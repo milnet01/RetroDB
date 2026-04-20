@@ -44,6 +44,9 @@ jobs:
           PY
           ls -la /tmp/staging
 
+      - name: Install PyYAML for changelog parsing
+        run: pip install pyyaml
+
       - name: Extract changelog entry
         id: changelog
         run: |
