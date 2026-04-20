@@ -1,0 +1,352 @@
+{% extends "base.html" %}
+
+{% block title %}Collector Trophies - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Collector Trophies</h1>
+        <p class="page-subtitle">Track your collection milestones and earn trophies</p>
+    </div>
+    <div class="page-actions">
+        <div class="trophy-summary">
+            <span class="trophy-summary-count" id="earnedCount">{{ earned_count }}</span>
+            <span class="trophy-summary-sep">/</span>
+            <span class="trophy-summary-total">{{ total_count }}</span>
+            <span class="trophy-summary-label">EARNED</span>
+        </div>
+        <button class="btn btn-primary" onclick="refreshTrophies()" id="refreshBtn">
+            Refresh Progress
+        </button>
+    </div>
+</div>
+
+<!-- Progress Bar -->
+<div class="trophy-progress-bar">
+    <div class="trophy-progress-fill" id="progressFill"
+         style="width: {{ (earned_count / total_count * 100) if total_count > 0 else 0 }}%;"></div>
+</div>
+
+<!-- Tier Sections -->
+{% set tiers = [
+    ('platinum', 'Platinum', 'Legendary milestones'),
+    ('gold', 'Gold', 'Expert-level achievements'),
+    ('silver', 'Silver', 'Intermediate milestones'),
+    ('bronze', 'Bronze', 'Getting started')
+] %}
+
+{% for tier_id, tier_name, tier_desc in tiers %}
+{% set tier_trophies = trophies|selectattr('tier', 'equalto', tier_id)|list %}
+{% if tier_trophies %}
+<section class="trophy-tier-section" data-tier="{{ tier_id }}">
+    <div class="trophy-tier-header">
+        <div class="trophy-tier-title-row">
+            <span class="trophy-tier-icon trophy-tier-{{ tier_id }}">
+                {% if tier_id == 'platinum' %}&#128142;{% elif tier_id == 'gold' %}&#127942;{% elif tier_id == 'silver' %}&#129351;{% else %}&#129352;{% endif %}
+            </span>
+            <div>
+                <h2 class="trophy-tier-name">{{ tier_name }}</h2>
+                <span class="trophy-tier-desc">{{ tier_desc }}</span>
+            </div>
+        </div>
+        <span class="trophy-tier-count">
+            {{ tier_trophies|selectattr('earned_at')|list|length }} / {{ tier_trophies|length }}
+        </span>
+    </div>
+
+    <div class="trophy-grid">
+        {% for trophy in tier_trophies %}
+        <div class="trophy-card {% if trophy.earned_at %}earned{% else %}locked{% endif %}" data-trophy-id="{{ trophy.id }}">
+            <div class="trophy-card-icon">{{ trophy.icon }}</div>
+            <div class="trophy-card-info">
+                <div class="trophy-card-name">{{ trophy.name }}</div>
+                <div class="trophy-card-desc">{{ trophy.description }}</div>
+                {% if trophy.earned_at %}
+                <div class="trophy-card-earned">Earned {{ trophy.earned_at[:10] }}</div>
+                {% else %}
+                <div class="trophy-card-progress-bar">
+                    <div class="trophy-card-progress-fill"
+                         style="width: {{ (trophy.progress / trophy.threshold * 100) if trophy.threshold > 0 else 0 }}%;"></div>
+                </div>
+                <div class="trophy-card-progress-text">
+                    {{ trophy.progress|format_number }} / {{ trophy.threshold|format_number }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endfor %}
+{% endblock %}
+
+{% block styles %}
+<style>
+/* Trophy Summary */
+.trophy-summary {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: 1px solid var(--primary-cyan);
+    border-radius: var(--radius-full);
+}
+
+.trophy-summary-count {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-cyan);
+}
+
+.trophy-summary-sep {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.trophy-summary-total {
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.trophy-summary-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--primary-cyan);
+    letter-spacing: 1px;
+    margin-left: 4px;
+}
+
+/* Progress Bar */
+.trophy-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: var(--bg-medium);
+    border-radius: var(--radius-full);
+    margin: var(--spacing-lg) 0 var(--spacing-xl);
+    overflow: hidden;
+}
+
+.trophy-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-cyan), var(--primary-magenta));
+    border-radius: var(--radius-full);
+    transition: width 0.6s ease-out;
+}
+
+/* Tier Sections */
+.trophy-tier-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.trophy-tier-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.trophy-tier-title-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.trophy-tier-icon {
+    font-size: 1.8rem;
+}
+
+.trophy-tier-name {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+.trophy-tier-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.trophy-tier-count {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    padding: 4px 12px;
+    background: var(--bg-medium);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-color);
+}
+
+/* Trophy Grid */
+.trophy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-md);
+}
+
+/* Trophy Card */
+.trophy-card {
+    display: flex;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-normal);
+}
+
+.trophy-card.earned {
+    border-color: rgba(76, 201, 240, 0.3);
+    background: linear-gradient(135deg, var(--card-bg), rgba(76, 201, 240, 0.05));
+}
+
+.trophy-card.locked {
+    opacity: 0.65;
+}
+
+.trophy-card.locked:hover {
+    opacity: 0.85;
+}
+
+.trophy-card-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-top: 2px;
+}
+
+.trophy-card.locked .trophy-card-icon {
+    filter: grayscale(0.5);
+}
+
+.trophy-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.trophy-card-name {
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.trophy-card.earned .trophy-card-name {
+    color: var(--primary-cyan);
+}
+
+.trophy-card-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+.trophy-card-earned {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--neon-green);
+    margin-top: 6px;
+}
+
+/* Progress inside card */
+.trophy-card-progress-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--bg-darker);
+    border-radius: var(--radius-full);
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.trophy-card-progress-fill {
+    height: 100%;
+    background: var(--primary-cyan);
+    border-radius: var(--radius-full);
+    transition: width 0.4s ease-out;
+    min-width: 0;
+}
+
+.trophy-card-progress-text {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* Tier-specific accents */
+.trophy-tier-section[data-tier="platinum"] .trophy-card.earned {
+    border-color: rgba(168, 85, 247, 0.4);
+    background: linear-gradient(135deg, var(--card-bg), rgba(168, 85, 247, 0.08));
+}
+
+.trophy-tier-section[data-tier="platinum"] .trophy-card.earned .trophy-card-name {
+    color: var(--neon-purple);
+}
+
+.trophy-tier-section[data-tier="gold"] .trophy-card.earned {
+    border-color: rgba(245, 158, 11, 0.4);
+    background: linear-gradient(135deg, var(--card-bg), rgba(245, 158, 11, 0.08));
+}
+
+.trophy-tier-section[data-tier="gold"] .trophy-card.earned .trophy-card-name {
+    color: var(--neon-orange);
+}
+
+.trophy-tier-section[data-tier="silver"] .trophy-card.earned {
+    border-color: rgba(154, 160, 166, 0.4);
+    background: linear-gradient(135deg, var(--card-bg), rgba(154, 160, 166, 0.08));
+}
+
+.trophy-tier-section[data-tier="silver"] .trophy-card.earned .trophy-card-name {
+    color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+    .trophy-grid {
+        grid-template-columns: 1fr;
+    }
+    .trophy-summary {
+        order: -1;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function refreshTrophies() {
+    const btn = document.getElementById('refreshBtn');
+    btn.disabled = true;
+    btn.textContent = 'Refreshing...';
+
+    try {
+        const resp = await fetch('/api/collector-trophies/refresh', { method: 'POST' });
+        const data = await resp.json();
+        if (data.success) {
+            showNotification(data.message, data.newly_earned > 0 ? 'success' : 'info');
+            // Reload to show updated progress
+            setTimeout(() => location.reload(), 600);
+        } else {
+            showNotification(data.error || 'Failed to refresh trophies.', 'error');
+            btn.disabled = false;
+            btn.textContent = 'Refresh Progress';
+        }
+    } catch (e) {
+        console.error('Error refreshing trophies:', e);
+        showNotification('Error refreshing trophies.', 'error');
+        btn.disabled = false;
+        btn.textContent = 'Refresh Progress';
+    }
+}
+</script>
+{% endblock %}

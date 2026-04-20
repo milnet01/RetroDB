@@ -1,0 +1,140 @@
+# RetroDB
+
+**Retro Gaming ROM Library Manager** - A web-based application for organizing, scraping metadata, and managing your retro game ROM collection.
+
+## Features
+
+### Library & Metadata
+- **Multi-System Library** - Supports 277 gaming platforms from Atari 2600 to PS5
+- **Hybrid Metadata Scraping** - Combines data from TheGamesDB, IGDB, RAWG, ScreenScraper, and ES-DE gamelists
+- **AI Fill** - Intelligent metadata gap-filling using Gemini, OpenAI, or Claude
+- **Multi-Rating System** - 8 international age rating systems (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd) with cross-mapping
+- **Bulk Operations** - Bulk scraping, bulk editing, compare games, and queue management with job recovery
+
+### Achievements & Trophies
+- **RetroAchievements Integration** - Track achievement progress across retro games
+- **Steam Achievements** - Import Steam library and track achievement progress
+- **Xbox Achievements** - Import Xbox library and track gamerscore
+- **PS3/PSN Trophy Tracking** - RPCS3 local trophies and PSN API trophy sync
+
+### Organization
+- **Collections** - Tags, named lists with drag-and-drop ordering, and wishlist
+- **Collector Trophies** - Gamification system with milestone-based trophy unlocks
+- **Game Imports** - Import from CLZ Games (PDF), Steam, Xbox, and PlayStation Network
+
+### Tools & Analytics
+- **ROM Tools** - Archive scanner, CHD converter/verifier, duplicate finder, multi-disc organizer
+- **ROM Reports** - Naming validation and standards compliance checking
+- **Analytics Dashboard** - 12-tab analytics with charts, export (PNG/CSV), and leaderboards
+- **Image Standardization** - AI upscaling (Real-ESRGAN) and Lanczos downscaling
+- **Museum** - Interactive gaming system encyclopedia with AI-generated content
+
+### UI & System
+- **6 Themes** - Cyberpunk, Matrix, Amber, Ocean, Cathedral, and Blade Runner with animated canvas effects
+- **Multi-User Support** - Role-based access control (admin, editor, viewer)
+- **How Long to Beat** - Playtime estimates for your games
+- **Log Viewer** - Unified log browser across all categories
+- **Genre Normalization** - Automatic normalization with custom rules
+
+## Quick Start
+
+### 1. Extract
+
+Extract the RetroDB ZIP to a directory of your choice.
+
+### 2. Install
+
+```bash
+python install.py
+```
+
+This installs Python dependencies, creates config files from templates, and sets up required directories.
+
+### 3. Launch
+
+```bash
+# Linux/macOS
+./start.sh
+
+# Windows
+start.bat
+
+# Or directly
+python app.py
+```
+
+Open your browser to `http://localhost:5000` and follow the setup wizard.
+
+## Requirements
+
+- **Python** 3.8 or higher
+- **pip** (Python package manager)
+- **Web Browser** (Chrome, Firefox, Safari, Edge)
+
+### Optional Tools (for ROM Tools features)
+
+- **7-Zip** (`p7zip-full`) - Archive extraction
+- **unrar** - RAR archive support
+- **chdman** (`mame-tools`) - CHD conversion and verification
+
+## Configuration
+
+RetroDB uses two configuration files:
+
+- **`config.py`** - Main settings (paths, API keys, server config). Created from `config.example.py` during install.
+- **`data/settings.json`** - User-editable settings changed via the web UI.
+
+Most settings can be configured through the web interface at **Settings** or during the first-run **Setup Wizard**.
+
+### API Keys (Optional)
+
+For metadata scraping and features, you can configure API keys for:
+
+| Service | Signup URL | Used For |
+|---|---|---|
+| TheGamesDB | https://api.thegamesdb.net/key.php | Metadata & boxart |
+| IGDB (Twitch) | https://dev.twitch.tv/console | Metadata |
+| RAWG.io | https://rawg.io/apidocs | Metadata |
+| ScreenScraper | https://www.screenscraper.fr | Metadata, 3D boxart, videos |
+| RetroAchievements | https://retroachievements.org/controlpanel.php | Achievement tracking |
+| Steam Web API | https://steamcommunity.com/dev/apikey | Steam import & achievements |
+| Google Gemini | https://aistudio.google.com/apikey | AI Fill & Museum |
+| OpenAI | https://platform.openai.com/api-keys | AI Fill & Museum |
+| Anthropic Claude | https://console.anthropic.com/ | AI Fill & Museum |
+
+## Platform Support
+
+RetroDB runs on **Linux**, **Windows**, and **macOS**. Platform-specific launchers are included:
+
+| Platform | Launcher | Notes |
+|---|---|---|
+| Linux | `start.sh` | Tested on Ubuntu, Fedora, Arch |
+| Windows | `start.bat` | Windows 10/11 |
+| macOS | `start.command` | Double-clickable from Finder |
+
+## Updating
+
+1. Back up your `config.py`, `data/settings.json`, and `database/` folder
+2. Extract the new version over the existing installation
+3. Run `python install.py` to install any new dependencies
+4. Your database and settings will be preserved
+
+## License
+
+RetroDB is released under the [MIT License](LICENSE).
+
+## Legal
+
+System logos and platform names are trademarks of their respective owners. RetroDB is not affiliated with any console manufacturer or game publisher. See [LEGAL.md](LEGAL.md) for full details.
+
+RetroDB does not distribute or host ROM files.
+
+## Credits
+
+- Built with [Flask](https://flask.palletsprojects.com/) and [Waitress](https://docs.pylonsproject.org/projects/waitress/)
+- Metadata from [TheGamesDB](https://thegamesdb.net/), [IGDB](https://www.igdb.com/), [RAWG](https://rawg.io/), [ScreenScraper](https://www.screenscraper.fr/)
+- Achievement data from [RetroAchievements](https://retroachievements.org/), [Steam](https://store.steampowered.com/), [Xbox](https://www.xbox.com/)
+- Trophy data from [PlayStation Network](https://www.playstation.com/) and [RPCS3](https://rpcs3.net/)
+- AI metadata via [Google Gemini](https://ai.google.dev/), [OpenAI](https://openai.com/), [Anthropic Claude](https://www.anthropic.com/)
+- Playtime data from [HowLongToBeat](https://howlongtobeat.com/)
+- Image upscaling via [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN) (ONNX Runtime)

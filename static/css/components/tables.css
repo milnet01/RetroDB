@@ -1,0 +1,264 @@
+/* =============================================================================
+   RETRODB - TABLES
+   Data tables and games tables
+   ============================================================================= */
+
+/* =============================================================================
+   BASE DATA TABLE
+   ============================================================================= */
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    background: var(--bg-darker, #0d1117);
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--card-border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.data-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--card-border);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.data-table tbody tr:hover {
+    background: rgba(76, 201, 240, 0.05);
+}
+
+/* =============================================================================
+   GAMES TABLE
+   ============================================================================= */
+
+.games-table-container {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.games-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.games-table thead {
+    background: linear-gradient(90deg, var(--bg-medium) 0%, var(--bg-light) 100%);
+}
+
+.games-table th {
+    padding: var(--spacing-md) var(--spacing-lg);
+    text-align: left;
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.games-table tbody tr {
+    border-bottom: 1px solid var(--card-border);
+    transition: background-color var(--transition-fast);
+}
+
+.games-table tbody tr:hover {
+    background: var(--card-bg-hover);
+}
+
+.games-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.games-table td {
+    padding: var(--spacing-md) var(--spacing-lg);
+    vertical-align: middle;
+}
+
+/* =============================================================================
+   GAME ROW ELEMENTS
+   ============================================================================= */
+
+.game-row-boxart {
+    width: 60px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--card-border);
+}
+
+/* 3D boxart needs contain to show the full box */
+.game-row-boxart.boxart-3d {
+    object-fit: contain;
+    background: var(--bg-medium);
+}
+
+.game-row-boxart-placeholder {
+    width: 60px;
+    height: 80px;
+    background: var(--bg-lighter);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+}
+
+.game-row-title {
+    color: var(--text-primary);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.game-row-title:hover {
+    color: var(--primary-cyan);
+}
+
+.game-row-system {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.game-row-genre {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.game-row-year {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+}
+
+/* =============================================================================
+   SCORE LISTS
+   ============================================================================= */
+
+.score-list-section {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+}
+
+.score-list-section h4 {
+    color: var(--text-primary);
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.score-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.score-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+
+.score-list-item:hover {
+    border-color: var(--primary-cyan);
+    background: var(--card-bg-hover);
+}
+
+.score-game-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+}
+
+.score-game-title {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.score-game-system {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.score-game-scores {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-shrink: 0;
+}
+
+.score-lists-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-xl);
+}
+
+/* =============================================================================
+   BULK UPDATE STYLES
+   ============================================================================= */
+
+.bulk-filter-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.bulk-action-section {
+    padding: var(--spacing-lg);
+    background: var(--bg-dark);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--card-border);
+}
+
+.bulk-preview-count {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-cyan);
+    margin-bottom: var(--spacing-sm);
+}
+
+.bulk-game-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: var(--spacing-md);
+}
+
+.bulk-game-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    border-bottom: 1px solid var(--card-border);
+}
+
+.bulk-game-item:last-child {
+    border-bottom: none;
+}

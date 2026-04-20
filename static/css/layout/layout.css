@@ -1,0 +1,96 @@
+/* =============================================================================
+   RETRODB - MAIN LAYOUT
+   App container and main content area
+   ============================================================================= */
+
+/* =============================================================================
+   APP CONTAINER
+   ============================================================================= */
+
+.app-container {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+    z-index: 2;
+}
+
+/* =============================================================================
+   MAIN CONTENT AREA
+   ============================================================================= */
+
+.main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    padding: var(--spacing-xl);
+    transition: margin-left var(--transition-normal);
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.main-content.sidebar-collapsed {
+    margin-left: var(--sidebar-collapsed-width);
+}
+
+/* =============================================================================
+   CONTENT WRAPPER
+   Centered content container with max-width
+   ============================================================================= */
+
+.content-wrapper {
+    width: 65%;
+    max-width: 1400px;
+    min-width: 600px;
+    position: relative;
+    z-index: 1;
+}
+
+/* =============================================================================
+   SECTION LAYOUTS
+   ============================================================================= */
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.section-link {
+    color: var(--primary-cyan);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all var(--transition-fast);
+}
+
+.section-link:hover {
+    text-shadow: 0 0 10px var(--primary-cyan-glow);
+}
+
+/* =============================================================================
+   COMMON GRID LAYOUTS
+   ============================================================================= */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.systems-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+/* =============================================================================
+   SYSTEMS SECTION
+   ============================================================================= */
+
+.systems-section {
+    margin-bottom: var(--spacing-xl);
+}

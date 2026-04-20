@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /mnt/Storage/Scripts/Linux/RetroDB/scripts/hook-on-static-asset-edit.sh",
+            "statusMessage": "Checking static asset rebuild needed…",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

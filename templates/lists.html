@@ -1,0 +1,486 @@
+{% extends "base.html" %}
+
+{% block title %}Lists - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Lists</h1>
+        <p class="page-subtitle">Create custom lists to group and organize your games</p>
+    </div>
+    <div class="page-actions">
+        <button class="btn btn-primary" onclick="openCreateListModal()">
+            <span class="btn-icon">+</span> New List
+        </button>
+    </div>
+</div>
+
+<!-- Lists Grid -->
+<div class="lists-grid" id="listsGrid">
+    <!-- Populated by JavaScript -->
+</div>
+
+<!-- Empty State -->
+<div class="empty-state" id="listsEmptyState" style="display: none;">
+    <div class="empty-state-icon">📋</div>
+    <div class="empty-state-title">No Lists Yet</div>
+    <div class="empty-state-text">
+        Create your first list to start curating your game collection.
+    </div>
+    <button class="btn btn-primary" onclick="openCreateListModal()">
+        <span class="btn-icon">+</span> Create List
+    </button>
+</div>
+
+<!-- Create/Edit List Modal -->
+<div class="custom-modal" id="listModal" onclick="if(event.target===this)closeListModal()">
+    <div class="custom-modal-content" style="max-width: 500px;" role="dialog" aria-modal="true" aria-labelledby="listModalTitle">
+        <div class="custom-modal-header">
+            <h3 id="listModalTitle">New List</h3>
+            <button class="custom-modal-close" onclick="closeListModal()" aria-label="Close">&times;</button>
+        </div>
+        <div class="custom-modal-body">
+            <input type="hidden" id="listEditId" value="">
+            <div class="form-group">
+                <label class="form-label" for="listNameInput">List Name</label>
+                <input type="text" id="listNameInput" class="form-control" placeholder="e.g., Best RPGs, Weekend Games..." maxlength="100">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="listDescInput">Description <span style="color: var(--text-muted); font-weight: 400; text-transform: none;">(optional)</span></label>
+                <textarea id="listDescInput" class="form-control" rows="3" placeholder="What is this list about?" maxlength="500" style="resize: vertical;"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Icon</label>
+                <div class="list-icon-picker" id="listIconPicker">
+                    <button type="button" class="list-icon-option active" data-icon="📋" onclick="selectListIcon(this)">📋</button>
+                    <button type="button" class="list-icon-option" data-icon="🎮" onclick="selectListIcon(this)">🎮</button>
+                    <button type="button" class="list-icon-option" data-icon="⭐" onclick="selectListIcon(this)">⭐</button>
+                    <button type="button" class="list-icon-option" data-icon="🏆" onclick="selectListIcon(this)">🏆</button>
+                    <button type="button" class="list-icon-option" data-icon="🔥" onclick="selectListIcon(this)">🔥</button>
+                    <button type="button" class="list-icon-option" data-icon="💎" onclick="selectListIcon(this)">💎</button>
+                    <button type="button" class="list-icon-option" data-icon="🎯" onclick="selectListIcon(this)">🎯</button>
+                    <button type="button" class="list-icon-option" data-icon="🕹️" onclick="selectListIcon(this)">🕹️</button>
+                    <button type="button" class="list-icon-option" data-icon="💀" onclick="selectListIcon(this)">💀</button>
+                    <button type="button" class="list-icon-option" data-icon="🌟" onclick="selectListIcon(this)">🌟</button>
+                    <button type="button" class="list-icon-option" data-icon="🎵" onclick="selectListIcon(this)">🎵</button>
+                    <button type="button" class="list-icon-option" data-icon="🏁" onclick="selectListIcon(this)">🏁</button>
+                    <button type="button" class="list-icon-option" data-icon="👾" onclick="selectListIcon(this)">👾</button>
+                    <button type="button" class="list-icon-option" data-icon="🗡️" onclick="selectListIcon(this)">🗡️</button>
+                    <button type="button" class="list-icon-option" data-icon="🚀" onclick="selectListIcon(this)">🚀</button>
+                    <button type="button" class="list-icon-option" data-icon="❤️" onclick="selectListIcon(this)">❤️</button>
+                </div>
+            </div>
+        </div>
+        <div class="custom-modal-footer">
+            <button class="btn btn-secondary" onclick="closeListModal()">Cancel</button>
+            <button class="btn btn-primary" id="listSaveBtn" onclick="saveList()">Create List</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+/* Lists Grid */
+.lists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+}
+
+/* List Card */
+.list-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all var(--transition-normal);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.list-card:hover {
+    border-color: var(--primary-cyan);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.list-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: var(--spacing-lg);
+}
+
+.list-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.list-card-icon {
+    font-size: 2rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.list-card-title {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.3;
+}
+
+.list-card-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: var(--spacing-md);
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.list-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-top: 1px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.list-card-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.list-card-count {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    background: rgba(76, 201, 240, 0.15);
+    color: var(--primary-cyan);
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+}
+
+.list-card-date {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.list-card-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+}
+
+.list-action-btn {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all var(--transition-fast);
+}
+
+.list-action-btn:hover {
+    background: var(--bg-lighter);
+    color: var(--text-primary);
+}
+
+.list-action-btn.danger:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--neon-red);
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* Icon Picker */
+.list-icon-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.list-icon-option {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    background: var(--bg-darker);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    padding: 0;
+}
+
+.list-icon-option:hover {
+    border-color: var(--primary-cyan);
+    background: var(--bg-light);
+}
+
+.list-icon-option.active {
+    border-color: var(--primary-cyan);
+    background: rgba(76, 201, 240, 0.15);
+    box-shadow: 0 0 8px rgba(76, 201, 240, 0.3);
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-label {
+    display: block;
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--spacing-xs);
+}
+
+.form-control {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-darker);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color var(--transition-fast);
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    border-color: var(--primary-cyan);
+}
+
+@media (max-width: 768px) {
+    .lists-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let allLists = [];
+let selectedListIcon = '📋';
+
+document.addEventListener('DOMContentLoaded', loadLists);
+
+async function loadLists() {
+    try {
+        const resp = await fetch('/api/lists');
+        const data = await resp.json();
+        if (data.success) {
+            allLists = data.lists || [];
+            renderLists();
+        }
+    } catch (e) {
+        console.error('Error loading lists:', e);
+    }
+}
+
+function renderLists() {
+    const grid = document.getElementById('listsGrid');
+    const empty = document.getElementById('listsEmptyState');
+
+    if (allLists.length === 0) {
+        grid.style.display = 'none';
+        empty.style.display = '';
+        return;
+    }
+
+    grid.style.display = '';
+    empty.style.display = 'none';
+
+    grid.innerHTML = allLists.map(list => {
+        const icon = escapeHtml(list.icon || '📋');
+        const name = escapeHtml(list.name);
+        const desc = list.description ? escapeHtml(list.description) : '<span style="color: var(--text-muted); font-style: italic;">No description</span>';
+        const count = list.game_count || 0;
+        const date = list.created_at ? formatDate(list.created_at) : '';
+
+        return `
+            <div class="list-card">
+                <a href="/list/${list.id}" class="list-card-link">
+                    <div class="list-card-header">
+                        <span class="list-card-icon">${icon}</span>
+                        <span class="list-card-title">${name}</span>
+                    </div>
+                    <div class="list-card-desc">${desc}</div>
+                </a>
+                <div class="list-card-footer">
+                    <div class="list-card-meta">
+                        <span class="list-card-count">${formatNumber(count)} game${count !== 1 ? 's' : ''}</span>
+                        ${date ? `<span class="list-card-date">${date}</span>` : ''}
+                    </div>
+                    <div class="list-card-actions">
+                        <button class="list-action-btn" onclick="openEditListModal(${list.id})" title="Edit list">&#9998;</button>
+                        <button class="list-action-btn danger" onclick="confirmDeleteList(${list.id}, '${escapeAttr(list.name)}')" title="Delete list">&#10005;</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function openCreateListModal() {
+    document.getElementById('listModalTitle').textContent = 'New List';
+    document.getElementById('listSaveBtn').textContent = 'Create List';
+    document.getElementById('listEditId').value = '';
+    document.getElementById('listNameInput').value = '';
+    document.getElementById('listDescInput').value = '';
+    selectedListIcon = '📋';
+    document.querySelectorAll('.list-icon-option').forEach(o => {
+        o.classList.toggle('active', o.dataset.icon === selectedListIcon);
+    });
+    document.getElementById('listModal').classList.add('active');
+    document.getElementById('listNameInput').focus();
+}
+
+function openEditListModal(listId) {
+    const list = allLists.find(l => l.id === listId);
+    if (!list) return;
+
+    document.getElementById('listModalTitle').textContent = 'Edit List';
+    document.getElementById('listSaveBtn').textContent = 'Save Changes';
+    document.getElementById('listEditId').value = list.id;
+    document.getElementById('listNameInput').value = list.name;
+    document.getElementById('listDescInput').value = list.description || '';
+    selectedListIcon = list.icon || '📋';
+    document.querySelectorAll('.list-icon-option').forEach(o => {
+        o.classList.toggle('active', o.dataset.icon === selectedListIcon);
+    });
+    document.getElementById('listModal').classList.add('active');
+    document.getElementById('listNameInput').focus();
+}
+
+function closeListModal() {
+    document.getElementById('listModal').classList.remove('active');
+}
+
+function selectListIcon(el) {
+    selectedListIcon = el.dataset.icon;
+    document.querySelectorAll('.list-icon-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+}
+
+async function saveList() {
+    const name = document.getElementById('listNameInput').value.trim();
+    if (!name) {
+        showNotification('Please enter a list name.', 'warning');
+        return;
+    }
+
+    const editId = document.getElementById('listEditId').value;
+    const payload = {
+        name: name,
+        description: document.getElementById('listDescInput').value.trim(),
+        icon: selectedListIcon
+    };
+
+    try {
+        let resp;
+        if (editId) {
+            resp = await fetch(`/api/lists/${editId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        } else {
+            resp = await fetch('/api/lists', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        }
+
+        const data = await resp.json();
+        if (data.success) {
+            showNotification(editId ? 'List updated.' : 'List created.', 'success');
+            closeListModal();
+            loadLists();
+        } else {
+            showNotification(data.error || 'Failed to save list.', 'error');
+        }
+    } catch (e) {
+        console.error('Error saving list:', e);
+        showNotification('Error saving list.', 'error');
+    }
+}
+
+function confirmDeleteList(listId, listName) {
+    showConfirm(
+        'Delete List',
+        `Are you sure you want to delete "${listName}"?\nThis will not delete the games themselves, only the list.`,
+        () => deleteList(listId)
+    );
+}
+
+async function deleteList(listId) {
+    try {
+        const resp = await fetch(`/api/lists/${listId}`, { method: 'DELETE' });
+        const data = await resp.json();
+        if (data.success) {
+            showNotification('List deleted.', 'success');
+            loadLists();
+        } else {
+            showNotification(data.error || 'Failed to delete list.', 'error');
+        }
+    } catch (e) {
+        console.error('Error deleting list:', e);
+        showNotification('Error deleting list.', 'error');
+    }
+}
+
+function formatDate(dateStr) {
+    try {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    } catch (e) {
+        return dateStr;
+    }
+}
+
+function escapeHtml(text) {
+    const d = document.createElement('div');
+    d.textContent = text;
+    return d.innerHTML;
+}
+
+function escapeAttr(str) {
+    return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
+}
+</script>
+{% endblock %}

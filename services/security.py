@@ -1,0 +1,158 @@
+# =============================================================================
+# RETRODB - Security Utilities
+# =============================================================================
+# Shared security functions for path validation, filename sanitization,
+# and login rate limiting. Used across all route blueprints.
+# =============================================================================
+
+import os
+import time
+import threading
+import logging
+
+logger = logging.getLogger(__name__)
+
+# =============================================================================
+# FILENAME & PATH VALIDATION
+# =============================================================================
+
+def safe_filename(filename):
+    """
+    Validate a filename to prevent path traversal.
+
+    Rejects filenames containing '..', '/', '\\', or os.sep.
+    Returns the sanitized filename or None if invalid.
+
+    Args:
+        filename: User-supplied filename string
+
+    Returns:
+        str or None: The filename if safe, None if rejected
+    """
+    if not filename or not isinstance(filename, str):
+        return None
+    if '..' in filename or '/' in filename or '\\' in filename:
+        logger.warning(f"Rejected unsafe filename: {filename}")
+        return None
+    if os.sep != '/' and os.sep != '\\' and os.sep in filename:
+        logger.warning(f"Rejected unsafe filename: {filename}")
+        return None
+    return filename
+
+
+def safe_path(user_path, allowed_base):
+    """
+    Validate that a user-supplied path resolves within an allowed base directory.
+
+    Resolves both paths with os.path.realpath() and verifies the user path
+    starts with the allowed base. Prevents directory traversal attacks.
+
+    Args:
+        user_path: User-supplied path string
+        allowed_base: The base directory the path must reside within
+
+    Returns:
+        str or None: The canonical path if safe, None if rejected
+    """
+    if not user_path or not isinstance(user_path, str):
+        return None
+    if not allowed_base or not isinstance(allowed_base, str):
+        return None
+
+    try:
+        canonical = os.path.realpath(user_path)
+        base = os.path.realpath(allowed_base)
+
+        if not canonical.startswith(base + os.sep) and canonical != base:
+            logger.warning(f"Rejected path traversal attempt: {user_path} (resolved to {canonical}, outside {base})")
+            return None
+
+        return canonical
+    except Exception as e:
+        logger.warning(f"Path validation error: {e}")
+        return None
+
+
+# =============================================================================
+# LOGIN RATE LIMITING
+# =============================================================================
+
+_login_attempts = {}
+_lock = threading.Lock()
+
+# Configuration
+MAX_ATTEMPTS = 5
+WINDOW_SECONDS = 300  # 5 minutes
+_MAX_ENTRIES = 10000
+
+
+def _cleanup_old_entries():
+    """Remove expired entries from the attempts dict, and cap size."""
+    now = time.time()
+    expired = [ip for ip, data in _login_attempts.items()
+               if now - data['first_attempt'] > WINDOW_SECONDS]
+    for ip in expired:
+        del _login_attempts[ip]
+
+    # If still over the cap, evict the oldest half
+    if len(_login_attempts) > _MAX_ENTRIES:
+        sorted_ips = sorted(_login_attempts.keys(),
+                            key=lambda ip: _login_attempts[ip]['first_attempt'])
+        for ip in sorted_ips[:len(sorted_ips) // 2]:
+            del _login_attempts[ip]
+
+
+def rate_limit_login(ip):
+    """
+    Check if a login attempt from this IP should be rate limited.
+
+    Returns False (blocked) if there have been more than MAX_ATTEMPTS
+    failed login attempts from this IP within WINDOW_SECONDS.
+
+    Args:
+        ip: The client IP address
+
+    Returns:
+        bool: True if the attempt is allowed, False if rate limited
+    """
+    with _lock:
+        _cleanup_old_entries()
+        entry = _login_attempts.get(ip)
+        if not entry:
+            return True
+        if entry['failures'] >= MAX_ATTEMPTS:
+            elapsed = time.time() - entry['first_attempt']
+            if elapsed < WINDOW_SECONDS:
+                logger.warning(f"Login rate limited for IP: {ip} ({entry['failures']} failures in {elapsed:.0f}s)")
+                return False
+            else:
+                del _login_attempts[ip]
+                return True
+        return True
+
+
+def record_login_attempt(ip, success):
+    """
+    Record a login attempt result for rate limiting.
+
+    On success, clears the failure counter for the IP.
+    On failure, increments the counter or starts tracking.
+
+    Args:
+        ip: The client IP address
+        success: True if login succeeded, False if failed
+    """
+    with _lock:
+        _cleanup_old_entries()
+        if success:
+            _login_attempts.pop(ip, None)
+        else:
+            entry = _login_attempts.get(ip)
+            now = time.time()
+            if entry:
+                if now - entry['first_attempt'] > WINDOW_SECONDS:
+                    _login_attempts[ip] = {'failures': 1, 'first_attempt': now}
+                else:
+                    entry['failures'] += 1
+            else:
+                _login_attempts[ip] = {'failures': 1, 'first_attempt': now}

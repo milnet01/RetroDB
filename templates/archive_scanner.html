@@ -1,0 +1,1821 @@
+{% extends "base.html" %}
+
+{% block title %}Archive Scanner - RetroDB{% endblock %}
+
+{% block styles %}
+<style>
+/* Configuration Section */
+.config-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .config-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Input with Button Layout */
+.input-with-button {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.input-with-button .form-input {
+    flex: 1;
+}
+
+.form-input.locked-prefix {
+    padding-left: 0;
+}
+
+/* Locked Input Wrapper */
+.locked-input-wrapper {
+    display: flex;
+    align-items: center;
+    background: var(--bg-darker);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    flex: 1;
+}
+
+.locked-input-wrapper:focus-within {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 0 2px rgba(76, 201, 240, 0.15);
+}
+
+.locked-prefix {
+    padding: 0.75rem 0 0.75rem 1rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    background: transparent;
+    white-space: nowrap;
+}
+
+.locked-input-wrapper input {
+    flex: 1;
+    padding: 0.75rem 1rem 0.75rem 0;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    outline: none;
+}
+
+/* Excluded Paths Badges */
+.excluded-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    min-height: 42px;
+    padding: 0.5rem;
+    background: var(--bg-darker);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.excluded-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.5rem 0.35rem 0.75rem;
+    background: rgba(76, 201, 240, 0.15);
+    border: 1px solid var(--accent-cyan);
+    border-radius: 6px;
+    color: var(--accent-cyan);
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+}
+
+.excluded-badge .remove-badge {
+    background: none;
+    border: none;
+    color: var(--accent-cyan);
+    cursor: pointer;
+    padding: 0;
+    font-size: 1rem;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.excluded-badge .remove-badge:hover {
+    opacity: 1;
+}
+
+.add-excluded-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.add-excluded-row input {
+    flex: 1;
+}
+
+/* Checkbox Groups */
+.options-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .options-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.options-group h4 {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Action Buttons */
+.btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn-row .btn {
+    min-width: 120px;
+}
+
+/* Progress Section - Always visible */
+.progress-section {
+    display: block;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(76, 201, 240, 0.05);
+    border-radius: 8px;
+}
+
+/* Results Section */
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.results-header h3 {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.results-count {
+    color: var(--accent-cyan);
+    font-size: 0.9rem;
+}
+
+/* Results Table */
+.results-table-container {
+    background: var(--bg-darker);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.data-table {
+    font-size: 0.85rem;
+}
+
+.data-table td {
+    padding: 0.6rem 1rem;
+    vertical-align: middle;
+}
+
+.data-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Type Badges */
+.type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.type-badge.corrupted {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.type-badge.multi-file {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.type-badge.unwanted {
+    background: rgba(168, 85, 247, 0.2);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+/* Path Column */
+.path-cell {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.path-cell:hover {
+    color: var(--accent-cyan);
+    cursor: pointer;
+}
+
+/* Action Buttons in Table */
+.action-cell {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Page-specific override for danger variant */
+.action-btn.danger:hover {
+    background: var(--neon-red);
+    border-color: var(--neon-red);
+}
+
+/* Stats Summary */
+.stats-summary {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: var(--bg-darker);
+    border-radius: 8px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stat-item .stat-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.stat-item .stat-icon.corrupted {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+.stat-item .stat-icon.multi-file {
+    background: rgba(251, 191, 36, 0.2);
+}
+
+.stat-item .stat-icon.unwanted {
+    background: rgba(168, 85, 247, 0.2);
+}
+
+.stat-item .stat-info .stat-value {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--text-primary);
+}
+
+.stat-item .stat-info .stat-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+/* Archive Contents Modal */
+.archive-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.archive-modal.active {
+    display: flex;
+}
+
+/* Batch Progress Modal */
+.batch-progress-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 1001;
+    align-items: center;
+    justify-content: center;
+}
+
+.batch-progress-modal.active {
+    display: flex;
+}
+
+.batch-progress-content {
+    background: #1a1a2e;
+    border: 1px solid #3a3a5a;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.batch-progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.batch-progress-header h3 {
+    font-family: var(--font-display);
+    color: var(--accent-cyan);
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.batch-progress-body {
+    padding: 1.5rem;
+}
+
+.batch-progress-bar-container {
+    background: #1a1a3e;
+    border: 2px solid var(--neon-cyan);
+    border-radius: 8px;
+    height: 36px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    position: relative;
+    box-shadow: 0 0 15px rgba(76, 201, 240, 0.3);
+}
+
+.batch-progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-cyan), #7209b3);
+    width: 0%;
+    transition: width 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+    border-radius: 6px;
+}
+
+.batch-progress-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.batch-stat {
+    text-align: center;
+    padding: 0.75rem;
+    background: var(--bg-darker);
+    border-radius: 8px;
+}
+
+.batch-stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.batch-stat-value.success {
+    color: var(--neon-green);
+}
+
+.batch-stat-value.failed {
+    color: var(--neon-red);
+}
+
+.batch-stat-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+}
+
+.batch-current-file {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    padding: 0.75rem;
+    background: var(--bg-darker);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.batch-current-file span {
+    color: var(--accent-cyan);
+}
+
+.batch-progress-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Archive Modal Content */
+.archive-modal-content {
+    background: #1a1a2e;
+    border: 1px solid #3a3a5a;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 700px;
+    max-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.archive-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.archive-modal-header h3 {
+    font-family: var(--font-display);
+    color: var(--accent-cyan);
+    font-size: 1rem;
+}
+
+/* .archive-modal-close — styled by unified modal close button rule in modals.css */
+
+.archive-modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 1.5rem;
+}
+
+/* Archive File List */
+.archive-file-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.archive-file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+}
+
+.archive-file-item:last-child {
+    border-bottom: none;
+}
+
+.archive-file-item .file-name {
+    color: var(--text-primary);
+    flex: 1;
+}
+
+.archive-file-item .file-size {
+    color: var(--text-secondary);
+    margin-right: 1rem;
+}
+
+.archive-file-item .file-unwanted {
+    color: #f87171;
+}
+
+.archive-file-item input[type="checkbox"] {
+    margin-right: 0.75rem;
+    accent-color: var(--accent-cyan);
+}
+
+.archive-modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🔧 ROM Tools</h1>
+    <p>Manage, organize, and optimize your ROM collection.</p>
+</div>
+
+<!-- Tool Tabs -->
+<nav class="tool-tabs">
+    <a href="{{ url_for('tools.archive_scanner') }}" class="tool-tab active">
+        <span class="tab-icon">📦</span>
+        <span class="tab-label">Archive Scanner</span>
+    </a>
+    <a href="{{ url_for('tools.chd_converter') }}" class="tool-tab">
+        <span class="tab-icon">💿</span>
+        <span class="tab-label">CHD Converter</span>
+    </a>
+    <a href="{{ url_for('tools.chd_verify') }}" class="tool-tab">
+        <span class="tab-icon">✅</span>
+        <span class="tab-label">CHD Verify</span>
+    </a>
+    <a href="{{ url_for('tools.multi_disc_organizer') }}" class="tool-tab">
+        <span class="tab-icon">💽</span>
+        <span class="tab-label">Multi-Disc Organizer</span>
+    </a>
+    <a href="{{ url_for('tools.duplicate_finder') }}" class="tool-tab">
+        <span class="tab-icon">🔍</span>
+        <span class="tab-label">Duplicate Finder</span>
+    </a>
+    <a href="{{ url_for('tools.screenshot_dedup') }}" class="tool-tab">
+        <span class="tab-icon">📸</span>
+        <span class="tab-label">Screenshot Dedup</span>
+    </a>
+    <a href="{{ url_for('tools.rom_tools_settings') }}" class="tool-tab">
+        <span class="tab-icon">⚙️</span>
+        <span class="tab-label">Settings</span>
+    </a>
+</nav>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><span>📁</span> Scan Configuration</h2>
+    </div>
+    <div class="card-body">
+    <div class="config-grid">
+        <div class="form-group">
+            <label>ROMs Folder Path</label>
+            <div class="input-with-button">
+                <div class="locked-input-wrapper">
+                    <span class="locked-prefix" id="basePath">{{ rom_path }}/</span>
+                    <input type="text" id="romsPathSuffix" value="" placeholder="subfolder (optional)">
+                </div>
+                <button class="btn btn-secondary" onclick="browseFolder()">Browse</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Excluded Paths <small class="text-muted">(folders to skip)</small></label>
+            <div class="excluded-badges" id="excludedBadges">
+                <!-- Badges will be added here -->
+            </div>
+            <div class="add-excluded-row">
+                <input type="text" class="form-input" id="newExcludedPath" placeholder="Enter folder name to exclude">
+                <button class="btn btn-secondary" onclick="addExcludedPath()">Add</button>
+                <button class="btn btn-secondary" onclick="browseExcluded()">Browse</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="options-row">
+        <div class="options-group">
+            <h4>📦 Compression Types</h4>
+            <div class="toggle-grid">
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="typeZip" aria-label="Scan ZIP archives" checked onchange="updateToggleLabel(this); savePreferences()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label active" onclick="document.getElementById('typeZip').click()">ZIP</span>
+                </div>
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="type7z" aria-label="Scan 7-Zip archives" checked onchange="updateToggleLabel(this); savePreferences()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label active" onclick="document.getElementById('type7z').click()">7-Zip</span>
+                </div>
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="typeRar" aria-label="Scan RAR archives" checked onchange="updateToggleLabel(this); savePreferences()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label active" onclick="document.getElementById('typeRar').click()">RAR</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="options-group">
+            <h4>🔍 Scan Modes</h4>
+            <div class="toggle-grid">
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="modeCorrupted" aria-label="Scan for corrupted archives" checked onchange="updateToggleLabel(this); savePreferences()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label active" onclick="document.getElementById('modeCorrupted').click()">Corrupted</span>
+                </div>
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="modeMultiFile" aria-label="Scan for multi-file archives" checked onchange="updateToggleLabel(this); savePreferences()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label active" onclick="document.getElementById('modeMultiFile').click()">Multi-file</span>
+                </div>
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="modeUnwanted" aria-label="Scan for unwanted files" checked onchange="updateToggleLabel(this); savePreferences()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label active" onclick="document.getElementById('modeUnwanted').click()">Unwanted</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="btn-row">
+        <button class="btn btn-primary" id="startBtn" onclick="startScan()">
+            <span class="btn-icon">🔍</span> Start Scan
+        </button>
+        <button class="btn btn-warning" id="pauseBtn" onclick="togglePause()" disabled>
+            <span class="btn-icon" id="pauseIcon">⏸️</span> <span id="pauseText">Pause</span>
+        </button>
+        <button class="btn btn-danger" id="cancelBtn" onclick="cancelScan()" disabled>
+            <span class="btn-icon">❌</span> Cancel
+        </button>
+        <button class="btn btn-danger" id="clearBtn" onclick="clearResults()">
+            <span class="btn-icon">🗑️</span> Clear Log
+        </button>
+        <div style="flex: 1;"></div>
+        <button class="btn btn-danger" id="batchRemoveBtn" onclick="batchRemoveUnwanted()" disabled>
+            <span class="btn-icon">🧹</span> Batch Remove
+        </button>
+        <button class="btn btn-secondary" id="batchM3uBtn" onclick="batchCreateM3U()" disabled>
+            <span class="btn-icon">💿</span> Batch M3U
+        </button>
+    </div>
+    
+    <div class="progress-section" id="progressSection">
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+        <div class="progress-stats">
+            <span id="progressStatus">Ready to scan</span>
+            <span id="progressCount"></span>
+        </div>
+    </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><span>📋</span> Scan Log</h2>
+        <span class="results-count" id="resultsCount">Found 0 issues</span>
+    </div>
+    <div class="card-body">
+    <div class="stats-summary" id="statsSummary" style="display: none;">
+        <div class="stat-item">
+            <div class="stat-icon corrupted">💥</div>
+            <div class="stat-info">
+                <div class="stat-value" id="statCorrupted">0</div>
+                <div class="stat-label">Corrupted</div>
+            </div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon multi-file">📚</div>
+            <div class="stat-info">
+                <div class="stat-value" id="statMultiFile">0</div>
+                <div class="stat-label">Multi-file</div>
+            </div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon unwanted">🗑️</div>
+            <div class="stat-info">
+                <div class="stat-value" id="statUnwanted">0</div>
+                <div class="stat-label">Unwanted</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="results-table-container">
+        <table class="data-table" id="resultsTable">
+            <thead>
+                <tr>
+                    <th style="width: 40px;">#</th>
+                    <th style="width: 150px;">Date & Time</th>
+                    <th style="width: 100px;">Type</th>
+                    <th style="width: 60px;">Files</th>
+                    <th>Path</th>
+                    <th style="width: 140px;">Action</th>
+                </tr>
+            </thead>
+            <tbody id="resultsBody">
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <div class="icon">📦</div>
+                            <p>Configure scan options and click "Start Scan" to find archive issues.</p>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    </div>
+</div>
+
+<!-- Archive Contents Modal -->
+<div class="archive-modal" id="archiveModal" onclick="if(event.target === this) closeArchiveModal()">
+    <div class="archive-modal-content">
+        <div class="archive-modal-header">
+            <h3 id="archiveModalTitle">📦 Archive Contents</h3>
+            <button class="archive-modal-close" onclick="closeArchiveModal()">×</button>
+        </div>
+        <div class="archive-modal-body">
+            <ul class="archive-file-list" id="archiveFileList">
+                <!-- Files will be populated here -->
+            </ul>
+        </div>
+        <div class="archive-modal-footer">
+            <button class="btn btn-secondary" onclick="closeArchiveModal()">Close</button>
+            <button class="btn btn-danger" id="removeSelectedBtn" onclick="removeSelectedFiles()">
+                <span class="btn-icon">🗑️</span> Remove Selected
+            </button>
+</div>
+    </div>
+</div>
+
+<!-- Batch Progress Modal -->
+<div class="batch-progress-modal" id="batchProgressModal">
+    <div class="batch-progress-content">
+        <div class="batch-progress-header">
+            <h3 id="batchProgressTitle">🧹 Batch Processing</h3>
+        </div>
+        <div class="batch-progress-body">
+            <div class="batch-progress-bar-container">
+                <div class="batch-progress-bar-fill" id="batchProgressBar">0%</div>
+            </div>
+            <div class="batch-progress-stats">
+                <div class="batch-stat">
+                    <div class="batch-stat-value" id="batchStatProcessed">0</div>
+                    <div class="batch-stat-label">Processed</div>
+                </div>
+                <div class="batch-stat">
+                    <div class="batch-stat-value success" id="batchStatSuccess">0</div>
+                    <div class="batch-stat-label">Success</div>
+                </div>
+                <div class="batch-stat">
+                    <div class="batch-stat-value failed" id="batchStatFailed">0</div>
+                    <div class="batch-stat-label">Failed</div>
+                </div>
+            </div>
+            <div class="batch-current-file" id="batchCurrentFile">
+                <span>Current:</span> Waiting to start...
+            </div>
+        </div>
+        <div class="batch-progress-footer">
+            <button class="btn btn-warning" id="batchPauseBtn" onclick="toggleBatchPause()">
+                <span class="btn-icon" id="batchPauseIcon">⏸️</span> <span id="batchPauseText">Pause</span>
+            </button>
+            <button class="btn btn-danger" id="batchCancelBtn" onclick="cancelBatchOperation()">
+                <span class="btn-icon">❌</span> Cancel
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/rom-tools.js') }}?v={{ config.APP_VERSION }}"></script>
+<script>
+let currentTaskId = null;
+let isPaused = false;
+let scanResults = [];
+let currentArchivePath = null;
+let currentArchiveType = null;
+let basePath = '{{ rom_path }}/';
+let excludedPaths = ['mame', 'ps3', 'xbox360'];
+
+// Batch operation state
+let batchState = {
+    running: false,
+    paused: false,
+    cancelled: false,
+    current: 0,
+    total: 0,
+    success: 0,
+    failed: 0,
+    items: [],
+    type: null  // 'remove' or 'm3u'
+};
+
+// Unwanted file patterns - will be loaded from settings
+let unwantedPatterns = [];
+
+// Convert extension strings to regex patterns
+function buildUnwantedRegex(patterns) {
+    return patterns.map(p => {
+        // Handle wildcard patterns like *.txt or .txt
+        let ext = p.replace(/^\*/, '').toLowerCase();
+        if (!ext.startsWith('.')) ext = '.' + ext;
+        // Escape special regex chars and create pattern
+        const escaped = ext.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return new RegExp(escaped + '$', 'i');
+    });
+}
+
+// Check if a filename matches any unwanted pattern
+function isUnwantedFile(filename) {
+    const lowerName = filename.toLowerCase();
+    return unwantedPatterns.some(pattern => pattern.test(lowerName));
+}
+
+// Update all toggle labels based on current state
+function updateAllToggleLabels() {
+    document.querySelectorAll('.toggle-item input[type="checkbox"]').forEach(checkbox => {
+        updateToggleLabel(checkbox);
+    });
+}
+
+// Save scanner preferences to server
+async function savePreferences() {
+    const prefs = {
+        scanner_types: {
+            zip: document.getElementById('typeZip').checked,
+            '7z': document.getElementById('type7z').checked,
+            rar: document.getElementById('typeRar').checked
+        },
+        scanner_modes: {
+            corrupted: document.getElementById('modeCorrupted').checked,
+            multiFile: document.getElementById('modeMultiFile').checked,
+            unwanted: document.getElementById('modeUnwanted').checked
+        }
+    };
+    
+    try {
+        await fetch('/api/rom-tools/settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(prefs)
+        });
+    } catch (error) {
+        console.error('Error saving preferences:', error);
+    }
+}
+
+// Load scanner preferences
+function loadPreferences(settings) {
+    if (settings.scanner_types) {
+        if (settings.scanner_types.zip !== undefined) {
+            document.getElementById('typeZip').checked = settings.scanner_types.zip;
+        }
+        if (settings.scanner_types['7z'] !== undefined) {
+            document.getElementById('type7z').checked = settings.scanner_types['7z'];
+        }
+        if (settings.scanner_types.rar !== undefined) {
+            document.getElementById('typeRar').checked = settings.scanner_types.rar;
+        }
+    }
+    if (settings.scanner_modes) {
+        if (settings.scanner_modes.corrupted !== undefined) {
+            document.getElementById('modeCorrupted').checked = settings.scanner_modes.corrupted;
+        }
+        if (settings.scanner_modes.multiFile !== undefined) {
+            document.getElementById('modeMultiFile').checked = settings.scanner_modes.multiFile;
+        }
+        if (settings.scanner_modes.unwanted !== undefined) {
+            document.getElementById('modeUnwanted').checked = settings.scanner_modes.unwanted;
+        }
+    }
+    // Update toggle label styling
+    updateAllToggleLabels();
+}
+
+// Session persistence functions
+function saveSessionState() {
+    const state = {
+        taskId: currentTaskId,
+        results: scanResults,
+        isPaused: isPaused
+    };
+    sessionStorage.setItem('archiveScannerState', JSON.stringify(state));
+}
+
+function loadSessionState() {
+    try {
+        const saved = sessionStorage.getItem('archiveScannerState');
+        if (saved) {
+            const state = JSON.parse(saved);
+            if (state.taskId) {
+                // Try to reconnect to the task
+                currentTaskId = state.taskId;
+                scanResults = state.results || [];
+                isPaused = state.isPaused || false;
+                
+                // Update UI
+                updateResultsTable();
+                updateStats();
+                document.getElementById('statsSummary').style.display = 'flex';
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('pauseBtn').disabled = false;
+                document.getElementById('cancelBtn').disabled = false;
+                
+                if (isPaused) {
+                    PauseButton.set(true);
+                }
+                
+                // Start polling via TaskPoller
+                TaskPoller.start(currentTaskId, {
+                    onProgress: handleScanProgress,
+                    onComplete: handleScanComplete,
+                    onError: handleScanError,
+                    onCancel: handleScanDone,
+                    onNotFound: handleScanNotFound
+                }, 500);
+            } else if (state.results && state.results.length > 0) {
+                // No active task but have results - show them
+                scanResults = state.results;
+                updateResultsTable();
+                updateStats();
+                document.getElementById('statsSummary').style.display = 'flex';
+                document.getElementById('batchRemoveBtn').disabled = scanResults.filter(r => r.type === 'unwanted').length === 0;
+                document.getElementById('batchM3uBtn').disabled = scanResults.filter(r => r.type === 'multi-file').length === 0;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading session state:', error);
+    }
+}
+
+function clearSessionState() {
+    sessionStorage.removeItem('archiveScannerState');
+}
+
+async function loadSettings() {
+    try {
+        const response = await fetch('/api/rom-tools/settings');
+        const settings = await response.json();
+        if (settings.roms_path) {
+            basePath = settings.roms_path;
+            if (!basePath.endsWith('/')) basePath += '/';
+            document.getElementById('basePath').textContent = basePath;
+        }
+        if (settings.excluded_paths && Array.isArray(settings.excluded_paths)) {
+            excludedPaths = settings.excluded_paths;
+        }
+        // Load unwanted patterns from settings and convert to regex
+        if (settings.unwanted_patterns && Array.isArray(settings.unwanted_patterns)) {
+            unwantedPatterns = buildUnwantedRegex(settings.unwanted_patterns);
+            console.log('Loaded unwanted patterns:', settings.unwanted_patterns);
+        } else {
+            // Default patterns if none in settings
+            unwantedPatterns = buildUnwantedRegex(['.txt', '.nfo', '.diz', '.url', '.html', '.htm', '.sfv', '.png', '.jpg', '.jpeg', '.gif', '.scr']);
+        }
+        
+        // Load scanner preferences (compression types and scan modes)
+        loadPreferences(settings);
+        
+        renderExcludedBadges();
+        
+        // Load previous session state after settings
+        loadSessionState();
+    } catch (error) {
+        console.error('Error loading settings:', error);
+        // Use defaults on error
+        unwantedPatterns = buildUnwantedRegex(['.txt', '.nfo', '.diz', '.url', '.html', '.htm', '.sfv', '.png', '.jpg', '.jpeg', '.gif', '.scr']);
+        renderExcludedBadges();
+        loadSessionState();
+    }
+}
+
+function renderExcludedBadges() {
+    const container = document.getElementById('excludedBadges');
+    if (excludedPaths.length === 0) {
+        container.innerHTML = '<span style="color: var(--text-secondary); font-size: 0.85rem;">No excluded paths</span>';
+        return;
+    }
+    // Sort alphabetically
+    const sorted = [...excludedPaths].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    container.innerHTML = sorted.map(path => `
+        <span class="excluded-badge">
+            ${escapeHtml(path)}
+            <button class="remove-badge" onclick="removeExcludedPath('${escapeHtml(path)}')" title="Remove">×</button>
+        </span>
+    `).join('');
+}
+
+function addExcludedPath() {
+    const input = document.getElementById('newExcludedPath');
+    const value = input.value.trim();
+    if (value && !excludedPaths.includes(value)) {
+        excludedPaths.push(value);
+        renderExcludedBadges();
+        input.value = '';
+    }
+}
+
+function removeExcludedPath(path) {
+    excludedPaths = excludedPaths.filter(p => p !== path);
+    renderExcludedBadges();
+}
+
+function browseFolder() {
+    // Create a hidden input to receive the folder path
+    if (!document.getElementById('hiddenFolderPath')) {
+        const hidden = document.createElement('input');
+        hidden.type = 'hidden';
+        hidden.id = 'hiddenFolderPath';
+        hidden.value = getFullPath();
+        document.body.appendChild(hidden);
+        
+        // Listen for changes
+        hidden.addEventListener('change', function() {
+            const fullPath = this.value;
+            if (fullPath.startsWith(basePath)) {
+                const sub = fullPath.substring(basePath.length);
+                document.getElementById('romsPathSuffix').value = sub;
+            }
+        });
+    } else {
+        document.getElementById('hiddenFolderPath').value = getFullPath();
+    }
+    
+    openFolderBrowser('hiddenFolderPath');
+}
+
+function browseExcluded() {
+    // Create a hidden input for excluded path
+    if (!document.getElementById('hiddenExcludedPath')) {
+        const hidden = document.createElement('input');
+        hidden.type = 'hidden';
+        hidden.id = 'hiddenExcludedPath';
+        hidden.value = getFullPath();
+        document.body.appendChild(hidden);
+        
+        // Listen for changes
+        hidden.addEventListener('change', function() {
+            const fullPath = this.value;
+            // Extract folder name from path
+            const folderName = fullPath.split('/').pop();
+            if (folderName) {
+                document.getElementById('newExcludedPath').value = folderName;
+            }
+        });
+    } else {
+        document.getElementById('hiddenExcludedPath').value = getFullPath();
+    }
+    
+    openFolderBrowser('hiddenExcludedPath');
+}
+
+function getFullPath() {
+    const suffix = document.getElementById('romsPathSuffix').value.trim();
+    return basePath + suffix;
+}
+
+function getSelectedTypes() {
+    const types = [];
+    if (document.getElementById('typeZip').checked) types.push('.zip');
+    if (document.getElementById('type7z').checked) types.push('.7z');
+    if (document.getElementById('typeRar').checked) types.push('.rar');
+    return types;
+}
+
+function getSelectedModes() {
+    return {
+        corrupted: document.getElementById('modeCorrupted').checked,
+        multiFile: document.getElementById('modeMultiFile').checked,
+        unwanted: document.getElementById('modeUnwanted').checked
+    };
+}
+
+async function startScan() {
+    const path = getFullPath();
+    const types = getSelectedTypes();
+    const modes = getSelectedModes();
+    
+    if (types.length === 0) {
+        showModal('⚠️ No Types Selected', 'Please select at least one compression type to scan.');
+        return;
+    }
+    
+    // Reset UI
+    scanResults = [];
+    isPaused = false;
+    document.getElementById('startBtn').disabled = true;
+    document.getElementById('pauseBtn').disabled = false;
+    document.getElementById('cancelBtn').disabled = false;
+    document.getElementById('progressStatus').textContent = 'Initializing...';
+    document.getElementById('progressCount').textContent = '0 / 0';
+    document.getElementById('progressBar').style.width = '0%';
+    document.getElementById('progressBar').textContent = '';
+    document.getElementById('statsSummary').style.display = 'flex';
+    updateResultsTable();
+    
+    try {
+        const response = await fetch('/api/rom-tools/archive-scanner/scan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                path: path,
+                excluded_paths: excludedPaths,
+                types: types,
+                modes: modes
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            currentTaskId = data.task_id;
+            saveSessionState();  // Save task ID to session
+            TaskPoller.start(currentTaskId, {
+                onProgress: handleScanProgress,
+                onComplete: handleScanComplete,
+                onError: handleScanError,
+                onCancel: handleScanDone,
+                onNotFound: handleScanNotFound
+            }, 500);
+        } else {
+            showModal('❌ Error', 'Error starting scan: ' + data.error);
+            resetUI();
+        }
+    } catch (error) {
+        showModal('❌ Error', 'Error starting scan: ' + error.message);
+        resetUI();
+    }
+}
+
+// TaskPoller callbacks
+function handleScanProgress(task) {
+    const progressBar = document.getElementById('progressBar');
+    const percent = Math.round(task.percent || 0);
+
+    progressBar.style.width = percent + '%';
+    if (percent > 0) {
+        progressBar.textContent = percent + '%';
+        progressBar.style.minWidth = '50px';
+    } else {
+        progressBar.textContent = '';
+        progressBar.style.minWidth = '0';
+    }
+
+    document.getElementById('progressStatus').textContent = task.current_file ? `Scanning: ${task.current_file}` : 'Processing...';
+    document.getElementById('progressCount').textContent = `${formatNumber(task.progress)} / ${formatNumber(task.total)}`;
+
+    if (task.issues && task.issues.length > scanResults.length) {
+        scanResults = task.issues;
+        updateResultsTable();
+        updateStats();
+        saveSessionState();
+    }
+}
+
+function handleScanComplete(task) {
+    handleScanDone();
+    showModal('✅ Scan Complete', `Found ${scanResults.length} issues in your archive collection.`);
+}
+
+function handleScanError(task) {
+    handleScanDone();
+    showModal('❌ Scan Error', task.error || 'Scan failed');
+}
+
+function handleScanDone() {
+    currentTaskId = null;
+    resetUI();
+    saveSessionState();
+    document.getElementById('batchRemoveBtn').disabled = scanResults.filter(r => r.type === 'unwanted').length === 0;
+    document.getElementById('batchM3uBtn').disabled = scanResults.filter(r => r.type === 'multi-file').length === 0;
+}
+
+function handleScanNotFound() {
+    currentTaskId = null;
+    resetUI();
+    saveSessionState();
+    showModal('⚠️ Scan Interrupted', 'The scan was interrupted (server may have restarted). Results so far have been preserved.');
+}
+
+async function togglePause() {
+    isPaused = await TaskPoller.togglePause();
+    PauseButton.set(isPaused);
+    saveSessionState();
+}
+
+async function cancelScan() {
+    showConfirm('⚠️ Cancel Scan', 'Are you sure you want to cancel the scan?', async function() {
+        if (!currentTaskId) return;
+        try {
+            await fetch(`/api/rom-tools/task/${currentTaskId}/cancel`, { method: 'POST' });
+        } catch (error) {
+            console.error('Error cancelling scan:', error);
+        }
+    });
+}
+
+function clearResults() {
+    scanResults = [];
+    updateResultsTable();
+    updateStats();
+    document.getElementById('statsSummary').style.display = 'none';
+    document.getElementById('batchRemoveBtn').disabled = true;
+    document.getElementById('batchM3uBtn').disabled = true;
+    clearSessionState();  // Clear saved results
+}
+
+function updateResultsTable() {
+    const tbody = document.getElementById('resultsBody');
+    const countEl = document.getElementById('resultsCount');
+    
+    countEl.textContent = `Found ${scanResults.length} issues`;
+    
+    if (scanResults.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6">
+                    <div class="empty-state">
+                        <div class="icon">📦</div>
+                        <p>No issues found yet. Run a scan to detect archive problems.</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = scanResults.map((result, index) => {
+        // Format file count based on type
+        let fileCountDisplay = result.file_count || '-';
+        if (result.type === 'multi-file' && result.total_files && result.total_files !== result.file_count) {
+            fileCountDisplay = `${result.file_count} / ${result.total_files}`;
+        }
+        
+        return `
+        <tr data-index="${index}">
+            <td>${index + 1}</td>
+            <td>${result.timestamp || formatTimestamp(new Date())}</td>
+            <td><span class="type-badge ${result.type}">${result.type.toUpperCase()}</span></td>
+            <td title="${result.type === 'multi-file' ? 'ROM files / Total files' : ''}">${fileCountDisplay}</td>
+            <td class="path-cell" title="${escapeHtml(result.path)}" onclick="viewArchive('${escapeHtml(result.path)}', '${result.type}')">${escapeHtml(result.relative_path || result.path)}</td>
+            <td class="action-cell">
+                <button class="action-btn" onclick="viewArchive('${escapeHtml(result.path)}', '${result.type}')">👁️ View</button>
+                ${result.type === 'unwanted' ? `<button class="action-btn danger" onclick="removeUnwanted('${escapeHtml(result.path)}')">🗑️</button>` : ''}
+                ${result.type === 'multi-file' ? `<button class="action-btn" onclick="createM3U('${escapeHtml(result.path)}')">💿</button>` : ''}
+            </td>
+        </tr>
+    `}).join('');
+}
+
+function updateStats() {
+    const corrupted = scanResults.filter(r => r.type === 'corrupted').length;
+    const multiFile = scanResults.filter(r => r.type === 'multi-file').length;
+    const unwanted = scanResults.filter(r => r.type === 'unwanted').length;
+    
+    document.getElementById('statCorrupted').textContent = corrupted;
+    document.getElementById('statMultiFile').textContent = multiFile;
+    document.getElementById('statUnwanted').textContent = unwanted;
+}
+
+function formatTimestamp(date) {
+    if (typeof DateUtils !== 'undefined') return DateUtils.formatShort(date);
+    return date.toISOString().slice(0, 16).replace('T', ' ');
+}
+
+async function viewArchive(path, type) {
+    currentArchivePath = path;
+    currentArchiveType = type || 'unknown';
+    document.getElementById('archiveModalTitle').textContent = `📦 ${path.split('/').pop()}`;
+    document.getElementById('archiveFileList').innerHTML = '<li class="archive-file-item">Loading...</li>';
+    document.getElementById('archiveModal').classList.add('active');
+    
+    // Show/hide Remove Selected button based on type
+    const removeBtn = document.getElementById('removeSelectedBtn');
+    if (currentArchiveType === 'multi-file') {
+        removeBtn.style.display = 'none';
+    } else {
+        removeBtn.style.display = 'inline-flex';
+    }
+    
+    try {
+        const response = await fetch('/api/rom-tools/archive-scanner/contents', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path: path })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.files) {
+            const fileList = document.getElementById('archiveFileList');
+            
+            if (currentArchiveType === 'multi-file') {
+                // For multi-file, just show the list without checkboxes
+                fileList.innerHTML = data.files.map((file) => {
+                    return `
+                        <li class="archive-file-item">
+                            <span class="file-name">${file.name}</span>
+                            <span class="file-size">${formatBytes(file.size)}</span>
+                        </li>
+                    `;
+                }).join('');
+            } else {
+                // For unwanted/corrupted, show checkboxes
+                fileList.innerHTML = data.files.map((file, index) => {
+                    const unwanted = isUnwantedFile(file.name);
+                    return `
+                        <li class="archive-file-item">
+                            <input type="checkbox" id="file_${index}" value="${escapeHtml(file.name)}" ${unwanted ? 'checked' : ''}>
+                            <span class="file-name ${unwanted ? 'file-unwanted' : ''}">${file.name}</span>
+                            <span class="file-size">${formatBytes(file.size)}</span>
+                        </li>
+                    `;
+                }).join('');
+            }
+        } else {
+            document.getElementById('archiveFileList').innerHTML = `<li class="archive-file-item">Error: ${escapeHtml(data.error || 'Could not read archive')}</li>`;
+        }
+    } catch (error) {
+        document.getElementById('archiveFileList').innerHTML = `<li class="archive-file-item">Error: ${escapeHtml(error.message || 'An error occurred')}</li>`;
+    }
+}
+
+function closeArchiveModal() {
+    document.getElementById('archiveModal').classList.remove('active');
+    currentArchivePath = null;
+    currentArchiveType = null;
+}
+
+async function removeSelectedFiles() {
+    const checkboxes = document.querySelectorAll('#archiveFileList input[type="checkbox"]:checked');
+    const filesToRemove = Array.from(checkboxes).map(cb => cb.value);
+    
+    if (filesToRemove.length === 0) {
+        showModal('⚠️ No Selection', 'Please select files to remove.');
+        return;
+    }
+    
+    showConfirm('🗑️ Remove Files', `Remove ${filesToRemove.length} files from this archive?`, async function() {
+        try {
+            const response = await fetch('/api/rom-tools/archive-scanner/remove-files', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    archive_path: currentArchivePath,
+                    files: filesToRemove
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showModal('✅ Files Removed', `Successfully removed ${filesToRemove.length} files.`);
+                closeArchiveModal();
+                viewArchive(currentArchivePath);
+            } else {
+                showModal('❌ Error', data.error || 'Failed to remove files.');
+            }
+        } catch (error) {
+            showModal('❌ Error', error.message);
+        }
+    });
+}
+
+async function removeUnwanted(path) {
+    showConfirm('🧹 Remove Unwanted', `Remove unwanted files from this archive?`, async function() {
+        try {
+            const response = await fetch('/api/rom-tools/archive-scanner/clean', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ path: path })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showModal('✅ Cleaned', `Removed ${data.removed_count} unwanted files.`);
+                scanResults = scanResults.filter(r => r.path !== path);
+                updateResultsTable();
+                updateStats();
+            } else {
+                showModal('❌ Error', data.error || 'Failed to clean archive.');
+            }
+        } catch (error) {
+            showModal('❌ Error', error.message);
+        }
+    });
+}
+
+async function createM3U(path) {
+    const archiveName = path.split('/').pop();
+    const folderName = archiveName.replace(/\.[^.]+$/, '');
+    
+    showConfirm('💿 Create M3U', 
+        `<p>This will create an ES-DE compatible M3U playlist:</p>
+        <ul style="text-align: left; margin: 1rem 0; padding-left: 1.5rem;">
+            <li>Extract archive to <code>${folderName}/</code> folder</li>
+            <li>Add <code>noload.txt</code> to prevent ES-DE scanning</li>
+            <li>Create <code>${folderName}.m3u</code> playlist file</li>
+            <li>Move original archive to staging folder</li>
+        </ul>
+        <p>Continue?</p>`, 
+        async function() {
+            try {
+                const response = await fetch('/api/rom-tools/archive-scanner/create-m3u', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path: path })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    let movedInfo = '';
+                    if (data.archive_moved) {
+                        movedInfo = `<li>📦 Archive moved to: <code>${data.moved_to}</code></li>`;
+                    }
+                    
+                    showModal('✅ M3U Created', 
+                        `<p>Successfully created:</p>
+                        <ul style="text-align: left; margin: 0.5rem 0; padding-left: 1.5rem;">
+                            <li>M3U: <code>${data.m3u_path}</code></li>
+                            <li>Folder: <code>${data.folder_path}</code></li>
+                            <li>Files: ${data.file_count} ROM file(s)</li>
+                            ${movedInfo}
+                        </ul>`);
+                    
+                    // Remove from scan results since it's been processed
+                    scanResults = scanResults.filter(r => r.path !== path);
+                    updateResultsTable();
+                    updateStats();
+                } else {
+                    showModal('❌ Error', data.error || 'Failed to create M3U.');
+                }
+            } catch (error) {
+                showModal('❌ Error', error.message);
+            }
+        });
+}
+
+async function batchRemoveUnwanted() {
+    const unwantedResults = scanResults.filter(r => r.type === 'unwanted');
+    
+    if (unwantedResults.length === 0) {
+        showModal('ℹ️ No Archives', 'No archives with unwanted files to process.');
+        return;
+    }
+    
+    showConfirm('🧹 Batch Remove', `Remove unwanted files from ${unwantedResults.length} archives?`, async function() {
+        // Initialize batch state
+        batchState = {
+            running: true,
+            paused: false,
+            cancelled: false,
+            current: 0,
+            total: unwantedResults.length,
+            success: 0,
+            failed: 0,
+            items: unwantedResults,
+            type: 'remove'
+        };
+        
+        // Show the progress modal
+        showBatchProgressModal('🧹 Removing Unwanted Files');
+        
+        // Process archives
+        await processBatchRemove();
+    });
+}
+
+async function processBatchRemove() {
+    const successfulPaths = [];
+    
+    while (batchState.current < batchState.total && !batchState.cancelled) {
+        // Check if paused
+        if (batchState.paused) {
+            await new Promise(resolve => {
+                const checkPause = setInterval(() => {
+                    if (!batchState.paused || batchState.cancelled) {
+                        clearInterval(checkPause);
+                        resolve();
+                    }
+                }, 100);
+            });
+        }
+        
+        if (batchState.cancelled) break;
+        
+        const result = batchState.items[batchState.current];
+        const filename = result.path.split('/').pop();
+        
+        // Update UI
+        updateBatchProgress(filename);
+        
+        try {
+            const response = await fetch('/api/rom-tools/archive-scanner/clean', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ path: result.path })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                batchState.success++;
+                successfulPaths.push(result.path);
+            } else {
+                batchState.failed++;
+            }
+        } catch (error) {
+            console.error('Error cleaning:', result.path, error);
+            batchState.failed++;
+        }
+        
+        batchState.current++;
+        updateBatchProgress(filename);
+    }
+    
+    // Hide the modal
+    hideBatchProgressModal();
+    
+    // Show completion message
+    if (batchState.cancelled) {
+        showModal('⚠️ Cancelled', 
+            `<p>Batch operation cancelled.</p>
+            <ul style="text-align: left; margin: 0.5rem 0; padding-left: 1.5rem;">
+                <li>✅ Processed: ${formatNumber(batchState.current)} / ${formatNumber(batchState.total)}</li>
+                <li>✅ Success: ${formatNumber(batchState.success)}</li>
+                <li>❌ Failed: ${formatNumber(batchState.failed)}</li>
+            </ul>`);
+    } else {
+        showModal('✅ Batch Complete',
+            `<p>Removed unwanted files from ${formatNumber(batchState.total)} archives:</p>
+            <ul style="text-align: left; margin: 0.5rem 0; padding-left: 1.5rem;">
+                <li>✅ Success: ${formatNumber(batchState.success)}</li>
+                <li>❌ Failed: ${formatNumber(batchState.failed)}</li>
+            </ul>`);
+    }
+    
+    // Update scan results - remove successful ones
+    scanResults = scanResults.filter(r => !successfulPaths.includes(r.path));
+    updateResultsTable();
+    updateStats();
+    document.getElementById('batchRemoveBtn').disabled = scanResults.filter(r => r.type === 'unwanted').length === 0;
+    
+    // Reset batch state
+    batchState.running = false;
+}
+
+function showBatchProgressModal(title) {
+    document.getElementById('batchProgressTitle').textContent = title;
+    document.getElementById('batchStatProcessed').textContent = '0';
+    document.getElementById('batchStatSuccess').textContent = '0';
+    document.getElementById('batchStatFailed').textContent = '0';
+    document.getElementById('batchProgressBar').style.width = '0%';
+    document.getElementById('batchProgressBar').textContent = '0%';
+    document.getElementById('batchCurrentFile').innerHTML = '<span>Current:</span> Starting...';
+    document.getElementById('batchPauseIcon').textContent = '⏸️';
+    document.getElementById('batchPauseText').textContent = 'Pause';
+    document.getElementById('batchProgressModal').classList.add('active');
+}
+
+function hideBatchProgressModal() {
+    document.getElementById('batchProgressModal').classList.remove('active');
+}
+
+function updateBatchProgress(currentFilename) {
+    const percent = batchState.total > 0 ? Math.round((batchState.current / batchState.total) * 100) : 0;
+    
+    document.getElementById('batchStatProcessed').textContent = `${formatNumber(batchState.current)} / ${formatNumber(batchState.total)}`;
+    document.getElementById('batchStatSuccess').textContent = formatNumber(batchState.success);
+    document.getElementById('batchStatFailed').textContent = formatNumber(batchState.failed);
+    document.getElementById('batchProgressBar').style.width = `${percent}%`;
+    document.getElementById('batchProgressBar').textContent = `${percent}%`;
+    
+    if (currentFilename) {
+        document.getElementById('batchCurrentFile').innerHTML = `<span>Current:</span> ${escapeHtml(currentFilename)}`;
+    }
+}
+
+function toggleBatchPause() {
+    batchState.paused = !batchState.paused;
+    
+    if (batchState.paused) {
+        document.getElementById('batchPauseIcon').textContent = '▶️';
+        document.getElementById('batchPauseText').textContent = 'Resume';
+        document.getElementById('batchCurrentFile').innerHTML = '<span>Status:</span> Paused...';
+    } else {
+        document.getElementById('batchPauseIcon').textContent = '⏸️';
+        document.getElementById('batchPauseText').textContent = 'Pause';
+    }
+}
+
+function cancelBatchOperation() {
+    showConfirm('❌ Cancel Operation', 'Are you sure you want to cancel the batch operation?', function() {
+        batchState.cancelled = true;
+        batchState.paused = false;  // Unpause so the loop can exit
+        document.getElementById('batchCurrentFile').innerHTML = '<span>Status:</span> Cancelling...';
+    });
+}
+
+async function batchCreateM3U() {
+    const multiFileResults = scanResults.filter(r => r.type === 'multi-file');
+    
+    if (multiFileResults.length === 0) {
+        showModal('ℹ️ No Archives', 'No multi-file archives to process.');
+        return;
+    }
+    
+    showConfirm('💿 Batch M3U', 
+        `<p>Create M3U playlists for <strong>${multiFileResults.length}</strong> multi-file archives?</p>
+        <p style="margin-top: 0.5rem;">Each archive will be:</p>
+        <ul style="text-align: left; margin: 0.5rem 0; padding-left: 1.5rem;">
+            <li>Extracted to its own folder</li>
+            <li>Have <code>noload.txt</code> added</li>
+            <li>Get an M3U playlist created</li>
+        </ul>
+        <p style="margin-top: 0.5rem; color: var(--text-secondary);">This may take a while for large archives.</p>`, 
+        async function() {
+            // Initialize batch state
+            batchState = {
+                running: true,
+                paused: false,
+                cancelled: false,
+                current: 0,
+                total: multiFileResults.length,
+                success: 0,
+                failed: 0,
+                items: multiFileResults,
+                type: 'm3u'
+            };
+            
+            // Show the progress modal
+            showBatchProgressModal('💿 Creating M3U Playlists');
+            
+            // Process archives
+            await processBatchM3U();
+        });
+}
+
+async function processBatchM3U() {
+    const successfulPaths = [];
+    let movedCount = 0;
+    
+    while (batchState.current < batchState.total && !batchState.cancelled) {
+        // Check if paused
+        if (batchState.paused) {
+            await new Promise(resolve => {
+                const checkPause = setInterval(() => {
+                    if (!batchState.paused || batchState.cancelled) {
+                        clearInterval(checkPause);
+                        resolve();
+                    }
+                }, 100);
+            });
+        }
+        
+        if (batchState.cancelled) break;
+        
+        const result = batchState.items[batchState.current];
+        const filename = result.path.split('/').pop();
+        
+        // Update UI
+        updateBatchProgress(filename);
+        
+        try {
+            const response = await fetch('/api/rom-tools/archive-scanner/create-m3u', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ path: result.path })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                batchState.success++;
+                successfulPaths.push(result.path);
+                if (data.archive_moved) {
+                    movedCount++;
+                }
+            } else {
+                batchState.failed++;
+            }
+        } catch (error) {
+            console.error('Error creating M3U:', result.path, error);
+            batchState.failed++;
+        }
+        
+        batchState.current++;
+        updateBatchProgress(filename);
+    }
+    
+    // Hide the modal
+    hideBatchProgressModal();
+    
+    // Show completion message
+    if (batchState.cancelled) {
+        showModal('⚠️ Cancelled', 
+            `<p>Batch operation cancelled.</p>
+            <ul style="text-align: left; margin: 0.5rem 0; padding-left: 1.5rem;">
+                <li>✅ Processed: ${formatNumber(batchState.current)} / ${formatNumber(batchState.total)}</li>
+                <li>✅ Success: ${formatNumber(batchState.success)}</li>
+                <li>❌ Failed: ${formatNumber(batchState.failed)}</li>
+                <li>📦 Archives moved to staging: ${formatNumber(movedCount)}</li>
+            </ul>`);
+    } else {
+        showModal('✅ Batch Complete',
+            `<p>Created M3U playlists for ${formatNumber(batchState.total)} archives:</p>
+            <ul style="text-align: left; margin: 0.5rem 0; padding-left: 1.5rem;">
+                <li>✅ Success: ${formatNumber(batchState.success)}</li>
+                <li>❌ Failed: ${formatNumber(batchState.failed)}</li>
+                <li>📦 Archives moved to staging: ${formatNumber(movedCount)}</li>
+            </ul>
+            <p style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.85rem;">
+                Original archives moved to:<br><code>/mnt/Games/ROMS_TO_BE_DELETED/M3U_Test/</code>
+            </p>`);
+    }
+    
+    // Update scan results - remove successful ones
+    scanResults = scanResults.filter(r => !successfulPaths.includes(r.path));
+    updateResultsTable();
+    updateStats();
+    document.getElementById('batchM3uBtn').disabled = scanResults.filter(r => r.type === 'multi-file').length === 0;
+    
+    // Reset batch state
+    batchState.running = false;
+}
+
+function resetUI() {
+    document.getElementById('startBtn').disabled = false;
+    document.getElementById('pauseBtn').disabled = true;
+    document.getElementById('cancelBtn').disabled = true;
+    PauseButton.set(false);
+    document.getElementById('progressStatus').textContent = 'Ready to scan';
+    document.getElementById('progressCount').textContent = '';
+    isPaused = false;
+}
+
+// ESC to close modal
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeArchiveModal();
+        // Don't close batch modal with ESC - require explicit cancel
+    }
+});
+
+// Enter to add excluded path
+document.getElementById('newExcludedPath').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        addExcludedPath();
+    }
+});
+
+// Initialize PauseButton controller
+PauseButton.init({ button: 'pauseBtn', icon: 'pauseIcon', text: 'pauseText' });
+
+// Load settings on page load
+loadSettings();
+</script>
+{% endblock %}

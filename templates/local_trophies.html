@@ -1,0 +1,429 @@
+{% extends "base.html" %}
+
+{% block title %}Trophies - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">🏆 PlayStation 3 Trophies</h1>
+        <p class="page-subtitle">RPCS3 Trophy Collection{% if current_user %} - {{ current_user.display_name or current_user.username }}{% endif %}</p>
+    </div>
+    <div class="header-actions">
+        {% if trophy_path_configured %}
+        <button onclick="scanTrophies()" class="btn btn-primary" id="scanTrophiesBtn">
+            <span class="btn-icon">🔍</span>
+            Scan Trophies
+        </button>
+        {% endif %}
+    </div>
+</div>
+
+{% if not trophy_path_configured %}
+<!-- No Path Configured -->
+<section class="card">
+    <div class="card-body" style="text-align: center; padding: 60px 20px;">
+        <div style="font-size: 4rem; margin-bottom: 20px;">⚙️</div>
+        <h2 style="margin-bottom: 10px;">Trophy Path Not Configured</h2>
+        <p class="text-muted" style="margin-bottom: 20px;">
+            Configure your personal RPCS3 trophy folder path in your profile settings to view your trophies.
+        </p>
+        <a href="{{ url_for('settings.settings') }}#profile" class="btn btn-primary">
+            <span class="btn-icon">👤</span>
+            Go to My Profile
+        </a>
+    </div>
+</section>
+
+{% elif not trophy_sets %}
+<!-- No Trophies Found -->
+<section class="card">
+    <div class="card-body" style="text-align: center; padding: 60px 20px;">
+        <div style="font-size: 4rem; margin-bottom: 20px;">🏆</div>
+        <h2 style="margin-bottom: 10px;">No Trophies Found</h2>
+        <p class="text-muted" style="margin-bottom: 20px;">
+            Click "Scan Trophies" to search for trophy data in your RPCS3 installation.
+        </p>
+        <button onclick="scanTrophies()" class="btn btn-primary">
+            <span class="btn-icon">🔍</span>
+            Scan Trophies
+        </button>
+    </div>
+</section>
+
+{% else %}
+<!-- Trophy Overview -->
+<section class="card mb-xl">
+    <div class="card-body">
+        <div class="trophy-overview">
+            <div class="trophy-stat platinum">
+                <img src="{{ url_for('static', filename='images/trophies/platinum.png') }}" alt="Platinum" onerror="this.outerHTML='🏆'">
+                <div class="trophy-stat-info">
+                    <span class="trophy-stat-label">Platinum</span>
+                    <span class="trophy-stat-value">{{ totals.P[0]|format_number }} / {{ totals.P[1]|format_number }}</span>
+                </div>
+            </div>
+            <div class="trophy-stat gold">
+                <img src="{{ url_for('static', filename='images/trophies/gold.png') }}" alt="Gold" onerror="this.outerHTML='🥇'">
+                <div class="trophy-stat-info">
+                    <span class="trophy-stat-label">Gold</span>
+                    <span class="trophy-stat-value">{{ totals.G[0]|format_number }} / {{ totals.G[1]|format_number }}</span>
+                </div>
+            </div>
+            <div class="trophy-stat silver">
+                <img src="{{ url_for('static', filename='images/trophies/silver.png') }}" alt="Silver" onerror="this.outerHTML='🥈'">
+                <div class="trophy-stat-info">
+                    <span class="trophy-stat-label">Silver</span>
+                    <span class="trophy-stat-value">{{ totals.S[0]|format_number }} / {{ totals.S[1]|format_number }}</span>
+                </div>
+            </div>
+            <div class="trophy-stat bronze">
+                <img src="{{ url_for('static', filename='images/trophies/bronze.png') }}" alt="Bronze" onerror="this.outerHTML='🥉'">
+                <div class="trophy-stat-info">
+                    <span class="trophy-stat-label">Bronze</span>
+                    <span class="trophy-stat-value">{{ totals.B[0]|format_number }} / {{ totals.B[1]|format_number }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Alphabet Jump Navigation -->
+{% if trophy_sets|length >= 20 %}
+<div class="alphabet-nav" id="alphabetNav">
+    <span class="alphabet-label">Jump to:</span>
+    <div class="alphabet-letters">
+        <button class="alphabet-btn" data-letter="#">#</button>
+        {% for letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' %}
+        <button class="alphabet-btn" data-letter="{{ letter }}">{{ letter }}</button>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Games List -->
+<section class="card">
+    <div class="card-header">
+        <h2 class="card-title">Games ({{ trophy_sets|length }})</h2>
+    </div>
+    <div class="card-body">
+        <div class="trophy-games-grid">
+            {% for npwr_id, ts in trophy_sets.items() %}
+            {% set game = games_data.get(npwr_id) %}
+            {% set counts = ts.get_trophy_counts() %}
+            <a href="{{ url_for('trophies.trophy_game', npwr_id=npwr_id) }}" class="trophy-game-card" data-title="{{ ts.title }}">
+                <div class="trophy-game-icon">
+                    {% if game and game.boxart %}
+                    <img src="{{ url_for('static', filename='images/boxart/' + game.boxart) }}"
+                         alt="{{ ts.title }}" loading="lazy">
+                    {% else %}
+                    <img src="{{ url_for('static', filename='images/trophies/' + npwr_id + '/ICON0.PNG') }}"
+                         alt="{{ ts.title }}" loading="lazy"
+                         onerror="this.src='{{ url_for('static', filename='images/placeholder.png') }}'">
+                    {% endif %}
+                </div>
+                <div class="trophy-game-info">
+                    <div class="trophy-game-title">{{ ts.title }}</div>
+                    <div class="trophy-npwr-id">{{ npwr_id }}</div>
+                    <div class="trophy-game-progress">
+                        <div class="trophy-progress-bar">
+                            <div class="trophy-progress-fill" style="width: {{ ts.completion_percentage|round(1) }}%"></div>
+                        </div>
+                        <span class="trophy-progress-text">{{ ts.completion_percentage|round(1) }}%</span>
+                    </div>
+                    <div class="trophy-game-counts">
+                        <span class="trophy-mini platinum">
+                            <img src="{{ url_for('static', filename='images/trophies/platinum.png') }}" alt="P" onerror="this.outerHTML='🏆'">
+                            {{ counts.P[0]|format_number }} / {{ counts.P[1]|format_number }}
+                        </span>
+                        <span class="trophy-mini gold">
+                            <img src="{{ url_for('static', filename='images/trophies/gold.png') }}" alt="G" onerror="this.outerHTML='🥇'">
+                            {{ counts.G[0]|format_number }} / {{ counts.G[1]|format_number }}
+                        </span>
+                        <span class="trophy-mini silver">
+                            <img src="{{ url_for('static', filename='images/trophies/silver.png') }}" alt="S" onerror="this.outerHTML='🥈'">
+                            {{ counts.S[0]|format_number }} / {{ counts.S[1]|format_number }}
+                        </span>
+                        <span class="trophy-mini bronze">
+                            <img src="{{ url_for('static', filename='images/trophies/bronze.png') }}" alt="B" onerror="this.outerHTML='🥉'">
+                            {{ counts.B[0]|format_number }} / {{ counts.B[1]|format_number }}
+                        </span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Scan Status Modal -->
+<div id="scanModal" class="modal">
+    <div class="modal-content glass-panel">
+        <div class="modal-header">
+            <h2>🔍 Scanning Trophies</h2>
+        </div>
+        <div class="modal-body">
+            <p id="scanStatus">Scanning trophy folders...</p>
+            <div class="progress-bar" style="margin-top: 15px;">
+                <div class="progress-fill" id="scanProgress" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+.trophy-overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-lg);
+}
+
+@media (max-width: 768px) {
+    .trophy-overview {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.trophy-stat {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--card-border);
+}
+
+.trophy-stat img {
+    width: 48px;
+    height: 48px;
+}
+
+.trophy-stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.trophy-stat-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.trophy-stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.trophy-stat.platinum .trophy-stat-value { color: #a8c8dc; }
+.trophy-stat.gold .trophy-stat-value { color: #ffd700; }
+.trophy-stat.silver .trophy-stat-value { color: #c0c0c0; }
+.trophy-stat.bronze .trophy-stat-value { color: #cd7f32; }
+
+.trophy-games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.trophy-game-card {
+    display: flex;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--card-border);
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease;
+}
+
+.trophy-game-card:hover {
+    background: rgba(0, 0, 0, 0.5);
+    border-color: var(--primary-cyan);
+    transform: translateY(-2px);
+}
+
+.trophy-game-icon {
+    width: 80px;
+    height: 100px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    flex-shrink: 0;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.trophy-game-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.trophy-game-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.trophy-game-title {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.trophy-npwr-id {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-sm);
+    opacity: 0.7;
+}
+
+.trophy-game-progress {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+.trophy-progress-bar {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.trophy-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-cyan), #00ddff);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.trophy-progress-text {
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    font-weight: 600;
+    min-width: 45px;
+    text-align: right;
+}
+
+.trophy-game-counts {
+    display: flex;
+    gap: var(--spacing-md);
+    font-size: 0.8rem;
+}
+
+.trophy-mini {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.trophy-mini img {
+    width: 16px;
+    height: 16px;
+}
+
+.trophy-mini.platinum { color: #a8c8dc; }
+.trophy-mini.gold { color: #ffd700; }
+.trophy-mini.silver { color: #c0c0c0; }
+.trophy-mini.bronze { color: #cd7f32; }
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    max-width: 400px;
+    width: 90%;
+    padding: var(--spacing-xl);
+    text-align: center;
+}
+
+.progress-bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-cyan), var(--secondary-magenta));
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Initialize alphabet nav
+if (typeof AlphabetNav !== 'undefined') {
+    AlphabetNav.init({ itemSelector: '.trophy-game-card' });
+}
+
+async function scanTrophies() {
+    const btn = document.getElementById('scanTrophiesBtn');
+    const modal = document.getElementById('scanModal');
+    const status = document.getElementById('scanStatus');
+    const progress = document.getElementById('scanProgress');
+    
+    btn.disabled = true;
+    modal.classList.add('active');
+    status.textContent = 'Scanning trophy folders...';
+    progress.style.width = '30%';
+    
+    try {
+        const response = await fetch('/api/scan-trophies', { method: 'POST' });
+        const data = await response.json();
+        
+        progress.style.width = '100%';
+        
+        if (data.success) {
+            status.textContent = data.message;
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            status.textContent = 'Error: ' + data.error;
+            setTimeout(() => {
+                modal.classList.remove('active');
+            }, 2000);
+        }
+    } catch (error) {
+        status.textContent = 'Failed to scan: ' + error.message;
+        setTimeout(() => {
+            modal.classList.remove('active');
+        }, 2000);
+    } finally {
+        btn.disabled = false;
+    }
+}
+</script>
+{% endblock %}

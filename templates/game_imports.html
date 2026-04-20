@@ -1,0 +1,980 @@
+{% extends "base.html" %}
+{% block title %}Game Imports - RetroDB{% endblock %}
+{% block content %}
+<style>
+.import-container { max-width: 1200px; margin: 0 auto; }
+
+.import-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-xl);
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.page-title { display: flex; align-items: center; gap: var(--spacing-md); }
+.page-title h1 { font-family: var(--font-heading); font-size: 1.8rem; color: var(--primary-cyan); margin: 0; }
+
+/* Tabs */
+.platform-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: var(--spacing-xl);
+    border-bottom: 2px solid var(--card-border);
+}
+
+.platform-tab {
+    padding: var(--spacing-md) var(--spacing-xl);
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.platform-tab:hover { color: var(--text-primary); }
+.platform-tab.active { color: var(--primary-cyan); border-bottom-color: var(--primary-cyan); }
+.platform-tab .tab-icon { font-size: 1.2rem; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Config Section */
+.config-section {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.config-section h2 {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    margin: 0 0 var(--spacing-lg) 0;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.config-row { display: flex; gap: var(--spacing-md); align-items: flex-end; flex-wrap: wrap; margin-bottom: var(--spacing-md); }
+.config-field { flex: 1; min-width: 200px; }
+.config-field label { display: block; color: var(--text-secondary); font-size: 0.85rem; margin-bottom: var(--spacing-xs); }
+.config-field input { width: 100%; padding: 8px 12px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.9rem; }
+.config-field input:focus { border-color: var(--primary-cyan); outline: none; }
+
+/* Profile Card */
+.profile-card { display: flex; align-items: center; gap: var(--spacing-md); background: rgba(76, 201, 240, 0.05); border: 1px solid rgba(76, 201, 240, 0.2); border-radius: var(--radius-md); padding: var(--spacing-md); margin-bottom: var(--spacing-lg); }
+.profile-avatar { width: 48px; height: 48px; border-radius: var(--radius-sm); }
+.profile-name { font-weight: 600; color: var(--text-primary); }
+.profile-id { font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono); }
+
+/* Auth Status */
+.auth-status { display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg); }
+.auth-status.connected { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); }
+.auth-status.disconnected { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); }
+.auth-dot { width: 10px; height: 10px; border-radius: 50%; }
+.auth-status.connected .auth-dot { background: var(--neon-green); }
+.auth-status.disconnected .auth-dot { background: var(--neon-orange); }
+
+/* Preview Section */
+.preview-section { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: var(--spacing-xl); margin-bottom: var(--spacing-xl); display: none; }
+.preview-section.active { display: block; }
+.preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-lg); flex-wrap: wrap; gap: var(--spacing-md); }
+.preview-header h2 { font-family: var(--font-heading); font-size: 1.2rem; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: var(--spacing-sm); }
+.preview-stats { display: flex; gap: var(--spacing-lg); flex-wrap: wrap; }
+.stat-item { text-align: center; }
+.stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary-cyan); }
+.stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-item.new-games .stat-value { color: var(--neon-green); }
+.stat-item.existing .stat-value { color: var(--text-muted); }
+.preview-controls { display: flex; gap: var(--spacing-md); margin-bottom: var(--spacing-lg); flex-wrap: wrap; align-items: center; }
+.preview-table-container { overflow-x: auto; max-height: 500px; overflow-y: auto; }
+.data-table .checkbox-cell { width: 40px; text-align: center; }
+.data-table input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+.data-table .icon-cell { width: 32px; padding: 4px; }
+.data-table .icon-cell img { width: 32px; height: 32px; border-radius: var(--radius-sm); }
+.status-new { color: var(--neon-green); }
+.status-existing { color: var(--text-muted); }
+.platform-badge { display: inline-block; padding: 2px 8px; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 500; background: rgba(76, 201, 240, 0.15); color: var(--primary-cyan); border: 1px solid rgba(76, 201, 240, 0.3); }
+.import-actions { display: flex; gap: var(--spacing-md); justify-content: flex-end; margin-top: var(--spacing-lg); padding-top: var(--spacing-lg); border-top: 1px solid var(--card-border); align-items: center; }
+
+/* Info Box */
+.info-box { background: rgba(76, 201, 240, 0.1); border: 1px solid var(--primary-cyan); border-radius: var(--radius-md); padding: var(--spacing-md); margin-bottom: var(--spacing-lg); display: flex; align-items: flex-start; gap: var(--spacing-sm); }
+.info-box-text { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; }
+
+/* Upload Area (CLZ) */
+.upload-area { border: 2px dashed var(--card-border); border-radius: var(--radius-lg); padding: var(--spacing-xl); text-align: center; cursor: pointer; transition: all 0.2s ease; margin-bottom: var(--spacing-lg); }
+.upload-area:hover, .upload-area.dragover { border-color: var(--primary-cyan); background: rgba(76, 201, 240, 0.05); }
+.upload-icon { font-size: 3rem; margin-bottom: var(--spacing-md); }
+.upload-text { color: var(--text-secondary); margin-bottom: var(--spacing-xs); }
+.upload-subtext { font-size: 0.8rem; color: var(--text-muted); }
+
+/* Loading overlay */
+.loading-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); z-index: 9999; justify-content: center; align-items: center; }
+.loading-overlay.active { display: flex; }
+.loading-content { text-align: center; color: var(--text-primary); }
+.loading-spinner { width: 50px; height: 50px; border: 4px solid var(--card-border); border-top-color: var(--primary-cyan); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto var(--spacing-md); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Trophy progress bar */
+.trophy-progress-bar { display: inline-flex; align-items: center; gap: var(--spacing-sm); min-width: 100px; }
+.trophy-progress-track { flex: 1; background: var(--bg-darker); border-radius: var(--radius-full); height: 6px; overflow: hidden; min-width: 60px; }
+.trophy-progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary-cyan), var(--neon-green)); border-radius: var(--radius-full); transition: width 0.3s ease; }
+.trophy-progress-text { font-size: 0.8rem; color: var(--text-secondary); font-family: var(--font-mono); white-space: nowrap; }
+
+/* Platform filter buttons */
+.import-platform-filters { display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-md); flex-wrap: wrap; }
+.import-platform-filter-btn {
+    padding: 4px 14px;
+    font-family: var(--font-primary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: transparent;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-full);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.import-platform-filter-btn:hover { border-color: var(--primary-cyan); color: var(--text-primary); }
+.import-platform-filter-btn.active { background: rgba(76, 201, 240, 0.15); border-color: var(--primary-cyan); color: var(--primary-cyan); }
+.import-platform-filter-btn .filter-count { font-size: 0.7rem; color: var(--text-muted); margin-left: 4px; }
+</style>
+
+<div class="import-container">
+    <div class="import-header">
+        <div class="page-title">
+            <span style="font-size: 2rem;">📥</span>
+            <h1>Game Imports</h1>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="platform-tabs">
+        <button class="platform-tab{% if active_tab == 'clz' %} active{% endif %}" onclick="switchTab('clz')" id="tab-clz">
+            <span class="tab-icon">📄</span> CLZ Import
+        </button>
+        <button class="platform-tab{% if active_tab == 'steam' %} active{% endif %}" onclick="switchTab('steam')" id="tab-steam">
+            <span class="tab-icon">🟦</span> Steam
+        </button>
+        <button class="platform-tab{% if active_tab == 'xbox' %} active{% endif %}" onclick="switchTab('xbox')" id="tab-xbox">
+            <span class="tab-icon">🟢</span> Xbox
+        </button>
+        <button class="platform-tab{% if active_tab == 'psn' %} active{% endif %}" onclick="switchTab('psn')" id="tab-psn">
+            <span class="tab-icon">🔵</span> PSN
+        </button>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- CLZ TAB -->
+    <!-- ================================================================= -->
+    <div class="tab-content{% if active_tab == 'clz' %} active{% endif %}" id="content-clz">
+        <div class="info-box">
+            <span>ℹ️</span>
+            <span class="info-box-text">
+                Import games from a <strong>CLZ Games</strong> PDF export. Export your collection from the CLZ app,
+                then upload the PDF here.
+            </span>
+        </div>
+
+        <div class="config-section">
+            <h2>📄 Upload CLZ Export</h2>
+            <div class="upload-area" id="clzUploadArea" onclick="document.getElementById('clzFileInput').click()">
+                <div class="upload-icon">📄</div>
+                <div class="upload-text">Click or drag a CLZ PDF file here</div>
+                <div class="upload-subtext">Supports PDF exports from CLZ Games app</div>
+            </div>
+            <input type="file" id="clzFileInput" accept=".pdf" style="display: none;" onchange="uploadClzFile(this)">
+        </div>
+
+        <!-- CLZ Preview -->
+        <div class="preview-section" id="clzPreview">
+            <div class="preview-header">
+                <h2>📋 CLZ Library</h2>
+                <div class="preview-stats">
+                    <div class="stat-item"><div class="stat-value" id="clzTotal">0</div><div class="stat-label">Total</div></div>
+                    <div class="stat-item new-games"><div class="stat-value" id="clzNew">0</div><div class="stat-label">New</div></div>
+                    <div class="stat-item existing"><div class="stat-value" id="clzExisting">0</div><div class="stat-label">Already Imported</div></div>
+                </div>
+            </div>
+            <div class="preview-controls">
+                <button class="btn btn-secondary btn-sm" onclick="selectAllNew('clz')">☑️ Select All New</button>
+                <button class="btn btn-secondary btn-sm" onclick="deselectAll('clz')">☐ Deselect All</button>
+                <input type="text" id="clzSearch" placeholder="Search games..." oninput="filterGames('clz')"
+                       style="padding: 6px 12px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.85rem; min-width: 200px;">
+            </div>
+            <div class="preview-table-container">
+                <table class="data-table">
+                    <thead><tr>
+                        <th class="checkbox-cell"><input type="checkbox" id="clzSelectAll" onchange="toggleSelectAll('clz')"></th>
+                        <th>Game</th>
+                        <th>Platform</th>
+                        <th>Status</th>
+                    </tr></thead>
+                    <tbody id="clzTableBody"></tbody>
+                </table>
+            </div>
+            <div class="import-actions">
+                <span id="clzSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">0 games selected</span>
+                <button class="btn btn-primary" id="clzImportBtn" onclick="importClzGames()" disabled>📥 Import Selected</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- STEAM TAB -->
+    <!-- ================================================================= -->
+    <div class="tab-content{% if active_tab == 'steam' %} active{% endif %}" id="content-steam">
+        <div class="info-box">
+            <span>ℹ️</span>
+            <span class="info-box-text">
+                Import your Steam game library. Games are created under the <strong>Microsoft Windows</strong> system.
+                Configure your Steam API key and Steam ID in <a href="{{ url_for('settings.settings') }}#apikeys" style="color: var(--primary-cyan);">Settings &rarr; API Keys</a>, or enter them below.
+            </span>
+        </div>
+        <div class="config-section" id="steamConfig">
+            <h2>🔑 Steam Credentials</h2>
+            <div class="config-row">
+                <div class="config-field"><label>Steam Web API Key</label><input type="text" id="steamApiKey" placeholder="Your Steam Web API Key"></div>
+                <div class="config-field"><label>Steam ID or Vanity URL</label><input type="text" id="steamId" placeholder="76561198012345678 or custom URL name"></div>
+                <button class="btn btn-primary" onclick="fetchSteamLibrary()" id="steamFetchBtn">📡 Fetch Library</button>
+            </div>
+        </div>
+        <div class="profile-card" id="steamProfile" style="display: none;">
+            <img class="profile-avatar" id="steamAvatar" src="" alt=""><div><div class="profile-name" id="steamPersona"></div><div class="profile-id" id="steamSteamId"></div></div>
+        </div>
+        <div class="preview-section" id="steamPreview">
+            <div class="preview-header">
+                <h2>📋 Steam Library</h2>
+                <div class="preview-stats">
+                    <div class="stat-item"><div class="stat-value" id="steamTotal">0</div><div class="stat-label">Total</div></div>
+                    <div class="stat-item new-games"><div class="stat-value" id="steamNew">0</div><div class="stat-label">New</div></div>
+                    <div class="stat-item existing"><div class="stat-value" id="steamExisting">0</div><div class="stat-label">Already Imported</div></div>
+                </div>
+            </div>
+            <div class="preview-controls">
+                <button class="btn btn-secondary btn-sm" onclick="selectAllNew('steam')">☑️ Select All New</button>
+                <button class="btn btn-secondary btn-sm" onclick="deselectAll('steam')">☐ Deselect All</button>
+                <input type="text" id="steamSearch" placeholder="Search games..." oninput="filterGames('steam')"
+                       style="padding: 6px 12px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.85rem; min-width: 200px;">
+            </div>
+            <div class="preview-table-container">
+                <table class="data-table">
+                    <thead><tr>
+                        <th class="checkbox-cell"><input type="checkbox" id="steamSelectAll" onchange="toggleSelectAll('steam')"></th>
+                        <th class="icon-cell"></th><th>Game</th><th>Playtime</th><th>Last Played</th><th>Status</th>
+                    </tr></thead>
+                    <tbody id="steamTableBody"></tbody>
+                </table>
+            </div>
+            <div class="import-actions">
+                <span id="steamSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">0 games selected</span>
+                <button class="btn btn-primary" id="steamImportBtn" onclick="importGames('steam')" disabled>📥 Import Selected</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- XBOX TAB -->
+    <!-- ================================================================= -->
+    <div class="tab-content{% if active_tab == 'xbox' %} active{% endif %}" id="content-xbox">
+        <div class="info-box">
+            <span>ℹ️</span>
+            <span class="info-box-text">
+                Import your Xbox game library. Games are assigned to their correct Xbox system.
+                You need an Azure AD app registration &mdash; configure credentials in <a href="{{ url_for('settings.settings') }}#apikeys" style="color: var(--primary-cyan);">Settings &rarr; API Keys</a>.
+            </span>
+        </div>
+        <div class="config-section" id="xboxConfig">
+            <h2>🔐 Xbox Account</h2>
+            <div class="auth-status disconnected" id="xboxAuthStatus">
+                <div class="auth-dot"></div>
+                <div><div id="xboxAuthText" style="color: var(--text-primary);">Not Connected</div><div id="xboxAuthDetail" style="color: var(--text-muted); font-size: 0.8rem;">Connect your Xbox account to import games</div></div>
+                <div style="margin-left: auto; display: flex; gap: var(--spacing-sm);">
+                    <button class="btn btn-primary btn-sm" onclick="connectXbox()" id="xboxConnectBtn">🔗 Connect Xbox Account</button>
+                    <button class="btn btn-secondary btn-sm" onclick="disconnectXbox()" id="xboxDisconnectBtn" style="display: none;">Disconnect</button>
+                </div>
+            </div>
+            <div style="display: flex; gap: var(--spacing-md); align-items: center; margin-top: var(--spacing-md);" id="xboxFetchRow">
+                <button class="btn btn-primary" onclick="fetchXboxLibrary()" id="xboxFetchBtn" disabled>📡 Fetch Library</button>
+            </div>
+        </div>
+        <div class="preview-section" id="xboxPreview">
+            <div class="preview-header">
+                <h2>📋 Xbox Library</h2>
+                <div class="preview-stats">
+                    <div class="stat-item"><div class="stat-value" id="xboxTotal">0</div><div class="stat-label">Total</div></div>
+                    <div class="stat-item new-games"><div class="stat-value" id="xboxNew">0</div><div class="stat-label">New</div></div>
+                    <div class="stat-item existing"><div class="stat-value" id="xboxExisting">0</div><div class="stat-label">Already Imported</div></div>
+                </div>
+            </div>
+            <div class="preview-controls">
+                <button class="btn btn-secondary btn-sm" onclick="selectAllNew('xbox')">☑️ Select All New</button>
+                <button class="btn btn-secondary btn-sm" onclick="deselectAll('xbox')">☐ Deselect All</button>
+                <input type="text" id="xboxSearch" placeholder="Search games..." oninput="filterGames('xbox')"
+                       style="padding: 6px 12px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.85rem; min-width: 200px;">
+            </div>
+            <div class="import-platform-filters" id="xboxPlatformFilters">
+                <button class="import-platform-filter-btn active" data-platform="all" onclick="setPlatformFilter('xbox', 'all')">All</button>
+                <button class="import-platform-filter-btn" data-platform="xbox360" onclick="setPlatformFilter('xbox', 'xbox360')">Xbox 360</button>
+                <button class="import-platform-filter-btn" data-platform="xboxone" onclick="setPlatformFilter('xbox', 'xboxone')">Xbox One</button>
+                <button class="import-platform-filter-btn" data-platform="xboxseriesx" onclick="setPlatformFilter('xbox', 'xboxseriesx')">Xbox Series</button>
+                <button class="import-platform-filter-btn" data-platform="windows" onclick="setPlatformFilter('xbox', 'windows')">PC</button>
+            </div>
+            <div class="preview-table-container">
+                <table class="data-table">
+                    <thead><tr>
+                        <th class="checkbox-cell"><input type="checkbox" id="xboxSelectAll" onchange="toggleSelectAll('xbox')"></th>
+                        <th>Game</th><th>Platform</th><th>Gamerscore</th><th>Status</th>
+                    </tr></thead>
+                    <tbody id="xboxTableBody"></tbody>
+                </table>
+            </div>
+            <div class="import-actions">
+                <span id="xboxSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">0 games selected</span>
+                <button class="btn btn-primary" id="xboxImportBtn" onclick="importGames('xbox')" disabled>📥 Import Selected</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- PSN TAB -->
+    <!-- ================================================================= -->
+    <div class="tab-content{% if active_tab == 'psn' %} active{% endif %}" id="content-psn">
+        <div class="info-box">
+            <span>ℹ️</span>
+            <span class="info-box-text">
+                Import your PlayStation game library. Games come from your PSN trophy list.
+                Configure your PSN NPSSO token in <a href="{{ url_for('settings.settings') }}#apikeys" style="color: var(--primary-cyan);">Settings &rarr; API Keys</a>.
+                For faster imports, sync your trophies first via the <a href="{{ url_for('trophies.psn_trophies') }}" style="color: var(--primary-cyan);">PSN Trophies</a> page.
+            </span>
+        </div>
+        <div class="config-section" id="psnConfig">
+            <h2>🔐 PSN Account</h2>
+            <div class="auth-status disconnected" id="psnAuthStatus">
+                <div class="auth-dot"></div>
+                <div><div id="psnAuthText" style="color: var(--text-primary);">Checking...</div><div id="psnAuthDetail" style="color: var(--text-muted); font-size: 0.8rem;"></div></div>
+                <div style="margin-left: auto; display: flex; gap: var(--spacing-sm);">
+                    <button class="btn btn-primary" onclick="fetchPsnLibrary()" id="psnFetchBtn" disabled>📡 Fetch Library</button>
+                </div>
+            </div>
+        </div>
+        <div class="profile-card" id="psnProfile" style="display: none;">
+            <img class="profile-avatar" id="psnAvatar" src="" alt=""><div><div class="profile-name" id="psnUsername"></div><div class="profile-id" id="psnDetail"></div></div>
+        </div>
+        <div class="preview-section" id="psnPreview">
+            <div class="preview-header">
+                <h2>📋 PSN Library</h2>
+                <div class="preview-stats">
+                    <div class="stat-item"><div class="stat-value" id="psnTotal">0</div><div class="stat-label">Total</div></div>
+                    <div class="stat-item new-games"><div class="stat-value" id="psnNew">0</div><div class="stat-label">New</div></div>
+                    <div class="stat-item existing"><div class="stat-value" id="psnExisting">0</div><div class="stat-label">Already Imported</div></div>
+                </div>
+            </div>
+            <div class="preview-controls">
+                <button class="btn btn-secondary btn-sm" onclick="selectAllNew('psn')">☑️ Select All New</button>
+                <button class="btn btn-secondary btn-sm" onclick="deselectAll('psn')">☐ Deselect All</button>
+                <input type="text" id="psnSearch" placeholder="Search games..." oninput="filterGames('psn')"
+                       style="padding: 6px 12px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.85rem; min-width: 200px;">
+            </div>
+            <div class="import-platform-filters" id="psnPlatformFilters">
+                <button class="import-platform-filter-btn active" data-platform="all" onclick="setPlatformFilter('psn', 'all')">All</button>
+                <button class="import-platform-filter-btn" data-platform="ps5" onclick="setPlatformFilter('psn', 'ps5')">PS5</button>
+                <button class="import-platform-filter-btn" data-platform="ps4" onclick="setPlatformFilter('psn', 'ps4')">PS4</button>
+                <button class="import-platform-filter-btn" data-platform="ps3" onclick="setPlatformFilter('psn', 'ps3')">PS3</button>
+                <button class="import-platform-filter-btn" data-platform="psvita" onclick="setPlatformFilter('psn', 'psvita')">PS Vita</button>
+            </div>
+            <div class="preview-table-container">
+                <table class="data-table">
+                    <thead><tr>
+                        <th class="checkbox-cell"><input type="checkbox" id="psnSelectAll" onchange="toggleSelectAll('psn')"></th>
+                        <th class="icon-cell"></th><th>Game</th><th>Platform</th><th>Trophy Progress</th><th>Status</th>
+                    </tr></thead>
+                    <tbody id="psnTableBody"></tbody>
+                </table>
+            </div>
+            <div class="import-actions">
+                <span id="psnSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">0 games selected</span>
+                <button class="btn btn-primary" id="psnImportBtn" onclick="importGames('psn')" disabled>📥 Import Selected</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content"><div class="loading-spinner"></div><div id="loadingText">Processing...</div></div>
+</div>
+
+<script>
+// =============================================================================
+// STATE
+// =============================================================================
+const IMPORT_FILTER_KEY = 'game_imports_platform_filters';
+const state = {
+    clz: { games: [], filtered: [] },
+    steam: { games: [], filtered: [] },
+    xbox: { games: [], filtered: [], platformFilter: 'all' },
+    psn: { games: [], filtered: [], platformFilter: 'all' },
+};
+
+// =============================================================================
+// TABS
+// =============================================================================
+function switchTab(tab) {
+    document.querySelectorAll('.platform-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('content-' + tab).classList.add('active');
+    if (tab === 'xbox') checkXboxStatus();
+    if (tab === 'psn') checkPsnStatus();
+    // Update URL without reload
+    const url = new URL(window.location);
+    url.searchParams.set('tab', tab);
+    window.history.replaceState({}, '', url);
+}
+
+// =============================================================================
+// PLATFORM FILTERS (Xbox/PSN)
+// =============================================================================
+function setPlatformFilter(platform, value) {
+    state[platform].platformFilter = value;
+    document.querySelectorAll('#' + platform + 'PlatformFilters .import-platform-filter-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.platform === value);
+    });
+    savePlatformFilters();
+    applyPlatformVisibility(platform);
+    updateSelection(platform);
+}
+
+function applyPlatformVisibility(platform) {
+    var filter = state[platform] ? state[platform].platformFilter : 'all';
+    if (!filter) filter = 'all';
+    var rows = document.querySelectorAll('#' + platform + 'TableBody tr');
+    rows.forEach(function(row) {
+        if (filter === 'all' || row.dataset.platform === filter) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+            // Uncheck hidden rows so they aren't accidentally imported
+            var cb = row.querySelector('input[type="checkbox"]');
+            if (cb) cb.checked = false;
+        }
+    });
+}
+
+function savePlatformFilters() {
+    try {
+        Storage.set(IMPORT_FILTER_KEY, JSON.stringify({
+            xbox: state.xbox.platformFilter,
+            psn: state.psn.platformFilter,
+        }));
+    } catch(e) {}
+}
+
+function restorePlatformFilters() {
+    try {
+        var saved = Storage.get(IMPORT_FILTER_KEY);
+        if (!saved) return;
+        var parsed = JSON.parse(saved);
+        if (typeof parsed !== 'object' || parsed === null) return;
+        ['xbox', 'psn'].forEach(function(platform) {
+            if (parsed[platform] && parsed[platform] !== 'all') {
+                state[platform].platformFilter = parsed[platform];
+                document.querySelectorAll('#' + platform + 'PlatformFilters .import-platform-filter-btn').forEach(function(btn) {
+                    btn.classList.toggle('active', btn.dataset.platform === parsed[platform]);
+                });
+            }
+        });
+    } catch(e) {}
+}
+
+function applyRestoredFilter(platform) {
+    try {
+        updateFilterCounts(platform);
+        applyPlatformVisibility(platform);
+    } catch(e) { console.error('applyRestoredFilter error:', e); }
+}
+
+// =============================================================================
+// CLZ
+// =============================================================================
+async function uploadClzFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const overlay = document.getElementById('loadingOverlay');
+    document.getElementById('loadingText').textContent = 'Parsing CLZ PDF...';
+    overlay.classList.add('active');
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const resp = await fetch('/api/clz-import/upload', { method: 'POST', body: formData });
+        const data = await resp.json();
+        if (!data.success) throw new Error(data.error || 'Parse failed');
+
+        state.clz.games = data.games;
+        state.clz.filtered = data.games;
+
+        const total = data.games.length;
+        const existing = data.games.filter(g => g.existing).length;
+        document.getElementById('clzTotal').textContent = formatNumber(total);
+        document.getElementById('clzNew').textContent = formatNumber(total - existing);
+        document.getElementById('clzExisting').textContent = formatNumber(existing);
+
+        renderClzTable();
+        document.getElementById('clzPreview').classList.add('active');
+        showNotification(`Found ${formatNumber(total)} games (${existing} already imported)`, 'success');
+    } catch (e) {
+        showNotification(e.message, 'error');
+    } finally {
+        overlay.classList.remove('active');
+        input.value = '';
+    }
+}
+
+function renderClzTable() {
+    const tbody = document.getElementById('clzTableBody');
+    const games = state.clz.filtered;
+    tbody.innerHTML = '';
+    games.forEach((game, i) => {
+        const tr = document.createElement('tr');
+        const isNew = !game.existing && game.system_id;
+        const idx = state.clz.games.indexOf(game);
+        tr.innerHTML = `
+            <td class="checkbox-cell"><input type="checkbox" class="clz-checkbox" data-index="${idx}" ${!isNew ? 'disabled' : ''} onchange="updateSelection('clz')"></td>
+            <td>${escapeHtml(game.title)}</td>
+            <td>${game.system_name ? '<span class="platform-badge">' + escapeHtml(game.system_name) + '</span>' : '<span style="color:var(--neon-orange)">' + escapeHtml(game.clz_platform || '?') + '</span>'}</td>
+            <td>${game.existing ? '<span class="status-existing">Already imported</span>' : (game.system_id ? '<span class="status-new">New</span>' : '<span style="color:var(--neon-orange)">No system match</span>')}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+    updateSelection('clz');
+}
+
+async function importClzGames() {
+    const selected = [];
+    document.querySelectorAll('.clz-checkbox:checked').forEach(cb => {
+        const idx = parseInt(cb.dataset.index);
+        const game = state.clz.games[idx];
+        if (game) selected.push(game);
+    });
+    if (!selected.length) { showNotification('No games selected', 'warning'); return; }
+
+    const overlay = document.getElementById('loadingOverlay');
+    document.getElementById('loadingText').textContent = `Importing ${formatNumber(selected.length)} games...`;
+    overlay.classList.add('active');
+
+    try {
+        const resp = await fetch('/api/clz-import/import', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ games: selected }),
+        });
+        const data = await resp.json();
+        if (data.success) {
+            const parts = [];
+            if (data.imported > 0) parts.push(`${data.imported} imported`);
+            if (data.skipped > 0) parts.push(`${data.skipped} already existed`);
+            if (data.failed > 0) parts.push(`${data.failed} failed`);
+            showNotification(parts.join(', ') || 'Import complete', 'success');
+            selected.forEach(g => g.existing = true);
+            const total = state.clz.games.length;
+            const existing = state.clz.games.filter(g => g.existing).length;
+            document.getElementById('clzNew').textContent = formatNumber(total - existing);
+            document.getElementById('clzExisting').textContent = formatNumber(existing);
+            renderClzTable();
+        } else {
+            showNotification(data.error || 'Import failed', 'error');
+        }
+    } catch (e) { showNotification('Import error: ' + e.message, 'error'); }
+    finally { overlay.classList.remove('active'); }
+}
+
+// Drag and drop for CLZ
+const clzUploadArea = document.getElementById('clzUploadArea');
+if (clzUploadArea) {
+    ['dragover', 'dragenter'].forEach(evt => {
+        clzUploadArea.addEventListener(evt, e => { e.preventDefault(); clzUploadArea.classList.add('dragover'); });
+    });
+    ['dragleave', 'drop'].forEach(evt => {
+        clzUploadArea.addEventListener(evt, e => { e.preventDefault(); clzUploadArea.classList.remove('dragover'); });
+    });
+    clzUploadArea.addEventListener('drop', e => {
+        const file = e.dataTransfer.files[0];
+        if (file && file.name.endsWith('.pdf')) {
+            const input = document.getElementById('clzFileInput');
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            input.files = dt.files;
+            uploadClzFile(input);
+        } else {
+            showNotification('Please drop a PDF file', 'warning');
+        }
+    });
+}
+
+// =============================================================================
+// STEAM
+// =============================================================================
+async function fetchSteamLibrary() {
+    const btn = document.getElementById('steamFetchBtn');
+    btn.disabled = true; btn.innerHTML = '⏳ Fetching...';
+    const overlay = document.getElementById('loadingOverlay');
+    document.getElementById('loadingText').textContent = 'Fetching Steam library...';
+    overlay.classList.add('active');
+    try {
+        const resp = await fetch('/api/steam/fetch-library', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                steam_api_key: document.getElementById('steamApiKey').value.trim() || undefined,
+                steam_id: document.getElementById('steamId').value.trim() || undefined,
+            }),
+        });
+        const data = await resp.json();
+        if (!data.success) throw new Error(data.error || 'Failed');
+        state.steam.games = data.games;
+        state.steam.filtered = data.games;
+        if (data.profile) {
+            const profileEl = document.getElementById('steamProfile');
+            document.getElementById('steamAvatar').src = data.profile.avatarfull || '';
+            document.getElementById('steamPersona').textContent = data.profile.personaname;
+            document.getElementById('steamSteamId').textContent = data.profile.steamid;
+            profileEl.style.display = data.profile.personaname ? 'flex' : 'none';
+        }
+        document.getElementById('steamTotal').textContent = formatNumber(data.total);
+        document.getElementById('steamNew').textContent = formatNumber(data.total - data.already_imported);
+        document.getElementById('steamExisting').textContent = formatNumber(data.already_imported);
+        renderTable('steam');
+        document.getElementById('steamPreview').classList.add('active');
+        showNotification(`Found ${formatNumber(data.total)} games (${data.already_imported} already imported)`, 'success');
+    } catch (e) { showNotification(e.message, 'error'); }
+    finally { overlay.classList.remove('active'); btn.disabled = false; btn.innerHTML = '📡 Fetch Library'; }
+}
+
+// =============================================================================
+// XBOX
+// =============================================================================
+async function checkXboxStatus() {
+    try {
+        const resp = await fetch('/api/xbox/status');
+        const data = await resp.json();
+        const statusEl = document.getElementById('xboxAuthStatus');
+        const textEl = document.getElementById('xboxAuthText');
+        const detailEl = document.getElementById('xboxAuthDetail');
+        const connectBtn = document.getElementById('xboxConnectBtn');
+        const disconnectBtn = document.getElementById('xboxDisconnectBtn');
+        const fetchBtn = document.getElementById('xboxFetchBtn');
+        if (data.connected) {
+            statusEl.className = 'auth-status connected';
+            textEl.textContent = `Connected as ${data.gamertag}`;
+            detailEl.textContent = `XUID: ${data.xuid}`;
+            connectBtn.style.display = 'none'; disconnectBtn.style.display = ''; fetchBtn.disabled = false;
+        } else {
+            statusEl.className = 'auth-status disconnected';
+            textEl.textContent = 'Not Connected';
+            detailEl.textContent = 'Connect your Xbox account to import games';
+            connectBtn.style.display = ''; disconnectBtn.style.display = 'none'; fetchBtn.disabled = true;
+        }
+    } catch (e) { console.error('Xbox status check failed:', e); }
+}
+
+async function connectXbox() {
+    try {
+        const resp = await fetch('/api/xbox/auth-url');
+        const data = await resp.json();
+        if (data.success) window.location.href = data.auth_url;
+        else showNotification(data.error || 'Failed to get auth URL', 'error');
+    } catch (e) { showNotification('Failed to connect to Xbox: ' + e.message, 'error'); }
+}
+
+async function disconnectXbox() {
+    showConfirm('Disconnect Xbox', 'Remove your Xbox account connection? You can reconnect later.', async () => {
+        try { await fetch('/api/xbox/disconnect', { method: 'POST' }); checkXboxStatus(); showNotification('Xbox account disconnected', 'info'); }
+        catch (e) { showNotification('Failed to disconnect: ' + e.message, 'error'); }
+    });
+}
+
+async function fetchXboxLibrary() {
+    const btn = document.getElementById('xboxFetchBtn');
+    btn.disabled = true; btn.innerHTML = '⏳ Fetching...';
+    const overlay = document.getElementById('loadingOverlay');
+    document.getElementById('loadingText').textContent = 'Fetching Xbox library...';
+    overlay.classList.add('active');
+    try {
+        const resp = await fetch('/api/xbox/fetch-library', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+        const data = await resp.json();
+        if (!data.success) throw new Error(data.error || 'Failed');
+        state.xbox.games = data.games;
+        state.xbox.filtered = data.games;
+        document.getElementById('xboxTotal').textContent = formatNumber(data.total);
+        document.getElementById('xboxNew').textContent = formatNumber(data.total - data.already_imported);
+        document.getElementById('xboxExisting').textContent = formatNumber(data.already_imported);
+        renderTable('xbox');
+        document.getElementById('xboxPreview').classList.add('active');
+        applyRestoredFilter('xbox');
+        showNotification(`Found ${formatNumber(data.total)} Xbox games (${data.already_imported} already imported)`, 'success');
+    } catch (e) { showNotification(e.message, 'error'); }
+    finally { overlay.classList.remove('active'); btn.disabled = false; btn.innerHTML = '📡 Fetch Library'; }
+}
+
+// =============================================================================
+// SHARED TABLE RENDERING (Steam/Xbox)
+// =============================================================================
+function renderTable(platform) {
+    const tbody = document.getElementById(platform + 'TableBody');
+    const games = state[platform].filtered;
+    tbody.innerHTML = '';
+    games.forEach((game, i) => {
+        const tr = document.createElement('tr');
+        if (game.platform) tr.dataset.platform = game.platform;
+        const isNew = !game.already_imported;
+        const idx = state[platform].games.indexOf(game);
+        if (platform === 'steam') {
+            tr.innerHTML = `<td class="checkbox-cell"><input type="checkbox" class="${platform}-checkbox" data-index="${idx}" ${!isNew ? 'disabled' : ''} onchange="updateSelection('${platform}')"></td>
+                <td class="icon-cell">${game.icon_url ? `<img src="${escapeHtml(game.icon_url)}" alt="" loading="lazy" onerror="this.style.display='none'">` : ''}</td>
+                <td>${escapeHtml(game.name)}</td>
+                <td>${game.playtime > 0 ? formatPlaytime(game.playtime) : '<span style="color:var(--text-muted)">—</span>'}</td>
+                <td>${game.last_played > 0 ? formatTimestamp(game.last_played) : '<span style="color:var(--text-muted)">—</span>'}</td>
+                <td>${isNew ? '<span class="status-new">New</span>' : '<span class="status-existing">Already imported</span>'}</td>`;
+        } else if (platform === 'psn') {
+            const progress = game.trophy_progress || 0;
+            tr.innerHTML = `<td class="checkbox-cell"><input type="checkbox" class="${platform}-checkbox" data-index="${idx}" ${!isNew ? 'disabled' : ''} onchange="updateSelection('${platform}')"></td>
+                <td class="icon-cell">${game.icon_url ? `<img src="${escapeHtml(game.icon_url)}" alt="" loading="lazy" onerror="this.style.display='none'">` : ''}</td>
+                <td>${escapeHtml(game.name)}</td>
+                <td><span class="platform-badge">${escapeHtml(game.system_name || game.platform_display)}</span></td>
+                <td><div class="trophy-progress-bar"><div class="trophy-progress-track"><div class="trophy-progress-fill" style="width:${progress}%"></div></div><span class="trophy-progress-text">${progress}%</span></div></td>
+                <td>${isNew ? '<span class="status-new">New</span>' : '<span class="status-existing">Already imported</span>'}</td>`;
+        } else {
+            tr.innerHTML = `<td class="checkbox-cell"><input type="checkbox" class="${platform}-checkbox" data-index="${idx}" ${!isNew ? 'disabled' : ''} onchange="updateSelection('${platform}')"></td>
+                <td>${escapeHtml(game.name)}</td>
+                <td><span class="platform-badge">${escapeHtml(game.system_name || game.platform_display)}</span></td>
+                <td>${game.earned_gamerscore > 0 ? `${formatNumber(game.earned_gamerscore)} / ${formatNumber(game.total_gamerscore)}` : '<span style="color:var(--text-muted)">—</span>'}</td>
+                <td>${isNew ? '<span class="status-new">New</span>' : '<span class="status-existing">Already imported</span>'}</td>`;
+        }
+        tbody.appendChild(tr);
+    });
+    updateSelection(platform);
+}
+
+function filterGames(platform) {
+    const search = document.getElementById(platform + 'Search').value.toLowerCase();
+    if (platform === 'clz') {
+        state.clz.filtered = state.clz.games.filter(g => !search || (g.title || '').toLowerCase().includes(search));
+        renderClzTable();
+    } else {
+        state[platform].filtered = state[platform].games.filter(g => !search || (g.name || '').toLowerCase().includes(search));
+        renderTable(platform);
+        applyPlatformVisibility(platform);
+    }
+}
+
+function toggleSelectAll(platform) {
+    const checked = document.getElementById(platform + 'SelectAll').checked;
+    document.querySelectorAll('.' + platform + '-checkbox:not(:disabled)').forEach(cb => cb.checked = checked);
+    updateSelection(platform);
+}
+
+function selectAllNew(platform) {
+    document.querySelectorAll('.' + platform + '-checkbox:not(:disabled)').forEach(cb => {
+        if (cb.closest('tr').style.display !== 'none') cb.checked = true;
+    });
+    document.getElementById(platform + 'SelectAll').checked = true;
+    updateSelection(platform);
+}
+
+function deselectAll(platform) {
+    document.querySelectorAll('.' + platform + '-checkbox').forEach(cb => cb.checked = false);
+    document.getElementById(platform + 'SelectAll').checked = false;
+    updateSelection(platform);
+}
+
+function updateSelection(platform) {
+    let count = 0;
+    document.querySelectorAll('.' + platform + '-checkbox:checked').forEach(cb => {
+        if (cb.closest('tr').style.display !== 'none') count++;
+    });
+    document.getElementById(platform + 'SelectedInfo').textContent = `${formatNumber(count)} game${count !== 1 ? 's' : ''} selected`;
+    document.getElementById(platform + 'ImportBtn').disabled = count === 0;
+}
+
+function getSelectedGames(platform) {
+    const selected = [];
+    document.querySelectorAll('.' + platform + '-checkbox:checked').forEach(cb => {
+        const idx = parseInt(cb.dataset.index);
+        const game = state[platform].games[idx];
+        if (game) selected.push(game);
+    });
+    return selected;
+}
+
+// =============================================================================
+// IMPORT (Steam/Xbox/PSN)
+// =============================================================================
+async function importGames(platform) {
+    const selected = getSelectedGames(platform);
+    if (!selected.length) { showNotification('No games selected', 'warning'); return; }
+    const overlay = document.getElementById('loadingOverlay');
+    document.getElementById('loadingText').textContent = `Importing ${formatNumber(selected.length)} games...`;
+    overlay.classList.add('active');
+    const urlMap = { steam: '/api/steam/import', xbox: '/api/xbox/import', psn: '/api/psn/import' };
+    const url = urlMap[platform];
+    try {
+        const resp = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ games: selected }) });
+        const data = await resp.json();
+        if (data.success) {
+            const parts = [];
+            if (data.imported > 0) parts.push(`${data.imported} imported`);
+            if (data.skipped > 0) parts.push(`${data.skipped} already existed`);
+            if (data.failed > 0) parts.push(`${data.failed} failed`);
+            showNotification(parts.join(', ') || 'Import complete', 'success');
+            selected.forEach(g => g.already_imported = true);
+            const total = state[platform].games.length;
+            const already = state[platform].games.filter(g => g.already_imported).length;
+            document.getElementById(platform + 'Total').textContent = formatNumber(total);
+            document.getElementById(platform + 'New').textContent = formatNumber(total - already);
+            document.getElementById(platform + 'Existing').textContent = formatNumber(already);
+            renderTable(platform);
+        } else { showNotification(data.error || 'Import failed', 'error'); }
+    } catch (e) { showNotification('Import error: ' + e.message, 'error'); }
+    finally { overlay.classList.remove('active'); }
+}
+
+// =============================================================================
+// PSN
+// =============================================================================
+async function checkPsnStatus() {
+    try {
+        const resp = await fetch('/api/psn/import/status');
+        const data = await resp.json();
+        const statusEl = document.getElementById('psnAuthStatus');
+        const textEl = document.getElementById('psnAuthText');
+        const detailEl = document.getElementById('psnAuthDetail');
+        const fetchBtn = document.getElementById('psnFetchBtn');
+        if (data.configured) {
+            statusEl.className = 'auth-status connected';
+            textEl.textContent = data.username ? `Connected as ${data.username}` : 'PSN Configured';
+            detailEl.textContent = data.has_data ? `${formatNumber(data.total_games)} games in trophy database` : 'No local trophy data \u2014 will fetch from PSN API';
+            fetchBtn.disabled = false;
+        } else {
+            statusEl.className = 'auth-status disconnected';
+            textEl.textContent = 'Not Configured';
+            detailEl.innerHTML = 'Add your NPSSO token in <a href="/settings#apikeys" style="color:var(--primary-cyan)">Settings \u2192 API Keys</a>';
+            fetchBtn.disabled = true;
+        }
+    } catch (e) { console.error('PSN status check failed:', e); }
+}
+
+async function fetchPsnLibrary() {
+    const btn = document.getElementById('psnFetchBtn');
+    btn.disabled = true; btn.innerHTML = '⏳ Fetching...';
+    const overlay = document.getElementById('loadingOverlay');
+    document.getElementById('loadingText').textContent = 'Fetching PSN library...';
+    overlay.classList.add('active');
+    try {
+        const resp = await fetch('/api/psn/fetch-library', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+        const data = await resp.json();
+        if (!data.success) throw new Error(data.error || 'Failed');
+        state.psn.games = data.games;
+        state.psn.filtered = data.games;
+        if (data.profile && data.profile.username) {
+            const profileEl = document.getElementById('psnProfile');
+            document.getElementById('psnUsername').textContent = data.profile.username;
+            document.getElementById('psnDetail').textContent = 'PlayStation Network';
+            if (data.profile.avatar_url) {
+                document.getElementById('psnAvatar').src = data.profile.avatar_url;
+            }
+            profileEl.style.display = 'flex';
+        }
+        document.getElementById('psnTotal').textContent = formatNumber(data.total);
+        document.getElementById('psnNew').textContent = formatNumber(data.total - data.already_imported);
+        document.getElementById('psnExisting').textContent = formatNumber(data.already_imported);
+        renderTable('psn');
+        document.getElementById('psnPreview').classList.add('active');
+        applyRestoredFilter('psn');
+        showNotification(`Found ${formatNumber(data.total)} PSN games (${data.already_imported} already imported)`, 'success');
+    } catch (e) { showNotification(e.message, 'error'); }
+    finally { overlay.classList.remove('active'); btn.disabled = false; btn.innerHTML = '📡 Fetch Library'; }
+}
+
+// =============================================================================
+// UTILITIES
+// =============================================================================
+function formatPlaytime(minutes) {
+    if (minutes < 60) return minutes + 'm';
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return m > 0 ? `${h}h ${m}m` : `${h}h`;
+}
+
+function formatTimestamp(unix) {
+    if (!unix) return '';
+    const d = new Date(unix * 1000);
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+function updateFilterCounts(platform) {
+    if (platform === 'clz' || platform === 'steam') return;
+    var games = state[platform].games;
+    if (!games || !games.length) return;
+    var counts = {};
+    games.forEach(function(g) { counts[g.platform] = (counts[g.platform] || 0) + 1; });
+    document.querySelectorAll('#' + platform + 'PlatformFilters .import-platform-filter-btn').forEach(function(btn) {
+        var key = btn.dataset.platform;
+        var existingCount = btn.querySelector('.filter-count');
+        var count = key === 'all' ? games.length : (counts[key] || 0);
+        if (!existingCount) {
+            existingCount = document.createElement('span');
+            existingCount.className = 'filter-count';
+            btn.appendChild(existingCount);
+        }
+        existingCount.textContent = '(' + formatNumber(count) + ')';
+    });
+}
+
+// =============================================================================
+// INIT
+// =============================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    restorePlatformFilters();
+    // Load saved API keys
+    fetch('/api/scraper-settings')
+        .then(r => r.json())
+        .then(data => {
+            const keys = data.api_keys || {};
+            if (keys.steam_api_key) document.getElementById('steamApiKey').value = keys.steam_api_key;
+            if (keys.steam_id) document.getElementById('steamId').value = keys.steam_id;
+        })
+        .catch(() => {});
+
+    // Check URL params for Xbox callback
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('xbox_connected') === '1') {
+        switchTab('xbox');
+        showNotification('Xbox account connected successfully!', 'success');
+        params.delete('xbox_connected');
+        window.history.replaceState({}, '', window.location.pathname + '?tab=xbox');
+    }
+    if (params.get('xbox_error')) {
+        switchTab('xbox');
+        showNotification('Xbox connection failed: ' + params.get('xbox_error'), 'error');
+        params.delete('xbox_error');
+        window.history.replaceState({}, '', window.location.pathname + '?tab=xbox');
+    }
+
+    // Check PSN status on init if PSN tab is active
+    if (params.get('tab') === 'psn') checkPsnStatus();
+});
+</script>
+{% endblock %}

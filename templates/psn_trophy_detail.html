@@ -1,0 +1,880 @@
+{% extends "base.html" %}
+
+{% block title %}{{ psn_game.title }} Trophies - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Fanart Background -->
+{% if game and game.fanart %}
+<div class="game-fanart-bg active" style="background-image: url('{{ url_for('static', filename='images/fanart/' + game.fanart) }}')"></div>
+{% endif %}
+
+<!-- Breadcrumb -->
+<nav class="breadcrumb">
+    <a href="{{ url_for('trophies.psn_trophies') }}">PSN Trophies</a>
+    <span class="breadcrumb-separator">›</span>
+    <span class="breadcrumb-current">{{ psn_game.title }}</span>
+</nav>
+
+<!-- Game Header -->
+<div class="game-page-header">
+    <h1 class="game-page-title">{{ psn_game.title }}</h1>
+    <div class="header-buttons">
+        <button class="btn btn-secondary" onclick="refreshTrophies()" id="refreshBtn">
+            <span class="btn-icon">🔄</span>
+            Refresh
+        </button>
+        {% if game %}
+        <a href="{{ url_for('games.game_detail', game_id=game.id) }}?from=trophies" class="btn btn-secondary">
+            <span class="btn-icon">🎮</span>
+            View Game
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Game Hero Section -->
+<div class="game-compact-layout">
+    <div class="game-hero">
+        <!-- Boxart -->
+        <div class="hero-boxart">
+            {% if game and game.boxart %}
+            <img src="{{ url_for('static', filename='images/boxart/' + game.boxart) }}"
+                 alt="{{ psn_game.title }}" class="game-boxart-image">
+            {% elif psn_game.npwr_id %}
+            <img src="{{ url_for('static', filename='images/trophies/' + psn_game.npwr_id + '/ICON0.PNG') }}"
+                 alt="{{ psn_game.title }}" class="game-boxart-image"
+                 onerror="if(this.dataset.fb){this.onerror=null;this.outerHTML='<div class=\'game-boxart-image\' style=\'width:200px;height:200px;background:var(--bg-medium);display:flex;align-items:center;justify-content:center;font-size:3rem;border-radius:var(--radius-md);\'>🎮</div>'}else{this.dataset.fb='1';this.src='{{ psn_game.icon_url or '' }}'}">
+            {% else %}
+            <div class="game-boxart-image" style="width:200px;height:200px;background:var(--bg-medium);display:flex;align-items:center;justify-content:center;font-size:3rem;border-radius:var(--radius-md);">🎮</div>
+            {% endif %}
+        </div>
+
+        <!-- Core Info -->
+        <div class="hero-info">
+            <!-- Quick Tags Row -->
+            <div class="quick-tags">
+                <span class="psn-platform-badge platform-{{ psn_game.platform|lower }}">{{ psn_game.platform|upper }}</span>
+                {% if game and game.release_date %}<span class="tag tag-date">📅 {{ game.release_date[:4] if game.release_date|length > 4 else game.release_date }}</span>{% endif %}
+                {% if game and game.players %}<span class="tag tag-players">👥 {{ game.players }} Player{% if game.players != '1' and game.players != 1 %}s{% endif %}</span>{% endif %}
+                {% if game and game.region %}<span class="tag tag-region">🌍 {{ game.region }}</span>{% endif %}
+            </div>
+
+            <!-- Description -->
+            <div class="hero-description">
+                {% if game and game.description %}
+                {{ game.description[:500] }}{% if game.description|length > 500 %}...{% endif %}
+                {% elif psn_game.description %}
+                {{ psn_game.description }}
+                {% else %}
+                <span class="text-muted">No description available. NPWR ID: {{ psn_game.npwr_id }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Key Details -->
+            {% if game %}
+            <div class="key-details">
+                {% if game.publisher %}
+                <div class="kd-item">
+                    <span class="kd-label">Publisher</span>
+                    <span class="kd-value">{{ game.publisher }}</span>
+                </div>
+                {% endif %}
+                {% if game.developer %}
+                <div class="kd-item">
+                    <span class="kd-label">Developer</span>
+                    <span class="kd-value">{{ game.developer }}</span>
+                </div>
+                {% endif %}
+                {% if game.genre %}
+                <div class="kd-item">
+                    <span class="kd-label">Genre</span>
+                    <span class="kd-value">{{ game.genre }}</span>
+                </div>
+                {% endif %}
+                {% if game.franchise %}
+                <div class="kd-item">
+                    <span class="kd-label">Franchise</span>
+                    <span class="kd-value">{{ game.franchise }}</span>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Trophy Summary Bar -->
+    <section class="card mb-xl">
+        <div class="card-body">
+            <div class="trophy-summary">
+                <div class="trophy-summary-header">
+                    <span class="trophy-summary-title">🏆 Trophy Progress</span>
+                    <span class="trophy-summary-total">{{ stats.earned|format_number }} / {{ stats.total|format_number }}</span>
+                </div>
+                <div class="trophy-summary-progress">
+                    <div class="trophy-progress-bar large">
+                        <div class="trophy-progress-fill" style="width: {{ psn_game.progress|round(1) }}%"></div>
+                    </div>
+                    <span class="trophy-progress-percent">{{ psn_game.progress|round(1) }}%</span>
+                </div>
+                <div class="trophy-summary-counts">
+                    <span class="trophy-count platinum">
+                        <img src="{{ url_for('static', filename='images/trophies/platinum.png') }}" alt="P" onerror="this.outerHTML='🏆'">
+                        {{ stats.platinum_earned|format_number }} / {{ stats.platinum_total|format_number }}
+                    </span>
+                    <span class="trophy-count gold">
+                        <img src="{{ url_for('static', filename='images/trophies/gold.png') }}" alt="G" onerror="this.outerHTML='🥇'">
+                        {{ stats.gold_earned|format_number }} / {{ stats.gold_total|format_number }}
+                    </span>
+                    <span class="trophy-count silver">
+                        <img src="{{ url_for('static', filename='images/trophies/silver.png') }}" alt="S" onerror="this.outerHTML='🥈'">
+                        {{ stats.silver_earned|format_number }} / {{ stats.silver_total|format_number }}
+                    </span>
+                    <span class="trophy-count bronze">
+                        <img src="{{ url_for('static', filename='images/trophies/bronze.png') }}" alt="B" onerror="this.outerHTML='🥉'">
+                        {{ stats.bronze_earned|format_number }} / {{ stats.bronze_total|format_number }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bottom Row: How Long to Beat + More Details -->
+    <div class="bottom-row">
+        <!-- Playtime Estimate -->
+        <div class="bottom-section">
+            <h3 class="section-title-sm">⏱️ How Long to Beat</h3>
+            <div class="hltb-section" id="hltbSection">
+                {% if game %}
+                <!-- Linked game exists - HLTB is synced with RetroDB game -->
+                <input type="text"
+                       id="hltbSearchQuery"
+                       class="hltb-search-input"
+                       value="{{ psn_game.title }}"
+                       placeholder="Search game title...">
+
+                <button class="btn-hltb" id="hltbLookupBtn" onclick="lookupHLTB()">
+                    🔍 Lookup HLTB
+                </button>
+
+                <!-- Pending results (shown before confirmation) -->
+                <div id="hltbPending" style="display: none;">
+                    <div class="hltb-match-header" id="hltbMatchHeader"></div>
+                    <div class="hltb-results">
+                        <div class="hltb-time-row">
+                            <span class="hltb-label">Main Story</span>
+                            <span class="hltb-value" id="hltbPendingMain">--</span>
+                        </div>
+                        <div class="hltb-time-row">
+                            <span class="hltb-label">Main + Extras</span>
+                            <span class="hltb-value" id="hltbPendingExtra">--</span>
+                        </div>
+                        <div class="hltb-time-row">
+                            <span class="hltb-label">Completionist</span>
+                            <span class="hltb-value" id="hltbPendingComplete">--</span>
+                        </div>
+                    </div>
+                    <div class="hltb-actions" style="margin-top: var(--spacing-sm); display: flex; gap: var(--spacing-xs);">
+                        <button class="btn btn-sm btn-primary" onclick="confirmHLTB()">✓ Save</button>
+                        <button class="btn btn-sm btn-secondary" onclick="cancelHLTB()">✕ Cancel</button>
+                    </div>
+                </div>
+
+                <!-- Saved results -->
+                <div id="hltbSaved" style="{% if hltb_data %}display: block;{% else %}display: none;{% endif %}">
+                    {% if hltb_data and hltb_data.title %}
+                    <div class="hltb-match-header">
+                        <span class="hltb-match-title">{{ hltb_data.title }}</span>
+                        {% if hltb_data.platform %}
+                        <span class="hltb-match-platform">{{ hltb_data.platform }}</span>
+                        {% endif %}
+                        {% if hltb_data.confidence %}
+                        <span class="hltb-match-confidence">{{ [(hltb_data.confidence * 100)|round|int, 100]|min }}% match</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <div class="hltb-results">
+                        <div class="hltb-time-row">
+                            <span class="hltb-label">Main Story</span>
+                            <span class="hltb-value" id="hltbMain">{{ hltb_data.main_story if hltb_data else '--' }}</span>
+                        </div>
+                        <div class="hltb-time-row">
+                            <span class="hltb-label">Main + Extras</span>
+                            <span class="hltb-value" id="hltbMainExtra">{{ hltb_data.main_extra if hltb_data else '--' }}</span>
+                        </div>
+                        <div class="hltb-time-row">
+                            <span class="hltb-label">Completionist</span>
+                            <span class="hltb-value" id="hltbComplete">{{ hltb_data.completionist if hltb_data else '--' }}</span>
+                        </div>
+                    </div>
+                    <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
+                        <button class="btn btn-sm btn-danger" onclick="clearHLTB()">✕ Clear</button>
+                    </div>
+                </div>
+
+                <div style="margin-top: var(--spacing-sm); font-size: 0.75rem; color: var(--text-muted);">
+                    <span style="color: var(--neon-green);">✓</span> Synced with linked game
+                </div>
+                {% else %}
+                <!-- No linked game - show message -->
+                <div style="padding: var(--spacing-md); text-align: center; color: var(--text-muted);">
+                    <div style="font-size: 1.5rem; margin-bottom: var(--spacing-sm);">🔗</div>
+                    <div style="font-size: 0.85rem;">Link this PSN game to a RetroDB game to add HLTB data.</div>
+                    <div style="font-size: 0.75rem; margin-top: var(--spacing-xs);">HLTB data is shared with the linked game.</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- More Details -->
+        <div class="bottom-section">
+            <h3 class="section-title-sm">📋 More Details</h3>
+            <div class="more-details">
+                <div class="md-item">
+                    <span class="md-label">NPWR ID</span>
+                    <span class="md-value" style="font-family: var(--font-mono); font-size: 0.85rem;">{{ psn_game.npwr_id }}</span>
+                </div>
+                <div class="md-item">
+                    <span class="md-label">Platform</span>
+                    <span class="md-value">{{ psn_game.platform|upper }}</span>
+                </div>
+                <div class="md-item">
+                    <span class="md-label">First Trophy</span>
+                    <span class="md-value">{{ psn_game.first_trophy_earned|tz('short') if psn_game.first_trophy_earned else 'Never' }}</span>
+                </div>
+                <div class="md-item">
+                    <span class="md-label">Last Trophy</span>
+                    <span class="md-value">{{ psn_game.last_trophy_earned|tz('short') if psn_game.last_trophy_earned else 'Never' }}</span>
+                </div>
+                <div class="md-item" style="grid-column: span 2;">
+                    <span class="md-label">Last Updated</span>
+                    <span class="md-value">{{ psn_game.last_updated|tz('short') if psn_game.last_updated else 'Never' }}</span>
+                </div>
+                {% if game and game.genre %}
+                <div class="md-item">
+                    <span class="md-label">Genre</span>
+                    <span class="md-value">{{ game.genre }}</span>
+                </div>
+                {% endif %}
+                {% if game and game.modes %}
+                <div class="md-item">
+                    <span class="md-label">Modes</span>
+                    <span class="md-value">{{ game.modes }}</span>
+                </div>
+                {% endif %}
+                {% if game and game.save_type %}
+                <div class="md-item">
+                    <span class="md-label">Save</span>
+                    <span class="md-value">{{ game.save_type }}</span>
+                </div>
+                {% endif %}
+                {% if stats and stats.total %}
+                <div class="md-item">
+                    <span class="md-label">Trophies</span>
+                    <span class="md-value">{{ stats.total|format_number }} total</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Game Linking Section -->
+            <div id="gameLinkSection" style="margin-top: var(--spacing-md); padding-top: var(--spacing-md); border-top: 1px solid var(--card-border);">
+                {% if game %}
+                <div id="linkedGameDisplay">
+                    <a href="{{ url_for('games.game_detail', game_id=game.id) }}?from=trophies" class="linked-game-card">
+                        {% if game.boxart %}
+                        <img src="{{ url_for('static', filename='images/boxart/' ~ game.boxart) }}" alt="{{ game.title }}" class="linked-game-thumb">
+                        {% else %}
+                        <div class="linked-game-thumb" style="background: var(--bg-medium); display: flex; align-items: center; justify-content: center;">🎮</div>
+                        {% endif %}
+                        <div class="linked-game-info">
+                            <div class="linked-game-label">Linked RetroDB Game</div>
+                            <div class="linked-game-title">{{ game.title }}</div>
+                            <div class="linked-game-system">{{ game.system_name }}</div>
+                        </div>
+                    </a>
+                    <div style="display: flex; gap: var(--spacing-xs); margin-top: var(--spacing-sm);">
+                        <button class="btn btn-sm btn-secondary" onclick="showLinkSearch()">Change</button>
+                        <button class="btn btn-sm btn-danger" onclick="unlinkGame()">Unlink</button>
+                    </div>
+                </div>
+                {% else %}
+                <div id="linkedGameDisplay" style="display: none;"></div>
+                {% endif %}
+
+                <div id="linkSearchSection" {% if game %}style="display: none;"{% endif %}>
+                    <div style="margin-top: var(--spacing-sm);">
+                        <div class="md-label" style="margin-bottom: var(--spacing-xs);">
+                            {% if game %}Change Linked Game{% else %}Link to RetroDB Game{% endif %}
+                        </div>
+                        <div style="display: flex; gap: var(--spacing-xs);">
+                            <input type="text"
+                                   id="gameLinkSearch"
+                                   class="hltb-search-input"
+                                   value="{{ psn_game.title|replace('™', '')|replace('®', '') }}"
+                                   placeholder="Search game title..."
+                                   style="flex: 1;"
+                                   onkeydown="if(event.key==='Enter') searchGamesForLink()">
+                            <button class="btn-hltb" onclick="searchGamesForLink()" style="width: auto; padding: 10px 16px;">Search</button>
+                        </div>
+                        <div id="gameLinkResults" style="margin-top: var(--spacing-sm); display: none; max-height: 300px; overflow-y: auto;">
+                        </div>
+                        {% if game %}
+                        <button class="btn btn-sm btn-secondary" style="margin-top: var(--spacing-sm);" onclick="cancelLinkSearch()">Cancel</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Trophy Lists -->
+<div class="trophy-columns">
+    <!-- Unlocked Column -->
+    <section class="card trophy-column">
+        <div class="card-header">
+            <h2 class="card-title">✓ Unlocked ({{ unlocked_trophies|length }})</h2>
+        </div>
+        <div class="card-body">
+            <div class="trophy-list">
+                {% if unlocked_groups %}
+                    {% for group_id, group_data in unlocked_groups %}
+                        {% if has_dlc %}
+                        <div class="trophy-group-divider {% if group_id == 'default' %}base-game{% endif %}">
+                            <span class="trophy-group-icon">{% if group_id == 'default' %}🎮{% else %}📦{% endif %}</span>
+                            {{ group_data.name }}
+                            <span class="trophy-group-count">{{ group_data.trophies|length }}</span>
+                        </div>
+                        {% endif %}
+                        {% for trophy in group_data.trophies %}
+                        <div class="trophy-item unlocked">
+                            <div class="trophy-item-icon">
+                                <img src="{{ url_for('static', filename='images/trophies/' + psn_game.npwr_id + '/TROP' + '%03d'|format(trophy.trophy_id) + '.PNG') }}"
+                                     alt="{{ trophy.name }}"
+                                     onerror="if(this.dataset.fb){this.onerror=null;this.src='{{ url_for('static', filename='images/trophies/' + {'P':'platinum','G':'gold','S':'silver','B':'bronze'}.get(trophy.trophy_type, 'bronze') + '.png') }}'}else{this.dataset.fb='1';this.src='{{ trophy.icon_url or '' }}'}">
+                                <img src="{{ url_for('static', filename='images/trophies/' + {'P':'platinum','G':'gold','S':'silver','B':'bronze'}.get(trophy.trophy_type, 'bronze') + '.png') }}"
+                                     class="trophy-type-badge"
+                                     alt="{{ trophy.trophy_type }}"
+                                     onerror="this.style.display='none'">
+                            </div>
+                            <div class="trophy-item-info">
+                                <div class="trophy-item-name">{{ trophy.name }}</div>
+                                <div class="trophy-item-desc">{{ trophy.description or 'No description' }}</div>
+                                <div class="trophy-item-meta">
+                                    <span class="trophy-type-label {{ trophy.trophy_type|lower }}">
+                                        {% if trophy.trophy_type == 'P' %}Platinum{% elif trophy.trophy_type == 'G' %}Gold{% elif trophy.trophy_type == 'S' %}Silver{% else %}Bronze{% endif %}
+                                    </span>
+                                    {% if trophy.rarity %}
+                                    <span class="psn-trophy-rarity">{{ trophy.rarity|round(1) }}% {{ trophy.rarity_label or '' }}</span>
+                                    {% endif %}
+                                    {% if trophy.earned_date %}
+                                    <span class="trophy-timestamp">🕐 {{ trophy.earned_date|tz('short') }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% endfor %}
+                {% elif unlocked_trophies %}
+                    {% for trophy in unlocked_trophies %}
+                    <div class="trophy-item unlocked">
+                        <div class="trophy-item-icon">
+                            {% if trophy.icon_url %}
+                            <img src="{{ trophy.icon_url }}" alt="{{ trophy.name }}">
+                            {% else %}
+                            <img src="{{ url_for('static', filename='images/trophies/' + {'P':'platinum','G':'gold','S':'silver','B':'bronze'}.get(trophy.trophy_type, 'bronze') + '.png') }}" alt="{{ trophy.trophy_type }}"
+                                 onerror="this.src='{{ url_for('static', filename='images/trophies/default_trophy.png') }}'">
+                            {% endif %}
+                            <img src="{{ url_for('static', filename='images/trophies/' + {'P':'platinum','G':'gold','S':'silver','B':'bronze'}.get(trophy.trophy_type, 'bronze') + '.png') }}"
+                                 class="trophy-type-badge"
+                                 alt="{{ trophy.trophy_type }}"
+                                 onerror="this.style.display='none'">
+                        </div>
+                        <div class="trophy-item-info">
+                            <div class="trophy-item-name">{{ trophy.name }}</div>
+                            <div class="trophy-item-desc">{{ trophy.description or 'No description' }}</div>
+                            <div class="trophy-item-meta">
+                                <span class="trophy-type-label {{ trophy.trophy_type|lower }}">
+                                    {% if trophy.trophy_type == 'P' %}Platinum{% elif trophy.trophy_type == 'G' %}Gold{% elif trophy.trophy_type == 'S' %}Silver{% else %}Bronze{% endif %}
+                                </span>
+                                {% if trophy.rarity %}
+                                <span class="psn-trophy-rarity">{{ trophy.rarity|round(1) }}% {{ trophy.rarity_label or '' }}</span>
+                                {% endif %}
+                                {% if trophy.earned_date %}
+                                <span class="trophy-timestamp">🕐 {{ trophy.earned_date|tz('short') }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="trophy-empty">No trophies unlocked yet</div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Locked Column -->
+    <section class="card trophy-column">
+        <div class="card-header">
+            <h2 class="card-title">🔒 Locked ({{ locked_trophies|length }})</h2>
+        </div>
+        <div class="card-body">
+            <div class="trophy-list">
+                {% if locked_groups %}
+                    {% for group_id, group_data in locked_groups %}
+                        {% if has_dlc %}
+                        <div class="trophy-group-divider {% if group_id == 'default' %}base-game{% endif %}">
+                            <span class="trophy-group-icon">{% if group_id == 'default' %}🎮{% else %}📦{% endif %}</span>
+                            {{ group_data.name }}
+                            <span class="trophy-group-count">{{ group_data.trophies|length }}</span>
+                        </div>
+                        {% endif %}
+                        {% for trophy in group_data.trophies %}
+                        <div class="trophy-item locked">
+                            <div class="trophy-item-icon">
+                                <img src="{{ url_for('static', filename='images/trophies/' + psn_game.npwr_id + '/TROP' + '%03d'|format(trophy.trophy_id) + '.PNG') }}"
+                                     alt="{{ trophy.name }}"
+                                     onerror="if(this.dataset.fb){this.onerror=null;this.src='{{ url_for('static', filename='images/trophies/' + {'P':'platinum','G':'gold','S':'silver','B':'bronze'}.get(trophy.trophy_type, 'bronze') + '.png') }}'}else{this.dataset.fb='1';this.src='{{ trophy.icon_url or '' }}'}">
+                                <img src="{{ url_for('static', filename='images/trophies/' + {'P':'platinum','G':'gold','S':'silver','B':'bronze'}.get(trophy.trophy_type, 'bronze') + '.png') }}"
+                                     class="trophy-type-badge"
+                                     alt="{{ trophy.trophy_type }}"
+                                     onerror="this.style.display='none'">
+                            </div>
+                            <div class="trophy-item-info">
+                                <div class="trophy-item-name">{{ trophy.name }}</div>
+                                <div class="trophy-item-desc">{{ trophy.description or 'No description' }}</div>
+                                <div class="trophy-item-meta">
+                                    <span class="trophy-type-label {{ trophy.trophy_type|lower }}">
+                                        {% if trophy.trophy_type == 'P' %}Platinum{% elif trophy.trophy_type == 'G' %}Gold{% elif trophy.trophy_type == 'S' %}Silver{% else %}Bronze{% endif %}
+                                    </span>
+                                    {% if trophy.rarity %}
+                                    <span class="psn-trophy-rarity">{{ trophy.rarity|round(1) }}% {{ trophy.rarity_label or '' }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% endfor %}
+                {% elif locked_trophies %}
+                    {% for trophy in locked_trophies %}
+                    <div class="trophy-item locked">
+                        <div class="trophy-item-icon">
+                            {% if trophy.icon_url %}
+                            <img src="{{ trophy.icon_url }}" alt="{{ trophy.name }}">
+                            {% else %}
+                            <img src="{{ url_for('static', filename='images/trophies/' + {'P':'platinum','G':'gold','S':'silver','B':'bronze'}.get(trophy.trophy_type, 'bronze') + '.png') }}" alt="{{ trophy.trophy_type }}"
+                                 onerror="this.src='{{ url_for('static', filename='images/trophies/default_trophy.png') }}'">
+                            {% endif %}
+                            <img src="{{ url_for('static', filename='images/trophies/' + {'P':'platinum','G':'gold','S':'silver','B':'bronze'}.get(trophy.trophy_type, 'bronze') + '.png') }}"
+                                 class="trophy-type-badge"
+                                 alt="{{ trophy.trophy_type }}"
+                                 onerror="this.style.display='none'">
+                        </div>
+                        <div class="trophy-item-info">
+                            <div class="trophy-item-name">{{ trophy.name }}</div>
+                            <div class="trophy-item-desc">{{ trophy.description or 'No description' }}</div>
+                            <div class="trophy-item-meta">
+                                <span class="trophy-type-label {{ trophy.trophy_type|lower }}">
+                                    {% if trophy.trophy_type == 'P' %}Platinum{% elif trophy.trophy_type == 'G' %}Gold{% elif trophy.trophy_type == 'S' %}Silver{% else %}Bronze{% endif %}
+                                </span>
+                                {% if trophy.rarity %}
+                                <span class="psn-trophy-rarity">{{ trophy.rarity|round(1) }}% {{ trophy.rarity_label or '' }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="trophy-empty">All trophies unlocked! 🎉</div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+/* PSN-specific styles only */
+.psn-platform-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.platform-ps3 { background: rgba(168, 85, 247, 0.2); border: 1px solid var(--neon-purple); color: var(--neon-purple); }
+.platform-ps4 { background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; color: #3b82f6; }
+.platform-ps5 { background: rgba(76, 201, 240, 0.2); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); }
+.platform-psvita { background: rgba(245, 158, 11, 0.2); border: 1px solid var(--neon-orange); color: var(--neon-orange); }
+
+.psn-trophy-rarity {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* DLC Group Dividers */
+.trophy-group-divider {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(76, 201, 240, 0.1));
+    border-top: 1px solid rgba(168, 85, 247, 0.3);
+    border-bottom: 1px solid rgba(168, 85, 247, 0.3);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--neon-purple);
+    letter-spacing: 0.5px;
+    border-radius: var(--radius-sm);
+}
+
+.trophy-group-divider::before,
+.trophy-group-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.5), transparent);
+}
+
+.trophy-group-divider.base-game {
+    background: linear-gradient(135deg, rgba(76, 201, 240, 0.1), rgba(34, 197, 94, 0.1));
+    border-color: rgba(76, 201, 240, 0.3);
+    color: var(--neon-cyan);
+}
+
+.trophy-group-divider.base-game::before,
+.trophy-group-divider.base-game::after {
+    background: linear-gradient(90deg, transparent, rgba(76, 201, 240, 0.5), transparent);
+}
+
+.trophy-group-icon {
+    font-size: 1rem;
+}
+
+.trophy-group-count {
+    margin-left: auto;
+    background: rgba(255,255,255,0.1);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+/* Linked Game Card */
+.linked-game-card {
+    display: flex;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: rgba(76, 201, 240, 0.05);
+    border: 1px solid rgba(76, 201, 240, 0.2);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.linked-game-card:hover {
+    background: rgba(76, 201, 240, 0.1);
+    border-color: var(--primary-cyan);
+}
+
+.linked-game-thumb {
+    width: 60px;
+    height: 80px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    border: 1px solid var(--card-border);
+}
+
+.linked-game-info {
+    flex: 1;
+}
+
+.linked-game-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.linked-game-title {
+    color: var(--primary-cyan);
+    font-weight: 600;
+}
+
+.linked-game-system {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* Game Link Search Results */
+.link-result-item {
+    display: flex;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background: var(--bg-dark);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--spacing-xs);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    align-items: center;
+}
+
+.link-result-item:hover {
+    background: rgba(76, 201, 240, 0.1);
+    border-color: var(--primary-cyan);
+}
+
+.link-result-thumb {
+    width: 40px;
+    height: 54px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid var(--card-border);
+    background: var(--bg-medium);
+}
+
+.link-result-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.link-result-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.link-result-system {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.link-result-ps {
+    color: var(--neon-green);
+}
+
+/* PSN trophy type badge mapping: P/G/S/B lowercase for shared .trophy-type-label */
+.trophy-type-label.p { background: #a8c8dc; color: #111; }
+.trophy-type-label.g { background: #ffd700; color: #111; }
+.trophy-type-label.s { background: #c0c0c0; color: #111; }
+.trophy-type-label.b { background: #cd7f32; color: #111; }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const npwrId = "{{ psn_game.npwr_id }}";
+
+// Refresh trophies from PSN
+async function refreshTrophies() {
+    const btn = document.getElementById('refreshBtn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span class="btn-icon">⏳</span> Syncing...';
+    btn.disabled = true;
+
+    try {
+        const response = await fetch(`/api/psn/sync/${npwrId}`, {
+            method: 'POST'
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            showNotification(`Synced ${data.trophies_synced} trophies`, 'success');
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showNotification(data.error || 'Sync failed', 'error');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    } catch (error) {
+        showNotification('Network error during sync', 'error');
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+// HLTB context configuration for PSN trophy page
+// Saves to linked RetroDB game (shared data source)
+const linkedGameId = {{ game.id if game else 'null' }};
+
+const psnHltbCtx = {
+    name: 'psn',
+    searchInputId: 'hltbSearchQuery',
+    lookupBtnId: 'hltbLookupBtn',
+    pendingDivId: 'hltbPending',
+    savedDivId: 'hltbSaved',
+    matchHeaderId: 'hltbMatchHeader',
+    mainTimeId: 'hltbPendingMain',
+    extrasTimeId: 'hltbPendingExtra',
+    completeTimeId: 'hltbPendingComplete',
+    clearFnName: 'clearHLTB',
+    get hasSavedData() {
+        const savedDiv = document.getElementById('hltbSaved');
+        return savedDiv && savedDiv.style.display !== 'none';
+    },
+    // Save to linked RetroDB game (same API as game edit modal)
+    customSave: function(pending, playtime) {
+        if (!linkedGameId) {
+            return Promise.resolve({ success: false, error: 'No linked game' });
+        }
+        const formattedPlaytime = `Main: ${pending.main_story} | Main+Extras: ${pending.main_extra} | 100%: ${pending.completionist}`;
+        return fetch(`/api/hltb-save/${linkedGameId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                playtime: formattedPlaytime,
+                match_name: pending.match_name,
+                match_platform: pending.match_platform,
+                confidence: pending.confidence
+            })
+        }).then(r => r.json());
+    },
+    // Clear from linked RetroDB game
+    customClear: function() {
+        if (!linkedGameId) {
+            return Promise.resolve({ success: false, error: 'No linked game' });
+        }
+        return fetch(`/api/hltb-clear/${linkedGameId}`, {
+            method: 'POST'
+        }).then(r => r.json());
+    }
+};
+
+// Wrapper functions that call the shared HLTBManager
+function lookupHLTB() {
+    if (!linkedGameId) {
+        showNotification('Link this PSN game to a RetroDB game first', 'warning');
+        return;
+    }
+    HLTBManager.lookup(psnHltbCtx);
+}
+function confirmHLTB() { HLTBManager.save(psnHltbCtx); }
+function cancelHLTB() { HLTBManager.cancel(psnHltbCtx); }
+function clearHLTB() { HLTBManager.clear(psnHltbCtx); }
+
+// =========================================
+// Game Linking Functions
+// =========================================
+
+function showLinkSearch() {
+    const display = document.getElementById('linkedGameDisplay');
+    const search = document.getElementById('linkSearchSection');
+    if (display) display.style.display = 'none';
+    if (search) {
+        search.style.display = 'block';
+        const label = search.querySelector('.md-label');
+        if (label) label.textContent = 'Change Linked Game';
+    }
+    const input = document.getElementById('gameLinkSearch');
+    if (input) input.focus();
+}
+
+function cancelLinkSearch() {
+    const display = document.getElementById('linkedGameDisplay');
+    const search = document.getElementById('linkSearchSection');
+    const results = document.getElementById('gameLinkResults');
+    if (display) display.style.display = 'block';
+    if (search) search.style.display = 'none';
+    if (results) { results.style.display = 'none'; results.innerHTML = ''; }
+}
+
+async function searchGamesForLink() {
+    const input = document.getElementById('gameLinkSearch');
+    const resultsDiv = document.getElementById('gameLinkResults');
+    const searchQuery = input ? input.value.trim() : '';
+
+    if (!searchQuery || searchQuery.length < 2) {
+        showNotification('Enter at least 2 characters to search', 'warning');
+        return;
+    }
+
+    resultsDiv.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: var(--spacing-sm);">Searching...</div>';
+    resultsDiv.style.display = 'block';
+
+    try {
+        const resp = await fetch(`/api/psn/search-games?q=${encodeURIComponent(searchQuery)}`);
+        const data = await resp.json();
+
+        if (!data.results || data.results.length === 0) {
+            resultsDiv.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: var(--spacing-sm);">No games found</div>';
+            return;
+        }
+
+        let html = '';
+        for (const game of data.results) {
+            const isPS = ['ps3', 'ps4', 'ps5', 'psvita', 'ps2', 'psx'].includes(game.folder);
+            const thumbHtml = game.boxart
+                ? `<img src="/static/images/boxart/${game.boxart}" class="link-result-thumb" alt="">`
+                : `<div class="link-result-thumb" style="display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🎮</div>`;
+
+            html += `
+                <div class="link-result-item" onclick="linkGame(${game.id}, '${game.title.replace(/'/g, "\\'")}', '${game.system}')">
+                    ${thumbHtml}
+                    <div class="link-result-info">
+                        <div class="link-result-title">${game.title}</div>
+                        <div class="link-result-system ${isPS ? 'link-result-ps' : ''}">${game.system}</div>
+                    </div>
+                </div>`;
+        }
+        resultsDiv.innerHTML = html;
+
+    } catch (error) {
+        resultsDiv.innerHTML = '<div class="alert alert-error">❌ Search failed</div>';
+        console.error('Game search error:', error);
+    }
+}
+
+async function linkGame(gameId, gameTitle, systemName) {
+    try {
+        const resp = await fetch('/api/psn/link-game', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ npwr_id: npwrId, game_id: gameId })
+        });
+        const data = await resp.json();
+
+        if (data.success) {
+            showNotification(`Linked to "${gameTitle}"`, 'success');
+            setTimeout(() => location.reload(), 800);
+        } else {
+            showNotification(data.error || 'Failed to link game', 'error');
+        }
+    } catch (error) {
+        showNotification('Network error', 'error');
+    }
+}
+
+async function unlinkGame() {
+    try {
+        const resp = await fetch('/api/psn/link-game', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ npwr_id: npwrId, game_id: null })
+        });
+        const data = await resp.json();
+
+        if (data.success) {
+            showNotification('Game unlinked', 'success');
+            setTimeout(() => location.reload(), 800);
+        } else {
+            showNotification(data.error || 'Failed to unlink game', 'error');
+        }
+    } catch (error) {
+        showNotification('Network error', 'error');
+    }
+}
+
+
+</script>
+{% endblock %}

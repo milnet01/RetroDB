@@ -1,0 +1,580 @@
+{% extends "base.html" %}
+
+{% block title %}ROM Tools - RetroDB{% endblock %}
+
+{% block styles %}
+<style>
+/* Page-specific form layout (flex override) */
+.form-row {
+    display: flex;
+    gap: 1rem;
+    align-items: end;
+    flex-wrap: wrap;
+}
+
+.form-row .form-group {
+    margin-bottom: 0;
+}
+
+.form-row .form-group.flex-1 {
+    flex: 1;
+    min-width: 250px;
+}
+
+.input-with-browse {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.input-with-browse .locked-path-wrapper {
+    flex: 1;
+}
+
+.toggle-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.progress-section {
+    margin-top: 1.5rem;
+}
+
+.progress-action {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.duplicate-groups {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.duplicate-group {
+    background: var(--bg-darker);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.duplicate-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--bg-dark);
+    cursor: pointer;
+}
+
+.duplicate-group-header:hover {
+    background: rgba(76, 201, 240, 0.05);
+}
+
+.duplicate-group-header h4 {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.duplicate-group-header .group-stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.duplicate-group-header .group-stats .wasted {
+    color: var(--accent-pink);
+}
+
+.duplicate-group-files {
+    border-top: 1px solid var(--border-color);
+}
+
+.duplicate-file {
+    display: grid;
+    grid-template-columns: 40px 1fr 100px 140px;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    align-items: center;
+}
+
+.duplicate-file:last-child {
+    border-bottom: none;
+}
+
+.duplicate-file:hover {
+    background: rgba(76, 201, 240, 0.03);
+}
+
+.duplicate-file input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent-cyan);
+}
+
+.duplicate-file .filename {
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.duplicate-file .filesize {
+    color: var(--text-secondary);
+}
+
+.duplicate-file .modified {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.duplicate-file.keep {
+    background: rgba(46, 213, 115, 0.1);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🔧 ROM Tools</h1>
+    <p>Manage, organize, and optimize your ROM collection.</p>
+</div>
+
+<!-- Tool Tabs -->
+<nav class="tool-tabs">
+    <a href="{{ url_for('tools.archive_scanner') }}" class="tool-tab">
+        <span class="tab-icon">📦</span>
+        <span class="tab-label">Archive Scanner</span>
+    </a>
+    <a href="{{ url_for('tools.chd_converter') }}" class="tool-tab">
+        <span class="tab-icon">💿</span>
+        <span class="tab-label">CHD Converter</span>
+    </a>
+    <a href="{{ url_for('tools.chd_verify') }}" class="tool-tab">
+        <span class="tab-icon">✅</span>
+        <span class="tab-label">CHD Verify</span>
+    </a>
+    <a href="{{ url_for('tools.multi_disc_organizer') }}" class="tool-tab">
+        <span class="tab-icon">💽</span>
+        <span class="tab-label">Multi-Disc Organizer</span>
+    </a>
+    <a href="{{ url_for('tools.duplicate_finder') }}" class="tool-tab active">
+        <span class="tab-icon">🔍</span>
+        <span class="tab-label">Duplicate Finder</span>
+    </a>
+    <a href="{{ url_for('tools.screenshot_dedup') }}" class="tool-tab">
+        <span class="tab-icon">📸</span>
+        <span class="tab-label">Screenshot Dedup</span>
+    </a>
+    <a href="{{ url_for('tools.rom_tools_settings') }}" class="tool-tab">
+        <span class="tab-icon">⚙️</span>
+        <span class="tab-label">Settings</span>
+    </a>
+</nav>
+
+<div class="warning-banner">
+    <span class="warning-icon">⚠️</span>
+    <div class="warning-text">
+        <h4>Careful Review Recommended</h4>
+        <p>Always review duplicates before deleting. Some "duplicates" may be different versions (regions, revisions) you might want to keep.</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><span>📁</span> Scan Configuration</h2>
+    </div>
+    <div class="card-body">
+    <div class="form-row">
+        <div class="form-group flex-1">
+            <label>Source Folder</label>
+            <div class="input-with-browse">
+                <div class="locked-path-wrapper">
+                    <span class="locked-path-prefix" id="pathPrefix">{{ rom_path }}/</span>
+                    <input type="text" id="subPath" placeholder="subfolder (optional)" value="">
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="openFolderBrowser('hiddenFullPath')">📁 Browse</button>
+            </div>
+            <input type="hidden" id="hiddenFullPath" value="{{ rom_path }}">
+        </div>
+        
+        <div class="form-group">
+            <label>Detection Method</label>
+            <select class="styled-select" id="scanMethod">
+                <option value="hash">🔐 By File Hash (Accurate but slow)</option>
+                <option value="name" selected>📝 By Filename (Fast)</option>
+                <option value="both">🔄 Combined (Hash + Name)</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <button class="btn btn-primary" id="scanBtn" onclick="startScan()">
+                <span class="btn-icon">🔍</span> Start Scan
+            </button>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label>Options</label>
+        <div class="toggle-group">
+            <div class="toggle-item">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="optRecursive" aria-label="Recursive scan including subfolders" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Recursive scan (include subfolders)</span>
+            </div>
+            <div class="toggle-item">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="optIgnoreRegion" aria-label="Ignore region tags" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Ignore region tags (USA, Europe, etc.)</span>
+            </div>
+            <div class="toggle-item">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="optArchives" aria-label="Include archives in scan">
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Include archives (.zip, .7z, .rar)</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="progress-section" id="progressSection" style="display: none;">
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="progressBar">0%</div>
+        </div>
+        <div class="progress-details">
+            <div class="progress-status">
+                <strong id="progressCount">0</strong> / <span id="progressTotal">0</span> files processed
+            </div>
+            <div class="progress-action" id="progressAction">Initializing...</div>
+        </div>
+    </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><span>📊</span> Scan Results</h2>
+    </div>
+    <div class="card-body">
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="stat-value" id="statScanned">0</div>
+            <div class="stat-label">Files Scanned</div>
+        </div>
+        <div class="stat-box warning">
+            <div class="stat-value" id="statGroups">0</div>
+            <div class="stat-label">Duplicate Groups</div>
+        </div>
+        <div class="stat-box danger">
+            <div class="stat-value" id="statDuplicates">0</div>
+            <div class="stat-label">Duplicate Files</div>
+        </div>
+        <div class="stat-box danger">
+            <div class="stat-value" id="statWasted">0 GB</div>
+            <div class="stat-label">Wasted Space</div>
+        </div>
+    </div>
+    </div>
+</div>
+
+<div class="card" id="resultsCard" style="display: none;">
+    <div class="card-header">
+        <h2 class="card-title"><span>📁</span> Duplicate Groups</h2>
+    </div>
+    <div class="card-body">
+    <div class="duplicate-groups" id="duplicateGroups"></div>
+    
+    <div class="action-bar">
+        <button class="btn btn-secondary" onclick="selectNewest()">📅 Keep Newest</button>
+        <button class="btn btn-secondary" onclick="selectSmallest()">📦 Keep Smallest</button>
+        <button class="btn btn-danger" onclick="deleteSelected()">🗑️ Delete Unselected</button>
+    </div>
+    </div>
+</div>
+
+<!-- Log Section -->
+<div class="scan-log-container" id="logContainer" style="display: none;">
+    <div class="scan-log-header">
+        <h4>📋 Scan Log</h4>
+        <button class="btn btn-sm btn-danger" onclick="clearLog()">Clear</button>
+    </div>
+    <div class="scan-log-content" id="scanLog"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/rom-tools.js') }}?v={{ config.APP_VERSION }}"></script>
+<script>
+const ROM_PATH = '{{ rom_path }}';
+let duplicateGroups = [];
+
+// Update full path when subpath changes
+document.getElementById('subPath').addEventListener('input', function() {
+    const subPath = this.value.replace(/^\/+/, ''); // Remove leading slashes
+    document.getElementById('hiddenFullPath').value = subPath ? `${ROM_PATH}/${subPath}` : ROM_PATH;
+});
+
+// Update subpath when folder browser selects
+document.getElementById('hiddenFullPath').addEventListener('change', function() {
+    const fullPath = this.value;
+    if (fullPath.startsWith(ROM_PATH)) {
+        const sub = fullPath.substring(ROM_PATH.length).replace(/^\/+/, '');
+        document.getElementById('subPath').value = sub;
+    }
+});
+
+function getFullPath() {
+    const subPath = document.getElementById('subPath').value.replace(/^\/+/, '');
+    return subPath ? `${ROM_PATH}/${subPath}` : ROM_PATH;
+}
+
+async function startScan() {
+    const path = getFullPath();
+    const method = document.getElementById('scanMethod').value;
+    const recursive = document.getElementById('optRecursive').checked;
+    const ignoreRegion = document.getElementById('optIgnoreRegion').checked;
+    const includeArchives = document.getElementById('optArchives').checked;
+    
+    document.getElementById('scanBtn').disabled = true;
+    document.getElementById('scanBtn').innerHTML = '<span class="btn-icon">⏳</span> Scanning...';
+    document.getElementById('progressSection').style.display = 'block';
+    document.getElementById('logContainer').style.display = 'block';
+    document.getElementById('scanLog').innerHTML = '';
+    document.getElementById('resultsCard').style.display = 'none';
+    document.getElementById('progressBar').style.width = '0%';
+    document.getElementById('progressBar').textContent = '0%';
+    
+    addLogEntry(`Starting scan on: ${path}`, 'info');
+    addLogEntry(`Method: ${method}, Recursive: ${recursive}, Ignore Region: ${ignoreRegion}`);
+    
+    try {
+        const response = await fetch('/api/rom-tools/duplicate-finder/scan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                path: path, 
+                method: method,
+                recursive: recursive,
+                ignore_region: ignoreRegion,
+                include_archives: includeArchives
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            TaskPoller.start(data.task_id, {
+                onProgress(task) {
+                    const percent = task.percent || 0;
+                    document.getElementById('progressBar').style.width = `${percent}%`;
+                    document.getElementById('progressBar').textContent = `${percent}%`;
+                    document.getElementById('progressCount').textContent = formatNumber(task.progress || 0);
+                    document.getElementById('progressTotal').textContent = formatNumber(task.total || 0);
+                    document.getElementById('progressAction').textContent = task.current_action || task.current_file || 'Processing...';
+
+                    if (task.results) {
+                        document.getElementById('statScanned').textContent = formatNumber(task.results.files_scanned || 0);
+                        document.getElementById('statGroups').textContent = formatNumber(task.results.duplicate_groups || 0);
+                        document.getElementById('statDuplicates').textContent = formatNumber(task.results.duplicate_files || 0);
+                        document.getElementById('statWasted').textContent = formatBytes(task.results.wasted_space || 0);
+                    }
+
+                    if (task.logs && task.logs.length > 0) {
+                        const logEl = document.getElementById('scanLog');
+                        const existingCount = logEl.querySelectorAll('.log-entry').length;
+                        for (let i = existingCount; i < task.logs.length; i++) {
+                            addLogEntry(task.logs[i]);
+                        }
+                    }
+                },
+                onComplete(task) {
+                    addLogEntry('Scan completed!', 'info');
+                    if (task.results && task.results.groups) {
+                        duplicateGroups = task.results.groups;
+                        renderDuplicateGroups();
+                    }
+                    resetUI();
+                },
+                onError(task) {
+                    addLogEntry(`Scan failed: ${task.error || 'Unknown error'}`, 'error');
+                    resetUI();
+                },
+                onCancel() {
+                    addLogEntry('Scan cancelled', 'warning');
+                    resetUI();
+                }
+            }, 500);
+        } else {
+            addLogEntry(`Error: ${data.error}`, 'error');
+            resetUI();
+        }
+    } catch (error) {
+        addLogEntry(`Error: ${error.message}`, 'error');
+        resetUI();
+    }
+}
+
+function addLogEntry(message, type = '') {
+    const logEl = document.getElementById('scanLog');
+    const entry = document.createElement('div');
+    entry.className = `log-entry ${type}`;
+    entry.textContent = message;
+    logEl.appendChild(entry);
+    logEl.scrollTop = logEl.scrollHeight;
+}
+
+function clearLog() {
+    document.getElementById('scanLog').innerHTML = '';
+}
+
+function renderDuplicateGroups() {
+    if (duplicateGroups.length === 0) {
+        document.getElementById('resultsCard').style.display = 'none';
+        addLogEntry('No duplicates found!', 'info');
+        return;
+    }
+    
+    document.getElementById('resultsCard').style.display = 'block';
+    
+    let html = '';
+    duplicateGroups.forEach((group, gi) => {
+        html += `
+            <div class="duplicate-group">
+                <div class="duplicate-group-header" onclick="toggleGroup(${gi})">
+                    <h4><span id="arrow-${gi}">▼</span> ${escapeHtml(group.name)}</h4>
+                    <div class="group-stats">
+                        <span>${group.count} files</span>
+                        <span class="wasted">Wasted: ${formatBytes(group.wasted)}</span>
+                    </div>
+                </div>
+                <div class="duplicate-group-files" id="group-${gi}">
+        `;
+        
+        group.files.forEach((file, fi) => {
+            const isFirst = fi === 0;
+            html += `
+                <div class="duplicate-file ${isFirst ? 'keep' : ''}" id="file-${gi}-${fi}">
+                    <input type="radio" name="group-${gi}" ${isFirst ? 'checked' : ''} data-group="${gi}" data-file="${fi}" onchange="updateSelection(${gi}, ${fi})">
+                    <span class="filename" title="${escapeHtml(file.path)}">${escapeHtml(file.name)}</span>
+                    <span class="filesize">${formatBytes(file.size)}</span>
+                    <span class="modified">${file.modified ? file.modified.split('T')[0] : ''}</span>
+                </div>
+            `;
+        });
+        
+        html += '</div></div>';
+    });
+    
+    document.getElementById('duplicateGroups').innerHTML = html;
+}
+
+function toggleGroup(gi) {
+    const group = document.getElementById(`group-${gi}`);
+    const arrow = document.getElementById(`arrow-${gi}`);
+    if (group.style.display === 'none') {
+        group.style.display = 'block';
+        arrow.textContent = '▼';
+    } else {
+        group.style.display = 'none';
+        arrow.textContent = '▶';
+    }
+}
+
+function updateSelection(gi, fi) {
+    duplicateGroups[gi].files.forEach((_, i) => {
+        document.getElementById(`file-${gi}-${i}`).classList.remove('keep');
+    });
+    document.getElementById(`file-${gi}-${fi}`).classList.add('keep');
+}
+
+function selectNewest() {
+    duplicateGroups.forEach((group, gi) => {
+        const radio = document.querySelector(`input[name="group-${gi}"][data-file="0"]`);
+        if (radio) {
+            radio.checked = true;
+            updateSelection(gi, 0);
+        }
+    });
+}
+
+function selectSmallest() {
+    duplicateGroups.forEach((group, gi) => {
+        let smallestIdx = 0;
+        let smallestSize = group.files[0].size;
+        group.files.forEach((f, i) => {
+            if (f.size < smallestSize) {
+                smallestSize = f.size;
+                smallestIdx = i;
+            }
+        });
+        const radio = document.querySelector(`input[name="group-${gi}"][data-file="${smallestIdx}"]`);
+        if (radio) {
+            radio.checked = true;
+            updateSelection(gi, smallestIdx);
+        }
+    });
+}
+
+async function deleteSelected() {
+    const filesToDelete = [];
+    
+    duplicateGroups.forEach((group, gi) => {
+        group.files.forEach((file, fi) => {
+            const radio = document.querySelector(`input[name="group-${gi}"][data-file="${fi}"]`);
+            if (radio && !radio.checked) {
+                filesToDelete.push(file.path);
+            }
+        });
+    });
+    
+    if (filesToDelete.length === 0) {
+        showModal('⚠️ No Selection', 'No files selected for deletion');
+        return;
+    }
+    
+    showConfirm('🗑️ Delete Files', `Are you sure you want to delete ${filesToDelete.length} files?\n\nThis action cannot be undone!`, async function() {
+        try {
+            const response = await fetch('/api/rom-tools/duplicate-finder/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ files: filesToDelete })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showModal('✅ Files Deleted', `Deleted ${data.results.deleted} files, freed ${formatBytes(data.results.freed_space)}`);
+                startScan();
+            } else {
+                showModal('❌ Error', data.error);
+            }
+        } catch (error) {
+            showModal('❌ Error', error.message);
+        }
+    });
+}
+
+function resetUI() {
+    document.getElementById('scanBtn').disabled = false;
+    document.getElementById('scanBtn').innerHTML = '<span class="btn-icon">🔍</span> Start Scan';
+}
+
+</script>
+{% endblock %}

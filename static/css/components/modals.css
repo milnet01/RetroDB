@@ -1,0 +1,428 @@
+/* =============================================================================
+   RETRODB - MODALS
+   Modal overlays and dialog styles
+   ============================================================================= */
+
+/* =============================================================================
+   BASE MODAL OVERLAY
+   ============================================================================= */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* =============================================================================
+   MODAL CONTENT
+   ============================================================================= */
+
+.modal-content {
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    max-width: 90%;
+    max-height: 90vh;
+    overflow: auto;
+    box-shadow: 0 0 50px rgba(76, 201, 240, 0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--card-border);
+}
+
+.modal-header h2 {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    color: var(--neon-cyan);
+}
+
+/* -----------------------------------------------------------------------------
+   UNIFIED MODAL CLOSE BUTTON
+   All modal close buttons share this base style (matching About modal design).
+   Position-specific overrides (position: absolute, etc.) are in their
+   respective CSS files / inline styles.
+   ----------------------------------------------------------------------------- */
+
+.modal-close,
+.custom-modal-close,
+.about-modal-close,
+.game-detail-modal-close,
+.game-edit-modal-close,
+.modal-close-btn,
+.archive-modal-close,
+.modal .modal-close {
+    background: none;
+    border: none;
+    font-size: 1.75rem;
+    font-weight: normal;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.modal-close:hover,
+.custom-modal-close:hover,
+.about-modal-close:hover,
+.game-detail-modal-close:hover,
+.game-edit-modal-close:hover,
+.modal-close-btn:hover,
+.archive-modal-close:hover,
+.modal .modal-close:hover {
+    color: var(--neon-red);
+}
+
+.modal-close:focus-visible,
+.custom-modal-close:focus-visible,
+.about-modal-close:focus-visible,
+.game-detail-modal-close:focus-visible,
+.game-edit-modal-close:focus-visible,
+.modal-close-btn:focus-visible,
+.archive-modal-close:focus-visible,
+.modal .modal-close:focus-visible {
+    outline: 2px solid rgba(76, 201, 240, 0.5);
+    outline-offset: 2px;
+}
+
+.modal-body {
+    padding: var(--spacing-lg);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    border-top: 1px solid var(--card-border);
+}
+
+/* =============================================================================
+   STANDARD MODAL
+   ============================================================================= */
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: var(--radius-lg);
+}
+
+/* =============================================================================
+   MODAL NAVIGATION (Gallery)
+   ============================================================================= */
+
+.modal-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    background: var(--card-bg);
+    border: none;
+    border-radius: 50%;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.modal-nav:hover {
+    background: var(--primary-cyan);
+    color: var(--bg-darkest);
+}
+
+.modal-nav.prev {
+    left: var(--spacing-lg);
+}
+
+.modal-nav.next {
+    right: var(--spacing-lg);
+}
+
+/* =============================================================================
+   CUSTOM MODAL DIALOG
+   ============================================================================= */
+
+.custom-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 10100;
+    align-items: center;
+    justify-content: center;
+}
+
+.custom-modal.active {
+    display: flex;
+}
+
+.custom-modal-content {
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.custom-modal-header {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.custom-modal-header h3 {
+    margin: 0;
+    font-family: var(--font-heading);
+    color: var(--primary-cyan);
+    font-size: 1.1rem;
+}
+
+/* .custom-modal-close — styled by unified modal close button rule above */
+
+.custom-modal-body {
+    padding: var(--spacing-lg);
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* Handle long text/code in modals */
+.custom-modal-body code {
+    word-break: break-all;
+    overflow-wrap: break-word;
+    display: inline-block;
+    max-width: 100%;
+}
+
+.custom-modal-body ul {
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.custom-modal-body li {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.custom-modal-footer {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-top: 1px solid var(--card-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+}
+
+/* =============================================================================
+   ABOUT MODAL
+   ============================================================================= */
+
+.about-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+}
+
+.about-modal-overlay.active {
+    display: flex;
+}
+
+.about-modal {
+    background: linear-gradient(135deg, rgba(20, 26, 35, 0.98), rgba(15, 20, 25, 0.98));
+    border: 1px solid var(--primary-cyan);
+    border-radius: var(--radius-lg);
+    max-width: 420px;
+    width: 90%;
+    box-shadow: 0 0 40px rgba(76, 201, 240, 0.3),
+                0 20px 40px rgba(0, 0, 0, 0.5);
+    animation: modalSlideIn 0.3s ease;
+}
+
+.about-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.about-modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-family: var(--font-heading);
+    color: var(--primary-cyan);
+}
+
+/* .about-modal-close — styled by unified modal close button rule above */
+
+.about-modal-body {
+    padding: 1.5rem;
+}
+
+.about-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.about-logo-icon {
+    font-size: 3rem;
+    filter: drop-shadow(0 0 10px rgba(76, 201, 240, 0.5));
+}
+
+.about-logo-text {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 2px;
+}
+
+.about-logo-text span {
+    color: var(--primary-cyan);
+    text-shadow: 0 0 10px var(--primary-cyan-glow);
+}
+
+.about-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.about-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-md);
+}
+
+.about-item.about-description {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.about-label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.about-value {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.about-description .about-value {
+    font-weight: 400;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.about-links {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.about-links .btn {
+    flex: 1;
+}
+
+/* =============================================================================
+   FOLDER BROWSER MODAL
+   ============================================================================= */
+
+.folder-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.folder-item:hover {
+    background: rgba(76, 201, 240, 0.1);
+}
+
+.folder-item.folder-parent {
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.75rem;
+    border-radius: 0;
+}
+
+.folder-item .folder-icon {
+    font-size: 1.25rem;
+}
+
+.folder-item .folder-name {
+    flex: 1;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.folder-item .folder-info {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}

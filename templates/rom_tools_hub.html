@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+
+{% block title %}ROM Tools - RetroDB{% endblock %}
+
+{% block styles %}
+<style>
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.tool-card {
+    background: var(--bg-medium);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.tool-card:hover {
+    border-color: var(--primary-cyan);
+    box-shadow: 0 0 20px rgba(76, 201, 240, 0.15);
+    transform: translateY(-2px);
+}
+
+.tool-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.tool-card-icon {
+    font-size: 2rem;
+    line-height: 1;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-darker);
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+}
+
+.tool-card-title {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.tool-card-desc {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    flex: 1;
+}
+
+.tool-card-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.tool-card-status .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.status-dot.available { background: var(--neon-green); }
+.status-dot.unavailable { background: var(--neon-red); }
+.status-dot.no-deps { background: var(--primary-cyan); }
+
+@media (max-width: 640px) {
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">ROM Tools</h1>
+        <p class="page-subtitle">Utilities for managing, converting, and organizing your ROM collection</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ url_for('tools.rom_tools_settings') }}" class="btn btn-secondary">
+            <span class="btn-icon">⚙️</span> Settings
+        </a>
+    </div>
+</div>
+
+<div class="tools-grid">
+    <a href="{{ url_for('tools.archive_scanner') }}" class="tool-card">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">📦</div>
+            <div class="tool-card-title">Archive Scanner</div>
+        </div>
+        <div class="tool-card-desc">
+            Scan ROM archives for corruption, unwanted files, and multi-file disc images. Clean up and create M3U playlists automatically.
+        </div>
+        <div class="tool-card-status">
+            {% if tool_status.tools.get('7z') or tool_status.tools.get('unzip') %}
+            <span class="status-dot available"></span> Tools available
+            {% else %}
+            <span class="status-dot unavailable"></span> Requires 7z or unzip
+            {% endif %}
+        </div>
+    </a>
+
+    <a href="{{ url_for('tools.chd_converter') }}" class="tool-card">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">💿</div>
+            <div class="tool-card-title">CHD Converter</div>
+        </div>
+        <div class="tool-card-desc">
+            Convert disc images (ISO, CUE/BIN, GDI) to compressed CHD format. Save significant storage space while maintaining full compatibility.
+        </div>
+        <div class="tool-card-status">
+            {% if tool_status.tools.get('chdman') %}
+            <span class="status-dot available"></span> chdman available
+            {% else %}
+            <span class="status-dot unavailable"></span> Requires chdman (MAME tools)
+            {% endif %}
+        </div>
+    </a>
+
+    <a href="{{ url_for('tools.chd_verify') }}" class="tool-card">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">✅</div>
+            <div class="tool-card-title">CHD Verify</div>
+        </div>
+        <div class="tool-card-desc">
+            Verify the integrity of your CHD files to detect corruption. Ensure your compressed disc images are valid and playable.
+        </div>
+        <div class="tool-card-status">
+            {% if tool_status.tools.get('chdman') %}
+            <span class="status-dot available"></span> chdman available
+            {% else %}
+            <span class="status-dot unavailable"></span> Requires chdman (MAME tools)
+            {% endif %}
+        </div>
+    </a>
+
+    <a href="{{ url_for('tools.duplicate_finder') }}" class="tool-card">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">🔍</div>
+            <div class="tool-card-title">Duplicate Finder</div>
+        </div>
+        <div class="tool-card-desc">
+            Find duplicate ROMs by hash, filename, or both. Identify wasted storage from region variants and redundant copies.
+        </div>
+        <div class="tool-card-status">
+            <span class="status-dot no-deps"></span> No dependencies required
+        </div>
+    </a>
+
+    <a href="{{ url_for('tools.multi_disc_organizer') }}" class="tool-card">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">📀</div>
+            <div class="tool-card-title">Multi-Disc Organizer</div>
+        </div>
+        <div class="tool-card-desc">
+            Organize multi-disc games into proper folder structures and generate M3U playlists for seamless disc-swapping in emulators.
+        </div>
+        <div class="tool-card-status">
+            <span class="status-dot no-deps"></span> No dependencies required
+        </div>
+    </a>
+
+    <a href="{{ url_for('tools.screenshot_dedup') }}" class="tool-card">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">📸</div>
+            <div class="tool-card-title">Screenshot Dedup</div>
+        </div>
+        <div class="tool-card-desc">
+            Find and remove duplicate screenshots per game using exact file hash or visual similarity matching. Free up storage and clean up your media library.
+        </div>
+        <div class="tool-card-status">
+            <span class="status-dot no-deps"></span> No dependencies required
+        </div>
+    </a>
+
+    <div class="tool-card" onclick="startImageResize()" style="cursor: pointer;">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">🖼️</div>
+            <div class="tool-card-title">Image Resizer</div>
+        </div>
+        <div class="tool-card-desc">
+            Standardize all images to consistent sizes using AI upscaling (Real-ESRGAN) for small images and Lanczos downscaling for large ones. Targets 1080px height for boxart/screenshots and 1280px longest edge for controllers/hardware.
+        </div>
+        <div class="tool-card-status">
+            <span class="status-dot no-deps"></span> No dependencies required
+        </div>
+    </div>
+
+    <a href="{{ url_for('tools.rom_tools_settings') }}" class="tool-card">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">⚙️</div>
+            <div class="tool-card-title">Tool Settings</div>
+        </div>
+        <div class="tool-card-desc">
+            Configure paths, external tool locations, archive types, and other preferences shared across all ROM tools.
+        </div>
+        <div class="tool-card-status">
+            <span class="status-dot no-deps"></span> Configuration
+        </div>
+    </a>
+</div>
+
+<script>
+function startImageResize() {
+    showConfirm(
+        '🖼️ Image Resizer',
+        'Standardize all images to consistent sizes:<br><br>' +
+        '<strong>Boxart, Screenshots, 3D Boxart:</strong> 1080px height<br>' +
+        '<strong>Controllers &amp; Hardware:</strong> 1280px longest edge<br><br>' +
+        'Small images will be AI-upscaled (Real-ESRGAN), large images will be downscaled (Lanczos). ' +
+        'Images already within 80-120% of target size are skipped.<br><br>' +
+        'This may take a while for large collections.',
+        function() {
+            fetch('/api/maintenance/image-resize/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image_types: ['boxart', 'screenshots', 'boxart_3d', 'controllers', 'hardware'] })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Image standardization started', 'success');
+                    if (typeof UnifiedToastController !== 'undefined') {
+                        UnifiedToastController.adjustPollingSpeed('image-resize', true);
+                        UnifiedToastController.broadcast('job-started', 'image-resize', {
+                            running: true, completed: false, total: 0, current: 0, percent: 0
+                        });
+                    }
+                } else {
+                    showNotification(data.error || 'Failed to start', 'error');
+                }
+            })
+            .catch(() => showNotification('Failed to start image resize', 'error'));
+        }
+    );
+}
+</script>
+{% endblock %}

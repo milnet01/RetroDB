@@ -1,0 +1,865 @@
+/* =============================================================================
+   RETRODB - PSN TROPHIES
+   Trophy-related styles for PSN integration
+   ============================================================================= */
+
+/* =============================================================================
+   PSN PROFILE BAR
+   ============================================================================= */
+
+.psn-profile-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: rgba(20, 26, 35, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.psn-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid var(--primary-cyan);
+    object-fit: cover;
+}
+
+.psn-avatar-placeholder {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid var(--card-border);
+    background: var(--bg-medium);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.psn-profile-info {
+    flex: 1;
+}
+
+.psn-username {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.psn-level {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.psn-level strong {
+    color: var(--primary-cyan);
+}
+
+.psn-sync-status {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* =============================================================================
+   PSN STATS BAR
+   ============================================================================= */
+
+.psn-stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.psn-stat-box {
+    padding: var(--spacing-md);
+    background: rgba(20, 26, 35, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    text-align: center;
+}
+
+.psn-stat-icon {
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.psn-stat-value {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.psn-stat-value.platinum { color: var(--trophy-platinum); }
+.psn-stat-value.gold { color: var(--trophy-gold); }
+.psn-stat-value.silver { color: var(--trophy-silver); }
+.psn-stat-value.bronze { color: var(--trophy-bronze); }
+
+.psn-stat-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+}
+
+/* =============================================================================
+   PLATFORM FILTERS
+   ============================================================================= */
+
+.platform-filters {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.platform-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: rgba(20, 26, 35, 0.8);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.platform-filter-btn:hover {
+    border-color: var(--primary-cyan);
+    color: var(--text-primary);
+}
+
+.platform-filter-btn.active {
+    background: rgba(76, 201, 240, 0.15);
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+.filter-count {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-full);
+}
+
+.platform-filter-btn.active .filter-count {
+    background: rgba(76, 201, 240, 0.2);
+}
+
+/* =============================================================================
+   PSN SEARCH & SORT
+   ============================================================================= */
+
+.psn-search-sort-row {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    align-items: center;
+}
+
+.psn-search-wrapper {
+    flex: 1;
+    position: relative;
+}
+
+.psn-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.psn-search-input {
+    width: 100%;
+    padding: 10px 12px 10px 36px;
+    background: rgba(20, 26, 35, 0.8);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+}
+
+.psn-search-input:focus {
+    outline: none;
+    border-color: var(--primary-cyan);
+    box-shadow: 0 0 0 2px rgba(76, 201, 240, 0.15);
+}
+
+.psn-search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.psn-sort-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.psn-sort-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.psn-sort-select {
+    padding: 8px 32px 8px 12px;
+    background: rgba(20, 26, 35, 0.8);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234cc9f0' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
+.psn-sort-select:focus {
+    outline: none;
+    border-color: var(--primary-cyan);
+}
+
+/* =============================================================================
+   PSN GAMES GRID
+   ============================================================================= */
+
+.psn-games-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+}
+
+.psn-trophy-game-card {
+    display: flex;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: rgba(20, 26, 35, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    text-decoration: none;
+    color: inherit;
+}
+
+.psn-trophy-game-card:hover {
+    border-color: var(--primary-cyan);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.psn-trophy-game-thumb {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    border: 1px solid var(--card-border);
+    flex-shrink: 0;
+}
+
+.psn-trophy-game-thumb-placeholder {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.psn-trophy-game-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.psn-trophy-game-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.psn-trophy-game-npwr {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+/* =============================================================================
+   PSN PROGRESS BAR
+   ============================================================================= */
+
+.psn-trophy-game-progress {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.psn-progress-track {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-dark);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.psn-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-cyan), var(--neon-purple));
+    border-radius: 3px;
+    transition: width var(--transition-normal);
+}
+
+.psn-progress-pct {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--primary-cyan);
+    min-width: 32px;
+    text-align: right;
+}
+
+/* =============================================================================
+   TROPHY MINI BADGES
+   ============================================================================= */
+
+.psn-trophy-mini-badges {
+    display: flex;
+    gap: 6px;
+}
+
+.trophy-mini-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.65rem;
+    font-weight: 600;
+}
+
+.tmb-platinum { color: var(--trophy-platinum); }
+.tmb-gold { color: var(--trophy-gold); }
+.tmb-silver { color: var(--trophy-silver); }
+.tmb-bronze { color: var(--trophy-bronze); }
+
+/* =============================================================================
+   PSN GAME INFO CARD (Detail Page)
+   ============================================================================= */
+
+.psn-game-info-card {
+    display: flex;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background: rgba(20, 26, 35, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.psn-game-boxart {
+    width: 180px;
+    flex-shrink: 0;
+}
+
+.psn-game-boxart img {
+    width: 100%;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--card-border);
+}
+
+.psn-game-boxart-placeholder {
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--bg-medium);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+}
+
+.psn-game-meta {
+    flex: 1;
+}
+
+.psn-game-badges {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    margin-bottom: var(--spacing-md);
+}
+
+.psn-game-description {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-md);
+    max-height: 100px;
+    overflow: hidden;
+}
+
+.psn-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+}
+
+.psn-meta-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+}
+
+.psn-meta-value {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* =============================================================================
+   PSN TROPHY PROGRESS CARD
+   ============================================================================= */
+
+.psn-trophy-progress-card {
+    padding: var(--spacing-lg);
+    background: rgba(20, 26, 35, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.psn-trophy-progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-md);
+}
+
+.psn-trophy-progress-title {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.psn-trophy-progress-fraction {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+.psn-trophy-progress-pct {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-cyan);
+}
+
+.psn-trophy-progress-bar-container {
+    height: 28px;
+    background: rgba(26, 26, 62, 0.8);
+    border: 2px solid var(--primary-cyan);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-bottom: var(--spacing-md);
+    box-shadow: 0 0 15px rgba(76, 201, 240, 0.2);
+}
+
+.psn-trophy-progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-cyan), var(--neon-purple));
+    border-radius: var(--radius-md);
+    transition: width 0.8s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+}
+
+.psn-trophy-type-breakdown {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-xl);
+}
+
+.psn-trophy-type-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+}
+
+.psn-trophy-type-icon { font-size: 1.1rem; }
+.psn-trophy-type-count { font-family: var(--font-mono); }
+.type-platinum .psn-trophy-type-count { color: var(--trophy-platinum); }
+.type-gold .psn-trophy-type-count { color: var(--trophy-gold); }
+.type-silver .psn-trophy-type-count { color: var(--trophy-silver); }
+.type-bronze .psn-trophy-type-count { color: var(--trophy-bronze); }
+
+/* =============================================================================
+   PSN INFO PANELS
+   ============================================================================= */
+
+.psn-info-panels-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.psn-info-panel {
+    padding: var(--spacing-lg);
+    background: rgba(20, 26, 35, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+}
+
+.psn-info-panel-title {
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.psn-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-sm) var(--spacing-lg);
+}
+
+.psn-detail-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+}
+
+.psn-detail-value {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.psn-mono {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+}
+
+.psn-hltb-input {
+    width: 100%;
+    padding: 8px 12px;
+    background: var(--bg-dark);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.psn-hltb-input:focus {
+    outline: none;
+    border-color: var(--primary-cyan);
+}
+
+/* =============================================================================
+   PSN TROPHY LISTS
+   ============================================================================= */
+
+.psn-trophy-lists-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+}
+
+.psn-trophy-list-panel {
+    background: rgba(20, 26, 35, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.psn-trophy-list-header {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid var(--card-border);
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.psn-trophy-list-header.header-unlocked { color: var(--neon-green); }
+.psn-trophy-list-header.header-locked { color: var(--neon-gray); }
+
+.psn-trophy-list-body {
+    max-height: 600px;
+    overflow-y: auto;
+    padding: var(--spacing-sm);
+}
+
+/* Custom scrollbar for trophy lists */
+.psn-trophy-list-body::-webkit-scrollbar { width: 6px; }
+.psn-trophy-list-body::-webkit-scrollbar-track { background: var(--bg-dark); }
+.psn-trophy-list-body::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 3px; }
+.psn-trophy-list-body::-webkit-scrollbar-thumb:hover { background: var(--primary-cyan); }
+
+/* =============================================================================
+   TROPHY ENTRY
+   ============================================================================= */
+
+.psn-trophy-entry {
+    display: flex;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    transition: background var(--transition-fast);
+}
+
+.psn-trophy-entry:hover {
+    background: rgba(76, 201, 240, 0.03);
+}
+
+.psn-trophy-entry + .psn-trophy-entry {
+    border-top: 1px solid rgba(42, 53, 66, 0.5);
+}
+
+.psn-trophy-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-medium);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    border: 1px solid var(--card-border);
+    overflow: hidden;
+}
+
+.psn-trophy-icon-box.locked {
+    opacity: 0.5;
+    filter: grayscale(0.5);
+}
+
+.psn-trophy-icon-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.psn-trophy-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.psn-trophy-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.psn-trophy-description {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.psn-trophy-earned-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+/* Trophy Type Badges */
+.psn-trophy-type-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.psn-trophy-type-badge.ttb-platinum { background: rgba(123,184,212,0.2); color: var(--trophy-platinum); border: 1px solid rgba(123,184,212,0.3); }
+.psn-trophy-type-badge.ttb-gold { background: rgba(205,154,42,0.2); color: var(--trophy-gold); border: 1px solid rgba(205,154,42,0.3); }
+.psn-trophy-type-badge.ttb-silver { background: rgba(168,168,168,0.2); color: var(--trophy-silver); border: 1px solid rgba(168,168,168,0.3); }
+.psn-trophy-type-badge.ttb-bronze { background: rgba(205,127,50,0.2); color: var(--trophy-bronze); border: 1px solid rgba(205,127,50,0.3); }
+
+/* Trophy Rarity */
+.psn-trophy-rarity {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.03);
+}
+
+.psn-trophy-rarity.rarity-ultra-rare { color: var(--neon-cyan); }
+.psn-trophy-rarity.rarity-very-rare { color: var(--neon-purple); }
+.psn-trophy-rarity.rarity-rare { color: var(--neon-orange); }
+.psn-trophy-rarity.rarity-common { color: var(--neon-gray); }
+
+.psn-trophy-earned-date {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.psn-trophy-earned-date .date-icon { font-size: 0.6rem; }
+
+/* DLC Separator */
+.psn-dlc-separator {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin-top: var(--spacing-sm);
+}
+
+.psn-dlc-separator-line {
+    flex: 1;
+    height: 1px;
+    background: var(--card-border);
+}
+
+.psn-dlc-separator-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--neon-purple);
+    white-space: nowrap;
+}
+
+/* Trophy Empty State */
+.psn-trophy-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.psn-trophy-empty-icon {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.psn-trophy-complete {
+    color: var(--neon-green);
+}
+
+/* =============================================================================
+   PSN NOT CONFIGURED / EMPTY STATES
+   ============================================================================= */
+
+.psn-not-configured {
+    text-align: center;
+    padding: var(--spacing-2xl);
+}
+
+.psn-not-configured-icon {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-lg);
+}
+
+.psn-not-configured-title {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.psn-not-configured-text {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-lg);
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.psn-no-games {
+    text-align: center;
+    padding: var(--spacing-2xl);
+    background: rgba(20, 26, 35, 0.6);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+}
+
+.psn-no-games-icon {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.psn-no-games-title {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.psn-no-games-text {
+    color: var(--text-muted);
+}
+
+.psn-visible-count {
+    text-align: center;
+    padding: var(--spacing-md);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}

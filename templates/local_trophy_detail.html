@@ -1,0 +1,444 @@
+{% extends "base.html" %}
+
+{% block title %}{{ trophy_set.title }} Trophies - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Fanart Background -->
+{% if game and game.fanart %}
+<div class="game-fanart-bg active" style="background-image: url('{{ url_for('static', filename='images/fanart/' + game.fanart) }}')"></div>
+{% endif %}
+
+<!-- Breadcrumb -->
+<nav class="breadcrumb">
+    <a href="{{ url_for('trophies.trophies') }}">RPCS3 Trophies</a>
+    <span class="breadcrumb-separator">›</span>
+    <span class="breadcrumb-current">{{ trophy_set.title }}</span>
+</nav>
+
+<!-- Game Header -->
+<div class="game-page-header">
+    <h1 class="game-page-title">{{ trophy_set.title }}</h1>
+    {% if game %}
+    <div class="header-buttons">
+        <a href="{{ url_for('games.game_detail', game_id=game.id) }}" class="btn btn-secondary">
+            <span class="btn-icon">🎮</span>
+            View Game
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Game Hero Section -->
+<div class="game-compact-layout">
+    <div class="game-hero">
+        <!-- Boxart -->
+        <div class="hero-boxart">
+            {% if game and game.boxart %}
+            <img src="{{ url_for('static', filename='images/boxart/' + game.boxart) }}" 
+                 alt="{{ trophy_set.title }}" class="game-boxart-image">
+            {% else %}
+            <img src="{{ url_for('static', filename='images/trophies/' + npwr_id + '/ICON0.PNG') }}" 
+                 alt="{{ trophy_set.title }}" class="game-boxart-image"
+                 onerror="this.src='{{ url_for('static', filename='images/placeholder.png') }}'">
+            {% endif %}
+            
+            {% if game and (game.esrb_rating or game.pegi_rating) %}
+            <div class="boxart-rating-badge">
+                {% if game.esrb_rating %}
+                <div class="esrb-badge esrb-{{ game.esrb_rating|lower|replace('+', 'plus') }}">
+                    <span class="esrb-rating">{{ game.esrb_rating }}</span>
+                    <span class="esrb-label">ESRB</span>
+                </div>
+                {% elif game.pegi_rating %}
+                <div class="pegi-badge">
+                    <span class="pegi-rating">{{ game.pegi_rating|replace('PEGI ', '') }}</span>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Core Info -->
+        <div class="hero-info">
+            <!-- Quick Tags Row -->
+            <div class="quick-tags">
+                <span class="tag tag-system">📁 Sony PlayStation 3</span>
+                {% if game and game.release_date %}<span class="tag tag-date">📅 {{ game.release_date[:4] if game.release_date|length > 4 else game.release_date }}</span>{% endif %}
+                {% if game and game.players %}<span class="tag tag-players">👥 {{ game.players }} Player{% if game.players != '1' and game.players != 1 %}s{% endif %}</span>{% endif %}
+                {% if game and game.region %}<span class="tag tag-region">🌍 {{ game.region }}</span>{% endif %}
+            </div>
+            
+            <!-- Description -->
+            <div class="hero-description">
+                {% if game and game.description %}
+                {{ game.description[:500] }}{% if game.description|length > 500 %}...{% endif %}
+                {% else %}
+                <span class="text-muted">No description available. Trophy ID: {{ npwr_id }}</span>
+                {% endif %}
+            </div>
+            
+            <!-- Key Details -->
+            {% if game %}
+            <div class="key-details">
+                {% if game.publisher %}
+                <div class="kd-item">
+                    <span class="kd-label">Publisher</span>
+                    <span class="kd-value">{{ game.publisher }}</span>
+                </div>
+                {% endif %}
+                {% if game.developer %}
+                <div class="kd-item">
+                    <span class="kd-label">Developer</span>
+                    <span class="kd-value">{{ game.developer }}</span>
+                </div>
+                {% endif %}
+                {% if game.genre %}
+                <div class="kd-item">
+                    <span class="kd-label">Genre</span>
+                    <span class="kd-value">{{ game.genre }}</span>
+                </div>
+                {% endif %}
+                {% if game.franchise %}
+                <div class="kd-item">
+                    <span class="kd-label">Franchise</span>
+                    <span class="kd-value">{{ game.franchise }}</span>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Trophy Summary Bar -->
+    {% set counts = trophy_set.get_trophy_counts() %}
+    {% set total_unlocked = counts.P[0] + counts.G[0] + counts.S[0] + counts.B[0] %}
+    {% set total_trophies = counts.P[1] + counts.G[1] + counts.S[1] + counts.B[1] %}
+    
+    <section class="card mb-xl">
+        <div class="card-body">
+            <div class="trophy-summary">
+                <div class="trophy-summary-header">
+                    <span class="trophy-summary-title">🏆 Trophy Progress</span>
+                    <span class="trophy-summary-total">{{ total_unlocked|format_number }} / {{ total_trophies|format_number }}</span>
+                </div>
+                <div class="trophy-summary-progress">
+                    <div class="trophy-progress-bar large">
+                        <div class="trophy-progress-fill" style="width: {{ trophy_set.completion_percentage|round(1) }}%"></div>
+                    </div>
+                    <span class="trophy-progress-percent">{{ trophy_set.completion_percentage|round(1) }}%</span>
+                </div>
+                <div class="trophy-summary-counts">
+                    <span class="trophy-count platinum">
+                        <img src="{{ url_for('static', filename='images/trophies/platinum.png') }}" alt="P" onerror="this.outerHTML='🏆'">
+                        {{ counts.P[0]|format_number }} / {{ counts.P[1]|format_number }}
+                    </span>
+                    <span class="trophy-count gold">
+                        <img src="{{ url_for('static', filename='images/trophies/gold.png') }}" alt="G" onerror="this.outerHTML='🥇'">
+                        {{ counts.G[0]|format_number }} / {{ counts.G[1]|format_number }}
+                    </span>
+                    <span class="trophy-count silver">
+                        <img src="{{ url_for('static', filename='images/trophies/silver.png') }}" alt="S" onerror="this.outerHTML='🥈'">
+                        {{ counts.S[0]|format_number }} / {{ counts.S[1]|format_number }}
+                    </span>
+                    <span class="trophy-count bronze">
+                        <img src="{{ url_for('static', filename='images/trophies/bronze.png') }}" alt="B" onerror="this.outerHTML='🥉'">
+                        {{ counts.B[0]|format_number }} / {{ counts.B[1]|format_number }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bottom Row: How Long to Beat + More Details -->
+    <div class="bottom-row">
+        <!-- Playtime Estimate -->
+        <div class="bottom-section">
+            <h3 class="section-title-sm">⏱️ How Long to Beat</h3>
+            <div class="hltb-section" id="hltbSection">
+                {% if game and game.playtime_estimate %}
+                <!-- Match Header -->
+                {% if game.hltb_match_name %}
+                <div class="hltb-match-header">
+                    <span class="hltb-match-title">{{ game.hltb_match_name }}</span>
+                    {% if game.hltb_match_platform %}<span class="hltb-match-platform">{{ game.hltb_match_platform }}</span>{% endif %}
+                    {% if game.hltb_match_confidence %}<span class="hltb-match-confidence">{{ [(game.hltb_match_confidence * 100) | round | int, 100] | min }}% match</span>{% endif %}
+                </div>
+                {% endif %}
+                <!-- Time Rows -->
+                <div class="hltb-results">
+                    {% set playtime_parts = game.playtime_estimate.split(' | ') %}
+                    {% for part in playtime_parts %}
+                    {% set kv = part.split(': ') %}
+                    <div class="hltb-time-row">
+                        <span class="hltb-label">{% if kv[0] == 'Main' %}Main Story{% elif kv[0] == 'Main+Extras' %}Main + Extras{% elif kv[0] == '100%' %}Completionist{% else %}{{ kv[0] }}{% endif %}</span>
+                        <span class="hltb-value">{{ kv[1] if kv|length > 1 else '--' }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="hltb-actions">
+                    <button class="btn btn-sm btn-secondary" onclick="lookupHLTB()" id="hltbBtn">
+                        <span class="btn-icon">🔄</span> Refresh
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="clearHLTB()">
+                        <span class="btn-icon">✕</span> Clear
+                    </button>
+                </div>
+                {% else %}
+                <div class="hltb-empty">No playtime data</div>
+                {% if game %}
+                <div class="hltb-actions">
+                    <button class="btn btn-sm btn-secondary" onclick="lookupHLTB()" id="hltbBtn">
+                        <span class="btn-icon">🔍</span> Lookup HLTB
+                    </button>
+                </div>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- More Details -->
+        <div class="bottom-section">
+            <h3 class="section-title-sm">📋 More Details</h3>
+            <div class="more-details">
+                <div class="md-item" style="grid-column: span 2;">
+                    <span class="md-label">Trophy ID</span>
+                    <span class="md-value" style="font-family: var(--font-mono); font-size: 0.85rem;">{{ npwr_id }}</span>
+                </div>
+                <div class="md-item">
+                    <span class="md-label">First Trophy</span>
+                    <span class="md-value">{{ first_trophy_date|tz('short') if first_trophy_date else 'Never' }}</span>
+                </div>
+                <div class="md-item">
+                    <span class="md-label">Last Trophy</span>
+                    <span class="md-value">{{ last_trophy_date|tz('short') if last_trophy_date else 'Never' }}</span>
+                </div>
+                {% if game %}
+                <div class="md-item">
+                    <span class="md-label">Modes</span>
+                    <span class="md-value">{{ game.modes or 'Unknown' }}</span>
+                </div>
+                <div class="md-item">
+                    <span class="md-label">Save</span>
+                    <span class="md-value">{{ game.save_type or 'Unknown' }}</span>
+                </div>
+                <div class="md-item" style="grid-column: span 2;">
+                    <span class="md-label">Input</span>
+                    <span class="md-value">{{ game.input_type or 'Standard Controller' }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Trophy Lists -->
+<div class="trophy-columns">
+    <!-- Unlocked Column -->
+    <section class="card trophy-column">
+        <div class="card-header">
+            <h2 class="card-title">✓ Unlocked ({{ unlocked|length }})</h2>
+        </div>
+        <div class="card-body">
+            <div class="trophy-list">
+                {% if unlocked %}
+                    {% for trophy in unlocked %}
+                    <div class="trophy-item unlocked">
+                        <div class="trophy-item-icon">
+                            <img src="{{ url_for('static', filename='images/trophies/' + npwr_id + '/TROP' + '%03d'|format(trophy.trophy_id) + '.PNG') }}" 
+                                 alt="{{ trophy.name }}"
+                                 onerror="this.src='{{ url_for('static', filename='images/trophies/default_trophy.png') }}'">
+                            <img src="{{ url_for('static', filename='images/trophies/' + (trophy.trophy_type|trophy_type_name) + '.png') }}" 
+                                 class="trophy-type-badge" 
+                                 alt="{{ trophy.trophy_type }}"
+                                 onerror="this.style.display='none'">
+                        </div>
+                        <div class="trophy-item-info">
+                            <div class="trophy-item-name">{{ trophy.name }}</div>
+                            <div class="trophy-item-desc">{{ trophy.description }}</div>
+                            <div class="trophy-item-meta">
+                                <span class="trophy-type-label {{ trophy.trophy_type|lower }}">{{ trophy.trophy_type_name }}</span>
+                                {% if trophy.unlock_timestamp %}
+                                <span class="trophy-timestamp">🕐 {{ trophy.unlock_timestamp|tz('short') }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="trophy-empty">No trophies unlocked yet</div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    
+    <!-- Locked Column -->
+    <section class="card trophy-column">
+        <div class="card-header">
+            <h2 class="card-title">🔒 Locked ({{ locked|length }})</h2>
+        </div>
+        <div class="card-body">
+            <div class="trophy-list">
+                {% if locked %}
+                    {% for trophy in locked %}
+                    <div class="trophy-item locked">
+                        <div class="trophy-item-icon">
+                            <img src="{{ url_for('static', filename='images/trophies/' + npwr_id + '/TROP' + '%03d'|format(trophy.trophy_id) + '.PNG') }}" 
+                                 alt="{{ trophy.name }}"
+                                 onerror="this.src='{{ url_for('static', filename='images/trophies/default_trophy.png') }}'">
+                            <img src="{{ url_for('static', filename='images/trophies/' + (trophy.trophy_type|trophy_type_name) + '.png') }}" 
+                                 class="trophy-type-badge" 
+                                 alt="{{ trophy.trophy_type }}"
+                                 onerror="this.style.display='none'">
+                        </div>
+                        <div class="trophy-item-info">
+                            <div class="trophy-item-name">{{ trophy.name }}</div>
+                            <div class="trophy-item-desc">{{ trophy.description }}</div>
+                            <div class="trophy-item-meta">
+                                <span class="trophy-type-label {{ trophy.trophy_type|lower }}">{{ trophy.trophy_type_name }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="trophy-empty">All trophies unlocked! 🎉</div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endblock %}
+
+{% block styles %}
+{# All styles now in static/css/pages/pages.css #}
+{% endblock %}
+
+{% block scripts %}
+<script>
+{% if game %}
+async function lookupHLTB() {
+    const btn = document.getElementById('hltbBtn');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="btn-icon">⏳</span> Searching...';
+    }
+
+    try {
+        const response = await fetch('/api/hltb-lookup/{{ game.id }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ preview: true })
+        });
+        const data = await response.json();
+
+        if (data.success && data.playtime) {
+            // Format time helper
+            const formatTime = (hours) => {
+                if (!hours || hours === 0) return '--';
+                if (hours < 1) return Math.round(hours * 60) + ' mins';
+                return hours.toFixed(1).replace('.0', '') + ' hrs';
+            };
+
+            const confidence = data.confidence ? Math.min(Math.round(data.confidence * 100), 100) : null;
+            const platformInfo = data.match_platform ? ` [${data.match_platform}]` : '';
+
+            showConfirm(
+                '✅ HLTB Match Found',
+                `Found: "${data.match_name}"${platformInfo} (${confidence}% confidence)\n\nPlaytime: ${data.playtime}\n\nAccept this match?`,
+                async function() {
+                    // Save the result
+                    await fetch('/api/hltb-save/{{ game.id }}', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            playtime: data.playtime,
+                            match_name: data.match_name,
+                            match_platform: data.match_platform,
+                            confidence: data.confidence
+                        })
+                    });
+
+                    // Update display
+                    const section = document.getElementById('hltbSection');
+                    let matchHeader = '';
+                    if (data.match_name) {
+                        matchHeader = `
+                            <div class="hltb-match-header">
+                                <span class="hltb-match-title">${data.match_name}</span>
+                                ${data.match_platform ? `<span class="hltb-match-platform">${data.match_platform}</span>` : ''}
+                                ${confidence ? `<span class="hltb-match-confidence">${confidence}% match</span>` : ''}
+                            </div>`;
+                    }
+
+                    section.innerHTML = `
+                        ${matchHeader}
+                        <div class="hltb-results">
+                            <div class="hltb-time-row">
+                                <span class="hltb-label">Main Story</span>
+                                <span class="hltb-value">${formatTime(data.main_story)}</span>
+                            </div>
+                            <div class="hltb-time-row">
+                                <span class="hltb-label">Main + Extras</span>
+                                <span class="hltb-value">${formatTime(data.main_plus_sides)}</span>
+                            </div>
+                            <div class="hltb-time-row">
+                                <span class="hltb-label">Completionist</span>
+                                <span class="hltb-value">${formatTime(data.completionist)}</span>
+                            </div>
+                        </div>
+                        <div class="hltb-actions">
+                            <button class="btn btn-sm btn-secondary" onclick="lookupHLTB()" id="hltbBtn">
+                                <span class="btn-icon">🔄</span> Refresh
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="clearHLTB()">
+                                <span class="btn-icon">✕</span> Clear
+                            </button>
+                        </div>`;
+                }
+            );
+
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<span class="btn-icon">🔄</span> Refresh';
+            }
+        } else {
+            showModal('❌ HLTB Lookup Failed', data.error || 'No match found.');
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<span class="btn-icon">🔍</span> Lookup HLTB';
+            }
+        }
+    } catch (error) {
+        showModal('❌ Error', 'Error: ' + error.message);
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<span class="btn-icon">🔍</span> Lookup HLTB';
+        }
+    }
+}
+
+async function clearHLTB() {
+    showConfirm(
+        '🗑️ Clear HLTB Data',
+        'Are you sure you want to remove the HLTB playtime data?',
+        async function() {
+            try {
+                await fetch('/api/hltb-clear/{{ game.id }}', { method: 'POST' });
+
+                const section = document.getElementById('hltbSection');
+                section.innerHTML = `
+                    <div class="hltb-empty">No playtime data</div>
+                    <div class="hltb-actions">
+                        <button class="btn btn-sm btn-secondary" onclick="lookupHLTB()" id="hltbBtn">
+                            <span class="btn-icon">🔍</span> Lookup HLTB
+                        </button>
+                    </div>`;
+            } catch (error) {
+                showModal('❌ Error', 'Failed to clear HLTB data.');
+            }
+        }
+    );
+}
+{% endif %}
+</script>
+{% endblock %}

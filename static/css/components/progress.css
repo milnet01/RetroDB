@@ -1,0 +1,377 @@
+/* =============================================================================
+   RETRODB - PROGRESS BARS
+   Progress indicators and loading states
+   ============================================================================= */
+
+/* =============================================================================
+   STANDARD PROGRESS BAR
+   ============================================================================= */
+
+.progress-container {
+    background: #1a1a3e;
+    border: 2px solid var(--neon-cyan);
+    border-radius: var(--radius-md);
+    height: 36px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 15px rgba(76, 201, 240, 0.3);
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-cyan), #7209b3);
+    border-radius: calc(var(--radius-md) - 2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+    transition: width 0.3s ease;
+    min-width: 0;
+}
+
+.progress-bar[data-percent="0"] {
+    min-width: 0;
+    width: 0%;
+}
+
+.progress-bar:not([data-percent="0"]) {
+    min-width: 60px;
+}
+
+.progress-stats {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+/* =============================================================================
+   SMALL PROGRESS BAR
+   ============================================================================= */
+
+.progress-container-sm {
+    height: 24px;
+    border-width: 1px;
+}
+
+.progress-container-sm .progress-bar {
+    font-size: 0.75rem;
+}
+
+/* =============================================================================
+   LOADING STATES
+   ============================================================================= */
+
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-2xl);
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--card-border);
+    border-top-color: var(--primary-cyan);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loading-spinner-small {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--card-border);
+    border-top-color: var(--primary-cyan);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loading-text {
+    margin-left: var(--spacing-md);
+    color: var(--text-secondary);
+}
+
+/* =============================================================================
+   LOADING OVERLAY
+   ============================================================================= */
+
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 14, 23, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.loading-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.loading-content .loading-text {
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: var(--font-primary);
+    margin-left: 0;
+}
+
+/* =============================================================================
+   EMPTY STATES
+   ============================================================================= */
+
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-2xl);
+    color: var(--text-secondary);
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-md);
+    opacity: 0.5;
+}
+
+.empty-state-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.empty-state-text {
+    margin-bottom: var(--spacing-lg);
+}
+
+/* =============================================================================
+   SCAN LOG
+   ============================================================================= */
+
+.scan-log-container {
+    background: var(--bg-darker);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    margin-top: var(--spacing-lg);
+}
+
+.scan-log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--bg-dark);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.scan-log-header h4 {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.scan-log-content {
+    height: 200px;
+    overflow-y: auto;
+    padding: 0.75rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    line-height: 1.6;
+}
+
+.scan-log-content .log-entry {
+    color: var(--text-secondary);
+    padding: 0.15rem 0;
+}
+
+.scan-log-content .log-entry.info {
+    color: var(--primary-cyan);
+}
+
+.scan-log-content .log-entry.warning {
+    color: var(--neon-orange);
+}
+
+.scan-log-content .log-entry.error {
+    color: var(--neon-red);
+}
+
+/* =============================================================================
+   RATE LIMITS / USAGE DISPLAY
+   Status cards with color-coded borders, usage bars, and detail text.
+   Used on Settings page; generic enough for any API quota/usage display.
+   ============================================================================= */
+
+.rate-limits-container {
+    background: var(--bg-darker, #0d1117);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.rate-limit-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--card-border);
+}
+
+.rate-limit-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-md);
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--text-muted);
+}
+
+.rate-limit-item.status-green {
+    border-left-color: var(--neon-green);
+}
+
+.rate-limit-item.status-yellow {
+    border-left-color: var(--neon-orange);
+}
+
+.rate-limit-item.status-red {
+    border-left-color: var(--neon-red);
+}
+
+.rate-limit-item.status-gray {
+    border-left-color: var(--text-muted);
+}
+
+.rate-limit-item strong {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.rate-limit-value {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.rate-limit-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 4px 0;
+}
+
+.rate-limit-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease;
+}
+
+.rate-limit-detail {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+/* =============================================================================
+   TOOL PROGRESS BAR (ROM Tools variant)
+   Thinner variant used by Archive Scanner, CHD tools, Duplicate Finder, etc.
+   ============================================================================= */
+
+.progress-bar-container {
+    background: #1a1a3e;
+    border: 2px solid var(--neon-cyan);
+    border-radius: var(--radius-md);
+    height: 36px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 0 15px rgba(76, 201, 240, 0.3);
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-cyan), #7209b3);
+    width: 0%;
+    transition: width 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+    border-radius: calc(var(--radius-md) - 2px);
+}
+
+.progress-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--bg-darker);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    margin-top: 0.75rem;
+}
+
+.progress-status {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.progress-status strong {
+    color: var(--primary-cyan);
+}
+
+/* =============================================================================
+   SCANNER SECTION
+   Configuration card for scan tools (Reports, Archive Scanner, etc.)
+   ============================================================================= */
+
+.scanner-section {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.scanner-section h3 {
+    color: var(--text-primary);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.scanner-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+}

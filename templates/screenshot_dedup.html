@@ -1,0 +1,618 @@
+{% extends "base.html" %}
+
+{% block title %}ROM Tools - RetroDB{% endblock %}
+
+{% block styles %}
+<style>
+.progress-section {
+    margin-top: 1.5rem;
+}
+
+.progress-action {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.threshold-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.threshold-group input[type="range"] {
+    flex: 1;
+    max-width: 200px;
+    accent-color: var(--primary-cyan);
+}
+
+.threshold-group .threshold-value {
+    font-family: var(--font-mono);
+    color: var(--primary-cyan);
+    min-width: 2ch;
+}
+
+.game-dedup-group {
+    background: var(--bg-darker);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.game-dedup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--bg-dark);
+    cursor: pointer;
+}
+
+.game-dedup-header:hover {
+    background: rgba(76, 201, 240, 0.05);
+}
+
+.game-dedup-header h4 {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.game-dedup-header .game-system {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: normal;
+}
+
+.game-dedup-header .group-stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.game-dedup-header .group-stats .reclaimable {
+    color: var(--accent-pink);
+}
+
+.game-dedup-body {
+    border-top: 1px solid var(--border-color);
+    padding: 1rem;
+}
+
+.dup-set {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dup-set:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.dup-set-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.dup-set-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.75rem;
+}
+
+.dup-thumb {
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.dup-thumb:hover {
+    border-color: var(--primary-cyan);
+}
+
+.dup-thumb.keep {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
+}
+
+.dup-thumb.delete {
+    opacity: 0.5;
+}
+
+.dup-thumb img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+    background: var(--bg-darkest);
+}
+
+.dup-thumb-info {
+    padding: 0.4rem 0.5rem;
+    background: var(--bg-medium);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.dup-thumb-info .filename {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+.dup-thumb-info .filesize {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.dup-thumb-radio {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    z-index: 1;
+}
+
+.dup-thumb-radio input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--neon-green);
+    cursor: pointer;
+}
+
+.dup-thumb .keep-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: var(--neon-green);
+    color: var(--bg-darkest);
+    font-size: 0.65rem;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    display: none;
+}
+
+.dup-thumb.keep .keep-badge {
+    display: block;
+}
+
+.dedup-results-scroll {
+    max-height: 600px;
+    overflow-y: auto;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>ROM Tools</h1>
+    <p>Manage, organize, and optimize your ROM collection.</p>
+</div>
+
+<!-- Tool Tabs -->
+<nav class="tool-tabs">
+    <a href="{{ url_for('tools.archive_scanner') }}" class="tool-tab">
+        <span class="tab-icon">📦</span>
+        <span class="tab-label">Archive Scanner</span>
+    </a>
+    <a href="{{ url_for('tools.chd_converter') }}" class="tool-tab">
+        <span class="tab-icon">💿</span>
+        <span class="tab-label">CHD Converter</span>
+    </a>
+    <a href="{{ url_for('tools.chd_verify') }}" class="tool-tab">
+        <span class="tab-icon">✅</span>
+        <span class="tab-label">CHD Verify</span>
+    </a>
+    <a href="{{ url_for('tools.multi_disc_organizer') }}" class="tool-tab">
+        <span class="tab-icon">💽</span>
+        <span class="tab-label">Multi-Disc Organizer</span>
+    </a>
+    <a href="{{ url_for('tools.duplicate_finder') }}" class="tool-tab">
+        <span class="tab-icon">🔍</span>
+        <span class="tab-label">Duplicate Finder</span>
+    </a>
+    <a href="{{ url_for('tools.screenshot_dedup') }}" class="tool-tab active">
+        <span class="tab-icon">📸</span>
+        <span class="tab-label">Screenshot Dedup</span>
+    </a>
+    <a href="{{ url_for('tools.rom_tools_settings') }}" class="tool-tab">
+        <span class="tab-icon">⚙️</span>
+        <span class="tab-label">Settings</span>
+    </a>
+</nav>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><span>📸</span> Scan Configuration</h2>
+    </div>
+    <div class="card-body">
+        <div class="form-row" style="display: flex; gap: 1rem; align-items: end; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 1; min-width: 200px;">
+                <label>Detection Method</label>
+                <select class="styled-select" id="scanMethod" onchange="toggleThreshold()">
+                    <option value="hash">Exact Hash (MD5) &mdash; identical files only</option>
+                    <option value="visual">Visual Similarity &mdash; perceptual hash comparison</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="thresholdGroup" style="display: none;">
+                <label>Similarity Threshold</label>
+                <div class="threshold-group">
+                    <input type="range" id="threshold" min="1" max="20" value="10"
+                           oninput="document.getElementById('thresholdVal').textContent = this.value">
+                    <span class="threshold-value" id="thresholdVal">10</span>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Lower = stricter</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button class="btn btn-primary" id="scanBtn" onclick="startScan()">
+                    <span class="btn-icon" data-themed-icon="running"></span> Start Scan
+                </button>
+                <button class="btn btn-danger" id="cancelBtn" onclick="cancelScan()" style="display: none;">
+                    Cancel
+                </button>
+            </div>
+        </div>
+
+        <div class="progress-section" id="progressSection" style="display: none;">
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progressBar">0%</div>
+            </div>
+            <div class="progress-details">
+                <div class="progress-status">
+                    <strong id="progressCount">0</strong> / <span id="progressTotal">0</span> games scanned
+                </div>
+                <div class="progress-action" id="progressAction">Initializing...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><span data-themed-icon="stat-success"></span> Scan Results</h2>
+    </div>
+    <div class="card-body">
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-value" id="statScanned">0</div>
+                <div class="stat-label">Games Scanned</div>
+            </div>
+            <div class="stat-box warning">
+                <div class="stat-value" id="statGamesWithDupes">0</div>
+                <div class="stat-label">Games with Duplicates</div>
+            </div>
+            <div class="stat-box danger">
+                <div class="stat-value" id="statDuplicates">0</div>
+                <div class="stat-label">Total Duplicates</div>
+            </div>
+            <div class="stat-box danger">
+                <div class="stat-value" id="statReclaimable">0 B</div>
+                <div class="stat-label">Space Reclaimable</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card" id="resultsCard" style="display: none;">
+    <div class="card-header">
+        <h2 class="card-title"><span>📸</span> Duplicate Groups</h2>
+        <div class="card-actions">
+            <button class="btn btn-secondary btn-sm" onclick="selectLargest()">Keep Largest</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteSelected()">Delete Unselected</button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="dedup-results-scroll" id="dedupResults"></div>
+    </div>
+</div>
+
+<!-- Log Section -->
+<div class="scan-log-container" id="logContainer" style="display: none;">
+    <div class="scan-log-header">
+        <h4>Scan Log</h4>
+        <button class="btn btn-sm btn-danger" onclick="clearLog()">Clear</button>
+    </div>
+    <div class="scan-log-content" id="scanLog"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/rom-tools.js') }}?v={{ config.APP_VERSION }}"></script>
+<script>
+let dedupGroups = [];
+let currentTaskId = null;
+
+function toggleThreshold() {
+    const method = document.getElementById('scanMethod').value;
+    document.getElementById('thresholdGroup').style.display = method === 'visual' ? '' : 'none';
+}
+
+async function startScan() {
+    const method = document.getElementById('scanMethod').value;
+    const threshold = parseInt(document.getElementById('threshold').value, 10);
+
+    document.getElementById('scanBtn').disabled = true;
+    document.getElementById('scanBtn').innerHTML = '<span class="btn-icon">' + getThemedIcon('loading') + '</span> Scanning...';
+    document.getElementById('cancelBtn').style.display = '';
+    document.getElementById('progressSection').style.display = 'block';
+    document.getElementById('logContainer').style.display = 'block';
+    document.getElementById('scanLog').innerHTML = '';
+    document.getElementById('resultsCard').style.display = 'none';
+    document.getElementById('progressBar').style.width = '0%';
+    document.getElementById('progressBar').textContent = '0%';
+    dedupGroups = [];
+
+    addLogEntry('Starting screenshot dedup scan (' + method + ')', 'info');
+
+    try {
+        const response = await fetch('/api/rom-tools/screenshot-dedup/scan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ method, threshold })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            currentTaskId = data.task_id;
+            TaskPoller.start(data.task_id, {
+                onProgress(task) {
+                    const percent = task.percent || 0;
+                    document.getElementById('progressBar').style.width = percent + '%';
+                    document.getElementById('progressBar').textContent = percent + '%';
+                    document.getElementById('progressCount').textContent = formatNumber(task.progress || 0);
+                    document.getElementById('progressTotal').textContent = formatNumber(task.total || 0);
+                    document.getElementById('progressAction').textContent = task.current_file || 'Processing...';
+
+                    if (task.results) {
+                        document.getElementById('statScanned').textContent = formatNumber(task.results.games_scanned || 0);
+                        document.getElementById('statGamesWithDupes').textContent = formatNumber(task.results.games_with_dupes || 0);
+                        document.getElementById('statDuplicates').textContent = formatNumber(task.results.total_duplicates || 0);
+                        document.getElementById('statReclaimable').textContent = formatBytes(task.results.space_reclaimable || 0);
+                    }
+
+                    if (task.logs && task.logs.length > 0) {
+                        const logEl = document.getElementById('scanLog');
+                        const existing = logEl.querySelectorAll('.log-entry').length;
+                        for (let i = existing; i < task.logs.length; i++) {
+                            addLogEntry(task.logs[i]);
+                        }
+                    }
+                },
+                onComplete(task) {
+                    addLogEntry('Scan completed!', 'info');
+                    if (task.results && task.results.groups) {
+                        dedupGroups = task.results.groups;
+                        renderResults();
+                    }
+                    resetUI();
+                },
+                onError(task) {
+                    addLogEntry('Scan failed: ' + (task.error || 'Unknown error'), 'error');
+                    resetUI();
+                },
+                onCancel() {
+                    addLogEntry('Scan cancelled', 'warning');
+                    resetUI();
+                }
+            }, 500);
+        } else {
+            addLogEntry('Error: ' + data.error, 'error');
+            resetUI();
+        }
+    } catch (error) {
+        addLogEntry('Error: ' + error.message, 'error');
+        resetUI();
+    }
+}
+
+function addLogEntry(message, type) {
+    const logEl = document.getElementById('scanLog');
+    const entry = document.createElement('div');
+    entry.className = 'log-entry ' + (type || '');
+    entry.textContent = message;
+    logEl.appendChild(entry);
+    logEl.scrollTop = logEl.scrollHeight;
+}
+
+function clearLog() {
+    document.getElementById('scanLog').innerHTML = '';
+}
+
+function cancelScan() {
+    if (currentTaskId) {
+        fetch('/api/rom-tools/task/' + currentTaskId + '/cancel', { method: 'POST' });
+        TaskPoller.cancel();
+        addLogEntry('Cancelling scan...', 'warning');
+    }
+}
+
+function resetUI() {
+    document.getElementById('scanBtn').disabled = false;
+    document.getElementById('scanBtn').innerHTML = '<span class="btn-icon" data-themed-icon="running"></span> Start Scan';
+    document.getElementById('cancelBtn').style.display = 'none';
+    currentTaskId = null;
+}
+
+function renderResults() {
+    if (dedupGroups.length === 0) {
+        document.getElementById('resultsCard').style.display = 'none';
+        addLogEntry('No duplicate screenshots found!', 'info');
+        return;
+    }
+
+    document.getElementById('resultsCard').style.display = 'block';
+
+    let html = '';
+    dedupGroups.forEach(function(game, gi) {
+        const totalDupes = game.duplicate_sets.reduce(function(sum, s) { return sum + s.files.length - 1; }, 0);
+        const totalSize = game.duplicate_sets.reduce(function(sum, s) {
+            return sum + s.files.slice(1).reduce(function(ss, f) { return ss + f.size; }, 0);
+        }, 0);
+
+        html += '<div class="game-dedup-group">';
+        html += '<div class="game-dedup-header" onclick="toggleGame(' + gi + ')">';
+        html += '<h4><span id="arrow-' + gi + '">&#9660;</span> ' + escapeHtml(game.game_title);
+        html += ' <span class="game-system">(' + escapeHtml(game.system_name) + ')</span></h4>';
+        html += '<div class="group-stats">';
+        html += '<span>' + totalDupes + ' duplicate(s)</span>';
+        html += '<span class="reclaimable">' + formatBytes(totalSize) + '</span>';
+        html += '</div></div>';
+
+        html += '<div class="game-dedup-body" id="game-' + gi + '">';
+
+        game.duplicate_sets.forEach(function(dset, si) {
+            if (game.duplicate_sets.length > 1) {
+                html += '<div class="dup-set-label">Set ' + (si + 1) + '</div>';
+            }
+            html += '<div class="dup-set"><div class="dup-set-grid">';
+
+            dset.files.forEach(function(file, fi) {
+                var isKeep = fi === 0;
+                var radioName = 'g' + gi + 's' + si;
+                html += '<div class="dup-thumb ' + (isKeep ? 'keep' : 'delete') + '" id="thumb-' + gi + '-' + si + '-' + fi + '">';
+                html += '<div class="dup-thumb-radio">';
+                html += '<input type="radio" name="' + radioName + '" ' + (isKeep ? 'checked' : '');
+                html += ' data-gi="' + gi + '" data-si="' + si + '" data-fi="' + fi + '"';
+                html += ' onchange="updateThumbSelection(' + gi + ',' + si + ',' + fi + ')">';
+                html += '</div>';
+                html += '<span class="keep-badge">KEEP</span>';
+                html += '<img src="/static/images/screenshots/' + encodeURIComponent(file.filename) + '" loading="lazy" alt="">';
+                html += '<div class="dup-thumb-info">';
+                html += '<span class="filename" title="' + escapeHtml(file.filename) + '">' + escapeHtml(file.filename) + '</span>';
+                html += '<span class="filesize">' + formatBytes(file.size) + '</span>';
+                html += '</div></div>';
+            });
+
+            html += '</div></div>';
+        });
+
+        html += '</div></div>';
+    });
+
+    document.getElementById('dedupResults').innerHTML = html;
+}
+
+function toggleGame(gi) {
+    var body = document.getElementById('game-' + gi);
+    var arrow = document.getElementById('arrow-' + gi);
+    if (body.style.display === 'none') {
+        body.style.display = 'block';
+        arrow.innerHTML = '&#9660;';
+    } else {
+        body.style.display = 'none';
+        arrow.innerHTML = '&#9654;';
+    }
+}
+
+function updateThumbSelection(gi, si, fi) {
+    var dset = dedupGroups[gi].duplicate_sets[si];
+    dset.files.forEach(function(_, i) {
+        var el = document.getElementById('thumb-' + gi + '-' + si + '-' + i);
+        if (el) {
+            el.classList.remove('keep', 'delete');
+            el.classList.add(i === fi ? 'keep' : 'delete');
+        }
+    });
+}
+
+function selectLargest() {
+    dedupGroups.forEach(function(game, gi) {
+        game.duplicate_sets.forEach(function(dset, si) {
+            var largestIdx = 0;
+            var largestSize = 0;
+            dset.files.forEach(function(f, i) {
+                if (f.size > largestSize) {
+                    largestSize = f.size;
+                    largestIdx = i;
+                }
+            });
+            var radio = document.querySelector('input[name="g' + gi + 's' + si + '"][data-fi="' + largestIdx + '"]');
+            if (radio) {
+                radio.checked = true;
+                updateThumbSelection(gi, si, largestIdx);
+            }
+        });
+    });
+    showNotification('Selected largest file in each group', 'info');
+}
+
+async function deleteSelected() {
+    var deletions = [];
+
+    dedupGroups.forEach(function(game, gi) {
+        game.duplicate_sets.forEach(function(dset, si) {
+            dset.files.forEach(function(file, fi) {
+                var radio = document.querySelector('input[name="g' + gi + 's' + si + '"][data-fi="' + fi + '"]');
+                if (radio && !radio.checked) {
+                    deletions.push({ game_id: game.game_id, filename: file.filename });
+                }
+            });
+        });
+    });
+
+    if (deletions.length === 0) {
+        showNotification('No files selected for deletion', 'warning');
+        return;
+    }
+
+    showConfirm(
+        'Delete Duplicate Screenshots',
+        'Delete <strong>' + deletions.length + '</strong> duplicate screenshot(s)?<br><br>' +
+        'Files will be removed from disk and database references updated. This cannot be undone.',
+        async function() {
+            try {
+                var response = await fetch('/api/rom-tools/screenshot-dedup/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ deletions: deletions })
+                });
+
+                var data = await response.json();
+
+                if (data.success) {
+                    showNotification(
+                        'Deleted ' + data.results.deleted + ' files, freed ' + formatBytes(data.results.freed_space) +
+                        ', updated ' + data.results.db_updated + ' game(s)',
+                        'success'
+                    );
+                    // Re-scan to refresh results
+                    startScan();
+                } else {
+                    showNotification(data.error || 'Failed to delete', 'error');
+                }
+            } catch (error) {
+                showNotification('Failed to delete: ' + error.message, 'error');
+            }
+        }
+    );
+}
+</script>
+{% endblock %}

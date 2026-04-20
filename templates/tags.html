@@ -1,0 +1,582 @@
+{% extends "base.html" %}
+
+{% block title %}Tags - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Tags</h1>
+        <p class="page-subtitle">Organize your collection with custom tags</p>
+    </div>
+    <div class="page-actions">
+        <button class="btn btn-primary" onclick="openCreateTagModal()">
+            <span class="btn-icon">+</span> New Tag
+        </button>
+    </div>
+</div>
+
+<!-- Tags Grid -->
+<div class="tags-grid" id="tagsGrid">
+    <!-- Populated by JavaScript -->
+</div>
+
+<!-- Empty State -->
+<div class="empty-state" id="tagsEmptyState" style="display: none;">
+    <div class="empty-state-icon">🏷️</div>
+    <div class="empty-state-title">No Tags Yet</div>
+    <div class="empty-state-text">
+        Create your first tag to start organizing your collection.
+    </div>
+    <button class="btn btn-primary" onclick="openCreateTagModal()">
+        <span class="btn-icon">+</span> Create Tag
+    </button>
+</div>
+
+<!-- Create/Edit Tag Modal -->
+<div class="custom-modal" id="tagModal" onclick="if(event.target===this)closeTagModal()">
+    <div class="custom-modal-content" style="max-width: 450px;" role="dialog" aria-modal="true" aria-labelledby="tagModalTitle">
+        <div class="custom-modal-header">
+            <h3 id="tagModalTitle">New Tag</h3>
+            <button class="custom-modal-close" onclick="closeTagModal()" aria-label="Close">&times;</button>
+        </div>
+        <div class="custom-modal-body">
+            <input type="hidden" id="tagEditId" value="">
+            <div class="form-group">
+                <label class="form-label" for="tagNameInput">Tag Name</label>
+                <input type="text" id="tagNameInput" class="form-control" placeholder="e.g., Favorites, Backlog, Co-op..." maxlength="50">
+            </div>
+            <div class="form-group" style="margin-top: var(--spacing-md);">
+                <label class="form-label">Tag Color</label>
+                <div class="tag-color-picker" id="tagColorPicker">
+                    <button type="button" class="tag-color-swatch active" data-color="#4cc9f0" style="background: #4cc9f0;" onclick="selectTagColor(this)" title="Cyan"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#f72585" style="background: #f72585;" onclick="selectTagColor(this)" title="Magenta"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#22c55e" style="background: #22c55e;" onclick="selectTagColor(this)" title="Green"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#ef4444" style="background: #ef4444;" onclick="selectTagColor(this)" title="Red"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#f59e0b" style="background: #f59e0b;" onclick="selectTagColor(this)" title="Orange"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#a855f7" style="background: #a855f7;" onclick="selectTagColor(this)" title="Purple"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#3b82f6" style="background: #3b82f6;" onclick="selectTagColor(this)" title="Blue"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#ec4899" style="background: #ec4899;" onclick="selectTagColor(this)" title="Pink"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#14b8a6" style="background: #14b8a6;" onclick="selectTagColor(this)" title="Teal"></button>
+                    <button type="button" class="tag-color-swatch" data-color="#64748b" style="background: #64748b;" onclick="selectTagColor(this)" title="Gray"></button>
+                </div>
+            </div>
+        </div>
+        <div class="custom-modal-footer">
+            <button class="btn btn-secondary" onclick="closeTagModal()">Cancel</button>
+            <button class="btn btn-primary" id="tagSaveBtn" onclick="saveTag()">Create Tag</button>
+        </div>
+    </div>
+</div>
+
+<!-- Tag Games Expanded Panel -->
+<div class="tag-games-panel" id="tagGamesPanel" style="display: none;">
+    <div class="tag-games-header">
+        <div class="tag-games-title-row">
+            <span class="tag-pill-lg" id="tagGamesPill"></span>
+            <h2 class="tag-games-name" id="tagGamesName"></h2>
+            <span class="tag-games-count" id="tagGamesCount"></span>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="closeTagGamesPanel()">Close</button>
+    </div>
+    <div class="tag-games-grid" id="tagGamesGrid">
+        <!-- Populated by JavaScript -->
+    </div>
+    <div class="tag-games-empty" id="tagGamesEmpty" style="display: none;">
+        No games have this tag yet. Add tags to games from the game detail page.
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+/* Tags Grid */
+.tags-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+}
+
+/* Tag Card */
+.tag-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+}
+
+.tag-card:hover {
+    border-color: var(--primary-cyan);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.tag-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-md);
+}
+
+.tag-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 14px;
+    border-radius: var(--radius-full);
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.3px;
+}
+
+.tag-card-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.tag-card:hover .tag-card-actions {
+    opacity: 1;
+}
+
+.tag-action-btn {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all var(--transition-fast);
+}
+
+.tag-action-btn:hover {
+    background: var(--bg-lighter);
+    color: var(--text-primary);
+}
+
+.tag-action-btn.danger:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--neon-red);
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.tag-card-count {
+    font-family: var(--font-mono);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.tag-card-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: var(--spacing-xs);
+}
+
+/* Color Picker */
+.tag-color-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.tag-color-swatch {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    padding: 0;
+}
+
+.tag-color-swatch:hover {
+    transform: scale(1.15);
+}
+
+.tag-color-swatch.active {
+    border-color: #fff;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
+/* Tag Games Panel */
+.tag-games-panel {
+    margin-top: var(--spacing-xl);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+}
+
+.tag-games-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tag-games-title-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.tag-pill-lg {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+}
+
+.tag-games-name {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.tag-games-count {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.tag-games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.tag-game-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all var(--transition-fast);
+    font-size: 0.9rem;
+}
+
+.tag-game-item:hover {
+    border-color: var(--primary-cyan);
+    background: var(--bg-light);
+}
+
+.tag-game-thumb {
+    width: 36px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    background: var(--bg-darker);
+}
+
+.tag-game-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.tag-game-title {
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tag-game-system {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.tag-games-empty {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-label {
+    display: block;
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--spacing-xs);
+}
+
+.form-control {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-darker);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color var(--transition-fast);
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    border-color: var(--primary-cyan);
+}
+
+@media (max-width: 768px) {
+    .tags-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .tag-games-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .tags-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let allTags = [];
+let selectedTagColor = '#4cc9f0';
+let expandedTagId = null;
+
+document.addEventListener('DOMContentLoaded', loadTags);
+
+async function loadTags() {
+    try {
+        const resp = await fetch('/api/tags');
+        const data = await resp.json();
+        if (data.success) {
+            allTags = data.tags || [];
+            renderTags();
+        }
+    } catch (e) {
+        console.error('Error loading tags:', e);
+    }
+}
+
+function renderTags() {
+    const grid = document.getElementById('tagsGrid');
+    const empty = document.getElementById('tagsEmptyState');
+
+    if (allTags.length === 0) {
+        grid.style.display = 'none';
+        empty.style.display = '';
+        return;
+    }
+
+    grid.style.display = '';
+    empty.style.display = 'none';
+
+    grid.innerHTML = allTags.map(tag => `
+        <div class="tag-card" onclick="toggleTagGames(${tag.id})" data-tag-id="${tag.id}">
+            <div class="tag-card-top">
+                <span class="tag-pill" style="background: ${escapeHtml(tag.color || '#4cc9f0')};">${escapeHtml(tag.name)}</span>
+                <div class="tag-card-actions" onclick="event.stopPropagation();">
+                    <button class="tag-action-btn" onclick="openEditTagModal(${tag.id})" title="Edit tag">&#9998;</button>
+                    <button class="tag-action-btn danger" onclick="confirmDeleteTag(${tag.id}, '${escapeHtml(tag.name)}')" title="Delete tag">&#10005;</button>
+                </div>
+            </div>
+            <div class="tag-card-count">${formatNumber(tag.game_count || 0)}</div>
+            <div class="tag-card-label">game${(tag.game_count || 0) !== 1 ? 's' : ''}</div>
+        </div>
+    `).join('');
+}
+
+function openCreateTagModal() {
+    document.getElementById('tagModalTitle').textContent = 'New Tag';
+    document.getElementById('tagSaveBtn').textContent = 'Create Tag';
+    document.getElementById('tagEditId').value = '';
+    document.getElementById('tagNameInput').value = '';
+    selectedTagColor = '#4cc9f0';
+    document.querySelectorAll('.tag-color-swatch').forEach(s => {
+        s.classList.toggle('active', s.dataset.color === selectedTagColor);
+    });
+    document.getElementById('tagModal').classList.add('active');
+    document.getElementById('tagNameInput').focus();
+}
+
+function openEditTagModal(tagId) {
+    const tag = allTags.find(t => t.id === tagId);
+    if (!tag) return;
+
+    document.getElementById('tagModalTitle').textContent = 'Edit Tag';
+    document.getElementById('tagSaveBtn').textContent = 'Save Changes';
+    document.getElementById('tagEditId').value = tag.id;
+    document.getElementById('tagNameInput').value = tag.name;
+    selectedTagColor = tag.color || '#4cc9f0';
+    document.querySelectorAll('.tag-color-swatch').forEach(s => {
+        s.classList.toggle('active', s.dataset.color === selectedTagColor);
+    });
+    document.getElementById('tagModal').classList.add('active');
+    document.getElementById('tagNameInput').focus();
+}
+
+function closeTagModal() {
+    document.getElementById('tagModal').classList.remove('active');
+}
+
+function selectTagColor(el) {
+    selectedTagColor = el.dataset.color;
+    document.querySelectorAll('.tag-color-swatch').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+}
+
+async function saveTag() {
+    const name = document.getElementById('tagNameInput').value.trim();
+    if (!name) {
+        showNotification('Please enter a tag name.', 'warning');
+        return;
+    }
+
+    const editId = document.getElementById('tagEditId').value;
+    const payload = { name: name, color: selectedTagColor };
+
+    try {
+        let resp;
+        if (editId) {
+            resp = await fetch(`/api/tags/${editId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        } else {
+            resp = await fetch('/api/tags', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        }
+
+        const data = await resp.json();
+        if (data.success) {
+            showNotification(editId ? 'Tag updated.' : 'Tag created.', 'success');
+            closeTagModal();
+            loadTags();
+        } else {
+            showNotification(data.error || 'Failed to save tag.', 'error');
+        }
+    } catch (e) {
+        console.error('Error saving tag:', e);
+        showNotification('Error saving tag.', 'error');
+    }
+}
+
+function confirmDeleteTag(tagId, tagName) {
+    showConfirm(
+        'Delete Tag',
+        `Are you sure you want to delete the tag "${tagName}"?\nThis will remove the tag from all games.`,
+        () => deleteTag(tagId)
+    );
+}
+
+async function deleteTag(tagId) {
+    try {
+        const resp = await fetch(`/api/tags/${tagId}`, { method: 'DELETE' });
+        const data = await resp.json();
+        if (data.success) {
+            showNotification('Tag deleted.', 'success');
+            if (expandedTagId === tagId) closeTagGamesPanel();
+            loadTags();
+        } else {
+            showNotification(data.error || 'Failed to delete tag.', 'error');
+        }
+    } catch (e) {
+        console.error('Error deleting tag:', e);
+        showNotification('Error deleting tag.', 'error');
+    }
+}
+
+async function toggleTagGames(tagId) {
+    const panel = document.getElementById('tagGamesPanel');
+
+    if (expandedTagId === tagId) {
+        closeTagGamesPanel();
+        return;
+    }
+
+    expandedTagId = tagId;
+    const tag = allTags.find(t => t.id === tagId);
+    if (!tag) return;
+
+    document.getElementById('tagGamesPill').style.background = tag.color || '#4cc9f0';
+    document.getElementById('tagGamesName').textContent = tag.name;
+    document.getElementById('tagGamesCount').textContent = `${formatNumber(tag.game_count || 0)} game${(tag.game_count || 0) !== 1 ? 's' : ''}`;
+
+    const grid = document.getElementById('tagGamesGrid');
+    const empty = document.getElementById('tagGamesEmpty');
+    grid.innerHTML = '<div style="text-align: center; padding: var(--spacing-lg); color: var(--text-muted);">Loading...</div>';
+    empty.style.display = 'none';
+    panel.style.display = '';
+
+    try {
+        const resp = await fetch(`/api/tags/${tagId}/games`);
+        const data = await resp.json();
+        if (data.success && data.games && data.games.length > 0) {
+            grid.innerHTML = data.games.map(g => `
+                <a href="/game/${g.id}" class="tag-game-item">
+                    <img src="${g.boxart || '/static/images/placeholder.png'}" alt="" class="tag-game-thumb" loading="lazy">
+                    <div class="tag-game-info">
+                        <div class="tag-game-title">${escapeHtml(g.title)}</div>
+                        <div class="tag-game-system">${escapeHtml(g.system_name || '')}</div>
+                    </div>
+                </a>
+            `).join('');
+            empty.style.display = 'none';
+        } else {
+            grid.innerHTML = '';
+            empty.style.display = '';
+        }
+    } catch (e) {
+        console.error('Error loading tag games:', e);
+        grid.innerHTML = '<div style="text-align: center; padding: var(--spacing-lg); color: var(--neon-red);">Error loading games.</div>';
+    }
+
+    // Scroll to panel
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeTagGamesPanel() {
+    expandedTagId = null;
+    document.getElementById('tagGamesPanel').style.display = 'none';
+}
+
+// Escape HTML helper
+function escapeHtml(text) {
+    const d = document.createElement('div');
+    d.textContent = text;
+    return d.innerHTML;
+}
+</script>
+{% endblock %}

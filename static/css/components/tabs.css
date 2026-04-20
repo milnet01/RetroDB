@@ -1,0 +1,162 @@
+/* =============================================================================
+   TABS - Unified Navigation Tab Components (Bordered Pill Style)
+   ============================================================================= */
+
+/* =============================================================================
+   TOOL TABS - ROM Tools pages
+   ============================================================================= */
+
+.tool-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-sm);
+    background: color-mix(in srgb, var(--card-bg) 90%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    /* Sticky positioning */
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.tool-tab {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-decoration: none;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.tool-tab:hover {
+    background: rgba(76, 201, 240, 0.05);
+    border-color: rgba(76, 201, 240, 0.3);
+    color: var(--text-primary);
+}
+
+.tool-tab.active {
+    background: rgba(76, 201, 240, 0.15);
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+.tool-tab .tab-icon {
+    font-size: 1.1rem;
+}
+
+.tool-tab .tab-label {
+    /* Hide on very small screens via media query */
+}
+
+/* =============================================================================
+   SYSTEM TABS - For Achievements page (flex-wrap for many tabs)
+   ============================================================================= */
+
+.system-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-sm);
+    background: color-mix(in srgb, var(--card-bg) 90%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    /* Sticky positioning */
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.system-tab {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    background: transparent;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-align: center;
+    white-space: nowrap;
+}
+
+.system-tab:hover {
+    background: rgba(76, 201, 240, 0.05);
+    border-color: rgba(76, 201, 240, 0.3);
+    color: var(--text-primary);
+}
+
+.system-tab.active {
+    background: rgba(76, 201, 240, 0.15);
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+    font-weight: 600;
+}
+
+.system-tab .tab-count {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: var(--radius-full);
+    color: var(--text-secondary);
+}
+
+.system-tab.active .tab-count {
+    background: var(--primary-cyan);
+    color: var(--bg-darkest);
+}
+
+/* =============================================================================
+   RESPONSIVE - Tabs
+   ============================================================================= */
+
+@media (max-width: 768px) {
+    .tool-tabs,
+    .system-tabs {
+        gap: var(--spacing-xs);
+        padding: var(--spacing-xs);
+    }
+
+    .tool-tab {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    .tool-tab .tab-label {
+        display: none;
+    }
+
+    .tool-tab .tab-icon {
+        font-size: 1.25rem;
+    }
+
+    .system-tab {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+}

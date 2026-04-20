@@ -1,0 +1,568 @@
+{% extends "base.html" %}
+
+{% block title %}Wishlist - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Wishlist</h1>
+        <p class="page-subtitle">Games you want to find and add to your collection</p>
+    </div>
+    <div class="page-actions">
+        <button class="btn btn-primary" onclick="openAddWishlistModal()">
+            <span class="btn-icon">+</span> Add to Wishlist
+        </button>
+    </div>
+</div>
+
+<!-- Priority Filter Tabs -->
+<div class="wishlist-filters">
+    <button class="filter-tab active" data-filter="all" onclick="filterWishlist('all', this)">All</button>
+    <button class="filter-tab" data-filter="1" onclick="filterWishlist('1', this)">Must Have</button>
+    <button class="filter-tab" data-filter="2" onclick="filterWishlist('2', this)">High</button>
+    <button class="filter-tab" data-filter="3" onclick="filterWishlist('3', this)">Medium</button>
+    <button class="filter-tab" data-filter="4" onclick="filterWishlist('4', this)">Low</button>
+    <button class="filter-tab" data-filter="5" onclick="filterWishlist('5', this)">Someday</button>
+</div>
+
+<!-- Wishlist Items -->
+<div class="wishlist-grid" id="wishlistGrid">
+    <!-- Populated by JavaScript -->
+</div>
+
+<!-- Empty State -->
+<div class="empty-state" id="wishlistEmptyState" style="display: none;">
+    <div class="empty-state-icon">&#11088;</div>
+    <div class="empty-state-title">Wishlist is Empty</div>
+    <div class="empty-state-text">
+        Add games you're looking for to keep track of your wants.
+    </div>
+    <button class="btn btn-primary" onclick="openAddWishlistModal()">
+        <span class="btn-icon">+</span> Add First Item
+    </button>
+</div>
+
+<!-- Add/Edit Wishlist Modal -->
+<div class="custom-modal" id="wishlistModal" onclick="if(event.target===this)closeWishlistModal()">
+    <div class="custom-modal-content" style="max-width: 500px;" role="dialog" aria-modal="true" aria-labelledby="wishlistModalTitle">
+        <div class="custom-modal-header">
+            <h3 id="wishlistModalTitle">Add to Wishlist</h3>
+            <button class="custom-modal-close" onclick="closeWishlistModal()" aria-label="Close">&times;</button>
+        </div>
+        <div class="custom-modal-body">
+            <input type="hidden" id="wishlistEditId" value="">
+            <div class="form-group">
+                <label class="form-label" for="wishlistTitleInput">Game Title</label>
+                <input type="text" id="wishlistTitleInput" class="form-control" placeholder="e.g., Chrono Trigger" maxlength="200">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="wishlistSystemInput">System <span style="color: var(--text-muted); font-weight: 400; text-transform: none;">(optional)</span></label>
+                <input type="text" id="wishlistSystemInput" class="form-control" placeholder="e.g., SNES, PlayStation, etc." maxlength="100">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Priority</label>
+                <div class="priority-picker" id="priorityPicker">
+                    <button type="button" class="priority-option" data-priority="1" onclick="selectPriority(this)">
+                        <span class="priority-dot" style="background: var(--neon-red);"></span> Must Have
+                    </button>
+                    <button type="button" class="priority-option active" data-priority="2" onclick="selectPriority(this)">
+                        <span class="priority-dot" style="background: var(--neon-orange);"></span> High
+                    </button>
+                    <button type="button" class="priority-option" data-priority="3" onclick="selectPriority(this)">
+                        <span class="priority-dot" style="background: var(--primary-cyan);"></span> Medium
+                    </button>
+                    <button type="button" class="priority-option" data-priority="4" onclick="selectPriority(this)">
+                        <span class="priority-dot" style="background: var(--text-secondary);"></span> Low
+                    </button>
+                    <button type="button" class="priority-option" data-priority="5" onclick="selectPriority(this)">
+                        <span class="priority-dot" style="background: var(--text-muted);"></span> Someday
+                    </button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="wishlistNotesInput">Notes <span style="color: var(--text-muted); font-weight: 400; text-transform: none;">(optional)</span></label>
+                <textarea id="wishlistNotesInput" class="form-control" rows="3" placeholder="Any notes, preferred edition, price target..." maxlength="500" style="resize: vertical;"></textarea>
+            </div>
+        </div>
+        <div class="custom-modal-footer">
+            <button class="btn btn-secondary" onclick="closeWishlistModal()">Cancel</button>
+            <button class="btn btn-primary" id="wishlistSaveBtn" onclick="saveWishlistItem()">Add to Wishlist</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+/* Wishlist Filters */
+.wishlist-filters {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.filter-tab {
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: var(--bg-medium);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+    color: var(--text-secondary);
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.filter-tab:hover {
+    border-color: var(--primary-cyan);
+    color: var(--text-primary);
+}
+
+.filter-tab.active {
+    background: rgba(76, 201, 240, 0.15);
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+/* Wishlist Grid */
+.wishlist-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+/* Wishlist Item Card */
+.wishlist-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-normal);
+    border-left: 4px solid var(--border-color);
+}
+
+.wishlist-item:hover {
+    border-color: var(--card-border);
+    box-shadow: var(--shadow-md);
+}
+
+.wishlist-item[data-priority="1"] {
+    border-left-color: var(--neon-red);
+}
+
+.wishlist-item[data-priority="2"] {
+    border-left-color: var(--neon-orange);
+}
+
+.wishlist-item[data-priority="3"] {
+    border-left-color: var(--primary-cyan);
+}
+
+.wishlist-item[data-priority="4"] {
+    border-left-color: var(--text-secondary);
+}
+
+.wishlist-item[data-priority="5"] {
+    border-left-color: var(--text-muted);
+}
+
+.wishlist-priority-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.wishlist-priority-badge .priority-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.wishlist-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.wishlist-item-title {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.wishlist-item-system {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+.wishlist-item-notes {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+.wishlist-item-date {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.wishlist-item-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-shrink: 0;
+}
+
+.wishlist-action-btn {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all var(--transition-fast);
+}
+
+.wishlist-action-btn:hover {
+    background: var(--bg-lighter);
+    color: var(--text-primary);
+}
+
+.wishlist-action-btn.danger:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--neon-red);
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* Priority Picker */
+.priority-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.priority-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: var(--bg-darker);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-full);
+    color: var(--text-secondary);
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.priority-option:hover {
+    border-color: var(--primary-cyan);
+    color: var(--text-primary);
+}
+
+.priority-option.active {
+    border-color: var(--primary-cyan);
+    background: rgba(76, 201, 240, 0.1);
+    color: var(--text-primary);
+}
+
+.priority-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-label {
+    display: block;
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--spacing-xs);
+}
+
+.form-control {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-darker);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color var(--transition-fast);
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    border-color: var(--primary-cyan);
+}
+
+@media (max-width: 768px) {
+    .wishlist-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .wishlist-item-actions {
+        align-self: flex-end;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let allItems = [];
+let selectedPriority = 2;
+let activeFilter = 'all';
+
+const PRIORITY_LABELS = { 1: 'Must Have', 2: 'High', 3: 'Medium', 4: 'Low', 5: 'Someday' };
+const PRIORITY_COLORS = {
+    1: 'var(--neon-red)', 2: 'var(--neon-orange)', 3: 'var(--primary-cyan)',
+    4: 'var(--text-secondary)', 5: 'var(--text-muted)'
+};
+
+document.addEventListener('DOMContentLoaded', loadWishlist);
+
+async function loadWishlist() {
+    try {
+        const resp = await fetch('/api/wishlist');
+        const data = await resp.json();
+        if (data.success) {
+            allItems = data.items || [];
+            renderWishlist();
+        }
+    } catch (e) {
+        console.error('Error loading wishlist:', e);
+    }
+}
+
+function renderWishlist() {
+    const grid = document.getElementById('wishlistGrid');
+    const empty = document.getElementById('wishlistEmptyState');
+
+    const filtered = activeFilter === 'all'
+        ? allItems
+        : allItems.filter(i => String(i.priority) === activeFilter);
+
+    if (filtered.length === 0) {
+        grid.style.display = 'none';
+        empty.style.display = allItems.length === 0 ? '' : 'none';
+        if (allItems.length > 0 && filtered.length === 0) {
+            grid.style.display = '';
+            grid.innerHTML = '<div style="text-align: center; padding: var(--spacing-xl); color: var(--text-muted);">No items match this filter.</div>';
+        }
+        return;
+    }
+
+    grid.style.display = '';
+    empty.style.display = 'none';
+
+    grid.innerHTML = filtered.map(item => {
+        const p = item.priority || 2;
+        const label = PRIORITY_LABELS[p] || 'Medium';
+        const color = PRIORITY_COLORS[p] || 'var(--primary-cyan)';
+        const date = item.added_at ? formatDate(item.added_at) : '';
+
+        return `
+            <div class="wishlist-item" data-priority="${p}" data-id="${item.id}">
+                <div class="wishlist-priority-badge" style="background: ${color}20; color: ${color}; border: 1px solid ${color}40;">
+                    <span class="priority-dot" style="background: ${color};"></span>
+                    ${label}
+                </div>
+                <div class="wishlist-item-info">
+                    <div class="wishlist-item-title">${escapeHtml(item.title)}</div>
+                    ${item.system_name ? `<div class="wishlist-item-system">${escapeHtml(item.system_name)}</div>` : ''}
+                    ${item.notes ? `<div class="wishlist-item-notes">${escapeHtml(item.notes)}</div>` : ''}
+                    ${date ? `<div class="wishlist-item-date">Added ${date}</div>` : ''}
+                </div>
+                <div class="wishlist-item-actions">
+                    <button class="wishlist-action-btn" onclick="openEditWishlistModal(${item.id})" title="Edit">&#9998;</button>
+                    <button class="wishlist-action-btn danger" onclick="confirmDeleteWishlistItem(${item.id}, '${escapeAttr(item.title)}')" title="Delete">&#10005;</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function filterWishlist(filter, btn) {
+    activeFilter = filter;
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    renderWishlist();
+}
+
+function openAddWishlistModal() {
+    document.getElementById('wishlistModalTitle').textContent = 'Add to Wishlist';
+    document.getElementById('wishlistSaveBtn').textContent = 'Add to Wishlist';
+    document.getElementById('wishlistEditId').value = '';
+    document.getElementById('wishlistTitleInput').value = '';
+    document.getElementById('wishlistSystemInput').value = '';
+    document.getElementById('wishlistNotesInput').value = '';
+    selectedPriority = 2;
+    document.querySelectorAll('.priority-option').forEach(o => {
+        o.classList.toggle('active', o.dataset.priority === '2');
+    });
+    document.getElementById('wishlistModal').classList.add('active');
+    document.getElementById('wishlistTitleInput').focus();
+}
+
+function openEditWishlistModal(itemId) {
+    const item = allItems.find(i => i.id === itemId);
+    if (!item) return;
+
+    document.getElementById('wishlistModalTitle').textContent = 'Edit Wishlist Item';
+    document.getElementById('wishlistSaveBtn').textContent = 'Save Changes';
+    document.getElementById('wishlistEditId').value = item.id;
+    document.getElementById('wishlistTitleInput').value = item.title;
+    document.getElementById('wishlistSystemInput').value = item.system_name || '';
+    document.getElementById('wishlistNotesInput').value = item.notes || '';
+    selectedPriority = item.priority || 2;
+    document.querySelectorAll('.priority-option').forEach(o => {
+        o.classList.toggle('active', o.dataset.priority === String(selectedPriority));
+    });
+    document.getElementById('wishlistModal').classList.add('active');
+    document.getElementById('wishlistTitleInput').focus();
+}
+
+function closeWishlistModal() {
+    document.getElementById('wishlistModal').classList.remove('active');
+}
+
+function selectPriority(el) {
+    selectedPriority = parseInt(el.dataset.priority);
+    document.querySelectorAll('.priority-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+}
+
+async function saveWishlistItem() {
+    const title = document.getElementById('wishlistTitleInput').value.trim();
+    if (!title) {
+        showNotification('Please enter a game title.', 'warning');
+        return;
+    }
+
+    const saveBtn = document.getElementById('wishlistSaveBtn');
+    saveBtn.disabled = true;
+
+    const editId = document.getElementById('wishlistEditId').value;
+    const payload = {
+        title: title,
+        system_name: document.getElementById('wishlistSystemInput').value.trim(),
+        notes: document.getElementById('wishlistNotesInput').value.trim(),
+        priority: selectedPriority
+    };
+
+    try {
+        let resp;
+        if (editId) {
+            resp = await fetch(`/api/wishlist/${editId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        } else {
+            resp = await fetch('/api/wishlist', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        }
+
+        const data = await resp.json();
+        if (data.success) {
+            showNotification(editId ? 'Wishlist item updated.' : 'Added to wishlist.', 'success');
+            closeWishlistModal();
+            loadWishlist();
+        } else {
+            showNotification(data.error || 'Failed to save.', 'error');
+        }
+    } catch (e) {
+        console.error('Error saving wishlist item:', e);
+        showNotification('Error saving wishlist item.', 'error');
+    } finally {
+        saveBtn.disabled = false;
+    }
+}
+
+function confirmDeleteWishlistItem(itemId, title) {
+    showConfirm(
+        'Remove from Wishlist',
+        `Are you sure you want to remove "${title}" from your wishlist?`,
+        () => deleteWishlistItem(itemId)
+    );
+}
+
+async function deleteWishlistItem(itemId) {
+    try {
+        const resp = await fetch(`/api/wishlist/${itemId}`, { method: 'DELETE' });
+        const data = await resp.json();
+        if (data.success) {
+            showNotification('Removed from wishlist.', 'success');
+            loadWishlist();
+        } else {
+            showNotification(data.error || 'Failed to remove.', 'error');
+        }
+    } catch (e) {
+        console.error('Error deleting wishlist item:', e);
+        showNotification('Error removing item.', 'error');
+    }
+}
+
+function formatDate(dateStr) {
+    try {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    } catch (e) {
+        return dateStr;
+    }
+}
+
+function escapeHtml(text) {
+    const d = document.createElement('div');
+    d.textContent = text;
+    return d.innerHTML;
+}
+
+function escapeAttr(str) {
+    return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
+}
+</script>
+{% endblock %}

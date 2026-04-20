@@ -1,0 +1,207 @@
+/* =============================================================================
+   HLTB (How Long To Beat) Component
+   Standardized playtime display and lookup
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   HLTB Card Container
+   ----------------------------------------------------------------------------- */
+.hltb-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+}
+
+.hltb-card-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-family: var(--font-primary);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+/* -----------------------------------------------------------------------------
+   Search Input
+   ----------------------------------------------------------------------------- */
+.hltb-search-input {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--bg-dark);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.hltb-search-input:focus {
+    outline: none;
+    border-color: var(--primary-cyan);
+    box-shadow: 0 0 0 2px rgba(76, 201, 240, 0.15);
+}
+
+/* -----------------------------------------------------------------------------
+   Lookup Button
+   ----------------------------------------------------------------------------- */
+.btn-hltb {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: 10px 16px;
+    background: rgba(76, 201, 240, 0.1);
+    border: 1px solid var(--primary-cyan);
+    border-radius: var(--radius-md);
+    color: var(--primary-cyan);
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-hltb:hover {
+    background: rgba(76, 201, 240, 0.2);
+}
+
+.btn-hltb:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* -----------------------------------------------------------------------------
+   Results Container
+   ----------------------------------------------------------------------------- */
+.hltb-results {
+    margin-top: var(--spacing-md);
+}
+
+/* -----------------------------------------------------------------------------
+   Match Info Header
+   ----------------------------------------------------------------------------- */
+.hltb-match-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--card-border);
+}
+
+.hltb-match-title {
+    color: var(--primary-cyan);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.hltb-match-platform {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.hltb-match-year {
+    color: var(--neon-orange);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.hltb-match-developer {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+.hltb-match-warning {
+    color: var(--neon-orange);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.hltb-match-confidence {
+    color: var(--accent-green);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* -----------------------------------------------------------------------------
+   Time Rows (Tabular Display)
+   ----------------------------------------------------------------------------- */
+.hltb-time-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.hltb-time-row:last-child {
+    border-bottom: none;
+}
+
+.hltb-label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.hltb-value {
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.hltb-value.highlight {
+    color: var(--primary-cyan);
+}
+
+/* -----------------------------------------------------------------------------
+   Action Buttons Row
+   ----------------------------------------------------------------------------- */
+.hltb-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+.hltb-actions .btn {
+    flex: 1;
+}
+
+/* -----------------------------------------------------------------------------
+   Empty State
+   ----------------------------------------------------------------------------- */
+.hltb-empty {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    padding: var(--spacing-sm) 0;
+}
+
+/* -----------------------------------------------------------------------------
+   Loading State
+   ----------------------------------------------------------------------------- */
+.hltb-loading {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    padding: var(--spacing-sm) 0;
+}
+
+/* -----------------------------------------------------------------------------
+   Compact Variant (for sidebars/modals)
+   ----------------------------------------------------------------------------- */
+.hltb-compact .hltb-time-row {
+    padding: var(--spacing-xs) 0;
+}
+
+.hltb-compact .hltb-label,
+.hltb-compact .hltb-value {
+    font-size: 0.8rem;
+}

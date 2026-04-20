@@ -1,0 +1,287 @@
+/* =============================================================================
+   RETRODB - TAGS
+   Genre tags, controller tags, filter tags
+   ============================================================================= */
+
+/* =============================================================================
+   QUICK TAGS
+   ============================================================================= */
+
+.quick-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: rgba(76, 201, 240, 0.1);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+/* Tag Variants */
+.tag.tag-system {
+    background: rgba(76, 201, 240, 0.15);
+    border-color: rgba(76, 201, 240, 0.4);
+    color: var(--primary-cyan);
+}
+
+.tag.tag-date {
+    background: rgba(168, 85, 247, 0.15);
+    border-color: rgba(168, 85, 247, 0.4);
+    color: #c084fc;
+}
+
+.tag.tag-genre {
+    background: rgba(34, 197, 94, 0.15);
+    border-color: rgba(34, 197, 94, 0.4);
+    color: #4ade80;
+}
+
+/* =============================================================================
+   GENRE TAGS
+   ============================================================================= */
+
+.genre-select-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px;
+    background: var(--bg-dark);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    min-height: 44px;
+}
+
+.genre-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: rgba(168, 85, 247, 0.15);
+    border: 1px solid var(--neon-purple);
+    border-radius: var(--radius-full);
+    color: var(--neon-purple);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.genre-tag .remove-genre {
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+}
+
+.genre-tag .remove-genre:hover {
+    opacity: 1;
+}
+
+/* Genre Dropdown */
+.genre-dropdown {
+    position: relative;
+}
+
+.genre-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background: var(--bg-dark);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    z-index: 100;
+    display: none;
+}
+
+.genre-dropdown-menu.active {
+    display: block;
+}
+
+.genre-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.genre-option:hover {
+    background: rgba(76, 201, 240, 0.1);
+}
+
+.genre-option.selected {
+    background: rgba(168, 85, 247, 0.2);
+    color: var(--neon-purple);
+}
+
+/* =============================================================================
+   CONTROLLER TAGS
+   ============================================================================= */
+
+.controller-select-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px;
+    background: var(--bg-dark);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    min-height: 44px;
+}
+
+.controller-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: rgba(76, 201, 240, 0.15);
+    border: 1px solid var(--neon-cyan);
+    border-radius: var(--radius-full);
+    color: var(--neon-cyan);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.controller-tag .remove-controller {
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+}
+
+.controller-tag .remove-controller:hover {
+    opacity: 1;
+}
+
+.controller-dropdown {
+    position: relative;
+}
+
+/* =============================================================================
+   ACTIVE FILTER TAGS
+   ============================================================================= */
+
+.active-filters {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: rgba(76, 201, 240, 0.05);
+    border: 1px solid rgba(76, 201, 240, 0.2);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.active-filters-label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.active-filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.active-filter-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: rgba(76, 201, 240, 0.15);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    border-radius: var(--radius-full);
+    color: var(--primary-cyan);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.active-filter-tag .remove-filter {
+    background: none;
+    border: none;
+    color: var(--primary-cyan);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.active-filter-tag .remove-filter:hover {
+    opacity: 1;
+}
+
+/* =============================================================================
+   EDIT MODAL TAG CONTAINER
+   ============================================================================= */
+
+.gem-tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    min-height: 36px;
+    padding: var(--spacing-sm);
+    background: var(--bg-darker);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-xs);
+}
+
+.gem-tag-container:empty::before {
+    content: 'None selected';
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 0.85rem;
+}
+
+.gem-tag-dropdown {
+    width: 100%;
+    padding: 8px 12px;
+    background: var(--bg-darker);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.gem-tag-dropdown:hover,
+.gem-tag-dropdown:focus {
+    border-color: var(--primary-cyan);
+    outline: none;
+}
+
+.gem-controller-inputs {
+    display: flex;
+    gap: var(--spacing-xs);
+}
+
+.gem-controller-inputs select {
+    flex: 1;
+}
+
+.gem-custom-input {
+    flex: 1;
+    padding: 8px 12px;
+    background: var(--bg-darker);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.gem-custom-input:hover,
+.gem-custom-input:focus {
+    border-color: var(--primary-cyan);
+    outline: none;
+}

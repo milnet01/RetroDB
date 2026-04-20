@@ -1,0 +1,359 @@
+{% extends "base.html" %}
+
+{% block title %}CHD Verify - RetroDB{% endblock %}
+
+{% block styles %}
+<style>
+/* CHD Verify - page-specific grid columns */
+.file-list-header {
+    grid-template-columns: 40px 1fr 100px 100px;
+}
+
+.file-list-item {
+    grid-template-columns: 40px 1fr 100px 100px;
+}
+
+/* Verification status badges */
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-pending {
+    background: rgba(128, 128, 128, 0.2);
+    color: var(--text-muted);
+}
+
+.status-checking {
+    background: rgba(76, 201, 240, 0.2);
+    color: var(--neon-cyan);
+}
+
+.status-valid {
+    background: rgba(46, 213, 115, 0.2);
+    color: var(--neon-green);
+}
+
+.status-invalid {
+    background: rgba(247, 37, 133, 0.2);
+    color: var(--neon-red);
+}
+
+/* Progress section */
+.progress-section {
+    margin-top: 1.5rem;
+}
+
+/* Stat box verify-specific color variants */
+.stat-box.valid .stat-value {
+    color: var(--neon-green);
+}
+
+.stat-box.invalid .stat-value {
+    color: var(--neon-red);
+}
+
+/* Scan log */
+.scan-log {
+    background: var(--bg-darker);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    max-height: 200px;
+    overflow-y: auto;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 1rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🔧 ROM Tools</h1>
+    <p>Manage, organize, and optimize your ROM collection.</p>
+</div>
+
+<!-- Tool Tabs -->
+<nav class="tool-tabs">
+    <a href="{{ url_for('tools.archive_scanner') }}" class="tool-tab">
+        <span class="tab-icon">📦</span>
+        <span class="tab-label">Archive Scanner</span>
+    </a>
+    <a href="{{ url_for('tools.chd_converter') }}" class="tool-tab">
+        <span class="tab-icon">💿</span>
+        <span class="tab-label">CHD Converter</span>
+    </a>
+    <a href="{{ url_for('tools.chd_verify') }}" class="tool-tab active">
+        <span class="tab-icon">✅</span>
+        <span class="tab-label">CHD Verify</span>
+    </a>
+    <a href="{{ url_for('tools.multi_disc_organizer') }}" class="tool-tab">
+        <span class="tab-icon">💽</span>
+        <span class="tab-label">Multi-Disc Organizer</span>
+    </a>
+    <a href="{{ url_for('tools.duplicate_finder') }}" class="tool-tab">
+        <span class="tab-icon">🔍</span>
+        <span class="tab-label">Duplicate Finder</span>
+    </a>
+    <a href="{{ url_for('tools.screenshot_dedup') }}" class="tool-tab">
+        <span class="tab-icon">📸</span>
+        <span class="tab-label">Screenshot Dedup</span>
+    </a>
+    <a href="{{ url_for('tools.rom_tools_settings') }}" class="tool-tab">
+        <span class="tab-icon">⚙️</span>
+        <span class="tab-label">Settings</span>
+    </a>
+</nav>
+
+<div class="info-banner">
+    <span class="info-icon">💡</span>
+    <div class="info-text">
+        <h4>Why Verify CHD Files?</h4>
+        <p>CHD files contain internal checksums. Verification ensures the file data matches these checksums, detecting corruption from storage errors, incomplete downloads, or bad conversions.</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><span>📁</span> CHD Files</h2>
+    </div>
+    <div class="card-body">
+    <div class="form-group">
+        <label>Source Folder</label>
+        <div class="form-row" style="display: flex; gap: 0.5rem;">
+            <div class="locked-path-wrapper" style="flex: 1;">
+                <span class="locked-path-prefix" id="basePath">{{ rom_path }}/</span>
+                <input type="text" id="subPath" placeholder="subfolder (optional)" value="">
+            </div>
+            <button class="btn btn-secondary" onclick="openFolderBrowser('hiddenFullPath')">📁 Browse</button>
+            <button class="btn btn-primary" onclick="scanFiles()">🔍 Scan</button>
+        </div>
+        <input type="hidden" id="hiddenFullPath" value="{{ rom_path }}">
+    </div>
+    
+    <div class="file-list" id="fileList">
+        <div class="empty-state">Click "Scan for CHD Files" to find files</div>
+    </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><span>⚙️</span> Verification</h2>
+    </div>
+    <div class="card-body">
+    <div class="btn-group">
+        <button class="btn btn-primary" id="verifyBtn" onclick="startVerification()" disabled>🔬 Start Verification</button>
+        <button class="btn btn-danger" id="cancelBtn" onclick="cancelVerification()" disabled>❌ Cancel</button>
+    </div>
+    
+    <div class="progress-section" id="progressSection" style="display: none;">
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="progressBar">0%</div>
+        </div>
+        <p id="progressStatus" style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">Preparing...</p>
+    </div>
+    
+    <div class="scan-log" id="verifyLog" style="display: none;"></div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><span>📊</span> Verification Results</h2>
+    </div>
+    <div class="card-body">
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="stat-value" id="statTotal">0</div>
+            <div class="stat-label">Total Files</div>
+        </div>
+        <div class="stat-box valid">
+            <div class="stat-value" id="statValid">0</div>
+            <div class="stat-label">Valid</div>
+        </div>
+        <div class="stat-box invalid">
+            <div class="stat-value" id="statInvalid">0</div>
+            <div class="stat-label">Invalid</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value" id="statSize">0 GB</div>
+            <div class="stat-label">Total Size</div>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/rom-tools.js') }}?v={{ config.APP_VERSION }}"></script>
+<script>
+let foundFiles = [];
+const ROM_PATH = '{{ rom_path }}';
+
+// Path management
+function getFullPath() {
+    const subPath = document.getElementById('subPath').value.replace(/^\/+/, '');
+    return subPath ? `${ROM_PATH}/${subPath}` : ROM_PATH;
+}
+
+// Update subpath when folder browser selects
+document.addEventListener('DOMContentLoaded', function() {
+    const hiddenInput = document.getElementById('hiddenFullPath');
+    if (hiddenInput) {
+        hiddenInput.addEventListener('change', function() {
+            const fullPath = this.value;
+            if (fullPath.startsWith(ROM_PATH)) {
+                const sub = fullPath.substring(ROM_PATH.length).replace(/^\/+/, '');
+                document.getElementById('subPath').value = sub;
+            }
+        });
+    }
+});
+
+async function scanFiles() {
+    const path = getFullPath();
+    document.getElementById('fileList').innerHTML = '<div class="empty-state">Scanning...</div>';
+    
+    try {
+        const response = await fetch('/api/rom-tools/chd-verify/scan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path: path })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            foundFiles = data.files;
+            renderFileList();
+        } else {
+            document.getElementById('fileList').innerHTML = `<div class="empty-state">Error: ${escapeHtml(data.error || 'Unknown error')}</div>`;
+        }
+    } catch (error) {
+        document.getElementById('fileList').innerHTML = `<div class="empty-state">Error: ${escapeHtml(error.message || 'An error occurred')}</div>`;
+    }
+}
+
+function renderFileList() {
+    if (foundFiles.length === 0) {
+        document.getElementById('fileList').innerHTML = '<div class="empty-state">No CHD files found</div>';
+        document.getElementById('verifyBtn').disabled = true;
+        return;
+    }
+    
+    let html = `
+        <div class="file-list-header">
+            <span><input type="checkbox" checked onclick="toggleAll(this)"></span>
+            <span>Filename</span>
+            <span>Size</span>
+            <span>Status</span>
+        </div>
+    `;
+    
+    foundFiles.forEach((f, i) => {
+        html += `
+            <div class="file-list-item" id="file-${i}">
+                <input type="checkbox" checked data-index="${i}">
+                <span class="filename" title="${f.path}">${f.name}</span>
+                <span class="filesize">${formatBytes(f.size)}</span>
+                <span class="status-badge status-pending">Pending</span>
+            </div>
+        `;
+    });
+    
+    document.getElementById('fileList').innerHTML = html;
+    document.getElementById('verifyBtn').disabled = false;
+    document.getElementById('statTotal').textContent = foundFiles.length;
+}
+
+async function startVerification() {
+    const selectedFiles = [];
+    document.querySelectorAll('.file-list-item input[type="checkbox"]:checked').forEach(cb => {
+        const index = parseInt(cb.dataset.index);
+        selectedFiles.push(foundFiles[index].path);
+    });
+    
+    if (selectedFiles.length === 0) {
+        showModal('⚠️ No Selection', 'No files selected');
+        return;
+    }
+    
+    document.getElementById('verifyBtn').disabled = true;
+    document.getElementById('cancelBtn').disabled = false;
+    document.getElementById('progressSection').style.display = 'block';
+    document.getElementById('verifyLog').style.display = 'block';
+    document.getElementById('verifyLog').innerHTML = '';
+    
+    // Reset stats
+    document.getElementById('statValid').textContent = '0';
+    document.getElementById('statInvalid').textContent = '0';
+    
+    try {
+        const response = await fetch('/api/rom-tools/chd-verify/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ files: selectedFiles })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            TaskPoller.start(data.task_id, {
+                onProgress(task) {
+                    document.getElementById('progressBar').style.width = task.percent + '%';
+                    document.getElementById('progressBar').textContent = task.percent + '%';
+                    document.getElementById('progressStatus').textContent = task.current_file ? `Verifying: ${task.current_file}` : 'Processing...';
+
+                    if (task.results) {
+                        document.getElementById('statTotal').textContent = task.results.total || 0;
+                        document.getElementById('statValid').textContent = task.results.valid || 0;
+                        document.getElementById('statInvalid').textContent = task.results.invalid || 0;
+                        document.getElementById('statSize').textContent = formatBytes(task.results.total_size || 0);
+
+                        if (task.results.files) {
+                            task.results.files.forEach((f, i) => {
+                                const row = document.querySelector(`#file-${i} .status-badge`);
+                                if (row) {
+                                    row.className = `status-badge status-${f.status}`;
+                                    row.textContent = f.status.charAt(0).toUpperCase() + f.status.slice(1);
+                                }
+                            });
+                        }
+                    }
+
+                    if (task.logs) {
+                        document.getElementById('verifyLog').innerHTML = task.logs.map(l => `<div>${escapeHtml(l)}</div>`).join('');
+                        document.getElementById('verifyLog').scrollTop = document.getElementById('verifyLog').scrollHeight;
+                    }
+                },
+                onComplete() { resetUI(); },
+                onError(task) { showModal('❌ Error', task.error || 'Verification failed'); resetUI(); },
+                onCancel() { resetUI(); }
+            }, 500);
+        } else {
+            showModal('❌ Error', data.error);
+            resetUI();
+        }
+    } catch (error) {
+        showModal('❌ Error', error.message);
+        resetUI();
+    }
+}
+
+async function cancelVerification() {
+    await TaskPoller.cancel();
+}
+
+function resetUI() {
+    document.getElementById('verifyBtn').disabled = false;
+    document.getElementById('cancelBtn').disabled = true;
+}
+
+</script>
+{% endblock %}

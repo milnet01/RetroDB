@@ -1,0 +1,108 @@
+/* =============================================================================
+   RETRODB - QUEUE MANAGER MODAL
+   Styles for the queue manager modal overlay
+   ============================================================================= */
+
+#queueManagerModal .queue-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    margin-bottom: 10px;
+    transition: all 0.2s ease;
+}
+
+#queueManagerModal .queue-item:hover {
+    border-color: var(--primary-cyan);
+}
+
+#queueManagerModal .queue-item.running {
+    border-color: var(--primary-cyan);
+    border-width: 2px;
+    background: rgba(76, 201, 240, 0.05);
+}
+
+#queueManagerModal .queue-item.queued {
+    border-color: var(--neon-orange);
+}
+
+#queueManagerModal .queue-item-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+#queueManagerModal .queue-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+#queueManagerModal .queue-item-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+#queueManagerModal .queue-item-system {
+    font-size: 0.85rem;
+    color: var(--neon-purple);
+}
+
+#queueManagerModal .queue-item.queued .queue-item-system {
+    color: var(--neon-orange);
+}
+
+#queueManagerModal .queue-item-games {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+#queueManagerModal .queue-item-progress {
+    font-size: 0.75rem;
+    color: var(--primary-cyan);
+    margin-top: 4px;
+}
+
+#queueManagerModal .queue-item-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#queueManagerModal .queue-btn {
+    padding: 6px 10px;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-medium);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+#queueManagerModal .queue-btn:hover {
+    background: rgba(76, 201, 240, 0.15);
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+#queueManagerModal .queue-btn.danger:hover {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+#queueManagerModal .queue-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+#queueManagerModal .queue-empty {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 20px;
+    font-style: italic;
+}

@@ -1,0 +1,618 @@
+/* =============================================================================
+   RETRODB - THEME OVERRIDES
+   Theme color variable overrides via data-theme attribute on <html>
+   Cyberpunk (default) uses :root values from variables.css — no override needed
+   ============================================================================= */
+
+/* =============================================================================
+   MATRIX THEME — Green/black hacker aesthetic
+   ============================================================================= */
+
+[data-theme="matrix"] {
+    /* Primary Colors */
+    --primary-cyan: #00ff41;
+    --primary-cyan-dark: #00cc33;
+    --primary-cyan-light: #66ff88;
+    --primary-cyan-glow: rgba(0, 255, 65, 0.5);
+
+    /* Secondary Colors */
+    --secondary-magenta: #008f11;
+    --secondary-magenta-dark: #006b0d;
+    --secondary-magenta-light: #33b833;
+    --secondary-magenta-glow: rgba(0, 143, 17, 0.5);
+
+    /* Accent Colors */
+    --accent-purple: #00aa22;
+    --accent-blue: #004d00;
+    --accent-violet: #009a1a;
+
+    /* Background Colors */
+    --bg-darkest: #000000;
+    --bg-dark: #050505;
+    --bg-darker: #0a0a0a;
+    --bg-medium: #111111;
+    --bg-light: #161616;
+    --bg-lighter: #1a1a1a;
+
+    /* Card Colors */
+    --card-bg: #0a0a0a;
+    --card-bg-hover: #111111;
+    --card-border: #1a3a1a;
+    --card-border-hover: #2a5a2a;
+
+    /* Text Colors */
+    --text-primary: #c0ffc0;
+    --text-secondary: #80c080;
+    --text-muted: #508050;
+    --text-accent: var(--primary-cyan);
+
+    /* Border Color Alias */
+    --border-color: #1a3a1a;
+
+    /* Status Colors */
+    --status-success: #00ff41;
+    --status-warning: #a0e000;
+    --status-error: #ff3333;
+    --status-info: var(--primary-cyan);
+    --status-online: #00ff41;
+    --status-offline: #ff3333;
+    --status-connected: var(--primary-cyan);
+
+    /* Shadows */
+    --shadow-glow-cyan: 0 0 20px rgba(0, 255, 65, 0.3);
+    --shadow-glow-magenta: 0 0 20px rgba(0, 143, 17, 0.3);
+
+    /* Neon Colors for Components */
+    --neon-cyan: #00ff41;
+    --neon-green: #00ff41;
+    --neon-orange: #a0e000;
+    --neon-red: #ff3333;
+    --neon-purple: #33cc66;
+    --neon-gray: #4a6a4a;
+
+    /* PSN Trophy Variables */
+    --trophy-platinum: #66ffaa;
+    --trophy-gold: #a0e060;
+    --trophy-silver: #88bb88;
+    --trophy-bronze: #77aa55;
+
+    /* Toast Overrides */
+    --toast-bg-from: rgba(0, 10, 0, 0.95);
+    --toast-bg-to: rgba(0, 20, 5, 0.95);
+    --toast-queued-bg-from: rgba(0, 12, 0, 0.90);
+    --toast-queued-bg-to: rgba(0, 22, 5, 0.90);
+}
+
+/* Matrix - Body background gradient */
+[data-theme="matrix"] body::before {
+    background: linear-gradient(
+        to top right,
+        rgba(0, 255, 65, 0.06) 0%,
+        rgba(0, 143, 17, 0.04) 25%,
+        rgba(0, 80, 0, 0.03) 50%,
+        rgba(0, 0, 0, 0.02) 75%,
+        transparent 100%
+    );
+}
+
+/* Matrix - Scanlines (green tint) */
+[data-theme="matrix"] body::after {
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 255, 65, 0.02) 2px,
+        rgba(0, 255, 65, 0.02) 4px
+    );
+}
+
+/* =============================================================================
+   RETRO AMBER THEME — Warm CRT terminal aesthetic
+   ============================================================================= */
+
+[data-theme="amber"] {
+    /* Primary Colors */
+    --primary-cyan: #ffb000;
+    --primary-cyan-dark: #cc8c00;
+    --primary-cyan-light: #ffc944;
+    --primary-cyan-glow: rgba(255, 176, 0, 0.5);
+
+    /* Secondary Colors */
+    --secondary-magenta: #ff6600;
+    --secondary-magenta-dark: #cc5200;
+    --secondary-magenta-light: #ff8833;
+    --secondary-magenta-glow: rgba(255, 102, 0, 0.5);
+
+    /* Accent Colors */
+    --accent-purple: #cc7700;
+    --accent-blue: #995500;
+    --accent-violet: #bb6600;
+
+    /* Background Colors */
+    --bg-darkest: #0a0800;
+    --bg-dark: #0d0a02;
+    --bg-darker: #0f0c04;
+    --bg-medium: #151008;
+    --bg-light: #1a150c;
+    --bg-lighter: #211c12;
+
+    /* Card Colors */
+    --card-bg: #120e04;
+    --card-bg-hover: #181208;
+    --card-border: #3a2a10;
+    --card-border-hover: #4a3a1a;
+
+    /* Text Colors */
+    --text-primary: #ffe0a0;
+    --text-secondary: #c09050;
+    --text-muted: #806030;
+    --text-accent: var(--primary-cyan);
+
+    /* Border Color Alias */
+    --border-color: #3a2a10;
+
+    /* Status Colors */
+    --status-success: #ffcc00;
+    --status-warning: #ff9900;
+    --status-error: #ff4422;
+    --status-info: var(--primary-cyan);
+    --status-online: #ffcc00;
+    --status-offline: #ff4422;
+    --status-connected: var(--primary-cyan);
+
+    /* Shadows */
+    --shadow-glow-cyan: 0 0 20px rgba(255, 176, 0, 0.3);
+    --shadow-glow-magenta: 0 0 20px rgba(255, 102, 0, 0.3);
+
+    /* Neon Colors for Components */
+    --neon-cyan: #ffb000;
+    --neon-green: #ddaa00;
+    --neon-orange: #ff7700;
+    --neon-red: #ff4422;
+    --neon-purple: #ff8844;
+    --neon-gray: #7a6a4a;
+
+    /* PSN Trophy Variables */
+    --trophy-platinum: #ffe8aa;
+    --trophy-gold: #ffcc44;
+    --trophy-silver: #ccaa77;
+    --trophy-bronze: #aa7733;
+
+    /* Toast Overrides */
+    --toast-bg-from: rgba(18, 14, 4, 0.95);
+    --toast-bg-to: rgba(28, 20, 8, 0.95);
+    --toast-queued-bg-from: rgba(20, 16, 4, 0.90);
+    --toast-queued-bg-to: rgba(30, 22, 8, 0.90);
+}
+
+/* Amber - Sunrise gradient from bottom center */
+[data-theme="amber"] body::before {
+    background:
+        /* Sun core - bright warm glow at bottom center */
+        radial-gradient(ellipse 30% 20% at 50% 100%, rgba(255, 230, 100, 0.2) 0%, rgba(255, 200, 50, 0.12) 40%, transparent 100%),
+        /* Sun corona - wider orange spread */
+        radial-gradient(ellipse 60% 40% at 50% 100%, rgba(255, 160, 0, 0.1) 0%, rgba(255, 100, 0, 0.05) 50%, transparent 100%),
+        /* Horizon warm band */
+        linear-gradient(to top, rgba(255, 120, 0, 0.08) 0%, rgba(255, 80, 0, 0.04) 20%, rgba(120, 50, 0, 0.02) 45%, transparent 70%);
+}
+
+/* Amber - Scanlines (amber tint, more visible for CRT feel) */
+[data-theme="amber"] body::after {
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 176, 0, 0.03) 2px,
+        rgba(255, 176, 0, 0.03) 4px
+    );
+}
+
+/* =============================================================================
+   MIDNIGHT OCEAN THEME — Deep blue tones
+   ============================================================================= */
+
+[data-theme="ocean"] {
+    /* Primary Colors */
+    --primary-cyan: #4dabf7;
+    --primary-cyan-dark: #3d8bd4;
+    --primary-cyan-light: #74c0fa;
+    --primary-cyan-glow: rgba(77, 171, 247, 0.5);
+
+    /* Secondary Colors */
+    --secondary-magenta: #20c997;
+    --secondary-magenta-dark: #1aaa7f;
+    --secondary-magenta-light: #4dd8ad;
+    --secondary-magenta-glow: rgba(32, 201, 151, 0.5);
+
+    /* Accent Colors */
+    --accent-purple: #5c7cfa;
+    --accent-blue: #3b5bdb;
+    --accent-violet: #4c6ef5;
+
+    /* Background Colors */
+    --bg-darkest: #040810;
+    --bg-dark: #050a14;
+    --bg-darker: #060c18;
+    --bg-medium: #0a1220;
+    --bg-light: #0e1828;
+    --bg-lighter: #142030;
+
+    /* Card Colors */
+    --card-bg: #081018;
+    --card-bg-hover: #0c1620;
+    --card-border: #1a2a40;
+    --card-border-hover: #2a3a55;
+
+    /* Text Colors */
+    --text-primary: #dce4f0;
+    --text-secondary: #8899b0;
+    --text-muted: #5a6a80;
+    --text-accent: var(--primary-cyan);
+
+    /* Border Color Alias */
+    --border-color: #1a2a40;
+
+    /* Status Colors */
+    --status-success: #40c057;
+    --status-warning: #fab005;
+    --status-error: #fa5252;
+    --status-info: var(--primary-cyan);
+    --status-online: #40c057;
+    --status-offline: #fa5252;
+    --status-connected: var(--primary-cyan);
+
+    /* Shadows */
+    --shadow-glow-cyan: 0 0 20px rgba(77, 171, 247, 0.3);
+    --shadow-glow-magenta: 0 0 20px rgba(32, 201, 151, 0.3);
+
+    /* Neon Colors for Components */
+    --neon-cyan: #4dabf7;
+    --neon-green: #40c057;
+    --neon-orange: #fab005;
+    --neon-red: #fa5252;
+    --neon-purple: #7950f2;
+    --neon-gray: #5a6a80;
+
+    /* PSN Trophy Variables */
+    --trophy-platinum: #a5d8ff;
+    --trophy-gold: #ffe066;
+    --trophy-silver: #adb5bd;
+    --trophy-bronze: #e8a44a;
+
+    /* Toast Overrides */
+    --toast-bg-from: rgba(6, 12, 22, 0.95);
+    --toast-bg-to: rgba(10, 18, 32, 0.95);
+    --toast-queued-bg-from: rgba(8, 14, 24, 0.90);
+    --toast-queued-bg-to: rgba(12, 20, 34, 0.90);
+}
+
+/* Ocean - Moon and water ambient glow */
+[data-theme="ocean"] body::before {
+    background:
+        /* Moon - bright circle upper right */
+        radial-gradient(circle at 70% 10%, rgba(220, 235, 255, 0.4) 0%, rgba(200, 220, 250, 0.2) 1.5%, rgba(150, 190, 240, 0.08) 4%, transparent 10%),
+        /* Moon glow - soft outer halo */
+        radial-gradient(circle at 70% 10%, rgba(77, 171, 247, 0.08) 0%, transparent 18%),
+        /* Ocean ambience - deep blue tones at bottom */
+        radial-gradient(ellipse 80% 50% at 50% 90%, rgba(32, 201, 151, 0.04) 0%, rgba(77, 171, 247, 0.05) 40%, transparent 100%),
+        /* Vertical depth gradient */
+        linear-gradient(to bottom, rgba(10, 20, 40, 0.02) 0%, rgba(77, 171, 247, 0.03) 55%, rgba(32, 201, 151, 0.02) 100%);
+}
+
+/* Ocean - Scanlines (blue tint) */
+[data-theme="ocean"] body::after {
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(77, 171, 247, 0.02) 2px,
+        rgba(77, 171, 247, 0.02) 4px
+    );
+}
+
+/* =============================================================================
+   CHRISTIAN THEME — Cathedral gold & royal purple aesthetic
+   ============================================================================= */
+
+[data-theme="christian"] {
+    /* Primary Colors */
+    --primary-cyan: #d4a843;
+    --primary-cyan-dark: #b08a30;
+    --primary-cyan-light: #e8c86a;
+    --primary-cyan-glow: rgba(212, 168, 67, 0.5);
+
+    /* Secondary Colors */
+    --secondary-magenta: #7b4db0;
+    --secondary-magenta-dark: #5f3a8a;
+    --secondary-magenta-light: #9b6dd0;
+    --secondary-magenta-glow: rgba(123, 77, 176, 0.5);
+
+    /* Accent Colors */
+    --accent-purple: #6a3d9a;
+    --accent-blue: #4a2d7a;
+    --accent-violet: #7b4db0;
+
+    /* Background Colors */
+    --bg-darkest: #0c0810;
+    --bg-dark: #0e0a14;
+    --bg-darker: #110d18;
+    --bg-medium: #16101f;
+    --bg-light: #1c1528;
+    --bg-lighter: #231c30;
+
+    /* Card Colors */
+    --card-bg: #120e1a;
+    --card-bg-hover: #181222;
+    --card-border: #2a1f3a;
+    --card-border-hover: #3a2d4e;
+
+    /* Text Colors */
+    --text-primary: #f0e8d8;
+    --text-secondary: #b0a090;
+    --text-muted: #706050;
+    --text-accent: var(--primary-cyan);
+
+    /* Border Color Alias */
+    --border-color: #2a1f3a;
+
+    /* Status Colors */
+    --status-success: #d4a843;
+    --status-warning: #e8a030;
+    --status-error: #c04040;
+    --status-info: var(--primary-cyan);
+    --status-online: #d4a843;
+    --status-offline: #c04040;
+    --status-connected: var(--primary-cyan);
+
+    /* Shadows */
+    --shadow-glow-cyan: 0 0 20px rgba(212, 168, 67, 0.3);
+    --shadow-glow-magenta: 0 0 20px rgba(123, 77, 176, 0.3);
+
+    /* Neon Colors for Components */
+    --neon-cyan: #d4a843;
+    --neon-green: #c0a040;
+    --neon-orange: #e8a030;
+    --neon-red: #c04040;
+    --neon-purple: #9b6dd0;
+    --neon-gray: #6a5a50;
+
+    /* PSN Trophy Variables */
+    --trophy-platinum: #f0e0c0;
+    --trophy-gold: #d4a843;
+    --trophy-silver: #b0a090;
+    --trophy-bronze: #8a6a40;
+
+    /* Toast Overrides */
+    --toast-bg-from: rgba(14, 10, 20, 0.95);
+    --toast-bg-to: rgba(22, 16, 30, 0.95);
+    --toast-queued-bg-from: rgba(16, 12, 22, 0.90);
+    --toast-queued-bg-to: rgba(24, 18, 32, 0.90);
+}
+
+/* Christian - Cathedral light from above */
+[data-theme="christian"] body::before {
+    background:
+        /* Central divine light from top */
+        radial-gradient(ellipse 40% 60% at 50% 0%, rgba(212, 168, 67, 0.15) 0%, rgba(212, 168, 67, 0.06) 30%, transparent 70%),
+        /* Wider warm glow */
+        radial-gradient(ellipse 70% 50% at 50% 10%, rgba(180, 140, 50, 0.06) 0%, rgba(123, 77, 176, 0.03) 50%, transparent 100%),
+        /* Bottom warm ambient */
+        linear-gradient(to top, rgba(100, 60, 20, 0.04) 0%, rgba(80, 40, 120, 0.02) 40%, transparent 70%);
+}
+
+/* Christian - Subtle warm scanlines */
+[data-theme="christian"] body::after {
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(212, 168, 67, 0.015) 2px,
+        rgba(212, 168, 67, 0.015) 4px
+    );
+}
+
+/* =============================================================================
+   BLADE RUNNER THEME — Neon-soaked rain and urban decay
+   ============================================================================= */
+
+[data-theme="bladerunner"] {
+    /* Primary Colors */
+    --primary-cyan: #1a9fff;
+    --primary-cyan-dark: #1480d4;
+    --primary-cyan-light: #55b8ff;
+    --primary-cyan-glow: rgba(26, 159, 255, 0.5);
+
+    /* Secondary Colors */
+    --secondary-magenta: #ff2d7c;
+    --secondary-magenta-dark: #d42060;
+    --secondary-magenta-light: #ff5a9a;
+    --secondary-magenta-glow: rgba(255, 45, 124, 0.5);
+
+    /* Accent Colors */
+    --accent-purple: #b040e0;
+    --accent-blue: #1060c0;
+    --accent-violet: #8830c0;
+
+    /* Background Colors */
+    --bg-darkest: #06080e;
+    --bg-dark: #080a12;
+    --bg-darker: #0a0d16;
+    --bg-medium: #0e121c;
+    --bg-light: #131824;
+    --bg-lighter: #1a1f2e;
+
+    /* Card Colors */
+    --card-bg: #0a0e16;
+    --card-bg-hover: #10141e;
+    --card-border: #1a2236;
+    --card-border-hover: #2a3248;
+
+    /* Text Colors */
+    --text-primary: #d8dce8;
+    --text-secondary: #8892a8;
+    --text-muted: #505868;
+    --text-accent: var(--primary-cyan);
+
+    /* Border Color Alias */
+    --border-color: #1a2236;
+
+    /* Status Colors */
+    --status-success: #22cc88;
+    --status-warning: #ff8c30;
+    --status-error: #ff2d5e;
+    --status-info: var(--primary-cyan);
+    --status-online: #22cc88;
+    --status-offline: #ff2d5e;
+    --status-connected: var(--primary-cyan);
+
+    /* Shadows */
+    --shadow-glow-cyan: 0 0 20px rgba(26, 159, 255, 0.3);
+    --shadow-glow-magenta: 0 0 20px rgba(255, 45, 124, 0.3);
+
+    /* Neon Colors for Components */
+    --neon-cyan: #1a9fff;
+    --neon-green: #22cc88;
+    --neon-orange: #ff8c30;
+    --neon-red: #ff2d5e;
+    --neon-purple: #b040e0;
+    --neon-gray: #4a5268;
+
+    /* PSN Trophy Variables */
+    --trophy-platinum: #c0d8ff;
+    --trophy-gold: #ffd066;
+    --trophy-silver: #a0aab8;
+    --trophy-bronze: #d08a40;
+
+    /* Toast Overrides */
+    --toast-bg-from: rgba(8, 10, 18, 0.95);
+    --toast-bg-to: rgba(14, 18, 28, 0.95);
+    --toast-queued-bg-from: rgba(10, 12, 20, 0.90);
+    --toast-queued-bg-to: rgba(16, 20, 30, 0.90);
+}
+
+/* Blade Runner - Neon city glow from below */
+[data-theme="bladerunner"] body::before {
+    background:
+        /* Neon pink glow lower left */
+        radial-gradient(ellipse 40% 30% at 20% 95%, rgba(255, 45, 124, 0.08) 0%, rgba(255, 45, 124, 0.03) 50%, transparent 100%),
+        /* Neon blue glow lower right */
+        radial-gradient(ellipse 40% 30% at 80% 90%, rgba(26, 159, 255, 0.08) 0%, rgba(26, 159, 255, 0.03) 50%, transparent 100%),
+        /* Purple haze mid */
+        radial-gradient(ellipse 60% 40% at 50% 70%, rgba(130, 40, 180, 0.04) 0%, transparent 80%),
+        /* Dark sky gradient */
+        linear-gradient(to bottom, rgba(6, 8, 14, 0.02) 0%, rgba(20, 15, 30, 0.04) 60%, rgba(255, 45, 124, 0.02) 100%);
+}
+
+/* Blade Runner - Rain-streak scanlines */
+[data-theme="bladerunner"] body::after {
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(26, 159, 255, 0.02) 2px,
+        rgba(26, 159, 255, 0.02) 4px
+    );
+}
+
+/* =============================================================================
+   ELITE THEME — 1984 wireframe vector space aesthetic
+   Inspired by the original BBC Micro game "Elite" by Braben & Bell
+   ============================================================================= */
+
+[data-theme="elite"] {
+    /* Primary Colors — bright vector green on black */
+    --primary-cyan: #00ff00;
+    --primary-cyan-dark: #00cc00;
+    --primary-cyan-light: #66ff66;
+    --primary-cyan-glow: rgba(0, 255, 0, 0.5);
+
+    /* Secondary Colors — vector white/grey for wireframes */
+    --secondary-magenta: #cccccc;
+    --secondary-magenta-dark: #999999;
+    --secondary-magenta-light: #e0e0e0;
+    --secondary-magenta-glow: rgba(204, 204, 204, 0.5);
+
+    /* Accent Colors */
+    --accent-purple: #00cc66;
+    --accent-blue: #008844;
+    --accent-violet: #00aa55;
+
+    /* Background Colors — pure black like deep space */
+    --bg-darkest: #000000;
+    --bg-dark: #020202;
+    --bg-darker: #040404;
+    --bg-medium: #080808;
+    --bg-light: #0c0c0c;
+    --bg-lighter: #111111;
+
+    /* Card Colors */
+    --card-bg: #050505;
+    --card-bg-hover: #0a0a0a;
+    --card-border: #1a331a;
+    --card-border-hover: #2a552a;
+
+    /* Text Colors */
+    --text-primary: #d0ffd0;
+    --text-secondary: #80cc80;
+    --text-muted: #508050;
+    --text-accent: var(--primary-cyan);
+
+    /* Border Color Alias */
+    --border-color: #1a331a;
+
+    /* Status Colors */
+    --status-success: #00ff00;
+    --status-warning: #ffff00;
+    --status-error: #ff0000;
+    --status-info: var(--primary-cyan);
+    --status-online: #00ff00;
+    --status-offline: #ff0000;
+    --status-connected: var(--primary-cyan);
+
+    /* Shadows — bright vector glow */
+    --shadow-glow-cyan: 0 0 20px rgba(0, 255, 0, 0.3);
+    --shadow-glow-magenta: 0 0 20px rgba(204, 204, 204, 0.3);
+
+    /* Neon Colors for Components */
+    --neon-cyan: #00ff00;
+    --neon-green: #00ff00;
+    --neon-orange: #ffff00;
+    --neon-red: #ff0000;
+    --neon-purple: #00cc66;
+    --neon-gray: #4a6a4a;
+
+    /* PSN Trophy Variables */
+    --trophy-platinum: #ccffcc;
+    --trophy-gold: #ffff66;
+    --trophy-silver: #aaccaa;
+    --trophy-bronze: #88aa44;
+
+    /* Toast Overrides */
+    --toast-bg-from: rgba(0, 5, 0, 0.95);
+    --toast-bg-to: rgba(0, 12, 0, 0.95);
+    --toast-queued-bg-from: rgba(0, 8, 0, 0.90);
+    --toast-queued-bg-to: rgba(0, 15, 0, 0.90);
+}
+
+/* Elite - Deep space starfield hint */
+[data-theme="elite"] body::before {
+    background:
+        /* Distant star glow upper area */
+        radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.03) 0%, transparent 8%),
+        radial-gradient(circle at 70% 15%, rgba(255, 255, 255, 0.02) 0%, transparent 5%),
+        /* Vector green station glow bottom center */
+        radial-gradient(ellipse 40% 25% at 50% 95%, rgba(0, 255, 0, 0.04) 0%, transparent 80%),
+        /* Space gradient — pure black */
+        linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 20, 0, 0.02) 100%);
+}
+
+/* Elite - Scanlines (vector phosphor green, crisp) */
+[data-theme="elite"] body::after {
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 255, 0, 0.025) 2px,
+        rgba(0, 255, 0, 0.025) 4px
+    );
+}

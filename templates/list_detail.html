@@ -1,0 +1,526 @@
+{% extends "base.html" %}
+
+{% block title %}{{ list.name }} - Lists - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="{{ url_for('collections.lists_page') }}" class="breadcrumb-link">Lists</a>
+    <span class="breadcrumb-separator">/</span>
+    <span class="breadcrumb-current">{{ list.name }}</span>
+</nav>
+
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><span class="list-header-icon">{{ list.icon or '📋' }}</span> {{ list.name }}</h1>
+        {% if list.description %}
+        <p class="page-subtitle">{{ list.description }}</p>
+        {% endif %}
+    </div>
+    <div class="page-actions">
+        <span class="list-game-count-badge">
+            <span class="count-number" id="listGameCount">{{ games|length|format_number }}</span>
+            <span class="count-label">GAMES</span>
+        </span>
+        <button class="btn btn-primary" onclick="openAddGameModal()">
+            <span class="btn-icon">+</span> Add Games
+        </button>
+        <a href="{{ url_for('collections.lists_page') }}" class="btn btn-secondary">
+            Back to Lists
+        </a>
+    </div>
+</div>
+
+<!-- Games Table -->
+<section class="card" id="listGamesCard">
+    <div class="card-body" style="padding: 0;">
+        <table class="list-games-table" id="listGamesTable">
+            <thead>
+                <tr>
+                    <th style="width: 50px;">#</th>
+                    <th style="width: 60px;">Cover</th>
+                    <th>Title</th>
+                    <th style="width: 180px;">System</th>
+                    <th style="width: 80px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="listGamesBody">
+                {% for game in games %}
+                <tr data-game-id="{{ game.id }}" data-position="{{ loop.index }}">
+                    <td class="list-row-num">{{ loop.index }}</td>
+                    <td>
+                        <img src="{{ game.boxart or url_for('static', filename='images/placeholder.png') }}"
+                             alt="" class="list-game-thumb" loading="lazy">
+                    </td>
+                    <td>
+                        <a href="/game/{{ game.id }}" class="list-game-title-link">{{ game.title }}</a>
+                    </td>
+                    <td>
+                        <span class="list-game-system">{{ game.system_name or '' }}</span>
+                    </td>
+                    <td>
+                        <button class="list-action-btn danger" onclick="confirmRemoveGame({{ game.id }}, '{{ game.title|e }}')" title="Remove from list">&#10005;</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Empty State -->
+{% if not games %}
+<div class="empty-state" id="listEmptyState">
+    <div class="empty-state-icon">📋</div>
+    <div class="empty-state-title">This List is Empty</div>
+    <div class="empty-state-text">
+        Add games from the library or use the button above.
+    </div>
+    <button class="btn btn-primary" onclick="openAddGameModal()">
+        <span class="btn-icon">+</span> Add Games
+    </button>
+</div>
+{% endif %}
+
+<!-- Add Game Search Modal -->
+<div class="custom-modal" id="addGameModal" onclick="if(event.target===this)closeAddGameModal()">
+    <div class="custom-modal-content" style="max-width: 600px; max-height: 80vh;" role="dialog" aria-modal="true" aria-labelledby="addGameModalTitle">
+        <div class="custom-modal-header">
+            <h3 id="addGameModalTitle">Add Games to List</h3>
+            <button class="custom-modal-close" onclick="closeAddGameModal()" aria-label="Close">&times;</button>
+        </div>
+        <div class="custom-modal-body" style="padding: 0;">
+            <div class="add-game-search-bar">
+                <input type="text" id="addGameSearchInput" class="form-control"
+                       placeholder="Search games by title..."
+                       oninput="debounceGameSearch()"
+                       onkeydown="if(event.key==='Enter')searchGamesForList()">
+                <button class="btn btn-primary btn-sm" onclick="searchGamesForList()">Search</button>
+            </div>
+            <div class="add-game-results" id="addGameResults">
+                <div class="add-game-hint">Type a game title and press Enter or click Search.</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+/* List Header */
+.list-header-icon {
+    font-size: 2.2rem;
+    margin-right: var(--spacing-sm);
+    vertical-align: middle;
+}
+
+.list-game-count-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: transparent;
+    border: 1px solid var(--primary-cyan);
+    border-radius: var(--radius-full);
+}
+
+.count-number {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--primary-cyan);
+}
+
+.count-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--primary-cyan);
+    letter-spacing: 1px;
+}
+
+/* Games Table */
+.list-games-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.list-games-table thead th {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.list-games-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: background var(--transition-fast);
+}
+
+.list-games-table tbody tr:hover {
+    background: var(--bg-light);
+}
+
+.list-games-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    vertical-align: middle;
+}
+
+.list-row-num {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.list-game-thumb {
+    width: 40px;
+    height: 54px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    background: var(--bg-darker);
+}
+
+.list-game-title-link {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: color var(--transition-fast);
+}
+
+.list-game-title-link:hover {
+    color: var(--primary-cyan);
+}
+
+.list-game-system {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.list-action-btn {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all var(--transition-fast);
+}
+
+.list-action-btn:hover {
+    background: var(--bg-lighter);
+    color: var(--text-primary);
+}
+
+.list-action-btn.danger:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--neon-red);
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* Add Game Modal */
+.add-game-search-bar {
+    display: flex;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-medium);
+}
+
+.add-game-search-bar .form-control {
+    flex: 1;
+}
+
+.add-game-results {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: var(--spacing-sm);
+}
+
+.add-game-hint {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.add-game-result-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    transition: background var(--transition-fast);
+    cursor: pointer;
+}
+
+.add-game-result-item:hover {
+    background: var(--bg-light);
+}
+
+.add-game-result-thumb {
+    width: 36px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    background: var(--bg-darker);
+    flex-shrink: 0;
+}
+
+.add-game-result-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.add-game-result-title {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.add-game-result-system {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.add-game-result-btn {
+    flex-shrink: 0;
+    background: rgba(76, 201, 240, 0.15);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    color: var(--primary-cyan);
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-family: var(--font-primary);
+}
+
+.add-game-result-btn:hover {
+    background: rgba(76, 201, 240, 0.3);
+}
+
+.add-game-result-btn.added {
+    background: rgba(34, 197, 94, 0.15);
+    border-color: rgba(34, 197, 94, 0.3);
+    color: var(--neon-green);
+    pointer-events: none;
+}
+
+/* Form Styles */
+.form-control {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-darker);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color var(--transition-fast);
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    border-color: var(--primary-cyan);
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    font-size: 0.85rem;
+}
+
+.breadcrumb-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.breadcrumb-link:hover {
+    color: var(--primary-cyan);
+}
+
+.breadcrumb-separator {
+    color: var(--text-muted);
+}
+
+.breadcrumb-current {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .page-actions {
+        flex-wrap: wrap;
+    }
+    .list-games-table thead th:nth-child(4),
+    .list-games-table td:nth-child(4) {
+        display: none;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const listId = {{ list.id }};
+let gameSearchTimeout = null;
+const existingGameIds = new Set([{% for g in games %}{{ g.id }},{% endfor %}]);
+
+function openAddGameModal() {
+    document.getElementById('addGameModal').classList.add('active');
+    document.getElementById('addGameSearchInput').value = '';
+    document.getElementById('addGameResults').innerHTML = '<div class="add-game-hint">Type a game title and press Enter or click Search.</div>';
+    setTimeout(() => document.getElementById('addGameSearchInput').focus(), 100);
+}
+
+function closeAddGameModal() {
+    document.getElementById('addGameModal').classList.remove('active');
+}
+
+function debounceGameSearch() {
+    clearTimeout(gameSearchTimeout);
+    gameSearchTimeout = setTimeout(searchGamesForList, 400);
+}
+
+async function searchGamesForList() {
+    const query = document.getElementById('addGameSearchInput').value.trim();
+    const results = document.getElementById('addGameResults');
+
+    if (query.length < 2) {
+        results.innerHTML = '<div class="add-game-hint">Type at least 2 characters to search.</div>';
+        return;
+    }
+
+    results.innerHTML = '<div class="add-game-hint">Searching...</div>';
+
+    try {
+        const resp = await fetch(`/api/games/find?q=${encodeURIComponent(query)}&limit=20`);
+        const data = await resp.json();
+
+        if (!data.success || !data.games || data.games.length === 0) {
+            results.innerHTML = '<div class="add-game-hint">No games found matching your search.</div>';
+            return;
+        }
+
+        results.innerHTML = data.games.map(g => {
+            const isAdded = existingGameIds.has(g.id);
+            const thumb = g.boxart || '/static/images/placeholder.png';
+            return `
+                <div class="add-game-result-item">
+                    <img src="${thumb}" alt="" class="add-game-result-thumb" loading="lazy">
+                    <div class="add-game-result-info">
+                        <div class="add-game-result-title">${escapeHtml(g.title)}</div>
+                        <div class="add-game-result-system">${escapeHtml(g.system_name || '')}</div>
+                    </div>
+                    <button class="add-game-result-btn ${isAdded ? 'added' : ''}"
+                            id="addBtn_${g.id}"
+                            onclick="addGameToList(${g.id}, this)"
+                            ${isAdded ? 'disabled' : ''}>
+                        ${isAdded ? 'Added' : '+ Add'}
+                    </button>
+                </div>
+            `;
+        }).join('');
+    } catch (e) {
+        console.error('Error searching games:', e);
+        results.innerHTML = '<div class="add-game-hint" style="color: var(--neon-red);">Error searching games.</div>';
+    }
+}
+
+async function addGameToList(gameId, btnEl) {
+    try {
+        const resp = await fetch(`/api/lists/${listId}/games`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ game_id: gameId })
+        });
+        const data = await resp.json();
+        if (data.success) {
+            existingGameIds.add(gameId);
+            if (btnEl) {
+                btnEl.textContent = 'Added';
+                btnEl.classList.add('added');
+                btnEl.disabled = true;
+            }
+            showNotification('Game added to list.', 'success');
+            // Reload page to update the table
+            setTimeout(() => location.reload(), 500);
+        } else {
+            showNotification(data.error || 'Failed to add game.', 'error');
+        }
+    } catch (e) {
+        console.error('Error adding game:', e);
+        showNotification('Error adding game to list.', 'error');
+    }
+}
+
+function confirmRemoveGame(gameId, gameTitle) {
+    showConfirm(
+        'Remove Game',
+        `Remove "${gameTitle}" from this list?`,
+        () => removeGameFromList(gameId)
+    );
+}
+
+async function removeGameFromList(gameId) {
+    try {
+        const resp = await fetch(`/api/lists/${listId}/games/${gameId}`, { method: 'DELETE' });
+        const data = await resp.json();
+        if (data.success) {
+            existingGameIds.delete(gameId);
+            showNotification('Game removed from list.', 'success');
+            // Remove row from table
+            const row = document.querySelector(`tr[data-game-id="${gameId}"]`);
+            if (row) row.remove();
+            // Update count
+            const countEl = document.getElementById('listGameCount');
+            const newCount = document.querySelectorAll('#listGamesBody tr').length;
+            countEl.textContent = formatNumber(newCount);
+            // Renumber rows
+            document.querySelectorAll('#listGamesBody tr').forEach((r, i) => {
+                r.querySelector('.list-row-num').textContent = i + 1;
+                r.dataset.position = i + 1;
+            });
+            // Show empty state if needed
+            if (newCount === 0) {
+                document.getElementById('listGamesCard').style.display = 'none';
+                const emptyEl = document.getElementById('listEmptyState');
+                if (emptyEl) emptyEl.style.display = '';
+            }
+        } else {
+            showNotification(data.error || 'Failed to remove game.', 'error');
+        }
+    } catch (e) {
+        console.error('Error removing game:', e);
+        showNotification('Error removing game.', 'error');
+    }
+}
+
+function escapeHtml(text) {
+    const d = document.createElement('div');
+    d.textContent = text;
+    return d.innerHTML;
+}
+</script>
+{% endblock %}

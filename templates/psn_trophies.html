@@ -1,0 +1,1747 @@
+{% extends "base.html" %}
+
+{% block title %}PSN Trophies - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">🏆 PSN Trophies</h1>
+        <p class="page-subtitle">PlayStation Network{% if psn_profile %} · {{ psn_profile.online_id }}{% endif %}</p>
+    </div>
+    <div class="header-actions">
+        {% if psn_configured %}
+        <button onclick="syncTrophies()" class="btn btn-primary" id="syncTrophiesBtn">
+            <span class="btn-icon">🔄</span>
+            Sync Trophies
+        </button>
+        {% endif %}
+    </div>
+</div>
+
+{% if not psn_configured %}
+<!-- PSN Not Configured -->
+<section class="card">
+    <div class="card-body" style="text-align: center; padding: 60px 20px;">
+        <div style="font-size: 4rem; margin-bottom: 20px;">🎮</div>
+        <h2 style="margin-bottom: 10px;">PSN Not Configured</h2>
+        <p class="text-muted" style="margin-bottom: 20px;">
+            Configure your PSN NPSSO token in your profile settings to sync your PlayStation Network trophies.
+        </p>
+        <a href="{{ url_for('settings.settings') }}#profile" class="btn btn-primary">
+            <span class="btn-icon">👤</span>
+            Go to My Profile
+        </a>
+    </div>
+</section>
+
+{% elif total_games == 0 %}
+<!-- No Trophies Found -->
+<section class="card">
+    <div class="card-body" style="text-align: center; padding: 60px 20px;">
+        <div style="font-size: 4rem; margin-bottom: 20px;">🏆</div>
+        <h2 style="margin-bottom: 10px;">No PSN Trophies Found</h2>
+        <p class="text-muted" style="margin-bottom: 20px;">
+            Click "Sync Trophies" to fetch your trophy data from PlayStation Network.
+        </p>
+        <button onclick="syncTrophies()" class="btn btn-primary">
+            <span class="btn-icon">🔄</span>
+            Sync Trophies
+        </button>
+    </div>
+</section>
+
+{% else %}
+<!-- PSN Profile Bar -->
+<div class="psn-profile-bar">
+    <div class="psn-avatar">
+        {% if psn_profile.avatar_url %}
+        <img src="{{ psn_profile.avatar_url }}" alt="{{ psn_profile.online_id }}">
+        {% else %}
+        🎮
+        {% endif %}
+    </div>
+    <div class="psn-profile-info">
+        <div class="psn-username">{{ psn_profile.online_id }}</div>
+        <div class="psn-level">{% if psn_profile.trophy_level %}PSN Level {{ psn_profile.trophy_level|format_number }} · {% endif %}{{ total_games|format_number }} Games with Trophies</div>
+    </div>
+    <div class="psn-sync-status">
+        Last synced<br>
+        <span class="sync-time">{{ psn_profile.last_sync|tz('short') if psn_profile.last_sync else 'Never' }}</span>
+    </div>
+</div>
+
+<!-- Stats Bar -->
+<div class="psn-stats-bar" aria-label="Trophy statistics">
+    <div class="psn-stat-box">
+        <div class="stat-icon"><img src="{{ url_for('static', filename='images/trophies/platinum.png') }}" alt="Platinum" class="trophy-stat-icon"></div>
+        <div class="stat-details">
+            <div class="stat-label">Platinum</div>
+            <div class="stat-value platinum">{{ stats.platinum_earned|default(0)|format_number }} / {{ stats.platinum_total|default(0)|format_number }}</div>
+        </div>
+    </div>
+    <div class="psn-stat-box">
+        <div class="stat-icon"><img src="{{ url_for('static', filename='images/trophies/gold.png') }}" alt="Gold" class="trophy-stat-icon"></div>
+        <div class="stat-details">
+            <div class="stat-label">Gold</div>
+            <div class="stat-value gold">{{ stats.gold_earned|default(0)|format_number }} / {{ stats.gold_total|default(0)|format_number }}</div>
+        </div>
+    </div>
+    <div class="psn-stat-box">
+        <div class="stat-icon"><img src="{{ url_for('static', filename='images/trophies/silver.png') }}" alt="Silver" class="trophy-stat-icon"></div>
+        <div class="stat-details">
+            <div class="stat-label">Silver</div>
+            <div class="stat-value silver">{{ stats.silver_earned|default(0)|format_number }} / {{ stats.silver_total|default(0)|format_number }}</div>
+        </div>
+    </div>
+    <div class="psn-stat-box">
+        <div class="stat-icon"><img src="{{ url_for('static', filename='images/trophies/bronze.png') }}" alt="Bronze" class="trophy-stat-icon"></div>
+        <div class="stat-details">
+            <div class="stat-label">Bronze</div>
+            <div class="stat-value bronze">{{ stats.bronze_earned|default(0)|format_number }} / {{ stats.bronze_total|default(0)|format_number }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="filter-bar-new glass-panel psn-filter-bar" role="search" aria-label="Trophy filters">
+    <div class="search-box-integrated">
+        <span class="search-icon-inside">🔍</span>
+        <input type="text"
+               id="gameSearch"
+               class="search-input-integrated"
+               placeholder="Search games..."
+               aria-label="Search trophy games"
+               autocomplete="off"
+               style="padding-left: 36px;">
+        <button type="button" class="search-clear-btn" id="searchClearBtn" title="Clear search">×</button>
+    </div>
+
+    <!-- Platform Filter Buttons -->
+    <div class="psn-platform-filters" role="group" aria-label="Filter by platform">
+        <button class="platform-filter-btn active" data-platform="all" aria-label="All platforms">
+            All<span class="filter-count">({{ total_games|format_number }})</span>
+        </button>
+        <button class="platform-filter-btn" data-platform="ps5" aria-label="PlayStation 5">
+            PS5<span class="filter-count">({{ platform_counts.ps5|default(0) }})</span>
+        </button>
+        <button class="platform-filter-btn" data-platform="ps4" aria-label="PlayStation 4">
+            PS4<span class="filter-count">({{ platform_counts.ps4|default(0) }})</span>
+        </button>
+        <button class="platform-filter-btn" data-platform="ps3" aria-label="PlayStation 3">
+            PS3<span class="filter-count">({{ platform_counts.ps3|default(0) }})</span>
+        </button>
+        <button class="platform-filter-btn" data-platform="vita" aria-label="PlayStation Vita">
+            PS Vita<span class="filter-count">({{ platform_counts.vita|default(0) }})</span>
+        </button>
+    </div>
+
+    <!-- Sort -->
+    <div class="psn-sort-wrapper">
+        <select id="sortSelect" aria-label="Sort trophies by">
+            <option value="name-asc">Name A-Z</option>
+            <option value="name-desc">Name Z-A</option>
+            <option value="progress-desc">Progress ↓</option>
+            <option value="progress-asc">Progress ↑</option>
+            <option value="recent">Recently Played</option>
+            <option value="platform">Platform</option>
+        </select>
+    </div>
+
+    <!-- Bulk Controls -->
+    <div class="bulk-controls">
+        <button class="filter-btn bulk-btn" onclick="PSNTrophyController.toggleBulkMode()" id="psnBulkModeBtn">
+            <span class="filter-icon">☑️</span> <span id="psnBulkModeText">Select</span>
+        </button>
+        <button class="filter-btn bulk-action-btn psn-bulk-action" onclick="PSNTrophyController.selectAllVisible()" id="psnSelectAllBtn" style="display: none;">
+            <span class="filter-icon">✅</span> All
+        </button>
+        <button class="filter-btn bulk-action-btn psn-bulk-action" onclick="PSNTrophyController.selectNotSynced()" id="psnSelectNotSyncedBtn" style="display: none;" title="Select games without synced trophy details">
+            <span class="filter-icon">🔄</span> Not Synced
+        </button>
+        <button class="filter-btn bulk-action-btn psn-bulk-action" onclick="PSNTrophyController.selectIncomplete()" id="psnSelectIncompleteBtn" style="display: none;" title="Select games with < 100% progress">
+            <span class="filter-icon">📊</span> Incomplete
+        </button>
+        <button class="filter-btn bulk-scrape-btn psn-bulk-action" onclick="startBulkRefresh()" id="psnBulkRefreshBtn" style="display: none;">
+            <span class="filter-icon">🔄</span> Sync Selected (<span id="psnSelectedCount">0</span>)
+        </button>
+    </div>
+</div>
+
+<!-- Alphabet Jump Navigation -->
+<div class="alphabet-nav glass-panel" id="alphabetNav" role="navigation" aria-label="Alphabetical jump navigation">
+    <span class="alphabet-label">Jump to:</span>
+    <div class="alphabet-letters">
+        <button class="alphabet-btn" data-letter="#">#</button>
+        <button class="alphabet-btn" data-letter="A">A</button>
+        <button class="alphabet-btn" data-letter="B">B</button>
+        <button class="alphabet-btn" data-letter="C">C</button>
+        <button class="alphabet-btn" data-letter="D">D</button>
+        <button class="alphabet-btn" data-letter="E">E</button>
+        <button class="alphabet-btn" data-letter="F">F</button>
+        <button class="alphabet-btn" data-letter="G">G</button>
+        <button class="alphabet-btn" data-letter="H">H</button>
+        <button class="alphabet-btn" data-letter="I">I</button>
+        <button class="alphabet-btn" data-letter="J">J</button>
+        <button class="alphabet-btn" data-letter="K">K</button>
+        <button class="alphabet-btn" data-letter="L">L</button>
+        <button class="alphabet-btn" data-letter="M">M</button>
+        <button class="alphabet-btn" data-letter="N">N</button>
+        <button class="alphabet-btn" data-letter="O">O</button>
+        <button class="alphabet-btn" data-letter="P">P</button>
+        <button class="alphabet-btn" data-letter="Q">Q</button>
+        <button class="alphabet-btn" data-letter="R">R</button>
+        <button class="alphabet-btn" data-letter="S">S</button>
+        <button class="alphabet-btn" data-letter="T">T</button>
+        <button class="alphabet-btn" data-letter="U">U</button>
+        <button class="alphabet-btn" data-letter="V">V</button>
+        <button class="alphabet-btn" data-letter="W">W</button>
+        <button class="alphabet-btn" data-letter="X">X</button>
+        <button class="alphabet-btn" data-letter="Y">Y</button>
+        <button class="alphabet-btn" data-letter="Z">Z</button>
+    </div>
+</div>
+
+<!-- Games Count -->
+<div class="games-count-bar">
+    <span class="showing-text">SHOWING <span id="visibleCount">0</span> OF <span id="totalFilteredCount">{{ total_games|format_number }}</span> GAMES</span>
+</div>
+
+<!-- Games Grid (populated by JS) -->
+<div class="psn-games-grid" id="gamesGrid"></div>
+
+<!-- Loading Indicator -->
+<div id="gamesLoading" class="games-loading" style="text-align: center; padding: 3rem;">
+    <div class="loading-spinner"></div>
+    <p style="color: var(--text-muted); margin-top: 1rem;">Loading games...</p>
+</div>
+
+<!-- Infinite Scroll Trigger -->
+<div id="infiniteScrollTrigger" style="height: 1px;"></div>
+{% endif %}
+
+<!-- Sync Status Modal -->
+<div id="syncModal" class="modal">
+    <div class="modal-content glass-panel" role="dialog" aria-modal="true" aria-labelledby="syncModalTitle">
+        <div class="modal-header">
+            <h2 id="syncModalTitle">🔄 Syncing PSN Trophies</h2>
+        </div>
+        <div class="modal-body">
+            <p id="syncStatus">Connecting to PlayStation Network...</p>
+            <p id="syncCurrentGame" style="font-size: 0.85rem; color: var(--primary-cyan); margin: 8px 0; min-height: 1.2em;"></p>
+            <div class="progress-bar" style="margin-top: 15px;">
+                <div class="progress-fill" id="syncProgress" style="width: 0%"></div>
+            </div>
+            <div id="syncStats" style="display: none; margin-top: 12px; font-size: 0.8rem; color: var(--text-secondary); display: flex; justify-content: center; gap: var(--spacing-lg);">
+                <span>🎮 <span id="syncGameCount">0</span> synced</span>
+                <span>🖼️ <span id="syncImageCount">0</span> images</span>
+            </div>
+        </div>
+        <div id="syncFooter" class="modal-footer" style="display: none;">
+            <button class="btn btn-primary" onclick="closeSyncModal()">✓ Done</button>
+        </div>
+    </div>
+</div>
+
+<!-- Bulk Refresh Modal -->
+<div id="bulkRefreshModal" class="modal">
+    <div class="modal-content glass-panel" style="max-width: 500px;" role="dialog" aria-modal="true" aria-labelledby="bulkRefreshModalTitle">
+        <div class="modal-header">
+            <h2 id="bulkRefreshModalTitle">🔄 Bulk Trophy Refresh</h2>
+        </div>
+        <div class="modal-body">
+            <p id="bulkRefreshStatus">Starting bulk refresh...</p>
+            <p class="bulk-current-game" id="bulkCurrentGame" style="font-size: 0.9rem; color: var(--primary-cyan); margin: 10px 0;">--</p>
+
+            <div class="progress-bar" style="margin: 15px 0;">
+                <div class="progress-fill" id="bulkProgressFill" style="width: 0%"></div>
+            </div>
+
+            <div class="bulk-stats" style="display: flex; justify-content: center; gap: var(--spacing-lg); margin: 15px 0;">
+                <span id="bulkProgressText">0 / 0</span>
+            </div>
+
+            <!-- Live Results -->
+            <div id="bulkResultsLive" class="bulk-results-row" style="display: flex; justify-content: center; gap: var(--spacing-lg); margin-top: 15px;">
+                <div class="result-item">
+                    <span class="result-icon">✅</span>
+                    <span id="bulkSuccessLive">0</span> synced
+                </div>
+                <div class="result-item">
+                    <span class="result-icon">❌</span>
+                    <span id="bulkFailedLive">0</span> failed
+                </div>
+                <div class="result-item">
+                    <span class="result-icon">⏭️</span>
+                    <span id="bulkSkippedLive">0</span> skipped
+                </div>
+            </div>
+
+            <p class="rate-limit-notice" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 15px; text-align: center;">
+                ⏱️ Rate limited: ~2.5 seconds between games to respect PSN API limits
+            </p>
+        </div>
+
+        <!-- Controls Row -->
+        <div id="bulkControlsRow" class="modal-footer" style="display: flex; gap: var(--spacing-sm); justify-content: center;">
+            <button class="btn btn-warning btn-sm" onclick="toggleBulkPause()" id="bulkPauseBtn">
+                <span id="bulkPauseBtnIcon">⏸️</span> <span id="bulkPauseBtnText">Pause</span>
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="cancelBulkRefresh()">
+                ❌ Cancel
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="psnRunInBackground()" id="bulkBackgroundBtn">
+                📤 Background
+            </button>
+        </div>
+
+        <!-- Final Footer (shown when complete) -->
+        <div id="bulkFooter" class="modal-footer" style="display: none;">
+            <button class="btn btn-primary" onclick="closeBulkRefreshModal(true)">
+                ✓ Done
+            </button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+/* ============================================================
+   PSN Profile Bar
+   ============================================================ */
+.psn-profile-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: rgba(20, 26, 35, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.psn-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0070d1, #00439c);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    border: 2px solid #0070d1;
+    box-shadow: 0 0 12px rgba(0, 112, 209, 0.4);
+    overflow: hidden;
+}
+
+.psn-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.psn-profile-info {
+    flex: 1;
+}
+
+.psn-username {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+}
+
+.psn-level {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.psn-sync-status {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: right;
+}
+
+.psn-sync-status .sync-time {
+    color: var(--text-secondary);
+}
+
+/* ============================================================
+   PSN Stats Bar
+   ============================================================ */
+.psn-stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+}
+
+.psn-stat-box {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background: rgba(20, 26, 35, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    transition: border-color var(--transition-fast);
+}
+
+.psn-stat-box:hover {
+    border-color: var(--card-border-hover);
+}
+
+.psn-stat-box .stat-icon {
+    font-size: 2rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.psn-stat-box .stat-icon .trophy-stat-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+.psn-stat-box .stat-details {
+    flex: 1;
+}
+
+.psn-stat-box .stat-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+}
+
+.psn-stat-box .stat-value {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.psn-stat-box .stat-value.platinum { color: #7bb8d4; }
+.psn-stat-box .stat-value.gold { color: #cd9a2a; }
+.psn-stat-box .stat-value.silver { color: #a8a8a8; }
+.psn-stat-box .stat-value.bronze { color: #cd7f32; }
+
+/* ============================================================
+   Filter Bar — Platform Buttons & Sort in Filter Bar
+   ============================================================ */
+.psn-filter-bar {
+    gap: var(--spacing-md);
+}
+
+.psn-platform-filters {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.platform-filter-btn {
+    padding: 6px 16px;
+    font-family: var(--font-primary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-full);
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.platform-filter-btn:hover {
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+.platform-filter-btn.active {
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+    background: rgba(76, 201, 240, 0.1);
+    box-shadow: 0 0 10px rgba(76, 201, 240, 0.2);
+}
+
+.filter-count {
+    font-size: 0.7rem;
+    opacity: 0.7;
+    margin-left: 4px;
+}
+
+.psn-sort-wrapper {
+    margin-left: auto;
+}
+
+.psn-sort-wrapper select {
+    padding: var(--spacing-sm) var(--spacing-md);
+    padding-right: 30px;
+    background-color: #1a1a2e;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 0.85rem;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234cc9f0' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    min-width: 140px;
+}
+
+.psn-sort-wrapper select:focus {
+    border-color: var(--primary-cyan);
+}
+
+.psn-sort-wrapper select option {
+    background-color: #1a1a2e;
+    color: #e0e0e0;
+}
+
+/* ============================================================
+   Sync Status Badge
+   ============================================================ */
+.sync-status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    font-size: 0.6rem;
+    border-radius: 50%;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+
+.sync-status-badge.synced {
+    background: rgba(34, 197, 94, 0.2);
+    color: var(--neon-green);
+    border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.sync-status-badge.not-synced {
+    background: rgba(255, 171, 0, 0.15);
+    color: var(--status-warning);
+    border: 1px solid rgba(255, 171, 0, 0.3);
+}
+
+.psn-trophy-game-meta {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+/* ============================================================
+   Bulk Selection Styles
+   ============================================================ */
+.psn-trophy-game-wrapper {
+    position: relative;
+    min-width: 0;
+}
+
+.psn-trophy-game-wrapper.selected .psn-trophy-game-card {
+    border-color: var(--primary-cyan);
+    background: rgba(76, 201, 240, 0.1);
+    box-shadow: 0 0 15px rgba(76, 201, 240, 0.2);
+}
+
+.bulk-select-checkbox {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 10;
+}
+
+.bulk-select-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--primary-cyan);
+}
+
+.bulk-mode .bulk-select-checkbox {
+    display: block !important;
+}
+
+.bulk-mode .psn-trophy-game-card {
+    cursor: pointer;
+}
+
+/* ============================================================
+   PSN Game Cards Grid
+   ============================================================ */
+.psn-games-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+}
+
+.psn-trophy-game-card {
+    display: flex;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: rgba(20, 26, 35, 0.6);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+}
+
+.psn-trophy-game-card:hover {
+    border-color: var(--primary-cyan);
+    background: rgba(20, 26, 35, 0.9);
+    box-shadow: 0 0 20px rgba(76, 201, 240, 0.1);
+    transform: translateY(-1px);
+}
+
+.psn-trophy-game-thumb {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    flex-shrink: 0;
+    background: var(--bg-medium);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    overflow: hidden;
+}
+
+.psn-trophy-game-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+}
+
+.psn-trophy-game-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.psn-trophy-game-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+}
+
+.psn-trophy-game-npwr {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-top: 1px;
+}
+
+/* Platform Badges */
+.psn-platform-badge {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-top: 2px;
+}
+
+.platform-ps3 {
+    background: rgba(0, 112, 209, 0.2);
+    color: #4da6ff;
+    border: 1px solid rgba(0, 112, 209, 0.3);
+}
+
+.platform-ps4 {
+    background: rgba(0, 55, 145, 0.2);
+    color: #6699ff;
+    border: 1px solid rgba(0, 55, 145, 0.3);
+}
+
+.platform-ps5 {
+    background: rgba(255, 255, 255, 0.08);
+    color: #cccccc;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.platform-vita {
+    background: rgba(0, 150, 200, 0.2);
+    color: #4dc8e8;
+    border: 1px solid rgba(0, 150, 200, 0.3);
+}
+
+.platform-psvita {
+    background: rgba(0, 150, 200, 0.2);
+    color: #4dc8e8;
+    border: 1px solid rgba(0, 150, 200, 0.3);
+}
+
+/* Progress Bar */
+.psn-trophy-game-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.progress-track {
+    flex: 1;
+    height: 4px;
+    background: var(--bg-lighter);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-track .progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--primary-cyan), var(--neon-purple));
+    transition: width 0.5s ease;
+}
+
+.progress-track .progress-fill.complete {
+    background: linear-gradient(90deg, var(--neon-green), #2dd36f);
+}
+
+.progress-pct {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--primary-cyan);
+    font-weight: 600;
+    min-width: 36px;
+    text-align: right;
+}
+
+.progress-pct.complete {
+    color: var(--neon-green);
+}
+
+/* Trophy Mini Badges */
+.trophy-counts {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.trophy-mini-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 1px 5px;
+    border-radius: 3px;
+    white-space: nowrap;
+}
+
+.trophy-mini-badge .t-icon {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+    vertical-align: middle;
+}
+
+.tmb-platinum {
+    background: rgba(123, 184, 212, 0.15);
+    color: #7bb8d4;
+    border: 1px solid rgba(123, 184, 212, 0.25);
+}
+
+.tmb-gold {
+    background: rgba(205, 154, 42, 0.15);
+    color: #cd9a2a;
+    border: 1px solid rgba(205, 154, 42, 0.25);
+}
+
+.tmb-silver {
+    background: rgba(168, 168, 168, 0.15);
+    color: #a8a8a8;
+    border: 1px solid rgba(168, 168, 168, 0.25);
+}
+
+.tmb-bronze {
+    background: rgba(205, 127, 50, 0.15);
+    color: #cd7f32;
+    border: 1px solid rgba(205, 127, 50, 0.25);
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 1024px) {
+    .psn-games-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .psn-games-grid {
+        grid-template-columns: 1fr;
+    }
+    .psn-stats-bar {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .psn-stats-bar {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================================
+   Modal
+   ============================================================ */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    max-width: 400px;
+    width: 90%;
+    padding: var(--spacing-xl);
+    text-align: center;
+}
+
+.modal-content .progress-bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.modal-content .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-cyan), var(--secondary-magenta));
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// ============================================
+// SERVER DATA
+// ============================================
+window.PSN_TOTAL_GAMES = {{ total_games }};
+window.PSN_AVAILABLE_LETTERS = {{ available_letters | tojson }};
+
+// ============================================
+// PSN TROPHY CONTROLLER
+// ============================================
+const PSNTrophyController = (function() {
+    'use strict';
+
+    // State
+    let currentPage = 0;
+    let totalPages = 1;
+    let totalFiltered = 0;
+    let loadedCount = 0;
+    let isLoading = false;
+    let hasMore = true;
+    const PER_PAGE = 60;
+
+    const STORAGE_KEY = 'psn_trophies_filters';
+    let filters = {};
+    let searchTimeout = null;
+    let currentFetchController = null;
+    let scrollObserver = null;
+
+    // Bulk selection
+    let bulkMode = false;
+    const selectedGames = new Set();
+
+    // Trophy image paths (cached for rendering)
+    const TROPHY_ICONS = {
+        platinum: '/static/images/trophies/platinum.png',
+        gold: '/static/images/trophies/gold.png',
+        silver: '/static/images/trophies/silver.png',
+        bronze: '/static/images/trophies/bronze.png',
+    };
+
+    // =========================================================================
+    // INITIALIZATION
+    // =========================================================================
+
+    function init() {
+        restoreFilters();
+        setupSearch();
+        setupPlatformFilter();
+        setupSort();
+        setupAlphabetNav();
+        setupInfiniteScroll();
+        fetchGames(1, false);
+    }
+
+    function saveFilters() {
+        try { Storage.set(STORAGE_KEY, JSON.stringify(filters)); } catch(e) {}
+    }
+
+    function restoreFilters() {
+        try {
+            const saved = Storage.get(STORAGE_KEY);
+            if (!saved) return;
+            const parsed = JSON.parse(saved);
+            if (typeof parsed !== 'object' || parsed === null) return;
+            filters = parsed;
+
+            // Restore platform button
+            if (filters.platform) {
+                const apiVal = filters.platform;
+                // Map 'psvita' back to 'vita' for the data-platform attribute
+                const dataVal = apiVal === 'psvita' ? 'vita' : apiVal;
+                document.querySelectorAll('.platform-filter-btn').forEach(b => {
+                    b.classList.toggle('active', b.dataset.platform === dataVal);
+                });
+            }
+
+            // Restore sort
+            if (filters.sort) {
+                const sortSelect = document.getElementById('sortSelect');
+                if (sortSelect) sortSelect.value = filters.sort;
+            }
+
+            // Restore search
+            if (filters.search) {
+                const searchInput = document.getElementById('gameSearch');
+                if (searchInput) searchInput.value = filters.search;
+            }
+        } catch(e) {}
+    }
+
+    // =========================================================================
+    // SEARCH
+    // =========================================================================
+
+    function setupSearch() {
+        const searchInput = document.getElementById('gameSearch');
+        if (!searchInput) return;
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                clearLetterJump();
+                const val = searchInput.value.trim();
+                if (val) filters.search = val;
+                else delete filters.search;
+                resetAndFetch();
+            }, 300);
+        });
+
+        // Clear button
+        const clearBtn = document.getElementById('searchClearBtn');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                searchInput.value = '';
+                delete filters.search;
+                clearLetterJump();
+                resetAndFetch();
+            });
+        }
+    }
+
+    // =========================================================================
+    // PLATFORM FILTER
+    // =========================================================================
+
+    function setupPlatformFilter() {
+        document.querySelectorAll('.platform-filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.platform-filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const platform = btn.dataset.platform;
+                if (platform && platform !== 'all') {
+                    // Map 'vita' to 'psvita' for the API
+                    filters.platform = platform === 'vita' ? 'psvita' : platform;
+                } else {
+                    delete filters.platform;
+                }
+                clearLetterJump();
+                resetAndFetch();
+            });
+        });
+    }
+
+    // =========================================================================
+    // SORT
+    // =========================================================================
+
+    function setupSort() {
+        const sortSelect = document.getElementById('sortSelect');
+        if (!sortSelect) return;
+
+        sortSelect.addEventListener('change', function() {
+            filters.sort = this.value;
+            clearLetterJump();
+            resetAndFetch();
+        });
+    }
+
+    // =========================================================================
+    // ALPHABET NAV
+    // =========================================================================
+
+    function clearLetterJump() {
+        delete filters.letter;
+        document.querySelectorAll('.alphabet-btn.active').forEach(b => b.classList.remove('active'));
+    }
+
+    function setupAlphabetNav() {
+        const nav = document.getElementById('alphabetNav');
+        if (!nav) return;
+
+        const totalGames = window.PSN_TOTAL_GAMES || 0;
+        if (totalGames < 20) {
+            nav.style.display = 'none';
+            return;
+        }
+
+        // Position below filter bar via ResizeObserver
+        const filterBar = document.querySelector('.filter-bar-new');
+        if (filterBar) {
+            const updateNavTop = () => {
+                nav.style.top = filterBar.offsetHeight + 'px';
+            };
+            requestAnimationFrame(() => {
+                requestAnimationFrame(updateNavTop);
+            });
+            if (typeof ResizeObserver !== 'undefined') {
+                new ResizeObserver(updateNavTop).observe(filterBar);
+            }
+        }
+
+        // Mark disabled letters
+        const available = window.PSN_AVAILABLE_LETTERS || [];
+        const letterSet = new Set();
+        available.forEach(l => {
+            if (/^[A-Z]$/i.test(l)) letterSet.add(l.toUpperCase());
+            else letterSet.add('#');
+        });
+
+        nav.querySelectorAll('.alphabet-btn').forEach(btn => {
+            const letter = btn.dataset.letter;
+            if (letterSet.size > 0 && !letterSet.has(letter)) {
+                btn.classList.add('disabled');
+            }
+
+            btn.addEventListener('click', () => {
+                if (btn.classList.contains('disabled')) return;
+
+                // Toggle: clicking active letter deselects it
+                const wasActive = btn.classList.contains('active');
+                nav.querySelectorAll('.alphabet-btn.active').forEach(b => b.classList.remove('active'));
+
+                if (wasActive) {
+                    delete filters.letter;
+                } else {
+                    btn.classList.add('active');
+                    filters.letter = letter;
+                }
+                resetAndFetch();
+            });
+        });
+    }
+
+    // =========================================================================
+    // DATA FETCHING
+    // =========================================================================
+
+    function buildQueryString(page) {
+        const params = new URLSearchParams();
+        params.set('page', page);
+        params.set('per_page', PER_PAGE);
+        for (const [k, v] of Object.entries(filters)) {
+            if (v !== undefined && v !== null && v !== '') {
+                params.set(k, v);
+            }
+        }
+        return params.toString();
+    }
+
+    async function fetchGames(page, append) {
+        if (append && isLoading) return;
+        if (!append && currentFetchController) {
+            currentFetchController.abort();
+        }
+
+        isLoading = true;
+        const controller = new AbortController();
+        currentFetchController = controller;
+
+        const loadingEl = document.getElementById('gamesLoading');
+        if (!append && loadingEl) loadingEl.style.display = '';
+
+        try {
+            const qs = buildQueryString(page);
+            const resp = await fetch('/api/psn/games?' + qs, { signal: controller.signal });
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            const data = await resp.json();
+            if (data.error) throw new Error(data.error);
+
+            currentPage = data.page;
+            totalPages = data.total_pages;
+            totalFiltered = data.total;
+            hasMore = data.has_more;
+
+            renderGames(data.games, append);
+            loadedCount = append ? loadedCount + data.games.length : data.games.length;
+
+            updateCounts();
+            observeTrigger();
+        } catch (err) {
+            if (err.name === 'AbortError') return;
+            console.error('Failed to fetch PSN games:', err);
+        } finally {
+            if (currentFetchController === controller) {
+                isLoading = false;
+                currentFetchController = null;
+                if (loadingEl) loadingEl.style.display = 'none';
+            }
+        }
+    }
+
+    function resetAndFetch() {
+        saveFilters();
+        currentPage = 0;
+        loadedCount = 0;
+        hasMore = true;
+        const grid = document.getElementById('gamesGrid');
+        if (grid) grid.innerHTML = '';
+        fetchGames(1, false);
+    }
+
+    // =========================================================================
+    // RENDERING
+    // =========================================================================
+
+    function renderGames(games, append) {
+        const grid = document.getElementById('gamesGrid');
+        if (!grid) return;
+        if (!append) grid.innerHTML = '';
+
+        const fragment = document.createDocumentFragment();
+        games.forEach(game => {
+            fragment.appendChild(renderGameCard(game));
+        });
+        grid.appendChild(fragment);
+    }
+
+    function renderGameCard(game) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'psn-trophy-game-wrapper';
+        wrapper.dataset.npwrId = game.npwr_id;
+        wrapper.dataset.platform = (game.platform || '').toLowerCase();
+        wrapper.dataset.name = game.title || '';
+        wrapper.dataset.progress = Math.round(game.progress || 0);
+        wrapper.dataset.synced = game.trophies_synced ? '1' : '0';
+
+        const progress = Math.round(game.progress || 0);
+        const isComplete = progress >= 100;
+        const progressRound = (game.progress || 0).toFixed(1);
+        const platformLower = (game.platform || '').toLowerCase();
+
+        // Trophy count display — show just earned if 100%, else earned/total
+        function trophyCount(earned, total) {
+            if (isComplete) return formatNumber(earned);
+            return formatNumber(earned) + ' / ' + formatNumber(total);
+        }
+
+        // Image: local first, CDN fallback, then emoji
+        const localSrc = '/static/images/trophies/' + escapeHtml(game.npwr_id) + '/ICON0.PNG';
+        const cdnSrc = escapeHtml(game.icon_url || '');
+        const imgFallback = cdnSrc
+            ? "if(this.dataset.fb){this.onerror=null;this.outerHTML='&#127918;'}else{this.dataset.fb='1';this.src='" + cdnSrc + "'}"
+            : "this.onerror=null;this.outerHTML='&#127918;'";
+
+        const checkboxDisplay = bulkMode ? 'block' : 'none';
+        const isSelected = selectedGames.has(game.npwr_id);
+
+        wrapper.innerHTML =
+            '<div class="bulk-select-checkbox" style="display: ' + checkboxDisplay + ';">' +
+                '<input type="checkbox" class="game-checkbox" data-npwr-id="' + escapeHtml(game.npwr_id) + '"' +
+                (isSelected ? ' checked' : '') +
+                ' onclick="event.stopPropagation(); PSNTrophyController.toggleGameSelection(\'' + escapeHtml(game.npwr_id) + '\')">' +
+            '</div>' +
+            '<a href="/psn-trophies/' + escapeHtml(game.npwr_id) + '" class="psn-trophy-game-card">' +
+                '<div class="psn-trophy-game-thumb">' +
+                    '<img src="' + localSrc + '" alt="' + escapeHtml(game.title) + '" loading="lazy" onerror="' + imgFallback + '">' +
+                '</div>' +
+                '<div class="psn-trophy-game-info">' +
+                    '<div>' +
+                        '<div class="psn-trophy-game-name">' + escapeHtml(game.title) + '</div>' +
+                        '<div class="psn-trophy-game-meta">' +
+                            '<span class="psn-trophy-game-npwr">' + escapeHtml(game.npwr_id) + '</span>' +
+                            (game.trophies_synced
+                                ? '<span class="sync-status-badge synced" title="Individual trophies synced">✓</span>'
+                                : '<span class="sync-status-badge not-synced" title="Trophy details not synced">○</span>') +
+                        '</div>' +
+                        '<span class="psn-platform-badge platform-' + platformLower + '">' + escapeHtml(game.platform) + '</span>' +
+                    '</div>' +
+                    '<div class="psn-trophy-game-progress">' +
+                        '<div class="progress-track">' +
+                            '<div class="progress-fill' + (isComplete ? ' complete' : '') + '" style="width: ' + progress + '%;"></div>' +
+                        '</div>' +
+                        '<span class="progress-pct' + (isComplete ? ' complete' : '') + '">' + progressRound + '%</span>' +
+                    '</div>' +
+                    '<div class="trophy-counts">' +
+                        '<span class="trophy-mini-badge tmb-platinum">' +
+                            '<img src="' + TROPHY_ICONS.platinum + '" alt="P" class="t-icon">' +
+                            trophyCount(game.platinum_earned, game.platinum_total) +
+                        '</span>' +
+                        '<span class="trophy-mini-badge tmb-gold">' +
+                            '<img src="' + TROPHY_ICONS.gold + '" alt="G" class="t-icon">' +
+                            trophyCount(game.gold_earned, game.gold_total) +
+                        '</span>' +
+                        '<span class="trophy-mini-badge tmb-silver">' +
+                            '<img src="' + TROPHY_ICONS.silver + '" alt="S" class="t-icon">' +
+                            trophyCount(game.silver_earned, game.silver_total) +
+                        '</span>' +
+                        '<span class="trophy-mini-badge tmb-bronze">' +
+                            '<img src="' + TROPHY_ICONS.bronze + '" alt="B" class="t-icon">' +
+                            trophyCount(game.bronze_earned, game.bronze_total) +
+                        '</span>' +
+                    '</div>' +
+                '</div>' +
+            '</a>';
+
+        if (isSelected) wrapper.classList.add('selected');
+
+        return wrapper;
+    }
+
+    // =========================================================================
+    // INFINITE SCROLL
+    // =========================================================================
+
+    function setupInfiniteScroll() {
+        const trigger = document.getElementById('infiniteScrollTrigger');
+        if (!trigger || !('IntersectionObserver' in window)) return;
+
+        scrollObserver = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && hasMore && !isLoading) {
+                fetchGames(currentPage + 1, true);
+            }
+        }, { rootMargin: '600px' });
+    }
+
+    function observeTrigger() {
+        const trigger = document.getElementById('infiniteScrollTrigger');
+        if (!scrollObserver || !trigger) return;
+        scrollObserver.disconnect();
+        if (hasMore) {
+            scrollObserver.observe(trigger);
+        }
+    }
+
+    // =========================================================================
+    // COUNTS
+    // =========================================================================
+
+    function updateCounts() {
+        const visibleEl = document.getElementById('visibleCount');
+        const totalEl = document.getElementById('totalFilteredCount');
+        if (visibleEl) visibleEl.textContent = formatNumber(loadedCount);
+        if (totalEl) totalEl.textContent = formatNumber(totalFiltered);
+    }
+
+    // =========================================================================
+    // BULK SELECTION
+    // =========================================================================
+
+    function toggleBulkMode() {
+        bulkMode = !bulkMode;
+        const grid = document.getElementById('gamesGrid');
+        const bulkModeBtn = document.getElementById('psnBulkModeBtn');
+        const bulkModeText = document.getElementById('psnBulkModeText');
+        const bulkActionBtns = document.querySelectorAll('.psn-bulk-action');
+
+        if (bulkMode) {
+            grid?.classList.add('bulk-mode');
+            bulkModeBtn?.classList.add('active');
+            if (bulkModeText) bulkModeText.textContent = 'Cancel';
+            bulkActionBtns.forEach(btn => btn.style.display = 'inline-flex');
+            document.querySelectorAll('.bulk-select-checkbox').forEach(cb => cb.style.display = 'block');
+
+            // Prevent links from navigating in bulk mode
+            document.querySelectorAll('.psn-trophy-game-card').forEach(card => {
+                card.addEventListener('click', handleCardClick);
+            });
+        } else {
+            exitBulkMode();
+        }
+    }
+
+    function exitBulkMode() {
+        bulkMode = false;
+        selectedGames.clear();
+
+        const grid = document.getElementById('gamesGrid');
+        const bulkModeBtn = document.getElementById('psnBulkModeBtn');
+        const bulkModeText = document.getElementById('psnBulkModeText');
+        const bulkActionBtns = document.querySelectorAll('.psn-bulk-action');
+
+        grid?.classList.remove('bulk-mode');
+        bulkModeBtn?.classList.remove('active');
+        if (bulkModeText) bulkModeText.textContent = 'Select';
+        bulkActionBtns.forEach(btn => btn.style.display = 'none');
+
+        document.querySelectorAll('.bulk-select-checkbox').forEach(cb => cb.style.display = 'none');
+        document.querySelectorAll('.game-checkbox').forEach(cb => cb.checked = false);
+        document.querySelectorAll('.psn-trophy-game-wrapper').forEach(w => w.classList.remove('selected'));
+
+        document.querySelectorAll('.psn-trophy-game-card').forEach(card => {
+            card.removeEventListener('click', handleCardClick);
+        });
+
+        updateSelectedCount();
+    }
+
+    function handleCardClick(e) {
+        if (bulkMode) {
+            e.preventDefault();
+            const wrapper = e.currentTarget.closest('.psn-trophy-game-wrapper');
+            const npwrId = wrapper.dataset.npwrId;
+            toggleGameSelection(npwrId);
+        }
+    }
+
+    function toggleGameSelection(npwrId) {
+        const wrapper = document.querySelector('.psn-trophy-game-wrapper[data-npwr-id="' + npwrId + '"]');
+        const checkbox = wrapper?.querySelector('.game-checkbox');
+
+        if (selectedGames.has(npwrId)) {
+            selectedGames.delete(npwrId);
+            wrapper?.classList.remove('selected');
+            if (checkbox) checkbox.checked = false;
+        } else {
+            selectedGames.add(npwrId);
+            wrapper?.classList.add('selected');
+            if (checkbox) checkbox.checked = true;
+        }
+        updateSelectedCount();
+    }
+
+    async function selectAllVisible() {
+        // Use API to get all IDs matching current filters
+        const params = new URLSearchParams();
+        for (const [k, v] of Object.entries(filters)) {
+            if (v !== undefined && v !== null && v !== '') params.set(k, v);
+        }
+        try {
+            const resp = await fetch('/api/psn/games/ids?' + params.toString());
+            const data = await resp.json();
+            if (data.ids) {
+                selectedGames.clear();
+                data.ids.forEach(id => selectedGames.add(id));
+                // Update visible checkboxes
+                document.querySelectorAll('.psn-trophy-game-wrapper').forEach(wrapper => {
+                    const npwrId = wrapper.dataset.npwrId;
+                    const cb = wrapper.querySelector('.game-checkbox');
+                    if (selectedGames.has(npwrId)) {
+                        wrapper.classList.add('selected');
+                        if (cb) cb.checked = true;
+                    }
+                });
+            }
+        } catch (e) {
+            console.error('Select all error:', e);
+        }
+        updateSelectedCount();
+    }
+
+    async function selectNotSynced() {
+        const params = new URLSearchParams();
+        for (const [k, v] of Object.entries(filters)) {
+            if (v !== undefined && v !== null && v !== '') params.set(k, v);
+        }
+        params.set('filter_type', 'not_synced');
+        try {
+            const resp = await fetch('/api/psn/games/ids?' + params.toString());
+            const data = await resp.json();
+            if (data.ids) {
+                selectedGames.clear();
+                data.ids.forEach(id => selectedGames.add(id));
+                document.querySelectorAll('.psn-trophy-game-wrapper').forEach(wrapper => {
+                    const npwrId = wrapper.dataset.npwrId;
+                    const cb = wrapper.querySelector('.game-checkbox');
+                    if (selectedGames.has(npwrId)) {
+                        wrapper.classList.add('selected');
+                        if (cb) cb.checked = true;
+                    } else {
+                        wrapper.classList.remove('selected');
+                        if (cb) cb.checked = false;
+                    }
+                });
+            }
+        } catch (e) {
+            console.error('Select not-synced error:', e);
+        }
+        updateSelectedCount();
+    }
+
+    async function selectIncomplete() {
+        const params = new URLSearchParams();
+        for (const [k, v] of Object.entries(filters)) {
+            if (v !== undefined && v !== null && v !== '') params.set(k, v);
+        }
+        params.set('filter_type', 'incomplete');
+        try {
+            const resp = await fetch('/api/psn/games/ids?' + params.toString());
+            const data = await resp.json();
+            if (data.ids) {
+                selectedGames.clear();
+                data.ids.forEach(id => selectedGames.add(id));
+                document.querySelectorAll('.psn-trophy-game-wrapper').forEach(wrapper => {
+                    const npwrId = wrapper.dataset.npwrId;
+                    const cb = wrapper.querySelector('.game-checkbox');
+                    if (selectedGames.has(npwrId)) {
+                        wrapper.classList.add('selected');
+                        if (cb) cb.checked = true;
+                    } else {
+                        wrapper.classList.remove('selected');
+                        if (cb) cb.checked = false;
+                    }
+                });
+            }
+        } catch (e) {
+            console.error('Select incomplete error:', e);
+        }
+        updateSelectedCount();
+    }
+
+    function updateSelectedCount() {
+        const countEl = document.getElementById('psnSelectedCount');
+        if (countEl) countEl.textContent = selectedGames.size;
+    }
+
+    function getSelectedIds() {
+        return Array.from(selectedGames);
+    }
+
+    // =========================================================================
+    // PUBLIC API
+    // =========================================================================
+
+    return {
+        init: init,
+        toggleBulkMode: toggleBulkMode,
+        exitBulkMode: exitBulkMode,
+        toggleGameSelection: toggleGameSelection,
+        selectAllVisible: selectAllVisible,
+        selectNotSynced: selectNotSynced,
+        selectIncomplete: selectIncomplete,
+        getSelectedIds: getSelectedIds,
+    };
+})();
+
+// Initialize on DOM ready
+document.addEventListener('DOMContentLoaded', function() {
+    PSNTrophyController.init();
+});
+
+// ============================================
+// SYNC TROPHIES (Background Job with Polling)
+// ============================================
+let syncPolling = null;
+
+async function syncTrophies() {
+    const btn = document.getElementById('syncTrophiesBtn');
+    const modal = document.getElementById('syncModal');
+    const status = document.getElementById('syncStatus');
+    const progress = document.getElementById('syncProgress');
+    const currentGame = document.getElementById('syncCurrentGame');
+    const syncStats = document.getElementById('syncStats');
+    const syncFooter = document.getElementById('syncFooter');
+
+    if (btn) btn.disabled = true;
+    if (modal) modal.classList.add('active');
+    if (status) status.textContent = 'Starting PSN sync...';
+    if (progress) progress.style.width = '0%';
+    if (currentGame) currentGame.textContent = '';
+    if (syncStats) syncStats.style.display = 'none';
+    if (syncFooter) syncFooter.style.display = 'none';
+
+    try {
+        const response = await fetch('/api/psn/sync', { method: 'POST' });
+        const data = await response.json();
+
+        if (data.success) {
+            if (syncStats) syncStats.style.display = 'flex';
+            syncPolling = setInterval(pollSyncStatus, 1000);
+            pollSyncStatus();
+        } else {
+            if (status) status.textContent = 'Error: ' + (data.error || 'Sync failed');
+            setTimeout(() => { if (modal) modal.classList.remove('active'); if (btn) btn.disabled = false; }, 3000);
+        }
+    } catch (error) {
+        if (status) status.textContent = 'Failed to start sync: ' + error.message;
+        setTimeout(() => { if (modal) modal.classList.remove('active'); if (btn) btn.disabled = false; }, 3000);
+    }
+}
+
+async function pollSyncStatus() {
+    try {
+        const res = await fetch('/api/psn/sync/status');
+        const s = await res.json();
+        if (!s.success) return;
+
+        const status = document.getElementById('syncStatus');
+        const progress = document.getElementById('syncProgress');
+        const currentGame = document.getElementById('syncCurrentGame');
+        const pct = s.total > 0 ? Math.round((s.current / s.total) * 100) : 0;
+
+        if (progress) progress.style.width = pct + '%';
+        if (currentGame) currentGame.textContent = s.current_game || '';
+
+        document.getElementById('syncGameCount').textContent = formatNumber(s.games_synced || 0);
+        document.getElementById('syncImageCount').textContent = formatNumber(s.images_downloaded || 0);
+
+        if (s.phase === 'fetching') {
+            if (status) status.textContent = 'Fetching game list from PSN...';
+        } else if (s.phase === 'syncing') {
+            if (status) status.textContent = 'Syncing ' + formatNumber(s.current) + ' / ' + formatNumber(s.total) + ' games';
+        } else if (s.phase === 'complete') {
+            clearInterval(syncPolling);
+            syncPolling = null;
+            if (progress) progress.style.width = '100%';
+            if (status) status.textContent = 'Synced ' + formatNumber(s.games_synced) + ' games · ' + formatNumber(s.images_downloaded) + ' images downloaded';
+            if (currentGame) currentGame.textContent = '';
+            document.getElementById('syncFooter').style.display = 'flex';
+        } else if (s.phase === 'error') {
+            clearInterval(syncPolling);
+            syncPolling = null;
+            if (status) status.textContent = 'Error: ' + (s.error || 'Sync failed');
+            setTimeout(() => {
+                document.getElementById('syncModal').classList.remove('active');
+                document.getElementById('syncTrophiesBtn').disabled = false;
+            }, 3000);
+        }
+    } catch (e) {
+        // Polling error, keep trying
+    }
+}
+
+function closeSyncModal() {
+    if (syncPolling) { clearInterval(syncPolling); syncPolling = null; }
+    document.getElementById('syncModal').classList.remove('active');
+    document.getElementById('syncTrophiesBtn').disabled = false;
+    window.location.reload();
+}
+
+// ============================================
+// BULK REFRESH
+// ============================================
+let bulkRefreshPolling = null;
+
+async function startBulkRefresh() {
+    const npwrIds = PSNTrophyController.getSelectedIds();
+    if (npwrIds.length === 0) {
+        if (typeof showModal === 'function') showModal('⚠️ No Selection', 'Please select at least one game to refresh.');
+        return;
+    }
+
+    const modal = document.getElementById('bulkRefreshModal');
+
+    // Reset modal UI
+    document.getElementById('bulkRefreshStatus').textContent = 'Starting bulk refresh...';
+    document.getElementById('bulkCurrentGame').textContent = '--';
+    document.getElementById('bulkProgressFill').style.width = '0%';
+    document.getElementById('bulkProgressText').textContent = '0 / ' + formatNumber(npwrIds.length);
+    document.getElementById('bulkSuccessLive').textContent = '0';
+    document.getElementById('bulkFailedLive').textContent = '0';
+    document.getElementById('bulkSkippedLive').textContent = '0';
+    document.getElementById('bulkControlsRow').style.display = 'flex';
+    document.getElementById('bulkFooter').style.display = 'none';
+    document.getElementById('bulkResultsLive').style.display = 'flex';
+    document.getElementById('bulkPauseBtnIcon').textContent = '⏸️';
+    document.getElementById('bulkPauseBtnText').textContent = 'Pause';
+
+    modal.classList.add('active');
+
+    try {
+        const response = await fetch('/api/psn/bulk-refresh/start', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ npwr_ids: npwrIds, return_url: window.location.href })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            if (data.first_game) {
+                document.getElementById('bulkCurrentGame').textContent = data.first_game;
+            }
+            startBulkRefreshPolling();
+
+            // Notify other tabs that PSN refresh started
+            if (typeof UnifiedToastController !== 'undefined' && UnifiedToastController.broadcast) {
+                UnifiedToastController.broadcast('job-started', 'psn-refresh', {
+                    running: true, completed: false,
+                    current_game: data.first_game || 'Starting...',
+                    total: npwrIds.length, current: 0, percent: 0, paused: false
+                });
+            }
+        } else {
+            document.getElementById('bulkRefreshStatus').textContent = 'Error: ' + (data.error || 'Failed to start');
+            setTimeout(() => modal.classList.remove('active'), 2000);
+        }
+    } catch (error) {
+        document.getElementById('bulkRefreshStatus').textContent = 'Network error: ' + error.message;
+        setTimeout(() => modal.classList.remove('active'), 2000);
+    }
+}
+
+function startBulkRefreshPolling() {
+    if (bulkRefreshPolling) clearInterval(bulkRefreshPolling);
+    pollBulkRefreshStatus();
+    bulkRefreshPolling = setInterval(pollBulkRefreshStatus, 1500);
+}
+
+async function pollBulkRefreshStatus() {
+    try {
+        const response = await fetch('/api/psn/bulk-refresh/status');
+        const data = await response.json();
+
+        if (!data.success) return;
+
+        document.getElementById('bulkCurrentGame').textContent = data.current_game || 'Processing...';
+        document.getElementById('bulkProgressFill').style.width = data.percent + '%';
+        document.getElementById('bulkProgressText').textContent = formatNumber(data.processed || 0) + ' / ' + formatNumber(data.total);
+        document.getElementById('bulkSuccessLive').textContent = formatNumber(data.success || 0);
+        document.getElementById('bulkFailedLive').textContent = formatNumber(data.failed || 0);
+        document.getElementById('bulkSkippedLive').textContent = formatNumber(data.skipped || 0);
+
+        if (data.paused) {
+            document.getElementById('bulkRefreshStatus').textContent = '⏸️ Paused - Click Resume to continue';
+            document.getElementById('bulkPauseBtnIcon').textContent = '▶️';
+            document.getElementById('bulkPauseBtnText').textContent = 'Resume';
+        } else if (data.cancelled) {
+            document.getElementById('bulkRefreshStatus').textContent = '❌ Cancelled';
+        } else {
+            document.getElementById('bulkRefreshStatus').textContent = 'Refreshing ' + formatNumber(data.processed || 0) + ' / ' + formatNumber(data.total) + ' - ' + data.percent + '%';
+            document.getElementById('bulkPauseBtnIcon').textContent = '⏸️';
+            document.getElementById('bulkPauseBtnText').textContent = 'Pause';
+        }
+
+        if (data.completed) {
+            stopBulkRefreshPolling();
+            showBulkRefreshComplete(data);
+        }
+    } catch (e) {
+        console.error('Poll error:', e);
+    }
+}
+
+function stopBulkRefreshPolling() {
+    if (bulkRefreshPolling) {
+        clearInterval(bulkRefreshPolling);
+        bulkRefreshPolling = null;
+    }
+}
+
+function showBulkRefreshComplete(data) {
+    if (data.cancelled) {
+        document.getElementById('bulkRefreshStatus').textContent = '❌ Cancelled';
+    } else {
+        document.getElementById('bulkRefreshStatus').textContent = 'Bulk refresh complete!';
+    }
+    document.getElementById('bulkCurrentGame').textContent = 'Done';
+    document.getElementById('bulkControlsRow').style.display = 'none';
+    document.getElementById('bulkFooter').style.display = 'flex';
+}
+
+async function toggleBulkPause() {
+    try {
+        const statusRes = await fetch('/api/psn/bulk-refresh/status');
+        const statusData = await statusRes.json();
+        const endpoint = statusData.paused ? '/api/psn/bulk-refresh/resume' : '/api/psn/bulk-refresh/pause';
+        await fetch(endpoint, { method: 'POST' });
+        pollBulkRefreshStatus();
+    } catch (e) {
+        console.error('Pause/resume error:', e);
+    }
+}
+
+async function cancelBulkRefresh() {
+    if (typeof showConfirm === 'function') {
+        showConfirm('⚠️ Cancel Refresh', 'Are you sure you want to cancel the bulk refresh?', async () => {
+            try {
+                await fetch('/api/psn/bulk-refresh/cancel', { method: 'POST' });
+                pollBulkRefreshStatus();
+            } catch (e) {
+                console.error('Cancel error:', e);
+            }
+        });
+    } else {
+        try {
+            await fetch('/api/psn/bulk-refresh/cancel', { method: 'POST' });
+            pollBulkRefreshStatus();
+        } catch (e) {
+            console.error('Cancel error:', e);
+        }
+    }
+}
+
+function psnRunInBackground() {
+    stopBulkRefreshPolling();
+    document.getElementById('bulkRefreshModal').classList.remove('active');
+    PSNTrophyController.exitBulkMode();
+
+    // Trigger toast controller to pick up the running job immediately
+    if (typeof UnifiedToastController !== 'undefined') {
+        UnifiedToastController.adjustPollingSpeed('psn-refresh', true);
+        const endpoint = UnifiedToastController.pollingEndpoints.get('psn-refresh');
+        if (endpoint) {
+            UnifiedToastController.pollStatus('psn-refresh', endpoint);
+        }
+    }
+}
+
+function closeBulkRefreshModal(reload) {
+    stopBulkRefreshPolling();
+    document.getElementById('bulkRefreshModal').classList.remove('active');
+    PSNTrophyController.exitBulkMode();
+    if (reload) window.location.reload();
+}
+</script>
+{% endblock %}

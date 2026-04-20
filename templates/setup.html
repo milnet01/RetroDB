@@ -1,0 +1,726 @@
+{% extends "base.html" %}
+
+{% block title %}Setup Wizard - RetroDB{% endblock %}
+
+{% block content %}
+<div style="max-width: 680px; margin: 40px auto; padding: 0 var(--spacing-lg);">
+
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: var(--spacing-xl);">
+        <h1 style="font-family: var(--font-heading); font-size: 2rem; color: var(--primary-cyan);">Welcome to RetroDB</h1>
+        <p style="color: var(--text-secondary);">Let's get your ROM library manager set up. This wizard will guide you through the essential configuration.</p>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="setup-tabs" id="setupTabs">
+        <button class="setup-tab active" data-tab="welcome" onclick="showTab('welcome')">Welcome</button>
+        <button class="setup-tab" data-tab="admin" onclick="showTab('admin')">Admin</button>
+        <button class="setup-tab" data-tab="library" onclick="showTab('library')">Library</button>
+        <button class="setup-tab" data-tab="esde" onclick="showTab('esde')">ES-DE</button>
+        <button class="setup-tab" data-tab="apikeys" onclick="showTab('apikeys')">API Keys</button>
+        <button class="setup-tab" data-tab="complete" onclick="showTab('complete')">Complete</button>
+    </div>
+
+    <div id="error-banner" style="display: none; background: rgba(247, 37, 133, 0.15); border: 1px solid rgba(247, 37, 133, 0.4); border-radius: var(--radius-md); padding: var(--spacing-md); margin-bottom: var(--spacing-lg); color: var(--secondary-magenta);"></div>
+
+    <!-- Step 1: Welcome -->
+    <div class="setup-panel active" id="panel-welcome">
+        <div class="card">
+            <div class="card-body">
+                <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">What is RetroDB?</h2>
+                <p style="color: var(--text-secondary); line-height: 1.6;">RetroDB is a web-based retro gaming ROM library manager. It helps you organize your ROM collection, scrape metadata from multiple sources, track achievements, and more.</p>
+                <ul style="color: var(--text-secondary); line-height: 1.8; margin-top: var(--spacing-md);">
+                    <li>Organize ROMs across 270+ gaming platforms</li>
+                    <li>Scrape metadata from TheGamesDB, IGDB, RAWG, ScreenScraper</li>
+                    <li>Track RetroAchievements progress and PS3 trophies</li>
+                    <li>ROM tools: archive scanner, CHD converter, duplicate finder</li>
+                    <li>Analytics dashboard with collection statistics</li>
+                </ul>
+
+                <!-- License -->
+                <details class="setup-license-section" style="margin-top: var(--spacing-xl);">
+                    <summary>MIT License</summary>
+                    <pre class="setup-license-text">MIT License
+
+Copyright (c) 2026 Anthony Schemel
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</pre>
+                </details>
+
+                <!-- Disclaimers -->
+                <div class="setup-disclaimers" style="margin-top: var(--spacing-lg);">
+                    <h3 style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: var(--spacing-sm);">Disclaimers</h3>
+                    <ul style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.7;">
+                        <li><strong style="color: var(--text-secondary);">ROM Legality:</strong> RetroDB is a library manager and does not provide, host, or distribute ROM files. You are solely responsible for ensuring your ROM collection complies with the laws of your jurisdiction.</li>
+                        <li><strong style="color: var(--text-secondary);">Third-Party APIs:</strong> Metadata scraping uses external services (IGDB, ScreenScraper, RAWG, TheGamesDB, RetroAchievements) that are subject to their own terms of service and rate limits.</li>
+                        <li><strong style="color: var(--text-secondary);">No Warranty:</strong> This software is provided as-is with no guarantee of functionality. Use at your own risk. See the MIT License above for full terms.</li>
+                    </ul>
+                </div>
+
+                <!-- Acceptance Checkbox -->
+                <div style="margin-top: var(--spacing-lg); padding: var(--spacing-md); background: var(--bg-medium); border-radius: var(--radius-md); border: 1px solid var(--card-border);">
+                    <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer; color: var(--text-secondary); font-size: 0.9rem;">
+                        <input type="checkbox" id="licenseAccepted" onchange="updateGetStartedBtn()">
+                        I have read and accept the license and terms above
+                    </label>
+                </div>
+
+                <div style="margin-top: var(--spacing-xl); text-align: right;">
+                    <button class="btn btn-primary" id="getStartedBtn" onclick="showTab('admin')" disabled>Get Started &rarr;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 2: Admin Account -->
+    <div class="setup-panel" id="panel-admin">
+        <div class="card">
+            <div class="card-body">
+                <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Admin Account</h2>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">Create your admin account. This is required to access settings and manage users.</p>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="admin_username" class="form-input" value="admin" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="admin_password" class="form-input" placeholder="Choose a secure password" autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="admin_password_confirm" class="form-input" placeholder="Confirm password" autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label>Timezone</label>
+                    <input type="text" id="tz_search_setup" class="form-input" placeholder="Search timezones..." autocomplete="off" style="margin-bottom: var(--spacing-sm);">
+                    <select id="timezone_select" class="form-input" size="6" style="font-family: var(--font-mono); font-size: 0.85rem;"></select>
+                    <small style="color: var(--text-muted); display: block; margin-top: 4px;">
+                        Browser detected: <span id="detectedTzSetup"></span>
+                        &mdash; <a href="#" onclick="event.preventDefault(); useDetectedTzSetup()" style="color: var(--primary-cyan);">Use detected</a>
+                    </small>
+                </div>
+                <div class="setup-nav">
+                    <button class="btn btn-secondary" onclick="showTab('welcome')">&larr; Back</button>
+                    <button class="btn btn-primary" onclick="showTab('library')">Next &rarr;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 3: Library Path -->
+    <div class="setup-panel" id="panel-library">
+        <div class="card">
+            <div class="card-body">
+                <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">ROM Library Path</h2>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">Set the root directory where your ROMs are stored. Each system should be in a subfolder (e.g., <code>ROMS/nes/</code>, <code>ROMS/snes/</code>).</p>
+                <div class="form-group">
+                    <label>ROM Library Path</label>
+                    <div class="setup-path-row">
+                        <input type="text" id="rom_path" class="form-input" placeholder="{% if platform_name == 'Windows' %}C:\Games\ROMS{% elif platform_name == 'macOS' %}/Users/user/ROMS{% else %}/home/user/ROMS{% endif %}">
+                        <button type="button" class="btn btn-secondary setup-browse-btn" onclick="setupBrowseFolder('rom_path')" title="Browse folders">Browse</button>
+                    </div>
+                    <small style="color: var(--text-muted); display: block; margin-top: 4px;">
+                        {% if config.ROM_PATH %}Current: {{ config.ROM_PATH }}{% else %}
+                        Example: <code>{% if platform_name == 'Windows' %}C:\Games\ROMS{% elif platform_name == 'macOS' %}/Users/user/ROMS{% else %}/home/user/ROMS{% endif %}</code>{% endif %}
+                    </small>
+                </div>
+                <div class="setup-nav">
+                    <button class="btn btn-secondary" onclick="showTab('admin')">&larr; Back</button>
+                    <button class="btn btn-primary" onclick="showTab('esde')">Next &rarr;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 4: ES-DE Integration -->
+    <div class="setup-panel" id="panel-esde">
+        <div class="card">
+            <div class="card-body">
+                <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">ES-DE Integration <span style="color: var(--text-muted); font-size: 0.8rem;">(Optional)</span></h2>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">If you use ES-DE (EmulationStation Desktop Edition), RetroDB can import your existing scraped metadata and media.</p>
+
+                <!-- Skip ES-DE toggle -->
+                <div style="margin-bottom: var(--spacing-lg); padding: var(--spacing-md); background: var(--bg-medium); border-radius: var(--radius-md); border: 1px solid var(--card-border);">
+                    <div class="toggle-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="skipEsde" onchange="toggleEsdeFields()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label" style="color: var(--text-secondary); font-size: 0.9rem;">I don't use ES-DE</span>
+                    </div>
+                </div>
+
+                <div id="esdeFields">
+                    <div class="form-group">
+                        <label>ES-DE Gamelists Path</label>
+                        <div class="setup-path-row">
+                            <input type="text" id="esde_gamelists" class="form-input" placeholder="{% if platform_name == 'Windows' %}C:\Users\&lt;user&gt;\ES-DE\gamelists{% elif platform_name == 'macOS' %}/Users/user/.emulationstation/gamelists{% else %}/home/user/.emulationstation/gamelists{% endif %}">
+                            <button type="button" class="btn btn-secondary setup-browse-btn" onclick="setupBrowseFolder('esde_gamelists')" title="Browse folders">Browse</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>ES-DE Downloaded Media Path</label>
+                        <div class="setup-path-row">
+                            <input type="text" id="esde_media" class="form-input" placeholder="{% if platform_name == 'Windows' %}C:\Users\&lt;user&gt;\ES-DE\downloaded_media{% elif platform_name == 'macOS' %}/Users/user/.emulationstation/downloaded_media{% else %}/home/user/.emulationstation/downloaded_media{% endif %}">
+                            <button type="button" class="btn btn-secondary setup-browse-btn" onclick="setupBrowseFolder('esde_media')" title="Browse folders">Browse</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="esdeSkipNote" style="display: none; padding: var(--spacing-md); color: var(--text-muted); font-size: 0.9rem;">
+                    You can configure ES-DE integration later in Settings if needed.
+                </div>
+
+                <div class="setup-nav">
+                    <button class="btn btn-secondary" onclick="showTab('library')">&larr; Back</button>
+                    <button class="btn btn-primary" onclick="showTab('apikeys')">Next &rarr;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 5: API Keys -->
+    <div class="setup-panel" id="panel-apikeys">
+        <div class="card">
+            <div class="card-body">
+                <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">API Keys <span style="color: var(--text-muted); font-size: 0.8rem;">(Optional)</span></h2>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">API keys enable metadata scraping from external databases. You can add these later in Settings.</p>
+
+                <details class="api-section">
+                    <summary>TheGamesDB</summary>
+                    <div class="form-group">
+                        <label>Public API Key <a href="https://api.thegamesdb.net/key.php" target="_blank" style="font-size: 0.8rem;">(Get keys)</a></label>
+                        <input type="text" id="tgdb_public_key" class="form-input" placeholder="Per-IP rate limit — primary key for scraping">
+                    </div>
+                    <div class="form-group">
+                        <label>Private API Key</label>
+                        <input type="text" id="tgdb_key" class="form-input" placeholder="Shared monthly pool — fallback key">
+                    </div>
+                </details>
+
+                <details class="api-section">
+                    <summary>IGDB (Twitch)</summary>
+                    <div class="form-group">
+                        <label>Client ID <a href="https://dev.twitch.tv/console" target="_blank" style="font-size: 0.8rem;">(Twitch Dev Console)</a></label>
+                        <input type="text" id="igdb_client_id" class="form-input" placeholder="Twitch Client ID">
+                    </div>
+                    <div class="form-group">
+                        <label>Client Secret</label>
+                        <input type="text" id="igdb_client_secret" class="form-input" placeholder="Twitch Client Secret">
+                    </div>
+                </details>
+
+                <details class="api-section">
+                    <summary>RAWG.io</summary>
+                    <div class="form-group">
+                        <label>API Key <a href="https://rawg.io/apidocs" target="_blank" style="font-size: 0.8rem;">(Get key)</a></label>
+                        <input type="text" id="rawg_key" class="form-input" placeholder="RAWG API key">
+                    </div>
+                </details>
+
+                <details class="api-section">
+                    <summary>ScreenScraper</summary>
+                    <div class="form-group">
+                        <label>Username <a href="https://www.screenscraper.fr" target="_blank" style="font-size: 0.8rem;">(Sign up)</a></label>
+                        <input type="text" id="ss_username" class="form-input" placeholder="ScreenScraper username">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="ss_password" class="form-input" placeholder="ScreenScraper password">
+                    </div>
+                    <div class="form-group">
+                        <label>Developer ID <a href="https://www.screenscraper.fr/forumsujets.php?fression=0&numpage=0&num_dossier=60" target="_blank" style="font-size: 0.8rem;">(Request dev access)</a></label>
+                        <input type="text" id="ss_devid" class="form-input" placeholder="Dev username from developer area">
+                    </div>
+                    <div class="form-group">
+                        <label>Developer Password</label>
+                        <input type="password" id="ss_devpassword" class="form-input" placeholder="Password from developer area (NOT debug password)">
+                    </div>
+                </details>
+
+                <details class="api-section">
+                    <summary>RetroAchievements</summary>
+                    <div class="form-group">
+                        <label>Username <a href="https://retroachievements.org/controlpanel.php" target="_blank" style="font-size: 0.8rem;">(Get API key)</a></label>
+                        <input type="text" id="ra_username" class="form-input" placeholder="RA username">
+                    </div>
+                    <div class="form-group">
+                        <label>API Key</label>
+                        <input type="text" id="ra_apikey" class="form-input" placeholder="RA API key">
+                    </div>
+                </details>
+
+                <div class="setup-nav">
+                    <button class="btn btn-secondary" onclick="showTab('esde')">&larr; Back</button>
+                    <button class="btn btn-primary" onclick="showTab('complete')">Next &rarr;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 6: Complete -->
+    <div class="setup-panel" id="panel-complete">
+        <div class="card">
+            <div class="card-body" style="text-align: center;">
+                <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Ready to Go!</h2>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">Click the button below to save your configuration and start using RetroDB.</p>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: var(--spacing-xl);">You can change any of these settings later via the Settings page.</p>
+                <button class="btn btn-primary" id="finishBtn" onclick="finishSetup()" style="font-size: 1.1rem; padding: var(--spacing-md) var(--spacing-xl);">Complete Setup</button>
+                <div style="margin-top: var(--spacing-lg);">
+                    <button class="btn btn-secondary" onclick="showTab('apikeys')">&larr; Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const tabs = ['welcome', 'admin', 'library', 'esde', 'apikeys', 'complete'];
+
+function updateGetStartedBtn() {
+    const btn = document.getElementById('getStartedBtn');
+    btn.disabled = !document.getElementById('licenseAccepted').checked;
+}
+
+function showTab(name) {
+    document.querySelectorAll('.setup-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.setup-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    document.querySelector('[data-tab="' + name + '"]').classList.add('active');
+    document.getElementById('error-banner').style.display = 'none';
+}
+
+function toggleEsdeFields() {
+    const skip = document.getElementById('skipEsde').checked;
+    document.getElementById('esdeFields').style.display = skip ? 'none' : '';
+    document.getElementById('esdeSkipNote').style.display = skip ? 'block' : 'none';
+}
+
+// ==========================================================================
+// Setup Folder Browser
+// ==========================================================================
+let setupBrowserInputId = null;
+
+async function setupBrowseFolder(inputId) {
+    setupBrowserInputId = inputId;
+
+    const modal = document.getElementById('folderBrowserModal');
+    const list = document.getElementById('folderBrowserList');
+    const pathEl = document.getElementById('folderBrowserPath');
+
+    const inputEl = document.getElementById(inputId);
+    let startPath = inputEl ? inputEl.value : '';
+
+    list.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">Loading...</div>';
+    pathEl.textContent = 'Loading...';
+    modal.classList.add('active');
+
+    try {
+        const response = await fetch('/api/setup/browse-folders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path: startPath || null })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            folderBrowserCurrentPath = data.current_path;
+            folderBrowserBasePath = data.base_path;
+            folderBrowserCallback = inputId;
+            renderSetupFolderBrowser(data);
+        } else {
+            list.innerHTML = '<div style="padding: 1rem; color: var(--neon-red);">Error: ' + escapeHtml(data.error || 'Unknown error') + '</div>';
+        }
+    } catch (e) {
+        list.innerHTML = '<div style="padding: 1rem; color: var(--neon-red);">Error: ' + escapeHtml(e.message || 'An error occurred') + '</div>';
+    }
+}
+
+function renderSetupFolderBrowser(data) {
+    const list = document.getElementById('folderBrowserList');
+    const pathEl = document.getElementById('folderBrowserPath');
+
+    pathEl.textContent = data.current_path;
+    folderBrowserCurrentPath = data.current_path;
+
+    let html = '';
+
+    if (data.parent_path) {
+        html += '<div class="folder-item folder-parent" onclick="navigateSetupFolder(\'' + escapeAttr(data.parent_path) + '\')">' +
+                '<span class="folder-icon">\u{1F4C1}</span>' +
+                '<span class="folder-name">..</span>' +
+                '<span class="folder-info">Parent folder</span>' +
+                '</div>';
+    }
+
+    if (data.folders.length === 0 && !data.parent_path) {
+        html += '<div style="padding: 1.5rem; text-align: center; color: var(--text-muted);">No subfolders found</div>';
+    } else if (data.folders.length === 0) {
+        html += '<div style="padding: 1rem; text-align: center; color: var(--text-muted); font-size: 0.9rem;">No subfolders</div>';
+    }
+
+    for (const folder of data.folders) {
+        const info = [];
+        if (folder.file_count > 0) info.push(folder.file_count + ' files');
+        if (folder.subfolder_count > 0) info.push(folder.subfolder_count + ' folders');
+
+        html += '<div class="folder-item" onclick="navigateSetupFolder(\'' + escapeAttr(folder.path) + '\')">' +
+                '<span class="folder-icon">\u{1F4C1}</span>' +
+                '<span class="folder-name">' + escapeHtml(folder.name) + '</span>' +
+                '<span class="folder-info">' + (info.join(', ') || 'Empty') + '</span>' +
+                '</div>';
+    }
+
+    list.innerHTML = html;
+}
+
+async function navigateSetupFolder(path) {
+    const list = document.getElementById('folderBrowserList');
+    list.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">Loading...</div>';
+
+    try {
+        const response = await fetch('/api/setup/browse-folders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path: path })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            renderSetupFolderBrowser(data);
+        } else {
+            list.innerHTML = '<div style="padding: 1rem; color: var(--neon-red);">Error: ' + escapeHtml(data.error || 'Unknown error') + '</div>';
+        }
+    } catch (e) {
+        list.innerHTML = '<div style="padding: 1rem; color: var(--neon-red);">Error: ' + escapeHtml(e.message || 'An error occurred') + '</div>';
+    }
+}
+
+// Override navigateFolder during setup so the modal's ".." clicks use the setup endpoint
+window.navigateFolder = navigateSetupFolder;
+
+function finishSetup() {
+    const errorBanner = document.getElementById('error-banner');
+    const username = document.getElementById('admin_username').value.trim();
+    const pw = document.getElementById('admin_password').value;
+    const pw2 = document.getElementById('admin_password_confirm').value;
+    const romPath = document.getElementById('rom_path').value.trim();
+
+    // Validate required fields
+    if (!username) {
+        errorBanner.textContent = 'Admin username is required.';
+        errorBanner.style.display = 'block';
+        showTab('admin');
+        return;
+    }
+    if (!pw) {
+        errorBanner.textContent = 'Admin password is required.';
+        errorBanner.style.display = 'block';
+        showTab('admin');
+        return;
+    }
+    if (pw !== pw2) {
+        errorBanner.textContent = 'Passwords do not match.';
+        errorBanner.style.display = 'block';
+        showTab('admin');
+        return;
+    }
+    if (pw.length < 4) {
+        errorBanner.textContent = 'Password must be at least 4 characters.';
+        errorBanner.style.display = 'block';
+        showTab('admin');
+        return;
+    }
+    if (!romPath) {
+        errorBanner.textContent = 'ROM Library Path is required.';
+        errorBanner.style.display = 'block';
+        showTab('library');
+        return;
+    }
+
+    const btn = document.getElementById('finishBtn');
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+
+    if (!document.getElementById('licenseAccepted').checked) {
+        errorBanner.textContent = 'You must accept the license and terms before completing setup.';
+        errorBanner.style.display = 'block';
+        showTab('welcome');
+        btn.disabled = false;
+        btn.textContent = 'Complete Setup';
+        return;
+    }
+
+    const data = {
+        admin_username: username,
+        admin_password: pw,
+        rom_path: romPath,
+        timezone: document.getElementById('timezone_select').value,
+        esde_gamelists_path: document.getElementById('esde_gamelists').value,
+        esde_media_path: document.getElementById('esde_media').value,
+        tgdb_key: document.getElementById('tgdb_key').value,
+        tgdb_public_key: document.getElementById('tgdb_public_key').value,
+        igdb_client_id: document.getElementById('igdb_client_id').value,
+        igdb_client_secret: document.getElementById('igdb_client_secret').value,
+        rawg_key: document.getElementById('rawg_key').value,
+        ss_username: document.getElementById('ss_username').value,
+        ss_password: document.getElementById('ss_password').value,
+        ss_devid: document.getElementById('ss_devid').value,
+        ss_devpassword: document.getElementById('ss_devpassword').value,
+        ra_username: document.getElementById('ra_username').value,
+        ra_apikey: document.getElementById('ra_apikey').value,
+        license_accepted: true,
+    };
+
+    fetch('/api/setup', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(result => {
+        if (result.success) {
+            window.location.href = '/dashboard';
+        } else {
+            errorBanner.textContent = result.error || 'Setup failed.';
+            errorBanner.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = 'Complete Setup';
+        }
+    })
+    .catch(() => {
+        errorBanner.textContent = 'Network error. Please try again.';
+        errorBanner.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Complete Setup';
+    });
+}
+
+// ==========================================================================
+// Timezone Picker (Setup)
+// ==========================================================================
+const detectedTz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+
+(function loadSetupTimezones() {
+    const label = document.getElementById('detectedTzSetup');
+    if (label) label.textContent = detectedTz;
+
+    fetch('/api/timezones')
+        .then(r => r.json())
+        .then(data => {
+            const sel = document.getElementById('timezone_select');
+            if (!sel || !data.timezones) return;
+            sel.innerHTML = '';
+            const regions = Object.keys(data.timezones).sort();
+            for (const region of regions) {
+                const grp = document.createElement('optgroup');
+                grp.label = region;
+                for (const tz of data.timezones[region]) {
+                    const opt = document.createElement('option');
+                    opt.value = tz;
+                    opt.textContent = tz.replace(/_/g, ' ');
+                    grp.appendChild(opt);
+                }
+                sel.appendChild(grp);
+            }
+            // Pre-select detected timezone
+            sel.value = detectedTz;
+            if (!sel.value) sel.value = 'UTC';
+        })
+        .catch(() => {});
+
+    const searchInput = document.getElementById('tz_search_setup');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const sel = document.getElementById('timezone_select');
+            for (const optgroup of sel.querySelectorAll('optgroup')) {
+                let groupVisible = false;
+                for (const opt of optgroup.querySelectorAll('option')) {
+                    const match = opt.textContent.toLowerCase().includes(query) || opt.value.toLowerCase().includes(query);
+                    opt.style.display = match ? '' : 'none';
+                    if (match) groupVisible = true;
+                }
+                optgroup.style.display = groupVisible ? '' : 'none';
+            }
+        });
+    }
+})();
+
+function useDetectedTzSetup() {
+    const sel = document.getElementById('timezone_select');
+    if (sel) {
+        sel.value = detectedTz;
+        if (!sel.value) sel.value = 'UTC';
+    }
+}
+</script>
+{% endblock %}
+
+{% block styles %}
+<style>
+.setup-tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: var(--spacing-xl);
+    background: var(--bg-medium);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.setup-tab {
+    flex: 1;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.setup-tab:hover {
+    color: var(--text-secondary);
+    background: var(--bg-lighter);
+}
+
+.setup-tab.active {
+    color: var(--primary-cyan);
+    background: var(--bg-lighter);
+    border-bottom: 2px solid var(--primary-cyan);
+}
+
+.setup-panel {
+    display: none;
+}
+
+.setup-panel.active {
+    display: block;
+}
+
+.form-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.form-group label {
+    display: block;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+    font-size: 0.9rem;
+}
+
+.form-group .form-input {
+    width: 100%;
+}
+
+.setup-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--card-border);
+}
+
+.api-section {
+    margin-bottom: var(--spacing-md);
+    background: var(--bg-medium);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--card-border);
+}
+
+.api-section summary {
+    padding: var(--spacing-md);
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.api-section summary:hover {
+    color: var(--primary-cyan);
+}
+
+.api-section[open] summary {
+    border-bottom: 1px solid var(--card-border);
+    color: var(--primary-cyan);
+}
+
+.api-section .form-group {
+    padding: 0 var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.api-section .form-group:first-child {
+    padding-top: var(--spacing-md);
+}
+
+.setup-license-section {
+    background: var(--bg-medium);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--card-border);
+}
+
+.setup-license-section summary {
+    padding: var(--spacing-md);
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.setup-license-section summary:hover {
+    color: var(--primary-cyan);
+}
+
+.setup-license-section[open] summary {
+    border-bottom: 1px solid var(--card-border);
+    color: var(--primary-cyan);
+}
+
+.setup-license-text {
+    margin: 0;
+    padding: var(--spacing-md);
+    max-height: 200px;
+    overflow-y: auto;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background: var(--bg-darker);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+.setup-path-row {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.setup-path-row .form-input {
+    flex: 1;
+}
+
+.setup-browse-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+</style>
+{% endblock %}

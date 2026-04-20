@@ -1,0 +1,292 @@
+/* =============================================================================
+   RETRODB - BUTTONS
+   Neon glow style buttons with variants
+   ============================================================================= */
+
+/* =============================================================================
+   BASE BUTTON STYLES
+   ============================================================================= */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 2px solid;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+/* =============================================================================
+   BUTTON VARIANTS
+   ============================================================================= */
+
+/* Primary - Cyan */
+.btn-primary {
+    background: rgba(76, 201, 240, 0.15);
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+    box-shadow: 0 0 15px rgba(76, 201, 240, 0.5), 0 0 30px rgba(76, 201, 240, 0.3), inset 0 0 20px rgba(76, 201, 240, 0.1);
+    text-shadow: 0 0 10px rgba(76, 201, 240, 0.8);
+}
+
+.btn-primary:hover {
+    background: rgba(76, 201, 240, 0.25);
+    box-shadow: 0 0 20px rgba(76, 201, 240, 0.7), 0 0 40px rgba(76, 201, 240, 0.4), inset 0 0 25px rgba(76, 201, 240, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Secondary - Gray */
+.btn-secondary {
+    background: rgba(148, 163, 184, 0.1);
+    border-color: var(--neon-gray);
+    color: #94a3b8;
+    box-shadow: 0 0 10px rgba(100, 116, 139, 0.3), 0 0 20px rgba(100, 116, 139, 0.2);
+}
+
+.btn-secondary:hover {
+    background: rgba(148, 163, 184, 0.2);
+    border-color: #94a3b8;
+    color: #cbd5e1;
+    box-shadow: 0 0 15px rgba(148, 163, 184, 0.5), 0 0 30px rgba(148, 163, 184, 0.3);
+}
+
+/* Success - Green */
+.btn-success {
+    background: rgba(34, 197, 94, 0.15);
+    border-color: var(--neon-green);
+    color: var(--neon-green);
+    box-shadow: 0 0 15px rgba(34, 197, 94, 0.5), 0 0 30px rgba(34, 197, 94, 0.3), inset 0 0 20px rgba(34, 197, 94, 0.1);
+    text-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
+}
+
+.btn-success:hover {
+    background: rgba(34, 197, 94, 0.25);
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.7), 0 0 40px rgba(34, 197, 94, 0.4), inset 0 0 25px rgba(34, 197, 94, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Warning - Orange */
+.btn-warning {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: var(--neon-orange);
+    color: var(--neon-orange);
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.5), 0 0 30px rgba(245, 158, 11, 0.3), inset 0 0 20px rgba(245, 158, 11, 0.1);
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
+}
+
+.btn-warning:hover {
+    background: rgba(245, 158, 11, 0.25);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.7), 0 0 40px rgba(245, 158, 11, 0.4), inset 0 0 25px rgba(245, 158, 11, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Danger - Red */
+.btn-danger {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: var(--neon-red);
+    color: var(--neon-red);
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.5), 0 0 30px rgba(239, 68, 68, 0.3), inset 0 0 20px rgba(239, 68, 68, 0.1);
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
+}
+
+.btn-danger:hover {
+    background: rgba(239, 68, 68, 0.25);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.7), 0 0 40px rgba(239, 68, 68, 0.4), inset 0 0 25px rgba(239, 68, 68, 0.15);
+    transform: translateY(-2px);
+}
+
+/* =============================================================================
+   BUTTON SIZES
+   ============================================================================= */
+
+.btn-sm {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.8rem;
+}
+
+.btn-xs {
+    padding: 3px 8px;
+    font-size: 0.7rem;
+    line-height: 1.2;
+}
+
+.btn-lg {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    font-size: 1rem;
+}
+
+/* =============================================================================
+   BUTTON ICONS & STATES
+   ============================================================================= */
+
+.btn-icon {
+    font-size: 1.1em;
+}
+
+.btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(76, 201, 240, 0.5), 0 0 15px rgba(76, 201, 240, 0.3);
+}
+
+.btn:disabled,
+.btn[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+    box-shadow: none;
+}
+
+/* =============================================================================
+   FILE INPUT BUTTONS
+   ============================================================================= */
+
+input[type="file"]::file-selector-button {
+    padding: 8px 16px;
+    margin-right: 12px;
+    background: rgba(76, 201, 240, 0.15);
+    border: 2px solid var(--neon-cyan);
+    border-radius: var(--radius-md);
+    color: var(--neon-cyan);
+    cursor: pointer;
+    font-weight: 600;
+    font-family: var(--font-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+    box-shadow: 0 0 15px rgba(76, 201, 240, 0.5), 0 0 30px rgba(76, 201, 240, 0.3), inset 0 0 20px rgba(76, 201, 240, 0.1);
+    text-shadow: 0 0 10px rgba(76, 201, 240, 0.8);
+    transition: all 0.3s ease;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background: rgba(76, 201, 240, 0.25);
+    box-shadow: 0 0 20px rgba(76, 201, 240, 0.7), 0 0 40px rgba(76, 201, 240, 0.4), inset 0 0 25px rgba(76, 201, 240, 0.15);
+}
+
+/* =============================================================================
+   PAGINATION BUTTONS
+   ============================================================================= */
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-xl);
+}
+
+.pagination-btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.pagination-btn:hover {
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+.pagination-btn.active {
+    background: var(--primary-cyan);
+    border-color: var(--primary-cyan);
+    color: var(--bg-darkest);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* =============================================================================
+   BACK TO TOP BUTTON
+   ============================================================================= */
+
+.back-to-top-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(20, 26, 35, 0.95);
+    border: 2px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease,
+                background 0.3s ease, box-shadow 0.3s ease;
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 15px rgba(76, 201, 240, 0.3),
+                inset 0 0 10px rgba(76, 201, 240, 0.1);
+}
+
+.back-to-top-btn.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.back-to-top-btn:hover {
+    background: rgba(76, 201, 240, 0.2);
+    box-shadow: 0 0 25px rgba(76, 201, 240, 0.5),
+                inset 0 0 15px rgba(76, 201, 240, 0.2);
+    transform: translateY(-3px);
+}
+
+.back-to-top-btn:active {
+    transform: translateY(0);
+}
+
+.back-to-top-icon {
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(76, 201, 240, 0.8);
+}
+
+/* =============================================================================
+   BUTTON GROUP
+   ============================================================================= */
+
+.btn-group {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+/* =============================================================================
+   DANGER OUTLINE BUTTON
+   ============================================================================= */
+
+.btn-danger-outline {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid var(--neon-red);
+    color: var(--neon-red);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.3), 0 0 20px rgba(239, 68, 68, 0.2);
+    text-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+}
+
+.btn-danger-outline:hover {
+    background: rgba(239, 68, 68, 0.2);
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.5), 0 0 30px rgba(239, 68, 68, 0.3);
+}

@@ -1,0 +1,618 @@
+{% extends "base.html" %}
+
+{% block title %}ROM Tools Settings - RetroDB{% endblock %}
+
+{% block styles %}
+<style>
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    color: var(--accent-cyan);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+.page-header p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+/* Card spacing */
+.card + .card {
+    margin-top: 1.5rem;
+}
+
+.section-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent-cyan);
+}
+
+.tool-status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.tool-status-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--bg-darker);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.tool-status-item .tool-icon {
+    font-size: 1.5rem;
+}
+
+.tool-status-item .tool-info h4 {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.tool-status-item .tool-info .status {
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.tool-status-item .tool-info .status.available {
+    color: var(--accent-green);
+}
+
+.tool-status-item .tool-info .status.missing {
+    color: var(--accent-pink);
+}
+
+.info-banner {
+    background: linear-gradient(135deg, rgba(76, 201, 240, 0.1), rgba(114, 9, 183, 0.1));
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.info-banner .info-icon {
+    font-size: 1.5rem;
+}
+
+.info-banner .info-text {
+    flex: 1;
+}
+
+.info-banner .info-text h4 {
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.info-banner .info-text p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.tags-input {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: var(--bg-darker);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    min-height: 60px;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    background: rgba(76, 201, 240, 0.2);
+    border: 1px solid var(--accent-cyan);
+    border-radius: 16px;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+}
+
+.tag .remove-tag {
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.tag .remove-tag:hover {
+    color: var(--accent-pink);
+}
+
+.add-tag-input {
+    flex: 1;
+    min-width: 100px;
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    outline: none;
+}
+
+.btn-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.success-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    background: rgba(46, 213, 115, 0.9);
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    z-index: 1000;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.form-help {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.35rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🔧 ROM Tools</h1>
+    <p>Manage, organize, and optimize your ROM collection.</p>
+</div>
+
+<!-- Tool Tabs -->
+<nav class="tool-tabs">
+    <a href="{{ url_for('tools.archive_scanner') }}" class="tool-tab">
+        <span class="tab-icon">📦</span>
+        <span class="tab-label">Archive Scanner</span>
+    </a>
+    <a href="{{ url_for('tools.chd_converter') }}" class="tool-tab">
+        <span class="tab-icon">💿</span>
+        <span class="tab-label">CHD Converter</span>
+    </a>
+    <a href="{{ url_for('tools.chd_verify') }}" class="tool-tab">
+        <span class="tab-icon">✅</span>
+        <span class="tab-label">CHD Verify</span>
+    </a>
+    <a href="{{ url_for('tools.multi_disc_organizer') }}" class="tool-tab">
+        <span class="tab-icon">💽</span>
+        <span class="tab-label">Multi-Disc Organizer</span>
+    </a>
+    <a href="{{ url_for('tools.duplicate_finder') }}" class="tool-tab">
+        <span class="tab-icon">🔍</span>
+        <span class="tab-label">Duplicate Finder</span>
+    </a>
+    <a href="{{ url_for('tools.screenshot_dedup') }}" class="tool-tab">
+        <span class="tab-icon">📸</span>
+        <span class="tab-label">Screenshot Dedup</span>
+    </a>
+    <a href="{{ url_for('tools.rom_tools_settings') }}" class="tool-tab active">
+        <span class="tab-icon">⚙️</span>
+        <span class="tab-label">Settings</span>
+    </a>
+</nav>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><span>🔧</span> Tool Availability</h2>
+    </div>
+    <div class="card-body">
+    <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">
+        These external tools are required for certain features. Install missing tools to enable full functionality.
+    </p>
+    
+    <div class="tool-status-grid">
+        <div class="tool-status-item">
+            <span class="tool-icon">📦</span>
+            <div class="tool-info">
+                <h4>unzip</h4>
+                <span class="status {% if tool_status.tools.unzip %}available{% else %}missing{% endif %}">
+                    {% if tool_status.tools.unzip %}✓ Available{% else %}✗ Not Found{% endif %}
+                </span>
+            </div>
+        </div>
+        <div class="tool-status-item">
+            <span class="tool-icon">🗜️</span>
+            <div class="tool-info">
+                <h4>7-Zip (7z)</h4>
+                <span class="status {% if tool_status.tools['7z'] %}available{% else %}missing{% endif %}">
+                    {% if tool_status.tools['7z'] %}✓ Available{% else %}✗ Not Found{% endif %}
+                </span>
+            </div>
+        </div>
+        <div class="tool-status-item">
+            <span class="tool-icon">📁</span>
+            <div class="tool-info">
+                <h4>unrar</h4>
+                <span class="status {% if tool_status.tools.unrar %}available{% else %}missing{% endif %}">
+                    {% if tool_status.tools.unrar %}✓ Available{% else %}✗ Not Found{% endif %}
+                </span>
+            </div>
+        </div>
+        <div class="tool-status-item">
+            <span class="tool-icon">💿</span>
+            <div class="tool-info">
+                <h4>chdman</h4>
+                <span class="status {% if tool_status.tools.chdman %}available{% else %}missing{% endif %}">
+                    {% if tool_status.tools.chdman %}✓ Available{% else %}✗ Not Found{% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    {% set any_missing = not tool_status.tools.unzip or not tool_status.tools['7z'] or not tool_status.tools.unrar or not tool_status.tools.chdman %}
+    {% if any_missing %}
+    <div class="info-banner" style="background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(247, 37, 133, 0.1)); border-color: rgba(255, 193, 7, 0.3);">
+        <span class="info-icon">⚠️</span>
+        <div class="info-text">
+            <h4>Missing Tools ({{ tool_status.platform }})</h4>
+            <p>Install all required tools: <code>{{ tool_status.install_instructions.all }}</code></p>
+        </div>
+    </div>
+    {% endif %}
+    </div>
+</div>
+
+<form id="settingsForm">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title"><span>📁</span> General Settings</h2>
+        </div>
+        <div class="card-body">
+        <div class="form-group">
+            <label>Default ROMs Path</label>
+            <input type="text" class="form-input" id="romsPath" value="{{ settings.roms_path }}" placeholder="/mnt/Games/ROMS">
+            <p class="form-help">Base directory for scanning ROMs</p>
+        </div>
+        
+        <div class="form-group">
+            <label>Temporary Path</label>
+            <input type="text" class="form-input" id="tempPath" value="{{ settings.temp_path }}" placeholder="/tmp/retrodb_romtools">
+            <p class="form-help">Directory for temporary files during processing</p>
+        </div>
+        
+        <div class="form-group">
+            <label>chdman Path</label>
+            <input type="text" class="form-input" id="chdmanPath" value="{{ settings.chdman_path }}" placeholder="chdman">
+            <p class="form-help">Path to chdman executable (use "chdman" if in PATH)</p>
+        </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title"><span>📦</span> Archive Scanner Settings</h2>
+        </div>
+        <div class="card-body">
+        <div class="info-banner" style="margin-bottom: 1rem;">
+            <span class="info-icon">💡</span>
+            <div class="info-text">
+                <p>Archive types and scan options (corruption check, M3U creation, unwanted file removal) are configured directly on the <a href="{{ url_for('tools.archive_scanner') }}" style="color: var(--accent-cyan);">Archive Scanner</a> page.</p>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>Unwanted File Extensions <small class="text-muted">(files to flag/remove during scans)</small></label>
+            <div class="tags-input" id="unwantedPatternsContainer">
+                <!-- Tags will be rendered here -->
+            </div>
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                <input type="text" class="form-input" id="newUnwantedPattern" placeholder="Enter extension (e.g., .txt, .nfo)" style="flex: 1;">
+                <button type="button" class="btn btn-secondary" onclick="addUnwantedPattern()">Add</button>
+            </div>
+            <p class="form-help">Extensions for files to flag as unwanted (e.g., .txt, .nfo, .url). These are used when scanning archives for unwanted files.</p>
+        </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title"><span>📁</span> Excluded Paths</h2>
+        </div>
+        <div class="card-body">
+        <div class="form-group">
+            <label>Default Excluded Folders <small class="text-muted">(folders to skip during scans)</small></label>
+            <div class="tags-input" id="excludedPathsContainer">
+                <!-- Tags will be rendered here -->
+            </div>
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                <input type="text" class="form-input" id="newExcludedPath" placeholder="Enter folder name to exclude" style="flex: 1;">
+                <button type="button" class="btn btn-secondary" onclick="addExcludedPathSetting()">Add</button>
+            </div>
+            <p class="form-help">Folder names to skip during archive scans (e.g., mame, ps3, xbox360)</p>
+        </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title"><span>💿</span> CHD Converter Settings</h2>
+        </div>
+        <div class="card-body">
+        <div class="form-group">
+            <label>Conversion Options</label>
+            <div class="toggle-item">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="chdVerifyAfter" {% if settings.chd_verify_after_convert %}checked{% endif %}>
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Verify CHD files after conversion</span>
+            </div>
+            <div class="toggle-item">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="chdDeleteOriginals" {% if settings.chd_delete_originals %}checked{% endif %}>
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Delete original files after successful conversion</span>
+            </div>
+            <div class="toggle-item">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="chdSkipExisting" {% if settings.chd_skip_existing %}checked{% endif %}>
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Skip files that already have CHD versions</span>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title"><span>🔍</span> Duplicate Finder Defaults</h2>
+        </div>
+        <div class="card-body">
+        <div class="form-group">
+            <label>Default Options</label>
+            <div class="toggle-item">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="ignoreRegionTags" {% if settings.ignore_region_tags %}checked{% endif %}>
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Ignore region tags (USA, Europe, Japan) when comparing names</span>
+            </div>
+            <div class="toggle-item">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="includeArchives" {% if settings.include_archives %}checked{% endif %}>
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Include archives (.zip, .7z, .rar) in duplicate scan</span>
+            </div>
+            <p class="form-hint" style="margin-top: 0.5rem; color: var(--text-muted); font-size: 0.8rem;">
+                Detection method can be selected directly on the Duplicate Finder page.
+            </p>
+        </div>
+        </div>
+    </div>
+
+    <div class="btn-group">
+        <button type="submit" class="btn btn-primary">💾 Save Settings</button>
+        <button type="button" class="btn btn-danger" onclick="resetDefaults()">🔄 Reset to Defaults</button>
+    </div>
+</form>
+
+<div id="successMessage" class="success-message" style="display: none;">
+    ✓ Settings saved successfully!
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Track unwanted patterns and excluded paths
+let unwantedPatterns = {{ settings.unwanted_patterns | tojson }};
+let excludedPaths = {{ settings.excluded_paths | default([]) | tojson }};
+
+// Render unwanted patterns as tags
+function renderUnwantedPatterns() {
+    const container = document.getElementById('unwantedPatternsContainer');
+    if (unwantedPatterns.length === 0) {
+        container.innerHTML = '<span style="color: var(--text-secondary); font-size: 0.85rem; padding: 0.5rem;">No patterns defined</span>';
+        return;
+    }
+    // Sort alphabetically
+    const sorted = [...unwantedPatterns].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    container.innerHTML = sorted.map(pattern => `
+        <span class="tag">
+            ${pattern}
+            <span class="remove-tag" onclick="removeUnwantedPattern('${pattern}')" title="Remove">×</span>
+        </span>
+    `).join('');
+}
+
+function addUnwantedPattern() {
+    const input = document.getElementById('newUnwantedPattern');
+    let value = input.value.trim();
+    if (!value) return;
+    
+    // Normalize: add . if it's an extension without it
+    if (!value.startsWith('.') && !value.startsWith('*')) {
+        value = '.' + value;
+    }
+    
+    if (!unwantedPatterns.includes(value)) {
+        unwantedPatterns.push(value);
+        renderUnwantedPatterns();
+    }
+    input.value = '';
+}
+
+function removeUnwantedPattern(pattern) {
+    unwantedPatterns = unwantedPatterns.filter(p => p !== pattern);
+    renderUnwantedPatterns();
+}
+
+// Render excluded paths as tags
+function renderExcludedPaths() {
+    const container = document.getElementById('excludedPathsContainer');
+    if (excludedPaths.length === 0) {
+        container.innerHTML = '<span style="color: var(--text-secondary); font-size: 0.85rem; padding: 0.5rem;">No paths excluded</span>';
+        return;
+    }
+    // Sort alphabetically
+    const sorted = [...excludedPaths].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    container.innerHTML = sorted.map(path => `
+        <span class="tag">
+            ${path}
+            <span class="remove-tag" onclick="removeExcludedPathSetting('${path}')" title="Remove">×</span>
+        </span>
+    `).join('');
+}
+
+function addExcludedPathSetting() {
+    const input = document.getElementById('newExcludedPath');
+    const value = input.value.trim();
+    if (value && !excludedPaths.includes(value)) {
+        excludedPaths.push(value);
+        renderExcludedPaths();
+    }
+    input.value = '';
+}
+
+function removeExcludedPathSetting(path) {
+    excludedPaths = excludedPaths.filter(p => p !== path);
+    renderExcludedPaths();
+}
+
+// Initialize tags on page load
+document.addEventListener('DOMContentLoaded', function() {
+    renderUnwantedPatterns();
+    renderExcludedPaths();
+});
+
+// Enter key handlers
+document.getElementById('newUnwantedPattern').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        addUnwantedPattern();
+    }
+});
+
+document.getElementById('newExcludedPath').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        addExcludedPathSetting();
+    }
+});
+
+document.getElementById('settingsForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const settings = {
+        roms_path: document.getElementById('romsPath').value,
+        temp_path: document.getElementById('tempPath').value,
+        chdman_path: document.getElementById('chdmanPath').value,
+        // Archive settings - keep defaults, these are controlled on Archive Scanner page
+        archive_types: ['.zip', '.7z', '.rar'],
+        recursive_scan: true,
+        verify_integrity: false,
+        generate_m3u: false,
+        remove_unwanted: false,
+        // User-configurable settings
+        unwanted_patterns: unwantedPatterns,
+        excluded_paths: excludedPaths,
+        chd_verify_after_convert: document.getElementById('chdVerifyAfter').checked,
+        chd_delete_originals: document.getElementById('chdDeleteOriginals').checked,
+        chd_skip_existing: document.getElementById('chdSkipExisting').checked,
+        ignore_region_tags: document.getElementById('ignoreRegionTags').checked,
+        include_archives: document.getElementById('includeArchives').checked
+    };
+    
+    try {
+        const response = await fetch('/api/rom-tools/settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(settings)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            const msg = document.getElementById('successMessage');
+            msg.style.display = 'block';
+            setTimeout(() => { msg.style.display = 'none'; }, 3000);
+        } else {
+            showModal('❌ Error', 'Error saving settings: ' + (data.error || 'Unknown error'));
+        }
+    } catch (error) {
+        showModal('❌ Error', 'Error saving settings: ' + error.message);
+    }
+});
+
+function resetDefaults() {
+    showConfirm('🔄 Reset Settings', 'Reset all ROM Tools settings to defaults?', function() {
+        document.getElementById('romsPath').value = '/mnt/Games/ROMS';
+        document.getElementById('tempPath').value = '/tmp/retrodb_romtools';
+        document.getElementById('chdmanPath').value = 'chdman';
+        unwantedPatterns = ['.txt', '.nfo', '.diz', '.url', '.html', '.htm', '.sfv', '.png', '.jpg', '.jpeg', '.gif', '.scr'];
+        renderUnwantedPatterns();
+        excludedPaths = [];  // No default excluded paths
+        renderExcludedPaths();
+        document.getElementById('chdVerifyAfter').checked = true;
+        document.getElementById('chdDeleteOriginals').checked = false;
+        document.getElementById('chdSkipExisting').checked = true;
+        document.getElementById('duplicateMethod').value = 'hash';
+        document.getElementById('ignoreRegionTags').checked = true;
+        document.getElementById('includeArchives').checked = false;
+    });
+}
+</script>
+{% endblock %}

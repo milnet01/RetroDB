@@ -1,0 +1,630 @@
+{% extends "base.html" %}
+
+{% block title %}Compare Games - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Compare Games</h1>
+        <p class="page-subtitle">Side-by-side metadata comparison</p>
+    </div>
+</div>
+
+<!-- Game Selector -->
+<div class="compare-selector" id="compareSelector">
+    <div class="compare-slot" id="slot0">
+        {% if games|length > 0 %}
+        <div class="slot-filled" data-game-id="{{ games[0].id }}">
+            <img src="{{ '/static/images/boxart/' + games[0].boxart if games[0].boxart else '/static/images/placeholder.png' }}"
+                 alt="" class="slot-thumb">
+            <span class="slot-title">{{ games[0].title }}</span>
+            <button class="slot-remove" onclick="removeSlot(0)" title="Remove">&times;</button>
+        </div>
+        {% else %}
+        <button class="slot-empty" onclick="openSearchModal(0)">
+            <span class="slot-empty-icon">+</span>
+            <span class="slot-empty-text">Select Game 1</span>
+        </button>
+        {% endif %}
+    </div>
+    <div class="compare-vs">VS</div>
+    <div class="compare-slot" id="slot1">
+        {% if games|length > 1 %}
+        <div class="slot-filled" data-game-id="{{ games[1].id }}">
+            <img src="{{ '/static/images/boxart/' + games[1].boxart if games[1].boxart else '/static/images/placeholder.png' }}"
+                 alt="" class="slot-thumb">
+            <span class="slot-title">{{ games[1].title }}</span>
+            <button class="slot-remove" onclick="removeSlot(1)" title="Remove">&times;</button>
+        </div>
+        {% else %}
+        <button class="slot-empty" onclick="openSearchModal(1)">
+            <span class="slot-empty-icon">+</span>
+            <span class="slot-empty-text">Select Game 2</span>
+        </button>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Comparison Table -->
+{% if games|length == 2 %}
+<div class="compare-table-wrap" id="compareTable">
+    <table class="compare-table">
+        <thead>
+            <tr>
+                <th class="compare-label-col">Field</th>
+                <th class="compare-game-col">
+                    <a href="/game/{{ games[0].id }}">{{ games[0].title }}</a>
+                </th>
+                <th class="compare-game-col">
+                    <a href="/game/{{ games[1].id }}">{{ games[1].title }}</a>
+                </th>
+                <th class="compare-match-col">Match</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set fields = [
+                ('System', 'system_name'),
+                ('Developer', 'developer'),
+                ('Publisher', 'publisher'),
+                ('Release Date', 'release_date'),
+                ('Genre', 'genre'),
+                ('Franchise', 'franchise'),
+                ('Region', 'region'),
+                ('Players', 'players'),
+                ('Modes', 'modes'),
+                ('Perspective', 'perspective'),
+                ('Dimension', 'dimension'),
+                ('ESRB Rating', 'esrb_rating'),
+                ('PEGI Rating', 'pegi_rating'),
+                ('CERO Rating', 'cero_rating'),
+                ('USK Rating', 'usk_rating'),
+                ('ACB Rating', 'acb_rating'),
+                ('FPB Rating', 'fpb_rating'),
+                ('GRAC Rating', 'grac_rating'),
+                ('ClassInd Rating', 'classind_rating'),
+                ('Rating', 'rating'),
+                ('Playtime Estimate', 'playtime_estimate'),
+                ('Controller Support', 'controller_support'),
+                ('Save Type', 'save_type'),
+                ('File Size', 'file_size'),
+                ('ROM Path', 'rom_path'),
+                ('Scraped', 'scraped'),
+                ('Similar Games', 'similar_games'),
+                ('Description', 'description'),
+            ] %}
+
+            {% for label, field in fields %}
+            {% set val0 = games[0][field] if games[0][field] is not none else '' %}
+            {% set val1 = games[1][field] if games[1][field] is not none else '' %}
+            {% set v0_str = val0|string %}
+            {% set v1_str = val1|string %}
+            <tr class="{% if v0_str == v1_str and v0_str %}match{% elif v0_str != v1_str and v0_str and v1_str %}diff{% endif %}">
+                <td class="compare-label">{{ label }}</td>
+                <td class="compare-value">
+                    {% if field == 'file_size' and val0 %}
+                        {{ val0|filesizeformat }}
+                    {% elif field == 'scraped' %}
+                        {{ 'Yes' if val0 else 'No' }}
+                    {% elif field == 'description' and val0 %}
+                        <div class="compare-desc">{{ val0[:200] }}{% if val0|length > 200 %}...{% endif %}</div>
+                    {% else %}
+                        {{ val0 or '—' }}
+                    {% endif %}
+                </td>
+                <td class="compare-value">
+                    {% if field == 'file_size' and val1 %}
+                        {{ val1|filesizeformat }}
+                    {% elif field == 'scraped' %}
+                        {{ 'Yes' if val1 else 'No' }}
+                    {% elif field == 'description' and val1 %}
+                        <div class="compare-desc">{{ val1[:200] }}{% if val1|length > 200 %}...{% endif %}</div>
+                    {% else %}
+                        {{ val1 or '—' }}
+                    {% endif %}
+                </td>
+                <td class="compare-match-indicator">
+                    {% if v0_str == v1_str and v0_str %}
+                        <span class="match-badge same">Same</span>
+                    {% elif not v0_str and not v1_str %}
+                        <span class="match-badge empty">—</span>
+                    {% else %}
+                        <span class="match-badge diff">Diff</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+
+            <!-- Media comparison -->
+            <tr>
+                <td class="compare-label">Box Art</td>
+                <td class="compare-value">
+                    {% if games[0].boxart %}
+                    <img src="/static/images/boxart/{{ games[0].boxart }}" alt="" class="compare-media-thumb">
+                    {% else %}—{% endif %}
+                </td>
+                <td class="compare-value">
+                    {% if games[1].boxart %}
+                    <img src="/static/images/boxart/{{ games[1].boxart }}" alt="" class="compare-media-thumb">
+                    {% else %}—{% endif %}
+                </td>
+                <td class="compare-match-indicator">
+                    {% if games[0].boxart and games[1].boxart %}
+                        {% if games[0].boxart == games[1].boxart %}
+                            <span class="match-badge same">Same</span>
+                        {% else %}
+                            <span class="match-badge diff">Diff</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="match-badge empty">—</span>
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% elif games|length < 2 %}
+<div class="compare-empty">
+    <p>Select two games above to compare their metadata side by side.</p>
+</div>
+{% endif %}
+
+<!-- Search Modal -->
+<div class="custom-modal" id="searchModal" onclick="if(event.target===this)closeSearchModal()">
+    <div class="custom-modal-content" style="max-width: 600px; max-height: 80vh;" role="dialog" aria-modal="true" aria-labelledby="searchModalTitle">
+        <div class="custom-modal-header">
+            <h3 id="searchModalTitle">Select a Game</h3>
+            <button class="custom-modal-close" onclick="closeSearchModal()" aria-label="Close">&times;</button>
+        </div>
+        <div class="custom-modal-body" style="padding: 0;">
+            <div class="compare-search-bar">
+                <input type="text" id="compareSearchInput" class="form-control"
+                       placeholder="Search games by title..."
+                       onkeydown="if(event.key==='Enter')searchForCompare()"
+                       oninput="debounceCompareSearch()">
+                <button class="btn btn-primary btn-sm" onclick="searchForCompare()">Search</button>
+            </div>
+            <div class="compare-search-results" id="compareSearchResults">
+                <div class="compare-search-hint">Type a game title to search.</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+/* Selector */
+.compare-selector {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    justify-content: center;
+    margin: var(--spacing-xl) 0;
+}
+
+.compare-slot {
+    flex: 1;
+    max-width: 400px;
+}
+
+.slot-empty {
+    width: 100%;
+    padding: var(--spacing-xl);
+    background: var(--bg-medium);
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-lg);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-family: var(--font-primary);
+}
+
+.slot-empty:hover {
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+    background: rgba(76, 201, 240, 0.05);
+}
+
+.slot-empty-icon {
+    font-size: 2rem;
+    font-weight: 300;
+}
+
+.slot-empty-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.slot-filled {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--card-bg);
+    border: 1px solid var(--primary-cyan);
+    border-radius: var(--radius-lg);
+}
+
+.slot-thumb {
+    width: 48px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    background: var(--bg-darker);
+    flex-shrink: 0;
+}
+
+.slot-title {
+    flex: 1;
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.slot-remove {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: var(--radius-sm);
+    color: var(--neon-red);
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    transition: all var(--transition-fast);
+}
+
+.slot-remove:hover {
+    background: rgba(239, 68, 68, 0.3);
+}
+
+.compare-vs {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary-magenta);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    flex-shrink: 0;
+}
+
+/* Table */
+.compare-table-wrap {
+    overflow-x: auto;
+    margin-top: var(--spacing-lg);
+}
+
+.compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.compare-table thead th {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--bg-medium);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: left;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.compare-table thead th a {
+    color: var(--primary-cyan);
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.compare-table thead th a:hover {
+    text-decoration: underline;
+}
+
+.compare-label-col { width: 160px; }
+.compare-match-col { width: 80px; text-align: center; }
+
+.compare-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: background var(--transition-fast);
+}
+
+.compare-table tbody tr:hover {
+    background: rgba(76, 201, 240, 0.03);
+}
+
+.compare-table tbody tr.diff {
+    background: rgba(247, 37, 133, 0.03);
+}
+
+.compare-label {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    vertical-align: top;
+}
+
+.compare-value {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    word-break: break-word;
+    vertical-align: top;
+    max-width: 350px;
+}
+
+.compare-match-indicator {
+    padding: var(--spacing-sm);
+    text-align: center;
+    vertical-align: top;
+}
+
+.match-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.match-badge.same {
+    background: rgba(34, 197, 94, 0.15);
+    color: var(--neon-green);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.match-badge.diff {
+    background: rgba(247, 37, 133, 0.15);
+    color: var(--primary-magenta);
+    border: 1px solid rgba(247, 37, 133, 0.3);
+}
+
+.match-badge.empty {
+    color: var(--text-muted);
+}
+
+.compare-desc {
+    max-height: 100px;
+    overflow: hidden;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
+.compare-media-thumb {
+    width: 80px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+}
+
+/* Empty state */
+.compare-empty {
+    text-align: center;
+    padding: var(--spacing-xxl);
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+/* Search Modal */
+.compare-search-bar {
+    display: flex;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-medium);
+}
+
+.compare-search-bar .form-control {
+    flex: 1;
+}
+
+.compare-search-results {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: var(--spacing-sm);
+}
+
+.compare-search-hint {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.compare-search-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.compare-search-item:hover {
+    background: var(--bg-light);
+}
+
+.compare-search-thumb {
+    width: 36px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    background: var(--bg-darker);
+    flex-shrink: 0;
+}
+
+.compare-search-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.compare-search-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.compare-search-system {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Form */
+.form-control {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-darker);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color var(--transition-fast);
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    border-color: var(--primary-cyan);
+}
+
+@media (max-width: 768px) {
+    .compare-selector {
+        flex-direction: column;
+    }
+    .compare-slot {
+        max-width: 100%;
+        width: 100%;
+    }
+    .compare-table {
+        font-size: 0.85rem;
+    }
+    .compare-label-col {
+        width: 120px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let selectedGameIds = [{{ games[0].id if games|length > 0 else 'null' }}, {{ games[1].id if games|length > 1 else 'null' }}];
+let activeSlot = 0;
+let compareSearchTimeout = null;
+
+function removeSlot(idx) {
+    selectedGameIds[idx] = null;
+    updateCompareUrl();
+}
+
+function openSearchModal(slot) {
+    activeSlot = slot;
+    document.getElementById('searchModal').classList.add('active');
+    const input = document.getElementById('compareSearchInput');
+    input.value = '';
+    document.getElementById('compareSearchResults').innerHTML = '<div class="compare-search-hint">Type a game title to search.</div>';
+    setTimeout(() => input.focus(), 100);
+}
+
+function closeSearchModal() {
+    document.getElementById('searchModal').classList.remove('active');
+}
+
+function debounceCompareSearch() {
+    clearTimeout(compareSearchTimeout);
+    compareSearchTimeout = setTimeout(searchForCompare, 400);
+}
+
+async function searchForCompare() {
+    const q = document.getElementById('compareSearchInput').value.trim();
+    const results = document.getElementById('compareSearchResults');
+
+    if (q.length < 2) {
+        results.innerHTML = '<div class="compare-search-hint">Type at least 2 characters to search.</div>';
+        return;
+    }
+
+    results.innerHTML = '<div class="compare-search-hint">Searching...</div>';
+
+    try {
+        const resp = await fetch(`/api/games/find?q=${encodeURIComponent(q)}&limit=20`);
+        const data = await resp.json();
+
+        if (!data.success || !data.games || data.games.length === 0) {
+            results.innerHTML = '<div class="compare-search-hint">No games found.</div>';
+            return;
+        }
+
+        results.innerHTML = data.games.map(g => {
+            const thumb = g.boxart ? `/static/images/boxart/${g.boxart}` : '/static/images/placeholder.png';
+            return `
+                <div class="compare-search-item" onclick="selectCompareGame(${g.id})">
+                    <img src="${thumb}" alt="" class="compare-search-thumb" loading="lazy">
+                    <div class="compare-search-info">
+                        <div class="compare-search-title">${escapeHtml(g.title)}</div>
+                        <div class="compare-search-system">${escapeHtml(g.system_name || '')}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } catch (e) {
+        console.error('Error searching:', e);
+        results.innerHTML = '<div class="compare-search-hint" style="color: var(--neon-red);">Error searching games.</div>';
+    }
+}
+
+function selectCompareGame(gameId) {
+    selectedGameIds[activeSlot] = gameId;
+    closeSearchModal();
+    updateCompareUrl();
+}
+
+function updateCompareUrl() {
+    const params = new URLSearchParams();
+    selectedGameIds.forEach(id => { if (id) params.append('id', id); });
+    window.location.href = '/compare?' + params.toString();
+}
+
+function escapeHtml(text) {
+    const d = document.createElement('div');
+    d.textContent = text;
+    return d.innerHTML;
+}
+</script>
+{% endblock %}

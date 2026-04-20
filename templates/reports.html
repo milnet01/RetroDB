@@ -1,0 +1,1527 @@
+{% extends "base.html" %}
+
+{% block title %}ROM Reports - RetroDB{% endblock %}
+
+{% block styles %}
+<style>
+/* Stats Summary */
+.stats-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Reports page stat box overrides */
+.stat-box { border-radius: var(--radius-md); padding: 1.25rem; }
+.stat-box.warning { border-left: 3px solid var(--neon-orange); }
+.stat-box.error { border-left: 3px solid var(--neon-red); }
+.stat-box.success { border-left: 3px solid var(--neon-green); }
+.stat-value { font-family: var(--font-display); font-size: 2rem; }
+
+/* Filter Bar */
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+}
+
+/* Results Table — max-height override (base styles in pages.css) */
+.results-table-container {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.data-table {
+    font-size: 0.85rem;
+}
+
+.data-table td {
+    padding: 0.6rem 1rem;
+    vertical-align: middle;
+}
+
+.data-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.15s ease;
+}
+
+.data-table th.sortable:hover {
+    color: var(--primary-cyan);
+}
+
+.data-table th.sortable.active {
+    color: var(--primary-cyan);
+}
+
+.data-table th .sort-indicator {
+    display: inline-block;
+    margin-left: 0.5rem;
+    font-size: 0.7rem;
+    opacity: 0.5;
+    transition: opacity 0.15s ease;
+}
+
+.data-table th.sortable:hover .sort-indicator {
+    opacity: 0.8;
+}
+
+.data-table th.sortable.active .sort-indicator {
+    opacity: 1;
+}
+
+.data-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Issue Badge */
+.issue-badge {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.issue-badge.missing-region {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.issue-badge.missing-year {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.issue-badge.missing-publisher {
+    background: rgba(168, 85, 247, 0.2);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.issue-badge.invalid-chars {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.issue-badge.name-mismatch {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.issue-badge.underscore {
+    background: rgba(100, 116, 139, 0.2);
+    color: #94a3b8;
+    border: 1px solid rgba(100, 116, 139, 0.3);
+}
+
+.issue-badge.bracket {
+    background: rgba(100, 116, 139, 0.2);
+    color: #94a3b8;
+    border: 1px solid rgba(100, 116, 139, 0.3);
+}
+
+.issue-badge.moved-article {
+    background: rgba(168, 85, 247, 0.2);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+/* Filename cells */
+.filename-cell {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    max-width: 350px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.filename-cell:hover {
+    color: var(--primary-cyan);
+}
+
+.suggested-name {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--neon-green);
+    max-width: 350px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* System badge */
+.system-badge {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    background: rgba(76, 201, 240, 0.15);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    border-radius: 4px;
+    font-size: 0.7rem;
+    color: var(--primary-cyan);
+    font-weight: 500;
+}
+
+/* Action buttons */
+.action-cell {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Reports-specific .action-btn override — uses smaller padding/font,
+   card-bg background, and .rename variant (differs from external .action-btn) */
+.action-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    color: var(--text-secondary);
+    transition: all 0.15s ease;
+}
+
+.action-btn:hover {
+    background: rgba(76, 201, 240, 0.1);
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+.action-btn.rename {
+    border-color: var(--neon-green);
+    color: var(--neon-green);
+}
+
+.action-btn.rename:hover {
+    background: rgba(34, 197, 94, 0.1);
+}
+
+/* Loading state */
+.loading-state {
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .page-header .page-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .last-scan-indicator {
+        justify-content: center;
+    }
+
+    .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group label {
+        margin-bottom: 0.25rem;
+    }
+
+    .stats-summary {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">📊 ROM Reports</h1>
+        <p class="page-subtitle">Analyze ROM filenames against naming standards and scraped metadata</p>
+    </div>
+    <div class="page-actions" style="display: flex; align-items: center; gap: 1rem;">
+        <div class="last-scan-indicator" id="last-scan-indicator" style="display: none;">
+            <span class="scan-icon">🕐</span>
+            <span class="scan-text">Last scan: <span class="scan-time"></span></span>
+        </div>
+        <button class="btn btn-danger" onclick="clearScanResults()" title="Clear cached results">
+            <span class="btn-icon">🗑️</span> Clear
+        </button>
+        <button class="btn btn-primary" onclick="runFullScan()">
+            <span class="btn-icon">🔄</span> Scan All ROMs
+        </button>
+    </div>
+</div>
+
+<!-- Report Tabs -->
+<div class="report-tabs">
+    <button class="report-tab active" onclick="switchTab('naming')" id="tab-naming">
+        <span class="tab-icon">📝</span>
+        <span class="tab-label">Non-Standard Names</span>
+        <span class="tab-count" id="count-naming">-</span>
+    </button>
+    <button class="report-tab" onclick="switchTab('mismatch')" id="tab-mismatch">
+        <span class="tab-icon">⚠️</span>
+        <span class="tab-label">Name Mismatches</span>
+        <span class="tab-count" id="count-mismatch">-</span>
+    </button>
+</div>
+
+<!-- Non-Standard Names Panel -->
+<div class="report-panel active" id="panel-naming">
+    <div class="stats-summary">
+        <div class="stat-box warning">
+            <div class="stat-value" id="stat-missing-region">-</div>
+            <div class="stat-label">Missing Region</div>
+        </div>
+        <div class="stat-box warning">
+            <div class="stat-value" id="stat-missing-year">-</div>
+            <div class="stat-label">Missing Year</div>
+        </div>
+        <div class="stat-box warning">
+            <div class="stat-value" id="stat-missing-publisher">-</div>
+            <div class="stat-label">Missing Publisher</div>
+        </div>
+        <div class="stat-box error">
+            <div class="stat-value" id="stat-invalid-chars">-</div>
+            <div class="stat-label">Invalid Characters</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value" id="stat-other-issues">-</div>
+            <div class="stat-label">Other Issues</div>
+        </div>
+    </div>
+    
+    <div class="filter-bar">
+        <div class="filter-group">
+            <label>System:</label>
+            <select id="filter-system" onchange="applyFilters()">
+                <option value="">All Systems</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Issue Type:</label>
+            <select id="filter-issue" onchange="applyFilters()">
+                <option value="">All Issues</option>
+                <option value="missing-region">Missing Region</option>
+                <option value="missing-year">Missing Year</option>
+                <option value="missing-publisher">Missing Publisher</option>
+                <option value="invalid-chars">Invalid Characters</option>
+                <option value="underscore">Contains Underscores</option>
+                <option value="bracket">Wrong Brackets</option>
+                <option value="moved-article">Moved Article</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Search:</label>
+            <input type="text" id="filter-search" placeholder="Search filenames..." oninput="applyFilters()">
+        </div>
+        <div class="filter-group" style="margin-left: auto;">
+            <button class="btn btn-success" id="batchRenameBtn" onclick="startBatchRename()" disabled>
+                <span class="btn-icon">✏️</span> Batch Rename (<span id="batchCount">0</span>)
+            </button>
+        </div>
+    </div>
+    
+    <div class="results-table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th class="sortable" style="width: 100px;" data-sort="system" data-tab="naming" onclick="sortColumn('naming', 'system', event)">
+                        System <span class="sort-indicator"></span>
+                    </th>
+                    <th class="sortable active" data-sort="filename" data-tab="naming" onclick="sortColumn('naming', 'filename', event)">
+                        Current Filename <span class="sort-indicator">▲</span>
+                    </th>
+                    <th style="width: 150px;">Issues</th>
+                    <th class="sortable" data-sort="suggested" data-tab="naming" onclick="sortColumn('naming', 'suggested', event)">
+                        Suggested Name <span class="sort-indicator"></span>
+                    </th>
+                    <th style="width: 100px;">Action</th>
+                </tr>
+            </thead>
+            <tbody id="naming-results">
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <div class="icon">📊</div>
+                            <p>Click "Scan All ROMs" to analyze your ROM collection against the naming standard.</p>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Name Mismatches Panel -->
+<div class="report-panel" id="panel-mismatch">
+    <div class="stats-summary">
+        <div class="stat-box warning">
+            <div class="stat-value" id="stat-title-mismatch">-</div>
+            <div class="stat-label">Title Mismatch</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value" id="stat-region-mismatch">-</div>
+            <div class="stat-label">Region Mismatch</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value" id="stat-year-mismatch">-</div>
+            <div class="stat-label">Year Mismatch</div>
+        </div>
+    </div>
+    
+    <div class="filter-bar">
+        <div class="filter-group">
+            <label>System:</label>
+            <select id="filter-mismatch-system" onchange="applyMismatchFilters()">
+                <option value="">All Systems</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Mismatch Type:</label>
+            <select id="filter-mismatch-type" onchange="applyMismatchFilters()">
+                <option value="">All Types</option>
+                <option value="title">Title Mismatch</option>
+                <option value="region">Region Mismatch</option>
+                <option value="year">Year Mismatch</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Search:</label>
+            <input type="text" id="filter-mismatch-search" placeholder="Search..." oninput="applyMismatchFilters()">
+        </div>
+        <div class="filter-group" style="margin-left: auto;">
+            <button class="btn btn-success" id="mismatchBatchRenameBtn" onclick="startMismatchBatchRename()" disabled>
+                <span class="btn-icon">✏️</span> Batch Rename (<span id="mismatchBatchCount">0</span>)
+            </button>
+        </div>
+    </div>
+    
+    <div class="results-table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th class="sortable" style="width: 100px;" data-sort="system" data-tab="mismatch" onclick="sortColumn('mismatch', 'system', event)">
+                        System <span class="sort-indicator"></span>
+                    </th>
+                    <th class="sortable active" data-sort="filename" data-tab="mismatch" onclick="sortColumn('mismatch', 'filename', event)">
+                        Current Filename <span class="sort-indicator">▲</span>
+                    </th>
+                    <th class="sortable" data-sort="scraped_title" data-tab="mismatch" onclick="sortColumn('mismatch', 'scraped_title', event)">
+                        Scraped Title <span class="sort-indicator"></span>
+                    </th>
+                    <th class="sortable" style="width: 100px;" data-sort="region" data-tab="mismatch" onclick="sortColumn('mismatch', 'region', event)">
+                        Region <span class="sort-indicator"></span>
+                    </th>
+                    <th class="sortable" style="width: 80px;" data-sort="year" data-tab="mismatch" onclick="sortColumn('mismatch', 'year', event)">
+                        Year <span class="sort-indicator"></span>
+                    </th>
+                    <th style="width: 120px;">Mismatch</th>
+                    <th style="width: 100px;">Action</th>
+                </tr>
+            </thead>
+            <tbody id="mismatch-results">
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <div class="icon">⚠️</div>
+                            <p>Click "Scan All ROMs" to find filenames that don't match scraped metadata.</p>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Batch Rename Modal -->
+<div class="modal-overlay" id="batchRenameModal">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h2 id="batchModalTitle">✏️ Batch Rename</h2>
+            <button class="modal-close" onclick="closeBatchModal()" id="batchCloseBtn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <!-- Confirmation View -->
+            <div id="batchConfirmView">
+                <p style="margin-bottom: 1rem;">This will rename <strong id="batchTotalCount">0</strong> ROM files to their suggested names.</p>
+                <div class="batch-filter-info" style="background: rgba(76, 201, 240, 0.1); border: 1px solid rgba(76, 201, 240, 0.3); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem;">
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                        <div><strong>System:</strong> <span id="batchFilterSystem">All Systems</span></div>
+                        <div><strong>Issue Type:</strong> <span id="batchFilterIssue">All Issues</span></div>
+                    </div>
+                </div>
+                <p style="color: var(--neon-orange); font-size: 0.9rem;">⚠️ This action cannot be undone. Make sure you have backups.</p>
+            </div>
+            
+            <!-- Progress View -->
+            <div id="batchProgressView" style="display: none;">
+                <div class="batch-stats" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="batch-stat" style="text-align: center; padding: 0.75rem; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: var(--radius-md);">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--neon-green);" id="batchSuccessCount">0</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Success</div>
+                    </div>
+                    <div class="batch-stat" style="text-align: center; padding: 0.75rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: var(--radius-md);">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--neon-red);" id="batchFailedCount">0</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Failed</div>
+                    </div>
+                    <div class="batch-stat" style="text-align: center; padding: 0.75rem; background: rgba(100, 116, 139, 0.1); border: 1px solid rgba(100, 116, 139, 0.3); border-radius: var(--radius-md);">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-secondary);" id="batchRemainingCount">0</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Remaining</div>
+                    </div>
+                </div>
+                
+                <div class="progress-container" style="margin-bottom: 1rem;">
+                    <div class="progress-bar" id="batchProgressBar" style="width: 0%;">0%</div>
+                </div>
+                
+                <div id="batchCurrentFile" style="font-size: 0.8rem; color: var(--text-secondary); font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 1rem;">
+                    Preparing...
+                </div>
+            </div>
+            
+            <!-- Complete View -->
+            <div id="batchCompleteView" style="display: none; text-align: center;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+                <h3 style="color: var(--neon-green); margin-bottom: 0.5rem;">Batch Rename Complete</h3>
+                <p id="batchCompleteMessage" style="color: var(--text-secondary);"></p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeBatchModal()" id="batchCancelBtn">Cancel</button>
+            <button class="btn btn-success" onclick="executeBatchRename()" id="batchStartBtn">
+                <span class="btn-icon">✏️</span> Start Rename
+            </button>
+            <button class="btn btn-primary" onclick="closeBatchModal()" id="batchDoneBtn" style="display: none;">Done</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let namingIssues = [];
+let mismatchIssues = [];
+let allSystems = [];
+
+// Sort state per tab — array of {column, direction} for multi-column sort
+// First entry = primary sort, second = secondary (Ctrl+Click)
+let sortState = {
+    naming:   [{ column: 'filename', direction: 'asc' }],
+    mismatch: [{ column: 'filename', direction: 'asc' }]
+};
+
+const STORAGE_KEY = 'retrodb_rom_reports';
+const FILTERS_KEY = 'retrodb_reports_filters';
+const CACHE_VERSION = 3;  // Bump when data shape changes (3: mismatch_types array)
+
+// Save current filter values to localStorage
+function saveFilterState() {
+    try {
+        localStorage.setItem(FILTERS_KEY, JSON.stringify({
+            system: document.getElementById('filter-system').value,
+            issue: document.getElementById('filter-issue').value,
+            search: document.getElementById('filter-search').value,
+            mismatchSystem: document.getElementById('filter-mismatch-system').value,
+            mismatchType: document.getElementById('filter-mismatch-type').value,
+            mismatchSearch: document.getElementById('filter-mismatch-search').value,
+            sortState: sortState
+        }));
+    } catch(e) {}
+}
+
+// Restore filter values from localStorage
+function restoreFilterState() {
+    try {
+        const stored = localStorage.getItem(FILTERS_KEY);
+        if (!stored) return;
+        const f = JSON.parse(stored);
+        if (f.system) document.getElementById('filter-system').value = f.system;
+        if (f.issue) document.getElementById('filter-issue').value = f.issue;
+        if (f.search) document.getElementById('filter-search').value = f.search;
+        if (f.mismatchSystem) document.getElementById('filter-mismatch-system').value = f.mismatchSystem;
+        if (f.mismatchType) document.getElementById('filter-mismatch-type').value = f.mismatchType;
+        if (f.mismatchSearch) document.getElementById('filter-mismatch-search').value = f.mismatchSearch;
+        if (f.sortState) {
+            if (Array.isArray(f.sortState.naming) && f.sortState.naming.length)
+                sortState.naming = f.sortState.naming;
+            if (Array.isArray(f.sortState.mismatch) && f.sortState.mismatch.length)
+                sortState.mismatch = f.sortState.mismatch;
+            updateSortIndicators('naming');
+            updateSortIndicators('mismatch');
+        }
+    } catch(e) {}
+}
+
+// Save scan results to localStorage
+function saveScanResults() {
+    const data = {
+        namingIssues: namingIssues,
+        mismatchIssues: mismatchIssues,
+        allSystems: allSystems,
+        timestamp: Date.now(),
+        cacheVersion: CACHE_VERSION
+    };
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+        console.warn('Failed to save scan results to localStorage:', e);
+    }
+}
+
+// Load scan results from localStorage
+function loadScanResults() {
+    try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+            const data = JSON.parse(stored);
+            // Stale cache check — clear if data shape has changed
+            if (!data.cacheVersion || data.cacheVersion < CACHE_VERSION) {
+                localStorage.removeItem(STORAGE_KEY);
+                return null;
+            }
+            namingIssues = data.namingIssues || [];
+            mismatchIssues = data.mismatchIssues || [];
+            allSystems = data.allSystems || [];
+            return data.timestamp;
+        }
+    } catch (e) {
+        console.warn('Failed to load scan results from localStorage:', e);
+    }
+    return null;
+}
+
+// Clear cached scan results
+function clearScanResults() {
+    namingIssues = [];
+    mismatchIssues = [];
+    allSystems = [];
+    try {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(FILTERS_KEY);
+    } catch (e) {
+        console.warn('Failed to clear localStorage:', e);
+    }
+    // Reset sort state
+    sortState.naming = [{ column: 'filename', direction: 'asc' }];
+    sortState.mismatch = [{ column: 'filename', direction: 'asc' }];
+    updateSortIndicators('naming');
+    updateSortIndicators('mismatch');
+    // Reset UI
+    document.getElementById('count-naming').textContent = '-';
+    document.getElementById('count-mismatch').textContent = '-';
+    document.getElementById('stat-missing-region').textContent = '-';
+    document.getElementById('stat-missing-year').textContent = '-';
+    document.getElementById('stat-missing-publisher').textContent = '-';
+    document.getElementById('stat-invalid-chars').textContent = '-';
+    document.getElementById('stat-other-issues').textContent = '-';
+    document.getElementById('stat-title-mismatch').textContent = '-';
+    document.getElementById('stat-region-mismatch').textContent = '-';
+    document.getElementById('stat-year-mismatch').textContent = '-';
+    document.getElementById('naming-results').innerHTML = `
+        <tr>
+            <td colspan="5">
+                <div class="empty-state">
+                    <div class="icon">🔍</div>
+                    <p>Click "Scan All ROMs" to analyze your ROM collection.</p>
+                </div>
+            </td>
+        </tr>
+    `;
+    document.getElementById('mismatch-results').innerHTML = `
+        <tr>
+            <td colspan="7">
+                <div class="empty-state">
+                    <div class="icon">🔍</div>
+                    <p>Click "Scan All ROMs" to check for name mismatches.</p>
+                </div>
+            </td>
+        </tr>
+    `;
+    // Reset system filter dropdowns
+    const selects = ['filter-system', 'filter-mismatch-system'];
+    selects.forEach(id => {
+        const select = document.getElementById(id);
+        if (select) {
+            select.innerHTML = '<option value="">All Systems</option>';
+        }
+    });
+    updateLastScanIndicator(null);
+    showModal('✅ Cleared', 'Scan results have been cleared.');
+}
+
+// Format relative time
+function formatRelativeTime(timestamp) {
+    if (!timestamp) return '';
+    const now = Date.now();
+    const diff = now - timestamp;
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    
+    if (minutes < 1) return 'just now';
+    if (minutes < 60) return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+    if (hours < 24) return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+    return `${days} day${days !== 1 ? 's' : ''} ago`;
+}
+
+// Update last scan indicator
+function updateLastScanIndicator(timestamp) {
+    const indicator = document.getElementById('last-scan-indicator');
+    if (indicator) {
+        if (timestamp) {
+            indicator.style.display = 'flex';
+            indicator.querySelector('.scan-time').textContent = formatRelativeTime(timestamp);
+            indicator.setAttribute('data-timestamp', timestamp);
+        } else {
+            indicator.style.display = 'none';
+        }
+    }
+}
+
+// Tab switching
+function switchTab(tab) {
+    document.querySelectorAll('.report-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.report-panel').forEach(p => p.classList.remove('active'));
+
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
+
+    // Persist active tab
+    history.replaceState(null, '', '#' + tab);
+    try { localStorage.setItem('retrodb_reports_tab', tab); } catch(e) {}
+}
+
+// Run full scan
+async function runFullScan() {
+    const btn = document.querySelector('.page-actions .btn-primary');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="btn-icon">⏳</span> Scanning...';
+
+    let hasError = false;
+
+    try {
+        // Scan for naming issues
+        const namingResponse = await fetch('/api/reports/naming-check');
+        const namingData = await namingResponse.json();
+
+        if (namingData.success) {
+            namingIssues = namingData.issues || [];
+            allSystems = namingData.systems || [];
+            updateNamingResults();
+            populateSystemFilters();
+        }
+    } catch (error) {
+        console.error('Naming scan error:', error);
+        hasError = true;
+    }
+
+    try {
+        // Scan for mismatches
+        const mismatchResponse = await fetch('/api/reports/name-mismatch');
+        const mismatchData = await mismatchResponse.json();
+
+        if (mismatchData.success) {
+            mismatchIssues = mismatchData.mismatches || [];
+            updateMismatchResults();
+        }
+    } catch (error) {
+        console.error('Mismatch scan error:', error);
+        hasError = true;
+    }
+
+    // Update tab counts
+    document.getElementById('count-naming').textContent = namingIssues.length;
+    document.getElementById('count-mismatch').textContent = mismatchIssues.length;
+
+    // Save results to localStorage for persistence
+    saveScanResults();
+    updateLastScanIndicator(Date.now());
+
+    if (hasError) {
+        showNotification('Some scan checks encountered errors. Check browser console for details.', 'warning');
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = '<span class="btn-icon">🔄</span> Scan All ROMs';
+}
+
+// Populate system filters
+function populateSystemFilters() {
+    const selects = ['filter-system', 'filter-mismatch-system'];
+    selects.forEach(id => {
+        const select = document.getElementById(id);
+        const current = select.value;
+        select.innerHTML = '<option value="">All Systems</option>';
+        allSystems.sort().forEach(sys => {
+            select.innerHTML += `<option value="${sys}">${sys}</option>`;
+        });
+        select.value = current;
+    });
+}
+
+// Update naming results
+function updateNamingResults() {
+    const stats = {
+        'missing-region': 0,
+        'missing-year': 0,
+        'missing-publisher': 0,
+        'invalid-chars': 0,
+        'other': 0
+    };
+    
+    namingIssues.forEach(issue => {
+        (issue.issues || []).forEach(i => {
+            if (stats[i] !== undefined) stats[i]++;
+            else stats['other']++;
+        });
+    });
+    
+    document.getElementById('stat-missing-region').textContent = stats['missing-region'];
+    document.getElementById('stat-missing-year').textContent = stats['missing-year'];
+    document.getElementById('stat-missing-publisher').textContent = stats['missing-publisher'];
+    document.getElementById('stat-invalid-chars').textContent = stats['invalid-chars'];
+    document.getElementById('stat-other-issues').textContent = stats['other'];
+    
+    applyFilters();
+}
+
+// Apply filters to naming results
+function applyFilters() {
+    const system = document.getElementById('filter-system').value;
+    const issue = document.getElementById('filter-issue').value;
+    const search = document.getElementById('filter-search').value.toLowerCase();
+
+    let filtered = (namingIssues || []).filter(item => {
+        if (!item) return false;
+        if (system && item.system !== system) return false;
+        if (issue && !(item.issues || []).includes(issue)) return false;
+        if (search && !(item.filename || '').toLowerCase().includes(search)) return false;
+        return true;
+    });
+
+    // Apply current sort
+    filtered = reportSortItems(filtered, 'naming');
+
+    renderNamingTable(filtered);
+    updateBatchRenameButton(filtered);
+    saveFilterState();
+}
+
+// Get sort value for a given column key from an item
+function getSortValue(item, column) {
+    switch (column) {
+        case 'system':        return (item.system || '').toLowerCase();
+        case 'filename':      return (item.filename || '').toLowerCase();
+        case 'suggested':     return (item.suggested || '').toLowerCase();
+        case 'scraped_title': return (item.scraped_title || '').toLowerCase();
+        case 'region':        return (item.region || '').toLowerCase();
+        case 'year':          return (item.release_date || '').slice(0, 4);
+        default:              return '';
+    }
+}
+
+// Sort items using the multi-column sort state for a tab
+function reportSortItems(items, tab) {
+    const sorts = sortState[tab] || [{ column: 'filename', direction: 'asc' }];
+    return [...items].sort((a, b) => {
+        for (const { column, direction } of sorts) {
+            const valA = getSortValue(a, column);
+            const valB = getSortValue(b, column);
+            if (valA < valB) return direction === 'asc' ? -1 : 1;
+            if (valA > valB) return direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+    });
+}
+
+// Handle column header click (unified for both tabs)
+// Plain click = single-column sort; Ctrl+Click = add/toggle secondary sort
+function sortColumn(tab, column, event) {
+    const sorts = sortState[tab];
+    const existingIdx = sorts.findIndex(s => s.column === column);
+
+    if (event && (event.ctrlKey || event.metaKey)) {
+        // Ctrl+Click: add as secondary or toggle its direction
+        if (existingIdx === 0) {
+            // Clicking the primary with Ctrl — just toggle its direction
+            sorts[0].direction = sorts[0].direction === 'asc' ? 'desc' : 'asc';
+        } else if (existingIdx > 0) {
+            // Already a secondary — toggle direction
+            sorts[existingIdx].direction = sorts[existingIdx].direction === 'asc' ? 'desc' : 'asc';
+        } else {
+            // Not in list — add as secondary (max 2 levels)
+            if (sorts.length >= 2) sorts.splice(1, 1);
+            sorts.push({ column, direction: 'asc' });
+        }
+    } else {
+        // Plain click: single-column sort
+        if (existingIdx === 0 && sorts.length === 1) {
+            // Same column — toggle direction
+            sorts[0].direction = sorts[0].direction === 'asc' ? 'desc' : 'asc';
+        } else {
+            // New primary — reset to single column
+            sortState[tab] = [{ column, direction: 'asc' }];
+        }
+    }
+
+    updateSortIndicators(tab);
+
+    // Re-apply the appropriate tab's filters (which also re-sorts)
+    if (tab === 'naming') applyFilters();
+    else applyMismatchFilters();
+}
+
+// Update sort indicator visuals for a specific tab
+function updateSortIndicators(tab) {
+    const sorts = sortState[tab];
+    const panel = document.getElementById('panel-' + tab);
+    if (!panel) return;
+
+    panel.querySelectorAll('th.sortable').forEach(header => {
+        const col = header.dataset.sort;
+        const indicator = header.querySelector('.sort-indicator');
+        const idx = sorts.findIndex(s => s.column === col);
+
+        if (idx !== -1) {
+            header.classList.add('active');
+            const arrow = sorts[idx].direction === 'asc' ? '▲' : '▼';
+            indicator.textContent = sorts.length > 1 ? (idx + 1) + arrow : arrow;
+        } else {
+            header.classList.remove('active');
+            indicator.textContent = '';
+        }
+    });
+}
+
+// Update batch rename button state
+function updateBatchRenameButton(filteredItems) {
+    if (!Array.isArray(filteredItems)) filteredItems = [];
+    const itemsWithSuggestions = filteredItems.filter(item => item.suggested);
+    const count = itemsWithSuggestions.length;
+    const btn = document.getElementById('batchRenameBtn');
+    const countSpan = document.getElementById('batchCount');
+    
+    countSpan.textContent = count;
+    btn.disabled = count === 0;
+}
+
+// Render naming table
+function renderNamingTable(items) {
+    const tbody = document.getElementById('naming-results');
+    if (!Array.isArray(items)) items = [];
+
+    if (items.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5">
+                    <div class="empty-state">
+                        <div class="icon">✅</div>
+                        <p>No naming issues found! All ROMs follow the naming standard.</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = items.map(item => `
+        <tr data-game-id="${item.game_id}">
+            <td><span class="system-badge">${item.system}</span></td>
+            <td class="filename-cell" title="${escapeHtml(item.filename)}">${escapeHtml(item.filename)}</td>
+            <td>${(item.issues || []).map(i => `<span class="issue-badge ${i}">${formatIssue(i)}</span>`).join(' ')}</td>
+            <td class="suggested-name" title="${escapeHtml(item.suggested || '')}">${escapeHtml(item.suggested || '-')}</td>
+            <td class="action-cell">
+                <button class="action-btn" onclick="viewGame(${item.game_id})">👁️</button>
+                ${item.suggested ? `<button class="action-btn rename" data-game-id="${item.game_id}" data-suggested="${escapeHtml(item.suggested)}">✏️</button>` : ''}
+            </td>
+        </tr>
+    `).join('');
+    
+    // Attach click handlers for rename buttons (avoids escaping issues with inline onclick)
+    tbody.querySelectorAll('.action-btn.rename').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const gameId = parseInt(this.dataset.gameId);
+            const suggested = this.dataset.suggested;
+            renameFile(gameId, suggested);
+        });
+    });
+}
+
+// Format issue type for display
+function formatIssue(issue) {
+    const labels = {
+        'missing-region': 'No Region',
+        'missing-year': 'No Year',
+        'missing-publisher': 'No Publisher',
+        'invalid-chars': 'Bad Chars',
+        'underscore': 'Underscore',
+        'bracket': 'Brackets',
+        'moved-article': 'Article'
+    };
+    return labels[issue] || issue;
+}
+
+// Update mismatch results
+function updateMismatchResults() {
+    const stats = {
+        title: 0,
+        region: 0,
+        year: 0
+    };
+
+    (mismatchIssues || []).forEach(item => {
+        if (!item) return;
+        // Support both old cached 'mismatch_type' (string) and new 'mismatch_types' (array)
+        const types = item.mismatch_types || (item.mismatch_type ? [item.mismatch_type] : []);
+        types.forEach(t => {
+            if (t === 'title') stats.title++;
+            else if (t === 'region') stats.region++;
+            else if (t === 'year') stats.year++;
+        });
+    });
+    
+    document.getElementById('stat-title-mismatch').textContent = stats.title;
+    document.getElementById('stat-region-mismatch').textContent = stats.region;
+    document.getElementById('stat-year-mismatch').textContent = stats.year;
+    
+    applyMismatchFilters();
+}
+
+// Apply filters to mismatch results
+function applyMismatchFilters() {
+    const system = document.getElementById('filter-mismatch-system').value;
+    const mismatchType = document.getElementById('filter-mismatch-type').value;
+    const search = document.getElementById('filter-mismatch-search').value.toLowerCase();
+
+    let filtered = (mismatchIssues || []).filter(item => {
+        if (!item) return false;
+        if (system && item.system !== system) return false;
+        if (mismatchType) {
+            const types = item.mismatch_types || (item.mismatch_type ? [item.mismatch_type] : []);
+            if (!types.includes(mismatchType)) return false;
+        }
+        if (search && !(item.filename || '').toLowerCase().includes(search) && !(item.scraped_title || '').toLowerCase().includes(search)) return false;
+        return true;
+    });
+
+    // Apply current sort
+    filtered = reportSortItems(filtered, 'mismatch');
+
+    renderMismatchTable(filtered);
+
+    // Update batch rename button count (only items with suggestions)
+    const renameable = filtered.filter(i => i.suggested_name);
+    const btn = document.getElementById('mismatchBatchRenameBtn');
+    const countSpan = document.getElementById('mismatchBatchCount');
+    if (btn && countSpan) {
+        countSpan.textContent = renameable.length;
+        btn.disabled = renameable.length === 0;
+    }
+
+    saveFilterState();
+}
+
+// Render mismatch table
+function renderMismatchTable(items) {
+    const tbody = document.getElementById('mismatch-results');
+    if (!Array.isArray(items)) items = [];
+
+    if (items.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7">
+                    <div class="empty-state">
+                        <div class="icon">✅</div>
+                        <p>No name mismatches found! All ROM filenames match scraped metadata.</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = items.map(item => {
+        const year = (item.release_date || '').slice(0, 4);
+        return `
+        <tr data-game-id="${item.game_id}">
+            <td><span class="system-badge">${item.system}</span></td>
+            <td class="filename-cell" title="${escapeHtml(item.filename)}">${escapeHtml(item.filename)}</td>
+            <td title="${escapeHtml(item.scraped_title)}">${escapeHtml(item.scraped_title)}</td>
+            <td>${escapeHtml(item.region || '')}</td>
+            <td>${escapeHtml(year)}</td>
+            <td>${(item.mismatch_types || (item.mismatch_type ? [item.mismatch_type] : [])).map(t => `<span class="issue-badge name-mismatch">${t}</span>`).join(' ')}</td>
+            <td class="action-cell">
+                <button class="action-btn" onclick="viewGame(${item.game_id})">👁️</button>
+                <button class="action-btn rename" data-game-id="${item.game_id}">✏️</button>
+            </td>
+        </tr>`;
+    }).join('');
+
+    // Attach rename click handlers with mismatch data context
+    tbody.querySelectorAll('.action-btn.rename').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const gameId = parseInt(this.dataset.gameId);
+            const item = items.find(i => i.game_id === gameId);
+            if (item) renameToScraped(item);
+        });
+    });
+}
+
+// View game - opens modal
+function viewGame(gameId) {
+    openGameDetailModal(gameId);
+}
+
+// Rename file
+async function renameFile(gameId, newName) {
+    showConfirm('✏️ Rename File', `Rename ROM file to:<br><code>${newName}</code>`, async function() {
+        try {
+            const response = await fetch('/api/reports/rename-rom', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ game_id: gameId, new_name: newName })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showModal('✅ Renamed', 'File renamed successfully.');
+                runFullScan();  // Refresh
+            } else {
+                showModal('❌ Error', data.error);
+            }
+        } catch (error) {
+            showModal('❌ Error', error.message);
+        }
+    });
+}
+
+// Rename to scraped title — show confirmation with context
+function renameToScraped(item) {
+    // system_type: 'computer', 'handheld', or 'console' (from server)
+    const systemType = item.system_type
+        ? item.system_type.charAt(0).toUpperCase() + item.system_type.slice(1)
+        : 'Console';
+
+    // Build convention display from tags list
+    const tags = item.convention_tags || ['region'];
+    const tagLabels = { region: 'Region', year: 'Year', publisher: 'Publisher', developer: 'Developer', genre: 'Genre', system_type: 'System Type', system_name: 'System Name' };
+    const convention = 'Title' + tags.map(t => ' + (' + (tagLabels[t] || t) + ')').join('');
+
+    // Handle missing suggested_name (stale cache or empty title)
+    const suggestedName = item.suggested_name || '';
+    if (!suggestedName) {
+        showModal('⚠️ Cannot Rename', 'No suggested filename available. Please re-scan to refresh the data.');
+        return;
+    }
+
+    const message = `
+        <div style="text-align: left; font-size: 0.9rem; line-height: 1.6;">
+            <div style="margin-bottom: 0.75rem;">
+                <span style="color: var(--text-secondary);">System:</span>
+                <strong>${escapeHtml(item.system_name || item.system)}</strong>
+                <span style="color: var(--text-muted); margin-left: 0.25rem;">(${escapeHtml(item.system)})</span>
+                <span class="issue-badge name-mismatch" style="margin-left: 0.5rem; vertical-align: middle;">${systemType}</span>
+            </div>
+            <div style="margin-bottom: 0.75rem;">
+                <span style="color: var(--text-secondary);">Naming convention:</span>
+                <code style="color: var(--primary-cyan);">${convention}</code>
+            </div>
+            <div style="margin-bottom: 0.5rem;">
+                <span style="color: var(--text-secondary);">Current filename:</span><br>
+                <code style="color: var(--neon-red);">${escapeHtml(item.filename)}</code>
+            </div>
+            <div style="margin-bottom: 0.75rem;">
+                <span style="color: var(--text-secondary);">Rename to:</span><br>
+                <code style="color: var(--neon-green);">${escapeHtml(suggestedName)}</code>
+            </div>
+            <div style="color: var(--neon-orange); font-size: 0.85rem;">⚠️ This will rename the file on disk. Make sure you have backups.</div>
+        </div>`;
+
+    showConfirm('✏️ Rename ROM File', message, async function() {
+        try {
+            const response = await fetch('/api/reports/rename-to-scraped', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ game_id: item.game_id })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showNotification('File renamed successfully.', 'success');
+                // Remove from local data and re-render
+                const idx = mismatchIssues.findIndex(m => m.game_id === item.game_id);
+                if (idx !== -1) mismatchIssues.splice(idx, 1);
+                document.getElementById('count-mismatch').textContent = mismatchIssues.length;
+                updateMismatchResults();
+                saveScanResults();
+            } else {
+                showModal('❌ Error', data.error);
+            }
+        } catch (error) {
+            showModal('❌ Error', error.message);
+        }
+    });
+}
+
+// ==================== BATCH RENAME FUNCTIONS ====================
+
+let batchRenameItems = [];
+let batchRenameRunning = false;
+let batchRenameCancelled = false;
+
+// Get currently filtered items with suggestions
+function getFilteredItemsWithSuggestions() {
+    const system = document.getElementById('filter-system').value;
+    const issue = document.getElementById('filter-issue').value;
+    const search = document.getElementById('filter-search').value.toLowerCase();
+    
+    return (namingIssues || []).filter(item => {
+        if (!item || !item.suggested) return false;  // Must have a suggestion
+        if (system && item.system !== system) return false;
+        if (issue && !(item.issues || []).includes(issue)) return false;
+        if (search && !(item.filename || '').toLowerCase().includes(search)) return false;
+        return true;
+    });
+}
+
+// Start batch rename - show confirmation modal
+function startBatchRename() {
+    batchRenameItems = getFilteredItemsWithSuggestions();
+    
+    if (batchRenameItems.length === 0) {
+        showModal('ℹ️ No Items', 'No items with suggested names match your current filters.');
+        return;
+    }
+    
+    // Get filter labels for display
+    const systemSelect = document.getElementById('filter-system');
+    const issueSelect = document.getElementById('filter-issue');
+    const systemLabel = systemSelect.value ? systemSelect.options[systemSelect.selectedIndex].text : 'All Systems';
+    const issueLabel = issueSelect.value ? issueSelect.options[issueSelect.selectedIndex].text : 'All Issues';
+    
+    // Update modal with info
+    document.getElementById('batchTotalCount').textContent = batchRenameItems.length;
+    document.getElementById('batchFilterSystem').textContent = systemLabel;
+    document.getElementById('batchFilterIssue').textContent = issueLabel;
+    
+    // Reset modal state
+    document.getElementById('batchConfirmView').style.display = 'block';
+    document.getElementById('batchProgressView').style.display = 'none';
+    document.getElementById('batchCompleteView').style.display = 'none';
+    document.getElementById('batchCancelBtn').style.display = 'inline-flex';
+    document.getElementById('batchStartBtn').style.display = 'inline-flex';
+    document.getElementById('batchDoneBtn').style.display = 'none';
+    document.getElementById('batchCloseBtn').style.display = 'block';
+    document.getElementById('batchModalTitle').textContent = '✏️ Batch Rename';
+    
+    // Show modal
+    document.getElementById('batchRenameModal').classList.add('active');
+}
+
+// Close batch modal
+function closeBatchModal() {
+    if (batchRenameRunning) {
+        showConfirm('⚠️ Cancel Batch Rename?',
+            'A batch rename is in progress. Are you sure you want to cancel?',
+            function() {
+                batchRenameCancelled = true;
+                document.getElementById('batchStartBtn').setAttribute('onclick', 'executeBatchRename()');
+                document.getElementById('batchRenameModal').classList.remove('active');
+            });
+    } else {
+        document.getElementById('batchStartBtn').setAttribute('onclick', 'executeBatchRename()');
+        document.getElementById('batchRenameModal').classList.remove('active');
+    }
+}
+
+// Execute batch rename
+async function executeBatchRename() {
+    if (batchRenameItems.length === 0) return;
+    
+    batchRenameRunning = true;
+    batchRenameCancelled = false;
+    
+    // Switch to progress view
+    document.getElementById('batchConfirmView').style.display = 'none';
+    document.getElementById('batchProgressView').style.display = 'block';
+    document.getElementById('batchCancelBtn').textContent = 'Cancel';
+    document.getElementById('batchStartBtn').style.display = 'none';
+    document.getElementById('batchCloseBtn').style.display = 'none';
+    
+    const total = batchRenameItems.length;
+    let success = 0;
+    let failed = 0;
+    
+    // Update initial counts
+    document.getElementById('batchSuccessCount').textContent = '0';
+    document.getElementById('batchFailedCount').textContent = '0';
+    document.getElementById('batchRemainingCount').textContent = total;
+    
+    for (let i = 0; i < batchRenameItems.length; i++) {
+        if (batchRenameCancelled) break;
+        
+        const item = batchRenameItems[i];
+        const progress = Math.round(((i + 1) / total) * 100);
+        
+        // Update current file display
+        document.getElementById('batchCurrentFile').textContent = `Renaming: ${item.filename}`;
+        document.getElementById('batchProgressBar').style.width = progress + '%';
+        document.getElementById('batchProgressBar').textContent = progress + '%';
+        
+        try {
+            const response = await fetch('/api/reports/rename-rom', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ game_id: item.game_id, new_name: item.suggested })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                success++;
+                // Remove from namingIssues array
+                const idx = namingIssues.findIndex(ni => ni.game_id === item.game_id);
+                if (idx !== -1) {
+                    namingIssues.splice(idx, 1);
+                }
+            } else {
+                failed++;
+                console.error(`Failed to rename ${item.filename}:`, data.error);
+            }
+        } catch (error) {
+            failed++;
+            console.error(`Error renaming ${item.filename}:`, error);
+        }
+        
+        // Update counts
+        document.getElementById('batchSuccessCount').textContent = success;
+        document.getElementById('batchFailedCount').textContent = failed;
+        document.getElementById('batchRemainingCount').textContent = total - (i + 1);
+    }
+    
+    batchRenameRunning = false;
+    
+    // Show completion view
+    document.getElementById('batchProgressView').style.display = 'none';
+    document.getElementById('batchCompleteView').style.display = 'block';
+    document.getElementById('batchCancelBtn').style.display = 'none';
+    document.getElementById('batchDoneBtn').style.display = 'inline-flex';
+    document.getElementById('batchCloseBtn').style.display = 'block';
+    
+    let message = `Successfully renamed ${success} files.`;
+    if (failed > 0) message += ` Failed: ${failed}.`;
+    if (batchRenameCancelled) message += ' (Cancelled by user)';
+    document.getElementById('batchCompleteMessage').textContent = message;
+    document.getElementById('batchModalTitle').textContent = '✅ Batch Complete';
+    
+    // Update UI
+    document.getElementById('count-naming').textContent = namingIssues.length;
+    saveScanResults();
+    applyFilters();  // Re-render table with updated data
+}
+
+// ==================== MISMATCH BATCH RENAME FUNCTIONS ====================
+
+// Get currently filtered mismatch items with suggestions
+function getFilteredMismatchItemsWithSuggestions() {
+    const system = document.getElementById('filter-mismatch-system').value;
+    const mismatchType = document.getElementById('filter-mismatch-type').value;
+    const search = document.getElementById('filter-mismatch-search').value.toLowerCase();
+
+    return (mismatchIssues || []).filter(item => {
+        if (!item || !item.suggested_name) return false;
+        if (system && item.system !== system) return false;
+        if (mismatchType) {
+            const types = item.mismatch_types || (item.mismatch_type ? [item.mismatch_type] : []);
+            if (!types.includes(mismatchType)) return false;
+        }
+        if (search && !(item.filename || '').toLowerCase().includes(search)
+                    && !(item.scraped_title || '').toLowerCase().includes(search)) return false;
+        return true;
+    });
+}
+
+// Start mismatch batch rename - reuses the shared batchRenameModal
+function startMismatchBatchRename() {
+    batchRenameItems = getFilteredMismatchItemsWithSuggestions();
+
+    if (batchRenameItems.length === 0) {
+        showModal('ℹ️ No Items', 'No items with suggested names match your current filters.');
+        return;
+    }
+
+    // Get filter labels
+    const systemSelect = document.getElementById('filter-mismatch-system');
+    const typeSelect = document.getElementById('filter-mismatch-type');
+    const systemLabel = systemSelect.value
+        ? systemSelect.options[systemSelect.selectedIndex].text
+        : 'All Systems';
+    const typeLabel = typeSelect.value
+        ? typeSelect.options[typeSelect.selectedIndex].text
+        : 'All Types';
+
+    // Update modal
+    document.getElementById('batchTotalCount').textContent = batchRenameItems.length;
+    document.getElementById('batchFilterSystem').textContent = systemLabel;
+    document.getElementById('batchFilterIssue').textContent = typeLabel;
+
+    // Reset modal state
+    document.getElementById('batchConfirmView').style.display = 'block';
+    document.getElementById('batchProgressView').style.display = 'none';
+    document.getElementById('batchCompleteView').style.display = 'none';
+    document.getElementById('batchCancelBtn').style.display = 'inline-flex';
+    document.getElementById('batchCancelBtn').textContent = 'Cancel';
+    document.getElementById('batchStartBtn').style.display = 'inline-flex';
+    document.getElementById('batchStartBtn').setAttribute('onclick', 'executeMismatchBatchRename()');
+    document.getElementById('batchDoneBtn').style.display = 'none';
+    document.getElementById('batchCloseBtn').style.display = 'block';
+    document.getElementById('batchModalTitle').textContent = '✏️ Batch Rename Mismatches';
+
+    document.getElementById('batchRenameModal').classList.add('active');
+}
+
+// Execute mismatch batch rename (calls /api/reports/rename-to-scraped per item)
+async function executeMismatchBatchRename() {
+    if (batchRenameItems.length === 0) return;
+
+    batchRenameRunning = true;
+    batchRenameCancelled = false;
+
+    // Switch to progress view
+    document.getElementById('batchConfirmView').style.display = 'none';
+    document.getElementById('batchProgressView').style.display = 'block';
+    document.getElementById('batchCancelBtn').textContent = 'Cancel';
+    document.getElementById('batchStartBtn').style.display = 'none';
+    document.getElementById('batchCloseBtn').style.display = 'none';
+
+    const total = batchRenameItems.length;
+    let success = 0;
+    let failed = 0;
+
+    document.getElementById('batchSuccessCount').textContent = '0';
+    document.getElementById('batchFailedCount').textContent = '0';
+    document.getElementById('batchRemainingCount').textContent = total;
+
+    for (let i = 0; i < batchRenameItems.length; i++) {
+        if (batchRenameCancelled) break;
+
+        const item = batchRenameItems[i];
+        const progress = Math.round(((i + 1) / total) * 100);
+
+        document.getElementById('batchCurrentFile').textContent = `Renaming: ${item.filename}`;
+        document.getElementById('batchProgressBar').style.width = progress + '%';
+        document.getElementById('batchProgressBar').textContent = progress + '%';
+
+        try {
+            const response = await fetch('/api/reports/rename-to-scraped', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ game_id: item.game_id })
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                success++;
+                const idx = mismatchIssues.findIndex(m => m.game_id === item.game_id);
+                if (idx !== -1) mismatchIssues.splice(idx, 1);
+            } else {
+                failed++;
+            }
+        } catch (error) {
+            failed++;
+        }
+
+        document.getElementById('batchSuccessCount').textContent = success;
+        document.getElementById('batchFailedCount').textContent = failed;
+        document.getElementById('batchRemainingCount').textContent = total - (i + 1);
+    }
+
+    batchRenameRunning = false;
+
+    // Show completion
+    document.getElementById('batchProgressView').style.display = 'none';
+    document.getElementById('batchCompleteView').style.display = 'block';
+    document.getElementById('batchCancelBtn').style.display = 'none';
+    document.getElementById('batchDoneBtn').style.display = 'inline-flex';
+    document.getElementById('batchCloseBtn').style.display = 'block';
+    // Restore the Non-Standard tab's onclick handler
+    document.getElementById('batchStartBtn').setAttribute('onclick', 'executeBatchRename()');
+
+    let message = `Successfully renamed ${success} files.`;
+    if (failed > 0) message += ` Failed: ${failed}.`;
+    if (batchRenameCancelled) message += ' (Cancelled by user)';
+    document.getElementById('batchCompleteMessage').textContent = message;
+    document.getElementById('batchModalTitle').textContent = '✅ Batch Complete';
+
+    // Update UI
+    document.getElementById('count-mismatch').textContent = mismatchIssues.length;
+    saveScanResults();
+    applyMismatchFilters();
+}
+
+// On page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Restore last-used tab (hash takes priority over localStorage)
+    const hashTab = window.location.hash ? window.location.hash.substring(1) : null;
+    let savedTab;
+    try { savedTab = localStorage.getItem('retrodb_reports_tab'); } catch(e) {}
+    const restoreTab = hashTab || savedTab;
+    if (restoreTab && ['naming', 'mismatch'].includes(restoreTab)) {
+        switchTab(restoreTab);
+    }
+    
+    // Restore cached scan results from localStorage
+    const timestamp = loadScanResults();
+    if (timestamp && (namingIssues.length > 0 || mismatchIssues.length > 0)) {
+        // Populate dropdowns first so saved filter values can be set
+        populateSystemFilters();
+        // Restore saved filter selections before rendering (which calls applyFilters)
+        restoreFilterState();
+        // Now render with filters applied
+        updateNamingResults();
+        updateMismatchResults();
+        document.getElementById('count-naming').textContent = namingIssues.length;
+        document.getElementById('count-mismatch').textContent = mismatchIssues.length;
+        updateLastScanIndicator(timestamp);
+    }
+    
+    // Update relative time display periodically
+    setInterval(() => {
+        const indicator = document.getElementById('last-scan-indicator');
+        if (indicator && indicator.style.display !== 'none') {
+            const ts = parseInt(indicator.getAttribute('data-timestamp'));
+            if (ts) {
+                indicator.querySelector('.scan-time').textContent = formatRelativeTime(ts);
+            }
+        }
+    }, 60000); // Update every minute
+});
+</script>
+{% endblock %}

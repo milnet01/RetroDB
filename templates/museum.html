@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Museum - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title glitch-text" data-text="Museum">Mus<span class="title-accent">eum</span></h1>
+        <p class="page-subtitle">Gaming system encyclopedia &mdash; history, specs, and legacy</p>
+    </div>
+    <div class="page-actions">
+        <div class="console-count-badge">
+            <span class="count-number">{{ content_count|format_number }}</span>
+            <span class="count-label">/ {{ total_systems|format_number }} DOCUMENTED</span>
+        </div>
+        <button class="btn btn-primary" id="generateAllBtn" onclick="startBulkGenerate()">
+            Generate All Content
+        </button>
+    </div>
+</div>
+
+<!-- Generation Progress Bar (hidden by default) -->
+<div class="museum-progress glass-panel" id="generateProgress" style="display: none;">
+    <div class="museum-progress-header">
+        <span class="museum-progress-title" id="progressTitle">Generating content...</span>
+        <button class="btn btn-sm btn-danger" onclick="cancelBulkGenerate()" id="cancelGenBtn">Cancel</button>
+    </div>
+    <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="progressBar" style="width: 0%;"></div>
+    </div>
+    <div class="museum-progress-stats">
+        <span id="progressCurrent">0</span> / <span id="progressTotal">0</span> systems
+        &mdash;
+        <span class="text-success" id="progressSuccess">0</span> success,
+        <span class="text-warning" id="progressSkipped">0</span> skipped,
+        <span class="text-error" id="progressFailed">0</span> failed
+        &mdash;
+        <span id="progressSystem">...</span>
+    </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+    <div class="search-box">
+        <span class="search-icon">&#128269;</span>
+        <input type="text"
+               id="museumSearch"
+               class="search-input"
+               placeholder="Search systems..."
+               autocomplete="off"
+               oninput="filterMuseumSystems()">
+    </div>
+    <div class="filter-buttons">
+        <select id="museumTypeFilter" class="filter-select" onchange="filterMuseumSystems()">
+            <option value="">All Types</option>
+            <option value="Console">&#127918; Console</option>
+            <option value="Handheld">&#128241; Handheld</option>
+            <option value="Computer">&#128187; Computer</option>
+            <option value="Arcade">&#128377;&#65039; Arcade</option>
+            <option value="Engine">&#9881;&#65039; Engine</option>
+        </select>
+    </div>
+</div>
+
+<!-- Timeline -->
+<div class="museum-timeline" id="museumTimeline">
+    {% for gen_key, gen_name, era, gen_systems in generations %}
+    <section class="museum-era" data-generation="{{ gen_key }}">
+        <div class="museum-era-header">
+            <div class="museum-era-line"></div>
+            <div class="museum-era-info">
+                <h2 class="museum-era-title">{{ gen_name }}</h2>
+                {% if era %}
+                <span class="museum-era-date">{{ era }}</span>
+                {% endif %}
+                <span class="museum-era-count">{{ gen_systems|length }} system{{ 's' if gen_systems|length != 1 }}</span>
+            </div>
+        </div>
+
+        <div class="museum-systems-grid">
+            {% for sys in gen_systems %}
+            <a href="{{ url_for('museum.museum_system', system_id=sys.id) }}"
+               class="museum-system-card glass-panel"
+               data-name="{{ sys.name|lower }}"
+               data-type="{{ sys.system_type }}">
+                <div class="museum-card-image">
+                    {% if sys.hw_image %}
+                    <img src="{{ url_for('static', filename=sys.hw_image) }}" alt="{{ sys.name }}" loading="lazy" onclick="event.stopPropagation();event.preventDefault();openHardwareLightbox(this)" style="cursor:zoom-in">
+                    {% else %}
+                    <div class="museum-card-placeholder">&#127918;</div>
+                    {% endif %}
+                </div>
+                <div class="museum-card-body">
+                    <h3 class="museum-card-title">{{ sys.name }}</h3>
+                    {% if sys.summary %}
+                    <p class="museum-card-summary">{{ sys.summary }}</p>
+                    {% endif %}
+                    <div class="museum-card-meta">
+                        {% if sys.manufacturer %}
+                        <span class="museum-meta-chip">{{ sys.manufacturer }}</span>
+                        {% endif %}
+                        {% if sys.released %}
+                        <span class="museum-meta-chip">{{ sys.released }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if sys.has_content %}
+                <span class="museum-content-indicator" title="Content generated">&#10003;</span>
+                {% endif %}
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endfor %}
+</div>
+
+{% if total_systems == 0 %}
+<div class="empty-state glass-panel">
+    <div class="empty-state-icon">&#127963;&#65039;</div>
+    <h3 class="empty-state-title">No Systems Found</h3>
+    <p class="empty-state-text">Scan your ROM library first to populate the museum.</p>
+</div>
+{% endif %}
+
+<!-- Hardware Image Lightbox -->
+<div id="museumHardwareLightbox" class="museum-lightbox" onclick="if(event.target===this)closeHardwareLightbox()" role="dialog" aria-modal="true" aria-label="Hardware image viewer">
+    <span class="museum-lightbox-close" onclick="closeHardwareLightbox()" aria-label="Close hardware viewer">&times;</span>
+    <img id="museumHwLightboxImage" class="museum-lightbox-image" alt="Hardware">
+    <div id="museumHwLightboxTitle" class="museum-lightbox-title"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/museum.js') }}?v={{ config.APP_VERSION }}"></script>
+{% endblock %}

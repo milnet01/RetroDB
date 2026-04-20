@@ -1,0 +1,933 @@
+{% extends "base.html" %}
+
+{% block title %}{{ system.name }} Achievements - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav class="breadcrumb">
+    <a href="{{ url_for('achievements.achievements') }}">RetroAchievements</a>
+    <span class="breadcrumb-separator">›</span>
+    <span class="breadcrumb-current">{{ system.name }}</span>
+</nav>
+
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">🏆 {{ system.name }}</h1>
+        <p class="page-subtitle">{{ games|length }} games with achievements{% if ra_username %} - {{ ra_username }}{% endif %}</p>
+    </div>
+</div>
+
+{% if not ra_configured %}
+<div class="alert alert-warning" style="margin-bottom: var(--spacing-xl);">
+    <strong>⚠️ RetroAchievements Not Configured</strong><br>
+    To view your personal progress, configure your RetroAchievements username and API key in your 
+    <a href="{{ url_for('settings.settings') }}#profile">Profile Settings</a>.
+</div>
+{% endif %}
+
+<!-- Overall Stats -->
+<section class="card mb-lg" id="overallStats">
+    <div class="card-body">
+        <div class="achievement-overview">
+            <div class="achievement-stat">
+                <div class="achievement-stat-icon">🎮</div>
+                <div class="achievement-stat-info">
+                    <span class="achievement-stat-label">Total Games</span>
+                    <span class="achievement-stat-value">{{ (overall_stats.total_games or 0)|format_number }}</span>
+                </div>
+            </div>
+            <div class="achievement-stat">
+                <div class="achievement-stat-icon">📺</div>
+                <div class="achievement-stat-info">
+                    <span class="achievement-stat-label">Systems</span>
+                    <span class="achievement-stat-value">{{ all_systems|length|format_number }}</span>
+                </div>
+            </div>
+            <div class="achievement-stat">
+                <div class="achievement-stat-icon">🏆</div>
+                <div class="achievement-stat-info">
+                    <span class="achievement-stat-label">Total Achievements</span>
+                    <span class="achievement-stat-value">
+                        {% if ra_configured %}
+                        <span id="overallEarnedAchievements">{{ (overall_stats.earned_achievements or 0)|format_number }}</span> /
+                        {% endif %}
+                        {{ (overall_stats.total_achievements or 0)|format_number }}
+                    </span>
+                </div>
+            </div>
+            <div class="achievement-stat">
+                <div class="achievement-stat-icon">⭐</div>
+                <div class="achievement-stat-info">
+                    <span class="achievement-stat-label">Total Points</span>
+                    <span class="achievement-stat-value">
+                        {% if ra_configured %}
+                        <span id="overallEarnedPoints">{{ (overall_stats.earned_points or 0)|format_number }}</span> /
+                        {% endif %}
+                        {{ (overall_stats.total_points or 0)|format_number }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- System Tabs (links to other systems) -->
+<nav class="system-tabs" id="systemTabs">
+    {% for sys in all_systems %}
+    <a href="{{ url_for('achievements.achievements_system', system_id=sys.id) }}" 
+       class="system-tab{% if sys.id == system.id %} active{% endif %}">
+        <span class="tab-name">{{ sys.name }}</span>
+        <span class="tab-count">{{ sys.game_count }}</span>
+    </a>
+    {% endfor %}
+</nav>
+
+<!-- System Stats -->
+<section class="card mb-lg">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h2 class="card-title" style="margin: 0;">{{ system.name }}</h2>
+        {% if ra_configured %}
+        <div class="header-actions" style="display: flex; align-items: center; gap: var(--spacing-md);">
+            <span class="cache-status" id="cacheStatus" 
+                  data-last-synced="{{ system.last_synced or '' }}"
+                  style="font-size: 0.85rem; color: var(--text-muted);">
+                {% if system.last_synced %}Loading...{% else %}Never synced{% endif %}
+            </span>
+            <button onclick="refreshSystemProgress()" class="btn btn-primary btn-sm" id="refreshBtn">
+                <span class="btn-icon">🔄</span>
+                <span class="btn-text">Sync Progress</span>
+            </button>
+            <button onclick="clearSystemRAData()" class="btn btn-danger btn-sm" id="clearRABtn" title="Remove this system from Achievements">
+                <span class="btn-icon">🗑️</span>
+                <span class="btn-text">Clear RA Data</span>
+            </button>
+        </div>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <div class="achievement-overview">
+            <div class="achievement-stat">
+                <div class="achievement-stat-icon">🎮</div>
+                <div class="achievement-stat-info">
+                    <span class="achievement-stat-label">Games</span>
+                    <span class="achievement-stat-value">{{ games|length }}</span>
+                </div>
+            </div>
+            <div class="achievement-stat">
+                <div class="achievement-stat-icon">🏆</div>
+                <div class="achievement-stat-info">
+                    <span class="achievement-stat-label">Achievements</span>
+                    <span class="achievement-stat-value">
+                        {% if ra_configured %}
+                        <span id="systemEarned">{{ (system.earned_achievements or 0)|format_number }}</span> /
+                        {% endif %}
+                        <span id="systemTotalAchievements">{{ (system.total_achievements or 0)|format_number }}</span>
+                    </span>
+                </div>
+            </div>
+            <div class="achievement-stat">
+                <div class="achievement-stat-icon">⭐</div>
+                <div class="achievement-stat-info">
+                    <span class="achievement-stat-label">Points</span>
+                    <span class="achievement-stat-value">
+                        {% if ra_configured %}
+                        <span id="systemPoints">{{ (system.earned_points or 0)|format_number }}</span> /
+                        {% endif %}
+                        <span id="systemTotalPoints">{{ (system.total_points or 0)|format_number }}</span>
+                    </span>
+                </div>
+            </div>
+            {% if ra_configured %}
+            <div class="achievement-stat games-started">
+                <div class="achievement-stat-icon">▶️</div>
+                <div class="achievement-stat-info">
+                    <span class="achievement-stat-label">In Progress</span>
+                    <span class="achievement-stat-value" id="systemStarted">-</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Filter Bar -->
+<div class="filter-bar glass-panel" style="padding: var(--spacing-md); margin-bottom: var(--spacing-lg);">
+    <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-md); align-items: center;">
+        <div class="form-group" style="margin: 0; flex: 1; min-width: 200px;">
+            <input type="text" class="form-input" id="gameSearch" placeholder="🔍 Search games..." onkeyup="filterGames()">
+        </div>
+        {% if ra_configured %}
+        <div class="form-group" style="margin: 0;">
+            <select class="form-select" id="progressFilter" onchange="filterGames()">
+                <option value="">All Games</option>
+                <option value="in-progress">In Progress</option>
+                <option value="not-started">Not Started</option>
+                <option value="completed">Completed (100%)</option>
+            </select>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Alphabet Jump Navigation -->
+{% if games|length >= 20 %}
+<div class="alphabet-nav" id="alphabetNav">
+    <span class="alphabet-label">Jump to:</span>
+    <div class="alphabet-letters">
+        <button class="alphabet-btn" data-letter="#">#</button>
+        {% for letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' %}
+        <button class="alphabet-btn" data-letter="{{ letter }}">{{ letter }}</button>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Games Grid -->
+<section class="card">
+    <div class="card-body">
+        <div class="achievement-games-grid" id="gamesGrid">
+            {% for game in games %}
+            <div class="achievement-game-card"
+               onclick="window.location.href='{{ url_for('achievements.achievement_game', game_id=game.id) }}'"
+               style="cursor: pointer;"
+               data-title="{{ game.title|lower }}"
+               data-game-id="{{ game.id }}"
+               data-ra-game-id="{{ game.ra_game_id }}"
+               data-progress="{% if game.earned_achievements is not none %}{% if game.total_achievements and game.earned_achievements >= game.total_achievements %}completed{% elif game.earned_achievements > 0 %}in-progress{% else %}not-started{% endif %}{% else %}unknown{% endif %}">
+                <div class="achievement-game-icon">
+                    {% if game.boxart %}
+                    <img src="{{ url_for('static', filename='images/boxart/' + game.boxart) }}" alt="{{ game.title }}"
+                         width="80" height="80"
+                         loading="lazy"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="no-boxart" style="display: none;">🎮</div>
+                    {% else %}
+                    <div class="no-boxart">🎮</div>
+                    {% endif %}
+                </div>
+                <div class="achievement-game-info">
+                    <div class="achievement-game-title">{{ game.title }}</div>
+                    <div class="achievement-game-system">{{ game.system_name }}</div>
+                    {% if ra_configured %}
+                    <div class="achievement-game-progress">
+                        <div class="achievement-progress-bar">
+                            <div class="achievement-progress-fill" data-progress-fill="true" style="width: {{ game.completion_percentage or 0 }}%"></div>
+                        </div>
+                        <div class="achievement-progress-text">
+                            <span data-earned="true">{{ game.earned_achievements|format_number if game.earned_achievements is not none else '-' }}</span> / <span data-total="true">{{ (game.ra_achievement_count or 0)|format_number }}</span>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="achievement-game-progress">
+                        <div class="achievement-progress-text">
+                            <span>{{ (game.ra_achievement_count or 0)|format_number }}</span> achievements
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const systemId = {{ system.id }};
+const systemName = '{{ system.name }}';
+const gameCount = {{ games|length }};
+const raConfigured = {{ 'true' if ra_configured else 'false' }};
+
+// Progress tracking
+let gameProgress = new Map();
+let syncPollTimeout = null;
+let isLoading = false;
+
+{% if ra_configured %}
+// Initialize game progress tracking from pre-populated HTML
+function initializeFromHTML() {
+    let gamesStarted = 0;
+    
+    document.querySelectorAll('.achievement-game-card').forEach(card => {
+        const gameId = card.dataset.gameId;
+        const earnedEl = card.querySelector('[data-earned]');
+        const totalEl = card.querySelector('[data-total]');
+        
+        const earned = earnedEl ? parseInt(earnedEl.textContent) || 0 : 0;
+        const total = totalEl ? parseInt(totalEl.textContent) || 0 : 0;
+        
+        gameProgress.set(gameId, { earned, total, card });
+        
+        if (earned > 0) gamesStarted++;
+    });
+    
+    // Update the "In Progress" count
+    const startedEl = document.getElementById('systemStarted');
+    if (startedEl) startedEl.textContent = gamesStarted;
+}
+
+function updateGamesFromData(games) {
+    Object.entries(games).forEach(([gameId, data]) => {
+        const card = document.querySelector(`.achievement-game-card[data-game-id="${gameId}"]`);
+        if (!card) return;
+        
+        const earned = data.unlocked_count || data.earned || 0;
+        const total = data.total_count || data.total || parseInt(card.querySelector('[data-total]')?.textContent || '0');
+        const percentage = total > 0 ? Math.round((earned / total) * 100) : 0;
+        
+        // Update progress bar
+        const fill = card.querySelector('[data-progress-fill]');
+        if (fill) fill.style.width = percentage + '%';
+        
+        // Update text
+        const earnedEl = card.querySelector('[data-earned]');
+        if (earnedEl) earnedEl.textContent = formatNumber(earned);
+        
+        // Update progress status
+        let status = 'not-started';
+        if (percentage >= 100) status = 'completed';
+        else if (earned > 0) status = 'in-progress';
+        card.dataset.progress = status;
+        
+        // Store in map
+        gameProgress.set(gameId.toString(), { earned, total, card });
+    });
+}
+
+function updateSystemStats() {
+    let totalEarned = 0;
+    let totalPoints = 0;
+    let gamesStarted = 0;
+    
+    gameProgress.forEach(({ earned }) => {
+        totalEarned += earned;
+        if (earned > 0) gamesStarted++;
+    });
+    
+    const earnedEl = document.getElementById('systemEarned');
+    const startedEl = document.getElementById('systemStarted');
+    
+    if (earnedEl) earnedEl.textContent = formatNumber(totalEarned);
+    if (startedEl) startedEl.textContent = gamesStarted;
+}
+
+async function refreshSystemProgress() {
+    if (isLoading) return;
+    
+    // Check if another sync is running
+    try {
+        const statusResponse = await fetch('/api/achievements/sync-status');
+        const statusData = await statusResponse.json();
+        
+        if (statusData.running && !statusData.completed) {
+            // Queue this sync using the new unified toast controller
+            const systemName = document.querySelector('.card-title')?.textContent || 'Unknown System';
+            const gameCount = document.querySelectorAll('.achievement-game-card').length;
+            
+            // Add to unified RA operations queue
+            const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+            
+            // Check if already queued
+            if (queue.find(q => q.type === 'sync' && q.systemId === systemId)) {
+                showNotification('System is already in the queue', 'info');
+                return;
+            }
+            
+            const newItem = {
+                type: 'sync',
+                systemId: systemId,
+                systemName: systemName,
+                gameCount: gameCount,
+                timestamp: Date.now()
+            };
+            queue.push(newItem);
+            localStorage.setItem('raOperationsQueue', JSON.stringify(queue));
+            
+            // Update button state
+            const btn = document.getElementById('refreshBtn');
+            if (btn) {
+                btn.innerHTML = '<span class="btn-icon">📋</span> Queued';
+                btn.disabled = true;
+            }
+            
+            // Add ONLY this toast (don't touch existing toasts)
+            if (typeof UnifiedToastController !== 'undefined' && UnifiedToastController.addRAOperationToQueue) {
+                UnifiedToastController.addRAOperationToQueue(newItem);
+                if (UnifiedToastController.adjustPollingSpeed) {
+                    UnifiedToastController.adjustPollingSpeed('ra-sync', true);
+                }
+            }
+            
+            showNotification(`Added ${systemName} to sync queue`, 'info');
+            return;
+        }
+    } catch (e) {
+        console.error('Error checking sync status:', e);
+    }
+    
+    isLoading = true;
+    
+    const btn = document.getElementById('refreshBtn');
+    const statusEl = document.getElementById('cacheStatus');
+    
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="btn-icon">⏳</span> Syncing...';
+    }
+    if (statusEl) {
+        statusEl.textContent = 'Syncing...';
+        statusEl.style.display = 'inline';
+    }
+    
+    try {
+        const response = await fetch(`/api/achievements/sync-system/${systemId}`, {
+            method: 'POST'
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            // Check if sync was queued
+            if (data.queued) {
+                try {
+                    // Add to unified RA operations queue for toast display
+                    const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+                    
+                    // Don't add duplicates
+                    if (!queue.find(q => q.type === 'sync' && q.systemId === data.system_id)) {
+                        const newItem = {
+                            type: 'sync',
+                            systemId: data.system_id,
+                            systemName: data.system_name,
+                            gameCount: data.game_count,
+                            timestamp: Date.now()
+                        };
+                        queue.push(newItem);
+                        localStorage.setItem('raOperationsQueue', JSON.stringify(queue));
+                        
+                        // Add ONLY this toast (don't touch existing toasts)
+                        if (typeof UnifiedToastController !== 'undefined' && UnifiedToastController.addRAOperationToQueue) {
+                            UnifiedToastController.addRAOperationToQueue(newItem);
+                            if (UnifiedToastController.adjustPollingSpeed) {
+                                UnifiedToastController.adjustPollingSpeed('ra-sync', true);
+                            }
+                        }
+                    }
+                } catch (queueError) {
+                    console.error('Error adding to queue:', queueError);
+                }
+                
+                // Show feedback
+                if (typeof showModal === 'function') {
+                    showModal('📋 Sync Queued', `${data.system_name} has been added to the sync queue. It will start automatically when the current sync completes.`);
+                }
+                
+                if (btn) {
+                    btn.innerHTML = '<span class="btn-icon">📋</span> Queued';
+                    setTimeout(() => {
+                        btn.innerHTML = '<span class="btn-icon">🔄</span> Sync Progress';
+                        btn.disabled = false;
+                    }, 2000);
+                }
+                if (statusEl) statusEl.style.display = 'none';
+                isLoading = false;
+                return;
+            }
+            
+            // Trigger toast-controller to show active toast and use fast polling
+            if (typeof UnifiedToastController !== 'undefined') {
+                // Create active toast immediately - don't wait for poll
+                const initialData = {
+                    running: true,
+                    completed: false,
+                    current_system: '{{ system.name }}',
+                    total: {{ games|length }},
+                    current: 0,
+                    percent: 0,
+                    paused: false
+                };
+                UnifiedToastController.showActiveToast('ra-sync', UnifiedToastController.getTypeConfig('ra-sync'), initialData);
+                UnifiedToastController.adjustPollingSpeed('ra-sync', true);
+                UnifiedToastController.broadcast('job-started', 'ra-sync', initialData);
+            }
+            // Toast controller handles polling - no page-specific polling needed
+            // Just update button to show syncing state
+            if (btn) {
+                btn.innerHTML = '<span class="btn-icon">🔄</span> Syncing...';
+            }
+        } else {
+            // Handle specific error cases
+            if (data.already_running) {
+                // Sync is already running for this system
+                if (btn) {
+                    btn.innerHTML = '<span class="btn-icon">🔄</span> Already Syncing';
+                    setTimeout(() => {
+                        btn.innerHTML = '<span class="btn-icon">🔄</span> Sync Progress';
+                        btn.disabled = false;
+                    }, 2000);
+                }
+                if (typeof showModal === 'function') {
+                    showModal('ℹ️ Sync In Progress', `${data.error || 'This system is already being synced.'} Check the toast notification for progress.`);
+                }
+            } else {
+                if (btn) {
+                    btn.innerHTML = `<span class="btn-icon">❌</span> ${escapeHtml(data.error || 'Sync failed')}`;
+                    setTimeout(() => {
+                        btn.innerHTML = '<span class="btn-icon">🔄</span> Sync Progress';
+                        btn.disabled = false;
+                    }, 3000);
+                }
+            }
+            isLoading = false;
+        }
+    } catch (e) {
+        console.error('Error starting sync:', e);
+        if (btn) {
+            btn.innerHTML = '<span class="btn-icon">❌</span> Network error';
+            setTimeout(() => {
+                btn.innerHTML = '<span class="btn-icon">🔄</span> Sync Progress';
+                btn.disabled = false;
+            }, 3000);
+        }
+        isLoading = false;
+    }
+}
+
+async function clearSystemRAData() {
+    const systemName = document.querySelector('.card-title')?.textContent || 'this system';
+    
+    showConfirm(
+        '🗑️ Clear RetroAchievements Data',
+        `This will remove "${systemName}" from the Achievements page by clearing all RetroAchievements game IDs and progress data for this system. Continue?`,
+        async function() {
+            const btn = document.getElementById('clearRABtn');
+            
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="btn-icon">⏳</span> Clearing...';
+            }
+            
+            try {
+                const response = await fetch(`/api/clear-ra-data/${systemId}`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification(`Cleared RA data for ${data.cleared} games in ${systemName}`, 'success');
+                    
+                    // Redirect to achievements page after clearing
+                    setTimeout(() => {
+                        window.location.href = '/achievements';
+                    }, 1500);
+                } else {
+                    showNotification(data.error || 'Failed to clear RA data', 'error');
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<span class="btn-icon">🗑️</span> Clear RA Data';
+                    }
+                }
+            } catch (error) {
+                console.error('Error clearing RA data:', error);
+                showNotification('Failed to clear RA data', 'error');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<span class="btn-icon">🗑️</span> Clear RA Data';
+                }
+            }
+        }
+    );
+}
+
+async function pollSyncStatus() {
+    const btn = document.getElementById('refreshBtn');
+    const statusEl = document.getElementById('cacheStatus');
+    
+    try {
+        const response = await fetch('/api/achievements/sync-status');
+        const data = await response.json();
+        
+        if (data.running && !data.completed) {
+            // Update button with progress
+            if (btn) {
+                btn.innerHTML = `<span class="btn-icon">🔄</span> ${data.processed || 0} / ${data.total || 0}`;
+            }
+            if (statusEl) {
+                statusEl.textContent = `Syncing: ${data.processed || 0} / ${data.total || 0}`;
+            }
+            
+            // Continue polling for button updates only
+            syncPollTimeout = setTimeout(pollSyncStatus, 2000);
+        } else if (data.completed) {
+            // Sync complete - update UI
+            if (btn) {
+                btn.innerHTML = '<span class="btn-icon">✅</span> Complete!';
+                btn.disabled = false;
+                setTimeout(() => {
+                    btn.innerHTML = '<span class="btn-icon">🔄</span> Sync Progress';
+                }, 3000);
+            }
+            if (statusEl) {
+                statusEl.textContent = 'Just synced';
+            }
+            isLoading = false;
+            
+            // Show notification instead of auto-reload
+            if (typeof showNotification === 'function') {
+                showNotification('Sync complete! Refresh page to see updated progress.', 'success');
+            }
+        } else {
+            // Not running
+            if (btn) {
+                btn.innerHTML = '<span class="btn-icon">🔄</span> Sync Progress';
+                btn.disabled = false;
+            }
+            isLoading = false;
+        }
+    } catch (e) {
+        console.error('Error polling sync status:', e);
+        // Don't retry on error - let toast controller handle it
+    }
+}
+
+async function loadSyncResults() {
+    // Reload the page to get fresh data from database
+    // This ensures all stats (overall, system, games) are properly refreshed
+    window.location.reload();
+}
+
+// Format relative time for last synced
+function formatRelativeTime(dateString) {
+    if (!dateString) return 'Never synced';
+    
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 1000 / 60);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    
+    // Less than 2 minutes
+    if (diffMins < 2) return 'Just synced';
+    
+    // Less than 60 minutes
+    if (diffMins < 60) return `Synced ${diffMins} minutes ago`;
+    
+    // Less than 24 hours
+    if (diffHours < 24) {
+        const hourText = diffHours === 1 ? 'hour' : 'hours';
+        return `Synced ${diffHours} ${hourText} ago`;
+    }
+    
+    // Days
+    const dayText = diffDays === 1 ? 'day' : 'days';
+    // Format date as YYYY-MM-DD
+    const formattedDate = (typeof DateUtils !== 'undefined') ? DateUtils.formatShort(date) : date.toISOString().slice(0, 16).replace('T', ' ');
+    
+    if (diffDays >= 3) {
+        // Show date in brackets for 3+ days
+        return `Synced ${diffDays} ${dayText} ago (${formattedDate})`;
+    }
+    
+    return `Synced ${diffDays} ${dayText} ago`;
+}
+
+// Update the cache status display
+function updateCacheStatus() {
+    const statusEl = document.getElementById('cacheStatus');
+    if (statusEl) {
+        const lastSynced = statusEl.dataset.lastSynced;
+        statusEl.textContent = formatRelativeTime(lastSynced);
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    // Save current system to localStorage for next visit
+    localStorage.setItem('retrodb_last_achievement_system', systemId);
+
+    // Update the last synced display
+    updateCacheStatus();
+
+    initializeFromHTML();
+
+    // Initialize alphabet nav - position below sticky system tabs
+    if (typeof AlphabetNav !== 'undefined') {
+        AlphabetNav.init({ itemSelector: '.achievement-game-card' });
+        const systemTabs = document.getElementById('systemTabs');
+        const alphaNav = document.getElementById('alphabetNav');
+        if (systemTabs && alphaNav) {
+            alphaNav.style.top = (systemTabs.offsetHeight + 4) + 'px';
+        }
+    }
+
+    // Check if sync is running
+    fetch('/api/achievements/sync-status')
+        .then(r => r.json())
+        .then(data => {
+            if (data.running && data.system_id === systemId) {
+                pollSyncStatus();
+            }
+        })
+        .catch(() => {});
+});
+{% else %}
+// Non-RA: still init alphabet nav
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof AlphabetNav !== 'undefined') {
+        AlphabetNav.init({ itemSelector: '.achievement-game-card' });
+        const systemTabs = document.getElementById('systemTabs');
+        const alphaNav = document.getElementById('alphabetNav');
+        if (systemTabs && alphaNav) {
+            alphaNav.style.top = (systemTabs.offsetHeight + 4) + 'px';
+        }
+    }
+});
+{% endif %}
+
+function filterGames() {
+    const search = document.getElementById('gameSearch')?.value.toLowerCase() || '';
+    const progressFilter = document.getElementById('progressFilter')?.value || '';
+    
+    document.querySelectorAll('.achievement-game-card').forEach(card => {
+        const title = card.dataset.title;
+        const progress = card.dataset.progress;
+        
+        const matchSearch = !search || title.includes(search);
+        const matchProgress = !progressFilter || progress === progressFilter;
+        
+        card.style.display = matchSearch && matchProgress ? '' : 'none';
+    });
+}
+
+// Back to top button
+const backToTopBtn = document.getElementById('backToTopBtn');
+
+window.addEventListener('scroll', () => {
+    if (backToTopBtn) {
+        if (window.scrollY > 300) {
+            backToTopBtn.classList.add('visible');
+        } else {
+            backToTopBtn.classList.remove('visible');
+        }
+    }
+});
+
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Cleanup on unload
+window.addEventListener('beforeunload', () => {
+    if (syncPollTimeout) {
+        clearTimeout(syncPollTimeout);
+    }
+});
+</script>
+{% endblock %}
+
+{% block styles %}
+<style>
+/* System Tabs as Links */
+.system-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background: rgba(20, 26, 35, 0.85);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(10px);
+}
+
+.system-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.system-tab:hover {
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+    background: rgba(76, 201, 240, 0.1);
+}
+
+.system-tab.active {
+    background: rgba(76, 201, 240, 0.15);
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+}
+
+.tab-count {
+    background: rgba(76, 201, 240, 0.2);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+}
+
+/* Achievement Overview */
+.achievement-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.achievement-stat {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: rgba(20, 26, 35, 0.6);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+}
+
+.achievement-stat-icon {
+    font-size: 2rem;
+}
+
+.achievement-stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.achievement-stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.achievement-stat-value {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--neon-cyan);
+}
+
+/* Games Grid */
+.achievement-games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.achievement-game-card {
+    display: flex;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: rgba(20, 26, 35, 0.6);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease;
+}
+
+.achievement-game-card:hover {
+    border-color: var(--neon-cyan);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.achievement-game-icon {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--bg-darker);
+}
+
+.achievement-game-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-boxart {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    background: var(--bg-darker);
+}
+
+.achievement-game-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.achievement-game-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.achievement-game-system {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.achievement-game-progress {
+    margin-top: auto;
+}
+
+.achievement-progress-bar {
+    height: 6px;
+    background: var(--bg-darker);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.achievement-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.achievement-progress-text {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Header actions */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.cache-status {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* Alphabet nav sits below sticky system tabs */
+.alphabet-nav {
+    top: 55px;
+}
+</style>
+{% endblock %}

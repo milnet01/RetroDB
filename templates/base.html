@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="RetroDB - Retro Gaming ROM Library Manager">
+    <title>{% block title %}RetroDB{% endblock %}</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <!-- Theme FOUC prevention: apply saved theme before CSS renders -->
+    <script>
+    (function(){
+        var t = localStorage.getItem('retrodb-theme');
+        if (t && t !== 'cyberpunk') document.documentElement.setAttribute('data-theme', t);
+    })();
+    </script>
+
+    <!-- Main Stylesheet (built from modular CSS) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.min.css') }}?v={{ config.APP_VERSION }}">
+    
+    <!-- Page-specific styles -->
+    {% block styles %}{% endblock %}
+    
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+</head>
+<body data-mist-enabled="{{ user_settings.get('enable_mist_effect', true)|lower }}">
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        {% if not setup_mode %}
+        <aside class="sidebar" role="navigation" aria-label="Main navigation">
+            <div class="sidebar-header">
+                <a href="{{ url_for('dashboard') }}" class="logo">
+                    <div class="logo-icon">🎮</div>
+                    <div class="logo-text">RETRO<span>DB</span></div>
+                </a>
+                {% if current_user %}
+                <div class="user-indicator">
+                    <div class="user-indicator-info">
+                        <span class="user-indicator-avatar">
+                            {% set avatar_url = get_avatar_url(current_user, current_user_settings) %}
+                            {% if avatar_url %}
+                            <img src="{{ avatar_url }}" alt="" class="user-avatar-img">
+                            {% else %}
+                            {% if current_user.role == 'admin' %}👑{% elif current_user.role == 'editor' %}✏️{% else %}👤{% endif %}
+                            {% endif %}
+                        </span>
+                        <div class="user-indicator-details">
+                            <span class="user-indicator-name">{{ current_user.display_name or current_user.username }}</span>
+                            <span class="user-indicator-role {{ current_user.role }}">{{ current_user.role }}</span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('auth.logout') }}" class="user-logout-btn" title="Logout" aria-label="Logout">🚪</a>
+                </div>
+                {% else %}
+                <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-sm" style="width: 100%; margin-top: var(--spacing-md);">
+                    <span>🔐</span> Login
+                </a>
+                {% endif %}
+            </div>
+            
+            <nav class="sidebar-nav">
+                {% if current_user %}
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="{{ url_for('dashboard') }}" class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="{{ url_for('systems.systems') }}" class="nav-item {% if request.endpoint in ['systems.systems', 'systems.system_games', 'games.game_detail'] and request.args.get('from') != 'library' and request.args.get('from') != 'achievements' and request.args.get('from') != 'rom_reports' %}active{% endif %}">
+                        <span class="nav-icon">🖥️</span>
+                        <span class="nav-text">Systems</span>
+                    </a>
+                    <a href="{{ url_for('games.all_games') }}" class="nav-item {% if request.endpoint == 'games.all_games' or (request.endpoint == 'games.game_detail' and request.args.get('from') == 'library') %}active{% endif %}">
+                        <span class="nav-icon">📚</span>
+                        <span class="nav-text">Library</span>
+                    </a>
+                    <a href="{{ url_for('analytics') }}" class="nav-item {% if request.endpoint == 'analytics' %}active{% endif %}">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-text">Analytics</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Trophies & Achievements</div>
+                    <a href="{{ url_for('trophies.trophies') }}" class="nav-item {% if request.endpoint == 'trophies.trophies' or request.endpoint == 'trophies.trophy_game' %}active{% endif %}">
+                        <span class="nav-icon">🏆</span>
+                        <span class="nav-text">RPCS3 Trophies</span>
+                    </a>
+                    <a href="{{ url_for('trophies.psn_trophies') }}" class="nav-item {% if request.endpoint in ['trophies.psn_trophies', 'trophies.psn_trophy_detail'] %}active{% endif %}">
+                        <span class="nav-icon">🎮</span>
+                        <span class="nav-text">PSN Trophies</span>
+                    </a>
+                    <a href="{{ url_for('achievements.achievements') }}" class="nav-item {% if request.endpoint in ['achievements.achievements', 'achievements.achievements_system', 'achievements.achievement_game'] %}active{% endif %}">
+                        <span class="nav-icon">🎖️</span>
+                        <span class="nav-text">Achievements</span>
+                    </a>
+                    <a href="{{ url_for('steam_achievements.steam_achievements_landing') }}" class="nav-item {% if request.endpoint and request.endpoint.startswith('steam_achievements.') %}active{% endif %}">
+                        <span class="nav-icon">🟦</span>
+                        <span class="nav-text">Steam Achievements</span>
+                    </a>
+                    <a href="{{ url_for('xbox_achievements.xbox_achievements_landing') }}" class="nav-item {% if request.endpoint and request.endpoint.startswith('xbox_achievements.') %}active{% endif %}">
+                        <span class="nav-icon">🟢</span>
+                        <span class="nav-text">Xbox Achievements</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">My Collection</div>
+                    <a href="{{ url_for('collections.tags_page') }}" class="nav-item {% if request.endpoint == 'collections.tags_page' %}active{% endif %}">
+                        <span class="nav-icon">🏷️</span>
+                        <span class="nav-text">Tags</span>
+                    </a>
+                    <a href="{{ url_for('collections.lists_page') }}" class="nav-item {% if request.endpoint in ['collections.lists_page', 'collections.list_detail_page'] %}active{% endif %}">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-text">Lists</span>
+                    </a>
+                    <a href="{{ url_for('collections.wishlist_page') }}" class="nav-item {% if request.endpoint == 'collections.wishlist_page' %}active{% endif %}">
+                        <span class="nav-icon">⭐</span>
+                        <span class="nav-text">Wishlist</span>
+                    </a>
+                    <a href="{{ url_for('collector_trophies.collector_trophies_page') }}" class="nav-item {% if request.endpoint == 'collector_trophies.collector_trophies_page' %}active{% endif %}">
+                        <span class="nav-icon">🏅</span>
+                        <span class="nav-text">Collector Trophies</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Tools</div>
+                    <a href="{{ url_for('reports.reports') }}" class="nav-item {% if request.endpoint == 'reports.reports' or (request.endpoint == 'games.game_detail' and request.args.get('from') == 'rom_reports') %}active{% endif %}">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">ROM Reports</span>
+                    </a>
+                    <a href="{{ url_for('game_imports.game_imports_page') }}" class="nav-item {% if request.endpoint == 'game_imports.game_imports_page' %}active{% endif %}">
+                        <span class="nav-icon">📥</span>
+                        <span class="nav-text">Game Imports</span>
+                    </a>
+                    <a href="{{ url_for('tools.rom_tools_hub') }}" class="nav-item {% if request.endpoint in ['tools.rom_tools_hub', 'tools.archive_scanner', 'tools.chd_converter', 'tools.chd_verify', 'tools.multi_disc_organizer', 'tools.duplicate_finder', 'tools.screenshot_dedup', 'tools.rom_tools_settings'] %}active{% endif %}">
+                        <span class="nav-icon">🛠️</span>
+                        <span class="nav-text">ROM Tools</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Configuration</div>
+                    <a href="{{ url_for('settings.settings') }}" class="nav-item {% if request.endpoint == 'settings.settings' %}active{% endif %}">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                    {% if has_permission('system_functions') %}
+                    <a href="{{ url_for('logs.log_viewer') }}" class="nav-item {% if request.endpoint == 'logs.log_viewer' %}active{% endif %}">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-text">Log Viewer</span>
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Info</div>
+                    <a href="{{ url_for('museum.museum') }}" class="nav-item {% if request.endpoint and request.endpoint.startswith('museum.') %}active{% endif %}">
+                        <span class="nav-icon">🏛️</span>
+                        <span class="nav-text">Museum</span>
+                    </a>
+                    <a href="{{ url_for('help_page') }}" class="nav-item {% if request.endpoint == 'help_page' %}active{% endif %}">
+                        <span class="nav-icon">❓</span>
+                        <span class="nav-text">Help</span>
+                    </a>
+                    <a href="{{ url_for('changelog') }}" class="nav-item {% if request.endpoint == 'changelog' %}active{% endif %}">
+                        <span class="nav-icon">📝</span>
+                        <span class="nav-text">Changelog</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="version-info" onclick="showAboutModal()" style="cursor: pointer;" title="Click for more info">
+                    <span class="version-icon">ℹ️</span> RetroDB v{{ config.APP_VERSION }}
+                </div>
+            </div>
+            
+            <!-- About Modal (in sidebar to be globally available) -->
+            <div class="about-modal-overlay" id="aboutModalOverlay" onclick="if(event.target===this)hideAboutModal()">
+                <div class="about-modal glass-panel" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
+                    <div class="about-modal-header">
+                        <h2 id="aboutModalTitle">🎮 About RetroDB</h2>
+                        <button class="about-modal-close" onclick="hideAboutModal()" aria-label="Close">×</button>
+                    </div>
+                    <div class="about-modal-body">
+                        <div class="about-logo">
+                            <div class="about-logo-icon">🎮</div>
+                            <div class="about-logo-text">RETRO<span>DB</span></div>
+                        </div>
+                        <div class="about-details">
+                            <div class="about-item">
+                                <span class="about-label">Version</span>
+                                <span class="about-value">{{ config.APP_VERSION }}</span>
+                            </div>
+                            <div class="about-item">
+                                <span class="about-label">Last Updated</span>
+                                <span class="about-value">{{ config.APP_LAST_UPDATE }}</span>
+                            </div>
+                            <div class="about-item about-description">
+                                <span class="about-label">Description</span>
+                                <span class="about-value">{{ config.APP_DESCRIPTION }}</span>
+                            </div>
+                        </div>
+                        <div class="about-links">
+                            <a href="{{ url_for('changelog') }}" class="btn btn-secondary btn-sm">
+                                <span>📜</span> Changelog
+                            </a>
+                            <a href="{{ url_for('help_page') }}" class="btn btn-secondary btn-sm">
+                                <span>❓</span> Help
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        {% endif %}
+
+        <!-- Main Content Area -->
+        <main class="main-content" role="main" {% if setup_mode %}style="margin-left: 0;"{% endif %}>
+            <!-- Centered Content Wrapper -->
+            <div class="content-wrapper">
+                <!-- Mobile Menu Toggle -->
+                {% if not setup_mode %}
+                <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                {% endif %}
+                
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <!-- Page Content -->
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Global Back to Top Button -->
+    <button id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()" title="Back to top" aria-label="Back to top">
+        <span class="back-to-top-icon" aria-hidden="true">↑</span>
+    </button>
+
+    <!-- Custom Modal Dialog -->
+    <div id="customModal" class="custom-modal" onclick="if(event.target === this) closeModal()">
+        <div class="custom-modal-content" role="dialog" aria-modal="true" aria-labelledby="customModalTitle">
+            <div class="custom-modal-header">
+                <h3 id="customModalTitle">Alert</h3>
+                <button class="custom-modal-close" onclick="closeModal()" aria-label="Close">×</button>
+            </div>
+            <div class="custom-modal-body">
+                <p id="customModalMessage"></p>
+            </div>
+            <div class="custom-modal-footer">
+                <button id="customModalCancel" class="btn btn-secondary" onclick="closeModal()" style="display: none;">Cancel</button>
+                <button id="customModalConfirm" class="btn btn-primary" onclick="confirmModal()">OK</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Folder Browser Modal -->
+    <div id="folderBrowserModal" class="custom-modal" onclick="if(event.target === this) closeFolderBrowser()">
+        <div class="custom-modal-content" style="max-width: 600px; max-height: 80vh;" role="dialog" aria-modal="true" aria-labelledby="folderBrowserTitle">
+            <div class="custom-modal-header">
+                <h3 id="folderBrowserTitle">📁 Browse Folders</h3>
+                <button class="custom-modal-close" onclick="closeFolderBrowser()" aria-label="Close">×</button>
+            </div>
+            <div class="custom-modal-body" style="padding: 0;">
+                <div id="folderBrowserPath" style="padding: 0.75rem 1rem; background: var(--bg-darker); border-bottom: 1px solid var(--border-color); font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary); word-break: break-all;"></div>
+                <div id="folderBrowserList" style="max-height: 400px; overflow-y: auto; padding: 0.5rem;"></div>
+            </div>
+            <div class="custom-modal-footer">
+                <button class="btn btn-secondary" onclick="closeFolderBrowser()">Cancel</button>
+                <button class="btn btn-primary" onclick="selectFolderPath()">Select This Folder</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification Settings (from user preferences) -->
+    <script>
+        window.NOTIFICATION_TIMEOUTS = {
+            success: {{ user_settings.notification_timeouts.success if user_settings and user_settings.notification_timeouts else 3 }},
+            info: {{ user_settings.notification_timeouts.info if user_settings and user_settings.notification_timeouts else 3 }},
+            warning: {{ user_settings.notification_timeouts.warning if user_settings and user_settings.notification_timeouts else 5 }},
+            error: {{ user_settings.notification_timeouts.error if user_settings and user_settings.notification_timeouts else 8 }}
+        };
+        window.AI_SCRAPER_ENABLED = {{ 'true' if ai_scraper_enabled else 'false' }};
+
+        // CSRF protection: auto-inject token into all fetch() calls
+        (function() {
+            const _origFetch = window.fetch;
+            window.fetch = function(url, options) {
+                options = options || {};
+                const method = (options.method || 'GET').toUpperCase();
+                if (method !== 'GET' && method !== 'HEAD') {
+                    options.headers = options.headers || {};
+                    // Support both Headers object and plain object
+                    if (options.headers instanceof Headers) {
+                        if (!options.headers.has('X-CSRF-Token')) {
+                            const token = document.querySelector('meta[name="csrf-token"]');
+                            if (token) options.headers.set('X-CSRF-Token', token.content);
+                        }
+                    } else {
+                        if (!options.headers['X-CSRF-Token']) {
+                            const token = document.querySelector('meta[name="csrf-token"]');
+                            if (token) options.headers['X-CSRF-Token'] = token.content;
+                        }
+                    }
+                }
+                return _origFetch.call(this, url, options);
+            };
+        })();
+    </script>
+
+    <!-- Theme System -->
+    <script src="{{ url_for('static', filename='js/theme.js') }}?v={{ config.APP_VERSION }}"></script>
+
+    <!-- Rating system globals (used by game-modals.js and all-games-controller.js) -->
+    <script>
+        window.PREFERRED_RATING_SYSTEM = window.PREFERRED_RATING_SYSTEM || '{{ user_settings.get("preferred_rating_system", "esrb") }}';
+        window.RATING_IMAGE_MAP = window.RATING_IMAGE_MAP || {{ rating_image_map_js | tojson }};
+        window.RATING_SYSTEM_NAMES = window.RATING_SYSTEM_NAMES || {{ rating_system_names_js | tojson }};
+        window.RATING_SYSTEM_KEYS = window.RATING_SYSTEM_KEYS || {{ rating_system_keys | tojson }};
+        window.RATING_TO_TIER = window.RATING_TO_TIER || {{ rating_to_tier_js | tojson }};
+        window.TIER_TO_RATING = window.TIER_TO_RATING || {{ tier_to_rating_js | tojson }};
+        window.IS_ADMIN = {{ 'true' if current_user and current_user.role == 'admin' else 'false' }};
+    </script>
+
+    <!-- App JavaScript Bundle (utils + page-lifecycle + filters + bulk-scrape + bulk-edit + toast-controller + game-list + game-modals + main) -->
+    <script defer src="{{ url_for('static', filename='js/app.bundle.js') }}?v={{ config.APP_VERSION }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof DateUtils !== 'undefined') {
+                DateUtils.setTimezone('{{ user_timezone|default("UTC") }}');
+            }
+        });
+    </script>
+    
+    <!-- Custom Modal Functions -->
+    <script>
+    let modalCallback = null;
+    let modalCancelCallback = null;
+    
+    function showModal(title, message, onConfirm, showCancel = false, onCancel = null) {
+        document.getElementById('customModalTitle').textContent = title;
+        const msgEl = document.getElementById('customModalMessage');
+        if (message.includes('<') && message.includes('>')) {
+            // Developer-controlled HTML content — sanitize to remove script tags
+            const temp = document.createElement('div');
+            temp.innerHTML = message;
+            temp.querySelectorAll('script').forEach(s => s.remove());
+            msgEl.innerHTML = temp.innerHTML;
+        } else {
+            // Plain text — use textContent to prevent XSS, then add line breaks
+            msgEl.textContent = '';
+            message.split('\n').forEach((line, i) => {
+                if (i > 0) msgEl.appendChild(document.createElement('br'));
+                msgEl.appendChild(document.createTextNode(line));
+            });
+        }
+        document.getElementById('customModalCancel').style.display = showCancel ? 'inline-block' : 'none';
+        document.getElementById('customModal').classList.add('active');
+        modalCallback = onConfirm;
+        modalCancelCallback = onCancel;
+        
+        // Add ESC key listener
+        document.addEventListener('keydown', modalKeyHandler);
+    }
+    
+    function modalKeyHandler(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+        } else if (e.key === 'Enter') {
+            confirmModal();
+        }
+    }
+    
+    function closeModal() {
+        document.getElementById('customModal').classList.remove('active');
+        document.removeEventListener('keydown', modalKeyHandler);
+        if (modalCancelCallback) {
+            modalCancelCallback();
+        }
+        modalCallback = null;
+        modalCancelCallback = null;
+    }
+    
+    function confirmModal() {
+        document.removeEventListener('keydown', modalKeyHandler);
+        if (modalCallback) {
+            modalCallback();
+        }
+        document.getElementById('customModal').classList.remove('active');
+        modalCallback = null;
+        modalCancelCallback = null;
+    }
+    
+    // Override alert
+    window.originalAlert = window.alert;
+    window.alert = function(message) {
+        showModal('Alert', message);
+    };
+    
+    // Confirm dialog (4th arg may be onCancel function or options object)
+    function showConfirm(title, message, onConfirm, optionsOrOnCancel = null) {
+        const onCancel = typeof optionsOrOnCancel === 'function' ? optionsOrOnCancel : null;
+        showModal(title, message, onConfirm, true, onCancel);
+    }
+    
+    // ==========================================================================
+    // Folder Browser Functions
+    // ==========================================================================
+    let folderBrowserCallback = null;
+    let folderBrowserCurrentPath = null;
+    let folderBrowserBasePath = null;
+    
+    async function openFolderBrowser(inputId, basePath = null) {
+        folderBrowserCallback = inputId;
+        
+        const modal = document.getElementById('folderBrowserModal');
+        const list = document.getElementById('folderBrowserList');
+        const pathEl = document.getElementById('folderBrowserPath');
+        
+        // Get initial path from input or use base path
+        const inputEl = document.getElementById(inputId);
+        let startPath = inputEl ? inputEl.value : null;
+        
+        // Show loading
+        list.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">Loading...</div>';
+        pathEl.textContent = 'Loading...';
+        modal.classList.add('active');
+        
+        try {
+            const response = await fetch('/api/rom-tools/browse-folders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ path: startPath || basePath })
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                folderBrowserBasePath = data.base_path;
+                folderBrowserCurrentPath = data.current_path;
+                renderFolderBrowser(data);
+            } else {
+                list.innerHTML = `<div class="alert alert-error">❌ Error: ${escapeHtml(data.error || 'Unknown error')}</div>`;
+            }
+        } catch (e) {
+            list.innerHTML = `<div class="alert alert-error">❌ Error: ${escapeHtml(e.message || 'An error occurred')}</div>`;
+        }
+    }
+
+    function renderFolderBrowser(data) {
+        const list = document.getElementById('folderBrowserList');
+        const pathEl = document.getElementById('folderBrowserPath');
+        
+        pathEl.textContent = data.current_path;
+        folderBrowserCurrentPath = data.current_path;
+        
+        let html = '';
+        
+        // Parent folder link (if not at root)
+        if (data.parent_path) {
+            html += `
+                <div class="folder-item folder-parent" onclick="navigateFolder('${escapeAttr(data.parent_path)}')">
+                    <span class="folder-icon">📁</span>
+                    <span class="folder-name">..</span>
+                    <span class="folder-info">Parent folder</span>
+                </div>
+            `;
+        }
+        
+        // Folders
+        if (data.folders.length === 0 && !data.parent_path) {
+            html += '<div style="padding: 1.5rem; text-align: center; color: var(--text-muted);">No subfolders found</div>';
+        } else if (data.folders.length === 0) {
+            html += '<div style="padding: 1rem; text-align: center; color: var(--text-muted); font-size: 0.9rem;">No subfolders</div>';
+        }
+        
+        for (const folder of data.folders) {
+            const info = [];
+            if (folder.file_count > 0) info.push(`${folder.file_count} files`);
+            if (folder.subfolder_count > 0) info.push(`${folder.subfolder_count} folders`);
+            
+            html += `
+                <div class="folder-item" onclick="navigateFolder('${escapeAttr(folder.path)}')">
+                    <span class="folder-icon">📁</span>
+                    <span class="folder-name">${escapeHtml(folder.name)}</span>
+                    <span class="folder-info">${info.join(', ') || 'Empty'}</span>
+                </div>
+            `;
+        }
+        
+        list.innerHTML = html;
+    }
+    
+    async function navigateFolder(path) {
+        const list = document.getElementById('folderBrowserList');
+        list.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">Loading...</div>';
+        
+        try {
+            const response = await fetch('/api/rom-tools/browse-folders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ path: path })
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                renderFolderBrowser(data);
+            } else {
+                list.innerHTML = `<div class="alert alert-error">❌ Error: ${escapeHtml(data.error || 'Unknown error')}</div>`;
+            }
+        } catch (e) {
+            list.innerHTML = `<div class="alert alert-error">❌ Error: ${escapeHtml(e.message || 'An error occurred')}</div>`;
+        }
+    }
+
+    function selectFolderPath() {
+        if (folderBrowserCallback && folderBrowserCurrentPath) {
+            const inputEl = document.getElementById(folderBrowserCallback);
+            if (inputEl) {
+                inputEl.value = folderBrowserCurrentPath;
+                // Trigger change event
+                inputEl.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        }
+        closeFolderBrowser();
+    }
+    
+    function closeFolderBrowser() {
+        document.getElementById('folderBrowserModal').classList.remove('active');
+        folderBrowserCallback = null;
+    }
+    
+    function escapeAttr(str) {
+        return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
+    }
+    
+    // About Modal Functions
+    function showAboutModal() {
+        document.getElementById('aboutModalOverlay').classList.add('active');
+        document.addEventListener('keydown', aboutModalKeyHandler);
+    }
+    
+    function hideAboutModal() {
+        document.getElementById('aboutModalOverlay').classList.remove('active');
+        document.removeEventListener('keydown', aboutModalKeyHandler);
+    }
+    
+    function aboutModalKeyHandler(e) {
+        if (e.key === 'Escape') {
+            hideAboutModal();
+        }
+    }
+    
+    </script>
+    
+    <!-- Old bulk scrape toast removed — now handled by UnifiedToastController in toast-controller.js -->
+    
+    <!-- Queue Manager Modal -->
+    <div class="modal-overlay" id="queueManagerModal">
+        <div class="modal-content" style="max-width: 600px;" role="dialog" aria-modal="true" aria-labelledby="queueManagerTitle">
+            <div class="modal-header">
+                <h2 id="queueManagerTitle">📋 Queue Manager</h2>
+                <button class="modal-close" onclick="closeQueueManager()" aria-label="Close queue manager">×</button>
+            </div>
+            <div class="modal-body" id="queueManagerBody">
+                <!-- Content populated by JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeQueueManager()">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    // =============================================================================
+    // Queue Manager Functions (Queue Manager Modal)
+    // Queue manipulation APIs - used by onclick handlers in queue manager modal
+    // =============================================================================
+
+    async function cancelQueuedJob(jobId) {
+        try {
+            const response = await fetch(`/api/bulk-scrape-job/cancel-queued/${jobId}`, { method: 'POST' });
+            const data = await response.json();
+            if (!data.success) console.error('Failed to cancel queued job:', data.error);
+            renderQueueManager();
+        } catch (e) {
+            console.error('Error cancelling queued job:', e);
+        }
+    }
+
+    async function promoteQueuedJob(jobId) {
+        try {
+            const response = await fetch(`/api/bulk-scrape-job/promote-queued/${jobId}`, { method: 'POST' });
+            const data = await response.json();
+            if (!data.success) console.error('Failed to promote queued job:', data.error);
+            renderQueueManager();
+        } catch (e) {
+            console.error('Error promoting queued job:', e);
+        }
+    }
+
+    async function demoteQueuedJob(jobId) {
+        try {
+            const response = await fetch(`/api/bulk-scrape-job/demote-queued/${jobId}`, { method: 'POST' });
+            const data = await response.json();
+            if (!data.success) console.error('Failed to demote queued job:', data.error);
+            renderQueueManager();
+        } catch (e) {
+            console.error('Error demoting queued job:', e);
+        }
+    }
+
+    async function swapWithRunning(jobId) {
+        try {
+            const response = await fetch(`/api/bulk-scrape-job/swap-running/${jobId}`, { method: 'POST' });
+            const data = await response.json();
+            if (!data.success) console.error('Failed to swap with running:', data.error);
+            renderQueueManager();
+        } catch (e) {
+            console.error('Error swapping with running:', e);
+        }
+    }
+
+    async function demoteRunningJob() {
+        try {
+            const response = await fetch('/api/bulk-scrape-job/demote-running', { method: 'POST' });
+            const data = await response.json();
+            if (!data.success) console.error('Failed to demote running job:', data.error);
+            renderQueueManager();
+        } catch (e) {
+            console.error('Error demoting running job:', e);
+        }
+    }
+
+    function openQueueManager() {
+        const modal = document.getElementById('queueManagerModal');
+        if (modal) {
+            modal.classList.add('active');
+            renderQueueManager();
+        }
+    }
+
+    function closeQueueManager() {
+        const modal = document.getElementById('queueManagerModal');
+        if (modal) {
+            modal.classList.remove('active');
+        }
+    }
+
+    async function renderQueueManager() {
+        const body = document.getElementById('queueManagerBody');
+        if (!body) return;
+
+        try {
+            const response = await fetch('/api/bulk-scrape-job/status');
+            if (!response.ok) return;
+            const data = await response.json();
+            if (!data.success) return;
+
+            const queue = data.queue || [];
+            const queueLength = queue.length;
+            let html = '';
+
+            // Running job
+            if (data.running && !data.completed) {
+                const percent = data.percent || 0;
+                const current = (data.current || 0) + 1;
+                const total = data.total || 0;
+
+                html += `
+                    <div class="queue-item running">
+                        <div class="queue-item-icon">⏳</div>
+                        <div class="queue-item-info">
+                            <div class="queue-item-title">Running</div>
+                            <div class="queue-item-system">${data.system_name || 'Multi-System'}</div>
+                            <div class="queue-item-games">${current} / ${total} games</div>
+                            <div class="queue-item-progress">${percent}% complete</div>
+                        </div>
+                        <div class="queue-item-controls">
+                            <button class="queue-btn" onclick="demoteRunningJob(); renderQueueManager();" ${queueLength === 0 ? 'disabled title="No queued jobs to swap with"' : 'title="Swap with next in queue"'}>
+                                ↑ Demote
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Queued jobs
+            if (queueLength > 0) {
+                queue.forEach((job, index) => {
+                    const position = index + 1;
+                    const isFirst = position === 1;
+                    const isLast = position === queueLength;
+                    const systemName = job.system_name || 'Multi-System';
+
+                    html += `
+                        <div class="queue-item queued" data-job-id="${job.job_id}">
+                            <div class="queue-item-icon">📋</div>
+                            <div class="queue-item-info">
+                                <div class="queue-item-title">#${position} in Queue</div>
+                                <div class="queue-item-system">${systemName}</div>
+                                <div class="queue-item-games">${job.total} games waiting</div>
+                            </div>
+                            <div class="queue-item-controls">
+                                ${isFirst
+                                    ? `<button class="queue-btn" onclick="swapWithRunning('${job.job_id}'); renderQueueManager();" title="Run now (swap with running)">↓ Run Now</button>`
+                                    : `<button class="queue-btn" onclick="promoteQueuedJob('${job.job_id}'); renderQueueManager();" title="Run sooner">↓ Promote</button>`
+                                }
+                                <button class="queue-btn" onclick="demoteQueuedJob('${job.job_id}'); renderQueueManager();" ${isLast ? 'disabled' : ''} title="${isLast ? 'Already last in queue' : 'Run later'}">
+                                    ↑ Demote
+                                </button>
+                                <button class="queue-btn danger" onclick="cancelQueuedJob('${job.job_id}'); renderQueueManager();" title="Cancel this queued scrape">
+                                    ✕ Cancel
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else if (!data.running || data.completed) {
+                html = '<div class="queue-empty">No bulk scrape jobs running or queued.</div>';
+            } else {
+                html += '<div class="queue-empty" style="margin-top: 10px;">No jobs in queue.</div>';
+            }
+
+            body.innerHTML = html;
+        } catch (e) {
+            console.error('Error rendering queue manager:', e);
+        }
+    }
+
+    // =============================================================================
+    // ROM Tools Navigation Memory
+    // =============================================================================
+    const ROM_TOOLS_PAGES = ['/tools/', '/tools/archive-scanner', '/tools/chd-converter', '/tools/chd-verify', '/tools/duplicate-finder', '/tools/multi-disc-organizer', '/tools/settings'];
+    const ROM_TOOLS_DEFAULT = '/tools/';
+
+    function navigateToRomTools(event) {
+        event.preventDefault();
+        const lastPage = localStorage.getItem('lastRomToolsPage') || ROM_TOOLS_DEFAULT;
+        window.location.href = lastPage;
+    }
+
+    // Save current ROM Tools page to localStorage when visiting
+    (function() {
+        const currentPath = window.location.pathname;
+        if (ROM_TOOLS_PAGES.includes(currentPath)) {
+            localStorage.setItem('lastRomToolsPage', currentPath);
+        }
+    })();
+
+    // =============================================================================
+    // PAGE CLEANUP - Clear intervals and references on page unload
+    // =============================================================================
+    window.addEventListener('beforeunload', function() {
+        // Clear any page-specific intervals (games.html sets these)
+        if (typeof window.pageIntervals !== 'undefined') {
+            window.pageIntervals.forEach(function(interval) {
+                clearInterval(interval);
+            });
+        }
+
+        // Clear any page-specific timeouts
+        if (typeof window.pageTimeouts !== 'undefined') {
+            window.pageTimeouts.forEach(function(timeout) {
+                clearTimeout(timeout);
+            });
+        }
+    });
+    </script>
+
+    <!-- Game Detail Modal -->
+    <div id="gameDetailModal" class="game-detail-modal" onclick="if(event.target===this)closeGameDetailModal()">
+        <div class="game-detail-modal-content" role="dialog" aria-modal="true" aria-label="Game details">
+            <button class="game-detail-modal-close" onclick="closeGameDetailModal()" aria-label="Close game details">&times;</button>
+
+            <!-- Loading State -->
+            <div id="gameDetailLoading" class="game-detail-loading">
+                <div class="loading-spinner"></div>
+                <p>Loading game details...</p>
+            </div>
+
+            <!-- Content (hidden while loading) -->
+            <div id="gameDetailContent" class="game-detail-content" style="display:none;">
+                <!-- Header: Boxart + Info -->
+                <div class="gdm-header">
+                    <div class="gdm-boxart-container">
+                        <img id="gdmBoxart" src="" alt="" class="gdm-boxart">
+                    </div>
+                    <div class="gdm-info">
+                        <h2 id="gdmTitle" class="gdm-title"></h2>
+                        <div class="gdm-meta">
+                            <span id="gdmSystem" class="gdm-system-badge"></span>
+                            <span id="gdmYear" class="gdm-year"></span>
+                            <span id="gdmPlayers" class="gdm-players"></span>
+                        </div>
+                        <div id="gdmRatings" class="gdm-ratings"></div>
+                        <div id="gdmCompletion" class="gdm-completion"></div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div id="gdmDescription" class="gdm-description"></div>
+
+                <!-- Details Grid -->
+                <div class="gdm-details-grid">
+                    <div class="gdm-detail"><span class="label">Developer</span><span id="gdmDeveloper"></span></div>
+                    <div class="gdm-detail"><span class="label">Publisher</span><span id="gdmPublisher"></span></div>
+                    <div class="gdm-detail"><span class="label">Genre</span><span id="gdmGenre"></span></div>
+                    <div class="gdm-detail"><span class="label">Franchise</span><span id="gdmFranchise"></span></div>
+                </div>
+
+                <!-- Achievements Badge (if applicable) -->
+                <div id="gdmAchievements" class="gdm-achievements" style="display:none;"></div>
+
+                <!-- Screenshots (if available) -->
+                <div id="gdmScreenshots" class="gdm-screenshots" style="display:none;"></div>
+
+                <!-- Video (if available) -->
+                <div id="gdmVideo" class="gdm-video" style="display:none;">
+                    <video id="gdmVideoPlayer" controls preload="metadata">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+
+                <!-- Actions -->
+                <div class="gdm-actions">
+                    <a id="gdmViewFull" href="#" class="btn btn-primary">
+                        <span class="btn-icon">📄</span> View Full Page
+                    </a>
+                    <button id="gdmAiFill" class="btn btn-secondary" onclick="triggerAiFill()" title="Fill missing metadata with AI" style="display:none;">
+                        <span class="btn-icon">🤖</span> AI Fill
+                    </button>
+                    <button id="gdmEdit" class="btn btn-warning" onclick="openGameEditModal()">
+                        <span class="btn-icon">✏️</span> Edit
+                    </button>
+                    <button class="btn btn-secondary" onclick="closeGameDetailModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GDM Screenshot Lightbox -->
+    <div id="gdmScreenshotLightbox" class="gdm-lightbox" onclick="if(event.target===this)GameDetailModal.closeLightbox()" role="dialog" aria-modal="true" aria-label="Screenshot viewer">
+        <span class="gdm-lightbox-close" onclick="GameDetailModal.closeLightbox()" aria-label="Close screenshot viewer">&times;</span>
+        <button class="gdm-lightbox-nav prev" onclick="event.stopPropagation();GameDetailModal.navigateScreenshot(-1)" aria-label="Previous screenshot">&#8249;</button>
+        <img id="gdmLightboxImage" class="gdm-lightbox-image" alt="Screenshot">
+        <button class="gdm-lightbox-nav next" onclick="event.stopPropagation();GameDetailModal.navigateScreenshot(1)" aria-label="Next screenshot">&#8250;</button>
+        <div class="gdm-lightbox-hint">Use &#8592; &#8594; arrow keys to navigate &bull; ESC to close</div>
+        <div id="gdmLightboxCounter" class="gdm-lightbox-counter"></div>
+    </div>
+
+    <!-- Game Edit Modal -->
+    <div id="gameEditModal" class="game-edit-modal" onclick="if(event.target===this)closeGameEditModal()">
+        <div class="game-edit-modal-content" role="dialog" aria-modal="true" aria-labelledby="gemTitle">
+            <button class="game-edit-modal-close" onclick="closeGameEditModal()" aria-label="Close edit modal">&times;</button>
+
+            <div class="gem-header">
+                <h2 id="gemTitle" class="gem-title">Edit Game</h2>
+                <div class="gem-tabs" role="tablist" aria-label="Edit game sections">
+                    <button class="gem-tab active" data-tab="quick" onclick="switchEditTab('quick')" role="tab" aria-selected="true" aria-controls="gemTabQuick">⚡ Quick</button>
+                    <button class="gem-tab" data-tab="identity" onclick="switchEditTab('identity')" role="tab" aria-selected="false" aria-controls="gemTabIdentity">📝 Identity</button>
+                    <button class="gem-tab" data-tab="release" onclick="switchEditTab('release')" role="tab" aria-selected="false" aria-controls="gemTabRelease">📅 Release</button>
+                    <button class="gem-tab" data-tab="gameplay" onclick="switchEditTab('gameplay')" role="tab" aria-selected="false" aria-controls="gemTabGameplay">🎮 Gameplay</button>
+                    <button class="gem-tab" data-tab="technical" onclick="switchEditTab('technical')" role="tab" aria-selected="false" aria-controls="gemTabTechnical">⚙️ Technical</button>
+                    <button class="gem-tab" data-tab="description" onclick="switchEditTab('description')" role="tab" aria-selected="false" aria-controls="gemTabDescription">📖 Info</button>
+                </div>
+            </div>
+
+            <div class="gem-body">
+                <!-- TAB: Quick (Completion + HLTB) -->
+                <div class="gem-tab-content active" id="gemTabQuick" role="tabpanel" aria-label="Quick edit">
+                    <div class="gem-section">
+                        <label class="gem-label">Completion Status</label>
+                        <select id="gemCompletionStatus" class="gem-select" onchange="updateGameCompletion()">
+                            <option value="not_started">📋 Not Started</option>
+                            <option value="in_progress">🎮 In Progress</option>
+                            <option value="played">🕹️ Played</option>
+                            <option value="completed">✅ Completed</option>
+                            <option value="100_percent">🏆 100%</option>
+                        </select>
+                    </div>
+
+                    <div class="gem-section">
+                        <label class="gem-label">HowLongToBeat</label>
+                        <input type="text"
+                               id="gemHltbSearchQuery"
+                               class="gem-input hltb-search-input"
+                               placeholder="Search game title..."
+                               style="margin-bottom: var(--spacing-sm);">
+                        <button class="btn-hltb" id="gemHltbLookupBtn" onclick="lookupHltbFromModal()">
+                            🔍 Lookup HLTB
+                        </button>
+
+                        <!-- Pending results (shown before confirmation) -->
+                        <div id="gemHltbPending" style="display: none; margin-top: var(--spacing-md); padding: var(--spacing-md); background: rgba(0,0,0,0.2); border-radius: var(--radius-md);">
+                            <div class="hltb-loading" id="gemHltbSearching" style="display: none;">
+                                <div class="loading-spinner-small"></div>
+                                <span>Searching HowLongToBeat...</span>
+                            </div>
+                            <div id="gemHltbResult">
+                                <div class="hltb-match-header" id="gemHltbMatchHeader">
+                                    <span class="hltb-match-title" id="gemHltbMatchTitle"></span>
+                                    <span class="hltb-match-platform" id="gemHltbMatchPlatform"></span>
+                                    <span class="hltb-match-confidence" id="gemHltbMatchConfidence"></span>
+                                </div>
+                                <div class="hltb-time-row">
+                                    <span class="hltb-label">Main Story</span>
+                                    <span class="hltb-value" id="gemHltbMain">-</span>
+                                </div>
+                                <div class="hltb-time-row">
+                                    <span class="hltb-label">Main + Extras</span>
+                                    <span class="hltb-value" id="gemHltbExtras">-</span>
+                                </div>
+                                <div class="hltb-time-row">
+                                    <span class="hltb-label">Completionist</span>
+                                    <span class="hltb-value" id="gemHltbComplete">-</span>
+                                </div>
+                                <div class="hltb-actions" style="margin-top: var(--spacing-md); display: flex; gap: var(--spacing-xs);">
+                                    <button class="btn btn-primary btn-sm" onclick="saveHltbFromModal()">✓ Save</button>
+                                    <button class="btn btn-secondary btn-sm" onclick="cancelHltbFromModal()">✕ Cancel</button>
+                                </div>
+                            </div>
+                            <div class="hltb-empty" id="gemHltbError" style="display: none; color: var(--neon-red);"></div>
+                        </div>
+
+                        <!-- Saved results -->
+                        <div id="gemHltbSaved" style="display: none; margin-top: var(--spacing-md);">
+                            <div id="gemHltbDisplay" class="hltb-compact">
+                                <div class="hltb-empty">No playtime data</div>
+                            </div>
+                            <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
+                                <button class="btn btn-danger btn-sm" onclick="clearHltbFromModal()">✕ Clear</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: Identity -->
+                <div class="gem-tab-content" id="gemTabIdentity" role="tabpanel" aria-label="Identity">
+                    <div class="gem-grid">
+                        <div class="gem-field">
+                            <label for="gemTitle_field">Title</label>
+                            <input type="text" id="gemTitle_field">
+                        </div>
+                        <div class="gem-field">
+                            <label for="gemSortTitle">Sort Title</label>
+                            <div class="gem-field-row">
+                                <input type="text" id="gemSortTitle" placeholder="Auto-generated from title">
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="generateModalSortTitle()">⚡</button>
+                            </div>
+                        </div>
+                        <div class="gem-field">
+                            <label>Franchise / Series</label>
+                            <div class="toggle-row" style="margin-bottom: var(--spacing-sm);">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="gemFranchiseToggle" aria-label="Toggle franchise status" onchange="updateGemFranchiseToggle()">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span id="gemFranchiseLabel" class="toggle-label" style="margin-left: var(--spacing-sm);">Standalone</span>
+                            </div>
+                            <input type="text" id="gemFranchise" placeholder="e.g., Final Fantasy, Crash Bandicoot">
+                        </div>
+                        <div class="gem-field">
+                            <label for="gemSimilarGames">Similar Games</label>
+                            <input type="text" id="gemSimilarGames" placeholder="Game 1, Game 2, Game 3">
+                        </div>
+                        <div class="gem-field">
+                            <label for="gemEdition">Edition</label>
+                            <input type="text" id="gemEdition" placeholder="Standard, Collector's, GOTY">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: Release Info -->
+                <div class="gem-tab-content" id="gemTabRelease" role="tabpanel" aria-label="Release info">
+                    <div class="gem-grid">
+                        <div class="gem-field">
+                            <label for="gemReleaseDate">Release Date</label>
+                            <div style="display:flex; gap:4px; align-items:center;">
+                                <input type="text" id="gemReleaseDate" placeholder="YYYY-MM-DD" style="flex:1;">
+                                <input type="date" id="gemReleaseDatePicker" tabindex="-1" aria-hidden="true" style="position:absolute; opacity:0; width:0; height:0; pointer-events:none;">
+                                <button type="button" class="btn btn-sm btn-secondary" onclick="var p=document.getElementById('gemReleaseDatePicker');p.value=document.getElementById('gemReleaseDate').value;p.showPicker()" title="Pick date" style="padding:4px 8px; font-size:1rem;">📅</button>
+                            </div>
+                        </div>
+                        <div class="gem-field">
+                            <label for="gemRegion">Region</label>
+                            <select id="gemRegion">
+                                <option value="">— Select —</option>
+                                {% for r in user_settings.get('region_options', ['USA', 'Europe', 'Japan', 'World']) %}
+                                <option value="{{ r }}"{% if r == user_settings.get('default_region', 'USA') %} selected{% endif %}>{{ r }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="gem-field">
+                            <label for="gemPublisher">Publisher</label>
+                            <input type="text" id="gemPublisher" placeholder="Sony, Nintendo">
+                        </div>
+                        <div class="gem-field">
+                            <label for="gemDeveloper">Developer</label>
+                            <input type="text" id="gemDeveloper" placeholder="Naughty Dog, Insomniac">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: Gameplay -->
+                <div class="gem-tab-content" id="gemTabGameplay" role="tabpanel" aria-label="Gameplay">
+                    <div class="gem-grid">
+                        <div class="gem-field gem-field-full">
+                            <label>Genre</label>
+                            <div class="gem-tag-container" id="gemGenreContainer"></div>
+                            <input type="hidden" id="gemGenreHidden">
+                            <select id="gemGenreDropdown" class="gem-tag-dropdown" onchange="addModalGenre(this.value); this.value='';">
+                                <option value="">+ Add genre...</option>
+                            </select>
+                        </div>
+                        <div class="gem-field gem-field-full">
+                            <label>Play Modes</label>
+                            <div class="gem-tag-container" id="gemModesContainer"></div>
+                            <input type="hidden" id="gemModesHidden">
+                            <select id="gemModesDropdown" class="gem-tag-dropdown" onchange="addModalMode(this.value); this.value='';">
+                                <option value="">+ Add mode...</option>
+                            </select>
+                        </div>
+                        <div class="gem-field">
+                            <label for="gemPlayers">Players</label>
+                            <input type="number" id="gemPlayers" min="1" max="16" value="1">
+                        </div>
+                        <div class="gem-field gem-field-full">
+                            <label>Game Structure</label>
+                            <div class="gem-tag-container" id="gemGameStructureContainer"></div>
+                            <input type="hidden" id="gemGameStructureHidden">
+                            <select id="gemGameStructureDropdown" class="gem-tag-dropdown" onchange="addModalGameStructure(this.value); this.value='';">
+                                <option value="">+ Add structure...</option>
+                            </select>
+                        </div>
+                        <div class="gem-field gem-field-full">
+                            <label>Perspective</label>
+                            <div class="gem-tag-container" id="gemPerspectiveContainer"></div>
+                            <input type="hidden" id="gemPerspectiveHidden">
+                            <select id="gemPerspectiveDropdown" class="gem-tag-dropdown" onchange="addModalPerspective(this.value); this.value='';">
+                                <option value="">+ Add perspective...</option>
+                            </select>
+                        </div>
+                        <div class="gem-field gem-field-full">
+                            <label>Dimension</label>
+                            <div class="gem-tag-container" id="gemDimensionContainer"></div>
+                            <input type="hidden" id="gemDimensionHidden">
+                            <select id="gemDimensionDropdown" class="gem-tag-dropdown" onchange="addModalDimension(this.value); this.value='';">
+                                <option value="">+ Add dimension...</option>
+                            </select>
+                        </div>
+                        <div class="gem-field">
+                            <label>Campaign Mode</label>
+                            <div class="gem-toggle-row">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="gemCampaignToggle" aria-label="Toggle campaign mode" onchange="updateModalCampaignLabel()">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span id="gemCampaignLabel" class="gem-toggle-label">Unknown</span>
+                                <input type="hidden" id="gemCampaign" value="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: Technical -->
+                <div class="gem-tab-content" id="gemTabTechnical" role="tabpanel" aria-label="Technical">
+                    <div class="gem-grid">
+                        <div class="gem-field gem-field-full">
+                            <label>Controller Support</label>
+                            <div class="gem-tag-container" id="gemControllerContainer"></div>
+                            <input type="hidden" id="gemControllerHidden">
+                            <div class="gem-controller-inputs">
+                                <select id="gemControllerDropdown" class="gem-tag-dropdown" onchange="addModalController(this.value); this.value='';">
+                                    <option value="">+ Add controller...</option>
+                                </select>
+                                <input type="text" id="gemControllerCustom" class="gem-custom-input" placeholder="Or type custom..." onkeypress="if(event.key==='Enter'){event.preventDefault();addModalController(this.value);this.value='';}">
+                            </div>
+                        </div>
+                        <div class="gem-field gem-field-full">
+                            <label>Save Type</label>
+                            <div class="gem-tag-container" id="gemSaveTypeContainer"></div>
+                            <input type="hidden" id="gemSaveTypeHidden">
+                            <select id="gemSaveTypeDropdown" class="gem-tag-dropdown" onchange="addModalSaveType(this.value); this.value='';">
+                                <option value="">+ Add save type...</option>
+                            </select>
+                        </div>
+                        <div class="gem-field gem-field-full">
+                            <label>Platform Availability</label>
+                            <div class="gem-toggle-row">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="gemExclusiveToggle" aria-label="Toggle platform exclusivity" onchange="updateModalExclusiveToggle()">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span id="gemExclusiveLabel" class="gem-toggle-label">Exclusive</span>
+                            </div>
+                            <input type="text" id="gemOtherPlatforms" placeholder="Xbox 360, PC, Switch" style="margin-top: var(--spacing-sm);">
+                            <input type="hidden" id="gemOtherPlatformsHidden">
+                        </div>
+                        <div class="gem-field">
+                            <label for="gemEsrbRating">ESRB (North America)</label>
+                            <select id="gemEsrbRating">
+                                <option value="">-- None --</option>
+                                <option value="EC">EC - Early Childhood</option>
+                                <option value="E">E - Everyone</option>
+                                <option value="E10+">E10+ - Everyone 10+</option>
+                                <option value="T">T - Teen</option>
+                                <option value="M">M - Mature</option>
+                                <option value="AO">AO - Adults Only</option>
+                                <option value="RP">RP - Rating Pending</option>
+                            </select>
+                        </div>
+                        <div class="gem-field">
+                            <label for="gemPegiRating">PEGI (Europe)</label>
+                            <select id="gemPegiRating">
+                                <option value="">-- None --</option>
+                                <option value="PEGI 3">PEGI 3</option>
+                                <option value="PEGI 7">PEGI 7</option>
+                                <option value="PEGI 12">PEGI 12</option>
+                                <option value="PEGI 16">PEGI 16</option>
+                                <option value="PEGI 18">PEGI 18</option>
+                            </select>
+                        </div>
+                        <div class="gem-field">
+                            <label for="gemCeroRating">CERO (Japan)</label>
+                            <select id="gemCeroRating">
+                                <option value="">-- None --</option>
+                                <option value="A">A - All Ages</option>
+                                <option value="B">B - Ages 12+</option>
+                                <option value="C">C - Ages 15+</option>
+                                <option value="D">D - Ages 17+</option>
+                                <option value="Z">Z - Ages 18+</option>
+                            </select>
+                        </div>
+                        <div class="gem-field">
+                            <label for="gemUskRating">USK (Germany)</label>
+                            <select id="gemUskRating">
+                                <option value="">-- None --</option>
+                                <option value="0">USK 0</option>
+                                <option value="6">USK 6</option>
+                                <option value="12">USK 12</option>
+                                <option value="16">USK 16</option>
+                                <option value="18">USK 18</option>
+                            </select>
+                        </div>
+                        <div class="gem-field">
+                            <label for="gemAcbRating">ACB (Australia)</label>
+                            <select id="gemAcbRating">
+                                <option value="">-- None --</option>
+                                <option value="G">G - General</option>
+                                <option value="PG">PG - Parental Guidance</option>
+                                <option value="M">M - Mature</option>
+                                <option value="MA15+">MA15+ - Restricted</option>
+                                <option value="R18+">R18+ - Restricted</option>
+                            </select>
+                        </div>
+                        <div class="gem-field">
+                            <label for="gemFpbRating">FPB (South Africa)</label>
+                            <select id="gemFpbRating">
+                                <option value="">-- None --</option>
+                                <option value="A">A - All Ages</option>
+                                <option value="PG">PG</option>
+                                <option value="7-9 PG">7-9 PG</option>
+                                <option value="10">10</option>
+                                <option value="10-12 PG">10-12 PG</option>
+                                <option value="13">13</option>
+                                <option value="16">16</option>
+                                <option value="18">18</option>
+                            </select>
+                        </div>
+                        <div class="gem-field">
+                            <label for="gemGracRating">GRAC (South Korea)</label>
+                            <select id="gemGracRating">
+                                <option value="">-- None --</option>
+                                <option value="ALL">ALL - All Ages</option>
+                                <option value="12">12+</option>
+                                <option value="15">15+</option>
+                                <option value="18">18+</option>
+                            </select>
+                        </div>
+                        <div class="gem-field">
+                            <label for="gemClassindRating">ClassInd (Brazil)</label>
+                            <select id="gemClassindRating">
+                                <option value="">-- None --</option>
+                                <option value="L">L - General</option>
+                                <option value="10">10</option>
+                                <option value="12">12</option>
+                                <option value="14">14</option>
+                                <option value="16">16</option>
+                                <option value="18">18</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: Description -->
+                <div class="gem-tab-content" id="gemTabDescription" role="tabpanel" aria-label="Description">
+                    <div class="gem-field gem-field-full">
+                        <label for="gemDescription">Game Description</label>
+                        <textarea id="gemDescription" rows="8" placeholder="Enter game description..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gem-footer">
+                <a id="gemFullEdit" href="#" class="btn btn-secondary">
+                    <span class="btn-icon">🖼️</span> Images/Video
+                </a>
+                <div class="gem-footer-right">
+                    <button class="btn btn-secondary" onclick="closeGameEditModal()">Close</button>
+                    <button class="btn btn-primary" onclick="saveGameEdits()">
+                        <span class="btn-icon">💾</span> Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game modal JavaScript moved to static/js/game-modals.js -->
+
+    {% block scripts %}{% endblock %}
+
+    <!-- Disable browser auto-fill site-wide -->
+    <script>
+    document.querySelectorAll('form').forEach(f => f.setAttribute('autocomplete', 'off'));
+    document.querySelectorAll('input, textarea, select').forEach(el => el.setAttribute('autocomplete', 'off'));
+    (function() {
+        const obs = new MutationObserver(mutations => {
+            for (const m of mutations) {
+                for (const node of m.addedNodes) {
+                    if (node.nodeType !== 1) continue;
+                    if (node.matches && node.matches('input, textarea, select, form')) node.setAttribute('autocomplete', 'off');
+                    if (node.querySelectorAll) node.querySelectorAll('input, textarea, select, form').forEach(el => el.setAttribute('autocomplete', 'off'));
+                }
+            }
+        });
+        obs.observe(document.body, { childList: true, subtree: true });
+        // Disconnect after 5 seconds — enough for initial script execution to add dynamic elements
+        setTimeout(() => obs.disconnect(), 5000);
+    })();
+    </script>
+</body>
+</html>

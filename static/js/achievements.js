@@ -1,0 +1,385 @@
+/**
+ * RetroDB Achievements Module
+ * Shared utilities for RetroAchievements pages
+ * Version: 1.20.0
+ *
+ * Features:
+ * - RASync: RetroAchievements sync operations
+ * - ProgressCalculator: Achievement progress calculations
+ */
+
+// =============================================================================
+// RA SYNC CONTROLLER
+// =============================================================================
+
+const RASync = {
+    isLoading: false,
+    pollTimeout: null,
+
+    /**
+     * Sync RetroAchievements for a system
+     * @param {number} systemId - System ID
+     * @param {string} systemName - System name for display
+     * @param {Object} options - Additional options
+     */
+    async syncSystem(systemId, systemName, options = {}) {
+        if (this.isLoading) return;
+        this.isLoading = true;
+
+        const btn = options.button || document.getElementById('refreshBtn');
+        const statusEl = options.statusElement || document.getElementById('cacheStatus');
+
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="btn-icon">🔄</span> Starting...';
+        }
+        if (statusEl) {
+            statusEl.textContent = 'Syncing...';
+            statusEl.style.display = 'inline';
+        }
+
+        try {
+            const response = await fetch(`/api/achievements/sync-system/${systemId}`, {
+                method: 'POST'
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                if (data.queued) {
+                    // Sync was queued
+                    this.handleQueued(data, btn, statusEl);
+                } else {
+                    // Sync started
+                    this.handleStarted(data, btn, systemName, options);
+                }
+            } else {
+                this.handleError(data, btn, statusEl);
+            }
+        } catch (e) {
+            console.error('Error starting sync:', e);
+            if (btn) {
+                btn.innerHTML = '<span class="btn-icon">❌</span> Network error';
+                setTimeout(() => {
+                    btn.innerHTML = '<span class="btn-icon">🔄</span> Sync Progress';
+                    btn.disabled = false;
+                }, 3000);
+            }
+            this.isLoading = false;
+        }
+    },
+
+    /**
+     * Handle queued sync response
+     */
+    handleQueued(data, btn, statusEl) {
+        try {
+            // Add to unified RA operations queue
+            const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+
+            if (!queue.find(q => q.type === 'sync' && q.systemId === data.system_id)) {
+                const newItem = {
+                    type: 'sync',
+                    systemId: data.system_id,
+                    systemName: data.system_name,
+                    gameCount: data.game_count,
+                    timestamp: Date.now()
+                };
+                queue.push(newItem);
+                localStorage.setItem('raOperationsQueue', JSON.stringify(queue));
+
+                // Add to toast controller if available
+                if (typeof UnifiedToastController !== 'undefined' && UnifiedToastController.addRAOperationToQueue) {
+                    UnifiedToastController.addRAOperationToQueue(newItem);
+                    if (UnifiedToastController.adjustPollingSpeed) {
+                        UnifiedToastController.adjustPollingSpeed('ra-sync', true);
+                    }
+                }
+            }
+        } catch (queueError) {
+            console.error('Error adding to queue:', queueError);
+        }
+
+        if (typeof showModal === 'function') {
+            showModal('📋 Sync Queued', `${data.system_name} has been added to the sync queue.`);
+        }
+
+        if (btn) {
+            btn.innerHTML = '<span class="btn-icon">📋</span> Queued';
+            setTimeout(() => {
+                btn.innerHTML = '<span class="btn-icon">🔄</span> Sync Progress';
+                btn.disabled = false;
+            }, 2000);
+        }
+        if (statusEl) statusEl.style.display = 'none';
+        this.isLoading = false;
+    },
+
+    /**
+     * Handle sync started response
+     */
+    handleStarted(data, btn, systemName, options) {
+        // Trigger toast controller if available
+        if (typeof UnifiedToastController !== 'undefined') {
+            const initialData = {
+                running: true,
+                completed: false,
+                current_system: systemName,
+                total: options.gameCount || 0,
+                current: 0,
+                percent: 0,
+                paused: false
+            };
+            UnifiedToastController.showActiveToast('ra-sync', UnifiedToastController.getTypeConfig('ra-sync'), initialData);
+            UnifiedToastController.adjustPollingSpeed('ra-sync', true);
+            UnifiedToastController.broadcast('job-started', 'ra-sync', initialData);
+        }
+
+        if (btn) {
+            btn.innerHTML = '<span class="btn-icon">🔄</span> Syncing...';
+        }
+    },
+
+    /**
+     * Handle sync error response
+     */
+    handleError(data, btn, statusEl) {
+        if (data.already_running) {
+            if (btn) {
+                btn.innerHTML = '<span class="btn-icon">🔄</span> Already Syncing';
+                setTimeout(() => {
+                    btn.innerHTML = '<span class="btn-icon">🔄</span> Sync Progress';
+                    btn.disabled = false;
+                }, 2000);
+            }
+            if (typeof showModal === 'function') {
+                showModal('ℹ️ Sync In Progress', data.error || 'This system is already being synced.');
+            }
+        } else {
+            if (btn) {
+                btn.innerHTML = `<span class="btn-icon">❌</span> ${escapeHtml(data.error || 'Sync failed')}`;
+                setTimeout(() => {
+                    btn.innerHTML = '<span class="btn-icon">🔄</span> Sync Progress';
+                    btn.disabled = false;
+                }, 3000);
+            }
+        }
+        this.isLoading = false;
+    },
+
+    /**
+     * Poll sync status
+     * @param {Object} options - Polling options
+     */
+    async pollStatus(options = {}) {
+        const btn = options.button || document.getElementById('refreshBtn');
+        const statusEl = options.statusElement || document.getElementById('cacheStatus');
+
+        try {
+            const response = await fetch('/api/achievements/sync-status');
+            const data = await response.json();
+
+            if (data.running && !data.completed) {
+                if (btn) {
+                    btn.innerHTML = `<span class="btn-icon">🔄</span> ${formatNumber(data.processed || 0)} / ${formatNumber(data.total || 0)}`;
+                }
+                if (statusEl) {
+                    statusEl.textContent = `Syncing: ${formatNumber(data.processed || 0)} / ${formatNumber(data.total || 0)}`;
+                }
+
+                // Continue polling
+                this.pollTimeout = setTimeout(() => this.pollStatus(options), 2000);
+            } else if (data.completed) {
+                if (btn) {
+                    btn.innerHTML = '<span class="btn-icon">✅</span> Complete!';
+                    btn.disabled = false;
+                    setTimeout(() => {
+                        btn.innerHTML = '<span class="btn-icon">🔄</span> Sync Progress';
+                    }, 3000);
+                }
+                if (statusEl) {
+                    statusEl.textContent = 'Just synced';
+                }
+                this.isLoading = false;
+
+                if (typeof showNotification === 'function') {
+                    showNotification('Sync complete! Refresh page to see updated progress.', 'success');
+                }
+            } else {
+                // Not running
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<span class="btn-icon">🔄</span> Sync Progress';
+                }
+                this.isLoading = false;
+            }
+        } catch (error) {
+            console.error('Error polling sync status:', error);
+        }
+    },
+
+    /**
+     * Clear RA data for a system
+     * @param {number} systemId - System ID
+     * @param {string} systemName - System name for display
+     */
+    async clearSystemData(systemId, systemName) {
+        showConfirm(
+            '🗑️ Clear RetroAchievements Data',
+            `This will remove "${systemName}" from the Achievements page. Continue?`,
+            async () => {
+                const btn = document.getElementById('clearRABtn');
+
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="btn-icon">⏳</span> Clearing...';
+                }
+
+                try {
+                    const response = await fetch(`/api/clear-ra-data/${systemId}`, {
+                        method: 'POST'
+                    });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        showNotification(`Cleared RA data for ${formatNumber(data.cleared)} games in ${systemName}`, 'success');
+                        setTimeout(() => {
+                            window.location.href = '/achievements';
+                        }, 1500);
+                    } else {
+                        showNotification(data.error || 'Failed to clear RA data', 'error');
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = '<span class="btn-icon">🗑️</span> Clear RA Data';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error clearing RA data:', error);
+                    showNotification('Failed to clear RA data', 'error');
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<span class="btn-icon">🗑️</span> Clear RA Data';
+                    }
+                }
+            }
+        );
+    }
+};
+
+// =============================================================================
+// PROGRESS CALCULATOR
+// =============================================================================
+
+const ProgressCalculator = {
+    /**
+     * Calculate achievement progress percentage
+     * @param {number} earned - Earned achievements
+     * @param {number} total - Total achievements
+     * @returns {number} Progress percentage (0-100)
+     */
+    percentage(earned, total) {
+        if (!total || total === 0) return 0;
+        return Math.round((earned / total) * 100);
+    },
+
+    /**
+     * Get progress bar color class
+     * @param {number} percent - Progress percentage
+     * @returns {string} CSS class name
+     */
+    colorClass(percent) {
+        if (percent >= 100) return 'progress-gold';
+        if (percent >= 75) return 'progress-green';
+        if (percent >= 50) return 'progress-cyan';
+        if (percent >= 25) return 'progress-blue';
+        return 'progress-default';
+    },
+
+    /**
+     * Format progress as display string
+     * @param {number} earned - Earned achievements
+     * @param {number} total - Total achievements
+     * @returns {string} Formatted progress string
+     */
+    format(earned, total) {
+        const percent = this.percentage(earned, total);
+        return `${formatNumber(earned)} / ${formatNumber(total)} (${percent}%)`;
+    }
+};
+
+// =============================================================================
+// ACHIEVEMENT CARD RENDERER
+// =============================================================================
+
+const AchievementCard = {
+    /**
+     * Render an achievement card
+     * @param {Object} achievement - Achievement data
+     * @returns {string} HTML string
+     */
+    render(achievement) {
+        const earnedClass = achievement.earned ? 'earned' : 'unearned';
+        const iconClass = achievement.earned ? 'achievement-icon-earned' : 'achievement-icon-locked';
+
+        return `
+            <div class="achievement-card ${earnedClass}">
+                <div class="achievement-icon ${iconClass}">
+                    ${achievement.badge_url ?
+                        `<img src="${achievement.badge_url}" alt="${achievement.title}">` :
+                        '🏆'
+                    }
+                </div>
+                <div class="achievement-info">
+                    <div class="achievement-title">${escapeHtml(achievement.title)}</div>
+                    <div class="achievement-description">${escapeHtml(achievement.description || '')}</div>
+                    ${achievement.points ? `<div class="achievement-points">${achievement.points} pts</div>` : ''}
+                </div>
+            </div>
+        `;
+    },
+
+    /**
+     * Render multiple achievement cards
+     * @param {Array} achievements - Array of achievements
+     * @param {Object} options - Render options
+     * @returns {string} HTML string
+     */
+    renderList(achievements, options = {}) {
+        if (!achievements || achievements.length === 0) {
+            return '<div class="no-achievements">No achievements found</div>';
+        }
+
+        const { showEarnedFirst = true, limit = null } = options;
+
+        let sorted = [...achievements];
+        if (showEarnedFirst) {
+            sorted.sort((a, b) => (b.earned ? 1 : 0) - (a.earned ? 1 : 0));
+        }
+
+        if (limit) {
+            sorted = sorted.slice(0, limit);
+        }
+
+        return sorted.map(a => this.render(a)).join('');
+    }
+};
+
+// =============================================================================
+// EXPORT GLOBALS
+// =============================================================================
+
+window.RASync = RASync;
+window.ProgressCalculator = ProgressCalculator;
+window.AchievementCard = AchievementCard;
+
+// Clear poll timeout on page unload to prevent orphaned timeout chains
+window.addEventListener('beforeunload', () => {
+    if (RASync.pollTimeout) {
+        clearTimeout(RASync.pollTimeout);
+        RASync.pollTimeout = null;
+    }
+});
+
+// Legacy function exports
+window.syncRAForSystem = (systemId, systemName, options) => RASync.syncSystem(systemId, systemName, options);
+window.clearSystemRAData = (systemId, systemName) => RASync.clearSystemData(systemId, systemName);
+window.pollSyncStatus = (options) => RASync.pollStatus(options);

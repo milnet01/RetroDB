@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+
+{% block title %}{{ game.title }} Steam Achievements - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Fanart Background -->
+{% if game.fanart %}
+<div class="game-fanart-bg active" style="background-image: url('{{ url_for('static', filename='images/fanart/' + game.fanart) }}')"></div>
+{% endif %}
+
+<!-- Breadcrumb -->
+<nav class="breadcrumb">
+    <a href="{{ url_for('steam_achievements.steam_achievements_landing') }}">Steam Achievements</a>
+    <span class="breadcrumb-separator">›</span>
+    <span class="breadcrumb-current">{{ game.title }}</span>
+</nav>
+
+<!-- Game Header -->
+<div class="game-page-header">
+    <h1 class="game-page-title">{{ game.title }}</h1>
+    <div class="header-buttons">
+        <a href="{{ url_for('games.game_detail', game_id=game.id) }}" class="btn btn-secondary">
+            <span class="btn-icon">🎮</span>
+            View Game
+        </a>
+        <button onclick="refreshAchievements()" class="btn btn-secondary" id="refreshBtn">
+            <span class="btn-icon">🔄</span>
+            Refresh
+        </button>
+        {% if game.steam_app_id %}
+        <a href="https://store.steampowered.com/app/{{ game.steam_app_id }}" target="_blank" class="btn btn-primary">
+            <span class="btn-icon">🟦</span>
+            Steam Store
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Game Hero Section -->
+<div class="game-compact-layout">
+    <div class="game-hero">
+        <!-- Boxart -->
+        <div class="hero-boxart">
+            {% if game.boxart %}
+            <img src="{{ url_for('static', filename='images/boxart/' + game.boxart) }}"
+                 alt="{{ game.title }}" class="game-boxart-image">
+            {% else %}
+            <div class="no-boxart-placeholder">🟦</div>
+            {% endif %}
+        </div>
+
+        <!-- Core Info -->
+        <div class="hero-info">
+            <!-- Quick Tags Row -->
+            <div class="quick-tags">
+                <span class="tag tag-system">🖥️ {{ game.system_name }}</span>
+                {% if game.release_date %}<span class="tag tag-date">📅 {{ game.release_date[:4] if game.release_date|length > 4 else game.release_date }}</span>{% endif %}
+                {% if game.genre %}<span class="tag tag-genre">🏷️ {{ game.genre.split(',')[0] }}</span>{% endif %}
+            </div>
+
+            <!-- Description -->
+            <div class="hero-description">
+                {% if game.description %}
+                {{ game.description[:500] }}{% if game.description|length > 500 %}...{% endif %}
+                {% else %}
+                <span class="text-muted">No description available.</span>
+                {% endif %}
+            </div>
+
+            <!-- Key Details -->
+            {% if game.publisher or game.developer %}
+            <div class="key-details">
+                {% if game.publisher %}
+                <div class="kd-item">
+                    <span class="kd-label">Publisher</span>
+                    <span class="kd-value">{{ game.publisher.split(',')[0] }}</span>
+                </div>
+                {% endif %}
+                {% if game.developer %}
+                <div class="kd-item">
+                    <span class="kd-label">Developer</span>
+                    <span class="kd-value">{{ game.developer.split(',')[0] }}</span>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Achievement Progress Summary Bar -->
+    {% if progress %}
+    <section class="card mb-xl">
+        <div class="card-body">
+            <div class="trophy-summary">
+                <div class="trophy-summary-header">
+                    <span class="trophy-summary-title">🏆 Achievement Progress</span>
+                    <span class="trophy-summary-total">{{ (progress.earned_achievements or 0)|format_number }} / {{ (progress.total_achievements or 0)|format_number }}</span>
+                </div>
+                <div class="trophy-summary-progress">
+                    <div class="trophy-progress-bar large">
+                        <div class="trophy-progress-fill" style="width: {{ progress.completion_percentage or 0 }}%"></div>
+                    </div>
+                    <span class="trophy-progress-percent">{{ progress.completion_percentage or 0 }}%</span>
+                </div>
+                {% if progress.last_synced %}
+                <div class="trophy-summary-counts">
+                    <span class="trophy-count" style="color: var(--text-muted); font-size: 0.85rem;">
+                        Last synced: {{ progress.last_synced[:16] }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Bottom Row: HLTB + More Details -->
+    <div class="bottom-row">
+        <div class="bottom-section">
+            <h3 class="section-title-sm">⏱️ How Long to Beat</h3>
+            <div class="hltb-section" id="hltbSection">
+                <input type="text" id="hltbSearchQuery" class="hltb-search-input"
+                       value="{{ game.title }}" placeholder="Search game title...">
+                <button class="btn-hltb" id="hltbLookupBtn" onclick="steamLookupHLTB()">🔍 Lookup HLTB</button>
+
+                <div id="hltbPending" style="display: none;">
+                    <div class="hltb-match-header" id="hltbMatchHeader"></div>
+                    <div class="hltb-results">
+                        <div class="hltb-time-row"><span class="hltb-label">Main Story</span><span class="hltb-value" id="hltbPendingMain">--</span></div>
+                        <div class="hltb-time-row"><span class="hltb-label">Main + Extras</span><span class="hltb-value" id="hltbPendingExtra">--</span></div>
+                        <div class="hltb-time-row"><span class="hltb-label">Completionist</span><span class="hltb-value" id="hltbPendingComplete">--</span></div>
+                    </div>
+                    <div class="hltb-actions" style="margin-top: var(--spacing-sm); display: flex; gap: var(--spacing-xs);">
+                        <button class="btn btn-sm btn-primary" onclick="steamConfirmHLTB()">✓ Save</button>
+                        <button class="btn btn-sm btn-secondary" onclick="steamCancelHLTB()">✕ Cancel</button>
+                    </div>
+                </div>
+
+                <div id="hltbSaved" style="{% if game.playtime_estimate %}display: block;{% else %}display: none;{% endif %}">
+                    {% if game.hltb_match_name %}
+                    <div class="hltb-match-header">
+                        <span class="hltb-match-title">{{ game.hltb_match_name }}</span>
+                        {% if game.hltb_match_platform %}<span class="hltb-match-platform">{{ game.hltb_match_platform }}</span>{% endif %}
+                        {% if game.hltb_match_confidence %}<span class="hltb-match-confidence">{{ [(game.hltb_match_confidence * 100) | round | int, 100] | min }}% match</span>{% endif %}
+                    </div>
+                    {% endif %}
+                    <div class="hltb-results">
+                        {% if game.playtime_estimate %}
+                        {% set playtime_parts = game.playtime_estimate.split(' | ') %}
+                        {% for part in playtime_parts %}
+                        {% set kv = part.split(': ') %}
+                        <div class="hltb-time-row">
+                            <span class="hltb-label">{% if kv[0] == 'Main' %}Main Story{% elif kv[0] == 'Main+Extras' %}Main + Extras{% elif kv[0] == '100%' %}Completionist{% else %}{{ kv[0] }}{% endif %}</span>
+                            <span class="hltb-value">{{ kv[1] if kv|length > 1 else '--' }}</span>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
+                        <button class="btn btn-sm btn-danger" onclick="steamClearHLTB()">✕ Clear</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-section">
+            <h3 class="section-title-sm">📋 More Details</h3>
+            <div class="more-details">
+                <div class="md-item">
+                    <span class="md-label">System</span>
+                    <span class="md-value">{{ game.system_name }}</span>
+                </div>
+                {% if game.genre %}
+                <div class="md-item">
+                    <span class="md-label">Genre</span>
+                    <span class="md-value">{{ game.genre }}</span>
+                </div>
+                {% endif %}
+                {% if game.modes %}
+                <div class="md-item">
+                    <span class="md-label">Modes</span>
+                    <span class="md-value">{{ game.modes }}</span>
+                </div>
+                {% endif %}
+                {% if achievements|length > 0 %}
+                <div class="md-item">
+                    <span class="md-label">Achievements</span>
+                    <span class="md-value">{{ achievements|length }} total</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Achievements List -->
+{% if achievements|length > 0 %}
+<div class="trophy-columns">
+    <!-- Unlocked Column -->
+    <section class="card trophy-column">
+        <div class="card-header">
+            <h2 class="card-title">✓ Unlocked ({{ unlocked|length }})</h2>
+        </div>
+        <div class="card-body">
+            <div class="trophy-list">
+                {% if unlocked|length > 0 %}
+                    {% for ach in unlocked %}
+                    <div class="trophy-item unlocked">
+                        <div class="trophy-item-icon">
+                            {% if ach.icon_url %}
+                            <img src="{{ ach.icon_url }}" alt="{{ ach.name }}" loading="lazy">
+                            {% else %}
+                            <div class="badge-placeholder">🏆</div>
+                            {% endif %}
+                        </div>
+                        <div class="trophy-item-info">
+                            <div class="trophy-item-name">{{ ach.name }}</div>
+                            <div class="trophy-item-desc">{{ ach.description }}</div>
+                            <div class="trophy-item-meta">
+                                {% if ach.unlock_time > 0 %}
+                                <span class="trophy-timestamp">🕐 {{ ach.unlock_time|tz('short') }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="trophy-empty">No achievements unlocked yet</div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Locked Column -->
+    <section class="card trophy-column">
+        <div class="card-header">
+            <h2 class="card-title">🔒 Locked ({{ locked|length }})</h2>
+        </div>
+        <div class="card-body">
+            <div class="trophy-list">
+                {% if locked|length > 0 %}
+                    {% for ach in locked %}
+                    <div class="trophy-item locked">
+                        <div class="trophy-item-icon">
+                            {% if ach.icon_locked_url %}
+                            <img src="{{ ach.icon_locked_url }}" alt="{{ ach.name }}" loading="lazy">
+                            {% elif ach.icon_url %}
+                            <img src="{{ ach.icon_url }}" alt="{{ ach.name }}" loading="lazy" style="filter: grayscale(100%); opacity: 0.5;">
+                            {% else %}
+                            <div class="badge-placeholder">🔒</div>
+                            {% endif %}
+                        </div>
+                        <div class="trophy-item-info">
+                            <div class="trophy-item-name">{{ ach.name }}</div>
+                            <div class="trophy-item-desc">{{ ach.description }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="trophy-empty">All achievements unlocked! 🎉</div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</div>
+{% elif progress %}
+<div class="empty-state" style="margin-top: var(--spacing-xl);">
+    <div class="empty-state-icon">🟦</div>
+    <div class="empty-state-title">No Individual Achievement Data</div>
+    <div class="empty-state-text">
+        Click <strong>Refresh</strong> above to sync individual achievements from Steam.
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+async function refreshAchievements() {
+    const btn = document.getElementById('refreshBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="btn-icon">⏳</span> Syncing...';
+
+    try {
+        const resp = await fetch('/api/steam-achievements/sync/{{ game.id }}', { method: 'POST' });
+        const data = await resp.json();
+
+        if (data.success) {
+            showNotification('Achievements synced!', 'success');
+            setTimeout(() => window.location.reload(), 1000);
+        } else {
+            showNotification(data.error || 'Sync failed', 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<span class="btn-icon">🔄</span> Refresh';
+        }
+    } catch (e) {
+        showNotification('Error: ' + e.message, 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<span class="btn-icon">🔄</span> Refresh';
+    }
+}
+
+// HLTB context
+const steamHltbCtx = {
+    name: 'steam',
+    gameId: {{ game.id }},
+    systemFolder: {{ game.system_folder|tojson }},
+    searchInputId: 'hltbSearchQuery',
+    lookupBtnId: 'hltbLookupBtn',
+    pendingDivId: 'hltbPending',
+    savedDivId: 'hltbSaved',
+    matchHeaderId: 'hltbMatchHeader',
+    mainTimeId: 'hltbPendingMain',
+    extrasTimeId: 'hltbPendingExtra',
+    completeTimeId: 'hltbPendingComplete',
+    clearFnName: 'steamClearHLTB',
+    get hasSavedData() {
+        const savedDiv = document.getElementById('hltbSaved');
+        return savedDiv && savedDiv.style.display !== 'none';
+    }
+};
+
+function steamLookupHLTB() { HLTBManager.lookup(steamHltbCtx); }
+function steamConfirmHLTB() { HLTBManager.save(steamHltbCtx); }
+function steamCancelHLTB() { HLTBManager.cancel(steamHltbCtx); }
+function steamClearHLTB() { HLTBManager.clear(steamHltbCtx); }
+</script>
+{% endblock %}

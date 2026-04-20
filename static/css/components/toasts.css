@@ -1,0 +1,488 @@
+/* =============================================================================
+   RETRODB - TOAST NOTIFICATIONS
+   Unified toast system for all notification types
+   ============================================================================= */
+
+/* =============================================================================
+   TOAST ANIMATIONS
+   ============================================================================= */
+
+@keyframes toast-slide-in {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toast-slide-out {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+}
+
+/* =============================================================================
+   TOAST CONTAINER
+   ============================================================================= */
+
+.unified-toast-container {
+    position: fixed;
+    bottom: 24px;
+    left: 280px;  /* Fallback - JS overrides dynamically */
+    z-index: 10000;
+    display: flex;
+    flex-direction: column-reverse;  /* Stack from bottom up */
+    gap: 10px;
+    width: 360px;  /* Fallback - JS overrides dynamically */
+}
+
+/* Adjust for collapsed sidebar */
+.sidebar-collapsed ~ .main-content .unified-toast-container,
+body:has(.sidebar.collapsed) .unified-toast-container {
+    left: calc(var(--sidebar-collapsed-width, 70px) + 20px);
+}
+
+/* Mobile: full width at bottom */
+@media (max-width: 768px) {
+    .unified-toast-container {
+        left: 16px;
+        right: 16px;
+        width: auto;
+        max-width: none;
+    }
+}
+
+/* =============================================================================
+   BASE TOAST STYLES
+   ============================================================================= */
+
+.unified-toast {
+    animation: toast-slide-in 0.3s ease-out forwards;
+    animation-iteration-count: 1;
+    width: 100%;
+    max-width: 360px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.unified-toast.removing {
+    animation: toast-slide-out 0.3s ease-out forwards;
+}
+
+/* =============================================================================
+   TOAST CONTENT
+   ============================================================================= */
+
+.toast-content {
+    display: flex;
+    align-items: stretch;
+    background: linear-gradient(135deg, var(--toast-bg-from, rgba(20, 26, 35, 0.95)), var(--toast-bg-to, rgba(30, 40, 55, 0.95)));
+    border: 2px solid var(--toast-color, var(--primary-cyan));
+    border-radius: var(--radius-lg);
+    box-shadow: 0 0 20px rgba(var(--toast-color-rgb, 76, 201, 240), 0.3),
+                0 4px 20px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+}
+
+/* Active Toast Styles */
+.active-toast .toast-content {
+    background: linear-gradient(135deg, var(--toast-bg-from, rgba(20, 26, 35, 0.95)), var(--toast-bg-to, rgba(30, 40, 55, 0.95)));
+}
+
+/* Queued Toast Styles */
+.queued-toast .toast-content {
+    background: linear-gradient(135deg, var(--toast-queued-bg-from, rgba(25, 30, 40, 0.90)), var(--toast-queued-bg-to, rgba(35, 45, 60, 0.90)));
+    opacity: 0.9;
+}
+
+/* =============================================================================
+   TOAST MAIN AREA
+   ============================================================================= */
+
+.toast-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    min-width: 0;
+}
+
+.toast-main:hover {
+    background: rgba(var(--toast-color-rgb, 76, 201, 240), 0.08);
+}
+
+/* =============================================================================
+   TOAST ICON
+   ============================================================================= */
+
+.toast-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.toast-icon:not(.paused) {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.toast-icon.paused {
+    animation: none;
+    opacity: 0.7;
+}
+
+/* =============================================================================
+   TOAST INFO AREA
+   ============================================================================= */
+
+.toast-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    flex: 1;
+}
+
+.toast-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--toast-color, var(--primary-cyan));
+}
+
+.toast-title.paused {
+    color: var(--neon-orange);
+}
+
+.toast-system-name {
+    color: var(--neon-purple);
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.toast-subtitle {
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* =============================================================================
+   TOAST PROGRESS BAR
+   ============================================================================= */
+
+.toast-progress-bar {
+    height: 4px;
+    background: rgba(var(--toast-color-rgb, 76, 201, 240), 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 4px 0;
+}
+
+.toast-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--toast-color, var(--primary-cyan)), var(--secondary-magenta, #f72585));
+    border-radius: 2px;
+    transition: width var(--transition-normal);
+}
+
+.toast-progress-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+}
+
+/* =============================================================================
+   TOAST STATS
+   ============================================================================= */
+
+.toast-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    margin-top: 2px;
+}
+
+.toast-stats .stat {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+}
+
+.toast-stats .stat-value {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.toast-stats .stat.success,
+.toast-stats .stat-success { color: var(--neon-green); }
+.toast-stats .stat.failed,
+.toast-stats .stat-failed { color: var(--neon-red); }
+.toast-stats .stat.skipped,
+.toast-stats .stat-skipped { color: var(--neon-orange); }
+
+/* =============================================================================
+   TOAST META
+   ============================================================================= */
+
+.toast-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.toast-queued-info {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* =============================================================================
+   TOAST CONTROLS
+   ============================================================================= */
+
+.toast-controls {
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid rgba(var(--toast-color-rgb, 76, 201, 240), 0.2);
+    flex-shrink: 0;
+}
+
+.toast-btn,
+.toast-ctrl-btn {
+    flex: 1;
+    padding: 8px 10px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all var(--transition-fast);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+}
+
+.toast-btn:hover,
+.toast-ctrl-btn:hover {
+    background: rgba(var(--toast-color-rgb, 76, 201, 240), 0.15);
+    color: var(--toast-color, var(--primary-cyan));
+}
+
+.toast-btn.pause:hover,
+.toast-btn.pause.is-paused,
+.toast-ctrl-btn.pause:hover {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--neon-orange);
+}
+
+.toast-btn.pause.is-paused {
+    background: rgba(34, 197, 94, 0.15);
+    color: var(--neon-green);
+}
+
+.toast-btn.cancel:hover,
+.toast-ctrl-btn.cancel:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--neon-red);
+}
+
+/* =============================================================================
+   TOAST TYPE VARIANTS
+   ============================================================================= */
+
+/* Bulk Scrape - Cyan */
+.bulk-scrape-toast {
+    --toast-color: var(--primary-cyan);
+    --toast-color-rgb: 76, 201, 240;
+}
+
+/* RA Sync - Orange */
+.ra-sync-toast {
+    --toast-color: var(--neon-orange);
+    --toast-color-rgb: 245, 158, 11;
+}
+
+.ra-sync-toast .toast-main:hover {
+    background: rgba(245, 158, 11, 0.08);
+}
+
+/* RA Refresh - Purple */
+.ra-refresh-toast {
+    --toast-color: var(--neon-purple);
+    --toast-color-rgb: 168, 85, 247;
+}
+
+.ra-refresh-toast .toast-main:hover {
+    background: rgba(168, 85, 247, 0.08);
+}
+
+/* Queued Toast Variants */
+.bulk-scrape-queued-toast {
+    --toast-color: var(--primary-cyan-dark);
+    --toast-color-rgb: 58, 159, 194;
+}
+
+.ra-sync-queued-toast {
+    --toast-color: #c47d09;
+    --toast-color-rgb: 196, 125, 9;
+}
+
+.ra-refresh-queued-toast {
+    --toast-color: #8b46d4;
+    --toast-color-rgb: 139, 70, 212;
+}
+
+/* Image Resize - Green */
+.image-resize-toast {
+    --toast-color: var(--neon-green);
+    --toast-color-rgb: 34, 197, 94;
+}
+
+.image-resize-toast .toast-main:hover {
+    background: rgba(34, 197, 94, 0.08);
+}
+
+/* Completed Toast */
+.toast-completed {
+    --toast-color: var(--neon-green);
+    --toast-color-rgb: 34, 197, 94;
+}
+
+/* =============================================================================
+   QUEUED TOAST COMPACT STYLES
+   ============================================================================= */
+
+.queued-toast {
+    width: 360px;
+}
+
+.queued-toast .toast-content {
+    padding: 0;
+}
+
+.queued-toast .toast-main {
+    padding: 10px 14px;
+}
+
+.queued-toast .toast-icon {
+    font-size: 1.2rem;
+}
+
+.queued-toast .toast-title {
+    font-size: 0.85rem;
+}
+
+.queued-toast .toast-controls {
+    flex-direction: row;
+    min-width: 36px;
+}
+
+.queued-toast .toast-btn {
+    min-width: 36px;
+    min-height: 36px;
+}
+
+/* Legacy toast containers removed — now handled by .unified-toast-container */
+
+/* =============================================================================
+   NOTIFICATION SYSTEM
+   ============================================================================= */
+
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10002;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 400px;
+}
+
+.notification {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg), 0 0 20px rgba(0, 0, 0, 0.3);
+    transform: translateX(120%);
+    opacity: 0;
+    transition: all var(--transition-normal);
+}
+
+.notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notification-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.notification-message {
+    flex: 1;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0 4px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.notification-close:hover {
+    opacity: 1;
+    color: var(--text-primary);
+}
+
+/* Notification Variants */
+.notification-success {
+    border-color: var(--neon-green);
+    box-shadow: var(--shadow-lg), 0 0 15px rgba(34, 197, 94, 0.2);
+}
+
+.notification-error {
+    border-color: var(--neon-red);
+    box-shadow: var(--shadow-lg), 0 0 15px rgba(239, 68, 68, 0.2);
+}
+
+.notification-warning {
+    border-color: var(--neon-orange);
+    box-shadow: var(--shadow-lg), 0 0 15px rgba(245, 158, 11, 0.2);
+}
+
+.notification-info {
+    border-color: var(--primary-cyan);
+    box-shadow: var(--shadow-lg), 0 0 15px rgba(76, 201, 240, 0.2);
+}

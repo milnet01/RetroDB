@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Changelog - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Changelog</h1>
+        <p class="page-subtitle">Version history and release notes</p>
+    </div>
+    <div class="page-actions">
+        <span class="version-badge">Current: v{{ config.APP_VERSION }}</span>
+    </div>
+</div>
+
+<!-- Changelog Content -->
+<div class="changelog-container">
+
+    {% for entry in changelog %}
+    <article class="changelog-entry">
+        <div class="changelog-header">
+            <h2 class="changelog-version">v{{ entry.version }}</h2>
+            <span class="changelog-date">{{ entry.date }}</span>
+            {% for tag in entry.tags %}
+            <span class="changelog-tag tag-{{ tag.type }}">{{ tag.label }}</span>
+            {% endfor %}
+        </div>
+        <div class="changelog-body">
+            {{ entry.body | safe }}
+        </div>
+    </article>
+    {% endfor %}
+
+</div>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+    /* Page-unique: outer wrapper */
+    .changelog-container {
+        max-width: 1300px;
+        margin: 0 auto;
+    }
+
+    /* Card-based layout override (pages.css uses simple bottom-border) */
+    .changelog-entry {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius-lg);
+        margin-bottom: var(--spacing-xl);
+        overflow: hidden;
+    }
+
+    /* Flex header inside card entries */
+    .changelog-header {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        padding: var(--spacing-lg);
+        border-bottom: 1px solid var(--card-border);
+        background: var(--bg-medium);
+        flex-wrap: wrap;
+    }
+
+    /* Override for card layout (no margin, used in flex header) */
+    .changelog-version {
+        margin: 0;
+    }
+
+    /* Override for card layout (mono font, no margin-bottom) */
+    .changelog-date {
+        color: var(--text-secondary);
+        font-family: var(--font-mono);
+        font-size: 0.9rem;
+    }
+
+    /* Card body content */
+    .changelog-body {
+        padding: var(--spacing-lg);
+    }
+
+    .changelog-body h3 {
+        font-family: var(--font-heading);
+        font-size: 1rem;
+        color: var(--text-primary);
+        margin: var(--spacing-lg) 0 var(--spacing-sm) 0;
+    }
+
+    .changelog-body h3:first-child {
+        margin-top: 0;
+    }
+
+    .changelog-body ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .changelog-body li {
+        position: relative;
+        padding-left: 1.5rem;
+        margin-bottom: var(--spacing-sm);
+        color: var(--text-secondary);
+        line-height: 1.6;
+    }
+
+    .changelog-body li::before {
+        content: "\2022";
+        position: absolute;
+        left: 0;
+        color: var(--primary-cyan);
+    }
+
+    .changelog-body li strong {
+        color: var(--text-primary);
+    }
+
+    /* Version badge in page header */
+    .version-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        background: rgba(76, 201, 240, 0.15);
+        border: 1px solid rgba(76, 201, 240, 0.3);
+        border-radius: var(--radius-md);
+        color: var(--primary-cyan);
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    /* Keyboard key styling in changelog entries */
+    kbd {
+        display: inline-block;
+        padding: 2px 6px;
+        background: var(--bg-lighter);
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius-sm);
+        font-family: var(--font-mono);
+        font-size: 0.85em;
+        color: var(--primary-cyan);
+    }
+
+    /* Tables within changelog entries */
+    .changelog-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: var(--spacing-md);
+        font-size: 0.9rem;
+    }
+
+    .changelog-table th,
+    .changelog-table td {
+        padding: 8px 12px;
+        border: 1px solid var(--card-border);
+        text-align: center;
+    }
+
+    .changelog-table th {
+        background: var(--bg-darker);
+        color: var(--primary-cyan);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+    }
+
+    .changelog-table td {
+        background: var(--card-bg);
+    }
+
+    .changelog-table tr:hover td {
+        background: var(--card-bg-hover);
+    }
+</style>
+{% endblock %}

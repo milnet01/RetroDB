@@ -1,0 +1,1023 @@
+{% extends "base.html" %}
+
+{% block title %}Gaming Systems - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title glitch-text" data-text="Gaming Systems">Gaming Sys<span class="title-accent">tems</span></h1>
+        <p class="page-subtitle">Select a console to view your library.</p>
+    </div>
+    <div class="page-actions">
+        <div class="console-count-badge">
+            <span class="count-number">{{ systems|length|format_number }}</span>
+            <span class="count-label">CONSOLES DETECTED</span>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+    <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" 
+               id="systemSearch" 
+               class="search-input" 
+               placeholder="Search systems..."
+               autocomplete="off">
+    </div>
+    <div class="filter-buttons">
+        <select id="systemTypeFilter" class="filter-select" onchange="applySystemFilters()">
+            <option value="">All Types</option>
+            <option value="Console">🎮 Console</option>
+            <option value="Handheld">📱 Handheld</option>
+            <option value="Computer">💻 Computer</option>
+            <option value="Arcade">🕹️ Arcade</option>
+            <option value="Engine">⚙️ Engine</option>
+        </select>
+        <select id="featureFilter" class="filter-select" onchange="applySystemFilters()">
+            <option value="">All Features</option>
+            <option value="ra">🏆 RetroAchievements</option>
+            <option value="trophies">🏅 Local Trophies</option>
+        </select>
+    </div>
+</div>
+
+<!-- Filter Results Bar -->
+<div class="filter-results-bar" id="filterResultsBar" style="display: none;">
+    <span class="filter-results-text" id="filterResultsText"></span>
+    <button class="filter-clear-btn" onclick="clearAllSystemFilters()">✕ Clear</button>
+</div>
+
+<!-- Systems Grid -->
+<div class="systems-grid-new">
+    {% for system in systems %}
+    {% set features = system_features.get(system.id, {}) %}
+    <div class="system-card-wrapper" data-folder="{{ system.folder }}" data-name="{{ system.name }}" data-type="{{ system.system_type or '' }}" data-ra="{{ 'true' if features.get('ra_supported') else 'false' }}" data-trophies="{{ 'true' if features.get('local_trophies') else 'false' }}">
+        <a href="{{ url_for('systems.system_games', system_id=system.id) }}" class="system-card-new">
+            <div class="system-card-glow"></div>
+            <div class="system-card-image">
+                {% if system.logo %}
+                    <img src="{{ url_for('static', filename='images/systems/' + system.logo) }}" 
+                         alt="{{ system.name }} logo"
+                         class="system-logo-img"
+                         loading="lazy">
+                {% else %}
+                    <div class="system-logo-placeholder-new">🎮</div>
+                {% endif %}
+            </div>
+            <div class="system-card-info">
+                <h3 class="system-card-name">{{ system.name }}</h3>
+                <div class="system-card-meta">
+                    <span class="system-folder-badge">📁 {{ system.folder }}</span>
+                </div>
+                <div class="system-card-stats">
+                    <span class="rom-count-badge">{{ system.rom_count|format_number }} ROM{{ 's' if system.rom_count != 1 else '' }}</span>
+                    {% if system.missing_count and system.missing_count > 0 %}
+                    <span class="missing-count-badge">{{ system.missing_count|format_number }} unscraped</span>
+                    {% endif %}
+                    {% if system.system_type %}
+                    <span class="system-type-tag {{ system.system_type|lower }}">{{ system.system_type }}</span>
+                    {% endif %}
+                    {% if features.get('ra_supported') %}
+                    <span class="system-feature-badge ra-badge" title="Supports RetroAchievements">🏆 RA</span>
+                    {% endif %}
+                    {% if features.get('local_trophies') %}
+                    <span class="system-feature-badge trophy-badge" title="Local Trophies (RPCS3)">🏅 Trophies</span>
+                    {% endif %}
+                </div>
+            </div>
+        </a>
+        <button class="specs-btn" onclick="showSpecs('{{ system.folder }}', event)" title="View Specifications">
+            ℹ️
+        </button>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Empty State -->
+{% if not systems %}
+<div class="empty-state">
+    <div class="empty-state-icon">🎮</div>
+    <div class="empty-state-title">No Systems Found</div>
+    <div class="empty-state-text">
+        Scan your ROM library to add systems.
+    </div>
+    <button class="btn btn-primary" onclick="scanLibrary()">
+        <span class="btn-icon">🔍</span>
+        Scan Library
+    </button>
+</div>
+{% endif %}
+
+<!-- System Specs Modal -->
+<div id="specsModal" class="specs-modal">
+    <div class="specs-modal-content glass-panel">
+        <div class="specs-modal-header">
+            <h2 id="specsTitle">System Specifications</h2>
+            <button class="modal-close-btn" onclick="closeSpecs()">×</button>
+        </div>
+        <div class="specs-modal-body" id="specsBody">
+            <!-- Specs will be inserted here -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+/* Glitch text effect */
+.glitch-text {
+    position: relative;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+}
+
+.glitch-text::before {
+    left: 2px;
+    text-shadow: -2px 0 var(--primary-magenta);
+    clip: rect(24px, 550px, 90px, 0);
+    animation: glitch-anim 3s infinite linear alternate-reverse;
+}
+
+.glitch-text::after {
+    left: -2px;
+    text-shadow: -2px 0 var(--primary-cyan);
+    clip: rect(85px, 550px, 140px, 0);
+    animation: glitch-anim2 3s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim {
+    0% { clip: rect(20px, 9999px, 40px, 0); }
+    50% { clip: rect(10px, 9999px, 30px, 0); }
+    100% { clip: rect(30px, 9999px, 50px, 0); }
+}
+
+@keyframes glitch-anim2 {
+    0% { clip: rect(80px, 9999px, 100px, 0); }
+    50% { clip: rect(50px, 9999px, 70px, 0); }
+    100% { clip: rect(60px, 9999px, 80px, 0); }
+}
+
+/* Glass panel */
+.glass-panel {
+    background: rgba(20, 28, 40, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(76, 201, 240, 0.2);
+}
+
+/* Page Title with accent */
+.page-title {
+    font-family: var(--font-heading);
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+.title-accent {
+    color: var(--primary-cyan);
+    text-shadow: 0 0 10px var(--primary-cyan-glow);
+}
+
+/* Console count badge */
+.console-count-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: transparent;
+    border: 1px solid var(--primary-cyan);
+    border-radius: var(--radius-full);
+}
+
+.count-number {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--primary-cyan);
+}
+
+.count-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--primary-cyan);
+    letter-spacing: 1px;
+}
+
+/* New Systems Grid — masonry layout (left-to-right reading order) */
+.systems-grid-new {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-auto-rows: 1px;
+    column-gap: var(--spacing-lg);
+    margin-top: var(--spacing-xl);
+}
+
+/* System Card Wrapper */
+.system-card-wrapper {
+    position: relative;
+    grid-row-end: span 310;
+    align-self: start;
+}
+
+.system-card-wrapper.hidden {
+    display: none;
+}
+
+/* Specs Button */
+.specs-btn {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    width: 32px;
+    height: 32px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid var(--card-border);
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all var(--transition-fast);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.specs-btn:hover {
+    background: var(--primary-cyan);
+    border-color: var(--primary-cyan);
+    transform: scale(1.1);
+}
+
+/* New System Card Style */
+.system-card-new {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    text-decoration: none;
+    transition: all var(--transition-normal);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.system-card-glow {
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, var(--primary-cyan), var(--primary-magenta), var(--primary-cyan));
+    border-radius: calc(var(--radius-lg) + 2px);
+    z-index: -1;
+    opacity: 0;
+    filter: blur(8px);
+    transition: opacity 0.3s ease;
+}
+
+.system-card-new:hover .system-card-glow {
+    opacity: 0.4;
+}
+
+.system-card-new:hover {
+    border-color: var(--primary-cyan);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(76, 201, 240, 0.15);
+}
+
+.system-card-image {
+    height: 140px;
+    background: linear-gradient(180deg, var(--bg-medium) 0%, var(--bg-light) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.system-logo-img {
+    max-width: 80%;
+    max-height: 80px;
+    object-fit: contain;
+    filter: brightness(0.9);
+    transition: all var(--transition-normal);
+}
+
+.system-card-new:hover .system-logo-img {
+    filter: brightness(1) drop-shadow(0 0 10px var(--primary-cyan-glow));
+    transform: scale(1.05);
+}
+
+.system-logo-placeholder-new {
+    font-size: 3.5rem;
+    opacity: 0.4;
+    color: var(--text-muted);
+}
+
+.system-card-info {
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    min-height: 115px;
+}
+
+.system-card-name {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: var(--spacing-sm);
+    min-height: 4em;
+    line-height: 1.3;
+}
+
+.system-card-meta {
+    margin-bottom: var(--spacing-md);
+}
+
+.system-folder-badge {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.system-card-stats {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.rom-count-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1;
+    padding: 5px 12px;
+    background: rgba(76, 201, 240, 0.15);
+    color: var(--primary-cyan);
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+}
+
+.missing-count-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1;
+    padding: 5px 12px;
+    background: rgba(255, 171, 0, 0.15);
+    color: var(--status-warning);
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(255, 171, 0, 0.3);
+}
+
+.system-feature-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1;
+    padding: 5px 12px;
+    border-radius: var(--radius-full);
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.system-feature-badge.ra-badge {
+    background: rgba(168, 85, 247, 0.15);
+    color: var(--neon-purple);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.system-feature-badge.trophy-badge {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--neon-orange);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Filter Results Bar */
+.filter-results-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    margin-bottom: var(--spacing-md);
+    background: rgba(76, 201, 240, 0.08);
+    border: 1px solid rgba(76, 201, 240, 0.2);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.filter-results-text {
+    font-family: var(--font-primary);
+}
+
+.filter-clear-btn {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: var(--neon-red);
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-family: var(--font-primary);
+}
+
+.filter-clear-btn:hover {
+    background: rgba(239, 68, 68, 0.3);
+}
+
+/* Specs Modal */
+.specs-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.specs-modal.active {
+    display: flex;
+}
+
+.specs-modal-content {
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.specs-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--card-border);
+    background: linear-gradient(135deg, rgba(76, 201, 240, 0.1), rgba(247, 37, 133, 0.1));
+}
+
+.specs-modal-header h2 {
+    color: var(--primary-cyan);
+    font-family: var(--font-heading);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.specs-modal-body {
+    padding: var(--spacing-lg);
+    overflow-y: auto;
+    max-height: 60vh;
+}
+
+.specs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+}
+
+.spec-item {
+    background: rgba(0, 0, 0, 0.3);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--card-border);
+}
+
+.spec-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.spec-value {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.no-specs {
+    text-align: center;
+    color: var(--text-muted);
+    padding: var(--spacing-xl);
+}
+
+/* Hardware Image */
+.hardware-image-container {
+    margin-bottom: var(--spacing-lg);
+}
+
+.hardware-image-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-md);
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--card-border);
+}
+
+.hardware-image {
+    max-width: 100%;
+    max-height: 250px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+}
+
+@media (max-width: 768px) {
+    .systems-grid-new {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .page-title {
+        font-size: 2rem;
+    }
+
+    .specs-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .glitch-text::before,
+    .glitch-text::after {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .systems-grid-new {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Hide masonry gaps on mobile (single column = no benefit) */
+@media (max-width: 480px) {
+    .system-card-wrapper {
+        grid-row-end: auto;
+    }
+    .systems-grid-new {
+        grid-auto-rows: auto;
+        row-gap: var(--spacing-lg);
+    }
+}
+
+/* Filter Bar */
+.filter-bar {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(to bottom, var(--bg-dark) 0%, var(--bg-dark) 80%, transparent 100%);
+    padding: var(--spacing-md) 0;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.filter-select {
+    padding: var(--spacing-sm) var(--spacing-md);
+    padding-right: 30px;
+    background-color: #1a1a2e;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234cc9f0' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    min-width: 150px;
+}
+
+.filter-select:focus {
+    border-color: var(--primary-cyan);
+}
+
+.filter-select option {
+    background-color: #1a1a2e;
+    color: #e0e0e0;
+    padding: 10px;
+}
+
+/* System Type Tags */
+.system-type-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 12px;
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.system-type-tag.console {
+    background: rgba(76, 201, 240, 0.2);
+    color: var(--primary-cyan);
+    border: 1px solid rgba(76, 201, 240, 0.4);
+}
+
+.system-type-tag.handheld {
+    background: rgba(34, 197, 94, 0.2);
+    color: var(--neon-green);
+    border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.system-type-tag.computer {
+    background: rgba(168, 85, 247, 0.2);
+    color: var(--neon-purple);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+.system-type-tag.arcade {
+    background: rgba(249, 115, 22, 0.2);
+    color: #f97316;
+    border: 1px solid rgba(249, 115, 22, 0.4);
+}
+
+.system-type-tag.engine {
+    background: rgba(234, 179, 8, 0.2);
+    color: #eab308;
+    border: 1px solid rgba(234, 179, 8, 0.4);
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// System specifications data from config
+const systemSpecs = {{ system_specs | tojson }};
+
+function showSpecs(folder, event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const modal = document.getElementById('specsModal');
+    const title = document.getElementById('specsTitle');
+    const body = document.getElementById('specsBody');
+    
+    const specs = systemSpecs[folder];
+    
+    // Get system type from the card data
+    const wrapper = event.target.closest('.system-card-wrapper');
+    const systemType = wrapper ? wrapper.dataset.type : '';
+    
+    // Check for hardware image
+    const hardwareImagePath = `/static/images/hardware/${folder.toLowerCase()}.png`;
+    
+    if (specs) {
+        title.textContent = specs.manufacturer ? `${specs.manufacturer} - ${folder.toUpperCase()}` : folder.toUpperCase();
+        
+        let html = '';
+        
+        // Add hardware image container (will be populated if image exists)
+        html += `<div class="hardware-image-container" id="hardwareImageContainer" data-folder="${folder.toLowerCase()}"></div>`;
+        
+        html += '<div class="specs-grid">';
+        
+        // Add system type first if available
+        if (systemType) {
+            html += `
+                <div class="spec-item">
+                    <div class="spec-label">📦 Type</div>
+                    <div class="spec-value"><span class="system-type-tag ${systemType.toLowerCase()}">${systemType}</span></div>
+                </div>
+            `;
+        }
+        
+        const specLabels = {
+            'manufacturer': '🏭 Manufacturer',
+            'released': '📅 Released',
+            'generation': '🎮 Generation',
+            'cpu': '🔧 CPU',
+            'gpu': '🖥️ GPU',
+            'ram': '💾 RAM',
+            'vram': '📺 VRAM',
+            'resolution': '📐 Resolution',
+            'colors': '🎨 Colors',
+            'sound': '🔊 Sound',
+            'media': '💿 Media'
+        };
+        
+        for (const [key, label] of Object.entries(specLabels)) {
+            if (specs[key]) {
+                html += `
+                    <div class="spec-item">
+                        <div class="spec-label">${label}</div>
+                        <div class="spec-value">${specs[key]}</div>
+                    </div>
+                `;
+            }
+        }
+        
+        html += '</div>';
+        body.innerHTML = html;
+    } else {
+        title.textContent = folder.toUpperCase();
+        
+        // Even without specs, show the system type if available
+        const wrapper = event.target.closest('.system-card-wrapper');
+        const systemType = wrapper ? wrapper.dataset.type : '';
+        
+        let html = '';
+        
+        // Add hardware image container
+        html += `<div class="hardware-image-container" id="hardwareImageContainer" data-folder="${folder.toLowerCase()}"></div>`;
+        
+        if (systemType) {
+            html += `
+                <div class="specs-grid">
+                    <div class="spec-item">
+                        <div class="spec-label">📦 Type</div>
+                        <div class="spec-value"><span class="system-type-tag ${systemType.toLowerCase()}">${systemType}</span></div>
+                    </div>
+                </div>
+                <div class="no-specs" style="margin-top: var(--spacing-md);">No additional specifications available for this system.</div>
+            `;
+        } else {
+            html += '<div class="no-specs">No specifications available for this system.</div>';
+        }
+        
+        body.innerHTML = html;
+    }
+    
+    // Try to load hardware image
+    loadHardwareImage(folder.toLowerCase());
+    
+    modal.classList.add('active');
+}
+
+function loadHardwareImage(folder) {
+    const container = document.getElementById('hardwareImageContainer');
+    if (!container) return;
+    
+    // Try multiple image extensions
+    const extensions = ['.png', '.webp', '.jpg', '.jpeg'];
+    let currentIndex = 0;
+    
+    function tryNextExtension() {
+        if (currentIndex >= extensions.length) {
+            // No image found with any extension
+            container.style.display = 'none';
+            return;
+        }
+        
+        const ext = extensions[currentIndex];
+        const img = new Image();
+        
+        img.onload = function() {
+            container.innerHTML = `
+                <div class="hardware-image-wrapper">
+                    <img src="/static/images/hardware/${folder}${ext}" alt="${folder} Hardware" class="hardware-image">
+                </div>
+            `;
+        };
+        
+        img.onerror = function() {
+            currentIndex++;
+            tryNextExtension();
+        };
+        
+        img.src = `/static/images/hardware/${folder}${ext}`;
+    }
+    
+    tryNextExtension();
+}
+
+function closeSpecs() {
+    document.getElementById('specsModal').classList.remove('active');
+}
+
+// Close on backdrop click
+document.getElementById('specsModal').addEventListener('click', function(e) {
+    if (e.target === this) closeSpecs();
+});
+
+// Close on Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeSpecs();
+});
+
+// Search filter
+document.getElementById('systemSearch').addEventListener('input', function() {
+    const term = this.value.toLowerCase();
+    document.querySelectorAll('.system-card-wrapper').forEach(card => {
+        const name = card.dataset.name.toLowerCase();
+        const folder = card.dataset.folder.toLowerCase();
+        if (name.includes(term) || folder.includes(term)) {
+            card.classList.remove('search-hidden');
+        } else {
+            card.classList.add('search-hidden');
+        }
+    });
+    applyFilters();
+});
+
+// Filter systems by type
+function applySystemFilters() {
+    applyFilters();
+}
+
+// Clear all filters
+function clearAllSystemFilters() {
+    document.getElementById('systemSearch').value = '';
+    document.getElementById('systemTypeFilter').value = '';
+    document.getElementById('featureFilter').value = '';
+    
+    // Remove all search-hidden classes
+    document.querySelectorAll('.system-card-wrapper').forEach(card => {
+        card.classList.remove('search-hidden');
+    });
+    
+    applyFilters();
+}
+
+// Apply all filters (search, type, and features)
+function applyFilters() {
+    const typeFilter = document.getElementById('systemTypeFilter').value;
+    const featureFilter = document.getElementById('featureFilter').value;
+    const searchTerm = document.getElementById('systemSearch').value.trim();
+    
+    let totalCount = 0;
+    let visibleCount = 0;
+    
+    document.querySelectorAll('.system-card-wrapper').forEach(card => {
+        totalCount++;
+        const systemType = card.dataset.type || '';
+        const searchHidden = card.classList.contains('search-hidden');
+        
+        // Check type filter
+        const typeMatch = !typeFilter || systemType === typeFilter;
+        
+        // Check feature filter
+        let featureMatch = true;
+        if (featureFilter === 'ra') {
+            featureMatch = card.dataset.ra === 'true';
+        } else if (featureFilter === 'trophies') {
+            featureMatch = card.dataset.trophies === 'true';
+        }
+        
+        // Apply combined visibility
+        if (searchHidden || !typeMatch || !featureMatch) {
+            card.classList.add('hidden');
+        } else {
+            card.classList.remove('hidden');
+            visibleCount++;
+        }
+    });
+    
+    // Update filter results bar
+    const hasActiveFilter = searchTerm || typeFilter || featureFilter;
+    const resultsBar = document.getElementById('filterResultsBar');
+    const resultsText = document.getElementById('filterResultsText');
+    
+    if (hasActiveFilter && resultsBar) {
+        resultsBar.style.display = 'flex';
+        resultsText.textContent = `Showing ${visibleCount} of ${totalCount} systems`;
+    } else if (resultsBar) {
+        resultsBar.style.display = 'none';
+    }
+    
+    // Save filter state
+    savePageState();
+
+    // Re-run masonry for visible cards
+    layoutSystemMasonry();
+}
+
+// =============================================================================
+// SCROLL & STATE PERSISTENCE
+// =============================================================================
+
+const pageKey = 'retrodb_systems';
+
+function savePageState() {
+    const state = {
+        scrollY: window.scrollY,
+        searchTerm: document.getElementById('systemSearch').value,
+        typeFilter: document.getElementById('systemTypeFilter').value,
+        featureFilter: document.getElementById('featureFilter').value
+    };
+    sessionStorage.setItem(pageKey, JSON.stringify(state));
+}
+
+function restorePageState() {
+    const saved = sessionStorage.getItem(pageKey);
+    if (!saved) return;
+    
+    try {
+        const state = JSON.parse(saved);
+        
+        // Restore search term
+        if (state.searchTerm) {
+            const searchInput = document.getElementById('systemSearch');
+            searchInput.value = state.searchTerm;
+            // Trigger search filter
+            searchInput.dispatchEvent(new Event('input'));
+        }
+        
+        // Restore type filter
+        if (state.typeFilter) {
+            document.getElementById('systemTypeFilter').value = state.typeFilter;
+        }
+        
+        // Restore feature filter
+        if (state.featureFilter) {
+            document.getElementById('featureFilter').value = state.featureFilter;
+        }
+        
+        // Apply filters if any were set
+        if (state.typeFilter || state.featureFilter) {
+            applySystemFilters();
+        }
+        
+        // Restore scroll position after a brief delay
+        if (state.scrollY) {
+            setTimeout(() => {
+                window.scrollTo(0, state.scrollY);
+            }, 50);
+        }
+    } catch (e) {
+        console.warn('Could not restore page state:', e);
+    }
+}
+
+// Save scroll position on scroll (debounced)
+var systemsScrollTimeout;
+window.addEventListener('scroll', function() {
+    clearTimeout(systemsScrollTimeout);
+    systemsScrollTimeout = setTimeout(savePageState, 150);
+});
+
+// Restore state on page load
+document.addEventListener('DOMContentLoaded', restorePageState);
+
+// Masonry layout — assign explicit grid positions for tight packing
+function layoutSystemMasonry() {
+    const grid = document.querySelector('.systems-grid-new');
+    if (!grid) return;
+
+    const gap = 16;
+    const wrappers = Array.from(grid.querySelectorAll('.system-card-wrapper:not(.hidden)'));
+    if (wrappers.length === 0) return;
+
+    const columns = getComputedStyle(grid).gridTemplateColumns.split(' ').length;
+    const columnEnds = new Array(columns).fill(1);
+    let itemCount = 0;
+
+    wrappers.forEach(wrapper => {
+        const card = wrapper.querySelector('.system-card-new');
+        if (!card) return;
+
+        const h = card.getBoundingClientRect().height;
+        const span = h > 0 ? Math.ceil(h) + gap : 310;
+
+        const col = itemCount % columns;
+        wrapper.style.gridColumn = String(col + 1);
+        wrapper.style.gridRowStart = String(columnEnds[col]);
+        wrapper.style.gridRowEnd = String(columnEnds[col] + span);
+
+        columnEnds[col] += span;
+        itemCount++;
+    });
+}
+// Run masonry after images have a chance to load
+window.addEventListener('load', layoutSystemMasonry);
+</script>
+{% endblock %}

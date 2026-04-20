@@ -1,0 +1,81 @@
+# =============================================================================
+# RetroDB .gitignore
+# =============================================================================
+
+# Personal configuration (contains API keys, paths, credentials)
+config.py
+data/scraper_settings.json
+data/settings.json
+data/rom_tools_config.json
+data/.secret_key
+
+# OAuth tokens (auto-generated at runtime, contain JWTs / refresh tokens)
+data/psn_tokens.json
+data/xbox_tokens.json
+
+# HLTB dataset (large CSV, downloaded on demand)
+data/hltb_dataset.csv
+
+# PSN credentials
+docs/psn-npsso.env
+
+# Database files
+database/*.db
+database/*.db-journal
+database/*.db-wal
+database/*.db.bak*
+
+# Log files
+logs/*.log
+
+# Scraped/user-uploaded media (downloaded during use).
+# Whitelist matches build_dist.py INCLUDE_IMAGE_DIRS: hardware, ratings, systems, avatars.
+static/images/*
+!static/images/hardware/
+!static/images/ratings/
+!static/images/systems/
+!static/images/avatars/
+!static/images/placeholder.png
+static/videos/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Demo/test data
+demo/
+
+# Backups (user-generated)
+backups/*.zip
+*.bak
+
+# Claude Code local permissions (per-user, should not be shared)
+.claude/settings.local.json
+
+# Ruff cache
+.ruff_cache/

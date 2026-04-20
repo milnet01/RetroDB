@@ -1,0 +1,452 @@
+{% extends "base.html" %}
+
+{% block title %}Multi-Disc Organizer - RetroDB{% endblock %}
+
+{% block styles %}
+<style>
+    /* Tool Tabs */
+    .tool-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .tool-tab {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        background: var(--bg-medium);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-family: var(--font-primary);
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+
+    .tool-tab:hover {
+        background: var(--bg-light);
+        border-color: var(--accent-cyan);
+        color: var(--text-primary);
+    }
+
+    .tool-tab.active {
+        background: rgba(76, 201, 240, 0.15);
+        border-color: var(--accent-cyan);
+        color: var(--accent-cyan);
+    }
+
+    .tab-icon {
+        font-size: 1.1rem;
+    }
+
+    /* Scanner Controls - margin override (base styles in progress.css) */
+    .scanner-controls {
+        margin-bottom: 1.5rem;
+    }
+
+    /* Results Table */
+    .results-table-container {
+        overflow-x: auto;
+    }
+
+    .data-table td {
+        vertical-align: top;
+    }
+
+    .system-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        background: rgba(168, 85, 247, 0.15);
+        border: 1px solid var(--accent-purple);
+        border-radius: 4px;
+        color: var(--accent-purple);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .filename-cell {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        max-width: 400px;
+        word-wrap: break-word;
+    }
+
+    .action-cell {
+        white-space: nowrap;
+    }
+
+    /* Badge styling */
+    .badge {
+        display: inline-block;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+
+    .badge-warning {
+        background: rgba(245, 158, 11, 0.15);
+        border: 1px solid var(--neon-orange);
+        color: var(--neon-orange);
+    }
+
+    .badge-danger {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid var(--neon-red);
+        color: var(--neon-red);
+    }
+
+    /* Info box */
+    .info-box {
+        background: rgba(76, 201, 240, 0.1);
+        border: 1px solid rgba(76, 201, 240, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-box h4 {
+        color: var(--accent-cyan);
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .info-box ul {
+        margin: 0;
+        padding-left: 1.5rem;
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+    }
+
+    .info-box li {
+        margin-bottom: 0.25rem;
+    }
+
+    /* Stats row */
+    .stats-row {
+        display: flex;
+        gap: 1.5rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+    }
+
+    .stat-item .value {
+        color: var(--accent-cyan);
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🔧 ROM Tools</h1>
+    <p>Manage, organize, and optimize your ROM collection.</p>
+</div>
+
+<!-- Tool Tabs -->
+<nav class="tool-tabs">
+    <a href="{{ url_for('tools.archive_scanner') }}" class="tool-tab">
+        <span class="tab-icon">📦</span>
+        <span class="tab-label">Archive Scanner</span>
+    </a>
+    <a href="{{ url_for('tools.chd_converter') }}" class="tool-tab">
+        <span class="tab-icon">💿</span>
+        <span class="tab-label">CHD Converter</span>
+    </a>
+    <a href="{{ url_for('tools.chd_verify') }}" class="tool-tab">
+        <span class="tab-icon">✅</span>
+        <span class="tab-label">CHD Verify</span>
+    </a>
+    <a href="{{ url_for('tools.multi_disc_organizer') }}" class="tool-tab active">
+        <span class="tab-icon">💽</span>
+        <span class="tab-label">Multi-Disc Organizer</span>
+    </a>
+    <a href="{{ url_for('tools.duplicate_finder') }}" class="tool-tab">
+        <span class="tab-icon">🔍</span>
+        <span class="tab-label">Duplicate Finder</span>
+    </a>
+    <a href="{{ url_for('tools.screenshot_dedup') }}" class="tool-tab">
+        <span class="tab-icon">📸</span>
+        <span class="tab-label">Screenshot Dedup</span>
+    </a>
+    <a href="{{ url_for('tools.rom_tools_settings') }}" class="tool-tab">
+        <span class="tab-icon">⚙️</span>
+        <span class="tab-label">Settings</span>
+    </a>
+</nav>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><span>💽</span> Multi-Disc Game Organizer</h2>
+    </div>
+    <div class="card-body">
+    <div class="info-box">
+        <h4>📋 What This Tool Does</h4>
+        <ul>
+            <li>Scans for multi-disc game files (Disc 1, Disc 2, etc.) that aren't properly organized</li>
+            <li>Creates a folder for each game with the disc files inside</li>
+            <li>Adds a <code>noload.txt</code> file to prevent ES-DE from scanning individual discs</li>
+            <li>Creates an M3U playlist file for ES-DE compatibility</li>
+        </ul>
+    </div>
+    
+    <div class="scanner-controls">
+        <div class="filter-group">
+            <label>System:</label>
+            <select id="multidisc-system">
+                <option value="">All Disc Systems</option>
+                {% for system in systems %}
+                <option value="{{ system.folder }}">{{ system.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button class="btn btn-primary" onclick="scanMultiDisc()">
+            <span class="btn-icon">🔍</span> Scan for Loose Discs
+        </button>
+        <button class="btn btn-success" onclick="organizeAllMultiDisc()" id="organizeAllBtn" disabled>
+            <span class="btn-icon">📁</span> Organize All
+        </button>
+    </div>
+    
+    <div id="multidisc-progress" style="display: none; margin-bottom: 1rem;">
+        <div class="progress-container">
+            <div class="progress-bar" id="multidisc-progress-bar" style="width: 0%;">0%</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.85rem;">
+            <span id="multidisc-status">Scanning...</span>
+            <span id="multidisc-count">0 found</span>
+        </div>
+    </div>
+    
+    <div class="results-table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width: 100px;">System</th>
+                    <th>Game Name</th>
+                    <th style="width: 80px;">Discs</th>
+                    <th>Files</th>
+                    <th style="width: 140px;">Action</th>
+                </tr>
+            </thead>
+            <tbody id="multidisc-results">
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <div class="icon">💽</div>
+                            <p>Click "Scan for Loose Discs" to find multi-disc games that need to be organized.</p>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="stats-row" id="scan-stats" style="display: none;">
+        <div class="stat-item">
+            <span>Systems scanned:</span>
+            <span class="value" id="stat-systems">0</span>
+        </div>
+        <div class="stat-item">
+            <span>Games found:</span>
+            <span class="value" id="stat-games">0</span>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/rom-tools.js') }}?v={{ config.APP_VERSION }}"></script>
+<script>
+let multiDiscGames = [];
+
+// Scan for multi-disc games
+async function scanMultiDisc() {
+    const system = document.getElementById('multidisc-system').value;
+    const progressDiv = document.getElementById('multidisc-progress');
+    const progressBar = document.getElementById('multidisc-progress-bar');
+    const statusEl = document.getElementById('multidisc-status');
+    const countEl = document.getElementById('multidisc-count');
+    
+    progressDiv.style.display = 'block';
+    progressBar.style.width = '0%';
+    progressBar.textContent = 'Scanning...';
+    statusEl.textContent = 'Scanning for loose disc files...';
+    countEl.textContent = '';
+    
+    try {
+        const response = await fetch('/api/reports/multidisc-scan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ system: system })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            multiDiscGames = data.games;
+            document.getElementById('organizeAllBtn').disabled = multiDiscGames.length === 0;
+            renderMultiDiscTable(multiDiscGames);
+            
+            progressBar.style.width = '100%';
+            progressBar.textContent = '100%';
+            statusEl.textContent = `Scan complete`;
+            countEl.textContent = `${multiDiscGames.length} game(s) found`;
+            
+            // Show stats
+            const statsDiv = document.getElementById('scan-stats');
+            statsDiv.style.display = 'flex';
+            document.getElementById('stat-systems').textContent = formatNumber(data.scanned_systems ? data.scanned_systems.length : 0);
+            document.getElementById('stat-games').textContent = formatNumber(multiDiscGames.length);
+        } else {
+            showModal('❌ Error', data.error || 'Failed to scan');
+        }
+    } catch (error) {
+        showModal('❌ Error', error.message);
+    }
+    
+    setTimeout(() => {
+        progressDiv.style.display = 'none';
+    }, 2000);
+}
+
+// Render results table
+function renderMultiDiscTable(games) {
+    const tbody = document.getElementById('multidisc-results');
+    
+    if (games.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5">
+                    <div class="empty-state">
+                        <div class="icon">✅</div>
+                        <p>No loose multi-disc files found. All multi-disc games are properly organized.</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = games.map((game, idx) => `
+        <tr data-index="${idx}">
+            <td><span class="system-badge">${game.system}</span></td>
+            <td>
+                ${escapeHtml(game.name)}
+                ${game.in_folder ? '<span class="badge badge-warning" style="margin-left: 8px;">In Folder</span>' : ''}
+                ${game.needs_m3u ? '<span class="badge badge-danger" style="margin-left: 4px;">No M3U</span>' : ''}
+            </td>
+            <td>${game.disc_count}</td>
+            <td class="filename-cell" title="${game.files.join('\n')}">${game.files.map(f => escapeHtml(f)).join('<br>')}</td>
+            <td class="action-cell">
+                <button class="action-btn" onclick="organizeMultiDisc(${idx})">${game.in_folder ? '📝 Create M3U' : '📁 Organize'}</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Organize single game
+async function organizeMultiDisc(index) {
+    const game = multiDiscGames[index];
+    
+    showConfirm(game.in_folder ? '📝 Create M3U' : '📁 Organize Multi-Disc', 
+        game.in_folder 
+            ? `<p>This will create an M3U playlist for the existing folder:</p>
+               <ul style="text-align: left; margin: 0.5rem 0; padding-left: 1.5rem;">
+                   <li>Folder: <code>${escapeHtml(game.name)}/</code></li>
+                   <li>Create <code>${escapeHtml(game.name)}.m3u</code> playlist</li>
+                   <li>Add <code>noload.txt</code> if missing</li>
+               </ul>`
+            : `<p>This will:</p>
+               <ul style="text-align: left; margin: 0.5rem 0; padding-left: 1.5rem;">
+                   <li>Create folder: <code>${escapeHtml(game.name)}/</code></li>
+                   <li>Move ${game.disc_count} disc files into the folder</li>
+                   <li>Add <code>noload.txt</code></li>
+                   <li>Create <code>${escapeHtml(game.name)}.m3u</code> playlist</li>
+               </ul>`,
+        async function() {
+            try {
+                const response = await fetch('/api/reports/organize-multidisc', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        system: game.system,
+                        name: game.name,
+                        files: game.files,
+                        in_folder: game.in_folder || false
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showModal('✅ Organized', `Created ${data.m3u_path}`);
+                    multiDiscGames.splice(index, 1);
+                    document.getElementById('stat-games').textContent = formatNumber(multiDiscGames.length);
+                    document.getElementById('organizeAllBtn').disabled = multiDiscGames.length === 0;
+                    renderMultiDiscTable(multiDiscGames);
+                } else {
+                    showModal('❌ Error', data.error);
+                }
+            } catch (error) {
+                showModal('❌ Error', error.message);
+            }
+        });
+}
+
+// Organize all games
+async function organizeAllMultiDisc() {
+    if (multiDiscGames.length === 0) return;
+    
+    showConfirm('📁 Organize All', 
+        `<p>Organize all ${multiDiscGames.length} multi-disc games?</p>
+        <p style="color: var(--text-secondary); margin-top: 0.5rem;">Each game will get its own folder with an M3U playlist.</p>`,
+        async function() {
+            let success = 0;
+            let failed = 0;
+            
+            for (const game of [...multiDiscGames]) {
+                try {
+                    const response = await fetch('/api/reports/organize-multidisc', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            system: game.system,
+                            name: game.name,
+                            files: game.files,
+                            in_folder: game.in_folder || false
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    if (data.success) success++;
+                    else failed++;
+                } catch (error) {
+                    failed++;
+                }
+            }
+            
+            showModal('✅ Complete', `Organized ${success} games. ${failed > 0 ? `Failed: ${failed}` : ''}`);
+            multiDiscGames = [];
+            document.getElementById('stat-games').textContent = formatNumber(0);
+            document.getElementById('organizeAllBtn').disabled = true;
+            renderMultiDiscTable([]);
+        });
+}
+</script>
+{% endblock %}

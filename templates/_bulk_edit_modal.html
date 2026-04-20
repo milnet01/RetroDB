@@ -1,0 +1,205 @@
+<!-- Bulk Edit Modal - Shared Component -->
+<!-- Usage: include '_bulk_edit_modal.html' in your template -->
+
+<div id="bulkEditModal" class="bulk-scrape-modal">
+    <div class="bulk-scrape-content glass-panel" style="max-width: 600px;">
+        <div class="bulk-scrape-header">
+            <h2>Bulk Edit</h2>
+            <button class="modal-close-btn" onclick="closeBulkEditModal()">&times;</button>
+        </div>
+        <div class="bulk-scrape-body">
+            <div class="bulk-progress-info" style="margin-bottom: var(--spacing-lg);">
+                <div class="bulk-progress-text">
+                    Editing <strong id="bulkEditCount">0</strong> games
+                </div>
+                <p class="text-muted" style="margin-top: var(--spacing-xs); font-size: 0.85rem;">
+                    Only fields changed from "Don't change" will be updated.
+                </p>
+            </div>
+
+            <div class="edit-grid" style="gap: var(--spacing-md);">
+                <!-- Completion Status -->
+                <div class="edit-field">
+                    <label for="bulkEditCompletion">Completion Status</label>
+                    <select id="bulkEditCompletion" class="form-select" data-field="completion_status">
+                        <option value="">-- Don't change --</option>
+                        <option value="not_started">Not Started</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="played">Played</option>
+                        <option value="completed">Completed</option>
+                        <option value="100_percent">100%</option>
+                    </select>
+                </div>
+
+                <!-- Genre (dropdown + append toggle) -->
+                <div class="edit-field">
+                    <label for="bulkEditGenre">Genre</label>
+                    <select id="bulkEditGenre" class="form-select" data-field="genre">
+                        <option value="">-- Don't change --</option>
+                        <!-- Populated dynamically -->
+                    </select>
+                    <div class="bulk-edit-mode-toggle" style="margin-top: var(--spacing-xs); display: flex; align-items: center; gap: var(--spacing-xs);">
+                        <span class="text-muted" style="font-size: 0.8rem;">Replace</span>
+                        <label class="toggle-switch" style="transform: scale(0.75);">
+                            <input type="checkbox" class="bulk-append-toggle" data-field="genre">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="text-muted" style="font-size: 0.8rem;">Append</span>
+                    </div>
+                </div>
+
+                <!-- Publisher (append toggle) -->
+                <div class="edit-field">
+                    <label for="bulkEditPublisher">Publisher</label>
+                    <input type="text" id="bulkEditPublisher" class="form-input" data-field="publisher" placeholder="Don't change">
+                    <div class="bulk-edit-mode-toggle" style="margin-top: var(--spacing-xs); display: flex; align-items: center; gap: var(--spacing-xs);">
+                        <span class="text-muted" style="font-size: 0.8rem;">Replace</span>
+                        <label class="toggle-switch" style="transform: scale(0.75);">
+                            <input type="checkbox" class="bulk-append-toggle" data-field="publisher">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="text-muted" style="font-size: 0.8rem;">Append</span>
+                    </div>
+                </div>
+
+                <!-- Developer (append toggle) -->
+                <div class="edit-field">
+                    <label for="bulkEditDeveloper">Developer</label>
+                    <input type="text" id="bulkEditDeveloper" class="form-input" data-field="developer" placeholder="Don't change">
+                    <div class="bulk-edit-mode-toggle" style="margin-top: var(--spacing-xs); display: flex; align-items: center; gap: var(--spacing-xs);">
+                        <span class="text-muted" style="font-size: 0.8rem;">Replace</span>
+                        <label class="toggle-switch" style="transform: scale(0.75);">
+                            <input type="checkbox" class="bulk-append-toggle" data-field="developer">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="text-muted" style="font-size: 0.8rem;">Append</span>
+                    </div>
+                </div>
+
+                <!-- ESRB Rating -->
+                <div class="edit-field">
+                    <label for="bulkEditEsrb">ESRB Rating</label>
+                    <select id="bulkEditEsrb" class="form-select" data-field="esrb_rating">
+                        <option value="">-- Don't change --</option>
+                        <option value="E">E - Everyone</option>
+                        <option value="E10+">E10+ - Everyone 10+</option>
+                        <option value="T">T - Teen</option>
+                        <option value="M">M - Mature</option>
+                    </select>
+                </div>
+
+                <!-- PEGI Rating -->
+                <div class="edit-field">
+                    <label for="bulkEditPegi">PEGI Rating</label>
+                    <select id="bulkEditPegi" class="form-select" data-field="pegi_rating">
+                        <option value="">-- Don't change --</option>
+                        <option value="PEGI 3">PEGI 3</option>
+                        <option value="PEGI 7">PEGI 7</option>
+                        <option value="PEGI 12">PEGI 12</option>
+                        <option value="PEGI 16">PEGI 16</option>
+                        <option value="PEGI 18">PEGI 18</option>
+                    </select>
+                </div>
+
+                <!-- Region (append toggle) -->
+                <div class="edit-field">
+                    <label for="bulkEditRegion">Region</label>
+                    <input type="text" id="bulkEditRegion" class="form-input" data-field="region" placeholder="Don't change">
+                    <div class="bulk-edit-mode-toggle" style="margin-top: var(--spacing-xs); display: flex; align-items: center; gap: var(--spacing-xs);">
+                        <span class="text-muted" style="font-size: 0.8rem;">Replace</span>
+                        <label class="toggle-switch" style="transform: scale(0.75);">
+                            <input type="checkbox" class="bulk-append-toggle" data-field="region">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="text-muted" style="font-size: 0.8rem;">Append</span>
+                    </div>
+                </div>
+
+                <!-- Players -->
+                <div class="edit-field">
+                    <label for="bulkEditPlayers">Players</label>
+                    <input type="number" id="bulkEditPlayers" class="form-input" data-field="players" placeholder="Don't change" min="1">
+                </div>
+
+                <!-- Game Structure (dropdown + append toggle) -->
+                <div class="edit-field">
+                    <label for="bulkEditGameStructure">Game Structure</label>
+                    <select id="bulkEditGameStructure" class="form-select" data-field="game_structure">
+                        <option value="">-- Don't change --</option>
+                        <!-- Populated dynamically -->
+                    </select>
+                    <div class="bulk-edit-mode-toggle" style="margin-top: var(--spacing-xs); display: flex; align-items: center; gap: var(--spacing-xs);">
+                        <span class="text-muted" style="font-size: 0.8rem;">Replace</span>
+                        <label class="toggle-switch" style="transform: scale(0.75);">
+                            <input type="checkbox" class="bulk-append-toggle" data-field="game_structure">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="text-muted" style="font-size: 0.8rem;">Append</span>
+                    </div>
+                </div>
+
+                <!-- Perspective (dropdown + append toggle) -->
+                <div class="edit-field">
+                    <label for="bulkEditPerspective">Perspective</label>
+                    <select id="bulkEditPerspective" class="form-select" data-field="perspective">
+                        <option value="">-- Don't change --</option>
+                    </select>
+                    <div class="bulk-edit-mode-toggle" style="margin-top: var(--spacing-xs); display: flex; align-items: center; gap: var(--spacing-xs);">
+                        <span class="text-muted" style="font-size: 0.8rem;">Replace</span>
+                        <label class="toggle-switch" style="transform: scale(0.75);">
+                            <input type="checkbox" class="bulk-append-toggle" data-field="perspective">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="text-muted" style="font-size: 0.8rem;">Append</span>
+                    </div>
+                </div>
+
+                <!-- Dimension (dropdown + append toggle) -->
+                <div class="edit-field">
+                    <label for="bulkEditDimension">Dimension</label>
+                    <select id="bulkEditDimension" class="form-select" data-field="dimension">
+                        <option value="">-- Don't change --</option>
+                    </select>
+                    <div class="bulk-edit-mode-toggle" style="margin-top: var(--spacing-xs); display: flex; align-items: center; gap: var(--spacing-xs);">
+                        <span class="text-muted" style="font-size: 0.8rem;">Replace</span>
+                        <label class="toggle-switch" style="transform: scale(0.75);">
+                            <input type="checkbox" class="bulk-append-toggle" data-field="dimension">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="text-muted" style="font-size: 0.8rem;">Append</span>
+                    </div>
+                </div>
+
+                <!-- Campaign -->
+                <div class="edit-field">
+                    <label for="bulkEditCampaign">Campaign</label>
+                    <select id="bulkEditCampaign" class="form-select" data-field="campaign">
+                        <option value="">-- Don't change --</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+
+                <!-- Franchise (append toggle) -->
+                <div class="edit-field">
+                    <label for="bulkEditFranchise">Franchise</label>
+                    <input type="text" id="bulkEditFranchise" class="form-input" data-field="franchise" placeholder="Don't change">
+                    <div class="bulk-edit-mode-toggle" style="margin-top: var(--spacing-xs); display: flex; align-items: center; gap: var(--spacing-xs);">
+                        <span class="text-muted" style="font-size: 0.8rem;">Replace</span>
+                        <label class="toggle-switch" style="transform: scale(0.75);">
+                            <input type="checkbox" class="bulk-append-toggle" data-field="franchise">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="text-muted" style="font-size: 0.8rem;">Append</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bulk-scrape-footer" style="display: flex; gap: var(--spacing-sm); justify-content: flex-end; padding: var(--spacing-md) var(--spacing-lg);">
+            <button class="btn btn-secondary" onclick="closeBulkEditModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="BulkEditController.apply()" id="bulkEditApplyBtn">
+                Apply Changes
+            </button>
+        </div>
+    </div>
+</div>

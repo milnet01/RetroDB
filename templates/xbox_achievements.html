@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block title %}Xbox Achievements - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav class="breadcrumb">
+    <span class="breadcrumb-current">Xbox Achievements</span>
+</nav>
+
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">🟢 Xbox Achievements</h1>
+        <p class="page-subtitle">{{ stats.total_games|format_number }} games with achievement data</p>
+    </div>
+    <div style="display: flex; gap: var(--spacing-sm);">
+        <button onclick="syncAll()" class="btn btn-primary" id="syncAllBtn">
+            <span class="btn-icon">🔄</span>
+            <span class="btn-text">Sync All</span>
+        </button>
+    </div>
+</div>
+
+<!-- Overall Stats -->
+<section class="card mb-lg">
+    <div class="card-body">
+        <div class="achievement-overview">
+            <div class="achievement-stat">
+                <div class="achievement-stat-icon">🎮</div>
+                <div class="achievement-stat-info">
+                    <span class="achievement-stat-label">Total Games</span>
+                    <span class="achievement-stat-value">{{ stats.total_games|format_number }}</span>
+                </div>
+            </div>
+            <div class="achievement-stat">
+                <div class="achievement-stat-icon">🏆</div>
+                <div class="achievement-stat-info">
+                    <span class="achievement-stat-label">Achievements</span>
+                    <span class="achievement-stat-value">{{ stats.total_earned|format_number }} / {{ stats.total_achievements|format_number }}</span>
+                </div>
+            </div>
+            <div class="achievement-stat">
+                <div class="achievement-stat-icon">⭐</div>
+                <div class="achievement-stat-info">
+                    <span class="achievement-stat-label">Gamerscore</span>
+                    <span class="achievement-stat-value">{{ stats.earned_gamerscore|format_number }} / {{ stats.total_gamerscore|format_number }}</span>
+                </div>
+            </div>
+            <div class="achievement-stat">
+                <div class="achievement-stat-icon">📊</div>
+                <div class="achievement-stat-info">
+                    <span class="achievement-stat-label">Avg. Completion</span>
+                    <span class="achievement-stat-value">{{ stats.avg_completion }}%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Filter Bar -->
+<div class="filter-bar glass-panel" style="padding: var(--spacing-md); margin-bottom: var(--spacing-lg);">
+    <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-md); align-items: center;">
+        <div class="form-group" style="margin: 0; flex: 1; min-width: 200px;">
+            <input type="text" class="form-input" id="gameSearch" placeholder="🔍 Search games..." onkeyup="filterGames()">
+        </div>
+        <div class="form-group" style="margin: 0;">
+            <select class="form-select" id="progressFilter" onchange="filterGames()">
+                <option value="">All Games</option>
+                <option value="in-progress">In Progress</option>
+                <option value="not-started">Not Started</option>
+                <option value="completed">Completed (100%)</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- Alphabet Jump Navigation -->
+{% if games|length >= 20 %}
+<div class="alphabet-nav" id="alphabetNav">
+    <span class="alphabet-label">Jump to:</span>
+    <div class="alphabet-letters">
+        <button class="alphabet-btn" data-letter="#">#</button>
+        {% for letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' %}
+        <button class="alphabet-btn" data-letter="{{ letter }}">{{ letter }}</button>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Games Grid -->
+{% if games|length > 0 %}
+<section class="card">
+    <div class="card-body">
+        <div class="achievement-games-grid" id="gamesGrid">
+            {% for game in games %}
+            <div class="achievement-game-card"
+               onclick="window.location.href='{{ url_for('xbox_achievements.xbox_achievement_game', game_id=game.id) }}'"
+               style="cursor: pointer;"
+               data-title="{{ game.title|lower }}"
+               data-game-id="{{ game.id }}"
+               data-progress="{% if game.earned_achievements is not none %}{% if game.total_achievements and game.earned_achievements >= game.total_achievements %}completed{% elif game.earned_achievements > 0 %}in-progress{% else %}not-started{% endif %}{% else %}unknown{% endif %}">
+                <div class="achievement-game-icon">
+                    {% if game.boxart %}
+                    <img src="{{ url_for('static', filename='images/boxart/' + game.boxart) }}" alt="{{ game.title }}"
+                         width="80" height="80"
+                         loading="lazy"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="no-boxart" style="display: none;">🟢</div>
+                    {% else %}
+                    <div class="no-boxart">🟢</div>
+                    {% endif %}
+                </div>
+                <div class="achievement-game-info">
+                    <div class="achievement-game-title">{{ game.title }}</div>
+                    <div class="achievement-game-system">{{ game.system_name }}</div>
+                    <div class="achievement-game-progress">
+                        <div class="achievement-progress-bar">
+                            <div class="achievement-progress-fill xbox-fill" style="width: {{ game.completion_percentage or 0 }}%"></div>
+                        </div>
+                        <div class="achievement-progress-text">
+                            {{ (game.earned_achievements or 0)|format_number }} / {{ (game.total_achievements or 0)|format_number }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% else %}
+<div class="empty-state" style="margin-top: var(--spacing-xl);">
+    <div class="empty-state-icon">🟢</div>
+    <div class="empty-state-title">No Xbox Achievements</div>
+    <div class="empty-state-text">
+        Import Xbox games and sync achievements to see them here.<br>
+        Go to <a href="{{ url_for('game_imports.game_imports_page') }}?tab=xbox" style="color: var(--primary-cyan);">Game Imports</a> to get started.
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+let syncPollInterval = null;
+
+async function syncAll() {
+    const btn = document.getElementById('syncAllBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="btn-icon">⏳</span> Starting...';
+
+    try {
+        const resp = await fetch('/api/xbox-achievements/sync-all', { method: 'POST' });
+        const data = await resp.json();
+
+        if (data.success) {
+            showNotification('Xbox achievement sync started', 'info');
+            btn.innerHTML = '<span class="btn-icon">🔄</span> Syncing...';
+            syncPollInterval = setInterval(pollSyncStatus, 2000);
+        } else {
+            showNotification(data.error || 'Failed to start sync', 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<span class="btn-icon">🔄</span> <span class="btn-text">Sync All</span>';
+        }
+    } catch (e) {
+        showNotification('Sync error: ' + e.message, 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<span class="btn-icon">🔄</span> <span class="btn-text">Sync All</span>';
+    }
+}
+
+async function pollSyncStatus() {
+    try {
+        const resp = await fetch('/api/xbox-achievements/sync-status');
+        const data = await resp.json();
+        const btn = document.getElementById('syncAllBtn');
+
+        if (data.completed || data.cancelled) {
+            clearInterval(syncPollInterval);
+            syncPollInterval = null;
+            btn.disabled = false;
+            btn.innerHTML = '<span class="btn-icon">🔄</span> <span class="btn-text">Sync All</span>';
+
+            if (data.error) {
+                showNotification('Sync error: ' + data.error, 'error');
+            } else {
+                showNotification(`Sync complete: ${formatNumber(data.success)} synced, ${formatNumber(data.skipped)} skipped`, 'success');
+                setTimeout(() => window.location.reload(), 1500);
+            }
+        } else if (data.running) {
+            btn.innerHTML = `<span class="btn-icon">🔄</span> ${formatNumber(data.current)} / ${formatNumber(data.total)}`;
+        }
+    } catch (e) {
+        console.error('Poll error:', e);
+    }
+}
+
+function filterGames() {
+    const search = document.getElementById('gameSearch')?.value.toLowerCase() || '';
+    const progressFilter = document.getElementById('progressFilter')?.value || '';
+
+    document.querySelectorAll('.achievement-game-card').forEach(card => {
+        const title = card.dataset.title;
+        const progress = card.dataset.progress;
+
+        const matchSearch = !search || title.includes(search);
+        const matchProgress = !progressFilter || progress === progressFilter;
+
+        card.style.display = matchSearch && matchProgress ? '' : 'none';
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof AlphabetNav !== 'undefined') {
+        AlphabetNav.init({ itemSelector: '.achievement-game-card' });
+    }
+
+    fetch('/api/xbox-achievements/sync-status')
+        .then(r => r.json())
+        .then(data => {
+            if (data.running && !data.completed) {
+                const btn = document.getElementById('syncAllBtn');
+                btn.disabled = true;
+                btn.innerHTML = `<span class="btn-icon">🔄</span> ${formatNumber(data.current)} / ${formatNumber(data.total)}`;
+                syncPollInterval = setInterval(pollSyncStatus, 2000);
+            }
+        })
+        .catch(() => {});
+});
+
+window.addEventListener('beforeunload', () => {
+    if (syncPollInterval) clearInterval(syncPollInterval);
+});
+</script>
+{% endblock %}
+
+{% block styles %}
+<style>
+/* Xbox green accent overrides (default is cyan for Steam) */
+.achievement-stat-value { color: var(--neon-green); }
+.achievement-game-card:hover { border-color: var(--neon-green); }
+</style>
+{% endblock %}

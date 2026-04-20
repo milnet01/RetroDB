@@ -1,0 +1,176 @@
+/* =============================================================================
+   RETRODB - ACHIEVEMENTS
+   RetroAchievements integration styles
+   ============================================================================= */
+
+/* Note: Tab styles (.tool-tabs, .system-tabs) are now in components/tabs.css */
+
+/* =============================================================================
+   Steam / Xbox Achievement Landing Page Styles
+   Shared by steam_achievements.html and xbox_achievements.html
+   ============================================================================= */
+
+/* --- Overview Stats Grid --- */
+.achievement-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.achievement-stat {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: rgba(20, 26, 35, 0.6);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+}
+
+.achievement-stat-icon {
+    font-size: 2rem;
+}
+
+.achievement-stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.achievement-stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.achievement-stat-value {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--neon-cyan);
+}
+
+/* --- Games Grid --- */
+.achievement-games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.achievement-game-card {
+    display: flex;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: rgba(20, 26, 35, 0.6);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease;
+}
+
+.achievement-game-card:hover {
+    border-color: var(--neon-cyan);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Game Card Icon --- */
+.achievement-game-icon {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--bg-darker);
+}
+
+.achievement-game-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.achievement-game-card .no-boxart {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    background: var(--bg-darker);
+}
+
+/* --- Game Card Info --- */
+.achievement-game-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.achievement-game-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.achievement-game-system {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.achievement-game-progress {
+    margin-top: auto;
+}
+
+/* --- Progress Bar --- */
+.achievement-progress-bar {
+    height: 6px;
+    background: var(--bg-darker);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.achievement-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+/* Xbox green gradient variant */
+.achievement-progress-fill.xbox-fill {
+    background: linear-gradient(90deg, var(--neon-green), #14b873);
+}
+
+.achievement-progress-text {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* --- Per-Game Detail: Boxart Placeholder --- */
+.no-boxart-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    background: var(--bg-darker);
+    color: var(--text-muted);
+}
+
+/* --- Xbox Gamerscore Badges --- */
+.trophy-type-label.gamerscore-earned {
+    background: #ffd700;
+    color: #111;
+}
+
+.trophy-type-label.gamerscore-locked {
+    background: var(--bg-lighter);
+    color: var(--text-muted);
+}

@@ -1,0 +1,823 @@
+{% extends "base.html" %}
+
+{% block title %}Log Viewer - RetroDB{% endblock %}
+
+{% block styles %}
+<style>
+/* =============================================================================
+   LOG VIEWER PAGE
+   ============================================================================= */
+
+.log-viewer-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1rem;
+}
+
+.log-viewer-header h1 {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    color: var(--primary-cyan);
+    margin: 0;
+}
+
+/* =============================================================================
+   CATEGORY TABS
+   ============================================================================= */
+
+.log-category-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 1rem;
+    padding: 6px;
+    background: rgba(15, 20, 30, 0.6);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    flex-wrap: wrap;
+}
+
+.category-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.category-tab:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-secondary);
+}
+
+.category-tab.active {
+    background: rgba(76, 201, 240, 0.12);
+    border-color: rgba(76, 201, 240, 0.3);
+    color: var(--primary-cyan);
+}
+
+.category-tab[data-category="scraping"].active {
+    background: rgba(76, 201, 240, 0.12);
+    border-color: rgba(76, 201, 240, 0.3);
+    color: var(--primary-cyan);
+}
+
+.category-tab[data-category="rom_tools"].active {
+    background: rgba(168, 85, 247, 0.12);
+    border-color: rgba(168, 85, 247, 0.3);
+    color: var(--neon-purple);
+}
+
+.category-tab[data-category="rom_reports"].active {
+    background: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.3);
+    color: var(--neon-green);
+}
+
+.category-tab[data-category="image_resize"].active {
+    background: rgba(245, 158, 11, 0.12);
+    border-color: rgba(245, 158, 11, 0.3);
+    color: var(--neon-orange);
+}
+
+.category-tab[data-category="system"].active {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: var(--neon-red);
+}
+
+.category-tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.08);
+    font-size: 0.68rem;
+    font-family: var(--font-mono);
+    line-height: 1;
+}
+
+.category-tab.active .category-tab-count {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* =============================================================================
+   TOOLBAR
+   ============================================================================= */
+
+.log-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(135deg, rgba(15, 20, 30, 0.97), rgba(25, 35, 50, 0.97));
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: 14px 18px;
+    margin-bottom: 1rem;
+    backdrop-filter: blur(12px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+.toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toolbar-group label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.toolbar-separator {
+    width: 1px;
+    height: 28px;
+    background: var(--card-border);
+    flex-shrink: 0;
+}
+
+/* File select */
+.log-file-select {
+    background: var(--bg-darker);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    min-width: 220px;
+    cursor: pointer;
+}
+
+.log-file-select:focus {
+    border-color: var(--primary-cyan);
+    outline: none;
+    box-shadow: 0 0 8px rgba(76, 201, 240, 0.2);
+}
+
+/* File action buttons */
+.log-file-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.log-file-btn {
+    padding: 5px 8px;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    line-height: 1;
+}
+
+.log-file-btn:hover {
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+    background: rgba(76, 201, 240, 0.08);
+}
+
+.log-file-btn.delete-btn:hover {
+    border-color: var(--neon-red);
+    color: var(--neon-red);
+    background: rgba(239, 68, 68, 0.08);
+}
+
+/* Time inputs */
+.time-input {
+    background: var(--bg-darker);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    padding: 5px 8px;
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    width: 115px;
+}
+
+.time-input:focus {
+    border-color: var(--primary-cyan);
+    outline: none;
+}
+
+/* Module filter select */
+.log-module-select {
+    background: var(--bg-darker);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    min-width: 170px;
+    cursor: pointer;
+}
+
+.log-module-select:focus {
+    border-color: var(--primary-cyan);
+    outline: none;
+    box-shadow: 0 0 8px rgba(76, 201, 240, 0.2);
+}
+
+/* Reset button */
+.log-reset-btn {
+    padding: 5px 12px;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.log-reset-btn:hover {
+    border-color: var(--neon-red);
+    color: var(--neon-red);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* Level toggles */
+.level-toggles {
+    display: flex;
+    gap: 4px;
+}
+
+.level-btn {
+    padding: 4px 10px;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: var(--font-mono);
+}
+
+.level-btn.active {
+    color: #fff;
+}
+
+.level-btn[data-level="INFO"].active {
+    background: rgba(76, 201, 240, 0.2);
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+.level-btn[data-level="WARNING"].active {
+    background: rgba(245, 158, 11, 0.2);
+    border-color: var(--neon-orange);
+    color: var(--neon-orange);
+}
+
+.level-btn[data-level="ERROR"].active {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: var(--neon-red);
+    color: var(--neon-red);
+}
+
+/* View mode toggle */
+.view-toggle-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.view-toggle {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.view-btn {
+    padding: 4px 12px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.view-btn.active {
+    background: rgba(76, 201, 240, 0.2);
+    color: var(--primary-cyan);
+}
+
+.view-btn:not(:last-child) {
+    border-right: 1px solid var(--card-border);
+}
+
+/* Search */
+.log-search {
+    background: var(--bg-darker);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    min-width: 160px;
+    flex: 1;
+    max-width: 280px;
+}
+
+.log-search:focus {
+    border-color: var(--primary-cyan);
+    outline: none;
+    box-shadow: 0 0 8px rgba(76, 201, 240, 0.2);
+}
+
+.log-search::placeholder {
+    color: var(--text-muted);
+}
+
+/* =============================================================================
+   STATS BAR
+   ============================================================================= */
+
+.log-stats-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 10px 18px;
+    background: rgba(15, 20, 30, 0.6);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+}
+
+.log-stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+}
+
+.log-stat-value {
+    font-weight: 600;
+}
+
+.log-stat.info .log-stat-value { color: var(--primary-cyan); }
+.log-stat.warn .log-stat-value { color: var(--neon-orange); }
+.log-stat.error .log-stat-value { color: var(--neon-red); }
+.log-stat.sessions .log-stat-value { color: var(--neon-purple); }
+
+/* =============================================================================
+   LOG CONTAINER
+   ============================================================================= */
+
+.log-container {
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    background: rgba(10, 14, 20, 0.8);
+    min-height: 400px;
+    overflow: hidden;
+}
+
+.log-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    color: var(--text-muted);
+    gap: 12px;
+}
+
+.log-empty-icon {
+    font-size: 3rem;
+    opacity: 0.4;
+}
+
+.log-empty-text {
+    font-size: 1rem;
+    font-family: var(--font-display);
+}
+
+.log-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem;
+    color: var(--text-muted);
+    gap: 10px;
+}
+
+/* =============================================================================
+   LOG LINES (FLAT VIEW)
+   ============================================================================= */
+
+.log-line {
+    display: flex;
+    padding: 4px 14px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    line-height: 1.5;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    gap: 0;
+    transition: background 0.1s ease;
+    border-left: 3px solid transparent;
+}
+
+.log-line:nth-child(even) {
+    background: rgba(255, 255, 255, 0.01);
+}
+
+.log-line:hover {
+    background: rgba(76, 201, 240, 0.04);
+}
+
+.log-line.level-WARNING {
+    background: rgba(245, 158, 11, 0.04);
+    border-left-color: var(--neon-orange);
+}
+
+.log-line.level-ERROR {
+    background: rgba(239, 68, 68, 0.06);
+    border-left-color: var(--neon-red);
+}
+
+.log-line-number {
+    color: var(--text-muted);
+    opacity: 0.4;
+    min-width: 40px;
+    text-align: right;
+    padding-right: 10px;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+.log-line-time {
+    color: var(--text-secondary);
+    min-width: 70px;
+    flex-shrink: 0;
+    padding-right: 8px;
+}
+
+.log-line-level {
+    min-width: 60px;
+    flex-shrink: 0;
+    font-weight: 600;
+    padding-right: 8px;
+}
+
+.log-line-level.INFO { color: var(--primary-cyan); }
+.log-line-level.WARNING { color: var(--neon-orange); }
+.log-line-level.ERROR { color: var(--neon-red); }
+
+.log-line-module {
+    color: var(--neon-purple);
+    opacity: 0.7;
+    min-width: 140px;
+    max-width: 200px;
+    flex-shrink: 0;
+    padding-right: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.log-line-message {
+    color: var(--text-primary);
+    flex: 1;
+    min-width: 0;
+    word-break: break-word;
+}
+
+/* =============================================================================
+   SESSIONS (GROUPED VIEW)
+   ============================================================================= */
+
+.log-session {
+    border-bottom: 1px solid var(--card-border);
+}
+
+.log-session:last-child {
+    border-bottom: none;
+}
+
+.log-session-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    user-select: none;
+}
+
+.log-session-header:hover {
+    background: rgba(76, 201, 240, 0.06);
+}
+
+.session-toggle {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+    width: 16px;
+    text-align: center;
+}
+
+.log-session.open .session-toggle {
+    transform: rotate(90deg);
+}
+
+.session-title {
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.session-system {
+    color: var(--neon-purple);
+    font-size: 0.78rem;
+    flex-shrink: 0;
+}
+
+.session-time {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    flex-shrink: 0;
+}
+
+.session-badge {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.session-badge.success {
+    background: rgba(34, 197, 94, 0.15);
+    color: var(--neon-green);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.session-badge.skipped {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--neon-orange);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.session-badge.error {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--neon-red);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.session-badge.unknown {
+    background: rgba(100, 100, 120, 0.15);
+    color: var(--text-muted);
+    border: 1px solid rgba(100, 100, 120, 0.3);
+}
+
+.session-line-count {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    flex-shrink: 0;
+}
+
+.log-session-body {
+    display: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.log-session.open .log-session-body {
+    display: block;
+}
+
+/* =============================================================================
+   SEARCH HIGHLIGHT
+   ============================================================================= */
+
+.search-highlight {
+    background: rgba(245, 158, 11, 0.35);
+    color: #fff;
+    border-radius: 2px;
+    padding: 0 1px;
+}
+
+/* =============================================================================
+   RESPONSIVE
+   ============================================================================= */
+
+@media (max-width: 1200px) {
+    .log-toolbar {
+        padding: 10px 14px;
+    }
+
+    .log-line-module {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .log-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .toolbar-separator {
+        display: none;
+    }
+
+    .toolbar-group {
+        flex-wrap: wrap;
+    }
+
+    .log-file-select,
+    .log-module-select {
+        min-width: 100%;
+    }
+
+    .log-search {
+        max-width: 100%;
+    }
+
+    .log-line-number {
+        display: none;
+    }
+
+    .session-system {
+        display: none;
+    }
+
+    .log-category-tabs {
+        gap: 2px;
+        padding: 4px;
+    }
+
+    .category-tab {
+        padding: 5px 10px;
+        font-size: 0.72rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="log-viewer-header">
+    <h1>Log Viewer</h1>
+</div>
+
+<!-- Category Tabs -->
+<div class="log-category-tabs" id="categoryTabs">
+    <button class="category-tab active" data-category="" onclick="LogViewer.setCategory('', this)">
+        All <span class="category-tab-count" id="countAll">0</span>
+    </button>
+    <button class="category-tab" data-category="scraping" onclick="LogViewer.setCategory('scraping', this)">
+        Scraping <span class="category-tab-count" id="countScraping">0</span>
+    </button>
+    <button class="category-tab" data-category="rom_tools" onclick="LogViewer.setCategory('rom_tools', this)">
+        ROM Tools <span class="category-tab-count" id="countRomTools">0</span>
+    </button>
+    <button class="category-tab" data-category="rom_reports" onclick="LogViewer.setCategory('rom_reports', this)">
+        Reports <span class="category-tab-count" id="countReports">0</span>
+    </button>
+    <button class="category-tab" data-category="image_resize" onclick="LogViewer.setCategory('image_resize', this)">
+        Image Resize <span class="category-tab-count" id="countImageResize">0</span>
+    </button>
+    <button class="category-tab" data-category="system" onclick="LogViewer.setCategory('system', this)">
+        System <span class="category-tab-count" id="countSystem">0</span>
+    </button>
+</div>
+
+<!-- Toolbar -->
+<div class="log-toolbar">
+    <div class="toolbar-group">
+        <label>File</label>
+        <select id="logFileSelect" class="log-file-select">
+            <option value="">Loading...</option>
+        </select>
+        <div class="log-file-actions" id="fileActions" style="display: none;">
+            <button class="log-file-btn" onclick="LogViewer.downloadFile()" title="Download">Download</button>
+            <button class="log-file-btn delete-btn" onclick="LogViewer.deleteFile()" title="Delete">Delete</button>
+        </div>
+    </div>
+
+    <div class="toolbar-separator"></div>
+
+    <div class="toolbar-group">
+        <label>Time</label>
+        <input type="time" id="timeFrom" class="time-input" step="1" placeholder="From">
+        <span style="color: var(--text-muted); font-size: 0.8rem;">—</span>
+        <input type="time" id="timeTo" class="time-input" step="1" placeholder="To">
+    </div>
+
+    <div class="toolbar-separator"></div>
+
+    <div class="toolbar-group">
+        <label>Level</label>
+        <div class="level-toggles">
+            <button class="level-btn active" data-level="INFO" onclick="LogViewer.toggleLevel('INFO', this)">INFO</button>
+            <button class="level-btn active" data-level="WARNING" onclick="LogViewer.toggleLevel('WARNING', this)">WARN</button>
+            <button class="level-btn active" data-level="ERROR" onclick="LogViewer.toggleLevel('ERROR', this)">ERROR</button>
+        </div>
+    </div>
+
+    <div class="toolbar-separator"></div>
+
+    <div class="toolbar-group">
+        <label>Source</label>
+        <select id="logModuleFilter" class="log-module-select" onchange="LogViewer.setModuleFilter(this.value)">
+            <option value="">All Sources</option>
+        </select>
+    </div>
+
+    <div class="toolbar-separator"></div>
+
+    <div class="toolbar-group view-toggle-group" id="viewToggleGroup">
+        <label>View</label>
+        <div class="view-toggle">
+            <button class="view-btn active" data-view="grouped" onclick="LogViewer.setView('grouped', this)">Grouped</button>
+            <button class="view-btn" data-view="flat" onclick="LogViewer.setView('flat', this)">Flat</button>
+        </div>
+    </div>
+
+    <div class="toolbar-separator" id="viewToggleSep"></div>
+
+    <div class="toolbar-group" style="flex: 1;">
+        <label>Search</label>
+        <input type="text" id="logSearch" class="log-search" placeholder="Filter log lines...">
+    </div>
+
+    <button class="log-reset-btn" onclick="LogViewer.resetFilters()">Reset</button>
+</div>
+
+<!-- Stats Bar -->
+<div class="log-stats-bar" id="logStatsBar" style="display: none;">
+    <div class="log-stat">
+        <span>Total:</span>
+        <span class="log-stat-value" id="statTotal">0</span>
+    </div>
+    <div class="log-stat">
+        <span>Showing:</span>
+        <span class="log-stat-value" id="statShowing">0</span>
+    </div>
+    <div class="log-stat info">
+        <span>INFO:</span>
+        <span class="log-stat-value" id="statInfo">0</span>
+    </div>
+    <div class="log-stat warn">
+        <span>WARN:</span>
+        <span class="log-stat-value" id="statWarn">0</span>
+    </div>
+    <div class="log-stat error">
+        <span>ERROR:</span>
+        <span class="log-stat-value" id="statError">0</span>
+    </div>
+    <div class="log-stat sessions" id="statSessionsWrap">
+        <span>Sessions:</span>
+        <span class="log-stat-value" id="statSessions">0</span>
+    </div>
+</div>
+
+<!-- Log Content -->
+<div class="log-container" id="logContainer">
+    <div class="log-empty">
+        <div class="log-empty-icon">Select a log file to view</div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/log-viewer.js') }}?v={{ config.APP_VERSION }}"></script>
+{% endblock %}

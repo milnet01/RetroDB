@@ -1,0 +1,2807 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Sticky Analytics Navigation -->
+<nav class="analytics-nav" id="analyticsNav" data-sticky-nav>
+    <a href="#summary" class="analytics-nav-link active" data-section="summary"><span class="tab-icon">📊</span> <span class="tab-label">Summary</span></a>
+    <a href="#charts" class="analytics-nav-link" data-section="charts"><span class="tab-icon">📈</span> <span class="tab-label">Charts</span></a>
+    <a href="#developers" class="analytics-nav-link" data-section="developers"><span class="tab-icon">🏢</span> <span class="tab-label">Developers</span></a>
+    <a href="#gameplay" class="analytics-nav-link" data-section="gameplay"><span class="tab-icon">🎯</span> <span class="tab-label">Gameplay</span></a>
+    <a href="#playtime" class="analytics-nav-link" data-section="playtime"><span class="tab-icon">⏱️</span> <span class="tab-label">Playtime</span></a>
+    <a href="#reviewscores" class="analytics-nav-link" data-section="reviewscores"><span class="tab-icon">⭐</span> <span class="tab-label">Review Scores</span></a>
+    <a href="#ageratings" class="analytics-nav-link" data-section="ageratings"><span class="tab-icon">🔞</span> <span class="tab-label">Age Ratings</span></a>
+    <a href="#retroachievements" class="analytics-nav-link" data-section="retroachievements"><span class="tab-icon">🏆</span> <span class="tab-label">Achievements</span></a>
+    <a href="#dataquality" class="analytics-nav-link" data-section="dataquality"><span class="tab-icon">📋</span> <span class="tab-label">Data Quality</span></a>
+    <a href="#growth" class="analytics-nav-link" data-section="growth"><span class="tab-icon">🌱</span> <span class="tab-label">Growth</span></a>
+    <a href="#storage" class="analytics-nav-link" data-section="storage"><span class="tab-icon">💾</span> <span class="tab-label">Storage</span></a>
+    <a href="#leaderboards" class="analytics-nav-link" data-section="leaderboards"><span class="tab-icon">🥇</span> <span class="tab-label">Leaderboards</span></a>
+</nav>
+
+<!-- Page Header -->
+<div class="page-header" id="summary">
+    <div>
+        <h1 class="page-title">Collection Analytics</h1>
+        <p class="page-subtitle">Insights into your retro gaming library</p>
+    </div>
+    <div class="page-actions">
+        <div class="export-dropdown" id="exportDropdown">
+            <button class="btn btn-secondary" onclick="toggleExportMenu()">
+                <span class="btn-icon">&#128230;</span>
+                Export
+            </button>
+            <div class="export-menu" id="exportMenu">
+                <button class="export-menu-item" onclick="exportAsPNG()">
+                    <span class="export-icon">&#128444;</span>
+                    <div>
+                        <div class="export-item-title">PNG Infographic</div>
+                        <div class="export-item-desc">Save as shareable image</div>
+                    </div>
+                </button>
+                <button class="export-menu-item" onclick="exportToClipboard()">
+                    <span class="export-icon">&#128203;</span>
+                    <div>
+                        <div class="export-item-title">Copy to Clipboard</div>
+                        <div class="export-item-desc">Forum-ready text stats</div>
+                    </div>
+                </button>
+                <button class="export-menu-item" onclick="exportAsCSV()">
+                    <span class="export-icon">&#128196;</span>
+                    <div>
+                        <div class="export-item-title">CSV Export</div>
+                        <div class="export-item-desc">Data for spreadsheets</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+        <button class="btn btn-secondary" onclick="refreshAnalytics()">
+            <span class="btn-icon">🔄</span>
+            Refresh
+        </button>
+    </div>
+</div>
+
+<!-- Summary Stats -->
+<div class="stats-grid analytics-summary">
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-label">Total Games</span>
+            <div class="stat-icon">🎮</div>
+        </div>
+        <div class="stat-value">{{ stats.total_games|format_number }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-label">Total Systems</span>
+            <div class="stat-icon">🖥️</div>
+        </div>
+        <div class="stat-value">{{ stats.total_systems|format_number }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-label">Total Storage</span>
+            <div class="stat-icon">💾</div>
+        </div>
+        <div class="stat-value">{{ stats.total_storage }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-label">Completion Rate</span>
+            <div class="stat-icon">📊</div>
+        </div>
+        <div class="stat-value">{{ stats.completion_rate }}%</div>
+    </div>
+</div>
+
+<!-- Charts Row 1 -->
+<div class="analytics-row" id="charts">
+    <!-- Games by Platform Manufacturer -->
+    <div class="card analytics-card">
+        <div class="card-header">
+            <h3 class="card-title">📊 Games by Manufacturer</h3>
+        </div>
+        <div class="chart-container">
+            <canvas id="manufacturerChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Games by Decade -->
+    <div class="card analytics-card">
+        <div class="card-header">
+            <h3 class="card-title">📅 Games by Decade</h3>
+        </div>
+        <div class="chart-container">
+            <canvas id="decadeChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row 2 -->
+<div class="analytics-row">
+    <!-- Games by Genre -->
+    <div class="card analytics-card">
+        <div class="card-header">
+            <h3 class="card-title">🎭 Top Genres</h3>
+        </div>
+        <div class="chart-container">
+            <canvas id="genreChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Completion Status -->
+    <div class="card analytics-card">
+        <div class="card-header">
+            <h3 class="card-title">✅ Completion Status</h3>
+        </div>
+        <div class="chart-container">
+            <canvas id="completionChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row 3 - Year-by-Year Timeline -->
+<div class="analytics-row">
+    <div class="card analytics-card" style="grid-column: 1 / -1;">
+        <div class="card-header">
+            <h3 class="card-title">📅 Release Timeline</h3>
+        </div>
+        <div class="chart-container">
+            <canvas id="yearTimelineChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Developers Section -->
+<div class="card analytics-card-full" id="developers">
+    <div class="card-header">
+        <h3 class="card-title">🏢 Developers &amp; Publishers</h3>
+    </div>
+
+    <div class="devpub-charts-grid">
+        <!-- Top Developers -->
+        <div class="devpub-chart-section">
+            <h4>Top 15 Developers</h4>
+            <div class="chart-container-tall">
+                <canvas id="devChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Top Publishers -->
+        <div class="devpub-chart-section">
+            <h4>Top 15 Publishers</h4>
+            <div class="chart-container-tall">
+                <canvas id="pubChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Franchises -->
+    <div class="devpub-franchise-section">
+        <h4>Top 15 Franchises</h4>
+        <div class="chart-container-tall">
+            <canvas id="franchiseChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Gameplay Section -->
+<div class="card analytics-card-full" id="gameplay">
+    <div class="card-header">
+        <h3 class="card-title">🎯 Gameplay Analysis</h3>
+    </div>
+
+    <div class="gameplay-charts-grid">
+        <!-- Perspective -->
+        <div class="gameplay-chart-section">
+            <h4>Perspective</h4>
+            <div class="chart-container">
+                <canvas id="perspChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Dimension -->
+        <div class="gameplay-chart-section">
+            <h4>Dimension</h4>
+            <div class="chart-container">
+                <canvas id="dimChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Game Modes -->
+        <div class="gameplay-chart-section">
+            <h4>Game Modes</h4>
+            <div class="chart-container">
+                <canvas id="modesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Player Count -->
+        <div class="gameplay-chart-section">
+            <h4>Player Count</h4>
+            <div class="chart-container">
+                <canvas id="playerChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Region Distribution -->
+        <div class="gameplay-chart-section">
+            <h4>Region Distribution</h4>
+            <div class="chart-container">
+                <canvas id="regionChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Playtime Section -->
+<div class="card analytics-card-full" id="playtime">
+    <div class="card-header">
+        <h3 class="card-title">⏱️ Playtime Analysis</h3>
+    </div>
+
+    <div class="playtime-stats-overview">
+        <div class="playtime-stat-box">
+            <div class="playtime-stat-value">{{ avg_length or 'N/A' }}{% if avg_length %}<span class="playtime-unit"> hrs</span>{% endif %}</div>
+            <div class="playtime-stat-label">Average Game Length</div>
+        </div>
+        <div class="playtime-stat-box">
+            <div class="playtime-stat-value">{{ games_with_hltb|format_number }}</div>
+            <div class="playtime-stat-label">Games with HLTB Data</div>
+        </div>
+    </div>
+
+    <div class="playtime-chart-section">
+        <h4>Game Length Distribution</h4>
+        <div class="chart-container-wide">
+            <canvas id="lengthChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Review Scores Section -->
+<div class="card analytics-card-full" id="reviewscores">
+    <div class="card-header">
+        <h3 class="card-title">⭐ Review Scores Analysis</h3>
+    </div>
+
+    <!-- Score Stats Overview -->
+    <div class="score-stats-overview">
+        <div class="score-stat-box">
+            <div class="score-stat-value">{{ (score_stats.games_with_critic or 0)|format_number }}</div>
+            <div class="score-stat-label">Games with Critic Scores</div>
+        </div>
+        <div class="score-stat-box">
+            <div class="score-stat-value {% if score_stats.avg_critic and score_stats.avg_critic >= 75 %}score-good{% elif score_stats.avg_critic and score_stats.avg_critic >= 50 %}score-mixed{% else %}score-bad{% endif %}">
+                {{ score_stats.avg_critic or 'N/A' }}{% if score_stats.avg_critic %}<span class="score-unit"> / 100</span>{% endif %}
+            </div>
+            <div class="score-stat-label">Average Critic Score</div>
+        </div>
+        <div class="score-stat-box">
+            <div class="score-stat-value {% if score_stats.avg_user and score_stats.avg_user >= 75 %}score-good{% elif score_stats.avg_user and score_stats.avg_user >= 50 %}score-mixed{% else %}score-bad{% endif %}">
+                {{ score_stats.avg_user or 'N/A' }}{% if score_stats.avg_user %}<span class="score-unit"> / 100</span>{% endif %}
+            </div>
+            <div class="score-stat-label">Average User Score</div>
+        </div>
+        <div class="score-stat-box">
+            <div class="score-stat-value">{{ (score_stats.games_with_user or 0)|format_number }}</div>
+            <div class="score-stat-label">Games with User Scores</div>
+        </div>
+    </div>
+
+    <div class="score-charts-grid">
+        <!-- Score Distribution Chart -->
+        <div class="score-chart-section">
+            <h4>Critic Score Distribution</h4>
+            <div class="chart-container">
+                <canvas id="scoreDistChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Scores by System Chart -->
+        <div class="score-chart-section">
+            <h4>Average Scores by System</h4>
+            <div class="chart-container">
+                <canvas id="scoreSystemChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Critic vs User Scatter Plot -->
+    <div class="score-scatter-section">
+        <h4>Critic vs User Score Comparison</h4>
+        <div class="chart-container-wide">
+            <canvas id="scoreScatterChart"></canvas>
+        </div>
+    </div>
+
+    <div class="score-lists-grid">
+        <!-- Top Rated Games -->
+        <div class="score-list-section">
+            <h4>🏆 Highest Rated Games</h4>
+            <div class="score-list">
+                {% for game in top_rated_games %}
+                <a href="{{ url_for('games.game_detail', game_id=game.id) }}" class="score-list-item">
+                    <div class="score-game-info">
+                        <span class="score-game-title">{{ game.title[:40] }}{% if game.title|length > 40 %}...{% endif %}</span>
+                        <span class="score-game-system">{{ game.system_name }}</span>
+                    </div>
+                    <div class="score-game-scores">
+                        <span class="game-badge score-badge {% if game.critic_score >= 75 %}score-good{% elif game.critic_score >= 50 %}score-mixed{% else %}score-bad{% endif %}">⭐ {{ game.critic_score|round|int }}</span>
+                        {% if game.user_score %}
+                        <span class="game-badge score-badge {% if game.user_score >= 75 %}score-good{% elif game.user_score >= 50 %}score-mixed{% else %}score-bad{% endif %}">👤 {{ game.user_score|round|int }}</span>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Lowest Rated Games -->
+        <div class="score-list-section">
+            <h4>📉 Lowest Rated Games</h4>
+            <div class="score-list">
+                {% for game in lowest_rated_games %}
+                <a href="{{ url_for('games.game_detail', game_id=game.id) }}" class="score-list-item">
+                    <div class="score-game-info">
+                        <span class="score-game-title">{{ game.title[:40] }}{% if game.title|length > 40 %}...{% endif %}</span>
+                        <span class="score-game-system">{{ game.system_name }}</span>
+                    </div>
+                    <div class="score-game-scores">
+                        <span class="game-badge score-badge {% if game.critic_score >= 75 %}score-good{% elif game.critic_score >= 50 %}score-mixed{% else %}score-bad{% endif %}">⭐ {{ game.critic_score|round|int }}</span>
+                        {% if game.user_score %}
+                        <span class="game-badge score-badge {% if game.user_score >= 75 %}score-good{% elif game.user_score >= 50 %}score-mixed{% else %}score-bad{% endif %}">👤 {{ game.user_score|round|int }}</span>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Age Ratings Section -->
+<div class="card analytics-card-full" id="ageratings">
+    <div class="card-header">
+        <h3 class="card-title">🔞 Age Ratings Analysis</h3>
+    </div>
+
+    <!-- Age Rating Stats Overview -->
+    <div class="age-stats-overview">
+        <div class="age-stat-box">
+            <div class="age-stat-value rating-primary-color">{{ rating_total|format_number }}</div>
+            <div class="age-stat-label">Games with {{ pref_rating_name }}</div>
+        </div>
+        <div class="age-stat-box">
+            <div class="age-stat-value rating-highlight-color">{{ top_rating }}</div>
+            <div class="age-stat-label">Most Common Rating</div>
+        </div>
+        <div class="age-stat-box">
+            <div class="age-stat-value unrated-color">{{ no_rating_count|format_number }}</div>
+            <div class="age-stat-label">No Rating</div>
+        </div>
+        <div class="age-stat-box">
+            <div class="age-stat-value">{{ ((stats.total_games - no_rating_count) / stats.total_games * 100)|round|int if stats.total_games > 0 else 0 }}%</div>
+            <div class="age-stat-label">Rating Coverage</div>
+        </div>
+    </div>
+
+    <div class="age-charts-grid">
+        <!-- Rating Distribution Chart -->
+        <div class="age-chart-section">
+            <h4>{{ pref_rating_name }} Rating Distribution</h4>
+            <div class="chart-container">
+                <canvas id="ratingDistChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Content Maturity by System -->
+        <div class="age-chart-section">
+            <h4>Content Maturity by System</h4>
+            <div class="chart-container">
+                <canvas id="ageSystemChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- RetroAchievements Section -->
+<div class="card analytics-card-full ra-section" id="retroachievements">
+    <div class="card-header">
+        <h3 class="card-title">🏆 RetroAchievements Coverage</h3>
+    </div>
+    <div class="ra-overview">
+        <div class="ra-stat-box">
+            <div class="ra-stat-value">{{ ra_total|format_number }}</div>
+            <div class="ra-stat-label">Games with Achievements</div>
+        </div>
+        <div class="ra-stat-box">
+            <div class="ra-stat-value">{{ ra_percentage }}%</div>
+            <div class="ra-stat-label">Library Coverage</div>
+        </div>
+        <div class="ra-stat-box">
+            <div class="ra-stat-value">{{ ra_system_labels|length }}</div>
+            <div class="ra-stat-label">Systems with RA Games</div>
+        </div>
+    </div>
+
+    <div class="ra-grid">
+        <div class="ra-chart-section">
+            <h4>Games with RetroAchievements by System</h4>
+            <div class="chart-container-ra">
+                <canvas id="raChart"></canvas>
+            </div>
+        </div>
+
+        <div class="ra-coverage-section">
+            <h4>RA Coverage by System</h4>
+            <div class="ra-coverage-list">
+                {% for sys in ra_coverage %}
+                <div class="ra-coverage-item">
+                    <div class="ra-coverage-name">{{ sys.name }}</div>
+                    <div class="ra-coverage-bar-container">
+                        <div class="ra-coverage-bar" style="width: {{ sys.coverage }}%"></div>
+                    </div>
+                    <div class="ra-coverage-stats">
+                        <span class="ra-count">{{ sys.ra_games|format_number }} / {{ sys.total_games|format_number }}</span>
+                        <span class="ra-percent">{{ sys.coverage }}%</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Data Quality Section -->
+<div class="card analytics-card-full" id="dataquality">
+    <div class="card-header">
+        <h3 class="card-title">📋 Data Quality</h3>
+    </div>
+
+    <div class="metadata-grid">
+        <!-- Radar Chart -->
+        <div class="metadata-radar-section">
+            <h4>Completeness Overview</h4>
+            <div class="chart-container-radar">
+                <canvas id="metadataRadarChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Progress Bars -->
+        <div class="metadata-bars-section">
+            <h4>Field Completeness</h4>
+            <div class="metadata-bars-list">
+                {% set mq = metadata_quality or {} %}
+                {% set fields = [
+                    ('Description', mq.get('description', 0)),
+                    ('Boxart', mq.get('boxart', 0)),
+                    ('Genre', mq.get('genre', 0)),
+                    ('Developer', mq.get('developer', 0)),
+                    ('Publisher', mq.get('publisher', 0)),
+                    ('Release Date', mq.get('release_date', 0)),
+                    ('Screenshots', mq.get('screenshots', 0)),
+                    ('Fanart', mq.get('fanart', 0)),
+                    ('Video', mq.get('video', 0)),
+                    ('Manual', mq.get('manual', 0)),
+                    ('HLTB', mq.get('hltb', 0)),
+                    ('Ratings', mq.get('ratings', 0)),
+                    ('Modes', mq.get('modes', 0)),
+                    ('Region', mq.get('region', 0))
+                ] %}
+                {% for label, pct in fields %}
+                <div class="metadata-bar-item">
+                    <div class="metadata-bar-header">
+                        <span class="metadata-bar-label">{{ label }}</span>
+                        <span class="metadata-bar-value {% if pct >= 75 %}meta-good{% elif pct >= 40 %}meta-mixed{% else %}meta-low{% endif %}">{{ pct }}%</span>
+                    </div>
+                    <div class="metadata-bar-track">
+                        <div class="metadata-bar-fill {% if pct >= 75 %}meta-good{% elif pct >= 40 %}meta-mixed{% else %}meta-low{% endif %}" style="width: {{ pct }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Minor Stats & Save Type Chart -->
+    <div class="dq-extras">
+        <div class="dq-extras-stats">
+            <div class="dq-extras-stat-box">
+                <div class="dq-extras-stat-value">{{ bonus_count|format_number }}</div>
+                <div class="dq-extras-stat-label">Bonus Discs</div>
+            </div>
+            <div class="dq-extras-stat-box">
+                <div class="dq-extras-stat-value">{{ edition_count|format_number }}</div>
+                <div class="dq-extras-stat-label">Special Editions</div>
+            </div>
+        </div>
+        <div class="dq-extras-chart">
+            <h4>Save Type Distribution</h4>
+            <div class="chart-container-wide">
+                <canvas id="saveTypeChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Growth Section -->
+<div class="card analytics-card-full" id="growth">
+    <div class="card-header">
+        <h3 class="card-title">🌱 Collection Growth</h3>
+    </div>
+    <div class="growth-chart-section">
+        <div class="chart-container-wide">
+            <canvas id="growthChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Storage Analysis -->
+<div class="card analytics-card-full" id="storage">
+    <div class="card-header">
+        <h3 class="card-title">💾 Storage by System</h3>
+    </div>
+    <div class="storage-analysis">
+        <div class="chart-container-wide">
+            <canvas id="storageChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Leaderboards Section -->
+<div class="card analytics-card-full" id="leaderboards">
+    <div class="card-header">
+        <h3 class="card-title">🥇 Leaderboards</h3>
+    </div>
+
+    <div class="leaderboards-grid">
+        <!-- Top Systems Table -->
+        <div class="leaderboard-section">
+            <h4>Top Systems by Game Count</h4>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>System</th>
+                            <th>Manufacturer</th>
+                            <th>Games</th>
+                            <th>Storage</th>
+                            <th>Avg Size</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for system in top_systems %}
+                        <tr>
+                            <td><span class="rank-badge">{{ loop.index }}</span></td>
+                            <td>
+                                <a href="{{ url_for('systems.system_games', system_id=system.id) }}">{{ system.name }}</a>
+                            </td>
+                            <td>{{ system.manufacturer or 'Unknown' }}</td>
+                            <td>{{ system.game_count|format_number }}</td>
+                            <td>{{ system.storage_formatted }}</td>
+                            <td>{{ system.avg_size_formatted }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Largest Games Table -->
+        <div class="leaderboard-section">
+            <h4>Largest Games</h4>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Game</th>
+                            <th>System</th>
+                            <th>Size</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for game in largest_games %}
+                        <tr>
+                            <td><span class="rank-badge">{{ loop.index }}</span></td>
+                            <td>
+                                <a href="{{ url_for('games.game_detail', game_id=game.id) }}">{{ game.title }}</a>
+                            </td>
+                            <td>{{ game.system_name }}</td>
+                            <td>{{ game.size_formatted }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+/* Sticky Analytics Navigation - matches standard tab pattern */
+.analytics-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-sm);
+    background: color-mix(in srgb, var(--card-bg) 90%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.analytics-nav-link {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.analytics-nav-link:hover {
+    background: rgba(76, 201, 240, 0.05);
+    border-color: rgba(76, 201, 240, 0.3);
+    color: var(--text-primary);
+}
+
+.analytics-nav-link.active {
+    background: rgba(76, 201, 240, 0.15);
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+@media (max-width: 768px) {
+    .analytics-nav {
+        gap: var(--spacing-xs);
+        padding: var(--spacing-xs);
+    }
+
+    .analytics-nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    .analytics-nav-link .tab-label {
+        display: none;
+    }
+
+    .analytics-nav-link .tab-icon {
+        font-size: 1.25rem;
+    }
+}
+
+.analytics-summary {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 1200px) {
+    .analytics-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .analytics-summary {
+        grid-template-columns: 1fr;
+    }
+}
+
+.analytics-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 1fr;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+/* Override the global .card + .card margin for grid rows */
+.analytics-row .card + .card {
+    margin-top: 0;
+}
+
+@media (max-width: 1000px) {
+    .analytics-row {
+        grid-template-columns: 1fr;
+        grid-auto-rows: auto;
+    }
+
+    /* Restore margin for single-column layout */
+    .analytics-row .card + .card {
+        margin-top: var(--spacing-xl);
+    }
+}
+
+.analytics-card {
+    height: 420px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.analytics-card .card-header {
+    flex-shrink: 0;
+}
+
+.analytics-card .chart-container {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.analytics-card-full {
+    margin-bottom: var(--spacing-xl);
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    padding: var(--spacing-md);
+}
+
+.chart-container-wide {
+    position: relative;
+    height: 350px;
+    padding: var(--spacing-md);
+}
+
+.storage-analysis {
+    overflow-x: auto;
+}
+
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: var(--bg-lighter);
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+}
+
+tr:nth-child(1) .rank-badge {
+    background: linear-gradient(135deg, #ffd700, #ffb700);
+    color: #1a1a1a;
+}
+
+tr:nth-child(2) .rank-badge {
+    background: linear-gradient(135deg, #c0c0c0, #a0a0a0);
+    color: #1a1a1a;
+}
+
+tr:nth-child(3) .rank-badge {
+    background: linear-gradient(135deg, #cd7f32, #b87333);
+    color: #1a1a1a;
+}
+
+.table-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* RetroAchievements Section */
+.ra-section {
+    border-color: rgba(255, 193, 7, 0.3);
+}
+
+.ra-overview {
+    display: flex;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.05), rgba(255, 193, 7, 0.02));
+    border-bottom: 1px solid var(--card-border);
+    flex-wrap: wrap;
+}
+
+.ra-stat-box {
+    text-align: center;
+    flex: 1;
+    min-width: 150px;
+}
+
+.ra-stat-value {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #ffc107;
+    text-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+}
+
+.ra-stat-label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: var(--spacing-xs);
+}
+
+.ra-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-lg);
+}
+
+@media (max-width: 1024px) {
+    .ra-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.ra-chart-section h4,
+.ra-coverage-section h4 {
+    color: var(--text-primary);
+    font-size: 1rem;
+    margin-bottom: var(--spacing-md);
+    font-weight: 600;
+}
+
+.chart-container-ra {
+    position: relative;
+    height: 300px;
+}
+
+.ra-coverage-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.ra-coverage-item {
+    display: grid;
+    grid-template-columns: 140px 1fr 100px;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-sm);
+}
+
+.ra-coverage-name {
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ra-coverage-bar-container {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.ra-coverage-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #ffc107, #ffdb4d);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.ra-coverage-stats {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+    font-size: 0.75rem;
+}
+
+.ra-count {
+    color: var(--text-muted);
+}
+
+.ra-percent {
+    color: #ffc107;
+    font-weight: 600;
+    min-width: 40px;
+    text-align: right;
+}
+
+/* Table link readability */
+.data-table td a {
+    color: var(--primary-cyan);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.data-table td a:hover {
+    color: var(--primary-cyan-light);
+    text-decoration: underline;
+}
+
+/* ============================================== */
+/* REVIEW SCORES SECTION */
+/* ============================================== */
+
+.score-stats-overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-xl);
+}
+
+.score-stat-box {
+    text-align: center;
+    padding: var(--spacing-md);
+}
+
+.score-stat-value {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-cyan);
+    margin-bottom: var(--spacing-xs);
+}
+
+.score-stat-value.score-good { color: var(--neon-green); }
+.score-stat-value.score-mixed { color: #eab308; }
+.score-stat-value.score-bad { color: var(--neon-red); }
+
+.score-stat-value .score-unit {
+    font-size: 1rem;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.score-stat-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.score-charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.score-chart-section h4 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.score-scatter-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.score-scatter-section h4 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.score-lists-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+}
+
+.score-list-section h4 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.score-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.score-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--card-border);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.score-list-item:hover {
+    background: rgba(76, 201, 240, 0.1);
+    border-color: var(--primary-cyan);
+}
+
+.score-game-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+}
+
+.score-game-title {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.score-game-system {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.score-game-scores {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-shrink: 0;
+}
+
+/* Score badges in analytics */
+#reviewscores .score-badge {
+    padding: 3px 8px;
+    font-size: 0.7rem;
+}
+
+@media (max-width: 1200px) {
+    .score-stats-overview {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .score-charts-grid,
+    .score-lists-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .score-stats-overview {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================== */
+/* AGE RATINGS SECTION */
+/* ============================================== */
+
+.age-stats-overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-xl);
+}
+
+.age-stat-box {
+    text-align: center;
+    padding: var(--spacing-md);
+}
+
+.age-stat-value {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-cyan);
+    margin-bottom: var(--spacing-xs);
+}
+
+.age-stat-value.rating-primary-color { color: var(--neon-cyan); }
+.age-stat-value.rating-highlight-color { color: var(--neon-green); }
+.age-stat-value.unrated-color { color: var(--text-muted); }
+
+.age-stat-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.age-charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.age-chart-section h4 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+
+@media (max-width: 1200px) {
+    .age-stats-overview {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .age-charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .age-stats-overview {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================== */
+/* DEVELOPERS & PUBLISHERS SECTION */
+/* ============================================== */
+
+.devpub-charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.devpub-chart-section h4,
+.devpub-franchise-section h4 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.devpub-franchise-section {
+    margin-top: var(--spacing-lg);
+}
+
+.chart-container-tall {
+    position: relative;
+    height: 420px;
+    padding: var(--spacing-md);
+}
+
+@media (max-width: 1200px) {
+    .devpub-charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================== */
+/* GAMEPLAY SECTION */
+/* ============================================== */
+
+.gameplay-charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+}
+
+.gameplay-chart-section h4 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+@media (max-width: 1200px) {
+    .gameplay-charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================== */
+/* PLAYTIME SECTION */
+/* ============================================== */
+
+.playtime-stats-overview {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-xl);
+}
+
+.playtime-stat-box {
+    text-align: center;
+    padding: var(--spacing-md);
+}
+
+.playtime-stat-value {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-cyan);
+    margin-bottom: var(--spacing-xs);
+}
+
+.playtime-stat-value .playtime-unit {
+    font-size: 1rem;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.playtime-stat-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.playtime-chart-section h4 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ============================================== */
+/* DATA QUALITY SECTION (Metadata + Technical) */
+/* ============================================== */
+
+.metadata-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-lg);
+}
+
+.metadata-radar-section h4,
+.metadata-bars-section h4 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.chart-container-radar {
+    position: relative;
+    height: 350px;
+    padding: var(--spacing-md);
+}
+
+.metadata-bars-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.metadata-bar-item {
+    padding: var(--spacing-xs) 0;
+}
+
+.metadata-bar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.metadata-bar-label {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.metadata-bar-value {
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.metadata-bar-value.meta-good { color: var(--neon-green); }
+.metadata-bar-value.meta-mixed { color: #eab308; }
+.metadata-bar-value.meta-low { color: var(--neon-red); }
+
+.metadata-bar-track {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.metadata-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.metadata-bar-fill.meta-good { background: linear-gradient(90deg, var(--neon-green), #4ade80); }
+.metadata-bar-fill.meta-mixed { background: linear-gradient(90deg, #eab308, #facc15); }
+.metadata-bar-fill.meta-low { background: linear-gradient(90deg, var(--neon-red), #f87171); }
+
+@media (max-width: 1200px) {
+    .metadata-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Data Quality extras (save types, bonus/edition counts) */
+.dq-extras {
+    padding: 0 var(--spacing-lg) var(--spacing-lg);
+    border-top: 1px solid var(--card-border);
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+}
+
+.dq-extras-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-xl);
+}
+
+.dq-extras-stat-box {
+    text-align: center;
+    padding: var(--spacing-md);
+}
+
+.dq-extras-stat-value {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-cyan);
+    margin-bottom: var(--spacing-xs);
+}
+
+.dq-extras-stat-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dq-extras-chart h4 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ============================================== */
+/* GROWTH SECTION */
+/* ============================================== */
+
+.growth-chart-section {
+    padding: var(--spacing-md);
+}
+
+/* ============================================== */
+/* LEADERBOARDS SECTION */
+/* ============================================== */
+
+.leaderboards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-lg);
+}
+
+.leaderboard-section h4 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+@media (max-width: 1200px) {
+    .leaderboards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Export Dropdown */
+.export-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.export-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: var(--bg-darker);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    min-width: 240px;
+    z-index: 100;
+    padding: var(--spacing-xs);
+    animation: fadeIn 0.15s ease-out;
+}
+
+.export-menu.active {
+    display: block;
+}
+
+.export-menu-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    text-align: left;
+    font-family: var(--font-primary);
+}
+
+.export-menu-item:hover {
+    background: var(--bg-light);
+}
+
+.export-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    width: 28px;
+    text-align: center;
+}
+
+.export-item-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.export-item-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Chart.js default config for cyberpunk theme
+Chart.defaults.color = '#9aa0a6';
+Chart.defaults.borderColor = 'rgba(42, 53, 66, 0.5)';
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.legend.labels.padding = 20;
+
+// Color palette matching the cyberpunk theme
+const chartColors = {
+    cyan: 'rgba(76, 201, 240, 0.8)',
+    magenta: 'rgba(247, 37, 133, 0.8)',
+    purple: 'rgba(114, 9, 183, 0.8)',
+    green: 'rgba(34, 197, 94, 0.8)',
+    orange: 'rgba(245, 158, 11, 0.8)',
+    red: 'rgba(239, 68, 68, 0.8)',
+    blue: 'rgba(59, 130, 246, 0.8)',
+    teal: 'rgba(20, 184, 166, 0.8)',
+    pink: 'rgba(236, 72, 153, 0.8)',
+    yellow: 'rgba(234, 179, 8, 0.8)'
+};
+
+const colorArray = Object.values(chartColors);
+
+// Manufacturer Chart (Doughnut)
+const manufacturerCtx = document.getElementById('manufacturerChart');
+if (manufacturerCtx) {
+    new Chart(manufacturerCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ manufacturer_labels|tojson }},
+            datasets: [{
+                data: {{ manufacturer_data|tojson }},
+                backgroundColor: colorArray,
+                borderWidth: 2,
+                borderColor: '#0a0e17'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+}
+
+// Decade Chart (Bar)
+const decadeCtx = document.getElementById('decadeChart');
+if (decadeCtx) {
+    new Chart(decadeCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ decade_labels|tojson }},
+            datasets: [{
+                label: 'Games',
+                data: {{ decade_data|tojson }},
+                backgroundColor: chartColors.cyan,
+                borderColor: '#4cc9f0',
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(42, 53, 66, 0.3)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Genre Chart (Horizontal Bar)
+const genreCtx = document.getElementById('genreChart');
+if (genreCtx) {
+    new Chart(genreCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ genre_labels|tojson }},
+            datasets: [{
+                label: 'Games',
+                data: {{ genre_data|tojson }},
+                backgroundColor: colorArray,
+                borderWidth: 0,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(42, 53, 66, 0.3)'
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Completion Chart (Doughnut)
+const completionCtx = document.getElementById('completionChart');
+if (completionCtx) {
+    new Chart(completionCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Not Started', 'In Progress', 'Played', 'Completed', '100%'],
+            datasets: [{
+                data: {{ completion_data|tojson }},
+                backgroundColor: [
+                    'rgba(100, 116, 139, 0.8)',
+                    'rgba(245, 158, 11, 0.8)',
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(34, 197, 94, 0.8)',
+                    'rgba(76, 201, 240, 0.8)'
+                ],
+                borderWidth: 2,
+                borderColor: '#0a0e17'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+}
+
+// Year-by-Year Release Timeline (Line)
+const yearTimelineCtx = document.getElementById('yearTimelineChart');
+if (yearTimelineCtx) {
+    new Chart(yearTimelineCtx, {
+        type: 'line',
+        data: {
+            labels: {{ year_labels|tojson }},
+            datasets: [{
+                label: 'Games Released',
+                data: {{ year_data|tojson }},
+                borderColor: '#4cc9f0',
+                backgroundColor: 'rgba(76, 201, 240, 0.15)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3,
+                pointBackgroundColor: '#4cc9f0',
+                pointBorderColor: '#0a0e17',
+                pointBorderWidth: 2,
+                pointRadius: 3,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(42, 53, 66, 0.3)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: { size: 10 },
+                        maxRotation: 45
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Storage Chart (Horizontal Bar)
+const storageCtx = document.getElementById('storageChart');
+if (storageCtx) {
+    new Chart(storageCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ storage_labels|tojson }},
+            datasets: [{
+                label: 'Storage (GB)',
+                data: {{ storage_data|tojson }},
+                backgroundColor: chartColors.magenta,
+                borderColor: '#f72585',
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(42, 53, 66, 0.3)'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Size (GB)'
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+}
+
+// RetroAchievements Chart (Horizontal Bar)
+const raCtx = document.getElementById('raChart');
+if (raCtx) {
+    new Chart(raCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ ra_system_labels|tojson }},
+            datasets: [{
+                label: 'Games with RA',
+                data: {{ ra_system_data|tojson }},
+                backgroundColor: 'rgba(255, 193, 7, 0.7)',
+                borderColor: '#ffc107',
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(42, 53, 66, 0.3)'
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 11
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// ============================================
+// REVIEW SCORES CHARTS
+// ============================================
+
+// Score Distribution Chart (Bar)
+const scoreDistCtx = document.getElementById('scoreDistChart');
+if (scoreDistCtx) {
+    new Chart(scoreDistCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ score_dist_labels|tojson }},
+            datasets: [{
+                label: 'Number of Games',
+                data: {{ score_dist_data|tojson }},
+                backgroundColor: [
+                    'rgba(239, 68, 68, 0.7)',   // 0-9 (red)
+                    'rgba(239, 68, 68, 0.6)',   // 10-19
+                    'rgba(245, 158, 11, 0.6)',  // 20-29 (orange)
+                    'rgba(245, 158, 11, 0.7)',  // 30-39
+                    'rgba(234, 179, 8, 0.6)',   // 40-49 (yellow)
+                    'rgba(234, 179, 8, 0.7)',   // 50-59
+                    'rgba(132, 204, 22, 0.6)',  // 60-69 (lime)
+                    'rgba(34, 197, 94, 0.6)',   // 70-79 (green)
+                    'rgba(34, 197, 94, 0.7)',   // 80-89
+                    'rgba(76, 201, 240, 0.8)'   // 90-100 (cyan - exceptional)
+                ],
+                borderColor: [
+                    '#ef4444', '#ef4444', '#f59e0b', '#f59e0b',
+                    '#eab308', '#eab308', '#84cc16', '#22c55e',
+                    '#22c55e', '#4cc9f0'
+                ],
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 10 } }
+                }
+            }
+        }
+    });
+}
+
+// Scores by System Chart (Grouped Bar)
+const scoreSystemCtx = document.getElementById('scoreSystemChart');
+if (scoreSystemCtx) {
+    new Chart(scoreSystemCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ score_system_labels|tojson }},
+            datasets: [
+                {
+                    label: 'Critic Score',
+                    data: {{ score_system_critic|tojson }},
+                    backgroundColor: 'rgba(76, 201, 240, 0.7)',
+                    borderColor: '#4cc9f0',
+                    borderWidth: 1,
+                    borderRadius: 4
+                },
+                {
+                    label: 'User Score',
+                    data: {{ score_system_user|tojson }},
+                    backgroundColor: 'rgba(168, 85, 247, 0.7)',
+                    borderColor: '#a855f7',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }
+            ]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: { usePointStyle: true }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: { font: { size: 10 } }
+                }
+            }
+        }
+    });
+}
+
+// Critic vs User Score Scatter Plot
+const scoreScatterCtx = document.getElementById('scoreScatterChart');
+if (scoreScatterCtx) {
+    new Chart(scoreScatterCtx, {
+        type: 'scatter',
+        data: {
+            datasets: [{
+                label: 'Games',
+                data: {{ score_scatter|tojson }},
+                backgroundColor: 'rgba(76, 201, 240, 0.5)',
+                borderColor: '#4cc9f0',
+                borderWidth: 1,
+                pointRadius: 4,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const point = context.raw;
+                            return (point.title || '') + ' (Critic: ' + point.x + ', User: ' + point.y + ')';
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    max: 100,
+                    title: {
+                        display: true,
+                        text: 'Critic Score'
+                    },
+                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                },
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    title: {
+                        display: true,
+                        text: 'User Score'
+                    },
+                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                }
+            }
+        }
+    });
+}
+
+// ============================================
+// AGE RATINGS CHARTS
+// ============================================
+
+// Generate gradient colors for rating values (least → most restrictive)
+function getRatingColors(labels, orderedValues) {
+    const gradient = [
+        '#20b2aa', '#22c55e', '#84cc16', '#eab308',
+        '#f59e0b', '#f97316', '#ef4444', '#dc2626'
+    ];
+    const fallback = '#64748b';
+    // Filter out non-restrictiveness values (RP = Rating Pending) for gradient calc
+    const realValues = orderedValues.filter(v => v !== 'RP');
+    return labels.map(label => {
+        if (label === 'RP') return fallback;
+        const idx = realValues.indexOf(label);
+        if (idx === -1) return fallback;
+        const pos = realValues.length <= 1 ? 0 : idx / (realValues.length - 1);
+        const gIdx = Math.min(Math.floor(pos * (gradient.length - 1)), gradient.length - 1);
+        return gradient[gIdx];
+    });
+}
+
+// Rating Distribution Chart (Doughnut)
+const ratingDistCtx = document.getElementById('ratingDistChart');
+if (ratingDistCtx) {
+    const ratingLabels = {{ rating_labels|tojson }};
+    const ratingData = {{ rating_data|tojson }};
+    const orderedValues = {{ ordered_rating_values|tojson }};
+    const borderColors = getRatingColors(ratingLabels, orderedValues);
+    const bgColors = borderColors.map(c => c + 'cc');
+
+    new Chart(ratingDistCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ratingLabels,
+            datasets: [{
+                data: ratingData,
+                backgroundColor: bgColors,
+                borderColor: borderColors,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 15,
+                        font: { size: 11 }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Content Maturity by System (Stacked Bar)
+const ageSystemCtx = document.getElementById('ageSystemChart');
+if (ageSystemCtx) {
+    new Chart(ageSystemCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ rating_system_labels|tojson }},
+            datasets: [
+                {
+                    label: 'Family Friendly',
+                    data: {{ rating_system_family|tojson }},
+                    backgroundColor: 'rgba(34, 197, 94, 0.7)',
+                    borderColor: '#22c55e',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Teen',
+                    data: {{ rating_system_teen|tojson }},
+                    backgroundColor: 'rgba(234, 179, 8, 0.7)',
+                    borderColor: '#eab308',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Mature',
+                    data: {{ rating_system_mature|tojson }},
+                    backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                    borderColor: '#ef4444',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: { usePointStyle: true }
+                }
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                    grid: { display: false },
+                    ticks: { font: { size: 10 } }
+                },
+                y: {
+                    stacked: true,
+                    beginAtZero: true,
+                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                }
+            }
+        }
+    });
+}
+
+// ============================================
+// DEVELOPERS & PUBLISHERS CHARTS
+// ============================================
+
+// Top Developers (Horizontal Bar)
+const devCtx = document.getElementById('devChart');
+if (devCtx) {
+    new Chart(devCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ dev_labels|tojson }},
+            datasets: [{
+                label: 'Games',
+                data: {{ dev_data|tojson }},
+                backgroundColor: chartColors.cyan,
+                borderColor: '#4cc9f0',
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: { font: { size: 11 } }
+                }
+            }
+        }
+    });
+}
+
+// Top Publishers (Horizontal Bar)
+const pubCtx = document.getElementById('pubChart');
+if (pubCtx) {
+    new Chart(pubCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ pub_labels|tojson }},
+            datasets: [{
+                label: 'Games',
+                data: {{ pub_data|tojson }},
+                backgroundColor: chartColors.magenta,
+                borderColor: '#f72585',
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: { font: { size: 11 } }
+                }
+            }
+        }
+    });
+}
+
+// Top Franchises (Horizontal Bar)
+const franchiseCtx = document.getElementById('franchiseChart');
+if (franchiseCtx) {
+    new Chart(franchiseCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ franchise_labels|tojson }},
+            datasets: [{
+                label: 'Games',
+                data: {{ franchise_data|tojson }},
+                backgroundColor: chartColors.purple,
+                borderColor: '#7209b7',
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: { font: { size: 11 } }
+                }
+            }
+        }
+    });
+}
+
+// ============================================
+// GAMEPLAY CHARTS
+// ============================================
+
+// Perspective (Doughnut)
+const perspCtx = document.getElementById('perspChart');
+if (perspCtx) {
+    new Chart(perspCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ persp_labels|tojson }},
+            datasets: [{
+                data: {{ persp_data|tojson }},
+                backgroundColor: colorArray,
+                borderWidth: 2,
+                borderColor: '#0a0e17'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+}
+
+// Dimension (Doughnut)
+const dimCtx = document.getElementById('dimChart');
+if (dimCtx) {
+    new Chart(dimCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ dim_labels|tojson }},
+            datasets: [{
+                data: {{ dim_data|tojson }},
+                backgroundColor: [chartColors.cyan, chartColors.magenta, chartColors.green, chartColors.orange, chartColors.purple],
+                borderWidth: 2,
+                borderColor: '#0a0e17'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+}
+
+// Game Modes (Horizontal Bar)
+const modesCtx = document.getElementById('modesChart');
+if (modesCtx) {
+    new Chart(modesCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ mode_labels|tojson }},
+            datasets: [{
+                label: 'Games',
+                data: {{ mode_data|tojson }},
+                backgroundColor: colorArray,
+                borderWidth: 0,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                },
+                y: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+}
+
+// Player Count (Bar)
+const playerCtx = document.getElementById('playerChart');
+if (playerCtx) {
+    new Chart(playerCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ player_labels|tojson }},
+            datasets: [{
+                label: 'Games',
+                data: {{ player_data|tojson }},
+                backgroundColor: chartColors.teal,
+                borderColor: '#14b8a6',
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+}
+
+// Region Distribution (Doughnut)
+const regionCtx = document.getElementById('regionChart');
+if (regionCtx) {
+    new Chart(regionCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ region_labels|tojson }},
+            datasets: [{
+                data: {{ region_data|tojson }},
+                backgroundColor: colorArray,
+                borderWidth: 2,
+                borderColor: '#0a0e17'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+}
+
+// ============================================
+// PLAYTIME CHART
+// ============================================
+
+// Game Length Histogram (Bar)
+const lengthCtx = document.getElementById('lengthChart');
+if (lengthCtx) {
+    new Chart(lengthCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ length_labels|tojson }},
+            datasets: [{
+                label: 'Games',
+                data: {{ length_data|tojson }},
+                backgroundColor: chartColors.orange,
+                borderColor: '#f59e0b',
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 10 } }
+                }
+            }
+        }
+    });
+}
+
+// ============================================
+// DATA QUALITY CHARTS
+// ============================================
+
+// Metadata Radar Chart
+const metadataRadarCtx = document.getElementById('metadataRadarChart');
+if (metadataRadarCtx) {
+    const mqData = {{ metadata_quality|tojson }};
+    new Chart(metadataRadarCtx, {
+        type: 'radar',
+        data: {
+            labels: ['Description', 'Boxart', 'Genre', 'Developer', 'Publisher', 'Release Date', 'Screenshots', 'Fanart', 'Video', 'Manual', 'HLTB', 'Ratings', 'Modes', 'Region'],
+            datasets: [{
+                label: 'Completeness %',
+                data: [
+                    mqData.description || 0,
+                    mqData.boxart || 0,
+                    mqData.genre || 0,
+                    mqData.developer || 0,
+                    mqData.publisher || 0,
+                    mqData.release_date || 0,
+                    mqData.screenshots || 0,
+                    mqData.fanart || 0,
+                    mqData.video || 0,
+                    mqData.manual || 0,
+                    mqData.hltb || 0,
+                    mqData.ratings || 0,
+                    mqData.modes || 0,
+                    mqData.region || 0
+                ],
+                borderColor: '#4cc9f0',
+                backgroundColor: 'rgba(76, 201, 240, 0.15)',
+                borderWidth: 2,
+                pointBackgroundColor: '#4cc9f0',
+                pointBorderColor: '#0a0e17',
+                pointBorderWidth: 2,
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: {
+                        color: 'rgba(42, 53, 66, 0.3)'
+                    },
+                    angleLines: {
+                        color: 'rgba(42, 53, 66, 0.3)'
+                    },
+                    pointLabels: {
+                        color: '#9aa0a6',
+                        font: { size: 10 }
+                    },
+                    ticks: {
+                        color: '#6e7378',
+                        backdropColor: 'transparent',
+                        stepSize: 25
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Save Type Distribution (Bar)
+const saveTypeCtx = document.getElementById('saveTypeChart');
+if (saveTypeCtx) {
+    new Chart(saveTypeCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ save_labels|tojson }},
+            datasets: [{
+                label: 'Games',
+                data: {{ save_data|tojson }},
+                backgroundColor: chartColors.blue,
+                borderColor: '#3b82f6',
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 10 } }
+                }
+            }
+        }
+    });
+}
+
+// ============================================
+// GROWTH CHART
+// ============================================
+
+// Collection Growth (Line)
+const growthCtx = document.getElementById('growthChart');
+if (growthCtx) {
+    new Chart(growthCtx, {
+        type: 'line',
+        data: {
+            labels: {{ growth_labels|tojson }},
+            datasets: [{
+                label: 'Total Games',
+                data: {{ growth_data|tojson }},
+                borderColor: '#22c55e',
+                backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3,
+                pointBackgroundColor: '#22c55e',
+                pointBorderColor: '#0a0e17',
+                pointBorderWidth: 2,
+                pointRadius: 3,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(42, 53, 66, 0.3)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: { size: 10 },
+                        maxRotation: 45
+                    }
+                }
+            }
+        }
+    });
+}
+
+function refreshAnalytics() {
+    location.reload();
+}
+
+// Analytics Nav Scroll Spy (wait for bundle to load so StickyScroll is available)
+document.addEventListener('DOMContentLoaded', function initAnalyticsNav() {
+    if (typeof StickyScroll === 'undefined') return;
+
+    const navLinks = document.querySelectorAll('.analytics-nav-link');
+    const sections = [];
+
+    navLinks.forEach(link => {
+        const sectionId = link.getAttribute('href').substring(1);
+        const section = document.getElementById(sectionId);
+        if (section) {
+            sections.push({ id: sectionId, element: section, link: link });
+        }
+    });
+
+    function updateActiveLink() {
+        const scrollY = window.scrollY;
+        const offset = StickyScroll.getStickyOffset() + 100;
+
+        let currentSection = sections[0];
+
+        for (const section of sections) {
+            const sectionTop = section.element.getBoundingClientRect().top + window.pageYOffset - offset;
+            if (scrollY >= sectionTop) {
+                currentSection = section;
+            }
+        }
+
+        navLinks.forEach(link => link.classList.remove('active'));
+        if (currentSection) {
+            currentSection.link.classList.add('active');
+        }
+    }
+
+    // Smooth scroll for nav links
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').substring(1);
+            StickyScroll.to(targetId);
+        });
+    });
+
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(updateActiveLink, 50);
+    });
+
+    updateActiveLink();
+});
+
+// =============================================================================
+// EXPORT FUNCTIONALITY
+// =============================================================================
+
+function toggleExportMenu() {
+    const menu = document.getElementById('exportMenu');
+    menu.classList.toggle('active');
+}
+
+// Close export menu on outside click
+document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('exportDropdown');
+    if (dropdown && !dropdown.contains(e.target)) {
+        document.getElementById('exportMenu').classList.remove('active');
+    }
+});
+
+function _getStatsData() {
+    // Gather stats from the page DOM
+    const statCards = document.querySelectorAll('.analytics-summary .stat-card .stat-value');
+    const labels = document.querySelectorAll('.analytics-summary .stat-card .stat-label');
+    const stats = {};
+    labels.forEach((lbl, i) => {
+        const key = lbl.textContent.trim();
+        const val = statCards[i] ? statCards[i].textContent.trim() : '';
+        stats[key] = val;
+    });
+    return stats;
+}
+
+function exportAsPNG() {
+    document.getElementById('exportMenu').classList.remove('active');
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 800;
+    canvas.height = 500;
+
+    // Background
+    ctx.fillStyle = '#0a0e17';
+    ctx.fillRect(0, 0, 800, 500);
+
+    // Header gradient bar
+    const grad = ctx.createLinearGradient(0, 0, 800, 0);
+    grad.addColorStop(0, '#4cc9f0');
+    grad.addColorStop(1, '#f72585');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 800, 6);
+
+    // Title
+    ctx.fillStyle = '#4cc9f0';
+    ctx.font = 'bold 28px Orbitron, sans-serif';
+    ctx.fillText('RetroDB Collection Stats', 40, 55);
+
+    // Date
+    ctx.fillStyle = '#6e7378';
+    ctx.font = '14px Share Tech Mono, monospace';
+    ctx.fillText(new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }), 40, 80);
+
+    // Stats
+    const stats = _getStatsData();
+    const entries = Object.entries(stats);
+    const colWidth = 240;
+    const startY = 120;
+    const rowH = 80;
+
+    entries.forEach(([label, value], i) => {
+        const col = i % 3;
+        const row = Math.floor(i / 3);
+        const x = 40 + col * colWidth;
+        const y = startY + row * rowH;
+
+        // Stat box background
+        ctx.fillStyle = '#151b24';
+        ctx.strokeStyle = '#2a3542';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(x, y, colWidth - 20, 65, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        // Value
+        ctx.fillStyle = '#e8eaed';
+        ctx.font = 'bold 24px Rajdhani, sans-serif';
+        ctx.fillText(value, x + 15, y + 30);
+
+        // Label
+        ctx.fillStyle = '#9aa0a6';
+        ctx.font = '12px Rajdhani, sans-serif';
+        ctx.fillText(label.toUpperCase(), x + 15, y + 50);
+    });
+
+    // Footer
+    ctx.fillStyle = '#2a3542';
+    ctx.fillRect(0, 470, 800, 30);
+    ctx.fillStyle = '#6e7378';
+    ctx.font = '11px Share Tech Mono, monospace';
+    ctx.fillText('Generated by RetroDB', 40, 490);
+
+    // Download
+    const link = document.createElement('a');
+    link.download = `RetroDB_Stats_${new Date().toISOString().slice(0, 10)}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+
+    showNotification('PNG infographic downloaded.', 'success');
+}
+
+function exportToClipboard() {
+    document.getElementById('exportMenu').classList.remove('active');
+
+    const stats = _getStatsData();
+    const lines = [
+        '=== RetroDB Collection Stats ===',
+        `Generated: ${new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}`,
+        ''
+    ];
+
+    Object.entries(stats).forEach(([label, value]) => {
+        lines.push(`${label}: ${value}`);
+    });
+
+    lines.push('');
+    lines.push('— Generated by RetroDB');
+
+    const text = lines.join('\n');
+
+    navigator.clipboard.writeText(text).then(() => {
+        showNotification('Stats copied to clipboard.', 'success');
+    }).catch(() => {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showNotification('Stats copied to clipboard.', 'success');
+    });
+}
+
+function exportAsCSV() {
+    document.getElementById('exportMenu').classList.remove('active');
+
+    const stats = _getStatsData();
+    const rows = [['Metric', 'Value']];
+
+    Object.entries(stats).forEach(([label, value]) => {
+        rows.push([label, value.replace(/,/g, '')]);
+    });
+
+    // Add genre data if available
+    const genreChart = Chart.getChart('genreChart');
+    if (genreChart) {
+        rows.push([]);
+        rows.push(['Genre', 'Count']);
+        genreChart.data.labels.forEach((label, i) => {
+            rows.push([label, genreChart.data.datasets[0].data[i]]);
+        });
+    }
+
+    // Add system data if available
+    const systemChart = Chart.getChart('systemChart');
+    if (systemChart) {
+        rows.push([]);
+        rows.push(['System', 'Count']);
+        systemChart.data.labels.forEach((label, i) => {
+            rows.push([label, systemChart.data.datasets[0].data[i]]);
+        });
+    }
+
+    const csv = rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.download = `RetroDB_Stats_${new Date().toISOString().slice(0, 10)}.csv`;
+    link.href = URL.createObjectURL(blob);
+    link.click();
+    URL.revokeObjectURL(link.href);
+
+    showNotification('CSV data exported.', 'success');
+}
+</script>
+{% endblock %}

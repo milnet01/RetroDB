@@ -1,0 +1,1275 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Sticky Dashboard Navigation -->
+<nav class="dashboard-nav" id="dashboardNav" data-sticky-nav>
+    <a href="#overview" class="dashboard-nav-link active" data-section="overview"><span class="tab-icon">📊</span> <span class="tab-label">Overview</span></a>
+    <a href="#systems" class="dashboard-nav-link" data-section="systems"><span class="tab-icon">🖥️</span> <span class="tab-label">Systems</span></a>
+    {% if continue_playing %}<a href="#playing" class="dashboard-nav-link" data-section="playing"><span class="tab-icon">▶️</span> <span class="tab-label">Playing</span></a>{% endif %}
+    {% if recent_games %}<a href="#added" class="dashboard-nav-link" data-section="added"><span class="tab-icon">🕹️</span> <span class="tab-label">Added</span></a>{% endif %}
+    {% if recently_viewed %}<a href="#viewed" class="dashboard-nav-link" data-section="viewed"><span class="tab-icon">👁️</span> <span class="tab-label">Viewed</span></a>{% endif %}
+    {% if recently_scraped %}<a href="#scraped" class="dashboard-nav-link" data-section="scraped"><span class="tab-icon">🔄</span> <span class="tab-label">Scraped</span></a>{% endif %}
+    <a href="#status" class="dashboard-nav-link" data-section="status"><span class="tab-icon">📡</span> <span class="tab-label">Status</span></a>
+</nav>
+
+<!-- API Warning Banner (hidden by default, shown by JS if offline APIs detected) -->
+<div id="apiWarningBanner" class="api-warning-banner" style="display: none;">
+    <span class="api-warning-icon">⚠️</span>
+    <span class="api-warning-text">One or more configured APIs are offline</span>
+    <a href="{{ url_for('settings.settings') }}" class="api-warning-link">Check Settings →</a>
+    <button class="api-warning-close" onclick="this.parentElement.style.display='none'">✕</button>
+</div>
+
+<!-- Job Recovery Banner (shown when interrupted/queued jobs exist) -->
+{% if recoverable_jobs %}
+<div class="job-recovery-banner" id="jobRecoveryBanner">
+    <div class="job-recovery-header">
+        <span class="job-recovery-icon">🔄</span>
+        <span class="job-recovery-title">{{ recoverable_jobs|length }} interrupted job{{ 's' if recoverable_jobs|length != 1 else '' }} found</span>
+        <button class="btn btn-sm btn-primary" onclick="resumeAllRecoverableJobs()">Resume All</button>
+        <button class="btn btn-sm btn-secondary" onclick="dismissAllRecoverableJobs()">Dismiss All</button>
+    </div>
+    {% for job in recoverable_jobs %}
+    <div class="job-recovery-item" id="recoveryItem{{ job.id }}">
+        <span class="job-recovery-desc">
+            <span class="job-recovery-status {{ job.status }}">{{ job.status|capitalize }}</span>
+            {{ job.description }}
+        </span>
+        <div class="job-recovery-actions">
+            <button class="btn btn-sm btn-primary" onclick="resumeJob({{ job.id }})">{{ job.action_label }}</button>
+            <button class="btn btn-sm btn-secondary" onclick="dismissJob({{ job.id }})">Dismiss</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Page Header -->
+<div class="page-header" id="overview">
+    <div>
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Overview of your retro gaming collection</p>
+    </div>
+    <div class="page-actions">
+        <button class="btn btn-secondary" onclick="randomGame()" title="Pick a random game">
+            <span class="btn-icon">🎲</span>
+            Random Game
+        </button>
+        <button id="scanLibraryBtn" class="btn btn-primary" onclick="scanLibrary()">
+            <span class="btn-icon">🔍</span>
+            Scan Library
+        </button>
+    </div>
+</div>
+
+<!-- Collection Health Score -->
+<div class="health-score-container">
+    <div class="health-score-ring" data-score="{{ stats.health_score }}">
+        <svg viewBox="0 0 120 120">
+            <circle class="health-ring-bg" cx="60" cy="60" r="52" />
+            <circle class="health-ring-fill" cx="60" cy="60" r="52"
+                    stroke-dasharray="{{ (stats.health_score / 100 * 326.73)|round(1) }} 326.73"
+                    style="--score-color: {% if stats.health_score >= 80 %}var(--neon-green){% elif stats.health_score >= 60 %}var(--neon-cyan){% elif stats.health_score >= 40 %}var(--neon-orange){% else %}var(--neon-red){% endif %}" />
+        </svg>
+        <div class="health-score-value">{{ stats.health_score|round(0)|int }}%</div>
+    </div>
+    <div class="health-score-info">
+        <h3 class="health-score-title">Collection Health</h3>
+        <p class="health-score-desc">Metadata completeness across your library</p>
+        <div class="health-score-breakdown">
+            <span class="health-pill {% if stats.health_score >= 80 %}good{% elif stats.health_score >= 60 %}okay{% elif stats.health_score >= 40 %}warn{% else %}bad{% endif %}">
+                {% if stats.health_score >= 80 %}Excellent{% elif stats.health_score >= 60 %}Good{% elif stats.health_score >= 40 %}Fair{% else %}Needs Work{% endif %}
+            </span>
+        </div>
+    </div>
+    <div class="health-mini-rings">
+        {% for field in [
+            {'label': 'Boxart', 'pct': stats.health_boxart_pct},
+            {'label': 'Descriptions', 'pct': stats.health_desc_pct},
+            {'label': 'Achievements', 'pct': stats.health_ra_pct},
+        ] %}
+        <div class="health-mini-gauge">
+            <div class="health-mini-ring">
+                <svg viewBox="0 0 80 80">
+                    <circle class="health-ring-bg" cx="40" cy="40" r="34" />
+                    <circle class="health-ring-fill" cx="40" cy="40" r="34"
+                            stroke-dasharray="{{ (field.pct / 100 * 213.63)|round(1) }} 213.63"
+                            style="--score-color: {% if field.pct >= 80 %}var(--neon-green){% elif field.pct >= 60 %}var(--neon-cyan){% elif field.pct >= 40 %}var(--neon-orange){% else %}var(--neon-red){% endif %}" />
+                </svg>
+                <span class="health-mini-value">{{ field.pct|round(0)|int }}%</span>
+            </div>
+            <span class="health-mini-label">{{ field.label }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Primary Stats Grid (Row 1) -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-label">Total Systems</span>
+            <div class="stat-icon">🖥️</div>
+        </div>
+        <div class="stat-value">{{ stats.total_systems|format_number }}</div>
+        <div class="stat-subtitle">Gaming platforms</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-label">Total Games</span>
+            <div class="stat-icon">🎮</div>
+        </div>
+        <div class="stat-value">{{ stats.total_games|format_number }}</div>
+        <div class="stat-subtitle">ROMs in library</div>
+    </div>
+
+    <div class="stat-card warning">
+        <div class="stat-card-header">
+            <span class="stat-label">Missing Metadata</span>
+            <div class="stat-icon">⚠️</div>
+        </div>
+        <div class="stat-value">{{ stats.missing_metadata|format_number }}</div>
+        <div class="stat-subtitle">
+            {% if stats.missing_metadata > 0 %}
+                <a href="{{ url_for('games.all_games') }}" style="color: inherit;">Action required</a>
+            {% else %}
+                All games scraped
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="stat-card success">
+        <div class="stat-card-header">
+            <span class="stat-label">Complete</span>
+            <div class="stat-icon">✅</div>
+        </div>
+        <div class="stat-value">{{ stats.scraped_games|format_number }}</div>
+        <div class="stat-subtitle">Games with metadata</div>
+    </div>
+</div>
+
+<!-- Secondary Stats Grid (Row 2) -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-label">Total Storage</span>
+            <div class="stat-icon">💾</div>
+        </div>
+        <div class="stat-value">{{ stats.total_storage|format_size }}</div>
+        <div class="stat-subtitle">ROM library size</div>
+    </div>
+
+    <div class="stat-card {% if stats.completion_rate >= 50 %}success{% elif stats.completion_rate >= 25 %}{% else %}warning{% endif %}">
+        <div class="stat-card-header">
+            <span class="stat-label">Completion Rate</span>
+            <div class="stat-icon">🏆</div>
+        </div>
+        <div class="stat-value">{{ stats.completion_rate }}%</div>
+        <div class="stat-subtitle">{{ stats.completed_games|format_number }} games beaten</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-label">Achievements</span>
+            <div class="stat-icon">⭐</div>
+        </div>
+        <div class="stat-value">{{ stats.total_earned_achievements|format_number }}</div>
+        <div class="stat-subtitle">
+            {% if stats.total_available_achievements > 0 %}
+                of {{ stats.total_available_achievements|format_number }} available
+            {% else %}
+                RetroAchievements earned
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-label">Playtime</span>
+            <div class="stat-icon">⏱️</div>
+        </div>
+        <div class="stat-value">{{ stats.total_hltb_hours|format_number }}h</div>
+        <div class="stat-subtitle">Estimated total (HLTB)</div>
+    </div>
+</div>
+
+<!-- Background Job Progress (shown via JS when jobs are running) -->
+<div id="jobProgressContainer" class="job-progress-container" style="display: none;"></div>
+
+<!-- Your Systems Section -->
+<section class="card systems-section" id="systems">
+    <div class="card-header">
+        <h2 class="card-title"><span>🖥️</span> Top Systems by Game Count</h2>
+        <a href="{{ url_for('systems.systems') }}" class="section-link">View All Systems →</a>
+    </div>
+
+    <div class="systems-grid" style="padding: var(--spacing-lg);">
+        {% for system in systems[:8] %}
+        <a href="{{ url_for('systems.system_games', system_id=system.id) }}" class="system-card" data-folder="{{ system.folder }}">
+            <div class="system-logo">
+                {% if system.logo %}
+                    <img src="{{ url_for('static', filename='images/systems/' + system.logo) }}" alt="{{ system.name }} logo">
+                {% else %}
+                    <div class="system-logo-placeholder">🎮</div>
+                {% endif %}
+            </div>
+            <h3 class="system-name">{{ system.name }}</h3>
+            <div class="system-card-bottom">
+                <div class="system-info">
+                    <span class="system-info-icon">📁</span>
+                    <span>{{ system.rom_count|format_number }} ROM{{ 's' if system.rom_count != 1 else '' }}</span>
+                </div>
+                {% if system.system_type %}
+                <div class="system-type-badge {{ system.system_type|lower }}">{{ system.system_type }}</div>
+                {% endif %}
+                <!-- Scraped progress bar -->
+                {% set scraped_pct = ((system.scraped_count or 0) / system.rom_count * 100) if system.rom_count > 0 else 0 %}
+                <div class="system-progress">
+                    <div class="system-progress-bar" style="width: {{ scraped_pct|round(0)|int }}%"></div>
+                </div>
+                <div class="system-progress-label">{{ scraped_pct|round(0)|int }}% scraped</div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Continue Playing Section -->
+{% if continue_playing %}
+<section class="card recent-section" id="playing">
+    <div class="card-header">
+        <h2 class="card-title"><span>▶️</span> Continue Playing</h2>
+    </div>
+
+    <div class="games-table-container" style="border: none; border-radius: 0;">
+        <table class="games-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Boxart</th>
+                    <th>Title</th>
+                    <th>System</th>
+                    <th>Playtime</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in continue_playing[:5] %}
+                <tr>
+                    <td>
+                        {% set prefer_3d = user_settings.get('preferred_boxart', '2d') == '3d' %}
+                        {% set use_3d = prefer_3d and game.boxart_3d %}
+                        {% set boxart_to_show = game.boxart_3d if use_3d else game.boxart %}
+                        {% set boxart_folder = 'boxart_3d' if use_3d else 'boxart' %}
+
+                        {% if boxart_to_show %}
+                            <img src="{{ url_for('static', filename='images/' + boxart_folder + '/' + boxart_to_show) }}"
+                                 alt="{{ game.title }}" class="game-row-boxart{% if use_3d %} boxart-3d{% endif %}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="game-row-boxart-placeholder" style="display: none;">🎮</div>
+                        {% else %}
+                            <div class="game-row-boxart-placeholder">🎮</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('games.game_detail', game_id=game.id) }}" class="game-row-title">
+                            {{ game.title }}
+                        </a>
+                    </td>
+                    <td class="game-row-system">
+                        <a href="{{ url_for('systems.system_games', system_id=game.system_id) }}" class="game-row-system-link">
+                            {{ game.system_name }}
+                        </a>
+                    </td>
+                    <td>
+                        <span class="completion-badge in-progress">In Progress</span>
+                        {% if game.playtime_estimate %}
+                            <span class="playtime-hint">{{ game.playtime_estimate.split('|')[0].strip() if '|' in (game.playtime_estimate or '') else game.playtime_estimate }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endif %}
+
+<!-- Recently Added Section -->
+{% if recent_games %}
+<section class="card recent-section" id="added">
+    <div class="card-header">
+        <h2 class="card-title"><span>🕹️</span> Recently Added</h2>
+        <a href="{{ url_for('games.all_games') }}" class="section-link">View All Games →</a>
+    </div>
+
+    <div class="games-table-container" style="border: none; border-radius: 0;">
+        <table class="games-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Boxart</th>
+                    <th>Title</th>
+                    <th>System</th>
+                    <th>Genre</th>
+                    <th>Year</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in recent_games[:5] %}
+                <tr onclick="window.location='{{ url_for('games.game_detail', game_id=game.id) }}'" style="cursor: pointer;">
+                    <td>
+                        {% set prefer_3d = user_settings.get('preferred_boxart', '2d') == '3d' %}
+                        {% set use_3d = prefer_3d and game.boxart_3d %}
+                        {% set boxart_to_show = game.boxart_3d if use_3d else game.boxart %}
+                        {% set boxart_folder = 'boxart_3d' if use_3d else 'boxart' %}
+
+                        {% if boxart_to_show %}
+                            <img src="{{ url_for('static', filename='images/' + boxart_folder + '/' + boxart_to_show) }}"
+                                 alt="{{ game.title }}" class="game-row-boxart{% if use_3d %} boxart-3d{% endif %}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="game-row-boxart-placeholder" style="display: none;">🎮</div>
+                        {% else %}
+                            <div class="game-row-boxart-placeholder">🎮</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('games.game_detail', game_id=game.id) }}" class="game-row-title">
+                            {{ game.title }}
+                        </a>
+                    </td>
+                    <td class="game-row-system">
+                        <a href="{{ url_for('systems.system_games', system_id=game.system_id) }}" class="game-row-system-link" onclick="event.stopPropagation();">
+                            {{ game.system_name }}
+                        </a>
+                    </td>
+                    <td class="game-row-genre">
+                        {% if game.genre %}
+                            {% for tag in game.genre.split(',')[:2] %}
+                                <span class="genre-tag">{{ tag.strip() }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="game-row-year">
+                        {% if game.release_date %}
+                            {{ game.release_date[:4] }}
+                        {% else %}
+                            <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if game.scraped %}
+                            <span class="metadata-status complete">✓ Scraped</span>
+                        {% else %}
+                            <span class="metadata-status missing">⚠ Missing</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endif %}
+
+<!-- Recently Viewed Section -->
+{% if recently_viewed %}
+<section class="card recent-section" id="viewed">
+    <div class="card-header">
+        <h2 class="card-title"><span>👁️</span> Recently Viewed</h2>
+    </div>
+
+    <div class="games-table-container" style="border: none; border-radius: 0;">
+        <table class="games-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Boxart</th>
+                    <th>Title</th>
+                    <th>System</th>
+                    <th>Completion</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in recently_viewed[:5] %}
+                <tr>
+                    <td>
+                        {% set prefer_3d = user_settings.get('preferred_boxart', '2d') == '3d' %}
+                        {% set use_3d = prefer_3d and game.boxart_3d %}
+                        {% set boxart_to_show = game.boxart_3d if use_3d else game.boxart %}
+                        {% set boxart_folder = 'boxart_3d' if use_3d else 'boxart' %}
+
+                        {% if boxart_to_show %}
+                            <img src="{{ url_for('static', filename='images/' + boxart_folder + '/' + boxart_to_show) }}"
+                                 alt="{{ game.title }}" class="game-row-boxart{% if use_3d %} boxart-3d{% endif %}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="game-row-boxart-placeholder" style="display: none;">🎮</div>
+                        {% else %}
+                            <div class="game-row-boxart-placeholder">🎮</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('games.game_detail', game_id=game.id) }}" class="game-row-title">
+                            {{ game.title }}
+                        </a>
+                    </td>
+                    <td class="game-row-system">
+                        <a href="{{ url_for('systems.system_games', system_id=game.system_id) }}" class="game-row-system-link">
+                            {{ game.system_name }}
+                        </a>
+                    </td>
+                    <td>
+                        {% set status = game.completion_status or 'not_started' %}
+                        {% if status == 'not_started' %}
+                            <span class="completion-badge not-started">Not Started</span>
+                        {% elif status == 'in_progress' %}
+                            <span class="completion-badge in-progress">In Progress</span>
+                        {% elif status == 'played' %}
+                            <span class="completion-badge played">Played</span>
+                        {% elif status == 'completed' %}
+                            <span class="completion-badge completed">Completed</span>
+                        {% elif status == '100_percent' %}
+                            <span class="completion-badge perfect">100%</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endif %}
+
+<!-- Recently Scraped Section -->
+{% if recently_scraped %}
+<section class="card recent-section" id="scraped">
+    <div class="card-header">
+        <h2 class="card-title"><span>🔄</span> Recently Scraped</h2>
+    </div>
+
+    <div class="games-table-container" style="border: none; border-radius: 0;">
+        <table class="games-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Boxart</th>
+                    <th>Title</th>
+                    <th>System</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in recently_scraped[:5] %}
+                <tr>
+                    <td>
+                        {% set prefer_3d = user_settings.get('preferred_boxart', '2d') == '3d' %}
+                        {% set use_3d = prefer_3d and game.boxart_3d %}
+                        {% set boxart_to_show = game.boxart_3d if use_3d else game.boxart %}
+                        {% set boxart_folder = 'boxart_3d' if use_3d else 'boxart' %}
+
+                        {% if boxart_to_show %}
+                            <img src="{{ url_for('static', filename='images/' + boxart_folder + '/' + boxart_to_show) }}"
+                                 alt="{{ game.title }}" class="game-row-boxart{% if use_3d %} boxart-3d{% endif %}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="game-row-boxart-placeholder" style="display: none;">🎮</div>
+                        {% else %}
+                            <div class="game-row-boxart-placeholder">🎮</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('games.game_detail', game_id=game.id) }}" class="game-row-title">
+                            {{ game.title }}
+                        </a>
+                    </td>
+                    <td class="game-row-system">
+                        <a href="{{ url_for('systems.system_games', system_id=game.system_id) }}" class="game-row-system-link">
+                            {{ game.system_name }}
+                        </a>
+                    </td>
+                    <td>
+                        <span class="metadata-status complete">✓ Scraped</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endif %}
+
+<!-- System Status Section (moved below content sections) -->
+<section class="card status-section" id="status">
+    <div class="card-header">
+        <h2 class="card-title"><span>📡</span> System Status</h2>
+    </div>
+
+    <div class="status-item">
+        <div class="status-info">
+            <span class="status-indicator online"></span>
+            <span class="status-name">Database Service</span>
+        </div>
+        <span class="status-badge online">Online</span>
+    </div>
+
+    <div class="status-item">
+        <div class="status-info">
+            <span class="status-indicator online"></span>
+            <span class="status-name">ES-DE Local Scraper</span>
+        </div>
+        <span class="status-badge connected">Available</span>
+    </div>
+
+    <div class="status-item" id="status-rawg">
+        <div class="status-info">
+            <span class="status-indicator {{ 'checking' if api_status.rawg else 'offline' }}"></span>
+            <span class="status-name">RAWG.io API</span>
+        </div>
+        <span class="status-badge {{ 'checking' if api_status.rawg else 'offline' }}">
+            {{ 'Checking...' if api_status.rawg else ('Disabled' if api_status._disabled.rawg else 'Not Configured') }}
+        </span>
+    </div>
+
+    <div class="status-item" id="status-igdb">
+        <div class="status-info">
+            <span class="status-indicator {{ 'checking' if api_status.igdb else 'offline' }}"></span>
+            <span class="status-name">IGDB API</span>
+        </div>
+        <span class="status-badge {{ 'checking' if api_status.igdb else 'offline' }}">
+            {{ 'Checking...' if api_status.igdb else ('Disabled' if api_status._disabled.igdb else 'Not Configured') }}
+        </span>
+    </div>
+
+    <div class="status-item" id="status-retroachievements">
+        <div class="status-info">
+            <span class="status-indicator {{ 'online' if api_status.retroachievements else 'offline' }}"></span>
+            <span class="status-name">RetroAchievements API</span>
+        </div>
+        <span class="status-badge {{ 'connected' if api_status.retroachievements else 'offline' }}">
+            {{ 'Configured' if api_status.retroachievements else 'Not Configured' }}
+        </span>
+    </div>
+
+    <div class="status-item" id="status-screenscraper">
+        <div class="status-info">
+            <span class="status-indicator {{ 'checking' if api_status.screenscraper else 'offline' }}"></span>
+            <span class="status-name">ScreenScraper API</span>
+        </div>
+        <span class="status-badge {{ 'checking' if api_status.screenscraper else 'offline' }}">
+            {{ 'Checking...' if api_status.screenscraper else ('Disabled' if api_status._disabled.screenscraper else 'Not Configured') }}
+        </span>
+    </div>
+
+    <div class="status-item" id="status-tgdb">
+        <div class="status-info">
+            <span class="status-indicator {{ 'checking' if api_status.tgdb else 'offline' }}"></span>
+            <span class="status-name">TheGamesDB API</span>
+        </div>
+        <span class="status-badge {{ 'checking' if api_status.tgdb else 'offline' }}">
+            {{ 'Checking...' if api_status.tgdb else ('Disabled' if api_status._disabled.tgdb else 'Not Configured') }}
+        </span>
+    </div>
+</section>
+{% endblock %}
+
+{% block styles %}
+<style>
+/* Dashboard Sticky Navigation */
+.dashboard-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-sm);
+    background: color-mix(in srgb, var(--card-bg) 90%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.dashboard-nav-link {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    text-align: center;
+    white-space: nowrap;
+}
+.dashboard-nav-link:hover {
+    background: rgba(76, 201, 240, 0.05);
+    border-color: rgba(76, 201, 240, 0.3);
+    color: var(--text-primary);
+}
+.dashboard-nav-link.active {
+    background: rgba(76, 201, 240, 0.15);
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+@media (max-width: 768px) {
+    .dashboard-nav {
+        gap: var(--spacing-xs);
+        padding: var(--spacing-xs);
+    }
+    .dashboard-nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+    .dashboard-nav-link .tab-label { display: none; }
+    .dashboard-nav-link .tab-icon { font-size: 1.25rem; }
+}
+
+/* API Warning Banner */
+.api-warning-banner {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+    font-size: 0.85rem;
+}
+.api-warning-icon { font-size: 1.1rem; }
+.api-warning-text { color: var(--neon-orange); flex: 1; }
+.api-warning-link { color: var(--primary-cyan); text-decoration: none; font-weight: 600; }
+.api-warning-link:hover { text-decoration: underline; }
+.api-warning-close {
+    background: none; border: none; color: var(--text-muted); cursor: pointer;
+    font-size: 1rem; padding: 2px 6px; line-height: 1;
+}
+
+/* Collection Health Score */
+.health-score-container {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    background: var(--bg-medium);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+.health-score-ring {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+}
+.health-score-ring svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+.health-ring-bg {
+    fill: none;
+    stroke: var(--bg-light);
+    stroke-width: 8;
+}
+.health-ring-fill {
+    fill: none;
+    stroke: var(--score-color, var(--neon-cyan));
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dasharray 1s ease;
+}
+.health-score-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+.health-score-title {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin: 0 0 4px 0;
+}
+.health-score-desc {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin: 0 0 8px 0;
+}
+.health-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.health-pill.good { background: rgba(34, 197, 94, 0.15); color: var(--neon-green); border: 1px solid var(--neon-green); }
+.health-pill.okay { background: rgba(76, 201, 240, 0.15); color: var(--neon-cyan); border: 1px solid var(--neon-cyan); }
+.health-pill.warn { background: rgba(245, 158, 11, 0.15); color: var(--neon-orange); border: 1px solid var(--neon-orange); }
+.health-pill.bad { background: rgba(239, 68, 68, 0.15); color: var(--neon-red); border: 1px solid var(--neon-red); }
+
+.health-mini-rings {
+    display: flex;
+    gap: var(--spacing-lg);
+    margin-left: auto;
+    align-items: center;
+}
+.health-mini-gauge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+.health-mini-ring {
+    position: relative;
+    width: 60px;
+    height: 60px;
+}
+.health-mini-ring svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+.health-mini-ring .health-ring-bg { stroke-width: 5; }
+.health-mini-ring .health-ring-fill { stroke-width: 5; }
+.health-mini-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+.health-mini-label {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+}
+
+/* Completion badges */
+.completion-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.completion-badge.not-started { background: rgba(100, 116, 139, 0.15); color: #94a3b8; border: 1px solid #64748b; }
+.completion-badge.in-progress { background: rgba(245, 158, 11, 0.15); color: var(--neon-orange); border: 1px solid var(--neon-orange); }
+.completion-badge.played { background: rgba(247, 37, 133, 0.15); color: var(--secondary-magenta); border: 1px solid var(--secondary-magenta); }
+.completion-badge.completed { background: rgba(34, 197, 94, 0.15); color: var(--neon-green); border: 1px solid var(--neon-green); }
+.completion-badge.perfect { background: rgba(76, 201, 240, 0.15); color: var(--neon-cyan); border: 1px solid var(--neon-cyan); }
+
+/* System links */
+.game-row-system-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+.game-row-system-link:hover { color: var(--primary-cyan); text-decoration: underline; }
+
+/* Genre tags in table */
+.genre-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    background: rgba(76, 201, 240, 0.1);
+    border: 1px solid rgba(76, 201, 240, 0.25);
+    border-radius: var(--radius-full);
+    font-size: 0.7rem;
+    color: var(--primary-cyan);
+    margin-right: 4px;
+}
+.game-row-year { color: var(--text-secondary); font-size: 0.85rem; }
+.game-row-genre { white-space: nowrap; }
+
+/* Playtime hint */
+.playtime-hint {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+/* System card bottom alignment */
+.system-card-bottom {
+    margin-top: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* System card enhancements */
+.system-type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+.system-type-badge.console {
+    background: rgba(76, 201, 240, 0.2);
+    color: var(--primary-cyan);
+    border: 1px solid rgba(76, 201, 240, 0.4);
+}
+.system-type-badge.handheld {
+    background: rgba(34, 197, 94, 0.2);
+    color: var(--neon-green);
+    border: 1px solid rgba(34, 197, 94, 0.4);
+}
+.system-type-badge.computer {
+    background: rgba(168, 85, 247, 0.2);
+    color: var(--neon-purple);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+}
+.system-type-badge.arcade {
+    background: rgba(249, 115, 22, 0.2);
+    color: #f97316;
+    border: 1px solid rgba(249, 115, 22, 0.4);
+}
+.system-type-badge.engine {
+    background: rgba(234, 179, 8, 0.2);
+    color: #eab308;
+    border: 1px solid rgba(234, 179, 8, 0.4);
+}
+.system-progress {
+    width: 100%;
+    height: 3px;
+    background: var(--bg-darkest);
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+.system-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+}
+.system-progress-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+    text-align: center;
+}
+
+/* Job progress */
+.job-progress-container {
+    margin-bottom: var(--spacing-lg);
+}
+.job-progress-card {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    background: var(--bg-medium);
+    border: 1px solid rgba(76, 201, 240, 0.2);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin-bottom: var(--spacing-xs);
+}
+.job-progress-label {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    white-space: nowrap;
+}
+.job-progress-bar-container {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-darkest);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.job-progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--primary-cyan));
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+.job-progress-text {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+}
+
+/* Job Recovery Banner */
+.job-recovery-banner {
+    background: rgba(76, 201, 240, 0.06);
+    border: 1px solid rgba(76, 201, 240, 0.25);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-lg);
+    overflow: hidden;
+    transition: opacity 0.4s ease, max-height 0.4s ease;
+}
+.job-recovery-banner.fade-out {
+    opacity: 0;
+    max-height: 0 !important;
+    margin-bottom: 0;
+    border-width: 0;
+    padding: 0;
+}
+.job-recovery-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: rgba(76, 201, 240, 0.08);
+    border-bottom: 1px solid rgba(76, 201, 240, 0.15);
+}
+.job-recovery-icon { font-size: 1.1rem; }
+.job-recovery-title {
+    flex: 1;
+    font-family: var(--font-primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--primary-cyan);
+}
+.job-recovery-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid rgba(76, 201, 240, 0.08);
+    transition: opacity 0.3s ease, max-height 0.3s ease;
+    overflow: hidden;
+}
+.job-recovery-item:last-child { border-bottom: none; }
+.job-recovery-item.fade-out {
+    opacity: 0;
+    max-height: 0 !important;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-bottom-width: 0;
+}
+.job-recovery-desc {
+    flex: 1;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+.job-recovery-status {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-right: 6px;
+}
+.job-recovery-status.interrupted {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--neon-orange);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+}
+.job-recovery-status.queued {
+    background: rgba(76, 201, 240, 0.15);
+    color: var(--primary-cyan);
+    border: 1px solid rgba(76, 201, 240, 0.4);
+}
+.job-recovery-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-shrink: 0;
+}
+
+/* Checking status animation */
+.status-indicator.checking { background: var(--neon-orange); animation: pulse 1.5s infinite; }
+.status-badge.checking { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.5); color: var(--neon-orange); }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+/* Responsive */
+@media (max-width: 600px) {
+    .health-score-container { flex-direction: column; text-align: center; }
+    .health-mini-rings { margin-left: 0; justify-content: center; }
+    .game-row-genre, .game-row-year { display: none; }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Job Recovery Banner actions
+function resumeJob(jobId) {
+    const item = document.getElementById('recoveryItem' + jobId);
+    const btn = item ? item.querySelector('.btn-primary') : null;
+    if (btn) { btn.disabled = true; btn.textContent = 'Resuming...'; }
+
+    fetch('/api/jobs/resume/' + jobId, { method: 'POST' })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('Job resumed successfully', 'success');
+                if (window.RetroDB && window.RetroDB.ToastController) {
+                    window.RetroDB.ToastController.pollAllNow();
+                }
+                animateOutItem(item);
+            } else {
+                showNotification(data.error || 'Failed to resume job', 'error');
+                if (btn) { btn.disabled = false; btn.textContent = 'Resume'; }
+            }
+        })
+        .catch(() => {
+            showNotification('Error resuming job', 'error');
+            if (btn) { btn.disabled = false; btn.textContent = 'Resume'; }
+        });
+}
+
+function dismissJob(jobId) {
+    fetch('/api/jobs/dismiss/' + jobId, { method: 'POST' })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                const item = document.getElementById('recoveryItem' + jobId);
+                animateOutItem(item);
+            }
+        })
+        .catch(() => {});
+}
+
+function resumeAllRecoverableJobs() {
+    const banner = document.getElementById('jobRecoveryBanner');
+    if (!banner) return;
+    const items = banner.querySelectorAll('.job-recovery-item');
+    let pending = items.length;
+    if (!pending) return;
+    // Disable all buttons while processing
+    banner.querySelectorAll('.btn').forEach(b => b.disabled = true);
+    items.forEach(item => {
+        const jobId = item.id.replace('recoveryItem', '');
+        fetch('/api/jobs/resume/' + jobId, { method: 'POST' })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success) {
+                    showNotification(data.error || 'Failed to resume job ' + jobId, 'error');
+                }
+            })
+            .catch(() => {})
+            .finally(() => {
+                pending--;
+                animateOutItem(item);
+                if (pending <= 0) {
+                    showNotification('All jobs resumed', 'success');
+                    if (window.RetroDB && window.RetroDB.ToastController) {
+                        window.RetroDB.ToastController.pollAllNow();
+                    }
+                }
+            });
+    });
+}
+
+function dismissAllRecoverableJobs() {
+    const banner = document.getElementById('jobRecoveryBanner');
+    if (!banner) return;
+    const items = banner.querySelectorAll('.job-recovery-item');
+    items.forEach(item => {
+        const jobId = item.id.replace('recoveryItem', '');
+        fetch('/api/jobs/dismiss/' + jobId, { method: 'POST' }).catch(() => {});
+    });
+    banner.classList.add('fade-out');
+    setTimeout(() => banner.remove(), 500);
+}
+
+function animateOutItem(item) {
+    if (!item) return;
+    item.style.maxHeight = item.offsetHeight + 'px';
+    requestAnimationFrame(() => item.classList.add('fade-out'));
+    setTimeout(() => {
+        item.remove();
+        checkBannerEmpty();
+    }, 350);
+}
+
+function checkBannerEmpty() {
+    const banner = document.getElementById('jobRecoveryBanner');
+    if (!banner) return;
+    if (banner.querySelectorAll('.job-recovery-item').length === 0) {
+        banner.classList.add('fade-out');
+        setTimeout(() => banner.remove(), 500);
+    }
+}
+
+// Random game button
+function randomGame() {
+    fetch('/api/random-game')
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = '/game/' + data.game_id;
+            } else {
+                showNotification('No games found', 'warning');
+            }
+        })
+        .catch(() => {
+            showNotification('Error picking random game', 'error');
+        });
+}
+
+// Async API status checking + warning banner
+document.addEventListener('DOMContentLoaded', function() {
+    const scrapers = ['tgdb', 'igdb', 'rawg', 'screenscraper'];
+    let offlineCount = 0;
+    let checkedCount = 0;
+    const totalToCheck = scrapers.filter(s => {
+        const el = document.getElementById(`status-${s}`);
+        return el && el.querySelector('.status-badge.checking');
+    }).length;
+
+    scrapers.forEach(scraper => {
+        const statusEl = document.getElementById(`status-${scraper}`);
+        if (!statusEl) return;
+
+        const indicator = statusEl.querySelector('.status-indicator');
+        const badge = statusEl.querySelector('.status-badge');
+
+        if (!badge.classList.contains('checking')) return;
+
+        fetch(`/api/check-scraper/${scraper}`)
+            .then(r => r.json())
+            .then(data => {
+                indicator.classList.remove('checking', 'offline');
+                badge.classList.remove('checking', 'offline');
+
+                if (data.online) {
+                    indicator.classList.add('online');
+                    badge.classList.add('connected');
+                    badge.textContent = 'Online';
+                } else {
+                    indicator.classList.add('offline');
+                    badge.classList.add('offline');
+                    badge.textContent = data.reason || 'Offline';
+                    offlineCount++;
+                }
+                checkedCount++;
+                if (checkedCount === totalToCheck && offlineCount > 0) {
+                    const banner = document.getElementById('apiWarningBanner');
+                    if (banner) {
+                        banner.querySelector('.api-warning-text').textContent =
+                            `${offlineCount} configured API${offlineCount > 1 ? 's are' : ' is'} offline`;
+                        banner.style.display = 'flex';
+                    }
+                }
+            })
+            .catch(() => {
+                indicator.classList.remove('checking');
+                badge.classList.remove('checking');
+                indicator.classList.add('offline');
+                badge.classList.add('offline');
+                badge.textContent = 'Error';
+                offlineCount++;
+                checkedCount++;
+                if (checkedCount === totalToCheck && offlineCount > 0) {
+                    const banner = document.getElementById('apiWarningBanner');
+                    if (banner) {
+                        banner.querySelector('.api-warning-text').textContent =
+                            `${offlineCount} configured API${offlineCount > 1 ? 's are' : ' is'} offline`;
+                        banner.style.display = 'flex';
+                    }
+                }
+            });
+    });
+
+    // Poll for active background jobs
+    function checkJobs() {
+        fetch('/api/bulk-scrape-job/status')
+            .then(r => r.json())
+            .then(data => {
+                const container = document.getElementById('jobProgressContainer');
+                if (!container) return;
+
+                if (data.status === 'running' || data.status === 'paused') {
+                    const pct = data.total > 0 ? Math.round((data.processed / data.total) * 100) : 0;
+                    const statusLabel = data.status === 'paused' ? ' (Paused)' : '';
+                    container.innerHTML = `
+                        <div class="job-progress-card">
+                            <span class="job-progress-label">Bulk Scrape${statusLabel}</span>
+                            <div class="job-progress-bar-container">
+                                <div class="job-progress-bar-fill" style="width: ${pct}%"></div>
+                            </div>
+                            <span class="job-progress-text">${data.processed}/${data.total} (${pct}%)</span>
+                        </div>`;
+                    container.style.display = 'block';
+                    setTimeout(checkJobs, 3000);
+                } else {
+                    container.style.display = 'none';
+                    container.innerHTML = '';
+                }
+            })
+            .catch(() => {});
+    }
+    checkJobs();
+});
+
+// Dashboard Nav Scroll Spy
+document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.querySelectorAll('.dashboard-nav-link');
+    const sections = [];
+
+    navLinks.forEach(link => {
+        const sectionId = link.getAttribute('href').substring(1);
+        const section = document.getElementById(sectionId);
+        if (section) {
+            sections.push({ id: sectionId, element: section, link: link });
+        }
+    });
+
+    function updateActiveLink() {
+        const scrollY = window.scrollY;
+        const offset = (typeof StickyScroll !== 'undefined' ? StickyScroll.getStickyOffset() : 0) + 100;
+
+        let currentSection = sections[0];
+
+        for (const section of sections) {
+            const sectionTop = section.element.getBoundingClientRect().top + window.pageYOffset - offset;
+            if (scrollY >= sectionTop) {
+                currentSection = section;
+            }
+        }
+
+        navLinks.forEach(link => link.classList.remove('active'));
+        if (currentSection) {
+            currentSection.link.classList.add('active');
+        }
+    }
+
+    // Smooth scroll for nav links
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').substring(1);
+            if (typeof StickyScroll !== 'undefined') {
+                StickyScroll.to(targetId);
+            } else {
+                document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(updateActiveLink, 50);
+    });
+
+    updateActiveLink();
+});
+</script>
+{% endblock %}

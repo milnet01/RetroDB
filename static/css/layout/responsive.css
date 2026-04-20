@@ -1,0 +1,304 @@
+/* =============================================================================
+   RETRODB - RESPONSIVE STYLES
+   All media queries consolidated
+   ============================================================================= */
+
+/* =============================================================================
+   CONTENT WRAPPER BREAKPOINTS
+   ============================================================================= */
+
+@media (max-width: 1600px) {
+    .content-wrapper {
+        width: 80%;
+    }
+}
+
+@media (max-width: 1200px) {
+    .content-wrapper {
+        width: 95%;
+        min-width: auto;
+    }
+
+    .game-hero {
+        grid-template-columns: 250px 1fr;
+    }
+
+    .game-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .psn-games-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* =============================================================================
+   TABLET BREAKPOINT (992px)
+   ============================================================================= */
+
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .game-hero {
+        grid-template-columns: 1fr;
+    }
+
+    .game-boxart-container {
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .unified-toast-container {
+        left: 20px;
+        right: 20px;
+        width: auto;
+        max-width: calc(100% - 40px);
+    }
+
+    .system-controller-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* =============================================================================
+   MEDIUM BREAKPOINT (900px)
+   ============================================================================= */
+
+@media (max-width: 900px) {
+    .score-lists-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .psn-trophy-lists-row {
+        grid-template-columns: 1fr;
+    }
+
+    .psn-info-panels-row {
+        grid-template-columns: 1fr;
+    }
+
+    .psn-game-info-card {
+        flex-direction: column;
+    }
+
+    .psn-game-boxart {
+        width: 140px;
+    }
+
+    .psn-meta-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .psn-stats-bar {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* =============================================================================
+   MOBILE BREAKPOINT (768px)
+   ============================================================================= */
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-md);
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .systems-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .filter-bar {
+        flex-direction: column;
+    }
+
+    .search-box {
+        min-width: 100%;
+    }
+
+    .game-meta-badges {
+        flex-direction: column;
+    }
+
+    .game-ratings {
+        flex-direction: column;
+    }
+
+    .game-hero {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-boxart {
+        width: 200px;
+        margin: 0 auto;
+    }
+
+    .mobile-menu-toggle {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: var(--spacing-sm);
+    }
+
+    .mobile-menu-toggle span {
+        width: 24px;
+        height: 3px;
+        background: var(--text-primary);
+        border-radius: 2px;
+    }
+
+    .tool-tab {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .tool-tab .tab-label {
+        display: none;
+    }
+
+    .tool-tab .tab-icon {
+        font-size: 1.25rem;
+    }
+
+    .edit-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .psn-games-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .psn-search-sort-row {
+        flex-direction: column;
+    }
+
+    .psn-sort-controls {
+        width: 100%;
+    }
+
+    .psn-sort-select {
+        flex: 1;
+    }
+
+    .psn-profile-bar {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+/* =============================================================================
+   SMALL MOBILE BREAKPOINT (600px)
+   ============================================================================= */
+
+@media (max-width: 600px) {
+    .gdm-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .gdm-boxart-container {
+        width: 140px;
+    }
+
+    .gdm-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .gdm-meta {
+        justify-content: center;
+    }
+
+    .gdm-ratings {
+        justify-content: center;
+    }
+
+    .gdm-actions {
+        flex-direction: column;
+    }
+
+    .gdm-actions .btn {
+        width: 100%;
+    }
+
+    .gem-hltb-times {
+        grid-template-columns: 1fr;
+    }
+
+    .gem-footer {
+        flex-direction: column;
+    }
+
+    .gem-footer .btn {
+        width: 100%;
+    }
+
+    .gem-tabs {
+        flex-wrap: nowrap;
+    }
+
+    .gem-tab {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+
+    .gem-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .gem-footer-right {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .psn-meta-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .psn-trophy-type-breakdown {
+        flex-wrap: wrap;
+        gap: var(--spacing-md);
+    }
+
+    .platform-filters {
+        justify-content: center;
+    }
+}
+
+/* =============================================================================
+   EXTRA SMALL BREAKPOINT (480px)
+   ============================================================================= */
+
+@media (max-width: 480px) {
+    .systems-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+        letter-spacing: 2px;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+    }
+}

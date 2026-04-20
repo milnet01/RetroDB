@@ -1,0 +1,1993 @@
+{% extends "base.html" %}
+
+{% block title %}Help - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Help & Documentation</h1>
+        <p class="page-subtitle">Complete guide to RetroDB v{{ config.APP_VERSION }}</p>
+    </div>
+</div>
+
+<!-- Help Navigation -->
+<div class="help-nav" data-sticky-nav>
+    <a href="#installation" class="help-nav-item">Installation</a>
+    <a href="#getting-started" class="help-nav-item">Getting Started</a>
+    <a href="#platform-notes" class="help-nav-item">Platform Notes</a>
+    <a href="#navigation" class="help-nav-item">Navigation</a>
+    <a href="#keyboard-shortcuts" class="help-nav-item">Keyboard Shortcuts</a>
+    <a href="#themes" class="help-nav-item">Themes</a>
+    <a href="#dashboard" class="help-nav-item">Dashboard</a>
+    <a href="#systems" class="help-nav-item">Systems</a>
+    <a href="#api-keys" class="help-nav-item">API Keys</a>
+    <a href="#settings" class="help-nav-item">Settings</a>
+    <a href="#scraping" class="help-nav-item">Scraping</a>
+    <a href="#bulk-scrape" class="help-nav-item">Bulk Scraping</a>
+    <a href="#ai-fill" class="help-nav-item">AI Fill</a>
+    <a href="#filtering" class="help-nav-item">Filtering</a>
+    <a href="#game-detail" class="help-nav-item">Game Details</a>
+    <a href="#bulk-edit" class="help-nav-item">Bulk Edit</a>
+    <a href="#compare" class="help-nav-item">Compare</a>
+    <a href="#collections" class="help-nav-item">Collections</a>
+    <a href="#game-imports" class="help-nav-item">Game Imports</a>
+    <a href="#retroachievements" class="help-nav-item">RetroAchievements</a>
+    <a href="#steam-achievements" class="help-nav-item">Steam</a>
+    <a href="#xbox-achievements" class="help-nav-item">Xbox</a>
+    <a href="#hltb" class="help-nav-item">HLTB</a>
+    <a href="#trophies" class="help-nav-item">Trophies</a>
+    <a href="#collector-trophies" class="help-nav-item">Collector Trophies</a>
+    <a href="#museum" class="help-nav-item">Museum</a>
+    <a href="#analytics" class="help-nav-item">Analytics</a>
+    <a href="#reports" class="help-nav-item">Reports</a>
+    <a href="#rom-tools" class="help-nav-item">ROM Tools</a>
+    <a href="#normalization" class="help-nav-item">Normalization</a>
+    <a href="#image-standardization" class="help-nav-item">Image Resize</a>
+    <a href="#logs" class="help-nav-item">Logs</a>
+    <a href="#maintenance" class="help-nav-item">Maintenance</a>
+    <a href="#multi-user" class="help-nav-item">Multi-User</a>
+    <a href="#backup" class="help-nav-item">Backup</a>
+    <a href="#updating" class="help-nav-item">Updating</a>
+    <a href="#troubleshooting" class="help-nav-item">Troubleshooting</a>
+    <a href="#security" class="help-nav-item">Security</a>
+</div>
+
+<!-- Installation -->
+<section id="installation" class="help-section card">
+    <h2 class="card-title">Installation</h2>
+    <div class="card-body">
+        <h3>System Requirements</h3>
+        <ul>
+            <li><strong>Python 3.8+</strong> with pip</li>
+            <li><strong>Web browser</strong> (Chrome, Firefox, Safari, Edge)</li>
+            <li><strong>Operating System:</strong> Linux, Windows 10/11, or macOS</li>
+        </ul>
+
+        <h3>Quick Install</h3>
+        <ol>
+            <li>Extract the RetroDB ZIP to a directory of your choice</li>
+            <li>Open a terminal/command prompt in that directory</li>
+            <li>Run: <code>python install.py</code></li>
+            <li>Start the server:
+                <ul>
+                    <li>Linux: <code>./start.sh</code></li>
+                    <li>Windows: double-click <code>start.bat</code></li>
+                    <li>macOS: double-click <code>start.command</code></li>
+                </ul>
+            </li>
+            <li>Open <code>http://localhost:5000</code> in your browser</li>
+        </ol>
+
+        <h3>GUI Installer</h3>
+        <p>On Linux, you can also run <code>./setup.sh</code> to launch a graphical installer wizard. It checks for Python/pip/tkinter automatically, then walks you through every setup step with a visual progress log.</p>
+
+        <h3>What install.py Does</h3>
+        <ul>
+            <li>Verifies Python 3.8+ and pip are available</li>
+            <li>Installs Python dependencies from <code>requirements.txt</code></li>
+            <li>Creates <code>config.py</code> from the example template</li>
+            <li>Creates required directories (database, logs, media folders)</li>
+            <li>Builds the CSS and JS bundles</li>
+        </ul>
+
+        <h3>Environment Variable Overrides</h3>
+        <p>The following environment variables can override default settings without editing config files:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>Variable</th><th>Default</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>RETRODB_DB_PATH</code></td><td><code>database/roms.db</code></td><td>Database file path</td></tr>
+                <tr><td><code>RETRODB_HOST</code></td><td><code>0.0.0.0</code></td><td>Server bind address</td></tr>
+                <tr><td><code>RETRODB_PORT</code></td><td><code>5000</code></td><td>Server port</td></tr>
+                <tr><td><code>RETRODB_DEBUG</code></td><td><code>false</code></td><td>Debug mode (<code>true</code> or <code>false</code>) &mdash; enables the Werkzeug interactive debugger. Keep <code>false</code> for any installation reachable from other devices on your network.</td></tr>
+                <tr><td><code>RETRODB_SECRET_KEY</code></td><td>Auto-generated</td><td>Flask secret key</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Getting Started -->
+<section id="getting-started" class="help-section card">
+    <h2 class="card-title">Getting Started</h2>
+    <div class="card-body">
+        <h3>First-Time Setup</h3>
+        <p>On first launch, RetroDB shows a <strong>Setup Wizard</strong> that guides you through:</p>
+        <ol>
+            <li><strong>Admin Account</strong> &mdash; Create your username and password</li>
+            <li><strong>Library Path</strong> &mdash; Set your ROM directory</li>
+            <li><strong>ES-DE Integration</strong> &mdash; Optionally link ES-DE gamelists and media</li>
+            <li><strong>API Keys</strong> &mdash; Optionally add scraper API keys</li>
+        </ol>
+        <p>After completing the wizard, click <strong>"Scan Library"</strong> on the Dashboard to discover your ROMs.</p>
+
+        <h3>Quick Start Workflow</h3>
+        <ol>
+            <li><strong>Scan</strong> your library to import ROMs</li>
+            <li><strong>Browse</strong> by system or view all games in Library</li>
+            <li><strong>Scrape</strong> metadata individually or use bulk scrape</li>
+            <li><strong>Organize</strong> with tags, lists, and wishlist</li>
+            <li><strong>Track</strong> your progress with completion status and achievements</li>
+        </ol>
+
+        <h3>ROM Library Structure</h3>
+        <p>RetroDB expects your ROMs to be organized in system folders within your library path:</p>
+        <pre>ROM Library/
+  nes/
+    Super Mario Bros. (USA).nes
+  snes/
+    Chrono Trigger (USA).sfc
+  psx/
+    Final Fantasy VII (USA)/
+      Final Fantasy VII (USA) (Disc 1).chd
+      Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>Each system folder should contain an ES-DE <code>systeminfo.txt</code> file that defines supported file extensions. RetroDB reads this during scanning to identify which files are valid ROMs for each system.</p>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> If you've already scraped with ES-DE, RetroDB can import that data!
+            Configure ES-DE paths in Settings &rarr; ES-DE Integration, or during the setup wizard.
+        </div>
+    </div>
+</section>
+
+<!-- Platform Notes -->
+<section id="platform-notes" class="help-section card">
+    <h2 class="card-title">Platform Notes</h2>
+    <div class="card-body">
+        <h3>Linux</h3>
+        <ul>
+            <li>Tested on Ubuntu, Fedora, openSUSE, and Arch Linux</li>
+            <li>ROM Tools require: <code>sudo apt install p7zip-full unrar mame-tools</code> (Debian/Ubuntu) or equivalent for your distro</li>
+            <li>If using system Python, the installer handles <code>--break-system-packages</code> automatically</li>
+            <li>ROCm GPU acceleration supported for AMD GPUs (Real-ESRGAN image upscaling)</li>
+        </ul>
+
+        <h3>Windows</h3>
+        <ul>
+            <li>Download Python from <a href="https://python.org" target="_blank">python.org</a> (check "Add to PATH" during install)</li>
+            <li>ROM Tools: Install <a href="https://www.7-zip.org/" target="_blank">7-Zip</a>, <a href="https://www.win-rar.com/" target="_blank">WinRAR</a>, and <a href="https://www.mamedev.org/" target="_blank">MAME</a> (for chdman)</li>
+            <li>Use <code>start.bat</code> to launch, or run <code>python app.py</code> from Command Prompt</li>
+        </ul>
+
+        <h3>macOS</h3>
+        <ul>
+            <li>Python 3 can be installed via <a href="https://brew.sh/" target="_blank">Homebrew</a>: <code>brew install python3</code></li>
+            <li>ROM Tools: <code>brew install p7zip unrar rom-tools</code></li>
+            <li>Double-click <code>start.command</code> in Finder to launch</li>
+            <li>CoreML acceleration supported for Apple Silicon (Real-ESRGAN image upscaling)</li>
+        </ul>
+
+        <h3>ROM Tool Requirements by Feature</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Feature</th><th>Required Tool</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ZIP extraction</td><td>unzip (usually pre-installed)</td></tr>
+                <tr><td>7z archive support</td><td>7z (p7zip-full)</td></tr>
+                <tr><td>RAR archive support</td><td>unrar</td></tr>
+                <tr><td>CHD conversion/verification</td><td>chdman (mame-tools)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Navigation -->
+<section id="navigation" class="help-section card">
+    <h2 class="card-title">Navigation</h2>
+    <div class="card-body">
+        <h3>Sidebar Sections</h3>
+
+        <h4>Main</h4>
+        <ul>
+            <li><strong>Dashboard</strong> &mdash; Collection health score, stats overview, API status, recently played/added/scraped games, job recovery</li>
+            <li><strong>Systems</strong> &mdash; Browse platforms with game counts, system images, specs, filtering by type and features</li>
+            <li><strong>Library</strong> &mdash; All games with infinite scroll, advanced filtering (include/exclude), search, and sorting</li>
+            <li><strong>Analytics</strong> &mdash; Charts and collection statistics across 12 tabs with export options</li>
+        </ul>
+
+        <h4>Trophies & Achievements</h4>
+        <ul>
+            <li><strong>RPCS3 Trophies</strong> &mdash; Locally earned PS3 trophies from RPCS3 emulator</li>
+            <li><strong>PSN Trophies</strong> &mdash; PlayStation Network trophy sync via PSN API</li>
+            <li><strong>Achievements</strong> &mdash; RetroAchievements progress tracking by system</li>
+            <li><strong>Steam Achievements</strong> &mdash; Steam achievement tracking with per-game details</li>
+            <li><strong>Xbox Achievements</strong> &mdash; Xbox achievement and gamerscore tracking</li>
+        </ul>
+
+        <h4>My Collection</h4>
+        <ul>
+            <li><strong>Tags</strong> &mdash; Custom color-coded game tags</li>
+            <li><strong>Lists</strong> &mdash; Named curated game lists with drag-and-drop ordering</li>
+            <li><strong>Wishlist</strong> &mdash; Track games you want to acquire with priority levels</li>
+            <li><strong>Collector Trophies</strong> &mdash; Gamification milestones for your collection</li>
+        </ul>
+
+        <h4>Tools</h4>
+        <ul>
+            <li><strong>ROM Reports</strong> &mdash; ROM naming validation and standards compliance</li>
+            <li><strong>Game Imports</strong> &mdash; Import from CLZ, Steam, Xbox, and PSN</li>
+            <li><strong>ROM Tools</strong> &mdash; Archive scanner, CHD converter/verify, duplicate finder, multi-disc organizer, screenshot dedup, image resizer</li>
+        </ul>
+
+        <h4>Configuration</h4>
+        <ul>
+            <li><strong>Settings</strong> &mdash; All app configuration (6 tabs with many subsections)</li>
+            <li><strong>Log Viewer</strong> &mdash; Browse application logs across all categories</li>
+        </ul>
+
+        <h4>Info</h4>
+        <ul>
+            <li><strong>Museum</strong> &mdash; Interactive gaming system encyclopedia with AI-generated content</li>
+            <li><strong>Help</strong> &mdash; This documentation page</li>
+            <li><strong>Changelog</strong> &mdash; Version history</li>
+        </ul>
+
+        <h3>Sidebar Highlighting</h3>
+        <p>The sidebar highlights the current section in cyan. Context is preserved when drilling down &mdash; viewing a system's games keeps <strong>Systems</strong> highlighted, viewing a game from Achievements keeps <strong>Achievements</strong> highlighted, etc.</p>
+
+        <h3>Breadcrumbs</h3>
+        <p>Breadcrumbs at the top of each page show your navigation path. Examples:</p>
+        <ul>
+            <li><code>Systems &rsaquo; NES &rsaquo; Super Mario Bros.</code></li>
+            <li><code>RetroAchievements &rsaquo; SNES</code></li>
+            <li><code>PSN Trophies &rsaquo; The Last of Us</code></li>
+        </ul>
+
+        <h3>Tabs</h3>
+        <p>Many pages use tabs for organization (Settings, Analytics, Reports, ROM Tools, Achievements). Tabs stretch to fill the content width and remember your last selection where applicable.</p>
+    </div>
+</section>
+
+<!-- Keyboard Shortcuts -->
+<section id="keyboard-shortcuts" class="help-section card">
+    <h2 class="card-title">Keyboard Shortcuts</h2>
+    <div class="card-body">
+        <p>Press <kbd>?</kbd> anywhere to show all shortcuts. A pending-key indicator appears when waiting for the second key in a sequence (e.g. <code>g...</code>).</p>
+
+        <h3>Navigation (press G, then letter)</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>d</kbd> <span>Dashboard</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>s</kbd> <span>Systems</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>l</kbd> <span>Library</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>a</kbd> <span>Analytics</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>t</kbd> <span>Settings</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>h</kbd> <span>Help</span></div>
+        </div>
+
+        <h3>Actions</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>/</kbd> <span>Focus search</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Close modal</span></div>
+            <div class="shortcut-item"><kbd>?</kbd> <span>Show shortcuts</span></div>
+        </div>
+
+        <h3>Game Pages</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>e</kbd> <span>Edit game</span></div>
+            <div class="shortcut-item"><kbd>s</kbd> <span>Scrape game</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Navigate screenshots</span></div>
+        </div>
+
+        <div class="help-tip">
+            <strong>Note:</strong> Keyboard shortcuts are disabled when a text input, textarea, or modal is focused to avoid accidental navigation.
+        </div>
+    </div>
+</section>
+
+<!-- Themes -->
+<section id="themes" class="help-section card">
+    <h2 class="card-title">Themes</h2>
+    <div class="card-body">
+        <p>RetroDB offers 7 visual themes, each with a unique color palette and animated canvas background effect. Change themes in <strong>Settings &rarr; Library &rarr; Display</strong>.</p>
+
+        <h3>Available Themes</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Theme</th><th>Colors</th><th>Background Effect</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Cyberpunk</strong> (default)</td><td>Cyan &amp; magenta on dark blue</td><td>Volumetric smoke/mist with simplex noise</td></tr>
+                <tr><td><strong>Matrix</strong></td><td>Green on black</td><td>Falling digital rain (kanji characters)</td></tr>
+                <tr><td><strong>Amber</strong></td><td>Amber/orange on dark brown</td><td>CRT sunrise gradient with sun corona</td></tr>
+                <tr><td><strong>Ocean</strong></td><td>Teal &amp; blue on dark navy</td><td>Moon reflection with ocean depth layering</td></tr>
+                <tr><td><strong>Cathedral</strong></td><td>Gold &amp; royal purple on deep purple</td><td>Divine light rays from above with warm ambience</td></tr>
+                <tr><td><strong>Blade Runner</strong></td><td>Electric blue &amp; neon pink on dark blue-grey</td><td>Neon city glow with rain streaks and purple haze</td></tr>
+                <tr><td><strong>Elite</strong></td><td>Vector green &amp; white on pure black</td><td>Wireframe vector aesthetic inspired by Elite (1984)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>How It Works</h3>
+        <ul>
+            <li>Themes override CSS color variables &mdash; all UI elements adapt automatically</li>
+            <li>Canvas effects include automatic hardware tier detection (high/medium/low) with GPU acceleration when available and CPU fallback for lower-end devices</li>
+            <li>Effects pause when the tab is not visible to save resources</li>
+            <li>Cyberpunk smoke state persists across page navigations for seamless transitions</li>
+            <li>Subtle CRT-style scanlines overlay adapts to each theme's color palette</li>
+            <li>Your theme preference is saved in the browser and persists across sessions</li>
+        </ul>
+
+        <h3>Theme-Aware Icons</h3>
+        <p>Notification icons, job status indicators, and action icons automatically adapt to the current theme. For example, the success icon might show a green checkmark on Cyberpunk but a different symbol on Matrix to match the green-on-black aesthetic.</p>
+    </div>
+</section>
+
+<!-- Dashboard -->
+<section id="dashboard" class="help-section card">
+    <h2 class="card-title">Dashboard</h2>
+    <div class="card-body">
+        <h3>Collection Health Score</h3>
+        <p>A circular progress ring shows your overall collection health as a percentage, color-coded by quality:</p>
+        <ul>
+            <li><strong>Green</strong> (80%+) &mdash; Excellent metadata coverage</li>
+            <li><strong>Cyan</strong> (60&ndash;79%) &mdash; Good coverage with some gaps</li>
+            <li><strong>Orange</strong> (40&ndash;59%) &mdash; Moderate coverage, consider bulk scraping</li>
+            <li><strong>Red</strong> (&lt;40%) &mdash; Significant metadata gaps</li>
+        </ul>
+        <p>Breakdown mini-rings below show boxart completeness, description completeness, and achievements coverage.</p>
+
+        <h3>Stats Overview</h3>
+        <p>At-a-glance cards showing:</p>
+        <ul>
+            <li><strong>Total Systems</strong> &mdash; Number of platforms in your library</li>
+            <li><strong>Total Games</strong> &mdash; Total game count (excluding bonus discs)</li>
+            <li><strong>Missing Metadata</strong> &mdash; Games not yet scraped</li>
+            <li><strong>Complete</strong> &mdash; Games with scraped metadata</li>
+        </ul>
+
+        <h3>Recent Activity Sections</h3>
+        <p>Scrollable sections showing your recent activity (each appears only when there are relevant games):</p>
+        <ul>
+            <li><strong>Currently Playing</strong> &mdash; Games marked as "In Progress"</li>
+            <li><strong>Recently Added</strong> &mdash; Latest games added to your library</li>
+            <li><strong>Recently Viewed</strong> &mdash; Games you've recently opened</li>
+            <li><strong>Recently Scraped</strong> &mdash; Games with recently fetched metadata</li>
+        </ul>
+
+        <h3>Quick Actions</h3>
+        <ul>
+            <li><strong>Scan Library</strong> &mdash; Scan your ROM directories for new games</li>
+            <li><strong>Random Game</strong> &mdash; Pick a random game from your library</li>
+        </ul>
+
+        <h3>API Status</h3>
+        <p>Shows the connection status of all configured scrapers and APIs. Offline or misconfigured APIs display a warning banner with a link to Settings.</p>
+
+        <h3>Job Recovery</h3>
+        <p>If RetroDB restarts while background jobs are running (bulk scrape, RA sync, image resize, etc.), interrupted jobs appear in a recovery banner. Options:</p>
+        <ul>
+            <li><strong>Resume</strong> &mdash; Restart an individual interrupted job</li>
+            <li><strong>Resume All</strong> &mdash; Restart all interrupted jobs</li>
+            <li><strong>Dismiss</strong> &mdash; Clear an individual job from the recovery list</li>
+            <li><strong>Dismiss All</strong> &mdash; Clear all interrupted jobs</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Systems Browser -->
+<section id="systems" class="help-section card">
+    <h2 class="card-title">Systems Browser</h2>
+    <div class="card-body">
+        <h3>Systems Grid</h3>
+        <p>The Systems page shows all platforms in your library as cards in a responsive masonry grid layout. Each card displays:</p>
+        <ul>
+            <li><strong>System logo</strong> (customizable in Settings &rarr; Customization &rarr; Logos)</li>
+            <li><strong>ROM count</strong> and <strong>unscraped count</strong></li>
+            <li><strong>System type badge</strong> &mdash; Console, Handheld, Computer, Arcade, or Engine</li>
+            <li><strong>Feature badges</strong> &mdash; RetroAchievements support, Local Trophies (RPCS3)</li>
+        </ul>
+
+        <h3>System Specs Modal</h3>
+        <p>Click the info button on any system card to view detailed hardware specifications:</p>
+        <ul>
+            <li>Hardware image (console/system photo)</li>
+            <li>Manufacturer and release date</li>
+            <li>CPU, GPU, RAM, VRAM</li>
+            <li>Resolution, color depth, sound chip</li>
+            <li>Media type (cartridge, disc, etc.)</li>
+        </ul>
+
+        <h3>Filtering & Search</h3>
+        <ul>
+            <li><strong>Text search</strong> &mdash; Filter by system name or folder name</li>
+            <li><strong>Type filter</strong> &mdash; Console, Handheld, Computer, Arcade, Engine</li>
+            <li><strong>Feature filter</strong> &mdash; RetroAchievements support, Local Trophies</li>
+            <li>Filter results bar shows <em>"X of Y systems"</em></li>
+            <li>Filters persist across page reloads via session storage</li>
+        </ul>
+
+        <h3>Per-System Game List</h3>
+        <p>Click any system card to view its games. The per-system game list has the same features as the full Library page &mdash; infinite scroll, search, all filter options, bulk selection, and sorting. A system header shows the system name, game count, and system type badge.</p>
+    </div>
+</section>
+
+<!-- API Key Setup Guide -->
+<section id="api-keys" class="help-section card">
+    <h2 class="card-title">API Key Setup Guide</h2>
+    <div class="card-body">
+        <p>API keys are optional but enable rich metadata scraping and additional features. Configure them in <strong>Settings &rarr; Scraping &rarr; API Keys</strong>.</p>
+
+        <h3>Metadata Scrapers</h3>
+
+        <h4>TheGamesDB</h4>
+        <ol>
+            <li>Go to <a href="https://api.thegamesdb.net/key.php" target="_blank">api.thegamesdb.net/key.php</a></li>
+            <li>Request API keys (free, approved manually) &mdash; you'll receive a <strong>Public</strong> and <strong>Private</strong> key</li>
+            <li>Enter both keys in Settings &rarr; API Keys &rarr; TheGamesDB</li>
+            <li>The <strong>Public key</strong> (per-IP rate limit) is used as the primary key for scraping</li>
+            <li>The <strong>Private key</strong> (shared monthly pool) is used as a fallback if the public key fails</li>
+        </ol>
+
+        <h4>IGDB (via Twitch)</h4>
+        <ol>
+            <li>Create a Twitch account at <a href="https://www.twitch.tv" target="_blank">twitch.tv</a></li>
+            <li>Go to <a href="https://dev.twitch.tv/console" target="_blank">dev.twitch.tv/console</a></li>
+            <li>Register a new application (any name, any category, <code>http://localhost</code> as OAuth redirect)</li>
+            <li>Copy the <strong>Client ID</strong> and generate a <strong>Client Secret</strong></li>
+            <li>Enter both in Settings &rarr; API Keys &rarr; IGDB</li>
+        </ol>
+
+        <h4>RAWG.io</h4>
+        <ol>
+            <li>Go to <a href="https://rawg.io/apidocs" target="_blank">rawg.io/apidocs</a></li>
+            <li>Click "Get API Key" and create an account</li>
+            <li>Copy your API key from the dashboard</li>
+            <li>Enter it in Settings &rarr; API Keys &rarr; RAWG</li>
+        </ol>
+        <p><em>Free tier: 20,000 requests/month</em></p>
+
+        <h4>ScreenScraper</h4>
+        <ol>
+            <li>Create an account at <a href="https://www.screenscraper.fr" target="_blank">screenscraper.fr</a></li>
+            <li>Enter your username and password in Settings &rarr; API Keys &rarr; ScreenScraper</li>
+        </ol>
+        <p><em>Note: ScreenScraper has daily request limits based on your account level. Contributing to the database increases your limits.</em></p>
+
+        <h3>Achievements & Trophies</h3>
+
+        <h4>RetroAchievements</h4>
+        <ol>
+            <li>Create an account at <a href="https://retroachievements.org" target="_blank">retroachievements.org</a></li>
+            <li>Go to <a href="https://retroachievements.org/controlpanel.php" target="_blank">Settings &rarr; API Keys</a> on your profile</li>
+            <li>Copy your API key</li>
+            <li>Enter your username and API key in Settings &rarr; Account &rarr; RetroAchievements</li>
+        </ol>
+
+        <h4>Steam Web API</h4>
+        <ol>
+            <li>Go to <a href="https://steamcommunity.com/dev/apikey" target="_blank">steamcommunity.com/dev/apikey</a></li>
+            <li>Register for a Steam Web API key (requires a Steam account)</li>
+            <li>Enter your API key and Steam ID (or vanity URL) in Settings</li>
+        </ol>
+        <p><em>Used for Steam library import and achievement tracking.</em></p>
+
+        <h4>Xbox Live</h4>
+        <p>Xbox authentication uses OAuth2 &mdash; no API key is needed. Sign in with your Microsoft account directly from the Game Imports &rarr; Xbox tab. Tokens are cached automatically and refreshed as needed.</p>
+
+        <h4>PlayStation Network (PSN)</h4>
+        <p>PSN uses NPSSO cookie authentication. See the <a href="#trophies">Trophies</a> section for detailed setup instructions.</p>
+
+        <h3>AI Providers (for AI Fill &amp; Museum)</h3>
+        <p>One AI provider is needed for AI Fill metadata and Museum content generation. Choose from:</p>
+
+        <table class="data-table">
+            <thead>
+                <tr><th>Provider</th><th>Default Model</th><th>Price (Input / Output per 1M tokens)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0.10 / $0.40</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0.15 / $0.60</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 4.5</td><td>$1.00 / $5.00</td></tr>
+            </tbody>
+        </table>
+        <p>Each provider offers multiple model tiers. The cheapest models work well for metadata and museum content. Configure your preferred provider and API key in <strong>Settings &rarr; Scraping &rarr; API Keys</strong>.</p>
+    </div>
+</section>
+
+<!-- Settings -->
+<section id="settings" class="help-section card">
+    <h2 class="card-title">Settings</h2>
+    <div class="card-body">
+        <p>Settings are organized into 6 tabs, each with multiple subsections.</p>
+
+        <h3>Account Tab</h3>
+        <ul>
+            <li><strong>My Profile</strong> &mdash; Avatar upload/remove, display name, role info, password change</li>
+            <li><strong>RetroAchievements</strong> &mdash; Username and API key for RA integration</li>
+            <li><strong>PSN</strong> &mdash; NPSSO cookie for PlayStation Network trophy sync</li>
+            <li><strong>Timezone</strong> &mdash; Set your timezone for date display throughout the app</li>
+            <li><strong>Users</strong> &mdash; User management: add, edit, delete users and assign roles (admin only)</li>
+        </ul>
+
+        <h3>Library Tab</h3>
+        <ul>
+            <li><strong>Paths</strong> &mdash; ROM library path, database location</li>
+            <li><strong>Display</strong> &mdash; Theme selection, boxart style (2D/3D), preferred age rating system, items per page</li>
+            <li><strong>ROM Naming</strong> &mdash; Article placement (leading/trailing "The"), region options list, default region, naming conventions</li>
+            <li><strong>Backup</strong> &mdash; Create and restore database backups</li>
+        </ul>
+
+        <h3>Scraping Tab</h3>
+        <ul>
+            <li><strong>ES-DE</strong> &mdash; ES-DE gamelist and media paths for local data import</li>
+            <li><strong>Scraper</strong> &mdash; Enable/disable individual scrapers, drag-and-drop priority ordering, rate limit settings per scraper</li>
+            <li><strong>API Keys</strong> &mdash; All scraper credentials (TGDB, IGDB, RAWG, ScreenScraper), AI provider selection and model choice (Gemini, OpenAI, Claude)</li>
+        </ul>
+
+        <h3>Data Tab</h3>
+        <ul>
+            <li><strong>Stats</strong> &mdash; Library statistics overview (total games, systems, storage usage)</li>
+            <li><strong>Trophies</strong> &mdash; RPCS3 trophy path configuration for local PS3 trophy scanning</li>
+            <li><strong>Dropdowns</strong> &mdash; Customize region options and other dropdown values used across the app</li>
+            <li><strong>Normalization</strong> &mdash; Genre and modes normalization rules &mdash; add custom mappings to standardize scraper output</li>
+        </ul>
+
+        <h3>Customization Tab</h3>
+        <ul>
+            <li><strong>Notifications</strong> &mdash; Notification timeout preferences (success, info, warning, error &mdash; each configurable independently)</li>
+            <li><strong>Controllers</strong> &mdash; Manage the controller library, set default controllers per system, add custom controllers. Default controllers override scraped/AI values during metadata fetch.</li>
+            <li><strong>Logos</strong> &mdash; System logo customization &mdash; import system logos or refresh from defaults</li>
+        </ul>
+
+        <h3>System Tab</h3>
+        <ul>
+            <li><strong>Maintenance</strong> &mdash; Database optimization (VACUUM/ANALYZE), orphan media cleanup, clean missing ROMs, clear scraped data, clear CLZ imports, bulk image standardization</li>
+            <li><strong>Server</strong> &mdash; Server configuration (host, port, debug mode)</li>
+            <li><strong>Logging</strong> &mdash; Log level settings for different categories</li>
+            <li><strong>Troubleshooting</strong> &mdash; Clear stuck bulk scrape, clear RA sync queue, clear PSN refresh, clear museum generation, restart server</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> Disabled scrapers will not trigger "API offline" warnings on the Dashboard. If you don't use a scraper, disable it in Settings &rarr; Scraping &rarr; Scraper rather than deleting the API key.
+        </div>
+    </div>
+</section>
+
+<!-- Scraping -->
+<section id="scraping" class="help-section card">
+    <h2 class="card-title">Scraping Metadata</h2>
+    <div class="card-body">
+        <h3>Single Game Scraping</h3>
+        <ol>
+            <li>Open any game's detail modal (click the game card)</li>
+            <li>Click <strong>"Scrape"</strong></li>
+            <li>Modify search title if needed</li>
+            <li>Select the correct result from the matches</li>
+            <li>Click <strong>"Apply"</strong></li>
+        </ol>
+
+        <h3>Scraper Sources</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Source</th><th>API Key</th><th>Best For</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ES-DE (Local)</td><td>No</td><td>Already scraped collections &mdash; imports gamelist.xml and downloaded media</td></tr>
+                <tr><td>TheGamesDB</td><td>Yes</td><td>Platform-specific boxart, 3D boxart</td></tr>
+                <tr><td>IGDB</td><td>Yes</td><td>Modern games, detailed info, genres, ratings</td></tr>
+                <tr><td>RAWG.io</td><td>Yes</td><td>User ratings, descriptions, screenshots</td></tr>
+                <tr><td>ScreenScraper</td><td>Yes</td><td>Regional variants, 3D boxart, videos, manuals</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Hybrid Scraping</h3>
+        <p>RetroDB automatically combines data from multiple sources to maximize metadata coverage:</p>
+        <ul>
+            <li>Text metadata from the highest-priority available source</li>
+            <li>Images and media from secondary sources when the primary doesn't have them</li>
+            <li>Automatic gap-filling across scrapers for maximum coverage</li>
+            <li>Sort title is auto-generated from the game title during scraping</li>
+        </ul>
+
+        <h3>Media Handling</h3>
+        <ul>
+            <li>Media fields (boxart, 3D boxart, screenshots, fanart, video, manual) are <strong>never replaced</strong> during normal scraping &mdash; only filled when empty</li>
+            <li>Screenshots are always <strong>appended</strong>, never replaced</li>
+            <li>To re-download media, clear the existing image in the edit modal first, then re-scrape</li>
+            <li><strong>Full Re-scrape</strong> mode overrides this and replaces everything</li>
+            <li>Stale media references (file deleted but filename still in DB) are automatically cleared before scraping so fresh media can be downloaded</li>
+            <li>Downloaded images are automatically standardized to target sizes (see <a href="#image-standardization">Image Standardization</a>)</li>
+        </ul>
+
+        <h3>Scraper Priority</h3>
+        <p>Configure which scrapers run first and which are enabled/disabled in <strong>Settings &rarr; Scraping &rarr; Scraper</strong>. Drag-and-drop to reorder priority. Disabled scrapers won't be tried during scraping and won't trigger API status warnings on the Dashboard.</p>
+
+        <h3>Rate Limiting</h3>
+        <p>Each scraper has configurable rate limits to prevent API throttling. Default delays are set conservatively. Reduce delays at your own risk &mdash; exceeding API rate limits may result in temporary bans from the respective service.</p>
+    </div>
+</section>
+
+<!-- Bulk Scraping -->
+<section id="bulk-scrape" class="help-section card">
+    <h2 class="card-title">Bulk Scraping</h2>
+    <div class="card-body">
+        <h3>Starting a Bulk Scrape</h3>
+        <ol>
+            <li>Go to any System or Library page</li>
+            <li>Click <strong>"Select"</strong> to enter selection mode</li>
+            <li>Select games individually or use quick select:
+                <ul>
+                    <li><strong>Select All</strong> &mdash; All visible games</li>
+                    <li><strong>Select Unscraped</strong> &mdash; Only games without metadata</li>
+                </ul>
+            </li>
+            <li>Choose mode: <strong>Fill Missing</strong> or <strong>Full Re-scrape</strong></li>
+            <li>Click <strong>"Scrape Selected"</strong></li>
+        </ol>
+
+        <h3>Controls</h3>
+        <ul>
+            <li><strong>Pause / Resume</strong> &mdash; Pause or continue scraping</li>
+            <li><strong>Cancel</strong> &mdash; Stop completely</li>
+            <li><strong>Background</strong> &mdash; Minimize and continue browsing while scraping runs</li>
+        </ul>
+
+        <h3>Toast Notification</h3>
+        <p>When running in background, a persistent toast shows progress on all pages:</p>
+        <ul>
+            <li>Current game name, progress count, and outcome stats (success, failed, skipped)</li>
+            <li>Pause/Cancel controls available from any page</li>
+            <li>Click the toast to return to the scrape modal</li>
+        </ul>
+
+        <h3>Queue System</h3>
+        <p>Multiple bulk scrapes queue automatically:</p>
+        <ul>
+            <li>Start a new scrape while one is running &mdash; it queues</li>
+            <li>Queue shows in toast with count of pending jobs</li>
+            <li>Jobs process automatically in order</li>
+            <li>Use Queue Manager to view, reorder, or cancel queued jobs</li>
+        </ul>
+
+        <h3>Scrape Options</h3>
+        <ul>
+            <li><strong>Fill Missing Only</strong> &mdash; Only fill empty metadata fields, preserving existing data</li>
+            <li><strong>Full Re-scrape</strong> &mdash; Replace all fields including media (downloads fresh images and videos)</li>
+            <li><strong>Check RetroAchievements</strong> &mdash; Also check for RetroAchievements achievement sets during scraping</li>
+        </ul>
+
+        <h3>Job Recovery</h3>
+        <p>If RetroDB is restarted while a job is running, interrupted jobs appear in a recovery banner on the Dashboard. Click <strong>"Resume"</strong> on individual jobs or <strong>"Resume All"</strong> to restart them. The progress toast appears immediately after resuming.</p>
+    </div>
+</section>
+
+<!-- AI Fill -->
+<section id="ai-fill" class="help-section card">
+    <h2 class="card-title">AI Fill</h2>
+    <div class="card-body">
+        <h3>What It Does</h3>
+        <p>AI Fill uses a large language model (Gemini, OpenAI, or Claude) to intelligently fill missing or incomplete game metadata. It's smarter than regular scraping because it uses contextual knowledge about the game to provide accurate data that scrapers may not have.</p>
+
+        <h3>How to Use</h3>
+        <ol>
+            <li>Open a game's detail modal (or full detail page)</li>
+            <li>Click <strong>"AI Fill"</strong> (requires an AI API key configured in Settings)</li>
+            <li>AI analyzes the game title and system, then fills in missing fields</li>
+            <li>Review the results &mdash; changes are saved automatically</li>
+        </ol>
+
+        <h3>What AI Fill Can Provide</h3>
+        <ul>
+            <li>Genre, description, developer, publisher, release date</li>
+            <li>Players, play modes (Single-Player, Multi-Player, Co-op, etc.)</li>
+            <li>Campaign info and game structure</li>
+            <li>All 8 age rating systems (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd)</li>
+            <li>Region, franchise, similar games</li>
+            <li>Controller support, save type</li>
+            <li>Perspective (First-Person, Top-Down, Side-Scroller, etc.), dimension (2D, 3D)</li>
+            <li>Edition info, critic and user scores</li>
+        </ul>
+
+        <h3>Smart Fill Logic</h3>
+        <ul>
+            <li><strong>Empty fields</strong> are always filled</li>
+            <li><strong>Existing user data</strong> is never overwritten</li>
+            <li><strong>Similar games</strong> are always refreshed (AI data is more reliable for this field)</li>
+            <li><strong>Cross-mapped ratings</strong> &mdash; If one rating system is known, empty ratings in other systems are automatically filled using maturity tier cross-mapping</li>
+            <li><strong>Sort title</strong> is auto-generated when filled</li>
+            <li><strong>Players</strong> field normalizes ranges (e.g. "1-4" becomes 4)</li>
+        </ul>
+
+        <h3>Genre Normalization</h3>
+        <p>AI Fill uses canonical genre forms with hyphenated names:</p>
+        <ul>
+            <li><code>First-Person-Shooter</code>, <code>Shoot-em-up</code>, <code>Beat-em-up</code></li>
+            <li><code>Hack-n-Slash</code>, <code>Board-Card</code>, <code>Real-Time Strategy</code></li>
+        </ul>
+
+        <h3>Requirements</h3>
+        <p>At least one AI provider API key must be configured in <strong>Settings &rarr; Scraping &rarr; API Keys</strong>. The cheapest model tier (Gemini Flash Lite, GPT-4o Mini, or Claude Haiku) works well for metadata.</p>
+    </div>
+</section>
+
+<!-- Filtering -->
+<section id="filtering" class="help-section card">
+    <h2 class="card-title">Filtering & Search</h2>
+    <div class="card-body">
+        <h3>Search</h3>
+        <p>Search filters games by title (and sort title). Press <kbd>/</kbd> to focus the search box. Results update in real-time with a 300ms debounce.</p>
+
+        <h3>Source Filter</h3>
+        <p>Filter games by import source:</p>
+        <ul>
+            <li><strong>ROM Files</strong> &mdash; Games from your ROM library</li>
+            <li><strong>CLZ Imports</strong> &mdash; Physical games imported from CLZ</li>
+            <li><strong>Steam Imports</strong> &mdash; Games imported from Steam</li>
+            <li><strong>Xbox Imports</strong> &mdash; Games imported from Xbox</li>
+            <li><strong>PSN Imports</strong> &mdash; Games imported from PlayStation Network</li>
+        </ul>
+
+        <h3>Filter Buttons</h3>
+        <p>Each filter opens a modal showing all unique values in your library with counts. Filters support two modes:</p>
+        <ul>
+            <li><strong>Include (IS)</strong> &mdash; Show only games matching the selected value</li>
+            <li><strong>Exclude (IS NOT)</strong> &mdash; Hide games matching the selected value</li>
+        </ul>
+        <p>Toggle between include and exclude mode using the switch in the filter modal.</p>
+
+        <h3>Available Filters</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Filter</th><th>Description</th><th>Multi-Value</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Genre</strong></td><td>Action, RPG, Platformer, etc.</td><td>Yes</td></tr>
+                <tr><td><strong>Series</strong></td><td>Game franchise</td><td>Yes</td></tr>
+                <tr><td><strong>Publisher</strong></td><td>Publishing company</td><td>Yes</td></tr>
+                <tr><td><strong>Developer</strong></td><td>Development studio</td><td>Yes</td></tr>
+                <tr><td><strong>Players</strong></td><td>Player count</td><td>No</td></tr>
+                <tr><td><strong>Modes</strong></td><td>Single-Player, Multi-Player, Co-op</td><td>Yes</td></tr>
+                <tr><td><strong>Perspective</strong></td><td>First-Person, Top-Down, Isometric, Side-Scroller</td><td>Yes</td></tr>
+                <tr><td><strong>Dimension</strong></td><td>2D, 3D</td><td>Yes</td></tr>
+                <tr><td><strong>Rating</strong></td><td>Age rating (shows your preferred system)</td><td>No</td></tr>
+                <tr><td><strong>Has RA</strong></td><td>Games with RetroAchievements support</td><td>No</td></tr>
+                <tr><td><strong>Show Bonus</strong></td><td>Toggle bonus disc visibility</td><td>No</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Sort Options</h3>
+        <ul>
+            <li><strong>Title</strong> &mdash; Alphabetical by sort title (case-insensitive)</li>
+            <li><strong>Release Date</strong> &mdash; Chronological order (earliest first)</li>
+            <li><strong>Platform</strong> &mdash; Grouped by system name</li>
+        </ul>
+
+        <h3>Alphabet Navigation</h3>
+        <p>Jump to games starting with a specific letter. Letters with no matching games are grayed out. Numbers and symbols are grouped under <strong>#</strong>.</p>
+
+        <h3>Infinite Scroll</h3>
+        <p>Games load in batches of 100 as you scroll. New pages load automatically when you near the bottom. Changing filters or search instantly resets and reloads results.</p>
+
+        <h3>State Persistence</h3>
+        <p>Your current filters, search term, and scroll position are saved in session storage. They are restored when you navigate back to the page or refresh.</p>
+    </div>
+</section>
+
+<!-- Game Detail -->
+<section id="game-detail" class="help-section card">
+    <h2 class="card-title">Game Details</h2>
+    <div class="card-body">
+        <h3>Game Detail Modal</h3>
+        <p>Clicking any game card opens a detail modal with a cached quick view. The modal shows:</p>
+        <ul>
+            <li>Boxart (2D and 3D), fanart background</li>
+            <li>Description and release info</li>
+            <li>Developer, publisher, genre badges</li>
+            <li>Players, play modes, game structure</li>
+            <li>Age rating image (from your preferred system, with cross-mapping fallback)</li>
+            <li>Screenshots gallery with keyboard navigation (<kbd>&larr;</kbd> <kbd>&rarr;</kbd>)</li>
+            <li>Trailer video (if available)</li>
+            <li>HLTB playtime estimates (Main Story, Main + Extras, Completionist)</li>
+            <li>RetroAchievements status and progress</li>
+            <li>Similar games (clickable links)</li>
+            <li>Controller support details</li>
+            <li>Tags assigned to the game</li>
+            <li>File size and ROM path</li>
+        </ul>
+
+        <h3>Full Game Detail Page</h3>
+        <p>Click the game title link or navigate from breadcrumbs to view the full game detail page. Additional features on the full page include:</p>
+        <ul>
+            <li><strong>Fanart background header</strong> with breadcrumb navigation</li>
+            <li><strong>Platform import badges</strong> &mdash; Shows CLZ Import, Steam Import, Xbox Import, or PSN Import with platform logos when applicable</li>
+            <li><strong>Bonus disc indicator</strong> &mdash; Shows a badge and "Part of:" link to the parent game with thumbnail</li>
+            <li><strong>Delete button</strong> &mdash; Remove the game from the database (with confirmation)</li>
+            <li><strong>Clear button</strong> &mdash; Clear all scraped metadata while keeping the ROM entry</li>
+        </ul>
+
+        <h3>Edit Modal</h3>
+        <p>Click <strong>Edit</strong> (or press <kbd>e</kbd>) to open the edit modal, organized into sections:</p>
+        <ul>
+            <li><strong>Identity</strong> &mdash; Title, sort title (auto-generated but editable), franchise, edition</li>
+            <li><strong>Release Info</strong> &mdash; Release date, region (from configurable dropdown)</li>
+            <li><strong>Gameplay</strong> &mdash; Genre (multi-select tags), modes, game structure, players, developer, publisher</li>
+            <li><strong>Technical</strong> &mdash; Controllers (multi-select), save type, perspective (multi-value), dimension (multi-value)</li>
+            <li><strong>Age Ratings</strong> &mdash; All 8 rating systems with official rating images and automatic cross-mapping. Changing one rating auto-fills empty ratings in other systems.</li>
+            <li><strong>Scores</strong> &mdash; Critic score, user score</li>
+            <li><strong>Description</strong> &mdash; Game description text</li>
+            <li><strong>Custom Images</strong> &mdash; Upload custom boxart (2D), 3D boxart, and fanart. Clear existing images to allow re-scraping.</li>
+            <li><strong>Video / Trailer</strong> &mdash; Upload or link a video trailer</li>
+        </ul>
+
+        <h3>Quick Actions</h3>
+        <ul>
+            <li><strong>Edit</strong> &mdash; Open the edit modal (<kbd>e</kbd>)</li>
+            <li><strong>Scrape</strong> &mdash; Fetch metadata from scraper sources (<kbd>s</kbd>)</li>
+            <li><strong>AI Fill</strong> &mdash; Fill missing fields with AI (requires AI API key)</li>
+            <li><strong>Check for RA</strong> &mdash; Search for a RetroAchievements achievement set</li>
+            <li><strong>HLTB Lookup</strong> &mdash; Find playtime estimates from HowLongToBeat</li>
+        </ul>
+
+        <h3>Completion Status</h3>
+        <p>Track your progress with these statuses (shown as badges on game cards):</p>
+        <ul>
+            <li><strong>Not Started</strong> &mdash; Haven't played yet</li>
+            <li><strong>In Progress</strong> &mdash; Currently playing</li>
+            <li><strong>Played</strong> &mdash; Played but not finished</li>
+            <li><strong>Completed</strong> &mdash; Finished the main game</li>
+            <li><strong>100%</strong> &mdash; Completed everything</li>
+        </ul>
+
+        <h3>Multi-Rating System</h3>
+        <p>RetroDB supports 8 international age rating systems:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>System</th><th>Region</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>ESRB</strong></td><td>North America</td></tr>
+                <tr><td><strong>PEGI</strong></td><td>Europe</td></tr>
+                <tr><td><strong>CERO</strong></td><td>Japan</td></tr>
+                <tr><td><strong>USK</strong></td><td>Germany</td></tr>
+                <tr><td><strong>ACB</strong></td><td>Australia</td></tr>
+                <tr><td><strong>FPB</strong></td><td>South Africa</td></tr>
+                <tr><td><strong>GRAC</strong></td><td>South Korea</td></tr>
+                <tr><td><strong>ClassInd</strong></td><td>Brazil</td></tr>
+            </tbody>
+        </table>
+        <p>Set your preferred system in <strong>Settings &rarr; Library &rarr; Display</strong>. Official rating images are displayed on game cards, detail modals, and detail pages. Empty ratings are auto-filled from any available rating via maturity tier cross-mapping during scraping, AI Fill, and manual editing.</p>
+
+        <h3>Bonus Discs</h3>
+        <p>RetroDB automatically detects bonus/extra discs (e.g. soundtrack CDs, extra content discs) and links them to their parent game. Bonus discs are hidden by default in the library &mdash; toggle <strong>"Show Bonus"</strong> in filters to display them. Linked bonus discs appear in the parent game's detail modal.</p>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> The detail modal caches recently viewed games for faster loading. Edits automatically update the game card on the page without requiring a refresh.
+        </div>
+    </div>
+</section>
+
+<!-- Bulk Edit -->
+<section id="bulk-edit" class="help-section card">
+    <h2 class="card-title">Bulk Edit</h2>
+    <div class="card-body">
+        <h3>How to Use</h3>
+        <ol>
+            <li>Go to any System or Library page</li>
+            <li>Click <strong>"Select"</strong> to enter selection mode</li>
+            <li>Select the games you want to edit (individually, Select All, or Select Unscraped)</li>
+            <li>Click <strong>"Bulk Edit"</strong></li>
+            <li>Choose the field to modify and set the new value</li>
+            <li>Choose <strong>Replace</strong> or <strong>Append</strong> mode</li>
+            <li>Click <strong>"Apply"</strong> to update all selected games</li>
+        </ol>
+
+        <h3>Replace vs Append</h3>
+        <ul>
+            <li><strong>Replace</strong> &mdash; Overwrites the existing value with the new one</li>
+            <li><strong>Append</strong> &mdash; Adds the new value to existing values (for multi-value fields)</li>
+        </ul>
+
+        <h3>Supported Fields</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Field</th><th>Supports Append</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Genre</td><td>Yes</td></tr>
+                <tr><td>Publisher</td><td>Yes</td></tr>
+                <tr><td>Developer</td><td>Yes</td></tr>
+                <tr><td>Franchise</td><td>Yes</td></tr>
+                <tr><td>Region</td><td>Yes</td></tr>
+                <tr><td>Game Structure</td><td>Yes</td></tr>
+                <tr><td>Perspective</td><td>Yes</td></tr>
+                <tr><td>Dimension</td><td>Yes</td></tr>
+                <tr><td>Completion Status</td><td>No (replace only)</td></tr>
+                <tr><td>Players</td><td>No (replace only)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Compare Games -->
+<section id="compare" class="help-section card">
+    <h2 class="card-title">Compare Games</h2>
+    <div class="card-body">
+        <h3>What It Does</h3>
+        <p>Side-by-side comparison of two games' metadata in a table view. Useful for checking metadata quality, spotting duplicates, or comparing versions of the same game across systems.</p>
+
+        <h3>How to Use</h3>
+        <ol>
+            <li>Go to <strong>Compare</strong> (accessible from the Library page)</li>
+            <li>Search and select the first game</li>
+            <li>Search and select the second game</li>
+            <li>Review the comparison table &mdash; differences are highlighted</li>
+        </ol>
+
+        <h3>Compared Fields</h3>
+        <p>System, developer, publisher, release date, genre, franchise, region, players, modes, perspective, dimension, all 8 age ratings, user rating, critic score, playtime estimates, controller support, save type, file size, similar games, description, and more.</p>
+    </div>
+</section>
+
+<!-- Collections -->
+<section id="collections" class="help-section card">
+    <h2 class="card-title">Collections (Tags, Lists, Wishlist)</h2>
+    <div class="card-body">
+        <h3>Tags</h3>
+        <p>Create custom color-coded tags to organize your games. Tags work like labels &mdash; each game can have multiple tags, and each tag can contain multiple games.</p>
+        <ul>
+            <li>Create tags with custom names and colors from the <strong>Tags</strong> page</li>
+            <li>Assign tags to games via the game detail modal</li>
+            <li>Click any tag to browse all games with that tag</li>
+            <li>Edit or delete tags from the Tags management page</li>
+        </ul>
+
+        <h3>Named Lists</h3>
+        <p>Create curated game lists with custom ordering. Lists are like playlists &mdash; you control the exact order of games.</p>
+        <ul>
+            <li>Create lists with a name, description, and icon from the <strong>Lists</strong> page</li>
+            <li>Add games to lists via the game detail modal or list page</li>
+            <li>Drag-and-drop to reorder games within a list</li>
+            <li>Sort by custom order or alphabetically</li>
+        </ul>
+
+        <h3>Wishlist</h3>
+        <p>Track games you want to acquire, whether physical or digital.</p>
+        <ul>
+            <li>Add games manually with title, system, notes, and priority (1&ndash;5)</li>
+            <li>Wishlist items can be linked to existing library games if found</li>
+            <li>Sorted by priority (highest first), then date added</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> Use tags for cross-cutting labels (e.g. "Favorites", "Couch Co-op", "Backlog") and lists for specific curated collections (e.g. "Top 10 SNES Games", "Games to Stream").
+        </div>
+    </div>
+</section>
+
+<!-- Game Imports -->
+<section id="game-imports" class="help-section card">
+    <h2 class="card-title">Game Imports</h2>
+    <div class="card-body">
+        <p>Import game collections from external sources. Access via <strong>Game Imports</strong> in the sidebar. All import types are consolidated into a single tabbed page.</p>
+
+        <h3>CLZ Games Import</h3>
+        <p>Import your physical game collection from CLZ Games.</p>
+        <ol>
+            <li>Export your CLZ Games collection as PDF</li>
+            <li>Go to Game Imports &rarr; <strong>CLZ</strong> tab</li>
+            <li>Upload the PDF file</li>
+            <li>Review the parsed games</li>
+            <li>Select which games to import</li>
+        </ol>
+        <p>CLZ imports are tracked separately from ROM games (using a <code>clz_import/</code> prefix), allowing you to catalog both physical and digital collections. CLZ imports can be cleared entirely from <strong>Settings &rarr; System &rarr; Maintenance</strong>.</p>
+
+        <h3>Steam Import</h3>
+        <p>Import your Steam game library and track achievements.</p>
+        <ol>
+            <li>Configure your Steam Web API key and Steam ID in Settings</li>
+            <li>Go to Game Imports &rarr; <strong>Steam</strong> tab</li>
+            <li>Click <strong>"Fetch Library"</strong> to retrieve your Steam games</li>
+            <li>Select games to import (duplicates are automatically detected)</li>
+            <li>Imported games are tagged with their Steam App ID for achievement tracking</li>
+        </ol>
+
+        <h3>Xbox Import</h3>
+        <p>Import your Xbox game library via Microsoft account.</p>
+        <ol>
+            <li>Go to Game Imports &rarr; <strong>Xbox</strong> tab</li>
+            <li>Click <strong>"Sign In"</strong> to authenticate with your Microsoft account (OAuth2 flow)</li>
+            <li>Your Xbox title history is fetched automatically</li>
+            <li>Select games to import with duplicate detection</li>
+            <li>Imported games are tagged with their Xbox Title ID for achievement tracking</li>
+        </ol>
+        <p>Xbox tokens are cached in <code>data/xbox_tokens.json</code> and refreshed automatically.</p>
+
+        <h3>PSN Import</h3>
+        <p>Import your PlayStation Network game library.</p>
+        <ol>
+            <li>Go to Game Imports &rarr; <strong>PSN</strong> tab</li>
+            <li>Enter your NPSSO cookie (see <a href="#trophies">Trophies &rarr; PSN Authentication</a> for how to obtain it)</li>
+            <li>Click <strong>"Fetch Library"</strong> to retrieve your PSN games</li>
+            <li>Select games to import</li>
+        </ol>
+
+        <h3>After Importing</h3>
+        <ul>
+            <li>Imported games appear in your Library with platform-specific badges</li>
+            <li>Use bulk scrape to fetch metadata for imported games</li>
+            <li>Achievement/trophy tracking is automatically linked to the source platform</li>
+            <li>Imported games can be filtered in the Library using the Source filter</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> After importing games from any platform, you can scrape metadata for them using bulk scrape, just like ROM games. Imported games can also track achievements from their respective platforms.
+        </div>
+    </div>
+</section>
+
+<!-- RetroAchievements -->
+<section id="retroachievements" class="help-section card">
+    <h2 class="card-title">RetroAchievements</h2>
+    <div class="card-body">
+        <h3>Setup</h3>
+        <ol>
+            <li>Create an account at <a href="https://retroachievements.org" target="_blank">retroachievements.org</a></li>
+            <li>Generate an API key in your profile settings</li>
+            <li>Enter your username and API key in Settings &rarr; Account &rarr; RetroAchievements</li>
+        </ol>
+
+        <h3>Achievements Page</h3>
+        <ul>
+            <li><strong>System Tabs</strong> &mdash; Browse achievements by platform (remembers your last viewed tab)</li>
+            <li><strong>Alphabet Navigation</strong> &mdash; Jump to games by first letter within each system tab</li>
+            <li><strong>Refresh Progress</strong> &mdash; Sync your achievement progress from RetroAchievements</li>
+            <li><strong>Overall Stats</strong> &mdash; Earned achievements and points across all systems</li>
+            <li><strong>Per-Game Progress</strong> &mdash; See completion percentage for each game with progress bars</li>
+        </ul>
+
+        <h3>Sync Queue</h3>
+        <p>Multiple system syncs can be queued:</p>
+        <ul>
+            <li>Click "Refresh Progress" on any system to start or queue a sync</li>
+            <li>If a sync is already running, new requests are queued automatically</li>
+            <li>Queue processes automatically when current sync completes</li>
+            <li>Toast notification shows current progress and queue count</li>
+        </ul>
+
+        <h3>Finding Games with Achievements</h3>
+        <ul>
+            <li><strong>Library Filter</strong> &mdash; Use "Has RA" filter to show only games with achievements</li>
+            <li><strong>Check for RA</strong> &mdash; On game detail modals, click to search for an achievement set</li>
+            <li><strong>Bulk Scrape</strong> &mdash; Enable "Check RA" option to find achievements during scraping</li>
+            <li><strong>RA Refresh Job</strong> &mdash; Scan all games in a system to identify which have RA support</li>
+        </ul>
+
+        <h3>Game-Level Details</h3>
+        <p>Click any game on the achievements page to see detailed per-game achievement info including individual achievement names, descriptions, point values, and earned status.</p>
+
+        <div class="help-tip">
+            <strong>Note:</strong> "Refresh Progress" syncs your progress for games that already have RetroAchievements linked.
+            To find NEW achievement sets, use "Check for RA" on game detail modals or enable it during bulk scraping.
+        </div>
+    </div>
+</section>
+
+<!-- Steam Achievements -->
+<section id="steam-achievements" class="help-section card">
+    <h2 class="card-title">Steam Achievements</h2>
+    <div class="card-body">
+        <h3>Setup</h3>
+        <ol>
+            <li>Import Steam games via <strong>Game Imports &rarr; Steam</strong></li>
+            <li>Ensure your Steam Web API key is configured in Settings</li>
+        </ol>
+
+        <h3>Achievements Landing Page</h3>
+        <p>View all your Steam games with achievement progress at a glance:</p>
+        <ul>
+            <li><strong>Overall Stats</strong> &mdash; Total Steam games, achievements earned, completion percentage</li>
+            <li><strong>Per-Game Progress</strong> &mdash; Completion bars for each game</li>
+        </ul>
+
+        <h3>Per-Game Achievement Details</h3>
+        <p>Click any Steam game to see its individual achievements:</p>
+        <ul>
+            <li>Achievement icons, names, and descriptions</li>
+            <li>Unlocked vs locked status with unlock timestamps</li>
+            <li>Global player unlock percentage for each achievement</li>
+        </ul>
+
+        <h3>Syncing</h3>
+        <ul>
+            <li>Sync a single game's achievements from its detail page</li>
+            <li>Bulk sync all Steam games from the achievements landing page</li>
+            <li>Sync runs as a background job with toast notification progress</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Xbox Achievements -->
+<section id="xbox-achievements" class="help-section card">
+    <h2 class="card-title">Xbox Achievements</h2>
+    <div class="card-body">
+        <h3>Setup</h3>
+        <ol>
+            <li>Import Xbox games via <strong>Game Imports &rarr; Xbox</strong></li>
+            <li>Authentication is handled via Xbox OAuth during import</li>
+        </ol>
+
+        <h3>Achievements Landing Page</h3>
+        <ul>
+            <li><strong>Overall Stats</strong> &mdash; Total Xbox games, achievements earned, earned/total gamerscore, completion percentage</li>
+            <li><strong>Per-Game Progress</strong> &mdash; Gamerscore earned per game with progress bars</li>
+        </ul>
+
+        <h3>Per-Game Achievement Details</h3>
+        <p>Click any Xbox game to see its individual achievements:</p>
+        <ul>
+            <li>Achievement icons with individual gamerscore values</li>
+            <li>Unlocked vs locked status with unlock timestamps</li>
+            <li>Gamerscore badges on each achievement</li>
+        </ul>
+
+        <h3>Syncing</h3>
+        <ul>
+            <li>Sync a single game or bulk sync all Xbox games</li>
+            <li>Runs as a background job with toast notifications</li>
+            <li>Gamerscore totals update automatically after each sync</li>
+        </ul>
+    </div>
+</section>
+
+<!-- HLTB -->
+<section id="hltb" class="help-section card">
+    <h2 class="card-title">How Long to Beat</h2>
+    <div class="card-body">
+        <h3>Usage</h3>
+        <ol>
+            <li>Open any game's detail modal</li>
+            <li>Click <strong>"Lookup HLTB"</strong></li>
+            <li>Select the correct match from the results</li>
+            <li>Playtime estimates are saved to the game</li>
+        </ol>
+
+        <h3>Time Categories</h3>
+        <ul>
+            <li><strong>Main Story</strong> &mdash; Core completion time</li>
+            <li><strong>Main + Extras</strong> &mdash; With side content</li>
+            <li><strong>Completionist</strong> &mdash; 100% everything</li>
+        </ul>
+
+        <h3>Where HLTB Data Appears</h3>
+        <ul>
+            <li><strong>Game detail modal</strong> &mdash; Playtime estimates shown in the game info</li>
+            <li><strong>Full game detail page</strong> &mdash; Same playtime info</li>
+            <li><strong>Analytics &rarr; Playtime tab</strong> &mdash; Collection-wide playtime analysis</li>
+            <li><strong>Compare Games</strong> &mdash; Side-by-side playtime comparison</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> HLTB data is also shown in Analytics under the Playtime tab, giving you estimates for your entire collection.
+        </div>
+    </div>
+</section>
+
+<!-- Trophies -->
+<section id="trophies" class="help-section card">
+    <h2 class="card-title">PS3 / PSN Trophies</h2>
+    <div class="card-body">
+        <h3>RPCS3 Local Trophies</h3>
+        <p>Track trophies earned in PS3 games through the RPCS3 emulator.</p>
+        <ol>
+            <li>Set your RPCS3 trophy path in <strong>Settings &rarr; Data &rarr; Trophies</strong></li>
+            <li>Click <strong>"Scan Trophies"</strong> to import earned trophies</li>
+            <li>View trophy lists and individual trophy details in the <strong>RPCS3 Trophies</strong> section</li>
+        </ol>
+        <p>RPCS3 reads the trophy XML data from your RPCS3 user directory and matches games to your library automatically.</p>
+
+        <h3>PSN API Trophies</h3>
+        <p>Sync your PlayStation Network trophy data from your PSN account.</p>
+        <ol>
+            <li>Obtain your NPSSO cookie (see below)</li>
+            <li>Enter it in <strong>Settings &rarr; Account &rarr; PSN</strong></li>
+            <li>Your PSN trophy library is fetched via the PlayStation API</li>
+            <li>View per-game trophy progress with earned/total counts</li>
+            <li>Individual trophy details include description, rarity, and unlock timestamps</li>
+        </ol>
+
+        <h3>PSN Authentication (NPSSO Cookie)</h3>
+        <p>PSN uses a special authentication cookie called an NPSSO token. To obtain it:</p>
+        <ol>
+            <li>Open a web browser and log in to <a href="https://store.playstation.com" target="_blank">store.playstation.com</a></li>
+            <li>Once logged in, navigate to: <code>https://ca.account.sony.com/api/v1/ssocookie</code></li>
+            <li>The page will display JSON containing your NPSSO token</li>
+            <li>Copy the <code>npsso</code> value and paste it into Settings &rarr; Account &rarr; PSN</li>
+        </ol>
+        <p>Once authenticated, tokens are cached locally in <code>data/psn_tokens.json</code> and automatically refreshed. The cached tokens remain valid for approximately 2 months.</p>
+
+        <h3>Trophy Details</h3>
+        <ul>
+            <li>Trophy types: Bronze, Silver, Gold, Platinum</li>
+            <li>Trophy icons are downloaded and cached locally</li>
+            <li>Per-game completion percentage</li>
+            <li>Unlock timestamps for each earned trophy</li>
+        </ul>
+
+        <h3>Bulk Sync</h3>
+        <p>Sync all PSN game trophies at once via a background job. Progress is shown in a toast notification. Rate limiting (2.5s between requests) prevents PSN API throttling.</p>
+    </div>
+</section>
+
+<!-- Collector Trophies -->
+<section id="collector-trophies" class="help-section card">
+    <h2 class="card-title">Collector Trophies</h2>
+    <div class="card-body">
+        <h3>What It Is</h3>
+        <p>A gamification system that awards trophies based on your collection milestones. As you add games, scrape metadata, and complete games, trophies unlock automatically.</p>
+
+        <h3>Trophy Tiers</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Tier</th><th>Examples</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Bronze</strong></td><td>Add first game, reach 10 games, first scrape, 5 systems, first completion</td></tr>
+                <tr><td><strong>Silver</strong></td><td>100 games, 50 scraped, 10 systems, 10 completions, 500 games</td></tr>
+                <tr><td><strong>Gold</strong></td><td>1,000 games, 100% metadata coverage, 20 systems, 50 completions</td></tr>
+                <tr><td><strong>Platinum</strong></td><td>5,000 games, 100 completions, 30+ systems</td></tr>
+            </tbody>
+        </table>
+
+        <h3>How It Works</h3>
+        <ul>
+            <li>Progress is tracked automatically based on your library stats</li>
+            <li>Visit the <strong>Collector Trophies</strong> page to see your progress toward each trophy</li>
+            <li>Click <strong>"Refresh"</strong> to update progress after making changes</li>
+            <li>Earned trophies display with their unlock date</li>
+            <li>Progress bars show how close you are to the next milestone</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Museum -->
+<section id="museum" class="help-section card">
+    <h2 class="card-title">Museum</h2>
+    <div class="card-body">
+        <h3>What It Is</h3>
+        <p>An interactive encyclopedia of gaming systems organized by generation. Learn about the history, specifications, and notable games for each platform in your collection.</p>
+
+        <h3>Landing Page</h3>
+        <p>The Museum landing page shows a timeline of gaming systems grouped by generation (1st&ndash;9th Gen, Handhelds, Arcade, Computers). Each system card shows the hardware image and game count from your library.</p>
+
+        <h3>System Detail Pages</h3>
+        <p>Click any system to view its museum page, which includes:</p>
+        <ul>
+            <li><strong>Hardware Image</strong> &mdash; Photo of the console/system</li>
+            <li><strong>Technical Specifications</strong> &mdash; CPU, GPU, RAM, resolution, media type</li>
+            <li><strong>History</strong> &mdash; AI-generated narrative about the system's development, launch, and legacy</li>
+            <li><strong>Top 10 Games</strong> &mdash; The system's most notable titles (from critic scores and AI suggestions)</li>
+            <li><strong>Controller Gallery</strong> &mdash; Images of the system's controllers with descriptions</li>
+        </ul>
+
+        <h3>AI Content Generation</h3>
+        <p>Museum content is generated using AI (Gemini, OpenAI, or Claude). You can generate content for:</p>
+        <ul>
+            <li><strong>Single system</strong> &mdash; Click "Generate" on any system's museum page</li>
+            <li><strong>Bulk generation</strong> &mdash; Generate content for all systems at once from the landing page (runs as a background job with toast progress)</li>
+        </ul>
+
+        <h3>Controller Images</h3>
+        <p>Controller images can be added via:</p>
+        <ul>
+            <li><strong>Image Search</strong> &mdash; Search for controller photos using Bing Image Search. Results are ranked by relevance (controller name + manufacturer + system variations).</li>
+            <li><strong>Manual Upload</strong> &mdash; Upload your own controller images</li>
+            <li><strong>Background Removal</strong> &mdash; Automatically remove backgrounds using local AI (rembg library) for transparent controller images on any background</li>
+            <li><strong>Image Propagation</strong> &mdash; When a controller image is found, it's automatically shared with the same controller on other systems (sibling controllers)</li>
+            <li><strong>Bulk Fetch</strong> &mdash; Fetch images for all controllers in a system at once</li>
+        </ul>
+        <p>All controller images are standardized to target size and saved as WebP format.</p>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> An AI API key is required for content generation. The Museum uses the same AI provider configured in Settings &rarr; Scraping &rarr; API Keys.
+        </div>
+    </div>
+</section>
+
+<!-- Analytics -->
+<section id="analytics" class="help-section card">
+    <h2 class="card-title">Analytics</h2>
+    <div class="card-body">
+        <p>Analytics provides comprehensive statistics and visualizations across 12 tabs. All charts are interactive and can be exported as PNG, copied to clipboard, or downloaded as CSV.</p>
+
+        <h3>Analytics Tabs</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Tab</th><th>Contents</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Summary</strong></td><td>Stats overview cards (total games, systems, completion rate, scraped percentage, etc.)</td></tr>
+                <tr><td><strong>Charts</strong></td><td>Games by platform/manufacturer, by genre, year-by-year timeline</td></tr>
+                <tr><td><strong>Developers</strong></td><td>Top 15 developers and publishers bar charts</td></tr>
+                <tr><td><strong>Gameplay</strong></td><td>Genre breakdown, play modes analysis, game structure distribution</td></tr>
+                <tr><td><strong>Playtime</strong></td><td>HLTB playtime data analysis across your collection &mdash; total estimated playtime, averages, distribution</td></tr>
+                <tr><td><strong>Review Scores</strong></td><td>Critic and user score distributions and averages</td></tr>
+                <tr><td><strong>Age Ratings</strong></td><td>Age rating distribution across all 8 rating systems</td></tr>
+                <tr><td><strong>Achievements</strong></td><td>RetroAchievements coverage and completion by system</td></tr>
+                <tr><td><strong>Data Quality</strong></td><td>Metadata completeness radar chart (description, boxart, genre, developer, publisher, release date, screenshots, fanart, video, manual, HLTB, ratings, modes, region)</td></tr>
+                <tr><td><strong>Growth</strong></td><td>Collection growth timeline showing when games were added over time</td></tr>
+                <tr><td><strong>Storage</strong></td><td>Storage usage breakdown by system (with formatted file sizes)</td></tr>
+                <tr><td><strong>Leaderboards</strong></td><td>Top systems by game count, largest individual games by file size</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Export Options</h3>
+        <p>Each chart can be exported using the buttons in the chart toolbar:</p>
+        <ul>
+            <li><strong>PNG</strong> &mdash; Save as image file</li>
+            <li><strong>Clipboard</strong> &mdash; Copy chart image to clipboard</li>
+            <li><strong>CSV</strong> &mdash; Download raw data as spreadsheet</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Reports -->
+<section id="reports" class="help-section card">
+    <h2 class="card-title">ROM Reports</h2>
+    <div class="card-body">
+        <h3>What It Does</h3>
+        <p>Validates ROM filenames against standard naming conventions and identifies potential issues. Access via <strong>ROM Reports</strong> in the sidebar.</p>
+
+        <h3>Report Types</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Tab</th><th>What It Checks</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Non-Standard Names</strong></td><td>ROMs with filenames that don't match naming conventions. Shows current filename, detected issues, and suggested corrected name.</td></tr>
+                <tr><td><strong>Name Mismatches</strong></td><td>ROMs where the filename doesn't match the scraped metadata title. Shows current filename vs scraped title, region, year, and developer.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>What's Checked</h3>
+        <ul>
+            <li>Invalid characters in filenames (<code>: ? * / " &lt; &gt; | \</code>)</li>
+            <li>Missing or incorrect region tags (e.g. <code>(USA)</code>, <code>(Europe)</code>)</li>
+            <li>Missing year tags</li>
+            <li>Filename vs database title mismatches</li>
+        </ul>
+
+        <p>Reports are sortable by system, filename, and issue type. Use them to keep your ROM library organized and consistently named.</p>
+    </div>
+</section>
+
+<!-- ROM Tools -->
+<section id="rom-tools" class="help-section card">
+    <h2 class="card-title">ROM Tools</h2>
+    <div class="card-body">
+        <p>Access the ROM Tools hub from the sidebar. Each tool runs as a background job with real-time progress updates, pause/resume support, and logging.</p>
+
+        <h3>Archive Scanner</h3>
+        <p>Extract ROM archives (ZIP, 7Z, RAR) with options for:</p>
+        <ul>
+            <li>Recursive scanning of subdirectories</li>
+            <li>Removal of unwanted files after extraction</li>
+            <li>Automatic M3U playlist generation for multi-disc games</li>
+        </ul>
+        <p><em>Requires: 7z or unzip</em></p>
+
+        <h3>CHD Converter</h3>
+        <p>Convert disc images (ISO, BIN/CUE, GDI) to compressed CHD format. Saves significant storage while maintaining full compatibility with emulators.</p>
+        <p><em>Requires: chdman (from mame-tools)</em></p>
+
+        <h3>CHD Verify</h3>
+        <p>Verify integrity of CHD files with hash validation. Identifies corrupted or incomplete conversions.</p>
+        <p><em>Requires: chdman</em></p>
+
+        <h3>Duplicate Finder</h3>
+        <p>Find duplicate ROMs by hash or filename, with options to prioritize by region tags.</p>
+        <p><em>No external dependencies</em></p>
+
+        <h3>Multi-Disc Organizer</h3>
+        <p>Organize multi-disc games into subdirectories and generate M3U playlists for emulators that support them. Useful for systems like PlayStation and Saturn.</p>
+        <p><em>No external dependencies</em></p>
+
+        <h3>Screenshot Dedup</h3>
+        <p>Find and remove duplicate screenshots across your game library to free up storage space.</p>
+        <ul>
+            <li><strong>Exact Hash (MD5)</strong> &mdash; Identifies identical files only</li>
+            <li><strong>Visual Similarity</strong> &mdash; Perceptual hash comparison with configurable threshold (1&ndash;20, lower = stricter match)</li>
+        </ul>
+        <p>Scans progressively with live stats showing games scanned, duplicate count, and reclaimable space. Results are grouped by game and system. You can select which file to keep in each duplicate group, or use <strong>"Select Largest"</strong> to automatically keep the highest resolution version.</p>
+        <p><em>No external dependencies</em></p>
+
+        <h3>Image Resizer</h3>
+        <p>Standardize game media to consistent target sizes. See <a href="#image-standardization">Image Standardization</a> for full details.</p>
+        <p><em>No external dependencies (Python-based AI upscaling)</em></p>
+
+        <h3>Tool Settings</h3>
+        <p>Configure paths, tool locations, archive types, and preferences shared across all ROM tools.</p>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> All ROM tools support pause/resume and run in the background. Progress and results are logged and viewable in the Log Viewer. Tool status (available vs requires install) is shown on each tool card.
+        </div>
+    </div>
+</section>
+
+<!-- Normalization -->
+<section id="normalization" class="help-section card">
+    <h2 class="card-title">Normalization</h2>
+    <div class="card-body">
+        <h3>What It Does</h3>
+        <p>Normalizes genre and play mode values to consistent canonical forms. This happens automatically during scraping and AI Fill, and can also be applied manually to your existing library.</p>
+
+        <h3>Why It Matters</h3>
+        <p>Different scrapers use different names for the same thing. Normalization ensures consistency across your entire library:</p>
+        <ul>
+            <li><code>platform</code> &rarr; <code>Platformer</code></li>
+            <li><code>fps</code>, <code>first person shooter</code> &rarr; <code>First-Person-Shooter</code></li>
+            <li><code>shoot 'em up</code>, <code>shmup</code> &rarr; <code>Shoot-em-up</code></li>
+            <li><code>beat 'em up</code>, <code>brawler</code> &rarr; <code>Beat-em-up</code></li>
+            <li><code>hack and slash</code> &rarr; <code>Hack-n-Slash</code></li>
+            <li><code>rts</code>, <code>real time strategy</code> &rarr; <code>Real-Time Strategy</code></li>
+            <li><code>board game</code>, <code>card game</code> &rarr; <code>Board-Card</code></li>
+        </ul>
+
+        <h3>Custom Rules</h3>
+        <p>You can add custom normalization rules in <strong>Settings &rarr; Data &rarr; Normalization</strong>. Custom rules override the built-in mappings, letting you define your own preferred genre and mode names. Rules are stored in the database.</p>
+
+        <h3>Preview & Apply</h3>
+        <p>Before applying normalization, you can preview which games will be affected and what changes will be made. This lets you review before committing changes to your library.</p>
+    </div>
+</section>
+
+<!-- Image Standardization -->
+<section id="image-standardization" class="help-section card">
+    <h2 class="card-title">Image Standardization</h2>
+    <div class="card-body">
+        <h3>What It Does</h3>
+        <p>Standardizes all game media to consistent target sizes for a uniform look throughout your library. Images within 80&ndash;120% of the target size are skipped.</p>
+
+        <h3>How It Works</h3>
+        <ul>
+            <li><strong>Upscaling</strong> &mdash; Images smaller than the target size are upscaled using Real-ESRGAN x4 (AI super-resolution via ONNX Runtime) for high-quality enlargement, then resized to the exact target</li>
+            <li><strong>Downscaling</strong> &mdash; Images larger than the target size are downscaled using Lanczos filtering for sharp results</li>
+            <li><strong>Threshold band</strong> &mdash; Images within 80&ndash;120% of the target are left untouched to avoid unnecessary reprocessing</li>
+        </ul>
+
+        <h3>Target Sizes</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Media Type</th><th>Target</th><th>Method</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Boxart</td><td>1080px height</td><td>Width scales proportionally</td></tr>
+                <tr><td>3D Boxart</td><td>1080px height</td><td>Width scales proportionally (preserves transparency)</td></tr>
+                <tr><td>Screenshots</td><td>1080px height</td><td>Width scales proportionally</td></tr>
+                <tr><td>Controllers</td><td>1280px longest edge</td><td>Preserves transparency (RGBA)</td></tr>
+                <tr><td>Hardware</td><td>1280px longest edge</td><td>Preserves transparency (RGBA)</td></tr>
+                <tr><td>Fanart</td><td>Skipped</td><td>Not standardized (left at original size)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>How to Run</h3>
+        <ol>
+            <li>Go to <strong>Settings &rarr; System &rarr; Maintenance</strong> or <strong>ROM Tools &rarr; Image Resizer</strong></li>
+            <li>Click <strong>"Start"</strong> to begin bulk standardization</li>
+            <li>The job runs in the background with toast progress showing current file and stats</li>
+            <li>Images are also auto-standardized during scraping (new downloads are standardized immediately)</li>
+        </ol>
+
+        <h3>Hardware Support</h3>
+        <p>The Real-ESRGAN model auto-detects your hardware and uses the best available provider:</p>
+        <ul>
+            <li><strong>CUDA</strong> &mdash; NVIDIA GPU acceleration</li>
+            <li><strong>ROCm</strong> &mdash; AMD GPU acceleration (with automatic gfx version override for RX 6000 series)</li>
+            <li><strong>CoreML</strong> &mdash; Apple Silicon acceleration</li>
+            <li><strong>CPU</strong> &mdash; Fallback for systems without GPU support</li>
+        </ul>
+        <p>The ONNX model file is downloaded automatically from Hugging Face on first use and cached locally.</p>
+    </div>
+</section>
+
+<!-- Logs -->
+<section id="logs" class="help-section card">
+    <h2 class="card-title">Log Viewer</h2>
+    <div class="card-body">
+        <h3>What It Does</h3>
+        <p>A unified viewer for all application logs. Access via <strong>Log Viewer</strong> in the sidebar.</p>
+
+        <h3>Log Categories</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Category</th><th>Contents</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Scraping</strong></td><td>Scraper activity, API calls, errors, and results per game</td></tr>
+                <tr><td><strong>ROM Tools</strong></td><td>Archive extraction, CHD conversion, duplicate detection, screenshot dedup</td></tr>
+                <tr><td><strong>ROM Reports</strong></td><td>Naming validation results</td></tr>
+                <tr><td><strong>Image Resize</strong></td><td>Image standardization job progress (upscale/downscale per file)</td></tr>
+                <tr><td><strong>System</strong></td><td>General app activity, maintenance tasks, startup, database operations</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Features</h3>
+        <ul>
+            <li>Filter by category or view all logs together</li>
+            <li>File list shows creation dates and file sizes</li>
+            <li>Click any log file to view its full contents</li>
+            <li>Download individual log files</li>
+            <li>Category counts shown at the top for quick overview</li>
+            <li>Log levels configurable in Settings &rarr; System &rarr; Logging</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Maintenance -->
+<section id="maintenance" class="help-section card">
+    <h2 class="card-title">Maintenance</h2>
+    <div class="card-body">
+        <p>Maintenance operations are available in <strong>Settings &rarr; System &rarr; Maintenance</strong>. These help keep your library clean and optimized.</p>
+
+        <h3>Library Scanning</h3>
+        <ul>
+            <li><strong>Scan Library</strong> &mdash; Scan your ROM directories for new games. Detects system folders and supported file types using ES-DE <code>systeminfo.txt</code> extension lists. Also available from the Dashboard.</li>
+        </ul>
+
+        <h3>Cleanup Operations</h3>
+        <ul>
+            <li><strong>Clean Missing ROMs</strong> &mdash; Remove database entries for games whose ROM files no longer exist on disk. Useful after reorganizing or deleting ROM files.</li>
+            <li><strong>Orphan Media Cleanup</strong> &mdash; Find and delete image files on disk (boxart, screenshots, fanart) that have no corresponding database reference. Preview before deleting to confirm.</li>
+            <li><strong>Clear Scraped Data</strong> &mdash; Remove all scraped metadata from games while keeping ROM file entries. Useful for starting fresh with scraping. Preview shows affected games before execution.</li>
+            <li><strong>Clear CLZ Imports</strong> &mdash; Remove all CLZ Games import records (metadata-only entries without ROM files).</li>
+        </ul>
+
+        <h3>Database Optimization</h3>
+        <ul>
+            <li><strong>Optimize Database</strong> &mdash; Runs SQLite VACUUM and ANALYZE to reclaim storage from deleted records and update query planner statistics. Recommended after large deletions or cleanup operations.</li>
+        </ul>
+
+        <h3>Bulk Image Standardization</h3>
+        <p>Standardize all game images to target sizes. See <a href="#image-standardization">Image Standardization</a> for details.</p>
+
+        <h3>Server Management</h3>
+        <ul>
+            <li><strong>Restart Server</strong> &mdash; Graceful application restart (cleanup and exit). Available in Settings &rarr; System &rarr; Troubleshooting.</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Multi-User Access -->
+<section id="multi-user" class="help-section card">
+    <h2 class="card-title">Multi-User Access</h2>
+    <div class="card-body">
+        <h3>User Roles</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Role</th><th>Access</th><th>Password</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Admin</strong></td><td>Full access: settings, user management, maintenance, all features</td><td>Required</td></tr>
+                <tr><td><strong>Editor</strong></td><td>Can edit games, scrape, use ROM tools, manage collections</td><td>None</td></tr>
+                <tr><td><strong>Viewer</strong></td><td>Read-only: browse library, view details, view achievements/trophies</td><td>None</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Managing Users</h3>
+        <ol>
+            <li>Go to <strong>Settings &rarr; Account &rarr; Users</strong> (admin only)</li>
+            <li>Click <strong>"Add User"</strong> to create a new account</li>
+            <li>Set username, display name, and role</li>
+            <li>Admin users receive a default password that must be changed on first login</li>
+        </ol>
+
+        <h3>Authentication</h3>
+        <p>The login page shows all active users. Admin accounts require a password; other roles simply click their name to log in. Sessions are persistent until logout.</p>
+
+        <h3>Per-User Settings</h3>
+        <p>Each user can configure their own:</p>
+        <ul>
+            <li>Avatar (upload custom image)</li>
+            <li>Display name</li>
+            <li>Theme preference</li>
+            <li>Items per page</li>
+            <li>Timezone</li>
+            <li>RPCS3 trophy path</li>
+            <li>RetroAchievements credentials (username + API key)</li>
+            <li>PSN credentials (NPSSO cookie)</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Backup -->
+<section id="backup" class="help-section card">
+    <h2 class="card-title">Backup & Restore</h2>
+    <div class="card-body">
+        <h3>Creating Backups</h3>
+        <ol>
+            <li>Go to <strong>Settings &rarr; Library &rarr; Backup</strong></li>
+            <li>Click <strong>"Create Backup"</strong></li>
+            <li>Backup is saved to the <code>backups/</code> folder with a timestamp filename</li>
+        </ol>
+
+        <h3>What's Backed Up</h3>
+        <p>The backup includes the entire SQLite database (<code>roms.db</code>), which contains all game metadata, user accounts, settings, trophy data, achievement progress, tags, lists, and wishlist items.</p>
+
+        <h3>What's NOT Backed Up</h3>
+        <p>Media files (boxart, screenshots, fanart, videos, manuals) are NOT included in the database backup as they can be re-downloaded by scraping. Consider backing up your <code>static/images/</code> directory separately if you have custom uploads.</p>
+
+        <h3>Restoring</h3>
+        <ol>
+            <li>Find the backup in the backup list</li>
+            <li>Click <strong>"Restore"</strong></li>
+            <li>Confirm the action</li>
+        </ol>
+
+        <div class="help-tip">
+            <strong>Warning:</strong> Restoring a backup overwrites your current database. Create a fresh backup before restoring an older one!
+        </div>
+    </div>
+</section>
+
+<!-- Updating RetroDB -->
+<section id="updating" class="help-section card">
+    <h2 class="card-title">Updating RetroDB</h2>
+    <div class="card-body">
+        <h3>How to Update</h3>
+        <ol>
+            <li>Download the new RetroDB release</li>
+            <li>Back up these files (they contain your personal data):
+                <ul>
+                    <li><code>config.py</code> (your paths and API keys)</li>
+                    <li><code>data/settings.json</code> (your UI preferences)</li>
+                    <li><code>data/scraper_settings.json</code> (your scraper configuration)</li>
+                    <li><code>data/rom_tools_config.json</code> (your ROM tools preferences)</li>
+                    <li><code>data/psn_tokens.json</code> (your PSN authentication tokens)</li>
+                    <li><code>data/xbox_tokens.json</code> (your Xbox authentication tokens)</li>
+                    <li><code>database/</code> folder (your game library database)</li>
+                </ul>
+            </li>
+            <li>Extract the new version over the existing installation</li>
+            <li>Run <code>python install.py</code> to install any new dependencies</li>
+            <li>Restart the server</li>
+        </ol>
+
+        <h3>Files Safe to Overwrite</h3>
+        <p>All source code files (<code>.py</code>, <code>.html</code>, <code>.css</code>, <code>.js</code>) can be safely overwritten. The installer will not overwrite your personal config files.</p>
+
+        <h3>Files to Keep</h3>
+        <p>Never delete or overwrite: <code>config.py</code>, <code>database/roms.db</code>, <code>data/settings.json</code>, <code>data/scraper_settings.json</code>, <code>data/rom_tools_config.json</code>.</p>
+
+        <h3>Database Migrations</h3>
+        <p>RetroDB automatically handles database schema changes on startup. New columns and tables are added as needed without data loss. You don't need to do anything special &mdash; just start the new version and the database is updated automatically.</p>
+    </div>
+</section>
+
+<!-- Troubleshooting -->
+<section id="troubleshooting" class="help-section card">
+    <h2 class="card-title">Troubleshooting</h2>
+    <div class="card-body">
+        <h3>Common Issues</h3>
+
+        <h4>"No extensions found for system"</h4>
+        <p>The system folder needs a valid ES-DE <code>systeminfo.txt</code> file that defines supported ROM file extensions. Ensure your ROM directory structure matches ES-DE standards.</p>
+
+        <h4>"API Connection Failed"</h4>
+        <ul>
+            <li>Check your internet connection</li>
+            <li>Verify API keys in Settings &rarr; Scraping &rarr; API Keys</li>
+            <li>Wait if rate limited (some APIs have daily/hourly caps)</li>
+            <li>Check if the scraper is enabled (disabled scrapers show "Disabled" in Dashboard status)</li>
+            <li>Check the Log Viewer for detailed error messages</li>
+        </ul>
+
+        <h4>"Bulk Scrape Stuck"</h4>
+        <p>Go to Settings &rarr; System &rarr; Troubleshooting &rarr; <strong>"Clear Stuck Bulk Scrape"</strong>. This resets the job state without affecting your data.</p>
+
+        <h4>"RA Sync Queue Stuck"</h4>
+        <p>Clear the RetroAchievements sync queue from Settings &rarr; System &rarr; Troubleshooting.</p>
+
+        <h4>"PSN Sync Stuck"</h4>
+        <p>Clear the PSN refresh job from Settings &rarr; System &rarr; Troubleshooting.</p>
+
+        <h4>"Museum Generation Stuck"</h4>
+        <p>Clear the museum generation job from Settings &rarr; System &rarr; Troubleshooting.</p>
+
+        <h4>"Database Errors"</h4>
+        <ol>
+            <li>Create a backup if possible (Settings &rarr; Library &rarr; Backup)</li>
+            <li>Try Settings &rarr; System &rarr; Maintenance &rarr; <strong>Optimize Database</strong></li>
+            <li>Check file permissions on the <code>database/</code> directory</li>
+            <li>Last resort: restore from a backup or delete the database and re-scan</li>
+        </ol>
+
+        <h4>"Images Not Saving"</h4>
+        <p>Check write permissions on the media directories: <code>chmod -R 755 static/images/</code></p>
+
+        <h4>"Page Slow or Unresponsive"</h4>
+        <ul>
+            <li>Large collections may take time to load &mdash; infinite scroll loads in batches of 100</li>
+            <li>Try refreshing the page to clear accumulated memory</li>
+            <li>Check browser console for JavaScript errors</li>
+            <li>Try switching to a theme with a lighter canvas effect (e.g. Amber or Elite)</li>
+            <li>Canvas effects auto-detect hardware; lower-end devices use CPU fallback at reduced frame rate</li>
+        </ul>
+
+        <h4>"Interrupted Jobs" Banner on Dashboard</h4>
+        <p>If RetroDB restarts while jobs are running, they appear in a recovery banner. Click <strong>"Resume"</strong> individually or <strong>"Resume All"</strong> to restart them. Click <strong>"Dismiss"</strong> or <strong>"Dismiss All"</strong> to clear them.</p>
+
+        <h4>"PSN Authentication Failed"</h4>
+        <ul>
+            <li>NPSSO tokens expire &mdash; generate a new one from <code>ca.account.sony.com/api/v1/ssocookie</code></li>
+            <li>Make sure you're logged into store.playstation.com before visiting the cookie URL</li>
+            <li>Cached tokens in <code>data/psn_tokens.json</code> last approximately 2 months</li>
+        </ul>
+
+        <h4>"Xbox Authentication Failed"</h4>
+        <ul>
+            <li>Re-authenticate by clicking "Sign In" on the Game Imports &rarr; Xbox tab</li>
+            <li>Xbox tokens are cached in <code>data/xbox_tokens.json</code> and refreshed automatically</li>
+        </ul>
+
+        <h4>"Image Upscaling Errors"</h4>
+        <ul>
+            <li>The Real-ESRGAN ONNX model is downloaded on first use &mdash; ensure internet access</li>
+            <li>GPU acceleration requires compatible drivers (CUDA for NVIDIA, ROCm for AMD)</li>
+            <li>If GPU fails, the system falls back to CPU processing automatically</li>
+        </ul>
+
+        <h3>Performance Tips</h3>
+        <ul>
+            <li>Keep your browser up to date for best performance</li>
+            <li>Close other browser tabs when working with very large collections</li>
+            <li>Use system filters to reduce games displayed at once</li>
+            <li>Run Optimize Database periodically after large operations (scraping, cleanup, imports)</li>
+            <li>Canvas theme effects auto-detect hardware; lower-end devices use CPU fallback</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Security & Disclaimer -->
+<section id="security" class="help-section card">
+    <h2 class="card-title">Security & Disclaimer</h2>
+    <div class="card-body">
+        <h3>Security Best Practices</h3>
+        <ul>
+            <li><strong>Change the default password</strong> &mdash; The default admin password (<code>admin</code>) should be changed immediately on first login. Use a strong password of at least 8 characters.</li>
+            <li><strong>Use an HTTPS reverse proxy</strong> &mdash; RetroDB does not provide TLS/SSL on its own. Place it behind a reverse proxy (e.g. Nginx, Caddy, Traefik) with HTTPS enabled to encrypt traffic between clients and the server.</li>
+            <li><strong>Restrict network access</strong> &mdash; Avoid exposing RetroDB directly to the public internet. Use a VPN or restrict access to your local network. If remote access is needed, use a reverse proxy with authentication.</li>
+            <li><strong>Keep regular backups</strong> &mdash; Use the built-in backup feature under Settings to create periodic database backups. Store backups in a separate location from the application.</li>
+            <li><strong>Keep RetroDB updated</strong> &mdash; Check for new releases regularly. Security fixes and improvements are included in updates.</li>
+            <li><strong>Protect your API keys</strong> &mdash; API keys are stored in <code>data/scraper_settings.json</code>. Ensure this file is not publicly accessible. Never share your <code>config.py</code> or token files.</li>
+        </ul>
+
+        <h3>Built-in Security Features</h3>
+        <ul>
+            <li><strong>Password hashing</strong> &mdash; Admin passwords are hashed with PBKDF2 (never stored in plain text)</li>
+            <li><strong>Login rate limiting</strong> &mdash; Brute-force protection on the login endpoint</li>
+            <li><strong>Path validation</strong> &mdash; All file operations use <code>safe_path</code> and <code>safe_filename</code> helpers to prevent directory traversal attacks</li>
+            <li><strong>Parameterized queries</strong> &mdash; All database queries use parameterized statements to prevent SQL injection</li>
+            <li><strong>XSS protection</strong> &mdash; Modal dialogs use safe DOM construction; user input is escaped</li>
+            <li><strong>Image decompression bomb protection</strong> &mdash; Maximum image pixel count is limited to prevent memory exhaustion from malicious images</li>
+        </ul>
+
+        <h3>Disclaimer</h3>
+        <p>
+            RetroDB is provided <strong>"AS IS"</strong>, without warranty of any kind, express or implied,
+            including but not limited to the warranties of merchantability, fitness for a particular purpose,
+            and noninfringement. In no event shall the authors or copyright holders be liable for any claim,
+            damages, or other liability, whether in an action of contract, tort, or otherwise, arising from,
+            out of, or in connection with the software or the use or other dealings in the software.
+        </p>
+        <p>
+            You are solely responsible for securing your deployment, including network configuration,
+            access control, data backups, and compliance with any applicable laws regarding the content
+            you manage with this software. The developers assume no responsibility for unauthorized access,
+            data loss, or misuse resulting from improper configuration or deployment.
+        </p>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+.help-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin: 0 calc(-1 * var(--spacing-lg));
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(20, 26, 35, 0.98), rgba(15, 20, 25, 0.98));
+    border-bottom: 2px solid var(--primary-cyan);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(76, 201, 240, 0.2);
+}
+
+.help-nav-item {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.help-nav-item:hover {
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+.help-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.help-section h3 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--primary-cyan);
+    margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+}
+
+.help-section h3:first-child {
+    margin-top: 0;
+}
+
+.help-section h4 {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+}
+
+.help-section ol, .help-section ul {
+    padding-left: 1.5rem;
+    margin: var(--spacing-sm) 0;
+}
+
+.help-section li {
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.help-section p {
+    color: var(--text-secondary);
+    margin: var(--spacing-sm) 0;
+    line-height: 1.6;
+}
+
+.help-section pre {
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    overflow-x: auto;
+    margin: var(--spacing-md) 0;
+    line-height: 1.5;
+}
+
+.help-section code {
+    background: var(--bg-lighter);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--primary-cyan);
+}
+
+.help-section a {
+    color: var(--primary-cyan);
+    text-decoration: none;
+}
+
+.help-section a:hover {
+    text-decoration: underline;
+}
+
+.shortcut-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-sm);
+    margin: var(--spacing-md) 0;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border-radius: var(--radius-md);
+}
+
+.shortcut-item kbd {
+    display: inline-block;
+    min-width: 24px;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    text-align: center;
+}
+
+.shortcut-item span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--primary-cyan);
+}
+
+.help-tip {
+    background: rgba(76, 201, 240, 0.1);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    border-left: 4px solid var(--primary-cyan);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    color: var(--text-secondary);
+}
+
+.help-tip strong {
+    color: var(--primary-cyan);
+}
+
+.data-table {
+    width: 100%;
+    margin: var(--spacing-md) 0;
+}
+
+.data-table th,
+.data-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.data-table th {
+    background: var(--bg-medium);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.data-table td {
+    color: var(--text-primary);
+}
+
+.data-table tbody tr:hover {
+    background: rgba(76, 201, 240, 0.05);
+}
+</style>
+{% endblock %}

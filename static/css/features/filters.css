@@ -1,0 +1,212 @@
+/* =============================================================================
+   RETRODB - FILTERS
+   Filter bar, search box, filter selects, platform filters, bulk filters
+   ============================================================================= */
+
+/* =============================================================================
+   FILTER BAR
+   ============================================================================= */
+
+.filter-bar {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+    flex-wrap: wrap;
+}
+
+/* =============================================================================
+   SEARCH BOX
+   ============================================================================= */
+
+.search-box {
+    --search-icon-offset: var(--spacing-md);
+    --search-icon-size: 1.15rem;
+    --search-icon-width: 2rem;  /* emoji glyphs render wider than font-size */
+    --search-icon-gap: var(--spacing-sm);
+    flex: 1;
+    min-width: 250px;
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: var(--search-icon-offset);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: var(--search-icon-size);
+}
+
+input.search-input {
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-lg);
+    padding-left: calc(var(--search-icon-offset) + var(--search-icon-width) + var(--search-icon-gap));
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-size: 0.95rem;
+    transition: all var(--transition-fast);
+}
+
+input.search-input:focus {
+    outline: none;
+    border-color: var(--primary-cyan);
+    box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.1);
+}
+
+input.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* =============================================================================
+   FILTER SELECT
+   ============================================================================= */
+
+.filter-select {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    min-width: 150px;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--primary-cyan);
+}
+
+/* =============================================================================
+   PLATFORM FILTER TABS
+   ============================================================================= */
+
+.platform-filters {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.platform-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: rgba(20, 26, 35, 0.8);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.platform-filter-btn:hover {
+    border-color: var(--primary-cyan);
+    color: var(--text-primary);
+}
+
+.platform-filter-btn.active {
+    background: rgba(76, 201, 240, 0.15);
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+.filter-count {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-full);
+}
+
+.platform-filter-btn.active .filter-count {
+    background: rgba(76, 201, 240, 0.2);
+}
+
+/* =============================================================================
+   BULK FILTER SECTION
+   ============================================================================= */
+
+.bulk-filter-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.bulk-action-section {
+    padding: var(--spacing-lg);
+    background: var(--bg-dark);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--card-border);
+}
+
+.bulk-preview-count {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-cyan);
+    margin-bottom: var(--spacing-sm);
+}
+
+.bulk-game-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: var(--spacing-md);
+}
+
+.bulk-game-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    border-bottom: 1px solid var(--card-border);
+}
+
+.bulk-game-item:last-child {
+    border-bottom: none;
+}
+
+/* =============================================================================
+   PSN SEARCH & SORT ROW
+   ============================================================================= */
+
+.psn-search-sort-row {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    align-items: center;
+}
+
+.psn-search-wrapper {
+    flex: 1;
+    position: relative;
+}
+
+.psn-search-wrapper .search-input {
+    width: 100%;
+    padding-left: calc(var(--search-icon-offset, var(--spacing-md)) + var(--search-icon-width, 2rem) + var(--search-icon-gap, var(--spacing-sm)));
+}
+
+.psn-sort-select {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.psn-sort-select:focus {
+    outline: none;
+    border-color: var(--primary-cyan);
+}
