@@ -81,7 +81,8 @@
 |------|-----------|---------|
 | `app.py` | `/`, `/dashboard`, `/analytics`, `/changelog`, `/help`, `/setup`, `/api/setup`, `/api/timezones`, `/api/jobs/resume/<id>`, `/api/jobs/dismiss/<id>` | Main pages, setup wizard, timezone API, job recovery |
 | `routes/auth.py` | `/login`, `/logout`, `/api/users/avatar`, `/api/users/avatar/remove` | Authentication, sessions, roles, avatars |
-| `routes/games.py` | `/games`, `/game/<id>`, `/compare`, `/api/games/*`, `/api/games/find`, `/api/game/<id>/ai-fill` | Game pages, search, edit, bulk edit, HLTB, compare, similar, AI fill |
+| `routes/games.py` | `/games`, `/game/<id>`, `/compare`, `/api/games/*`, `/api/games/find`, `/api/game/<id>/ai-fill` | Game pages, search, edit, bulk edit, compare, similar, AI fill |
+| `routes/games_hltb.py` | `/api/hltb-lookup/<id>`, `/api/hltb-save/<id>`, `/api/hltb-clear/<id>`, `/api/hltb/search` | HowLongToBeat playtime lookup, save, clear, generic search. Split from `routes/games.py`. |
 | `routes/systems.py` | `/systems`, `/systems/<id>` | System browser & per-system game lists |
 | `routes/achievements.py` | `/achievements`, `/api/achievements/*` | RetroAchievements integration |
 | `routes/trophies.py` | `/trophies`, `/api/psn/games`, `/api/psn/games/ids`, PSN routes | RPCS3 local + PSN trophies (API-driven) |
@@ -112,6 +113,7 @@
 | `services/analytics.py` | Pure data helpers (20 `_get_*` functions) feeding the `/analytics` page charts. No Flask/session coupling. |
 | `services/formatters.py` | `format_size()`, `get_manufacturer()`, `MANUFACTURER_MAP` — shared by analytics, template filters, stats endpoints. |
 | `services/template_filters.py` | Jinja filters (`timestamp_to_date`, `trophy_type_name`, `format_number`, `format_size`, `format_ratio`, `tz`). Entry point: `register_filters(app)`. |
+| `services/game_query.py` | Shared game-list query helpers: `escape_like`, `_get_filter_options` (with 60 s TTL cache), `_build_games_query`, `get_retroachievements_info`, `get_trophy_info_for_game`, `get_bonus_discs_for_game`. Extracted from `routes/games.py`. |
 | `services/log_redactor.py` | `SecretRedactor` logging filter — masks JWTs, OAuth tokens, API keys before they hit `logs/*.log` |
 | `services/auth.py` | Password hashing, role decorators (`@login_required`, `@admin_required`) |
 | `services/security.py` | Path validation (`safe_path`, `safe_filename`), login rate limiting |

@@ -1,3 +1,16 @@
+- version: 2.77.9
+  date: 2026-04-20
+  tags:
+  - type: enhancement
+    label: Enhancement
+  body: |
+    <ul>
+        <li><strong>routes/games.py Decomposition</strong> &mdash; Split the 2 472-line <code>routes/games.py</code> by extracting shared query helpers and the HLTB sub-API into dedicated modules. No behavior change &mdash; all 30 pytest cases still pass, ruff clean.</li>
+        <li><strong>services/game_query.py (new)</strong> &mdash; Extracted query helpers used across the games blueprint: <code>escape_like</code> (SQL LIKE character escaping), <code>_get_filter_options</code> (60-second TTL cache for dropdown values), <code>_build_games_query</code> (the master WHERE/JOIN builder with filter, search, letter-nav, and source-source logic), <code>get_retroachievements_info</code>, <code>get_trophy_info_for_game</code>, <code>get_bonus_discs_for_game</code>. Also extracted the filter cache state and <code>invalidate_filter_cache()</code>.</li>
+        <li><strong>routes/games_hltb.py (new blueprint)</strong> &mdash; Extracted the four HLTB API endpoints (<code>/api/hltb-lookup/&lt;id&gt;</code>, <code>/api/hltb-save/&lt;id&gt;</code>, <code>/api/hltb-clear/&lt;id&gt;</code>, <code>/api/hltb/search</code>) into their own blueprint. URL paths are unchanged; endpoint names are now <code>games_hltb.*</code> (no template references needed updating since these are called from JS via fetch).</li>
+        <li><strong>routes/games.py shrinks</strong> &mdash; Down from 2 472 to 2 000 lines (&minus;19%). Combined with v2.77.8, <code>app.py</code> + <code>routes/games.py</code> have together dropped by about 1 450 lines, replaced by six cohesive service/blueprint modules totalling 1 540 lines &mdash; the codebase is cleaner to navigate without growing.</li>
+    </ul>
+
 - version: 2.77.8
   date: 2026-04-20
   tags:
