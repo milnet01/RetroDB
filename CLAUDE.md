@@ -9,11 +9,13 @@
 ## Mandatory Workflow
 
 ### After Every Code Change
-1. **Bump version** in `config.py` (`APP_VERSION` + `APP_LAST_UPDATE`)
+1. **Bump version** in `config.py` AND `config.example.py` (`APP_VERSION` + `APP_LAST_UPDATE`)
 2. **Add changelog entry** at top of `data/changelog.yaml`
 3. **Rebuild CSS** if any `.css` file under `static/css/` was modified: `python3 build_css.py`
 3b. **Rebuild JS** if any bundled `.js` file under `static/js/` was modified: `python3 build_js.py`
-4. **Update this file** (`CLAUDE.md`) if any change adds, removes, or renames routes, templates, CSS files, JS files, or alters how pages/CSS/JS are created or used
+4. **Run tests** if any `services/*.py` or `scraper/*.py` was modified: `python3 -m pytest`
+5. **Regenerate lockfile** if `requirements.txt` was edited: `pip-compile requirements.txt -o requirements.lock --strip-extras`
+6. **Update this file** (`CLAUDE.md`) if any change adds, removes, or renames routes, templates, CSS files, JS files, or alters how pages/CSS/JS are created or used
 
 ### Version Bumping Rules
 - **Patch** (x.x.N+1): Bug fixes, cleanup, refactoring, accessibility
@@ -56,6 +58,12 @@
 | `install_gui.py` | Tkinter graphical installer wizard (dark cyberpunk theme, step progress, log, launch button) |
 | `install.py` | CLI installer fallback (auto-detects distro, colored output, all setup steps) |
 | `start.sh` | Server launcher for Linux (checks deps, builds CSS, starts app) |
+| `pyproject.toml` | Ruff + pytest config (no packaging — project is a Flask app, not a library) |
+| `requirements.txt` | Runtime dependencies with semver ranges (user-facing `pip install -r`) |
+| `requirements.lock` | Fully pinned transitive dependency list — regenerate with `pip-compile` |
+| `tests/` | pytest suite — `python3 -m pytest` |
+| `.github/workflows/ci.yml` | Lint + semgrep + smoke import + pytest on push/PR |
+| `.github/workflows/release.yml` | On `v*.*.*` tag: build 3-platform ZIPs, draft GitHub Release |
 
 ### Configuration & Data
 | File | Purpose |
@@ -99,7 +107,8 @@
 ### Services
 | File | Purpose |
 |------|---------|
-| `services/database.py` | SQLite connection, query helpers, WAL mode |
+| `services/database.py` | SQLite connection, query helpers, WAL mode, `safe_column()` allowlist validator for SQL f-string interpolation |
+| `services/log_redactor.py` | `SecretRedactor` logging filter — masks JWTs, OAuth tokens, API keys before they hit `logs/*.log` |
 | `services/auth.py` | Password hashing, role decorators (`@login_required`, `@admin_required`) |
 | `services/security.py` | Path validation (`safe_path`, `safe_filename`), login rate limiting |
 | `services/game_utils.py` | Title parsing, sort titles, rating mappings, system constants (`COMPUTER_SYSTEMS`, `HANDHELD_SYSTEMS`, `ENGINE_SYSTEMS`, `get_system_type()`, `build_filename()`) |

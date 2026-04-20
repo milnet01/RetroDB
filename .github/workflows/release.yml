@@ -1,0 +1,73 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (e.g. v2.77.6)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Build Linux / macOS / Windows ZIPs
+        run: |
+          mkdir -p /tmp/staging
+          # build_dist.py writes to /mnt/Storage/Scripts/Linux/Staging_Area/RetroDB/ by default;
+          # redirect via a tiny wrapper so CI writes to /tmp/staging instead.
+          cp config.example.py config.py
+          python - <<'PY'
+          import os, sys
+          os.environ['STAGING_DIR_OVERRIDE'] = '/tmp/staging'
+          # build_dist.py reads STAGING_DIR at top level; we wrap to override.
+          sys.path.insert(0, '.')
+          import build_dist
+          build_dist.STAGING_DIR = '/tmp/staging'
+          os.makedirs('/tmp/staging', exist_ok=True)
+          build_dist.main() if hasattr(build_dist, 'main') else None
+          PY
+          ls -la /tmp/staging
+
+      - name: Extract changelog entry
+        id: changelog
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import yaml, os, sys
+          tag = os.environ.get('GITHUB_REF_NAME', '').lstrip('v')
+          with open('data/changelog.yaml') as f:
+              entries = yaml.safe_load(f)
+          for e in entries:
+              if str(e.get('version')) == tag:
+                  body = e.get('body', '').strip()
+                  # GitHub Actions multi-line output
+                  print('body<<EOF')
+                  print(body)
+                  print('EOF')
+                  sys.exit(0)
+          print('body=No changelog entry found.')
+          PY
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          name: RetroDB ${{ github.event.inputs.tag || github.ref_name }}
+          body: ${{ steps.changelog.outputs.body }}
+          draft: true
+          files: /tmp/staging/RetroDB-v*-*.zip

@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 # Xbox Live API endpoints
 XBOX_AUTH_URL = 'https://login.live.com/oauth20_authorize.srf'
-XBOX_TOKEN_URL = 'https://login.live.com/oauth20_token.srf'
+XBOX_TOKEN_URL = 'https://login.live.com/oauth20_token.srf'  # noqa: S105 — URL constant, not a credential
 XBL_AUTH_URL = 'https://user.auth.xboxlive.com/user/authenticate'
 XSTS_AUTH_URL = 'https://xsts.auth.xboxlive.com/xsts/authorize'
 XBOX_PROFILE_URL = 'https://profile.xboxlive.com'

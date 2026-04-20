@@ -10,6 +10,34 @@ import config
 from flask import g, has_app_context
 
 
+def safe_column(name, allowed):
+    """
+    Validate a column/order-by/field name against an allowlist before
+    interpolating into an SQL string.
+
+    Use this any time a request-derived value needs to end up inside a raw
+    SQL fragment — column lists, ORDER BY, dynamic WHERE field references.
+    Prevents both injection and typo-induced silent mismatches.
+
+    Args:
+        name: The untrusted string (e.g. request.args.get('sort')).
+        allowed: An iterable of permitted values.
+
+    Returns:
+        The validated string, guaranteed to be equal to one of `allowed`.
+
+    Raises:
+        ValueError: If `name` is not in `allowed`.
+
+    Example:
+        column = safe_column(request.args.get('sort'), {'title', 'year', 'rating'})
+        sql = f"SELECT * FROM games ORDER BY {column}"
+    """
+    if name not in allowed:
+        raise ValueError(f"Invalid column name: {name!r}")
+    return name
+
+
 def get_db():
     """
     Get a database connection.

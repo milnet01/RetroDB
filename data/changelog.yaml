@@ -1,3 +1,21 @@
+- version: 2.77.7
+  date: 2026-04-20
+  tags:
+  - type: security
+    label: Security
+  - type: enhancement
+    label: Enhancement
+  body: |
+    <ul>
+        <li><strong>Log Secret Redaction</strong> &mdash; Added <code>services/log_redactor.py</code> with a <code>SecretRedactor</code> logging filter that masks JWTs, OAuth access/refresh tokens, API keys, Authorization headers, and long hex digests before they hit <code>logs/*.log</code> files. Wired into every category log handler in <code>log_manager.py</code>. Previously, <code>logs/scraping_*.log</code> accumulated ~200 real tokens over a 45-day retention window. Existing logs on disk are not retroactively cleaned &mdash; delete old <code>logs/scraping_*.log</code> if concerned.</li>
+        <li><strong>SQL Allowlist Helper</strong> &mdash; Added <code>services.database.safe_column(name, allowed)</code> helper for validating request-derived column/order-by names before f-string interpolation. New code should use this in place of inline <code>if field not in allowlist</code> checks.</li>
+        <li><strong>Pinned Dependency Lockfile</strong> &mdash; Added <code>requirements.lock</code> (generated via <code>pip-compile requirements.txt -o requirements.lock --strip-extras</code>) so reproducible installs are possible. <code>requirements.txt</code> still holds user-facing version ranges; <code>requirements.lock</code> records exact transitive pins.</li>
+        <li><strong>Audit Tooling</strong> &mdash; Added <code>pyproject.toml</code> with a <code>[tool.ruff]</code> config tuned for this codebase (bug-class rules only, cosmetic findings ignored). Added <code>[tool.pytest.ini_options]</code>. Running <code>ruff check .</code> now returns 0 findings when the tree is clean.</li>
+        <li><strong>Test Suite Scaffolding</strong> &mdash; Added <code>tests/</code> with 30 pytest cases covering <code>services/game_utils.py</code> (article placement, platform name map regression for the F601 duplicate-key bug, filename sanitization) and the new <code>SecretRedactor</code> filter. Run with <code>python3 -m pytest</code>.</li>
+        <li><strong>GitHub Actions CI</strong> &mdash; Added <code>.github/workflows/ci.yml</code>: runs ruff, semgrep (security-audit + python + flask), an import smoke test, and the pytest suite on every push/PR to <code>main</code>.</li>
+        <li><strong>GitHub Actions Release</strong> &mdash; Added <code>.github/workflows/release.yml</code>: on <code>v*.*.*</code> tag push, builds Linux/macOS/Windows ZIPs via <code>build_dist.py</code>, extracts the matching changelog entry, and creates a draft GitHub Release with the three ZIPs attached. Manual step still required: publish the draft + copy the notes into the Patreon post.</li>
+    </ul>
+
 - version: 2.77.6
   date: 2026-04-20
   tags:

@@ -1108,7 +1108,7 @@ def _run_screenshot_dedup_scan(task, method, threshold):
                 if method == 'hash':
                     h = hashlib.md5()
                     with open(filepath, 'rb') as f:
-                        for chunk in iter(lambda: f.read(65536), b''):
+                        for chunk in iter(lambda f=f: f.read(65536), b''):
                             h.update(chunk)
                     file_hash = h.hexdigest()
                 else:

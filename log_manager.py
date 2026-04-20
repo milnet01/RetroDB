@@ -99,6 +99,10 @@ class CategoryFileHandler(logging.Handler):
                 '%(asctime)s | %(levelname)-8s | %(name)s | %(message)s',
                 datefmt='%Y-%m-%d %H:%M:%S'
             ))
+            # Attach secret-redaction filter so JWTs / OAuth tokens / API keys
+            # logged by scrapers don't accumulate on disk as plaintext.
+            from services.log_redactor import SecretRedactor
+            self.file_handler.addFilter(SecretRedactor())
             self.current_date = today
 
             # Write version banner on new file or server restart
