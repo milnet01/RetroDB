@@ -108,6 +108,10 @@
 | File | Purpose |
 |------|---------|
 | `services/database.py` | SQLite connection, query helpers, WAL mode, `safe_column()` allowlist validator for SQL f-string interpolation |
+| `services/database_init.py` | Schema bootstrap: `init_database()`, `ensure_user_tables()`, and data migrations (`_migrate_genre_canonical`, `_migrate_pegi_format`). Runs on every import (idempotent). |
+| `services/analytics.py` | Pure data helpers (20 `_get_*` functions) feeding the `/analytics` page charts. No Flask/session coupling. |
+| `services/formatters.py` | `format_size()`, `get_manufacturer()`, `MANUFACTURER_MAP` — shared by analytics, template filters, stats endpoints. |
+| `services/template_filters.py` | Jinja filters (`timestamp_to_date`, `trophy_type_name`, `format_number`, `format_size`, `format_ratio`, `tz`). Entry point: `register_filters(app)`. |
 | `services/log_redactor.py` | `SecretRedactor` logging filter — masks JWTs, OAuth tokens, API keys before they hit `logs/*.log` |
 | `services/auth.py` | Password hashing, role decorators (`@login_required`, `@admin_required`) |
 | `services/security.py` | Path validation (`safe_path`, `safe_filename`), login rate limiting |
