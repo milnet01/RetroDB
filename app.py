@@ -171,6 +171,9 @@ from routes.settings import bp as settings_bp
 from routes.systems import bp as systems_bp
 from routes.games import bp as games_bp
 from routes.games_hltb import bp as games_hltb_bp
+from routes.games_ai import bp as games_ai_bp
+from routes.games_search import bp as games_search_bp
+from routes.games_media import bp as games_media_bp
 from routes.maintenance import bp as maintenance_bp
 from routes.bulk_scrape import bp as bulk_scrape_bp
 from routes.ra_sync import bp as ra_sync_bp
@@ -190,6 +193,9 @@ app.register_blueprint(settings_bp)
 app.register_blueprint(systems_bp)
 app.register_blueprint(games_bp)
 app.register_blueprint(games_hltb_bp)
+app.register_blueprint(games_ai_bp)
+app.register_blueprint(games_search_bp)
+app.register_blueprint(games_media_bp)
 app.register_blueprint(maintenance_bp)
 app.register_blueprint(bulk_scrape_bp)
 app.register_blueprint(ra_sync_bp)

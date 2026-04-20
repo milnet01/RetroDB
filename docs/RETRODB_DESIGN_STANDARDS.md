@@ -540,7 +540,7 @@ Sidebar nav items highlight for both parent and child pages using `request.endpo
 ## 8. Theme System
 
 ### Available Themes
-RetroDB supports 6 themes, each with CSS variable overrides and an animated canvas effect:
+RetroDB supports 7 themes, each with CSS variable overrides and an animated canvas effect:
 
 | Theme | `data-theme` | Primary | Secondary | Canvas Effect |
 |-------|-------------|---------|-----------|---------------|
@@ -550,6 +550,7 @@ RetroDB supports 6 themes, each with CSS variable overrides and an animated canv
 | Ocean | `ocean` | `#06b6d4` (teal) | `#0284c7` (blue) | Moon reflection with waves |
 | Cathedral | `christian` | `#d4a843` (gold) | `#7b4db0` (purple) | Golden dust motes with light rays |
 | Blade Runner | `bladerunner` | `#1a9fff` (electric blue) | `#ff2d7c` (neon pink) | Rain streaks with neon glow pools |
+| Elite 1984 | `elite` | `#00ff00` (vector green) | `#00cc00` | 1984 vector starfield (stars streaming past) |
 
 ### Theme Implementation
 - **CSS**: `[data-theme="name"]` selectors in `static/css/core/themes.css` override CSS variables
@@ -580,6 +581,7 @@ Each theme has a dedicated canvas effect rendered by `ThemeManager`:
 - **Ocean**: Moon reflection with wave physics simulation
 - **Cathedral**: 60 golden dust motes with upward drift and divine light beam
 - **Blade Runner**: 200 rain streaks with wind drift, 8% neon pink / 6% neon blue tinted
+- **Elite 1984**: Vector-green starfield with stars streaming past at hyperspace speed
 
 ---
 

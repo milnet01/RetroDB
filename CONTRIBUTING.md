@@ -24,11 +24,11 @@ Thank you for your interest in contributing to RetroDB! This guide will help you
    ```
 
 3. **Configure for development:**
-   Edit `config.py` and set:
-   ```python
-   DEBUG_MODE = True
+   Set the `RETRODB_DEBUG` environment variable to enable Flask's auto-reloader and debug output:
+   ```bash
+   export RETRODB_DEBUG=true
    ```
-   This enables Flask's auto-reloader and debug output.
+   (`DEBUG_MODE` in `config.py` reads from this env var and defaults to `false` for safety — the Werkzeug debugger exposes an RCE endpoint if the server is bound to a non-localhost address, so we don't ship with it on.)
 
 4. **Start the development server:**
    ```bash
@@ -47,29 +47,51 @@ RetroDB/
 ├── build_css.py            # CSS build script (modular -> bundled)
 ├── install.py              # Cross-platform installer
 │
-├── routes/                 # Flask blueprints
+├── routes/                 # Flask blueprints (20+ route files)
 │   ├── auth.py             # Authentication and user management
-│   ├── games.py            # Game detail, edit, scraping
+│   ├── games.py            # Game list, detail, edit, bulk edit, search
+│   ├── games_hltb.py       # HowLongToBeat API endpoints
 │   ├── systems.py          # System browsing
 │   ├── settings.py         # Settings UI
 │   ├── tools.py            # ROM tools (archive, CHD, duplicates)
-│   ├── scraper.py          # Single game scraping
+│   ├── scraper.py          # Scraper config
 │   ├── bulk_scrape.py      # Bulk scraping queue
 │   ├── reports.py          # ROM reports
 │   ├── achievements.py     # RetroAchievements
-│   ├── trophies.py         # PS3 trophies
+│   ├── trophies.py         # PS3 & PSN trophies
+│   ├── steam_achievements.py
+│   ├── xbox_achievements.py
+│   ├── museum.py           # System encyclopedia
+│   ├── collections.py      # Tags, lists, wishlist
+│   ├── collector_trophies.py
+│   ├── platform_import.py  # Steam / Xbox / PSN library import
 │   └── ...
 │
 ├── scraper/                # Scraping backends
 │   ├── scraper_manager.py  # Orchestrates hybrid scraping
 │   ├── hybrid_scraper.py   # Multi-source scraper
 │   ├── rom_tools.py        # Archive/CHD/duplicate tools backend
+│   ├── scrape_steam.py     # Steam Web API
+│   ├── scrape_xbox.py      # Xbox Live API (OAuth)
 │   └── ...
 │
 ├── services/               # Service layer
-│   ├── database.py         # SQLite query helpers
+│   ├── database.py         # SQLite query helpers, safe_column allowlist
+│   ├── database_init.py    # Schema bootstrap + migrations
 │   ├── auth.py             # Auth helpers (hashing, permissions)
-│   └── jobs.py             # Background job management
+│   ├── security.py         # Path validation, rate limiting
+│   ├── analytics.py        # Analytics data helpers (20 functions)
+│   ├── formatters.py       # format_size, get_manufacturer
+│   ├── template_filters.py # Jinja filters
+│   ├── game_query.py       # Shared game-list query helpers
+│   ├── game_utils.py       # Title parsing, ratings, system constants
+│   ├── image_utils.py      # Real-ESRGAN upscaling, Lanczos downscaling
+│   ├── normalization.py    # Genre/modes normalization
+│   ├── log_redactor.py     # Logs secret-redaction filter
+│   └── jobs/               # Background job package (bulk scrape, RA sync, PSN, etc.)
+│
+├── tests/                  # pytest suite
+├── .github/workflows/      # CI + release pipelines
 │
 ├── templates/              # Jinja2 HTML templates
 ├── static/                 # CSS, JS, images
@@ -123,7 +145,23 @@ RetroDB follows the conventions documented in `RETRODB_DESIGN_STANDARDS.md`. Key
 
 ## Testing
 
-Currently RetroDB does not have an automated test suite. Manual testing workflow:
+### Automated tests
+
+RetroDB has a pytest suite under `tests/`:
+
+```bash
+python3 -m pytest                # run everything (fast — all tests are unit-level)
+python3 -m pytest tests/test_game_utils.py -v   # one file, verbose
+```
+
+Every push and PR runs the suite on CI (`.github/workflows/ci.yml`) along with ruff
+(`ruff check .`), a semgrep security scan, and an import smoke test. New service code
+in `services/*.py` or `scraper/*.py` **must** ship with tests — the CI workflow
+considers a ruff/pytest failure blocking.
+
+### Manual QA workflow
+
+For changes that touch UI or external integrations, also do:
 
 1. Start fresh: delete `database/roms.db` and run the app
 2. Complete the setup wizard

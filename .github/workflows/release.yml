@@ -9,6 +9,10 @@ on:
         description: "Tag to release (e.g. v2.77.6)"
         required: true
 
+# Force Node 24 for all JavaScript actions — see .github/workflows/ci.yml.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 permissions:
   contents: write
 

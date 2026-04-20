@@ -30,7 +30,7 @@
 - **Museum** - Interactive gaming system encyclopedia with AI-generated content
 
 ### UI & System
-- **6 Themes** - Cyberpunk, Matrix, Amber, Ocean, Cathedral, and Blade Runner with animated canvas effects
+- **7 Themes** - Cyberpunk, Matrix, Amber, Ocean, Cathedral, Blade Runner, and Elite 1984 (vector starfield) with animated canvas effects
 - **Multi-User Support** - Role-based access control (admin, editor, viewer)
 - **How Long to Beat** - Playtime estimates for your games
 - **Log Viewer** - Unified log browser across all categories

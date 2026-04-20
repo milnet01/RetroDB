@@ -1,3 +1,27 @@
+- version: 2.77.10
+  date: 2026-04-20
+  tags:
+  - type: enhancement
+    label: Enhancement
+  - type: patch
+    label: Cleanup
+  body: |
+    <ul>
+        <li><strong>routes/games.py further decomposition</strong> &mdash; Split three more cohesive chunks out of the games blueprint, bringing <code>routes/games.py</code> from 2 000 down to 1 370 lines (cumulative &minus;45% from the original 2 472). New blueprints each register cleanly in <code>app.py</code> and preserve URL paths unchanged.</li>
+        <li><strong>routes/games_ai.py (new blueprint)</strong> &mdash; Extracted the <code>/api/game/&lt;id&gt;/ai-fill</code> endpoint (302 lines) &mdash; AI metadata fill with smart overwrite, rating cross-mapping, controller-default preference, and scrape-history audit trail.</li>
+        <li><strong>routes/games_search.py (new blueprint)</strong> &mdash; Extracted the scraper search (<code>/api/games/search</code>), local library search (<code>/api/games/find</code>), similar-games recommendations (<code>/api/games/&lt;id&gt;/similar</code>), and game comparison (<code>/compare</code>, <code>/api/games/compare</code>) endpoints.</li>
+        <li><strong>routes/games_media.py (new blueprint)</strong> &mdash; Extracted destructive game actions: DB delete, ROM file rename, screenshot removal.</li>
+        <li><strong>Test coverage expanded</strong> &mdash; From 30 to 86 pytest cases (&plus;187%). New suites cover <code>services/formatters.py</code> (size formatting edge cases, manufacturer lookup, F601-duplicate-key regression), <code>services/game_query.py</code> (escape_like wildcard-safe escaping, _build_games_query WHERE clause generation across all filter types), and route-registration smoke tests that verify each split blueprint stays registered and that login_required actually redirects unauthenticated users.</li>
+        <li><strong>CI: Node.js 24 opt-in</strong> &mdash; Added <code>FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true</code> to both workflow files so <code>actions/checkout@v4</code> / <code>actions/setup-python@v5</code> / <code>softprops/action-gh-release@v2</code> run on Node 24 instead of the deprecated Node 20 (GitHub removes Node 20 on 2026-09-16).</li>
+        <li><strong>Documentation sync</strong> &mdash; Fixed stale counts and stale instructions across the docs set:
+            <ul>
+                <li><code>README.md</code> and <code>docs/README.md</code>: "6 Themes" &rarr; "7 Themes" (Elite 1984 was missing from both).</li>
+                <li><code>docs/RETRODB_DESIGN_STANDARDS.md</code> &sect;8: Added Elite 1984 row to the theme table and canvas-effects bullet list.</li>
+                <li><code>CONTRIBUTING.md</code>: Architecture diagram refreshed to reflect the v2.77.x services/ package layout (analytics, formatters, template_filters, database_init, game_query, log_redactor). Debug-mode instructions corrected from "edit config.py" to "set RETRODB_DEBUG=true" (the v2.77.6 security fix made the flag env-driven). Testing section updated &mdash; we now have a pytest suite + CI.</li>
+            </ul>
+        </li>
+    </ul>
+
 - version: 2.77.9
   date: 2026-04-20
   tags:

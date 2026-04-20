@@ -81,8 +81,11 @@
 |------|-----------|---------|
 | `app.py` | `/`, `/dashboard`, `/analytics`, `/changelog`, `/help`, `/setup`, `/api/setup`, `/api/timezones`, `/api/jobs/resume/<id>`, `/api/jobs/dismiss/<id>` | Main pages, setup wizard, timezone API, job recovery |
 | `routes/auth.py` | `/login`, `/logout`, `/api/users/avatar`, `/api/users/avatar/remove` | Authentication, sessions, roles, avatars |
-| `routes/games.py` | `/games`, `/game/<id>`, `/compare`, `/api/games/*`, `/api/games/find`, `/api/game/<id>/ai-fill` | Game pages, search, edit, bulk edit, compare, similar, AI fill |
+| `routes/games.py` | `/games`, `/game/<id>`, `/api/games`, `/api/games/ids`, `/api/games/card-data`, `/api/games/bulk-edit`, `/api/game/<id>/completion`, `/api/game/<id>/track-view`, `/api/recently-viewed`, `/api/filter-games`, `/api/game/<id>/edit`, `/api/game/<id>/detail` | Game list, detail, edit, bulk edit, tracking, filter options |
 | `routes/games_hltb.py` | `/api/hltb-lookup/<id>`, `/api/hltb-save/<id>`, `/api/hltb-clear/<id>`, `/api/hltb/search` | HowLongToBeat playtime lookup, save, clear, generic search. Split from `routes/games.py`. |
+| `routes/games_ai.py` | `/api/game/<id>/ai-fill` | AI-powered metadata fill via Gemini/OpenAI/Claude with smart overwrite + rating cross-map + scrape-history. Split from `routes/games.py`. |
+| `routes/games_search.py` | `/api/games/search`, `/api/games/find`, `/api/games/<id>/similar`, `/compare`, `/api/games/compare` | External scraper search, local-library search, similar-games suggestions, side-by-side comparison. Split from `routes/games.py`. |
+| `routes/games_media.py` | `/api/delete-game/<id>`, `/api/rename-rom/<id>`, `/api/delete-screenshot/<id>` | Destructive game actions: DB delete, ROM file rename, screenshot removal. Split from `routes/games.py`. |
 | `routes/systems.py` | `/systems`, `/systems/<id>` | System browser & per-system game lists |
 | `routes/achievements.py` | `/achievements`, `/api/achievements/*` | RetroAchievements integration |
 | `routes/trophies.py` | `/trophies`, `/api/psn/games`, `/api/psn/games/ids`, PSN routes | RPCS3 local + PSN trophies (API-driven) |

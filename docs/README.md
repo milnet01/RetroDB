@@ -32,7 +32,7 @@ A web-based application for organizing, scraping metadata, and managing your ret
 - **Log Viewer** - Unified log browser across all categories
 
 ### UI & System
-- **6 Themes** - Cyberpunk, Matrix, Amber, Ocean, Cathedral, Blade Runner (each with animated canvas effects)
+- **7 Themes** - Cyberpunk, Matrix, Amber, Ocean, Cathedral, Blade Runner, Elite 1984 (each with animated canvas effects)
 - **Multi-User Support** - Role-based access (admin, editor, viewer)
 - **How Long to Beat** - Playtime estimates integration
 - **Keyboard Shortcuts** - Navigate with `g+d`, `g+s`, `g+l`, etc.
