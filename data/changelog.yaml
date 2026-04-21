@@ -1,3 +1,30 @@
+- version: 2.80.0
+  date: 2026-04-21
+  tags:
+  - type: enhancement
+    label: New feature
+  body: |
+    <ul>
+        <li><strong>+53 collector trophies</strong> &mdash; The trophy catalogue grows from 17 to 70 across ten categories. Additions:
+            <ul>
+                <li><em>Collection</em> expanded with <strong>Genre Hopper</strong> (5 distinct genres), <strong>Renaissance Gamer</strong> (15), <strong>Brand Loyalty</strong> (5 games in one franchise), <strong>Franchise Fan</strong> (10), <strong>Franchise Obsessed</strong> (20), <strong>Big Three</strong> (own a Nintendo + Sony + Microsoft game), <strong>Hardware Historian</strong> (8+ manufacturers).</li>
+                <li><em>Media</em> (new): <strong>Picture Perfect</strong>, <strong>Snapshot</strong>, <strong>Art Gallery</strong>, <strong>Cinematographer</strong>, <strong>Complete Collection</strong>, <strong>Museum Quality</strong>.</li>
+                <li><em>Era</em> (new): <strong>Time Traveler</strong> (3 decades), <strong>History Buff</strong> (5), <strong>Chronicler</strong> (every decade 1970s&ndash;2020s), <strong>Vintage Vault</strong> (game released before 1980).</li>
+                <li><em>Achievements</em> (new, unified RA + Steam + Xbox + PSN): <strong>First Blood</strong>, <strong>Achievement Hunter</strong> (100), <strong>First Platinum</strong>, <strong>Trophy Wall</strong> (1,000), <strong>Perfectionist</strong> (10 games at 100%), <strong>Achievement Legend</strong> (5,000).</li>
+                <li><em>Storage</em> (new): <strong>Filling Up</strong> (10 GB), <strong>Serious Storage</strong> (100 GB), <strong>Data Archive</strong> (1 TB), <strong>Petabyte Club</strong> (10 TB).</li>
+                <li><em>Playtime</em> (new, HLTB main-story): <strong>Weekend Gamer</strong> (1,000 h), <strong>Life Savings</strong> (10,000 h), <strong>Immortal Gamer</strong> (100,000 h).</li>
+                <li><em>Discovery</em> expanded with <strong>Critic's Pick</strong> (game rated 90+), <strong>Highly Acclaimed</strong> (10), <strong>Masterpiece Collection</strong> (25), <strong>Wishing Well</strong> (first wishlist item), <strong>Import Initiate</strong> (first Steam/Xbox/PSN/CLZ import).</li>
+                <li><em>Manufacturer loyalists</em> (new): Fan (bronze) + Devotee (silver) tiers for Nintendo, Sony, Sega, Microsoft, Atari, SNK, and NEC &mdash; 14 trophies.</li>
+                <li><em>Iconic-system loyalists</em> (new): <strong>NES Loyalist</strong>, <strong>SNES Master</strong>, <strong>Genesis Ruler</strong>, <strong>PlayStation Master</strong> &mdash; 10 games each.</li>
+            </ul>
+        </li>
+        <li><strong>Collector Rank system</strong> &mdash; Trophies are now weighted PSN-style (Bronze=10, Silver=25, Gold=50, Platinum=100 pts) and roll up into a ten-tier rank: <strong>Pixel Rookie</strong> &rarr; <strong>Cartridge Hunter</strong> &rarr; <strong>Controller Enthusiast</strong> &rarr; <strong>Collector</strong> &rarr; <strong>Retro Curator</strong> &rarr; <strong>Archivist</strong> &rarr; <strong>Vault Keeper</strong> &rarr; <strong>Connoisseur</strong> &rarr; <strong>Grandmaster</strong> &rarr; <strong>ROM Legend</strong>. Max rank is calibrated to require ~97% of available points, so the top tier is a real achievement.</li>
+        <li><strong>Rank badge in the sidebar</strong> &mdash; Under the username, a small coloured rank badge now appears next to the role chip on every page. Hover shows a tooltip with trophy points, earned count, and what's needed for the next rank. Click jumps to the Collector Trophies page. The badge ramps through a muted-to-cyan-to-magenta colour scheme as you climb, with the top tier adding a magenta glow.</li>
+        <li><strong>Rank headline on /collector-trophies</strong> &mdash; A prominent rank card at the top of the page shows the current rank name, total trophy points, a progress bar toward the next rank, and the next tier's name/threshold. Max-rank collectors see a "Maximum rank reached. Flawless." flourish.</li>
+        <li><strong>Trophy-definition changes now propagate on refresh</strong> &mdash; <code>_refresh_trophies()</code> now re-writes name, description, icon, tier, category, and threshold on every refresh, so editing a trophy definition no longer requires a manual DB reset. Previously a trophy's display text was frozen at insert time.</li>
+        <li><strong>services/formatters.py re-used for manufacturer detection</strong> &mdash; The new manufacturer-loyalist trophies (Nintendo Fan / Sony Devotee / etc.) key off the same <code>MANUFACTURER_MAP</code> the analytics page uses, so additions there automatically surface here. 10 manufacturers mapped (Nintendo, Sony, Sega, Microsoft, Atari, NEC, SNK, Coleco, Mattel, Panasonic, etc.).</li>
+    </ul>
+
 - version: 2.79.0
   date: 2026-04-21
   tags:

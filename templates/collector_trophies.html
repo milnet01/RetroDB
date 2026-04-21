@@ -22,6 +22,37 @@
     </div>
 </div>
 
+<!-- Collector Rank Headline -->
+{% if rank %}
+<div class="collector-rank-card rank-tier-{{ rank.tier_index }}">
+    <div class="collector-rank-title">
+        <span class="collector-rank-icon">&#127942;</span>
+        <div>
+            <div class="collector-rank-label">Collector Rank</div>
+            <div class="collector-rank-name">{{ rank.name }}</div>
+        </div>
+    </div>
+    <div class="collector-rank-progress">
+        <div class="collector-rank-points">
+            <span class="collector-rank-points-value">{{ rank.points }}</span> trophy points
+        </div>
+        {% if rank.next_name %}
+        <div class="collector-rank-next">
+            <div class="collector-rank-next-label">
+                Next: <strong>{{ rank.next_name }}</strong> at {{ rank.next_threshold }} pts
+                <span class="collector-rank-next-pct">({{ rank.progress_percent }}%)</span>
+            </div>
+            <div class="collector-rank-next-bar">
+                <div class="collector-rank-next-fill" style="width: {{ rank.progress_percent }}%;"></div>
+            </div>
+        </div>
+        {% else %}
+        <div class="collector-rank-max">Maximum rank reached. Flawless.</div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
 <!-- Progress Bar -->
 <div class="trophy-progress-bar">
     <div class="trophy-progress-fill" id="progressFill"
@@ -84,6 +115,125 @@
 
 {% block styles %}
 <style>
+/* Collector Rank Headline */
+.collector-rank-card {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-lg);
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-lg);
+    background: var(--bg-medium);
+    border: 2px solid var(--primary-cyan);
+    border-radius: var(--radius-lg);
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+    box-shadow: 0 0 16px rgba(76, 201, 240, 0.15);
+}
+
+.collector-rank-card.rank-tier-0,
+.collector-rank-card.rank-tier-1 { border-color: var(--text-muted); box-shadow: none; }
+.collector-rank-card.rank-tier-2,
+.collector-rank-card.rank-tier-3 { border-color: var(--primary-cyan); }
+.collector-rank-card.rank-tier-4 { border-color: var(--neon-green); box-shadow: 0 0 16px rgba(34, 197, 94, 0.18); }
+.collector-rank-card.rank-tier-5 { border-color: var(--neon-orange); box-shadow: 0 0 16px rgba(245, 158, 11, 0.2); }
+.collector-rank-card.rank-tier-6,
+.collector-rank-card.rank-tier-7 { border-color: var(--neon-purple); box-shadow: 0 0 20px rgba(168, 85, 247, 0.25); }
+.collector-rank-card.rank-tier-8,
+.collector-rank-card.rank-tier-9 {
+    border-color: var(--primary-magenta);
+    background: linear-gradient(135deg, var(--bg-medium) 0%, rgba(247, 37, 133, 0.08) 100%);
+    box-shadow: 0 0 24px rgba(247, 37, 133, 0.3);
+}
+
+.collector-rank-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    min-width: 220px;
+}
+
+.collector-rank-icon {
+    font-size: 2.4rem;
+    line-height: 1;
+}
+
+.collector-rank-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.collector-rank-name {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1.15;
+}
+
+.collector-rank-progress {
+    flex: 1;
+    min-width: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.collector-rank-points {
+    font-family: var(--font-primary);
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.collector-rank-points-value {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary-cyan);
+}
+
+.collector-rank-next-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.collector-rank-next-label strong {
+    color: var(--text-primary);
+}
+
+.collector-rank-next-pct {
+    font-family: var(--font-mono);
+    margin-left: 6px;
+    color: var(--primary-cyan);
+}
+
+.collector-rank-next-bar {
+    width: 100%;
+    height: 6px;
+    background: var(--bg-darker);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.collector-rank-next-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-cyan), var(--primary-magenta));
+    transition: width 0.4s ease;
+}
+
+.collector-rank-max {
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    color: var(--primary-magenta);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
 /* Trophy Summary */
 .trophy-summary {
     display: flex;

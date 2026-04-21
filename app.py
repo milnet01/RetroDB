@@ -487,7 +487,20 @@ def inject_config():
         'rating_system_keys': RATING_SYSTEM_KEYS,
         'rating_to_tier_js': _RATING_TO_TIER_JS,
         'tier_to_rating_js': _TIER_TO_RATING_JS,
+        'collector_rank': _get_collector_rank_safe(),
     }
+
+
+def _get_collector_rank_safe():
+    """Return the current collector rank, or a zeroed placeholder if the
+    trophies module / table isn't ready yet (e.g. first boot before the
+    table has been populated). The sidebar badge reads this on every
+    render, so it must never raise."""
+    try:
+        from routes.collector_trophies import get_current_rank
+        return get_current_rank()
+    except Exception:
+        return None
 
 
 # =============================================================================

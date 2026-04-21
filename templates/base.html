@@ -54,7 +54,16 @@
                         </span>
                         <div class="user-indicator-details">
                             <span class="user-indicator-name">{{ current_user.display_name or current_user.username }}</span>
-                            <span class="user-indicator-role {{ current_user.role }}">{{ current_user.role }}</span>
+                            <div class="user-indicator-meta">
+                                <span class="user-indicator-role {{ current_user.role }}">{{ current_user.role }}</span>
+                                {% if collector_rank %}
+                                <a href="{{ url_for('collector_trophies.collector_trophies_page') }}"
+                                   class="user-indicator-rank rank-tier-{{ collector_rank.tier_index }}"
+                                   title="{{ collector_rank.points }} trophy points · {{ collector_rank.earned_count }}/{{ collector_rank.total_count }} trophies{% if collector_rank.next_name %} · Next: {{ collector_rank.next_name }} @ {{ collector_rank.next_threshold }} pts{% else %} · Max rank reached!{% endif %}">
+                                    🏆 {{ collector_rank.name }}
+                                </a>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                     <a href="{{ url_for('auth.logout') }}" class="user-logout-btn" title="Logout" aria-label="Logout">🚪</a>
