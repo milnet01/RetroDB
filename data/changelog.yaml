@@ -1,3 +1,25 @@
+- version: 2.79.0
+  date: 2026-04-21
+  tags:
+  - type: enhancement
+    label: New feature
+  body: |
+    <ul>
+        <li><strong>Wishlist metadata scraping</strong> &mdash; Wishlist entries now carry full scraped metadata (boxart, description, release date, developer, publisher, genre, modes, player count, rating, critic score, franchise) instead of just a bare title. The <code>wishlist</code> table has been extended with the relevant columns plus <code>source</code>, <code>source_id</code>, <code>scrape_status</code>, <code>scraped_at</code>; migration is idempotent.</li>
+        <li><strong>System dropdown with free-text fallback</strong> &mdash; The Add-to-Wishlist modal now shows a searchable list of all systems known to RetroDB (via <code>/api/systems</code>) so picks are typo-free and scraper-matchable via the new <code>wishlist.system_id</code> column. Users can still type a system RetroDB doesn't know about yet (e.g. &ldquo;Sony PlayStation 6&rdquo;) &mdash; it'll be saved as free text and the scraper searches proceed without a platform filter.</li>
+        <li><strong>Three ways to trigger a scrape</strong> &mdash;
+            <ul>
+                <li><em>On add</em>: a &ldquo;Scrape metadata now&rdquo; checkbox (default on) fires a background scrape immediately after the item is saved, so the Add dialog closes instantly and the new card fills in within a few seconds.</li>
+                <li><em>Per item</em>: a magnifier button on each row triggers a re-scrape (useful after an item's release or when RetroDB's scraper settings change).</li>
+                <li><em>Bulk</em>: a page-level &ldquo;Scrape All (N)&rdquo; button processes every <code>unscraped</code> / <code>failed</code> / <code>no_match</code> item in the background.</li>
+            </ul>
+        </li>
+        <li><strong>services/wishlist_scraper.py (new)</strong> &mdash; Thin orchestrator that calls <code>scraper_manager.search_games</code>, picks the best match from enabled scrapers, applies the primary source via the existing per-source <code>apply_tgdb_to_metadata</code> / <code>apply_igdb_to_metadata</code> / <code>apply_rawg_to_metadata</code> mergers, then iterates remaining supported scrapers to gap-fill. Image filenames are namespaced with a <code>w{id}</code> prefix so they never collide with owned-game boxart. ES-DE and ScreenScraper are deliberately excluded &mdash; they rely on local ROM context which wishlist entries don't have. Runs in a background thread so the HTTP response isn't blocked on network I/O.</li>
+        <li><strong>Wishlist UI refresh</strong> &mdash; Cards now show a boxart thumbnail, a scrape-status badge (Unscraped / Scraping / Scraped / Failed / No Match), and a chip row with release / dev / pub / genre / rating / critic score. The page polls every 3 s while anything is mid-scrape and then auto-stops. For unreleased / upcoming games, fields the scraper didn't find (release date, critic score, rating) simply stay empty &mdash; the entry still has a title, system, and notes.</li>
+        <li><strong>New API routes</strong> &mdash; <code>POST /api/wishlist/&lt;id&gt;/scrape</code> (single item re-scrape), <code>POST /api/wishlist/scrape-all</code> (bulk unscraped). The existing <code>POST /api/wishlist</code> now accepts an optional <code>scrape: true</code> flag for the add-and-scrape flow, plus a <code>system_id</code> field for dropdown picks.</li>
+        <li><strong>DB indexes</strong> &mdash; Added <code>idx_wishlist_scrape_status</code> and <code>idx_wishlist_system_id</code>.</li>
+    </ul>
+
 - version: 2.78.1
   date: 2026-04-21
   tags:

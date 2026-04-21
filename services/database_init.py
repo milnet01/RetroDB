@@ -363,6 +363,50 @@ def init_database():
         )
     """)
 
+    # Wishlist metadata columns — populated by the wishlist scraper so each
+    # entry can carry boxart + descriptive metadata without living in the
+    # main games table. system_id is nullable so users can wishlist games
+    # for systems not yet in RetroDB (e.g. future PlayStation 6 titles).
+    wishlist_columns = [
+        ('system_id', 'INTEGER'),
+        ('boxart', 'TEXT'),
+        ('boxart_3d', 'TEXT'),
+        ('fanart', 'TEXT'),
+        ('screenshots', 'TEXT'),
+        ('video', 'TEXT'),
+        ('manual', 'TEXT'),
+        ('description', 'TEXT'),
+        ('release_date', 'TEXT'),
+        ('developer', 'TEXT'),
+        ('publisher', 'TEXT'),
+        ('genre', 'TEXT'),
+        ('franchise', 'TEXT'),
+        ('modes', 'TEXT'),
+        ('players', 'INTEGER'),
+        ('esrb_rating', 'TEXT'),
+        ('pegi_rating', 'TEXT'),
+        ('critic_score', 'REAL'),
+        ('critic_score_count', 'INTEGER'),
+        ('user_score', 'REAL'),
+        ('user_score_count', 'INTEGER'),
+        ('source', 'TEXT'),
+        ('source_id', 'TEXT'),
+        ('scrape_status', "TEXT DEFAULT 'unscraped'"),
+        ('scraped_at', 'TEXT'),
+    ]
+    for col_name, col_type in wishlist_columns:
+        try:
+            c.execute(f"ALTER TABLE wishlist ADD COLUMN {col_name} {col_type}")
+            logger.info(f"Added {col_name} column to wishlist")
+        except sqlite3.OperationalError:
+            pass
+
+    try:
+        c.execute("CREATE INDEX IF NOT EXISTS idx_wishlist_scrape_status ON wishlist(scrape_status)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_wishlist_system_id ON wishlist(system_id)")
+    except sqlite3.OperationalError:
+        pass
+
     c.execute("""
         CREATE TABLE IF NOT EXISTS collector_trophies (
             id TEXT PRIMARY KEY,

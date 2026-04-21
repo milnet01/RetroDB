@@ -100,7 +100,7 @@
 | `routes/clz_import.py` | `/clz-import` (redirects to `/game-imports`), `/api/clz-import/*` | CLZ Games PDF import API |
 | `routes/ra_sync.py` | `/api/ra-sync/*` | RetroAchievements background sync |
 | `routes/bonus_discs.py` | `/api/bonus-discs/*` | Bonus disc detection & linking |
-| `routes/collections.py` | `/tags`, `/lists`, `/list/<id>`, `/wishlist`, `/api/tags/*`, `/api/lists/*`, `/api/wishlist/*`, `/api/games/<id>/tags/*` | Tags, named lists, wishlist management |
+| `routes/collections.py` | `/tags`, `/lists`, `/list/<id>`, `/wishlist`, `/api/tags/*`, `/api/lists/*`, `/api/wishlist/*` (incl. `/<id>/scrape`, `/scrape-all`), `/api/games/<id>/tags/*` | Tags, named lists, wishlist management + metadata scraping |
 | `routes/collector_trophies.py` | `/collector-trophies`, `/api/collector-trophies`, `/api/collector-trophies/refresh` | Collector trophy gamification system |
 | `routes/museum.py` | `/museum`, `/museum/<id>`, `/api/museum/generate/*`, `/api/museum/controller-image/*`, `/api/museum/controller-image-upload/*` | Gaming system encyclopedia, AI content generation, controller image search/upload |
 | `routes/platform_import.py` | `/platform-import` (redirects to `/game-imports`), `/api/steam/*`, `/api/xbox/*`, `/api/psn/import/*`, `/api/psn/fetch-library` | Steam, Xbox & PSN game library import, achievement sync, Xbox OAuth |
@@ -133,6 +133,7 @@
 | `services/jobs/platform_sync.py` | `SteamSyncJob`, `XboxSyncJob` — background achievement sync for imported Steam/Xbox games |
 | `services/image_utils.py` | Image standardization: Real-ESRGAN upscaling, Lanczos downscaling, per-type targets |
 | `services/normalization.py` | Genre/modes normalization dicts, DB custom rules, preview/apply logic |
+| `services/wishlist_scraper.py` | Wishlist metadata scraper — orchestrates `scraper_manager.search_games` + the per-source `apply_*_to_metadata` mergers to fill boxart/description/release/ratings/critic score on wishlist rows. Background-thread dispatch (`scrape_wishlist_item_async`, `scrape_unscraped_items_async`). Image files namespaced `w{id}_*` so they don't collide with owned-game boxart. |
 
 ### Scrapers (`scraper/`)
 | File | Purpose |

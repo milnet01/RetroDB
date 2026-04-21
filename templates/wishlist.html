@@ -10,6 +10,9 @@
         <p class="page-subtitle">Games you want to find and add to your collection</p>
     </div>
     <div class="page-actions">
+        <button class="btn btn-secondary" id="wishlistScrapeAllBtn" onclick="scrapeAllWishlist()" title="Scrape metadata for every un-scraped wishlist item">
+            <span class="btn-icon">&#128270;</span> Scrape All
+        </button>
         <button class="btn btn-primary" onclick="openAddWishlistModal()">
             <span class="btn-icon">+</span> Add to Wishlist
         </button>
@@ -57,8 +60,19 @@
                 <input type="text" id="wishlistTitleInput" class="form-control" placeholder="e.g., Chrono Trigger" maxlength="200">
             </div>
             <div class="form-group">
-                <label class="form-label" for="wishlistSystemInput">System <span style="color: var(--text-muted); font-weight: 400; text-transform: none;">(optional)</span></label>
-                <input type="text" id="wishlistSystemInput" class="form-control" placeholder="e.g., SNES, PlayStation, etc." maxlength="100">
+                <label class="form-label" for="wishlistSystemInput">
+                    System
+                    <span style="color: var(--text-muted); font-weight: 400; text-transform: none;">
+                        (optional — pick from the list or type a new one for upcoming systems)
+                    </span>
+                </label>
+                <input type="text" id="wishlistSystemInput" class="form-control"
+                       list="wishlistSystemOptions"
+                       placeholder="e.g., SNES, PlayStation, Sony PlayStation 6"
+                       maxlength="100"
+                       autocomplete="off">
+                <input type="hidden" id="wishlistSystemIdInput" value="">
+                <datalist id="wishlistSystemOptions"></datalist>
             </div>
             <div class="form-group">
                 <label class="form-label">Priority</label>
@@ -83,6 +97,15 @@
             <div class="form-group">
                 <label class="form-label" for="wishlistNotesInput">Notes <span style="color: var(--text-muted); font-weight: 400; text-transform: none;">(optional)</span></label>
                 <textarea id="wishlistNotesInput" class="form-control" rows="3" placeholder="Any notes, preferred edition, price target..." maxlength="500" style="resize: vertical;"></textarea>
+            </div>
+            <div class="form-group" id="wishlistScrapeCheckRow">
+                <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer; font-family: var(--font-primary); color: var(--text-primary);">
+                    <input type="checkbox" id="wishlistScrapeCheckbox" checked>
+                    <span>Scrape metadata now (boxart, description, release date, &hellip;)</span>
+                </label>
+                <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 4px; margin-left: 26px;">
+                    Can be triggered later too. Unreleased titles may not have all fields.
+                </div>
             </div>
         </div>
         <div class="custom-modal-footer">
@@ -260,6 +283,121 @@
     border-color: rgba(239, 68, 68, 0.4);
 }
 
+/* Scraped boxart thumbnail */
+.wishlist-item-boxart {
+    width: 64px;
+    height: 88px;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
+    background: var(--bg-darker);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+}
+
+.wishlist-item-boxart img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Scraped metadata line — small muted row under title */
+.wishlist-item-meta {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.wishlist-item-meta .meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    padding: 1px 8px;
+    border-radius: var(--radius-full);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.wishlist-item-meta .meta-chip.score {
+    color: var(--primary-cyan);
+    border-color: rgba(76, 201, 240, 0.3);
+}
+
+.wishlist-item-description {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Scrape status badge */
+.scrape-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+}
+
+.scrape-status.unscraped {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+}
+
+.scrape-status.scraping {
+    background: rgba(76, 201, 240, 0.15);
+    color: var(--primary-cyan);
+    border: 1px solid rgba(76, 201, 240, 0.4);
+}
+
+.scrape-status.scraped {
+    background: rgba(34, 197, 94, 0.12);
+    color: var(--neon-green);
+    border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.scrape-status.failed,
+.scrape-status.no_match {
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--neon-red);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.scrape-status.scraping::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: wishlistScrapeSpin 0.8s linear infinite;
+}
+
+@keyframes wishlistScrapeSpin {
+    to { transform: rotate(360deg); }
+}
+
 /* Priority Picker */
 .priority-picker {
     display: flex;
@@ -352,6 +490,8 @@
 let allItems = [];
 let selectedPriority = 2;
 let activeFilter = 'all';
+let systemsList = []; // Populated from /api/systems — maps system_name -> id
+let pollTimer = null;
 
 const PRIORITY_LABELS = { 1: 'Must Have', 2: 'High', 3: 'Medium', 4: 'Low', 5: 'Someday' };
 const PRIORITY_COLORS = {
@@ -359,7 +499,38 @@ const PRIORITY_COLORS = {
     4: 'var(--text-secondary)', 5: 'var(--text-muted)'
 };
 
-document.addEventListener('DOMContentLoaded', loadWishlist);
+const SCRAPE_STATUS_LABELS = {
+    unscraped: 'Unscraped',
+    scraping: 'Scraping',
+    scraped: 'Scraped',
+    failed: 'Failed',
+    no_match: 'No Match'
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadSystems();
+    loadWishlist();
+});
+
+async function loadSystems() {
+    try {
+        const resp = await fetch('/api/systems');
+        const data = await resp.json();
+        if (data.success) {
+            systemsList = data.systems || [];
+            // Populate the datalist so users see existing systems as a dropdown
+            // while still being able to type a future system (e.g. PS6) by hand.
+            const dl = document.getElementById('wishlistSystemOptions');
+            if (dl) {
+                dl.innerHTML = systemsList.map(s =>
+                    `<option value="${escapeAttr(s.name)}"></option>`
+                ).join('');
+            }
+        }
+    } catch (e) {
+        console.error('Error loading systems:', e);
+    }
+}
 
 async function loadWishlist() {
     try {
@@ -368,9 +539,23 @@ async function loadWishlist() {
         if (data.success) {
             allItems = data.items || [];
             renderWishlist();
+            maybeStartPolling();
         }
     } catch (e) {
         console.error('Error loading wishlist:', e);
+    }
+}
+
+function maybeStartPolling() {
+    // If anything is mid-scrape, poll every 3s until it settles. Stops on its
+    // own once all statuses are terminal (scraped / failed / no_match /
+    // unscraped) so we don't hammer the server forever.
+    const anyScraping = allItems.some(i => i.scrape_status === 'scraping');
+    if (anyScraping && !pollTimer) {
+        pollTimer = setInterval(loadWishlist, 3000);
+    } else if (!anyScraping && pollTimer) {
+        clearInterval(pollTimer);
+        pollTimer = null;
     }
 }
 
@@ -395,31 +580,78 @@ function renderWishlist() {
     grid.style.display = '';
     empty.style.display = 'none';
 
-    grid.innerHTML = filtered.map(item => {
-        const p = item.priority || 2;
-        const label = PRIORITY_LABELS[p] || 'Medium';
-        const color = PRIORITY_COLORS[p] || 'var(--primary-cyan)';
-        const date = item.added_at ? formatDate(item.added_at) : '';
+    grid.innerHTML = filtered.map(renderWishlistCard).join('');
 
-        return `
-            <div class="wishlist-item" data-priority="${p}" data-id="${item.id}">
-                <div class="wishlist-priority-badge" style="background: ${color}20; color: ${color}; border: 1px solid ${color}40;">
-                    <span class="priority-dot" style="background: ${color};"></span>
-                    ${label}
-                </div>
-                <div class="wishlist-item-info">
-                    <div class="wishlist-item-title">${escapeHtml(item.title)}</div>
-                    ${item.system_name ? `<div class="wishlist-item-system">${escapeHtml(item.system_name)}</div>` : ''}
-                    ${item.notes ? `<div class="wishlist-item-notes">${escapeHtml(item.notes)}</div>` : ''}
-                    ${date ? `<div class="wishlist-item-date">Added ${date}</div>` : ''}
-                </div>
-                <div class="wishlist-item-actions">
-                    <button class="wishlist-action-btn" onclick="openEditWishlistModal(${item.id})" title="Edit">&#9998;</button>
-                    <button class="wishlist-action-btn danger" onclick="confirmDeleteWishlistItem(${item.id}, '${escapeAttr(item.title)}')" title="Delete">&#10005;</button>
-                </div>
+    // Refresh the "Scrape All" button's enabled state
+    updateScrapeAllBtn();
+}
+
+function renderWishlistCard(item) {
+    const p = item.priority || 2;
+    const label = PRIORITY_LABELS[p] || 'Medium';
+    const color = PRIORITY_COLORS[p] || 'var(--primary-cyan)';
+    const date = item.added_at ? formatDate(item.added_at) : '';
+
+    // Prefer the scraper-linked system name over the free-text one
+    const systemDisplay = item.wishlist_system_name || item.system_name || '';
+    const status = item.scrape_status || 'unscraped';
+    const statusLabel = SCRAPE_STATUS_LABELS[status] || status;
+
+    // Metadata chips: release, developer, publisher, genre, rating, critic score
+    const chips = [];
+    if (item.release_date) chips.push(`<span class="meta-chip">&#128197; ${escapeHtml(item.release_date)}</span>`);
+    if (item.developer) chips.push(`<span class="meta-chip">${escapeHtml(truncate(item.developer, 30))}</span>`);
+    if (item.publisher && item.publisher !== item.developer) chips.push(`<span class="meta-chip">${escapeHtml(truncate(item.publisher, 30))}</span>`);
+    if (item.genre) chips.push(`<span class="meta-chip">${escapeHtml(truncate(item.genre, 40))}</span>`);
+    if (item.esrb_rating) chips.push(`<span class="meta-chip">${escapeHtml(item.esrb_rating)}</span>`);
+    else if (item.pegi_rating) chips.push(`<span class="meta-chip">${escapeHtml(item.pegi_rating)}</span>`);
+    if (item.critic_score) chips.push(`<span class="meta-chip score">&#9733; ${Math.round(item.critic_score)}</span>`);
+
+    const boxartHtml = item.boxart
+        ? `<div class="wishlist-item-boxart"><img src="/static/images/boxart/${escapeAttr(item.boxart)}" alt="" loading="lazy"></div>`
+        : `<div class="wishlist-item-boxart" title="No boxart yet">&#127918;</div>`;
+
+    const rescrapeTitle = status === 'scraped' ? 'Re-scrape metadata' : 'Scrape metadata';
+    const rescrapeDisabled = status === 'scraping' ? 'disabled' : '';
+    const rescrapeIcon = status === 'scraping' ? '&#8987;' : '&#128270;';
+
+    return `
+        <div class="wishlist-item" data-priority="${p}" data-id="${item.id}">
+            <div class="wishlist-priority-badge" style="background: ${color}20; color: ${color}; border: 1px solid ${color}40;">
+                <span class="priority-dot" style="background: ${color};"></span>
+                ${label}
             </div>
-        `;
-    }).join('');
+            ${boxartHtml}
+            <div class="wishlist-item-info">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <div class="wishlist-item-title">${escapeHtml(item.title)}</div>
+                    <span class="scrape-status ${status}">${statusLabel}</span>
+                </div>
+                ${systemDisplay ? `<div class="wishlist-item-system">${escapeHtml(systemDisplay)}</div>` : ''}
+                ${chips.length ? `<div class="wishlist-item-meta">${chips.join('')}</div>` : ''}
+                ${item.description ? `<div class="wishlist-item-description">${escapeHtml(item.description)}</div>` : ''}
+                ${item.notes ? `<div class="wishlist-item-notes">${escapeHtml(item.notes)}</div>` : ''}
+                ${date ? `<div class="wishlist-item-date">Added ${date}</div>` : ''}
+            </div>
+            <div class="wishlist-item-actions">
+                <button class="wishlist-action-btn" onclick="scrapeWishlistItem(${item.id})" title="${rescrapeTitle}" ${rescrapeDisabled}>${rescrapeIcon}</button>
+                <button class="wishlist-action-btn" onclick="openEditWishlistModal(${item.id})" title="Edit">&#9998;</button>
+                <button class="wishlist-action-btn danger" onclick="confirmDeleteWishlistItem(${item.id}, '${escapeAttr(item.title)}')" title="Delete">&#10005;</button>
+            </div>
+        </div>
+    `;
+}
+
+function updateScrapeAllBtn() {
+    const btn = document.getElementById('wishlistScrapeAllBtn');
+    if (!btn) return;
+    const pending = allItems.filter(i =>
+        !i.scrape_status || ['unscraped', 'failed', 'no_match'].includes(i.scrape_status)
+    ).length;
+    btn.disabled = pending === 0;
+    btn.innerHTML = pending > 0
+        ? `<span class="btn-icon">&#128270;</span> Scrape All (${pending})`
+        : `<span class="btn-icon">&#128270;</span> Scrape All`;
 }
 
 function filterWishlist(filter, btn) {
@@ -435,7 +667,10 @@ function openAddWishlistModal() {
     document.getElementById('wishlistEditId').value = '';
     document.getElementById('wishlistTitleInput').value = '';
     document.getElementById('wishlistSystemInput').value = '';
+    document.getElementById('wishlistSystemIdInput').value = '';
     document.getElementById('wishlistNotesInput').value = '';
+    document.getElementById('wishlistScrapeCheckbox').checked = true;
+    document.getElementById('wishlistScrapeCheckRow').style.display = '';
     selectedPriority = 2;
     document.querySelectorAll('.priority-option').forEach(o => {
         o.classList.toggle('active', o.dataset.priority === '2');
@@ -452,8 +687,11 @@ function openEditWishlistModal(itemId) {
     document.getElementById('wishlistSaveBtn').textContent = 'Save Changes';
     document.getElementById('wishlistEditId').value = item.id;
     document.getElementById('wishlistTitleInput').value = item.title;
-    document.getElementById('wishlistSystemInput').value = item.system_name || '';
+    document.getElementById('wishlistSystemInput').value = item.wishlist_system_name || item.system_name || '';
+    document.getElementById('wishlistSystemIdInput').value = item.system_id || '';
     document.getElementById('wishlistNotesInput').value = item.notes || '';
+    // Scrape-on-save checkbox is only meaningful for new items
+    document.getElementById('wishlistScrapeCheckRow').style.display = 'none';
     selectedPriority = item.priority || 2;
     document.querySelectorAll('.priority-option').forEach(o => {
         o.classList.toggle('active', o.dataset.priority === String(selectedPriority));
@@ -472,6 +710,16 @@ function selectPriority(el) {
     el.classList.add('active');
 }
 
+function resolveSystemId(systemName) {
+    // If the typed/picked value matches a known system by name (case-insensitive),
+    // return its id; otherwise return null so the entry is saved as free-text
+    // (e.g. for Sony PlayStation 6 which isn't in the DB yet).
+    if (!systemName) return null;
+    const needle = systemName.trim().toLowerCase();
+    const match = systemsList.find(s => s.name.toLowerCase() === needle);
+    return match ? match.id : null;
+}
+
 async function saveWishlistItem() {
     const title = document.getElementById('wishlistTitleInput').value.trim();
     if (!title) {
@@ -483,12 +731,18 @@ async function saveWishlistItem() {
     saveBtn.disabled = true;
 
     const editId = document.getElementById('wishlistEditId').value;
+    const systemName = document.getElementById('wishlistSystemInput').value.trim();
+    const systemId = resolveSystemId(systemName);
+    const scrapeOnAdd = !editId && document.getElementById('wishlistScrapeCheckbox').checked;
+
     const payload = {
         title: title,
-        system_name: document.getElementById('wishlistSystemInput').value.trim(),
+        system_name: systemName,
+        system_id: systemId,
         notes: document.getElementById('wishlistNotesInput').value.trim(),
         priority: selectedPriority
     };
+    if (scrapeOnAdd) payload.scrape = true;
 
     try {
         let resp;
@@ -508,7 +762,10 @@ async function saveWishlistItem() {
 
         const data = await resp.json();
         if (data.success) {
-            showNotification(editId ? 'Wishlist item updated.' : 'Added to wishlist.', 'success');
+            const msg = editId
+                ? 'Wishlist item updated.'
+                : (scrapeOnAdd ? 'Added to wishlist — scraping metadata in the background.' : 'Added to wishlist.');
+            showNotification(msg, 'success');
             closeWishlistModal();
             loadWishlist();
         } else {
@@ -520,6 +777,62 @@ async function saveWishlistItem() {
     } finally {
         saveBtn.disabled = false;
     }
+}
+
+async function scrapeWishlistItem(itemId) {
+    // Optimistically flip the row's status before the server confirms so the
+    // UI responds instantly. maybeStartPolling then takes over to reflect the
+    // eventual outcome.
+    const item = allItems.find(i => i.id === itemId);
+    if (item) {
+        item.scrape_status = 'scraping';
+        renderWishlist();
+    }
+    try {
+        const resp = await fetch(`/api/wishlist/${itemId}/scrape`, { method: 'POST' });
+        const data = await resp.json();
+        if (!data.success) {
+            showNotification(data.error || 'Failed to start scrape.', 'error');
+            loadWishlist();
+            return;
+        }
+        showNotification('Scraping metadata — this may take a few seconds.', 'info');
+        // Poll until scrape finishes (handled by maybeStartPolling after loadWishlist)
+        loadWishlist();
+    } catch (e) {
+        console.error('Error scraping wishlist item:', e);
+        showNotification('Error starting scrape.', 'error');
+        loadWishlist();
+    }
+}
+
+async function scrapeAllWishlist() {
+    const btn = document.getElementById('wishlistScrapeAllBtn');
+    btn.disabled = true;
+    try {
+        const resp = await fetch('/api/wishlist/scrape-all', { method: 'POST' });
+        const data = await resp.json();
+        if (!data.success) {
+            showNotification(data.error || 'Failed to start bulk scrape.', 'error');
+            return;
+        }
+        if (data.scheduled === 0) {
+            showNotification('Everything is already scraped.', 'info');
+            return;
+        }
+        showNotification(`Scraping ${data.scheduled} item${data.scheduled === 1 ? '' : 's'} in the background.`, 'success');
+        loadWishlist();
+    } catch (e) {
+        console.error('Error starting bulk scrape:', e);
+        showNotification('Error starting bulk scrape.', 'error');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+function truncate(s, n) {
+    if (!s) return '';
+    return s.length > n ? s.slice(0, n - 1).trimEnd() + '…' : s;
 }
 
 function confirmDeleteWishlistItem(itemId, title) {

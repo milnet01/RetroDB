@@ -81,10 +81,14 @@ def list_detail_page(list_id):
 def wishlist_page():
     """Wishlist page."""
     items = query("""
-        SELECT w.*, g.title AS linked_game_title, s.name AS linked_system
+        SELECT w.*,
+               g.title AS linked_game_title,
+               gs.name AS linked_system,
+               ws.name AS wishlist_system_name
         FROM wishlist w
         LEFT JOIN games g ON g.id = w.game_id
-        LEFT JOIN systems s ON g.system_id = s.id
+        LEFT JOIN systems gs ON g.system_id = gs.id
+        LEFT JOIN systems ws ON ws.id = w.system_id
         ORDER BY w.priority ASC, w.added_at DESC
     """)
     return render_template('wishlist.html', items=items)
@@ -503,10 +507,14 @@ def api_remove_game_from_list(list_id, game_id):
 def api_get_wishlist():
     """Get all wishlist items."""
     items = query("""
-        SELECT w.*, g.title AS linked_game_title, s.name AS linked_system
+        SELECT w.*,
+               g.title AS linked_game_title,
+               gs.name AS linked_system,
+               ws.name AS wishlist_system_name
         FROM wishlist w
         LEFT JOIN games g ON g.id = w.game_id
-        LEFT JOIN systems s ON g.system_id = s.id
+        LEFT JOIN systems gs ON g.system_id = gs.id
+        LEFT JOIN systems ws ON ws.id = w.system_id
         ORDER BY w.priority ASC, w.added_at DESC
     """)
     return jsonify({'success': True, 'items': items})
@@ -515,20 +523,40 @@ def api_get_wishlist():
 @bp.route('/api/wishlist', methods=['POST'])
 @login_required
 def api_add_to_wishlist():
-    """Add an item to the wishlist."""
+    """Add an item to the wishlist.
+
+    Optional `system_id` links to a known systems row for stronger scraper
+    matching; `system_name` is kept as free text so users can wishlist games
+    for systems RetroDB doesn't yet know about (e.g. an upcoming Sony
+    PlayStation 6 title). Optional `scrape=true` fires off a background
+    scrape immediately after inserting.
+    """
     data = request.get_json()
     if not data or not data.get('title', '').strip():
         return jsonify({'success': False, 'error': 'Title is required'}), 400
 
     title = data['title'].strip()
     system_name = data.get('system_name', '').strip()
+    system_id = data.get('system_id')
     notes = data.get('notes', '').strip()
     priority = data.get('priority', 2)
     game_id = data.get('game_id')
+    scrape_now = bool(data.get('scrape'))
 
     # Validate priority range
     if not isinstance(priority, int) or priority < 1 or priority > 5:
         return jsonify({'success': False, 'error': 'Priority must be an integer between 1 and 5'}), 400
+
+    # Validate system_id (if provided) resolves to a real system
+    if system_id is not None:
+        if not isinstance(system_id, int):
+            return jsonify({'success': False, 'error': 'system_id must be an integer'}), 400
+        sys_row = query("SELECT id, name FROM systems WHERE id = ?", (system_id,), one=True)
+        if not sys_row:
+            return jsonify({'success': False, 'error': 'Unknown system_id'}), 400
+        # If caller didn't send a system_name, use the canonical one
+        if not system_name:
+            system_name = sys_row['name']
 
     # Check for duplicates (same title, case-insensitive)
     existing = query(
@@ -540,15 +568,23 @@ def api_add_to_wishlist():
 
     try:
         item_id = execute(
-            "INSERT INTO wishlist (title, system_name, notes, priority, added_at, game_id) VALUES (?, ?, ?, ?, ?, ?)",
-            (title, system_name, notes, priority, _utcnow_iso(), game_id)
+            """INSERT INTO wishlist
+               (title, system_name, system_id, notes, priority, added_at, game_id, scrape_status)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+            (title, system_name, system_id, notes, priority, _utcnow_iso(), game_id, 'unscraped')
         )
-        logger.info(f"Added '{title}' to wishlist (id={item_id})")
+        logger.info(f"Added '{title}' to wishlist (id={item_id}, system_id={system_id}, scrape={scrape_now})")
+
+        if scrape_now:
+            from services.wishlist_scraper import scrape_wishlist_item_async
+            scrape_wishlist_item_async(item_id)
+
         return jsonify({
             'success': True,
             'item': {
                 'id': item_id, 'title': title, 'system_name': system_name,
-                'notes': notes, 'priority': priority, 'game_id': game_id
+                'system_id': system_id, 'notes': notes, 'priority': priority,
+                'game_id': game_id, 'scrape_status': 'scraping' if scrape_now else 'unscraped'
             }
         }), 201
     except Exception as e:
@@ -570,6 +606,7 @@ def api_update_wishlist_item(item_id):
 
     title = (data.get('title', item['title']) or '').strip()
     system_name = (data.get('system_name', item['system_name']) or '').strip()
+    system_id = data.get('system_id', item['system_id']) if 'system_id' in data else item['system_id']
     notes = (data.get('notes', item['notes']) or '').strip()
     priority = data.get('priority', item['priority'])
     game_id = data.get('game_id', item['game_id'])
@@ -577,17 +614,28 @@ def api_update_wishlist_item(item_id):
     if not isinstance(priority, int) or priority < 1 or priority > 5:
         return jsonify({'success': False, 'error': 'Priority must be an integer between 1 and 5'}), 400
 
+    # Validate system_id if it was supplied (either in this request or previously stored)
+    if system_id is not None:
+        if not isinstance(system_id, int):
+            return jsonify({'success': False, 'error': 'system_id must be an integer'}), 400
+        sys_row = query("SELECT id FROM systems WHERE id = ?", (system_id,), one=True)
+        if not sys_row:
+            return jsonify({'success': False, 'error': 'Unknown system_id'}), 400
+
     try:
         execute(
-            "UPDATE wishlist SET title = ?, system_name = ?, notes = ?, priority = ?, game_id = ? WHERE id = ?",
-            (title, system_name, notes, priority, game_id, item_id)
+            """UPDATE wishlist SET title = ?, system_name = ?, system_id = ?,
+                                   notes = ?, priority = ?, game_id = ?
+               WHERE id = ?""",
+            (title, system_name, system_id, notes, priority, game_id, item_id)
         )
         logger.info(f"Updated wishlist item id={item_id} -> title='{title}'")
         return jsonify({
             'success': True,
             'item': {
                 'id': item_id, 'title': title, 'system_name': system_name,
-                'notes': notes, 'priority': priority, 'game_id': game_id
+                'system_id': system_id, 'notes': notes, 'priority': priority,
+                'game_id': game_id
             }
         })
     except Exception as e:
@@ -609,4 +657,49 @@ def api_delete_wishlist_item(item_id):
         return jsonify({'success': True})
     except Exception as e:
         logger.error(f"Failed to delete wishlist item: {e}")
+        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+
+
+@bp.route('/api/wishlist/<int:item_id>/scrape', methods=['POST'])
+@login_required
+def api_scrape_wishlist_item(item_id):
+    """Kick off a background scrape for a single wishlist item.
+
+    Returns immediately; the UI polls /api/wishlist to see scrape_status
+    flip from 'scraping' → 'scraped' | 'failed' | 'no_match'.
+    """
+    item = query("SELECT id FROM wishlist WHERE id = ?", (item_id,), one=True)
+    if not item:
+        return jsonify({'success': False, 'error': 'Wishlist item not found'}), 404
+
+    try:
+        from services.wishlist_scraper import scrape_wishlist_item_async
+        scrape_wishlist_item_async(item_id)
+        return jsonify({'success': True, 'status': 'scraping'})
+    except Exception as e:
+        logger.error(f"Failed to dispatch wishlist scrape: {e}")
+        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+
+
+@bp.route('/api/wishlist/scrape-all', methods=['POST'])
+@login_required
+def api_scrape_all_wishlist():
+    """Background-scrape every wishlist item with scrape_status NULL /
+    'unscraped' / 'failed' / 'no_match'. Already-scraped items are left
+    alone; the per-item re-scrape endpoint is what rescrapes those."""
+    unscraped_count = query("""
+        SELECT COUNT(*) AS c FROM wishlist
+        WHERE scrape_status IS NULL
+           OR scrape_status IN ('unscraped', 'failed', 'no_match')
+    """, one=True)['c']
+
+    if unscraped_count == 0:
+        return jsonify({'success': True, 'scheduled': 0, 'message': 'Nothing to scrape'})
+
+    try:
+        from services.wishlist_scraper import scrape_unscraped_items_async
+        scrape_unscraped_items_async()
+        return jsonify({'success': True, 'scheduled': unscraped_count})
+    except Exception as e:
+        logger.error(f"Failed to dispatch wishlist bulk scrape: {e}")
         return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
