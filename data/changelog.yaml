@@ -1,3 +1,16 @@
+- version: 2.83.2
+  date: 2026-04-21
+  tags:
+  - type: chore
+    label: Chore
+  body: |
+    <ul>
+        <li><strong>Refactor pass 1 of N &mdash; shared API error decorator &amp; helper consolidation</strong> &mdash; First wave of the refactor roadmap (see <code>roadmap.md</code>). Three changes, no behaviour difference for end users, lower maintenance cost going forward.</li>
+        <li><strong>New <code>@handle_api_errors</code> decorator</strong> &mdash; <code>services/api_helpers.py</code> now exports a single decorator that replaces the repeated <code>try: &hellip; except Exception as e: logger.error(&hellip;); return jsonify({'success': False, 'error': 'An internal error occurred'}), 500</code> pattern. Applied to all 12 route handlers in <code>routes/games_hltb.py</code>, dropping &sim;60 lines of boilerplate. As a side benefit the decorator logs with <code>exc_info=True</code>, so server errors now carry full stack traces in the log (previously only the <code>str(e)</code> summary was captured).</li>
+        <li><strong>Consolidated <code>get_user_ra_credentials()</code></strong> &mdash; The RetroAchievements credential lookup was defined identically in both <code>routes/achievements.py</code> and <code>routes/trophies.py</code> with an explicit &ldquo;duplicated &mdash; update both&rdquo; warning. Moved to <code>services/auth.py</code>, imported from the one caller that actually uses it (<code>routes/achievements.py</code>); the orphaned copy in <code>routes/trophies.py</code> was dead code and has been removed.</li>
+        <li><strong>Consolidated PSN trophy image downloader</strong> &mdash; <code>download_psn_trophy_image()</code> was defined twice (once in <code>routes/trophies.py</code>, once in <code>services/jobs/base.py</code> as <code>_download_psn_trophy_image()</code>). The routes-side copy has been removed; the route file now imports the canonical version from <code>services.jobs.base</code>.</li>
+    </ul>
+
 - version: 2.83.1
   date: 2026-04-21
   tags:

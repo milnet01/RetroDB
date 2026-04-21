@@ -16,6 +16,7 @@ from datetime import datetime
 import config
 from services.database import get_db, query, execute
 from services.auth import login_required, admin_required, get_user_settings
+from services.jobs.base import _download_psn_trophy_image as download_psn_trophy_image
 
 # PSN API imports
 try:
@@ -47,45 +48,6 @@ except ImportError:
 logger = logging.getLogger('scraper')
 
 bp = Blueprint('trophies', __name__)
-
-
-def download_psn_trophy_image(npwr_id, image_url, trophy_id=None):
-    """Download a PSN trophy image locally.
-
-    Args:
-        npwr_id: NPWR ID for the game (used as folder name)
-        image_url: Remote CDN URL to download from
-        trophy_id: If None, downloads game icon as ICON0.PNG.
-                   If int, downloads trophy icon as TROP{NNN}.PNG.
-    Returns:
-        Filename on success, None on failure.
-    """
-    if not image_url or not npwr_id:
-        return None
-
-    dest_dir = os.path.join(config.IMAGE_PATH, 'trophies', npwr_id)
-    if trophy_id is not None:
-        filename = f'TROP{int(trophy_id):03d}.PNG'
-    else:
-        filename = 'ICON0.PNG'
-
-    dest_path = os.path.join(dest_dir, filename)
-
-    # Skip if already downloaded
-    if os.path.exists(dest_path):
-        return filename
-
-    try:
-        os.makedirs(dest_dir, exist_ok=True)
-        resp = requests.get(image_url, timeout=15)
-        if resp.status_code == 200 and len(resp.content) > 0:
-            with open(dest_path, 'wb') as f:
-                f.write(resp.content)
-            return filename
-    except Exception as e:
-        logger.warning(f"Failed to download PSN trophy image {filename} for {npwr_id}: {e}")
-
-    return None
 
 
 PSN_TOKENS_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'psn_tokens.json')
@@ -1944,25 +1906,4 @@ def api_psn_bulk_refresh_cancel():
     return jsonify(psn_refresh_job.cancel())
 
 
-# =============================================================================
-# RETROACHIEVEMENTS ROUTES
-# =============================================================================
-
-def get_user_ra_credentials():
-    """Get RetroAchievements credentials for current user, or global if not configured
-
-    NOTE: This function is duplicated in routes/achievements.py. If modifying, update both.
-    """
-    if g.user and g.user_settings:
-        try:
-            user_username = g.user_settings['ra_username'] or ''
-            user_api_key = g.user_settings['ra_api_key'] or ''
-            if user_username and user_api_key:
-                return user_username, user_api_key
-        except (KeyError, TypeError):
-            pass
-    
-    # Fall back to global credentials
-    from scraper.retroachievements import get_ra_credentials
-    return get_ra_credentials()
 

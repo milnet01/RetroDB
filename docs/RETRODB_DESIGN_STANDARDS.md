@@ -1111,5 +1111,114 @@ Controllers follow a strict naming convention based on their type:
 
 ---
 
-*Document Version: 2.3.0*
-*Last Updated: 2026-02-26*
+## 24. Code Naming Standards
+
+These rules codify conventions already in use across the codebase.  New
+modules, classes, functions, and files must follow them; existing code that
+deviates should be migrated when touched (see `roadmap.md`).
+
+### 24.1 Python
+
+| Artefact | Convention | Example |
+|----------|-----------|---------|
+| Module files | `snake_case.py` | `services/api_helpers.py`, `routes/games_hltb.py` |
+| Packages | `snake_case/` | `services/`, `scraper/`, `services/jobs/` |
+| Classes | `PascalCase` | `BulkScrapeJob`, `SecretRedactor`, `HLTBLookup` |
+| Functions / methods | `snake_case` | `get_current_user()`, `apply_metadata_to_game()` |
+| Variables | `snake_case` | `game_id`, `match_confidence` |
+| Module-level constants | `SCREAMING_SNAKE_CASE` | `ROLE_PERMISSIONS`, `MANUFACTURER_MAP`, `COMPUTER_SYSTEMS` |
+| Module-private helpers | `_leading_underscore` | `_extract_alt_titles()`, `_apply_pending_match()` |
+| Decorators | `snake_case`, verb-phrase | `@login_required`, `@admin_required`, `@handle_api_errors` |
+| Test files | `test_<subject>.py` | `test_alternate_titles.py`, `test_routes_smoke.py` |
+| Test functions | `test_<behaviour>` | `def test_alt_titles_empty_input(): ...` |
+
+**Module naming within a package:**
+- Route blueprints live in `routes/<subject>.py` (e.g. `routes/games.py`,
+  `routes/trophies.py`).  When a route file is split, suffix with the
+  sub-subject: `routes/games_hltb.py`, `routes/games_ai.py`,
+  `routes/games_search.py`, `routes/games_media.py`.
+- Scrapers live in `scraper/scrape_<source>.py` — one word per source, no
+  `scrape_metadata_` prefix (all scrapers scrape metadata; the prefix adds
+  nothing).  Examples: `scrape_igdb.py`, `scrape_rawg.py`, `scrape_steam.py`.
+  Shared scraper infrastructure (not tied to one source) is named by role:
+  `base_scraper.py`, `hybrid_scraper.py`, `scraper_manager.py`,
+  `metadata_merger.py`.
+- Service modules in `services/<role>.py` are named after the role, not the
+  subject — `services/database.py`, `services/auth.py`,
+  `services/formatters.py`, `services/template_filters.py`.
+- Background jobs in `services/jobs/<job>.py` are named by the job verb:
+  `bulk_scrape.py`, `ra_sync.py`, `image_resize.py`, `hltb_bulk.py`.
+
+### 24.2 JavaScript
+
+| Artefact | Convention | Example |
+|----------|-----------|---------|
+| Files | `kebab-case.js` | `game-modals.js`, `toast-controller.js`, `all-games-controller.js` |
+| Exported singletons / controllers | `PascalCase` | `BulkScrapeController`, `FanartController`, `GameDetailModal`, `TrophySync` |
+| Exported utility objects | `PascalCase` | `API`, `Storage`, `Notifications`, `DOM`, `DateUtils`, `StickyScroll` |
+| Functions | `camelCase` | `showNotification()`, `formatBytes()`, `gameDetailUrl()` |
+| Variables | `camelCase` | `const gameId = ...`, `let matchConfidence = ...` |
+| Module-level constants | `SCREAMING_SNAKE_CASE` | `NOTIFICATION_TIMEOUTS` |
+| Module-private | `_leading_underscore` | `_MODAL_RATING_COLS`, `_getAllRatingsFromGame()` |
+
+**File naming within `static/js/`:**
+- Bundled files (see `build_js.py`): short, functional names — `utils.js`,
+  `main.js`, `filters.js`.
+- Page-specific files: noun or noun-phrase — `achievements.js`,
+  `trophies.js`, `museum.js`, `log-viewer.js`, `rom-tools.js`.
+- Controllers bound to a page feature: noun + `-controller` —
+  `all-games-controller.js`, `toast-controller.js`.
+
+### 24.3 CSS
+
+| Artefact | Convention | Example |
+|----------|-----------|---------|
+| Files | `kebab-case.css` | `game-cards.css`, `queue-manager.css`, `stat-boxes.css` |
+| Class names | `kebab-case`, BEM-ish | `.btn-neon`, `.card-glass`, `.game-card__title`, `.is-active` |
+| CSS custom properties | `--kebab-case` | `--primary-cyan`, `--bg-darkest`, `--font-heading` |
+
+File placement rules are in §20 (CSS Architecture).
+
+### 24.4 Templates
+
+| Artefact | Convention | Example |
+|----------|-----------|---------|
+| Files | `snake_case.html` | `game_detail.html`, `local_trophy_detail.html` |
+| Partials / macros | `_leading_underscore.html` | `_bulk_scrape_modal.html`, `_bulk_edit_modal.html` |
+| Jinja macros | `snake_case` | `{% macro rating_badge(system, value) %}` |
+
+Partials and macros should go under `templates/_partials/` or
+`templates/_modals/` (to be introduced in Pass 9 — see `roadmap.md`).
+
+### 24.5 Database
+
+| Artefact | Convention | Example |
+|----------|-----------|---------|
+| Tables | `snake_case`, plural | `games`, `systems`, `hltb_pending_matches` |
+| Columns | `snake_case` | `system_id`, `playtime_estimate`, `hltb_match_confidence` |
+| Junction tables | `<a>_<b>` | `system_controllers`, `game_tags` |
+| Foreign keys | `<table_singular>_id` | `game_id`, `system_id`, `user_id` |
+| Boolean flags | `is_<adj>` or `has_<noun>` | `is_default`, `has_manual` |
+
+### 24.6 Changelog / version artefacts
+
+See §21 for tag types.  Entries in `data/changelog.yaml` use `type`
+values from a fixed set (`enhancement`, `fix`, `chore`, `security`, etc.);
+see §17 for the full list.
+
+### 24.7 When to rename
+
+- **Free to rename**: module-private helpers (`_leading_underscore`),
+  unused functions, local variables.
+- **Rename with care**: public functions / classes imported across files
+  (grep callers first, update all in the same commit).
+- **Rename with user sign-off**: anything referenced from templates or JS
+  bundles (e.g. a Python function exposed via a Jinja filter, or a JS
+  singleton whose name appears in template inline scripts).
+- **Never silently rename**: DB columns, route URLs, JSON response field
+  names — these are external contracts.
+
+---
+
+*Document Version: 2.4.0*
+*Last Updated: 2026-04-21*

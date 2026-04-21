@@ -90,14 +90,38 @@ def get_current_user():
 def get_user_settings(user_id):
     """
     Get settings for a specific user.
-    
+
     Args:
         user_id: Database ID of the user
-    
+
     Returns:
         dict: User settings record or None
     """
     return query("SELECT * FROM user_settings WHERE user_id = ?", (user_id,), one=True)
+
+
+def get_user_ra_credentials():
+    """Get RetroAchievements credentials for the current user.
+
+    Prefers the logged-in user's per-account credentials from user_settings;
+    falls back to the global config.py / settings.json credentials if the user
+    hasn't configured their own.
+
+    Returns:
+        tuple: (username, api_key). Either may be empty if neither the user
+               nor the global config has them set.
+    """
+    if g.user and g.user_settings:
+        try:
+            user_username = g.user_settings['ra_username'] or ''
+            user_api_key = g.user_settings['ra_api_key'] or ''
+            if user_username and user_api_key:
+                return user_username, user_api_key
+        except (KeyError, TypeError):
+            pass
+
+    from scraper.retroachievements import get_ra_credentials
+    return get_ra_credentials()
 
 
 def has_permission(permission):

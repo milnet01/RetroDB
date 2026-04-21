@@ -4,12 +4,12 @@
 # Handles RetroAchievements integration and synchronization.
 # =============================================================================
 
-from flask import Blueprint, render_template, redirect, url_for, jsonify, flash, g
+from flask import Blueprint, render_template, redirect, url_for, jsonify, flash
 import logging
 from datetime import datetime, timezone
 
 from services.database import query, execute
-from services.auth import login_required
+from services.auth import login_required, get_user_ra_credentials
 from services.jobs import ra_sync_job, ra_refresh_job
 
 logger = logging.getLogger('scraper')
@@ -25,29 +25,6 @@ def system_log(level, message):
         logger.warning(message)
     elif level == 'error':
         logger.error(message)
-
-
-# =============================================================================
-# HELPER FUNCTIONS
-# =============================================================================
-
-def get_user_ra_credentials():
-    """Get RetroAchievements credentials for current user, or global if not configured
-
-    NOTE: This function is duplicated in routes/trophies.py. If modifying, update both.
-    """
-    if g.user and g.user_settings:
-        try:
-            user_username = g.user_settings['ra_username'] or ''
-            user_api_key = g.user_settings['ra_api_key'] or ''
-            if user_username and user_api_key:
-                return user_username, user_api_key
-        except (KeyError, TypeError):
-            pass
-    
-    # Fall back to global credentials
-    from scraper.retroachievements import get_ra_credentials
-    return get_ra_credentials()
 
 
 @bp.route('/achievements')
