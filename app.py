@@ -62,17 +62,10 @@ from services.game_utils import (
     get_rating_crossmap_js, RATING_SYSTEM_KEYS,
     RATING_SYSTEMS, RATING_VALUES
 )
-from services.formatters import format_size, get_manufacturer, MANUFACTURER_MAP
 from services.template_filters import register_filters as _register_template_filters
 from services.database_init import init_database, ensure_user_tables
 from services.analytics import (
-    _get_analytics_stats, _get_manufacturer_data, _get_decade_data,
-    _get_genre_data, _get_storage_by_system, _get_top_systems,
-    _get_largest_games, _get_ra_statistics, _get_score_statistics,
-    _get_rating_data, _get_developer_publisher_data, _get_franchise_data,
-    _get_gameplay_data, _get_playtime_data, _get_metadata_quality,
-    _get_year_data, _get_region_data, _get_collection_growth,
-    _get_score_scatter, _get_minor_analytics,
+    build_analytics_context,
 )
 
 # Pre-compute static rating data (derived from constants, never changes)
@@ -902,105 +895,8 @@ def random_game():
 def analytics():
     """Collection analytics page with charts"""
     try:
-        total_games, stats, completion_data = _get_analytics_stats()
-        manufacturer_labels, manufacturer_data = _get_manufacturer_data()
-        decade_labels, decade_data = _get_decade_data()
-        genre_labels, genre_data = _get_genre_data()
-        storage_labels, storage_data = _get_storage_by_system()
-        top_systems_list = _get_top_systems()
-        largest_list = _get_largest_games()
-        ra_total, ra_percentage, ra_system_labels, ra_system_data, ra_system_totals, ra_coverage = _get_ra_statistics(total_games)
-        (score_stats, score_dist_labels, score_dist_data,
-         score_system_labels, score_system_critic, score_system_user,
-         top_rated_games, lowest_rated_games) = _get_score_statistics()
-        (pref_rating_key, pref_rating_name, rating_labels, rating_data, rating_total,
-         top_rating, ordered_rating_values, no_rating_count,
-         rating_system_labels, rating_system_family, rating_system_teen, rating_system_mature) = _get_rating_data()
-
-        # New analytics data
-        dev_labels, dev_data, pub_labels, pub_data = _get_developer_publisher_data()
-        franchise_labels, franchise_data = _get_franchise_data()
-        (persp_labels, persp_data, dim_labels, dim_data,
-         mode_labels, mode_data, player_labels, player_data) = _get_gameplay_data()
-        length_labels, length_data, avg_length, games_with_hltb = _get_playtime_data()
-        metadata_quality = _get_metadata_quality()
-        year_labels, year_data = _get_year_data()
-        region_labels, region_data = _get_region_data()
-        growth_labels, growth_data = _get_collection_growth()
-        score_scatter = _get_score_scatter()
-        save_labels, save_data, bonus_count, edition_count = _get_minor_analytics()
-
-        return render_template('analytics.html',
-            stats=stats,
-            manufacturer_labels=manufacturer_labels,
-            manufacturer_data=manufacturer_data,
-            decade_labels=decade_labels,
-            decade_data=decade_data,
-            genre_labels=genre_labels,
-            genre_data=genre_data,
-            completion_data=completion_data,
-            storage_labels=storage_labels,
-            storage_data=storage_data,
-            top_systems=top_systems_list,
-            largest_games=largest_list,
-            ra_total=ra_total,
-            ra_percentage=ra_percentage,
-            ra_system_labels=ra_system_labels,
-            ra_system_data=ra_system_data,
-            ra_system_totals=ra_system_totals,
-            ra_coverage=ra_coverage,
-            score_stats=score_stats,
-            score_dist_labels=score_dist_labels,
-            score_dist_data=score_dist_data,
-            score_system_labels=score_system_labels,
-            score_system_critic=score_system_critic,
-            score_system_user=score_system_user,
-            top_rated_games=top_rated_games,
-            lowest_rated_games=lowest_rated_games,
-            pref_rating_key=pref_rating_key,
-            pref_rating_name=pref_rating_name,
-            rating_labels=rating_labels,
-            rating_data=rating_data,
-            rating_total=rating_total,
-            top_rating=top_rating,
-            ordered_rating_values=ordered_rating_values,
-            no_rating_count=no_rating_count,
-            rating_system_labels=rating_system_labels,
-            rating_system_family=rating_system_family,
-            rating_system_teen=rating_system_teen,
-            rating_system_mature=rating_system_mature,
-            # New analytics
-            dev_labels=dev_labels,
-            dev_data=dev_data,
-            pub_labels=pub_labels,
-            pub_data=pub_data,
-            franchise_labels=franchise_labels,
-            franchise_data=franchise_data,
-            persp_labels=persp_labels,
-            persp_data=persp_data,
-            dim_labels=dim_labels,
-            dim_data=dim_data,
-            mode_labels=mode_labels,
-            mode_data=mode_data,
-            player_labels=player_labels,
-            player_data=player_data,
-            length_labels=length_labels,
-            length_data=length_data,
-            avg_length=avg_length,
-            games_with_hltb=games_with_hltb,
-            metadata_quality=metadata_quality,
-            year_labels=year_labels,
-            year_data=year_data,
-            region_labels=region_labels,
-            region_data=region_data,
-            growth_labels=growth_labels,
-            growth_data=growth_data,
-            score_scatter=score_scatter,
-            save_labels=save_labels,
-            save_data=save_data,
-            bonus_count=bonus_count,
-            edition_count=edition_count,
-        )
+        ctx = build_analytics_context()
+        return render_template('analytics.html', **ctx)
     except Exception as e:
         logger.error(f"Analytics error: {e}", exc_info=True)
         return "An error occurred loading analytics. Check logs for details.", 500

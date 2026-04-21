@@ -918,6 +918,18 @@ class BulkScrapeJob:
 
             persist_job_complete(persist_id, status=_final_status)
 
+            # Game metadata changed en masse — drop dependent caches so the
+            # next /games + /analytics load reflects the new genres, filter
+            # options, rating distribution etc. instead of serving up to 60s
+            # of stale filter dropdowns or 300s of stale analytics.
+            try:
+                from services.game_query import invalidate_filter_cache
+                from services.analytics import invalidate_analytics_cache
+                invalidate_filter_cache()
+                invalidate_analytics_cache()
+            except Exception as cache_err:
+                logger.debug(f"Cache invalidation after bulk scrape failed: {cache_err}")
+
             # Start next queued job if any
             self._start_next_queued()
 

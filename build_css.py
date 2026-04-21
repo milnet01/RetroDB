@@ -79,6 +79,35 @@ def verify_files():
 
     return missing
 
+
+def is_output_fresh():
+    """Return True if main.min.css is newer than every source file.
+
+    Skips the rebuild when no source has changed since the last build — makes
+    the mandatory "rebuild CSS after edits" step a no-op when nothing touched
+    CSS, instead of a 100ms re-read/re-minify every version bump.
+    """
+    css_dir = get_css_dir()
+    output_path = css_dir / 'main.min.css'
+    if not output_path.exists():
+        return False
+
+    output_mtime = output_path.stat().st_mtime
+    for css_file in CSS_ORDER:
+        path = css_dir / css_file
+        if not path.exists():
+            continue
+        if path.stat().st_mtime > output_mtime:
+            return False
+
+    # Also consider the build script itself — if we changed the minifier,
+    # re-run regardless of source mtimes.
+    script_path = Path(__file__).resolve()
+    if script_path.stat().st_mtime > output_mtime:
+        return False
+
+    return True
+
 def _extract_calc_expressions(css_text):
     """Extract calc() expressions and replace with placeholders to protect them.
 
@@ -201,6 +230,7 @@ def main():
     """Main entry point."""
     dev_mode = '--dev' in sys.argv
     no_minify = '--no-minify' in sys.argv
+    force = '--force' in sys.argv
 
     # Verify all files exist
     missing = verify_files()
@@ -216,6 +246,10 @@ def main():
 
     if dev_mode:
         print("All CSS files verified!")
+        return
+
+    if not force and is_output_fresh():
+        print("main.min.css is up-to-date — no source changes detected. (use --force to rebuild)")
         return
 
     # Build concatenated (and optionally minified) file

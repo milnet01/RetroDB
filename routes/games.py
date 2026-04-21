@@ -28,7 +28,9 @@ from services.game_utils import (
 from services.game_query import (
     escape_like, get_retroachievements_info, get_trophy_info_for_game,
     get_bonus_discs_for_game, _get_filter_options, _build_games_query,
+    invalidate_filter_cache,
 )
+from services.analytics import invalidate_analytics_cache
 
 logger = logging.getLogger(__name__)
 
@@ -1114,6 +1116,9 @@ def api_game_edit(game_id):
             UPDATE games SET {', '.join(updates)} WHERE id = ?
         """, tuple(values))
 
+        invalidate_filter_cache()
+        invalidate_analytics_cache()
+
         return jsonify({'success': True})
 
     except Exception as e:
@@ -1217,6 +1222,9 @@ def api_games_bulk_edit():
             conn.commit()
 
         logger.info(f"Bulk edit applied: {len(game_ids)} games, fields: {list(fields.keys())}")
+
+        invalidate_filter_cache()
+        invalidate_analytics_cache()
 
         return jsonify({
             'success': True,

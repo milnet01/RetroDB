@@ -1,3 +1,17 @@
+- version: 2.78.0
+  date: 2026-04-21
+  tags:
+  - type: enhancement
+    label: Performance
+  body: |
+    <ul>
+        <li><strong>/analytics now cached</strong> &mdash; The analytics page runs ~20 aggregate queries and splits several comma-separated columns in Python (genre, franchise, developer, publisher, modes, perspective, dimension, save_type, region). On a multi-thousand-game library this was a hundreds-of-milliseconds hit on every refresh. The whole context is now built once and held in a 5-minute in-memory cache, invalidated explicitly on game edit, bulk edit, delete, and bulk-scrape completion &mdash; so repeat loads are near-free without ever going stale.</li>
+        <li><strong>Bulk-scrape now invalidates filter dropdowns</strong> &mdash; <code>invalidate_filter_cache()</code> had been defined since v2.77.9 but never called, so after a bulk scrape finished writing new genres/franchises/developers the <code>/games</code> dropdown held the pre-scrape values for up to 60 s. The bulk-scrape completion path now flushes both the filter cache and the new analytics cache. Same wiring added to <code>/api/game/&lt;id&gt;/edit</code>, <code>/api/games/bulk-edit</code>, and <code>/api/delete-game/&lt;id&gt;</code>.</li>
+        <li><strong>DB indexes</strong> &mdash; Added <code>idx_games_file_size</code> (speeds up the largest-games list and per-system storage aggregates), <code>idx_games_user_score</code> (review-score analytics), and <code>idx_games_players</code> (player-count grouping). Applied idempotently on next app start.</li>
+        <li><strong>build_css.py / build_js.py now short-circuit</strong> &mdash; The mandatory post-edit "rebuild CSS/JS" steps in CLAUDE.md used to always re-read every source file and re-concatenate/re-minify, even when nothing touched them. Both scripts now compare source mtimes against output mtime and skip the rebuild when the bundle is already fresh; a <code>--force</code> flag bypasses the check.</li>
+        <li><strong>/analytics route simplification</strong> &mdash; The route function is down from ~105 lines of 20 sequential helper calls + a 70-entry <code>render_template</code> kwarg list to 5 lines, thanks to the new <code>build_analytics_context()</code> in <code>services/analytics.py</code>. No change to the rendered page.</li>
+    </ul>
+
 - version: 2.77.10
   date: 2026-04-20
   tags:

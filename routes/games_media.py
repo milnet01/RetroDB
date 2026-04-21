@@ -10,8 +10,10 @@ import os
 from flask import Blueprint, request, jsonify
 
 import config
+from services.analytics import invalidate_analytics_cache
 from services.auth import login_required
 from services.database import query, execute
+from services.game_query import invalidate_filter_cache
 from services.security import safe_filename
 
 logger = logging.getLogger(__name__)
@@ -33,6 +35,9 @@ def api_delete_game(game_id):
         execute("UPDATE psn_games SET linked_game_id = NULL WHERE linked_game_id = ?", (game_id,))
 
         execute("DELETE FROM games WHERE id = ?", (game_id,))
+
+        invalidate_filter_cache()
+        invalidate_analytics_cache()
 
         logger.info(f"Deleted game from database: {game['title']} (ID: {game_id})")
 

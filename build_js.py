@@ -66,6 +66,35 @@ def verify_files():
     return missing
 
 
+def is_output_fresh():
+    """Return True if app.bundle.js is newer than every source file.
+
+    Skips the rebuild when no source has changed since the last build — makes
+    the mandatory "rebuild JS after edits" step a no-op when nothing touched
+    the bundled JS, instead of re-reading and re-concatenating 9 files.
+    """
+    js_dir = get_js_dir()
+    output_path = js_dir / OUTPUT_FILENAME
+    if not output_path.exists():
+        return False
+
+    output_mtime = output_path.stat().st_mtime
+    for js_file in JS_ORDER:
+        path = js_dir / js_file
+        if not path.exists():
+            continue
+        if path.stat().st_mtime > output_mtime:
+            return False
+
+    # Also consider the build script itself — if we changed the minifier,
+    # re-run regardless of source mtimes.
+    script_path = Path(__file__).resolve()
+    if script_path.stat().st_mtime > output_mtime:
+        return False
+
+    return True
+
+
 def minify_js(js_text):
     """Conservative JS minification.
 
@@ -170,6 +199,7 @@ def main():
     """Main entry point."""
     dev_mode = '--dev' in sys.argv
     no_minify = '--no-minify' in sys.argv
+    force = '--force' in sys.argv
 
     # Verify all files exist
     missing = verify_files()
@@ -185,6 +215,10 @@ def main():
 
     if dev_mode:
         print(f"All {len(JS_ORDER)} JS files verified!")
+        return
+
+    if not force and is_output_fresh():
+        print(f"{OUTPUT_FILENAME} is up-to-date — no source changes detected. (use --force to rebuild)")
         return
 
     # Build concatenated (and optionally minified) file
