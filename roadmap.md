@@ -1,8 +1,15 @@
-# RetroDB Refactor Roadmap
+# RetroDB Roadmap
 
-Tracking file for refactoring opportunities identified in the 2026-04-21 code
-review. Items are ordered so that earlier passes establish the patterns used
-by later ones (service-layer carve-outs, response helpers, etc.).
+Tracking file for refactoring, security, performance, and quality work
+identified in successive reviews (2026-04-21 onwards). Items are ordered so
+that earlier passes establish the patterns used by later ones (service-layer
+carve-outs, response helpers, etc.).
+
+Scope covers: refactoring (Passes 2-10), security (Pass 11, 16), database
+performance (Pass 12), frontend performance (Pass 13, 18, 22), developer
+efficiency and tests (Pass 14, 20), accessibility (Pass 15), observability
+(Pass 17), schema migrations (Pass 19), and operational resilience (Pass 21).
+See "Scope notes" near the bottom for items deliberately excluded.
 
 Each item lists:
 - **Target** — file(s) and approximate line range / LOC
@@ -594,6 +601,577 @@ sheet, Flask/Werkzeug/Waitress CVE scan).
   2. State-machine tests for `BulkScrapeJob` — start → pause → resume →
      cancel → restart transitions.  Use an in-memory SQLite fixture.
 - **Status**: todo (but do this BEFORE Pass 5 to de-risk the rewrite)
+
+---
+
+## Pass 15 — Accessibility (a11y)
+
+Derived from: template audit (2026-04-21) + WCAG 2.2 AA. ARIA is present in
+17 of 45 templates (163 occurrences) but uneven. No skip-to-main-content
+link; `<main role="main">` on `base.html:239` has a redundant role attribute
+(the `<main>` element implies `role="main"`).
+
+### 15.1 Skip-to-main-content link (LOW, S)
+
+- **Target**: `templates/base.html` — add a `.skip-link` as the first
+  focusable element inside `<body>`, styled to be visually hidden until
+  focused.
+- **Why**: WCAG 2.2 Success Criterion 2.4.1 (Bypass Blocks). Keyboard-only
+  users currently have to tab through the entire sidebar on every page.
+- **Plan**:
+  ```html
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  ```
+  plus a `.skip-link` rule in `components/buttons.css` (positioned off-screen
+  with `position: absolute; left: -9999px;` and brought on-screen on
+  `:focus`). Give `<main>` `id="main-content"` and drop the redundant
+  `role="main"`.
+- **Status**: todo
+
+### 15.2 Modal focus management (MEDIUM, M)
+
+- **Target**: `static/js/game-modals.js` — `GameDetailModal`, `GameEditModal`,
+  and any ad-hoc modals in `static/js/main.js`. Also `bulk-edit.js`,
+  `bulk-scrape.js` modal flows.
+- **Why**: WCAG 2.4.3 (Focus Order) + 3.2.1 (On Focus). Current modals show
+  `focus()` calls but no trap — tab can escape the modal to the background
+  sidebar. Also no "focus restore to trigger" pattern on close, so keyboard
+  users lose their place in the list.
+- **Plan**: add a small `ModalFocusTrap` helper to `utils.js`:
+  ```js
+  const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+  const ModalFocusTrap = {
+      activate(modalEl, triggerEl) { /* save trigger, trap Tab, Escape closes */ },
+      deactivate() { /* restore focus to saved trigger */ },
+  };
+  ```
+  Call on modal open/close. Add `aria-modal="true"`, `aria-labelledby="..."`
+  and `role="dialog"` to each modal root element.
+- **Status**: todo
+
+### 15.3 Theme contrast audit (MEDIUM, M)
+
+- **Target**: all 7 themes (`cyberpunk`, `matrix`, `amber`, `ocean`,
+  `christian`, `bladerunner`, `elite`) — `static/css/core/themes.css` plus
+  per-theme overrides.
+- **Why**: WCAG 2.2 AA requires 4.5:1 contrast for normal text and 3:1 for
+  large text / UI components. Cyberpunk-style dark themes routinely fail on
+  secondary text (`--text-secondary: #9aa0a6` on `--bg-darkest: #0a0e17` =
+  about 7.5:1 — fine, but gradients and overlays can drop below threshold).
+- **Plan**: run each theme through a contrast audit (axe-core or Lighthouse
+  in Firefox/Chrome dev tools). Document measured ratios per theme per token
+  pair in a `docs/theme_contrast.md`. Fix any pair that falls below 4.5:1.
+  Low-priority pairs (disabled text, decorative) can accept 3:1 documented.
+- **Status**: todo
+
+### 15.4 Sweep redundant ARIA + upgrade semantic HTML (LOW, M)
+
+- **Target**: every template with `role=` attributes.
+- **Why**: the first rule of ARIA is "don't use ARIA where HTML has native
+  semantics". `<nav role="navigation">`, `<main role="main">`, `<header
+  role="banner">` are redundant. Template audit found at least `base.html:239`
+  as redundant.
+- **Plan**: grep for `role="(navigation|main|banner|contentinfo|form|button)"`
+  and remove redundant ones where the wrapping tag is the matching element.
+  Add ARIA only where there's no native equivalent (live regions, modals,
+  disclosure widgets).
+- **Status**: todo
+
+### 15.5 Keyboard shortcut help overlay (LOW, S)
+
+- **Target**: `static/js/main.js::KeyboardShortcuts` — document existing
+  shortcuts in a `?` overlay.
+- **Why**: discoverability. Help page has a shortcuts section, but in-app
+  `?` overlay is a standard pattern (Gmail, GitHub, Linear) and takes ~40 LOC.
+- **Plan**: bind `?` (Shift+/) to open a modal listing all registered
+  shortcuts. Generate the list from a single source of truth so new
+  shortcuts auto-document.
+- **Status**: todo
+
+---
+
+## Pass 16 — HTTP security headers expansion
+
+Current state (`app.py:235-242`): `X-Content-Type-Options`, `X-Frame-Options`,
+`X-XSS-Protection`, `Referrer-Policy`. Missing: `Content-Security-Policy`,
+`Strict-Transport-Security`, `Permissions-Policy`. The `X-XSS-Protection`
+header is deprecated and modern guidance is to omit it (Chromium removed
+the auditor entirely; some edge cases where it enabled XSS).
+
+### 16.1 Remove deprecated `X-XSS-Protection` (LOW, S)
+
+- **Target**: `app.py:240`.
+- **Why**: MDN / OWASP 2024-2026 guidance: the XSS Auditor was removed
+  from Chrome/Edge. The header can itself introduce XSS in some browsers.
+  Modern stance: omit, or set to `0` to explicitly disable in legacy
+  browsers.
+- **Plan**: delete the line. Leave a brief `# (deleted X-XSS-Protection
+  — deprecated header)` commit message for posterity.
+- **Source**: <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection>
+- **Status**: todo
+
+### 16.2 Add `Content-Security-Policy` (MEDIUM, L — needs template audit)
+
+- **Target**: `app.py::set_security_headers`.
+- **Why**: CSP is the strongest defence-in-depth against XSS. RetroDB is
+  single-user localhost, but inline styles/scripts exist in several
+  templates (the `<style>` blocks in game_detail / settings, inline event
+  handlers in older JS). Adding CSP requires auditing all of them first.
+- **Plan**:
+  1. Inventory every inline `<script>` and `on*="..."` handler across
+     `templates/`.
+  2. Add CSP nonces via `secrets.token_urlsafe(16)` generated per-request,
+     attached to `g` and surfaced via a Jinja context processor as
+     `{{ csp_nonce }}`.
+  3. Start in **report-only** mode:
+     ```python
+     response.headers['Content-Security-Policy-Report-Only'] = (
+         "default-src 'self'; "
+         "script-src 'self' 'nonce-" + g.csp_nonce + "'; "
+         "style-src 'self' 'unsafe-inline'; "  # relax until inline <style> audit done
+         "img-src 'self' data: https:; "  # https: needed for scraped boxart cached by URL in rare cases
+         "font-src 'self'; "
+         "connect-src 'self'; "
+         "frame-ancestors 'self'"
+     )
+     ```
+  4. After a week of zero `report-only` violations (collected via browser
+     console in dev), flip to `Content-Security-Policy` enforcing.
+  5. Do NOT adopt `flask-talisman` — the extension is overkill for a single
+     `after_request` hook and adds a dependency.
+- **Source**: <https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html>
+- **Status**: todo
+
+### 16.3 Add `Permissions-Policy` (LOW, S)
+
+- **Target**: `app.py::set_security_headers`.
+- **Why**: opt out of browser APIs that RetroDB never uses (camera, mic,
+  geolocation, Topics). Defence-in-depth against compromised dependencies
+  that attempt to access sensors.
+- **Plan**: one-line addition:
+  ```python
+  response.headers['Permissions-Policy'] = (
+      'browsing-topics=(), camera=(), microphone=(), geolocation=(), '
+      'payment=(), usb=(), interest-cohort=()'
+  )
+  ```
+- **Source**: <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy>
+- **Status**: todo
+
+### 16.4 Add `Strict-Transport-Security` — env-gated (LOW, S)
+
+- **Target**: `app.py::set_security_headers` — pair with 11.2
+  (`SESSION_COOKIE_SECURE`).
+- **Why**: only meaningful behind a TLS reverse proxy. On localhost HTTP it
+  does nothing (browsers ignore HSTS without a TLS handshake). But if an
+  operator fronts with HTTPS and doesn't set HSTS, they're one MITM away
+  from cookie theft.
+- **Plan**: env-gated by the same `RETRODB_SECURE_COOKIES` flag as 11.2:
+  ```python
+  if app.config.get('SESSION_COOKIE_SECURE'):
+      response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+  ```
+- **Status**: todo
+
+---
+
+## Pass 17 — Observability & health checks
+
+### 17.1 `/health` and `/ready` endpoints (HIGH, S)
+
+- **Target**: new blueprint `routes/health.py` or inline in `app.py`.
+- **Why**: no liveness or readiness endpoint currently exists. Operators
+  running RetroDB behind systemd / Docker / a reverse-proxy have no way to
+  tell "is the process alive" vs "is it ready to serve" without probing a
+  real page.
+- **Plan**: two cheap endpoints, no auth required, not logged as requests:
+  ```python
+  @app.route('/health')
+  def health():
+      return jsonify({'status': 'alive'}), 200
+
+  @app.route('/ready')
+  def ready():
+      try:
+          db = get_db()
+          db.execute("SELECT 1").fetchone()
+          return jsonify({'status': 'ready'}), 200
+      except Exception as e:
+          return jsonify({'status': 'not_ready', 'error': str(e)}), 503
+  ```
+  Liveness stays cheap (no DB). Readiness hits DB so it catches DB-lock
+  failures. Exclude both from the `load_user` decorator to skip session
+  overhead.
+- **Source**: <https://github.com/fedora-infra/flask-healthz> (pattern, not
+  adoption — do it inline, no dep)
+- **Status**: todo
+
+### 17.2 Request IDs / correlation IDs in logs (MEDIUM, S)
+
+- **Target**: `app.py::before_request`, `services/log_redactor.py`, log
+  format strings in `log_manager.py`.
+- **Why**: when a user reports "my AI fill crashed at 3pm", correlating
+  the route hit → scraper call → DB error across three log files currently
+  requires timestamp matching. A per-request UUID in every log line makes
+  it one grep.
+- **Plan**:
+  1. In `before_request`: `g.request_id = secrets.token_hex(4)` (8-char hex).
+  2. Add a `logging.Filter` that reads `g.request_id` and stamps it onto
+     every record (or `"-"` if no request context).
+  3. Update format strings: `%(request_id)s [%(levelname)s] ...`.
+- **Status**: todo
+
+### 17.3 Slow-request logging middleware (LOW, S)
+
+- **Target**: `app.py::before_request`/`after_request`.
+- **Why**: spot-detects endpoints that regress. Pairs with 12.4
+  (slow-query logging) — slow-query catches DB; slow-request catches the
+  whole handler.
+- **Plan**:
+  ```python
+  @app.before_request
+  def _start_timer():
+      g.start_time = time.perf_counter()
+
+  @app.after_request
+  def _log_slow_request(response):
+      elapsed = (time.perf_counter() - g.start_time) * 1000
+      if elapsed > 500:  # ms
+          logger.warning(f"slow_request {request.method} {request.path} {elapsed:.0f}ms status={response.status_code}")
+      return response
+  ```
+  Guard by a `SLOW_REQUEST_MS` config knob so ops can disable / tune.
+- **Status**: todo
+
+---
+
+## Pass 18 — Image pipeline modernization
+
+Cover art, screenshots, fanart and manuals are the largest single class of
+disk usage and over-the-wire bytes for typical installs. Modernizing the
+pipeline yields real wins.
+
+### 18.1 WebP conversion on ingest (HIGH, M)
+
+- **Target**: `scraper/base_scraper.py::download_image()` + the `apply_*_to_metadata()`
+  helpers in `scraper/metadata_merger.py`.
+- **Why**: WebP is 25-35% smaller than JPEG at equivalent quality and
+  supported by ~97% of browsers in 2026. `Pillow` is already a dependency.
+  AVIF is smaller still (~50% vs JPEG) but encoding is 10-100× slower —
+  not worth the scrape-job cost on a single-user machine.
+- **Plan**:
+  1. Add `RETRODB_IMAGE_FORMAT` config (`jpeg` / `webp`, default `webp`).
+  2. In `download_image()`, after fetching: `Image.open(io.BytesIO(response.content)).save(path, format='WEBP', quality=85, method=4)`.
+  3. Keep filename extension logic — the DB stores filenames, so migrate
+     over time, not in a big-bang conversion.
+  4. Add a one-off maintenance task `/api/maintenance/convert-images-to-webp`
+     that iterates `media_directory` and converts JPEGs in place, updating
+     DB filename references. Gated behind a disk-space check.
+- **Source**: <https://caniuse.com/webp>
+- **Status**: todo
+
+### 18.2 `loading="lazy"` + `decoding="async"` on game-card images (MEDIUM, S)
+
+- **Target**: `static/js/all-games-controller.js` (card render), `static/js/game-modals.js`
+  (screenshot carousel), plus any template loops over `<img>`.
+- **Why**: on pages with 500+ cards the browser fetches every image
+  eagerly until JS scroll-observer kicks in. Native `loading="lazy"` is
+  free to add and has been baseline-supported since 2022.
+- **Plan**: add both attributes to every `<img>` inside a card / list
+  render path. First image on the page (above-the-fold boxart) can remain
+  eager via `loading="eager"` to avoid LCP regression.
+- **Status**: todo
+
+### 18.3 Responsive `srcset` for boxart (LOW, L)
+
+- **Target**: `services/image_utils.py` + card / detail templates.
+- **Why**: game cards render boxart at ~150×200 px; detail modal at
+  ~300×400 px. Both currently load the same file (often 1000×1400 original).
+  Generating a `-sm` and `-md` variant on ingest and using
+  `<img srcset="...-sm.webp 150w, ...-md.webp 300w">` would cut typical page
+  payload 60-80%.
+- **Plan**:
+  1. `services/image_utils.py::make_responsive_variants(src_path)` — writes
+     `-sm` (160w) and `-md` (320w) next to the original.
+  2. Call from the `standardize_image()` path during scrape.
+  3. Jinja helper `{{ boxart_srcset(game) }}` that produces the `srcset`
+     string, skipping missing variants.
+- **Source**: <https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#srcset>
+- **Status**: todo
+
+---
+
+## Pass 19 — Versioned schema migrations
+
+### 19.1 Replace ad-hoc `_migrate_*` with `PRAGMA user_version` (MEDIUM, M)
+
+- **Target**: `services/database_init.py` — 21 `_migrate_*` / `ALTER TABLE`
+  references, all run unconditionally on every app start. New migrations
+  get grafted on as another `_migrate_X()` function.
+- **Why**: current pattern works (migrations are idempotent with
+  `CREATE TABLE IF NOT EXISTS` / try-except on column-exists) but:
+  - No way to know "which migrations have actually run on this install?"
+  - Startup cost grows linearly as migrations accumulate.
+  - No rollback story.
+  - Deleted migrations leave no audit trail.
+- **Plan**: the "suckless" SQLite pattern — no Alembic, no SQLAlchemy dep.
+  ```python
+  # services/migrations/__init__.py
+  MIGRATIONS = [
+      '001_initial_schema.sql',
+      '002_add_alt_titles.sql',
+      # ...
+  ]
+  def apply_pending(conn):
+      current = conn.execute("PRAGMA user_version").fetchone()[0]
+      for idx, filename in enumerate(MIGRATIONS[current:], start=current):
+          sql = (MIGRATIONS_DIR / filename).read_text()
+          conn.executescript(sql)
+          conn.execute(f"PRAGMA user_version = {idx + 1}")
+          conn.commit()
+  ```
+  Folder `services/migrations/*.sql` holds the raw DDL (or `*.py` for
+  data migrations that need Python). New migration = new file + array
+  entry.
+- **Source**: <https://eskerda.com/sqlite-schema-migrations-python/>
+- **Status**: todo
+
+### 19.2 Document migration authoring in standards doc (LOW, S)
+
+- **Target**: `docs/RETRODB_DESIGN_STANDARDS.md` — add §25 after the
+  naming standards.
+- **Why**: the above pattern needs a one-page rulebook: file naming, no
+  editing past migrations, how to handle data migrations vs schema.
+- **Plan**: short section covering filename format (`NNN_description.sql`),
+  idempotency rules, and the "migrations are append-only once shipped"
+  invariant.
+- **Status**: todo (follows 19.1)
+
+---
+
+## Pass 20 — CI/CD hardening
+
+### 20.1 Dependabot config for pip + GitHub Actions (MEDIUM, S)
+
+- **Target**: `.github/dependabot.yml` (new).
+- **Why**: no automated dependency update PRs. `requirements.lock` drifts,
+  CVEs sit unpatched. GitHub provides this free.
+- **Plan**:
+  ```yaml
+  version: 2
+  updates:
+    - package-ecosystem: "pip"
+      directory: "/"
+      schedule: { interval: "weekly" }
+      cooldown: { default-days: 4 }
+      groups:
+        pip-dependencies:
+          patterns: ["*"]
+    - package-ecosystem: "github-actions"
+      directory: "/"
+      schedule: { interval: "weekly" }
+  ```
+  Cooldown avoids landing day-of-release breakages. Grouping keeps PR
+  volume manageable.
+- **Source**: <https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file>
+- **Status**: todo
+
+### 20.2 `pip-audit` in CI (MEDIUM, S)
+
+- **Target**: `.github/workflows/ci.yml` — add a step after the install.
+- **Why**: catches CVEs against the specific pinned versions in
+  `requirements.lock`. Dependabot catches "new release exists";
+  `pip-audit` catches "current pin has a known CVE".
+- **Plan**:
+  ```yaml
+  - name: pip-audit
+    run: |
+      pip install pip-audit
+      pip-audit --requirement requirements.lock --strict
+    continue-on-error: true  # surface as warning until backlog is clean
+  ```
+- **Source**: <https://pypi.org/project/pip-audit/>
+- **Status**: todo
+
+### 20.3 Coverage reporting via `pytest-cov` (LOW, S)
+
+- **Target**: `.github/workflows/ci.yml`, `pyproject.toml`.
+- **Why**: currently no visibility into which modules are covered. Pairs
+  with 14.3 (test coverage targets for metadata_merger / bulk_scrape).
+- **Plan**:
+  ```yaml
+  - name: Pytest with coverage
+    run: |
+      pip install pytest-cov
+      pytest --cov=services --cov=scraper --cov=routes --cov-report=term-missing
+  ```
+  Add `[tool.coverage.run]` omit rules for `tests/`, `migrations/`.
+  Do NOT gate PRs on coverage threshold yet — set a baseline first.
+- **Status**: todo
+
+### 20.4 Python version matrix (LOW, S)
+
+- **Target**: `.github/workflows/ci.yml` — add matrix for 3.12 + 3.13.
+- **Why**: CI pins 3.13 only. Users on long-term distros (Debian stable,
+  openSUSE Leap) are often on 3.11-3.12 — a regression on those Pythons
+  wouldn't be caught. Keep 3.13 on the list (JIT coming).
+- **Plan**: `strategy.matrix.python-version: [ "3.12", "3.13" ]`. Do NOT
+  include 3.14 free-threaded — research confirms it hurts single-threaded
+  Flask perf 30-50%.
+- **Source**: <https://codspeed.io/blog/state-of-python-3-13-performance-free-threading>
+- **Status**: todo
+
+---
+
+## Pass 21 — Operational resilience
+
+### 21.1 SQLite online backup API (HIGH, M)
+
+- **Target**: `routes/settings.py:247-276::api_backup` — currently uses
+  `shutil.copy2(config.DB_PATH, backup_path)`.
+- **Why**: `shutil.copy2` on a WAL-mode database with active writers can
+  produce a torn / corrupted file. SQLite's online backup API
+  (`sqlite3.Connection.backup()`) coordinates with WAL and guarantees a
+  consistent snapshot even under concurrent writes.
+- **Plan**:
+  ```python
+  src = sqlite3.connect(config.DB_PATH)
+  dst = sqlite3.connect(backup_path)
+  with dst:
+      src.backup(dst)  # single call; SQLite handles WAL coordination
+  dst.close(); src.close()
+
+  verify = sqlite3.connect(backup_path)
+  ok = verify.execute("PRAGMA integrity_check").fetchone()[0]
+  verify.close()
+  if ok != 'ok':
+      os.remove(backup_path)
+      raise RuntimeError(f"backup failed integrity check: {ok}")
+  ```
+  Integrity check at the end means we never hand the user a broken backup.
+- **Source**: <https://docs.python.org/3/library/sqlite3.html#sqlite3.Connection.backup>
+- **Status**: todo
+
+### 21.2 Graceful shutdown — mark jobs paused on SIGTERM (MEDIUM, M)
+
+- **Target**: `app.py` (signal handler install), `services/jobs/base.py`
+  (shutdown hook).
+- **Why**: background jobs (bulk scrape, RA sync, museum generation) run
+  in threads with state in SQLite. A `systemctl stop` / Ctrl-C kills them
+  mid-iteration — the queued-games DB row still shows "in-progress", the
+  user sees a stuck job on next start. App.py has `/api/jobs/resume/<id>`
+  already; the missing piece is marking jobs "pausable" cleanly at
+  shutdown instead of leaving them wedged.
+- **Plan**:
+  ```python
+  import signal
+  _shutdown = threading.Event()
+  def _handle_sigterm(signum, frame):
+      _shutdown.set()
+      for job in get_running_jobs():
+          job.request_pause()  # set a flag the job's inner loop reads each iter
+      logger.info("SIGTERM received; running jobs flagged for pause")
+  signal.signal(signal.SIGTERM, _handle_sigterm)
+  signal.signal(signal.SIGINT, _handle_sigterm)
+  ```
+  Each job's inner loop already has a "paused" check (for the pause
+  button) — just need to wire the signal to the same path.
+- **Status**: todo
+
+### 21.3 Backup rotation / max-backups knob (LOW, S)
+
+- **Target**: `routes/settings.py::api_backup` — currently unbounded.
+- **Why**: on a deploy that auto-backups daily, the `backups/` dir grows
+  without limit. Each backup is ~10-500 MB depending on library size.
+- **Plan**: after creating a new backup, if the count exceeds
+  `MAX_BACKUPS` config (default 30), delete the oldest N. Keep at least
+  one always.
+- **Status**: todo
+
+---
+
+## Pass 22 — Request-level caching & ETags
+
+### 22.1 ETag / `If-None-Match` on `/api/games/card-data` (MEDIUM, M)
+
+- **Target**: `routes/games.py::api_games_card_data` and similar large
+  read-only endpoints.
+- **Why**: card-data responses are huge (JSON of 1000+ games, ~500 KB).
+  Currently the browser re-fetches on every page navigation. An ETag
+  based on the max `updated_at` timestamp in the query's row set lets the
+  browser short-circuit with `304 Not Modified`.
+- **Plan**:
+  ```python
+  @bp.route('/api/games/card-data')
+  def api_games_card_data():
+      max_updated = db.execute("SELECT MAX(updated_at) FROM games WHERE ...").fetchone()[0]
+      etag = hashlib.md5(f"{filter_key}:{max_updated}".encode()).hexdigest()
+      if request.headers.get('If-None-Match') == etag:
+          return '', 304
+      response = jsonify(data)
+      response.headers['ETag'] = etag
+      response.headers['Cache-Control'] = 'private, must-revalidate'
+      return response
+  ```
+  Requires every game write to touch `updated_at` — verify this on
+  INSERT/UPDATE paths.
+- **Status**: todo
+
+### 22.2 Response compression (LOW, S)
+
+- **Target**: `app.py` — add `Flask-Compress` or roll a `gzip`
+  `after_request` hook.
+- **Why**: large JSON payloads (card-data, filter options) ship
+  uncompressed. Waitress doesn't compress by default.
+- **Plan**: inline hook (avoids dep):
+  ```python
+  @app.after_request
+  def _compress(response):
+      if (response.content_length and response.content_length > 1024
+          and 'gzip' in request.headers.get('Accept-Encoding', '')
+          and response.content_type and 'json' in response.content_type):
+          response.data = gzip.compress(response.data, compresslevel=6)
+          response.headers['Content-Encoding'] = 'gzip'
+          response.headers['Content-Length'] = len(response.data)
+      return response
+  ```
+  Benchmark first — may be better done at the reverse-proxy layer on
+  deploys that have one.
+- **Status**: todo
+
+### 22.3 Per-file cache-busting hash — consolidate with Pass 13.3 (N/A)
+
+See Pass 13.3 — no duplicate entry.
+
+---
+
+## Scope notes — considered and dropped
+
+The following were considered during this planning round and intentionally
+not added to the roadmap. Document here so they don't keep re-appearing.
+
+- **Flask-Talisman**: replaces 4-8 lines of manual header setting with a
+  dependency. Not worth it.
+- **Flask-Migrate / Alembic**: requires SQLAlchemy adoption, which RetroDB
+  explicitly doesn't use (raw SQL is part of the design). Pass 19 uses the
+  suckless PRAGMA-user_version pattern instead.
+- **Progressive Web App / service worker**: no offline story for a
+  localhost ROM manager. Adds maintenance burden for zero user benefit.
+- **i18n / localization**: explicitly English-only single-operator context.
+- **Docker image / container**: `setup.sh` + `install_gui.py` already
+  target bare-metal installs. A container would add a distribution surface
+  without simplifying anything for current users.
+- **API versioning / OpenAPI spec**: API is internal to the app. No
+  external consumers to break.
+- **Feature flags**: single-user app — no gradual rollouts needed.
+- **Python 3.13 free-threaded build**: research confirmed single-threaded
+  Flask perf regresses 30-50% in free-threaded mode. Actively avoid — pin
+  to the GIL build.
+- **Sentry / error tracking SaaS**: exfiltrates stack traces and request
+  context to a third party. Local log files are the right place for a
+  self-hosted app. Covered by Pass 17.3 instead.
+- **Prometheus `/metrics`**: no scraper. Local `/health` + `/ready`
+  (Pass 17.1) covers the actual need.
 
 ---
 

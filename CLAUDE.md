@@ -340,6 +340,10 @@ python3 build_dist.py windows    # Build Windows only
 - `docs/STANDARDS_ADDENDUM.md` — Version checklist, logging system
 - `docs/ROM_NAMING_STANDARD.md` — ROM file naming conventions
 
+## Planning Documents
+- `roadmap.md` — Backlog of refactoring, security, perf, a11y, observability, migrations, CI/CD, and ops-resilience passes (2-22). Includes a "Scope notes — considered and dropped" section. Check here before proposing net-new architectural work.
+- `audit_hygiene.md` — Portable recommendations for the `/audit` skill maintainer on how to cut false-positive rate from ~99% to <75%. Not RetroDB-specific.
+
 ---
 
 ## Common Patterns
