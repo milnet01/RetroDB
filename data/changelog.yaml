@@ -1,3 +1,14 @@
+- version: 2.78.1
+  date: 2026-04-21
+  tags:
+  - type: bugfix
+    label: Bug fix
+  body: |
+    <ul>
+        <li><strong>Fixed: trophy loader crashed on every page with <code>module 'defusedxml.ElementTree' has no attribute 'Element'</code></strong> &mdash; <code>scraper/trophy_parser.py</code> was type-annotating two methods as <code>elem: ET.Element</code> against <code>defusedxml.ElementTree</code>, but <code>defusedxml</code> only re-exports parser functions (<code>fromstring</code>, <code>parse</code>, &hellip;), never the <code>Element</code> node class. The annotation was evaluated at class-definition time, so <em>importing</em> the module raised <code>AttributeError</code>, which the trophy scan / PS3 game list route caught and logged once per request. <code>Element</code> is now imported from stdlib <code>xml.etree.ElementTree</code> (safe: <code>Element</code> is just a data container, no parsing happens through it); actual XML parsing still goes through <code>defusedxml</code> for XXE protection.</li>
+        <li><strong>Waitress: bumped thread pool 4 &rarr; 16, silenced the noisy queue-depth warnings</strong> &mdash; A single <code>/games</code> or <code>/dashboard</code> load fan-outs 20+ parallel XHRs (card data, fanart, per-row lookups), most of which queued behind each other on the old 4-thread pool and each queued request logged a <code>waitress.queue - WARNING - Task queue depth is N</code>. Every page navigation was dropping 30&ndash;50 of these into the terminal. Thread count raised to 16 (still tiny, comfortable headroom for a local single-user / small-household workload); <code>waitress.queue</code> logger level raised to <code>ERROR</code> so normal queueing at depth 1&ndash;2 is silent but genuine back-pressure would still surface.</li>
+    </ul>
+
 - version: 2.78.0
   date: 2026-04-21
   tags:

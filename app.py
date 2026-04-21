@@ -371,6 +371,13 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Waitress logs a WARNING every time a request queues — with a 16-thread pool
+# and 20+ parallel XHRs per page load, this fires dozens of times per
+# navigation and drowns the actual log. Queueing at depth 1–2 is normal and
+# not actionable. Bump the threshold so only sustained back-pressure (ERROR)
+# surfaces. See waitress/task.py — "Task queue depth is N" is the message.
+logging.getLogger('waitress.queue').setLevel(logging.ERROR)
+
 # =============================================================================
 # CATEGORY LOGGING
 # =============================================================================
@@ -1236,4 +1243,9 @@ if __name__ == '__main__':
         print(f"  Press Ctrl+C to stop the server")
         print()
 
-        serve(app, host=host, port=port, threads=4)
+        # A single /games or /dashboard load fires 20+ parallel XHRs (card
+        # data, fanart, per-row API lookups). 4 threads meant most of those
+        # queued behind each other and every page load flooded the log with
+        # "Task queue depth" warnings. 16 gives comfortable headroom for a
+        # local single-user / small-household workload without being wasteful.
+        serve(app, host=host, port=port, threads=16)

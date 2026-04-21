@@ -19,6 +19,11 @@ Timestamps are microseconds since year 0001.
 
 import struct
 import defusedxml.ElementTree as ET
+# Element is only used for type annotations — defusedxml doesn't re-export
+# node classes (only parser functions), and annotating with a data-container
+# class has no security impact. Actual XML parsing still goes through
+# defusedxml.ElementTree.fromstring() below.
+from xml.etree.ElementTree import Element
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Tuple
 from datetime import datetime
@@ -131,7 +136,7 @@ class TROPCONFParser:
         
         return trophy_set
     
-    def _parse_trophy(self, elem: ET.Element) -> Trophy:
+    def _parse_trophy(self, elem: Element) -> Trophy:
         trophy_id = int(elem.get('id', '0'))
         trophy_type = elem.get('ttype', 'B')
         hidden = elem.get('hidden', 'no').lower() == 'yes'
@@ -151,7 +156,7 @@ class TROPCONFParser:
             group_id=group_id
         )
     
-    def _get_text(self, elem: ET.Element, tag: str, default: str = '') -> str:
+    def _get_text(self, elem: Element, tag: str, default: str = '') -> str:
         child = elem.find(tag)
         return child.text if child is not None and child.text else default
 
