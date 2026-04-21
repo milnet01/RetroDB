@@ -22,6 +22,7 @@ from datetime import datetime, timedelta, timezone
 from flask import Blueprint, request, jsonify
 
 import config
+from services.api_helpers import handle_api_errors
 from services.auth import admin_required
 
 # Create blueprint
@@ -140,72 +141,64 @@ def api_get_scraper_settings():
 
 @scraper_bp.route('/api/scraper-settings', methods=['POST'])
 @admin_required
+@handle_api_errors
 def api_save_scraper_settings():
     """Save scraper priority and settings"""
-    try:
-        data = request.get_json()
-        
-        # Ensure data directory exists
-        os.makedirs(os.path.dirname(SCRAPER_SETTINGS_FILE), exist_ok=True)
-        
-        # Load existing settings to preserve API keys
-        existing = {}
-        if os.path.exists(SCRAPER_SETTINGS_FILE):
-            with open(SCRAPER_SETTINGS_FILE, 'r') as f:
-                existing = json.load(f)
-        
-        # Merge new settings with existing (preserve api_keys if not in new data)
-        if 'api_keys' in existing and 'api_keys' not in data:
-            data['api_keys'] = existing['api_keys']
+    data = request.get_json()
 
-        # Preserve match filtering settings if not in new data
-        for key in ('minimum_match_score', 'match_mode', 'match_criteria'):
-            if key in existing and key not in data:
-                data[key] = existing[key]
+    # Ensure data directory exists
+    os.makedirs(os.path.dirname(SCRAPER_SETTINGS_FILE), exist_ok=True)
 
-        # Save to file
-        with open(SCRAPER_SETTINGS_FILE, 'w') as f:
-            json.dump(data, f, indent=2)
-        
-        logger.info(f"Saved scraper settings: priority={data.get('priority')}, enabled={data.get('enabled')}")
-        
-        return jsonify({'success': True, 'message': 'Settings saved'})
-        
-    except Exception as e:
-        logger.error(f"Error saving scraper settings: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    # Load existing settings to preserve API keys
+    existing = {}
+    if os.path.exists(SCRAPER_SETTINGS_FILE):
+        with open(SCRAPER_SETTINGS_FILE, 'r') as f:
+            existing = json.load(f)
+
+    # Merge new settings with existing (preserve api_keys if not in new data)
+    if 'api_keys' in existing and 'api_keys' not in data:
+        data['api_keys'] = existing['api_keys']
+
+    # Preserve match filtering settings if not in new data
+    for key in ('minimum_match_score', 'match_mode', 'match_criteria'):
+        if key in existing and key not in data:
+            data[key] = existing[key]
+
+    # Save to file
+    with open(SCRAPER_SETTINGS_FILE, 'w') as f:
+        json.dump(data, f, indent=2)
+
+    logger.info(f"Saved scraper settings: priority={data.get('priority')}, enabled={data.get('enabled')}")
+
+    return jsonify({'success': True, 'message': 'Settings saved'})
 
 
 @scraper_bp.route('/api/scraper-api-keys', methods=['POST'])
 @admin_required
+@handle_api_errors
 def api_save_api_keys():
     """Save scraper API keys"""
-    try:
-        data = request.get_json()
-        
-        # Ensure data directory exists
-        os.makedirs(os.path.dirname(SCRAPER_SETTINGS_FILE), exist_ok=True)
-        
-        # Load existing settings
-        existing = {}
-        if os.path.exists(SCRAPER_SETTINGS_FILE):
-            with open(SCRAPER_SETTINGS_FILE, 'r') as f:
-                existing = json.load(f)
-        
-        # Update API keys
-        existing['api_keys'] = data
-        
-        # Save to file
-        with open(SCRAPER_SETTINGS_FILE, 'w') as f:
-            json.dump(existing, f, indent=2)
-        
-        logger.info(f"Saved API keys for scrapers")
-        
-        return jsonify({'success': True, 'message': 'API keys saved'})
-        
-    except Exception as e:
-        logger.error(f"Error saving API keys: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    data = request.get_json()
+
+    # Ensure data directory exists
+    os.makedirs(os.path.dirname(SCRAPER_SETTINGS_FILE), exist_ok=True)
+
+    # Load existing settings
+    existing = {}
+    if os.path.exists(SCRAPER_SETTINGS_FILE):
+        with open(SCRAPER_SETTINGS_FILE, 'r') as f:
+            existing = json.load(f)
+
+    # Update API keys
+    existing['api_keys'] = data
+
+    # Save to file
+    with open(SCRAPER_SETTINGS_FILE, 'w') as f:
+        json.dump(existing, f, indent=2)
+
+    logger.info(f"Saved API keys for scrapers")
+
+    return jsonify({'success': True, 'message': 'API keys saved'})
 
 
 @scraper_bp.route('/api/check-scraper/<scraper>')

@@ -21,6 +21,7 @@ import tempfile
 import config
 import settings_manager
 from services.database import query
+from services.api_helpers import handle_api_errors
 from services.auth import login_required, admin_required
 from services.security import safe_path
 
@@ -195,19 +196,17 @@ def rom_tools_settings():
 
 @tools_bp.route('/api/rom-tools/settings', methods=['GET', 'POST'])
 @login_required
+@handle_api_errors
 def api_rom_tools_settings():
     """Get or update ROM Tools settings"""
     if request.method == 'GET':
         return jsonify(load_rom_tools_config())
     else:
-        try:
-            settings = request.get_json()
-            if save_rom_tools_config(settings):
-                return jsonify({'success': True})
-            else:
-                return jsonify({'success': False, 'error': 'Failed to save settings'}), 500
-        except Exception as e:
-            return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+        settings = request.get_json()
+        if save_rom_tools_config(settings):
+            return jsonify({'success': True})
+        else:
+            return jsonify({'success': False, 'error': 'Failed to save settings'}), 500
 
 
 @tools_bp.route('/api/rom-tools/status')
@@ -219,66 +218,63 @@ def api_rom_tools_status():
 
 @tools_bp.route('/api/rom-tools/browse-folders', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_rom_tools_browse_folders():
     """Browse folders within the ROMs directory"""
+    data = request.get_json() or {}
+    base_path = _get_rom_path()
+    current_path = data.get('path', base_path)
+
+    # Security: Ensure path is within base_path
     try:
-        data = request.get_json() or {}
-        base_path = _get_rom_path()
-        current_path = data.get('path', base_path)
-        
-        # Security: Ensure path is within base_path
-        try:
-            current_real = os.path.realpath(current_path)
-            base_real = os.path.realpath(base_path)
-            
-            if not current_real.startswith(base_real):
-                current_path = base_path
-                current_real = base_real
-        except (OSError, ValueError):
+        current_real = os.path.realpath(current_path)
+        base_real = os.path.realpath(base_path)
+
+        if not current_real.startswith(base_real):
             current_path = base_path
-            current_real = os.path.realpath(base_path)
-        
-        if not os.path.exists(current_path):
-            return jsonify({'success': False, 'error': f'Path does not exist: {current_path}'}), 400
-        
-        parent_path = None
-        if current_real != base_real:
-            parent = os.path.dirname(current_path)
-            if os.path.realpath(parent).startswith(base_real):
-                parent_path = parent
-        
-        folders = []
-        try:
-            for item in sorted(os.listdir(current_path)):
-                item_path = os.path.join(current_path, item)
-                if os.path.isdir(item_path) and not item.startswith('.'):
-                    try:
-                        file_count = len([f for f in os.listdir(item_path) if os.path.isfile(os.path.join(item_path, f))])
-                        subfolder_count = len([f for f in os.listdir(item_path) if os.path.isdir(os.path.join(item_path, f))])
-                    except PermissionError:
-                        file_count = 0
-                        subfolder_count = 0
-                    
-                    folders.append({
-                        'name': item,
-                        'path': item_path,
-                        'file_count': file_count,
-                        'subfolder_count': subfolder_count
-                    })
-        except PermissionError:
-            return jsonify({'success': False, 'error': 'Permission denied'}), 403
-        
-        return jsonify({
-            'success': True,
-            'base_path': base_path,
-            'current_path': current_path,
-            'parent_path': parent_path,
-            'folders': folders,
-            'is_root': current_real == base_real
-        })
-        
-    except Exception as e:
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+            current_real = base_real
+    except (OSError, ValueError):
+        current_path = base_path
+        current_real = os.path.realpath(base_path)
+
+    if not os.path.exists(current_path):
+        return jsonify({'success': False, 'error': f'Path does not exist: {current_path}'}), 400
+
+    parent_path = None
+    if current_real != base_real:
+        parent = os.path.dirname(current_path)
+        if os.path.realpath(parent).startswith(base_real):
+            parent_path = parent
+
+    folders = []
+    try:
+        for item in sorted(os.listdir(current_path)):
+            item_path = os.path.join(current_path, item)
+            if os.path.isdir(item_path) and not item.startswith('.'):
+                try:
+                    file_count = len([f for f in os.listdir(item_path) if os.path.isfile(os.path.join(item_path, f))])
+                    subfolder_count = len([f for f in os.listdir(item_path) if os.path.isdir(os.path.join(item_path, f))])
+                except PermissionError:
+                    file_count = 0
+                    subfolder_count = 0
+
+                folders.append({
+                    'name': item,
+                    'path': item_path,
+                    'file_count': file_count,
+                    'subfolder_count': subfolder_count
+                })
+    except PermissionError:
+        return jsonify({'success': False, 'error': 'Permission denied'}), 403
+
+    return jsonify({
+        'success': True,
+        'base_path': base_path,
+        'current_path': current_path,
+        'parent_path': parent_path,
+        'folders': folders,
+        'is_root': current_real == base_real
+    })
 
 
 # =============================================================================
@@ -363,191 +359,173 @@ def api_rom_tools_task_resume(task_id):
 
 @tools_bp.route('/api/rom-tools/archive-scanner/scan', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_archive_scanner_scan():
     """Start archive scanning for issues"""
     from scraper.rom_tools import ArchiveScanner, ROMToolsConfig, create_task, update_task
     
-    try:
-        data = request.get_json() or {}
-        path = data.get('path', _get_rom_path())
-        if safe_path(path, _get_rom_path()) is None:
-            return jsonify({'success': False, 'error': 'Invalid scan path'}), 400
-        excluded_paths = data.get('excluded_paths', [])
-        types = data.get('types', ['.zip', '.7z', '.rar'])
-        modes = data.get('modes', {'corrupted': True, 'multiFile': True, 'unwanted': True})
+    data = request.get_json() or {}
+    path = data.get('path', _get_rom_path())
+    if safe_path(path, _get_rom_path()) is None:
+        return jsonify({'success': False, 'error': 'Invalid scan path'}), 400
+    excluded_paths = data.get('excluded_paths', [])
+    types = data.get('types', ['.zip', '.7z', '.rar'])
+    modes = data.get('modes', {'corrupted': True, 'multiFile': True, 'unwanted': True})
 
-        settings = load_rom_tools_config()
-        unwanted_patterns = settings.get('unwanted_patterns', [])
-        logger.info(f"Archive scanner using unwanted patterns: {unwanted_patterns}")
+    settings = load_rom_tools_config()
+    unwanted_patterns = settings.get('unwanted_patterns', [])
+    logger.info(f"Archive scanner using unwanted patterns: {unwanted_patterns}")
 
-        task = create_task('archive_scan')
-        task.logs.append(f"[{datetime.now().strftime('%H:%M:%S')}] Starting scan of {path}")
-        task.logs.append(f"[{datetime.now().strftime('%H:%M:%S')}] Unwanted patterns: {unwanted_patterns}")
-        update_task(task)
-        
-        def run_scan():
-            rom_config = ROMToolsConfig()
-            scanner = ArchiveScanner(rom_config)
-            scanner.scan_for_issues(path, task, excluded_paths, types, modes, unwanted_patterns)
-        
-        thread = threading.Thread(target=run_scan)
-        thread.daemon = True
-        thread.start()
-        
-        return jsonify({'success': True, 'task_id': task.task_id})
-        
-    except Exception as e:
-        logger.error(f"Archive scanner error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    task = create_task('archive_scan')
+    task.logs.append(f"[{datetime.now().strftime('%H:%M:%S')}] Starting scan of {path}")
+    task.logs.append(f"[{datetime.now().strftime('%H:%M:%S')}] Unwanted patterns: {unwanted_patterns}")
+    update_task(task)
+    
+    def run_scan():
+        rom_config = ROMToolsConfig()
+        scanner = ArchiveScanner(rom_config)
+        scanner.scan_for_issues(path, task, excluded_paths, types, modes, unwanted_patterns)
+    
+    thread = threading.Thread(target=run_scan)
+    thread.daemon = True
+    thread.start()
+    
+    return jsonify({'success': True, 'task_id': task.task_id})
+    
 
 
 @tools_bp.route('/api/rom-tools/archive-scanner/contents', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_archive_scanner_contents():
     """Get contents of an archive file"""
     from scraper.rom_tools import ArchiveScanner, ROMToolsConfig
     
-    try:
-        data = request.get_json() or {}
-        path = data.get('path')
+    data = request.get_json() or {}
+    path = data.get('path')
 
-        if not path:
-            return jsonify({'success': False, 'error': 'No path provided'}), 400
+    if not path:
+        return jsonify({'success': False, 'error': 'No path provided'}), 400
 
-        if safe_path(path, _get_rom_path()) is None:
-            return jsonify({'success': False, 'error': 'Invalid path'}), 400
+    if safe_path(path, _get_rom_path()) is None:
+        return jsonify({'success': False, 'error': 'Invalid path'}), 400
 
-        if not os.path.exists(path):
-            return jsonify({'success': False, 'error': 'File not found'}), 404
+    if not os.path.exists(path):
+        return jsonify({'success': False, 'error': 'File not found'}), 404
 
-        rom_config = ROMToolsConfig()
-        scanner = ArchiveScanner(rom_config)
-        result = scanner.get_archive_contents_detailed(path)
-        
-        return jsonify(result)
-        
-    except Exception as e:
-        logger.error(f"Archive contents error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    rom_config = ROMToolsConfig()
+    scanner = ArchiveScanner(rom_config)
+    result = scanner.get_archive_contents_detailed(path)
+    
+    return jsonify(result)
+    
 
 
 @tools_bp.route('/api/rom-tools/archive-scanner/remove-files', methods=['POST'])
 @admin_required
+@handle_api_errors
 def api_archive_scanner_remove_files():
     """Remove specific files from an archive"""
     from scraper.rom_tools import ArchiveScanner, ROMToolsConfig
     
-    try:
-        data = request.get_json() or {}
-        archive_path = data.get('archive_path')
-        files = data.get('files', [])
+    data = request.get_json() or {}
+    archive_path = data.get('archive_path')
+    files = data.get('files', [])
 
-        if not archive_path:
-            return jsonify({'success': False, 'error': 'No archive path provided'}), 400
+    if not archive_path:
+        return jsonify({'success': False, 'error': 'No archive path provided'}), 400
 
-        if safe_path(archive_path, _get_rom_path()) is None:
-            return jsonify({'success': False, 'error': 'Invalid archive path'}), 400
+    if safe_path(archive_path, _get_rom_path()) is None:
+        return jsonify({'success': False, 'error': 'Invalid archive path'}), 400
 
-        if not files:
-            return jsonify({'success': False, 'error': 'No files to remove'}), 400
+    if not files:
+        return jsonify({'success': False, 'error': 'No files to remove'}), 400
 
-        logger.info(f"Removing {len(files)} files from archive: {archive_path}")
-        
-        rom_config = ROMToolsConfig()
-        scanner = ArchiveScanner(rom_config)
-        result = scanner.remove_files_from_archive(archive_path, files)
-        
-        return jsonify(result)
-        
-    except Exception as e:
-        logger.error(f"Archive remove files error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    logger.info(f"Removing {len(files)} files from archive: {archive_path}")
+    
+    rom_config = ROMToolsConfig()
+    scanner = ArchiveScanner(rom_config)
+    result = scanner.remove_files_from_archive(archive_path, files)
+    
+    return jsonify(result)
+    
 
 
 @tools_bp.route('/api/rom-tools/archive-scanner/clean', methods=['POST'])
 @admin_required
+@handle_api_errors
 def api_archive_scanner_clean():
     """Remove unwanted files from an archive"""
     from scraper.rom_tools import ArchiveScanner, ROMToolsConfig
     
-    try:
-        data = request.get_json() or {}
-        path = data.get('path')
+    data = request.get_json() or {}
+    path = data.get('path')
 
-        if not path:
-            return jsonify({'success': False, 'error': 'No path provided'}), 400
+    if not path:
+        return jsonify({'success': False, 'error': 'No path provided'}), 400
 
-        if safe_path(path, _get_rom_path()) is None:
-            return jsonify({'success': False, 'error': 'Invalid path'}), 400
+    if safe_path(path, _get_rom_path()) is None:
+        return jsonify({'success': False, 'error': 'Invalid path'}), 400
 
-        settings = load_rom_tools_config()
-        unwanted_patterns = settings.get('unwanted_patterns', [])
+    settings = load_rom_tools_config()
+    unwanted_patterns = settings.get('unwanted_patterns', [])
 
-        rom_config = ROMToolsConfig()
-        scanner = ArchiveScanner(rom_config)
-        result = scanner.clean_archive(path, unwanted_patterns)
-        
-        return jsonify(result)
-        
-    except Exception as e:
-        logger.error(f"Archive clean error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    rom_config = ROMToolsConfig()
+    scanner = ArchiveScanner(rom_config)
+    result = scanner.clean_archive(path, unwanted_patterns)
+    
+    return jsonify(result)
+    
 
 
 @tools_bp.route('/api/rom-tools/archive-scanner/create-m3u', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_archive_scanner_create_m3u():
     """Create M3U playlist for multi-file archive"""
     from scraper.rom_tools import ArchiveScanner, ROMToolsConfig
     
-    try:
-        data = request.get_json() or {}
-        path = data.get('path')
-        move_to_staging = data.get('move_to_staging', True)
-        staging_folder = data.get('staging_folder')
+    data = request.get_json() or {}
+    path = data.get('path')
+    move_to_staging = data.get('move_to_staging', True)
+    staging_folder = data.get('staging_folder')
 
-        if not path:
-            return jsonify({'success': False, 'error': 'No path provided'}), 400
+    if not path:
+        return jsonify({'success': False, 'error': 'No path provided'}), 400
 
-        if safe_path(path, _get_rom_path()) is None:
-            return jsonify({'success': False, 'error': 'Invalid path'}), 400
+    if safe_path(path, _get_rom_path()) is None:
+        return jsonify({'success': False, 'error': 'Invalid path'}), 400
 
-        rom_config = ROMToolsConfig()
-        scanner = ArchiveScanner(rom_config)
-        result = scanner.create_m3u_playlist(path, move_to_staging=move_to_staging,
-                                              staging_folder=staging_folder)
-        
-        return jsonify(result)
-        
-    except Exception as e:
-        logger.error(f"Create M3U error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    rom_config = ROMToolsConfig()
+    scanner = ArchiveScanner(rom_config)
+    result = scanner.create_m3u_playlist(path, move_to_staging=move_to_staging,
+                                          staging_folder=staging_folder)
+    
+    return jsonify(result)
+    
 
 
 @tools_bp.route('/api/rom-tools/archive-scanner/batch-create-m3u', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_archive_scanner_batch_create_m3u():
     """Create M3U playlists for multiple multi-file archives"""
     from scraper.rom_tools import ArchiveScanner, ROMToolsConfig
     
-    try:
-        data = request.get_json() or {}
-        paths = data.get('paths', [])
-        delete_archives = data.get('delete_archives', False)
-        staging_folder = data.get('staging_folder', os.path.join(tempfile.gettempdir(), 'retrodb_m3u_staging'))
-        
-        if not paths:
-            return jsonify({'success': False, 'error': 'No paths provided'}), 400
-        
-        rom_config = ROMToolsConfig()
-        scanner = ArchiveScanner(rom_config)
-        result = scanner.batch_create_m3u(paths, delete_archives, staging_folder)
-        
-        return jsonify(result)
-        
-    except Exception as e:
-        logger.error(f"Batch M3U error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    data = request.get_json() or {}
+    paths = data.get('paths', [])
+    delete_archives = data.get('delete_archives', False)
+    staging_folder = data.get('staging_folder', os.path.join(tempfile.gettempdir(), 'retrodb_m3u_staging'))
+    
+    if not paths:
+        return jsonify({'success': False, 'error': 'No paths provided'}), 400
+    
+    rom_config = ROMToolsConfig()
+    scanner = ArchiveScanner(rom_config)
+    result = scanner.batch_create_m3u(paths, delete_archives, staging_folder)
+    
+    return jsonify(result)
+    
 
 
 # =============================================================================
@@ -556,132 +534,127 @@ def api_archive_scanner_batch_create_m3u():
 
 @tools_bp.route('/api/rom-tools/chd-converter/scan', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_chd_converter_scan():
     """Scan for convertible disc images"""
-    try:
-        data = request.get_json() or {}
-        path = data.get('path', _get_rom_path())
-        if safe_path(path, _get_rom_path()) is None:
-            return jsonify({'success': False, 'error': 'Invalid scan path'}), 400
-        settings = load_rom_tools_config()
+    data = request.get_json() or {}
+    path = data.get('path', _get_rom_path())
+    if safe_path(path, _get_rom_path()) is None:
+        return jsonify({'success': False, 'error': 'Invalid scan path'}), 400
+    settings = load_rom_tools_config()
 
-        extensions = ['.iso', '.cue', '.gdi', '.mds']
-        files = []
+    extensions = ['.iso', '.cue', '.gdi', '.mds']
+    files = []
+    
+    for ext in extensions:
+        pattern = os.path.join(path, '**', f'*{ext}')
+        files.extend(glob.glob(pattern, recursive=True))
+    
+    result = []
+    for f in sorted(files):
+        chd_path = os.path.splitext(f)[0] + '.chd'
+        chd_exists = os.path.exists(chd_path)
         
-        for ext in extensions:
-            pattern = os.path.join(path, '**', f'*{ext}')
-            files.extend(glob.glob(pattern, recursive=True))
+        if chd_exists and settings.get('chd_skip_existing', True):
+            continue
         
-        result = []
-        for f in sorted(files):
-            chd_path = os.path.splitext(f)[0] + '.chd'
-            chd_exists = os.path.exists(chd_path)
-            
-            if chd_exists and settings.get('chd_skip_existing', True):
-                continue
-            
-            result.append({
-                'path': f,
-                'name': os.path.basename(f),
-                'size': os.path.getsize(f),
-                'type': os.path.splitext(f)[1].upper()[1:],
-                'chd_exists': chd_exists
-            })
-        
-        return jsonify({'success': True, 'files': result})
-        
-    except Exception as e:
-        logger.error(f"CHD scan error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+        result.append({
+            'path': f,
+            'name': os.path.basename(f),
+            'size': os.path.getsize(f),
+            'type': os.path.splitext(f)[1].upper()[1:],
+            'chd_exists': chd_exists
+        })
+    
+    return jsonify({'success': True, 'files': result})
+    
 
 
 @tools_bp.route('/api/rom-tools/chd-converter/convert', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_chd_converter_convert():
     """Start CHD conversion"""
-    try:
-        data = request.get_json() or {}
-        files = data.get('files', [])
-        settings = load_rom_tools_config()
-        
-        chdman_path = settings.get('chdman_path', 'chdman')
-        if not shutil.which(chdman_path):
-            return jsonify({'success': False, 'error': 'chdman not found. Please install MAME tools.'}), 400
-        
-        _cleanup_completed_tasks()
-        task_id = str(uuid.uuid4())[:8]
-        task = {
-            'task_id': task_id,
-            'task_type': 'chd_convert',
-            'status': 'running',
-            'progress': 0,
-            'total': len(files),
-            'current_file': '',
-            'percent': 0,
-            'results': {
-                'converted': 0, 'failed': 0, 'skipped': 0,
-                'original_size': 0, 'compressed_size': 0, 'files': []
-            },
-            'logs': [f"[{datetime.now().strftime('%H:%M:%S')}] Starting conversion of {len(files)} files"]
-        }
-        _rom_tool_tasks[task_id] = task
-        
-        def run_conversion():
-            for i, file_path in enumerate(files):
-                if task['status'] == 'cancelled':
-                    task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Conversion cancelled")
-                    break
-                
-                task['progress'] = i + 1
-                task['current_file'] = os.path.basename(file_path)
-                task['percent'] = round((i + 1) / len(files) * 100, 1) if files else 0
-                
-                src_size = os.path.getsize(file_path)
-                dst_path = os.path.splitext(file_path)[0] + '.chd'
-                
-                task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Converting: {os.path.basename(file_path)}")
-                
-                try:
-                    cmd = [chdman_path, 'createcd', '-i', file_path, '-o', dst_path]
-                    result = subprocess.run(cmd, capture_output=True, text=True, timeout=3600)
-                    
-                    if result.returncode == 0 and os.path.exists(dst_path):
-                        dst_size = os.path.getsize(dst_path)
-                        task['results']['converted'] += 1
-                        task['results']['original_size'] += src_size
-                        task['results']['compressed_size'] += dst_size
-                        task['results']['files'].append({
-                            'source': file_path, 'destination': dst_path,
-                            'original_size': src_size, 'compressed_size': dst_size, 'status': 'success'
-                        })
-                        task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✓ Converted")
-                        
-                        if settings.get('chd_delete_originals', False):
-                            os.remove(file_path)
-                    else:
-                        task['results']['failed'] += 1
-                        task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Failed")
-                except Exception as e:
-                    task['results']['failed'] += 1
-                    logger.error(f"CHD conversion error for {file_path}: {e}")
-                    task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Error processing file")
+    data = request.get_json() or {}
+    files = data.get('files', [])
+    settings = load_rom_tools_config()
+    
+    chdman_path = settings.get('chdman_path', 'chdman')
+    if not shutil.which(chdman_path):
+        return jsonify({'success': False, 'error': 'chdman not found. Please install MAME tools.'}), 400
+    
+    _cleanup_completed_tasks()
+    task_id = str(uuid.uuid4())[:8]
+    task = {
+        'task_id': task_id,
+        'task_type': 'chd_convert',
+        'status': 'running',
+        'progress': 0,
+        'total': len(files),
+        'current_file': '',
+        'percent': 0,
+        'results': {
+            'converted': 0, 'failed': 0, 'skipped': 0,
+            'original_size': 0, 'compressed_size': 0, 'files': []
+        },
+        'logs': [f"[{datetime.now().strftime('%H:%M:%S')}] Starting conversion of {len(files)} files"]
+    }
+    _rom_tool_tasks[task_id] = task
+    
+    def run_conversion():
+        for i, file_path in enumerate(files):
+            if task['status'] == 'cancelled':
+                task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Conversion cancelled")
+                break
             
-            task['status'] = 'completed' if task['status'] != 'cancelled' else 'cancelled'
-            task['end_time'] = datetime.now()
-            if task['results']['original_size'] > 0:
-                saved = task['results']['original_size'] - task['results']['compressed_size']
-                task['results']['space_saved'] = saved
-                task['results']['percent_saved'] = round((saved / task['results']['original_size']) * 100, 1)
-            task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Conversion completed")
+            task['progress'] = i + 1
+            task['current_file'] = os.path.basename(file_path)
+            task['percent'] = round((i + 1) / len(files) * 100, 1) if files else 0
+            
+            src_size = os.path.getsize(file_path)
+            dst_path = os.path.splitext(file_path)[0] + '.chd'
+            
+            task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Converting: {os.path.basename(file_path)}")
+            
+            try:
+                cmd = [chdman_path, 'createcd', '-i', file_path, '-o', dst_path]
+                result = subprocess.run(cmd, capture_output=True, text=True, timeout=3600)
+                
+                if result.returncode == 0 and os.path.exists(dst_path):
+                    dst_size = os.path.getsize(dst_path)
+                    task['results']['converted'] += 1
+                    task['results']['original_size'] += src_size
+                    task['results']['compressed_size'] += dst_size
+                    task['results']['files'].append({
+                        'source': file_path, 'destination': dst_path,
+                        'original_size': src_size, 'compressed_size': dst_size, 'status': 'success'
+                    })
+                    task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✓ Converted")
+                    
+                    if settings.get('chd_delete_originals', False):
+                        os.remove(file_path)
+                else:
+                    task['results']['failed'] += 1
+                    task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Failed")
+            except Exception as e:
+                task['results']['failed'] += 1
+                logger.error(f"CHD conversion error for {file_path}: {e}")
+                task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Error processing file")
         
-        thread = threading.Thread(target=run_conversion)
-        thread.daemon = True
-        thread.start()
-        
-        return jsonify({'success': True, 'task_id': task_id})
-        
-    except Exception as e:
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+        task['status'] = 'completed' if task['status'] != 'cancelled' else 'cancelled'
+        task['end_time'] = datetime.now()
+        if task['results']['original_size'] > 0:
+            saved = task['results']['original_size'] - task['results']['compressed_size']
+            task['results']['space_saved'] = saved
+            task['results']['percent_saved'] = round((saved / task['results']['original_size']) * 100, 1)
+        task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Conversion completed")
+    
+    thread = threading.Thread(target=run_conversion)
+    thread.daemon = True
+    thread.start()
+    
+    return jsonify({'success': True, 'task_id': task_id})
+    
 
 
 # =============================================================================
@@ -690,100 +663,96 @@ def api_chd_converter_convert():
 
 @tools_bp.route('/api/rom-tools/chd-verify/scan', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_chd_verify_scan():
     """Scan for CHD files"""
-    try:
-        data = request.get_json() or {}
-        path = data.get('path', _get_rom_path())
-        if safe_path(path, _get_rom_path()) is None:
-            return jsonify({'success': False, 'error': 'Invalid scan path'}), 400
-        settings = load_rom_tools_config()
+    data = request.get_json() or {}
+    path = data.get('path', _get_rom_path())
+    if safe_path(path, _get_rom_path()) is None:
+        return jsonify({'success': False, 'error': 'Invalid scan path'}), 400
+    settings = load_rom_tools_config()
 
-        recursive = settings.get('recursive_scan', True)
-        pattern = os.path.join(path, '**', '*.chd') if recursive else os.path.join(path, '*.chd')
-        files = glob.glob(pattern, recursive=recursive)
-        
-        result = [{'path': f, 'name': os.path.basename(f), 'size': os.path.getsize(f)} for f in sorted(files)]
-        return jsonify({'success': True, 'files': result})
-        
-    except Exception as e:
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    recursive = settings.get('recursive_scan', True)
+    pattern = os.path.join(path, '**', '*.chd') if recursive else os.path.join(path, '*.chd')
+    files = glob.glob(pattern, recursive=recursive)
+    
+    result = [{'path': f, 'name': os.path.basename(f), 'size': os.path.getsize(f)} for f in sorted(files)]
+    return jsonify({'success': True, 'files': result})
+    
 
 
 @tools_bp.route('/api/rom-tools/chd-verify/verify', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_chd_verify_verify():
     """Start CHD verification"""
-    try:
-        data = request.get_json() or {}
-        files = data.get('files', [])
-        settings = load_rom_tools_config()
-        
-        chdman_path = settings.get('chdman_path', 'chdman')
-        if not shutil.which(chdman_path):
-            return jsonify({'success': False, 'error': 'chdman not found'}), 400
-        
-        _cleanup_completed_tasks()
-        task_id = str(uuid.uuid4())[:8]
-        task = {
-            'task_id': task_id,
-            'task_type': 'chd_verify',
-            'status': 'running',
-            'progress': 0,
-            'total': len(files),
-            'current_file': '',
-            'percent': 0,
-            'results': {'total': len(files), 'valid': 0, 'invalid': 0, 'total_size': 0, 'files': []},
-            'logs': [f"[{datetime.now().strftime('%H:%M:%S')}] Starting verification"]
-        }
-        _rom_tool_tasks[task_id] = task
-        
-        def run_verification():
-            for i, file_path in enumerate(files):
-                if task['status'] == 'cancelled':
-                    break
+    data = request.get_json() or {}
+    files = data.get('files', [])
+    settings = load_rom_tools_config()
+    
+    chdman_path = settings.get('chdman_path', 'chdman')
+    if not shutil.which(chdman_path):
+        return jsonify({'success': False, 'error': 'chdman not found'}), 400
+    
+    _cleanup_completed_tasks()
+    task_id = str(uuid.uuid4())[:8]
+    task = {
+        'task_id': task_id,
+        'task_type': 'chd_verify',
+        'status': 'running',
+        'progress': 0,
+        'total': len(files),
+        'current_file': '',
+        'percent': 0,
+        'results': {'total': len(files), 'valid': 0, 'invalid': 0, 'total_size': 0, 'files': []},
+        'logs': [f"[{datetime.now().strftime('%H:%M:%S')}] Starting verification"]
+    }
+    _rom_tool_tasks[task_id] = task
+    
+    def run_verification():
+        for i, file_path in enumerate(files):
+            if task['status'] == 'cancelled':
+                break
+            
+            task['progress'] = i + 1
+            task['current_file'] = os.path.basename(file_path)
+            task['percent'] = round((i + 1) / len(files) * 100, 1) if files else 0
+            
+            file_size = os.path.getsize(file_path)
+            task['results']['total_size'] += file_size
+            task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Verifying: {os.path.basename(file_path)}")
+            
+            try:
+                result = subprocess.run([chdman_path, 'verify', '-i', file_path], 
+                                      capture_output=True, text=True, timeout=600)
                 
-                task['progress'] = i + 1
-                task['current_file'] = os.path.basename(file_path)
-                task['percent'] = round((i + 1) / len(files) * 100, 1) if files else 0
-                
-                file_size = os.path.getsize(file_path)
-                task['results']['total_size'] += file_size
-                task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Verifying: {os.path.basename(file_path)}")
-                
-                try:
-                    result = subprocess.run([chdman_path, 'verify', '-i', file_path], 
-                                          capture_output=True, text=True, timeout=600)
-                    
-                    if result.returncode == 0:
-                        task['results']['valid'] += 1
-                        task['results']['files'].append({
-                            'path': file_path, 'name': os.path.basename(file_path),
-                            'size': file_size, 'status': 'valid'
-                        })
-                        task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✓ Valid")
-                    else:
-                        task['results']['invalid'] += 1
-                        task['results']['files'].append({
-                            'path': file_path, 'name': os.path.basename(file_path),
-                            'size': file_size, 'status': 'invalid'
-                        })
-                        task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Invalid")
-                except Exception as e:
+                if result.returncode == 0:
+                    task['results']['valid'] += 1
+                    task['results']['files'].append({
+                        'path': file_path, 'name': os.path.basename(file_path),
+                        'size': file_size, 'status': 'valid'
+                    })
+                    task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✓ Valid")
+                else:
                     task['results']['invalid'] += 1
-                    task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Error: {e}")
+                    task['results']['files'].append({
+                        'path': file_path, 'name': os.path.basename(file_path),
+                        'size': file_size, 'status': 'invalid'
+                    })
+                    task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Invalid")
+            except Exception as e:
+                task['results']['invalid'] += 1
+                task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Error: {e}")
 
-            task['status'] = 'completed' if task['status'] != 'cancelled' else 'cancelled'
-            task['end_time'] = datetime.now()
+        task['status'] = 'completed' if task['status'] != 'cancelled' else 'cancelled'
+        task['end_time'] = datetime.now()
 
-        thread = threading.Thread(target=run_verification)
-        thread.daemon = True
-        thread.start()
-        
-        return jsonify({'success': True, 'task_id': task_id})
-        
-    except Exception as e:
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    thread = threading.Thread(target=run_verification)
+    thread.daemon = True
+    thread.start()
+    
+    return jsonify({'success': True, 'task_id': task_id})
+    
 
 
 # =============================================================================
@@ -792,221 +761,216 @@ def api_chd_verify_verify():
 
 @tools_bp.route('/api/rom-tools/duplicate-finder/scan', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_duplicate_finder_scan():
     """Start duplicate file scanning"""
-    try:
-        data = request.get_json() or {}
-        path = data.get('path', _get_rom_path())
-        if safe_path(path, _get_rom_path()) is None:
-            return jsonify({'success': False, 'error': 'Invalid scan path'}), 400
-        settings = load_rom_tools_config()
-        method = data.get('method', settings.get('duplicate_method', 'hash'))
-        recursive = data.get('recursive', True)
-        ignore_region = data.get('ignore_region', True)
-        include_archives = data.get('include_archives', False)
+    data = request.get_json() or {}
+    path = data.get('path', _get_rom_path())
+    if safe_path(path, _get_rom_path()) is None:
+        return jsonify({'success': False, 'error': 'Invalid scan path'}), 400
+    settings = load_rom_tools_config()
+    method = data.get('method', settings.get('duplicate_method', 'hash'))
+    recursive = data.get('recursive', True)
+    ignore_region = data.get('ignore_region', True)
+    include_archives = data.get('include_archives', False)
 
-        if not os.path.exists(path):
-            return jsonify({'success': False, 'error': f'Path does not exist: {path}'}), 400
+    if not os.path.exists(path):
+        return jsonify({'success': False, 'error': f'Path does not exist: {path}'}), 400
 
-        _cleanup_completed_tasks()
-        task_id = str(uuid.uuid4())[:8]
-        task = {
-            'task_id': task_id,
-            'task_type': 'duplicate_scan',
-            'status': 'running',
-            'progress': 0,
-            'total': 0,
-            'current_file': '',
-            'current_action': 'Initializing...',
-            'percent': 0,
-            'results': {'files_scanned': 0, 'duplicate_groups': 0, 'duplicate_files': 0, 'wasted_space': 0, 'groups': []},
-            'logs': [f"[{datetime.now().strftime('%H:%M:%S')}] Starting duplicate scan on {path}"],
-            'method': method
-        }
-        _rom_tool_tasks[task_id] = task
+    _cleanup_completed_tasks()
+    task_id = str(uuid.uuid4())[:8]
+    task = {
+        'task_id': task_id,
+        'task_type': 'duplicate_scan',
+        'status': 'running',
+        'progress': 0,
+        'total': 0,
+        'current_file': '',
+        'current_action': 'Initializing...',
+        'percent': 0,
+        'results': {'files_scanned': 0, 'duplicate_groups': 0, 'duplicate_files': 0, 'wasted_space': 0, 'groups': []},
+        'logs': [f"[{datetime.now().strftime('%H:%M:%S')}] Starting duplicate scan on {path}"],
+        'method': method
+    }
+    _rom_tool_tasks[task_id] = task
+    
+    rom_logger = logging.getLogger('rom_tools')
+    rom_logger.info(f"Duplicate scan started on {path} using method: {method}")
+    
+    def run_scan():
+        rom_extensions = [
+            '.iso', '.cue', '.bin', '.chd', '.gdi', '.cso', '.pbp', '.mdf', '.nrg',
+            '.nes', '.fds', '.unf', '.sfc', '.smc', '.fig', '.swc', '.n64', '.z64', '.v64',
+            '.nds', '.3ds', '.cia', '.gcm', '.gcz', '.wbfs', '.wad', '.wia', '.rvz',
+            '.gb', '.gbc', '.gba', '.sgb', '.vb',
+            '.md', '.smd', '.gen', '.32x', '.sms', '.gg', '.sg', '.sc',
+            '.pbp', '.pkg',
+            '.a26', '.a52', '.a78', '.lnx', '.jag', '.j64',
+            '.pce', '.sgx', '.cdi', '.ngp', '.ngc', '.ws', '.wsc', '.vec',
+            '.adf', '.adz', '.dms', '.ipf', '.d64', '.t64', '.tap', '.crt', '.prg',
+            '.tzx', '.z80', '.sna', '.dsk', '.st', '.stx', '.msa',
+            '.zip',
+        ]
         
-        rom_logger = logging.getLogger('rom_tools')
-        rom_logger.info(f"Duplicate scan started on {path} using method: {method}")
+        if include_archives:
+            rom_extensions.extend(['.7z', '.rar'])
         
-        def run_scan():
-            rom_extensions = [
-                '.iso', '.cue', '.bin', '.chd', '.gdi', '.cso', '.pbp', '.mdf', '.nrg',
-                '.nes', '.fds', '.unf', '.sfc', '.smc', '.fig', '.swc', '.n64', '.z64', '.v64',
-                '.nds', '.3ds', '.cia', '.gcm', '.gcz', '.wbfs', '.wad', '.wia', '.rvz',
-                '.gb', '.gbc', '.gba', '.sgb', '.vb',
-                '.md', '.smd', '.gen', '.32x', '.sms', '.gg', '.sg', '.sc',
-                '.pbp', '.pkg',
-                '.a26', '.a52', '.a78', '.lnx', '.jag', '.j64',
-                '.pce', '.sgx', '.cdi', '.ngp', '.ngc', '.ws', '.wsc', '.vec',
-                '.adf', '.adz', '.dms', '.ipf', '.d64', '.t64', '.tap', '.crt', '.prg',
-                '.tzx', '.z80', '.sna', '.dsk', '.st', '.stx', '.msa',
-                '.zip',
-            ]
+        task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Scanning for files...")
+        task['current_action'] = 'Scanning directory for files...'
+        
+        files = []
+        extensions_lower = [ext.lower() for ext in rom_extensions]
+        
+        if recursive:
+            for root, dirs, filenames in os.walk(path):
+                for filename in filenames:
+                    if any(filename.lower().endswith(ext) for ext in extensions_lower):
+                        files.append(os.path.join(root, filename))
+                task['current_action'] = f'Scanning: {os.path.basename(root)}'
+        else:
+            for filename in os.listdir(path):
+                filepath = os.path.join(path, filename)
+                if os.path.isfile(filepath) and any(filename.lower().endswith(ext) for ext in extensions_lower):
+                    files.append(filepath)
+        
+        task['total'] = len(files)
+        task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Found {len(files)} ROM files")
+        
+        if len(files) == 0:
+            task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] No files found")
+            task['status'] = 'completed'
+            task['end_time'] = datetime.now()
+            return
+        
+        region_tags = [r'\(USA\)', r'\(Europe\)', r'\(Japan\)', r'\(World\)', r'\(U\)', r'\(E\)', r'\(J\)', 
+                      r'\(En\)', r'\(Fr\)', r'\(De\)', r'\(Es\)', r'\(It\)', r'\(Nl\)', r'\(Pt\)', r'\(Sv\)',
+                      r'\(Ko\)', r'\(Zh\)', r'\(Tw\)', r'\[!\]', r'\[a\]', r'\[b\]', r'\[h\]', r'\[o\]', r'\[p\]', r'\[t\]']
+        
+        def normalize_name(name):
+            n = name
+            if ignore_region:
+                for p in region_tags:
+                    n = re.sub(p, '', n, flags=re.IGNORECASE)
+            n = re.sub(r'\(Rev\s*\d+\)', '', n, flags=re.IGNORECASE)
+            n = re.sub(r'\(v\d+\.?\d*\)', '', n, flags=re.IGNORECASE)
+            return re.sub(r'\s+', ' ', n).strip().lower()
+        
+        def hash_file(fp):
+            h = hashlib.sha256()
+            try:
+                with open(fp, 'rb') as f:
+                    for chunk in iter(lambda: f.read(65536), b''):
+                        h.update(chunk)
+                return h.hexdigest()
+            except OSError:
+                return None
+        
+        groups = {}
+        for i, f in enumerate(files):
+            if task['status'] == 'cancelled':
+                break
             
-            if include_archives:
-                rom_extensions.extend(['.7z', '.rar'])
+            task['progress'] = i + 1
+            task['current_file'] = os.path.basename(f)
+            task['percent'] = round((i + 1) / len(files) * 100, 1) if files else 0
+            task['results']['files_scanned'] = i + 1
             
-            task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Scanning for files...")
-            task['current_action'] = 'Scanning directory for files...'
-            
-            files = []
-            extensions_lower = [ext.lower() for ext in rom_extensions]
-            
-            if recursive:
-                for root, dirs, filenames in os.walk(path):
-                    for filename in filenames:
-                        if any(filename.lower().endswith(ext) for ext in extensions_lower):
-                            files.append(os.path.join(root, filename))
-                    task['current_action'] = f'Scanning: {os.path.basename(root)}'
+            if method == 'hash':
+                task['current_action'] = f'Hashing: {os.path.basename(f)}'
             else:
-                for filename in os.listdir(path):
-                    filepath = os.path.join(path, filename)
-                    if os.path.isfile(filepath) and any(filename.lower().endswith(ext) for ext in extensions_lower):
-                        files.append(filepath)
+                task['current_action'] = f'Comparing: {os.path.basename(f)}'
             
-            task['total'] = len(files)
-            task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Found {len(files)} ROM files")
-            
-            if len(files) == 0:
-                task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] No files found")
-                task['status'] = 'completed'
-                task['end_time'] = datetime.now()
-                return
-            
-            region_tags = [r'\(USA\)', r'\(Europe\)', r'\(Japan\)', r'\(World\)', r'\(U\)', r'\(E\)', r'\(J\)', 
-                          r'\(En\)', r'\(Fr\)', r'\(De\)', r'\(Es\)', r'\(It\)', r'\(Nl\)', r'\(Pt\)', r'\(Sv\)',
-                          r'\(Ko\)', r'\(Zh\)', r'\(Tw\)', r'\[!\]', r'\[a\]', r'\[b\]', r'\[h\]', r'\[o\]', r'\[p\]', r'\[t\]']
-            
-            def normalize_name(name):
-                n = name
-                if ignore_region:
-                    for p in region_tags:
-                        n = re.sub(p, '', n, flags=re.IGNORECASE)
-                n = re.sub(r'\(Rev\s*\d+\)', '', n, flags=re.IGNORECASE)
-                n = re.sub(r'\(v\d+\.?\d*\)', '', n, flags=re.IGNORECASE)
-                return re.sub(r'\s+', ' ', n).strip().lower()
-            
-            def hash_file(fp):
-                h = hashlib.sha256()
-                try:
-                    with open(fp, 'rb') as f:
-                        for chunk in iter(lambda: f.read(65536), b''):
-                            h.update(chunk)
-                    return h.hexdigest()
-                except OSError:
-                    return None
-            
-            groups = {}
-            for i, f in enumerate(files):
-                if task['status'] == 'cancelled':
-                    break
-                
-                task['progress'] = i + 1
-                task['current_file'] = os.path.basename(f)
-                task['percent'] = round((i + 1) / len(files) * 100, 1) if files else 0
-                task['results']['files_scanned'] = i + 1
+            try:
+                stat_info = os.stat(f)
+                info = {
+                    'path': f, 
+                    'name': os.path.basename(f), 
+                    'size': stat_info.st_size, 
+                    'modified': datetime.fromtimestamp(stat_info.st_mtime).isoformat()
+                }
                 
                 if method == 'hash':
-                    task['current_action'] = f'Hashing: {os.path.basename(f)}'
+                    key = hash_file(f)
+                    if key is None:
+                        continue
+                elif method == 'name':
+                    key = normalize_name(os.path.splitext(os.path.basename(f))[0])
                 else:
-                    task['current_action'] = f'Comparing: {os.path.basename(f)}'
+                    name_key = normalize_name(os.path.splitext(os.path.basename(f))[0])
+                    hash_key = hash_file(f)
+                    if hash_key is None:
+                        continue
+                    key = f"{name_key}|{hash_key}"
                 
-                try:
-                    stat_info = os.stat(f)
-                    info = {
-                        'path': f, 
-                        'name': os.path.basename(f), 
-                        'size': stat_info.st_size, 
-                        'modified': datetime.fromtimestamp(stat_info.st_mtime).isoformat()
-                    }
-                    
-                    if method == 'hash':
-                        key = hash_file(f)
-                        if key is None:
-                            continue
-                    elif method == 'name':
-                        key = normalize_name(os.path.splitext(os.path.basename(f))[0])
-                    else:
-                        name_key = normalize_name(os.path.splitext(os.path.basename(f))[0])
-                        hash_key = hash_file(f)
-                        if hash_key is None:
-                            continue
-                        key = f"{name_key}|{hash_key}"
-                    
-                    if key not in groups:
-                        groups[key] = []
-                    groups[key].append(info)
-                    
-                except Exception as e:
-                    task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Error: {os.path.basename(f)}: {e}")
-            
-            task['current_action'] = 'Analyzing duplicate groups...'
-            
-            dup_groups = []
-            for key, gfiles in groups.items():
-                if len(gfiles) > 1:
-                    gfiles.sort(key=lambda x: x['modified'], reverse=True)
-                    wasted = sum(f['size'] for f in gfiles[1:])
-                    dup_groups.append({
-                        'key': key[:16] if len(key) > 16 else key, 
-                        'name': min([f['name'] for f in gfiles], key=len), 
-                        'count': len(gfiles), 
-                        'wasted': wasted, 
-                        'files': gfiles
-                    })
-                    task['results']['duplicate_files'] += len(gfiles) - 1
-                    task['results']['wasted_space'] += wasted
-            
-            task['results']['groups'] = dup_groups
-            task['results']['duplicate_groups'] = len(dup_groups)
-            task['status'] = 'completed' if task['status'] != 'cancelled' else 'cancelled'
-            task['end_time'] = datetime.now()
-            task['current_action'] = 'Scan complete'
-            task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Scan complete: {len(dup_groups)} groups found")
+                if key not in groups:
+                    groups[key] = []
+                groups[key].append(info)
+                
+            except Exception as e:
+                task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Error: {os.path.basename(f)}: {e}")
         
-        thread = threading.Thread(target=run_scan)
-        thread.daemon = True
-        thread.start()
+        task['current_action'] = 'Analyzing duplicate groups...'
         
-        return jsonify({'success': True, 'task_id': task_id})
+        dup_groups = []
+        for key, gfiles in groups.items():
+            if len(gfiles) > 1:
+                gfiles.sort(key=lambda x: x['modified'], reverse=True)
+                wasted = sum(f['size'] for f in gfiles[1:])
+                dup_groups.append({
+                    'key': key[:16] if len(key) > 16 else key, 
+                    'name': min([f['name'] for f in gfiles], key=len), 
+                    'count': len(gfiles), 
+                    'wasted': wasted, 
+                    'files': gfiles
+                })
+                task['results']['duplicate_files'] += len(gfiles) - 1
+                task['results']['wasted_space'] += wasted
         
-    except Exception as e:
-        logging.getLogger('rom_tools').error(f"Duplicate scan error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+        task['results']['groups'] = dup_groups
+        task['results']['duplicate_groups'] = len(dup_groups)
+        task['status'] = 'completed' if task['status'] != 'cancelled' else 'cancelled'
+        task['end_time'] = datetime.now()
+        task['current_action'] = 'Scan complete'
+        task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Scan complete: {len(dup_groups)} groups found")
+    
+    thread = threading.Thread(target=run_scan)
+    thread.daemon = True
+    thread.start()
+    
+    return jsonify({'success': True, 'task_id': task_id})
+    
 
 
 @tools_bp.route('/api/rom-tools/duplicate-finder/delete', methods=['POST'])
 @admin_required
+@handle_api_errors
 def api_duplicate_finder_delete():
     """Delete specified duplicate files"""
-    try:
-        data = request.get_json() or {}
-        files = data.get('files', [])
+    data = request.get_json() or {}
+    files = data.get('files', [])
 
-        results = {'deleted': 0, 'failed': 0, 'freed_space': 0, 'errors': []}
+    results = {'deleted': 0, 'failed': 0, 'freed_space': 0, 'errors': []}
 
-        for fp in files:
-            if safe_path(fp, _get_rom_path()) is None:
+    for fp in files:
+        if safe_path(fp, _get_rom_path()) is None:
+            results['failed'] += 1
+            results['errors'].append(f'Invalid path: {fp}')
+            continue
+        try:
+            if os.path.exists(fp):
+                size = os.path.getsize(fp)
+                os.remove(fp)
+                results['deleted'] += 1
+                results['freed_space'] += size
+            else:
                 results['failed'] += 1
-                results['errors'].append(f'Invalid path: {fp}')
-                continue
-            try:
-                if os.path.exists(fp):
-                    size = os.path.getsize(fp)
-                    os.remove(fp)
-                    results['deleted'] += 1
-                    results['freed_space'] += size
-                else:
-                    results['failed'] += 1
-            except Exception as e:
-                results['failed'] += 1
-                logger.error(f"Error deleting duplicate file: {e}")
-                results['errors'].append('An error occurred during processing')
+        except Exception as e:
+            results['failed'] += 1
+            logger.error(f"Error deleting duplicate file: {e}")
+            results['errors'].append('An error occurred during processing')
 
-        return jsonify({'success': True, 'results': results})
+    return jsonify({'success': True, 'results': results})
 
-    except Exception as e:
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
 
 
 # =============================================================================
@@ -1177,107 +1141,101 @@ def screenshot_dedup():
 
 @tools_bp.route('/api/rom-tools/screenshot-dedup/scan', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_screenshot_dedup_scan():
     """Start screenshot deduplication scan"""
-    try:
-        data = request.get_json() or {}
-        method = data.get('method', 'hash')
-        threshold = int(data.get('threshold', 10))
+    data = request.get_json() or {}
+    method = data.get('method', 'hash')
+    threshold = int(data.get('threshold', 10))
 
-        _cleanup_completed_tasks()
-        task_id = str(uuid.uuid4())[:8]
-        task = {
-            'task_id': task_id,
-            'task_type': 'screenshot_dedup',
-            'status': 'running',
-            'progress': 0,
-            'total': 0,
-            'current_file': '',
-            'percent': 0,
-            'results': {
-                'games_scanned': 0, 'games_with_dupes': 0,
-                'total_duplicates': 0, 'space_reclaimable': 0, 'groups': []
-            },
-            'logs': [f"[{datetime.now().strftime('%H:%M:%S')}] Starting screenshot dedup scan (method={method})"]
-        }
-        _rom_tool_tasks[task_id] = task
+    _cleanup_completed_tasks()
+    task_id = str(uuid.uuid4())[:8]
+    task = {
+        'task_id': task_id,
+        'task_type': 'screenshot_dedup',
+        'status': 'running',
+        'progress': 0,
+        'total': 0,
+        'current_file': '',
+        'percent': 0,
+        'results': {
+            'games_scanned': 0, 'games_with_dupes': 0,
+            'total_duplicates': 0, 'space_reclaimable': 0, 'groups': []
+        },
+        'logs': [f"[{datetime.now().strftime('%H:%M:%S')}] Starting screenshot dedup scan (method={method})"]
+    }
+    _rom_tool_tasks[task_id] = task
 
-        thread = threading.Thread(
-            target=_run_screenshot_dedup_scan, args=(task, method, threshold)
-        )
-        thread.daemon = True
-        thread.start()
+    thread = threading.Thread(
+        target=_run_screenshot_dedup_scan, args=(task, method, threshold)
+    )
+    thread.daemon = True
+    thread.start()
 
-        return jsonify({'success': True, 'task_id': task_id})
+    return jsonify({'success': True, 'task_id': task_id})
 
-    except Exception as e:
-        logger.error(f"Screenshot dedup scan error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
 
 
 @tools_bp.route('/api/rom-tools/screenshot-dedup/delete', methods=['POST'])
 @admin_required
+@handle_api_errors
 def api_screenshot_dedup_delete():
     """Delete duplicate screenshots and update database"""
-    try:
-        data = request.get_json() or {}
-        deletions = data.get('deletions', [])  # [{game_id, filename}, ...]
+    data = request.get_json() or {}
+    deletions = data.get('deletions', [])  # [{game_id, filename}, ...]
 
-        screenshots_dir = os.path.join(config.STATIC_PATH, 'images', 'screenshots')
-        results = {'deleted': 0, 'failed': 0, 'freed_space': 0, 'db_updated': 0}
+    screenshots_dir = os.path.join(config.STATIC_PATH, 'images', 'screenshots')
+    results = {'deleted': 0, 'failed': 0, 'freed_space': 0, 'db_updated': 0}
 
-        # Group by game_id
-        by_game = {}
-        for d in deletions:
-            gid = d.get('game_id')
-            fn = d.get('filename', '')
-            # Validate filename (no path traversal)
-            if not fn or os.sep in fn or '/' in fn or '..' in fn:
+    # Group by game_id
+    by_game = {}
+    for d in deletions:
+        gid = d.get('game_id')
+        fn = d.get('filename', '')
+        # Validate filename (no path traversal)
+        if not fn or os.sep in fn or '/' in fn or '..' in fn:
+            results['failed'] += 1
+            continue
+        if gid not in by_game:
+            by_game[gid] = []
+        by_game[gid].append(fn)
+
+    from services.database import get_db
+    db = get_db()
+
+    for game_id, filenames in by_game.items():
+        game = db.execute(
+            "SELECT screenshots FROM games WHERE id = ?", [game_id]
+        ).fetchone()
+        if not game:
+            results['failed'] += len(filenames)
+            continue
+
+        current = [s.strip() for s in (game['screenshots'] or '').split(',') if s.strip()]
+        new_list = [s for s in current if s not in filenames]
+
+        # Delete files from disk
+        for fn in filenames:
+            filepath = os.path.join(screenshots_dir, fn)
+            try:
+                if os.path.exists(filepath):
+                    size = os.path.getsize(filepath)
+                    os.remove(filepath)
+                    results['deleted'] += 1
+                    results['freed_space'] += size
+                else:
+                    results['deleted'] += 1  # File already gone
+            except Exception as e:
                 results['failed'] += 1
-                continue
-            if gid not in by_game:
-                by_game[gid] = []
-            by_game[gid].append(fn)
+                logger.error(f"Error deleting screenshot {fn}: {e}")
 
-        from services.database import get_db
-        db = get_db()
+        # Update DB
+        db.execute(
+            "UPDATE games SET screenshots = ? WHERE id = ?",
+            [', '.join(new_list) if new_list else None, game_id]
+        )
+        results['db_updated'] += 1
 
-        for game_id, filenames in by_game.items():
-            game = db.execute(
-                "SELECT screenshots FROM games WHERE id = ?", [game_id]
-            ).fetchone()
-            if not game:
-                results['failed'] += len(filenames)
-                continue
+    db.commit()
+    return jsonify({'success': True, 'results': results})
 
-            current = [s.strip() for s in (game['screenshots'] or '').split(',') if s.strip()]
-            new_list = [s for s in current if s not in filenames]
-
-            # Delete files from disk
-            for fn in filenames:
-                filepath = os.path.join(screenshots_dir, fn)
-                try:
-                    if os.path.exists(filepath):
-                        size = os.path.getsize(filepath)
-                        os.remove(filepath)
-                        results['deleted'] += 1
-                        results['freed_space'] += size
-                    else:
-                        results['deleted'] += 1  # File already gone
-                except Exception as e:
-                    results['failed'] += 1
-                    logger.error(f"Error deleting screenshot {fn}: {e}")
-
-            # Update DB
-            db.execute(
-                "UPDATE games SET screenshots = ? WHERE id = ?",
-                [', '.join(new_list) if new_list else None, game_id]
-            )
-            results['db_updated'] += 1
-
-        db.commit()
-        return jsonify({'success': True, 'results': results})
-
-    except Exception as e:
-        logger.error(f"Screenshot dedup delete error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500

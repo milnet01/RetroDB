@@ -15,6 +15,7 @@ from datetime import datetime, timezone
 import config
 import settings_manager
 import log_manager
+from services.api_helpers import handle_api_errors
 from services.database import query, execute, get_db
 from services.auth import login_required, admin_required
 from services.security import safe_filename
@@ -176,23 +177,21 @@ def settings():
 
 @bp.route('/api/dropdown-options/<category>')
 @login_required
+@handle_api_errors
 def api_get_dropdown_options(category):
     """Get dropdown options for a category"""
-    try:
-        options = query("""
-            SELECT id, value, sort_order
-            FROM dropdown_options
-            WHERE category = ?
-            ORDER BY value COLLATE NOCASE
-        """, (category,))
-        return jsonify({'success': True, 'options': [dict(o) for o in options]})
-    except Exception as e:
-        logger.error(f"Error getting dropdown options: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    options = query("""
+        SELECT id, value, sort_order
+        FROM dropdown_options
+        WHERE category = ?
+        ORDER BY value COLLATE NOCASE
+    """, (category,))
+    return jsonify({'success': True, 'options': [dict(o) for o in options]})
 
 
 @bp.route('/api/dropdown-options/<category>', methods=['POST'])
 @admin_required
+@handle_api_errors
 def api_add_dropdown_option(category):
     """Add a new dropdown option"""
     try:
@@ -223,21 +222,15 @@ def api_add_dropdown_option(category):
         return jsonify({'success': True, 'message': f'Added "{value}" to {category}'})
     except sqlite3.IntegrityError:
         return jsonify({'success': False, 'error': 'Option already exists'}), 400
-    except Exception as e:
-        logger.error(f"Error adding dropdown option: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
 
 
 @bp.route('/api/dropdown-options/<int:option_id>', methods=['DELETE'])
 @admin_required
+@handle_api_errors
 def api_delete_dropdown_option(option_id):
     """Delete a dropdown option"""
-    try:
-        execute("DELETE FROM dropdown_options WHERE id = ?", (option_id,))
-        return jsonify({'success': True})
-    except Exception as e:
-        logger.error(f"Error deleting dropdown option: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    execute("DELETE FROM dropdown_options WHERE id = ?", (option_id,))
+    return jsonify({'success': True})
 
 
 # =============================================================================
@@ -500,54 +493,48 @@ def api_save_logging_settings():
 
 @bp.route('/api/normalize/preview/<field>')
 @admin_required
+@handle_api_errors
 def api_normalize_preview(field):
     """Preview normalization suggestions for a field (genre or modes)"""
-    try:
-        if field not in ('genre', 'modes'):
-            return jsonify({'success': False, 'error': 'Invalid field. Must be "genre" or "modes"'}), 400
+    if field not in ('genre', 'modes'):
+        return jsonify({'success': False, 'error': 'Invalid field. Must be "genre" or "modes"'}), 400
 
-        values = get_unique_values(field)
+    values = get_unique_values(field)
 
-        # Get canonical options from dropdown_options table
-        category = 'genre' if field == 'genre' else 'game_modes'
-        canonical = query(
-            "SELECT value FROM dropdown_options WHERE category = ? ORDER BY value COLLATE NOCASE",
-            (category,)
-        )
-        canonical_options = [row['value'] for row in canonical]
+    # Get canonical options from dropdown_options table
+    category = 'genre' if field == 'genre' else 'game_modes'
+    canonical = query(
+        "SELECT value FROM dropdown_options WHERE category = ? ORDER BY value COLLATE NOCASE",
+        (category,)
+    )
+    canonical_options = [row['value'] for row in canonical]
 
-        return jsonify({
-            'success': True,
-            'values': values,
-            'canonical_options': canonical_options
-        })
-    except Exception as e:
-        logger.error(f"Normalization preview error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    return jsonify({
+        'success': True,
+        'values': values,
+        'canonical_options': canonical_options
+    })
 
 
 @bp.route('/api/normalize/apply', methods=['POST'])
 @admin_required
+@handle_api_errors
 def api_normalize_apply():
     """Apply normalization mappings to game data and save custom rules"""
-    try:
-        data = request.get_json() or {}
-        field = data.get('field')
-        mappings = data.get('mappings', [])
+    data = request.get_json() or {}
+    field = data.get('field')
+    mappings = data.get('mappings', [])
 
-        if field not in ('genre', 'modes'):
-            return jsonify({'success': False, 'error': 'Invalid field. Must be "genre" or "modes"'}), 400
+    if field not in ('genre', 'modes'):
+        return jsonify({'success': False, 'error': 'Invalid field. Must be "genre" or "modes"'}), 400
 
-        if not mappings:
-            return jsonify({'success': False, 'error': 'No mappings provided'}), 400
+    if not mappings:
+        return jsonify({'success': False, 'error': 'No mappings provided'}), 400
 
-        result = apply_normalization(field, mappings)
+    result = apply_normalization(field, mappings)
 
-        return jsonify({
-            'success': True,
-            'games_updated': result['games_updated'],
-            'rules_saved': result['rules_saved']
-        })
-    except Exception as e:
-        logger.error(f"Normalization apply error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    return jsonify({
+        'success': True,
+        'games_updated': result['games_updated'],
+        'rules_saved': result['rules_saved']
+    })

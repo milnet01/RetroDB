@@ -18,6 +18,7 @@ from datetime import datetime, timezone
 
 from flask import Blueprint, render_template, jsonify
 
+from services.api_helpers import handle_api_errors
 from services.auth import login_required
 from services.database import query, execute
 from services.formatters import get_manufacturer
@@ -557,16 +558,13 @@ def get_all_trophies():
 
 @bp.route('/api/collector-trophies/refresh', methods=['POST'])
 @login_required
+@handle_api_errors
 def refresh_trophies():
     """Recalculate all trophy progress from current database state."""
-    try:
-        result = _refresh_trophies()
-        return jsonify({
-            'success': True,
-            'message': f"{result['newly_earned']} new trophies earned!" if result['newly_earned']
-                       else 'Trophy progress updated.',
-            **result,
-        })
-    except Exception as e:
-        logger.error("Failed to refresh collector trophies: %s", e, exc_info=True)
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    result = _refresh_trophies()
+    return jsonify({
+        'success': True,
+        'message': f"{result['newly_earned']} new trophies earned!" if result['newly_earned']
+                   else 'Trophy progress updated.',
+        **result,
+    })

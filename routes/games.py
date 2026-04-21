@@ -17,6 +17,7 @@ import config
 import settings_manager
 from services.database import query, execute
 from services.auth import login_required, editor_required
+from services.api_helpers import handle_api_errors
 from services.security import safe_filename
 from services.game_utils import (
     generate_sort_title, map_esrb_to_pegi, map_rating, infer_rating_from_content,
@@ -107,304 +108,295 @@ def all_games():
 
 @bp.route('/api/games')
 @login_required
+@handle_api_errors
 def api_games():
     """Paginated games API for the all-games page"""
-    try:
-        page = request.args.get('page', 1, type=int)
-        per_page = min(request.args.get('per_page', 100, type=int), 200)
+    page = request.args.get('page', 1, type=int)
+    per_page = min(request.args.get('per_page', 100, type=int), 200)
 
-        params = {k: request.args.get(k) for k in
-                  ('system', 'system_type', 'genre', 'franchise', 'developer',
-                   'publisher', 'modes', 'perspective', 'dimension', 'rating', 'source', 'search', 'letter',
-                   'show_bonus', 'ra_only',
-                   'not_genre', 'not_franchise', 'not_developer', 'not_publisher',
-                   'not_modes', 'not_perspective', 'not_dimension', 'not_rating')
-                  if request.args.get(k)}
+    params = {k: request.args.get(k) for k in
+              ('system', 'system_type', 'genre', 'franchise', 'developer',
+               'publisher', 'modes', 'perspective', 'dimension', 'rating', 'source', 'search', 'letter',
+               'show_bonus', 'ra_only',
+               'not_genre', 'not_franchise', 'not_developer', 'not_publisher',
+               'not_modes', 'not_perspective', 'not_dimension', 'not_rating')
+              if request.args.get(k)}
 
-        # Count query
-        count_sql, count_vals = _build_games_query(params, count_only=True)
-        total = query(count_sql, tuple(count_vals), one=True)['total']
+    # Count query
+    count_sql, count_vals = _build_games_query(params, count_only=True)
+    total = query(count_sql, tuple(count_vals), one=True)['total']
 
-        # Data query with pagination
-        data_sql, data_vals = _build_games_query(params)
-        offset = (page - 1) * per_page
-        data_sql += " LIMIT ? OFFSET ?"
-        data_vals.extend([per_page, offset])
-        rows = query(data_sql, tuple(data_vals))
+    # Data query with pagination
+    data_sql, data_vals = _build_games_query(params)
+    offset = (page - 1) * per_page
+    data_sql += " LIMIT ? OFFSET ?"
+    data_vals.extend([per_page, offset])
+    rows = query(data_sql, tuple(data_vals))
 
-        total_pages = (total + per_page - 1) // per_page if total > 0 else 1
+    total_pages = (total + per_page - 1) // per_page if total > 0 else 1
 
-        # Build RPCS3 local trophy mapping for PS3 games
-        rpcs3_trophy_map = {}
-        has_ps3 = any(r['system_folder'] == 'ps3' for r in rows)
-        if has_ps3:
+    # Build RPCS3 local trophy mapping for PS3 games
+    rpcs3_trophy_map = {}
+    has_ps3 = any(r['system_folder'] == 'ps3' for r in rows)
+    if has_ps3:
+        try:
+            from routes.trophies import get_trophy_data, _clean_title_for_matching as _clean_trophy_title
+            trophy_sets, _ = get_trophy_data()
+            for npwr_id, ts in trophy_sets.items():
+                clean = _clean_trophy_title(ts.title)
+                total = len(ts.base_game_trophies)
+                earned = sum(1 for t in ts.base_game_trophies if t.unlocked)
+                if total > 0 and clean:
+                    rpcs3_trophy_map[clean] = {'earned': earned, 'total': total}
+        except Exception as e:
+            logger.debug(f"RPCS3 trophy lookup skipped: {e}")
+
+    games = []
+    for g in rows:
+        rp = g['rom_path'] or ''
+        import_source = (
+            'clz' if rp.startswith('clz_import/') else
+            'steam' if rp.startswith('steam_import/') else
+            'xbox' if rp.startswith('xbox_import/') else
+            'psn' if rp.startswith('psn_import/') else
+            None
+        )
+
+        # Match RPCS3 local trophies for PS3 games
+        rpcs3_info = None
+        if g['system_folder'] == 'ps3' and rpcs3_trophy_map:
             try:
-                from routes.trophies import get_trophy_data, _clean_title_for_matching as _clean_trophy_title
-                trophy_sets, _ = get_trophy_data()
-                for npwr_id, ts in trophy_sets.items():
-                    clean = _clean_trophy_title(ts.title)
-                    total = len(ts.base_game_trophies)
-                    earned = sum(1 for t in ts.base_game_trophies if t.unlocked)
-                    if total > 0 and clean:
-                        rpcs3_trophy_map[clean] = {'earned': earned, 'total': total}
-            except Exception as e:
-                logger.debug(f"RPCS3 trophy lookup skipped: {e}")
+                clean_title = _clean_trophy_title(g['title'])
+                rpcs3_info = rpcs3_trophy_map.get(clean_title)
+            except Exception:
+                pass
 
-        games = []
-        for g in rows:
-            rp = g['rom_path'] or ''
-            import_source = (
-                'clz' if rp.startswith('clz_import/') else
-                'steam' if rp.startswith('steam_import/') else
-                'xbox' if rp.startswith('xbox_import/') else
-                'psn' if rp.startswith('psn_import/') else
-                None
-            )
-
-            # Match RPCS3 local trophies for PS3 games
-            rpcs3_info = None
-            if g['system_folder'] == 'ps3' and rpcs3_trophy_map:
-                try:
-                    clean_title = _clean_trophy_title(g['title'])
-                    rpcs3_info = rpcs3_trophy_map.get(clean_title)
-                except Exception:
-                    pass
-
-            games.append({
-                'id': g['id'],
-                'title': g['title'],
-                'sort_title': g['sort_title'],
-                'system_id': g['system_id'],
-                'system_name': g['system_name'],
-                'system_folder': g['system_folder'],
-                'system_type': g['system_type'] or '',
-                'boxart': g['boxart'],
-                'boxart_3d': g['boxart_3d'],
-                'fanart': g['fanart'],
-                'genre': g['genre'],
-                'franchise': g['franchise'],
-                'developer': g['developer'],
-                'publisher': g['publisher'],
-                'release_date': g['release_date'],
-                'modes': g['modes'],
-                'esrb_rating': g['esrb_rating'],
-                'pegi_rating': g['pegi_rating'],
-                'cero_rating': g['cero_rating'],
-                'usk_rating': g['usk_rating'],
-                'acb_rating': g['acb_rating'],
-                'fpb_rating': g['fpb_rating'],
-                'grac_rating': g['grac_rating'],
-                'classind_rating': g['classind_rating'],
-                'critic_score': g['critic_score'],
-                'critic_score_count': g['critic_score_count'],
-                'user_score': g['user_score'],
-                'user_score_count': g['user_score_count'],
-                'completion_status': g['completion_status'],
-                'scraped': g['scraped'],
-                'has_retroachievements': g['has_retroachievements'],
-                'is_bonus_disc': g['is_bonus_disc'],
-                'bonus_count': g['bonus_count'],
-                'is_clz_import': import_source == 'clz',
-                'import_source': import_source,
-                'achievement_earned': g['earned_achievements'],
-                'achievement_total': g['achievement_total'],
-                'achievement_pct': g['achievement_pct'],
-                'achievement_source': g['achievement_source'],
-                'psn_earned': g['psn_earned'],
-                'psn_total': g['psn_total'],
-                'rpcs3_earned': rpcs3_info['earned'] if rpcs3_info else None,
-                'rpcs3_total': rpcs3_info['total'] if rpcs3_info else None,
-            })
-
-        return jsonify({
-            'success': True,
-            'games': games,
-            'total': total,
-            'page': page,
-            'per_page': per_page,
-            'total_pages': total_pages,
-            'has_more': page < total_pages,
+        games.append({
+            'id': g['id'],
+            'title': g['title'],
+            'sort_title': g['sort_title'],
+            'system_id': g['system_id'],
+            'system_name': g['system_name'],
+            'system_folder': g['system_folder'],
+            'system_type': g['system_type'] or '',
+            'boxart': g['boxart'],
+            'boxart_3d': g['boxart_3d'],
+            'fanart': g['fanart'],
+            'genre': g['genre'],
+            'franchise': g['franchise'],
+            'developer': g['developer'],
+            'publisher': g['publisher'],
+            'release_date': g['release_date'],
+            'modes': g['modes'],
+            'esrb_rating': g['esrb_rating'],
+            'pegi_rating': g['pegi_rating'],
+            'cero_rating': g['cero_rating'],
+            'usk_rating': g['usk_rating'],
+            'acb_rating': g['acb_rating'],
+            'fpb_rating': g['fpb_rating'],
+            'grac_rating': g['grac_rating'],
+            'classind_rating': g['classind_rating'],
+            'critic_score': g['critic_score'],
+            'critic_score_count': g['critic_score_count'],
+            'user_score': g['user_score'],
+            'user_score_count': g['user_score_count'],
+            'completion_status': g['completion_status'],
+            'scraped': g['scraped'],
+            'has_retroachievements': g['has_retroachievements'],
+            'is_bonus_disc': g['is_bonus_disc'],
+            'bonus_count': g['bonus_count'],
+            'is_clz_import': import_source == 'clz',
+            'import_source': import_source,
+            'achievement_earned': g['earned_achievements'],
+            'achievement_total': g['achievement_total'],
+            'achievement_pct': g['achievement_pct'],
+            'achievement_source': g['achievement_source'],
+            'psn_earned': g['psn_earned'],
+            'psn_total': g['psn_total'],
+            'rpcs3_earned': rpcs3_info['earned'] if rpcs3_info else None,
+            'rpcs3_total': rpcs3_info['total'] if rpcs3_info else None,
         })
 
-    except Exception as e:
-        logger.error(f"API games error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    return jsonify({
+        'success': True,
+        'games': games,
+        'total': total,
+        'page': page,
+        'per_page': per_page,
+        'total_pages': total_pages,
+        'has_more': page < total_pages,
+    })
+
 
 
 @bp.route('/api/games/ids')
 @login_required
+@handle_api_errors
 def api_games_ids():
     """Lightweight endpoint returning only IDs matching current filters (for bulk select)."""
-    try:
-        params = {k: request.args.get(k) for k in
-                  ('system', 'system_type', 'genre', 'franchise', 'developer',
-                   'publisher', 'modes', 'perspective', 'dimension', 'rating', 'source', 'search', 'letter',
-                   'show_bonus', 'ra_only',
-                   'not_genre', 'not_franchise', 'not_developer', 'not_publisher',
-                   'not_modes', 'not_perspective', 'not_dimension', 'not_rating')
-                  if request.args.get(k)}
+    params = {k: request.args.get(k) for k in
+              ('system', 'system_type', 'genre', 'franchise', 'developer',
+               'publisher', 'modes', 'perspective', 'dimension', 'rating', 'source', 'search', 'letter',
+               'show_bonus', 'ra_only',
+               'not_genre', 'not_franchise', 'not_developer', 'not_publisher',
+               'not_modes', 'not_perspective', 'not_dimension', 'not_rating')
+              if request.args.get(k)}
 
-        # For select-unscraped, add scraped=0 filter
-        if request.args.get('unscraped') == '1':
-            params['_unscraped'] = True
+    # For select-unscraped, add scraped=0 filter
+    if request.args.get('unscraped') == '1':
+        params['_unscraped'] = True
 
-        ids_sql, ids_vals = _build_games_query(params, ids_only=True)
+    ids_sql, ids_vals = _build_games_query(params, ids_only=True)
 
-        # Append unscraped condition if requested
-        if params.get('_unscraped'):
-            ids_sql = ids_sql.replace("ORDER BY", "AND g.scraped = 0 ORDER BY")
+    # Append unscraped condition if requested
+    if params.get('_unscraped'):
+        ids_sql = ids_sql.replace("ORDER BY", "AND g.scraped = 0 ORDER BY")
 
-        rows = query(ids_sql, tuple(ids_vals))
-        ids = [r['id'] for r in rows]
+    rows = query(ids_sql, tuple(ids_vals))
+    ids = [r['id'] for r in rows]
 
-        return jsonify({'success': True, 'ids': ids, 'total': len(ids)})
-    except Exception as e:
-        logger.error(f"API games/ids error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    return jsonify({'success': True, 'ids': ids, 'total': len(ids)})
 
 
 @bp.route('/api/games/card-data')
 @login_required
+@handle_api_errors
 def api_games_card_data():
     """Get card-compatible game data for specific game IDs (for live card refresh)."""
-    try:
-        ids_param = request.args.get('ids', '')
-        if not ids_param:
-            return jsonify({'success': False, 'error': 'No IDs provided'}), 400
+    ids_param = request.args.get('ids', '')
+    if not ids_param:
+        return jsonify({'success': False, 'error': 'No IDs provided'}), 400
 
-        game_ids = []
-        for part in ids_param.split(','):
-            part = part.strip()
-            if part.isdigit():
-                game_ids.append(int(part))
-        if not game_ids or len(game_ids) > 50:
-            return jsonify({'success': False, 'error': 'Provide 1-50 valid IDs'}), 400
+    game_ids = []
+    for part in ids_param.split(','):
+        part = part.strip()
+        if part.isdigit():
+            game_ids.append(int(part))
+    if not game_ids or len(game_ids) > 50:
+        return jsonify({'success': False, 'error': 'Provide 1-50 valid IDs'}), 400
 
-        placeholders = ','.join('?' * len(game_ids))
-        sql = f"""
-            SELECT g.id, g.title, g.sort_title, g.system_id, g.boxart, g.boxart_3d,
-                   g.fanart, g.genre, g.franchise, g.developer, g.publisher,
-                   g.release_date, g.modes, g.esrb_rating, g.pegi_rating,
-                   g.cero_rating, g.usk_rating, g.acb_rating, g.fpb_rating,
-                   g.grac_rating, g.classind_rating,
-                   g.critic_score, g.critic_score_count, g.user_score, g.user_score_count,
-                   g.completion_status, g.scraped, g.has_retroachievements,
-                   g.is_bonus_disc, g.rom_path, g.ra_achievement_count,
-                   s.name AS system_name, s.folder AS system_folder, s.system_type,
-                   COALESCE(bc.bonus_count, 0) AS bonus_count,
-                   gap.earned_achievements,
-                   CASE WHEN COALESCE(gap.total_achievements, 0) > 0
-                        THEN gap.total_achievements
-                        ELSE g.ra_achievement_count END AS achievement_total,
-                   gap.completion_percentage AS achievement_pct,
-                   gap.source AS achievement_source,
-                   psn.psn_earned, psn.psn_total, psn.psn_progress
-            FROM games g
-            JOIN systems s ON g.system_id = s.id
-            LEFT JOIN (
-                SELECT parent_game_id, COUNT(*) AS bonus_count
-                FROM games
-                WHERE is_bonus_disc = 1
-                GROUP BY parent_game_id
-            ) bc ON bc.parent_game_id = g.id
-            LEFT JOIN game_achievement_progress gap ON gap.game_id = g.id
-            LEFT JOIN (
-                SELECT pg.linked_game_id,
-                       (pg.earned_bronze + pg.earned_silver + pg.earned_gold + pg.earned_platinum) AS psn_earned,
-                       COUNT(pt.id) AS psn_total,
-                       pg.progress AS psn_progress
-                FROM psn_games pg
-                LEFT JOIN psn_trophies pt ON pt.psn_game_id = pg.id
-                WHERE pg.linked_game_id IS NOT NULL
-                GROUP BY pg.linked_game_id
-            ) psn ON psn.linked_game_id = g.id
-            WHERE g.id IN ({placeholders})
-        """
-        rows = query(sql, tuple(game_ids))
+    placeholders = ','.join('?' * len(game_ids))
+    sql = f"""
+        SELECT g.id, g.title, g.sort_title, g.system_id, g.boxart, g.boxart_3d,
+               g.fanart, g.genre, g.franchise, g.developer, g.publisher,
+               g.release_date, g.modes, g.esrb_rating, g.pegi_rating,
+               g.cero_rating, g.usk_rating, g.acb_rating, g.fpb_rating,
+               g.grac_rating, g.classind_rating,
+               g.critic_score, g.critic_score_count, g.user_score, g.user_score_count,
+               g.completion_status, g.scraped, g.has_retroachievements,
+               g.is_bonus_disc, g.rom_path, g.ra_achievement_count,
+               s.name AS system_name, s.folder AS system_folder, s.system_type,
+               COALESCE(bc.bonus_count, 0) AS bonus_count,
+               gap.earned_achievements,
+               CASE WHEN COALESCE(gap.total_achievements, 0) > 0
+                    THEN gap.total_achievements
+                    ELSE g.ra_achievement_count END AS achievement_total,
+               gap.completion_percentage AS achievement_pct,
+               gap.source AS achievement_source,
+               psn.psn_earned, psn.psn_total, psn.psn_progress
+        FROM games g
+        JOIN systems s ON g.system_id = s.id
+        LEFT JOIN (
+            SELECT parent_game_id, COUNT(*) AS bonus_count
+            FROM games
+            WHERE is_bonus_disc = 1
+            GROUP BY parent_game_id
+        ) bc ON bc.parent_game_id = g.id
+        LEFT JOIN game_achievement_progress gap ON gap.game_id = g.id
+        LEFT JOIN (
+            SELECT pg.linked_game_id,
+                   (pg.earned_bronze + pg.earned_silver + pg.earned_gold + pg.earned_platinum) AS psn_earned,
+                   COUNT(pt.id) AS psn_total,
+                   pg.progress AS psn_progress
+            FROM psn_games pg
+            LEFT JOIN psn_trophies pt ON pt.psn_game_id = pg.id
+            WHERE pg.linked_game_id IS NOT NULL
+            GROUP BY pg.linked_game_id
+        ) psn ON psn.linked_game_id = g.id
+        WHERE g.id IN ({placeholders})
+    """
+    rows = query(sql, tuple(game_ids))
 
-        # Build RPCS3 local trophy mapping for PS3 games
-        rpcs3_trophy_map = {}
-        has_ps3 = any(r['system_folder'] == 'ps3' for r in rows)
-        if has_ps3:
+    # Build RPCS3 local trophy mapping for PS3 games
+    rpcs3_trophy_map = {}
+    has_ps3 = any(r['system_folder'] == 'ps3' for r in rows)
+    if has_ps3:
+        try:
+            from routes.trophies import get_trophy_data, _clean_title_for_matching as _clean_trophy_title
+            trophy_sets, _ = get_trophy_data()
+            for npwr_id, ts in trophy_sets.items():
+                clean = _clean_trophy_title(ts.title)
+                total = len(ts.base_game_trophies)
+                earned = sum(1 for t in ts.base_game_trophies if t.unlocked)
+                if total > 0 and clean:
+                    rpcs3_trophy_map[clean] = {'earned': earned, 'total': total}
+        except Exception:
+            pass
+
+    games = []
+    for g in rows:
+        rp = g['rom_path'] or ''
+        import_source = (
+            'clz' if rp.startswith('clz_import/') else
+            'steam' if rp.startswith('steam_import/') else
+            'xbox' if rp.startswith('xbox_import/') else
+            'psn' if rp.startswith('psn_import/') else
+            None
+        )
+        rpcs3_info = None
+        if g['system_folder'] == 'ps3' and rpcs3_trophy_map:
             try:
-                from routes.trophies import get_trophy_data, _clean_title_for_matching as _clean_trophy_title
-                trophy_sets, _ = get_trophy_data()
-                for npwr_id, ts in trophy_sets.items():
-                    clean = _clean_trophy_title(ts.title)
-                    total = len(ts.base_game_trophies)
-                    earned = sum(1 for t in ts.base_game_trophies if t.unlocked)
-                    if total > 0 and clean:
-                        rpcs3_trophy_map[clean] = {'earned': earned, 'total': total}
+                from routes.trophies import _clean_title_for_matching as _clean_trophy_title
+                rpcs3_info = rpcs3_trophy_map.get(_clean_trophy_title(g['title']))
             except Exception:
                 pass
 
-        games = []
-        for g in rows:
-            rp = g['rom_path'] or ''
-            import_source = (
-                'clz' if rp.startswith('clz_import/') else
-                'steam' if rp.startswith('steam_import/') else
-                'xbox' if rp.startswith('xbox_import/') else
-                'psn' if rp.startswith('psn_import/') else
-                None
-            )
-            rpcs3_info = None
-            if g['system_folder'] == 'ps3' and rpcs3_trophy_map:
-                try:
-                    from routes.trophies import _clean_title_for_matching as _clean_trophy_title
-                    rpcs3_info = rpcs3_trophy_map.get(_clean_trophy_title(g['title']))
-                except Exception:
-                    pass
+        games.append({
+            'id': g['id'],
+            'title': g['title'],
+            'sort_title': g['sort_title'],
+            'system_id': g['system_id'],
+            'system_name': g['system_name'],
+            'system_folder': g['system_folder'],
+            'system_type': g['system_type'] or '',
+            'boxart': g['boxart'],
+            'boxart_3d': g['boxart_3d'],
+            'fanart': g['fanart'],
+            'genre': g['genre'],
+            'franchise': g['franchise'],
+            'developer': g['developer'],
+            'publisher': g['publisher'],
+            'release_date': g['release_date'],
+            'modes': g['modes'],
+            'esrb_rating': g['esrb_rating'],
+            'pegi_rating': g['pegi_rating'],
+            'cero_rating': g['cero_rating'],
+            'usk_rating': g['usk_rating'],
+            'acb_rating': g['acb_rating'],
+            'fpb_rating': g['fpb_rating'],
+            'grac_rating': g['grac_rating'],
+            'classind_rating': g['classind_rating'],
+            'critic_score': g['critic_score'],
+            'critic_score_count': g['critic_score_count'],
+            'user_score': g['user_score'],
+            'user_score_count': g['user_score_count'],
+            'completion_status': g['completion_status'],
+            'scraped': g['scraped'],
+            'has_retroachievements': g['has_retroachievements'],
+            'is_bonus_disc': g['is_bonus_disc'],
+            'bonus_count': g['bonus_count'],
+            'import_source': import_source,
+            'achievement_earned': g['earned_achievements'],
+            'achievement_total': g['achievement_total'],
+            'achievement_pct': g['achievement_pct'],
+            'achievement_source': g['achievement_source'],
+            'psn_earned': g['psn_earned'],
+            'psn_total': g['psn_total'],
+            'rpcs3_earned': rpcs3_info['earned'] if rpcs3_info else None,
+            'rpcs3_total': rpcs3_info['total'] if rpcs3_info else None,
+        })
 
-            games.append({
-                'id': g['id'],
-                'title': g['title'],
-                'sort_title': g['sort_title'],
-                'system_id': g['system_id'],
-                'system_name': g['system_name'],
-                'system_folder': g['system_folder'],
-                'system_type': g['system_type'] or '',
-                'boxart': g['boxart'],
-                'boxart_3d': g['boxart_3d'],
-                'fanart': g['fanart'],
-                'genre': g['genre'],
-                'franchise': g['franchise'],
-                'developer': g['developer'],
-                'publisher': g['publisher'],
-                'release_date': g['release_date'],
-                'modes': g['modes'],
-                'esrb_rating': g['esrb_rating'],
-                'pegi_rating': g['pegi_rating'],
-                'cero_rating': g['cero_rating'],
-                'usk_rating': g['usk_rating'],
-                'acb_rating': g['acb_rating'],
-                'fpb_rating': g['fpb_rating'],
-                'grac_rating': g['grac_rating'],
-                'classind_rating': g['classind_rating'],
-                'critic_score': g['critic_score'],
-                'critic_score_count': g['critic_score_count'],
-                'user_score': g['user_score'],
-                'user_score_count': g['user_score_count'],
-                'completion_status': g['completion_status'],
-                'scraped': g['scraped'],
-                'has_retroachievements': g['has_retroachievements'],
-                'is_bonus_disc': g['is_bonus_disc'],
-                'bonus_count': g['bonus_count'],
-                'import_source': import_source,
-                'achievement_earned': g['earned_achievements'],
-                'achievement_total': g['achievement_total'],
-                'achievement_pct': g['achievement_pct'],
-                'achievement_source': g['achievement_source'],
-                'psn_earned': g['psn_earned'],
-                'psn_total': g['psn_total'],
-                'rpcs3_earned': rpcs3_info['earned'] if rpcs3_info else None,
-                'rpcs3_total': rpcs3_info['total'] if rpcs3_info else None,
-            })
-
-        return jsonify({'success': True, 'games': games})
-    except Exception as e:
-        logger.error(f"API games/card-data error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    return jsonify({'success': True, 'games': games})
 
 
 @bp.route('/game/<int:game_id>', methods=['GET', 'POST'])
@@ -1082,170 +1074,164 @@ def api_game_detail(game_id):
 
 @bp.route('/api/game/<int:game_id>/edit', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_game_edit(game_id):
     """Save game edits from modal"""
-    try:
-        data = request.get_json() or {}
+    data = request.get_json() or {}
 
-        game = query("SELECT id, title FROM games WHERE id = ?", (game_id,), one=True)
-        if not game:
-            return jsonify({'success': False, 'error': 'Game not found'}), 404
+    game = query("SELECT id, title FROM games WHERE id = ?", (game_id,), one=True)
+    if not game:
+        return jsonify({'success': False, 'error': 'Game not found'}), 404
 
-        allowed_fields = [
-            'title', 'sort_title', 'franchise', 'similar_games', 'edition',
-            'release_date', 'region', 'publisher', 'developer',
-            'genre', 'modes', 'players', 'campaign', 'game_structure', 'perspective', 'dimension',
-            'controller_support', 'save_type', 'other_platforms',
-            'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating',
-            'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating',
-            'description'
-        ]
+    allowed_fields = [
+        'title', 'sort_title', 'franchise', 'similar_games', 'edition',
+        'release_date', 'region', 'publisher', 'developer',
+        'genre', 'modes', 'players', 'campaign', 'game_structure', 'perspective', 'dimension',
+        'controller_support', 'save_type', 'other_platforms',
+        'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating',
+        'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating',
+        'description'
+    ]
 
-        updates = []
-        values = []
+    updates = []
+    values = []
 
-        for field in allowed_fields:
-            if field in data:
-                value = data[field]
-                if value == '':
+    for field in allowed_fields:
+        if field in data:
+            value = data[field]
+            if value == '':
+                value = None
+            if field == 'release_date' and value:
+                if '/' in value:
+                    value = value.replace('/', '-')
+                try:
+                    datetime.strptime(value, '%Y-%m-%d')
+                except ValueError:
                     value = None
-                if field == 'release_date' and value:
-                    if '/' in value:
-                        value = value.replace('/', '-')
-                    try:
-                        datetime.strptime(value, '%Y-%m-%d')
-                    except ValueError:
-                        value = None
-                updates.append(f"{field} = ?")
-                values.append(value)
+            updates.append(f"{field} = ?")
+            values.append(value)
 
-        if not updates:
-            return jsonify({'success': False, 'error': 'No fields to update'}), 400
+    if not updates:
+        return jsonify({'success': False, 'error': 'No fields to update'}), 400
 
-        values.append(game_id)
+    values.append(game_id)
 
-        execute(f"""
-            UPDATE games SET {', '.join(updates)} WHERE id = ?
-        """, tuple(values))
+    execute(f"""
+        UPDATE games SET {', '.join(updates)} WHERE id = ?
+    """, tuple(values))
 
-        invalidate_filter_cache()
-        invalidate_analytics_cache()
+    invalidate_filter_cache()
+    invalidate_analytics_cache()
 
-        return jsonify({'success': True})
+    return jsonify({'success': True})
 
-    except Exception as e:
-        logger.error(f"Game edit error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
 
 
 
 
 @bp.route('/api/games/bulk-edit', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_games_bulk_edit():
     """Bulk edit multiple games at once"""
-    try:
-        data = request.get_json() or {}
-        game_ids = data.get('game_ids', [])
-        fields = data.get('fields', {})
-        field_modes = data.get('field_modes', {})
+    data = request.get_json() or {}
+    game_ids = data.get('game_ids', [])
+    fields = data.get('fields', {})
+    field_modes = data.get('field_modes', {})
 
-        if not game_ids:
-            return jsonify({'success': False, 'error': 'No games selected'}), 400
+    if not game_ids:
+        return jsonify({'success': False, 'error': 'No games selected'}), 400
 
-        if not fields:
-            return jsonify({'success': False, 'error': 'No fields to update'}), 400
+    if not fields:
+        return jsonify({'success': False, 'error': 'No fields to update'}), 400
 
-        bulk_allowed_fields = [
-            'completion_status', 'genre', 'publisher', 'developer',
-            'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating',
-            'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating',
-            'region', 'players',
-            'game_structure', 'perspective', 'dimension', 'campaign', 'franchise', 'modes'
-        ]
+    bulk_allowed_fields = [
+        'completion_status', 'genre', 'publisher', 'developer',
+        'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating',
+        'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating',
+        'region', 'players',
+        'game_structure', 'perspective', 'dimension', 'campaign', 'franchise', 'modes'
+    ]
 
-        # Fields that support append mode
-        appendable_fields = ['genre', 'publisher', 'developer', 'franchise', 'region', 'game_structure', 'perspective', 'dimension']
+    # Fields that support append mode
+    appendable_fields = ['genre', 'publisher', 'developer', 'franchise', 'region', 'game_structure', 'perspective', 'dimension']
 
-        # Separate append fields from replace fields
-        append_fields = {}
-        replace_updates = []
-        replace_values = []
+    # Separate append fields from replace fields
+    append_fields = {}
+    replace_updates = []
+    replace_values = []
 
-        for field, value in fields.items():
-            if field not in bulk_allowed_fields:
-                continue
-            if value == '':
-                value = None
+    for field, value in fields.items():
+        if field not in bulk_allowed_fields:
+            continue
+        if value == '':
+            value = None
 
-            mode = field_modes.get(field, 'replace')
-            if mode == 'append' and field in appendable_fields and value:
-                append_fields[field] = value
-            else:
-                replace_updates.append(f"{field} = ?")
-                replace_values.append(value)
+        mode = field_modes.get(field, 'replace')
+        if mode == 'append' and field in appendable_fields and value:
+            append_fields[field] = value
+        else:
+            replace_updates.append(f"{field} = ?")
+            replace_values.append(value)
 
-        if not replace_updates and not append_fields:
-            return jsonify({'success': False, 'error': 'No valid fields to update'}), 400
+    if not replace_updates and not append_fields:
+        return jsonify({'success': False, 'error': 'No valid fields to update'}), 400
 
-        from services.database import get_db_with_context
+    from services.database import get_db_with_context
 
-        with get_db_with_context() as conn:
-            cursor = conn.cursor()
+    with get_db_with_context() as conn:
+        cursor = conn.cursor()
 
-            # Handle standard replace updates
-            if replace_updates:
-                placeholders = ','.join('?' for _ in game_ids)
-                values = replace_values + list(game_ids)
-                cursor.execute(f"""
-                    UPDATE games SET {', '.join(replace_updates)}
-                    WHERE id IN ({placeholders})
-                """, tuple(values))
+        # Handle standard replace updates
+        if replace_updates:
+            placeholders = ','.join('?' for _ in game_ids)
+            values = replace_values + list(game_ids)
+            cursor.execute(f"""
+                UPDATE games SET {', '.join(replace_updates)}
+                WHERE id IN ({placeholders})
+            """, tuple(values))
 
-            # Handle append fields — batch updates per field
-            # field names are validated against bulk_allowed_fields whitelist — safe for SQL interpolation
-            if append_fields:
-                placeholders = ','.join('?' for _ in game_ids)
-                for field, new_value in append_fields.items():
-                    # Games with empty field: set directly in one batch
-                    cursor.execute(
-                        f"UPDATE games SET {field} = ? WHERE id IN ({placeholders}) AND ({field} IS NULL OR {field} = '')",
-                        (new_value, *game_ids)
+        # Handle append fields — batch updates per field
+        # field names are validated against bulk_allowed_fields whitelist — safe for SQL interpolation
+        if append_fields:
+            placeholders = ','.join('?' for _ in game_ids)
+            for field, new_value in append_fields.items():
+                # Games with empty field: set directly in one batch
+                cursor.execute(
+                    f"UPDATE games SET {field} = ? WHERE id IN ({placeholders}) AND ({field} IS NULL OR {field} = '')",
+                    (new_value, *game_ids)
+                )
+                # Games with existing values: check for duplicates, batch the appends
+                rows = cursor.execute(
+                    f"SELECT id, {field} FROM games WHERE id IN ({placeholders}) AND {field} IS NOT NULL AND {field} != ''",
+                    tuple(game_ids)
+                ).fetchall()
+
+                updates = []
+                for row in rows:
+                    current = row[1]
+                    existing = [v.strip().lower() for v in current.split(',') if v.strip()]
+                    if new_value.lower() not in existing:
+                        updates.append((f"{current}, {new_value}", row[0]))
+
+                if updates:
+                    cursor.executemany(
+                        f"UPDATE games SET {field} = ? WHERE id = ?",
+                        updates
                     )
-                    # Games with existing values: check for duplicates, batch the appends
-                    rows = cursor.execute(
-                        f"SELECT id, {field} FROM games WHERE id IN ({placeholders}) AND {field} IS NOT NULL AND {field} != ''",
-                        tuple(game_ids)
-                    ).fetchall()
 
-                    updates = []
-                    for row in rows:
-                        current = row[1]
-                        existing = [v.strip().lower() for v in current.split(',') if v.strip()]
-                        if new_value.lower() not in existing:
-                            updates.append((f"{current}, {new_value}", row[0]))
+        conn.commit()
 
-                    if updates:
-                        cursor.executemany(
-                            f"UPDATE games SET {field} = ? WHERE id = ?",
-                            updates
-                        )
+    logger.info(f"Bulk edit applied: {len(game_ids)} games, fields: {list(fields.keys())}")
 
-            conn.commit()
+    invalidate_filter_cache()
+    invalidate_analytics_cache()
 
-        logger.info(f"Bulk edit applied: {len(game_ids)} games, fields: {list(fields.keys())}")
+    return jsonify({
+        'success': True,
+        'updated': len(game_ids)
+    })
 
-        invalidate_filter_cache()
-        invalidate_analytics_cache()
-
-        return jsonify({
-            'success': True,
-            'updated': len(game_ids)
-        })
-
-    except Exception as e:
-        logger.error(f"Bulk edit error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
 
 
 @bp.route('/api/game/<int:game_id>/completion', methods=['POST'])
@@ -1305,6 +1291,7 @@ def api_recently_viewed():
 
 @bp.route('/api/filter-games')
 @login_required
+@handle_api_errors
 def api_filter_games():
     """Filter games by genre, publisher, developer, franchise, or player mode"""
     filter_type = request.args.get('type', '')
@@ -1314,52 +1301,43 @@ def api_filter_games():
     if not filter_type or not filter_value:
         return jsonify({'success': False, 'error': 'Filter type and value required'}), 400
 
-    try:
-        column_map = {
-            'genre': 'genre',
-            'publisher': 'publisher',
-            'developer': 'developer',
-            'modes': 'modes',
-            'franchise': 'franchise',
-            'series': 'franchise'
-        }
+    column_map = {
+        'genre': 'genre',
+        'publisher': 'publisher',
+        'developer': 'developer',
+        'modes': 'modes',
+        'franchise': 'franchise',
+        'series': 'franchise'
+    }
 
-        column = column_map.get(filter_type)
-        if not column:
-            return jsonify({'success': False, 'error': 'Invalid filter type'}), 400
+    column = column_map.get(filter_type)
+    if not column:
+        return jsonify({'success': False, 'error': 'Invalid filter type'}), 400
 
-        if sort_by == 'release_date':
-            order_clause = "ORDER BY g.release_date ASC, COALESCE(g.sort_title, g.title) COLLATE NOCASE"
-        elif sort_by == 'platform':
-            order_clause = "ORDER BY s.name COLLATE NOCASE, COALESCE(g.sort_title, g.title) COLLATE NOCASE"
-        else:
-            order_clause = "ORDER BY COALESCE(g.sort_title, g.title) COLLATE NOCASE"
+    if sort_by == 'release_date':
+        order_clause = "ORDER BY g.release_date ASC, COALESCE(g.sort_title, g.title) COLLATE NOCASE"
+    elif sort_by == 'platform':
+        order_clause = "ORDER BY s.name COLLATE NOCASE, COALESCE(g.sort_title, g.title) COLLATE NOCASE"
+    else:
+        order_clause = "ORDER BY COALESCE(g.sort_title, g.title) COLLATE NOCASE"
 
-        if filter_type == 'modes':
-            if 'single' in filter_value.lower():
-                games = query(f"""
-                    SELECT g.*, s.name AS system_name
-                    FROM games g
-                    JOIN systems s ON g.system_id = s.id
-                    WHERE g.{column} LIKE '%Single%' OR g.players = 1
-                    {order_clause}
-                """)
-            elif 'multi' in filter_value.lower():
-                games = query(f"""
-                    SELECT g.*, s.name AS system_name
-                    FROM games g
-                    JOIN systems s ON g.system_id = s.id
-                    WHERE g.{column} LIKE '%Multi%' OR g.players > 1
-                    {order_clause}
-                """)
-            else:
-                games = query(f"""
-                    SELECT g.*, s.name AS system_name
-                    FROM games g
-                    JOIN systems s ON g.system_id = s.id
-                    WHERE g.{column} LIKE ? ESCAPE '\\'
-                    {order_clause}
-                """, (f'%{escape_like(filter_value)}%',))
+    if filter_type == 'modes':
+        if 'single' in filter_value.lower():
+            games = query(f"""
+                SELECT g.*, s.name AS system_name
+                FROM games g
+                JOIN systems s ON g.system_id = s.id
+                WHERE g.{column} LIKE '%Single%' OR g.players = 1
+                {order_clause}
+            """)
+        elif 'multi' in filter_value.lower():
+            games = query(f"""
+                SELECT g.*, s.name AS system_name
+                FROM games g
+                JOIN systems s ON g.system_id = s.id
+                WHERE g.{column} LIKE '%Multi%' OR g.players > 1
+                {order_clause}
+            """)
         else:
             games = query(f"""
                 SELECT g.*, s.name AS system_name
@@ -1368,23 +1346,28 @@ def api_filter_games():
                 WHERE g.{column} LIKE ? ESCAPE '\\'
                 {order_clause}
             """, (f'%{escape_like(filter_value)}%',))
+    else:
+        games = query(f"""
+            SELECT g.*, s.name AS system_name
+            FROM games g
+            JOIN systems s ON g.system_id = s.id
+            WHERE g.{column} LIKE ? ESCAPE '\\'
+            {order_clause}
+        """, (f'%{escape_like(filter_value)}%',))
 
-        result_games = []
-        for g in games:
-            result_games.append({
-                'id': g['id'],
-                'title': g['title'],
-                'system_name': g['system_name'],
-                'boxart': g['boxart'],
-                'genre': g['genre'],
-                'release_date': g['release_date'],
-                'publisher': g['publisher'],
-                'developer': g['developer']
-            })
+    result_games = []
+    for g in games:
+        result_games.append({
+            'id': g['id'],
+            'title': g['title'],
+            'system_name': g['system_name'],
+            'boxart': g['boxart'],
+            'genre': g['genre'],
+            'release_date': g['release_date'],
+            'publisher': g['publisher'],
+            'developer': g['developer']
+        })
 
-        return jsonify({'success': True, 'games': result_games, 'sort': sort_by})
-    except Exception as e:
-        logger.error(f"Filter API error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    return jsonify({'success': True, 'games': result_games, 'sort': sort_by})
 
 

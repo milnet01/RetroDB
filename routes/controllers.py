@@ -9,6 +9,7 @@ import logging
 
 from services.database import query, execute
 from services.auth import login_required, editor_required
+from services.api_helpers import handle_api_errors
 
 logger = logging.getLogger(__name__)
 
@@ -142,211 +143,21 @@ SYSTEM_DEFAULT_CONTROLLER = {
 
 @bp.route('/api/controllers')
 @login_required
+@handle_api_errors
 def api_get_all_controllers():
     """Get all controllers from the global library, sorted alphabetically"""
-    try:
-        # Get all controllers
-        controllers = query("""
-            SELECT c.id, c.name, c.manufacturer, c.release_year, c.description,
-                   c.button_layout, c.image, c.sort_order
-            FROM controllers c
-            ORDER BY c.manufacturer COLLATE NOCASE, c.name COLLATE NOCASE
-        """)
+    # Get all controllers
+    controllers = query("""
+        SELECT c.id, c.name, c.manufacturer, c.release_year, c.description,
+               c.button_layout, c.image, c.sort_order
+        FROM controllers c
+        ORDER BY c.manufacturer COLLATE NOCASE, c.name COLLATE NOCASE
+    """)
 
-        # For each controller, get all associated systems
-        result = []
-        for c in controllers:
-            ctrl = dict(c)
-
-            # Get systems from junction table
-            systems = query("""
-                SELECT s.id, s.name
-                FROM systems s
-                JOIN system_controllers sc ON s.id = sc.system_id
-                WHERE sc.controller_id = ?
-                ORDER BY s.name COLLATE NOCASE
-            """, (ctrl['id'],))
-
-            ctrl['system_ids'] = [s['id'] for s in systems]
-            ctrl['system_names'] = [s['name'] for s in systems]
-            ctrl['system_name'] = ', '.join(ctrl['system_names']) if ctrl['system_names'] else None
-
-            result.append(ctrl)
-
-        return jsonify({'success': True, 'controllers': result})
-    except Exception as e:
-        logger.error(f"Error getting controllers: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
-
-
-@bp.route('/api/controllers/by-system/<int:system_id>')
-@login_required
-def api_get_controllers_for_system(system_id):
-    """Get controllers compatible with a specific system"""
-    try:
-        # First check if there are system-specific controller mappings
-        controllers = query("""
-            SELECT c.id, c.name, c.manufacturer, c.release_year, c.description,
-                   c.button_layout, c.image, c.sort_order
-            FROM controllers c
-            JOIN system_controllers sc ON c.id = sc.controller_id
-            WHERE sc.system_id = ?
-            ORDER BY c.manufacturer COLLATE NOCASE, c.name COLLATE NOCASE
-        """, (system_id,))
-
-        # If no specific mappings, return all controllers
-        if not controllers:
-            controllers = query("""
-                SELECT id, name, manufacturer, release_year, description,
-                       button_layout, image, sort_order
-                FROM controllers
-                ORDER BY manufacturer COLLATE NOCASE, name COLLATE NOCASE
-            """)
-
-        return jsonify({'success': True, 'controllers': [dict(c) for c in controllers]})
-    except Exception as e:
-        logger.error(f"Error getting controllers for system: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
-
-
-@bp.route('/api/controllers', methods=['POST'])
-@editor_required
-def api_add_controller():
-    """Add a new controller to the global library"""
-    try:
-        data = request.get_json()
-        name = data.get('name', '').strip()
-        # Support both single system_id and multiple system_ids
-        system_ids = data.get('system_ids', [])
-        if not system_ids and data.get('system_id'):
-            system_ids = [data.get('system_id')]
-        manufacturer = data.get('manufacturer', '').strip() or 'Other'
-        release_year = data.get('release_year')
-        description = data.get('description', '').strip()
-        button_layout = data.get('button_layout', '').strip()
-
-        if not name:
-            return jsonify({'success': False, 'error': 'Controller name is required'}), 400
-
-        # Check for duplicates
-        existing = query("SELECT id FROM controllers WHERE name = ?", (name,), one=True)
-        if existing:
-            return jsonify({'success': False, 'error': f'Controller "{name}" already exists'}), 400
-
-        # Get max sort order
-        result = query("SELECT MAX(sort_order) as max_order FROM controllers", one=True)
-        sort_order = (result['max_order'] or 0) + 1
-
-        # Insert controller (without system_id - we use junction table now)
-        controller_id = execute("""
-            INSERT INTO controllers (name, manufacturer, release_year, description, button_layout, sort_order)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (name, manufacturer, release_year, description, button_layout, sort_order))
-
-        # Add system associations to junction table
-        for sys_id in system_ids:
-            if sys_id:
-                try:
-                    execute("""
-                        INSERT OR IGNORE INTO system_controllers (system_id, controller_id)
-                        VALUES (?, ?)
-                    """, (int(sys_id), controller_id))
-                except Exception as e:
-                    logger.warning(f"Could not add system {sys_id} to controller {controller_id}: {e}")
-
-        return jsonify({'success': True, 'message': f'Added controller "{name}"', 'id': controller_id})
-    except Exception as e:
-        logger.error(f"Error adding controller: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
-
-
-@bp.route('/api/controllers/<int:controller_id>', methods=['DELETE'])
-@editor_required
-def api_delete_controller(controller_id):
-    """Delete a controller"""
-    try:
-        # Clear any default_controller_id references first
-        execute("UPDATE systems SET default_controller_id = NULL WHERE default_controller_id = ?", (controller_id,))
-        # Remove from junction table
-        execute("DELETE FROM system_controllers WHERE controller_id = ?", (controller_id,))
-        # Delete the controller
-        execute("DELETE FROM controllers WHERE id = ?", (controller_id,))
-        return jsonify({'success': True})
-    except Exception as e:
-        logger.error(f"Error deleting controller: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
-
-
-@bp.route('/api/controllers/<int:controller_id>', methods=['PUT'])
-@editor_required
-def api_update_controller(controller_id):
-    """Update an existing controller"""
-    try:
-        data = request.get_json()
-        name = data.get('name', '').strip()
-        # Support both single system_id and multiple system_ids
-        system_ids = data.get('system_ids', [])
-        if not system_ids and data.get('system_id'):
-            system_ids = [data.get('system_id')]
-        manufacturer = data.get('manufacturer', '').strip() or 'Other'
-        release_year = data.get('release_year')
-        description = data.get('description', '').strip()
-        button_layout = data.get('button_layout', '').strip()
-
-        if not name:
-            return jsonify({'success': False, 'error': 'Controller name is required'}), 400
-
-        # Check controller exists
-        existing = query("SELECT id FROM controllers WHERE id = ?", (controller_id,), one=True)
-        if not existing:
-            return jsonify({'success': False, 'error': 'Controller not found'}), 404
-
-        # Check for name conflicts with other controllers
-        duplicate = query("SELECT id FROM controllers WHERE name = ? AND id != ?", (name, controller_id), one=True)
-        if duplicate:
-            return jsonify({'success': False, 'error': f'Another controller named "{name}" already exists'}), 400
-
-        # Update controller (without system_id - we use junction table)
-        execute("""
-            UPDATE controllers
-            SET name = ?, manufacturer = ?, release_year = ?, description = ?, button_layout = ?
-            WHERE id = ?
-        """, (name, manufacturer, release_year, description, button_layout, controller_id))
-
-        # Update system associations - remove old ones and add new ones
-        execute("DELETE FROM system_controllers WHERE controller_id = ?", (controller_id,))
-        for sys_id in system_ids:
-            if sys_id:
-                try:
-                    execute("""
-                        INSERT OR IGNORE INTO system_controllers (system_id, controller_id)
-                        VALUES (?, ?)
-                    """, (int(sys_id), controller_id))
-                except Exception as e:
-                    logger.warning(f"Could not add system {sys_id} to controller {controller_id}: {e}")
-
-        return jsonify({'success': True, 'message': f'Updated controller "{name}"'})
-    except Exception as e:
-        logger.error(f"Error updating controller: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
-
-
-@bp.route('/api/controllers/<int:controller_id>', methods=['GET'])
-@login_required
-def api_get_controller(controller_id):
-    """Get a single controller by ID"""
-    try:
-        controller = query("""
-            SELECT c.id, c.name, c.manufacturer, c.release_year, c.description,
-                   c.button_layout, c.image, c.sort_order
-            FROM controllers c
-            WHERE c.id = ?
-        """, (controller_id,), one=True)
-
-        if not controller:
-            return jsonify({'success': False, 'error': 'Controller not found'}), 404
-
-        ctrl = dict(controller)
+    # For each controller, get all associated systems
+    result = []
+    for c in controllers:
+        ctrl = dict(c)
 
         # Get systems from junction table
         systems = query("""
@@ -355,143 +166,264 @@ def api_get_controller(controller_id):
             JOIN system_controllers sc ON s.id = sc.system_id
             WHERE sc.controller_id = ?
             ORDER BY s.name COLLATE NOCASE
-        """, (controller_id,))
+        """, (ctrl['id'],))
 
         ctrl['system_ids'] = [s['id'] for s in systems]
         ctrl['system_names'] = [s['name'] for s in systems]
         ctrl['system_name'] = ', '.join(ctrl['system_names']) if ctrl['system_names'] else None
 
-        return jsonify({
-            'success': True,
-            'controller': ctrl
-        })
-    except Exception as e:
-        logger.error(f"Error fetching controller: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+        result.append(ctrl)
+
+    return jsonify({'success': True, 'controllers': result})
+
+
+@bp.route('/api/controllers/by-system/<int:system_id>')
+@login_required
+@handle_api_errors
+def api_get_controllers_for_system(system_id):
+    """Get controllers compatible with a specific system"""
+    # First check if there are system-specific controller mappings
+    controllers = query("""
+        SELECT c.id, c.name, c.manufacturer, c.release_year, c.description,
+               c.button_layout, c.image, c.sort_order
+        FROM controllers c
+        JOIN system_controllers sc ON c.id = sc.controller_id
+        WHERE sc.system_id = ?
+        ORDER BY c.manufacturer COLLATE NOCASE, c.name COLLATE NOCASE
+    """, (system_id,))
+
+    # If no specific mappings, return all controllers
+    if not controllers:
+        controllers = query("""
+            SELECT id, name, manufacturer, release_year, description,
+                   button_layout, image, sort_order
+            FROM controllers
+            ORDER BY manufacturer COLLATE NOCASE, name COLLATE NOCASE
+        """)
+
+    return jsonify({'success': True, 'controllers': [dict(c) for c in controllers]})
+
+
+@bp.route('/api/controllers', methods=['POST'])
+@editor_required
+@handle_api_errors
+def api_add_controller():
+    """Add a new controller to the global library"""
+    data = request.get_json()
+    name = data.get('name', '').strip()
+    # Support both single system_id and multiple system_ids
+    system_ids = data.get('system_ids', [])
+    if not system_ids and data.get('system_id'):
+        system_ids = [data.get('system_id')]
+    manufacturer = data.get('manufacturer', '').strip() or 'Other'
+    release_year = data.get('release_year')
+    description = data.get('description', '').strip()
+    button_layout = data.get('button_layout', '').strip()
+
+    if not name:
+        return jsonify({'success': False, 'error': 'Controller name is required'}), 400
+
+    # Check for duplicates
+    existing = query("SELECT id FROM controllers WHERE name = ?", (name,), one=True)
+    if existing:
+        return jsonify({'success': False, 'error': f'Controller "{name}" already exists'}), 400
+
+    # Get max sort order
+    result = query("SELECT MAX(sort_order) as max_order FROM controllers", one=True)
+    sort_order = (result['max_order'] or 0) + 1
+
+    # Insert controller (without system_id - we use junction table now)
+    controller_id = execute("""
+        INSERT INTO controllers (name, manufacturer, release_year, description, button_layout, sort_order)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (name, manufacturer, release_year, description, button_layout, sort_order))
+
+    # Add system associations to junction table
+    for sys_id in system_ids:
+        if sys_id:
+            try:
+                execute("""
+                    INSERT OR IGNORE INTO system_controllers (system_id, controller_id)
+                    VALUES (?, ?)
+                """, (int(sys_id), controller_id))
+            except Exception as e:
+                logger.warning(f"Could not add system {sys_id} to controller {controller_id}: {e}")
+
+    return jsonify({'success': True, 'message': f'Added controller "{name}"', 'id': controller_id})
+
+
+@bp.route('/api/controllers/<int:controller_id>', methods=['DELETE'])
+@editor_required
+@handle_api_errors
+def api_delete_controller(controller_id):
+    """Delete a controller"""
+    # Clear any default_controller_id references first
+    execute("UPDATE systems SET default_controller_id = NULL WHERE default_controller_id = ?", (controller_id,))
+    # Remove from junction table
+    execute("DELETE FROM system_controllers WHERE controller_id = ?", (controller_id,))
+    # Delete the controller
+    execute("DELETE FROM controllers WHERE id = ?", (controller_id,))
+    return jsonify({'success': True})
+
+
+@bp.route('/api/controllers/<int:controller_id>', methods=['PUT'])
+@editor_required
+@handle_api_errors
+def api_update_controller(controller_id):
+    """Update an existing controller"""
+    data = request.get_json()
+    name = data.get('name', '').strip()
+    # Support both single system_id and multiple system_ids
+    system_ids = data.get('system_ids', [])
+    if not system_ids and data.get('system_id'):
+        system_ids = [data.get('system_id')]
+    manufacturer = data.get('manufacturer', '').strip() or 'Other'
+    release_year = data.get('release_year')
+    description = data.get('description', '').strip()
+    button_layout = data.get('button_layout', '').strip()
+
+    if not name:
+        return jsonify({'success': False, 'error': 'Controller name is required'}), 400
+
+    # Check controller exists
+    existing = query("SELECT id FROM controllers WHERE id = ?", (controller_id,), one=True)
+    if not existing:
+        return jsonify({'success': False, 'error': 'Controller not found'}), 404
+
+    # Check for name conflicts with other controllers
+    duplicate = query("SELECT id FROM controllers WHERE name = ? AND id != ?", (name, controller_id), one=True)
+    if duplicate:
+        return jsonify({'success': False, 'error': f'Another controller named "{name}" already exists'}), 400
+
+    # Update controller (without system_id - we use junction table)
+    execute("""
+        UPDATE controllers
+        SET name = ?, manufacturer = ?, release_year = ?, description = ?, button_layout = ?
+        WHERE id = ?
+    """, (name, manufacturer, release_year, description, button_layout, controller_id))
+
+    # Update system associations - remove old ones and add new ones
+    execute("DELETE FROM system_controllers WHERE controller_id = ?", (controller_id,))
+    for sys_id in system_ids:
+        if sys_id:
+            try:
+                execute("""
+                    INSERT OR IGNORE INTO system_controllers (system_id, controller_id)
+                    VALUES (?, ?)
+                """, (int(sys_id), controller_id))
+            except Exception as e:
+                logger.warning(f"Could not add system {sys_id} to controller {controller_id}: {e}")
+
+    return jsonify({'success': True, 'message': f'Updated controller "{name}"'})
+
+
+@bp.route('/api/controllers/<int:controller_id>', methods=['GET'])
+@login_required
+@handle_api_errors
+def api_get_controller(controller_id):
+    """Get a single controller by ID"""
+    controller = query("""
+        SELECT c.id, c.name, c.manufacturer, c.release_year, c.description,
+               c.button_layout, c.image, c.sort_order
+        FROM controllers c
+        WHERE c.id = ?
+    """, (controller_id,), one=True)
+
+    if not controller:
+        return jsonify({'success': False, 'error': 'Controller not found'}), 404
+
+    ctrl = dict(controller)
+
+    # Get systems from junction table
+    systems = query("""
+        SELECT s.id, s.name
+        FROM systems s
+        JOIN system_controllers sc ON s.id = sc.system_id
+        WHERE sc.controller_id = ?
+        ORDER BY s.name COLLATE NOCASE
+    """, (controller_id,))
+
+    ctrl['system_ids'] = [s['id'] for s in systems]
+    ctrl['system_names'] = [s['name'] for s in systems]
+    ctrl['system_name'] = ', '.join(ctrl['system_names']) if ctrl['system_names'] else None
+
+    return jsonify({
+        'success': True,
+        'controller': ctrl
+    })
 
 
 @bp.route('/api/systems/<int:system_id>/controllers')
 @login_required
+@handle_api_errors
 def api_get_system_controllers(system_id):
     """Get controllers available for a system (associated + universal) and its default controllers"""
-    try:
-        # Get controllers that are either:
-        # 1. Associated with this specific system via junction table
-        # 2. Universal (not associated with any system)
-        controllers = query("""
-            SELECT DISTINCT c.id, c.name, c.manufacturer, c.release_year,
-                   CASE WHEN sc.controller_id IS NOT NULL THEN 1 ELSE 0 END as is_system_specific
-            FROM controllers c
-            LEFT JOIN system_controllers sc ON c.id = sc.controller_id AND sc.system_id = ?
-            WHERE sc.controller_id IS NOT NULL
-               OR c.id NOT IN (SELECT DISTINCT controller_id FROM system_controllers)
-            ORDER BY c.manufacturer COLLATE NOCASE, c.name COLLATE NOCASE
-        """, (system_id,))
+    # Get controllers that are either:
+    # 1. Associated with this specific system via junction table
+    # 2. Universal (not associated with any system)
+    controllers = query("""
+        SELECT DISTINCT c.id, c.name, c.manufacturer, c.release_year,
+               CASE WHEN sc.controller_id IS NOT NULL THEN 1 ELSE 0 END as is_system_specific
+        FROM controllers c
+        LEFT JOIN system_controllers sc ON c.id = sc.controller_id AND sc.system_id = ?
+        WHERE sc.controller_id IS NOT NULL
+           OR c.id NOT IN (SELECT DISTINCT controller_id FROM system_controllers)
+        ORDER BY c.manufacturer COLLATE NOCASE, c.name COLLATE NOCASE
+    """, (system_id,))
 
-        # Get the system's default controllers (can be multiple)
-        default_controllers = query("""
-            SELECT c.id, c.name, c.manufacturer
-            FROM controllers c
-            JOIN system_controllers sc ON c.id = sc.controller_id
-            WHERE sc.system_id = ? AND sc.is_default = 1
-            ORDER BY c.name COLLATE NOCASE
-        """, (system_id,))
+    # Get the system's default controllers (can be multiple)
+    default_controllers = query("""
+        SELECT c.id, c.name, c.manufacturer
+        FROM controllers c
+        JOIN system_controllers sc ON c.id = sc.controller_id
+        WHERE sc.system_id = ? AND sc.is_default = 1
+        ORDER BY c.name COLLATE NOCASE
+    """, (system_id,))
 
-        # For backwards compatibility, also include legacy default_controller_id
-        legacy_default = query("SELECT default_controller_id FROM systems WHERE id = ?", (system_id,), one=True)
+    # For backwards compatibility, also include legacy default_controller_id
+    legacy_default = query("SELECT default_controller_id FROM systems WHERE id = ?", (system_id,), one=True)
 
-        default_list = [{'id': c['id'], 'name': c['name'], 'manufacturer': c['manufacturer']} for c in default_controllers]
+    default_list = [{'id': c['id'], 'name': c['name'], 'manufacturer': c['manufacturer']} for c in default_controllers]
 
-        # If no defaults in junction table but legacy default exists, include it
-        if not default_list and legacy_default and legacy_default['default_controller_id']:
-            ctrl = query("SELECT id, name, manufacturer FROM controllers WHERE id = ?",
-                        (legacy_default['default_controller_id'],), one=True)
-            if ctrl:
-                default_list = [{'id': ctrl['id'], 'name': ctrl['name'], 'manufacturer': ctrl['manufacturer']}]
+    # If no defaults in junction table but legacy default exists, include it
+    if not default_list and legacy_default and legacy_default['default_controller_id']:
+        ctrl = query("SELECT id, name, manufacturer FROM controllers WHERE id = ?",
+                    (legacy_default['default_controller_id'],), one=True)
+        if ctrl:
+            default_list = [{'id': ctrl['id'], 'name': ctrl['name'], 'manufacturer': ctrl['manufacturer']}]
 
-        return jsonify({
-            'success': True,
-            'controllers': [dict(c) for c in controllers],
-            'default_controllers': default_list,
-            # For backwards compatibility
-            'default_controller': default_list[0] if default_list else None
-        })
-    except Exception as e:
-        logger.error(f"Error getting system controllers: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    return jsonify({
+        'success': True,
+        'controllers': [dict(c) for c in controllers],
+        'default_controllers': default_list,
+        # For backwards compatibility
+        'default_controller': default_list[0] if default_list else None
+    })
 
 
 @bp.route('/api/systems/<int:system_id>/default-controllers', methods=['POST'])
 @editor_required
+@handle_api_errors
 def api_set_system_default_controllers(system_id):
     """Set multiple default controllers for a system"""
-    try:
-        data = request.get_json()
-        controller_ids = data.get('controller_ids', [])
+    data = request.get_json()
+    controller_ids = data.get('controller_ids', [])
 
-        # Verify system exists
-        system = query("SELECT id, name FROM systems WHERE id = ?", (system_id,), one=True)
-        if not system:
-            return jsonify({'success': False, 'error': 'System not found'}), 404
+    # Verify system exists
+    system = query("SELECT id, name FROM systems WHERE id = ?", (system_id,), one=True)
+    if not system:
+        return jsonify({'success': False, 'error': 'System not found'}), 404
 
-        # Clear existing defaults for this system
-        execute("UPDATE system_controllers SET is_default = 0 WHERE system_id = ?", (system_id,))
+    # Clear existing defaults for this system
+    execute("UPDATE system_controllers SET is_default = 0 WHERE system_id = ?", (system_id,))
 
-        # Also clear legacy default_controller_id
-        execute("UPDATE systems SET default_controller_id = NULL WHERE id = ?", (system_id,))
+    # Also clear legacy default_controller_id
+    execute("UPDATE systems SET default_controller_id = NULL WHERE id = ?", (system_id,))
 
-        # Set new defaults
-        for controller_id in controller_ids:
-            if controller_id:
-                # First ensure the controller-system association exists
-                existing = query("""
-                    SELECT id FROM system_controllers
-                    WHERE system_id = ? AND controller_id = ?
-                """, (system_id, controller_id), one=True)
-
-                if existing:
-                    execute("""
-                        UPDATE system_controllers SET is_default = 1
-                        WHERE system_id = ? AND controller_id = ?
-                    """, (system_id, controller_id))
-                else:
-                    # Create the association with is_default = 1
-                    execute("""
-                        INSERT INTO system_controllers (system_id, controller_id, is_default)
-                        VALUES (?, ?, 1)
-                    """, (system_id, controller_id))
-
-        return jsonify({'success': True, 'message': f'Set {len(controller_ids)} default controller(s)'})
-    except Exception as e:
-        logger.error(f"Error setting default controllers: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
-
-
-@bp.route('/api/systems/<int:system_id>/default-controller', methods=['POST'])
-@editor_required
-def api_set_system_default_controller(system_id):
-    """Set the default controller for a system (legacy single-controller endpoint)"""
-    try:
-        data = request.get_json()
-        controller_id = data.get('controller_id')
-
-        # Verify system exists
-        system = query("SELECT id, name FROM systems WHERE id = ?", (system_id,), one=True)
-        if not system:
-            return jsonify({'success': False, 'error': 'System not found'}), 404
-
-        # Verify controller exists (if provided)
+    # Set new defaults
+    for controller_id in controller_ids:
         if controller_id:
-            controller = query("SELECT id, name FROM controllers WHERE id = ?", (controller_id,), one=True)
-            if not controller:
-                return jsonify({'success': False, 'error': 'Controller not found'}), 404
-
-        # Clear existing defaults
-        execute("UPDATE system_controllers SET is_default = 0 WHERE system_id = ?", (system_id,))
-        execute("UPDATE systems SET default_controller_id = NULL WHERE id = ?", (system_id,))
-
-        if controller_id:
-            # Ensure association exists and set as default
+            # First ensure the controller-system association exists
             existing = query("""
                 SELECT id FROM system_controllers
                 WHERE system_id = ? AND controller_id = ?
@@ -503,109 +435,148 @@ def api_set_system_default_controller(system_id):
                     WHERE system_id = ? AND controller_id = ?
                 """, (system_id, controller_id))
             else:
+                # Create the association with is_default = 1
                 execute("""
                     INSERT INTO system_controllers (system_id, controller_id, is_default)
                     VALUES (?, ?, 1)
                 """, (system_id, controller_id))
 
-        return jsonify({'success': True, 'message': 'Default controller updated'})
-    except Exception as e:
-        logger.error(f"Error setting default controller: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    return jsonify({'success': True, 'message': f'Set {len(controller_ids)} default controller(s)'})
+
+
+@bp.route('/api/systems/<int:system_id>/default-controller', methods=['POST'])
+@editor_required
+@handle_api_errors
+def api_set_system_default_controller(system_id):
+    """Set the default controller for a system (legacy single-controller endpoint)"""
+    data = request.get_json()
+    controller_id = data.get('controller_id')
+
+    # Verify system exists
+    system = query("SELECT id, name FROM systems WHERE id = ?", (system_id,), one=True)
+    if not system:
+        return jsonify({'success': False, 'error': 'System not found'}), 404
+
+    # Verify controller exists (if provided)
+    if controller_id:
+        controller = query("SELECT id, name FROM controllers WHERE id = ?", (controller_id,), one=True)
+        if not controller:
+            return jsonify({'success': False, 'error': 'Controller not found'}), 404
+
+    # Clear existing defaults
+    execute("UPDATE system_controllers SET is_default = 0 WHERE system_id = ?", (system_id,))
+    execute("UPDATE systems SET default_controller_id = NULL WHERE id = ?", (system_id,))
+
+    if controller_id:
+        # Ensure association exists and set as default
+        existing = query("""
+            SELECT id FROM system_controllers
+            WHERE system_id = ? AND controller_id = ?
+        """, (system_id, controller_id), one=True)
+
+        if existing:
+            execute("""
+                UPDATE system_controllers SET is_default = 1
+                WHERE system_id = ? AND controller_id = ?
+            """, (system_id, controller_id))
+        else:
+            execute("""
+                INSERT INTO system_controllers (system_id, controller_id, is_default)
+                VALUES (?, ?, 1)
+            """, (system_id, controller_id))
+
+    return jsonify({'success': True, 'message': 'Default controller updated'})
 
 
 @bp.route('/api/systems/assign-default-controllers', methods=['POST'])
 @editor_required
+@handle_api_errors
 def api_assign_default_controllers():
     """Auto-assign default controllers to systems based on manufacturer matching"""
-    try:
-        assigned = 0
+    assigned = 0
 
-        # Get all systems without a default controller
-        systems = query("SELECT id, name, folder FROM systems WHERE default_controller_id IS NULL")
+    # Get all systems without a default controller
+    systems = query("SELECT id, name, folder FROM systems WHERE default_controller_id IS NULL")
 
-        # Controller name patterns to match to system folders
-        controller_mappings = {
-            # Nintendo
-            'nes': ['NES Controller', 'Nintendo NES'],
-            'snes': ['SNES Controller', 'Nintendo SNES'],
-            'n64': ['N64 Controller', 'Nintendo 64'],
-            'gc': ['GameCube Controller'],
-            'gamecube': ['GameCube Controller'],
-            'wii': ['Wii Remote', 'Wiimote'],
-            'wiiu': ['Wii U GamePad'],
-            'switch': ['Nintendo Switch Pro', 'Joy-Con'],
-            'gb': ['Game Boy'],
-            'gba': ['Game Boy Advance'],
-            'gbc': ['Game Boy Color', 'Game Boy'],
-            'nds': ['Nintendo DS'],
-            '3ds': ['Nintendo 3DS'],
-            'virtualboy': ['Virtual Boy Controller'],
-            # Sega
-            'genesis': ['Sega Genesis', 'Mega Drive', '6-Button'],
-            'megadrive': ['Sega Genesis', 'Mega Drive', '6-Button'],
-            'mastersystem': ['Sega Master System'],
-            'sms': ['Sega Master System'],
-            'saturn': ['Sega Saturn'],
-            'dreamcast': ['Dreamcast Controller'],
-            'dc': ['Dreamcast Controller'],
-            'gamegear': ['Game Gear'],
-            'segacd': ['Sega Genesis', 'Mega Drive'],
-            'sega32x': ['Sega Genesis', 'Mega Drive'],
-            # Sony
-            'psx': ['PlayStation', 'DualShock', 'PS1'],
-            'ps1': ['PlayStation', 'DualShock', 'PS1'],
-            'ps2': ['DualShock 2', 'PlayStation 2'],
-            'ps3': ['DualShock 3', 'SIXAXIS', 'PlayStation 3'],
-            'psp': ['PSP'],
-            'psvita': ['PS Vita'],
-            # Atari
-            'atari2600': ['Atari Joystick', 'Atari 2600'],
-            'atari5200': ['Atari 5200'],
-            'atari7800': ['Atari 7800', 'Atari Joystick'],
-            'atarijaguar': ['Atari Jaguar'],
-            'atarilynx': ['Atari Lynx'],
-            # Other
-            'turbografx16': ['TurboGrafx-16', 'PC Engine'],
-            'pcengine': ['TurboGrafx-16', 'PC Engine'],
-            'neogeo': ['Neo Geo', 'AES'],
-            'neogeopocket': ['Neo Geo Pocket'],
-            '3do': ['3DO Controller'],
-            'colecovision': ['ColecoVision'],
-            'intellivision': ['Intellivision'],
-            'vectrex': ['Vectrex'],
-            'wonderswan': ['WonderSwan'],
-            'msx': ['MSX'],
-            'xbox': ['Xbox Controller', 'Duke'],
-            'xbox360': ['Xbox 360'],
-        }
+    # Controller name patterns to match to system folders
+    controller_mappings = {
+        # Nintendo
+        'nes': ['NES Controller', 'Nintendo NES'],
+        'snes': ['SNES Controller', 'Nintendo SNES'],
+        'n64': ['N64 Controller', 'Nintendo 64'],
+        'gc': ['GameCube Controller'],
+        'gamecube': ['GameCube Controller'],
+        'wii': ['Wii Remote', 'Wiimote'],
+        'wiiu': ['Wii U GamePad'],
+        'switch': ['Nintendo Switch Pro', 'Joy-Con'],
+        'gb': ['Game Boy'],
+        'gba': ['Game Boy Advance'],
+        'gbc': ['Game Boy Color', 'Game Boy'],
+        'nds': ['Nintendo DS'],
+        '3ds': ['Nintendo 3DS'],
+        'virtualboy': ['Virtual Boy Controller'],
+        # Sega
+        'genesis': ['Sega Genesis', 'Mega Drive', '6-Button'],
+        'megadrive': ['Sega Genesis', 'Mega Drive', '6-Button'],
+        'mastersystem': ['Sega Master System'],
+        'sms': ['Sega Master System'],
+        'saturn': ['Sega Saturn'],
+        'dreamcast': ['Dreamcast Controller'],
+        'dc': ['Dreamcast Controller'],
+        'gamegear': ['Game Gear'],
+        'segacd': ['Sega Genesis', 'Mega Drive'],
+        'sega32x': ['Sega Genesis', 'Mega Drive'],
+        # Sony
+        'psx': ['PlayStation', 'DualShock', 'PS1'],
+        'ps1': ['PlayStation', 'DualShock', 'PS1'],
+        'ps2': ['DualShock 2', 'PlayStation 2'],
+        'ps3': ['DualShock 3', 'SIXAXIS', 'PlayStation 3'],
+        'psp': ['PSP'],
+        'psvita': ['PS Vita'],
+        # Atari
+        'atari2600': ['Atari Joystick', 'Atari 2600'],
+        'atari5200': ['Atari 5200'],
+        'atari7800': ['Atari 7800', 'Atari Joystick'],
+        'atarijaguar': ['Atari Jaguar'],
+        'atarilynx': ['Atari Lynx'],
+        # Other
+        'turbografx16': ['TurboGrafx-16', 'PC Engine'],
+        'pcengine': ['TurboGrafx-16', 'PC Engine'],
+        'neogeo': ['Neo Geo', 'AES'],
+        'neogeopocket': ['Neo Geo Pocket'],
+        '3do': ['3DO Controller'],
+        'colecovision': ['ColecoVision'],
+        'intellivision': ['Intellivision'],
+        'vectrex': ['Vectrex'],
+        'wonderswan': ['WonderSwan'],
+        'msx': ['MSX'],
+        'xbox': ['Xbox Controller', 'Duke'],
+        'xbox360': ['Xbox 360'],
+    }
 
-        for system in systems:
-            folder_lower = system['folder'].lower().replace('-', '').replace('_', '').replace(' ', '')
+    for system in systems:
+        folder_lower = system['folder'].lower().replace('-', '').replace('_', '').replace(' ', '')
 
-            # Try to find a matching controller
-            matched_controller = None
-            for folder_pattern, controller_names in controller_mappings.items():
-                if folder_pattern in folder_lower:
-                    # Search for any matching controller
-                    for ctrl_name in controller_names:
-                        ctrl = query("""
-                            SELECT id FROM controllers
-                            WHERE name LIKE ?
-                            ORDER BY id LIMIT 1
-                        """, (f'%{ctrl_name}%',), one=True)
-                        if ctrl:
-                            matched_controller = ctrl['id']
-                            break
-                    if matched_controller:
+        # Try to find a matching controller
+        matched_controller = None
+        for folder_pattern, controller_names in controller_mappings.items():
+            if folder_pattern in folder_lower:
+                # Search for any matching controller
+                for ctrl_name in controller_names:
+                    ctrl = query("""
+                        SELECT id FROM controllers
+                        WHERE name LIKE ?
+                        ORDER BY id LIMIT 1
+                    """, (f'%{ctrl_name}%',), one=True)
+                    if ctrl:
+                        matched_controller = ctrl['id']
                         break
+                if matched_controller:
+                    break
 
-            if matched_controller:
-                execute("UPDATE systems SET default_controller_id = ? WHERE id = ?",
-                       (matched_controller, system['id']))
-                assigned += 1
+        if matched_controller:
+            execute("UPDATE systems SET default_controller_id = ? WHERE id = ?",
+                   (matched_controller, system['id']))
+            assigned += 1
 
-        return jsonify({'success': True, 'assigned': assigned})
-    except Exception as e:
-        logger.error(f"Error auto-assigning controllers: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    return jsonify({'success': True, 'assigned': assigned})

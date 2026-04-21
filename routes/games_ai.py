@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 
 from flask import Blueprint, jsonify
 
+from services.api_helpers import handle_api_errors
 from services.auth import editor_required
 from services.database import query, execute
 from services.game_utils import (
@@ -26,6 +27,7 @@ bp = Blueprint('games_ai', __name__)
 
 @bp.route('/api/game/<int:game_id>/ai-fill', methods=['POST'])
 @editor_required
+@handle_api_errors
 def api_game_ai_fill(game_id):
     """Fill missing metadata fields using AI scraper with smart overwrite logic."""
     try:
@@ -297,6 +299,3 @@ def api_game_ai_fill(game_id):
 
     except ImportError:
         return jsonify({'success': False, 'error': 'AI scraper module not available'}), 500
-    except Exception as e:
-        logger.error(f"AI fill error for game {game_id}: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500

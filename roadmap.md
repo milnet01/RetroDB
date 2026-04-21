@@ -37,6 +37,19 @@ change forces a different sequence.
   re-exports `_download_psn_trophy_image` from `services.jobs.base` under the
   `download_psn_trophy_image` name, so call sites are unchanged but the body
   is no longer duplicated. (v2.83.2)
+- [x] **Pass 2 — `@handle_api_errors` sweep across routes/** — Applied to 118
+  handlers across 20 files (155 raw `'An internal error occurred'` hits → 37
+  remaining, all intentional HTTP-200 responses or non-standard payload
+  shapes). Files fully swept: `achievements`, `auth`, `bulk_scrape`,
+  `clz_import`, `collections`, `collector_trophies`, `controllers`,
+  `maintenance`, `games_ai`, `games_media`, `games_search`, `ra_sync`,
+  `reports`, `tools`. Partial: `bonus_discs` (8/10), `games` (6/9),
+  `scraper` (2/5), `scrape_logs` (1/5), `settings` (5/13), `systems` (6/8).
+  Skipped entirely: `platform_import`, `steam_achievements`,
+  `xbox_achievements`, `trophies` — all use HTTP-200 responses. Specific
+  exception handlers (`ValueError`, `sqlite3.IntegrityError`, `ImportError`,
+  `PermissionError`, `OSError`, `json.JSONDecodeError`) preserved; all
+  `try/finally` cleanup blocks preserved. (v2.83.5)
 
 ---
 
@@ -47,23 +60,6 @@ _None._
 ---
 
 ## Pass 2 — finish the cross-route cleanup (small, mechanical)
-
-### `@handle_api_errors` on the rest of the routes layer
-
-- **Target**: every `routes/*.py` file with a `try: … except Exception as e:
-  logger.error(…); return jsonify({'success': False, 'error': …}), 500`
-  block.
-- **Why**: `games_hltb.py` is the template. The same boilerplate appears in
-  `routes/games.py`, `routes/maintenance.py`, `routes/bulk_scrape.py`,
-  `routes/ra_sync.py`, `routes/bonus_discs.py`, `routes/trophies.py`,
-  `routes/collections.py`, `routes/platform_import.py`, etc.
-- **Plan**: grep for `'An internal error occurred'` across `routes/`; for
-  each hit, drop the try/except and add `@handle_api_errors` below the auth
-  decorator. Be careful to preserve any `except` clauses that catch *specific*
-  exceptions (those are intentional handlers, not generic 500 fallbacks).
-- **Est. reduction**: ~4 LOC × every occurrence. Likely 200+ LOC total
-  across routes/.
-- **Status**: todo
 
 ### Response builder helpers
 

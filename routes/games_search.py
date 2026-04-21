@@ -10,6 +10,7 @@ import re
 
 from flask import Blueprint, render_template, request, jsonify
 
+from services.api_helpers import handle_api_errors
 from services.auth import login_required
 from services.database import query
 from services.game_query import escape_like
@@ -29,6 +30,7 @@ except ImportError:
 
 @bp.route('/api/games/search')
 @login_required
+@handle_api_errors
 def api_search_games():
     """Search games API for scraping."""
     title = request.args.get('title', '')
@@ -57,25 +59,21 @@ def api_search_games():
     if len(clean_title) < 2:
         clean_title = title
 
-    try:
-        results = search_games(clean_title, system, system_folder=folder, limit=15)
+    results = search_games(clean_title, system, system_folder=folder, limit=15)
 
-        rom_path = request.args.get('rom_path', '')
-        if rom_path and results:
-            from services.game_utils import extract_filename_hints
-            from services.jobs.bulk_scrape import _extract_year_from_result
-            hints = extract_filename_hints(rom_path)
-            hint_year = hints.get('year')
-            if hint_year:
-                for r in results:
-                    result_year = _extract_year_from_result(r)
-                    if result_year and result_year == hint_year:
-                        r['score'] = r.get('score', 0) + 50
+    rom_path = request.args.get('rom_path', '')
+    if rom_path and results:
+        from services.game_utils import extract_filename_hints
+        from services.jobs.bulk_scrape import _extract_year_from_result
+        hints = extract_filename_hints(rom_path)
+        hint_year = hints.get('year')
+        if hint_year:
+            for r in results:
+                result_year = _extract_year_from_result(r)
+                if result_year and result_year == hint_year:
+                    r['score'] = r.get('score', 0) + 50
 
-        return jsonify({'success': True, 'results': results})
-    except Exception as e:
-        logger.error(f"API search error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    return jsonify({'success': True, 'results': results})
 
 
 @bp.route('/api/games/find')

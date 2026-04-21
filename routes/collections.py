@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 
 from services.database import query, execute
 from services.auth import login_required
+from services.api_helpers import handle_api_errors
 
 logger = logging.getLogger(__name__)
 
@@ -114,6 +115,7 @@ def api_get_tags():
 
 @bp.route('/api/tags', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_create_tag():
     """Create a new tag."""
     data = request.get_json()
@@ -127,20 +129,17 @@ def api_create_tag():
     if existing:
         return jsonify({'success': False, 'error': 'A tag with that name already exists'}), 409
 
-    try:
-        tag_id = execute(
-            "INSERT INTO tags (name, color, created_at) VALUES (?, ?, ?)",
-            (name, color, _utcnow_iso())
-        )
-        logger.info(f"Created tag '{name}' (id={tag_id})")
-        return jsonify({'success': True, 'tag': {'id': tag_id, 'name': name, 'color': color}}), 201
-    except Exception as e:
-        logger.error(f"Failed to create tag: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    tag_id = execute(
+        "INSERT INTO tags (name, color, created_at) VALUES (?, ?, ?)",
+        (name, color, _utcnow_iso())
+    )
+    logger.info(f"Created tag '{name}' (id={tag_id})")
+    return jsonify({'success': True, 'tag': {'id': tag_id, 'name': name, 'color': color}}), 201
 
 
 @bp.route('/api/tags/<int:tag_id>', methods=['PUT'])
 @login_required
+@handle_api_errors
 def api_update_tag(tag_id):
     """Update an existing tag."""
     data = request.get_json()
@@ -160,31 +159,24 @@ def api_update_tag(tag_id):
         if conflict:
             return jsonify({'success': False, 'error': 'A tag with that name already exists'}), 409
 
-    try:
-        execute("UPDATE tags SET name = ?, color = ? WHERE id = ?", (name, color, tag_id))
-        logger.info(f"Updated tag id={tag_id} -> name='{name}', color='{color}'")
-        return jsonify({'success': True, 'tag': {'id': tag_id, 'name': name, 'color': color}})
-    except Exception as e:
-        logger.error(f"Failed to update tag: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    execute("UPDATE tags SET name = ?, color = ? WHERE id = ?", (name, color, tag_id))
+    logger.info(f"Updated tag id={tag_id} -> name='{name}', color='{color}'")
+    return jsonify({'success': True, 'tag': {'id': tag_id, 'name': name, 'color': color}})
 
 
 @bp.route('/api/tags/<int:tag_id>', methods=['DELETE'])
 @login_required
+@handle_api_errors
 def api_delete_tag(tag_id):
     """Delete a tag and all its game associations."""
     tag = query("SELECT * FROM tags WHERE id = ?", (tag_id,), one=True)
     if not tag:
         return jsonify({'success': False, 'error': 'Tag not found'}), 404
 
-    try:
-        execute("DELETE FROM game_tags WHERE tag_id = ?", (tag_id,))
-        execute("DELETE FROM tags WHERE id = ?", (tag_id,))
-        logger.info(f"Deleted tag '{tag['name']}' (id={tag_id})")
-        return jsonify({'success': True})
-    except Exception as e:
-        logger.error(f"Failed to delete tag: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    execute("DELETE FROM game_tags WHERE tag_id = ?", (tag_id,))
+    execute("DELETE FROM tags WHERE id = ?", (tag_id,))
+    logger.info(f"Deleted tag '{tag['name']}' (id={tag_id})")
+    return jsonify({'success': True})
 
 
 # =============================================================================
@@ -207,6 +199,7 @@ def api_get_game_tags(game_id):
 
 @bp.route('/api/games/<int:game_id>/tags', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_add_tag_to_game(game_id):
     """Add a tag to a game. Accepts {tag_id} or {tag_name} for auto-create."""
     data = request.get_json()
@@ -248,17 +241,14 @@ def api_add_tag_to_game(game_id):
     if existing:
         return jsonify({'success': True, 'tag': tag, 'message': 'Tag already assigned'})
 
-    try:
-        execute("INSERT INTO game_tags (game_id, tag_id) VALUES (?, ?)", (game_id, tag['id']))
-        logger.info(f"Added tag '{tag['name']}' to game id={game_id}")
-        return jsonify({'success': True, 'tag': tag}), 201
-    except Exception as e:
-        logger.error(f"Failed to add tag to game: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    execute("INSERT INTO game_tags (game_id, tag_id) VALUES (?, ?)", (game_id, tag['id']))
+    logger.info(f"Added tag '{tag['name']}' to game id={game_id}")
+    return jsonify({'success': True, 'tag': tag}), 201
 
 
 @bp.route('/api/games/<int:game_id>/tags/<int:tag_id>', methods=['DELETE'])
 @login_required
+@handle_api_errors
 def api_remove_tag_from_game(game_id, tag_id):
     """Remove a tag from a game."""
     existing = query(
@@ -268,13 +258,9 @@ def api_remove_tag_from_game(game_id, tag_id):
     if not existing:
         return jsonify({'success': False, 'error': 'Tag is not assigned to this game'}), 404
 
-    try:
-        execute("DELETE FROM game_tags WHERE game_id = ? AND tag_id = ?", (game_id, tag_id))
-        logger.info(f"Removed tag id={tag_id} from game id={game_id}")
-        return jsonify({'success': True})
-    except Exception as e:
-        logger.error(f"Failed to remove tag from game: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    execute("DELETE FROM game_tags WHERE game_id = ? AND tag_id = ?", (game_id, tag_id))
+    logger.info(f"Removed tag id={tag_id} from game id={game_id}")
+    return jsonify({'success': True})
 
 
 # =============================================================================
@@ -327,6 +313,7 @@ def api_get_lists():
 
 @bp.route('/api/lists', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_create_list():
     """Create a new named list."""
     data = request.get_json()
@@ -341,26 +328,23 @@ def api_create_list():
     max_order = query("SELECT MAX(sort_order) AS max_order FROM lists", one=True)
     next_order = (max_order['max_order'] or 0) + 1 if max_order else 1
 
-    try:
-        list_id = execute(
-            "INSERT INTO lists (name, description, icon, sort_order, created_at) VALUES (?, ?, ?, ?, ?)",
-            (name, description, icon, next_order, _utcnow_iso())
-        )
-        logger.info(f"Created list '{name}' (id={list_id})")
-        return jsonify({
-            'success': True,
-            'list': {
-                'id': list_id, 'name': name, 'description': description,
-                'icon': icon, 'sort_order': next_order
-            }
-        }), 201
-    except Exception as e:
-        logger.error(f"Failed to create list: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    list_id = execute(
+        "INSERT INTO lists (name, description, icon, sort_order, created_at) VALUES (?, ?, ?, ?, ?)",
+        (name, description, icon, next_order, _utcnow_iso())
+    )
+    logger.info(f"Created list '{name}' (id={list_id})")
+    return jsonify({
+        'success': True,
+        'list': {
+            'id': list_id, 'name': name, 'description': description,
+            'icon': icon, 'sort_order': next_order
+        }
+    }), 201
 
 
 @bp.route('/api/lists/<int:list_id>', methods=['PUT'])
 @login_required
+@handle_api_errors
 def api_update_list(list_id):
     """Update an existing list."""
     data = request.get_json()
@@ -376,40 +360,33 @@ def api_update_list(list_id):
     icon = (data.get('icon', lst['icon']) or '').strip()
     sort_order = data.get('sort_order', lst['sort_order'])
 
-    try:
-        execute(
-            "UPDATE lists SET name = ?, description = ?, icon = ?, sort_order = ? WHERE id = ?",
-            (name, description, icon, sort_order, list_id)
-        )
-        logger.info(f"Updated list id={list_id} -> name='{name}'")
-        return jsonify({
-            'success': True,
-            'list': {
-                'id': list_id, 'name': name, 'description': description,
-                'icon': icon, 'sort_order': sort_order
-            }
-        })
-    except Exception as e:
-        logger.error(f"Failed to update list: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    execute(
+        "UPDATE lists SET name = ?, description = ?, icon = ?, sort_order = ? WHERE id = ?",
+        (name, description, icon, sort_order, list_id)
+    )
+    logger.info(f"Updated list id={list_id} -> name='{name}'")
+    return jsonify({
+        'success': True,
+        'list': {
+            'id': list_id, 'name': name, 'description': description,
+            'icon': icon, 'sort_order': sort_order
+        }
+    })
 
 
 @bp.route('/api/lists/<int:list_id>', methods=['DELETE'])
 @login_required
+@handle_api_errors
 def api_delete_list(list_id):
     """Delete a list and all its game associations."""
     lst = query("SELECT * FROM lists WHERE id = ?", (list_id,), one=True)
     if not lst:
         return jsonify({'success': False, 'error': 'List not found'}), 404
 
-    try:
-        execute("DELETE FROM list_games WHERE list_id = ?", (list_id,))
-        execute("DELETE FROM lists WHERE id = ?", (list_id,))
-        logger.info(f"Deleted list '{lst['name']}' (id={list_id})")
-        return jsonify({'success': True})
-    except Exception as e:
-        logger.error(f"Failed to delete list: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    execute("DELETE FROM list_games WHERE list_id = ?", (list_id,))
+    execute("DELETE FROM lists WHERE id = ?", (list_id,))
+    logger.info(f"Deleted list '{lst['name']}' (id={list_id})")
+    return jsonify({'success': True})
 
 
 # =============================================================================
@@ -436,6 +413,7 @@ def api_get_list_games(list_id):
 
 @bp.route('/api/lists/<int:list_id>/games', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_add_game_to_list(list_id):
     """Add a game to a list."""
     data = request.get_json()
@@ -466,20 +444,17 @@ def api_add_game_to_list(list_id):
     )
     next_pos = (max_pos['max_pos'] or 0) + 1 if max_pos else 1
 
-    try:
-        execute(
-            "INSERT INTO list_games (list_id, game_id, position, added_at) VALUES (?, ?, ?, ?)",
-            (list_id, game_id, next_pos, _utcnow_iso())
-        )
-        logger.info(f"Added game '{game['title']}' (id={game_id}) to list id={list_id}")
-        return jsonify({'success': True}), 201
-    except Exception as e:
-        logger.error(f"Failed to add game to list: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    execute(
+        "INSERT INTO list_games (list_id, game_id, position, added_at) VALUES (?, ?, ?, ?)",
+        (list_id, game_id, next_pos, _utcnow_iso())
+    )
+    logger.info(f"Added game '{game['title']}' (id={game_id}) to list id={list_id}")
+    return jsonify({'success': True}), 201
 
 
 @bp.route('/api/lists/<int:list_id>/games/<int:game_id>', methods=['DELETE'])
 @login_required
+@handle_api_errors
 def api_remove_game_from_list(list_id, game_id):
     """Remove a game from a list."""
     existing = query(
@@ -489,13 +464,9 @@ def api_remove_game_from_list(list_id, game_id):
     if not existing:
         return jsonify({'success': False, 'error': 'Game is not in this list'}), 404
 
-    try:
-        execute("DELETE FROM list_games WHERE list_id = ? AND game_id = ?", (list_id, game_id))
-        logger.info(f"Removed game id={game_id} from list id={list_id}")
-        return jsonify({'success': True})
-    except Exception as e:
-        logger.error(f"Failed to remove game from list: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    execute("DELETE FROM list_games WHERE list_id = ? AND game_id = ?", (list_id, game_id))
+    logger.info(f"Removed game id={game_id} from list id={list_id}")
+    return jsonify({'success': True})
 
 
 # =============================================================================
@@ -522,6 +493,7 @@ def api_get_wishlist():
 
 @bp.route('/api/wishlist', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_add_to_wishlist():
     """Add an item to the wishlist.
 
@@ -566,34 +538,31 @@ def api_add_to_wishlist():
     if existing:
         return jsonify({'success': False, 'error': 'This game is already on your wishlist'}), 409
 
-    try:
-        item_id = execute(
-            """INSERT INTO wishlist
-               (title, system_name, system_id, notes, priority, added_at, game_id, scrape_status)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-            (title, system_name, system_id, notes, priority, _utcnow_iso(), game_id, 'unscraped')
-        )
-        logger.info(f"Added '{title}' to wishlist (id={item_id}, system_id={system_id}, scrape={scrape_now})")
+    item_id = execute(
+        """INSERT INTO wishlist
+           (title, system_name, system_id, notes, priority, added_at, game_id, scrape_status)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+        (title, system_name, system_id, notes, priority, _utcnow_iso(), game_id, 'unscraped')
+    )
+    logger.info(f"Added '{title}' to wishlist (id={item_id}, system_id={system_id}, scrape={scrape_now})")
 
-        if scrape_now:
-            from services.wishlist_scraper import scrape_wishlist_item_async
-            scrape_wishlist_item_async(item_id)
+    if scrape_now:
+        from services.wishlist_scraper import scrape_wishlist_item_async
+        scrape_wishlist_item_async(item_id)
 
-        return jsonify({
-            'success': True,
-            'item': {
-                'id': item_id, 'title': title, 'system_name': system_name,
-                'system_id': system_id, 'notes': notes, 'priority': priority,
-                'game_id': game_id, 'scrape_status': 'scraping' if scrape_now else 'unscraped'
-            }
-        }), 201
-    except Exception as e:
-        logger.error(f"Failed to add to wishlist: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    return jsonify({
+        'success': True,
+        'item': {
+            'id': item_id, 'title': title, 'system_name': system_name,
+            'system_id': system_id, 'notes': notes, 'priority': priority,
+            'game_id': game_id, 'scrape_status': 'scraping' if scrape_now else 'unscraped'
+        }
+    }), 201
 
 
 @bp.route('/api/wishlist/<int:item_id>', methods=['PUT'])
 @login_required
+@handle_api_errors
 def api_update_wishlist_item(item_id):
     """Update a wishlist item."""
     data = request.get_json()
@@ -622,46 +591,40 @@ def api_update_wishlist_item(item_id):
         if not sys_row:
             return jsonify({'success': False, 'error': 'Unknown system_id'}), 400
 
-    try:
-        execute(
-            """UPDATE wishlist SET title = ?, system_name = ?, system_id = ?,
-                                   notes = ?, priority = ?, game_id = ?
-               WHERE id = ?""",
-            (title, system_name, system_id, notes, priority, game_id, item_id)
-        )
-        logger.info(f"Updated wishlist item id={item_id} -> title='{title}'")
-        return jsonify({
-            'success': True,
-            'item': {
-                'id': item_id, 'title': title, 'system_name': system_name,
-                'system_id': system_id, 'notes': notes, 'priority': priority,
-                'game_id': game_id
-            }
-        })
-    except Exception as e:
-        logger.error(f"Failed to update wishlist item: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    execute(
+        """UPDATE wishlist SET title = ?, system_name = ?, system_id = ?,
+                               notes = ?, priority = ?, game_id = ?
+           WHERE id = ?""",
+        (title, system_name, system_id, notes, priority, game_id, item_id)
+    )
+    logger.info(f"Updated wishlist item id={item_id} -> title='{title}'")
+    return jsonify({
+        'success': True,
+        'item': {
+            'id': item_id, 'title': title, 'system_name': system_name,
+            'system_id': system_id, 'notes': notes, 'priority': priority,
+            'game_id': game_id
+        }
+    })
 
 
 @bp.route('/api/wishlist/<int:item_id>', methods=['DELETE'])
 @login_required
+@handle_api_errors
 def api_delete_wishlist_item(item_id):
     """Delete a wishlist item."""
     item = query("SELECT * FROM wishlist WHERE id = ?", (item_id,), one=True)
     if not item:
         return jsonify({'success': False, 'error': 'Wishlist item not found'}), 404
 
-    try:
-        execute("DELETE FROM wishlist WHERE id = ?", (item_id,))
-        logger.info(f"Deleted wishlist item '{item['title']}' (id={item_id})")
-        return jsonify({'success': True})
-    except Exception as e:
-        logger.error(f"Failed to delete wishlist item: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    execute("DELETE FROM wishlist WHERE id = ?", (item_id,))
+    logger.info(f"Deleted wishlist item '{item['title']}' (id={item_id})")
+    return jsonify({'success': True})
 
 
 @bp.route('/api/wishlist/<int:item_id>/scrape', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_scrape_wishlist_item(item_id):
     """Kick off a background scrape for a single wishlist item.
 
@@ -672,17 +635,14 @@ def api_scrape_wishlist_item(item_id):
     if not item:
         return jsonify({'success': False, 'error': 'Wishlist item not found'}), 404
 
-    try:
-        from services.wishlist_scraper import scrape_wishlist_item_async
-        scrape_wishlist_item_async(item_id)
-        return jsonify({'success': True, 'status': 'scraping'})
-    except Exception as e:
-        logger.error(f"Failed to dispatch wishlist scrape: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    from services.wishlist_scraper import scrape_wishlist_item_async
+    scrape_wishlist_item_async(item_id)
+    return jsonify({'success': True, 'status': 'scraping'})
 
 
 @bp.route('/api/wishlist/scrape-all', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_scrape_all_wishlist():
     """Background-scrape every wishlist item with scrape_status NULL /
     'unscraped' / 'failed' / 'no_match'. Already-scraped items are left
@@ -696,10 +656,6 @@ def api_scrape_all_wishlist():
     if unscraped_count == 0:
         return jsonify({'success': True, 'scheduled': 0, 'message': 'Nothing to scrape'})
 
-    try:
-        from services.wishlist_scraper import scrape_unscraped_items_async
-        scrape_unscraped_items_async()
-        return jsonify({'success': True, 'scheduled': unscraped_count})
-    except Exception as e:
-        logger.error(f"Failed to dispatch wishlist bulk scrape: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    from services.wishlist_scraper import scrape_unscraped_items_async
+    scrape_unscraped_items_async()
+    return jsonify({'success': True, 'scheduled': unscraped_count})

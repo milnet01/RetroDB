@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 
 from services.database import query, execute
 from services.auth import login_required, get_user_ra_credentials
+from services.api_helpers import handle_api_errors
 from services.jobs import ra_sync_job, ra_refresh_job
 
 logger = logging.getLogger('scraper')
@@ -218,6 +219,7 @@ def api_get_achievements(game_id):
 
 @bp.route('/api/achievements/sync/<int:game_id>', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_sync_game_achievements(game_id):
     """Sync achievements for a single game from RetroAchievements API and store locally"""
     from scraper.retroachievements import get_user_game_progress_custom
@@ -231,45 +233,41 @@ def api_sync_game_achievements(game_id):
     username, api_key = get_user_ra_credentials()
     if not api_key or not username:
         return jsonify({'success': False, 'error': 'RetroAchievements not configured'})
-    
-    try:
-        progress = get_user_game_progress_custom(game['ra_game_id'], username, api_key)
-        
-        if progress:
-            # Store in local database
-            now = datetime.now(timezone.utc).isoformat()
-            execute("""
-                INSERT INTO game_achievement_progress 
-                (game_id, ra_game_id, earned_achievements, total_achievements, 
-                 earned_points, total_points, completion_percentage, last_synced)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(game_id) DO UPDATE SET
-                    earned_achievements = excluded.earned_achievements,
-                    total_achievements = excluded.total_achievements,
-                    earned_points = excluded.earned_points,
-                    total_points = excluded.total_points,
-                    completion_percentage = excluded.completion_percentage,
-                    last_synced = excluded.last_synced
-            """, (
-                game_id, 
-                game['ra_game_id'],
-                progress.get('unlocked_count', 0),
-                progress.get('total_count', 0),
-                progress.get('earned_points', 0),
-                progress.get('total_points', 0),
-                progress.get('completion_percentage', 0),
-                now
-            ))
-            
-            return jsonify({
-                'success': True,
-                'data': progress
-            })
-        else:
-            return jsonify({'success': False, 'error': 'Could not fetch achievement data'})
-    except Exception as e:
-        logger.error(f"Error syncing achievements for game {game_id}: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+
+    progress = get_user_game_progress_custom(game['ra_game_id'], username, api_key)
+
+    if progress:
+        # Store in local database
+        now = datetime.now(timezone.utc).isoformat()
+        execute("""
+            INSERT INTO game_achievement_progress
+            (game_id, ra_game_id, earned_achievements, total_achievements,
+             earned_points, total_points, completion_percentage, last_synced)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(game_id) DO UPDATE SET
+                earned_achievements = excluded.earned_achievements,
+                total_achievements = excluded.total_achievements,
+                earned_points = excluded.earned_points,
+                total_points = excluded.total_points,
+                completion_percentage = excluded.completion_percentage,
+                last_synced = excluded.last_synced
+        """, (
+            game_id,
+            game['ra_game_id'],
+            progress.get('unlocked_count', 0),
+            progress.get('total_count', 0),
+            progress.get('earned_points', 0),
+            progress.get('total_points', 0),
+            progress.get('completion_percentage', 0),
+            now
+        ))
+
+        return jsonify({
+            'success': True,
+            'data': progress
+        })
+    else:
+        return jsonify({'success': False, 'error': 'Could not fetch achievement data'})
 
 
 @bp.route('/api/achievements/sync-system/<int:system_id>', methods=['POST'])

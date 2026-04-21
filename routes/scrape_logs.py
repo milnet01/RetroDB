@@ -10,6 +10,7 @@ import os
 import logging
 
 import log_manager
+from services.api_helpers import handle_api_errors
 from services.auth import login_required, permission_required
 from services.security import safe_filename
 
@@ -122,29 +123,26 @@ def api_log_content(filename):
 @logs_bp.route('/api/logs/download/<filename>')
 @login_required
 @permission_required('system_functions')
+@handle_api_errors
 def api_download_log(filename):
     """Download a log file"""
-    try:
-        if not safe_filename(filename):
-            return jsonify({'success': False, 'error': 'Invalid filename'}), 400
+    if not safe_filename(filename):
+        return jsonify({'success': False, 'error': 'Invalid filename'}), 400
 
-        if not any(filename.startswith(p) for p in VALID_PREFIXES):
-            return jsonify({'success': False, 'error': 'Invalid log file'}), 403
+    if not any(filename.startswith(p) for p in VALID_PREFIXES):
+        return jsonify({'success': False, 'error': 'Invalid log file'}), 403
 
-        filepath = os.path.join(log_manager.LOGS_DIR, filename)
+    filepath = os.path.join(log_manager.LOGS_DIR, filename)
 
-        if not os.path.exists(filepath):
-            return jsonify({'success': False, 'error': 'Log file not found'}), 404
+    if not os.path.exists(filepath):
+        return jsonify({'success': False, 'error': 'Log file not found'}), 404
 
-        return send_file(
-            filepath,
-            mimetype='text/plain',
-            as_attachment=True,
-            download_name=filename
-        )
-    except Exception as e:
-        logger.error(f"Error downloading log file: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    return send_file(
+        filepath,
+        mimetype='text/plain',
+        as_attachment=True,
+        download_name=filename
+    )
 
 
 @logs_bp.route('/api/logs/delete/<filename>', methods=['DELETE'])

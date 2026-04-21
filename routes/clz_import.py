@@ -15,6 +15,7 @@ from datetime import datetime, timezone
 import config
 from services.database import get_db, query, execute
 from services.auth import login_required
+from services.api_helpers import handle_api_errors
 
 logger = logging.getLogger(__name__)
 
@@ -242,6 +243,7 @@ def clz_import():
 
 @bp.route('/api/clz-import/parse', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_clz_parse():
     """Parse CLZ PDF export and return game list"""
     try:
@@ -269,234 +271,230 @@ def api_clz_parse():
     if not content.startswith(b'%PDF'):
         return jsonify({'success': False, 'error': 'Invalid PDF file (bad magic bytes)'}), 400
 
-    try:
-        # Save to temp file
-        with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp:
-            tmp.write(content)
-            tmp_path = tmp.name
+    # Save to temp file
+    with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp:
+        tmp.write(content)
+        tmp_path = tmp.name
 
-        games = []
+    games = []
 
-        with pdfplumber.open(tmp_path) as pdf:
-            # Store column mapping from first page (subsequent pages may not have headers)
-            persistent_col_map = None
+    with pdfplumber.open(tmp_path) as pdf:
+        # Store column mapping from first page (subsequent pages may not have headers)
+        persistent_col_map = None
 
-            for page_num, page in enumerate(pdf.pages):
-                # Extract tables from the page
-                tables = page.extract_tables()
+        for page_num, page in enumerate(pdf.pages):
+            # Extract tables from the page
+            tables = page.extract_tables()
 
-                for table in tables:
-                    if not table:
-                        continue
-
-                    # Find header row (only on pages that have one)
-                    header_row = None
-                    for i, row in enumerate(table):
-                        if row and any('Platform' in str(cell) for cell in row if cell):
-                            header_row = i
-                            break
-
-                    # Determine column mapping
-                    if header_row is not None:
-                        # This page has headers - parse them
-                        headers = [str(h).strip().lower() if h else '' for h in table[header_row]]
-
-                        col_map = {}
-                        for i, h in enumerate(headers):
-                            if 'platform' in h:
-                                col_map['platform'] = i
-                            elif 'title' in h:
-                                col_map['title'] = i
-                            elif 'release' in h:
-                                col_map['release'] = i
-                            elif 'publisher' in h:
-                                col_map['publisher'] = i
-                            elif 'developer' in h:
-                                col_map['developer'] = i
-                            elif 'genre' in h:
-                                col_map['genre'] = i
-
-                        if 'title' not in col_map:
-                            continue
-
-                        # Save for subsequent pages
-                        persistent_col_map = col_map
-                        data_start_row = header_row + 1
-                    else:
-                        # No header row - use mapping from previous page
-                        if persistent_col_map is None:
-                            continue  # Can't process without knowing columns
-                        col_map = persistent_col_map
-                        data_start_row = 0  # Data starts at first row
-
-                    # Parse data rows
-                    for row in table[data_start_row:]:
-                        if not row or len(row) <= max(col_map.values()):
-                            continue
-
-                        title = str(row[col_map['title']]).strip() if col_map.get('title') is not None and row[col_map['title']] else ''
-                        if not title or title.lower() in ('title', '', 'none'):
-                            continue
-
-                        platform = str(row[col_map.get('platform', 0)]).strip() if col_map.get('platform') is not None and row[col_map.get('platform', 0)] else ''
-                        release = str(row[col_map.get('release', -1)]).strip() if col_map.get('release') is not None and col_map['release'] < len(row) and row[col_map['release']] else ''
-                        publisher = str(row[col_map.get('publisher', -1)]).strip() if col_map.get('publisher') is not None and col_map['publisher'] < len(row) and row[col_map['publisher']] else ''
-                        developer = str(row[col_map.get('developer', -1)]).strip() if col_map.get('developer') is not None and col_map['developer'] < len(row) and row[col_map['developer']] else ''
-                        genre = str(row[col_map.get('genre', -1)]).strip() if col_map.get('genre') is not None and col_map['genre'] < len(row) and row[col_map['genre']] else ''
-
-                        # Clean up extracted text - replace newlines/tabs with spaces, normalize whitespace
-                        title = re.sub(r'[\n\r\t]+', ' ', title).strip()
-                        title = re.sub(r'\s+', ' ', title)
-                        platform = re.sub(r'[\n\r\t]+', ' ', platform).strip()
-                        platform = re.sub(r'\s+', ' ', platform)
-                        release = re.sub(r'[\n\r\t]+', ' ', release).strip()
-                        publisher = re.sub(r'[\n\r\t]+', ' ', publisher).strip()
-                        developer = re.sub(r'[\n\r\t]+', ' ', developer).strip()
-                        genre = re.sub(r'[\n\r\t]+', ' ', genre).strip()
-
-                        # Clean up None strings
-                        if release == 'None': release = ''
-                        if publisher == 'None': publisher = ''
-                        if developer == 'None': developer = ''
-                        if genre == 'None': genre = ''
-
-                        games.append({
-                            'title': title,
-                            'clz_platform': platform,
-                            'release_date': release,
-                            'publisher': publisher,
-                            'developer': developer,
-                            'genre': genre
-                        })
-
-        # Clean up temp file
-        os.unlink(tmp_path)
-
-        # -----------------------------------------------------------------
-        # Merge rows split across PDF page boundaries
-        # -----------------------------------------------------------------
-        # pdfplumber extracts each page independently, so a table row that
-        # spans a page break becomes two partial rows:
-        #   Page N  : "PlayStation"  | "Assassin's Creed: Rogue" | "Mar 20,"
-        #   Page N+1: "4"           | "Remastered"              | "2018"
-        # Detect continuations: if a row's platform is unrecognized but,
-        # when appended to the previous row's platform, forms a known CLZ
-        # platform (or is a pure numeric fragment like "2", "4", "360").
-        merged_games = []
-        merge_count = 0
-        for game in games:
-            plat = game['clz_platform'].lower().strip()
-            if plat and plat not in CLZ_PLATFORM_MAP and merged_games:
-                prev = merged_games[-1]
-                combined = f"{prev['clz_platform'].lower().strip()} {plat}"
-                if combined in CLZ_PLATFORM_MAP or plat.isdigit():
-                    # Merge continuation into previous row
-                    prev['clz_platform'] = f"{prev['clz_platform']} {game['clz_platform']}".strip()
-                    for field in ('title', 'release_date', 'publisher', 'developer', 'genre'):
-                        cont_val = game.get(field, '').strip()
-                        if cont_val and cont_val != 'None':
-                            prev_val = prev.get(field, '').strip()
-                            prev[field] = f"{prev_val} {cont_val}".strip() if prev_val else cont_val
-                    merge_count += 1
+            for table in tables:
+                if not table:
                     continue
 
-            merged_games.append(game)
+                # Find header row (only on pages that have one)
+                header_row = None
+                for i, row in enumerate(table):
+                    if row and any('Platform' in str(cell) for cell in row if cell):
+                        header_row = i
+                        break
 
-        if merge_count:
-            logger.info(f"CLZ Import: Merged {merge_count} page-boundary split rows")
-        games = merged_games
+                # Determine column mapping
+                if header_row is not None:
+                    # This page has headers - parse them
+                    headers = [str(h).strip().lower() if h else '' for h in table[header_row]]
 
-        # Get all systems for mapping
-        systems = query("SELECT id, name, folder FROM systems ORDER BY name")
-        systems_dict = {s['folder']: {'id': s['id'], 'name': s['name']} for s in systems}
-        systems_map = {str(s['id']): s['name'] for s in systems}
+                    col_map = {}
+                    for i, h in enumerate(headers):
+                        if 'platform' in h:
+                            col_map['platform'] = i
+                        elif 'title' in h:
+                            col_map['title'] = i
+                        elif 'release' in h:
+                            col_map['release'] = i
+                        elif 'publisher' in h:
+                            col_map['publisher'] = i
+                        elif 'developer' in h:
+                            col_map['developer'] = i
+                        elif 'genre' in h:
+                            col_map['genre'] = i
 
-        # Auto-create missing systems that CLZ games need
-        # Collect all unique target folders from the parsed games
-        needed_folders = set()
-        for game in games:
-            platform_lower = game['clz_platform'].lower().strip()
-            matched_folder = CLZ_PLATFORM_MAP.get(platform_lower)
-            if matched_folder and matched_folder not in systems_dict:
-                needed_folders.add(matched_folder)
+                    if 'title' not in col_map:
+                        continue
 
-        if needed_folders:
-            for folder in needed_folders:
-                system_name = config.SYSTEM_NAME_MAP.get(folder, folder.upper())
-                # Check for a system logo
-                logo = f"{folder}.png" if os.path.isfile(os.path.join(config.IMAGE_PATH, 'systems', f'{folder}.png')) else None
-                try:
-                    new_id = execute(
-                        "INSERT OR IGNORE INTO systems (name, folder, logo) VALUES (?, ?, ?)",
-                        (system_name, folder, logo)
-                    )
-                    # Fetch the actual id (INSERT OR IGNORE may not return it)
-                    row = query("SELECT id, name FROM systems WHERE folder = ?", (folder,), one=True)
-                    if row:
-                        systems_dict[folder] = {'id': row['id'], 'name': row['name']}
-                        systems_map[str(row['id'])] = row['name']
-                        logger.info(f"CLZ Import: Auto-created system '{system_name}' (folder: {folder})")
-                except Exception as e:
-                    logger.warning(f"CLZ Import: Failed to auto-create system '{folder}': {e}")
+                    # Save for subsequent pages
+                    persistent_col_map = col_map
+                    data_start_row = header_row + 1
+                else:
+                    # No header row - use mapping from previous page
+                    if persistent_col_map is None:
+                        continue  # Can't process without knowing columns
+                    col_map = persistent_col_map
+                    data_start_row = 0  # Data starts at first row
 
-        # Log available systems for debugging
-        logger.info(f"CLZ Import: Available system folders: {sorted(systems_dict.keys())}")
+                # Parse data rows
+                for row in table[data_start_row:]:
+                    if not row or len(row) <= max(col_map.values()):
+                        continue
 
-        # Get existing games for duplicate detection (normalized for fuzzy matching)
-        existing_games = {}
-        for game in query("SELECT id, title, system_id FROM games"):
-            key = (normalize_title(game['title']), game['system_id'])
-            existing_games[key] = game['id']
+                    title = str(row[col_map['title']]).strip() if col_map.get('title') is not None and row[col_map['title']] else ''
+                    if not title or title.lower() in ('title', '', 'none'):
+                        continue
 
-        # Match platforms and check for duplicates
-        unmatched_platforms = set()
-        for game in games:
-            platform_lower = game['clz_platform'].lower().strip()
+                    platform = str(row[col_map.get('platform', 0)]).strip() if col_map.get('platform') is not None and row[col_map.get('platform', 0)] else ''
+                    release = str(row[col_map.get('release', -1)]).strip() if col_map.get('release') is not None and col_map['release'] < len(row) and row[col_map['release']] else ''
+                    publisher = str(row[col_map.get('publisher', -1)]).strip() if col_map.get('publisher') is not None and col_map['publisher'] < len(row) and row[col_map['publisher']] else ''
+                    developer = str(row[col_map.get('developer', -1)]).strip() if col_map.get('developer') is not None and col_map['developer'] < len(row) and row[col_map['developer']] else ''
+                    genre = str(row[col_map.get('genre', -1)]).strip() if col_map.get('genre') is not None and col_map['genre'] < len(row) and row[col_map['genre']] else ''
 
-            # Try to find matching system
-            matched_folder = CLZ_PLATFORM_MAP.get(platform_lower)
-            if matched_folder and matched_folder in systems_dict:
-                system_info = systems_dict[matched_folder]
-                game['system_id'] = system_info['id']
-                game['system_name'] = system_info['name']
-                game['system_folder'] = matched_folder
+                    # Clean up extracted text - replace newlines/tabs with spaces, normalize whitespace
+                    title = re.sub(r'[\n\r\t]+', ' ', title).strip()
+                    title = re.sub(r'\s+', ' ', title)
+                    platform = re.sub(r'[\n\r\t]+', ' ', platform).strip()
+                    platform = re.sub(r'\s+', ' ', platform)
+                    release = re.sub(r'[\n\r\t]+', ' ', release).strip()
+                    publisher = re.sub(r'[\n\r\t]+', ' ', publisher).strip()
+                    developer = re.sub(r'[\n\r\t]+', ' ', developer).strip()
+                    genre = re.sub(r'[\n\r\t]+', ' ', genre).strip()
 
-                # Check if game already exists (normalized matching)
-                key = (normalize_title(game['title']), system_info['id'])
-                game['existing'] = key in existing_games
-            else:
-                game['system_id'] = None
-                game['system_name'] = None
-                game['system_folder'] = None
-                game['existing'] = False
-                # Track unmatched for logging
-                if platform_lower:
-                    if matched_folder:
-                        unmatched_platforms.add(f"{platform_lower} -> {matched_folder} (system not in DB)")
-                    else:
-                        unmatched_platforms.add(f"{platform_lower} (no mapping)")
+                    # Clean up None strings
+                    if release == 'None': release = ''
+                    if publisher == 'None': publisher = ''
+                    if developer == 'None': developer = ''
+                    if genre == 'None': genre = ''
 
-            game['selected'] = False
+                    games.append({
+                        'title': title,
+                        'clz_platform': platform,
+                        'release_date': release,
+                        'publisher': publisher,
+                        'developer': developer,
+                        'genre': genre
+                    })
 
-        # Log unmatched platforms to help with debugging
-        if unmatched_platforms:
-            logger.info(f"CLZ Import: Unmatched platforms: {sorted(unmatched_platforms)}")
+    # Clean up temp file
+    os.unlink(tmp_path)
 
-        logger.info(f"CLZ Import: Parsed {len(games)} games from PDF")
+    # -----------------------------------------------------------------
+    # Merge rows split across PDF page boundaries
+    # -----------------------------------------------------------------
+    # pdfplumber extracts each page independently, so a table row that
+    # spans a page break becomes two partial rows:
+    #   Page N  : "PlayStation"  | "Assassin's Creed: Rogue" | "Mar 20,"
+    #   Page N+1: "4"           | "Remastered"              | "2018"
+    # Detect continuations: if a row's platform is unrecognized but,
+    # when appended to the previous row's platform, forms a known CLZ
+    # platform (or is a pure numeric fragment like "2", "4", "360").
+    merged_games = []
+    merge_count = 0
+    for game in games:
+        plat = game['clz_platform'].lower().strip()
+        if plat and plat not in CLZ_PLATFORM_MAP and merged_games:
+            prev = merged_games[-1]
+            combined = f"{prev['clz_platform'].lower().strip()} {plat}"
+            if combined in CLZ_PLATFORM_MAP or plat.isdigit():
+                # Merge continuation into previous row
+                prev['clz_platform'] = f"{prev['clz_platform']} {game['clz_platform']}".strip()
+                for field in ('title', 'release_date', 'publisher', 'developer', 'genre'):
+                    cont_val = game.get(field, '').strip()
+                    if cont_val and cont_val != 'None':
+                        prev_val = prev.get(field, '').strip()
+                        prev[field] = f"{prev_val} {cont_val}".strip() if prev_val else cont_val
+                merge_count += 1
+                continue
 
-        return jsonify({
-            'success': True,
-            'games': games,
-            'systems_map': systems_map
-        })
+        merged_games.append(game)
 
-    except Exception as e:
-        logger.error(f"CLZ Import parse error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+    if merge_count:
+        logger.info(f"CLZ Import: Merged {merge_count} page-boundary split rows")
+    games = merged_games
+
+    # Get all systems for mapping
+    systems = query("SELECT id, name, folder FROM systems ORDER BY name")
+    systems_dict = {s['folder']: {'id': s['id'], 'name': s['name']} for s in systems}
+    systems_map = {str(s['id']): s['name'] for s in systems}
+
+    # Auto-create missing systems that CLZ games need
+    # Collect all unique target folders from the parsed games
+    needed_folders = set()
+    for game in games:
+        platform_lower = game['clz_platform'].lower().strip()
+        matched_folder = CLZ_PLATFORM_MAP.get(platform_lower)
+        if matched_folder and matched_folder not in systems_dict:
+            needed_folders.add(matched_folder)
+
+    if needed_folders:
+        for folder in needed_folders:
+            system_name = config.SYSTEM_NAME_MAP.get(folder, folder.upper())
+            # Check for a system logo
+            logo = f"{folder}.png" if os.path.isfile(os.path.join(config.IMAGE_PATH, 'systems', f'{folder}.png')) else None
+            try:
+                new_id = execute(
+                    "INSERT OR IGNORE INTO systems (name, folder, logo) VALUES (?, ?, ?)",
+                    (system_name, folder, logo)
+                )
+                # Fetch the actual id (INSERT OR IGNORE may not return it)
+                row = query("SELECT id, name FROM systems WHERE folder = ?", (folder,), one=True)
+                if row:
+                    systems_dict[folder] = {'id': row['id'], 'name': row['name']}
+                    systems_map[str(row['id'])] = row['name']
+                    logger.info(f"CLZ Import: Auto-created system '{system_name}' (folder: {folder})")
+            except Exception as e:
+                logger.warning(f"CLZ Import: Failed to auto-create system '{folder}': {e}")
+
+    # Log available systems for debugging
+    logger.info(f"CLZ Import: Available system folders: {sorted(systems_dict.keys())}")
+
+    # Get existing games for duplicate detection (normalized for fuzzy matching)
+    existing_games = {}
+    for game in query("SELECT id, title, system_id FROM games"):
+        key = (normalize_title(game['title']), game['system_id'])
+        existing_games[key] = game['id']
+
+    # Match platforms and check for duplicates
+    unmatched_platforms = set()
+    for game in games:
+        platform_lower = game['clz_platform'].lower().strip()
+
+        # Try to find matching system
+        matched_folder = CLZ_PLATFORM_MAP.get(platform_lower)
+        if matched_folder and matched_folder in systems_dict:
+            system_info = systems_dict[matched_folder]
+            game['system_id'] = system_info['id']
+            game['system_name'] = system_info['name']
+            game['system_folder'] = matched_folder
+
+            # Check if game already exists (normalized matching)
+            key = (normalize_title(game['title']), system_info['id'])
+            game['existing'] = key in existing_games
+        else:
+            game['system_id'] = None
+            game['system_name'] = None
+            game['system_folder'] = None
+            game['existing'] = False
+            # Track unmatched for logging
+            if platform_lower:
+                if matched_folder:
+                    unmatched_platforms.add(f"{platform_lower} -> {matched_folder} (system not in DB)")
+                else:
+                    unmatched_platforms.add(f"{platform_lower} (no mapping)")
+
+        game['selected'] = False
+
+    # Log unmatched platforms to help with debugging
+    if unmatched_platforms:
+        logger.info(f"CLZ Import: Unmatched platforms: {sorted(unmatched_platforms)}")
+
+    logger.info(f"CLZ Import: Parsed {len(games)} games from PDF")
+
+    return jsonify({
+        'success': True,
+        'games': games,
+        'systems_map': systems_map
+    })
 
 
 @bp.route('/api/clz-import/import', methods=['POST'])
 @login_required
+@handle_api_errors
 def api_clz_import():
     """Import selected games from CLZ"""
     data = request.get_json()
@@ -584,10 +582,6 @@ def api_clz_import():
             'skipped': skipped,
             'failed': failed
         })
-
-    except Exception as e:
-        logger.error(f"CLZ Import error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
     finally:
         if conn:
             conn.close()

@@ -12,6 +12,7 @@ import time
 
 import config
 from services.database import query, execute
+from services.api_helpers import handle_api_errors
 from services.auth import (
     hash_password, verify_password, get_user_settings,
     admin_required, login_required
@@ -113,42 +114,40 @@ def api_list_users():
 
 @bp.route('/api/users/create', methods=['POST'])
 @admin_required
+@handle_api_errors
 def api_create_user():
     """Create a new user (admin only)"""
     data = request.get_json()
     username = data.get('username', '').strip()
     display_name = data.get('display_name', '').strip() or username
     role = data.get('role', 'viewer')
-    
+
     if not username:
         return jsonify({'success': False, 'error': 'Username is required'})
-    
+
     if role not in ['admin', 'editor', 'viewer']:
         return jsonify({'success': False, 'error': 'Invalid role'})
-    
+
     # Check if username already exists
     existing = query("SELECT id FROM users WHERE username = ?", (username,), one=True)
     if existing:
         return jsonify({'success': False, 'error': 'Username already exists'})
-    
+
     # Create user (no password for non-admin)
     password_hash = None
     if role == 'admin':
         # Admin users get a default password they should change
         password_hash = hash_password('changeme')
-    
-    try:
-        user_id = execute("""
-            INSERT INTO users (username, display_name, password_hash, role)
-            VALUES (?, ?, ?, ?)
-        """, (username, display_name, password_hash, role))
-        
-        # Create user settings record
-        execute("INSERT INTO user_settings (user_id) VALUES (?)", (user_id,))
-        
-        return jsonify({'success': True, 'user_id': user_id, 'message': f'User "{username}" created successfully'})
-    except Exception as e:
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+
+    user_id = execute("""
+        INSERT INTO users (username, display_name, password_hash, role)
+        VALUES (?, ?, ?, ?)
+    """, (username, display_name, password_hash, role))
+
+    # Create user settings record
+    execute("INSERT INTO user_settings (user_id) VALUES (?)", (user_id,))
+
+    return jsonify({'success': True, 'user_id': user_id, 'message': f'User "{username}" created successfully'})
 
 
 @bp.route('/api/users/<int:user_id>/update', methods=['POST'])
@@ -189,38 +188,36 @@ def api_update_user(user_id):
 
 @bp.route('/api/users/<int:user_id>/delete', methods=['POST'])
 @admin_required
+@handle_api_errors
 def api_delete_user(user_id):
     """Delete a user (admin only)"""
     user = query("SELECT * FROM users WHERE id = ?", (user_id,), one=True)
     if not user:
         return jsonify({'success': False, 'error': 'User not found'})
-    
+
     # Can't delete yourself
     if g.user['id'] == user_id:
         return jsonify({'success': False, 'error': 'Cannot delete your own account'})
-    
+
     # Can't delete the last admin
     admin_count = query("SELECT COUNT(*) as count FROM users WHERE role = 'admin' AND is_active = 1", one=True)
     if user['role'] == 'admin' and admin_count['count'] <= 1:
         return jsonify({'success': False, 'error': 'Cannot delete the last admin user'})
-    
-    try:
-        # Delete custom avatar file if one exists
-        user_settings = get_user_settings(user_id)
-        if user_settings:
-            avatar = dict(user_settings).get('avatar', '')
-            if avatar and not avatar.startswith('default_'):
-                clean_name = safe_filename(avatar)
-                if clean_name:
-                    avatar_path = os.path.join(config.IMAGE_PATH, 'avatars', clean_name)
-                    if os.path.isfile(avatar_path):
-                        os.remove(avatar_path)
 
-        execute("DELETE FROM user_settings WHERE user_id = ?", (user_id,))
-        execute("DELETE FROM users WHERE id = ?", (user_id,))
-        return jsonify({'success': True, 'message': 'User deleted successfully'})
-    except Exception as e:
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+    # Delete custom avatar file if one exists
+    user_settings = get_user_settings(user_id)
+    if user_settings:
+        avatar = dict(user_settings).get('avatar', '')
+        if avatar and not avatar.startswith('default_'):
+            clean_name = safe_filename(avatar)
+            if clean_name:
+                avatar_path = os.path.join(config.IMAGE_PATH, 'avatars', clean_name)
+                if os.path.isfile(avatar_path):
+                    os.remove(avatar_path)
+
+    execute("DELETE FROM user_settings WHERE user_id = ?", (user_id,))
+    execute("DELETE FROM users WHERE id = ?", (user_id,))
+    return jsonify({'success': True, 'message': 'User deleted successfully'})
 
 
 @bp.route('/api/users/settings', methods=['GET', 'POST'])

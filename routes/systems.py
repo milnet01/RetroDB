@@ -10,6 +10,7 @@ import logging
 
 import config
 from services.database import get_db, query, execute, execute_many
+from services.api_helpers import handle_api_errors
 from services.auth import login_required, admin_required
 from services.game_utils import find_image_file, is_ra_supported, get_ra_supported_systems
 
@@ -271,37 +272,32 @@ def api_get_systems():
 # Callers should migrate to /api/systems. Kept for backward compatibility.
 @bp.route('/api/systems-list')
 @login_required
+@handle_api_errors
 def api_systems_list():
     """Get list of all systems for dropdown (deprecated — use /api/systems)"""
-    try:
-        systems = query("SELECT id, name, folder, system_type FROM systems ORDER BY name COLLATE NOCASE")
-        return jsonify({'success': True, 'systems': [dict(s) for s in systems]})
-    except Exception as e:
-        logger.error(f"Error getting systems: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    systems = query("SELECT id, name, folder, system_type FROM systems ORDER BY name COLLATE NOCASE")
+    return jsonify({'success': True, 'systems': [dict(s) for s in systems]})
 
 
 @bp.route('/api/update-system-type', methods=['POST'])
 @admin_required
+@handle_api_errors
 def api_update_system_type():
     """Update system type for a system"""
-    try:
-        data = request.get_json()
-        system_id = data.get('system_id')
-        system_type = data.get('system_type', '').strip()
+    data = request.get_json()
+    system_id = data.get('system_id')
+    system_type = data.get('system_type', '').strip()
 
-        if not system_id:
-            return jsonify({'success': False, 'error': 'System ID required'}), 400
+    if not system_id:
+        return jsonify({'success': False, 'error': 'System ID required'}), 400
 
-        execute("UPDATE systems SET system_type = ? WHERE id = ?", (system_type, system_id))
-        return jsonify({'success': True, 'message': f'System type updated to {system_type}'})
-    except Exception as e:
-        logger.error(f"Error updating system type: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    execute("UPDATE systems SET system_type = ? WHERE id = ?", (system_type, system_id))
+    return jsonify({'success': True, 'message': f'System type updated to {system_type}'})
 
 
 @bp.route('/api/refresh-system-types', methods=['POST'])
 @admin_required
+@handle_api_errors
 def api_refresh_system_types():
     """Re-run system type auto-detection"""
     conn = None
@@ -315,9 +311,6 @@ def api_refresh_system_types():
 
         conn.commit()
         return jsonify({'success': True, 'message': 'System types refreshed'})
-    except Exception as e:
-        logger.error(f"Error refreshing system types: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
     finally:
         if conn:
             conn.close()
@@ -325,72 +318,67 @@ def api_refresh_system_types():
 
 @bp.route('/api/refresh-system-names', methods=['POST'])
 @admin_required
+@handle_api_errors
 def api_refresh_system_names():
     """Update system names from config mappings"""
-    try:
-        updated = 0
-        systems = query("SELECT id, folder, name FROM systems")
+    updated = 0
+    systems = query("SELECT id, folder, name FROM systems")
 
-        updates_list = []
-        for system in systems:
-            folder = system['folder']
-            # Get mapped name from config
-            mapped_name = config.SYSTEM_NAME_MAP.get(folder)
+    updates_list = []
+    for system in systems:
+        folder = system['folder']
+        # Get mapped name from config
+        mapped_name = config.SYSTEM_NAME_MAP.get(folder)
 
-            if mapped_name and system['name'] != mapped_name:
-                updates_list.append((mapped_name, system['id']))
-                updated += 1
-                logger.info(f"Updated name for {folder}: {system['name']} -> {mapped_name}")
+        if mapped_name and system['name'] != mapped_name:
+            updates_list.append((mapped_name, system['id']))
+            updated += 1
+            logger.info(f"Updated name for {folder}: {system['name']} -> {mapped_name}")
 
-        if updates_list:
-            execute_many("UPDATE systems SET name = ? WHERE id = ?", updates_list)
+    if updates_list:
+        execute_many("UPDATE systems SET name = ? WHERE id = ?", updates_list)
 
-        return jsonify({
-            'success': True,
-            'message': f'Updated {updated} system names',
-            'updated': updated
-        })
-    except Exception as e:
-        logger.error(f"Error refreshing system names: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    return jsonify({
+        'success': True,
+        'message': f'Updated {updated} system names',
+        'updated': updated
+    })
 
 
 @bp.route('/api/refresh-system-logos', methods=['POST'])
 @admin_required
+@handle_api_errors
 def api_refresh_system_logos():
     """Check for and update system logos that exist on disk"""
-    try:
-        updated = 0
+    updated = 0
 
-        systems = query("SELECT id, folder, logo FROM systems")
-        logo_dir = os.path.join(config.STATIC_PATH, 'images', 'systems')
+    systems = query("SELECT id, folder, logo FROM systems")
+    logo_dir = os.path.join(config.STATIC_PATH, 'images', 'systems')
 
-        updates_list = []
-        for system in systems:
-            logo_filename, logo_path = find_image_file(logo_dir, system['folder'])
+    updates_list = []
+    for system in systems:
+        logo_filename, logo_path = find_image_file(logo_dir, system['folder'])
 
-            if logo_filename:
-                # Logo file exists - update database if not already set
-                if system['logo'] != logo_filename:
-                    updates_list.append((logo_filename, system['id']))
-                    updated += 1
-                    logger.info(f"Updated logo for {system['folder']}: {logo_filename}")
+        if logo_filename:
+            # Logo file exists - update database if not already set
+            if system['logo'] != logo_filename:
+                updates_list.append((logo_filename, system['id']))
+                updated += 1
+                logger.info(f"Updated logo for {system['folder']}: {logo_filename}")
 
-        if updates_list:
-            execute_many("UPDATE systems SET logo = ? WHERE id = ?", updates_list)
+    if updates_list:
+        execute_many("UPDATE systems SET logo = ? WHERE id = ?", updates_list)
 
-        return jsonify({
-            'success': True,
-            'message': f'Updated {updated} system logos',
-            'updated': updated
-        })
-    except Exception as e:
-        logger.error(f"Error refreshing system logos: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    return jsonify({
+        'success': True,
+        'message': f'Updated {updated} system logos',
+        'updated': updated
+    })
 
 
 @bp.route('/api/import-logos', methods=['POST'])
 @admin_required
+@handle_api_errors
 def api_import_logos():
     """Import system logos from ES-DE"""
     try:
@@ -432,12 +420,6 @@ def api_import_logos():
         return jsonify({
             'success': False,
             'error': 'ES-DE scraper not available'
-        }), 500
-    except Exception as e:
-        logger.error(f"Logo import error: {e}")
-        return jsonify({
-            'success': False,
-            'error': 'An internal error occurred'
         }), 500
 
 

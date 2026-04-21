@@ -12,6 +12,7 @@ import logging
 from services.database import query, execute
 from services.game_utils import is_bonus_disc_title, extract_base_game_title
 from services.auth import login_required, editor_required
+from services.api_helpers import handle_api_errors
 
 logger = logging.getLogger(__name__)
 
@@ -242,178 +243,154 @@ def get_bonus_discs_for_game(parent_game_id):
 
 @bp.route('/api/bonus-discs/detect')
 @login_required
+@handle_api_errors
 def api_detect_bonus_discs():
     """Detect potential bonus discs based on title patterns"""
-    try:
-        system_id = request.args.get('system_id', type=int)
-        result = auto_detect_bonus_discs(system_id)
-        return jsonify({'success': True, **result})
-    except Exception as e:
-        logger.error(f"Error detecting bonus discs: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+    system_id = request.args.get('system_id', type=int)
+    result = auto_detect_bonus_discs(system_id)
+    return jsonify({'success': True, **result})
 
 
 @bp.route('/api/bonus-discs/potential-parents/<int:game_id>')
 @login_required
+@handle_api_errors
 def api_get_potential_parents(game_id):
     """Get potential parent games for a bonus disc"""
-    try:
-        game = query("SELECT system_id FROM games WHERE id = ?", (game_id,), one=True)
-        if not game:
-            return jsonify({'success': False, 'error': 'Game not found'})
+    game = query("SELECT system_id FROM games WHERE id = ?", (game_id,), one=True)
+    if not game:
+        return jsonify({'success': False, 'error': 'Game not found'})
 
-        parents = find_potential_parent_games(game_id, game['system_id'])
-        return jsonify({'success': True, 'parents': parents})
-    except Exception as e:
-        logger.error(f"Error finding potential parents: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+    parents = find_potential_parent_games(game_id, game['system_id'])
+    return jsonify({'success': True, 'parents': parents})
 
 
 @bp.route('/api/bonus-discs/link', methods=['POST'])
 @editor_required
+@handle_api_errors
 def api_link_bonus_disc():
     """Link a bonus disc to its parent game"""
-    try:
-        data = request.get_json()
-        bonus_id = data.get('bonus_id')
-        parent_id = data.get('parent_id')
+    data = request.get_json()
+    bonus_id = data.get('bonus_id')
+    parent_id = data.get('parent_id')
 
-        if not bonus_id or not parent_id:
-            return jsonify({'success': False, 'error': 'Missing bonus_id or parent_id'})
+    if not bonus_id or not parent_id:
+        return jsonify({'success': False, 'error': 'Missing bonus_id or parent_id'})
 
-        result = link_bonus_disc_to_parent(bonus_id, parent_id)
-        return jsonify(result)
-    except Exception as e:
-        logger.error(f"Error linking bonus disc: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+    result = link_bonus_disc_to_parent(bonus_id, parent_id)
+    return jsonify(result)
 
 
 @bp.route('/api/bonus-discs/unlink/<int:game_id>', methods=['POST'])
 @editor_required
+@handle_api_errors
 def api_unlink_bonus_disc(game_id):
     """Unlink a bonus disc from its parent"""
-    try:
-        result = unlink_bonus_disc(game_id)
-        return jsonify(result)
-    except Exception as e:
-        logger.error(f"Error unlinking bonus disc: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+    result = unlink_bonus_disc(game_id)
+    return jsonify(result)
 
 
 @bp.route('/api/bonus-discs/mark', methods=['POST'])
 @editor_required
+@handle_api_errors
 def api_mark_bonus_disc():
     """Manually mark a game as a bonus disc (without linking to parent)"""
-    try:
-        data = request.get_json()
-        game_id = data.get('game_id')
-        is_bonus = data.get('is_bonus', True)
+    data = request.get_json()
+    game_id = data.get('game_id')
+    is_bonus = data.get('is_bonus', True)
 
-        if not game_id:
-            return jsonify({'success': False, 'error': 'Missing game_id'})
+    if not game_id:
+        return jsonify({'success': False, 'error': 'Missing game_id'})
 
-        execute("UPDATE games SET is_bonus_disc = ? WHERE id = ?",
-               (1 if is_bonus else 0, game_id))
+    execute("UPDATE games SET is_bonus_disc = ? WHERE id = ?",
+           (1 if is_bonus else 0, game_id))
 
-        return jsonify({'success': True})
-    except Exception as e:
-        logger.error(f"Error marking bonus disc: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+    return jsonify({'success': True})
 
 
 @bp.route('/api/bonus-discs/for-game/<int:game_id>')
 @login_required
+@handle_api_errors
 def api_get_bonus_discs_for_game(game_id):
     """Get all bonus discs linked to a parent game"""
-    try:
-        bonus_discs = get_bonus_discs_for_game(game_id)
-        return jsonify({
-            'success': True,
-            'bonus_discs': [dict(b) for b in bonus_discs]
-        })
-    except Exception as e:
-        logger.error(f"Error getting bonus discs: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+    bonus_discs = get_bonus_discs_for_game(game_id)
+    return jsonify({
+        'success': True,
+        'bonus_discs': [dict(b) for b in bonus_discs]
+    })
 
 
 @bp.route('/api/bonus-discs/stats')
 @login_required
+@handle_api_errors
 def api_bonus_disc_stats():
     """Get statistics about bonus discs"""
-    try:
-        total_bonus = query("SELECT COUNT(*) as count FROM games WHERE is_bonus_disc = 1", one=True)['count']
-        linked = query("SELECT COUNT(*) as count FROM games WHERE is_bonus_disc = 1 AND parent_game_id IS NOT NULL", one=True)['count']
-        unlinked = total_bonus - linked
+    total_bonus = query("SELECT COUNT(*) as count FROM games WHERE is_bonus_disc = 1", one=True)['count']
+    linked = query("SELECT COUNT(*) as count FROM games WHERE is_bonus_disc = 1 AND parent_game_id IS NOT NULL", one=True)['count']
+    unlinked = total_bonus - linked
 
-        # Count unique parent games that have bonus content
-        parents_with_bonus = query("SELECT COUNT(DISTINCT parent_game_id) as count FROM games WHERE is_bonus_disc = 1 AND parent_game_id IS NOT NULL", one=True)['count']
+    # Count unique parent games that have bonus content
+    parents_with_bonus = query("SELECT COUNT(DISTINCT parent_game_id) as count FROM games WHERE is_bonus_disc = 1 AND parent_game_id IS NOT NULL", one=True)['count']
 
-        # Get list of current bonus discs
-        bonus_list = query("""
-            SELECT g.id, g.title, g.boxart, g.system_id, g.parent_game_id,
-                   s.name as system_name,
-                   p.title as parent_title
-            FROM games g
-            JOIN systems s ON g.system_id = s.id
-            LEFT JOIN games p ON g.parent_game_id = p.id
-            WHERE g.is_bonus_disc = 1
-            ORDER BY s.name, g.title
-        """)
+    # Get list of current bonus discs
+    bonus_list = query("""
+        SELECT g.id, g.title, g.boxart, g.system_id, g.parent_game_id,
+               s.name as system_name,
+               p.title as parent_title
+        FROM games g
+        JOIN systems s ON g.system_id = s.id
+        LEFT JOIN games p ON g.parent_game_id = p.id
+        WHERE g.is_bonus_disc = 1
+        ORDER BY s.name, g.title
+    """)
 
-        return jsonify({
-            'success': True,
-            'total_bonus': total_bonus,
-            'linked': linked,
-            'unlinked': unlinked,
-            'parents_with_bonus': parents_with_bonus,
-            'bonus_discs': [dict(b) for b in bonus_list]
-        })
-    except Exception as e:
-        logger.error(f"Error getting bonus disc stats: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+    return jsonify({
+        'success': True,
+        'total_bonus': total_bonus,
+        'linked': linked,
+        'unlinked': unlinked,
+        'parents_with_bonus': parents_with_bonus,
+        'bonus_discs': [dict(b) for b in bonus_list]
+    })
 
 
 @bp.route('/api/bonus-discs/auto-link', methods=['POST'])
 @editor_required
+@handle_api_errors
 def api_auto_link_bonus_discs():
     """Auto-detect and link bonus discs to their parent games"""
-    try:
-        system_id = request.args.get('system_id', type=int)
+    system_id = request.args.get('system_id', type=int)
 
-        # Detect bonus discs
-        result = auto_detect_bonus_discs(system_id)
+    # Detect bonus discs
+    result = auto_detect_bonus_discs(system_id)
 
-        linked_count = 0
-        for game in result['games']:
-            # Mark as bonus disc
-            execute("UPDATE games SET is_bonus_disc = 1 WHERE id = ?", (game['id'],))
+    linked_count = 0
+    for game in result['games']:
+        # Mark as bonus disc
+        execute("UPDATE games SET is_bonus_disc = 1 WHERE id = ?", (game['id'],))
 
-            # Try to find and link parent
-            if game['base_title']:
-                # Look for exact or close title match
-                parent = query("""
-                    SELECT id FROM games
-                    WHERE system_id = ?
-                      AND id != ?
-                      AND (is_bonus_disc = 0 OR is_bonus_disc IS NULL)
-                      AND (title = ? OR title LIKE ?)
-                    ORDER BY
-                        CASE WHEN title = ? THEN 0 ELSE 1 END
-                    LIMIT 1
-                """, (game['system_id'], game['id'], game['base_title'],
-                      f"{game['base_title']}%", game['base_title']), one=True)
+        # Try to find and link parent
+        if game['base_title']:
+            # Look for exact or close title match
+            parent = query("""
+                SELECT id FROM games
+                WHERE system_id = ?
+                  AND id != ?
+                  AND (is_bonus_disc = 0 OR is_bonus_disc IS NULL)
+                  AND (title = ? OR title LIKE ?)
+                ORDER BY
+                    CASE WHEN title = ? THEN 0 ELSE 1 END
+                LIMIT 1
+            """, (game['system_id'], game['id'], game['base_title'],
+                  f"{game['base_title']}%", game['base_title']), one=True)
 
-                if parent:
-                    execute("UPDATE games SET parent_game_id = ? WHERE id = ?",
-                           (parent['id'], game['id']))
-                    linked_count += 1
+            if parent:
+                execute("UPDATE games SET parent_game_id = ? WHERE id = ?",
+                       (parent['id'], game['id']))
+                linked_count += 1
 
-        return jsonify({
-            'success': True,
-            'detected': result['detected'],
-            'linked': linked_count,
-            'message': f"Detected {result['detected']} bonus discs, linked {linked_count} to parent games"
-        })
-    except Exception as e:
-        logger.error(f"Error auto-linking bonus discs: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+    return jsonify({
+        'success': True,
+        'detected': result['detected'],
+        'linked': linked_count,
+        'message': f"Detected {result['detected']} bonus discs, linked {linked_count} to parent games"
+    })

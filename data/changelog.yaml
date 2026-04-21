@@ -1,3 +1,15 @@
+- version: 2.83.5
+  date: 2026-04-21
+  tags:
+  - type: chore
+    label: Chore
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 2 &mdash; <code>@handle_api_errors</code> sweep across the routes layer</strong> &mdash; Applied the shared error decorator (landed in 2.83.2) to 118 route handlers spread across 20 files in <code>routes/</code>. Removed the repetitive <code>try: &hellip; except Exception as e: logger.error(&hellip;); return jsonify({'success': False, 'error': 'An internal error occurred'}), 500</code> boilerplate in favour of a single <code>@handle_api_errors</code> decorator placed innermost on each handler (below the auth decorator). Net reduction: ~370 lines of dead boilerplate; every caught 500 now also carries a full <code>exc_info=True</code> stack trace in the logs so production errors are diagnosable from the log file alone.</li>
+        <li><strong>Intentional non-conversions</strong> &mdash; 37 occurrences of the error string remain, all in handlers that deliberately return HTTP 200 (search endpoints that render an empty result list with an error hint; settings probes that return <code>{'configured': True, 'error': &hellip;}</code>) or use non-standard payload shapes. Converting those would change their status code and frontend contract, so they were preserved. Files with zero generic-500 handlers left: <code>achievements</code>, <code>auth</code>, <code>bulk_scrape</code>, <code>clz_import</code>, <code>collections</code>, <code>collector_trophies</code>, <code>controllers</code>, <code>maintenance</code>, <code>games_ai</code>, <code>games_media</code>, <code>games_search</code>, <code>ra_sync</code>, <code>reports</code>, <code>tools</code>.</li>
+        <li><strong>Preserved domain handlers</strong> &mdash; All specific <code>except</code> clauses (<code>ValueError</code>, <code>sqlite3.IntegrityError</code>, <code>ImportError</code>, <code>PermissionError</code>, <code>OSError</code>, <code>json.JSONDecodeError</code>) were kept; only the generic catch-alls went away. All <code>try/finally</code> blocks for cleanup were preserved.</li>
+    </ul>
+
 - version: 2.83.4
   date: 2026-04-21
   tags:
