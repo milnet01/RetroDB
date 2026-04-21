@@ -341,10 +341,13 @@ async function lookupHLTB() {
 
             const confidence = data.confidence ? Math.min(Math.round(data.confidence * 100), 100) : null;
             const platformInfo = data.match_platform ? ` [${data.match_platform}]` : '';
+            const altNotice = data.matched_via_alternate && data.search_term_used
+                ? `\n\n⚡ Matched via alternate title "${data.search_term_used}" — please verify this is the same game.`
+                : '';
 
             showConfirm(
                 '✅ HLTB Match Found',
-                `Found: "${data.match_name}"${platformInfo} (${confidence}% confidence)\n\nPlaytime: ${data.playtime}\n\nAccept this match?`,
+                `Found: "${data.match_name}"${platformInfo} (${confidence}% confidence)${altNotice}\n\nPlaytime: ${data.playtime}\n\nAccept this match?`,
                 async function() {
                     // Save the result
                     await fetch('/api/hltb-save/{{ game.id }}', {

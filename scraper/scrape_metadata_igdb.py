@@ -175,8 +175,9 @@ def search_games(title, system_name=None, limit=10):
         # Build query using search command
         body = f"""
         search "{search_title}";
-        fields id, name, first_release_date, platforms.id, platforms.name, platforms.abbreviation, 
-               release_dates.region, release_dates.platform, summary;
+        fields id, name, first_release_date, platforms.id, platforms.name, platforms.abbreviation,
+               release_dates.region, release_dates.platform, summary,
+               alternative_names.name, alternative_names.comment;
         where {where_clause};
         limit {limit};
         """
@@ -191,7 +192,8 @@ def search_games(title, system_name=None, limit=10):
             body = f"""
             search "{search_title}";
             fields id, name, first_release_date, platforms.id, platforms.name, platforms.abbreviation,
-                   release_dates.region, release_dates.platform, summary;
+                   release_dates.region, release_dates.platform, summary,
+                   alternative_names.name, alternative_names.comment;
             where version_parent = null;
             limit {limit};
             """
@@ -228,7 +230,8 @@ def search_games(title, system_name=None, limit=10):
                 vp_body = f"""
                 search "{search_title}";
                 fields id, name, first_release_date, platforms.id, platforms.name, platforms.abbreviation,
-                       release_dates.region, release_dates.platform, summary;
+                       release_dates.region, release_dates.platform, summary,
+                       alternative_names.name, alternative_names.comment;
                 {"where " + vp_where + ";" if vp_where else ""}
                 limit {limit};
                 """
@@ -249,8 +252,9 @@ def search_games(title, system_name=None, limit=10):
             # Strategy 1: Try with name regex as fallback (some titles work better this way)
             logger.info(f"IGDB: Trying regex fallback for '{search_title}'")
             body = f"""
-            fields id, name, first_release_date, platforms.id, platforms.name, platforms.abbreviation, 
-                   release_dates.region, release_dates.platform, summary;
+            fields id, name, first_release_date, platforms.id, platforms.name, platforms.abbreviation,
+                   release_dates.region, release_dates.platform, summary,
+                   alternative_names.name, alternative_names.comment;
             where name ~ *"{search_title}"* & version_parent = null;
             limit {limit};
             """
@@ -264,8 +268,9 @@ def search_games(title, system_name=None, limit=10):
                 logger.info(f"IGDB: Trying short title search: '{short_title}'")
                 body = f"""
                 search "{short_title}";
-                fields id, name, first_release_date, platforms.id, platforms.name, platforms.abbreviation, 
-                       release_dates.region, release_dates.platform, summary;
+                fields id, name, first_release_date, platforms.id, platforms.name, platforms.abbreviation,
+                       release_dates.region, release_dates.platform, summary,
+                       alternative_names.name, alternative_names.comment;
                 where version_parent = null;
                 limit {limit};
                 """
@@ -326,6 +331,17 @@ def search_games(title, system_name=None, limit=10):
             if not platform_match:
                 logger.info(f"  No platform match for '{game.get('name', '')}'")
             
+            # Alternate names — {name, comment} pairs where comment is usually
+            # a region hint like "Japanese title" or "JP". Surface for UI preview.
+            alt_titles = []
+            for alt in game.get('alternative_names') or []:
+                alt_name = alt.get('name', '').strip() if isinstance(alt, dict) else ''
+                if alt_name:
+                    alt_titles.append({
+                        'title': alt_name,
+                        'region': (alt.get('comment') or '').strip() or None,
+                    })
+
             formatted.append({
                 'id': str(game.get('id')),
                 'name': game.get('name', ''),
@@ -335,7 +351,8 @@ def search_games(title, system_name=None, limit=10):
                 'region': region,
                 'source': 'igdb',
                 'platform_match': platform_match,
-                'matched_platform': matched_platform_name
+                'matched_platform': matched_platform_name,
+                'alternate_titles': alt_titles,
             })
         
         logger.info(f"IGDB found {len(formatted)} results")

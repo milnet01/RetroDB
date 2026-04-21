@@ -151,6 +151,68 @@ def normalize_esrb_rating(rating):
 
 
 # =============================================================================
+# ALTERNATE TITLES
+# =============================================================================
+# Regional / alternate names for games (e.g. Japanese vs USA vs PAL titles).
+# Stored as JSON list of {title, region?, source?} dicts on games.alternate_titles.
+#
+# Dedupe is case-insensitive on title. Entries whose title matches the game's
+# primary title are dropped — no point storing the same string twice.
+
+def _alt_title_entry(title, region=None, source=None):
+    """Build a normalized alt-title dict, or None if title is empty/whitespace."""
+    if not title:
+        return None
+    t = str(title).strip()
+    if not t:
+        return None
+    entry = {'title': t}
+    if region:
+        r = str(region).strip()
+        if r:
+            entry['region'] = r
+    if source:
+        entry['source'] = source
+    return entry
+
+
+def merge_alt_titles(existing, new_entries, primary_title=None):
+    """Merge `new_entries` into `existing`, deduping case-insensitively on title.
+
+    `existing` may be a list, a JSON string, or None. Returns a plain list
+    (caller json.dumps on save). Entries matching `primary_title` are dropped.
+    """
+    import json as _json
+    if existing is None:
+        merged = []
+    elif isinstance(existing, list):
+        merged = [e for e in existing if isinstance(e, dict) and e.get('title')]
+    elif isinstance(existing, str):
+        try:
+            parsed = _json.loads(existing)
+            merged = [e for e in parsed if isinstance(e, dict) and e.get('title')] if isinstance(parsed, list) else []
+        except (ValueError, TypeError):
+            merged = []
+    else:
+        merged = []
+
+    seen = {e['title'].lower() for e in merged}
+    if primary_title:
+        seen.add(str(primary_title).strip().lower())
+
+    for entry in new_entries or []:
+        if not entry or not entry.get('title'):
+            continue
+        key = entry['title'].lower()
+        if key in seen:
+            continue
+        merged.append(entry)
+        seen.add(key)
+
+    return merged
+
+
+# =============================================================================
 # SCRAPER SETTINGS
 # =============================================================================
 
@@ -317,6 +379,26 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
             metadata['title'] = normalize_title(igdb_data['name'])
             if fill_only:
                 result['filled_fields'].append('title (IGDB)')
+
+    # Alternate names — IGDB returns list of {name, comment?} where comment
+    # is typically the region (e.g. "Japanese title") or platform variant.
+    alt_entries = []
+    for alt in igdb_data.get('alternative_names') or []:
+        entry = _alt_title_entry(
+            alt.get('name'),
+            region=alt.get('comment'),
+            source='igdb',
+        )
+        if entry:
+            alt_entries.append(entry)
+    if alt_entries:
+        before = len(metadata.get('alternate_titles') or [])
+        metadata['alternate_titles'] = merge_alt_titles(
+            metadata.get('alternate_titles'), alt_entries, primary_title=metadata.get('title')
+        )
+        added = len(metadata['alternate_titles']) - before
+        if added > 0:
+            result['filled_fields'].append(f'alternate_titles +{added} (IGDB)')
 
     # Publisher/Developer
     involved = igdb_data.get('involved_companies', [])
@@ -598,6 +680,21 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
         metadata['franchise'] = rawg_data['franchise']
         result['filled_fields'].append('franchise (RAWG)')
 
+    # Alternate names — RAWG returns flat list of strings with no region info.
+    alt_entries = [
+        _alt_title_entry(name, source='rawg')
+        for name in (rawg_data.get('alternative_names') or [])
+    ]
+    alt_entries = [e for e in alt_entries if e]
+    if alt_entries:
+        before = len(metadata.get('alternate_titles') or [])
+        metadata['alternate_titles'] = merge_alt_titles(
+            metadata.get('alternate_titles'), alt_entries, primary_title=metadata.get('title')
+        )
+        added = len(metadata['alternate_titles']) - before
+        if added > 0:
+            result['filled_fields'].append(f'alternate_titles +{added} (RAWG)')
+
     # Boxart (only if not already present — never replace existing)
     if rawg_data.get('boxart_url') and not metadata['boxart']:
         url = rawg_data['boxart_url']
@@ -718,6 +815,29 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
     if title and (not metadata['title'] or not fill_only):
         metadata['title'] = normalize_title(title)
         result['filled_fields'].append('title (ScreenScraper)')
+
+    # Alternate names — ScreenScraper's `noms` list is already region-tagged
+    # with every regional release title. Keep the whole list (minus the one
+    # chosen as primary title) as alt titles.
+    alt_entries = []
+    for nom in ss_data.get('noms') or []:
+        if not isinstance(nom, dict):
+            continue
+        entry = _alt_title_entry(
+            nom.get('text'),
+            region=nom.get('region') or nom.get('langue'),
+            source='screenscraper',
+        )
+        if entry:
+            alt_entries.append(entry)
+    if alt_entries:
+        before = len(metadata.get('alternate_titles') or [])
+        metadata['alternate_titles'] = merge_alt_titles(
+            metadata.get('alternate_titles'), alt_entries, primary_title=metadata.get('title')
+        )
+        added = len(metadata['alternate_titles']) - before
+        if added > 0:
+            result['filled_fields'].append(f'alternate_titles +{added} (ScreenScraper)')
 
     # Description - only fill if empty
     desc = get_localized(ss_data.get('synopsis'))

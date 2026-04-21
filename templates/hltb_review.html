@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block title %}HLTB Review - RetroDB{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">HLTB Pending Matches</h1>
+        <p class="page-subtitle">Review and approve bulk HowLongToBeat lookup matches that need a human glance.</p>
+    </div>
+    <div class="page-actions">
+        <button class="btn btn-success" id="approveAllBtn" onclick="hltbApproveAll()">
+            <span class="btn-icon">&check;</span> Approve All
+        </button>
+        <button class="btn btn-danger-outline" id="rejectAllBtn" onclick="hltbRejectAll()">
+            <span class="btn-icon">&times;</span> Reject All
+        </button>
+    </div>
+</div>
+
+<div class="hltb-review-summary" id="hltbReviewSummary" style="margin-bottom: 1rem; color: var(--text-secondary);">
+    Loading pending matches&hellip;
+</div>
+
+<div class="hltb-review-filters">
+    <button class="filter-tab active" data-filter="all" onclick="hltbFilterReview('all', this)">All</button>
+    <button class="filter-tab" data-filter="alt_title" onclick="hltbFilterReview('alt_title', this)">Alt-title matches</button>
+    <button class="filter-tab" data-filter="low_confidence" onclick="hltbFilterReview('low_confidence', this)">Low confidence</button>
+</div>
+
+<div class="hltb-review-list" id="hltbReviewList">
+    <!-- populated by JS -->
+</div>
+
+<div class="empty-state" id="hltbReviewEmpty" style="display: none;">
+    <div class="empty-state-icon">&check;</div>
+    <div class="empty-state-title">No pending HLTB matches</div>
+    <div class="empty-state-text">Run a bulk HLTB lookup from the ROM Tools Hub to queue matches for review here.</div>
+</div>
+
+<style>
+.hltb-review-filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.hltb-review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.hltb-review-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    transition: border-color var(--transition-fast);
+}
+
+.hltb-review-item:hover {
+    border-color: var(--primary-cyan);
+}
+
+.hltb-review-item.reason-alt_title {
+    border-left: 3px solid var(--neon-orange);
+}
+
+.hltb-review-item.reason-low_confidence {
+    border-left: 3px solid var(--neon-purple);
+}
+
+.hltb-review-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 0;
+}
+
+.hltb-review-titles {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.hltb-review-game-title {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.hltb-review-arrow {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.hltb-review-match-title {
+    color: var(--primary-cyan);
+    font-weight: 500;
+}
+
+.hltb-review-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.75rem;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+}
+
+.hltb-review-meta .meta-chip {
+    padding: 2px 8px;
+    background: var(--bg-lighter);
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+}
+
+.hltb-review-meta .meta-chip.alt {
+    background: rgba(245, 158, 11, 0.12);
+    color: var(--neon-orange);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    cursor: help;
+}
+
+.hltb-review-meta .meta-chip.conf-low {
+    background: rgba(168, 85, 247, 0.12);
+    color: var(--neon-purple);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+.hltb-review-meta .meta-chip.conf-high {
+    background: rgba(34, 197, 94, 0.12);
+    color: var(--neon-green);
+}
+
+.hltb-review-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    align-self: center;
+}
+
+.hltb-review-actions .btn {
+    min-width: 110px;
+}
+</style>
+
+<script>
+let pendingMatches = [];
+let activeFilter = 'all';
+
+async function hltbLoadPending() {
+    const list = document.getElementById('hltbReviewList');
+    const summary = document.getElementById('hltbReviewSummary');
+    const empty = document.getElementById('hltbReviewEmpty');
+
+    try {
+        const resp = await fetch('/api/hltb/pending');
+        const data = await resp.json();
+        if (!data.success) {
+            summary.textContent = data.error || 'Failed to load';
+            return;
+        }
+        pendingMatches = data.items || [];
+        hltbRenderPending();
+    } catch (err) {
+        summary.textContent = 'Failed to load pending matches';
+    }
+}
+
+function hltbRenderPending() {
+    const list = document.getElementById('hltbReviewList');
+    const summary = document.getElementById('hltbReviewSummary');
+    const empty = document.getElementById('hltbReviewEmpty');
+
+    const filtered = activeFilter === 'all'
+        ? pendingMatches
+        : pendingMatches.filter(m => m.reason === activeFilter);
+
+    const altCount = pendingMatches.filter(m => m.reason === 'alt_title').length;
+    const lowCount = pendingMatches.filter(m => m.reason === 'low_confidence').length;
+
+    summary.innerHTML = pendingMatches.length
+        ? `<strong>${pendingMatches.length}</strong> pending &middot; ${altCount} alt-title matches &middot; ${lowCount} low-confidence`
+        : '';
+
+    if (!pendingMatches.length) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        document.getElementById('approveAllBtn').disabled = true;
+        document.getElementById('rejectAllBtn').disabled = true;
+        return;
+    }
+    empty.style.display = 'none';
+    document.getElementById('approveAllBtn').disabled = false;
+    document.getElementById('rejectAllBtn').disabled = false;
+
+    list.innerHTML = filtered.map(item => {
+        const conf = Math.round(item.confidence || 0);
+        const confClass = conf >= 85 ? 'conf-high' : 'conf-low';
+        const altChip = item.matched_via_alternate && item.search_term_used
+            ? `<span class="meta-chip alt" title="HLTB didn't find '${escapeHtml(item.game_title)}' but matched via alternate title">&#9889; via &ldquo;${escapeHtml(item.search_term_used)}&rdquo;</span>`
+            : '';
+        const platChip = item.match_platform
+            ? `<span class="meta-chip">${escapeHtml(item.match_platform)}</span>`
+            : '';
+        const playtime = item.playtime || 'No playtime data';
+        return `
+            <div class="hltb-review-item reason-${escapeHtml(item.reason || 'unknown')}" data-id="${item.id}">
+                <div class="hltb-review-body">
+                    <div class="hltb-review-titles">
+                        <span class="hltb-review-game-title">${escapeHtml(item.game_title)}</span>
+                        <span class="hltb-review-meta"><span class="meta-chip">${escapeHtml(item.system_name || '')}</span></span>
+                        <span class="hltb-review-arrow">&rarr;</span>
+                        <span class="hltb-review-match-title">${escapeHtml(item.match_name || '—')}</span>
+                    </div>
+                    <div class="hltb-review-meta">
+                        ${platChip}
+                        <span class="meta-chip ${confClass}">${conf}% match</span>
+                        ${altChip}
+                        <span class="meta-chip">${escapeHtml(playtime)}</span>
+                    </div>
+                </div>
+                <div class="hltb-review-actions">
+                    <button class="btn btn-success btn-sm" onclick="hltbApprove(${item.id})">&check; Approve</button>
+                    <button class="btn btn-danger-outline btn-sm" onclick="hltbReject(${item.id})">&times; Reject</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function hltbFilterReview(filter, btn) {
+    activeFilter = filter;
+    document.querySelectorAll('.hltb-review-filters .filter-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    hltbRenderPending();
+}
+
+async function hltbApprove(id) {
+    try {
+        const resp = await fetch(`/api/hltb/pending/${id}/approve`, { method: 'POST' });
+        const data = await resp.json();
+        if (data.success) {
+            pendingMatches = pendingMatches.filter(m => m.id !== id);
+            hltbRenderPending();
+            showNotification('Match approved', 'success');
+        } else {
+            showNotification(data.error || 'Failed to approve', 'error');
+        }
+    } catch (err) {
+        showNotification('Approve failed', 'error');
+    }
+}
+
+async function hltbReject(id) {
+    try {
+        const resp = await fetch(`/api/hltb/pending/${id}/reject`, { method: 'POST' });
+        const data = await resp.json();
+        if (data.success) {
+            pendingMatches = pendingMatches.filter(m => m.id !== id);
+            hltbRenderPending();
+            showNotification('Match rejected', 'info');
+        } else {
+            showNotification(data.error || 'Failed to reject', 'error');
+        }
+    } catch (err) {
+        showNotification('Reject failed', 'error');
+    }
+}
+
+function hltbApproveAll() {
+    const visible = activeFilter === 'all'
+        ? pendingMatches
+        : pendingMatches.filter(m => m.reason === activeFilter);
+    if (!visible.length) return;
+    showConfirm(
+        'Approve all visible matches?',
+        `This will apply ${visible.length} HLTB ${activeFilter === 'all' ? 'pending' : activeFilter.replace('_', ' ')} match${visible.length === 1 ? '' : 'es'} to your games. Cannot be undone without a manual Clear on each game.`,
+        async () => {
+            try {
+                const resp = await fetch('/api/hltb/pending/approve-all', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filter: activeFilter }),
+                });
+                const data = await resp.json();
+                if (data.success) {
+                    showNotification(`Approved ${data.applied} match${data.applied === 1 ? '' : 'es'}`, 'success');
+                    hltbLoadPending();
+                } else {
+                    showNotification(data.error || 'Bulk approve failed', 'error');
+                }
+            } catch (err) {
+                showNotification('Bulk approve failed', 'error');
+            }
+        }
+    );
+}
+
+function hltbRejectAll() {
+    const visible = activeFilter === 'all'
+        ? pendingMatches
+        : pendingMatches.filter(m => m.reason === activeFilter);
+    if (!visible.length) return;
+    showConfirm(
+        'Reject all visible matches?',
+        `This will drop ${visible.length} queued HLTB match${visible.length === 1 ? '' : 'es'}. Nothing is written to your games; they remain unlinked from HLTB.`,
+        async () => {
+            try {
+                const resp = await fetch('/api/hltb/pending/reject-all', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filter: activeFilter }),
+                });
+                const data = await resp.json();
+                if (data.success) {
+                    showNotification(`Rejected ${data.rejected} match${data.rejected === 1 ? '' : 'es'}`, 'info');
+                    hltbLoadPending();
+                } else {
+                    showNotification(data.error || 'Bulk reject failed', 'error');
+                }
+            } catch (err) {
+                showNotification('Bulk reject failed', 'error');
+            }
+        }
+    );
+}
+
+document.addEventListener('DOMContentLoaded', hltbLoadPending);
+</script>
+{% endblock %}

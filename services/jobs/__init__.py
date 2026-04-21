@@ -31,6 +31,8 @@ from services.jobs.psn_refresh import PSNRefreshJob
 from services.jobs.museum import MuseumGenerateJob
 from services.jobs.image_resize import ImageResizeJob
 from services.jobs.platform_sync import SteamSyncJob, XboxSyncJob
+from services.jobs.alt_titles_backfill import AltTitlesBackfillJob
+from services.jobs.hltb_bulk import HLTBBulkLookupJob
 
 # =============================================================================
 # GLOBAL JOB INSTANCES
@@ -45,6 +47,8 @@ museum_generate_job = MuseumGenerateJob()
 image_resize_job = ImageResizeJob()
 steam_sync_job = SteamSyncJob()
 xbox_sync_job = XboxSyncJob()
+alt_titles_backfill_job = AltTitlesBackfillJob()
+hltb_bulk_job = HLTBBulkLookupJob()
 
 __all__ = [
     # Helpers
@@ -71,6 +75,8 @@ __all__ = [
     'ImageResizeJob',
     'SteamSyncJob',
     'XboxSyncJob',
+    'AltTitlesBackfillJob',
+    'HLTBBulkLookupJob',
     # Singleton instances
     'bulk_scrape_job',
     'ra_sync_job',
@@ -80,4 +86,6 @@ __all__ = [
     'image_resize_job',
     'steam_sync_job',
     'xbox_sync_job',
+    'alt_titles_backfill_job',
+    'hltb_bulk_job',
 ]

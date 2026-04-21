@@ -31,6 +31,20 @@ class TestRouteRegistration:
         # HLTB blueprint (v2.77.9)
         'games_hltb.api_hltb_lookup': '/api/hltb-lookup/<int:game_id>',
         'games_hltb.api_hltb_search': '/api/hltb/search',
+        # HLTB bulk + review queue (v2.83.0)
+        'games_hltb.hltb_review_page': '/hltb/review',
+        'games_hltb.api_hltb_bulk_start': '/api/hltb/bulk/start',
+        'games_hltb.api_hltb_bulk_status': '/api/hltb/bulk/status',
+        'games_hltb.api_hltb_bulk_cancel': '/api/hltb/bulk/cancel',
+        'games_hltb.api_hltb_pending_list': '/api/hltb/pending',
+        'games_hltb.api_hltb_pending_approve': '/api/hltb/pending/<int:pending_id>/approve',
+        'games_hltb.api_hltb_pending_reject': '/api/hltb/pending/<int:pending_id>/reject',
+        'games_hltb.api_hltb_pending_approve_all': '/api/hltb/pending/approve-all',
+        'games_hltb.api_hltb_pending_reject_all': '/api/hltb/pending/reject-all',
+        # Alt-titles backfill (v2.83.0)
+        'maintenance.api_alt_titles_backfill_start': '/api/maintenance/alt-titles-backfill/start',
+        'maintenance.api_alt_titles_backfill_status': '/api/maintenance/alt-titles-backfill/status',
+        'maintenance.api_alt_titles_backfill_cancel': '/api/maintenance/alt-titles-backfill/cancel',
         # AI blueprint (v2.77.10)
         'games_ai.api_game_ai_fill': '/api/game/<int:game_id>/ai-fill',
         # Search/compare blueprint (v2.77.10)

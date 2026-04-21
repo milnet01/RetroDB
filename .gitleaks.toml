@@ -1,0 +1,26 @@
+# Gitleaks allowlist for RetroDB.
+#
+# This file tells gitleaks which matches are known false positives so repeat
+# /audit runs don't re-surface them.
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Admin-authored runtime state (tokens, settings). Users place their own API keys here; gitleaks should not flag files the user is expected to edit."
+paths = [
+  '''logs/.*''',
+  '''data/scraper_settings\.json$''',
+  '''data/settings\.json$''',
+  '''data/psn_tokens\.json$''',
+  '''data/xbox_tokens\.json$''',
+  '''database/.*''',
+  '''static/images/.*''',
+  '''static/videos/.*''',
+]
+
+[[allowlists]]
+description = "Claude model identifier literals used as <select> option values in the settings template — not secrets, just model names."
+regexes = [
+  '''claude-(opus|sonnet|haiku)-\d[-\w]*''',
+]

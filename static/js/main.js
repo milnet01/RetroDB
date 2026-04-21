@@ -1126,26 +1126,41 @@ async function searchGame(gameId, title) {
 function displayScraperResults(results, gameId) {
     const container = document.getElementById('searchResults');
     if (!container) return;
-    
-    container.innerHTML = results.map(result => `
-        <div class="search-result">
-            <div class="search-result-info">
-                <h4>${escapeHtml(result.name)}</h4>
-                <div class="search-result-meta">
-                    <span class="source-badge ${result.source}">${result.source.toUpperCase()}</span>
-                    ${result.release_date ? `<span>${result.release_date.substring(0, 4)}</span>` : ''}
-                    ${result.score ? `<span>Score: ${result.score.toFixed(1)}</span>` : ''}
+
+    container.innerHTML = results.map(result => {
+        const alts = Array.isArray(result.alternate_titles) ? result.alternate_titles : [];
+        const primaryLower = (result.name || '').trim().toLowerCase();
+        const altChips = alts
+            .filter(a => a && a.title && a.title.trim().toLowerCase() !== primaryLower)
+            .slice(0, 6)
+            .map(a => `
+                <span class="alt-title-chip">
+                    ${a.region ? `<span class="alt-title-region">${escapeHtml(a.region)}</span>` : ''}
+                    <span class="alt-title-text">${escapeHtml(a.title)}</span>
+                </span>
+            `).join('');
+
+        return `
+            <div class="search-result">
+                <div class="search-result-info">
+                    <h4>${escapeHtml(result.name)}</h4>
+                    <div class="search-result-meta">
+                        <span class="source-badge ${result.source}">${result.source.toUpperCase()}</span>
+                        ${result.release_date ? `<span>${result.release_date.substring(0, 4)}</span>` : ''}
+                        ${result.score ? `<span>Score: ${result.score.toFixed(1)}</span>` : ''}
+                    </div>
+                    ${altChips ? `<div class="search-result-alts"><span class="search-result-alts-label">Also known as:</span> ${altChips}</div>` : ''}
                 </div>
+                <form method="POST" style="margin: 0;">
+                    <input type="hidden" name="action" value="apply">
+                    <input type="hidden" name="game_source" value="${result.source}_${result.id}">
+                    <button type="submit" class="btn btn-success btn-sm">
+                        Apply
+                    </button>
+                </form>
             </div>
-            <form method="POST" style="margin: 0;">
-                <input type="hidden" name="action" value="apply">
-                <input type="hidden" name="game_source" value="${result.source}_${result.id}">
-                <button type="submit" class="btn btn-success btn-sm">
-                    Apply
-                </button>
-            </form>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // =============================================================================

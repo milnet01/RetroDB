@@ -66,6 +66,17 @@
         </a>
     </div>
     {% endif %}
+    {% if alternate_titles %}
+    <div class="alternate-titles">
+        <span class="alternate-titles-label">Also known as:</span>
+        {% for alt in alternate_titles %}
+        <span class="alt-title-chip" {% if alt.region %}title="{{ alt.region }}{% if alt.source %} · {{ alt.source }}{% endif %}"{% elif alt.source %}title="Source: {{ alt.source }}"{% endif %}>
+            {% if alt.region %}<span class="alt-title-region">{{ alt.region }}</span>{% endif %}
+            <span class="alt-title-text">{{ alt.title }}</span>
+        </span>
+        {% endfor %}
+    </div>
+    {% endif %}
     <div class="header-buttons">
         {% if game.scraped %}
         <button class="btn btn-danger-outline" onclick="confirmClearMetadata()">
@@ -1418,6 +1429,52 @@ body:has(.game-fanart-bg.active)::before {
     color: var(--primary-cyan);
     text-shadow: 0 0 30px rgba(76, 201, 240, 0.3);
     margin: 0;
+}
+
+.alternate-titles {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.alternate-titles-label {
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-right: 0.25rem;
+}
+
+.alt-title-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.2rem 0.6rem;
+    background: rgba(76, 201, 240, 0.08);
+    border: 1px solid rgba(76, 201, 240, 0.25);
+    border-radius: var(--radius-full);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+.alt-title-region {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--primary-cyan);
+    padding: 0.1rem 0.4rem;
+    background: rgba(76, 201, 240, 0.12);
+    border-radius: var(--radius-sm);
+}
+
+.alt-title-text {
+    font-style: italic;
 }
 
 .clz-import-badge {
@@ -5485,7 +5542,8 @@ async function lookupHLTB() {
             body: JSON.stringify({
                 query: query,
                 system_folder: systemFolder || '',
-                year: hintYear
+                year: hintYear,
+                game_id: {{ game.id }}
             })
         });
 
@@ -5503,7 +5561,9 @@ async function lookupHLTB() {
                 main_extra: data.result.main_extra || '--',
                 completionist: data.result.completionist || '--',
                 release_year: data.result.release_year || null,
-                developer: data.result.developer || null
+                developer: data.result.developer || null,
+                search_term_used: data.result.search_term_used || null,
+                matched_via_alternate: !!data.result.matched_via_alternate
             };
 
             // Build match header with title, platform, year, developer, and confidence
@@ -5524,6 +5584,9 @@ async function lookupHLTB() {
             if (confidence > 0) {
                 headerHtml += `<span class="hltb-match-confidence">${confidence}% match</span>`;
             }
+            if (pendingHltbData.matched_via_alternate && pendingHltbData.search_term_used) {
+                headerHtml += `<span class="hltb-match-alt-notice" title="Matched using this alternate/regional title — confirm it refers to the same game before saving.">⚡ via &ldquo;${escapeHtml(pendingHltbData.search_term_used)}&rdquo;</span>`;
+            }
             document.getElementById('hltbMatchHeader').innerHTML = headerHtml;
 
             // Show pending results
@@ -5535,7 +5598,15 @@ async function lookupHLTB() {
             document.getElementById('hltbPending').style.display = 'block';
             document.getElementById('hltbSaved').style.display = 'none';
 
-            showNotification('Match found - please confirm to save', 'info');
+            if (pendingHltbData.matched_via_alternate && pendingHltbData.search_term_used) {
+                showNotification(
+                    `Matched via alternate title "${pendingHltbData.search_term_used}" — HLTB shows it as "${pendingHltbData.match_name}". Confirm before saving.`,
+                    'warning',
+                    9000
+                );
+            } else {
+                showNotification('Match found - please confirm to save', 'info');
+            }
         } else {
             showNotification(data.error || 'No HLTB data found', 'warning');
         }

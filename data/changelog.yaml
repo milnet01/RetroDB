@@ -1,3 +1,57 @@
+- version: 2.83.1
+  date: 2026-04-21
+  tags:
+  - type: chore
+    label: Chore
+  body: |
+    <ul>
+        <li><strong>Audit config &mdash; <code>.semgrep.yml</code></strong> &mdash; New project-local Semgrep config documents the threat model (single-user localhost, admin == operator, external-API hash contracts, env-gated debug), lists the 13 upstream rule IDs that are known noise on this codebase with one-line anchors explaining why each fires but isn't a bug, and includes a shell snippet to synthesise <code>--exclude-rule</code> flags from the list. Verified: with all excludes applied, semgrep's 54 raw findings drop to 0. Three consecutive 100%-noise audits (2026-04-20 semgrep 34/34, 2026-04-21 semgrep 54/54, 2026-04-21 bandit 56/56) now have a single documented source of truth so future /audit runs don't re-discover the same suppressions from scratch.</li>
+    </ul>
+
+- version: 2.83.0
+  date: 2026-04-21
+  tags:
+  - type: enhancement
+    label: New feature
+  body: |
+    <ul>
+        <li><strong>Alternate-titles backfill job</strong> &mdash; New maintenance task under ROM Tools &rarr; &ldquo;Backfill Alternate Titles&rdquo; that walks every already-scraped game and pulls back regional / alternate names without re-scraping media. Uses <code>scraper_manager.search_games()</code> so IGDB and ScreenScraper alt titles come back from the cached search response at no extra API cost. By default only games with empty <code>alternate_titles</code> are processed; existing lists are left untouched. Implemented as a real background job (start / status / cancel, progress persistence, crash-resume via <code>persist_job_start</code>) so closing the tab doesn't abort it.</li>
+        <li><strong>Bulk HLTB lookup with review queue</strong> &mdash; New &ldquo;Bulk HLTB Lookup&rdquo; tool runs a HowLongToBeat lookup for every game, respecting stored alternate titles. Matches are triaged three ways: <strong>auto-applied</strong> when the primary title scored at or above the confidence threshold (default 95%), <strong>queued for review</strong> when the match came via an alternate title (any confidence), and <strong>queued for review</strong> when a primary-title match came back below the threshold. The reasoning: obvious primary-title hits don't need human attention, but alt-title matches are exceptional by nature (different game names for the same game) and deserve a glance; low-confidence hits might be the wrong game entirely.</li>
+        <li><strong>/hltb/review page</strong> &mdash; Queued matches land in a new <code>hltb_pending_matches</code> table and appear on a dedicated review page. Each row shows <em>your ROM title &rarr; HLTB match name</em>, the system, the platform, the confidence chip (green &ge; 85%, purple otherwise), a &ldquo;&#9889; via &hellip;&rdquo; chip when matched via alt title, and the playtime preview. Filters for All / Alt-title / Low-confidence. Per-row Approve / Reject plus bulk Approve-all / Reject-all (scoped to the active filter &mdash; so you can accept every alt-title match but still review the low-confidence ones individually).</li>
+        <li><strong>Auto-surfacing of the review card</strong> &mdash; The ROM Tools Hub shows an &ldquo;HLTB Pending Review&rdquo; card with a warning-tinted badge counting queued items; it hides itself when the queue is empty so the hub stays uncluttered.</li>
+        <li><strong>Why not auto-apply everything</strong> &mdash; Because alt-title fallbacks (introduced in 2.82) occasionally produce cross-matches that are wrong (two different games sharing a regional alias). Having them queued keeps the bulk operation fast (no manual clicks for the obvious 95%+ cases) while preserving the sanity check that matters for the ambiguous 5%. If you'd rather auto-apply alt-title matches too, you can Approve All on the review page in one click.</li>
+        <li><strong>Schema &amp; wiring</strong> &mdash; New <code>hltb_pending_matches</code> table with <code>ON CONFLICT(game_id) DO UPDATE</code> so re-running the bulk job refreshes rather than duplicates. New <code>AltTitlesBackfillJob</code> and <code>HLTBBulkLookupJob</code> classes in <code>services/jobs/</code>, both following the existing persist/resume pattern used by <code>RARefreshJob</code>. Routes split across <code>routes/maintenance.py</code> (alt-titles backfill) and <code>routes/games_hltb.py</code> (bulk HLTB + pending-queue management). All wrapped in smoke tests and a unit-tested classifier (<code>classify_match</code>) for the auto-apply vs queue decision.</li>
+    </ul>
+
+- version: 2.82.0
+  date: 2026-04-21
+  tags:
+  - type: enhancement
+    label: Enhancement
+  body: |
+    <ul>
+        <li><strong>HLTB now falls back to regional titles</strong> &mdash; When the primary game title doesn't produce a near-exact HowLongToBeat match, the lookup retries each stored alternate title in turn (regional names, romanised forms, working titles). The worked example that prompted this: the EU-named ROM &ldquo;Action in New York&rdquo; returns nothing on HLTB &mdash; but the US title <em>S.C.A.T.: Special Cybernetic Attack Team</em> (now stored in <code>alternate_titles</code>) matches instantly. Same game, two names, and HLTB only knows one of them.</li>
+        <li><strong>Confirmation UI for alt-title matches</strong> &mdash; When the match came via an alternate title, the pending-result header gains an orange &ldquo;&#9889; via &lsquo;&hellip;&rsquo;&rdquo; chip showing exactly which title HLTB matched on, and the notification widens the disambiguation: &ldquo;Matched via alternate title 'X' &mdash; HLTB shows it as 'Y'. Confirm before saving.&rdquo; Save/Cancel still gate the DB write, so nothing is applied without a conscious click.</li>
+        <li><strong>Applies everywhere HLTB can be queried</strong> &mdash; The fallback runs in both endpoints: <code>/api/hltb-lookup/&lt;id&gt;</code> pulls <code>games.alternate_titles</code> automatically, and <code>/api/hltb/search</code> accepts an optional <code>game_id</code> (or an explicit <code>alternate_titles</code> array) so the same behavior works from the game-detail modal, the game-detail page, the local-trophy detail page, and any future caller.</li>
+        <li><strong>Scoring is per-title, not cross-title</strong> &mdash; Each alternate title is scored against the HLTB results of <em>its own</em> search, not the primary title's. That means a good &ldquo;S.C.A.T.&rdquo; result doesn't get penalised for looking nothing like &ldquo;Action in New York&rdquo; &mdash; it's judged on its own merit. If the primary already had a solid match, alternates aren't tried at all (no wasted API calls).</li>
+        <li><strong>What it doesn't do</strong> &mdash; No auto-save. Even with a 100% score on an alt-title match, the Save button still requires a user click. The reasoning is that alt-title fallbacks should be visibly exceptional so regression cases (e.g. two different games that happen to share a regional alias) can be caught by eye.</li>
+    </ul>
+
+- version: 2.81.0
+  date: 2026-04-21
+  tags:
+  - type: enhancement
+    label: New feature
+  body: |
+    <ul>
+        <li><strong>Regional / alternate titles</strong> &mdash; Games now persist the full set of regional names (USA vs Europe vs Japan, working titles, romanised forms) in a new <code>games.alternate_titles</code> JSON column. Populated automatically on every scrape from the sources that expose them: <strong>IGDB</strong>'s <code>alternative_names</code> (region comment preserved), <strong>RAWG</strong>'s <code>alternative_names</code> detail field, and <strong>ScreenScraper</strong>'s region-tagged <code>noms</code> list. Entries are merged cumulatively across sources and deduped case-insensitively &mdash; the same name returned by two scrapers is stored once.</li>
+        <li><strong>&ldquo;Also known as&rdquo; on the game page</strong> &mdash; A chip row under the game title on <code>/game/&lt;id&gt;</code> shows every alternate title with its region tag (e.g. &ldquo;JP Rockman X&rdquo; next to &ldquo;Mega Man X&rdquo;). Styled to read as metadata, not a link block &mdash; italic title, small uppercase region chip, cyan accent matching the rest of the cyberpunk theme.</li>
+        <li><strong>Alt titles in the manual scrape picker</strong> &mdash; When you click <em>Scrape</em> on a game detail page, each result card now lists the alternate titles that source knows about, under the primary match name. So if IGDB returns <em>Final Fantasy VI</em> with <em>Final Fantasy III (US)</em> and <em>Final Fantasy VI Advance</em> as alt names, you see all three at once and can pick the right entry with confidence. IGDB surfaces alts directly from the search endpoint; ScreenScraper surfaces them via <code>noms</code>. TGDB / RAWG don't return alts in search results, so their cards just show the primary match (still cheap &mdash; no extra API calls).</li>
+        <li><strong>Why this matters for matching</strong> &mdash; Many retro games ship with wildly different regional names (<em>Super Mario Bros. 2</em> vs <em>Doki Doki Panic</em>, <em>Contra</em> vs <em>Probotector</em>, etc.). Having the full name set stored and visible makes it obvious when two scraper hits actually refer to the same game and helps you catch false matches before applying them.</li>
+        <li><strong>Cumulative, no data loss</strong> &mdash; Alt titles are merged into the existing stored list on every subsequent scrape, never overwritten. Re-scraping a game with a different primary source just adds any names that source knew that the others didn't.</li>
+        <li><strong>Schema &amp; wiring</strong> &mdash; New <code>alternate_titles</code> TEXT column on <code>games</code> (idempotent migration). <code>merge_alt_titles()</code> helper in <code>scraper/metadata_merger.py</code> handles JSON decode, dedupe, and primary-title skip. <code>apply_hybrid_metadata</code> pre-populates from DB, each <code>apply_*_to_metadata</code> appends new entries, and the final save <code>COALESCE</code>s the JSON-encoded list back into the column.</li>
+    </ul>
+
 - version: 2.80.0
   date: 2026-04-21
   tags:

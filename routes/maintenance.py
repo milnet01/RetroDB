@@ -709,6 +709,52 @@ def api_image_resize_cancel():
         return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
 
 
+# =============================================================================
+# ALTERNATE TITLES BACKFILL JOB
+# =============================================================================
+
+@bp.route('/api/maintenance/alt-titles-backfill/start', methods=['POST'])
+@admin_required
+def api_alt_titles_backfill_start():
+    """Start bulk alternate-titles backfill job."""
+    try:
+        from services.jobs import alt_titles_backfill_job
+        data = request.get_json(silent=True) or {}
+        only_empty = bool(data.get('only_empty', True))
+        result = alt_titles_backfill_job.start(only_empty=only_empty)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Alt-titles backfill start error: {e}")
+        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+
+
+@bp.route('/api/maintenance/alt-titles-backfill/status', methods=['GET'])
+@login_required
+def api_alt_titles_backfill_status():
+    """Poll alt-titles backfill job status."""
+    try:
+        from services.jobs import alt_titles_backfill_job
+        status = alt_titles_backfill_job.get_status()
+        status['success'] = True
+        return jsonify(status)
+    except Exception as e:
+        logger.error(f"Alt-titles backfill status error: {e}")
+        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+
+
+@bp.route('/api/maintenance/alt-titles-backfill/cancel', methods=['POST'])
+@admin_required
+def api_alt_titles_backfill_cancel():
+    """Cancel running alt-titles backfill job."""
+    try:
+        from services.jobs import alt_titles_backfill_job
+        result = alt_titles_backfill_job.cancel()
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Alt-titles backfill cancel error: {e}")
+        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+
+
 @bp.route('/api/restart', methods=['POST'])
 @admin_required
 def api_restart():

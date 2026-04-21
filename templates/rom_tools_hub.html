@@ -211,6 +211,45 @@
         </div>
     </div>
 
+    <div class="tool-card" onclick="startAltTitlesBackfill()" style="cursor: pointer;">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">&#127760;</div>
+            <div class="tool-card-title">Backfill Alternate Titles</div>
+        </div>
+        <div class="tool-card-desc">
+            Scan your library for regional / alternate game titles (e.g. &ldquo;Action in New York&rdquo; = &ldquo;S.C.A.T.&rdquo; = &ldquo;Final Mission&rdquo;) without re-scraping media. Uses the same IGDB and ScreenScraper search results that would fire during a scrape, just extracting the alt names.
+        </div>
+        <div class="tool-card-status">
+            <span class="status-dot no-deps"></span> Metadata only &middot; no media downloads
+        </div>
+    </div>
+
+    <div class="tool-card" onclick="startHltbBulk()" style="cursor: pointer;">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">&#9201;</div>
+            <div class="tool-card-title">Bulk HLTB Lookup</div>
+        </div>
+        <div class="tool-card-desc">
+            Fetch HowLongToBeat playtime for every game. High-confidence primary-title matches apply automatically; alt-title matches and low-confidence hits are queued for review so you can approve or reject in bulk.
+        </div>
+        <div class="tool-card-status">
+            <span class="status-dot no-deps"></span> Uses stored alternate titles
+        </div>
+    </div>
+
+    <a href="{{ url_for('games_hltb.hltb_review_page') }}" class="tool-card" id="hltbReviewCard" style="display:none;">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">&#128214;</div>
+            <div class="tool-card-title">HLTB Pending Review <span id="hltbPendingCount" class="badge badge-warning" style="margin-left: 0.5rem;">0</span></div>
+        </div>
+        <div class="tool-card-desc">
+            Review and approve HLTB matches that were flagged during a bulk lookup &mdash; alt-title matches and anything below the confidence threshold.
+        </div>
+        <div class="tool-card-status">
+            <span class="status-dot no-deps"></span> Requires review
+        </div>
+    </a>
+
     <a href="{{ url_for('tools.rom_tools_settings') }}" class="tool-card">
         <div class="tool-card-header">
             <div class="tool-card-icon">⚙️</div>
@@ -226,6 +265,91 @@
 </div>
 
 <script>
+function startAltTitlesBackfill() {
+    showConfirm(
+        '🌐 Backfill Alternate Titles',
+        'Scan every scraped game for alternate / regional titles using IGDB and ScreenScraper search results. ' +
+        '<br><br>No media is downloaded, no other metadata is touched — just alternate title lists are merged into the DB.' +
+        '<br><br>By default only games with <em>no</em> alternate titles yet are processed. This may take a while for large libraries.',
+        function() {
+            fetch('/api/maintenance/alt-titles-backfill/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ only_empty: true })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Alt-titles backfill started', 'success');
+                    if (typeof UnifiedToastController !== 'undefined') {
+                        UnifiedToastController.adjustPollingSpeed('alt-titles-backfill', true);
+                        UnifiedToastController.broadcast('job-started', 'alt-titles-backfill', {
+                            running: true, completed: false, total: 0, current: 0, percent: 0
+                        });
+                    }
+                } else {
+                    showNotification(data.error || 'Failed to start', 'error');
+                }
+            })
+            .catch(() => showNotification('Failed to start backfill', 'error'));
+        }
+    );
+}
+
+function startHltbBulk() {
+    showConfirm(
+        '⏱ Bulk HLTB Lookup',
+        'Fetch HowLongToBeat playtime for every game.<br><br>' +
+        '<strong>High-confidence primary-title matches</strong> apply automatically.<br>' +
+        '<strong>Alt-title matches</strong> and <strong>low-confidence</strong> matches queue for review on the <em>HLTB Pending Review</em> page.<br><br>' +
+        'By default only games without an existing HLTB match are processed. HLTB rate-limits, so this runs slowly in the background &mdash; you can leave the page.',
+        function() {
+            fetch('/api/hltb/bulk/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ only_missing: true, confidence_threshold: 95 })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Bulk HLTB lookup started — queued matches will appear on the review page', 'success');
+                    if (typeof UnifiedToastController !== 'undefined') {
+                        UnifiedToastController.adjustPollingSpeed('hltb-bulk', true);
+                        UnifiedToastController.broadcast('job-started', 'hltb-bulk', {
+                            running: true, completed: false, total: 0, current: 0, percent: 0
+                        });
+                    }
+                } else {
+                    showNotification(data.error || 'Failed to start', 'error');
+                }
+            })
+            .catch(() => showNotification('Failed to start bulk HLTB', 'error'));
+        }
+    );
+}
+
+// Show the "HLTB Pending Review" card when the queue is non-empty so users
+// notice items needing attention after a bulk lookup finishes.
+async function refreshHltbPendingCount() {
+    try {
+        const resp = await fetch('/api/hltb/bulk/status');
+        const data = await resp.json();
+        const count = (data && data.pending_review) || 0;
+        const card = document.getElementById('hltbReviewCard');
+        const badge = document.getElementById('hltbPendingCount');
+        if (card && badge) {
+            if (count > 0) {
+                card.style.display = '';
+                badge.textContent = count;
+            } else {
+                card.style.display = 'none';
+            }
+        }
+    } catch (err) { /* non-fatal */ }
+}
+
+document.addEventListener('DOMContentLoaded', refreshHltbPendingCount);
+
 function startImageResize() {
     showConfirm(
         '🖼️ Image Resizer',

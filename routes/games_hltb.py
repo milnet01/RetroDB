@@ -4,16 +4,36 @@
 # Lookup, save, clear, and search endpoints for HLTB playtime data.
 # =============================================================================
 
+import json
 import logging
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, render_template, request, jsonify
 
 from services.database import query, execute
-from services.auth import login_required
+from services.auth import login_required, admin_required
 
 logger = logging.getLogger(__name__)
 
 bp = Blueprint('games_hltb', __name__)
+
+
+def _extract_alt_titles(alternate_titles_json):
+    """Decode games.alternate_titles JSON into a flat list of title strings."""
+    if not alternate_titles_json:
+        return []
+    try:
+        parsed = json.loads(alternate_titles_json)
+    except (ValueError, TypeError):
+        return []
+    if not isinstance(parsed, list):
+        return []
+    titles = []
+    for entry in parsed:
+        if isinstance(entry, dict):
+            t = entry.get('title')
+            if isinstance(t, str) and t.strip():
+                titles.append(t.strip())
+    return titles
 
 
 @bp.route('/api/hltb-lookup/<int:game_id>', methods=['POST'])
@@ -37,7 +57,13 @@ def api_hltb_lookup(game_id):
         search_title = data.get('search_title', game['title'])
         preview_mode = data.get('preview', False)
 
-        result = lookup_playtime(search_title, game['system_folder'])
+        # Pull alternate titles from the game row so HLTB can fall back to
+        # regional names (e.g. search for "Action in New York" matches the
+        # canonical "S.C.A.T.: Special Cybernetic Attack Team").
+        alt_titles = _extract_alt_titles(game.get('alternate_titles'))
+
+        result = lookup_playtime(search_title, game['system_folder'],
+                                 alternate_titles=alt_titles)
 
         if not result:
             return jsonify({'success': False, 'error': f'No HLTB match found for "{search_title}"'})
@@ -69,7 +95,9 @@ def api_hltb_lookup(game_id):
             'confidence': result['match_confidence'],
             'main_story': result['main_story'],
             'main_plus_sides': result['main_plus_sides'],
-            'completionist': result['completionist']
+            'completionist': result['completionist'],
+            'search_term_used': result.get('search_term_used'),
+            'matched_via_alternate': result.get('matched_via_alternate', False),
         })
 
     except Exception as e:
@@ -154,8 +182,26 @@ def api_hltb_search():
         if not search_query:
             return jsonify({'success': False, 'error': 'No search query provided'})
 
+        # Resolve alternate titles: explicit list wins; otherwise look them up
+        # from the game row if a game_id was supplied.
+        alt_titles = []
+        explicit_alts = data.get('alternate_titles')
+        if isinstance(explicit_alts, list):
+            alt_titles = [str(t).strip() for t in explicit_alts if str(t).strip()]
+        elif data.get('game_id'):
+            try:
+                row = query(
+                    "SELECT alternate_titles FROM games WHERE id = ?",
+                    (int(data['game_id']),), one=True,
+                )
+                if row:
+                    alt_titles = _extract_alt_titles(row.get('alternate_titles'))
+            except (ValueError, TypeError):
+                pass
+
         folder = system_folder or 'ps4'
-        result = lookup_playtime(search_query, folder, year=year)
+        result = lookup_playtime(search_query, folder, year=year,
+                                 alternate_titles=alt_titles or None)
 
         if not result:
             return jsonify({'success': False, 'error': f'No HLTB match found for "{search_query}"'})
@@ -172,10 +218,190 @@ def api_hltb_search():
                 'confidence': result.get('match_confidence', 0),
                 'platform_mismatch': result.get('platform_mismatch', False),
                 'release_year': result.get('release_world'),
-                'developer': result.get('profile_dev')
+                'developer': result.get('profile_dev'),
+                'search_term_used': result.get('search_term_used'),
+                'matched_via_alternate': result.get('matched_via_alternate', False),
             }
         })
 
     except Exception as e:
         logger.error(f"HLTB search error: {e}")
+        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+
+
+# =============================================================================
+# BULK HLTB LOOKUP JOB + REVIEW QUEUE
+# =============================================================================
+
+@bp.route('/hltb/review')
+@login_required
+def hltb_review_page():
+    """Render the HLTB pending-matches review page."""
+    return render_template('hltb_review.html')
+
+
+@bp.route('/api/hltb/bulk/start', methods=['POST'])
+@admin_required
+def api_hltb_bulk_start():
+    """Kick off a bulk HLTB lookup across the library."""
+    try:
+        from services.jobs import hltb_bulk_job
+        data = request.get_json(silent=True) or {}
+        only_missing = bool(data.get('only_missing', True))
+        threshold = int(data.get('confidence_threshold', 95))
+        result = hltb_bulk_job.start(only_missing=only_missing,
+                                     confidence_threshold=threshold)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"HLTB bulk start error: {e}")
+        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+
+
+@bp.route('/api/hltb/bulk/status', methods=['GET'])
+@login_required
+def api_hltb_bulk_status():
+    """Poll bulk HLTB lookup job status."""
+    try:
+        from services.jobs import hltb_bulk_job
+        status = hltb_bulk_job.get_status()
+        status['success'] = True
+        # Include queue depth so the UI can deep-link to /hltb/review.
+        queue_row = query("SELECT COUNT(*) AS c FROM hltb_pending_matches", (), one=True)
+        status['pending_review'] = queue_row['c'] if queue_row else 0
+        return jsonify(status)
+    except Exception as e:
+        logger.error(f"HLTB bulk status error: {e}")
+        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+
+
+@bp.route('/api/hltb/bulk/cancel', methods=['POST'])
+@admin_required
+def api_hltb_bulk_cancel():
+    """Cancel the running bulk HLTB lookup."""
+    try:
+        from services.jobs import hltb_bulk_job
+        result = hltb_bulk_job.cancel()
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"HLTB bulk cancel error: {e}")
+        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+
+
+@bp.route('/api/hltb/pending', methods=['GET'])
+@login_required
+def api_hltb_pending_list():
+    """Return all queued HLTB matches awaiting review."""
+    try:
+        rows = query("""
+            SELECT p.id, p.game_id, p.hltb_id, p.match_name, p.match_platform,
+                   p.confidence, p.playtime, p.main_story, p.main_plus_sides,
+                   p.completionist, p.search_term_used, p.matched_via_alternate,
+                   p.reason, p.created_at,
+                   g.title AS game_title, s.name AS system_name
+            FROM hltb_pending_matches p
+            JOIN games g ON p.game_id = g.id
+            JOIN systems s ON g.system_id = s.id
+            ORDER BY p.reason, g.title
+        """)
+        items = []
+        for r in rows or []:
+            d = dict(r)
+            d['matched_via_alternate'] = bool(d.get('matched_via_alternate'))
+            items.append(d)
+        return jsonify({'success': True, 'items': items})
+    except Exception as e:
+        logger.error(f"HLTB pending list error: {e}")
+        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+
+
+def _apply_pending_match(pending_row):
+    """Write the pending match to the games row and delete it from the queue."""
+    confidence_frac = None
+    if pending_row.get('confidence') is not None:
+        try:
+            c = float(pending_row['confidence'])
+            confidence_frac = c / 100.0 if c > 1 else c
+        except (ValueError, TypeError):
+            confidence_frac = None
+    execute("""
+        UPDATE games SET
+            playtime_estimate = ?,
+            hltb_match_name = ?,
+            hltb_match_platform = ?,
+            hltb_match_confidence = ?
+        WHERE id = ?
+    """, (pending_row.get('playtime'), pending_row.get('match_name'),
+          pending_row.get('match_platform'), confidence_frac,
+          pending_row['game_id']))
+    execute("DELETE FROM hltb_pending_matches WHERE id = ?", (pending_row['id'],))
+
+
+@bp.route('/api/hltb/pending/<int:pending_id>/approve', methods=['POST'])
+@admin_required
+def api_hltb_pending_approve(pending_id):
+    """Approve a single pending match — write it to the game row."""
+    try:
+        row = query("SELECT * FROM hltb_pending_matches WHERE id = ?", (pending_id,), one=True)
+        if not row:
+            return jsonify({'success': False, 'error': 'Pending match not found'}), 404
+        _apply_pending_match(dict(row))
+        return jsonify({'success': True})
+    except Exception as e:
+        logger.error(f"HLTB pending approve error: {e}")
+        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+
+
+@bp.route('/api/hltb/pending/<int:pending_id>/reject', methods=['POST'])
+@admin_required
+def api_hltb_pending_reject(pending_id):
+    """Reject a single pending match — drop it from the queue."""
+    try:
+        execute("DELETE FROM hltb_pending_matches WHERE id = ?", (pending_id,))
+        return jsonify({'success': True})
+    except Exception as e:
+        logger.error(f"HLTB pending reject error: {e}")
+        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+
+
+def _resolve_filter_clause(filter_value):
+    """Map the UI filter to a (where_clause, params) pair."""
+    if filter_value == 'alt_title':
+        return ("WHERE reason = 'alt_title'", ())
+    if filter_value == 'low_confidence':
+        return ("WHERE reason = 'low_confidence'", ())
+    return ("", ())
+
+
+@bp.route('/api/hltb/pending/approve-all', methods=['POST'])
+@admin_required
+def api_hltb_pending_approve_all():
+    """Approve every pending match matching the current filter."""
+    try:
+        data = request.get_json(silent=True) or {}
+        where, params = _resolve_filter_clause(data.get('filter', 'all'))
+        rows = query(f"SELECT * FROM hltb_pending_matches {where}", params)
+        applied = 0
+        for r in rows or []:
+            _apply_pending_match(dict(r))
+            applied += 1
+        return jsonify({'success': True, 'applied': applied})
+    except Exception as e:
+        logger.error(f"HLTB pending approve-all error: {e}")
+        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+
+
+@bp.route('/api/hltb/pending/reject-all', methods=['POST'])
+@admin_required
+def api_hltb_pending_reject_all():
+    """Drop every pending match matching the current filter."""
+    try:
+        data = request.get_json(silent=True) or {}
+        where, params = _resolve_filter_clause(data.get('filter', 'all'))
+        count_row = query(f"SELECT COUNT(*) AS c FROM hltb_pending_matches {where}",
+                          params, one=True)
+        count = count_row['c'] if count_row else 0
+        execute(f"DELETE FROM hltb_pending_matches {where}", params)
+        return jsonify({'success': True, 'rejected': count})
+    except Exception as e:
+        logger.error(f"HLTB pending reject-all error: {e}")
         return jsonify({'success': False, 'error': 'An internal error occurred'}), 500

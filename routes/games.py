@@ -914,6 +914,17 @@ def game_detail(game_id):
             if xbox_counts and not xbox_counts['total']:
                 xbox_counts = None
 
+        # Decode alternate_titles (stored as JSON list of {title, region?, source?})
+        alternate_titles = []
+        if game_dict.get('alternate_titles'):
+            try:
+                import json as _json_at
+                parsed_alts = _json_at.loads(game_dict['alternate_titles'])
+                if isinstance(parsed_alts, list):
+                    alternate_titles = [a for a in parsed_alts if isinstance(a, dict) and a.get('title')]
+            except (ValueError, TypeError):
+                alternate_titles = []
+
         return render_template('game_detail.html',
                              game=game,
                              system=system,
@@ -921,6 +932,7 @@ def game_detail(game_id):
                              message=message,
                              bonus_discs=bonus_discs,
                              parent_game=parent_game,
+                             alternate_titles=alternate_titles,
                              pref_rating={'value': pref_rating_val, 'image': pref_rating_img,
                                           'crossmapped': pref_rating_crossmapped, 'name': pref_rating_name,
                                           'region': pref_rating_region, 'system': pref_sys},

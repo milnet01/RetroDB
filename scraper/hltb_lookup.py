@@ -207,17 +207,26 @@ def _seconds_to_hours(seconds):
     return round(seconds / 3600, 1)
 
 
-def lookup_playtime(game_title, system_folder=None, year=None):
+def lookup_playtime(game_title, system_folder=None, year=None, alternate_titles=None):
     """
-    Look up playtime data from HowLongToBeat
+    Look up playtime data from HowLongToBeat.
+
+    When the primary title doesn't produce a near-exact match, retries with any
+    provided alternate titles (e.g. regional release names like the US
+    "S.C.A.T." for the EU-named "Action in New York"). The title that actually
+    produced the best match is returned in `search_term_used`; if it differs
+    from the primary title, `matched_via_alternate` is True so the UI can ask
+    the user to confirm before saving.
 
     Args:
-        game_title: Game title to search for
-        system_folder: Optional system folder for platform filtering
-        year: Optional release year string for filtering (e.g. '1989')
+        game_title: Primary title to search for.
+        system_folder: Optional system folder for platform filtering.
+        year: Optional release year string (e.g. '1989').
+        alternate_titles: Optional iterable of alt-title strings. Only tried
+            if the primary title's best match falls below GOOD_MATCH.
 
     Returns:
-        dict with playtime data or None if not found
+        dict with playtime data or None if not found.
     """
     try:
         # Resolve HLTB platform from system folder
@@ -226,24 +235,10 @@ def lookup_playtime(game_title, system_folder=None, year=None):
             hltb_platform = SYSTEM_TO_HLTB_PLATFORM.get(system_folder.lower(), '')
 
         # Graduated fallback: try narrower filters first, widen if no good
-        # title match is found.  A "good match" requires score >= 0.95
-        # (near-exact title).  This prevents e.g. year=1994 returning only
+        # title match is found. A "good match" requires score >= 0.95
+        # (near-exact title). This prevents e.g. year=1994 returning only
         # "Art of Fighting 2" when the user searched "Art of Fighting" (1992).
         GOOD_MATCH = 0.95
-        query_lower = game_title.lower()
-
-        def _best_match(results):
-            """Return (best_result, best_score) from a result list."""
-            if not results:
-                return None, 0.0
-            best = results[0]
-            best_s = 0.0
-            for r in results:
-                s = SequenceMatcher(None, query_lower, r.get('game_name', '').lower()).ratio()
-                if s > best_s:
-                    best_s = s
-                    best = r
-            return best, best_s
 
         search_steps = []
         if hltb_platform and year:
@@ -254,22 +249,58 @@ def lookup_playtime(game_title, system_folder=None, year=None):
             search_steps.append(('year', '', year))
         search_steps.append(('unfiltered', '', None))
 
-        result = None
-        best_score = 0.0
-        for label, plat, yr in search_steps:
-            raw = _search_hltb(game_title, platform=plat, year=yr)
-            candidate, score = _best_match(raw)
-            if candidate and score > best_score:
-                result = candidate
-                best_score = score
-                logger.info(f"HLTB: [{label}] best={candidate.get('game_name', '')!r} score={score:.4f}")
-            if best_score >= GOOD_MATCH:
-                break  # exact/near-exact — no need to widen
-            if candidate and best_score < GOOD_MATCH:
-                logger.info(f"HLTB: [{label}] no good match (best={best_score:.4f}), widening search")
+        def _run_search_for_title(search_title):
+            """Run graduated-fallback search for one title. Returns (best_result, best_score)."""
+            search_lower = search_title.lower()
+            local_best = None
+            local_score = 0.0
+            for label, plat, yr in search_steps:
+                raw = _search_hltb(search_title, platform=plat, year=yr)
+                if not raw:
+                    continue
+                for r in raw:
+                    s = SequenceMatcher(None, search_lower, r.get('game_name', '').lower()).ratio()
+                    if s > local_score:
+                        local_score = s
+                        local_best = r
+                logger.info(f"HLTB: [{label}] for '{search_title}' best={(local_best or {}).get('game_name', '')!r} score={local_score:.4f}")
+                if local_score >= GOOD_MATCH:
+                    break
+            return local_best, local_score
+
+        # Try the primary title first.
+        result, best_score = _run_search_for_title(game_title)
+        search_term_used = game_title
+
+        # If the primary title didn't yield a great match, try alternates
+        # (regional names, romanised forms) one at a time. Keep the overall
+        # best match across all attempts.
+        if best_score < GOOD_MATCH and alternate_titles:
+            primary_lower = game_title.lower()
+            tried = {primary_lower}
+            for alt in alternate_titles:
+                if not alt:
+                    continue
+                alt_clean = str(alt).strip()
+                if not alt_clean:
+                    continue
+                alt_lower = alt_clean.lower()
+                if alt_lower in tried:
+                    continue
+                tried.add(alt_lower)
+                logger.info(f"HLTB: Retrying with alternate title '{alt_clean}' (primary score={best_score:.4f})")
+                alt_result, alt_score = _run_search_for_title(alt_clean)
+                if alt_result and alt_score > best_score:
+                    result = alt_result
+                    best_score = alt_score
+                    search_term_used = alt_clean
+                    logger.info(f"HLTB: Alt title '{alt_clean}' produced better match (score={alt_score:.4f})")
+                if best_score >= GOOD_MATCH:
+                    break
 
         if not result:
-            logger.info(f"HLTB: No results for '{game_title}'")
+            logger.info(f"HLTB: No results for '{game_title}'"
+                        + (f" or {len(alternate_titles)} alternate(s)" if alternate_titles else ""))
             return None
 
         match_name = result.get('game_name', game_title)
@@ -313,7 +344,9 @@ def lookup_playtime(game_title, system_folder=None, year=None):
             'main_plus_sides': main_extra,
             'completionist': completionist,
             'release_world': release_world,
-            'profile_dev': profile_dev
+            'profile_dev': profile_dev,
+            'search_term_used': search_term_used,
+            'matched_via_alternate': search_term_used.lower() != game_title.lower(),
         }
 
     except Exception as e:

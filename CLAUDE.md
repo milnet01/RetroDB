@@ -59,6 +59,8 @@
 | `install.py` | CLI installer fallback (auto-detects distro, colored output, all setup steps) |
 | `start.sh` | Server launcher for Linux (checks deps, builds CSS, starts app) |
 | `pyproject.toml` | Ruff + pytest config (no packaging — project is a Flask app, not a library) |
+| `.semgrep.yml` | Semgrep audit config — documented threat model + list of excluded upstream rule IDs. Read this before triaging new audit findings. |
+| `.gitleaks.toml` | Gitleaks allowlist — excludes `logs/`, `data/*.json` tokens, admin-editable settings files |
 | `requirements.txt` | Runtime dependencies with semver ranges (user-facing `pip install -r`) |
 | `requirements.lock` | Fully pinned transitive dependency list — regenerate with `pip-compile` |
 | `tests/` | pytest suite — `python3 -m pytest` |

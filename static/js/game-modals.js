@@ -476,7 +476,8 @@ const HLTBManager = {
             body: JSON.stringify({
                 query: query,
                 system_folder: ctx.systemFolder || '',
-                year: ctx.year || ''
+                year: ctx.year || '',
+                game_id: ctx.gameId || null
             })
         })
         .then(r => r.json())
@@ -499,7 +500,9 @@ const HLTBManager = {
                     main_extra: data.result.main_extra || '--',
                     completionist: data.result.completionist || '--',
                     release_year: data.result.release_year || null,
-                    developer: data.result.developer || null
+                    developer: data.result.developer || null,
+                    search_term_used: data.result.search_term_used || null,
+                    matched_via_alternate: !!data.result.matched_via_alternate
                 };
 
                 const pending = HLTBManager.pendingData[ctx.name];
@@ -533,6 +536,9 @@ const HLTBManager = {
                     if (confidence > 0) {
                         headerHtml += `<span class="hltb-match-confidence">${confidence}% match</span>`;
                     }
+                    if (pending.matched_via_alternate && pending.search_term_used) {
+                        headerHtml += `<span class="hltb-match-alt-notice" title="Matched using this alternate/regional title — confirm it refers to the same game before saving.">⚡ via &ldquo;${escapeHtml(pending.search_term_used)}&rdquo;</span>`;
+                    }
                     matchHeader.innerHTML = headerHtml;
                 }
 
@@ -546,7 +552,15 @@ const HLTBManager = {
                 if (completeEl) completeEl.textContent = pending.completionist;
 
                 if (resultDiv) resultDiv.style.display = 'block';
-                showNotification('Match found - please confirm to save', 'info');
+                if (pending.matched_via_alternate && pending.search_term_used) {
+                    showNotification(
+                        `Matched via alternate title "${pending.search_term_used}" — HLTB shows it as "${pending.match_name}". Confirm before saving.`,
+                        'warning',
+                        9000
+                    );
+                } else {
+                    showNotification('Match found - please confirm to save', 'info');
+                }
             } else {
                 // No results — hide pending section so Save button isn't exposed
                 if (pendingDiv && !resultDiv) pendingDiv.style.display = 'none';

@@ -317,6 +317,13 @@ def get_game_details(game_id):
             if prefix and len(prefix) >= 3:
                 franchise = prefix
 
+    # RAWG's detail endpoint returns alternative_names as a flat list of strings
+    # (no region metadata). Keep them verbatim so the merger can dedupe.
+    alternative_names = []
+    for alt in game.get('alternative_names') or []:
+        if isinstance(alt, str) and alt.strip():
+            alternative_names.append(alt.strip())
+
     result = {
         'id': game.get('id'),
         'slug': game.get('slug'),
@@ -338,6 +345,7 @@ def get_game_details(game_id):
         'playtime': game.get('playtime'),  # Average playtime in hours
         'website': game.get('website'),
         'franchise': franchise,
+        'alternative_names': alternative_names,
         'source': 'rawg'
     }
 

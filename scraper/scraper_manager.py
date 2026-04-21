@@ -480,7 +480,23 @@ class ScraperManager:
                             
                             # Get name - prefer English/US region
                             name = self._get_ss_localized_text(result.get('noms', []), 'text')
-                            
+
+                            # Alternate names — ScreenScraper's `noms` is a list
+                            # of {region, langue, text} for every regional release.
+                            # Surface them all (minus the one used as primary name).
+                            alt_titles = []
+                            _primary_lower = (name or '').strip().lower()
+                            for nom in result.get('noms') or []:
+                                if not isinstance(nom, dict):
+                                    continue
+                                alt_name = (nom.get('text') or '').strip()
+                                if not alt_name or alt_name.lower() == _primary_lower:
+                                    continue
+                                alt_titles.append({
+                                    'title': alt_name,
+                                    'region': (nom.get('region') or nom.get('langue') or '').strip() or None,
+                                })
+
                             parsed = {
                                 'id': f"{game_id}:{ss_system_id}",
                                 'name': name,
@@ -491,7 +507,8 @@ class ScraperManager:
                                 'platforms': [{'name': ss_system_name}] if ss_system_name else [],
                                 'region': region,
                                 'platform_match': platform_match,
-                                'matched_platform': ss_system_name if platform_match else None
+                                'matched_platform': ss_system_name if platform_match else None,
+                                'alternate_titles': alt_titles,
                             }
                             parsed['score'] = self._calculate_ss_score(parsed, title, system_name)
                             all_results.append(parsed)

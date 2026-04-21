@@ -576,16 +576,27 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             'critic_score_count': None,
             'user_score': None,
             'user_score_count': None,
+            'alternate_titles': None,
         }
-        
+
         # Pre-populate metadata from existing database values (for cumulative scraping)
         # This ensures subsequent scrapes only fill gaps, not replace existing data
         # UNLESS force_overwrite is True (full re-scrape mode)
         if not force_overwrite:
+            import json as _json_prepop
             for field in metadata.keys():
                 existing_value = game.get(field)
                 if existing_value:
-                    metadata[field] = existing_value
+                    # alternate_titles is stored as JSON in DB — decode to list
+                    # so per-source mergers can append into it.
+                    if field == 'alternate_titles':
+                        try:
+                            parsed = _json_prepop.loads(existing_value)
+                            metadata[field] = parsed if isinstance(parsed, list) else None
+                        except (ValueError, TypeError):
+                            metadata[field] = None
+                    else:
+                        metadata[field] = existing_value
                     # Don't add to filled_fields since these are pre-existing
 
             # Validate media files exist on disk — clear stale DB references
@@ -1269,6 +1280,15 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         # Remove internal tracking field before saving
         metadata.pop('_boxart_source', None)
 
+        # Encode alternate_titles list → JSON for storage
+        alt_titles_json = None
+        if metadata.get('alternate_titles'):
+            try:
+                alt_titles_json = json.dumps(metadata['alternate_titles'])
+            except (TypeError, ValueError) as _e:
+                logger.warning(f"Failed to JSON-encode alternate_titles: {_e}")
+                alt_titles_json = None
+
         # Try with scrape_history column first
         try:
             c.execute("""
@@ -1312,6 +1332,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                     critic_score_count = COALESCE(?, critic_score_count),
                     user_score = COALESCE(?, user_score),
                     user_score_count = COALESCE(?, user_score_count),
+                    alternate_titles = COALESCE(?, alternate_titles),
                     scrape_history = ?,
                     scraped = 1
                 WHERE id = ?
@@ -1355,6 +1376,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 metadata.get('critic_score_count'),
                 metadata.get('user_score'),
                 metadata.get('user_score_count'),
+                alt_titles_json,
                 scrape_history_json,
                 db_game_id
             ))
@@ -1402,6 +1424,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                     critic_score_count = COALESCE(?, critic_score_count),
                     user_score = COALESCE(?, user_score),
                     user_score_count = COALESCE(?, user_score_count),
+                    alternate_titles = COALESCE(?, alternate_titles),
                     scraped = 1
                 WHERE id = ?
             """, (
@@ -1444,6 +1467,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 metadata.get('critic_score_count'),
                 metadata.get('user_score'),
                 metadata.get('user_score_count'),
+                alt_titles_json,
                 db_game_id
             ))
         

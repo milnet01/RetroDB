@@ -117,6 +117,7 @@ def init_database():
         ('fpb_rating', 'TEXT'),
         ('grac_rating', 'TEXT'),
         ('classind_rating', 'TEXT'),
+        ('alternate_titles', 'TEXT'),
     ]
     for col_name, col_type in new_columns:
         try:
@@ -404,6 +405,34 @@ def init_database():
     try:
         c.execute("CREATE INDEX IF NOT EXISTS idx_wishlist_scrape_status ON wishlist(scrape_status)")
         c.execute("CREATE INDEX IF NOT EXISTS idx_wishlist_system_id ON wishlist(system_id)")
+    except sqlite3.OperationalError:
+        pass
+
+    # HLTB pending matches — queue for bulk HLTB lookup results that need user
+    # review before being applied (alt-title matches, low-confidence matches).
+    # Applied matches are deleted from this table; rejected matches too.
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS hltb_pending_matches (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            game_id INTEGER NOT NULL UNIQUE,
+            hltb_id INTEGER,
+            match_name TEXT,
+            match_platform TEXT,
+            confidence REAL,
+            playtime TEXT,
+            main_story REAL,
+            main_plus_sides REAL,
+            completionist REAL,
+            search_term_used TEXT,
+            matched_via_alternate INTEGER DEFAULT 0,
+            reason TEXT,
+            created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+            FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE
+        )
+    """)
+    try:
+        c.execute("CREATE INDEX IF NOT EXISTS idx_hltb_pending_game_id ON hltb_pending_matches(game_id)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_hltb_pending_reason ON hltb_pending_matches(reason)")
     except sqlite3.OperationalError:
         pass
 

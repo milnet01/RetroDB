@@ -1,0 +1,154 @@
+# RetroDB Semgrep audit config
+# ============================================================================
+#
+# This file is the canonical reference for how /audit runs Semgrep on RetroDB.
+# It serves three purposes:
+#
+#   1. Document which upstream rule IDs are known noise on this codebase
+#      (three consecutive audits, 0 actionable / 105 raw findings combined),
+#      with a one-line anchor for each explaining WHY the rule fires but does
+#      not indicate a bug here.
+#
+#   2. Define RetroDB-specific custom rules (under `rules:` below) that catch
+#      issues the upstream packs miss.
+#
+#   3. Consolidate the project's audit threat model so future contributors
+#      (and future /audit runs) pick up the same calibration.
+#
+# Usage
+# -----
+# Invoke Semgrep with upstream packs AND this file. Synthesise the
+# `--exclude-rule` flags from the list under "Excluded upstream rules" below:
+#
+#   EXCLUDES=$(awk '/^# Excluded upstream rules/,/^# RetroDB-specific/' .semgrep.yml \
+#              | grep -oE '^#   [a-z][a-z0-9._-]+\.[a-z0-9._-]+' \
+#              | awk '{print "--exclude-rule " $2}' | tr '\n' ' ')
+#   semgrep \
+#     --config p/security-audit --config p/python --config p/flask \
+#     --config .semgrep.yml \
+#     --exclude logs --exclude data --exclude database --exclude static \
+#     --exclude __pycache__ --exclude node_modules --exclude .venv \
+#     $EXCLUDES \
+#     --json --timeout 120 --metrics=off .
+#
+# Verified 2026-04-21: with all 13 excludes applied, 54 raw findings → 0.
+#
+# The `--exclude-rule` loop is optional; leave them out the first time you
+# audit a feature branch so you see every finding, then add them back once
+# you've verified each site.
+#
+# Threat model
+# ------------
+# - Single-user, localhost Flask app. One human operator (the admin) runs it.
+# - Admin == operator. There is no lower-privilege tier whose input flows into
+#   admin-authored content. Settings pages and admin-only routes are not
+#   treated as XSS or CSRF targets, because the attacker would have to be the
+#   admin.
+# - External-API hash algorithms (MD5, SHA1) are dictated by third-party
+#   contracts (RetroAchievements requires MD5 ROM hashes as lookup keys;
+#   ScreenScraper requires both MD5 and SHA1 in every request payload). Not a
+#   crypto choice — a contract requirement.
+# - Flask `debug=True` in app.py is inside a `if config.DEBUG_MODE:` branch
+#   controlled by the RETRODB_DEBUG environment variable. Production uses the
+#   Waitress WSGI server on the other branch.
+#
+# Known-safe SQL patterns (do NOT flag these)
+# -------------------------------------------
+# Every SQL f-string in the codebase is safe via one of these mechanisms:
+#
+#   (a) `services.database.safe_column(col)` validates `col` against a
+#       hardcoded allowlist before interpolation.
+#   (b) A `column_map` / `sort_map` / `_resolve_filter_clause()` dict-literal
+#       switch returns one of a small set of hardcoded SQL fragments; user
+#       input selects WHICH fragment, never WHAT it contains.
+#   (c) Whitelist-driven UPDATE SET clauses: `_ALLOWED_FIELDS` frozenset
+#       (services/normalization.py), `bulk_allowed_fields` (routes/games.py),
+#       `allowed_fields` (routes/auth.py, routes/platform_import.py).
+#   (d) Structural `?`-placeholder IN-clauses:
+#         placeholders = ','.join('?' * len(ids))
+#       where `ids` contains values bound via `?` at execute-time.
+#
+# If a NEW f-string SQL site is introduced that doesn't fit (a-d), /audit
+# should surface it as actionable.
+#
+# Known-safe network calls
+# ------------------------
+# `urllib.request.urlopen` and `requests.*` are called with URLs built from
+# hardcoded vendor hostnames:
+#   - api.thegamesdb.net (routes/scraper.py)
+#   - id.twitch.tv (routes/scraper.py — IGDB OAuth)
+#   - api.rawg.io (routes/scraper.py)
+#   - api.retroachievements.org (scraper/retroachievements.py)
+#   - api.screenscraper.fr (scraper/scrape_screenscraper.py)
+#   - the ONNX Real-ESRGAN model CDN (services/image_utils.py)
+# User input can parameterise query strings but not the host/scheme.
+#
+# Excluded upstream rules
+# -----------------------
+# These rule IDs are noise-only on RetroDB. Pass `--exclude-rule` per ID to
+# skip them on audit runs. If a NEW finding for one of these rules appears in
+# a file or code pattern not listed below, investigate — the exclusion list
+# is calibrated for the current codebase, and a new site may be a real bug.
+#
+#   python.flask.security.audit.debug-enabled.debug-enabled
+#     Anchor: app.py:1238 is env-gated (config.DEBUG_MODE / RETRODB_DEBUG).
+#
+#   python.flask.security.audit.directly-returned-format-string.directly-returned-format-string
+#     Anchor: routes/games.py:677 is a nested helper (_save_upload), not a
+#     Flask view return.
+#
+#   python.flask.security.injection.tainted-sql-string.tainted-sql-string
+#     Anchor: every SQL f-string is guarded by safe_column / column_map /
+#     sort_map / whitelist / ?-placeholder (see "Known-safe SQL patterns"
+#     above). Semgrep doesn't recognise the allowlist indirection.
+#
+#   python.lang.security.audit.dangerous-os-exec-tainted-env-args.dangerous-os-exec-tainted-env-args
+#     Anchor: routes/maintenance.py:765 is the self-restart path
+#     (`os.execv(sys.executable, [sys.executable] + sys.argv)`), behind
+#     @admin_required. sys.argv is process-own, not request data.
+#
+#   python.flask.security.open-redirect.open-redirect
+#     Anchor: routes/platform_import.py:429 passes the flagged value as a
+#     url_for query-string parameter, not as a redirect target.
+#
+#   python.lang.security.insecure-hash-algorithms-md5.insecure-hash-algorithm-md5
+#   python.lang.security.insecure-hash-algorithms.insecure-hash-algorithm-sha1
+#     Anchors: scraper/retroachievements.py (RA API contract),
+#     scraper/scrape_screenscraper.py (ScreenScraper API contract),
+#     routes/tools.py (duplicate-finder content hash, non-security).
+#
+#   python.lang.security.audit.dynamic-urllib-use-detected.dynamic-urllib-use-detected
+#     Anchor: hardcoded vendor hosts (see "Known-safe network calls" above).
+#
+#   python.lang.security.use-defused-xml.use-defused-xml
+#     Anchor: scraper/trophy_parser.py imports `xml.etree.ElementTree.Element`
+#     for type annotations only; actual parsing uses defusedxml.
+#
+#   generic.html-templates.security.unquoted-attribute-var.unquoted-attribute-var
+#     Anchor: templates/settings.html emits literal `checked`/`selected`
+#     strings from server-side conditionals — attacker-controlled text never
+#     flows through these attributes. Admin-only page.
+#
+#   generic.html-templates.security.var-in-script-tag.var-in-script-tag
+#     Anchor: templates/base.html emits admin-editable user_settings dicts
+#     through `|tojson` (valid JS literal encoding). Admin authors the data.
+#
+#   generic.html-templates.security.var-in-href.var-in-href
+#     Anchor: templates/game_detail.html:269 renders the RetroAchievements
+#     game URL, which is always `https://retroachievements.org/game/{ID}`
+#     sourced from the RA API client. Not user-controllable.
+#
+#   python.flask.security.xss.audit.template-unescaped-with-safe.template-unescaped-with-safe
+#     Anchor: templates/changelog.html:30 renders entry.body HTML authored in
+#     data/changelog.yaml (in-repo, admin-authored).
+#
+# RetroDB-specific custom rules
+# -----------------------------
+# Start scaffolded-empty; add rules here that catch patterns the upstream
+# packs miss. Candidate rules for future implementation:
+#   - flag `os.path.join(user_input, ...)` that bypasses services.security.safe_path()
+#   - flag new SQL f-string sites that do NOT call safe_column() or reference
+#     a column_map / sort_map / _ALLOWED_FIELDS / bulk_allowed_fields symbol
+#   - flag Flask routes that lack @login_required or @admin_required
+#
+rules: []

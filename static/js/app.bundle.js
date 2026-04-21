@@ -4162,7 +4162,8 @@ const HLTBManager = {
             body: JSON.stringify({
                 query: query,
                 system_folder: ctx.systemFolder || '',
-                year: ctx.year || ''
+                year: ctx.year || '',
+                game_id: ctx.gameId || null
             })
         })
         .then(r => r.json())
@@ -4184,7 +4185,9 @@ const HLTBManager = {
                     main_extra: data.result.main_extra || '--',
                     completionist: data.result.completionist || '--',
                     release_year: data.result.release_year || null,
-                    developer: data.result.developer || null
+                    developer: data.result.developer || null,
+                    search_term_used: data.result.search_term_used || null,
+                    matched_via_alternate: !!data.result.matched_via_alternate
                 };
 
                 const pending = HLTBManager.pendingData[ctx.name];
@@ -4216,6 +4219,9 @@ const HLTBManager = {
                     if (confidence > 0) {
                         headerHtml += `<span class="hltb-match-confidence">${confidence}% match</span>`;
                     }
+                    if (pending.matched_via_alternate && pending.search_term_used) {
+                        headerHtml += `<span class="hltb-match-alt-notice" title="Matched using this alternate/regional title — confirm it refers to the same game before saving.">⚡ via &ldquo;${escapeHtml(pending.search_term_used)}&rdquo;</span>`;
+                    }
                     matchHeader.innerHTML = headerHtml;
                 }
 
@@ -4228,7 +4234,15 @@ const HLTBManager = {
                 if (completeEl) completeEl.textContent = pending.completionist;
 
                 if (resultDiv) resultDiv.style.display = 'block';
-                showNotification('Match found - please confirm to save', 'info');
+                if (pending.matched_via_alternate && pending.search_term_used) {
+                    showNotification(
+                        `Matched via alternate title "${pending.search_term_used}" — HLTB shows it as "${pending.match_name}". Confirm before saving.`,
+                        'warning',
+                        9000
+                    );
+                } else {
+                    showNotification('Match found - please confirm to save', 'info');
+                }
             } else {
                 if (pendingDiv && !resultDiv) pendingDiv.style.display = 'none';
                 if (errorDiv) {
@@ -6874,25 +6888,40 @@ function displayScraperResults(results, gameId) {
     const container = document.getElementById('searchResults');
     if (!container) return;
 
-    container.innerHTML = results.map(result => `
-        <div class="search-result">
-            <div class="search-result-info">
-                <h4>${escapeHtml(result.name)}</h4>
-                <div class="search-result-meta">
-                    <span class="source-badge ${result.source}">${result.source.toUpperCase()}</span>
-                    ${result.release_date ? `<span>${result.release_date.substring(0, 4)}</span>` : ''}
-                    ${result.score ? `<span>Score: ${result.score.toFixed(1)}</span>` : ''}
+    container.innerHTML = results.map(result => {
+        const alts = Array.isArray(result.alternate_titles) ? result.alternate_titles : [];
+        const primaryLower = (result.name || '').trim().toLowerCase();
+        const altChips = alts
+            .filter(a => a && a.title && a.title.trim().toLowerCase() !== primaryLower)
+            .slice(0, 6)
+            .map(a => `
+                <span class="alt-title-chip">
+                    ${a.region ? `<span class="alt-title-region">${escapeHtml(a.region)}</span>` : ''}
+                    <span class="alt-title-text">${escapeHtml(a.title)}</span>
+                </span>
+            `).join('');
+
+        return `
+            <div class="search-result">
+                <div class="search-result-info">
+                    <h4>${escapeHtml(result.name)}</h4>
+                    <div class="search-result-meta">
+                        <span class="source-badge ${result.source}">${result.source.toUpperCase()}</span>
+                        ${result.release_date ? `<span>${result.release_date.substring(0, 4)}</span>` : ''}
+                        ${result.score ? `<span>Score: ${result.score.toFixed(1)}</span>` : ''}
+                    </div>
+                    ${altChips ? `<div class="search-result-alts"><span class="search-result-alts-label">Also known as:</span> ${altChips}</div>` : ''}
                 </div>
+                <form method="POST" style="margin: 0;">
+                    <input type="hidden" name="action" value="apply">
+                    <input type="hidden" name="game_source" value="${result.source}_${result.id}">
+                    <button type="submit" class="btn btn-success btn-sm">
+                        Apply
+                    </button>
+                </form>
             </div>
-            <form method="POST" style="margin: 0;">
-                <input type="hidden" name="action" value="apply">
-                <input type="hidden" name="game_source" value="${result.source}_${result.id}">
-                <button type="submit" class="btn btn-success btn-sm">
-                    Apply
-                </button>
-            </form>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 const styleSheet = document.createElement('style');
