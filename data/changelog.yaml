@@ -1,3 +1,13 @@
+- version: 2.83.4
+  date: 2026-04-21
+  tags:
+  - type: chore
+    label: Chore
+  body: |
+    <ul>
+        <li><strong>.gitignore sweep</strong> &mdash; Added audit-tool output (<code>.audit_cache/</code>, <code>audit_rule_quality.json</code>), Python tool caches (<code>.pytest_cache/</code>, <code>.mypy_cache/</code>, <code>.tox/</code>, <code>.nox/</code>), coverage output (<code>.coverage</code>, <code>coverage.xml</code>, <code>htmlcov/</code> &mdash; ready for the pytest-cov work in Pass 20.3), and defensive safety nets for env / dotenv files (<code>.env*</code>) and TLS / signing material (<code>*.pem</code>, <code>*.key</code>, <code>*.crt</code>, <code>*.pfx</code>, <code>*.p12</code>) so misplaced secrets can't slip into a commit.</li>
+    </ul>
+
 - version: 2.83.3
   date: 2026-04-21
   tags:
