@@ -64,6 +64,7 @@ from services.game_utils import (
 )
 from services.template_filters import register_filters as _register_template_filters
 from services.database_init import init_database, ensure_user_tables
+from services.assets import asset_url
 from services.analytics import (
     build_analytics_context,
 )
@@ -79,6 +80,10 @@ _RATING_TO_TIER_JS, _TIER_TO_RATING_JS = get_rating_crossmap_js()
 
 app = Flask(__name__)
 _register_template_filters(app)
+# Register asset_url as a Jinja global so it is available in every template
+# (including partials rendered without the context processor, e.g. bare
+# `jinja_env.get_template(...).render(...)` in tests / tools).
+app.jinja_env.globals['asset_url'] = asset_url
 
 
 def _get_secret_key():
@@ -499,6 +504,7 @@ def inject_config():
         'current_user_settings': g.get('user_settings'),
         'has_permission': has_permission,
         'get_avatar_url': get_avatar_url,
+        'asset_url': asset_url,
         'user_timezone': user_tz,
         'csrf_token': session.get('_csrf_token', ''),
         'ai_scraper_enabled': ai_scraper_enabled,

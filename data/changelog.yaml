@@ -1,3 +1,20 @@
+- version: 2.84.2
+  date: 2026-04-22
+  tags:
+  - type: performance
+    label: Performance
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 13 &mdash; frontend performance</strong> &mdash; Three-item sweep. 145 tests pass (was 140); 5 new tests added.
+            <ul>
+                <li><strong>13.1 &mdash; streaming image downloads</strong>. <code>scraper/base_scraper.py::download_image</code> now uses <code>requests.get(..., stream=True)</code> + <code>iter_content(chunk_size=8192)</code> instead of <code>f.write(response.content)</code>. Same streaming pattern applied to <code>services/jobs/base.py::_download_psn_avatar</code> and <code>_download_psn_trophy_image</code> so the PSN CDN path doesn't buffer an entire icon in RAM before writing.  One lingering buffered spot remains at <code>scraper/scrape_thegamesdb.py:1006</code> &mdash; it goes through <code>http_get()</code> which returns the full <code>Response</code>, so streaming it requires a larger refactor; noted for a follow-up pass.</li>
+                <li><strong>13.2 &mdash; split <code>app.bundle.js</code> into <code>core.bundle.js</code> + <code>games.bundle.js</code></strong>. The previous single 271 KB bundle is now two: <code>core.bundle.js</code> (144 KB &mdash; utils, page-lifecycle, toast-controller, main) loads on every page; <code>games.bundle.js</code> (127 KB &mdash; filters, bulk-scrape, bulk-edit, game-list, game-modals) loads only on the 13 templates that opt in via a Jinja variable <code>{% set needs_games_bundle = true %}</code> immediately after <code>{% extends "base.html" %}</code>. Opted-in templates: <code>all_games</code>, <code>system_games</code>, <code>game_detail</code>, <code>reports</code>, <code>achievement_game</code>, <code>achievements_system</code>, <code>local_trophies</code>, <code>psn_trophies</code>, <code>psn_trophy_detail</code>, <code>steam_achievements</code>, <code>steam_achievement_game</code>, <code>xbox_achievements</code>, <code>xbox_achievement_game</code>. Non-games pages (<code>dashboard</code>, <code>settings</code>, <code>logs</code>, <code>museum</code>, <code>help</code>, <code>changelog</code>, <code>login</code>, <code>setup</code>, <code>analytics</code> &hellip;) now ship 127 KB less JS per load. <code>build_js.py</code> auto-removes the legacy <code>app.bundle.js</code> so a stale single-bundle copy can't stick around and double-load.</li>
+                <li><strong>13.3 &mdash; per-file content-hash cache-busting</strong>. <code>build_css.py</code> and <code>build_js.py</code> now write an <code>static/asset_manifest.json</code> mapping each built file to the first 8 hex chars of its SHA-256 (e.g. <code>{"css/main.min.css": "7af0491f", "js/core.bundle.js": "3b29911a", "js/games.bundle.js": "06cc99b6"}</code>). New <code>services/assets.py::asset_url(relative_path)</code> loads that manifest (mtime-cached with a lock), appends <code>?v=&lt;hash&gt;</code>, and falls back to <code>?v={APP_VERSION}</code> when the manifest is missing or the path isn't indexed. Registered as a Jinja global + context-processor entry so every template can use <code>{{ asset_url('css/main.min.css') }}</code>. <code>base.html</code> switched over for the three bundle URLs. Result: a CSS-only change no longer busts the JS bundle, and vice versa. 5 new tests in <code>tests/test_assets.py</code>.</li>
+                <li><strong>Validation</strong> &mdash; <code>pytest</code> clean; <code>build_js.py --force</code> emits the 2 bundles + manifest; <code>build_css.py --force</code> writes main.min.css + manifest entry; dashboard renders without <code>games.bundle.js</code>; <code>all_games</code> renders with it; asset URLs appear with the correct per-file hash.</li>
+            </ul>
+        </li>
+    </ul>
+
 - version: 2.84.1
   date: 2026-04-22
   tags:

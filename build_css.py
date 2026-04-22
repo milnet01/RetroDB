@@ -9,6 +9,8 @@ Usage:
     python build_css.py --no-minify  # Concatenate without minifying
 """
 
+import hashlib
+import json
 import re
 import sys
 from pathlib import Path
@@ -218,6 +220,9 @@ def build(do_minify=True):
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(combined)
 
+    # Record content hash in the shared asset manifest (Pass 13.3).
+    _update_manifest({'css/main.min.css': _content_hash(output_path)})
+
     print("-" * 50)
     print(f"Source: {total_lines} lines across {len(CSS_ORDER)} files")
     if do_minify:
@@ -225,6 +230,31 @@ def build(do_minify=True):
         print(f"Size: {original_size:,} → {final_size:,} bytes ({reduction:.1f}% reduction)")
     print(f"Output: {output_path}")
     print("Build complete!")
+
+
+def _content_hash(path):
+    """First 8 hex chars of SHA-256 of file content."""
+    h = hashlib.sha256()
+    with open(path, 'rb') as f:
+        for chunk in iter(lambda: f.read(65536), b''):
+            h.update(chunk)
+    return h.hexdigest()[:8]
+
+
+def _update_manifest(entries):
+    """Merge entries into static/asset_manifest.json (shared with build_js)."""
+    manifest_path = Path(__file__).parent / 'static' / 'asset_manifest.json'
+    manifest = {}
+    if manifest_path.exists():
+        try:
+            with open(manifest_path, 'r', encoding='utf-8') as f:
+                manifest = json.load(f) or {}
+        except (OSError, json.JSONDecodeError):
+            manifest = {}
+    manifest.update(entries)
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(manifest_path, 'w', encoding='utf-8') as f:
+        json.dump(manifest, f, indent=2, sort_keys=True)
 
 def main():
     """Main entry point."""

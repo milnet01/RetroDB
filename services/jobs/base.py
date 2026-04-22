@@ -119,17 +119,25 @@ def _download_psn_avatar(username, avatar_url):
     try:
         os.makedirs(dest_dir, exist_ok=True)
         # PSN CDN rejects the default python-requests UA.
-        resp = requests.get(
+        with requests.get(
             avatar_url,
             timeout=15,
             headers={'User-Agent': 'Mozilla/5.0 (RetroDB)'},
-        )
-        if resp.status_code == 200 and len(resp.content) > 0:
+            stream=True,
+        ) as resp:
+            if resp.status_code != 200:
+                logger.warning(f"PSN avatar download returned {resp.status_code} for {username}")
+                return None
+            bytes_written = 0
             with open(dest_path, 'wb') as f:
-                f.write(resp.content)
+                for chunk in resp.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
+                        bytes_written += len(chunk)
+            if bytes_written == 0:
+                return None
             cache_bust = int(time.time())
             return f'/static/images/avatars/{filename}?t={cache_bust}'
-        logger.warning(f"PSN avatar download returned {resp.status_code} for {username}")
     except Exception as e:
         logger.warning(f"Failed to download PSN avatar for {username}: {e}")
     return None
@@ -163,10 +171,17 @@ def _download_psn_trophy_image(npwr_id, image_url, trophy_id=None):
 
     try:
         os.makedirs(dest_dir, exist_ok=True)
-        resp = requests.get(image_url, timeout=15)
-        if resp.status_code == 200 and len(resp.content) > 0:
+        with requests.get(image_url, timeout=15, stream=True) as resp:
+            if resp.status_code != 200:
+                return None
+            bytes_written = 0
             with open(dest_path, 'wb') as f:
-                f.write(resp.content)
+                for chunk in resp.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
+                        bytes_written += len(chunk)
+            if bytes_written == 0:
+                return None
             return filename
     except Exception as e:
         logger.warning(f"Failed to download PSN trophy image {filename} for {npwr_id}: {e}")

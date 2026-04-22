@@ -122,6 +122,37 @@ change forces a different sequence.
   every existing caller (`routes/bulk_scrape.py`, `routes/games.py`,
   `scraper/hybrid_scraper.py`, `services/wishlist_scraper.py`,
   `services/jobs/*`) is unchanged. All 124 tests pass. (v2.83.12)
+- [x] **Pass 13 — Frontend performance** — Three-item sweep landed as
+  v2.84.2.
+    - **13.1** Streaming image downloads. `scraper/base_scraper.py::
+      download_image` switched to `requests.get(..., stream=True)` +
+      `iter_content(chunk_size=8192)` so the full response body is no
+      longer materialised in memory before write. Same pattern applied
+      to the two PSN image downloaders in `services/jobs/base.py`.
+      One lingering buffered spot at `scrape_thegamesdb.py:1006` — it
+      goes through `http_get()` which returns the full Response, so a
+      refactor is needed; noted in the changelog.
+    - **13.2** Split single 271 KB `app.bundle.js` into
+      `core.bundle.js` (144 KB — utils, page-lifecycle,
+      toast-controller, main) + `games.bundle.js` (127 KB — filters,
+      bulk-scrape, bulk-edit, game-list, game-modals).  Core loads on
+      every page; games loads only on 13 templates that opt in via
+      `{% set needs_games_bundle = true %}`.  Non-games pages
+      (dashboard, settings, logs, museum, help, changelog, login,
+      setup, analytics, &hellip;) now ship 127 KB less JS per load.
+      `build_js.py` auto-removes the legacy bundle.
+    - **13.3** Per-file content-hash cache-busting.  `build_css.py` +
+      `build_js.py` now write `static/asset_manifest.json` mapping each
+      built file to its SHA-256[:8].  New
+      `services/assets.py::asset_url(path)` appends `?v=<hash>` to the
+      static URL (mtime-cached manifest with lock; falls back to
+      `?v={APP_VERSION}` on miss).  Registered as Jinja global +
+      context processor entry; `base.html` uses it for the 3 bundle
+      URLs.  CSS-only changes no longer bust JS cache, and vice versa.
+      5 new tests in `tests/test_assets.py`.
+    Net: 145 tests pass (was 140); smoke render-tests confirm
+    dashboard omits the games bundle and all_games includes it.
+    (v2.84.2)
 - [x] **Pass 12 (partial) — Database performance** — Four-item sweep
   across the SQLite layer, landed as v2.84.1.
     - **12.1** Long-lived `PRAGMA optimize=0x10002` on background-job
@@ -739,7 +770,11 @@ sheet, Flask/Werkzeug/Waitress CVE scan).
   at a time, so the agent's earlier "500 MB at once" claim was wrong —
   but streaming is still best practice and cheap.
 - **Plan**: replace with `for chunk in response.iter_content(chunk_size=8192):`.
-- **Status**: todo
+- **Status**: done (v2.84.2) — `scraper/base_scraper.py::download_image`
+  switched to `stream=True` + `iter_content(chunk_size=8192)`.  Same pattern
+  applied to both PSN image downloaders in `services/jobs/base.py`.
+  `scrape_thegamesdb.py:1006` still buffers because it goes through the
+  non-streaming `http_get()` — noted as a follow-up.
 
 ### 13.2 Split `app.bundle.js` into core vs feature bundles (MEDIUM, M)
 
@@ -755,7 +790,11 @@ sheet, Flask/Werkzeug/Waitress CVE scan).
      filters.  Loaded only by `base.html` when a template sets
      `{% set needs_games_bundle = true %}` or when on a games-related
      endpoint.
-- **Status**: todo
+- **Status**: done (v2.84.2) — `build_js.py` now emits `core.bundle.js`
+  (144 KB minified) + `games.bundle.js` (127 KB minified), auto-removes the
+  legacy single bundle.  13 templates opt in via the Jinja var.  Non-games
+  pages (dashboard, settings, logs, museum, help, changelog, login, setup,
+  analytics) now ship 127 KB less JS per page load.
 
 ### 13.3 Per-file cache-busting hash in bundle URLs (LOW, M)
 
@@ -769,7 +808,11 @@ sheet, Flask/Werkzeug/Waitress CVE scan).
   (e.g. first 8 chars of SHA-256) to a JSON manifest; `base.html` reads
   the manifest via a Jinja global.  Loaded assets become
   `main.min.css?v=abc12345`.
-- **Status**: todo
+- **Status**: done (v2.84.2) — `static/asset_manifest.json` written by both
+  builders; `services/assets.py::asset_url(path)` reads it (mtime-cached
+  with lock) and appends `?v=<hash>`.  Falls back to `?v={APP_VERSION}` on
+  manifest miss or corrupt JSON.  Registered as Jinja global + context
+  processor entry.  5 tests in `tests/test_assets.py`.
 
 ---
 

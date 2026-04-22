@@ -211,24 +211,26 @@ def download_image(url, dest_path, timeout=15):
         os.makedirs(dest_dir, exist_ok=True)
 
     try:
-        response = _http_session.get(url, timeout=timeout)
-        if response.status_code == 200:
+        # stream=True so the whole response body isn't materialised in memory
+        # before write; iter_content pipes directly to disk in 8 KB chunks.
+        with _http_session.get(url, timeout=timeout, stream=True) as response:
+            if response.status_code != 200:
+                logger.warning(f"Image download failed: HTTP {response.status_code} - {url}")
+                return False
             with open(dest_path, 'wb') as f:
-                f.write(response.content)
-            # Standardize image size if type can be inferred from path
-            try:
-                from services.image_utils import standardize_downloaded_image
-                # Infer type from parent directory name
-                parent_dir = os.path.basename(os.path.dirname(dest_path))
-                if parent_dir in ('boxart', 'screenshots', 'boxart_3d', 'controllers'):
-                    standardize_downloaded_image(dest_path, parent_dir)
-            except Exception:
-                pass  # Non-critical — don't fail the download
-            logger.debug(f"Downloaded image: {dest_path}")
-            return True
-        else:
-            logger.warning(f"Image download failed: HTTP {response.status_code} - {url}")
-            return False
+                for chunk in response.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
+        # Standardize image size if type can be inferred from path
+        try:
+            from services.image_utils import standardize_downloaded_image
+            parent_dir = os.path.basename(os.path.dirname(dest_path))
+            if parent_dir in ('boxart', 'screenshots', 'boxart_3d', 'controllers'):
+                standardize_downloaded_image(dest_path, parent_dir)
+        except Exception:
+            pass  # Non-critical — don't fail the download
+        logger.debug(f"Downloaded image: {dest_path}")
+        return True
     except Exception as e:
         logger.warning(f"Image download error: {e}")
         return False

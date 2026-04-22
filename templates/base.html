@@ -19,8 +19,8 @@
     })();
     </script>
 
-    <!-- Main Stylesheet (built from modular CSS) -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.min.css') }}?v={{ config.APP_VERSION }}">
+    <!-- Main Stylesheet (built from modular CSS) — per-file cache-bust via asset_manifest.json (Pass 13.3) -->
+    <link rel="stylesheet" href="{{ asset_url('css/main.min.css') }}">
     
     <!-- Page-specific styles -->
     {% block styles %}{% endblock %}
@@ -355,8 +355,12 @@
         window.IS_ADMIN = {{ 'true' if current_user and current_user.role == 'admin' else 'false' }};
     </script>
 
-    <!-- App JavaScript Bundle (utils + page-lifecycle + filters + bulk-scrape + bulk-edit + toast-controller + game-list + game-modals + main) -->
-    <script defer src="{{ url_for('static', filename='js/app.bundle.js') }}?v={{ config.APP_VERSION }}"></script>
+    <!-- Core JavaScript Bundle (utils + page-lifecycle + toast-controller + main) - loaded on every page -->
+    <script defer src="{{ asset_url('js/core.bundle.js') }}"></script>
+    {% if needs_games_bundle %}
+    <!-- Games JavaScript Bundle (filters + bulk-scrape + bulk-edit + game-list + game-modals) - loaded only on templates that opt in via {% raw %}{% set needs_games_bundle = true %}{% endraw %} -->
+    <script defer src="{{ asset_url('js/games.bundle.js') }}"></script>
+    {% endif %}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof DateUtils !== 'undefined') {

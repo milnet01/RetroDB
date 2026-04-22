@@ -239,21 +239,22 @@
 | (root) | `utilities.css` | Helper classes (margin, padding, text) |
 
 ### JavaScript (`static/js/`)
-**Build:** `python3 build_js.py` concatenates bundled files into `app.bundle.js`
-**Bundle order:** utils -> page-lifecycle -> filters -> bulk-scrape -> bulk-edit -> toast-controller -> game-list -> game-modals -> main
+**Build:** `python3 build_js.py` concatenates bundled files into two outputs — `core.bundle.js` (loaded on every page) and `games.bundle.js` (loaded only on game-centric templates that set `{% set needs_games_bundle = true %}` right after `{% extends "base.html" %}`).
+**Core bundle order:** utils -> page-lifecycle -> toast-controller -> main
+**Games bundle order:** filters -> bulk-scrape -> bulk-edit -> game-list -> game-modals
 
 | File | Bundle | Purpose |
 |------|--------|---------|
 | `theme.js` | No (FOUC) | Theme switching, persistence, canvas effects (Matrix rain, Ocean reflection, Cyberpunk volumetric noise smoke with hardware detection) |
-| `utils.js` | Yes (1) | Shared helpers (formatBytes, formatNumber, API calls) |
-| `page-lifecycle.js` | Yes (2) | Page state persistence |
-| `filters.js` | Yes (3) | AlphabetNav (used by achievements/trophies pages) |
-| `bulk-scrape.js` | Yes (4) | Bulk scrape queue UI |
-| `bulk-edit.js` | Yes (5) | Bulk edit controller for game list pages |
-| `toast-controller.js` | Yes (6) | Notification system, job status polling |
-| `game-list.js` | Yes (7) | FanartController, BackToTopController, RARefreshController |
-| `game-modals.js` | Yes (8) | Game detail/edit modals, screenshot carousel |
-| `main.js` | Yes (9) | Core init, sidebar, search, tooltips |
+| `utils.js` | core (1) | Shared helpers (formatBytes, formatNumber, API calls) |
+| `page-lifecycle.js` | core (2) | Page state persistence |
+| `toast-controller.js` | core (3) | Notification system, job status polling |
+| `main.js` | core (4) | Core init, sidebar, search, tooltips |
+| `filters.js` | games (1) | AlphabetNav (used by achievements/trophies pages) |
+| `bulk-scrape.js` | games (2) | Bulk scrape queue UI |
+| `bulk-edit.js` | games (3) | Bulk edit controller for game list pages |
+| `game-list.js` | games (4) | FanartController, BackToTopController, RARefreshController |
+| `game-modals.js` | games (5) | Game detail/edit modals, screenshot carousel |
 | `all-games-controller.js` | No (page) | API-driven game list for `/games` and `/system/<id>` (infinite scroll, filters) |
 | `achievements.js` | No (page) | Achievement display interactions |
 | `trophies.js` | No (page) | Trophy display interactions |
@@ -261,11 +262,16 @@
 | `log-viewer.js` | No (page) | Universal log viewer (all categories) |
 | `rom-tools.js` | No (page) | ROM tool operations, TaskPoller, PauseButton |
 | `museum.js` | No (page) | Museum bulk generation, controller images, tab navigation, filtering |
-| `app.bundle.js` | Output | Generated bundle (do not edit directly) |
+| `core.bundle.js` | Output | Generated core bundle (do not edit directly) |
+| `games.bundle.js` | Output | Generated games bundle (do not edit directly) |
+
+**Templates that load `games.bundle.js`** (must set `{% set needs_games_bundle = true %}`): `all_games.html`, `system_games.html`, `game_detail.html`, `reports.html`, `achievement_game.html`, `achievements_system.html`, `local_trophies.html`, `psn_trophies.html`, `psn_trophy_detail.html`, `steam_achievements.html`, `steam_achievement_game.html`, `xbox_achievements.html`, `xbox_achievement_game.html`.
+
+**Cache-busting:** `build_js.py` + `build_css.py` write `static/asset_manifest.json` mapping each built file to the first 8 hex chars of its SHA-256.  `base.html` references them via `{{ asset_url('js/core.bundle.js') }}` (registered as a Jinja global + context processor entry from `services/assets.py`).  Fallback is `?v={APP_VERSION}` when the manifest is missing or the path isn't indexed.
 
 ### Global JS Functions & Objects (available on every page)
 
-These are defined in the bundle (`app.bundle.js`) and `base.html` inline scripts. **Always use these exact names in template `<script>` blocks — never invent aliases.**
+Core-bundle APIs are defined in `core.bundle.js`; games-bundle APIs require a template with `{% set needs_games_bundle = true %}` (see list above). **Always use these exact names in template `<script>` blocks — never invent aliases.**
 
 | Name | Source | Usage |
 |------|--------|-------|
