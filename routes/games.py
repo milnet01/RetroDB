@@ -648,11 +648,20 @@ def game_detail(game_id):
             FROM game_achievement_progress WHERE game_id = ?
         """, (game_id,), one=True)
 
-        # PSN trophy progress (if linked)
+        # PSN trophy progress (if linked).
+        # psn_games has two parallel column families — `defined_*` (legacy,
+        # never populated by any writer) and `total_*` (canonical, written
+        # by every sync path). Alias `total_*` -> the `defined_*` names the
+        # template expects so per-category breakdowns stop rendering as
+        # "earned / 0". The `defined_*` columns themselves can be dropped
+        # in a future migration pass.
         psn_progress = query("""
             SELECT pg.id, pg.npwr_id, pg.progress,
                    pg.earned_bronze, pg.earned_silver, pg.earned_gold, pg.earned_platinum,
-                   pg.defined_bronze, pg.defined_silver, pg.defined_gold, pg.defined_platinum,
+                   pg.total_bronze   AS defined_bronze,
+                   pg.total_silver   AS defined_silver,
+                   pg.total_gold     AS defined_gold,
+                   pg.total_platinum AS defined_platinum,
                    (pg.earned_bronze + pg.earned_silver + pg.earned_gold + pg.earned_platinum) AS earned_total,
                    pg.total_trophies AS defined_total
             FROM psn_games pg

@@ -1,3 +1,14 @@
+- version: 2.83.20
+  date: 2026-04-22
+  tags:
+  - type: fix
+    label: Fix
+  body: |
+    <ul>
+        <li><strong>Game-detail PSN trophy card: per-category totals now show real numbers</strong> &mdash; <code>templates/game_detail.html</code> reads <code>psn_progress.defined_bronze / defined_silver / defined_gold / defined_platinum</code>, but the <code>psn_games</code> table has two parallel column families and every writer (<code>routes/trophies.py</code>, <code>services/jobs/psn_refresh.py</code>) populates the <code>total_*</code> columns &mdash; <code>defined_*</code> has been unused since schema inception. Result: the 56 / 73 headline was correct, but the per-type breakdown rendered as "🏆 1 / 0 &nbsp;🥇 1 / 0 &nbsp;🥈 11 / 0 &nbsp;🥉 43 / 0". Fixed by aliasing <code>pg.total_bronze AS defined_bronze</code> (etc.) in the SELECT in <code>routes/games.py::game_detail</code> so the template renders unchanged. The unused <code>defined_*</code> columns can be dropped in a future migration pass.</li>
+        <li><strong>Achievement/trophy progress-bar fill now visibly renders</strong> &mdash; the <code>&lt;span class="achievement-fill"&gt;</code> element had no explicit <code>display</code> rule and therefore inherited the default <code>inline</code> from <code>&lt;span&gt;</code>. CSS percentage widths are ignored on inline boxes, so <code>style="width: 76.7%"</code> collapsed to the intrinsic content width (zero). Added <code>display: block</code> to <code>.achievement-fill</code> in the game-detail inline CSS &mdash; fixes the PSN bar that prompted this report and the RA / Steam / Xbox / RPCS3 bars that shared the same latent bug.</li>
+    </ul>
+
 - version: 2.83.19
   date: 2026-04-22
   tags:
