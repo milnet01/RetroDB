@@ -122,6 +122,28 @@ change forces a different sequence.
   every existing caller (`routes/bulk_scrape.py`, `routes/games.py`,
   `scraper/hybrid_scraper.py`, `services/wishlist_scraper.py`,
   `services/jobs/*`) is unchanged. All 124 tests pass. (v2.83.12)
+- [x] **Pass 7 stage 3 — unified metadata-apply orchestrator** — Moved
+  `ScraperManager.apply_metadata` + `ScraperManager.apply_hybrid_metadata`
+  out of `scraper/scraper_manager.py` (684 → 584 LOC; −100) and into
+  `services/game_metadata_service.py` (110 → 285 LOC; +175) as
+  `apply_metadata_to_game(db_game_id, game_data, source, system_folder)` +
+  `apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id,
+  system_folder, all_results=None, explicit_secondary=None,
+  secondary_sources=None, fill_gaps=True, force_overwrite=False,
+  primary_data=None)`. All three apply-path callers — `routes/games.py`
+  (manual edit), `routes/bulk_scrape.py` (single-game sync bulk),
+  `services/jobs/bulk_scrape.py` (background bulk) — now go through the
+  same entry point instead of two calling the manager and one calling
+  `scraper.hybrid_scraper.apply_hybrid_metadata` directly. Side-effect
+  fix: `routes/games.py` no longer does the
+  `apply_metadata_to_game = scraper_manager.apply_metadata` reassignment
+  dance, and the two bulk-scrape call sites that previously passed raw
+  'thegamesdb' as `primary_source` (which hybrid_scraper's dispatch
+  silently skipped, falling through to the fallback search) now get
+  normalized to 'tgdb' at the service boundary — the primary-source
+  branch actually fires instead of relying on the fallback path to
+  re-search. Dead imports (`apply_tgdb`, `apply_igdb`, `apply_esde`)
+  dropped from `scraper_manager.py`. All 124 tests pass. (v2.83.19)
 - [x] **Pass 7 stage 2 — title-matching consolidation** — Pulled three
   remaining cross-module title-normalization helpers into
   `services/achievement_linking.py` (125 → 333 LOC; +208 LOC of shared
@@ -245,15 +267,12 @@ onwards. Manager shrank 1022 → 684 LOC (−33%).
      RA-list-match, PSN-trophy-link) previously scattered across a
      route, a blueprint, and a job — now all in one service module with
      documented semantics for why they stay separate.
-  3. **stage 3 — todo.** `services/game_metadata_service.py` expanded
-     to host the merge orchestrator (`apply_metadata_to_game` currently
-     on `scraper/scraper_manager.ScraperManager`, which mixes search
-     orchestration and field-merge writes). Extract so both the
-     bulk-scrape job and the POST `/game/<id>` apply action call the
-     same code path instead of one calling the manager and the other
-     calling `scraper_manager.apply_metadata` through a reassigned
-     symbol.
-- **Status**: stages 1-2 done, stage 3 todo
+  3. **stage 3 — done (v2.83.19).** Extracted `apply_metadata` and
+     `apply_hybrid_metadata` off `ScraperManager` and into
+     `services/game_metadata_service.py` as `apply_metadata_to_game` +
+     `apply_hybrid_metadata_to_game`. All three call sites now share
+     one code path. See the "Done" entry above.
+- **Status**: all three stages done
 
 ---
 

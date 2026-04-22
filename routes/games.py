@@ -34,6 +34,7 @@ from services.game_query import (
 from services.analytics import invalidate_analytics_cache
 from services.game_metadata_service import (
     cross_map_ratings, build_game_card,
+    apply_metadata_to_game, apply_hybrid_metadata_to_game,
 )
 from services.achievement_linking import (
     build_rpcs3_trophy_map, lookup_rpcs3_info,
@@ -47,12 +48,14 @@ logger = logging.getLogger(__name__)
 
 bp = Blueprint('games', __name__)
 
-# Scraper manager with graceful fallback when scrapers are unavailable
+# Scraper manager with graceful fallback when scrapers are unavailable.
+# The apply path is served by services.game_metadata_service (imported above)
+# so routes/games.py and both bulk-scrape sites share one code path. Search
+# and fetch stay on the manager — they're orchestration concerns, not merge.
 try:
     from scraper.scraper_manager import scraper_manager
     search_games = scraper_manager.search_games
     fetch_game_details = scraper_manager.fetch_game_details
-    apply_metadata_to_game = scraper_manager.apply_metadata
     SCRAPER_AVAILABLE = True
 except ImportError:
     SCRAPER_AVAILABLE = False
@@ -62,9 +65,6 @@ except ImportError:
 
     def fetch_game_details(*args, **kwargs):
         return None
-
-    def apply_metadata_to_game(*args, **kwargs):
-        return False
 
 
 @bp.route('/games')
@@ -344,7 +344,7 @@ def game_detail(game_id):
                                     except (json.JSONDecodeError, TypeError):
                                         logger.warning("Invalid secondary_selections JSON, ignoring")
 
-                                result = scraper_manager.apply_hybrid_metadata(
+                                result = apply_hybrid_metadata_to_game(
                                     db_game_id=game_id,
                                     primary_source=source,
                                     primary_id=source_id,

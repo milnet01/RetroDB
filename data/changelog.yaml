@@ -1,3 +1,22 @@
+- version: 2.83.19
+  date: 2026-04-22
+  tags:
+  - type: chore
+    label: Chore
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 7 stage 3 &mdash; unified metadata-apply orchestrator in <code>services/game_metadata_service.py</code></strong> &mdash; Finished Pass 7 by moving the two apply methods off <code>ScraperManager</code> into the service layer so every caller goes through one code path. <code>scraper_manager.py</code> shrank 684 &rarr; 584 LOC (&minus;100); <code>services/game_metadata_service.py</code> grew 110 &rarr; 285 LOC (+175).
+            <ul>
+                <li><code>apply_metadata_to_game(db_game_id, game_data, source, system_folder=None)</code> &mdash; single-source dispatch to the per-scraper apply functions (TGDB, IGDB, ES-DE). RAWG and ScreenScraper lack standalone applies and correctly return False so the caller routes through the hybrid path instead.</li>
+                <li><code>apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system_folder, all_results=None, explicit_secondary=None, secondary_sources=None, fill_gaps=True, force_overwrite=False, primary_data=None)</code> &mdash; the hybrid orchestrator. Normalizes the raw search-result source name ('thegamesdb' &rarr; 'tgdb', etc.) and handles both calling patterns: the manual-edit path passes <code>all_results</code> + optional <code>explicit_secondary</code> (this function finds <code>primary_data</code> by ID match and auto-builds <code>secondary_sources</code> from the other results); bulk paths pass <code>primary_data</code> + <code>secondary_sources</code> directly. On unexpected hybrid-apply failure, falls back to a single-source apply on a freshly-fetched primary.</li>
+                <li><strong>Three migration sites updated</strong> to use the new orchestrator: <code>routes/games.py</code> (manual edit &mdash; dropped the <code>apply_metadata_to_game = scraper_manager.apply_metadata</code> reassignment dance and the <code>scraper_manager.apply_hybrid_metadata</code> call), <code>routes/bulk_scrape.py</code> (single-game sync bulk &mdash; replaced the direct <code>scraper.hybrid_scraper.apply_hybrid_metadata</code> import), <code>services/jobs/bulk_scrape.py</code> (background bulk &mdash; same).</li>
+                <li><strong>Side-effect fix</strong> &mdash; the two bulk-scrape sites previously passed the raw source name ('thegamesdb') straight to <code>hybrid_scraper.apply_hybrid_metadata</code>, which expected the short form ('tgdb'); the primary-source dispatch silently skipped and the function fell back to re-searching. Those calls now normalize at the service boundary so the primary-source branch actually fires.</li>
+                <li><strong>Dead imports pruned</strong> &mdash; <code>apply_tgdb</code>, <code>apply_igdb</code>, and <code>apply_esde</code> aliases dropped from <code>scraper_manager.py</code>.</li>
+                <li><strong>All 124 tests pass; smoke-import of <code>app</code> clean.</strong></li>
+            </ul>
+        </li>
+    </ul>
+
 - version: 2.83.18
   date: 2026-04-22
   tags:

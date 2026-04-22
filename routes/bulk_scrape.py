@@ -118,16 +118,18 @@ def api_bulk_scrape():
                 seen_sources.add(r_src)
                 secondary_sources.append({'source': r_src, 'id': r.get('id')})
 
-        # Apply metadata using hybrid scraper
-        from scraper.hybrid_scraper import apply_hybrid_metadata
-        result = apply_hybrid_metadata(
+        # Apply metadata via the shared orchestrator — normalizes the raw
+        # `source` name ('thegamesdb' -> 'tgdb' etc.) so the hybrid pipeline's
+        # primary-source branch fires instead of silently falling through.
+        from services.game_metadata_service import apply_hybrid_metadata_to_game
+        result = apply_hybrid_metadata_to_game(
             db_game_id=game_id,
             primary_source=source,
             primary_id=source_id,
             system_folder=game['system_folder'],
             fill_gaps=True,
             primary_data=best_match,
-            secondary_sources=secondary_sources
+            secondary_sources=secondary_sources,
         )
 
         if result.get('success'):

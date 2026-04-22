@@ -1,13 +1,22 @@
 # =============================================================================
 # RETRODB - Game Metadata Service
 # =============================================================================
-# Shared helpers for game metadata merging: rating cross-mapping used by both
-# the manual edit form (routes/games.py) and the AI-fill endpoint
-# (routes/games_ai.py), plus game-card dict shaping used by /api/games and
-# /api/games/card-data.
+# Shared helpers for game metadata merging:
+#   - Rating cross-mapping (manual edit + AI fill).
+#   - Game-card dict shaping for /api/games and /api/games/card-data.
+#   - Unified metadata-apply orchestrator (apply_metadata_to_game +
+#     apply_hybrid_metadata_to_game) used by routes/games.py,
+#     routes/bulk_scrape.py, and services/jobs/bulk_scrape.py so all three
+#     go through the same source-name normalization + secondary-source build
+#     instead of each reaching into scraper_manager or scraper.hybrid_scraper
+#     directly.
 # =============================================================================
 
+import logging
+
 from services.game_utils import map_rating, RATING_SYSTEM_KEYS
+
+logger = logging.getLogger(__name__)
 
 # 'RP' is "Rating Pending" — not an actual maturity level. Treat it as empty
 # so cross-mapping replaces it with a real rating from another system.
@@ -108,3 +117,169 @@ def build_game_card(row, rpcs3_info=None, include_source_flag=False):
     if include_source_flag:
         card['is_clz_import'] = import_source == 'clz'
     return card
+
+
+# =============================================================================
+# METADATA APPLY ORCHESTRATOR
+# =============================================================================
+# Raw search-result `source` field values (what the per-scraper search
+# routines tag their results with) vs. the short-form names
+# hybrid_scraper.apply_hybrid_metadata dispatches on. Normalizing here means
+# bulk callers that previously passed 'thegamesdb' straight through (bypassing
+# the manager's source_map step) now actually hit the primary-source branch
+# in the hybrid pipeline instead of silently falling through to fallback.
+_SOURCE_NAME_MAP = {
+    'thegamesdb': 'tgdb',
+    'tgdb': 'tgdb',
+    'igdb': 'igdb',
+    'esde': 'esde',
+    'rawg': 'rawg',
+    'screenscraper': 'screenscraper',
+    'ai': 'ai',
+}
+
+
+def _normalize_source(source):
+    """Normalize a raw search-result `source` value to hybrid_scraper's short form."""
+    return _SOURCE_NAME_MAP.get(source, source)
+
+
+def apply_metadata_to_game(db_game_id, game_data, source, system_folder=None):
+    """Apply metadata from a single (non-hybrid) source to a game.
+
+    Dispatches to the per-source `apply_*` functions in `scraper/`. Used by the
+    manual "Apply from this source" flow in `routes/games.py` when the user
+    picked a single scraper and no gap-fill is needed.
+
+    RAWG and ScreenScraper have no standalone apply function — their metadata
+    is only reachable through the hybrid path, so those sources return False
+    here; callers should use `apply_hybrid_metadata_to_game` instead.
+
+    Args:
+        db_game_id: Database game ID.
+        game_data: Fetched game-details dict from the chosen source.
+        source: Raw source name ('thegamesdb', 'igdb', 'esde', 'rawg',
+                'screenscraper') — accepts either raw or short form.
+        system_folder: System folder (required for ES-DE apply).
+
+    Returns:
+        bool: True on success, False otherwise (including for unroutable
+              RAWG / ScreenScraper single-source applies).
+    """
+    logger.info(f"Applying metadata from {source} to game {db_game_id}")
+    normalized = _normalize_source(source)
+    try:
+        if normalized == 'tgdb':
+            from scraper.scrape_metadata_thegamesdb import apply_metadata_to_game as apply_tgdb
+            return apply_tgdb(db_game_id, game_data)
+        if normalized == 'igdb':
+            from scraper.scrape_metadata_igdb import apply_metadata_to_game as apply_igdb
+            return apply_igdb(db_game_id, game_data)
+        if normalized == 'esde':
+            from scraper.scrape_esde import apply_esde_metadata
+            return apply_esde_metadata(db_game_id, game_data, system_folder)
+        if normalized in ('rawg', 'screenscraper'):
+            logger.info(f"{source} has no single-source apply — caller should use apply_hybrid_metadata_to_game")
+            return False
+        logger.error(f"Unknown source: {source}")
+        return False
+    except Exception as e:
+        logger.error(f"Error applying metadata from {source}: {e}")
+        return False
+
+
+def apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system_folder,
+                                  all_results=None, explicit_secondary=None,
+                                  secondary_sources=None, fill_gaps=True,
+                                  force_overwrite=False, primary_data=None):
+    """Apply primary-source metadata, then fill gaps from secondary scrapers.
+
+    Unified entry point shared by every apply path:
+      - Manual edit (routes/games.py) passes `all_results` + optional
+        `explicit_secondary`; this function finds `primary_data` by ID match
+        and auto-builds `secondary_sources` from the remaining results.
+      - Single-game bulk (routes/bulk_scrape.py) and background bulk
+        (services/jobs/bulk_scrape.py) pass pre-curated `primary_data` +
+        `secondary_sources` directly.
+
+    Args:
+        db_game_id: Database game ID.
+        primary_source: Raw or short-form source name for the primary scraper.
+        primary_id: ID of the chosen primary-source result.
+        system_folder: System folder (required for ES-DE and ScreenScraper).
+        all_results: Optional list of all search results (manual path).
+        explicit_secondary: Optional list of user-picked secondary selections
+            [{'source', 'id', 'name'}, ...]. Forces `restrict_to_selected=True`
+            in the underlying hybrid apply so unselected scrapers are skipped.
+        secondary_sources: Optional pre-built secondary list (bulk paths). If
+            None and `all_results` is provided, auto-derived from the other
+            search results.
+        fill_gaps: If True, search remaining scrapers for any field the
+            primary left empty.
+        force_overwrite: If True, overwrite existing fields (full-rescrape).
+        primary_data: Optional pre-fetched primary-source result dict; saves
+            a re-fetch round-trip.
+
+    Returns:
+        dict: {'success', 'filled_fields', 'missing_fields', 'sources_used'}
+              as produced by scraper.hybrid_scraper.apply_hybrid_metadata. On
+              unexpected failure, falls back to `apply_metadata_to_game` on
+              freshly-fetched primary data and returns {'success': <bool>}.
+    """
+    from scraper.hybrid_scraper import apply_hybrid_metadata as hybrid_apply
+
+    primary = _normalize_source(primary_source)
+
+    # Manual path: derive primary_data + secondary_sources from all_results.
+    if all_results is not None and secondary_sources is None:
+        if primary_data is None:
+            for r in all_results:
+                if r.get('id') == primary_id and _normalize_source(r.get('source')) == primary:
+                    primary_data = r
+                    logger.info(f"Found selected result data for {primary}: {r.get('name', 'Unknown')}")
+                    break
+
+        if explicit_secondary:
+            secondary_sources = []
+            for sel in explicit_secondary:
+                src = _normalize_source(sel.get('source'))
+                if src != primary:
+                    secondary_sources.append({
+                        'source': src,
+                        'id': sel.get('id'),
+                        'name': sel.get('name', ''),
+                    })
+            logger.info(
+                f"Using {len(secondary_sources)} explicit secondary selection(s): "
+                f"{[s['source'] + ':' + s.get('name', '') for s in secondary_sources]}"
+            )
+        else:
+            secondary_sources = []
+            for r in all_results:
+                src = _normalize_source(r.get('source'))
+                if src != primary:
+                    secondary_sources.append({
+                        'source': src,
+                        'id': r.get('id'),
+                        'name': r.get('name', ''),
+                    })
+
+    try:
+        return hybrid_apply(
+            db_game_id=db_game_id,
+            primary_source=primary,
+            primary_id=primary_id,
+            system_folder=system_folder,
+            secondary_sources=secondary_sources or [],
+            fill_gaps=fill_gaps,
+            force_overwrite=force_overwrite,
+            primary_data=primary_data,
+            restrict_to_selected=bool(explicit_secondary),
+        )
+    except Exception as e:
+        logger.error(f"Error in hybrid metadata apply: {e}")
+        from scraper.scraper_manager import scraper_manager
+        game_data = scraper_manager.fetch_game_details(primary_id, primary_source, system_folder)
+        if game_data:
+            return {'success': apply_metadata_to_game(db_game_id, game_data, primary_source, system_folder)}
+        return {'success': False}

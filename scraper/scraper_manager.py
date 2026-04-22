@@ -194,12 +194,10 @@ def get_api_key(service, key_name=None):
 from .scrape_metadata_thegamesdb import (
     search_games as search_tgdb,
     fetch_game_details as fetch_tgdb,
-    apply_metadata_to_game as apply_tgdb
 )
 from .scrape_metadata_igdb import (
     search_games as search_igdb,
     fetch_game_details as fetch_igdb,
-    apply_metadata_to_game as apply_igdb
 )
 
 logger = logging.getLogger(__name__)
@@ -210,8 +208,7 @@ try:
     from .scrape_esde import (
         search_esde_games as search_esde,
         fetch_esde_game_details as fetch_esde,
-        apply_esde_metadata as apply_esde,
-        normalize_external_platform_name
+        normalize_external_platform_name,
     )
     ESDE_AVAILABLE = True
 except ImportError:
@@ -578,106 +575,9 @@ class ScraperManager:
             logger.error(f"Error fetching details from {source}: {e}")
             return None
 
-    def apply_metadata(self, db_game_id, game_data, source, system_folder=None):
-        """Apply metadata from specified source to database game"""
-        logger.info(f"Applying metadata from {source} to game {db_game_id}")
-
-        try:
-            if source == 'thegamesdb':
-                return apply_tgdb(db_game_id, game_data)
-            elif source == 'igdb':
-                return apply_igdb(db_game_id, game_data)
-            elif source == 'esde' and ESDE_AVAILABLE:
-                return apply_esde(db_game_id, game_data, system_folder)
-            elif source in ('rawg', 'screenscraper'):
-                # RAWG and ScreenScraper don't have standalone apply functions;
-                # route through hybrid scraper which handles all sources
-                logger.info(f"{source} apply routed through hybrid scraper")
-                return False  # Caller should use apply_hybrid_metadata instead
-            else:
-                logger.error(f"Unknown source: {source}")
-                return False
-        except Exception as e:
-            logger.error(f"Error applying metadata from {source}: {e}")
-            return False
-
-    def apply_hybrid_metadata(self, db_game_id, primary_source, primary_id,
-                              system_folder, all_results=None, explicit_secondary=None):
-        """
-        Apply metadata from primary source, then fill gaps from other scrapers.
-
-        Args:
-            db_game_id: Database game ID
-            primary_source: 'esde', 'thegamesdb', or 'igdb'
-            primary_id: ID for the primary source
-            system_folder: System folder name
-            all_results: List of all search results to find secondary sources
-            explicit_secondary: User-selected secondary sources from UI checkboxes.
-                When provided (non-empty list), these override auto-picked secondaries.
-                Each entry: {'source': str, 'id': str, 'name': str}
-        """
-        try:
-            from scraper.hybrid_scraper import apply_hybrid_metadata as hybrid_apply
-
-            # Map source names
-            source_map = {'thegamesdb': 'tgdb', 'igdb': 'igdb', 'esde': 'esde', 'rawg': 'rawg', 'screenscraper': 'screenscraper'}
-            primary = source_map.get(primary_source, primary_source)
-
-            # Find the selected result from all_results to pass its data directly
-            # This fixes the bug where ES-DE would re-fetch using the path and get wrong data
-            primary_data = None
-            if all_results:
-                for r in all_results:
-                    if r.get('id') == primary_id and source_map.get(r.get('source'), r.get('source')) == primary:
-                        primary_data = r
-                        logger.info(f"Found selected result data for {primary}: {r.get('name', 'Unknown')}")
-                        break
-
-            # Use explicit user selections if provided, otherwise auto-build from all_results
-            if explicit_secondary:
-                secondary_sources = []
-                for sel in explicit_secondary:
-                    src = source_map.get(sel.get('source'), sel.get('source'))
-                    if src != primary:
-                        secondary_sources.append({
-                            'source': src,
-                            'id': sel.get('id'),
-                            'name': sel.get('name', '')
-                        })
-                logger.info(f"Using {len(secondary_sources)} explicit secondary selection(s): "
-                           f"{[s['source'] + ':' + s.get('name', '') for s in secondary_sources]}")
-            else:
-                secondary_sources = []
-                if all_results:
-                    for r in all_results:
-                        src = source_map.get(r.get('source'), r.get('source'))
-                        if src != primary:
-                            secondary_sources.append({
-                                'source': src,
-                                'id': r.get('id'),
-                                'name': r.get('name', '')
-                            })
-
-            result = hybrid_apply(
-                db_game_id=db_game_id,
-                primary_source=primary,
-                primary_id=primary_id,
-                system_folder=system_folder,
-                secondary_sources=secondary_sources,
-                fill_gaps=True,
-                primary_data=primary_data,
-                restrict_to_selected=bool(explicit_secondary)
-            )
-
-            return result
-
-        except Exception as e:
-            logger.error(f"Error in hybrid metadata: {e}")
-            # Fall back to regular apply
-            game_data = self.fetch_game_details(primary_id, primary_source, system_folder)
-            if game_data:
-                return {'success': self.apply_metadata(db_game_id, game_data, primary_source, system_folder)}
-            return {'success': False}
+    # Metadata-apply orchestration lives in services.game_metadata_service
+    # (apply_metadata_to_game + apply_hybrid_metadata_to_game). Callers should
+    # go through that service rather than reaching back into the manager.
 
 
 # Create global instance

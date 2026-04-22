@@ -638,7 +638,7 @@ class BulkScrapeJob:
     def _run_scrape(self):
         """Background thread that runs the actual scraping"""
         from scraper.scraper_manager import scraper_manager, load_scraper_settings, get_match_settings, passes_match_filter
-        from scraper.hybrid_scraper import apply_hybrid_metadata
+        from services.game_metadata_service import apply_hybrid_metadata_to_game
         from services.game_utils import get_system_type
 
         # Snapshot immutable job parameters at thread start — prevents corruption
@@ -870,8 +870,8 @@ class BulkScrapeJob:
                                     'title_score': r.get('title_score', 0),
                                 })
 
-                        # Apply hybrid metadata with correct parameters
-                        result = apply_hybrid_metadata(
+                        # Apply hybrid metadata via the shared orchestrator.
+                        result = apply_hybrid_metadata_to_game(
                             db_game_id=game_id,
                             primary_source=source,
                             primary_id=source_id,
@@ -879,7 +879,7 @@ class BulkScrapeJob:
                             fill_gaps=True,
                             force_overwrite=(_scrape_mode == 'full_rescrape'),
                             primary_data=best_match,
-                            secondary_sources=secondary_sources
+                            secondary_sources=secondary_sources,
                         )
 
                         if result.get('success'):
