@@ -1,3 +1,15 @@
+- version: 2.83.14
+  date: 2026-04-22
+  tags:
+  - type: fix
+    label: Fix
+  body: |
+    <ul>
+        <li><strong>Game imports: text search filter now works on all four tabs</strong> &mdash; The four search inputs (CLZ, Steam, Xbox, PSN) used to wire their filter via an inline <code>oninput="filterGames('…')"</code> attribute. For reasons that reproduced reliably on PSN and likely on the others too, the handler did not fire when the user typed after the library had already been fetched &mdash; the table kept showing every game regardless of what was typed. Switched all four to an explicit <code>addEventListener('input', …)</code> binding attached from <code>DOMContentLoaded</code>, with a 120 ms debounce so fast typing doesn't thrash the table re-render.</li>
+        <li><strong>Search now applies to freshly-fetched libraries</strong> &mdash; <code>fetchPsnLibrary</code> / <code>fetchXboxLibrary</code> / <code>fetchSteamLibrary</code> / <code>uploadClzFile</code> now call <code>filterGames(platform)</code> after populating state instead of calling <code>renderTable</code> directly. If the search box already had text (e.g. from browser form-autofill on page reload), the rendered list now honors it from the first render rather than showing the full library until the user re-types.</li>
+        <li><strong>Defensive filter</strong> &mdash; <code>filterGames()</code> guards against a missing search input and a non-array <code>state[platform].games</code> so a stray race between tab switches and fetches can no longer throw mid-filter.</li>
+    </ul>
+
 - version: 2.83.13
   date: 2026-04-22
   tags:
