@@ -6,9 +6,9 @@
 
 import threading
 import time
-import re
 import logging
 
+from services.achievement_linking import match_ra_game
 from services.jobs.base import (
     _get_conn, _commit_with_retry, _get_ra_credentials,
     persist_job_start, persist_job_progress, persist_job_complete
@@ -306,67 +306,8 @@ class RARefreshJob:
 
                         ra_games = ra_console_cache.get(console_id, [])
 
-                        # Try to find matching RA game - use normalized matching
-
-                        def normalize_for_ra(title):
-                            """Normalize title for RA comparison"""
-                            title = title.lower()
-                            # Remove region/version tags in parentheses
-                            title = re.sub(r'\s*[\(\[].*?[\)\]]\s*', '', title)
-                            # Normalize punctuation
-                            title = re.sub(r"[:\-\u2013\u2014/&]", ' ', title)
-                            # Normalize apostrophes
-                            title = re.sub(r"['\u2019\u2018\u02BC\u02BB`\u00B4\u2032\u02B9]", "'", title)
-                            # Remove possessive 's
-                            title = re.sub(r"'s\b", '', title)
-                            # Remove remaining special chars
-                            title = re.sub(r"[^\w\s']", '', title)
-                            # Collapse whitespace
-                            title = re.sub(r'\s+', ' ', title).strip()
-                            return title
-
-                        def get_significant_words(title):
-                            """Get significant words from title"""
-                            words = normalize_for_ra(title).split()
-                            stopwords = {'the', 'a', 'an', 'of', 'and', 'in', 'on', 'at', 'to', 'for'}
-                            return set(w for w in words if w not in stopwords and len(w) > 1)
-
-                        game_title_norm = normalize_for_ra(game['title'])
-                        game_words = get_significant_words(game['title'])
                         rom_name = game['rom_path'].split('/')[-1].rsplit('.', 1)[0] if game['rom_path'] else ''
-                        rom_norm = normalize_for_ra(rom_name)
-
-                        ra_match = None
-                        best_score = 0
-
-                        for ra_game in ra_games:
-                            ra_title = ra_game.get('Title', '')
-                            ra_norm = normalize_for_ra(ra_title)
-                            ra_words = get_significant_words(ra_title)
-
-                            # Skip if no achievements
-                            if ra_game.get('NumAchievements', 0) == 0:
-                                continue
-
-                            # Exact match after normalization
-                            if ra_norm == game_title_norm or ra_norm == rom_norm:
-                                ra_match = ra_game
-                                break
-
-                            # Word-based matching - require all words match
-                            if game_words and ra_words:
-                                if game_words == ra_words:
-                                    # Perfect word match
-                                    ra_match = ra_game
-                                    break
-                                elif game_words.issubset(ra_words) or ra_words.issubset(game_words):
-                                    # One is subset of other - calculate Jaccard similarity
-                                    intersection = len(game_words & ra_words)
-                                    union = len(game_words | ra_words)
-                                    score = intersection / union if union > 0 else 0
-                                    if score > 0.85 and score > best_score:
-                                        best_score = score
-                                        ra_match = ra_game
+                        ra_match = match_ra_game(game['title'], rom_name, ra_games)
 
                         if ra_match:
                             # Update game with RA info

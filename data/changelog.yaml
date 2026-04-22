@@ -1,3 +1,21 @@
+- version: 2.83.16
+  date: 2026-04-22
+  tags:
+  - type: chore
+    label: Chore
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 7 stage 2 &mdash; title-matching consolidation in <code>services/achievement_linking.py</code></strong> &mdash; Pulled the three remaining cross-module title-normalization helpers out of their routes / jobs and into a single service module. <code>services/achievement_linking.py</code> grew 125 &rarr; 333 LOC (+208); consumers shrank collectively by ~75 LOC of inline boilerplate.
+            <ul>
+                <li><code>normalize_title_for_dedup(title)</code> &mdash; NFKD + diacritic strip + ASCII-only lowercase. Lifted out of <code>routes/platform_import.py</code>'s <code>normalize_title()</code>. <code>platform_import.py</code> now imports the service symbol under the local name <code>normalize_title</code> so all nine internal call sites (Steam / Xbox / PSN dedup-by-title paths) are unchanged. The <code>unicodedata</code> and <code>re</code> imports are dropped from <code>platform_import.py</code>.</li>
+                <li><code>find_linked_game_for_psn(title, platform, query_fn)</code> &mdash; the PSN-trophy-to-owned-game linker. Moved out of <code>routes/trophies.py</code>; a thin wrapper stays in the blueprint that injects the module's <code>query</code> function so the service helper never has to import back into <code>routes/</code>. The re-export keeps every existing caller working.</li>
+                <li><code>normalize_for_ra_match(title)</code>, <code>ra_significant_words(title)</code>, <code>match_ra_game(game_title, rom_name, ra_games, jaccard_threshold=0.85)</code> &mdash; the three-pass exact/word-set/Jaccard RetroAchievements matcher that lived as ~60 lines of nested inline functions inside <code>RARefreshJob._run_refresh</code>. The job now calls <code>match_ra_game(...)</code> and the <code>re</code> import drops from the file. Behaviour preserved exactly (spot-check: "The Legend of Zelda: A Link to the Past" still matches "Legend of Zelda, The - A Link to the Past (USA)").</li>
+            </ul>
+        </li>
+        <li><strong>Three distinct normalization regimes, deliberately kept separate</strong> &mdash; the service module now documents why <code>clean_title_for_matching</code> (preserves unicode, trims trademark / bracket / punctuation), <code>normalize_title_for_dedup</code> (NFKD + ASCII-only, for import-time duplicate checks), and <code>normalize_for_ra_match</code> (keeps apostrophes through the possessive-strip pass, folds broad dash variants) are not the same function with cosmetic differences. Conflating them would silently break downstream fuzzy matching that relies on specific semantics.</li>
+        <li><strong>All 124 tests pass; smoke-import of <code>app</code> clean.</strong></li>
+    </ul>
+
 - version: 2.83.15
   date: 2026-04-22
   tags:

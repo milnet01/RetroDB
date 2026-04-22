@@ -26,14 +26,13 @@
 # =============================================================================
 
 import os
-import re
 import logging
-import unicodedata
 from datetime import datetime, timezone
 
 from flask import Blueprint, request, jsonify, redirect, url_for, g
 
 import config
+from services.achievement_linking import normalize_title_for_dedup as normalize_title
 from services.database import get_db, query, execute
 from services.auth import login_required
 from routes.scraper import get_saved_api_keys
@@ -46,22 +45,6 @@ bp = Blueprint('platform_import', __name__)
 # =============================================================================
 # HELPERS
 # =============================================================================
-
-def normalize_title(title):
-    """Normalize a game title for fuzzy matching.
-
-    Strips diacritical marks, lowercases, removes punctuation,
-    and collapses whitespace for comparison.
-    """
-    if not title:
-        return ''
-    nfkd = unicodedata.normalize('NFKD', title)
-    stripped = ''.join(c for c in nfkd if not unicodedata.combining(c))
-    stripped = stripped.lower()
-    stripped = re.sub(r'[^a-z0-9\s]', '', stripped)
-    stripped = re.sub(r'\s+', ' ', stripped).strip()
-    return stripped
-
 
 def _ensure_system_exists(folder, name=None):
     """Ensure a system exists in the DB, auto-creating if needed.

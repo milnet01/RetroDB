@@ -210,65 +210,19 @@ def extract_psn_platform(title):
     return platform
 
 
-from services.achievement_linking import clean_title_for_matching as _clean_title_for_matching  # noqa: E402
+from services.achievement_linking import (  # noqa: E402
+    clean_title_for_matching as _clean_title_for_matching,
+    find_linked_game_for_psn as _find_linked_game_for_psn_impl,
+)
 
 
 def find_linked_game_for_psn(title, platform):
-    """Try to find a matching game in the RetroDB library"""
-    import re
-    # Clean title for matching - strip all special chars
-    clean_title = _clean_title_for_matching(title)
+    """Backward-compat wrapper: delegate to the achievement_linking service.
 
-    # Map PSN platform to system folder
-    platform_map = {
-        'PS3': 'ps3',
-        'PS4': 'ps4',
-        'PS5': 'ps5',
-        'PSVITA': 'psvita',
-        'PS Vita': 'psvita'
-    }
-    system_folder = platform_map.get(platform, '')
-
-    # Try exact match with system (comparing cleaned versions of both titles)
-    if system_folder:
-        # Fetch all games for this system and compare cleaned titles in Python
-        # This avoids SQLite's limited string functions and LIKE bracket issues
-        games = query("""
-            SELECT g.*, s.name as system_name, s.folder as system_folder
-            FROM games g
-            JOIN systems s ON g.system_id = s.id
-            WHERE s.folder = ?
-        """, (system_folder,))
-
-        if games:
-            for game in games:
-                db_clean = _clean_title_for_matching(game['title'])
-                if db_clean == clean_title:
-                    return dict(game)
-
-    # Try fuzzy match across all PlayStation systems
-    # Fetch candidates and compare cleaned titles
-    candidates = query("""
-        SELECT g.*, s.name as system_name, s.folder as system_folder
-        FROM games g
-        JOIN systems s ON g.system_id = s.id
-        WHERE s.folder IN ('ps3', 'ps4', 'ps5', 'psvita', 'psx', 'ps2')
-    """)
-
-    if candidates:
-        # First pass: exact cleaned match (any platform)
-        for game in candidates:
-            db_clean = _clean_title_for_matching(game['title'])
-            if db_clean == clean_title:
-                return dict(game)
-
-        # Second pass: one title contains the other
-        for game in candidates:
-            db_clean = _clean_title_for_matching(game['title'])
-            if clean_title and db_clean and (clean_title in db_clean or db_clean in clean_title):
-                return dict(game)
-
-    return None
+    Kept as a module-level function so existing callers (`routes.trophies`
+    internals and blueprint-scoped imports) don't need to change.
+    """
+    return _find_linked_game_for_psn_impl(title, platform, query)
 
 
 def calculate_rarity_class(rarity):

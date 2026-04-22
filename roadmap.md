@@ -122,6 +122,29 @@ change forces a different sequence.
   every existing caller (`routes/bulk_scrape.py`, `routes/games.py`,
   `scraper/hybrid_scraper.py`, `services/wishlist_scraper.py`,
   `services/jobs/*`) is unchanged. All 124 tests pass. (v2.83.12)
+- [x] **Pass 7 stage 2 — title-matching consolidation** — Pulled three
+  remaining cross-module title-normalization helpers into
+  `services/achievement_linking.py` (125 → 333 LOC; +208 LOC of shared
+  code; ~75 LOC of inline boilerplate removed from consumers):
+  `normalize_title_for_dedup` (lifted from `routes/platform_import.py`'s
+  `normalize_title`, re-exported under the same local name so all nine
+  Steam / Xbox / PSN import call sites are unchanged; `unicodedata` + `re`
+  imports dropped from `platform_import.py`), `find_linked_game_for_psn`
+  (lifted from `routes/trophies.py`; the blueprint keeps a thin wrapper
+  that injects its module-level `query` so the service helper doesn't
+  have to import back into `routes/`), and the three-pass RA matcher
+  `normalize_for_ra_match` / `ra_significant_words` / `match_ra_game`
+  (lifted from the ~60-line nested-inline block inside
+  `RARefreshJob._run_refresh`; the job now calls `match_ra_game(...)`
+  directly, `re` import dropped). Service module now documents why the
+  three normalization regimes (`clean_title_for_matching`,
+  `normalize_title_for_dedup`, `normalize_for_ra_match`) are deliberately
+  distinct — conflating them would silently break downstream fuzzy
+  matching. Parity spot-checked: `normalize_title_for_dedup` output
+  matches the old `normalize_title` on diacritics, apostrophes,
+  parenthesised years; `match_ra_game` still links "The Legend of Zelda:
+  A Link to the Past" to "Legend of Zelda, The - A Link to the Past
+  (USA)". All 124 tests pass. (v2.83.16)
 - [x] **Pass 7 stage 1 — `routes/games.py` decomposition (first wave)** —
   Shrank the route from 1373 → 1128 LOC (−18%) by extracting three
   focused service modules (327 LOC of pure, reusable logic):
@@ -212,13 +235,16 @@ onwards. Manager shrank 1022 → 684 LOC (−33%).
      `routes/trophies.py` re-exporting for backward compat),
      `services/game_media_service.py` (upload/removal/path helpers). See
      the "Done" entry above.
-  2. **stage 2 — todo.** External-provider matching service:
-     generalise the RPCS3-only `build_rpcs3_trophy_map` into a
-     multi-provider `achievement_linking` helper that the
-     Steam / Xbox / PSN background sync jobs can reuse instead of
-     re-discovering their own title-matching logic. Currently those
-     jobs each open their own sqlite connection and run ad-hoc
-     title matches.
+  2. **stage 2 — done (v2.83.16).** Consolidated the remaining title-
+     matching helpers into `services/achievement_linking.py` — see the
+     "Done" entry above. Steam / Xbox sync jobs (`platform_sync.py`)
+     actually link by `steam_app_id` / `xbox_title_id` rather than by
+     title, so there was less title-matching duplication in sync jobs
+     than the original roadmap prose implied. The real consolidation
+     was three distinct normalization regimes (import-dedup,
+     RA-list-match, PSN-trophy-link) previously scattered across a
+     route, a blueprint, and a job — now all in one service module with
+     documented semantics for why they stay separate.
   3. **stage 3 — todo.** `services/game_metadata_service.py` expanded
      to host the merge orchestrator (`apply_metadata_to_game` currently
      on `scraper/scraper_manager.ScraperManager`, which mixes search
@@ -227,7 +253,7 @@ onwards. Manager shrank 1022 → 684 LOC (−33%).
      same code path instead of one calling the manager and the other
      calling `scraper_manager.apply_metadata` through a reassigned
      symbol.
-- **Status**: stage 1 done, stages 2-3 todo
+- **Status**: stages 1-2 done, stage 3 todo
 
 ---
 
