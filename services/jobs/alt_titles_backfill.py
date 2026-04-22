@@ -103,7 +103,7 @@ class AltTitlesBackfillJob:
         persist_id = None
         try:
             from scraper.scraper_manager import scraper_manager
-            from scraper.metadata_merger import merge_alt_titles
+            from scraper.metadata_normalizer import merge_alt_titles
 
             conn = _get_conn()
             c = conn.cursor()

@@ -1,28 +1,28 @@
-# Tests for alternate-title merging in scraper/metadata_merger.py
+# Tests for alternate-title merging in scraper/metadata_normalizer.py
 
 import json
 
-from scraper.metadata_merger import _alt_title_entry, merge_alt_titles
+from scraper.metadata_normalizer import alt_title_entry, merge_alt_titles
 
 
 class TestAltTitleEntry:
     def test_empty_title_returns_none(self):
-        assert _alt_title_entry("") is None
-        assert _alt_title_entry(None) is None
-        assert _alt_title_entry("   ") is None
+        assert alt_title_entry("") is None
+        assert alt_title_entry(None) is None
+        assert alt_title_entry("   ") is None
 
     def test_plain_title(self):
-        assert _alt_title_entry("Rockman") == {"title": "Rockman"}
+        assert alt_title_entry("Rockman") == {"title": "Rockman"}
 
     def test_strips_whitespace(self):
-        assert _alt_title_entry("  Mega Man  ") == {"title": "Mega Man"}
+        assert alt_title_entry("  Mega Man  ") == {"title": "Mega Man"}
 
     def test_with_region_and_source(self):
-        entry = _alt_title_entry("Rockman", region="JP", source="igdb")
+        entry = alt_title_entry("Rockman", region="JP", source="igdb")
         assert entry == {"title": "Rockman", "region": "JP", "source": "igdb"}
 
     def test_blank_region_dropped(self):
-        entry = _alt_title_entry("Rockman", region="   ", source="igdb")
+        entry = alt_title_entry("Rockman", region="   ", source="igdb")
         assert "region" not in entry
         assert entry["source"] == "igdb"
 
@@ -74,8 +74,8 @@ class TestMergeAltTitles:
 
     def test_preserves_region_and_source(self):
         new = [
-            _alt_title_entry("Rockman X", region="JP", source="igdb"),
-            _alt_title_entry("Mega Man X", region="US", source="screenscraper"),
+            alt_title_entry("Rockman X", region="JP", source="igdb"),
+            alt_title_entry("Mega Man X", region="US", source="screenscraper"),
         ]
         merged = merge_alt_titles(None, new)
         assert merged[0]["region"] == "JP"

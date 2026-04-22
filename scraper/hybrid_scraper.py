@@ -35,17 +35,14 @@ from scraper.scrape_metadata_igdb import (
 
 # Import metadata merging functions (extracted to reduce file size)
 from scraper.metadata_merger import (
-    # Per-source apply functions
     apply_tgdb_to_metadata,
     apply_igdb_to_metadata,
     apply_rawg_to_metadata,
     apply_screenscraper_to_metadata,
     apply_ai_to_metadata,
     load_scraper_settings,
-    # Shared utilities
-    _compute_dhash,
-    _get_existing_screenshot_hashes,
-    _is_visual_duplicate,
+)
+from scraper.metadata_normalizer import (
     normalize_title,
     normalize_esrb_rating,
 )
@@ -231,7 +228,7 @@ def should_use_default_controller(controller_value):
     
     return False
 
-# normalize_title, normalize_esrb_rating imported from scraper.metadata_merger
+# normalize_title, normalize_esrb_rating imported from scraper.metadata_normalizer
 # normalize_genre, normalize_modes imported from services.normalization
 
 

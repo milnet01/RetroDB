@@ -1,3 +1,20 @@
+- version: 2.83.11
+  date: 2026-04-22
+  tags:
+  - type: chore
+    label: Chore
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 5 &mdash; <code>scraper/metadata_merger.py</code> split</strong> &mdash; Extracted two focused helper modules, shrinking the merger from 1293 to 1090 LOC (&minus;16%) and giving the previously-private dedup / normalization helpers a proper public home:
+            <ul>
+                <li><code>scraper/image_dedup.py</code> (99 LOC) &mdash; owns perceptual-hash (dHash) duplicate-screenshot detection. Public API: <code>compute_dhash(path)</code>, <code>get_existing_screenshot_hashes(filenames)</code>, <code>is_visual_duplicate(new_path, existing_hashes)</code>, plus a new <code>keep_screenshot_if_unique(local_path, filename, existing_hashes, source_label)</code> helper that folds the four near-identical post-download blocks (TGDB / IGDB / RAWG / ScreenScraper) into a single call.</li>
+                <li><code>scraper/metadata_normalizer.py</code> (158 LOC) &mdash; owns scraper-local field normalization. Public API: <code>normalize_title()</code>, <code>normalize_esrb_rating()</code>, <code>alt_title_entry()</code>, <code>merge_alt_titles()</code>. The ScreenScraper ESRB branch, which used to carry its own 18-line <code>if/elif</code> chain, now calls <code>normalize_esrb_rating()</code> and therefore also handles the legacy KA &rarr; E mapping for free.</li>
+            </ul>
+        </li>
+        <li><strong>Callers updated</strong> &mdash; <code>scraper/hybrid_scraper.py</code>, <code>services/jobs/alt_titles_backfill.py</code>, and <code>tests/test_alternate_titles.py</code> now import from the new modules directly. The underscored-private aliases (<code>_compute_dhash</code>, <code>_alt_title_entry</code>, etc.) are gone &mdash; these helpers are intentionally public now. Three dead imports in <code>hybrid_scraper.py</code> also dropped.</li>
+        <li><strong>Wire format preserved</strong> &mdash; Behavior is equivalent to Pass 4's surface. All 124 pytest tests still pass; smoke-import of <code>app</code> is clean.</li>
+    </ul>
+
 - version: 2.83.10
   date: 2026-04-22
   tags:

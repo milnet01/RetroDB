@@ -148,6 +148,8 @@
 | `scraper/base_scraper.py` | Shared helpers: `http_get`, `http_post`, `download_image`, `rate_limit`, `safe_json` with retry/backoff |
 | `scraper/hybrid_scraper.py` | Orchestration: `apply_hybrid_metadata()`, extended fetch, detection helpers |
 | `scraper/metadata_merger.py` | Per-source apply functions: `apply_tgdb_to_metadata()`, `apply_igdb_to_metadata()`, `apply_ai_to_metadata()`, etc. |
+| `scraper/image_dedup.py` | Perceptual-hash (dHash) duplicate-screenshot detection shared by every per-source apply function. Public API: `compute_dhash(path)`, `get_existing_screenshot_hashes(filenames)`, `is_visual_duplicate(new_path, existing_hashes)`, `keep_screenshot_if_unique(local_path, filename, existing_hashes, source_label)`. Split from `metadata_merger.py`. |
+| `scraper/metadata_normalizer.py` | Scraper-local field normalization: `normalize_title()` (subtitle dash → colon, article placement), `normalize_esrb_rating()` (legacy KA → E), `alt_title_entry()`, `merge_alt_titles()` (case-insensitive dedup on `games.alternate_titles` JSON). Split from `metadata_merger.py`. |
 | `scraper/scrape_metadata_igdb.py` | IGDB API scraper |
 | `scraper/scrape_metadata_thegamesdb.py` | TheGamesDB API scraper |
 | `scraper/scrape_rawg.py` | RAWG.io API scraper |

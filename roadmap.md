@@ -84,6 +84,24 @@ change forces a different sequence.
   don't need). The six near-duplicate per-field delete blocks inside
   `delete_game_images()` now run off a single `_MEDIA_LAYOUT` table.
   Wire format preserved exactly; all 124 tests pass. (v2.83.10)
+- [x] **Pass 5 — `scraper/metadata_merger.py` split** — Extracted two
+  helper modules, shrinking the merger from 1293 → 1090 LOC (−16%):
+  `scraper/image_dedup.py` (99 LOC, dHash + post-download dedup helper
+  `keep_screenshot_if_unique`) and `scraper/metadata_normalizer.py`
+  (158 LOC, `normalize_title` / `normalize_esrb_rating` / `alt_title_entry`
+  / `merge_alt_titles`). The four near-identical screenshot post-
+  download dedup blocks (TGDB / IGDB / RAWG / ScreenScraper) now call
+  `keep_screenshot_if_unique()`. ScreenScraper ESRB branch replaced its
+  inline if/elif chain with `normalize_esrb_rating()`, which also picks
+  up the legacy KA → E mapping for free. Fell short of the roadmap's
+  ~700-LOC reduction target: collapsing the `apply_*` functions to
+  ~100 LOC each would require normalising across different per-source
+  response shapes (TGDB uses its own downloader, IGDB needs URL
+  transforms, SS has two URL sources), which belongs in a dedicated
+  later pass rather than this one. Callers updated
+  (`hybrid_scraper.py`, `alt_titles_backfill.py`, tests); three dead
+  imports in `hybrid_scraper.py` also dropped. All 124 tests pass.
+  (v2.83.11)
 
 ---
 
@@ -108,30 +126,13 @@ change forces a different sequence.
 
 ---
 
-## Pass 5 — scraper/metadata_merger.py split
+## Pass 5 — scraper/metadata_merger.py split — done (v2.83.11)
 
-### Extract image dedup and field normalisation from metadata_merger
-
-- **Target**: `scraper/metadata_merger.py` (1293 LOC → ~600); new
-  `scraper/image_dedup.py`, `scraper/metadata_normalizer.py`.
-- **Why**: five near-parallel `apply_{tgdb,igdb,rawg,screenscraper,ai}_to_metadata()`
-  functions each re-implement: field normalisation → image dhash computation
-  → screenshot dedup → DB update. Image hashing code (`_compute_dhash`,
-  `_get_existing_screenshot_hashes`, etc.) is ~100 LOC interleaved with
-  field-mapping code in the middle of each function.
-- **Plan**:
-  - `scraper/image_dedup.py::ImageDeduplicator` — `compute_dhash(path)`,
-    `get_existing_hashes(game_id)`, `is_duplicate(path, existing)`,
-    `find_duplicates_in_batch(paths)`.
-  - `scraper/metadata_normalizer.py::MetadataNormalizer` — field-level
-    helpers (`normalize_genre()`, `normalize_rating()`, `normalize_players()`,
-    `merge_alt_titles()`, etc.) currently re-implemented inside each
-    scraper.
-  - Each `apply_*_to_metadata()` becomes a linear fetch → normalise →
-    dedupe → write, dropping to ~100 LOC.
-- **Est. reduction**: merger shrinks by ~700 LOC; new helper files total
-  ~400 LOC.
-- **Status**: todo
+See "Done" section above. Future follow-up for the deeper collapse of
+`apply_*_to_metadata()` into a linear fetch → normalise → dedupe → write
+skeleton tracked under Pass 7 alongside `services/game_metadata_service.py`,
+which will handle the merge orchestration from both the bulk-scrape and
+AI-fill sides.
 
 ---
 

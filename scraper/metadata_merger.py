@@ -9,9 +9,13 @@
 #   - apply_igdb_to_metadata()
 #   - apply_rawg_to_metadata()
 #   - apply_screenscraper_to_metadata()
+#   - apply_ai_to_metadata()
 #   - load_scraper_settings()
-#   - Image hashing / duplicate detection helpers
-#   - normalize_title(), normalize_esrb_rating()
+#
+# Shared helpers live in sibling modules:
+#   - scraper.image_dedup         — dHash + post-download dedup check
+#   - scraper.metadata_normalizer — normalize_title, normalize_esrb_rating,
+#                                   alt_title_entry, merge_alt_titles
 # =============================================================================
 
 import os
@@ -19,197 +23,42 @@ import re
 import json
 import logging
 import requests
-from PIL import Image
 
 from config import IMAGE_PATH, STATIC_PATH
 from services.normalization import normalize_genre, normalize_modes
+from scraper.image_dedup import (
+    compute_dhash,
+    get_existing_screenshot_hashes,
+    keep_screenshot_if_unique,
+)
+from scraper.metadata_normalizer import (
+    normalize_title,
+    normalize_esrb_rating,
+    alt_title_entry,
+    merge_alt_titles,
+)
 
 logger = logging.getLogger(__name__)
 
 
-# =============================================================================
-# PERCEPTUAL HASHING (dHash) FOR DUPLICATE SCREENSHOT DETECTION
-# =============================================================================
-
-def _compute_dhash(image_path, hash_size=8):
-    """Compute a difference hash (dHash) for an image. Returns a 64-bit integer or None on error."""
-    try:
-        img = Image.open(image_path).convert('L').resize((hash_size + 1, hash_size), Image.LANCZOS)
-        try:
-            pixels = list(img.getdata())
-            diff = 0
-            for row in range(hash_size):
-                for col in range(hash_size):
-                    offset = row * (hash_size + 1) + col
-                    if pixels[offset] > pixels[offset + 1]:
-                        diff |= 1 << (row * hash_size + col)
-            return diff
-        finally:
-            img.close()
-    except (OSError, ValueError):
-        return None
-
-def _get_existing_screenshot_hashes(filenames):
-    """Compute dHash for each existing screenshot file. Returns list of (filename, hash_int) tuples."""
-    hashes = []
-    for fname in filenames:
-        path = os.path.join(IMAGE_PATH, 'screenshots', fname)
-        h = _compute_dhash(path)
-        if h is not None:
-            hashes.append((fname, h))
-    return hashes
-
-def _is_visual_duplicate(new_path, existing_hashes, threshold=10):
-    """Check if a newly downloaded screenshot is a visual duplicate of any existing one.
-    Returns (True, matching_filename) or (False, None)."""
-    new_hash = _compute_dhash(new_path)
-    if new_hash is None:
-        return False, None
-    for fname, h in existing_hashes:
-        distance = bin(new_hash ^ h).count('1')
-        if distance <= threshold:
-            return True, fname
-    return False, None
-
-
-# =============================================================================
-# TITLE AND RATING NORMALIZATION
-# =============================================================================
-
-def normalize_title(title):
-    """Normalize title - fix spacing around colons, commas and other punctuation,
-    and convert first dash-separated subtitle to colon format when appropriate."""
-    if not title:
-        return title
-
-    # If title already has a colon, just fix spacing issues
-    if ':' not in title:
-        # Common franchise patterns that use colon subtitles
-        # Convert first " - " to ": " for subtitle pattern (e.g., "Call of Duty - World at War" -> "Call of Duty: World at War")
-        # Only apply if the pattern looks like a subtitle (word - word, not abbreviations)
-        match = re.match(r'^([A-Za-z0-9][A-Za-z0-9\s\'\&\!\.]+?)\s+-\s+([A-Z][a-zA-Z0-9\s\-\'\&\!\.]+)$', title)
-        if match:
-            # Verify it's likely a subtitle pattern (base name is 2+ words or known franchise)
-            base_name = match.group(1).strip()
-            subtitle = match.group(2).strip()
-            # Apply colon conversion for reasonable subtitle patterns
-            if len(base_name) >= 3 and len(subtitle) >= 3:
-                title = f"{base_name}: {subtitle}"
-
-    # Normalize colon formatting: " : " -> ": " first, then " :" -> ":"
-    title = title.replace(' : ', ': ')
-    # Remove space before colon (e.g., "Game :" -> "Game:")
-    title = title.replace(' :', ':')
-    # Remove space before comma (e.g., "Game , Part 2" -> "Game, Part 2")
-    title = title.replace(' ,', ',')
-    # Ensure space after colon if followed by a letter
-    title = re.sub(r':([A-Za-z])', r': \1', title)
-    # Ensure space after comma if followed by a letter
-    title = re.sub(r',([A-Za-z])', r', \1', title)
-    # Apply article placement setting (beginning or end)
-    from services.game_utils import apply_article_placement
-    title = apply_article_placement(title)
-    return title.strip()
-
-
-def normalize_esrb_rating(rating):
-    """
-    Normalize ESRB rating values for consistency.
-    Handles legacy ratings like KA (Kids to Adults) -> E (Everyone).
-    """
-    if not rating:
-        return rating
-
-    rating_upper = rating.upper().strip()
-
-    # ESRB rating normalization map
-    ESRB_NORMALIZATION = {
-        # KA (Kids to Adults) was replaced by E (Everyone) in 1998
-        'KA': 'E',
-        'K-A': 'E',
-        'KIDS TO ADULTS': 'E',
-        # Ensure consistent formatting
-        'E10': 'E10+',
-        'EVERYONE 10+': 'E10+',
-        'EVERYONE 10': 'E10+',
-        'EVERYONE': 'E',
-        'TEEN': 'T',
-        'MATURE': 'M',
-        'MATURE 17+': 'M',
-        'ADULTS ONLY': 'AO',
-        'ADULTS ONLY 18+': 'AO',
-        'RATING PENDING': 'RP',
-        'EARLY CHILDHOOD': 'EC',
-    }
-
-    # Check for direct match
-    if rating_upper in ESRB_NORMALIZATION:
-        return ESRB_NORMALIZATION[rating_upper]
-
-    # Return original if already in standard format
-    return rating
-
-
-# =============================================================================
-# ALTERNATE TITLES
-# =============================================================================
-# Regional / alternate names for games (e.g. Japanese vs USA vs PAL titles).
-# Stored as JSON list of {title, region?, source?} dicts on games.alternate_titles.
-#
-# Dedupe is case-insensitive on title. Entries whose title matches the game's
-# primary title are dropped — no point storing the same string twice.
-
-def _alt_title_entry(title, region=None, source=None):
-    """Build a normalized alt-title dict, or None if title is empty/whitespace."""
-    if not title:
-        return None
-    t = str(title).strip()
-    if not t:
-        return None
-    entry = {'title': t}
-    if region:
-        r = str(region).strip()
-        if r:
-            entry['region'] = r
-    if source:
-        entry['source'] = source
-    return entry
-
-
-def merge_alt_titles(existing, new_entries, primary_title=None):
-    """Merge `new_entries` into `existing`, deduping case-insensitively on title.
-
-    `existing` may be a list, a JSON string, or None. Returns a plain list
-    (caller json.dumps on save). Entries matching `primary_title` are dropped.
-    """
-    import json as _json
-    if existing is None:
-        merged = []
-    elif isinstance(existing, list):
-        merged = [e for e in existing if isinstance(e, dict) and e.get('title')]
-    elif isinstance(existing, str):
-        try:
-            parsed = _json.loads(existing)
-            merged = [e for e in parsed if isinstance(e, dict) and e.get('title')] if isinstance(parsed, list) else []
-        except (ValueError, TypeError):
-            merged = []
-    else:
-        merged = []
-
-    seen = {e['title'].lower() for e in merged}
-    if primary_title:
-        seen.add(str(primary_title).strip().lower())
-
-    for entry in new_entries or []:
-        if not entry or not entry.get('title'):
-            continue
-        key = entry['title'].lower()
-        if key in seen:
-            continue
-        merged.append(entry)
-        seen.add(key)
-
-    return merged
+# Re-export helpers through this module for backward compatibility with
+# existing callers (notably `scraper.hybrid_scraper`). New code should import
+# from `scraper.image_dedup` / `scraper.metadata_normalizer` directly.
+__all__ = [
+    'apply_tgdb_to_metadata',
+    'apply_igdb_to_metadata',
+    'apply_rawg_to_metadata',
+    'apply_screenscraper_to_metadata',
+    'apply_ai_to_metadata',
+    'load_scraper_settings',
+    'compute_dhash',
+    'get_existing_screenshot_hashes',
+    'keep_screenshot_if_unique',
+    'normalize_title',
+    'normalize_esrb_rating',
+    'alt_title_entry',
+    'merge_alt_titles',
+]
 
 
 # =============================================================================
@@ -218,7 +67,10 @@ def merge_alt_titles(existing, new_entries, primary_title=None):
 
 def load_scraper_settings():
     """Load scraper settings from file"""
-    settings_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'scraper_settings.json')
+    settings_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        'data', 'scraper_settings.json',
+    )
 
     if os.path.exists(settings_path):
         try:
@@ -236,7 +88,6 @@ def load_scraper_settings():
 
 def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=False):
     """Apply TGDB data to metadata dict"""
-    from datetime import datetime
     from scraper.scrape_metadata_thegamesdb import download_image as download_tgdb_image
 
     field_map = {
@@ -321,9 +172,8 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
     if ss_urls:
         existing_screenshots = metadata['screenshots'].split(',') if metadata['screenshots'] else []
         existing_screenshots = [s.strip() for s in existing_screenshots if s.strip()]
-        existing_hashes = _get_existing_screenshot_hashes(existing_screenshots)
+        existing_hashes = get_existing_screenshot_hashes(existing_screenshots)
 
-        # Determine next screenshot number
         start_num = len(existing_screenshots) + 1
         new_screenshots = []
 
@@ -331,15 +181,9 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
             filename = download_tgdb_image(db_game_id, url, 'screenshots', suffix=f'_ss{start_num + i}')
             if filename:
                 local_path = os.path.join(IMAGE_PATH, 'screenshots', filename)
-                is_dup, match = _is_visual_duplicate(local_path, existing_hashes)
-                if is_dup:
-                    logger.info(f"Skipping duplicate TGDB screenshot {filename} (visually matches {match})")
-                    try:
-                        os.remove(local_path)
-                    except OSError:
-                        pass
-                elif filename not in existing_screenshots:
-                    existing_hashes.append((filename, _compute_dhash(local_path)))
+                if filename in existing_screenshots:
+                    continue
+                if keep_screenshot_if_unique(local_path, filename, existing_hashes, 'TGDB'):
                     new_screenshots.append(filename)
 
         if new_screenshots:
@@ -384,7 +228,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
     # is typically the region (e.g. "Japanese title") or platform variant.
     alt_entries = []
     for alt in igdb_data.get('alternative_names') or []:
-        entry = _alt_title_entry(
+        entry = alt_title_entry(
             alt.get('name'),
             region=alt.get('comment'),
             source='igdb',
@@ -507,7 +351,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
     if screenshots:
         existing_screenshots = metadata['screenshots'].split(',') if metadata['screenshots'] else []
         existing_screenshots = [s.strip() for s in existing_screenshots if s.strip()]
-        existing_hashes = _get_existing_screenshot_hashes(existing_screenshots)
+        existing_hashes = get_existing_screenshot_hashes(existing_screenshots)
 
         start_num = len(existing_screenshots) + 1
         new_ss_files = []
@@ -535,15 +379,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
                             standardize_downloaded_image(local_path, 'screenshots')
                         except Exception:
                             pass
-                        is_dup, match = _is_visual_duplicate(local_path, existing_hashes)
-                        if is_dup:
-                            logger.info(f"Skipping duplicate IGDB screenshot {filename} (visually matches {match})")
-                            try:
-                                os.remove(local_path)
-                            except OSError:
-                                pass
-                        else:
-                            existing_hashes.append((filename, _compute_dhash(local_path)))
+                        if keep_screenshot_if_unique(local_path, filename, existing_hashes, 'IGDB'):
                             new_ss_files.append(filename)
                 except (requests.RequestException, OSError) as e:
                     logger.warning(f"Failed to download IGDB screenshot {filename}: {e}")
@@ -682,7 +518,7 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
 
     # Alternate names — RAWG returns flat list of strings with no region info.
     alt_entries = [
-        _alt_title_entry(name, source='rawg')
+        alt_title_entry(name, source='rawg')
         for name in (rawg_data.get('alternative_names') or [])
     ]
     alt_entries = [e for e in alt_entries if e]
@@ -740,7 +576,7 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
         os.makedirs(screenshot_dir, exist_ok=True)
 
         existing_ss = [s.strip() for s in metadata['screenshots'].split(',') if s.strip()] if metadata['screenshots'] else []
-        existing_hashes = _get_existing_screenshot_hashes(existing_ss)
+        existing_hashes = get_existing_screenshot_hashes(existing_ss)
 
         downloaded = []
         for i, url in enumerate(rawg_data['screenshot_urls'][:3]):
@@ -757,15 +593,7 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
                             standardize_downloaded_image(local_path, 'screenshots')
                         except Exception:
                             pass
-                        is_dup, match = _is_visual_duplicate(local_path, existing_hashes)
-                        if is_dup:
-                            logger.info(f"Skipping duplicate RAWG screenshot {filename} (visually matches {match})")
-                            try:
-                                os.remove(local_path)
-                            except OSError:
-                                pass
-                        else:
-                            existing_hashes.append((filename, _compute_dhash(local_path)))
+                        if keep_screenshot_if_unique(local_path, filename, existing_hashes, 'RAWG'):
                             downloaded.append(filename)
                 except Exception as e:
                     logger.warning(f"Failed to download RAWG screenshot: {e}")
@@ -823,7 +651,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
     for nom in ss_data.get('noms') or []:
         if not isinstance(nom, dict):
             continue
-        entry = _alt_title_entry(
+        entry = alt_title_entry(
             nom.get('text'),
             region=nom.get('region') or nom.get('langue'),
             source='screenscraper',
@@ -932,24 +760,9 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
         c_type = c.get('type', '').upper()
         c_text = c.get('text', '')
         if c_type == 'ESRB' and c_text and not metadata['esrb_rating']:
-            # Normalize ESRB rating
-            esrb_upper = c_text.upper().strip()
-            if esrb_upper in ['E', 'EVERYONE']:
-                metadata['esrb_rating'] = 'E'
-            elif esrb_upper in ['E10', 'E10+', 'EVERYONE 10+']:
-                metadata['esrb_rating'] = 'E10+'
-            elif esrb_upper in ['T', 'TEEN']:
-                metadata['esrb_rating'] = 'T'
-            elif esrb_upper in ['M', 'MATURE', 'MATURE 17+']:
-                metadata['esrb_rating'] = 'M'
-            elif esrb_upper in ['AO', 'ADULTS ONLY', 'ADULTS ONLY 18+']:
-                metadata['esrb_rating'] = 'AO'
-            elif esrb_upper in ['RP', 'RATING PENDING']:
-                metadata['esrb_rating'] = 'RP'
-            elif esrb_upper in ['EC', 'EARLY CHILDHOOD']:
-                metadata['esrb_rating'] = 'EC'
-            else:
-                metadata['esrb_rating'] = c_text
+            # Normalize ESRB rating via shared normalizer (covers E, E10+, T,
+            # M, AO, RP, EC and legacy KA → E mapping).
+            metadata['esrb_rating'] = normalize_esrb_rating(c_text)
             result['filled_fields'].append('esrb_rating (ScreenScraper)')
         elif c_type == 'PEGI' and c_text and not metadata.get('pegi_rating'):
             # Ensure PEGI format consistency
@@ -1079,7 +892,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
     # Screenshots - ALWAYS append, never replace
     existing_screenshots = metadata['screenshots'].split(',') if metadata['screenshots'] else []
     existing_screenshots = [s.strip() for s in existing_screenshots if s.strip()]
-    existing_hashes = _get_existing_screenshot_hashes(existing_screenshots)
+    existing_hashes = get_existing_screenshot_hashes(existing_screenshots)
 
     ss_files = []
     ss_count = 0
@@ -1093,15 +906,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
         local_path = os.path.join(IMAGE_PATH, 'screenshots', filename)
         if filename not in existing_screenshots and not os.path.exists(local_path):
             if _download_ss_media(url, local_path, timeout=10, image_type='screenshots'):
-                is_dup, match = _is_visual_duplicate(local_path, existing_hashes)
-                if is_dup:
-                    logger.info(f"Skipping duplicate ScreenScraper screenshot {filename} (visually matches {match})")
-                    try:
-                        os.remove(local_path)
-                    except OSError:
-                        pass
-                else:
-                    existing_hashes.append((filename, _compute_dhash(local_path)))
+                if keep_screenshot_if_unique(local_path, filename, existing_hashes, 'ScreenScraper'):
                     ss_files.append(filename)
                     ss_count += 1
 
@@ -1119,15 +924,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
                     continue
 
                 if _download_ss_media(url, local_path, timeout=10, image_type='screenshots'):
-                    is_dup, match = _is_visual_duplicate(local_path, existing_hashes)
-                    if is_dup:
-                        logger.info(f"Skipping duplicate ScreenScraper screenshot {filename} (visually matches {match})")
-                        try:
-                            os.remove(local_path)
-                        except OSError:
-                            pass
-                    else:
-                        existing_hashes.append((filename, _compute_dhash(local_path)))
+                    if keep_screenshot_if_unique(local_path, filename, existing_hashes, 'ScreenScraper'):
                         ss_files.append(filename)
                         ss_count += 1
 
