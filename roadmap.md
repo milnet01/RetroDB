@@ -63,6 +63,15 @@ change forces a different sequence.
   / task-dict passthroughs preserved as raw `jsonify` (correct shape, no
   `success` key). Combined Pass 2 total: **186 sites across 14 routes**.
   (v2.83.7)
+- [x] **Pass 3 — HLTB service extraction** — Split
+  `routes/games_hltb.py` (366 LOC) into a 165-LOC route layer plus a new
+  `services/hltb_service.py` with three classes (`HLTBLookup`,
+  `HLTBPendingQueue`, `HLTBBulkOrchestrator`). Typed error surface:
+  service raises `HLTBError` subclasses carrying HTTP status codes;
+  routes catch and map to `error()`. `routes/games_hltb.py` also
+  migrated its 10 `jsonify` sites to `success()` / `error()` in the
+  same pass (Pass 2 carry-over). Wire format preserved; all 124
+  tests pass. (v2.83.8)
 
 ---
 
@@ -71,9 +80,9 @@ change forces a different sequence.
 ### Pass 2 — continue gradual migration of `jsonify({'success': …})` → `success()` / `error()`
 
 - **Target**: partially-swept routes (`bonus_discs`, `games`, `scraper`,
-  `scrape_logs`, `settings`, `systems`, `games_hltb`) and HTTP-200-only
+  `scrape_logs`, `settings`, `systems`) and HTTP-200-only
   (`platform_import`, `steam_achievements`, `xbox_achievements`,
-  `trophies`).
+  `trophies`). `games_hltb` completed as part of Pass 3 (v2.83.8).
 - **Why**: the helpers are landed and wire-format-compatible with every
   existing call site. Gradual migration per roadmap guidance — pick files
   up as they are touched for other work, or knock them off opportunistically
@@ -84,31 +93,6 @@ change forces a different sequence.
   `success`, or scanner-result passthroughs) stay as raw `jsonify` —
   document here if discovered.
 - **Status**: in-progress
-
----
-
-## Pass 3 — HLTB service extraction
-
-### Split `routes/games_hltb.py` into route + service
-
-- **Target**: `routes/games_hltb.py` (407 LOC → ~150), new
-  `services/hltb_service.py`.
-- **Why**: three concerns mixed in one file: (1) single-game lookup and
-  save, (2) pending-match review queue, (3) bulk job orchestration. The
-  helpers `_extract_alt_titles()`, `_apply_pending_match()` and
-  `_resolve_filter_clause()` are buried in route bodies.
-- **Plan**: create `services/hltb_service.py` with:
-  - `HLTBLookup` — `lookup(game_id, search_title=None, preview=False)`,
-    `search(query, folder, year=None, alternate_titles=None)`,
-    `save_result(game_id, payload)`, `clear(game_id)`.
-  - `HLTBPendingQueue` — `list()`, `approve(id)`, `reject(id)`,
-    `approve_all(filter)`, `reject_all(filter)`. Owns `_apply_pending_match`
-    and `_resolve_filter_clause`.
-  - `HLTBBulkOrchestrator` — `start()`, `status()`, `cancel()` (thin wrapper
-    over `services.jobs.hltb_bulk_job` with queue-depth stitching).
-- **Est. reduction**: route file drops from 407 → ~150 LOC; service file is
-  ~300 LOC and reusable from any future caller (CLI, admin UI, etc.).
-- **Status**: todo
 
 ---
 

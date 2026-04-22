@@ -1,3 +1,22 @@
+- version: 2.83.8
+  date: 2026-04-22
+  tags:
+  - type: chore
+    label: Chore
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 3 &mdash; HLTB service extraction</strong> &mdash; Split <code>routes/games_hltb.py</code> (366 LOC) into a thin route layer (165 LOC) plus a new <code>services/hltb_service.py</code> (~310 LOC) that owns the domain logic. Three independent concerns now live in three independent classes:
+            <ul>
+                <li><code>HLTBLookup</code> &mdash; <code>lookup(game_id, search_title, preview)</code>, <code>search(query, folder, year, alternate_titles, game_id)</code>, <code>save_result(game_id, payload)</code>, <code>clear(game_id)</code>.</li>
+                <li><code>HLTBPendingQueue</code> &mdash; <code>list()</code>, <code>approve(id)</code>, <code>reject(id)</code>, <code>approve_all(filter)</code>, <code>reject_all(filter)</code>. Owns the previously route-level <code>_apply_pending_match()</code> and <code>_resolve_filter_clause()</code>.</li>
+                <li><code>HLTBBulkOrchestrator</code> &mdash; <code>start()</code>, <code>status()</code>, <code>cancel()</code>. Thin wrapper over <code>services.jobs.hltb_bulk_job</code> that stitches the <code>hltb_pending_matches</code> queue depth into the status response.</li>
+            </ul>
+        </li>
+        <li><strong>Typed error surface</strong> &mdash; the service raises <code>HLTBError</code> subclasses (<code>GameNotFound</code> &rArr; 404, <code>NoHLTBMatch</code> &rArr; 200, <code>MissingPlaytime</code> &rArr; 400, <code>PendingMatchNotFound</code> &rArr; 404), each carrying its HTTP status code. Routes catch <code>HLTBError</code> and hand off to <code>error(msg, code)</code>. Callers from non-HTTP contexts (CLI, future admin UI, tests) can handle the exceptions directly without going through Flask.</li>
+        <li><strong>Pass 2 carry-over</strong> &mdash; in the same pass, the <code>routes/games_hltb.py</code> handlers also migrated their <code>jsonify({'success': &hellip;})</code> envelopes to <code>success()</code> / <code>error()</code> (10 sites). The two bulk-job endpoints that already return canonical-envelope dicts (<code>hltb_bulk_job.start()</code>, <code>.cancel()</code>) stay as raw <code>jsonify</code> passthroughs, matching the pattern established in 2.83.7.</li>
+        <li><strong>Wire format preserved exactly</strong> &mdash; identical HTTP status codes and JSON keys at every endpoint. All 124 pytest tests still pass; smoke-import of <code>app</code> plus the new service module is clean.</li>
+    </ul>
+
 - version: 2.83.7
   date: 2026-04-22
   tags:
