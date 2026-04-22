@@ -18,7 +18,7 @@ from datetime import datetime, timezone
 
 from flask import Blueprint, render_template, jsonify
 
-from services.api_helpers import handle_api_errors
+from services.api_helpers import handle_api_errors, success
 from services.auth import login_required
 from services.database import query, execute
 from services.formatters import get_manufacturer
@@ -562,9 +562,8 @@ def get_all_trophies():
 def refresh_trophies():
     """Recalculate all trophy progress from current database state."""
     result = _refresh_trophies()
-    return jsonify({
-        'success': True,
-        'message': f"{result['newly_earned']} new trophies earned!" if result['newly_earned']
-                   else 'Trophy progress updated.',
+    return success(
+        message=f"{result['newly_earned']} new trophies earned!" if result['newly_earned']
+                else 'Trophy progress updated.',
         **result,
-    })
+    )

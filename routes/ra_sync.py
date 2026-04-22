@@ -7,7 +7,7 @@
 from flask import Blueprint, jsonify
 import logging
 
-from services.api_helpers import handle_api_errors
+from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required, admin_required
 from services.database import query, execute
 from services.jobs import ra_sync_job, ra_refresh_job
@@ -45,27 +45,25 @@ def api_refresh_retroachievements():
     sync_status = ra_sync_job.get_status()
     if sync_status.get('running', False) and not sync_status.get('completed', False):
         system_log('info', 'RA Sync is running, queueing global RA Refresh')
-        return jsonify({
-            'success': True,
-            'queued': True,
-            'message': 'RA Sync is running. Global Refresh will start when current operation completes.',
-            'blocked_by': 'ra-sync',
-            'system_id': None,
-            'system_name': 'All Systems'
-        })
+        return success(
+            queued=True,
+            message='RA Sync is running. Global Refresh will start when current operation completes.',
+            blocked_by='ra-sync',
+            system_id=None,
+            system_name='All Systems',
+        )
 
     # Check if RA Refresh is already running
     refresh_status = ra_refresh_job.get_status()
     if refresh_status.get('running', False) and not refresh_status.get('completed', False):
         system_log('info', 'RA Refresh already running, cannot start another')
-        return jsonify({
-            'success': True,
-            'queued': True,
-            'message': 'Another RA Refresh is running. Global Refresh will start when current operation completes.',
-            'blocked_by': 'ra-refresh',
-            'system_id': None,
-            'system_name': 'All Systems'
-        })
+        return success(
+            queued=True,
+            message='Another RA Refresh is running. Global Refresh will start when current operation completes.',
+            blocked_by='ra-refresh',
+            system_id=None,
+            system_name='All Systems',
+        )
 
     result = ra_refresh_job.start()
     return jsonify(result)
@@ -95,16 +93,13 @@ def api_refresh_retroachievements_system(system_id):
     # Get the system
     system = query("SELECT * FROM systems WHERE id = ?", (system_id,), one=True)
     if not system:
-        return jsonify({'success': False, 'error': 'System not found'}), 404
+        return error('System not found', 404)
 
     system_folder = system['folder'].lower()
 
     # Check if system supports RA
     if system_folder not in RA_CONSOLE_MAP:
-        return jsonify({
-            'success': False,
-            'error': f'System {system["name"]} does not support RetroAchievements'
-        }), 400
+        return error(f'System {system["name"]} does not support RetroAchievements', 400)
 
     # Get game count for this system
     game_count = query("SELECT COUNT(*) as cnt FROM games WHERE system_id = ?", (system_id,), one=True)['cnt']
@@ -113,29 +108,27 @@ def api_refresh_retroachievements_system(system_id):
     sync_status = ra_sync_job.get_status()
     if sync_status.get('running', False) and not sync_status.get('completed', False):
         system_log('info', f'RA Sync is running, queueing RA Refresh for {system["name"]}')
-        return jsonify({
-            'success': True,
-            'queued': True,
-            'message': f'RA Sync is running. {system["name"]} Refresh will start when current operation completes.',
-            'blocked_by': 'ra-sync',
-            'system_id': system_id,
-            'system_name': system['name'],
-            'game_count': game_count
-        })
+        return success(
+            queued=True,
+            message=f'RA Sync is running. {system["name"]} Refresh will start when current operation completes.',
+            blocked_by='ra-sync',
+            system_id=system_id,
+            system_name=system['name'],
+            game_count=game_count,
+        )
 
     # Check if RA Refresh is already running
     refresh_status = ra_refresh_job.get_status()
     if refresh_status.get('running', False) and not refresh_status.get('completed', False):
         system_log('info', f'RA Refresh already running, queueing Refresh for {system["name"]}')
-        return jsonify({
-            'success': True,
-            'queued': True,
-            'message': f'Another RA Refresh is running. {system["name"]} will start when current operation completes.',
-            'blocked_by': 'ra-refresh',
-            'system_id': system_id,
-            'system_name': system['name'],
-            'game_count': game_count
-        })
+        return success(
+            queued=True,
+            message=f'Another RA Refresh is running. {system["name"]} will start when current operation completes.',
+            blocked_by='ra-refresh',
+            system_id=system_id,
+            system_name=system['name'],
+            game_count=game_count,
+        )
 
     # Start the per-system refresh
     result = ra_refresh_job.start(system_id=system_id, system_name=system['name'])
@@ -159,11 +152,10 @@ def api_clear_ra_data_system(system_id):
     """, (system_id,))
 
     if not games:
-        return jsonify({
-            'success': True,
-            'message': 'No games with RA data found for this system',
-            'cleared': 0
-        })
+        return success(
+            message='No games with RA data found for this system',
+            cleared=0,
+        )
 
     game_ids = [g['id'] for g in games]
 
@@ -179,11 +171,10 @@ def api_clear_ra_data_system(system_id):
         DELETE FROM game_achievement_progress WHERE game_id IN ({placeholders})
     """, game_ids)
 
-    return jsonify({
-        'success': True,
-        'message': f'Cleared RA data for {len(games)} games',
-        'cleared': len(games)
-    })
+    return success(
+        message=f'Cleared RA data for {len(games)} games',
+        cleared=len(games),
+    )
 
 
 @bp.route('/api/clear-ra-data', methods=['POST'])
@@ -200,8 +191,7 @@ def api_clear_ra_data_all():
     # Clear all progress data
     execute("DELETE FROM game_achievement_progress")
 
-    return jsonify({
-        'success': True,
-        'message': f'Cleared RA data for {count} games',
-        'cleared': count
-    })
+    return success(
+        message=f'Cleared RA data for {count} games',
+        cleared=count,
+    )

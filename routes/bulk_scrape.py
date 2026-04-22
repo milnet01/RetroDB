@@ -12,7 +12,7 @@ from services.database import query
 from services.jobs import bulk_scrape_job
 from services.game_utils import derive_title_from_filename, get_system_type
 from services.auth import login_required
-from services.api_helpers import handle_api_errors
+from services.api_helpers import handle_api_errors, success, error
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +32,7 @@ def api_bulk_scrape():
     system_id = data.get('system_id')
 
     if not game_id:
-        return jsonify({'success': False, 'error': 'No game ID provided'})
+        return error('No game ID provided', code=200)
 
     # Get game info
     game = query("""
@@ -43,7 +43,7 @@ def api_bulk_scrape():
     """, (game_id,), one=True)
 
     if not game:
-        return jsonify({'success': False, 'error': 'Game not found'})
+        return error('Game not found', code=200)
 
     # Skip if already scraped
     if game['scraped']:
@@ -131,16 +131,15 @@ def api_bulk_scrape():
         )
 
         if result.get('success'):
-            return jsonify({
-                'success': True,
-                'updated': True,
-                'message': f"Scraped from {', '.join(result.get('sources_used', []))}",
-                'filled_fields': len(result.get('filled_fields', []))
-            })
+            return success(
+                updated=True,
+                message=f"Scraped from {', '.join(result.get('sources_used', []))}",
+                filled_fields=len(result.get('filled_fields', [])),
+            )
         else:
-            return jsonify({'success': False, 'error': 'Failed to apply metadata'})
+            return error('Failed to apply metadata', code=200)
     else:
-        return jsonify({'success': False, 'error': 'No matches found'})
+        return error('No matches found', code=200)
 
 
 # =============================================================================
@@ -159,7 +158,7 @@ def api_bulk_scrape_job_start():
     scrape_mode = data.get('scrape_mode', 'fill_missing')
 
     if not game_ids:
-        return jsonify({'success': False, 'error': 'No game IDs provided'})
+        return error('No game IDs provided', code=200)
 
     result = bulk_scrape_job.start(game_ids, system_id, return_url, scrape_mode)
     return jsonify(result)
@@ -171,7 +170,7 @@ def api_bulk_scrape_job_start():
 def api_bulk_scrape_job_status():
     """Get the status of the current bulk scrape job"""
     status = bulk_scrape_job.get_status()
-    return jsonify({'success': True, **status})
+    return success(**status)
 
 
 @bp.route('/api/bulk-scrape-job/pause', methods=['POST'])

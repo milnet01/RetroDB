@@ -10,9 +10,9 @@ import json as json_lib
 import logging
 from datetime import datetime, timezone
 
-from flask import Blueprint, jsonify
+from flask import Blueprint
 
-from services.api_helpers import handle_api_errors
+from services.api_helpers import handle_api_errors, success, error
 from services.auth import editor_required
 from services.database import query, execute
 from services.game_utils import (
@@ -39,7 +39,7 @@ def api_game_ai_fill(game_id):
         """, (game_id,), one=True)
 
         if not game:
-            return jsonify({'success': False, 'error': 'Game not found'}), 404
+            return error('Game not found', 404)
 
         from scraper.scrape_ai import get_game_details as ai_get_details, VALIDATE_FIELDS
         from scraper.hybrid_scraper import should_use_default_controller, get_system_default_controller_name
@@ -74,10 +74,10 @@ def api_game_ai_fill(game_id):
         )
 
         if not ai_data:
-            return jsonify({
-                'success': False,
-                'error': 'AI returned no data. Check your API key and provider settings.'
-            })
+            return error(
+                'AI returned no data. Check your API key and provider settings.',
+                code=200,
+            )
 
         filled_fields = []
         all_updates = []
@@ -261,11 +261,10 @@ def api_game_ai_fill(game_id):
             WHERE g.id = ?
         """, (game_id,), one=True)
 
-        return jsonify({
-            'success': True,
-            'filled_fields': filled_fields,
-            'filled_count': len(filled_fields),
-            'game': {
+        return success(
+            filled_fields=filled_fields,
+            filled_count=len(filled_fields),
+            game={
                 'id': updated_game['id'],
                 'title': updated_game['title'],
                 'genre': updated_game['genre'],
@@ -294,8 +293,8 @@ def api_game_ai_fill(game_id):
                 'campaign': updated_game['campaign'],
                 'other_platforms': updated_game['other_platforms'],
                 'edition': updated_game['edition'],
-            }
-        })
+            },
+        )
 
     except ImportError:
-        return jsonify({'success': False, 'error': 'AI scraper module not available'}), 500
+        return error('AI scraper module not available', 500)

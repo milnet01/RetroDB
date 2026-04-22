@@ -8,9 +8,9 @@
 import logging
 import re
 
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request
 
-from services.api_helpers import handle_api_errors
+from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required
 from services.database import query
 from services.game_query import escape_like
@@ -38,7 +38,7 @@ def api_search_games():
     folder = request.args.get('folder', '')
 
     if not title:
-        return jsonify({'success': False, 'error': 'Title required'}), 400
+        return error('Title required', 400)
 
     clean_title = title
     patterns_to_remove = [
@@ -73,7 +73,7 @@ def api_search_games():
                 if result_year and result_year == hint_year:
                     r['score'] = r.get('score', 0) + 50
 
-    return jsonify({'success': True, 'results': results})
+    return success(results=results)
 
 
 @bp.route('/api/games/find')
@@ -84,7 +84,7 @@ def api_local_search_games():
     limit = min(request.args.get('limit', 20, type=int), 50)
 
     if not q or len(q) < 2:
-        return jsonify({'success': True, 'games': []})
+        return success(games=[])
 
     escaped_q = escape_like(q)
     games_list = query("""
@@ -96,7 +96,7 @@ def api_local_search_games():
         LIMIT ?
     """, (f'%{escaped_q}%', limit))
 
-    return jsonify({'success': True, 'games': games_list or []})
+    return success(games=games_list or [])
 
 
 @bp.route('/api/games/<int:game_id>/similar')
@@ -106,7 +106,7 @@ def api_similar_games(game_id):
     try:
         game = query("SELECT genre, developer, franchise, system_id FROM games WHERE id = ?", [game_id], one=True)
         if not game:
-            return jsonify({'success': True, 'games': []})
+            return success(games=[])
 
         similar = []
         seen_ids = {game_id}
@@ -158,10 +158,10 @@ def api_similar_games(game_id):
                         similar.append({'id': m['id'], 'title': m['title'], 'boxart': m['boxart'], 'system_name': m['system_name'], 'reason': 'Similar genre on same system'})
                         seen_ids.add(m['id'])
 
-        return jsonify({'success': True, 'games': similar[:8]})
+        return success(games=similar[:8])
     except Exception as e:
         logger.error(f"Similar games error: {e}")
-        return jsonify({'success': True, 'games': []})
+        return success(games=[])
 
 
 @bp.route('/compare')
@@ -189,7 +189,7 @@ def api_compare_games():
     """Return comparison data for two games."""
     game_ids = request.args.getlist('id', type=int)
     if len(game_ids) < 2:
-        return jsonify({'success': False, 'error': 'Two game IDs required'}), 400
+        return error('Two game IDs required', 400)
 
     ids = game_ids[:2]
     placeholders = ','.join('?' for _ in ids)
@@ -203,6 +203,6 @@ def api_compare_games():
     results = [by_id[gid] for gid in ids if gid in by_id]
 
     if len(results) < 2:
-        return jsonify({'success': False, 'error': 'One or both games not found'}), 404
+        return error('One or both games not found', 404)
 
-    return jsonify({'success': True, 'games': results})
+    return success(games=results)

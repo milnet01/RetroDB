@@ -50,42 +50,34 @@ change forces a different sequence.
   exception handlers (`ValueError`, `sqlite3.IntegrityError`, `ImportError`,
   `PermissionError`, `OSError`, `json.JSONDecodeError`) preserved; all
   `try/finally` cleanup blocks preserved. (v2.83.5)
+- [x] **Pass 2 — response-builder helpers (`success()` / `error()`)** —
+  `services/api_helpers.py` now exports `success(data=None, **extra)` and
+  `error(message, code=400, **extra)`. First migration wave: 56 sites across
+  7 fully-swept routes (`games_ai`, `collector_trophies`, `bulk_scrape`,
+  `ra_sync`, `clz_import`, `games_media`, `games_search`). Wire format
+  preserved exactly; HTTP-200-with-`success:False` handlers now pass
+  `code=200` explicitly. (v2.83.6)
 
 ---
 
 ## In progress
 
-_None._
+### Pass 2 — continue gradual migration of `jsonify({'success': …})` → `success()` / `error()`
 
----
-
-## Pass 2 — finish the cross-route cleanup (small, mechanical)
-
-### Response builder helpers
-
-- **Target**: new `services/api_helpers.py::success()` / `::error()` + sweep
-  across `routes/*.py`.
-- **Why**: every handler builds `jsonify({'success': True/False, 'data': …,
-  'error': …})` inline. Standardising lets us tweak the envelope in one
-  place (e.g. add a `request_id` field) and makes error vs. success calls
-  visually distinct.
-- **Plan**:
-  ```python
-  def success(data=None, **extra):
-      payload = {'success': True}
-      if data is not None:
-          payload['data'] = data
-      payload.update(extra)
-      return jsonify(payload)
-
-  def error(message, code=400, **extra):
-      return jsonify({'success': False, 'error': message, **extra}), code
-  ```
-  Migrate gradually — don't force a mass rewrite. Use on new routes and
-  when touching old ones.
-- **Est. reduction**: cosmetic per site, but large cumulative gain in
-  readability.
-- **Status**: todo
+- **Target**: remaining fully-swept routes `auth`, `collections`, `tools`,
+  `reports`, `achievements`, `controllers`, `maintenance`, plus partially
+  swept (`bonus_discs`, `games`, `scraper`, `scrape_logs`, `settings`,
+  `systems`, `games_hltb`) and HTTP-200-only (`platform_import`,
+  `steam_achievements`, `xbox_achievements`, `trophies`).
+- **Why**: the helpers are landed and wire-format-compatible with every
+  existing call site. Gradual migration per roadmap guidance — pick files
+  up as they are touched for other work, or knock them off opportunistically
+  in future patch bumps.
+- **Plan**: convert `jsonify({'success': True, ...})` → `success(...)` and
+  `jsonify({'success': False, 'error': '...'})[, code]` → `error('...', code)`.
+  Non-standard payloads (e.g. `{'configured': True, 'error': '...'}` without
+  `success`) stay as raw `jsonify` — document here if discovered.
+- **Status**: in-progress
 
 ---
 

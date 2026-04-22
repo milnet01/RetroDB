@@ -4,7 +4,7 @@
 # Handles importing game collections from CLZ Games PDF exports.
 # =============================================================================
 
-from flask import Blueprint, request, jsonify, redirect, url_for
+from flask import Blueprint, request, redirect, url_for
 import os
 import re
 import tempfile
@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 import config
 from services.database import get_db, query, execute
 from services.auth import login_required
-from services.api_helpers import handle_api_errors
+from services.api_helpers import handle_api_errors, success, error
 
 logger = logging.getLogger(__name__)
 
@@ -249,27 +249,27 @@ def api_clz_parse():
     try:
         import pdfplumber
     except ImportError:
-        return jsonify({
-            "success": False,
-            "error": "pdfplumber module not installed. Please run: pip install pdfplumber --break-system-packages"
-        }), 400
+        return error(
+            'pdfplumber module not installed. Please run: pip install pdfplumber --break-system-packages',
+            400,
+        )
 
     if 'file' not in request.files:
-        return jsonify({'success': False, 'error': 'No file uploaded'})
+        return error('No file uploaded', code=200)
 
     file = request.files['file']
     if not file.filename.lower().endswith('.pdf'):
-        return jsonify({'success': False, 'error': 'File must be a PDF'})
+        return error('File must be a PDF', code=200)
 
     # Read file content for size and magic byte validation
     MAX_PDF_SIZE = 50 * 1024 * 1024  # 50MB
     content = file.read()
 
     if len(content) > MAX_PDF_SIZE:
-        return jsonify({'success': False, 'error': f'File too large ({len(content) // (1024*1024)}MB). Maximum size is 50MB'}), 400
+        return error(f'File too large ({len(content) // (1024*1024)}MB). Maximum size is 50MB', 400)
 
     if not content.startswith(b'%PDF'):
-        return jsonify({'success': False, 'error': 'Invalid PDF file (bad magic bytes)'}), 400
+        return error('Invalid PDF file (bad magic bytes)', 400)
 
     # Save to temp file
     with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp:
@@ -485,11 +485,7 @@ def api_clz_parse():
 
     logger.info(f"CLZ Import: Parsed {len(games)} games from PDF")
 
-    return jsonify({
-        'success': True,
-        'games': games,
-        'systems_map': systems_map
-    })
+    return success(games=games, systems_map=systems_map)
 
 
 @bp.route('/api/clz-import/import', methods=['POST'])
@@ -501,7 +497,7 @@ def api_clz_import():
     games = data.get('games', [])
 
     if not games:
-        return jsonify({'success': False, 'error': 'No games to import'})
+        return error('No games to import', code=200)
 
     imported = 0
     skipped = 0
@@ -576,12 +572,7 @@ def api_clz_import():
 
         logger.info(f"CLZ Import complete: {imported} imported, {skipped} skipped, {failed} failed")
 
-        return jsonify({
-            'success': True,
-            'imported': imported,
-            'skipped': skipped,
-            'failed': failed
-        })
+        return success(imported=imported, skipped=skipped, failed=failed)
     finally:
         if conn:
             conn.close()

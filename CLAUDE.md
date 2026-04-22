@@ -114,6 +114,7 @@
 | File | Purpose |
 |------|---------|
 | `services/database.py` | SQLite connection, query helpers, WAL mode, `safe_column()` allowlist validator for SQL f-string interpolation |
+| `services/api_helpers.py` | `@handle_api_errors` decorator + `success()` / `error()` response-envelope constructors used by route handlers to return the canonical `{'success': True/False, ...}` JSON shape |
 | `services/database_init.py` | Schema bootstrap: `init_database()`, `ensure_user_tables()`, and data migrations (`_migrate_genre_canonical`, `_migrate_pegi_format`). Runs on every import (idempotent). |
 | `services/analytics.py` | Pure data helpers (20 `_get_*` functions) feeding the `/analytics` page charts. No Flask/session coupling. |
 | `services/formatters.py` | `format_size()`, `get_manufacturer()`, `MANUFACTURER_MAP` — shared by analytics, template filters, stats endpoints. |

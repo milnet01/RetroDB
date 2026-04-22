@@ -1,3 +1,14 @@
+- version: 2.83.6
+  date: 2026-04-22
+  tags:
+  - type: chore
+    label: Chore
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 2 &mdash; response-builder helpers <code>success()</code> / <code>error()</code></strong> &mdash; Second wave of the cross-route cleanup. Added two small helpers to <code>services/api_helpers.py</code> that replace the inline <code>jsonify({'success': True/False, 'error': '&hellip;', &hellip;})</code> envelope with a canonical constructor: <code>success(data=None, **extra)</code> returns the positive envelope (optionally adding top-level <code>data</code> plus arbitrary extras), and <code>error(message, code=400, **extra)</code> returns the negative envelope paired with an HTTP status code. Centralising the shape means any future envelope change (e.g. adding a <code>request_id</code> field for Pass 17.2) lands in one place.</li>
+        <li><strong>First migration wave &mdash; 56 sites across 7 fully-swept routes</strong> &mdash; Converted the inline <code>jsonify</code> calls to <code>success()</code> / <code>error()</code> in <code>routes/games_ai.py</code>, <code>routes/collector_trophies.py</code>, <code>routes/bulk_scrape.py</code>, <code>routes/ra_sync.py</code>, <code>routes/clz_import.py</code>, <code>routes/games_media.py</code>, and <code>routes/games_search.py</code>. Wire-format preserved exactly (both HTTP status code and JSON keys) &mdash; handlers that deliberately return HTTP 200 with <code>success: False</code> now pass <code>code=200</code> explicitly to make the intent obvious. Remaining fully-swept files (<code>auth</code>, <code>collections</code>, <code>tools</code>, <code>reports</code>, <code>achievements</code>, <code>controllers</code>, <code>maintenance</code>) plus partially-swept ones will migrate opportunistically as per the roadmap's &ldquo;gradual &mdash; don't force a mass rewrite&rdquo; guidance.</li>
+    </ul>
+
 - version: 2.83.5
   date: 2026-04-21
   tags:

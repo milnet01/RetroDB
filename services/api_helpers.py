@@ -39,3 +39,40 @@ def handle_api_errors(func):
             )
             return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
     return wrapper
+
+
+def success(data=None, **extra):
+    """Build the canonical success JSON response.
+
+    Produces `{'success': True, 'data': ..., **extra}` when `data` is
+    supplied, or `{'success': True, **extra}` otherwise. `extra` lets callers
+    attach additional top-level keys (counts, ids, pagination) without having
+    to assemble the envelope by hand.
+
+    Usage:
+        return success()                       # {'success': True}
+        return success({'id': 5})              # {'success': True, 'data': {'id': 5}}
+        return success(games, total=len(games))# {'success': True, 'data': [...], 'total': N}
+    """
+    payload = {'success': True}
+    if data is not None:
+        payload['data'] = data
+    payload.update(extra)
+    return jsonify(payload)
+
+
+def error(message, code=400, **extra):
+    """Build the canonical error JSON response.
+
+    Returns a `(response, code)` tuple suitable for direct `return` from a
+    Flask route. `extra` allows additional context fields (e.g. `field`,
+    `details`) to ride alongside the error message.
+
+    Usage:
+        return error('Game not found', 404)
+        return error('Validation failed', 422, field='title')
+
+    For unhandled exceptions use @handle_api_errors — it emits a 500 with the
+    same envelope shape and logs the stack trace.
+    """
+    return jsonify({'success': False, 'error': message, **extra}), code
