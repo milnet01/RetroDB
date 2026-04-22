@@ -210,24 +210,7 @@ def extract_psn_platform(title):
     return platform
 
 
-def _clean_title_for_matching(title):
-    """Strip all special characters, trademarks, brackets etc. for title matching"""
-    import re
-    if not title:
-        return ''
-    # Remove trademark/registered symbols
-    cleaned = title.replace('™', '').replace('®', '').replace('©', '')
-    # Remove brackets and their content patterns like [PROTOTYPE] -> PROTOTYPE
-    # But keep the text inside brackets
-    cleaned = cleaned.replace('[', '').replace(']', '')
-    cleaned = cleaned.replace('(', '').replace(')', '')
-    # Remove colons, dashes used as separators
-    cleaned = cleaned.replace(':', '').replace(' - ', ' ')
-    # Remove other special characters
-    cleaned = re.sub(r'[^\w\s]', '', cleaned)
-    # Collapse whitespace
-    cleaned = re.sub(r'\s+', ' ', cleaned).strip().lower()
-    return cleaned
+from services.achievement_linking import clean_title_for_matching as _clean_title_for_matching  # noqa: E402
 
 
 def find_linked_game_for_psn(title, platform):

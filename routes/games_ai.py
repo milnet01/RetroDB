@@ -15,8 +15,9 @@ from flask import Blueprint
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import editor_required
 from services.database import query, execute
+from services.game_metadata_service import cross_map_ratings
 from services.game_utils import (
-    generate_sort_title, map_rating, infer_rating_from_content,
+    generate_sort_title, infer_rating_from_content,
     RATING_SYSTEM_KEYS, RATING_SYSTEMS,
 )
 
@@ -118,29 +119,21 @@ def api_game_ai_fill(game_id):
                 all_updates.append("sort_title = ?")
                 all_values.append(new_sort)
 
-        # Cross-map empty rating fields from any available rating. 'RP' is not a
-        # real maturity level — treat as empty so it gets replaced.
-        _rp_values = {'RP', 'rp'}
-        for tgt_key in RATING_SYSTEM_KEYS:
-            tgt_col = RATING_SYSTEMS[tgt_key]['db_column']
-            tgt_val = pending.get(tgt_col) or (game.get(tgt_col, '') or '').strip()
-            if tgt_val and tgt_val not in _rp_values:
-                continue
-            for src_key in RATING_SYSTEM_KEYS:
-                if src_key == tgt_key:
-                    continue
-                src_col = RATING_SYSTEMS[src_key]['db_column']
-                src_val = pending.get(src_col) or (game.get(src_col, '') or '').strip()
-                if src_val and src_val not in _rp_values:
-                    mapped = map_rating(src_key, src_val, tgt_key)
-                    if mapped:
-                        all_updates.append(f"{tgt_col} = ?")
-                        all_values.append(mapped)
-                        filled_fields.append(tgt_col)
-                        src_name = RATING_SYSTEMS[src_key]['name']
-                        tgt_name = RATING_SYSTEMS[tgt_key]['name']
-                        logger.info(f"AI fill: auto-mapped {src_name} '{src_val}' to {tgt_name} '{mapped}'")
-                        break
+        # Cross-map empty rating fields from any available rating. The helper
+        # treats 'RP' (Rating Pending) as empty so it gets replaced.
+        effective = {
+            k: pending.get(RATING_SYSTEMS[k]['db_column'])
+               or (game.get(RATING_SYSTEMS[k]['db_column'], '') or '').strip()
+            for k in RATING_SYSTEM_KEYS
+        }
+        mapped = cross_map_ratings(effective)
+        for key in RATING_SYSTEM_KEYS:
+            if mapped[key] and mapped[key] != effective[key]:
+                col = RATING_SYSTEMS[key]['db_column']
+                all_updates.append(f"{col} = ?")
+                all_values.append(mapped[key])
+                filled_fields.append(col)
+                logger.info(f"AI fill: auto-mapped {RATING_SYSTEMS[key]['name']} '{mapped[key]}'")
 
         # Content-based rating inference (fallback when still no ratings)
         has_any_rating = any(

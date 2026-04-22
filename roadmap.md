@@ -122,6 +122,32 @@ change forces a different sequence.
   every existing caller (`routes/bulk_scrape.py`, `routes/games.py`,
   `scraper/hybrid_scraper.py`, `services/wishlist_scraper.py`,
   `services/jobs/*`) is unchanged. All 124 tests pass. (v2.83.12)
+- [x] **Pass 7 stage 1 — `routes/games.py` decomposition (first wave)** —
+  Shrank the route from 1373 → 1128 LOC (−18%) by extracting three
+  focused service modules (327 LOC of pure, reusable logic):
+  `services/game_metadata_service.py` (110 LOC — `cross_map_ratings`,
+  `build_game_card`, `import_source_for_rom_path`),
+  `services/achievement_linking.py` (101 LOC — `clean_title_for_matching`
+  moved out of `routes/trophies.py` which now re-exports it under the
+  legacy `_clean_title_for_matching` name, plus `build_rpcs3_trophy_map`
+  and `lookup_rpcs3_info`), `services/game_media_service.py` (116 LOC —
+  `save_upload`, `save_screenshots`, `remove_media_file`,
+  `resolve_media_path`, `try_standardize`, allowed-extension constants).
+  The duplicated ~60-line card dict literal in `/api/games` and
+  `/api/games/card-data` collapsed to a single `build_game_card()`
+  call. Three copies of "fetch trophy data, build clean-title dict" for
+  RPCS3 matching collapsed to `build_rpcs3_trophy_map()` +
+  `lookup_rpcs3_info()`. The `edit_metadata` action's ~100-line inline
+  filesystem block (upload / remove / path resolve per media type)
+  became a ~20-line sequence of service calls. `routes/games_ai.py`
+  also migrated to the shared `cross_map_ratings` helper so the
+  manual-edit and AI-fill paths share a single source of truth.
+  Leftover dead imports (`map_esrb_to_pegi`, `map_rating`,
+  `infer_rating_from_content`, `is_ra_supported`, `normalize_platform_name`,
+  `RATING_SYSTEM_KEYS`) cleaned out of `routes/games.py`. All 124 tests
+  pass. Remaining stages (`achievement_linking_service` for external-
+  provider matching beyond RPCS3, and the `apply_metadata_to_game` merge
+  orchestrator) tracked as Pass 7 stage 2/3. (v2.83.13)
 
 ---
 
@@ -171,25 +197,37 @@ onwards. Manager shrank 1022 → 684 LOC (−33%).
 
 ### Carve service layer out of the biggest route file
 
-- **Target**: `routes/games.py` (1390 LOC) — split into thin route handlers
-  + multiple service modules.
+- **Target**: `routes/games.py` (now 1128 LOC, was 1373) — split into thin
+  route handlers + multiple service modules.
 - **Why**: the file handles game CRUD, metadata application, trophy/
   achievement linking, image management, game search, and stats/reports in
   one body. Too big to tackle in one pass; start with the three heaviest
   endpoints.
 - **Plan** (multi-stage):
-  1. `services/game_metadata_service.py` — owns `apply_metadata_to_game`,
-     field merging, scrape-history writes. Called from both
-     `routes/games.py` and `routes/games_ai.py`.
-  2. `services/achievement_linking_service.py` — the ad-hoc code that
-     matches games to RA / PSN / Steam / Xbox titles via `_clean_title_for_matching`
-     and related helpers. Pull the matching logic out of the route so it's
-     reusable from sync jobs.
-  3. `services/game_media_service.py` — image upload, boxart application,
-     screenshot dedup (share with Pass 5 helpers).
-- **Est. reduction**: per stage ~150 LOC out of routes/games.py.
-  Multi-stage; target ~800 LOC when done.
-- **Status**: todo
+  1. **stage 1 — done (v2.83.13).** Landed
+     `services/game_metadata_service.py` (rating cross-map +
+     `build_game_card` used by `/api/games` and `/api/games/card-data`),
+     `services/achievement_linking.py` (`clean_title_for_matching` +
+     `build_rpcs3_trophy_map` + `lookup_rpcs3_info`, with
+     `routes/trophies.py` re-exporting for backward compat),
+     `services/game_media_service.py` (upload/removal/path helpers). See
+     the "Done" entry above.
+  2. **stage 2 — todo.** External-provider matching service:
+     generalise the RPCS3-only `build_rpcs3_trophy_map` into a
+     multi-provider `achievement_linking` helper that the
+     Steam / Xbox / PSN background sync jobs can reuse instead of
+     re-discovering their own title-matching logic. Currently those
+     jobs each open their own sqlite connection and run ad-hoc
+     title matches.
+  3. **stage 3 — todo.** `services/game_metadata_service.py` expanded
+     to host the merge orchestrator (`apply_metadata_to_game` currently
+     on `scraper/scraper_manager.ScraperManager`, which mixes search
+     orchestration and field-merge writes). Extract so both the
+     bulk-scrape job and the POST `/game/<id>` apply action call the
+     same code path instead of one calling the manager and the other
+     calling `scraper_manager.apply_metadata` through a reassigned
+     symbol.
+- **Status**: stage 1 done, stages 2-3 todo
 
 ---
 

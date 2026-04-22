@@ -1,3 +1,22 @@
+- version: 2.83.13
+  date: 2026-04-22
+  tags:
+  - type: chore
+    label: Chore
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 7 stage 1 &mdash; <code>routes/games.py</code> decomposition</strong> &mdash; Extracted three service modules and collapsed the card-shaping and media-upload duplication, shrinking the route from 1373 to 1128 LOC (&minus;18%). The three new services together are 327 LOC of pure, reusable logic:
+            <ul>
+                <li><code>services/game_metadata_service.py</code> (110 LOC) &mdash; owns rating cross-mapping and game-card dict shaping. Public API: <code>cross_map_ratings(ratings)</code> (fills empty rating slots from any other system, treating <code>RP</code> as empty), <code>build_game_card(row, rpcs3_info, include_source_flag)</code> (the shared card dict returned by <code>/api/games</code> and <code>/api/games/card-data</code> &mdash; previously a ~60-line inline dict literal duplicated across both endpoints), <code>import_source_for_rom_path(rom_path)</code>.</li>
+                <li><code>services/achievement_linking.py</code> (101 LOC) &mdash; owns the title-normalization used for cross-provider matching. Public API: <code>clean_title_for_matching(title)</code> (moved out of <code>routes/trophies.py</code>, which now re-exports it as <code>_clean_title_for_matching</code> so its internal callers keep working), <code>build_rpcs3_trophy_map(rows)</code>, <code>lookup_rpcs3_info(row, trophy_map)</code>. Three copies of "fetch trophy data, build clean-title dict" are gone.</li>
+                <li><code>services/game_media_service.py</code> (116 LOC) &mdash; owns file upload / removal / path resolution. Public API: <code>resolve_media_path(filename, media_type)</code>, <code>remove_media_file(filename, media_type)</code>, <code>save_upload(file_storage, dest_dir, game_id, prefix, allowed_ext)</code>, <code>save_screenshots(file_storages, game_id, existing_csv)</code>, <code>try_standardize(path, media_type)</code>, plus the <code>ALLOWED_IMAGE_EXT</code> / <code>ALLOWED_VIDEO_EXT</code> constants. The <code>edit_metadata</code> action's ~100-line inline filesystem block is now a ~20-line sequence of service calls.</li>
+            </ul>
+        </li>
+        <li><strong>Route callers wired through</strong> &mdash; <code>/api/games</code> and <code>/api/games/card-data</code> use <code>build_game_card()</code> + <code>build_rpcs3_trophy_map()</code> + <code>lookup_rpcs3_info()</code>. <code>/api/game/&lt;id&gt;/detail</code> uses the same RPCS3 helpers. <code>/game/&lt;id&gt;</code> POST's <code>edit_metadata</code> action calls <code>cross_map_ratings()</code> (replacing a hand-rolled loop), plus the new media helpers. <code>routes/games_ai.py</code>'s AI-fill endpoint now calls <code>cross_map_ratings()</code> too, sharing the single source of truth with the manual-edit flow.</li>
+        <li><strong>Dead-import cleanup</strong> &mdash; Removed <code>map_esrb_to_pegi</code>, <code>map_rating</code>, <code>infer_rating_from_content</code>, <code>is_ra_supported</code>, <code>normalize_platform_name</code>, <code>RATING_SYSTEM_KEYS</code> from <code>routes/games.py</code>'s import list (they were left over from before the inline cross-map loop moved out).</li>
+        <li><strong>Wire format preserved</strong> &mdash; Same JSON shape, same cross-map semantics, same file paths. All 124 pytest tests still pass; smoke-import of <code>app</code> is clean.</li>
+    </ul>
+
 - version: 2.83.12
   date: 2026-04-22
   tags:

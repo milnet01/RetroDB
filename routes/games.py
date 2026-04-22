@@ -20,11 +20,11 @@ from services.auth import login_required, editor_required
 from services.api_helpers import handle_api_errors
 from services.security import safe_filename
 from services.game_utils import (
-    generate_sort_title, map_esrb_to_pegi, map_rating, infer_rating_from_content,
+    generate_sort_title,
     reset_game_title_from_filename,
-    is_ra_supported, get_ra_supported_systems, normalize_platform_name,
+    get_ra_supported_systems,
     get_preferred_rating, get_all_ratings,
-    RATING_SYSTEM_KEYS, RATING_SYSTEMS,
+    RATING_SYSTEMS,
 )
 from services.game_query import (
     escape_like, get_retroachievements_info, get_trophy_info_for_game,
@@ -32,6 +32,16 @@ from services.game_query import (
     invalidate_filter_cache,
 )
 from services.analytics import invalidate_analytics_cache
+from services.game_metadata_service import (
+    cross_map_ratings, build_game_card,
+)
+from services.achievement_linking import (
+    build_rpcs3_trophy_map, lookup_rpcs3_info,
+)
+from services.game_media_service import (
+    ALLOWED_IMAGE_EXT, ALLOWED_VIDEO_EXT, image_dir,
+    remove_media_file, save_upload, save_screenshots, try_standardize,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -135,87 +145,16 @@ def api_games():
 
     total_pages = (total + per_page - 1) // per_page if total > 0 else 1
 
-    # Build RPCS3 local trophy mapping for PS3 games
-    rpcs3_trophy_map = {}
-    has_ps3 = any(r['system_folder'] == 'ps3' for r in rows)
-    if has_ps3:
-        try:
-            from routes.trophies import get_trophy_data, _clean_title_for_matching as _clean_trophy_title
-            trophy_sets, _ = get_trophy_data()
-            for npwr_id, ts in trophy_sets.items():
-                clean = _clean_trophy_title(ts.title)
-                total = len(ts.base_game_trophies)
-                earned = sum(1 for t in ts.base_game_trophies if t.unlocked)
-                if total > 0 and clean:
-                    rpcs3_trophy_map[clean] = {'earned': earned, 'total': total}
-        except Exception as e:
-            logger.debug(f"RPCS3 trophy lookup skipped: {e}")
+    try:
+        rpcs3_trophy_map = build_rpcs3_trophy_map(rows)
+    except Exception as e:
+        logger.debug(f"RPCS3 trophy lookup skipped: {e}")
+        rpcs3_trophy_map = {}
 
-    games = []
-    for g in rows:
-        rp = g['rom_path'] or ''
-        import_source = (
-            'clz' if rp.startswith('clz_import/') else
-            'steam' if rp.startswith('steam_import/') else
-            'xbox' if rp.startswith('xbox_import/') else
-            'psn' if rp.startswith('psn_import/') else
-            None
-        )
-
-        # Match RPCS3 local trophies for PS3 games
-        rpcs3_info = None
-        if g['system_folder'] == 'ps3' and rpcs3_trophy_map:
-            try:
-                clean_title = _clean_trophy_title(g['title'])
-                rpcs3_info = rpcs3_trophy_map.get(clean_title)
-            except Exception:
-                pass
-
-        games.append({
-            'id': g['id'],
-            'title': g['title'],
-            'sort_title': g['sort_title'],
-            'system_id': g['system_id'],
-            'system_name': g['system_name'],
-            'system_folder': g['system_folder'],
-            'system_type': g['system_type'] or '',
-            'boxart': g['boxart'],
-            'boxart_3d': g['boxart_3d'],
-            'fanart': g['fanart'],
-            'genre': g['genre'],
-            'franchise': g['franchise'],
-            'developer': g['developer'],
-            'publisher': g['publisher'],
-            'release_date': g['release_date'],
-            'modes': g['modes'],
-            'esrb_rating': g['esrb_rating'],
-            'pegi_rating': g['pegi_rating'],
-            'cero_rating': g['cero_rating'],
-            'usk_rating': g['usk_rating'],
-            'acb_rating': g['acb_rating'],
-            'fpb_rating': g['fpb_rating'],
-            'grac_rating': g['grac_rating'],
-            'classind_rating': g['classind_rating'],
-            'critic_score': g['critic_score'],
-            'critic_score_count': g['critic_score_count'],
-            'user_score': g['user_score'],
-            'user_score_count': g['user_score_count'],
-            'completion_status': g['completion_status'],
-            'scraped': g['scraped'],
-            'has_retroachievements': g['has_retroachievements'],
-            'is_bonus_disc': g['is_bonus_disc'],
-            'bonus_count': g['bonus_count'],
-            'is_clz_import': import_source == 'clz',
-            'import_source': import_source,
-            'achievement_earned': g['earned_achievements'],
-            'achievement_total': g['achievement_total'],
-            'achievement_pct': g['achievement_pct'],
-            'achievement_source': g['achievement_source'],
-            'psn_earned': g['psn_earned'],
-            'psn_total': g['psn_total'],
-            'rpcs3_earned': rpcs3_info['earned'] if rpcs3_info else None,
-            'rpcs3_total': rpcs3_info['total'] if rpcs3_info else None,
-        })
+    games = [
+        build_game_card(row, lookup_rpcs3_info(row, rpcs3_trophy_map), include_source_flag=True)
+        for row in rows
+    ]
 
     return jsonify({
         'success': True,
@@ -317,84 +256,15 @@ def api_games_card_data():
     """
     rows = query(sql, tuple(game_ids))
 
-    # Build RPCS3 local trophy mapping for PS3 games
-    rpcs3_trophy_map = {}
-    has_ps3 = any(r['system_folder'] == 'ps3' for r in rows)
-    if has_ps3:
-        try:
-            from routes.trophies import get_trophy_data, _clean_title_for_matching as _clean_trophy_title
-            trophy_sets, _ = get_trophy_data()
-            for npwr_id, ts in trophy_sets.items():
-                clean = _clean_trophy_title(ts.title)
-                total = len(ts.base_game_trophies)
-                earned = sum(1 for t in ts.base_game_trophies if t.unlocked)
-                if total > 0 and clean:
-                    rpcs3_trophy_map[clean] = {'earned': earned, 'total': total}
-        except Exception:
-            pass
+    try:
+        rpcs3_trophy_map = build_rpcs3_trophy_map(rows)
+    except Exception:
+        rpcs3_trophy_map = {}
 
-    games = []
-    for g in rows:
-        rp = g['rom_path'] or ''
-        import_source = (
-            'clz' if rp.startswith('clz_import/') else
-            'steam' if rp.startswith('steam_import/') else
-            'xbox' if rp.startswith('xbox_import/') else
-            'psn' if rp.startswith('psn_import/') else
-            None
-        )
-        rpcs3_info = None
-        if g['system_folder'] == 'ps3' and rpcs3_trophy_map:
-            try:
-                from routes.trophies import _clean_title_for_matching as _clean_trophy_title
-                rpcs3_info = rpcs3_trophy_map.get(_clean_trophy_title(g['title']))
-            except Exception:
-                pass
-
-        games.append({
-            'id': g['id'],
-            'title': g['title'],
-            'sort_title': g['sort_title'],
-            'system_id': g['system_id'],
-            'system_name': g['system_name'],
-            'system_folder': g['system_folder'],
-            'system_type': g['system_type'] or '',
-            'boxart': g['boxart'],
-            'boxart_3d': g['boxart_3d'],
-            'fanart': g['fanart'],
-            'genre': g['genre'],
-            'franchise': g['franchise'],
-            'developer': g['developer'],
-            'publisher': g['publisher'],
-            'release_date': g['release_date'],
-            'modes': g['modes'],
-            'esrb_rating': g['esrb_rating'],
-            'pegi_rating': g['pegi_rating'],
-            'cero_rating': g['cero_rating'],
-            'usk_rating': g['usk_rating'],
-            'acb_rating': g['acb_rating'],
-            'fpb_rating': g['fpb_rating'],
-            'grac_rating': g['grac_rating'],
-            'classind_rating': g['classind_rating'],
-            'critic_score': g['critic_score'],
-            'critic_score_count': g['critic_score_count'],
-            'user_score': g['user_score'],
-            'user_score_count': g['user_score_count'],
-            'completion_status': g['completion_status'],
-            'scraped': g['scraped'],
-            'has_retroachievements': g['has_retroachievements'],
-            'is_bonus_disc': g['is_bonus_disc'],
-            'bonus_count': g['bonus_count'],
-            'import_source': import_source,
-            'achievement_earned': g['earned_achievements'],
-            'achievement_total': g['achievement_total'],
-            'achievement_pct': g['achievement_pct'],
-            'achievement_source': g['achievement_source'],
-            'psn_earned': g['psn_earned'],
-            'psn_total': g['psn_total'],
-            'rpcs3_earned': rpcs3_info['earned'] if rpcs3_info else None,
-            'rpcs3_total': rpcs3_info['total'] if rpcs3_info else None,
-        })
+    games = [
+        build_game_card(row, lookup_rpcs3_info(row, rpcs3_trophy_map))
+        for row in rows
+    ]
 
     return jsonify({'success': True, 'games': games})
 
@@ -566,155 +436,62 @@ def game_detail(game_id):
                     if title and not sort_title:
                         sort_title = generate_sort_title(title)
 
-                    # Cross-map empty rating fields from any available rating
-                    # 'RP' (Rating Pending) is not a real maturity level — treat as empty
-                    _rp_values = {'RP', 'rp'}
-                    _local_ratings = {
+                    _mapped_ratings = cross_map_ratings({
                         'esrb': esrb_rating, 'pegi': pegi_rating, 'cero': cero_rating,
                         'usk': usk_rating, 'acb': acb_rating, 'fpb': fpb_rating,
                         'grac': grac_rating, 'classind': classind_rating,
-                    }
-                    for tgt_key in RATING_SYSTEM_KEYS:
-                        if _local_ratings[tgt_key] and _local_ratings[tgt_key] not in _rp_values:
-                            continue
-                        for src_key in RATING_SYSTEM_KEYS:
-                            if src_key == tgt_key or not _local_ratings[src_key] or _local_ratings[src_key] in _rp_values:
-                                continue
-                            mapped = map_rating(src_key, _local_ratings[src_key], tgt_key)
-                            if mapped:
-                                _local_ratings[tgt_key] = mapped
-                                break
-                    esrb_rating = _local_ratings['esrb']
-                    pegi_rating = _local_ratings['pegi']
-                    cero_rating = _local_ratings['cero']
-                    usk_rating = _local_ratings['usk']
-                    acb_rating = _local_ratings['acb']
-                    fpb_rating = _local_ratings['fpb']
-                    grac_rating = _local_ratings['grac']
-                    classind_rating = _local_ratings['classind']
+                    })
+                    esrb_rating = _mapped_ratings['esrb']
+                    pegi_rating = _mapped_ratings['pegi']
+                    cero_rating = _mapped_ratings['cero']
+                    usk_rating = _mapped_ratings['usk']
+                    acb_rating = _mapped_ratings['acb']
+                    fpb_rating = _mapped_ratings['fpb']
+                    grac_rating = _mapped_ratings['grac']
+                    classind_rating = _mapped_ratings['classind']
 
-                    # Handle file uploads
                     boxart_filename = game['boxart']
                     boxart_3d_filename = game['boxart_3d'] if game['boxart_3d'] else ''
                     fanart_filename = game['fanart']
                     screenshots = game['screenshots'] or ''
                     video_filename = game['video'] if game['video'] else ''
 
-                    # Handle file removals
-                    def _resolve_media_path(filename, media_type):
-                        """Resolve the filesystem path for a media file."""
-                        if media_type == 'video':
-                            if not filename.startswith('/') and not filename.startswith('videos/'):
-                                return os.path.join(config.STATIC_PATH, 'videos', filename)
-                            return os.path.join(config.STATIC_PATH, filename.lstrip('/'))
-                        else:
-                            subdir = media_type  # boxart, boxart_3d, fanart
-                            if not filename.startswith('/') and not filename.startswith('images/'):
-                                return os.path.join(config.IMAGE_PATH, subdir, filename)
-                            return os.path.join(config.STATIC_PATH, filename.lstrip('/'))
-
                     if request.form.get('remove_boxart') == '1' and boxart_filename:
-                        path = _resolve_media_path(boxart_filename, 'boxart')
-                        if os.path.exists(path):
-                            try:
-                                os.remove(path)
-                            except Exception as e:
-                                logger.warning(f"Could not delete boxart {path}: {e}")
+                        remove_media_file(boxart_filename, 'boxart')
                         boxart_filename = ''
-
                     if request.form.get('remove_boxart_3d') == '1' and boxart_3d_filename:
-                        path = _resolve_media_path(boxart_3d_filename, 'boxart_3d')
-                        if os.path.exists(path):
-                            try:
-                                os.remove(path)
-                            except Exception as e:
-                                logger.warning(f"Could not delete boxart_3d {path}: {e}")
+                        remove_media_file(boxart_3d_filename, 'boxart_3d')
                         boxart_3d_filename = ''
-
                     if request.form.get('remove_fanart') == '1' and fanart_filename:
-                        path = _resolve_media_path(fanart_filename, 'fanart')
-                        if os.path.exists(path):
-                            try:
-                                os.remove(path)
-                            except Exception as e:
-                                logger.warning(f"Could not delete fanart {path}: {e}")
+                        remove_media_file(fanart_filename, 'fanart')
                         fanart_filename = ''
-
                     if request.form.get('remove_video') == '1' and video_filename:
-                        path = _resolve_media_path(video_filename, 'video')
-                        if os.path.exists(path):
-                            try:
-                                os.remove(path)
-                            except Exception as e:
-                                logger.warning(f"Could not delete video {path}: {e}")
+                        remove_media_file(video_filename, 'video')
                         video_filename = ''
 
-                    # Handle file uploads
-                    ALLOWED_IMAGE_EXT = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
-                    ALLOWED_VIDEO_EXT = {'mp4', 'webm', 'ogg'}
-
-                    def _save_upload(file_field, dest_dir, game_id, prefix, allowed_ext):
-                        """Save an uploaded file if present and valid. Returns new filename or None."""
-                        f = request.files.get(file_field)
-                        if not f or not f.filename:
-                            return None
-                        ext = f.filename.rsplit('.', 1)[-1].lower() if '.' in f.filename else ''
-                        if ext not in allowed_ext:
-                            logger.warning(f"Upload rejected: {f.filename} — extension '{ext}' not allowed")
-                            return None
-                        os.makedirs(dest_dir, exist_ok=True)
-                        new_filename = f"{game_id}_{prefix}.{ext}"
-                        f.save(os.path.join(dest_dir, new_filename))
-                        logger.info(f"Saved upload: {new_filename} to {dest_dir}")
-                        return new_filename
-
-                    img_dir = lambda subdir: os.path.join(config.IMAGE_PATH, subdir)
-
-                    uploaded = _save_upload('custom_boxart', img_dir('boxart'), game_id, 'custom', ALLOWED_IMAGE_EXT)
+                    uploaded = save_upload(request.files.get('custom_boxart'), image_dir('boxart'), game_id, 'custom', ALLOWED_IMAGE_EXT)
                     if uploaded:
                         boxart_filename = uploaded
-                        try:
-                            from services.image_utils import standardize_downloaded_image
-                            standardize_downloaded_image(os.path.join(img_dir('boxart'), uploaded), 'boxart')
-                        except Exception as e:
-                            logger.warning(f"Auto-resize boxart failed: {e}")
+                        try_standardize(os.path.join(image_dir('boxart'), uploaded), 'boxart')
 
-                    uploaded = _save_upload('custom_boxart_3d', img_dir('boxart_3d'), game_id, 'custom_3d', ALLOWED_IMAGE_EXT)
+                    uploaded = save_upload(request.files.get('custom_boxart_3d'), image_dir('boxart_3d'), game_id, 'custom_3d', ALLOWED_IMAGE_EXT)
                     if uploaded:
                         boxart_3d_filename = uploaded
-                        try:
-                            from services.image_utils import standardize_downloaded_image
-                            standardize_downloaded_image(os.path.join(img_dir('boxart_3d'), uploaded), 'boxart_3d')
-                        except Exception as e:
-                            logger.warning(f"Auto-resize boxart_3d failed: {e}")
+                        try_standardize(os.path.join(image_dir('boxart_3d'), uploaded), 'boxart_3d')
 
-                    uploaded = _save_upload('custom_fanart', img_dir('fanart'), game_id, 'custom_fanart', ALLOWED_IMAGE_EXT)
+                    uploaded = save_upload(request.files.get('custom_fanart'), image_dir('fanart'), game_id, 'custom_fanart', ALLOWED_IMAGE_EXT)
                     if uploaded:
                         fanart_filename = uploaded
 
-                    uploaded = _save_upload('custom_video', os.path.join(config.STATIC_PATH, 'videos'), game_id, 'custom', ALLOWED_VIDEO_EXT)
+                    uploaded = save_upload(request.files.get('custom_video'), os.path.join(config.STATIC_PATH, 'videos'), game_id, 'custom', ALLOWED_VIDEO_EXT)
                     if uploaded:
                         video_filename = uploaded
 
-                    # Handle screenshot uploads (multiple files)
-                    ss_files = request.files.getlist('custom_screenshots')
-                    if ss_files and any(f.filename for f in ss_files):
-                        ss_dir = img_dir('screenshots')
-                        os.makedirs(ss_dir, exist_ok=True)
-                        existing = [s.strip() for s in screenshots.split(',') if s.strip()] if screenshots else []
-                        next_idx = len(existing) + 1
-                        for f in ss_files:
-                            if not f.filename:
-                                continue
-                            ext = f.filename.rsplit('.', 1)[-1].lower() if '.' in f.filename else ''
-                            if ext not in ALLOWED_IMAGE_EXT:
-                                continue
-                            ss_filename = f"{game_id}_ss{next_idx}.{ext}"
-                            f.save(os.path.join(ss_dir, ss_filename))
-                            existing.append(ss_filename)
-                            next_idx += 1
-                            logger.info(f"Saved screenshot: {ss_filename}")
-                        screenshots = ','.join(existing)
+                    screenshots = save_screenshots(
+                        request.files.getlist('custom_screenshots'),
+                        game_id,
+                        screenshots,
+                    )
 
                     # Update database
                     execute("""
@@ -980,22 +757,10 @@ def api_game_detail(game_id):
         GROUP BY pg.linked_game_id
     """, (game_id,), one=True)
 
-    # RPCS3 local trophies
-    rpcs3_info = None
-    if game['system_folder'] == 'ps3':
-        try:
-            from routes.trophies import get_trophy_data, _clean_title_for_matching
-            trophy_sets, _ = get_trophy_data()
-            clean_title = _clean_title_for_matching(game['title'])
-            for _, ts in trophy_sets.items():
-                if _clean_title_for_matching(ts.title) == clean_title:
-                    total = len(ts.base_game_trophies)
-                    earned = sum(1 for t in ts.base_game_trophies if t.unlocked)
-                    if total > 0:
-                        rpcs3_info = {'earned': earned, 'total': total}
-                    break
-        except Exception:
-            pass
+    try:
+        rpcs3_info = lookup_rpcs3_info(game, build_rpcs3_trophy_map([game]))
+    except Exception:
+        rpcs3_info = None
 
     screenshots = []
     if game['screenshots']:
