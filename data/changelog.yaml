@@ -1,3 +1,14 @@
+- version: 2.83.9
+  date: 2026-04-22
+  tags:
+  - type: fix
+    label: Fix
+  body: |
+    <ul>
+        <li><strong>HLTB lookups &mdash; track upstream API change</strong> &mdash; HowLongToBeat renamed their search endpoint from <code>/api/finder</code> to <code>/api/find</code> and added an anti-bot fingerprint check. The old URL now 404s and every lookup was returning "No HLTB match found" regardless of the title. <code>scraper/hltb_lookup.py</code> now hits <code>/api/find/init</code> (which returns <code>token</code>, <code>hpKey</code>, <code>hpVal</code>) and echoes <code>hpKey</code>/<code>hpVal</code> on search requests as both <code>x-hp-key</code>/<code>x-hp-val</code> headers AND as a <code>{hpKey: hpVal}</code> body pair &mdash; missing either yields 403. Verified live: <em>Chrono Trigger</em> (SNES) now returns main=23.1 h / extras=26.6 h / completionist=42.3 h at 100% confidence.</li>
+        <li>The 403-retry path clears all three cached fields (token + hpKey + hpVal) and re-runs init, since a rotated fingerprint invalidates the whole set.</li>
+    </ul>
+
 - version: 2.83.8
   date: 2026-04-22
   tags:

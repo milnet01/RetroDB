@@ -1,7 +1,7 @@
 """
 HLTB (HowLongToBeat) lookup module for RetroDB
 
-Uses the HowLongToBeat API directly via /api/finder endpoint.
+Uses the HowLongToBeat API directly via /api/find endpoint.
 """
 
 import logging
@@ -73,46 +73,58 @@ HLTB_HEADERS = {
     'origin': 'https://howlongtobeat.com'
 }
 
-# Cache auth token to avoid repeated init requests
+# Cache auth token + hp fingerprint to avoid repeated init requests.
+# HLTB's /api/find/init returns three fields — token + hpKey + hpVal — and
+# all three must be echoed back on every search, with hpKey/hpVal also
+# injected as a body key and sent as x-hp-* headers.
 _auth_token = None
+_hp_key = None
+_hp_val = None
 _auth_token_time = 0
 _AUTH_TOKEN_TTL = 300  # 5 minutes
 
 
 def _get_auth_token():
-    """Get or refresh the HLTB auth token"""
-    global _auth_token, _auth_token_time
+    """Get or refresh the HLTB auth token + hp fingerprint.
 
-    # Return cached token if still fresh
+    Returns a (token, hp_key, hp_val) tuple, or (None, None, None) on failure.
+    """
+    global _auth_token, _hp_key, _hp_val, _auth_token_time
+
     if _auth_token and (time.time() - _auth_token_time) < _AUTH_TOKEN_TTL:
-        return _auth_token
+        return _auth_token, _hp_key, _hp_val
 
     try:
-        init_url = f"{HLTB_BASE_URL}/api/finder/init?t={int(time.time() * 1000)}"
+        # HLTB renamed /api/finder → /api/find around 2026-04; the old path 404s.
+        # The init response now ships hpKey/hpVal alongside the token — required
+        # for the anti-bot fingerprint check on the search endpoint.
+        init_url = f"{HLTB_BASE_URL}/api/find/init?t={int(time.time() * 1000)}"
         resp = requests.get(init_url, headers=HLTB_HEADERS, timeout=15)
         if resp.status_code == 200:
             data = resp.json()
             _auth_token = data.get('token', '')
+            _hp_key = data.get('hpKey')
+            _hp_val = data.get('hpVal')
             _auth_token_time = time.time()
             logger.debug(f"HLTB: Got new auth token")
-            return _auth_token
+            return _auth_token, _hp_key, _hp_val
         else:
             logger.warning(f"HLTB: Auth token request failed with status {resp.status_code}")
     except Exception as e:
         logger.error(f"HLTB: Failed to get auth token: {e}")
 
-    return None
+    return None, None, None
 
 
 def _search_hltb(game_title, platform='', year=None):
-    """Search HLTB for a game using the /api/finder endpoint.
+    """Search HLTB for a game using the /api/find endpoint.
 
     Args:
         game_title: Game title to search for
         platform: HLTB platform string (e.g. 'Commodore 64', 'PlayStation 2')
         year: Release year string to filter by (e.g. '1989')
     """
-    token = _get_auth_token()
+    token, hp_key, hp_val = _get_auth_token()
     if not token:
         logger.error("HLTB: No auth token available")
         return None
@@ -121,51 +133,64 @@ def _search_hltb(game_title, platform='', year=None):
     if year:
         range_year = {'min': str(year), 'max': str(year)}
 
-    search_headers = {**HLTB_HEADERS, 'x-auth-token': token}
-    payload = {
-        'searchType': 'games',
-        'searchTerms': game_title.split(),
-        'searchPage': 1,
-        'size': 20,
-        'searchOptions': {
-            'games': {
-                'userId': 0,
-                'platform': platform or '',
-                'sortCategory': 'popular',
-                'rangeCategory': 'main',
-                'rangeTime': {'min': 0, 'max': 0},
-                'gameplay': {'perspective': '', 'flow': '', 'genre': '', 'difficulty': ''},
-                'rangeYear': range_year,
-                'modifier': ''
+    def _build_request(tok, hk, hv):
+        """Compose (headers, payload) for a search call using a given token set."""
+        headers = {**HLTB_HEADERS, 'x-auth-token': tok}
+        body = {
+            'searchType': 'games',
+            'searchTerms': game_title.split(),
+            'searchPage': 1,
+            'size': 20,
+            'searchOptions': {
+                'games': {
+                    'userId': 0,
+                    'platform': platform or '',
+                    'sortCategory': 'popular',
+                    'rangeCategory': 'main',
+                    'rangeTime': {'min': 0, 'max': 0},
+                    'gameplay': {'perspective': '', 'flow': '', 'genre': '', 'difficulty': ''},
+                    'rangeYear': range_year,
+                    'modifier': ''
+                },
+                'users': {'sortCategory': 'postcount'},
+                'lists': {'sortCategory': 'follows'},
+                'filter': '',
+                'sort': 0,
+                'randomizer': 0
             },
-            'users': {'sortCategory': 'postcount'},
-            'lists': {'sortCategory': 'follows'},
-            'filter': '',
-            'sort': 0,
-            'randomizer': 0
-        },
-        'useCache': True
-    }
+            'useCache': True
+        }
+        # HLTB's anti-bot fingerprint: hp_key/hp_val are echoed in both a header
+        # pair AND as a body key (body[hp_key] = hp_val). Missing either is a 403.
+        if hk and hv:
+            headers['x-hp-key'] = hk
+            headers['x-hp-val'] = hv
+            body[hk] = hv
+        return headers, body
+
+    search_headers, payload = _build_request(token, hp_key, hp_val)
 
     try:
         resp = requests.post(
-            f"{HLTB_BASE_URL}/api/finder",
+            f"{HLTB_BASE_URL}/api/find",
             headers=search_headers,
             json=payload,
             timeout=30
         )
 
         if resp.status_code == 403:
-            # Token expired, clear cache and retry once
-            global _auth_token, _auth_token_time
+            # Token expired / fingerprint rotated — clear cache and retry once.
+            global _auth_token, _hp_key, _hp_val, _auth_token_time
             _auth_token = None
+            _hp_key = None
+            _hp_val = None
             _auth_token_time = 0
             logger.info("HLTB: Token expired, refreshing...")
-            token = _get_auth_token()
+            token, hp_key, hp_val = _get_auth_token()
             if token:
-                search_headers['x-auth-token'] = token
+                search_headers, payload = _build_request(token, hp_key, hp_val)
                 resp = requests.post(
-                    f"{HLTB_BASE_URL}/api/finder",
+                    f"{HLTB_BASE_URL}/api/find",
                     headers=search_headers,
                     json=payload,
                     timeout=30
