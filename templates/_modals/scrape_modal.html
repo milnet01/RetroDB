@@ -1,0 +1,45 @@
+{# Scrape / Search Metadata modal — inherits game_detail.html context. #}
+<div id="scrapeModal" class="scrape-modal">
+    <div class="scrape-modal-content" role="dialog" aria-modal="true" aria-labelledby="scrapeModalHeading">
+        <div class="scrape-modal-header">
+            <h2 id="scrapeModalHeading">Search Metadata</h2>
+            <span class="scrape-modal-subtitle" id="scrapeModalSubtitle">Search enabled scrapers for metadata and boxart.</span>
+            <button class="modal-close-btn" onclick="closeScrapeModal()" aria-label="Close scrape modal">×</button>
+        </div>
+
+        <div class="scrape-modal-body">
+            <form id="scrapeSearchForm" onsubmit="performSearch(event)">
+                <div class="search-input-row">
+                    <input type="text"
+                           id="scrapeSearchInput"
+                           value="{{ game.title }}"
+                           placeholder="Enter game title to search..."
+                           aria-label="Search game title for scraping"
+                           autocomplete="off">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-icon">🔍</span>
+                    </button>
+                </div>
+            </form>
+
+            <div id="scrapeResults" class="scrape-results">
+                <div class="scrape-results-placeholder">
+                    Enter a title to search for matches.
+                </div>
+            </div>
+        </div>
+
+        {% if game.scraped %}
+        <div class="scrape-modal-footer">
+            <form method="POST" id="resetMetadataForm">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="action" value="reset">
+                <button type="button" class="btn btn-danger btn-sm" onclick="showConfirm('🗑️ Reset Metadata', 'Reset all metadata including boxart and screenshots? This cannot be undone.', function() { document.getElementById('resetMetadataForm').submit(); })">
+                    <span class="btn-icon">🗑️</span>
+                    Reset Metadata
+                </button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>

@@ -1,3 +1,22 @@
+- version: 2.83.23
+  date: 2026-04-22
+  tags:
+  - type: chore
+    label: Chore
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 10 &mdash; template macros: modal extraction from <code>game_detail.html</code></strong> &mdash; Extracted all six modal dialogs from <code>templates/game_detail.html</code> (5904 LOC) into a new <code>templates/_modals/</code> directory, wired back in as Jinja <code>{% include %}</code> directives that inherit full template context.
+            <ul>
+                <li><strong>Extracted partials</strong> (total 504 LOC pulled out): <code>_modals/rename_modal.html</code> (23 LOC, rename-ROM dialog), <code>_modals/scrape_modal.html</code> (45 LOC, search-metadata dialog with reset-metadata footer), <code>_modals/screenshot_modal.html</code> (9 LOC, carousel viewer), <code>_modals/filter_modal.html</code> (22 LOC, similar-games / platform filter), <code>_modals/edit_modal.html</code> (400 LOC, the big edit-metadata form &mdash; identity / release / gameplay / technical / ratings / description / images / video sections), <code>_modals/boxart_zoom_modal.html</code> (5 LOC, lightbox).</li>
+                <li><strong>Net result</strong> &mdash; <code>game_detail.html</code>: 5904 &rarr; 5376 LOC (&minus;528, &minus;8.9%). Each modal is now reviewable in isolation without scrolling through several thousand lines of unrelated markup.</li>
+                <li><strong>Why <code>{% include %}</code> rather than <code>{% macro %}</code></strong> &mdash; the modals are single-use on this page and share the full <code>game</code> / <code>user_settings</code> / <code>csrf_token</code> context. An include inherits that context transparently; a macro would require declaring and forwarding every field. The roadmap's stated goal was the extraction &mdash; includes hit it with zero parameter-plumbing churn.</li>
+                <li><strong>Behavioral equivalence</strong> &mdash; the modal <code>id=</code> attributes (<code>renameModal</code>, <code>scrapeModal</code>, <code>editModal</code>, <code>filterModal</code>, <code>screenshotModal</code>, <code>boxartZoomModal</code>) stay identical, so every <code>document.getElementById(...)</code> call in the page's own <code>&lt;script&gt;</code> block keeps working. Zero JS changes were needed.</li>
+                <li><strong>Hidden apply-metadata form</strong> (<code>&lt;form id=&quot;applyMetadataForm&quot;&gt;</code>) stays inline in <code>game_detail.html</code> &mdash; it's a single 7-line POST-submission stub, not a modal.</li>
+                <li><strong>Validation</strong> &mdash; each partial was rendered in isolation under a Flask test-request context with a stubbed game object to confirm Jinja parsing + include resolution + context inheritance work end-to-end. All 124 tests pass; smoke-import of <code>app</code> clean.</li>
+            </ul>
+        </li>
+    </ul>
+
 - version: 2.83.22
   date: 2026-04-22
   tags:

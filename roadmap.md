@@ -122,6 +122,31 @@ change forces a different sequence.
   every existing caller (`routes/bulk_scrape.py`, `routes/games.py`,
   `scraper/hybrid_scraper.py`, `services/wishlist_scraper.py`,
   `services/jobs/*`) is unchanged. All 124 tests pass. (v2.83.12)
+- [x] **Pass 10 — template macros: modal extraction from
+  `game_detail.html`** — Extracted all six modal dialogs from
+  `templates/game_detail.html` (5904 → 5376 LOC, −528, −8.9%) into a
+  new `templates/_modals/` directory, wired back in via Jinja
+  `{% include %}` directives that inherit the full template context.
+  New partials: `_modals/rename_modal.html` (23 LOC, rename-ROM
+  dialog), `_modals/scrape_modal.html` (45 LOC, search-metadata with
+  reset footer), `_modals/screenshot_modal.html` (9 LOC, carousel
+  viewer), `_modals/filter_modal.html` (22 LOC, similar-games /
+  platform filter), `_modals/edit_modal.html` (400 LOC, the big
+  edit-metadata form with identity / release / gameplay / technical /
+  ratings / description / images / video sections), and
+  `_modals/boxart_zoom_modal.html` (5 LOC, lightbox). Used
+  `{% include %}` rather than `{% macro %}` because the modals are
+  single-use on this page and share the full `game` /
+  `user_settings` / `csrf_token` context — an include inherits that
+  context transparently, while a macro would require declaring and
+  forwarding every field. Modal `id=` attributes stay identical, so
+  every `document.getElementById(...)` in the page's own script block
+  keeps working unchanged. Zero JS changes needed. The hidden
+  `applyMetadataForm` POST-submission stub stays inline (7 LOC, not a
+  modal). Each partial was rendered in isolation under a Flask
+  test-request context to confirm Jinja parsing + include
+  resolution + context inheritance work end-to-end. All 124 tests
+  pass; smoke-import of `app` clean. (v2.83.23)
 - [x] **Pass 8 — `window.API` migration across the JS layer** — Migrated
   83 of 84 raw `fetch()` call sites across 13 JS files (`theme.js`,
   `trophies.js`, `achievements.js`, `bulk-edit.js`, `bulk-scrape.js`,
@@ -395,7 +420,14 @@ onwards. Manager shrank 1022 → 684 LOC (−33%).
     triplets repeated per field.
 - **Est. reduction**: game_detail.html shrinks ~40% (target ~3500 LOC).
   Other templates shrink too by consuming the shared macros.
-- **Status**: todo
+- **Status**: done (v2.83.23) — modals extracted; see "Done" entry
+  above. Actual reduction 8.9% (5904 → 5376 LOC) — below the 40%
+  target because the `_partials/game_card.html` and
+  `_partials/metadata_fields.html` ideas would shrink *other*
+  templates, not `game_detail.html`, and converting the edit-modal's
+  field triplets to a macro would add call-site complexity without
+  a clear win. The cross-template `game_card` / `metadata_fields`
+  extractions can be picked up separately if/when duplication grows.
 
 ---
 

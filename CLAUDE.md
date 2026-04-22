@@ -167,7 +167,7 @@
 | `scraper/scrape_steam.py` | Steam Web API — owned games, achievements, player profiles |
 | `scraper/scrape_xbox.py` | Xbox Live API — OAuth2 auth, title history, achievements |
 
-### Templates (45 files in `templates/`)
+### Templates (45 files in `templates/` + 6 partials in `templates/_modals/`)
 | Template | Page/Feature |
 |----------|-------------|
 | `base.html` | Master layout: sidebar, nav, scripts, CSS loading |
@@ -217,6 +217,12 @@
 | `changelog.html` | Version history (reads `changelog.yaml`) |
 | `_bulk_scrape_modal.html` | Bulk scrape modal (included partial) |
 | `_bulk_edit_modal.html` | Bulk edit modal (included partial) |
+| `_modals/rename_modal.html` | Rename-ROM dialog (included by `game_detail.html`) |
+| `_modals/scrape_modal.html` | Search-metadata dialog + reset-metadata footer (included by `game_detail.html`) |
+| `_modals/screenshot_modal.html` | Screenshot carousel viewer (included by `game_detail.html`) |
+| `_modals/filter_modal.html` | Similar-games / platform filter dialog (included by `game_detail.html`) |
+| `_modals/edit_modal.html` | Big edit-metadata form: identity / release / gameplay / technical / ratings / description / images / video (included by `game_detail.html`) |
+| `_modals/boxart_zoom_modal.html` | Boxart lightbox (included by `game_detail.html`) |
 
 ### CSS Architecture (`static/css/`)
 **Build:** `python3 build_css.py` concatenates all modules into `main.min.css`
