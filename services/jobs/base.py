@@ -76,6 +76,57 @@ def _get_ra_credentials():
     return ra_username, ra_api_key
 
 
+def _download_psn_avatar(username, avatar_url):
+    """Download a PSN profile avatar into static/images/avatars/.
+
+    PSN's avatar CDN URLs require a browser-like request (the User-Agent on
+    Python's default `requests` is blocked, and the URLs themselves are
+    sometimes signed / short-lived). We mirror the image into the
+    local static directory so the browser can serve it without needing
+    outbound access to PSN and without leaking the user's real CDN URL
+    across the wire.
+
+    Args:
+        username: PSN username — used as part of the output filename.
+        avatar_url: Remote PSN avatar URL.
+
+    Returns:
+        str or None: Browser-relative path (e.g. "/static/images/avatars/
+        psn_milnet.png?t=1234") on success, None on failure.
+    """
+    if not avatar_url or not username:
+        return None
+
+    safe_user = ''.join(c for c in username if c.isalnum() or c in ('-', '_')).lower()
+    if not safe_user:
+        return None
+
+    ext_raw = avatar_url.rsplit('?', 1)[0].rsplit('.', 1)[-1].lower()
+    ext = ext_raw if ext_raw in ('png', 'jpg', 'jpeg', 'webp', 'gif') else 'png'
+
+    dest_dir = os.path.join(config.IMAGE_PATH, 'avatars')
+    filename = f'psn_{safe_user}.{ext}'
+    dest_path = os.path.join(dest_dir, filename)
+
+    try:
+        os.makedirs(dest_dir, exist_ok=True)
+        # PSN CDN rejects the default python-requests UA.
+        resp = requests.get(
+            avatar_url,
+            timeout=15,
+            headers={'User-Agent': 'Mozilla/5.0 (RetroDB)'},
+        )
+        if resp.status_code == 200 and len(resp.content) > 0:
+            with open(dest_path, 'wb') as f:
+                f.write(resp.content)
+            cache_bust = int(time.time())
+            return f'/static/images/avatars/{filename}?t={cache_bust}'
+        logger.warning(f"PSN avatar download returned {resp.status_code} for {username}")
+    except Exception as e:
+        logger.warning(f"Failed to download PSN avatar for {username}: {e}")
+    return None
+
+
 def _download_psn_trophy_image(npwr_id, image_url, trophy_id=None):
     """Download a PSN trophy image locally (thread-safe standalone version).
 

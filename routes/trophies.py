@@ -988,7 +988,14 @@ def _run_psn_full_sync(psnawp):
             avatars = profile.get('avatarUrls', [])
             if avatars:
                 # Use the largest avatar available
-                avatar_url = avatars[-1].get('avatarUrl') or avatars[0].get('avatarUrl')
+                remote_avatar = avatars[-1].get('avatarUrl') or avatars[0].get('avatarUrl')
+                if remote_avatar:
+                    from services.jobs.base import _download_psn_avatar
+                    # Mirror to /static so the browser can render it without
+                    # hitting PSN's UA-restricted CDN. Fall back to the remote
+                    # URL if the download fails — broken images are no worse
+                    # than what we had before.
+                    avatar_url = _download_psn_avatar(username, remote_avatar) or remote_avatar
         except Exception as e:
             logger.warning(f"Could not fetch PSN avatar: {e}")
 

@@ -887,6 +887,30 @@ def _build_psn_library_response(games_data, from_api=False):
         one=True
     )
 
+    avatar_out = ''
+    if sync_info:
+        stored = sync_info['avatar_url'] or ''
+        username = sync_info['username'] or ''
+        # Legacy rows stored the PSN CDN URL directly; the browser can't
+        # load those (PSN rejects the default UA). Mirror to /static on
+        # first read so existing profiles fix themselves without forcing
+        # the user to re-run a full trophy sync.
+        if stored.startswith('/static/'):
+            avatar_out = stored
+        elif stored and username:
+            from services.jobs.base import _download_psn_avatar
+            local = _download_psn_avatar(username, stored)
+            if local:
+                execute(
+                    "UPDATE psn_sync_status SET avatar_url = ? WHERE id = 1",
+                    (local,),
+                )
+                avatar_out = local
+            else:
+                avatar_out = stored  # fallback — still broken, but no worse
+        else:
+            avatar_out = stored
+
     return jsonify({
         'success': True,
         'games': result_games,
@@ -894,7 +918,7 @@ def _build_psn_library_response(games_data, from_api=False):
         'already_imported': sum(1 for g in result_games if g['already_imported']),
         'profile': {
             'username': sync_info['username'] if sync_info else '',
-            'avatar_url': sync_info['avatar_url'] if sync_info else '',
+            'avatar_url': avatar_out,
         } if sync_info else None,
     })
 

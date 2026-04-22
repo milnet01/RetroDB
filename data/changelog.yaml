@@ -1,3 +1,15 @@
+- version: 2.83.17
+  date: 2026-04-22
+  tags:
+  - type: fix
+    label: Fix
+  body: |
+    <ul>
+        <li><strong>PSN profile avatar now renders</strong> &mdash; Previously the game-imports PSN tab stored the remote PSN-CDN avatar URL directly in <code>psn_sync_status.avatar_url</code> and set the browser's <code>&lt;img src&gt;</code> to that URL. PSN's CDN rejects the browser's default request (User-Agent / referrer-based), so the avatar rendered as a broken-image icon. Now we mirror the avatar into <code>static/images/avatars/psn_{username}.{ext}</code> on the server side and store that local path in the DB. The image served by RetroDB's static route loads normally.</li>
+        <li><strong>One-shot backfill on fetch-library</strong> &mdash; <code>/api/psn/fetch-library</code> checks whether the stored avatar is already a <code>/static/</code> path; if not, it downloads the remote avatar now, persists the local URL, and returns it. Existing users don't need to re-run a full PSN trophy sync &mdash; the first PSN-tab fetch after upgrading heals the row automatically. A failed download falls back to the remote URL (no regression over previous behaviour).</li>
+        <li><strong>Helper added</strong> &mdash; <code>services/jobs/base.py</code> gains <code>_download_psn_avatar(username, avatar_url)</code> that writes to <code>config.IMAGE_PATH/avatars/</code> with a browser-like User-Agent header and cache-busting query string. Reused by both the full-sync path (<code>routes/trophies.py</code>) and the backfill path (<code>routes/platform_import.py</code>).</li>
+    </ul>
+
 - version: 2.83.16
   date: 2026-04-22
   tags:
