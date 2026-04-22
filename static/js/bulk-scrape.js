@@ -98,14 +98,8 @@ const BulkScrapeController = {
             };
             if (systemId) payload.system_id = systemId;
             
-            const response = await fetch('/api/bulk-scrape-job/start', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            
-            const data = await response.json();
-            
+            const data = await API.post('/api/bulk-scrape-job/start', payload);
+
             if (data.success) {
                 if (data.queued) {
                     // Job was queued, show queued notification and exit bulk mode
@@ -326,15 +320,13 @@ const BulkScrapeController = {
      */
     async togglePause() {
         try {
-            const response = await fetch('/api/bulk-scrape-job/status');
-            const statusData = await response.json();
+            const statusData = await API.get('/api/bulk-scrape-job/status');
 
             const endpoint = statusData.paused
                 ? '/api/bulk-scrape-job/resume'
                 : '/api/bulk-scrape-job/pause';
 
-            const actionResponse = await fetch(endpoint, { method: 'POST' });
-            const data = await actionResponse.json();
+            const data = await API.post(endpoint);
 
             if (data.success) {
                 // Trigger an immediate poll through the shared poller
@@ -354,8 +346,7 @@ const BulkScrapeController = {
         const _wi2 = typeof getThemedIcon === 'function' ? getThemedIcon('warning') : '⚠️';
         showConfirm(`${_wi2} Cancel Bulk Scrape`, 'Are you sure you want to cancel the bulk scrape?', async () => {
             try {
-                const response = await fetch('/api/bulk-scrape-job/cancel', { method: 'POST' });
-                const data = await response.json();
+                const data = await API.post('/api/bulk-scrape-job/cancel');
 
                 if (data.success) {
                     // Trigger an immediate poll through the shared poller
@@ -418,9 +409,8 @@ const BulkScrapeController = {
             localStorage.removeItem('showBulkScrapeModal');
             
             try {
-                const response = await fetch('/api/bulk-scrape-job/status');
-                const data = await response.json();
-                
+                const data = await API.get('/api/bulk-scrape-job/status');
+
                 if (data.success && data.running && !data.completed) {
                     const el = this.getElements();
                     if (el.modal) {

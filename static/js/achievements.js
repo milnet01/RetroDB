@@ -39,10 +39,7 @@ const RASync = {
         }
 
         try {
-            const response = await fetch(`/api/achievements/sync-system/${systemId}`, {
-                method: 'POST'
-            });
-            const data = await response.json();
+            const data = await API.post(`/api/achievements/sync-system/${systemId}`);
 
             if (data.success) {
                 if (data.queued) {
@@ -175,8 +172,7 @@ const RASync = {
         const statusEl = options.statusElement || document.getElementById('cacheStatus');
 
         try {
-            const response = await fetch('/api/achievements/sync-status');
-            const data = await response.json();
+            const data = await API.get('/api/achievements/sync-status');
 
             if (data.running && !data.completed) {
                 if (btn) {
@@ -235,10 +231,7 @@ const RASync = {
                 }
 
                 try {
-                    const response = await fetch(`/api/clear-ra-data/${systemId}`, {
-                        method: 'POST'
-                    });
-                    const data = await response.json();
+                    const data = await API.post(`/api/clear-ra-data/${systemId}`);
 
                     if (data.success) {
                         showNotification(`Cleared RA data for ${formatNumber(data.cleared)} games in ${systemName}`, 'success');

@@ -34,10 +34,7 @@ const TrophySync = {
         }
 
         try {
-            const response = await fetch(`/api/trophies/sync/${gameId}`, {
-                method: 'POST'
-            });
-            const data = await response.json();
+            const data = await API.post(`/api/trophies/sync/${gameId}`);
 
             if (data.success) {
                 if (typeof showNotification === 'function') {
@@ -85,10 +82,7 @@ const TrophySync = {
         }
 
         try {
-            const response = await fetch('/api/trophies/scan', {
-                method: 'POST'
-            });
-            const data = await response.json();
+            const data = await API.post('/api/trophies/scan');
 
             if (data.success) {
                 if (typeof showNotification === 'function') {
@@ -139,8 +133,7 @@ const PSNConnection = {
         }
 
         try {
-            const response = await fetch('/api/psn/test-connection');
-            const data = await response.json();
+            const data = await API.get('/api/psn/test-connection');
 
             if (data.success) {
                 if (statusEl) {
@@ -190,10 +183,7 @@ const PSNConnection = {
         }
 
         try {
-            const response = await fetch('/api/psn/sync', {
-                method: 'POST'
-            });
-            const data = await response.json();
+            const data = await API.post('/api/psn/sync');
 
             if (data.success) {
                 if (typeof showNotification === 'function') {

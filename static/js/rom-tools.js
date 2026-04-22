@@ -74,8 +74,7 @@ const TaskPoller = {
         if (!this.taskId) return;
 
         try {
-            const response = await fetch(`/api/rom-tools/task/${this.taskId}`);
-            const task = await response.json();
+            const task = await API.get(`/api/rom-tools/task/${this.taskId}`);
 
             // Task not found (server restarted)
             if (task.error === 'Task not found') {
@@ -124,7 +123,7 @@ const TaskPoller = {
         if (!this.taskId) return;
 
         try {
-            await fetch(`/api/rom-tools/task/${this.taskId}/pause`, { method: 'POST' });
+            await API.post(`/api/rom-tools/task/${this.taskId}/pause`);
             this.isPaused = true;
         } catch (error) {
             console.error('Error pausing task:', error);
@@ -138,7 +137,7 @@ const TaskPoller = {
         if (!this.taskId) return;
 
         try {
-            await fetch(`/api/rom-tools/task/${this.taskId}/resume`, { method: 'POST' });
+            await API.post(`/api/rom-tools/task/${this.taskId}/resume`);
             this.isPaused = false;
         } catch (error) {
             console.error('Error resuming task:', error);
@@ -165,7 +164,7 @@ const TaskPoller = {
         if (!this.taskId) return;
 
         try {
-            await fetch(`/api/rom-tools/task/${this.taskId}/cancel`, { method: 'POST' });
+            await API.post(`/api/rom-tools/task/${this.taskId}/cancel`);
             this.stop();
         } catch (error) {
             console.error('Error cancelling task:', error);
@@ -357,12 +356,7 @@ const BatchOperations = {
      */
     async _doExecute(endpoint, data, onSuccess, onError, successMessage, errorMessage) {
         try {
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            const result = await response.json();
+            const result = await API.post(endpoint, data);
 
             if (result.success) {
                 if (typeof showNotification === 'function') {

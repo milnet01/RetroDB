@@ -122,6 +122,29 @@ change forces a different sequence.
   every existing caller (`routes/bulk_scrape.py`, `routes/games.py`,
   `scraper/hybrid_scraper.py`, `services/wishlist_scraper.py`,
   `services/jobs/*`) is unchanged. All 124 tests pass. (v2.83.12)
+- [x] **Pass 8 — `window.API` migration across the JS layer** — Migrated
+  83 of 84 raw `fetch()` call sites across 13 JS files (`theme.js`,
+  `trophies.js`, `achievements.js`, `bulk-edit.js`, `bulk-scrape.js`,
+  `game-list.js`, `rom-tools.js`, `log-viewer.js`,
+  `all-games-controller.js`, `settings-page.js`, `main.js`,
+  `game-modals.js`, `toast-controller.js`) to the existing
+  `window.API` helper. Collapsed `fetch(url, { method: 'POST', headers:
+  { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+  }).then(r => r.json()).then(...)` → `API.post(url, data).then(...)`;
+  collapsed `const resp = await fetch(url); const data = await
+  resp.json();` → `const data = await API.get(url);`. AbortController
+  signals pass through the options parameter — `API.get(url, { signal
+  })` works unchanged in the dropdown-options loaders and the toast
+  poller. One `fetch()` remains raw: the `DELETE /api/logs/delete/
+  <filename>` in `log-viewer.js`, because `window.API` has no
+  `.delete()` helper yet. Per the original roadmap item, no new
+  `APIClient` class was invented — the existing `window.API` (which
+  already shipped `.get()`, `.post()`, `.postForm()`) does the job.
+  Side-effect fix: the server-restart ping in `main.js::
+  checkServerStatus` now uses `API.get` which throws on non-200,
+  preserving the silent-retry path cleanly. Bundle regenerated
+  (312,602 → 271,155 bytes after minification, ~13.3% reduction).
+  All 124 tests pass; smoke-import of `app` clean. (v2.83.22)
 - [x] **Pass 9 — scraper/ filename consistency** — Renamed
   `scraper/scrape_metadata_igdb.py` → `scraper/scrape_igdb.py` and
   `scraper/scrape_metadata_thegamesdb.py` → `scraper/scrape_thegamesdb.py`
@@ -316,7 +339,7 @@ onwards. Manager shrank 1022 → 684 LOC (−33%).
 - **Est. reduction**: 10–20 LOC per migrated site; probably 200+ LOC
   across the codebase, but more importantly centralises error handling
   and CSRF/auth header logic if/when we add it.
-- **Status**: todo
+- **Status**: done (v2.83.22) — see "Done" entry above.
 
 ---
 

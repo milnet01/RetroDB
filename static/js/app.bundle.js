@@ -1289,13 +1289,7 @@ const BulkScrapeController = {
             };
             if (systemId) payload.system_id = systemId;
 
-            const response = await fetch('/api/bulk-scrape-job/start', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            const data = await response.json();
+            const data = await API.post('/api/bulk-scrape-job/start', payload);
 
             if (data.success) {
                 if (data.queued) {
@@ -1502,15 +1496,13 @@ const BulkScrapeController = {
      */
     async togglePause() {
         try {
-            const response = await fetch('/api/bulk-scrape-job/status');
-            const statusData = await response.json();
+            const statusData = await API.get('/api/bulk-scrape-job/status');
 
             const endpoint = statusData.paused
                 ? '/api/bulk-scrape-job/resume'
                 : '/api/bulk-scrape-job/pause';
 
-            const actionResponse = await fetch(endpoint, { method: 'POST' });
-            const data = await actionResponse.json();
+            const data = await API.post(endpoint);
 
             if (data.success) {
                 if (typeof UnifiedToastController !== 'undefined') {
@@ -1529,8 +1521,7 @@ const BulkScrapeController = {
         const _wi2 = typeof getThemedIcon === 'function' ? getThemedIcon('warning') : '⚠️';
         showConfirm(`${_wi2} Cancel Bulk Scrape`, 'Are you sure you want to cancel the bulk scrape?', async () => {
             try {
-                const response = await fetch('/api/bulk-scrape-job/cancel', { method: 'POST' });
-                const data = await response.json();
+                const data = await API.post('/api/bulk-scrape-job/cancel');
 
                 if (data.success) {
                     if (typeof UnifiedToastController !== 'undefined') {
@@ -1585,8 +1576,7 @@ const BulkScrapeController = {
             localStorage.removeItem('showBulkScrapeModal');
 
             try {
-                const response = await fetch('/api/bulk-scrape-job/status');
-                const data = await response.json();
+                const data = await API.get('/api/bulk-scrape-job/status');
 
                 if (data.success && data.running && !data.completed) {
                     const el = this.getElements();
@@ -1691,10 +1681,9 @@ const BulkEditController = (function() {
         select.innerHTML = '<option value="">-- Don\'t change --</option>';
 
         try {
-            const resp = await fetch('/api/dropdown-options/game_structure', {
+            const data = await API.get('/api/dropdown-options/game_structure', {
                 signal: _abortController ? _abortController.signal : undefined
             });
-            const data = await resp.json();
 
             if (data.success && data.options) {
                 data.options.forEach(opt => {
@@ -1720,10 +1709,9 @@ const BulkEditController = (function() {
         select.innerHTML = '<option value="">-- Don\'t change --</option>';
 
         try {
-            const resp = await fetch('/api/dropdown-options/perspective', {
+            const data = await API.get('/api/dropdown-options/perspective', {
                 signal: _abortController ? _abortController.signal : undefined
             });
-            const data = await resp.json();
 
             if (data.success && data.options) {
                 data.options.forEach(opt => {
@@ -1749,10 +1737,9 @@ const BulkEditController = (function() {
         select.innerHTML = '<option value="">-- Don\'t change --</option>';
 
         try {
-            const resp = await fetch('/api/dropdown-options/dimension', {
+            const data = await API.get('/api/dropdown-options/dimension', {
                 signal: _abortController ? _abortController.signal : undefined
             });
-            const data = await resp.json();
 
             if (data.success && data.options) {
                 data.options.forEach(opt => {
@@ -1778,10 +1765,9 @@ const BulkEditController = (function() {
         select.innerHTML = '<option value="">-- Don\'t change --</option>';
 
         try {
-            const resp = await fetch('/api/dropdown-options/genre', {
+            const data = await API.get('/api/dropdown-options/genre', {
                 signal: _abortController ? _abortController.signal : undefined
             });
-            const data = await resp.json();
 
             if (data.success && data.options) {
                 data.options.forEach(opt => {
@@ -1877,17 +1863,11 @@ const BulkEditController = (function() {
                 }
             }
 
-            const resp = await fetch('/api/games/bulk-edit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    game_ids: gameIds,
-                    fields: fields,
-                    field_modes: fieldModes
-                })
+            const data = await API.post('/api/games/bulk-edit', {
+                game_ids: gameIds,
+                fields: fields,
+                field_modes: fieldModes
             });
-
-            const data = await resp.json();
 
             if (data.success) {
                 close();
@@ -2486,12 +2466,8 @@ const UnifiedToastController = {
             const ac = new AbortController();
             this._pollAbortControllers.set(type, ac);
 
-            const response = await fetch(endpoint, { signal: ac.signal });
+            const data = await API.get(endpoint, { signal: ac.signal });
             this._pollAbortControllers.delete(type);
-
-            if (!response.ok) return; // 404, 500, etc.
-
-            const data = await response.json();
 
             if (data.success === false) return;
 
@@ -2635,8 +2611,7 @@ const UnifiedToastController = {
 
         console.debug(`Triggering queued RA ${next.type} for ${next.systemName}`);
 
-        fetch(endpoint, { method: 'POST' })
-            .then(r => r.json())
+        API.post(endpoint)
             .then(result => {
                 if (result.success && !result.queued) {
                     this.removeRAQueuedToast(next);
@@ -3269,8 +3244,7 @@ const UnifiedToastController = {
             let endpoint;
             switch(type) {
                 case 'bulk-scrape':
-                    const statusResp = await fetch('/api/bulk-scrape-job/status');
-                    const status = await statusResp.json();
+                    const status = await API.get('/api/bulk-scrape-job/status');
                     endpoint = status.paused ? '/api/bulk-scrape-job/resume' : '/api/bulk-scrape-job/pause';
                     break;
                 case 'ra-sync':
@@ -3280,14 +3254,13 @@ const UnifiedToastController = {
                     endpoint = '/api/ra-refresh/toggle-pause';
                     break;
                 case 'psn-refresh':
-                    const psnResp = await fetch('/api/psn/bulk-refresh/status');
-                    const psnStatus = await psnResp.json();
+                    const psnStatus = await API.get('/api/psn/bulk-refresh/status');
                     endpoint = psnStatus.paused ? '/api/psn/bulk-refresh/resume' : '/api/psn/bulk-refresh/pause';
                     break;
             }
 
             if (endpoint) {
-                await fetch(endpoint, { method: 'POST' });
+                await API.post(endpoint);
             }
         } catch (e) {
             console.error(`Error toggling pause for ${type}:`, e);
@@ -3333,7 +3306,7 @@ const UnifiedToastController = {
             }
 
             if (endpoint) {
-                await fetch(endpoint, { method: 'POST' });
+                await API.post(endpoint);
                 this.hideActiveToast(type);
                 this._stopTypePolling(type);
                 this.activeOperations.set(type, false);
@@ -3350,7 +3323,7 @@ const UnifiedToastController = {
     async cancelQueued(type, jobId) {
         try {
             if (type === 'bulk-scrape') {
-                await fetch(`/api/bulk-scrape-job/cancel-queued/${jobId}`, { method: 'POST' });
+                await API.post(`/api/bulk-scrape-job/cancel-queued/${jobId}`);
 
                 const toastId = `queued-${type}-${jobId}`;
                 const toast = this.activeToasts.get(toastId);
@@ -3627,10 +3600,7 @@ const RARefreshController = {
         btn.disabled = true;
 
         try {
-            const response = await fetch(`/api/refresh-retroachievements/${systemId}`, {
-                method: 'POST'
-            });
-            const data = await response.json();
+            const data = await API.post(`/api/refresh-retroachievements/${systemId}`);
 
             if (data.success) {
                 if (data.queued) {
@@ -3866,8 +3836,7 @@ const GameDetailModal = {
             return;
         }
 
-        fetch(`/api/game/${gameId}/detail`)
-            .then(r => r.json())
+        API.get(`/api/game/${gameId}/detail`)
             .then(data => {
                 if (data.success) {
                     this.cache.set(gameId, data.game);
@@ -4156,17 +4125,12 @@ const HLTBManager = {
         if (resultDiv) resultDiv.style.display = 'none';
         if (errorDiv) errorDiv.style.display = 'none';
 
-        fetch('/api/hltb/search', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                query: query,
-                system_folder: ctx.systemFolder || '',
-                year: ctx.year || '',
-                game_id: ctx.gameId || null
-            })
+        API.post('/api/hltb/search', {
+            query: query,
+            system_folder: ctx.systemFolder || '',
+            year: ctx.year || '',
+            game_id: ctx.gameId || null
         })
-        .then(r => r.json())
         .then(data => {
             if (searchingDiv) searchingDiv.style.display = 'none';
             if (btn) {
@@ -4281,16 +4245,12 @@ const HLTBManager = {
 
         const savePromise = ctx.customSave
             ? ctx.customSave(pending, playtime)
-            : fetch(`/api/hltb-save/${ctx.gameId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    playtime: playtime,
-                    match_name: pending.match_name,
-                    match_platform: pending.match_platform,
-                    confidence: pending.confidence
-                })
-            }).then(r => r.json());
+            : API.post(`/api/hltb-save/${ctx.gameId}`, {
+                playtime: playtime,
+                match_name: pending.match_name,
+                match_platform: pending.match_platform,
+                confidence: pending.confidence
+            });
 
         savePromise
         .then(data => {
@@ -4378,7 +4338,7 @@ const HLTBManager = {
         showConfirm('🗑️ Clear HLTB Data', 'Clear HLTB data for this game?', () => {
             const clearPromise = ctx.customClear
                 ? ctx.customClear()
-                : fetch(`/api/hltb-clear/${ctx.gameId}`, { method: 'POST' }).then(r => r.json());
+                : API.post(`/api/hltb-clear/${ctx.gameId}`);
 
             clearPromise
             .then(data => {
@@ -4631,12 +4591,7 @@ const GameEditModal = {
         saveBtn.innerHTML = '<span class="btn-icon">⏳</span> Saving...';
         saveBtn.disabled = true;
 
-        fetch(`/api/game/${this.currentData.id}/edit`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
-        })
-        .then(r => r.json())
+        API.post(`/api/game/${this.currentData.id}/edit`, formData)
         .then(data => {
             saveBtn.innerHTML = originalText;
             saveBtn.disabled = false;
@@ -4862,12 +4817,7 @@ const GameEditModal = {
 
         const status = document.getElementById('gemCompletionStatus').value;
 
-        fetch(`/api/game/${this.currentData.id}/completion`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: status })
-        })
-        .then(r => r.json())
+        API.post(`/api/game/${this.currentData.id}/completion`, { status: status })
         .then(data => {
             if (data.success) {
                 this.currentData.completion_status = status;
@@ -4944,8 +4894,7 @@ const GameEditModal = {
 
     loadGenreDropdown() {
         const signal = this._dropdownAbortController ? this._dropdownAbortController.signal : undefined;
-        fetch('/api/dropdown-options/genre', { signal })
-            .then(r => r.json())
+        API.get('/api/dropdown-options/genre', { signal })
             .then(data => {
                 if (data.success && data.options) {
                     this.genreOptions = data.options;
@@ -5022,8 +4971,7 @@ const GameEditModal = {
 
     loadModesDropdown() {
         const signal = this._dropdownAbortController ? this._dropdownAbortController.signal : undefined;
-        fetch('/api/dropdown-options/game_modes', { signal })
-            .then(r => r.json())
+        API.get('/api/dropdown-options/game_modes', { signal })
             .then(data => {
                 if (data.success && data.options) {
                     this.modesOptions = data.options;
@@ -5100,8 +5048,7 @@ const GameEditModal = {
 
     loadSaveTypeDropdown() {
         const signal = this._dropdownAbortController ? this._dropdownAbortController.signal : undefined;
-        fetch('/api/dropdown-options/save_type', { signal })
-            .then(r => r.json())
+        API.get('/api/dropdown-options/save_type', { signal })
             .then(data => {
                 if (data.success && data.options) {
                     this.saveTypeOptions = data.options;
@@ -5180,8 +5127,7 @@ const GameEditModal = {
         if (!systemId) return;
 
         const signal = this._dropdownAbortController ? this._dropdownAbortController.signal : undefined;
-        fetch(`/api/systems/${systemId}/controllers`, { signal })
-            .then(r => r.json())
+        API.get(`/api/systems/${systemId}/controllers`, { signal })
             .then(data => {
                 if (data.success) {
                     this.controllerOptions.defaults = data.default_controllers || [];
@@ -5401,8 +5347,7 @@ const GameEditModal = {
 
     loadGameStructureDropdown() {
         const signal = this._dropdownAbortController ? this._dropdownAbortController.signal : undefined;
-        fetch('/api/dropdown-options/game_structure', { signal })
-            .then(r => r.json())
+        API.get('/api/dropdown-options/game_structure', { signal })
             .then(data => {
                 if (data.success && data.options) {
                     this.gameStructureOptions = data.options;
@@ -5479,8 +5424,7 @@ const GameEditModal = {
 
     loadPerspectiveDropdown() {
         const signal = this._dropdownAbortController ? this._dropdownAbortController.signal : undefined;
-        fetch('/api/dropdown-options/perspective', { signal })
-            .then(r => r.json())
+        API.get('/api/dropdown-options/perspective', { signal })
             .then(data => {
                 if (data.success && data.options) {
                     this.perspectiveOptions = data.options;
@@ -5558,8 +5502,7 @@ const GameEditModal = {
 
     loadDimensionDropdown() {
         const signal = this._dropdownAbortController ? this._dropdownAbortController.signal : undefined;
-        fetch('/api/dropdown-options/dimension', { signal })
-            .then(r => r.json())
+        API.get('/api/dropdown-options/dimension', { signal })
             .then(data => {
                 if (data.success && data.options) {
                     this.dimensionOptions = data.options;
@@ -5836,8 +5779,7 @@ window.triggerAiFill = function() {
     btn.disabled = true;
     btn.innerHTML = '<span class="btn-icon">⏳</span> Filling...';
 
-    fetch(`/api/game/${gameId}/ai-fill`, { method: 'POST' })
-        .then(r => r.json())
+    API.post(`/api/game/${gameId}/ai-fill`)
         .then(data => {
             if (data.success) {
                 const count = data.filled_count || 0;
@@ -6076,8 +6018,7 @@ function performGlobalSearch(query) {
 
     showSearchLoading();
 
-    fetch(`/api/search?q=${encodeURIComponent(query)}`)
-        .then(response => response.json())
+    API.get(`/api/search?q=${encodeURIComponent(query)}`)
         .then(data => {
             displaySearchResults(data);
         })
@@ -6489,14 +6430,7 @@ async function scanLibrary() {
     btn.disabled = true;
 
     try {
-        const response = await fetch('/api/scan', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        const data = await response.json();
+        const data = await API.post('/api/scan');
 
         if (data.success) {
             showNotification('Library scan complete! Found ' + (data.new_games || 0) + ' new games.', 'success');
@@ -6520,7 +6454,7 @@ async function restartServer() {
             showNotification('Restarting server...', 'info');
 
             try {
-                await fetch('/api/restart', { method: 'POST' });
+                await API.post('/api/restart');
 
                 setTimeout(() => {
                     checkServerStatus();
@@ -6540,12 +6474,10 @@ async function checkServerStatus() {
 
     const checkStatus = async () => {
         try {
-            const response = await fetch('/api/status');
-            if (response.ok) {
-                showNotification('Server restarted successfully!', 'success');
-                setTimeout(() => location.reload(), 1000);
-                return true;
-            }
+            await API.get('/api/status');
+            showNotification('Server restarted successfully!', 'success');
+            setTimeout(() => location.reload(), 1000);
+            return true;
         } catch (error) {
         }
 
@@ -6574,11 +6506,7 @@ async function cleanMissingRoms() {
             }
 
             try {
-                const response = await fetch('/api/clean-missing-roms', {
-                    method: 'POST'
-                });
-
-                const data = await response.json();
+                const data = await API.post('/api/clean-missing-roms');
 
                 if (data.success) {
                     showNotification(`Removed ${formatNumber(data.removed)} games with missing ROMs`, 'success');
@@ -6635,11 +6563,7 @@ async function clearClzImports() {
             }
 
             try {
-                const response = await fetch('/api/clear-clz-imports', {
-                    method: 'POST'
-                });
-
-                const data = await response.json();
+                const data = await API.post('/api/clear-clz-imports');
 
                 if (data.success) {
                     showNotification(`Removed ${formatNumber(data.removed)} CLZ Import games`, 'success');
@@ -6695,11 +6619,7 @@ async function refreshRetroAchievements() {
             }
 
             try {
-                const response = await fetch('/api/refresh-retroachievements', {
-                    method: 'POST'
-                });
-
-                const data = await response.json();
+                const data = await API.post('/api/refresh-retroachievements');
 
                 if (data.success) {
                     if (data.queued) {
@@ -6804,11 +6724,7 @@ async function clearRAData() {
                     ? '/api/clear-ra-data'
                     : `/api/clear-ra-data/${systemId}`;
 
-                const response = await fetch(endpoint, {
-                    method: 'POST'
-                });
-
-                const data = await response.json();
+                const data = await API.post(endpoint);
 
                 if (data.success) {
                     const msg = systemId === 'all'
@@ -6851,15 +6767,7 @@ async function searchGame(gameId, title) {
     searchBtn.disabled = true;
 
     try {
-        const response = await fetch('/api/games/search', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ game_id: gameId, title: title })
-        });
-
-        const data = await response.json();
+        const data = await API.post('/api/games/search', { game_id: gameId, title: title });
 
         if (data.results && data.results.length > 0) {
             displayScraperResults(data.results, gameId);
@@ -7291,7 +7199,7 @@ document.addEventListener('DOMContentLoaded', () => KeyboardShortcuts.init());
 
 function trackGameView(gameId) {
     if (!gameId) return;
-    fetch(`/api/game/${gameId}/track-view`, { method: 'POST' })
+    API.post(`/api/game/${gameId}/track-view`)
         .catch(e => console.warn('View tracking failed:', e));
 }
 
@@ -7303,16 +7211,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function updateCompletionStatus(gameId, status) {
-    fetch(`/api/game/${gameId}/completion`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: status })
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.success) {
-            showNotification('Completion status updated', 'success');
-        } else {
+    API.post(`/api/game/${gameId}/completion`, { status: status })
+        .then(data => {
+            if (data.success) {
+                showNotification('Completion status updated', 'success');
+            } else {
             showNotification('Failed to update status: ' + data.error, 'error');
         }
     })

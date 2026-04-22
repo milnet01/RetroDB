@@ -211,20 +211,15 @@ const UserManager = {
             psn_npsso: document.getElementById('userPsnNpsso')?.value.trim() || ''
         };
 
-        fetch('/api/users/settings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(r => r.json())
-        .then(result => {
-            if (result.success) {
-                showNotification('Your settings have been saved!', 'success');
-            } else {
-                showNotification(result.error || 'Failed to save settings', 'error');
-            }
-        })
-        .catch(() => showNotification('Network error saving settings', 'error'));
+        API.post('/api/users/settings', data)
+            .then(result => {
+                if (result.success) {
+                    showNotification('Your settings have been saved!', 'success');
+                } else {
+                    showNotification(result.error || 'Failed to save settings', 'error');
+                }
+            })
+            .catch(() => showNotification('Network error saving settings', 'error'));
     },
 
     /**
@@ -239,25 +234,20 @@ const UserManager = {
             return;
         }
 
-        fetch('/api/profile/password', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                current_password: currentPassword,
-                new_password: newPassword
+        API.post('/api/profile/password', {
+            current_password: currentPassword,
+            new_password: newPassword
+        })
+            .then(result => {
+                if (result.success) {
+                    showNotification('Password changed successfully!', 'success');
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                } else {
+                    showNotification(result.error || 'Failed to change password', 'error');
+                }
             })
-        })
-        .then(r => r.json())
-        .then(result => {
-            if (result.success) {
-                showNotification('Password changed successfully!', 'success');
-                document.getElementById('currentPassword').value = '';
-                document.getElementById('newPassword').value = '';
-            } else {
-                showNotification(result.error || 'Failed to change password', 'error');
-            }
-        })
-        .catch(() => showNotification('Network error changing password', 'error'));
+            .catch(() => showNotification('Network error changing password', 'error'));
     },
 
     /**
@@ -279,8 +269,7 @@ const UserManager = {
      * @param {number} userId - User ID
      */
     edit(userId) {
-        fetch('/api/users')
-            .then(r => r.json())
+        API.get('/api/users')
             .then(data => {
                 if (data.success) {
                     const user = data.users.find(u => u.id === userId);
@@ -331,22 +320,17 @@ const UserManager = {
 
         const url = isEdit ? `/api/users/${userId}/update` : '/api/users/create';
 
-        fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(r => r.json())
-        .then(result => {
-            if (result.success) {
-                showNotification(result.message || 'User saved successfully!', 'success');
-                this.closeModal();
-                setTimeout(() => location.reload(), 1000);
-            } else {
-                showNotification(result.error || 'Failed to save user', 'error');
-            }
-        })
-        .catch(() => showNotification('Network error saving user', 'error'));
+        API.post(url, data)
+            .then(result => {
+                if (result.success) {
+                    showNotification(result.message || 'User saved successfully!', 'success');
+                    this.closeModal();
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showNotification(result.error || 'Failed to save user', 'error');
+                }
+            })
+            .catch(() => showNotification('Network error saving user', 'error'));
     },
 
     /**
@@ -359,8 +343,7 @@ const UserManager = {
             '🗑️ Delete User',
             `Are you sure you want to delete user "${username}"? This action cannot be undone.`,
             () => {
-                fetch(`/api/users/${userId}/delete`, { method: 'POST' })
-                    .then(r => r.json())
+                API.post(`/api/users/${userId}/delete`)
                     .then(result => {
                         if (result.success) {
                             showNotification('User deleted successfully', 'success');
@@ -386,8 +369,7 @@ const PathSettings = {
      * Load path settings from server
      */
     load() {
-        fetch('/api/settings/paths')
-            .then(r => r.json())
+        API.get('/api/settings/paths')
             .then(data => {
                 if (data.success) {
                     // Set input values
@@ -427,23 +409,18 @@ const PathSettings = {
             rpcs3_trophy: document.getElementById('rpcs3TrophyInput')?.value.trim() || ''
         };
 
-        fetch('/api/settings/paths', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(r => r.json())
-        .then(result => {
-            if (result.success) {
-                showNotification('Path settings saved!', 'success');
-                if (result.restart_required) {
-                    showNotification('Restart required for changes to take full effect', 'warning');
+        API.post('/api/settings/paths', data)
+            .then(result => {
+                if (result.success) {
+                    showNotification('Path settings saved!', 'success');
+                    if (result.restart_required) {
+                        showNotification('Restart required for changes to take full effect', 'warning');
+                    }
+                } else {
+                    showNotification('Failed to save: ' + result.error, 'error');
                 }
-            } else {
-                showNotification('Failed to save: ' + result.error, 'error');
-            }
-        })
-        .catch(e => showNotification('Error saving settings: ' + e, 'error'));
+            })
+            .catch(e => showNotification('Error saving settings: ' + e, 'error'));
     }
 };
 
@@ -456,8 +433,7 @@ const DisplaySettings = {
      * Load display settings
      */
     load() {
-        fetch('/api/settings')
-            .then(r => r.json())
+        API.get('/api/settings')
             .then(data => {
                 if (data.success) {
                     const preferredBoxart = data.settings.preferred_boxart || '2d';
@@ -482,20 +458,15 @@ const DisplaySettings = {
             preferred_boxart: document.getElementById('preferredBoxartSelect')?.value || '2d'
         };
 
-        fetch('/api/settings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(r => r.json())
-        .then(result => {
-            if (result.success) {
-                showNotification('Display settings saved!', 'success');
-            } else {
-                showNotification('Failed to save: ' + result.error, 'error');
-            }
-        })
-        .catch(e => showNotification('Error saving settings: ' + e, 'error'));
+        API.post('/api/settings', data)
+            .then(result => {
+                if (result.success) {
+                    showNotification('Display settings saved!', 'success');
+                } else {
+                    showNotification('Failed to save: ' + result.error, 'error');
+                }
+            })
+            .catch(e => showNotification('Error saving settings: ' + e, 'error'));
     }
 };
 
@@ -524,30 +495,25 @@ const NotificationSettings = {
             }
         };
 
-        fetch('/api/settings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(r => r.json())
-        .then(result => {
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-            if (result.success) {
-                // Update global notification timeouts
-                if (typeof Notifications !== 'undefined') {
-                    Notifications.timeouts = data.notification_timeouts;
+        API.post('/api/settings', data)
+            .then(result => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                if (result.success) {
+                    // Update global notification timeouts
+                    if (typeof Notifications !== 'undefined') {
+                        Notifications.timeouts = data.notification_timeouts;
+                    }
+                    showNotification('Notification settings saved!', 'success');
+                } else {
+                    showNotification('Failed to save: ' + result.error, 'error');
                 }
-                showNotification('Notification settings saved!', 'success');
-            } else {
-                showNotification('Failed to save: ' + result.error, 'error');
-            }
-        })
-        .catch(e => {
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-            showNotification('Error saving settings: ' + e, 'error');
-        });
+            })
+            .catch(e => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                showNotification('Error saving settings: ' + e, 'error');
+            });
     },
 
     /**
@@ -701,8 +667,7 @@ const ScraperConfig = {
      * Check API status for all scrapers
      */
     checkStatus() {
-        fetch('/api/scraper-status')
-            .then(r => r.json())
+        API.get('/api/scraper-status')
             .then(data => {
                 if (data.success) {
                     Object.entries(data.status).forEach(([scraper, status]) => {
@@ -784,22 +749,17 @@ const ScraperConfig = {
             }
         });
 
-        fetch('/api/settings/scrapers', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ priority, enabled })
-        })
-        .then(r => r.json())
-        .then(result => {
-            if (result.success) {
-                showNotification('Scraper settings saved!', 'success');
-                this.settings.priority = priority;
-                this.settings.enabled = enabled;
-            } else {
-                showNotification('Failed to save: ' + result.error, 'error');
-            }
-        })
-        .catch(e => showNotification('Error saving settings: ' + e, 'error'));
+        API.post('/api/settings/scrapers', { priority, enabled })
+            .then(result => {
+                if (result.success) {
+                    showNotification('Scraper settings saved!', 'success');
+                    this.settings.priority = priority;
+                    this.settings.enabled = enabled;
+                } else {
+                    showNotification('Failed to save: ' + result.error, 'error');
+                }
+            })
+            .catch(e => showNotification('Error saving settings: ' + e, 'error'));
     },
 
     /**
@@ -818,21 +778,16 @@ const ScraperConfig = {
             ra_apikey: document.getElementById('raApiKey')?.value.trim() || ''
         };
 
-        fetch('/api/settings/api-keys', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(r => r.json())
-        .then(result => {
-            if (result.success) {
-                showNotification('API keys saved!', 'success');
-                this.checkStatus();
-            } else {
-                showNotification('Failed to save: ' + result.error, 'error');
-            }
-        })
-        .catch(e => showNotification('Error saving API keys: ' + e, 'error'));
+        API.post('/api/settings/api-keys', data)
+            .then(result => {
+                if (result.success) {
+                    showNotification('API keys saved!', 'success');
+                    this.checkStatus();
+                } else {
+                    showNotification('Failed to save: ' + result.error, 'error');
+                }
+            })
+            .catch(e => showNotification('Error saving API keys: ' + e, 'error'));
     }
 };
 
@@ -846,8 +801,7 @@ const LogoReference = {
      */
     async reload() {
         try {
-            const response = await fetch('/api/systems-list');
-            const data = await response.json();
+            const data = await API.get('/api/systems-list');
             if (data.success && data.systems) {
                 this.load(data.systems);
             }
@@ -899,8 +853,7 @@ const DatabaseBackup = {
         btn.disabled = true;
         btn.innerHTML = '<span class="btn-icon">⏳</span> Creating backup...';
 
-        fetch('/api/backup/create', { method: 'POST' })
-            .then(r => r.json())
+        API.post('/api/backup/create')
             .then(data => {
                 btn.disabled = false;
                 btn.innerHTML = '<span class="btn-icon">💾</span> Create Backup';
@@ -931,21 +884,16 @@ const DatabaseBackup = {
             '⚠️ Restore Database',
             `Are you sure you want to restore from "${filename}"? This will replace all current data.`,
             () => {
-                fetch('/api/backup/restore', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ filename })
-                })
-                .then(r => r.json())
-                .then(data => {
-                    if (data.success) {
-                        showNotification('Database restored! Reloading...', 'success');
-                        setTimeout(() => location.reload(), 2000);
-                    } else {
-                        showNotification('Restore failed: ' + data.error, 'error');
-                    }
-                })
-                .catch(e => showNotification('Error restoring: ' + e, 'error'));
+                API.post('/api/backup/restore', { filename })
+                    .then(data => {
+                        if (data.success) {
+                            showNotification('Database restored! Reloading...', 'success');
+                            setTimeout(() => location.reload(), 2000);
+                        } else {
+                            showNotification('Restore failed: ' + data.error, 'error');
+                        }
+                    })
+                    .catch(e => showNotification('Error restoring: ' + e, 'error'));
             },
             {danger: true}
         );
@@ -1009,8 +957,7 @@ const NormalizationManager = {
         if (empty) empty.style.display = 'none';
 
         try {
-            const resp = await fetch(`/api/normalize/preview/${encodeURIComponent(this.currentField)}`);
-            const result = await resp.json();
+            const result = await API.get(`/api/normalize/preview/${encodeURIComponent(this.currentField)}`);
 
             if (loading) loading.style.display = 'none';
 
@@ -1186,16 +1133,10 @@ const NormalizationManager = {
         }
 
         try {
-            const resp = await fetch('/api/normalize/apply', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    field: this.currentField,
-                    mappings: mappings.map(m => ({ old: m.old, new: m.new }))
-                })
+            const result = await API.post('/api/normalize/apply', {
+                field: this.currentField,
+                mappings: mappings.map(m => ({ old: m.old, new: m.new }))
             });
-
-            const result = await resp.json();
 
             if (result.success) {
                 showNotification(

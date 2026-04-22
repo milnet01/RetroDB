@@ -609,12 +609,8 @@ const UnifiedToastController = {
             const ac = new AbortController();
             this._pollAbortControllers.set(type, ac);
 
-            const response = await fetch(endpoint, { signal: ac.signal });
+            const data = await API.get(endpoint, { signal: ac.signal });
             this._pollAbortControllers.delete(type);
-
-            if (!response.ok) return; // 404, 500, etc.
-
-            const data = await response.json();
 
             // Different endpoints have different response formats
             // bulk-scrape-job/status returns { success: true, running: ..., ... }
@@ -791,8 +787,7 @@ const UnifiedToastController = {
         
         console.debug(`Triggering queued RA ${next.type} for ${next.systemName}`);
         
-        fetch(endpoint, { method: 'POST' })
-            .then(r => r.json())
+        API.post(endpoint)
             .then(result => {
                 // Only proceed if operation actually STARTED (not just re-queued)
                 if (result.success && !result.queued) {
@@ -1487,8 +1482,7 @@ const UnifiedToastController = {
             let endpoint;
             switch(type) {
                 case 'bulk-scrape':
-                    const statusResp = await fetch('/api/bulk-scrape-job/status');
-                    const status = await statusResp.json();
+                    const status = await API.get('/api/bulk-scrape-job/status');
                     endpoint = status.paused ? '/api/bulk-scrape-job/resume' : '/api/bulk-scrape-job/pause';
                     break;
                 case 'ra-sync':
@@ -1498,14 +1492,13 @@ const UnifiedToastController = {
                     endpoint = '/api/ra-refresh/toggle-pause';
                     break;
                 case 'psn-refresh':
-                    const psnResp = await fetch('/api/psn/bulk-refresh/status');
-                    const psnStatus = await psnResp.json();
+                    const psnStatus = await API.get('/api/psn/bulk-refresh/status');
                     endpoint = psnStatus.paused ? '/api/psn/bulk-refresh/resume' : '/api/psn/bulk-refresh/pause';
                     break;
             }
             
             if (endpoint) {
-                await fetch(endpoint, { method: 'POST' });
+                await API.post(endpoint);
             }
         } catch (e) {
             console.error(`Error toggling pause for ${type}:`, e);
@@ -1551,7 +1544,7 @@ const UnifiedToastController = {
             }
 
             if (endpoint) {
-                await fetch(endpoint, { method: 'POST' });
+                await API.post(endpoint);
                 this.hideActiveToast(type);
                 this._stopTypePolling(type);
                 this.activeOperations.set(type, false);
@@ -1568,7 +1561,7 @@ const UnifiedToastController = {
     async cancelQueued(type, jobId) {
         try {
             if (type === 'bulk-scrape') {
-                await fetch(`/api/bulk-scrape-job/cancel-queued/${jobId}`, { method: 'POST' });
+                await API.post(`/api/bulk-scrape-job/cancel-queued/${jobId}`);
                 
                 const toastId = `queued-${type}-${jobId}`;
                 const toast = this.activeToasts.get(toastId);

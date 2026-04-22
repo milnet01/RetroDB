@@ -285,9 +285,7 @@ const AllGamesController = (function() {
 
         try {
             const qs = buildQueryString(page);
-            const resp = await fetch(`/api/games?${qs}`, { signal: controller.signal });
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-            const data = await resp.json();
+            const data = await API.get(`/api/games?${qs}`, { signal: controller.signal });
 
             if (data.error) throw new Error(data.error);
 
@@ -1125,8 +1123,7 @@ const AllGamesController = (function() {
                 if (v !== undefined && v !== null && v !== '') params.set('not_' + k, v);
             }
 
-            const resp = await fetch(`/api/games/ids?${params.toString()}`);
-            const data = await resp.json();
+            const data = await API.get(`/api/games/ids?${params.toString()}`);
 
             if (data.ids) {
                 // Clear current selection
@@ -1170,8 +1167,7 @@ const AllGamesController = (function() {
             }
             params.set('unscraped', '1');
 
-            const resp = await fetch(`/api/games/ids?${params.toString()}`);
-            const data = await resp.json();
+            const data = await API.get(`/api/games/ids?${params.toString()}`);
 
             if (data.ids) {
                 // Clear current selection
@@ -1410,8 +1406,7 @@ const AllGamesController = (function() {
         if (visibleIds.length === 0) return;
 
         try {
-            const resp = await fetch(`/api/games/card-data?ids=${visibleIds.join(',')}`);
-            const data = await resp.json();
+            const data = await API.get(`/api/games/card-data?ids=${visibleIds.join(',')}`);
             if (!data.success || !data.games) return;
 
             for (const game of data.games) {

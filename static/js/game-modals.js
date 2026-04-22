@@ -154,8 +154,7 @@ const GameDetailModal = {
             return;
         }
 
-        fetch(`/api/game/${gameId}/detail`)
-            .then(r => r.json())
+        API.get(`/api/game/${gameId}/detail`)
             .then(data => {
                 if (data.success) {
                     this.cache.set(gameId, data.game);
@@ -470,17 +469,12 @@ const HLTBManager = {
         if (resultDiv) resultDiv.style.display = 'none';
         if (errorDiv) errorDiv.style.display = 'none';
 
-        fetch('/api/hltb/search', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                query: query,
-                system_folder: ctx.systemFolder || '',
-                year: ctx.year || '',
-                game_id: ctx.gameId || null
-            })
+        API.post('/api/hltb/search', {
+            query: query,
+            system_folder: ctx.systemFolder || '',
+            year: ctx.year || '',
+            game_id: ctx.gameId || null
         })
-        .then(r => r.json())
         .then(data => {
             if (searchingDiv) searchingDiv.style.display = 'none';
             if (btn) {
@@ -602,16 +596,12 @@ const HLTBManager = {
         // Use custom save if provided, otherwise default API
         const savePromise = ctx.customSave
             ? ctx.customSave(pending, playtime)
-            : fetch(`/api/hltb-save/${ctx.gameId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    playtime: playtime,
-                    match_name: pending.match_name,
-                    match_platform: pending.match_platform,
-                    confidence: pending.confidence
-                })
-            }).then(r => r.json());
+            : API.post(`/api/hltb-save/${ctx.gameId}`, {
+                playtime: playtime,
+                match_name: pending.match_name,
+                match_platform: pending.match_platform,
+                confidence: pending.confidence
+            });
 
         savePromise
         .then(data => {
@@ -703,7 +693,7 @@ const HLTBManager = {
             // Use custom clear if provided, otherwise default API
             const clearPromise = ctx.customClear
                 ? ctx.customClear()
-                : fetch(`/api/hltb-clear/${ctx.gameId}`, { method: 'POST' }).then(r => r.json());
+                : API.post(`/api/hltb-clear/${ctx.gameId}`);
 
             clearPromise
             .then(data => {
@@ -985,12 +975,7 @@ const GameEditModal = {
         saveBtn.innerHTML = '<span class="btn-icon">⏳</span> Saving...';
         saveBtn.disabled = true;
 
-        fetch(`/api/game/${this.currentData.id}/edit`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
-        })
-        .then(r => r.json())
+        API.post(`/api/game/${this.currentData.id}/edit`, formData)
         .then(data => {
             saveBtn.innerHTML = originalText;
             saveBtn.disabled = false;
@@ -1230,12 +1215,7 @@ const GameEditModal = {
 
         const status = document.getElementById('gemCompletionStatus').value;
 
-        fetch(`/api/game/${this.currentData.id}/completion`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: status })
-        })
-        .then(r => r.json())
+        API.post(`/api/game/${this.currentData.id}/completion`, { status: status })
         .then(data => {
             if (data.success) {
                 // Update cached game data
@@ -1323,8 +1303,7 @@ const GameEditModal = {
 
     loadGenreDropdown() {
         const signal = this._dropdownAbortController ? this._dropdownAbortController.signal : undefined;
-        fetch('/api/dropdown-options/genre', { signal })
-            .then(r => r.json())
+        API.get('/api/dropdown-options/genre', { signal })
             .then(data => {
                 if (data.success && data.options) {
                     this.genreOptions = data.options;
@@ -1405,8 +1384,7 @@ const GameEditModal = {
 
     loadModesDropdown() {
         const signal = this._dropdownAbortController ? this._dropdownAbortController.signal : undefined;
-        fetch('/api/dropdown-options/game_modes', { signal })
-            .then(r => r.json())
+        API.get('/api/dropdown-options/game_modes', { signal })
             .then(data => {
                 if (data.success && data.options) {
                     this.modesOptions = data.options;
@@ -1487,8 +1465,7 @@ const GameEditModal = {
 
     loadSaveTypeDropdown() {
         const signal = this._dropdownAbortController ? this._dropdownAbortController.signal : undefined;
-        fetch('/api/dropdown-options/save_type', { signal })
-            .then(r => r.json())
+        API.get('/api/dropdown-options/save_type', { signal })
             .then(data => {
                 if (data.success && data.options) {
                     this.saveTypeOptions = data.options;
@@ -1571,8 +1548,7 @@ const GameEditModal = {
         if (!systemId) return;
 
         const signal = this._dropdownAbortController ? this._dropdownAbortController.signal : undefined;
-        fetch(`/api/systems/${systemId}/controllers`, { signal })
-            .then(r => r.json())
+        API.get(`/api/systems/${systemId}/controllers`, { signal })
             .then(data => {
                 if (data.success) {
                     this.controllerOptions.defaults = data.default_controllers || [];
@@ -1814,8 +1790,7 @@ const GameEditModal = {
 
     loadGameStructureDropdown() {
         const signal = this._dropdownAbortController ? this._dropdownAbortController.signal : undefined;
-        fetch('/api/dropdown-options/game_structure', { signal })
-            .then(r => r.json())
+        API.get('/api/dropdown-options/game_structure', { signal })
             .then(data => {
                 if (data.success && data.options) {
                     this.gameStructureOptions = data.options;
@@ -1896,8 +1871,7 @@ const GameEditModal = {
 
     loadPerspectiveDropdown() {
         const signal = this._dropdownAbortController ? this._dropdownAbortController.signal : undefined;
-        fetch('/api/dropdown-options/perspective', { signal })
-            .then(r => r.json())
+        API.get('/api/dropdown-options/perspective', { signal })
             .then(data => {
                 if (data.success && data.options) {
                     this.perspectiveOptions = data.options;
@@ -1979,8 +1953,7 @@ const GameEditModal = {
 
     loadDimensionDropdown() {
         const signal = this._dropdownAbortController ? this._dropdownAbortController.signal : undefined;
-        fetch('/api/dropdown-options/dimension', { signal })
-            .then(r => r.json())
+        API.get('/api/dropdown-options/dimension', { signal })
             .then(data => {
                 if (data.success && data.options) {
                     this.dimensionOptions = data.options;
@@ -2300,8 +2273,7 @@ window.triggerAiFill = function() {
     btn.disabled = true;
     btn.innerHTML = '<span class="btn-icon">⏳</span> Filling...';
 
-    fetch(`/api/game/${gameId}/ai-fill`, { method: 'POST' })
-        .then(r => r.json())
+    API.post(`/api/game/${gameId}/ai-fill`)
         .then(data => {
             if (data.success) {
                 const count = data.filled_count || 0;

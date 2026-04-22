@@ -209,11 +209,8 @@ const ThemeManager = {
      * @param {string} theme - Theme name
      */
     save(theme) {
-        fetch('/api/settings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ theme: theme })
-        }).catch(err => console.error('Failed to save theme:', err));
+        API.post('/api/settings', { theme: theme })
+            .catch(err => console.error('Failed to save theme:', err));
     },
 
     // =========================================================================

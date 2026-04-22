@@ -140,10 +140,7 @@ const RARefreshController = {
         btn.disabled = true;
 
         try {
-            const response = await fetch(`/api/refresh-retroachievements/${systemId}`, {
-                method: 'POST'
-            });
-            const data = await response.json();
+            const data = await API.post(`/api/refresh-retroachievements/${systemId}`);
 
             if (data.success) {
                 // Check if operation was queued (blocked by another RA operation)

@@ -244,8 +244,7 @@ function performGlobalSearch(query) {
     
     showSearchLoading();
     
-    fetch(`/api/search?q=${encodeURIComponent(query)}`)
-        .then(response => response.json())
+    API.get(`/api/search?q=${encodeURIComponent(query)}`)
         .then(data => {
             displaySearchResults(data);
         })
@@ -707,15 +706,8 @@ async function scanLibrary() {
     btn.disabled = true;
     
     try {
-        const response = await fetch('/api/scan', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        
-        const data = await response.json();
-        
+        const data = await API.post('/api/scan');
+
         if (data.success) {
             showNotification('Library scan complete! Found ' + (data.new_games || 0) + ' new games.', 'success');
             setTimeout(() => location.reload(), 1500);
@@ -738,8 +730,8 @@ async function restartServer() {
             showNotification('Restarting server...', 'info');
             
             try {
-                await fetch('/api/restart', { method: 'POST' });
-                
+                await API.post('/api/restart');
+
                 // Wait and try to reconnect
                 setTimeout(() => {
                     checkServerStatus();
@@ -760,12 +752,10 @@ async function checkServerStatus() {
     
     const checkStatus = async () => {
         try {
-            const response = await fetch('/api/status');
-            if (response.ok) {
-                showNotification('Server restarted successfully!', 'success');
-                setTimeout(() => location.reload(), 1000);
-                return true;
-            }
+            await API.get('/api/status');
+            showNotification('Server restarted successfully!', 'success');
+            setTimeout(() => location.reload(), 1000);
+            return true;
         } catch (error) {
             // Server not ready yet
         }
@@ -795,12 +785,8 @@ async function cleanMissingRoms() {
             }
             
             try {
-                const response = await fetch('/api/clean-missing-roms', {
-                    method: 'POST'
-                });
-                
-                const data = await response.json();
-                
+                const data = await API.post('/api/clean-missing-roms');
+
                 if (data.success) {
                     showNotification(`Removed ${formatNumber(data.removed)} games with missing ROMs`, 'success');
 
@@ -856,11 +842,7 @@ async function clearClzImports() {
             }
 
             try {
-                const response = await fetch('/api/clear-clz-imports', {
-                    method: 'POST'
-                });
-
-                const data = await response.json();
+                const data = await API.post('/api/clear-clz-imports');
 
                 if (data.success) {
                     showNotification(`Removed ${formatNumber(data.removed)} CLZ Import games`, 'success');
@@ -917,12 +899,8 @@ async function refreshRetroAchievements() {
             
             try {
                 // Start the background job
-                const response = await fetch('/api/refresh-retroachievements', {
-                    method: 'POST'
-                });
-                
-                const data = await response.json();
-                
+                const data = await API.post('/api/refresh-retroachievements');
+
                 if (data.success) {
                     // Check if operation was queued (blocked by another RA operation)
                     if (data.queued) {
@@ -1039,12 +1017,8 @@ async function clearRAData() {
                     ? '/api/clear-ra-data' 
                     : `/api/clear-ra-data/${systemId}`;
                     
-                const response = await fetch(endpoint, {
-                    method: 'POST'
-                });
-                
-                const data = await response.json();
-                
+                const data = await API.post(endpoint);
+
                 if (data.success) {
                     const msg = systemId === 'all'
                         ? `Cleared RA data for ${formatNumber(data.cleared)} games`
@@ -1090,16 +1064,8 @@ async function searchGame(gameId, title) {
     searchBtn.disabled = true;
     
     try {
-        const response = await fetch('/api/games/search', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ game_id: gameId, title: title })
-        });
-        
-        const data = await response.json();
-        
+        const data = await API.post('/api/games/search', { game_id: gameId, title: title });
+
         if (data.results && data.results.length > 0) {
             displayScraperResults(data.results, gameId);
         } else {
@@ -1560,7 +1526,7 @@ document.addEventListener('DOMContentLoaded', () => KeyboardShortcuts.init());
 
 function trackGameView(gameId) {
     if (!gameId) return;
-    fetch(`/api/game/${gameId}/track-view`, { method: 'POST' })
+    API.post(`/api/game/${gameId}/track-view`)
         .catch(e => console.warn('View tracking failed:', e));
 }
 
@@ -1577,16 +1543,11 @@ document.addEventListener('DOMContentLoaded', () => {
 // =============================================================================
 
 function updateCompletionStatus(gameId, status) {
-    fetch(`/api/game/${gameId}/completion`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: status })
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.success) {
-            showNotification('Completion status updated', 'success');
-        } else {
+    API.post(`/api/game/${gameId}/completion`, { status: status })
+        .then(data => {
+            if (data.success) {
+                showNotification('Completion status updated', 'success');
+            } else {
             showNotification('Failed to update status: ' + data.error, 'error');
         }
     })

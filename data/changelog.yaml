@@ -1,3 +1,21 @@
+- version: 2.83.22
+  date: 2026-04-22
+  tags:
+  - type: chore
+    label: Chore
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 8 &mdash; <code>window.API</code> migration across the JS layer</strong> &mdash; Migrated 83 of 84 raw <code>fetch()</code> call sites across <code>static/js/**/*.js</code> to the existing <code>window.API</code> helper (<code>API.get</code>, <code>API.post</code>). The one remaining raw <code>fetch()</code> is the <code>DELETE /api/logs/delete/&lt;filename&gt;</code> in <code>log-viewer.js</code>, which stays raw because <code>window.API</code> has no <code>.delete()</code> helper yet. The original roadmap item explicitly said to use the existing <code>API</code> rather than inventing a new <code>APIClient</code> class.
+            <ul>
+                <li><strong>Files migrated:</strong> <code>theme.js</code>, <code>trophies.js</code>, <code>achievements.js</code>, <code>bulk-edit.js</code>, <code>bulk-scrape.js</code>, <code>game-list.js</code>, <code>rom-tools.js</code>, <code>log-viewer.js</code>, <code>all-games-controller.js</code>, <code>settings-page.js</code>, <code>main.js</code>, <code>game-modals.js</code>, <code>toast-controller.js</code>.</li>
+                <li><strong>Pattern applied:</strong> collapsed <code>fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(r =&gt; r.json()).then(...)</code> to <code>API.post(url, data).then(...)</code>; collapsed <code>const resp = await fetch(url); const data = await resp.json();</code> to <code>const data = await API.get(url);</code>. AbortController signals pass straight through via the options parameter &mdash; <code>API.get(url, { signal })</code> works unchanged in the dropdown-options loaders (<code>bulk-edit.js</code>, <code>game-modals.js</code>) and the toast poller.</li>
+                <li><strong>Latent bug fixed as a side effect</strong> &mdash; the server-restart ping in <code>main.js::checkServerStatus</code> previously used <code>response.ok</code> as a truthy guard without checking the body; migrated to <code>API.get('/api/status')</code> which throws on non-200 and hits the existing catch branch, so the 'not ready yet' silent-retry path stays identical.</li>
+                <li><strong>Noise reduction</strong> &mdash; ~200 LOC removed across the 13 files (boilerplate <code>headers</code> + <code>body: JSON.stringify</code> + <code>.then(r =&gt; r.json())</code> triplets). Error handling is now consistent: every call throws on non-OK and surfaces through the caller's existing <code>.catch()</code> / <code>try/catch</code>.</li>
+                <li><strong>Bundle rebuilt</strong> (<code>python3 build_js.py</code>) &mdash; 312,602 &rarr; 271,155 bytes after minification (~13.3% reduction). All 124 tests pass; smoke-import of <code>app</code> clean.</li>
+            </ul>
+        </li>
+    </ul>
+
 - version: 2.83.21
   date: 2026-04-22
   tags:

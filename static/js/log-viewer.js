@@ -112,8 +112,7 @@ const LogViewer = {
 
     async loadFileList() {
         try {
-            const resp = await fetch('/api/logs/files');
-            const data = await resp.json();
+            const data = await API.get('/api/logs/files');
             if (!data.success) return;
 
             this.allFiles = data.files;
@@ -172,8 +171,7 @@ const LogViewer = {
         document.getElementById('fileActions').style.display = 'flex';
 
         try {
-            const resp = await fetch(`/api/logs/content/${encodeURIComponent(filename)}`);
-            const data = await resp.json();
+            const data = await API.get(`/api/logs/content/${encodeURIComponent(filename)}`);
             if (!data.success) {
                 container.innerHTML = `<div class="log-empty"><div class="log-empty-icon">${escapeHtml(data.error || 'Error loading file')}</div></div>`;
                 return;

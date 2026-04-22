@@ -68,10 +68,9 @@ const BulkEditController = (function() {
         select.innerHTML = '<option value="">-- Don\'t change --</option>';
 
         try {
-            const resp = await fetch('/api/dropdown-options/game_structure', {
+            const data = await API.get('/api/dropdown-options/game_structure', {
                 signal: _abortController ? _abortController.signal : undefined
             });
-            const data = await resp.json();
 
             if (data.success && data.options) {
                 data.options.forEach(opt => {
@@ -97,10 +96,9 @@ const BulkEditController = (function() {
         select.innerHTML = '<option value="">-- Don\'t change --</option>';
 
         try {
-            const resp = await fetch('/api/dropdown-options/perspective', {
+            const data = await API.get('/api/dropdown-options/perspective', {
                 signal: _abortController ? _abortController.signal : undefined
             });
-            const data = await resp.json();
 
             if (data.success && data.options) {
                 data.options.forEach(opt => {
@@ -126,10 +124,9 @@ const BulkEditController = (function() {
         select.innerHTML = '<option value="">-- Don\'t change --</option>';
 
         try {
-            const resp = await fetch('/api/dropdown-options/dimension', {
+            const data = await API.get('/api/dropdown-options/dimension', {
                 signal: _abortController ? _abortController.signal : undefined
             });
-            const data = await resp.json();
 
             if (data.success && data.options) {
                 data.options.forEach(opt => {
@@ -155,10 +152,9 @@ const BulkEditController = (function() {
         select.innerHTML = '<option value="">-- Don\'t change --</option>';
 
         try {
-            const resp = await fetch('/api/dropdown-options/genre', {
+            const data = await API.get('/api/dropdown-options/genre', {
                 signal: _abortController ? _abortController.signal : undefined
             });
-            const data = await resp.json();
 
             if (data.success && data.options) {
                 data.options.forEach(opt => {
@@ -258,17 +254,11 @@ const BulkEditController = (function() {
                 }
             }
 
-            const resp = await fetch('/api/games/bulk-edit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    game_ids: gameIds,
-                    fields: fields,
-                    field_modes: fieldModes
-                })
+            const data = await API.post('/api/games/bulk-edit', {
+                game_ids: gameIds,
+                fields: fields,
+                field_modes: fieldModes
             });
-
-            const data = await resp.json();
 
             if (data.success) {
                 close();
