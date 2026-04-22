@@ -14,7 +14,7 @@ import config
 from services.database import query, execute
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import (
-    hash_password, verify_password, get_user_settings,
+    hash_password, verify_password, needs_rehash, get_user_settings,
     admin_required, login_required
 )
 from services.security import rate_limit_login, record_login_attempt, safe_filename
@@ -69,6 +69,12 @@ def api_login():
         if not verify_password(password, user['password_hash']):
             record_login_attempt(client_ip, False)
             return error('Invalid password', code=200)
+
+        # Migrate legacy (pre-v2.84.0) password hash to current OWASP floor.
+        # We have the plaintext here, so this is the natural rehash point.
+        if needs_rehash(user['password_hash']):
+            execute("UPDATE users SET password_hash = ? WHERE id = ?",
+                    (hash_password(password), user['id']))
 
     # Login successful
     record_login_attempt(client_ip, True)
@@ -354,10 +360,16 @@ def api_upload_avatar():
     filename = f"user_{g.user['id']}_avatar.{ext}"
     avatar_path = os.path.join(config.IMAGE_PATH, 'avatars', filename)
 
-    # Try to resize with Pillow if available
+    # Try to resize with Pillow if available. Call verify() first so a
+    # renamed .exe uploaded as "evil.jpg" gets rejected before we write
+    # anything to disk.
     try:
         from PIL import Image
         import io
+        # verify() consumes the stream, so open a fresh BytesIO for the
+        # actual processing step afterwards.
+        with Image.open(io.BytesIO(file_data)) as _probe:
+            _probe.verify()
         img = Image.open(io.BytesIO(file_data))
         img = img.convert('RGB') if ext in ('jpg', 'jpeg') else img.convert('RGBA')
         img.thumbnail((200, 200), Image.LANCZOS)
@@ -366,6 +378,9 @@ def api_upload_avatar():
         # Pillow not installed — save raw file
         with open(avatar_path, 'wb') as f:
             f.write(file_data)
+    except Exception as e:
+        # PIL.verify() failed or decode error — treat as invalid upload.
+        return error('Invalid image file', code=200)
 
     # Update user settings
     execute("UPDATE user_settings SET avatar = ? WHERE user_id = ?", (filename, g.user['id']))

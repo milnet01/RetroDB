@@ -121,7 +121,7 @@
 | `services/template_filters.py` | Jinja filters (`timestamp_to_date`, `trophy_type_name`, `format_number`, `format_size`, `format_ratio`, `tz`). Entry point: `register_filters(app)`. |
 | `services/game_query.py` | Shared game-list query helpers: `escape_like`, `_get_filter_options` (with 60 s TTL cache), `_build_games_query`, `get_retroachievements_info`, `get_trophy_info_for_game`, `get_bonus_discs_for_game`. Extracted from `routes/games.py`. |
 | `services/log_redactor.py` | `SecretRedactor` logging filter — masks JWTs, OAuth tokens, API keys before they hit `logs/*.log` |
-| `services/auth.py` | Password hashing, role decorators (`@login_required`, `@admin_required`) |
+| `services/auth.py` | Password hashing (PBKDF2-SHA256, 600k iters floor per OWASP 2026; `hash_password`, `verify_password`, `needs_rehash` + legacy-format compat), role decorators (`@login_required`, `@admin_required`) |
 | `services/security.py` | Path validation (`safe_path`, `safe_filename`), login rate limiting |
 | `services/game_utils.py` | Title parsing, sort titles, rating mappings, system constants (`COMPUTER_SYSTEMS`, `HANDHELD_SYSTEMS`, `ENGINE_SYSTEMS`, `get_system_type()`, `build_filename()`) |
 | `services/jobs/` | Background job package (split from monolithic `jobs.py`) |

@@ -122,6 +122,42 @@ change forces a different sequence.
   every existing caller (`routes/bulk_scrape.py`, `routes/games.py`,
   `scraper/hybrid_scraper.py`, `services/wishlist_scraper.py`,
   `services/jobs/*`) is unchanged. All 124 tests pass. (v2.83.12)
+- [x] **Pass 11 — Security hardening** — Seven-item security sweep
+  landed as one patch (v2.84.0).
+    - **11.1** PBKDF2-SHA256 iteration count bumped 100,000 → 600,000
+      (OWASP 2026 floor). Hash format migrated from `<salt>:<hash>` to
+      `pbkdf2:<iters>:<salt>:<hash>` so future iteration bumps don't
+      need another format change. Legacy hashes stay verifiable; they
+      transparently upgrade on next successful login via new
+      `needs_rehash()` helper + rehash branch in
+      `routes/auth.py::api_login`. 8 tests added in
+      `tests/test_auth_hashing.py`.
+    - **11.2** `SESSION_COOKIE_SECURE` env-gated via
+      `RETRODB_SECURE_COOKIES` (default off). Localhost HTTP deploys
+      keep working; operators fronting with TLS flip the env var.
+    - **11.3** Image upload magic-byte validation via
+      `PIL.Image.verify()` in `services/game_media_service.py::
+      save_upload` + `save_screenshots` + `routes/auth.py::
+      api_upload_avatar`. Per-file 10 MB ceiling
+      (`MAX_IMAGE_SIZE`) inside the global 16 MB cap.
+    - **11.4** Rate limits extended to heavy admin endpoints
+      (`api_restart` 2/min; `api_scan`, `api_database_optimize`,
+      `api_image_resize_start`, `api_backup` 3/min). Latent bug
+      fix: pre-existing AI Fill + bulk-scrape limiters pointed at
+      stale endpoint names (`games.api_game_ai_fill` →
+      `games_ai.api_game_ai_fill`; `api_bulk_scrape_start` →
+      `api_bulk_scrape_job_start`) so those two limits never fired;
+      names corrected.
+    - **11.5** Anchor comment added to the `except Exception: pass`
+      in `inject_config` per global rule #1.
+    - **11.6** Custom CSRF implementation rationale documented in
+      `docs/RETRODB_DESIGN_STANDARDS.md` §22 (why not Flask-WTF).
+    - **11.7** `SecretRedactor` installed universally at root-logger
+      level via new `log_manager.install_global_redactor()`, called
+      in `app.py` immediately after `basicConfig`. Idempotent — two
+      tests added in `test_log_redactor.py`.
+    Net: 134 tests pass (was 124); 10 new tests; smoke-import clean.
+    (v2.84.0)
 - [x] **Pass 10 — template macros: modal extraction from
   `game_detail.html`** — Extracted all six modal dialogs from
   `templates/game_detail.html` (5904 → 5376 LOC, −528, −8.9%) into a
@@ -452,7 +488,8 @@ sheet, Flask/Werkzeug/Waitress CVE scan).
   2. Thorough — migrate to `argon2-cffi`.  Same migration-on-login
      pattern.  Adds a dependency; slightly more involved.
 - **Source**: <https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html>
-- **Status**: todo
+- **Status**: done (v2.84.0) — option 1 (bump + migrate-on-login) shipped;
+  Argon2id migration deferred pending real-world demand.
 
 ### 11.2 `SESSION_COOKIE_SECURE` env-gated (LOW / defense-in-depth, S)
 
@@ -471,7 +508,7 @@ sheet, Flask/Werkzeug/Waitress CVE scan).
   ```
   Default off; operators fronting with HTTPS flip the env var.
 - **Source**: <https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html>
-- **Status**: todo
+- **Status**: done (v2.84.0)
 
 ### 11.3 File upload content-type / magic-byte validation (MEDIUM, M)
 
@@ -490,7 +527,9 @@ sheet, Flask/Werkzeug/Waitress CVE scan).
      requirements for decompression-bomb defence).
   2. Add per-file size limit (e.g. 5 MB avatars, 10 MB boxart) inside
      `_save_upload()`.
-- **Status**: todo
+- **Status**: done (v2.84.0) — `PIL.Image.verify()` wired in
+  `services/game_media_service.py` + `routes/auth.py::api_upload_avatar`;
+  10 MB per-image cap applied (`MAX_IMAGE_SIZE`).
 
 ### 11.4 Rate-limit heavy admin routes (LOW, S)
 
@@ -505,7 +544,11 @@ sheet, Flask/Werkzeug/Waitress CVE scan).
   pattern for login/bulk-scrape.
 - **Plan**: add `limiter.limit("2 per minute")` to restart, `"3 per minute"`
   to scan/bulk/backup in the same register block.
-- **Status**: todo
+- **Status**: done (v2.84.0) — limits applied; also fixed two pre-existing
+  stale endpoint-name lookups (`games.api_game_ai_fill` →
+  `games_ai.api_game_ai_fill`, `bulk_scrape.api_bulk_scrape_start` →
+  `bulk_scrape.api_bulk_scrape_job_start`) so those two limiters actually
+  fire now instead of silently wrapping a no-op lambda.
 
 ### 11.5 Anchor comment for exception swallow in `inject_config` (LOW, S)
 
@@ -520,7 +563,7 @@ sheet, Flask/Werkzeug/Waitress CVE scan).
   except Exception:
       pass  # non-fatal — missing/invalid scraper_settings.json just hides the AI Fill button
   ```
-- **Status**: todo (from ants-audit triage 2026-04-21)
+- **Status**: done (v2.84.0)
 
 ### 11.6 Document CSRF rationale in §22 (LOW, S)
 
@@ -534,7 +577,7 @@ sheet, Flask/Werkzeug/Waitress CVE scan).
 - **Plan**: two-sentence note in §22 explaining the choice (minimal
   dependency footprint; single-user localhost means CSRF is low-impact
   anyway, so the custom impl is simpler than wiring CSRFProtect).
-- **Status**: todo
+- **Status**: done (v2.84.0)
 
 ### 11.7 Consolidate logger initialisation so `SecretRedactor` is universal (MEDIUM, M)
 
@@ -547,7 +590,9 @@ sheet, Flask/Werkzeug/Waitress CVE scan).
   startup, so every handler inherits it.  Requires verifying it doesn't
   over-redact structured log output (e.g. JSON tokens that are literals
   in stack traces).
-- **Status**: todo
+- **Status**: done (v2.84.0) — `log_manager.install_global_redactor()`
+  attaches the filter to the root logger + every basicConfig-era
+  handler; idempotent; two tests added in `test_log_redactor.py`.
 
 ---
 

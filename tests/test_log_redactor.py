@@ -88,3 +88,36 @@ class TestSecretRedactorFilter:
             exc_info=None,
         )
         assert f.filter(record) is True
+
+
+class TestInstallGlobalRedactor:
+    def test_root_filter_is_idempotent(self):
+        import log_manager
+
+        root = logging.getLogger()
+        # Start clean so a prior test run doesn't taint the count.
+        root.filters = [f for f in root.filters if not isinstance(f, SecretRedactor)]
+
+        log_manager.install_global_redactor()
+        log_manager.install_global_redactor()  # second call must not duplicate
+
+        redactors = [f for f in root.filters if isinstance(f, SecretRedactor)]
+        assert len(redactors) == 1
+
+    def test_install_covers_basicconfig_handler(self, caplog):
+        import io
+        import log_manager
+
+        # Set up a fresh root StreamHandler (what basicConfig would install)
+        # and confirm install_global_redactor() attaches SecretRedactor to it.
+        buf = io.StringIO()
+        root = logging.getLogger()
+        handler = logging.StreamHandler(buf)
+        handler.setFormatter(logging.Formatter("%(message)s"))
+        root.addHandler(handler)
+        try:
+            log_manager.install_global_redactor()
+            attached = any(isinstance(f, SecretRedactor) for f in handler.filters)
+            assert attached is True
+        finally:
+            root.removeHandler(handler)

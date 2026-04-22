@@ -195,6 +195,35 @@ def setup_all_logging():
         setup_category_logging(category)
 
 
+def install_global_redactor():
+    """Install SecretRedactor universally on the root logger and every
+    handler it currently holds.
+
+    Catches the StreamHandler registered by ``logging.basicConfig()`` plus
+    any third-party handlers attached before this call. Records originating
+    in child loggers (scrapers / services / routes) that propagate to root
+    pass through the root-logger filter, so their message/args get redacted
+    before any root handler emits them. The per-category
+    ``CategoryFileHandler`` already installs its own SecretRedactor
+    instance — this adds a second, universal layer that covers anything
+    routing through the stdout console or a basicConfig StreamHandler.
+
+    Idempotent — calling twice won't attach two copies.
+    """
+    from services.log_redactor import SecretRedactor
+
+    root = logging.getLogger()
+
+    def _already_redacting(filters):
+        return any(isinstance(f, SecretRedactor) for f in filters)
+
+    if not _already_redacting(root.filters):
+        root.addFilter(SecretRedactor())
+    for handler in root.handlers:
+        if not _already_redacting(handler.filters):
+            handler.addFilter(SecretRedactor())
+
+
 def get_log_files():
     """Get list of all log files with metadata"""
     ensure_logs_dir()

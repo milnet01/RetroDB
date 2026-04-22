@@ -117,6 +117,13 @@ app.secret_key = _get_secret_key()
 # Session cookie hardening
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+# Operators fronting RetroDB with a TLS reverse proxy should set
+# RETRODB_SECURE_COOKIES=true so the browser drops the session cookie on
+# any plain-HTTP request. Default off: on a localhost HTTP deploy the flag
+# would silently break login (browser refuses to send the cookie).
+app.config['SESSION_COOKIE_SECURE'] = (
+    os.environ.get('RETRODB_SECURE_COOKIES', '').lower() in ('true', '1', 'yes')
+)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 
@@ -207,10 +214,18 @@ app.register_blueprint(game_imports_bp)
 
 if limiter:
     # Expensive AI/scraping endpoints
-    limiter.limit("10 per minute")(app.view_functions.get('games.api_game_ai_fill', lambda: None))
-    limiter.limit("5 per minute")(app.view_functions.get('bulk_scrape.api_bulk_scrape_start', lambda: None))
+    limiter.limit("10 per minute")(app.view_functions.get('games_ai.api_game_ai_fill', lambda: None))
+    limiter.limit("5 per minute")(app.view_functions.get('bulk_scrape.api_bulk_scrape_job_start', lambda: None))
     # Login brute force protection (supplements existing IP-based rate limiting)
     limiter.limit("10 per minute")(app.view_functions.get('auth.api_login', lambda: None))
+    # Heavy admin endpoints — on a localhost deploy the realistic risk is
+    # the operator double-clicking, not a malicious DoS, but matching the
+    # existing login/bulk-scrape pattern costs nothing.
+    limiter.limit("2 per minute")(app.view_functions.get('maintenance.api_restart', lambda: None))
+    limiter.limit("3 per minute")(app.view_functions.get('maintenance.api_scan', lambda: None))
+    limiter.limit("3 per minute")(app.view_functions.get('maintenance.api_database_optimize', lambda: None))
+    limiter.limit("3 per minute")(app.view_functions.get('maintenance.api_image_resize_start', lambda: None))
+    limiter.limit("3 per minute")(app.view_functions.get('settings.api_backup', lambda: None))
 
 # =============================================================================
 # REQUEST-SCOPED DB CONNECTION CLEANUP
@@ -369,6 +384,11 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
+# Install SecretRedactor on the root logger + its basicConfig StreamHandler
+# before any module-level logger fires. CategoryFileHandler already attaches
+# its own redactor; this adds the console-stream safety net that the
+# CategoryFileHandler path cannot cover.
+log_manager.install_global_redactor()
 logger = logging.getLogger(__name__)
 
 # Waitress logs a WARNING every time a request queues — with a 16-thread pool
@@ -470,7 +490,7 @@ def inject_config():
                 _key_map = {'gemini': 'ai_gemini_api_key', 'openai': 'ai_openai_api_key', 'claude': 'ai_claude_api_key'}
                 ai_scraper_enabled = bool(_prov and _ak.get(_key_map.get(_prov, ''), '') and _ss.get('enabled', {}).get('ai', False))
     except Exception:
-        pass
+        pass  # non-fatal — missing/invalid scraper_settings.json just hides the AI Fill button in the UI
 
     return {
         'config': config,

@@ -36,38 +36,79 @@ ROLE_PERMISSIONS = {
 # PASSWORD HASHING
 # =============================================================================
 
-def hash_password(password):
+# OWASP 2026 Password Storage Cheat Sheet floor for PBKDF2-SHA256.
+# Bumped from the pre-v2.84.0 value of 100,000 — still far below the Argon2id
+# target but a no-dependency-change upgrade. Legacy 100k hashes are rehashed
+# on next successful login (see needs_rehash() + api_login).
+PBKDF2_ITERATIONS = 600_000
+
+
+def hash_password(password, iterations=PBKDF2_ITERATIONS):
     """
-    Hash a password with salt using PBKDF2.
-    
+    Hash a password with salt using PBKDF2-SHA256.
+
     Args:
         password: Plain text password
-    
+        iterations: PBKDF2 iteration count (defaults to current OWASP floor)
+
     Returns:
-        str: Salted hash in format "salt:hash"
+        str: Salted hash in format "pbkdf2:<iters>:<salt>:<hash>"
     """
     salt = secrets.token_hex(16)
-    hash_obj = hashlib.pbkdf2_hmac('sha256', password.encode(), salt.encode(), 100000)
-    return f"{salt}:{hash_obj.hex()}"
+    hash_obj = hashlib.pbkdf2_hmac('sha256', password.encode(), salt.encode(), iterations)
+    return f"pbkdf2:{iterations}:{salt}:{hash_obj.hex()}"
 
 
 def verify_password(password, password_hash):
     """
     Verify a password against its stored hash.
-    
+
+    Accepts both the current format ("pbkdf2:<iters>:<salt>:<hash>") and the
+    legacy pre-v2.84.0 format ("<salt>:<hash>", fixed at 100,000 iterations).
+    Legacy hashes stay verifiable so existing users aren't locked out; they
+    get upgraded to the current format the next time they log in (see
+    needs_rehash() + the migrate-on-login branch in routes/auth.py::api_login).
+
     Args:
         password: Plain text password to verify
-        password_hash: Stored hash in format "salt:hash"
-    
+        password_hash: Stored hash string
+
     Returns:
         bool: True if password matches, False otherwise
     """
     try:
-        salt, stored_hash = password_hash.split(':')
-        hash_obj = hashlib.pbkdf2_hmac('sha256', password.encode(), salt.encode(), 100000)
+        parts = password_hash.split(':')
+        if len(parts) == 4 and parts[0] == 'pbkdf2':
+            iterations = int(parts[1])
+            salt = parts[2]
+            stored_hash = parts[3]
+        elif len(parts) == 2:
+            iterations = 100_000
+            salt, stored_hash = parts
+        else:
+            return False
+        hash_obj = hashlib.pbkdf2_hmac('sha256', password.encode(), salt.encode(), iterations)
         return hmac.compare_digest(hash_obj.hex(), stored_hash)
     except Exception:
         return False
+
+
+def needs_rehash(password_hash):
+    """
+    Return True if the stored hash uses legacy parameters (pre-v2.84.0
+    "<salt>:<hash>" format or a pbkdf2 iteration count below the current
+    PBKDF2_ITERATIONS floor), or if the hash is malformed. Callers should
+    re-hash on next successful login and UPDATE the stored value. Malformed
+    hashes get flagged so callers migrate the credential rather than trust
+    it forever.
+    """
+    try:
+        parts = password_hash.split(':')
+        if len(parts) != 4 or parts[0] != 'pbkdf2':
+            return True
+        return int(parts[1]) < PBKDF2_ITERATIONS
+    except Exception:
+        return True
 
 
 # =============================================================================

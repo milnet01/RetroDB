@@ -1065,7 +1065,12 @@ Is this style used on 2+ pages?
 ### Session & Cookie Security
 - Session cookies are configured with `HttpOnly=True` and `SameSite=Lax` in `app.py`.
 - `SameSite=Lax` prevents cross-origin POST requests from sending session cookies, serving as the primary CSRF defense.
+- `Secure=True` is env-gated via `RETRODB_SECURE_COOKIES` (default off). Operators fronting RetroDB with a TLS reverse proxy should set this to `true`; leaving it off on a localhost HTTP deploy avoids silently breaking login (the browser would refuse to send the cookie over plain HTTP).
 - Do not override these settings in route code.
+
+### CSRF Protection
+- RetroDB ships a **custom CSRF implementation** (see `app.py::validate_csrf` / `before_request`) rather than `Flask-WTF` / `CSRFProtect`. The impl is HMAC + per-session token stored in `session['_csrf_token']`, validated against `X-CSRF-Token` header or `_csrf_token` form field on every state-changing request, with an explicit exempt set for login / setup / static.
+- **Design intent** (why not Flask-WTF): the custom implementation is ~30 lines with zero extra dependencies, and the deployment target is a single-user localhost app where CSRF is low-impact even without the token (the `SameSite=Lax` cookie is already the primary defence). Flask-WTF would add `wtforms` + `itsdangerous` pins for no additional protection and would require migrating every existing `_csrf_token` form field. A future contributor considering a switch to `CSRFProtect` should first confirm the migration cost is worth the ergonomics, not just assume the stdlib-built version is ad-hoc.
 
 ### Security Headers
 - The following headers are set on every response via `@app.after_request` in `app.py`:

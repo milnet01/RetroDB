@@ -7,6 +7,7 @@
 # manipulation.
 # =============================================================================
 
+import io
 import logging
 import os
 
@@ -16,6 +17,37 @@ logger = logging.getLogger(__name__)
 
 ALLOWED_IMAGE_EXT = frozenset({'jpg', 'jpeg', 'png', 'gif', 'webp'})
 ALLOWED_VIDEO_EXT = frozenset({'mp4', 'webm', 'ogg'})
+
+# Per-type upload size ceilings (bytes). Sit under the global
+# MAX_CONTENT_LENGTH (16 MB) to reject oversize single files before they
+# clobber disk. Videos stay at the global cap.
+MAX_IMAGE_SIZE = 10 * 1024 * 1024  # 10 MB
+
+# Matches video extensions but is checked by extension on the caller; we
+# don't probe video containers here.
+_VIDEO_EXT = ALLOWED_VIDEO_EXT
+
+
+def _validate_image_bytes(raw: bytes) -> bool:
+    """Decode the uploaded bytes with Pillow and run verify() to catch
+    content-type spoofs (e.g. .exe renamed to .jpg). Returns True if the
+    bytes parse as a real image, False otherwise. Pillow is a hard runtime
+    dependency already (used for screenshot dedup + standardization).
+    """
+    try:
+        from PIL import Image
+    except ImportError:
+        # Pillow missing → skip the magic-byte check rather than blocking
+        # uploads entirely. In practice Pillow is always installed.
+        logger.warning("Pillow not installed — skipping image magic-byte validation")
+        return True
+    try:
+        with Image.open(io.BytesIO(raw)) as im:
+            im.verify()
+        return True
+    except Exception as e:
+        logger.warning(f"Image upload rejected by PIL.verify(): {e}")
+        return False
 
 
 def image_dir(subdir):
@@ -56,6 +88,10 @@ def remove_media_file(filename, media_type):
 def save_upload(file_storage, dest_dir, game_id, prefix, allowed_ext):
     """Persist an uploaded werkzeug FileStorage if present and valid.
 
+    Validates extension, per-type size ceiling (MAX_IMAGE_SIZE for image
+    uploads), and — for images — the magic bytes via Pillow so a renamed
+    .exe in a .jpg file gets rejected before it hits disk.
+
     Args:
         file_storage: werkzeug FileStorage (from request.files.get(...)).
         dest_dir: absolute destination directory.
@@ -73,9 +109,23 @@ def save_upload(file_storage, dest_dir, game_id, prefix, allowed_ext):
     if ext not in allowed_ext:
         logger.warning(f"Upload rejected: {original} — extension '{ext}' not allowed")
         return None
-    os.makedirs(dest_dir, exist_ok=True)
-    new_filename = f"{game_id}_{prefix}.{ext}"
-    file_storage.save(os.path.join(dest_dir, new_filename))
+
+    is_image = ext in ALLOWED_IMAGE_EXT
+    if is_image:
+        raw = file_storage.read()
+        if len(raw) > MAX_IMAGE_SIZE:
+            logger.warning(f"Upload rejected: {original} — {len(raw)} bytes exceeds {MAX_IMAGE_SIZE}")
+            return None
+        if not _validate_image_bytes(raw):
+            return None
+        os.makedirs(dest_dir, exist_ok=True)
+        new_filename = f"{game_id}_{prefix}.{ext}"
+        with open(os.path.join(dest_dir, new_filename), 'wb') as f:
+            f.write(raw)
+    else:
+        os.makedirs(dest_dir, exist_ok=True)
+        new_filename = f"{game_id}_{prefix}.{ext}"
+        file_storage.save(os.path.join(dest_dir, new_filename))
     logger.info(f"Saved upload: {new_filename} to {dest_dir}")
     return new_filename
 
@@ -99,8 +149,15 @@ def save_screenshots(file_storages, game_id, existing_csv):
         ext = original.rsplit('.', 1)[-1].lower() if '.' in original else ''
         if ext not in ALLOWED_IMAGE_EXT:
             continue
+        raw = f.read()
+        if len(raw) > MAX_IMAGE_SIZE:
+            logger.warning(f"Screenshot rejected: {original} — {len(raw)} bytes exceeds {MAX_IMAGE_SIZE}")
+            continue
+        if not _validate_image_bytes(raw):
+            continue
         ss_filename = f"{game_id}_ss{next_idx}.{ext}"
-        f.save(os.path.join(ss_dir, ss_filename))
+        with open(os.path.join(ss_dir, ss_filename), 'wb') as out:
+            out.write(raw)
         existing.append(ss_filename)
         next_idx += 1
         logger.info(f"Saved screenshot: {ss_filename}")
