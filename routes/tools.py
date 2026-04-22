@@ -21,7 +21,7 @@ import tempfile
 import config
 import settings_manager
 from services.database import query
-from services.api_helpers import handle_api_errors
+from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required, admin_required
 from services.security import safe_path
 
@@ -204,9 +204,9 @@ def api_rom_tools_settings():
     else:
         settings = request.get_json()
         if save_rom_tools_config(settings):
-            return jsonify({'success': True})
+            return success()
         else:
-            return jsonify({'success': False, 'error': 'Failed to save settings'}), 500
+            return error('Failed to save settings', 500)
 
 
 @tools_bp.route('/api/rom-tools/status')
@@ -238,7 +238,7 @@ def api_rom_tools_browse_folders():
         current_real = os.path.realpath(base_path)
 
     if not os.path.exists(current_path):
-        return jsonify({'success': False, 'error': f'Path does not exist: {current_path}'}), 400
+        return error(f'Path does not exist: {current_path}', 400)
 
     parent_path = None
     if current_real != base_real:
@@ -265,16 +265,15 @@ def api_rom_tools_browse_folders():
                     'subfolder_count': subfolder_count
                 })
     except PermissionError:
-        return jsonify({'success': False, 'error': 'Permission denied'}), 403
+        return error('Permission denied', 403)
 
-    return jsonify({
-        'success': True,
-        'base_path': base_path,
-        'current_path': current_path,
-        'parent_path': parent_path,
-        'folders': folders,
-        'is_root': current_real == base_real
-    })
+    return success(
+        base_path=base_path,
+        current_path=current_path,
+        parent_path=parent_path,
+        folders=folders,
+        is_root=current_real == base_real,
+    )
 
 
 # =============================================================================
@@ -288,12 +287,12 @@ def api_rom_tools_task_status(task_id):
     task = _rom_tool_tasks.get(task_id)
     if task:
         return jsonify(task)
-    
+
     from scraper.rom_tools import get_task
     task_obj = get_task(task_id)
     if task_obj:
         return jsonify(task_obj.to_dict())
-    
+
     return jsonify({'error': 'Task not found'}), 404
 
 
@@ -304,13 +303,13 @@ def api_rom_tools_task_cancel(task_id):
     task = _rom_tool_tasks.get(task_id)
     if task and task.get('status') == 'running':
         task['status'] = 'cancelled'
-        return jsonify({'success': True})
-    
+        return success()
+
     from scraper.rom_tools import cancel_task
     if cancel_task(task_id):
-        return jsonify({'success': True})
-    
-    return jsonify({'success': False, 'error': 'Task not found or not running'}), 404
+        return success()
+
+    return error('Task not found or not running', 404)
 
 
 @tools_bp.route('/api/rom-tools/task/<task_id>/pause', methods=['POST'])
@@ -322,15 +321,15 @@ def api_rom_tools_task_pause(task_id):
     task = _rom_tool_tasks.get(task_id)
     if task and task.get('status') == 'running':
         task['status'] = 'paused'
-        return jsonify({'success': True})
-    
+        return success()
+
     task_obj = get_task(task_id)
     if task_obj and task_obj.status == 'running':
         task_obj.status = 'paused'
         update_task(task_obj)
-        return jsonify({'success': True})
-    
-    return jsonify({'success': False, 'error': 'Task not found or not running'}), 404
+        return success()
+
+    return error('Task not found or not running', 404)
 
 
 @tools_bp.route('/api/rom-tools/task/<task_id>/resume', methods=['POST'])
@@ -342,15 +341,15 @@ def api_rom_tools_task_resume(task_id):
     task = _rom_tool_tasks.get(task_id)
     if task and task.get('status') == 'paused':
         task['status'] = 'running'
-        return jsonify({'success': True})
-    
+        return success()
+
     task_obj = get_task(task_id)
     if task_obj and task_obj.status == 'paused':
         task_obj.status = 'running'
         update_task(task_obj)
-        return jsonify({'success': True})
-    
-    return jsonify({'success': False, 'error': 'Task not found or not paused'}), 404
+        return success()
+
+    return error('Task not found or not paused', 404)
 
 
 # =============================================================================
@@ -367,7 +366,7 @@ def api_archive_scanner_scan():
     data = request.get_json() or {}
     path = data.get('path', _get_rom_path())
     if safe_path(path, _get_rom_path()) is None:
-        return jsonify({'success': False, 'error': 'Invalid scan path'}), 400
+        return error('Invalid scan path', 400)
     excluded_paths = data.get('excluded_paths', [])
     types = data.get('types', ['.zip', '.7z', '.rar'])
     modes = data.get('modes', {'corrupted': True, 'multiFile': True, 'unwanted': True})
@@ -390,7 +389,7 @@ def api_archive_scanner_scan():
     thread.daemon = True
     thread.start()
     
-    return jsonify({'success': True, 'task_id': task.task_id})
+    return success(task_id=task.task_id)
     
 
 
@@ -405,18 +404,18 @@ def api_archive_scanner_contents():
     path = data.get('path')
 
     if not path:
-        return jsonify({'success': False, 'error': 'No path provided'}), 400
+        return error('No path provided', 400)
 
     if safe_path(path, _get_rom_path()) is None:
-        return jsonify({'success': False, 'error': 'Invalid path'}), 400
+        return error('Invalid path', 400)
 
     if not os.path.exists(path):
-        return jsonify({'success': False, 'error': 'File not found'}), 404
+        return error('File not found', 404)
 
     rom_config = ROMToolsConfig()
     scanner = ArchiveScanner(rom_config)
     result = scanner.get_archive_contents_detailed(path)
-    
+
     return jsonify(result)
     
 
@@ -433,13 +432,13 @@ def api_archive_scanner_remove_files():
     files = data.get('files', [])
 
     if not archive_path:
-        return jsonify({'success': False, 'error': 'No archive path provided'}), 400
+        return error('No archive path provided', 400)
 
     if safe_path(archive_path, _get_rom_path()) is None:
-        return jsonify({'success': False, 'error': 'Invalid archive path'}), 400
+        return error('Invalid archive path', 400)
 
     if not files:
-        return jsonify({'success': False, 'error': 'No files to remove'}), 400
+        return error('No files to remove', 400)
 
     logger.info(f"Removing {len(files)} files from archive: {archive_path}")
     
@@ -462,10 +461,10 @@ def api_archive_scanner_clean():
     path = data.get('path')
 
     if not path:
-        return jsonify({'success': False, 'error': 'No path provided'}), 400
+        return error('No path provided', 400)
 
     if safe_path(path, _get_rom_path()) is None:
-        return jsonify({'success': False, 'error': 'Invalid path'}), 400
+        return error('Invalid path', 400)
 
     settings = load_rom_tools_config()
     unwanted_patterns = settings.get('unwanted_patterns', [])
@@ -491,10 +490,10 @@ def api_archive_scanner_create_m3u():
     staging_folder = data.get('staging_folder')
 
     if not path:
-        return jsonify({'success': False, 'error': 'No path provided'}), 400
+        return error('No path provided', 400)
 
     if safe_path(path, _get_rom_path()) is None:
-        return jsonify({'success': False, 'error': 'Invalid path'}), 400
+        return error('Invalid path', 400)
 
     rom_config = ROMToolsConfig()
     scanner = ArchiveScanner(rom_config)
@@ -518,7 +517,7 @@ def api_archive_scanner_batch_create_m3u():
     staging_folder = data.get('staging_folder', os.path.join(tempfile.gettempdir(), 'retrodb_m3u_staging'))
     
     if not paths:
-        return jsonify({'success': False, 'error': 'No paths provided'}), 400
+        return error('No paths provided', 400)
     
     rom_config = ROMToolsConfig()
     scanner = ArchiveScanner(rom_config)
@@ -540,7 +539,7 @@ def api_chd_converter_scan():
     data = request.get_json() or {}
     path = data.get('path', _get_rom_path())
     if safe_path(path, _get_rom_path()) is None:
-        return jsonify({'success': False, 'error': 'Invalid scan path'}), 400
+        return error('Invalid scan path', 400)
     settings = load_rom_tools_config()
 
     extensions = ['.iso', '.cue', '.gdi', '.mds']
@@ -566,8 +565,8 @@ def api_chd_converter_scan():
             'chd_exists': chd_exists
         })
     
-    return jsonify({'success': True, 'files': result})
-    
+    return success(files=result)
+
 
 
 @tools_bp.route('/api/rom-tools/chd-converter/convert', methods=['POST'])
@@ -581,7 +580,7 @@ def api_chd_converter_convert():
     
     chdman_path = settings.get('chdman_path', 'chdman')
     if not shutil.which(chdman_path):
-        return jsonify({'success': False, 'error': 'chdman not found. Please install MAME tools.'}), 400
+        return error('chdman not found. Please install MAME tools.', 400)
     
     _cleanup_completed_tasks()
     task_id = str(uuid.uuid4())[:8]
@@ -652,8 +651,8 @@ def api_chd_converter_convert():
     thread = threading.Thread(target=run_conversion)
     thread.daemon = True
     thread.start()
-    
-    return jsonify({'success': True, 'task_id': task_id})
+
+    return success(task_id=task_id)
     
 
 
@@ -669,7 +668,7 @@ def api_chd_verify_scan():
     data = request.get_json() or {}
     path = data.get('path', _get_rom_path())
     if safe_path(path, _get_rom_path()) is None:
-        return jsonify({'success': False, 'error': 'Invalid scan path'}), 400
+        return error('Invalid scan path', 400)
     settings = load_rom_tools_config()
 
     recursive = settings.get('recursive_scan', True)
@@ -677,7 +676,7 @@ def api_chd_verify_scan():
     files = glob.glob(pattern, recursive=recursive)
     
     result = [{'path': f, 'name': os.path.basename(f), 'size': os.path.getsize(f)} for f in sorted(files)]
-    return jsonify({'success': True, 'files': result})
+    return success(files=result)
     
 
 
@@ -692,7 +691,7 @@ def api_chd_verify_verify():
     
     chdman_path = settings.get('chdman_path', 'chdman')
     if not shutil.which(chdman_path):
-        return jsonify({'success': False, 'error': 'chdman not found'}), 400
+        return error('chdman not found', 400)
     
     _cleanup_completed_tasks()
     task_id = str(uuid.uuid4())[:8]
@@ -750,8 +749,8 @@ def api_chd_verify_verify():
     thread = threading.Thread(target=run_verification)
     thread.daemon = True
     thread.start()
-    
-    return jsonify({'success': True, 'task_id': task_id})
+
+    return success(task_id=task_id)
     
 
 
@@ -767,7 +766,7 @@ def api_duplicate_finder_scan():
     data = request.get_json() or {}
     path = data.get('path', _get_rom_path())
     if safe_path(path, _get_rom_path()) is None:
-        return jsonify({'success': False, 'error': 'Invalid scan path'}), 400
+        return error('Invalid scan path', 400)
     settings = load_rom_tools_config()
     method = data.get('method', settings.get('duplicate_method', 'hash'))
     recursive = data.get('recursive', True)
@@ -775,7 +774,7 @@ def api_duplicate_finder_scan():
     include_archives = data.get('include_archives', False)
 
     if not os.path.exists(path):
-        return jsonify({'success': False, 'error': f'Path does not exist: {path}'}), 400
+        return error(f'Path does not exist: {path}', 400)
 
     _cleanup_completed_tasks()
     task_id = str(uuid.uuid4())[:8]
@@ -936,9 +935,9 @@ def api_duplicate_finder_scan():
     thread = threading.Thread(target=run_scan)
     thread.daemon = True
     thread.start()
-    
-    return jsonify({'success': True, 'task_id': task_id})
-    
+
+    return success(task_id=task_id)
+
 
 
 @tools_bp.route('/api/rom-tools/duplicate-finder/delete', methods=['POST'])
@@ -969,7 +968,7 @@ def api_duplicate_finder_delete():
             logger.error(f"Error deleting duplicate file: {e}")
             results['errors'].append('An error occurred during processing')
 
-    return jsonify({'success': True, 'results': results})
+    return success(results=results)
 
 
 
@@ -1172,7 +1171,7 @@ def api_screenshot_dedup_scan():
     thread.daemon = True
     thread.start()
 
-    return jsonify({'success': True, 'task_id': task_id})
+    return success(task_id=task_id)
 
 
 
@@ -1237,5 +1236,5 @@ def api_screenshot_dedup_delete():
         results['db_updated'] += 1
 
     db.commit()
-    return jsonify({'success': True, 'results': results})
+    return success(results=results)
 

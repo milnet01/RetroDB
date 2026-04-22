@@ -13,7 +13,7 @@ import logging
 from datetime import datetime, timezone
 
 import config
-from services.api_helpers import handle_api_errors
+from services.api_helpers import handle_api_errors, success, error
 from services.database import get_db, get_db_with_context, query, execute
 from services.game_utils import find_image_file, reset_game_title_from_filename
 from services.auth import admin_required, login_required
@@ -301,11 +301,7 @@ def api_scan():
         # Fallback - run inline scan
         new_games = run_inline_scan()
 
-    return jsonify({
-        'success': True,
-        'new_games': new_games,
-        'message': f'Found {new_games} new games'
-    })
+    return success(new_games=new_games, message=f'Found {new_games} new games')
 
 
 @bp.route('/api/clean-missing-roms', methods=['POST'])
@@ -340,12 +336,11 @@ def api_clean_missing_roms():
             })
             logger.info(f"Removed missing ROM: {game['title']} ({rom_path})")
 
-    return jsonify({
-        'success': True,
-        'removed': removed,
-        'removed_games': removed_games[:50],
-        'message': f'Removed {removed} games with missing ROM files'
-    })
+    return success(
+        removed=removed,
+        removed_games=removed_games[:50],
+        message=f'Removed {removed} games with missing ROM files',
+    )
 
 
 @bp.route('/api/clear-clz-imports', methods=['POST'])
@@ -358,12 +353,11 @@ def api_clear_clz_imports():
     count = count_row['count'] if count_row else 0
 
     if count == 0:
-        return jsonify({
-            'success': True,
-            'removed': 0,
-            'removed_games': [],
-            'message': 'No CLZ Import games found'
-        })
+        return success(
+            removed=0,
+            removed_games=[],
+            message='No CLZ Import games found',
+        )
 
     # Get titles for the response (limit to 50)
     clz_games = query("SELECT id, title, rom_path FROM games WHERE rom_path LIKE 'clz_import/%' ORDER BY title LIMIT 50")
@@ -376,12 +370,11 @@ def api_clear_clz_imports():
     execute("DELETE FROM games WHERE rom_path LIKE 'clz_import/%'")
     logger.info(f"Removed {count} CLZ Import games")
 
-    return jsonify({
-        'success': True,
-        'removed': count,
-        'removed_games': removed_games,
-        'message': f'Removed {count} CLZ Import games'
-    })
+    return success(
+        removed=count,
+        removed_games=removed_games,
+        message=f'Removed {count} CLZ Import games',
+    )
 
 
 @bp.route('/api/clear-scraped-data/preview', methods=['GET'])
@@ -399,10 +392,7 @@ def api_clear_scraped_data_preview():
 
     count = result['count'] if result else 0
 
-    return jsonify({
-        'success': True,
-        'count': count
-    })
+    return success(count=count)
 
 
 @bp.route('/api/clear-scraped-data', methods=['POST'])
@@ -459,11 +449,10 @@ def api_clear_scraped_data():
     logger.info(f"Cleared scraped data from {cleared} games" +
                (f", deleted {images_deleted} images" if delete_images else ""))
 
-    return jsonify({
-        'success': True,
-        'cleared': cleared,
-        'images_deleted': images_deleted if delete_images else 0
-    })
+    return success(
+        cleared=cleared,
+        images_deleted=images_deleted if delete_images else 0,
+    )
 
 
 @bp.route('/api/orphaned-media/preview', methods=['GET'])
@@ -544,11 +533,10 @@ def api_orphaned_media_preview():
                     'size': size
                 })
 
-    return jsonify({
-        'success': True,
-        'files': orphaned,
-        'total_size_mb': total_size / (1024 * 1024)
-    })
+    return success(
+        files=orphaned,
+        total_size_mb=total_size / (1024 * 1024),
+    )
 
 
 @bp.route('/api/orphaned-media/clean', methods=['POST'])
@@ -560,7 +548,7 @@ def api_orphaned_media_clean():
     preview_data = preview_response.get_json()
 
     if not preview_data.get('success'):
-        return jsonify({'success': False, 'error': 'Failed to scan for orphaned files'})
+        return error('Failed to scan for orphaned files', code=200)
 
     files = preview_data.get('files', [])
 
@@ -580,12 +568,11 @@ def api_orphaned_media_clean():
             errors += 1
             logger.warning(f"Failed to delete orphaned file {filepath}: {e}")
 
-    return jsonify({
-        'success': True,
-        'deleted': deleted,
-        'errors': errors,
-        'freed_mb': freed_size / (1024 * 1024)
-    })
+    return success(
+        deleted=deleted,
+        errors=errors,
+        freed_mb=freed_size / (1024 * 1024),
+    )
 
 
 @bp.route('/api/database/optimize', methods=['POST'])
@@ -608,13 +595,12 @@ def api_database_optimize():
 
     logger.info(f"Database optimized: {size_before / (1024*1024):.2f}MB -> {size_after / (1024*1024):.2f}MB in {duration:.2f}s")
 
-    return jsonify({
-        'success': True,
-        'message': 'Database optimized successfully',
-        'size_before_mb': round(size_before / (1024 * 1024), 2),
-        'size_after_mb': round(size_after / (1024 * 1024), 2),
-        'duration_seconds': round(duration, 2)
-    })
+    return success(
+        message='Database optimized successfully',
+        size_before_mb=round(size_before / (1024 * 1024), 2),
+        size_after_mb=round(size_after / (1024 * 1024), 2),
+        duration_seconds=round(duration, 2),
+    )
 
 
 # =============================================================================
@@ -704,4 +690,4 @@ def api_restart():
 
     threading.Thread(target=restart).start()
 
-    return jsonify({'success': True, 'message': 'Server restarting...'})
+    return success(message='Server restarting...')

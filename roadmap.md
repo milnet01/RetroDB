@@ -57,6 +57,12 @@ change forces a different sequence.
   `ra_sync`, `clz_import`, `games_media`, `games_search`). Wire format
   preserved exactly; HTTP-200-with-`success:False` handlers now pass
   `code=200` explicitly. (v2.83.6)
+- [x] **Pass 2 — second migration wave across remaining fully-swept routes** —
+  Migrated ~130 sites across `controllers`, `maintenance`, `achievements`,
+  `reports`, `auth`, `tools`, and `collections`. Scanner-result / job-status
+  / task-dict passthroughs preserved as raw `jsonify` (correct shape, no
+  `success` key). Combined Pass 2 total: **186 sites across 14 routes**.
+  (v2.83.7)
 
 ---
 
@@ -64,11 +70,10 @@ change forces a different sequence.
 
 ### Pass 2 — continue gradual migration of `jsonify({'success': …})` → `success()` / `error()`
 
-- **Target**: remaining fully-swept routes `auth`, `collections`, `tools`,
-  `reports`, `achievements`, `controllers`, `maintenance`, plus partially
-  swept (`bonus_discs`, `games`, `scraper`, `scrape_logs`, `settings`,
-  `systems`, `games_hltb`) and HTTP-200-only (`platform_import`,
-  `steam_achievements`, `xbox_achievements`, `trophies`).
+- **Target**: partially-swept routes (`bonus_discs`, `games`, `scraper`,
+  `scrape_logs`, `settings`, `systems`, `games_hltb`) and HTTP-200-only
+  (`platform_import`, `steam_achievements`, `xbox_achievements`,
+  `trophies`).
 - **Why**: the helpers are landed and wire-format-compatible with every
   existing call site. Gradual migration per roadmap guidance — pick files
   up as they are touched for other work, or knock them off opportunistically
@@ -76,7 +81,8 @@ change forces a different sequence.
 - **Plan**: convert `jsonify({'success': True, ...})` → `success(...)` and
   `jsonify({'success': False, 'error': '...'})[, code]` → `error('...', code)`.
   Non-standard payloads (e.g. `{'configured': True, 'error': '...'}` without
-  `success`) stay as raw `jsonify` — document here if discovered.
+  `success`, or scanner-result passthroughs) stay as raw `jsonify` —
+  document here if discovered.
 - **Status**: in-progress
 
 ---

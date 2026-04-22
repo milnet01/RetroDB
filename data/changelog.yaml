@@ -1,3 +1,14 @@
+- version: 2.83.7
+  date: 2026-04-22
+  tags:
+  - type: chore
+    label: Chore
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 2 &mdash; second migration wave: the remaining fully-swept routes</strong> &mdash; Migrated the remaining 7 fully-swept route files from inline <code>jsonify({'success': &hellip;})</code> envelopes to <code>success()</code> / <code>error()</code> helpers. Files converted: <code>routes/controllers.py</code> (20 sites), <code>routes/maintenance.py</code> (11 sites &mdash; job passthroughs preserved), <code>routes/achievements.py</code> (13 sites &mdash; job passthroughs preserved), <code>routes/reports.py</code> (21 sites), <code>routes/auth.py</code> (22 sites), <code>routes/tools.py</code> (19 sites &mdash; scanner-result and task-dict passthroughs preserved), and <code>routes/collections.py</code> (24 sites). Net: <strong>~130 sites</strong> across 7 files. Wire format preserved exactly &mdash; HTTP-200-with-<code>success:False</code> handlers pass <code>code=200</code> explicitly. Three files dropped <code>jsonify</code> from their imports entirely (<code>controllers</code>, <code>reports</code>, <code>auth</code>, <code>collections</code>); the others keep it for raw-passthrough responses (tool-status, job-status, task dicts). All 124 pytest tests pass.</li>
+        <li><strong>Pass 2 progress</strong> &mdash; Combined with the 2.83.6 wave, <strong>186 migration sites across 14 routes</strong> are now on the new envelope helpers. Remaining: partially-swept routes (<code>bonus_discs</code>, <code>games</code>, <code>scraper</code>, <code>scrape_logs</code>, <code>settings</code>, <code>systems</code>, <code>games_hltb</code>) and HTTP-200-only routes (<code>platform_import</code>, <code>steam_achievements</code>, <code>xbox_achievements</code>, <code>trophies</code>). These will be picked up opportunistically as other work touches them, per the roadmap's gradual-migration guidance.</li>
+    </ul>
+
 - version: 2.83.6
   date: 2026-04-22
   tags:

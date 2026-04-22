@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 
 from services.database import query, execute
 from services.auth import login_required, get_user_ra_credentials
-from services.api_helpers import handle_api_errors
+from services.api_helpers import handle_api_errors, success, error
 from services.jobs import ra_sync_job, ra_refresh_job
 
 logger = logging.getLogger('scraper')
@@ -201,20 +201,19 @@ def api_get_achievements(game_id):
     """, (game_id,), one=True)
     
     if progress:
-        return jsonify({
-            'success': True, 
-            'data': {
+        return success(
+            data={
                 'unlocked_count': progress['earned_achievements'],
                 'total_count': progress['total_achievements'],
                 'earned_points': progress['earned_points'],
                 'total_points': progress['total_points'],
                 'completion_percentage': progress['completion_percentage'],
-                'last_synced': progress['last_synced']
+                'last_synced': progress['last_synced'],
             },
-            'source': 'local'
-        })
+            source='local',
+        )
     else:
-        return jsonify({'success': False, 'error': 'No progress data - click Refresh to sync'})
+        return error('No progress data - click Refresh to sync', code=200)
 
 
 @bp.route('/api/achievements/sync/<int:game_id>', methods=['POST'])
@@ -228,11 +227,11 @@ def api_sync_game_achievements(game_id):
     game = query("SELECT ra_game_id FROM games WHERE id = ?", (game_id,), one=True)
 
     if not game or not game['ra_game_id']:
-        return jsonify({'success': False, 'error': 'Game not linked to RetroAchievements'})
+        return error('Game not linked to RetroAchievements', code=200)
 
     username, api_key = get_user_ra_credentials()
     if not api_key or not username:
-        return jsonify({'success': False, 'error': 'RetroAchievements not configured'})
+        return error('RetroAchievements not configured', code=200)
 
     progress = get_user_game_progress_custom(game['ra_game_id'], username, api_key)
 
@@ -262,12 +261,9 @@ def api_sync_game_achievements(game_id):
             now
         ))
 
-        return jsonify({
-            'success': True,
-            'data': progress
-        })
+        return success(data=progress)
     else:
-        return jsonify({'success': False, 'error': 'Could not fetch achievement data'})
+        return error('Could not fetch achievement data', code=200)
 
 
 @bp.route('/api/achievements/sync-system/<int:system_id>', methods=['POST'])
@@ -280,7 +276,7 @@ def api_sync_system_achievements(system_id):
     system = query("SELECT id, name FROM systems WHERE id = ?", (system_id,), one=True)
     if not system:
         system_log('error', f'System not found: {system_id}')
-        return jsonify({'success': False, 'error': 'System not found'})
+        return error('System not found', code=200)
     
     # Get all games with RA data in this system
     games = query("""
@@ -291,7 +287,7 @@ def api_sync_system_achievements(system_id):
     
     if not games:
         system_log('warning', f'No games with RetroAchievements in system: {system["name"]}')
-        return jsonify({'success': False, 'error': 'No games with RetroAchievements in this system'})
+        return error('No games with RetroAchievements in this system', code=200)
     
     game_count = len(games)
     
@@ -300,38 +296,36 @@ def api_sync_system_achievements(system_id):
     if sync_status.get('running', False) and not sync_status.get('completed', False):
         if sync_status.get('system_id') == system_id:
             system_log('info', f'RA Sync already running for this system: {system["name"]}')
-            return jsonify({
-                'success': False,
-                'error': f'Sync already in progress for {system["name"]}',
-                'already_running': True
-            })
+            return error(
+                f'Sync already in progress for {system["name"]}',
+                code=200,
+                already_running=True,
+            )
     
     # Check if RA Refresh is currently running
     refresh_status = ra_refresh_job.get_status()
     if refresh_status.get('running', False):
         system_log('info', f'RA Refresh is running, queueing sync for system ID {system_id}')
-        return jsonify({
-            'success': True,
-            'queued': True,
-            'message': 'RA Refresh is running. Sync will start when refresh completes.',
-            'refresh_running': True,
-            'system_id': system_id,
-            'system_name': system['name'],
-            'game_count': game_count
-        })
+        return success(
+            queued=True,
+            message='RA Refresh is running. Sync will start when refresh completes.',
+            refresh_running=True,
+            system_id=system_id,
+            system_name=system['name'],
+            game_count=game_count,
+        )
     
     # Check if RA Sync is already running for a DIFFERENT system
     if sync_status.get('running', False) and not sync_status.get('completed', False):
         system_log('info', f'RA Sync already running, queueing sync for {system["name"]}')
-        return jsonify({
-            'success': True,
-            'queued': True,
-            'message': f'Sync queued. Will start after current sync completes.',
-            'sync_running': True,
-            'system_id': system_id,
-            'system_name': system['name'],
-            'game_count': game_count
-        })
+        return success(
+            queued=True,
+            message=f'Sync queued. Will start after current sync completes.',
+            sync_running=True,
+            system_id=system_id,
+            system_name=system['name'],
+            game_count=game_count,
+        )
     
     game_ids = [g['id'] for g in games]
     system_log('info', f'Syncing {len(game_ids)} games for {system["name"]}')
@@ -381,10 +375,7 @@ def api_achievements_sync_results(system_id):
                 'last_synced': row['last_synced']
             }
     
-    return jsonify({
-        'success': True,
-        'progress': result
-    })
+    return success(progress=result)
 
 
 @bp.route('/api/achievements/stored/<int:system_id>')
@@ -411,10 +402,7 @@ def api_get_stored_achievements(system_id):
                 'last_synced': row['last_synced']
             }
     
-    return jsonify({
-        'success': True,
-        'progress': result
-    })
+    return success(progress=result)
 
 
 @bp.route('/api/achievements/refresh/<int:game_id>', methods=['POST'])
@@ -431,7 +419,7 @@ def api_refresh_achievements(game_id):
     """, (game_id,), one=True)
     
     if not game:
-        return jsonify({'success': False, 'error': 'Game not found'})
+        return error('Game not found', code=200)
     
     result = check_retroachievements(game['title'], game['system_folder'])
     
@@ -442,13 +430,12 @@ def api_refresh_achievements(game_id):
             WHERE id = ?
         """, (result['id'], result['achievement_count'], result['points'], game_id))
         
-        return jsonify({
-            'success': True, 
-            'message': f"Found {result['achievement_count']} achievements",
-            'data': result
-        })
+        return success(
+            message=f"Found {result['achievement_count']} achievements",
+            data=result,
+        )
     else:
-        return jsonify({'success': False, 'error': 'No RetroAchievements found for this game'})
+        return error('No RetroAchievements found for this game', code=200)
 
 # =============================================================================
 # RETROACHIEVEMENTS API ROUTES

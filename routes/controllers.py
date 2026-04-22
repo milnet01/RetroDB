@@ -4,12 +4,12 @@
 # Handles controller management - CRUD operations and system assignments.
 # =============================================================================
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 import logging
 
 from services.database import query, execute
 from services.auth import login_required, editor_required
-from services.api_helpers import handle_api_errors
+from services.api_helpers import handle_api_errors, success, error
 
 logger = logging.getLogger(__name__)
 
@@ -174,7 +174,7 @@ def api_get_all_controllers():
 
         result.append(ctrl)
 
-    return jsonify({'success': True, 'controllers': result})
+    return success(controllers=result)
 
 
 @bp.route('/api/controllers/by-system/<int:system_id>')
@@ -201,7 +201,7 @@ def api_get_controllers_for_system(system_id):
             ORDER BY manufacturer COLLATE NOCASE, name COLLATE NOCASE
         """)
 
-    return jsonify({'success': True, 'controllers': [dict(c) for c in controllers]})
+    return success(controllers=[dict(c) for c in controllers])
 
 
 @bp.route('/api/controllers', methods=['POST'])
@@ -221,12 +221,12 @@ def api_add_controller():
     button_layout = data.get('button_layout', '').strip()
 
     if not name:
-        return jsonify({'success': False, 'error': 'Controller name is required'}), 400
+        return error('Controller name is required', 400)
 
     # Check for duplicates
     existing = query("SELECT id FROM controllers WHERE name = ?", (name,), one=True)
     if existing:
-        return jsonify({'success': False, 'error': f'Controller "{name}" already exists'}), 400
+        return error(f'Controller "{name}" already exists', 400)
 
     # Get max sort order
     result = query("SELECT MAX(sort_order) as max_order FROM controllers", one=True)
@@ -249,7 +249,7 @@ def api_add_controller():
             except Exception as e:
                 logger.warning(f"Could not add system {sys_id} to controller {controller_id}: {e}")
 
-    return jsonify({'success': True, 'message': f'Added controller "{name}"', 'id': controller_id})
+    return success(message=f'Added controller "{name}"', id=controller_id)
 
 
 @bp.route('/api/controllers/<int:controller_id>', methods=['DELETE'])
@@ -263,7 +263,7 @@ def api_delete_controller(controller_id):
     execute("DELETE FROM system_controllers WHERE controller_id = ?", (controller_id,))
     # Delete the controller
     execute("DELETE FROM controllers WHERE id = ?", (controller_id,))
-    return jsonify({'success': True})
+    return success()
 
 
 @bp.route('/api/controllers/<int:controller_id>', methods=['PUT'])
@@ -283,17 +283,17 @@ def api_update_controller(controller_id):
     button_layout = data.get('button_layout', '').strip()
 
     if not name:
-        return jsonify({'success': False, 'error': 'Controller name is required'}), 400
+        return error('Controller name is required', 400)
 
     # Check controller exists
     existing = query("SELECT id FROM controllers WHERE id = ?", (controller_id,), one=True)
     if not existing:
-        return jsonify({'success': False, 'error': 'Controller not found'}), 404
+        return error('Controller not found', 404)
 
     # Check for name conflicts with other controllers
     duplicate = query("SELECT id FROM controllers WHERE name = ? AND id != ?", (name, controller_id), one=True)
     if duplicate:
-        return jsonify({'success': False, 'error': f'Another controller named "{name}" already exists'}), 400
+        return error(f'Another controller named "{name}" already exists', 400)
 
     # Update controller (without system_id - we use junction table)
     execute("""
@@ -314,7 +314,7 @@ def api_update_controller(controller_id):
             except Exception as e:
                 logger.warning(f"Could not add system {sys_id} to controller {controller_id}: {e}")
 
-    return jsonify({'success': True, 'message': f'Updated controller "{name}"'})
+    return success(message=f'Updated controller "{name}"')
 
 
 @bp.route('/api/controllers/<int:controller_id>', methods=['GET'])
@@ -330,7 +330,7 @@ def api_get_controller(controller_id):
     """, (controller_id,), one=True)
 
     if not controller:
-        return jsonify({'success': False, 'error': 'Controller not found'}), 404
+        return error('Controller not found', 404)
 
     ctrl = dict(controller)
 
@@ -347,10 +347,7 @@ def api_get_controller(controller_id):
     ctrl['system_names'] = [s['name'] for s in systems]
     ctrl['system_name'] = ', '.join(ctrl['system_names']) if ctrl['system_names'] else None
 
-    return jsonify({
-        'success': True,
-        'controller': ctrl
-    })
+    return success(controller=ctrl)
 
 
 @bp.route('/api/systems/<int:system_id>/controllers')
@@ -392,13 +389,12 @@ def api_get_system_controllers(system_id):
         if ctrl:
             default_list = [{'id': ctrl['id'], 'name': ctrl['name'], 'manufacturer': ctrl['manufacturer']}]
 
-    return jsonify({
-        'success': True,
-        'controllers': [dict(c) for c in controllers],
-        'default_controllers': default_list,
+    return success(
+        controllers=[dict(c) for c in controllers],
+        default_controllers=default_list,
         # For backwards compatibility
-        'default_controller': default_list[0] if default_list else None
-    })
+        default_controller=default_list[0] if default_list else None,
+    )
 
 
 @bp.route('/api/systems/<int:system_id>/default-controllers', methods=['POST'])
@@ -412,7 +408,7 @@ def api_set_system_default_controllers(system_id):
     # Verify system exists
     system = query("SELECT id, name FROM systems WHERE id = ?", (system_id,), one=True)
     if not system:
-        return jsonify({'success': False, 'error': 'System not found'}), 404
+        return error('System not found', 404)
 
     # Clear existing defaults for this system
     execute("UPDATE system_controllers SET is_default = 0 WHERE system_id = ?", (system_id,))
@@ -441,7 +437,7 @@ def api_set_system_default_controllers(system_id):
                     VALUES (?, ?, 1)
                 """, (system_id, controller_id))
 
-    return jsonify({'success': True, 'message': f'Set {len(controller_ids)} default controller(s)'})
+    return success(message=f'Set {len(controller_ids)} default controller(s)')
 
 
 @bp.route('/api/systems/<int:system_id>/default-controller', methods=['POST'])
@@ -455,13 +451,13 @@ def api_set_system_default_controller(system_id):
     # Verify system exists
     system = query("SELECT id, name FROM systems WHERE id = ?", (system_id,), one=True)
     if not system:
-        return jsonify({'success': False, 'error': 'System not found'}), 404
+        return error('System not found', 404)
 
     # Verify controller exists (if provided)
     if controller_id:
         controller = query("SELECT id, name FROM controllers WHERE id = ?", (controller_id,), one=True)
         if not controller:
-            return jsonify({'success': False, 'error': 'Controller not found'}), 404
+            return error('Controller not found', 404)
 
     # Clear existing defaults
     execute("UPDATE system_controllers SET is_default = 0 WHERE system_id = ?", (system_id,))
@@ -485,7 +481,7 @@ def api_set_system_default_controller(system_id):
                 VALUES (?, ?, 1)
             """, (system_id, controller_id))
 
-    return jsonify({'success': True, 'message': 'Default controller updated'})
+    return success(message='Default controller updated')
 
 
 @bp.route('/api/systems/assign-default-controllers', methods=['POST'])
@@ -579,4 +575,4 @@ def api_assign_default_controllers():
                    (matched_controller, system['id']))
             assigned += 1
 
-    return jsonify({'success': True, 'assigned': assigned})
+    return success(assigned=assigned)

@@ -4,7 +4,7 @@
 # Handles user authentication, login/logout, and user management.
 # =============================================================================
 
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash, session, g
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, g
 from datetime import datetime, timezone
 from urllib.parse import urlparse
 import os
@@ -12,7 +12,7 @@ import time
 
 import config
 from services.database import query, execute
-from services.api_helpers import handle_api_errors
+from services.api_helpers import handle_api_errors, success, error
 from services.auth import (
     hash_password, verify_password, get_user_settings,
     admin_required, login_required
@@ -51,24 +51,24 @@ def api_login():
     # Rate limit login attempts
     client_ip = request.remote_addr or '127.0.0.1'
     if not rate_limit_login(client_ip):
-        return jsonify({'success': False, 'error': 'Too many login attempts. Please try again later.'}), 429
+        return error('Too many login attempts. Please try again later.', 429)
 
     if not user_id:
-        return jsonify({'success': False, 'error': 'No user selected'})
+        return error('No user selected', code=200)
 
     user = query("SELECT * FROM users WHERE id = ? AND is_active = 1", (user_id,), one=True)
 
     if not user:
         record_login_attempt(client_ip, False)
-        return jsonify({'success': False, 'error': 'User not found'})
+        return error('User not found', code=200)
 
     # Admin requires password
     if user['role'] == 'admin':
         if not password:
-            return jsonify({'success': False, 'error': 'Password required for admin', 'needs_password': True})
+            return error('Password required for admin', code=200, needs_password=True)
         if not verify_password(password, user['password_hash']):
             record_login_attempt(client_ip, False)
-            return jsonify({'success': False, 'error': 'Invalid password'})
+            return error('Invalid password', code=200)
 
     # Login successful
     record_login_attempt(client_ip, True)
@@ -83,7 +83,7 @@ def api_login():
     parsed = urlparse(next_url)
     if parsed.netloc or parsed.scheme or '\\' in next_url:
         next_url = url_for('dashboard')
-    return jsonify({'success': True, 'redirect': next_url})
+    return success(redirect=next_url)
 
 
 @bp.route('/logout')
@@ -109,7 +109,7 @@ def api_list_users():
         LEFT JOIN user_settings us ON u.id = us.user_id
         ORDER BY u.role, u.username
     """)
-    return jsonify({'success': True, 'users': [dict(u) for u in users]})
+    return success(users=[dict(u) for u in users])
 
 
 @bp.route('/api/users/create', methods=['POST'])
@@ -123,15 +123,15 @@ def api_create_user():
     role = data.get('role', 'viewer')
 
     if not username:
-        return jsonify({'success': False, 'error': 'Username is required'})
+        return error('Username is required', code=200)
 
     if role not in ['admin', 'editor', 'viewer']:
-        return jsonify({'success': False, 'error': 'Invalid role'})
+        return error('Invalid role', code=200)
 
     # Check if username already exists
     existing = query("SELECT id FROM users WHERE username = ?", (username,), one=True)
     if existing:
-        return jsonify({'success': False, 'error': 'Username already exists'})
+        return error('Username already exists', code=200)
 
     # Create user (no password for non-admin)
     password_hash = None
@@ -147,7 +147,7 @@ def api_create_user():
     # Create user settings record
     execute("INSERT INTO user_settings (user_id) VALUES (?)", (user_id,))
 
-    return jsonify({'success': True, 'user_id': user_id, 'message': f'User "{username}" created successfully'})
+    return success(user_id=user_id, message=f'User "{username}" created successfully')
 
 
 @bp.route('/api/users/<int:user_id>/update', methods=['POST'])
@@ -158,8 +158,8 @@ def api_update_user(user_id):
     
     user = query("SELECT * FROM users WHERE id = ?", (user_id,), one=True)
     if not user:
-        return jsonify({'success': False, 'error': 'User not found'})
-    
+        return error('User not found', code=200)
+
     updates = []
     params = []
     
@@ -183,7 +183,7 @@ def api_update_user(user_id):
         params.append(user_id)
         execute(f"UPDATE users SET {', '.join(updates)} WHERE id = ?", params)
     
-    return jsonify({'success': True, 'message': 'User updated successfully'})
+    return success(message='User updated successfully')
 
 
 @bp.route('/api/users/<int:user_id>/delete', methods=['POST'])
@@ -193,16 +193,16 @@ def api_delete_user(user_id):
     """Delete a user (admin only)"""
     user = query("SELECT * FROM users WHERE id = ?", (user_id,), one=True)
     if not user:
-        return jsonify({'success': False, 'error': 'User not found'})
+        return error('User not found', code=200)
 
     # Can't delete yourself
     if g.user['id'] == user_id:
-        return jsonify({'success': False, 'error': 'Cannot delete your own account'})
+        return error('Cannot delete your own account', code=200)
 
     # Can't delete the last admin
     admin_count = query("SELECT COUNT(*) as count FROM users WHERE role = 'admin' AND is_active = 1", one=True)
     if user['role'] == 'admin' and admin_count['count'] <= 1:
-        return jsonify({'success': False, 'error': 'Cannot delete the last admin user'})
+        return error('Cannot delete the last admin user', code=200)
 
     # Delete custom avatar file if one exists
     user_settings = get_user_settings(user_id)
@@ -217,20 +217,20 @@ def api_delete_user(user_id):
 
     execute("DELETE FROM user_settings WHERE user_id = ?", (user_id,))
     execute("DELETE FROM users WHERE id = ?", (user_id,))
-    return jsonify({'success': True, 'message': 'User deleted successfully'})
+    return success(message='User deleted successfully')
 
 
 @bp.route('/api/users/settings', methods=['GET', 'POST'])
 def api_user_settings():
     """Get or update current user's settings"""
     if not g.user:
-        return jsonify({'success': False, 'error': 'Not logged in'})
-    
+        return error('Not logged in', code=200)
+
     if request.method == 'GET':
         settings = get_user_settings(g.user['id'])
         if settings:
-            return jsonify({'success': True, 'settings': dict(settings)})
-        return jsonify({'success': True, 'settings': {}})
+            return success(settings=dict(settings))
+        return success(settings={})
     
     # POST - update settings
     data = request.get_json()
@@ -248,66 +248,66 @@ def api_user_settings():
     if updates:
         params.append(g.user['id'])
         execute(f"UPDATE user_settings SET {', '.join(updates)} WHERE user_id = ?", params)
-        return jsonify({'success': True, 'message': 'Settings updated'})
-    
-    return jsonify({'success': True, 'message': 'No changes made'})
+        return success(message='Settings updated')
+
+    return success(message='No changes made')
 
 
 @bp.route('/api/profile/password', methods=['POST'])
 def api_change_password():
     """Change current user's password (admin only)"""
     if not g.user:
-        return jsonify({'success': False, 'error': 'Not logged in'})
+        return error('Not logged in', code=200)
 
     if g.user['role'] != 'admin':
-        return jsonify({'success': False, 'error': 'Only admin accounts have passwords'})
+        return error('Only admin accounts have passwords', code=200)
 
     data = request.get_json()
     current_password = data.get('current_password', '')
     new_password = data.get('new_password', '')
 
     if not new_password:
-        return jsonify({'success': False, 'error': 'New password is required'})
+        return error('New password is required', code=200)
 
     if len(new_password) < 8:
-        return jsonify({'success': False, 'error': 'Password must be at least 8 characters'})
+        return error('Password must be at least 8 characters', code=200)
 
     # Verify current password
     user = query("SELECT password_hash FROM users WHERE id = ?", (g.user['id'],), one=True)
     if not user or not verify_password(current_password, user['password_hash']):
-        return jsonify({'success': False, 'error': 'Current password is incorrect'})
+        return error('Current password is incorrect', code=200)
 
     # Update password and clear force_password_change flag
     new_hash = hash_password(new_password)
     execute("UPDATE users SET password_hash = ?, force_password_change = 0 WHERE id = ?", (new_hash, g.user['id']))
 
-    return jsonify({'success': True, 'message': 'Password changed successfully'})
+    return success(message='Password changed successfully')
 
 
 @bp.route('/api/profile/force-change-password', methods=['POST'])
 def api_force_change_password():
     """Change password when forced (first login with default password)"""
     if not g.user:
-        return jsonify({'success': False, 'error': 'Not logged in'})
+        return error('Not logged in', code=200)
 
     if not g.user.get('force_password_change'):
-        return jsonify({'success': False, 'error': 'Password change not required'})
+        return error('Password change not required', code=200)
 
     data = request.get_json()
     new_password = data.get('new_password', '')
 
     if not new_password:
-        return jsonify({'success': False, 'error': 'New password is required'})
+        return error('New password is required', code=200)
 
     if len(new_password) < 8:
-        return jsonify({'success': False, 'error': 'Password must be at least 8 characters'})
+        return error('Password must be at least 8 characters', code=200)
 
     # Update password and clear force flag
     new_hash = hash_password(new_password)
     execute("UPDATE users SET password_hash = ?, force_password_change = 0 WHERE id = ?",
             (new_hash, g.user['id']))
 
-    return jsonify({'success': True, 'message': 'Password changed successfully'})
+    return success(message='Password changed successfully')
 
 
 # =============================================================================
@@ -332,21 +332,21 @@ def _delete_custom_avatar(user_id):
 def api_upload_avatar():
     """Upload a custom avatar image"""
     if 'avatar' not in request.files:
-        return jsonify({'success': False, 'error': 'No file provided'})
+        return error('No file provided', code=200)
 
     file = request.files['avatar']
     if not file.filename:
-        return jsonify({'success': False, 'error': 'No file selected'})
+        return error('No file selected', code=200)
 
     # Validate extension
     ext = file.filename.rsplit('.', 1)[-1].lower() if '.' in file.filename else ''
     if ext not in ALLOWED_AVATAR_EXTENSIONS:
-        return jsonify({'success': False, 'error': 'Invalid file type. Allowed: jpg, png, gif, webp'})
+        return error('Invalid file type. Allowed: jpg, png, gif, webp', code=200)
 
     # Read file data and check size
     file_data = file.read()
     if len(file_data) > MAX_AVATAR_SIZE:
-        return jsonify({'success': False, 'error': 'File too large. Maximum size is 2MB'})
+        return error('File too large. Maximum size is 2MB', code=200)
 
     # Delete any previous custom avatar
     _delete_custom_avatar(g.user['id'])
@@ -372,7 +372,7 @@ def api_upload_avatar():
 
     cache_bust = int(time.time())
     avatar_url = f'/static/images/avatars/{filename}?t={cache_bust}'
-    return jsonify({'success': True, 'avatar_url': avatar_url})
+    return success(avatar_url=avatar_url)
 
 
 @bp.route('/api/users/avatar/remove', methods=['POST'])
@@ -386,4 +386,4 @@ def api_remove_avatar():
             _delete_custom_avatar(g.user['id'])
 
     execute("UPDATE user_settings SET avatar = '' WHERE user_id = ?", (g.user['id'],))
-    return jsonify({'success': True})
+    return success()

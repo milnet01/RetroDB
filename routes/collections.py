@@ -4,13 +4,13 @@
 # Handles Tags, Named Lists, and Wishlist features for game organization.
 # =============================================================================
 
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request
 import logging
 from datetime import datetime, timezone
 
 from services.database import query, execute
 from services.auth import login_required
-from services.api_helpers import handle_api_errors
+from services.api_helpers import handle_api_errors, success, error
 
 logger = logging.getLogger(__name__)
 
@@ -110,7 +110,7 @@ def api_get_tags():
         GROUP BY t.id
         ORDER BY t.name COLLATE NOCASE
     """)
-    return jsonify({'success': True, 'tags': tags})
+    return success(tags=tags)
 
 
 @bp.route('/api/tags', methods=['POST'])
@@ -120,21 +120,21 @@ def api_create_tag():
     """Create a new tag."""
     data = request.get_json()
     if not data or not data.get('name', '').strip():
-        return jsonify({'success': False, 'error': 'Tag name is required'}), 400
+        return error('Tag name is required', 400)
 
     name = data['name'].strip()
     color = data.get('color', '#4cc9f0').strip()
 
     existing = query("SELECT id FROM tags WHERE name = ? COLLATE NOCASE", (name,), one=True)
     if existing:
-        return jsonify({'success': False, 'error': 'A tag with that name already exists'}), 409
+        return error('A tag with that name already exists', 409)
 
     tag_id = execute(
         "INSERT INTO tags (name, color, created_at) VALUES (?, ?, ?)",
         (name, color, _utcnow_iso())
     )
     logger.info(f"Created tag '{name}' (id={tag_id})")
-    return jsonify({'success': True, 'tag': {'id': tag_id, 'name': name, 'color': color}}), 201
+    return success(tag={'id': tag_id, 'name': name, 'color': color}), 201
 
 
 @bp.route('/api/tags/<int:tag_id>', methods=['PUT'])
@@ -144,11 +144,11 @@ def api_update_tag(tag_id):
     """Update an existing tag."""
     data = request.get_json()
     if not data:
-        return jsonify({'success': False, 'error': 'No data provided'}), 400
+        return error('No data provided', 400)
 
     tag = query("SELECT * FROM tags WHERE id = ?", (tag_id,), one=True)
     if not tag:
-        return jsonify({'success': False, 'error': 'Tag not found'}), 404
+        return error('Tag not found', 404)
 
     name = data.get('name', tag['name']).strip()
     color = data.get('color', tag['color']).strip()
@@ -157,11 +157,11 @@ def api_update_tag(tag_id):
     if name.lower() != tag['name'].lower():
         conflict = query("SELECT id FROM tags WHERE name = ? COLLATE NOCASE AND id != ?", (name, tag_id), one=True)
         if conflict:
-            return jsonify({'success': False, 'error': 'A tag with that name already exists'}), 409
+            return error('A tag with that name already exists', 409)
 
     execute("UPDATE tags SET name = ?, color = ? WHERE id = ?", (name, color, tag_id))
     logger.info(f"Updated tag id={tag_id} -> name='{name}', color='{color}'")
-    return jsonify({'success': True, 'tag': {'id': tag_id, 'name': name, 'color': color}})
+    return success(tag={'id': tag_id, 'name': name, 'color': color})
 
 
 @bp.route('/api/tags/<int:tag_id>', methods=['DELETE'])
@@ -171,12 +171,12 @@ def api_delete_tag(tag_id):
     """Delete a tag and all its game associations."""
     tag = query("SELECT * FROM tags WHERE id = ?", (tag_id,), one=True)
     if not tag:
-        return jsonify({'success': False, 'error': 'Tag not found'}), 404
+        return error('Tag not found', 404)
 
     execute("DELETE FROM game_tags WHERE tag_id = ?", (tag_id,))
     execute("DELETE FROM tags WHERE id = ?", (tag_id,))
     logger.info(f"Deleted tag '{tag['name']}' (id={tag_id})")
-    return jsonify({'success': True})
+    return success()
 
 
 # =============================================================================
@@ -194,7 +194,7 @@ def api_get_game_tags(game_id):
         WHERE gt.game_id = ?
         ORDER BY t.name COLLATE NOCASE
     """, (game_id,))
-    return jsonify({'success': True, 'tags': tags})
+    return success(tags=tags)
 
 
 @bp.route('/api/games/<int:game_id>/tags', methods=['POST'])
@@ -204,24 +204,24 @@ def api_add_tag_to_game(game_id):
     """Add a tag to a game. Accepts {tag_id} or {tag_name} for auto-create."""
     data = request.get_json()
     if not data:
-        return jsonify({'success': False, 'error': 'No data provided'}), 400
+        return error('No data provided', 400)
 
     # Verify game exists
     game = query("SELECT id FROM games WHERE id = ?", (game_id,), one=True)
     if not game:
-        return jsonify({'success': False, 'error': 'Game not found'}), 404
+        return error('Game not found', 404)
 
     tag_id = data.get('tag_id')
     tag_name = data.get('tag_name', '').strip() if data.get('tag_name') else None
 
     if not tag_id and not tag_name:
-        return jsonify({'success': False, 'error': 'Either tag_id or tag_name is required'}), 400
+        return error('Either tag_id or tag_name is required', 400)
 
     # Resolve or create the tag
     if tag_id:
         tag = query("SELECT id, name, color FROM tags WHERE id = ?", (tag_id,), one=True)
         if not tag:
-            return jsonify({'success': False, 'error': 'Tag not found'}), 404
+            return error('Tag not found', 404)
     else:
         # Look up by name, auto-create if missing
         tag = query("SELECT id, name, color FROM tags WHERE name = ? COLLATE NOCASE", (tag_name,), one=True)
@@ -239,11 +239,11 @@ def api_add_tag_to_game(game_id):
         (game_id, tag['id']), one=True
     )
     if existing:
-        return jsonify({'success': True, 'tag': tag, 'message': 'Tag already assigned'})
+        return success(tag=tag, message='Tag already assigned')
 
     execute("INSERT INTO game_tags (game_id, tag_id) VALUES (?, ?)", (game_id, tag['id']))
     logger.info(f"Added tag '{tag['name']}' to game id={game_id}")
-    return jsonify({'success': True, 'tag': tag}), 201
+    return success(tag=tag), 201
 
 
 @bp.route('/api/games/<int:game_id>/tags/<int:tag_id>', methods=['DELETE'])
@@ -256,11 +256,11 @@ def api_remove_tag_from_game(game_id, tag_id):
         (game_id, tag_id), one=True
     )
     if not existing:
-        return jsonify({'success': False, 'error': 'Tag is not assigned to this game'}), 404
+        return error('Tag is not assigned to this game', 404)
 
     execute("DELETE FROM game_tags WHERE game_id = ? AND tag_id = ?", (game_id, tag_id))
     logger.info(f"Removed tag id={tag_id} from game id={game_id}")
-    return jsonify({'success': True})
+    return success()
 
 
 # =============================================================================
@@ -273,7 +273,7 @@ def api_get_tag_games(tag_id):
     """Get all games that have a specific tag."""
     tag = query("SELECT id, name, color FROM tags WHERE id = ?", (tag_id,), one=True)
     if not tag:
-        return jsonify({'success': False, 'error': 'Tag not found'}), 404
+        return error('Tag not found', 404)
 
     games = query("""
         SELECT g.id, g.title, g.boxart, s.name AS system_name
@@ -289,7 +289,7 @@ def api_get_tag_games(tag_id):
         if g.get('boxart'):
             g['boxart'] = f"/static/images/boxart/{g['boxart']}"
 
-    return jsonify({'success': True, 'games': games, 'tag': tag})
+    return success(games=games, tag=tag)
 
 
 # =============================================================================
@@ -308,7 +308,7 @@ def api_get_lists():
         GROUP BY l.id
         ORDER BY l.sort_order, l.name COLLATE NOCASE
     """)
-    return jsonify({'success': True, 'lists': lists})
+    return success(lists=lists)
 
 
 @bp.route('/api/lists', methods=['POST'])
@@ -318,7 +318,7 @@ def api_create_list():
     """Create a new named list."""
     data = request.get_json()
     if not data or not data.get('name', '').strip():
-        return jsonify({'success': False, 'error': 'List name is required'}), 400
+        return error('List name is required', 400)
 
     name = data['name'].strip()
     description = data.get('description', '').strip()
@@ -333,12 +333,9 @@ def api_create_list():
         (name, description, icon, next_order, _utcnow_iso())
     )
     logger.info(f"Created list '{name}' (id={list_id})")
-    return jsonify({
-        'success': True,
-        'list': {
-            'id': list_id, 'name': name, 'description': description,
-            'icon': icon, 'sort_order': next_order
-        }
+    return success(list={
+        'id': list_id, 'name': name, 'description': description,
+        'icon': icon, 'sort_order': next_order,
     }), 201
 
 
@@ -349,11 +346,11 @@ def api_update_list(list_id):
     """Update an existing list."""
     data = request.get_json()
     if not data:
-        return jsonify({'success': False, 'error': 'No data provided'}), 400
+        return error('No data provided', 400)
 
     lst = query("SELECT * FROM lists WHERE id = ?", (list_id,), one=True)
     if not lst:
-        return jsonify({'success': False, 'error': 'List not found'}), 404
+        return error('List not found', 404)
 
     name = (data.get('name', lst['name']) or '').strip()
     description = (data.get('description', lst['description']) or '').strip()
@@ -365,12 +362,9 @@ def api_update_list(list_id):
         (name, description, icon, sort_order, list_id)
     )
     logger.info(f"Updated list id={list_id} -> name='{name}'")
-    return jsonify({
-        'success': True,
-        'list': {
-            'id': list_id, 'name': name, 'description': description,
-            'icon': icon, 'sort_order': sort_order
-        }
+    return success(list={
+        'id': list_id, 'name': name, 'description': description,
+        'icon': icon, 'sort_order': sort_order,
     })
 
 
@@ -381,12 +375,12 @@ def api_delete_list(list_id):
     """Delete a list and all its game associations."""
     lst = query("SELECT * FROM lists WHERE id = ?", (list_id,), one=True)
     if not lst:
-        return jsonify({'success': False, 'error': 'List not found'}), 404
+        return error('List not found', 404)
 
     execute("DELETE FROM list_games WHERE list_id = ?", (list_id,))
     execute("DELETE FROM lists WHERE id = ?", (list_id,))
     logger.info(f"Deleted list '{lst['name']}' (id={list_id})")
-    return jsonify({'success': True})
+    return success()
 
 
 # =============================================================================
@@ -399,7 +393,7 @@ def api_get_list_games(list_id):
     """Get all games in a list."""
     lst = query("SELECT id FROM lists WHERE id = ?", (list_id,), one=True)
     if not lst:
-        return jsonify({'success': False, 'error': 'List not found'}), 404
+        return error('List not found', 404)
 
     games = query("""
         SELECT g.*, lg.position, lg.added_at AS list_added_at
@@ -408,7 +402,7 @@ def api_get_list_games(list_id):
         WHERE lg.list_id = ?
         ORDER BY lg.position, g.title COLLATE NOCASE
     """, (list_id,))
-    return jsonify({'success': True, 'games': games})
+    return success(games=games)
 
 
 @bp.route('/api/lists/<int:list_id>/games', methods=['POST'])
@@ -418,24 +412,24 @@ def api_add_game_to_list(list_id):
     """Add a game to a list."""
     data = request.get_json()
     if not data or not data.get('game_id'):
-        return jsonify({'success': False, 'error': 'game_id is required'}), 400
+        return error('game_id is required', 400)
 
     game_id = data['game_id']
 
     lst = query("SELECT id FROM lists WHERE id = ?", (list_id,), one=True)
     if not lst:
-        return jsonify({'success': False, 'error': 'List not found'}), 404
+        return error('List not found', 404)
 
     game = query("SELECT id, title FROM games WHERE id = ?", (game_id,), one=True)
     if not game:
-        return jsonify({'success': False, 'error': 'Game not found'}), 404
+        return error('Game not found', 404)
 
     existing = query(
         "SELECT 1 FROM list_games WHERE list_id = ? AND game_id = ?",
         (list_id, game_id), one=True
     )
     if existing:
-        return jsonify({'success': True, 'message': 'Game already in list'})
+        return success(message='Game already in list')
 
     # Determine next position
     max_pos = query(
@@ -449,7 +443,7 @@ def api_add_game_to_list(list_id):
         (list_id, game_id, next_pos, _utcnow_iso())
     )
     logger.info(f"Added game '{game['title']}' (id={game_id}) to list id={list_id}")
-    return jsonify({'success': True}), 201
+    return success(), 201
 
 
 @bp.route('/api/lists/<int:list_id>/games/<int:game_id>', methods=['DELETE'])
@@ -462,11 +456,11 @@ def api_remove_game_from_list(list_id, game_id):
         (list_id, game_id), one=True
     )
     if not existing:
-        return jsonify({'success': False, 'error': 'Game is not in this list'}), 404
+        return error('Game is not in this list', 404)
 
     execute("DELETE FROM list_games WHERE list_id = ? AND game_id = ?", (list_id, game_id))
     logger.info(f"Removed game id={game_id} from list id={list_id}")
-    return jsonify({'success': True})
+    return success()
 
 
 # =============================================================================
@@ -488,7 +482,7 @@ def api_get_wishlist():
         LEFT JOIN systems ws ON ws.id = w.system_id
         ORDER BY w.priority ASC, w.added_at DESC
     """)
-    return jsonify({'success': True, 'items': items})
+    return success(items=items)
 
 
 @bp.route('/api/wishlist', methods=['POST'])
@@ -505,7 +499,7 @@ def api_add_to_wishlist():
     """
     data = request.get_json()
     if not data or not data.get('title', '').strip():
-        return jsonify({'success': False, 'error': 'Title is required'}), 400
+        return error('Title is required', 400)
 
     title = data['title'].strip()
     system_name = data.get('system_name', '').strip()
@@ -517,15 +511,15 @@ def api_add_to_wishlist():
 
     # Validate priority range
     if not isinstance(priority, int) or priority < 1 or priority > 5:
-        return jsonify({'success': False, 'error': 'Priority must be an integer between 1 and 5'}), 400
+        return error('Priority must be an integer between 1 and 5', 400)
 
     # Validate system_id (if provided) resolves to a real system
     if system_id is not None:
         if not isinstance(system_id, int):
-            return jsonify({'success': False, 'error': 'system_id must be an integer'}), 400
+            return error('system_id must be an integer', 400)
         sys_row = query("SELECT id, name FROM systems WHERE id = ?", (system_id,), one=True)
         if not sys_row:
-            return jsonify({'success': False, 'error': 'Unknown system_id'}), 400
+            return error('Unknown system_id', 400)
         # If caller didn't send a system_name, use the canonical one
         if not system_name:
             system_name = sys_row['name']
@@ -536,7 +530,7 @@ def api_add_to_wishlist():
         (title,), one=True
     )
     if existing:
-        return jsonify({'success': False, 'error': 'This game is already on your wishlist'}), 409
+        return error('This game is already on your wishlist', 409)
 
     item_id = execute(
         """INSERT INTO wishlist
@@ -550,13 +544,10 @@ def api_add_to_wishlist():
         from services.wishlist_scraper import scrape_wishlist_item_async
         scrape_wishlist_item_async(item_id)
 
-    return jsonify({
-        'success': True,
-        'item': {
-            'id': item_id, 'title': title, 'system_name': system_name,
-            'system_id': system_id, 'notes': notes, 'priority': priority,
-            'game_id': game_id, 'scrape_status': 'scraping' if scrape_now else 'unscraped'
-        }
+    return success(item={
+        'id': item_id, 'title': title, 'system_name': system_name,
+        'system_id': system_id, 'notes': notes, 'priority': priority,
+        'game_id': game_id, 'scrape_status': 'scraping' if scrape_now else 'unscraped',
     }), 201
 
 
@@ -567,11 +558,11 @@ def api_update_wishlist_item(item_id):
     """Update a wishlist item."""
     data = request.get_json()
     if not data:
-        return jsonify({'success': False, 'error': 'No data provided'}), 400
+        return error('No data provided', 400)
 
     item = query("SELECT * FROM wishlist WHERE id = ?", (item_id,), one=True)
     if not item:
-        return jsonify({'success': False, 'error': 'Wishlist item not found'}), 404
+        return error('Wishlist item not found', 404)
 
     title = (data.get('title', item['title']) or '').strip()
     system_name = (data.get('system_name', item['system_name']) or '').strip()
@@ -581,15 +572,15 @@ def api_update_wishlist_item(item_id):
     game_id = data.get('game_id', item['game_id'])
 
     if not isinstance(priority, int) or priority < 1 or priority > 5:
-        return jsonify({'success': False, 'error': 'Priority must be an integer between 1 and 5'}), 400
+        return error('Priority must be an integer between 1 and 5', 400)
 
     # Validate system_id if it was supplied (either in this request or previously stored)
     if system_id is not None:
         if not isinstance(system_id, int):
-            return jsonify({'success': False, 'error': 'system_id must be an integer'}), 400
+            return error('system_id must be an integer', 400)
         sys_row = query("SELECT id FROM systems WHERE id = ?", (system_id,), one=True)
         if not sys_row:
-            return jsonify({'success': False, 'error': 'Unknown system_id'}), 400
+            return error('Unknown system_id', 400)
 
     execute(
         """UPDATE wishlist SET title = ?, system_name = ?, system_id = ?,
@@ -598,13 +589,10 @@ def api_update_wishlist_item(item_id):
         (title, system_name, system_id, notes, priority, game_id, item_id)
     )
     logger.info(f"Updated wishlist item id={item_id} -> title='{title}'")
-    return jsonify({
-        'success': True,
-        'item': {
-            'id': item_id, 'title': title, 'system_name': system_name,
-            'system_id': system_id, 'notes': notes, 'priority': priority,
-            'game_id': game_id
-        }
+    return success(item={
+        'id': item_id, 'title': title, 'system_name': system_name,
+        'system_id': system_id, 'notes': notes, 'priority': priority,
+        'game_id': game_id,
     })
 
 
@@ -615,11 +603,11 @@ def api_delete_wishlist_item(item_id):
     """Delete a wishlist item."""
     item = query("SELECT * FROM wishlist WHERE id = ?", (item_id,), one=True)
     if not item:
-        return jsonify({'success': False, 'error': 'Wishlist item not found'}), 404
+        return error('Wishlist item not found', 404)
 
     execute("DELETE FROM wishlist WHERE id = ?", (item_id,))
     logger.info(f"Deleted wishlist item '{item['title']}' (id={item_id})")
-    return jsonify({'success': True})
+    return success()
 
 
 @bp.route('/api/wishlist/<int:item_id>/scrape', methods=['POST'])
@@ -633,11 +621,11 @@ def api_scrape_wishlist_item(item_id):
     """
     item = query("SELECT id FROM wishlist WHERE id = ?", (item_id,), one=True)
     if not item:
-        return jsonify({'success': False, 'error': 'Wishlist item not found'}), 404
+        return error('Wishlist item not found', 404)
 
     from services.wishlist_scraper import scrape_wishlist_item_async
     scrape_wishlist_item_async(item_id)
-    return jsonify({'success': True, 'status': 'scraping'})
+    return success(status='scraping')
 
 
 @bp.route('/api/wishlist/scrape-all', methods=['POST'])
@@ -654,8 +642,8 @@ def api_scrape_all_wishlist():
     """, one=True)['c']
 
     if unscraped_count == 0:
-        return jsonify({'success': True, 'scheduled': 0, 'message': 'Nothing to scrape'})
+        return success(scheduled=0, message='Nothing to scrape')
 
     from services.wishlist_scraper import scrape_unscraped_items_async
     scrape_unscraped_items_async()
-    return jsonify({'success': True, 'scheduled': unscraped_count})
+    return success(scheduled=unscraped_count)

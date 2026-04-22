@@ -5,7 +5,7 @@
 # Extracted from app.py for better code organization
 # =============================================================================
 
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request
 import os
 import shutil
 import re
@@ -18,7 +18,7 @@ import config
 # Import services layer
 from services.database import query, execute
 from services.game_utils import get_system_type, build_filename
-from services.api_helpers import handle_api_errors
+from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required, editor_required
 from services.security import safe_filename, safe_path
 import settings_manager
@@ -189,12 +189,11 @@ def api_reports_naming_check():
                 'suggested': suggested
             })
     
-    return jsonify({
-        'success': True,
-        'issues': issues,
-        'systems': list(systems),
-        'total_checked': len(games)
-    })
+    return success(
+        issues=issues,
+        systems=list(systems),
+        total_checked=len(games),
+    )
     
 
 
@@ -363,11 +362,10 @@ def api_reports_name_mismatch():
             'suggested_name': suggested
         })
     
-    return jsonify({
-        'success': True,
-        'mismatches': mismatches,
-        'total_checked': len(games)
-    })
+    return success(
+        mismatches=mismatches,
+        total_checked=len(games),
+    )
     
 
 
@@ -546,15 +544,14 @@ def api_reports_multidisc_scan():
     
     logger.info(f"Multi-disc scan complete: {len(multi_disc_games)} loose games found, scanned systems: {scanned_systems}")
     
-    return jsonify({
-        'success': True,
-        'games': multi_disc_games,
-        'scanned_systems': scanned_systems,
-        'debug_info': {
+    return success(
+        games=multi_disc_games,
+        scanned_systems=scanned_systems,
+        debug_info={
             'systems_checked': scanned_systems,
-            'total_loose_games': len(multi_disc_games)
-        }
-    })
+            'total_loose_games': len(multi_disc_games),
+        },
+    )
     
 
 
@@ -574,19 +571,19 @@ def api_reports_organize_multidisc():
     in_folder = data.get('in_folder', False)  # True if files are already in a folder
     
     if not system or not name or not files:
-        return jsonify({'success': False, 'error': 'Missing required parameters'}), 400
+        return error('Missing required parameters', 400)
 
     system_path = os.path.join(config.ROM_PATH, system)
     folder_path = os.path.join(system_path, name)
 
     if safe_path(folder_path, config.ROM_PATH) is None:
-        return jsonify({'success': False, 'error': 'Invalid path'}), 400
+        return error('Invalid path', 400)
     m3u_path = os.path.join(system_path, f"{name}.m3u")
-    
+
     if in_folder:
         # Files are already in folder, just create M3U
         if not os.path.isdir(folder_path):
-            return jsonify({'success': False, 'error': f'Folder does not exist: {folder_path}'}), 400
+            return error(f'Folder does not exist: {folder_path}', 400)
         
         # Create noload.txt if it doesn't exist
         noload_path = os.path.join(folder_path, 'noload.txt')
@@ -602,13 +599,12 @@ def api_reports_organize_multidisc():
         
         logger.info(f"Created M3U for existing folder: {name} ({len(files)} discs)")
         
-        return jsonify({
-            'success': True,
-            'm3u_path': m3u_path,
-            'folder_path': folder_path,
-            'files_moved': 0,
-            'created_m3u_only': True
-        })
+        return success(
+            m3u_path=m3u_path,
+            folder_path=folder_path,
+            files_moved=0,
+            created_m3u_only=True,
+        )
     
     # Standard case: move loose files into folder
     
@@ -639,12 +635,11 @@ def api_reports_organize_multidisc():
     
     logger.info(f"Organized multi-disc game: {name} ({len(moved_files)} discs)")
     
-    return jsonify({
-        'success': True,
-        'm3u_path': m3u_path,
-        'folder_path': folder_path,
-        'files_moved': len(moved_files)
-    })
+    return success(
+        m3u_path=m3u_path,
+        folder_path=folder_path,
+        files_moved=len(moved_files),
+    )
     
 
 
@@ -662,35 +657,34 @@ def api_reports_rename_rom():
     new_name = data.get('new_name')
     
     if not game_id or not new_name:
-        return jsonify({'success': False, 'error': 'Missing game_id or new_name'}), 400
+        return error('Missing game_id or new_name', 400)
 
     if not safe_filename(new_name):
-        return jsonify({'success': False, 'error': 'Invalid filename'}), 400
+        return error('Invalid filename', 400)
 
     # Get game info
     game = query("SELECT rom_path FROM games WHERE id = ?", (game_id,), one=True)
     if not game:
-        return jsonify({'success': False, 'error': 'Game not found'}), 404
-    
+        return error('Game not found', 404)
+
     old_path = game['rom_path']
     if not old_path:
-        return jsonify({'success': False, 'error': 'No ROM path set'}), 404
+        return error('No ROM path set', 404)
 
     # CLZ imports have virtual paths — just update the database
     is_virtual = old_path.startswith(('clz_import/', 'steam_import/', 'xbox_import/', 'psn_import/'))
     if is_virtual:
         new_path = os.path.join(os.path.dirname(old_path), new_name)
         execute("UPDATE games SET rom_path = ? WHERE id = ?", (new_path, game_id))
-        return jsonify({
-            'success': True,
-            'old_name': os.path.basename(old_path),
-            'new_name': new_name,
-            'new_path': new_path,
-            'is_m3u': False
-        })
+        return success(
+            old_name=os.path.basename(old_path),
+            new_name=new_name,
+            new_path=new_path,
+            is_m3u=False,
+        )
 
     if not os.path.exists(old_path):
-        return jsonify({'success': False, 'error': 'ROM file not found'}), 404
+        return error('ROM file not found', 404)
 
     # Build new path
     dir_path = os.path.dirname(old_path)
@@ -698,7 +692,7 @@ def api_reports_rename_rom():
 
     # Check if new name already exists
     if os.path.exists(new_path) and new_path != old_path:
-        return jsonify({'success': False, 'error': 'A file with that name already exists'}), 400
+        return error('A file with that name already exists', 400)
 
     # Check if this is an M3U file
     old_ext = os.path.splitext(old_path)[1].lower()
@@ -707,7 +701,7 @@ def api_reports_rename_rom():
 
     # Validate extension match for M3U
     if is_m3u and new_ext != '.m3u':
-        return jsonify({'success': False, 'error': 'M3U files must keep the .m3u extension'}), 400
+        return error('M3U files must keep the .m3u extension', 400)
 
     # Handle M3U files specially - need to rename folder and update M3U contents
     if is_m3u:
@@ -720,46 +714,45 @@ def api_reports_rename_rom():
         if os.path.isdir(old_folder):
             # Check if new folder name already exists
             if os.path.exists(new_folder) and new_folder != old_folder:
-                return jsonify({'success': False, 'error': 'A folder with the new name already exists'}), 400
-            
+                return error('A folder with the new name already exists', 400)
+
             # Rename the folder first
             if new_folder != old_folder:
                 os.rename(old_folder, new_folder)
                 logger.info(f"Renamed M3U folder: {old_folder} -> {new_folder}")
-            
+
             # Update M3U contents to reference new folder name
             if os.path.exists(old_path):
                 try:
                     with open(old_path, 'r', encoding='utf-8') as f:
                         m3u_contents = f.read()
-                    
+
                     # Replace old folder name with new folder name in paths
                     updated_contents = m3u_contents.replace(f"{old_base_name}/", f"{new_base_name}/")
-                    
+
                     # Write updated contents
                     with open(old_path, 'w', encoding='utf-8') as f:
                         f.write(updated_contents)
-                    
+
                     logger.info(f"Updated M3U contents: {old_base_name}/ -> {new_base_name}/")
                 except Exception as e:
                     logger.warning(f"Failed to update M3U contents: {e}")
-    
+
     # Rename the main file (ROM or M3U)
     if new_path != old_path:
         os.rename(old_path, new_path)
-    
+
     # Update database
     execute("UPDATE games SET rom_path = ? WHERE id = ?", (new_path, game_id))
-    
+
     logger.info(f"Renamed ROM: {old_path} -> {new_path}")
-    
-    return jsonify({
-        'success': True,
-        'old_name': os.path.basename(old_path),
-        'new_name': new_name,
-        'new_path': new_path,
-        'is_m3u': is_m3u
-    })
+
+    return success(
+        old_name=os.path.basename(old_path),
+        new_name=new_name,
+        new_path=new_path,
+        is_m3u=is_m3u,
+    )
     
 
 
@@ -776,8 +769,8 @@ def api_reports_rename_to_scraped():
     game_id = data.get('game_id')
     
     if not game_id:
-        return jsonify({'success': False, 'error': 'Missing game_id'}), 400
-    
+        return error('Missing game_id', 400)
+
     # Get game info (join with systems to get system folder)
     game = query("""
         SELECT g.rom_path, s.folder AS system, s.name AS system_name,
@@ -788,20 +781,20 @@ def api_reports_rename_to_scraped():
         WHERE g.id = ?
     """, (game_id,), one=True)
     if not game:
-        return jsonify({'success': False, 'error': 'Game not found'}), 404
+        return error('Game not found', 404)
 
     old_path = game['rom_path']
     if not old_path:
-        return jsonify({'success': False, 'error': 'No ROM path set'}), 404
+        return error('No ROM path set', 404)
 
     is_virtual = old_path.startswith(('clz_import/', 'steam_import/', 'xbox_import/', 'psn_import/'))
 
     if not is_virtual and not os.path.exists(old_path):
-        return jsonify({'success': False, 'error': 'ROM file not found'}), 404
+        return error('ROM file not found', 404)
 
     title = game['title']
     if not title:
-        return jsonify({'success': False, 'error': 'No scraped title available'}), 400
+        return error('No scraped title available', 400)
 
     system = game['system'] or ''
     region = game['region'] or 'USA'
@@ -819,7 +812,7 @@ def api_reports_rename_to_scraped():
     clean_title = clean_title.strip()
 
     if not clean_title:
-        return jsonify({'success': False, 'error': 'Title is empty after sanitization'}), 400
+        return error('Title is empty after sanitization', 400)
 
     ext = os.path.splitext(old_path)[1].lower()
     is_m3u = ext == '.m3u'
@@ -842,19 +835,18 @@ def api_reports_rename_to_scraped():
     new_name = new_base_name + ext
 
     if not safe_filename(new_name):
-        return jsonify({'success': False, 'error': 'Generated filename contains invalid characters'}), 400
+        return error('Generated filename contains invalid characters', 400)
 
     # CLZ imports have virtual paths — just update the database
     if is_virtual:
         new_path = os.path.join(os.path.dirname(old_path), new_name)
         execute("UPDATE games SET rom_path = ? WHERE id = ?", (new_path, game_id))
-        return jsonify({
-            'success': True,
-            'old_name': os.path.basename(old_path),
-            'new_name': new_name,
-            'new_path': new_path,
-            'is_m3u': False
-        })
+        return success(
+            old_name=os.path.basename(old_path),
+            new_name=new_name,
+            new_path=new_path,
+            is_m3u=False,
+        )
 
     # Build new path
     dir_path = os.path.dirname(old_path)
@@ -862,7 +854,7 @@ def api_reports_rename_to_scraped():
 
     # Check if new name already exists
     if os.path.exists(new_path) and new_path != old_path:
-        return jsonify({'success': False, 'error': 'A file with that name already exists'}), 400
+        return error('A file with that name already exists', 400)
     
     # Handle M3U files specially - need to rename folder and update M3U contents
     if is_m3u:
@@ -874,7 +866,7 @@ def api_reports_rename_to_scraped():
         if os.path.isdir(old_folder):
             # Check if new folder name already exists
             if os.path.exists(new_folder) and new_folder != old_folder:
-                return jsonify({'success': False, 'error': 'A folder with the new name already exists'}), 400
+                return error('A folder with the new name already exists', 400)
             
             # Rename the folder first
             if new_folder != old_folder:
@@ -907,11 +899,10 @@ def api_reports_rename_to_scraped():
         
         logger.info(f"Renamed ROM to scraped title: {old_path} -> {new_path}")
     
-    return jsonify({
-        'success': True,
-        'old_name': os.path.basename(old_path),
-        'new_name': new_name,
-        'new_path': new_path,
-        'is_m3u': is_m3u
-    })
+    return success(
+        old_name=os.path.basename(old_path),
+        new_name=new_name,
+        new_path=new_path,
+        is_m3u=is_m3u,
+    )
     
