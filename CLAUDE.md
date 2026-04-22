@@ -138,6 +138,9 @@
 | `services/normalization.py` | Genre/modes normalization dicts, DB custom rules, preview/apply logic |
 | `services/wishlist_scraper.py` | Wishlist metadata scraper — orchestrates `scraper_manager.search_games` + the per-source `apply_*_to_metadata` mergers to fill boxart/description/release/ratings/critic score on wishlist rows. Background-thread dispatch (`scrape_wishlist_item_async`, `scrape_unscraped_items_async`). Image files namespaced `w{id}_*` so they don't collide with owned-game boxart. |
 | `services/hltb_service.py` | HLTB domain layer backing `routes/games_hltb.py`. Three classes: `HLTBLookup` (single-game lookup + save + clear + generic search), `HLTBPendingQueue` (review-queue CRUD for bulk-lookup matches needing a human glance), `HLTBBulkOrchestrator` (thin wrapper over `services.jobs.hltb_bulk_job` + pending-queue depth stitching). Raises typed `HLTBError` subclasses (`GameNotFound`, `NoHLTBMatch`, `MissingPlaytime`, `PendingMatchNotFound`) carrying HTTP status codes. |
+| `services/rom_scanner.py` | Inline-fallback ROM scanner used by `/api/scan` when `scraper.scan_roms` can't be imported. Functions: `clean_title(filename)`, `parse_systeminfo(system_path)`, `run_inline_scan()`. |
+| `services/media_cleanup.py` | Per-game media deletion + orphan detection. Functions: `delete_game_images(games)`, `find_orphaned_media(games)`, `clean_orphaned_files(files)`. Single `_MEDIA_LAYOUT` table drives boxart / boxart_3d / screenshots / fanart / video / manual path resolution. |
+| `services/game_cleanup.py` | Game-centric DB cleanup powering `/api/clean-missing-roms`, `/api/clear-clz-imports`, and `/api/clear-scraped-data`. Functions: `clean_missing_roms()`, `clear_clz_imports()`, `preview_scraped_data(system_id)`, `clear_scraped_data(system_id, delete_images)`. |
 
 ### Scrapers (`scraper/`)
 | File | Purpose |

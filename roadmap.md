@@ -72,6 +72,18 @@ change forces a different sequence.
   migrated its 10 `jsonify` sites to `success()` / `error()` in the
   same pass (Pass 2 carry-over). Wire format preserved; all 124
   tests pass. (v2.83.8)
+- [x] **Pass 4 — `routes/maintenance.py` split** — Carved the 693-LOC
+  blueprint into a 254-LOC route layer (−63%) plus three focused service
+  modules: `services/rom_scanner.py` (128 LOC, inline-fallback scanner),
+  `services/media_cleanup.py` (185 LOC, per-game media delete +
+  orphan detection), `services/game_cleanup.py` (154 LOC, missing-ROM
+  cleanup, CLZ-import purge, scraped-data reset). Used module-level
+  functions rather than the roadmap's suggested classes — simpler and
+  matches `game_query.py` / `analytics.py` idiom (the Pass 3 class
+  approach was motivated by typed errors, which these simpler helpers
+  don't need). The six near-duplicate per-field delete blocks inside
+  `delete_game_images()` now run off a single `_MEDIA_LAYOUT` table.
+  Wire format preserved exactly; all 124 tests pass. (v2.83.10)
 
 ---
 
@@ -93,32 +105,6 @@ change forces a different sequence.
   `success`, or scanner-result passthroughs) stay as raw `jsonify` —
   document here if discovered.
 - **Status**: in-progress
-
----
-
-## Pass 4 — maintenance.py split
-
-### Break `routes/maintenance.py` into service modules
-
-- **Target**: `routes/maintenance.py` (769 LOC → ~200); new
-  `services/game_cleanup.py`, `services/media_cleanup.py`,
-  `services/rom_scanner.py`.
-- **Why**: file mixes seven concerns (ROM scanning, image deletion, game
-  cleanup, scraped-data clearing, orphan detection, DB optimisation, job
-  scheduling for image resize + alt-titles backfill). Helper functions like
-  `delete_game_images()` and `clean_title()` are trapped inside route
-  bodies.
-- **Plan**:
-  - `services/game_cleanup.py::GameCleanup` — `clean_missing_roms()`,
-    `delete_game_images(game_id)`, `clear_scraped_data(game_id, fields)`.
-  - `services/media_cleanup.py::MediaCleaner` — `find_orphaned_media()`,
-    `clean_orphaned_files()`.
-  - `services/rom_scanner.py::ROMScanner` — `clean_title(name)`,
-    `parse_systeminfo(folder)`, `run_inline_scan(system_id)`.
-  - Routes call into these; each handler becomes 3–10 LOC.
-- **Est. reduction**: routes file shrinks by ~550 LOC; three new service
-  modules total ~500 LOC, each focused.
-- **Status**: todo
 
 ---
 

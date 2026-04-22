@@ -1,3 +1,21 @@
+- version: 2.83.10
+  date: 2026-04-22
+  tags:
+  - type: chore
+    label: Chore
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 4 &mdash; <code>routes/maintenance.py</code> split</strong> &mdash; Carved the 693-LOC maintenance blueprint into a thin HTTP surface (254 LOC, &minus;63%) plus three focused service modules:
+            <ul>
+                <li><code>services/rom_scanner.py</code> (128 LOC) &mdash; owns the inline-fallback scanner used when <code>scraper.scan_roms</code> can't be imported. Functions: <code>clean_title(filename)</code>, <code>parse_systeminfo(system_path)</code>, <code>run_inline_scan()</code>.</li>
+                <li><code>services/media_cleanup.py</code> (185 LOC) &mdash; per-game media deletion plus orphan detection across boxart, boxart_3d, screenshots, fanart, video and manual. Functions: <code>delete_game_images(games)</code>, <code>find_orphaned_media(games)</code>, <code>clean_orphaned_files(files)</code>. The six near-duplicate per-field delete blocks that used to live inline in <code>delete_game_images()</code> now run off a single <code>_MEDIA_LAYOUT</code> table driving <code>_resolve_media_path()</code> &plus; <code>_try_remove()</code>.</li>
+                <li><code>services/game_cleanup.py</code> (154 LOC) &mdash; game-centric DB cleanup. Functions: <code>clean_missing_roms()</code>, <code>clear_clz_imports()</code>, <code>preview_scraped_data(system_id=None)</code>, <code>clear_scraped_data(system_id=None, delete_images=False)</code>. Scraped-field list and virtual-ROM prefixes are module constants so they're easy to grep.</li>
+            </ul>
+        </li>
+        <li><strong>Route handlers are now 3&ndash;10 LOC</strong> &mdash; Every endpoint under <code>/api/clean-missing-roms</code>, <code>/api/clear-clz-imports</code>, <code>/api/clear-scraped-data</code>, <code>/api/orphaned-media/*</code>, and the inline scan fallback now reads as "call service &rarr; wrap in <code>success()</code>", so intent is obvious at a glance. Image-resize and alt-titles job endpoints kept their raw <code>jsonify</code> passthroughs since the job classes already return canonical-envelope dicts.</li>
+        <li><strong>Wire format preserved exactly</strong> &mdash; Identical HTTP status codes and JSON keys at every endpoint. All 124 pytest tests still pass; smoke-import of <code>app</code> plus the new service modules is clean. No caller outside <code>routes/maintenance.py</code> imported any of the extracted helpers, so the split is backward-compatible at the package boundary.</li>
+    </ul>
+
 - version: 2.83.9
   date: 2026-04-22
   tags:
