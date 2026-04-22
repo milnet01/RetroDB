@@ -23,11 +23,11 @@ from scraper.scrape_esde import (
     extract_region_from_filename,
     derive_game_modes
 )
-from scraper.scrape_metadata_thegamesdb import (
+from scraper.scrape_thegamesdb import (
     fetch_game_details as fetch_tgdb_details,
     download_image as download_tgdb_image
 )
-from scraper.scrape_metadata_igdb import (
+from scraper.scrape_igdb import (
     fetch_game_details as fetch_igdb_details,
     igdb_auth,
     igdb_request
@@ -948,7 +948,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                             
                             # If not, search for it (fetch multiple and pick best match)
                             if not tgdb_id:
-                                from scraper.scrape_metadata_thegamesdb import search_games as search_tgdb
+                                from scraper.scrape_thegamesdb import search_games as search_tgdb
                                 tgdb_results = search_tgdb(game_title, system_name, limit=5)
                                 tgdb_match = _pick_best_fallback(tgdb_results, game_title)
                                 if tgdb_match:
@@ -979,7 +979,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                             
                             # If not, search for it (fetch multiple and pick best match)
                             if not igdb_id:
-                                from scraper.scrape_metadata_igdb import search_games as search_igdb
+                                from scraper.scrape_igdb import search_games as search_igdb
                                 igdb_results = search_igdb(game_title, system_name, limit=5)
                                 igdb_match = _pick_best_fallback(igdb_results, game_title)
                                 if igdb_match:

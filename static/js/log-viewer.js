@@ -487,7 +487,6 @@ const LogViewer = {
     shortenModule(mod) {
         // Generic module name shortening for readability
         return mod
-            .replace('scraper.scrape_metadata_', '')
             .replace('scraper.scrape_', '')
             .replace('scraper.', '')
             .replace('services.jobs.', 'jobs/')

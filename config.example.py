@@ -75,7 +75,7 @@ DEBUG_MODE = os.environ.get('RETRODB_DEBUG', "false").lower() in ('true', '1', '
 
 # Application metadata
 APP_NAME = "RetroDB"
-APP_VERSION = "2.83.20"
+APP_VERSION = "2.83.21"
 APP_LAST_UPDATE = "2026-04-22"
 APP_DESCRIPTION = "Retro Gaming ROM Library Manager"
 

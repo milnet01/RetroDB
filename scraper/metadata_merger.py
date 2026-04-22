@@ -88,7 +88,7 @@ def load_scraper_settings():
 
 def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=False):
     """Apply TGDB data to metadata dict"""
-    from scraper.scrape_metadata_thegamesdb import download_image as download_tgdb_image
+    from scraper.scrape_thegamesdb import download_image as download_tgdb_image
 
     field_map = {
         'title': 'name',

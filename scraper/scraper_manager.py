@@ -191,11 +191,11 @@ def get_api_key(service, key_name=None):
         return getattr(config, key_name, '')
     return ''
 
-from .scrape_metadata_thegamesdb import (
+from .scrape_thegamesdb import (
     search_games as search_tgdb,
     fetch_game_details as fetch_tgdb,
 )
-from .scrape_metadata_igdb import (
+from .scrape_igdb import (
     search_games as search_igdb,
     fetch_game_details as fetch_igdb,
 )

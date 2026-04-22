@@ -170,10 +170,10 @@ def apply_metadata_to_game(db_game_id, game_data, source, system_folder=None):
     normalized = _normalize_source(source)
     try:
         if normalized == 'tgdb':
-            from scraper.scrape_metadata_thegamesdb import apply_metadata_to_game as apply_tgdb
+            from scraper.scrape_thegamesdb import apply_metadata_to_game as apply_tgdb
             return apply_tgdb(db_game_id, game_data)
         if normalized == 'igdb':
-            from scraper.scrape_metadata_igdb import apply_metadata_to_game as apply_igdb
+            from scraper.scrape_igdb import apply_metadata_to_game as apply_igdb
             return apply_igdb(db_game_id, game_data)
         if normalized == 'esde':
             from scraper.scrape_esde import apply_esde_metadata

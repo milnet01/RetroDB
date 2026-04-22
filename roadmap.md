@@ -122,6 +122,26 @@ change forces a different sequence.
   every existing caller (`routes/bulk_scrape.py`, `routes/games.py`,
   `scraper/hybrid_scraper.py`, `services/wishlist_scraper.py`,
   `services/jobs/*`) is unchanged. All 124 tests pass. (v2.83.12)
+- [x] **Pass 9 — scraper/ filename consistency** — Renamed
+  `scraper/scrape_metadata_igdb.py` → `scraper/scrape_igdb.py` and
+  `scraper/scrape_metadata_thegamesdb.py` → `scraper/scrape_thegamesdb.py`
+  via `git mv` so blame is preserved. The `scrape_metadata_` prefix added
+  nothing — every other scraper in the directory is already
+  `scrape_<source>.py` (`scrape_rawg.py`, `scrape_screenscraper.py`,
+  `scrape_steam.py`, `scrape_xbox.py`, `scrape_ai.py`, `scrape_esde.py`)
+  and `docs/RETRODB_DESIGN_STANDARDS.md` §24.1 codifies the convention.
+  Six import sites updated: `scraper/scraper_manager.py` (top-level),
+  `scraper/hybrid_scraper.py` (2 top-level + 2 deferred inside
+  fallback branches), `scraper/metadata_merger.py` (deferred inside
+  `apply_tgdb_to_metadata`), `services/game_metadata_service.py`
+  (2 deferred inside `apply_metadata_to_game`), `log_manager.py`
+  (`scraping` category logger names), `static/js/log-viewer.js`
+  (`shortenModule()` replaced the stale
+  `scraper.scrape_metadata_` strip — the remaining `scraper.scrape_`
+  strip now handles both old TGDB/IGDB files and all other scrapers).
+  `CLAUDE.md` scraper-table rows updated. Cosmetic LOC-wise, but the
+  scraper dir is now fully self-consistent with the standards doc.
+  Smoke-import of `app` clean; all 124 tests pass. (v2.83.21)
 - [x] **Pass 7 stage 3 — unified metadata-apply orchestrator** — Moved
   `ScraperManager.apply_metadata` + `ScraperManager.apply_hybrid_metadata`
   out of `scraper/scraper_manager.py` (684 → 584 LOC; −100) and into
@@ -326,7 +346,7 @@ onwards. Manager shrank 1022 → 684 LOC (−33%).
   4. Run `python3 -m pytest`; run `python3 -c "import app"` smoke test.
 - **Est. reduction**: cosmetic LOC-wise (~0) but brings scraper/ dir to
   full consistency with the standards doc.
-- **Status**: todo
+- **Status**: done (v2.83.21) — see "Done" entry above.
 
 ---
 

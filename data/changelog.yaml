@@ -1,3 +1,13 @@
+- version: 2.83.21
+  date: 2026-04-22
+  tags:
+  - type: chore
+    label: Chore
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 9 &mdash; scraper/ filename consistency</strong> &mdash; <code>git mv</code>'d <code>scraper/scrape_metadata_igdb.py</code> &rarr; <code>scraper/scrape_igdb.py</code> and <code>scraper/scrape_metadata_thegamesdb.py</code> &rarr; <code>scraper/scrape_thegamesdb.py</code> so blame is preserved. Every other scraper in the directory was already <code>scrape_&lt;source&gt;.py</code> (<code>scrape_rawg</code>, <code>scrape_screenscraper</code>, <code>scrape_steam</code>, <code>scrape_xbox</code>, <code>scrape_ai</code>, <code>scrape_esde</code>) &mdash; IGDB and TheGamesDB carried a redundant <code>metadata_</code> segment that added nothing (all scrapers scrape metadata). <code>docs/RETRODB_DESIGN_STANDARDS.md</code> &sect;24.1 codifies the convention. Six import sites updated: <code>scraper/scraper_manager.py</code> top-level, <code>scraper/hybrid_scraper.py</code> top-level + two deferred imports inside fallback branches, <code>scraper/metadata_merger.py</code> deferred import inside <code>apply_tgdb_to_metadata</code>, <code>services/game_metadata_service.py</code> two deferred imports inside <code>apply_metadata_to_game</code>, <code>log_manager.py</code> scraping-category logger names, <code>static/js/log-viewer.js</code> <code>shortenModule()</code> replaced the stale <code>scraper.scrape_metadata_</code> strip. <code>CLAUDE.md</code> scraper-table rows updated. Cosmetic LOC-wise, but the scraper dir is now fully self-consistent with the standards doc. Smoke-import of <code>app</code> clean; all 124 tests pass.</li>
+    </ul>
+
 - version: 2.83.20
   date: 2026-04-22
   tags:
