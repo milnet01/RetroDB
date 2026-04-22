@@ -1,3 +1,13 @@
+- version: 2.83.18
+  date: 2026-04-22
+  tags:
+  - type: fix
+    label: Fix
+  body: |
+    <ul>
+        <li><strong>Game imports: search filter wiring hardened</strong> &mdash; The v2.83.15 fix attached the <code>input</code> listener per-input from <code>DOMContentLoaded</code>. That binding was still getting missed in some setups (stale tab caches, browser extensions that re-parent form controls, or Flask debug reloads that replace the tab content without firing <code>DOMContentLoaded</code> again). Switched to a single document-level delegated listener &mdash; input events bubble, so matching on <code>e.target.id.endsWith('Search')</code> catches PSN / Xbox / Steam / CLZ regardless of whether the input node was re-inserted. The 120&nbsp;ms debounce and defensive <code>filterGames()</code> guards from v2.83.14/15 are preserved.</li>
+    </ul>
+
 - version: 2.83.17
   date: 2026-04-22
   tags:

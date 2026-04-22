@@ -961,16 +961,21 @@ function updateFilterCounts(platform) {
 // =============================================================================
 // INIT
 // =============================================================================
+// Delegate search-input events off `document` rather than binding per-input.
+// Survives any DOM mutation (tab re-render, browser extension interference,
+// late-injected nodes) that can silently detach a per-element listener and
+// leave the filter feeling broken even on the latest template.
+const _searchDebounceTimers = {};
+document.addEventListener('input', (e) => {
+    const tgt = e.target;
+    if (!tgt || !tgt.id || !tgt.id.endsWith('Search')) return;
+    const platform = tgt.id.slice(0, -'Search'.length);
+    if (!['clz', 'steam', 'xbox', 'psn'].includes(platform)) return;
+    clearTimeout(_searchDebounceTimers[platform]);
+    _searchDebounceTimers[platform] = setTimeout(() => filterGames(platform), 120);
+});
+
 document.addEventListener('DOMContentLoaded', () => {
-    ['clz', 'steam', 'xbox', 'psn'].forEach(platform => {
-        const input = document.getElementById(platform + 'Search');
-        if (!input) return;
-        let timer = null;
-        input.addEventListener('input', () => {
-            if (timer) clearTimeout(timer);
-            timer = setTimeout(() => filterGames(platform), 120);
-        });
-    });
     restorePlatformFilters();
     // Load saved API keys
     fetch('/api/scraper-settings')
