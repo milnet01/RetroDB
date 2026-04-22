@@ -61,6 +61,7 @@
 | `pyproject.toml` | Ruff + pytest config (no packaging — project is a Flask app, not a library) |
 | `.semgrep.yml` | Semgrep audit config — documented threat model + list of excluded upstream rule IDs. Read this before triaging new audit findings. |
 | `.gitleaks.toml` | Gitleaks allowlist — excludes `logs/`, `data/*.json` tokens, admin-editable settings files |
+| `.pre-commit-config.yaml` | Pre-commit hooks — `ruff check --fix` + `gitleaks`. Install with `pip install pre-commit --break-system-packages && pre-commit install`. `ruff-format` and `pytest`/`mypy` intentionally excluded (format needs its own clean-up pass; pytest/mypy belong in CI). |
 | `requirements.txt` | Runtime dependencies with semver ranges (user-facing `pip install -r`) |
 | `requirements.lock` | Fully pinned transitive dependency list — regenerate with `pip-compile` |
 | `tests/` | pytest suite — `python3 -m pytest` |

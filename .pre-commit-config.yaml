@@ -1,0 +1,26 @@
+# Pre-commit hooks for RetroDB.
+#
+# Install locally:
+#   pip install pre-commit --break-system-packages
+#   pre-commit install
+#
+# Run manually across the whole tree:
+#   pre-commit run --all-files
+#
+# Ruff config is read from pyproject.toml; gitleaks from .gitleaks.toml.
+# Pytest / mypy are intentionally NOT wired in here — they belong in CI,
+# not on every commit (too slow for an interactive dev loop).
+# ruff-format is intentionally omitted — the repo is not currently
+# format-clean and adopting it needs its own reviewable pass.
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
+    hooks:
+      - id: ruff
+        args: [--fix]
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.21.2
+    hooks:
+      - id: gitleaks

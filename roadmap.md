@@ -122,6 +122,40 @@ change forces a different sequence.
   every existing caller (`routes/bulk_scrape.py`, `routes/games.py`,
   `scraper/hybrid_scraper.py`, `services/wishlist_scraper.py`,
   `services/jobs/*`) is unchanged. All 124 tests pass. (v2.83.12)
+- [x] **Pass 14 (partial) — Developer efficiency & test coverage** —
+  Two-item sweep; 14.2 (gradual type hints) deferred as a separate
+  LOW-priority future pass. Landed as v2.84.3.
+    - **14.1** Pre-commit hooks. New `.pre-commit-config.yaml` wires
+      `astral-sh/ruff-pre-commit` (ruff check with `--fix`, reading
+      `pyproject.toml`'s E/F/B/S rule set) and `gitleaks/gitleaks`
+      (using the existing `.gitleaks.toml` allowlist). `ruff-format`
+      was dropped from the initial wiring because the repo is not
+      format-clean today (101 files would reformat); adopting format
+      is its own future pass. `pytest` / `mypy` intentionally stay in
+      CI, not pre-commit. Install locally with
+      `pip install pre-commit --break-system-packages` then
+      `pre-commit install`.
+    - **14.3a** Characterisation tests for
+      `scraper/metadata_merger.py` (1090 LOC, 0 → 30 tests). New
+      `tests/test_metadata_merger.py` pins all 5 apply functions
+      (TGDB, IGDB, RAWG, ScreenScraper, AI): fill_only semantics,
+      TGDB ESRB/PEGI regex parsing, IGDB age-rating category map,
+      IGDB extended fields, RAWG release-date ISO truncation,
+      ScreenScraper region-priority + 0-20 → 0-100 note conversion,
+      AI VALIDATE_FIELDS override, AI score coercion.
+    - **14.3b** State-machine tests for
+      `services/jobs/bulk_scrape.py` (980 LOC, 0 → 24 tests). New
+      `tests/test_bulk_scrape_job.py` pins the `BulkScrapeJob`
+      transitions: start/queue/pause/resume/cancel + queue management
+      (`cancel_queued`, `cancel_all_queued`, `promote_queued`,
+      `demote_queued`) + duplicate-rejection (same system + same mode).
+      Real `_run_scrape` thread target stubbed; `_get_conn()` patched
+      to an in-memory SQLite with minimal fixtures.
+    - **14.2 (deferred)** Gradual type hints on `metadata_merger.py`,
+      `game_query.py`, `routes/games.py` — LOW priority / L sized; a
+      full pass in its own right. Pushed to a later pass.
+    Net: 199 tests pass (was 145); 54 new tests; full suite green;
+    ruff + gitleaks pre-commit hooks both pass on the tree. (v2.84.3)
 - [x] **Pass 13 — Frontend performance** — Three-item sweep landed as
   v2.84.2.
     - **13.1** Streaming image downloads. `scraper/base_scraper.py::
@@ -832,7 +866,10 @@ sheet, Flask/Werkzeug/Waitress CVE scan).
   they're slower and belong in CI.
 - **Source**: <https://github.com/astral-sh/ruff-pre-commit>,
   <https://gatlenculp.medium.com/effortless-code-quality-the-ultimate-pre-commit-hooks-guide-for-2025-57ca501d9835>
-- **Status**: todo
+- **Status**: done (v2.84.3) — `.pre-commit-config.yaml` wires ruff-check +
+  gitleaks. `ruff-format` was dropped from the initial wiring because the
+  repo is not currently format-clean (101 files would reformat); adopting
+  format is a separate future pass.
 
 ### 14.2 Gradual type hints on high-risk modules (LOW, L)
 
@@ -862,7 +899,10 @@ sheet, Flask/Werkzeug/Waitress CVE scan).
      Done per-source (TGDB, IGDB, RAWG, ScreenScraper, AI).
   2. State-machine tests for `BulkScrapeJob` — start → pause → resume →
      cancel → restart transitions.  Use an in-memory SQLite fixture.
-- **Status**: todo (but do this BEFORE Pass 5 to de-risk the rewrite)
+- **Status**: done (v2.84.3) — `tests/test_metadata_merger.py` (30 tests)
+  pins all 5 `apply_*_to_metadata()` functions; `tests/test_bulk_scrape_job.py`
+  (24 tests) pins the BulkScrapeJob state machine (start/queue/pause/resume/
+  cancel + queue management + duplicate-rejection). 54 new tests, total 199.
 
 ---
 

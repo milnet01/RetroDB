@@ -1,3 +1,26 @@
+- version: 2.84.3
+  date: 2026-04-22
+  tags:
+  - type: chore
+    label: Tooling
+  - type: test
+    label: Tests
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 14 (partial) &mdash; developer efficiency &amp; test coverage</strong> &mdash; Two-item sweep; 14.2 (gradual type hints) deferred as a separate LOW-priority pass. 199 tests pass (was 145); 54 new tests added.
+            <ul>
+                <li><strong>14.1 &mdash; pre-commit hooks for ruff + gitleaks</strong>. New <code>.pre-commit-config.yaml</code> wires <code>astral-sh/ruff-pre-commit</code> (ruff check with <code>--fix</code>, reading <code>pyproject.toml</code>'s E/F/B/S rule set) and <code>gitleaks/gitleaks</code> (using the existing <code>.gitleaks.toml</code> allowlist). Both hooks pass on the current tree. <code>ruff-format</code> is intentionally omitted &mdash; the repo is not format-clean today (101 files would reformat) and adopting it needs its own reviewable pass. <code>pytest</code> and <code>mypy</code> are likewise intentionally out of pre-commit scope (too slow for an interactive dev loop; they belong in CI). Install locally with <code>pip install pre-commit --break-system-packages</code> then <code>pre-commit install</code>.</li>
+                <li><strong>14.3 &mdash; characterisation + state-machine tests</strong> on the two most-complex / most-changing modules that previously had near-zero coverage.
+                    <ul>
+                        <li><strong>14.3a &mdash; <code>scraper/metadata_merger.py</code></strong> (1090 LOC, 0 tests &rarr; 30 tests). New <code>tests/test_metadata_merger.py</code> pins the exercise behaviour of all 5 apply functions: <code>apply_tgdb_to_metadata</code>, <code>apply_igdb_to_metadata</code>, <code>apply_rawg_to_metadata</code>, <code>apply_screenscraper_to_metadata</code>, <code>apply_ai_to_metadata</code>. Covers the fill_only semantics per source (title always overwrites when <code>fill_only=False</code>, other fields only fill if empty; RAWG fills every field when <code>fill_only=False</code>; AI <code>VALIDATE_FIELDS</code> always override), TGDB ESRB/PEGI regex parsing, IGDB's category &rarr; rating-field map (ESRB=1, PEGI=2, CERO=3, USK=4, GRAC=5, ClassInd=6, ACB=7) with unknown categories ignored, IGDB <code>storyline</code>-preferred-over-<code>summary</code> for description, IGDB Unix-timestamp release-date conversion, IGDB extended fields (franchise, similar_games, playtime_estimate, perspective, themes, critic_score, user_score), RAWG's ISO-truncate of release_date (<code>2007-10-10T00:00:00Z</code> &rarr; <code>2007-10-10</code>), RAWG franchise fill-only-when-empty behaviour regardless of <code>fill_only</code> param, ScreenScraper's <code>get_localized()</code> region priority (us/eu/wor/ss &rarr; language &rarr; fallback), ScreenScraper alt-title region tagging, ScreenScraper note 0-20 &rarr; 0-100 conversion, AI <code>None</code> data is no-op, AI simple/score/validate fields, AI score coercion to int with silent-drop on non-numeric. Image-download paths are not exercised (tests skip network + filesystem by leaving URL fields empty).</li>
+                        <li><strong>14.3b &mdash; <code>services/jobs/bulk_scrape.py</code></strong> (980 LOC, 0 tests &rarr; 24 tests). New <code>tests/test_bulk_scrape_job.py</code> pins the <code>BulkScrapeJob</code> state machine: idle-state invariants, start (first-job-runs-immediately vs second-job-queues), duplicate rejection (same system+mode rejected both when running and when queued; different mode for same system is not a duplicate), pause/resume round-trips (with pause-when-idle-fails and resume-when-not-paused-fails), cancel semantics (cancel clears paused so the loop exits; cancel when idle fails), queue management (<code>cancel_queued</code> / <code>cancel_all_queued</code> / <code>promote_queued</code> / <code>demote_queued</code> including the already-at-front / already-at-back no-op cases), and <code>get_status()</code> shape. The real <code>_run_scrape</code> thread target is stubbed to a no-op and <code>_get_conn()</code> is patched to an in-memory SQLite with minimal <code>systems</code>/<code>games</code> fixtures, so the state machine can be exercised without spawning scrapers or opening the real DB.</li>
+                    </ul>
+                </li>
+                <li><strong>Validation</strong> &mdash; full suite green (199 passed, 0 failed); <code>ruff check</code> clean; <code>pre-commit run --all-files</code> green (ruff + gitleaks both pass).</li>
+            </ul>
+        </li>
+    </ul>
+
 - version: 2.84.2
   date: 2026-04-22
   tags:
