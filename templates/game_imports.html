@@ -533,8 +533,11 @@ async function uploadClzFile(input) {
         document.getElementById('clzNew').textContent = formatNumber(total - existing);
         document.getElementById('clzExisting').textContent = formatNumber(existing);
 
+        renderClzTable();
         document.getElementById('clzPreview').classList.add('active');
-        filterGames('clz');
+        if (document.getElementById('clzSearch') && document.getElementById('clzSearch').value) {
+            filterGames('clz');
+        }
         showNotification(`Found ${formatNumber(total)} games (${existing} already imported)`, 'success');
     } catch (e) {
         showNotification(e.message, 'error');
@@ -656,8 +659,11 @@ async function fetchSteamLibrary() {
         document.getElementById('steamTotal').textContent = formatNumber(data.total);
         document.getElementById('steamNew').textContent = formatNumber(data.total - data.already_imported);
         document.getElementById('steamExisting').textContent = formatNumber(data.already_imported);
+        renderTable('steam');
         document.getElementById('steamPreview').classList.add('active');
-        filterGames('steam');
+        if (document.getElementById('steamSearch') && document.getElementById('steamSearch').value) {
+            filterGames('steam');
+        }
         showNotification(`Found ${formatNumber(data.total)} games (${data.already_imported} already imported)`, 'success');
     } catch (e) { showNotification(e.message, 'error'); }
     finally { overlay.classList.remove('active'); btn.disabled = false; btn.innerHTML = '📡 Fetch Library'; }
@@ -721,9 +727,12 @@ async function fetchXboxLibrary() {
         document.getElementById('xboxTotal').textContent = formatNumber(data.total);
         document.getElementById('xboxNew').textContent = formatNumber(data.total - data.already_imported);
         document.getElementById('xboxExisting').textContent = formatNumber(data.already_imported);
+        renderTable('xbox');
         document.getElementById('xboxPreview').classList.add('active');
-        filterGames('xbox');
         applyRestoredFilter('xbox');
+        if (document.getElementById('xboxSearch') && document.getElementById('xboxSearch').value) {
+            filterGames('xbox');
+        }
         showNotification(`Found ${formatNumber(data.total)} Xbox games (${data.already_imported} already imported)`, 'success');
     } catch (e) { showNotification(e.message, 'error'); }
     finally { overlay.classList.remove('active'); btn.disabled = false; btn.innerHTML = '📡 Fetch Library'; }
@@ -903,9 +912,12 @@ async function fetchPsnLibrary() {
         document.getElementById('psnTotal').textContent = formatNumber(data.total);
         document.getElementById('psnNew').textContent = formatNumber(data.total - data.already_imported);
         document.getElementById('psnExisting').textContent = formatNumber(data.already_imported);
+        renderTable('psn');
         document.getElementById('psnPreview').classList.add('active');
-        filterGames('psn');
         applyRestoredFilter('psn');
+        if (document.getElementById('psnSearch') && document.getElementById('psnSearch').value) {
+            filterGames('psn');
+        }
         showNotification(`Found ${formatNumber(data.total)} PSN games (${data.already_imported} already imported)`, 'success');
     } catch (e) { showNotification(e.message, 'error'); }
     finally { overlay.classList.remove('active'); btn.disabled = false; btn.innerHTML = '📡 Fetch Library'; }

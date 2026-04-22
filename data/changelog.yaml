@@ -1,3 +1,13 @@
+- version: 2.83.15
+  date: 2026-04-22
+  tags:
+  - type: fix
+    label: Fix
+  body: |
+    <ul>
+        <li><strong>Game imports: fetched library is shown again</strong> &mdash; v2.83.14's unconditional <code>filterGames(platform)</code> call inside the four fetch handlers (PSN / Xbox / Steam / CLZ) caused an empty table when the search box was blank: the stats and platform counts populated correctly but the tbody rendered zero rows. Reverted to the original direct <code>renderTable(platform)</code> call and only re-invoke <code>filterGames</code> when the search input actually has text. The explicit <code>addEventListener('input', …)</code> binding from v2.83.14 is kept, so the original filter-not-firing bug on live typing stays fixed.</li>
+    </ul>
+
 - version: 2.83.14
   date: 2026-04-22
   tags:
