@@ -1284,24 +1284,24 @@ const KeyboardShortcuts = {
     
     shortcuts: {
         // Navigation shortcuts (g + key)
-        'g d': { action: () => window.location.href = '/dashboard', description: 'Go to Dashboard' },
-        'g s': { action: () => window.location.href = '/systems', description: 'Go to Systems' },
-        'g l': { action: () => window.location.href = '/games', description: 'Go to Library' },
-        'g a': { action: () => window.location.href = '/analytics', description: 'Go to Analytics' },
-        'g t': { action: () => window.location.href = '/settings', description: 'Go to Settings' },
-        'g h': { action: () => window.location.href = '/help', description: 'Go to Help' },
-        'g c': { action: () => window.location.href = '/changelog', description: 'Go to Changelog' },
-        
+        'g d': { action: () => window.location.href = '/dashboard', description: 'Go to Dashboard', category: 'Navigation' },
+        'g s': { action: () => window.location.href = '/systems', description: 'Go to Systems', category: 'Navigation' },
+        'g l': { action: () => window.location.href = '/games', description: 'Go to Library', category: 'Navigation' },
+        'g a': { action: () => window.location.href = '/analytics', description: 'Go to Analytics', category: 'Navigation' },
+        'g t': { action: () => window.location.href = '/settings', description: 'Go to Settings', category: 'Navigation' },
+        'g h': { action: () => window.location.href = '/help', description: 'Go to Help', category: 'Navigation' },
+        'g c': { action: () => window.location.href = '/changelog', description: 'Go to Changelog', category: 'Navigation' },
+
         // Single key shortcuts
-        '/': { action: () => focusSearch(), description: 'Focus search box' },
-        '?': { action: () => showShortcutsModal(), description: 'Show keyboard shortcuts' },
-        'Escape': { action: () => closeAnyModal(), description: 'Close modal / cancel' },
+        '/': { action: () => focusSearch(), description: 'Focus search box', category: 'Actions' },
+        '?': { action: () => showShortcutsModal(), description: 'Show keyboard shortcuts', category: 'Actions' },
+        'Escape': { action: () => closeAnyModal(), description: 'Close modal / cancel', category: 'Actions' },
     },
-    
+
     // Game page shortcuts (only active on game detail pages)
     gameShortcuts: {
-        'e': { action: () => { if (typeof openEditModal === 'function') openEditModal(); }, description: 'Edit game' },
-        's': { action: () => { if (typeof openScrapeModal === 'function') openScrapeModal(); }, description: 'Scrape game' },
+        'e': { action: () => { if (typeof openEditModal === 'function') openEditModal(); }, description: 'Edit game', category: 'Game Page' },
+        's': { action: () => { if (typeof openScrapeModal === 'function') openScrapeModal(); }, description: 'Scrape game', category: 'Game Page' },
     },
     
     init() {
@@ -1442,52 +1442,69 @@ function closeAnyModal() {
     }
 }
 
+// Friendly labels for keys that don't render well as a single character.
+const _SHORTCUT_KEY_LABELS = {
+    'Escape': 'Esc',
+    'ArrowLeft': '←',
+    'ArrowRight': '→',
+    'ArrowUp': '↑',
+    'ArrowDown': '↓',
+};
+
+function _renderShortcutKeys(combo) {
+    // "g d" → "<kbd>g</kbd> <kbd>d</kbd>", "Escape" → "<kbd>Esc</kbd>"
+    return combo.split(' ').map(k => {
+        const label = _SHORTCUT_KEY_LABELS[k] || k;
+        return `<kbd>${escapeHtml(label)}</kbd>`;
+    }).join(' ');
+}
+
+function _buildShortcutsBody() {
+    // Collect all shortcuts into category-grouped buckets, drawing from the
+    // single source of truth (KeyboardShortcuts.shortcuts + .gameShortcuts).
+    const buckets = new Map();
+    const addEntry = (combo, meta) => {
+        const cat = meta.category || 'Other';
+        if (!buckets.has(cat)) buckets.set(cat, []);
+        buckets.get(cat).push({ combo, description: meta.description });
+    };
+    Object.entries(KeyboardShortcuts.shortcuts).forEach(([k, v]) => addEntry(k, v));
+    Object.entries(KeyboardShortcuts.gameShortcuts).forEach(([k, v]) => addEntry(k, v));
+
+    const sections = [];
+    for (const [category, entries] of buckets) {
+        const rows = entries.map(e =>
+            `<div class="shortcut-row">${_renderShortcutKeys(e.combo)} <span>${escapeHtml(e.description)}</span></div>`
+        ).join('');
+        sections.push(
+            `<div style="margin-bottom: 1.5rem;">
+                <h4 style="color: var(--primary-cyan); margin-bottom: 0.75rem; font-size: 0.9rem;">${escapeHtml(category.toUpperCase())}</h4>
+                <div class="shortcut-list">${rows}</div>
+            </div>`
+        );
+    }
+    return sections.join('');
+}
+
 function showShortcutsModal() {
     let modal = document.getElementById('shortcuts-modal');
+    const body = _buildShortcutsBody();
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'shortcuts-modal';
         modal.className = 'custom-modal';
         modal.innerHTML = `
-            <div class="custom-modal-content" style="max-width: 600px;">
+            <div class="custom-modal-content" style="max-width: 600px;" role="dialog" aria-modal="true" aria-labelledby="shortcutsModalTitle">
                 <div class="custom-modal-header">
-                    <h3>⌨️ Keyboard Shortcuts</h3>
-                    <button class="custom-modal-close" onclick="closeShortcutsModal()">×</button>
+                    <h3 id="shortcutsModalTitle">⌨️ Keyboard Shortcuts</h3>
+                    <button class="custom-modal-close" onclick="closeShortcutsModal()" aria-label="Close keyboard shortcuts">×</button>
                 </div>
-                <div class="custom-modal-body">
-                    <div style="margin-bottom: 1.5rem;">
-                        <h4 style="color: var(--primary-cyan); margin-bottom: 0.75rem; font-size: 0.9rem;">NAVIGATION</h4>
-                        <div class="shortcut-list">
-                            <div class="shortcut-row"><kbd>g</kbd> <kbd>d</kbd> <span>Dashboard</span></div>
-                            <div class="shortcut-row"><kbd>g</kbd> <kbd>s</kbd> <span>Systems</span></div>
-                            <div class="shortcut-row"><kbd>g</kbd> <kbd>l</kbd> <span>Library</span></div>
-                            <div class="shortcut-row"><kbd>g</kbd> <kbd>a</kbd> <span>Analytics</span></div>
-                            <div class="shortcut-row"><kbd>g</kbd> <kbd>t</kbd> <span>Settings</span></div>
-                            <div class="shortcut-row"><kbd>g</kbd> <kbd>h</kbd> <span>Help</span></div>
-                        </div>
-                    </div>
-                    <div style="margin-bottom: 1.5rem;">
-                        <h4 style="color: var(--primary-cyan); margin-bottom: 0.75rem; font-size: 0.9rem;">ACTIONS</h4>
-                        <div class="shortcut-list">
-                            <div class="shortcut-row"><kbd>/</kbd> <span>Focus search</span></div>
-                            <div class="shortcut-row"><kbd>Esc</kbd> <span>Close modal</span></div>
-                            <div class="shortcut-row"><kbd>?</kbd> <span>Show shortcuts</span></div>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 style="color: var(--primary-cyan); margin-bottom: 0.75rem; font-size: 0.9rem;">GAME PAGE</h4>
-                        <div class="shortcut-list">
-                            <div class="shortcut-row"><kbd>e</kbd> <span>Edit game</span></div>
-                            <div class="shortcut-row"><kbd>s</kbd> <span>Scrape game</span></div>
-                            <div class="shortcut-row"><kbd>←</kbd> <kbd>→</kbd> <span>Navigate screenshots</span></div>
-                        </div>
-                    </div>
-                </div>
+                <div class="custom-modal-body" id="shortcutsModalBody">${body}</div>
             </div>
         `;
         modal.onclick = (e) => { if (e.target === modal) closeShortcutsModal(); };
         document.body.appendChild(modal);
-        
+
         // Add styles for shortcuts modal
         const style = document.createElement('style');
         style.textContent = `
@@ -1508,13 +1525,22 @@ function showShortcutsModal() {
             .shortcut-row span { color: var(--text-secondary, #9aa0a6); margin-left: 8px; }
         `;
         document.head.appendChild(style);
+    } else {
+        // Refresh — shortcuts object may have been extended since last open.
+        document.getElementById('shortcutsModalBody').innerHTML = body;
     }
     modal.classList.add('active');
+    if (window.ModalFocusTrap) {
+        ModalFocusTrap.activate(modal.querySelector('.custom-modal-content'),
+                                document.activeElement,
+                                { onEscape: closeShortcutsModal });
+    }
 }
 
 function closeShortcutsModal() {
     const modal = document.getElementById('shortcuts-modal');
     if (modal) modal.classList.remove('active');
+    if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
 }
 
 // Initialize keyboard shortcuts

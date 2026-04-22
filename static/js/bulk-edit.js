@@ -56,6 +56,11 @@ const BulkEditController = (function() {
 
         // Show modal
         modal.classList.add('active');
+        if (window.ModalFocusTrap) {
+            ModalFocusTrap.activate(modal.querySelector('.modal-content') || modal,
+                                    document.activeElement,
+                                    { onEscape: () => close() });
+        }
     }
 
     /**
@@ -290,6 +295,7 @@ const BulkEditController = (function() {
             _abortController.abort();
             _abortController = null;
         }
+        if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
     }
 
     // Expose globally

@@ -62,6 +62,8 @@
 | `.semgrep.yml` | Semgrep audit config — documented threat model + list of excluded upstream rule IDs. Read this before triaging new audit findings. |
 | `.gitleaks.toml` | Gitleaks allowlist — excludes `logs/`, `data/*.json` tokens, admin-editable settings files |
 | `.pre-commit-config.yaml` | Pre-commit hooks — `ruff check --fix` + `gitleaks`. Install with `pip install pre-commit --break-system-packages && pre-commit install`. `ruff-format` and `pytest`/`mypy` intentionally excluded (format needs its own clean-up pass; pytest/mypy belong in CI). |
+| `scripts/audit_contrast.py` | WCAG 2.2 AA theme contrast audit — parses `variables.css` + `themes.css`, resolves `var()` references, computes relative-luminance contrast ratios for 12 text/bg pairs × 7 themes. Writes `docs/theme_contrast.md` with PASS/NOTE/FAIL rows. Run after adding a theme or changing text/bg tokens. |
+| `docs/theme_contrast.md` | Generated output of `scripts/audit_contrast.py`. Shipped in git so the current state is visible in PRs; regenerate when colors change. |
 | `requirements.txt` | Runtime dependencies with semver ranges (user-facing `pip install -r`) |
 | `requirements.lock` | Fully pinned transitive dependency list — regenerate with `pip-compile` |
 | `tests/` | pytest suite — `python3 -m pytest` |
@@ -304,6 +306,7 @@ Core-bundle APIs are defined in `core.bundle.js`; games-bundle APIs require a te
 | `HLTBManager` | `game-modals.js` | `.lookup(ctx)`, `.save(ctx)`, `.cancel(ctx)`, `.clear(ctx)` |
 | `triggerAiFill` | `game-modals.js` | AI metadata fill for current game detail modal |
 | `StickyScroll` | `utils.js` | `.stackPositions()`, `.to(target, padding?)`, `.getStickyOffset(el?)`, `.updateMargins(padding?)` — universal sticky header scroll offset & stacking |
+| `ModalFocusTrap` | `utils.js` | `.activate(modalEl, triggerEl, {onEscape, autoFocus})`, `.deactivate()`, `.deactivateAll()` — WCAG 2.4.3 focus trap for dialogs. Stacks for nested modals; restores focus to trigger element on close |
 | `KeyboardShortcuts` | `main.js` | Global keyboard shortcut handler |
 | `NOTIFICATION_TIMEOUTS` | `base.html` | Timeout config `{success, info, warning, error}` |
 

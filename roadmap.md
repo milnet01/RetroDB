@@ -122,6 +122,37 @@ change forces a different sequence.
   every existing caller (`routes/bulk_scrape.py`, `routes/games.py`,
   `scraper/hybrid_scraper.py`, `services/wishlist_scraper.py`,
   `services/jobs/*`) is unchanged. All 124 tests pass. (v2.83.12)
+- [x] **Pass 15 — Accessibility (WCAG 2.2 AA)** — Five-item sweep landed
+  as v2.85.0. 199 tests still pass; no regressions.
+    - **15.1** Skip-to-main-content link. `base.html` now starts with
+      `<a href="#main-content" class="skip-link">` as the first focusable
+      element; visually hidden until focused (`.skip-link` rule in
+      `components/buttons.css`). `<main>` gained `id="main-content"` and
+      dropped redundant `role="main"`.
+    - **15.2** Modal focus trap. New `ModalFocusTrap` helper in
+      `utils.js` (activate/deactivate/deactivateAll, stacked for nested
+      modals, onEscape callback, focus restore to trigger). Wired into
+      GameDetail/GameEdit modals, showModal/confirmModal/closeModal,
+      folder browser, queue manager, bulk-edit and bulk-scrape modals.
+      Most modal roots already had `role="dialog" aria-modal="true"`.
+    - **15.3** Theme contrast audit. New `scripts/audit_contrast.py`
+      parses `variables.css` + `themes.css`, resolves `var()`, computes
+      WCAG contrast ratios for 12 pairs × 7 themes → `docs/theme_contrast.md`.
+      Initial run found 2 FAILs in bladerunner theme
+      (`--text-muted: #505868` at 2.80:1); bumped to `#78809a` for
+      5.10:1. All 7 themes now clear 4.5:1 body / 3.0:1 UI thresholds.
+    - **15.4** Two redundant ARIA patterns fixed: `<main role="main">`
+      → `<main>` and `<aside class="sidebar" role="navigation">` →
+      `<nav class="sidebar">` (all selectors were `.sidebar`, no CSS
+      ripple). `<div role="navigation">` on alphabet-nav kept — `<div>`
+      has no implicit role so the attribute is meaningful.
+    - **15.5** Keyboard shortcut overlay refactored to auto-generate
+      from a single source of truth. Each entry in
+      `KeyboardShortcuts.shortcuts`/`gameShortcuts` gained a `category`
+      field; `showShortcutsModal()` builds rows by iterating the dicts.
+      Added `role="dialog" aria-modal="true" aria-labelledby` + focus
+      trap + friendly key-label map (Escape → Esc, ArrowLeft → ←, etc).
+      New shortcuts auto-document. (v2.85.0)
 - [x] **Pass 14 (partial) — Developer efficiency & test coverage** —
   Two-item sweep; 14.2 (gradual type hints) deferred as a separate
   LOW-priority future pass. Landed as v2.84.3.
@@ -928,7 +959,10 @@ link; `<main role="main">` on `base.html:239` has a redundant role attribute
   with `position: absolute; left: -9999px;` and brought on-screen on
   `:focus`). Give `<main>` `id="main-content"` and drop the redundant
   `role="main"`.
-- **Status**: todo
+- **Status**: done (v2.85.0) — `<a href="#main-content" class="skip-link">`
+  is now the first focusable element in `base.html`; `.skip-link` rule in
+  `components/buttons.css`; `<main>` gained `id="main-content"` and dropped
+  its redundant `role="main"`.
 
 ### 15.2 Modal focus management (MEDIUM, M)
 
@@ -949,7 +983,14 @@ link; `<main role="main">` on `base.html:239` has a redundant role attribute
   ```
   Call on modal open/close. Add `aria-modal="true"`, `aria-labelledby="..."`
   and `role="dialog"` to each modal root element.
-- **Status**: todo
+- **Status**: done (v2.85.0) — `ModalFocusTrap` helper added to `utils.js`
+  (activate/deactivate/deactivateAll, stacked for nested modals, onEscape
+  callback, restores focus to trigger element on close). Wired into
+  `GameDetailModal`, `GameEditModal`, `showModal`/`confirmModal`/`closeModal`,
+  `openFolderBrowser`/`closeFolderBrowser`, `openQueueManager`/`closeQueueManager`,
+  `BulkEditController.open/close`, `BulkScrapeController.resetUI/closeModal/onComplete`.
+  Most modal roots already had `role="dialog" aria-modal="true" aria-labelledby"`;
+  this pass wired the focus-trap behavior behind them.
 
 ### 15.3 Theme contrast audit (MEDIUM, M)
 
@@ -964,7 +1005,12 @@ link; `<main role="main">` on `base.html:239` has a redundant role attribute
   in Firefox/Chrome dev tools). Document measured ratios per theme per token
   pair in a `docs/theme_contrast.md`. Fix any pair that falls below 4.5:1.
   Low-priority pairs (disabled text, decorative) can accept 3:1 documented.
-- **Status**: todo
+- **Status**: done (v2.85.0) — new `scripts/audit_contrast.py` parses
+  `variables.css` + `themes.css`, resolves `var()`, computes WCAG ratios
+  for 12 pairs × 7 themes. Output: `docs/theme_contrast.md` with
+  PASS/NOTE/FAIL per theme. Initial run found 2 FAILs in bladerunner
+  (`--text-muted: #505868` at 2.80:1); bumped to `#78809a` for 5.10:1.
+  All 7 themes now clear 4.5:1 body text and 3.0:1 UI thresholds.
 
 ### 15.4 Sweep redundant ARIA + upgrade semantic HTML (LOW, M)
 
@@ -977,7 +1023,12 @@ link; `<main role="main">` on `base.html:239` has a redundant role attribute
   and remove redundant ones where the wrapping tag is the matching element.
   Add ARIA only where there's no native equivalent (live regions, modals,
   disclosure widgets).
-- **Status**: todo
+- **Status**: done (v2.85.0) — two redundant patterns fixed: `<main
+  role="main">` → `<main>` (implicit role) and `<aside class="sidebar"
+  role="navigation">` → `<nav class="sidebar">` (semantic element, no CSS
+  ripple — all selectors were `.sidebar`). Kept `<div
+  class="alphabet-nav" role="navigation">` on list pages — `<div>` has no
+  implicit role so the attribute is meaningful.
 
 ### 15.5 Keyboard shortcut help overlay (LOW, S)
 
@@ -988,7 +1039,14 @@ link; `<main role="main">` on `base.html:239` has a redundant role attribute
 - **Plan**: bind `?` (Shift+/) to open a modal listing all registered
   shortcuts. Generate the list from a single source of truth so new
   shortcuts auto-document.
-- **Status**: todo
+- **Status**: done (v2.85.0) — overlay already existed and was already
+  bound to `?`, but its rows were hardcoded in HTML. Refactored
+  `showShortcutsModal()` to build the body from
+  `KeyboardShortcuts.shortcuts` + `.gameShortcuts` with a new `category`
+  field on each entry (`'Navigation'` / `'Actions'` / `'Game Page'`),
+  added `role="dialog"` + `aria-modal` + `aria-labelledby` + focus trap
+  via Pass 15.2 `ModalFocusTrap`, and a `_SHORTCUT_KEY_LABELS` map so
+  `Escape` / `ArrowLeft` / `ArrowRight` render as friendly glyphs.
 
 ---
 

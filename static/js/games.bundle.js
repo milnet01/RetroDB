@@ -132,6 +132,11 @@ const BulkScrapeController = {
         const el = this.getElements();
 
         el.modal.classList.add('active');
+        if (window.ModalFocusTrap) {
+            ModalFocusTrap.activate(el.modal.querySelector('.modal-content') || el.modal,
+                                    document.activeElement,
+                                    { onEscape: () => this.closeModal() });
+        }
         el.total.textContent = formatNumber(totalGames);
         el.progress.textContent = '1';  // Show 1/x immediately (we're about to scrape game 1)
         el.progressFill.style.setProperty('--progress', '0%');
@@ -432,6 +437,7 @@ const BulkScrapeController = {
 
         if (el.modal) {
             el.modal.classList.remove('active');
+            if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
         }
 
         if (typeof UnifiedToastController !== 'undefined') {
@@ -454,6 +460,7 @@ const BulkScrapeController = {
     closeModal() {
         this.getElements().modal.classList.remove('active');
         this.stopPolling();
+        if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
     },
 
     /**
@@ -557,6 +564,11 @@ const BulkEditController = (function() {
         ]);
 
         modal.classList.add('active');
+        if (window.ModalFocusTrap) {
+            ModalFocusTrap.activate(modal.querySelector('.modal-content') || modal,
+                                    document.activeElement,
+                                    { onEscape: () => close() });
+        }
     }
 
     /**
@@ -786,6 +798,7 @@ const BulkEditController = (function() {
             _abortController.abort();
             _abortController = null;
         }
+        if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
     }
 
     window.closeBulkEditModal = close;
@@ -1159,6 +1172,10 @@ const GameDetailModal = {
         loading.style.display = 'flex';
         content.style.display = 'none';
 
+        if (window.ModalFocusTrap) {
+            ModalFocusTrap.activate(modal, document.activeElement, { onEscape: () => this.close() });
+        }
+
         if (this.cache.has(gameId)) {
             this.populate(this.cache.get(gameId));
             return;
@@ -1401,6 +1418,8 @@ const GameDetailModal = {
         modal.classList.remove('active');
         document.body.style.overflow = '';
         this.currentId = null;
+
+        if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
 
         const videoPlayer = document.getElementById('gdmVideoPlayer');
         if (videoPlayer) {
@@ -1815,6 +1834,10 @@ const GameEditModal = {
         this.pendingHltbData = null;
 
         editModal.classList.add('active');
+
+        if (window.ModalFocusTrap) {
+            ModalFocusTrap.activate(editModal, document.activeElement, { onEscape: () => this.close() });
+        }
     },
 
     /**
@@ -1982,6 +2005,7 @@ const GameEditModal = {
             this._dropdownAbortController.abort();
             this._dropdownAbortController = null;
         }
+        if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
     },
 
     /**

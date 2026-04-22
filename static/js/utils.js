@@ -736,6 +736,113 @@ const StickyScroll = {
 };
 
 // =============================================================================
+// MODAL FOCUS TRAP (WCAG 2.4.3 Focus Order + 3.2.1 On Focus)
+// =============================================================================
+// Usage:
+//     ModalFocusTrap.activate(modalEl, triggerEl);  // on modal open
+//     ModalFocusTrap.deactivate();                  // on modal close
+//
+// Tab wraps within the modal; Shift+Tab wraps backwards; Escape closes.
+// On deactivate, focus returns to the element that opened the modal.
+// Activating a second modal stacks — only the top-most trap is active.
+//
+// The focusable selector intentionally excludes elements with tabindex=-1
+// (programmatic focus targets that shouldn't be in tab order).
+
+const _FOCUSABLE_SELECTOR = [
+    'a[href]:not([disabled])',
+    'button:not([disabled])',
+    'input:not([disabled]):not([type="hidden"])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])',
+].join(',');
+
+const ModalFocusTrap = {
+    _stack: [],  // stack of { modalEl, triggerEl, keyHandler, onEscape }
+
+    /**
+     * Activate a focus trap on the given modal element.
+     * @param {HTMLElement} modalEl - the dialog root (the visible container)
+     * @param {HTMLElement} [triggerEl] - element to restore focus to on close
+     * @param {Object} [opts]
+     * @param {Function} [opts.onEscape] - called when Escape is pressed (default: noop)
+     * @param {boolean}  [opts.autoFocus=true] - focus the first focusable on activate
+     */
+    activate(modalEl, triggerEl, opts = {}) {
+        if (!modalEl) return;
+        const onEscape = opts.onEscape || null;
+        const autoFocus = opts.autoFocus !== false;
+
+        const keyHandler = (e) => {
+            if (e.key === 'Escape' && onEscape) {
+                e.preventDefault();
+                e.stopPropagation();
+                onEscape();
+                return;
+            }
+            if (e.key !== 'Tab') return;
+
+            const focusables = Array.from(modalEl.querySelectorAll(_FOCUSABLE_SELECTOR))
+                .filter(el => el.offsetParent !== null || el === document.activeElement);
+            if (focusables.length === 0) {
+                e.preventDefault();
+                return;
+            }
+            const first = focusables[0];
+            const last = focusables[focusables.length - 1];
+            const active = document.activeElement;
+
+            if (e.shiftKey && active === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && active === last) {
+                e.preventDefault();
+                first.focus();
+            } else if (!modalEl.contains(active)) {
+                e.preventDefault();
+                first.focus();
+            }
+        };
+
+        document.addEventListener('keydown', keyHandler, true);
+        this._stack.push({ modalEl, triggerEl: triggerEl || document.activeElement, keyHandler, onEscape });
+
+        if (autoFocus) {
+            // Defer one frame so display:block takes effect before focus.
+            requestAnimationFrame(() => {
+                const first = modalEl.querySelector(_FOCUSABLE_SELECTOR);
+                if (first) first.focus();
+                else if (modalEl.hasAttribute('tabindex') === false) {
+                    // Fallback: focus the modal itself so screen readers announce it.
+                    modalEl.setAttribute('tabindex', '-1');
+                    modalEl.focus();
+                }
+            });
+        }
+    },
+
+    /**
+     * Deactivate the top-most focus trap and restore focus to its trigger.
+     */
+    deactivate() {
+        const entry = this._stack.pop();
+        if (!entry) return;
+        document.removeEventListener('keydown', entry.keyHandler, true);
+        if (entry.triggerEl && typeof entry.triggerEl.focus === 'function') {
+            try { entry.triggerEl.focus(); } catch (e) { /* element removed from DOM */ }
+        }
+    },
+
+    /**
+     * Deactivate all active focus traps. Call on SPA-style navigation.
+     */
+    deactivateAll() {
+        while (this._stack.length > 0) this.deactivate();
+    },
+};
+
+// =============================================================================
 // REGISTER WITH RETRODB NAMESPACE
 // =============================================================================
 
@@ -754,6 +861,7 @@ RetroDB.LoadingState = LoadingState;
 RetroDB.DOM = DOM;
 RetroDB.DateUtils = DateUtils;
 RetroDB.StickyScroll = StickyScroll;
+RetroDB.ModalFocusTrap = ModalFocusTrap;
 
 // =============================================================================
 // EXPORT GLOBALS (backward compatibility)
@@ -774,3 +882,4 @@ window.LoadingState = LoadingState;
 window.DOM = DOM;
 window.DateUtils = DateUtils;
 window.StickyScroll = StickyScroll;
+window.ModalFocusTrap = ModalFocusTrap;

@@ -148,6 +148,10 @@ const GameDetailModal = {
         loading.style.display = 'flex';
         content.style.display = 'none';
 
+        if (window.ModalFocusTrap) {
+            ModalFocusTrap.activate(modal, document.activeElement, { onEscape: () => this.close() });
+        }
+
         // Check cache first
         if (this.cache.has(gameId)) {
             this.populate(this.cache.get(gameId));
@@ -410,6 +414,8 @@ const GameDetailModal = {
         modal.classList.remove('active');
         document.body.style.overflow = '';
         this.currentId = null;
+
+        if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
 
         // Stop video and fully release buffered data
         const videoPlayer = document.getElementById('gdmVideoPlayer');
@@ -861,6 +867,10 @@ const GameEditModal = {
 
         // Show modal
         editModal.classList.add('active');
+
+        if (window.ModalFocusTrap) {
+            ModalFocusTrap.activate(editModal, document.activeElement, { onEscape: () => this.close() });
+        }
     },
 
     /**
@@ -1044,6 +1054,7 @@ const GameEditModal = {
             this._dropdownAbortController.abort();
             this._dropdownAbortController = null;
         }
+        if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
     },
 
     /**

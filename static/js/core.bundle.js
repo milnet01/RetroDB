@@ -681,6 +681,97 @@ const StickyScroll = {
     }
 };
 
+const _FOCUSABLE_SELECTOR = [
+    'a[href]:not([disabled])',
+    'button:not([disabled])',
+    'input:not([disabled]):not([type="hidden"])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])',
+].join(',');
+
+const ModalFocusTrap = {
+    _stack: [],  // stack of { modalEl, triggerEl, keyHandler, onEscape }
+
+    /**
+     * Activate a focus trap on the given modal element.
+     * @param {HTMLElement} modalEl - the dialog root (the visible container)
+     * @param {HTMLElement} [triggerEl] - element to restore focus to on close
+     * @param {Object} [opts]
+     * @param {Function} [opts.onEscape] - called when Escape is pressed (default: noop)
+     * @param {boolean}  [opts.autoFocus=true] - focus the first focusable on activate
+     */
+    activate(modalEl, triggerEl, opts = {}) {
+        if (!modalEl) return;
+        const onEscape = opts.onEscape || null;
+        const autoFocus = opts.autoFocus !== false;
+
+        const keyHandler = (e) => {
+            if (e.key === 'Escape' && onEscape) {
+                e.preventDefault();
+                e.stopPropagation();
+                onEscape();
+                return;
+            }
+            if (e.key !== 'Tab') return;
+
+            const focusables = Array.from(modalEl.querySelectorAll(_FOCUSABLE_SELECTOR))
+                .filter(el => el.offsetParent !== null || el === document.activeElement);
+            if (focusables.length === 0) {
+                e.preventDefault();
+                return;
+            }
+            const first = focusables[0];
+            const last = focusables[focusables.length - 1];
+            const active = document.activeElement;
+
+            if (e.shiftKey && active === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && active === last) {
+                e.preventDefault();
+                first.focus();
+            } else if (!modalEl.contains(active)) {
+                e.preventDefault();
+                first.focus();
+            }
+        };
+
+        document.addEventListener('keydown', keyHandler, true);
+        this._stack.push({ modalEl, triggerEl: triggerEl || document.activeElement, keyHandler, onEscape });
+
+        if (autoFocus) {
+            requestAnimationFrame(() => {
+                const first = modalEl.querySelector(_FOCUSABLE_SELECTOR);
+                if (first) first.focus();
+                else if (modalEl.hasAttribute('tabindex') === false) {
+                    modalEl.setAttribute('tabindex', '-1');
+                    modalEl.focus();
+                }
+            });
+        }
+    },
+
+    /**
+     * Deactivate the top-most focus trap and restore focus to its trigger.
+     */
+    deactivate() {
+        const entry = this._stack.pop();
+        if (!entry) return;
+        document.removeEventListener('keydown', entry.keyHandler, true);
+        if (entry.triggerEl && typeof entry.triggerEl.focus === 'function') {
+            try { entry.triggerEl.focus(); } catch (e) { /* element removed from DOM */ }
+        }
+    },
+
+    /**
+     * Deactivate all active focus traps. Call on SPA-style navigation.
+     */
+    deactivateAll() {
+        while (this._stack.length > 0) this.deactivate();
+    },
+};
+
 RetroDB.debounce = debounce;
 RetroDB.throttle = throttle;
 RetroDB.formatBytes = formatBytes;
@@ -696,6 +787,7 @@ RetroDB.LoadingState = LoadingState;
 RetroDB.DOM = DOM;
 RetroDB.DateUtils = DateUtils;
 RetroDB.StickyScroll = StickyScroll;
+RetroDB.ModalFocusTrap = ModalFocusTrap;
 
 window.debounce = debounce;
 window.throttle = throttle;
@@ -712,6 +804,7 @@ window.LoadingState = LoadingState;
 window.DOM = DOM;
 window.DateUtils = DateUtils;
 window.StickyScroll = StickyScroll;
+window.ModalFocusTrap = ModalFocusTrap;
 
 })();
 
@@ -3840,22 +3933,22 @@ const KeyboardShortcuts = {
     pendingTimeout: null,
 
     shortcuts: {
-        'g d': { action: () => window.location.href = '/dashboard', description: 'Go to Dashboard' },
-        'g s': { action: () => window.location.href = '/systems', description: 'Go to Systems' },
-        'g l': { action: () => window.location.href = '/games', description: 'Go to Library' },
-        'g a': { action: () => window.location.href = '/analytics', description: 'Go to Analytics' },
-        'g t': { action: () => window.location.href = '/settings', description: 'Go to Settings' },
-        'g h': { action: () => window.location.href = '/help', description: 'Go to Help' },
-        'g c': { action: () => window.location.href = '/changelog', description: 'Go to Changelog' },
+        'g d': { action: () => window.location.href = '/dashboard', description: 'Go to Dashboard', category: 'Navigation' },
+        'g s': { action: () => window.location.href = '/systems', description: 'Go to Systems', category: 'Navigation' },
+        'g l': { action: () => window.location.href = '/games', description: 'Go to Library', category: 'Navigation' },
+        'g a': { action: () => window.location.href = '/analytics', description: 'Go to Analytics', category: 'Navigation' },
+        'g t': { action: () => window.location.href = '/settings', description: 'Go to Settings', category: 'Navigation' },
+        'g h': { action: () => window.location.href = '/help', description: 'Go to Help', category: 'Navigation' },
+        'g c': { action: () => window.location.href = '/changelog', description: 'Go to Changelog', category: 'Navigation' },
 
-        '/': { action: () => focusSearch(), description: 'Focus search box' },
-        '?': { action: () => showShortcutsModal(), description: 'Show keyboard shortcuts' },
-        'Escape': { action: () => closeAnyModal(), description: 'Close modal / cancel' },
+        '/': { action: () => focusSearch(), description: 'Focus search box', category: 'Actions' },
+        '?': { action: () => showShortcutsModal(), description: 'Show keyboard shortcuts', category: 'Actions' },
+        'Escape': { action: () => closeAnyModal(), description: 'Close modal / cancel', category: 'Actions' },
     },
 
     gameShortcuts: {
-        'e': { action: () => { if (typeof openEditModal === 'function') openEditModal(); }, description: 'Edit game' },
-        's': { action: () => { if (typeof openScrapeModal === 'function') openScrapeModal(); }, description: 'Scrape game' },
+        'e': { action: () => { if (typeof openEditModal === 'function') openEditModal(); }, description: 'Edit game', category: 'Game Page' },
+        's': { action: () => { if (typeof openScrapeModal === 'function') openScrapeModal(); }, description: 'Scrape game', category: 'Game Page' },
     },
 
     init() {
@@ -3983,47 +4076,60 @@ function closeAnyModal() {
     }
 }
 
+const _SHORTCUT_KEY_LABELS = {
+    'Escape': 'Esc',
+    'ArrowLeft': '←',
+    'ArrowRight': '→',
+    'ArrowUp': '↑',
+    'ArrowDown': '↓',
+};
+
+function _renderShortcutKeys(combo) {
+    return combo.split(' ').map(k => {
+        const label = _SHORTCUT_KEY_LABELS[k] || k;
+        return `<kbd>${escapeHtml(label)}</kbd>`;
+    }).join(' ');
+}
+
+function _buildShortcutsBody() {
+    const buckets = new Map();
+    const addEntry = (combo, meta) => {
+        const cat = meta.category || 'Other';
+        if (!buckets.has(cat)) buckets.set(cat, []);
+        buckets.get(cat).push({ combo, description: meta.description });
+    };
+    Object.entries(KeyboardShortcuts.shortcuts).forEach(([k, v]) => addEntry(k, v));
+    Object.entries(KeyboardShortcuts.gameShortcuts).forEach(([k, v]) => addEntry(k, v));
+
+    const sections = [];
+    for (const [category, entries] of buckets) {
+        const rows = entries.map(e =>
+            `<div class="shortcut-row">${_renderShortcutKeys(e.combo)} <span>${escapeHtml(e.description)}</span></div>`
+        ).join('');
+        sections.push(
+            `<div style="margin-bottom: 1.5rem;">
+                <h4 style="color: var(--primary-cyan); margin-bottom: 0.75rem; font-size: 0.9rem;">${escapeHtml(category.toUpperCase())}</h4>
+                <div class="shortcut-list">${rows}</div>
+            </div>`
+        );
+    }
+    return sections.join('');
+}
+
 function showShortcutsModal() {
     let modal = document.getElementById('shortcuts-modal');
+    const body = _buildShortcutsBody();
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'shortcuts-modal';
         modal.className = 'custom-modal';
         modal.innerHTML = `
-            <div class="custom-modal-content" style="max-width: 600px;">
+            <div class="custom-modal-content" style="max-width: 600px;" role="dialog" aria-modal="true" aria-labelledby="shortcutsModalTitle">
                 <div class="custom-modal-header">
-                    <h3>⌨️ Keyboard Shortcuts</h3>
-                    <button class="custom-modal-close" onclick="closeShortcutsModal()">×</button>
+                    <h3 id="shortcutsModalTitle">⌨️ Keyboard Shortcuts</h3>
+                    <button class="custom-modal-close" onclick="closeShortcutsModal()" aria-label="Close keyboard shortcuts">×</button>
                 </div>
-                <div class="custom-modal-body">
-                    <div style="margin-bottom: 1.5rem;">
-                        <h4 style="color: var(--primary-cyan); margin-bottom: 0.75rem; font-size: 0.9rem;">NAVIGATION</h4>
-                        <div class="shortcut-list">
-                            <div class="shortcut-row"><kbd>g</kbd> <kbd>d</kbd> <span>Dashboard</span></div>
-                            <div class="shortcut-row"><kbd>g</kbd> <kbd>s</kbd> <span>Systems</span></div>
-                            <div class="shortcut-row"><kbd>g</kbd> <kbd>l</kbd> <span>Library</span></div>
-                            <div class="shortcut-row"><kbd>g</kbd> <kbd>a</kbd> <span>Analytics</span></div>
-                            <div class="shortcut-row"><kbd>g</kbd> <kbd>t</kbd> <span>Settings</span></div>
-                            <div class="shortcut-row"><kbd>g</kbd> <kbd>h</kbd> <span>Help</span></div>
-                        </div>
-                    </div>
-                    <div style="margin-bottom: 1.5rem;">
-                        <h4 style="color: var(--primary-cyan); margin-bottom: 0.75rem; font-size: 0.9rem;">ACTIONS</h4>
-                        <div class="shortcut-list">
-                            <div class="shortcut-row"><kbd>/</kbd> <span>Focus search</span></div>
-                            <div class="shortcut-row"><kbd>Esc</kbd> <span>Close modal</span></div>
-                            <div class="shortcut-row"><kbd>?</kbd> <span>Show shortcuts</span></div>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 style="color: var(--primary-cyan); margin-bottom: 0.75rem; font-size: 0.9rem;">GAME PAGE</h4>
-                        <div class="shortcut-list">
-                            <div class="shortcut-row"><kbd>e</kbd> <span>Edit game</span></div>
-                            <div class="shortcut-row"><kbd>s</kbd> <span>Scrape game</span></div>
-                            <div class="shortcut-row"><kbd>←</kbd> <kbd>→</kbd> <span>Navigate screenshots</span></div>
-                        </div>
-                    </div>
-                </div>
+                <div class="custom-modal-body" id="shortcutsModalBody">${body}</div>
             </div>
         `;
         modal.onclick = (e) => { if (e.target === modal) closeShortcutsModal(); };
@@ -4048,13 +4154,21 @@ function showShortcutsModal() {
             .shortcut-row span { color: var(--text-secondary, #9aa0a6); margin-left: 8px; }
         `;
         document.head.appendChild(style);
+    } else {
+        document.getElementById('shortcutsModalBody').innerHTML = body;
     }
     modal.classList.add('active');
+    if (window.ModalFocusTrap) {
+        ModalFocusTrap.activate(modal.querySelector('.custom-modal-content'),
+                                document.activeElement,
+                                { onEscape: closeShortcutsModal });
+    }
 }
 
 function closeShortcutsModal() {
     const modal = document.getElementById('shortcuts-modal');
     if (modal) modal.classList.remove('active');
+    if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
 }
 
 document.addEventListener('DOMContentLoaded', () => KeyboardShortcuts.init());

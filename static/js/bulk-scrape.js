@@ -50,8 +50,13 @@ const BulkScrapeController = {
      */
     resetUI(totalGames, firstGame = null) {
         const el = this.getElements();
-        
+
         el.modal.classList.add('active');
+        if (window.ModalFocusTrap) {
+            ModalFocusTrap.activate(el.modal.querySelector('.modal-content') || el.modal,
+                                    document.activeElement,
+                                    { onEscape: () => this.closeModal() });
+        }
         el.total.textContent = formatNumber(totalGames);
         el.progress.textContent = '1';  // Show 1/x immediately (we're about to scrape game 1)
         el.progressFill.style.setProperty('--progress', '0%');
@@ -372,6 +377,7 @@ const BulkScrapeController = {
         // Close the modal
         if (el.modal) {
             el.modal.classList.remove('active');
+            if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
         }
 
         // The UnifiedToastController already has an active toast (created in start()).
@@ -398,6 +404,7 @@ const BulkScrapeController = {
     closeModal() {
         this.getElements().modal.classList.remove('active');
         this.stopPolling();
+        if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
     },
     
     /**

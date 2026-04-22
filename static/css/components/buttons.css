@@ -4,6 +4,33 @@
    ============================================================================= */
 
 /* =============================================================================
+   SKIP LINK (WCAG 2.4.1 Bypass Blocks)
+   Visually hidden until keyboard-focused; lets Tab users skip the sidebar.
+   ============================================================================= */
+
+.skip-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0.75rem 1.25rem;
+    background: var(--primary-cyan);
+    color: var(--bg-darkest);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 0 0 6px 0;
+    z-index: 10000;
+    transform: translateY(-150%);
+    transition: transform 0.15s ease-out;
+}
+
+.skip-link:focus {
+    transform: translateY(0);
+    outline: 2px solid var(--primary-magenta);
+    outline-offset: 2px;
+}
+
+/* =============================================================================
    BASE BUTTON STYLES
    ============================================================================= */
 

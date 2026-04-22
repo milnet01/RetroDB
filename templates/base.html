@@ -32,10 +32,11 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
 </head>
 <body data-mist-enabled="{{ user_settings.get('enable_mist_effect', true)|lower }}">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <div class="app-container">
         <!-- Sidebar Navigation -->
         {% if not setup_mode %}
-        <aside class="sidebar" role="navigation" aria-label="Main navigation">
+        <nav class="sidebar" aria-label="Main navigation">
             <div class="sidebar-header">
                 <a href="{{ url_for('dashboard') }}" class="logo">
                     <div class="logo-icon">🎮</div>
@@ -232,11 +233,11 @@
                     </div>
                 </div>
             </div>
-        </aside>
+        </nav>
         {% endif %}
 
         <!-- Main Content Area -->
-        <main class="main-content" role="main" {% if setup_mode %}style="margin-left: 0;"{% endif %}>
+        <main id="main-content" class="main-content" {% if setup_mode %}style="margin-left: 0;"{% endif %}>
             <!-- Centered Content Wrapper -->
             <div class="content-wrapper">
                 <!-- Mobile Menu Toggle -->
@@ -392,12 +393,19 @@
             });
         }
         document.getElementById('customModalCancel').style.display = showCancel ? 'inline-block' : 'none';
-        document.getElementById('customModal').classList.add('active');
+        const customModal = document.getElementById('customModal');
+        customModal.classList.add('active');
         modalCallback = onConfirm;
         modalCancelCallback = onCancel;
-        
-        // Add ESC key listener
+
+        // Add ESC/Enter key listener
         document.addEventListener('keydown', modalKeyHandler);
+
+        // Focus-trap inside the modal and restore focus on close (WCAG 2.4.3).
+        if (window.ModalFocusTrap) {
+            ModalFocusTrap.activate(customModal.querySelector('.custom-modal-content') || customModal,
+                                    document.activeElement);
+        }
     }
     
     function modalKeyHandler(e) {
@@ -411,15 +419,17 @@
     function closeModal() {
         document.getElementById('customModal').classList.remove('active');
         document.removeEventListener('keydown', modalKeyHandler);
+        if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
         if (modalCancelCallback) {
             modalCancelCallback();
         }
         modalCallback = null;
         modalCancelCallback = null;
     }
-    
+
     function confirmModal() {
         document.removeEventListener('keydown', modalKeyHandler);
+        if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
         if (modalCallback) {
             modalCallback();
         }
@@ -462,6 +472,11 @@
         list.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">Loading...</div>';
         pathEl.textContent = 'Loading...';
         modal.classList.add('active');
+        if (window.ModalFocusTrap) {
+            ModalFocusTrap.activate(modal.querySelector('.custom-modal-content') || modal,
+                                    document.activeElement,
+                                    { onEscape: () => closeFolderBrowser() });
+        }
         
         try {
             const response = await fetch('/api/rom-tools/browse-folders', {
@@ -564,6 +579,7 @@
     function closeFolderBrowser() {
         document.getElementById('folderBrowserModal').classList.remove('active');
         folderBrowserCallback = null;
+        if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
     }
     
     function escapeAttr(str) {
@@ -673,6 +689,11 @@
         if (modal) {
             modal.classList.add('active');
             renderQueueManager();
+            if (window.ModalFocusTrap) {
+                ModalFocusTrap.activate(modal.querySelector('.modal-content') || modal,
+                                        document.activeElement,
+                                        { onEscape: () => closeQueueManager() });
+            }
         }
     }
 
@@ -680,6 +701,7 @@
         const modal = document.getElementById('queueManagerModal');
         if (modal) {
             modal.classList.remove('active');
+            if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
         }
     }
 
