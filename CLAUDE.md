@@ -157,7 +157,10 @@
 | `scraper/scrape_esde.py` | ES-DE local gamelist.xml parser |
 | `scraper/scrape_ai.py` | AI metadata scraper (Gemini, OpenAI, Claude) — text fields only, gap-filling |
 | `scraper/retroachievements.py` | RetroAchievements API integration |
-| `scraper/scraper_manager.py` | Scraper orchestration and priority logic |
+| `scraper/scraper_manager.py` | Scraper orchestration and priority logic. Thin facade after Pass 6 — search fan-out, source priority boost, hybrid-apply dispatch. Re-exports `load_scraper_settings`, `get_match_settings`, `passes_match_filter`, `get_api_key`, `cache_screenscraper_result`, `get_cached_screenscraper_result` for backward compat. |
+| `scraper/match_scorer.py` | Pure scoring functions. Public API: `calculate_title_match_score(result_title, search_title)`, `word_order_bonus(result_words, search_words)`, and per-source bonus calculators `calculate_tgdb_score` / `calculate_igdb_score` / `calculate_rawg_score` / `calculate_ss_score` (each mutates `result['title_score']`). Split from `scraper_manager.py`. |
+| `scraper/title_normalizer.py` | Title noise stripping + match normalization. Public API: `strip_title_noise(title)` (bracketed content / region tags / disc markers / version tags / edition tags via module-level compiled regexes) and `normalize_for_matching(title)` (apostrophe-variant flattening, punctuation → space, Roman-numeral conversion). Split from `scraper_manager.py`. |
+| `scraper/scraper_cache.py` | Thread-safe TTL-backed ScreenScraper result cache — 10-minute expiry, 500-entry cap, expired-first eviction. Public API: `cache_screenscraper_result(game_id, system_id, data)`, `get_cached_screenscraper_result(game_id, system_id)`. Split from `scraper_manager.py`. |
 | `scraper/scrape_steam.py` | Steam Web API — owned games, achievements, player profiles |
 | `scraper/scrape_xbox.py` | Xbox Live API — OAuth2 auth, title history, achievements |
 

@@ -7,6 +7,9 @@
 # - ES-DE (local gamelist.xml)
 # - RAWG.io (detailed game info, ESRB ratings)
 # - ScreenScraper (comprehensive retro gaming database)
+#
+# Scoring / noise-stripping live in scraper.match_scorer + scraper.title_normalizer.
+# ScreenScraper result cache lives in scraper.scraper_cache.
 # =============================================================================
 
 import logging
@@ -14,8 +17,6 @@ import sys
 import os
 import json
 import time
-import threading
-from datetime import datetime, timedelta
 
 try:
     from circuitbreaker import circuit, CircuitBreakerError
@@ -34,6 +35,18 @@ try:
 except ImportError:
     config = None
 
+# Cache helpers — re-exported for hybrid_scraper and any legacy importer.
+from scraper.scraper_cache import (
+    cache_screenscraper_result,
+    get_cached_screenscraper_result,
+)
+from scraper.match_scorer import (
+    calculate_ss_score,
+    calculate_tgdb_score,
+    calculate_igdb_score,
+    calculate_rawg_score,
+)
+
 # Settings file path
 SCRAPER_SETTINGS_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'scraper_settings.json')
 
@@ -41,46 +54,6 @@ SCRAPER_SETTINGS_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abs
 # A score of 200 means roughly "close title match with platform confirmation" —
 # anything below is likely the wrong game. Configurable via Settings page.
 MIN_MATCH_SCORE = 200
-
-# ScreenScraper search result cache (expires after 10 minutes, max 500 entries)
-# Key: "gameid:systemid", Value: {"data": {...}, "timestamp": datetime}
-_screenscraper_cache = {}
-_screenscraper_cache_lock = threading.Lock()
-_CACHE_EXPIRY_MINUTES = 10
-_CACHE_MAX_SIZE = 500
-
-def cache_screenscraper_result(game_id, system_id, data):
-    """Cache a ScreenScraper search result (thread-safe)"""
-    key = f"{game_id}:{system_id}"
-    with _screenscraper_cache_lock:
-        _screenscraper_cache[key] = {
-            "data": data,
-            "timestamp": datetime.now()
-        }
-        # Evict oldest entries if cache exceeds max size
-        if len(_screenscraper_cache) > _CACHE_MAX_SIZE:
-            cutoff = datetime.now() - timedelta(minutes=_CACHE_EXPIRY_MINUTES)
-            expired = [k for k, v in _screenscraper_cache.items() if v["timestamp"] < cutoff]
-            for k in expired:
-                del _screenscraper_cache[k]
-            # If still too large, remove oldest entries
-            if len(_screenscraper_cache) > _CACHE_MAX_SIZE:
-                sorted_keys = sorted(_screenscraper_cache, key=lambda k: _screenscraper_cache[k]["timestamp"])
-                for k in sorted_keys[:len(_screenscraper_cache) - _CACHE_MAX_SIZE]:
-                    del _screenscraper_cache[k]
-
-def get_cached_screenscraper_result(game_id, system_id):
-    """Get a cached ScreenScraper result if not expired (thread-safe)"""
-    key = f"{game_id}:{system_id}"
-    with _screenscraper_cache_lock:
-        if key in _screenscraper_cache:
-            entry = _screenscraper_cache[key]
-            if datetime.now() - entry["timestamp"] < timedelta(minutes=_CACHE_EXPIRY_MINUTES):
-                return entry["data"]
-            else:
-                # Expired, remove it
-                del _screenscraper_cache[key]
-    return None
 
 _settings_cache = None
 _settings_cache_time = 0
@@ -106,7 +79,7 @@ def load_scraper_settings():
         },
         'api_keys': {}
     }
-    
+
     try:
         if os.path.exists(SCRAPER_SETTINGS_FILE):
             with open(SCRAPER_SETTINGS_FILE, 'r') as f:
@@ -308,11 +281,11 @@ else:
 
 class ScraperManager:
     """Manages multiple scraping sources"""
-    
+
     def __init__(self):
         # Sources are determined dynamically now
         pass
-    
+
     def get_enabled_scrapers(self):
         """Get list of currently enabled scrapers"""
         enabled = load_scraper_enabled()
@@ -330,20 +303,20 @@ class ScraperManager:
         if AI_AVAILABLE and enabled.get('ai', False):
             sources.append('ai')
         return sources
-    
+
     def search_games(self, title, system_name=None, system_folder=None, limit=10):
         """
         Search games using ALL available sources simultaneously
         Shows results from TheGamesDB, IGDB, ES-DE, RAWG, and ScreenScraper so user can choose
         """
         all_results = []
-        
+
         # Load enabled status dynamically
         enabled = load_scraper_enabled()
-        
+
         logger.info(f"Searching for: '{title}' on system: {system_name} (folder: {system_folder})")
         logger.info(f"Enabled scrapers: {enabled}")
-        
+
         # Search ES-DE first (local, fastest)
         if ESDE_AVAILABLE and enabled.get('esde', True) and system_folder:
             try:
@@ -357,7 +330,7 @@ class ScraperManager:
                     all_results.extend(esde_results)
             except Exception as e:
                 logger.error(f"ES-DE search failed: {e}")
-        
+
         # Search TheGamesDB
         if enabled.get('tgdb', True):
             try:
@@ -367,7 +340,7 @@ class ScraperManager:
                     for result in tgdb_results:
                         result['source'] = 'thegamesdb'
                         result['scraper'] = 'thegamesdb'
-                        result['score'] = self._calculate_tgdb_score(result, title, system_name)
+                        result['score'] = calculate_tgdb_score(result, title)
                     all_results.extend(tgdb_results)
             except CircuitBreakerError:
                 logger.info("TheGamesDB circuit breaker open — skipping (recent failures)")
@@ -383,7 +356,7 @@ class ScraperManager:
                     for result in igdb_results:
                         result['source'] = 'igdb'
                         result['scraper'] = 'igdb'
-                        result['score'] = self._calculate_igdb_score(result, title, system_name)
+                        result['score'] = calculate_igdb_score(result, title)
                     all_results.extend(igdb_results)
             except CircuitBreakerError:
                 logger.info("IGDB circuit breaker open — skipping (recent failures)")
@@ -399,13 +372,13 @@ class ScraperManager:
                     for result in rawg_results:
                         result['source'] = 'rawg'
                         result['scraper'] = 'rawg'
-                        result['score'] = self._calculate_rawg_score(result, title, system_name)
+                        result['score'] = calculate_rawg_score(result, title)
                     all_results.extend(rawg_results)
             except CircuitBreakerError:
                 logger.info("RAWG circuit breaker open — skipping (recent failures)")
             except Exception as e:
                 logger.error(f"RAWG search failed: {e}")
-        
+
         # Search ScreenScraper
         logger.info(f"ScreenScraper check: available={SCREENSCRAPER_AVAILABLE}, enabled={enabled.get('screenscraper', False)}, folder={system_folder}")
         if SCREENSCRAPER_AVAILABLE and enabled.get('screenscraper', False) and system_folder:
@@ -416,9 +389,9 @@ class ScraperManager:
                 ss_password = api_keys.get('screenscraper_password', '')
                 ss_devid = api_keys.get('screenscraper_devid', '')
                 ss_devpassword = api_keys.get('screenscraper_devpassword', '')
-                
+
                 logger.info(f"ScreenScraper credentials: username={ss_username}, has_password={bool(ss_password)}, devid={ss_devid}")
-                
+
                 if ss_username and ss_password:
                     logger.info(f"ScreenScraper searching for: '{title}' on system: {system_folder}")
                     ss_results = _screenscraper_breaker(search_screenscraper)(
@@ -429,88 +402,8 @@ class ScraperManager:
                     if ss_results:
                         logger.info(f"ScreenScraper found {len(ss_results)} results")
                         for result in ss_results:
-                            # Get system ID and name from result
-                            system_info = result.get('systeme', {})
-                            ss_system_id = system_info.get('id', '')
-                            ss_system_name = system_info.get('text', '')
-                            
-                            # Get region from dates - ONLY use English-preferred regions
-                            dates = result.get('dates', [])
-                            region = None
-                            region_text = None
-                            # English-preferred regions only
-                            region_priority = ['us', 'wor', 'eu', 'uk', 'au', 'en']
-                            
-                            # First pass: look for preferred regions
-                            for pref_region in region_priority:
-                                for d in dates:
-                                    r = d.get('region', '').lower()
-                                    if r == pref_region:
-                                        region = r.upper()
-                                        region_text = d.get('text', '')
-                                        break
-                                if region:
-                                    break
-                            
-                            # Only show region if it's an English-preferred one
-                            # Don't fallback to FR, DE, ES, IT etc.
-                            if not region and dates:
-                                first_region = dates[0].get('region', '').lower()
-                                # Only use fallback if it's still English-acceptable
-                                if first_region in ['us', 'usa', 'wor', 'world', 'eu', 'eur', 'uk', 'au', 'en']:
-                                    region = first_region.upper()
-                                    region_text = dates[0].get('text', '')
-                            
-                            # Check if the system matches the searched system
-                            platform_match = False
-                            if system_folder:
-                                searched_system_id = SCREENSCRAPER_AVAILABLE and hasattr(search_screenscraper, '__self__')
-                                # Just check if result system matches what we searched for
-                                from scraper.scrape_screenscraper import get_system_id
-                                searched_ss_id = get_system_id(system_folder)
-                                if searched_ss_id and str(searched_ss_id) == str(ss_system_id):
-                                    platform_match = True
-                            
-                            # Parse ScreenScraper result format
-                            # ID format: gameid:systemid for later fetching
-                            game_id = result.get('id')
-                            
-                            # Cache the full result for later use when applying
-                            cache_screenscraper_result(game_id, ss_system_id, result)
-                            
-                            # Get name - prefer English/US region
-                            name = self._get_ss_localized_text(result.get('noms', []), 'text')
-
-                            # Alternate names — ScreenScraper's `noms` is a list
-                            # of {region, langue, text} for every regional release.
-                            # Surface them all (minus the one used as primary name).
-                            alt_titles = []
-                            _primary_lower = (name or '').strip().lower()
-                            for nom in result.get('noms') or []:
-                                if not isinstance(nom, dict):
-                                    continue
-                                alt_name = (nom.get('text') or '').strip()
-                                if not alt_name or alt_name.lower() == _primary_lower:
-                                    continue
-                                alt_titles.append({
-                                    'title': alt_name,
-                                    'region': (nom.get('region') or nom.get('langue') or '').strip() or None,
-                                })
-
-                            parsed = {
-                                'id': f"{game_id}:{ss_system_id}",
-                                'name': name,
-                                'source': 'screenscraper',
-                                'scraper': 'screenscraper',
-                                'release_date': region_text if region_text else self._get_ss_localized_text(result.get('dates', []), 'text'),
-                                'platform': ss_system_name,
-                                'platforms': [{'name': ss_system_name}] if ss_system_name else [],
-                                'region': region,
-                                'platform_match': platform_match,
-                                'matched_platform': ss_system_name if platform_match else None,
-                                'alternate_titles': alt_titles,
-                            }
-                            parsed['score'] = self._calculate_ss_score(parsed, title, system_name)
+                            parsed = self._parse_ss_result(result, system_folder)
+                            parsed['score'] = calculate_ss_score(parsed, title)
                             all_results.append(parsed)
                     else:
                         logger.info("ScreenScraper returned no results")
@@ -522,7 +415,7 @@ class ScraperManager:
                 logger.error(f"ScreenScraper search failed: {e}")
                 import traceback
                 logger.error(traceback.format_exc())
-        
+
         # Load priority settings and apply priority boost
         priority = load_scraper_priority()
         source_map = {
@@ -533,7 +426,7 @@ class ScraperManager:
             'screenscraper': 'screenscraper',
             'ai': 'ai'
         }
-        
+
         # Apply priority boost (higher priority = higher boost)
         # Each priority position adds 10 points (max 50 for first position)
         # With sort-by-score-only in bulk scrape, this is the sole mechanism for
@@ -545,10 +438,10 @@ class ScraperManager:
                     priority_boost = (len(priority) - idx) * 10  # First = 50, second = 40, etc.
                     result['score'] = result.get('score', 0) + priority_boost
                     break
-        
+
         # Sort by score (keeps best matches at top, with priority boost applied)
         all_results.sort(key=lambda x: x.get('score', 0), reverse=True)
-        
+
         # Return top results (will include mix of all sources)
         final_results = all_results[:limit * 2]  # Return more results for 4-column display
 
@@ -572,14 +465,85 @@ class ScraperManager:
         ss_count = sum(1 for r in final_results if r.get('source') == 'screenscraper')
         logger.info(f"Returning {len(final_results)} results (ES-DE: {esde_count}, TGDB: {tgdb_count}, IGDB: {igdb_count}, RAWG: {rawg_count}, SS: {ss_count})")
         logger.info(f"Using scraper priority: {priority}")
-        
+
         return final_results
-    
+
+    def _parse_ss_result(self, result, system_folder):
+        """Convert a raw ScreenScraper API result into our common result shape.
+
+        Also caches the full raw record under `gameid:systemid` so the hybrid
+        scraper can pull it back without re-fetching when the user picks it.
+        """
+        # System identity
+        system_info = result.get('systeme', {})
+        ss_system_id = system_info.get('id', '')
+        ss_system_name = system_info.get('text', '')
+
+        # Region (English-preferred only — don't fall back to FR/DE/ES/IT).
+        region, region_text = self._pick_ss_region(result.get('dates', []))
+
+        # Platform match: did ScreenScraper return a result whose system ID
+        # matches the folder we searched under?
+        platform_match = False
+        if system_folder:
+            from scraper.scrape_screenscraper import get_system_id
+            searched_ss_id = get_system_id(system_folder)
+            if searched_ss_id and str(searched_ss_id) == str(ss_system_id):
+                platform_match = True
+
+        game_id = result.get('id')
+        cache_screenscraper_result(game_id, ss_system_id, result)
+
+        # Primary name — prefer English / US region.
+        name = self._get_ss_localized_text(result.get('noms', []), 'text')
+
+        # Alternate names — every regional release except the one used as primary.
+        alt_titles = []
+        primary_lower = (name or '').strip().lower()
+        for nom in result.get('noms') or []:
+            if not isinstance(nom, dict):
+                continue
+            alt_name = (nom.get('text') or '').strip()
+            if not alt_name or alt_name.lower() == primary_lower:
+                continue
+            alt_titles.append({
+                'title': alt_name,
+                'region': (nom.get('region') or nom.get('langue') or '').strip() or None,
+            })
+
+        return {
+            'id': f"{game_id}:{ss_system_id}",
+            'name': name,
+            'source': 'screenscraper',
+            'scraper': 'screenscraper',
+            'release_date': region_text if region_text else self._get_ss_localized_text(result.get('dates', []), 'text'),
+            'platform': ss_system_name,
+            'platforms': [{'name': ss_system_name}] if ss_system_name else [],
+            'region': region,
+            'platform_match': platform_match,
+            'matched_platform': ss_system_name if platform_match else None,
+            'alternate_titles': alt_titles,
+        }
+
+    @staticmethod
+    def _pick_ss_region(dates):
+        """Pick the best English-preferred region/date pair from a SS `dates` list."""
+        region_priority = ['us', 'wor', 'eu', 'uk', 'au', 'en']
+        for pref_region in region_priority:
+            for d in dates:
+                if d.get('region', '').lower() == pref_region:
+                    return pref_region.upper(), d.get('text', '')
+        if dates:
+            first_region = dates[0].get('region', '').lower()
+            if first_region in ('us', 'usa', 'wor', 'world', 'eu', 'eur', 'uk', 'au', 'en'):
+                return first_region.upper(), dates[0].get('text', '')
+        return None, None
+
     def _get_ss_localized_text(self, items, text_key='text'):
         """Get localized text from ScreenScraper result, preferring English"""
         if not items:
             return ''
-        
+
         # Priority: en/us, then wor (world), then first available
         for region in ['us', 'eu', 'wor', 'ss']:
             for item in items:
@@ -587,319 +551,17 @@ class ScraperManager:
                     result = item.get(text_key, '')
                     if result:
                         return result
-        
+
         # Fallback to first item
         if items and isinstance(items[0], dict):
             return items[0].get(text_key, '')
-        
+
         return ''
-    
-    def _strip_title_noise(self, title):
-        """
-        Strip common noise from titles that tanks match scores.
-        Removes region tags, disc indicators, version/revision, edition tags,
-        and bracketed content like [NTSC], [USA], etc.
-        """
-        import re
-        if not title:
-            return title
 
-        # Remove bracketed content: [NTSC], [USA], [PAL], etc.
-        title = re.sub(r'\s*\[[^\]]*\]', '', title)
-
-        # Remove parenthesized noise patterns (order matters — specific before general)
-        # Region tags: (USA), (Europe), (Japan), (World), (En,Fr,De), (U), (E), (J), etc.
-        title = re.sub(r'\s*\((?:USA|Europe|Japan|World|Asia|Australia|Brazil|Canada|China|France|Germany|Italy|Korea|Netherlands|Russia|Spain|Sweden|Taiwan|UK|En|Fr|De|Es|It|Ja|Ko|Nl|Pt|Ru|Sv|Zh|Da|Fi|No|Pl|Tr|Cs|Hu|Ro|El|Ar|He|Th|Vi|U|E|J|W)(?:\s*,\s*(?:USA|Europe|Japan|World|Asia|Australia|Brazil|Canada|China|France|Germany|Italy|Korea|Netherlands|Russia|Spain|Sweden|Taiwan|UK|En|Fr|De|Es|It|Ja|Ko|Nl|Pt|Ru|Sv|Zh|Da|Fi|No|Pl|Tr|Cs|Hu|Ro|El|Ar|He|Th|Vi|U|E|J|W))*\)', '', title, flags=re.IGNORECASE)
-
-        # Disc indicators: (Disc 1), (Disc 1 of 3), (Disk 2), (CD1)
-        title = re.sub(r'\s*\((?:Disc|Disk|CD)\s*\d+(?:\s*of\s*\d+)?\)', '', title, flags=re.IGNORECASE)
-
-        # Version/revision: (Rev 1), (Rev A), (v1.0), (v1.1), (Beta), (Proto), (Sample), (Demo)
-        title = re.sub(r'\s*\((?:Rev\s*[A-Za-z0-9.]+|v\d+[.\d]*|Beta|Proto(?:type)?|Sample|Demo|Promo|Preview|Unl)\)', '', title, flags=re.IGNORECASE)
-
-        # Edition tags: (Greatest Hits), (GOTY), (Remastered), (Collector's Edition), etc.
-        title = re.sub(r"\s*\((?:Greatest\s+Hits|Platinum|Player'?s?\s+Choice|Nintendo\s+Selects|Classics|Budget|GOTY|Game\s+of\s+the\s+Year|Remaster(?:ed)?|Collector'?s?\s+Edition|Special\s+Edition|Limited\s+Edition|Definitive\s+Edition|Complete\s+Edition|Gold\s+Edition|Premium\s+Edition|Deluxe\s+Edition|Ultimate\s+Edition|Standard\s+Edition|Digital\s+Edition|Anniversary\s+Edition|Enhanced\s+Edition|Director'?s?\s+Cut|Black\s+Label|Not\s+for\s+Resale|NFR|Rental)\)", '', title, flags=re.IGNORECASE)
-
-        # Clean up extra whitespace
-        title = re.sub(r'\s+', ' ', title).strip()
-
-        return title
-
-    def _word_order_bonus(self, result_words_list, search_words_list):
-        """
-        Calculate a bonus for words appearing in correct sequential order.
-        Uses longest common subsequence (LCS) on word lists.
-        Returns 0-40 bonus points.
-        """
-        if not result_words_list or not search_words_list:
-            return 0
-
-        # LCS on word lists
-        m, n = len(result_words_list), len(search_words_list)
-        dp = [[0] * (n + 1) for _ in range(m + 1)]
-        for i in range(1, m + 1):
-            for j in range(1, n + 1):
-                if result_words_list[i - 1] == search_words_list[j - 1]:
-                    dp[i][j] = dp[i - 1][j - 1] + 1
-                else:
-                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
-
-        lcs_len = dp[m][n]
-        max_len = max(m, n)
-        if max_len == 0:
-            return 0
-
-        ratio = lcs_len / max_len
-        bonus = int(ratio * 40)
-        return bonus
-
-    def _calculate_title_match_score(self, result_title, search_title):
-        """
-        Calculate a match score between result title and search title.
-        Improved algorithm that:
-        1. Heavily rewards exact matches
-        2. Penalizes short partial matches
-        3. Uses word overlap similarity
-        4. Prioritizes complete matches over partial matches
-        5. Strips noise (region tags, edition tags) before comparison
-        6. Adds word-order bonus via LCS
-        """
-        if not result_title or not search_title:
-            return 0
-
-        # Check for raw exact match BEFORE noise stripping — a title that
-        # already matches without needing to strip brackets/editions is a
-        # stronger signal than one that only matches after stripping.
-        raw_exact = result_title.strip().lower() == search_title.strip().lower()
-
-        # Strip noise before any comparison
-        result_title = self._strip_title_noise(result_title)
-        search_title = self._strip_title_noise(search_title)
-
-        result_lower = result_title.lower()
-        search_lower = search_title.lower()
-        
-        # Normalize - replace punctuation with spaces for comparison
-        # Remove ALL apostrophe-like characters using explicit Unicode code points
-        import re
-        
-        # Comprehensive pattern for ALL apostrophe variants (using Unicode escapes for safety)
-        # U+0027 = ' (ASCII apostrophe)
-        # U+2019 = ' (right single quote - curly)
-        # U+2018 = ' (left single quote - curly)
-        # U+02BC = ʼ (modifier letter apostrophe)
-        # U+02BB = ʻ (modifier letter turned comma)
-        # U+0060 = ` (grave accent)
-        # U+00B4 = ´ (acute accent)
-        # U+2032 = ′ (prime)
-        # U+02B9 = ʹ (modifier letter prime)
-        apostrophe_chars = "'\u2019\u2018\u02BC\u02BB`\u00B4\u2032\u02B9"
-        
-        # First remove possessive 's (with any apostrophe variant)
-        possessive_pattern = f"[{apostrophe_chars}]s\\b"
-        result_normalized = re.sub(possessive_pattern, '', result_lower)
-        search_normalized = re.sub(possessive_pattern, '', search_lower)
-        
-        # Then remove any remaining apostrophes
-        apostrophe_pattern = f"[{apostrophe_chars}]"
-        result_normalized = re.sub(apostrophe_pattern, '', result_normalized)
-        search_normalized = re.sub(apostrophe_pattern, '', search_normalized)
-        
-        # Replace other punctuation with spaces
-        result_normalized = re.sub(r'[:\-–—/]', ' ', result_normalized)
-        result_normalized = re.sub(r'\s+', ' ', result_normalized).strip()
-
-        search_normalized = re.sub(r'[:\-–—/]', ' ', search_normalized)
-        search_normalized = re.sub(r'\s+', ' ', search_normalized).strip()
-
-        # Normalize Roman numerals to Arabic (e.g., "II" -> "2", "VII" -> "7")
-        # so "Rick Dangerous II" matches "Rick Dangerous 2"
-        from scraper.base_scraper import normalize_roman_numerals
-        result_normalized = normalize_roman_numerals(result_normalized)
-        search_normalized = normalize_roman_numerals(search_normalized)
-
-        # Create word lists (for order bonus) and sets (for overlap)
-        result_words_list = result_normalized.split()
-        search_words_list = search_normalized.split()
-        result_words = set(result_words_list)
-        search_words = set(search_words_list)
-
-        logger.info(f"Title match: result='{result_normalized}' search='{search_normalized}' | result_words={result_words} search_words={search_words}")
-
-        # Debug: Check if strings look equal but aren't
-        if result_words == search_words and result_normalized != search_normalized:
-            logger.info(f"  WARN: Words match but strings differ! result_repr={repr(result_normalized)} search_repr={repr(search_normalized)}")
-
-        score = 0
-
-        # Exact match (highest priority) - very high score
-        # Exact matches already have perfect word order, no bonus needed
-        if result_normalized == search_normalized:
-            # Bonus if the raw title matched without noise stripping needed
-            # e.g. "Halo 2" > "Halo 2 [Platinum Collection]" when both
-            # normalize to the same string after stripping brackets
-            bonus = 50 if raw_exact else 0
-            logger.info(f"  -> EXACT MATCH: {300 + bonus} (raw_exact={raw_exact})")
-            return 300 + bonus
-
-        # Check if all search words are in result words (search is subset of result)
-        # This handles cases like searching "Rogue" finding "Assassin's Creed Rogue"
-        if search_words <= result_words:
-            # All search words present - very good match
-            # But penalize results with extra words (like "Remastered", "HD", etc.)
-            extra_words = len(result_words) - len(search_words)
-            if extra_words == 0:
-                # Exact word match (just different punctuation/case)
-                score = 280
-                logger.info(f"  -> EXACT WORDS: {score}")
-            elif extra_words <= 2:
-                # Few extra words (like "Collector's Edition")
-                completeness = len(search_words) / len(result_words) if result_words else 0
-                score = int(200 * completeness)
-                logger.info(f"  -> search subset of result ({extra_words} extra): {score}")
-            else:
-                # Many extra words - less relevant
-                completeness = len(search_words) / len(result_words) if result_words else 0
-                score = int(150 * completeness)
-                logger.info(f"  -> search subset of result ({extra_words} extra, many): {score}")
-        # Check if all result words are in search words (result is subset of search)
-        # This handles cases like searching "Assassin's Creed Rogue" finding "Assassin's Creed"
-        elif result_words <= search_words:
-            # Result is missing some words from search - penalize significantly!
-            # "Assassin's Creed" should NOT beat "Assassin's Creed Rogue" when searching for latter
-            missing_words = len(search_words) - len(result_words)
-            completeness = len(result_words) / len(search_words) if search_words else 0
-            if missing_words == 1:
-                # Just 1 word missing - moderate penalty
-                score = int(100 * completeness)
-                logger.info(f"  -> result subset of search ({missing_words} missing): {score}")
-            elif missing_words == 2:
-                # 2 words missing - significant penalty
-                score = int(60 * completeness)
-                logger.info(f"  -> result subset of search ({missing_words} missing): {score}")
-            else:
-                # Many words missing - low score
-                score = int(30 * completeness)
-                logger.info(f"  -> result subset of search ({missing_words} missing, many): {score}")
-        else:
-            # Partial overlap - use Jaccard for general similarity
-            if result_words and search_words:
-                common_words = result_words & search_words
-                union_words = result_words | search_words
-                jaccard = len(common_words) / len(union_words) if union_words else 0
-
-                # Calculate how many of the search words are present
-                search_coverage = len(common_words) / len(search_words) if search_words else 0
-
-                if search_coverage >= 0.8:
-                    # Most search words found - good match
-                    score += int(120 * jaccard)
-                elif search_coverage >= 0.6:
-                    score += int(80 * jaccard)
-                elif search_coverage >= 0.4:
-                    score += int(50 * jaccard)
-                else:
-                    score += int(20 * jaccard)
-
-        # Word-order bonus (0-40 points) — rewards correct sequential ordering
-        # "Final Fantasy VII" vs "VII Fantasy Final" will now score differently
-        order_bonus = self._word_order_bonus(result_words_list, search_words_list)
-        if order_bonus > 0:
-            score += order_bonus
-            logger.info(f"  -> Word order bonus: +{order_bonus}")
-
-        return score
-    
-    def _calculate_ss_score(self, result, search_title, system_name):
-        """Calculate relevance score for ScreenScraper results"""
-        score = self._calculate_title_match_score(result.get('name', ''), search_title)
-        result['title_score'] = score
-
-        # Release date bonus
-        if result.get('release_date'):
-            score += 10
-        
-        # Platform match bonus - MAJOR boost to ensure correct platform shows first
-        if result.get('platform_match'):
-            score += 150
-        
-        # Region bonus - prefer US/World (handle None explicitly)
-        region = (result.get('region') or '').upper()
-        if region in ['US', 'USA', 'WOR']:
-            score += 20
-        elif region in ['EU', 'UK']:
-            score += 10
-        
-        return score
-    
-    def _calculate_tgdb_score(self, result, search_title, system_name):
-        """Calculate relevance score for TheGamesDB results"""
-        score = self._calculate_title_match_score(result.get('name', ''), search_title)
-        result['title_score'] = score
-
-        # Release date bonus
-        if result.get('release_date'):
-            score += 10
-        
-        # Platform match bonus - MAJOR boost to ensure correct platform shows first
-        if result.get('platform_match'):
-            score += 150
-        
-        # Region bonus - prefer US/World
-        region = result.get('region', '').upper() if result.get('region') else ''
-        if region in ['USA', 'WORLD']:
-            score += 20
-        elif region in ['EUROPE', 'EU', 'UK']:
-            score += 10
-        
-        return score
-    
-    def _calculate_igdb_score(self, result, search_title, system_name):
-        """Calculate relevance score for IGDB results"""
-        score = self._calculate_title_match_score(result.get('name', ''), search_title)
-        result['title_score'] = score
-
-        # Popularity/date bonus
-        if result.get('first_release_date'):
-            score += 20
-        
-        # Platform match bonus - MAJOR boost to ensure correct platform shows first
-        if result.get('platform_match'):
-            score += 150
-        
-        return score
-    
-    def _calculate_rawg_score(self, result, search_title, system_name):
-        """Calculate relevance score for RAWG results"""
-        title_score = self._calculate_title_match_score(result.get('name', ''), search_title)
-        result['title_score'] = title_score
-
-        score = title_score
-        
-        # Has release date bonus
-        if result.get('release_date'):
-            score += 20
-        
-        # Has image bonus
-        if result.get('image'):
-            score += 10
-        
-        # Platform match bonus - MAJOR boost to ensure correct platform shows first
-        if result.get('platform_match'):
-            score += 150  # High enough to always put platform matches at top
-        
-        # Has Metacritic score bonus
-        if result.get('metacritic'):
-            score += 15
-        
-        logger.info(f"RAWG Score for '{result.get('name', '')}': title={title_score}, platform_match={result.get('platform_match')}, total={score}")
-        
-        return score
-    
     def fetch_game_details(self, game_id, source, system_folder=None):
         """Fetch game details from specified source"""
         logger.info(f"Fetching details from {source} for ID: {game_id}")
-        
+
         try:
             if source == 'thegamesdb':
                 return fetch_tgdb(game_id)
@@ -915,11 +577,11 @@ class ScraperManager:
         except Exception as e:
             logger.error(f"Error fetching details from {source}: {e}")
             return None
-    
+
     def apply_metadata(self, db_game_id, game_data, source, system_folder=None):
         """Apply metadata from specified source to database game"""
         logger.info(f"Applying metadata from {source} to game {db_game_id}")
-        
+
         try:
             if source == 'thegamesdb':
                 return apply_tgdb(db_game_id, game_data)
@@ -938,7 +600,7 @@ class ScraperManager:
         except Exception as e:
             logger.error(f"Error applying metadata from {source}: {e}")
             return False
-    
+
     def apply_hybrid_metadata(self, db_game_id, primary_source, primary_id,
                               system_folder, all_results=None, explicit_secondary=None):
         """
@@ -1008,7 +670,7 @@ class ScraperManager:
             )
 
             return result
-            
+
         except Exception as e:
             logger.error(f"Error in hybrid metadata: {e}")
             # Fall back to regular apply

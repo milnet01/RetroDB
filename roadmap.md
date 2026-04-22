@@ -102,6 +102,26 @@ change forces a different sequence.
   (`hybrid_scraper.py`, `alt_titles_backfill.py`, tests); three dead
   imports in `hybrid_scraper.py` also dropped. All 124 tests pass.
   (v2.83.11)
+- [x] **Pass 6 — `scraper/scraper_manager.py` split** — Carved the 1022-LOC
+  manager into a 684-LOC orchestrator (−33%) plus three focused modules:
+  `scraper/match_scorer.py` (207 LOC, pure scoring — `calculate_title_match_score`,
+  `word_order_bonus`, and four per-source calculators `calculate_ss_score` /
+  `calculate_tgdb_score` / `calculate_igdb_score` / `calculate_rawg_score`),
+  `scraper/title_normalizer.py` (100 LOC, `strip_title_noise` and
+  `normalize_for_matching` with module-level compiled regexes instead of
+  re-compiled inline patterns), `scraper/scraper_cache.py` (48 LOC,
+  thread-safe TTL-backed ScreenScraper result cache). Module-level
+  functions rather than the roadmap's suggested `MatchScorer` /
+  `TitleNormalizer` / `ScraperCache` classes — same reasoning as Pass 4:
+  matches `game_query.py` / `analytics.py` idiom, and scoring is
+  fundamentally stateless so `self` was never load-bearing. The 80-line
+  inline ScreenScraper result-parsing block inside `search_games()` also
+  flattened to `_parse_ss_result()` + `_pick_ss_region()` static helpers
+  so the orchestrator reads as "for each source: search → score →
+  extend". `scraper_manager.py` re-exports cache + scoring helpers so
+  every existing caller (`routes/bulk_scrape.py`, `routes/games.py`,
+  `scraper/hybrid_scraper.py`, `services/wishlist_scraper.py`,
+  `services/jobs/*`) is unchanged. All 124 tests pass. (v2.83.12)
 
 ---
 
@@ -136,29 +156,14 @@ AI-fill sides.
 
 ---
 
-## Pass 6 — scraper_manager.py split
+## Pass 6 — scraper_manager.py split — done (v2.83.12)
 
-### Extract match scoring and cache from ScraperManager
-
-- **Target**: `scraper/scraper_manager.py` (1022 LOC → ~700); new
-  `scraper/match_scorer.py`, `scraper/scraper_cache.py`.
-- **Why**: `ScraperManager` currently handles orchestration (fine), match
-  scoring (`_calculate_title_match_score` is 200+ LOC of nested logic),
-  noise-stripping regexes, and cache/TTL management. The scoring code is
-  the single hardest-to-maintain block in the file.
-- **Plan**:
-  - `scraper/match_scorer.py::MatchScorer` — `score_title(a, b)`,
-    `word_order_bonus(a, b)`, `ss_specific_score(...)`,
-    `calculate_match_confidence(result, query)`.
-  - `scraper/title_normalizer.py::TitleNormalizer` — config-driven
-    dict-of-regex patterns for region tags, edition tags, disc markers;
-    single loop applies them in priority order. Replaces the long
-    conditional chain in `_strip_title_noise()`.
-  - `scraper/scraper_cache.py::ScraperCache` — TTL-backed cache used by
-    `search_games()` / `get_extended_data()`.
-- **Est. reduction**: manager drops by ~300 LOC; three new files total
-  ~350 LOC, each with one job.
-- **Status**: todo
+See "Done" section above. All three extractions landed:
+`scraper/match_scorer.py` (scoring), `scraper/title_normalizer.py`
+(noise strip + match normalization), `scraper/scraper_cache.py`
+(SS TTL cache). Module-level functions rather than classes — matches
+the `game_query.py` / `analytics.py` idiom followed from Pass 4
+onwards. Manager shrank 1022 → 684 LOC (−33%).
 
 ---
 

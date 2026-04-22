@@ -1,3 +1,22 @@
+- version: 2.83.12
+  date: 2026-04-22
+  tags:
+  - type: chore
+    label: Chore
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 6 &mdash; <code>scraper/scraper_manager.py</code> split</strong> &mdash; Extracted the scoring and caching machinery into three focused modules, shrinking the manager from 1022 to 684 LOC (&minus;33%):
+            <ul>
+                <li><code>scraper/match_scorer.py</code> (207 LOC) &mdash; owns the pure scoring functions. Public API: <code>calculate_title_match_score(a, b)</code>, <code>word_order_bonus(result_words, search_words)</code>, and the four per-source bonus calculators <code>calculate_tgdb_score</code> / <code>calculate_igdb_score</code> / <code>calculate_rawg_score</code> / <code>calculate_ss_score</code>. No state, no <code>self</code> &mdash; fundamentally stateless work, now callable without an orchestrator instance.</li>
+                <li><code>scraper/title_normalizer.py</code> (100 LOC) &mdash; owns title-side text normalization. Public API: <code>strip_title_noise(title)</code> (bracketed content, region tags, disc markers, version tags, edition tags &mdash; each pattern is now a module-level compiled regex instead of a re-compiled inline pattern) and <code>normalize_for_matching(title)</code> (apostrophe-variant flattening, punctuation &rarr; space, Roman-numeral conversion).</li>
+                <li><code>scraper/scraper_cache.py</code> (48 LOC) &mdash; owns the thread-safe TTL-backed ScreenScraper result cache. Public API: <code>cache_screenscraper_result(game_id, system_id, data)</code>, <code>get_cached_screenscraper_result(game_id, system_id)</code>. 10-minute expiry, 500-entry cap, expired-first eviction.</li>
+            </ul>
+        </li>
+        <li><strong>ScreenScraper result parsing flattened</strong> &mdash; The 80-line inline block inside <code>search_games()</code> that parsed raw ScreenScraper responses into our common result shape is now a named static helper pair (<code>_parse_ss_result()</code> + <code>_pick_ss_region()</code>), so <code>search_games()</code> reads as "for each source: search &rarr; score &rarr; extend". The region-picker logic used to inline a two-pass loop; it's now a single method you can reason about on its own.</li>
+        <li><strong>Backward-compatible at the package boundary</strong> &mdash; <code>scraper.scraper_manager</code> still exports <code>scraper_manager</code>, <code>load_scraper_settings</code>, <code>get_match_settings</code>, <code>passes_match_filter</code>, <code>get_api_key</code>, <code>cache_screenscraper_result</code>, and <code>get_cached_screenscraper_result</code>. No caller changes needed: <code>routes/bulk_scrape.py</code>, <code>routes/games.py</code>, <code>scraper/hybrid_scraper.py</code>, <code>services/wishlist_scraper.py</code>, and the <code>services/jobs/*</code> modules all kept their existing imports.</li>
+        <li><strong>Wire format preserved exactly</strong> &mdash; Identical scoring output per source. All 124 pytest tests still pass; smoke-import of <code>app</code> is clean.</li>
+    </ul>
+
 - version: 2.83.11
   date: 2026-04-22
   tags:
