@@ -69,13 +69,22 @@ SERVER_HOST = os.environ.get('RETRODB_HOST', "0.0.0.0")
 SERVER_PORT = int(os.environ.get('RETRODB_PORT', "5000"))
 DEBUG_MODE = os.environ.get('RETRODB_DEBUG', "false").lower() in ('true', '1', 'yes')
 
+# Slow-query threshold (ms).  When > 0, services.database logs a WARNING for
+# any query/execute call that exceeds the threshold, including the SQL text
+# and argument count.  0 (default) disables the check entirely.
+# Override via RETRODB_SLOW_QUERY_MS=100 to enable in dev.
+try:
+    SLOW_QUERY_MS = int(os.environ.get('RETRODB_SLOW_QUERY_MS', '0'))
+except ValueError:
+    SLOW_QUERY_MS = 0
+
 # =============================================================================
 # APPLICATION SETTINGS
 # =============================================================================
 
 # Application metadata
 APP_NAME = "RetroDB"
-APP_VERSION = "2.84.0"
+APP_VERSION = "2.84.1"
 APP_LAST_UPDATE = "2026-04-22"
 APP_DESCRIPTION = "Retro Gaming ROM Library Manager"
 

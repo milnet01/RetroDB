@@ -122,6 +122,37 @@ change forces a different sequence.
   every existing caller (`routes/bulk_scrape.py`, `routes/games.py`,
   `scraper/hybrid_scraper.py`, `services/wishlist_scraper.py`,
   `services/jobs/*`) is unchanged. All 124 tests pass. (v2.83.12)
+- [x] **Pass 12 (partial) — Database performance** — Four-item sweep
+  across the SQLite layer, landed as v2.84.1.
+    - **12.1** Long-lived `PRAGMA optimize=0x10002` on background-job
+      connections. `services/jobs/base.py::_get_conn()` now sets the
+      0x10002 mask on open so per-table stats accumulate; a later
+      `PRAGMA optimize` (no args) uses those stats to ANALYZE stale
+      tables. Per-request teardown already ran `PRAGMA optimize` in
+      Pass 11; this closes the gap for job threads. Graceful fallthrough
+      on older SQLite builds.
+    - **12.2** Batched job progress persistence. `persist_job_progress`
+      gained an optional `conn=` kwarg; `services/jobs/bulk_scrape.py`
+      opens a long-lived `_progress_conn` at job start, reuses it for
+      every in-loop progress tick (eliminates ~100 conn open/PRAGMA
+      cycles per 1000-game scrape), closes it in both success and
+      exception branches, runs `PRAGMA optimize` periodically so the
+      0x10002-collected stats actually get applied.
+    - **12.3** Already-landed in v2.84.0 — `database_init.py` runs
+      `PRAGMA optimize` after `CREATE INDEX` loop. Noted here for
+      completeness.
+    - **12.4** Slow-query logging gated by new
+      `RETRODB_SLOW_QUERY_MS` env var (default 0 = disabled).
+      `services/database.py` wraps `query()` / `execute()` /
+      `execute_many()` with `perf_counter` deltas; threshold-exceed
+      cases log WARNING with whitespace-compacted + 500-char-truncated
+      SQL and arg count (values themselves stay out of the log to avoid
+      PII leaks). 6 tests added in `tests/test_slow_query_log.py`.
+    - **12.5 (deferred)** FTS5 virtual table — L-sized; gated on a
+      benchmark run to confirm `WHERE title LIKE '%q%'` actually is the
+      hot path on realistic 10k-row libraries. Pushed to a later pass.
+    Net: 140 tests pass (was 134); 6 new tests; smoke-import clean.
+    (v2.84.1)
 - [x] **Pass 11 — Security hardening** — Seven-item security sweep
   landed as one patch (v2.84.0).
     - **11.1** PBKDF2-SHA256 iteration count bumped 100,000 → 600,000
@@ -615,7 +646,10 @@ sheet, Flask/Werkzeug/Waitress CVE scan).
      then `PRAGMA optimize` periodically (e.g. every 30 minutes or every
      500 iterations).
 - **Source**: <https://sqlite.org/pragma.html#pragma_optimize>
-- **Status**: todo
+- **Status**: done (v2.84.1) — per-request teardown landed in v2.84.0 at
+  `app.py:234`; long-lived 0x10002 mask + fallback-safe try/except added to
+  `services/jobs/base.py::_get_conn()` in v2.84.1; periodic `PRAGMA optimize`
+  (no args) every 30 min on the bulk-scrape progress connection.
 
 ### 12.2 Batch job progress persistence (HIGH, M)
 
@@ -633,7 +667,10 @@ sheet, Flask/Werkzeug/Waitress CVE scan).
   into `persist_job_progress(conn, job_id, progress_dict)`.  Close on
   job completion.  `_commit_with_retry` already exists for the long-
   lived pattern — re-use it.
-- **Status**: todo
+- **Status**: done (v2.84.1) — `persist_job_progress(job_id, dict, conn=None)`
+  new signature; `bulk_scrape.py::run()` now opens `_progress_conn` once at
+  job start, reuses it via `_commit_with_retry`, closes it in both success
+  and exception branches.
 
 ### 12.3 Run `ANALYZE` after schema / index changes (MEDIUM, S)
 
@@ -648,7 +685,8 @@ sheet, Flask/Werkzeug/Waitress CVE scan).
   since SQLite 3.46.0 auto-runs ANALYZE where stale).  Alternatively an
   explicit `ANALYZE;`.  One-off per app start.
 - **Source**: <https://sqlite.org/lang_analyze.html>
-- **Status**: todo
+- **Status**: done (v2.84.0) — `database_init.py:515` runs `PRAGMA optimize`
+  after the `CREATE INDEX` loop.  Confirmed in the 2.84.1 audit.
 
 ### 12.4 Slow-query logging (MEDIUM, M)
 
@@ -660,7 +698,12 @@ sheet, Flask/Werkzeug/Waitress CVE scan).
   delta; if > 100 ms, log at WARNING with the SQL (redacted) and
   arguments count.  Guard behind a `SLOW_QUERY_MS` config knob (default
   disabled in production, 100 ms in dev).
-- **Status**: todo
+- **Status**: done (v2.84.1) — `config.SLOW_QUERY_MS` (env
+  `RETRODB_SLOW_QUERY_MS`, default 0 = disabled); `services/database.py`
+  wraps `query()`, `execute()`, and `execute_many()` with perf-counter
+  deltas; threshold-exceed logs WARNING with whitespace-compacted +
+  500-char-truncated SQL and arg count.  Values themselves never logged.
+  6 tests in `tests/test_slow_query_log.py`.
 
 ### 12.5 FTS5 virtual table for `games.title` + `alternate_titles` (MEDIUM, L)
 
@@ -678,7 +721,10 @@ sheet, Flask/Werkzeug/Waitress CVE scan).
 - **Caveat**: FTS5 doesn't replace prefix LIKE for all cases (autocomplete,
   substring mid-word).  Keep LIKE where required.
 - **Source**: <https://www.sqlite.org/fts5.html>
-- **Status**: todo
+- **Status**: deferred (post-v2.84.1) — L-sized; gated on a benchmark run
+  that confirms `WHERE title LIKE '%q%'` is actually the hot path on a
+  realistic 10k-row library.  `RETRODB_SLOW_QUERY_MS=100` (added 12.4) is
+  the instrument to collect that data.
 
 ---
 

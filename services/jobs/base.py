@@ -32,6 +32,14 @@ def _get_conn():
     conn.execute("PRAGMA temp_store = MEMORY")
     conn.execute("PRAGMA mmap_size = 268435456")
     conn.execute("PRAGMA journal_size_limit = 67108864")
+    # 0x10002 = enable per-connection statistics tracking for long-lived
+    # connections.  A later PRAGMA optimize (no args) will ANALYZE any
+    # tables whose stats went stale during this connection's lifetime.
+    # See https://sqlite.org/pragma.html#pragma_optimize
+    try:
+        conn.execute("PRAGMA optimize=0x10002")
+    except sqlite3.OperationalError:
+        pass  # older SQLite builds without the 0x10002 mask — safe to skip
     return conn
 
 
@@ -206,27 +214,38 @@ def persist_job_start(job_type, params=None):
         return None
 
 
-def persist_job_progress(job_id, progress_dict):
+def persist_job_progress(job_id, progress_dict, conn=None):
     """Update progress JSON for a running job.
 
     Args:
         job_id: The job_queue row ID returned by persist_job_start.
         progress_dict: Dict with progress info (current, total, current_item, etc.)
+        conn: Optional persistent connection to reuse.  When provided, avoids
+            the ~3-10 ms open+PRAGMA overhead on every progress tick inside a
+            tight job loop.  The caller owns the connection lifecycle.
     """
     if job_id is None:
         return
+    now = datetime.now(timezone.utc).isoformat()
+    payload = (json.dumps(progress_dict), now, job_id)
+    sql = "UPDATE job_queue SET progress = ?, updated_at = ? WHERE id = ?"
+
+    if conn is not None:
+        try:
+            conn.execute(sql, payload)
+            _commit_with_retry(conn, max_retries=5, base_delay=0.5)
+        except Exception as e:
+            logger.warning(f"Failed to persist job progress on shared conn: {e}")
+        return
+
     try:
         def _do_update():
-            now = datetime.now(timezone.utc).isoformat()
-            conn = _get_conn()
+            fresh = _get_conn()
             try:
-                conn.execute(
-                    "UPDATE job_queue SET progress = ?, updated_at = ? WHERE id = ?",
-                    (json.dumps(progress_dict), now, job_id)
-                )
-                conn.commit()
+                fresh.execute(sql, payload)
+                fresh.commit()
             finally:
-                conn.close()
+                fresh.close()
 
         _retry_on_locked(_do_update, max_retries=5, base_delay=0.5)
     except Exception as e:

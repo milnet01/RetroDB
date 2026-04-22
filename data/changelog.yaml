@@ -1,3 +1,21 @@
+- version: 2.84.1
+  date: 2026-04-22
+  tags:
+  - type: performance
+    label: Performance
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 12 (partial) &mdash; database performance</strong> &mdash; Four-item sweep across the SQLite layer.  140 tests pass (was 134); 6 new tests added.
+            <ul>
+                <li><strong>12.1 &mdash; long-lived <code>PRAGMA optimize=0x10002</code> on background-job connections</strong>. <code>services/jobs/base.py::_get_conn()</code> now sets the 0x10002 mask on connection open, telling SQLite to start tracking per-table usage statistics on this connection.  A later <code>PRAGMA optimize</code> (no args) uses those stats to ANALYZE only the tables that went stale &mdash; cheap, incremental planner-stat refresh per job instead of nothing.  The short-lived per-request connection already got <code>PRAGMA optimize</code> on teardown in Pass 11; this closes the gap for long-running job threads.  Falls through harmlessly on older SQLite builds that don't know the 0x10002 mask.  (See <a href="https://sqlite.org/pragma.html#pragma_optimize">sqlite.org/pragma.html#pragma_optimize</a>.)</li>
+                <li><strong>12.2 &mdash; batched job progress persistence</strong>. <code>services/jobs/base.py::persist_job_progress</code> now accepts an optional <code>conn=</code> kwarg; when provided, the caller's persistent connection is reused instead of opening a fresh sqlite connection + 6 PRAGMAs on every progress tick.  <code>services/jobs/bulk_scrape.py</code> opens a dedicated <code>_progress_conn</code> at job start, passes it to every <code>persist_job_progress()</code> inside the loop, and closes it in both the success and exception branches.  Every 30 minutes the job also runs <code>PRAGMA optimize</code> on that connection (the 0x10002-collected stats actually get applied).  For a 1000-game bulk scrape that eliminates ~100 connection-open/close cycles on the progress-persist path alone.</li>
+                <li><strong>12.4 &mdash; slow-query logging gated by <code>RETRODB_SLOW_QUERY_MS</code></strong>.  <code>services/database.py</code> now wraps <code>query()</code>, <code>execute()</code>, and <code>execute_many()</code> with a <code>perf_counter()</code> delta; calls exceeding <code>config.SLOW_QUERY_MS</code> log a WARNING with the SQL (whitespace-compacted, truncated to 500 chars) + argument count.  Values themselves never hit the log &mdash; arg-count only, to avoid PII leaks.  Threshold defaults to 0 (disabled) so production paths are unaffected; set <code>RETRODB_SLOW_QUERY_MS=100</code> in dev to surface N+1 patterns.  6 new tests cover the zero-threshold disable path, fast-query no-log, slow-query log, whitespace-compaction, long-SQL truncation, and non-sequence args.</li>
+                <li><strong>12.3 was already landed in v2.84.0</strong>: <code>services/database_init.py:515</code> already runs <code>PRAGMA optimize</code> after the <code>CREATE INDEX</code> loop, so planner stats refresh once per app start.  No-op this pass &mdash; noting for roadmap completeness.</li>
+                <li><strong>Validation</strong> &mdash; <code>pytest</code> clean; app smoke-imports cleanly; no regressions in the existing 134 tests.  12.5 (FTS5 virtual table) deferred &mdash; L-sized; gated on a benchmark run to confirm LIKE actually is the hot path.</li>
+            </ul>
+        </li>
+    </ul>
+
 - version: 2.84.0
   date: 2026-04-22
   tags:

@@ -666,6 +666,16 @@ class BulkScrapeJob:
             'scrape_mode': _scrape_mode
         })
         _last_persist_time = time.time()
+        _last_optimize_time = _last_persist_time
+
+        # Long-lived connection for progress persistence: avoids opening a
+        # fresh sqlite connection (6 PRAGMAs) on every ~10-item progress tick.
+        # Closed in both the success and exception branches below.
+        try:
+            _progress_conn = _get_conn()
+        except sqlite3.Error as e:
+            logger.warning(f"Could not open persistent progress connection, falling back to per-tick opens: {e}")
+            _progress_conn = None
 
         # Pre-fetch all game data in one query to avoid N individual DB connections
         valid_game_ids = [gid for gid in _game_ids if gid is not None]
@@ -714,8 +724,16 @@ class BulkScrapeJob:
                             'skipped': self.skipped_count,
                             'current_item': self.current_game_title
                         }
-                    persist_job_progress(persist_id, _progress)
+                    persist_job_progress(persist_id, _progress, conn=_progress_conn)
                     _last_persist_time = _now
+                    # Periodic ANALYZE for stale-table stats on the long-lived
+                    # connection.  Cheap after the 0x10002 hint in _get_conn().
+                    if _progress_conn is not None and (_now - _last_optimize_time) >= 1800:
+                        try:
+                            _progress_conn.execute("PRAGMA optimize")
+                            _last_optimize_time = _now
+                        except sqlite3.Error:
+                            pass
 
                 # Check for pause - wait until resumed
                 while True:
@@ -916,6 +934,17 @@ class BulkScrapeJob:
                 _final_status = 'cancelled' if self.cancelled else 'completed'
                 logger.info(f"Bulk scrape completed: {self.success_count} success, {self.failed_count} failed, {self.skipped_count} skipped")
 
+            if _progress_conn is not None:
+                try:
+                    _progress_conn.execute("PRAGMA optimize")
+                except sqlite3.Error:
+                    pass
+                try:
+                    _progress_conn.close()
+                except sqlite3.Error:
+                    pass
+                _progress_conn = None
+
             persist_job_complete(persist_id, status=_final_status)
 
             # Game metadata changed en masse — drop dependent caches so the
@@ -936,6 +965,12 @@ class BulkScrapeJob:
         except Exception as e:
             logger.error(f"Bulk scrape error: {e}")
             _prefetched_games.clear()
+            if _progress_conn is not None:
+                try:
+                    _progress_conn.close()
+                except sqlite3.Error:
+                    pass
+                _progress_conn = None
             with self._lock:
                 self.completed = True
                 self.running = False

@@ -5,9 +5,45 @@
 # All database operations should use these functions for consistency.
 # =============================================================================
 
+import logging
+import re
 import sqlite3
+import time
+
 import config
 from flask import g, has_app_context
+
+logger = logging.getLogger(__name__)
+
+_WHITESPACE_RE = re.compile(r'\s+')
+
+
+def _log_if_slow(sql, args, start):
+    """Log a WARNING if (now - start) exceeds config.SLOW_QUERY_MS.
+
+    Args:
+        sql: The SQL string that was executed.
+        args: The parameter sequence (used only for arg-count logging —
+            values themselves stay out of the log to avoid PII leaks).
+        start: perf_counter() timestamp captured before execute.
+    """
+    threshold = getattr(config, 'SLOW_QUERY_MS', 0) or 0
+    if threshold <= 0:
+        return
+    elapsed_ms = (time.perf_counter() - start) * 1000.0
+    if elapsed_ms < threshold:
+        return
+    compact_sql = _WHITESPACE_RE.sub(' ', sql).strip()
+    if len(compact_sql) > 500:
+        compact_sql = compact_sql[:497] + '...'
+    try:
+        arg_count = len(args) if args is not None else 0
+    except TypeError:
+        arg_count = -1
+    logger.warning(
+        "slow_query elapsed_ms=%.1f args=%d sql=%s",
+        elapsed_ms, arg_count, compact_sql,
+    )
 
 
 def safe_column(name, allowed):
@@ -110,8 +146,10 @@ def query(sql, args=(), one=False):
                      (system_id, f"%{search}%"))
     """
     conn = get_request_db()
+    _t0 = time.perf_counter()
     cur = conn.execute(sql, args)
     rows = cur.fetchall()
+    _log_if_slow(sql, args, _t0)
 
     # Convert sqlite3.Row objects to dicts so .get() works
     if one:
@@ -149,8 +187,10 @@ def execute(sql, args=()):
         execute("DELETE FROM games WHERE id = ?", (game_id,))
     """
     conn = get_request_db()
+    _t0 = time.perf_counter()
     cur = conn.execute(sql, args)
     conn.commit()
+    _log_if_slow(sql, args, _t0)
     return cur.lastrowid
 
 
@@ -181,8 +221,10 @@ def execute_many(sql, args_list):
         )
     """
     conn = get_request_db()
+    _t0 = time.perf_counter()
     cur = conn.executemany(sql, args_list)
     conn.commit()
+    _log_if_slow(sql, args_list, _t0)
     return cur.rowcount
 
 
