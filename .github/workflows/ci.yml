@@ -12,6 +12,11 @@ on:
 # CI green through the transition without pinning action versions we don't control.
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  # Python used for "run-once" steps (semgrep, pip-audit, lockfile-drift,
+  # coverage). The matrix still runs ruff + import smoke + pytest on every
+  # listed interpreter, but these heavier steps skip non-primary interpreters
+  # to keep wall-clock reasonable — their result is interpreter-independent.
+  PRIMARY_PYTHON: "3.13"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -20,31 +25,49 @@ concurrency:
 jobs:
   lint-and-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+
+    strategy:
+      # Users on long-term distros (Debian stable, openSUSE Leap) still ship
+      # 3.12 — keep it green. 3.14 free-threaded is intentionally excluded:
+      # it hurts single-threaded Flask perf 30-50%.
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
 
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          python-version: ${{ matrix.python-version }}
           cache: pip
 
       - name: Install runtime + audit deps
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install ruff semgrep pytest
+          pip install ruff semgrep pytest pytest-cov pip-audit pip-tools
 
       - name: Ruff (bugs only — E, F, B, S)
         run: ruff check .
 
-      - name: Semgrep (security-audit + python + flask)
+      - name: Semgrep (calibrated via .semgrep.yml exclusions)
+        if: matrix.python-version == env.PRIMARY_PYTHON
         run: |
+          # .semgrep.yml documents 13 upstream rule IDs as noise-only on this
+          # codebase (three consecutive audits, 0/105 actionable). The raw
+          # upstream packs would surface them every run. Parse the list out
+          # of the doc comments and feed it back as --exclude-rule flags.
+          EXCLUDES=$(awk '/^# Excluded upstream rules/,/^# RetroDB-specific/' .semgrep.yml \
+                     | grep -oE '^#   [a-z][a-z0-9._-]+\.[a-z0-9._-]+' \
+                     | awk '{print "--exclude-rule " $2}' | tr '\n' ' ')
+          echo "Applying exclusions:"; echo "$EXCLUDES" | tr ' ' '\n' | grep -v '^$' || true
           semgrep \
             --config p/security-audit \
             --config p/python \
             --config p/flask \
+            --config .semgrep.yml \
             --error \
             --timeout 60 \
             --metrics=off \
@@ -53,8 +76,41 @@ jobs:
             --exclude database \
             --exclude static/images \
             --exclude static/videos \
+            $EXCLUDES \
             .
         continue-on-error: true  # security findings surface as warnings until we drive the actionable count to zero
+
+      - name: pip-audit (CVEs in pinned lockfile)
+        if: matrix.python-version == env.PRIMARY_PYTHON
+        run: pip-audit --requirement requirements.lock --strict
+        continue-on-error: true  # Dependabot backlog first; flip to hard-fail once clean
+
+      - name: Lockfile drift check
+        if: matrix.python-version == env.PRIMARY_PYTHON
+        run: |
+          # CLAUDE.md says "regenerate lockfile if requirements.txt was edited"
+          # — this step turns that honor-system rule into a hard check.
+          #
+          # Semantic intent: catch "someone added a dep to requirements.txt
+          # but forgot to recompile the lock", NOT "upstream released a point
+          # version newer than what we've pinned" (that's Dependabot's job).
+          #
+          # Implementation: seed /tmp/fresh.lock with the existing lock, then
+          # recompile. pip-compile honors existing pins unless the input
+          # constraints actually force a change, so a clean PR produces an
+          # identical body. The 6-line auto-generated header differs by
+          # output path between the two runs — strip it before diffing.
+          cp requirements.lock /tmp/fresh.lock
+          pip-compile --quiet --strip-extras --output-file /tmp/fresh.lock requirements.txt
+          # Strip any leading `# ...` header lines (newer pip-compile emits a
+          # 6-line comment block; older invocations produce none). Per-package
+          # `# via` lines are indented with spaces so they don't match ^#.
+          if ! diff -u <(grep -v '^#' requirements.lock) <(grep -v '^#' /tmp/fresh.lock); then
+            echo ""
+            echo "::error::requirements.lock is out of sync with requirements.txt."
+            echo "Run: pip-compile requirements.txt -o requirements.lock --strip-extras"
+            exit 1
+          fi
 
       - name: Import smoke test
         env:
@@ -63,5 +119,18 @@ jobs:
           cp config.example.py config.py
           python -c "import app; print('app imports cleanly')"
 
-      - name: Pytest
-        run: pytest
+      - name: Pytest (+ coverage on primary interpreter)
+        run: |
+          if [ "${{ matrix.python-version }}" = "${{ env.PRIMARY_PYTHON }}" ]; then
+            pytest --cov=services --cov=scraper --cov=routes --cov-report=term-missing --cov-report=xml
+          else
+            pytest
+          fi
+
+      - name: Upload coverage artifact
+        if: matrix.python-version == env.PRIMARY_PYTHON
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: coverage.xml
+          if-no-files-found: ignore

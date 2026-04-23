@@ -1,0 +1,44 @@
+# Dependabot config — Pass 22.1.
+#
+# Weekly scan opens grouped PRs for pip + GitHub Actions bumps. The 4-day
+# cooldown avoids landing day-of-release breakages; grouping keeps the PR
+# volume manageable (one bundle per ecosystem per week, not one per package).
+#
+# Docs: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    cooldown:
+      default-days: 4
+    open-pull-requests-limit: 5
+    groups:
+      pip-dependencies:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "python"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions"

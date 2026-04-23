@@ -61,3 +61,24 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
 addopts = "-ra --strict-markers"
+
+# Coverage (Pass 22.3). No threshold gate yet — establish a baseline first,
+# then raise the floor in a later pass. CI prints term-missing + uploads XML.
+[tool.coverage.run]
+branch = true
+source = ["services", "scraper", "routes"]
+omit = [
+    "tests/*",
+    "services/migrations/scripts/*",
+    "**/__pycache__/*",
+]
+
+[tool.coverage.report]
+exclude_also = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+show_missing = true
+skip_covered = false

@@ -288,6 +288,40 @@ change forces a different sequence.
       `Vary: Accept-Encoding`. Operators behind a compressing reverse
       proxy can disable via `RETRODB_DISABLE_GZIP=1`. No new dependency.
       (v2.92.0)
+- [x] **Pass 22 — CI/CD hardening (7 of 8 landed; 22.7 held for Pass 24)** —
+  All tooling-side items shipped together; zero runtime behavior change.
+    - **22.1** `.github/dependabot.yml` — weekly grouped PRs for both pip
+      and github-actions, 4-day cooldown on pip, labeled for filtering.
+      (v2.93.0)
+    - **22.2** `pip-audit --requirement requirements.lock --strict`
+      added to CI on the primary interpreter (3.13). `continue-on-error`
+      until the backlog is clean. (v2.93.0)
+    - **22.3** `pytest-cov` wired on the primary interpreter;
+      `pyproject.toml` gets `[tool.coverage.run]` + `[tool.coverage.report]`;
+      XML report uploads as a CI artifact. No threshold gate yet. (v2.93.0)
+    - **22.4** Python 3.12 + 3.13 matrix with `fail-fast: false`. Heavier
+      run-once steps (semgrep, pip-audit, lockfile-drift, coverage) skip
+      the secondary interpreter. 3.14 free-threaded deliberately excluded
+      (30-50% Flask slowdown). (v2.93.0)
+    - **22.5** CI semgrep now parses `.semgrep.yml`'s documented exclusion
+      list and feeds it back as `--exclude-rule` flags; `--config
+      .semgrep.yml` also passed for any RetroDB-specific rules defined
+      there. CI scan matches the documented audit baseline. (v2.93.0)
+    - **22.6** `release.yml` emits CycloneDX SBOM + `SHA256SUMS.txt` +
+      keyless cosign `.sig`/`.pem` per artifact + SLSA build-provenance
+      attestation. All third-party actions pinned by commit SHA with
+      trailing version comment. `id-token: write` + `attestations: write`
+      permissions added for the OIDC/attestation flows. (v2.93.0)
+    - **22.8** Lockfile-drift CI step seeds `/tmp/fresh.lock` from the
+      committed lock, recompiles, and body-diffs after stripping the
+      auto-generated `^#` header block (which bakes the output path and
+      so always differs between two pip-compile runs). Catches
+      "requirements.txt edited without recompiling lock", not "upstream
+      point release newer than pin" (that's Dependabot). (v2.93.0)
+    - **22.7 deferred** — destructive-endpoint coverage for
+      `/api/delete-game`, `/api/rename-rom`, `/api/delete-screenshot`
+      needs the admin/editor/viewer role split introduced in Pass 24;
+      scheduled to land alongside 24.
 - [x] **Pass 23 — Correctness bugfixes (2026-04-23 multi-agent review)** —
   Eight runtime bugs fixed; 250 tests pass (was 244); 6 new regression
   tests in `tests/test_hybrid_scraper.py`. Landed as v2.88.1.
@@ -1868,7 +1902,15 @@ See Pass 13.3 — no duplicate entry.
   Cooldown avoids landing day-of-release breakages. Grouping keeps PR
   volume manageable.
 - **Source**: <https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file>
-- **Status**: todo
+- **Status**: done (v2.93.0) — `.github/dependabot.yml` opens weekly grouped
+  PRs for both `pip` (scanning `requirements.txt`) and `github-actions`
+  (scanning the SHA-pinned actions in `ci.yml` / `release.yml`). Cooldown
+  is 4 days on the pip ecosystem (suppresses day-of-release breakages);
+  github-actions has no cooldown (action releases are rarely yanked).
+  `open-pull-requests-limit: 5` per ecosystem caps churn. Grouping uses a
+  single `*` pattern so each ecosystem produces at most one PR per week.
+  Commit-message prefixes (`deps:` / `ci:`) and labels (`dependencies` +
+  `python` / `github-actions`) keep the PR list filterable.
 
 ### 22.2 `pip-audit` in CI (MEDIUM, S)
 
@@ -1885,7 +1927,11 @@ See Pass 13.3 — no duplicate entry.
     continue-on-error: true  # surface as warning until backlog is clean
   ```
 - **Source**: <https://pypi.org/project/pip-audit/>
-- **Status**: todo
+- **Status**: done (v2.93.0) — CI runs `pip-audit --requirement
+  requirements.lock --strict` on the primary interpreter (3.13) after the
+  install step. `continue-on-error: true` until the first clean run so any
+  current-pin CVEs surface as warnings rather than blocking the pipeline;
+  flip to hard-fail once Dependabot has driven the backlog to zero.
 
 ### 22.3 Coverage reporting via `pytest-cov` (LOW, S)
 
@@ -1901,7 +1947,16 @@ See Pass 13.3 — no duplicate entry.
   ```
   Add `[tool.coverage.run]` omit rules for `tests/`, `migrations/`.
   Do NOT gate PRs on coverage threshold yet — set a baseline first.
-- **Status**: todo
+- **Status**: done (v2.93.0) — primary-interpreter pytest run now emits
+  `--cov=services --cov=scraper --cov=routes --cov-report=term-missing
+  --cov-report=xml`; the XML artifact uploads via
+  `actions/upload-artifact@v4` for later ingestion. `pyproject.toml` adds
+  `[tool.coverage.run]` (branch coverage on; `tests/*`,
+  `services/migrations/scripts/*`, and `__pycache__` omitted) and
+  `[tool.coverage.report]` with the standard `exclude_also` list
+  (`pragma: no cover`, `raise NotImplementedError`, `if __name__ ==
+  '__main__':`, `if TYPE_CHECKING:`). No coverage threshold gate — per
+  roadmap directive, establish a baseline first.
 
 ### 22.4 Python version matrix (LOW, S)
 
@@ -1913,7 +1968,13 @@ See Pass 13.3 — no duplicate entry.
   include 3.14 free-threaded — research confirms it hurts single-threaded
   Flask perf 30-50%.
 - **Source**: <https://codspeed.io/blog/state-of-python-3-13-performance-free-threading>
-- **Status**: todo
+- **Status**: done (v2.93.0) — `strategy.matrix.python-version: ["3.12",
+  "3.13"]` with `fail-fast: false` so a 3.12-only regression is visible
+  even when 3.13 passes. Heavier run-once steps (semgrep, pip-audit,
+  lockfile-drift, coverage + artifact upload) skip the secondary
+  interpreter via `if: matrix.python-version == env.PRIMARY_PYTHON` —
+  their results are interpreter-independent, so doubling their wall-clock
+  buys nothing. 3.14 free-threaded deliberately excluded.
 
 ### 22.5 Wire CI semgrep to the calibrated `.semgrep.yml` (MEDIUM, S)
 
@@ -1927,7 +1988,16 @@ See Pass 13.3 — no duplicate entry.
   model.  Alternative: delete the exclusion-list documentation if the
   intent really is "upstream packs only in CI."
 - **Source**: 2026-04-23 audit, Tests/Tooling/CI finding 1.
-- **Status**: todo
+- **Status**: done (v2.93.0) — CI step parses the exclusion list out of
+  the `.semgrep.yml` doc comments using the awk/grep snippet that file
+  itself recommends, then passes each matched rule ID back via
+  `--exclude-rule`. `--config .semgrep.yml` is also passed so any
+  RetroDB-specific rules defined there are picked up (currently
+  `rules: []`, scaffolded for future custom rules — flag new SQL
+  f-strings that bypass `safe_column`, flag `os.path.join(user_input,
+  ...)` that bypasses `safe_path`, flag Flask routes missing
+  `@login_required`). The CI scan and the documented audit baseline are
+  now calibrated identically.
 
 ### 22.6 Signed release artifacts + provenance (MEDIUM, M)
 
@@ -1941,7 +2011,25 @@ See Pass 13.3 — no duplicate entry.
   ZIP.  Pin the third-party actions by SHA (currently
   `softprops/action-gh-release@v2` floats).
 - **Source**: 2026-04-23 audit, Tests/Tooling/CI finding 2.
-- **Status**: todo
+- **Status**: done (v2.93.0) — `release.yml` overhauled. Every
+  third-party action now pinned by commit SHA with trailing
+  version comment (`actions/checkout@34e1148... # v4.3.1`,
+  `actions/setup-python@a26af69... # v5.6.0`,
+  `softprops/action-gh-release@b430933... # v3.0.0`,
+  `sigstore/cosign-installer@cad07c2... # v4.1.1`,
+  `actions/attest-build-provenance@a2bbfa2... # v4.1.0`). Build emits a
+  CycloneDX JSON SBOM via `cyclonedx-py requirements requirements.lock
+  --output-format JSON`, a `SHA256SUMS.txt` manifest over all ZIPs and
+  the SBOM, and keyless cosign signatures (`.sig` + `.pem`) for every
+  artifact using the GitHub Actions OIDC token — no long-lived key to
+  rotate. `actions/attest-build-provenance` publishes a SLSA build
+  attestation over all ZIPs and the SBOM. Permissions block updated with
+  `id-token: write` + `attestations: write` for the Sigstore OIDC +
+  attestation flows. Release body includes all four artifact kinds so
+  downstream Patreon recipients can verify via
+  `cosign verify-blob --certificate ZIP.pem --signature ZIP.sig
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+  ZIP`.
 
 ### 22.7 Destructive-endpoint coverage for `routes/games_media.py` (MEDIUM, M)
 
@@ -1970,7 +2058,19 @@ See Pass 13.3 — no duplicate entry.
   /tmp/fresh.lock --strip-extras` and fails if `diff
   requirements.lock /tmp/fresh.lock` is non-empty.
 - **Source**: 2026-04-23 audit, Tests/Tooling/CI gap 7.
-- **Status**: todo
+- **Status**: done (v2.93.0) — primary-interpreter CI step seeds
+  `/tmp/fresh.lock` from `requirements.lock`, then runs `pip-compile
+  --strip-extras --output-file /tmp/fresh.lock requirements.txt`.
+  **Critical semantic detail**: the seeding step makes pip-compile honor
+  the existing pins and only change on actual input changes, so the
+  drift check catches *unregenerated lock after requirements.txt edit*
+  (which is what CLAUDE.md rule #5 is actually about), not *upstream
+  released a point version newer than what's pinned* (that's Dependabot's
+  job — see 22.1). The body-diff strips leading `^#` lines so the
+  auto-generated comment header — which bakes the output path and so
+  differs between the repo lock and the temp lock — doesn't register as
+  spurious drift. `# via` lines are indented and so don't match the
+  filter. Verified locally against the current lockfile: exit 0.
 
 ---
 
