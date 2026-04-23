@@ -10,6 +10,8 @@ import json
 import logging
 import threading
 
+from services.atomic_io import atomic_write_json
+
 logger = logging.getLogger(__name__)
 
 # Default settings file location
@@ -193,8 +195,7 @@ def save_settings(settings):
     ensure_settings_dir()
     
     try:
-        with open(SETTINGS_FILE, 'w', encoding='utf-8') as f:
-            json.dump(settings, f, indent=2)
+        atomic_write_json(SETTINGS_FILE, settings)
         logger.info("Saved user settings to settings.json")
         
         # Invalidate cache so next load picks up new values

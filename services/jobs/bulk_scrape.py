@@ -374,11 +374,21 @@ class BulkScrapeJob:
             # Cancel current job (this will cause _run_scrape to exit)
             self.cancelled = True
             self.paused = False
+            old_thread = self._thread
 
             logger.info(f"Swapping running job {self.job_id} with queued job {job_id}")
 
-        # Wait a moment for current job to stop
-        time.sleep(0.5)
+        # Wait for the old worker to actually exit its current iteration
+        # before we mutate state for the new job.  A bare `time.sleep(0.5)`
+        # used to race here: the worker could wake after reset() and treat
+        # the next game as still belonging to the old job, mixing counters.
+        if old_thread is not None and old_thread.is_alive():
+            old_thread.join(timeout=60.0)
+            if old_thread.is_alive():
+                logger.warning(
+                    "Old bulk-scrape worker did not exit within 60s of cancel; "
+                    "proceeding with swap (state mixing possible)"
+                )
 
         # Start the new job
         with self._lock:
@@ -450,11 +460,19 @@ class BulkScrapeJob:
             # Cancel current job
             self.cancelled = True
             self.paused = False
+            old_thread = self._thread
 
             logger.info(f"Demoting running job {self.job_id}, promoting {new_running_job['job_id']}")
 
-        # Wait for current job to stop
-        time.sleep(0.5)
+        # Same race as swap_with_running — wait for the worker to exit
+        # before we mutate state for the new job.
+        if old_thread is not None and old_thread.is_alive():
+            old_thread.join(timeout=60.0)
+            if old_thread.is_alive():
+                logger.warning(
+                    "Old bulk-scrape worker did not exit within 60s of cancel; "
+                    "proceeding with demote (state mixing possible)"
+                )
 
         # Start the new job
         with self._lock:

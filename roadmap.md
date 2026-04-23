@@ -204,21 +204,54 @@ change forces a different sequence.
       (default 500 ms, env-overridable via `RETRODB_SLOW_REQUEST_MS`, 0
       disables). Probe endpoints exempted. Pairs with the existing
       `SLOW_QUERY_MS` DB-layer check. (v2.86.0)
-- [x] **Pass 19.1 + 19.3 — SQLite online backup + retention** — Replaced
-  `shutil.copy2(config.DB_PATH, ...)` in `routes/settings.py::api_backup`
-  and the pre-restore snapshot in `api_restore` with a new
-  `services.database.backup_database(src, dst)` helper that uses
-  `sqlite3.Connection.backup()` — the SQLite online backup API, which
-  coordinates with WAL and produces a consistent snapshot under concurrent
-  writes. Always followed by `PRAGMA integrity_check`; the destination is
-  removed and the call raises if the check fails, so no broken backup is
-  ever handed back. New `config.MAX_BACKUPS` (default 30, env-overridable
-  via `RETRODB_MAX_BACKUPS`) + `_prune_old_backups()` sweep after each
-  successful backup. `pre_restore_*.db` snapshots are exempt and never
-  pruned (recovery safety net). 9 new regression tests
-  (`tests/test_database_backup.py`, `tests/test_backup_rotation.py`); 259
-  total pass (was 250). End-to-end smoke against the live 39 MB DB clean.
-  (v2.89.0)
+- [x] **Pass 19 — Resilience (complete)** — All 8 sub-items landed.
+    - **19.1 + 19.3** SQLite online backup API + retention sweep. Replaced
+      `shutil.copy2(config.DB_PATH, ...)` in `routes/settings.py::api_backup`
+      and the pre-restore snapshot in `api_restore` with
+      `services.database.backup_database(src, dst)` (uses
+      `sqlite3.Connection.backup()`, coordinates with WAL, runs
+      `PRAGMA integrity_check`). New `config.MAX_BACKUPS` (default 30,
+      env-overridable) + `_prune_old_backups()`. `pre_restore_*.db`
+      snapshots are exempt. (v2.89.0)
+    - **19.2** Graceful shutdown on SIGTERM / SIGINT. New
+      `services.jobs.base.request_shutdown(timeout=5.0)` cancels every
+      running singleton then joins worker threads up to `timeout` so each
+      job's `finally` block can fire `persist_job_complete()` before exit.
+      Wired into `app.py`'s `_is_worker` block; handler restores SIG_DFL
+      and re-raises so process exit code is unchanged. (v2.90.0)
+    - **19.4** `BulkScrapeJob.swap_with_running` / `demote_running`
+      cancel-then-reset race. Replaced the bare `time.sleep(0.5)` with
+      `self._thread.join(timeout=60.0)` so the new state is only written
+      after the old worker actually exits its current iteration. 2
+      regression tests in `tests/test_bulk_scrape_race.py`. (v2.90.0)
+    - **19.5** `MuseumGenerateJob` brought up to the persistence contract.
+      Added `persist_job_start / progress / complete` and
+      `resume_from_params(params, progress=None)`; wired
+      `'museum_generate'` into `app.py::resume_job`'s `handler_map`. Also
+      deleted the duplicate singleton at `services/jobs/museum.py:404` (the
+      one in `services/jobs/__init__.py:46` is canonical) and updated
+      `routes/museum.py` to import from the package. `get_status()` now
+      takes `self._lock`. (v2.90.0)
+    - **19.6** `job_queue` retention sweep. New
+      `config.JOB_HISTORY_RETENTION_DAYS` (default 30, env-overridable)
+      and `services.jobs.base.sweep_old_job_history()`. Deletes terminal-
+      state rows older than the retention window; active states (running,
+      queued, interrupted) and rows missing `completed_at` are never
+      swept. Wired into `app.py`'s `_is_worker` startup block.
+      First-run on this machine pruned 370 stale rows. (v2.90.0)
+    - **19.7** Atomic settings file writes. New
+      `services/atomic_io.py::atomic_write_json(path, data)` (write to
+      sibling `.tmp`, `os.fsync`, `os.replace`). All five callers
+      switched: `settings_manager.py:196`, `routes/scraper.py:168/196`,
+      `routes/tools.py:104`, `app.py:1268`. 6 tests in
+      `tests/test_atomic_io.py`; the load-bearing assertion is "original
+      file intact on failure." (v2.90.0)
+    - **19.8** PSN ALTER table-existence guard.
+      `services/database_init.py:267-291` now gates each `ALTER TABLE
+      psn_games / psn_sync_status` on a `SELECT 1 FROM sqlite_master`
+      check so the bare `except` no longer hides "table doesn't exist"
+      alongside legitimate "column already exists" suppression. Stopgap
+      until Pass 20 (PRAGMA user_version migrations). (v2.90.0)
 - [x] **Pass 23 — Correctness bugfixes (2026-04-23 multi-agent review)** —
   Eight runtime bugs fixed; 250 tests pass (was 244); 6 new regression
   tests in `tests/test_hybrid_scraper.py`. Landed as v2.88.1.
@@ -1494,7 +1527,14 @@ pipeline yields real wins.
   ```
   Each job's inner loop already has a "paused" check (for the pause
   button) — just need to wire the signal to the same path.
-- **Status**: todo
+- **Status**: done (v2.90.0) — implementation diverged slightly from the
+  plan: instead of "request_pause" we call existing `cancel()` which sets
+  the cancel flag every job loop already checks, then `_thread.join()`
+  with a 5s drain so each job's `finally` block fires
+  `persist_job_complete()` before exit. Handler restores SIG_DFL and
+  re-raises so process exit code is unchanged. 4 tests in
+  `tests/test_graceful_shutdown.py` use a fixture that swaps real
+  singletons in/out of `services.jobs` for the test duration.
 
 ### 19.3 Backup rotation / max-backups knob (LOW, S)
 
@@ -1520,7 +1560,12 @@ pipeline yields real wins.
   so the new state is only written once the worker has actually exited its
   current iteration.
 - **Source**: 2026-04-23 audit, Jobs subsystem finding 3.
-- **Status**: todo
+- **Status**: done (v2.90.0) — `self._thread.join(timeout=60.0)` in both
+  swap_with_running and demote_running. 60 s covers worst-case scraper
+  per-game latency; warning logs if exceeded. 2 regression tests in
+  `tests/test_bulk_scrape_race.py` use a controllable
+  `threading.Event`-driven stub `_run_scrape` to verify the swap/demote
+  thread blocks on the worker exit before mutating state.
 
 ### 19.5 Bring `MuseumGenerateJob` up to the persistence contract (MEDIUM, M)
 
@@ -1537,7 +1582,15 @@ pipeline yields real wins.
   one of the two singletons (keep `__init__.py:46`, delete the other); also
   take `self._lock` in `get_status()` (museum.py:78-93).
 - **Source**: 2026-04-23 audit, Jobs subsystem finding 1.
-- **Status**: todo
+- **Status**: done (v2.90.0) — full `persist_job_start / progress /
+  complete` + `resume_from_params(params, progress=None)` mirror of the
+  RA-sync pattern; museum-specific persist cadence is every 5 systems or
+  30 s (gens are slow at ~5-15 s per system). Wired
+  `'museum_generate'` into `app.py::resume_job`'s `handler_map`. Deleted
+  the duplicate singleton at `museum.py:404`; updated
+  `routes/museum.py` to import from `services.jobs`. 5 tests in
+  `tests/test_museum_job.py` cover dedup, resume index restore, lock
+  acquisition in get_status, refusal-when-already-running.
 
 ### 19.6 `job_queue` retention sweep (LOW, S)
 
@@ -1550,7 +1603,13 @@ pipeline yields real wins.
   completed_at < date('now', '-30 days')`.  Config knob
   `JOB_HISTORY_RETENTION_DAYS` default 30.
 - **Source**: 2026-04-23 audit, Jobs subsystem gap 3.
-- **Status**: todo
+- **Status**: done (v2.90.0) — `services.jobs.base.sweep_old_job_history()`
+  + `config.JOB_HISTORY_RETENTION_DAYS` (env-overridable, `<=0` disables).
+  Also covers `'cancelled'` status. Active states (running, queued,
+  interrupted) are never swept; rows missing `completed_at` are also
+  preserved. Wired into `app.py`'s `_is_worker` startup block. First-run
+  on this dev machine pruned 370 stale rows. 5 tests in
+  `tests/test_job_history_sweep.py`.
 
 ### 19.7 Atomic settings file writes (MEDIUM, S)
 
@@ -1563,7 +1622,11 @@ pipeline yields real wins.
   before close, `os.replace(tmp, final)`.  Single helper function, reused
   by both settings modules.
 - **Source**: 2026-04-23 audit, Maintenance subsystem finding 1.
-- **Status**: todo
+- **Status**: done (v2.90.0) — new `services/atomic_io.py::atomic_write_json`.
+  Switched five callers (the three from the audit plus
+  `routes/tools.py:104` and `app.py:1268` which had the same pattern).
+  6 tests in `tests/test_atomic_io.py`; the load-bearing assertion is
+  "original file intact on failure."
 
 ### 19.8 Guard `database_init.py` PSN ALTERs on table existence (MEDIUM, S)
 
@@ -1580,7 +1643,11 @@ pipeline yields real wins.
 - **Source**: 2026-04-23 audit, Database subsystem finding 1.
   Properly fixed only by Pass 20 (schema_version table) — this is the
   stopgap.
-- **Status**: todo
+- **Status**: done (v2.90.0) — gated each PSN ALTER block on a
+  `SELECT 1 FROM sqlite_master WHERE type='table' AND name=?` check.
+  Bare `except sqlite3.OperationalError: pass` still suppresses the
+  "column already exists" case but no longer hides "table doesn't
+  exist." Stopgap until Pass 20.
 
 ---
 

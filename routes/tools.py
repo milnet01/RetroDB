@@ -20,6 +20,7 @@ import tempfile
 
 import config
 import settings_manager
+from services.atomic_io import atomic_write_json
 from services.database import query
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required, admin_required
@@ -99,9 +100,7 @@ def save_rom_tools_config(settings):
     """Save ROM Tools configuration to JSON file"""
     config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'rom_tools_config.json')
     try:
-        os.makedirs(os.path.dirname(config_path), exist_ok=True)
-        with open(config_path, 'w') as f:
-            json.dump(settings, f, indent=2)
+        atomic_write_json(config_path, settings)
         return True
     except Exception as e:
         logger.error(f"Error saving ROM tools config: {e}")

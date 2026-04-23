@@ -263,32 +263,42 @@ def init_database():
         except sqlite3.OperationalError:
             pass
 
-    try:
-        c.execute("ALTER TABLE psn_games ADD COLUMN trophies_synced INTEGER DEFAULT 0")
-        logger.info("Added trophies_synced column to psn_games")
-    except sqlite3.OperationalError:
-        pass
+    psn_games_exists = c.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='psn_games'"
+    ).fetchone() is not None
+    psn_sync_status_exists = c.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='psn_sync_status'"
+    ).fetchone() is not None
 
-    for col_name, col_type in [("trophy_level", "INTEGER DEFAULT 0"), ("avatar_url", "TEXT")]:
+    if psn_games_exists:
         try:
-            c.execute(f"ALTER TABLE psn_sync_status ADD COLUMN {col_name} {col_type}")
-            logger.info(f"Added {col_name} column to psn_sync_status")
+            c.execute("ALTER TABLE psn_games ADD COLUMN trophies_synced INTEGER DEFAULT 0")
+            logger.info("Added trophies_synced column to psn_games")
         except sqlite3.OperationalError:
             pass
 
-    hltb_columns = [
-        ("hltb_id", "INTEGER"),
-        ("hltb_title", "TEXT"),
-        ("hltb_main", "TEXT"),
-        ("hltb_extra", "TEXT"),
-        ("hltb_complete", "TEXT")
-    ]
-    for col_name, col_type in hltb_columns:
-        try:
-            c.execute(f"ALTER TABLE psn_games ADD COLUMN {col_name} {col_type}")
-            logger.info(f"Added {col_name} column to psn_games")
-        except sqlite3.OperationalError:
-            pass
+    if psn_sync_status_exists:
+        for col_name, col_type in [("trophy_level", "INTEGER DEFAULT 0"), ("avatar_url", "TEXT")]:
+            try:
+                c.execute(f"ALTER TABLE psn_sync_status ADD COLUMN {col_name} {col_type}")
+                logger.info(f"Added {col_name} column to psn_sync_status")
+            except sqlite3.OperationalError:
+                pass
+
+    if psn_games_exists:
+        hltb_columns = [
+            ("hltb_id", "INTEGER"),
+            ("hltb_title", "TEXT"),
+            ("hltb_main", "TEXT"),
+            ("hltb_extra", "TEXT"),
+            ("hltb_complete", "TEXT")
+        ]
+        for col_name, col_type in hltb_columns:
+            try:
+                c.execute(f"ALTER TABLE psn_games ADD COLUMN {col_name} {col_type}")
+                logger.info(f"Added {col_name} column to psn_games")
+            except sqlite3.OperationalError:
+                pass
 
     c.execute("""
         CREATE TABLE IF NOT EXISTS job_queue (

@@ -53,6 +53,7 @@ import settings_manager
 import log_manager
 
 # Import services layer
+from services.atomic_io import atomic_write_json
 from services.database import query, execute
 from services.auth import (
     hash_password, get_current_user, get_user_settings,
@@ -997,7 +998,7 @@ def resume_job(job_id):
     from services.jobs.base import get_recoverable_jobs, persist_job_complete
     from services.jobs import bulk_scrape_job, ra_sync_job, ra_refresh_job, psn_refresh_job
     from services.jobs.platform_sync import SteamSyncJob, XboxSyncJob
-    from services.jobs import steam_sync_job, xbox_sync_job
+    from services.jobs import steam_sync_job, xbox_sync_job, museum_generate_job
 
     try:
         # Find the job
@@ -1018,6 +1019,7 @@ def resume_job(job_id):
             'psn_refresh': psn_refresh_job,
             'steam_sync': steam_sync_job,
             'xbox_sync': xbox_sync_job,
+            'museum_generate': museum_generate_job,
         }
         handler = handler_map.get(job['job_type'])
         if not handler or not hasattr(handler, 'resume_from_params'):
@@ -1264,8 +1266,7 @@ def setup_api():
         scraper_settings['enabled'] = {'esde': True, 'tgdb': True, 'igdb': True, 'rawg': True, 'screenscraper': True}
 
     try:
-        with open(scraper_path, 'w') as f:
-            json.dump(scraper_settings, f, indent=2)
+        atomic_write_json(scraper_path, scraper_settings)
     except Exception as e:
         logger.error(f"Error saving scraper settings during setup: {e}")
 
@@ -1331,12 +1332,41 @@ ensure_user_tables()
 _is_worker = os.environ.get('WERKZEUG_RUN_MAIN') == 'true' or not config.DEBUG_MODE
 if _is_worker:
     try:
-        from services.jobs.base import mark_jobs_interrupted
+        from services.jobs.base import mark_jobs_interrupted, sweep_old_job_history
         _interrupted = mark_jobs_interrupted()
         if _interrupted:
             logger.info(f"Marked {len(_interrupted)} interrupted job(s) for dashboard recovery")
+        sweep_old_job_history()
     except Exception as _e:
         logger.warning(f"Could not mark interrupted jobs: {_e}")
+
+    # Graceful-shutdown handler: on SIGTERM/SIGINT, ask running jobs to
+    # cancel and give them a few seconds to flush persisted state.
+    # Without this, jobs killed mid-iteration leave their last few minutes
+    # of progress unpersisted, so the dashboard recovery banner would
+    # rewind the user further than necessary on next start.
+    try:
+        import signal as _signal
+        from services.jobs.base import request_shutdown as _request_job_shutdown
+
+        def _handle_shutdown_signal(signum, frame):
+            try:
+                logger.info(f"Received signal {signum}; draining running jobs before exit")
+                _request_job_shutdown(timeout=5.0)
+            finally:
+                # Restore default handler and re-raise so the process exits
+                # the same way it would have without our handler.
+                _signal.signal(signum, _signal.SIG_DFL)
+                os.kill(os.getpid(), signum)
+
+        _signal.signal(_signal.SIGTERM, _handle_shutdown_signal)
+        _signal.signal(_signal.SIGINT, _handle_shutdown_signal)
+    except (ValueError, OSError) as _e:
+        # signal.signal() raises ValueError when called outside the main
+        # thread (e.g. under WSGI workers that import the app on a worker
+        # thread).  In that case we silently skip — the WSGI host owns
+        # signal handling.
+        logger.debug(f"Could not install shutdown signal handlers: {_e}")
 
 # =============================================================================
 # MAIN ENTRY POINT

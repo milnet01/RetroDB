@@ -452,7 +452,7 @@ def generate_system(system_id):
 @editor_required
 def generate_all():
     """Start bulk AI generation for all systems."""
-    from services.jobs.museum import museum_generate_job
+    from services.jobs import museum_generate_job
 
     data = request.get_json(silent=True) or {}
     overwrite = data.get('overwrite', False)
@@ -464,7 +464,7 @@ def generate_all():
 @login_required
 def generate_status():
     """Poll bulk generation progress."""
-    from services.jobs.museum import museum_generate_job
+    from services.jobs import museum_generate_job
     return jsonify(museum_generate_job.get_status())
 
 
@@ -472,7 +472,7 @@ def generate_status():
 @editor_required
 def cancel_generate():
     """Cancel running bulk generation."""
-    from services.jobs.museum import museum_generate_job
+    from services.jobs import museum_generate_job
     result = museum_generate_job.cancel()
     return jsonify(result)
 

@@ -13,6 +13,7 @@ import logging
 import os
 import json
 import time
+import threading
 import requests
 from datetime import datetime, timezone
 
@@ -20,6 +21,72 @@ import config
 
 # Get logger
 logger = logging.getLogger(__name__)
+
+# Set when a SIGTERM/SIGINT is received so background loops can short-circuit
+# their inner `time.sleep`s and exit cleanly.  Job classes are encouraged to
+# poll `shutdown_requested.is_set()` alongside their own `cancelled` flag.
+shutdown_requested = threading.Event()
+
+
+def request_shutdown(timeout=5.0):
+    """Cancel all running job singletons and wait briefly for their worker
+    threads to flush state before the process exits.
+
+    Called from the SIGTERM/SIGINT handler installed in app.py.  Importing
+    inside the function to avoid a circular dependency at module load.
+
+    Args:
+        timeout: Total seconds to wait for worker threads to drain.
+    """
+    shutdown_requested.set()
+
+    # Lazy import — avoid pulling the singleton module at base import time.
+    try:
+        from services import jobs as _jobs_pkg
+    except Exception as e:
+        logger.warning(f"Shutdown: could not import jobs package: {e}")
+        return
+
+    candidates = [
+        getattr(_jobs_pkg, 'bulk_scrape_job', None),
+        getattr(_jobs_pkg, 'ra_sync_job', None),
+        getattr(_jobs_pkg, 'ra_refresh_job', None),
+        getattr(_jobs_pkg, 'psn_refresh_job', None),
+        getattr(_jobs_pkg, 'museum_generate_job', None),
+        getattr(_jobs_pkg, 'image_resize_job', None),
+        getattr(_jobs_pkg, 'steam_sync_job', None),
+        getattr(_jobs_pkg, 'xbox_sync_job', None),
+        getattr(_jobs_pkg, 'alt_titles_backfill_job', None),
+        getattr(_jobs_pkg, 'hltb_bulk_job', None),
+    ]
+
+    cancelled = 0
+    for j in candidates:
+        if j is None:
+            continue
+        try:
+            if getattr(j, 'running', False) and hasattr(j, 'cancel'):
+                j.cancel()
+                cancelled += 1
+        except Exception as e:
+            logger.warning(f"Shutdown: cancel({type(j).__name__}) raised: {e}")
+
+    if cancelled:
+        logger.info(f"Shutdown: requested cancel on {cancelled} running job(s); waiting up to {timeout}s to drain")
+
+    # Wait for worker threads to actually exit so persist_job_complete fires
+    # before the process is reaped.
+    deadline = time.monotonic() + timeout
+    for j in candidates:
+        if j is None:
+            continue
+        thread = getattr(j, '_thread', None)
+        if thread is None or not thread.is_alive():
+            continue
+        remaining = max(0.0, deadline - time.monotonic())
+        if remaining <= 0:
+            break
+        thread.join(timeout=remaining)
 
 
 def _get_conn():
@@ -497,6 +564,46 @@ def remove_queued_job(job_id):
         logger.debug(f"Removed queued job: id={job_id}")
     except Exception as e:
         logger.warning(f"Failed to remove queued job {job_id}: {e}")
+
+
+def sweep_old_job_history(retention_days=None):
+    """Delete completed/failed/dismissed/cancelled jobs older than the
+    retention window so `job_queue` doesn't grow unbounded.
+
+    Active states (running, queued, interrupted) are never swept — only
+    terminal states whose record is purely historical.
+
+    Args:
+        retention_days: Override the config default. <= 0 disables the sweep.
+
+    Returns:
+        int: Number of rows deleted, or 0 on failure / no-op.
+    """
+    if retention_days is None:
+        retention_days = getattr(config, 'JOB_HISTORY_RETENTION_DAYS', 30)
+    if retention_days is None or retention_days <= 0:
+        return 0
+    try:
+        conn = _get_conn()
+        try:
+            c = conn.cursor()
+            c.execute(
+                "DELETE FROM job_queue "
+                "WHERE status IN ('completed', 'failed', 'dismissed', 'cancelled') "
+                "AND completed_at IS NOT NULL "
+                "AND completed_at < datetime('now', ?)",
+                (f'-{int(retention_days)} days',)
+            )
+            deleted = c.rowcount
+            conn.commit()
+            if deleted:
+                logger.info(f"Pruned {deleted} job_queue row(s) older than {retention_days} days")
+            return deleted or 0
+        finally:
+            conn.close()
+    except Exception as e:
+        logger.warning(f"Failed to sweep old job history: {e}")
+        return 0
 
 
 def persist_job_complete(job_id, status='completed', error=None):

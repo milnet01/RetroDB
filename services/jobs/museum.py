@@ -11,7 +11,9 @@ import json
 import logging
 from datetime import datetime, timezone
 
-from services.jobs.base import _get_conn
+from services.jobs.base import (
+    _get_conn, persist_job_start, persist_job_progress, persist_job_complete,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +41,8 @@ class MuseumGenerateJob:
         self.end_time = None
         self.error_message = None
         self.overwrite = False
+        self.persist_id = None
+        self._resume_index = 0
 
     def start(self, system_ids=None, overwrite=False):
         """Start bulk museum generation.
@@ -77,20 +81,56 @@ class MuseumGenerateJob:
 
     def get_status(self):
         """Return current job status."""
-        return {
-            'running': self.running,
-            'cancelled': self.cancelled,
-            'completed': self.completed,
-            'current_index': self.current_index,
-            'total_systems': self.total_systems,
-            'current_system_name': self.current_system_name,
-            'success_count': self.success_count,
-            'failed_count': self.failed_count,
-            'skipped_count': self.skipped_count,
-            'start_time': self.start_time,
-            'end_time': self.end_time,
-            'error_message': self.error_message,
-        }
+        with self._lock:
+            return {
+                'running': self.running,
+                'cancelled': self.cancelled,
+                'completed': self.completed,
+                'current_index': self.current_index,
+                'total_systems': self.total_systems,
+                'current_system_name': self.current_system_name,
+                'success_count': self.success_count,
+                'failed_count': self.failed_count,
+                'skipped_count': self.skipped_count,
+                'start_time': self.start_time,
+                'end_time': self.end_time,
+                'error_message': self.error_message,
+            }
+
+    def resume_from_params(self, params, progress=None):
+        """Resume museum generation from persisted params after a server restart.
+
+        Mirrors the bulk_scrape / ra_sync pattern: pick up at the last persisted
+        `current` index and continue with the remaining systems.
+        """
+        system_ids = params.get('system_ids')
+        overwrite = bool(params.get('overwrite', False))
+        resume_index = int(progress.get('current', 0)) if progress else 0
+
+        with self._lock:
+            if self.running:
+                return False
+            self.reset()
+            self.running = True
+            self.overwrite = overwrite
+            self.start_time = datetime.now(timezone.utc).isoformat()
+            self._resume_index = resume_index
+            self.success_count = int(progress.get('success', 0)) if progress else 0
+            self.failed_count = int(progress.get('failed', 0)) if progress else 0
+            self.skipped_count = int(progress.get('skipped', 0)) if progress else 0
+
+            self._thread = threading.Thread(
+                target=self._worker,
+                args=(system_ids,),
+                daemon=True
+            )
+            self._thread.start()
+
+        logger.info(
+            f"Resumed museum generation from index {resume_index} "
+            f"({self.success_count}ok/{self.failed_count}fail/{self.skipped_count}skip)"
+        )
+        return True
 
     def _worker(self, system_ids=None):
         """Background worker — loops systems and generates AI content."""
@@ -100,6 +140,8 @@ class MuseumGenerateJob:
         )
 
         conn = None
+        persist_id = None
+        last_persist_time = time.time()
         try:
             conn = _get_conn()
             c = conn.cursor()
@@ -115,21 +157,36 @@ class MuseumGenerateJob:
                 c.execute("SELECT id, name, folder FROM systems ORDER BY name")
 
             systems = c.fetchall()
-            self.total_systems = len(systems)
+            with self._lock:
+                self.total_systems = len(systems)
+                resolved_ids = [int(s['id']) for s in systems]
+
+            persist_id = persist_job_start('museum_generate', {
+                'system_ids': resolved_ids,
+                'overwrite': self.overwrite,
+            })
+            with self._lock:
+                self.persist_id = persist_id
 
             if self.total_systems == 0:
-                self.running = False
-                self.completed = True
-                self.end_time = datetime.now(timezone.utc).isoformat()
+                with self._lock:
+                    self.running = False
+                    self.completed = True
+                    self.end_time = datetime.now(timezone.utc).isoformat()
+                if persist_id:
+                    persist_job_complete(persist_id, status='completed')
                 conn.close()
                 return
 
             # Check AI provider availability
             provider_config = _get_active_provider()
             if not provider_config:
-                self.running = False
-                self.error_message = 'No AI provider configured. Set up an AI provider in Settings.'
-                self.end_time = datetime.now(timezone.utc).isoformat()
+                with self._lock:
+                    self.running = False
+                    self.error_message = 'No AI provider configured. Set up an AI provider in Settings.'
+                    self.end_time = datetime.now(timezone.utc).isoformat()
+                if persist_id:
+                    persist_job_complete(persist_id, status='failed', error=self.error_message)
                 conn.close()
                 return
 
@@ -148,21 +205,45 @@ class MuseumGenerateJob:
             }.get(provider)
 
             if not call_fn:
-                self.running = False
-                self.error_message = f'Unknown AI provider: {provider}'
-                self.end_time = datetime.now(timezone.utc).isoformat()
+                with self._lock:
+                    self.running = False
+                    self.error_message = f'Unknown AI provider: {provider}'
+                    self.end_time = datetime.now(timezone.utc).isoformat()
+                if persist_id:
+                    persist_job_complete(persist_id, status='failed', error=self.error_message)
                 conn.close()
                 return
 
             for i, system in enumerate(systems):
-                if self.cancelled:
-                    break
+                # Skip already-processed indices on resume
+                if i < self._resume_index:
+                    continue
+
+                with self._lock:
+                    if self.cancelled:
+                        break
 
                 system_id = system['id']
                 system_name = system['name']
                 folder = system['folder']
-                self.current_index = i + 1
-                self.current_system_name = system_name
+                with self._lock:
+                    self.current_index = i + 1
+                    self.current_system_name = system_name
+
+                # Persist progress every 5 items or 30 seconds (museum gens are slow)
+                _now = time.time()
+                if persist_id and ((i % 5 == 0 or _now - last_persist_time >= 30) and i > 0):
+                    with self._lock:
+                        _progress = {
+                            'current': i,
+                            'total': self.total_systems,
+                            'success': self.success_count,
+                            'failed': self.failed_count,
+                            'skipped': self.skipped_count,
+                            'current_item': system_name,
+                        }
+                    persist_job_progress(persist_id, _progress)
+                    last_persist_time = _now
 
                 # Check if already generated (skip unless overwrite)
                 if not self.overwrite:
@@ -171,7 +252,8 @@ class MuseumGenerateJob:
                         (system_id,)
                     ).fetchone()
                     if existing:
-                        self.skipped_count += 1
+                        with self._lock:
+                            self.skipped_count += 1
                         continue
 
                 # Get specs for prompt context
@@ -184,7 +266,8 @@ class MuseumGenerateJob:
                     raw_text = call_fn(prompt, api_key, model, **call_kwargs)
                     if not raw_text:
                         logger.warning(f"Museum: Empty AI response for {system_name}")
-                        self.failed_count += 1
+                        with self._lock:
+                            self.failed_count += 1
                         time.sleep(1.5)
                         continue
 
@@ -194,7 +277,8 @@ class MuseumGenerateJob:
 
                     if not history and not summary:
                         logger.warning(f"Museum: No usable content for {system_name}")
-                        self.failed_count += 1
+                        with self._lock:
+                            self.failed_count += 1
                         time.sleep(1.5)
                         continue
 
@@ -217,23 +301,33 @@ class MuseumGenerateJob:
                     """, (system_id, history, summary, top_games_json, now, provider))
                     conn.commit()
 
-                    self.success_count += 1
+                    with self._lock:
+                        self.success_count += 1
                     logger.info(f"Museum: Generated content for {system_name}")
 
                 except Exception as e:
                     logger.error(f"Museum: Error generating for {system_name}: {e}")
-                    self.failed_count += 1
+                    with self._lock:
+                        self.failed_count += 1
 
                 # Rate limiting between systems
                 time.sleep(1.5)
 
         except Exception as e:
             logger.error(f"Museum generation worker error: {e}")
-            self.error_message = str(e)
+            with self._lock:
+                self.error_message = str(e)
+            if persist_id:
+                persist_job_complete(persist_id, status='failed', error=str(e))
+                persist_id = None
         finally:
-            self.running = False
-            self.completed = True
-            self.end_time = datetime.now(timezone.utc).isoformat()
+            with self._lock:
+                self.running = False
+                self.completed = True
+                self.end_time = datetime.now(timezone.utc).isoformat()
+                final_status = 'cancelled' if self.cancelled else 'completed'
+            if persist_id:
+                persist_job_complete(persist_id, status=final_status)
             if conn:
                 try:
                     conn.close()
@@ -398,7 +492,3 @@ def _parse_museum_response(raw_text):
 
     logger.warning(f"Museum: Failed to parse AI response: {text[:200]}")
     return {}
-
-
-# Singleton instance
-museum_generate_job = MuseumGenerateJob()

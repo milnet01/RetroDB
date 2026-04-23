@@ -95,7 +95,7 @@ except ValueError:
 
 # Application metadata
 APP_NAME = "RetroDB"
-APP_VERSION = "2.89.0"
+APP_VERSION = "2.90.0"
 APP_LAST_UPDATE = "2026-04-23"
 APP_DESCRIPTION = "Retro Gaming ROM Library Manager"
 
@@ -145,6 +145,15 @@ try:
     MAX_BACKUPS = int(os.environ.get('RETRODB_MAX_BACKUPS', '30'))
 except ValueError:
     MAX_BACKUPS = 30
+
+# How many days of completed/failed/dismissed/cancelled job_queue rows to
+# keep. Active states (running, queued, interrupted) are never swept.
+# Set to 0 or negative to disable the sweep. Override via
+# RETRODB_JOB_HISTORY_RETENTION_DAYS.
+try:
+    JOB_HISTORY_RETENTION_DAYS = int(os.environ.get('RETRODB_JOB_HISTORY_RETENTION_DAYS', '30'))
+except ValueError:
+    JOB_HISTORY_RETENTION_DAYS = 30
 
 # =============================================================================
 # SYSTEM NAME MAPPING

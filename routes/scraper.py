@@ -23,6 +23,7 @@ from flask import Blueprint, request, jsonify
 
 import config
 from services.api_helpers import handle_api_errors
+from services.atomic_io import atomic_write_json
 from services.auth import admin_required
 
 # Create blueprint
@@ -165,8 +166,7 @@ def api_save_scraper_settings():
             data[key] = existing[key]
 
     # Save to file
-    with open(SCRAPER_SETTINGS_FILE, 'w') as f:
-        json.dump(data, f, indent=2)
+    atomic_write_json(SCRAPER_SETTINGS_FILE, data)
 
     logger.info(f"Saved scraper settings: priority={data.get('priority')}, enabled={data.get('enabled')}")
 
@@ -193,8 +193,7 @@ def api_save_api_keys():
     existing['api_keys'] = data
 
     # Save to file
-    with open(SCRAPER_SETTINGS_FILE, 'w') as f:
-        json.dump(existing, f, indent=2)
+    atomic_write_json(SCRAPER_SETTINGS_FILE, existing)
 
     logger.info(f"Saved API keys for scrapers")
 
