@@ -232,7 +232,9 @@ def _build_games_query(params, count_only=False, ids_only=False):
     elif source == 'psn':
         conditions.append("g.rom_path LIKE 'psn_import/%'")
     elif source == 'rom':
-        conditions.append("(g.rom_path NOT LIKE 'clz_import/%' AND g.rom_path NOT LIKE 'steam_import/%' AND g.rom_path NOT LIKE 'xbox_import/%' AND g.rom_path NOT LIKE 'psn_import/%' OR g.rom_path IS NULL)")
+        # Explicit inner parens: the AND chain must group before the OR with
+        # IS NULL, otherwise SQL precedence still works but reads ambiguously.
+        conditions.append("((g.rom_path NOT LIKE 'clz_import/%' AND g.rom_path NOT LIKE 'steam_import/%' AND g.rom_path NOT LIKE 'xbox_import/%' AND g.rom_path NOT LIKE 'psn_import/%') OR g.rom_path IS NULL)")
 
     if params.get('search'):
         conditions.append("(g.title LIKE ? ESCAPE '\\' OR COALESCE(g.sort_title, '') LIKE ? ESCAPE '\\')")

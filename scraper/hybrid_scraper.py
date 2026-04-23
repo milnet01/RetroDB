@@ -12,7 +12,8 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import IMAGE_PATH, STATIC_PATH
 from services.normalization import normalize_genre, normalize_modes
-from services.game_utils import generate_sort_title, map_rating, infer_rating_from_content, RATING_SYSTEM_KEYS, RATING_SYSTEMS
+from services.game_utils import generate_sort_title, infer_rating_from_content, RATING_SYSTEM_KEYS, RATING_SYSTEMS
+from services.game_metadata_service import cross_map_ratings
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +47,7 @@ from scraper.metadata_normalizer import (
     normalize_title,
     normalize_esrb_rating,
 )
+from scraper.match_scorer import calculate_title_match_score
 
 # Try to import AI scraper
 AI_AVAILABLE = False
@@ -76,7 +78,6 @@ def _pick_best_fallback(results, game_title, min_title_score=80):
     if not results:
         return None
 
-    from scraper.scraper_manager import scraper_manager
     best = None
     best_score = -1
     for r in results:
@@ -93,7 +94,7 @@ def _pick_best_fallback(results, game_title, min_title_score=80):
                     break
             if not name and noms and isinstance(noms[0], dict):
                 name = noms[0].get('text', '')
-        score = scraper_manager._calculate_title_match_score(name, game_title)
+        score = calculate_title_match_score(name, game_title)
         if score > best_score:
             best_score = score
             best = r
@@ -134,7 +135,6 @@ def _pick_best_secondary(candidates, target_title, min_title_score=100):
     if not target_title:
         return candidates[0]
 
-    from scraper.scraper_manager import scraper_manager
     best = None
     best_score = -1
     for c in candidates:
@@ -144,7 +144,7 @@ def _pick_best_secondary(candidates, target_title, min_title_score=100):
             name = c.get('name', '')
             if not name:
                 continue
-            score = scraper_manager._calculate_title_match_score(name, target_title)
+            score = calculate_title_match_score(name, target_title)
         if score > best_score:
             best_score = score
             best = c
@@ -1221,29 +1221,19 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         if metadata['esrb_rating']:
             metadata['esrb_rating'] = normalize_esrb_rating(metadata['esrb_rating'])
 
-        # Cross-map empty rating fields from any available rating
-        # 'RP' (Rating Pending) is not a real maturity level — treat as empty
-        _rp_values = {'RP', 'rp'}
-        for target_key in RATING_SYSTEM_KEYS:
-            target_col = RATING_SYSTEMS[target_key]['db_column']
-            target_val = metadata.get(target_col)
-            if target_val and target_val not in _rp_values:
-                continue  # Already has a real value
-            # Try to map from any populated rating
-            for source_key in RATING_SYSTEM_KEYS:
-                if source_key == target_key:
-                    continue
-                source_col = RATING_SYSTEMS[source_key]['db_column']
-                source_val = metadata.get(source_col)
-                if source_val and source_val not in _rp_values:
-                    mapped = map_rating(source_key, source_val, target_key)
-                    if mapped:
-                        metadata[target_col] = mapped
-                        src_name = RATING_SYSTEMS[source_key]['name']
-                        tgt_name = RATING_SYSTEMS[target_key]['name']
-                        result['filled_fields'].append(f'{target_col} ({src_name}→{tgt_name})')
-                        logger.info(f"Auto-mapped {src_name} '{source_val}' → {tgt_name} '{mapped}'")
-                        break
+        # Cross-map empty rating fields from any available rating.
+        # Single source of truth: services.game_metadata_service.cross_map_ratings
+        # ('RP' is treated as empty inside that helper).
+        _bare = {k: metadata.get(RATING_SYSTEMS[k]['db_column']) for k in RATING_SYSTEM_KEYS}
+        _filled = cross_map_ratings(_bare)
+        for tgt_key in RATING_SYSTEM_KEYS:
+            tgt_col = RATING_SYSTEMS[tgt_key]['db_column']
+            new_val = _filled.get(tgt_key)
+            if new_val and new_val != (_bare.get(tgt_key) or ''):
+                metadata[tgt_col] = new_val
+                tgt_name = RATING_SYSTEMS[tgt_key]['name']
+                result['filled_fields'].append(f'{tgt_col} (cross-map→{tgt_name})')
+                logger.info(f"Auto-mapped rating → {tgt_name} '{new_val}'")
 
         # Content-based rating inference (final fallback when no ratings found)
         has_any_rating = any(

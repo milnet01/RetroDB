@@ -248,14 +248,16 @@ class TestApplyRawg:
         assert meta['esrb_rating'] == 'T'
         assert meta['critic_score'] == 90
 
-    def test_fill_only_false_overwrites_every_field(self):
+    def test_fill_only_false_overwrites_only_title(self):
+        # Pass 23.2: only title overwrites on primary source, matching
+        # TGDB / IGDB / ScreenScraper. Other fields are always fill-only.
         meta = _blank_metadata()
         meta.update({'title': 'Old', 'developer': 'OldDev'})
         result = _blank_result()
         rawg = {'name': 'New', 'developer': 'NewDev'}
         apply_rawg_to_metadata(meta, rawg, db_game_id=1, result=result, fill_only=False)
         assert meta['title'] == 'New'
-        assert meta['developer'] == 'NewDev'
+        assert meta['developer'] == 'OldDev'
 
     def test_release_date_truncated_to_iso(self):
         meta = _blank_metadata()

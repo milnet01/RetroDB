@@ -112,7 +112,9 @@ def find_orphaned_media(games):
         (os.path.join(config.IMAGE_PATH, 'screenshots'), 'screenshots'),
         (os.path.join(config.IMAGE_PATH, 'fanart'),      'fanart'),
         (os.path.join(config.STATIC_PATH, 'videos'),     'video'),
-        (os.path.join(config.STATIC_PATH, 'manuals'),    'manual'),
+        # Manuals live under IMAGE_PATH/manuals (matches every scraper output
+        # and _MEDIA_LAYOUT). Was STATIC_PATH/manuals, which never existed.
+        (os.path.join(config.IMAGE_PATH, 'manuals'),     'manual'),
     )
 
     orphaned = []

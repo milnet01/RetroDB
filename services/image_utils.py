@@ -735,6 +735,13 @@ def _save_image(img, path):
     """Save image preserving format with appropriate quality settings."""
     ext = os.path.splitext(path)[1].lower()
 
+    # GIFs: never re-encode. PIL's `img.save(path, 'GIF')` without save_all
+    # flattens animated GIFs to first frame, and any prior resize step has
+    # already discarded subsequent frames. The original file on disk still
+    # has the animation intact, so the safe path is to leave it untouched.
+    if ext == '.gif':
+        return
+
     try:
         if ext == '.webp':
             if img.mode == 'RGBA':
@@ -747,8 +754,6 @@ def _save_image(img, path):
             img.save(path, 'JPEG', quality=90)
         elif ext == '.png':
             img.save(path, 'PNG')
-        elif ext == '.gif':
-            img.save(path, 'GIF')
         else:
             # Unknown format — save as PNG
             img.save(path, 'PNG')

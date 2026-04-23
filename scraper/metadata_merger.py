@@ -463,56 +463,59 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
         metadata['title'] = normalize_title(rawg_data['name'])
         result['filled_fields'].append('title (RAWG)')
 
+    # Non-title fields are fill-only regardless of fill_only flag, matching
+    # TGDB / IGDB / ScreenScraper. Only title overwrites on primary source.
+
     # Description
-    if rawg_data.get('description') and (not metadata['description'] or not fill_only):
+    if rawg_data.get('description') and not metadata['description']:
         metadata['description'] = rawg_data['description']
         result['filled_fields'].append('description (RAWG)')
 
     # Release date
-    if rawg_data.get('release_date') and (not metadata['release_date'] or not fill_only):
+    if rawg_data.get('release_date') and not metadata['release_date']:
         release = rawg_data['release_date']
         if release and len(release) >= 10:
             metadata['release_date'] = release[:10]
             result['filled_fields'].append('release_date (RAWG)')
 
     # Developer
-    if rawg_data.get('developer') and (not metadata['developer'] or not fill_only):
+    if rawg_data.get('developer') and not metadata['developer']:
         metadata['developer'] = rawg_data['developer']
         result['filled_fields'].append('developer (RAWG)')
 
     # Publisher
-    if rawg_data.get('publisher') and (not metadata['publisher'] or not fill_only):
+    if rawg_data.get('publisher') and not metadata['publisher']:
         metadata['publisher'] = rawg_data['publisher']
         result['filled_fields'].append('publisher (RAWG)')
 
     # Genres
-    if rawg_data.get('genre') and (not metadata['genre'] or not fill_only):
+    if rawg_data.get('genre') and not metadata['genre']:
         metadata['genre'] = normalize_genre(rawg_data['genre'])
         result['filled_fields'].append('genre (RAWG)')
 
     # ESRB Rating
-    if rawg_data.get('esrb_rating') and (not metadata['esrb_rating'] or not fill_only):
+    if rawg_data.get('esrb_rating') and not metadata['esrb_rating']:
         metadata['esrb_rating'] = rawg_data['esrb_rating']
         result['filled_fields'].append('esrb_rating (RAWG)')
 
     # Players
-    if rawg_data.get('players') and (not metadata['players'] or not fill_only):
+    if rawg_data.get('players') and not metadata['players']:
         metadata['players'] = rawg_data['players']
         result['filled_fields'].append('players (RAWG)')
 
     # Modes
-    if rawg_data.get('modes') and (not metadata['modes'] or not fill_only):
+    if rawg_data.get('modes') and not metadata['modes']:
         metadata['modes'] = normalize_modes(rawg_data['modes'])
         result['filled_fields'].append('modes (RAWG)')
 
     # Critic score (Metacritic)
-    if rawg_data.get('metacritic') and (not metadata['critic_score'] or not fill_only):
+    if rawg_data.get('metacritic') and not metadata['critic_score']:
         metadata['critic_score'] = rawg_data['metacritic']
         metadata['critic_score_count'] = None  # RAWG doesn't provide review count
         result['filled_fields'].append('critic_score (RAWG)')
 
     # User score
-    if rawg_data.get('user_score') and (not metadata['user_score'] or not fill_only):
+    if rawg_data.get('user_score') and not metadata['user_score']:
         metadata['user_score'] = rawg_data['user_score']
         metadata['user_score_count'] = rawg_data.get('user_score_count')
         result['filled_fields'].append('user_score (RAWG)')

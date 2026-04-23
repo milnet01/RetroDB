@@ -5,11 +5,17 @@ identified in successive reviews (2026-04-21 onwards). Items are ordered so
 that earlier passes establish the patterns used by later ones (service-layer
 carve-outs, response helpers, etc.).
 
-Scope covers: refactoring (Passes 2-10), security (Pass 11, 16), database
-performance (Pass 12), frontend performance (Pass 13, 18, 21), developer
-efficiency and tests (Pass 14, 22), accessibility (Pass 15), observability
-(Pass 17), operational resilience (Pass 19), and schema migrations (Pass 20).
-See "Scope notes" near the bottom for items deliberately excluded.
+Scope covers: refactoring (Passes 2-10), security (Pass 11, 16, 24),
+database performance (Pass 12), frontend performance (Pass 13, 18, 21),
+developer efficiency and tests (Pass 14, 22), accessibility (Pass 15, 28),
+observability (Pass 17), operational resilience (Pass 19), schema migrations
+(Pass 20), correctness bugfixes surfaced by the 2026-04-23 multi-agent
+independent review (Pass 23), input hardening / SSRF / size caps (Pass 25),
+scraper HTTP uniformity (Pass 26), multi-user data ownership (Pass 27), and
+frontend defense in depth (Pass 29).  See "Scope notes" near the bottom for
+items deliberately excluded, and "Periodic Independent Review" at the very
+end for the cadence on re-running the multi-agent audit that populated
+Passes 23-29.
 
 Each item lists:
 - **Target** — file(s) and approximate line range / LOC
@@ -198,6 +204,42 @@ change forces a different sequence.
       (default 500 ms, env-overridable via `RETRODB_SLOW_REQUEST_MS`, 0
       disables). Probe endpoints exempted. Pairs with the existing
       `SLOW_QUERY_MS` DB-layer check. (v2.86.0)
+- [x] **Pass 23 — Correctness bugfixes (2026-04-23 multi-agent review)** —
+  Eight runtime bugs fixed; 250 tests pass (was 244); 6 new regression
+  tests in `tests/test_hybrid_scraper.py`. Landed as v2.88.1.
+    - **23.1** `scraper/hybrid_scraper.py` AttributeError on
+      `scraper_manager._calculate_title_match_score` (function moved to
+      `scraper/match_scorer.py` during Pass 6 but call sites missed) —
+      swapped both call sites to the module-level
+      `calculate_title_match_score`. The error was being swallowed by an
+      outer `except` and silently returning empty fallback data in
+      production.
+    - **23.9** New `tests/test_hybrid_scraper.py` exercises
+      `_pick_best_fallback` / `_pick_best_secondary` against the real
+      scorer (no mocking) so the 23.1 bug cannot re-land.
+    - **23.2** RAWG `apply_rawg_to_metadata` aligned with
+      TGDB/IGDB/ScreenScraper fill-only semantics — only `title`
+      overwrites on primary. `tests/test_metadata_merger.py` updated to
+      pin the corrected behaviour.
+    - **23.3** Collapsed inline RP-as-empty cross-map loop in
+      `hybrid_scraper.py` to a 9-line wrapper around
+      `services.game_metadata_service.cross_map_ratings()` — single
+      source of truth restored.
+    - **23.4** `routes/games_search.py:149` — materialised
+      `seen_ids_list = list(seen_ids)` once so `NOT IN` placeholder count
+      and bind values use the same iteration order.
+    - **23.5** `services/game_query.py:235` — added explicit inner
+      parens around the `source=rom` AND chain so the OR-with-NULL is
+      visually unambiguous.
+    - **23.6** `services/media_cleanup.py:115` — pointed manuals orphan
+      sweep at `IMAGE_PATH/manuals` (matches scraper output and
+      `_MEDIA_LAYOUT`); was scanning `STATIC_PATH/manuals` which never
+      existed.
+    - **23.7** `services/image_utils.py::_save_image` — early-return on
+      `.gif` so animated GIFs are never re-encoded to first frame.
+    - **23.8** `config.example.py` resynced with `config.py` (15
+      missing IGDB platform mappings + 95 missing `SYSTEM_SPECS`
+      entries). (v2.88.1)
 - [x] **Pass 15 — Accessibility (WCAG 2.2 AA)** — Five-item sweep landed
   as v2.85.0. 199 tests still pass; no regressions.
     - **15.1** Skip-to-main-content link. `base.html` now starts with
@@ -1447,6 +1489,79 @@ pipeline yields real wins.
   one always.
 - **Status**: todo
 
+### 19.4 Fix `BulkScrapeJob.swap_with_running` / `demote_running` cancel+reset race (MEDIUM, S)
+
+- **Target**: `services/jobs/bulk_scrape.py:375-414, 451-490`.
+- **Why**: current code sets `cancelled=True` then sleeps 0.5 s and calls
+  `reset()` — if the worker hasn't observed the cancel flag yet, it wakes,
+  reads `cancelled=False`, and keeps processing the new job's first game as
+  if it were the old job's (mixing `current_game_title` and counters).
+- **Plan**: replace `time.sleep(0.5)` with `self._thread.join(timeout=...)`
+  so the new state is only written once the worker has actually exited its
+  current iteration.
+- **Source**: 2026-04-23 audit, Jobs subsystem finding 3.
+- **Status**: todo
+
+### 19.5 Bring `MuseumGenerateJob` up to the persistence contract (MEDIUM, M)
+
+- **Target**: `services/jobs/museum.py` (add persistence), plus dedup the
+  duplicate `museum_generate_job` singleton declared at both
+  `services/jobs/__init__.py:46` and `services/jobs/museum.py:404`.
+- **Why**: every other job in scope calls
+  `persist_job_start/progress/complete` + defines `resume_from_params` so
+  the dashboard's `/api/jobs/resume/<id>` can rehydrate after a crash.
+  Museum doesn't — a mid-run museum generation silently dies on restart.
+  And the double-singleton means whichever import order loses ships
+  divergent state.
+- **Plan**: mirror the `bulk_scrape` / `ra_sync` persistence pattern; pick
+  one of the two singletons (keep `__init__.py:46`, delete the other); also
+  take `self._lock` in `get_status()` (museum.py:78-93).
+- **Source**: 2026-04-23 audit, Jobs subsystem finding 1.
+- **Status**: todo
+
+### 19.6 `job_queue` retention sweep (LOW, S)
+
+- **Target**: `services/jobs/base.py` — add a startup sweep.
+- **Why**: `job_queue` grows unbounded — every completed/failed/dismissed
+  job stays forever.  On a long-running install this table accumulates
+  indefinitely.
+- **Plan**: on app start (or via a periodic scheduler), run `DELETE FROM
+  job_queue WHERE status IN ('completed','failed','dismissed') AND
+  completed_at < date('now', '-30 days')`.  Config knob
+  `JOB_HISTORY_RETENTION_DAYS` default 30.
+- **Source**: 2026-04-23 audit, Jobs subsystem gap 3.
+- **Status**: todo
+
+### 19.7 Atomic settings file writes (MEDIUM, S)
+
+- **Target**: `services/settings_manager.py:196`, `routes/scraper.py:168`,
+  `routes/scraper.py:196`.
+- **Why**: plain `open('w') + json.dump` — a crash or power loss mid-write
+  truncates `settings.json` / `scraper_settings.json`, wiping the user's
+  API keys and paths.
+- **Plan**: write to `<path>.tmp` in the same directory, `os.fsync(fd)`
+  before close, `os.replace(tmp, final)`.  Single helper function, reused
+  by both settings modules.
+- **Source**: 2026-04-23 audit, Maintenance subsystem finding 1.
+- **Status**: todo
+
+### 19.8 Guard `database_init.py` PSN ALTERs on table existence (MEDIUM, S)
+
+- **Target**: `services/database_init.py:267-291` — `ALTER TABLE psn_games`
+  / `psn_sync_status` runs unconditionally, but those tables are created
+  elsewhere (first `/trophies` visit).
+- **Why**: on a fresh DB the ALTERs raise `OperationalError: no such
+  table` on every app start, swallowed by the bare `except` block.
+  Silently masks real schema drift and adds noise to Sentry-style error
+  surfaces if one is ever wired in.
+- **Plan**: `SELECT name FROM sqlite_master WHERE type='table' AND
+  name=?` gate before each ALTER, or move the CREATE TABLE for both PSN
+  tables into `database_init.py` so ordering is explicit.
+- **Source**: 2026-04-23 audit, Database subsystem finding 1.
+  Properly fixed only by Pass 20 (schema_version table) — this is the
+  stopgap.
+- **Status**: todo
+
 ---
 
 ## Pass 20 — Versioned schema migrations
@@ -1626,6 +1741,751 @@ See Pass 13.3 — no duplicate entry.
 - **Source**: <https://codspeed.io/blog/state-of-python-3-13-performance-free-threading>
 - **Status**: todo
 
+### 22.5 Wire CI semgrep to the calibrated `.semgrep.yml` (MEDIUM, S)
+
+- **Target**: `.github/workflows/ci.yml:44-56`.
+- **Why**: `.semgrep.yml` documents 13 excluded rule IDs with rationale,
+  but CI invokes semgrep with raw upstream packs — none of the exclusions
+  apply.  The documented "calibrated audit" and the actual CI scan have
+  drifted apart.
+- **Plan**: pass `--config .semgrep.yml` (or loop the documented
+  `--exclude-rule` list) so the CI run matches the documented threat
+  model.  Alternative: delete the exclusion-list documentation if the
+  intent really is "upstream packs only in CI."
+- **Source**: 2026-04-23 audit, Tests/Tooling/CI finding 1.
+- **Status**: todo
+
+### 22.6 Signed release artifacts + provenance (MEDIUM, M)
+
+- **Target**: `.github/workflows/release.yml:74-80`.
+- **Why**: current workflow ships ZIPs with no checksum, no signing, no
+  SLSA attestation, no SBOM.  Downstream (Patreon) recipients can't
+  verify the ZIP came from this workflow.
+- **Plan**: add `actions/attest-build-provenance` after the build step to
+  emit signed provenance; add `cosign sign-blob --yes` (keyless OIDC) for
+  each ZIP; add `cyclonedx-py` or `syft` to emit an SBOM alongside each
+  ZIP.  Pin the third-party actions by SHA (currently
+  `softprops/action-gh-release@v2` floats).
+- **Source**: 2026-04-23 audit, Tests/Tooling/CI finding 2.
+- **Status**: todo
+
+### 22.7 Destructive-endpoint coverage for `routes/games_media.py` (MEDIUM, M)
+
+- **Target**: `tests/test_games_media.py` (new).
+- **Why**: `/api/delete-game`, `/api/rename-rom`, `/api/delete-screenshot`
+  currently have only auth-redirect assertions in
+  `tests/test_routes_smoke.py:57-59`.  Zero coverage for path-traversal
+  on `rom_path`, role-separation (admin vs editor vs viewer), or
+  cascade cleanup of screenshot rows.  These endpoints can irreversibly
+  destroy user data.
+- **Plan**: spin a fixture DB with test games, exercise each endpoint
+  under each role, assert both the positive (admin succeeds) and
+  negative (viewer gets 403) paths.  Include one `..` traversal probe
+  on `rename-rom`.
+- **Source**: 2026-04-23 audit, Tests/Tooling/CI finding 3.
+- **Status**: todo (lands with Pass 24 authz tightening)
+
+### 22.8 Lockfile-drift test (LOW, S)
+
+- **Target**: `tests/test_lockfile.py` (new), or a CI-only `make` target.
+- **Why**: CLAUDE.md workflow rule #5 says "Regenerate lockfile if
+  requirements.txt was edited" but it's honor-system.  A PR that bumps
+  `requirements.txt` without regenerating `requirements.lock` lands
+  silently.
+- **Plan**: CI step that runs `pip-compile requirements.txt -o
+  /tmp/fresh.lock --strip-extras` and fails if `diff
+  requirements.lock /tmp/fresh.lock` is non-empty.
+- **Source**: 2026-04-23 audit, Tests/Tooling/CI gap 7.
+- **Status**: todo
+
+---
+
+## Pass 23 — Correctness bugfixes (2026-04-23 multi-agent review)
+
+> **Land first.**  These are real runtime bugs silently degrading every
+> install; no architectural dependencies; most are one-to-few-line fixes.
+
+### 23.1 Fix `scraper_manager._calculate_title_match_score` AttributeError (CRITICAL, S)
+
+- **Target**: `scraper/hybrid_scraper.py:96, 147`.
+- **Why**: after the Pass 6 scraper split, the method moved to module-level
+  `calculate_title_match_score` in `scraper/match_scorer.py` but wasn't
+  re-attached to `scraper_manager`.  Every `_pick_best_fallback` /
+  `_pick_best_secondary` call path raises `AttributeError`, gets caught by
+  the outer `except Exception as fallback_error`, and silently returns
+  zero fallback data with only a generic "Fallback scraper X failed"
+  warning in logs.  This is live, invisible, and running in production.
+- **Plan**: `from scraper.match_scorer import calculate_title_match_score`
+  at the top of `hybrid_scraper.py`, swap the two call sites.
+- **Source**: 2026-04-23 audit, Scraper Orchestration finding 1.
+- **Status**: done (v2.88.1)
+
+### 23.2 Align RAWG `apply_rawg_to_metadata` with fill-only semantics (HIGH, S)
+
+- **Target**: `scraper/metadata_merger.py:462-519`.
+- **Why**: every field uses `(not metadata[X] or not fill_only)` — when
+  RAWG is the primary source this overwrites publisher / developer /
+  release_date / description / genre / players / modes / ESRB / critic /
+  user score even if those already hold curated or cross-source data.
+  TGDB / IGDB / ScreenScraper only overwrite `title` on primary; RAWG is
+  the odd one out, contradicting CLAUDE.md's "media fields never
+  replaced" contract and surprising users who re-scrape.
+- **Plan**: collapse the `(not metadata[X] or not fill_only)` pattern to
+  `not metadata[X]` for everything except `title`, matching the other
+  three per-source applies.
+- **Source**: 2026-04-23 audit, Scraper Orchestration finding 2.
+- **Status**: done (v2.88.1)
+
+### 23.3 Collapse duplicate rating cross-map in `hybrid_scraper.py` (MEDIUM, S)
+
+- **Target**: `scraper/hybrid_scraper.py:1224-1246`.
+- **Why**: reimplements the `RP`-as-empty tier-mapping loop that lives in
+  `services/game_metadata_service.cross_map_ratings`.  Two sources of
+  truth now; any change to `_RP_VALUES` or tier-map semantics has to be
+  synced across both.  CLAUDE.md already names `cross_map_ratings` as
+  the single API.
+- **Plan**: delete the inline loop, call `cross_map_ratings(metadata)`
+  after normalizing the key convention (the inline version uses
+  `db_column` keys; the service uses bare system keys — pick one, stick
+  with it).
+- **Source**: 2026-04-23 audit, Scraper Orchestration finding 2 (spec).
+- **Status**: done (v2.88.1)
+
+### 23.4 Fix `api_similar_games` set-iteration ordering bug (MEDIUM, S)
+
+- **Target**: `routes/games_search.py:149-155`.
+- **Why**: builds `NOT IN ({placeholders})` from `seen_ids` (a `set`),
+  then binds `list(seen_ids)`.  The two iterations of the set are not
+  guaranteed to produce the same order across calls in CPython — the
+  `NOT IN` filter can silently exclude the wrong game IDs (or none at
+  all).  Appears to work today because the set happens to iterate
+  consistently within one call, but this is a correctness landmine.
+- **Plan**: assign `seen_ids_list = list(seen_ids)` once, use that same
+  list both for placeholder-count and bind values.
+- **Source**: 2026-04-23 audit, Game Routes finding 8.
+- **Status**: done (v2.88.1)
+
+### 23.5 Fix `source=rom` filter precedence (LOW, S)
+
+- **Target**: `services/game_query.py:235`.
+- **Why**: `A AND B AND C OR D` parses as `(A AND B AND C) OR D` so a
+  `NULL` `rom_path` row appears under every `source=` filter, not just
+  the intended one.
+- **Plan**: add explicit parentheses: `AND (… OR g.rom_path IS NULL)`.
+- **Source**: 2026-04-23 audit, Game Routes finding 9.
+- **Status**: done (v2.88.1)
+
+### 23.6 Fix `media_cleanup.py` manuals path divergence (MEDIUM, S)
+
+- **Target**: `services/media_cleanup.py:28` vs `:115`.
+- **Why**: `_MEDIA_LAYOUT` claims manuals live under `IMAGE_PATH/manuals`
+  but `find_orphaned_media` scans `STATIC_PATH/manuals`.  Per-game
+  deletion and orphan detection hit different directories — manuals are
+  silently bypassed by the orphan sweep.
+- **Plan**: pick one canonical location (whichever matches the actual
+  scraper output — verify via `base_scraper.download_image`), update both
+  references to match.
+- **Source**: 2026-04-23 audit, Image Pipeline finding 1.
+- **Status**: done (v2.88.1)
+
+### 23.7 Preserve GIF animation in `_save_image` (MEDIUM, S)
+
+- **Target**: `services/image_utils.py:751`.
+- **Why**: `img.save(path, 'GIF')` without `save_all=True, append_images=...`
+  flattens animated GIFs to first frame.  `preferred_image_extension`
+  preserves `.gif` correctly, but any touch by the pipeline
+  (re-encode, variant generation, standardization) destroys the
+  animation.
+- **Plan**: either pass `save_all=True, append_images=list(ImageSequence.Iterator(img))[1:]`
+  for GIF, or branch GIF to a dedicated "copy without re-encode" path.
+  The latter is simpler and also avoids quality loss.
+- **Source**: 2026-04-23 audit, Image Pipeline finding 3.
+- **Status**: done (v2.88.1)
+
+### 23.8 Sync `config.example.py` with `config.py` system mappings (MEDIUM, S)
+
+- **Target**: `config.example.py`.
+- **Why**: `config.py` has IGDB platform entries (atarist:63, atari800:65,
+  zxspectrum:26, amstradcpc:25, msx/msx2, bbcmicro:69, apple2:75,
+  x68000:121, pc88:125, pc98:149, fmtowns:118, sg-1000:84, neogeocd:136,
+  supergrafx:128) plus extra `SYSTEM_SPECS` entries (famicom, fds, …)
+  that `config.example.py` lacks.  Fresh installs silently miss these
+  mappings — scraped metadata for those platforms drops back to
+  per-name fuzzy lookup.  This is the same class of bug that broke CI
+  in the Pass 18 ship (missing `IMAGE_SKIP_TYPES`).
+- **Plan**: diff the two files constant-by-constant, backfill
+  `config.example.py`.  Add a CI test (22.8-adjacent) that fails if
+  top-level constants diverge.
+- **Source**: 2026-04-23 audit, Core App finding 7.
+- **Status**: done (v2.88.1)
+
+### 23.9 Fix `_calculate_title_match_score` call-site coverage test gap
+
+- **Target**: `tests/test_hybrid_scraper.py` (new or extension).
+- **Why**: 23.1 above is a regression that landed undetected through the
+  Pass 6 split — tests mocked too aggressively.  Without a test that
+  exercises `_pick_best_fallback` against a real
+  `calculate_title_match_score`, the bug can re-land.
+- **Plan**: add a test that constructs a minimal fallback scenario, runs
+  `_pick_best_fallback`, and asserts the `AttributeError` is *not*
+  raised and a scored result comes back.
+- **Source**: 2026-04-23 audit, meta.
+- **Status**: done (v2.88.1, landed alongside 23.1)
+
+---
+
+## Pass 24 — Multi-user authn/authz hardening
+
+> **Severity caveat.**  Under the single-user-localhost threat model
+> (see §Notes below) these are LOW.  Under the documented multi-user
+> role model (admin / editor / viewer in `services/auth.py:26-28`) they
+> are HIGH because a viewer can currently assume any editor identity.
+> Land if you actually use multi-user mode.  If you don't, skip to
+> Pass 25.
+
+### 24.1 Require a password for editor and viewer roles (HIGH-in-multi-user, M)
+
+- **Target**: `routes/auth.py:59-81`.
+- **Why**: `api_login` skips password verification entirely for any
+  `role in ('editor','viewer')` and sets `session['user_id']` on the
+  POSTed ID.  Combined with `/login` enumerating users + roles
+  (`routes/auth.py:35-41`), anyone reaching `/api/login` assumes any
+  non-admin identity.  Editors hold `edit`, `delete_metadata`, and
+  `scrape` permissions — full authentication bypass.
+- **Plan**: remove the passwordless branch; require `verify_password`
+  for every role.  Migration path: on first login after the change,
+  prompt editor/viewer accounts to set a password (mirroring the
+  admin `force_password_change` flow).
+- **Source**: 2026-04-23 audit, Auth & Security finding 1.
+- **Status**: todo
+
+### 24.2 Session rotation on login (LOW-single-user, HIGH-multi-user, S)
+
+- **Target**: `routes/auth.py:81`.
+- **Why**: `session['user_id'] = user['id']` without calling
+  `session.regenerate()` / equivalent.  Any pre-login session data
+  (including an attacker-set cookie) survives the auth boundary —
+  session fixation.
+- **Plan**: Flask doesn't expose a built-in `regenerate()`, so clear
+  then re-set: `session.clear(); session.permanent = True;
+  session['user_id'] = user['id']`.  Add a CSRF-token rotation call
+  here once Pass 29 lands.
+- **Source**: 2026-04-23 audit, Auth & Security finding 3.
+- **Status**: todo
+
+### 24.3 Force password change for default-`changeme` admins (MEDIUM, S)
+
+- **Target**: `routes/auth.py:146-151` (create flow),
+  `services/database_init.py:570-586` (seed), `app.py` (before_request
+  middleware).
+- **Why**: `force_password_change` flag and `force_change_password.html`
+  template exist, but nothing enforces the redirect.  A seeded admin
+  can navigate the whole app with `changeme` / `admin` credentials
+  indefinitely.
+- **Plan**: add a `before_request` handler that redirects logged-in
+  users with `force_password_change = 1` to the change-password page
+  for every non-login, non-static route.
+- **Source**: 2026-04-23 audit, Auth & Security finding 4.
+- **Status**: todo
+
+### 24.4 Tighten password policy + rate-limit password change (MEDIUM, S)
+
+- **Target**: `routes/auth.py:278, 308` (policy), `:262` (change
+  endpoint).
+- **Why**: current policy is 8 chars with no complexity / breach
+  check — `password` passes.  OWASP 2026 guidance is ≥12 or HIBP
+  k-anonymity check.  Password-change endpoint isn't rate-limited at
+  all, so an attacker with any session can brute-force `current_password`
+  unlimited.
+- **Plan**: raise minimum to 12 chars; add the same `login_attempts`
+  dict-based rate limit to the change endpoint; document the choice
+  (HIBP call vs length rule) in standards addendum.
+- **Source**: 2026-04-23 audit, Auth & Security findings 5, 8.
+- **Status**: todo
+
+### 24.5 `@editor_required` / `@admin_required` on destructive endpoints (HIGH-in-multi-user, M)
+
+- **Target**: `routes/games.py:849, 906, 1011`;
+  `routes/games_media.py:25, 51, 100`;
+  `routes/bulk_scrape.py:151-256`;
+  `routes/achievements.py:269` (sync);
+  `routes/collector_trophies.py` (refresh);
+  `routes/collections.py` list/tag/wishlist CRUD.
+- **Why**: all currently `@login_required` only — any authenticated
+  viewer can delete games, rename ROMs, delete screenshots, wipe
+  another user's bulk-scrape queue, trigger expensive API sync on the
+  admin's account.
+- **Plan**: per-endpoint review: destructive mutation → `@editor_required`
+  (data write), or `@admin_required` (credential / global setting).
+  Collections endpoints deferred to Pass 27 (needs `owner_id`).
+- **Source**: 2026-04-23 audit, Game Routes finding 1, Collections
+  finding 1, Maintenance finding 5.
+- **Status**: todo
+
+### 24.6 Xbox OAuth `state` parameter + verification (MEDIUM-in-multi-user, S)
+
+- **Target**: `scraper/scrape_xbox.py:46-62` (generate), `routes/platform_import.py:383-452` (verify).
+- **Why**: `get_auth_url()` omits `state` entirely.  An attacker can
+  trigger the callback with arbitrary `code` and bind the victim's
+  RetroDB session to the attacker's Microsoft account.
+- **Plan**: generate a random token, stash in session as
+  `oauth_state_xbox`, include as `state=` in the auth URL, compare on
+  callback.  Reject mismatches with 400.
+- **Source**: 2026-04-23 audit, Platform Imports finding 1.
+- **Status**: todo
+
+### 24.7 Sensitive-file permissions on token JSON (LOW, S)
+
+- **Target**: `scraper/scrape_xbox.py:42-43, 182-189` (Xbox tokens),
+  PSN token writer in `routes/trophies.py` (out-of-file reference).
+- **Why**: `open(..., 'w')` then `json.dump` with no umask / chmod,
+  so world-readable on group-shared filesystems.  Tokens are
+  long-lived refresh credentials.
+- **Plan**: after save, `os.chmod(path, 0o600)`.  Tiny helper,
+  applied uniformly.
+- **Source**: 2026-04-23 audit, Platform Imports finding 4.
+- **Status**: todo
+
+### 24.8 Broaden `SecretRedactor` token patterns (LOW, S)
+
+- **Target**: `services/log_redactor.py:22-32`.
+- **Why**: current patterns catch JWTs and `[a-f0-9]{40,}` hex
+  digests.  PSN `NPSSO` is 64 chars of base64 (`[A-Za-z0-9]{64}`)
+  and slips through when logged as a bare string.  Same for raw
+  Gemini API keys.
+- **Plan**: add a base64-ish `[A-Za-z0-9_\-]{32,}` pattern gated to
+  field names in a known-sensitive list (`npsso`, `api_key`,
+  `access_token`).  Don't redact unconditionally — too many false
+  positives.
+- **Source**: 2026-04-23 audit, Auth & Security finding 10.
+- **Status**: todo
+
+---
+
+## Pass 25 — Input hardening, SSRF, size caps
+
+> Defensive.  No architectural deps.  Independent of Pass 24.
+
+### 25.1 ES-DE path-traversal guard (MEDIUM, S)
+
+- **Target**: `scraper/scrape_esde.py:801-828` (`resolve_media_path`).
+- **Why**: accepts absolute `/`-prefixed paths verbatim; `shutil.copy2`
+  then copies anything the server process can read into `IMAGE_PATH`.
+  A crafted `gamelist.xml` → arbitrary-file-read (within server
+  privilege).
+- **Plan**: `os.path.commonpath([resolved, allowed_es_de_root])`
+  check against an allowlist of configured ES-DE roots before
+  `shutil.copy2`.  Reject otherwise.
+- **Source**: 2026-04-23 audit, Per-source Scrapers finding 4.
+- **Status**: todo
+
+### 25.2 `/api/reports` system-folder whitelist (MEDIUM, S)
+
+- **Target**: `routes/reports.py:391, 568` (pre-join whitelist),
+  `:576` (post-join guard already via `safe_path`).
+- **Why**: `system_filter` is concatenated into `os.path.join(ROM_PATH,
+  system_filter)` before `safe_path` validates.  Pre-join
+  `os.listdir` / `glob` calls still run on the unvalidated path, so
+  a `../../etc` value enumerates outside `ROM_PATH`.
+- **Plan**: validate `system_filter` against `SELECT folder FROM
+  systems` (DB-known folders only) before any FS call.
+- **Source**: 2026-04-23 audit, Maintenance finding 3.
+- **Status**: todo
+
+### 25.3 Museum Bing-search SSRF hardening (MEDIUM, M)
+
+- **Target**: `routes/museum.py:736-780`
+  (`_bing_image_search`), `:984-1007` (`_fetch_and_process_image`).
+- **Why**: returns `murl` from Bing HTML and fetches verbatim with
+  only `startswith('http')` check.  No host allowlist, no
+  RFC1918 / localhost / link-local rejection, no redirect cap.
+- **Plan**: resolve hostname to IP, reject private ranges
+  (`ipaddress.ip_address(h).is_private`, `.is_loopback`,
+  `.is_link_local`, `.is_reserved`); cap redirects with
+  `allow_redirects=False` + manual hop limit; restrict content-type
+  to `image/*`.
+- **Source**: 2026-04-23 audit, Collections finding 3.
+- **Status**: todo
+
+### 25.4 Museum controller-image upload size cap (MEDIUM, S)
+
+- **Target**: `routes/museum.py:607` — `file.read()` before
+  validation.
+- **Why**: a 2 GB upload OOMs the process.  No per-route cap.
+- **Plan**: check `request.content_length` before `file.read()`;
+  hard cap 10 MB for controller images.  Same helper used for
+  avatar / boxart uploads.
+- **Source**: 2026-04-23 audit, Collections finding 4.
+- **Status**: todo
+
+### 25.5 CLZ PDF bounds (MEDIUM, M)
+
+- **Target**: `routes/clz_import.py:281-374`.
+- **Why**: opens arbitrary 50 MB PDFs and iterates every page; a
+  pathological 10 000-page PDF blocks a worker for minutes.  Temp
+  file isn't unlinked on exception path.  Duplicate SELECT loads
+  the whole `games` table for each import.
+- **Plan**: page-count ceiling (default 500); `try/finally` around
+  the `tmp_path` cleanup; scope the dup-check SELECT to `WHERE
+  system_id IN (...)` so it stays fast on large libraries.
+- **Source**: 2026-04-23 audit, Collections findings 5, 6.
+- **Status**: todo
+
+### 25.6 Video upload `MAX_VIDEO_SIZE` (MEDIUM, S)
+
+- **Target**: `services/game_media_service.py:125-128` (video branch
+  of `save_upload`).
+- **Why**: image branch enforces `MAX_IMAGE_SIZE`; video branch
+  writes with `file_storage.save()` directly.  Flask
+  `MAX_CONTENT_LENGTH` is the only backstop.
+- **Plan**: add `MAX_VIDEO_SIZE` to `config.py` (default 50 MB);
+  apply in `save_upload`.
+- **Source**: 2026-04-23 audit, Game Routes finding 5.
+- **Status**: todo
+
+### 25.7 Response size caps in scraper image downloads (MEDIUM, S)
+
+- **Target**: `scraper/base_scraper.py:216-223`
+  (`download_image` streaming), `scraper/scrape_screenscraper.py:742-753`
+  (`download_media`), `scraper/_ss_request_with_retry:933`.
+- **Why**: streaming download writes every chunk with no total-size
+  limit.  A malicious or misconfigured API response exhausts disk;
+  a giant SS JSON response OOMs the worker.
+- **Plan**: cap at `MAX_MEDIA_DOWNLOAD_BYTES` (default 50 MB) and
+  `MAX_API_RESPONSE_BYTES` (default 10 MB); abort + delete partial
+  file on overflow.
+- **Source**: 2026-04-23 audit, Per-source Scrapers finding 1,
+  Image Pipeline gap 7.
+- **Status**: todo
+
+### 25.8 Cap list-returning endpoints (LOW, S)
+
+- **Target**: `routes/games.py:1099-1130` (`api_filter_games`,
+  no LIMIT), `:1048` (`api_recently_viewed`, user-trusted `limit`),
+  `:209-214` (`api_games_ids` uncapped).
+- **Why**: `?limit=999999` can OOM or produce multi-MB JSON blobs.
+- **Plan**: enforce a hard `MAX_LIST_ROWS` (default 500) via
+  `min(user_limit, MAX_LIST_ROWS)`.
+- **Source**: 2026-04-23 audit, Game Routes finding 4.
+- **Status**: todo
+
+### 25.9 Rate limits on expensive endpoints (MEDIUM, S)
+
+- **Target**: `routes/games_ai.py:29` (AI fill),
+  `routes/games_hltb.py` (HLTB lookup + search),
+  `routes/museum.py:346` (museum generate),
+  `routes/collector_trophies.py` (refresh).
+- **Why**: currently unbounded — a single user can burn the
+  Gemini / OpenAI quota in minutes, spam the HLTB scraper, or
+  trigger repeated 20-query trophy-stat scans.
+- **Plan**: reuse the existing rate-limiter from `routes/auth.py`
+  (dict-based per-IP or per-user).  Defaults: AI-fill 30/hour,
+  HLTB 60/hour, museum generate 20/hour, trophy refresh 10/hour.
+- **Source**: 2026-04-23 audit, Game Routes gaps 3, 4; Collections
+  gaps 2.
+- **Status**: todo
+
+---
+
+## Pass 26 — Scraper HTTP uniformity & API-key hygiene
+
+> Polish pass.  No deps.  Independent of security passes.
+
+### 26.1 Route ScreenScraper + RetroAchievements through `base_scraper` (MEDIUM, M)
+
+- **Target**: `scraper/scrape_screenscraper.py:238, 745, 933`
+  (bypass sites); `scraper/retroachievements.py:211, 291, 359,
+  441, 523` (5 bare `requests.get` sites).
+- **Why**: these 8 sites skip shared retry, 429 `Retry-After`,
+  log redaction, and session reuse.  Error handling is
+  inconsistent across scrapers — RA has zero 429 / 5xx handling at
+  all.
+- **Plan**: swap each site to `base_scraper.http_get` /
+  `http_post`; keep the per-scraper response-shape parsing but
+  delegate HTTP policy to the shared helpers.
+- **Source**: 2026-04-23 audit, Per-source Scrapers finding 1.
+- **Status**: todo
+
+### 26.2 Move Gemini API key out of URL querystring (MEDIUM, S)
+
+- **Target**: `scraper/scrape_ai.py:647, 1036`.
+- **Why**: `?key={api_key}` ends up in every log line via
+  `http_post`'s DEBUG + ERROR logging (`base_scraper.py:133, 177`).
+  `SecretRedactor` does catch the `api_key=` querystring pattern
+  today, but header-based auth eliminates the exposure surface
+  entirely.
+- **Plan**: use `x-goog-api-key: {api_key}` header; delete the
+  querystring param.
+- **Source**: 2026-04-23 audit, Per-source Scrapers finding 3.
+- **Status**: todo
+
+### 26.3 Apply AI circuit-breaker at the call site (LOW, S)
+
+- **Target**: `scraper/hybrid_scraper.py:1094` (`fetch_ai_metadata`).
+- **Why**: `_ai_breaker` is defined at `scraper_manager.py:267`
+  but never wrapped around `fetch_ai_metadata`.  Every AI
+  gap-fill hits the provider regardless of recent failures.
+- **Plan**: wrap the call in `with _ai_breaker:` (or manual
+  `if _ai_breaker.is_open(): return None`).
+- **Source**: 2026-04-23 audit, Scraper Orchestration gap 2.
+- **Status**: todo
+
+### 26.4 Unify 5xx retry policy across `http_get` and SS retry helper (LOW, S)
+
+- **Target**: `scraper/base_scraper.py:90` (no-retry on 5xx),
+  `scraper/scrape_screenscraper.py:947` (does retry 5xx).
+- **Why**: inconsistent policy — an SS transient 503 retries,
+  a TGDB transient 503 doesn't.
+- **Plan**: retry `[500, 502, 503, 504]` in `http_get` with
+  exponential backoff + jitter (no thundering herd); never retry
+  401 / 403.
+- **Source**: 2026-04-23 audit, Per-source Scrapers gaps 2, 3.
+- **Status**: todo
+
+### 26.5 Mask API keys on GET `/settings` + `/api/scraper-settings` (LOW, S)
+
+- **Target**: `routes/settings.py:116-130`,
+  `routes/scraper.py:46-82`.
+- **Why**: `/settings` renders unmasked API keys directly to the
+  DOM; `get_saved_api_keys` returns them in response envelopes.
+  Not a vuln per se (single-user localhost) but fails shoulder-surf
+  / screenshot hygiene.
+- **Plan**: show `***` with last 4 chars only on GET; accept the
+  `***` placeholder on PUT as "don't change" sentinel.
+- **Source**: 2026-04-23 audit, Maintenance finding 2.
+- **Status**: todo
+
+---
+
+## Pass 27 — Multi-user data ownership
+
+> **Depends on Pass 20 (schema migrations) + Pass 24.1 (real
+> auth on editor/viewer).**  Don't start until both have landed —
+> adding `owner_id` columns through the ad-hoc migration path
+> would be exactly the kind of schema drift Pass 20 exists to
+> kill.
+
+### 27.1 Add `owner_id` to `tags`, `lists`, `wishlist` (HIGH-in-multi-user, M)
+
+- **Target**: new migration file under `services/migrations/`
+  (shape defined by 20.1); `routes/collections.py` list / tag /
+  wishlist CRUD.
+- **Why**: currently zero per-user scoping — any logged-in user
+  can mutate any other user's tags / lists / wishlist items.
+- **Plan**: migration adds `owner_id INTEGER REFERENCES
+  users(id)`, NULL for existing rows (treat as admin-owned);
+  backfill step can assign existing rows to admin.  Every route
+  handler gains `WHERE owner_id = g.user['id'] OR
+  g.user['role']='admin'`.
+- **Source**: 2026-04-23 audit, Collections finding 1.
+- **Status**: todo
+
+### 27.2 Scope PSN / Xbox tokens per user (HIGH-in-multi-user, M)
+
+- **Target**: migration (rename `psn_tokens.json` →
+  `user_psn_tokens` table with `user_id` FK); `scraper/scrape_xbox.py`
+  token file → table with `user_id`; `routes/platform_import.py`
+  status + library readers; singleton state in
+  `services/jobs/psn_refresh.py`.
+- **Why**: today `psn_sync_status` uses `LIMIT 1` with no
+  `user_id` filter — every logged-in user sees the single
+  account that happens to have synced, including its avatar and
+  PSN username.  Same for `xbox_tokens.json` (one file per
+  install, not per user).
+- **Plan**: new `user_platform_tokens` table keyed by
+  `(user_id, platform)`.  Job workers take `user_id` as a
+  parameter; status reads filter by session user.
+- **Source**: 2026-04-23 audit, Platform Imports finding 11.
+- **Status**: todo
+
+### 27.3 Remove global-state assumptions from platform sync jobs (MEDIUM, S)
+
+- **Target**: `services/jobs/platform_sync.py:20-49`
+  (`_get_steam_credentials`, `_get_xbox_credentials`).
+- **Why**: reads credentials from a single source every job
+  run; won't compose with 27.2's per-user scoping.
+- **Plan**: accept `user_id` on job construction; credential
+  lookup goes through the new `user_platform_tokens` table.
+- **Source**: 2026-04-23 audit, Background Jobs finding
+  (platform_sync.py:20-49).
+- **Status**: todo (follows 27.2)
+
+---
+
+## Pass 28 — Accessibility pass 2 — forms, focus traps, motion
+
+> Independent of every other pass.  Each sub-item is independently
+> shippable.
+
+### 28.1 Add `<label for=…>` association across form controls (HIGH, L)
+
+- **Target**: `templates/settings.html` (~50 controls),
+  `templates/wishlist.html:103`, `templates/museum_system.html:199`,
+  and scattered sites (~209 non-hidden controls total out of
+  365).
+- **Why**: sibling `<label>` tags sit above the `<input>` but
+  lack `for=`, so screen readers announce placeholder text only.
+  Biggest a11y regression in the template tree.
+- **Plan**: add `id=` to each input and `for=` to its label.  No
+  schema change, just markup.
+- **Source**: 2026-04-23 audit, Templates & CSS finding 2.
+- **Status**: todo
+
+### 28.2 `ModalFocusTrap` on template-local modals (MEDIUM, M)
+
+- **Target**: inline modal open/close JS in `wishlist.html`,
+  `tags.html`, `lists.html`, `list_detail.html`,
+  `compare_games.html`, `settings.html` user-edit / tz-picker /
+  folder-browser, `museum_system.html`.
+- **Why**: these pages define their own `openXModal /
+  closeXModal` without calling `ModalFocusTrap.activate /
+  deactivate`.  Keyboard users tabbing inside the modal escape
+  to the page behind.
+- **Plan**: wrap each open/close pair with the existing
+  `ModalFocusTrap` calls documented in CLAUDE.md §Global JS.
+- **Source**: 2026-04-23 audit, Templates & CSS finding 4.
+- **Status**: todo
+
+### 28.3 Remove positive `tabindex` values from `_modals/edit_modal.html` (LOW, S)
+
+- **Target**: `templates/_modals/edit_modal.html:29-… (28 occurrences)`.
+- **Why**: positive `tabindex="1"` through `tabindex="28"` fights
+  DOM order; WCAG 2.1 SC 2.4.3 discourages.  DOM order suffices
+  if the modal form is laid out in the intended tab sequence.
+- **Plan**: strip all positive `tabindex` attributes; verify tab
+  order via keyboard walk-through.
+- **Source**: 2026-04-23 audit, Templates & CSS finding 3.
+- **Status**: todo
+
+### 28.4 Skip-to-content link (LOW, S)
+
+- **Target**: `templates/base.html:240` (after `<body>` open).
+- **Why**: WCAG 2.1 SC 2.4.1 "Bypass Blocks" — keyboard users
+  currently have to tab through the full sidebar on every page.
+  `<main id="main-content">` already exists; just need the link.
+- **Plan**: `<a href="#main-content" class="skip-link">Skip to
+  main content</a>` styled to only appear on `:focus`.
+- **Source**: 2026-04-23 audit, Templates & CSS gap 3.
+- **Status**: todo
+
+### 28.5 `prefers-reduced-motion` kill-switch for theme canvas effects (MEDIUM, S)
+
+- **Target**: `static/js/theme.js` — Matrix rain, Cyberpunk
+  volumetric smoke, Ocean reflection.
+- **Why**: CSS `@media (prefers-reduced-motion: reduce)` covers
+  the rest of the app (via `reset.css:62`), but JS-driven canvas
+  animations ignore CSS media queries entirely.  Users with
+  motion-sensitivity see full-bleed animated canvases regardless.
+- **Plan**: `window.matchMedia('(prefers-reduced-motion:
+  reduce)').matches` check at theme init; if true, skip the
+  canvas animation start.
+- **Source**: 2026-04-23 audit, Templates & CSS gap 1.
+- **Status**: todo
+
+### 28.6 `aria-live="polite"` on notification + loading containers (MEDIUM, S)
+
+- **Target**: `static/js/utils.js:344-357`
+  (`Notifications.show`), `:409-426` (`LoadingState.show`).
+- **Why**: screen-reader users don't hear scrape progress,
+  errors, or bulk-edit completion because the `.notification`
+  divs lack `role="status"` / `aria-live`.  Direct contradiction
+  of the WCAG 2.2 AA sweep shipped in Pass 15.
+- **Plan**: one-line attribute add on the container element
+  Notifications injects into.
+- **Source**: 2026-04-23 audit, Frontend JS gap 4.
+- **Status**: todo
+
+---
+
+## Pass 29 — Frontend defense in depth
+
+> No deps.  Independent of every other pass.  Severity is
+> LOW under the single-user-localhost threat model but these
+> are cheap, high-signal hardening wins.
+
+### 29.1 Escape user-derived strings in `innerHTML` sinks (MEDIUM, S)
+
+- **Target**: `static/js/settings-page.js:826`
+  (system.name / system.slug);
+  `static/js/achievements.js:320`
+  (badge_url / title);
+  `static/js/trophies.js:294` (icon_url / name);
+  `static/js/museum.js:191-195` (imageFilename in `src=`);
+  `static/js/settings-page.js:552, 581`
+  (`ConfirmModal.show` `.innerHTML = message`);
+  `static/js/all-games-controller.js:491-502`
+  (inline-onclick construction).
+- **Why**: API-derived strings flow into `innerHTML` without
+  escaping.  Today the data is trusted (scrapers, local
+  settings) so XSS risk is low, but any future user-facing input
+  sharing these sinks becomes an execution primitive.
+- **Plan**: use `escapeHtml()` from `utils.js` at every sink; for
+  the ConfirmModal case, switch `.innerHTML = message` to
+  `.textContent = message` unless the caller explicitly passes
+  HTML (document the contract).
+- **Source**: 2026-04-23 audit, Frontend JS finding 1.
+- **Status**: todo
+
+### 29.2 CSRF token propagation in `API.post` / `API.postForm` (LOW-per-threat-model, S)
+
+- **Target**: `static/js/utils.js:231-272`.
+- **Why**: zero CSRF token header on any POST.  Under the
+  single-user-localhost threat model this is LOW (see §Notes).
+  Worth doing anyway because (a) it's one file, and (b) multi-user
+  installs do exist once Pass 24.1 passes ship.
+- **Plan**: backend emits CSRF token via `csrf_token()` Jinja
+  global (needs Pass 24.x backend half — bundle with it).
+  Frontend reads from `<meta name="csrf-token">` and sets
+  `X-CSRFToken` on every non-GET.  Coordinate with 24.2 session
+  rotation to regenerate token on login.
+- **Source**: 2026-04-23 audit, Frontend JS gap 3.
+- **Status**: todo (lands with Pass 24 backend CSRF middleware)
+
+### 29.3 Consolidate duplicate keyboard handlers + enforce focus-trap stacking (MEDIUM, M)
+
+- **Target**: `static/js/main.js:532` (Escape for screenshot nav),
+  `static/js/game-modals.js:2048` (Escape for carousel),
+  `static/js/all-games-controller.js:1365` (Escape for filter modal);
+  all three register document-level `keydown` handlers.
+- **Why**: opening the filter modal over the game-detail modal
+  fires both handlers; the nested modal can close along with the
+  outer.  Screenshot-lightbox focus trap overrides the
+  underlying `GameDetailModal` trap.
+- **Plan**: migrate all three to the existing `ModalFocusTrap`
+  API, which already stacks correctly per spec.  Delete the
+  direct document listeners.
+- **Source**: 2026-04-23 audit, Frontend JS finding (event
+  leaks + stacking).
+- **Status**: todo
+
+### 29.4 `try/catch` around `JSON.parse` of `localStorage` values (LOW, S)
+
+- **Target**: 13 sites (`static/js/toast-controller.js:726, 740,
+  798, 871, 911, 933, 1012, 1381, 1617`;
+  `static/js/main.js:908`;
+  `static/js/game-list.js:149`;
+  `static/js/achievements.js:74`).
+- **Why**: a corrupted or tampered `localStorage` value throws
+  and breaks the page on load.  No recovery path.
+- **Plan**: single helper `safeParseJSON(key, fallback)` in
+  `utils.js`; swap each call site.
+- **Source**: 2026-04-23 audit, Frontend JS finding (unguarded
+  parse).
+- **Status**: todo
+
+### 29.5 `AbortController` on search-style API calls (LOW, S)
+
+- **Target**: `static/js/main.js:247` (global search);
+  `static/js/all-games-controller.js` filter / sort rapid-fire
+  calls.
+- **Why**: rapid typing spawns parallel requests; last-response-wins
+  races flash stale results.
+- **Plan**: store an `AbortController` per input on the
+  controller; abort the previous request before issuing a new
+  one.
+- **Source**: 2026-04-23 audit, Frontend JS finding (race).
+- **Status**: todo
+
 ---
 
 ## Follow-ups from landed passes
@@ -1734,6 +2594,89 @@ for the Claude Code session maintaining the `/audit` skill:
 **`audit_hygiene.md`** (repo root).  That file is portable — it can be
 handed to the audit-tool maintainer without any RetroDB-specific
 context.
+
+---
+
+## Periodic Independent Review
+
+The 2026-04-23 multi-agent sweep that surfaced Passes 23-29 is the
+counterweight to the "author marks own homework" problem: an agent that
+wrote the code can't write tests that meaningfully vet it, because the
+tests encode the same (possibly wrong) understanding.  Dispatching
+multiple independent agents — each seeing only a subsystem's code + the
+project docs, *not* seeing the orchestrator's prior reasoning — produces
+fresh-eyes findings at full-codebase scale.
+
+### Cadence
+
+Re-run the multi-agent sweep:
+
+1. **Every 5 landed passes**, or
+2. **Before any minor version bump** (`x.N+1.0`), or
+3. **After an architectural change** that touches >3 subsystems
+   (migration, auth model change, DB schema reshape).
+
+Whichever comes first.
+
+### How to run
+
+The 14-subsystem partition that produced this audit is:
+
+1. **Auth & security** — `services/auth.py`, `security.py`, `log_redactor.py`, `routes/auth.py`
+2. **Database & schema** — `services/database.py`, `database_init.py`
+3. **Scraper orchestration & metadata** — `scraper/scraper_manager.py`, `hybrid_scraper.py`, `metadata_merger.py`, `metadata_normalizer.py`, `match_scorer.py`, `title_normalizer.py`, `scraper_cache.py`, `image_dedup.py`, `services/game_metadata_service.py`
+4. **Per-source scrapers** — `scraper/base_scraper.py`, `scrape_igdb.py`, `scrape_thegamesdb.py`, `scrape_rawg.py`, `scrape_screenscraper.py`, `scrape_esde.py`, `scrape_ai.py`, `retroachievements.py`
+5. **Platform imports** — `routes/platform_import.py`, `steam_achievements.py`, `xbox_achievements.py`, `game_imports.py`, `scraper/scrape_steam.py`, `scrape_xbox.py`
+6. **Image pipeline** — `services/image_utils.py`, `jobs/image_resize.py`, `game_media_service.py`, `media_cleanup.py`
+7. **Background jobs** — `services/jobs/*`
+8. **Game routes & detail/edit** — `routes/games*.py`, `services/game_query.py`, `hltb_service.py`
+9. **Maintenance, settings, systems, reports** — `routes/{systems,maintenance,settings,scraper,bulk_scrape,controllers,reports}.py`, `services/{rom_scanner,game_cleanup,normalization}.py`
+10. **Collections, achievements, trophies, museum** — `routes/{collections,achievements,trophies,collector_trophies,museum,ra_sync,bonus_discs,clz_import,scrape_logs,tools}.py`, `services/{wishlist_scraper,achievement_linking}.py`
+11. **Core app & shared utilities** — `app.py`, `config.py`, `config.example.py`, `services/{api_helpers,template_filters,formatters,game_utils,analytics,assets}.py`
+12. **Frontend JavaScript** — `static/js/*.js` (source files only, skip bundles)
+13. **Templates & CSS** — `templates/**/*.html`, `static/css/**/*.css`
+14. **Tests, tooling, CI/CD** — `tests/`, `build_*.py`, `install*.py`, `scripts/`, `pyproject.toml`, `.semgrep.yml`, `.gitleaks.toml`, `.pre-commit-config.yaml`, `.github/workflows/*`
+
+Each agent gets the same brief, scoped to its subsystem:
+
+> You are performing an INDEPENDENT code review of ONE subsystem of RetroDB.
+> Project root: `/mnt/Storage/Scripts/Linux/RetroDB`.  You do not know what
+> the orchestrator thinks about this code.  Fresh eyes.
+>
+> **Scope:** `<paths>` — review ONLY these files.
+>
+> **References (treat CLAUDE.md module descriptions as AUTHOR'S CLAIMS, verify against code):**
+> `CLAUDE.md`, `docs/RETRODB_DESIGN_STANDARDS.md`, `docs/STANDARDS_ADDENDUM.md`,
+> `docs/ROM_NAMING_STANDARD.md` (if your subsystem touches ROM paths).
+>
+> Answer three questions, with `file:line` refs mandatory on every finding:
+> 1. **Spec alignment** — where does code diverge from docs/CLAUDE.md claims?
+> 2. **Weaknesses** — fragile code, hidden assumptions, race conditions,
+>    resource leaks, injection / SSRF / a11y risks, perf traps, surprising
+>    behavior.
+> 3. **Gaps** — features/edge cases the spec implies but code doesn't handle.
+>
+> Rules: stay in scope; don't read tests or git log to infer intent; no
+> aesthetic refactors; if clean, say so — don't invent findings.
+>
+> Output: `## Subsystem: <name>` header, three numbered sections, summary
+> with top-3 priorities. Target 300-600 words.
+
+Dispatch all 14 in parallel (single message, 14 Agent tool calls).
+
+### Triage rules
+
+- Any **CRITICAL runtime bug** across two or more reports → land as the
+  next pass.
+- **Security findings** → weight against the "single-user localhost"
+  threat model documented below; HIGH on SaaS ≠ HIGH here.
+- **Consistent drift between CLAUDE.md and code** → either fix the code
+  or fix the doc; don't let the claim stand unverified.
+- **Findings already on the roadmap** → skip (acknowledge + link to the
+  existing pass, don't duplicate).
+
+The resulting triage lives as new numbered passes inserted before the
+follow-ups section (see Passes 23-29 for a worked example).
 
 ---
 

@@ -146,13 +146,16 @@ def api_similar_games(game_id):
         if len(similar) < 8 and game['genre']:
             genres = [g.strip() for g in game['genre'].split(',') if g.strip()]
             if genres:
-                placeholders = ','.join(['?'] * len(seen_ids))
+                # Materialise the set once; placeholders and bind values must
+                # iterate the same sequence (set iteration order is unstable).
+                seen_ids_list = list(seen_ids)
+                placeholders = ','.join(['?'] * len(seen_ids_list))
                 matches = query(f"""
                     SELECT g.id, g.title, g.boxart, s.name AS system_name
                     FROM games g JOIN systems s ON g.system_id = s.id
                     WHERE g.genre LIKE ? AND g.system_id = ? AND g.id NOT IN ({placeholders}) AND g.is_bonus_disc = 0
                     ORDER BY RANDOM() LIMIT ?
-                """, [f'%{genres[0]}%', game['system_id']] + list(seen_ids) + [8 - len(similar)])
+                """, [f'%{genres[0]}%', game['system_id']] + seen_ids_list + [8 - len(similar)])
                 for m in matches:
                     if m['id'] not in seen_ids:
                         similar.append({'id': m['id'], 'title': m['title'], 'boxart': m['boxart'], 'system_name': m['system_name'], 'reason': 'Similar genre on same system'})
