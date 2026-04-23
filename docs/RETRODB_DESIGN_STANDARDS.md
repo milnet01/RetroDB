@@ -1225,5 +1225,73 @@ see §17 for the full list.
 
 ---
 
-*Document Version: 2.4.0*
-*Last Updated: 2026-04-21*
+## 25. Schema Migrations
+
+Schema and one-shot data changes go through the versioned migration runner
+in `services/migrations/__init__.py`, driven by SQLite's `PRAGMA
+user_version`. Every migration is run at most once per install.
+
+### 25.1 Authoring a migration
+
+1. Create `services/migrations/scripts/NNN_short_description.py` where
+   `NNN` is the next zero-padded number (currently `004_…` is next).
+2. The module must expose a single function:
+   ```python
+   def apply(conn):
+       cursor = conn.cursor()
+       cursor.execute("ALTER TABLE games ADD COLUMN ...")
+   ```
+   `conn` is a raw `sqlite3.Connection`. Don't open or close it; don't
+   commit (the runner owns the transaction).
+3. Append the module's stem to `MIGRATIONS` in
+   `services/migrations/__init__.py`. The 1-indexed position becomes the
+   `user_version` the DB advances to after the migration runs.
+
+### 25.2 Idempotency
+
+Every migration must be safely re-runnable on a database that already
+carries the change — pre-versioned installs may have been built up by the
+old `_migrate_*` pattern and now sit at `user_version = 0` with the
+schema already in its post-migration state.
+
+- Tables: `CREATE TABLE IF NOT EXISTS`.
+- Columns: wrap `ALTER TABLE ADD COLUMN` in `try / except
+  sqlite3.OperationalError: pass` (SQLite has no `ADD COLUMN IF NOT
+  EXISTS`).
+- Indexes: `CREATE INDEX IF NOT EXISTS`.
+- Data updates: write `WHERE` clauses that no-op on already-converted
+  rows (e.g. `WHERE pegi_rating = '12'` rather than blind `UPDATE …`).
+
+### 25.3 Append-only invariant
+
+Once a migration ships in a tagged release, it is frozen:
+
+- **Never edit the body** of a shipped migration. Production DBs have
+  already run it; edits will not retroactively apply.
+- **Never reorder or delete** entries in `MIGRATIONS`. The list index is
+  the version number. Reordering would advance some DBs into an
+  inconsistent state on next startup.
+- Schema typos and bugs are corrected by **adding a new migration** that
+  fixes them.
+
+### 25.4 Transactions and failure handling
+
+Each migration runs inside its own `BEGIN`/`COMMIT` along with the
+matching `PRAGMA user_version = N`. If a migration raises, the runner
+calls `ROLLBACK` so the DB stays at the previous version with no partial
+DDL. The exception bubbles up so the caller (and any service-management
+layer like systemd) sees the failure.
+
+### 25.5 Testing
+
+`tests/test_migrations.py` covers fresh installs, legacy installs, the
+no-op fast-path, rollback on failure, and the
+"DB-newer-than-build" guard. New migrations don't typically need
+dedicated tests — but data migrations with non-trivial transformations
+(e.g. genre normalization) should add a regression check that exercises
+the rewrite logic against representative fixtures.
+
+---
+
+*Document Version: 2.5.0*
+*Last Updated: 2026-04-23*

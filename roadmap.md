@@ -252,6 +252,26 @@ change forces a different sequence.
       check so the bare `except` no longer hides "table doesn't exist"
       alongside legitimate "column already exists" suppression. Stopgap
       until Pass 20 (PRAGMA user_version migrations). (v2.90.0)
+- [x] **Pass 20 — Versioned schema migrations (complete)** — Both
+  sub-items landed; the `_migrate_*` + try/except idempotent-DDL pattern
+  that 19.8 stopgapped is now retired entirely.
+    - **20.1** `services/migrations/` framework. `apply_pending(conn)`
+      reads `PRAGMA user_version`, runs every migration whose version
+      exceeds it (each in its own `BEGIN`/`COMMIT` paired with the
+      matching `PRAGMA user_version = N`), rolls back on failure so the
+      DB never lands at a half-applied version, and refuses to run when
+      the DB is ahead of the build (catches downgrades). Three migrations
+      seeded: `001_baseline.py` (full pre-Pass-20 schema, idempotent for
+      legacy installs), `002_normalize_genres.py`, `003_normalize_pegi.py`.
+      `services/database_init.py` collapsed 647 → ~115 lines.
+      `ensure_user_tables()` kept separate (default-admin INSERT is a
+      runtime bootstrap concern). 8 tests in `tests/test_migrations.py`;
+      live install on this dev machine migrated 0 → 3 cleanly with
+      integrity_check `ok` and 5,504 games intact. (v2.91.0)
+    - **20.2** Standards doc §25 added: file naming, the `apply(conn)`
+      contract, idempotency rules with worked examples, the append-only
+      invariant, transaction semantics, and pointer to the test file.
+      Standards bumped to v2.5.0. (v2.91.0)
 - [x] **Pass 23 — Correctness bugfixes (2026-04-23 multi-agent review)** —
   Eight runtime bugs fixed; 250 tests pass (was 244); 6 new regression
   tests in `tests/test_hybrid_scraper.py`. Landed as v2.88.1.
@@ -1684,7 +1704,27 @@ pipeline yields real wins.
   data migrations that need Python). New migration = new file + array
   entry.
 - **Source**: <https://eskerda.com/sqlite-schema-migrations-python/>
-- **Status**: todo
+- **Status**: done (v2.91.0) — `services/migrations/__init__.py` exposes
+  `apply_pending(conn)`, `current_version(conn)`, `latest_version()`.
+  Migrations live in `services/migrations/scripts/NNN_description.py`,
+  each exposing `apply(conn)`. Three migrations seeded:
+  `001_baseline.py` (full pre-Pass-20 schema, idempotent so legacy
+  installs at `user_version=0` advance cleanly), `002_normalize_genres.py`
+  (port of `_migrate_genre_canonical`), `003_normalize_pegi.py` (port of
+  `_migrate_pegi_format`). `services/database_init.py` collapsed
+  647 → ~115 lines and is now a thin wrapper around the runner. Each
+  migration runs in its own `BEGIN` / `COMMIT` paired with the matching
+  `PRAGMA user_version = N`, rolling back on failure so the DB never
+  lands at a half-applied version. Refuses to run when the DB's
+  `user_version` is ahead of the build (catches downgrades). 8 tests in
+  `tests/test_migrations.py` cover fresh install, legacy install
+  (pre-seeded schema + old genre/PEGI values), no-op fast path, rollback
+  on failure (load-bearing — pins the no-half-applied guarantee), DB
+  ahead of build refuses, baseline runs twice without error.
+  `ensure_user_tables()` kept separate (default-admin INSERT is a runtime
+  bootstrap concern, not a schema concern). Live install on this dev
+  machine migrated 0 → 3 cleanly; integrity_check reports `ok`; 5,504
+  games intact.
 
 ### 20.2 Document migration authoring in standards doc (LOW, S)
 
@@ -1695,7 +1735,14 @@ pipeline yields real wins.
 - **Plan**: short section covering filename format (`NNN_description.sql`),
   idempotency rules, and the "migrations are append-only once shipped"
   invariant.
-- **Status**: todo (follows 20.1)
+- **Status**: done (v2.91.0) — `docs/RETRODB_DESIGN_STANDARDS.md` §25
+  added: file naming (`NNN_short_description.py`), the `apply(conn)`
+  contract (no commit, no connection management — runner owns the
+  transaction), idempotency rules with worked examples per object type,
+  the append-only invariant (never edit, reorder, or delete a shipped
+  migration — bugs are fixed by adding a new one), transaction /
+  rollback semantics, and a pointer to `tests/test_migrations.py` for
+  the regression contract. Standards doc bumped to v2.5.0.
 
 ---
 

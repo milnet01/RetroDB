@@ -1,3 +1,26 @@
+- version: 2.91.0
+  date: 2026-04-23
+  tags:
+  - type: refactor
+    label: Migrations
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 20 complete &mdash; versioned schema migrations via <code>PRAGMA user_version</code></strong>. The pre-existing <code>services/database_init.py</code> grew migrations by accretion: every schema change added another <code>_migrate_*()</code> function or another <code>ALTER TABLE</code> wrapped in <code>try / except sqlite3.OperationalError: pass</code>, and every one of those ran unconditionally on every app start. On a long-lived install the startup cost grew linearly with the migration history, there was no audit trail of which migrations had run, and 19.8 had to add an existence-guard stopgap because some ALTERs were trying to mutate tables that didn't exist yet. Pass 20 retires that pattern.</li>
+
+        <li><strong>20.1 &mdash; new framework at <code>services/migrations/</code></strong>. <code>services/migrations/__init__.py</code> exposes <code>apply_pending(conn)</code>; <code>services/migrations/scripts/NNN_description.py</code> holds individual migration modules each exposing a single <code>apply(conn)</code> function. The 1-indexed position in the <code>MIGRATIONS</code> list is the <code>user_version</code> the DB advances to after the migration runs. <code>apply_pending</code> reads <code>PRAGMA user_version</code>, runs every migration whose version exceeds it, wraps each in its own <code>BEGIN</code> / <code>COMMIT</code> alongside the matching <code>PRAGMA user_version = N</code>, and rolls back on failure so the DB never lands at a half-applied version. Refuses to run if the DB's <code>user_version</code> is ahead of the build (catches downgrades).</li>
+
+        <li><strong>Three migrations seeded</strong>. <code>001_baseline.py</code> snapshots the entire pre-Pass-20 schema in one idempotent module &mdash; every <code>CREATE TABLE IF NOT EXISTS</code>, every <code>ALTER TABLE ADD COLUMN</code> wrapped in the &quot;column already exists&quot; tolerance, every <code>CREATE INDEX IF NOT EXISTS</code>, plus the perspective and dimension dropdown seeds. Idempotent so legacy installs whose schema was built up by the old <code>_migrate_*</code> pattern can advance to <code>user_version=1</code> as a near-no-op without erroring on already-existing objects. <code>002_normalize_genres.py</code> ports the old <code>_migrate_genre_canonical</code> helper (FPS &rarr; First-Person-Shooter, Beat 'em Up &rarr; Beat-em-up, &hellip; 20 mappings). <code>003_normalize_pegi.py</code> ports <code>_migrate_pegi_format</code> (bare PEGI numbers like <code>'12'</code> &rarr; <code>'PEGI 12'</code> for the five PEGI tiers). Both data migrations re-run safely because the WHERE clauses no-op on already-converted rows.</li>
+
+        <li><strong><code>services/database_init.py</code> reduced 647 &rarr; ~115 lines</strong>. <code>init_database()</code> is now a thin wrapper that opens the DB, calls <code>apply_pending(conn)</code>, runs <code>PRAGMA optimize</code>, and closes. <code>ensure_user_tables()</code> stays separate &mdash; the default-admin INSERT is a runtime bootstrap concern, not a schema concern, and doesn't fit the append-only migration model.</li>
+
+        <li><strong>20.2 &mdash; standards documentation</strong>. <code>docs/RETRODB_DESIGN_STANDARDS.md</code> §25 added: file-naming convention, idempotency rules, the &quot;append-only once shipped&quot; invariant (never edit, never reorder, never delete a shipped migration &mdash; bugs are fixed by adding a new one), transaction semantics, and pointer to the test file for the regression contract.</li>
+
+        <li><strong>Live install verification</strong> &mdash; this dev machine's <code>data/retrodb.db</code> migrated cleanly from <code>user_version=0</code> to <code>user_version=3</code> on the first import after upgrade. <code>PRAGMA integrity_check</code> reports <code>ok</code>; the 5,504 games in the table are intact; all 27 schema tables present.</li>
+
+        <li><strong>New tests</strong> (8) &mdash; <code>tests/test_migrations.py</code>: fresh DB advances 0 &rarr; latest, legacy install (pre-seeded schema with old genre/PEGI values) finishes at latest <em>and</em> rewrites the legacy data, no-op fast path when up-to-date, failed migration rolls back DDL <em>and</em> leaves <code>user_version</code> untouched (the load-bearing test &mdash; pin the &quot;no half-applied state&quot; guarantee), DB ahead of build refuses, baseline can run twice without error, version helpers expose latest_version() and current_version(). Suite total now 289 (was 281).</li>
+
+        <li><strong>Roadmap status</strong> &mdash; Pass 20 closed; the <code>_migrate_*</code> + try/except idempotent-DDL pattern that 19.8 stopgapped is now retired entirely. Next architecturally significant work is Pass 21 (request-level caching &amp; ETags), which depends on Pass 20 because the ETag scheme hinges on every game write touching <code>updated_at</code> &mdash; any missing trigger / column can now be added as an auditable migration rather than another ad-hoc <code>_migrate_*</code> graft.</li>
+    </ul>
 - version: 2.90.0
   date: 2026-04-23
   tags:
