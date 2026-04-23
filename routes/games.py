@@ -192,6 +192,12 @@ def api_games_ids():
     if params.get('_unscraped'):
         ids_sql = ids_sql.replace("ORDER BY", "AND g.scraped = 0 ORDER BY")
 
+    # Pass 25.8 — sanity LIMIT. This endpoint feeds bulk-select ("select every
+    # filtered game on this page") so a 500-row cap would break a realistic
+    # library; we pick a ceiling (20 000) that's one order of magnitude past
+    # any plausible library size but still prevents a runaway response.
+    ids_sql += f" LIMIT {20 * int(getattr(config, 'MAX_LIST_ROWS', 500))}"
+
     rows = query(ids_sql, tuple(ids_vals))
     ids = [r['id'] for r in rows]
 
@@ -1068,7 +1074,12 @@ def api_track_view(game_id):
 def api_recently_viewed():
     """Get recently viewed games"""
     try:
-        limit = request.args.get('limit', 10, type=int)
+        # Pass 25.8 — clamp the user-trusted ?limit. `?limit=999999`
+        # otherwise flows straight into the SQL LIMIT clause and produces a
+        # multi-MB JSON blob plus the JOIN cost.
+        user_limit = request.args.get('limit', 10, type=int) or 10
+        max_rows = getattr(config, 'MAX_LIST_ROWS', 500)
+        limit = max(1, min(user_limit, max_rows))
         games = query("""
             SELECT g.*, s.name as system_name
             FROM games g
@@ -1118,6 +1129,10 @@ def api_filter_games():
     else:
         order_clause = "ORDER BY COALESCE(g.sort_title, g.title) COLLATE NOCASE"
 
+    # Pass 25.8 — hard row cap. Previously uncapped; a filter matching every
+    # genre on a 50 000-game library would ship every row in one response.
+    limit_clause = f"LIMIT {int(getattr(config, 'MAX_LIST_ROWS', 500))}"
+
     if filter_type == 'modes':
         if 'single' in filter_value.lower():
             games = query(f"""
@@ -1126,6 +1141,7 @@ def api_filter_games():
                 JOIN systems s ON g.system_id = s.id
                 WHERE g.{column} LIKE '%Single%' OR g.players = 1
                 {order_clause}
+                {limit_clause}
             """)
         elif 'multi' in filter_value.lower():
             games = query(f"""
@@ -1134,6 +1150,7 @@ def api_filter_games():
                 JOIN systems s ON g.system_id = s.id
                 WHERE g.{column} LIKE '%Multi%' OR g.players > 1
                 {order_clause}
+                {limit_clause}
             """)
         else:
             games = query(f"""
@@ -1142,6 +1159,7 @@ def api_filter_games():
                 JOIN systems s ON g.system_id = s.id
                 WHERE g.{column} LIKE ? ESCAPE '\\'
                 {order_clause}
+                {limit_clause}
             """, (f'%{escape_like(filter_value)}%',))
     else:
         games = query(f"""
@@ -1150,6 +1168,7 @@ def api_filter_games():
             JOIN systems s ON g.system_id = s.id
             WHERE g.{column} LIKE ? ESCAPE '\\'
             {order_clause}
+            {limit_clause}
         """, (f'%{escape_like(filter_value)}%',))
 
     result_games = []

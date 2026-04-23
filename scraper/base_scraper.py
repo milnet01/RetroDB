@@ -210,6 +210,15 @@ def download_image(url, dest_path, timeout=15):
     if dest_dir:
         os.makedirs(dest_dir, exist_ok=True)
 
+    # Pass 25.7 — streaming-download size cap. A malicious or misconfigured
+    # upstream could stream gigabytes into IMAGE_PATH; cap at 50 MB by
+    # default and delete the partial file on overflow so disk doesn't fill.
+    try:
+        import config as _config
+        max_bytes = getattr(_config, 'MAX_MEDIA_DOWNLOAD_BYTES', 50 * 1024 * 1024)
+    except Exception:
+        max_bytes = 50 * 1024 * 1024
+
     try:
         # stream=True so the whole response body isn't materialised in memory
         # before write; iter_content pipes directly to disk in 8 KB chunks.
@@ -217,9 +226,27 @@ def download_image(url, dest_path, timeout=15):
             if response.status_code != 200:
                 logger.warning(f"Image download failed: HTTP {response.status_code} - {url}")
                 return False
+            declared = int(response.headers.get('Content-Length', 0) or 0)
+            if declared and declared > max_bytes:
+                logger.warning(
+                    f"Image download rejected: {url} — declared {declared} bytes exceeds {max_bytes}"
+                )
+                return False
+            written = 0
             with open(dest_path, 'wb') as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     if chunk:
+                        written += len(chunk)
+                        if written > max_bytes:
+                            f.close()
+                            try:
+                                os.remove(dest_path)
+                            except OSError:
+                                pass
+                            logger.warning(
+                                f"Image download aborted: {url} exceeded {max_bytes} bytes"
+                            )
+                            return False
                         f.write(chunk)
         # Post-download: re-encode to match extension (so dest_path=*.webp →
         # on-disk WebP bytes), standardize size, generate responsive variants.

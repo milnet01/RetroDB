@@ -797,19 +797,57 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None, existing_boxa
             logger.debug(f"  No {media_type} found for: {rom_name_no_ext}")
             return None
         
-        # Helper function to resolve ES-DE media paths from gamelist.xml
+        # Helper function to resolve ES-DE media paths from gamelist.xml.
+        #
+        # Pass 25.1 — path-traversal guard. Earlier versions accepted any
+        # absolute `/`-prefixed path verbatim, so a crafted gamelist.xml
+        # entry `<image>/etc/passwd</image>` would happily return that path
+        # and the outer `copy_media()` would then `shutil.copy2` it into
+        # `IMAGE_PATH`. We now verify the resolved path sits under an
+        # allowlist of known ES-DE / ROM roots via `os.path.commonpath`,
+        # which handles `..` segments and symlinks-as-components correctly.
+        def _allowed_esde_roots():
+            roots = []
+            for p in (gamelist_dir, esde_base, downloaded_media_base,
+                      _get_esde_media_path(), _get_rom_path()):
+                if p:
+                    try:
+                        roots.append(os.path.realpath(p))
+                    except OSError:
+                        continue
+            return roots
+
+        def _within_allowed_root(candidate):
+            try:
+                resolved = os.path.realpath(candidate)
+            except OSError:
+                return False
+            for root in _allowed_esde_roots():
+                try:
+                    if os.path.commonpath([resolved, root]) == root:
+                        return True
+                except ValueError:
+                    # commonpath raises when paths are on different drives
+                    # (Windows) or one is relative — skip, not a match.
+                    continue
+            return False
+
         def resolve_media_path(media_path):
             if not media_path:
                 return None
-            
+
             if media_path.startswith('/'):
-                if os.path.exists(media_path):
+                if os.path.exists(media_path) and _within_allowed_root(media_path):
                     return media_path
+                if os.path.exists(media_path):
+                    logger.warning(
+                        f"  Rejected ES-DE media path outside allowed roots: {media_path}"
+                    )
                 return None
-            
+
             if media_path.startswith('./') or media_path.startswith('~'):
                 media_path = media_path.lstrip('./')
-            
+
             # Try relative to gamelist directory
             possible_bases = []
             if gamelist_dir:
@@ -818,13 +856,13 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None, existing_boxa
                 possible_bases.append(os.path.join(esde_base, 'downloaded_media', system_folder))
                 possible_bases.append(esde_base)
             possible_bases.append(os.path.join(_get_rom_path(), system_folder))
-            
+
             for base in possible_bases:
                 full_path = os.path.join(base, media_path)
-                if os.path.exists(full_path):
+                if os.path.exists(full_path) and _within_allowed_root(full_path):
                     logger.info(f"  Found media at: {full_path}")
                     return full_path
-            
+
             return None
         
         # Helper function to copy media file

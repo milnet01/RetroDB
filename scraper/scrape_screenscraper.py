@@ -740,12 +740,44 @@ def get_localized_text(items, text_key="text", lang_key=None, region_key=None):
 
 
 def download_media(url, dest_path, timeout=60):
-    """Download media file from ScreenScraper"""
+    """Download media file from ScreenScraper.
+
+    Pass 25.7 — cap at MAX_MEDIA_DOWNLOAD_BYTES (default 50 MB). Deletes the
+    partial file on overflow so disk can't be exhausted by a misconfigured
+    or malicious upstream.
+    """
     try:
-        response = requests.get(url, timeout=timeout, stream=True)
-        if response.status_code == 200:
+        import config as _config
+        max_bytes = getattr(_config, 'MAX_MEDIA_DOWNLOAD_BYTES', 50 * 1024 * 1024)
+    except Exception:
+        max_bytes = 50 * 1024 * 1024
+
+    try:
+        with requests.get(url, timeout=timeout, stream=True) as response:
+            if response.status_code != 200:
+                return False
+            declared = int(response.headers.get('Content-Length', 0) or 0)
+            if declared and declared > max_bytes:
+                logger.warning(
+                    f"ScreenScraper media rejected: declared {declared} bytes exceeds {max_bytes}"
+                )
+                return False
+            written = 0
             with open(dest_path, 'wb') as f:
                 for chunk in response.iter_content(chunk_size=8192):
+                    if not chunk:
+                        continue
+                    written += len(chunk)
+                    if written > max_bytes:
+                        f.close()
+                        try:
+                            os.remove(dest_path)
+                        except OSError:
+                            pass
+                        logger.warning(
+                            f"ScreenScraper media aborted: exceeded {max_bytes} bytes"
+                        )
+                        return False
                     f.write(chunk)
             return True
     except Exception as e:
@@ -925,14 +957,45 @@ def _ss_request_with_retry(url, params, timeout=60, retries=2):
 
     Retries on timeouts, 429/430 (rate limit), and 5xx (server errors)
     with exponential backoff.  Returns the Response object or None.
+
+    Pass 25.7 — enforce MAX_API_RESPONSE_BYTES (default 10 MB) on successful
+    responses. A giant SS JSON body would OOM the worker during `.json()`
+    parse; bail before Python has to allocate the decode buffer.
     """
     import time as _time
 
+    try:
+        import config as _config
+        max_bytes = getattr(_config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
+    except Exception:
+        max_bytes = 10 * 1024 * 1024
+
     for attempt in range(retries + 1):
         try:
-            response = requests.get(url, params=params, timeout=timeout)
+            response = requests.get(url, params=params, timeout=timeout, stream=True)
 
             if response.status_code == 200:
+                declared = int(response.headers.get('Content-Length', 0) or 0)
+                if declared and declared > max_bytes:
+                    logger.warning(
+                        f"ScreenScraper response too large ({declared} > {max_bytes}) — skipping"
+                    )
+                    return None
+                # Force full body read under the cap so downstream .json()
+                # gets a bounded payload. Abort as soon as we exceed max_bytes
+                # rather than letting requests buffer the whole body.
+                buf = bytearray()
+                for chunk in response.iter_content(chunk_size=64 * 1024):
+                    if not chunk:
+                        continue
+                    buf.extend(chunk)
+                    if len(buf) > max_bytes:
+                        logger.warning(
+                            f"ScreenScraper response exceeded {max_bytes} bytes mid-stream — discarding"
+                        )
+                        return None
+                # Re-inject the bounded body so callers can still use .json()/.text.
+                response._content = bytes(buf)
                 return response
             elif response.status_code in (429, 430):
                 if attempt < retries:

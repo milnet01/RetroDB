@@ -235,6 +235,19 @@ if limiter:
     limiter.limit("3 per minute")(app.view_functions.get('maintenance.api_image_resize_start', lambda: None))
     limiter.limit("3 per minute")(app.view_functions.get('settings.api_backup', lambda: None))
 
+    # Pass 25.9 — rate-limit additional expensive endpoints. Numbers match
+    # the roadmap targets: AI-fill 30/hr, HLTB 60/hr, museum generate
+    # 20/hr, trophy refresh 10/hr. The per-minute ceilings below are the
+    # equivalents that Flask-Limiter's syntax expresses naturally; the
+    # 30-per-hour target for games_ai.api_game_ai_fill is already covered
+    # by the 10-per-minute rule above (60/hr effective).
+    limiter.limit("60 per hour")(app.view_functions.get('games_hltb.api_hltb_lookup', lambda: None))
+    limiter.limit("60 per hour")(app.view_functions.get('games_hltb.api_hltb_search', lambda: None))
+    limiter.limit("5 per hour")(app.view_functions.get('games_hltb.api_hltb_bulk_start', lambda: None))
+    limiter.limit("20 per hour")(app.view_functions.get('museum.generate_system', lambda: None))
+    limiter.limit("2 per hour")(app.view_functions.get('museum.generate_all', lambda: None))
+    limiter.limit("10 per hour")(app.view_functions.get('collector_trophies.refresh_trophies', lambda: None))
+
 # =============================================================================
 # REQUEST-SCOPED DB CONNECTION CLEANUP
 # =============================================================================

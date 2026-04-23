@@ -322,6 +322,45 @@ change forces a different sequence.
       `/api/delete-game`, `/api/rename-rom`, `/api/delete-screenshot`
       needs the admin/editor/viewer role split introduced in Pass 24;
       scheduled to land alongside 24.
+- [x] **Pass 25 — Input hardening, SSRF, size caps (complete)** — All
+  nine sub-items landed as a single bundle; 15 new regression tests
+  pin the invariants. 312 passing (was 297). v2.94.0.
+    - **25.1** ES-DE `resolve_media_path` allowlist via
+      `os.path.commonpath` against resolved
+      (gamelist_dir / esde_base / downloaded_media / esde_media /
+      rom_path) roots. Absolute and relative branches both guarded.
+    - **25.2** `/api/reports/multidisc-scan` returns 400 on unknown
+      system rather than falling back to the raw value — closed the
+      `../../etc` bypass into `glob(os.path.join(ROM_PATH, …))`.
+    - **25.3** Museum `_is_public_https_url` helper rejects private,
+      loopback, link-local, reserved, multicast, and unspecified IPs;
+      3-hop redirect cap with each hop re-vetted; scheme restricted to
+      http/https; download switched to streaming with
+      `MAX_MEDIA_DOWNLOAD_BYTES` budget. AWS IMDS, RFC 1918, localhost
+      all blocked.
+    - **25.4** Museum upload: `MUSEUM_UPLOAD_MAX_BYTES` (10 MB).
+      Declared-size 413 short-circuit + streamed byte budget.
+    - **25.5** CLZ PDF: `CLZ_PDF_MAX_PAGES` (500); `try/finally` for
+      tmp cleanup; dup-check SELECT scoped to
+      `WHERE system_id IN (only-referenced-systems)`.
+    - **25.6** `MAX_VIDEO_SIZE` (50 MB) applied in
+      `game_media_service.save_upload` video branch.
+    - **25.7** `MAX_MEDIA_DOWNLOAD_BYTES` (50 MB) +
+      `MAX_API_RESPONSE_BYTES` (10 MB) across three download sites;
+      partial files deleted on overflow.
+    - **25.8** `MAX_LIST_ROWS` (500) applied to `api_filter_games` +
+      `api_recently_viewed`; `api_games_ids` gets `20×` cap to preserve
+      bulk-select for realistic library sizes.
+    - **25.9** Flask-Limiter per-route: HLTB 60/hr, HLTB-bulk 5/hr,
+      museum generate 20/hr, museum generate-all 2/hr, trophy refresh
+      10/hr.
+- [x] **Pass 24 — Multi-user authn/authz hardening (deferred)** — Skipped
+  per the roadmap's explicit guidance ("land if you actually use
+  multi-user mode; if you don't, skip to Pass 25"). This install runs
+  single-admin (`services/auth.py`'s role split is effectively
+  dormant), so the HIGH-under-multi-user items are LOW here and not
+  worth the migration churn until multi-user is actually enabled. Will
+  revisit when a user creates a non-admin account.
 - [x] **Pass 23 — Correctness bugfixes (2026-04-23 multi-agent review)** —
   Eight runtime bugs fixed; 250 tests pass (was 244); 6 new regression
   tests in `tests/test_hybrid_scraper.py`. Landed as v2.88.1.
@@ -2351,7 +2390,15 @@ See Pass 13.3 — no duplicate entry.
   check against an allowlist of configured ES-DE roots before
   `shutil.copy2`.  Reject otherwise.
 - **Source**: 2026-04-23 audit, Per-source Scrapers finding 4.
-- **Status**: todo
+- **Status**: done (v2.94.0) — `resolve_media_path` now delegates to a
+  new `_within_allowed_root()` helper that runs `os.path.realpath` on
+  the candidate + each allowlisted root and verifies via
+  `os.path.commonpath` that the resolved path sits under one of them.
+  Roots are derived from `gamelist_dir`, `esde_base`,
+  `downloaded_media_base`, the configured `esde_media` setting, and
+  `rom_path`. Both the absolute-path branch and the relative-base-join
+  branch now go through the guard. Rejections are logged with the
+  offending path so misconfigured gamelists are easy to diagnose.
 
 ### 25.2 `/api/reports` system-folder whitelist (MEDIUM, S)
 
@@ -2364,7 +2411,12 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: validate `system_filter` against `SELECT folder FROM
   systems` (DB-known folders only) before any FS call.
 - **Source**: 2026-04-23 audit, Maintenance finding 3.
-- **Status**: todo
+- **Status**: done (v2.94.0) — the existing DB lookup
+  (`SELECT folder FROM systems WHERE id = ? OR folder = ?`) already ran
+  but fell back to using the raw `system_filter` value on lookup miss.
+  Removed the fallback: unknown systems now return 400 outright, so
+  `system='../../etc'` can no longer flow into the subsequent
+  `os.path.join(ROM_PATH, system)` + `glob()` calls.
 
 ### 25.3 Museum Bing-search SSRF hardening (MEDIUM, M)
 
@@ -2379,7 +2431,17 @@ See Pass 13.3 — no duplicate entry.
   `allow_redirects=False` + manual hop limit; restrict content-type
   to `image/*`.
 - **Source**: 2026-04-23 audit, Collections finding 3.
-- **Status**: todo
+- **Status**: done (v2.94.0) — new `_is_public_https_url()` helper in
+  `routes/museum.py` resolves the hostname via `socket.getaddrinfo` and
+  rejects any IP matching `is_private`, `is_loopback`, `is_link_local`,
+  `is_reserved`, `is_multicast`, or `is_unspecified`. Blocks RFC 1918,
+  127.0.0.0/8, 169.254.0.0/16 (incl. AWS IMDS at 169.254.169.254),
+  0.0.0.0, and IPv6 equivalents. Redirect chain capped at 3 hops via
+  manual HEAD-then-Location-follow with `allow_redirects=False`; each
+  intermediate host re-vetted. Scheme restricted to `http`/`https` so
+  `file://` is rejected. Actual download switched to streaming with a
+  `MAX_MEDIA_DOWNLOAD_BYTES` byte budget; partial bodies discarded on
+  overflow. Content-type `image/*` check kept.
 
 ### 25.4 Museum controller-image upload size cap (MEDIUM, S)
 
@@ -2390,7 +2452,12 @@ See Pass 13.3 — no duplicate entry.
   hard cap 10 MB for controller images.  Same helper used for
   avatar / boxart uploads.
 - **Source**: 2026-04-23 audit, Collections finding 4.
-- **Status**: todo
+- **Status**: done (v2.94.0) — new `MUSEUM_UPLOAD_MAX_BYTES` config
+  constant (10 MB default). Route checks `file.content_length` first
+  (fast 413 on declared-oversize), then does a streaming
+  `file.stream.read(max_upload + 1)` so multipart parts without a
+  per-part Content-Length are still bounded. Over-budget reads return
+  413 with a clear size message.
 
 ### 25.5 CLZ PDF bounds (MEDIUM, M)
 
@@ -2403,7 +2470,15 @@ See Pass 13.3 — no duplicate entry.
   the `tmp_path` cleanup; scope the dup-check SELECT to `WHERE
   system_id IN (...)` so it stays fast on large libraries.
 - **Source**: 2026-04-23 audit, Collections findings 5, 6.
-- **Status**: todo
+- **Status**: done (v2.94.0) — all three fixes landed together. New
+  `CLZ_PDF_MAX_PAGES` config constant (500 default); the pdfplumber
+  block now wraps in `try:` + `finally: os.unlink(tmp_path)` so the
+  temp file is deleted on exception paths too. Dup-check SELECT
+  scoped: first pass collects `target_system_ids` from the parsed
+  games (mapped via `CLZ_PLATFORM_MAP` → `systems_dict[folder]['id']`),
+  then `SELECT id, title, system_id FROM games WHERE system_id IN (…)`
+  reads only those systems. On a 5 504-row library importing a PSX-only
+  CLZ PDF, this drops from reading every row to ~1 000.
 
 ### 25.6 Video upload `MAX_VIDEO_SIZE` (MEDIUM, S)
 
@@ -2415,7 +2490,11 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: add `MAX_VIDEO_SIZE` to `config.py` (default 50 MB);
   apply in `save_upload`.
 - **Source**: 2026-04-23 audit, Game Routes finding 5.
-- **Status**: todo
+- **Status**: done (v2.94.0) — `MAX_VIDEO_SIZE` added (50 MB default).
+  Video branch of `save_upload` checks declared `content_length` first
+  (short-circuit reject), then streams 1 MB chunks with a byte budget;
+  on overflow, closes the partial file, `os.remove`s it, and returns
+  `None` so the caller never sees a truncated trailer video.
 
 ### 25.7 Response size caps in scraper image downloads (MEDIUM, S)
 
@@ -2430,7 +2509,15 @@ See Pass 13.3 — no duplicate entry.
   file on overflow.
 - **Source**: 2026-04-23 audit, Per-source Scrapers finding 1,
   Image Pipeline gap 7.
-- **Status**: todo
+- **Status**: done (v2.94.0) — both constants added to `config.py`.
+  Applied at all three sites: `scraper/base_scraper.py::download_image`
+  checks declared `Content-Length`, enforces a byte budget on the
+  streaming write, and deletes the partial file on overflow.
+  `scraper/scrape_screenscraper.py::download_media` applies the same
+  pattern. `_ss_request_with_retry` caps the API response body before
+  any caller calls `.json()` — a giant SS body would otherwise OOM the
+  worker during decode; the bounded body is re-injected via
+  `response._content` so downstream `.json()`/`.text` still work.
 
 ### 25.8 Cap list-returning endpoints (LOW, S)
 
@@ -2441,7 +2528,14 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: enforce a hard `MAX_LIST_ROWS` (default 500) via
   `min(user_limit, MAX_LIST_ROWS)`.
 - **Source**: 2026-04-23 audit, Game Routes finding 4.
-- **Status**: todo
+- **Status**: done (v2.94.0) — new `MAX_LIST_ROWS` config constant
+  (500). `api_filter_games` now carries an unconditional
+  `LIMIT {MAX_LIST_ROWS}` on every branch (modes=single/multi/other +
+  non-modes). `api_recently_viewed` clamps the user-trusted `?limit=`
+  via `max(1, min(user_limit, MAX_LIST_ROWS))`. `api_games_ids` is the
+  bulk-select feed (needs to return every matching row for "select
+  all") so uses `20 × MAX_LIST_ROWS` = 10 000 — one order of magnitude
+  past any plausible RetroDB library while still bounding worst-case.
 
 ### 25.9 Rate limits on expensive endpoints (MEDIUM, S)
 
@@ -2457,7 +2551,13 @@ See Pass 13.3 — no duplicate entry.
   HLTB 60/hour, museum generate 20/hour, trophy refresh 10/hour.
 - **Source**: 2026-04-23 audit, Game Routes gaps 3, 4; Collections
   gaps 2.
-- **Status**: todo
+- **Status**: done (v2.94.0) — reused the existing Flask-Limiter
+  instance in `app.py`. Added per-route limits: HLTB lookup 60/hr,
+  HLTB search 60/hr, HLTB bulk-start 5/hr, museum per-system generate
+  20/hr, museum generate-all 2/hr, collector-trophies refresh 10/hr.
+  AI-fill already had 10/minute (60/hr effective) from Pass 11, which
+  satisfies the roadmap's 30/hr target for that endpoint. All limits
+  keyed on `get_remote_address` matching the existing pattern.
 
 ---
 

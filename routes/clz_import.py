@@ -278,100 +278,114 @@ def api_clz_parse():
 
     games = []
 
-    with pdfplumber.open(tmp_path) as pdf:
-        # Store column mapping from first page (subsequent pages may not have headers)
-        persistent_col_map = None
+    # Pass 25.5 — page-count ceiling + unconditional tmp cleanup. A
+    # pathological 10 000-page PDF would block a worker for minutes
+    # otherwise; the prior `os.unlink(tmp_path)` below only ran on the
+    # success path so any pdfplumber exception leaked the temp file.
+    max_pages = getattr(config, 'CLZ_PDF_MAX_PAGES', 500)
+    try:
+        with pdfplumber.open(tmp_path) as pdf:
+            if len(pdf.pages) > max_pages:
+                return error(
+                    f'PDF has {len(pdf.pages)} pages; maximum is {max_pages}.',
+                    code=400,
+                )
+            # Store column mapping from first page (subsequent pages may not have headers)
+            persistent_col_map = None
 
-        for page_num, page in enumerate(pdf.pages):
-            # Extract tables from the page
-            tables = page.extract_tables()
+            for page_num, page in enumerate(pdf.pages):
+                # Extract tables from the page
+                tables = page.extract_tables()
 
-            for table in tables:
-                if not table:
-                    continue
-
-                # Find header row (only on pages that have one)
-                header_row = None
-                for i, row in enumerate(table):
-                    if row and any('Platform' in str(cell) for cell in row if cell):
-                        header_row = i
-                        break
-
-                # Determine column mapping
-                if header_row is not None:
-                    # This page has headers - parse them
-                    headers = [str(h).strip().lower() if h else '' for h in table[header_row]]
-
-                    col_map = {}
-                    for i, h in enumerate(headers):
-                        if 'platform' in h:
-                            col_map['platform'] = i
-                        elif 'title' in h:
-                            col_map['title'] = i
-                        elif 'release' in h:
-                            col_map['release'] = i
-                        elif 'publisher' in h:
-                            col_map['publisher'] = i
-                        elif 'developer' in h:
-                            col_map['developer'] = i
-                        elif 'genre' in h:
-                            col_map['genre'] = i
-
-                    if 'title' not in col_map:
+                for table in tables:
+                    if not table:
                         continue
 
-                    # Save for subsequent pages
-                    persistent_col_map = col_map
-                    data_start_row = header_row + 1
-                else:
-                    # No header row - use mapping from previous page
-                    if persistent_col_map is None:
-                        continue  # Can't process without knowing columns
-                    col_map = persistent_col_map
-                    data_start_row = 0  # Data starts at first row
+                    # Find header row (only on pages that have one)
+                    header_row = None
+                    for i, row in enumerate(table):
+                        if row and any('Platform' in str(cell) for cell in row if cell):
+                            header_row = i
+                            break
 
-                # Parse data rows
-                for row in table[data_start_row:]:
-                    if not row or len(row) <= max(col_map.values()):
-                        continue
+                    # Determine column mapping
+                    if header_row is not None:
+                        # This page has headers - parse them
+                        headers = [str(h).strip().lower() if h else '' for h in table[header_row]]
 
-                    title = str(row[col_map['title']]).strip() if col_map.get('title') is not None and row[col_map['title']] else ''
-                    if not title or title.lower() in ('title', '', 'none'):
-                        continue
+                        col_map = {}
+                        for i, h in enumerate(headers):
+                            if 'platform' in h:
+                                col_map['platform'] = i
+                            elif 'title' in h:
+                                col_map['title'] = i
+                            elif 'release' in h:
+                                col_map['release'] = i
+                            elif 'publisher' in h:
+                                col_map['publisher'] = i
+                            elif 'developer' in h:
+                                col_map['developer'] = i
+                            elif 'genre' in h:
+                                col_map['genre'] = i
 
-                    platform = str(row[col_map.get('platform', 0)]).strip() if col_map.get('platform') is not None and row[col_map.get('platform', 0)] else ''
-                    release = str(row[col_map.get('release', -1)]).strip() if col_map.get('release') is not None and col_map['release'] < len(row) and row[col_map['release']] else ''
-                    publisher = str(row[col_map.get('publisher', -1)]).strip() if col_map.get('publisher') is not None and col_map['publisher'] < len(row) and row[col_map['publisher']] else ''
-                    developer = str(row[col_map.get('developer', -1)]).strip() if col_map.get('developer') is not None and col_map['developer'] < len(row) and row[col_map['developer']] else ''
-                    genre = str(row[col_map.get('genre', -1)]).strip() if col_map.get('genre') is not None and col_map['genre'] < len(row) and row[col_map['genre']] else ''
+                        if 'title' not in col_map:
+                            continue
 
-                    # Clean up extracted text - replace newlines/tabs with spaces, normalize whitespace
-                    title = re.sub(r'[\n\r\t]+', ' ', title).strip()
-                    title = re.sub(r'\s+', ' ', title)
-                    platform = re.sub(r'[\n\r\t]+', ' ', platform).strip()
-                    platform = re.sub(r'\s+', ' ', platform)
-                    release = re.sub(r'[\n\r\t]+', ' ', release).strip()
-                    publisher = re.sub(r'[\n\r\t]+', ' ', publisher).strip()
-                    developer = re.sub(r'[\n\r\t]+', ' ', developer).strip()
-                    genre = re.sub(r'[\n\r\t]+', ' ', genre).strip()
+                        # Save for subsequent pages
+                        persistent_col_map = col_map
+                        data_start_row = header_row + 1
+                    else:
+                        # No header row - use mapping from previous page
+                        if persistent_col_map is None:
+                            continue  # Can't process without knowing columns
+                        col_map = persistent_col_map
+                        data_start_row = 0  # Data starts at first row
 
-                    # Clean up None strings
-                    if release == 'None': release = ''
-                    if publisher == 'None': publisher = ''
-                    if developer == 'None': developer = ''
-                    if genre == 'None': genre = ''
+                    # Parse data rows
+                    for row in table[data_start_row:]:
+                        if not row or len(row) <= max(col_map.values()):
+                            continue
 
-                    games.append({
-                        'title': title,
-                        'clz_platform': platform,
-                        'release_date': release,
-                        'publisher': publisher,
-                        'developer': developer,
-                        'genre': genre
-                    })
+                        title = str(row[col_map['title']]).strip() if col_map.get('title') is not None and row[col_map['title']] else ''
+                        if not title or title.lower() in ('title', '', 'none'):
+                            continue
 
-    # Clean up temp file
-    os.unlink(tmp_path)
+                        platform = str(row[col_map.get('platform', 0)]).strip() if col_map.get('platform') is not None and row[col_map.get('platform', 0)] else ''
+                        release = str(row[col_map.get('release', -1)]).strip() if col_map.get('release') is not None and col_map['release'] < len(row) and row[col_map['release']] else ''
+                        publisher = str(row[col_map.get('publisher', -1)]).strip() if col_map.get('publisher') is not None and col_map['publisher'] < len(row) and row[col_map['publisher']] else ''
+                        developer = str(row[col_map.get('developer', -1)]).strip() if col_map.get('developer') is not None and col_map['developer'] < len(row) and row[col_map['developer']] else ''
+                        genre = str(row[col_map.get('genre', -1)]).strip() if col_map.get('genre') is not None and col_map['genre'] < len(row) and row[col_map['genre']] else ''
+
+                        # Clean up extracted text - replace newlines/tabs with spaces, normalize whitespace
+                        title = re.sub(r'[\n\r\t]+', ' ', title).strip()
+                        title = re.sub(r'\s+', ' ', title)
+                        platform = re.sub(r'[\n\r\t]+', ' ', platform).strip()
+                        platform = re.sub(r'\s+', ' ', platform)
+                        release = re.sub(r'[\n\r\t]+', ' ', release).strip()
+                        publisher = re.sub(r'[\n\r\t]+', ' ', publisher).strip()
+                        developer = re.sub(r'[\n\r\t]+', ' ', developer).strip()
+                        genre = re.sub(r'[\n\r\t]+', ' ', genre).strip()
+
+                        # Clean up None strings
+                        if release == 'None': release = ''
+                        if publisher == 'None': publisher = ''
+                        if developer == 'None': developer = ''
+                        if genre == 'None': genre = ''
+
+                        games.append({
+                            'title': title,
+                            'clz_platform': platform,
+                            'release_date': release,
+                            'publisher': publisher,
+                            'developer': developer,
+                            'genre': genre
+                        })
+    finally:
+        # Always clean up the temp file, even if pdfplumber raised.
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
 
     # -----------------------------------------------------------------
     # Merge rows split across PDF page boundaries
@@ -443,11 +457,28 @@ def api_clz_parse():
     # Log available systems for debugging
     logger.info(f"CLZ Import: Available system folders: {sorted(systems_dict.keys())}")
 
-    # Get existing games for duplicate detection (normalized for fuzzy matching)
+    # Get existing games for duplicate detection (normalized for fuzzy matching).
+    # Pass 25.5 — scope the SELECT to only the systems this import actually
+    # references. On a 5 000+ game library importing a 50-game CLZ export of
+    # just PSX + PS2, this reads ~1 000 rows instead of the whole table.
+    target_system_ids = set()
+    for game in games:
+        platform_lower = game['clz_platform'].lower().strip()
+        matched_folder = CLZ_PLATFORM_MAP.get(platform_lower)
+        if matched_folder and matched_folder in systems_dict:
+            target_system_ids.add(systems_dict[matched_folder]['id'])
+
     existing_games = {}
-    for game in query("SELECT id, title, system_id FROM games"):
-        key = (normalize_title(game['title']), game['system_id'])
-        existing_games[key] = game['id']
+    if target_system_ids:
+        id_list = sorted(target_system_ids)
+        placeholders = ','.join('?' * len(id_list))
+        rows = query(
+            f"SELECT id, title, system_id FROM games WHERE system_id IN ({placeholders})",
+            tuple(id_list),
+        )
+        for game in rows:
+            key = (normalize_title(game['title']), game['system_id'])
+            existing_games[key] = game['id']
 
     # Match platforms and check for duplicates
     unmatched_platforms = set()

@@ -388,13 +388,16 @@ def api_reports_multidisc_scan():
     ]
     
     if system_filter:
-        # Look up the system folder name from the database
-        system_info = query("SELECT folder FROM systems WHERE id = ? OR folder = ?", 
+        # Look up the system folder name from the database.
+        # Pass 25.2 — previously fell back to `disc_systems = [system_filter]`
+        # on lookup miss, so a `system='../../etc'` value flowed into the
+        # subsequent `os.path.join(config.ROM_PATH, system)` + glob() calls
+        # and enumerated outside ROM_PATH. Reject unknown values outright.
+        system_info = query("SELECT folder FROM systems WHERE id = ? OR folder = ?",
                           (system_filter, system_filter), one=True)
-        if system_info:
-            disc_systems = [system_info['folder']]
-        else:
-            disc_systems = [system_filter]
+        if not system_info:
+            return error('Unknown system', 400)
+        disc_systems = [system_info['folder']]
     
     # Disc file extensions (expanded)
     disc_extensions = ['.bin', '.iso', '.cue', '.img', '.mdf', '.chd', '.cso', '.pbp', '.rvz', '.wbfs', '.gcz']

@@ -95,7 +95,7 @@ except ValueError:
 
 # Application metadata
 APP_NAME = "RetroDB"
-APP_VERSION = "2.93.0"
+APP_VERSION = "2.94.0"
 APP_LAST_UPDATE = "2026-04-23"
 APP_DESCRIPTION = "Retro Gaming ROM Library Manager"
 
@@ -133,6 +133,17 @@ try:
 except ValueError:
     _max_upload_mb = 64
 MAX_UPLOAD_BYTES = _max_upload_mb * 1024 * 1024
+
+# Pass 25 — per-operation size and response caps.  Werkzeug's
+# MAX_CONTENT_LENGTH backstops any HTTP body, but some code paths (scraper
+# streaming downloads, SS API JSON, PDF parsing) pre-size their reads from
+# the remote response — not the request body — so they need their own caps.
+MAX_VIDEO_SIZE = 50 * 1024 * 1024              # 25.6 — per-upload video cap
+MAX_MEDIA_DOWNLOAD_BYTES = 50 * 1024 * 1024    # 25.7 — scraper streaming download cap
+MAX_API_RESPONSE_BYTES = 10 * 1024 * 1024      # 25.7 — scraper JSON response cap
+MUSEUM_UPLOAD_MAX_BYTES = 10 * 1024 * 1024     # 25.4 — museum controller-image cap
+CLZ_PDF_MAX_PAGES = 500                        # 25.5 — CLZ PDF page-count ceiling
+MAX_LIST_ROWS = 500                            # 25.8 — list-endpoint row cap
 
 # Maximum results to show in search
 MAX_SEARCH_RESULTS = 10

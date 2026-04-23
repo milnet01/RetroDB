@@ -123,9 +123,38 @@ def save_upload(file_storage, dest_dir, game_id, prefix, allowed_ext):
         with open(os.path.join(dest_dir, new_filename), 'wb') as f:
             f.write(raw)
     else:
+        # Video branch — Pass 25.6. Reject oversize videos before
+        # file_storage.save() writes them to disk. Prefer Content-Length
+        # when present (avoids buffering the whole payload), fall back to
+        # a streamed read with a byte budget so multipart bodies without
+        # per-part Content-Length are still bounded.
+        max_video_size = getattr(config, 'MAX_VIDEO_SIZE', 50 * 1024 * 1024)
+        declared = getattr(file_storage, 'content_length', 0) or 0
+        if declared and declared > max_video_size:
+            logger.warning(
+                f"Video upload rejected: {original} — declared "
+                f"{declared} bytes exceeds {max_video_size}"
+            )
+            return None
         os.makedirs(dest_dir, exist_ok=True)
         new_filename = f"{game_id}_{prefix}.{ext}"
-        file_storage.save(os.path.join(dest_dir, new_filename))
+        dest = os.path.join(dest_dir, new_filename)
+        with open(dest, 'wb') as out:
+            remaining = max_video_size
+            while True:
+                chunk = file_storage.stream.read(min(1024 * 1024, remaining + 1))
+                if not chunk:
+                    break
+                if len(chunk) > remaining:
+                    out.close()
+                    os.remove(dest)
+                    logger.warning(
+                        f"Video upload rejected: {original} — streaming size "
+                        f"exceeded {max_video_size} bytes"
+                    )
+                    return None
+                out.write(chunk)
+                remaining -= len(chunk)
     logger.info(f"Saved upload: {new_filename} to {dest_dir}")
     return new_filename
 

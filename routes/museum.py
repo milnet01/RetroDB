@@ -6,12 +6,15 @@
 # =============================================================================
 
 from flask import Blueprint, render_template, jsonify, request
+import ipaddress
 import json
 import os
 import re
 import logging
 import requests
+import socket
 import time
+from urllib.parse import urlparse
 
 import threading
 
@@ -20,6 +23,53 @@ from services.database import get_db
 from services.auth import login_required, editor_required
 
 logger = logging.getLogger(__name__)
+
+
+def _is_public_https_url(url, max_redirects=3):
+    """Pass 25.3 — SSRF guard. Accept the URL only if every host along any
+    redirect chain resolves to a public IP. Reject private / loopback /
+    link-local / reserved ranges so a crafted Bing result pointing at
+    ``http://127.0.0.1:5000/admin`` or ``http://169.254.169.254/`` (AWS IMDS)
+    can't be dereferenced by the server. Caps the redirect depth.
+
+    Returns:
+        (final_url, error) — final_url is the safe URL to fetch (with
+        allow_redirects=False), error is None on success or a log string.
+    """
+    current = url
+    for _ in range(max_redirects + 1):
+        parsed = urlparse(current)
+        if parsed.scheme not in ('http', 'https'):
+            return None, f"disallowed scheme: {parsed.scheme}"
+        host = parsed.hostname
+        if not host:
+            return None, "missing hostname"
+        try:
+            infos = socket.getaddrinfo(host, None)
+        except socket.gaierror as e:
+            return None, f"DNS failure: {e}"
+        for info in infos:
+            ip_str = info[4][0]
+            try:
+                ip = ipaddress.ip_address(ip_str)
+            except ValueError:
+                return None, f"invalid IP: {ip_str}"
+            if (ip.is_private or ip.is_loopback or ip.is_link_local
+                    or ip.is_reserved or ip.is_multicast or ip.is_unspecified):
+                return None, f"disallowed IP range: {ip_str} ({host})"
+        # Do a HEAD with redirects manually disabled to peek at Location.
+        try:
+            head = requests.head(current, allow_redirects=False, timeout=5)
+        except requests.RequestException as e:
+            return None, f"HEAD failed: {e}"
+        if head.status_code in (301, 302, 303, 307, 308):
+            next_url = head.headers.get('Location')
+            if not next_url:
+                return None, "redirect without Location"
+            current = next_url
+            continue
+        return current, None
+    return None, f"exceeded {max_redirects} redirects"
 
 # Serialize all rembg GPU work to prevent concurrent sessions from exhausting
 # GPU memory (ROCm/HIP workspace allocation failures → GPU hang).
@@ -604,7 +654,25 @@ def upload_controller_image(controller_id):
     if not file.filename:
         return jsonify({'success': False, 'error': 'No file selected'})
 
-    image_data = file.read()
+    # Pass 25.4 — reject oversize uploads before reading the whole payload.
+    # Werkzeug's MAX_CONTENT_LENGTH covers the full request body, but a single
+    # /controller-image-upload with a 2 GB file still OOMs this process on
+    # file.read(). Use the declared per-part Content-Length when present,
+    # fall back to a byte budget on the stream read.
+    max_upload = getattr(config, 'MUSEUM_UPLOAD_MAX_BYTES', 10 * 1024 * 1024)
+    declared = getattr(file, 'content_length', 0) or 0
+    if declared and declared > max_upload:
+        return jsonify({
+            'success': False,
+            'error': f'File too large ({declared // (1024*1024)} MB). Maximum is {max_upload // (1024*1024)} MB.',
+        }), 413
+
+    image_data = file.stream.read(max_upload + 1)
+    if len(image_data) > max_upload:
+        return jsonify({
+            'success': False,
+            'error': f'File too large (> {max_upload // (1024*1024)} MB).',
+        }), 413
     if len(image_data) < 100:
         return jsonify({'success': False, 'error': 'File is too small'})
 
@@ -976,34 +1044,67 @@ def _fetch_and_process_image(controller_id, controller_name, manufacturer,
         logger.warning(f"Museum: No image search results for {controller_name}")
         return None
 
-    # Try each result until we get a usable image (minimum 200x200)
+    # Try each result until we get a usable image (minimum 200x200).
+    # Pass 25.3 — every candidate URL goes through the SSRF guard: private
+    # IP rejection, redirect cap, HEAD/GET both with allow_redirects=False.
     image_data = None
+    max_bytes = getattr(config, 'MAX_MEDIA_DOWNLOAD_BYTES', 50 * 1024 * 1024)
     headers = {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     }
     for image_url in image_urls:
+        safe_url, err = _is_public_https_url(image_url)
+        if err:
+            logger.warning(f"Museum: rejected SSRF candidate {image_url}: {err}")
+            continue
         try:
-            resp = requests.get(image_url, timeout=15, headers=headers)
-            if resp.status_code != 200:
-                continue
+            # Stream so we can enforce a byte budget and bail on giant bodies
+            # before they fill memory. allow_redirects is False because every
+            # redirect hop was already vetted by _is_public_https_url.
+            with requests.get(safe_url, timeout=15, headers=headers,
+                              stream=True, allow_redirects=False) as resp:
+                if resp.status_code != 200:
+                    continue
 
-            content_type = resp.headers.get('Content-Type', '')
-            if not content_type.startswith('image/'):
-                continue
+                content_type = resp.headers.get('Content-Type', '')
+                if not content_type.startswith('image/'):
+                    continue
 
-            if len(resp.content) < 5000:
+                declared = int(resp.headers.get('Content-Length', 0) or 0)
+                if declared and declared > max_bytes:
+                    logger.warning(
+                        f"Museum: response too large ({declared} > {max_bytes}): {safe_url}"
+                    )
+                    continue
+
+                body = bytearray()
+                for chunk in resp.iter_content(chunk_size=64 * 1024):
+                    if not chunk:
+                        continue
+                    body.extend(chunk)
+                    if len(body) > max_bytes:
+                        logger.warning(
+                            f"Museum: streaming size exceeded {max_bytes}: {safe_url}"
+                        )
+                        body = None
+                        break
+                if body is None:
+                    continue
+                data_bytes = bytes(body)
+
+            if len(data_bytes) < 5000:
                 continue
 
             # Check actual image dimensions
             try:
-                img_check = Image.open(io.BytesIO(resp.content))
+                img_check = Image.open(io.BytesIO(data_bytes))
                 w, h = img_check.size
                 if w < 200 or h < 200:
                     continue
             except Exception:
                 continue
 
-            image_data = resp.content
+            image_data = data_bytes
             logger.info(f"Museum: Downloaded {w}x{h} image for {controller_name}")
             break
         except Exception:
