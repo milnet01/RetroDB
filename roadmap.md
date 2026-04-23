@@ -6,9 +6,9 @@ that earlier passes establish the patterns used by later ones (service-layer
 carve-outs, response helpers, etc.).
 
 Scope covers: refactoring (Passes 2-10), security (Pass 11, 16), database
-performance (Pass 12), frontend performance (Pass 13, 18, 22), developer
-efficiency and tests (Pass 14, 20), accessibility (Pass 15), observability
-(Pass 17), schema migrations (Pass 19), and operational resilience (Pass 21).
+performance (Pass 12), frontend performance (Pass 13, 18, 21), developer
+efficiency and tests (Pass 14, 22), accessibility (Pass 15), observability
+(Pass 17), operational resilience (Pass 19), and schema migrations (Pass 20).
 See "Scope notes" near the bottom for items deliberately excluded.
 
 Each item lists:
@@ -1382,9 +1382,76 @@ pipeline yields real wins.
 
 ---
 
-## Pass 19 — Versioned schema migrations
+## Pass 19 — Operational resilience
 
-### 19.1 Replace ad-hoc `_migrate_*` with `PRAGMA user_version` (MEDIUM, M)
+### 19.1 SQLite online backup API (HIGH, M)
+
+- **Target**: `routes/settings.py:247-276::api_backup` — currently uses
+  `shutil.copy2(config.DB_PATH, backup_path)`.
+- **Why**: `shutil.copy2` on a WAL-mode database with active writers can
+  produce a torn / corrupted file. SQLite's online backup API
+  (`sqlite3.Connection.backup()`) coordinates with WAL and guarantees a
+  consistent snapshot even under concurrent writes.
+- **Plan**:
+  ```python
+  src = sqlite3.connect(config.DB_PATH)
+  dst = sqlite3.connect(backup_path)
+  with dst:
+      src.backup(dst)  # single call; SQLite handles WAL coordination
+  dst.close(); src.close()
+
+  verify = sqlite3.connect(backup_path)
+  ok = verify.execute("PRAGMA integrity_check").fetchone()[0]
+  verify.close()
+  if ok != 'ok':
+      os.remove(backup_path)
+      raise RuntimeError(f"backup failed integrity check: {ok}")
+  ```
+  Integrity check at the end means we never hand the user a broken backup.
+- **Source**: <https://docs.python.org/3/library/sqlite3.html#sqlite3.Connection.backup>
+- **Status**: todo
+
+### 19.2 Graceful shutdown — mark jobs paused on SIGTERM (MEDIUM, M)
+
+- **Target**: `app.py` (signal handler install), `services/jobs/base.py`
+  (shutdown hook).
+- **Why**: background jobs (bulk scrape, RA sync, museum generation) run
+  in threads with state in SQLite. A `systemctl stop` / Ctrl-C kills them
+  mid-iteration — the queued-games DB row still shows "in-progress", the
+  user sees a stuck job on next start. App.py has `/api/jobs/resume/<id>`
+  already; the missing piece is marking jobs "pausable" cleanly at
+  shutdown instead of leaving them wedged.
+- **Plan**:
+  ```python
+  import signal
+  _shutdown = threading.Event()
+  def _handle_sigterm(signum, frame):
+      _shutdown.set()
+      for job in get_running_jobs():
+          job.request_pause()  # set a flag the job's inner loop reads each iter
+      logger.info("SIGTERM received; running jobs flagged for pause")
+  signal.signal(signal.SIGTERM, _handle_sigterm)
+  signal.signal(signal.SIGINT, _handle_sigterm)
+  ```
+  Each job's inner loop already has a "paused" check (for the pause
+  button) — just need to wire the signal to the same path.
+- **Status**: todo
+
+### 19.3 Backup rotation / max-backups knob (LOW, S)
+
+- **Target**: `routes/settings.py::api_backup` — currently unbounded.
+- **Why**: on a deploy that auto-backups daily, the `backups/` dir grows
+  without limit. Each backup is ~10-500 MB depending on library size.
+- **Plan**: after creating a new backup, if the count exceeds
+  `MAX_BACKUPS` config (default 30), delete the oldest N. Keep at least
+  one always.
+- **Status**: todo
+
+---
+
+## Pass 20 — Versioned schema migrations
+
+### 20.1 Replace ad-hoc `_migrate_*` with `PRAGMA user_version` (MEDIUM, M)
 
 - **Target**: `services/database_init.py` — 21 `_migrate_*` / `ALTER TABLE`
   references, all run unconditionally on every app start. New migrations
@@ -1417,7 +1484,7 @@ pipeline yields real wins.
 - **Source**: <https://eskerda.com/sqlite-schema-migrations-python/>
 - **Status**: todo
 
-### 19.2 Document migration authoring in standards doc (LOW, S)
+### 20.2 Document migration authoring in standards doc (LOW, S)
 
 - **Target**: `docs/RETRODB_DESIGN_STANDARDS.md` — add §25 after the
   naming standards.
@@ -1426,154 +1493,15 @@ pipeline yields real wins.
 - **Plan**: short section covering filename format (`NNN_description.sql`),
   idempotency rules, and the "migrations are append-only once shipped"
   invariant.
-- **Status**: todo (follows 19.1)
+- **Status**: todo (follows 20.1)
 
 ---
 
-## Pass 20 — CI/CD hardening
+## Pass 21 — Request-level caching & ETags
 
-### 20.1 Dependabot config for pip + GitHub Actions (MEDIUM, S)
+> **Depends on Pass 20** — the ETag scheme in 21.1 hinges on every game write touching `updated_at`.  Landing Pass 20 first lets any missing trigger / column be added as an auditable migration rather than an ad-hoc `_migrate_*` graft.
 
-- **Target**: `.github/dependabot.yml` (new).
-- **Why**: no automated dependency update PRs. `requirements.lock` drifts,
-  CVEs sit unpatched. GitHub provides this free.
-- **Plan**:
-  ```yaml
-  version: 2
-  updates:
-    - package-ecosystem: "pip"
-      directory: "/"
-      schedule: { interval: "weekly" }
-      cooldown: { default-days: 4 }
-      groups:
-        pip-dependencies:
-          patterns: ["*"]
-    - package-ecosystem: "github-actions"
-      directory: "/"
-      schedule: { interval: "weekly" }
-  ```
-  Cooldown avoids landing day-of-release breakages. Grouping keeps PR
-  volume manageable.
-- **Source**: <https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file>
-- **Status**: todo
-
-### 20.2 `pip-audit` in CI (MEDIUM, S)
-
-- **Target**: `.github/workflows/ci.yml` — add a step after the install.
-- **Why**: catches CVEs against the specific pinned versions in
-  `requirements.lock`. Dependabot catches "new release exists";
-  `pip-audit` catches "current pin has a known CVE".
-- **Plan**:
-  ```yaml
-  - name: pip-audit
-    run: |
-      pip install pip-audit
-      pip-audit --requirement requirements.lock --strict
-    continue-on-error: true  # surface as warning until backlog is clean
-  ```
-- **Source**: <https://pypi.org/project/pip-audit/>
-- **Status**: todo
-
-### 20.3 Coverage reporting via `pytest-cov` (LOW, S)
-
-- **Target**: `.github/workflows/ci.yml`, `pyproject.toml`.
-- **Why**: currently no visibility into which modules are covered. Pairs
-  with 14.3 (test coverage targets for metadata_merger / bulk_scrape).
-- **Plan**:
-  ```yaml
-  - name: Pytest with coverage
-    run: |
-      pip install pytest-cov
-      pytest --cov=services --cov=scraper --cov=routes --cov-report=term-missing
-  ```
-  Add `[tool.coverage.run]` omit rules for `tests/`, `migrations/`.
-  Do NOT gate PRs on coverage threshold yet — set a baseline first.
-- **Status**: todo
-
-### 20.4 Python version matrix (LOW, S)
-
-- **Target**: `.github/workflows/ci.yml` — add matrix for 3.12 + 3.13.
-- **Why**: CI pins 3.13 only. Users on long-term distros (Debian stable,
-  openSUSE Leap) are often on 3.11-3.12 — a regression on those Pythons
-  wouldn't be caught. Keep 3.13 on the list (JIT coming).
-- **Plan**: `strategy.matrix.python-version: [ "3.12", "3.13" ]`. Do NOT
-  include 3.14 free-threaded — research confirms it hurts single-threaded
-  Flask perf 30-50%.
-- **Source**: <https://codspeed.io/blog/state-of-python-3-13-performance-free-threading>
-- **Status**: todo
-
----
-
-## Pass 21 — Operational resilience
-
-### 21.1 SQLite online backup API (HIGH, M)
-
-- **Target**: `routes/settings.py:247-276::api_backup` — currently uses
-  `shutil.copy2(config.DB_PATH, backup_path)`.
-- **Why**: `shutil.copy2` on a WAL-mode database with active writers can
-  produce a torn / corrupted file. SQLite's online backup API
-  (`sqlite3.Connection.backup()`) coordinates with WAL and guarantees a
-  consistent snapshot even under concurrent writes.
-- **Plan**:
-  ```python
-  src = sqlite3.connect(config.DB_PATH)
-  dst = sqlite3.connect(backup_path)
-  with dst:
-      src.backup(dst)  # single call; SQLite handles WAL coordination
-  dst.close(); src.close()
-
-  verify = sqlite3.connect(backup_path)
-  ok = verify.execute("PRAGMA integrity_check").fetchone()[0]
-  verify.close()
-  if ok != 'ok':
-      os.remove(backup_path)
-      raise RuntimeError(f"backup failed integrity check: {ok}")
-  ```
-  Integrity check at the end means we never hand the user a broken backup.
-- **Source**: <https://docs.python.org/3/library/sqlite3.html#sqlite3.Connection.backup>
-- **Status**: todo
-
-### 21.2 Graceful shutdown — mark jobs paused on SIGTERM (MEDIUM, M)
-
-- **Target**: `app.py` (signal handler install), `services/jobs/base.py`
-  (shutdown hook).
-- **Why**: background jobs (bulk scrape, RA sync, museum generation) run
-  in threads with state in SQLite. A `systemctl stop` / Ctrl-C kills them
-  mid-iteration — the queued-games DB row still shows "in-progress", the
-  user sees a stuck job on next start. App.py has `/api/jobs/resume/<id>`
-  already; the missing piece is marking jobs "pausable" cleanly at
-  shutdown instead of leaving them wedged.
-- **Plan**:
-  ```python
-  import signal
-  _shutdown = threading.Event()
-  def _handle_sigterm(signum, frame):
-      _shutdown.set()
-      for job in get_running_jobs():
-          job.request_pause()  # set a flag the job's inner loop reads each iter
-      logger.info("SIGTERM received; running jobs flagged for pause")
-  signal.signal(signal.SIGTERM, _handle_sigterm)
-  signal.signal(signal.SIGINT, _handle_sigterm)
-  ```
-  Each job's inner loop already has a "paused" check (for the pause
-  button) — just need to wire the signal to the same path.
-- **Status**: todo
-
-### 21.3 Backup rotation / max-backups knob (LOW, S)
-
-- **Target**: `routes/settings.py::api_backup` — currently unbounded.
-- **Why**: on a deploy that auto-backups daily, the `backups/` dir grows
-  without limit. Each backup is ~10-500 MB depending on library size.
-- **Plan**: after creating a new backup, if the count exceeds
-  `MAX_BACKUPS` config (default 30), delete the oldest N. Keep at least
-  one always.
-- **Status**: todo
-
----
-
-## Pass 22 — Request-level caching & ETags
-
-### 22.1 ETag / `If-None-Match` on `/api/games/card-data` (MEDIUM, M)
+### 21.1 ETag / `If-None-Match` on `/api/games/card-data` (MEDIUM, M)
 
 - **Target**: `routes/games.py::api_games_card_data` and similar large
   read-only endpoints.
@@ -1598,7 +1526,7 @@ pipeline yields real wins.
   INSERT/UPDATE paths.
 - **Status**: todo
 
-### 22.2 Response compression (LOW, S)
+### 21.2 Response compression (LOW, S)
 
 - **Target**: `app.py` — add `Flask-Compress` or roll a `gzip`
   `after_request` hook.
@@ -1620,9 +1548,146 @@ pipeline yields real wins.
   deploys that have one.
 - **Status**: todo
 
-### 22.3 Per-file cache-busting hash — consolidate with Pass 13.3 (N/A)
+### 21.3 Per-file cache-busting hash — consolidate with Pass 13.3 (N/A)
 
 See Pass 13.3 — no duplicate entry.
+
+---
+
+## Pass 22 — CI/CD hardening
+
+### 22.1 Dependabot config for pip + GitHub Actions (MEDIUM, S)
+
+- **Target**: `.github/dependabot.yml` (new).
+- **Why**: no automated dependency update PRs. `requirements.lock` drifts,
+  CVEs sit unpatched. GitHub provides this free.
+- **Plan**:
+  ```yaml
+  version: 2
+  updates:
+    - package-ecosystem: "pip"
+      directory: "/"
+      schedule: { interval: "weekly" }
+      cooldown: { default-days: 4 }
+      groups:
+        pip-dependencies:
+          patterns: ["*"]
+    - package-ecosystem: "github-actions"
+      directory: "/"
+      schedule: { interval: "weekly" }
+  ```
+  Cooldown avoids landing day-of-release breakages. Grouping keeps PR
+  volume manageable.
+- **Source**: <https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file>
+- **Status**: todo
+
+### 22.2 `pip-audit` in CI (MEDIUM, S)
+
+- **Target**: `.github/workflows/ci.yml` — add a step after the install.
+- **Why**: catches CVEs against the specific pinned versions in
+  `requirements.lock`. Dependabot catches "new release exists";
+  `pip-audit` catches "current pin has a known CVE".
+- **Plan**:
+  ```yaml
+  - name: pip-audit
+    run: |
+      pip install pip-audit
+      pip-audit --requirement requirements.lock --strict
+    continue-on-error: true  # surface as warning until backlog is clean
+  ```
+- **Source**: <https://pypi.org/project/pip-audit/>
+- **Status**: todo
+
+### 22.3 Coverage reporting via `pytest-cov` (LOW, S)
+
+- **Target**: `.github/workflows/ci.yml`, `pyproject.toml`.
+- **Why**: currently no visibility into which modules are covered. Pairs
+  with 14.3 (test coverage targets for metadata_merger / bulk_scrape).
+- **Plan**:
+  ```yaml
+  - name: Pytest with coverage
+    run: |
+      pip install pytest-cov
+      pytest --cov=services --cov=scraper --cov=routes --cov-report=term-missing
+  ```
+  Add `[tool.coverage.run]` omit rules for `tests/`, `migrations/`.
+  Do NOT gate PRs on coverage threshold yet — set a baseline first.
+- **Status**: todo
+
+### 22.4 Python version matrix (LOW, S)
+
+- **Target**: `.github/workflows/ci.yml` — add matrix for 3.12 + 3.13.
+- **Why**: CI pins 3.13 only. Users on long-term distros (Debian stable,
+  openSUSE Leap) are often on 3.11-3.12 — a regression on those Pythons
+  wouldn't be caught. Keep 3.13 on the list (JIT coming).
+- **Plan**: `strategy.matrix.python-version: [ "3.12", "3.13" ]`. Do NOT
+  include 3.14 free-threaded — research confirms it hurts single-threaded
+  Flask perf 30-50%.
+- **Source**: <https://codspeed.io/blog/state-of-python-3-13-performance-free-threading>
+- **Status**: todo
+
+---
+
+## Follow-ups from landed passes
+
+Small, well-scoped items that surfaced while finishing an earlier pass but
+weren't worth blocking the ship on.  Ordered by rough priority.
+
+### FU.1 Flip CSP from Report-Only to enforcing (MEDIUM, L — needs template migration)
+
+- **Context**: Pass 16.2 shipped CSP as `Content-Security-Policy-Report-Only`
+  because ~765 inline `on*` event handlers and ~38 inline `<script>` blocks
+  still exist across templates.  Violations surface in the browser console
+  today; flipping to enforcing would break pages.
+- **Plan**: migrate inline handlers to delegated listeners registered in the
+  page's bundled JS, convert inline `<script>` blocks to either external
+  files or nonced blocks (`<script nonce="{{ csp_nonce }}">`), then change
+  the header name from `Content-Security-Policy-Report-Only` to
+  `Content-Security-Policy` in `app.py::set_security_headers`.
+- **Status**: todo
+
+### FU.2 Grid-card `srcset` for boxart (LOW, M)
+
+- **Context**: Pass 18.3 wired `boxart_srcset()` into the detail-page hero
+  `<img>` but deliberately left the card grid off because emitting per-card
+  srcset on a 500-item page would mean 500 filesystem `stat` calls per
+  render.
+- **Plan**: add a request-scoped batch-existence cache — one `os.scandir`
+  of `static/images/boxart/` per request, membership test per card — then
+  call `boxart_srcset()` from `build_game_card()` in
+  `services/game_metadata_service.py` so every card payload includes a
+  pre-computed `boxart_srcset` field.  Update
+  `static/js/all-games-controller.js` to emit the field when present.
+- **Status**: todo
+
+### FU.3 Bulk JPEG→WebP migration endpoint (LOW, M)
+
+- **Context**: Pass 18.1 ships WebP on ingest, but legacy `.jpg` / `.png`
+  files in existing libraries stay in their original format.  The bulk
+  `ImageResizeJob` already re-encodes via `_save_image()` when it runs, but
+  filename extensions (and therefore DB references) are preserved.
+- **Plan**: new `/api/maintenance/convert-to-webp` endpoint that walks
+  `games.boxart`, `games.boxart_3d`, `games.fanart`, `games.screenshots`
+  (comma-split), and `games.manual`; converts each referenced JPEG/PNG to a
+  sibling `.webp`; updates the DB filename in-place; then deletes the
+  original after verifying the `.webp` opens cleanly.  Disk-space guard
+  (refuse to start if free space < 2× current media size).  Background job
+  following the `ImageResizeJob` pattern with status/cancel endpoints.
+- **Status**: todo
+
+### FU.4 Stream large image downloads in the TGDB scraper (LOW, S)
+
+- **Context**: Pass 13.1 moved `base_scraper.download_image()` to streamed
+  chunked writes, but the TGDB wrapper in
+  `scraper/scrape_thegamesdb.py::download_image` still buffers
+  `response.content` entirely in memory before writing.  For a 10 MB fanart
+  JPEG that's a ~10 MB spike per concurrent scrape.
+- **Plan**: switch the TGDB wrapper to the same `http_get(..., stream=True)`
+  + `iter_content(8192)` pattern as the base helper.  Keep the
+  `http_get` retry/backoff semantics — the helper doesn't currently expose
+  `stream=True`, so either add a flag or call `_http_session.get` directly
+  for images.
+- **Status**: todo
 
 ---
 
@@ -1634,7 +1699,7 @@ not added to the roadmap. Document here so they don't keep re-appearing.
 - **Flask-Talisman**: replaces 4-8 lines of manual header setting with a
   dependency. Not worth it.
 - **Flask-Migrate / Alembic**: requires SQLAlchemy adoption, which RetroDB
-  explicitly doesn't use (raw SQL is part of the design). Pass 19 uses the
+  explicitly doesn't use (raw SQL is part of the design). Pass 20 uses the
   suckless PRAGMA-user_version pattern instead.
 - **Progressive Web App / service worker**: no offline story for a
   localhost ROM manager. Adds maintenance burden for zero user benefit.
