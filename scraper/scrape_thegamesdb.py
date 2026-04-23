@@ -984,8 +984,12 @@ def download_image(db_game_id, image_url, image_type, suffix=''):
             else:
                 image_url = f"https://cdn.thegamesdb.net/{image_url}"
 
-        # Get file extension from URL or default to jpg
-        ext = os.path.splitext(image_url.split('?')[0])[1] or '.jpg'
+        # Get file extension from URL or default to jpg, then translate to the
+        # configured ingest format (e.g. WebP) so freshly-scraped media is
+        # stored compressed from day one.
+        url_ext = os.path.splitext(image_url.split('?')[0])[1] or '.jpg'
+        from services.image_utils import preferred_image_extension
+        ext = preferred_image_extension(image_type, url_ext)
 
         # Create filename with optional suffix
         filename = f"{db_game_id}_tgdb{suffix}{ext}"
@@ -1005,13 +1009,14 @@ def download_image(db_game_id, image_url, image_type, suffix=''):
             with open(local_path, 'wb') as f:
                 f.write(response.content)
 
-            # Standardize image size (skip fanart)
-            if image_type != 'fanart':
-                try:
-                    from services.image_utils import standardize_downloaded_image
-                    standardize_downloaded_image(local_path, image_type)
-                except Exception:
-                    pass
+            # Post-download pipeline: format-normalize + size standardize +
+            # responsive variants. Fanart is still size-skipped inside the
+            # helper via config.IMAGE_SKIP_TYPES.
+            try:
+                from services.image_utils import finalize_downloaded_image
+                finalize_downloaded_image(local_path, image_type)
+            except Exception:
+                pass
 
             logger.info(f"Downloaded {image_type} for game {db_game_id}: {filename}")
             return filename

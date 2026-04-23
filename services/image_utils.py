@@ -363,6 +363,181 @@ def _init_upscaler(allow_gpu=True):
 # Public API
 # ---------------------------------------------------------------------------
 
+# Image types where the pipeline may convert format on ingest. Videos and
+# manuals keep their original extension; GIFs preserve animation.
+_CONVERTIBLE_TYPES = frozenset({
+    'boxart', 'boxart_3d', 'screenshots', 'fanart', 'controllers', 'hardware',
+})
+
+_PIL_FORMAT_FOR_EXT = {
+    '.webp': 'WEBP',
+    '.jpg':  'JPEG',
+    '.jpeg': 'JPEG',
+    '.png':  'PNG',
+    '.gif':  'GIF',
+}
+
+
+def preferred_image_extension(image_type, original_ext='.jpg'):
+    """Return the on-disk extension new downloads of `image_type` should use.
+
+    Driven by `config.IMAGE_FORMAT`. GIFs pass through unchanged so animations
+    survive. Non-convertible types (video, manual) keep their original ext.
+    """
+    import config
+
+    if not original_ext.startswith('.'):
+        original_ext = '.' + original_ext
+    original_ext = original_ext.lower()
+
+    if image_type not in _CONVERTIBLE_TYPES:
+        return original_ext
+    if original_ext == '.gif':
+        return '.gif'
+
+    fmt = getattr(config, 'IMAGE_FORMAT', 'webp').lower()
+    if fmt == 'webp':
+        return '.webp'
+    # jpeg mode: keep original if already JPEG-ish, else downgrade to jpg
+    return original_ext if original_ext in ('.jpg', '.jpeg') else '.jpg'
+
+
+def _ensure_format_matches_extension(path):
+    """If the on-disk bytes at `path` don't match the filename extension
+    (e.g. JPEG bytes written to a `.webp` filename because the caller chose
+    the target format up-front), re-encode in place. No-op when the format
+    already matches or Pillow can't decode the file.
+    """
+    from PIL import Image
+
+    ext = os.path.splitext(path)[1].lower()
+    target = _PIL_FORMAT_FOR_EXT.get(ext)
+    if not target:
+        return
+
+    try:
+        with Image.open(path) as img:
+            current = (img.format or '').upper()
+            if current == target:
+                return
+            # Copy the decoded pixels so we can close the source handle
+            # before overwriting it (Windows file-lock safety).
+            img.load()
+            buffer = img.copy()
+        _save_image(buffer, path)
+        buffer.close()
+    except Exception as e:
+        logger.warning(f"Image format normalize failed for {path}: {e}")
+
+
+def finalize_downloaded_image(path, image_type):
+    """Post-download pipeline.
+
+    1. Re-encode bytes to match the filename extension (so callers can declare
+       the target format via the path alone — e.g. `foo.webp` will be WebP on
+       disk even if the source URL served JPEG).
+    2. Run the existing size standardization pass (Real-ESRGAN / Lanczos).
+    3. Generate responsive `-sm` / `-md` variants for boxart.
+
+    Safe to call from any scraper call site — each step is best-effort and
+    swallows its own errors so the caller never fails a download on
+    post-processing trouble.
+    """
+    if not path or not os.path.exists(path):
+        return
+
+    _ensure_format_matches_extension(path)
+    standardize_downloaded_image(path, image_type)
+    _make_responsive_variants(path, image_type)
+
+
+# Responsive boxart variants: keep cards light without touching the original.
+# Sizes chosen to match the actual render widths: ~150 px for grid cards,
+# ~300 px for modals / detail views. The HTMLImageElement picks the smallest
+# candidate that satisfies its layout width, so serving two variants cuts
+# payload 60-80% on list pages.
+_RESPONSIVE_VARIANTS = {
+    'boxart':    [('sm', 160), ('md', 320)],
+    'boxart_3d': [('sm', 160), ('md', 320)],
+}
+
+
+def _variant_path(original_path, suffix):
+    """Return the sibling path for a `-sm` / `-md` variant of `original_path`."""
+    stem, ext = os.path.splitext(original_path)
+    return f"{stem}-{suffix}{ext}"
+
+
+def _make_responsive_variants(path, image_type):
+    """Write `-sm` and `-md` sibling files for boxart-family images.
+
+    Variants are Lanczos-downscaled and saved in the same format as the
+    original. Missing / unreadable inputs silently no-op. Variants are
+    regenerated unconditionally on each call (matches what happens during a
+    full re-scrape) so they stay in sync with the primary image.
+    """
+    from PIL import Image
+
+    sizes = _RESPONSIVE_VARIANTS.get(image_type)
+    if not sizes or not os.path.exists(path):
+        return
+
+    try:
+        with Image.open(path) as img:
+            img.load()
+            src_w, src_h = img.size
+            for suffix, target_w in sizes:
+                if src_w <= target_w:
+                    # Source is already smaller than the variant target —
+                    # skip to avoid upscaling the variant unnecessarily.
+                    continue
+                ratio = target_w / src_w
+                new_h = max(1, int(src_h * ratio))
+                variant = img.resize((target_w, new_h), Image.LANCZOS)
+                _save_image(variant, _variant_path(path, suffix))
+                variant.close()
+    except Exception as e:
+        logger.warning(f"Responsive variant generation failed for {path}: {e}")
+
+
+def boxart_srcset(filename, sizes=None):
+    """Return a `srcset` string for a boxart filename, skipping missing variants.
+
+    `filename` is the bare filename stored in the DB (e.g. `12_tgdb.webp`).
+    The original plus each existing `-sm` / `-md` sibling is included so the
+    browser can pick the smallest candidate that satisfies the rendered width.
+    Returns an empty string when the original is missing.
+    """
+    import config
+
+    if not filename:
+        return ''
+
+    boxart_dir = os.path.join(config.IMAGE_PATH, 'boxart')
+    original_path = os.path.join(boxart_dir, filename)
+    if not os.path.exists(original_path):
+        return ''
+
+    candidates = []
+    for suffix, target_w in (sizes or _RESPONSIVE_VARIANTS['boxart']):
+        variant_filename = os.path.basename(_variant_path(filename, suffix))
+        if os.path.exists(os.path.join(boxart_dir, variant_filename)):
+            candidates.append(f"/static/images/boxart/{variant_filename} {target_w}w")
+
+    # Width descriptor for the original: use actual pixel width when cheap to
+    # read; otherwise fall back to a conservative upper bound (the
+    # standardized target height of 1080 implies ~760 w for a 7:10 ratio).
+    try:
+        from PIL import Image
+        with Image.open(original_path) as img:
+            orig_w = img.size[0]
+    except Exception:
+        orig_w = 760
+    candidates.append(f"/static/images/boxart/{filename} {orig_w}w")
+
+    return ', '.join(candidates)
+
+
 def standardize_downloaded_image(path, image_type):
     """Convenience wrapper — standardize a freshly-downloaded image.
 

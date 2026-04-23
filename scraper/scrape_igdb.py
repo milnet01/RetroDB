@@ -490,7 +490,8 @@ def apply_metadata_to_game(db_game_id, igdb_data):
             if not boxart_url.startswith('http'):
                 boxart_url = f"https:{boxart_url}"
             
-            boxart_filename = f"{db_game_id}_igdb.jpg"
+            from services.image_utils import preferred_image_extension
+            boxart_filename = f"{db_game_id}_igdb{preferred_image_extension('boxart', '.jpg')}"
             local_dir = os.path.join(IMAGE_PATH, 'boxart')
             os.makedirs(local_dir, exist_ok=True)
             local_path = os.path.join(local_dir, boxart_filename)
@@ -513,7 +514,8 @@ def apply_metadata_to_game(db_game_id, igdb_data):
                     if not screenshot_url.startswith('http'):
                         screenshot_url = f"https:{screenshot_url}"
                     
-                    screenshot_filename = f"{db_game_id}_ss{i+1}.jpg"
+                    from services.image_utils import preferred_image_extension
+                    screenshot_filename = f"{db_game_id}_ss{i+1}{preferred_image_extension('screenshots', '.jpg')}"
                     local_path = os.path.join(screenshot_dir, screenshot_filename)
                     
                     if download_image(screenshot_url, local_path, timeout=10):
@@ -531,7 +533,8 @@ def apply_metadata_to_game(db_game_id, igdb_data):
                 if not artwork_url.startswith('http'):
                     artwork_url = f"https:{artwork_url}"
                 
-                fanart_filename = f"{db_game_id}_igdb_fanart.jpg"
+                from services.image_utils import preferred_image_extension
+                fanart_filename = f"{db_game_id}_igdb_fanart{preferred_image_extension('fanart', '.jpg')}"
                 fanart_dir = os.path.join(IMAGE_PATH, 'fanart')
                 os.makedirs(fanart_dir, exist_ok=True)
                 local_path = os.path.join(fanart_dir, fanart_filename)

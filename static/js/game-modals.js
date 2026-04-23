@@ -302,7 +302,7 @@ const GameDetailModal = {
                 `/static/images/screenshots/${encodeURIComponent(s)}`
             );
             ssEl.innerHTML = this._screenshots.map((src, i) =>
-                `<img src="${src}" alt="" class="gdm-screenshot" data-index="${i}" loading="lazy">`
+                `<img src="${src}" alt="" class="gdm-screenshot" data-index="${i}" loading="lazy" decoding="async">`
             ).join('');
             ssEl.style.display = 'flex';
 

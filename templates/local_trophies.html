@@ -116,10 +116,10 @@
                 <div class="trophy-game-icon">
                     {% if game and game.boxart %}
                     <img src="{{ url_for('static', filename='images/boxart/' + game.boxart) }}"
-                         alt="{{ ts.title }}" loading="lazy">
+                         alt="{{ ts.title }}" loading="lazy" decoding="async">
                     {% else %}
                     <img src="{{ url_for('static', filename='images/trophies/' + npwr_id + '/ICON0.PNG') }}"
-                         alt="{{ ts.title }}" loading="lazy"
+                         alt="{{ ts.title }}" loading="lazy" decoding="async"
                          onerror="this.src='{{ url_for('static', filename='images/placeholder.png') }}'">
                     {% endif %}
                 </div>

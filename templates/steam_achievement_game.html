@@ -209,7 +209,7 @@
                     <div class="trophy-item unlocked">
                         <div class="trophy-item-icon">
                             {% if ach.icon_url %}
-                            <img src="{{ ach.icon_url }}" alt="{{ ach.name }}" loading="lazy">
+                            <img src="{{ ach.icon_url }}" alt="{{ ach.name }}" loading="lazy" decoding="async">
                             {% else %}
                             <div class="badge-placeholder">🏆</div>
                             {% endif %}
@@ -244,9 +244,9 @@
                     <div class="trophy-item locked">
                         <div class="trophy-item-icon">
                             {% if ach.icon_locked_url %}
-                            <img src="{{ ach.icon_locked_url }}" alt="{{ ach.name }}" loading="lazy">
+                            <img src="{{ ach.icon_locked_url }}" alt="{{ ach.name }}" loading="lazy" decoding="async">
                             {% elif ach.icon_url %}
-                            <img src="{{ ach.icon_url }}" alt="{{ ach.name }}" loading="lazy" style="filter: grayscale(100%); opacity: 0.5;">
+                            <img src="{{ ach.icon_url }}" alt="{{ ach.name }}" loading="lazy" decoding="async" style="filter: grayscale(100%); opacity: 0.5;">
                             {% else %}
                             <div class="badge-placeholder">🔒</div>
                             {% endif %}

@@ -608,7 +608,7 @@ function renderWishlistCard(item) {
     if (item.critic_score) chips.push(`<span class="meta-chip score">&#9733; ${Math.round(item.critic_score)}</span>`);
 
     const boxartHtml = item.boxart
-        ? `<div class="wishlist-item-boxart"><img src="/static/images/boxart/${escapeAttr(item.boxart)}" alt="" loading="lazy"></div>`
+        ? `<div class="wishlist-item-boxart"><img src="/static/images/boxart/${escapeAttr(item.boxart)}" alt="" loading="lazy" decoding="async"></div>`
         : `<div class="wishlist-item-boxart" title="No boxart yet">&#127918;</div>`;
 
     const rescrapeTitle = status === 'scraped' ? 'Re-scrape metadata' : 'Scrape metadata';

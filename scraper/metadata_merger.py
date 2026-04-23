@@ -25,6 +25,10 @@ import logging
 import requests
 
 from config import IMAGE_PATH, STATIC_PATH
+from services.image_utils import (
+    preferred_image_extension,
+    finalize_downloaded_image,
+)
 from services.normalization import normalize_genre, normalize_modes
 from scraper.image_dedup import (
     compute_dhash,
@@ -327,7 +331,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
             url = cover['url'].replace('t_thumb', 't_cover_big')
             if not url.startswith('http'):
                 url = f"https:{url}"
-            filename = f"{db_game_id}_igdb.jpg"
+            filename = f"{db_game_id}_igdb{preferred_image_extension('boxart', '.jpg')}"
             local_path = os.path.join(IMAGE_PATH, 'boxart', filename)
             try:
                 r = requests.get(url, timeout=10)
@@ -336,8 +340,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
                     with open(local_path, 'wb') as f:
                         f.write(r.content)
                     try:
-                        from services.image_utils import standardize_downloaded_image
-                        standardize_downloaded_image(local_path, 'boxart')
+                        finalize_downloaded_image(local_path, 'boxart')
                     except Exception:
                         pass
                     metadata['boxart'] = filename
@@ -361,7 +364,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
                 url = ss['url'].replace('t_thumb', 't_screenshot_big')
                 if not url.startswith('http'):
                     url = f"https:{url}"
-                filename = f"{db_game_id}_igdb_ss{start_num + i}.jpg"
+                filename = f"{db_game_id}_igdb_ss{start_num + i}{preferred_image_extension('screenshots', '.jpg')}"
                 local_path = os.path.join(IMAGE_PATH, 'screenshots', filename)
 
                 # Skip if file already exists
@@ -375,8 +378,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
                         with open(local_path, 'wb') as f:
                             f.write(r.content)
                         try:
-                            from services.image_utils import standardize_downloaded_image
-                            standardize_downloaded_image(local_path, 'screenshots')
+                            finalize_downloaded_image(local_path, 'screenshots')
                         except Exception:
                             pass
                         if keep_screenshot_if_unique(local_path, filename, existing_hashes, 'IGDB'):
@@ -396,7 +398,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
             url = artworks[0]['url'].replace('t_thumb', 't_1080p')
             if not url.startswith('http'):
                 url = f"https:{url}"
-            filename = f"{db_game_id}_igdb_fanart.jpg"
+            filename = f"{db_game_id}_igdb_fanart{preferred_image_extension('fanart', '.jpg')}"
             local_path = os.path.join(IMAGE_PATH, 'fanart', filename)
             try:
                 r = requests.get(url, timeout=15)
@@ -404,6 +406,10 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
                     os.makedirs(os.path.dirname(local_path), exist_ok=True)
                     with open(local_path, 'wb') as f:
                         f.write(r.content)
+                    try:
+                        finalize_downloaded_image(local_path, 'fanart')
+                    except Exception:
+                        pass
                     metadata['fanart'] = filename
                     result['filled_fields'].append('fanart (IGDB)')
             except Exception as e:
@@ -535,7 +541,7 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
     if rawg_data.get('boxart_url') and not metadata['boxart']:
         url = rawg_data['boxart_url']
         if url:
-            filename = f"{db_game_id}_rawg_boxart.jpg"
+            filename = f"{db_game_id}_rawg_boxart{preferred_image_extension('boxart', '.jpg')}"
             local_path = os.path.join(IMAGE_PATH, 'boxart', filename)
             try:
                 r = requests.get(url, timeout=15)
@@ -544,8 +550,7 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
                     with open(local_path, 'wb') as f:
                         f.write(r.content)
                     try:
-                        from services.image_utils import standardize_downloaded_image
-                        standardize_downloaded_image(local_path, 'boxart')
+                        finalize_downloaded_image(local_path, 'boxart')
                     except Exception:
                         pass
                     metadata['boxart'] = filename
@@ -557,7 +562,7 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
     # Fanart from background_image_additional (only if not already present)
     if rawg_data.get('fanart_url') and not metadata.get('fanart'):
         url = rawg_data['fanart_url']
-        filename = f"{db_game_id}_rawg_fanart.jpg"
+        filename = f"{db_game_id}_rawg_fanart{preferred_image_extension('fanart', '.jpg')}"
         local_path = os.path.join(IMAGE_PATH, 'fanart', filename)
         try:
             r = requests.get(url, timeout=15)
@@ -565,6 +570,10 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
                 os.makedirs(os.path.dirname(local_path), exist_ok=True)
                 with open(local_path, 'wb') as f:
                     f.write(r.content)
+                try:
+                    finalize_downloaded_image(local_path, 'fanart')
+                except Exception:
+                    pass
                 metadata['fanart'] = filename
                 result['filled_fields'].append('fanart (RAWG)')
         except Exception as e:
@@ -581,7 +590,7 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
         downloaded = []
         for i, url in enumerate(rawg_data['screenshot_urls'][:3]):
             if url:
-                filename = f"{db_game_id}_rawg_ss{i+1}.jpg"
+                filename = f"{db_game_id}_rawg_ss{i+1}{preferred_image_extension('screenshots', '.jpg')}"
                 local_path = os.path.join(screenshot_dir, filename)
                 try:
                     r = requests.get(url, timeout=15)
@@ -589,8 +598,7 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
                         with open(local_path, 'wb') as f:
                             f.write(r.content)
                         try:
-                            from services.image_utils import standardize_downloaded_image
-                            standardize_downloaded_image(local_path, 'screenshots')
+                            finalize_downloaded_image(local_path, 'screenshots')
                         except Exception:
                             pass
                         if keep_screenshot_if_unique(local_path, filename, existing_hashes, 'RAWG'):
@@ -835,8 +843,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
                     f.write(r.content)
                 if image_type:
                     try:
-                        from services.image_utils import standardize_downloaded_image
-                        standardize_downloaded_image(dest_path, image_type)
+                        finalize_downloaded_image(dest_path, image_type)
                     except Exception:
                         pass
                 return True
@@ -860,7 +867,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             ext = boxart_url.rsplit('.', 1)[-1] if '.' in boxart_url else 'png'
 
         if boxart_url:
-            filename = f"{db_game_id}_ss_boxart.{ext}"
+            filename = f"{db_game_id}_ss_boxart{preferred_image_extension('boxart', '.' + ext)}"
             local_path = os.path.join(IMAGE_PATH, 'boxart', filename)
             if _download_ss_media(boxart_url, local_path, image_type='boxart'):
                 metadata['boxart'] = filename
@@ -883,7 +890,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             ext = boxart_3d_url.rsplit('.', 1)[-1] if '.' in boxart_3d_url else 'png'
 
         if boxart_3d_url:
-            filename = f"{db_game_id}_ss_boxart3d.{ext}"
+            filename = f"{db_game_id}_ss_boxart3d{preferred_image_extension('boxart_3d', '.' + ext)}"
             local_path = os.path.join(IMAGE_PATH, 'boxart_3d', filename)
             if _download_ss_media(boxart_3d_url, local_path, image_type='boxart_3d'):
                 metadata['boxart_3d'] = filename
@@ -902,7 +909,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
     if parsed_media.get('screenshot') and ss_count < 5:
         url = parsed_media['screenshot']
         ext = url.rsplit('.', 1)[-1] if '.' in url else 'png'
-        filename = f"{db_game_id}_ss_screenshot_{start_num + ss_count}.{ext}"
+        filename = f"{db_game_id}_ss_screenshot_{start_num + ss_count}{preferred_image_extension('screenshots', '.' + ext)}"
         local_path = os.path.join(IMAGE_PATH, 'screenshots', filename)
         if filename not in existing_screenshots and not os.path.exists(local_path):
             if _download_ss_media(url, local_path, timeout=10, image_type='screenshots'):
@@ -916,7 +923,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             url = m.get('url')
             if url:
                 ext = m.get('format', 'png')
-                filename = f"{db_game_id}_ss_screenshot_{start_num + ss_count}.{ext}"
+                filename = f"{db_game_id}_ss_screenshot_{start_num + ss_count}{preferred_image_extension('screenshots', '.' + ext)}"
                 local_path = os.path.join(IMAGE_PATH, 'screenshots', filename)
 
                 if filename in existing_screenshots or os.path.exists(local_path):
@@ -949,9 +956,9 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             ext = fanart_url.rsplit('.', 1)[-1] if '.' in fanart_url else 'jpg'
 
         if fanart_url:
-            filename = f"{db_game_id}_ss_fanart.{ext}"
+            filename = f"{db_game_id}_ss_fanart{preferred_image_extension('fanart', '.' + ext)}"
             local_path = os.path.join(IMAGE_PATH, 'fanart', filename)
-            if _download_ss_media(fanart_url, local_path):
+            if _download_ss_media(fanart_url, local_path, image_type='fanart'):
                 metadata['fanart'] = filename
                 result['filled_fields'].append('fanart (ScreenScraper)')
 

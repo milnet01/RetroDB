@@ -465,7 +465,8 @@ const AllGamesController = (function() {
                 <img src="/static/images/${boxartFolder}/${esc(boxartToShow)}"
                      alt="${esc(game.title)}"
                      class="game-boxart-img${use3d ? ' boxart-3d' : ''}"
-                     loading="lazy"${fallbackAttr}>
+                     loading="lazy"
+                     decoding="async"${fallbackAttr}>
                 <div class="game-boxart-placeholder" style="display: none;">
                     <span class="placeholder-icon">&#127918;</span>
                 </div>`;

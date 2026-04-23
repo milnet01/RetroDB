@@ -120,10 +120,15 @@
 
                 <!-- 2D Boxart -->
                 {% if game.boxart %}
+                {% set _boxart_srcset = boxart_srcset(game.boxart) %}
                 <img src="{{ url_for('static', filename='images/boxart/' + game.boxart) }}"
+                     {% if _boxart_srcset %}srcset="{{ _boxart_srcset }}"
+                     sizes="(max-width: 768px) 160px, 320px"{% endif %}
                      alt="{{ game.title }}"
                      class="game-boxart-image clickable boxart-2d"
                      id="boxart2d"
+                     decoding="async"
+                     fetchpriority="high"
                      style="{% if show_3d_initially %}display: none;{% endif %}"
                      onclick="openBoxartZoom('{{ url_for('static', filename='images/boxart/' + game.boxart) }}')"
                      title="Click to zoom"
@@ -390,7 +395,7 @@
                     {% for ss in game.screenshots.split(',') if ss %}
                     <div class="screenshot-thumb" data-filename="{{ ss.strip() }}">
                         <img src="{{ url_for('static', filename='images/screenshots/' + ss.strip()) }}"
-                             alt="Screenshot {{ loop.index }}" loading="lazy">
+                             alt="Screenshot {{ loop.index }}" loading="lazy" decoding="async">
                         <button class="screenshot-delete-btn" onclick="event.stopPropagation(); deleteScreenshot('{{ ss.strip() }}')" title="Delete screenshot">×</button>
                     </div>
                     {% endfor %}
@@ -4938,7 +4943,8 @@ function openGameDetailFilterModal(filterType, filterValue, sortBy = null) {
                     
                     html += `
                         <a href="/game/${game.id}" class="filter-game-item">
-                            <img src="${thumbUrl}" alt="${game.title}" class="filter-game-thumb" 
+                            <img src="${thumbUrl}" alt="${game.title}" class="filter-game-thumb"
+                                 loading="lazy" decoding="async"
                                  onerror="this.style.display='none'">
                             <div class="filter-game-info">
                                 <div class="filter-game-title">${game.title}</div>

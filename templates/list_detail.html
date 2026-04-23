@@ -51,7 +51,7 @@
                     <td class="list-row-num">{{ loop.index }}</td>
                     <td>
                         <img src="{{ game.boxart or url_for('static', filename='images/placeholder.png') }}"
-                             alt="" class="list-game-thumb" loading="lazy">
+                             alt="" class="list-game-thumb" loading="lazy" decoding="async">
                     </td>
                     <td>
                         <a href="/game/{{ game.id }}" class="list-game-title-link">{{ game.title }}</a>
@@ -428,7 +428,7 @@ async function searchGamesForList() {
             const thumb = g.boxart || '/static/images/placeholder.png';
             return `
                 <div class="add-game-result-item">
-                    <img src="${thumb}" alt="" class="add-game-result-thumb" loading="lazy">
+                    <img src="${thumb}" alt="" class="add-game-result-thumb" loading="lazy" decoding="async">
                     <div class="add-game-result-info">
                         <div class="add-game-result-title">${escapeHtml(g.title)}</div>
                         <div class="add-game-result-system">${escapeHtml(g.system_name || '')}</div>

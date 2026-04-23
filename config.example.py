@@ -95,12 +95,18 @@ except ValueError:
 
 # Application metadata
 APP_NAME = "RetroDB"
-APP_VERSION = "2.87.0"
+APP_VERSION = "2.88.0"
 APP_LAST_UPDATE = "2026-04-23"
 APP_DESCRIPTION = "Retro Gaming ROM Library Manager"
 
 # Supported image extensions for boxart/screenshots
 SUPPORTED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
+
+# On-ingest image format. 'webp' saves 25-35% vs JPEG at equivalent quality.
+# Override with RETRODB_IMAGE_FORMAT=jpeg to keep legacy behavior.
+IMAGE_FORMAT = os.environ.get('RETRODB_IMAGE_FORMAT', 'webp').lower()
+if IMAGE_FORMAT not in ('webp', 'jpeg'):
+    IMAGE_FORMAT = 'webp'
 
 # Maximum results to show in search
 MAX_SEARCH_RESULTS = 10

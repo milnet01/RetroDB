@@ -221,12 +221,13 @@ def download_image(url, dest_path, timeout=15):
                 for chunk in response.iter_content(chunk_size=8192):
                     if chunk:
                         f.write(chunk)
-        # Standardize image size if type can be inferred from path
+        # Post-download: re-encode to match extension (so dest_path=*.webp →
+        # on-disk WebP bytes), standardize size, generate responsive variants.
         try:
-            from services.image_utils import standardize_downloaded_image
+            from services.image_utils import finalize_downloaded_image
             parent_dir = os.path.basename(os.path.dirname(dest_path))
-            if parent_dir in ('boxart', 'screenshots', 'boxart_3d', 'controllers'):
-                standardize_downloaded_image(dest_path, parent_dir)
+            if parent_dir in ('boxart', 'screenshots', 'boxart_3d', 'controllers', 'fanart'):
+                finalize_downloaded_image(dest_path, parent_dir)
         except Exception:
             pass  # Non-critical — don't fail the download
         logger.debug(f"Downloaded image: {dest_path}")

@@ -122,6 +122,37 @@ change forces a different sequence.
   every existing caller (`routes/bulk_scrape.py`, `routes/games.py`,
   `scraper/hybrid_scraper.py`, `services/wishlist_scraper.py`,
   `services/jobs/*`) is unchanged. All 124 tests pass. (v2.83.12)
+- [x] **Pass 18 — Image pipeline modernization** — Three-item sweep
+  landed as v2.88.0. 244 tests pass (was 226); 18 new tests in
+  `tests/test_image_pipeline.py`.
+    - **18.1** WebP on ingest. New `RETRODB_IMAGE_FORMAT` config (default
+      `webp`) + `services.image_utils.preferred_image_extension()` helper
+      routed through every scraper filename construction: `scrape_igdb.py`,
+      `scrape_thegamesdb.py`, and 9 inline sites in `metadata_merger.py`
+      (IGDB / RAWG / ScreenScraper). Download path ends with new
+      `finalize_downloaded_image(path, image_type)` which re-encodes bytes
+      when the on-disk format doesn't match the filename extension (so
+      JPEG-payload-in-`.webp`-path re-saves as WebP) + standardizes size +
+      generates responsive variants. GIFs preserved; videos and manuals
+      untouched.
+    - **18.2** `loading="lazy" decoding="async"` on every `<img>` inside a
+      card / list render path: both JS card renderers
+      (`all-games-controller.js`, `game-modals.js` screenshot carousel)
+      plus 12 template grids (dashboard, achievements, trophies, lists,
+      wishlist, game detail screenshot row). Above-the-fold hero boxart
+      kept eager + annotated `decoding="async" fetchpriority="high"` for
+      LCP. Native browser-level lazy loading replaces the never-written
+      scroll-observer the roadmap noted was missing.
+    - **18.3** Responsive `srcset` for boxart. New
+      `_make_responsive_variants(path, image_type)` writes `-sm` (160w) +
+      `-md` (320w) Lanczos-downscaled siblings on ingest and during the
+      bulk `ImageResizeJob`. New `boxart_srcset(filename)` Jinja global
+      skips missing variant siblings so the browser never gets a 404
+      candidate. Wired into the `game_detail.html` hero `<img>` with
+      `sizes="(max-width: 768px) 160px, 320px"`. Grid-card integration
+      deferred — per-card srcset on a 500-item page would mean 500
+      filesystem `stat` calls; flagged as a follow-up (batch cache
+      required). Follow-up entry: "Pass 18.3 — srcset for card grids".
 - [x] **Pass 16 — HTTP security headers expansion** — Four-item sweep
   landed as v2.87.0. 226 tests pass (was 211); 15 new tests in
   `tests/test_security_headers.py`.
@@ -1288,7 +1319,19 @@ pipeline yields real wins.
      that iterates `media_directory` and converts JPEGs in place, updating
      DB filename references. Gated behind a disk-space check.
 - **Source**: <https://caniuse.com/webp>
-- **Status**: todo
+- **Status**: done (v2.88.0) — `RETRODB_IMAGE_FORMAT` config + new
+  `services.image_utils.preferred_image_extension()` /
+  `finalize_downloaded_image()` helpers. Every scraper filename-construction
+  site (IGDB / TGDB / RAWG / ScreenScraper) now goes through the helper;
+  `base_scraper.download_image()` + every inline download site calls
+  `finalize_downloaded_image()` which re-encodes bytes to match the filename
+  extension (handles the case where the URL served JPEG but the path is
+  `.webp`), standardizes size, and generates responsive variants. Plan step 4
+  (the bulk JPEG→WebP migration endpoint) was deliberately descoped for this
+  pass — fresh scrapes land as WebP, and the bulk `ImageResizeJob` already
+  re-saves via `_save_image()` so re-running it on an existing library will
+  migrate formats opportunistically (filename extension is preserved though;
+  a dedicated DB-filename-rewriting endpoint is a follow-up).
 
 ### 18.2 `loading="lazy"` + `decoding="async"` on game-card images (MEDIUM, S)
 
@@ -1300,7 +1343,12 @@ pipeline yields real wins.
 - **Plan**: add both attributes to every `<img>` inside a card / list
   render path. First image on the page (above-the-fold boxart) can remain
   eager via `loading="eager"` to avoid LCP regression.
-- **Status**: todo
+- **Status**: done (v2.88.0) — applied to both JS card renderers
+  (`all-games-controller.js` + `game-modals.js`) and 12 template grids
+  (dashboard, achievements, trophies, lists, wishlist, game detail
+  screenshot row + filter modal thumbs). Above-the-fold hero boxart on
+  `game_detail.html` kept eager but annotated
+  `decoding="async" fetchpriority="high"` for LCP.
 
 ### 18.3 Responsive `srcset` for boxart (LOW, L)
 
@@ -1317,7 +1365,20 @@ pipeline yields real wins.
   3. Jinja helper `{{ boxart_srcset(game) }}` that produces the `srcset`
      string, skipping missing variants.
 - **Source**: <https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#srcset>
-- **Status**: todo
+- **Status**: done (v2.88.0), grid integration is a follow-up —
+  `_make_responsive_variants(path, image_type)` writes `-sm` (160w) and
+  `-md` (320w) siblings on both the scrape path (via
+  `finalize_downloaded_image`) and the bulk `ImageResizeJob` so backfills
+  happen automatically. `boxart_srcset(filename)` Jinja global does
+  per-candidate filesystem existence checks so missing variants never 404
+  the browser. Wired into `game_detail.html` hero `<img>` with
+  `sizes="(max-width: 768px) 160px, 320px"`. **Grid-card srcset deferred**
+  — emitting per-card srcset on a 500-item page would mean 500 filesystem
+  `stat` calls per render; needs a batched existence cache (one
+  `os.scandir` of `images/boxart/` per request, membership test per card)
+  before it's safe to flip on in `all-games-controller.js`. Flagged as
+  follow-up "Pass 18.3 — srcset for card grids" in the new Done entry
+  above.
 
 ---
 

@@ -201,6 +201,7 @@
                     <img src="{{ url_for('static', filename='images/boxart/' + game.boxart) }}" alt="{{ game.title }}"
                          width="80" height="80"
                          loading="lazy"
+                         decoding="async"
                          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="no-boxart" style="display: none;">🎮</div>
                     {% else %}

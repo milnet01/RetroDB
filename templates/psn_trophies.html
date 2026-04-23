@@ -1206,7 +1206,7 @@ const PSNTrophyController = (function() {
             '</div>' +
             '<a href="/psn-trophies/' + escapeHtml(game.npwr_id) + '" class="psn-trophy-game-card">' +
                 '<div class="psn-trophy-game-thumb">' +
-                    '<img src="' + localSrc + '" alt="' + escapeHtml(game.title) + '" loading="lazy" onerror="' + imgFallback + '">' +
+                    '<img src="' + localSrc + '" alt="' + escapeHtml(game.title) + '" loading="lazy" decoding="async" onerror="' + imgFallback + '">' +
                 '</div>' +
                 '<div class="psn-trophy-game-info">' +
                     '<div>' +

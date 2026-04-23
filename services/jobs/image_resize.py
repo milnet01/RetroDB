@@ -253,4 +253,13 @@ def _standardize_with_tracking(path, image_type, target, preserve_rgba):
         if result_img is not img:
             result_img.close()
     img.close()
+
+    # Regenerate responsive variants for boxart-family types so cards / hero
+    # images pick up the new primary on the next page load.
+    try:
+        from services.image_utils import _make_responsive_variants
+        _make_responsive_variants(path, image_type)
+    except Exception as e:
+        logger.warning(f"Responsive variant regen failed for {path}: {e}")
+
     return action

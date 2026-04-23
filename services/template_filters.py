@@ -10,6 +10,7 @@ from zoneinfo import ZoneInfo
 from flask import g
 
 from services.formatters import format_size
+from services.image_utils import boxart_srcset
 
 
 def timestamp_to_date(timestamp):
@@ -121,3 +122,4 @@ def register_filters(app):
     app.template_filter('format_size')(format_size_filter)
     app.template_filter('format_ratio')(format_ratio_filter)
     app.template_filter('tz')(tz_filter)
+    app.jinja_env.globals['boxart_srcset'] = boxart_srcset
