@@ -8,6 +8,45 @@ import os
 import logging
 from datetime import datetime
 
+
+# ------------------------------------------------------------------------------
+# REQUEST-ID LOG RECORD FACTORY
+# ------------------------------------------------------------------------------
+# Stamp a per-request correlation ID onto every LogRecord so format strings
+# can reference %(request_id)s. Set via the Flask before_request hook in
+# app.py; '-' outside a request context (background jobs, startup).
+
+_request_id_installed = False
+
+
+def install_request_id_factory():
+    """Install a LogRecord factory that auto-populates record.request_id.
+
+    Called once at import of app.py. Reads flask.g.request_id when inside a
+    request context; falls back to '-' otherwise. Idempotent — installing
+    twice is a no-op.
+    """
+    global _request_id_installed
+    if _request_id_installed:
+        return
+    _request_id_installed = True
+
+    original = logging.getLogRecordFactory()
+
+    def factory(*args, **kwargs):
+        record = original(*args, **kwargs)
+        try:
+            from flask import g, has_request_context
+            if has_request_context():
+                record.request_id = getattr(g, 'request_id', '-')
+            else:
+                record.request_id = '-'
+        except Exception:
+            record.request_id = '-'
+        return record
+
+    logging.setLogRecordFactory(factory)
+
 # Base directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOGS_DIR = os.path.join(BASE_DIR, 'logs')
@@ -96,7 +135,7 @@ class CategoryFileHandler(logging.Handler):
 
             self.file_handler = logging.FileHandler(log_file, encoding='utf-8')
             self.file_handler.setFormatter(logging.Formatter(
-                '%(asctime)s | %(levelname)-8s | %(name)s | %(message)s',
+                '%(asctime)s | %(levelname)-8s | %(request_id)s | %(name)s | %(message)s',
                 datefmt='%Y-%m-%d %H:%M:%S'
             ))
             # Attach secret-redaction filter so JWTs / OAuth tokens / API keys

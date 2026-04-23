@@ -78,14 +78,25 @@ try:
 except ValueError:
     SLOW_QUERY_MS = 0
 
+# Slow-request threshold (ms).  When > 0, app.py logs a WARNING for any HTTP
+# request whose handler runs longer than the threshold, including method,
+# path, and status code.  Pairs with SLOW_QUERY_MS — slow-query catches the
+# DB layer; slow-request catches the whole handler (template render, scraper
+# fan-out, etc.).  Default 500 ms matches "user-perceptible latency"; set to
+# 0 to disable.  Override via RETRODB_SLOW_REQUEST_MS.
+try:
+    SLOW_REQUEST_MS = int(os.environ.get('RETRODB_SLOW_REQUEST_MS', '500'))
+except ValueError:
+    SLOW_REQUEST_MS = 500
+
 # =============================================================================
 # APPLICATION SETTINGS
 # =============================================================================
 
 # Application metadata
 APP_NAME = "RetroDB"
-APP_VERSION = "2.85.0"
-APP_LAST_UPDATE = "2026-04-22"
+APP_VERSION = "2.86.0"
+APP_LAST_UPDATE = "2026-04-23"
 APP_DESCRIPTION = "Retro Gaming ROM Library Manager"
 
 # Supported image extensions for boxart/screenshots

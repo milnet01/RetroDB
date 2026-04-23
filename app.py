@@ -13,6 +13,7 @@ import logging
 import json
 import re
 import secrets
+import time
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo, available_timezones
 
@@ -262,6 +263,58 @@ def set_security_headers(response):
     return response
 
 
+@app.after_request
+def log_slow_request(response):
+    """Log a WARNING for handlers that exceed config.SLOW_REQUEST_MS.
+
+    Pairs with SLOW_QUERY_MS — DB slowness vs. whole-handler slowness are
+    distinct signals. Probe endpoints are exempted so /health polling noise
+    never lands in the log. Disabled entirely when SLOW_REQUEST_MS == 0.
+    """
+    threshold = getattr(config, 'SLOW_REQUEST_MS', 0)
+    if threshold <= 0 or request.endpoint in _PROBE_ENDPOINTS:
+        return response
+    start = g.get('request_start_time')
+    if start is None:
+        return response
+    elapsed_ms = (time.perf_counter() - start) * 1000
+    if elapsed_ms > threshold:
+        logger.warning(
+            f"slow_request {request.method} {request.path} "
+            f"{elapsed_ms:.0f}ms status={response.status_code}"
+        )
+    return response
+
+
+# =============================================================================
+# HEALTH & READINESS PROBES
+# =============================================================================
+# Cheap unauthenticated endpoints for systemd / Docker / reverse-proxy probes.
+# /health is process-alive (no DB hit); /ready exercises the DB so it catches
+# lock-held / corrupt-schema states. Both are exempted from first-time-setup
+# redirect and slow-request logging so they stay silent in the common case.
+
+@app.route('/health')
+def health_probe():
+    return jsonify({'status': 'alive', 'version': config.APP_VERSION}), 200
+
+
+@app.route('/ready')
+def ready_probe():
+    try:
+        from services.database import get_request_db
+        db = get_request_db()
+        db.execute("SELECT 1").fetchone()
+        return jsonify({'status': 'ready'}), 200
+    except Exception as e:
+        logger.warning(f"readiness probe failed: {e}")
+        return jsonify({'status': 'not_ready', 'error': str(e)}), 503
+
+
+# Endpoints exempted from first-time-setup redirects and slow-request log noise.
+_PROBE_ENDPOINTS = frozenset({'health_probe', 'ready_probe'})
+
+
 # =============================================================================
 # GLOBAL ERROR HANDLERS
 # =============================================================================
@@ -283,6 +336,19 @@ def handle_internal_error(e):
 # =============================================================================
 # USER SESSION SETUP
 # =============================================================================
+
+@app.before_request
+def assign_request_id():
+    """Assign a short correlation ID to every request.
+
+    Stamped onto every log record via log_manager.install_request_id_factory()
+    so a single grep across logs/*.log reconstructs a full request trace.
+    8-char hex (~32 bits) is enough entropy for per-request uniqueness
+    within a single operator's install and reads cleanly in logs.
+    """
+    g.request_id = secrets.token_hex(4)
+    g.request_start_time = time.perf_counter()
+
 
 @app.before_request
 def load_user():
@@ -335,6 +401,8 @@ def check_first_time_setup():
                                                      'setup_browse_folders',
                                                      'auth.api_login', 'auth.login', 'auth.logout'):
         return
+    if request.endpoint in _PROBE_ENDPOINTS:
+        return
     # Check if setup has been completed
     user_settings = settings_manager.load_settings()
     has_rom_path = bool(user_settings.get('rom_path') or getattr(config, 'ROM_PATH', ''))
@@ -384,10 +452,12 @@ app.config['ROM_PATH'] = get_rom_path()
 app.config['DB_PATH'] = config.DB_PATH
 app.config['RPCS3_TROPHY_PATH'] = get_rpcs3_trophy_path()
 
-# Set up logging
+# Set up logging — install the request-id factory FIRST so basicConfig's
+# handler already has access to %(request_id)s on the very first record.
+log_manager.install_request_id_factory()
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format='%(asctime)s - %(request_id)s - %(name)s - %(levelname)s - %(message)s'
 )
 # Install SecretRedactor on the root logger + its basicConfig StreamHandler
 # before any module-level logger fires. CategoryFileHandler already attaches

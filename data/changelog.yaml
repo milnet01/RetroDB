@@ -1,3 +1,21 @@
+- version: 2.86.0
+  date: 2026-04-23
+  tags:
+  - type: feature
+    label: Observability
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 17 &mdash; observability &amp; health checks</strong> &mdash; Three-item sweep. 211 tests pass (was 199); 12 new tests added.
+            <ul>
+                <li><strong>17.1 &mdash; <code>/health</code> and <code>/ready</code> probes</strong>. Two unauthenticated endpoints in <code>app.py</code>. <code>/health</code> is process-alive only (no DB hit) and returns <code>{"status": "alive", "version": "&hellip;"}</code>. <code>/ready</code> exercises the DB via <code>SELECT 1</code> so it returns <code>503 {"status": "not_ready", "error": "&hellip;"}</code> on DB-lock / corrupt-schema states; otherwise <code>200 {"status": "ready"}</code>. Both are exempted from the first-time-setup redirect so probes stay green on a fresh install, and exempted from slow-request logging (17.3) so probe-polling noise never lands in logs. Inline in <code>app.py</code> &mdash; a dedicated blueprint for two one-liner routes would have been overkill. Operators running RetroDB behind systemd / Docker / a reverse-proxy now have a sub-ms liveness probe and a DB-backed readiness probe without having to hit a real page.</li>
+                <li><strong>17.2 &mdash; per-request correlation IDs in logs</strong>. New <code>log_manager.install_request_id_factory()</code> installs a <code>logging.setLogRecordFactory</code> wrapper that stamps <code>record.request_id</code> on every <code>LogRecord</code> created anywhere in the process &mdash; reading <code>flask.g.request_id</code> inside a request context, falling back to <code>'-'</code> outside one (background jobs, startup, tests). <code>app.py</code> now calls the factory installer before <code>logging.basicConfig</code> and before any module-level logger fires, and a new <code>assign_request_id</code> <code>before_request</code> hook sets <code>g.request_id = secrets.token_hex(4)</code> (8-char hex, ~32 bits entropy). Format strings updated: <code>basicConfig</code> becomes <code>%(asctime)s - %(request_id)s - %(name)s - %(levelname)s - %(message)s</code>; <code>CategoryFileHandler</code> becomes <code>%(asctime)s | %(levelname)-8s | %(request_id)s | %(name)s | %(message)s</code>. A single <code>grep abc12345 logs/*.log</code> now reconstructs a full cross-module request trace (route hit &rarr; scraper call &rarr; DB error) without timestamp matching across three log files.</li>
+                <li><strong>17.3 &mdash; slow-request logging middleware</strong>. New <code>log_slow_request</code> <code>after_request</code> hook warns when a handler exceeds <code>config.SLOW_REQUEST_MS</code>. Uses <code>time.perf_counter()</code> deltas captured in <code>assign_request_id</code>. Format: <code>slow_request GET /api/games 612ms status=200</code>. New <code>SLOW_REQUEST_MS</code> config knob (default 500 ms, overridable via <code>RETRODB_SLOW_REQUEST_MS</code> env) in both <code>config.py</code> and <code>config.example.py</code>; set to 0 to disable. Pairs with <code>SLOW_QUERY_MS</code> &mdash; slow-query catches the DB layer, slow-request catches the whole handler (template render, scraper fan-out, etc.). Probe endpoints are exempted so <code>/health</code> polling never triggers the warning.</li>
+                <li><strong>New tests</strong> (12) &mdash; <code>tests/test_observability.py</code>: health probe 200 + payload + version + first-time-setup bypass (4); readiness probe 200 when DB works + 503 with error string when DB fails (2); request-id factory stamps attribute + matches <code>g.request_id</code> inside a context + returns <code>'-'</code> sentinel in a fresh process outside all contexts (3); slow-request logs warning with correct method/path/status, fast request is silent, probe endpoints exempt + threshold=0 disables (3).</li>
+                <li><strong>Validation</strong> &mdash; full suite green (211 passed, 0 failed); <code>app.py</code> smoke-imports; <code>pre-commit</code> clean.</li>
+            </ul>
+        </li>
+    </ul>
+
 - version: 2.85.0
   date: 2026-04-22
   tags:

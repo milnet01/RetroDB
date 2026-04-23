@@ -122,6 +122,25 @@ change forces a different sequence.
   every existing caller (`routes/bulk_scrape.py`, `routes/games.py`,
   `scraper/hybrid_scraper.py`, `services/wishlist_scraper.py`,
   `services/jobs/*`) is unchanged. All 124 tests pass. (v2.83.12)
+- [x] **Pass 17 — Observability & health checks** — Three-item sweep
+  landed as v2.86.0. 211 tests pass (was 199); 12 new tests in
+  `tests/test_observability.py`.
+    - **17.1** `/health` and `/ready` probes inline in `app.py`.
+      `/health` is cheap (no DB, returns version + status). `/ready` runs
+      `SELECT 1` and returns 503 with error text on DB failure. Both
+      exempted from first-time-setup redirect and slow-request logging.
+    - **17.2** Request correlation IDs. `log_manager.install_request_id_factory()`
+      installs a `setLogRecordFactory` wrapper that stamps `record.request_id`
+      from `flask.g.request_id` (or `'-'` outside a request context). New
+      `assign_request_id` before_request hook sets `g.request_id = secrets.token_hex(4)`.
+      `basicConfig` and `CategoryFileHandler` format strings updated to
+      include `%(request_id)s`. Single-grep log correlation across
+      services.
+    - **17.3** Slow-request middleware. `log_slow_request` after_request
+      hook warns when handler elapsed > `config.SLOW_REQUEST_MS`
+      (default 500 ms, env-overridable via `RETRODB_SLOW_REQUEST_MS`, 0
+      disables). Probe endpoints exempted. Pairs with the existing
+      `SLOW_QUERY_MS` DB-layer check. (v2.86.0)
 - [x] **Pass 15 — Accessibility (WCAG 2.2 AA)** — Five-item sweep landed
   as v2.85.0. 199 tests still pass; no regressions.
     - **15.1** Skip-to-main-content link. `base.html` now starts with
@@ -1164,7 +1183,7 @@ the auditor entirely; some edge cases where it enabled XSS).
   overhead.
 - **Source**: <https://github.com/fedora-infra/flask-healthz> (pattern, not
   adoption — do it inline, no dep)
-- **Status**: todo
+- **Status**: done (v2.86.0)
 
 ### 17.2 Request IDs / correlation IDs in logs (MEDIUM, S)
 
@@ -1179,7 +1198,11 @@ the auditor entirely; some edge cases where it enabled XSS).
   2. Add a `logging.Filter` that reads `g.request_id` and stamps it onto
      every record (or `"-"` if no request context).
   3. Update format strings: `%(request_id)s [%(levelname)s] ...`.
-- **Status**: todo
+- **Status**: done (v2.86.0) — implemented via `logging.setLogRecordFactory`
+  instead of a `logging.Filter` so every `LogRecord` created anywhere in
+  the process (including records from child loggers that propagate to
+  root) carries `record.request_id` without needing per-handler filter
+  wiring.
 
 ### 17.3 Slow-request logging middleware (LOW, S)
 
@@ -1201,7 +1224,10 @@ the auditor entirely; some edge cases where it enabled XSS).
       return response
   ```
   Guard by a `SLOW_REQUEST_MS` config knob so ops can disable / tune.
-- **Status**: todo
+- **Status**: done (v2.86.0) — `config.SLOW_REQUEST_MS` defaults to 500 ms
+  and is overridable via `RETRODB_SLOW_REQUEST_MS`; 0 disables.
+  `assign_request_id` (17.2) already captures `g.request_start_time` so
+  17.3 reuses that timer without a second `before_request` hook.
 
 ---
 
