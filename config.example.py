@@ -102,6 +102,19 @@ APP_DESCRIPTION = "Retro Gaming ROM Library Manager"
 # Supported image extensions for boxart/screenshots
 SUPPORTED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
 
+# =============================================================================
+# IMAGE STANDARDIZATION (Real-ESRGAN upscaling + Lanczos downscaling)
+# =============================================================================
+
+IMAGE_TARGET_HEIGHT = 1080                # Target height for boxart, screenshots, boxart_3d
+IMAGE_TARGET_LONGEST_EDGE = 1280          # Target longest edge for controllers (irregular shapes)
+IMAGE_UPSCALE_THRESHOLD = 0.80            # Upscale if below 80% of target
+IMAGE_DOWNSCALE_THRESHOLD = 1.20          # Downscale if above 120% of target
+REALESRGAN_MODEL_NAME = 'RealESRGAN_x4plus'
+REALESRGAN_TILE_SIZE = 256
+REALESRGAN_MODEL_URL = 'https://huggingface.co/Xenova/realesrgan-x4plus/resolve/main/model.onnx'
+IMAGE_SKIP_TYPES = ['fanart']             # Image types to skip standardization
+
 # On-ingest image format. 'webp' saves 25-35% vs JPEG at equivalent quality.
 # Override with RETRODB_IMAGE_FORMAT=jpeg to keep legacy behavior.
 IMAGE_FORMAT = os.environ.get('RETRODB_IMAGE_FORMAT', 'webp').lower()
