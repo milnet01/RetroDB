@@ -1,3 +1,15 @@
+- version: 2.88.2
+  date: 2026-04-23
+  tags:
+  - type: bugfix
+    label: Uploads
+  body: |
+    <ul>
+        <li><strong>Fixed &quot;Request Entity Too Large&quot; on the game-edit modal</strong>. The Edit Metadata form posts a single multipart submission with boxart + 3D boxart + fanart + screenshots + video together. Werkzeug enforces <code>MAX_CONTENT_LENGTH</code> at the WSGI layer <em>before</em> any handler runs &mdash; the old 16 MB ceiling tripped on two 4K boxart files in a single submit, returning the bare HTML 413 page with no actionable hint. Bumped the default to 64 MB and made it env-overridable via <code>RETRODB_MAX_UPLOAD_MB</code>; per-file <code>MAX_IMAGE_SIZE</code> in <code>services/game_media_service.py</code> still gates individual files at 10 MB so an oversized single image is still rejected at the application layer with a logged warning.</li>
+        <li><strong>Friendly 413 handler</strong>. New <code>app.py::handle_request_too_large</code> renders an actionable plain-text message (current MB cap, per-file ceiling, env-var name to raise the global limit) instead of Werkzeug's bare default page. API requests get the same message in the standard <code>{success:false, error:...}</code> envelope.</li>
+        <li><strong>Validation</strong> &mdash; full suite green (250 passed, 0 failed); <code>app.py</code> smoke-imports with <code>MAX_CONTENT_LENGTH = 67108864</code> bytes (64 MB).</li>
+    </ul>
+
 - version: 2.88.1
   date: 2026-04-23
   tags:

@@ -130,7 +130,7 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_SECURE'] = (
     os.environ.get('RETRODB_SECURE_COOKIES', '').lower() in ('true', '1', 'yes')
 )
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
+app.config['MAX_CONTENT_LENGTH'] = config.MAX_UPLOAD_BYTES
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 
 # =============================================================================
@@ -367,6 +367,23 @@ def handle_internal_error(e):
     if request.path.startswith('/api/'):
         return jsonify({'success': False, 'error': 'Internal server error'}), 500
     return render_template('base.html'), 500
+
+@app.errorhandler(413)
+def handle_request_too_large(e):
+    """Werkzeug raises this from MAX_CONTENT_LENGTH before any handler runs.
+    Default page is bare HTML — give the user a hint about the per-file cap
+    and where the global limit comes from.
+    """
+    mb = config.MAX_UPLOAD_BYTES // (1024 * 1024)
+    msg = (
+        f"Upload exceeds the {mb} MB request limit. "
+        "Each image is also capped at 10 MB; try resizing oversized files "
+        "or upload them one at a time. "
+        "Operators can raise the global cap via RETRODB_MAX_UPLOAD_MB."
+    )
+    if request.path.startswith('/api/'):
+        return jsonify({'success': False, 'error': msg}), 413
+    return msg, 413
 
 
 # =============================================================================

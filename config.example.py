@@ -95,7 +95,7 @@ except ValueError:
 
 # Application metadata
 APP_NAME = "RetroDB"
-APP_VERSION = "2.88.1"
+APP_VERSION = "2.88.2"
 APP_LAST_UPDATE = "2026-04-23"
 APP_DESCRIPTION = "Retro Gaming ROM Library Manager"
 
@@ -122,6 +122,17 @@ IMAGE_SKIP_TYPES = ['fanart']             # Image types to skip standardization
 IMAGE_FORMAT = os.environ.get('RETRODB_IMAGE_FORMAT', 'webp').lower()
 if IMAGE_FORMAT not in ('webp', 'jpeg'):
     IMAGE_FORMAT = 'webp'
+
+# Maximum HTTP request body size, in bytes. Werkzeug enforces this at the
+# WSGI layer before any handler runs — a multipart edit-modal POST with
+# boxart + boxart_3d + several screenshots can easily exceed the old 16 MB
+# default. Per-file caps in services.game_media_service still apply.
+# Override via RETRODB_MAX_UPLOAD_MB.
+try:
+    _max_upload_mb = int(os.environ.get('RETRODB_MAX_UPLOAD_MB', '64'))
+except ValueError:
+    _max_upload_mb = 64
+MAX_UPLOAD_BYTES = _max_upload_mb * 1024 * 1024
 
 # Maximum results to show in search
 MAX_SEARCH_RESULTS = 10
