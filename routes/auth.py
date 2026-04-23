@@ -43,7 +43,9 @@ def login():
 
 @bp.route('/api/login', methods=['POST'])
 def api_login():
-    """Process login - admin requires password, others just click"""
+    """Process login — Pass 24.1: every role now requires a password. The
+    prior passwordless branch for editor/viewer was a full authentication
+    bypass (anyone hitting /api/login could assume any non-admin identity)."""
     data = request.get_json() or request.form
     user_id = data.get('user_id')
     password = data.get('password', '')
@@ -62,22 +64,38 @@ def api_login():
         record_login_attempt(client_ip, False)
         return error('User not found', code=200)
 
-    # Admin requires password
-    if user['role'] == 'admin':
-        if not password:
-            return error('Password required for admin', code=200, needs_password=True)
-        if not verify_password(password, user['password_hash']):
-            record_login_attempt(client_ip, False)
-            return error('Invalid password', code=200)
+    # Pass 24.1 — every role requires a password.
+    if not user['password_hash']:
+        # Legacy editor/viewer account created before Pass 24. Refuse the
+        # login until an admin sets a password via User Management. We
+        # deliberately do NOT silently authenticate — that's the bug we
+        # came here to fix.
+        record_login_attempt(client_ip, False)
+        return error(
+            'This account has no password set. Ask an administrator to set one.',
+            code=200,
+        )
+    if not password:
+        return error('Password required', code=200, needs_password=True)
+    if not verify_password(password, user['password_hash']):
+        record_login_attempt(client_ip, False)
+        return error('Invalid password', code=200)
 
-        # Migrate legacy (pre-v2.84.0) password hash to current OWASP floor.
-        # We have the plaintext here, so this is the natural rehash point.
-        if needs_rehash(user['password_hash']):
-            execute("UPDATE users SET password_hash = ? WHERE id = ?",
-                    (hash_password(password), user['id']))
+    # Migrate legacy (pre-v2.84.0) password hash to current OWASP floor.
+    # We have the plaintext here, so this is the natural rehash point.
+    if needs_rehash(user['password_hash']):
+        execute("UPDATE users SET password_hash = ? WHERE id = ?",
+                (hash_password(password), user['id']))
 
-    # Login successful
+    # Login successful.
     record_login_attempt(client_ip, True)
+
+    # Pass 24.2 — rotate the session on the auth boundary so any pre-login
+    # session state (including an attacker-planted cookie) is discarded.
+    # Flask doesn't expose a built-in regenerate(); clear-then-reset is the
+    # idiomatic equivalent. The fresh cookie value is derived from the
+    # server's secret_key on next response.
+    session.clear()
     session['user_id'] = user['id']
     session.permanent = True
 
@@ -89,6 +107,11 @@ def api_login():
     parsed = urlparse(next_url)
     if parsed.netloc or parsed.scheme or '\\' in next_url:
         next_url = url_for('dashboard')
+    # Pass 24.3 is handled by the app.py::check_force_password_change
+    # before_request hook — if force_password_change=1 the next request
+    # under this session will be intercepted and rendered as the
+    # force-change-password template regardless of next_url, so we don't
+    # need a special branch here.
     return success(redirect=next_url)
 
 
@@ -139,16 +162,25 @@ def api_create_user():
     if existing:
         return error('Username already exists', code=200)
 
-    # Create user (no password for non-admin)
-    password_hash = None
-    if role == 'admin':
-        # Admin users get a default password they should change
+    # Pass 24.1 — every role now requires a password, so every new account
+    # seeds the same `changeme` + force_password_change=1 onboarding flow
+    # that admin accounts already used. The new user's first login lands
+    # on the force-change-password page via the app.py before_request hook.
+    # An admin can override this during creation by passing `password`.
+    raw_password = data.get('password', '').strip()
+    if raw_password:
+        if len(raw_password) < 12:
+            return error('Password must be at least 12 characters', code=200)
+        password_hash = hash_password(raw_password)
+        must_change = 0
+    else:
         password_hash = hash_password('changeme')
+        must_change = 1
 
     user_id = execute("""
-        INSERT INTO users (username, display_name, password_hash, role)
-        VALUES (?, ?, ?, ?)
-    """, (username, display_name, password_hash, role))
+        INSERT INTO users (username, display_name, password_hash, role, force_password_change)
+        VALUES (?, ?, ?, ?, ?)
+    """, (username, display_name, password_hash, role, must_change))
 
     # Create user settings record
     execute("INSERT INTO user_settings (user_id) VALUES (?)", (user_id,))
@@ -261,12 +293,17 @@ def api_user_settings():
 
 @bp.route('/api/profile/password', methods=['POST'])
 def api_change_password():
-    """Change current user's password (admin only)"""
+    """Change current user's password (any authenticated role — Pass 24.1)."""
     if not g.user:
         return error('Not logged in', code=200)
 
-    if g.user['role'] != 'admin':
-        return error('Only admin accounts have passwords', code=200)
+    # Pass 24.4 — rate-limit the change-password endpoint. Previously
+    # unbounded, so an attacker with any session could brute-force
+    # `current_password` indefinitely. Reuses the login-attempts bucket
+    # (5 failures in 5 minutes per IP) — same attack class, same budget.
+    client_ip = request.remote_addr or '127.0.0.1'
+    if not rate_limit_login(client_ip):
+        return error('Too many attempts. Please try again later.', 429)
 
     data = request.get_json()
     current_password = data.get('current_password', '')
@@ -275,18 +312,22 @@ def api_change_password():
     if not new_password:
         return error('New password is required', code=200)
 
-    if len(new_password) < 8:
-        return error('Password must be at least 8 characters', code=200)
+    # Pass 24.4 — 8 → 12 char floor. OWASP 2026 Password Storage Cheat
+    # Sheet minimum for accounts without MFA; 8 chars let `password` pass.
+    if len(new_password) < 12:
+        return error('Password must be at least 12 characters', code=200)
 
     # Verify current password
     user = query("SELECT password_hash FROM users WHERE id = ?", (g.user['id'],), one=True)
     if not user or not verify_password(current_password, user['password_hash']):
+        record_login_attempt(client_ip, False)
         return error('Current password is incorrect', code=200)
 
     # Update password and clear force_password_change flag
     new_hash = hash_password(new_password)
     execute("UPDATE users SET password_hash = ?, force_password_change = 0 WHERE id = ?", (new_hash, g.user['id']))
 
+    record_login_attempt(client_ip, True)
     return success(message='Password changed successfully')
 
 
@@ -305,8 +346,9 @@ def api_force_change_password():
     if not new_password:
         return error('New password is required', code=200)
 
-    if len(new_password) < 8:
-        return error('Password must be at least 8 characters', code=200)
+    # Pass 24.4 — 8 → 12 char floor, matching api_change_password.
+    if len(new_password) < 12:
+        return error('Password must be at least 12 characters', code=200)
 
     # Update password and clear force flag
     new_hash = hash_password(new_password)

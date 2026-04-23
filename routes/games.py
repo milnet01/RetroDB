@@ -876,7 +876,7 @@ def api_game_detail(game_id):
 
 
 @bp.route('/api/game/<int:game_id>/edit', methods=['POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def api_game_edit(game_id):
     """Save game edits from modal"""
@@ -933,7 +933,7 @@ def api_game_edit(game_id):
 
 
 @bp.route('/api/games/bulk-edit', methods=['POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def api_games_bulk_edit():
     """Bulk edit multiple games at once"""

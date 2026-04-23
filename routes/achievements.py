@@ -9,7 +9,7 @@ import logging
 from datetime import datetime, timezone
 
 from services.database import query, execute
-from services.auth import login_required, get_user_ra_credentials
+from services.auth import login_required, editor_required, get_user_ra_credentials
 from services.api_helpers import handle_api_errors, success, error
 from services.jobs import ra_sync_job, ra_refresh_job
 
@@ -217,7 +217,7 @@ def api_get_achievements(game_id):
 
 
 @bp.route('/api/achievements/sync/<int:game_id>', methods=['POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def api_sync_game_achievements(game_id):
     """Sync achievements for a single game from RetroAchievements API and store locally"""
@@ -267,7 +267,7 @@ def api_sync_game_achievements(game_id):
 
 
 @bp.route('/api/achievements/sync-system/<int:system_id>', methods=['POST'])
-@login_required
+@editor_required
 def api_sync_system_achievements(system_id):
     """Start background sync for all achievements in a system"""
     system_log('info', f'Starting achievements sync for system ID {system_id}')
@@ -344,7 +344,7 @@ def api_achievements_sync_status():
 
 
 @bp.route('/api/achievements/sync-cancel', methods=['POST'])
-@login_required
+@editor_required
 def api_achievements_sync_cancel():
     """Cancel the current RA sync job"""
     result = ra_sync_job.cancel()
@@ -406,7 +406,7 @@ def api_get_stored_achievements(system_id):
 
 
 @bp.route('/api/achievements/refresh/<int:game_id>', methods=['POST'])
-@login_required
+@editor_required
 def api_refresh_achievements(game_id):
     """Refresh achievements from RetroAchievements API"""
     from scraper.retroachievements import check_retroachievements

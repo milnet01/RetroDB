@@ -29,7 +29,8 @@ import os
 import logging
 from datetime import datetime, timezone
 
-from flask import Blueprint, request, jsonify, redirect, url_for, g
+from flask import Blueprint, request, jsonify, redirect, url_for, g, session as flask_session
+import secrets as _secrets
 
 import config
 from services.achievement_linking import normalize_title_for_dedup as normalize_title
@@ -392,9 +393,17 @@ def api_xbox_auth_url():
     if not client_id:
         return jsonify({'success': False, 'error': 'Xbox Client ID not configured. Add it in Settings → API Keys.'})
 
+    # Pass 24.6 — generate a CSRF-protection `state` token, stash it in
+    # the caller's session, and include it in the Microsoft auth URL so
+    # the callback can verify the flow originated here. Without this,
+    # an attacker triggering /api/xbox/callback with their own `code`
+    # would bind the victim's RetroDB session to the attacker's MS account.
+    state = _secrets.token_urlsafe(32)
+    flask_session['oauth_state_xbox'] = state
+
     # Build redirect URI based on current request
     redirect_uri = request.host_url.rstrip('/') + '/api/xbox/callback'
-    auth_url = get_auth_url(client_id, redirect_uri)
+    auth_url = get_auth_url(client_id, redirect_uri, state=state)
 
     return jsonify({'success': True, 'auth_url': auth_url})
 
@@ -410,6 +419,7 @@ def api_xbox_callback():
 
     code = request.args.get('code')
     error = request.args.get('error')
+    returned_state = request.args.get('state', '')
 
     if error:
         logger.error(f"Xbox OAuth error: {error} - {request.args.get('error_description', '')}")
@@ -417,6 +427,15 @@ def api_xbox_callback():
 
     if not code:
         return redirect(url_for('platform_import.platform_import') + '?xbox_error=no_code')
+
+    # Pass 24.6 — verify the state parameter matches what we stashed in
+    # api_xbox_auth_url. Pop-and-compare so a replay attack can't reuse a
+    # consumed state. hmac.compare_digest for timing-safe equality.
+    import hmac as _hmac
+    expected_state = flask_session.pop('oauth_state_xbox', None)
+    if not expected_state or not returned_state or not _hmac.compare_digest(expected_state, returned_state):
+        logger.warning("Xbox OAuth callback rejected: state mismatch or missing")
+        return redirect(url_for('platform_import.platform_import') + '?xbox_error=state_mismatch')
 
     api_keys = get_saved_api_keys()
     client_id = api_keys.get('xbox_client_id', '')

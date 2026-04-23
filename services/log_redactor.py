@@ -28,6 +28,18 @@ _PATTERNS = [
     (re.compile(r'([?&](?:apikey|api_key|token|auth|pwd|password|devpassword|ssid)=)([^&\s"\']+)', re.IGNORECASE), r'\1<redacted>'),
     # Raw "X-Auth: ..." / "X-API-Key: ..." header styles
     (re.compile(r'(X-(?:Auth|API-Key|Session-Token)[^:]*:\s*)\S+', re.IGNORECASE), r'\1<redacted>'),
+    # Pass 24.8 — bare long tokens in sensitive-field contexts.
+    # PSN NPSSO cookies are 64 chars of base64ish, Gemini API keys are
+    # ~39 chars of [A-Za-z0-9_\-]; neither matches the hex-only rule
+    # below. Gated to a `field_name: TOKEN` / `field_name=TOKEN` syntax
+    # around a known-sensitive label so unrelated 32-char identifiers
+    # (commit SHAs written with prefix, etc.) don't get false-positives.
+    (re.compile(
+        r'\b(npsso|NPSSO|api[_-]?key|access[_-]?token|refresh[_-]?token|bearer|session[_-]?token|client[_-]?secret)\b'
+        r'(\s*[:=]\s*|\s+is\s+|\s+=>\s+)'
+        r'([A-Za-z0-9_\-\.]{24,})',
+        re.IGNORECASE,
+    ), r'\1\2<redacted-token>'),
     # Hex secrets ≥32 chars — catches most hashed tokens; false-positive rate is acceptable for log output
     (re.compile(r'\b[a-f0-9]{40,}\b', re.IGNORECASE), '<redacted-hex>'),
 ]

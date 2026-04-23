@@ -19,7 +19,7 @@ from datetime import datetime, timezone
 from flask import Blueprint, render_template, jsonify
 
 from services.api_helpers import handle_api_errors, success
-from services.auth import login_required
+from services.auth import login_required, editor_required
 from services.database import query, execute
 from services.formatters import get_manufacturer
 
@@ -557,7 +557,7 @@ def get_all_trophies():
 
 
 @bp.route('/api/collector-trophies/refresh', methods=['POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def refresh_trophies():
     """Recalculate all trophy progress from current database state."""

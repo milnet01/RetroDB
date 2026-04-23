@@ -354,13 +354,45 @@ change forces a different sequence.
     - **25.9** Flask-Limiter per-route: HLTB 60/hr, HLTB-bulk 5/hr,
       museum generate 20/hr, museum generate-all 2/hr, trophy refresh
       10/hr.
-- [x] **Pass 24 — Multi-user authn/authz hardening (deferred)** — Skipped
-  per the roadmap's explicit guidance ("land if you actually use
-  multi-user mode; if you don't, skip to Pass 25"). This install runs
-  single-admin (`services/auth.py`'s role split is effectively
-  dormant), so the HIGH-under-multi-user items are LOW here and not
-  worth the migration churn until multi-user is actually enabled. Will
-  revisit when a user creates a non-admin account.
+- [x] **Pass 24 — Multi-user authn/authz hardening (complete)** —
+  All eight sub-items landed. 19 new regression tests. v2.95.0.
+  Previously deferred by operator preference, but landing it now
+  unblocked Pass 22.7 and Pass 27, and the actual bug fixes (24.1 full
+  auth bypass for editor/viewer; 24.6 Xbox OAuth session-binding) are
+  real regressions even for single-admin operators.
+    - **24.1** `api_login` removed the `if user['role'] == 'admin':`
+      passwordless gate; every role now requires `verify_password`.
+      `password_hash=NULL` accounts are refused with a clear
+      "ask an administrator" message. `api_create_user` seeds
+      `changeme` + force_password_change=1 for every role.
+    - **24.2** `session.clear()` called before `session['user_id'] =`
+      so pre-login session state (including attacker-planted cookies)
+      is discarded on auth boundary.
+    - **24.3** `app.py::check_force_password_change` before_request
+      middleware already existed; pinned in a regression test.
+    - **24.4** Password min length 8 → 12 on `api_change_password`,
+      `api_force_change_password`, and admin-supplied password on
+      `api_create_user`. `api_change_password` now calls
+      `rate_limit_login(ip)` sharing the 5-failures-per-5-min bucket.
+    - **24.5** 11 destructive endpoints upgraded `@login_required` →
+      `@editor_required`: games_media (delete-game / rename-rom /
+      delete-screenshot), games (edit, bulk-edit), bulk_scrape (8 POST
+      job-control endpoints; status GET kept at login_required),
+      achievements (sync / refresh / cancel), collector_trophies
+      (refresh). Collections endpoints deferred to Pass 27.
+    - **24.6** Xbox OAuth state: `secrets.token_urlsafe(32)` generated
+      on `/api/xbox/auth-url`, stashed in `flask_session`, compared
+      via `hmac.compare_digest` on callback.
+    - **24.7** `_save_psn_tokens` and `scrape_xbox.save_tokens` now use
+      `os.open(path, O_WRONLY|O_CREAT|O_TRUNC, 0o600)` + `fdopen`,
+      ensuring tokens are never world/group-readable.
+    - **24.8** `SecretRedactor` adds a label-gated pattern for bare
+      tokens in `npsso: ...` / `api_key: ...` / `access_token: ...`
+      / `client_secret: ...` contexts (24 chars of
+      `[A-Za-z0-9_\-\.]`). Label gate avoids false positives on
+      commit SHAs etc in free text.
+    - **Pass 22.7 unblocked** — destructive-endpoint test coverage
+      landed in `tests/test_auth_hardening.py`.
 - [x] **Pass 23 — Correctness bugfixes (2026-04-23 multi-agent review)** —
   Eight runtime bugs fixed; 250 tests pass (was 244); 6 new regression
   tests in `tests/test_hybrid_scraper.py`. Landed as v2.88.1.
@@ -2084,7 +2116,21 @@ See Pass 13.3 — no duplicate entry.
   negative (viewer gets 403) paths.  Include one `..` traversal probe
   on `rename-rom`.
 - **Source**: 2026-04-23 audit, Tests/Tooling/CI finding 3.
-- **Status**: todo (lands with Pass 24 authz tightening)
+- **Status**: done (v2.95.0, alongside Pass 24). Two-level coverage
+  in `tests/test_auth_hardening.py`:
+  (a) `TestEditorRequiredOnDestructiveEndpoints` parses each destructive
+      route's decorator stack from source and asserts `@editor_required`
+      is present on 11 endpoints — catches regressions that silently
+      drop the decorator.
+  (b) `TestDestructiveEndpointsRequireAuth` actually hits `/api/delete-
+      game`, `/api/rename-rom`, `/api/delete-screenshot` unauthenticated
+      and asserts redirect to `/login`.
+  (c) A source-level check pins the inline `'..' in new_filename`
+      traversal guard on rename-rom.
+  Positive-path coverage under admin/editor/viewer roles still deferred
+  pending per-test DB seeding helpers (Pass 14.3 / Pass 27 will add
+  those; the decorator-level assertion is the load-bearing regression
+  pin until then).
 
 ### 22.8 Lockfile-drift test (LOW, S)
 
@@ -2269,8 +2315,14 @@ See Pass 13.3 — no duplicate entry.
   for every role.  Migration path: on first login after the change,
   prompt editor/viewer accounts to set a password (mirroring the
   admin `force_password_change` flow).
-- **Source**: 2026-04-23 audit, Auth & Security finding 1.
-- **Status**: todo
+- **Status**: done (v2.95.0) — the `if user['role'] == 'admin':` gate
+  is gone. Every role runs through `verify_password`. Accounts created
+  pre-Pass-24 with `password_hash=NULL` are refused at login with a
+  clear "ask an administrator to set one" message rather than silently
+  authenticated. `api_create_user` seeds `changeme` +
+  `force_password_change=1` for every role, so new editor/viewer
+  accounts use the same onboarding flow as admin — the first login
+  lands on the force-change-password page via the existing middleware.
 
 ### 24.2 Session rotation on login (LOW-single-user, HIGH-multi-user, S)
 
@@ -2284,7 +2336,10 @@ See Pass 13.3 — no duplicate entry.
   session['user_id'] = user['id']`.  Add a CSRF-token rotation call
   here once Pass 29 lands.
 - **Source**: 2026-04-23 audit, Auth & Security finding 3.
-- **Status**: todo
+- **Status**: done (v2.95.0) — `session.clear()` called immediately
+  before `session['user_id'] = user['id']`; order verified in a source-
+  level regression test. CSRF rotation hook left as a note for when
+  Pass 29 lands.
 
 ### 24.3 Force password change for default-`changeme` admins (MEDIUM, S)
 
@@ -2299,7 +2354,13 @@ See Pass 13.3 — no duplicate entry.
   users with `force_password_change = 1` to the change-password page
   for every non-login, non-static route.
 - **Source**: 2026-04-23 audit, Auth & Security finding 4.
-- **Status**: todo
+- **Status**: done (v2.95.0) — found `app.py::check_force_password_change`
+  already registered as `before_request` from earlier work; it redirects
+  logged-in `force_password_change=1` users to the
+  `force_change_password.html` template for all non-allowlisted endpoints
+  (auth.api_change_password, auth.api_force_change_password, auth.logout,
+  static, setup_page, setup_api). Registration pinned in a regression
+  test so it can't silently disappear in a future refactor.
 
 ### 24.4 Tighten password policy + rate-limit password change (MEDIUM, S)
 
@@ -2314,7 +2375,15 @@ See Pass 13.3 — no duplicate entry.
   dict-based rate limit to the change endpoint; document the choice
   (HIBP call vs length rule) in standards addendum.
 - **Source**: 2026-04-23 audit, Auth & Security findings 5, 8.
-- **Status**: todo
+- **Status**: done (v2.95.0) — 8 → 12 char minimum on both
+  `api_change_password` and `api_force_change_password`. `api_create_user`
+  also enforces ≥12 for any admin-supplied password. Rate-limit: reused
+  the existing `rate_limit_login(client_ip)` + `record_login_attempt`
+  helpers, so a brute-force attack on `current_password` shares the 5-
+  failures-per-5-minutes login bucket from that IP. No HIBP integration
+  — length rule is the path of least surprise, length floor documented
+  in the Pass 24 changelog entry instead of adding a standards-addendum
+  file for one setting.
 
 ### 24.5 `@editor_required` / `@admin_required` on destructive endpoints (HIGH-in-multi-user, M)
 
@@ -2333,7 +2402,14 @@ See Pass 13.3 — no duplicate entry.
   Collections endpoints deferred to Pass 27 (needs `owner_id`).
 - **Source**: 2026-04-23 audit, Game Routes finding 1, Collections
   finding 1, Maintenance finding 5.
-- **Status**: todo
+- **Status**: done (v2.95.0) — 11 endpoints upgraded: `games_media`
+  (delete-game, rename-rom, delete-screenshot), `games` (game edit,
+  bulk-edit), `bulk_scrape` (8 job-control POSTs; status GET kept at
+  login_required), `achievements` (sync/&lt;id&gt;, sync-system, sync-cancel,
+  refresh/&lt;id&gt;), `collector_trophies` (refresh).
+  `api_update_completion` and `api_track_view` deliberately retained
+  `@login_required` — non-destructive, and Pass 27 will scope the state
+  per-user anyway. Collections endpoints held for Pass 27 per plan.
 
 ### 24.6 Xbox OAuth `state` parameter + verification (MEDIUM-in-multi-user, S)
 
@@ -2345,7 +2421,15 @@ See Pass 13.3 — no duplicate entry.
   `oauth_state_xbox`, include as `state=` in the auth URL, compare on
   callback.  Reject mismatches with 400.
 - **Source**: 2026-04-23 audit, Platform Imports finding 1.
-- **Status**: todo
+- **Status**: done (v2.95.0) — `scrape_xbox.get_auth_url()` now accepts
+  an optional `state` kwarg and round-trips it through Microsoft.
+  `routes/platform_import.py::api_xbox_auth_url` generates a
+  `secrets.token_urlsafe(32)`, stashes it in
+  `flask_session['oauth_state_xbox']`, and passes it in. The callback
+  pops the stashed state and compares with `hmac.compare_digest`
+  (timing-safe); missing or mismatched state redirects to
+  `?xbox_error=state_mismatch` rather than proceeding. Pop-and-compare
+  prevents replay since a consumed state is gone from the session.
 
 ### 24.7 Sensitive-file permissions on token JSON (LOW, S)
 
@@ -2357,7 +2441,14 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: after save, `os.chmod(path, 0o600)`.  Tiny helper,
   applied uniformly.
 - **Source**: 2026-04-23 audit, Platform Imports finding 4.
-- **Status**: todo
+- **Status**: done (v2.95.0) — both `_save_psn_tokens` (in
+  `routes/trophies.py`) and `save_tokens` (in `scraper/scrape_xbox.py`)
+  now create the file via `os.open(path, O_WRONLY|O_CREAT|O_TRUNC, 0o600)`
+  + `os.fdopen`, which respects the mode arg directly rather than
+  inheriting the default umask. A defensive `os.chmod(path, 0o600)`
+  follows to cover the already-exists case (O_CREAT's mode only
+  applies on file creation). Regression tests verify the resulting
+  file's mode is exactly 0o600.
 
 ### 24.8 Broaden `SecretRedactor` token patterns (LOW, S)
 
@@ -2371,7 +2462,12 @@ See Pass 13.3 — no duplicate entry.
   `access_token`).  Don't redact unconditionally — too many false
   positives.
 - **Source**: 2026-04-23 audit, Auth & Security finding 10.
-- **Status**: todo
+- **Status**: done (v2.95.0) — added a `(label)(separator)(token)`
+  pattern where `label` is one of `npsso`, `api[_-]?key`,
+  `access[_-]?token`, `refresh[_-]?token`, `bearer`, `session[_-]?token`,
+  `client[_-]?secret` and `token` is `[A-Za-z0-9_\-\.]{24,}`. The
+  explicit label gate keeps commit SHAs and other non-secret long
+  strings in free-text log lines unredacted.
 
 ---
 

@@ -12,7 +12,7 @@ from flask import Blueprint, request
 import config
 from services.analytics import invalidate_analytics_cache
 from services.api_helpers import handle_api_errors, success, error
-from services.auth import login_required
+from services.auth import editor_required
 from services.database import query, execute
 from services.game_query import invalidate_filter_cache
 from services.security import safe_filename
@@ -23,7 +23,7 @@ bp = Blueprint('games_media', __name__)
 
 
 @bp.route('/api/delete-game/<int:game_id>', methods=['DELETE', 'POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def api_delete_game(game_id):
     """Delete a game from the database."""
@@ -49,7 +49,7 @@ def api_delete_game(game_id):
 
 
 @bp.route('/api/rename-rom/<int:game_id>', methods=['POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def api_rename_rom(game_id):
     """Rename a ROM file on disk and update the database."""
@@ -98,7 +98,7 @@ def api_rename_rom(game_id):
 
 
 @bp.route('/api/delete-screenshot/<int:game_id>', methods=['POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def api_delete_screenshot(game_id):
     """Delete a screenshot from a game."""

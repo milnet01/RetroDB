@@ -11,7 +11,7 @@ import logging
 from services.database import query
 from services.jobs import bulk_scrape_job
 from services.game_utils import derive_title_from_filename, get_system_type
-from services.auth import login_required
+from services.auth import login_required, editor_required
 from services.api_helpers import handle_api_errors, success, error
 
 logger = logging.getLogger(__name__)
@@ -23,7 +23,7 @@ bp = Blueprint('bulk_scrape', __name__)
 # =============================================================================
 
 @bp.route('/api/bulk-scrape', methods=['POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def api_bulk_scrape():
     """Bulk scrape a single game - called repeatedly by frontend (LEGACY - kept for compatibility)"""
@@ -149,7 +149,7 @@ def api_bulk_scrape():
 # =============================================================================
 
 @bp.route('/api/bulk-scrape-job/start', methods=['POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def api_bulk_scrape_job_start():
     """Start a new bulk scrape job that runs in the background"""
@@ -176,7 +176,7 @@ def api_bulk_scrape_job_status():
 
 
 @bp.route('/api/bulk-scrape-job/pause', methods=['POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def api_bulk_scrape_job_pause():
     """Pause the current bulk scrape job"""
@@ -185,7 +185,7 @@ def api_bulk_scrape_job_pause():
 
 
 @bp.route('/api/bulk-scrape-job/resume', methods=['POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def api_bulk_scrape_job_resume():
     """Resume the current bulk scrape job"""
@@ -194,7 +194,7 @@ def api_bulk_scrape_job_resume():
 
 
 @bp.route('/api/bulk-scrape-job/cancel', methods=['POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def api_bulk_scrape_job_cancel():
     """Cancel the current bulk scrape job"""
@@ -203,7 +203,7 @@ def api_bulk_scrape_job_cancel():
 
 
 @bp.route('/api/bulk-scrape-job/cancel-queued/<job_id>', methods=['POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def api_bulk_scrape_job_cancel_queued(job_id):
     """Cancel a specific queued bulk scrape job"""
@@ -212,7 +212,7 @@ def api_bulk_scrape_job_cancel_queued(job_id):
 
 
 @bp.route('/api/bulk-scrape-job/cancel-all-queued', methods=['POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def api_bulk_scrape_job_cancel_all_queued():
     """Cancel all queued bulk scrape jobs"""
@@ -221,7 +221,7 @@ def api_bulk_scrape_job_cancel_all_queued():
 
 
 @bp.route('/api/bulk-scrape-job/promote-queued/<job_id>', methods=['POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def api_bulk_scrape_job_promote_queued(job_id):
     """Move a queued job up in the queue (run sooner)"""
@@ -230,7 +230,7 @@ def api_bulk_scrape_job_promote_queued(job_id):
 
 
 @bp.route('/api/bulk-scrape-job/demote-queued/<job_id>', methods=['POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def api_bulk_scrape_job_demote_queued(job_id):
     """Move a queued job down in the queue (run later)"""
@@ -239,7 +239,7 @@ def api_bulk_scrape_job_demote_queued(job_id):
 
 
 @bp.route('/api/bulk-scrape-job/swap-running/<job_id>', methods=['POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def api_bulk_scrape_job_swap_running(job_id):
     """Swap a queued job with the currently running job"""
@@ -248,7 +248,7 @@ def api_bulk_scrape_job_swap_running(job_id):
 
 
 @bp.route('/api/bulk-scrape-job/demote-running', methods=['POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def api_bulk_scrape_job_demote_running():
     """Demote the running job to queue position 1 and start the next queued job"""

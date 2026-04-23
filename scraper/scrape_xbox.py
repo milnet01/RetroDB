@@ -43,12 +43,20 @@ XBOX_PLATFORM_MAP = {
 TOKENS_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'xbox_tokens.json')
 
 
-def get_auth_url(client_id, redirect_uri):
+def get_auth_url(client_id, redirect_uri, state=None):
     """Generate the Microsoft OAuth authorization URL.
+
+    Pass 24.6 — the `state` parameter is now part of the signature so the
+    route can bind this authorization flow to the caller's session. Without
+    it, any attacker triggering a callback with a valid `code` would bind
+    the victim's RetroDB session to the attacker's Microsoft account.
+    Callers should generate a random token, stash it in `session`, and
+    compare on callback.
 
     Args:
         client_id: Azure AD application client ID
         redirect_uri: OAuth callback URL
+        state: opaque CSRF-protection token to round-trip through Microsoft
 
     Returns:
         str: Authorization URL to redirect user to
@@ -59,6 +67,8 @@ def get_auth_url(client_id, redirect_uri):
         'redirect_uri': redirect_uri,
         'scope': SCOPES,
     }
+    if state:
+        params['state'] = state
     return f'{XBOX_AUTH_URL}?{urlencode(params)}'
 
 
@@ -180,11 +190,27 @@ def _get_auth_header(user_hash, xsts_token):
 
 
 def save_tokens(tokens):
-    """Save Xbox tokens to disk for persistence across restarts."""
+    """Save Xbox tokens to disk for persistence across restarts.
+
+    Pass 24.7 — Xbox refresh tokens are long-lived credentials that can
+    authenticate to the user's Microsoft account. File gets 0o600 so it
+    isn't world/group readable on shared-filesystem deploys.
+    """
     try:
         os.makedirs(os.path.dirname(TOKENS_FILE), exist_ok=True)
-        with open(TOKENS_FILE, 'w') as f:
-            json.dump(tokens, f, indent=2)
+        # Create with 0o600 up front via os.open — open() respects umask.
+        fd = os.open(TOKENS_FILE, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+        try:
+            with os.fdopen(fd, 'w') as f:
+                json.dump(tokens, f, indent=2)
+        except BaseException:
+            os.close(fd)
+            raise
+        # Re-chmod in case the file already existed.
+        try:
+            os.chmod(TOKENS_FILE, 0o600)
+        except OSError:
+            pass
     except Exception as e:
         logger.error(f"Failed to save Xbox tokens: {e}")
 

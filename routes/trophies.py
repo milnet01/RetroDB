@@ -65,11 +65,30 @@ def _load_psn_tokens():
 
 
 def _save_psn_tokens(token_response):
-    """Save PSN OAuth tokens to file for reuse across restarts."""
+    """Save PSN OAuth tokens to file for reuse across restarts.
+
+    Pass 24.7 — tokens are long-lived OAuth refresh credentials, so the
+    file gets 0o600 to prevent world/group read on shared filesystems.
+    Set the mode before writing so there's no window where the default
+    umask 0o644 applies.
+    """
     try:
         os.makedirs(os.path.dirname(PSN_TOKENS_FILE), exist_ok=True)
-        with open(PSN_TOKENS_FILE, 'w') as f:
-            json.dump(dict(token_response), f)
+        # Create the file with 0o600 up front — os.open + O_CREAT respects
+        # the mode arg, unlike open() which goes through the umask.
+        fd = os.open(PSN_TOKENS_FILE, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+        try:
+            with os.fdopen(fd, 'w') as f:
+                json.dump(dict(token_response), f)
+        except BaseException:
+            os.close(fd)
+            raise
+        # Re-chmod in case the file already existed (O_CREAT only applies
+        # mode on creation).
+        try:
+            os.chmod(PSN_TOKENS_FILE, 0o600)
+        except OSError:
+            pass
         logger.debug("PSN token cache saved")
     except OSError as e:
         logger.warning(f"Could not save PSN token cache: {e}")
