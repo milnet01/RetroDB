@@ -1,3 +1,22 @@
+- version: 2.87.0
+  date: 2026-04-23
+  tags:
+  - type: feature
+    label: Security
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 16 &mdash; HTTP security headers expansion</strong> &mdash; Four-item sweep. 226 tests pass (was 211); 15 new tests added.
+            <ul>
+                <li><strong>16.1 &mdash; removed deprecated <code>X-XSS-Protection</code></strong>. The XSS Auditor was removed from Chromium/Edge and retained only in Safari, where modern OWASP (2024-2026) guidance is to omit the header. Deleted the <code>response.headers['X-XSS-Protection'] = '1; mode=block'</code> line from <code>app.py::set_security_headers</code>. Keeps the other three baseline headers (<code>X-Content-Type-Options</code>, <code>X-Frame-Options</code>, <code>Referrer-Policy</code>) unchanged.</li>
+                <li><strong>16.3 &mdash; added <code>Permissions-Policy</code></strong>. Opts out of 11 browser APIs RetroDB never uses: <code>browsing-topics</code>, <code>camera</code>, <code>microphone</code>, <code>geolocation</code>, <code>payment</code>, <code>usb</code>, <code>interest-cohort</code>, <code>accelerometer</code>, <code>gyroscope</code>, <code>magnetometer</code>, <code>midi</code>. Defence-in-depth against compromised dependencies that try to reach for sensors or the Topics API. Sent on every response.</li>
+                <li><strong>16.4 &mdash; added <code>Strict-Transport-Security</code> (env-gated)</strong>. Only emitted when <code>SESSION_COOKIE_SECURE</code> is on (i.e. <code>RETRODB_SECURE_COOKIES=true</code>, meaning the operator has flagged TLS is in front). Value: <code>max-age=31536000; includeSubDomains</code>. On plain-HTTP localhost the header is ignored by browsers anyway, but sending it unconditionally would be misleading to anyone reading the response.</li>
+                <li><strong>16.2 &mdash; added <code>Content-Security-Policy</code> in Report-Only mode</strong>. Per-request nonce via <code>secrets.token_urlsafe(16)</code> attached to <code>g.csp_nonce</code> in the existing <code>assign_request_id</code> <code>before_request</code> hook (no second hook). Surfaced to templates as <code>{{ csp_nonce }}</code> via the <code>inject_config</code> context processor. Policy sent as <code>Content-Security-Policy-Report-Only</code>: <code>default-src 'self'</code>, <code>script-src 'self' 'nonce-...' https://cdn.jsdelivr.net</code> (Chart.js), <code>style-src 'self' 'unsafe-inline' https://fonts.googleapis.com</code>, <code>img-src 'self' data: blob:</code>, <code>font-src 'self' https://fonts.gstatic.com</code>, <code>connect-src 'self'</code>, <code>object-src 'none'</code>, <code>frame-ancestors 'self'</code>, <code>base-uri 'self'</code>, <code>form-action 'self'</code>. Intentionally ships report-only while ~765 inline <code>on*</code> handlers and ~38 inline <code>&lt;script&gt;</code> blocks still exist across templates &mdash; violations surface in the browser console so devs / operators can spot regressions, and a follow-up template-migration pass will flip to enforcing once handlers have been refactored to delegated listeners.</li>
+                <li><strong>New tests</strong> (15) &mdash; <code>tests/test_security_headers.py</code>: baseline headers still sent (3); <code>X-XSS-Protection</code> absent (1); <code>Permissions-Policy</code> disables 7 sensor / tracking APIs (2); HSTS absent on plain HTTP + present when <code>SESSION_COOKIE_SECURE=True</code> (2); CSP Report-Only present + enforcing header absent + nonce embedded + nonce differs per request + 9 core directives present + <code>object-src 'none'</code> (6); <code>{{ csp_nonce }}</code> Jinja global renders (1).</li>
+                <li><strong>Validation</strong> &mdash; full suite green (226 passed, 0 failed); <code>app.py</code> smoke-imports; <code>pre-commit</code> clean.</li>
+            </ul>
+        </li>
+    </ul>
+
 - version: 2.86.0
   date: 2026-04-23
   tags:

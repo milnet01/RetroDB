@@ -122,6 +122,32 @@ change forces a different sequence.
   every existing caller (`routes/bulk_scrape.py`, `routes/games.py`,
   `scraper/hybrid_scraper.py`, `services/wishlist_scraper.py`,
   `services/jobs/*`) is unchanged. All 124 tests pass. (v2.83.12)
+- [x] **Pass 16 — HTTP security headers expansion** — Four-item sweep
+  landed as v2.87.0. 226 tests pass (was 211); 15 new tests in
+  `tests/test_security_headers.py`.
+    - **16.1** Removed deprecated `X-XSS-Protection`. Modern OWASP
+      guidance after Chromium removed the XSS Auditor.
+    - **16.3** Added `Permissions-Policy` opting out of 11 unused
+      browser APIs (camera / microphone / geolocation / payment / usb /
+      interest-cohort / browsing-topics / accelerometer / gyroscope /
+      magnetometer / midi).
+    - **16.4** Added `Strict-Transport-Security` env-gated by
+      `SESSION_COOKIE_SECURE` (so it only fires when the operator has
+      flagged TLS is in front). `max-age=31536000; includeSubDomains`.
+    - **16.2** Added `Content-Security-Policy` in **Report-Only** mode.
+      Per-request nonce via `secrets.token_urlsafe(16)` generated in
+      the existing `assign_request_id` hook (reused instead of a
+      second `before_request`), exposed to templates via
+      `{{ csp_nonce }}` through the `inject_config` context processor.
+      Policy: `default-src 'self'`; `script-src 'self' 'nonce-...'
+      https://cdn.jsdelivr.net` (Chart.js); `style-src 'self'
+      'unsafe-inline' https://fonts.googleapis.com`; `img-src 'self'
+      data: blob:`; `font-src 'self' https://fonts.gstatic.com`;
+      `object-src 'none'`; `frame-ancestors 'self'`; `base-uri 'self'`;
+      `form-action 'self'`. Intentionally report-only while ~765 inline
+      `on*` handlers and ~38 inline `<script>` blocks still exist —
+      follow-up template migration pass flips to enforcing once
+      handlers are refactored to delegated listeners. (v2.87.0)
 - [x] **Pass 17 — Observability & health checks** — Three-item sweep
   landed as v2.86.0. 211 tests pass (was 199); 12 new tests in
   `tests/test_observability.py`.
@@ -1087,7 +1113,7 @@ the auditor entirely; some edge cases where it enabled XSS).
 - **Plan**: delete the line. Leave a brief `# (deleted X-XSS-Protection
   — deprecated header)` commit message for posterity.
 - **Source**: <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection>
-- **Status**: todo
+- **Status**: done (v2.87.0)
 
 ### 16.2 Add `Content-Security-Policy` (MEDIUM, L — needs template audit)
 
@@ -1119,7 +1145,13 @@ the auditor entirely; some edge cases where it enabled XSS).
   5. Do NOT adopt `flask-talisman` — the extension is overkill for a single
      `after_request` hook and adds a dependency.
 - **Source**: <https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html>
-- **Status**: todo
+- **Status**: done (v2.87.0) — shipped in Report-Only. `g.csp_nonce`
+  generated inside the existing `assign_request_id` hook (no second
+  `before_request`), surfaced via `inject_config` as `{{ csp_nonce }}`.
+  Enforcing flip is a follow-up once the ~765 inline `on*` handlers and
+  ~38 inline `<script>` blocks have been migrated to delegated listeners
+  / nonced blocks. Allowed hosts: `cdn.jsdelivr.net` (Chart.js),
+  `fonts.googleapis.com`, `fonts.gstatic.com`.
 
 ### 16.3 Add `Permissions-Policy` (LOW, S)
 
@@ -1135,7 +1167,9 @@ the auditor entirely; some edge cases where it enabled XSS).
   )
   ```
 - **Source**: <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy>
-- **Status**: todo
+- **Status**: done (v2.87.0) — extended the baseline list with four
+  more sensor/instrument APIs (`accelerometer`, `gyroscope`,
+  `magnetometer`, `midi`) for 11 total.
 
 ### 16.4 Add `Strict-Transport-Security` — env-gated (LOW, S)
 
@@ -1150,7 +1184,7 @@ the auditor entirely; some edge cases where it enabled XSS).
   if app.config.get('SESSION_COOKIE_SECURE'):
       response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
   ```
-- **Status**: todo
+- **Status**: done (v2.87.0)
 
 ---
 

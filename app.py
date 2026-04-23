@@ -255,11 +255,47 @@ def close_request_db(exception):
 
 @app.after_request
 def set_security_headers(response):
-    """Add security headers to every response"""
+    """Add security headers to every response.
+
+    X-XSS-Protection is intentionally omitted — the XSS Auditor was removed
+    from Chromium/Edge and retained only in Safari, where leaving the header
+    unset matches modern OWASP guidance.
+    """
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
-    response.headers['X-XSS-Protection'] = '1; mode=block'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    response.headers['Permissions-Policy'] = (
+        'browsing-topics=(), camera=(), microphone=(), geolocation=(), '
+        'payment=(), usb=(), interest-cohort=(), accelerometer=(), '
+        'gyroscope=(), magnetometer=(), midi=()'
+    )
+    # HSTS only when the operator has flagged TLS is in front. On plain HTTP
+    # localhost the header is ignored anyway, but sending it unconditionally
+    # would be misleading.
+    if app.config.get('SESSION_COOKIE_SECURE'):
+        response.headers['Strict-Transport-Security'] = (
+            'max-age=31536000; includeSubDomains'
+        )
+    # CSP ships in Report-Only until inline event handlers across templates
+    # have been migrated to delegated listeners. The policy below is what we
+    # intend to enforce — currently it surfaces violations in the browser
+    # console so operators / devs can spot regressions before flipping to
+    # enforcing mode. Nonce is per-request and exposed via {{ csp_nonce }}.
+    nonce = g.get('csp_nonce', '')
+    if nonce:
+        response.headers['Content-Security-Policy-Report-Only'] = (
+            "default-src 'self'; "
+            f"script-src 'self' 'nonce-{nonce}' https://cdn.jsdelivr.net; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "img-src 'self' data: blob:; "
+            "font-src 'self' https://fonts.gstatic.com; "
+            "connect-src 'self'; "
+            "media-src 'self'; "
+            "object-src 'none'; "
+            "frame-ancestors 'self'; "
+            "base-uri 'self'; "
+            "form-action 'self'"
+        )
     return response
 
 
@@ -348,6 +384,11 @@ def assign_request_id():
     """
     g.request_id = secrets.token_hex(4)
     g.request_start_time = time.perf_counter()
+    # Per-request CSP nonce — 128 bits, base64-url. Templates that embed
+    # inline <script> blocks may opt into the enforced CSP by adding
+    # nonce="{{ csp_nonce }}"; while the policy ships in report-only mode
+    # that migration can happen template-by-template without breaking pages.
+    g.csp_nonce = secrets.token_urlsafe(16)
 
 
 @app.before_request
@@ -584,6 +625,7 @@ def inject_config():
         'rating_to_tier_js': _RATING_TO_TIER_JS,
         'tier_to_rating_js': _TIER_TO_RATING_JS,
         'collector_rank': _get_collector_rank_safe(),
+        'csp_nonce': g.get('csp_nonce', ''),
     }
 
 
