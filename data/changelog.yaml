@@ -1,3 +1,26 @@
+- version: 2.92.0
+  date: 2026-04-23
+  tags:
+  - type: feature
+    label: Performance
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 21 complete &mdash; request-level caching &amp; ETags</strong>. Two small, independent pieces that together cut both bandwidth and re-render work for the Library page's card-refresh loop.</li>
+
+        <li><strong>21.1 &mdash; <code>ETag</code> / <code>If-None-Match</code> on <code>/api/games/card-data</code></strong>. The card-refresh loop triggered after a game edit hits this endpoint with up to 50 IDs per call. Response is a fat JOIN across games, systems, <code>game_achievement_progress</code>, <code>psn_games</code>, and the bonus-disc count subquery &mdash; plus the per-card render path in <code>build_game_card()</code>. Now short-circuits: the endpoint runs one indexed <code>SELECT MAX(updated_at) FROM games WHERE id IN (&hellip;)</code>, builds a weak ETag from the sorted IDs + that timestamp, and returns <code>304 Not Modified</code> when the client's <code>If-None-Match</code> matches. A 200 response ships <code>ETag</code> + <code>Cache-Control: private, must-revalidate</code> so the browser caches it correctly.</li>
+
+        <li><strong>Migration 004 &mdash; <code>games.updated_at</code> + auto-refresh triggers</strong>. The ETag depends on every write to the <code>games</code> table touching a last-modified timestamp. The column didn't exist, so rather than instrument ~15 write sites across <code>routes/</code> and <code>services/jobs/</code> (and inevitably miss one), landed it in the schema: new <code>updated_at TEXT</code> column, backfilled with <code>COALESCE(created_at, now)</code>, indexed for fast <code>MAX()</code> scans, plus two SQLite triggers (<code>games_updated_at_on_insert</code> and <code>games_updated_at_on_update</code>) that stamp the column automatically. SQLite's default <code>recursive_triggers = OFF</code> already prevents the UPDATE trigger from re-firing itself; the <code>WHEN NEW.updated_at IS OLD.updated_at</code> guard covers the edge case where a future PRAGMA change flips recursion on. Live install on this dev machine migrated <code>user_version=3 &rarr; 4</code> cleanly; <code>PRAGMA integrity_check</code> reports <code>ok</code>; all 5,504 games backfilled.</li>
+
+        <li><strong>21.2 &mdash; gzip compression <code>after_request</code> hook</strong>. Waitress ships no compression by default, so large JSON payloads (card-data, filter options, timezones list) went over the wire uncompressed. New hook in <code>app.py</code> compresses responses when: status is 2xx (not 204/304), <code>Content-Type</code> is JSON or JavaScript, <code>Accept-Encoding</code> contains <code>gzip</code>, body is &gt;1&nbsp;KB, and the response is not <code>direct_passthrough</code> (never touches streamed <code>send_file</code> bodies). Updates <code>Content-Length</code> and <code>Vary: Accept-Encoding</code> correctly. Operators fronting RetroDB with a reverse proxy that already compresses should set <code>RETRODB_DISABLE_GZIP=1</code> to skip the double work. Quick check against <code>/api/timezones</code>: ~30&nbsp;KB JSON compresses to ~3&nbsp;KB (≈90% reduction), which is the expected shape for repetitive string-heavy payloads.</li>
+
+        <li><strong>Hook ordering</strong>: registered between <code>set_security_headers</code> and <code>log_slow_request</code> so compression sees a finalized body before headers get stamped on. Flask calls <code>after_request</code> in reverse registration order, so the effective chain is <code>log_slow_request &rarr; compress_response &rarr; set_security_headers</code> — no interaction with the CSP nonce or <code>Content-Length</code> because the header-setters don't read the body.</li>
+
+        <li><strong>21.3</strong> is a pointer to Pass 13.3 (per-file content-hash cache-busting) which already landed; no duplicate entry.</li>
+
+        <li><strong>New tests</strong> (8) &mdash; <code>tests/test_migrations.py</code>: 3 tests pinning the new trigger behavior (INSERT stamps, UPDATE refreshes, legacy rows backfilled). <code>tests/test_etag_and_gzip.py</code> (new): gzip roundtrips correctly, <code>Content-Length</code> matches the compressed body, no compression when client declines but <code>Vary</code> still set, sub-1KB bodies skipped, plus a card-data ETag round-trip that verifies <code>If-None-Match</code> &rarr; 304. Suite total now 297 (was 289).</li>
+
+        <li><strong>Roadmap status</strong> &mdash; Pass 21 closed. Next architecturally significant work is Pass 22 (CI/CD hardening) or Pass 23 onwards (security / multi-user / input hardening) depending on priority.</li>
+    </ul>
 - version: 2.91.0
   date: 2026-04-23
   tags:

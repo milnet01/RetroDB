@@ -175,6 +175,60 @@ class TestApplyPending:
             assert applied == list(range(1, migrations.latest_version() + 1))
 
 
+class TestUpdatedAtTriggers:
+    """Migration 004 adds games.updated_at + INSERT/UPDATE triggers — the
+    Pass 21 ETag scheme depends on MAX(updated_at) being fresh without each
+    write-site having to remember to stamp it."""
+
+    def test_insert_stamps_updated_at(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, 'ins.db')
+            conn = _open(path)
+            migrations.apply_pending(conn)
+            conn.execute("INSERT INTO systems (name, folder) VALUES ('PS1', 'ps1')")
+            conn.execute(
+                "INSERT INTO games (system_id, title, rom_path) "
+                "VALUES (1, 'Test', 'ps1/test.bin')"
+            )
+            conn.commit()
+            row = conn.execute("SELECT updated_at FROM games").fetchone()
+            conn.close()
+            assert row[0] is not None and row[0].endswith('Z')
+
+    def test_update_refreshes_updated_at(self):
+        import time
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, 'upd.db')
+            conn = _open(path)
+            migrations.apply_pending(conn)
+            conn.execute("INSERT INTO systems (name, folder) VALUES ('PS1', 'ps1')")
+            conn.execute(
+                "INSERT INTO games (system_id, title, rom_path) "
+                "VALUES (1, 'Test', 'ps1/test.bin')"
+            )
+            conn.commit()
+            first = conn.execute("SELECT id, updated_at FROM games").fetchone()
+            time.sleep(0.01)
+            conn.execute("UPDATE games SET title = 'Renamed' WHERE id = ?", (first[0],))
+            conn.commit()
+            second = conn.execute("SELECT updated_at FROM games WHERE id = ?", (first[0],)).fetchone()
+            conn.close()
+            assert second[0] > first[1], \
+                f"updated_at did not advance: before={first[1]!r} after={second[0]!r}"
+
+    def test_legacy_rows_backfilled(self):
+        """Rows present before the column was added should come out with a
+        non-NULL updated_at."""
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, 'legacy.db')
+            _seed_legacy(path)
+            conn = _open(path)
+            migrations.apply_pending(conn)
+            row = conn.execute("SELECT updated_at FROM games WHERE title = 'Test'").fetchone()
+            conn.close()
+            assert row[0] is not None
+
+
 class TestVersionHelpers:
     def test_latest_matches_migrations_length(self):
         assert migrations.latest_version() == len(migrations.MIGRATIONS)

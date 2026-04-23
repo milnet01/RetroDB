@@ -7,6 +7,7 @@
 
 from flask import Flask, render_template, request, redirect, url_for, jsonify, session, g
 import sqlite3
+import gzip
 import os
 import sys
 import logging
@@ -297,6 +298,58 @@ def set_security_headers(response):
             "base-uri 'self'; "
             "form-action 'self'"
         )
+    return response
+
+
+# Pass 21.2 — opt-out gzip compression for JSON responses. Waitress ships no
+# compression so large card/filter payloads go over the wire uncompressed.
+# Reverse-proxied deploys (Caddy, nginx) already compress at the edge; set
+# RETRODB_DISABLE_GZIP=1 there to skip the double work.
+_GZIP_ENABLED = os.environ.get('RETRODB_DISABLE_GZIP', '').lower() not in ('1', 'true', 'yes')
+_GZIP_MIN_BYTES = 1024
+
+
+@app.after_request
+def compress_response(response):
+    """gzip JSON responses >1 KB when the client advertises Accept-Encoding: gzip.
+
+    Skips streamed/direct-passthrough responses, already-encoded bodies, and
+    non-compressible status codes (204, 304). Adds Vary: Accept-Encoding so
+    shared caches never serve a gzipped body to a client that did not ask for
+    it.
+    """
+    if not _GZIP_ENABLED:
+        return response
+    # `direct_passthrough` bodies (send_file, StreamResponse) must not be
+    # materialised — compressing them would break the streaming contract.
+    if response.direct_passthrough:
+        return response
+    if response.status_code < 200 or response.status_code in (204, 304):
+        return response
+    if response.headers.get('Content-Encoding'):
+        return response
+    ctype = response.content_type or ''
+    if 'json' not in ctype and 'javascript' not in ctype:
+        return response
+    if 'gzip' not in (request.headers.get('Accept-Encoding') or ''):
+        # Even when we don't compress, advertise that the response varies by
+        # Accept-Encoding so the browser cache keys on it correctly.
+        response.headers.setdefault('Vary', 'Accept-Encoding')
+        return response
+    data = response.get_data()
+    if len(data) < _GZIP_MIN_BYTES:
+        response.headers.setdefault('Vary', 'Accept-Encoding')
+        return response
+    compressed = gzip.compress(data, compresslevel=6)
+    response.set_data(compressed)
+    response.headers['Content-Encoding'] = 'gzip'
+    response.headers['Content-Length'] = str(len(compressed))
+    existing_vary = response.headers.get('Vary', '')
+    if existing_vary:
+        if 'accept-encoding' not in existing_vary.lower():
+            response.headers['Vary'] = f"{existing_vary}, Accept-Encoding"
+    else:
+        response.headers['Vary'] = 'Accept-Encoding'
     return response
 
 

@@ -272,6 +272,22 @@ change forces a different sequence.
       contract, idempotency rules with worked examples, the append-only
       invariant, transaction semantics, and pointer to the test file.
       Standards bumped to v2.5.0. (v2.91.0)
+- [x] **Pass 21 — Request-level caching & ETags (complete)** — Both
+  applicable sub-items landed; 21.3 was already resolved by Pass 13.3.
+    - **21.1** `routes/games.py::api_games_card_data` emits a weak ETag
+      keyed on sorted IDs + `MAX(games.updated_at)` and short-circuits
+      with 304 when `If-None-Match` matches. To avoid instrumenting ~15
+      write sites, landed `updated_at` as a schema invariant: migration
+      004 adds the column (backfilled from `created_at` where present),
+      indexes it, and installs INSERT/UPDATE triggers that stamp it
+      automatically. Live install migrated 3 → 4 cleanly; 5,504 games
+      backfilled. (v2.92.0)
+    - **21.2** `compress_response` `after_request` hook in `app.py` gzips
+      JSON/JS responses >1 KB when the client opts in, skips 204/304 and
+      `direct_passthrough` bodies, and always emits
+      `Vary: Accept-Encoding`. Operators behind a compressing reverse
+      proxy can disable via `RETRODB_DISABLE_GZIP=1`. No new dependency.
+      (v2.92.0)
 - [x] **Pass 23 — Correctness bugfixes (2026-04-23 multi-agent review)** —
   Eight runtime bugs fixed; 250 tests pass (was 244); 6 new regression
   tests in `tests/test_hybrid_scraper.py`. Landed as v2.88.1.
@@ -1773,7 +1789,22 @@ pipeline yields real wins.
   ```
   Requires every game write to touch `updated_at` — verify this on
   INSERT/UPDATE paths.
-- **Status**: todo
+- **Status**: done (v2.92.0) — `api_games_card_data` issues a weak ETag
+  keyed on sorted IDs + `MAX(games.updated_at)` over those IDs, and
+  short-circuits with 304 when `If-None-Match` matches. `updated_at` was
+  missing from the schema entirely, so rather than instrument every write
+  site across `routes/` + `services/jobs/` (~15 call sites), landed the
+  timestamp invariant in the schema itself: migration 004 adds the column
+  (backfilled from `created_at` where present), indexes it for fast
+  `MAX()` scans, and installs two triggers (`games_updated_at_on_insert`
+  + `games_updated_at_on_update`) that stamp it automatically. SQLite's
+  `recursive_triggers = OFF` default prevents trigger re-firing; the
+  `WHEN NEW.updated_at IS OLD.updated_at` guard covers the edge case if
+  that PRAGMA ever changes. Live install migrated 0 → 4 cleanly; 5,504
+  games backfilled; `PRAGMA integrity_check` reports `ok`. Only
+  `card-data` wired for now — `/api/games` (the paginated variant) can
+  opt in later with the same pattern when its filter-key plumbing is
+  cheap enough to share.
 
 ### 21.2 Response compression (LOW, S)
 
@@ -1795,7 +1826,16 @@ pipeline yields real wins.
   ```
   Benchmark first — may be better done at the reverse-proxy layer on
   deploys that have one.
-- **Status**: todo
+- **Status**: done (v2.92.0) — `compress_response` hook in `app.py`
+  compresses JSON/JavaScript responses >1 KB when `Accept-Encoding`
+  contains `gzip`. Skips 204/304, `direct_passthrough` bodies, and
+  already-encoded responses. Sets `Content-Length` to the compressed
+  size and always emits `Vary: Accept-Encoding` so shared caches don't
+  serve a gzipped body to a client that didn't ask for one. Reverse-
+  proxied deploys (Caddy, nginx) that already compress at the edge can
+  skip the double work via `RETRODB_DISABLE_GZIP=1`. Quick check against
+  `/api/timezones`: ~30 KB JSON compresses to ~3 KB (≈90%). No new
+  dependency — stdlib `gzip`.
 
 ### 21.3 Per-file cache-busting hash — consolidate with Pass 13.3 (N/A)
 

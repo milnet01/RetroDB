@@ -4,7 +4,8 @@
 # Handles game pages, game API endpoints, HLTB lookup, and game management.
 # =============================================================================
 
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, session, g
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, session, g, make_response
+import hashlib
 import os
 import re
 import json
@@ -214,6 +215,25 @@ def api_games_card_data():
     if not game_ids or len(game_ids) > 50:
         return jsonify({'success': False, 'error': 'Provide 1-50 valid IDs'}), 400
 
+    # Pass 21.1: ETag short-circuit. Key off MAX(games.updated_at) for the
+    # requested IDs — migration 004 guarantees every INSERT/UPDATE refreshes
+    # it. If the client's If-None-Match matches, skip the heavy JOIN + JSON
+    # serialisation entirely and return 304.
+    sorted_ids = sorted(game_ids)
+    max_updated_row = query(
+        f"SELECT MAX(updated_at) AS m FROM games WHERE id IN ({','.join('?' * len(sorted_ids))})",
+        tuple(sorted_ids),
+        one=True,
+    )
+    max_updated = (max_updated_row or {}).get('m') or ''
+    etag_payload = f"cd:{','.join(str(i) for i in sorted_ids)}:{max_updated}"
+    etag = f'W/"{hashlib.md5(etag_payload.encode()).hexdigest()}"'
+    if request.headers.get('If-None-Match') == etag:
+        resp = make_response('', 304)
+        resp.headers['ETag'] = etag
+        resp.headers['Cache-Control'] = 'private, must-revalidate'
+        return resp
+
     placeholders = ','.join('?' * len(game_ids))
     sql = f"""
         SELECT g.id, g.title, g.sort_title, g.system_id, g.boxart, g.boxart_3d,
@@ -266,7 +286,10 @@ def api_games_card_data():
         for row in rows
     ]
 
-    return jsonify({'success': True, 'games': games})
+    resp = jsonify({'success': True, 'games': games})
+    resp.headers['ETag'] = etag
+    resp.headers['Cache-Control'] = 'private, must-revalidate'
+    return resp
 
 
 @bp.route('/game/<int:game_id>', methods=['GET', 'POST'])

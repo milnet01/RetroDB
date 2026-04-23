@@ -28,6 +28,7 @@ MIGRATIONS = [
     '001_baseline',
     '002_normalize_genres',
     '003_normalize_pegi',
+    '004_games_updated_at',
 ]
 
 
