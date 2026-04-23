@@ -1,3 +1,22 @@
+- version: 2.89.0
+  date: 2026-04-23
+  tags:
+  - type: feature
+    label: Resilience
+  body: |
+    <ul>
+        <li><strong>Roadmap Pass 19.1 &mdash; safe SQLite backups via the online backup API</strong>. <code>routes/settings.py::api_backup</code> previously used <code>shutil.copy2(config.DB_PATH, backup_path)</code>, which on a WAL-mode database with active writers can produce a torn / partially-written backup file &mdash; the user could be handed a snapshot that <code>PRAGMA integrity_check</code> would reject if they ever needed to restore from it. Replaced with a new <code>services.database.backup_database(src, dst)</code> helper that:
+            <ul>
+                <li>uses <code>sqlite3.Connection.backup()</code> &mdash; SQLite's online backup API, which coordinates with WAL and guarantees a consistent snapshot even under concurrent writes;</li>
+                <li>runs <code>PRAGMA integrity_check</code> on the resulting file and removes the destination + raises <code>RuntimeError</code> if the check fails any reason &mdash; so the user never receives a silently corrupt backup.</li>
+            </ul>
+            Same helper now backs the pre-restore safety snapshot in <code>api_restore</code>; the bare <code>shutil.copy2(backup, DB_PATH)</code> on the restore step itself is unchanged (different concern &mdash; backup file is static, write-after-replace requires app restart anyway).
+        </li>
+        <li><strong>Roadmap Pass 19.3 &mdash; backup rotation</strong>. New <code>config.MAX_BACKUPS</code> knob (default 30, override via <code>RETRODB_MAX_BACKUPS</code>) and a <code>_prune_old_backups()</code> sweep called after each successful backup that deletes the oldest <code>roms_backup_*.db</code> files past the limit. <code>pre_restore_*.db</code> snapshots created automatically before a restore are exempt and never pruned &mdash; users rely on them for recovery and they're created intentionally per restore. Defensive guard: <code>keep &le; 0</code> is a no-op so a misconfigured env var can never wipe all backups.</li>
+        <li><strong>New tests</strong> (9) &mdash; <code>tests/test_database_backup.py</code>: backup creates consistent copy, backup works under WAL mode, backup with concurrent open writer (uncommitted writes don't appear), corrupt destination is removed on integrity-check failure (4). <code>tests/test_backup_rotation.py</code>: keeps newest N files, pre_restore backups never pruned, keep=0 is no-op, fewer-than-keep is no-op, unrelated files (README/.keep) are ignored (5).</li>
+        <li><strong>Validation</strong> &mdash; full suite green (259 passed, 0 failed); end-to-end smoke against the live 39 MB DB backed up cleanly via the new helper.</li>
+    </ul>
+
 - version: 2.88.2
   date: 2026-04-23
   tags:

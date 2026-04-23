@@ -204,6 +204,21 @@ change forces a different sequence.
       (default 500 ms, env-overridable via `RETRODB_SLOW_REQUEST_MS`, 0
       disables). Probe endpoints exempted. Pairs with the existing
       `SLOW_QUERY_MS` DB-layer check. (v2.86.0)
+- [x] **Pass 19.1 + 19.3 — SQLite online backup + retention** — Replaced
+  `shutil.copy2(config.DB_PATH, ...)` in `routes/settings.py::api_backup`
+  and the pre-restore snapshot in `api_restore` with a new
+  `services.database.backup_database(src, dst)` helper that uses
+  `sqlite3.Connection.backup()` — the SQLite online backup API, which
+  coordinates with WAL and produces a consistent snapshot under concurrent
+  writes. Always followed by `PRAGMA integrity_check`; the destination is
+  removed and the call raises if the check fails, so no broken backup is
+  ever handed back. New `config.MAX_BACKUPS` (default 30, env-overridable
+  via `RETRODB_MAX_BACKUPS`) + `_prune_old_backups()` sweep after each
+  successful backup. `pre_restore_*.db` snapshots are exempt and never
+  pruned (recovery safety net). 9 new regression tests
+  (`tests/test_database_backup.py`, `tests/test_backup_rotation.py`); 259
+  total pass (was 250). End-to-end smoke against the live 39 MB DB clean.
+  (v2.89.0)
 - [x] **Pass 23 — Correctness bugfixes (2026-04-23 multi-agent review)** —
   Eight runtime bugs fixed; 250 tests pass (was 244); 6 new regression
   tests in `tests/test_hybrid_scraper.py`. Landed as v2.88.1.
@@ -1451,7 +1466,9 @@ pipeline yields real wins.
   ```
   Integrity check at the end means we never hand the user a broken backup.
 - **Source**: <https://docs.python.org/3/library/sqlite3.html#sqlite3.Connection.backup>
-- **Status**: todo
+- **Status**: done (v2.89.0) — landed as `services/database.backup_database()`,
+  used by both `api_backup` and the pre-restore snapshot in `api_restore`. 4
+  regression tests in `tests/test_database_backup.py`.
 
 ### 19.2 Graceful shutdown — mark jobs paused on SIGTERM (MEDIUM, M)
 
@@ -1487,7 +1504,10 @@ pipeline yields real wins.
 - **Plan**: after creating a new backup, if the count exceeds
   `MAX_BACKUPS` config (default 30), delete the oldest N. Keep at least
   one always.
-- **Status**: todo
+- **Status**: done (v2.89.0) — `config.MAX_BACKUPS` (env-overridable via
+  `RETRODB_MAX_BACKUPS`) + `_prune_old_backups()` after each successful
+  backup. `pre_restore_*` snapshots are exempt and never pruned. 5
+  regression tests in `tests/test_backup_rotation.py`.
 
 ### 19.4 Fix `BulkScrapeJob.swap_with_running` / `demote_running` cancel+reset race (MEDIUM, S)
 

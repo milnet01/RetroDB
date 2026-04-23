@@ -95,7 +95,7 @@ except ValueError:
 
 # Application metadata
 APP_NAME = "RetroDB"
-APP_VERSION = "2.88.2"
+APP_VERSION = "2.89.0"
 APP_LAST_UPDATE = "2026-04-23"
 APP_DESCRIPTION = "Retro Gaming ROM Library Manager"
 
@@ -136,6 +136,15 @@ MAX_UPLOAD_BYTES = _max_upload_mb * 1024 * 1024
 
 # Maximum results to show in search
 MAX_SEARCH_RESULTS = 10
+
+# Maximum number of database backups to retain. Older backups beyond this
+# count are pruned after each new backup. `pre_restore_*` backups created
+# automatically before a restore are exempt and never pruned.
+# Override via RETRODB_MAX_BACKUPS.
+try:
+    MAX_BACKUPS = int(os.environ.get('RETRODB_MAX_BACKUPS', '30'))
+except ValueError:
+    MAX_BACKUPS = 30
 
 # =============================================================================
 # SYSTEM NAME MAPPING

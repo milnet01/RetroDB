@@ -16,7 +16,7 @@ import config
 import settings_manager
 import log_manager
 from services.api_helpers import handle_api_errors
-from services.database import query, execute, get_db
+from services.database import query, execute, get_db, backup_database
 from services.auth import login_required, admin_required
 from services.security import safe_filename
 from services.normalization import get_unique_values, apply_normalization
@@ -237,6 +237,29 @@ def api_delete_dropdown_option(option_id):
 # BACKUP / RESTORE API
 # =============================================================================
 
+def _prune_old_backups(backup_dir, keep):
+    """Delete oldest `roms_backup_*.db` files past `keep`. `pre_restore_*`
+    backups are intentionally never pruned — they are safety nets a user
+    explicitly relies on to recover a bad restore."""
+    if keep <= 0:
+        return
+    candidates = []
+    for filename in os.listdir(backup_dir):
+        if filename.startswith('roms_backup_') and filename.endswith('.db'):
+            path = os.path.join(backup_dir, filename)
+            try:
+                candidates.append((os.path.getmtime(path), path))
+            except OSError:
+                continue
+    candidates.sort()
+    for _, path in candidates[:-keep]:
+        try:
+            os.remove(path)
+            logger.info(f"Pruned old backup: {os.path.basename(path)}")
+        except OSError as e:
+            logger.warning(f"Could not prune backup {path}: {e}")
+
+
 @bp.route('/api/backup', methods=['POST'])
 @admin_required
 def api_backup():
@@ -251,11 +274,14 @@ def api_backup():
         backup_filename = f"roms_backup_{timestamp}.db"
         backup_path = os.path.join(backup_dir, backup_filename)
 
-        # Copy database
-        shutil.copy2(config.DB_PATH, backup_path)
+        # SQLite online backup API — safe under WAL with concurrent writers,
+        # post-write integrity check raises if the snapshot is corrupt.
+        backup_database(config.DB_PATH, backup_path)
 
         # Get backup size
         backup_size = format_size(os.path.getsize(backup_path))
+
+        _prune_old_backups(backup_dir, getattr(config, 'MAX_BACKUPS', 30))
 
         logger.info(f"Created backup: {backup_filename}")
         return jsonify({
@@ -265,7 +291,7 @@ def api_backup():
             'size': backup_size
         })
     except Exception as e:
-        logger.error(f"Backup error: {e}")
+        logger.error(f"Backup error: {e}", exc_info=True)
         return jsonify({'success': False, 'error': 'An internal error occurred'})
 
 
@@ -307,10 +333,11 @@ def api_restore(filename):
         if not os.path.exists(backup_path):
             return jsonify({'success': False, 'error': 'Backup file not found'})
 
-        # Create a backup of current db before restoring
+        # Create a backup of current db before restoring (online backup API
+        # → consistent snapshot of the live, possibly-being-written DB).
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         pre_restore_backup = os.path.join(backup_dir, f"pre_restore_{timestamp}.db")
-        shutil.copy2(config.DB_PATH, pre_restore_backup)
+        backup_database(config.DB_PATH, pre_restore_backup)
 
         # Restore
         shutil.copy2(backup_path, config.DB_PATH)

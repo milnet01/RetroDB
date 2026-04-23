@@ -6,6 +6,7 @@
 # =============================================================================
 
 import logging
+import os
 import re
 import sqlite3
 import time
@@ -246,6 +247,47 @@ def execute_script(sql_script):
     conn = get_request_db()
     conn.executescript(sql_script)
     conn.commit()
+
+
+def backup_database(src_path, dst_path):
+    """
+    Create a consistent snapshot of a SQLite database using the online
+    backup API. Coordinates with WAL mode and concurrent writers, unlike
+    `shutil.copy2` which can produce a torn file. Verifies the result with
+    `PRAGMA integrity_check` and removes the destination file if the check
+    fails, so callers never receive a corrupt backup.
+
+    Args:
+        src_path: Path to the live SQLite database file.
+        dst_path: Path where the backup will be written.
+
+    Raises:
+        RuntimeError: if the backup fails its post-write integrity check.
+        sqlite3.Error: on any underlying SQLite failure.
+    """
+    src = sqlite3.connect(src_path)
+    try:
+        dst = sqlite3.connect(dst_path)
+        try:
+            with dst:
+                src.backup(dst)
+        finally:
+            dst.close()
+    finally:
+        src.close()
+
+    verify = sqlite3.connect(dst_path)
+    try:
+        result = verify.execute("PRAGMA integrity_check").fetchone()
+    finally:
+        verify.close()
+
+    if not result or result[0] != 'ok':
+        try:
+            os.remove(dst_path)
+        except OSError:
+            pass
+        raise RuntimeError(f"backup failed integrity check: {result[0] if result else 'no result'}")
 
 
 def get_db_with_context():
