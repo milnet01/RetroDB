@@ -2773,7 +2773,22 @@ See Pass 13.3 — no duplicate entry.
   handler gains `WHERE owner_id = g.user['id'] OR
   g.user['role']='admin'`.
 - **Source**: 2026-04-23 audit, Collections finding 1.
-- **Status**: todo
+- **Status**: done (v2.98.0). Migration 005 adds `owner_id
+  INTEGER REFERENCES users(id)` + `idx_{table}_owner_id` to
+  all three tables, backfills legacy rows to the first admin,
+  and is a no-op on fresh installs where `users` doesn't
+  exist yet (order: `init_database()` → `ensure_user_tables()`).
+  `routes/collections.py` gained a `_owner_clause(table_alias)`
+  helper (`(sql, params)`-pair) that every SELECT/UPDATE/DELETE
+  now routes through — admins match `1=1`, everyone else
+  matches `owner_id = ?`. Duplicate checks (tag name, wishlist
+  title) are per-owner so two users can both have a
+  "Favourites" tag. `services/wishlist_scraper.py` gained an
+  `owner_id` parameter on `scrape_unscraped_items_async` so
+  admin "scrape all" still spans every user's items while
+  non-admins stay in their own wishlist. 3 new tests in
+  `test_migrations.py` cover fresh install + legacy backfill +
+  no-users-yet paths.
 
 ### 27.2 Scope PSN / Xbox tokens per user (HIGH-in-multi-user, M)
 
@@ -2791,7 +2806,29 @@ See Pass 13.3 — no duplicate entry.
   `(user_id, platform)`.  Job workers take `user_id` as a
   parameter; status reads filter by session user.
 - **Source**: 2026-04-23 audit, Platform Imports finding 11.
-- **Status**: todo
+- **Status**: done (v2.98.0). Migration 006 creates
+  `user_platform_tokens (user_id, platform, tokens,
+  updated_at)`, ingests the two legacy JSON files
+  (`data/psn_tokens.json`, `data/xbox_tokens.json`) into the
+  admin's row, and deletes the files. `services/platform_tokens.py`
+  is the single shared accessor (`load_tokens` / `save_tokens`
+  / `clear_tokens`) used by both `routes/trophies.py` (PSN)
+  and `scraper/scrape_xbox.py` (Xbox); Xbox function
+  signatures now require `user_id` and every caller in
+  `routes/platform_import.py` passes `g.user['id']`. The PSN
+  helpers in `trophies.py` default to the request's
+  `g.user['id']` via `_current_user_id()`. `psn_sync_status`
+  gains a `user_id` column + partial UNIQUE index
+  (`WHERE user_id IS NOT NULL`) so the singleton
+  `INSERT OR REPLACE id=1` pattern pivots to
+  `INSERT … ON CONFLICT(user_id) DO UPDATE`. Every
+  `WHERE id = 1` / `LIMIT 1` on `psn_sync_status` is now
+  `WHERE user_id = ?`. The background sync worker
+  (`_run_psn_full_sync`) takes `user_id` as an argument
+  (dispatched with `g.user['id']` at start time). The 24.7
+  file-permission tests are superseded by five new
+  round-trip / per-user / per-platform isolation tests in
+  `test_auth_hardening.py` (total tests net +3).
 
 ### 27.3 Remove global-state assumptions from platform sync jobs (MEDIUM, S)
 
@@ -2803,7 +2840,22 @@ See Pass 13.3 — no duplicate entry.
   lookup goes through the new `user_platform_tokens` table.
 - **Source**: 2026-04-23 audit, Background Jobs finding
   (platform_sync.py:20-49).
-- **Status**: todo (follows 27.2)
+- **Status**: done (v2.98.0). `XboxSyncJob` now stores
+  `self.user_id`, requires it in `start(user_id=…)`, and
+  persists it in `persist_job_start('xbox_sync', {'user_id':
+  self.user_id, …})` so `resume_from_params` re-authenticates
+  as the right user after a server restart. Pre-Pass-27
+  snapshots without `user_id` in params are dropped on
+  resume (logged as an info line) rather than silently
+  defaulting to admin — tokens may have rotated since the
+  snapshot. Callers in `routes/platform_import.py` and
+  `routes/xbox_achievements.py` pass `g.user['id']`. Steam is
+  explicitly out of scope — Steam integration uses an
+  install-wide API key + Steam ID (in `scraper_settings.json`),
+  not per-user OAuth tokens, so the "whose credentials"
+  question doesn't arise the same way. If Steam ever grows a
+  per-user OAuth refresh flow, this pattern should extend to
+  `SteamSyncJob` the same way.
 
 ---
 

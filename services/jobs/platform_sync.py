@@ -433,7 +433,13 @@ class SteamSyncJob:
 
 
 class XboxSyncJob:
-    """Manages Xbox achievement sync jobs in background"""
+    """Manages Xbox achievement sync jobs in background.
+
+    Pass 27.3 — OAuth refresh tokens live in `user_platform_tokens` keyed by
+    user_id (Pass 27.2), so the job must know whose tokens to authenticate
+    with. `start(user_id=…)` captures that at dispatch time and the worker
+    thread reaches back through `self.user_id`.
+    """
 
     def __init__(self):
         self._lock = threading.Lock()
@@ -454,6 +460,7 @@ class XboxSyncJob:
         self.current_game_title = ""
         self.error_message = None
         self._resume_game_ids = None  # Set by resume_from_params for proper resume
+        self.user_id = None  # Pass 27.3 — whose Xbox tokens to authenticate with
 
     def get_status(self):
         """Get current sync status"""
@@ -474,13 +481,22 @@ class XboxSyncJob:
                 'error': self.error_message,
             }
 
-    def start(self):
-        """Start Xbox achievement sync for all Xbox-imported games"""
+    def start(self, user_id=None):
+        """Start Xbox achievement sync for all Xbox-imported games.
+
+        Args:
+            user_id: RetroDB users.id whose Xbox OAuth tokens authenticate
+                the XBL/XSTS handshake (Pass 27.3). Required for new starts;
+                resume paths read it back from persisted params.
+        """
+        if not user_id:
+            return {'success': False, 'error': 'user_id required for Xbox sync'}
         with self._lock:
             if self.running:
                 return {'success': False, 'error': 'Sync already running'}
             self.reset()
             self.job_id = f"xbox_sync_{int(time.time())}"
+            self.user_id = user_id
             self.running = True
 
         self._thread = threading.Thread(target=self._run_sync, daemon=True)
@@ -500,9 +516,20 @@ class XboxSyncJob:
 
         Uses persisted game_ids and progress to continue from where it left off,
         prepending None placeholders for already-processed items and restoring counts.
+
+        `params['user_id']` is the owner whose tokens to authenticate with
+        (persisted by `persist_job_start` in `_run_sync`). Pre-Pass-27
+        snapshots predate the field; those are dropped rather than
+        resumed-under-admin because tokens may have rotated or been
+        disconnected since the snapshot was taken.
         """
         game_ids = params.get('game_ids')
+        user_id = params.get('user_id')
         resume_index = progress.get('current', 0) if progress else 0
+
+        if not user_id:
+            logger.info("Xbox sync resume skipped: params missing user_id (pre-Pass-27 snapshot)")
+            return False
 
         if resume_index > 0 and game_ids:
             remaining_ids = game_ids[resume_index:]
@@ -512,6 +539,7 @@ class XboxSyncJob:
                     return False
                 self.reset()
                 self.job_id = f"xbox_sync_{int(time.time())}_resume"
+                self.user_id = user_id
                 self._resume_game_ids = [None] * resume_index + remaining_ids
                 self.running = True
                 self.current_index = resume_index
@@ -529,8 +557,8 @@ class XboxSyncJob:
             )
             return True
 
-        # No progress data — start from scratch
-        result = self.start()
+        # No progress data — start from scratch using the persisted user_id.
+        result = self.start(user_id=user_id)
         if result.get('success'):
             logger.info("Auto-resumed Xbox achievement sync (from start)")
         return result.get('success', False)
@@ -551,7 +579,7 @@ class XboxSyncJob:
                     self.error_message = "Xbox credentials not configured"
                 return
 
-            session = get_authenticated_session(xbox_client_id, xbox_client_secret)
+            session = get_authenticated_session(xbox_client_id, xbox_client_secret, self.user_id)
             if not session:
                 with self._lock:
                     self.completed = True
@@ -593,9 +621,13 @@ class XboxSyncJob:
             with self._lock:
                 self.total_games = len(games)
 
-            # Persist job start for crash recovery (include game IDs for resume)
+            # Persist job start for crash recovery (include game IDs for
+            # resume plus the owner whose tokens kicked off this sync — Pass
+            # 27.3 — so resume_from_params can re-authenticate as the right
+            # user rather than silently defaulting to admin).
             persist_id = persist_job_start('xbox_sync', {
-                'game_ids': [g['id'] if g is not None else None for g in games]
+                'game_ids': [g['id'] if g is not None else None for g in games],
+                'user_id': self.user_id,
             })
 
             if not games:

@@ -184,29 +184,73 @@ class TestXboxOAuthState:
 
 
 # =============================================================================
-# 24.7 — token file permissions 0o600
+# 27.2 — per-user platform token store (supersedes 24.7's file-permissions
+# tests, since tokens now live in the DB rather than data/{psn,xbox}_tokens.json)
 # =============================================================================
 
-class TestTokenFilePermissions:
-    def test_psn_token_save_uses_0o600(self, tmp_path, monkeypatch):
-        monkeypatch.setattr(
-            'routes.trophies.PSN_TOKENS_FILE',
-            str(tmp_path / 'psn_tokens.json'),
-        )
-        from routes.trophies import _save_psn_tokens
-        _save_psn_tokens({'access_token': 'abc', 'refresh_token': 'def'})
-        mode = os.stat(tmp_path / 'psn_tokens.json').st_mode & 0o777
-        assert mode == 0o600, f"expected 0o600, got {oct(mode)}"
+class TestPerUserPlatformTokens:
+    """Pass 27.2 moved PSN / Xbox OAuth tokens from per-install JSON files to
+    per-user rows in `user_platform_tokens`. Verifies (a) round-trip storage,
+    (b) per-(user, platform) isolation so one user's tokens can't leak to
+    another, and (c) clear_tokens() truly removes the row."""
 
-    def test_xbox_token_save_uses_0o600(self, tmp_path, monkeypatch):
-        monkeypatch.setattr(
-            'scraper.scrape_xbox.TOKENS_FILE',
-            str(tmp_path / 'xbox_tokens.json'),
-        )
-        from scraper.scrape_xbox import save_tokens
-        save_tokens({'access_token': 'abc', 'refresh_token': 'def'})
-        mode = os.stat(tmp_path / 'xbox_tokens.json').st_mode & 0o777
-        assert mode == 0o600, f"expected 0o600, got {oct(mode)}"
+    def _isolated_db(self, tmp_path, monkeypatch):
+        import sqlite3
+        from services import migrations
+        db_path = str(tmp_path / 'tokens.db')
+        # Run migrations against a real on-disk DB so the helpers can
+        # connect through services.database.get_db.
+        monkeypatch.setattr('config.DB_PATH', db_path)
+        # Reset cached connection so get_db() picks up the patched path.
+        from services import database
+        if hasattr(database, '_db_pool'):
+            database._db_pool = {}
+        conn = sqlite3.connect(db_path)
+        conn.execute("CREATE TABLE users (id INTEGER PRIMARY KEY, role TEXT)")
+        conn.execute("INSERT INTO users (id, role) VALUES (1, 'admin'), (2, 'editor')")
+        conn.commit()
+        migrations.apply_pending(conn)
+        conn.close()
+        return db_path
+
+    def test_psn_save_and_load_round_trip(self, tmp_path, monkeypatch):
+        self._isolated_db(tmp_path, monkeypatch)
+        from services.platform_tokens import save_tokens, load_tokens
+        save_tokens(1, 'psn', {'access_token': 'abc', 'refresh_token': 'def'})
+        got = load_tokens(1, 'psn')
+        assert got == {'access_token': 'abc', 'refresh_token': 'def'}
+
+    def test_tokens_isolated_between_users(self, tmp_path, monkeypatch):
+        self._isolated_db(tmp_path, monkeypatch)
+        from services.platform_tokens import save_tokens, load_tokens
+        save_tokens(1, 'psn', {'access_token': 'admin_token'})
+        save_tokens(2, 'psn', {'access_token': 'editor_token'})
+        assert load_tokens(1, 'psn') == {'access_token': 'admin_token'}
+        assert load_tokens(2, 'psn') == {'access_token': 'editor_token'}
+
+    def test_tokens_isolated_between_platforms(self, tmp_path, monkeypatch):
+        self._isolated_db(tmp_path, monkeypatch)
+        from services.platform_tokens import save_tokens, load_tokens
+        save_tokens(1, 'psn', {'a': 1})
+        save_tokens(1, 'xbox', {'b': 2})
+        assert load_tokens(1, 'psn') == {'a': 1}
+        assert load_tokens(1, 'xbox') == {'b': 2}
+
+    def test_clear_tokens_removes_row(self, tmp_path, monkeypatch):
+        self._isolated_db(tmp_path, monkeypatch)
+        from services.platform_tokens import save_tokens, load_tokens, clear_tokens
+        save_tokens(1, 'psn', {'access_token': 'abc'})
+        clear_tokens(1, 'psn')
+        assert load_tokens(1, 'psn') is None
+
+    def test_save_with_no_user_id_is_noop(self, tmp_path, monkeypatch):
+        """Defence-in-depth: a misconfigured caller that passes user_id=None
+        must not write a row that would later be ambiguous to read."""
+        self._isolated_db(tmp_path, monkeypatch)
+        from services.platform_tokens import save_tokens, load_tokens
+        save_tokens(None, 'psn', {'access_token': 'abc'})
+        # Nothing to load for any real user.
+        assert load_tokens(1, 'psn') is None
 
 
 # =============================================================================

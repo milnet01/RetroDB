@@ -50,58 +50,53 @@ logger = logging.getLogger('scraper')
 bp = Blueprint('trophies', __name__)
 
 
-PSN_TOKENS_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'psn_tokens.json')
+# Pass 27.2 — PSN tokens moved from a single data/psn_tokens.json file (one
+# per install, leaked across users on multi-user installs) to per-user rows
+# in `user_platform_tokens`. The legacy file is ingested into the table for
+# the first admin via migration 006 and then deleted.
+from services.platform_tokens import (
+    load_tokens as _platform_load_tokens,
+    save_tokens as _platform_save_tokens,
+    clear_tokens as _platform_clear_tokens,
+)
 
 
-def _load_psn_tokens():
-    """Load cached PSN OAuth tokens from file."""
-    try:
-        if os.path.exists(PSN_TOKENS_FILE):
-            with open(PSN_TOKENS_FILE, 'r') as f:
-                return json.load(f)
-    except (json.JSONDecodeError, OSError) as e:
-        logger.debug(f"Could not load PSN token cache: {e}")
+def _current_user_id():
+    """Resolve the user_id to attach PSN tokens to.
+
+    Most callers run inside a request with `g.user` populated. Background
+    syncs that go through `_run_psn_full_sync` capture the user_id at
+    dispatch time and reach back through closures, so this fallback is
+    only hit if a misconfigured caller invokes a token helper without a
+    request context — in which case there's nothing to authenticate as.
+    """
+    if g and getattr(g, 'user', None):
+        return g.user['id']
     return None
 
 
-def _save_psn_tokens(token_response):
-    """Save PSN OAuth tokens to file for reuse across restarts.
-
-    Pass 24.7 — tokens are long-lived OAuth refresh credentials, so the
-    file gets 0o600 to prevent world/group read on shared filesystems.
-    Set the mode before writing so there's no window where the default
-    umask 0o644 applies.
-    """
-    try:
-        os.makedirs(os.path.dirname(PSN_TOKENS_FILE), exist_ok=True)
-        # Create the file with 0o600 up front — os.open + O_CREAT respects
-        # the mode arg, unlike open() which goes through the umask.
-        fd = os.open(PSN_TOKENS_FILE, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
-        try:
-            with os.fdopen(fd, 'w') as f:
-                json.dump(dict(token_response), f)
-        except BaseException:
-            os.close(fd)
-            raise
-        # Re-chmod in case the file already existed (O_CREAT only applies
-        # mode on creation).
-        try:
-            os.chmod(PSN_TOKENS_FILE, 0o600)
-        except OSError:
-            pass
-        logger.debug("PSN token cache saved")
-    except OSError as e:
-        logger.warning(f"Could not save PSN token cache: {e}")
+def _load_psn_tokens(user_id=None):
+    """Load cached PSN OAuth tokens for the given user (defaults to current)."""
+    return _platform_load_tokens(user_id or _current_user_id(), 'psn')
 
 
-def _clear_psn_tokens():
-    """Remove cached PSN tokens."""
-    try:
-        if os.path.exists(PSN_TOKENS_FILE):
-            os.remove(PSN_TOKENS_FILE)
-            logger.debug("PSN token cache cleared")
-    except OSError:
-        pass
+def _save_psn_tokens(token_response, user_id=None):
+    """Persist PSN OAuth tokens for the given user."""
+    uid = user_id or _current_user_id()
+    if not uid:
+        logger.warning("PSN token save skipped — no current user")
+        return
+    _platform_save_tokens(uid, 'psn', dict(token_response))
+    logger.debug("PSN token cache saved (user=%d)", uid)
+
+
+def _clear_psn_tokens(user_id=None):
+    """Remove cached PSN tokens for the given user."""
+    uid = user_id or _current_user_id()
+    if not uid:
+        return
+    _platform_clear_tokens(uid, 'psn')
+    logger.debug("PSN token cache cleared (user=%d)", uid)
 
 
 def create_psn_client(npsso):
@@ -564,8 +559,11 @@ def psn_trophies():
     letter_rows = query("SELECT DISTINCT UPPER(SUBSTR(title, 1, 1)) AS letter FROM psn_games")
     available_letters = [r['letter'] for r in letter_rows] if letter_rows else []
 
-    # Get sync status
-    sync_status = query("SELECT * FROM psn_sync_status LIMIT 1", one=True)
+    # Get sync status — Pass 27.2 scopes to current user.
+    sync_status = query(
+        "SELECT * FROM psn_sync_status WHERE user_id = ?",
+        (g.user['id'],), one=True,
+    )
 
     # Build profile info from sync status
     sync_status_dict = dict(sync_status) if sync_status else {}
@@ -967,7 +965,11 @@ def api_psn_sync_all():
             'images_downloaded': 0, 'error': None
         })
 
-    t = threading.Thread(target=_run_psn_full_sync, args=(psnawp,), daemon=True)
+    # Pass 27.2 — capture the dispatching user's id; the worker thread has
+    # no Flask request context to read g.user from.
+    t = threading.Thread(
+        target=_run_psn_full_sync, args=(psnawp, g.user['id']), daemon=True,
+    )
     t.start()
 
     return jsonify({'success': True, 'started': True})
@@ -982,8 +984,13 @@ def api_psn_sync_status():
     return jsonify({'success': True, **state})
 
 
-def _run_psn_full_sync(psnawp):
-    """Background worker for full PSN sync with image downloads"""
+def _run_psn_full_sync(psnawp, user_id):
+    """Background worker for full PSN sync with image downloads.
+
+    Pass 27.2 — `user_id` is required: the sync writer needs to scope
+    psn_sync_status by `WHERE user_id = ?` so two PSN-connected accounts
+    don't overwrite each other's `last_full_sync` / avatar / trophy_level.
+    """
     global _psn_sync_state
 
     try:
@@ -1029,11 +1036,20 @@ def _run_psn_full_sync(psnawp):
         conn = _get_conn()
 
         try:
+            # Pass 27.2 — user_id is the conflict key (UNIQUE index from
+            # migration 006). The id column stays for legacy compat but is
+            # no longer the singleton handle.
             conn.execute("""
-                INSERT OR REPLACE INTO psn_sync_status
-                    (id, username, sync_in_progress, last_full_sync, trophy_level, avatar_url)
-                VALUES (1, ?, 1, datetime('now'), ?, ?)
-            """, (username, trophy_level, avatar_url))
+                INSERT INTO psn_sync_status
+                    (user_id, username, sync_in_progress, last_full_sync, trophy_level, avatar_url)
+                VALUES (?, ?, 1, datetime('now'), ?, ?)
+                ON CONFLICT(user_id) DO UPDATE SET
+                    username = excluded.username,
+                    sync_in_progress = excluded.sync_in_progress,
+                    last_full_sync = excluded.last_full_sync,
+                    trophy_level = excluded.trophy_level,
+                    avatar_url = excluded.avatar_url
+            """, (user_id, username, trophy_level, avatar_url))
             _commit_with_retry(conn)
 
             # Pre-fetch all PS games for linking
@@ -1162,8 +1178,8 @@ def _run_psn_full_sync(psnawp):
                 games_synced = _psn_sync_state['games_synced']
             conn.execute("""
                 UPDATE psn_sync_status SET sync_in_progress = 0, total_games = ?
-                WHERE id = 1
-            """, (games_synced,))
+                WHERE user_id = ?
+            """, (games_synced, user_id))
             _commit_with_retry(conn)
         finally:
             conn.close()
@@ -1181,7 +1197,10 @@ def _run_psn_full_sync(psnawp):
         try:
             from services.jobs.base import _get_conn as _get_err_conn
             err_conn = _get_err_conn()
-            err_conn.execute("UPDATE psn_sync_status SET sync_in_progress = 0 WHERE id = 1")
+            err_conn.execute(
+                "UPDATE psn_sync_status SET sync_in_progress = 0 WHERE user_id = ?",
+                (user_id,),
+            )
             err_conn.commit()
             err_conn.close()
         except Exception:

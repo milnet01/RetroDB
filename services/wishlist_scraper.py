@@ -354,18 +354,32 @@ def scrape_wishlist_item_async(item_id):
     return thread
 
 
-def scrape_unscraped_items():
+def scrape_unscraped_items(owner_id=None):
     """Scrape every wishlist item that hasn't been scraped yet (or failed).
 
     Runs synchronously in the calling thread, so callers should dispatch it
     via scrape_unscraped_items_async below. Returns the count scraped.
+
+    Args:
+        owner_id: when set, only scrape items owned by that user (Pass 27.1
+            per-user scoping). None means scrape every user's items — used
+            by admin "scrape all" calls.
     """
-    items = query("""
-        SELECT id FROM wishlist
-        WHERE scrape_status IS NULL
-           OR scrape_status IN ('unscraped', 'failed', 'no_match')
-        ORDER BY added_at DESC
-    """)
+    if owner_id is None:
+        items = query("""
+            SELECT id FROM wishlist
+            WHERE scrape_status IS NULL
+               OR scrape_status IN ('unscraped', 'failed', 'no_match')
+            ORDER BY added_at DESC
+        """)
+    else:
+        items = query("""
+            SELECT id FROM wishlist
+            WHERE (scrape_status IS NULL
+                   OR scrape_status IN ('unscraped', 'failed', 'no_match'))
+              AND owner_id = ?
+            ORDER BY added_at DESC
+        """, (owner_id,))
     count = 0
     for row in items:
         try:
@@ -376,8 +390,11 @@ def scrape_unscraped_items():
     return count
 
 
-def scrape_unscraped_items_async():
+def scrape_unscraped_items_async(owner_id=None):
     """Background-thread wrapper for scrape_unscraped_items()."""
-    thread = threading.Thread(target=scrape_unscraped_items, name="wishlist-scrape-all", daemon=True)
+    thread = threading.Thread(
+        target=scrape_unscraped_items, args=(owner_id,),
+        name="wishlist-scrape-all", daemon=True,
+    )
     thread.start()
     return thread

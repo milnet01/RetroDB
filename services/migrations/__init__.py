@@ -29,6 +29,8 @@ MIGRATIONS = [
     '002_normalize_genres',
     '003_normalize_pegi',
     '004_games_updated_at',
+    '005_collections_owner_id',
+    '006_per_user_platform_tokens',
 ]
 
 

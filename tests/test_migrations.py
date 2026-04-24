@@ -239,3 +239,88 @@ class TestVersionHelpers:
             conn = _open(path)
             assert migrations.current_version(conn) == 0
             conn.close()
+
+
+class TestCollectionsOwnerId:
+    """Migration 005 adds owner_id to tags/lists/wishlist (Pass 27.1).
+
+    Verifies (a) the column lands on a fresh install, (b) legacy rows that
+    pre-date the column get backfilled to the first admin's user_id, and
+    (c) the per-table owner_id index exists.
+    """
+
+    def test_fresh_install_adds_column_and_index(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, 'fresh.db')
+            conn = _open(path)
+            migrations.apply_pending(conn)
+
+            for table in ('tags', 'lists', 'wishlist'):
+                cols = {row[1] for row in conn.execute(f"PRAGMA table_info({table})")}
+                assert 'owner_id' in cols, f"{table}.owner_id missing"
+
+                indexes = {
+                    row[0] for row in conn.execute(
+                        "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name=?",
+                        (table,),
+                    )
+                }
+                assert f'idx_{table}_owner_id' in indexes, \
+                    f"missing owner_id index on {table}"
+            conn.close()
+
+    def test_backfill_assigns_legacy_rows_to_admin(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, 'backfill.db')
+
+            # Hand-build a "pre-Pass-27" install: tags/lists/wishlist exist
+            # via baseline 001 but without owner_id, and a users table with
+            # one admin already exists (since real installs always run
+            # ensure_user_tables() on first launch).
+            conn = _open(path)
+            conn.execute("""
+                CREATE TABLE users (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    username TEXT,
+                    role TEXT NOT NULL DEFAULT 'viewer'
+                )
+            """)
+            conn.execute("INSERT INTO users (username, role) VALUES ('admin', 'admin')")
+            admin_id = conn.execute("SELECT id FROM users WHERE role = 'admin'").fetchone()[0]
+            conn.commit()
+
+            # Stop migrations after 001 so we can seed legacy rows without
+            # owner_id, then re-run apply_pending to land 005.
+            real_list = migrations.MIGRATIONS
+            try:
+                migrations.MIGRATIONS = real_list[:1]  # only 001_baseline
+                migrations.apply_pending(conn)
+            finally:
+                migrations.MIGRATIONS = real_list
+
+            conn.execute("INSERT INTO tags (name) VALUES ('legacy_tag')")
+            conn.execute("INSERT INTO lists (name) VALUES ('legacy_list')")
+            conn.execute("INSERT INTO wishlist (title) VALUES ('legacy_game')")
+            conn.commit()
+
+            # Now run the rest of the migrations including 005.
+            migrations.apply_pending(conn)
+
+            for table in ('tags', 'lists', 'wishlist'):
+                row = conn.execute(f"SELECT owner_id FROM {table}").fetchone()
+                assert row[0] == admin_id, \
+                    f"{table}.owner_id not backfilled to admin (got {row[0]!r})"
+            conn.close()
+
+    def test_no_users_table_skips_backfill(self):
+        """Truly fresh install: users table doesn't exist yet at migration
+        time (ensure_user_tables runs after init_database). Migration must
+        not error and must not create rows that aren't there."""
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, 'no_users.db')
+            conn = _open(path)
+            # Should run all migrations without raising.
+            applied = migrations.apply_pending(conn)
+            assert 5 in applied
+            assert conn.execute("SELECT COUNT(*) FROM tags").fetchone()[0] == 0
+            conn.close()

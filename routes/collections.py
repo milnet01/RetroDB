@@ -2,9 +2,15 @@
 # RETRODB - Collections Blueprint
 # =============================================================================
 # Handles Tags, Named Lists, and Wishlist features for game organization.
+#
+# Per-user data ownership (Pass 27.1): every row carries an `owner_id`. Reads
+# and mutations are restricted to the current user's rows; admins see and
+# mutate everyone's. Routes use `_owner_clause()` (a fragment + params tuple)
+# to splice the filter into queries without each callsite repeating the
+# admin-bypass logic.
 # =============================================================================
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, g
 import logging
 from datetime import datetime, timezone
 
@@ -26,6 +32,20 @@ def _utcnow_iso():
     return datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
+def _owner_clause(table_alias=''):
+    """Per-user ownership filter for collections rows.
+
+    Admins see every row; everyone else sees only their own. Returns
+    (sql_fragment, params_tuple) ready to splice into a WHERE / AND.
+    `table_alias` should be the alias used in the surrounding query
+    (e.g. 't' for `tags t`); pass '' for unaliased SELECT * style queries.
+    """
+    col = f"{table_alias}.owner_id" if table_alias else "owner_id"
+    if g.user and g.user['role'] == 'admin':
+        return ("1=1", ())
+    return (f"{col} = ?", (g.user['id'],))
+
+
 # =============================================================================
 # PAGE ROUTES
 # =============================================================================
@@ -34,13 +54,15 @@ def _utcnow_iso():
 @login_required
 def tags_page():
     """Tags management page - show all tags with game counts."""
-    tags = query("""
+    owner_sql, owner_params = _owner_clause('t')
+    tags = query(f"""
         SELECT t.id, t.name, t.color, t.created_at, COUNT(gt.game_id) AS game_count
         FROM tags t
         LEFT JOIN game_tags gt ON gt.tag_id = t.id
+        WHERE {owner_sql}
         GROUP BY t.id
         ORDER BY t.name COLLATE NOCASE
-    """)
+    """, owner_params)
     return render_template('tags.html', tags=tags)
 
 
@@ -48,14 +70,16 @@ def tags_page():
 @login_required
 def lists_page():
     """Lists overview page - show all named lists."""
-    lists = query("""
+    owner_sql, owner_params = _owner_clause('l')
+    lists = query(f"""
         SELECT l.id, l.name, l.description, l.icon, l.sort_order, l.created_at,
                COUNT(lg.game_id) AS game_count
         FROM lists l
         LEFT JOIN list_games lg ON lg.list_id = l.id
+        WHERE {owner_sql}
         GROUP BY l.id
         ORDER BY l.sort_order, l.name COLLATE NOCASE
-    """)
+    """, owner_params)
     return render_template('lists.html', lists=lists)
 
 
@@ -63,7 +87,11 @@ def lists_page():
 @login_required
 def list_detail_page(list_id):
     """View a specific list's games."""
-    lst = query("SELECT * FROM lists WHERE id = ?", (list_id,), one=True)
+    owner_sql, owner_params = _owner_clause()
+    lst = query(
+        f"SELECT * FROM lists WHERE id = ? AND {owner_sql}",
+        (list_id, *owner_params), one=True,
+    )
     if not lst:
         return render_template('lists.html', lists=[], error='List not found'), 404
 
@@ -81,7 +109,8 @@ def list_detail_page(list_id):
 @login_required
 def wishlist_page():
     """Wishlist page."""
-    items = query("""
+    owner_sql, owner_params = _owner_clause('w')
+    items = query(f"""
         SELECT w.*,
                g.title AS linked_game_title,
                gs.name AS linked_system,
@@ -90,8 +119,9 @@ def wishlist_page():
         LEFT JOIN games g ON g.id = w.game_id
         LEFT JOIN systems gs ON g.system_id = gs.id
         LEFT JOIN systems ws ON ws.id = w.system_id
+        WHERE {owner_sql}
         ORDER BY w.priority ASC, w.added_at DESC
-    """)
+    """, owner_params)
     return render_template('wishlist.html', items=items)
 
 
@@ -103,13 +133,15 @@ def wishlist_page():
 @login_required
 def api_get_tags():
     """Get all tags with game count."""
-    tags = query("""
+    owner_sql, owner_params = _owner_clause('t')
+    tags = query(f"""
         SELECT t.id, t.name, t.color, t.created_at, COUNT(gt.game_id) AS game_count
         FROM tags t
         LEFT JOIN game_tags gt ON gt.tag_id = t.id
+        WHERE {owner_sql}
         GROUP BY t.id
         ORDER BY t.name COLLATE NOCASE
-    """)
+    """, owner_params)
     return success(tags=tags)
 
 
@@ -125,15 +157,23 @@ def api_create_tag():
     name = data['name'].strip()
     color = data.get('color', '#4cc9f0').strip()
 
-    existing = query("SELECT id FROM tags WHERE name = ? COLLATE NOCASE", (name,), one=True)
+    # Tag-name uniqueness is per-owner — two users can each have a "Favourites"
+    # tag. Pre-Pass 27 the UNIQUE constraint on tags.name was global; the
+    # constraint stays in the schema but we no longer validate against it
+    # cross-user. (Admins still see everyone's tags via _owner_clause but
+    # collisions there are intentional admin behavior.)
+    existing = query(
+        "SELECT id FROM tags WHERE name = ? COLLATE NOCASE AND owner_id = ?",
+        (name, g.user['id']), one=True,
+    )
     if existing:
         return error('A tag with that name already exists', 409)
 
     tag_id = execute(
-        "INSERT INTO tags (name, color, created_at) VALUES (?, ?, ?)",
-        (name, color, _utcnow_iso())
+        "INSERT INTO tags (name, color, owner_id, created_at) VALUES (?, ?, ?, ?)",
+        (name, color, g.user['id'], _utcnow_iso())
     )
-    logger.info(f"Created tag '{name}' (id={tag_id})")
+    logger.info(f"Created tag '{name}' (id={tag_id}, owner={g.user['id']})")
     return success(tag={'id': tag_id, 'name': name, 'color': color}), 201
 
 
@@ -146,16 +186,24 @@ def api_update_tag(tag_id):
     if not data:
         return error('No data provided', 400)
 
-    tag = query("SELECT * FROM tags WHERE id = ?", (tag_id,), one=True)
+    owner_sql, owner_params = _owner_clause()
+    tag = query(
+        f"SELECT * FROM tags WHERE id = ? AND {owner_sql}",
+        (tag_id, *owner_params), one=True,
+    )
     if not tag:
         return error('Tag not found', 404)
 
     name = data.get('name', tag['name']).strip()
     color = data.get('color', tag['color']).strip()
 
-    # Check for name conflict with a different tag
+    # Conflict check is scoped to the same owner so two users with the same
+    # tag name don't collide on an admin's edit.
     if name.lower() != tag['name'].lower():
-        conflict = query("SELECT id FROM tags WHERE name = ? COLLATE NOCASE AND id != ?", (name, tag_id), one=True)
+        conflict = query(
+            "SELECT id FROM tags WHERE name = ? COLLATE NOCASE AND id != ? AND owner_id = ?",
+            (name, tag_id, tag['owner_id']), one=True,
+        )
         if conflict:
             return error('A tag with that name already exists', 409)
 
@@ -169,7 +217,11 @@ def api_update_tag(tag_id):
 @handle_api_errors
 def api_delete_tag(tag_id):
     """Delete a tag and all its game associations."""
-    tag = query("SELECT * FROM tags WHERE id = ?", (tag_id,), one=True)
+    owner_sql, owner_params = _owner_clause()
+    tag = query(
+        f"SELECT * FROM tags WHERE id = ? AND {owner_sql}",
+        (tag_id, *owner_params), one=True,
+    )
     if not tag:
         return error('Tag not found', 404)
 
@@ -186,14 +238,19 @@ def api_delete_tag(tag_id):
 @bp.route('/api/games/<int:game_id>/tags', methods=['GET'])
 @login_required
 def api_get_game_tags(game_id):
-    """Get all tags for a specific game."""
-    tags = query("""
+    """Get all tags for a specific game (current user's tags only).
+
+    game_tags is the join table; tags themselves are owner-scoped, so a user
+    only sees tag rows they own attached to a given game.
+    """
+    owner_sql, owner_params = _owner_clause('t')
+    tags = query(f"""
         SELECT t.id, t.name, t.color
         FROM game_tags gt
         JOIN tags t ON t.id = gt.tag_id
-        WHERE gt.game_id = ?
+        WHERE gt.game_id = ? AND {owner_sql}
         ORDER BY t.name COLLATE NOCASE
-    """, (game_id,))
+    """, (game_id, *owner_params))
     return success(tags=tags)
 
 
@@ -217,21 +274,29 @@ def api_add_tag_to_game(game_id):
     if not tag_id and not tag_name:
         return error('Either tag_id or tag_name is required', 400)
 
-    # Resolve or create the tag
+    owner_sql, owner_params = _owner_clause()
+
+    # Resolve or create the tag — owner-scoped lookup so non-admins can't
+    # attach another user's tag.
     if tag_id:
-        tag = query("SELECT id, name, color FROM tags WHERE id = ?", (tag_id,), one=True)
+        tag = query(
+            f"SELECT id, name, color FROM tags WHERE id = ? AND {owner_sql}",
+            (tag_id, *owner_params), one=True,
+        )
         if not tag:
             return error('Tag not found', 404)
     else:
-        # Look up by name, auto-create if missing
-        tag = query("SELECT id, name, color FROM tags WHERE name = ? COLLATE NOCASE", (tag_name,), one=True)
+        tag = query(
+            "SELECT id, name, color FROM tags WHERE name = ? COLLATE NOCASE AND owner_id = ?",
+            (tag_name, g.user['id']), one=True,
+        )
         if not tag:
             new_id = execute(
-                "INSERT INTO tags (name, color, created_at) VALUES (?, ?, ?)",
-                (tag_name, '#4cc9f0', _utcnow_iso())
+                "INSERT INTO tags (name, color, owner_id, created_at) VALUES (?, ?, ?, ?)",
+                (tag_name, '#4cc9f0', g.user['id'], _utcnow_iso())
             )
             tag = {'id': new_id, 'name': tag_name, 'color': '#4cc9f0'}
-            logger.info(f"Auto-created tag '{tag_name}' (id={new_id})")
+            logger.info(f"Auto-created tag '{tag_name}' (id={new_id}, owner={g.user['id']})")
 
     # Check if association already exists
     existing = query(
@@ -250,10 +315,17 @@ def api_add_tag_to_game(game_id):
 @login_required
 @handle_api_errors
 def api_remove_tag_from_game(game_id, tag_id):
-    """Remove a tag from a game."""
+    """Remove a tag from a game.
+
+    Caller must own the tag (or be admin); enforces ownership via a join
+    to tags so non-admins can't unlink another user's tag.
+    """
+    owner_sql, owner_params = _owner_clause('t')
     existing = query(
-        "SELECT 1 FROM game_tags WHERE game_id = ? AND tag_id = ?",
-        (game_id, tag_id), one=True
+        f"""SELECT 1 FROM game_tags gt
+            JOIN tags t ON t.id = gt.tag_id
+            WHERE gt.game_id = ? AND gt.tag_id = ? AND {owner_sql}""",
+        (game_id, tag_id, *owner_params), one=True,
     )
     if not existing:
         return error('Tag is not assigned to this game', 404)
@@ -271,7 +343,11 @@ def api_remove_tag_from_game(game_id, tag_id):
 @login_required
 def api_get_tag_games(tag_id):
     """Get all games that have a specific tag."""
-    tag = query("SELECT id, name, color FROM tags WHERE id = ?", (tag_id,), one=True)
+    owner_sql, owner_params = _owner_clause()
+    tag = query(
+        f"SELECT id, name, color FROM tags WHERE id = ? AND {owner_sql}",
+        (tag_id, *owner_params), one=True,
+    )
     if not tag:
         return error('Tag not found', 404)
 
@@ -285,9 +361,9 @@ def api_get_tag_games(tag_id):
     """, (tag_id,))
 
     # Prefix boxart paths for the frontend
-    for g in games:
-        if g.get('boxart'):
-            g['boxart'] = f"/static/images/boxart/{g['boxart']}"
+    for g_row in games:
+        if g_row.get('boxart'):
+            g_row['boxart'] = f"/static/images/boxart/{g_row['boxart']}"
 
     return success(games=games, tag=tag)
 
@@ -300,14 +376,16 @@ def api_get_tag_games(tag_id):
 @login_required
 def api_get_lists():
     """Get all lists with game count."""
-    lists = query("""
+    owner_sql, owner_params = _owner_clause('l')
+    lists = query(f"""
         SELECT l.id, l.name, l.description, l.icon, l.sort_order, l.created_at,
                COUNT(lg.game_id) AS game_count
         FROM lists l
         LEFT JOIN list_games lg ON lg.list_id = l.id
+        WHERE {owner_sql}
         GROUP BY l.id
         ORDER BY l.sort_order, l.name COLLATE NOCASE
-    """)
+    """, owner_params)
     return success(lists=lists)
 
 
@@ -324,15 +402,19 @@ def api_create_list():
     description = data.get('description', '').strip()
     icon = data.get('icon', '').strip()
 
-    # Determine next sort_order
-    max_order = query("SELECT MAX(sort_order) AS max_order FROM lists", one=True)
+    # sort_order is per-owner so two users' lists don't fight for slot 1.
+    max_order = query(
+        "SELECT MAX(sort_order) AS max_order FROM lists WHERE owner_id = ?",
+        (g.user['id'],), one=True,
+    )
     next_order = (max_order['max_order'] or 0) + 1 if max_order else 1
 
     list_id = execute(
-        "INSERT INTO lists (name, description, icon, sort_order, created_at) VALUES (?, ?, ?, ?, ?)",
-        (name, description, icon, next_order, _utcnow_iso())
+        "INSERT INTO lists (name, description, icon, sort_order, owner_id, created_at) "
+        "VALUES (?, ?, ?, ?, ?, ?)",
+        (name, description, icon, next_order, g.user['id'], _utcnow_iso())
     )
-    logger.info(f"Created list '{name}' (id={list_id})")
+    logger.info(f"Created list '{name}' (id={list_id}, owner={g.user['id']})")
     return success(list={
         'id': list_id, 'name': name, 'description': description,
         'icon': icon, 'sort_order': next_order,
@@ -348,7 +430,11 @@ def api_update_list(list_id):
     if not data:
         return error('No data provided', 400)
 
-    lst = query("SELECT * FROM lists WHERE id = ?", (list_id,), one=True)
+    owner_sql, owner_params = _owner_clause()
+    lst = query(
+        f"SELECT * FROM lists WHERE id = ? AND {owner_sql}",
+        (list_id, *owner_params), one=True,
+    )
     if not lst:
         return error('List not found', 404)
 
@@ -373,7 +459,11 @@ def api_update_list(list_id):
 @handle_api_errors
 def api_delete_list(list_id):
     """Delete a list and all its game associations."""
-    lst = query("SELECT * FROM lists WHERE id = ?", (list_id,), one=True)
+    owner_sql, owner_params = _owner_clause()
+    lst = query(
+        f"SELECT * FROM lists WHERE id = ? AND {owner_sql}",
+        (list_id, *owner_params), one=True,
+    )
     if not lst:
         return error('List not found', 404)
 
@@ -391,7 +481,11 @@ def api_delete_list(list_id):
 @login_required
 def api_get_list_games(list_id):
     """Get all games in a list."""
-    lst = query("SELECT id FROM lists WHERE id = ?", (list_id,), one=True)
+    owner_sql, owner_params = _owner_clause()
+    lst = query(
+        f"SELECT id FROM lists WHERE id = ? AND {owner_sql}",
+        (list_id, *owner_params), one=True,
+    )
     if not lst:
         return error('List not found', 404)
 
@@ -416,7 +510,11 @@ def api_add_game_to_list(list_id):
 
     game_id = data['game_id']
 
-    lst = query("SELECT id FROM lists WHERE id = ?", (list_id,), one=True)
+    owner_sql, owner_params = _owner_clause()
+    lst = query(
+        f"SELECT id FROM lists WHERE id = ? AND {owner_sql}",
+        (list_id, *owner_params), one=True,
+    )
     if not lst:
         return error('List not found', 404)
 
@@ -451,6 +549,14 @@ def api_add_game_to_list(list_id):
 @handle_api_errors
 def api_remove_game_from_list(list_id, game_id):
     """Remove a game from a list."""
+    owner_sql, owner_params = _owner_clause()
+    lst = query(
+        f"SELECT id FROM lists WHERE id = ? AND {owner_sql}",
+        (list_id, *owner_params), one=True,
+    )
+    if not lst:
+        return error('List not found', 404)
+
     existing = query(
         "SELECT 1 FROM list_games WHERE list_id = ? AND game_id = ?",
         (list_id, game_id), one=True
@@ -471,7 +577,8 @@ def api_remove_game_from_list(list_id, game_id):
 @login_required
 def api_get_wishlist():
     """Get all wishlist items."""
-    items = query("""
+    owner_sql, owner_params = _owner_clause('w')
+    items = query(f"""
         SELECT w.*,
                g.title AS linked_game_title,
                gs.name AS linked_system,
@@ -480,8 +587,9 @@ def api_get_wishlist():
         LEFT JOIN games g ON g.id = w.game_id
         LEFT JOIN systems gs ON g.system_id = gs.id
         LEFT JOIN systems ws ON ws.id = w.system_id
+        WHERE {owner_sql}
         ORDER BY w.priority ASC, w.added_at DESC
-    """)
+    """, owner_params)
     return success(items=items)
 
 
@@ -524,21 +632,23 @@ def api_add_to_wishlist():
         if not system_name:
             system_name = sys_row['name']
 
-    # Check for duplicates (same title, case-insensitive)
+    # Duplicate check is per-owner: two users may both wishlist the same game.
     existing = query(
-        "SELECT id FROM wishlist WHERE title = ? COLLATE NOCASE",
-        (title,), one=True
+        "SELECT id FROM wishlist WHERE title = ? COLLATE NOCASE AND owner_id = ?",
+        (title, g.user['id']), one=True,
     )
     if existing:
         return error('This game is already on your wishlist', 409)
 
     item_id = execute(
         """INSERT INTO wishlist
-           (title, system_name, system_id, notes, priority, added_at, game_id, scrape_status)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-        (title, system_name, system_id, notes, priority, _utcnow_iso(), game_id, 'unscraped')
+           (title, system_name, system_id, notes, priority, added_at, game_id,
+            scrape_status, owner_id)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        (title, system_name, system_id, notes, priority, _utcnow_iso(), game_id,
+         'unscraped', g.user['id'])
     )
-    logger.info(f"Added '{title}' to wishlist (id={item_id}, system_id={system_id}, scrape={scrape_now})")
+    logger.info(f"Added '{title}' to wishlist (id={item_id}, system_id={system_id}, scrape={scrape_now}, owner={g.user['id']})")
 
     if scrape_now:
         from services.wishlist_scraper import scrape_wishlist_item_async
@@ -560,7 +670,11 @@ def api_update_wishlist_item(item_id):
     if not data:
         return error('No data provided', 400)
 
-    item = query("SELECT * FROM wishlist WHERE id = ?", (item_id,), one=True)
+    owner_sql, owner_params = _owner_clause()
+    item = query(
+        f"SELECT * FROM wishlist WHERE id = ? AND {owner_sql}",
+        (item_id, *owner_params), one=True,
+    )
     if not item:
         return error('Wishlist item not found', 404)
 
@@ -601,7 +715,11 @@ def api_update_wishlist_item(item_id):
 @handle_api_errors
 def api_delete_wishlist_item(item_id):
     """Delete a wishlist item."""
-    item = query("SELECT * FROM wishlist WHERE id = ?", (item_id,), one=True)
+    owner_sql, owner_params = _owner_clause()
+    item = query(
+        f"SELECT * FROM wishlist WHERE id = ? AND {owner_sql}",
+        (item_id, *owner_params), one=True,
+    )
     if not item:
         return error('Wishlist item not found', 404)
 
@@ -619,7 +737,11 @@ def api_scrape_wishlist_item(item_id):
     Returns immediately; the UI polls /api/wishlist to see scrape_status
     flip from 'scraping' → 'scraped' | 'failed' | 'no_match'.
     """
-    item = query("SELECT id FROM wishlist WHERE id = ?", (item_id,), one=True)
+    owner_sql, owner_params = _owner_clause()
+    item = query(
+        f"SELECT id FROM wishlist WHERE id = ? AND {owner_sql}",
+        (item_id, *owner_params), one=True,
+    )
     if not item:
         return error('Wishlist item not found', 404)
 
@@ -634,16 +756,24 @@ def api_scrape_wishlist_item(item_id):
 def api_scrape_all_wishlist():
     """Background-scrape every wishlist item with scrape_status NULL /
     'unscraped' / 'failed' / 'no_match'. Already-scraped items are left
-    alone; the per-item re-scrape endpoint is what rescrapes those."""
-    unscraped_count = query("""
+    alone; the per-item re-scrape endpoint is what rescrapes those.
+
+    Scope: current user's wishlist (admins scrape every user's items).
+    """
+    owner_sql, owner_params = _owner_clause()
+    unscraped_count = query(f"""
         SELECT COUNT(*) AS c FROM wishlist
-        WHERE scrape_status IS NULL
-           OR scrape_status IN ('unscraped', 'failed', 'no_match')
-    """, one=True)['c']
+        WHERE (scrape_status IS NULL
+               OR scrape_status IN ('unscraped', 'failed', 'no_match'))
+          AND {owner_sql}
+    """, owner_params, one=True)['c']
 
     if unscraped_count == 0:
         return success(scheduled=0, message='Nothing to scrape')
 
     from services.wishlist_scraper import scrape_unscraped_items_async
-    scrape_unscraped_items_async()
+    # Admins re-scrape everyone's wishlist; everyone else re-scrapes their own.
+    scrape_unscraped_items_async(
+        owner_id=None if g.user['role'] == 'admin' else g.user['id']
+    )
     return success(scheduled=unscraped_count)

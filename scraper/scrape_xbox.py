@@ -39,8 +39,15 @@ XBOX_PLATFORM_MAP = {
     'Android': None,
 }
 
-# Token storage path
-TOKENS_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'xbox_tokens.json')
+# Pass 27.2 — Xbox tokens moved from a single data/xbox_tokens.json file
+# (one per install, leaked across users on multi-user installs) to per-user
+# rows in `user_platform_tokens`. The legacy file is ingested into the table
+# for the first admin via migration 006 and then deleted.
+from services.platform_tokens import (
+    load_tokens as _platform_load_tokens,
+    save_tokens as _platform_save_tokens,
+    clear_tokens as _platform_clear_tokens,
+)
 
 
 def get_auth_url(client_id, redirect_uri, state=None):
@@ -189,67 +196,56 @@ def _get_auth_header(user_hash, xsts_token):
     return f'XBL3.0 x={user_hash};{xsts_token}'
 
 
-def save_tokens(tokens):
-    """Save Xbox tokens to disk for persistence across restarts.
+def save_tokens(tokens, user_id):
+    """Persist Xbox OAuth tokens for the given user.
 
-    Pass 24.7 — Xbox refresh tokens are long-lived credentials that can
-    authenticate to the user's Microsoft account. File gets 0o600 so it
-    isn't world/group readable on shared-filesystem deploys.
+    Pass 27.2 — `user_id` is now required: tokens belong to a specific
+    RetroDB user. Callers must pass `g.user['id']` (request context) or the
+    user_id captured at job-dispatch time.
     """
+    if not user_id:
+        logger.warning("Xbox token save skipped — no user_id supplied")
+        return
     try:
-        os.makedirs(os.path.dirname(TOKENS_FILE), exist_ok=True)
-        # Create with 0o600 up front via os.open — open() respects umask.
-        fd = os.open(TOKENS_FILE, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
-        try:
-            with os.fdopen(fd, 'w') as f:
-                json.dump(tokens, f, indent=2)
-        except BaseException:
-            os.close(fd)
-            raise
-        # Re-chmod in case the file already existed.
-        try:
-            os.chmod(TOKENS_FILE, 0o600)
-        except OSError:
-            pass
+        _platform_save_tokens(user_id, 'xbox', tokens)
     except Exception as e:
-        logger.error(f"Failed to save Xbox tokens: {e}")
+        logger.error(f"Failed to save Xbox tokens (user={user_id}): {e}")
 
 
-def load_tokens():
-    """Load saved Xbox tokens from disk.
-
-    Returns:
-        dict: Token data or None if not found
-    """
+def load_tokens(user_id):
+    """Load Xbox OAuth tokens for the given user, or None if not present."""
+    if not user_id:
+        return None
     try:
-        if os.path.exists(TOKENS_FILE):
-            with open(TOKENS_FILE, 'r') as f:
-                return json.load(f)
+        return _platform_load_tokens(user_id, 'xbox')
     except Exception as e:
-        logger.error(f"Failed to load Xbox tokens: {e}")
-    return None
+        logger.error(f"Failed to load Xbox tokens (user={user_id}): {e}")
+        return None
 
 
-def clear_tokens():
-    """Remove saved Xbox tokens."""
+def clear_tokens(user_id):
+    """Remove the cached Xbox tokens for the given user."""
+    if not user_id:
+        return
     try:
-        if os.path.exists(TOKENS_FILE):
-            os.unlink(TOKENS_FILE)
+        _platform_clear_tokens(user_id, 'xbox')
     except Exception as e:
-        logger.error(f"Failed to clear Xbox tokens: {e}")
+        logger.error(f"Failed to clear Xbox tokens (user={user_id}): {e}")
 
 
-def get_authenticated_session(client_id, client_secret):
-    """Get an authenticated Xbox session, refreshing tokens if needed.
+def get_authenticated_session(client_id, client_secret, user_id):
+    """Get an authenticated Xbox session for the given user, refreshing
+    tokens if needed.
 
     Args:
         client_id: Azure AD app client ID
         client_secret: Azure AD app client secret
+        user_id: RetroDB users.id whose Xbox tokens to use (Pass 27.2)
 
     Returns:
         dict: {auth_header, xuid, user_hash, xsts_token, gamertag} or None
     """
-    tokens = load_tokens()
+    tokens = load_tokens(user_id)
     if not tokens:
         return None
 
@@ -266,7 +262,7 @@ def get_authenticated_session(client_id, client_secret):
         if new_tokens:
             access_token = new_tokens.get('access_token')
             tokens.update(new_tokens)
-            save_tokens(tokens)
+            save_tokens(tokens, user_id)
         elif not access_token:
             return None
 

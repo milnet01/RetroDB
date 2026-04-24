@@ -15,7 +15,7 @@ import logging
 import sqlite3
 from datetime import datetime, timezone
 
-from flask import Blueprint, render_template, jsonify
+from flask import Blueprint, render_template, jsonify, g
 import config
 from services.database import query, execute
 from services.auth import login_required
@@ -186,7 +186,7 @@ def api_xbox_sync_status():
 @bp.route('/api/xbox-achievements/sync-all', methods=['POST'])
 @login_required
 def api_xbox_sync_all():
-    """Start bulk Xbox achievement sync."""
+    """Start bulk Xbox achievement sync (Pass 27.3 — per current user)."""
     from services.jobs import xbox_sync_job
-    result = xbox_sync_job.start()
+    result = xbox_sync_job.start(user_id=g.user['id'])
     return jsonify(result)

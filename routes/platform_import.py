@@ -465,19 +465,19 @@ def api_xbox_callback():
     tokens['xuid'] = xuid
     tokens['gamertag'] = gamertag
     tokens['connected_at'] = datetime.now(timezone.utc).isoformat()
-    save_tokens(tokens)
+    save_tokens(tokens, g.user['id'])
 
-    logger.info(f"Xbox: Connected as {gamertag} (XUID: {xuid})")
+    logger.info(f"Xbox: Connected as {gamertag} (XUID: {xuid}, user={g.user['id']})")
     return redirect(url_for('game_imports.game_imports_page', tab='xbox') + '&xbox_connected=1')
 
 
 @bp.route('/api/xbox/status')
 @login_required
 def api_xbox_status():
-    """Check if Xbox account is connected."""
+    """Check if Xbox account is connected (Pass 27.2 — per current user)."""
     from scraper.scrape_xbox import load_tokens
 
-    tokens = load_tokens()
+    tokens = load_tokens(g.user['id'])
     if tokens and tokens.get('refresh_token'):
         return jsonify({
             'connected': True,
@@ -491,10 +491,10 @@ def api_xbox_status():
 @bp.route('/api/xbox/disconnect', methods=['POST'])
 @login_required
 def api_xbox_disconnect():
-    """Disconnect Xbox account (remove stored tokens)."""
+    """Disconnect Xbox account (remove stored tokens for current user)."""
     from scraper.scrape_xbox import clear_tokens
-    clear_tokens()
-    logger.info("Xbox: Account disconnected")
+    clear_tokens(g.user['id'])
+    logger.info(f"Xbox: Account disconnected (user={g.user['id']})")
     return jsonify({'success': True})
 
 
@@ -511,7 +511,7 @@ def api_xbox_fetch_library():
     if not client_id or not client_secret:
         return jsonify({'success': False, 'error': 'Xbox credentials not configured. Add them in Settings → API Keys.'}), 400
 
-    session = get_authenticated_session(client_id, client_secret)
+    session = get_authenticated_session(client_id, client_secret, g.user['id'])
     if not session:
         return jsonify({'success': False, 'error': 'Xbox authentication failed. Please re-connect your Xbox account.'}), 401
 
@@ -696,9 +696,14 @@ def api_xbox_import():
 @bp.route('/api/xbox/sync-achievements', methods=['POST'])
 @login_required
 def api_xbox_sync_achievements():
-    """Start bulk Xbox achievement sync (background job)."""
+    """Start bulk Xbox achievement sync (background job).
+
+    Pass 27.3 — the starting user's id is passed to the job so
+    `get_authenticated_session` reads that user's Xbox tokens, not
+    whatever happened to be cached first on the install.
+    """
     from services.jobs import xbox_sync_job
-    result = xbox_sync_job.start()
+    result = xbox_sync_job.start(user_id=g.user['id'])
     return jsonify(result)
 
 
@@ -757,11 +762,11 @@ def api_psn_import_status():
     except Exception:
         total_games = 0
 
-    # Get sync status info
+    # Get sync status info — Pass 27.2 scopes to current user.
     try:
         sync_info = query(
-            "SELECT username, last_full_sync, avatar_url FROM psn_sync_status LIMIT 1",
-            one=True
+            "SELECT username, last_full_sync, avatar_url FROM psn_sync_status WHERE user_id = ?",
+            (g.user['id'],), one=True
         )
     except Exception:
         sync_info = None
@@ -900,10 +905,10 @@ def _build_psn_library_response(games_data, from_api=False):
 
     result_games.sort(key=lambda g: g['name'].lower())
 
-    # Get sync status for profile info
+    # Get sync status for profile info — Pass 27.2 scopes to current user.
     sync_info = query(
-        "SELECT username, avatar_url FROM psn_sync_status LIMIT 1",
-        one=True
+        "SELECT username, avatar_url FROM psn_sync_status WHERE user_id = ?",
+        (g.user['id'],), one=True
     )
 
     avatar_out = ''
@@ -921,8 +926,8 @@ def _build_psn_library_response(games_data, from_api=False):
             local = _download_psn_avatar(username, stored)
             if local:
                 execute(
-                    "UPDATE psn_sync_status SET avatar_url = ? WHERE id = 1",
-                    (local,),
+                    "UPDATE psn_sync_status SET avatar_url = ? WHERE user_id = ?",
+                    (local, g.user['id']),
                 )
                 avatar_out = local
             else:
