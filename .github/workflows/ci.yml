@@ -78,7 +78,11 @@ jobs:
             --exclude static/videos \
             $EXCLUDES \
             .
-        continue-on-error: true  # security findings surface as warnings until we drive the actionable count to zero
+        # Hard-fail since v2.98.1 (Pass 30 debt sweep): with the calibrated
+        # exclusion list in .semgrep.yml, CI runs at 0 findings. If a new
+        # finding lands it's either a real bug or a new noise pattern that
+        # needs a documented exclusion — either way, green CI should mean
+        # zero.
 
       - name: pip-audit (CVEs in pinned lockfile)
         if: matrix.python-version == env.PRIMARY_PYTHON

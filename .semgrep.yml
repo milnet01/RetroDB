@@ -149,6 +149,14 @@
 #     Anchor: templates/changelog.html:30 renders entry.body HTML authored in
 #     data/changelog.yaml (in-repo, admin-authored).
 #
+#   python.lang.security.audit.logging.logger-credential-leak.python-logger-credential-disclosure
+#     Anchor: services/platform_tokens.py:43,50 and
+#     services/migrations/scripts/006_per_user_platform_tokens.py:112,114,116
+#     log the PLATFORM NAME + user_id + OSError/ValueError text. The token
+#     bytes themselves are never passed to the logger. Rule fires on any
+#     `logger.*` call inside a function/module that has the word "token" in
+#     scope — it's a lexical match, not a taint trace.
+#
 # RetroDB-specific custom rules
 # -----------------------------
 # Start scaffolded-empty; add rules here that catch patterns the upstream
