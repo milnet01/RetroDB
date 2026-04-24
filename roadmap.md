@@ -4395,6 +4395,776 @@ See Pass 13.3 — no duplicate entry.
 - **Source**: 2026-04-24 audit, /audit triage config-tightening.
 - **Status**: todo
 
+### 39.9 Audit-hygiene: `usedforsecurity=False` kwarg on non-security MD5/SHA1 (LOW, S)
+
+- **Target**: `routes/games.py:236` (ETag fingerprint),
+  `routes/tools.py:1071` (user-requested file hash),
+  `scraper/retroachievements.py:95` (RA API contract),
+  `scraper/scrape_screenscraper.py:205-206` (MD5 + SHA1 for ScreenScraper).
+- **Why**: bandit B324 recurs on five sites every audit; none is a
+  security primitive (remote-API contract hashes + ETag fingerprint +
+  user-selected hash method).  `hashlib.md5(usedforsecurity=False)`
+  is supported on Python 3.9+, documents intent inline (six-month
+  test), and silences the rule permanently — cheaper than adding a
+  per-site `# nosec` comment.
+- **Plan**: add the `usedforsecurity=False` kwarg to each of the five
+  constructors.  Run `bandit -ll scraper/ routes/` after — B324 count
+  should drop to 0.
+- **Source**: 2026-04-24 audit (5th), /audit triage config-tightening.
+- **Status**: todo
+
+### 39.10 Audit-hygiene: gitleaks regex allowlist for Claude model literal (LOW, S)
+
+- **Target**: `.gitleaks.toml`; re-firing at `templates/settings.html:1265`.
+- **Why**: the existing `claude-(opus|sonnet|haiku)-\d[-\w]*` regex
+  allowlist isn't suppressing the `generic-api-key` hit on the
+  `<option value="claude-haiku-4-5-20251001">` literal.  Likely
+  cause: gitleaks `generic-api-key` extracts the surrounding
+  high-entropy context (HTML attribute) as the secret, so the
+  allowlist regex (which only covers the model name substring)
+  doesn't match the full captured string.
+- **Plan**: add `'''templates/settings\.html$'''` to the `paths`
+  allowlist array — narrow (only this file, which is project-
+  controlled Jinja markup, not user content).  Cheaper than hunting
+  the gitleaks regex semantics.
+- **Source**: 2026-04-24 audit (5th), /audit triage config-tightening.
+- **Status**: todo
+
+---
+
+## Pass 40 — Tier-1 ship-this-week fixes (indie-review 2026-04-24)
+
+> Sixteen findings from the 14-agent independent review post-Pass 37 that
+> represent concrete exploit paths or silent-corruption vectors under routine
+> use.  Each has an external anchor (OWASP, CWE, RFC, or prior-pass invariant)
+> and a fix-sketch.  Land one-per-commit with red/green test pairs per the
+> remediation workflow.
+
+### 40.1 RCE via unvalidated `chdman_path` in `rom_tools_config.json` POST (CRITICAL, S)
+
+- **Target**: `routes/tools.py:196-208` (`api_rom_tools_settings` POST).
+- **Why**: `@login_required` only; JSON body written verbatim via
+  `atomic_write_json(config_path, settings)`.  Downstream
+  `subprocess.run([chdman_path, 'createcd', ...])` at `:618`/`:691` uses
+  the attacker-supplied argv[0].  `shutil.which()` happily resolves
+  `/usr/bin/python3` or `/tmp/evil`.  CWE-78 command injection via argv[0]
+  substitution; logged-in-user → arbitrary code execution with Flask UID.
+- **Plan**: (1) raise to `@admin_required`.  (2) author a
+  `rom_tools_validators.py` mirroring `services/settings_validators.py`
+  — whitelist `chdman_path` to `'chdman'` or resolved path under
+  `/usr/bin|/usr/local/bin|bundled tools dir`; reject absolute paths to
+  writable dirs; per-key allowlist validator for every other field.
+- **Source**: 2026-04-24 indie-review, settings/maintenance/tools C1.
+- **Status**: todo
+
+### 40.2 Arbitrary-path CHD convert + source file delete (CRITICAL, S)
+
+- **Target**: `routes/tools.py:571-654` (`api_chd_converter_convert`) +
+  `:682-752` (`api_chd_verify_verify`).
+- **Why**: `files[]` list from request body goes straight into
+  `subprocess.run([chdman_path, 'createcd', '-i', file_path, ...])` and
+  `os.remove(file_path)` (when `chd_delete_originals=True`).  No
+  `safe_path` check; `api_chd_converter_scan` correctly validates but the
+  convert/verify endpoints don't.  Logged-in user → arbitrary file delete
+  primitive.  CWE-22 path traversal.
+- **Plan**: add `if safe_path(fp, _get_rom_path()) is None: continue`
+  inside the `for file_path in files` loop of both endpoints.  Mirror
+  the `api_duplicate_finder_delete` pattern which already gets this
+  right.
+- **Source**: 2026-04-24 indie-review, settings/maintenance/tools C2.
+- **Status**: todo
+
+### 40.3 Archive-scanner batch extract + move to arbitrary paths (CRITICAL, S)
+
+- **Target**: `routes/tools.py:479-525` (`api_archive_scanner_create_m3u`
+  + `api_archive_scanner_batch_create_m3u`).
+- **Why**: `@login_required` only; `paths` and `staging_folder` not
+  validated.  `create_m3u_playlist` then runs unzip/7z/unrar on the
+  archive and `shutil.move()` into `staging_folder`.  Logged-in user
+  can extract archives anywhere the Flask process has write access.
+- **Plan**: raise both endpoints to `@admin_required`; add per-entry
+  `safe_path(p, _get_rom_path())` validation; restrict `staging_folder`
+  to a pre-approved list.
+- **Source**: 2026-04-24 indie-review, image/media #2.
+- **Status**: todo
+
+### 40.4 Steam achievement IDOR — three queries missing `user_id` filter (CRITICAL, S)
+
+- **Target**: `routes/steam_achievements.py:31-40, 73-78, 80-84`.
+- **Why**: Landing-page query joins `game_achievement_progress gap` without
+  `AND gap.user_id = ?`; per-game progress query and per-game achievements
+  query both omit the user filter.  Migration 009 added `user_id` to both
+  tables, and `routes/xbox_achievements.py` is the correct template (lines
+  33-43, 87-91, 94-98).  On a multi-user install, user A sees user B's
+  earned-achievement counts.  CWE-639 IDOR; Pass 31.4's claim is present
+  in a comment but the filter is not.
+- **Plan**: copy the Xbox blueprint's `AND gap.user_id = ?` /
+  `AND user_id = ?` into each of the three queries, bound to
+  `g.user['id']`.
+- **Source**: 2026-04-24 indie-review, achievements/trophies C1.
+- **Status**: todo
+
+### 40.5 ETag cross-user cache bleed on `/api/games/card-data` (CRITICAL, S)
+
+- **Target**: `routes/games.py:235`.
+- **Why**: `etag_payload = f"cd:{...}:{max_updated}"` — `max_updated` is
+  global, not per-user.  Per-user PSN and achievement progress join in
+  lines 270/279.  User A's browser caches with the ETag; user B on the
+  same browser sends A's `If-None-Match`, server 304s, B sees A's PSN
+  numbers.  `Cache-Control: private` doesn't prevent cross-session reuse
+  on the same client.  CWE-524 cache-bleed.
+- **Plan**: append `str(g.user['id'])` to the ETag payload.
+- **Source**: 2026-04-24 indie-review, game routes C1.
+- **Status**: todo
+
+### 40.6 `players` fill-only invariant broken at 3 sites (CRITICAL, S)
+
+- **Target**:
+  - `scraper/scrape_igdb.py:477-481, 591` — `players = 1` default + no
+    `COALESCE(?, players)`.
+  - `scraper/scrape_thegamesdb.py:876-882, 959` — same shape.
+  - `routes/games.py:917-952` — `api_game_edit` stores raw string
+    (SQLite weak typing lets `"1-4"` into an INTEGER column).
+  - `routes/games.py:458, 551` — `edit_metadata` form-POST has the same
+    bug.
+- **Why**: CLAUDE.md "scraper fill-only invariant" requires every `?` to
+  be wrapped in `COALESCE(?, column_name)` so empty API responses preserve
+  curated values.  With `players` initialised to `1` instead of `None`,
+  `COALESCE(1, players)` is always `1` — a curated "4-players" row
+  silently becomes 1 after re-scrape.  The JSON-edit path compounds the
+  issue by corrupting the column type.  Same bug class as Pass 30.4
+  fixed for `publisher`/`developer`.
+- **Plan**: in IGDB + TGDB adapters, initialise `players = None`, set
+  only when the source provided a value, bind `players if players else
+  None` through COALESCE.  In `api_game_edit` + `edit_metadata`,
+  normalise via `generate_sort_title`-siblings helper that rejects
+  ranges like `"1-4"` → 4, also triggers `cross_map_ratings` and
+  `generate_sort_title` to match the form-POST path's contract.
+  Extract a shared `_normalize_game_edit(dict) -> dict` helper used by
+  both routes (addresses game-routes C3's cache-invalidation drift as
+  a free side-effect).
+- **Source**: 2026-04-24 indie-review, scraper adapters C2 + game routes
+  C2/H4.
+- **Status**: todo
+
+### 40.7 TGDB image downloads bypass SSRF (CRITICAL, S)
+
+- **Target**: `scraper/scrape_thegamesdb.py:985-1043`
+  (`_download_tgdb_image`).
+- **Why**: calls `http_get(image_url, ...)` + `open(local_path,
+  'wb').write(response.content)` with no `validate_outbound_url`, no
+  redirect-chain check, no `max_bytes`, no streaming.  `metadata_merger`
+  re-exports it and uses it on the default scrape path.  Because
+  `requests` follows redirects by default, a crafted TGDB response
+  with an image URL redirecting to `http://169.254.169.254/...` fetches
+  cloud metadata and writes it to `static/images/boxart/`.  `base_scraper
+  .download_image` is already hardened (Pass 32.6, 32.7, 25.7).  CWE-918.
+- **Plan**: delete `_download_tgdb_image`; route through
+  `metadata_merger._download_and_finalize` or `base_scraper.download_image`.
+  Both are functionally equivalent and hardened.
+- **Source**: 2026-04-24 indie-review, scraper adapters C1.
+- **Status**: todo
+
+### 40.8 Museum job `finally` clobbers `failed` status back to `completed` (CRITICAL, S)
+
+- **Target**: `services/jobs/museum.py:136-336`.
+- **Why**: two early-exit failure paths at lines 189 (no-AI-provider) and
+  213 (unknown-provider) call `persist_job_complete(persist_id,
+  status='failed', ...)` and `return` without setting `persist_id = None`.
+  The `finally:` block at 334 then calls
+  `persist_job_complete(persist_id, status=final_status)` a second time,
+  overwriting 'failed' with 'completed'.  Silent data corruption — a
+  mis-configured admin sees "Completed" in `job_queue` with no error
+  trace.
+- **Plan**: set `persist_id = None` after every early-return
+  `persist_job_complete('failed')` call (the `except` branch at 321-323
+  already does this correctly).  Alternative: collapse the early-exit
+  paths into guard-blocks so exactly one terminal persist runs in the
+  `finally`.
+- **Source**: 2026-04-24 indie-review, jobs C1.
+- **Status**: todo
+
+### 40.9 ImageResizeJob has no persistence, no lock, no shutdown recovery (CRITICAL, M)
+
+- **Target**: `services/jobs/image_resize.py`.
+- **Why**: `_worker` never calls `persist_job_start`/`persist_job_progress`/
+  `persist_job_complete`; reads/writes `self.running`, `self.cancelled`,
+  `self.current_index`, `self.total_images` without `self._lock`;
+  `get_status()` reads without the lock either.  A bulk resize of 10,000
+  boxart files interrupted at 8,000 has zero DB record of ever running.
+  `request_shutdown` at `base.py:56` includes the job in its cancel
+  candidates, which only sets the in-memory flag — no persisted audit
+  trail.  Worst-of-both-worlds: acts cancellable without any cancellation
+  record.
+- **Plan**: either (a) bring up to `base.py` convention — wrap `_worker`
+  in `persist_job_start`/`persist_job_progress` ticks (every 10 items),
+  take `self._lock` around all counter reads/writes, add
+  `resolve_terminal_status` on exit; or (b) explicitly carve out — remove
+  from `request_shutdown` candidates and document in a docstring as
+  non-recoverable.  Option (a) is the lower-risk path.
+- **Source**: 2026-04-24 indie-review, jobs C3.
+- **Status**: todo
+
+### 40.10 Rate-limit `time.sleep` blocks shutdown drain, loses progress (CRITICAL, M)
+
+- **Target**: `services/jobs/psn_refresh.py:433, 459`,
+  `platform_sync.py:452, 767`, `ra_sync.py:359`, `ra_refresh.py:306`,
+  `museum.py:272, 283, 315`.
+- **Why**: per-iteration `time.sleep()` with durations 0.5-2.5s ignores
+  both `self.cancelled` and `shutdown_requested`.  Combined with blocking
+  HTTP timeouts up to 300s and `request_shutdown(timeout=5.0)`, a SIGTERM
+  during any sleep or in-flight call expires the drain budget.  The
+  daemon thread is killed mid-operation with un-persisted progress lost
+  and DB writes possibly half-committed — `job_queue` row stays
+  `status='running'` until the startup sweep marks it interrupted, and
+  up to 30s of committed work is re-done on resume.
+- **Plan**: replace every `time.sleep(d)` in `services/jobs/*.py` with
+  `shutdown_requested.wait(d)` — when the event is set, the sleep
+  short-circuits.  Separately, either cap outbound HTTP timeouts below
+  the shutdown budget (e.g. 4s) or lengthen the budget to fit realistic
+  API call durations (30-60s is more honest for PSN/RA sync).  Pick one
+  explicitly — document the decision.
+- **Source**: 2026-04-24 indie-review, jobs C2.
+- **Status**: todo
+
+### 40.11 CHD conversion non-atomic + dead `chd_verify_after_convert` (CRITICAL, M)
+
+- **Target**: `scraper/rom_tools.py:1129-1188` (`CHDConverter._convert_file`),
+  `routes/tools.py:602-648` (inline worker).
+- **Why**: both paths run `chdman createcd -i src -o dst` where
+  `dst = src.with_suffix('.chd')`.  chdman writes to the final path; any
+  mid-run kill (subprocess.TimeoutExpired at :1177, SIGKILL from OOM)
+  leaves a truncated `.chd`.  If `chd_delete_originals=True` and chdman
+  exits 0 with a warning-ridden partial output, `src.unlink()` fires.
+  Next run sees `dst.exists() → True`, `chd_skip_existing=True` → skipped.
+  Permanent corruption.  `chd_verify_after_convert: bool = True` is
+  declared in the `ROMToolsConfig` dataclass but grep returns zero
+  readers — the setting is surfaced in the UI but does nothing.
+- **Plan**: (1) write chdman output to `dst.with_suffix('.chd.part')`.
+  (2) if `config.chd_verify_after_convert`, run `chdman verify -i tmp`
+  after successful conversion; fail the task if verify fails.  (3)
+  `os.replace(tmp, dst)` only after verify (or on settings-off). (4) on
+  any exception path, `tmp.unlink(missing_ok=True)`.  (5) deduplicate
+  the `CHDConverter` class and the `routes/tools.py` inline worker —
+  one implementation.
+- **Source**: 2026-04-24 indie-review, image/media #3.
+- **Status**: todo
+
+### 40.12 Toast-controller XSS on `job.system_name` (CRITICAL, S)
+
+- **Target**: `static/js/toast-controller.js:1462-1467`.
+- **Why**: `${job.system_name || 'Multi-System'}` interpolated into
+  `toast.innerHTML` without escape; `${type}`/`${job.job_id}`
+  interpolated into an inline `onclick=` JS-string-in-HTML-attribute
+  double-decode context.  Every other toast path uses
+  `this.escapeHtml()` — this site is the anomaly.  A system name of
+  `<img src=x onerror=alert(1)>` fires in admin context.  CWE-79
+  reflected XSS; Pass 29/36 regression.
+- **Plan**: wrap `${job.system_name}` with `this.escapeHtml()`; replace
+  the inline `onclick` with `addEventListener` in a separate JS
+  statement using `data-job-id` + `data-job-type` attributes via
+  `escAttr` (pattern already in `all-games-controller.js:1362`).
+- **Source**: 2026-04-24 indie-review, frontend JS C1.
+- **Status**: todo
+
+### 40.13 `showModal` HTML auto-detect heuristic is blocklist XSS sink (CRITICAL, M)
+
+- **Target**: `templates/base.html:385-401`.
+- **Why**: `if (message.includes('<') && message.includes('>'))` triggers
+  an `innerHTML` render with a `<script>`-only strip — misses `<img
+  onerror=>`, `<svg onload=>`, `<iframe src=javascript:>`, and any event
+  handler on any element.  Dozens of call sites pass `'Error: ' +
+  data.error` — the day a server echoes user-controlled text containing
+  both brackets, every page becomes a reflected-XSS sink.  The settings-
+  page `ConfirmModal.show` (`settings-page.js:553-560`) gets this right
+  with opt-in `allowHtml` — the two implementations disagree.  CWE-79.
+- **Plan**: mirror settings-page `ConfirmModal.show` — default to
+  `textContent`; require explicit `allowHtml: true` opt-in.  Remove the
+  `<script>`-strip heuristic entirely.  Audit callers and migrate the
+  handful that legitimately need HTML.
+- **Source**: 2026-04-24 indie-review, frontend JS C3.
+- **Status**: todo
+
+### 40.14 PSN trophy-detail game-link search XSS (CRITICAL, S)
+
+- **Target**: `templates/psn_trophy_detail.html:815-831`.
+- **Why**: user-authored `game.title` / `game.boxart` / `game.system`
+  interpolated into a template literal (both HTML-text and attribute
+  contexts) then `resultsDiv.innerHTML = html;`.  Only mitigation is
+  `.replace(/'/g, "\\'")` on `title` for the `onclick` JS-string context
+  — nothing for HTML-text or attribute contexts.  Payload of title
+  `"><img src=x onerror=alert(1)>` escapes the div; boxart `x"
+  onerror=alert(1) x="` escapes the `src` attribute.  `setup.html:360-
+  393` demonstrates the correct pattern with `escapeHtml`/`escapeAttr`.
+  Pass 35 (XSS round 2) regression.  CWE-79.
+- **Plan**: wrap every `${game.title}` / `${game.boxart}` /
+  `${game.system}` with `escapeHtml()` (text context) or `escapeAttr()`
+  (attribute context); refactor the inline `onclick="linkGame(...)"`
+  to `data-game-id` + `addEventListener` so the single-quote sanitiser
+  stops being load-bearing.
+- **Source**: 2026-04-24 indie-review, templates C1.
+- **Status**: todo
+
+### 40.15 `base_scraper.download_image` non-atomic + stale-clear race (CRITICAL, S)
+
+- **Target**: `scraper/base_scraper.py:257-358` (`download_image`) +
+  `scraper/hybrid_scraper.py:593-632` (stale-clear) +
+  `services/media_cleanup.py:100-166` (orphan sweep).
+- **Why**: `download_image` streams `open(dest_path, 'wb')` directly to
+  final path; any mid-stream exception (connection reset, OOM) leaves a
+  partial file, and the `if os.path.exists(dest_path): return True` at
+  :274 means a later scrape treats it as "already downloaded" forever.
+  Only IGDB uses this path; `metadata_merger._download_and_finalize`
+  already uses `tempfile.mkstemp` + `os.replace` and has SSRF gates.
+  Separately, the stale-ref auto-clear issues `UPDATE games SET {field}
+  = NULL WHERE id = ?` without a check that the DB value is still the
+  stale filename observed — so a concurrent upload between stat and
+  UPDATE gets its new reference wiped and the file orphaned.  Orphan
+  sweep compounds by deleting the now-dangling file.
+- **Plan**: (1) copy `metadata_merger._download_and_finalize` scaffold
+  into `base_scraper.download_image` — tempfile + fsync + `os.replace`.
+  Unlink tempfile on any exception.  (2) tighten stale-clear to
+  `UPDATE games SET {field} = NULL WHERE id = ? AND {field} = ?` binding
+  both the row id and the stale filename captured at stat time.  (3)
+  have `find_orphaned_media` re-check the DB per file when the
+  prefix-ID fallback fails, or take an advisory lock.
+- **Source**: 2026-04-24 indie-review, scraper adapters H1 + image/media
+  H1 + H2.  Upgraded to CRITICAL under threat-model calibration because
+  combining all three yields silent cross-user data loss.
+- **Status**: todo
+
+### 40.16 Missing `docs/PROXY-DEPLOY.md` referenced in `app.py:147` (HIGH, S)
+
+- **Target**: `docs/PROXY-DEPLOY.md` (non-existent), referenced by
+  `app.py:147` comment "See docs/PROXY-DEPLOY.md (added in this pass)
+  for the trust contract."
+- **Why**: operators enabling `RETRODB_TRUST_PROXY=1` have no guidance
+  on required nginx/Caddy headers.  Misconfigure and `X-Forwarded-For`
+  becomes attacker-controlled, defeating IP-based rate limiting.  The
+  `ProxyFix` parameters (`x_for=1, x_proto=1, x_host=1, x_prefix=0`)
+  assume a single trusted hop — undocumented assumption.
+- **Plan**: either (a) author `docs/PROXY-DEPLOY.md` describing the
+  required nginx/Caddy configuration (must-terminate-TLS-at-proxy,
+  must-strip-and-re-emit-XFF-from-client, one hop only), or (b) drop
+  the false reference and inline a 3-line comment naming the hop
+  assumption.  (a) is the right call — other operators will hit this.
+- **Source**: 2026-04-24 indie-review, app bootstrap H1.
+- **Status**: todo
+
+---
+
+## Pass 41 — Tier-2 hardening sweep (indie-review 2026-04-24)
+
+> Forty-four HIGH findings after threat-model calibration.  Real
+> correctness smells with concrete failure scenarios, but none carries
+> a current-use exploit chain.  Group fixes by subsystem to minimise
+> cross-cutting churn.
+
+### 41.1 Auth — three decorator / bucket hygiene findings
+
+- **Targets**:
+  - `services/auth.py:204` — `login_required` inline allow-list bypass
+    for 5 endpoint names is a footgun (any future endpoint that
+    collides with the list becomes silently public).
+  - `routes/auth.py:348-368` — `api_change_password` rate-limit bucket
+    keyed on IP-only, shared with `/api/login` — allows cross-user LAN
+    lockout.
+  - `services/auth.py:96` — `needs_rehash` only upgrades on successful
+    login; idle accounts keep weaker 100k-iter hashes indefinitely.
+- **Why**: decorator allow-lists are the worst place for silent bypass;
+  shared rate-limit buckets across orthogonal surfaces fail-close the
+  wrong thing; OWASP ASVS V2.4.5 requires a path for inactive-account
+  rehash.
+- **Plan**: (1) remove the 5-name allow-list from `login_required`;
+  attach the decorator only where needed.  (2) re-key change-password
+  rate bucket to `(ip, user_id)`.  (3) add a background sweep or
+  startup check flagging users with stale hash params for admin
+  attention.
+- **Source**: 2026-04-24 indie-review, auth H1/H2/H3.
+- **Status**: todo
+
+### 41.2 Database — FK-OFF PRAGMA is no-op inside transaction; connection leaks in 10+ route sites
+
+- **Targets**:
+  - `services/migrations/__init__.py:83` — `conn.execute("BEGIN")`
+    runs before per-migration PRAGMAs, so `PRAGMA foreign_keys = OFF`
+    in migrations 007/008/009 is silently ignored (SQLite docs: FK
+    state cannot change mid-transaction).
+  - `routes/museum.py` (10+ sites), `routes/tools.py:1202`,
+    `routes/trophies.py:1804` — raw `get_db()` without matching
+    `.close()`.  Each leak holds a file handle + 64 MB cache.
+- **Why**: the rebuilt `psn_games` / `collector_trophies` /
+  achievement tables happen to work today only because no FK was
+  declared `DEFERRABLE`; a future migration that does introduce a
+  deferred-FK will silently corrupt on rebuild.  Connection leaks
+  compound under load.
+- **Plan**: (1) move `conn.execute("BEGIN")` to *after* the PRAGMA
+  preamble, or convert 007/008/009 to `PRAGMA defer_foreign_keys = ON`
+  which works inside a txn.  (2) route every leaking `get_db()` through
+  `get_request_db()` (teardown-managed).
+- **Source**: 2026-04-24 indie-review, database H1/H2.
+- **Status**: todo
+
+### 41.3 App bootstrap — CSP nonce zombie + `'system'` log category dead + redactor ordering
+
+- **Targets**:
+  - `app.py:342-356` — CSP Report-Only header references
+    `nonce-{{csp_nonce}}`; `grep -rn csp_nonce templates/` → zero hits.
+    CSP is effectively unshipped.  (Feeds FU.1.)
+  - `log_manager.py:55, 58` — `'system'` category listed but has no
+    logger names; creates empty log files that mislead operators.
+  - `app.py:631-639` — `install_global_redactor()` runs *after*
+    `logging.basicConfig()`; intermediate log records emitted between
+    the two lines bypass redaction.  `services/database_init.py:150`
+    logs default admin/admin creds verbatim.
+- **Plan**: wire CSP migration per FU.1.  Drop or populate the
+  `'system'` category.  Move `install_global_redactor` before
+  `basicConfig`; scrub the default-creds log line.
+- **Source**: 2026-04-24 indie-review, app bootstrap H2/M3/M4.
+- **Status**: todo
+
+### 41.4 Scraper orchestration — ES-DE screenshot append lost + primary-source exceptions abort scrape
+
+- **Targets**:
+  - `scraper/hybrid_scraper.py:714-727` — sync-back from DB reload after
+    `apply_esde_metadata` uses `if game.get(field) and not
+    metadata.get(field):` guard; for `screenshots` the guard is False
+    because metadata was pre-populated, so newly-appended screenshots
+    are lost on the final UPDATE.
+  - `scraper/hybrid_scraper.py:737-795` — primary-source dispatch has
+    no per-source try/except; fallback dispatches do.  One malformed
+    IGDB response aborts the whole hybrid apply; user sees "scrape
+    failed" even when fallbacks could have filled gaps.  Orphan media
+    files downloaded before the exception are never cleaned.
+- **Plan**: (1) for `screenshots`, replace the guard with an
+  unconditional copy from the reloaded DB value (after file-existence
+  filter).  (2) wrap each primary dispatch in its own try/except; log
+  and fall through to gap-fill.  Track downloaded file paths in a
+  local list and `os.remove` them on exception.
+- **Source**: 2026-04-24 indie-review, scraper orchestration H1/H2.
+- **Status**: todo
+
+### 41.5 Scraper adapters — credential leak in logs + adapters bypassing `base_scraper`
+
+- **Targets**:
+  - `scraper/scrape_steam.py` (7 endpoints) and `scraper/hltb_lookup.py`
+    (3 endpoints) call raw `requests.get/post` — no retry+size-cap via
+    `base_scraper`, no redactor coverage for URL params on exception.
+  - `services/log_redactor.py:31` — querystring allowlist covers
+    `apikey|api_key|token|auth|pwd|password|devpassword|ssid` but NOT
+    `key=` (Steam) or `sspassword=` (ScreenScraper).  Exception
+    `HTTPError` stringification exposes full URL → credentials leak
+    to log files.
+  - `scraper/scrape_igdb.py:86-87` — 401 from expired Twitch token
+    doesn't invalidate the cached token; subsequent calls in the same
+    scrape replay the dead token and silently return empty results.
+- **Plan**: (1) route Steam + HLTB calls through `http_get`/`http_post`
+  for retry/backoff/size-cap.  (2) add `key` and `sspassword` to the
+  redactor querystring patterns (narrow to avoid false positives).
+  (3) in `igdb_request`, on status 401, clear `_igdb_token_cache` and
+  retry once with a fresh token.
+- **Source**: 2026-04-24 indie-review, scraper adapters H1/H2/H3/H4.
+- **Status**: todo
+
+### 41.6 Jobs — cross-process singleton + persist-under-lock + PSN inner-thread unsync
+
+- **Targets**:
+  - every job class (`bulk_scrape`, `psn_refresh`, etc.) — in-memory
+    `self.running` flag only prevents concurrent starts in the same
+    Python process.  Multi-worker WSGI (gunicorn `--workers 2`) has no
+    cross-process guard; two workers can each run their own `bulk_scrape
+    _job` singleton simultaneously against the same system.
+  - `services/jobs/alt_titles_backfill.py:154-162`,
+    `hltb_bulk.py:207-214` — `persist_job_progress` called inside
+    `with self._lock`, blocking every status-poll request for 10-50ms
+    per tick (up to 30s under WAL busy-timeout contention).
+  - `services/jobs/psn_refresh.py:306-320` — `_fetch_titles` inner
+    thread reads `self.cancelled` without the lock; if the outer 300s
+    join times out, the inner thread continues updating shared state.
+- **Plan**: (1) add a DB-advisory-lock (`fcntl.flock` on a sentinel
+  file) around `start()` for each job type to guard multi-worker
+  deployments.  (2) move `persist_job_progress` outside the lock
+  block; follow `bulk_scrape.py:738-745` pattern.  (3) give
+  `_fetch_titles` an explicit cancel event; treat the 300s timeout
+  as "abandoned, may still run" and drop its state updates.
+- **Source**: 2026-04-24 indie-review, jobs H1/H2/H3.
+- **Status**: todo
+
+### 41.7 OAuth / trophy-parser — TROPUSR bounds hardening + Xbox redirect URL concat + RA 401 observability
+
+- **Targets**:
+  - `scraper/trophy_parser.py:189-216` — attacker-controlled
+    `tables_count`/`entries_count`/`offset` in TROPUSR.DAT; inner
+    `break` saves exploitability, but control flow relies on the
+    reviewer proving early-exit rather than explicit bounds.
+  - `routes/platform_import.py:484` — Xbox callback redirect uses
+    `url_for(...) + '&xbox_connected=1'` — works only because
+    `url_for` currently emits a query arg; brittle on future refactor.
+  - `scraper/retroachievements.py:253-254` + 4 other callers — 401
+    from stale RA API key falls through to generic `None` return;
+    user sees "no RA entry found" instead of "check your API key."
+- **Plan**: (1) prepend explicit `tables_count = min(tables_count,
+  (len(data) - 0x30) // 32 + 1)` + `if offset >= len(data): return`
+  guards.  (2) switch redirect to `url_for(..., xbox_connected=1)`
+  kwarg form.  (3) in the 5 RA HTTP callers, add an `if
+  response.status_code == 401: logger.error(...); return None` branch
+  before the generic non-200 fallthrough.
+- **Source**: 2026-04-24 indie-review, OAuth H1/H2/M5.
+- **Status**: todo
+
+### 41.8 Achievements/trophies — `flask.g` shadow + achievement aggregation silent-drop
+
+- **Targets**:
+  - `routes/trophies.py:1075, 1119, 1125, 1131` — four `for g in ...`
+    loops in `_run_psn_full_sync` shadow module-level `from flask
+    import g`.  Latent bug (thread has no request context).
+  - `routes/achievements.py:88-96` — `LEFT JOIN` with `AND
+    gap.user_id = ?` silently filters out pre-migration null-user_id
+    rows, hiding data without erroring.
+- **Plan**: rename the four loop vars to `ps_game` (mirrors the
+  `existing_groups` comprehension at :1384).  Either back-fill
+  `user_id` in migration 009 for the admin user (similar to the PSN
+  tokens case) or document the silent-drop behavior and surface a
+  warning in the aggregated view.
+- **Source**: 2026-04-24 indie-review, achievements/trophies H1/H2.
+- **Status**: todo
+
+### 41.9 Game routes — track-view / completion / recently-viewed / sort_title
+
+- **Targets**:
+  - `routes/games.py:1086, 1106` — `@editor_required` on
+    `api_track_view` + `api_update_completion`; viewers can't mark
+    their own games complete.  Separately, `last_viewed` is a global
+    column on `games` — cross-user leak of viewing history.
+  - `routes/games.py:1117-1142` — `/api/recently-viewed` has zero
+    callers (dashboard uses inline `query()` in `app.py:994`).
+  - `services/game_utils.py:1275-1288` — `generate_sort_title`
+    converts single-letter Roman numerals at word-start: "I am
+    Setsuna" → "01 am Setsuna".
+- **Plan**: (1) downgrade the two decorators to `@login_required`,
+  and introduce a per-user `user_game_views` table so `last_viewed`
+  isn't shared.  (2) delete `/api/recently-viewed`.  (3) tighten the
+  Roman-numeral heuristic: only convert when followed by digit, end-
+  of-string, or adjacent to another numeral token.
+- **Source**: 2026-04-24 indie-review, game routes H1/H2/H3.
+- **Status**: todo
+
+### 41.10 Settings/maintenance/tools — every destructive endpoint at `@login_required` + task-cancel authz + scan unboundedness
+
+- **Targets**:
+  - `routes/tools.py` — 10+ endpoints at `@login_required` that
+    mutate filesystem / launch subprocesses; `api_archive_scanner_scan`,
+    `api_duplicate_finder_scan`, `api_screenshot_dedup_scan`,
+    `api_chd_converter_scan`, `api_chd_verify_scan` all walk the ROM
+    tree with no rate limit.
+  - `routes/tools.py:298-351` — `api_rom_tools_task_cancel/pause/
+    resume` are `@login_required`-only; any logged-in user can cancel
+    any admin task.
+- **Plan**: raise every destructive `api_*_convert`/`_verify_verify`
+  to `@admin_required`; raise every heavy-filesystem `*_scan` to
+  `@editor_required` + `_rate_limit('...', '5 per minute')` in
+  `app.py`.  Task cancel/pause/resume endpoints also need
+  `@admin_required`.  Full UUIDs for task IDs (currently 8-char
+  slice → 32 bits, guessable across logged-in users).
+- **Source**: 2026-04-24 indie-review, settings/maintenance/tools
+  H1/H2/H3.
+- **Status**: todo
+
+### 41.11 Museum — silent JSON decode failure + GET-handler DB mutation
+
+- **Targets**:
+  - `routes/museum.py:192` — `_get_top_games` catches
+    `(json.JSONDecodeError, TypeError): pass`; admin sees a page
+    with no top-games and no indicator that cached LLM output is
+    corrupt.
+  - `routes/museum.py:347-351` — stale-controller-image cleanup runs
+    inside a GET handler (`UPDATE controllers SET image = NULL`);
+    violates RFC 7231 GET-idempotency and allows one user's page load
+    to mutate globally-shared state.
+- **Plan**: (1) log the JSON decode failure at `warning` so the next
+  museum generation can be prompted.  (2) move the stale-image
+  cleanup to a background sweep or an `@editor_required` POST.
+- **Source**: 2026-04-24 indie-review, museum H1/H2.
+- **Status**: todo
+
+### 41.12 Frontend JS — fetch timeout + navigateTo open-redirect + inline-onclick JSON
+
+- **Targets**:
+  - `static/js/utils.js:264-329` — `API.get/post/postForm` use `fetch()`
+    without `AbortController`, no default timeout, no `signal` param.
+  - `static/js/toast-controller.js:1171, 1586-1592` — `navigateTo`
+    writes raw `returnUrl` from localStorage to `window.location.href`
+    with no scheme check; `data.return_url` also interpolated into an
+    inline `onclick=` JS-string.
+  - 51 raw `setInterval`/`setTimeout`/`addEventListener` sites across
+    the JS tree; 0 callers of `PageLifecycle.*` — the abstraction is
+    a documented zombie.
+- **Plan**: (1) thread `options.signal` through `API.*`; default
+  timeout 30s via `AbortController`.  (2) in `navigateTo`, reject
+  URLs not matching `startsWith('/')` or `new URL(..., location).
+  protocol ∈ {http:, https:}`.  Replace inline `onclick` with
+  delegated `addEventListener` + `data-*` attrs.  (3) either adopt
+  `PageLifecycle` in the canonical hot paths (museum, rom-tools,
+  log-viewer) or delete the abstraction — pick one.
+- **Source**: 2026-04-24 indie-review, frontend JS H1/H2/H3/M3.
+- **Status**: todo
+
+### 41.13 Templates / a11y — aria-current + div-as-button + mis-targeted label-for + label-as-group-heading
+
+- **Targets**:
+  - `templates/base.html:83-189` — no `aria-current="page"` on sidebar
+    nav links.
+  - `templates/base.html:194`, `rom_tools_hub.html:201/214/227`,
+    `game_detail.html:659`, `duplicate_finder.html:460`,
+    `screenshot_dedup.html:481`, `game_imports.html:191` — `<div
+    onclick=>` / `<h2 onclick=>` primary actions fail WCAG 2.1.1
+    (keyboard).
+  - `templates/base.html:1154-1162` — gem-modal platform toggle:
+    `<label class="toggle-switch" for="gemOtherPlatforms">` wraps
+    checkbox `gemExclusiveToggle` but `for=` points at the sibling
+    text input.  Functional bug, not just a11y — clicking the toggle
+    focuses the text input instead of toggling the checkbox.
+  - wishlist.html / lists.html / tags.html / logs.html / chd_converter
+    .html / rom_tools_settings.html / duplicate_finder.html /
+    _modals/rename_modal.html — `<label>` used as group heading above
+    button groups (no form control to associate with).
+- **Plan**: (1) Jinja one-liner `{% if request.endpoint == '...' %}
+  aria-current="page"{% endif %}` on every sidebar nav link.  (2)
+  convert the 6 `<div onclick=>` primary actions to `<button>`.  (3)
+  drop the `for=` on the wrapping toggle label (implicit association
+  via wrapped input is correct).  (4) replace bare `<label>` over
+  button groups with `<fieldset><legend>` or `<div role="group"
+  aria-labelledby="...">` + heading.
+- **Source**: 2026-04-24 indie-review, templates H1/H2/H3/H4.
+- **Status**: todo
+
+### 41.14 Image/media — Pillow bomb-error not caught + ESRGAN SSRF gap + `rglob` follows symlinks
+
+- **Targets**:
+  - `scraper/image_dedup.py:24-45` — `except (OSError, ValueError)`
+    misses `PIL.Image.DecompressionBombError`; one bomb-image aborts
+    the scrape for that game.
+  - `services/image_utils.py:67-107` — `_download_model` calls
+    `urllib.request.urlopen` directly, bypassing `services.ssrf`.
+    `_MODEL_URLS` is hardcoded today; if the URL becomes settings-
+    editable (as happened in Pass 32.1 for `ROM_PATH`), this becomes
+    a real SSRF primitive.
+  - `scraper/rom_tools.py:260-272, 1044-1064, 1212-1225, 1408-1423` —
+    `Path.rglob()` follows symlinks on Python 3.12 (default changed
+    in 3.13); a symlink to `/` inside ROM_PATH enumerates the entire
+    filesystem.
+- **Plan**: widen the `compute_dhash` exception catch to `Exception`
+  or add `DecompressionBombError` explicitly.  Route ESRGAN model
+  download through `services.ssrf.validate_outbound_url`.  In every
+  rglob loop, check `archive_path.is_symlink() and resolved-path-
+  under-root` before traversal.
+- **Source**: 2026-04-24 indie-review, image/media #8/#9/#10.
+- **Status**: todo
+
+---
+
+## Pass 42 — Tier-3 structural fold-ins (indie-review 2026-04-24)
+
+> MEDIUM/LOW cross-cutting items that aren't urgent but should be
+> scheduled before the next indie-review — opportunistically mergeable
+> into feature PRs that touch adjacent code.
+
+### 42.1 Extract `_normalize_game_edit` helper (MEDIUM, M)
+
+- **Target**: `routes/games.py:458` (form-POST) + `routes/games.py:917`
+  (JSON).  Helper in `services/game_metadata_service.py`.
+- **Why**: both edit paths independently normalize `players`, compute
+  `sort_title`, cross-map ratings.  Three separate divergences today;
+  Pass 40.6 closes the `players` case, but the structural lesson
+  is "one helper, two callers."  Fold-in touches game routes H4 + C3
+  plus scraper adapters C2.
+- **Plan**: extract `_normalize_game_edit(dict) -> dict` that takes
+  arbitrary edit payload and returns a sanitised dict ready for UPDATE.
+  Include `cross_map_ratings`, `generate_sort_title`, `players`
+  coercion, `invalidate_filter_cache + invalidate_analytics_cache`.
+- **Status**: todo
+
+### 42.2 Deduplicate migration helpers (MEDIUM, S)
+
+- **Target**: `services/migrations/_helpers.py` (new); remove 4-6
+  copies from individual migration scripts.
+- **Why**: `_table_exists`, `_has_column`, `_admin_user_id`,
+  `_columns_ddl`, `_add_column_if_missing` are duplicated across
+  001/005/006/007/008/009.  Baseline's variant swallows
+  `OperationalError`; post-baseline strict variants do not.  Drift
+  is actively masking regressions.
+- **Plan**: one `_helpers.py` with the strict variants; update all
+  migration imports; add a schema-test that re-runs every migration
+  on an empty DB to prove idempotency.
+- **Status**: todo
+
+### 42.3 Global `window.onerror` + `unhandledrejection` handler (MEDIUM, S)
+
+- **Target**: `static/js/main.js` or `static/js/utils.js` — handler
+  pipes into `showNotification(msg, 'error')` with sampling.
+- **Why**: 57 `console.error` sites and zero global handlers; silent
+  UI failures reach the console and stop there.  User sees stale UI
+  with no toast.
+- **Plan**: add `window.addEventListener('error', ...)` and
+  `'unhandledrejection'` handlers that dispatch to the toast system,
+  rate-limited to one surface every 5s to avoid feedback loops.
+- **Status**: todo
+
+### 42.4 Pin / vendor Chart.js (MEDIUM, S)
+
+- **Target**: `templates/analytics.html:1515`.
+- **Why**: unpinned `cdn.jsdelivr.net/npm/chart.js` with no SRI on an
+  admin-only page with session cookie.  Supply-chain attack surface.
+- **Plan**: either pin `@4.x.y` + `integrity="sha384-..."`
+  `crossorigin="anonymous"`, or vendor to `/static/vendor/chart.js`.
+- **Status**: todo
+
+### 42.5 CHD converter dedup + `_persist_controller_image` (MEDIUM, M)
+
+- **Target**: `scraper/rom_tools.py:CHDConverter` vs
+  `routes/tools.py:602-648` inline worker; `routes/museum.py:670-698,
+  723-755, 1105-1127` controller-image save.
+- **Why**: two implementations of CHD conversion (one class-based,
+  one inline) diverge on error handling; three identical 30-line
+  blocks in museum do controller-image save/propagate.  Rule of
+  Three crossed in both cases.
+- **Plan**: keep the class; have `routes/tools.py` delegate.
+  Extract `_persist_controller_image(controller_id,
+  img_bytes_or_pil)` in `routes/museum.py`.
+- **Status**: todo
+
+### 42.6 RA 401 observability + Steam / SS log-redaction tightening (MEDIUM, S)
+
+- **Target**: `scraper/retroachievements.py` (5 callers),
+  `services/log_redactor.py:31`.
+- **Why**: stale API key masquerades as "no match"; credential
+  patterns `key=` and `sspassword=` not in redactor.  Observability
+  gap + credential leak surface.
+- **Plan**: already scoped under Pass 41.5 for redactor; track the
+  RA observability half here (5 call-site edits to surface 401 as a
+  distinct error).
+- **Status**: todo
+
+### 42.7 Adopt or remove `PageLifecycle` (MEDIUM, M)
+
+- **Target**: `static/js/page-lifecycle.js` (467 LoC) + all JS call
+  sites currently rolling their own cleanup.
+- **Why**: 0 current consumers of `PageLifecycle.*`; CLAUDE.md
+  advertises the abstraction as canonical.  Either migrate the 10
+  hot-path files or delete the module.
+- **Plan**: pick an option; don't leave the doc-vs-code drift.
+- **Status**: todo
+
+### 42.8 Remove `/api/recently-viewed` + `ScraperManager.get_enabled_scrapers` + CSP nonce dead infrastructure (LOW, S — bundle)
+
+- **Targets**:
+  - `routes/games.py:1117-1142` — zero callers.
+  - `scraper/scraper_manager.py:286-302` — zero callers.
+  - CSP nonce infrastructure is covered by FU.1; noted here for
+    cross-reference.
+- **Plan**: delete the two zombie functions; FU.1 handles CSP.
+- **Status**: todo
+
 ---
 
 ## Follow-ups from landed passes
