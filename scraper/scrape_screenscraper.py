@@ -14,6 +14,8 @@ import time
 import hashlib
 import os
 
+from .base_scraper import http_get, _http_session
+
 logger = logging.getLogger(__name__)
 
 # ScreenScraper API endpoints
@@ -235,9 +237,9 @@ def check_credentials(username, password, dev_id=None, dev_password=None):
             ("output", "json")
         ])
         
-        response = requests.get(USER_INFO_URL, params=params, timeout=30)
-        
-        if response.status_code == 200:
+        response = http_get(USER_INFO_URL, params=params, timeout=30)
+
+        if response is not None and response.status_code == 200:
             data = response.json()
             if "response" in data and "ssuser" in data["response"]:
                 user_info = data["response"]["ssuser"]
@@ -250,11 +252,9 @@ def check_credentials(username, password, dev_id=None, dev_password=None):
                     "requests_today": user_info.get("requeststoday", "0"),
                     "max_requests": user_info.get("maxrequestsperday", "20000"),
                 }
-        
+
         return {"valid": False, "error": "Invalid credentials or API unavailable"}
-        
-    except requests.exceptions.Timeout:
-        return {"valid": False, "error": "Connection timeout"}
+
     except Exception as e:
         return {"valid": False, "error": str(e)}
 
@@ -753,7 +753,10 @@ def download_media(url, dest_path, timeout=60):
         max_bytes = 50 * 1024 * 1024
 
     try:
-        with requests.get(url, timeout=timeout, stream=True) as response:
+        # Route through shared session for connection pooling (Pass 26.1).
+        # stream=True is required for the mid-stream size cap below, so this
+        # stays on _http_session.get rather than base_scraper.http_get.
+        with _http_session.get(url, timeout=timeout, stream=True) as response:
             if response.status_code != 200:
                 return False
             declared = int(response.headers.get('Content-Length', 0) or 0)
@@ -972,7 +975,10 @@ def _ss_request_with_retry(url, params, timeout=60, retries=2):
 
     for attempt in range(retries + 1):
         try:
-            response = requests.get(url, params=params, timeout=timeout, stream=True)
+            # Shared session for connection pooling (Pass 26.1); stream=True is
+            # required for the response-size cap below so we can abort before
+            # buffering the whole body.
+            response = _http_session.get(url, params=params, timeout=timeout, stream=True)
 
             if response.status_code == 200:
                 declared = int(response.headers.get('Content-Length', 0) or 0)

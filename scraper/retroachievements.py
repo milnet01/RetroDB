@@ -6,7 +6,6 @@
 # =============================================================================
 
 import re
-import requests
 import logging
 import hashlib
 import os
@@ -16,6 +15,7 @@ import json
 # Add parent directory to path for config import
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import config
+from .base_scraper import http_get
 
 logger = logging.getLogger(__name__)
 
@@ -208,9 +208,9 @@ def search_game_by_name(game_name, console_id):
                 'f': 1,  # Only games with achievements
             }
 
-            response = requests.get(url, params=params, timeout=30)
+            response = http_get(url, params=params, timeout=30)
 
-            if response.status_code != 200:
+            if response is None or response.status_code != 200:
                 return None
 
             games = response.json()
@@ -288,9 +288,9 @@ def get_game_info(game_id):
             'i': game_id,
         }
         
-        response = requests.get(url, params=params, timeout=30)
+        response = http_get(url, params=params, timeout=30)
         
-        if response.status_code == 200:
+        if response is not None and response.status_code == 200:
             data = response.json()
             
             return {
@@ -356,9 +356,9 @@ def get_user_game_progress(game_id, username=None):
             'g': game_id,
         }
         
-        response = requests.get(url, params=params, timeout=30)
+        response = http_get(url, params=params, timeout=30)
         
-        if response.status_code == 200:
+        if response is not None and response.status_code == 200:
             data = response.json()
             
             # Parse achievements
@@ -438,9 +438,9 @@ def get_user_game_progress_custom(game_id, username, api_key):
             'g': game_id,
         }
         
-        response = requests.get(url, params=params, timeout=30)
+        response = http_get(url, params=params, timeout=30)
         
-        if response.status_code == 200:
+        if response is not None and response.status_code == 200:
             data = response.json()
             
             # Parse achievements
@@ -520,9 +520,9 @@ def get_user_summary(username=None):
             'g': 5,  # Number of recent games
         }
         
-        response = requests.get(url, params=params, timeout=30)
+        response = http_get(url, params=params, timeout=30)
         
-        if response.status_code == 200:
+        if response is not None and response.status_code == 200:
             data = response.json()
             return {
                 'username': data.get('User'),

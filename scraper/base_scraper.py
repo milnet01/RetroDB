@@ -8,6 +8,7 @@
 
 import requests
 import logging
+import random
 import time
 import os
 import re
@@ -45,6 +46,19 @@ def get_scraper_conn():
     return conn
 
 
+_RETRYABLE_5XX = (500, 502, 503, 504)
+
+
+def _backoff_delay(attempt):
+    """Exponential backoff with jitter (Pass 26.4).
+
+    Returns `2**attempt` seconds plus up to 1 second of uniform jitter so
+    many concurrent scrapers don't all retry in lockstep after a shared
+    upstream blip (thundering herd).
+    """
+    return (2 ** attempt) + random.random()
+
+
 def http_get(url, params=None, headers=None, timeout=30, retries=2):
     """
     HTTP GET request with retry logic and exponential backoff.
@@ -76,17 +90,30 @@ def http_get(url, params=None, headers=None, timeout=30, retries=2):
                         try:
                             wait_time = min(int(retry_after), 60)
                         except (ValueError, TypeError):
-                            wait_time = 2 ** attempt
+                            wait_time = _backoff_delay(attempt)
                     else:
-                        wait_time = 2 ** attempt
-                    logger.warning(f"Rate limited (429), waiting {wait_time}s before retry...")
+                        wait_time = _backoff_delay(attempt)
+                    logger.warning(f"Rate limited (429), waiting {wait_time:.1f}s before retry...")
                     time.sleep(wait_time)
                     continue
                 else:
                     logger.warning(f"Rate limited (429), no retries left - {url}")
                     return response
+            elif response.status_code in _RETRYABLE_5XX:
+                # Transient server error — retry with jittered backoff (Pass 26.4)
+                if attempt < retries:
+                    wait_time = _backoff_delay(attempt)
+                    logger.warning(
+                        f"HTTP GET server error {response.status_code}, waiting {wait_time:.1f}s before retry..."
+                    )
+                    time.sleep(wait_time)
+                    continue
+                logger.warning(
+                    f"HTTP GET server error {response.status_code} after {retries + 1} attempts - {url}"
+                )
+                return response
             else:
-                # Non-retryable HTTP error
+                # Non-retryable HTTP error (401/403/4xx/etc.)
                 logger.warning(f"HTTP GET failed: {response.status_code} - {url}")
                 return response
 
@@ -94,13 +121,13 @@ def http_get(url, params=None, headers=None, timeout=30, retries=2):
             last_error = e
             logger.warning(f"HTTP GET timeout (attempt {attempt + 1}/{retries + 1}): {e}")
             if attempt < retries:
-                time.sleep(1 * (attempt + 1))
+                time.sleep(_backoff_delay(attempt))
                 continue
         except requests.exceptions.ConnectionError as e:
             last_error = e
             logger.warning(f"HTTP GET connection error (attempt {attempt + 1}/{retries + 1}): {e}")
             if attempt < retries:
-                time.sleep(1 * (attempt + 1))
+                time.sleep(_backoff_delay(attempt))
                 continue
         except Exception as e:
             logger.error(f"HTTP GET unexpected error: {e}")
@@ -144,15 +171,28 @@ def http_post(url, data=None, json_data=None, headers=None, timeout=30, retries=
                         try:
                             wait_time = min(int(retry_after), 60)
                         except (ValueError, TypeError):
-                            wait_time = 2 ** attempt
+                            wait_time = _backoff_delay(attempt)
                     else:
-                        wait_time = 2 ** attempt
-                    logger.warning(f"Rate limited (429), waiting {wait_time}s before retry...")
+                        wait_time = _backoff_delay(attempt)
+                    logger.warning(f"Rate limited (429), waiting {wait_time:.1f}s before retry...")
                     time.sleep(wait_time)
                     continue
                 else:
                     logger.warning(f"Rate limited (429), no retries left - {url}")
                     return response
+            elif response.status_code in _RETRYABLE_5XX:
+                # Transient server error — retry with jittered backoff (Pass 26.4)
+                if attempt < retries:
+                    wait_time = _backoff_delay(attempt)
+                    logger.warning(
+                        f"HTTP POST server error {response.status_code}, waiting {wait_time:.1f}s before retry..."
+                    )
+                    time.sleep(wait_time)
+                    continue
+                logger.warning(
+                    f"HTTP POST server error {response.status_code} after {retries + 1} attempts - {url}"
+                )
+                return response
             else:
                 logger.warning(f"HTTP POST failed: {response.status_code} - {url}")
                 return response
@@ -161,13 +201,13 @@ def http_post(url, data=None, json_data=None, headers=None, timeout=30, retries=
             last_error = e
             logger.warning(f"HTTP POST timeout (attempt {attempt + 1}/{retries + 1}): {e}")
             if attempt < retries:
-                time.sleep(1 * (attempt + 1))
+                time.sleep(_backoff_delay(attempt))
                 continue
         except requests.exceptions.ConnectionError as e:
             last_error = e
             logger.warning(f"HTTP POST connection error (attempt {attempt + 1}/{retries + 1}): {e}")
             if attempt < retries:
-                time.sleep(1 * (attempt + 1))
+                time.sleep(_backoff_delay(attempt))
                 continue
         except Exception as e:
             logger.error(f"HTTP POST unexpected error: {e}")

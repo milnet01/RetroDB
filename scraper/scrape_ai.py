@@ -644,7 +644,10 @@ def _call_gemini(prompt, api_key, model, project_id=''):
     Returns:
         str: Raw text response, or None on failure.
     """
-    url = f'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}'
+    # Pass 26.2 — API key goes in header, not querystring. http_post logs URLs
+    # at DEBUG/ERROR; header-based auth keeps the secret out of log lines
+    # entirely, even if SecretRedactor's patterns miss.
+    url = f'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent'
     payload = {
         'contents': [{'parts': [{'text': prompt}]}],
         'tools': [{'google_search': {}}],
@@ -652,7 +655,10 @@ def _call_gemini(prompt, api_key, model, project_id=''):
             'temperature': 0.2,
         }
     }
-    headers = {'Content-Type': 'application/json'}
+    headers = {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': api_key,
+    }
     if project_id:
         headers['x-goog-user-project'] = project_id
 
@@ -1033,12 +1039,16 @@ def check_api_status():
 
     try:
         if provider == 'gemini':
-            url = f'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}'
+            # Pass 26.2 — key in header, not querystring (see _call_gemini).
+            url = f'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent'
             payload = {
                 'contents': [{'parts': [{'text': test_prompt}]}],
                 'generationConfig': {'maxOutputTokens': 20}
             }
-            headers = {'Content-Type': 'application/json'}
+            headers = {
+                'Content-Type': 'application/json',
+                'x-goog-api-key': api_key,
+            }
             project_id = provider_config.get('project_id', '')
             if project_id:
                 headers['x-goog-user-project'] = project_id

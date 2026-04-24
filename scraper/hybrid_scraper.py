@@ -1091,7 +1091,12 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                                 logger.info(f"Trying AI fallback for: '{game_title}'")
                                 # Build existing metadata snapshot for AI to know what's missing
                                 ai_existing = {k: v for k, v in metadata.items() if v}
-                                ai_data = fetch_ai_metadata(
+                                # Pass 26.3 — wrap AI call in the circuit breaker so
+                                # repeated provider failures skip the call entirely
+                                # for the recovery window instead of hitting the API
+                                # on every gap-fill attempt.
+                                from scraper.scraper_manager import _ai_breaker
+                                ai_data = _ai_breaker(fetch_ai_metadata)(
                                     db_game_id, game_title, system_name,
                                     system_folder, existing_metadata=ai_existing
                                 )

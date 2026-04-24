@@ -44,6 +44,62 @@ SCRAPER_SETTINGS_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abs
 # HELPER FUNCTIONS
 # =============================================================================
 
+# Pass 26.5 — API-key hygiene. Fields listed here are treated as secrets: on
+# GET they're masked (`***<last4>`) before the response is serialized, and on
+# PUT a value matching MASKED_SENTINEL (three-plus asterisks, optionally with
+# last-4-visible tail) is interpreted as "don't change" and falls back to the
+# stored value. Non-secret identifiers (client_id, usernames, model names,
+# provider selector) are returned verbatim.
+SECRET_API_KEY_FIELDS = frozenset({
+    'tgdb',
+    'tgdb_public',
+    'igdb_client_secret',
+    'rawg',
+    'ra_apikey',
+    'ai_gemini_api_key',
+    'ai_openai_api_key',
+    'ai_claude_api_key',
+    'steam_api_key',
+    'xbox_client_secret',
+})
+
+MASKED_SENTINEL_PREFIX = '***'
+
+
+def mask_api_key(value):
+    """Return a display-safe version of `value`: `***<last4>` or `***` if short.
+
+    Empty/None → empty string. The output is intended purely for display — the
+    real key stays in scraper_settings.json / config.py.
+    """
+    if not value:
+        return ''
+    value = str(value)
+    if len(value) <= 4:
+        return MASKED_SENTINEL_PREFIX
+    return f"{MASKED_SENTINEL_PREFIX}{value[-4:]}"
+
+
+def is_masked_sentinel(value):
+    """True if `value` is a client echo of mask_api_key output (unchanged key)."""
+    if not value or not isinstance(value, str):
+        return False
+    return value.startswith(MASKED_SENTINEL_PREFIX)
+
+
+def mask_api_keys_for_response(api_keys):
+    """Return a copy of `api_keys` with SECRET_API_KEY_FIELDS masked."""
+    if not isinstance(api_keys, dict):
+        return api_keys
+    masked = {}
+    for key, value in api_keys.items():
+        if key in SECRET_API_KEY_FIELDS:
+            masked[key] = mask_api_key(value)
+        else:
+            masked[key] = value
+    return masked
+
+
 def get_saved_api_keys():
     """Get API keys from saved settings, falling back to config.py"""
     keys = {
@@ -122,6 +178,10 @@ def api_get_scraper_settings():
                 if 'ai' not in settings.get('priority', []):
                     settings.get('priority', []).append('ai')
 
+                # Pass 26.5 — mask secret API keys before returning.
+                if isinstance(settings.get('api_keys'), dict):
+                    settings['api_keys'] = mask_api_keys_for_response(settings['api_keys'])
+
                 return jsonify(settings)
         else:
             # Return defaults
@@ -188,6 +248,15 @@ def api_save_api_keys():
     if os.path.exists(SCRAPER_SETTINGS_FILE):
         with open(SCRAPER_SETTINGS_FILE, 'r') as f:
             existing = json.load(f)
+
+    # Pass 26.5 — for every secret field, treat `***<anything>` as "unchanged"
+    # and keep the stored value. The frontend sends the masked display value
+    # back on save when the user didn't retype the key.
+    prior_keys = existing.get('api_keys', {}) if isinstance(existing.get('api_keys'), dict) else {}
+    if isinstance(data, dict):
+        for field in SECRET_API_KEY_FIELDS:
+            if field in data and is_masked_sentinel(data[field]):
+                data[field] = prior_keys.get(field, '')
 
     # Update API keys
     existing['api_keys'] = data

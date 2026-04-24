@@ -2674,7 +2674,13 @@ See Pass 13.3 — no duplicate entry.
   `http_post`; keep the per-scraper response-shape parsing but
   delegate HTTP policy to the shared helpers.
 - **Source**: 2026-04-23 audit, Per-source Scrapers finding 1.
-- **Status**: todo
+- **Status**: done (v2.96.0). RA's five sites now use `http_get`
+  with `response is None` guards. SS `check_credentials` uses
+  `http_get`; SS streaming paths (`download_media`,
+  `_ss_request_with_retry`) kept as `stream=True` for the Pass
+  25.7 size caps but routed through the shared
+  `base_scraper._http_session` for connection pooling. RA gains
+  its first 429/5xx retry policy via 26.4's shared `http_get`.
 
 ### 26.2 Move Gemini API key out of URL querystring (MEDIUM, S)
 
@@ -2687,7 +2693,9 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: use `x-goog-api-key: {api_key}` header; delete the
   querystring param.
 - **Source**: 2026-04-23 audit, Per-source Scrapers finding 3.
-- **Status**: todo
+- **Status**: done (v2.96.0). `_call_gemini` and
+  `check_api_status` both send `x-goog-api-key` header; URL no
+  longer carries `?key=`.
 
 ### 26.3 Apply AI circuit-breaker at the call site (LOW, S)
 
@@ -2698,7 +2706,10 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: wrap the call in `with _ai_breaker:` (or manual
   `if _ai_breaker.is_open(): return None`).
 - **Source**: 2026-04-23 audit, Scraper Orchestration gap 2.
-- **Status**: todo
+- **Status**: done (v2.96.0). `hybrid_scraper.py:1094` now uses
+  `_ai_breaker(fetch_ai_metadata)(...)` — same decorator-as-call
+  pattern the other four breakers use. `CircuitBreakerError` is
+  caught by the outer `except Exception as fallback_error:`.
 
 ### 26.4 Unify 5xx retry policy across `http_get` and SS retry helper (LOW, S)
 
@@ -2710,7 +2721,10 @@ See Pass 13.3 — no duplicate entry.
   exponential backoff + jitter (no thundering herd); never retry
   401 / 403.
 - **Source**: 2026-04-23 audit, Per-source Scrapers gaps 2, 3.
-- **Status**: todo
+- **Status**: done (v2.96.0). New `_backoff_delay(attempt)` =
+  `2**attempt + random.random()` drives 429 *and* 5xx retries in
+  both `http_get` and `http_post`. `_RETRYABLE_5XX = (500, 502,
+  503, 504)`; 401/403/4xx/etc. return immediately without retry.
 
 ### 26.5 Mask API keys on GET `/settings` + `/api/scraper-settings` (LOW, S)
 
@@ -2723,7 +2737,18 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: show `***` with last 4 chars only on GET; accept the
   `***` placeholder on PUT as "don't change" sentinel.
 - **Source**: 2026-04-23 audit, Maintenance finding 2.
-- **Status**: todo
+- **Status**: done (v2.96.0). `routes/scraper.py` exposes
+  `SECRET_API_KEY_FIELDS`, `mask_api_key`,
+  `mask_api_keys_for_response`, `is_masked_sentinel`. GET
+  `/api/scraper-settings` and the `/settings` render path both
+  mask secret fields (tgdb[_public], igdb_client_secret, rawg,
+  ra_apikey, ai_{gemini,openai,claude}_api_key, steam_api_key,
+  xbox_client_secret) to `***<last4>`. POST
+  `/api/scraper-api-keys` treats any secret field starting with
+  `***` as unchanged and preserves the stored value. Non-secret
+  fields (client IDs, usernames, model names, provider selector)
+  pass through verbatim. Internal `get_saved_api_keys()` still
+  returns real values for scraper-check routes.
 
 ---
 

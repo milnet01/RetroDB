@@ -156,6 +156,11 @@ def settings():
         scraper_settings.setdefault('match_mode', 'score')
         scraper_settings.setdefault('match_criteria', {'title_quality': 'close', 'platform_required': True})
 
+        # Pass 26.5 — mask secret API keys before the template receives them,
+        # so the HTML page never renders the raw key to the DOM.
+        from routes.scraper import mask_api_keys_for_response
+        scraper_settings['api_keys'] = mask_api_keys_for_response(scraper_settings.get('api_keys', {}))
+
         # Load user settings (including logging settings)
         user_settings = settings_manager.load_settings()
 
