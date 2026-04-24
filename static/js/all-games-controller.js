@@ -1270,9 +1270,11 @@ const AllGamesController = (function() {
 
     function restoreState() {
         try {
-            const saved = sessionStorage.getItem(getStateKey());
-            if (!saved) return;
-            const state = JSON.parse(saved);
+            // Pass 36.5 — route through safeParseJSON so a corrupt entry
+            // (DevTools edit, schema drift from a prior build) gets cleared
+            // on first read instead of re-throwing every page load.
+            const state = safeParseJSON(getStateKey(), null, sessionStorage);
+            if (!state) return;
 
             if (state.filters) {
                 filters = state.filters;
@@ -1342,8 +1344,31 @@ const AllGamesController = (function() {
         return escapeHtml(String(str || ''));
     }
 
+    // Pass 36.1 — escAttr interpolates into a SINGLE-QUOTED JS-string
+    // literal embedded in a DOUBLE-QUOTED HTML attribute:
+    //   `onclick="...applyFilter('${escAttr(title)}')"`.
+    // The HTML parser entity-decodes first, then the JS parser sees the
+    // result. So a game title containing `'`, `\\`, newline, `<`, or `>`
+    // breaks out of the JS string and everything after is executable —
+    // the previous `escapeHtml()`-only form was XSS-equivalent for any
+    // user-editable text that reached these sinks.
+    //
+    // Fix: escape EVERYTHING outside a safe alphanumeric/space set to a
+    // `\\uHHHH` JS escape. That survives both HTML attribute decoding
+    // AND JS string parsing — the decoded bytes are a valid JS escape
+    // sequence that yields the original char in-string without any
+    // delimiter break. Then HTML-escape the whole thing to protect the
+    // outer attribute quote.
     function escAttr(str) {
-        return escapeHtml(String(str || ''));
+        const s = String(str || '');
+        const jsEscaped = s.replace(/[^a-zA-Z0-9 _.\-]/g, (c) => {
+            const code = c.charCodeAt(0);
+            if (code < 0x100) {
+                return '\\x' + code.toString(16).padStart(2, '0');
+            }
+            return '\\u' + code.toString(16).padStart(4, '0');
+        });
+        return escapeHtml(jsEscaped);
     }
 
     // =========================================================================

@@ -110,10 +110,11 @@ function escapeHtml(text) {
  * @param {*} fallback - Value to return when parse fails or key is missing
  * @returns {*} parsed value, or `fallback` on any failure
  */
-function safeParseJSON(key, fallback) {
+function safeParseJSON(key, fallback, storage) {
+    const store = storage || localStorage;
     let raw;
     try {
-        raw = localStorage.getItem(key);
+        raw = store.getItem(key);
     } catch (e) {
         return fallback;
     }
@@ -122,7 +123,7 @@ function safeParseJSON(key, fallback) {
         return JSON.parse(raw);
     } catch (e) {
         console.warn(`safeParseJSON: could not parse ${key}, removing poison entry`, e);
-        try { localStorage.removeItem(key); } catch (_) { /* ignore */ }
+        try { store.removeItem(key); } catch (_) { /* ignore */ }
         return fallback;
     }
 }
@@ -201,17 +202,36 @@ const Storage = {
     },
 
     /**
-     * Clear all RetroDB localStorage items
+     * Clear all RetroDB localStorage items.
+     *
+     * Pass 36.9 — prior prefix list was `retrodb/bulkScrape/sidebar` only,
+     * so Storage.clearAll() lied — it left behind the RetroAchievements
+     * operations queue, toast completion flags, and the legacy
+     * raSyncQueue. Settings → "Clear local storage" is a support
+     * diagnostic; skipping half the keys makes bug reports harder. Keep
+     * this list in sync with every key pattern introduced below.
      */
     clearAll() {
-        const retroDbKeys = [];
+        const PREFIXES = [
+            'retrodb',
+            'bulkScrape',
+            'sidebar',
+            'raOperationsQueue',
+            'raSyncQueue',
+            'toast_completion_',
+        ];
+        const keysToRemove = [];
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            if (key && (key.startsWith('retrodb') || key.startsWith('bulkScrape') || key.startsWith('sidebar'))) {
-                retroDbKeys.push(key);
+            if (!key) continue;
+            for (const prefix of PREFIXES) {
+                if (key.startsWith(prefix)) {
+                    keysToRemove.push(key);
+                    break;
+                }
             }
         }
-        retroDbKeys.forEach(key => localStorage.removeItem(key));
+        keysToRemove.forEach(key => localStorage.removeItem(key));
     }
 };
 
@@ -290,7 +310,8 @@ const API = {
 };
 
 const Notifications = {
-    container: null,
+    container: null,        // polite (success/info/warning)
+    assertiveContainer: null,  // Pass 36.10 — errors announced immediately
 
     timeouts: {
         success: 3,
@@ -300,7 +321,13 @@ const Notifications = {
     },
 
     /**
-     * Initialize notification container and load settings
+     * Initialize notification containers and load settings.
+     *
+     * Pass 36.10 — WCAG 4.1.3 Status Messages: warning/info/success should
+     * be announced at idle (`aria-live="polite"`), but errors and
+     * critical alerts need `aria-live="assertive"` so a screen-reader
+     * user hears them mid-utterance. One container can't carry both
+     * severities — split into two regions and route by notification type.
      */
     init() {
         if (!this.container) {
@@ -312,9 +339,22 @@ const Notifications = {
             this.container.setAttribute('aria-atomic', 'false');
             document.body.appendChild(this.container);
         }
+        if (!this.assertiveContainer) {
+            this.assertiveContainer = document.createElement('div');
+            this.assertiveContainer.id = 'notification-container-assertive';
+            this.assertiveContainer.className = 'notification-container';
+            this.assertiveContainer.setAttribute('role', 'alert');
+            this.assertiveContainer.setAttribute('aria-live', 'assertive');
+            this.assertiveContainer.setAttribute('aria-atomic', 'false');
+            document.body.appendChild(this.assertiveContainer);
+        }
         if (window.NOTIFICATION_TIMEOUTS) {
             this.timeouts = { ...this.timeouts, ...window.NOTIFICATION_TIMEOUTS };
         }
+    },
+
+    _containerFor(type) {
+        return type === 'error' ? this.assertiveContainer : this.container;
     },
 
     /**
@@ -342,8 +382,10 @@ const Notifications = {
 
         const actualDuration = this.getDuration(type, duration);
 
+        const container = this._containerFor(type);
+
         const MAX_NOTIFICATIONS = 8;
-        const existing = this.container.querySelectorAll('.notification');
+        const existing = container.querySelectorAll('.notification');
         if (existing.length >= MAX_NOTIFICATIONS) {
             for (let i = 0; i <= existing.length - MAX_NOTIFICATIONS; i++) {
                 existing[i].remove();
@@ -364,7 +406,7 @@ const Notifications = {
             <button class="notification-close" onclick="this.parentElement.remove()">×</button>
         `;
 
-        this.container.appendChild(notification);
+        container.appendChild(notification);
 
         requestAnimationFrame(() => {
             notification.classList.add('show');
@@ -452,6 +494,22 @@ const LoadingState = {
     }
 };
 
+function _buildElement(tag, attrs) {
+    const el = document.createElement(tag);
+    Object.entries(attrs || {}).forEach(([key, value]) => {
+        if (key === 'className') {
+            el.className = value;
+        } else if (key === 'dataset') {
+            Object.entries(value).forEach(([k, v]) => { el.dataset[k] = v; });
+        } else if (key.startsWith('on') && typeof value === 'function') {
+            el.addEventListener(key.slice(2).toLowerCase(), value);
+        } else {
+            el.setAttribute(key, value);
+        }
+    });
+    return el;
+}
+
 const DOM = {
     /**
      * Query selector shorthand
@@ -474,34 +532,44 @@ const DOM = {
     },
 
     /**
-     * Create element with attributes
+     * Create element with attributes. String `content` is assigned as
+     * `textContent` (safe) — call `DOM.createHTML(tag, attrs, html)` for
+     * explicit innerHTML when the caller has already sanitized the string.
+     *
+     * Pass 36.7 — the old form treated string content as innerHTML, giving
+     * every future caller an easy XSS footgun baked into the API.
+     *
      * @param {string} tag - Tag name
      * @param {Object} attrs - Attributes
-     * @param {string|Element} content - Inner content
+     * @param {string|Element|Element[]} content - Inner content (text for strings)
      * @returns {Element}
      */
     create(tag, attrs = {}, content = '') {
-        const el = document.createElement(tag);
-        Object.entries(attrs).forEach(([key, value]) => {
-            if (key === 'className') {
-                el.className = value;
-            } else if (key === 'dataset') {
-                Object.entries(value).forEach(([k, v]) => {
-                    el.dataset[k] = v;
-                });
-            } else if (key.startsWith('on') && typeof value === 'function') {
-                el.addEventListener(key.slice(2).toLowerCase(), value);
-            } else {
-                el.setAttribute(key, value);
-            }
-        });
-        if (content) {
+        const el = _buildElement(tag, attrs);
+        if (content !== null && content !== undefined && content !== '') {
             if (typeof content === 'string') {
-                el.innerHTML = content;
+                el.textContent = content;
+            } else if (Array.isArray(content)) {
+                content.forEach((c) => el.appendChild(c));
             } else {
                 el.appendChild(content);
             }
         }
+        return el;
+    },
+
+    /**
+     * Create element and assign pre-sanitized HTML to innerHTML. Use only
+     * when the caller has escaped every user-controlled interpolation.
+     *
+     * @param {string} tag - Tag name
+     * @param {Object} attrs - Attributes
+     * @param {string} html - Pre-escaped inner HTML
+     * @returns {Element}
+     */
+    createHTML(tag, attrs = {}, html = '') {
+        const el = _buildElement(tag, attrs);
+        if (html) el.innerHTML = html;
         return el;
     },
 
@@ -726,6 +794,14 @@ const _FOCUSABLE_SELECTOR = [
     '[tabindex]:not([tabindex="-1"])',
 ].join(',');
 
+function _isTypingTarget(target) {
+    if (!target || !target.tagName) return false;
+    const tag = target.tagName.toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'select') return true;
+    if (target.isContentEditable) return true;
+    return false;
+}
+
 const ModalFocusTrap = {
     _stack: [],  // stack of { modalEl, triggerEl, keyHandler, onEscape }
 
@@ -735,11 +811,15 @@ const ModalFocusTrap = {
      * @param {HTMLElement} [triggerEl] - element to restore focus to on close
      * @param {Object} [opts]
      * @param {Function} [opts.onEscape] - called when Escape is pressed (default: noop)
+     * @param {Function} [opts.onArrowLeft] - called when ArrowLeft is pressed (Pass 36.8)
+     * @param {Function} [opts.onArrowRight] - called when ArrowRight is pressed (Pass 36.8)
      * @param {boolean}  [opts.autoFocus=true] - focus the first focusable on activate
      */
     activate(modalEl, triggerEl, opts = {}) {
         if (!modalEl) return;
         const onEscape = opts.onEscape || null;
+        const onArrowLeft = opts.onArrowLeft || null;
+        const onArrowRight = opts.onArrowRight || null;
         const autoFocus = opts.autoFocus !== false;
 
         const keyHandler = (e) => {
@@ -747,6 +827,16 @@ const ModalFocusTrap = {
                 e.preventDefault();
                 e.stopPropagation();
                 onEscape();
+                return;
+            }
+            if (e.key === 'ArrowLeft' && onArrowLeft && !_isTypingTarget(e.target)) {
+                e.preventDefault();
+                onArrowLeft();
+                return;
+            }
+            if (e.key === 'ArrowRight' && onArrowRight && !_isTypingTarget(e.target)) {
+                e.preventDefault();
+                onArrowRight();
                 return;
             }
             if (e.key !== 'Tab') return;
@@ -978,13 +1068,9 @@ const PageLifecycle = (function() {
     function initPageState(key) {
         pageKey = key;
 
-        try {
-            const saved = sessionStorage.getItem(pageKey);
-            if (saved) {
-                pageState = JSON.parse(saved);
-            }
-        } catch (e) {
-            console.warn('Failed to restore page state:', e);
+        const restored = safeParseJSON(pageKey, null, sessionStorage);
+        if (restored) {
+            pageState = restored;
         }
 
         return pageState;
@@ -3277,15 +3363,6 @@ function initializeScreenshots() {
         navigateScreenshots(1);
     });
 
-    document.addEventListener('keydown', function(e) {
-        if (RetroDBState.currentModal?.id === 'screenshotModal') {
-            if (e.key === 'ArrowLeft') {
-                navigateScreenshots(-1);
-            } else if (e.key === 'ArrowRight') {
-                navigateScreenshots(1);
-            }
-        }
-    });
 }
 
 function openScreenshotModal(index) {
@@ -3296,6 +3373,8 @@ function openScreenshotModal(index) {
     if (window.ModalFocusTrap && modal) {
         ModalFocusTrap.activate(modal, document.activeElement, {
             onEscape: () => closeScreenshotModal(),
+            onArrowLeft: () => navigateScreenshots(-1),
+            onArrowRight: () => navigateScreenshots(1),
         });
     }
 }

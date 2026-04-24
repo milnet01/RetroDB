@@ -95,7 +95,7 @@ except ValueError:
 
 # Application metadata
 APP_NAME = "RetroDB"
-APP_VERSION = "3.2.0"
+APP_VERSION = "3.3.0"
 APP_LAST_UPDATE = "2026-04-24"
 APP_DESCRIPTION = "Retro Gaming ROM Library Manager"
 

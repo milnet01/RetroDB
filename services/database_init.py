@@ -18,11 +18,43 @@ from services.migrations import apply_pending, current_version, latest_version
 logger = logging.getLogger(__name__)
 
 
+def _add_column_if_missing(cursor, table, column, coldef):
+    """Additive ALTER that no-ops if the column already exists.
+
+    Replaces the `try: ALTER ... except sqlite3.OperationalError: pass`
+    idiom — the prior form also swallowed real schema errors (syntax
+    typos in `coldef`, missing parent table, locked DB). The explicit
+    PRAGMA probe keeps the idempotency while letting surprising errors
+    bubble up.
+    """
+    cols = {row[1] for row in cursor.execute(f"PRAGMA table_info({table})")}
+    if column in cols:
+        return
+    cursor.execute(f"ALTER TABLE {table} ADD COLUMN {column} {coldef}")
+
+
 def init_database():
     """Run any pending schema/data migrations to bring the DB up to date."""
     os.makedirs(os.path.dirname(config.DB_PATH), exist_ok=True)
+    # Pass 35.1 — DB file carries password hashes and OAuth tokens; tighten
+    # the mode to owner-only on every boot (idempotent no-op after the
+    # first time). Ignore failures: on Windows / network mounts chmod is a
+    # best-effort advisory.
+    try:
+        if os.path.exists(config.DB_PATH):
+            os.chmod(config.DB_PATH, 0o600)
+    except OSError:
+        pass
     conn = sqlite3.connect(config.DB_PATH)
     try:
+        # Pass 35.3 — migration 005 adds REFERENCES users(id) FKs that
+        # only runtime get_db() enforces. Turn them on here too so any
+        # future FK-sensitive migration step sees consistent enforcement.
+        conn.execute("PRAGMA foreign_keys = ON")
+        # Pass 35.4 — file-level PRAGMAs applied once per boot, not per
+        # connection. Writes to the DB header.
+        conn.execute("PRAGMA journal_mode = WAL")
+        conn.execute("PRAGMA journal_size_limit = 67108864")
         before = current_version(conn)
         applied = apply_pending(conn)
         if applied:
@@ -63,11 +95,6 @@ def ensure_user_tables():
         )
     """)
 
-    try:
-        cursor.execute("ALTER TABLE users ADD COLUMN force_password_change BOOLEAN DEFAULT 0")
-    except sqlite3.OperationalError:
-        pass
-
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS user_settings (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -81,31 +108,28 @@ def ensure_user_tables():
         )
     """)
 
-    try:
-        cursor.execute("ALTER TABLE user_settings ADD COLUMN avatar TEXT DEFAULT ''")
-    except sqlite3.OperationalError:
-        pass
-
-    try:
-        cursor.execute("ALTER TABLE user_settings ADD COLUMN timezone TEXT DEFAULT 'UTC'")
-    except sqlite3.OperationalError:
-        pass
-
-    # Pass 31.4 — Steam API key + Steam ID per user. Pre-31 these lived in
-    # the shared data/scraper_settings.json blob (install-wide) so any
-    # logged-in user could launch a sync under the admin's credentials.
-    # Safe to add here (ALTER IF NOT EXISTS idiom via try/except) because
-    # ensure_user_tables is the per-boot bootstrap that owns user_settings.
+    # Pass 35.5 — additive columns needed for legacy databases that were
+    # created before the newer CREATE TABLE shapes shipped. Rolled out of
+    # try/except ALTER blocks into an explicit column-existence probe so
+    # re-execution is obviously idempotent (no silently-swallowed
+    # OperationalError covering unrelated schema bugs). Keep the probe
+    # here rather than in a numbered migration because `ensure_user_tables`
+    # is the per-boot bootstrap that owns the users/user_settings tables
+    # AND has to run before migrations 005-009 see rows to backfill.
+    _add_column_if_missing(cursor, 'users', 'force_password_change', 'BOOLEAN DEFAULT 0')
     for _col, _defn in (
+        ('avatar', "TEXT DEFAULT ''"),
+        ('timezone', "TEXT DEFAULT 'UTC'"),
+        # Pass 31.4 — Steam API key + Steam ID per user. Pre-31 these lived
+        # in the shared data/scraper_settings.json blob (install-wide) so
+        # any logged-in user could launch a sync under the admin's
+        # credentials.
         ('psn_username', "TEXT DEFAULT ''"),
         ('psn_npsso', "TEXT DEFAULT ''"),
         ('steam_api_key', "TEXT DEFAULT ''"),
         ('steam_id', "TEXT DEFAULT ''"),
     ):
-        try:
-            cursor.execute(f"ALTER TABLE user_settings ADD COLUMN {_col} {_defn}")
-        except sqlite3.OperationalError:
-            pass
+        _add_column_if_missing(cursor, 'user_settings', _col, _defn)
 
     cursor.execute("SELECT id FROM users WHERE role = 'admin' LIMIT 1")
     admin_row = cursor.fetchone()

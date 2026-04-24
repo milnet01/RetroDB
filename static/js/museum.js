@@ -181,47 +181,75 @@ function generateContent(systemId) {
 // CONTROLLER IMAGES
 // =============================================================================
 
+// Pass 36.3 — rebuilt via DOM API + addEventListener so an attacker-
+// controlled controller ID or filename can't close the attribute or
+// smuggle a JS payload. Event listeners close over the coerced integer,
+// which means no stringification and no opportunity for injection.
 function _updateControllerImage(controllerId, imageFilename) {
-    var card = document.querySelector('[data-controller-id="' + controllerId + '"]');
+    var safeControllerId = parseInt(controllerId, 10);
+    if (!Number.isFinite(safeControllerId)) return;
+    var card = document.querySelector('[data-controller-id="' + safeControllerId + '"]');
     if (!card) return;
     var imgContainer = card.querySelector('.museum-controller-image');
-    if (imgContainer) {
-        // Preserve the hidden file input
-        var fileInput = imgContainer.querySelector('input[type="file"]');
-        // Pass 29.1: URL-encode the filename in the src attribute and
-        // hard-coerce controllerId to a safe integer before interpolation.
-        // Without this, an attacker-influenced filename (scraper or remove-
-        // bg response filename) could close the attribute.
-        var safeFilename = encodeURIComponent(imageFilename);
-        var safeControllerId = parseInt(controllerId, 10);
-        if (!Number.isFinite(safeControllerId)) return;
-        imgContainer.innerHTML = '<img src="/static/images/controllers/' +
-            safeFilename + '?t=' + Date.now() + '" alt="Controller" loading="lazy" onclick="openControllerLightbox(this)">' +
-            '<div class="museum-controller-image-actions">' +
-            '<button class="btn btn-xs btn-ghost" onclick="event.stopPropagation();uploadControllerImage(' + safeControllerId + ')" title="Upload replacement image">Replace</button>' +
-            '</div>';
-        if (fileInput) imgContainer.appendChild(fileInput);
-    }
+    if (!imgContainer) return;
+
+    var fileInput = imgContainer.querySelector('input[type="file"]');
+
+    var img = document.createElement('img');
+    img.setAttribute('src', '/static/images/controllers/' + encodeURIComponent(imageFilename) + '?t=' + Date.now());
+    img.setAttribute('alt', 'Controller');
+    img.setAttribute('loading', 'lazy');
+    img.addEventListener('click', function () { openControllerLightbox(img); });
+
+    var actions = document.createElement('div');
+    actions.className = 'museum-controller-image-actions';
+    var replaceBtn = document.createElement('button');
+    replaceBtn.className = 'btn btn-xs btn-ghost';
+    replaceBtn.title = 'Upload replacement image';
+    replaceBtn.textContent = 'Replace';
+    replaceBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        uploadControllerImage(safeControllerId);
+    });
+    actions.appendChild(replaceBtn);
+
+    imgContainer.replaceChildren(img, actions);
+    if (fileInput) imgContainer.appendChild(fileInput);
 }
 
 function _resetPlaceholder(controllerId) {
-    var card = document.querySelector('[data-controller-id="' + controllerId + '"]');
+    var safeControllerId = parseInt(controllerId, 10);
+    if (!Number.isFinite(safeControllerId)) return;
+    var card = document.querySelector('[data-controller-id="' + safeControllerId + '"]');
     if (!card) return;
     var imgContainer = card.querySelector('.museum-controller-image');
-    if (imgContainer) {
-        var fileInput = imgContainer.querySelector('input[type="file"]');
-        var placeholder = imgContainer.querySelector('.museum-controller-placeholder');
-        if (!placeholder) {
-            placeholder = document.createElement('div');
-            placeholder.className = 'museum-controller-placeholder';
-            imgContainer.insertBefore(placeholder, fileInput);
-        }
-        placeholder.innerHTML = '<span>&#128377;&#65039;</span>' +
-            '<div class="museum-controller-image-actions">' +
-            '<button class="btn btn-sm btn-ghost" onclick="fetchControllerImage(' + controllerId + ')">Search</button>' +
-            '<button class="btn btn-sm btn-ghost" onclick="uploadControllerImage(' + controllerId + ')">Upload</button>' +
-            '</div>';
+    if (!imgContainer) return;
+
+    var fileInput = imgContainer.querySelector('input[type="file"]');
+    var placeholder = imgContainer.querySelector('.museum-controller-placeholder');
+    if (!placeholder) {
+        placeholder = document.createElement('div');
+        placeholder.className = 'museum-controller-placeholder';
+        imgContainer.insertBefore(placeholder, fileInput);
     }
+
+    var icon = document.createElement('span');
+    // 🕹️ — controller glyph with variation selector
+    icon.textContent = '🕹️';
+
+    var actions = document.createElement('div');
+    actions.className = 'museum-controller-image-actions';
+    var searchBtn = document.createElement('button');
+    searchBtn.className = 'btn btn-sm btn-ghost';
+    searchBtn.textContent = 'Search';
+    searchBtn.addEventListener('click', function () { fetchControllerImage(safeControllerId); });
+    var uploadBtn = document.createElement('button');
+    uploadBtn.className = 'btn btn-sm btn-ghost';
+    uploadBtn.textContent = 'Upload';
+    uploadBtn.addEventListener('click', function () { uploadControllerImage(safeControllerId); });
+    actions.append(searchBtn, uploadBtn);
+
+    placeholder.replaceChildren(icon, actions);
 }
 
 function _showControllerOverlay(controllerId, message) {
@@ -477,7 +505,12 @@ function openControllerLightbox(imgEl) {
     if (lb) {
         lb.classList.add('active');
         if (window.ModalFocusTrap) {
-            ModalFocusTrap.activate(lb, imgEl, { onEscape: closeControllerLightbox });
+            // Pass 36.8 — arrow navigation hosted by the focus trap.
+            ModalFocusTrap.activate(lb, imgEl, {
+                onEscape: closeControllerLightbox,
+                onArrowLeft: function () { navigateControllerLightbox(-1); },
+                onArrowRight: function () { navigateControllerLightbox(1); },
+            });
         }
     }
 }
@@ -586,22 +619,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // --- Lightbox keyboard navigation ---
-    document.addEventListener('keydown', function (e) {
-        // Hardware lightbox (single image — ESC only)
-        var hwLb = document.getElementById('museumHardwareLightbox');
-        if (hwLb && hwLb.classList.contains('active')) {
-            if (e.key === 'Escape') closeHardwareLightbox();
-            return;
-        }
-
-        // Controller lightbox (multi-image — ESC + arrows)
-        var lb = document.getElementById('museumControllerLightbox');
-        if (!lb || !lb.classList.contains('active')) return;
-        if (e.key === 'Escape') closeControllerLightbox();
-        else if (e.key === 'ArrowLeft') navigateControllerLightbox(-1);
-        else if (e.key === 'ArrowRight') navigateControllerLightbox(1);
-    });
+    // Pass 36.8 — lightbox keyboard navigation (ESC + arrows) now routes
+    // through ModalFocusTrap.activate() in openControllerLightbox /
+    // openHardwareLightbox. The standalone document-level keydown handler
+    // that used to live here has been removed.
 
     // --- Landing page: restore filters, scroll, and check generation status ---
     if (document.getElementById('museumTimeline')) {

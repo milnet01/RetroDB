@@ -87,14 +87,16 @@ def get_db():
     """
     conn = sqlite3.connect(config.DB_PATH)
     conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA journal_mode = WAL")
+    # Pass 35.4 — journal_mode=WAL and journal_size_limit are DB-file-level
+    # settings (stored in the SQLite header). They're applied once at init
+    # by init_database(); re-issuing them per connection wastes a parse
+    # round-trip. Keep the six connection-scoped PRAGMAs below.
     conn.execute("PRAGMA busy_timeout = 5000")
     conn.execute("PRAGMA synchronous = NORMAL")
     conn.execute("PRAGMA cache_size = -64000")
     conn.execute("PRAGMA foreign_keys = ON")
     conn.execute("PRAGMA temp_store = MEMORY")
     conn.execute("PRAGMA mmap_size = 268435456")
-    conn.execute("PRAGMA journal_size_limit = 67108864")
     return conn
 
 
@@ -249,6 +251,20 @@ def execute_script(sql_script):
     conn.commit()
 
 
+def _fsync_path(path):
+    """Open `path` read-only and fsync its file descriptor.
+
+    Works for both regular files and directories — on POSIX, fsyncing a
+    directory flushes the directory's own metadata (i.e. the rename/create
+    entries under it) so a crash after `os.replace` can't lose the new name.
+    """
+    fd = os.open(path, os.O_RDONLY)
+    try:
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+
+
 def backup_database(src_path, dst_path):
     """
     Create a consistent snapshot of a SQLite database using the online
@@ -288,6 +304,23 @@ def backup_database(src_path, dst_path):
         except OSError:
             pass
         raise RuntimeError(f"backup failed integrity check: {result[0] if result else 'no result'}")
+
+    # Pass 35.1 — backups contain session cookies, password hashes, and
+    # OAuth tokens. sqlite3.connect() creates the file with the process
+    # umask (commonly 0644), leaving it group/world-readable. Tighten the
+    # mode and fsync both the file and its parent directory so a power
+    # loss can't leave a directory entry pointing at empty contents.
+    try:
+        os.chmod(dst_path, 0o600)
+    except OSError:
+        pass
+    try:
+        _fsync_path(dst_path)
+        _fsync_path(os.path.dirname(dst_path) or '.')
+    except OSError:
+        # fsync can fail on some network filesystems — not worth aborting
+        # an otherwise-verified backup over.
+        pass
 
 
 def get_db_with_context():

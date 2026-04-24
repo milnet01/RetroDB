@@ -36,6 +36,20 @@ def atomic_write_json(path, data, indent=2):
             f.flush()
             os.fsync(f.fileno())
         os.replace(tmp_path, path)
+        # Pass 35.2 — os.replace is atomic but the directory entry update
+        # isn't durable until the directory itself is fsynced. On XFS or
+        # mounts with `nobarrier`, power loss can lose the new file's
+        # contents while the old file's removal persists.
+        try:
+            fd = os.open(directory, os.O_RDONLY)
+            try:
+                os.fsync(fd)
+            finally:
+                os.close(fd)
+        except OSError:
+            # fsync of a directory can fail on some network filesystems;
+            # the atomic rename itself has already succeeded.
+            pass
     except Exception:
         try:
             os.remove(tmp_path)

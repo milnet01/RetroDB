@@ -294,13 +294,8 @@ const SessionState = {
      * @returns {Object|null} Saved state or null
      */
     load() {
-        try {
-            const saved = sessionStorage.getItem(this.storageKey);
-            return saved ? JSON.parse(saved) : null;
-        } catch (e) {
-            console.warn('Failed to load session state:', e);
-            return null;
-        }
+        // Pass 36.5 — safeParseJSON drops the poison entry on parse fail.
+        return safeParseJSON(this.storageKey, null, sessionStorage);
     },
 
     /**

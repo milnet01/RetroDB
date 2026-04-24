@@ -375,6 +375,9 @@ const GameDetailModal = {
         if (window.ModalFocusTrap && lb) {
             ModalFocusTrap.activate(lb, document.activeElement, {
                 onEscape: () => this.closeLightbox(),
+                // Pass 36.8 — arrows consolidated via the focus trap.
+                onArrowLeft: () => this.navigateScreenshot(-1),
+                onArrowRight: () => this.navigateScreenshot(1),
             });
         }
     },
@@ -2054,23 +2057,10 @@ const GameEditModal = {
 // KEYBOARD AND BFCACHE SUPPORT
 // =============================================================================
 
-// Pass 29.3: Arrow-key navigation for the screenshot lightbox. Escape is
-// owned by ModalFocusTrap (activated in openLightbox / close handlers for
-// the enclosing detail + edit modals at lines 152, 872), which stacks
-// correctly with the edit/detail modals underneath the lightbox. This
-// listener only fires when the lightbox is actually visible, so it does
-// not interfere with arrow-key usage inside form fields.
-document.addEventListener('keydown', function(e) {
-    const lightbox = document.getElementById('gdmScreenshotLightbox');
-    if (!lightbox || !lightbox.classList.contains('active')) return;
-    if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        GameDetailModal.navigateScreenshot(-1);
-    } else if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        GameDetailModal.navigateScreenshot(1);
-    }
-});
+// Pass 36.8 — arrow keys for the lightbox now route through
+// ModalFocusTrap's onArrowLeft/onArrowRight callbacks (wired in
+// openLightbox()). The standalone document-level keydown handler that
+// used to live here has been removed.
 
 window.addEventListener('pageshow', function(event) {
     if (event.persisted) {

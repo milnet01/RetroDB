@@ -93,11 +93,16 @@ def test_29_3_filter_modal_uses_ModalFocusTrap():
 def test_29_3_lightbox_activates_focus_trap():
     """Pass 29.3 — GameDetailModal.openLightbox pushes a ModalFocusTrap
     on top of the detail-modal trap so Escape closes the lightbox first.
+    Pass 36.8 further removed the standalone arrow-only keydown handler;
+    arrows now route via ModalFocusTrap's onArrowLeft / onArrowRight.
     """
     src = _read('game-modals.js')
     assert 'ModalFocusTrap.activate(lb' in src
-    # Old monolithic Escape handler replaced with arrow-only handler.
-    assert "if (e.key === 'Escape') {" not in src.split('document.addEventListener(\'keydown\', function(e) {\n    const lightbox')[1].split('\n});')[0]
+    # Pass 36.8 removal: no document-level keydown handler should remain
+    # on the lightbox path; arrow callbacks are wired via the trap.
+    assert "document.addEventListener('keydown'" not in src
+    assert 'onArrowLeft' in src
+    assert 'onArrowRight' in src
 
 
 def test_29_5_global_search_uses_abort_controller():

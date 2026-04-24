@@ -550,16 +550,9 @@ function initializeScreenshots() {
         navigateScreenshots(1);
     });
     
-    // Keyboard navigation
-    document.addEventListener('keydown', function(e) {
-        if (RetroDBState.currentModal?.id === 'screenshotModal') {
-            if (e.key === 'ArrowLeft') {
-                navigateScreenshots(-1);
-            } else if (e.key === 'ArrowRight') {
-                navigateScreenshots(1);
-            }
-        }
-    });
+    // Pass 36.8 — arrow-key navigation now routes through the
+    // ModalFocusTrap activated in openScreenshotModal (see below). That
+    // removed the standalone document-level keydown handler formerly here.
 }
 
 function openScreenshotModal(index) {
@@ -575,6 +568,10 @@ function openScreenshotModal(index) {
     if (window.ModalFocusTrap && modal) {
         ModalFocusTrap.activate(modal, document.activeElement, {
             onEscape: () => closeScreenshotModal(),
+            // Pass 36.8 — arrows consolidated here; removed separate
+            // document-level keydown handler that used currentModal probe.
+            onArrowLeft: () => navigateScreenshots(-1),
+            onArrowRight: () => navigateScreenshots(1),
         });
     }
 }

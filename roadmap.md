@@ -3918,7 +3918,7 @@ See Pass 13.3 — no duplicate entry.
   then `os.open(dir, os.O_RDONLY); os.fsync(dir_fd); os.close(dir_fd)`.
   Apply the same chmod to `config.DB_PATH` on first init.
 - **Source**: 2026-04-24 audit, Database & schema H1/M3.
-- **Status**: todo
+- **Status**: done (v3.3.0) — `backup_database` chmod 0o600 + `_fsync_path` helper; `init_database` also tightens DB_PATH mode on boot.
 
 ### 35.2 `atomic_write_json` fsync parent directory (MEDIUM, S)
 
@@ -3930,7 +3930,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: after `os.replace`, open the parent dir with
   `os.open(directory, os.O_RDONLY)` + `os.fsync(fd)` + `os.close(fd)`.
 - **Source**: 2026-04-24 audit, Database & schema M4.
-- **Status**: todo
+- **Status**: done (v3.3.0) — parent-dir fsync after `os.replace`.
 
 ### 35.3 Enable `PRAGMA foreign_keys = ON` in migration connection (HIGH, S)
 
@@ -3944,7 +3944,7 @@ See Pass 13.3 — no duplicate entry.
   `init_database()` before applying migrations.  Rerun pytest migrations
   suite.
 - **Source**: 2026-04-24 audit, Database & schema H3.
-- **Status**: todo
+- **Status**: done (v3.3.0) — `PRAGMA foreign_keys = ON` issued in `init_database()`.
 
 ### 35.4 Move `journal_mode=WAL` / `journal_size_limit` to init (HIGH, S)
 
@@ -3956,7 +3956,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: move those two to `init_database()` (one-time); keep the
   other six connection-scoped PRAGMAs in `get_db()`.
 - **Source**: 2026-04-24 audit, Database & schema H2.
-- **Status**: todo
+- **Status**: done (v3.3.0) — WAL + `journal_size_limit` moved to init; connection PRAGMAs trimmed to six.
 
 ### 35.5 Guard legacy `ensure_user_tables` ALTER blocks (LOW, S)
 
@@ -3968,7 +3968,7 @@ See Pass 13.3 — no duplicate entry.
   into an explicit "if not exists" path so re-execution is obviously
   idempotent.
 - **Source**: 2026-04-24 audit, Database & schema L1.
-- **Status**: todo
+- **Status**: done (v3.3.0) — `_add_column_if_missing()` helper replaces the three try/except ALTER blocks; surprising `OperationalError`s no longer get swallowed.
 
 ---
 
@@ -3994,7 +3994,7 @@ See Pass 13.3 — no duplicate entry.
   `data-*` attributes with event delegation.  Prefer the delegation
   path; it also unblocks Pass 16 CSP.
 - **Source**: 2026-04-24 audit, Frontend JS C1.
-- **Status**: todo
+- **Status**: done (v3.3.0) — `escAttr` rewritten to `\xHH`/`\uHHHH` JS-string escape + outer `escapeHtml`; survives HTML attribute parse AND JS string parse.
 
 ### 36.2 Escape system name + slug in `settings-page.js` (CRITICAL, S)
 
@@ -4006,7 +4006,7 @@ See Pass 13.3 — no duplicate entry.
   push.
 - **Plan**: wrap with `escapeHtml()` consistently.
 - **Source**: 2026-04-24 audit, Frontend JS C2.
-- **Status**: todo
+- **Status**: done (v3.3.0) — verified Pass 29.1 closed this; all `settings-page.js` innerHTML writes of system fields already escape.
 
 ### 36.3 Escape controller image filename in `museum.js` (HIGH, S)
 
@@ -4018,7 +4018,7 @@ See Pass 13.3 — no duplicate entry.
   with `encodeURIComponent(imageFilename)`; use `addEventListener` for
   the reset button.
 - **Source**: 2026-04-24 audit, Frontend JS H1.
-- **Status**: todo
+- **Status**: done (v3.3.0) — `_updateControllerImage` / `_resetPlaceholder` rebuilt via `createElement` + `setAttribute` + `addEventListener`; listeners close over coerced-integer `controllerId`.
 
 ### 36.4 Escape log-viewer dynamic fields (MEDIUM, S)
 
@@ -4030,7 +4030,7 @@ See Pass 13.3 — no duplicate entry.
   `escapeHtml` when rendered as text AND an allowlist
   (`DEBUG|INFO|WARNING|ERROR|CRITICAL`) when used as a CSS class.
 - **Source**: 2026-04-24 audit, Frontend JS M3.
-- **Status**: todo
+- **Status**: done (v3.3.0) — `lineNumber`/`time`/`level` escaped; `level` allowlisted before use as CSS class.
 
 ### 36.5 Migrate remaining `JSON.parse(localStorage.getItem(...))` sites (HIGH, S)
 
@@ -4043,7 +4043,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: mechanical migration to `Storage.get(key, default)`;
   delete the now-unreferenced `try/catch` around each site.
 - **Source**: 2026-04-24 audit, Frontend JS H2 (extends Pass 29.4).
-- **Status**: todo
+- **Status**: done (v3.3.0) — `safeParseJSON(key, fallback, storage)` accepts optional storage arg; the four remaining sessionStorage sites migrated (all-games-controller, page-lifecycle, rom-tools). theme.js already safe (removeItem-before-parse).
 
 ### 36.6 AbortController on `performGlobalSearch` (HIGH, S)
 
@@ -4056,7 +4056,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: reuse `PageLifecycle.createAbortController()`; abort the
   previous controller before firing each new request.
 - **Source**: 2026-04-24 audit, Frontend JS H3 (closes Pass 29.5).
-- **Status**: todo
+- **Status**: done (v3.3.0) — closed by Pass 29.5 (`_globalSearchController` abort on rapid-type).
 
 ### 36.7 `DOM.create()` default to `textContent`, not `innerHTML` (MEDIUM, S)
 
@@ -4067,7 +4067,7 @@ See Pass 13.3 — no duplicate entry.
   default) and `DOM.createHTML()` for explicit opt-in; audit existing
   callers.
 - **Source**: 2026-04-24 audit, Frontend JS M1.
-- **Status**: todo
+- **Status**: done (v3.3.0) — `DOM.create(tag, attrs, text)` assigns `textContent`; `DOM.createHTML(tag, attrs, html)` is the explicit opt-in. No existing callers — safe default change.
 
 ### 36.8 Consolidate six document-level `keydown` handlers (MEDIUM, M)
 
@@ -4080,7 +4080,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: single dispatcher routed through `ModalFocusTrap`'s
   capture-phase listener; delete per-site Escape handlers.
 - **Source**: 2026-04-24 audit, Frontend JS M4 (closes Pass 29.3).
-- **Status**: todo
+- **Status**: done (v3.3.0) — `ModalFocusTrap.activate()` accepts `onArrowLeft` / `onArrowRight`. Three standalone document-level keydown handlers removed (main.js screenshot modal, game-modals.js lightbox, museum.js lightboxes). Typing in form fields bypasses the callbacks.
 
 ### 36.9 `Storage.clearAll` prefix list sync (LOW, S)
 
@@ -4092,7 +4092,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: expand the prefix list or iterate all keys with a single
   regex; add a test.
 - **Source**: 2026-04-24 audit, Frontend JS L2.
-- **Status**: todo
+- **Status**: done (v3.3.0) — prefix list expanded to include `raOperationsQueue`, `raSyncQueue`, `toast_completion_`.
 
 ### 36.10 Notification container aria-live severity split (LOW, S)
 
@@ -4102,7 +4102,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: two containers (polite / assertive); `showNotification`
   routes by severity.
 - **Source**: 2026-04-24 audit, Frontend JS L5.
-- **Status**: todo
+- **Status**: done (v3.3.0) — polite (status / success-info-warning) + assertive (alert / error) containers; `Notifications.show` routes by type.
 
 ---
 

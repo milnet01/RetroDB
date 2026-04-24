@@ -158,14 +158,11 @@ const PageLifecycle = (function() {
     function initPageState(key) {
         pageKey = key;
         
-        // Try to restore previous state
-        try {
-            const saved = sessionStorage.getItem(pageKey);
-            if (saved) {
-                pageState = JSON.parse(saved);
-            }
-        } catch (e) {
-            console.warn('Failed to restore page state:', e);
+        // Pass 36.5 — use safeParseJSON so a poison entry gets cleared
+        // on first read instead of re-throwing every page load.
+        const restored = safeParseJSON(pageKey, null, sessionStorage);
+        if (restored) {
+            pageState = restored;
         }
         
         return pageState;

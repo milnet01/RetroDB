@@ -1376,6 +1376,8 @@ const GameDetailModal = {
         if (window.ModalFocusTrap && lb) {
             ModalFocusTrap.activate(lb, document.activeElement, {
                 onEscape: () => this.closeLightbox(),
+                onArrowLeft: () => this.navigateScreenshot(-1),
+                onArrowRight: () => this.navigateScreenshot(1),
             });
         }
     },
@@ -2936,18 +2938,6 @@ const GameEditModal = {
         this.updateDimensionDropdown();
     }
 };
-
-document.addEventListener('keydown', function(e) {
-    const lightbox = document.getElementById('gdmScreenshotLightbox');
-    if (!lightbox || !lightbox.classList.contains('active')) return;
-    if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        GameDetailModal.navigateScreenshot(-1);
-    } else if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        GameDetailModal.navigateScreenshot(1);
-    }
-});
 
 window.addEventListener('pageshow', function(event) {
     if (event.persisted) {

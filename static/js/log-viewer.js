@@ -466,10 +466,24 @@ const LogViewer = {
             ? this.highlightSearch(this.escapeHtml(line.message))
             : this.escapeHtml(line.message);
 
-        return `<div class="log-line level-${line.level}">` +
-            `<span class="log-line-number">${line.lineNumber}</span>` +
-            `<span class="log-line-time">${line.time}</span>` +
-            `<span class="log-line-level ${line.level}">${line.level}</span>` +
+        // Pass 36.4 — lineNumber / time / level flow from a log file on disk
+        // and land inside innerHTML'd template strings. Escape each one so
+        // a malformed rotated-log parser emitting `INFO"><script>` (or a
+        // log file a user has write access to) can't smuggle a payload.
+        // `level` additionally gets allowlisted before it's used as a CSS
+        // class name — arbitrary attacker content would otherwise become
+        // a selector and the unquoted class attribute would swallow it.
+        const LEVELS = new Set(['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']);
+        const rawLevel = String(line.level || '');
+        const levelClass = LEVELS.has(rawLevel.toUpperCase()) ? rawLevel.toUpperCase() : 'UNKNOWN';
+        const lineNumberSafe = this.escapeHtml(String(line.lineNumber || ''));
+        const timeSafe = this.escapeHtml(String(line.time || ''));
+        const levelSafe = this.escapeHtml(rawLevel);
+
+        return `<div class="log-line level-${levelClass}">` +
+            `<span class="log-line-number">${lineNumberSafe}</span>` +
+            `<span class="log-line-time">${timeSafe}</span>` +
+            `<span class="log-line-level ${levelClass}">${levelSafe}</span>` +
             `<span class="log-line-module">${this.shortenModule(this.escapeHtml(line.module))}</span>` +
             `<span class="log-line-message">${message}</span>` +
             `</div>`;
