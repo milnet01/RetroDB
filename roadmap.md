@@ -3010,7 +3010,7 @@ See Pass 13.3 — no duplicate entry.
   `.textContent = message` unless the caller explicitly passes
   HTML (document the contract).
 - **Source**: 2026-04-23 audit, Frontend JS finding 1.
-- **Status**: todo
+- **Status**: done — v3.1.0
 
 ### 29.2 CSRF token propagation in `API.post` / `API.postForm` (LOW-per-threat-model, S)
 
@@ -3025,7 +3025,7 @@ See Pass 13.3 — no duplicate entry.
   `X-CSRFToken` on every non-GET.  Coordinate with 24.2 session
   rotation to regenerate token on login.
 - **Source**: 2026-04-23 audit, Frontend JS gap 3.
-- **Status**: todo (lands with Pass 24 backend CSRF middleware)
+- **Status**: done — v3.1.0 (lands with Pass 24 backend CSRF middleware)
 
 ### 29.3 Consolidate duplicate keyboard handlers + enforce focus-trap stacking (MEDIUM, M)
 
@@ -3042,7 +3042,7 @@ See Pass 13.3 — no duplicate entry.
   direct document listeners.
 - **Source**: 2026-04-23 audit, Frontend JS finding (event
   leaks + stacking).
-- **Status**: todo
+- **Status**: done — v3.1.0
 
 ### 29.4 `try/catch` around `JSON.parse` of `localStorage` values (LOW, S)
 
@@ -3057,7 +3057,7 @@ See Pass 13.3 — no duplicate entry.
   `utils.js`; swap each call site.
 - **Source**: 2026-04-23 audit, Frontend JS finding (unguarded
   parse).
-- **Status**: todo
+- **Status**: done — v3.1.0
 
 ### 29.5 `AbortController` on search-style API calls (LOW, S)
 
@@ -3070,7 +3070,7 @@ See Pass 13.3 — no duplicate entry.
   controller; abort the previous request before issuing a new
   one.
 - **Source**: 2026-04-23 audit, Frontend JS finding (race).
-- **Status**: todo
+- **Status**: done — v3.1.0
 
 ---
 

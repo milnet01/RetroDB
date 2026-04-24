@@ -542,14 +542,22 @@ const ConfirmModal = {
     /**
      * Show confirmation modal
      * @param {string} title - Modal title
-     * @param {string} message - Modal message (can contain HTML)
+     * @param {string} message - Modal message (plain text by default; HTML
+     *   only when options.allowHtml is true — Pass 29.1)
      * @param {Function} onConfirm - Callback on confirm
      * @param {Object} [options] - Optional settings
      * @param {boolean} [options.danger=false] - Use red danger styling for destructive actions
+     * @param {boolean} [options.allowHtml=false] - Treat `message` as HTML.
+     *   Default is text so callers can't inadvertently inject a script sink.
      */
     show(title, message, onConfirm, options = {}) {
         document.getElementById('confirmTitle').textContent = title;
-        document.getElementById('confirmMessage').innerHTML = message;
+        const messageEl = document.getElementById('confirmMessage');
+        if (options.allowHtml) {
+            messageEl.innerHTML = message;
+        } else {
+            messageEl.textContent = message;
+        }
         this.pendingAction = onConfirm;
 
         const cancelBtn = document.getElementById('confirmCancelBtn');
@@ -576,9 +584,16 @@ const ConfirmModal = {
      * @param {string} message - Modal message
      * @param {Function} onOk - Optional callback
      */
-    showInfo(title, message, onOk) {
+    showInfo(title, message, onOk, options = {}) {
         document.getElementById('confirmTitle').textContent = title;
-        document.getElementById('confirmMessage').innerHTML = message;
+        // Pass 29.1: default to textContent so admin-settings diagnostics
+        // that pass through arbitrary strings can't become XSS sinks.
+        const messageEl = document.getElementById('confirmMessage');
+        if (options.allowHtml) {
+            messageEl.innerHTML = message;
+        } else {
+            messageEl.textContent = message;
+        }
         this.pendingAction = onOk || null;
 
         const cancelBtn = document.getElementById('confirmCancelBtn');
@@ -818,15 +833,22 @@ const LogoReference = {
         const container = document.getElementById('logoReferenceBody');
         if (!container) return;
 
+        // Pass 29.1: escape every field coming from the /api/systems-list
+        // response — slug/id/name/logo can all be edited via the system
+        // admin modal, and even under the admin-only threat model escape
+        // removes the possibility of a self-XSS / stored-XSS chain.
         let html = '';
         systems.forEach(system => {
+            const slugSafe = escapeHtml(system.slug || system.id);
+            const nameSafe = escapeHtml(system.name);
+            const logoSafe = system.logo ? encodeURIComponent(system.logo) : '';
             html += `
                 <tr>
-                    <td><code>${system.slug || system.id}</code></td>
-                    <td>${system.name}</td>
+                    <td><code>${slugSafe}</code></td>
+                    <td>${nameSafe}</td>
                     <td>
-                        ${system.logo ?
-                            `<img src="/static/images/logos/${system.logo}" alt="${escapeHtml(system.name)}" style="height: 24px;">` :
+                        ${logoSafe ?
+                            `<img src="/static/images/logos/${logoSafe}" alt="${nameSafe}" style="height: 24px;">` :
                             '<span class="text-muted">No logo</span>'
                         }
                     </td>

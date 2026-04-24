@@ -146,7 +146,7 @@ const RARefreshController = {
                 // Check if operation was queued (blocked by another RA operation)
                 if (data.queued) {
                     // Add to unified queue
-                    const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+                    const queue = safeParseJSON('raOperationsQueue', []);
 
                     // Don't add duplicates
                     if (!queue.find(q => q.type === 'refresh' && q.systemId === systemId)) {

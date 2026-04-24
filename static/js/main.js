@@ -236,19 +236,37 @@ function filterGames(query) {
     updateRowCount(visibleCount);
 }
 
+// Pass 29.5: last-in-wins guard for the global search input. Rapid typing
+// used to fire parallel fetches; whichever completed last painted the
+// results, so a slow response to "Zel" could overwrite a fast response to
+// "Zelda". The controller is aborted before issuing each new request.
+let _globalSearchController = null;
+
 function performGlobalSearch(query) {
     if (query.length < 2) {
+        if (_globalSearchController) {
+            _globalSearchController.abort();
+            _globalSearchController = null;
+        }
         hideSearchResults();
         return;
     }
-    
+
+    if (_globalSearchController) _globalSearchController.abort();
+    _globalSearchController = new AbortController();
+    const signal = _globalSearchController.signal;
+
     showSearchLoading();
-    
-    API.get(`/api/search?q=${encodeURIComponent(query)}`)
+
+    API.get(`/api/search?q=${encodeURIComponent(query)}`, { signal })
         .then(data => {
+            if (signal.aborted) return;  // a newer request is in flight
             displaySearchResults(data);
         })
         .catch(error => {
+            // AbortError just means we were superseded; don't wipe results
+            // that the follow-up request may have already painted.
+            if (error && error.name === 'AbortError') return;
             console.error('Search error:', error);
             hideSearchResults();
         });
@@ -484,6 +502,10 @@ function closeScreenshotModal() {
         RetroDBState.currentModal.classList.remove('active');
         RetroDBState.currentModal = null;
         document.body.style.overflow = '';
+        // Pass 29.3: match the activate in openScreenshotModal so the
+        // focus trap stack stays balanced. deactivate() no-ops when
+        // there's nothing to pop.
+        if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
     }
 }
 
@@ -544,6 +566,17 @@ function openScreenshotModal(index) {
     RetroDBState.screenshotIndex = index;
     updateScreenshotDisplay();
     openModal('screenshotModal');
+    // Pass 29.3: activate ModalFocusTrap so Tab stays inside the modal and
+    // Escape routes through the trap's onEscape (closes this modal without
+    // collapsing any parent modal beneath). KeyboardShortcuts.closeAnyModal
+    // retains its global Escape semantics for pages that don't open via
+    // openScreenshotModal.
+    const modal = document.getElementById('screenshotModal');
+    if (window.ModalFocusTrap && modal) {
+        ModalFocusTrap.activate(modal, document.activeElement, {
+            onEscape: () => closeScreenshotModal(),
+        });
+    }
 }
 
 function navigateScreenshots(direction) {
@@ -905,7 +938,7 @@ async function refreshRetroAchievements() {
                     // Check if operation was queued (blocked by another RA operation)
                     if (data.queued) {
                         // Add to unified queue
-                        const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+                        const queue = safeParseJSON('raOperationsQueue', []);
                         
                         // Don't add duplicates
                         if (!queue.find(q => q.type === 'refresh' && q.systemId === null)) {

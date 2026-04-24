@@ -723,7 +723,7 @@ const UnifiedToastController = {
             // Also check if ra-refresh is active
             const raRefreshToast = this.activeToasts.get('active-ra-refresh');
             if (!raRefreshToast) {
-                const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+                const queue = safeParseJSON('raOperationsQueue', []);
                 if (queue.length > 0 && !this._triggeringRAQueue) {
                     this.triggerNextRAOperationFromQueue();
                 }
@@ -737,7 +737,7 @@ const UnifiedToastController = {
      */
     triggerNextRAOperationFromQueue() {
         // Get unified queue from localStorage
-        const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+        const queue = safeParseJSON('raOperationsQueue', []);
         if (queue.length === 0) {
             this._triggeringRAQueue = false;
             return;
@@ -795,7 +795,7 @@ const UnifiedToastController = {
                     this.removeRAQueuedToast(next);
                     
                     // Remove from queue in localStorage
-                    const updatedQueue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+                    const updatedQueue = safeParseJSON('raOperationsQueue', []);
                     const newQueue = updatedQueue.slice(1); // Remove first item
                     localStorage.setItem('raOperationsQueue', JSON.stringify(newQueue));
                     
@@ -868,7 +868,7 @@ const UnifiedToastController = {
         }
         
         // Get queue to determine position
-        const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+        const queue = safeParseJSON('raOperationsQueue', []);
         const position = queue.findIndex(q => 
             q.type === item.type && 
             (q.systemId || 'all') === (item.systemId || 'all')
@@ -908,7 +908,7 @@ const UnifiedToastController = {
      * Update queue position numbers for unified queue
      */
     updateRAQueuePositions() {
-        const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+        const queue = safeParseJSON('raOperationsQueue', []);
         queue.forEach((item, index) => {
             const toastId = item.type === 'sync'
                 ? `queued-ra-sync-${item.systemId}`
@@ -930,7 +930,7 @@ const UnifiedToastController = {
      * Restore RA queued toasts from localStorage (called on page load only)
      */
     restoreRAQueuedToasts() {
-        const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+        const queue = safeParseJSON('raOperationsQueue', []);
         if (queue.length === 0) return;
         
         // Ensure container exists
@@ -1009,7 +1009,7 @@ const UnifiedToastController = {
      */
     cancelRAQueued(type, systemId) {
         // Remove from localStorage
-        const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+        const queue = safeParseJSON('raOperationsQueue', []);
         const newQueue = queue.filter(q => !(q.type === type && (q.systemId || null) === systemId));
         localStorage.setItem('raOperationsQueue', JSON.stringify(newQueue));
         
@@ -1378,7 +1378,7 @@ const UnifiedToastController = {
             if (type === 'ra-sync' || type === 'ra-refresh') {
                 // Wait a bit longer to ensure server state is clean
                 setTimeout(() => {
-                    const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+                    const queue = safeParseJSON('raOperationsQueue', []);
                     // Double-check no active toasts exist
                     const syncToast = this.activeToasts.get('active-ra-sync');
                     const refreshToast = this.activeToasts.get('active-ra-refresh');
@@ -1611,30 +1611,26 @@ const UnifiedToastController = {
      * Migrate old raSyncQueue to unified raOperationsQueue
      */
     migrateOldQueue() {
-        const oldQueue = localStorage.getItem('raSyncQueue');
-        if (oldQueue) {
-            try {
-                const oldItems = JSON.parse(oldQueue);
-                if (oldItems.length > 0) {
-                    // Get current unified queue
-                    const unifiedQueue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
-                    
-                    // Add old items with type='sync' if not already present
-                    oldItems.forEach(item => {
-                        if (!item.type) item.type = 'sync';
-                        if (!unifiedQueue.find(q => q.type === 'sync' && q.systemId === item.systemId)) {
-                            unifiedQueue.push(item);
-                        }
-                    });
-                    
-                    localStorage.setItem('raOperationsQueue', JSON.stringify(unifiedQueue));
+        // Pass 29.4: route the legacy queue through safeParseJSON so a
+        // corrupted raSyncQueue value no longer breaks page load during
+        // migration.
+        const oldItems = safeParseJSON('raSyncQueue', null);
+        if (Array.isArray(oldItems) && oldItems.length > 0) {
+            const unifiedQueue = safeParseJSON('raOperationsQueue', []);
+            oldItems.forEach(item => {
+                if (!item.type) item.type = 'sync';
+                if (!unifiedQueue.find(q => q.type === 'sync' && q.systemId === item.systemId)) {
+                    unifiedQueue.push(item);
                 }
+            });
+            try {
+                localStorage.setItem('raOperationsQueue', JSON.stringify(unifiedQueue));
             } catch (e) {
-                console.error('Error migrating old queue:', e);
+                console.warn('Could not write migrated raOperationsQueue:', e);
             }
-            // Remove old queue
-            localStorage.removeItem('raSyncQueue');
         }
+        // Remove old queue whether migration succeeded or not (poison entry).
+        try { localStorage.removeItem('raSyncQueue'); } catch (_) { /* ignore */ }
     },
     
     

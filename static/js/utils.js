@@ -98,7 +98,37 @@ function escapeHtml(text) {
         '"': '&quot;',
         "'": '&#039;'
     };
-    return text.replace(/[&<>"']/g, m => map[m]);
+    return String(text).replace(/[&<>"']/g, m => map[m]);
+}
+
+/**
+ * Pass 29.4 — safely parse a localStorage value as JSON.
+ *
+ * A corrupted or tampered value (bad quotes, truncated string, attacker-
+ * modified content) previously threw in JSON.parse and bubbled to the page
+ * load, breaking the whole script. This helper returns the fallback value
+ * in that case and removes the poison entry so the page recovers on next
+ * reload.
+ *
+ * @param {string} key - localStorage key
+ * @param {*} fallback - Value to return when parse fails or key is missing
+ * @returns {*} parsed value, or `fallback` on any failure
+ */
+function safeParseJSON(key, fallback) {
+    let raw;
+    try {
+        raw = localStorage.getItem(key);
+    } catch (e) {
+        return fallback;
+    }
+    if (raw === null || raw === undefined) return fallback;
+    try {
+        return JSON.parse(raw);
+    } catch (e) {
+        console.warn(`safeParseJSON: could not parse ${key}, removing poison entry`, e);
+        try { localStorage.removeItem(key); } catch (_) { /* ignore */ }
+        return fallback;
+    }
 }
 
 /**
@@ -879,6 +909,7 @@ window.formatBytes = formatBytes;
 window.formatNumber = formatNumber;
 window.formatRatio = formatRatio;
 window.escapeHtml = escapeHtml;
+window.safeParseJSON = safeParseJSON;
 window.copyToClipboard = copyToClipboard;
 window.Storage = Storage;
 window.API = API;

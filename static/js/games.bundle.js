@@ -945,7 +945,7 @@ const RARefreshController = {
 
             if (data.success) {
                 if (data.queued) {
-                    const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+                    const queue = safeParseJSON('raOperationsQueue', []);
 
                     if (!queue.find(q => q.type === 'refresh' && q.systemId === systemId)) {
                         const newItem = {
@@ -1373,6 +1373,11 @@ const GameDetailModal = {
         this._updateLightbox();
         const lb = document.getElementById('gdmScreenshotLightbox');
         if (lb) lb.classList.add('active');
+        if (window.ModalFocusTrap && lb) {
+            ModalFocusTrap.activate(lb, document.activeElement, {
+                onEscape: () => this.closeLightbox(),
+            });
+        }
     },
 
     /**
@@ -1381,6 +1386,7 @@ const GameDetailModal = {
     closeLightbox() {
         const lb = document.getElementById('gdmScreenshotLightbox');
         if (lb) lb.classList.remove('active');
+        if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
     },
 
     /**
@@ -2933,34 +2939,13 @@ const GameEditModal = {
 
 document.addEventListener('keydown', function(e) {
     const lightbox = document.getElementById('gdmScreenshotLightbox');
-    if (lightbox && lightbox.classList.contains('active')) {
-        if (e.key === 'Escape') {
-            GameDetailModal.closeLightbox();
-            return;
-        }
-        if (e.key === 'ArrowLeft') {
-            GameDetailModal.navigateScreenshot(-1);
-            return;
-        }
-        if (e.key === 'ArrowRight') {
-            GameDetailModal.navigateScreenshot(1);
-            return;
-        }
-    }
-
-    if (e.key === 'Escape') {
-        const customModal = document.getElementById('customModal');
-        if (customModal && customModal.classList.contains('active')) return;
-
-        const editModal = document.getElementById('gameEditModal');
-        if (editModal && editModal.classList.contains('active')) {
-            GameEditModal.close();
-            return;
-        }
-        const detailModal = document.getElementById('gameDetailModal');
-        if (detailModal && detailModal.classList.contains('active')) {
-            GameDetailModal.close();
-        }
+    if (!lightbox || !lightbox.classList.contains('active')) return;
+    if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        GameDetailModal.navigateScreenshot(-1);
+    } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        GameDetailModal.navigateScreenshot(1);
     }
 });
 

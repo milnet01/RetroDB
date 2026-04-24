@@ -94,7 +94,37 @@ function escapeHtml(text) {
         '"': '&quot;',
         "'": '&#039;'
     };
-    return text.replace(/[&<>"']/g, m => map[m]);
+    return String(text).replace(/[&<>"']/g, m => map[m]);
+}
+
+/**
+ * Pass 29.4 — safely parse a localStorage value as JSON.
+ *
+ * A corrupted or tampered value (bad quotes, truncated string, attacker-
+ * modified content) previously threw in JSON.parse and bubbled to the page
+ * load, breaking the whole script. This helper returns the fallback value
+ * in that case and removes the poison entry so the page recovers on next
+ * reload.
+ *
+ * @param {string} key - localStorage key
+ * @param {*} fallback - Value to return when parse fails or key is missing
+ * @returns {*} parsed value, or `fallback` on any failure
+ */
+function safeParseJSON(key, fallback) {
+    let raw;
+    try {
+        raw = localStorage.getItem(key);
+    } catch (e) {
+        return fallback;
+    }
+    if (raw === null || raw === undefined) return fallback;
+    try {
+        return JSON.parse(raw);
+    } catch (e) {
+        console.warn(`safeParseJSON: could not parse ${key}, removing poison entry`, e);
+        try { localStorage.removeItem(key); } catch (_) { /* ignore */ }
+        return fallback;
+    }
 }
 
 /**
@@ -801,6 +831,7 @@ window.formatBytes = formatBytes;
 window.formatNumber = formatNumber;
 window.formatRatio = formatRatio;
 window.escapeHtml = escapeHtml;
+window.safeParseJSON = safeParseJSON;
 window.copyToClipboard = copyToClipboard;
 window.Storage = Storage;
 window.API = API;
@@ -1849,7 +1880,7 @@ const UnifiedToastController = {
         if (type === 'ra-sync' && !isActive && !existingToast) {
             const raRefreshToast = this.activeToasts.get('active-ra-refresh');
             if (!raRefreshToast) {
-                const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+                const queue = safeParseJSON('raOperationsQueue', []);
                 if (queue.length > 0 && !this._triggeringRAQueue) {
                     this.triggerNextRAOperationFromQueue();
                 }
@@ -1862,7 +1893,7 @@ const UnifiedToastController = {
      * Queue can contain both 'sync' and 'refresh' operations
      */
     triggerNextRAOperationFromQueue() {
-        const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+        const queue = safeParseJSON('raOperationsQueue', []);
         if (queue.length === 0) {
             this._triggeringRAQueue = false;
             return;
@@ -1911,7 +1942,7 @@ const UnifiedToastController = {
                 if (result.success && !result.queued) {
                     this.removeRAQueuedToast(next);
 
-                    const updatedQueue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+                    const updatedQueue = safeParseJSON('raOperationsQueue', []);
                     const newQueue = updatedQueue.slice(1); // Remove first item
                     localStorage.setItem('raOperationsQueue', JSON.stringify(newQueue));
 
@@ -1973,7 +2004,7 @@ const UnifiedToastController = {
             return;
         }
 
-        const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+        const queue = safeParseJSON('raOperationsQueue', []);
         const position = queue.findIndex(q =>
             q.type === item.type &&
             (q.systemId || 'all') === (item.systemId || 'all')
@@ -2011,7 +2042,7 @@ const UnifiedToastController = {
      * Update queue position numbers for unified queue
      */
     updateRAQueuePositions() {
-        const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+        const queue = safeParseJSON('raOperationsQueue', []);
         queue.forEach((item, index) => {
             const toastId = item.type === 'sync'
                 ? `queued-ra-sync-${item.systemId}`
@@ -2032,7 +2063,7 @@ const UnifiedToastController = {
      * Restore RA queued toasts from localStorage (called on page load only)
      */
     restoreRAQueuedToasts() {
-        const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+        const queue = safeParseJSON('raOperationsQueue', []);
         if (queue.length === 0) return;
 
         if (!this.container) {
@@ -2104,7 +2135,7 @@ const UnifiedToastController = {
      * Cancel a queued RA operation
      */
     cancelRAQueued(type, systemId) {
-        const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+        const queue = safeParseJSON('raOperationsQueue', []);
         const newQueue = queue.filter(q => !(q.type === type && (q.systemId || null) === systemId));
         localStorage.setItem('raOperationsQueue', JSON.stringify(newQueue));
 
@@ -2443,7 +2474,7 @@ const UnifiedToastController = {
 
             if (type === 'ra-sync' || type === 'ra-refresh') {
                 setTimeout(() => {
-                    const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+                    const queue = safeParseJSON('raOperationsQueue', []);
                     const syncToast = this.activeToasts.get('active-ra-sync');
                     const refreshToast = this.activeToasts.get('active-ra-refresh');
 
@@ -2665,27 +2696,22 @@ const UnifiedToastController = {
      * Migrate old raSyncQueue to unified raOperationsQueue
      */
     migrateOldQueue() {
-        const oldQueue = localStorage.getItem('raSyncQueue');
-        if (oldQueue) {
-            try {
-                const oldItems = JSON.parse(oldQueue);
-                if (oldItems.length > 0) {
-                    const unifiedQueue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
-
-                    oldItems.forEach(item => {
-                        if (!item.type) item.type = 'sync';
-                        if (!unifiedQueue.find(q => q.type === 'sync' && q.systemId === item.systemId)) {
-                            unifiedQueue.push(item);
-                        }
-                    });
-
-                    localStorage.setItem('raOperationsQueue', JSON.stringify(unifiedQueue));
+        const oldItems = safeParseJSON('raSyncQueue', null);
+        if (Array.isArray(oldItems) && oldItems.length > 0) {
+            const unifiedQueue = safeParseJSON('raOperationsQueue', []);
+            oldItems.forEach(item => {
+                if (!item.type) item.type = 'sync';
+                if (!unifiedQueue.find(q => q.type === 'sync' && q.systemId === item.systemId)) {
+                    unifiedQueue.push(item);
                 }
+            });
+            try {
+                localStorage.setItem('raOperationsQueue', JSON.stringify(unifiedQueue));
             } catch (e) {
-                console.error('Error migrating old queue:', e);
+                console.warn('Could not write migrated raOperationsQueue:', e);
             }
-            localStorage.removeItem('raSyncQueue');
         }
+        try { localStorage.removeItem('raSyncQueue'); } catch (_) { /* ignore */ }
     },
 
     /**
@@ -2971,19 +2997,31 @@ function filterGames(query) {
     updateRowCount(visibleCount);
 }
 
+let _globalSearchController = null;
+
 function performGlobalSearch(query) {
     if (query.length < 2) {
+        if (_globalSearchController) {
+            _globalSearchController.abort();
+            _globalSearchController = null;
+        }
         hideSearchResults();
         return;
     }
 
+    if (_globalSearchController) _globalSearchController.abort();
+    _globalSearchController = new AbortController();
+    const signal = _globalSearchController.signal;
+
     showSearchLoading();
 
-    API.get(`/api/search?q=${encodeURIComponent(query)}`)
+    API.get(`/api/search?q=${encodeURIComponent(query)}`, { signal })
         .then(data => {
+            if (signal.aborted) return;  // a newer request is in flight
             displaySearchResults(data);
         })
         .catch(error => {
+            if (error && error.name === 'AbortError') return;
             console.error('Search error:', error);
             hideSearchResults();
         });
@@ -3204,6 +3242,7 @@ function closeScreenshotModal() {
         RetroDBState.currentModal.classList.remove('active');
         RetroDBState.currentModal = null;
         document.body.style.overflow = '';
+        if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
     }
 }
 
@@ -3253,6 +3292,12 @@ function openScreenshotModal(index) {
     RetroDBState.screenshotIndex = index;
     updateScreenshotDisplay();
     openModal('screenshotModal');
+    const modal = document.getElementById('screenshotModal');
+    if (window.ModalFocusTrap && modal) {
+        ModalFocusTrap.activate(modal, document.activeElement, {
+            onEscape: () => closeScreenshotModal(),
+        });
+    }
 }
 
 function navigateScreenshots(direction) {
@@ -3584,7 +3629,7 @@ async function refreshRetroAchievements() {
 
                 if (data.success) {
                     if (data.queued) {
-                        const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+                        const queue = safeParseJSON('raOperationsQueue', []);
 
                         if (!queue.find(q => q.type === 'refresh' && q.systemId === null)) {
                             const newItem = {

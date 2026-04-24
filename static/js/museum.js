@@ -188,10 +188,17 @@ function _updateControllerImage(controllerId, imageFilename) {
     if (imgContainer) {
         // Preserve the hidden file input
         var fileInput = imgContainer.querySelector('input[type="file"]');
+        // Pass 29.1: URL-encode the filename in the src attribute and
+        // hard-coerce controllerId to a safe integer before interpolation.
+        // Without this, an attacker-influenced filename (scraper or remove-
+        // bg response filename) could close the attribute.
+        var safeFilename = encodeURIComponent(imageFilename);
+        var safeControllerId = parseInt(controllerId, 10);
+        if (!Number.isFinite(safeControllerId)) return;
         imgContainer.innerHTML = '<img src="/static/images/controllers/' +
-            imageFilename + '?t=' + Date.now() + '" alt="Controller" loading="lazy" onclick="openControllerLightbox(this)">' +
+            safeFilename + '?t=' + Date.now() + '" alt="Controller" loading="lazy" onclick="openControllerLightbox(this)">' +
             '<div class="museum-controller-image-actions">' +
-            '<button class="btn btn-xs btn-ghost" onclick="event.stopPropagation();uploadControllerImage(' + controllerId + ')" title="Upload replacement image">Replace</button>' +
+            '<button class="btn btn-xs btn-ghost" onclick="event.stopPropagation();uploadControllerImage(' + safeControllerId + ')" title="Upload replacement image">Replace</button>' +
             '</div>';
         if (fileInput) imgContainer.appendChild(fileInput);
     }

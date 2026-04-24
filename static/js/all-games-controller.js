@@ -709,6 +709,7 @@ const AllGamesController = (function() {
                     <span class="filter-option-name">PSN Imports</span>
                 </div>`;
             modal.classList.add('active');
+            _activateFilterModalTrap(modal);
             return;
         }
 
@@ -729,6 +730,7 @@ const AllGamesController = (function() {
             }
             optionsEl.innerHTML = html || '<div class="filter-empty">No ratings available</div>';
             modal.classList.add('active');
+            _activateFilterModalTrap(modal);
             return;
         }
 
@@ -745,11 +747,30 @@ const AllGamesController = (function() {
             ).join('');
         }
         modal.classList.add('active');
+        _activateFilterModalTrap(modal);
+    }
+
+    // Pass 29.3: shared helper so every openFilterModal branch activates
+    // the focus trap once, idempotently. Deactivated in closeFilterModal.
+    let _filterModalTrapActive = false;
+    function _activateFilterModalTrap(modal) {
+        if (!window.ModalFocusTrap || _filterModalTrapActive) return;
+        ModalFocusTrap.activate(modal, document.activeElement, {
+            onEscape: () => closeFilterModal(),
+        });
+        _filterModalTrapActive = true;
     }
 
     function closeFilterModal() {
         const modal = document.getElementById('filterModal');
         if (modal) modal.classList.remove('active');
+        // Pass 29.3: Deactivate the trap we activated in openFilterModal.
+        // Safe to call even if activation never happened — deactivate()
+        // pops the top of the stack and no-ops on empty.
+        if (window.ModalFocusTrap && _filterModalTrapActive) {
+            ModalFocusTrap.deactivate();
+            _filterModalTrapActive = false;
+        }
     }
 
     function applyFilter(type, value) {
@@ -1360,15 +1381,15 @@ const AllGamesController = (function() {
     // EVENT LISTENERS (non-init)
     // =========================================================================
 
-    // Close filter modal on Escape / backdrop (store references for cleanup)
-    function _onFilterKeydown(e) {
-        if (e.key === 'Escape') closeFilterModal();
-    }
+    // Close filter modal on backdrop click.
+    // Pass 29.3: Escape handling is now owned by ModalFocusTrap (activated
+    // inside openFilterModal / deactivated inside closeFilterModal), which
+    // stacks correctly with any parent modal trap. The standalone document
+    // keydown listener from the pre-29.3 implementation has been removed.
     function _onFilterBackdropClick(e) {
         const modal = document.getElementById('filterModal');
         if (e.target === modal) closeFilterModal();
     }
-    document.addEventListener('keydown', _onFilterKeydown);
     document.addEventListener('click', _onFilterBackdropClick);
 
     // =========================================================================

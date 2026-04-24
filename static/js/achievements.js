@@ -71,7 +71,7 @@ const RASync = {
     handleQueued(data, btn, statusEl) {
         try {
             // Add to unified RA operations queue
-            const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
+            const queue = safeParseJSON('raOperationsQueue', []);
 
             if (!queue.find(q => q.type === 'sync' && q.systemId === data.system_id)) {
                 const newItem = {
@@ -313,16 +313,22 @@ const AchievementCard = {
         const earnedClass = achievement.earned ? 'earned' : 'unearned';
         const iconClass = achievement.earned ? 'achievement-icon-earned' : 'achievement-icon-locked';
 
+        // Pass 29.1: escape badge_url and title in the <img> attributes.
+        // badge_url is upstream-controlled (RA / Steam / Xbox) and title is
+        // user-visible; an attacker-influenced upstream could otherwise
+        // close the attribute and inject an onerror handler.
+        const badgeUrlSafe = achievement.badge_url ? escapeHtml(achievement.badge_url) : '';
+        const titleSafe = escapeHtml(achievement.title);
         return `
             <div class="achievement-card ${earnedClass}">
                 <div class="achievement-icon ${iconClass}">
-                    ${achievement.badge_url ?
-                        `<img src="${achievement.badge_url}" alt="${achievement.title}">` :
+                    ${badgeUrlSafe ?
+                        `<img src="${badgeUrlSafe}" alt="${titleSafe}">` :
                         '🏆'
                     }
                 </div>
                 <div class="achievement-info">
-                    <div class="achievement-title">${escapeHtml(achievement.title)}</div>
+                    <div class="achievement-title">${titleSafe}</div>
                     <div class="achievement-description">${escapeHtml(achievement.description || '')}</div>
                     ${achievement.points ? `<div class="achievement-points">${achievement.points} pts</div>` : ''}
                 </div>

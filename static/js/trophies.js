@@ -287,21 +287,26 @@ const TrophyDisplay = {
         const earnedClass = earned ? 'trophy-earned' : 'trophy-locked';
         const icon = this.getIcon(trophy.type || trophy.trophy_type);
 
+        // Pass 29.1: escape icon_url and displayed trophy name so a
+        // malformed PSN/upstream response can't close the src attribute.
+        const iconUrlSafe = trophy.icon_url ? escapeHtml(trophy.icon_url) : '';
+        const nameSafe = escapeHtml(trophy.name || trophy.title || '');
+        const typeSafe = escapeHtml(trophy.type || trophy.trophy_type || '');
         return `
             <div class="trophy-card ${earnedClass}">
                 <div class="trophy-icon">
-                    ${trophy.icon_url ?
-                        `<img src="${trophy.icon_url}" alt="${trophy.name || trophy.title}">` :
+                    ${iconUrlSafe ?
+                        `<img src="${iconUrlSafe}" alt="${nameSafe}">` :
                         icon
                     }
                 </div>
                 <div class="trophy-info">
-                    <div class="trophy-name">${escapeHtml(trophy.name || trophy.title || '')}</div>
+                    <div class="trophy-name">${nameSafe}</div>
                     <div class="trophy-description">${escapeHtml(trophy.description || trophy.detail || '')}</div>
-                    <div class="trophy-type">${icon} ${trophy.type || trophy.trophy_type || ''}</div>
+                    <div class="trophy-type">${icon} ${typeSafe}</div>
                 </div>
                 ${earned && trophy.earned_date ?
-                    `<div class="trophy-date">Earned: ${(typeof DateUtils !== 'undefined') ? DateUtils.formatShort(new Date(trophy.earned_date)) : (trophy.earned_date || '').replace('T', ' ').slice(0, 16)}</div>` : ''
+                    `<div class="trophy-date">Earned: ${(typeof DateUtils !== 'undefined') ? DateUtils.formatShort(new Date(trophy.earned_date)) : escapeHtml((trophy.earned_date || '').replace('T', ' ').slice(0, 16))}</div>` : ''
                 }
             </div>
         `;
