@@ -789,8 +789,8 @@ def psn_trophy_detail(npwr_id):
     # 'default' gets order 0, DLC groups like '001', '002' get 1, 2, etc.
     group_order = {'default': 0}
     dlc_order = 1
-    for g in groups_list:
-        gid = g.get('group_id') or 'default'
+    for grp in groups_list:
+        gid = grp.get('group_id') or 'default'
         if gid != 'default':
             group_order[gid] = dlc_order
             dlc_order += 1
@@ -1363,9 +1363,9 @@ def api_psn_sync_game(npwr_id):
             try:
                 groups_summary = client.trophy_groups_summary(npwr_id, platform=platform_enum)
                 if hasattr(groups_summary, 'trophy_groups'):
-                    for g in groups_summary.trophy_groups:
-                        gid = getattr(g, 'trophy_group_id', None)
-                        gname = getattr(g, 'trophy_group_name', None)
+                    for grp in groups_summary.trophy_groups:
+                        gid = getattr(grp, 'trophy_group_id', None)
+                        gname = getattr(grp, 'trophy_group_name', None)
                         if gid and gname:
                             group_names_from_api[gid] = gname
                             logger.info(f"Group from API: {gid} -> {gname}")
