@@ -3681,7 +3681,7 @@ See Pass 13.3 — no duplicate entry.
   env (`RETRODB_TRUST_PROXY` or reuse `RETRODB_SECURE_COOKIES`).
   Document trust assumptions in the deploy README.
 - **Source**: 2026-04-24 audit, Auth & security H1.
-- **Status**: todo
+- **Status**: done — v3.2.0
 
 ### 33.2 `safe_filename` on `avatar` in `api_user_settings` (CRITICAL, S)
 
@@ -3695,7 +3695,7 @@ See Pass 13.3 — no duplicate entry.
   drop `avatar` from `allowed_fields` entirely — avatar already has a
   controlled upload route.
 - **Source**: 2026-04-24 audit, Auth & security C1.
-- **Status**: todo
+- **Status**: done — v3.2.0
 
 ### 33.3 Length-check `new_password` in `api_update_user` (HIGH, S)
 
@@ -3705,7 +3705,7 @@ See Pass 13.3 — no duplicate entry.
   Pass 24.4 contract.  Two-line fix.
 - **Plan**: same `if len(raw_password) < 12:` check; reject with 400.
 - **Source**: 2026-04-24 audit, Auth & security H3.
-- **Status**: todo
+- **Status**: done — v3.2.0
 
 ### 33.4 Force password change after admin reset (HIGH, S)
 
@@ -3718,7 +3718,7 @@ See Pass 13.3 — no duplicate entry.
   `force_password_change = 1` unless a `skip_force_change` flag is
   explicitly passed.
 - **Source**: 2026-04-24 audit, Auth & security H4.
-- **Status**: todo
+- **Status**: done — v3.2.0
 
 ### 33.5 Session rotation on password change (HIGH, S)
 
@@ -3730,7 +3730,7 @@ See Pass 13.3 — no duplicate entry.
   `api_login` after the UPDATE; return new CSRF token in the response
   body.
 - **Source**: 2026-04-24 audit, Auth & security H5.
-- **Status**: todo
+- **Status**: done — v3.2.0
 
 ### 33.6 Full `session.clear()` on logout (MEDIUM, S)
 
@@ -3740,7 +3740,7 @@ See Pass 13.3 — no duplicate entry.
   persist into the next login.  Pair with 31.9.
 - **Plan**: replace with `session.clear()`.
 - **Source**: 2026-04-24 audit, Auth & security M3.
-- **Status**: todo
+- **Status**: done — v3.2.0
 
 ### 33.7 Require Pillow for avatar upload (MEDIUM, S)
 
@@ -3753,7 +3753,7 @@ See Pass 13.3 — no duplicate entry.
   verify lockfile); hard-fail with 500 if Pillow import fails; or add
   a `python-magic` fallback.
 - **Source**: 2026-04-24 audit, Auth & security M4.
-- **Status**: todo
+- **Status**: done — v3.2.0
 
 ### 33.8 Surface new CSRF token in login response body (MEDIUM, S)
 
@@ -3765,7 +3765,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: include the new token in the `success()` body:
   `success(redirect=next_url, csrf_token=session['_csrf_token'])`.
 - **Source**: 2026-04-24 audit, Auth & security C2.
-- **Status**: todo
+- **Status**: done — v3.2.0
 
 ### 33.9 Rate-limiter cleanup efficiency (HIGH, S)
 
@@ -3778,7 +3778,7 @@ See Pass 13.3 — no duplicate entry.
   structure (`collections.OrderedDict` + `move_to_end`) or use
   `cachetools.TTLCache`.
 - **Source**: 2026-04-24 audit, Auth & security H2.
-- **Status**: todo
+- **Status**: done — v3.2.0
 
 ### 33.10 `SecretRedactor` handles dict/bytes logger args (MEDIUM, S)
 
@@ -3794,7 +3794,7 @@ See Pass 13.3 — no duplicate entry.
   named positions (`hash=`, `sha=`, `digest=`) to stop clobbering git
   SHAs in log output.
 - **Source**: 2026-04-24 audit, Auth & security M1/M2.
-- **Status**: todo
+- **Status**: done — v3.2.0
 
 ### 33.11 Redact credentials in scraper INFO logs (HIGH, S)
 
@@ -3807,7 +3807,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: downgrade to DEBUG; redact username/devid via
   `SecretRedactor`; for check endpoints log status code only.
 - **Source**: 2026-04-24 audit, Scraper orchestration H1 + Maintenance/settings M9.
-- **Status**: todo
+- **Status**: done — v3.2.0
 
 ---
 
@@ -3828,7 +3828,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: apply `@handle_api_errors` + call `success()` / `error()`;
   strip `str(e)` from user-facing bodies.
 - **Source**: 2026-04-24 audit, Core app H2.
-- **Status**: todo
+- **Status**: done — v3.2.0
 
 ### 34.2 `inject_config` — cache `scraper_settings.json` by mtime (MEDIUM, S)
 
@@ -3839,7 +3839,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: add an mtime cache on the scraper-settings lookup; reuse
   the `settings_manager` pattern.
 - **Source**: 2026-04-24 audit, Core app M4.
-- **Status**: todo
+- **Status**: done — v3.2.0
 
 ### 34.3 Delete zombie log helpers (MEDIUM, S)
 
@@ -3851,7 +3851,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: delete or move into `log_manager.py` as canonical; remove
   the re-definitions in route files if they end up imported.
 - **Source**: 2026-04-24 audit, Core app M1/M2.
-- **Status**: todo
+- **Status**: done — v3.2.0
 
 ### 34.4 Rate limiter view-function lookup hard-fail (MEDIUM, S)
 
@@ -3862,7 +3862,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: raise `KeyError` at import-time if endpoint missing, or
   `logger.warning` the first resolution to the fallback lambda.
 - **Source**: 2026-04-24 audit, Core app M3.
-- **Status**: todo
+- **Status**: done — v3.2.0
 
 ### 34.5 Log-rollover on UTC boundary (MEDIUM, S)
 
@@ -3873,7 +3873,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: switch to `datetime.now(timezone.utc)` or explicitly
   document the local-time choice.  Must land alongside 30.7.
 - **Source**: 2026-04-24 audit, Core app M5.
-- **Status**: todo
+- **Status**: done — v3.2.0
 
 ### 34.6 `asset_url` double registration (LOW, S)
 
@@ -3884,7 +3884,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: keep `jinja_env.globals` for outside-request renders;
   drop the entry from `inject_config`.  Comment the rationale.
 - **Source**: 2026-04-24 audit, Core app M6.
-- **Status**: todo
+- **Status**: done — v3.2.0
 
 ### 34.7 Observability on mutations in game routes (LOW, M)
 
@@ -3896,7 +3896,7 @@ See Pass 13.3 — no duplicate entry.
   changed, before/after for scalar fields, user id); optional
   `audit_log` SQLite table if scale warrants.
 - **Source**: 2026-04-24 audit, Game routes L11.
-- **Status**: todo
+- **Status**: done — v3.2.0
 
 ---
 

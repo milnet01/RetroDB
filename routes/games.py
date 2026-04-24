@@ -613,6 +613,12 @@ def game_detail(game_id):
                     """, (game_id,))
 
                     new_title = reset_game_title_from_filename(game_id)
+                    # Pass 34.7: log the destructive reset.
+                    user_id = (g.user or {}).get('id') if g.user else None
+                    logger.info(
+                        "game_reset game_id=%s title=%r user_id=%s",
+                        game_id, game['title'], user_id,
+                    )
                     message = f"All metadata cleared. Title reset to: {new_title}"
 
                     game = query("""
@@ -926,6 +932,19 @@ def api_game_edit(game_id):
     if not updates:
         return jsonify({'success': False, 'error': 'No fields to update'}), 400
 
+    # Pass 34.7: structured observability on every mutation. Without this,
+    # "who scrambled this game's metadata?" debugging has nothing to go on.
+    # Fields only — values themselves stay out of logs to avoid PII leaks
+    # and to keep lines bounded. user_id is resolved from g.user when the
+    # caller is authenticated (editor_required guards this route).
+    from flask import g as _flask_g
+    user_id = getattr(_flask_g, 'user', None) and _flask_g.user.get('id')
+    logger.info(
+        "game_edit game_id=%s title=%r user_id=%s fields=%s",
+        game_id, game['title'], user_id,
+        [u.split(' = ')[0] for u in updates],
+    )
+
     values.append(game_id)
 
     execute(f"""
@@ -1045,7 +1064,13 @@ def api_games_bulk_edit():
 
         conn.commit()
 
-    logger.info(f"Bulk edit applied: {len(game_ids)} games, fields: {list(fields.keys())}")
+    # Pass 34.7: keep structured — user_id + field names + count only.
+    from flask import g as _flask_g
+    user_id = getattr(_flask_g, 'user', None) and _flask_g.user.get('id')
+    logger.info(
+        "games_bulk_edit count=%d user_id=%s fields=%s",
+        len(game_ids), user_id, list(fields.keys()),
+    )
 
     invalidate_filter_cache()
     invalidate_analytics_cache()

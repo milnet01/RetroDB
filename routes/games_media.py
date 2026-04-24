@@ -40,7 +40,15 @@ def api_delete_game(game_id):
     invalidate_filter_cache()
     invalidate_analytics_cache()
 
-    logger.info(f"Deleted game from database: {game['title']} (ID: {game_id})")
+    # Pass 34.7: structured so grep and external log shippers can parse
+    # mutation history consistently. user_id may be None in legacy paths
+    # but editor_required guarantees g.user for this route today.
+    from flask import g as _flask_g
+    user_id = getattr(_flask_g, 'user', None) and _flask_g.user.get('id')
+    logger.info(
+        "game_delete game_id=%s title=%r user_id=%s",
+        game_id, game['title'], user_id,
+    )
 
     return success(
         message=f"Game '{game['title']}' deleted from database",

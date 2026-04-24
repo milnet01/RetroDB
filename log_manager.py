@@ -6,7 +6,7 @@
 
 import os
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 # ------------------------------------------------------------------------------
@@ -93,8 +93,15 @@ def ensure_logs_dir():
 
 
 def get_log_filename(category):
-    """Get the log filename for a category (date-based)"""
-    today = datetime.now().strftime('%Y-%m-%d')
+    """Get the log filename for a category (date-based, UTC).
+
+    Pass 34.5 — previously used naive local time, which meant:
+      - a server in Europe/Berlin rolled logs at Berlin midnight, not UTC;
+      - DST transitions created same-named files twice with mtime drift.
+    UTC gives a single monotonic day boundary across the global fleet,
+    matching the pattern in ra_sync / platform_sync (Pass 30.7).
+    """
+    today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
     return os.path.join(LOGS_DIR, f'{category}_{today}.log')
 
 
@@ -119,8 +126,13 @@ class CategoryFileHandler(logging.Handler):
         self._setup_handler()
     
     def _setup_handler(self):
-        """Setup or rotate the file handler if date changed"""
-        today = datetime.now().strftime('%Y-%m-%d')
+        """Setup or rotate the file handler if date changed.
+
+        Pass 34.5 — rolls on UTC midnight. Matches get_log_filename() so
+        we never open yesterday's filename because local time disagrees
+        with the filename-generation clock.
+        """
+        today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
 
         if self.current_date != today:
             # Close existing handler if any
@@ -348,24 +360,8 @@ def get_full_log_content(filename):
         return None
 
 
-def get_scraping_log_files():
-    """Get log files filtered to scraping category only"""
-    return [f for f in get_log_files() if f['category'] == 'scraping']
-
-
-def log_scraping(level, message, logger_name='scraper'):
-    """Convenience function for scraping logs"""
-    logger = logging.getLogger(logger_name)
-    getattr(logger, level.lower(), logger.info)(message)
-
-
-def log_rom_tools(level, message, logger_name='rom_tools'):
-    """Convenience function for ROM tools logs"""
-    logger = logging.getLogger(logger_name)
-    getattr(logger, level.lower(), logger.info)(message)
-
-
-def log_rom_reports(level, message, logger_name='rom_reports'):
-    """Convenience function for ROM reports logs"""
-    logger = logging.getLogger(logger_name)
-    getattr(logger, level.lower(), logger.info)(message)
+# Pass 34.3 — removed get_scraping_log_files / log_scraping / log_rom_tools /
+# log_rom_reports. The convenience helpers had zero callers across the repo;
+# routes query logs via get_log_files() + read_log_file() directly, and
+# scraper modules call getLogger() themselves. Grepping for the names at
+# removal time yielded only this module's own definitions.

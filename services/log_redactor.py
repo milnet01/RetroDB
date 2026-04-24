@@ -20,6 +20,9 @@ import re
 _PATTERNS = [
     # JSON token fields: "access_token": "..." / "refresh_token": "..." / "api_key": "..." / etc.
     (re.compile(r'("(?:access_token|refresh_token|id_token|api_key|apiKey|authorization|authKey|authz_c|session_token|secret|password|devpassword|npsso)"\s*:\s*")([^"]+)(")', re.IGNORECASE), r'\1<redacted>\3'),
+    # Pass 33.10 — Python repr() form of the same dict keys, e.g.
+    # "{'access_token': 'abc'}" coming out of `logger.info('%r', dct)`.
+    (re.compile(r"('(?:access_token|refresh_token|id_token|api_key|apiKey|authorization|authKey|authz_c|session_token|secret|password|devpassword|npsso)'\s*:\s*')([^']+)(')", re.IGNORECASE), r'\1<redacted>\3'),
     # JWT triples (header.payload.signature), 3 base64url segments separated by dots
     (re.compile(r'\beyJ[A-Za-z0-9_\-]{10,}\.[A-Za-z0-9_\-]{10,}\.[A-Za-z0-9_\-]{10,}\b'), '<redacted-jwt>'),
     # Authorization header values: "Authorization: Bearer ..." / "Authorization: Basic ..."
@@ -40,8 +43,17 @@ _PATTERNS = [
         r'([A-Za-z0-9_\-\.]{24,})',
         re.IGNORECASE,
     ), r'\1\2<redacted-token>'),
-    # Hex secrets ≥32 chars — catches most hashed tokens; false-positive rate is acceptable for log output
-    (re.compile(r'\b[a-f0-9]{40,}\b', re.IGNORECASE), '<redacted-hex>'),
+    # Hex secrets ≥32 chars in a named-secret context. Pass 33.10 narrows
+    # this from "any 40-char hex string" to "a hex run that appears after
+    # a known-secret label" so git commit SHAs in log output stop getting
+    # clobbered. Labels are tokenized broadly: token/secret/auth/sha256
+    # style names before `:` or `=`.
+    (re.compile(
+        r'\b(token|secret|auth|key|bearer|hash|digest|npsso|sig|signature|session)\b'
+        r'(\s*[:=]\s*|\s+is\s+|\s+=>\s+)'
+        r'([a-f0-9]{32,})',
+        re.IGNORECASE,
+    ), r'\1\2<redacted-hex>'),
 ]
 
 
@@ -62,13 +74,41 @@ class SecretRedactor(logging.Filter):
     """
 
     def filter(self, record: logging.LogRecord) -> bool:
+        """Redact secrets from the formatted record.
+
+        Pass 33.10 — previously this filter only walked `record.msg` /
+        positional string args. A call like
+        ``logger.info("tokens=%r", response.json())`` passes a dict; the
+        formatter `%r`'d it AFTER this filter ran, and the resulting line
+        hit the handler unredacted. Fix: render the full message via
+        ``record.getMessage()``, redact the composite, then overwrite
+        ``record.msg`` with the result and empty ``record.args`` so the
+        formatter doesn't re-interpolate.
+        """
         try:
-            if isinstance(record.msg, str):
-                record.msg = redact(record.msg)
+            # Bytes args: render via decode so regexes see the token.
             if record.args:
-                record.args = tuple(
-                    redact(a) if isinstance(a, str) else a for a in (record.args if isinstance(record.args, tuple) else (record.args,))
-                )
+                normalized_args = record.args if isinstance(record.args, tuple) else (record.args,)
+                decoded = []
+                for a in normalized_args:
+                    if isinstance(a, (bytes, bytearray)):
+                        try:
+                            decoded.append(a.decode('utf-8', errors='replace'))
+                        except Exception:
+                            decoded.append(repr(a))
+                    else:
+                        decoded.append(a)
+                record.args = tuple(decoded)
+
+            rendered = record.getMessage()
+            record.msg = redact(rendered)
+            record.args = None
         except Exception:
-            pass
+            # Last-resort: fall back to the old behaviour so a
+            # redactor bug doesn't drop the log line entirely.
+            try:
+                if isinstance(record.msg, str):
+                    record.msg = redact(record.msg)
+            except Exception:
+                pass
         return True

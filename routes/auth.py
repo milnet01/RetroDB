@@ -112,18 +112,32 @@ def api_login():
     # under this session will be intercepted and rendered as the
     # force-change-password template regardless of next_url, so we don't
     # need a special branch here.
-    return success(redirect=next_url)
+    # Pass 33.8: return the freshly-minted CSRF token so a client that
+    # stashed a pre-login token (e.g. from the /login GET) can refresh it
+    # without relying on a subsequent GET round-trip. The token is set by
+    # app.py's @before_request ensure_csrf_token hook once session.clear()
+    # has emptied the session.
+    from flask import session as _flask_session
+    _ensure_csrf = _flask_session.get('_csrf_token')
+    if not _ensure_csrf:
+        import secrets as _secrets
+        _flask_session['_csrf_token'] = _secrets.token_hex(32)
+        _ensure_csrf = _flask_session['_csrf_token']
+    return success(redirect=next_url, csrf_token=_ensure_csrf)
 
 
 @bp.route('/logout')
 def logout():
-    """Log out current user"""
-    # Pass 31.9 — drop in-flight OAuth state alongside user_id so a pending
-    # Xbox auth can't be picked up by the next login on the same browser.
-    # (session.clear() is the broader Pass 33.6 fix; this keeps the minimal
-    # surface pending that pass.)
-    session.pop('user_id', None)
-    session.pop('oauth_state_xbox', None)
+    """Log out current user.
+
+    Pass 33.6: clear the whole session on logout. The old `session.pop` of
+    just `user_id` (and later `oauth_state_xbox` per 31.9) left the CSRF
+    token, `permanent` flag, and any other ambient state in the cookie,
+    which survived into the next login. `session.clear()` wipes everything
+    atomically; the next request cycles a fresh CSRF token via
+    app.py's ensure_csrf_token hook.
+    """
+    session.clear()
     flash('You have been logged out', 'info')
     return redirect(url_for('auth.login'))
 
@@ -219,13 +233,26 @@ def api_update_user(user_id):
         params.append(1 if data['is_active'] else 0)
     
     if 'new_password' in data and data['new_password']:
+        # Pass 33.3: enforce the same 12-char floor that api_create_user
+        # applies. Admin was previously able to silently set a 3-char
+        # password via this endpoint, violating the Pass 24.4 contract.
+        raw_password = data['new_password']
+        if len(raw_password) < 12:
+            return error('Password must be at least 12 characters', code=200)
         updates.append('password_hash = ?')
-        params.append(hash_password(data['new_password']))
-    
+        params.append(hash_password(raw_password))
+        # Pass 33.4: admin-reset passwords must trigger a force-change on
+        # the next login (OWASP ASVS). Admin can opt out of the forced
+        # change by passing `skip_force_change: true` (e.g. re-issuing
+        # one's own password during troubleshooting).
+        if not data.get('skip_force_change'):
+            updates.append('force_password_change = ?')
+            params.append(1)
+
     if updates:
         params.append(user_id)
         execute(f"UPDATE users SET {', '.join(updates)} WHERE id = ?", params)
-    
+
     return success(message='User updated successfully')
 
 
@@ -277,17 +304,29 @@ def api_user_settings():
     
     # POST - update settings
     data = request.get_json()
-    
+
     updates = []
     params = []
-    
-    allowed_fields = ['rpcs3_trophy_path', 'ra_username', 'ra_api_key', 'theme_preference', 'items_per_page', 'psn_username', 'psn_npsso', 'avatar', 'timezone']
-    
+
+    # Pass 33.2: `avatar` is deliberately omitted from this allowlist. The
+    # avatar field is owned by the dedicated upload flow
+    # (api_upload_avatar / api_remove_avatar), which writes a sanitized
+    # filename via safe_filename(). Accepting a free-form `avatar` value
+    # here would let any authenticated user POST
+    # `{"avatar": "../../.secret_key"}` and have the resulting DB value
+    # reconstructed verbatim into `os.path.join(IMAGE_PATH, 'avatars',
+    # clean_name)` — anyone downstream that re-derives a path from that
+    # stored string inherits the traversal.
+    allowed_fields = [
+        'rpcs3_trophy_path', 'ra_username', 'ra_api_key', 'theme_preference',
+        'items_per_page', 'psn_username', 'psn_npsso', 'timezone',
+    ]
+
     for field in allowed_fields:
         if field in data:
             updates.append(f'{field} = ?')
             params.append(data[field])
-    
+
     if updates:
         params.append(g.user['id'])
         execute(f"UPDATE user_settings SET {', '.join(updates)} WHERE user_id = ?", params)
@@ -330,10 +369,23 @@ def api_change_password():
 
     # Update password and clear force_password_change flag
     new_hash = hash_password(new_password)
-    execute("UPDATE users SET password_hash = ?, force_password_change = 0 WHERE id = ?", (new_hash, g.user['id']))
+    user_id = g.user['id']
+    execute("UPDATE users SET password_hash = ?, force_password_change = 0 WHERE id = ?", (new_hash, user_id))
 
     record_login_attempt(client_ip, True)
-    return success(message='Password changed successfully')
+
+    # Pass 33.5 — OWASP ASVS V3.7. A credentials-change is a
+    # session-rotation boundary: a hijacked cookie that reaches this path
+    # must not keep its authenticated state, and concurrent sessions of
+    # the same account must be invalidated. Clear + re-set mirrors
+    # api_login's regenerate flow. We also mint a fresh CSRF token so the
+    # client can keep POSTing without a GET round-trip.
+    session.clear()
+    session['user_id'] = user_id
+    session.permanent = True
+    import secrets as _secrets
+    session['_csrf_token'] = _secrets.token_hex(32)
+    return success(message='Password changed successfully', csrf_token=session['_csrf_token'])
 
 
 @bp.route('/api/profile/force-change-password', methods=['POST'])
@@ -357,10 +409,20 @@ def api_force_change_password():
 
     # Update password and clear force flag
     new_hash = hash_password(new_password)
+    user_id = g.user['id']
     execute("UPDATE users SET password_hash = ?, force_password_change = 0 WHERE id = ?",
-            (new_hash, g.user['id']))
+            (new_hash, user_id))
 
-    return success(message='Password changed successfully')
+    # Pass 33.5 — same session-rotation contract as api_change_password.
+    # force-change-password is the first place a user touches after a
+    # `changeme` or admin-reset login; rotating here means the original
+    # bootstrap cookie cannot be replayed after the password is set.
+    session.clear()
+    session['user_id'] = user_id
+    session.permanent = True
+    import secrets as _secrets
+    session['_csrf_token'] = _secrets.token_hex(32)
+    return success(message='Password changed successfully', csrf_token=session['_csrf_token'])
 
 
 # =============================================================================
@@ -407,12 +469,22 @@ def api_upload_avatar():
     filename = f"user_{g.user['id']}_avatar.{ext}"
     avatar_path = os.path.join(config.IMAGE_PATH, 'avatars', filename)
 
-    # Try to resize with Pillow if available. Call verify() first so a
-    # renamed .exe uploaded as "evil.jpg" gets rejected before we write
-    # anything to disk.
+    # Pass 33.7 — Pillow is a hard dependency for avatar uploads. Without
+    # it we have only extension validation, and a `.png`-renamed PHP / JSP
+    # / ASP payload would persist verbatim on a proxied deploy that hands
+    # `static/images/avatars/` to an interpreter. Pillow is pinned in
+    # requirements.txt / requirements.lock, so ImportError is now a fatal
+    # 500 rather than a quiet fallback.
     try:
         from PIL import Image
-        import io
+    except ImportError:
+        return error(
+            'Avatar uploads require Pillow; please ask the operator to '
+            'install the project requirements.',
+            code=500,
+        )
+    import io
+    try:
         # verify() consumes the stream, so open a fresh BytesIO for the
         # actual processing step afterwards.
         with Image.open(io.BytesIO(file_data)) as _probe:
@@ -421,11 +493,7 @@ def api_upload_avatar():
         img = img.convert('RGB') if ext in ('jpg', 'jpeg') else img.convert('RGBA')
         img.thumbnail((200, 200), Image.LANCZOS)
         img.save(avatar_path, quality=90)
-    except ImportError:
-        # Pillow not installed — save raw file
-        with open(avatar_path, 'wb') as f:
-            f.write(file_data)
-    except Exception as e:
+    except Exception:
         # PIL.verify() failed or decode error — treat as invalid upload.
         return error('Invalid image file', code=200)
 

@@ -387,7 +387,18 @@ class ScraperManager:
                 ss_devid = api_keys.get('screenscraper_devid', '')
                 ss_devpassword = api_keys.get('screenscraper_devpassword', '')
 
-                logger.info(f"ScreenScraper credentials: username={ss_username}, has_password={bool(ss_password)}, devid={ss_devid}")
+                # Pass 33.11: username and devid are credentials when paired
+                # with the password/devpassword, so don't write them at INFO.
+                # Downgrade to DEBUG for operator troubleshooting and report
+                # only boolean configuration state at INFO.
+                logger.debug(
+                    f"ScreenScraper credentials: username={ss_username}, "
+                    f"has_password={bool(ss_password)}, devid={ss_devid}"
+                )
+                logger.info(
+                    f"ScreenScraper configured: has_username={bool(ss_username)}, "
+                    f"has_password={bool(ss_password)}, has_devid={bool(ss_devid)}"
+                )
 
                 if ss_username and ss_password:
                     logger.info(f"ScreenScraper searching for: '{title}' on system: {system_folder}")

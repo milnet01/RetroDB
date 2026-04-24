@@ -68,6 +68,7 @@ from services.game_utils import (
 from services.template_filters import register_filters as _register_template_filters
 from services.database_init import init_database, ensure_user_tables
 from services.assets import asset_url
+from services.api_helpers import handle_api_errors, success as api_success, error as api_error
 from services.analytics import (
     build_analytics_context,
 )
@@ -134,6 +135,27 @@ app.config['SESSION_COOKIE_SECURE'] = (
 )
 app.config['MAX_CONTENT_LENGTH'] = config.MAX_UPLOAD_BYTES
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
+
+# Pass 33.1 — reverse-proxy deploys (nginx / Caddy in front of waitress).
+# Behind a proxy, `request.remote_addr` is always the proxy's loopback
+# address, so the IP-based login rate limiter (`services.security.
+# rate_limit_login`) and flask-limiter both collapse everyone into the
+# same bucket — a self-DoS + trivial bypass. Wiring werkzeug's ProxyFix
+# middleware reads X-Forwarded-For (and friends) and rewrites remote_addr
+# accordingly. Gated on RETRODB_TRUST_PROXY so a localhost deploy without
+# a proxy won't start honouring attacker-controlled forwarded headers.
+# See docs/PROXY-DEPLOY.md (added in this pass) for the trust contract.
+if os.environ.get('RETRODB_TRUST_PROXY', '').lower() in ('true', '1', 'yes'):
+    from werkzeug.middleware.proxy_fix import ProxyFix
+    # Trust exactly one hop of X-Forwarded-For / X-Forwarded-Proto /
+    # X-Forwarded-Host — the single reverse proxy directly in front. If
+    # your deployment chains proxies, increase these and audit every hop.
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=0)
+    logger_startup = logging.getLogger(__name__)
+    logger_startup.info(
+        "RETRODB_TRUST_PROXY=1 — ProxyFix installed; trusting one hop of "
+        "X-Forwarded-For / Proto / Host"
+    )
 
 # =============================================================================
 # RATE LIMITING
@@ -220,20 +242,41 @@ app.register_blueprint(game_imports_bp)
 # PER-ROUTE RATE LIMITS (applied after blueprint registration)
 # =============================================================================
 
+def _rate_limit(endpoint, spec):
+    """Pass 34.4 — apply a rate-limit rule to a view function by endpoint,
+    hard-failing at import time if the endpoint was renamed / removed.
+
+    Previously every call used ``app.view_functions.get(endpoint, lambda: None)``
+    which silently swapped in a no-op decorator — a renamed route would
+    break its rate-limiter coverage with no log line, and the next audit
+    pass would miss it. Raising here surfaces the regression before the
+    process ever serves a request.
+    """
+    if not limiter:
+        return
+    view = app.view_functions.get(endpoint)
+    if view is None:
+        raise RuntimeError(
+            f"Pass 34.4: rate-limiter endpoint '{endpoint}' is not registered "
+            f"(did the route get renamed?)"
+        )
+    limiter.limit(spec)(view)
+
+
 if limiter:
     # Expensive AI/scraping endpoints
-    limiter.limit("10 per minute")(app.view_functions.get('games_ai.api_game_ai_fill', lambda: None))
-    limiter.limit("5 per minute")(app.view_functions.get('bulk_scrape.api_bulk_scrape_job_start', lambda: None))
+    _rate_limit('games_ai.api_game_ai_fill', "10 per minute")
+    _rate_limit('bulk_scrape.api_bulk_scrape_job_start', "5 per minute")
     # Login brute force protection (supplements existing IP-based rate limiting)
-    limiter.limit("10 per minute")(app.view_functions.get('auth.api_login', lambda: None))
+    _rate_limit('auth.api_login', "10 per minute")
     # Heavy admin endpoints — on a localhost deploy the realistic risk is
     # the operator double-clicking, not a malicious DoS, but matching the
     # existing login/bulk-scrape pattern costs nothing.
-    limiter.limit("2 per minute")(app.view_functions.get('maintenance.api_restart', lambda: None))
-    limiter.limit("3 per minute")(app.view_functions.get('maintenance.api_scan', lambda: None))
-    limiter.limit("3 per minute")(app.view_functions.get('maintenance.api_database_optimize', lambda: None))
-    limiter.limit("3 per minute")(app.view_functions.get('maintenance.api_image_resize_start', lambda: None))
-    limiter.limit("3 per minute")(app.view_functions.get('settings.api_backup', lambda: None))
+    _rate_limit('maintenance.api_restart', "2 per minute")
+    _rate_limit('maintenance.api_scan', "3 per minute")
+    _rate_limit('maintenance.api_database_optimize', "3 per minute")
+    _rate_limit('maintenance.api_image_resize_start', "3 per minute")
+    _rate_limit('settings.api_backup', "3 per minute")
 
     # Pass 25.9 — rate-limit additional expensive endpoints. Numbers match
     # the roadmap targets: AI-fill 30/hr, HLTB 60/hr, museum generate
@@ -241,12 +284,12 @@ if limiter:
     # equivalents that Flask-Limiter's syntax expresses naturally; the
     # 30-per-hour target for games_ai.api_game_ai_fill is already covered
     # by the 10-per-minute rule above (60/hr effective).
-    limiter.limit("60 per hour")(app.view_functions.get('games_hltb.api_hltb_lookup', lambda: None))
-    limiter.limit("60 per hour")(app.view_functions.get('games_hltb.api_hltb_search', lambda: None))
-    limiter.limit("5 per hour")(app.view_functions.get('games_hltb.api_hltb_bulk_start', lambda: None))
-    limiter.limit("20 per hour")(app.view_functions.get('museum.generate_system', lambda: None))
-    limiter.limit("2 per hour")(app.view_functions.get('museum.generate_all', lambda: None))
-    limiter.limit("10 per hour")(app.view_functions.get('collector_trophies.refresh_trophies', lambda: None))
+    _rate_limit('games_hltb.api_hltb_lookup', "60 per hour")
+    _rate_limit('games_hltb.api_hltb_search', "60 per hour")
+    _rate_limit('games_hltb.api_hltb_bulk_start', "5 per hour")
+    _rate_limit('museum.generate_system', "20 per hour")
+    _rate_limit('museum.generate_all', "2 per hour")
+    _rate_limit('collector_trophies.refresh_trophies', "10 per hour")
 
 # =============================================================================
 # REQUEST-SCOPED DB CONNECTION CLEANUP
@@ -424,17 +467,19 @@ _PROBE_ENDPOINTS = frozenset({'health_probe', 'ready_probe'})
 
 @app.errorhandler(404)
 def handle_not_found(e):
+    # Pass 34.1: API paths return the standard envelope.
     if request.path.startswith('/api/'):
-        return jsonify({'success': False, 'error': 'Not found'}), 404
+        return api_error('Not found', 404)
     return render_template('base.html'), 404
 
 @app.errorhandler(500)
 def handle_internal_error(e):
     # Include the traceback — without it, the white-page 500 leaves the
-    # operator with only `str(e)` to debug from.
+    # operator with only `str(e)` to debug from. Pass 34.1: API body via
+    # shared error() helper; non-API path stays HTML.
     logger.error(f"Internal server error: {e}", exc_info=True)
     if request.path.startswith('/api/'):
-        return jsonify({'success': False, 'error': 'Internal server error'}), 500
+        return api_error('Internal server error', 500)
     return render_template('base.html'), 500
 
 @app.errorhandler(413)
@@ -451,7 +496,7 @@ def handle_request_too_large(e):
         "Operators can raise the global cap via RETRODB_MAX_UPLOAD_MB."
     )
     if request.path.startswith('/api/'):
-        return jsonify({'success': False, 'error': msg}), 413
+        return api_error(msg, 413)
     return msg, 413
 
 
@@ -601,53 +646,10 @@ logger = logging.getLogger(__name__)
 # surfaces. See waitress/task.py — "Task queue depth is N" is the message.
 logging.getLogger('waitress.queue').setLevel(logging.ERROR)
 
-# =============================================================================
-# CATEGORY LOGGING
-# =============================================================================
-
-def log_to_category(category, level, message):
-    """
-    Write log message to category-specific log file.
-    Categories: scraping, rom_tools, rom_reports, image_resize, system
-    Levels: info, warning, error
-    """
-    try:
-        settings = settings_manager.load_settings()
-        log_settings = settings.get('logging', {}).get(category, {})
-
-        # Check if this level is enabled for this category
-        if not log_settings.get(level, level == 'error'):
-            return
-
-        # Ensure logs directory exists
-        logs_dir = os.path.join(os.path.dirname(__file__), 'logs')
-        os.makedirs(logs_dir, exist_ok=True)
-
-        # Create log filename with category and date
-        today = datetime.now().strftime('%Y-%m-%d')
-        log_file = os.path.join(logs_dir, f'{category}_{today}.log')
-
-        # Format log message
-        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        log_line = f"[{timestamp}] [{level.upper()}] {message}\n"
-
-        # Append to log file
-        with open(log_file, 'a', encoding='utf-8') as f:
-            f.write(log_line)
-
-        # Also log to standard logger for console output
-        log_func = getattr(logger, level, logger.info)
-        log_func(f"[{category}] {message}")
-
-    except Exception as e:
-        # Don't let logging errors break the app
-        logger.error(f"Error writing to category log: {e}")
-
-
-def system_log(level, message):
-    """Convenience function for system category logging"""
-    log_to_category('system', level, message)
-
+# Pass 34.3 — removed log_to_category + system_log. Neither had any
+# importers (routes/ra_sync.py and routes/achievements.py each define
+# their own local system_log). Categorised logs flow through
+# log_manager.CategoryFileHandler, installed via setup_all_logging().
 
 # =============================================================================
 # JINJA2 FILTERS — moved to services/template_filters.py
@@ -667,6 +669,41 @@ def get_avatar_url(user, user_settings_row):
     return f'/static/images/avatars/{avatar}'
 
 
+# Pass 34.2 — mtime-keyed cache for the ai-scraper-enabled read. Previous
+# implementation re-parsed scraper_settings.json on every Jinja render.
+_AI_SCRAPER_CACHE = {'mtime': None, 'enabled': False}
+_AI_SCRAPER_KEY_MAP = {
+    'gemini': 'ai_gemini_api_key',
+    'openai': 'ai_openai_api_key',
+    'claude': 'ai_claude_api_key',
+}
+
+
+def _ai_scraper_enabled_cached():
+    try:
+        from routes.scraper import SCRAPER_SETTINGS_FILE as _ssf
+        if not os.path.exists(_ssf):
+            _AI_SCRAPER_CACHE['mtime'] = None
+            _AI_SCRAPER_CACHE['enabled'] = False
+            return False
+        mtime = os.path.getmtime(_ssf)
+        if _AI_SCRAPER_CACHE['mtime'] == mtime:
+            return _AI_SCRAPER_CACHE['enabled']
+        with open(_ssf, 'r') as _f:
+            _ss = json.load(_f)
+        _ak = _ss.get('api_keys', {})
+        _prov = _ak.get('ai_provider', '')
+        _key = _AI_SCRAPER_KEY_MAP.get(_prov, '')
+        enabled = bool(_prov and _ak.get(_key, '') and _ss.get('enabled', {}).get('ai', False))
+        _AI_SCRAPER_CACHE['mtime'] = mtime
+        _AI_SCRAPER_CACHE['enabled'] = enabled
+        return enabled
+    except Exception:
+        # non-fatal — missing/invalid scraper_settings.json just hides the
+        # AI Fill button in the UI.
+        return False
+
+
 @app.context_processor
 def inject_config():
     """Make config, user settings, and current user available to all templates"""
@@ -681,19 +718,14 @@ def inject_config():
         elif hasattr(user_settings_obj, 'keys') and 'timezone' in user_settings_obj.keys():
             user_tz = user_settings_obj['timezone'] or 'UTC'
 
-    # Check if AI scraper is configured (for showing AI Fill button)
-    ai_scraper_enabled = False
-    try:
-        from routes.scraper import SCRAPER_SETTINGS_FILE as _ssf
-        if os.path.exists(_ssf):
-            with open(_ssf, 'r') as _f:
-                _ss = json.load(_f)
-                _ak = _ss.get('api_keys', {})
-                _prov = _ak.get('ai_provider', '')
-                _key_map = {'gemini': 'ai_gemini_api_key', 'openai': 'ai_openai_api_key', 'claude': 'ai_claude_api_key'}
-                ai_scraper_enabled = bool(_prov and _ak.get(_key_map.get(_prov, ''), '') and _ss.get('enabled', {}).get('ai', False))
-    except Exception:
-        pass  # non-fatal — missing/invalid scraper_settings.json just hides the AI Fill button in the UI
+    # Check if AI scraper is configured (for showing AI Fill button).
+    # Pass 34.2 — mtime-cache the scraper_settings.json read. inject_config
+    # fires on every Jinja render (dashboard, library, modal partials,
+    # cards); the pre-34.2 implementation parsed the JSON file on every
+    # one of those, which at ~30-50 renders per page-navigation is a
+    # noticeable fixed cost. Matches the pattern settings_manager already
+    # uses for its own JSON.
+    ai_scraper_enabled = _ai_scraper_enabled_cached()
 
     return {
         'config': config,
@@ -702,7 +734,10 @@ def inject_config():
         'current_user_settings': g.get('user_settings'),
         'has_permission': has_permission,
         'get_avatar_url': get_avatar_url,
-        'asset_url': asset_url,
+        # Pass 34.6 — asset_url is already registered as a Jinja global
+        # at line 89, so it's available in every template including those
+        # rendered outside a request context (tests). Removed from
+        # inject_config to avoid double registration; the global wins.
         'user_timezone': user_tz,
         'csrf_token': session.get('_csrf_token', ''),
         'ai_scraper_enabled': ai_scraper_enabled,
@@ -1080,77 +1115,71 @@ def dashboard():
 
 @app.route('/api/jobs/resume/<int:job_id>', methods=['POST'])
 @login_required
+@handle_api_errors
 def resume_job(job_id):
-    """Resume an interrupted or queued job from the dashboard recovery banner."""
+    """Resume an interrupted or queued job from the dashboard recovery banner.
+
+    Pass 34.1 — routes via @handle_api_errors + success()/error(). The old
+    implementation hand-rolled `jsonify` envelopes and returned `str(e)` in
+    error bodies (SQL text / column names leak to the client). The decorator
+    emits a stack trace to the log and a redacted 500 envelope.
+    """
     from services.jobs.base import get_recoverable_jobs, persist_job_complete
     from services.jobs import bulk_scrape_job, ra_sync_job, ra_refresh_job, psn_refresh_job
-    from services.jobs.platform_sync import SteamSyncJob, XboxSyncJob
     from services.jobs import steam_sync_job, xbox_sync_job, museum_generate_job
 
-    try:
-        # Find the job
-        recoverable = get_recoverable_jobs()
-        job = None
-        for rj in recoverable:
-            if rj['id'] == job_id:
-                job = rj
-                break
+    # Find the job
+    recoverable = get_recoverable_jobs()
+    job = None
+    for rj in recoverable:
+        if rj['id'] == job_id:
+            job = rj
+            break
 
-        if not job:
-            return jsonify({'success': False, 'error': 'Job not found or already handled'}), 404
+    if not job:
+        return api_error('Job not found or already handled', 404)
 
-        handler_map = {
-            'bulk_scrape': bulk_scrape_job,
-            'ra_refresh': ra_refresh_job,
-            'ra_sync': ra_sync_job,
-            'psn_refresh': psn_refresh_job,
-            'steam_sync': steam_sync_job,
-            'xbox_sync': xbox_sync_job,
-            'museum_generate': museum_generate_job,
-        }
-        handler = handler_map.get(job['job_type'])
-        if not handler or not hasattr(handler, 'resume_from_params'):
-            return jsonify({'success': False, 'error': f"No handler for job type '{job['job_type']}'"}), 400
+    handler_map = {
+        'bulk_scrape': bulk_scrape_job,
+        'ra_refresh': ra_refresh_job,
+        'ra_sync': ra_sync_job,
+        'psn_refresh': psn_refresh_job,
+        'steam_sync': steam_sync_job,
+        'xbox_sync': xbox_sync_job,
+        'museum_generate': museum_generate_job,
+    }
+    handler = handler_map.get(job['job_type'])
+    if not handler or not hasattr(handler, 'resume_from_params'):
+        return api_error(f"No handler for job type '{job['job_type']}'", 400)
 
-        success = handler.resume_from_params(job['params'], progress=job.get('progress'))
-        if success:
-            # Mark the old interrupted/queued row as completed so it doesn't reappear
-            persist_job_complete(job_id, status='completed')
-            logger.info(f"Resumed {job['job_type']} job (DB id={job_id}) from dashboard")
-            return jsonify({'success': True})
-        else:
-            return jsonify({'success': False, 'error': 'Could not resume job — handler returned false'}), 500
-
-    except Exception as e:
-        logger.error(f"Error resuming job {job_id}: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
+    resumed = handler.resume_from_params(job['params'], progress=job.get('progress'))
+    if not resumed:
+        return api_error('Could not resume job — handler returned false', 500)
+    # Mark the old interrupted/queued row as completed so it doesn't reappear
+    persist_job_complete(job_id, status='completed')
+    logger.info(f"Resumed {job['job_type']} job (DB id={job_id}) from dashboard")
+    return api_success()
 
 
 @app.route('/api/jobs/dismiss/<int:job_id>', methods=['POST'])
 @login_required
+@handle_api_errors
 def dismiss_job_route(job_id):
     """Dismiss a recoverable job so it no longer appears on the dashboard."""
     from services.jobs.base import dismiss_job
-    try:
-        dismiss_job(job_id)
-        return jsonify({'success': True})
-    except Exception as e:
-        logger.error(f"Error dismissing job {job_id}: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
+    dismiss_job(job_id)
+    return api_success()
 
 
 @app.route('/api/random-game')
 @login_required
+@handle_api_errors
 def random_game():
     """Get a random game from the library"""
-    try:
-        game = query("SELECT id FROM games ORDER BY RANDOM() LIMIT 1", one=True)
-        if game:
-            return jsonify({'success': True, 'game_id': game['id']})
-        return jsonify({'success': False, 'message': 'No games in library'}), 404
-    except Exception as e:
-        logger.error(f"Random game error: {e}")
-        return jsonify({'success': False, 'message': str(e)}), 500
+    game = query("SELECT id FROM games ORDER BY RANDOM() LIMIT 1", one=True)
+    if game:
+        return api_success(game_id=game['id'])
+    return api_error('No games in library', 404)
 
 
 
@@ -1196,91 +1225,95 @@ def setup_page():
 
 
 @app.route('/api/setup/browse-folders', methods=['POST'])
+@handle_api_errors
 def setup_browse_folders():
-    """Browse filesystem folders during setup (no auth required, only works before setup is complete)"""
-    # Only accessible when setup is NOT completed
+    """Browse filesystem folders during setup (no auth required, only works before setup is complete).
+
+    Pass 34.1: routed through success()/error(); @handle_api_errors owns
+    the unexpected-exception 500 path. No behavioural change.
+    """
     user_settings_check = settings_manager.load_settings()
     has_rom_path = bool(user_settings_check.get('rom_path') or getattr(config, 'ROM_PATH', ''))
     setup_done = user_settings_check.get('setup_completed', False)
     if setup_done or has_rom_path:
-        return jsonify({'success': False, 'error': 'Setup has already been completed'}), 403
+        return api_error('Setup has already been completed', 403)
 
+    data = request.get_json() or {}
+    requested_path = data.get('path', '')
+
+    # Default to user's home directory
+    home_dir = os.path.expanduser('~')
+    current_path = requested_path if requested_path else home_dir
+
+    # Resolve and validate
     try:
-        data = request.get_json() or {}
-        requested_path = data.get('path', '')
+        current_path = os.path.realpath(current_path)
+    except (OSError, ValueError):
+        current_path = home_dir
 
-        # Default to user's home directory
-        home_dir = os.path.expanduser('~')
-        current_path = requested_path if requested_path else home_dir
+    if not os.path.exists(current_path) or not os.path.isdir(current_path):
+        current_path = home_dir
 
-        # Resolve and validate
-        try:
-            current_path = os.path.realpath(current_path)
-        except (OSError, ValueError):
-            current_path = home_dir
+    # Parent path (allow navigating up to filesystem root)
+    parent_path = None
+    parent = os.path.dirname(current_path)
+    if parent != current_path:  # Not at filesystem root
+        parent_path = parent
 
-        if not os.path.exists(current_path) or not os.path.isdir(current_path):
-            current_path = home_dir
+    folders = []
+    try:
+        for item in sorted(os.listdir(current_path)):
+            if item.startswith('.'):
+                continue
+            item_path = os.path.join(current_path, item)
+            if not os.path.isdir(item_path):
+                continue
+            try:
+                contents = os.listdir(item_path)
+                file_count = sum(1 for f in contents if os.path.isfile(os.path.join(item_path, f)))
+                subfolder_count = sum(1 for f in contents if os.path.isdir(os.path.join(item_path, f)))
+            except PermissionError:
+                file_count = 0
+                subfolder_count = 0
+            folders.append({
+                'name': item,
+                'path': item_path,
+                'file_count': file_count,
+                'subfolder_count': subfolder_count
+            })
+    except PermissionError:
+        return api_error('Permission denied', 403)
 
-        # Parent path (allow navigating up to filesystem root)
-        parent_path = None
-        parent = os.path.dirname(current_path)
-        if parent != current_path:  # Not at filesystem root
-            parent_path = parent
-
-        folders = []
-        try:
-            for item in sorted(os.listdir(current_path)):
-                if item.startswith('.'):
-                    continue
-                item_path = os.path.join(current_path, item)
-                if not os.path.isdir(item_path):
-                    continue
-                try:
-                    contents = os.listdir(item_path)
-                    file_count = sum(1 for f in contents if os.path.isfile(os.path.join(item_path, f)))
-                    subfolder_count = sum(1 for f in contents if os.path.isdir(os.path.join(item_path, f)))
-                except PermissionError:
-                    file_count = 0
-                    subfolder_count = 0
-                folders.append({
-                    'name': item,
-                    'path': item_path,
-                    'file_count': file_count,
-                    'subfolder_count': subfolder_count
-                })
-        except PermissionError:
-            return jsonify({'success': False, 'error': 'Permission denied'}), 403
-
-        return jsonify({
-            'success': True,
-            'base_path': home_dir,
-            'current_path': current_path,
-            'parent_path': parent_path,
-            'folders': folders,
-            'is_root': parent == current_path
-        })
-    except Exception:
-        return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+    return api_success(
+        base_path=home_dir,
+        current_path=current_path,
+        parent_path=parent_path,
+        folders=folders,
+        is_root=parent == current_path,
+    )
 
 
 @app.route('/api/setup', methods=['POST'])
+@handle_api_errors
 def setup_api():
-    """Process setup wizard form submission"""
-    # Prevent re-running setup after it's already complete
+    """Process setup wizard form submission.
+
+    Pass 34.1: routed through success()/error(); @handle_api_errors wraps
+    unexpected-exception logging.
+    """
     user_settings_check = settings_manager.load_settings()
     has_rom_path = bool(user_settings_check.get('rom_path') or getattr(config, 'ROM_PATH', ''))
     setup_done = user_settings_check.get('setup_completed', False)
     if setup_done or has_rom_path:
-        return jsonify({'success': False, 'error': 'Setup has already been completed'})
+        return api_error('Setup has already been completed', 403)
 
     data = request.get_json()
     if not data:
-        return jsonify({'success': False, 'error': 'No data provided'})
+        return api_error('No data provided', 400)
 
     # Require license acceptance
     if not data.get('license_accepted'):
-        return jsonify({'success': False, 'error': 'You must accept the license and terms before completing setup'})
+        return api_error('You must accept the license and terms before completing setup', 400)
 
     # 1. Create admin account if username/password provided
     admin_username = data.get('admin_username', '').strip()
@@ -1377,7 +1410,7 @@ def setup_api():
     # Update runtime config paths
     app.config['ROM_PATH'] = get_rom_path()
 
-    return jsonify({'success': True, 'message': 'Setup complete!'})
+    return api_success(message='Setup complete!')
 
 
 @app.route('/api/timezones')

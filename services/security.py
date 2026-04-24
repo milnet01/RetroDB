@@ -9,6 +9,7 @@ import os
 import time
 import threading
 import logging
+from collections import OrderedDict
 
 logger = logging.getLogger(__name__)
 
@@ -127,8 +128,13 @@ def safe_path(user_path, allowed_base):
 # =============================================================================
 # LOGIN RATE LIMITING
 # =============================================================================
+# Pass 33.9 — replace the O(N) + O(N log N) sweep of a plain dict with an
+# OrderedDict ordered by `first_attempt`. Eviction happens only when a new
+# entry is inserted, and lazy per-key TTL check runs at read time. This
+# removes the per-request full-scan and full-sort that made the previous
+# implementation a soft-DoS amplifier under sustained load.
 
-_login_attempts = {}
+_login_attempts = OrderedDict()
 _lock = threading.Lock()
 
 # Configuration
@@ -137,20 +143,18 @@ WINDOW_SECONDS = 300  # 5 minutes
 _MAX_ENTRIES = 10000
 
 
-def _cleanup_old_entries():
-    """Remove expired entries from the attempts dict, and cap size."""
-    now = time.time()
-    expired = [ip for ip, data in _login_attempts.items()
-               if now - data['first_attempt'] > WINDOW_SECONDS]
-    for ip in expired:
-        del _login_attempts[ip]
+def _evict_if_over_cap():
+    """If we're above the cap, evict the oldest entries until we're back
+    under. OrderedDict insertion order === first_attempt order because we
+    only insert with `move_to_end(..., last=True)` on create, and don't
+    reorder existing entries.
+    """
+    while len(_login_attempts) > _MAX_ENTRIES:
+        _login_attempts.popitem(last=False)
 
-    # If still over the cap, evict the oldest half
-    if len(_login_attempts) > _MAX_ENTRIES:
-        sorted_ips = sorted(_login_attempts.keys(),
-                            key=lambda ip: _login_attempts[ip]['first_attempt'])
-        for ip in sorted_ips[:len(sorted_ips) // 2]:
-            del _login_attempts[ip]
+
+def _entry_is_expired(entry, now):
+    return now - entry['first_attempt'] > WINDOW_SECONDS
 
 
 def rate_limit_login(ip):
@@ -167,18 +171,22 @@ def rate_limit_login(ip):
         bool: True if the attempt is allowed, False if rate limited
     """
     with _lock:
-        _cleanup_old_entries()
         entry = _login_attempts.get(ip)
         if not entry:
             return True
+        now = time.time()
+        if _entry_is_expired(entry, now):
+            # Lazy TTL expiry — the window has elapsed, drop the stale
+            # record and allow this attempt.
+            _login_attempts.pop(ip, None)
+            return True
         if entry['failures'] >= MAX_ATTEMPTS:
-            elapsed = time.time() - entry['first_attempt']
-            if elapsed < WINDOW_SECONDS:
-                logger.warning(f"Login rate limited for IP: {ip} ({entry['failures']} failures in {elapsed:.0f}s)")
-                return False
-            else:
-                del _login_attempts[ip]
-                return True
+            elapsed = now - entry['first_attempt']
+            logger.warning(
+                f"Login rate limited for IP: {ip} "
+                f"({entry['failures']} failures in {elapsed:.0f}s)"
+            )
+            return False
         return True
 
 
@@ -194,16 +202,16 @@ def record_login_attempt(ip, success):
         success: True if login succeeded, False if failed
     """
     with _lock:
-        _cleanup_old_entries()
         if success:
             _login_attempts.pop(ip, None)
-        else:
-            entry = _login_attempts.get(ip)
-            now = time.time()
-            if entry:
-                if now - entry['first_attempt'] > WINDOW_SECONDS:
-                    _login_attempts[ip] = {'failures': 1, 'first_attempt': now}
-                else:
-                    entry['failures'] += 1
-            else:
-                _login_attempts[ip] = {'failures': 1, 'first_attempt': now}
+            return
+        entry = _login_attempts.get(ip)
+        now = time.time()
+        if entry and not _entry_is_expired(entry, now):
+            entry['failures'] += 1
+            return
+        # Either no entry, or an expired one — (re)seed.
+        if entry:
+            _login_attempts.pop(ip, None)
+        _login_attempts[ip] = {'failures': 1, 'first_attempt': now}
+        _evict_if_over_cap()

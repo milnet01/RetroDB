@@ -419,7 +419,18 @@ def api_check_scraper(scraper):
             ss_devid = api_keys.get('screenscraper_devid', '')
             ss_devpassword = api_keys.get('screenscraper_devpassword', '')
             
-            logger.info(f"ScreenScraper check - username: {ss_username}, has_password: {bool(ss_password)}, devid: {ss_devid}, has_devpass: {bool(ss_devpassword)}")
+            # Pass 33.11: downgrade username/devid to DEBUG; INFO only sees
+            # booleans so routine check output never holds the raw credentials.
+            logger.debug(
+                f"ScreenScraper check - username: {ss_username}, "
+                f"has_password: {bool(ss_password)}, devid: {ss_devid}, "
+                f"has_devpass: {bool(ss_devpassword)}"
+            )
+            logger.info(
+                "ScreenScraper check configured: "
+                f"has_username={bool(ss_username)}, has_password={bool(ss_password)}, "
+                f"has_devid={bool(ss_devid)}, has_devpass={bool(ss_devpassword)}"
+            )
             
             if ss_username and ss_password:
                 try:
@@ -436,14 +447,18 @@ def api_check_scraper(scraper):
                     ])
                     
                     url = 'https://api.screenscraper.fr/api2/ssuserInfos.php'
-                    logger.info(f"ScreenScraper checking with devid={ss_devid}")
-                    
+                    # Pass 33.11: raw devid is credential material.
+                    logger.debug(f"ScreenScraper checking with devid={ss_devid}")
+
                     # Use requests library with 30 second timeout
                     response = requests.get(url, params=params, timeout=30, headers={'User-Agent': 'RetroDB/1.0'})
                     data = response.text
-                    
+
+                    # Pass 33.11: the check endpoint's upstream response body can
+                    # contain the logged-in user's ssid / session envelope. Log
+                    # only the status code at INFO; body preview stays at DEBUG.
                     logger.info(f"ScreenScraper response status: {response.status_code}")
-                    logger.info(f"ScreenScraper response (first 300 chars): {data[:300]}")
+                    logger.debug(f"ScreenScraper response (first 300 chars): {data[:300]}")
                     
                     if response.status_code == 200:
                         if '"ssuser"' in data or '"success": "true"' in data or '"success":"true"' in data:
