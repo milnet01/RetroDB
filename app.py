@@ -526,6 +526,7 @@ def check_first_time_setup():
     # Skip for static files, the setup route itself, and API endpoints used by setup
     if not request.endpoint or request.endpoint in ('static', 'setup_page', 'setup_api',
                                                      'setup_browse_folders',
+                                                     'api_timezones',
                                                      'auth.api_login', 'auth.login', 'auth.logout'):
         return
     if request.endpoint in _PROBE_ENDPOINTS:

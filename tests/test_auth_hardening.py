@@ -13,6 +13,8 @@ import hashlib
 import os
 import pytest
 
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 # =============================================================================
 # 24.1 — password required for all roles
@@ -143,7 +145,7 @@ class TestEditorRequiredOnDestructiveEndpoints:
         import re as _re
         for endpoint, _path, _method in self.DESTRUCTIVE_ENDPOINTS:
             module_name, view_name = endpoint.split('.', 1)
-            module_path = f'/mnt/Storage/Scripts/Linux/RetroDB/routes/{module_name}.py'
+            module_path = os.path.join(_REPO_ROOT, 'routes', f'{module_name}.py')
             src = open(module_path).read()
             # Find the decorator stack above `def view_name(`
             pat = _re.compile(
@@ -321,6 +323,6 @@ class TestDestructiveEndpointsRequireAuth:
         # This test needs auth to reach the validation logic. We can't
         # assert the 400 rejection without a real session, so we settle
         # for verifying the inline check is present in source.
-        src = open('/mnt/Storage/Scripts/Linux/RetroDB/routes/games_media.py').read()
+        src = open(os.path.join(_REPO_ROOT, 'routes', 'games_media.py')).read()
         assert "'..' in new_filename" in src
         assert 'invalid_chars' in src
