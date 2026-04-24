@@ -30,7 +30,7 @@ _METADATA_KEYS = [
     'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating',
     'boxart', 'boxart_3d', 'screenshots', 'fanart', 'video', 'manual',
     'franchise', 'similar_games', 'playtime_estimate',
-    'perspective', 'themes', 'alternate_titles',
+    'perspective', 'alternate_titles',
     'critic_score', 'critic_score_count', 'user_score', 'user_score_count',
     'controller_support', 'save_type', 'campaign', 'other_platforms',
     'edition', 'region', 'game_structure', 'dimension',
@@ -185,7 +185,6 @@ class TestApplyIgdb:
                 'similar_games': 'Destiny, Titanfall',
                 'playtime_estimate': 10,
                 'perspective': 'First-person',
-                'themes': 'Sci-fi',
                 'critic_score': 97.5,
                 'critic_score_count': 120,
                 'user_score': 91.0,
@@ -197,7 +196,6 @@ class TestApplyIgdb:
         assert meta['similar_games'] == 'Destiny, Titanfall'
         assert meta['playtime_estimate'] == 10
         assert meta['perspective'] == 'First-person'
-        assert meta['themes'] == 'Sci-fi'
         assert meta['critic_score'] == 97.5
         assert meta['critic_score_count'] == 120
         assert meta['user_score'] == 91.0

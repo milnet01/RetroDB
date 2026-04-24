@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 
 from flask import Blueprint
 
+from services.analytics import invalidate_analytics_cache
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import editor_required
 from services.database import query, execute
@@ -237,6 +238,7 @@ def api_game_ai_fill(game_id):
         if all_updates:
             all_values.append(game_id)
             execute(f"UPDATE games SET {', '.join(all_updates)} WHERE id = ?", tuple(all_values))
+            invalidate_analytics_cache()
 
             verify = query("SELECT esrb_rating, edition FROM games WHERE id = ?", (game_id,), one=True)
             if verify:

@@ -7,6 +7,7 @@
 from flask import Blueprint, jsonify
 import logging
 
+from services.analytics import invalidate_analytics_cache
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required, admin_required
 from services.database import query, execute
@@ -171,6 +172,7 @@ def api_clear_ra_data_system(system_id):
         DELETE FROM game_achievement_progress WHERE game_id IN ({placeholders})
     """, game_ids)
 
+    invalidate_analytics_cache()
     return success(
         message=f'Cleared RA data for {len(games)} games',
         cleared=len(games),
@@ -191,6 +193,7 @@ def api_clear_ra_data_all():
     # Clear all progress data
     execute("DELETE FROM game_achievement_progress")
 
+    invalidate_analytics_cache()
     return success(
         message=f'Cleared RA data for {count} games',
         cleared=count,

@@ -26,7 +26,7 @@ from scraper.scrape_esde import (
 )
 from scraper.scrape_thegamesdb import (
     fetch_game_details as fetch_tgdb_details,
-    download_image as download_tgdb_image
+    _download_tgdb_image as download_tgdb_image,
 )
 from scraper.scrape_igdb import (
     fetch_game_details as fetch_igdb_details,
@@ -336,11 +336,6 @@ def fetch_igdb_extended(game_id):
             if game.get('player_perspectives'):
                 perspectives = [p.get('name', '') for p in game['player_perspectives'] if p.get('name')]
 
-            # Process themes
-            themes = []
-            if game.get('themes'):
-                themes = [t.get('name', '') for t in game['themes'] if t.get('name')]
-
             game['_extended'] = {
                 'franchise': franchise,
                 'similar_games': ', '.join(similar) if similar else None,
@@ -350,7 +345,6 @@ def fetch_igdb_extended(game_id):
                 'user_score': user_score,
                 'user_score_count': user_score_count,
                 'perspective': ', '.join(perspectives) if perspectives else None,
-                'themes': ', '.join(themes) if themes else None,
             }
             
             logger.info(f"IGDB extended details fetched for game ID: {game_id}")
@@ -1188,35 +1182,27 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         import json
         from datetime import datetime
         
-        # Check if scrape_history column exists (might be missing in older databases)
-        try:
-            c.execute("SELECT scrape_history FROM games WHERE id = ? LIMIT 1", (db_game_id,))
-            row = c.fetchone()
-            existing_history = []
-            if row and row[0]:
-                try:
-                    existing_history = json.loads(row[0])
-                except (ValueError, TypeError):
-                    existing_history = []
-            
-            # Create new history entry
-            history_entry = {
-                'timestamp': datetime.now().isoformat(),
-                'primary_source': primary_source,
-                'sources_used': result['sources_used'],
-                'fields_filled': result['filled_fields'],
-                'fields_missing': [k for k, v in metadata.items() if not v],
-                'scrape_mode': 'full_rescrape' if force_overwrite else 'fill_missing'
-            }
-            
-            # Append to history
-            existing_history.append(history_entry)
-            scrape_history_json = json.dumps(existing_history)
-            has_scrape_history_column = True
-        except Exception as e:
-            logger.warning(f"scrape_history column may not exist: {e}")
-            scrape_history_json = None
-            has_scrape_history_column = False
+        # `scrape_history` is part of the baseline games schema (migration 001),
+        # so it is always present on any DB that reached this code path.
+        c.execute("SELECT scrape_history FROM games WHERE id = ? LIMIT 1", (db_game_id,))
+        row = c.fetchone()
+        existing_history = []
+        if row and row[0]:
+            try:
+                existing_history = json.loads(row[0])
+            except (ValueError, TypeError):
+                existing_history = []
+
+        history_entry = {
+            'timestamp': datetime.now().isoformat(),
+            'primary_source': primary_source,
+            'sources_used': result['sources_used'],
+            'fields_filled': result['filled_fields'],
+            'fields_missing': [k for k, v in metadata.items() if not v],
+            'scrape_mode': 'full_rescrape' if force_overwrite else 'fill_missing'
+        }
+        existing_history.append(history_entry)
+        scrape_history_json = json.dumps(existing_history)
         
         # =============================================
         # NORMALIZE VALUES BEFORE SAVE
@@ -1281,187 +1267,99 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 logger.warning(f"Failed to JSON-encode alternate_titles: {_e}")
                 alt_titles_json = None
 
-        # Try with scrape_history column first
-        try:
-            c.execute("""
-                UPDATE games SET
-                    title = COALESCE(?, title),
-                    sort_title = COALESCE(?, sort_title),
-                    publisher = COALESCE(?, publisher),
-                    developer = COALESCE(?, developer),
-                    release_date = COALESCE(?, release_date),
-                    genre = COALESCE(?, genre),
-                    description = COALESCE(?, description),
-                    players = COALESCE(?, players),
-                    modes = COALESCE(?, modes),
-                    esrb_rating = COALESCE(?, esrb_rating),
-                    pegi_rating = COALESCE(?, pegi_rating),
-                    cero_rating = COALESCE(?, cero_rating),
-                    usk_rating = COALESCE(?, usk_rating),
-                    acb_rating = COALESCE(?, acb_rating),
-                    fpb_rating = COALESCE(?, fpb_rating),
-                    grac_rating = COALESCE(?, grac_rating),
-                    classind_rating = COALESCE(?, classind_rating),
-                    boxart = COALESCE(?, boxart),
-                    boxart_3d = COALESCE(?, boxart_3d),
-                    screenshots = COALESCE(?, screenshots),
-                    fanart = COALESCE(?, fanart),
-                    video = COALESCE(?, video),
-                    manual = COALESCE(?, manual),
-                    region = COALESCE(?, region),
-                    franchise = COALESCE(?, franchise),
-                    similar_games = COALESCE(?, similar_games),
-                    playtime_estimate = COALESCE(?, playtime_estimate),
-                    controller_support = COALESCE(?, controller_support),
-                    save_type = COALESCE(?, save_type),
-                    game_structure = COALESCE(?, game_structure),
-                    perspective = COALESCE(?, perspective),
-                    dimension = COALESCE(?, dimension),
-                    edition = COALESCE(?, edition),
-                    campaign = COALESCE(?, campaign),
-                    other_platforms = COALESCE(?, other_platforms),
-                    critic_score = COALESCE(?, critic_score),
-                    critic_score_count = COALESCE(?, critic_score_count),
-                    user_score = COALESCE(?, user_score),
-                    user_score_count = COALESCE(?, user_score_count),
-                    alternate_titles = COALESCE(?, alternate_titles),
-                    scrape_history = ?,
-                    scraped = 1
-                WHERE id = ?
-            """, (
-                metadata['title'],
-                metadata.get('sort_title'),
-                metadata['publisher'],
-                metadata['developer'],
-                metadata['release_date'],
-                metadata['genre'],
-                metadata['description'],
-                metadata['players'],
-                metadata['modes'],
-                metadata['esrb_rating'],
-                metadata['pegi_rating'],
-                metadata.get('cero_rating'),
-                metadata.get('usk_rating'),
-                metadata.get('acb_rating'),
-                metadata.get('fpb_rating'),
-                metadata.get('grac_rating'),
-                metadata.get('classind_rating'),
-                metadata['boxart'],
-                metadata['boxart_3d'],
-                metadata['screenshots'],
-                metadata['fanart'],
-                metadata['video'],
-                metadata['manual'],
-                metadata['region'],
-                metadata['franchise'],
-                metadata['similar_games'],
-                metadata['playtime_estimate'],
-                metadata['controller_support'],
-                metadata['save_type'],
-                metadata.get('game_structure'),
-                metadata.get('perspective'),
-                metadata.get('dimension'),
-                metadata.get('edition'),
-                metadata.get('campaign'),
-                metadata.get('other_platforms'),
-                metadata.get('critic_score'),
-                metadata.get('critic_score_count'),
-                metadata.get('user_score'),
-                metadata.get('user_score_count'),
-                alt_titles_json,
-                scrape_history_json,
-                db_game_id
-            ))
-        except Exception as e:
-            # scrape_history column might not exist, try without it
-            logger.warning(f"Update with scrape_history failed, retrying without: {e}")
-            c.execute("""
-                UPDATE games SET
-                    title = COALESCE(?, title),
-                    sort_title = COALESCE(?, sort_title),
-                    publisher = COALESCE(?, publisher),
-                    developer = COALESCE(?, developer),
-                    release_date = COALESCE(?, release_date),
-                    genre = COALESCE(?, genre),
-                    description = COALESCE(?, description),
-                    players = COALESCE(?, players),
-                    modes = COALESCE(?, modes),
-                    esrb_rating = COALESCE(?, esrb_rating),
-                    pegi_rating = COALESCE(?, pegi_rating),
-                    cero_rating = COALESCE(?, cero_rating),
-                    usk_rating = COALESCE(?, usk_rating),
-                    acb_rating = COALESCE(?, acb_rating),
-                    fpb_rating = COALESCE(?, fpb_rating),
-                    grac_rating = COALESCE(?, grac_rating),
-                    classind_rating = COALESCE(?, classind_rating),
-                    boxart = COALESCE(?, boxart),
-                    boxart_3d = COALESCE(?, boxart_3d),
-                    screenshots = COALESCE(?, screenshots),
-                    fanart = COALESCE(?, fanart),
-                    video = COALESCE(?, video),
-                    manual = COALESCE(?, manual),
-                    region = COALESCE(?, region),
-                    franchise = COALESCE(?, franchise),
-                    similar_games = COALESCE(?, similar_games),
-                    playtime_estimate = COALESCE(?, playtime_estimate),
-                    controller_support = COALESCE(?, controller_support),
-                    save_type = COALESCE(?, save_type),
-                    game_structure = COALESCE(?, game_structure),
-                    perspective = COALESCE(?, perspective),
-                    dimension = COALESCE(?, dimension),
-                    edition = COALESCE(?, edition),
-                    campaign = COALESCE(?, campaign),
-                    other_platforms = COALESCE(?, other_platforms),
-                    critic_score = COALESCE(?, critic_score),
-                    critic_score_count = COALESCE(?, critic_score_count),
-                    user_score = COALESCE(?, user_score),
-                    user_score_count = COALESCE(?, user_score_count),
-                    alternate_titles = COALESCE(?, alternate_titles),
-                    scraped = 1
-                WHERE id = ?
-            """, (
-                metadata['title'],
-                metadata.get('sort_title'),
-                metadata['publisher'],
-                metadata['developer'],
-                metadata['release_date'],
-                metadata['genre'],
-                metadata['description'],
-                metadata['players'],
-                metadata['modes'],
-                metadata['esrb_rating'],
-                metadata['pegi_rating'],
-                metadata.get('cero_rating'),
-                metadata.get('usk_rating'),
-                metadata.get('acb_rating'),
-                metadata.get('fpb_rating'),
-                metadata.get('grac_rating'),
-                metadata.get('classind_rating'),
-                metadata['boxart'],
-                metadata['boxart_3d'],
-                metadata['screenshots'],
-                metadata['fanart'],
-                metadata['video'],
-                metadata['manual'],
-                metadata['region'],
-                metadata['franchise'],
-                metadata['similar_games'],
-                metadata['playtime_estimate'],
-                metadata['controller_support'],
-                metadata['save_type'],
-                metadata.get('game_structure'),
-                metadata.get('perspective'),
-                metadata.get('dimension'),
-                metadata.get('edition'),
-                metadata.get('campaign'),
-                metadata.get('other_platforms'),
-                metadata.get('critic_score'),
-                metadata.get('critic_score_count'),
-                metadata.get('user_score'),
-                metadata.get('user_score_count'),
-                alt_titles_json,
-                db_game_id
-            ))
+        # Fill-only writes across the full metadata dict. Do NOT wrap this in a
+        # try/except fallback — a failure here means the metadata dict and the
+        # UPDATE bindings have diverged (new field in merger, no column), and
+        # the scraper must fail loudly so the drift is caught in review.
+        c.execute("""
+            UPDATE games SET
+                title = COALESCE(?, title),
+                sort_title = COALESCE(?, sort_title),
+                publisher = COALESCE(?, publisher),
+                developer = COALESCE(?, developer),
+                release_date = COALESCE(?, release_date),
+                genre = COALESCE(?, genre),
+                description = COALESCE(?, description),
+                players = COALESCE(?, players),
+                modes = COALESCE(?, modes),
+                esrb_rating = COALESCE(?, esrb_rating),
+                pegi_rating = COALESCE(?, pegi_rating),
+                cero_rating = COALESCE(?, cero_rating),
+                usk_rating = COALESCE(?, usk_rating),
+                acb_rating = COALESCE(?, acb_rating),
+                fpb_rating = COALESCE(?, fpb_rating),
+                grac_rating = COALESCE(?, grac_rating),
+                classind_rating = COALESCE(?, classind_rating),
+                boxart = COALESCE(?, boxart),
+                boxart_3d = COALESCE(?, boxart_3d),
+                screenshots = COALESCE(?, screenshots),
+                fanart = COALESCE(?, fanart),
+                video = COALESCE(?, video),
+                manual = COALESCE(?, manual),
+                region = COALESCE(?, region),
+                franchise = COALESCE(?, franchise),
+                similar_games = COALESCE(?, similar_games),
+                playtime_estimate = COALESCE(?, playtime_estimate),
+                controller_support = COALESCE(?, controller_support),
+                save_type = COALESCE(?, save_type),
+                game_structure = COALESCE(?, game_structure),
+                perspective = COALESCE(?, perspective),
+                dimension = COALESCE(?, dimension),
+                edition = COALESCE(?, edition),
+                campaign = COALESCE(?, campaign),
+                other_platforms = COALESCE(?, other_platforms),
+                critic_score = COALESCE(?, critic_score),
+                critic_score_count = COALESCE(?, critic_score_count),
+                user_score = COALESCE(?, user_score),
+                user_score_count = COALESCE(?, user_score_count),
+                alternate_titles = COALESCE(?, alternate_titles),
+                scrape_history = ?,
+                scraped = 1
+            WHERE id = ?
+        """, (
+            metadata['title'],
+            metadata.get('sort_title'),
+            metadata['publisher'],
+            metadata['developer'],
+            metadata['release_date'],
+            metadata['genre'],
+            metadata['description'],
+            metadata['players'],
+            metadata['modes'],
+            metadata['esrb_rating'],
+            metadata['pegi_rating'],
+            metadata.get('cero_rating'),
+            metadata.get('usk_rating'),
+            metadata.get('acb_rating'),
+            metadata.get('fpb_rating'),
+            metadata.get('grac_rating'),
+            metadata.get('classind_rating'),
+            metadata['boxart'],
+            metadata['boxart_3d'],
+            metadata['screenshots'],
+            metadata['fanart'],
+            metadata['video'],
+            metadata['manual'],
+            metadata['region'],
+            metadata['franchise'],
+            metadata['similar_games'],
+            metadata['playtime_estimate'],
+            metadata['controller_support'],
+            metadata['save_type'],
+            metadata.get('game_structure'),
+            metadata.get('perspective'),
+            metadata.get('dimension'),
+            metadata.get('edition'),
+            metadata.get('campaign'),
+            metadata.get('other_platforms'),
+            metadata.get('critic_score'),
+            metadata.get('critic_score_count'),
+            metadata.get('user_score'),
+            metadata.get('user_score_count'),
+            alt_titles_json,
+            scrape_history_json,
+            db_game_id
+        ))
         
         conn.commit()
         

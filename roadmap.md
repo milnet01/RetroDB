@@ -3074,6 +3074,1285 @@ See Pass 13.3 — no duplicate entry.
 
 ---
 
+## Pass 30 — Correctness bugfixes (2026-04-24 multi-agent review)
+
+> **Land first.**  Real runtime bugs, silent data issues, or broken-as-
+> shipped features surfaced by the second 14-subsystem sweep.  Nearly all
+> are one-to-few-line fixes with no architectural dependencies.
+
+### 30.1 Fresh-install migration ordering for owner_id backfill (CRITICAL, S)
+
+- **Target**: `app.py:1391-1392`, `services/migrations/scripts/005_collections_owner_id.py:57-64`, `006_per_user_platform_tokens.py:76-77`.
+- **Why**: `init_database()` runs migrations 005/006 **before**
+  `ensure_user_tables()`.  On upgrade paths where `users` doesn't yet
+  exist the migrations skip the `owner_id` backfill, stamp
+  `user_version=6`, then `ensure_user_tables()` creates the admin row —
+  the backfill never re-runs.  Any pre-Pass-27 tags/lists/wishlist
+  rows are left with `owner_id = NULL` and disappear from the
+  owner-scoped queries introduced in Pass 27.
+- **Plan**: swap the call order so `ensure_user_tables()` runs before
+  `init_database()`, OR move the ownership backfill into
+  `ensure_user_tables()` once the admin id is known.
+- **Source**: 2026-04-24 audit, Database & schema C1.
+- **Status**: done — v2.98.1 (Pass 30.1). Swapped call order in `app.py` so
+  `ensure_user_tables()` runs before `init_database()`; added idempotent
+  `_backfill_null_owner_ids()` helper that runs every startup as self-heal
+  for DBs already bitten.
+
+### 30.2 `hybrid_scraper` `scrape_history` fallback UPDATE swallows real errors (CRITICAL, S)
+
+- **Target**: `scraper/hybrid_scraper.py:1375-1377` (and fallback at :1378-1464).
+- **Why**: `except Exception as e: ...` catches any UPDATE failure (typo
+  in a column, type mismatch, trigger error, bad rating) and retries
+  without `scrape_history`, then commits + `result['success'] = True`.
+  Data may be half-written and the user sees "success."  The
+  schema-presence probe at :1193-1219 made the fallback redundant for
+  its stated purpose.
+- **Plan**: cheap `PRAGMA table_info(games)` probe at module import to
+  verify `scrape_history` exists; drop the fallback UPDATE.  Make the
+  save fail loudly when metadata dict ↔ UPDATE bindings diverge.
+- **Source**: 2026-04-24 audit, Scraper orchestration C1.
+- **Status**: done — v2.98.1 (Pass 30.2). Dropped both the fallback UPDATE
+  and the defensive schema probe; `scrape_history` column has been in the
+  baseline schema since migration 001 so it is always present.
+
+### 30.3 IGDB `themes` written to metadata dict but no DB column (HIGH, S)
+
+- **Target**: `scraper/hybrid_scraper.py:352-353`, `scraper/metadata_merger.py:438-440`.
+- **Why**: IGDB extended fetch emits `themes`, merger writes
+  `metadata['themes']`, `result['filled_fields']` records it, user sees
+  "theme (IGDB)" toast — but the `metadata = {...}` dict at
+  `hybrid_scraper.py:537-577` doesn't list it and neither UPDATE binds
+  a `themes` column.  Value silently dropped.
+- **Plan**: either add a `themes` column + migration + UPDATE binding,
+  or remove the merger/extended-fetch code path.
+- **Source**: 2026-04-24 audit, Scraper orchestration H4.
+- **Status**: done — v2.98.1 (Pass 30.3). Removed the `themes` key from
+  the IGDB extended dict in `hybrid_scraper` and the corresponding merger
+  branch in `metadata_merger.apply_igdb_to_metadata`. Left `themes.name`
+  in the IGDB search query — harmless unused field, schema support if we
+  ever add the column.
+
+### 30.4 IGDB + TGDB `apply_metadata_to_game` bare writes violate fill-only (CRITICAL, S)
+
+- **Target**: `scraper/scrape_igdb.py:563-586`, `scraper/scrape_thegamesdb.py:927-953`.
+- **Why**: `publisher = ?, developer = ?, release_date = ?, genre = ?,
+  rating = ?, esrb_rating = ?, pegi_rating = ?, players = ?, modes = ?,
+  description = ?, boxart = ?` are bare assignments, not COALESCE.
+  When IGDB/TGDB is the primary and returns empty for a field, the
+  existing scraped or curated value is wiped.  Only
+  `scrape_esde.apply_esde_metadata` (`:1121-1137`) uses the correct
+  COALESCE pattern.
+- **Plan**: wrap every `?` in `COALESCE(?, column)` matching the ES-DE
+  pattern.  Write a single-statement test that verifies prior
+  publisher/developer/genre survive an empty IGDB response.
+- **Source**: 2026-04-24 audit, Per-source scrapers C1.
+- **Status**: done — v2.98.1 (Pass 30.4). Wrapped every binding in
+  `COALESCE(?, column)` matching the ES-DE pattern. TGDB's
+  `str(None)[:255]` stringification bug is fixed via a local `_trunc`
+  helper that returns `None` for empty values. New
+  `tests/test_scrape_fill_only.py` pins the preservation behaviour.
+
+### 30.5 Dashboard "Resume" 400s for three job types (CRITICAL, S)
+
+- **Target**: `app.py:1081-1092`, `services/jobs/base.py:384-414`, `services/jobs/hltb_bulk.py`, `services/jobs/alt_titles_backfill.py`, `services/jobs/image_resize.py`.
+- **Why**: `mark_jobs_interrupted` flips `running`/`queued` rows to
+  `interrupted` for all job types, but `hltb_bulk`, `alt_titles_backfill`,
+  and `image_resize` have no `resume_from_params` handler.  The
+  dashboard still renders a "Resume" button for their interrupted rows,
+  which then 400s with `No handler for job type`.
+- **Plan**: either (a) add `resume_from_params` to the three types, or
+  (b) gate `action_label='Dismiss'` in `app.py:1015-1035` for job types
+  without a handler.  Option (b) is cheaper if persistence for those
+  jobs isn't load-bearing.
+- **Source**: 2026-04-24 audit, Background jobs C1.
+- **Status**: done — v2.98.1 (Pass 30.5). Option (b) — added
+  `_RESUMABLE_JOB_TYPES` constant in `app.py`; dashboard loop sets
+  `can_resume` per job; template conditionally hides the Resume button
+  for jobs without a handler (Dismiss stays). `resumeAllRecoverableJobs()`
+  filters by `data-can-resume="true"`. Descriptions for `hltb_bulk` and
+  `alt_titles_backfill` are now human-readable.
+
+### 30.6 SIGTERM writes `status='cancelled'`; rows invisible to recovery banner (HIGH, S)
+
+- **Target**: `app.py:1418-1426`, `services/jobs/base.py:64-69`, terminal branches in `bulk_scrape.py:952`, `ra_sync.py:362`, `psn_refresh.py:424`, etc.
+- **Why**: Pass 19.2 contract is "jobs pause on SIGTERM," but the cancel
+  flag drives every job's terminal branch to
+  `persist_job_complete(..., 'cancelled')`.  `mark_jobs_interrupted`
+  at startup only touches `running`/`queued` — cancelled rows survive,
+  so the user sees no recovery banner and in-flight progress is silently
+  dropped.
+- **Plan**: write `status='paused'` (new state) on SIGTERM-triggered
+  cancel, OR bypass `persist_job_complete` so rows stay `running` long
+  enough for the startup sweep to mark them `interrupted`.  Add a
+  startup log line counting how many rows moved to `interrupted`.
+- **Source**: 2026-04-24 audit, Background jobs H2.
+- **Status**: done — v2.98.1 (Pass 30.6). New `resolve_terminal_status(cancelled)`
+  helper in `services/jobs/base.py` returns `'interrupted'` when
+  `shutdown_requested.is_set()`, `'cancelled'` on user-triggered cancel,
+  `'completed'` otherwise. All 9 terminal branches (bulk_scrape, ra_sync,
+  ra_refresh, psn_refresh, platform_sync × 2, alt_titles_backfill,
+  hltb_bulk, museum) route through it. Startup "marked N interrupted"
+  log line was already present (app.py:1404).
+
+### 30.7 Naive `datetime.now()` in bulk_scrape vs UTC elsewhere (MEDIUM, S)
+
+- **Target**: `services/jobs/bulk_scrape.py:102, 810`.
+- **Why**: `last_bulk_scraped` is written with naive local-time
+  `datetime.now().isoformat()` and read back the same way.  Other jobs
+  (`ra_sync.py:293`, `platform_sync.py:382`) use
+  `datetime.now(timezone.utc).isoformat()`.  DST and timezone changes
+  skew the 24h cooldown; cross-timezone host migration TypeErrors on
+  aware-vs-naive subtraction.
+- **Plan**: standardize on `datetime.now(timezone.utc)` everywhere;
+  parse stored strings with `datetime.fromisoformat(...)` and treat
+  tz-naive strings as UTC (backward-compat shim).
+- **Source**: 2026-04-24 audit, Background jobs H5.
+- **Status**: done — v2.98.1 (Pass 30.7). Write side now uses
+  `datetime.now(timezone.utc).isoformat()`; read side treats tz-naive
+  pre-Pass-30 strings as UTC. The `start_time` in-memory timestamps
+  elsewhere in bulk_scrape stay naive — they're only used for run-local
+  elapsed-time display and don't cross process boundaries.
+
+### 30.8 `handle_internal_error` logs without `exc_info=True` (HIGH, S)
+
+- **Target**: `app.py:433`.
+- **Why**: the 500 handler is the only thing catching unhandled
+  exceptions escaping non-API views, and it logs a 1-line `Internal
+  server error: <str(e)>` with no traceback.  Operator debugging a
+  white-page 500 has nothing to go on.
+- **Plan**: add `exc_info=True`, or route through `handle_api_errors`
+  for consistency.  One-line fix.
+- **Source**: 2026-04-24 audit, Core app H1.
+- **Status**: done — v2.98.1 (Pass 30.8). Added `exc_info=True` to the
+  500 handler's `logger.error(...)`.
+
+### 30.9 Analytics cache invalidation gaps (HIGH, S)
+
+- **Target**: `services/analytics.py:636` (`invalidate_analytics_cache`), callers in `routes/games_ai.py`, `routes/ra_sync.py`, `routes/clz_import.py`, `routes/maintenance.py` (scan), `routes/trophies.py`, `routes/achievements.py`, `routes/collector_trophies.py`.
+- **Why**: `/analytics` caches 20 queries for 5 minutes.  Invalidation
+  is wired from only 4 call sites; AI fill, CLZ import, RA sync,
+  maintenance scan, and trophy/achievement mutations all leave the
+  cache stale.  User runs import → goes to `/analytics` → charts show
+  pre-import state for up to 5 minutes with no way to force refresh.
+- **Plan**: call `invalidate_analytics_cache()` at each mutation site.
+  Stretch goal: invalidate from the `execute()` wrapper when a table in
+  `{games, systems, user_settings, scrape_history, scraped_games}` is
+  touched.
+- **Source**: 2026-04-24 audit, Core app H3.
+- **Status**: done — v2.98.1 (Pass 30.9). Wired `invalidate_analytics_cache()`
+  into the games-ai AI-fill endpoint, CLZ import, ROM scan, clean-missing,
+  clear-clz-imports, clear-scraped-data, achievements RA lookup, and both
+  ra_sync clear endpoints. Verified analytics.py reads only from `games`
+  and `systems` (and joins thereof), so trophy/PSN/collector mutations are
+  out of scope — they don't touch the tables analytics queries. Stretch
+  goal (invalidate from the `execute()` wrapper) deferred — avoids a
+  circular import with `services.analytics → services.database`.
+
+### 30.10 TGDB `download_image` signature collides with `base_scraper.download_image` (MEDIUM, S)
+
+- **Target**: `scraper/scrape_thegamesdb.py:972` (local `download_image`) vs `scraper/base_scraper.py` (imported `download_image`).
+- **Why**: same name, incompatible signatures: `(db_game_id, url,
+  image_type, suffix)` vs `(url, dest_path, timeout=15)`.  Latent
+  footgun — a future `from scraper.base_scraper import download_image`
+  refactor in TGDB would silently call the wrong helper.
+- **Plan**: rename the TGDB helper to `_download_tgdb_image`.
+- **Source**: 2026-04-24 audit, Per-source scrapers C2.
+- **Status**: done — v2.98.1 (Pass 30.10). Renamed the local helper to
+  `_download_tgdb_image`. Updated the three call sites plus the two
+  `import ... as download_tgdb_image` aliases in `hybrid_scraper` and
+  `metadata_merger`, and the fill-only test fixture.
+
+---
+
+## Pass 31 — Multi-user data ownership round 2
+
+> **Follows Pass 27.**  The first round scoped `tags`, `lists`,
+> `wishlist`, and platform tokens.  The 2026-04-24 sweep surfaced a
+> second tier of tables that are keyed without `user_id` — anyone's
+> sync overwrites anyone else's data, and multiple routes that mutate
+> shared rows carry only `@login_required`.
+
+### 31.1 Add `user_id` to `psn_games` + `psn_trophies` (HIGH-in-multi-user, M)
+
+- **Target**: `001_baseline.py:448-464` area; affects `routes/trophies.py:1210, 1565, 1600, 1631, 1659, 1833`, `routes/platform_import.py:784-848`.
+- **Why**: `psn_games` and `psn_trophies` are keyed on `npwr_id` alone;
+  two connected PSN users share one row per game.  Any user's sync
+  overwrites another user's earned counts with `ON CONFLICT(npwr_id)
+  DO UPDATE SET earned_platinum = excluded.earned_platinum, …`.
+  `api_psn_fetch_library` returns every row of `psn_games` regardless
+  of caller.  OWASP A01.
+- **Plan**: migration adding `user_id INTEGER NOT NULL REFERENCES users(id)`
+  with backfill from `psn_sync_status` (Pass 27.2); change UNIQUE to
+  `(npwr_id, user_id)`; owner-scope every SELECT / UPDATE / DELETE; add
+  `_owner_clause`-style helper specific to PSN routes.
+- **Source**: 2026-04-24 audit, Collections/achievements/trophies C1.
+- **Status**: todo
+
+### 31.2 Add `user_id` to `game_achievement_progress` + `steam_achievements` + `xbox_achievements` (HIGH-in-multi-user, M)
+
+- **Target**: `services/migrations/scripts/001_baseline.py:146-158, 448, 464`; affects `routes/platform_import.py:300-355`, `routes/xbox_achievements.py:110-175`, `routes/steam_achievements.py:95-158`, `routes/ra_sync.py:183`.
+- **Why**: three tables, all keyed on `(game_id, apiname)` or `game_id`.
+  User B's Steam/Xbox/RA sync overwrites User A's completion percentage.
+  `/api/refresh-retroachievements` wipes all users' achievement progress
+  with a single global DELETE.  Pass 27 scoped this out ("Steam
+  integration uses an install-wide API key + Steam ID") but the user-
+  scoping for achievement data remains a gap.
+- **Plan**: migration adding `user_id` + composite unique key; scope
+  every upsert and landing-page query; OR document the "shared library,
+  shared progress" contract explicitly in CLAUDE.md.
+- **Source**: 2026-04-24 audit, Platform imports C2 + Collections H6.
+- **Status**: todo
+
+### 31.3 Add `user_id` to `collector_trophies` (MEDIUM-in-multi-user, S)
+
+- **Target**: `routes/collector_trophies.py:228, 244, 559`.
+- **Why**: table is global; stats aggregate across every user's games /
+  wishlist / psn_games; any editor hitting refresh clobbers the shared
+  row; user B sees user A's trophies and rank.
+- **Plan**: migration adding `user_id` + unique per user; scope
+  `_gather_collection_stats()` to the caller.
+- **Source**: 2026-04-24 audit, Collections/achievements/trophies H7.
+- **Status**: todo
+
+### 31.4 Scope Steam sync credentials per user (HIGH-in-multi-user, M)
+
+- **Target**: `services/jobs/platform_sync.py:20-33, 201-212, 270`; `routes/platform_import.py:289-295`; `routes/steam_achievements.py:169-175`.
+- **Why**: Pass 27.3 closed Xbox but left Steam reading
+  `data/scraper_settings.json` (install-wide API key + Steam ID).  Any
+  logged-in user — including `viewer` — can launch a sync using the
+  admin's credentials.
+- **Plan**: move Steam API key + Steam ID to `user_settings`; require
+  `user_id` in `SteamSyncJob.start()`; role-gate the launcher routes
+  (`@editor_required`).
+- **Source**: 2026-04-24 audit, Platform imports C1 + Background jobs H4.
+- **Status**: todo
+
+### 31.5 Scope PSN refresh credentials per user (HIGH-in-multi-user, S)
+
+- **Target**: `services/jobs/psn_refresh.py:163-168`.
+- **Why**: `PSNRefreshJob.resume_from_params` does `SELECT psn_npsso
+  FROM user_settings WHERE psn_npsso IS NOT NULL LIMIT 1`.  In multi-
+  user mode this resumes user A's refresh using user B's NPSSO.
+- **Plan**: persist `user_id` in job params; look up the caller's
+  NPSSO, refuse resume when the originating user is gone.
+- **Source**: 2026-04-24 audit, Background jobs L2.
+- **Status**: todo
+
+### 31.6 Owner-scope + role-gate PSN mutation endpoints (HIGH-in-multi-user, S)
+
+- **Target**: `routes/trophies.py:1565 api_psn_link_game`, `:1631 api_psn_save_hltb`, `:1659 api_psn_edit_group_name`.
+- **Why**: `@login_required` only; update `psn_games`/`psn_trophies`
+  rows by `npwr_id` with no ownership filter.  User B can relink User
+  A's PSN game to an arbitrary `games.id`, corrupt HLTB links, rename
+  DLC groups.
+- **Plan**: `@editor_required` + owner filter on every PSN-mutating
+  SQL statement (depends on 31.1).
+- **Source**: 2026-04-24 audit, Collections/achievements/trophies C3.
+- **Status**: todo
+
+### 31.7 Role-gate CLZ PDF import (MEDIUM-in-multi-user, S)
+
+- **Target**: `routes/clz_import.py:522 api_clz_import`, `:438-455` auto-system creation.
+- **Why**: `@login_required` lets any user upload a 50 MB PDF, trigger
+  scrape-adjacent workflow, auto-create new `systems` rows, and mass-
+  insert `games` rows.  Library mutation should be editor or admin
+  only (Pass 24.5 intent).
+- **Plan**: change decorator to `@editor_required`; restrict system
+  auto-creation to admin (`@admin_required` for that branch).
+- **Source**: 2026-04-24 audit, Collections/achievements/trophies C2.
+- **Status**: todo
+
+### 31.8 Gate `POST /game/<id>` write actions behind `@editor_required` (HIGH-in-multi-user, S)
+
+- **Target**: `routes/games.py:301-302` dispatching `action=edit_metadata` (:423), `action=apply` (:348), `action=reset` (:586).
+- **Why**: the sibling JSON `/api/game/<id>/edit` at `:879` correctly
+  uses `@editor_required`; the form-POST path lets viewer role mutate
+  any game by submitting `multipart/form-data`.  OWASP A01 +
+  mass-assignment.
+- **Plan**: either split GET/POST into two handlers with separate
+  decorators, or gate at dispatch: `if request.method == 'POST' and
+  not has_permission('edit'): abort(403)`.  Same treatment for
+  `api_update_completion` (:1041) and `api_track_view` (:1061).
+- **Source**: 2026-04-24 audit, Game routes C1.
+- **Status**: todo
+
+### 31.9 Clear `oauth_state_xbox` across login boundary (MEDIUM-in-multi-user, S)
+
+- **Target**: `routes/platform_import.py:402, 411-471`, `routes/auth.py:98-100, 118-123`.
+- **Why**: fixed `flask_session['oauth_state_xbox']` key survives
+  logout/login transitions on many Flask configs; user A starts OAuth,
+  logs out, user B logs in on the same browser — callback runs with
+  user B's `g.user['id']` (`:468`) against a state user A created.
+  Also: two tabs doing Xbox auth for the same user interleave; second
+  overwrites first.
+- **Plan**: bind `oauth_state_xbox` server-side to `(state, user_id)`;
+  clear the key in the login / logout handlers; use per-tab state
+  tokens or flash them through a query-string-scoped cache.
+- **Source**: 2026-04-24 audit, Platform imports H2.
+- **Status**: todo
+
+---
+
+## Pass 32 — Input hardening / SSRF / size caps round 2
+
+> **Follows Pass 25.**  First round plugged the big filesystem + API
+> boundaries; the 2026-04-24 sweep surfaced a second tier of
+> unvalidated paths, SSRF gates that re-resolve after checking, and
+> non-atomic destructive operations.
+
+### 32.1 `api_update_paths` must validate filesystem paths (HIGH, S)
+
+- **Target**: `routes/settings.py:387-428`.
+- **Why**: accepts arbitrary absolute paths for `rom_path`,
+  `esde_gamelists`, `esde_media`, `rpcs3_trophy` and writes them
+  verbatim.  New `rom_path` becomes the base for every
+  `os.path.join(config.ROM_PATH, …)` in reports/scan/media-cleanup —
+  `safe_path` inside those modules cannot save you if `ROM_PATH = '/'`.
+- **Plan**: validate (a) `os.path.isabs`, (b) `os.path.isdir`, (c)
+  `os.path.realpath == path` (reject symlinks escaping the expected
+  tree), (d) not in `{'/', '/etc', '/boot', '/root'}`, (e) not equal
+  to the user's home top-level.
+- **Source**: 2026-04-24 audit, Maintenance/settings H1.
+- **Status**: todo
+
+### 32.2 Per-key validators on `api_update_all_settings` (HIGH, S)
+
+- **Target**: `routes/settings.py:446-473`.
+- **Why**: checks only that the *key* exists in `DEFAULT_SETTINGS`; the
+  *value* is trusted.  Admin can persist `debug_mode: true`, set
+  `rom_path` bypassing H1's check, or replace a nested dict with a
+  primitive and break `log_manager.setup_all_logging()` next start.
+- **Plan**: per-key `_VALIDATORS` map (`rom_path: _validate_path`,
+  `server_port: _validate_port`, `debug_mode: _validate_bool`,
+  `logging: _validate_logging_dict`); reject unknown keys and malformed
+  values with 400.
+- **Source**: 2026-04-24 audit, Maintenance/settings H2.
+- **Status**: todo
+
+### 32.3 `api_restore` must close pool + delete WAL/SHM before copy (HIGH, M)
+
+- **Target**: `routes/settings.py:327-358`.
+- **Why**: `backup_database()` does the pre-restore snapshot via
+  SQLite's online backup API (correct), but the actual restore is
+  `shutil.copy2` over the live DB file while the WAL is still active
+  and other connections may hold readers.  Leftover WAL/SHM from the
+  previous run can be replayed against the restored baseline → corrupt
+  DB.
+- **Plan**: (a) set `restart_required=True` before the copy so the
+  response reaches the client, (b) close all pooled connections via
+  `get_db` teardown, (c) `os.remove` `config.DB_PATH + '-wal'` and
+  `-shm` before the copy, (d) spawn the restart from `api_restore`
+  itself rather than relying on the client.
+- **Source**: 2026-04-24 audit, Maintenance/settings H3.
+- **Status**: todo
+
+### 32.4 `clean_missing_roms` single-transaction + batched writes (HIGH, M)
+
+- **Target**: `services/game_cleanup.py:37-65`.
+- **Why**: O(N_games) round-trip `execute()` loop, each with its own
+  `get_db().commit()`.  On a 50k-row library this blocks every other
+  writer for minutes and, if interrupted mid-loop, leaves some rows
+  deleted while their `parent_game_id` children are orphaned.
+- **Plan**: single `with get_db_with_context() as conn:` block,
+  pre-compute missing IDs via one `SELECT id, rom_path FROM games` +
+  Python `os.path.exists` filter, one batched `UPDATE`/`DELETE` over
+  the full set.
+- **Source**: 2026-04-24 audit, Maintenance/settings H4.
+- **Status**: todo
+
+### 32.5 `api_rename_rom` jail destination inside ROM root (HIGH, S)
+
+- **Target**: `routes/games_media.py:73-85`.
+- **Why**: uses DB-stored `rom_path` as trust anchor; rejects `..` in
+  `new_filename` but never constrains the derived directory to the
+  configured ROM tree.  `safe_filename` is imported (`:18`) but unused.
+  If `rom_path` is ever absolute outside the ROM root (legacy import,
+  future ingestion), this becomes an arbitrary-rename primitive.
+- **Plan**: `safe_filename(new_filename)` + `os.path.commonpath` check
+  that `new_path` stays inside `config.ROM_PATH`.
+- **Source**: 2026-04-24 audit, Game routes H1.
+- **Status**: todo
+
+### 32.6 SSRF gate on `base_scraper.download_image` + media downloads (HIGH, M)
+
+- **Target**: `scraper/base_scraper.py:242-246, 253-290`, `scraper/scrape_screenscraper.py:742-788`, `scraper/metadata_merger.py` image/video call sites.
+- **Why**: Pass 25.1 added filesystem-path SSRF-equivalent guards for
+  ES-DE; network-path SSRF remains open.  An attacker-influenced
+  upstream response body (e.g. a TGDB entry whose `base_url` points at
+  `http://169.254.169.254/latest/meta-data/`) can make the server GET
+  arbitrary URLs.  Size caps from Pass 25.7 block disk exhaustion but
+  not metadata exfil / internal port scanning.
+- **Plan**: add URL validator (scheme in `{http, https}`, host not in
+  private/loopback/link-local/metadata ranges, resolved IP verified
+  before connect, redirect chain re-validated) inside
+  `base_scraper.download_image`; reuse from `download_media`.
+- **Source**: 2026-04-24 audit, Per-source scrapers H3.
+- **Status**: todo
+
+### 32.7 Museum SSRF guard — pin resolved IP against DNS rebinding (MEDIUM, S)
+
+- **Target**: `routes/museum.py:28 _is_public_https_url`, `:1064` `requests.get(safe_url, …, stream=True)`.
+- **Why**: TOCTOU — `_is_public_https_url` resolves the host once,
+  then `requests.get` resolves again.  DNS server flipping a TTL=0
+  record between the two calls lands on `127.0.0.1`.  Extends Pass
+  25.3 which assumed a single resolve was sufficient.
+- **Plan**: pin the resolved IP across both calls; connect by IP and
+  pass `Host:` header; or install a `requests` adapter that reuses the
+  vetted A record.
+- **Source**: 2026-04-24 audit, Collections/achievements/trophies H1.
+- **Status**: todo
+
+### 32.8 CLZ PDF per-cell size cap (MEDIUM, S)
+
+- **Target**: `routes/clz_import.py:287` (page ceiling, already in place per Pass 25.5) and the unbounded `cell` extraction path.
+- **Why**: page count is capped at 500 but individual cells from
+  `page.extract_tables()` are unbounded.  A crafted PDF with a 100 MB
+  text-run per cell lands a huge string in `re.sub` and then SQLite.
+- **Plan**: cap individual cell length (e.g. 4 KB) and total `games`
+  list size (e.g. 50_000 titles) before the insert loop.
+- **Source**: 2026-04-24 audit, Collections/achievements/trophies H5.
+- **Status**: todo
+
+### 32.9 Atomic image-pipeline writes + Pillow FD leak fixes (HIGH, M)
+
+- **Target**: `services/image_utils.py:587, 497, 754`, `services/jobs/image_resize.py:222, 245`, `services/game_media_service.py:141-157`.
+- **Why**: every `img.save(path, …)` and `save_upload` video branch
+  writes in-place.  Mid-write crash (OOM, I/O error, client
+  disconnect) leaves truncated files over the originals.  `Image.open`
+  without context manager leaks file descriptors on raising paths —
+  bulk job of 10k boxart can exhaust the FD table.  Upscale overwrites
+  `img` without closing; on Windows the save hits `PermissionError`.
+- **Plan**: introduce `_atomic_save(img, path, **kwargs)` using
+  `tempfile.NamedTemporaryFile(delete=False, dir=os.path.dirname(path))`
+  + `os.replace`; route all writes through it.  Use `with Image.open(...)
+  as src: src.load(); img = src.copy()` with `finally: img.close()` for
+  all decode sites.  Same atomic pattern for video upload.
+- **Source**: 2026-04-24 audit, Image pipeline H1/H2/M2.
+- **Status**: todo
+
+### 32.10 Validate format-vs-extension on image upload (HIGH, S)
+
+- **Target**: `services/game_media_service.py:108-124`, `services/image_utils.py:607` (threshold band).
+- **Why**: extension comes verbatim from `file_storage.filename`;
+  `_validate_image_bytes` verifies decode but doesn't check that the
+  decoded format matches the claimed extension.  Inside the 80-120%
+  threshold band nothing re-encodes, so PNG bytes in a `.webp` file
+  persist on disk with the wrong Content-Type.
+- **Plan**: always run `_ensure_format_matches_extension` on uploads;
+  rewrite `save_upload` to call `finalize_downloaded_image` instead of
+  `try_standardize`, OR make `try_standardize` call the full finalize
+  wrapper.
+- **Source**: 2026-04-24 audit, Image pipeline H4.
+- **Status**: todo
+
+### 32.11 Consistent `safe_path` across media helpers (HIGH, S)
+
+- **Target**: `services/game_media_service.py:58 resolve_media_path`, `:79 remove_media_file`, `services/jobs/image_resize.py:139`, compared against `services/media_cleanup.py` `_resolve_media_path`.
+- **Why**: `media_cleanup` uses `safe_path`; `game_media_service`
+  doesn't.  If a DB value ever contains `../...` (possible via scraper
+  filenames derived from URLs), `remove_media_file` happily resolves
+  and deletes outside the image root.
+- **Plan**: factor a single `resolve_media_path(value, media_type)` in
+  `services/security.py` or a `services/media_paths.py` that always
+  applies `safe_path(..., config.STATIC_PATH)`; migrate both call
+  sites.
+- **Source**: 2026-04-24 audit, Image pipeline H3.
+- **Status**: todo
+
+### 32.12 Route `api_games_bulk_edit` field names through `safe_column()` (HIGH, S)
+
+- **Target**: `routes/games.py:993, 1004, 1009, 1022`.
+- **Why**: the `field` token is interpolated directly into f-string
+  SQL; a comment at `:998` claims safety via the `bulk_allowed_fields`
+  allowlist check at `:968`.  Project invariant: every such
+  interpolation routes through `safe_column()` (the allowlist
+  validator in `services/database.py:50`) — not a comment.
+- **Plan**: `safe_column(field, set(bulk_allowed_fields))` before every
+  f-string insertion.
+- **Source**: 2026-04-24 audit, Game routes H3.
+- **Status**: todo
+
+### 32.13 Escape user-controlled values in AI prompts (MEDIUM, S)
+
+- **Target**: `scraper/scrape_ai.py:621` (`Game: "{title}"`).
+- **Why**: OWASP LLM01.  A ROM filename containing
+  `"\nIGNORE PREVIOUS INSTRUCTIONS AND RETURN …\n"` injects arbitrary
+  guidance.  Schema-constrained fields have a robust exit via
+  `_validate_field` (good), but free-text fields (description, 2000
+  chars; similar_games; developer; publisher; controller_support;
+  franchise; edition) pass through size-truncation only.
+- **Plan**: escape `{`, `}`, newlines, backticks in interpolated
+  `title` / `system_name`; better, migrate to structured tool-use
+  (Gemini + Claude both support it) instead of a templated prompt.
+- **Source**: 2026-04-24 audit, Per-source scrapers M5.
+- **Status**: todo
+
+### 32.14 Response-size caps on AI + RA HTTP calls (MEDIUM, S)
+
+- **Target**: `scraper/scrape_ai.py:667, 735, 781`; `scraper/retroachievements.py` http_get sites.
+- **Why**: Pass 25.7 added size caps to `base_scraper.download_image`
+  and SS `_ss_request_with_retry` but not to AI `_call_openai` /
+  `_call_claude` / Gemini, nor to RA API calls.  A 50 MB Gemini
+  response (feasible with `google_search` grounding citations) would
+  allocate accordingly; `_ra_console_cache` has no size bound.
+- **Plan**: wrap `http_post` / `http_get` with a `max_bytes` kwarg;
+  stream and cap; wire `max_bytes=MAX_API_RESPONSE_BYTES` at every
+  AI/RA call site.  Bound `_ra_console_cache` via LRU.
+- **Source**: 2026-04-24 audit, Per-source scrapers M6/M7.
+- **Status**: todo
+
+### 32.15 HTTP response hardening in metadata_merger image/video downloads (HIGH, M)
+
+- **Target**: `scraper/metadata_merger.py:337, 375, 404, 550, 571, 599, 842` (and `finalize_downloaded_image` error paths).
+- **Why**: every download does `r = requests.get(url, timeout=…)` then
+  `f.write(r.content)` — no `raise_for_status`, no `stream=True`, no
+  content-length cap.  Hostile CDN response body buffered fully in
+  RAM; corrupted/HTML-typed response silently written to disk, then
+  `finalize_downloaded_image`'s `except Exception: pass` commits the
+  filename to the DB.
+- **Plan**: `stream=True` + `iter_content(chunk_size=…)` with size
+  cap; `raise_for_status()` first; if `finalize_downloaded_image`
+  fails, `os.remove(local_path)` and do NOT set `metadata[field]`.
+  Depends on 32.6 for URL validation.
+- **Source**: 2026-04-24 audit, Scraper orchestration H2/H3.
+- **Status**: todo
+
+---
+
+## Pass 33 — Auth & session hardening round 2
+
+> **Follows Pass 24.**  Proxy-deployment, password-change boundaries,
+> rate-limiter correctness, and secret-redactor type handling.
+
+### 33.1 `ProxyFix` env-gated for reverse-proxy deploys (HIGH, S)
+
+- **Target**: `app.py:128-131` (reverse-proxy comment), `services/security.py:105`, `routes/auth.py:54, 304`.
+- **Why**: rate limiter keys on `request.remote_addr`.  Behind
+  nginx/Caddy, `remote_addr` is always `127.0.0.1`, so every attacker
+  shares one bucket with every legit user (self-DoS + bypass).
+  `SESSION_COOKIE_SECURE` already anticipates a proxy deploy —
+  asymmetric to not trust `X-Forwarded-For`.
+- **Plan**: wire `werkzeug.middleware.proxy_fix.ProxyFix` gated on
+  env (`RETRODB_TRUST_PROXY` or reuse `RETRODB_SECURE_COOKIES`).
+  Document trust assumptions in the deploy README.
+- **Source**: 2026-04-24 audit, Auth & security H1.
+- **Status**: todo
+
+### 33.2 `safe_filename` on `avatar` in `api_user_settings` (CRITICAL, S)
+
+- **Target**: `routes/auth.py:279-288`.
+- **Why**: `allowed_fields` includes `avatar`; value is attacker-
+  controlled and written to DB without `safe_filename`.  Avatar path
+  is reconstructed from DB at `:252` (`os.path.join(IMAGE_PATH,
+  'avatars', clean_name)`).  Attacker can `POST {"avatar":
+  "../../.secret_key"}`; any future read path inherits the traversal.
+- **Plan**: run `safe_filename(value)` on `avatar` before storing, or
+  drop `avatar` from `allowed_fields` entirely — avatar already has a
+  controlled upload route.
+- **Source**: 2026-04-24 audit, Auth & security C1.
+- **Status**: todo
+
+### 33.3 Length-check `new_password` in `api_update_user` (HIGH, S)
+
+- **Target**: `routes/auth.py:216-218`.
+- **Why**: admin can silently set a 3-char password, violating the
+  12-char floor enforced in `api_create_user` (`:170-175`) and the
+  Pass 24.4 contract.  Two-line fix.
+- **Plan**: same `if len(raw_password) < 12:` check; reject with 400.
+- **Source**: 2026-04-24 audit, Auth & security H3.
+- **Status**: todo
+
+### 33.4 Force password change after admin reset (HIGH, S)
+
+- **Target**: `routes/auth.py:216-218`.
+- **Why**: `api_create_user` sets `force_password_change=1` for the
+  default `changeme` user, but `api_update_user` silently replaces a
+  user's password without any follow-up prompt.  OWASP ASVS recommends
+  admin-reset → forced change on next login.
+- **Plan**: when admin supplies `new_password`, also set
+  `force_password_change = 1` unless a `skip_force_change` flag is
+  explicitly passed.
+- **Source**: 2026-04-24 audit, Auth & security H4.
+- **Status**: todo
+
+### 33.5 Session rotation on password change (HIGH, S)
+
+- **Target**: `routes/auth.py:320-358` (`api_change_password`, `api_force_change_password`).
+- **Why**: OWASP ASVS V3.7 — credentials-change is a session-rotation
+  boundary.  A hijacked session that changes the password keeps its
+  cookie; concurrent sessions of the same user survive.
+- **Plan**: re-run the `session.clear()` + re-set dance from
+  `api_login` after the UPDATE; return new CSRF token in the response
+  body.
+- **Source**: 2026-04-24 audit, Auth & security H5.
+- **Status**: todo
+
+### 33.6 Full `session.clear()` on logout (MEDIUM, S)
+
+- **Target**: `routes/auth.py:118-123`.
+- **Why**: logout does `session.pop('user_id')` — CSRF token,
+  `permanent` flag, `oauth_state_xbox`, and any other ambient state
+  persist into the next login.  Pair with 31.9.
+- **Plan**: replace with `session.clear()`.
+- **Source**: 2026-04-24 audit, Auth & security M3.
+- **Status**: todo
+
+### 33.7 Require Pillow for avatar upload (MEDIUM, S)
+
+- **Target**: `routes/auth.py:390-419`.
+- **Why**: upload validates filename extension, then tries Pillow
+  `Image.verify()`.  If Pillow is missing, the `ImportError` branch
+  writes the bytes to disk with only extension validation — `evil.png`
+  can be a PHP payload on a proxied deploy.
+- **Plan**: pin `Pillow>=10` in `requirements.txt` (already present —
+  verify lockfile); hard-fail with 500 if Pillow import fails; or add
+  a `python-magic` fallback.
+- **Source**: 2026-04-24 audit, Auth & security M4.
+- **Status**: todo
+
+### 33.8 Surface new CSRF token in login response body (MEDIUM, S)
+
+- **Target**: `routes/auth.py:98-100` (`session.clear()` wipes `_csrf_token`).
+- **Why**: client holds stale token after login; any POST-after-login
+  without a GET-refresh fails 403.  Works today by accident — the
+  template does `window.location = data.redirect` which triggers a
+  fresh GET, but fragile.
+- **Plan**: include the new token in the `success()` body:
+  `success(redirect=next_url, csrf_token=session['_csrf_token'])`.
+- **Source**: 2026-04-24 audit, Auth & security C2.
+- **Status**: todo
+
+### 33.9 Rate-limiter cleanup efficiency (HIGH, S)
+
+- **Target**: `services/security.py:89-95`.
+- **Why**: `_cleanup_old_entries()` iterates the entire dict on every
+  call; eviction-by-sort at the 10k cap is O(N log N) per request.
+  Successful logins do `pop(ip, None)`, fine, but the cleanup path on
+  the hot rate-limit call is still a self-DoS under load.
+- **Plan**: evict on insertion only; store entries in a TTL-bounded
+  structure (`collections.OrderedDict` + `move_to_end`) or use
+  `cachetools.TTLCache`.
+- **Source**: 2026-04-24 audit, Auth & security H2.
+- **Status**: todo
+
+### 33.10 `SecretRedactor` handles dict/bytes logger args (MEDIUM, S)
+
+- **Target**: `services/log_redactor.py:64-73`.
+- **Why**: filter only handles `isinstance(record.msg, str)` and
+  `isinstance(a, str)`.  `logger.info("tokens=%r", response.json())`
+  passes a dict; the formatter `%r`s it *after* the filter runs,
+  tokens reach the handler unredacted.  This is the exact case Pass
+  24.8 tests aimed at.
+- **Plan**: pre-render via `record.getMessage()` and replace
+  `record.msg/args` with the redacted composite; or extend the filter
+  to handle dict/bytes before dispatch.  Also: narrow the hex rule to
+  named positions (`hash=`, `sha=`, `digest=`) to stop clobbering git
+  SHAs in log output.
+- **Source**: 2026-04-24 audit, Auth & security M1/M2.
+- **Status**: todo
+
+### 33.11 Redact credentials in scraper INFO logs (HIGH, S)
+
+- **Target**: `scraper/scraper_manager.py:390`, `routes/scraper.py:422, 445-446`.
+- **Why**: `logger.info(f"ScreenScraper credentials: username={ss_username},
+  … devid={ss_devid}")` runs on every search.  `routes/scraper.py`
+  scraper-check endpoints log the raw provider response body
+  (first 300 chars) at INFO — body can include session tokens.  Pass
+  26.2 hardened API-key hygiene; these regressions sidestep it.
+- **Plan**: downgrade to DEBUG; redact username/devid via
+  `SecretRedactor`; for check endpoints log status code only.
+- **Source**: 2026-04-24 audit, Scraper orchestration H1 + Maintenance/settings M9.
+- **Status**: todo
+
+---
+
+## Pass 34 — Response envelope + observability round 2
+
+> **Follows Pass 2, Pass 17.**  The decorator migration stopped short
+> of `app.py`; analytics cache is half-wired; log-manager convenience
+> helpers are dead.
+
+### 34.1 `app.py` routes via `@handle_api_errors` + `success()` / `error()` (HIGH, M)
+
+- **Target**: `app.py:1079-1132, 1185-1262, 1359, 428-452` (handlers for `/api/jobs/resume`, `/api/jobs/dismiss`, `/api/random-game`, `/api/setup`, `/api/setup/browse-folders`, `/api/timezones`, and the 404/500/413 handlers).
+- **Why**: each hand-rolls `jsonify({'success': …, 'message'|'error': …})`.
+  Problems: (a) `'message'` vs `'error'` keys diverge from
+  `test_routes_smoke.py` shape; (b) `str(e)` leaks SQL text / column
+  names on `sqlite3.IntegrityError`; (c) routes aren't wrapped so the
+  traceback-logging guarantee from `handle_api_errors` is missing.
+- **Plan**: apply `@handle_api_errors` + call `success()` / `error()`;
+  strip `str(e)` from user-facing bodies.
+- **Source**: 2026-04-24 audit, Core app H2.
+- **Status**: todo
+
+### 34.2 `inject_config` — cache `scraper_settings.json` by mtime (MEDIUM, S)
+
+- **Target**: `app.py:683-693`.
+- **Why**: opens + parses `scraper_settings.json` on every Jinja
+  render (dashboard, library, modals, partials).  `settings_manager`
+  already mtime-caches its own JSON; scraper settings should match.
+- **Plan**: add an mtime cache on the scraper-settings lookup; reuse
+  the `settings_manager` pattern.
+- **Source**: 2026-04-24 audit, Core app M4.
+- **Status**: todo
+
+### 34.3 Delete zombie log helpers (MEDIUM, S)
+
+- **Target**: `app.py:605-646` (`log_to_category`, `system_log`); `log_manager.py:351, 356, 362, 368` (`get_scraping_log_files`, `log_scraping`, `log_rom_tools`, `log_rom_reports`).
+- **Why**: `log_to_category` + `system_log` in `app.py` have zero
+  importers; `routes/achievements.py:21` + `routes/ra_sync.py:23`
+  each re-define their own `system_log`.  The four log-manager
+  convenience helpers have zero callers.  ~40 lines of dead code each.
+- **Plan**: delete or move into `log_manager.py` as canonical; remove
+  the re-definitions in route files if they end up imported.
+- **Source**: 2026-04-24 audit, Core app M1/M2.
+- **Status**: todo
+
+### 34.4 Rate limiter view-function lookup hard-fail (MEDIUM, S)
+
+- **Target**: `app.py:225-249`.
+- **Why**: `app.view_functions.get('museum.generate_system', lambda: None)`
+  silently becomes a no-op if the endpoint is renamed.  No WARNING
+  logged — broken rate limiting on a renamed route would go unnoticed.
+- **Plan**: raise `KeyError` at import-time if endpoint missing, or
+  `logger.warning` the first resolution to the fallback lambda.
+- **Source**: 2026-04-24 audit, Core app M3.
+- **Status**: todo
+
+### 34.5 Log-rollover on UTC boundary (MEDIUM, S)
+
+- **Target**: `log_manager.py:97, 123`.
+- **Why**: uses `datetime.now()` local time; server in
+  `Europe/Berlin` rolls logs at Berlin midnight, not UTC; DST
+  transition creates same-named file twice with mtime drift.
+- **Plan**: switch to `datetime.now(timezone.utc)` or explicitly
+  document the local-time choice.  Must land alongside 30.7.
+- **Source**: 2026-04-24 audit, Core app M5.
+- **Status**: todo
+
+### 34.6 `asset_url` double registration (LOW, S)
+
+- **Target**: `app.py:89` (Jinja global) + `app.py:702` (context-processor dict).
+- **Why**: context-processor shadows the global.  Either the global
+  is the intended fallback for template-render-outside-request (tests),
+  or it's a duplicate.  Pick one.
+- **Plan**: keep `jinja_env.globals` for outside-request renders;
+  drop the entry from `inject_config`.  Comment the rationale.
+- **Source**: 2026-04-24 audit, Core app M6.
+- **Status**: todo
+
+### 34.7 Observability on mutations in game routes (LOW, M)
+
+- **Target**: `routes/games.py` edit/reset/delete paths.
+- **Why**: no structured log on title / rating / genre changes; no
+  audit_log table for destructive actions.  A3am debug ("who
+  scrambled this game's metadata?") has nothing to go on.
+- **Plan**: structured logger entries at each mutation site (fields
+  changed, before/after for scalar fields, user id); optional
+  `audit_log` SQLite table if scale warrants.
+- **Source**: 2026-04-24 audit, Game routes L11.
+- **Status**: todo
+
+---
+
+## Pass 35 — Data integrity & backup hardening
+
+> **Follows Pass 19.**  Durability guarantees on files that carry
+> secrets; foreign-key parity between migrations and runtime.
+
+### 35.1 Backup destination `chmod 0o600` + fsync file + parent dir (HIGH, S)
+
+- **Target**: `services/database.py:268-290`.
+- **Why**: `sqlite3.connect(dst_path)` creates the backup file with
+  process umask (typically 0644) — world-readable backups containing
+  session cookies, OAuth tokens, and password hashes.  Neither the
+  file nor the parent directory is fsynced — post-crash, the directory
+  entry may exist with no contents.
+- **Plan**: after `dst.close()`: `os.chmod(dst_path, 0o600)`;
+  `fd = os.open(dst_path, os.O_RDONLY); os.fsync(fd); os.close(fd)`;
+  then `os.open(dir, os.O_RDONLY); os.fsync(dir_fd); os.close(dir_fd)`.
+  Apply the same chmod to `config.DB_PATH` on first init.
+- **Source**: 2026-04-24 audit, Database & schema H1/M3.
+- **Status**: todo
+
+### 35.2 `atomic_write_json` fsync parent directory (MEDIUM, S)
+
+- **Target**: `services/atomic_io.py:38`.
+- **Why**: `os.replace()` is atomic for the rename on POSIX, but the
+  directory entry change isn't durable until the *directory* is
+  fsynced.  On XFS or `nobarrier` mounts, power loss can lose the new
+  file's contents while keeping the old file's removal durable.
+- **Plan**: after `os.replace`, open the parent dir with
+  `os.open(directory, os.O_RDONLY)` + `os.fsync(fd)` + `os.close(fd)`.
+- **Source**: 2026-04-24 audit, Database & schema M4.
+- **Status**: todo
+
+### 35.3 Enable `PRAGMA foreign_keys = ON` in migration connection (HIGH, S)
+
+- **Target**: `services/database_init.py:24`.
+- **Why**: migration-time connection never issues `foreign_keys = ON`,
+  but runtime `get_db()` does (`services/database.py:94`).  Migration
+  005 adds `REFERENCES users(id)` constraints that only the runtime
+  enforces — mixed-enforcement footgun for any future migration that
+  needs to validate FK targets.
+- **Plan**: issue `PRAGMA foreign_keys = ON` at the top of
+  `init_database()` before applying migrations.  Rerun pytest migrations
+  suite.
+- **Source**: 2026-04-24 audit, Database & schema H3.
+- **Status**: todo
+
+### 35.4 Move `journal_mode=WAL` / `journal_size_limit` to init (HIGH, S)
+
+- **Target**: `services/database.py:88-98`.
+- **Why**: `get_db()` issues 8 PRAGMAs per connection.
+  `journal_mode=WAL` is a DB-file-level setting (writes to the DB
+  header); `journal_size_limit` likewise.  Re-issuing them on every
+  request is wasted work SQLite still has to parse.
+- **Plan**: move those two to `init_database()` (one-time); keep the
+  other six connection-scoped PRAGMAs in `get_db()`.
+- **Source**: 2026-04-24 audit, Database & schema H2.
+- **Status**: todo
+
+### 35.5 Guard legacy `ensure_user_tables` ALTER blocks (LOW, S)
+
+- **Target**: `services/database_init.py:67-92`.
+- **Why**: three `try/except sqlite3.OperationalError: pass` ALTER
+  blocks re-run on every boot — cheap, but duplicates migration logic
+  that should live in a numbered migration script.
+- **Plan**: fold into a new migration (007_user_tables_baseline.py) or
+  into an explicit "if not exists" path so re-execution is obviously
+  idempotent.
+- **Source**: 2026-04-24 audit, Database & schema L1.
+- **Status**: todo
+
+---
+
+## Pass 36 — Frontend defense in depth round 2
+
+> **Follows Pass 29.**  First round scoped escape-innerHTML and
+> CSRF-on-API; the 2026-04-24 sweep surfaced specific attribute-
+> context XSS sinks, remaining unsafe-JSON sites, and the
+> AbortController gap on global search.
+
+### 36.1 Rewrite `escAttr` for JS-string context (CRITICAL, S)
+
+- **Target**: `static/js/all-games-controller.js:1324-1326, 462, 491-502, 596, 727, 741, 921, 929`.
+- **Why**: `escAttr()` does `escapeHtml(String(str || ''))` — only
+  HTML-entity-encodes.  Inside single-quoted JS literals in
+  `onclick`/`onerror` attributes, HTML parser entity-decodes before JS
+  eval; a game title containing `'` breaks string context and
+  everything after is executable.  Game titles, franchises,
+  publishers, developers, genre values are all interpolated this way.
+- **Plan**: EITHER rewrite `escAttr` to also backslash-escape
+  `\`, `'`, `"`, newline, `<`, `>` (JS-string-escape), OR — cleaner —
+  eliminate inline handlers by switching to `addEventListener` +
+  `data-*` attributes with event delegation.  Prefer the delegation
+  path; it also unblocks Pass 16 CSP.
+- **Source**: 2026-04-24 audit, Frontend JS C1.
+- **Status**: todo
+
+### 36.2 Escape system name + slug in `settings-page.js` (CRITICAL, S)
+
+- **Target**: `static/js/settings-page.js:825-826` (and `:837` innerHTML).
+- **Why**: admin-editable `system.name` / `system.slug` injected raw
+  into `<td>` via `innerHTML`.  Violates the project's own stated
+  "escapeHtml per security standards" comment at `:1107`.  Low
+  exploitability today; defence-in-depth for the Pass 27 multi-user
+  push.
+- **Plan**: wrap with `escapeHtml()` consistently.
+- **Source**: 2026-04-24 audit, Frontend JS C2.
+- **Status**: todo
+
+### 36.3 Escape controller image filename in `museum.js` (HIGH, S)
+
+- **Target**: `static/js/museum.js:191, 212` (`_updateControllerImage`, `_resetPlaceholder`).
+- **Why**: `imgContainer.innerHTML = '<img src="/static/images/controllers/'
+  + imageFilename + '?t=' + …` — raw string-concat.  `controllerId` also
+  interpolated into `onclick=` without type-enforcement.
+- **Plan**: use `document.createElement('img')` + `.setAttribute('src', …)`
+  with `encodeURIComponent(imageFilename)`; use `addEventListener` for
+  the reset button.
+- **Source**: 2026-04-24 audit, Frontend JS H1.
+- **Status**: todo
+
+### 36.4 Escape log-viewer dynamic fields (MEDIUM, S)
+
+- **Target**: `static/js/log-viewer.js:470-473`.
+- **Why**: `line.lineNumber` / `line.time` / `line.level` interpolated
+  via template-literal into innerHTML.  `level` doubles as class and
+  text content; a malformed parser could emit `'INFO"><script>'`.
+- **Plan**: `escapeHtml` all three; `level` specifically goes through
+  `escapeHtml` when rendered as text AND an allowlist
+  (`DEBUG|INFO|WARNING|ERROR|CRITICAL`) when used as a CSS class.
+- **Source**: 2026-04-24 audit, Frontend JS M3.
+- **Status**: todo
+
+### 36.5 Migrate remaining `JSON.parse(localStorage.getItem(...))` sites (HIGH, S)
+
+- **Target**: 14 sites listed in the review: `static/js/toast-controller.js:726,740,798,871,911,933,1012,1381,1617,1620`; `main.js:908`; `achievements.js:74`; `game-list.js:149`; `all-games-controller.js:1254`; `page-lifecycle.js:165`; `rom-tools.js:299`; `theme.js:760`.
+- **Why**: safe wrapper `Storage.get()` in `utils.js:143-152` already
+  exists; callers bypass it.  One corrupt entry (DevTools edit,
+  cross-tab race, extension, schema drift) throws on load and cascades
+  through the toast controller.  Pass 29.4 lists this as open — the
+  2026-04-24 review enumerates the exact sites.
+- **Plan**: mechanical migration to `Storage.get(key, default)`;
+  delete the now-unreferenced `try/catch` around each site.
+- **Source**: 2026-04-24 audit, Frontend JS H2 (extends Pass 29.4).
+- **Status**: todo
+
+### 36.6 AbortController on `performGlobalSearch` (HIGH, S)
+
+- **Target**: `static/js/main.js:239-255`.
+- **Why**: typing "Zelda" fires 4-5 fetches at 500ms debounce; on a
+  slow network, an earlier response can land after a later one and
+  `displaySearchResults()` renders the stale data.  Sibling
+  controllers (`all-games-controller.js`, `game-modals.js`) already
+  use AbortController.  Pass 29.5.
+- **Plan**: reuse `PageLifecycle.createAbortController()`; abort the
+  previous controller before firing each new request.
+- **Source**: 2026-04-24 audit, Frontend JS H3 (closes Pass 29.5).
+- **Status**: todo
+
+### 36.7 `DOM.create()` default to `textContent`, not `innerHTML` (MEDIUM, S)
+
+- **Target**: `static/js/utils.js:505-509`.
+- **Why**: documented helper treats string content as `innerHTML` —
+  DOM-XSS sink baked into the API.
+- **Plan**: split into `DOM.create(tag, attrs, textContent)` (safe
+  default) and `DOM.createHTML()` for explicit opt-in; audit existing
+  callers.
+- **Source**: 2026-04-24 audit, Frontend JS M1.
+- **Status**: todo
+
+### 36.8 Consolidate six document-level `keydown` handlers (MEDIUM, M)
+
+- **Target**: `main.js:532, 1308`, `game-modals.js:2048`, `utils.js:814`,
+  `all-games-controller.js:1371`, `museum.js:583`.
+- **Why**: six independent `document.addEventListener('keydown', …)`
+  handlers, each with its own Escape check + `RetroDBState.currentModal`
+  probe.  Easy for a future modal to be missed.  Pass 29.3 lists this;
+  the 2026-04-24 review confirms it's still open.
+- **Plan**: single dispatcher routed through `ModalFocusTrap`'s
+  capture-phase listener; delete per-site Escape handlers.
+- **Source**: 2026-04-24 audit, Frontend JS M4 (closes Pass 29.3).
+- **Status**: todo
+
+### 36.9 `Storage.clearAll` prefix list sync (LOW, S)
+
+- **Target**: `static/js/utils.js:186-194`.
+- **Why**: hard-coded prefix list (`retrodb`, `bulkScrape`, `sidebar`)
+  doesn't include `raOperationsQueue`, `toast_completion_*`,
+  `bulkScrapeReturnUrl`, `bulkScrapeJustStarted`, `raSyncQueue`.
+  "Clear all" lies.
+- **Plan**: expand the prefix list or iterate all keys with a single
+  regex; add a test.
+- **Source**: 2026-04-24 audit, Frontend JS L2.
+- **Status**: todo
+
+### 36.10 Notification container aria-live severity split (LOW, S)
+
+- **Target**: `static/js/utils.js:296-303`.
+- **Why**: one container for all severities uses `aria-live="polite"`;
+  errors should use `aria-live="assertive"` per WCAG 4.1.3.
+- **Plan**: two containers (polite / assertive); `showNotification`
+  routes by severity.
+- **Source**: 2026-04-24 audit, Frontend JS L5.
+- **Status**: todo
+
+---
+
+## Pass 37 — Accessibility round 3
+
+> **Follows Pass 15, Pass 28.**  Residual `<label for=>` gaps on
+> composite fields, focus-trap holes on PSN trophies modals, motion
+> coverage for canvas effects.
+
+### 37.1 `<label for=>` on composite fields (HIGH, M)
+
+- **Target**: `templates/_modals/edit_modal.html:40, 106, 132, 145, 158, 169, 186, 212`; `templates/base.html:1011, 1067, 1100, …` (game-edit-modal); `templates/settings.html:171, 433, 461, …`.
+- **Why**: Pass 28.1 swept form inputs but skipped composite tag-
+  container controls.  `<label>Franchise / Series</label>` points at
+  nothing; screen-reader users tabbing in hear "combo box" with no
+  field name.
+- **Plan**: `<label for="gemGenreDropdown">Genre</label>` where a
+  single focus target exists, OR `<fieldset><legend>Genre</legend>`
+  for composite controls.  Audit with axe-core or a keyboard-only
+  walk.
+- **Source**: 2026-04-24 audit, Templates & CSS M1 (extends Pass 28.1).
+- **Status**: todo
+
+### 37.2 Focus trap on PSN trophies modals (HIGH, S)
+
+- **Target**: `templates/psn_trophies.html:225, 248` (syncModal, bulkRefreshModal).
+- **Why**: `role="dialog" aria-modal="true"` but no
+  `ModalFocusTrap.activate()` anywhere in the file.  Pass 28.2 claims
+  coverage on template-local modals — these two slipped.
+- **Plan**: wire `ModalFocusTrap.activate(modalEl, triggerEl, {...})`
+  in the existing open-modal JS; verify by keyboard-only walk.
+- **Source**: 2026-04-24 audit, Templates & CSS H3 (extends Pass 28.2).
+- **Status**: todo
+
+### 37.3 Reduced-motion kill-switch for canvas effects (MEDIUM, S)
+
+- **Target**: `static/css/effects/animations.css`, `static/css/effects/backgrounds.css`, canvas-driving JS in `theme.js:184, 678`.
+- **Why**: Pass 28.5 added one `prefers-reduced-motion` rule in
+  `reset.css:62`; keyframes in `effects/animations.css` (71 lines) and
+  canvas effects in JS have no additional guard.  CSS cannot reach
+  canvas draw loops.
+- **Plan**: add a `@media (prefers-reduced-motion: reduce)` block in
+  each effects file disabling the animation; JS canvas effects probe
+  `window.matchMedia('(prefers-reduced-motion: reduce)').matches`
+  before starting the loop.
+- **Source**: 2026-04-24 audit, Templates & CSS M4 (extends Pass 28.5).
+- **Status**: todo
+
+### 37.4 `rel="noopener noreferrer"` on `target="_blank"` (MEDIUM, S)
+
+- **Target**: `templates/setup.html:207, 219, 231, 239, 247, 259`; `templates/help.html:168-1212`; `templates/steam_achievement_game.html:32`.
+- **Why**: 36 external links without `rel`.  Reverse-tabnabbing
+  surface; low-risk today, but the pattern should be uniform.
+- **Plan**: trivial sweep; add `rel="noopener noreferrer"` to every
+  `target="_blank"`.  Stretch: Jinja macro for external-link rendering.
+- **Source**: 2026-04-24 audit, Templates & CSS M5.
+- **Status**: todo
+
+### 37.5 Heading hierarchy fixes (LOW, M)
+
+- **Target**: `templates/game_detail.html:12, 391` (H1 → H3 jump);
+  `templates/settings.html` (h1 page-title → h3 sections).
+- **Why**: WCAG 1.3.1; screen readers announce the gap.
+- **Plan**: insert h2 for section groupings or demote h3→h2 where
+  semantically correct; audit with the browser's a11y tree.
+- **Source**: 2026-04-24 audit, Templates & CSS L6.
+- **Status**: todo
+
+### 37.6 Add `aria-live` status regions to flash messages (LOW, S)
+
+- **Target**: `templates/base.html:253-261` + settings.html alert divs.
+- **Why**: dynamic `<div class="alert …">` content invisible to
+  screen readers.  WCAG 4.1.3 Status Messages.
+- **Plan**: `role="status"` for success, `role="alert"` for errors on
+  the flash container.
+- **Source**: 2026-04-24 audit, Templates & CSS L9.
+- **Status**: todo
+
+### 37.7 Promote hardcoded colors into variables (LOW, S)
+
+- **Target**: `static/css/pages/game-list.css:541, 545, 970, 971` (`#3b82f6`, `#fff`); any remaining `#xxx` hits outside `core/variables.css`.
+- **Why**: CLAUDE.md: "no hardcoded colors."  Trophy badge tokens
+  already exist (`--trophy-display-*`).
+- **Plan**: migrate to `var(--trophy-display-gold)` etc.; grep check
+  for residue after.
+- **Source**: 2026-04-24 audit, Templates & CSS M6.
+- **Status**: todo
+
+---
+
+## Pass 38 — Refactor & consolidation
+
+> **Rule-of-Three triggered on five areas surfaced by the
+> 2026-04-24 sweep.**
+
+### 38.1 Split `apply_hybrid_metadata` (HIGH, L)
+
+- **Target**: `scraper/hybrid_scraper.py:495-1516` (1,022-line function).
+- **Why**: untestable in isolation, hard to audit.  The fallback loop
+  (807-1112), normalize block (1222-1266), save block (1268-1464), RA
+  check (1469-1498) are each independent operations with clean inputs.
+- **Plan**: carve `_run_fallbacks`, `_normalize_metadata`,
+  `_save_game_row`, `_check_ra_matches` into separate helpers.
+  Sibling mergers already extracted to `scraper/metadata_merger.py`.
+- **Source**: 2026-04-24 audit, Scraper orchestration M2.
+- **Status**: todo
+
+### 38.2 Consolidate `load_scraper_settings` (MEDIUM, S)
+
+- **Target**: `scraper/scraper_manager.py:63-106` vs `scraper/metadata_merger.py:72-86`.
+- **Why**: duplicated with divergent miss-behavior; the manager's
+  returns a fully-defaulted dict, the merger's returns
+  `{'api_keys': {}, 'enabled': {}, 'priority': []}`.  Upstream `enabled`
+  lookups silently disagree.
+- **Plan**: keep one loader; re-export from the other.  Pick the
+  manager's behavior (defaults from `config.py`) as canonical.
+- **Source**: 2026-04-24 audit, Scraper orchestration M1.
+- **Status**: todo
+
+### 38.3 Extract `installer_core.py` (MEDIUM, M)
+
+- **Target**: `install.py`, `install_gui.py` share ~90% of logic
+  (distro detection, `_run_pip`, `_check_module`, `_build_script`,
+  config-copy list, directory list).
+- **Why**: CLAUDE.md rule-of-three; bundle-name drift (`app.bundle.js`
+  zombie, Pass 38.5) already demonstrated silent drift.
+- **Plan**: `installer_core.py` with `detect_distro`, `pip_install`,
+  `check_module`, `run_build_script`, `CONFIG_COPIES`, `DIRECTORIES`,
+  `do_install_step_*`; both frontends call into it.
+- **Source**: 2026-04-24 audit, Tests/tooling/CI M2.
+- **Status**: todo
+
+### 38.4 Extract Jinja macros (MEDIUM, M)
+
+- **Target**: zero `{% macro %}` across 45 templates; duplicated
+  rating `<select>` (8 sub-systems × ~90 lines × 2+ files), filter
+  modal (3 copies), breadcrumb (2+), sticky-subnav (6× in
+  `settings.html`).
+- **Why**: Pass 10 target; rule-of-three crossed on all four.
+- **Plan**: `_macros/ratings.html`, `_macros/breadcrumb.html`,
+  `_macros/sticky_subnav.html`, `_macros/filter_modal.html`.  Closes
+  Pass 10 substantively.
+- **Source**: 2026-04-24 audit, Templates & CSS M2.
+- **Status**: todo
+
+### 38.5 Delete `app.bundle.js` references in installers (MEDIUM, S)
+
+- **Target**: `install.py:299`, `install_gui.py:569, 572`.
+- **Why**: `build_js.py:277-279` deletes `app.bundle.js` as a legacy
+  artifact since the split into `core.bundle.js` + `games.bundle.js`.
+  Installers still check for the old filename — "use existing bundle"
+  branch never fires correctly on a failed build.  Zombie code.
+- **Plan**: replace with checks for `core.bundle.js` + `games.bundle.js`.
+- **Source**: 2026-04-24 audit, Tests/tooling/CI M1.
+- **Status**: todo
+
+### 38.6 Split `settings.html` by tab (LOW, M)
+
+- **Target**: `templates/settings.html` (7,333 lines).
+- **Why**: CSP / a11y / i18n sweeps all bottleneck on this file.
+- **Plan**: split into `_partials/settings_{account,library,
+  scraping,data,customization,system}.html`; `{% include %}` from a
+  thin shell; preserve anchor IDs for sticky nav.
+- **Source**: 2026-04-24 audit, Templates & CSS M3.
+- **Status**: todo
+
+### 38.7 Consolidate duplicate platform-sync endpoints (MEDIUM, S)
+
+- **Target**: `routes/platform_import.py:298-361` vs `routes/steam_achievements.py:95-158` (`api_steam_sync_single` × 2); similarly Xbox single-sync in `xbox_achievements.py:110-175`.
+- **Why**: two copies of near-identical UPSERT SQL; one uses
+  `sqlite3.connect(config.DB_PATH)` directly, bypassing `get_db()`.
+- **Plan**: extract `_upsert_steam_progress(game_id, result)` +
+  `_upsert_xbox_progress(…)` helpers in
+  `services/jobs/platform_sync.py`; collapse the routes.
+- **Source**: 2026-04-24 audit, Platform imports M1/M2.
+- **Status**: todo
+
+### 38.8 Consolidate resume-path boilerplate across job classes (LOW, M)
+
+- **Target**: `services/jobs/ra_sync.py:112-157`, `ra_refresh.py:94-136`, `platform_sync.py:222-260, 514-564`, `psn_refresh.py:149-214`, `bulk_scrape.py:512-603`.
+- **Why**: six copies of "if resume_index > 0 and game_ids, reset +
+  prepend Nones + restore counts + start thread, else fall through."
+- **Plan**: extract `_apply_resume(self, game_ids, progress, **extra)`
+  onto a thin mixin used by every job with resume support.
+- **Source**: 2026-04-24 audit, Background jobs M5.
+- **Status**: todo
+
+---
+
+## Pass 39 — CI/CD hardening round 2
+
+> **Follows Pass 22.**  Action pinning, workflow permissions,
+> `continue-on-error` discipline, lockfile hash verification,
+> Dependabot lockfile regeneration.
+
+### 39.1 Pin CI workflow actions to SHA (HIGH, S)
+
+- **Target**: `.github/workflows/ci.yml:39, 41, 132` (`actions/checkout@v4`, `actions/setup-python@v5`, `actions/upload-artifact@v4`).
+- **Why**: release workflow pins every action by SHA + version
+  comment (e.g. `release.yml:35, 39, 83, 106, 133`); CI uses floating
+  tags.  Tags are mutable — a compromised maintainer account can
+  rewrite a tag and CI runs on every PR, including forks via
+  `pull_request`.  OWASP CICD-SEC-4 Poisoned Pipeline Execution.
+- **Plan**: copy release-workflow pattern; add comment with version
+  next to each SHA for Dependabot legibility.
+- **Source**: 2026-04-24 audit, Tests/tooling/CI H1.
+- **Status**: todo
+
+### 39.2 Explicit `permissions:` block on CI (HIGH, S)
+
+- **Target**: `.github/workflows/ci.yml`.
+- **Why**: no workflow-level `permissions:` block; job inherits repo-
+  default `GITHUB_TOKEN` scope, which for private/org repos can
+  include `contents: write`.  OWASP CICD-SEC-2.
+- **Plan**: add `permissions: { contents: read }` at workflow level;
+  let individual steps narrow further if needed.
+- **Source**: 2026-04-24 audit, Tests/tooling/CI H2.
+- **Status**: todo
+
+### 39.3 Hard-fail `pip-audit` + `semgrep` in CI (HIGH, S)
+
+- **Target**: `.github/workflows/ci.yml:81, 86`.
+- **Why**: both marked `continue-on-error: true` with TODO comments
+  promising an eventual flip.  Security steps perpetually warn =
+  observability, not enforcement.  Five consecutive 0-actionable
+  audit runs means the suite is calibrated.
+- **Plan**: remove `continue-on-error: true` on both; document the
+  bar ("audit-triage must actionable=0 for main merge") in
+  CONTRIBUTING.md.
+- **Source**: 2026-04-24 audit, Tests/tooling/CI H3.
+- **Status**: todo
+
+### 39.4 `requirements.lock` with `--generate-hashes` + `--require-hashes` install (MEDIUM, S)
+
+- **Target**: `requirements.lock`; `install.py:192`, `install_gui.py:433`; regen command in CLAUDE.md.
+- **Why**: lockfile has no hashes — installs don't fail-closed on
+  MITM or PyPI compromise.  OWASP CICD-SEC-3 Dependency Chain Abuse.
+  Pass 22 shipped signed *outputs* (cosign) without verifying
+  *inputs*.
+- **Plan**: `pip-compile requirements.txt -o requirements.lock
+  --strip-extras --generate-hashes`; `pip install --require-hashes -r
+  requirements.lock`.  Update CLAUDE.md regen instruction.
+- **Source**: 2026-04-24 audit, Tests/tooling/CI M4.
+- **Status**: todo
+
+### 39.5 Dependabot regenerates `requirements.lock` (MEDIUM, S)
+
+- **Target**: `.github/dependabot.yml:10-27`.
+- **Why**: currently updates `requirements.txt` only.  Lockfile-drift
+  check at `ci.yml:88-113` hard-fails every Dependabot PR until
+  manual `pip-compile`.
+- **Plan**: add a GitHub Actions post-update step (or a
+  `@dependabot pre-task` directive) that runs `pip-compile`; ensure
+  the resulting diff is committed to the same PR.
+- **Source**: 2026-04-24 audit, Tests/tooling/CI M5.
+- **Status**: todo
+
+### 39.6 `build_dist.py` env-configurable `STAGING_DIR` (MEDIUM, S)
+
+- **Target**: `build_dist.py:22`; `release.yml:55-64`.
+- **Why**: hardcoded absolute path `/mnt/Storage/Scripts/Linux/Staging_Area/RetroDB`.
+  Release workflow monkey-patches `build_dist.STAGING_DIR` inline —
+  fragile; `main()` return is also `None`-masked.
+- **Plan**: `STAGING_DIR = os.environ.get('RETRODB_STAGING_DIR',
+  '/mnt/Storage/...')`; set `env: RETRODB_STAGING_DIR:` in the
+  workflow.  Raise on `hasattr(build_dist, 'main') is False` rather
+  than silently no-op.
+- **Source**: 2026-04-24 audit, Tests/tooling/CI M3.
+- **Status**: todo
+
+### 39.7 Rate-limit `api_reports_multidisc_scan` (MEDIUM, S)
+
+- **Target**: `routes/reports.py:376-378`; `app.py:232-236` limiter config.
+- **Why**: `@login_required`-only POST that walks the filesystem;
+  non-editor users can loop-hammer it.  Pass 25.9 scope.
+- **Plan**: add a Flask-Limiter rule (or gate behind `@editor_required`
+  since it's effectively a write-adjacent discovery).
+- **Source**: 2026-04-24 audit, Maintenance/settings M3.
+- **Status**: todo
+
+### 39.8 Audit-hygiene: gitleaks allowlist for `tests/test_log_redactor.py` (LOW, S)
+
+- **Target**: `.gitleaks.toml`.
+- **Why**: `/audit` run 2026-04-24 surfaced the synthetic-JWT test
+  fixture at `tests/test_log_redactor.py:9` — intended to verify the
+  redactor replaces JWTs.  Recurs on every audit.
+- **Plan**: add `'''tests/test_log_redactor\.py$'''` to the existing
+  `paths` array in `.gitleaks.toml` (narrow form — keep gitleaks
+  active on other test files).
+- **Source**: 2026-04-24 audit, /audit triage config-tightening.
+- **Status**: todo
+
+---
+
 ## Follow-ups from landed passes
 
 Small, well-scoped items that surfaced while finishing an earlier pass but

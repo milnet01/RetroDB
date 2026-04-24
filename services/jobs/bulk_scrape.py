@@ -9,11 +9,11 @@ import time
 import sqlite3
 import logging
 from collections import deque
-from datetime import datetime
+from datetime import datetime, timezone
 
 from services.jobs.base import (
     _get_conn, persist_job_start, persist_job_progress, persist_job_complete,
-    persist_job_queued, remove_queued_job
+    persist_job_queued, remove_queued_job, resolve_terminal_status,
 )
 
 logger = logging.getLogger(__name__)
@@ -99,7 +99,7 @@ class BulkScrapeJob:
             conn = _get_conn()
             conn.execute(
                 "UPDATE games SET last_bulk_scraped = ? WHERE id = ?",
-                (datetime.now().isoformat(), game_id)
+                (datetime.now(timezone.utc).isoformat(), game_id)
             )
             conn.commit()
         except Exception:
@@ -801,13 +801,18 @@ class BulkScrapeJob:
                     with self._lock:
                         self.current_game_title = title
 
-                    # Check 24-hour bulk scrape cooldown (skip in full_rescrape mode)
+                    # Check 24-hour bulk scrape cooldown (skip in full_rescrape mode).
+                    # All new timestamps are UTC-aware; treat pre-Pass-30 naive
+                    # strings as UTC so legacy rows don't trip the aware-vs-naive
+                    # TypeError on subtraction.
                     if _scrape_mode != 'full_rescrape':
                         last_bulk = game_dict.get('last_bulk_scraped')
                         if last_bulk:
                             try:
                                 last_dt = datetime.fromisoformat(last_bulk)
-                                hours_ago = (datetime.now() - last_dt).total_seconds() / 3600
+                                if last_dt.tzinfo is None:
+                                    last_dt = last_dt.replace(tzinfo=timezone.utc)
+                                hours_ago = (datetime.now(timezone.utc) - last_dt).total_seconds() / 3600
                                 if hours_ago < 24:
                                     logger.info(f"Skipping {title} - bulk scraped {hours_ago:.1f}h ago (cooldown 24h)")
                                     with self._lock:
@@ -949,7 +954,7 @@ class BulkScrapeJob:
                 self.completed = True
                 self.running = False
                 self.end_time = datetime.now()
-                _final_status = 'cancelled' if self.cancelled else 'completed'
+                _final_status = resolve_terminal_status(self.cancelled)
                 logger.info(f"Bulk scrape completed: {self.success_count} success, {self.failed_count} failed, {self.skipped_count} skipped")
 
             if _progress_conn is not None:

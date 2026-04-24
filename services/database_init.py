@@ -92,9 +92,9 @@ def ensure_user_tables():
         pass
 
     cursor.execute("SELECT id FROM users WHERE role = 'admin' LIMIT 1")
-    admin_exists = cursor.fetchone()
+    admin_row = cursor.fetchone()
 
-    if not admin_exists:
+    if not admin_row:
         default_password_hash = hash_password('admin')
         cursor.execute("""
             INSERT INTO users (username, display_name, password_hash, role, force_password_change)
@@ -108,6 +108,40 @@ def ensure_user_tables():
         """, (admin_id,))
 
         logger.info("Created default admin user (username: admin, password: admin)")
+    else:
+        admin_id = admin_row['id']
+
+    _backfill_null_owner_ids(cursor, admin_id)
 
     conn.commit()
     conn.close()
+
+
+def _backfill_null_owner_ids(cursor, admin_id):
+    # Idempotent self-heal for installs bitten by the pre-fix migration order
+    # bug, where ensure_user_tables() ran AFTER init_database() on an upgrade
+    # path that had no users table, causing migrations 005/006 to stamp
+    # user_version past their backfill steps without ever seeing an admin row.
+    # Runs every startup; WHERE owner_id IS NULL makes it a no-op on healthy DBs.
+    targets = (
+        ('tags', 'owner_id'),
+        ('lists', 'owner_id'),
+        ('wishlist', 'owner_id'),
+        ('psn_sync_status', 'user_id'),
+    )
+    for table, column in targets:
+        try:
+            cols = {row[1] for row in cursor.execute(f"PRAGMA table_info({table})")}
+        except sqlite3.OperationalError:
+            continue
+        if column not in cols:
+            continue
+        cursor.execute(
+            f"UPDATE {table} SET {column} = ? WHERE {column} IS NULL",
+            (admin_id,),
+        )
+        if cursor.rowcount:
+            logger.info(
+                "Backfilled %d NULL %s row(s) in %s to user_id=%d",
+                cursor.rowcount, column, table, admin_id,
+            )

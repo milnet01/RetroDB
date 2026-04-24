@@ -11,7 +11,8 @@ import logging
 from services.achievement_linking import match_ra_game
 from services.jobs.base import (
     _get_conn, _commit_with_retry, _get_ra_credentials,
-    persist_job_start, persist_job_progress, persist_job_complete
+    persist_job_start, persist_job_progress, persist_job_complete,
+    resolve_terminal_status,
 )
 
 logger = logging.getLogger(__name__)
@@ -361,7 +362,7 @@ class RARefreshJob:
             with self._lock:
                 self.completed = True
                 self.running = False
-                _final_status = 'cancelled' if self.cancelled else 'completed'
+                _final_status = resolve_terminal_status(self.cancelled)
                 logger.info(f"RA Refresh: Completed - Found {self.success_count} games with RA, {self.skipped_count} without, {self.failed_count} errors")
 
             if persist_id:

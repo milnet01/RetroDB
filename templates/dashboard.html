@@ -32,13 +32,15 @@
         <button class="btn btn-sm btn-secondary" onclick="dismissAllRecoverableJobs()">Dismiss All</button>
     </div>
     {% for job in recoverable_jobs %}
-    <div class="job-recovery-item" id="recoveryItem{{ job.id }}">
+    <div class="job-recovery-item" id="recoveryItem{{ job.id }}" data-can-resume="{{ 'true' if job.can_resume else 'false' }}">
         <span class="job-recovery-desc">
             <span class="job-recovery-status {{ job.status }}">{{ job.status|capitalize }}</span>
             {{ job.description }}
         </span>
         <div class="job-recovery-actions">
+            {% if job.can_resume %}
             <button class="btn btn-sm btn-primary" onclick="resumeJob({{ job.id }})">{{ job.action_label }}</button>
+            {% endif %}
             <button class="btn btn-sm btn-secondary" onclick="dismissJob({{ job.id }})">Dismiss</button>
         </div>
     </div>
@@ -1048,7 +1050,9 @@ function dismissJob(jobId) {
 function resumeAllRecoverableJobs() {
     const banner = document.getElementById('jobRecoveryBanner');
     if (!banner) return;
-    const items = banner.querySelectorAll('.job-recovery-item');
+    // Only resume items whose job type has a handler — others can only be
+    // dismissed and a Resume POST for them would 400 at the endpoint.
+    const items = banner.querySelectorAll('.job-recovery-item[data-can-resume="true"]');
     let pending = items.length;
     if (!pending) return;
     // Disable all buttons while processing

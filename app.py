@@ -430,7 +430,9 @@ def handle_not_found(e):
 
 @app.errorhandler(500)
 def handle_internal_error(e):
-    logger.error(f"Internal server error: {e}")
+    # Include the traceback — without it, the white-page 500 leaves the
+    # operator with only `str(e)` to debug from.
+    logger.error(f"Internal server error: {e}", exc_info=True)
     if request.path.startswith('/api/'):
         return jsonify({'success': False, 'error': 'Internal server error'}), 500
     return render_template('base.html'), 500
@@ -913,6 +915,15 @@ def index():
     return redirect(url_for('dashboard'))
 
 
+# Job types that have a `resume_from_params` handler wired in `resume_job`.
+# Kept alongside the dashboard loop so we never offer a Resume button that
+# would 400 at the endpoint — jobs here skip Resume and only offer Dismiss.
+_RESUMABLE_JOB_TYPES = {
+    'bulk_scrape', 'ra_refresh', 'ra_sync', 'psn_refresh',
+    'steam_sync', 'xbox_sync', 'museum_generate',
+}
+
+
 @app.route('/dashboard')
 @login_required
 def dashboard():
@@ -1031,14 +1042,23 @@ def dashboard():
                 desc = "Steam achievement sync was interrupted" if has_progress else "Steam achievement sync was queued"
             elif jtype == 'xbox_sync':
                 desc = "Xbox achievement sync was interrupted" if has_progress else "Xbox achievement sync was queued"
+            elif jtype == 'hltb_bulk':
+                desc = "HLTB bulk lookup was interrupted" if has_progress else "HLTB bulk lookup was queued"
+            elif jtype == 'alt_titles_backfill':
+                desc = "Alternate titles backfill was interrupted" if has_progress else "Alternate titles backfill was queued"
             else:
                 desc = f"{jtype} job was {status}"
+
+            # Mirror resume_job's handler_map so the UI never offers "Resume"
+            # on a job type that would 400 at the endpoint.
+            can_resume = jtype in _RESUMABLE_JOB_TYPES
 
             recoverable_jobs.append({
                 'id': rj['id'],
                 'job_type': jtype,
                 'status': status,
                 'description': desc,
+                'can_resume': can_resume,
                 'action_label': 'Resume' if has_progress else 'Start'
             })
 
@@ -1387,9 +1407,15 @@ def api_timezones():
 # =============================================================================
 # ENSURE DATABASE IS INITIALIZED (runs on import)
 # =============================================================================
-# This ensures database migrations run even when Flask auto-reloads
-init_database()
+# This ensures database migrations run even when Flask auto-reloads.
+# Order matters: ensure_user_tables() creates the `users` table and seeds the
+# default admin; init_database() then runs migrations that depend on those
+# rows for backfill (e.g. 005_collections_owner_id, 006_per_user_platform_tokens).
+# Reversing this order silently stamps user_version past those migrations on
+# a fresh install, leaving owner_id columns NULL and rows invisible to the
+# owner-scoped queries introduced in Pass 27.
 ensure_user_tables()
+init_database()
 
 # Mark interrupted jobs for dashboard recovery (no silent auto-resume)
 # In debug mode, Flask's reloader spawns a child process (worker) that handles

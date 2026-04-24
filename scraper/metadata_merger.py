@@ -92,7 +92,7 @@ def load_scraper_settings():
 
 def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=False):
     """Apply TGDB data to metadata dict"""
-    from scraper.scrape_thegamesdb import download_image as download_tgdb_image
+    from scraper.scrape_thegamesdb import _download_tgdb_image as download_tgdb_image
 
     field_map = {
         'title': 'name',
@@ -434,10 +434,6 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
         if ext.get('perspective') and not metadata.get('perspective'):
             metadata['perspective'] = ext['perspective']
             result['filled_fields'].append('perspective (IGDB)')
-
-        if ext.get('themes') and not metadata.get('themes'):
-            metadata['themes'] = ext['themes']
-            result['filled_fields'].append('themes (IGDB)')
 
         # Critic and user scores
         if ext.get('critic_score') and not metadata.get('critic_score'):

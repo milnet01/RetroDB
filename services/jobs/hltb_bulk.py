@@ -22,6 +22,7 @@ from datetime import datetime, timezone
 from services.jobs.base import (
     _get_conn, _commit_with_retry,
     persist_job_start, persist_job_progress, persist_job_complete,
+    resolve_terminal_status,
 )
 
 logger = logging.getLogger(__name__)
@@ -311,7 +312,7 @@ class HLTBBulkLookupJob:
             with self._lock:
                 self.completed = True
                 self.running = False
-                final_status = 'cancelled' if self.cancelled else 'completed'
+                final_status = resolve_terminal_status(self.cancelled)
                 logger.info(
                     f"HLTB bulk done: {self.auto_applied_count} auto-applied, "
                     f"{self.queued_count} queued for review, "

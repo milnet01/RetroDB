@@ -14,6 +14,7 @@ import threading
 import logging
 
 import config
+from services.analytics import invalidate_analytics_cache
 from services.api_helpers import handle_api_errors, success
 from services.database import get_db, query
 from services.auth import admin_required, login_required
@@ -56,6 +57,8 @@ def api_scan():
     except ImportError:
         new_games = run_inline_scan()
 
+    if new_games:
+        invalidate_analytics_cache()
     return success(new_games=new_games, message=f'Found {new_games} new games')
 
 
@@ -65,6 +68,8 @@ def api_scan():
 def api_clean_missing_roms():
     """Remove games from database whose ROM files no longer exist"""
     removed, removed_games = clean_missing_roms()
+    if removed:
+        invalidate_analytics_cache()
     return success(
         removed=removed,
         removed_games=removed_games,
@@ -80,6 +85,7 @@ def api_clear_clz_imports():
     removed, removed_games = clear_clz_imports()
     if removed == 0:
         return success(removed=0, removed_games=[], message='No CLZ Import games found')
+    invalidate_analytics_cache()
     return success(
         removed=removed,
         removed_games=removed_games,
@@ -106,6 +112,8 @@ def api_clear_scraped_data():
         system_id=data.get('system_id'),
         delete_images=data.get('delete_images', False),
     )
+    if cleared:
+        invalidate_analytics_cache()
     return success(cleared=cleared, images_deleted=images_deleted)
 
 

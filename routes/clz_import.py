@@ -13,6 +13,7 @@ import unicodedata
 from datetime import datetime, timezone
 
 import config
+from services.analytics import invalidate_analytics_cache
 from services.database import get_db, query, execute
 from services.auth import login_required
 from services.api_helpers import handle_api_errors, success, error
@@ -603,6 +604,8 @@ def api_clz_import():
 
         logger.info(f"CLZ Import complete: {imported} imported, {skipped} skipped, {failed} failed")
 
+        if imported:
+            invalidate_analytics_cache()
         return success(imported=imported, skipped=skipped, failed=failed)
     finally:
         if conn:

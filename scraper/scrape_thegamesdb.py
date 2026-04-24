@@ -891,13 +891,13 @@ def apply_metadata_to_game(db_game_id, tgdb_data):
         boxart = None
         boxart_url = tgdb_data.get('boxart_url')
         if boxart_url:
-            boxart = download_image(db_game_id, boxart_url, 'boxart')
+            boxart = _download_tgdb_image(db_game_id, boxart_url, 'boxart')
 
         # Download screenshots
         screenshots = []
         screenshot_urls = tgdb_data.get('screenshot_urls', [])
         for i, ss_url in enumerate(screenshot_urls[:5]):  # Limit to 5 screenshots
-            ss_filename = download_image(db_game_id, ss_url, 'screenshots', suffix=f'_ss{i+1}')
+            ss_filename = _download_tgdb_image(db_game_id, ss_url, 'screenshots', suffix=f'_ss{i+1}')
             if ss_filename:
                 screenshots.append(ss_filename)
 
@@ -907,7 +907,7 @@ def apply_metadata_to_game(db_game_id, tgdb_data):
         fanart = None
         fanart_urls = tgdb_data.get('fanart_urls', [])
         if fanart_urls:
-            fanart = download_image(db_game_id, fanart_urls[0], 'fanart', suffix='_fanart')
+            fanart = _download_tgdb_image(db_game_id, fanart_urls[0], 'fanart', suffix='_fanart')
 
         # Log values
         logger.info(f"Update values for game {db_game_id}:")
@@ -923,29 +923,42 @@ def apply_metadata_to_game(db_game_id, tgdb_data):
         logger.info(f"  Screenshots: {len(screenshots)}")
         logger.info(f"  Fanart: {fanart}")
 
-        # Update database (including title, screenshots, and fanart)
+        # Fill-only writes: COALESCE preserves prior scraped/curated values when
+        # the TGDB response is empty for a field. Matches scrape_esde's pattern.
+        def _trunc(value, limit):
+            return str(value)[:limit] if value else None
+
+        modes_str = 'Single-player, Multiplayer' if (players or 0) > 1 else 'Single-player'
         c.execute("""
             UPDATE games SET
                 title = COALESCE(?, title),
-                publisher = ?, developer = ?, release_date = ?, genre = ?,
-                rating = ?, esrb_rating = ?, pegi_rating = ?,
-                players = ?, modes = ?, description = ?, boxart = ?,
+                publisher = COALESCE(?, publisher),
+                developer = COALESCE(?, developer),
+                release_date = COALESCE(?, release_date),
+                genre = COALESCE(?, genre),
+                rating = COALESCE(?, rating),
+                esrb_rating = COALESCE(?, esrb_rating),
+                pegi_rating = COALESCE(?, pegi_rating),
+                players = COALESCE(?, players),
+                modes = COALESCE(?, modes),
+                description = COALESCE(?, description),
+                boxart = COALESCE(?, boxart),
                 screenshots = COALESCE(?, screenshots),
                 fanart = COALESCE(?, fanart),
                 scraped = 1
             WHERE id = ?
         """, (
-            str(scraped_title)[:255] if scraped_title else None,
-            str(publisher)[:255],
-            str(developer)[:255],
-            str(release_date)[:20],
-            str(genre)[:500],
-            str(rating)[:50],
-            str(esrb_rating)[:50],
-            str(pegi_rating)[:50],
-            players,
-            'Single-player, Multiplayer' if players > 1 else 'Single-player',
-            str(description)[:2000],
+            _trunc(scraped_title, 255),
+            _trunc(publisher, 255),
+            _trunc(developer, 255),
+            _trunc(release_date, 20),
+            _trunc(genre, 500),
+            _trunc(rating, 50),
+            _trunc(esrb_rating, 50),
+            _trunc(pegi_rating, 50),
+            players if players else None,
+            modes_str if players else None,
+            _trunc(description, 2000),
             str(boxart) if boxart else None,
             screenshots_str,
             str(fanart) if fanart else None,
@@ -969,7 +982,7 @@ def apply_metadata_to_game(db_game_id, tgdb_data):
 # IMAGE DOWNLOAD
 # =============================================================================
 
-def download_image(db_game_id, image_url, image_type, suffix=''):
+def _download_tgdb_image(db_game_id, image_url, image_type, suffix=''):
     """Download image from URL"""
     if not image_url:
         return None

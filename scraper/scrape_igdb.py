@@ -560,12 +560,22 @@ def apply_metadata_to_game(db_game_id, igdb_data):
         scraped_title = igdb_data.get('name', '')
         screenshots_str = ','.join(screenshots) if screenshots else None
         
+        # Fill-only writes: COALESCE preserves prior scraped/curated values when
+        # the IGDB response is empty for a field. Matches scrape_esde's pattern.
         c.execute("""
             UPDATE games SET
                 title = COALESCE(?, title),
-                publisher = ?, developer = ?, release_date = ?, genre = ?,
-                rating = ?, esrb_rating = ?, pegi_rating = ?,
-                players = ?, modes = ?, description = ?, boxart = ?,
+                publisher = COALESCE(?, publisher),
+                developer = COALESCE(?, developer),
+                release_date = COALESCE(?, release_date),
+                genre = COALESCE(?, genre),
+                rating = COALESCE(?, rating),
+                esrb_rating = COALESCE(?, esrb_rating),
+                pegi_rating = COALESCE(?, pegi_rating),
+                players = COALESCE(?, players),
+                modes = COALESCE(?, modes),
+                description = COALESCE(?, description),
+                boxart = COALESCE(?, boxart),
                 screenshots = COALESCE(?, screenshots),
                 fanart = COALESCE(?, fanart),
                 critic_score = COALESCE(?, critic_score),
@@ -576,9 +586,9 @@ def apply_metadata_to_game(db_game_id, igdb_data):
             WHERE id = ?
         """, (
             scraped_title if scraped_title else None,
-            publisher, developer, release_date, genre,
-            rating, esrb_rating, pegi_rating,
-            players, modes, description, boxart,
+            publisher or None, developer or None, release_date or None, genre or None,
+            rating or None, esrb_rating or None, pegi_rating or None,
+            players, modes or None, description or None, boxart or None,
             screenshots_str, fanart,
             critic_score, critic_score_count,
             user_score, user_score_count,

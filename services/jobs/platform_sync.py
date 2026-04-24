@@ -11,7 +11,8 @@ from datetime import datetime, timezone
 
 from services.jobs.base import (
     _get_conn, _commit_with_retry,
-    persist_job_start, persist_job_progress, persist_job_complete
+    persist_job_start, persist_job_progress, persist_job_complete,
+    resolve_terminal_status,
 )
 
 logger = logging.getLogger(__name__)
@@ -417,7 +418,7 @@ class SteamSyncJob:
             with self._lock:
                 self.completed = True
                 self.running = False
-                _final_status = 'cancelled' if self.cancelled else 'completed'
+                _final_status = resolve_terminal_status(self.cancelled)
 
             if persist_id:
                 persist_job_complete(persist_id, status=_final_status)
@@ -731,7 +732,7 @@ class XboxSyncJob:
             with self._lock:
                 self.completed = True
                 self.running = False
-                _final_status = 'cancelled' if self.cancelled else 'completed'
+                _final_status = resolve_terminal_status(self.cancelled)
 
             if persist_id:
                 persist_job_complete(persist_id, status=_final_status)

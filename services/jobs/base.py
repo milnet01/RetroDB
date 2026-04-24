@@ -606,6 +606,22 @@ def sweep_old_job_history(retention_days=None):
         return 0
 
 
+def resolve_terminal_status(cancelled):
+    """Map a job's terminal state to the status column of `job_queue`.
+
+    Distinguishes a user-initiated cancel ('cancelled' — final, not recoverable)
+    from a SIGTERM/SIGINT during shutdown ('interrupted' — recoverable via the
+    dashboard banner). Without this, Pass 19.2's graceful-shutdown path wrote
+    'cancelled' for both, leaving in-flight jobs invisible to the startup
+    sweep and silently dropping work.
+    """
+    if shutdown_requested.is_set():
+        return 'interrupted'
+    if cancelled:
+        return 'cancelled'
+    return 'completed'
+
+
 def persist_job_complete(job_id, status='completed', error=None):
     """Mark a job as completed, failed, or cancelled.
 

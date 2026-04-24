@@ -8,6 +8,7 @@ from flask import Blueprint, render_template, redirect, url_for, jsonify, flash
 import logging
 from datetime import datetime, timezone
 
+from services.analytics import invalidate_analytics_cache
 from services.database import query, execute
 from services.auth import login_required, editor_required, get_user_ra_credentials
 from services.api_helpers import handle_api_errors, success, error
@@ -425,11 +426,12 @@ def api_refresh_achievements(game_id):
     
     if result:
         execute("""
-            UPDATE games 
+            UPDATE games
             SET ra_game_id = ?, ra_achievement_count = ?, ra_points = ?
             WHERE id = ?
         """, (result['id'], result['achievement_count'], result['points'], game_id))
-        
+
+        invalidate_analytics_cache()
         return success(
             message=f"Found {result['achievement_count']} achievements",
             data=result,
