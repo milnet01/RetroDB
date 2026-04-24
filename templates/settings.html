@@ -116,7 +116,7 @@
             </div>
         </div>
         
-        <h4 class="section-title" style="margin-bottom: var(--spacing-md);">🏆 Trophy Settings</h4>
+        <h3 class="section-title" style="margin-bottom: var(--spacing-md);">🏆 Trophy Settings</h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
             Configure your personal RPCS3 trophy path to view your PS3 trophies.
         </p>
@@ -129,7 +129,7 @@
             <span class="field-tip">Path to your RPCS3 trophy folder (e.g., /home/user/RPCS3/dev_hdd0/home/00000001/trophy)</span>
         </div>
         
-        <h4 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">🎖️ RetroAchievements Settings</h4>
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">🎖️ RetroAchievements Settings</h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
             Configure your RetroAchievements credentials to view your achievement progress.
         </p>
@@ -146,10 +146,10 @@
             <input type="password" class="form-input" id="userRaApiKey" 
                    value="{{ current_user_settings.ra_api_key if current_user_settings else '' }}"
                    placeholder="Your RetroAchievements API Key">
-            <span class="field-tip">Get your API key from <a href="https://retroachievements.org/controlpanel.php" target="_blank" style="color: var(--primary-cyan);">RetroAchievements Control Panel</a></span>
+            <span class="field-tip">Get your API key from <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer" style="color: var(--primary-cyan);">RetroAchievements Control Panel</a></span>
         </div>
         
-        <h4 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">🎮 PlayStation Network</h4>
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">🎮 PlayStation Network</h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
             Connect your PSN account to sync trophies from PS3, PS4, PS5, and PS Vita games.
         </p>
@@ -168,7 +168,7 @@
 
         <!-- NPSSO Setup Wizard -->
         <div style="background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
-            <label class="form-label" style="margin-bottom: var(--spacing-md); font-size: 1rem;">NPSSO Token Setup</label>
+            <div class="form-label" style="margin-bottom: var(--spacing-md); font-size: 1rem;">NPSSO Token Setup</div>
 
             <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
                 <!-- Step 1 -->
@@ -207,7 +207,7 @@
                                 Paste &amp; Detect
                             </button>
                         </div>
-                        <div id="psnNpssoDetectResult" style="margin-top: 6px; font-size: 0.85rem;"></div>
+                        <div id="psnNpssoDetectResult" role="status" aria-live="polite" style="margin-top: 6px; font-size: 0.85rem;"></div>
                     </div>
                 </div>
             </div>
@@ -226,7 +226,7 @@
         </button>
         
         {% if current_user.role == 'admin' %}
-        <h4 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">🔐 Change Password</h4>
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">🔐 Change Password</h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
             Admin accounts require a password for login.
         </p>
@@ -430,7 +430,7 @@
         </div>
         
         <div class="form-group mb-lg">
-            <label class="form-label">Database Location</label>
+            <div class="form-label">Database Location</div>
             <span class="detail-value" style="font-family: var(--font-mono);">{{ config.DB_PATH }}</span>
             <span class="form-hint">Database path cannot be changed via UI</span>
         </div>
@@ -458,8 +458,8 @@
     </div>
     <div class="card-body">
         <div class="form-group mb-lg">
-            <label class="form-label">Theme</label>
-            <div class="theme-selector" id="themeSelector">
+            <div class="form-label" id="themeSelectorLabel">Theme</div>
+            <div class="theme-selector" id="themeSelector" role="radiogroup" aria-labelledby="themeSelectorLabel">
                 <div class="theme-option" data-theme="cyberpunk" onclick="ThemeManager.apply('cyberpunk')">
                     <div class="theme-preview">
                         <span class="theme-swatch" style="background: #4cc9f0;"></span>
@@ -577,11 +577,11 @@
         </div>
 
         <div class="form-group mb-lg">
-            <label class="form-label">Region Options</label>
+            <div class="form-label" id="regionOptionsLabel">Region Options</div>
             <p class="text-muted" style="margin-bottom: var(--spacing-sm); font-size: 0.85rem;">
                 Configure the available region values and default. The default region is used when scraping if no region is detected.
             </p>
-            <div id="regionOptionsContainer" style="display: flex; flex-wrap: wrap; gap: var(--spacing-xs); margin-bottom: var(--spacing-sm);">
+            <div id="regionOptionsContainer" role="list" aria-labelledby="regionOptionsLabel" style="display: flex; flex-wrap: wrap; gap: var(--spacing-xs); margin-bottom: var(--spacing-sm);">
                 {% for r in user_settings.get('region_options', ['USA', 'Europe', 'Japan', 'World']) %}
                 <span class="badge badge-info" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; font-size: 0.85rem;">
                     {{ r }}
@@ -644,9 +644,9 @@
         
         <div id="bonusDiscResult" style="display: none; margin-top: var(--spacing-lg);"></div>
         
-        <h4 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
             📋 Detected Bonus Discs
-        </h4>
+        </h3>
         <div id="detectedBonusDiscs" class="glass-panel" style="padding: var(--spacing-md); min-height: 100px;">
             <span class="text-muted">Click "Auto-Detect Bonus Discs" to scan your library</span>
         </div>
@@ -673,7 +673,7 @@
             Create backups before making major changes to your library
         </p>
         
-        <h4 class="section-title" style="margin-top: var(--spacing-lg);">Available Backups</h4>
+        <h3 class="section-title" style="margin-top: var(--spacing-lg);">Available Backups</h3>
         <div id="backupsList" style="margin-top: var(--spacing-md);">
             <p class="text-muted">Loading backups...</p>
         </div>
@@ -909,7 +909,7 @@
                         </select>
                     </div>
                     <div class="match-criteria-field">
-                        <label class="form-label">Platform Match Required</label>
+                        <label class="form-label" for="matchPlatformRequired">Platform Match Required</label>
                         <div style="padding-top: 0.35rem;">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="matchPlatformRequired" checked onchange="updateMatchCriteria()" aria-label="Require platform match">
@@ -936,8 +936,8 @@
                 Check Rate Limits
             </button>
         </div>
-        <div id="scraperSettingsResult" style="margin-top: var(--spacing-md);"></div>
-        <div id="rateLimitsResult" style="margin-top: var(--spacing-md);"></div>
+        <div id="scraperSettingsResult" role="status" aria-live="polite" style="margin-top: var(--spacing-md);"></div>
+        <div id="rateLimitsResult" role="status" aria-live="polite" style="margin-top: var(--spacing-md);"></div>
     </div>
 </section>
 
@@ -957,7 +957,7 @@
             <div class="api-key-item">
                 <div class="api-key-header">
                     <span class="api-key-name">🎮 TheGamesDB — Public API Key</span>
-                    <a href="https://api.thegamesdb.net/key.php" target="_blank" class="api-key-link">Get API Keys →</a>
+                    <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Keys →</a>
                 </div>
                 <input type="text" id="apikey-tgdb-public" class="api-key-input"
                        value="{{ scraper_settings.api_keys.tgdb_public }}"
@@ -979,7 +979,7 @@
             <div class="api-key-item">
                 <div class="api-key-header">
                     <span class="api-key-name">🌐 IGDB / Twitch Client ID</span>
-                    <a href="https://api-docs.igdb.com/#getting-started" target="_blank" class="api-key-link">Get Credentials →</a>
+                    <a href="https://api-docs.igdb.com/#getting-started" target="_blank" rel="noopener noreferrer" class="api-key-link">Get Credentials →</a>
                 </div>
                 <input type="text" id="apikey-igdb-client-id" class="api-key-input" 
                        value="{{ scraper_settings.api_keys.igdb_client_id }}" 
@@ -999,7 +999,7 @@
             <div class="api-key-item">
                 <div class="api-key-header">
                     <span class="api-key-name">🎮 RAWG.io API Key</span>
-                    <a href="https://rawg.io/apidocs" target="_blank" class="api-key-link">Get API Key →</a>
+                    <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
                 </div>
                 <input type="text" id="apikey-rawg" class="api-key-input" 
                        value="{{ scraper_settings.api_keys.rawg }}" 
@@ -1010,7 +1010,7 @@
             <div class="api-key-item" style="border-top: 1px solid rgba(76, 201, 240, 0.2); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
                 <div class="api-key-header">
                     <span class="api-key-name">🖥️ ScreenScraper Username</span>
-                    <a href="https://www.screenscraper.fr/membreinscription.php" target="_blank" class="api-key-link">Register →</a>
+                    <a href="https://www.screenscraper.fr/membreinscription.php" target="_blank" rel="noopener noreferrer" class="api-key-link">Register →</a>
                 </div>
                 <input type="text" id="apikey-screenscraper-username" class="api-key-input" 
                        value="{{ scraper_settings.api_keys.screenscraper_username }}" 
@@ -1029,7 +1029,7 @@
             <div class="api-key-item">
                 <div class="api-key-header">
                     <span class="api-key-name">🖥️ ScreenScraper Developer ID</span>
-                    <a href="https://www.screenscraper.fr/forumsujets.php?frub=12" target="_blank" class="api-key-link">Request Dev Access →</a>
+                    <a href="https://www.screenscraper.fr/forumsujets.php?frub=12" target="_blank" rel="noopener noreferrer" class="api-key-link">Request Dev Access →</a>
                 </div>
                 <input type="text" id="apikey-screenscraper-devid" class="api-key-input" 
                        value="{{ scraper_settings.api_keys.screenscraper_devid }}" 
@@ -1049,7 +1049,7 @@
             <div class="api-key-item" style="border-top: 1px solid rgba(76, 201, 240, 0.2); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
                 <div class="api-key-header">
                     <span class="api-key-name">🏆 RetroAchievements Username</span>
-                    <a href="https://retroachievements.org/" target="_blank" class="api-key-link">Register →</a>
+                    <a href="https://retroachievements.org/" target="_blank" rel="noopener noreferrer" class="api-key-link">Register →</a>
                 </div>
                 <input type="text" id="apikey-ra-username" class="api-key-input" 
                        value="{{ scraper_settings.api_keys.ra_username }}" 
@@ -1059,7 +1059,7 @@
             <div class="api-key-item">
                 <div class="api-key-header">
                     <span class="api-key-name">🏆 RetroAchievements API Key</span>
-                    <a href="https://retroachievements.org/controlpanel.php" target="_blank" class="api-key-link">Get API Key →</a>
+                    <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
                 </div>
                 <input type="text" id="apikey-ra-apikey" class="api-key-input"
                        value="{{ scraper_settings.api_keys.ra_apikey }}"
@@ -1070,7 +1070,7 @@
             <div class="api-key-item" style="border-top: 1px solid rgba(76, 201, 240, 0.2); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
                 <div class="api-key-header">
                     <span class="api-key-name">🎮 Steam Web API Key</span>
-                    <a href="https://steamcommunity.com/dev/apikey" target="_blank" class="api-key-link">Get API Key →</a>
+                    <a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
                 </div>
                 <input type="text" id="apikey-steam-api-key" class="api-key-input"
                        value="{{ scraper_settings.api_keys.steam_api_key }}"
@@ -1083,7 +1083,7 @@
                 <input type="text" id="apikey-steam-id" class="api-key-input"
                        value="{{ scraper_settings.api_keys.steam_id }}"
                        placeholder="17-digit Steam ID or custom URL name">
-                <span class="text-muted" style="font-size: 0.8rem; margin-top: 2px; display: block;">Your 17-digit Steam ID (e.g. 76561198012345678) or custom URL name. Find it at <a href="https://steamid.io" target="_blank" style="color: var(--primary-cyan);">steamid.io</a></span>
+                <span class="text-muted" style="font-size: 0.8rem; margin-top: 2px; display: block;">Your 17-digit Steam ID (e.g. 76561198012345678) or custom URL name. Find it at <a href="https://steamid.io" target="_blank" rel="noopener noreferrer" style="color: var(--primary-cyan);">steamid.io</a></span>
             </div>
 
             <!-- Xbox Setup Wizard -->
@@ -1196,7 +1196,7 @@
                 <div class="api-key-item">
                     <div class="api-key-header">
                         <span class="api-key-name">🤖 Gemini API Key</span>
-                        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="api-key-link">Get API Key →</a>
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
                     </div>
                     <input type="text" id="apikey-ai-gemini-key" class="api-key-input"
                            value="{{ scraper_settings.api_keys.ai_gemini_api_key }}"
@@ -1229,7 +1229,7 @@
                 <div class="api-key-item">
                     <div class="api-key-header">
                         <span class="api-key-name">🤖 OpenAI API Key</span>
-                        <a href="https://platform.openai.com/api-keys" target="_blank" class="api-key-link">Get API Key →</a>
+                        <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
                     </div>
                     <input type="text" id="apikey-ai-openai-key" class="api-key-input"
                            value="{{ scraper_settings.api_keys.ai_openai_api_key }}"
@@ -1251,7 +1251,7 @@
                 <div class="api-key-item">
                     <div class="api-key-header">
                         <span class="api-key-name">🤖 Anthropic API Key</span>
-                        <a href="https://console.anthropic.com/settings/keys" target="_blank" class="api-key-link">Get API Key →</a>
+                        <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
                     </div>
                     <input type="text" id="apikey-ai-claude-key" class="api-key-input"
                            value="{{ scraper_settings.api_keys.ai_claude_api_key }}"
@@ -1276,7 +1276,7 @@
                 Save API Keys
             </button>
         </div>
-        <div id="apiKeysResult" style="margin-top: var(--spacing-md);"></div>
+        <div id="apiKeysResult" role="status" aria-live="polite" style="margin-top: var(--spacing-md);"></div>
     </div>
 </section>
 {% endif %}
@@ -1364,7 +1364,7 @@
         
         <!-- Genre -->
         <div class="dropdown-manager" style="margin-bottom: var(--spacing-xl);">
-            <h4 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Genre</h4>
+            <h3 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Genre</h3>
             <div id="genreOptions" class="options-list"></div>
             <div class="add-option-row">
                 <input type="text" id="newGenre" placeholder="New genre..." class="option-input">
@@ -1374,7 +1374,7 @@
         
         <!-- Game Structure -->
         <div class="dropdown-manager" style="margin-bottom: var(--spacing-xl);">
-            <h4 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Game Structure</h4>
+            <h3 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Game Structure</h3>
             <div id="gameStructureOptions" class="options-list"></div>
             <div class="add-option-row">
                 <input type="text" id="newGameStructure" placeholder="New game structure..." class="option-input">
@@ -1384,7 +1384,7 @@
 
         <!-- Perspective -->
         <div class="dropdown-manager" style="margin-bottom: var(--spacing-xl);">
-            <h4 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Perspective</h4>
+            <h3 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Perspective</h3>
             <div id="perspectiveOptions" class="options-list"></div>
             <div class="add-option-row">
                 <input type="text" id="newPerspective" placeholder="New perspective..." class="option-input">
@@ -1394,7 +1394,7 @@
 
         <!-- Dimension -->
         <div class="dropdown-manager" style="margin-bottom: var(--spacing-xl);">
-            <h4 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Dimension</h4>
+            <h3 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Dimension</h3>
             <div id="dimensionOptions" class="options-list"></div>
             <div class="add-option-row">
                 <input type="text" id="newDimension" placeholder="New dimension..." class="option-input">
@@ -1404,7 +1404,7 @@
 
         <!-- Play Modes -->
         <div class="dropdown-manager" style="margin-bottom: var(--spacing-xl);">
-            <h4 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Play Modes</h4>
+            <h3 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Play Modes</h3>
             <div id="gameModesOptions" class="options-list"></div>
             <div class="add-option-row">
                 <input type="text" id="newGameMode" placeholder="New play mode..." class="option-input">
@@ -1414,7 +1414,7 @@
 
         <!-- Save Type -->
         <div class="dropdown-manager" style="margin-bottom: var(--spacing-xl);">
-            <h4 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Save Type</h4>
+            <h3 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Save Type</h3>
             <div id="saveTypeOptions" class="options-list"></div>
             <div class="add-option-row">
                 <input type="text" id="newSaveType" placeholder="New save type..." class="option-input">
@@ -1598,9 +1598,9 @@
         
         <!-- System Default Controllers Section -->
         <div id="controllers-defaults"></div>
-        <h4 class="section-title" style="margin-bottom: var(--spacing-md);">
+        <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
             <span>⚙️</span> System Default Controllers
-        </h4>
+        </h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
             Assign a default controller to each system. Games will inherit this controller unless manually changed.
         </p>
@@ -1633,9 +1633,9 @@
         
         <!-- Add New Controller Section -->
         <div id="controllers-add"></div>
-        <h4 class="section-title" style="margin-bottom: var(--spacing-md); margin-top: var(--spacing-xl);">
+        <h3 class="section-title" style="margin-bottom: var(--spacing-md); margin-top: var(--spacing-xl);">
             <span>➕</span> Add New Controller
-        </h4>
+        </h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
             Add a custom controller to the library. Select one or more systems, or leave empty for "Universal" controllers.
         </p>
@@ -1699,9 +1699,9 @@
         
         <!-- Controller Library Section -->
         <div id="controllers-library"></div>
-        <h4 class="section-title" style="margin-bottom: var(--spacing-md);">
+        <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
             <span>📚</span> Controller Library
-        </h4>
+        </h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
             All controllers in the database, sorted alphabetically by manufacturer. Click to expand details. You can delete custom controllers.
         </p>
@@ -1867,9 +1867,9 @@
         <div id="clearRAResult" style="margin-top: var(--spacing-md); display: none;"></div>
         
         <!-- Clear Data Section -->
-        <h4 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
             <span>🗑️</span> Clear Data
-        </h4>
+        </h3>
 
         <div style="display: flex; gap: var(--spacing-md); align-items: flex-start; flex-wrap: wrap; margin-bottom: var(--spacing-lg);">
             <div>
@@ -1918,9 +1918,9 @@
         <div id="clearScrapedResult" style="margin-top: var(--spacing-md); display: none;"></div>
         
         <!-- Orphaned Media Cleanup Section -->
-        <h4 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
             <span>🗂️</span> Orphaned Media Cleanup
-        </h4>
+        </h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
             Find and delete media files (boxart, screenshots, videos, etc.) for ROMs that no longer exist in the database. 
             This cleans up leftover files from deleted games.
@@ -1938,9 +1938,9 @@
         <div id="orphanedMediaResult" style="margin-top: var(--spacing-md); display: none;"></div>
 
         <!-- Database Optimization Section -->
-        <h4 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
             <span>💾</span> Database Optimization
-        </h4>
+        </h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
             Optimize the database for better performance. Runs VACUUM to reclaim unused space
             and ANALYZE to update query planner statistics.
@@ -1983,9 +1983,9 @@
         
         <!-- Scraping Logs -->
         <div class="log-category-section">
-            <h4 class="section-title" style="margin-bottom: var(--spacing-md);">
+            <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
                 <span>🔍</span> Scraping Logs
-            </h4>
+            </h3>
             <p class="text-muted" style="font-size: 0.85rem; margin-bottom: var(--spacing-md);">
                 Logs from metadata scraping operations (IGDB, TGDB, ScreenScraper, RAWG, ES-DE)
             </p>
@@ -2016,9 +2016,9 @@
         
         <!-- ROM Tools Logs -->
         <div class="log-category-section" style="margin-top: var(--spacing-xl);">
-            <h4 class="section-title" style="margin-bottom: var(--spacing-md);">
+            <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
                 <span>🛠️</span> ROM Tools Logs
-            </h4>
+            </h3>
             <p class="text-muted" style="font-size: 0.85rem; margin-bottom: var(--spacing-md);">
                 Logs from ROM scanning, CHD conversion, archive extraction, and M3U creation
             </p>
@@ -2049,9 +2049,9 @@
         
         <!-- ROM Reports Logs -->
         <div class="log-category-section" style="margin-top: var(--spacing-xl);">
-            <h4 class="section-title" style="margin-bottom: var(--spacing-md);">
+            <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
                 <span>📊</span> ROM Reports Logs
-            </h4>
+            </h3>
             <p class="text-muted" style="font-size: 0.85rem; margin-bottom: var(--spacing-md);">
                 Logs from ROM naming checks, mismatch detection, and batch rename operations
             </p>
@@ -2082,9 +2082,9 @@
         
         <!-- Image Resize Logs -->
         <div class="log-category-section" style="margin-top: var(--spacing-xl);">
-            <h4 class="section-title" style="margin-bottom: var(--spacing-md);">
+            <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
                 <span>🖼️</span> Image Resize Logs
-            </h4>
+            </h3>
             <p class="text-muted" style="font-size: 0.85rem; margin-bottom: var(--spacing-md);">
                 Logs from image standardization (upscale/downscale) operations
             </p>
@@ -2115,9 +2115,9 @@
 
         <!-- System Logs -->
         <div class="log-category-section" style="margin-top: var(--spacing-xl);">
-            <h4 class="section-title" style="margin-bottom: var(--spacing-md);">
+            <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
                 <span>🖥️</span> System Logs
-            </h4>
+            </h3>
             <p class="text-muted" style="font-size: 0.85rem; margin-bottom: var(--spacing-md);">
                 General system operations including achievements sync, page loads, and API calls
             </p>
@@ -2157,9 +2157,9 @@
         
         <!-- Log Files Section -->
         <div style="margin-top: var(--spacing-2xl); padding-top: var(--spacing-lg); border-top: 1px solid var(--card-border);">
-            <h4 class="section-title" style="margin-bottom: var(--spacing-md);">
+            <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
                 <span>📁</span> Log Files
-            </h4>
+            </h3>
             <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; align-items: center; margin-bottom: var(--spacing-md);">
                 <button onclick="loadLogFiles()" class="btn btn-secondary">
                     <span class="btn-icon">🔄</span>
@@ -2183,9 +2183,9 @@
         <h2 class="card-title">🔧 Troubleshooting</h2>
     </div>
     <div class="card-body">
-        <h4 class="section-title" style="margin-bottom: var(--spacing-md);">
+        <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
             <span>🔄</span> Bulk Scrape Issues
-        </h4>
+        </h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
             If a bulk scrape gets stuck or won't clear from the toast notification, use this button to force clear all bulk scrape state from your browser's local storage.
         </p>
@@ -2194,16 +2194,16 @@
                 <span class="btn-icon">🧹</span>
                 Clear Stuck Bulk Scrape
             </button>
-            <span id="bulkScrapeClearResult" style="font-size: 0.9rem;"></span>
+            <span id="bulkScrapeClearResult" role="status" aria-live="polite" style="font-size: 0.9rem;"></span>
         </div>
         <div id="bulkScrapeStatusInfo" style="margin-top: var(--spacing-lg); padding: var(--spacing-md); background: rgba(0, 0, 0, 0.2); border-radius: var(--radius-md);">
             <h5 style="color: var(--text-secondary); margin-bottom: var(--spacing-sm);">Current Bulk Scrape State:</h5>
             <pre id="bulkScrapeStateDisplay" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); white-space: pre-wrap; margin: 0;">Loading...</pre>
         </div>
         
-        <h4 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
             <span>🏆</span> Achievement Sync Issues
-        </h4>
+        </h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
             If achievement syncs get stuck or the queue won't process, use this button to clear the sync queue and reset the sync state.
         </p>
@@ -2212,7 +2212,7 @@
                 <span class="btn-icon">🧹</span>
                 Clear Stuck RA Sync
             </button>
-            <span id="raSyncClearResult" style="font-size: 0.9rem;"></span>
+            <span id="raSyncClearResult" role="status" aria-live="polite" style="font-size: 0.9rem;"></span>
         </div>
         <div id="raSyncStatusInfo" style="margin-top: var(--spacing-lg); padding: var(--spacing-md); background: rgba(0, 0, 0, 0.2); border-radius: var(--radius-md);">
             <h5 style="color: var(--text-secondary); margin-bottom: var(--spacing-sm);">Current RA Sync Queue:</h5>

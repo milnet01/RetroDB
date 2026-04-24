@@ -49,3 +49,13 @@ body::after {
     z-index: 9999;
 }
 
+/* =============================================================================
+   REDUCED-MOTION (WCAG SC 2.3.3)
+   The scanline can be perceived as shimmering on some displays; hide it when
+   the user requests reduced motion. The diagonal gradient is static, no-op.
+   ============================================================================= */
+@media (prefers-reduced-motion: reduce) {
+    body::after {
+        display: none;
+    }
+}

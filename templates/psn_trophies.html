@@ -1496,7 +1496,13 @@ async function syncTrophies() {
     const syncFooter = document.getElementById('syncFooter');
 
     if (btn) btn.disabled = true;
-    if (modal) modal.classList.add('active');
+    if (modal) {
+        modal.classList.add('active');
+        // Pass 37.2 — WCAG 2.4.3; escape is disabled so close always goes through Done button.
+        if (typeof ModalFocusTrap !== 'undefined') {
+            ModalFocusTrap.activate(modal, btn, { onEscape: null, autoFocus: false });
+        }
+    }
     if (status) status.textContent = 'Starting PSN sync...';
     if (progress) progress.style.width = '0%';
     if (currentGame) currentGame.textContent = '';
@@ -1513,11 +1519,23 @@ async function syncTrophies() {
             pollSyncStatus();
         } else {
             if (status) status.textContent = 'Error: ' + (data.error || 'Sync failed');
-            setTimeout(() => { if (modal) modal.classList.remove('active'); if (btn) btn.disabled = false; }, 3000);
+            setTimeout(() => {
+                if (modal) {
+                    modal.classList.remove('active');
+                    if (typeof ModalFocusTrap !== 'undefined') ModalFocusTrap.deactivate(modal);
+                }
+                if (btn) btn.disabled = false;
+            }, 3000);
         }
     } catch (error) {
         if (status) status.textContent = 'Failed to start sync: ' + error.message;
-        setTimeout(() => { if (modal) modal.classList.remove('active'); if (btn) btn.disabled = false; }, 3000);
+        setTimeout(() => {
+            if (modal) {
+                modal.classList.remove('active');
+                if (typeof ModalFocusTrap !== 'undefined') ModalFocusTrap.deactivate(modal);
+            }
+            if (btn) btn.disabled = false;
+        }, 3000);
     }
 }
 
@@ -1554,7 +1572,9 @@ async function pollSyncStatus() {
             syncPolling = null;
             if (status) status.textContent = 'Error: ' + (s.error || 'Sync failed');
             setTimeout(() => {
-                document.getElementById('syncModal').classList.remove('active');
+                const m = document.getElementById('syncModal');
+                m.classList.remove('active');
+                if (typeof ModalFocusTrap !== 'undefined') ModalFocusTrap.deactivate(m);
                 document.getElementById('syncTrophiesBtn').disabled = false;
             }, 3000);
         }
@@ -1565,7 +1585,9 @@ async function pollSyncStatus() {
 
 function closeSyncModal() {
     if (syncPolling) { clearInterval(syncPolling); syncPolling = null; }
-    document.getElementById('syncModal').classList.remove('active');
+    const modal = document.getElementById('syncModal');
+    modal.classList.remove('active');
+    if (typeof ModalFocusTrap !== 'undefined') ModalFocusTrap.deactivate(modal);
     document.getElementById('syncTrophiesBtn').disabled = false;
     window.location.reload();
 }
@@ -1599,6 +1621,11 @@ async function startBulkRefresh() {
     document.getElementById('bulkPauseBtnText').textContent = 'Pause';
 
     modal.classList.add('active');
+    // Pass 37.2 — focus-trap for keyboard users while the bulk refresh runs.
+    if (typeof ModalFocusTrap !== 'undefined') {
+        const trigger = document.getElementById('psnBulkRefreshBtn');
+        ModalFocusTrap.activate(modal, trigger, { onEscape: null, autoFocus: false });
+    }
 
     try {
         const response = await fetch('/api/psn/bulk-refresh/start', {
@@ -1624,7 +1651,10 @@ async function startBulkRefresh() {
             }
         } else {
             document.getElementById('bulkRefreshStatus').textContent = 'Error: ' + (data.error || 'Failed to start');
-            setTimeout(() => modal.classList.remove('active'), 2000);
+            setTimeout(() => {
+                modal.classList.remove('active');
+                if (typeof ModalFocusTrap !== 'undefined') ModalFocusTrap.deactivate(modal);
+            }, 2000);
         }
     } catch (error) {
         document.getElementById('bulkRefreshStatus').textContent = 'Network error: ' + error.message;
@@ -1725,7 +1755,9 @@ async function cancelBulkRefresh() {
 
 function psnRunInBackground() {
     stopBulkRefreshPolling();
-    document.getElementById('bulkRefreshModal').classList.remove('active');
+    const modal = document.getElementById('bulkRefreshModal');
+    modal.classList.remove('active');
+    if (typeof ModalFocusTrap !== 'undefined') ModalFocusTrap.deactivate(modal);
     PSNTrophyController.exitBulkMode();
 
     // Trigger toast controller to pick up the running job immediately
@@ -1740,7 +1772,9 @@ function psnRunInBackground() {
 
 function closeBulkRefreshModal(reload) {
     stopBulkRefreshPolling();
-    document.getElementById('bulkRefreshModal').classList.remove('active');
+    const modal = document.getElementById('bulkRefreshModal');
+    modal.classList.remove('active');
+    if (typeof ModalFocusTrap !== 'undefined') ModalFocusTrap.deactivate(modal);
     PSNTrophyController.exitBulkMode();
     if (reload) window.location.reload();
 }

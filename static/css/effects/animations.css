@@ -69,3 +69,13 @@
     }
 }
 
+/* =============================================================================
+   REDUCED-MOTION (WCAG SC 2.3.3)
+   core/reset.css has the universal rule; these are file-local safeguards that
+   survive if a future override re-enables animation on specific classes.
+   ============================================================================= */
+@media (prefers-reduced-motion: reduce) {
+    .highlight-jump {
+        animation: none;
+    }
+}

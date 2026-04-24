@@ -37,7 +37,7 @@
                             <span class="field-tip">Used for proper franchise ordering (e.g., "Final Fantasy 07" instead of "VII")</span>
                         </div>
                         <div class="edit-field">
-                            <label>Franchise / Series</label>
+                            <label for="edit_franchise">Franchise / Series</label>
                             <div class="toggle-row" style="margin-bottom: var(--spacing-sm);">
                                 <label class="toggle-switch" for="edit_franchise">
                                     <input type="checkbox" id="edit_franchise_toggle" aria-label="Toggle franchise status" onchange="updateEditFranchiseToggle()">
@@ -103,7 +103,7 @@
                     <h3 class="edit-section-title">🎮 Gameplay</h3>
                     <div class="edit-grid">
                         <div class="edit-field">
-                            <label>Genre</label>
+                            <label for="genreDropdown">Genre</label>
                             <div class="genre-select-container" id="genreContainer"></div>
                             <input type="hidden" name="edit_genre" id="edit_genre_hidden" value="{{ game.genre or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
@@ -114,7 +114,7 @@
                             <span class="field-tip">Click × to remove, use dropdown to add genres</span>
                         </div>
                         <div class="edit-field">
-                            <label for="edit_modes">Play Modes</label>
+                            <label for="modesDropdown">Play Modes</label>
                             <div class="genre-select-container" id="modesContainer"></div>
                             <input type="hidden" name="edit_modes" id="edit_modes_hidden" value="{{ game.modes or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
@@ -129,7 +129,7 @@
                             <input type="number" name="edit_players" id="edit_players" value="{{ game.players or 1 }}" min="1" max="16" />
                         </div>
                         <div class="edit-field">
-                            <label>Campaign Mode</label>
+                            <label for="edit_campaign_toggle">Campaign Mode</label>
                             <div class="toggle-field">
                                 <label class="toggle-switch">
                                     <input type="checkbox" name="edit_campaign_toggle" id="edit_campaign_toggle"
@@ -142,7 +142,7 @@
                             <span class="field-tip">Does this game have a story campaign?</span>
                         </div>
                         <div class="edit-field">
-                            <label>Game Structure</label>
+                            <label for="gameStructureDropdown">Game Structure</label>
                             <div class="genre-select-container" id="gameStructureContainer"></div>
                             <input type="hidden" name="edit_game_structure" id="edit_game_structure_hidden"
                                    value="{{ game.game_structure or '' }}" />
@@ -155,7 +155,7 @@
                             <span class="field-tip">Linear, Open World, Level-based, etc.</span>
                         </div>
                         <div class="edit-field">
-                            <label>Perspective</label>
+                            <label for="perspectiveDropdown">Perspective</label>
                             <div class="genre-select-container" id="perspectiveContainer"></div>
                             <input type="hidden" name="edit_perspective" id="edit_perspective_hidden" value="{{ game.perspective or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
@@ -166,7 +166,7 @@
                             <span class="field-tip">First-Person, Third-Person, Side-Scroller, etc.</span>
                         </div>
                         <div class="edit-field">
-                            <label>Dimension</label>
+                            <label for="dimensionDropdown">Dimension</label>
                             <div class="genre-select-container" id="dimensionContainer"></div>
                             <input type="hidden" name="edit_dimension" id="edit_dimension_hidden" value="{{ game.dimension or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
@@ -183,7 +183,7 @@
                     <h3 class="edit-section-title">⚙️ Technical</h3>
                     <div class="edit-grid">
                         <div class="edit-field">
-                            <label>Controller Support</label>
+                            <label for="controllerDropdown">Controller Support</label>
                             <div class="controller-select-container" id="controllerContainer"></div>
                             <input type="hidden" name="edit_controller_support" id="edit_controller_hidden" value="{{ game.controller_support or '' }}" />
                             <div class="controller-dropdown">
@@ -198,7 +198,7 @@
                             <span class="field-tip">Click ✕ to remove, use dropdown or type custom</span>
                         </div>
                         <div class="edit-field">
-                            <label for="edit_save_type">Save Type</label>
+                            <label for="saveTypeDropdown">Save Type</label>
                             <div class="genre-select-container" id="saveTypeContainer"></div>
                             <input type="hidden" name="edit_save_type" id="edit_save_type_hidden" value="{{ game.save_type or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
@@ -209,7 +209,7 @@
                             <span class="field-tip">Click × to remove, use dropdown to add save types</span>
                         </div>
                         <div class="edit-field">
-                            <label>Platform Availability</label>
+                            <label for="edit_other_platforms">Platform Availability</label>
                             <div class="toggle-row" style="margin-bottom: var(--spacing-sm);">
                                 <label class="toggle-switch" for="edit_other_platforms">
                                     <input type="checkbox" id="edit_exclusive_toggle" aria-label="Toggle platform exclusivity" onchange="updateEditExclusiveToggle()">

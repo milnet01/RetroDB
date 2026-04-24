@@ -4124,7 +4124,7 @@ See Pass 13.3 — no duplicate entry.
   for composite controls.  Audit with axe-core or a keyboard-only
   walk.
 - **Source**: 2026-04-24 audit, Templates & CSS M1 (extends Pass 28.1).
-- **Status**: todo
+- **Status**: done (v3.4.0) — Pass 37 sub-item 1 landed 2026-04-24
 
 ### 37.2 Focus trap on PSN trophies modals (HIGH, S)
 
@@ -4135,7 +4135,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: wire `ModalFocusTrap.activate(modalEl, triggerEl, {...})`
   in the existing open-modal JS; verify by keyboard-only walk.
 - **Source**: 2026-04-24 audit, Templates & CSS H3 (extends Pass 28.2).
-- **Status**: todo
+- **Status**: done (v3.4.0) — Pass 37 sub-item 2 landed 2026-04-24
 
 ### 37.3 Reduced-motion kill-switch for canvas effects (MEDIUM, S)
 
@@ -4149,7 +4149,7 @@ See Pass 13.3 — no duplicate entry.
   `window.matchMedia('(prefers-reduced-motion: reduce)').matches`
   before starting the loop.
 - **Source**: 2026-04-24 audit, Templates & CSS M4 (extends Pass 28.5).
-- **Status**: todo
+- **Status**: done (v3.4.0) — Pass 37 sub-item 3 landed 2026-04-24
 
 ### 37.4 `rel="noopener noreferrer"` on `target="_blank"` (MEDIUM, S)
 
@@ -4159,7 +4159,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: trivial sweep; add `rel="noopener noreferrer"` to every
   `target="_blank"`.  Stretch: Jinja macro for external-link rendering.
 - **Source**: 2026-04-24 audit, Templates & CSS M5.
-- **Status**: todo
+- **Status**: done (v3.4.0) — Pass 37 sub-item 4 landed 2026-04-24
 
 ### 37.5 Heading hierarchy fixes (LOW, M)
 
@@ -4169,7 +4169,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: insert h2 for section groupings or demote h3→h2 where
   semantically correct; audit with the browser's a11y tree.
 - **Source**: 2026-04-24 audit, Templates & CSS L6.
-- **Status**: todo
+- **Status**: done (v3.4.0) — Pass 37 sub-item 5 landed 2026-04-24
 
 ### 37.6 Add `aria-live` status regions to flash messages (LOW, S)
 
@@ -4179,7 +4179,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: `role="status"` for success, `role="alert"` for errors on
   the flash container.
 - **Source**: 2026-04-24 audit, Templates & CSS L9.
-- **Status**: todo
+- **Status**: done (v3.4.0) — Pass 37 sub-item 6 landed 2026-04-24
 
 ### 37.7 Promote hardcoded colors into variables (LOW, S)
 
@@ -4189,7 +4189,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: migrate to `var(--trophy-display-gold)` etc.; grep check
   for residue after.
 - **Source**: 2026-04-24 audit, Templates & CSS M6.
-- **Status**: todo
+- **Status**: done (v3.4.0) — Pass 37 sub-item 7 landed 2026-04-24
 
 ---
 

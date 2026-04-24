@@ -272,7 +272,7 @@
                         </div>
                         <span class="achievement-arrow">→</span>
                     </a>
-                    <a href="{{ retroachievements.url }}" target="_blank" class="achievement-ext-link ra" title="View on RetroAchievements.org">
+                    <a href="{{ retroachievements.url }}" target="_blank" rel="noopener noreferrer" class="achievement-ext-link ra" title="View on RetroAchievements.org">
                         <img src="{{ url_for('static', filename='images/trophies/ra.webp') }}" alt="" class="achievement-ext-icon">
                         <span>RA Site</span>
                         <span class="ext-arrow">↗</span>
@@ -388,7 +388,7 @@
     <div class="media-row">
         {% if game.screenshots %}
         <div class="media-section screenshots-section">
-            <h3 class="media-title">📸 Screenshots ({{ game.screenshots.split(',') | length }})</h3>
+            <h2 class="media-title">📸 Screenshots ({{ game.screenshots.split(',') | length }})</h2>
             <div class="screenshots-wrapper">
                 <button class="screenshots-nav prev" onclick="scrollScreenshots(-1)" aria-label="Previous screenshots">‹</button>
                 <div class="screenshots-row" id="screenshotsRow">
@@ -407,7 +407,7 @@
         
         {% if game.video %}
         <div class="media-section video-section">
-            <h3 class="media-title">🎬 Video</h3>
+            <h2 class="media-title">🎬 Video</h2>
             <div class="video-compact">
                 <video id="gameVideo" controls preload="metadata" poster="{{ url_for('static', filename='images/boxart/' + game.boxart) if game.boxart else '' }}">
                     <source src="{{ url_for('static', filename='videos/' + game.video) }}" type="video/{{ game.video.split('.')[-1] }}">
@@ -423,7 +423,7 @@
     <div class="bottom-row">
         <!-- Similar Games -->
         <div class="bottom-section">
-            <h3 class="section-title-sm">🎯 Similar Games</h3>
+            <h2 class="section-title-sm">🎯 Similar Games</h2>
             {% if game.similar_games %}
             <div class="similar-tags" style="margin-bottom: 0.75rem;">
                 {% for sg in game.similar_games.split(',')[:5] if sg.strip() %}
@@ -438,7 +438,7 @@
         
         <!-- Playtime Estimate -->
         <div class="bottom-section">
-            <h3 class="section-title-sm">⏱️ How Long to Beat</h3>
+            <h2 class="section-title-sm">⏱️ How Long to Beat</h2>
             <div class="hltb-section" id="hltbSection">
                 <!-- Search Input -->
                 <input type="text"
@@ -517,7 +517,7 @@
         
         <!-- Extra Details -->
         <div class="bottom-section">
-            <h3 class="section-title-sm">📋 More Details</h3>
+            <h2 class="section-title-sm">📋 More Details</h2>
             <div class="extra-details">
                 {% if is_platform_import %}
                 <div class="ed-row clz-notice">
@@ -626,7 +626,7 @@
         <!-- Bonus Discs Section (only show if this game has linked bonus discs) -->
         {% if bonus_discs %}
         <div class="bottom-section bonus-discs-section">
-            <h3 class="section-title-sm">🎁 Bonus Content</h3>
+            <h2 class="section-title-sm">🎁 Bonus Content</h2>
             <div class="bonus-discs-list">
                 {% for disc in bonus_discs %}
                 <a href="{{ url_for('games.game_detail', game_id=disc.id) }}" class="bonus-disc-item">
@@ -646,7 +646,7 @@
     <!-- Manual Link -->
     {% if game.manual %}
     <div class="manual-link">
-        <a href="{{ url_for('static', filename='images/manuals/' + game.manual) }}" target="_blank" class="btn btn-secondary">
+        <a href="{{ url_for('static', filename='images/manuals/' + game.manual) }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
             <span class="btn-icon">📖</span>
             View Manual (PDF)
         </a>
@@ -656,9 +656,9 @@
     <!-- Scrape History -->
     {% if game.scrape_history %}
     <div class="scrape-history-section">
-        <h3 class="section-title-sm" onclick="toggleScrapeHistory()" style="cursor: pointer;">
+        <h2 class="section-title-sm" onclick="toggleScrapeHistory()" style="cursor: pointer;">
             📜 Scrape History <span id="scrapeHistoryArrow">▼</span>
-        </h3>
+        </h2>
         <div id="scrapeHistoryContent" class="scrape-history-content">
             {% if game.scrape_history is iterable and game.scrape_history is not string %}
             {% for entry in game.scrape_history | reverse %}
