@@ -4,7 +4,7 @@
 # Handles RetroAchievements integration and synchronization.
 # =============================================================================
 
-from flask import Blueprint, render_template, redirect, url_for, jsonify, flash
+from flask import Blueprint, render_template, redirect, url_for, jsonify, flash, g
 import logging
 from datetime import datetime, timezone
 
@@ -77,7 +77,10 @@ def achievements_system(system_id):
     # Check if user has RA configured
     ra_username, ra_api_key = get_user_ra_credentials()
     
-    # Get system info with user's earned stats from database
+    # Pass 31.2 — every JOIN on game_achievement_progress carries an ON-clause
+    # filter on gap.user_id so each user sees their own earned counts. Without
+    # the filter, the LEFT JOIN would aggregate across every user's rows.
+    user_id = g.user['id']
     system = query("""
         SELECT s.id, s.name, s.folder, COUNT(g.id) as game_count,
                SUM(g.ra_achievement_count) as total_achievements,
@@ -87,41 +90,41 @@ def achievements_system(system_id):
                MAX(gap.last_synced) as last_synced
         FROM systems s
         JOIN games g ON g.system_id = s.id
-        LEFT JOIN game_achievement_progress gap ON g.id = gap.game_id
+        LEFT JOIN game_achievement_progress gap ON g.id = gap.game_id AND gap.user_id = ?
         WHERE s.id = ? AND g.ra_game_id IS NOT NULL AND g.ra_game_id != ''
         GROUP BY s.id
-    """, (system_id,), one=True)
-    
+    """, (user_id, system_id), one=True)
+
     if not system:
         flash('System not found or has no achievement games', 'warning')
         return redirect(url_for('dashboard'))
-    
-    # Get games for this system with their stored progress
+
+    # Get games for this system with the caller's stored progress
     games = query("""
         SELECT g.id, g.title, g.boxart, g.system_id, s.name as system_name, s.folder as system_folder,
                g.ra_game_id, g.ra_achievement_count, g.ra_points,
                gap.earned_achievements, gap.earned_points, gap.completion_percentage, gap.last_synced
         FROM games g
         JOIN systems s ON g.system_id = s.id
-        LEFT JOIN game_achievement_progress gap ON g.id = gap.game_id
+        LEFT JOIN game_achievement_progress gap ON g.id = gap.game_id AND gap.user_id = ?
         WHERE g.system_id = ? AND g.ra_game_id IS NOT NULL AND g.ra_game_id != ''
         ORDER BY g.title COLLATE NOCASE
-    """, (system_id,))
-    
-    # Get all systems for the navigation tabs with user stats
+    """, (user_id, system_id))
+
+    # Get all systems for the navigation tabs with per-user stats
     all_systems = query("""
         SELECT s.id, s.name, COUNT(g.id) as game_count,
                SUM(COALESCE(gap.earned_achievements, 0)) as earned_achievements,
                SUM(g.ra_achievement_count) as total_achievements
         FROM systems s
         JOIN games g ON g.system_id = s.id
-        LEFT JOIN game_achievement_progress gap ON g.id = gap.game_id
+        LEFT JOIN game_achievement_progress gap ON g.id = gap.game_id AND gap.user_id = ?
         WHERE g.ra_game_id IS NOT NULL AND g.ra_game_id != ''
         GROUP BY s.id
         ORDER BY s.name COLLATE NOCASE
-    """)
-    
-    # Get overall stats across all systems with user's earned totals
+    """, (user_id,))
+
+    # Get overall stats across all systems with per-user earned totals
     overall_stats = query("""
         SELECT COUNT(g.id) as total_games,
                SUM(g.ra_achievement_count) as total_achievements,
@@ -129,9 +132,9 @@ def achievements_system(system_id):
                SUM(COALESCE(gap.earned_achievements, 0)) as earned_achievements,
                SUM(COALESCE(gap.earned_points, 0)) as earned_points
         FROM games g
-        LEFT JOIN game_achievement_progress gap ON g.id = gap.game_id
+        LEFT JOIN game_achievement_progress gap ON g.id = gap.game_id AND gap.user_id = ?
         WHERE g.ra_game_id IS NOT NULL AND g.ra_game_id != ''
-    """, one=True)
+    """, (user_id,), one=True)
     
     return render_template('achievements_system.html',
                          system=system,
@@ -194,12 +197,12 @@ def achievement_game(game_id):
 @login_required
 def api_get_achievements(game_id):
     """API endpoint to get achievements for a game - loads from local database"""
-    # First try to get from local storage
+    # First try to get from local storage (Pass 31.2 — per user).
     progress = query("""
-        SELECT earned_achievements, total_achievements, earned_points, 
+        SELECT earned_achievements, total_achievements, earned_points,
                total_points, completion_percentage, last_synced
-        FROM game_achievement_progress WHERE game_id = ?
-    """, (game_id,), one=True)
+        FROM game_achievement_progress WHERE game_id = ? AND user_id = ?
+    """, (game_id, g.user['id']), one=True)
     
     if progress:
         return success(
@@ -237,14 +240,14 @@ def api_sync_game_achievements(game_id):
     progress = get_user_game_progress_custom(game['ra_game_id'], username, api_key)
 
     if progress:
-        # Store in local database
+        # Store in local database (Pass 31.2 — per user).
         now = datetime.now(timezone.utc).isoformat()
         execute("""
             INSERT INTO game_achievement_progress
-            (game_id, ra_game_id, earned_achievements, total_achievements,
+            (game_id, user_id, ra_game_id, earned_achievements, total_achievements,
              earned_points, total_points, completion_percentage, last_synced)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ON CONFLICT(game_id) DO UPDATE SET
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(game_id, user_id) DO UPDATE SET
                 earned_achievements = excluded.earned_achievements,
                 total_achievements = excluded.total_achievements,
                 earned_points = excluded.earned_points,
@@ -253,6 +256,7 @@ def api_sync_game_achievements(game_id):
                 last_synced = excluded.last_synced
         """, (
             game_id,
+            g.user['id'],
             game['ra_game_id'],
             progress.get('unlocked_count', 0),
             progress.get('total_count', 0),
@@ -331,8 +335,8 @@ def api_sync_system_achievements(system_id):
     game_ids = [g['id'] for g in games]
     system_log('info', f'Syncing {len(game_ids)} games for {system["name"]}')
     
-    # Start background sync
-    result = ra_sync_job.start(system_id, game_ids, system['name'])
+    # Start background sync (Pass 31.2 — per-user progress rows).
+    result = ra_sync_job.start(system_id, game_ids, system['name'], user_id=g.user['id'])
     
     return jsonify(result)
 
@@ -360,9 +364,9 @@ def api_achievements_sync_results(system_id):
         SELECT g.id as game_id, gap.earned_achievements, gap.total_achievements,
                gap.earned_points, gap.total_points, gap.completion_percentage, gap.last_synced
         FROM games g
-        LEFT JOIN game_achievement_progress gap ON g.id = gap.game_id
+        LEFT JOIN game_achievement_progress gap ON g.id = gap.game_id AND gap.user_id = ?
         WHERE g.system_id = ? AND g.ra_game_id IS NOT NULL
-    """, (system_id,))
+    """, (g.user['id'], system_id))
     
     result = {}
     for row in progress_data:
@@ -387,9 +391,9 @@ def api_get_stored_achievements(system_id):
         SELECT g.id as game_id, gap.earned_achievements, gap.total_achievements,
                gap.earned_points, gap.total_points, gap.completion_percentage, gap.last_synced
         FROM games g
-        LEFT JOIN game_achievement_progress gap ON g.id = gap.game_id
+        LEFT JOIN game_achievement_progress gap ON g.id = gap.game_id AND gap.user_id = ?
         WHERE g.system_id = ? AND g.ra_game_id IS NOT NULL
-    """, (system_id,))
+    """, (g.user['id'], system_id))
     
     result = {}
     for row in progress_data:

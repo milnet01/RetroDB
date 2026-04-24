@@ -49,6 +49,11 @@ class PSNRefreshJob:
         self.start_time = None
         # Store user credentials for background thread
         self._npsso = None
+        # Pass 31.1 / 31.5 — the user on whose behalf the refresh runs. Every
+        # psn_games / psn_trophies write scopes to this id so user B's refresh
+        # can't overwrite user A's rows, and resume-from-params refuses to
+        # silently pick up someone else's NPSSO.
+        self._user_id = None
 
     def get_status(self):
         """Get current job status"""
@@ -76,13 +81,17 @@ class PSNRefreshJob:
                 'return_url': self.return_url
             }
 
-    def start(self, npwr_ids, npsso, return_url=None):
-        """Start a new PSN trophy refresh job"""
+    def start(self, npwr_ids, npsso, return_url=None, user_id=None):
+        """Start a new PSN trophy refresh job (Pass 31.1 — user_id required
+        to scope every psn_games / psn_trophies write to the caller)."""
         if not npwr_ids:
             return {'success': False, 'error': 'No games to refresh'}
 
         if not npsso:
             return {'success': False, 'error': 'PSN NPSSO not configured'}
+
+        if not user_id:
+            return {'success': False, 'error': 'PSN refresh requires a caller user_id'}
 
         # Get the first game's title for immediate UI feedback
         first_game_title = None
@@ -90,7 +99,10 @@ class PSNRefreshJob:
             try:
                 conn = _get_conn()
                 c = conn.cursor()
-                c.execute("SELECT title FROM psn_games WHERE npwr_id = ?", (npwr_ids[0],))
+                c.execute(
+                    "SELECT title FROM psn_games WHERE npwr_id = ? AND user_id = ?",
+                    (npwr_ids[0], user_id),
+                )
                 row = c.fetchone()
                 if row:
                     first_game_title = row['title']
@@ -106,6 +118,7 @@ class PSNRefreshJob:
             self.job_id = f"psn_refresh_{int(time.time())}"
             self.npwr_ids = npwr_ids
             self._npsso = npsso
+            self._user_id = user_id
             self.return_url = return_url
             self.running = True
             self.start_time = datetime.now()
@@ -150,19 +163,35 @@ class PSNRefreshJob:
     def resume_from_params(self, params, progress=None):
         """Resume PSN refresh from persisted params after server restart.
 
-        Uses persisted npwr_ids and progress to continue from where it left off,
-        prepending None placeholders for already-processed items and restoring counts.
+        Uses persisted npwr_ids, user_id, and progress to continue from where
+        it left off.  Pass 31.5 — refuses to resume if the originating user is
+        missing from the params (pre-31 jobs) or no longer has an NPSSO
+        configured.  Picking an NPSSO from any user row (the old "first
+        configured user wins" behavior) would silently resume user A's job
+        under user B's credentials, which is exactly the cross-user leak
+        this pass fixes.
         """
         npwr_ids = params.get('npwr_ids', [])
         if not npwr_ids:
             return False
 
-        # Get NPSSO from user_settings table (first user with PSN configured)
+        user_id = params.get('user_id')
+        if not user_id:
+            logger.warning(
+                "Cannot auto-resume PSN refresh: job params predate Pass 31.5 "
+                "(no user_id). Rerunning the sync manually re-binds it."
+            )
+            return False
+
+        # Pass 31.5 — fetch the ORIGINATING user's NPSSO, not the first user
+        # who happens to have one configured.
         try:
             conn = _get_conn()
             try:
                 row = conn.execute(
-                    "SELECT psn_npsso FROM user_settings WHERE psn_npsso IS NOT NULL AND psn_npsso != '' LIMIT 1"
+                    "SELECT psn_npsso FROM user_settings "
+                    "WHERE user_id = ? AND psn_npsso IS NOT NULL AND psn_npsso != ''",
+                    (user_id,),
                 ).fetchone()
                 npsso = row['psn_npsso'] if row else ''
             finally:
@@ -171,7 +200,12 @@ class PSNRefreshJob:
             npsso = ''
 
         if not npsso:
-            logger.warning("Cannot auto-resume PSN refresh: NPSSO not configured")
+            logger.warning(
+                "Cannot auto-resume PSN refresh for user_id=%s: NPSSO no "
+                "longer configured for that user (user may have been removed "
+                "or rotated credentials).",
+                user_id,
+            )
             return False
 
         resume_index = progress.get('current', 0) if progress else 0
@@ -189,6 +223,7 @@ class PSNRefreshJob:
                 self.job_id = f"psn_refresh_{int(time.time())}_resume"
                 self.npwr_ids = [None] * resume_index + remaining_ids
                 self._npsso = npsso
+                self._user_id = user_id
                 self.return_url = return_url
                 self.running = True
                 self.start_time = datetime.now()
@@ -202,25 +237,28 @@ class PSNRefreshJob:
             self._thread.start()
 
             logger.info(
-                f"Resumed PSN refresh: {resume_index}/{len(npwr_ids)} done "
+                f"Resumed PSN refresh for user {user_id}: {resume_index}/{len(npwr_ids)} done "
                 f"({self.success_count}ok/{self.failed_count}fail/{self.skipped_count}skip), "
                 f"continuing with {len(remaining_ids)} remaining"
             )
             return True
 
-        # No progress data — start from scratch
-        result = self.start(npwr_ids, npsso, return_url)
+        # No progress data — start from scratch for the originating user.
+        result = self.start(npwr_ids, npsso, return_url, user_id=user_id)
         if result.get('success'):
             logger.info(f"Auto-resumed PSN refresh with {len(npwr_ids)} games (from start)")
         return result.get('success', False)
 
     def _run_refresh(self):
         """Background thread that runs the PSN trophy refresh"""
-        # Persist job start for crash recovery (include npwr_ids + return_url for resume)
+        # Persist job start for crash recovery (include npwr_ids + return_url +
+        # user_id for resume; Pass 31.5 keeps the originating user bound to the
+        # job so a restart can refuse to pick up someone else's NPSSO).
         persist_id = persist_job_start('psn_refresh', {
             'game_count': len(self.npwr_ids),
             'npwr_ids': list(self.npwr_ids),
-            'return_url': self.return_url
+            'return_url': self.return_url,
+            'user_id': self._user_id,
         })
         _last_persist_time = time.time()
 
@@ -361,10 +399,13 @@ class PSNRefreshJob:
                         if self.cancelled:
                             break
 
-                    # Get game info from database
+                    # Get game info from database (Pass 31.1 — per user)
                     try:
                         c = write_conn.cursor()
-                        c.execute("SELECT id, title FROM psn_games WHERE npwr_id = ?", (npwr_id,))
+                        c.execute(
+                            "SELECT id, title FROM psn_games WHERE npwr_id = ? AND user_id = ?",
+                            (npwr_id, self._user_id),
+                        )
                         psn_game = c.fetchone()
 
                         if not psn_game:
@@ -487,14 +528,14 @@ class PSNRefreshJob:
                     total_gold = ?, total_silver = ?, total_bronze = ?,
                     total_trophies = ?, earned_trophies = ?,
                     last_updated = datetime('now'), trophies_synced = 1
-                WHERE npwr_id = ?
+                WHERE npwr_id = ? AND user_id = ?
             """, (
                 progress,
                 earned_counts['platinum'], earned_counts['gold'],
                 earned_counts['silver'], earned_counts['bronze'],
                 total_counts['platinum'], total_counts['gold'],
                 total_counts['silver'], total_counts['bronze'],
-                total_trophies, total_earned, npwr_id
+                total_trophies, total_earned, npwr_id, self._user_id
             ))
             _commit_with_retry(conn)
             return 0
@@ -591,9 +632,10 @@ class PSNRefreshJob:
                     except (ValueError, TypeError):
                         pass
 
-                # Collect params for batch INSERT (no DB write yet)
+                # Collect params for batch INSERT (no DB write yet).
+                # Pass 31.1 — user_id on psn_trophies for direct filtering.
                 trophy_rows.append((
-                    psn_game['id'], trophy_id, group_id, group_name,
+                    psn_game['id'], self._user_id, trophy_id, group_id, group_name,
                     trophy_name, trophy_detail, trophy_type, trophy_icon,
                     rarity, rarity_label, 1 if earned else 0, earned_date
                 ))
@@ -608,7 +650,7 @@ class PSNRefreshJob:
 
         c = conn.cursor()
 
-        # Update game counts
+        # Update game counts (Pass 31.1 — per user)
         c.execute("""
             UPDATE psn_games SET
                 progress = ?, earned_platinum = ?, earned_gold = ?,
@@ -616,24 +658,24 @@ class PSNRefreshJob:
                 total_gold = ?, total_silver = ?, total_bronze = ?,
                 total_trophies = ?, earned_trophies = ?,
                 last_updated = datetime('now'), trophies_synced = 1
-            WHERE npwr_id = ?
+            WHERE npwr_id = ? AND user_id = ?
         """, (
             progress,
             earned_counts['platinum'], earned_counts['gold'],
             earned_counts['silver'], earned_counts['bronze'],
             total_counts['platinum'], total_counts['gold'],
             total_counts['silver'], total_counts['bronze'],
-            total_trophies, total_earned, npwr_id
+            total_trophies, total_earned, npwr_id, self._user_id
         ))
 
         # Batch upsert all trophies
         for row in trophy_rows:
             c.execute("""
                 INSERT INTO psn_trophies (
-                    psn_game_id, trophy_id, group_id, group_name,
+                    psn_game_id, user_id, trophy_id, group_id, group_name,
                     name, description, trophy_type, icon_url,
                     rarity, rarity_label, earned, earned_date
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(psn_game_id, trophy_id) DO UPDATE SET
                     group_id = excluded.group_id,
                     group_name = excluded.group_name,
@@ -647,14 +689,14 @@ class PSNRefreshJob:
                     earned_date = excluded.earned_date
             """, row)
 
-        # Update first/last trophy dates
+        # Update first/last trophy dates (Pass 31.1 — per user)
         if first_trophy_date or last_trophy_date:
             c.execute("""
                 UPDATE psn_games SET
                     first_trophy_earned = COALESCE(?, first_trophy_earned),
                     last_trophy_earned = COALESCE(?, last_trophy_earned)
-                WHERE npwr_id = ?
-            """, (first_trophy_date, last_trophy_date, npwr_id))
+                WHERE npwr_id = ? AND user_id = ?
+            """, (first_trophy_date, last_trophy_date, npwr_id, self._user_id))
 
         # Commit all changes for this game — lock held only for this brief batch
         _commit_with_retry(conn)

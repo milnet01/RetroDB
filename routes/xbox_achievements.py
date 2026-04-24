@@ -18,7 +18,7 @@ from datetime import datetime, timezone
 from flask import Blueprint, render_template, jsonify, g
 import config
 from services.database import query, execute
-from services.auth import login_required
+from services.auth import login_required, editor_required
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,8 @@ bp = Blueprint('xbox_achievements', __name__)
 @bp.route('/xbox-achievements')
 @login_required
 def xbox_achievements_landing():
-    """Landing page: all games with Xbox achievement progress."""
+    """Landing page: all games with Xbox achievement progress (Pass 31.2 — per user)."""
+    user_id = g.user['id']
     games = query("""
         SELECT g.id, g.title, g.boxart, g.system_id, s.name as system_name,
                gap.earned_achievements, gap.total_achievements,
@@ -37,8 +38,9 @@ def xbox_achievements_landing():
         JOIN systems s ON g.system_id = s.id
         JOIN game_achievement_progress gap ON g.id = gap.game_id
         WHERE gap.source = 'xbox' AND g.xbox_title_id IS NOT NULL
+          AND gap.user_id = ?
         ORDER BY g.title COLLATE NOCASE
-    """)
+    """, (user_id,))
 
     # Calculate overall stats + gamerscore
     total_games = len(games)
@@ -46,12 +48,13 @@ def xbox_achievements_landing():
     total_earned = sum(g['earned_achievements'] or 0 for g in games)
     avg_completion = round(sum(g['completion_percentage'] or 0 for g in games) / total_games, 1) if total_games > 0 else 0
 
-    # Get gamerscore totals from individual achievements
+    # Get gamerscore totals from individual achievements (scoped).
     gs_row = query("""
         SELECT COALESCE(SUM(CASE WHEN achieved = 1 THEN gamerscore ELSE 0 END), 0) as earned_gs,
                COALESCE(SUM(gamerscore), 0) as total_gs
         FROM xbox_achievements
-    """, one=True)
+        WHERE user_id = ?
+    """, (user_id,), one=True)
 
     stats = {
         'total_games': total_games,
@@ -79,19 +82,20 @@ def xbox_achievement_game(game_id):
     if not game:
         return "Game not found", 404
 
-    # Get achievement progress summary
+    # Get achievement progress summary (Pass 31.2 — per user).
+    user_id = g.user['id']
     progress = query("""
         SELECT earned_achievements, total_achievements, completion_percentage, last_synced
         FROM game_achievement_progress
-        WHERE game_id = ? AND source = 'xbox'
-    """, (game_id,), one=True)
+        WHERE game_id = ? AND source = 'xbox' AND user_id = ?
+    """, (game_id, user_id), one=True)
 
     # Get individual achievements
     achievements = query("""
         SELECT * FROM xbox_achievements
-        WHERE game_id = ?
+        WHERE game_id = ? AND user_id = ?
         ORDER BY achieved DESC, unlock_time DESC, name ASC
-    """, (game_id,))
+    """, (game_id, user_id))
 
     unlocked = [a for a in achievements if a['achieved']]
     locked = [a for a in achievements if not a['achieved']]
@@ -108,9 +112,9 @@ def xbox_achievement_game(game_id):
 
 
 @bp.route('/api/xbox-achievements/sync/<int:game_id>', methods=['POST'])
-@login_required
+@editor_required
 def api_xbox_sync_single(game_id):
-    """Sync achievements for a single Xbox game."""
+    """Sync achievements for a single Xbox game (Pass 31.2 — per user)."""
     from scraper.scrape_xbox import get_authenticated_session, get_achievements
     from routes.scraper import get_saved_api_keys
     from services.jobs.platform_sync import _upsert_xbox_achievements
@@ -122,7 +126,8 @@ def api_xbox_sync_single(game_id):
     if not client_id or not client_secret:
         return jsonify({'success': False, 'error': 'Xbox credentials not configured'})
 
-    session = get_authenticated_session(client_id, client_secret)
+    user_id = g.user['id']
+    session = get_authenticated_session(client_id, client_secret, user_id)
     if not session:
         return jsonify({'success': False, 'error': 'Xbox authentication failed — please re-connect your account'})
 
@@ -141,10 +146,10 @@ def api_xbox_sync_single(game_id):
 
         c.execute("""
             INSERT INTO game_achievement_progress
-                (game_id, earned_achievements, total_achievements,
+                (game_id, user_id, earned_achievements, total_achievements,
                  completion_percentage, last_synced, xbox_title_id, source)
-            VALUES (?, ?, ?, ?, ?, ?, 'xbox')
-            ON CONFLICT(game_id) DO UPDATE SET
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'xbox')
+            ON CONFLICT(game_id, user_id) DO UPDATE SET
                 earned_achievements = excluded.earned_achievements,
                 total_achievements = excluded.total_achievements,
                 completion_percentage = excluded.completion_percentage,
@@ -153,6 +158,7 @@ def api_xbox_sync_single(game_id):
                 source = 'xbox'
         """, (
             game_id,
+            user_id,
             result['earned'],
             result['total'],
             round(result['earned'] / result['total'] * 100, 1) if result['total'] > 0 else 0,
@@ -160,7 +166,7 @@ def api_xbox_sync_single(game_id):
             game['xbox_title_id'],
         ))
 
-        _upsert_xbox_achievements(c, game_id, result.get('achievements', []))
+        _upsert_xbox_achievements(c, game_id, result.get('achievements', []), user_id)
 
         conn.commit()
         conn.close()

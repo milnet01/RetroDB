@@ -3287,7 +3287,13 @@ See Pass 13.3 — no duplicate entry.
   `(npwr_id, user_id)`; owner-scope every SELECT / UPDATE / DELETE; add
   `_owner_clause`-style helper specific to PSN routes.
 - **Source**: 2026-04-24 audit, Collections/achievements/trophies C1.
-- **Status**: todo
+- **Status**: done — v2.99.0.  Migration 007 rebuilds both tables (SQLite
+  12-step: create new shape → INSERT SELECT with admin backfill → DROP
+  old → RENAME), swaps `UNIQUE(npwr_id)` for `UNIQUE(npwr_id, user_id)`.
+  Updated ~20 SQL sites across routes/trophies.py, platform_import.py,
+  games.py, services/game_query.py, services/jobs/psn_refresh.py.
+  Regression: `tests/test_pass31_migrations.py` covers two-user
+  coexistence (`test_two_users_can_have_same_npwr_id`).
 
 ### 31.2 Add `user_id` to `game_achievement_progress` + `steam_achievements` + `xbox_achievements` (HIGH-in-multi-user, M)
 
@@ -3302,7 +3308,16 @@ See Pass 13.3 — no duplicate entry.
   every upsert and landing-page query; OR document the "shared library,
   shared progress" contract explicitly in CLAUDE.md.
 - **Source**: 2026-04-24 audit, Platform imports C2 + Collections H6.
-- **Status**: todo
+- **Status**: done — v2.99.0.  Migration 009 rebuilds
+  `game_achievement_progress` (inline `game_id UNIQUE` → composite
+  `UNIQUE(game_id, user_id)`) and adds user_id + composite UNIQUE to the
+  other two via the same 12-step pattern.  Upsert helpers
+  `_upsert_steam_achievements` / `_upsert_xbox_achievements` require
+  user_id; `RASyncJob.start` / `SteamSyncJob.start` / `XboxSyncJob.start`
+  all accept and persist user_id.  Every gap JOIN on game cards now
+  filters by `gap.user_id = ?`.  Regression:
+  `tests/test_pass31_migrations.py::test_two_users_steam_achievements_coexist`
+  and `::test_legacy_gap_rows_backfill_to_admin`.
 
 ### 31.3 Add `user_id` to `collector_trophies` (MEDIUM-in-multi-user, S)
 
@@ -3313,7 +3328,12 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: migration adding `user_id` + unique per user; scope
   `_gather_collection_stats()` to the caller.
 - **Source**: 2026-04-24 audit, Collections/achievements/trophies H7.
-- **Status**: todo
+- **Status**: done — v2.99.0.  Migration 008 rebuilds with composite
+  `PRIMARY KEY (id, user_id)`.  `_gather_collection_stats()` takes
+  `user_id` and scopes PSN + achievement + wishlist counts; game/system
+  counts stay library-wide because `games` is shared schema.
+  `_refresh_trophies()` / `_trophies_sorted()` refuse to run without
+  `user_id` to prevent accidental cross-user writes.
 
 ### 31.4 Scope Steam sync credentials per user (HIGH-in-multi-user, M)
 
@@ -3326,7 +3346,13 @@ See Pass 13.3 — no duplicate entry.
   `user_id` in `SteamSyncJob.start()`; role-gate the launcher routes
   (`@editor_required`).
 - **Source**: 2026-04-24 audit, Platform imports C1 + Background jobs H4.
-- **Status**: todo
+- **Status**: done — v2.99.0.  `ensure_user_tables()` ALTERs
+  `steam_api_key` + `steam_id` + `psn_username` + `psn_npsso` onto
+  `user_settings` (idempotent try/except).  `_get_steam_credentials()`
+  takes `user_id` and prefers the per-user row, falling back to
+  `scraper_settings.json` for legacy single-tenant installs.  All
+  `/api/steam/…` launchers gained `@editor_required` and thread
+  `g.user['id']` through to `SteamSyncJob.start`.
 
 ### 31.5 Scope PSN refresh credentials per user (HIGH-in-multi-user, S)
 
@@ -3337,7 +3363,11 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: persist `user_id` in job params; look up the caller's
   NPSSO, refuse resume when the originating user is gone.
 - **Source**: 2026-04-24 audit, Background jobs L2.
-- **Status**: todo
+- **Status**: done — v2.99.0.  `PSNRefreshJob` now stores `self._user_id`
+  and persists it in `persist_job_start` params.  `resume_from_params`
+  refuses to resume if `user_id` is missing (pre-31 snapshot) or the
+  originating user no longer has an NPSSO.  Route launcher in
+  `routes/trophies.py::api_psn_bulk_refresh_start` passes `g.user['id']`.
 
 ### 31.6 Owner-scope + role-gate PSN mutation endpoints (HIGH-in-multi-user, S)
 
@@ -3349,7 +3379,9 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: `@editor_required` + owner filter on every PSN-mutating
   SQL statement (depends on 31.1).
 - **Source**: 2026-04-24 audit, Collections/achievements/trophies C3.
-- **Status**: todo
+- **Status**: done — v2.99.0.  All three endpoints flipped to
+  `@editor_required` with `AND user_id = ?` on every mutating SQL
+  statement (depended on 31.1 landing first).
 
 ### 31.7 Role-gate CLZ PDF import (MEDIUM-in-multi-user, S)
 
@@ -3361,7 +3393,10 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: change decorator to `@editor_required`; restrict system
   auto-creation to admin (`@admin_required` for that branch).
 - **Source**: 2026-04-24 audit, Collections/achievements/trophies C2.
-- **Status**: todo
+- **Status**: done — v2.99.0.  `/api/clz-import/parse` and
+  `/api/clz-import/import` flipped to `@editor_required`; the
+  auto-create-systems branch is further gated to admin only (system-
+  folder registration is a schema-level decision).
 
 ### 31.8 Gate `POST /game/<id>` write actions behind `@editor_required` (HIGH-in-multi-user, S)
 
@@ -3375,7 +3410,10 @@ See Pass 13.3 — no duplicate entry.
   not has_permission('edit'): abort(403)`.  Same treatment for
   `api_update_completion` (:1041) and `api_track_view` (:1061).
 - **Source**: 2026-04-24 audit, Game routes C1.
-- **Status**: todo
+- **Status**: done — v2.99.0.  `game_detail` POST dispatcher aborts 403
+  for non-editors on `apply` / `edit_metadata` / `reset` actions (the
+  benign `search` action stays open).  `api_update_completion` and
+  `api_track_view` flipped to `@editor_required`.
 
 ### 31.9 Clear `oauth_state_xbox` across login boundary (MEDIUM-in-multi-user, S)
 
@@ -3390,7 +3428,13 @@ See Pass 13.3 — no duplicate entry.
   clear the key in the login / logout handlers; use per-tab state
   tokens or flash them through a query-string-scoped cache.
 - **Source**: 2026-04-24 audit, Platform imports H2.
-- **Status**: todo
+- **Status**: done — v2.99.0.  Stash is now `{'state': ..., 'user_id':
+  g.user['id']}`; callback verifies both state and user_id via
+  `hmac.compare_digest` + id equality.  Logout pops
+  `oauth_state_xbox` alongside `user_id` as belt-and-braces before the
+  broader `session.clear()` pass 33.6.  Two-tab interleaving (one state
+  key per session) stays as-is and is filed as a MEDIUM follow-up under
+  Pass 33.
 
 ---
 

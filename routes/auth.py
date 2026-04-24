@@ -118,7 +118,12 @@ def api_login():
 @bp.route('/logout')
 def logout():
     """Log out current user"""
+    # Pass 31.9 — drop in-flight OAuth state alongside user_id so a pending
+    # Xbox auth can't be picked up by the next login on the same browser.
+    # (session.clear() is the broader Pass 33.6 fix; this keeps the minimal
+    # surface pending that pass.)
     session.pop('user_id', None)
+    session.pop('oauth_state_xbox', None)
     flash('You have been logged out', 'info')
     return redirect(url_for('auth.login'))
 

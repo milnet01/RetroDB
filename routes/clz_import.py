@@ -15,7 +15,9 @@ from datetime import datetime, timezone
 import config
 from services.analytics import invalidate_analytics_cache
 from services.database import get_db, query, execute
-from services.auth import login_required
+from flask import g
+
+from services.auth import editor_required, login_required
 from services.api_helpers import handle_api_errors, success, error
 
 logger = logging.getLogger(__name__)
@@ -243,7 +245,7 @@ def clz_import():
 
 
 @bp.route('/api/clz-import/parse', methods=['POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def api_clz_parse():
     """Parse CLZ PDF export and return game list"""
@@ -436,17 +438,19 @@ def api_clz_parse():
         if matched_folder and matched_folder not in systems_dict:
             needed_folders.add(matched_folder)
 
-    if needed_folders:
+    # Auto-creating systems rows is an admin-only operation (Pass 31.7):
+    # editors can import into existing systems but cannot add new ones, since
+    # that's a schema-level decision and the system folder / logo convention
+    # is part of library structure.
+    if needed_folders and g.user and g.user.get('role') == 'admin':
         for folder in needed_folders:
             system_name = config.SYSTEM_NAME_MAP.get(folder, folder.upper())
-            # Check for a system logo
             logo = f"{folder}.png" if os.path.isfile(os.path.join(config.IMAGE_PATH, 'systems', f'{folder}.png')) else None
             try:
-                new_id = execute(
+                execute(
                     "INSERT OR IGNORE INTO systems (name, folder, logo) VALUES (?, ?, ?)",
                     (system_name, folder, logo)
                 )
-                # Fetch the actual id (INSERT OR IGNORE may not return it)
                 row = query("SELECT id, name FROM systems WHERE folder = ?", (folder,), one=True)
                 if row:
                     systems_dict[folder] = {'id': row['id'], 'name': row['name']}
@@ -454,6 +458,12 @@ def api_clz_parse():
                     logger.info(f"CLZ Import: Auto-created system '{system_name}' (folder: {folder})")
             except Exception as e:
                 logger.warning(f"CLZ Import: Failed to auto-create system '{folder}': {e}")
+    elif needed_folders:
+        logger.info(
+            "CLZ Import: %d system folder(s) not in DB and caller is non-admin; "
+            "skipping auto-create. Rows for these platforms will be unmatched: %s",
+            len(needed_folders), sorted(needed_folders),
+        )
 
     # Log available systems for debugging
     logger.info(f"CLZ Import: Available system folders: {sorted(systems_dict.keys())}")
@@ -521,7 +531,7 @@ def api_clz_parse():
 
 
 @bp.route('/api/clz-import/import', methods=['POST'])
-@login_required
+@editor_required
 @handle_api_errors
 def api_clz_import():
     """Import selected games from CLZ"""

@@ -91,6 +91,22 @@ def ensure_user_tables():
     except sqlite3.OperationalError:
         pass
 
+    # Pass 31.4 — Steam API key + Steam ID per user. Pre-31 these lived in
+    # the shared data/scraper_settings.json blob (install-wide) so any
+    # logged-in user could launch a sync under the admin's credentials.
+    # Safe to add here (ALTER IF NOT EXISTS idiom via try/except) because
+    # ensure_user_tables is the per-boot bootstrap that owns user_settings.
+    for _col, _defn in (
+        ('psn_username', "TEXT DEFAULT ''"),
+        ('psn_npsso', "TEXT DEFAULT ''"),
+        ('steam_api_key', "TEXT DEFAULT ''"),
+        ('steam_id', "TEXT DEFAULT ''"),
+    ):
+        try:
+            cursor.execute(f"ALTER TABLE user_settings ADD COLUMN {_col} {_defn}")
+        except sqlite3.OperationalError:
+            pass
+
     cursor.execute("SELECT id FROM users WHERE role = 'admin' LIMIT 1")
     admin_row = cursor.fetchone()
 

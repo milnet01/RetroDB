@@ -44,6 +44,7 @@ class RASyncJob:
         self.error_message = None
         self._resume_game_ids = None  # Set by resume_from_params for proper resume
         self._preset_game_ids = None  # Set by start() when caller provides game IDs
+        self._user_id = None  # Pass 31.2 — caller for per-user progress rows
 
     def get_status(self):
         """Get current sync status"""
@@ -68,8 +69,9 @@ class RASyncJob:
                 'error': self.error_message
             }
 
-    def start(self, system_id, game_ids=None, system_name=None):
-        """Start RA sync for a system"""
+    def start(self, system_id, game_ids=None, system_name=None, user_id=None):
+        """Start RA sync for a system (Pass 31.2 — user_id selects whose
+        game_achievement_progress rows to upsert)."""
         with self._lock:
             if self.running:
                 return {'success': False, 'error': 'Sync already running'}
@@ -78,6 +80,7 @@ class RASyncJob:
             self.job_id = f"ra_sync_{int(time.time())}"
             self.system_id = system_id
             self.running = True
+            self._user_id = user_id
             if game_ids is not None:
                 self._preset_game_ids = game_ids
 
@@ -121,6 +124,7 @@ class RASyncJob:
             return False
 
         game_ids = params.get('game_ids')
+        user_id = params.get('user_id')
         resume_index = progress.get('current', 0) if progress else 0
 
         if resume_index > 0 and game_ids:
@@ -134,6 +138,7 @@ class RASyncJob:
                 self.job_id = f"ra_sync_{int(time.time())}_resume"
                 self.system_id = system_id
                 self.system_name = system_name
+                self._user_id = user_id
                 self._resume_game_ids = [None] * resume_index + remaining_ids
                 self.running = True
                 self.current_index = resume_index
@@ -152,7 +157,7 @@ class RASyncJob:
             return True
 
         # No progress data — start from scratch
-        result = self.start(system_id)
+        result = self.start(system_id, user_id=user_id)
         if result.get('success'):
             logger.info(f"Auto-resumed RA sync for system {system_id} (from start)")
         return result.get('success', False)
@@ -223,11 +228,13 @@ class RASyncJob:
             with self._lock:
                 self.total_games = len(games)
 
-            # Persist job start for crash recovery (include game IDs for resume)
+            # Persist job start for crash recovery (include game IDs + user_id
+            # for resume; Pass 31.2 binds each upsert to the originating user).
             persist_id = persist_job_start('ra_sync', {
                 'system_id': self.system_id,
                 'system_name': self.system_name,
-                'game_ids': [g['id'] if g is not None else None for g in games]
+                'game_ids': [g['id'] if g is not None else None for g in games],
+                'user_id': self._user_id,
             })
 
             if not games:
@@ -307,13 +314,13 @@ class RASyncJob:
                                 "UPDATE games SET ra_achievement_count = ? WHERE id = ?",
                                 (total_achievements, game['id']))
 
-                            # Upsert into game_achievement_progress
+                            # Upsert into game_achievement_progress (Pass 31.2 — per user).
                             ra_cursor.execute("""
                                 INSERT INTO game_achievement_progress
-                                    (game_id, ra_game_id, earned_achievements, total_achievements,
+                                    (game_id, user_id, ra_game_id, earned_achievements, total_achievements,
                                      earned_points, total_points, completion_percentage, last_synced, source)
-                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'ra')
-                                ON CONFLICT(game_id) DO UPDATE SET
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'ra')
+                                ON CONFLICT(game_id, user_id) DO UPDATE SET
                                     ra_game_id = excluded.ra_game_id,
                                     earned_achievements = excluded.earned_achievements,
                                     total_achievements = excluded.total_achievements,
@@ -322,7 +329,7 @@ class RASyncJob:
                                     completion_percentage = excluded.completion_percentage,
                                     last_synced = excluded.last_synced,
                                     source = 'ra'
-                            """, (game['id'], game['ra_game_id'], earned, total_achievements,
+                            """, (game['id'], self._user_id, game['ra_game_id'], earned, total_achievements,
                                   earned_points, total_points, pct, now_iso))
                             _pending_commits += 2
 

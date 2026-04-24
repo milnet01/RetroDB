@@ -4,7 +4,7 @@
 # Handles game pages, game API endpoints, HLTB lookup, and game management.
 # =============================================================================
 
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, session, g, make_response
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, session, g, make_response, abort
 import hashlib
 import os
 import re
@@ -17,7 +17,7 @@ from datetime import datetime, timezone
 import config
 import settings_manager
 from services.database import query, execute
-from services.auth import login_required, editor_required
+from services.auth import login_required, editor_required, has_permission
 from services.api_helpers import handle_api_errors
 from services.security import safe_filename
 from services.game_utils import (
@@ -137,8 +137,8 @@ def api_games():
     count_sql, count_vals = _build_games_query(params, count_only=True)
     total = query(count_sql, tuple(count_vals), one=True)['total']
 
-    # Data query with pagination
-    data_sql, data_vals = _build_games_query(params)
+    # Data query with pagination (Pass 31.1 — scope the psn subquery to caller).
+    data_sql, data_vals = _build_games_query(params, user_id=g.user['id'])
     offset = (page - 1) * per_page
     data_sql += " LIMIT ? OFFSET ?"
     data_vals.extend([per_page, offset])
@@ -267,7 +267,7 @@ def api_games_card_data():
             WHERE is_bonus_disc = 1
             GROUP BY parent_game_id
         ) bc ON bc.parent_game_id = g.id
-        LEFT JOIN game_achievement_progress gap ON gap.game_id = g.id
+        LEFT JOIN game_achievement_progress gap ON gap.game_id = g.id AND gap.user_id = ?
         LEFT JOIN (
             SELECT pg.linked_game_id,
                    (pg.earned_bronze + pg.earned_silver + pg.earned_gold + pg.earned_platinum) AS psn_earned,
@@ -276,11 +276,12 @@ def api_games_card_data():
             FROM psn_games pg
             LEFT JOIN psn_trophies pt ON pt.psn_game_id = pg.id
             WHERE pg.linked_game_id IS NOT NULL
+              AND pg.user_id = ?
             GROUP BY pg.linked_game_id
         ) psn ON psn.linked_game_id = g.id
         WHERE g.id IN ({placeholders})
     """
-    rows = query(sql, tuple(game_ids))
+    rows = query(sql, (g.user['id'], g.user['id'], *game_ids))
 
     try:
         rpcs3_trophy_map = build_rpcs3_trophy_map(rows)
@@ -322,6 +323,13 @@ def game_detail(game_id):
 
         if request.method == 'POST':
             action = request.form.get('action')
+
+            # Pass 31.8 — the sibling JSON route /api/game/<id>/edit uses
+            # @editor_required; this form-POST dispatcher must match it so
+            # viewer role can't mutate games by POSTing multipart/form-data.
+            # 'search' is read-only and left unguarded.
+            if action in ('apply', 'edit_metadata', 'reset') and not has_permission('edit'):
+                abort(403)
 
             if action == 'search':
                 title = request.form.get('title', game['title'])
@@ -670,12 +678,12 @@ def game_detail(game_id):
         pref_rating_region = RATING_SYSTEMS.get(pref_sys, {}).get('region', '')
         all_ratings = get_all_ratings(game)
 
-        # Achievement & trophy progress for all platforms
+        # Achievement & trophy progress for the caller (Pass 31.2).
         achievement_progress = query("""
             SELECT earned_achievements, total_achievements,
                    completion_percentage, source
-            FROM game_achievement_progress WHERE game_id = ?
-        """, (game_id,), one=True)
+            FROM game_achievement_progress WHERE game_id = ? AND user_id = ?
+        """, (game_id, g.user['id']), one=True)
 
         # PSN trophy progress (if linked).
         # psn_games has two parallel column families — `defined_*` (legacy,
@@ -684,6 +692,7 @@ def game_detail(game_id):
         # template expects so per-category breakdowns stop rendering as
         # "earned / 0". The `defined_*` columns themselves can be dropped
         # in a future migration pass.
+        # Pass 31.1 — show the caller's own PSN progress for this game.
         psn_progress = query("""
             SELECT pg.id, pg.npwr_id, pg.progress,
                    pg.earned_bronze, pg.earned_silver, pg.earned_gold, pg.earned_platinum,
@@ -694,21 +703,21 @@ def game_detail(game_id):
                    (pg.earned_bronze + pg.earned_silver + pg.earned_gold + pg.earned_platinum) AS earned_total,
                    pg.total_trophies AS defined_total
             FROM psn_games pg
-            WHERE pg.linked_game_id = ?
-        """, (game_id,), one=True)
+            WHERE pg.linked_game_id = ? AND pg.user_id = ?
+        """, (game_id, g.user['id']), one=True)
 
-        # Steam achievement count (from steam_achievements table)
+        # Steam achievement count (Pass 31.2 — per user).
         steam_counts = None
         if game_dict.get('steam_app_id'):
             steam_counts = query("""
                 SELECT COUNT(*) AS total,
                        SUM(CASE WHEN achieved = 1 THEN 1 ELSE 0 END) AS earned
-                FROM steam_achievements WHERE game_id = ?
-            """, (game_id,), one=True)
+                FROM steam_achievements WHERE game_id = ? AND user_id = ?
+            """, (game_id, g.user['id']), one=True)
             if steam_counts and not steam_counts['total']:
                 steam_counts = None
 
-        # Xbox achievement count (from xbox_achievements table)
+        # Xbox achievement count (Pass 31.2 — per user).
         xbox_counts = None
         if game_dict.get('xbox_title_id'):
             xbox_counts = query("""
@@ -716,8 +725,8 @@ def game_detail(game_id):
                        SUM(CASE WHEN achieved = 1 THEN 1 ELSE 0 END) AS earned,
                        SUM(CASE WHEN achieved = 1 THEN gamerscore ELSE 0 END) AS earned_gs,
                        SUM(gamerscore) AS total_gs
-                FROM xbox_achievements WHERE game_id = ?
-            """, (game_id,), one=True)
+                FROM xbox_achievements WHERE game_id = ? AND user_id = ?
+            """, (game_id, g.user['id']), one=True)
             if xbox_counts and not xbox_counts['total']:
                 xbox_counts = None
 
@@ -778,22 +787,22 @@ def api_game_detail(game_id):
         (game_id,), one=True
     )['cnt']
 
-    # Achievement progress data
+    # Achievement progress data (Pass 31.2 — per user).
     gap = query("""
         SELECT earned_achievements, total_achievements,
                completion_percentage, source
-        FROM game_achievement_progress WHERE game_id = ?
-    """, (game_id,), one=True)
+        FROM game_achievement_progress WHERE game_id = ? AND user_id = ?
+    """, (game_id, g.user['id']), one=True)
 
-    # PSN trophies
+    # PSN trophies (Pass 31.1 — scope to caller).
     psn = query("""
         SELECT (pg.earned_bronze + pg.earned_silver + pg.earned_gold + pg.earned_platinum) AS psn_earned,
                COUNT(pt.id) AS psn_total
         FROM psn_games pg
         LEFT JOIN psn_trophies pt ON pt.psn_game_id = pg.id
-        WHERE pg.linked_game_id = ?
+        WHERE pg.linked_game_id = ? AND pg.user_id = ?
         GROUP BY pg.linked_game_id
-    """, (game_id,), one=True)
+    """, (game_id, g.user['id']), one=True)
 
     try:
         rpcs3_info = lookup_rpcs3_info(game, build_rpcs3_trophy_map([game]))
@@ -1038,7 +1047,7 @@ def api_games_bulk_edit():
 
 
 @bp.route('/api/game/<int:game_id>/completion', methods=['POST'])
-@login_required
+@editor_required
 def api_update_completion(game_id):
     """Update game completion status"""
     try:
@@ -1058,7 +1067,7 @@ def api_update_completion(game_id):
 
 
 @bp.route('/api/game/<int:game_id>/track-view', methods=['POST'])
-@login_required
+@editor_required
 def api_track_view(game_id):
     """Track that a game was viewed (for recently viewed)"""
     try:

@@ -16,7 +16,7 @@ import logging
 import re
 from datetime import datetime, timezone
 
-from flask import Blueprint, render_template, jsonify
+from flask import Blueprint, render_template, jsonify, g
 
 from services.api_helpers import handle_api_errors, success
 from services.auth import login_required, editor_required
@@ -223,9 +223,23 @@ def get_current_rank():
     """Cheap query for the context processor - reads just enough from
     collector_trophies to compute the rank badge shown in the sidebar.
     Safe to call even before the table has been populated (returns a
-    sensible zeroed rank)."""
+    sensible zeroed rank).
+
+    Pass 31.3 — scopes to the current user. Anonymous / pre-login contexts
+    get a zeroed rank rather than a cross-user aggregate.
+    """
+    user_id = g.user['id'] if getattr(g, 'user', None) else None
+    if not user_id:
+        return {
+            'name': RANK_TIERS[0][0], 'tier_index': 0, 'points': 0,
+            'next_name': RANK_TIERS[1][0], 'next_threshold': RANK_TIERS[1][1],
+            'progress_percent': 0, 'earned_count': 0, 'total_count': len(TROPHY_DEFINITIONS),
+        }
     try:
-        rows = query("SELECT tier, earned_at FROM collector_trophies")
+        rows = query(
+            "SELECT tier, earned_at FROM collector_trophies WHERE user_id = ?",
+            (user_id,),
+        )
     except Exception:
         rows = []
     if not rows:
@@ -241,11 +255,18 @@ def get_current_rank():
 # STATS GATHERING
 # =============================================================================
 
-def _gather_collection_stats():
+def _gather_collection_stats(user_id=None):
     """Query the database for every stat referenced by TROPHY_DEFINITIONS.
     Returns a dict of stat_name -> current_value. Each trophy looks its
     threshold stat up by key, so adding a new trophy means adding one
-    entry here."""
+    entry here.
+
+    Pass 31.3 — `user_id` (required for per-user stats) scopes psn_games
+    and wishlist counts to the caller. The games/systems/scraped stats stay
+    library-wide because the `games` table is shared schema (not per-user).
+    Achievement stats (RA/Steam/Xbox) are still library-wide pending Pass
+    31.2 which adds user_id to those tables.
+    """
     stats = {}
 
     # --- Basic counts ---
@@ -288,18 +309,43 @@ def _gather_collection_stats():
         LIMIT 1
     """, one=True) else 0
 
-    # --- Achievements (RA + Steam + Xbox + PSN, unified) ---
-    ra_earned    = query("SELECT COALESCE(SUM(earned_achievements), 0) AS s FROM game_achievement_progress", one=True)['s']
-    steam_earned = query("SELECT COUNT(*) AS c FROM steam_achievements WHERE achieved = 1", one=True)['c']
-    xbox_earned  = query("SELECT COUNT(*) AS c FROM xbox_achievements WHERE achieved = 1", one=True)['c']
-    psn_earned   = query("""
-        SELECT COALESCE(SUM(earned_bronze + earned_silver + earned_gold + earned_platinum), 0) AS s
-        FROM psn_games
-    """, one=True)['s']
+    # --- Achievements (RA + Steam + Xbox + PSN, unified, per user via Pass 31.2) ---
+    if user_id is not None:
+        ra_earned = query(
+            "SELECT COALESCE(SUM(earned_achievements), 0) AS s "
+            "FROM game_achievement_progress WHERE user_id = ?",
+            (user_id,), one=True,
+        )['s']
+        steam_earned = query(
+            "SELECT COUNT(*) AS c FROM steam_achievements "
+            "WHERE achieved = 1 AND user_id = ?",
+            (user_id,), one=True,
+        )['c']
+        xbox_earned = query(
+            "SELECT COUNT(*) AS c FROM xbox_achievements "
+            "WHERE achieved = 1 AND user_id = ?",
+            (user_id,), one=True,
+        )['c']
+        psn_earned = query("""
+            SELECT COALESCE(SUM(earned_bronze + earned_silver + earned_gold + earned_platinum), 0) AS s
+            FROM psn_games WHERE user_id = ?
+        """, (user_id,), one=True)['s']
+    else:
+        ra_earned = steam_earned = xbox_earned = psn_earned = 0
     stats['total_achievements_earned'] = (ra_earned or 0) + (steam_earned or 0) + (xbox_earned or 0) + (psn_earned or 0)
 
-    ra_full   = query("SELECT COUNT(*) AS c FROM game_achievement_progress WHERE completion_percentage >= 100", one=True)['c']
-    psn_full  = query("SELECT COUNT(*) AS c FROM psn_games WHERE progress >= 100", one=True)['c']
+    if user_id is not None:
+        ra_full = query(
+            "SELECT COUNT(*) AS c FROM game_achievement_progress "
+            "WHERE completion_percentage >= 100 AND user_id = ?",
+            (user_id,), one=True,
+        )['c']
+        psn_full = query(
+            "SELECT COUNT(*) AS c FROM psn_games WHERE progress >= 100 AND user_id = ?",
+            (user_id,), one=True,
+        )['c']
+    else:
+        ra_full = psn_full = 0
     stats['full_completion_count'] = (ra_full or 0) + (psn_full or 0)
 
     # --- Storage (GB, rounded down) ---
@@ -375,7 +421,14 @@ def _gather_collection_stats():
     stats['psx_count']     = sys_counts.get('psx', 0)
 
     # --- Discovery: wishlist, imports, critic-rated ---
-    stats['wishlist_count'] = query("SELECT COUNT(*) AS c FROM wishlist", one=True)['c']
+    # Pass 31.3 — wishlist is owner-scoped (Pass 27.1).
+    if user_id is not None:
+        stats['wishlist_count'] = query(
+            "SELECT COUNT(*) AS c FROM wishlist WHERE owner_id = ?",
+            (user_id,), one=True,
+        )['c']
+    else:
+        stats['wishlist_count'] = query("SELECT COUNT(*) AS c FROM wishlist", one=True)['c']
 
     stats['has_platform_import'] = 1 if query("""
         SELECT 1 FROM games
@@ -394,19 +447,17 @@ def _gather_collection_stats():
     return stats
 
 
-def _refresh_trophies():
-    """Recalculate all trophy progress from current database state.
+def _refresh_trophies(user_id=None):
+    """Recalculate trophy progress for a single user.
 
-    For each trophy definition:
-      - Look up the relevant stat value
-      - Compute progress (capped at threshold)
-      - If threshold is met and trophy not already earned, set earned_at
-      - Upsert into collector_trophies table
-
-    Returns a summary dict with counts of earned / newly earned trophies
-    plus the current collector rank.
+    Pass 31.3 — rows are scoped by user_id. Calling without a user_id is
+    refused so no-one accidentally writes shared rows (which was the
+    pre-31 behavior that caused cross-user clobbering).
     """
-    stats = _gather_collection_stats()
+    if user_id is None:
+        raise ValueError("collector_trophies refresh requires a user_id")
+
+    stats = _gather_collection_stats(user_id=user_id)
     now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
 
     newly_earned = 0
@@ -422,8 +473,8 @@ def _refresh_trophies():
         met = current_value >= threshold
 
         existing = query(
-            "SELECT earned_at FROM collector_trophies WHERE id = ?",
-            (trophy_id,), one=True
+            "SELECT earned_at FROM collector_trophies WHERE id = ? AND user_id = ?",
+            (trophy_id, user_id), one=True
         )
 
         if existing is not None:
@@ -434,10 +485,10 @@ def _refresh_trophies():
                        SET progress = ?, earned_at = ?,
                            name = ?, description = ?, icon = ?, tier = ?,
                            category = ?, threshold = ?
-                       WHERE id = ?""",
+                       WHERE id = ? AND user_id = ?""",
                     (progress, now, trophy_def['name'], trophy_def['description'],
                      trophy_def['icon'], trophy_def['tier'], trophy_def['category'],
-                     threshold, trophy_id)
+                     threshold, trophy_id, user_id)
                 )
                 newly_earned += 1
                 total_earned += 1
@@ -449,10 +500,10 @@ def _refresh_trophies():
                     """UPDATE collector_trophies
                        SET progress = ?, name = ?, description = ?, icon = ?,
                            tier = ?, category = ?, threshold = ?
-                       WHERE id = ?""",
+                       WHERE id = ? AND user_id = ?""",
                     (progress, trophy_def['name'], trophy_def['description'],
                      trophy_def['icon'], trophy_def['tier'], trophy_def['category'],
-                     threshold, trophy_id)
+                     threshold, trophy_id, user_id)
                 )
                 total_earned += 1
             else:
@@ -460,10 +511,10 @@ def _refresh_trophies():
                     """UPDATE collector_trophies
                        SET progress = ?, name = ?, description = ?, icon = ?,
                            tier = ?, category = ?, threshold = ?
-                       WHERE id = ?""",
+                       WHERE id = ? AND user_id = ?""",
                     (progress, trophy_def['name'], trophy_def['description'],
                      trophy_def['icon'], trophy_def['tier'], trophy_def['category'],
-                     threshold, trophy_id)
+                     threshold, trophy_id, user_id)
                 )
         else:
             earned_at = now if met else None
@@ -472,17 +523,20 @@ def _refresh_trophies():
                 total_earned += 1
             execute(
                 """INSERT INTO collector_trophies
-                   (id, name, description, icon, tier, category, threshold, earned_at, progress)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                   (id, user_id, name, description, icon, tier, category, threshold, earned_at, progress)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
-                    trophy_id, trophy_def['name'], trophy_def['description'],
+                    trophy_id, user_id, trophy_def['name'], trophy_def['description'],
                     trophy_def['icon'], trophy_def['tier'], trophy_def['category'],
                     threshold, earned_at, progress,
                 )
             )
 
     # Compute the rank after refresh so the API response reflects the new state
-    all_trophies = query("SELECT tier, earned_at FROM collector_trophies")
+    all_trophies = query(
+        "SELECT tier, earned_at FROM collector_trophies WHERE user_id = ?",
+        (user_id,),
+    )
     rank = compute_collector_rank(all_trophies)
 
     logger.info(
@@ -503,12 +557,13 @@ def _refresh_trophies():
 # PAGE ROUTES
 # =============================================================================
 
-def _trophies_sorted():
-    """Return all trophies ordered by tier (plat -> bronze) then name."""
+def _trophies_sorted(user_id):
+    """Return the given user's trophies ordered by tier (plat -> bronze) then name."""
     return query(
-        "SELECT * FROM collector_trophies ORDER BY "
+        "SELECT * FROM collector_trophies WHERE user_id = ? ORDER BY "
         "CASE tier WHEN 'platinum' THEN 1 WHEN 'gold' THEN 2 "
-        "WHEN 'silver' THEN 3 WHEN 'bronze' THEN 4 END, name"
+        "WHEN 'silver' THEN 3 WHEN 'bronze' THEN 4 END, name",
+        (user_id,),
     )
 
 
@@ -516,10 +571,11 @@ def _trophies_sorted():
 @login_required
 def collector_trophies_page():
     """Render the collector trophy showcase page."""
-    trophies = _trophies_sorted()
+    user_id = g.user['id']
+    trophies = _trophies_sorted(user_id)
     if not trophies:
-        _refresh_trophies()
-        trophies = _trophies_sorted()
+        _refresh_trophies(user_id=user_id)
+        trophies = _trophies_sorted(user_id)
 
     rank = compute_collector_rank(trophies)
     earned_count = rank['earned_count']
@@ -541,11 +597,12 @@ def collector_trophies_page():
 @bp.route('/api/collector-trophies')
 @login_required
 def get_all_trophies():
-    """Return all collector trophies with their current status."""
-    trophies = _trophies_sorted()
+    """Return the caller's collector trophies with their current status."""
+    user_id = g.user['id']
+    trophies = _trophies_sorted(user_id)
     if not trophies:
-        _refresh_trophies()
-        trophies = _trophies_sorted()
+        _refresh_trophies(user_id=user_id)
+        trophies = _trophies_sorted(user_id)
 
     rank = compute_collector_rank(trophies)
     return jsonify({
@@ -560,8 +617,8 @@ def get_all_trophies():
 @editor_required
 @handle_api_errors
 def refresh_trophies():
-    """Recalculate all trophy progress from current database state."""
-    result = _refresh_trophies()
+    """Recalculate the caller's trophy progress from current database state."""
+    result = _refresh_trophies(user_id=g.user['id'])
     return success(
         message=f"{result['newly_earned']} new trophies earned!" if result['newly_earned']
                 else 'Trophy progress updated.',

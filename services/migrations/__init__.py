@@ -31,6 +31,9 @@ MIGRATIONS = [
     '004_games_updated_at',
     '005_collections_owner_id',
     '006_per_user_platform_tokens',
+    '007_psn_user_id',
+    '008_collector_trophies_user_id',
+    '009_achievement_tables_user_id',
 ]
 
 

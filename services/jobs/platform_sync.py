@@ -18,8 +18,34 @@ from services.jobs.base import (
 logger = logging.getLogger(__name__)
 
 
-def _get_steam_credentials():
-    """Get Steam API credentials from scraper settings."""
+def _get_steam_credentials(user_id=None):
+    """Return (steam_api_key, steam_id) for the caller.
+
+    Pass 31.4 — credentials now live in user_settings, keyed by user_id.
+    When `user_id` is supplied we read directly from there. The legacy
+    fallback to data/scraper_settings.json stays in place for installs that
+    haven't migrated their scraper config yet, so a pre-31 admin can still
+    run a sync while they move their keys to their profile.
+    """
+    if user_id is not None:
+        try:
+            conn = _get_conn()
+            try:
+                row = conn.execute(
+                    "SELECT steam_api_key, steam_id FROM user_settings "
+                    "WHERE user_id = ?",
+                    (user_id,),
+                ).fetchone()
+                if row:
+                    key = (row['steam_api_key'] or '') if hasattr(row, 'keys') else (row[0] or '')
+                    sid = (row['steam_id'] or '') if hasattr(row, 'keys') else (row[1] or '')
+                    if key and sid:
+                        return key, sid
+            finally:
+                conn.close()
+        except Exception as e:
+            logger.warning(f"Could not load per-user Steam credentials: {e}")
+
     import os, json
     settings_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(
         os.path.abspath(__file__)))), 'data', 'scraper_settings.json')
@@ -50,8 +76,8 @@ def _get_xbox_credentials():
     return '', ''
 
 
-def _upsert_steam_achievements(cursor, game_id, app_id, api_key, player_result):
-    """Upsert individual Steam achievements for a game.
+def _upsert_steam_achievements(cursor, game_id, app_id, api_key, player_result, user_id):
+    """Upsert individual Steam achievements for a game (Pass 31.2 — per user).
 
     Merges player progress with achievement schema (for icons).
     Returns the number of rows upserted.
@@ -79,9 +105,9 @@ def _upsert_steam_achievements(cursor, game_id, app_id, api_key, player_result):
         schema_entry = schema_map.get(apiname, {})
         cursor.execute("""
             INSERT INTO steam_achievements
-                (game_id, apiname, name, description, icon_url, icon_locked_url, achieved, unlock_time)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ON CONFLICT(game_id, apiname) DO UPDATE SET
+                (game_id, user_id, apiname, name, description, icon_url, icon_locked_url, achieved, unlock_time)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(game_id, apiname, user_id) DO UPDATE SET
                 name = excluded.name,
                 description = excluded.description,
                 icon_url = excluded.icon_url,
@@ -90,6 +116,7 @@ def _upsert_steam_achievements(cursor, game_id, app_id, api_key, player_result):
                 unlock_time = excluded.unlock_time
         """, (
             game_id,
+            user_id,
             apiname,
             schema_entry.get('displayName', ach.get('name', apiname)),
             schema_entry.get('description', ach.get('description', '')),
@@ -102,8 +129,8 @@ def _upsert_steam_achievements(cursor, game_id, app_id, api_key, player_result):
     return count
 
 
-def _upsert_xbox_achievements(cursor, game_id, achievements):
-    """Upsert individual Xbox achievements for a game.
+def _upsert_xbox_achievements(cursor, game_id, achievements, user_id):
+    """Upsert individual Xbox achievements for a game (Pass 31.2 — per user).
 
     Returns the number of rows upserted.
     """
@@ -138,10 +165,10 @@ def _upsert_xbox_achievements(cursor, game_id, achievements):
 
         cursor.execute("""
             INSERT INTO xbox_achievements
-                (game_id, achievement_id, name, description, icon_url, icon_locked_url,
+                (game_id, user_id, achievement_id, name, description, icon_url, icon_locked_url,
                  gamerscore, achieved, unlock_time)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON CONFLICT(game_id, achievement_id) DO UPDATE SET
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(game_id, achievement_id, user_id) DO UPDATE SET
                 name = excluded.name,
                 description = excluded.description,
                 icon_url = excluded.icon_url,
@@ -150,7 +177,7 @@ def _upsert_xbox_achievements(cursor, game_id, achievements):
                 achieved = excluded.achieved,
                 unlock_time = excluded.unlock_time
         """, (
-            game_id, ach_id, name, description, icon_url, icon_locked_url,
+            game_id, user_id, ach_id, name, description, icon_url, icon_locked_url,
             gamerscore, achieved, unlock_time,
         ))
         count += 1
@@ -179,6 +206,7 @@ class SteamSyncJob:
         self.current_game_title = ""
         self.error_message = None
         self._resume_game_ids = None  # Set by resume_from_params for proper resume
+        self._user_id = None  # Pass 31.4 — caller's user_id for credential lookup
 
     def get_status(self):
         """Get current sync status"""
@@ -199,14 +227,20 @@ class SteamSyncJob:
                 'error': self.error_message,
             }
 
-    def start(self):
-        """Start Steam achievement sync for all Steam-imported games"""
+    def start(self, user_id=None):
+        """Start Steam achievement sync for all Steam-imported games.
+
+        Pass 31.4 — `user_id` selects whose stored Steam credentials to use.
+        Legacy callers without a user_id fall back to the scraper_settings.json
+        keys (single-tenant compat).
+        """
         with self._lock:
             if self.running:
                 return {'success': False, 'error': 'Sync already running'}
             self.reset()
             self.job_id = f"steam_sync_{int(time.time())}"
             self.running = True
+            self._user_id = user_id
 
         self._thread = threading.Thread(target=self._run_sync, daemon=True)
         self._thread.start()
@@ -223,11 +257,13 @@ class SteamSyncJob:
     def resume_from_params(self, params, progress=None):
         """Resume Steam sync from persisted params after server restart.
 
-        Uses persisted game_ids and progress to continue from where it left off,
-        prepending None placeholders for already-processed items and restoring counts.
+        Uses persisted game_ids, user_id, and progress to continue from where
+        it left off. Pre-31 jobs without a user_id fall back to the shared
+        scraper_settings.json credentials (single-tenant compat).
         """
         game_ids = params.get('game_ids')
         resume_index = progress.get('current', 0) if progress else 0
+        user_id = params.get('user_id')
 
         if resume_index > 0 and game_ids:
             remaining_ids = game_ids[resume_index:]
@@ -239,6 +275,7 @@ class SteamSyncJob:
                 self.job_id = f"steam_sync_{int(time.time())}_resume"
                 self._resume_game_ids = [None] * resume_index + remaining_ids
                 self.running = True
+                self._user_id = user_id
                 self.current_index = resume_index
                 self.success_count = progress.get('success', 0)
                 self.failed_count = progress.get('failed', 0)
@@ -254,8 +291,8 @@ class SteamSyncJob:
             )
             return True
 
-        # No progress data — start from scratch
-        result = self.start()
+        # No progress data — start from scratch for the originating user.
+        result = self.start(user_id=user_id)
         if result.get('success'):
             logger.info("Auto-resumed Steam achievement sync (from start)")
         return result.get('success', False)
@@ -268,7 +305,7 @@ class SteamSyncJob:
         persist_id = None
 
         try:
-            steam_api_key, steam_id = _get_steam_credentials()
+            steam_api_key, steam_id = _get_steam_credentials(user_id=self._user_id)
             if not steam_api_key or not steam_id:
                 with self._lock:
                     self.completed = True
@@ -310,9 +347,12 @@ class SteamSyncJob:
             with self._lock:
                 self.total_games = len(games)
 
-            # Persist job start for crash recovery (include game IDs for resume)
+            # Persist job start for crash recovery (include game IDs + user_id
+            # for resume; Pass 31.4 keeps credentials bound to the originating
+            # user across restarts).
             persist_id = persist_job_start('steam_sync', {
-                'game_ids': [g['id'] if g is not None else None for g in games]
+                'game_ids': [g['id'] if g is not None else None for g in games],
+                'user_id': self._user_id,
             })
 
             if not games:
@@ -362,13 +402,13 @@ class SteamSyncJob:
                                 self.skipped_count += 1
                             continue
 
-                        # Upsert into game_achievement_progress
+                        # Upsert into game_achievement_progress (Pass 31.2 — per user).
                         sync_cursor.execute("""
                             INSERT INTO game_achievement_progress
-                                (game_id, earned_achievements, total_achievements,
+                                (game_id, user_id, earned_achievements, total_achievements,
                                  completion_percentage, last_synced, steam_app_id, source)
-                            VALUES (?, ?, ?, ?, ?, ?, 'steam')
-                            ON CONFLICT(game_id) DO UPDATE SET
+                            VALUES (?, ?, ?, ?, ?, ?, ?, 'steam')
+                            ON CONFLICT(game_id, user_id) DO UPDATE SET
                                 earned_achievements = excluded.earned_achievements,
                                 total_achievements = excluded.total_achievements,
                                 completion_percentage = excluded.completion_percentage,
@@ -377,6 +417,7 @@ class SteamSyncJob:
                                 source = 'steam'
                         """, (
                             game['id'],
+                            self._user_id,
                             result['earned'],
                             result['total'],
                             round(result['earned'] / result['total'] * 100, 1) if result['total'] > 0 else 0,
@@ -388,7 +429,7 @@ class SteamSyncJob:
                         # Save individual achievements
                         _pending_commits += _upsert_steam_achievements(
                             sync_cursor, game['id'], game['steam_app_id'],
-                            steam_api_key, result)
+                            steam_api_key, result, self._user_id)
 
                         if _pending_commits >= 3:
                             _commit_with_retry(sync_conn)
@@ -681,10 +722,10 @@ class XboxSyncJob:
 
                         sync_cursor.execute("""
                             INSERT INTO game_achievement_progress
-                                (game_id, earned_achievements, total_achievements,
+                                (game_id, user_id, earned_achievements, total_achievements,
                                  completion_percentage, last_synced, xbox_title_id, source)
-                            VALUES (?, ?, ?, ?, ?, ?, 'xbox')
-                            ON CONFLICT(game_id) DO UPDATE SET
+                            VALUES (?, ?, ?, ?, ?, ?, ?, 'xbox')
+                            ON CONFLICT(game_id, user_id) DO UPDATE SET
                                 earned_achievements = excluded.earned_achievements,
                                 total_achievements = excluded.total_achievements,
                                 completion_percentage = excluded.completion_percentage,
@@ -693,6 +734,7 @@ class XboxSyncJob:
                                 source = 'xbox'
                         """, (
                             game['id'],
+                            self.user_id,
                             result['earned'],
                             result['total'],
                             round(result['earned'] / result['total'] * 100, 1) if result['total'] > 0 else 0,
@@ -703,7 +745,7 @@ class XboxSyncJob:
 
                         # Save individual achievements
                         _pending_commits += _upsert_xbox_achievements(
-                            sync_cursor, game['id'], result.get('achievements', []))
+                            sync_cursor, game['id'], result.get('achievements', []), self.user_id)
 
                         if _pending_commits >= 3:
                             _commit_with_retry(sync_conn)

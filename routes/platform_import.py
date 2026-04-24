@@ -35,7 +35,7 @@ import secrets as _secrets
 import config
 from services.achievement_linking import normalize_title_for_dedup as normalize_title
 from services.database import get_db, query, execute
-from services.auth import login_required
+from services.auth import login_required, editor_required
 from routes.scraper import get_saved_api_keys
 
 logger = logging.getLogger(__name__)
@@ -287,25 +287,25 @@ def api_steam_import():
 
 
 @bp.route('/api/steam/sync-achievements', methods=['POST'])
-@login_required
+@editor_required
 def api_steam_sync_achievements():
-    """Start bulk Steam achievement sync (background job)."""
+    """Start bulk Steam achievement sync (background job).
+
+    Pass 31.4 — editor-gated; uses the caller's stored Steam credentials.
+    """
     from services.jobs import steam_sync_job
-    result = steam_sync_job.start()
+    result = steam_sync_job.start(user_id=g.user['id'])
     return jsonify(result)
 
 
 @bp.route('/api/steam/sync-achievements/<int:game_id>', methods=['POST'])
-@login_required
+@editor_required
 def api_steam_sync_single(game_id):
-    """Sync achievements for a single Steam game."""
+    """Sync achievements for a single Steam game (Pass 31.4 — per user)."""
     from scraper.scrape_steam import get_player_achievements
-    from services.jobs.platform_sync import _upsert_steam_achievements
+    from services.jobs.platform_sync import _upsert_steam_achievements, _get_steam_credentials
 
-    api_keys = get_saved_api_keys()
-    steam_api_key = api_keys.get('steam_api_key', '')
-    steam_id = api_keys.get('steam_id', '')
-
+    steam_api_key, steam_id = _get_steam_credentials(user_id=g.user['id'])
     if not steam_api_key or not steam_id:
         return jsonify({'success': False, 'error': 'Steam credentials not configured'})
 
@@ -324,10 +324,10 @@ def api_steam_sync_single(game_id):
 
         c.execute("""
             INSERT INTO game_achievement_progress
-                (game_id, earned_achievements, total_achievements,
+                (game_id, user_id, earned_achievements, total_achievements,
                  completion_percentage, last_synced, steam_app_id, source)
-            VALUES (?, ?, ?, ?, ?, ?, 'steam')
-            ON CONFLICT(game_id) DO UPDATE SET
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'steam')
+            ON CONFLICT(game_id, user_id) DO UPDATE SET
                 earned_achievements = excluded.earned_achievements,
                 total_achievements = excluded.total_achievements,
                 completion_percentage = excluded.completion_percentage,
@@ -336,6 +336,7 @@ def api_steam_sync_single(game_id):
                 source = 'steam'
         """, (
             game_id,
+            g.user['id'],
             result['earned'],
             result['total'],
             round(result['earned'] / result['total'] * 100, 1) if result['total'] > 0 else 0,
@@ -343,8 +344,8 @@ def api_steam_sync_single(game_id):
             game['steam_app_id'],
         ))
 
-        # Save individual achievements
-        _upsert_steam_achievements(c, game_id, game['steam_app_id'], steam_api_key, result)
+        # Save individual achievements (Pass 31.2 — per user).
+        _upsert_steam_achievements(c, game_id, game['steam_app_id'], steam_api_key, result, g.user['id'])
 
         conn.commit()
 
@@ -398,8 +399,10 @@ def api_xbox_auth_url():
     # the callback can verify the flow originated here. Without this,
     # an attacker triggering /api/xbox/callback with their own `code`
     # would bind the victim's RetroDB session to the attacker's MS account.
+    # Pass 31.9 — bind the state to the issuing user's id so a logout/login
+    # transition can't let user B's callback consume user A's pending state.
     state = _secrets.token_urlsafe(32)
-    flask_session['oauth_state_xbox'] = state
+    flask_session['oauth_state_xbox'] = {'state': state, 'user_id': g.user['id']}
 
     # Build redirect URI based on current request
     redirect_uri = request.host_url.rstrip('/') + '/api/xbox/callback'
@@ -431,10 +434,20 @@ def api_xbox_callback():
     # Pass 24.6 — verify the state parameter matches what we stashed in
     # api_xbox_auth_url. Pop-and-compare so a replay attack can't reuse a
     # consumed state. hmac.compare_digest for timing-safe equality.
+    # Pass 31.9 — the stash is now `{'state': ..., 'user_id': ...}` so the
+    # callback also refuses to consume a state issued by a different user
+    # on the same browser session (logout → new login re-race). Legacy
+    # bare-string stashes from an in-flight upgrade degrade to a forced
+    # state_mismatch, which is the safe behavior.
     import hmac as _hmac
-    expected_state = flask_session.pop('oauth_state_xbox', None)
-    if not expected_state or not returned_state or not _hmac.compare_digest(expected_state, returned_state):
-        logger.warning("Xbox OAuth callback rejected: state mismatch or missing")
+    expected = flask_session.pop('oauth_state_xbox', None)
+    expected_state = expected.get('state') if isinstance(expected, dict) else None
+    expected_user_id = expected.get('user_id') if isinstance(expected, dict) else None
+    if (not expected_state
+            or not returned_state
+            or not _hmac.compare_digest(expected_state, returned_state)
+            or expected_user_id != g.user['id']):
+        logger.warning("Xbox OAuth callback rejected: state mismatch or user mismatch")
         return redirect(url_for('platform_import.platform_import') + '?xbox_error=state_mismatch')
 
     api_keys = get_saved_api_keys()
@@ -755,9 +768,12 @@ def api_psn_import_status():
     if not npsso:
         return jsonify({'configured': False, 'has_data': False})
 
-    # Check if psn_games table has data
+    # Check if psn_games table has data (Pass 31.1 — per user).
     try:
-        row = query("SELECT COUNT(*) as cnt FROM psn_games", one=True)
+        row = query(
+            "SELECT COUNT(*) as cnt FROM psn_games WHERE user_id = ?",
+            (g.user['id'],), one=True,
+        )
         total_games = row['cnt'] if row else 0
     except Exception:
         total_games = 0
@@ -795,11 +811,12 @@ def api_psn_fetch_library():
             'error': 'PSN NPSSO not configured. Add it in Settings \u2192 API Keys.'
         }), 400
 
-    # Check local psn_games table first
+    # Check local psn_games table first (Pass 31.1 — per user).
     try:
         local_games = query(
             "SELECT npwr_id, title, platform, icon_url, progress, linked_game_id "
-            "FROM psn_games ORDER BY title"
+            "FROM psn_games WHERE user_id = ? ORDER BY title",
+            (g.user['id'],),
         )
     except Exception:
         local_games = []
@@ -1021,11 +1038,14 @@ def api_psn_import():
                     datetime.now(timezone.utc).isoformat(),
                 ))
 
-                # Link the PSN trophy record to the imported game
+                # Link the PSN trophy record to the imported game.
+                # Pass 31.1 — scope by user so user B's import can't
+                # inadvertently repoint user A's trophy row to a new game.
                 new_game_id = c.lastrowid
                 c.execute(
-                    "UPDATE psn_games SET linked_game_id = ? WHERE npwr_id = ?",
-                    (new_game_id, npwr_id)
+                    "UPDATE psn_games SET linked_game_id = ? "
+                    "WHERE npwr_id = ? AND user_id = ?",
+                    (new_game_id, npwr_id, g.user['id'])
                 )
 
                 imported += 1

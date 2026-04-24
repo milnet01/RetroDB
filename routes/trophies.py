@@ -15,7 +15,7 @@ from datetime import datetime
 
 import config
 from services.database import get_db, query, execute
-from services.auth import login_required, admin_required, get_user_settings
+from services.auth import login_required, admin_required, editor_required, get_user_settings
 from services.jobs.base import _download_psn_trophy_image as download_psn_trophy_image
 
 # PSN API imports
@@ -519,7 +519,7 @@ def psn_trophies():
                              total_games=0,
                              available_letters=[])
 
-    # Aggregate stats via SQL (no need to load all game rows)
+    # Aggregate stats via SQL, scoped to the caller (Pass 31.1).
     stats_row = query("""
         SELECT
             COUNT(*) as total_games,
@@ -534,7 +534,8 @@ def psn_trophies():
             COALESCE(SUM(earned_trophies), 0) as total_earned,
             COALESCE(SUM(total_trophies), 0) as total_trophies
         FROM psn_games
-    """, one=True)
+        WHERE user_id = ?
+    """, (g.user['id'],), one=True)
 
     stats = dict(stats_row) if stats_row else {
         'total_games': 0, 'platinum_earned': 0, 'platinum_total': 0,
@@ -543,10 +544,12 @@ def psn_trophies():
     }
     total_games = stats['total_games']
 
-    # Platform counts via SQL
+    # Platform counts via SQL (Pass 31.1 — per user).
     platform_rows = query("""
-        SELECT platform, COUNT(*) as cnt FROM psn_games GROUP BY platform
-    """)
+        SELECT platform, COUNT(*) as cnt FROM psn_games
+        WHERE user_id = ?
+        GROUP BY platform
+    """, (g.user['id'],))
     platforms = {r['platform']: r['cnt'] for r in platform_rows} if platform_rows else {}
     platform_counts = {
         'ps5': platforms.get('PS5', 0),
@@ -555,8 +558,12 @@ def psn_trophies():
         'vita': platforms.get('PSVITA', 0) + platforms.get('Vita', 0)
     }
 
-    # Available first-letters for alphabet nav
-    letter_rows = query("SELECT DISTINCT UPPER(SUBSTR(title, 1, 1)) AS letter FROM psn_games")
+    # Available first-letters for alphabet nav (Pass 31.1 — per user).
+    letter_rows = query(
+        "SELECT DISTINCT UPPER(SUBSTR(title, 1, 1)) AS letter FROM psn_games "
+        "WHERE user_id = ?",
+        (g.user['id'],),
+    )
     available_letters = [r['letter'] for r in letter_rows] if letter_rows else []
 
     # Get sync status — Pass 27.2 scopes to current user.
@@ -596,8 +603,10 @@ def api_psn_games():
         sort = request.args.get('sort', 'name-asc').strip()
         platform = request.args.get('platform', '').strip()
 
-        where_clauses = []
-        params = []
+        # Pass 31.1 — caller-scoped as the first WHERE clause so every
+        # subsequent filter narrows within the user's own library only.
+        where_clauses = ["pg.user_id = ?"]
+        params = [g.user['id']]
 
         # Search filter
         if search:
@@ -618,7 +627,7 @@ def api_psn_games():
                 where_clauses.append("UPPER(SUBSTR(pg.title, 1, 1)) = ?")
                 params.append(letter.upper())
 
-        where_sql = (' WHERE ' + ' AND '.join(where_clauses)) if where_clauses else ''
+        where_sql = ' WHERE ' + ' AND '.join(where_clauses)
 
         # Sort
         sort_map = {
@@ -687,8 +696,9 @@ def api_psn_games_ids():
         platform = request.args.get('platform', '').strip()
         filter_type = request.args.get('filter_type', '').strip()
 
-        where_clauses = []
-        params = []
+        # Pass 31.1 — caller scope as the first clause.
+        where_clauses = ["pg.user_id = ?"]
+        params = [g.user['id']]
 
         if search:
             escaped = search.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
@@ -711,7 +721,7 @@ def api_psn_games_ids():
         elif filter_type == 'incomplete':
             where_clauses.append("(pg.progress IS NULL OR pg.progress < 100)")
 
-        where_sql = (' WHERE ' + ' AND '.join(where_clauses)) if where_clauses else ''
+        where_sql = ' WHERE ' + ' AND '.join(where_clauses)
         sql = f"SELECT pg.npwr_id FROM psn_games pg{where_sql} ORDER BY pg.title COLLATE NOCASE ASC"
         rows = query(sql, tuple(params))
 
@@ -727,9 +737,11 @@ def api_psn_games_ids():
 @bp.route('/psn-trophies/<npwr_id>')
 @login_required
 def psn_trophy_detail(npwr_id):
-    """PSN Trophy detail page for a specific game"""
-    # Get PSN game
-    psn_game = query("SELECT * FROM psn_games WHERE npwr_id = ?", (npwr_id,), one=True)
+    """PSN Trophy detail page for a specific game (Pass 31.1 — per user)."""
+    psn_game = query(
+        "SELECT * FROM psn_games WHERE npwr_id = ? AND user_id = ?",
+        (npwr_id, g.user['id']), one=True,
+    )
     
     if not psn_game:
         flash('PSN game not found', 'error')
@@ -1122,14 +1134,15 @@ def _run_psn_full_sync(psnawp, user_id):
                                     linked_game_id = g['id']
                                     break
 
+                    # Pass 31.1 — per-user rows. Conflict key is (npwr_id, user_id).
                     conn.execute("""
                         INSERT INTO psn_games (
-                            npwr_id, title, platform, icon_url, progress,
+                            npwr_id, user_id, title, platform, icon_url, progress,
                             earned_platinum, earned_gold, earned_silver, earned_bronze,
                             total_platinum, total_gold, total_silver, total_bronze,
                             total_trophies, earned_trophies, last_updated, linked_game_id
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), ?)
-                        ON CONFLICT(npwr_id) DO UPDATE SET
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), ?)
+                        ON CONFLICT(npwr_id, user_id) DO UPDATE SET
                             title = excluded.title,
                             platform = excluded.platform,
                             icon_url = excluded.icon_url,
@@ -1147,7 +1160,7 @@ def _run_psn_full_sync(psnawp, user_id):
                             last_updated = datetime('now'),
                             linked_game_id = COALESCE(excluded.linked_game_id, psn_games.linked_game_id)
                     """, (
-                        npwr_id, title.title_name, platform, icon_url, progress,
+                        npwr_id, user_id, title.title_name, platform, icon_url, progress,
                         earned_counts['platinum'], earned_counts['gold'],
                         earned_counts['silver'], earned_counts['bronze'],
                         total_counts['platinum'], total_counts['gold'],
@@ -1216,9 +1229,13 @@ def api_psn_sync_game(npwr_id):
     if error:
         return jsonify({'success': False, 'error': error})
     
-    # Get PSN game from database
-    psn_game = query("SELECT * FROM psn_games WHERE npwr_id = ?", (npwr_id,), one=True)
-    
+    # Get PSN game from database (Pass 31.1 — scope to caller).
+    user_id = g.user['id']
+    psn_game = query(
+        "SELECT * FROM psn_games WHERE npwr_id = ? AND user_id = ?",
+        (npwr_id, user_id), one=True,
+    )
+
     if not psn_game:
         return jsonify({'success': False, 'error': 'Game not found'})
     
@@ -1286,7 +1303,7 @@ def api_psn_sync_game(npwr_id):
                 earned_trophies = ?,
                 last_updated = datetime('now'),
                 trophies_synced = 1
-            WHERE npwr_id = ?
+            WHERE npwr_id = ? AND user_id = ?
         """, (
             target_title.title_name,
             platform,
@@ -1302,7 +1319,8 @@ def api_psn_sync_game(npwr_id):
             total_counts['bronze'],
             total_trophies,
             total_earned,
-            npwr_id
+            npwr_id,
+            user_id,
         ))
 
         # Download game icon locally
@@ -1464,66 +1482,42 @@ def api_psn_sync_game(npwr_id):
                     rarity = getattr(trophy, 'trophy_earn_rate', None)
                     rarity_class, rarity_label = calculate_rarity_class(rarity)
                     
-                    # Upsert trophy - use DELETE + INSERT as fallback for older DBs without UNIQUE constraint
-                    try:
-                        execute("""
-                            INSERT INTO psn_trophies (
-                                psn_game_id, trophy_id, group_id, group_name,
-                                name, description, trophy_type, icon_url,
-                                rarity, rarity_label, earned, earned_date
-                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                            ON CONFLICT(psn_game_id, trophy_id) DO UPDATE SET
-                                group_id = excluded.group_id,
-                                group_name = excluded.group_name,
-                                name = excluded.name,
-                                description = excluded.description,
-                                trophy_type = excluded.trophy_type,
-                                icon_url = excluded.icon_url,
-                                rarity = excluded.rarity,
-                                rarity_label = excluded.rarity_label,
-                                earned = excluded.earned,
-                                earned_date = excluded.earned_date
-                        """, (
-                            psn_game['id'],
-                            trophy_id,
-                            group_id,
-                            group_name,
-                            trophy_name,
-                            trophy_detail,
-                            trophy_type,
-                            trophy_icon,
-                            rarity,
-                            rarity_label,
-                            1 if earned else 0,
-                            earned_date
-                        ))
-                    except Exception as upsert_error:
-                        if 'ON CONFLICT' in str(upsert_error):
-                            # Fallback: DELETE then INSERT for DBs without UNIQUE constraint
-                            execute("DELETE FROM psn_trophies WHERE psn_game_id = ? AND trophy_id = ?",
-                                    (psn_game['id'], trophy_id))
-                            execute("""
-                                INSERT INTO psn_trophies (
-                                    psn_game_id, trophy_id, group_id, group_name,
-                                    name, description, trophy_type, icon_url,
-                                    rarity, rarity_label, earned, earned_date
-                                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                            """, (
-                                psn_game['id'],
-                                trophy_id,
-                                group_id,
-                                group_name,
-                                trophy_name,
-                                trophy_detail,
-                                trophy_type,
-                                trophy_icon,
-                                rarity,
-                                rarity_label,
-                                1 if earned else 0,
-                                earned_date
-                            ))
-                        else:
-                            raise
+                    # Pass 31.1 — trophies carry their owner's user_id for
+                    # direct filtering. The psn_game_id already cascades owner
+                    # via psn_games.user_id, so user_id on psn_trophies is a
+                    # denormalised lookup aid.
+                    execute("""
+                        INSERT INTO psn_trophies (
+                            psn_game_id, user_id, trophy_id, group_id, group_name,
+                            name, description, trophy_type, icon_url,
+                            rarity, rarity_label, earned, earned_date
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        ON CONFLICT(psn_game_id, trophy_id) DO UPDATE SET
+                            group_id = excluded.group_id,
+                            group_name = excluded.group_name,
+                            name = excluded.name,
+                            description = excluded.description,
+                            trophy_type = excluded.trophy_type,
+                            icon_url = excluded.icon_url,
+                            rarity = excluded.rarity,
+                            rarity_label = excluded.rarity_label,
+                            earned = excluded.earned,
+                            earned_date = excluded.earned_date
+                    """, (
+                        psn_game['id'],
+                        user_id,
+                        trophy_id,
+                        group_id,
+                        group_name,
+                        trophy_name,
+                        trophy_detail,
+                        trophy_type,
+                        trophy_icon,
+                        rarity,
+                        rarity_label,
+                        1 if earned else 0,
+                        earned_date
+                    ))
                     
                     trophies_synced += 1
                     
@@ -1534,11 +1528,11 @@ def api_psn_sync_game(npwr_id):
             # Update first and last trophy dates if we found any
             if first_trophy_date or last_trophy_date:
                 execute("""
-                    UPDATE psn_games SET 
+                    UPDATE psn_games SET
                         first_trophy_earned = COALESCE(?, first_trophy_earned),
                         last_trophy_earned = COALESCE(?, last_trophy_earned)
-                    WHERE npwr_id = ?
-                """, (first_trophy_date, last_trophy_date, npwr_id))
+                    WHERE npwr_id = ? AND user_id = ?
+                """, (first_trophy_date, last_trophy_date, npwr_id, user_id))
                     
         except Exception as te:
             logger.warning(f"Could not sync individual trophies for {npwr_id}: {te}")
@@ -1563,9 +1557,9 @@ def api_psn_sync_game(npwr_id):
 
 
 @bp.route('/api/psn/link-game', methods=['POST'])
-@login_required
+@editor_required
 def api_psn_link_game():
-    """Link a PSN game to a RetroDB game"""
+    """Link a PSN game to a RetroDB game (Pass 31.6 — owner-scoped)."""
     data = request.get_json()
     npwr_id = data.get('npwr_id')
     game_id = data.get('game_id')
@@ -1577,8 +1571,8 @@ def api_psn_link_game():
         execute("""
             UPDATE psn_games
             SET linked_game_id = ?
-            WHERE npwr_id = ?
-        """, (game_id if game_id else None, npwr_id))
+            WHERE npwr_id = ? AND user_id = ?
+        """, (game_id if game_id else None, npwr_id, g.user['id']))
 
         return jsonify({'success': True})
 
@@ -1629,9 +1623,9 @@ def api_psn_search_games():
 
 
 @bp.route('/api/psn/save-hltb', methods=['POST'])
-@login_required
+@editor_required
 def api_psn_save_hltb():
-    """Save HLTB match for a PSN game"""
+    """Save HLTB match for a PSN game (Pass 31.6 — owner-scoped)."""
     data = request.get_json()
     npwr_id = data.get('npwr_id')
     hltb_id = data.get('hltb_id')
@@ -1639,16 +1633,16 @@ def api_psn_save_hltb():
     hltb_main = data.get('hltb_main')
     hltb_extra = data.get('hltb_extra')
     hltb_complete = data.get('hltb_complete')
-    
+
     if not npwr_id:
         return jsonify({'success': False, 'error': 'Missing npwr_id'})
-    
+
     try:
         execute("""
-            UPDATE psn_games 
+            UPDATE psn_games
             SET hltb_id = ?, hltb_title = ?, hltb_main = ?, hltb_extra = ?, hltb_complete = ?
-            WHERE npwr_id = ?
-        """, (hltb_id, hltb_title, hltb_main, hltb_extra, hltb_complete, npwr_id))
+            WHERE npwr_id = ? AND user_id = ?
+        """, (hltb_id, hltb_title, hltb_main, hltb_extra, hltb_complete, npwr_id, g.user['id']))
         
         return jsonify({'success': True})
         
@@ -1657,34 +1651,37 @@ def api_psn_save_hltb():
 
 
 @bp.route('/api/psn/edit-group-name', methods=['POST'])
-@login_required
+@editor_required
 def api_psn_edit_group_name():
-    """Edit a trophy group name (for DLC sets)"""
+    """Edit a trophy group name (Pass 31.6 — owner-scoped)."""
     data = request.get_json()
     npwr_id = data.get('npwr_id')
     group_id = data.get('group_id')
     new_name = data.get('name', '').strip()
-    
+
     if not npwr_id or not group_id:
         return jsonify({'success': False, 'error': 'Missing npwr_id or group_id'})
-    
+
     if not new_name:
         return jsonify({'success': False, 'error': 'Name cannot be empty'})
-    
+
     try:
-        # Get PSN game ID
-        psn_game = query("SELECT id FROM psn_games WHERE npwr_id = ?", (npwr_id,), one=True)
+        user_id = g.user['id']
+        psn_game = query(
+            "SELECT id FROM psn_games WHERE npwr_id = ? AND user_id = ?",
+            (npwr_id, user_id), one=True,
+        )
         if not psn_game:
             return jsonify({'success': False, 'error': 'PSN game not found'})
-        
+
         psn_game_id = psn_game['id']
-        
+
         # Update all trophies in this group with the new name
         execute("""
-            UPDATE psn_trophies 
+            UPDATE psn_trophies
             SET group_name = ?
-            WHERE psn_game_id = ? AND group_id = ?
-        """, (new_name, psn_game_id, group_id))
+            WHERE psn_game_id = ? AND group_id = ? AND user_id = ?
+        """, (new_name, psn_game_id, group_id, user_id))
         
         logger.info(f"Updated group name for {npwr_id} group {group_id} to '{new_name}'")
         
@@ -1852,7 +1849,7 @@ def api_psn_bulk_refresh_start():
     if not npsso:
         return jsonify({'success': False, 'error': 'PSN NPSSO not configured'})
 
-    result = psn_refresh_job.start(npwr_ids, npsso, return_url)
+    result = psn_refresh_job.start(npwr_ids, npsso, return_url, user_id=g.user['id'])
     return jsonify(result)
 
 

@@ -156,11 +156,19 @@ def _get_filter_options(system_id=None):
     return options
 
 
-def _build_games_query(params, count_only=False, ids_only=False):
+def _build_games_query(params, count_only=False, ids_only=False, user_id=None):
     """Build dynamic WHERE clause for game queries from filter params.
 
     Returns (sql, bind_values) tuple. The SQL is either a SELECT for data,
     a COUNT, or an ids-only query depending on flags.
+
+    Pass 31.1 — `user_id` (optional) scopes the psn_games/psn_trophies subquery
+    to the caller so each user sees only their own PSN progress on game cards.
+    COUNT and ids_only variants don't join the psn subquery, so user_id is
+    ignored there. For callers that haven't been threaded through yet, a
+    missing user_id preserves the historical "show everyone's PSN data"
+    behavior — safe on a single-user install, visibly wrong on multi-user;
+    audit any new caller that reads a card with psn.* columns.
     """
     conditions = []
     values = []
@@ -260,6 +268,12 @@ def _build_games_query(params, count_only=False, ids_only=False):
     elif ids_only:
         sql = f"SELECT g.id FROM games g JOIN systems s ON g.system_id = s.id WHERE {where} ORDER BY COALESCE(g.sort_title, g.title) COLLATE NOCASE"
     else:
+        # Pass 31.1 / 31.2 — psn and gap joins scope by user_id when the
+        # caller passes one, so each user sees only their own library
+        # progress on game cards. Legacy call sites without user_id keep
+        # their historical shape (which matches the pre-31 behavior).
+        psn_user_clause = "AND pg.user_id = ?" if user_id is not None else ""
+        gap_user_clause = "AND gap.user_id = ?" if user_id is not None else ""
         sql = f"""
             SELECT g.id, g.title, g.sort_title, g.system_id, g.boxart, g.boxart_3d,
                    g.fanart, g.genre, g.franchise, g.developer, g.publisher,
@@ -286,7 +300,7 @@ def _build_games_query(params, count_only=False, ids_only=False):
                 WHERE is_bonus_disc = 1
                 GROUP BY parent_game_id
             ) bc ON bc.parent_game_id = g.id
-            LEFT JOIN game_achievement_progress gap ON gap.game_id = g.id
+            LEFT JOIN game_achievement_progress gap ON gap.game_id = g.id {gap_user_clause}
             LEFT JOIN (
                 SELECT pg.linked_game_id,
                        (pg.earned_bronze + pg.earned_silver + pg.earned_gold + pg.earned_platinum) AS psn_earned,
@@ -295,10 +309,16 @@ def _build_games_query(params, count_only=False, ids_only=False):
                 FROM psn_games pg
                 LEFT JOIN psn_trophies pt ON pt.psn_game_id = pg.id
                 WHERE pg.linked_game_id IS NOT NULL
+                  {psn_user_clause}
                 GROUP BY pg.linked_game_id
             ) psn ON psn.linked_game_id = g.id
             WHERE {where}
             ORDER BY COALESCE(g.sort_title, g.title) COLLATE NOCASE
         """
+        if user_id is not None:
+            # gap JOIN and psn subquery each consume one user_id bind; both
+            # land before the WHERE bindings (gap first since its clause
+            # appears earlier in the SQL).
+            values = [user_id, user_id, *values]
 
     return sql, values
