@@ -70,9 +70,11 @@ def apply(conn):
     """)
 
     # If a users table exists, locate the first admin so we can ingest legacy
-    # data under their id. Truly fresh installs (no users table yet — see
-    # services/database_init.py for the init order) have nothing to ingest
-    # and just exit here.
+    # data under their id. A missing users table means the caller is running
+    # migrations before ensure_user_tables() has bootstrapped the admin — the
+    # normal init path (see services/database_init.py, post-Pass-30.1) seeds
+    # users first so we rarely hit this branch, but keep it as a defensive
+    # no-op since there's nothing to ingest without an admin id.
     if not _table_exists(cursor, 'users'):
         return
 

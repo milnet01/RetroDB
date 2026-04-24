@@ -287,7 +287,7 @@ def fetch_igdb_extended(game_id):
         body = f"""
         fields name, first_release_date,
                involved_companies.company.name, involved_companies.developer, involved_companies.publisher,
-               genres.name, themes.name, age_ratings.category, age_ratings.rating,
+               genres.name, age_ratings.category, age_ratings.rating,
                game_modes.name, player_perspectives.name,
                multiplayer_modes.offlinemax, multiplayer_modes.onlinemax,
                multiplayer_modes.campaigncoop, multiplayer_modes.splitscreen,

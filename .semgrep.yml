@@ -67,8 +67,15 @@
 #   (d) Structural `?`-placeholder IN-clauses:
 #         placeholders = ','.join('?' * len(ids))
 #       where `ids` contains values bound via `?` at execute-time.
+#   (e) Hardcoded-tuple loops — a file-local tuple literal drives the
+#       table/column names, no caller input reaches the f-string. Canonical
+#       sites: `services/database_init.py::_backfill_null_owner_ids` (Pass
+#       30.1 startup self-heal), migrations `005_collections_owner_id.py`,
+#       `006_per_user_platform_tokens.py`. Pattern: a `targets = (('tbl',
+#       'col'), ...)` literal at the top of the function, then
+#       `f"UPDATE {table} SET {column} = ?"` inside the loop body.
 #
-# If a NEW f-string SQL site is introduced that doesn't fit (a-d), /audit
+# If a NEW f-string SQL site is introduced that doesn't fit (a-e), /audit
 # should surface it as actionable.
 #
 # Known-safe network calls

@@ -58,9 +58,12 @@ def apply(conn):
         "SELECT 1 FROM sqlite_master WHERE type='table' AND name='users'"
     ).fetchone() is not None
     if not users_exists:
-        # Fresh install: ensure_user_tables() runs after init_database(), so
-        # the users table doesn't exist yet. There are also no collection
-        # rows to backfill. Nothing to do.
+        # Nothing to do — collection tables are either empty (fresh install)
+        # or the caller hasn't bootstrapped the users table yet, so there's
+        # no admin id to backfill against. Pass 30.1 made this unreachable
+        # on the normal init path (ensure_user_tables() now runs before
+        # init_database()), but the guard stays as a belt-and-braces for
+        # any future caller that runs migrations against an incomplete DB.
         return
 
     admin = cursor.execute(
