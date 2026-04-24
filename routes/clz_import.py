@@ -286,6 +286,12 @@ def api_clz_parse():
     # otherwise; the prior `os.unlink(tmp_path)` below only ran on the
     # success path so any pdfplumber exception leaked the temp file.
     max_pages = getattr(config, 'CLZ_PDF_MAX_PAGES', 500)
+    # Pass 32.8: per-cell and per-list caps. Page count alone doesn't stop
+    # a crafted PDF with a 100 MB text run in a single cell, or a "legal"
+    # 500-page PDF with 500k rows — both land massive strings in re.sub
+    # and subsequently in SQLite inserts.
+    MAX_CELL_LEN = getattr(config, 'CLZ_PDF_MAX_CELL_BYTES', 4096)
+    MAX_GAMES = getattr(config, 'CLZ_PDF_MAX_GAMES', 50_000)
     try:
         with pdfplumber.open(tmp_path) as pdf:
             if len(pdf.pages) > max_pages:
@@ -359,6 +365,16 @@ def api_clz_parse():
                         developer = str(row[col_map.get('developer', -1)]).strip() if col_map.get('developer') is not None and col_map['developer'] < len(row) and row[col_map['developer']] else ''
                         genre = str(row[col_map.get('genre', -1)]).strip() if col_map.get('genre') is not None and col_map['genre'] < len(row) and row[col_map['genre']] else ''
 
+                        # Pass 32.8: truncate each cell to MAX_CELL_LEN before
+                        # the re.sub passes below. Without this a single 100 MB
+                        # cell becomes a 100 MB regex input + SQLite insert.
+                        title = title[:MAX_CELL_LEN]
+                        platform = platform[:MAX_CELL_LEN]
+                        release = release[:MAX_CELL_LEN]
+                        publisher = publisher[:MAX_CELL_LEN]
+                        developer = developer[:MAX_CELL_LEN]
+                        genre = genre[:MAX_CELL_LEN]
+
                         # Clean up extracted text - replace newlines/tabs with spaces, normalize whitespace
                         title = re.sub(r'[\n\r\t]+', ' ', title).strip()
                         title = re.sub(r'\s+', ' ', title)
@@ -383,6 +399,16 @@ def api_clz_parse():
                             'developer': developer,
                             'genre': genre
                         })
+                        if len(games) >= MAX_GAMES:
+                            break
+                    if len(games) >= MAX_GAMES:
+                        break
+                if len(games) >= MAX_GAMES:
+                    break
+            if len(games) >= MAX_GAMES:
+                logger.warning(
+                    f"CLZ PDF truncated at MAX_GAMES={MAX_GAMES}; further rows skipped"
+                )
     finally:
         # Always clean up the temp file, even if pdfplumber raised.
         try:

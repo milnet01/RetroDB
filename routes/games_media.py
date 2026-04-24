@@ -59,12 +59,12 @@ def api_rename_rom(game_id):
     if not new_filename:
         return error('No filename provided', 400)
 
-    invalid_chars = '<>:"/\\|?*'
-    if any(c in new_filename for c in invalid_chars):
-        return error(f'Filename contains invalid characters: {invalid_chars}', 400)
-
-    if '..' in new_filename:
-        return error('Filename cannot contain path traversal sequences', 400)
+    # Pass 32.5: the previous guard only rejected invalid chars + `..` in
+    # the user-supplied filename. safe_filename already covers both (plus
+    # path separators), and safe_filename failure is the single canonical
+    # reject path.
+    if safe_filename(new_filename) is None:
+        return error('Invalid filename', 400)
 
     game = query("SELECT id, title, rom_path FROM games WHERE id = ?", (game_id,), one=True)
     if not game:
@@ -77,6 +77,21 @@ def api_rename_rom(game_id):
 
     directory = os.path.dirname(old_path)
     new_path = os.path.join(directory, new_filename)
+
+    # Pass 32.5: jail the derived destination inside the configured ROM
+    # root. DB rom_path values are trusted by default, but a legacy import
+    # (or a pre-Pass-32.1 admin setting) could leave a row whose rom_path
+    # points outside ROM_PATH — without this check, rename-rom would then
+    # become an arbitrary rename primitive anywhere on disk.
+    rom_root = getattr(config, 'ROM_PATH', '') or ''
+    if rom_root:
+        try:
+            canonical_root = os.path.realpath(rom_root)
+            canonical_new = os.path.realpath(os.path.dirname(new_path))
+            if os.path.commonpath([canonical_root, canonical_new]) != canonical_root:
+                return error('Destination is outside the configured ROM root', 400)
+        except (ValueError, OSError):
+            return error('Could not validate destination path', 400)
 
     if os.path.exists(new_path) and new_path != old_path:
         return error('A file with that name already exists', 400)

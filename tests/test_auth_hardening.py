@@ -319,10 +319,12 @@ class TestDestructiveEndpointsRequireAuth:
         assert '/login' in location or '/setup' in location or resp.status_code in (401, 403)
 
     def test_rename_rom_rejects_path_traversal_in_filename(self, client):
-        """Independent of auth: the route also validates filename contents."""
-        # This test needs auth to reach the validation logic. We can't
-        # assert the 400 rejection without a real session, so we settle
-        # for verifying the inline check is present in source.
+        """Independent of auth: the route also validates filename contents.
+
+        Pass 32.5 replaced the inline `'..' in new_filename` + invalid_chars
+        check with a single `safe_filename()` call plus a jail check that
+        the destination stays inside config.ROM_PATH.
+        """
         src = open(os.path.join(_REPO_ROOT, 'routes', 'games_media.py')).read()
-        assert "'..' in new_filename" in src
-        assert 'invalid_chars' in src
+        assert 'safe_filename(new_filename)' in src
+        assert 'commonpath' in src

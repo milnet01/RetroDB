@@ -16,7 +16,7 @@ from datetime import datetime, timezone
 
 import config
 import settings_manager
-from services.database import query, execute
+from services.database import query, execute, safe_column
 from services.auth import login_required, editor_required, has_permission
 from services.api_helpers import handle_api_errors
 from services.security import safe_filename
@@ -957,13 +957,16 @@ def api_games_bulk_edit():
     if not fields:
         return jsonify({'success': False, 'error': 'No fields to update'}), 400
 
-    bulk_allowed_fields = [
+    # Pass 32.12: gate this set at a single safe_column() call site per
+    # interpolation; the allowlist itself is frozen below so a future edit
+    # can't bypass the validator by mutating the list in flight.
+    bulk_allowed_fields = frozenset({
         'completion_status', 'genre', 'publisher', 'developer',
         'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating',
         'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating',
         'region', 'players',
-        'game_structure', 'perspective', 'dimension', 'campaign', 'franchise', 'modes'
-    ]
+        'game_structure', 'perspective', 'dimension', 'campaign', 'franchise', 'modes',
+    })
 
     # Fields that support append mode
     appendable_fields = ['genre', 'publisher', 'developer', 'franchise', 'region', 'game_structure', 'perspective', 'dimension']
@@ -976,14 +979,19 @@ def api_games_bulk_edit():
     for field, value in fields.items():
         if field not in bulk_allowed_fields:
             continue
+        # Pass 32.12: every f-string insertion of `field` goes through
+        # safe_column(). The allowlist check above already narrows the set,
+        # but this makes the SQL interpolation contract explicit at the
+        # insertion point instead of trusting an earlier comment.
+        safe_field = safe_column(field, bulk_allowed_fields)
         if value == '':
             value = None
 
         mode = field_modes.get(field, 'replace')
-        if mode == 'append' and field in appendable_fields and value:
-            append_fields[field] = value
+        if mode == 'append' and safe_field in appendable_fields and value:
+            append_fields[safe_field] = value
         else:
-            replace_updates.append(f"{field} = ?")
+            replace_updates.append(f"{safe_field} = ?")
             replace_values.append(value)
 
     if not replace_updates and not append_fields:
@@ -1003,19 +1011,22 @@ def api_games_bulk_edit():
                 WHERE id IN ({placeholders})
             """, tuple(values))
 
-        # Handle append fields — batch updates per field
-        # field names are validated against bulk_allowed_fields whitelist — safe for SQL interpolation
+        # Handle append fields — batch updates per field. Pass 32.12:
+        # re-validate through safe_column() at every interpolation site so
+        # the contract holds even if the outer loop's allowlist logic is
+        # ever refactored.
         if append_fields:
             placeholders = ','.join('?' for _ in game_ids)
             for field, new_value in append_fields.items():
+                safe_field = safe_column(field, bulk_allowed_fields)
                 # Games with empty field: set directly in one batch
                 cursor.execute(
-                    f"UPDATE games SET {field} = ? WHERE id IN ({placeholders}) AND ({field} IS NULL OR {field} = '')",
+                    f"UPDATE games SET {safe_field} = ? WHERE id IN ({placeholders}) AND ({safe_field} IS NULL OR {safe_field} = '')",
                     (new_value, *game_ids)
                 )
                 # Games with existing values: check for duplicates, batch the appends
                 rows = cursor.execute(
-                    f"SELECT id, {field} FROM games WHERE id IN ({placeholders}) AND {field} IS NOT NULL AND {field} != ''",
+                    f"SELECT id, {safe_field} FROM games WHERE id IN ({placeholders}) AND {safe_field} IS NOT NULL AND {safe_field} != ''",
                     tuple(game_ids)
                 ).fetchall()
 
@@ -1028,7 +1039,7 @@ def api_games_bulk_edit():
 
                 if updates:
                     cursor.executemany(
-                        f"UPDATE games SET {field} = ? WHERE id = ?",
+                        f"UPDATE games SET {safe_field} = ? WHERE id = ?",
                         updates
                     )
 

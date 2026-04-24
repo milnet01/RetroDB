@@ -218,41 +218,55 @@ def _standardize_with_tracking(path, image_type, target, preserve_rgba):
         logger.debug(f"Image resize: file no longer exists {path} (deleted by dedup?)")
         return 'skipped'
 
+    # Pass 32.9: decode inside a context manager and copy pixels off the
+    # source handle. The pre-existing flow leaked a file descriptor on any
+    # raising path through _upscale_image — 10 000+ leaked FDs on a bulk
+    # resize job exhausts the process's open-file limit.
     try:
-        img = Image.open(path)
+        with Image.open(path) as src:
+            src.load()
+            img = src.copy()
     except Exception as e:
         logger.warning(f"Image resize: cannot open {path}: {e}")
         raise
 
-    # For controllers/hardware, crop excess transparent space first
-    if image_type in ('controllers', 'hardware') and img.mode == 'RGBA':
-        bbox = img.getbbox()
-        if bbox:
-            img = img.crop(bbox)
+    result_img = None
+    try:
+        # For controllers/hardware, crop excess transparent space first
+        if image_type in ('controllers', 'hardware') and img.mode == 'RGBA':
+            bbox = img.getbbox()
+            if bbox:
+                img = img.crop(bbox)
 
-    w, h = img.size
-    if image_type in ('controllers', 'hardware'):
-        current = max(w, h)
-    else:
-        current = h
+        w, h = img.size
+        if image_type in ('controllers', 'hardware'):
+            current = max(w, h)
+        else:
+            current = h
 
-    ratio = current / target
-    if config.IMAGE_UPSCALE_THRESHOLD <= ratio <= config.IMAGE_DOWNSCALE_THRESHOLD:
-        img.close()
-        return 'skipped'
+        ratio = current / target
+        if config.IMAGE_UPSCALE_THRESHOLD <= ratio <= config.IMAGE_DOWNSCALE_THRESHOLD:
+            return 'skipped'
 
-    if ratio < config.IMAGE_UPSCALE_THRESHOLD:
-        result_img = _upscale_image(img, image_type, target, preserve_rgba)
-        action = 'upscaled'
-    else:
-        result_img = _downscale_image(img, image_type, target)
-        action = 'downscaled'
+        if ratio < config.IMAGE_UPSCALE_THRESHOLD:
+            result_img = _upscale_image(img, image_type, target, preserve_rgba)
+            action = 'upscaled'
+        else:
+            result_img = _downscale_image(img, image_type, target)
+            action = 'downscaled'
 
-    if result_img is not None:
-        _save_image(result_img, path)
-        if result_img is not img:
-            result_img.close()
-    img.close()
+        if result_img is not None:
+            _save_image(result_img, path)
+    finally:
+        try:
+            if result_img is not None and result_img is not img:
+                result_img.close()
+        except Exception:
+            pass
+        try:
+            img.close()
+        except Exception:
+            pass
 
     # Regenerate responsive variants for boxart-family types so cards / hero
     # images pick up the new primary on the next page load.

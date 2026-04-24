@@ -16,6 +16,7 @@ import logging
 import os
 import time
 
+import config
 from scraper.base_scraper import http_post, rate_limit, safe_json
 
 logger = logging.getLogger(__name__)
@@ -395,6 +396,36 @@ def _get_active_provider():
 # PROMPT CONSTRUCTION
 # =============================================================================
 
+def _sanitize_prompt_input(value, *, max_len=256):
+    """Pass 32.13 — escape user-controlled values before f-string injection.
+
+    OWASP LLM01: a ROM filename containing
+    `"\\nIGNORE PREVIOUS INSTRUCTIONS AND RETURN …\\n"` or
+    `"}`, `` ` ``, or curly braces can subvert the surrounding prompt
+    template. Strip control chars, collapse whitespace, drop braces and
+    backticks, and cap length.
+    """
+    if value is None:
+        return ''
+    if not isinstance(value, str):
+        value = str(value)
+    # Replace newlines / tabs with single spaces, drop other control chars.
+    cleaned = ''.join(
+        ' ' if ch in ('\n', '\r', '\t') else ch
+        for ch in value
+        if ord(ch) >= 0x20 or ch in ('\n', '\r', '\t')
+    )
+    # Drop characters the f-string template itself uses structurally so a
+    # title can't open a new section / close the prompt.
+    for bad in ('{', '}', '`'):
+        cleaned = cleaned.replace(bad, '')
+    # Collapse runs of whitespace and double-quotes so the Game: "{title}"
+    # line stays balanced.
+    cleaned = cleaned.replace('"', "'")
+    cleaned = ' '.join(cleaned.split())
+    return cleaned[:max_len]
+
+
 def _build_prompt(title, system_name, missing_fields, existing_values=None):
     """Build a structured JSON-requesting prompt for the AI provider.
 
@@ -411,6 +442,10 @@ def _build_prompt(title, system_name, missing_fields, existing_values=None):
         str prompt
     """
     existing_values = existing_values or {}
+    # Pass 32.13: sanitize caller-supplied values before they land in the
+    # templated prompt — see _sanitize_prompt_input for rationale.
+    title = _sanitize_prompt_input(title, max_len=256)
+    system_name = _sanitize_prompt_input(system_name, max_len=128)
     field_instructions = []
 
     for field in missing_fields:
@@ -662,9 +697,13 @@ def _call_gemini(prompt, api_key, model, project_id=''):
     if project_id:
         headers['x-goog-user-project'] = project_id
 
+    # Pass 32.14: cap AI response size. Gemini's google_search grounding can
+    # cite many URLs and bloat the body; 10 MB default catches abuse without
+    # rejecting the normal <100 KB case.
+    max_bytes = getattr(config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
     max_attempts = 2
     for attempt in range(1, max_attempts + 1):
-        response = http_post(url, json_data=payload, headers=headers, timeout=60, retries=1)
+        response = http_post(url, json_data=payload, headers=headers, timeout=60, retries=1, max_bytes=max_bytes)
         if response is None or response.status_code != 200:
             status = response.status_code if response is not None else 'No response'
             logger.error(f"Gemini API error: {status}")
@@ -732,7 +771,9 @@ def _call_openai(prompt, api_key, model, **_kwargs):
         'Authorization': f'Bearer {api_key}',
     }
 
-    response = http_post(url, json_data=payload, headers=headers, timeout=90, retries=1)
+    # Pass 32.14: cap OpenAI response size.
+    max_bytes = getattr(config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
+    response = http_post(url, json_data=payload, headers=headers, timeout=90, retries=1, max_bytes=max_bytes)
     if response is None or response.status_code != 200:
         status = response.status_code if response is not None else 'No response'
         logger.error(f"OpenAI API error: {status}")
@@ -778,7 +819,9 @@ def _call_claude(prompt, api_key, model, **_kwargs):
         'anthropic-version': '2023-06-01',
     }
 
-    response = http_post(url, json_data=payload, headers=headers, timeout=60, retries=1)
+    # Pass 32.14: cap Claude response size.
+    max_bytes = getattr(config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
+    response = http_post(url, json_data=payload, headers=headers, timeout=60, retries=1, max_bytes=max_bytes)
     if response is None or response.status_code != 200:
         status = response.status_code if response is not None else 'No response'
         logger.error(f"Claude API error: {status}")

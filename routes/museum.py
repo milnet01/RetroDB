@@ -26,50 +26,27 @@ logger = logging.getLogger(__name__)
 
 
 def _is_public_https_url(url, max_redirects=3):
-    """Pass 25.3 — SSRF guard. Accept the URL only if every host along any
-    redirect chain resolves to a public IP. Reject private / loopback /
-    link-local / reserved ranges so a crafted Bing result pointing at
-    ``http://127.0.0.1:5000/admin`` or ``http://169.254.169.254/`` (AWS IMDS)
-    can't be dereferenced by the server. Caps the redirect depth.
+    """Pass 25.3 / 32.6 — SSRF guard. Accept the URL only if every host along
+    any redirect chain resolves to a public IP. Delegates to the shared
+    services.ssrf helpers so the allowlist stays consistent with the scraper
+    download path.
 
     Returns:
-        (final_url, error) — final_url is the safe URL to fetch (with
-        allow_redirects=False), error is None on success or a log string.
+        (final_url, pinned_ip, error) — final_url is the safe URL to fetch
+        (with allow_redirects=False), pinned_ip is the IP to pin via
+        pin_host_ip() to defeat DNS rebinding (Pass 32.7), error is None on
+        success or a log string.
     """
-    current = url
-    for _ in range(max_redirects + 1):
-        parsed = urlparse(current)
-        if parsed.scheme not in ('http', 'https'):
-            return None, f"disallowed scheme: {parsed.scheme}"
-        host = parsed.hostname
-        if not host:
-            return None, "missing hostname"
-        try:
-            infos = socket.getaddrinfo(host, None)
-        except socket.gaierror as e:
-            return None, f"DNS failure: {e}"
-        for info in infos:
-            ip_str = info[4][0]
-            try:
-                ip = ipaddress.ip_address(ip_str)
-            except ValueError:
-                return None, f"invalid IP: {ip_str}"
-            if (ip.is_private or ip.is_loopback or ip.is_link_local
-                    or ip.is_reserved or ip.is_multicast or ip.is_unspecified):
-                return None, f"disallowed IP range: {ip_str} ({host})"
-        # Do a HEAD with redirects manually disabled to peek at Location.
-        try:
-            head = requests.head(current, allow_redirects=False, timeout=5)
-        except requests.RequestException as e:
-            return None, f"HEAD failed: {e}"
-        if head.status_code in (301, 302, 303, 307, 308):
-            next_url = head.headers.get('Location')
-            if not next_url:
-                return None, "redirect without Location"
-            current = next_url
-            continue
-        return current, None
-    return None, f"exceeded {max_redirects} redirects"
+    from services.ssrf import validate_outbound_url, validate_redirect_chain
+    # First, walk redirects with HEADs, validating each hop's DNS lookup.
+    final_url, err = validate_redirect_chain(requests, url, max_redirects=max_redirects, timeout=5)
+    if err:
+        return None, None, err
+    # Re-resolve the final URL to capture the IP we'll pin against rebinding.
+    ok, _, ips = validate_outbound_url(final_url)
+    if not ok or not ips:
+        return None, None, 'final URL re-validation failed'
+    return final_url, ips[0], None
 
 # Serialize all rembg GPU work to prevent concurrent sessions from exhausting
 # GPU memory (ROCm/HIP workspace allocation failures → GPU hang).
@@ -1052,17 +1029,24 @@ def _fetch_and_process_image(controller_id, controller_name, manufacturer,
     headers = {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     }
+    from services.ssrf import pin_host_ip
     for image_url in image_urls:
-        safe_url, err = _is_public_https_url(image_url)
+        safe_url, pinned_ip, err = _is_public_https_url(image_url)
         if err:
             logger.warning(f"Museum: rejected SSRF candidate {image_url}: {err}")
             continue
+        # Pass 32.7: pin the resolved IP for the duration of the GET so a
+        # hostile DNS server can't flip the record between validation and
+        # fetch (classic DNS-rebinding SSRF).
+        parsed_host = urlparse(safe_url).hostname
         try:
             # Stream so we can enforce a byte budget and bail on giant bodies
             # before they fill memory. allow_redirects is False because every
             # redirect hop was already vetted by _is_public_https_url.
-            with requests.get(safe_url, timeout=15, headers=headers,
-                              stream=True, allow_redirects=False) as resp:
+            with pin_host_ip(parsed_host, pinned_ip), requests.get(
+                safe_url, timeout=15, headers=headers,
+                stream=True, allow_redirects=False,
+            ) as resp:
                 if resp.status_code != 200:
                     continue
 

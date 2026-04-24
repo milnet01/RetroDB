@@ -59,7 +59,35 @@ def _backoff_delay(attempt):
     return (2 ** attempt) + random.random()
 
 
-def http_get(url, params=None, headers=None, timeout=30, retries=2):
+def _check_response_size_cap(response, max_bytes, url, method):
+    """Return True if the response is within `max_bytes`, False otherwise.
+
+    Pass 32.14 — caps apply to AI + RA API calls whose bodies are otherwise
+    unbounded. Checks Content-Length first (cheap pre-read reject), falls
+    through to an actual len(response.content) check because `requests`
+    has already materialised the body at this point anyway.
+    """
+    if max_bytes is None or max_bytes <= 0:
+        return True
+    declared = int(response.headers.get('Content-Length', 0) or 0)
+    if declared and declared > max_bytes:
+        logger.warning(
+            f"{method} response rejected: {url} declared {declared} bytes exceeds {max_bytes}"
+        )
+        return False
+    try:
+        actual = len(response.content)
+    except Exception:
+        return True
+    if actual > max_bytes:
+        logger.warning(
+            f"{method} response rejected: {url} body {actual} bytes exceeds {max_bytes}"
+        )
+        return False
+    return True
+
+
+def http_get(url, params=None, headers=None, timeout=30, retries=2, max_bytes=None):
     """
     HTTP GET request with retry logic and exponential backoff.
 
@@ -69,6 +97,8 @@ def http_get(url, params=None, headers=None, timeout=30, retries=2):
         headers: Optional request headers dict.
         timeout: Request timeout in seconds (default 30).
         retries: Number of retry attempts after the initial request (default 2).
+        max_bytes: If set, reject responses whose body exceeds this cap
+            (Pass 32.14 — applied to AI + RA API calls).
 
     Returns:
         requests.Response object on success, or None on total failure.
@@ -79,6 +109,8 @@ def http_get(url, params=None, headers=None, timeout=30, retries=2):
         try:
             logger.debug(f"HTTP GET {url} (attempt {attempt + 1}/{retries + 1})")
             response = _http_session.get(url, params=params, headers=headers, timeout=timeout)
+            if response.status_code == 200 and not _check_response_size_cap(response, max_bytes, url, 'HTTP GET'):
+                return None
 
             if response.status_code == 200:
                 return response
@@ -138,7 +170,7 @@ def http_get(url, params=None, headers=None, timeout=30, retries=2):
     return None
 
 
-def http_post(url, data=None, json_data=None, headers=None, timeout=30, retries=2):
+def http_post(url, data=None, json_data=None, headers=None, timeout=30, retries=2, max_bytes=None):
     """
     HTTP POST request with retry logic and exponential backoff.
 
@@ -149,6 +181,8 @@ def http_post(url, data=None, json_data=None, headers=None, timeout=30, retries=
         headers: Optional request headers dict.
         timeout: Request timeout in seconds (default 30).
         retries: Number of retry attempts after the initial request (default 2).
+        max_bytes: If set, reject responses whose body exceeds this cap
+            (Pass 32.14 — applied to AI + RA API calls).
 
     Returns:
         requests.Response object on success, or None on total failure.
@@ -161,6 +195,8 @@ def http_post(url, data=None, json_data=None, headers=None, timeout=30, retries=
             response = _http_session.post(
                 url, data=data, json=json_data, headers=headers, timeout=timeout
             )
+            if response.status_code == 200 and not _check_response_size_cap(response, max_bytes, url, 'HTTP POST'):
+                return None
 
             if response.status_code == 200:
                 return response
@@ -245,6 +281,17 @@ def download_image(url, dest_path, timeout=15):
     elif not url.startswith('http'):
         url = 'https:' + url if url.startswith('//') else url
 
+    # Pass 32.6: SSRF gate. Reject non-http(s) schemes and any URL whose
+    # host resolves to a private/loopback/link-local/metadata IP (e.g.
+    # 169.254.169.254 AWS IMDS, 127.0.0.1, 10/8, etc.). An attacker-controlled
+    # upstream metadata record (TGDB, RAWG, …) can otherwise steer the
+    # scraper into internal endpoints.
+    from services.ssrf import validate_outbound_url, validate_redirect_chain
+    ok, _, _ = validate_outbound_url(url)
+    if not ok:
+        logger.warning(f"SSRF block: refusing to fetch {url}")
+        return False
+
     # Ensure destination directory exists
     dest_dir = os.path.dirname(dest_path)
     if dest_dir:
@@ -260,16 +307,22 @@ def download_image(url, dest_path, timeout=15):
         max_bytes = 50 * 1024 * 1024
 
     try:
+        # Walk the redirect chain manually so every hop goes through the
+        # SSRF validator. If no redirect is returned, safe_url == url.
+        safe_url, err = validate_redirect_chain(_http_session, url, max_redirects=3, timeout=timeout)
+        if err:
+            logger.warning(f"SSRF block: redirect chain rejected for {url} ({err})")
+            return False
         # stream=True so the whole response body isn't materialised in memory
         # before write; iter_content pipes directly to disk in 8 KB chunks.
-        with _http_session.get(url, timeout=timeout, stream=True) as response:
+        with _http_session.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as response:
             if response.status_code != 200:
-                logger.warning(f"Image download failed: HTTP {response.status_code} - {url}")
+                logger.warning(f"Image download failed: HTTP {response.status_code} - {safe_url}")
                 return False
             declared = int(response.headers.get('Content-Length', 0) or 0)
             if declared and declared > max_bytes:
                 logger.warning(
-                    f"Image download rejected: {url} — declared {declared} bytes exceeds {max_bytes}"
+                    f"Image download rejected: {safe_url} — declared {declared} bytes exceeds {max_bytes}"
                 )
                 return False
             written = 0
@@ -284,7 +337,7 @@ def download_image(url, dest_path, timeout=15):
                             except OSError:
                                 pass
                             logger.warning(
-                                f"Image download aborted: {url} exceeded {max_bytes} bytes"
+                                f"Image download aborted: {safe_url} exceeded {max_bytes} bytes"
                             )
                             return False
                         f.write(chunk)

@@ -3458,7 +3458,7 @@ See Pass 13.3 — no duplicate entry.
   tree), (d) not in `{'/', '/etc', '/boot', '/root'}`, (e) not equal
   to the user's home top-level.
 - **Source**: 2026-04-24 audit, Maintenance/settings H1.
-- **Status**: todo
+- **Status**: done — v3.0.0
 
 ### 32.2 Per-key validators on `api_update_all_settings` (HIGH, S)
 
@@ -3472,7 +3472,7 @@ See Pass 13.3 — no duplicate entry.
   `logging: _validate_logging_dict`); reject unknown keys and malformed
   values with 400.
 - **Source**: 2026-04-24 audit, Maintenance/settings H2.
-- **Status**: todo
+- **Status**: done — v3.0.0
 
 ### 32.3 `api_restore` must close pool + delete WAL/SHM before copy (HIGH, M)
 
@@ -3489,7 +3489,7 @@ See Pass 13.3 — no duplicate entry.
   `-shm` before the copy, (d) spawn the restart from `api_restore`
   itself rather than relying on the client.
 - **Source**: 2026-04-24 audit, Maintenance/settings H3.
-- **Status**: todo
+- **Status**: done — v3.0.0
 
 ### 32.4 `clean_missing_roms` single-transaction + batched writes (HIGH, M)
 
@@ -3503,7 +3503,7 @@ See Pass 13.3 — no duplicate entry.
   Python `os.path.exists` filter, one batched `UPDATE`/`DELETE` over
   the full set.
 - **Source**: 2026-04-24 audit, Maintenance/settings H4.
-- **Status**: todo
+- **Status**: done — v3.0.0
 
 ### 32.5 `api_rename_rom` jail destination inside ROM root (HIGH, S)
 
@@ -3516,7 +3516,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: `safe_filename(new_filename)` + `os.path.commonpath` check
   that `new_path` stays inside `config.ROM_PATH`.
 - **Source**: 2026-04-24 audit, Game routes H1.
-- **Status**: todo
+- **Status**: done — v3.0.0
 
 ### 32.6 SSRF gate on `base_scraper.download_image` + media downloads (HIGH, M)
 
@@ -3532,7 +3532,7 @@ See Pass 13.3 — no duplicate entry.
   before connect, redirect chain re-validated) inside
   `base_scraper.download_image`; reuse from `download_media`.
 - **Source**: 2026-04-24 audit, Per-source scrapers H3.
-- **Status**: todo
+- **Status**: done — v3.0.0
 
 ### 32.7 Museum SSRF guard — pin resolved IP against DNS rebinding (MEDIUM, S)
 
@@ -3545,7 +3545,7 @@ See Pass 13.3 — no duplicate entry.
   pass `Host:` header; or install a `requests` adapter that reuses the
   vetted A record.
 - **Source**: 2026-04-24 audit, Collections/achievements/trophies H1.
-- **Status**: todo
+- **Status**: done — v3.0.0
 
 ### 32.8 CLZ PDF per-cell size cap (MEDIUM, S)
 
@@ -3556,7 +3556,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: cap individual cell length (e.g. 4 KB) and total `games`
   list size (e.g. 50_000 titles) before the insert loop.
 - **Source**: 2026-04-24 audit, Collections/achievements/trophies H5.
-- **Status**: todo
+- **Status**: done — v3.0.0
 
 ### 32.9 Atomic image-pipeline writes + Pillow FD leak fixes (HIGH, M)
 
@@ -3573,7 +3573,7 @@ See Pass 13.3 — no duplicate entry.
   as src: src.load(); img = src.copy()` with `finally: img.close()` for
   all decode sites.  Same atomic pattern for video upload.
 - **Source**: 2026-04-24 audit, Image pipeline H1/H2/M2.
-- **Status**: todo
+- **Status**: done — v3.0.0
 
 ### 32.10 Validate format-vs-extension on image upload (HIGH, S)
 
@@ -3588,7 +3588,7 @@ See Pass 13.3 — no duplicate entry.
   `try_standardize`, OR make `try_standardize` call the full finalize
   wrapper.
 - **Source**: 2026-04-24 audit, Image pipeline H4.
-- **Status**: todo
+- **Status**: done — v3.0.0
 
 ### 32.11 Consistent `safe_path` across media helpers (HIGH, S)
 
@@ -3602,7 +3602,7 @@ See Pass 13.3 — no duplicate entry.
   applies `safe_path(..., config.STATIC_PATH)`; migrate both call
   sites.
 - **Source**: 2026-04-24 audit, Image pipeline H3.
-- **Status**: todo
+- **Status**: done — v3.0.0
 
 ### 32.12 Route `api_games_bulk_edit` field names through `safe_column()` (HIGH, S)
 
@@ -3615,7 +3615,7 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: `safe_column(field, set(bulk_allowed_fields))` before every
   f-string insertion.
 - **Source**: 2026-04-24 audit, Game routes H3.
-- **Status**: todo
+- **Status**: done — v3.0.0
 
 ### 32.13 Escape user-controlled values in AI prompts (MEDIUM, S)
 
@@ -3630,7 +3630,7 @@ See Pass 13.3 — no duplicate entry.
   `title` / `system_name`; better, migrate to structured tool-use
   (Gemini + Claude both support it) instead of a templated prompt.
 - **Source**: 2026-04-24 audit, Per-source scrapers M5.
-- **Status**: todo
+- **Status**: done — v3.0.0
 
 ### 32.14 Response-size caps on AI + RA HTTP calls (MEDIUM, S)
 
@@ -3644,7 +3644,7 @@ See Pass 13.3 — no duplicate entry.
   stream and cap; wire `max_bytes=MAX_API_RESPONSE_BYTES` at every
   AI/RA call site.  Bound `_ra_console_cache` via LRU.
 - **Source**: 2026-04-24 audit, Per-source scrapers M6/M7.
-- **Status**: todo
+- **Status**: done — v3.0.0
 
 ### 32.15 HTTP response hardening in metadata_merger image/video downloads (HIGH, M)
 
@@ -3660,7 +3660,7 @@ See Pass 13.3 — no duplicate entry.
   fails, `os.remove(local_path)` and do NOT set `metadata[field]`.
   Depends on 32.6 for URL validation.
 - **Source**: 2026-04-24 audit, Scraper orchestration H2/H3.
-- **Status**: todo
+- **Status**: done — v3.0.0
 
 ---
 

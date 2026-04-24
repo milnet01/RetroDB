@@ -11,7 +11,7 @@
 import logging
 import os
 
-from services.database import execute, get_db, query
+from services.database import execute, get_db, get_db_with_context, query
 from services.game_utils import reset_game_title_from_filename
 from services.media_cleanup import delete_game_images
 
@@ -39,30 +39,58 @@ def clean_missing_roms():
 
     Returns (removed_count, removed_games_preview) where the preview is
     capped at the first 50 removals for UI display.
-    """
-    games = query("SELECT id, title, rom_path, system_id FROM games")
-    removed = 0
-    removed_games = []
 
+    Pass 32.4: one SELECT to enumerate candidates, filesystem checks in
+    Python, then one single-transaction batched UPDATE/DELETE so we never
+    leave the DB with orphan parent_game_id references if interrupted.
+    """
+    games = query("SELECT id, title, rom_path FROM games")
+
+    missing = []
     for game in games:
         rom_path = game['rom_path']
-
-        if rom_path and rom_path.startswith(_VIRTUAL_ROM_PREFIXES):
+        if not rom_path:
             continue
-
-        if rom_path and not os.path.exists(rom_path):
-            execute("UPDATE games SET parent_game_id = NULL, is_bonus_disc = 0 WHERE parent_game_id = ?", (game['id'],))
-            execute("UPDATE psn_games SET linked_game_id = NULL WHERE linked_game_id = ?", (game['id'],))
-            execute("DELETE FROM games WHERE id = ?", (game['id'],))
-            removed += 1
-            removed_games.append({
+        if rom_path.startswith(_VIRTUAL_ROM_PREFIXES):
+            continue
+        if not os.path.exists(rom_path):
+            missing.append({
                 'id': game['id'],
                 'title': game['title'],
                 'path': rom_path,
             })
-            logger.info(f"Removed missing ROM: {game['title']} ({rom_path})")
 
-    return removed, removed_games[:50]
+    if not missing:
+        return 0, []
+
+    missing_ids = [m['id'] for m in missing]
+
+    # Batch the rewrites + deletes into a single transaction. SQLite caps
+    # host-parameter lists at ~999 by default; chunk to stay safely below.
+    CHUNK = 500
+    with get_db_with_context() as conn:
+        for start in range(0, len(missing_ids), CHUNK):
+            chunk = missing_ids[start:start + CHUNK]
+            placeholders = ','.join('?' * len(chunk))
+            conn.execute(
+                f"UPDATE games SET parent_game_id = NULL, is_bonus_disc = 0 "
+                f"WHERE parent_game_id IN ({placeholders})",
+                chunk,
+            )
+            conn.execute(
+                f"UPDATE psn_games SET linked_game_id = NULL "
+                f"WHERE linked_game_id IN ({placeholders})",
+                chunk,
+            )
+            conn.execute(
+                f"DELETE FROM games WHERE id IN ({placeholders})",
+                chunk,
+            )
+
+    for m in missing:
+        logger.info(f"Removed missing ROM: {m['title']} ({m['path']})")
+
+    return len(missing), missing[:50]
 
 
 def clear_clz_imports():

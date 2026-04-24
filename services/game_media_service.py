@@ -10,8 +10,10 @@
 import io
 import logging
 import os
+import tempfile
 
 import config
+from services.security import safe_path
 
 logger = logging.getLogger(__name__)
 
@@ -60,16 +62,36 @@ def resolve_media_path(filename, media_type):
 
     Accepts bare filenames (e.g. "42_boxart.jpg"), STATIC-prefixed paths
     (e.g. "images/boxart/42_boxart.jpg"), and "videos/"-prefixed video paths.
+
+    Pass 32.11: the returned path is always validated to live inside
+    `config.STATIC_PATH` (via services.security.safe_path). A scraper
+    filename derived from a URL could otherwise contain `../...`, letting
+    `remove_media_file` delete files outside the image root. Returns None
+    if the resolved path escapes STATIC_PATH.
     """
+    if not filename:
+        return None
+
     if media_type == 'video':
         if not filename.startswith('/') and not filename.startswith('videos/'):
-            return os.path.join(config.STATIC_PATH, 'videos', filename)
-        return os.path.join(config.STATIC_PATH, filename.lstrip('/'))
+            candidate = os.path.join(config.STATIC_PATH, 'videos', filename)
+        else:
+            candidate = os.path.join(config.STATIC_PATH, filename.lstrip('/'))
+    else:
+        subdir = media_type  # boxart, boxart_3d, fanart
+        if not filename.startswith('/') and not filename.startswith('images/'):
+            candidate = os.path.join(config.IMAGE_PATH, subdir, filename)
+        else:
+            candidate = os.path.join(config.STATIC_PATH, filename.lstrip('/'))
 
-    subdir = media_type  # boxart, boxart_3d, fanart
-    if not filename.startswith('/') and not filename.startswith('images/'):
-        return os.path.join(config.IMAGE_PATH, subdir, filename)
-    return os.path.join(config.STATIC_PATH, filename.lstrip('/'))
+    safe = safe_path(candidate, config.STATIC_PATH)
+    if safe is None:
+        logger.warning(
+            f"resolve_media_path rejected: {filename!r} (media_type={media_type}) "
+            f"escapes STATIC_PATH"
+        )
+        return None
+    return safe
 
 
 def remove_media_file(filename, media_type):
@@ -77,7 +99,7 @@ def remove_media_file(filename, media_type):
     if not filename:
         return
     path = resolve_media_path(filename, media_type)
-    if not os.path.exists(path):
+    if not path or not os.path.exists(path):
         return
     try:
         os.remove(path)
@@ -120,14 +142,18 @@ def save_upload(file_storage, dest_dir, game_id, prefix, allowed_ext):
             return None
         os.makedirs(dest_dir, exist_ok=True)
         new_filename = f"{game_id}_{prefix}.{ext}"
-        with open(os.path.join(dest_dir, new_filename), 'wb') as f:
-            f.write(raw)
+        # Pass 32.9: write via tmp + os.replace. On a mid-write OOM or I/O
+        # error the destination path never exists in a truncated state.
+        _atomic_write_bytes(os.path.join(dest_dir, new_filename), raw)
     else:
         # Video branch — Pass 25.6. Reject oversize videos before
         # file_storage.save() writes them to disk. Prefer Content-Length
         # when present (avoids buffering the whole payload), fall back to
         # a streamed read with a byte budget so multipart bodies without
         # per-part Content-Length are still bounded.
+        # Pass 32.9: stream to a tempfile next to the destination, then
+        # os.replace. Mid-stream abort removes the tmp and never leaves a
+        # truncated artifact at `dest`.
         max_video_size = getattr(config, 'MAX_VIDEO_SIZE', 50 * 1024 * 1024)
         declared = getattr(file_storage, 'content_length', 0) or 0
         if declared and declared > max_video_size:
@@ -139,24 +165,55 @@ def save_upload(file_storage, dest_dir, game_id, prefix, allowed_ext):
         os.makedirs(dest_dir, exist_ok=True)
         new_filename = f"{game_id}_{prefix}.{ext}"
         dest = os.path.join(dest_dir, new_filename)
-        with open(dest, 'wb') as out:
-            remaining = max_video_size
-            while True:
-                chunk = file_storage.stream.read(min(1024 * 1024, remaining + 1))
-                if not chunk:
-                    break
-                if len(chunk) > remaining:
-                    out.close()
-                    os.remove(dest)
-                    logger.warning(
-                        f"Video upload rejected: {original} — streaming size "
-                        f"exceeded {max_video_size} bytes"
-                    )
-                    return None
-                out.write(chunk)
-                remaining -= len(chunk)
+        fd, tmp_path = tempfile.mkstemp(prefix='.upload_', dir=dest_dir)
+        try:
+            with os.fdopen(fd, 'wb') as out:
+                remaining = max_video_size
+                while True:
+                    chunk = file_storage.stream.read(min(1024 * 1024, remaining + 1))
+                    if not chunk:
+                        break
+                    if len(chunk) > remaining:
+                        logger.warning(
+                            f"Video upload rejected: {original} — streaming size "
+                            f"exceeded {max_video_size} bytes"
+                        )
+                        out.close()
+                        try:
+                            os.remove(tmp_path)
+                        except OSError:
+                            pass
+                        return None
+                    out.write(chunk)
+                    remaining -= len(chunk)
+            os.replace(tmp_path, dest)
+        except Exception:
+            if os.path.exists(tmp_path):
+                try:
+                    os.remove(tmp_path)
+                except OSError:
+                    pass
+            raise
     logger.info(f"Saved upload: {new_filename} to {dest_dir}")
     return new_filename
+
+
+def _atomic_write_bytes(path, raw):
+    """Write `raw` bytes to `path` atomically (tmp + os.replace)."""
+    dirname = os.path.dirname(path) or '.'
+    os.makedirs(dirname, exist_ok=True)
+    fd, tmp_path = tempfile.mkstemp(prefix='.upload_', dir=dirname)
+    try:
+        with os.fdopen(fd, 'wb') as f:
+            f.write(raw)
+        os.replace(tmp_path, path)
+    except Exception:
+        if os.path.exists(tmp_path):
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
+        raise
 
 
 def save_screenshots(file_storages, game_id, existing_csv):
@@ -185,8 +242,9 @@ def save_screenshots(file_storages, game_id, existing_csv):
         if not _validate_image_bytes(raw):
             continue
         ss_filename = f"{game_id}_ss{next_idx}.{ext}"
-        with open(os.path.join(ss_dir, ss_filename), 'wb') as out:
-            out.write(raw)
+        # Pass 32.9: atomic write so a mid-save failure never leaves a
+        # truncated screenshot visible at its final path.
+        _atomic_write_bytes(os.path.join(ss_dir, ss_filename), raw)
         existing.append(ss_filename)
         next_idx += 1
         logger.info(f"Saved screenshot: {ss_filename}")
@@ -194,9 +252,14 @@ def save_screenshots(file_storages, game_id, existing_csv):
 
 
 def try_standardize(path, media_type):
-    """Run the optional image-standardizer pass; warn-and-continue on failure."""
+    """Run the full post-download pipeline (format-matches-extension check,
+    size standardization, responsive variants). Pass 32.10 — what was
+    `standardize_downloaded_image` alone now goes through
+    `finalize_downloaded_image` so admin-uploaded PNG bytes inside a
+    `.webp` file get re-encoded to real WebP before they persist.
+    """
     try:
-        from services.image_utils import standardize_downloaded_image
-        standardize_downloaded_image(path, media_type)
+        from services.image_utils import finalize_downloaded_image
+        finalize_downloaded_image(path, media_type)
     except Exception as e:
         logger.warning(f"Auto-resize {media_type} failed: {e}")

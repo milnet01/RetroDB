@@ -9,6 +9,7 @@
 import os
 import logging
 import queue
+import tempfile
 import threading
 
 logger = logging.getLogger(__name__)
@@ -583,40 +584,51 @@ def standardize_image(path, image_type, target, preserve_rgba=False):
     import config
     from PIL import Image
 
+    # Pass 32.9: decode inside a context manager and copy pixels off the
+    # source handle before the upscale / downscale branches. A raising
+    # upscale path otherwise leaks the file descriptor — exhausts the FD
+    # table on bulk jobs of 10k boxart. Also sidesteps the Windows file
+    # lock when _save_image() rewrites the same path.
     try:
-        img = Image.open(path)
+        with Image.open(path) as src:
+            src.load()
+            img = src.copy()
     except Exception as e:
         logger.warning(f"Image standardize: cannot open {path}: {e}")
         return
 
-    # For controllers/hardware, crop excess transparent space first
-    if image_type in ('controllers', 'hardware') and img.mode == 'RGBA':
-        bbox = img.getbbox()
-        if bbox:
-            img = img.crop(bbox)
+    try:
+        # For controllers/hardware, crop excess transparent space first
+        if image_type in ('controllers', 'hardware') and img.mode == 'RGBA':
+            bbox = img.getbbox()
+            if bbox:
+                img = img.crop(bbox)
 
-    # Determine current relevant dimension
-    w, h = img.size
-    if image_type in ('controllers', 'hardware'):
-        current = max(w, h)
-    else:
-        current = h
+        # Determine current relevant dimension
+        w, h = img.size
+        if image_type in ('controllers', 'hardware'):
+            current = max(w, h)
+        else:
+            current = h
 
-    # Check threshold band
-    ratio = current / target
-    if config.IMAGE_UPSCALE_THRESHOLD <= ratio <= config.IMAGE_DOWNSCALE_THRESHOLD:
-        # Close image handle before returning
-        img.close()
-        return
+        # Check threshold band
+        ratio = current / target
+        if config.IMAGE_UPSCALE_THRESHOLD <= ratio <= config.IMAGE_DOWNSCALE_THRESHOLD:
+            return
 
-    if ratio < config.IMAGE_UPSCALE_THRESHOLD:
-        img = _upscale_image(img, image_type, target, preserve_rgba)
-    else:
-        img = _downscale_image(img, image_type, target)
+        if ratio < config.IMAGE_UPSCALE_THRESHOLD:
+            img = _upscale_image(img, image_type, target, preserve_rgba)
+        else:
+            img = _downscale_image(img, image_type, target)
 
-    if img is not None:
-        _save_image(img, path)
-        img.close()
+        if img is not None:
+            _save_image(img, path)
+    finally:
+        try:
+            if img is not None:
+                img.close()
+        except Exception:
+            pass
 
 
 # ---------------------------------------------------------------------------
@@ -731,6 +743,29 @@ def _downscale_image(img, image_type, target):
     return img.resize((new_w, new_h), Image.LANCZOS)
 
 
+def _atomic_save(img, path, fmt, **save_kwargs):
+    """Pass 32.9 — save `img` to `path` atomically.
+
+    Writes to a temp file in the same directory, fsyncs, and swaps into
+    place with os.replace. A mid-write OOM / I/O error / client-disconnect
+    can no longer leave a truncated file at `path`.
+    """
+    dirname = os.path.dirname(path) or '.'
+    os.makedirs(dirname, exist_ok=True)
+    fd, tmp_path = tempfile.mkstemp(prefix='.save_', dir=dirname)
+    os.close(fd)
+    try:
+        img.save(tmp_path, fmt, **save_kwargs)
+        os.replace(tmp_path, path)
+    except Exception:
+        if os.path.exists(tmp_path):
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
+        raise
+
+
 def _save_image(img, path):
     """Save image preserving format with appropriate quality settings."""
     ext = os.path.splitext(path)[1].lower()
@@ -745,17 +780,17 @@ def _save_image(img, path):
     try:
         if ext == '.webp':
             if img.mode == 'RGBA':
-                img.save(path, 'WEBP', quality=85, lossless=False)
+                _atomic_save(img, path, 'WEBP', quality=85, lossless=False)
             else:
-                img.save(path, 'WEBP', quality=85)
+                _atomic_save(img, path, 'WEBP', quality=85)
         elif ext in ('.jpg', '.jpeg'):
             if img.mode == 'RGBA':
                 img = img.convert('RGB')
-            img.save(path, 'JPEG', quality=90)
+            _atomic_save(img, path, 'JPEG', quality=90)
         elif ext == '.png':
-            img.save(path, 'PNG')
+            _atomic_save(img, path, 'PNG')
         else:
             # Unknown format — save as PNG
-            img.save(path, 'PNG')
+            _atomic_save(img, path, 'PNG')
     except Exception as e:
         logger.error(f"Image standardize: failed to save {path}: {e}")

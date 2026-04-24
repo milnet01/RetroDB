@@ -68,30 +68,36 @@ class TestReportsSystemWhitelist:
 # ------------------------
 # Private-IP candidates must be rejected before requests.get is called.
 class TestMuseumSSRFGuard:
+    # Pass 32.7 expanded the return tuple from (safe_url, err) to
+    # (safe_url, pinned_ip, err) so callers can defeat DNS rebinding.
     def test_private_ip_rejected(self):
         from routes.museum import _is_public_https_url
         # 127.0.0.1 explicit — no DNS needed
-        safe_url, err = _is_public_https_url('http://127.0.0.1/admin')
+        safe_url, pinned_ip, err = _is_public_https_url('http://127.0.0.1/admin')
         assert safe_url is None
+        assert pinned_ip is None
         assert 'disallowed IP range' in err or 'loopback' in err.lower() or '127' in err
 
     def test_rfc1918_rejected(self):
         from routes.museum import _is_public_https_url
-        safe_url, err = _is_public_https_url('http://10.0.0.1/foo')
+        safe_url, pinned_ip, err = _is_public_https_url('http://10.0.0.1/foo')
         assert safe_url is None
+        assert pinned_ip is None
         assert err  # some rejection reason
 
     def test_link_local_rejected(self):
         from routes.museum import _is_public_https_url
         # AWS IMDS endpoint — the canonical SSRF target
-        safe_url, err = _is_public_https_url('http://169.254.169.254/latest/meta-data/')
+        safe_url, pinned_ip, err = _is_public_https_url('http://169.254.169.254/latest/meta-data/')
         assert safe_url is None
+        assert pinned_ip is None
         assert err
 
     def test_non_http_scheme_rejected(self):
         from routes.museum import _is_public_https_url
-        safe_url, err = _is_public_https_url('file:///etc/passwd')
+        safe_url, pinned_ip, err = _is_public_https_url('file:///etc/passwd')
         assert safe_url is None
+        assert pinned_ip is None
         assert 'scheme' in err.lower()
 
 

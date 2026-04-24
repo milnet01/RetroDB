@@ -745,6 +745,7 @@ def download_media(url, dest_path, timeout=60):
     Pass 25.7 — cap at MAX_MEDIA_DOWNLOAD_BYTES (default 50 MB). Deletes the
     partial file on overflow so disk can't be exhausted by a misconfigured
     or malicious upstream.
+    Pass 32.6 — SSRF gate on the URL and redirect chain.
     """
     try:
         import config as _config
@@ -752,11 +753,21 @@ def download_media(url, dest_path, timeout=60):
     except Exception:
         max_bytes = 50 * 1024 * 1024
 
+    from services.ssrf import validate_outbound_url, validate_redirect_chain
+    ok, _, _ = validate_outbound_url(url)
+    if not ok:
+        logger.warning(f"SSRF block: refusing to fetch {url}")
+        return False
+    safe_url, err = validate_redirect_chain(_http_session, url, max_redirects=3, timeout=5)
+    if err:
+        logger.warning(f"SSRF block: redirect chain rejected for {url} ({err})")
+        return False
+
     try:
         # Route through shared session for connection pooling (Pass 26.1).
         # stream=True is required for the mid-stream size cap below, so this
         # stays on _http_session.get rather than base_scraper.http_get.
-        with _http_session.get(url, timeout=timeout, stream=True) as response:
+        with _http_session.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as response:
             if response.status_code != 200:
                 return False
             declared = int(response.headers.get('Content-Length', 0) or 0)

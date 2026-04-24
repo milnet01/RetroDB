@@ -102,9 +102,48 @@ def calculate_rom_hash(rom_path):
         return None
 
 
-_ra_console_cache = {}
-_ra_console_cache_time = {}
+from collections import OrderedDict
+import threading
+
+# Pass 32.14: bound the console cache. Previously an unbounded dict — one
+# entry per console_id ever queried, each entry a list of every RA game for
+# that console (can be 2k+ entries). A bulk-scrape across many consoles
+# could therefore pin many megabytes in memory for the 10-min TTL window.
+_RA_CACHE_MAX_ENTRIES = 64
+_ra_console_cache = OrderedDict()   # console_id → games list
+_ra_console_cache_time = {}         # console_id → timestamp
+_ra_console_cache_lock = threading.Lock()
 _RA_CACHE_TTL = 600  # 10 minutes
+
+
+def _ra_cache_set(console_id, games):
+    with _ra_console_cache_lock:
+        if console_id in _ra_console_cache:
+            _ra_console_cache.move_to_end(console_id)
+        _ra_console_cache[console_id] = games
+        _ra_console_cache_time[console_id] = _time_now()
+        while len(_ra_console_cache) > _RA_CACHE_MAX_ENTRIES:
+            evict_id, _ = _ra_console_cache.popitem(last=False)
+            _ra_console_cache_time.pop(evict_id, None)
+
+
+def _ra_cache_get(console_id):
+    import time as _time
+    with _ra_console_cache_lock:
+        if console_id not in _ra_console_cache:
+            return None
+        now = _time.time()
+        if now - _ra_console_cache_time.get(console_id, 0) >= _RA_CACHE_TTL:
+            _ra_console_cache.pop(console_id, None)
+            _ra_console_cache_time.pop(console_id, None)
+            return None
+        _ra_console_cache.move_to_end(console_id)
+        return _ra_console_cache[console_id]
+
+
+def _time_now():
+    import time as _time
+    return _time.time()
 
 
 def search_game_by_name(game_name, console_id):
@@ -193,10 +232,10 @@ def search_game_by_name(game_name, console_id):
         return score
     
     try:
-        # Check cache first
-        now = _time.time()
-        if console_id in _ra_console_cache and (now - _ra_console_cache_time.get(console_id, 0)) < _RA_CACHE_TTL:
-            games = _ra_console_cache[console_id]
+        # Pass 32.14: bounded LRU + size cap on fetch.
+        cached_games = _ra_cache_get(console_id)
+        if cached_games is not None:
+            games = cached_games
             logger.debug(f"Using cached RA game list for console {console_id} ({len(games)} games)")
         else:
             # Fetch from API and cache
@@ -208,14 +247,14 @@ def search_game_by_name(game_name, console_id):
                 'f': 1,  # Only games with achievements
             }
 
-            response = http_get(url, params=params, timeout=30)
+            max_bytes = getattr(config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
+            response = http_get(url, params=params, timeout=30, max_bytes=max_bytes)
 
             if response is None or response.status_code != 200:
                 return None
 
             games = response.json()
-            _ra_console_cache[console_id] = games
-            _ra_console_cache_time[console_id] = now
+            _ra_cache_set(console_id, games)
             logger.debug(f"Cached RA game list for console {console_id} ({len(games)} games)")
 
         if games:
@@ -288,7 +327,7 @@ def get_game_info(game_id):
             'i': game_id,
         }
         
-        response = http_get(url, params=params, timeout=30)
+        response = http_get(url, params=params, timeout=30, max_bytes=getattr(config, "MAX_API_RESPONSE_BYTES", 10 * 1024 * 1024))
         
         if response is not None and response.status_code == 200:
             data = response.json()
@@ -356,7 +395,7 @@ def get_user_game_progress(game_id, username=None):
             'g': game_id,
         }
         
-        response = http_get(url, params=params, timeout=30)
+        response = http_get(url, params=params, timeout=30, max_bytes=getattr(config, "MAX_API_RESPONSE_BYTES", 10 * 1024 * 1024))
         
         if response is not None and response.status_code == 200:
             data = response.json()
@@ -438,7 +477,7 @@ def get_user_game_progress_custom(game_id, username, api_key):
             'g': game_id,
         }
         
-        response = http_get(url, params=params, timeout=30)
+        response = http_get(url, params=params, timeout=30, max_bytes=getattr(config, "MAX_API_RESPONSE_BYTES", 10 * 1024 * 1024))
         
         if response is not None and response.status_code == 200:
             data = response.json()
@@ -520,7 +559,7 @@ def get_user_summary(username=None):
             'g': 5,  # Number of recent games
         }
         
-        response = http_get(url, params=params, timeout=30)
+        response = http_get(url, params=params, timeout=30, max_bytes=getattr(config, "MAX_API_RESPONSE_BYTES", 10 * 1024 * 1024))
         
         if response is not None and response.status_code == 200:
             data = response.json()

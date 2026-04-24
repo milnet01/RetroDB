@@ -40,6 +40,57 @@ def safe_filename(filename):
     return filename
 
 
+# Absolute paths that must never be accepted as a user-configurable root:
+# assigning any of these to ROM_PATH or ES-DE roots would let media cleanup
+# / rescan code traverse the whole system.
+_FORBIDDEN_ROOTS = frozenset({
+    '/', '/etc', '/boot', '/root', '/proc', '/sys', '/dev',
+    '/bin', '/sbin', '/lib', '/lib64', '/usr',
+})
+
+
+def validate_settings_path(user_path, *, allow_empty=True):
+    """Validate an admin-supplied absolute directory path destined for settings.
+
+    Accepts empty strings when allow_empty is True (unset path). Otherwise
+    rejects anything that is not (a) absolute, (b) an existing directory,
+    (c) its own realpath (no symlink escape), (d) not a system root, and
+    (e) not the current user's home directory itself.
+
+    Returns (True, canonical_path) on success; (False, reason) on failure.
+    """
+    if user_path is None:
+        user_path = ''
+    if not isinstance(user_path, str):
+        return False, 'must be a string'
+    stripped = user_path.strip()
+    if not stripped:
+        if allow_empty:
+            return True, ''
+        return False, 'must not be empty'
+    if not os.path.isabs(stripped):
+        return False, 'must be an absolute path'
+    if not os.path.isdir(stripped):
+        return False, 'directory does not exist'
+    try:
+        canonical = os.path.realpath(stripped)
+    except OSError as e:
+        return False, f'could not resolve path: {e}'
+    # Symlink-escape check: accept canonical (follow-through) but reject
+    # the input itself being a distinct symlink target outside the tree.
+    if os.path.normpath(stripped.rstrip('/')) != canonical.rstrip('/') and os.path.islink(stripped):
+        return False, 'path is a symlink that resolves elsewhere'
+    if canonical in _FORBIDDEN_ROOTS or canonical.rstrip('/') in _FORBIDDEN_ROOTS:
+        return False, 'path is a protected system directory'
+    try:
+        home = os.path.realpath(os.path.expanduser('~'))
+    except OSError:
+        home = None
+    if home and canonical == home:
+        return False, 'path cannot be the home directory itself'
+    return True, canonical
+
+
 def safe_path(user_path, allowed_base):
     """
     Validate that a user-supplied path resolves within an allowed base directory.

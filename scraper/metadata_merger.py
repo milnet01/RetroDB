@@ -45,6 +45,105 @@ from scraper.metadata_normalizer import (
 logger = logging.getLogger(__name__)
 
 
+def _download_and_finalize(url, local_path, image_type, *, timeout=15):
+    """Pass 32.15 — hardened image download helper.
+
+    Downstream of every TGDB / IGDB / RAWG / SS / ESDE boxart+screenshot+
+    fanart call. Previously every site did:
+
+        r = requests.get(url, timeout=X)
+        f.write(r.content)
+        finalize_downloaded_image(local_path, ...)  # best-effort
+
+    which (a) had no `raise_for_status`, so 403/500 HTML bodies got written
+    as .jpg; (b) buffered the entire response in memory before write;
+    (c) swallowed `finalize_downloaded_image` errors but still committed
+    the filename to the metadata dict, leaving a broken reference on disk.
+
+    This helper:
+      - SSRF-validates the URL and its redirect chain (Pass 32.6)
+      - streams with an explicit size cap (MAX_MEDIA_DOWNLOAD_BYTES)
+      - raises for non-200 upstream responses
+      - writes atomically (tmp + os.replace)
+      - runs finalize_downloaded_image; if it fails, deletes the file and
+        returns False so the caller does NOT set metadata[field]
+
+    Returns True on success, False on any failure.
+    """
+    import tempfile
+    from services.ssrf import validate_outbound_url, validate_redirect_chain
+
+    if not url or not local_path:
+        return False
+
+    ok, _, _ = validate_outbound_url(url)
+    if not ok:
+        logger.warning(f"SSRF block: refusing to fetch {url}")
+        return False
+    safe_url, err = validate_redirect_chain(requests, url, max_redirects=3, timeout=5)
+    if err:
+        logger.warning(f"SSRF block: redirect chain rejected for {url} ({err})")
+        return False
+
+    try:
+        import config as _config
+        max_bytes = getattr(_config, 'MAX_MEDIA_DOWNLOAD_BYTES', 50 * 1024 * 1024)
+    except Exception:
+        max_bytes = 50 * 1024 * 1024
+
+    os.makedirs(os.path.dirname(local_path), exist_ok=True)
+    dirname = os.path.dirname(local_path) or '.'
+    fd, tmp_path = tempfile.mkstemp(prefix='.dl_', dir=dirname)
+    os.close(fd)
+    try:
+        with requests.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as r:
+            if r.status_code != 200:
+                logger.warning(f"Download failed: HTTP {r.status_code} — {safe_url}")
+                return False
+            declared = int(r.headers.get('Content-Length', 0) or 0)
+            if declared and declared > max_bytes:
+                logger.warning(
+                    f"Download rejected: {safe_url} declared {declared} bytes > {max_bytes}"
+                )
+                return False
+            written = 0
+            with open(tmp_path, 'wb') as f:
+                for chunk in r.iter_content(chunk_size=8192):
+                    if not chunk:
+                        continue
+                    written += len(chunk)
+                    if written > max_bytes:
+                        logger.warning(
+                            f"Download aborted: {safe_url} exceeded {max_bytes} bytes"
+                        )
+                        return False
+                    f.write(chunk)
+        os.replace(tmp_path, local_path)
+    except Exception as e:
+        logger.warning(f"Download error for {url}: {e}")
+        if os.path.exists(tmp_path):
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
+        return False
+
+    try:
+        finalize_downloaded_image(local_path, image_type)
+    except Exception as e:
+        # If we can't finalize the bytes we just wrote (non-image content,
+        # bad encoding, decoder crash), remove the file so the caller does
+        # NOT set the metadata field to an invalid path.
+        logger.warning(f"finalize_downloaded_image failed for {local_path}: {e}")
+        try:
+            os.remove(local_path)
+        except OSError:
+            pass
+        return False
+
+    return True
+
+
 # Re-export helpers through this module for backward compatibility with
 # existing callers (notably `scraper.hybrid_scraper`). New code should import
 # from `scraper.image_dedup` / `scraper.metadata_normalizer` directly.
@@ -333,21 +432,10 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
                 url = f"https:{url}"
             filename = f"{db_game_id}_igdb{preferred_image_extension('boxart', '.jpg')}"
             local_path = os.path.join(IMAGE_PATH, 'boxart', filename)
-            try:
-                r = requests.get(url, timeout=10)
-                if r.status_code == 200:
-                    os.makedirs(os.path.dirname(local_path), exist_ok=True)
-                    with open(local_path, 'wb') as f:
-                        f.write(r.content)
-                    try:
-                        finalize_downloaded_image(local_path, 'boxart')
-                    except Exception:
-                        pass
-                    metadata['boxart'] = filename
-                    metadata['_boxart_source'] = 'igdb'
-                    result['filled_fields'].append('boxart (IGDB)')
-            except Exception as e:
-                logger.warning(f"Failed to download IGDB cover: {e}")
+            if _download_and_finalize(url, local_path, 'boxart', timeout=10):
+                metadata['boxart'] = filename
+                metadata['_boxart_source'] = 'igdb'
+                result['filled_fields'].append('boxart (IGDB)')
 
     # Download screenshots (append to existing)
     screenshots = igdb_data.get('screenshots', [])
@@ -371,20 +459,9 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
                 if filename in existing_screenshots or os.path.exists(local_path):
                     continue
 
-                try:
-                    r = requests.get(url, timeout=10)
-                    if r.status_code == 200:
-                        os.makedirs(os.path.dirname(local_path), exist_ok=True)
-                        with open(local_path, 'wb') as f:
-                            f.write(r.content)
-                        try:
-                            finalize_downloaded_image(local_path, 'screenshots')
-                        except Exception:
-                            pass
-                        if keep_screenshot_if_unique(local_path, filename, existing_hashes, 'IGDB'):
-                            new_ss_files.append(filename)
-                except (requests.RequestException, OSError) as e:
-                    logger.warning(f"Failed to download IGDB screenshot {filename}: {e}")
+                if _download_and_finalize(url, local_path, 'screenshots', timeout=10):
+                    if keep_screenshot_if_unique(local_path, filename, existing_hashes, 'IGDB'):
+                        new_ss_files.append(filename)
 
         if new_ss_files:
             all_screenshots = existing_screenshots + new_ss_files
@@ -400,20 +477,9 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
                 url = f"https:{url}"
             filename = f"{db_game_id}_igdb_fanart{preferred_image_extension('fanart', '.jpg')}"
             local_path = os.path.join(IMAGE_PATH, 'fanart', filename)
-            try:
-                r = requests.get(url, timeout=15)
-                if r.status_code == 200:
-                    os.makedirs(os.path.dirname(local_path), exist_ok=True)
-                    with open(local_path, 'wb') as f:
-                        f.write(r.content)
-                    try:
-                        finalize_downloaded_image(local_path, 'fanart')
-                    except Exception:
-                        pass
-                    metadata['fanart'] = filename
-                    result['filled_fields'].append('fanart (IGDB)')
-            except Exception as e:
-                logger.warning(f"Failed to download IGDB fanart: {e}")
+            if _download_and_finalize(url, local_path, 'fanart', timeout=15):
+                metadata['fanart'] = filename
+                result['filled_fields'].append('fanart (IGDB)')
 
     # Extended data
     if igdb_data.get('_extended'):
@@ -542,41 +608,19 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
         if url:
             filename = f"{db_game_id}_rawg_boxart{preferred_image_extension('boxart', '.jpg')}"
             local_path = os.path.join(IMAGE_PATH, 'boxart', filename)
-            try:
-                r = requests.get(url, timeout=15)
-                if r.status_code == 200:
-                    os.makedirs(os.path.dirname(local_path), exist_ok=True)
-                    with open(local_path, 'wb') as f:
-                        f.write(r.content)
-                    try:
-                        finalize_downloaded_image(local_path, 'boxart')
-                    except Exception:
-                        pass
-                    metadata['boxart'] = filename
-                    metadata['_boxart_source'] = 'rawg'
-                    result['filled_fields'].append('boxart (RAWG)')
-            except Exception as e:
-                logger.warning(f"Failed to download RAWG boxart: {e}")
+            if _download_and_finalize(url, local_path, 'boxart', timeout=15):
+                metadata['boxart'] = filename
+                metadata['_boxart_source'] = 'rawg'
+                result['filled_fields'].append('boxart (RAWG)')
 
     # Fanart from background_image_additional (only if not already present)
     if rawg_data.get('fanart_url') and not metadata.get('fanart'):
         url = rawg_data['fanart_url']
         filename = f"{db_game_id}_rawg_fanart{preferred_image_extension('fanart', '.jpg')}"
         local_path = os.path.join(IMAGE_PATH, 'fanart', filename)
-        try:
-            r = requests.get(url, timeout=15)
-            if r.status_code == 200:
-                os.makedirs(os.path.dirname(local_path), exist_ok=True)
-                with open(local_path, 'wb') as f:
-                    f.write(r.content)
-                try:
-                    finalize_downloaded_image(local_path, 'fanart')
-                except Exception:
-                    pass
-                metadata['fanart'] = filename
-                result['filled_fields'].append('fanart (RAWG)')
-        except Exception as e:
-            logger.warning(f"Failed to download RAWG fanart: {e}")
+        if _download_and_finalize(url, local_path, 'fanart', timeout=15):
+            metadata['fanart'] = filename
+            result['filled_fields'].append('fanart (RAWG)')
 
     # Screenshots (always append, never replace)
     if rawg_data.get('screenshot_urls'):
@@ -591,19 +635,9 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
             if url:
                 filename = f"{db_game_id}_rawg_ss{i+1}{preferred_image_extension('screenshots', '.jpg')}"
                 local_path = os.path.join(screenshot_dir, filename)
-                try:
-                    r = requests.get(url, timeout=15)
-                    if r.status_code == 200:
-                        with open(local_path, 'wb') as f:
-                            f.write(r.content)
-                        try:
-                            finalize_downloaded_image(local_path, 'screenshots')
-                        except Exception:
-                            pass
-                        if keep_screenshot_if_unique(local_path, filename, existing_hashes, 'RAWG'):
-                            downloaded.append(filename)
-                except Exception as e:
-                    logger.warning(f"Failed to download RAWG screenshot: {e}")
+                if _download_and_finalize(url, local_path, 'screenshots', timeout=15):
+                    if keep_screenshot_if_unique(local_path, filename, existing_hashes, 'RAWG'):
+                        downloaded.append(filename)
 
         if downloaded:
             if metadata['screenshots']:
@@ -833,19 +867,57 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
     parsed_media = ss_data.get('media', {})
 
     def _download_ss_media(url, dest_path, timeout=15, image_type=None):
-        """Download a media file from ScreenScraper URL"""
+        """Download a media file from ScreenScraper URL.
+
+        Pass 32.15: routes through the hardened _download_and_finalize
+        helper (SSRF gate, streamed size cap, atomic write, rollback on
+        finalize failure) when `image_type` is provided. For manual/video
+        downloads (image_type=None) we keep the legacy behaviour but still
+        apply the SSRF gate and streaming size cap.
+        """
+        if image_type:
+            return _download_and_finalize(url, dest_path, image_type, timeout=timeout)
+
+        # Non-image media (manuals, videos) — still SSRF-validate and stream.
+        from services.ssrf import validate_outbound_url, validate_redirect_chain
+        ok, _, _ = validate_outbound_url(url)
+        if not ok:
+            logger.warning(f"SSRF block: refusing to fetch {url}")
+            return False
+        safe_url, err = validate_redirect_chain(requests, url, max_redirects=3, timeout=5)
+        if err:
+            logger.warning(f"SSRF block: redirect chain rejected for {url} ({err})")
+            return False
         try:
-            r = requests.get(url, timeout=timeout)
-            if r.status_code == 200:
-                os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+            import config as _config
+            max_bytes = getattr(_config, 'MAX_MEDIA_DOWNLOAD_BYTES', 50 * 1024 * 1024)
+        except Exception:
+            max_bytes = 50 * 1024 * 1024
+        try:
+            os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+            with requests.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as r:
+                if r.status_code != 200:
+                    return False
+                declared = int(r.headers.get('Content-Length', 0) or 0)
+                if declared and declared > max_bytes:
+                    logger.warning(f"ScreenScraper media rejected: declared {declared} > {max_bytes}")
+                    return False
+                written = 0
                 with open(dest_path, 'wb') as f:
-                    f.write(r.content)
-                if image_type:
-                    try:
-                        finalize_downloaded_image(dest_path, image_type)
-                    except Exception:
-                        pass
-                return True
+                    for chunk in r.iter_content(chunk_size=8192):
+                        if not chunk:
+                            continue
+                        written += len(chunk)
+                        if written > max_bytes:
+                            logger.warning(f"ScreenScraper media aborted: exceeded {max_bytes} bytes")
+                            try:
+                                f.close()
+                                os.remove(dest_path)
+                            except OSError:
+                                pass
+                            return False
+                        f.write(chunk)
+            return True
         except Exception as e:
             logger.warning(f"Failed to download ScreenScraper media: {e}")
         return False
