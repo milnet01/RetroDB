@@ -467,12 +467,18 @@ function openControllerLightbox(imgEl) {
     }
     _updateControllerLightbox();
     var lb = document.getElementById('museumControllerLightbox');
-    if (lb) lb.classList.add('active');
+    if (lb) {
+        lb.classList.add('active');
+        if (window.ModalFocusTrap) {
+            ModalFocusTrap.activate(lb, imgEl, { onEscape: closeControllerLightbox });
+        }
+    }
 }
 
 function closeControllerLightbox() {
     var lb = document.getElementById('museumControllerLightbox');
     if (lb) lb.classList.remove('active');
+    if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
 }
 
 function navigateControllerLightbox(delta) {
@@ -513,11 +519,15 @@ function openHardwareLightbox(imgEl) {
     lbImg.src = imgEl.src;
     if (lbTitle) lbTitle.textContent = imgEl.alt || '';
     lb.classList.add('active');
+    if (window.ModalFocusTrap) {
+        ModalFocusTrap.activate(lb, imgEl, { onEscape: closeHardwareLightbox });
+    }
 }
 
 function closeHardwareLightbox() {
     var lb = document.getElementById('museumHardwareLightbox');
     if (lb) lb.classList.remove('active');
+    if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
 }
 
 // =============================================================================

@@ -415,6 +415,7 @@ function renderTags() {
 }
 
 function openCreateTagModal() {
+    const trigger = document.activeElement;
     document.getElementById('tagModalTitle').textContent = 'New Tag';
     document.getElementById('tagSaveBtn').textContent = 'Create Tag';
     document.getElementById('tagEditId').value = '';
@@ -423,11 +424,16 @@ function openCreateTagModal() {
     document.querySelectorAll('.tag-color-swatch').forEach(s => {
         s.classList.toggle('active', s.dataset.color === selectedTagColor);
     });
-    document.getElementById('tagModal').classList.add('active');
+    const modal = document.getElementById('tagModal');
+    modal.classList.add('active');
     document.getElementById('tagNameInput').focus();
+    if (window.ModalFocusTrap) {
+        ModalFocusTrap.activate(modal, trigger, { onEscape: closeTagModal, autoFocus: false });
+    }
 }
 
 function openEditTagModal(tagId) {
+    const trigger = document.activeElement;
     const tag = allTags.find(t => t.id === tagId);
     if (!tag) return;
 
@@ -439,12 +445,17 @@ function openEditTagModal(tagId) {
     document.querySelectorAll('.tag-color-swatch').forEach(s => {
         s.classList.toggle('active', s.dataset.color === selectedTagColor);
     });
-    document.getElementById('tagModal').classList.add('active');
+    const modal = document.getElementById('tagModal');
+    modal.classList.add('active');
     document.getElementById('tagNameInput').focus();
+    if (window.ModalFocusTrap) {
+        ModalFocusTrap.activate(modal, trigger, { onEscape: closeTagModal, autoFocus: false });
+    }
 }
 
 function closeTagModal() {
     document.getElementById('tagModal').classList.remove('active');
+    if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
 }
 
 function selectTagColor(el) {

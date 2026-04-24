@@ -928,7 +928,7 @@
                 <!-- TAB: Quick (Completion + HLTB) -->
                 <div class="gem-tab-content active" id="gemTabQuick" role="tabpanel" aria-label="Quick edit">
                     <div class="gem-section">
-                        <label class="gem-label">Completion Status</label>
+                        <label class="gem-label" for="gemCompletionStatus">Completion Status</label>
                         <select id="gemCompletionStatus" class="gem-select" onchange="updateGameCompletion()">
                             <option value="not_started">📋 Not Started</option>
                             <option value="in_progress">🎮 In Progress</option>
@@ -939,7 +939,7 @@
                     </div>
 
                     <div class="gem-section">
-                        <label class="gem-label">HowLongToBeat</label>
+                        <label class="gem-label" for="gemHltbSearchQuery">HowLongToBeat</label>
                         <input type="text"
                                id="gemHltbSearchQuery"
                                class="gem-input hltb-search-input"
@@ -1010,7 +1010,7 @@
                         <div class="gem-field">
                             <label>Franchise / Series</label>
                             <div class="toggle-row" style="margin-bottom: var(--spacing-sm);">
-                                <label class="toggle-switch">
+                                <label class="toggle-switch" for="gemFranchise">
                                     <input type="checkbox" id="gemFranchiseToggle" aria-label="Toggle franchise status" onchange="updateGemFranchiseToggle()">
                                     <span class="toggle-slider"></span>
                                 </label>
@@ -1146,7 +1146,7 @@
                         <div class="gem-field gem-field-full">
                             <label>Platform Availability</label>
                             <div class="gem-toggle-row">
-                                <label class="toggle-switch">
+                                <label class="toggle-switch" for="gemOtherPlatforms">
                                     <input type="checkbox" id="gemExclusiveToggle" aria-label="Toggle platform exclusivity" onchange="updateModalExclusiveToggle()">
                                     <span class="toggle-slider"></span>
                                 </label>

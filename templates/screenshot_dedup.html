@@ -253,7 +253,7 @@
     <div class="card-body">
         <div class="form-row" style="display: flex; gap: 1rem; align-items: end; flex-wrap: wrap;">
             <div class="form-group" style="flex: 1; min-width: 200px;">
-                <label>Detection Method</label>
+                <label for="scanMethod">Detection Method</label>
                 <select class="styled-select" id="scanMethod" onchange="toggleThreshold()">
                     <option value="hash">Exact Hash (MD5) &mdash; identical files only</option>
                     <option value="visual">Visual Similarity &mdash; perceptual hash comparison</option>
@@ -261,7 +261,7 @@
             </div>
 
             <div class="form-group" id="thresholdGroup" style="display: none;">
-                <label>Similarity Threshold</label>
+                <label for="threshold">Similarity Threshold</label>
                 <div class="threshold-group">
                     <input type="range" id="threshold" min="1" max="20" value="10"
                            oninput="document.getElementById('thresholdVal').textContent = this.value">

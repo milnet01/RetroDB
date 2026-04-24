@@ -26,12 +26,12 @@
                     <div class="edit-grid">
                         <div class="edit-field">
                             <label for="edit_title">Title</label>
-                            <input type="text" name="edit_title" id="edit_title" value="{{ game.title }}" tabindex="1" />
+                            <input type="text" name="edit_title" id="edit_title" value="{{ game.title }}" />
                         </div>
                         <div class="edit-field">
                             <label for="edit_sort_title">Sort Title</label>
                             <div style="display: flex; gap: 8px;">
-                                <input type="text" name="edit_sort_title" id="edit_sort_title" value="{{ game.sort_title or '' }}" placeholder="Auto-generated from title" style="flex: 1;" tabindex="2" />
+                                <input type="text" name="edit_sort_title" id="edit_sort_title" value="{{ game.sort_title or '' }}" placeholder="Auto-generated from title" style="flex: 1;" />
                                 <button type="button" class="btn btn-secondary btn-sm" onclick="generateSortTitle()" title="Generate from title">⚡ Auto</button>
                             </div>
                             <span class="field-tip">Used for proper franchise ordering (e.g., "Final Fantasy 07" instead of "VII")</span>
@@ -39,23 +39,23 @@
                         <div class="edit-field">
                             <label>Franchise / Series</label>
                             <div class="toggle-row" style="margin-bottom: var(--spacing-sm);">
-                                <label class="toggle-switch">
+                                <label class="toggle-switch" for="edit_franchise">
                                     <input type="checkbox" id="edit_franchise_toggle" aria-label="Toggle franchise status" onchange="updateEditFranchiseToggle()">
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <span id="edit_franchise_label" class="toggle-label" style="margin-left: var(--spacing-sm);">Standalone</span>
                             </div>
-                            <input type="text" name="edit_franchise" id="edit_franchise" value="{{ game.franchise or '' }}" placeholder="e.g., Final Fantasy, Crash Bandicoot" tabindex="3" />
+                            <input type="text" name="edit_franchise" id="edit_franchise" value="{{ game.franchise or '' }}" placeholder="e.g., Final Fantasy, Crash Bandicoot" />
                             <span class="field-tip">Group related games together (e.g., "Final Fantasy", "Crash Bandicoot")</span>
                         </div>
                         <div class="edit-field">
                             <label for="edit_similar_games">Similar Games</label>
-                            <input type="text" name="edit_similar_games" id="edit_similar_games" value="{{ game.similar_games or '' }}" placeholder="Game 1, Game 2, Game 3" tabindex="4" />
+                            <input type="text" name="edit_similar_games" id="edit_similar_games" value="{{ game.similar_games or '' }}" placeholder="Game 1, Game 2, Game 3" />
                             <span class="field-tip">Comma-separated list of similar titles</span>
                         </div>
                         <div class="edit-field">
                             <label for="edit_edition">Edition</label>
-                            <input type="text" name="edit_edition" id="edit_edition" value="{{ game.edition or '' }}" placeholder="Standard, Collector's, Complete, GOTY" tabindex="5" />
+                            <input type="text" name="edit_edition" id="edit_edition" value="{{ game.edition or '' }}" placeholder="Standard, Collector's, Complete, GOTY" />
                             <span class="field-tip">Game edition (e.g., Collector's Edition, Complete Edition, GOTY)</span>
                         </div>
                     </div>
@@ -71,7 +71,7 @@
                                        value="{{ game.release_date if game.release_date else '' }}"
                                        placeholder="YYYY-MM-DD"
                                        pattern="\d{4}-\d{2}-\d{2}"
-                                       tabindex="6" style="flex:1;" />
+                                       style="flex:1;" />
                                 <input type="date" id="editReleaseDatePicker" tabindex="-1" aria-hidden="true" style="position:absolute; opacity:0; width:0; height:0; pointer-events:none;">
                                 <button type="button" class="btn btn-sm btn-secondary" onclick="var p=document.getElementById('editReleaseDatePicker');p.value=document.getElementById('edit_release_date').value;p.showPicker()" title="Pick date" style="padding:4px 8px; font-size:1rem;">📅</button>
                             </div>
@@ -79,7 +79,7 @@
                         </div>
                         <div class="edit-field">
                             <label for="edit_region">Region</label>
-                            <select name="edit_region" id="edit_region" tabindex="7">
+                            <select name="edit_region" id="edit_region">
                                 <option value="">— Select —</option>
                                 {% for r in user_settings.get('region_options', ['USA', 'Europe', 'Japan', 'World']) %}
                                 <option value="{{ r }}"{% if r == (game.region or '') %} selected{% endif %}>{{ r }}</option>
@@ -88,12 +88,12 @@
                         </div>
                         <div class="edit-field">
                             <label for="edit_publisher">Publisher</label>
-                            <input type="text" name="edit_publisher" id="edit_publisher" value="{{ game.publisher or '' }}" placeholder="Sony, Nintendo" tabindex="8" />
+                            <input type="text" name="edit_publisher" id="edit_publisher" value="{{ game.publisher or '' }}" placeholder="Sony, Nintendo" />
                             <span class="field-tip">Comma-separated for multiple publishers</span>
                         </div>
                         <div class="edit-field">
                             <label for="edit_developer">Developer</label>
-                            <input type="text" name="edit_developer" id="edit_developer" value="{{ game.developer or '' }}" placeholder="Naughty Dog, Insomniac Games" tabindex="9" />
+                            <input type="text" name="edit_developer" id="edit_developer" value="{{ game.developer or '' }}" placeholder="Naughty Dog, Insomniac Games" />
                             <span class="field-tip">Comma-separated for multiple developers</span>
                         </div>
                     </div>
@@ -107,7 +107,7 @@
                             <div class="genre-select-container" id="genreContainer"></div>
                             <input type="hidden" name="edit_genre" id="edit_genre_hidden" value="{{ game.genre or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
-                                <select id="genreDropdown" class="form-select" tabindex="10" onchange="addGenreFromDropdown()">
+                                <select id="genreDropdown" class="form-select" onchange="addGenreFromDropdown()">
                                     <option value="">+ Add genre...</option>
                                 </select>
                             </div>
@@ -118,7 +118,7 @@
                             <div class="genre-select-container" id="modesContainer"></div>
                             <input type="hidden" name="edit_modes" id="edit_modes_hidden" value="{{ game.modes or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
-                                <select id="modesDropdown" class="form-select" tabindex="11" onchange="addModeFromDropdown()">
+                                <select id="modesDropdown" class="form-select" onchange="addModeFromDropdown()">
                                     <option value="">+ Add mode...</option>
                                 </select>
                             </div>
@@ -126,14 +126,14 @@
                         </div>
                         <div class="edit-field">
                             <label for="edit_players">Players</label>
-                            <input type="number" name="edit_players" id="edit_players" value="{{ game.players or 1 }}" min="1" max="16" tabindex="12" />
+                            <input type="number" name="edit_players" id="edit_players" value="{{ game.players or 1 }}" min="1" max="16" />
                         </div>
                         <div class="edit-field">
                             <label>Campaign Mode</label>
                             <div class="toggle-field">
                                 <label class="toggle-switch">
                                     <input type="checkbox" name="edit_campaign_toggle" id="edit_campaign_toggle"
-                                           aria-label="Toggle campaign mode" {% if game.campaign == 'Yes' %}checked{% endif %} tabindex="13">
+                                           aria-label="Toggle campaign mode" {% if game.campaign == 'Yes' %}checked{% endif %}>
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <span class="toggle-label-text" id="campaignToggleLabel">{% if game.campaign == 'Yes' %}Yes{% else %}No{% endif %}</span>
@@ -147,7 +147,7 @@
                             <input type="hidden" name="edit_game_structure" id="edit_game_structure_hidden"
                                    value="{{ game.game_structure or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
-                                <select id="gameStructureDropdown" class="form-select" tabindex="13"
+                                <select id="gameStructureDropdown" class="form-select"
                                         onchange="addGameStructureFromDropdown()">
                                     <option value="">+ Add structure...</option>
                                 </select>
@@ -159,7 +159,7 @@
                             <div class="genre-select-container" id="perspectiveContainer"></div>
                             <input type="hidden" name="edit_perspective" id="edit_perspective_hidden" value="{{ game.perspective or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
-                                <select id="perspectiveDropdown" class="form-select" tabindex="14" onchange="addPerspectiveFromDropdown()">
+                                <select id="perspectiveDropdown" class="form-select" onchange="addPerspectiveFromDropdown()">
                                     <option value="">+ Add perspective...</option>
                                 </select>
                             </div>
@@ -170,7 +170,7 @@
                             <div class="genre-select-container" id="dimensionContainer"></div>
                             <input type="hidden" name="edit_dimension" id="edit_dimension_hidden" value="{{ game.dimension or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
-                                <select id="dimensionDropdown" class="form-select" tabindex="15" onchange="addDimensionFromDropdown()">
+                                <select id="dimensionDropdown" class="form-select" onchange="addDimensionFromDropdown()">
                                     <option value="">+ Add dimension...</option>
                                 </select>
                             </div>
@@ -187,13 +187,13 @@
                             <div class="controller-select-container" id="controllerContainer"></div>
                             <input type="hidden" name="edit_controller_support" id="edit_controller_hidden" value="{{ game.controller_support or '' }}" />
                             <div class="controller-dropdown">
-                                <select id="controllerDropdown" onchange="addControllerFromDropdown()" tabindex="14">
+                                <select id="controllerDropdown" onchange="addControllerFromDropdown()">
                                     <option value="">+ Add controller...</option>
                                 </select>
                             </div>
                             <input type="text" id="controllerCustomInput"
                                    placeholder="Or type custom and press Enter"
-                                   style="margin-top: 8px;" tabindex="15"
+                                   style="margin-top: 8px;"
                                    onkeypress="if(event.key==='Enter'){event.preventDefault(); addCustomController();}" />
                             <span class="field-tip">Click ✕ to remove, use dropdown or type custom</span>
                         </div>
@@ -202,7 +202,7 @@
                             <div class="genre-select-container" id="saveTypeContainer"></div>
                             <input type="hidden" name="edit_save_type" id="edit_save_type_hidden" value="{{ game.save_type or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
-                                <select id="saveTypeDropdown" class="form-select" tabindex="16" onchange="addSaveTypeFromDropdown()">
+                                <select id="saveTypeDropdown" class="form-select" onchange="addSaveTypeFromDropdown()">
                                     <option value="">+ Add save type...</option>
                                 </select>
                             </div>
@@ -211,13 +211,13 @@
                         <div class="edit-field">
                             <label>Platform Availability</label>
                             <div class="toggle-row" style="margin-bottom: var(--spacing-sm);">
-                                <label class="toggle-switch">
+                                <label class="toggle-switch" for="edit_other_platforms">
                                     <input type="checkbox" id="edit_exclusive_toggle" aria-label="Toggle platform exclusivity" onchange="updateEditExclusiveToggle()">
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <span id="edit_exclusive_label" class="toggle-label" style="margin-left: var(--spacing-sm);">Exclusive</span>
                             </div>
-                            <input type="text" name="edit_other_platforms" id="edit_other_platforms" value="{{ game.other_platforms or '' }}" placeholder="Xbox 360, PC, Nintendo Switch" tabindex="17" />
+                            <input type="text" name="edit_other_platforms" id="edit_other_platforms" value="{{ game.other_platforms or '' }}" placeholder="Xbox 360, PC, Nintendo Switch" />
                             <span class="field-tip">Other systems this game was released on</span>
                         </div>
                     </div>
@@ -229,7 +229,7 @@
                     <div class="edit-grid">
                         <div class="edit-field">
                             <label for="edit_esrb_rating">ESRB (North America)</label>
-                            <select name="edit_esrb_rating" id="edit_esrb_rating" tabindex="18">
+                            <select name="edit_esrb_rating" id="edit_esrb_rating">
                                 <option value="">-- None --</option>
                                 <option value="EC" {% if game.esrb_rating == 'EC' %}selected{% endif %}>EC - Early Childhood</option>
                                 <option value="E" {% if game.esrb_rating == 'E' %}selected{% endif %}>E - Everyone</option>
@@ -242,7 +242,7 @@
                         </div>
                         <div class="edit-field">
                             <label for="edit_pegi_rating">PEGI (Europe)</label>
-                            <select name="edit_pegi_rating" id="edit_pegi_rating" tabindex="19">
+                            <select name="edit_pegi_rating" id="edit_pegi_rating">
                                 <option value="">-- None --</option>
                                 <option value="PEGI 3" {% if game.pegi_rating == 'PEGI 3' %}selected{% endif %}>PEGI 3</option>
                                 <option value="PEGI 7" {% if game.pegi_rating == 'PEGI 7' %}selected{% endif %}>PEGI 7</option>
@@ -327,7 +327,7 @@
                     <h3 class="edit-section-title">📖 Description</h3>
                     <div class="edit-field">
                         <label for="edit_description">Game Description</label>
-                        <textarea name="edit_description" id="edit_description" rows="4" tabindex="20">{{ game.description or '' }}</textarea>
+                        <textarea name="edit_description" id="edit_description" rows="4">{{ game.description or '' }}</textarea>
                     </div>
                 </div>
 
@@ -335,8 +335,8 @@
                     <h3 class="edit-section-title">🖼️ Custom Images</h3>
                     <div class="edit-grid">
                         <div class="edit-field">
-                            <label>Custom Boxart (2D)</label>
-                            <input type="file" name="custom_boxart" accept="image/*" tabindex="21" />
+                            <label for="custom_boxart">Custom Boxart (2D)</label>
+                            <input id="custom_boxart" type="file" name="custom_boxart" accept="image/*" />
                             {% if game.boxart %}
                             <span class="current-file">Current: {{ game.boxart }}</span>
                             <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" onclick="showConfirm('🗑️ Delete Boxart', 'Delete boxart? You can re-scrape to get a new one.', function() { document.querySelector('input[name=remove_boxart]').value='1'; document.getElementById('editMetadataForm').submit(); })">
@@ -346,8 +346,8 @@
                             {% endif %}
                         </div>
                         <div class="edit-field">
-                            <label>Custom 3D Boxart</label>
-                            <input type="file" name="custom_boxart_3d" accept="image/*" tabindex="22" />
+                            <label for="custom_boxart_3d">Custom 3D Boxart</label>
+                            <input id="custom_boxart_3d" type="file" name="custom_boxart_3d" accept="image/*" />
                             {% if game.boxart_3d %}
                             <span class="current-file">Current: {{ game.boxart_3d }}</span>
                             <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" onclick="showConfirm('🗑️ Delete 3D Boxart', 'Delete 3D boxart? You can re-scrape to get a new one.', function() { document.querySelector('input[name=remove_boxart_3d]').value='1'; document.getElementById('editMetadataForm').submit(); })">
@@ -357,8 +357,8 @@
                             {% endif %}
                         </div>
                         <div class="edit-field">
-                            <label>Custom Fanart</label>
-                            <input type="file" name="custom_fanart" accept="image/*" tabindex="23" />
+                            <label for="custom_fanart">Custom Fanart</label>
+                            <input id="custom_fanart" type="file" name="custom_fanart" accept="image/*" />
                             {% if game.fanart %}
                             <span class="current-file">Current: {{ game.fanart }}</span>
                             <button type="button" class="btn btn-sm btn-danger" style="margin-top: 8px;" onclick="showConfirm('🗑️ Delete Fanart', 'Delete fanart? You can re-scrape to get a new one.', function() { document.querySelector('input[name=remove_fanart]').value='1'; document.getElementById('editMetadataForm').submit(); })">
@@ -368,8 +368,8 @@
                             {% endif %}
                         </div>
                         <div class="edit-field full-width">
-                            <label>Add Screenshots</label>
-                            <input type="file" name="custom_screenshots" accept="image/*" multiple tabindex="24" />
+                            <label for="custom_screenshots">Add Screenshots</label>
+                            <input id="custom_screenshots" type="file" name="custom_screenshots" accept="image/*" multiple />
                             <span class="field-tip">Hold Ctrl/Cmd to select multiple files</span>
                             {% if game.screenshots %}
                             <span class="current-file">Current: {{ game.screenshots.split(',') | length }} screenshots</span>
@@ -381,8 +381,8 @@
                 <div class="edit-section">
                     <h3 class="edit-section-title">🎬 Video / Trailer</h3>
                     <div class="edit-field">
-                        <label>Video File</label>
-                        <input type="file" name="custom_video" accept="video/mp4,video/webm,video/ogg,.mp4,.webm,.ogg" tabindex="24" />
+                        <label for="custom_video">Video File</label>
+                        <input id="custom_video" type="file" name="custom_video" accept="video/mp4,video/webm,video/ogg,.mp4,.webm,.ogg" />
                         <span class="field-tip">Supported formats: MP4, WebM, OGG</span>
                         {% if game.video %}
                         <span class="current-file">Current: {{ game.video }}</span>

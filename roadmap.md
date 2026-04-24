@@ -2824,7 +2824,15 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: add `id=` to each input and `for=` to its label.  No
   schema change, just markup.
 - **Source**: 2026-04-23 audit, Templates & CSS finding 2.
-- **Status**: todo
+- **Status**: done (v2.97.0) — auto-fixer paired each label with the
+  next form control in window; 87 labels gained `for=` across 19
+  templates (settings.html got 36, setup.html 18, edit_modal.html 7).
+  61 of the "missing" cases are implicit-association labels (control
+  sits inside the `<label>` body — toggle-switch wrappers, etc.) which
+  are valid as-is. The remaining 33 are group-labels (one label
+  heading a button-group, color-picker, toggle-grid, or custom tag
+  widget) that need a different a11y pattern (`<fieldset>`/`<legend>`
+  or `role="group"`+`aria-labelledby`); spun out as FU.5.
 
 ### 28.2 `ModalFocusTrap` on template-local modals (MEDIUM, M)
 
@@ -2839,7 +2847,18 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: wrap each open/close pair with the existing
   `ModalFocusTrap` calls documented in CLAUDE.md §Global JS.
 - **Source**: 2026-04-23 audit, Templates & CSS finding 4.
-- **Status**: todo
+- **Status**: done (v2.97.0) — `wishlist.html` (Add+Edit), `tags.html`
+  (Create+Edit), `lists.html` (Create+Edit), `list_detail.html`
+  (Add Game), `compare_games.html` (Search), `settings.html` (User
+  modal Add+Edit, Edit Controller, Avatar Picker), and `museum.js`
+  (Hardware + Controller lightboxes) all wire `ModalFocusTrap.activate`
+  on open and `.deactivate` on close. Trigger element captured via
+  `document.activeElement` so focus returns to the opener button on
+  close. `autoFocus: false` passed where the open handler already
+  focuses a specific input. The `tz-picker / folder-browser` items
+  the original roadmap entry referenced don't exist as separate modals
+  in the current settings.html (timezone is an inline `<select>`+search;
+  no folder-browser modal); avatar-picker overlay covered instead.
 
 ### 28.3 Remove positive `tabindex` values from `_modals/edit_modal.html` (LOW, S)
 
@@ -2850,7 +2869,11 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: strip all positive `tabindex` attributes; verify tab
   order via keyboard walk-through.
 - **Source**: 2026-04-23 audit, Templates & CSS finding 3.
-- **Status**: todo
+- **Status**: done (v2.97.0) — `sed -i -E 's/ tabindex="[0-9]+"//g'`
+  removed all 28 positive values. `tabindex="-1"` on the hidden date
+  picker (line 75) is preserved — that one keeps the offscreen input
+  out of tab sequence. DOM order in the modal already matches the
+  intended tab sequence so no tab-walk surprises were introduced.
 
 ### 28.4 Skip-to-content link (LOW, S)
 
@@ -2861,7 +2884,12 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: `<a href="#main-content" class="skip-link">Skip to
   main content</a>` styled to only appear on `:focus`.
 - **Source**: 2026-04-23 audit, Templates & CSS gap 3.
-- **Status**: todo
+- **Status**: done (v2.97.0) — already in place from earlier work and
+  verified during Pass 28: `templates/base.html:35` emits the link
+  right after `<body>`; `static/css/components/buttons.css:11-31`
+  defines `.skip-link` with `transform: translateY(-150%)` default and
+  `translateY(0)` on `:focus`, so the link only appears when keyboard
+  users tab to it. Roadmap entry was stale.
 
 ### 28.5 `prefers-reduced-motion` kill-switch for theme canvas effects (MEDIUM, S)
 
@@ -2875,7 +2903,13 @@ See Pass 13.3 — no duplicate entry.
   reduce)').matches` check at theme init; if true, skip the
   canvas animation start.
 - **Source**: 2026-04-23 audit, Templates & CSS gap 1.
-- **Status**: todo
+- **Status**: done (v2.97.0) — `static/js/theme.js::apply` reads
+  `window.matchMedia('(prefers-reduced-motion: reduce)').matches` at
+  theme-apply time and skips the entire `_init{Matrix,Ocean,Cyberpunk,
+  Christian,BladeRunner,Elite}` branch if true. The visibility-change
+  resume path (`_startEffectLoop`) is gated on
+  `this._canvas && this._activeEffect`, both of which stay null when
+  the init branch is skipped, so no further changes were needed there.
 
 ### 28.6 `aria-live="polite"` on notification + loading containers (MEDIUM, S)
 
@@ -2888,7 +2922,12 @@ See Pass 13.3 — no duplicate entry.
 - **Plan**: one-line attribute add on the container element
   Notifications injects into.
 - **Source**: 2026-04-23 audit, Frontend JS gap 4.
-- **Status**: todo
+- **Status**: done (v2.97.0) — `Notifications.init` sets `role="status"`,
+  `aria-live="polite"`, `aria-atomic="false"` on `#notification-container`;
+  `LoadingState.show` sets `role="status"`, `aria-live="polite"`,
+  `aria-busy="true"` on the freshly-created overlay. `aria-atomic=false`
+  on the toast stack so each new notification is read individually
+  rather than re-reading the whole stack.
 
 ---
 
@@ -3042,6 +3081,29 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   `http_get` retry/backoff semantics — the helper doesn't currently expose
   `stream=True`, so either add a flag or call `_http_session.get` directly
   for images.
+- **Status**: todo
+
+### FU.5 Group-label a11y pattern (LOW–MEDIUM, S–M)
+
+- **Context**: Pass 28.1 fixed the 87 sibling-label cases by adding
+  `for=…`, but 33 cases remain where one `<label>` heads a *group* of
+  controls — button groups (`templates/lists.html:54` icon picker,
+  `templates/tags.html:50` color swatches, `templates/wishlist.html:78`
+  priority radios, `templates/logs.html:748,768` level/view toggles),
+  toggle grids (`chd_converter.html:124`, `duplicate_finder.html:231`,
+  `rom_tools_settings.html:393,425`), custom tag widgets in the edit
+  modals (`_modals/edit_modal.html:106,145,158,169,186` and the
+  parallel `base.html:1067-1147` gem modal), and prose-style labels
+  (`settings.html:171,433,461,580,912`).
+- **Why**: visual labels already convey context, but the relationship
+  isn't programmatically exposed to assistive tech. Screen readers
+  hear the controls but can't anchor them to the group label.
+- **Plan**: per-case judgement: convert to `<fieldset><legend>` for
+  semantically-related controls (toggle grids, button groups), or use
+  `role="group"` + `aria-labelledby` for custom widgets where
+  fieldset semantics don't fit. For prose-style labels heading a
+  read-only display (e.g. `Database Location`), demote `<label>` to
+  `<div class="form-label">` since there's no control to associate.
 - **Status**: todo
 
 ---

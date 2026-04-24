@@ -178,19 +178,26 @@ const ThemeManager = {
         // Tear down any existing canvas effect
         this._destroyCanvas();
 
+        // WCAG SC 2.3.3 Animation from Interactions: respect prefers-reduced-motion.
+        // CSS @media query covers the rest of the app via reset.css; canvas-driven
+        // animations ignore CSS so we gate them here.
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
         // Start theme-specific canvas effect
-        if (theme === 'matrix') {
-            this._initMatrixRain();
-        } else if (theme === 'ocean') {
-            this._initOceanEffect();
-        } else if (theme === 'cyberpunk') {
-            this._initCyberpunkSmoke();
-        } else if (theme === 'christian') {
-            this._initChristianDust();
-        } else if (theme === 'bladerunner') {
-            this._initBladeRunnerRain();
-        } else if (theme === 'elite') {
-            this._initEliteStarfield();
+        if (!reduceMotion) {
+            if (theme === 'matrix') {
+                this._initMatrixRain();
+            } else if (theme === 'ocean') {
+                this._initOceanEffect();
+            } else if (theme === 'cyberpunk') {
+                this._initCyberpunkSmoke();
+            } else if (theme === 'christian') {
+                this._initChristianDust();
+            } else if (theme === 'bladerunner') {
+                this._initBladeRunnerRain();
+            } else if (theme === 'elite') {
+                this._initEliteStarfield();
+            }
         }
 
         // Update theme selector UI if present

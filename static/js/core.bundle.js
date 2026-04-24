@@ -277,6 +277,9 @@ const Notifications = {
             this.container = document.createElement('div');
             this.container.id = 'notification-container';
             this.container.className = 'notification-container';
+            this.container.setAttribute('role', 'status');
+            this.container.setAttribute('aria-live', 'polite');
+            this.container.setAttribute('aria-atomic', 'false');
             document.body.appendChild(this.container);
         }
         if (window.NOTIFICATION_TIMEOUTS) {
@@ -380,6 +383,9 @@ const LoadingState = {
             overlay = document.createElement('div');
             overlay.id = 'loading-overlay';
             overlay.className = 'loading-overlay';
+            overlay.setAttribute('role', 'status');
+            overlay.setAttribute('aria-live', 'polite');
+            overlay.setAttribute('aria-busy', 'true');
             overlay.innerHTML = `
                 <div class="loading-content">
                     <div class="loading-spinner"></div>

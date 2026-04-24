@@ -554,16 +554,22 @@ function removeSlot(idx) {
 }
 
 function openSearchModal(slot) {
+    const trigger = document.activeElement;
     activeSlot = slot;
-    document.getElementById('searchModal').classList.add('active');
+    const modal = document.getElementById('searchModal');
+    modal.classList.add('active');
     const input = document.getElementById('compareSearchInput');
     input.value = '';
     document.getElementById('compareSearchResults').innerHTML = '<div class="compare-search-hint">Type a game title to search.</div>';
     setTimeout(() => input.focus(), 100);
+    if (window.ModalFocusTrap) {
+        ModalFocusTrap.activate(modal, trigger, { onEscape: closeSearchModal, autoFocus: false });
+    }
 }
 
 function closeSearchModal() {
     document.getElementById('searchModal').classList.remove('active');
+    if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
 }
 
 function debounceCompareSearch() {

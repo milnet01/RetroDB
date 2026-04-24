@@ -356,6 +356,7 @@ function renderLists() {
 }
 
 function openCreateListModal() {
+    const trigger = document.activeElement;
     document.getElementById('listModalTitle').textContent = 'New List';
     document.getElementById('listSaveBtn').textContent = 'Create List';
     document.getElementById('listEditId').value = '';
@@ -365,11 +366,16 @@ function openCreateListModal() {
     document.querySelectorAll('.list-icon-option').forEach(o => {
         o.classList.toggle('active', o.dataset.icon === selectedListIcon);
     });
-    document.getElementById('listModal').classList.add('active');
+    const modal = document.getElementById('listModal');
+    modal.classList.add('active');
     document.getElementById('listNameInput').focus();
+    if (window.ModalFocusTrap) {
+        ModalFocusTrap.activate(modal, trigger, { onEscape: closeListModal, autoFocus: false });
+    }
 }
 
 function openEditListModal(listId) {
+    const trigger = document.activeElement;
     const list = allLists.find(l => l.id === listId);
     if (!list) return;
 
@@ -382,12 +388,17 @@ function openEditListModal(listId) {
     document.querySelectorAll('.list-icon-option').forEach(o => {
         o.classList.toggle('active', o.dataset.icon === selectedListIcon);
     });
-    document.getElementById('listModal').classList.add('active');
+    const modal = document.getElementById('listModal');
+    modal.classList.add('active');
     document.getElementById('listNameInput').focus();
+    if (window.ModalFocusTrap) {
+        ModalFocusTrap.activate(modal, trigger, { onEscape: closeListModal, autoFocus: false });
+    }
 }
 
 function closeListModal() {
     document.getElementById('listModal').classList.remove('active');
+    if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
 }
 
 function selectListIcon(el) {

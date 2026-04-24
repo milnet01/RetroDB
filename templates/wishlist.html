@@ -661,7 +661,12 @@ function filterWishlist(filter, btn) {
     renderWishlist();
 }
 
+function _wishlistTrapTrigger() {
+    return document.activeElement;
+}
+
 function openAddWishlistModal() {
+    const trigger = _wishlistTrapTrigger();
     document.getElementById('wishlistModalTitle').textContent = 'Add to Wishlist';
     document.getElementById('wishlistSaveBtn').textContent = 'Add to Wishlist';
     document.getElementById('wishlistEditId').value = '';
@@ -675,11 +680,16 @@ function openAddWishlistModal() {
     document.querySelectorAll('.priority-option').forEach(o => {
         o.classList.toggle('active', o.dataset.priority === '2');
     });
-    document.getElementById('wishlistModal').classList.add('active');
+    const modal = document.getElementById('wishlistModal');
+    modal.classList.add('active');
     document.getElementById('wishlistTitleInput').focus();
+    if (window.ModalFocusTrap) {
+        ModalFocusTrap.activate(modal, trigger, { onEscape: closeWishlistModal, autoFocus: false });
+    }
 }
 
 function openEditWishlistModal(itemId) {
+    const trigger = _wishlistTrapTrigger();
     const item = allItems.find(i => i.id === itemId);
     if (!item) return;
 
@@ -690,18 +700,22 @@ function openEditWishlistModal(itemId) {
     document.getElementById('wishlistSystemInput').value = item.wishlist_system_name || item.system_name || '';
     document.getElementById('wishlistSystemIdInput').value = item.system_id || '';
     document.getElementById('wishlistNotesInput').value = item.notes || '';
-    // Scrape-on-save checkbox is only meaningful for new items
     document.getElementById('wishlistScrapeCheckRow').style.display = 'none';
     selectedPriority = item.priority || 2;
     document.querySelectorAll('.priority-option').forEach(o => {
         o.classList.toggle('active', o.dataset.priority === String(selectedPriority));
     });
-    document.getElementById('wishlistModal').classList.add('active');
+    const modal = document.getElementById('wishlistModal');
+    modal.classList.add('active');
     document.getElementById('wishlistTitleInput').focus();
+    if (window.ModalFocusTrap) {
+        ModalFocusTrap.activate(modal, trigger, { onEscape: closeWishlistModal, autoFocus: false });
+    }
 }
 
 function closeWishlistModal() {
     document.getElementById('wishlistModal').classList.remove('active');
+    if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
 }
 
 function selectPriority(el) {

@@ -723,7 +723,7 @@
 <!-- Toolbar -->
 <div class="log-toolbar">
     <div class="toolbar-group">
-        <label>File</label>
+        <label for="logFileSelect">File</label>
         <select id="logFileSelect" class="log-file-select">
             <option value="">Loading...</option>
         </select>
@@ -736,7 +736,7 @@
     <div class="toolbar-separator"></div>
 
     <div class="toolbar-group">
-        <label>Time</label>
+        <label for="timeFrom">Time</label>
         <input type="time" id="timeFrom" class="time-input" step="1" placeholder="From">
         <span style="color: var(--text-muted); font-size: 0.8rem;">—</span>
         <input type="time" id="timeTo" class="time-input" step="1" placeholder="To">
@@ -756,7 +756,7 @@
     <div class="toolbar-separator"></div>
 
     <div class="toolbar-group">
-        <label>Source</label>
+        <label for="logModuleFilter">Source</label>
         <select id="logModuleFilter" class="log-module-select" onchange="LogViewer.setModuleFilter(this.value)">
             <option value="">All Sources</option>
         </select>
@@ -775,7 +775,7 @@
     <div class="toolbar-separator" id="viewToggleSep"></div>
 
     <div class="toolbar-group" style="flex: 1;">
-        <label>Search</label>
+        <label for="logSearch">Search</label>
         <input type="text" id="logSearch" class="log-search" placeholder="Filter log lines...">
     </div>
 

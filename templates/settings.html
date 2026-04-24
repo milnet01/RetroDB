@@ -122,7 +122,7 @@
         </p>
         
         <div class="form-group mb-lg">
-            <label class="form-label">Your RPCS3 Trophy Path</label>
+            <label class="form-label" for="userTrophyPath">Your RPCS3 Trophy Path</label>
             <input type="text" class="form-input" id="userTrophyPath" 
                    value="{{ current_user_settings.rpcs3_trophy_path if current_user_settings else '' }}"
                    placeholder="/path/to/your/RPCS3/dev_hdd0/home/00000001/trophy">
@@ -135,14 +135,14 @@
         </p>
         
         <div class="form-group mb-md">
-            <label class="form-label">Your RA Username</label>
+            <label class="form-label" for="userRaUsername">Your RA Username</label>
             <input type="text" class="form-input" id="userRaUsername" 
                    value="{{ current_user_settings.ra_username if current_user_settings else '' }}"
                    placeholder="YourRAUsername">
         </div>
         
         <div class="form-group mb-lg">
-            <label class="form-label">Your RA API Key</label>
+            <label class="form-label" for="userRaApiKey">Your RA API Key</label>
             <input type="password" class="form-input" id="userRaApiKey" 
                    value="{{ current_user_settings.ra_api_key if current_user_settings else '' }}"
                    placeholder="Your RetroAchievements API Key">
@@ -159,7 +159,7 @@
         </div>
 
         <div class="form-group mb-md">
-            <label class="form-label">PSN Username</label>
+            <label class="form-label" for="userPsnUsername">PSN Username</label>
             <input type="text" class="form-input" id="userPsnUsername"
                    value="{{ current_user_settings.psn_username if current_user_settings else '' }}"
                    placeholder="YourPSNOnlineID">
@@ -232,12 +232,12 @@
         </p>
         
         <div class="form-group mb-md">
-            <label class="form-label">Current Password</label>
+            <label class="form-label" for="currentPassword">Current Password</label>
             <input type="password" class="form-input" id="currentPassword" placeholder="Enter current password">
         </div>
         
         <div class="form-group mb-lg">
-            <label class="form-label">New Password</label>
+            <label class="form-label" for="newPassword">New Password</label>
             <input type="password" class="form-input" id="newPassword" placeholder="Enter new password">
         </div>
         
@@ -261,7 +261,7 @@
             Set your timezone to ensure all dates and times display correctly.
         </p>
         <div class="form-group mb-lg">
-            <label class="form-label">Timezone</label>
+            <label class="form-label" for="tzSearchInput">Timezone</label>
             <input type="text" id="tzSearchInput" class="form-input"
                    placeholder="Search timezones..." autocomplete="off"
                    style="margin-bottom: var(--spacing-sm);">
@@ -369,17 +369,17 @@
             <input type="hidden" id="editUserId" value="">
             
             <div class="form-group mb-md">
-                <label class="form-label">Username *</label>
+                <label class="form-label" for="userUsername">Username *</label>
                 <input type="text" class="form-input" id="userUsername" placeholder="username">
             </div>
             
             <div class="form-group mb-md">
-                <label class="form-label">Display Name</label>
+                <label class="form-label" for="userDisplayName">Display Name</label>
                 <input type="text" class="form-input" id="userDisplayName" placeholder="Display Name">
             </div>
             
             <div class="form-group mb-md">
-                <label class="form-label">Role *</label>
+                <label class="form-label" for="userRole">Role *</label>
                 <select class="form-select" id="userRole">
                     <option value="viewer">Viewer - Read only access</option>
                     <option value="editor">Editor - Can edit games and scrape</option>
@@ -388,7 +388,7 @@
             </div>
             
             <div class="form-group mb-md" id="resetPasswordGroup" style="display: none;">
-                <label class="form-label">Reset Password</label>
+                <label class="form-label" for="userNewPassword">Reset Password</label>
                 <input type="password" class="form-input" id="userNewPassword" placeholder="Leave blank to keep current">
                 <span class="field-tip">Only for admin accounts</span>
             </div>
@@ -422,7 +422,7 @@
         </p>
 
         <div class="form-group mb-lg">
-            <label class="form-label">ROM Library Path</label>
+            <label class="form-label" for="romPathInput">ROM Library Path</label>
             <input type="text" id="romPathInput" class="form-input"
                    placeholder="e.g. /home/user/ROMS"
                    style="font-family: var(--font-mono);">
@@ -521,7 +521,7 @@
         </div>
 
         <div class="form-group mb-lg">
-            <label class="form-label">Preferred Boxart Style</label>
+            <label class="form-label" for="preferredBoxartSelect">Preferred Boxart Style</label>
             <select id="preferredBoxartSelect" class="form-select" style="max-width: 300px;">
                 <option value="2d">2D Boxart (Standard)</option>
                 <option value="3d">3D Boxart (with 2D fallback)</option>
@@ -530,7 +530,7 @@
         </div>
 
         <div class="form-group mb-lg">
-            <label class="form-label">Preferred Age Rating System</label>
+            <label class="form-label" for="preferredRatingSelect">Preferred Age Rating System</label>
             <select id="preferredRatingSelect" class="form-select" style="max-width: 300px;">
                 <option value="esrb">ESRB (North America)</option>
                 <option value="pegi">PEGI (Europe)</option>
@@ -565,7 +565,7 @@
         </p>
 
         <div class="form-group mb-lg">
-            <label class="form-label">Article Placement</label>
+            <label class="form-label" for="articlePlacementSelect">Article Placement</label>
             <p class="text-muted" style="margin-bottom: var(--spacing-sm); font-size: 0.85rem;">
                 Controls where articles (A, An, The) appear in game titles and ROM filenames.
             </p>
@@ -594,7 +594,7 @@
                 <button type="button" class="btn btn-sm btn-secondary" onclick="addRegionOption()">Add</button>
             </div>
             <div style="margin-top: var(--spacing-sm);">
-                <label class="form-label" style="font-size:0.85rem;">Default Region</label>
+                <label class="form-label" style="font-size:0.85rem;" for="defaultRegionSelect">Default Region</label>
                 <select id="defaultRegionSelect" class="form-select" style="max-width: 200px;">
                     {% for r in user_settings.get('region_options', ['USA', 'Europe', 'Japan', 'World']) %}
                     <option value="{{ r }}"{% if r == user_settings.get('default_region', 'USA') %} selected{% endif %}>{{ r }}</option>
@@ -698,7 +698,7 @@
     </div>
     <div class="card-body">
         <div class="form-group mb-lg">
-            <label class="form-label">ES-DE Gamelists Path</label>
+            <label class="form-label" for="esdeGamelistsInput">ES-DE Gamelists Path</label>
             <input type="text" id="esdeGamelistsInput" class="form-input"
                    placeholder="e.g. /home/user/.es-de/gamelists"
                    style="font-family: var(--font-mono);">
@@ -706,7 +706,7 @@
         </div>
         
         <div class="form-group mb-lg">
-            <label class="form-label">ES-DE Downloaded Media Path</label>
+            <label class="form-label" for="esdeMediaInput">ES-DE Downloaded Media Path</label>
             <input type="text" id="esdeMediaInput" class="form-input"
                    placeholder="Leave blank to auto-detect from gamelists path"
                    style="font-family: var(--font-mono);">
@@ -714,7 +714,7 @@
         </div>
         
         <div class="form-group mb-lg">
-            <label class="form-label">RPCS3 Trophy Path</label>
+            <label class="form-label" for="rpcs3TrophyInput">RPCS3 Trophy Path</label>
             <input type="text" id="rpcs3TrophyInput" class="form-input"
                    placeholder="e.g. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
                    style="font-family: var(--font-mono);">
@@ -1441,7 +1441,7 @@
             <button class="btn btn-secondary norm-field-btn" id="normBtnModes" onclick="NormalizationManager.load('modes')">Modes</button>
             <div style="margin-left: auto; display: flex; gap: var(--spacing-sm); align-items: center;">
                 <div class="toggle-item" style="display: flex; align-items: center; gap: var(--spacing-xs);">
-                    <label class="toggle-switch" style="transform: scale(0.75);">
+                    <label class="toggle-switch" style="transform: scale(0.75);" for="normSelectAll">
                         <input type="checkbox" id="normFilterChanged" onchange="NormalizationManager.toggleFilter()">
                         <span class="toggle-slider"></span>
                     </label>
@@ -1518,7 +1518,7 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-lg);">
                 <!-- Success Timeout -->
                 <div class="form-group">
-                    <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);" for="notifTimeoutSuccess">
                         <span style="color: var(--neon-green);">✅</span> Success Notifications
                     </label>
                     <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
@@ -1532,7 +1532,7 @@
 
                 <!-- Info Timeout -->
                 <div class="form-group">
-                    <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);" for="notifTimeoutInfo">
                         <span style="color: var(--primary-cyan);">ℹ️</span> Info Notifications
                     </label>
                     <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
@@ -1546,7 +1546,7 @@
 
                 <!-- Warning Timeout -->
                 <div class="form-group">
-                    <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);" for="notifTimeoutWarning">
                         <span style="color: var(--neon-orange);">⚠️</span> Warning Notifications
                     </label>
                     <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
@@ -1560,7 +1560,7 @@
 
                 <!-- Error Timeout -->
                 <div class="form-group">
-                    <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);" for="notifTimeoutError">
                         <span style="color: var(--neon-red);">❌</span> Error Notifications
                     </label>
                     <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
@@ -1642,11 +1642,11 @@
         <div class="add-controller-form glass-panel" style="padding: var(--spacing-lg); margin-bottom: var(--spacing-xl);">
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md);">
                 <div class="form-group">
-                    <label class="form-label">Controller Name <span style="color: var(--neon-red);">*</span></label>
+                    <label class="form-label" for="newControllerName">Controller Name <span style="color: var(--neon-red);">*</span></label>
                     <input type="text" class="form-input" id="newControllerName" placeholder="e.g., SNES Mouse">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Systems</label>
+                    <label class="form-label" for="newControllerSystemSelect">Systems</label>
                     <div class="system-tags-container" id="newControllerSystemTags" style="display: flex; flex-wrap: wrap; gap: 6px; min-height: 38px; padding: 6px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-md); margin-bottom: 6px;">
                         <!-- Tags added here -->
                     </div>
@@ -1657,7 +1657,7 @@
                     <span class="field-tip">Leave empty for Universal controllers. Select multiple systems for shared controllers.</span>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Manufacturer</label>
+                    <label class="form-label" for="newControllerManufacturer">Manufacturer</label>
                     <input type="text" class="form-input" id="newControllerManufacturer" 
                            list="manufacturerSuggestions" placeholder="e.g., Nintendo, Sony, or custom...">
                     <datalist id="manufacturerSuggestions">
@@ -1677,16 +1677,16 @@
                     </datalist>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Release Year</label>
+                    <label class="form-label" for="newControllerYear">Release Year</label>
                     <input type="number" class="form-input" id="newControllerYear" placeholder="e.g., 1992" min="1970" max="2030">
                 </div>
             </div>
             <div class="form-group" style="margin-top: var(--spacing-md);">
-                <label class="form-label">Button Layout</label>
+                <label class="form-label" for="newControllerButtons">Button Layout</label>
                 <input type="text" class="form-input" id="newControllerButtons" placeholder="e.g., D-Pad, A, B, Start, Select">
             </div>
             <div class="form-group" style="margin-top: var(--spacing-md);">
-                <label class="form-label">Description</label>
+                <label class="form-label" for="newControllerDescription">Description</label>
                 <textarea class="form-input" id="newControllerDescription" rows="2" placeholder="Brief description of the controller..."></textarea>
             </div>
             <div style="margin-top: var(--spacing-lg);">
@@ -1723,11 +1723,11 @@
             <input type="hidden" id="editControllerId">
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md);">
                 <div class="form-group">
-                    <label class="form-label">Controller Name <span style="color: var(--neon-red);">*</span></label>
+                    <label class="form-label" for="editControllerName">Controller Name <span style="color: var(--neon-red);">*</span></label>
                     <input type="text" class="form-input" id="editControllerName" placeholder="e.g., SNES Mouse">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Systems</label>
+                    <label class="form-label" for="editControllerSystemSelect">Systems</label>
                     <div class="system-tags-container" id="editControllerSystemTags" style="display: flex; flex-wrap: wrap; gap: 6px; min-height: 38px; padding: 6px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-md); margin-bottom: 6px;">
                         <!-- Tags added here -->
                     </div>
@@ -1738,21 +1738,21 @@
                     <span class="field-tip">Leave empty for Universal controllers.</span>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Manufacturer</label>
+                    <label class="form-label" for="editControllerManufacturer">Manufacturer</label>
                     <input type="text" class="form-input" id="editControllerManufacturer" 
                            list="manufacturerSuggestions" placeholder="e.g., Nintendo, Sony, or custom...">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Release Year</label>
+                    <label class="form-label" for="editControllerYear">Release Year</label>
                     <input type="number" class="form-input" id="editControllerYear" placeholder="e.g., 1992" min="1970" max="2030">
                 </div>
             </div>
             <div class="form-group" style="margin-top: var(--spacing-md);">
-                <label class="form-label">Button Layout</label>
+                <label class="form-label" for="editControllerButtons">Button Layout</label>
                 <input type="text" class="form-input" id="editControllerButtons" placeholder="e.g., D-Pad, A, B, Start, Select">
             </div>
             <div class="form-group" style="margin-top: var(--spacing-md);">
-                <label class="form-label">Description</label>
+                <label class="form-label" for="editControllerDescription">Description</label>
                 <textarea class="form-input" id="editControllerDescription" rows="2" placeholder="Brief description of the controller..."></textarea>
             </div>
         </div>
@@ -3560,7 +3560,18 @@ function changePassword() {
 }
 
 // User Management Functions (Admin Only)
+let _userModalTrigger = null;
+
+function _activateUserModal() {
+    const modal = document.getElementById('userModal');
+    modal.classList.add('active');
+    if (window.ModalFocusTrap) {
+        ModalFocusTrap.activate(modal, _userModalTrigger, { onEscape: closeUserModal });
+    }
+}
+
 function showAddUserModal() {
+    _userModalTrigger = document.activeElement;
     document.getElementById('userModalTitle').textContent = 'Add User';
     document.getElementById('editUserId').value = '';
     document.getElementById('userUsername').value = '';
@@ -3568,11 +3579,11 @@ function showAddUserModal() {
     document.getElementById('userDisplayName').value = '';
     document.getElementById('userRole').value = 'viewer';
     document.getElementById('resetPasswordGroup').style.display = 'none';
-    document.getElementById('userModal').classList.add('active');
+    _activateUserModal();
 }
 
 function editUser(userId) {
-    // Fetch user data
+    _userModalTrigger = document.activeElement;
     fetch(`/api/users`)
         .then(r => r.json())
         .then(data => {
@@ -3585,16 +3596,15 @@ function editUser(userId) {
                     document.getElementById('userUsername').disabled = true;
                     document.getElementById('userDisplayName').value = user.display_name || '';
                     document.getElementById('userRole').value = user.role;
-                    
-                    // Show password reset for admin users
+
                     if (user.role === 'admin') {
                         document.getElementById('resetPasswordGroup').style.display = 'block';
                     } else {
                         document.getElementById('resetPasswordGroup').style.display = 'none';
                     }
                     document.getElementById('userNewPassword').value = '';
-                    
-                    document.getElementById('userModal').classList.add('active');
+
+                    _activateUserModal();
                 }
             }
         });
@@ -3602,6 +3612,7 @@ function editUser(userId) {
 
 function closeUserModal() {
     document.getElementById('userModal').classList.remove('active');
+    if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
 }
 
 function saveUser() {
@@ -6272,27 +6283,25 @@ async function deleteController(controllerId, controllerName) {
 // =============================================================================
 
 async function openEditControllerModal(controllerId) {
+    const trigger = document.activeElement;
     try {
-        // Fetch controller data
         const response = await fetch(`/api/controllers/${controllerId}`);
         const data = await response.json();
-        
+
         if (!data.success) {
             showModal('❌ Error', data.error || 'Failed to load controller');
             return;
         }
-        
+
         const c = data.controller;
-        
-        // Fill in the form
+
         document.getElementById('editControllerId').value = c.id;
         document.getElementById('editControllerName').value = c.name || '';
         document.getElementById('editControllerManufacturer').value = c.manufacturer || '';
         document.getElementById('editControllerYear').value = c.release_year || '';
         document.getElementById('editControllerButtons').value = c.button_layout || '';
         document.getElementById('editControllerDescription').value = c.description || '';
-        
-        // Populate selected systems from controller data
+
         editControllerSelectedSystems = [];
         if (c.system_ids && c.system_ids.length > 0 && c.system_names) {
             for (let i = 0; i < c.system_ids.length; i++) {
@@ -6303,9 +6312,12 @@ async function openEditControllerModal(controllerId) {
             }
         }
         renderSystemTags('edit');
-        
-        // Show modal using active class
-        document.getElementById('editControllerModal').classList.add('active');
+
+        const modal = document.getElementById('editControllerModal');
+        modal.classList.add('active');
+        if (window.ModalFocusTrap) {
+            ModalFocusTrap.activate(modal, trigger, { onEscape: closeEditControllerModal });
+        }
     } catch (error) {
         console.error('Error opening edit modal:', error);
         showModal('❌ Error', 'Failed to load controller data');
@@ -6315,6 +6327,7 @@ async function openEditControllerModal(controllerId) {
 function closeEditControllerModal() {
     document.getElementById('editControllerModal').classList.remove('active');
     clearSelectedSystems('edit');
+    if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
 }
 
 async function saveControllerChanges() {
@@ -7193,10 +7206,9 @@ function copyXboxRedirectUri() {
 let selectedDefaultAvatar = null;
 
 function openAvatarPicker() {
+    const trigger = document.activeElement;
     selectedDefaultAvatar = null;
-    // Clear selection state
     document.querySelectorAll('.avatar-option').forEach(opt => opt.classList.remove('selected'));
-    // Re-select current if it's a default
     const currentAvatar = '{{ current_user_settings.avatar if current_user_settings and current_user_settings.avatar else "" }}';
     if (currentAvatar.startsWith('default_')) {
         const opt = document.querySelector('.avatar-option[data-avatar="' + currentAvatar + '"]');
@@ -7205,11 +7217,16 @@ function openAvatarPicker() {
             selectedDefaultAvatar = currentAvatar;
         }
     }
-    document.getElementById('avatarPickerOverlay').classList.add('active');
+    const overlay = document.getElementById('avatarPickerOverlay');
+    overlay.classList.add('active');
+    if (window.ModalFocusTrap) {
+        ModalFocusTrap.activate(overlay, trigger, { onEscape: closeAvatarPicker });
+    }
 }
 
 function closeAvatarPicker() {
     document.getElementById('avatarPickerOverlay').classList.remove('active');
+    if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
 }
 
 function selectDefaultAvatar(name, el) {

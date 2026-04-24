@@ -388,14 +388,20 @@ let gameSearchTimeout = null;
 const existingGameIds = new Set([{% for g in games %}{{ g.id }},{% endfor %}]);
 
 function openAddGameModal() {
-    document.getElementById('addGameModal').classList.add('active');
+    const trigger = document.activeElement;
+    const modal = document.getElementById('addGameModal');
+    modal.classList.add('active');
     document.getElementById('addGameSearchInput').value = '';
     document.getElementById('addGameResults').innerHTML = '<div class="add-game-hint">Type a game title and press Enter or click Search.</div>';
     setTimeout(() => document.getElementById('addGameSearchInput').focus(), 100);
+    if (window.ModalFocusTrap) {
+        ModalFocusTrap.activate(modal, trigger, { onEscape: closeAddGameModal, autoFocus: false });
+    }
 }
 
 function closeAddGameModal() {
     document.getElementById('addGameModal').classList.remove('active');
+    if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
 }
 
 function debounceGameSearch() {

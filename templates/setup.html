@@ -95,19 +95,19 @@ SOFTWARE.</pre>
                 <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Admin Account</h2>
                 <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">Create your admin account. This is required to access settings and manage users.</p>
                 <div class="form-group">
-                    <label>Username</label>
+                    <label for="admin_username">Username</label>
                     <input type="text" id="admin_username" class="form-input" value="admin" autocomplete="username">
                 </div>
                 <div class="form-group">
-                    <label>Password</label>
+                    <label for="admin_password">Password</label>
                     <input type="password" id="admin_password" class="form-input" placeholder="Choose a secure password" autocomplete="new-password">
                 </div>
                 <div class="form-group">
-                    <label>Confirm Password</label>
+                    <label for="admin_password_confirm">Confirm Password</label>
                     <input type="password" id="admin_password_confirm" class="form-input" placeholder="Confirm password" autocomplete="new-password">
                 </div>
                 <div class="form-group">
-                    <label>Timezone</label>
+                    <label for="tz_search_setup">Timezone</label>
                     <input type="text" id="tz_search_setup" class="form-input" placeholder="Search timezones..." autocomplete="off" style="margin-bottom: var(--spacing-sm);">
                     <select id="timezone_select" class="form-input" size="6" style="font-family: var(--font-mono); font-size: 0.85rem;"></select>
                     <small style="color: var(--text-muted); display: block; margin-top: 4px;">
@@ -130,7 +130,7 @@ SOFTWARE.</pre>
                 <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">ROM Library Path</h2>
                 <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">Set the root directory where your ROMs are stored. Each system should be in a subfolder (e.g., <code>ROMS/nes/</code>, <code>ROMS/snes/</code>).</p>
                 <div class="form-group">
-                    <label>ROM Library Path</label>
+                    <label for="rom_path">ROM Library Path</label>
                     <div class="setup-path-row">
                         <input type="text" id="rom_path" class="form-input" placeholder="{% if platform_name == 'Windows' %}C:\Games\ROMS{% elif platform_name == 'macOS' %}/Users/user/ROMS{% else %}/home/user/ROMS{% endif %}">
                         <button type="button" class="btn btn-secondary setup-browse-btn" onclick="setupBrowseFolder('rom_path')" title="Browse folders">Browse</button>
@@ -168,14 +168,14 @@ SOFTWARE.</pre>
 
                 <div id="esdeFields">
                     <div class="form-group">
-                        <label>ES-DE Gamelists Path</label>
+                        <label for="esde_gamelists">ES-DE Gamelists Path</label>
                         <div class="setup-path-row">
                             <input type="text" id="esde_gamelists" class="form-input" placeholder="{% if platform_name == 'Windows' %}C:\Users\&lt;user&gt;\ES-DE\gamelists{% elif platform_name == 'macOS' %}/Users/user/.emulationstation/gamelists{% else %}/home/user/.emulationstation/gamelists{% endif %}">
                             <button type="button" class="btn btn-secondary setup-browse-btn" onclick="setupBrowseFolder('esde_gamelists')" title="Browse folders">Browse</button>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>ES-DE Downloaded Media Path</label>
+                        <label for="esde_media">ES-DE Downloaded Media Path</label>
                         <div class="setup-path-row">
                             <input type="text" id="esde_media" class="form-input" placeholder="{% if platform_name == 'Windows' %}C:\Users\&lt;user&gt;\ES-DE\downloaded_media{% elif platform_name == 'macOS' %}/Users/user/.emulationstation/downloaded_media{% else %}/home/user/.emulationstation/downloaded_media{% endif %}">
                             <button type="button" class="btn btn-secondary setup-browse-btn" onclick="setupBrowseFolder('esde_media')" title="Browse folders">Browse</button>
@@ -204,11 +204,11 @@ SOFTWARE.</pre>
                 <details class="api-section">
                     <summary>TheGamesDB</summary>
                     <div class="form-group">
-                        <label>Public API Key <a href="https://api.thegamesdb.net/key.php" target="_blank" style="font-size: 0.8rem;">(Get keys)</a></label>
+                        <label for="tgdb_public_key">Public API Key <a href="https://api.thegamesdb.net/key.php" target="_blank" style="font-size: 0.8rem;">(Get keys)</a></label>
                         <input type="text" id="tgdb_public_key" class="form-input" placeholder="Per-IP rate limit — primary key for scraping">
                     </div>
                     <div class="form-group">
-                        <label>Private API Key</label>
+                        <label for="tgdb_key">Private API Key</label>
                         <input type="text" id="tgdb_key" class="form-input" placeholder="Shared monthly pool — fallback key">
                     </div>
                 </details>
@@ -216,11 +216,11 @@ SOFTWARE.</pre>
                 <details class="api-section">
                     <summary>IGDB (Twitch)</summary>
                     <div class="form-group">
-                        <label>Client ID <a href="https://dev.twitch.tv/console" target="_blank" style="font-size: 0.8rem;">(Twitch Dev Console)</a></label>
+                        <label for="igdb_client_id">Client ID <a href="https://dev.twitch.tv/console" target="_blank" style="font-size: 0.8rem;">(Twitch Dev Console)</a></label>
                         <input type="text" id="igdb_client_id" class="form-input" placeholder="Twitch Client ID">
                     </div>
                     <div class="form-group">
-                        <label>Client Secret</label>
+                        <label for="igdb_client_secret">Client Secret</label>
                         <input type="text" id="igdb_client_secret" class="form-input" placeholder="Twitch Client Secret">
                     </div>
                 </details>
@@ -228,7 +228,7 @@ SOFTWARE.</pre>
                 <details class="api-section">
                     <summary>RAWG.io</summary>
                     <div class="form-group">
-                        <label>API Key <a href="https://rawg.io/apidocs" target="_blank" style="font-size: 0.8rem;">(Get key)</a></label>
+                        <label for="rawg_key">API Key <a href="https://rawg.io/apidocs" target="_blank" style="font-size: 0.8rem;">(Get key)</a></label>
                         <input type="text" id="rawg_key" class="form-input" placeholder="RAWG API key">
                     </div>
                 </details>
@@ -236,19 +236,19 @@ SOFTWARE.</pre>
                 <details class="api-section">
                     <summary>ScreenScraper</summary>
                     <div class="form-group">
-                        <label>Username <a href="https://www.screenscraper.fr" target="_blank" style="font-size: 0.8rem;">(Sign up)</a></label>
+                        <label for="ss_username">Username <a href="https://www.screenscraper.fr" target="_blank" style="font-size: 0.8rem;">(Sign up)</a></label>
                         <input type="text" id="ss_username" class="form-input" placeholder="ScreenScraper username">
                     </div>
                     <div class="form-group">
-                        <label>Password</label>
+                        <label for="ss_password">Password</label>
                         <input type="password" id="ss_password" class="form-input" placeholder="ScreenScraper password">
                     </div>
                     <div class="form-group">
-                        <label>Developer ID <a href="https://www.screenscraper.fr/forumsujets.php?fression=0&numpage=0&num_dossier=60" target="_blank" style="font-size: 0.8rem;">(Request dev access)</a></label>
+                        <label for="ss_devid">Developer ID <a href="https://www.screenscraper.fr/forumsujets.php?fression=0&numpage=0&num_dossier=60" target="_blank" style="font-size: 0.8rem;">(Request dev access)</a></label>
                         <input type="text" id="ss_devid" class="form-input" placeholder="Dev username from developer area">
                     </div>
                     <div class="form-group">
-                        <label>Developer Password</label>
+                        <label for="ss_devpassword">Developer Password</label>
                         <input type="password" id="ss_devpassword" class="form-input" placeholder="Password from developer area (NOT debug password)">
                     </div>
                 </details>
@@ -256,11 +256,11 @@ SOFTWARE.</pre>
                 <details class="api-section">
                     <summary>RetroAchievements</summary>
                     <div class="form-group">
-                        <label>Username <a href="https://retroachievements.org/controlpanel.php" target="_blank" style="font-size: 0.8rem;">(Get API key)</a></label>
+                        <label for="ra_username">Username <a href="https://retroachievements.org/controlpanel.php" target="_blank" style="font-size: 0.8rem;">(Get API key)</a></label>
                         <input type="text" id="ra_username" class="form-input" placeholder="RA username">
                     </div>
                     <div class="form-group">
-                        <label>API Key</label>
+                        <label for="ra_apikey">API Key</label>
                         <input type="text" id="ra_apikey" class="form-input" placeholder="RA API key">
                     </div>
                 </details>
