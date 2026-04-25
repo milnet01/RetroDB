@@ -84,6 +84,317 @@ paths or silent-corruption vectors under routine use.
 
 ---
 
+### Pass 45 — indie-review 2026-04-25 (post Pass 41 sweep)
+
+> Third 14-agent independent review (v3.5.14). 2 CRIT + 33 HIGH raw →
+> 1 CRITICAL + ~28 HIGH after threat-model calibration. The CRITICAL is
+> a net-new bug introduced by Pass 41.9; everything else is hardening or
+> contract drift surfaced by cold-read agents that don't share the
+> author's mental model. Cross-cutting themes (≥2 reviewers) flagged
+> independently: atomic-write drift, SSRF pin_host_ip unwired, source-
+> grep test antipattern, inline-onclick + CSP zombie nonce, aria-current
+> + ModalFocusTrap rollouts incomplete, Steam/Xbox/PSN sync rate-limit
+> gap, migration runner BEGIN DEFERRED.
+
+#### Pass 45.1 CRITICAL — `track_progress` permission unsatisfiable (CRITICAL, S)
+
+- **Targets**: `services/auth.py:31-42` (`ROLE_PERMISSIONS`) +
+  `routes/games.py:1101, 1130` (`@permission_required('track_progress')`).
+- **Why**: Pass 41.9.A added the decorator on `api_track_view` and
+  `api_update_completion` but never added the permission to any role.
+  `has_permission('track_progress')` returns False for every user
+  including admin → both endpoints redirect to `/dashboard`. Completion-
+  toggle and recently-viewed are dead in production. Caught by Auth +
+  Game routes lanes independently.
+- **Plan**: add `'track_progress'` to admin + editor + viewer (and
+  whatever future Player role lands). Make `permission_required` JSON-
+  aware on `/api/*` routes (return 403 envelope, not 302).
+- **Source**: indie-review 2026-04-25 cross-cutting theme T1.
+- **Status**: todo (CRITICAL — unblock first)
+
+#### Pass 45.2 SSRF DNS-rebinding TOCTOU on scraper download path (HIGH, M)
+
+- **Targets**: `services/ssrf.py:127` (`pin_host_ip`), threaded through
+  `scraper/base_scraper.download_image`,
+  `scraper/metadata_merger._download_and_finalize`,
+  `services/image_utils._download_model`.
+- **Why**: Pass 32.7 documented the rebinding protection but the helper
+  is consumed only by `routes/museum.py:1085`. Every other scraper path
+  calls `validate_outbound_url()` then GETs separately — adversarial DNS
+  flips A-records between validate and connect. Caught by Core app +
+  Scraper orchestration + Per-source scrapers lanes.
+- **Plan**: thread `pin_host_ip` through every `validate_outbound_url`
+  call site or document the residual.
+- **Source**: indie-review 2026-04-25 theme T3.
+- **Status**: todo
+
+#### Pass 45.3 AI Fill breaks fill-only invariant on integer columns (HIGH, S)
+
+- **Targets**: `routes/games_ai.py:109` — `all_updates.append(f"{field} = ?")`.
+- **Why**: writes bare `field = ?` instead of `COALESCE(?, field)`.
+  `_int_fields` coerce path at `:106` writes `0` after `int(float("0"))`,
+  overwriting curated non-zero values (e.g. `players=4` clobbered by
+  AI returning `"0"`). CLAUDE.md scraper-fill-only invariant should
+  apply to AI Fill too.
+- **Plan**: wrap integer column writes in `COALESCE(NULLIF(?, 0), col)`,
+  or skip when `value == 0`.
+- **Source**: indie-review 2026-04-25 (Game routes lane H1).
+- **Status**: todo
+
+#### Pass 45.4 XSS sinks in toast / HLTB / settings dialogs (HIGH, S)
+
+- **Targets**:
+  - `static/js/toast-controller.js:1171` — raw-interpolated `data.return_url`
+    in inline `onclick` JS-string. Pass 41.12.B's runtime guard fires too
+    late (URL already rendered as HTML).
+  - `static/js/game-modals.js:670-689` — `data.main_story/main_extra/
+    completionist` from HLTB API in `innerHTML` without `escapeHtml`.
+  - `templates/settings.html:4373, 4399` — `confirmMessage.innerHTML = message`
+    with comment `"Use innerHTML to support HTML content"`. Same family
+    as `showModal` Pass 40.13 closed.
+- **Plan**: migrate `toast-controller.js:1171` to delegated listener +
+  `data-` attr; wrap HLTB fields with `escapeHtml`; default
+  `showConfirmModal/showInfoModal` to `textContent` with `{allowHtml:true}`
+  opt-in mirroring Pass 40.13.
+- **Source**: indie-review 2026-04-25 theme T12.
+- **Status**: todo
+
+#### Pass 45.5 Atomic-write contract drift (HIGH, M)
+
+- **Targets**:
+  - `app.py:115-120` `_get_secret_key` truncates without `os.replace`;
+    chmod-after-write leaves brief 644 window.
+  - `services/image_utils.py:759-779` `_atomic_save` claims fsync in
+    docstring but doesn't call `os.fsync`. Same in
+    `services/game_media_service.py:201-216` `_atomic_write_bytes`.
+  - `services/image_utils.py:88-118` `_download_model` uses static
+    `.tmp` suffix (race-prone with concurrent processes).
+  - `services/database.py:295` `backup_database` chmods after the
+    integrity-check open (mode-0644 window).
+- **Plan**: route everything through `services.atomic_io` (one helper);
+  add `f.flush() + os.fsync(fd)` before `os.replace`; chmod before
+  any reopen-for-verify.
+- **Source**: indie-review 2026-04-25 theme T2.
+- **Status**: todo
+
+#### Pass 45.6 Decompression-bomb / `MAX_IMAGE_PIXELS` global (HIGH, S)
+
+- **Targets**: `services/image_utils.py` + `services/game_media_service.py`
+  module imports; `_validate_image_bytes`, `_ensure_format_matches_extension`,
+  `standardize_image` exception handling.
+- **Why**: scraper-downloaded crafted PNG can decode to GBs of pixels.
+  Pass 41.14.A fixed `compute_dhash` for image_dedup; the rest of the
+  image stack still has no `Image.MAX_IMAGE_PIXELS` set and `verify()`
+  doesn't decode.
+- **Plan**: `Image.MAX_IMAGE_PIXELS = config.IMAGE_MAX_PIXELS or 64_000_000`
+  at module import in both files; explicit `DecompressionBombError` catch
+  at every `Image.open(...)` call site.
+- **Source**: indie-review 2026-04-25 theme T5.
+- **Status**: todo
+
+#### Pass 45.7 Stale-ref orphan-cleanup race (HIGH, M)
+
+- **Targets**: `services/media_cleanup.py:127-187`.
+- **Why**: `clean_orphaned_files` deletes based on a snapshot taken by
+  `find_orphaned_media` at scan time. A scraper writing a new
+  `42_boxart.webp` between scan and delete loses the file. Same
+  architectural shape as Pass 40.15's `hybrid_scraper` stale-clear race.
+  Also: orphan deletion follows symlinks (no `os.path.islink` guard).
+- **Plan**: re-validate each candidate against fresh DB read at delete
+  time, OR filter on `mtime > scan_start_time`. Add `os.path.islink`
+  skip in the iteration.
+- **Source**: indie-review 2026-04-25 (Image pipeline lane).
+- **Status**: todo
+
+#### Pass 45.8 Steam/Xbox/PSN/wishlist endpoint rate-limits (HIGH, S)
+
+- **Targets**: `app.py:266-300` registrations. Add for:
+  `platform_import.api_steam_fetch_library`, `..._import`,
+  `..._sync_achievements`, Xbox + PSN siblings,
+  `trophies.api_psn_sync`, `..._sync_one`, `..._bulk_refresh_start`,
+  `collections.scrape_all_wishlist`,
+  `scraper.api_check_scraper`, `..._scraper_allowance`.
+- **Why**: each fans out hundreds of remote API calls; misclick or
+  stuck XHR can hammer Steam/Xbox/PSN APIs and trigger account bans
+  or burn paid AI quota.
+- **Plan**: 5/min or 5/hour caps mirroring `tools.api_*_scan` block.
+- **Source**: indie-review 2026-04-25 theme T13.
+- **Status**: todo
+
+#### Pass 45.9 collector_trophies regressions (HIGH, S)
+
+- **Targets**:
+  - `routes/collector_trophies.py:372` — `for g in (r['genre'] or '').split(',')`
+    is the exact Pass 41.8.A `flask.g` shadow pattern.
+  - `routes/collector_trophies.py:570-605` — `collector_trophies_page`
+    + `get_all_trophies` GET handlers call `_refresh_trophies` (writes
+    ~70 rows) on cold-cache. RFC 7231 GET-idempotency violation; same
+    family Pass 41.11.B closed for museum.
+- **Plan**: rename loop var to `genre_part`; remove lazy-init from GET
+  paths (explicit POST at `:616` already exists).
+- **Source**: indie-review 2026-04-25 (Collections lane).
+- **Status**: todo
+
+#### Pass 45.10 Migration runner `BEGIN IMMEDIATE` + busy_timeout (HIGH, S)
+
+- **Targets**:
+  - `services/migrations/__init__.py:84` — `conn.execute("BEGIN")` is
+    DEFERRED; table-rebuild migrations 007/008/009 deadlock under
+    concurrency.
+  - `services/database_init.py:48` — migration connection skips
+    `PRAGMA busy_timeout = 5000` (also `ensure_user_tables` at `:80`,
+    `backup_database` verify at `database.py:295`).
+  - migrations 007/008/009 — add `PRAGMA foreign_key_check` immediately
+    before COMMIT to fail loudly if rebuild ordering breaks.
+- **Plan**: switch to `BEGIN IMMEDIATE`; add `busy_timeout = 5000` on
+  all migration/init connections; pin foreign_key_check.
+- **Source**: indie-review 2026-04-25 theme T14 (Database lane H1+H2+H3).
+- **Status**: todo
+
+#### Pass 45.11 `/api/settings/logging` POST bypasses validator (HIGH, S)
+
+- **Targets**: `routes/settings.py:579`.
+- **Why**: writes `data` directly to `settings['logging']` without
+  calling `validate_settings_value('logging', data)`. The validator
+  exists at `services/settings_validators.py:182-199` but is unwired.
+  An admin (or admin under XSRF, even though CSRF protected) can
+  persist a malformed logging block that crashes
+  `log_manager.setup_all_logging()` on next start.
+- **Plan**: route through `validate_settings_value`. Same for
+  `/api/scraper-settings` POST and `/api/scraper-api-keys` POST
+  (`routes/scraper.py:228, 263`) — author per-key validators in
+  `services/scraper_settings_validators.py`.
+- **Source**: indie-review 2026-04-25 (Maintenance/settings lane P1+P2).
+- **Status**: todo
+
+#### Pass 45.12 Xbox refresh-token rotation hardening (HIGH, M)
+
+- **Targets**: `scraper/scrape_xbox.py:236-286`.
+- **Why**: refresh on every sync (no `expires_at` tracking); revocation
+  leaves stale tokens forever (no `clear_tokens` on 401-loop); `xuid`/
+  `gamertag` not re-validated on refresh.
+- **Plan**: track `expires_at = now + expires_in - 60s`; clear stored
+  `xuid`/`gamertag` on refresh; `clear_tokens(user_id)` when refresh
+  returns None.
+- **Source**: indie-review 2026-04-25 (Platform imports lane H1).
+- **Status**: todo
+
+#### Pass 45.13 IGDB token cache thread-safety + `y/z` redactor (HIGH, S)
+
+- **Targets**:
+  - `scraper/scrape_igdb.py:31` — `_igdb_token_cache` mutated by
+    background threads without lock; concurrent expiry → duplicate
+    Twitch OAuth calls.
+  - `services/log_redactor.py:35` — RetroAchievements API key
+    (`?y=KEY`) and username (`?z=USER`) flow through unredacted if
+    any caller logs the full URL. Latent leak.
+- **Plan**: wrap cache in `threading.Lock` mirroring
+  `retroachievements._ra_console_cache_lock`. Add `y` and `z` to the
+  URL-querystring redactor allowlist (narrow boundary `[?&]y=`).
+- **Source**: indie-review 2026-04-25 (Per-source scrapers lane).
+- **Status**: todo
+
+#### Pass 45.14 TGDB / RAWG / IGDB add `max_bytes` (MEDIUM, S)
+
+- **Targets**: `scraper/scrape_thegamesdb.py:85,150,170,190`,
+  `scrape_rawg.py:124`, `scrape_igdb.py:84-90,102-108`.
+- **Why**: each calls `http_get` without `max_bytes`; OOM risk on
+  malicious or buggy upstream.
+- **Plan**: pass `max_bytes=getattr(config, 'MAX_API_RESPONSE_BYTES',
+  10*1024*1024)` (matches RA + AI + ScreenScraper precedent).
+- **Source**: indie-review 2026-04-25 theme T4.
+- **Status**: todo
+
+#### Pass 45.15 Migration 010 missing CASCADE FKs (MEDIUM, S)
+
+- **Target**: `services/migrations/scripts/010_user_game_views.py:43-49`.
+- **Why**: composite PK exists but no `FOREIGN KEY (game_id) REFERENCES
+  games(id) ON DELETE CASCADE` and no `FOREIGN KEY (user_id) REFERENCES
+  users(id) ON DELETE CASCADE`. When games or users are deleted, rows
+  orphan; recently-viewed query joins return inconsistent results.
+- **Plan**: write migration 011 (or higher — collision-aware after
+  feat/multi-emulator-launch merges) adding CASCADE FKs via table-rebuild.
+- **Source**: indie-review 2026-04-25 (Database lane M1).
+- **Status**: todo
+
+#### Pass 45.16 `aria-current` rollout to remaining 50+ nav links (HIGH, M)
+
+- **Targets**: `templates/dashboard.html:8` (8 tabs),
+  `templates/analytics.html:8` (6 tabs),
+  `templates/museum_system.html:58` (4 tabs),
+  `templates/settings.html` 7 subnavs (~30 links),
+  `rom_tools_settings.html:249`, `duplicate_finder.html:174`,
+  `screenshot_dedup.html:239`, `chd_verify.html:91`,
+  `multi_disc_organizer.html:174`, `archive_scanner.html:564`,
+  `chd_converter.html:71`.
+- **Plan**: extract `nav_active(cond)` macro to a shared partial;
+  apply to every `class="* active"` nav link. Same WCAG 2.4.3 criterion
+  Pass 41.13.A handled for the sidebar.
+- **Source**: indie-review 2026-04-25 theme T10 (Templates & CSS lane).
+- **Status**: todo
+
+#### Pass 45.17 `ModalFocusTrap` rollout to 20+ remaining dialogs (HIGH, M)
+
+- **Targets**: `templates/base.html:290` `customModal`,
+  `:307` `folderBrowserModal`, `:640` queue-manager,
+  `:858` `gameDetailModal`, `:939` `gameEditModal`,
+  `_modals/scrape_modal.html`, `_modals/edit_modal.html`,
+  `_modals/filter_modal.html`, `wishlist.html:50`, `tags.html:37`.
+- **Why**: only 6/26 dialogs activate the focus trap; Tab key escapes
+  the modal (WCAG 2.1.2 No Keyboard Trap inverted — a focus-leak).
+- **Plan**: pair `ModalFocusTrap.activate()` with every `.classList.add('active')`
+  open path; `.deactivate()` on close.
+- **Source**: indie-review 2026-04-25 theme T11.
+- **Status**: todo
+
+#### Pass 45.18 Source-grep test antipattern (HIGH systemic, L)
+
+- **Targets**: `tests/test_pass40_security.py`, `test_pass41_security.py`
+  (78 cases / 1645 LOC), `test_pass33_34_hardening.py`,
+  `test_pass35_36_hardening.py`, `test_auth_hardening.py`. ~140
+  `open(path).read()` + `getsource()` substring assertions across
+  these.
+- **Why**: tests fail on rename/refactor and pass on real regressions
+  when the implementer keeps the string. The "regression coverage"
+  is regression-of-our-own-fix, not contract verification.
+- **Plan**: rewrite as functional `client.get/post` assertions where
+  possible (Pass 40.x routes are testable via the test client).
+  Where source-grep is unavoidable (e.g. decorator presence), assert
+  via `app.view_functions[...].__wrapped__.__qualname__` or runtime
+  introspection rather than regex over `.py` files. L-sized — gate
+  on test-quality budget pass.
+- **Source**: indie-review 2026-04-25 theme T7 (Tests/tooling lane).
+- **Status**: todo
+
+#### Pass 45.19 release.yml heredoc indentation (HIGH, S)
+
+- **Target**: `.github/workflows/release.yml:55-64`.
+- **Why**: `python - <<'PY'` heredoc has 10 spaces of leading whitespace
+  on every line; `python -` reads stdin and parses module-level
+  indented code as `IndentationError`. The release workflow as written
+  cannot succeed; tag-driven release path likely unexercised since the
+  SHA-pin/SLSA refactor.
+- **Plan**: dedent heredoc, OR factor to `scripts/ci_build_dist.py`
+  invoked as `python scripts/ci_build_dist.py`.
+- **Source**: indie-review 2026-04-25 (Tests/tooling lane P1).
+- **Status**: todo
+
+#### Pass 45.20 chmod-after-verify race + `<button type="button">` sweep (MEDIUM, S)
+
+- **Targets**:
+  - `services/database.py:295-323` — chmod 0o600 happens after the
+    integrity-check open; brief 0644 window.
+  - 419 `<button onclick="..."` across templates without explicit
+    `type="button"`. Inside `<form>` defaults to submit → silent form
+    submission.
+- **Plan**: chmod before reopen for verify; sweep templates adding
+  `type="button"` to every onclick-bearing button (or document `submit`
+  intent where applicable).
+- **Source**: indie-review 2026-04-25 (Database M3, Templates 11).
+- **Status**: todo
+
+---
+
 ### Security & input hardening — Tier-1 (indie-review 2026-04-24)
 
 > Sixteen findings from the 14-agent independent review post-Pass 37 that
