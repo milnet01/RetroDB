@@ -1143,6 +1143,107 @@ paths or silent-corruption vectors under routine use.
 
 ---
 
+### Internationalization (i18n) — language packs
+
+> **Pass 43** (proposed, deferred until Tier-1 + Tier-2 sweeps are done).
+> Ship-shape RetroDB in any language; UI strings translated, retro-game
+> data (titles, descriptions, scraper output) deliberately untranslated
+> because that's content, not chrome.
+
+#### Pass 43.1 Wire Flask-Babel + extract first language pack (HIGH, L)
+
+- **Target**: every user-facing UI string in `templates/*.html` (45
+  files, ~3-4k strings), `routes/*.py` flash + error messages, and
+  `services/api_helpers.py::error()` callers.  JS strings (toasts,
+  modals, dialog labels) live separately — see 43.3.
+- **Why**: RetroDB is a single-binary Flask app, single-household
+  deployments often have non-English-speaking family members.  No
+  language-switch primitive exists today; everything is hard-coded
+  English.  Flask-Babel is the standard plugin and folds cleanly into
+  Jinja's auto-escape pipeline.
+- **Plan**:
+  1. Add `flask-babel` to `requirements.txt` + `requirements.lock`.
+  2. Initialize `Babel(app)` in `app.py`; locale selector reads
+     `g.user_settings.locale_preference` first, then session, then
+     `Accept-Language` header, then `BABEL_DEFAULT_LOCALE='en'`.
+  3. Migrate templates progressively: wrap visible strings in
+     `{{ _('...') }}` / `{% trans %}...{% endtrans %}`.  Keep
+     attribute strings (`title=`, `aria-label=`, `placeholder=`) in
+     scope.  Don't translate template comments or class names.
+  4. Migrate Python flash + error sites: `flash(_('Please log in'))`,
+     `error(_('Invalid CSRF token'), 403)`.
+  5. `pybabel extract -F babel.cfg -o messages.pot .`; commit
+     `messages.pot` as the canonical extraction snapshot.
+  6. `pybabel init -i messages.pot -d translations -l en` (and any
+     additional shipped languages: probably `de`, `fr`, `es`, `it`,
+     `ja`, `pt_BR` to start).  Compile with `pybabel compile -d
+     translations`.
+  7. Add a Settings → Language section to `templates/settings.html`
+     (per-user locale_preference) with a dropdown of available
+     translations enumerated from `translations/` at request time.
+- **Caveats**:
+  - DB content (game titles, alternate_titles, description, genre
+    canonical forms) is NOT translated — it's raw scraper data and
+    canonical genre values feed FIELD_SCHEMAS-driven validation.
+    Translating "First-Person-Shooter" would corrupt the schema; the
+    scraper writes the canonical English form, the UI displays a
+    translated label via a separate i18n map keyed on the canonical.
+  - Theme display names ("Cyberpunk", "Matrix") are left as-is —
+    they're brand-style identifiers, not chrome.
+  - Multi-rating system labels (ESRB, PEGI, etc.) stay as-is — these
+    are official trademarks.
+- **Source**: net-new feature ask 2026-04-25.
+- **Status**: todo
+
+#### Pass 43.2 Translate canonical genre / dimension / perspective labels (MEDIUM, M)
+
+- **Target**: `services/game_utils.py` field-display helpers + every
+  `<select>` populating canonical multi-value fields.
+- **Why**: 43.1 leaves DB-stored canonical values untranslated for
+  data-integrity reasons.  But a French viewer reading "First-Person-
+  Shooter, 3D" in the UI is mid-translation noise.  A small
+  `services/i18n_labels.py` map keyed on canonical English → translated
+  display label closes the loop without touching the DB.
+- **Plan**: build the map at `services/i18n_labels.py`; expose a
+  `display_field_value(field, canonical_value, locale)` helper.  Wire
+  through `game_utils.py` for `genre`, `perspective`, `dimension`,
+  `modes`, `game_structure`.  Filter pages render translated labels
+  but submit canonical English values to the API; the controller
+  layer never sees translated tokens.
+- **Status**: todo
+
+#### Pass 43.3 JS-side i18n bundle (MEDIUM, M)
+
+- **Target**: `static/js/toast-controller.js`, `game-modals.js`,
+  `main.js`, every JS file that constructs user-visible strings via
+  template literals.
+- **Why**: 43.1 covers server-rendered strings; toasts and modal
+  copy are constructed client-side and would stay English under that
+  scheme.
+- **Plan**: server emits `window.I18N` (a translated string map) in
+  `base.html` based on the active locale.  JS reads via a thin
+  `t('toast.scrape_started')` helper.  Build step: a Python script
+  that walks JS for `t('...')` keys and ensures every key exists in
+  the locale map; CI fails the build on missing keys.
+- **Status**: todo
+
+#### Pass 43.4 RTL layout support (LOW, L)
+
+- **Target**: `static/css/core/*.css`, every grid/flex layout, every
+  text-align/margin-left utility.
+- **Why**: Arabic and Hebrew are RTL; the current CSS bakes
+  left-to-right assumptions deep into the grid/sticky-nav system.
+- **Plan**: switch directional utilities (`margin-left/right`,
+  `text-align: left`) to logical properties (`margin-inline-start/end`,
+  `text-align: start`).  Add `[dir="rtl"]` overrides where logical
+  properties don't reach (icons, chevrons, sortable column arrows).
+  `<html dir="rtl">` driven by locale class.  Defer until at least one
+  RTL translation lands — a feature without a user is dead weight.
+- **Status**: deferred — gated on Pass 43.1 plus a translator who
+  ships an RTL `.po`.
+
+---
+
 ### Follow-ups from landed passes
 
 Small, well-scoped items that surfaced while finishing an earlier pass but
@@ -1429,6 +1530,25 @@ landing sequence stays legible.
   kill-switch for canvas effects, `rel="noopener noreferrer"` on
   `target="_blank"`, heading hierarchy fixes, `aria-live` status regions
   on flash messages, promote hardcoded colors into variables.  (v3.4.0)
+- [x] **Pass 40 (16 items)** — Tier-1 indie-review sweep (2026-04-24
+  14-agent review): chdman_path RCE validator + admin gate (40.1),
+  CHD convert/verify path traversal (40.2), archive-scanner m3u admin
+  gate + per-entry safe_path (40.3), Steam achievements user-scoping
+  IDOR (40.4), ETag cache-bleed user-id discriminator (40.5), players
+  fill-only invariant + `normalize_players_value` (40.6), TGDB image
+  download SSRF gate (40.7), museum job preserves failed status (40.8),
+  ImageResizeJob persistence + lock discipline (40.9), shutdown-aware
+  rate-limit sleeps across 5 jobs (40.10), CHD conversion atomic + verify
+  wired (40.11), toast-controller XSS on system_name (40.12), showModal
+  opt-in HTML via options.allowHtml (40.13), PSN trophy-detail
+  game-link search XSS (40.14), `download_image` atomic + stale-clear
+  race fix (40.15), `docs/PROXY-DEPLOY.md` authored for
+  RETRODB_TRUST_PROXY trust contract (40.16).  (v3.4.1 — v3.5.0)
+- [x] **Pass 41.1 (3 items)** — Tier-2 auth hygiene: `login_required`
+  5-name allow-list bypass dropped, `api_change_password` rate bucket
+  re-keyed to `(ip, user_id)` (isolated from `/api/login` and per-user),
+  `count_stale_password_hashes()` startup sweep with `logger.warning`
+  for active users below the OWASP PBKDF2 floor.  (v3.5.1)
 
 ---
 
@@ -1444,7 +1564,6 @@ not added to the roadmap. Document here so they don't keep re-appearing.
   suckless PRAGMA-user_version pattern instead.
 - **Progressive Web App / service worker**: no offline story for a
   localhost ROM manager. Adds maintenance burden for zero user benefit.
-- **i18n / localization**: explicitly English-only single-operator context.
 - **Docker image / container**: `setup.sh` + `install_gui.py` already
   target bare-metal installs. A container would add a distribution surface
   without simplifying anything for current users.
