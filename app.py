@@ -1451,6 +1451,24 @@ def api_timezones():
 ensure_user_tables()
 init_database()
 
+# Pass 41.1.C — surface accounts whose password_hash is below the current
+# OWASP floor (PBKDF2_ITERATIONS).  needs_rehash() only fires on the next
+# successful login, so dormant accounts retain pre-bump 100k-iteration
+# hashes indefinitely.  An operator can act on the warning by forcing a
+# password change in User Management.
+try:
+    from services.auth import count_stale_password_hashes
+    _stale_hash_count = count_stale_password_hashes()
+    if _stale_hash_count:
+        logger.warning(
+            "%d active user(s) have password hashes below the current "
+            "OWASP floor; force a password change for any idle accounts "
+            "to upgrade now (User Management → Reset Password).",
+            _stale_hash_count,
+        )
+except Exception as _e:
+    logger.error(f"Stale-password-hash sweep failed: {_e}")
+
 # Mark interrupted jobs for dashboard recovery (no silent auto-resume)
 # In debug mode, Flask's reloader spawns a child process (worker) that handles
 # HTTP requests. Module-level code runs in BOTH processes. We must only mark

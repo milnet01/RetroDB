@@ -1,3 +1,18 @@
+- version: 3.5.1
+  date: 2026-04-25
+  tags:
+  - type: security
+    label: Pass 41.1 — auth decorator allow-list dropped, change-pwd bucket re-keyed, stale-hash sweep
+  body: |
+    <ul>
+        <li><strong>Pass 41.1.A (HIGH) &mdash; <code>login_required</code> allow-list bypass removed</strong>. The decorator at <code>services/auth.py:204</code> short-circuited for <code>request.endpoint in ['auth.login', 'auth.api_login', 'static', 'help_page', 'changelog']</code>. Any future endpoint named <code>help_page</code> / <code>changelog</code> / <code>static</code> would have inherited a silent public bypass, regardless of intent. None of the current public routes apply <code>@login_required</code> in the first place, so the allow-list was dead weight + footgun. Dropped; public pages must simply not apply the decorator.</li>
+        <li><strong>Pass 41.1.B (HIGH) &mdash; <code>api_change_password</code> rate bucket re-keyed</strong>. The endpoint shared the IP-only login bucket via <code>rate_limit_login(client_ip)</code> &mdash; meaning 5 failed change-password attempts from user A throttled <code>/api/login</code> for every other user on the same LAN. Now buckets on <code>f"{ip}:cpw:{user_id}"</code>: isolated from <code>/api/login</code> AND per-user (user A's failures don't block user B). MAX_ATTEMPTS budget unchanged.</li>
+        <li><strong>Pass 41.1.C (MEDIUM) &mdash; stale-password-hash startup sweep</strong>. <code>needs_rehash()</code> only fires on the next successful login, so dormant accounts retain pre-bump 100k-iteration PBKDF2 hashes indefinitely (current OWASP floor: 600k). New <code>services/auth.count_stale_password_hashes()</code> helper queries active users; <code>app.py</code> calls it after migrations and emits a <code>logger.warning</code> when count &gt; 0 so an operator can force a password change on long-idle accounts.</li>
+        <li><strong>Tests</strong>. New <code>tests/test_pass41_security.py::TestPass41_1A/B/C</code> &mdash; 10 cases. Source-level pins (allow-list literals removed; <code>rate_limit_login(client_ip)</code> gone from <code>api_change_password</code>; <code>count_stale_password_hashes</code> wired into <code>app.py</code> with a paired <code>logger.warning</code>) plus functional smokes (change-password bucket isolated from login bucket; per-user isolation; stale-hash counter handles legacy / below-floor / at-floor / above-floor / malformed cases). 513 passed (was 503).</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 41.1 closed. Pass 41 has 13 sub-passes remaining (41.2 &hellip; 41.14).</li>
+        <li><strong>Version bump 3.5.0 &rarr; 3.5.1</strong>: patch (auth hardening; no behavior change for end users beyond the inability to LAN-lockout via change-password).</li>
+    </ul>
+
 - version: 3.5.0
   date: 2026-04-25
   tags:

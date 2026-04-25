@@ -13,6 +13,16 @@ from flask import g, session, redirect, url_for, flash, request
 
 from services.database import query
 
+# Re-exported under the module so monkeypatch tests + the startup sweep can
+# stub the DB layer without reaching into services.database.
+__all__ = (
+    'hash_password', 'verify_password', 'needs_rehash',
+    'count_stale_password_hashes',
+    'get_current_user', 'get_user_settings', 'get_user_ra_credentials',
+    'has_permission', 'login_required', 'permission_required',
+    'admin_required', 'editor_required',
+)
+
 
 # =============================================================================
 # ROLE PERMISSIONS
@@ -91,6 +101,20 @@ def verify_password(password, password_hash):
         return hmac.compare_digest(hash_obj.hex(), stored_hash)
     except Exception:
         return False
+
+
+def count_stale_password_hashes():
+    """Return the count of active users whose password_hash is below the
+    current OWASP floor (PBKDF2_ITERATIONS) or malformed.
+
+    Pass 41.1.C — needs_rehash() only fires on the next successful login,
+    so dormant accounts retain pre-bump 100k-iteration hashes indefinitely.
+    Surfacing the count at startup lets an operator force-change long-idle
+    accounts (User Management → Reset Password) instead of waiting for
+    an organic login that may never come.
+    """
+    rows = query("SELECT password_hash FROM users WHERE is_active = 1")
+    return sum(1 for r in rows if needs_rehash(r['password_hash']))
 
 
 def needs_rehash(password_hash):
@@ -188,10 +212,13 @@ def has_permission(permission):
 def login_required(f):
     """
     Decorator to require login for a route.
-    
-    Public pages (dashboard, analytics, login, static) are exempt.
-    Redirects to login page with 'next' parameter for return.
-    
+
+    Pass 41.1.A — the legacy 5-name endpoint allow-list (auth.login,
+    auth.api_login, static, help_page, changelog) was removed: any future
+    endpoint colliding with one of those names became silently public,
+    a footgun the indie-review flagged.  Public pages must simply not
+    apply this decorator.
+
     Usage:
         @app.route('/protected')
         @login_required
@@ -200,9 +227,6 @@ def login_required(f):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        # Public pages don't require login
-        if request.endpoint in ['auth.login', 'auth.api_login', 'static', 'help_page', 'changelog']:
-            return f(*args, **kwargs)
         if not g.user:
             flash('Please log in to access this page', 'warning')
             return redirect(url_for('auth.login', next=request.url))

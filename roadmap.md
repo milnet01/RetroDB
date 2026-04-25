@@ -516,7 +516,14 @@ paths or silent-corruption vectors under routine use.
   startup check flagging users with stale hash params for admin
   attention.
 - **Source**: 2026-04-24 indie-review, auth H1/H2/H3.
-- **Status**: todo
+- **Status**: done (v3.5.1) — A: allow-list dropped from `login_required`
+  (none of the listed endpoints had `@login_required` applied today, so
+  the allow-list was dead-code-as-footgun). B: `api_change_password`
+  rate bucket now `f"{ip}:cpw:{user_id}"` — isolated from `/api/login`
+  AND per-user. C: `services/auth.count_stale_password_hashes()` helper
+  + `app.py` startup sweep that emits `logger.warning` when active
+  users hold below-floor or malformed PBKDF2 hashes. Tests:
+  `tests/test_pass41_security.py::TestPass41_1A/B/C` (10 cases).
 
 #### Pass 41.2 Database — FK-OFF PRAGMA is no-op inside transaction; connection leaks in 10+ route sites
 

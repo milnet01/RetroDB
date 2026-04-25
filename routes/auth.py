@@ -341,12 +341,16 @@ def api_change_password():
     if not g.user:
         return error('Not logged in', code=200)
 
-    # Pass 24.4 — rate-limit the change-password endpoint. Previously
-    # unbounded, so an attacker with any session could brute-force
-    # `current_password` indefinitely. Reuses the login-attempts bucket
-    # (5 failures in 5 minutes per IP) — same attack class, same budget.
+    # Pass 41.1.B — bucket on (ip, user_id), not bare IP.  The legacy
+    # IP-only bucket was shared with /api/login, so 5 failed
+    # change-password attempts from user A on a shared LAN locked out
+    # /api/login for every other user on that LAN.  Per-(ip, user)
+    # buckets isolate the change-password counter from /api/login AND
+    # from other users.  Same MAX_ATTEMPTS budget as Pass 24.4.
     client_ip = request.remote_addr or '127.0.0.1'
-    if not rate_limit_login(client_ip):
+    user_id = g.user['id']
+    rl_bucket = f"{client_ip}:cpw:{user_id}"
+    if not rate_limit_login(rl_bucket):
         return error('Too many attempts. Please try again later.', 429)
 
     data = request.get_json()
@@ -362,17 +366,16 @@ def api_change_password():
         return error('Password must be at least 12 characters', code=200)
 
     # Verify current password
-    user = query("SELECT password_hash FROM users WHERE id = ?", (g.user['id'],), one=True)
+    user = query("SELECT password_hash FROM users WHERE id = ?", (user_id,), one=True)
     if not user or not verify_password(current_password, user['password_hash']):
-        record_login_attempt(client_ip, False)
+        record_login_attempt(rl_bucket, False)
         return error('Current password is incorrect', code=200)
 
     # Update password and clear force_password_change flag
     new_hash = hash_password(new_password)
-    user_id = g.user['id']
     execute("UPDATE users SET password_hash = ?, force_password_change = 0 WHERE id = ?", (new_hash, user_id))
 
-    record_login_attempt(client_ip, True)
+    record_login_attempt(rl_bucket, True)
 
     # Pass 33.5 — OWASP ASVS V3.7. A credentials-change is a
     # session-rotation boundary: a hijacked cookie that reaches this path
