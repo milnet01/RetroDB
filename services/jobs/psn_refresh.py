@@ -302,17 +302,33 @@ class PSNRefreshJob:
                 trophy_titles = {}
                 fetch_error = [None]  # mutable for closure
                 fetch_count = [0]  # mutable counter for progress
+                # Pass 41.6.C — explicit cancel event for the inner thread.
+                # Previously the inner thread read `self.cancelled` directly
+                # (without the lock) and the outer 300s join was the only
+                # way to stop it. If the join timed out, the abandoned
+                # thread kept iterating `client.trophy_titles()` and
+                # mutating shared state (trophy_titles dict, fetch_count,
+                # self.current_game_title). The event below is set both on
+                # user-cancel and on timeout, so the abandoned thread sees
+                # the signal on its next iteration and exits without
+                # writing further.
+                fetch_cancelled = threading.Event()
 
                 def _fetch_titles():
                     try:
                         for t in client.trophy_titles():
-                            if self.cancelled:
-                                logger.info("PSN refresh: trophy title fetch cancelled by user")
+                            if fetch_cancelled.is_set() or self.cancelled:
+                                logger.info("PSN refresh: trophy title fetch cancelled")
                                 break
                             trophy_titles[t.np_communication_id] = t
                             fetch_count[0] += 1
                             if fetch_count[0] % 25 == 0:
                                 logger.info(f"PSN refresh: fetched {fetch_count[0]} trophy titles so far...")
+                            # Drop the broadcast progress write on the floor
+                            # if we've already been told to stop — saves a
+                            # last gratuitous lock acquire after cancel.
+                            if fetch_cancelled.is_set():
+                                break
                             with self._lock:
                                 self.current_game_title = f'Fetching PSN trophy list... ({fetch_count[0]} found)'
                     except Exception as e:
@@ -324,7 +340,12 @@ class PSNRefreshJob:
                 fetch_thread.join(timeout=FETCH_TIMEOUT)
 
                 if fetch_thread.is_alive():
-                    logger.error(f"PSN refresh: trophy list fetch timed out after {FETCH_TIMEOUT}s (fetched {fetch_count[0]} so far)")
+                    # Pass 41.6.C — tell the abandoned inner thread to stop
+                    # writing to shared state on its next iteration. We
+                    # don't wait on it (daemon thread; process exit will
+                    # reap if it's truly stuck on a network read).
+                    fetch_cancelled.set()
+                    logger.error(f"PSN refresh: trophy list fetch timed out after {FETCH_TIMEOUT}s (fetched {fetch_count[0]} so far); abandoned thread told to exit")
                     with self._lock:
                         self.completed = True
                         self.running = False

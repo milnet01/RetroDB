@@ -672,7 +672,33 @@ paths or silent-corruption vectors under routine use.
   `_fetch_titles` an explicit cancel event; treat the 300s timeout
   as "abandoned, may still run" and drop its state updates.
 - **Source**: 2026-04-24 indie-review, jobs H1/H2/H3.
-- **Status**: todo
+- **Status**: done (v3.5.14) — A: new
+  `services/jobs/base.acquire_job_singleton_lock(name)` /
+  `release_job_singleton_lock(fd)` helpers wrap
+  `fcntl.flock(LOCK_EX | LOCK_NB)` on a sentinel file under
+  `data/job_locks/`. Applied to `BulkScrapeJob` as the reference
+  implementation; Windows / NFS gracefully degrade. B: persist payload
+  snapshot under lock + persist call outside in
+  `alt_titles_backfill.py` and `hltb_bulk.py` (matches
+  `bulk_scrape.py:738-745` pattern). C: PSN `_fetch_titles` thread
+  gets an explicit `threading.Event` set on cancel AND on the 300s
+  timeout, so an abandoned inner thread stops writing shared state.
+  Tests: `tests/test_pass41_security.py::TestPass41_6A/B/C` (7 cases);
+  test fixtures updated to release the FD in teardown.
+
+#### Pass 41.6.A-extend Apply singleton lock to remaining 9 job classes (carry-over from 41.6)
+
+- **Target**: `ra_sync`, `ra_refresh`, `psn_refresh`,
+  `museum_generate`, `image_resize`, `steam_sync`, `xbox_sync`,
+  `alt_titles_backfill`, `hltb_bulk`.
+- **Why**: Pass 41.6.A landed the helper + the
+  `BulkScrapeJob` reference implementation; the other 9 job classes
+  still have no cross-process guard.
+- **Plan**: same pattern — `start()` calls `acquire_job_singleton_lock`
+  with the job name; the FD lives on `self._singleton_fd`; the worker's
+  terminal cleanup releases it. Each job's existing test fixture needs
+  the same teardown release pattern as `tests/test_bulk_scrape_job.py`.
+- **Status**: todo (carry-over from Pass 41.6)
 
 #### Pass 41.7 OAuth / trophy-parser — TROPUSR bounds hardening + Xbox redirect URL concat + RA 401 observability
 

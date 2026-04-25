@@ -203,15 +203,20 @@ class HLTBBulkLookupJob:
                         self.current_game = game['title']
                         self.current_system = game.get('system_name') or ''
 
+                    # Pass 41.6.B — snapshot under the lock, persist outside.
+                    # persist_job_progress is a SQLite write (10–50ms typical,
+                    # up to 30s under WAL contention) that previously blocked
+                    # every status-poll request taking the same lock.
                     if time.time() - last_persist >= 15:
                         _commit_with_retry(write_conn)
                         with self._lock:
-                            persist_job_progress(persist_id, {
+                            progress_payload = {
                                 'current': i + 1, 'total': len(games),
                                 'auto_applied': self.auto_applied_count,
                                 'queued': self.queued_count,
                                 'current_item': self.current_game,
-                            })
+                            }
+                        persist_job_progress(persist_id, progress_payload)
                         last_persist = time.time()
 
                     try:

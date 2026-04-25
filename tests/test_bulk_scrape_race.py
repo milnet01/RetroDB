@@ -29,13 +29,30 @@ def job_with_real_thread():
     we replace it with a controllable stub so the race is testable.
     """
     mem_db = _make_memory_db()
+    # Pass 41.6.A — track BulkScrapeJob instances created via this fixture
+    # so we can release any singleton FDs they acquired in teardown. Without
+    # this, the cross-process flock survives the test and the next test's
+    # start() returns "already running on another worker".
+    _instances = []
+
+    class _TrackingJob(BulkScrapeJob):
+        def __init__(self):
+            super().__init__()
+            _instances.append(self)
+
     with patch.object(bulk_scrape_mod, '_get_conn', return_value=mem_db), \
          patch.object(bulk_scrape_mod, 'persist_job_start', return_value=None), \
          patch.object(bulk_scrape_mod, 'persist_job_progress', return_value=None), \
          patch.object(bulk_scrape_mod, 'persist_job_complete', return_value=None), \
          patch.object(bulk_scrape_mod, 'persist_job_queued', return_value=999), \
          patch.object(bulk_scrape_mod, 'remove_queued_job', return_value=None):
-        yield BulkScrapeJob
+        yield _TrackingJob
+
+    from services.jobs.base import release_job_singleton_lock
+    for inst in _instances:
+        if getattr(inst, '_singleton_fd', None) is not None:
+            release_job_singleton_lock(inst._singleton_fd)
+            inst._singleton_fd = None
 
 
 class TestSwapWaitsForWorkerExit:

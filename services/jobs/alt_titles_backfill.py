@@ -149,16 +149,22 @@ class AltTitlesBackfillJob:
                         self.current_game = game['title']
                         self.current_system = game.get('system_name') or ''
 
-                    # Periodic progress persistence
+                    # Periodic progress persistence — Pass 41.6.B: snapshot
+                    # job state under the lock, then release the lock before
+                    # the persist call. persist_job_progress writes to SQLite
+                    # (10–50ms typical, up to 30s under WAL contention) and
+                    # blocked every status-poll request that took the same
+                    # lock during the write window.
                     if time.time() - last_persist >= 15:
                         _commit_with_retry(write_conn)
                         with self._lock:
-                            persist_job_progress(persist_id, {
+                            progress_payload = {
                                 'current': i + 1, 'total': len(games),
                                 'updated': self.updated_count,
                                 'failed': self.failed_count,
                                 'current_item': self.current_game,
-                            })
+                            }
+                        persist_job_progress(persist_id, progress_payload)
                         last_persist = time.time()
 
                     try:

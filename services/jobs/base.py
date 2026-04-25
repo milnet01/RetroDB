@@ -257,6 +257,108 @@ def _download_psn_trophy_image(npwr_id, image_url, trophy_id=None):
 
 
 # =============================================================================
+# CROSS-PROCESS JOB SINGLETON LOCK (Pass 41.6.A)
+# =============================================================================
+#
+# Each job class keeps an in-memory `self.running` flag that prevents
+# concurrent starts within a single Python process. Multi-worker WSGI
+# deployments (e.g. `gunicorn --workers 2`) have no cross-process guard:
+# two workers can each run their own bulk-scrape against the same
+# system simultaneously, doubling API load and racing on DB writes.
+#
+# `acquire_job_singleton_lock(name)` opens an `fcntl.flock(LOCK_EX |
+# LOCK_NB)` advisory lock on a sentinel file under `data/job_locks/`.
+# A successful acquire returns the open file descriptor; the caller
+# must keep the FD open for the lifetime of the run and pass it to
+# `release_job_singleton_lock(fd)` from a `finally:` clause when done.
+# A failed acquire returns `None` and the caller should refuse the
+# `start()` request.
+#
+# The OS releases the lock automatically when the process dies (file
+# descriptor closed by kernel), so a SIGKILL'd worker doesn't leave
+# orphan locks. `flock` is process-scoped (not thread-scoped) — fine
+# for our case where each job runs at most one worker thread per process.
+#
+# Linux/macOS only — fcntl is unavailable on Windows. RetroDB ships
+# Linux containers as the deployment target; on Windows the helpers
+# are no-ops (in-memory `self.running` remains the only guard).
+
+_JOB_LOCK_DIR = None
+
+
+def _get_job_lock_dir():
+    global _JOB_LOCK_DIR
+    if _JOB_LOCK_DIR is not None:
+        return _JOB_LOCK_DIR
+    base = os.path.dirname(os.path.abspath(config.DB_PATH))
+    _JOB_LOCK_DIR = os.path.join(base, 'job_locks')
+    try:
+        os.makedirs(_JOB_LOCK_DIR, exist_ok=True)
+    except OSError as e:
+        logger.warning(f"Could not create job-lock dir {_JOB_LOCK_DIR}: {e}")
+    return _JOB_LOCK_DIR
+
+
+def acquire_job_singleton_lock(job_name):
+    """Pass 41.6.A — try to acquire a cross-process advisory lock for a
+    given job name (e.g. 'bulk_scrape', 'ra_sync').
+
+    Returns the open file descriptor on success, `None` on failure
+    (another process is already running this job). The caller must keep
+    the FD open for the duration of the run and pass it to
+    `release_job_singleton_lock(fd)` in a `finally:` clause.
+
+    On Windows / fcntl-unavailable platforms this is a no-op that always
+    returns a sentinel `0` (treat as "acquired"); the in-memory
+    `self.running` flag remains the only guard there.
+    """
+    try:
+        import fcntl
+    except ImportError:
+        # Windows / non-POSIX: no advisory locking available.
+        logger.debug(f"acquire_job_singleton_lock({job_name}): fcntl unavailable; falling back to in-memory guard only")
+        return 0
+    safe_name = ''.join(c for c in job_name if c.isalnum() or c in ('_', '-'))
+    if not safe_name:
+        return None
+    lock_path = os.path.join(_get_job_lock_dir(), f'{safe_name}.lock')
+    try:
+        fd = os.open(lock_path, os.O_CREAT | os.O_RDWR, 0o644)
+    except OSError as e:
+        logger.warning(f"Could not open job-lock file {lock_path}: {e}")
+        return None
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        logger.warning(f"Job '{job_name}' is already running on another worker; refusing concurrent start")
+        os.close(fd)
+        return None
+    except OSError as e:
+        # Some filesystems (NFS) don't support flock — treat as "no
+        # cross-process guard available" and let the caller proceed.
+        logger.warning(f"flock not supported on {lock_path}: {e}; in-memory guard only")
+        os.close(fd)
+        return 0
+    return fd
+
+
+def release_job_singleton_lock(fd):
+    """Release the lock acquired by `acquire_job_singleton_lock`. Safe to
+    call with `None` or the sentinel `0`."""
+    if fd is None or fd == 0:
+        return
+    try:
+        import fcntl
+        fcntl.flock(fd, fcntl.LOCK_UN)
+    except (ImportError, OSError):
+        pass
+    try:
+        os.close(fd)
+    except OSError:
+        pass
+
+
+# =============================================================================
 # JOB PERSISTENCE HELPERS (crash recovery)
 # =============================================================================
 

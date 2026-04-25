@@ -1485,3 +1485,161 @@ class TestPass41_9CSortTitleHeuristic:
         from services.game_utils import generate_sort_title
         # Sanity: the tightening only narrows single-letter Romans.
         assert generate_sort_title('Final Fantasy IX') == 'Final Fantasy 09'
+
+
+# -----------------------------------------------------------------------------
+# 41.6.A — cross-process advisory lock helper
+# -----------------------------------------------------------------------------
+class TestPass41_6ASingletonLock:
+    """`acquire_job_singleton_lock(name)` opens an `fcntl.flock(LOCK_EX |
+    LOCK_NB)` advisory lock on a sentinel file. A successful acquire
+    returns an FD; a failed acquire (another process holds it) returns
+    None. The OS releases the lock automatically on process death so a
+    SIGKILL'd worker doesn't leave orphan locks."""
+
+    def test_helpers_exported(self):
+        from services.jobs.base import (
+            acquire_job_singleton_lock, release_job_singleton_lock,
+        )
+        assert callable(acquire_job_singleton_lock)
+        assert callable(release_job_singleton_lock)
+
+    def test_acquire_then_release_is_repeatable(self):
+        """A successful release returns the lock to "available", so a
+        subsequent acquire succeeds again."""
+        from services.jobs.base import (
+            acquire_job_singleton_lock, release_job_singleton_lock,
+        )
+        fd = acquire_job_singleton_lock('test_singleton_acquire_release')
+        assert fd is not None, "first acquire failed"
+        release_job_singleton_lock(fd)
+        fd2 = acquire_job_singleton_lock('test_singleton_acquire_release')
+        assert fd2 is not None, "re-acquire after release failed"
+        release_job_singleton_lock(fd2)
+
+    def test_second_acquire_blocked_while_held(self):
+        """While one FD holds the lock, a second acquire returns None
+        (non-blocking refusal). Real cross-process testing would need a
+        subprocess; this verifies the same-process flock semantics."""
+        from services.jobs.base import (
+            acquire_job_singleton_lock, release_job_singleton_lock,
+        )
+        try:
+            import fcntl  # noqa: F401
+        except ImportError:
+            import pytest
+            pytest.skip('fcntl unavailable; helper is a no-op on this platform')
+
+        # Open the sentinel file directly and hold it via fcntl ourselves
+        # to simulate "another worker is running".
+        import os
+        from services.jobs.base import _get_job_lock_dir
+        path = os.path.join(_get_job_lock_dir(), 'test_singleton_blocked.lock')
+        fd_outer = os.open(path, os.O_CREAT | os.O_RDWR, 0o644)
+        fcntl.flock(fd_outer, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        try:
+            # Now the helper should refuse.
+            blocked = acquire_job_singleton_lock('test_singleton_blocked')
+            assert blocked is None, (
+                "Pass 41.6.A — helper must return None when the sentinel "
+                "is already locked by another FD"
+            )
+        finally:
+            fcntl.flock(fd_outer, fcntl.LOCK_UN)
+            os.close(fd_outer)
+
+    def test_bulk_scrape_uses_singleton_lock(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'services/jobs/bulk_scrape.py'),
+            encoding='utf-8'
+        ).read()
+        assert 'acquire_job_singleton_lock' in body, (
+            "BulkScrapeJob must call acquire_job_singleton_lock in start() "
+            "(Pass 41.6.A)"
+        )
+        assert 'release_job_singleton_lock' in body, (
+            "BulkScrapeJob must release the lock when the queue empties "
+            "(Pass 41.6.A)"
+        )
+
+
+# -----------------------------------------------------------------------------
+# 41.6.B — persist_job_progress moved out of `with self._lock` blocks
+# -----------------------------------------------------------------------------
+class TestPass41_6BPersistOutsideLock:
+    """`persist_job_progress` is a SQLite write that takes 10–50ms typical
+    and up to 30s under WAL contention. Calling it inside `with self._lock`
+    blocked every status-poll request that took the same lock during the
+    write window. Pass 41.6.B snapshots the progress payload under the
+    lock, then releases the lock before the persist call."""
+
+    def test_alt_titles_backfill_persists_outside_lock(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'services/jobs/alt_titles_backfill.py'),
+            encoding='utf-8'
+        ).read()
+        # The Pass 41.6.B marker comment is the contract.
+        assert 'Pass 41.6.B' in body, (
+            "alt_titles_backfill.py must carry the Pass 41.6.B marker"
+        )
+        # Functional pin — the snapshot pattern: a `progress_payload = {`
+        # local is built under the lock, then `persist_job_progress` is
+        # called with that local OUTSIDE the lock. Source-level grep is
+        # sufficient: these two literals must both appear.
+        assert 'progress_payload = {' in body, (
+            "Pass 41.6.B — alt_titles_backfill.py must snapshot progress "
+            "into a local under the lock"
+        )
+        assert 'persist_job_progress(persist_id, progress_payload)' in body, (
+            "Pass 41.6.B — alt_titles_backfill.py must call "
+            "persist_job_progress(persist_id, progress_payload) outside "
+            "the lock"
+        )
+
+    def test_hltb_bulk_persists_outside_lock(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'services/jobs/hltb_bulk.py'),
+            encoding='utf-8'
+        ).read()
+        assert 'Pass 41.6.B' in body, (
+            "hltb_bulk.py must carry the Pass 41.6.B marker"
+        )
+        assert 'progress_payload = {' in body, (
+            "Pass 41.6.B — hltb_bulk.py must snapshot progress into a "
+            "local under the lock"
+        )
+        assert 'persist_job_progress(persist_id, progress_payload)' in body, (
+            "Pass 41.6.B — hltb_bulk.py must call persist_job_progress "
+            "(persist_id, progress_payload) outside the lock"
+        )
+
+
+# -----------------------------------------------------------------------------
+# 41.6.C — psn_refresh _fetch_titles inner thread has explicit cancel event
+# -----------------------------------------------------------------------------
+class TestPass41_6CPsnFetchCancelEvent:
+    """The inner `_fetch_titles` thread previously read `self.cancelled`
+    directly without the lock and the outer 300s join was the only way
+    to stop it. If the join timed out, the abandoned thread continued
+    iterating `client.trophy_titles()` and mutating shared state. Pass
+    41.6.C introduces an explicit `threading.Event` set on both
+    user-cancel and timeout; the inner thread polls the event and exits
+    on its next iteration."""
+
+    def test_fetch_cancelled_event_present(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'services/jobs/psn_refresh.py'),
+            encoding='utf-8'
+        ).read()
+        assert 'fetch_cancelled = threading.Event()' in body, (
+            "Pass 41.6.C — psn_refresh.py must define a threading.Event "
+            "for cancellation of the inner _fetch_titles thread"
+        )
+        assert 'fetch_cancelled.is_set()' in body, (
+            "Pass 41.6.C — _fetch_titles must poll fetch_cancelled.is_set() "
+            "to exit promptly on cancel"
+        )
+        assert 'fetch_cancelled.set()' in body, (
+            "Pass 41.6.C — outer timeout handler must call fetch_cancelled.set() "
+            "to tell the abandoned inner thread to stop writing shared state"
+        )

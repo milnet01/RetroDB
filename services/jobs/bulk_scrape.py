@@ -14,6 +14,7 @@ from datetime import datetime, timezone
 from services.jobs.base import (
     _get_conn, persist_job_start, persist_job_progress, persist_job_complete,
     persist_job_queued, remove_queued_job, resolve_terminal_status,
+    acquire_job_singleton_lock, release_job_singleton_lock,
 )
 
 logger = logging.getLogger(__name__)
@@ -49,6 +50,10 @@ class BulkScrapeJob:
         self._lock = threading.Lock()
         self._thread = None
         self._queue = []  # Queue of pending jobs
+        # Pass 41.6.A — cross-process advisory lock FD; None when no chain
+        # is active. Acquired in start(), released in _start_next_queued()
+        # when the queue empties.
+        self._singleton_fd = None
         self.reset()
 
     def reset(self):
@@ -231,7 +236,20 @@ class BulkScrapeJob:
                     'queue_position': len(self._queue)
                 }
 
-            # No job running, start immediately
+            # No job running, start immediately. Pass 41.6.A — try the
+            # cross-process advisory lock first. If another worker is
+            # already running bulk_scrape (multi-worker WSGI deploy), the
+            # acquire returns None and we refuse the start. Held FD lives
+            # on `self._singleton_fd` for the whole queue-chain; released
+            # in `_start_next_queued` when the queue empties.
+            singleton_fd = acquire_job_singleton_lock('bulk_scrape')
+            if singleton_fd is None:
+                return {
+                    'success': False,
+                    'error': 'A bulk scrape is already running on another worker process. Wait for it to complete or stop the other worker.',
+                }
+            self._singleton_fd = singleton_fd
+
             self.reset()
             self.job_id = new_job_id
             self.game_ids = game_ids
@@ -603,9 +621,18 @@ class BulkScrapeJob:
         return result.get('success', False)
 
     def _start_next_queued(self):
-        """Start the next job from the queue (called after current job completes)"""
+        """Start the next job from the queue (called after current job completes).
+
+        Pass 41.6.A — when the queue is empty, releases the cross-process
+        singleton FD held since the original `start()`. Subsequent
+        `start()` calls will acquire a fresh lock.
+        """
         with self._lock:
             if not self._queue:
+                fd = getattr(self, '_singleton_fd', None)
+                if fd is not None:
+                    release_job_singleton_lock(fd)
+                    self._singleton_fd = None
                 return False
 
             # Get next job from queue
