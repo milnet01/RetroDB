@@ -1,3 +1,18 @@
+- version: 3.4.11
+  date: 2026-04-25
+  tags:
+  - type: reliability
+    label: Pass 40.11 — CHD conversion is now atomic + verify-on-convert wired
+  body: |
+    <ul>
+        <li><strong>Pass 40.11 (CRITICAL) &mdash; CHD conversion atomic + dead <code>chd_verify_after_convert</code> wired</strong>. Both <code>scraper/rom_tools.py::CHDConverter._convert_file</code> and the inline worker in <code>routes/tools.py::api_chd_converter_convert</code> ran <code>chdman createcd -i src -o dst</code> where <code>dst = src.with_suffix('.chd')</code>. Any mid-run kill (<code>subprocess.TimeoutExpired</code>, SIGKILL from OOM, container restart) left a truncated <code>.chd</code>. Worse: if <code>chd_delete_originals=True</code> and chdman exited 0 with a warning-ridden partial output, <code>src.unlink()</code> fired and the next run saw <code>dst.exists() → True</code>, <code>chd_skip_existing=True</code> → skipped. Permanent corruption. Separately, <code>chd_verify_after_convert: bool = True</code> was declared in <code>ROMToolsConfig</code> but had zero readers &mdash; surfaced in the UI but did nothing.</li>
+        <li><strong>Fix &mdash; atomic write</strong>. Both paths now write chdman output to a sibling <code>.chd.part</code> tempfile. Stale tempfiles from previous failed runs are unlinked at the start of each iteration. <code>os.replace(tmp, dst)</code> only fires after the optional verify; on any exception or timeout, the <code>finally</code> block unlinks the tempfile so the directory entry never points at a partial file.</li>
+        <li><strong>Fix &mdash; verify hookup</strong>. When <code>chd_verify_after_convert</code> is on (the default), both paths now run <code>chdman verify -i tmp</code> with a 600 s timeout after a successful conversion; a non-zero return-code marks the task as failed and the tempfile is dropped. Source <code>.unlink()</code> only happens after the verified <code>.chd</code> is in place.</li>
+        <li><strong>Tests</strong>. <code>TestPass40_11ChdAtomicConversion</code> &mdash; 4 source-level pins (rom_tools converter uses <code>.chd.part</code> + <code>os.replace</code> + reads <code>chd_verify_after_convert</code> + calls chdman <code>verify</code>; inline worker mirrors). 492 passed (was 488).</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 40.11 closed. 5 Tier-1 items remain.</li>
+        <li><strong>Version bump 3.4.10 &rarr; 3.4.11</strong>: patch (reliability; observable change &mdash; verify failures are now reported in the task log instead of silently producing corrupt CHDs that survive future "skip existing" passes).</li>
+    </ul>
+
 - version: 3.4.10
   date: 2026-04-25
   tags:

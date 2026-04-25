@@ -860,3 +860,55 @@ class TestPass40_10ShutdownAwareSleep:
             mod = __import__(f'services.jobs.{name}', fromlist=['*'])
             assert hasattr(mod, 'shutdown_requested'), \
                 f'{name}.py must import shutdown_requested (Pass 40.10)'
+
+
+# -----------------------------------------------------------------------------
+# 40.11 — CHD conversion non-atomic + dead chd_verify_after_convert
+# -----------------------------------------------------------------------------
+class TestPass40_11ChdAtomicConversion:
+    """chdman output must be written to a tempfile, optionally verified,
+    and only os.replace'd to the final path on success.  Otherwise a
+    mid-run kill leaves a truncated .chd that chd_skip_existing treats
+    as good on the next pass."""
+
+    def test_rom_tools_converter_uses_tempfile(self):
+        from scraper import rom_tools as mod
+        src = open(mod.__file__).read()
+        idx = src.index('def _convert_file')
+        end = src.index('def _timestamp', idx)
+        body = src[idx:end]
+        assert '.chd.part' in body, \
+            'CHDConverter._convert_file must write to .chd.part tempfile (Pass 40.11)'
+        assert 'os.replace(' in body, \
+            'CHDConverter._convert_file must os.replace tmp → dst (Pass 40.11)'
+
+    def test_rom_tools_converter_runs_verify(self):
+        from scraper import rom_tools as mod
+        src = open(mod.__file__).read()
+        idx = src.index('def _convert_file')
+        end = src.index('def _timestamp', idx)
+        body = src[idx:end]
+        assert 'chd_verify_after_convert' in body, \
+            'CHDConverter must read chd_verify_after_convert (Pass 40.11)'
+        assert "'verify'" in body or '"verify"' in body, \
+            'CHDConverter must call chdman verify when configured (Pass 40.11)'
+
+    def test_routes_inline_worker_uses_tempfile(self):
+        from routes import tools as mod
+        src = open(mod.__file__).read()
+        idx = src.index('def api_chd_converter_convert')
+        end = src.index('def api_chd_verify_scan', idx)
+        body = src[idx:end]
+        assert '.part' in body, \
+            'inline CHD converter must write to .chd.part (Pass 40.11)'
+        assert 'os.replace(' in body, \
+            'inline CHD converter must os.replace tmp → dst (Pass 40.11)'
+
+    def test_routes_inline_worker_runs_verify(self):
+        from routes import tools as mod
+        src = open(mod.__file__).read()
+        idx = src.index('def api_chd_converter_convert')
+        end = src.index('def api_chd_verify_scan', idx)
+        body = src[idx:end]
+        assert 'chd_verify_after_convert' in body, \
+            'inline CHD converter must honor chd_verify_after_convert (Pass 40.11)'

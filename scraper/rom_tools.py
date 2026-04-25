@@ -1127,10 +1127,19 @@ class CHDConverter:
         return shutil.which(self.config.chdman_path) is not None
     
     def _convert_file(self, file_path: str, task: TaskStatus):
-        """Convert a single file to CHD"""
+        """Convert a single file to CHD atomically.
+
+        Pass 40.11 — chdman writes to a sibling .chd.part tempfile first;
+        if `chd_verify_after_convert` is on we run `chdman verify -i tmp`
+        before promoting; only then does os.replace move it to the final
+        path.  Any mid-conversion kill (timeout / SIGKILL / OOM) leaves
+        a .chd.part that we unlink, never a corrupted .chd that
+        chd_skip_existing would treat as good on the next pass.
+        """
         src = Path(file_path)
         dst = src.with_suffix(".chd")
-        
+        tmp = dst.with_suffix(".chd.part")
+
         file_result = {
             "source": str(src),
             "destination": str(dst),
@@ -1139,7 +1148,7 @@ class CHDConverter:
             "status": "pending",
             "error": ""
         }
-        
+
         try:
             if dst.exists() and self.config.chd_skip_existing:
                 file_result["status"] = "skipped"
@@ -1147,33 +1156,53 @@ class CHDConverter:
                 task.logs.append(f"[{self._timestamp()}] Skipped (CHD exists): {src.name}")
                 task.results["files"].append(file_result)
                 return
-            
+
+            # Clean up any stale tempfile from a previous failed run.
+            if tmp.exists():
+                try:
+                    tmp.unlink()
+                except OSError:
+                    pass
+
             task.logs.append(f"[{self._timestamp()}] Converting: {src.name}")
-            
-            # Build chdman command
-            cmd = [self.config.chdman_path, "createcd", "-i", str(src), "-o", str(dst)]
-            
-            # Run conversion
+
+            cmd = [self.config.chdman_path, "createcd", "-i", str(src), "-o", str(tmp)]
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=3600)
-            
-            if result.returncode == 0 and dst.exists():
-                file_result["status"] = "success"
-                file_result["compressed_size"] = dst.stat().st_size
-                task.results["converted"] += 1
-                task.results["original_size"] += file_result["original_size"]
-                task.results["compressed_size"] += file_result["compressed_size"]
-                task.logs.append(f"[{self._timestamp()}] ✓ Converted: {src.name} ({self._format_size(file_result['compressed_size'])})")
-                
-                # Delete original if requested
-                if self.config.chd_delete_originals:
-                    src.unlink()
-                    task.logs.append(f"[{self._timestamp()}] Deleted original: {src.name}")
-            else:
+
+            if result.returncode != 0 or not tmp.exists():
                 file_result["status"] = "failed"
                 file_result["error"] = result.stderr[:500] if result.stderr else "Unknown error"
                 task.results["failed"] += 1
                 task.logs.append(f"[{self._timestamp()}] ✗ Failed: {src.name}")
-                
+                return
+
+            # Optional verify before promoting the tempfile.
+            if self.config.chd_verify_after_convert:
+                verify = subprocess.run(
+                    [self.config.chdman_path, "verify", "-i", str(tmp)],
+                    capture_output=True, text=True, timeout=600,
+                )
+                if verify.returncode != 0:
+                    file_result["status"] = "failed"
+                    file_result["error"] = (verify.stderr[:500] or "Verify failed")
+                    task.results["failed"] += 1
+                    task.logs.append(f"[{self._timestamp()}] ✗ Verify failed: {src.name}")
+                    return
+
+            os.replace(str(tmp), str(dst))
+
+            file_result["status"] = "success"
+            file_result["compressed_size"] = dst.stat().st_size
+            task.results["converted"] += 1
+            task.results["original_size"] += file_result["original_size"]
+            task.results["compressed_size"] += file_result["compressed_size"]
+            task.logs.append(f"[{self._timestamp()}] ✓ Converted: {src.name} ({self._format_size(file_result['compressed_size'])})")
+
+            # Delete original only after the verified .chd is in place.
+            if self.config.chd_delete_originals:
+                src.unlink()
+                task.logs.append(f"[{self._timestamp()}] Deleted original: {src.name}")
+
         except subprocess.TimeoutExpired:
             file_result["status"] = "failed"
             file_result["error"] = "Conversion timed out"
@@ -1184,8 +1213,14 @@ class CHDConverter:
             file_result["error"] = str(e)
             task.results["failed"] += 1
             task.logs.append(f"[{self._timestamp()}] ✗ Error: {src.name} - {e}")
-        
-        task.results["files"].append(file_result)
+        finally:
+            # Drop any partial tempfile so the next run starts clean.
+            if tmp.exists() and file_result["status"] != "success":
+                try:
+                    tmp.unlink()
+                except OSError:
+                    pass
+            task.results["files"].append(file_result)
     
     def _timestamp(self) -> str:
         return datetime.now().strftime("%H:%M:%S")

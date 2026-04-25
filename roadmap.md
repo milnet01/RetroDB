@@ -351,7 +351,15 @@ paths or silent-corruption vectors under routine use.
   the `CHDConverter` class and the `routes/tools.py` inline worker —
   one implementation.
 - **Source**: 2026-04-24 indie-review, image/media #3.
-- **Status**: todo
+- **Status**: done (v3.4.11) — both paths now write to `.chd.part`,
+  optionally `chdman verify -i tmp` (default on) before
+  `os.replace(tmp, dst)`; `finally` unlinks the tempfile on any
+  exception/timeout so the directory entry never points at a partial
+  file. Source `.unlink()` only after the verified `.chd` is in place.
+  CHDConverter and the inline worker still duplicated &mdash; left for a
+  later refactor pass; both implementations now have identical
+  semantics. Tests:
+  `test_pass40_security.py::TestPass40_11ChdAtomicConversion`.
 
 #### Pass 40.12 Toast-controller XSS on `job.system_name` (CRITICAL, S)
 

@@ -675,33 +675,70 @@ def api_chd_converter_convert():
 
             src_size = os.path.getsize(file_path)
             dst_path = os.path.splitext(file_path)[0] + '.chd'
+            tmp_path = dst_path + '.part'
 
             task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Converting: {os.path.basename(file_path)}")
 
+            # Pass 40.11 — atomic write: chdman → .chd.part, optional verify,
+            # then os.replace.  Mirrors CHDConverter._convert_file.  Without
+            # this, a SIGKILL mid-conversion left a truncated .chd that
+            # chd_skip_existing then treated as good on the next run.
+            chd_succeeded = False
             try:
-                cmd = [chdman_path, 'createcd', '-i', file_path, '-o', dst_path]
+                # Clean up any stale tempfile from a previous failed run.
+                if os.path.exists(tmp_path):
+                    try:
+                        os.remove(tmp_path)
+                    except OSError:
+                        pass
+
+                cmd = [chdman_path, 'createcd', '-i', file_path, '-o', tmp_path]
                 result = subprocess.run(cmd, capture_output=True, text=True, timeout=3600)
-                
-                if result.returncode == 0 and os.path.exists(dst_path):
-                    dst_size = os.path.getsize(dst_path)
-                    task['results']['converted'] += 1
-                    task['results']['original_size'] += src_size
-                    task['results']['compressed_size'] += dst_size
-                    task['results']['files'].append({
-                        'source': file_path, 'destination': dst_path,
-                        'original_size': src_size, 'compressed_size': dst_size, 'status': 'success'
-                    })
-                    task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✓ Converted")
-                    
-                    if settings.get('chd_delete_originals', False):
-                        os.remove(file_path)
-                else:
+
+                if result.returncode != 0 or not os.path.exists(tmp_path):
                     task['results']['failed'] += 1
                     task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Failed")
+                else:
+                    if settings.get('chd_verify_after_convert', True):
+                        verify = subprocess.run(
+                            [chdman_path, 'verify', '-i', tmp_path],
+                            capture_output=True, text=True, timeout=600,
+                        )
+                        if verify.returncode != 0:
+                            task['results']['failed'] += 1
+                            task['logs'].append(
+                                f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Verify failed"
+                            )
+                        else:
+                            os.replace(tmp_path, dst_path)
+                            chd_succeeded = True
+                    else:
+                        os.replace(tmp_path, dst_path)
+                        chd_succeeded = True
+
+                    if chd_succeeded:
+                        dst_size = os.path.getsize(dst_path)
+                        task['results']['converted'] += 1
+                        task['results']['original_size'] += src_size
+                        task['results']['compressed_size'] += dst_size
+                        task['results']['files'].append({
+                            'source': file_path, 'destination': dst_path,
+                            'original_size': src_size, 'compressed_size': dst_size, 'status': 'success'
+                        })
+                        task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✓ Converted")
+
+                        if settings.get('chd_delete_originals', False):
+                            os.remove(file_path)
             except Exception as e:
                 task['results']['failed'] += 1
                 logger.error(f"CHD conversion error for {file_path}: {e}")
                 task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Error processing file")
+            finally:
+                if not chd_succeeded and os.path.exists(tmp_path):
+                    try:
+                        os.remove(tmp_path)
+                    except OSError:
+                        pass
         
         task['status'] = 'completed' if task['status'] != 'cancelled' else 'cancelled'
         task['end_time'] = datetime.now()
