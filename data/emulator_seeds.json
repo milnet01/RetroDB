@@ -1,0 +1,116 @@
+{
+  "emulators": [
+    {
+      "name": "RetroArch",
+      "binary_name": "retroarch",
+      "args_template": "-L \"{retroarch_core}\" \"{rom}\"",
+      "is_retroarch": 1,
+      "description": "Reference libretro frontend; used per-platform via cores."
+    },
+    {
+      "name": "DuckStation",
+      "binary_name": "duckstation-qt",
+      "args_template": "-batch -fullscreen \"{rom}\"",
+      "is_retroarch": 0,
+      "description": "Sony PlayStation (PS1)."
+    },
+    {
+      "name": "PCSX2",
+      "binary_name": "pcsx2-qt",
+      "args_template": "-batch -fullscreen \"{rom}\"",
+      "is_retroarch": 0,
+      "description": "Sony PlayStation 2."
+    },
+    {
+      "name": "RPCS3",
+      "binary_name": "rpcs3",
+      "args_template": "--no-gui \"{rom}\"",
+      "is_retroarch": 0,
+      "description": "Sony PlayStation 3."
+    },
+    {
+      "name": "Dolphin",
+      "binary_name": "dolphin-emu",
+      "args_template": "-b -e \"{rom}\"",
+      "is_retroarch": 0,
+      "description": "Nintendo GameCube and Wii."
+    },
+    {
+      "name": "Cemu",
+      "binary_name": "cemu",
+      "args_template": "-g \"{rom}\" -f",
+      "is_retroarch": 0,
+      "description": "Nintendo Wii U."
+    },
+    {
+      "name": "ScummVM",
+      "binary_name": "scummvm",
+      "args_template": "--fullscreen --path=\"{rom_dir}\"",
+      "is_retroarch": 0,
+      "description": "Point-and-click adventure game engine."
+    },
+    {
+      "name": "MAME",
+      "binary_name": "mame",
+      "args_template": "-rompath \"{rom_dir}\" \"{rom_name}\"",
+      "is_retroarch": 0,
+      "description": "Multiple Arcade Machine Emulator."
+    },
+    {
+      "name": "mGBA",
+      "binary_name": "mgba-qt",
+      "args_template": "-f \"{rom}\"",
+      "is_retroarch": 0,
+      "description": "Game Boy / GBC / GBA."
+    },
+    {
+      "name": "melonDS",
+      "binary_name": "melonDS",
+      "args_template": "\"{rom}\"",
+      "is_retroarch": 0,
+      "description": "Nintendo DS."
+    },
+    {
+      "name": "Citra",
+      "binary_name": "citra-qt",
+      "args_template": "\"{rom}\"",
+      "is_retroarch": 0,
+      "description": "Nintendo 3DS."
+    },
+    {
+      "name": "PPSSPP",
+      "binary_name": "PPSSPPSDL",
+      "args_template": "--fullscreen \"{rom}\"",
+      "is_retroarch": 0,
+      "description": "Sony PlayStation Portable."
+    }
+  ],
+  "system_emulators": [
+    {"system_folder": "psx",          "emulator_name": "DuckStation", "is_default": 1},
+    {"system_folder": "psx",          "emulator_name": "RetroArch",   "retroarch_core": "mednafen_psx_hw_libretro.so", "is_default": 0},
+    {"system_folder": "ps2",          "emulator_name": "PCSX2",       "is_default": 1},
+    {"system_folder": "ps3",          "emulator_name": "RPCS3",       "is_default": 1},
+    {"system_folder": "psp",          "emulator_name": "PPSSPP",      "is_default": 1},
+    {"system_folder": "psp",          "emulator_name": "RetroArch",   "retroarch_core": "ppsspp_libretro.so", "is_default": 0},
+    {"system_folder": "gamecube",     "emulator_name": "Dolphin",     "is_default": 1},
+    {"system_folder": "wii",          "emulator_name": "Dolphin",     "is_default": 1},
+    {"system_folder": "wiiu",         "emulator_name": "Cemu",        "is_default": 1},
+    {"system_folder": "snes",         "emulator_name": "RetroArch",   "retroarch_core": "snes9x_libretro.so",         "is_default": 1},
+    {"system_folder": "superfamicom", "emulator_name": "RetroArch",   "retroarch_core": "snes9x_libretro.so",         "is_default": 1},
+    {"system_folder": "nes",          "emulator_name": "RetroArch",   "retroarch_core": "nestopia_libretro.so",       "is_default": 1},
+    {"system_folder": "famicom",      "emulator_name": "RetroArch",   "retroarch_core": "nestopia_libretro.so",       "is_default": 1},
+    {"system_folder": "n64",          "emulator_name": "RetroArch",   "retroarch_core": "mupen64plus_next_libretro.so","is_default": 1},
+    {"system_folder": "gb",           "emulator_name": "mGBA",        "is_default": 1},
+    {"system_folder": "gbc",          "emulator_name": "mGBA",        "is_default": 1},
+    {"system_folder": "gba",          "emulator_name": "mGBA",        "is_default": 1},
+    {"system_folder": "nds",          "emulator_name": "melonDS",     "is_default": 1},
+    {"system_folder": "3ds",          "emulator_name": "Citra",       "is_default": 1},
+    {"system_folder": "genesis",      "emulator_name": "RetroArch",   "retroarch_core": "genesis_plus_gx_libretro.so","is_default": 1},
+    {"system_folder": "megadrive",    "emulator_name": "RetroArch",   "retroarch_core": "genesis_plus_gx_libretro.so","is_default": 1},
+    {"system_folder": "saturn",       "emulator_name": "RetroArch",   "retroarch_core": "mednafen_saturn_libretro.so","is_default": 1},
+    {"system_folder": "dreamcast",    "emulator_name": "RetroArch",   "retroarch_core": "flycast_libretro.so",        "is_default": 1},
+    {"system_folder": "scummvm",      "emulator_name": "ScummVM",     "is_default": 1},
+    {"system_folder": "arcade",       "emulator_name": "MAME",        "is_default": 1},
+    {"system_folder": "mame",         "emulator_name": "MAME",        "is_default": 1}
+  ]
+}
