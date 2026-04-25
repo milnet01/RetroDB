@@ -7,15 +7,31 @@
 
 import logging
 
-from flask import Blueprint, request
+from flask import Blueprint, render_template, request
 
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required, admin_required
 from services.database import query, execute
+from settings_manager import get_setting
 
 logger = logging.getLogger(__name__)
 
 bp = Blueprint('emulators', __name__)
+
+
+# -----------------------------------------------------------------------------
+# Page route
+# -----------------------------------------------------------------------------
+
+@bp.route('/settings/emulators', methods=['GET'])
+@login_required
+@admin_required
+def page_emulators_settings():
+    return render_template(
+        'settings_emulators.html',
+        retroarch_binary=get_setting('retroarch_binary', ''),
+        retroarch_cores_dir=get_setting('retroarch_cores_dir', ''),
+    )
 
 
 # -----------------------------------------------------------------------------

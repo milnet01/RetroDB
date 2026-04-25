@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Emulators · Settings · RetroDB{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">🎮 Emulators</h1>
+    <p class="page-subtitle">Manage emulator binaries and per-system mappings used by the ▶ Play button.</p>
+</div>
+
+<!-- ================================================== -->
+<!-- RetroArch installation panel -->
+<!-- ================================================== -->
+<section class="settings-section">
+    <h2 class="section-title">RetroArch</h2>
+    <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+        RetroArch needs explicit binary + cores-dir paths because they typically live in different prefixes (system package, ~/.local, or a Flatpak sandbox).
+    </p>
+
+    <div class="form-group mb-md">
+        <label class="form-label" for="ra-binary">Binary</label>
+        <input type="text" class="form-input" id="ra-binary"
+               value="{{ retroarch_binary or '' }}"
+               placeholder="/usr/bin/retroarch  or  flatpak run org.libretro.RetroArch">
+    </div>
+    <div class="form-group mb-md">
+        <label class="form-label" for="ra-cores-dir">Cores directory</label>
+        <input type="text" class="form-input" id="ra-cores-dir"
+               value="{{ retroarch_cores_dir or '' }}"
+               placeholder="~/.config/retroarch/cores/">
+    </div>
+    <div style="display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
+        <button id="ra-detect-btn" class="btn btn-secondary"><span class="btn-icon">🔍</span> Auto-detect</button>
+        <button id="ra-save-btn" class="btn btn-primary"><span class="btn-icon">💾</span> Save</button>
+    </div>
+    <div id="ra-status" class="text-muted" style="font-size: 0.9rem;"></div>
+</section>
+
+<!-- ================================================== -->
+<!-- Emulators list -->
+<!-- ================================================== -->
+<section class="settings-section">
+    <h2 class="section-title">Registered emulators</h2>
+    <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+        RetroDB ships with a default registry seeded on first run.  Add custom emulators or edit the seeded entries.
+    </p>
+    <div style="overflow-x: auto;">
+        <table class="data-table" id="emulator-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Binary</th>
+                    <th>Args template</th>
+                    <th>Type</th>
+                    <th>Enabled</th>
+                </tr>
+            </thead>
+            <tbody id="emu-tbody">
+                <tr><td colspan="5" class="text-muted">Loading…</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- ================================================== -->
+<!-- Per-system mapping -->
+<!-- ================================================== -->
+<section class="settings-section">
+    <h2 class="section-title">Per-system mapping</h2>
+    <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+        For each system, the default emulator is starred (★).  Per-game overrides live in the edit-game modal.
+    </p>
+    <div id="mapping-body"><span class="text-muted">Loading…</span></div>
+</section>
+
+<script src="{{ asset_url('js/emulators-settings.js') }}" defer></script>
+{% endblock %}
