@@ -96,6 +96,13 @@ def _disc_paths_for_game(game_id: int) -> list:
     return [r['rom_path'] for r in rows if r and r.get('rom_path')]
 
 
+_FIX_HINT = (
+    " — set the path at /settings/emulators (Edit row → Binary path "
+    "override) or click Auto-detect, or install the emulator via your "
+    "package manager so it lands on PATH"
+)
+
+
 def _resolve_binary(emu_row, sys_emu_row) -> str:
     """Apply the resolver's binary lookup chain."""
     if emu_row['is_retroarch']:
@@ -106,12 +113,13 @@ def _resolve_binary(emu_row, sys_emu_row) -> str:
         path = emu_row['binary_path_override']
         if not os.access(path, os.X_OK):
             raise LaunchResolutionError(
-                f"binary_path_override not executable: {path}")
+                f"binary_path_override not executable: {path}{_FIX_HINT}")
         return path
     found = shutil.which(emu_row['binary_name'])
     if not found:
         raise LaunchResolutionError(
-            f"Emulator binary not found on PATH: {emu_row['binary_name']!r}")
+            f"Emulator binary not found on PATH: {emu_row['binary_name']!r}"
+            f"{_FIX_HINT}")
     return found
 
 

@@ -31,6 +31,9 @@ def page_emulators_settings():
         'settings_emulators.html',
         retroarch_binary=get_setting('retroarch_binary', ''),
         retroarch_cores_dir=get_setting('retroarch_cores_dir', ''),
+        emulator_scan_paths=get_setting(
+            'emulator_scan_paths',
+            '/mnt/Emulators:~/Downloads:~/.local/bin:/opt'),
     )
 
 

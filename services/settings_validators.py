@@ -288,6 +288,7 @@ _VALIDATORS = {
     'launcher_backend': _enum_validator(_ALLOWED_LAUNCHER_BACKENDS, 'launcher_backend'),
     'launch_required_permission': _launch_required_permission_validator,
     'launch_concurrent_same_game': _enum_validator(_ALLOWED_CONCURRENT_POLICIES, 'launch_concurrent_same_game'),
+    'emulator_scan_paths': _string_validator(max_len=2000, allow_empty=True),
 }
 
 

@@ -1,3 +1,18 @@
+- version: 3.6.1
+  date: 2026-04-25
+  tags:
+  - type: feature
+    label: Pass 44.1 — emulator path UX (edit modal, AppImage scan, better error)
+  body: |
+    <ul>
+        <li><strong>Pass 44.1A &mdash; resolver error message</strong>.  When <code>shutil.which</code> can't find the emulator binary OR <code>binary_path_override</code> isn't executable, the error now appends "&mdash; set the path at /settings/emulators (Edit row → Binary path override) or click Auto-detect, or install the emulator via your package manager so it lands on PATH".  Routes the user from a launch failure straight to the fix UI instead of leaving them stuck.</li>
+        <li><strong>Pass 44.1B &mdash; AppImage auto-detect scanner</strong>.  New setting <code>emulator_scan_paths</code> (default <code>/mnt/Emulators:~/Downloads:~/.local/bin:/opt</code>) and new endpoint <code>POST /api/settings/emulators/detect[?apply=true]</code>.  Walks the scan paths (depth-capped at 4 dirs, 5000 entries per root) for AppImages matching 12 known emulator name regexes (RetroArch, DuckStation, PCSX2, RPCS3, Dolphin, Cemu, ScummVM, MAME, mGBA, melonDS, Citra, PPSSPP).  Prefers <code>&lt;name&gt;-portable.sh</code> wrapper scripts when present alongside the AppImage so portable mode is preserved (RetroArch's portable .home with custom cores layout works without separate config).  <code>?apply=true</code> atomically writes <code>binary_path_override</code> on each matching emulators row.</li>
+        <li><strong>Pass 44.1C &mdash; edit-emulator modal</strong>.  New "Edit" button on each registry row in <code>/settings/emulators</code> opens a modal with name, binary_name, binary_path_override, args_template, description, is_retroarch checkbox, enabled checkbox.  Save → <code>PUT /api/emulators/&lt;id&gt;</code> → table refreshes.  Closes the loop on Pass 44 where the registry could only be modified via API.</li>
+        <li><strong>UI additions</strong> on <code>/settings/emulators</code>: a new "Auto-detect emulator AppImages" section with Scan + Apply-all buttons that surface a per-emulator suggestion table (detected path, current override, would-change flag, portable-script badge); a new "Path override" column on the registry table; the per-row Edit button.</li>
+        <li><strong>Tests</strong>.  9 new in <code>tests/test_emulator_autodetect.py</code> (walk finds AppImages and portable scripts, detector prefers portable script when present, falls back to AppImage when not, skips unknown emulator names, handles non-existent root, default scan paths include <code>/mnt/Emulators</code>, validator accepts colon-separated list, endpoint registered, unauth blocked) + 1 in <code>test_emulator_registry_routes.py::test_admin_can_update</code> covering the PUT path used by the new edit modal.  617 passed (was 607).</li>
+        <li><strong>Version bump 3.6.0 &rarr; 3.6.1</strong>: patch (UX gap closure on top of v3.6.0; no schema or behavior change).</li>
+    </ul>
+
 - version: 3.6.0
   date: 2026-04-25
   tags:

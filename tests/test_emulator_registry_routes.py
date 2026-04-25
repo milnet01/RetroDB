@@ -73,6 +73,23 @@ class TestEmulatorCRUD:
                                headers=self._csrf())
         assert rv.status_code == 400
 
+    def test_admin_can_update(self, admin_client, monkeypatch):
+        captured = {}
+
+        def _execute(sql, args=()):
+            captured['sql'] = sql
+            captured['args'] = args
+            return 1
+
+        monkeypatch.setattr('routes.emulators.execute', _execute)
+        rv = admin_client.put('/api/emulators/5',
+                              json={'binary_path_override': '/opt/foo.AppImage'},
+                              headers=self._csrf())
+        assert rv.status_code == 200
+        # The UPDATE should set binary_path_override to the supplied path.
+        assert 'binary_path_override' in captured['sql']
+        assert '/opt/foo.AppImage' in captured['args']
+
     def test_viewer_cannot_create(self, monkeypatch):
         import app as app_module
         monkeypatch.setattr('app.get_current_user',
