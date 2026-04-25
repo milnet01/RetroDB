@@ -473,12 +473,16 @@ def apply_metadata_to_game(db_game_id, igdb_data):
         # Game modes
         modes = ', '.join(g['name'] for g in igdb_data.get('game_modes', [])) or ''
         
-        # Players
-        players = 1
+        # Players — Pass 40.6: leave as None when IGDB has no value so
+        # COALESCE(?, players) preserves the curated DB value.  The previous
+        # default of 1 silently overwrote curated multi-player counts on
+        # every re-scrape because COALESCE(1, players) is always 1.
+        players = None
         multiplayer_modes = igdb_data.get('multiplayer_modes', [])
         if multiplayer_modes:
-            max_players = max((m.get('offlinemax', 1) for m in multiplayer_modes), default=1)
-            players = max_players if max_players else 1
+            max_players = max((m.get('offlinemax', 0) for m in multiplayer_modes), default=0)
+            if max_players:
+                players = max_players
         
         # Description
         description = igdb_data.get('storyline', igdb_data.get('summary', ''))
@@ -588,7 +592,7 @@ def apply_metadata_to_game(db_game_id, igdb_data):
             scraped_title if scraped_title else None,
             publisher or None, developer or None, release_date or None, genre or None,
             rating or None, esrb_rating or None, pegi_rating or None,
-            players, modes or None, description or None, boxart or None,
+            players if players else None, modes or None, description or None, boxart or None,
             screenshots_str, fanart,
             critic_score, critic_score_count,
             user_score, user_score_count,

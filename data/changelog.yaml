@@ -1,3 +1,18 @@
+- version: 3.4.6
+  date: 2026-04-25
+  tags:
+  - type: security
+    label: Pass 40.6 — players fill-only invariant + JSON-edit type corruption
+  body: |
+    <ul>
+        <li><strong>Pass 40.6 (CRITICAL) &mdash; <code>players</code> fill-only invariant restored at four sites</strong>. The CLAUDE.md scraper invariant requires every <code>?</code> in <code>apply_*_to_game</code> UPDATEs to wrap in <code>COALESCE(?, column_name)</code> so empty source responses preserve curated values. <code>players = COALESCE(?, players)</code> was correctly wired in IGDB and TGDB, but both adapters initialised <code>players = 1</code> (not <code>None</code>) before checking the source &mdash; meaning <code>COALESCE(1, players)</code> always evaluated to <code>1</code> on re-scrape, silently overwriting curated 4-player values. Same bug class as Pass 30.4 fixed for <code>publisher</code>/<code>developer</code>.</li>
+        <li><strong>JSON-edit type corruption</strong>. <code>routes/games.py::api_game_edit</code> stored the raw value for the <code>players</code> field; SQLite weak typing happily put <code>"1-4"</code> into the INTEGER column. <code>edit_metadata</code> form-POST had the same bug (<code>players = NULLIF(?, '')</code> bound the raw string).</li>
+        <li><strong>Fix</strong>. (1) <code>scrape_igdb.apply_igdb_metadata</code>: <code>players = None</code>, only set when <code>multiplayer_modes[].offlinemax</code> &gt;= 1; bind <code>players if players else None</code> through COALESCE. (2) <code>scrape_thegamesdb.apply_tgdb_metadata</code>: <code>players = None</code> default, only set on a successful <code>int()</code> parse of <code>tgdb_data.get('players')</code> with <code>&gt;= 1</code> guard; <code>modes_str</code> follows the same source signal so it stays <code>None</code> when TGDB was silent. (3) New <code>services/game_utils.normalize_players_value(value)</code> helper coerces <code>None</code> / <code>""</code> / <code>"1-4"</code> / int / junk to <code>int|None</code> &mdash; ranges normalize to max, zero or invalid → None. Wired into both <code>api_game_edit</code> (per-field branch on <code>players</code>) and <code>edit_metadata</code> (around the <code>request.form.get('edit_players')</code> read). Booleans explicitly rejected so <code>True</code> doesn't sneak in as <code>1</code>.</li>
+        <li><strong>Tests</strong>. <code>TestPass40_6PlayersNormalization</code> (8 helper-shape cases), <code>TestPass40_6IgdbTgdbPlayersDefault</code> (2 source pins on the adapter defaults), <code>TestPass40_6RouteNormalization</code> (2 source pins on the route normalization). 475 passed (was 463).</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 40.6 closed. 10 Tier-1 items remain.</li>
+        <li><strong>Version bump 3.4.5 &rarr; 3.4.6</strong>: patch (data integrity; visible behavior change &mdash; sending <code>"1-4"</code> via JSON edit now stores <code>4</code>, not <code>"1-4"</code>).</li>
+    </ul>
+
 - version: 3.4.5
   date: 2026-04-25
   tags:

@@ -25,6 +25,7 @@ from services.game_utils import (
     reset_game_title_from_filename,
     get_ra_supported_systems,
     get_preferred_rating, get_all_ratings,
+    normalize_players_value,
     RATING_SYSTEMS,
 )
 from services.game_query import (
@@ -459,7 +460,11 @@ def game_detail(game_id):
                     controller_support_custom = request.form.get('edit_controller_support_custom', '').strip()
                     controller_support_dropdown = request.form.get('edit_controller_support', '').strip()
                     controller_support = controller_support_custom or controller_support_dropdown
-                    players = request.form.get('edit_players', '').strip()
+                    # Pass 40.6 — coerce "1-4" / "" / junk to int|None so
+                    # the INTEGER column stays well-typed.
+                    players = normalize_players_value(
+                        request.form.get('edit_players', '').strip()
+                    )
                     esrb_rating = request.form.get('edit_esrb_rating', '').strip()
                     pegi_rating = request.form.get('edit_pegi_rating', '').strip()
                     cero_rating = request.form.get('edit_cero_rating', '').strip()
@@ -930,6 +935,11 @@ def api_game_edit(game_id):
                     datetime.strptime(value, '%Y-%m-%d')
                 except ValueError:
                     value = None
+            # Pass 40.6 — players is INTEGER, but SQLite weak typing accepts
+            # ranges like "1-4" verbatim and corrupts the column.  Normalize
+            # to int|None so COALESCE-style semantics on later scrapes hold.
+            if field == 'players':
+                value = normalize_players_value(value)
             updates.append(f"{field} = ?")
             values.append(value)
 

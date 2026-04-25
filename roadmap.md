@@ -218,7 +218,13 @@ paths or silent-corruption vectors under routine use.
   a free side-effect).
 - **Source**: 2026-04-24 indie-review, scraper adapters C2 + game routes
   C2/H4.
-- **Status**: todo
+- **Status**: done (v3.4.6) — IGDB + TGDB initialise `players = None`,
+  set only when source provides a value; bind `players if players else
+  None` through COALESCE. New `normalize_players_value` helper in
+  `services/game_utils.py` coerces ranges/junk/empty to `int|None`;
+  wired into `api_game_edit` (per-field branch) and `edit_metadata`
+  (form-POST). Tests: `test_pass40_security.py::TestPass40_6*` (12
+  cases).
 
 #### Pass 40.7 TGDB image downloads bypass SSRF (CRITICAL, S)
 

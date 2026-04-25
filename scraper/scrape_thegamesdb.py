@@ -872,14 +872,18 @@ def apply_metadata_to_game(db_game_id, tgdb_data):
         else:
             genre = str(genres) if genres else ''
 
-        # Players
-        players = 1
-        players_val = tgdb_data.get('players', '1')
+        # Players — Pass 40.6: leave as None when TGDB doesn't supply a
+        # value (or supplies one that doesn't parse).  COALESCE(?, players)
+        # then preserves the curated DB value on re-scrape.
+        players = None
+        players_val = tgdb_data.get('players')
         if players_val:
             try:
-                players = int(str(players_val))
-            except Exception:
-                players = 1
+                parsed = int(str(players_val))
+                if parsed >= 1:
+                    players = parsed
+            except (ValueError, TypeError):
+                players = None
 
         # Description
         description = tgdb_data.get('summary', '') or ''
@@ -928,7 +932,12 @@ def apply_metadata_to_game(db_game_id, tgdb_data):
         def _trunc(value, limit):
             return str(value)[:limit] if value else None
 
-        modes_str = 'Single-player, Multiplayer' if (players or 0) > 1 else 'Single-player'
+        # modes_str follows the source signal: only emit when TGDB supplied
+        # a player count, otherwise leave None so COALESCE preserves curated.
+        if players is None:
+            modes_str = None
+        else:
+            modes_str = 'Single-player, Multiplayer' if players > 1 else 'Single-player'
         c.execute("""
             UPDATE games SET
                 title = COALESCE(?, title),
@@ -957,7 +966,7 @@ def apply_metadata_to_game(db_game_id, tgdb_data):
             _trunc(esrb_rating, 50),
             _trunc(pegi_rating, 50),
             players if players else None,
-            modes_str if players else None,
+            modes_str,
             _trunc(description, 2000),
             str(boxart) if boxart else None,
             screenshots_str,

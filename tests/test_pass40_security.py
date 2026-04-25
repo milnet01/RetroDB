@@ -589,3 +589,108 @@ class TestPass40_5CardDataEtagPerUser:
         assert "{g.user['id']}" in line or '{user_id}' in line or \
                ":{g.user[" in line, \
             'card-data ETag must bake user identity into the payload (Pass 40.5)'
+
+
+# -----------------------------------------------------------------------------
+# 40.6 — players fill-only invariant + JSON-edit type corruption
+# -----------------------------------------------------------------------------
+class TestPass40_6PlayersNormalization:
+    """Helper rejects junk strings, normalizes ranges to max, returns None
+    for the absent / invalid case so COALESCE preserves curated values."""
+
+    def test_none_returns_none(self):
+        from services.game_utils import normalize_players_value
+        assert normalize_players_value(None) is None
+
+    def test_empty_string_returns_none(self):
+        from services.game_utils import normalize_players_value
+        assert normalize_players_value('') is None
+        assert normalize_players_value('   ') is None
+
+    def test_int_passthrough(self):
+        from services.game_utils import normalize_players_value
+        assert normalize_players_value(1) == 1
+        assert normalize_players_value(4) == 4
+
+    def test_zero_returns_none(self):
+        from services.game_utils import normalize_players_value
+        assert normalize_players_value(0) is None
+        assert normalize_players_value('0') is None
+
+    def test_string_int(self):
+        from services.game_utils import normalize_players_value
+        assert normalize_players_value('1') == 1
+        assert normalize_players_value('  4  ') == 4
+
+    def test_range_takes_max(self):
+        from services.game_utils import normalize_players_value
+        assert normalize_players_value('1-4') == 4
+        assert normalize_players_value('2-8') == 8
+        assert normalize_players_value('1-16') == 16
+
+    def test_garbage_string_returns_none(self):
+        from services.game_utils import normalize_players_value
+        assert normalize_players_value('many') is None
+        assert normalize_players_value('1.0e9') is None
+
+    def test_bool_rejected(self):
+        from services.game_utils import normalize_players_value
+        assert normalize_players_value(True) is None
+        assert normalize_players_value(False) is None
+
+
+class TestPass40_6IgdbTgdbPlayersDefault:
+    """IGDB/TGDB adapters must initialise players = None and only set when
+    the source explicitly provided a value, so COALESCE preserves curated
+    values when the API is silent."""
+
+    def test_igdb_initializes_players_none(self):
+        from scraper import scrape_igdb as mod
+
+        src = open(mod.__file__).read()
+        # Find the apply_igdb_metadata function (or where players is set).
+        idx = src.index('# Players')
+        block = src[idx:idx + 600]
+        # The fix flips the default from `players = 1` to `players = None`.
+        assert 'players = 1' not in block, \
+            "IGDB players must default to None (Pass 40.6)"
+        assert 'players = None' in block, \
+            "IGDB players must initialise to None (Pass 40.6)"
+
+    def test_tgdb_initializes_players_none(self):
+        from scraper import scrape_thegamesdb as mod
+
+        src = open(mod.__file__).read()
+        idx = src.index('# Players')
+        block = src[idx:idx + 600]
+        assert 'players = 1\n' not in block.replace(' ', ''), \
+            "TGDB players must default to None (Pass 40.6)"
+        assert 'players = None' in block, \
+            "TGDB players must initialise to None (Pass 40.6)"
+
+
+class TestPass40_6RouteNormalization:
+    """api_game_edit + edit_metadata must run players through
+    normalize_players_value before binding to the INTEGER column."""
+
+    def test_api_game_edit_normalizes_players(self):
+        from routes import games as games_mod
+
+        src = open(games_mod.__file__).read()
+        idx = src.index('def api_game_edit')
+        end = src.index('@bp.route(\'/api/games/bulk-edit\'', idx)
+        body = src[idx:end]
+        assert 'normalize_players_value' in body, \
+            'api_game_edit must call normalize_players_value (Pass 40.6)'
+
+    def test_edit_metadata_normalizes_players(self):
+        from routes import games as games_mod
+
+        src = open(games_mod.__file__).read()
+        # edit_metadata is the form-POST handler ahead of api_game_edit.
+        idx = src.index("edit_players")
+        # Within the surrounding ~600 chars, the players read must be wrapped
+        # in normalize_players_value(...).
+        window = src[max(0, idx - 200):idx + 400]
+        assert 'normalize_players_value' in window, \
+            'edit_metadata must call normalize_players_value (Pass 40.6)'

@@ -1246,6 +1246,51 @@ def reset_game_title_from_filename(game_id, conn=None):
             conn.close()
 
 
+def normalize_players_value(value):
+    """Coerce a `players` value to int | None for the games.players INTEGER column.
+
+    The DB column is INTEGER but SQLite weak typing happily accepts strings
+    like "1-4" or "" — Pass 40.6 closed two routes that did exactly that
+    (api_game_edit JSON body, edit_metadata form-POST).  Scraper "1-4"
+    ranges normalize to the maximum (4) per the existing fill-only contract.
+
+    Returns:
+        int >= 1 if a valid number was extracted, else None.
+    """
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        # bool is an int subclass — explicitly reject so True doesn't become 1.
+        return None
+    if isinstance(value, int):
+        return value if value >= 1 else None
+    if isinstance(value, float):
+        return int(value) if value >= 1 else None
+    if not isinstance(value, str):
+        return None
+    stripped = value.strip()
+    if not stripped:
+        return None
+    # Range form "1-4" / "2-8" — take the maximum.
+    if '-' in stripped:
+        parts = [p.strip() for p in stripped.split('-') if p.strip()]
+        nums = []
+        for part in parts:
+            try:
+                nums.append(int(part))
+            except ValueError:
+                continue
+        if nums:
+            return max(nums) if max(nums) >= 1 else None
+        return None
+    # Plain integer string.
+    try:
+        n = int(stripped)
+        return n if n >= 1 else None
+    except ValueError:
+        return None
+
+
 def generate_sort_title(title):
     """
     Generate a sortable title from a game title.
