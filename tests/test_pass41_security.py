@@ -973,3 +973,176 @@ class TestPass41_14CRglobSymlinkGuard:
         legit = root / 'real.bin'
         legit.write_bytes(b'y')
         assert _safe_under_root(legit, root.resolve()) is True
+
+
+# -----------------------------------------------------------------------------
+# 41.10.A — tools.py task cancel/pause/resume require admin
+# -----------------------------------------------------------------------------
+class TestPass41_10ATaskAuthz:
+    """Task cancel/pause/resume in routes/tools.py at lines 327-378 were
+    @login_required, letting any logged-in user (Player / Viewer) interrupt
+    an admin's running scan or convert task by knowing the task_id. Pass
+    41.10.A raises all three to @admin_required."""
+
+    def test_task_cancel_requires_admin(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'routes/tools.py'),
+            encoding='utf-8'
+        ).read()
+        # Locate the cancel route's decorator stack; expect @admin_required.
+        idx = body.find("/api/rom-tools/task/<task_id>/cancel")
+        assert idx != -1, "cancel route not found"
+        block = body[idx:idx + 400]
+        assert '@admin_required' in block, (
+            "task_cancel must be @admin_required (Pass 41.10.A)"
+        )
+
+    def test_task_pause_requires_admin(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'routes/tools.py'),
+            encoding='utf-8'
+        ).read()
+        idx = body.find("/api/rom-tools/task/<task_id>/pause")
+        assert idx != -1, "pause route not found"
+        block = body[idx:idx + 200]
+        assert '@admin_required' in block, (
+            "task_pause must be @admin_required (Pass 41.10.A)"
+        )
+
+    def test_task_resume_requires_admin(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'routes/tools.py'),
+            encoding='utf-8'
+        ).read()
+        idx = body.find("/api/rom-tools/task/<task_id>/resume")
+        assert idx != -1, "resume route not found"
+        block = body[idx:idx + 200]
+        assert '@admin_required' in block, (
+            "task_resume must be @admin_required (Pass 41.10.A)"
+        )
+
+
+# -----------------------------------------------------------------------------
+# 41.10.B — chd-converter/convert + chd-verify/verify require admin
+# -----------------------------------------------------------------------------
+class TestPass41_10BConvertVerifyAuthz:
+    """Both endpoints mutate filesystem state (subprocess.run + os.remove
+    when delete_originals=True). Pass 40.2 hardened the file paths via
+    safe_path; Pass 41.10.B closes the remaining gap by requiring admin."""
+
+    def test_chd_convert_requires_admin(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'routes/tools.py'),
+            encoding='utf-8'
+        ).read()
+        idx = body.find("/api/rom-tools/chd-converter/convert")
+        assert idx != -1, "chd-converter/convert route not found"
+        block = body[idx:idx + 300]
+        assert '@admin_required' in block, (
+            "chd-converter/convert must be @admin_required (Pass 41.10.B)"
+        )
+
+    def test_chd_verify_requires_admin(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'routes/tools.py'),
+            encoding='utf-8'
+        ).read()
+        idx = body.find("/api/rom-tools/chd-verify/verify")
+        assert idx != -1, "chd-verify/verify route not found"
+        block = body[idx:idx + 200]
+        assert '@admin_required' in block, (
+            "chd-verify/verify must be @admin_required (Pass 41.10.B)"
+        )
+
+
+# -----------------------------------------------------------------------------
+# 41.10.C — task IDs use full UUIDs (no [:8] truncation)
+# -----------------------------------------------------------------------------
+class TestPass41_10CTaskIdFullUuid:
+    """`task_id = str(uuid.uuid4())[:8]` gave only 32 bits of entropy across
+    a per-process task registry. A logged-in user could brute-force the
+    short ID space (~4.3B values, but feasible across long-running scans
+    in a multi-user deployment) to interact with another admin's task.
+    Pass 41.10.C drops the slice — full UUID-4 strings now."""
+
+    def test_no_uuid_8char_slice(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'routes/tools.py'),
+            encoding='utf-8'
+        ).read()
+        # Strip comments so the explanatory comment doesn't false-positive.
+        code_only = '\n'.join(
+            line.split('#', 1)[0]
+            for line in body.splitlines()
+        )
+        assert 'uuid.uuid4())[:8]' not in code_only, (
+            "routes/tools.py still truncates task_ids to 8 chars "
+            "(Pass 41.10.C)"
+        )
+
+    def test_uuid4_still_used(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'routes/tools.py'),
+            encoding='utf-8'
+        ).read()
+        # Confirm task_id assignment still uses uuid.uuid4 (not weakened
+        # to something else).
+        assert 'str(uuid.uuid4())' in body, (
+            "routes/tools.py must still generate task_ids via "
+            "str(uuid.uuid4()) (Pass 41.10.C)"
+        )
+
+
+# -----------------------------------------------------------------------------
+# 41.10.D — heavy *_scan endpoints raised to editor + 5/min rate-limit
+# -----------------------------------------------------------------------------
+class TestPass41_10DScanAuthzAndRateLimit:
+    """Each *_scan endpoint walks the ROM tree (potentially millions of
+    files / GBs of disk). Pass 41.10.D raises them to @editor_required
+    so anonymous-Player misclicks can't trigger the cost, and adds a
+    5/min Flask-Limiter cap so even an authorized editor can't loop on
+    them. Five endpoints affected: archive_scanner_scan,
+    chd_converter_scan, chd_verify_scan, duplicate_finder_scan,
+    screenshot_dedup_scan."""
+
+    SCAN_ROUTES = (
+        '/api/rom-tools/archive-scanner/scan',
+        '/api/rom-tools/chd-converter/scan',
+        '/api/rom-tools/chd-verify/scan',
+        '/api/rom-tools/duplicate-finder/scan',
+        '/api/rom-tools/screenshot-dedup/scan',
+    )
+
+    def test_each_scan_requires_editor(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'routes/tools.py'),
+            encoding='utf-8'
+        ).read()
+        for route in self.SCAN_ROUTES:
+            idx = body.find(route)
+            assert idx != -1, f"{route} route not found"
+            block = body[idx:idx + 250]
+            assert '@editor_required' in block, (
+                f"{route} must be @editor_required (Pass 41.10.D)"
+            )
+
+    def test_rate_limits_registered(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'app.py'),
+            encoding='utf-8'
+        ).read()
+        # Each scan endpoint must have a _rate_limit registration; the
+        # spec is "5 per minute". Source-level pin (CI's Flask-Limiter
+        # registration test would otherwise need a live limiter, which
+        # depends on FLASK_LIMITER_ENABLED).
+        for fn in (
+            'tools.api_archive_scanner_scan',
+            'tools.api_chd_converter_scan',
+            'tools.api_chd_verify_scan',
+            'tools.api_duplicate_finder_scan',
+            'tools.api_screenshot_dedup_scan',
+        ):
+            assert f"_rate_limit('{fn}', \"5 per minute\")" in body, (
+                f"Missing _rate_limit('{fn}', '5 per minute') in app.py "
+                "(Pass 41.10.D)"
+            )

@@ -1,3 +1,19 @@
+- version: 3.5.10
+  date: 2026-04-25
+  tags:
+  - type: security
+    label: Pass 41.10 — tools.py authz uplift, scan rate-limits, full-UUID task IDs
+  body: |
+    <ul>
+        <li><strong>Pass 41.10.A (HIGH) &mdash; task cancel/pause/resume require admin</strong>. <code>routes/tools.py</code> task control endpoints (<code>/api/rom-tools/task/&lt;id&gt;/{cancel,pause,resume}</code>) were <code>@login_required</code>, letting any logged-in user (Player / Viewer) interrupt an admin's running scan or convert task by knowing the task_id. Raised to <code>@admin_required</code>.</li>
+        <li><strong>Pass 41.10.B (HIGH) &mdash; CHD convert + verify require admin</strong>. <code>chd-converter/convert</code> and <code>chd-verify/verify</code> were <code>@login_required</code>, letting non-admins trigger long-running disc conversions and (with <code>chd_delete_originals=true</code>) source-file deletions across the ROM tree. Pass 40.2 hardened the file paths via <code>safe_path</code>; Pass 41.10.B closes the remaining authorization gap by requiring admin.</li>
+        <li><strong>Pass 41.10.C (HIGH) &mdash; task IDs use full UUID-4</strong>. <code>task_id = str(uuid.uuid4())[:8]</code> at four sites gave 32 bits of entropy &mdash; ~4.3B values, brute-forceable across long-running scans in a multi-user deployment. Dropped the slice; full 36-char UUID strings now.</li>
+        <li><strong>Pass 41.10.D (MEDIUM) &mdash; heavy <code>*_scan</code> endpoints raised to editor + 5/min rate-limit</strong>. The five filesystem-walk scans (archive_scanner, chd_converter, chd_verify, duplicate_finder, screenshot_dedup) walk the entire ROM tree; previously <code>@login_required</code> meant a Player misclick could trigger the cost. Raised to <code>@editor_required</code> (Player still sees the page, just can't kick off scans), and registered <code>5 per minute</code> Flask-Limiter caps in <code>app.py</code> so even an authorized editor can't loop them.</li>
+        <li><strong>Tests</strong>. <code>TestPass41_10A/B/C/D</code> &mdash; 13 cases. Source-level pin on <code>@admin_required</code> for cancel/pause/resume and convert/verify; pin that <code>uuid.uuid4())[:8]</code> is gone (comment-stripped grep) and full-UUID generation remains; pin that each <code>*_scan</code> route has <code>@editor_required</code> and a matching <code>_rate_limit('tools.api_..._scan', "5 per minute")</code> registration in app.py.</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 41.10 closed. Pass 41 has 4 sub-passes remaining (41.6 + 41.9 + 41.12 + 41.13, plus 41.5b carry-over).</li>
+        <li><strong>Version bump 3.5.9 &rarr; 3.5.10</strong>: patch (authz tightening + UUID-entropy hardening + DoS rate-limits).</li>
+    </ul>
+
 - version: 3.5.9
   date: 2026-04-25
   tags:

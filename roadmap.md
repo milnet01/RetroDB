@@ -770,7 +770,16 @@ paths or silent-corruption vectors under routine use.
   slice → 32 bits, guessable across logged-in users).
 - **Source**: 2026-04-24 indie-review, settings/maintenance/tools
   H1/H2/H3.
-- **Status**: todo
+- **Status**: done (v3.5.10) — A: task cancel/pause/resume in
+  `routes/tools.py:328/344/364` raised to `@admin_required`. B: CHD
+  `convert` (line 626) and `verify` (line 797) raised to
+  `@admin_required`. C: 4 `task_id = str(uuid.uuid4())[:8]` sites now
+  use full UUID-4 strings (no slice). D: 5 scan endpoints
+  (`archive_scanner_scan`, `chd_converter_scan`, `chd_verify_scan`,
+  `duplicate_finder_scan`, `screenshot_dedup_scan`) raised to
+  `@editor_required` and registered with `5 per minute` Flask-Limiter
+  caps in `app.py`. Tests:
+  `tests/test_pass41_security.py::TestPass41_10A/B/C/D` (13 cases).
 
 #### Pass 41.11 Museum — silent JSON decode failure + GET-handler DB mutation
 

@@ -291,6 +291,14 @@ if limiter:
     _rate_limit('museum.generate_all', "2 per hour")
     _rate_limit('collector_trophies.refresh_trophies', "10 per hour")
 
+    # Pass 41.10.D — heavy filesystem walks; cap at 5/min so a misclick in
+    # the UI or a runaway script can't hammer the disk on a multi-user host.
+    _rate_limit('tools.api_archive_scanner_scan', "5 per minute")
+    _rate_limit('tools.api_chd_converter_scan', "5 per minute")
+    _rate_limit('tools.api_chd_verify_scan', "5 per minute")
+    _rate_limit('tools.api_duplicate_finder_scan', "5 per minute")
+    _rate_limit('tools.api_screenshot_dedup_scan', "5 per minute")
+
 # =============================================================================
 # REQUEST-SCOPED DB CONNECTION CLEANUP
 # =============================================================================

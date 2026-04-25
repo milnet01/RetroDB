@@ -23,7 +23,7 @@ import settings_manager
 from services.atomic_io import atomic_write_json
 from services.database import query
 from services.api_helpers import handle_api_errors, success, error
-from services.auth import login_required, admin_required
+from services.auth import login_required, admin_required, editor_required
 from services.security import safe_path
 from services.rom_tools_validators import (
     validate_rom_tools_value,
@@ -325,9 +325,16 @@ def api_rom_tools_task_status(task_id):
 
 
 @tools_bp.route('/api/rom-tools/task/<task_id>/cancel', methods=['POST'])
-@login_required
+@admin_required
 def api_rom_tools_task_cancel(task_id):
-    """Cancel a running task"""
+    """Cancel a running task. Pass 41.10 — admin-only.
+
+    Previously @login_required, which let any logged-in user (Player /
+    Viewer) cancel an admin's in-flight scan/convert task by guessing the
+    8-char task_id (32 bits, brute-forceable across 100s of attempts).
+    The full-UUID swap below removes the guessability path; admin-only
+    closes the legitimate-but-unauthorized cancellation vector.
+    """
     task = _rom_tool_tasks.get(task_id)
     if task and task.get('status') == 'running':
         task['status'] = 'cancelled'
@@ -341,9 +348,9 @@ def api_rom_tools_task_cancel(task_id):
 
 
 @tools_bp.route('/api/rom-tools/task/<task_id>/pause', methods=['POST'])
-@login_required
+@admin_required
 def api_rom_tools_task_pause(task_id):
-    """Pause a running task"""
+    """Pause a running task. Pass 41.10 — admin-only (see _cancel)."""
     from scraper.rom_tools import get_task, update_task
     
     task = _rom_tool_tasks.get(task_id)
@@ -361,9 +368,9 @@ def api_rom_tools_task_pause(task_id):
 
 
 @tools_bp.route('/api/rom-tools/task/<task_id>/resume', methods=['POST'])
-@login_required
+@admin_required
 def api_rom_tools_task_resume(task_id):
-    """Resume a paused task"""
+    """Resume a paused task. Pass 41.10 — admin-only (see _cancel)."""
     from scraper.rom_tools import get_task, update_task
     
     task = _rom_tool_tasks.get(task_id)
@@ -385,7 +392,7 @@ def api_rom_tools_task_resume(task_id):
 # =============================================================================
 
 @tools_bp.route('/api/rom-tools/archive-scanner/scan', methods=['POST'])
-@login_required
+@editor_required  # Pass 41.10.D — heavy filesystem walk; rate-limited in app.py
 @handle_api_errors
 def api_archive_scanner_scan():
     """Start archive scanning for issues"""
@@ -579,7 +586,7 @@ def api_archive_scanner_batch_create_m3u():
 # =============================================================================
 
 @tools_bp.route('/api/rom-tools/chd-converter/scan', methods=['POST'])
-@login_required
+@editor_required  # Pass 41.10.D — heavy filesystem walk; rate-limited in app.py
 @handle_api_errors
 def api_chd_converter_scan():
     """Scan for convertible disc images"""
@@ -617,10 +624,17 @@ def api_chd_converter_scan():
 
 
 @tools_bp.route('/api/rom-tools/chd-converter/convert', methods=['POST'])
-@login_required
+@admin_required
 @handle_api_errors
 def api_chd_converter_convert():
-    """Start CHD conversion"""
+    """Start CHD conversion. Pass 41.10 — admin-only.
+
+    Converts disc-image source files in-place (and optionally deletes the
+    originals when chd_delete_originals=True). Pass 40.2 already gates the
+    file paths via safe_path; admin-only closes the remaining gap where
+    a logged-in non-admin could trigger a long-running conversion or
+    source deletion across the ROM tree.
+    """
     data = request.get_json() or {}
     files = data.get('files', [])
     settings = load_rom_tools_config()
@@ -630,7 +644,10 @@ def api_chd_converter_convert():
         return error('chdman not found. Please install MAME tools.', 400)
     
     _cleanup_completed_tasks()
-    task_id = str(uuid.uuid4())[:8]
+    # Pass 41.10 — full UUID (no [:8] slice). 32 bits gave attackers ~4.3B
+    # values to brute-force, which is insufficient for a per-process task
+    # registry that keeps state for the lifetime of long-running scans.
+    task_id = str(uuid.uuid4())
     task = {
         'task_id': task_id,
         'task_type': 'chd_convert',
@@ -761,7 +778,7 @@ def api_chd_converter_convert():
 # =============================================================================
 
 @tools_bp.route('/api/rom-tools/chd-verify/scan', methods=['POST'])
-@login_required
+@editor_required  # Pass 41.10.D — heavy filesystem walk; rate-limited in app.py
 @handle_api_errors
 def api_chd_verify_scan():
     """Scan for CHD files"""
@@ -781,7 +798,7 @@ def api_chd_verify_scan():
 
 
 @tools_bp.route('/api/rom-tools/chd-verify/verify', methods=['POST'])
-@login_required
+@admin_required
 @handle_api_errors
 def api_chd_verify_verify():
     """Start CHD verification"""
@@ -794,7 +811,10 @@ def api_chd_verify_verify():
         return error('chdman not found', 400)
     
     _cleanup_completed_tasks()
-    task_id = str(uuid.uuid4())[:8]
+    # Pass 41.10 — full UUID (no [:8] slice). 32 bits gave attackers ~4.3B
+    # values to brute-force, which is insufficient for a per-process task
+    # registry that keeps state for the lifetime of long-running scans.
+    task_id = str(uuid.uuid4())
     task = {
         'task_id': task_id,
         'task_type': 'chd_verify',
@@ -872,7 +892,7 @@ def api_chd_verify_verify():
 # =============================================================================
 
 @tools_bp.route('/api/rom-tools/duplicate-finder/scan', methods=['POST'])
-@login_required
+@editor_required  # Pass 41.10.D — heavy filesystem walk; rate-limited in app.py
 @handle_api_errors
 def api_duplicate_finder_scan():
     """Start duplicate file scanning"""
@@ -890,7 +910,10 @@ def api_duplicate_finder_scan():
         return error(f'Path does not exist: {path}', 400)
 
     _cleanup_completed_tasks()
-    task_id = str(uuid.uuid4())[:8]
+    # Pass 41.10 — full UUID (no [:8] slice). 32 bits gave attackers ~4.3B
+    # values to brute-force, which is insufficient for a per-process task
+    # registry that keeps state for the lifetime of long-running scans.
+    task_id = str(uuid.uuid4())
     task = {
         'task_id': task_id,
         'task_type': 'duplicate_scan',
@@ -1252,7 +1275,7 @@ def screenshot_dedup():
 
 
 @tools_bp.route('/api/rom-tools/screenshot-dedup/scan', methods=['POST'])
-@login_required
+@editor_required  # Pass 41.10.D — heavy filesystem walk; rate-limited in app.py
 @handle_api_errors
 def api_screenshot_dedup_scan():
     """Start screenshot deduplication scan"""
@@ -1261,7 +1284,10 @@ def api_screenshot_dedup_scan():
     threshold = int(data.get('threshold', 10))
 
     _cleanup_completed_tasks()
-    task_id = str(uuid.uuid4())[:8]
+    # Pass 41.10 — full UUID (no [:8] slice). 32 bits gave attackers ~4.3B
+    # values to brute-force, which is insufficient for a per-process task
+    # registry that keeps state for the lifetime of long-running scans.
+    task_id = str(uuid.uuid4())
     task = {
         'task_id': task_id,
         'task_type': 'screenshot_dedup',
