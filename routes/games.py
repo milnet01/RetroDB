@@ -17,7 +17,7 @@ from datetime import datetime, timezone
 import config
 import settings_manager
 from services.database import query, execute, safe_column
-from services.auth import login_required, editor_required, has_permission
+from services.auth import login_required, editor_required, has_permission, permission_required
 from services.api_helpers import handle_api_errors
 from services.security import safe_filename
 from services.game_utils import (
@@ -1097,7 +1097,8 @@ def api_games_bulk_edit():
 
 
 @bp.route('/api/game/<int:game_id>/completion', methods=['POST'])
-@editor_required
+@login_required
+@permission_required('track_progress')
 def api_update_completion(game_id):
     """Update game completion status"""
     try:
@@ -1117,7 +1118,8 @@ def api_update_completion(game_id):
 
 
 @bp.route('/api/game/<int:game_id>/track-view', methods=['POST'])
-@editor_required
+@login_required
+@permission_required('track_progress')
 def api_track_view(game_id):
     """Track that a game was viewed (for recently viewed)"""
     try:

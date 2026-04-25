@@ -61,3 +61,22 @@ class TestRouteAllowlistsUseConstant:
         src = path.read_text()
         assert "['admin', 'editor', 'viewer']" not in src
         assert 'VALID_ROLES' in src
+
+
+class TestTrackProgressGating:
+    """The completion + track-view endpoints must require track_progress."""
+
+    def test_routes_use_permission_decorator(self):
+        path = _REPO_ROOT / 'routes' / 'games.py'
+        src = path.read_text()
+        assert "permission_required('track_progress')" in src or \
+               'permission_required("track_progress")' in src
+        comp_idx = src.find('def api_update_completion')
+        assert comp_idx > 0
+        prelude = src[max(0, comp_idx - 500):comp_idx]
+        assert 'track_progress' in prelude
+
+        tv_idx = src.find('def api_track_view')
+        assert tv_idx > 0
+        prelude_tv = src[max(0, tv_idx - 500):tv_idx]
+        assert 'track_progress' in prelude_tv
