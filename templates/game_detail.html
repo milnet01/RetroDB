@@ -3970,6 +3970,35 @@ function openEditModal() {
     
     // Initialize campaign toggle state
     initializeCampaignToggle();
+
+    // Pass 42 — populate the emulator override dropdown.
+    populateEmulatorOverrides();
+}
+
+// Pass 42 — multi-emulator launch: load the per-system emulator list into
+// the override dropdown.  Honors data-current-override so the saved value
+// is pre-selected.
+async function populateEmulatorOverrides() {
+    const sel = document.getElementById('edit_emulator_override_id');
+    if (!sel) return;
+    const sysId = sel.dataset.systemId;
+    const current = sel.dataset.currentOverride;
+    // Reset to (auto) only — the option from server-rendered HTML.
+    while (sel.options.length > 1) sel.remove(1);
+    try {
+        const rv = await fetch(`/api/emulators/for-system/${sysId}`);
+        const body = await rv.json();
+        if (!body.success) return;
+        for (const e of (body.emulators || [])) {
+            const opt = document.createElement('option');
+            opt.value = String(e.id);
+            opt.textContent = e.name + (e.is_default ? ' (default)' : '');
+            if (current && String(current) === String(e.id)) opt.selected = true;
+            sel.appendChild(opt);
+        }
+    } catch (err) {
+        console.error('emulator override fetch failed:', err);
+    }
 }
 
 function closeEditModal() {

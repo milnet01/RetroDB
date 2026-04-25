@@ -394,6 +394,23 @@
                     </div>
                 </div>
 
+                <!-- Pass 42 — multi-emulator launch overrides -->
+                <div class="edit-section">
+                    <h3 class="edit-section-title">▶ Launch</h3>
+                    <div class="edit-field">
+                        <label for="edit_emulator_override">Emulator override</label>
+                        <select name="edit_emulator_override_id" id="edit_emulator_override_id" data-system-id="{{ system.id }}" data-current-override="{{ game.emulator_override_id or '' }}">
+                            <option value="">(use system default)</option>
+                        </select>
+                        <span class="field-tip">Pick a specific emulator for this game.  Leave blank to use the per-system default.</span>
+                    </div>
+                    <div class="edit-field">
+                        <label for="edit_launch_args_override">Custom launch args</label>
+                        <input id="edit_launch_args_override" type="text" name="edit_launch_args_override" value="{{ game.launch_args_override or '' }}" placeholder='e.g.  --renderer vulkan' />
+                        <span class="field-tip">Appended to the emulator's args template after substitution.  Use shell-quoted strings if values contain spaces.</span>
+                    </div>
+                </div>
+
             </form>
         </div>
     </div>
