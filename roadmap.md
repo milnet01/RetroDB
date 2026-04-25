@@ -181,7 +181,20 @@ paths or silent-corruption vectors under routine use.
   `showConfirmModal/showInfoModal` to `textContent` with `{allowHtml:true}`
   opt-in mirroring Pass 40.13.
 - **Source**: indie-review 2026-04-25 theme T12.
-- **Status**: todo
+- **Status**: done (v3.5.18) — toast-controller's three inline onclicks
+  (active-toast navigate / pause / cancel + RA-queued cancel) replaced
+  with `data-toast-action` + a single delegated container click handler
+  that routes by action; all interpolated values run through
+  `escapeHtml`. HLTB `main_story/main_extra/completionist` wrapped in
+  `escapeHtml(String(...))`; HLTB clear button migrated from inline
+  onclick to `data-hltb-clear` + addEventListener. `showConfirmModal`/
+  `showInfoModal` in `settings.html` now accept `options` and default
+  to `textContent`; `clearScrapedData` and `deleteController` opt in
+  via `{allowHtml: true}` AND escape `systemName`/`controllerName`.
+  6 regression tests in `tests/test_pass45_security.py::TestPass45_4*`
+  pin each contract via source grep (mirrors Pass 40.13's pattern).
+  Pass 45.3 CI fix folded in: monkeypatch `settings_manager.load_
+  settings` so the empty-data CI environment doesn't 302 to /setup.
 
 #### Pass 45.5 Atomic-write contract drift (HIGH, M)
 

@@ -201,6 +201,14 @@ class TestPass45_3AiFillIntFields:
         monkeypatch.setattr(app_module, 'get_user_settings',
                             lambda _uid: None)
 
+        # In CI the data/ dir is empty, so app.check_first_time_setup sees no
+        # rom_path and no `setup_completed` flag and 302s every endpoint to
+        # /setup. Stub settings_manager.load_settings to claim setup is done
+        # so the route under test is the one that actually runs.
+        import settings_manager as _settings_manager
+        monkeypatch.setattr(_settings_manager, 'load_settings',
+                            lambda: {'setup_completed': True})
+
         app_module.app.config['TESTING'] = True
         with app_module.app.test_client() as c:
             with c.session_transaction() as sess:
@@ -480,6 +488,155 @@ class TestPass45_2DnsRebindingPin:
             str(dest),
         )
         assert observed.get('ips') == [ip]
+
+
+# -----------------------------------------------------------------------------
+# 45.4 — XSS sinks in toast / HLTB / settings dialogs
+# -----------------------------------------------------------------------------
+class TestPass45_4XssSinks:
+    """Three XSS sinks identified by the third 14-agent indie review:
+
+    1. ``static/js/toast-controller.js:1171`` — bare ``${data.return_url}``
+       interpolated into ``onclick="...JS-string..."`` attribute. Pass 41.12.B
+       added a runtime ``_isSafeReturnUrl`` guard, but it fires after the
+       HTML parser has already executed the broken-out-of attribute. Migrated
+       to ``data-toast-action`` + delegated ``addEventListener`` handler.
+
+    2. ``static/js/game-modals.js:670-689`` — HLTB API fields
+       ``main_story``/``main_extra``/``completionist`` interpolated raw into
+       ``innerHTML``. Wrapped in ``escapeHtml(String(...))``.
+
+    3. ``templates/settings.html:4373/4399`` — ``confirmMessage.innerHTML =
+       message`` with the comment "Use innerHTML to support HTML content".
+       Same family as ``showModal`` Pass 40.13 closed — default to
+       ``textContent`` with ``{allowHtml:true}`` opt-in mirroring
+       ``settings-page.js`` ``ConfirmModal.show``.
+
+    These are template/JS-level sinks, so the tests are source-grep against
+    the contract (mirrors Pass 40.13's pattern in
+    ``test_pass40_security.py::TestPass40_13TextContentDefault``)."""
+
+    @staticmethod
+    def _read(rel):
+        path = os.path.join(_REPO_ROOT, rel)
+        with open(path, encoding='utf-8') as f:
+            return f.read()
+
+    def test_toast_controller_has_no_inline_onclicks(self):
+        """The active-toast and RA-queued toast templates must not emit
+        ``onclick="...${value}..."`` strings — that's the JS-string-in-HTML
+        attribute sink. Doc/comment references are excluded."""
+        body = self._read('static/js/toast-controller.js')
+        # Strip line-comments so docstrings mentioning the legacy pattern
+        # don't trip the assertion.
+        live_lines = [
+            ln for ln in body.split('\n')
+            if 'onclick=' in ln and not ln.lstrip().startswith('//')
+        ]
+        assert not live_lines, (
+            "toast-controller.js still has live inline onclick attributes "
+            f"(Pass 45.4 migrated to delegated handlers): {live_lines!r}"
+        )
+
+    def test_toast_controller_uses_delegated_action_attrs(self):
+        """The replacement pattern is data-toast-action + addEventListener
+        on the container. At least one ``data-toast-action="..."`` must be
+        present and the container must register a click listener."""
+        body = self._read('static/js/toast-controller.js')
+        assert 'data-toast-action=' in body, (
+            "toast-controller.js must emit data-toast-action attributes "
+            "instead of inline onclick (Pass 45.4)"
+        )
+        assert "this.container.addEventListener('click'" in body, (
+            "toast-controller.js must install a delegated click handler "
+            "on the toast container (Pass 45.4)"
+        )
+
+    def test_hltb_time_fields_are_escaped(self):
+        """The HLTB API returns external strings; every field that lands in
+        innerHTML must go through escapeHtml. game-modals.js:670-689 used
+        to interpolate them raw."""
+        body = self._read('static/js/game-modals.js')
+        # The savedDiv.innerHTML block must escape main_story / main_extra
+        # / completionist.
+        assert 'escapeHtml(String(data.main_story' in body, (
+            "game-modals.js must escape data.main_story before innerHTML "
+            "(Pass 45.4)"
+        )
+        assert 'escapeHtml(String(data.main_extra' in body, (
+            "game-modals.js must escape data.main_extra before innerHTML "
+            "(Pass 45.4)"
+        )
+        assert 'escapeHtml(String(data.completionist' in body, (
+            "game-modals.js must escape data.completionist before innerHTML "
+            "(Pass 45.4)"
+        )
+
+    def test_hltb_clear_button_no_inline_onclick(self):
+        """The HLTB clear button used to embed ${ctx.clearFnName} into an
+        inline onclick — same JS-string-in-HTML family. Replaced with
+        data-hltb-clear + addEventListener."""
+        body = self._read('static/js/game-modals.js')
+        assert 'onclick="${ctx.clearFnName}' not in body, (
+            "game-modals.js must not embed clearFnName into inline onclick "
+            "(Pass 45.4)"
+        )
+        assert 'data-hltb-clear' in body, (
+            "HLTB clear button must use data-hltb-clear + addEventListener "
+            "(Pass 45.4)"
+        )
+
+    def test_settings_modal_helpers_default_to_textcontent(self):
+        """showConfirmModal and showInfoModal in settings.html must default
+        to textContent and only use innerHTML when options.allowHtml is
+        explicitly true. Mirrors the ConfirmModal.show pattern in
+        settings-page.js (Pass 29.1)."""
+        body = self._read('templates/settings.html')
+        # Both helpers must accept an options arg.
+        assert 'function showConfirmModal(title, message, onConfirm, options' in body, (
+            "showConfirmModal must accept an options arg with allowHtml "
+            "(Pass 45.4)"
+        )
+        assert 'function showInfoModal(title, message, onOk, options' in body, (
+            "showInfoModal must accept an options arg with allowHtml "
+            "(Pass 45.4)"
+        )
+        # The bug-shape comment must be gone — its presence indicates the
+        # bare innerHTML sink is back.
+        assert "Use innerHTML to support HTML content" not in body, (
+            "Pass 45.4 removed the bare 'innerHTML to support HTML content' "
+            "form; if this fires the textContent default has been reverted"
+        )
+        # The opt-in branch must exist.
+        assert 'options.allowHtml' in body, (
+            "showConfirmModal/showInfoModal must guard innerHTML behind "
+            "options.allowHtml (Pass 45.4)"
+        )
+        assert 'messageEl.textContent = message' in body, (
+            "showConfirmModal/showInfoModal must default to textContent "
+            "(Pass 45.4)"
+        )
+
+    def test_settings_html_callers_with_html_opt_in(self):
+        """The two showConfirmModal callers that genuinely need formatted
+        HTML (clearScrapedData, deleteController) must opt in via
+        {allowHtml: true} and escape user-controlled values they
+        interpolate into the template."""
+        body = self._read('templates/settings.html')
+        # User-controlled fields must be escaped.
+        assert 'escapeHtml(controllerName)' in body, (
+            "deleteController must escape controllerName before injecting "
+            "into the confirm template (Pass 45.4)"
+        )
+        assert 'escapeHtml(systemName)' in body, (
+            "clearScrapedData must escape systemName before injecting "
+            "into the confirm template (Pass 45.4)"
+        )
+        # Both callers opt in to HTML.
+        assert body.count('{allowHtml: true}') >= 2, (
+            "settings.html must opt in to HTML on the two formatted-confirm "
+            "callers (Pass 45.4)"
+        )
 
 
 def _stub_authenticated_admin(app_module):

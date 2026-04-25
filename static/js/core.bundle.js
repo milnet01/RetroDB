@@ -1670,6 +1670,28 @@ const UnifiedToastController = {
         this.container.className = 'unified-toast-container';
         document.body.appendChild(this.container);
 
+        this.container.addEventListener('click', (e) => {
+            const target = e.target.closest('[data-toast-action]');
+            if (!target) return;
+            const action = target.dataset.toastAction;
+            const type = target.dataset.toastType;
+            if (action === 'navigate') {
+                this.navigateTo(type, target.dataset.toastReturnUrl || '');
+                return;
+            }
+            e.stopPropagation();
+            if (action === 'pause') {
+                this.togglePause(type);
+            } else if (action === 'cancel') {
+                this.cancel(type);
+            } else if (action === 'cancel-ra-queued') {
+                const raType = target.dataset.raType;
+                const raSystemIdRaw = target.dataset.raSystemId;
+                const raSystemId = raSystemIdRaw === '' ? null : Number(raSystemIdRaw);
+                this.cancelRAQueued(raType, Number.isFinite(raSystemId) ? raSystemId : null);
+            }
+        });
+
         this.positionContainer();
         this.positionBackToTop();
 
@@ -2212,9 +2234,8 @@ const UnifiedToastController = {
             ? `🔄 Sync: ${this.escapeHtml(item.systemName)}`
             : `🏆 Refresh: ${this.escapeHtml(item.systemName || 'All Systems')}`;
 
-        const cancelCall = item.type === 'sync'
-            ? `UnifiedToastController.cancelRAQueued('sync', ${item.systemId})`
-            : `UnifiedToastController.cancelRAQueued('refresh', ${item.systemId || 'null'})`;
+        const raType = item.type === 'sync' ? 'sync' : 'refresh';
+        const raSystemId = item.systemId == null ? '' : String(item.systemId);
 
         toast.innerHTML = `
             <div class="toast-content">
@@ -2226,7 +2247,7 @@ const UnifiedToastController = {
                     </div>
                 </div>
                 <div class="toast-controls">
-                    <button class="toast-btn cancel" onclick="event.stopPropagation(); ${cancelCall}" title="Remove from queue">
+                    <button class="toast-btn cancel" data-toast-action="cancel-ra-queued" data-ra-type="${this.escapeHtml(raType)}" data-ra-system-id="${this.escapeHtml(raSystemId)}" title="Remove from queue">
                         ✕
                     </button>
                 </div>
@@ -2391,7 +2412,7 @@ const UnifiedToastController = {
 
         return `
             <div class="toast-content">
-                <div class="toast-main" onclick="UnifiedToastController.navigateTo('${type}', '${data.return_url || ''}')">
+                <div class="toast-main" data-toast-action="navigate" data-toast-type="${this.escapeHtml(type)}" data-toast-return-url="${this.escapeHtml(data.return_url || '')}">
                     <div class="toast-icon ${isPaused ? 'paused' : ''}">${isPaused ? getThemedIcon(type, 'paused') : getThemedIcon(type)}</div>
                     <div class="toast-info">
                         <div class="toast-title ${isPaused ? 'paused' : ''}">${config.name} ${isPaused ? '(Paused)' : 'Running'}</div>
@@ -2409,11 +2430,11 @@ const UnifiedToastController = {
                 </div>
                 <div class="toast-controls">
                     ${type === 'bulk-scrape' || type === 'psn-refresh' ? `
-                    <button class="toast-btn pause" onclick="event.stopPropagation(); UnifiedToastController.togglePause('${type}')" title="${isPaused ? 'Resume' : 'Pause'}">
+                    <button class="toast-btn pause" data-toast-action="pause" data-toast-type="${this.escapeHtml(type)}" title="${isPaused ? 'Resume' : 'Pause'}">
                         <span data-pause-icon>${isPaused ? '▶️' : '⏸️'}</span>
                     </button>
                     ` : ''}
-                    <button class="toast-btn cancel" onclick="event.stopPropagation(); UnifiedToastController.cancel('${type}')" title="Cancel">
+                    <button class="toast-btn cancel" data-toast-action="cancel" data-toast-type="${this.escapeHtml(type)}" title="Cancel">
                         ✕
                     </button>
                 </div>

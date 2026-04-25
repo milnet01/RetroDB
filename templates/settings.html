@@ -4368,9 +4368,19 @@ document.addEventListener('DOMContentLoaded', loadBackups);
 
 let pendingConfirmAction = null;
 
-function showConfirmModal(title, message, onConfirm) {
+// Pass 45.4 — default to textContent so callers can't accidentally turn
+// admin-curated values (controller name, system name, dropdown option,
+// upstream API error string) into an XSS sink. Callers that need
+// formatted HTML pass `{allowHtml: true}` to opt in, mirroring the
+// `ConfirmModal.show` helper in settings-page.js (Pass 29.1).
+function showConfirmModal(title, message, onConfirm, options = {}) {
     document.getElementById('confirmTitle').textContent = title;
-    document.getElementById('confirmMessage').innerHTML = message;  // Use innerHTML to support HTML content
+    const messageEl = document.getElementById('confirmMessage');
+    if (options.allowHtml) {
+        messageEl.innerHTML = message;
+    } else {
+        messageEl.textContent = message;
+    }
     pendingConfirmAction = onConfirm;
     
     // Show/hide cancel button and update confirm button text
@@ -4394,9 +4404,15 @@ function showConfirmModal(title, message, onConfirm) {
 }
 
 // Show info modal (just OK button)
-function showInfoModal(title, message, onOk) {
+// Pass 45.4 — same allowHtml opt-in as showConfirmModal.
+function showInfoModal(title, message, onOk, options = {}) {
     document.getElementById('confirmTitle').textContent = title;
-    document.getElementById('confirmMessage').innerHTML = message;  // Use innerHTML to support HTML content
+    const messageEl = document.getElementById('confirmMessage');
+    if (options.allowHtml) {
+        messageEl.innerHTML = message;
+    } else {
+        messageEl.textContent = message;
+    }
     pendingConfirmAction = onOk || null;
     
     const cancelBtn = document.getElementById('confirmCancelBtn');
@@ -6014,9 +6030,10 @@ async function clearScrapedData() {
     // Confirm first
     const systemName = systemId === 'all' ? 'ALL SYSTEMS' : systemSelect.options[systemSelect.selectedIndex].text;
     
+    // Pass 45.4 — escape system name; opt in to HTML for the formatting.
     showConfirmModal(
         '⚠️ Clear Scraped Data',
-        `This will clear all scraped metadata from games in <strong>${systemName}</strong>.<br><br>
+        `This will clear all scraped metadata from games in <strong>${escapeHtml(systemName)}</strong>.<br><br>
          ${deleteImages ? '<strong style="color: var(--neon-red);">⚠️ Downloaded images will also be deleted!</strong><br><br>' : ''}
          This cannot be undone. Are you sure?`,
         async () => {
@@ -6063,7 +6080,8 @@ async function clearScrapedData() {
                 btn.disabled = false;
                 btn.innerHTML = '<span class="btn-icon">🗑️</span> Clear Scraped Data';
             }
-        }
+        },
+        {allowHtml: true}
     );
 }
 
@@ -6242,9 +6260,12 @@ document.getElementById('confirmModal')?.addEventListener('click', function(e) {
 });
 
 async function deleteController(controllerId, controllerName) {
+    // Pass 45.4 — controllerName is admin-editable text; escape before
+    // interpolating into the HTML template, then opt in to HTML so the
+    // <strong> + <br><br> still render.
     showConfirmModal(
         '🗑️ Delete Controller',
-        `Are you sure you want to delete <strong>${controllerName}</strong>?<br><br>This will remove it from the library and any systems using it as default.`,
+        `Are you sure you want to delete <strong>${escapeHtml(controllerName)}</strong>?<br><br>This will remove it from the library and any systems using it as default.`,
         async () => {
             closeConfirmModal();
             try {
@@ -6274,7 +6295,8 @@ async function deleteController(controllerId, controllerName) {
                 console.error('Error deleting controller:', error);
                 showModal('❌ Error', 'Failed to delete controller');
             }
-        }
+        },
+        {allowHtml: true}
     );
 }
 
