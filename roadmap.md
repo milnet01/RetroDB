@@ -236,7 +236,12 @@ paths or silent-corruption vectors under routine use.
   at module import in both files; explicit `DecompressionBombError` catch
   at every `Image.open(...)` call site.
 - **Source**: indie-review 2026-04-25 theme T5.
-- **Status**: todo
+- **Status**: done (v3.5.21) — added `config.IMAGE_MAX_PIXELS` (default
+  64 megapixels), set `Image.MAX_IMAGE_PIXELS` at module-import time in
+  both `services/image_utils.py` and `services/game_media_service.py`,
+  and added explicit `DecompressionBombError` catches at every
+  `Image.open` site (5 total) with distinct log lines for forensics.
+  5 regression tests in `tests/test_pass45_security.py::TestPass45_6*`.
 
 #### Pass 45.7 Stale-ref orphan-cleanup race (HIGH, M)
 

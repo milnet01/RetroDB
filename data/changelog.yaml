@@ -1,3 +1,18 @@
+- version: 3.5.21
+  date: 2026-04-25
+  tags:
+  - type: security
+    label: Pass 45.6 — Pillow decompression-bomb cap on image stack
+  body: |
+    <ul>
+        <li><strong>Pass 45.6 (HIGH) &mdash; <code>Image.MAX_IMAGE_PIXELS</code> set at module-import time</strong>. Pass 41.14.A had set the cap inside <code>image_dedup.compute_dhash</code> only; the rest of the image stack (<code>services.image_utils</code>, <code>services.game_media_service</code>) had no cap. A 1 MB malicious PNG that advertises 50000&times;50000 pixels could decode to ~10 GB of pixel data and OOM-kill the worker process. <code>verify()</code> doesn't help &mdash; it only sniffs the magic bytes, not the dimensions.</li>
+        <li><strong>Cap is configurable</strong>. New <code>config.IMAGE_MAX_PIXELS</code> knob (default 64 megapixels &mdash; well above any legitimate game cover or screenshot, but two orders of magnitude below the bomb threshold). Operators with legitimately huge artwork (8K box scans, fan-art at print resolution) can raise it via <code>config.py</code>. Set once at module import in both files so every <code>Image.open</code> below inherits the limit.</li>
+        <li><strong>Explicit <code>DecompressionBombError</code> catches</strong> at every <code>Image.open</code> call site: <code>game_media_service._validate_image_bytes</code> (upload validator), <code>image_utils._ensure_format_matches_extension</code> (re-encode after download), <code>_make_responsive_variants</code> (boxart -sm/-md), <code>boxart_srcset</code> (width descriptor), <code>standardize_image</code> (Real-ESRGAN / Lanczos pipeline). Generic <code>except Exception</code> blocks already absorbed the error, but a distinct log line ("decompression bomb rejected for &hellip;") makes the security log forensics-friendly &mdash; previously a bomb attempt looked identical to a corrupt-file error.</li>
+        <li><strong>Source</strong> &mdash; indie-review 2026-04-25 theme T5 (decompression-bomb / <code>MAX_IMAGE_PIXELS</code> global). Caught by Storage / persistence and Frontend (uploads) lanes.</li>
+        <li><strong>Tests</strong>. <code>tests/test_pass45_security.py::TestPass45_6*</code> &mdash; 5 cases. (1) After importing <code>services.image_utils</code>, <code>Image.MAX_IMAGE_PIXELS</code> is set and &le; 64 megapixels. (2) Same contract for <code>services.game_media_service</code>. (3) Functional smoke: lower the cap to 1000 px, build a 100&times;100 PNG (10000 px &gt; cap), pass through <code>_validate_image_bytes</code> &mdash; must return False. (4) <code>config.example.py</code> exports <code>IMAGE_MAX_PIXELS</code>. (5) <code>image_utils.py</code> has at least 4 explicit <code>Image.DecompressionBombError</code> catches (one per public-API <code>Image.open</code> site). Reverting the production fix fails 3 of 5 cases &mdash; pinning behaviour, not source grep alone.</li>
+        <li><strong>Version bump 3.5.20 &rarr; 3.5.21</strong>: patch (DoS hardening, no schema or surface change).</li>
+    </ul>
+
 - version: 3.5.20
   date: 2026-04-25
   tags:

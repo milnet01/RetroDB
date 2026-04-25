@@ -95,7 +95,7 @@ except ValueError:
 
 # Application metadata
 APP_NAME = "RetroDB"
-APP_VERSION = "3.5.20"
+APP_VERSION = "3.5.21"
 APP_LAST_UPDATE = "2026-04-25"
 APP_DESCRIPTION = "Retro Gaming ROM Library Manager"
 
@@ -144,6 +144,12 @@ MAX_API_RESPONSE_BYTES = 10 * 1024 * 1024      # 25.7 — scraper JSON response 
 MUSEUM_UPLOAD_MAX_BYTES = 10 * 1024 * 1024     # 25.4 — museum controller-image cap
 CLZ_PDF_MAX_PAGES = 500                        # 25.5 — CLZ PDF page-count ceiling
 MAX_LIST_ROWS = 500                            # 25.8 — list-endpoint row cap
+# Pass 45.6 — Pillow decompression-bomb cap. A maliciously-crafted PNG can
+# decode to gigabytes of pixel data even if the file itself is small. Caps
+# Image.MAX_IMAGE_PIXELS at module-import time in services/image_utils.py
+# and services/game_media_service.py. 64 megapixels (~8K × 8K) is well above
+# any legitimate game cover or screenshot.
+IMAGE_MAX_PIXELS = 64_000_000                  # 45.6 — Pillow decompression-bomb cap
 
 # Maximum results to show in search
 MAX_SEARCH_RESULTS = 10

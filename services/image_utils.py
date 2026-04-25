@@ -15,6 +15,28 @@ import threading
 logger = logging.getLogger(__name__)
 
 
+# Pass 45.6 — Pillow decompression-bomb cap. A 1 MB malicious PNG can
+# advertise dimensions that decode to 4+ GB of pixel data, OOM-killing
+# the worker. Pillow has a built-in cap (`Image.MAX_IMAGE_PIXELS`,
+# default ~89 megapixels) that emits a `DecompressionBombWarning`, but
+# it doesn't *raise* unless the value is set explicitly OR a stricter
+# value is configured. We set the cap once at module import so every
+# `Image.open` call site below inherits it. Pass 41.14.A applied this
+# only to `compute_dhash` in `image_dedup`; here we cover the rest of
+# the image stack (`_validate_image_bytes`, `_atomic_save`,
+# `standardize_image`, `finalize_downloaded_image`, `_OnnxUpscaler`).
+try:
+    from PIL import Image as _PIL_Image
+    import config as _config
+    _PIL_Image.MAX_IMAGE_PIXELS = getattr(_config, 'IMAGE_MAX_PIXELS', None) or 64_000_000
+    del _PIL_Image, _config
+except ImportError:
+    # Pillow is a hard runtime dependency; if it really is missing,
+    # individual call sites below will raise on their own `from PIL
+    # import Image` and the cap is moot.
+    pass
+
+
 # ---------------------------------------------------------------------------
 # Lazy-loaded Real-ESRGAN ONNX singleton
 # ---------------------------------------------------------------------------
@@ -469,6 +491,11 @@ def _ensure_format_matches_extension(path):
             buffer = img.copy()
         _save_image(buffer, path)
         buffer.close()
+    except Image.DecompressionBombError as e:
+        # Pass 45.6 — log decompression bombs distinctly so the security
+        # log shows the rejected filename (a normal "format normalize
+        # failed" line could otherwise hide a bomb attempt).
+        logger.warning(f"Image format normalize: decompression bomb rejected for {path} ({e})")
     except Exception as e:
         logger.warning(f"Image format normalize failed for {path}: {e}")
 
@@ -539,6 +566,8 @@ def _make_responsive_variants(path, image_type):
                 variant = img.resize((target_w, new_h), Image.LANCZOS)
                 _save_image(variant, _variant_path(path, suffix))
                 variant.close()
+    except Image.DecompressionBombError as e:
+        logger.warning(f"Responsive variants: decompression bomb rejected for {path} ({e})")
     except Exception as e:
         logger.warning(f"Responsive variant generation failed for {path}: {e}")
 
@@ -574,6 +603,9 @@ def boxart_srcset(filename, sizes=None):
         from PIL import Image
         with Image.open(original_path) as img:
             orig_w = img.size[0]
+    except Image.DecompressionBombError as e:
+        logger.warning(f"boxart_srcset: decompression bomb rejected for {original_path} ({e})")
+        orig_w = 760
     except Exception:
         orig_w = 760
     candidates.append(f"/static/images/boxart/{filename} {orig_w}w")
@@ -635,6 +667,9 @@ def standardize_image(path, image_type, target, preserve_rgba=False):
         with Image.open(path) as src:
             src.load()
             img = src.copy()
+    except Image.DecompressionBombError as e:
+        logger.warning(f"Image standardize: decompression bomb rejected for {path} ({e})")
+        return
     except Exception as e:
         logger.warning(f"Image standardize: cannot open {path}: {e}")
         return

@@ -845,3 +845,99 @@ class TestPass45_5AtomicWrite:
             "_download_model must not use the static `dest + '.tmp'` "
             "suffix (race-prone, Pass 45.5)"
         )
+
+
+# -----------------------------------------------------------------------------
+# 45.6 — Pillow decompression-bomb cap
+# -----------------------------------------------------------------------------
+class TestPass45_6DecompressionBomb:
+    """Pass 41.14.A set ``Image.MAX_IMAGE_PIXELS`` for ``compute_dhash``
+    only. The rest of the image stack (``services.image_utils`` and
+    ``services.game_media_service``) had no cap, so a 1 MB malicious PNG
+    that advertises 50000×50000 pixels could decode to 10 GB of pixel
+    data and OOM-kill the worker.
+
+    Pass 45.6 sets the cap once at module-import time in both files,
+    using ``config.IMAGE_MAX_PIXELS`` (default 64 megapixels) — well
+    above any legitimate game cover or screenshot. Every ``Image.open``
+    call site catches ``DecompressionBombError`` explicitly so the
+    security log records bomb attempts under a distinct line."""
+
+    def test_image_utils_module_sets_max_image_pixels(self):
+        """Importing services.image_utils must install the cap on the
+        global Pillow Image module, not just inside one helper."""
+        import importlib
+        import services.image_utils  # noqa: F401 — import for side-effect
+        from PIL import Image
+        # The cap is set in services/image_utils.py at import time.
+        assert Image.MAX_IMAGE_PIXELS is not None, (
+            "Image.MAX_IMAGE_PIXELS must be set after services.image_utils "
+            "is imported (Pass 45.6)"
+        )
+        assert Image.MAX_IMAGE_PIXELS <= 64_000_000, (
+            f"Image.MAX_IMAGE_PIXELS = {Image.MAX_IMAGE_PIXELS}; "
+            "must be ≤ 64 megapixels (Pass 45.6)"
+        )
+
+    def test_game_media_service_module_sets_max_image_pixels(self):
+        """Same contract for game_media_service — the upload validator
+        runs through Pillow and needs the cap too."""
+        import services.game_media_service  # noqa: F401
+        from PIL import Image
+        assert Image.MAX_IMAGE_PIXELS is not None
+        assert Image.MAX_IMAGE_PIXELS <= 64_000_000
+
+    def test_validate_image_bytes_rejects_oversized_bomb(self, monkeypatch):
+        """Functional smoke: a synthetic image whose declared dimensions
+        exceed MAX_IMAGE_PIXELS must be rejected by
+        ``_validate_image_bytes``, not raise an OOM."""
+        from PIL import Image
+        from services import game_media_service
+
+        # Lower the cap to 1000 px² for the test so we don't have to
+        # actually build a 64-megapixel buffer.
+        monkeypatch.setattr(Image, 'MAX_IMAGE_PIXELS', 1000)
+        # Build a real 100×100 PNG (10000 px > 1000 cap → bomb error).
+        import io
+        img = Image.new('RGB', (100, 100), color=(0, 0, 0))
+        buf = io.BytesIO()
+        img.save(buf, 'PNG')
+        raw = buf.getvalue()
+
+        result = game_media_service._validate_image_bytes(raw)
+        assert result is False, (
+            "_validate_image_bytes must reject images that trip "
+            "MAX_IMAGE_PIXELS (Pass 45.6)"
+        )
+
+    def test_config_exports_image_max_pixels(self):
+        """The cap must be configurable via ``config.IMAGE_MAX_PIXELS`` so
+        operators with legitimately huge artwork (e.g. 8K box scans) can
+        raise it. The default in config.example.py must be present."""
+        path = os.path.join(_REPO_ROOT, 'config.example.py')
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        assert 'IMAGE_MAX_PIXELS' in body, (
+            "config.example.py must export IMAGE_MAX_PIXELS (Pass 45.6)"
+        )
+
+    def test_image_open_sites_catch_decompression_bomb(self):
+        """Every ``Image.open`` call site in services/image_utils.py must
+        catch ``DecompressionBombError`` explicitly so the security log
+        shows a distinct rejection line (mirrors the source-grep pattern
+        used by Pass 40.13/45.4 for textContent default)."""
+        path = os.path.join(_REPO_ROOT, 'services', 'image_utils.py')
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        open_count = body.count('Image.open(')
+        bomb_catches = body.count('Image.DecompressionBombError')
+        # Expect at least 4 explicit catches — one per Image.open site
+        # in the public API surface (_ensure_format_matches_extension,
+        # _make_responsive_variants, boxart_srcset, standardize_image).
+        # The lazy `from PIL import Image` lines also count as "Image.open"
+        # imports in raw count, so use a >= floor.
+        assert bomb_catches >= 4, (
+            f"Found {open_count} Image.open() sites but only "
+            f"{bomb_catches} DecompressionBombError catches; "
+            "every site must catch the bomb explicitly (Pass 45.6)"
+        )
