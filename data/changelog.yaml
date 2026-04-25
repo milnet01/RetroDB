@@ -1,3 +1,19 @@
+- version: 3.5.11
+  date: 2026-04-25
+  tags:
+  - type: security
+    label: Pass 41.12 — frontend fetch timeout + navigateTo open-redirect guard
+  body: |
+    <ul>
+        <li><strong>Pass 41.12.A (HIGH) &mdash; default 30 s fetch timeout via AbortController</strong>. <code>static/js/utils.js::API.get/post/postForm</code> previously called <code>fetch()</code> with no timeout. A hung server (or a request that fell into a captive portal) blocked the pending Promise indefinitely; the spinner spun forever and the user had no recovery path short of a hard reload. New <code>_withTimeout(opts)</code> helper wraps every API call in a 30 s <code>AbortController</code>; callers that want to control cancellation can pass their own <code>signal</code> in <code>options</code> and the helper steps aside. <code>finally</code> blocks call <code>cleanup()</code> to clear the timeout on success/failure.</li>
+        <li><strong>Pass 41.12.B (HIGH) &mdash; <code>navigateTo</code> open-redirect guard</strong>. <code>static/js/toast-controller.js::UnifiedToastController.navigateTo</code> previously assigned <code>window.location.href = returnUrl</code> directly. <code>returnUrl</code> flows from <code>localStorage.getItem('bulkScrapeReturnUrl')</code> and similar keys; localStorage is writable from any same-origin script, so an XSS payload (or a malicious browser extension) could land an absolute attacker URL there and the next toast click would fire it. New <code>_isSafeReturnUrl(url)</code> helper accepts only (a) <code>/</code>-rooted paths that don't start with <code>//</code> (protocol-relative), or (b) absolute URLs whose parsed origin matches <code>window.location.origin</code> with http(s) scheme. Rejected URLs log a <code>console.warn</code> and the navigation is skipped.</li>
+        <li><strong>Deferred</strong> &mdash; replacing inline <code>onclick=</code> handlers with delegated <code>addEventListener</code> + <code>data-*</code> attributes (the third sub-item in roadmap 41.12). 51+ raw <code>setInterval/setTimeout/addEventListener</code> sites were called out as a separate "PageLifecycle adopt-or-remove" decision, tracked under Pass 42.7. The current pass is scoped to the bug-class fixes that are currently exploitable; the inline-handler rewrite is its own UX-affecting effort (it also blocks Pass 41.3's CSP nonce zombie cleanup).</li>
+        <li><strong>JS bundle rebuilt</strong>. <code>build_js.py</code> regenerated <code>core.bundle.js</code> with the updated <code>utils.js</code> + <code>toast-controller.js</code>; <code>asset_manifest.json</code> SHA-256 prefix advanced.</li>
+        <li><strong>Tests</strong>. <code>TestPass41_12A/B</code> &mdash; 5 cases. 12A: source-level pin on <code>AbortController</code> + <code>_API_DEFAULT_TIMEOUT_MS</code> + caller-signal opt-out. 12B: pin on <code>_isSafeReturnUrl</code> helper definition with origin-parity check, <code>navigateTo</code> consults the guard, and the protocol-relative-URL rejection (<code>startsWith('//')</code>).</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 41.12 closed (A + B); inline-onclick rewrite carried over to Pass 42.7. Pass 41 has 3 sub-passes remaining (41.6 + 41.9 + 41.13, plus 41.5b carry-over).</li>
+        <li><strong>Version bump 3.5.10 &rarr; 3.5.11</strong>: patch (frontend resilience + open-redirect closure).</li>
+    </ul>
+
 - version: 3.5.10
   date: 2026-04-25
   tags:

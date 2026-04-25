@@ -823,7 +823,15 @@ paths or silent-corruption vectors under routine use.
   `PageLifecycle` in the canonical hot paths (museum, rom-tools,
   log-viewer) or delete the abstraction — pick one.
 - **Source**: 2026-04-24 indie-review, frontend JS H1/H2/H3/M3.
-- **Status**: todo
+- **Status**: partial (v3.5.11) — A (HIGH) + B (HIGH) closed:
+  `_withTimeout(opts)` wraps every `API.get/post/postForm` call in a
+  30 s default `AbortController`; caller-supplied `signal` opts out.
+  `_isSafeReturnUrl(url)` validates `navigateTo` redirect targets to
+  same-origin paths or origins. M3 (inline-onclick → delegated listener
+  rewrite) deferred to Pass 42.7 — that's gated on the
+  PageLifecycle adopt-or-remove decision and unblocks Pass 41.3's CSP
+  nonce zombie cleanup. Tests:
+  `tests/test_pass41_security.py::TestPass41_12A/B` (5 cases).
 
 #### Pass 41.13 Templates / a11y — aria-current + div-as-button + mis-targeted label-for + label-as-group-heading
 

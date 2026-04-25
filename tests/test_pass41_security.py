@@ -1146,3 +1146,98 @@ class TestPass41_10DScanAuthzAndRateLimit:
                 f"Missing _rate_limit('{fn}', '5 per minute') in app.py "
                 "(Pass 41.10.D)"
             )
+
+
+# -----------------------------------------------------------------------------
+# 41.12.A — API.* fetch wraps default 30 s AbortController timeout
+# -----------------------------------------------------------------------------
+class TestPass41_12AFetchTimeout:
+    """`static/js/utils.js::API.get/post/postForm` previously called
+    `fetch()` with no timeout. A hung server (or a request that fell into
+    a captive portal) blocked the pending Promise indefinitely; the
+    spinner spun forever and the user had no recovery path. Pass 41.12.A
+    wires a 30 s default via AbortController; callers that want to
+    control cancellation can pass their own `signal`."""
+
+    def test_abortcontroller_used(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'static/js/utils.js'),
+            encoding='utf-8'
+        ).read()
+        assert 'AbortController' in body, (
+            "API.* must use AbortController for default timeout (Pass 41.12.A)"
+        )
+        assert '_API_DEFAULT_TIMEOUT_MS' in body, (
+            "Default timeout constant missing (Pass 41.12.A)"
+        )
+
+    def test_caller_signal_respected(self):
+        """If caller passes their own signal, the helper should NOT clobber
+        it with a timed AbortController."""
+        body = open(
+            os.path.join(_REPO_ROOT, 'static/js/utils.js'),
+            encoding='utf-8'
+        ).read()
+        assert 'opts.signal' in body or 'options.signal' in body, (
+            "API.* timeout must opt out when caller passes signal (Pass 41.12.A)"
+        )
+
+
+# -----------------------------------------------------------------------------
+# 41.12.B — navigateTo rejects non-same-origin returnUrl
+# -----------------------------------------------------------------------------
+class TestPass41_12BNavigateToOpenRedirect:
+    """The `returnUrl` argument flows from <code>localStorage.getItem</code>
+    keys; localStorage is writable from any same-origin script. An XSS
+    payload (or a malicious extension) could land an absolute attacker
+    URL there, and `window.location.href = returnUrl` would fire it on
+    the user's next toast click. Pass 41.12.B validates that returnUrl
+    is either a `/`-rooted path or a same-origin URL."""
+
+    def test_isSafeReturnUrl_helper_present(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'static/js/toast-controller.js'),
+            encoding='utf-8'
+        ).read()
+        assert '_isSafeReturnUrl' in body, (
+            "Open-redirect guard helper must exist (Pass 41.12.B)"
+        )
+        # Must check origin parity.
+        assert 'window.location.origin' in body, (
+            "_isSafeReturnUrl must compare origins (Pass 41.12.B)"
+        )
+
+    def test_navigateTo_consults_guard(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'static/js/toast-controller.js'),
+            encoding='utf-8'
+        ).read()
+        # The navigateTo function must call the guard before assigning
+        # window.location.href.
+        idx = body.find('navigateTo(type, returnUrl)')
+        assert idx != -1, "navigateTo function not found"
+        # Look at the next ~600 chars of the function for the guard call.
+        nearby = body[idx:idx + 800]
+        assert '_isSafeReturnUrl' in nearby, (
+            "navigateTo must call _isSafeReturnUrl before redirecting "
+            "(Pass 41.12.B)"
+        )
+
+    def test_protocol_relative_url_rejected(self):
+        """Functional smoke: `//evil.example/path` is protocol-relative
+        and resolves to a different host. The guard must reject it."""
+        # Source-level pin: we explicitly check that the helper rejects
+        # `//`-prefixed input (the common protocol-relative attack shape).
+        body = open(
+            os.path.join(_REPO_ROOT, 'static/js/toast-controller.js'),
+            encoding='utf-8'
+        ).read()
+        # Locate the helper *definition* (skip past the call site that uses
+        # the same identifier above).
+        idx = body.find('_isSafeReturnUrl(url) {')
+        assert idx != -1, "_isSafeReturnUrl helper definition not found"
+        helper_body = body[idx:idx + 600]
+        assert "startsWith('//')" in helper_body, (
+            "Guard must explicitly reject `//`-prefixed protocol-relative "
+            "URLs (Pass 41.12.B)"
+        )

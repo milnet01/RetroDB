@@ -235,18 +235,33 @@ const Storage = {
     }
 };
 
+const _API_DEFAULT_TIMEOUT_MS = 30000;
+
+function _withTimeout(opts) {
+    if (opts && opts.signal) {
+        return { opts, cleanup: null };  // caller controls cancellation
+    }
+    const ac = new AbortController();
+    const t = setTimeout(() => ac.abort(), _API_DEFAULT_TIMEOUT_MS);
+    return {
+        opts: Object.assign({}, opts, { signal: ac.signal }),
+        cleanup: () => clearTimeout(t),
+    };
+}
+
 const API = {
     /**
      * Make a GET request
      * @param {string} url - API endpoint
-     * @param {Object} options - Fetch options
+     * @param {Object} options - Fetch options (pass `signal` to opt out of default 30s timeout)
      * @returns {Promise<Object>} - Response data
      */
     async get(url, options = {}) {
+        const { opts, cleanup } = _withTimeout(options);
         try {
             const response = await fetch(url, {
                 method: 'GET',
-                ...options
+                ...opts
             });
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
@@ -255,6 +270,8 @@ const API = {
         } catch (error) {
             console.error('API GET error:', error);
             throw error;
+        } finally {
+            if (cleanup) cleanup();
         }
     },
 
@@ -262,19 +279,20 @@ const API = {
      * Make a POST request
      * @param {string} url - API endpoint
      * @param {Object} data - Request body
-     * @param {Object} options - Fetch options
+     * @param {Object} options - Fetch options (pass `signal` to opt out of default 30s timeout)
      * @returns {Promise<Object>} - Response data
      */
     async post(url, data = {}, options = {}) {
+        const { opts, cleanup } = _withTimeout(options);
         try {
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    ...options.headers
+                    ...opts.headers
                 },
                 body: JSON.stringify(data),
-                ...options
+                ...opts
             });
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
@@ -283,6 +301,8 @@ const API = {
         } catch (error) {
             console.error('API POST error:', error);
             throw error;
+        } finally {
+            if (cleanup) cleanup();
         }
     },
 
@@ -293,10 +313,12 @@ const API = {
      * @returns {Promise<Object>} - Response data
      */
     async postForm(url, formData) {
+        const { opts, cleanup } = _withTimeout({});
         try {
             const response = await fetch(url, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                signal: opts.signal,
             });
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
@@ -305,6 +327,8 @@ const API = {
         } catch (error) {
             console.error('API POST form error:', error);
             throw error;
+        } finally {
+            if (cleanup) cleanup();
         }
     }
 };
@@ -2759,7 +2783,17 @@ const UnifiedToastController = {
     },
 
     /**
-     * Navigate to the appropriate page
+     * Navigate to the appropriate page.
+     *
+     * Pass 41.12.B — open-redirect guard. The `returnUrl` argument flows
+     * from `localStorage.getItem('bulkScrapeReturnUrl')` and similar
+     * sources. localStorage is writable from any same-origin script, so
+     * an XSS payload (or a stale value left by a malicious extension)
+     * could land an attacker-controlled absolute URL here. Without
+     * validation, `window.location.href = 'https://evil.example/...'`
+     * would fire on the user's next toast click. Accept only:
+     *   (a) same-origin paths starting with `/` (e.g. `/all-games`)
+     *   (b) absolute URLs whose parsed origin matches the current page
      */
     navigateTo(type, returnUrl) {
         if (type === 'bulk-scrape') {
@@ -2767,11 +2801,30 @@ const UnifiedToastController = {
         }
 
         if (returnUrl && window.location.pathname !== returnUrl) {
-            window.location.href = returnUrl;
+            if (UnifiedToastController._isSafeReturnUrl(returnUrl)) {
+                window.location.href = returnUrl;
+            } else {
+                console.warn('navigateTo: rejecting unsafe returnUrl', returnUrl);
+            }
         } else if (type === 'ra-sync' || type === 'ra-refresh') {
             window.location.href = '/achievements';
         } else if (type === 'psn-refresh') {
             window.location.href = '/psn-trophies';
+        }
+    },
+
+    /**
+     * Pass 41.12.B — Validate that a navigation target is same-origin.
+     */
+    _isSafeReturnUrl(url) {
+        if (typeof url !== 'string' || !url) return false;
+        if (url.startsWith('/') && !url.startsWith('//')) return true;
+        try {
+            const parsed = new URL(url, window.location.origin);
+            return parsed.origin === window.location.origin &&
+                   (parsed.protocol === 'http:' || parsed.protocol === 'https:');
+        } catch (e) {
+            return false;
         }
     },
 

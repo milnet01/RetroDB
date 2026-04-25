@@ -1593,7 +1593,17 @@ const UnifiedToastController = {
     },
     
     /**
-     * Navigate to the appropriate page
+     * Navigate to the appropriate page.
+     *
+     * Pass 41.12.B — open-redirect guard. The `returnUrl` argument flows
+     * from `localStorage.getItem('bulkScrapeReturnUrl')` and similar
+     * sources. localStorage is writable from any same-origin script, so
+     * an XSS payload (or a stale value left by a malicious extension)
+     * could land an attacker-controlled absolute URL here. Without
+     * validation, `window.location.href = 'https://evil.example/...'`
+     * would fire on the user's next toast click. Accept only:
+     *   (a) same-origin paths starting with `/` (e.g. `/all-games`)
+     *   (b) absolute URLs whose parsed origin matches the current page
      */
     navigateTo(type, returnUrl) {
         if (type === 'bulk-scrape') {
@@ -1601,11 +1611,32 @@ const UnifiedToastController = {
         }
 
         if (returnUrl && window.location.pathname !== returnUrl) {
-            window.location.href = returnUrl;
+            if (UnifiedToastController._isSafeReturnUrl(returnUrl)) {
+                window.location.href = returnUrl;
+            } else {
+                console.warn('navigateTo: rejecting unsafe returnUrl', returnUrl);
+            }
         } else if (type === 'ra-sync' || type === 'ra-refresh') {
             window.location.href = '/achievements';
         } else if (type === 'psn-refresh') {
             window.location.href = '/psn-trophies';
+        }
+    },
+
+    /**
+     * Pass 41.12.B — Validate that a navigation target is same-origin.
+     */
+    _isSafeReturnUrl(url) {
+        if (typeof url !== 'string' || !url) return false;
+        // Same-origin path: starts with `/` but not `//` (which would be
+        // protocol-relative and could land on any host).
+        if (url.startsWith('/') && !url.startsWith('//')) return true;
+        try {
+            const parsed = new URL(url, window.location.origin);
+            return parsed.origin === window.location.origin &&
+                   (parsed.protocol === 'http:' || parsed.protocol === 'https:');
+        } catch (e) {
+            return false;
         }
     },
     
