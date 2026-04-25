@@ -89,6 +89,13 @@ DEFAULT_SETTINGS = {
     # 'end' = sort-friendly: "Legend of Zelda, The", "Bug's Life, A"
     'article_placement': 'beginning',
 
+    # Pass 42 — multi-emulator launch settings.  See spec §Settings.
+    'retroarch_binary':              '',
+    'retroarch_cores_dir':           '',
+    'launcher_backend':              'local',
+    'launch_required_permission':    'launch',
+    'launch_concurrent_same_game':   'reject',
+
     # Logging settings
     'logging': {
         'scraping': {
