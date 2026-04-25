@@ -688,3 +688,68 @@ class TestPass41_7CRaApi401Logging:
         assert 'API key' in nearby or 'api_key' in nearby, (
             "Pass 41.7.C region must hint at user-actionable 'check API key'"
         )
+
+
+# -----------------------------------------------------------------------------
+# 41.8.A — flask.g shadow in PSN sync loops renamed
+# -----------------------------------------------------------------------------
+class TestPass41_8AFlaskGShadow:
+    """`routes/trophies.py::_run_psn_full_sync` had four `for g in ...` loops
+    that shadowed the module-level `from flask import g`. The PSN sync runs
+    in a background thread (no request context) so today the shadow is only
+    a typing/IDE hazard, but it's a latent bug under any future refactor
+    that moves the body inside a request handler. Renaming to `ps_game`
+    matches the existing `existing_groups` comprehension at :1384."""
+
+    def test_no_for_g_in_loops(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'routes/trophies.py'),
+            encoding='utf-8'
+        ).read()
+        # Strip comments so the explanatory comment doesn't false-positive.
+        code_only = '\n'.join(
+            line.split('#', 1)[0]
+            for line in body.splitlines()
+        )
+        # `for g in ...` (with whitespace boundaries) must be absent from
+        # routes/trophies.py — including any list/dict comprehension.
+        import re as _re
+        matches = _re.findall(r'\bfor\s+g\s+in\b', code_only)
+        assert not matches, (
+            f"routes/trophies.py still has `for g in ...` shadow(s) "
+            f"({len(matches)} occurrences) — rename loop var to ps_game "
+            "or similar (Pass 41.8.A)"
+        )
+
+
+# -----------------------------------------------------------------------------
+# 41.8.B — achievement aggregation null-user_id contract documented
+# -----------------------------------------------------------------------------
+class TestPass41_8BAchievementAggregationDoc:
+    """The `LEFT JOIN game_achievement_progress gap ON g.id = gap.game_id
+    AND gap.user_id = ?` shape silently drops rows where gap.user_id is
+    NULL. Migration 009 back-fills every row and the column is NOT NULL,
+    so this is impossible under normal init paths — but a backup restore
+    that pre-dates migration 009 could surface the silent-drop. Pass 41.8.B
+    documents the contract near the query so a future operator knows what
+    to check."""
+
+    def test_null_userid_invariant_documented(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'routes/achievements.py'),
+            encoding='utf-8'
+        ).read()
+        assert 'Pass 41.8' in body, (
+            "routes/achievements.py must document the gap.user_id NOT NULL "
+            "invariant (Pass 41.8.B)"
+        )
+        # The doc must mention migration 009 + `user_id IS NULL` so an
+        # operator hitting the silent-drop knows the diagnostic query.
+        idx = body.find('Pass 41.8')
+        nearby = body[max(0, idx - 100):idx + 800]
+        assert '009' in nearby, (
+            "Pass 41.8.B doc must reference migration 009 (the backfill)"
+        )
+        assert 'user_id IS NULL' in nearby, (
+            "Pass 41.8.B doc must give the `user_id IS NULL` diagnostic query"
+        )

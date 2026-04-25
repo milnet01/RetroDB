@@ -1,3 +1,17 @@
+- version: 3.5.7
+  date: 2026-04-25
+  tags:
+  - type: hardening
+    label: Pass 41.8 — flask.g shadow renames + achievement aggregation contract docs
+  body: |
+    <ul>
+        <li><strong>Pass 41.8.A (HIGH) &mdash; <code>flask.g</code> shadow eliminated</strong>. <code>routes/trophies.py</code> module imports <code>g</code> from Flask (request-context globals); seven loops/comprehensions used <code>g</code> as a local variable name, shadowing the import. Today the affected sites either run in background threads (no request context) or don't actually access flask.g, so the shadow is a typing/IDE hazard rather than a live bug &mdash; but a future refactor moving any of these bodies into a request handler would silently mask the global. Renamed: <code>_run_psn_full_sync</code> background loops use <code>ps_game</code> (mirroring the existing <code>existing_groups</code> comprehension); the trophy_groups comprehension uses <code>tg</code>; the per-request game-search loop uses <code>game</code>.</li>
+        <li><strong>Pass 41.8.B (MEDIUM) &mdash; achievement aggregation null-user_id contract documented</strong>. The <code>LEFT JOIN game_achievement_progress gap ON g.id = gap.game_id AND gap.user_id = ?</code> shape silently drops rows where <code>gap.user_id IS NULL</code>. Migration 009 back-fills every pre-migration row to admin_id and the column is <code>NOT NULL</code>, so this is impossible under the standard init path &mdash; but a backup-restore that pre-dates migration 009 could surface the silent-drop. Added a comment block at the query naming the invariant + the diagnostic query (<code>SELECT COUNT(*) FROM game_achievement_progress WHERE user_id IS NULL</code>) so an operator hitting "too empty" aggregations knows what to check.</li>
+        <li><strong>Tests</strong>. <code>TestPass41_8A/B</code> &mdash; 2 cases. 8A: comment-stripped grep that <code>routes/trophies.py</code> contains no <code>for g in &hellip;</code> patterns at all. 8B: pin that the Pass 41.8 marker, the &ldquo;migration 009&rdquo; reference, and the <code>user_id IS NULL</code> diagnostic query are all present in <code>routes/achievements.py</code>.</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 41.8 closed. Pass 41 has 7 sub-passes remaining (41.6 + 41.9 &hellip; 41.14, plus 41.5b carry-over).</li>
+        <li><strong>Version bump 3.5.6 &rarr; 3.5.7</strong>: patch (latent-bug hygiene + observability hint).</li>
+    </ul>
+
 - version: 3.5.6
   date: 2026-04-25
   tags:

@@ -783,7 +783,8 @@ def psn_trophy_detail(npwr_id):
         WHERE psn_game_id = ?
         ORDER BY group_id
     """, (psn_game['id'],))
-    groups_list = [dict(g) for g in trophy_groups] if trophy_groups else []
+    # Pass 41.8 — `tg` instead of `g` to avoid shadowing flask.g.
+    groups_list = [dict(tg) for tg in trophy_groups] if trophy_groups else []
     
     # Build group order map (default/base game first, then DLC in order)
     # 'default' gets order 0, DLC groups like '001', '002' get 1, 2, etc.
@@ -1072,11 +1073,16 @@ def _run_psn_full_sync(psnawp, user_id):
             """).fetchall()
 
             ps_by_folder = {}
-            for g in all_ps_games:
-                folder = g['folder']
+            # Pass 41.8 — loop var renamed from `g` to `ps_game` to avoid
+            # shadowing the module-level `from flask import g`. Background
+            # sync threads have no request context, so `g` would surface
+            # only as a typing/IDE hazard, but the shadow is fragile under
+            # future refactors that move this body into a request handler.
+            for ps_game in all_ps_games:
+                folder = ps_game['folder']
                 if folder not in ps_by_folder:
                     ps_by_folder[folder] = []
-                ps_by_folder[folder].append(g)
+                ps_by_folder[folder].append(ps_game)
 
             platform_map = {'PS3': 'ps3', 'PS4': 'ps4', 'PS5': 'ps5', 'PSVITA': 'psvita', 'PS Vita': 'psvita'}
 
@@ -1115,23 +1121,26 @@ def _run_psn_full_sync(psnawp, user_id):
                     sf = platform_map.get(platform, '')
 
                     if clean_title:
+                        # Pass 41.8 — `ps_game` instead of `g` to avoid
+                        # shadowing flask.g (mirrors the loop above and
+                        # the existing_groups comprehension at :1384).
                         if sf and sf in ps_by_folder:
-                            for g in ps_by_folder[sf]:
-                                if _clean_title_for_matching(g['title']) == clean_title:
-                                    linked_game_id = g['id']
+                            for ps_game in ps_by_folder[sf]:
+                                if _clean_title_for_matching(ps_game['title']) == clean_title:
+                                    linked_game_id = ps_game['id']
                                     break
 
                         if not linked_game_id:
-                            for g in all_ps_games:
-                                if _clean_title_for_matching(g['title']) == clean_title:
-                                    linked_game_id = g['id']
+                            for ps_game in all_ps_games:
+                                if _clean_title_for_matching(ps_game['title']) == clean_title:
+                                    linked_game_id = ps_game['id']
                                     break
 
                         if not linked_game_id:
-                            for g in all_ps_games:
-                                db_clean = _clean_title_for_matching(g['title'])
+                            for ps_game in all_ps_games:
+                                db_clean = _clean_title_for_matching(ps_game['title'])
                                 if db_clean and (clean_title in db_clean or db_clean in clean_title):
-                                    linked_game_id = g['id']
+                                    linked_game_id = ps_game['id']
                                     break
 
                     # Pass 31.1 — per-user rows. Conflict key is (npwr_id, user_id).
@@ -1381,7 +1390,8 @@ def api_psn_sync_game(npwr_id):
                 SELECT DISTINCT group_id, group_name FROM psn_trophies
                 WHERE psn_game_id = ? AND group_id != 'default'
             """, (psn_game['id'],))
-            custom_group_names = {g['group_id']: g['group_name'] for g in existing_groups} if existing_groups else {}
+            # Pass 41.8 — `tg` instead of `g` to avoid shadowing flask.g.
+            custom_group_names = {tg['group_id']: tg['group_name'] for tg in existing_groups} if existing_groups else {}
             
             for trophy in trophies:
                 try:
@@ -1606,13 +1616,16 @@ def api_psn_search_games():
 
         results = []
         if games:
-            for g in games:
+            # Pass 41.8 — `game` instead of `g` to avoid shadowing flask.g
+            # (this loop runs inside a request handler that does access
+            # flask.g via @login_required's get_current_user).
+            for game in games:
                 results.append({
-                    'id': g['id'],
-                    'title': g['title'],
-                    'system': g['system_name'],
-                    'folder': g['system_folder'],
-                    'boxart': g['boxart']
+                    'id': game['id'],
+                    'title': game['title'],
+                    'system': game['system_name'],
+                    'folder': game['system_folder'],
+                    'boxart': game['boxart']
                 })
 
         return jsonify({'results': results})

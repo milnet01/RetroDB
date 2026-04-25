@@ -720,7 +720,16 @@ paths or silent-corruption vectors under routine use.
   tokens case) or document the silent-drop behavior and surface a
   warning in the aggregated view.
 - **Source**: 2026-04-24 indie-review, achievements/trophies H1/H2.
-- **Status**: todo
+- **Status**: done (v3.5.7) — A: every `for g in ...` shadow in
+  `routes/trophies.py` renamed (`ps_game` for PSN background sync
+  loops mirroring the existing comprehension; `tg` for trophy_groups
+  comprehensions; `game` for the per-request game-search loop).
+  B: comment block in `routes/achievements.py` documents the
+  `gap.user_id NOT NULL` invariant + the diagnostic query
+  (`SELECT COUNT(*) FROM game_achievement_progress WHERE user_id IS NULL`)
+  for operators hitting "too empty" aggregations after a pre-009
+  backup restore. Tests:
+  `tests/test_pass41_security.py::TestPass41_8A/B` (2 cases).
 
 #### Pass 41.9 Game routes — track-view / completion / recently-viewed / sort_title
 
