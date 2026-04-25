@@ -1,3 +1,17 @@
+- version: 3.5.19
+  date: 2026-04-25
+  tags:
+  - type: docs
+    label: Help-page coverage for ROM Tools backfill / bulk HLTB / pending review; Pass 45.1 test fidelity fix
+  body: |
+    <ul>
+        <li><strong>Help page &mdash; three ROM Tools surfaces previously undocumented</strong>. <code>templates/help.html</code> §"ROM Tools" was missing entries for <strong>Backfill Alternate Titles</strong>, <strong>Bulk HLTB Lookup</strong>, and <strong>HLTB Pending Review</strong> &mdash; all three appear as tool cards in <code>templates/rom_tools_hub.html</code> but had no narrative coverage. Added one short section each, with the same "what it does + dependencies + how to find it" shape as the other tool entries. The HLTB Pending Review section also explains the conditional visibility (the card only renders when there is at least one pending match).</li>
+        <li><strong>Pass 45.1 test-fidelity fix &mdash; <code>test_permission_denied_on_api_returns_403_json</code></strong>. The original test relied on <code>_stub_authenticated_admin</code> to register a position-0 <code>before_request</code> hook setting <code>g.user</code>, then issued a POST without a CSRF token. Flask's <code>before_request</code> chain runs every hook (including the app's own <code>get_current_user</code> loader, which overwrote <code>g.user</code>) before route decorators fire, so the request actually reached the CSRF layer un-authenticated &mdash; the 403 came from the CSRF rejection, not the <code>permission_required</code> decorator the test claimed to exercise. Test now monkeypatches <code>app.get_current_user</code> directly (so <code>login_required</code> sees a real admin), seeds a matching <code>X-CSRF-Token</code> header + session token (so CSRF passes), bypasses <code>check_first_time_setup</code> via a <code>settings_manager.load_settings</code> stub, and adds an explicit assertion that the 403 body's error message does <em>not</em> contain "csrf". The fidelity bug was flagged by the post-Pass-45.4 debt audit.</li>
+        <li><strong>Dead-code removal</strong>. The <code>_stub_authenticated_admin</code> / <code>_unstub_authenticated_admin</code> helpers in <code>tests/test_pass45_security.py</code> are unreferenced after the 45.1 rewrite; deleted.</li>
+        <li><strong>Tests</strong>. Full suite still 603 passed; the rewritten 45.1 test now exercises the <em>actual</em> permission-decorator path. CI should remain green.</li>
+        <li><strong>Version bump 3.5.18 &rarr; 3.5.19</strong>: patch (docs + test fidelity, no production code change).</li>
+    </ul>
+
 - version: 3.5.18
   date: 2026-04-25
   tags:

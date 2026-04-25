@@ -45,43 +45,69 @@ class TestPass45_1TrackProgressPermission:
         from services.auth import ROLE_PERMISSIONS
         assert 'track_progress' in ROLE_PERMISSIONS['viewer']
 
-    def test_permission_denied_on_api_returns_403_json(self):
+    def test_permission_denied_on_api_returns_403_json(self, monkeypatch):
         """A logged-in user who lacks the permission must receive a 403
         with the canonical JSON envelope on /api/* — not a 302 to /dashboard
         (which fetch() with credentials follows transparently and turns the
-        error into a confusing dashboard-HTML response)."""
+        error into a confusing dashboard-HTML response).
+
+        Pass 45.4 follow-up: the original version of this test relied on the
+        ``_stub_authenticated_admin`` ``before_request`` hook, but Flask runs
+        every ``before_request`` (including the app's own ``get_current_user``
+        loader and the CSRF check) before the route's decorators. The CSRF
+        layer rejected the test's POST with 403 *before* the permission
+        decorator ran — the assertion happened to pass for the wrong reason.
+        We now monkeypatch ``get_current_user`` directly (so the decorator
+        sees a real admin) AND seed a matching CSRF token, so the 403 is
+        truly the permission decorator's response."""
         import app as app_module
         from services import auth as auth_mod
+        import settings_manager as _settings_manager
 
         # Stash the permission map, drop track_progress so the decorator
         # denies access, then restore on teardown.
         original = auth_mod.ROLE_PERMISSIONS['admin'].copy()
         auth_mod.ROLE_PERMISSIONS['admin'] = original - {'track_progress'}
+
+        # Bypass the DB-backed user loader and the first-time-setup redirect
+        # (CI's empty data/ directory has no settings.json → 302 to /setup).
+        fake_admin = {'id': 1, 'username': 'admin-stub', 'role': 'admin'}
+        monkeypatch.setattr(app_module, 'get_current_user', lambda: fake_admin)
+        monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
+        monkeypatch.setattr(_settings_manager, 'load_settings',
+                            lambda: {'setup_completed': True})
+
         try:
             app_module.app.config['TESTING'] = True
             with app_module.app.test_client() as c:
-                # Pretend the request came from an authenticated admin so
-                # the decorator runs the permission check, not the login
-                # redirect.  We monkey-patch get_current_user since the
-                # session-cookie path needs a seeded users row.
-                _stub_authenticated_admin(app_module)
+                with c.session_transaction() as sess:
+                    sess['_csrf_token'] = 'pass45_1-csrf-token'
                 resp = c.post(
                     '/api/game/1/completion',
                     json={'status': 'played'},
+                    headers={'X-CSRF-Token': 'pass45_1-csrf-token'},
                     follow_redirects=False,
                 )
         finally:
             auth_mod.ROLE_PERMISSIONS['admin'] = original
-            _unstub_authenticated_admin(app_module)
 
         assert resp.status_code == 403, (
             f"Expected 403 on permission denied, got {resp.status_code} "
-            f"with Location={resp.headers.get('Location', '')}"
+            f"with Location={resp.headers.get('Location', '')} "
+            f"and body={resp.get_data(as_text=True)[:200]}"
         )
         body = resp.get_json()
         assert body is not None, "Response must be JSON, not HTML redirect"
         assert body.get('success') is False
         assert 'error' in body
+        # Pin that the 403 is from the permission decorator, not from CSRF.
+        # The decorator emits "permission denied" / "track_progress" / a
+        # variant naming the missing permission; the CSRF layer emits
+        # "Invalid or missing CSRF token". They must not collide.
+        err = (body.get('error') or '').lower()
+        assert 'csrf' not in err, (
+            f"403 came from CSRF, not the permission decorator: {body!r}"
+        )
 
     def test_permission_denied_on_page_route_still_redirects(self):
         """Non-/api/* routes keep the existing redirect-to-dashboard
@@ -637,32 +663,3 @@ class TestPass45_4XssSinks:
             "settings.html must opt in to HTML on the two formatted-confirm "
             "callers (Pass 45.4)"
         )
-
-
-def _stub_authenticated_admin(app_module):
-    """Replace before_request user loader with a fake admin so the
-    decorator's ``g.user`` lookup succeeds during the test.  We splice
-    the stub onto ``g`` directly via a request-local hook."""
-    from flask import g
-    import services.auth as auth_mod
-
-    fake = {'id': 1, 'username': 'admin-stub', 'role': 'admin'}
-
-    def _before():
-        g.user = fake
-
-    # Register only once; idempotent across parametrise runs.
-    funcs = app_module.app.before_request_funcs.setdefault(None, [])
-    if _before not in funcs:
-        funcs.insert(0, _before)
-    app_module._pass45_test_before = _before
-
-
-def _unstub_authenticated_admin(app_module):
-    fn = getattr(app_module, '_pass45_test_before', None)
-    if fn is None:
-        return
-    funcs = app_module.app.before_request_funcs.get(None, [])
-    if fn in funcs:
-        funcs.remove(fn)
-    delattr(app_module, '_pass45_test_before')

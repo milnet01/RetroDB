@@ -1415,6 +1415,21 @@
         <p>Standardize game media to consistent target sizes. See <a href="#image-standardization">Image Standardization</a> for full details.</p>
         <p><em>No external dependencies (Python-based AI upscaling)</em></p>
 
+        <h3>Backfill Alternate Titles</h3>
+        <p>Sweep the library for games whose <strong>alternate titles</strong> field is empty and populate it from IGDB / TGDB / ScreenScraper. Useful after importing a large catalogue or migrating from another tool that did not store regional / Japanese / sub-titles. Runs in the background; progress is shown on the tool card.</p>
+        <p><em>Requires at least one scraper API key (IGDB / TGDB / ScreenScraper)</em></p>
+
+        <h3>Bulk HLTB Lookup</h3>
+        <p>Run a HowLongToBeat lookup for every game missing a playtime estimate. Each match is scored by title + platform + release year; high-confidence matches are saved automatically. Anything below the confidence threshold (or with conflicting platforms) is parked for human review.</p>
+        <p><em>No external dependencies (uses the bundled offline HLTB dataset)</em></p>
+
+        <h3>HLTB Pending Review</h3>
+        <p>Review queue for ambiguous matches surfaced by Bulk HLTB Lookup. Each pending row shows the source game alongside the HLTB candidate (title, platform, release year, confidence). Approve, reject, or pick a different match per row. The review tool card only appears in the ROM Tools hub when there is at least one pending match.</p>
+        <ul>
+            <li><strong>Filter tabs</strong> for low-confidence, alt-title, and platform-mismatch matches.</li>
+            <li><strong>Approve</strong> writes the playtime estimate; <strong>Reject</strong> drops the candidate and keeps the lookup queue clean.</li>
+        </ul>
+
         <h3>Tool Settings</h3>
         <p>Configure paths, tool locations, archive types, and preferences shared across all ROM tools.</p>
 
