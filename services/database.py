@@ -304,6 +304,11 @@ def backup_database(src_path, dst_path):
 
     verify = sqlite3.connect(dst_path)
     try:
+        # Pass 45.10 — match the migration runner's busy_timeout. A
+        # backup-verify connection competing with a peer reader on the
+        # same file would otherwise fail-fast under SQLite's default
+        # zero timeout.
+        verify.execute("PRAGMA busy_timeout = 5000")
         result = verify.execute("PRAGMA integrity_check").fetchone()
     finally:
         verify.close()

@@ -109,7 +109,16 @@ class TestBackupDatabase:
 
             class _FakeVerifyConn:
                 def execute(self, sql):
-                    assert 'integrity_check' in sql.lower()
+                    # Pass 45.10 — the verify connection now also issues
+                    # `PRAGMA busy_timeout = 5000` before the integrity
+                    # check; both must be tolerated by the fake.
+                    sql_lower = sql.lower()
+                    assert (
+                        'integrity_check' in sql_lower
+                        or 'busy_timeout' in sql_lower
+                    )
+                    if 'busy_timeout' in sql_lower:
+                        return _FakeCursor()  # ignored result
                     return _FakeCursor()
 
                 def close(self):

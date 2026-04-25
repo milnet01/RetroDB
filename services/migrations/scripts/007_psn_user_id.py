@@ -273,6 +273,22 @@ def apply(conn):
 
     # defer_foreign_keys auto-resets at COMMIT — no explicit restoration needed.
 
+    # Pass 45.10 — fail loudly if the rebuild left dangling FK references
+    # IN THE TABLES THIS MIGRATION REBUILT. SQLite's plain foreign_key_check
+    # walks every FK in the whole DB; we scope to psn_games + psn_trophies
+    # so pre-existing data-integrity issues elsewhere (legacy installs that
+    # still have orphan rows from before the FK was added in another
+    # migration) don't block this one.
+    for table in ('psn_games', 'psn_trophies'):
+        violations = cursor.execute(
+            f"PRAGMA foreign_key_check({table})"
+        ).fetchall()
+        if violations:
+            raise RuntimeError(
+                f"Migration 007 left foreign-key violations on {table}: "
+                f"{violations}"
+            )
+
     logger.info(
         "psn_games / psn_trophies now carry user_id; npwr_id uniqueness is "
         "scoped per user (admin_id=%s)",

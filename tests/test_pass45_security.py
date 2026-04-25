@@ -1275,3 +1275,101 @@ class TestPass45_9CollectorTrophies:
             f"GET /api/collector-trophies issued {len(writes)} writes; "
             "must be zero (RFC 7231 / Pass 45.9). Writes: {writes!r}"
         )
+
+
+# -----------------------------------------------------------------------------
+# 45.10 — Migration runner BEGIN IMMEDIATE + busy_timeout + scoped FK check
+# -----------------------------------------------------------------------------
+class TestPass45_10MigrationHardening:
+    """Pass 45.10 hardens the migration runner against three failure modes:
+
+    1. Plain ``BEGIN`` (= BEGIN DEFERRED) lets concurrent readers slip in
+       between BEGIN and the first DDL; under WAL a long-running reader
+       can deadlock the rebuild migrations 007/008/009 that drop and
+       recreate tables. Switched to ``BEGIN IMMEDIATE`` which acquires
+       the write lock up front.
+    2. Migration / boot connections lacked ``PRAGMA busy_timeout``, so
+       BEGIN IMMEDIATE would fail-fast on contention instead of waiting.
+       Added 5000ms busy_timeout on the migration runner connection,
+       ``ensure_user_tables`` connection, and the backup-database verify
+       connection.
+    3. Rebuild migrations 007/008/009 had no post-rebuild FK assertion;
+       a typo in the rebuild SQL could leave dangling references that
+       SQLite only complains about lazily. Added scoped
+       ``PRAGMA foreign_key_check(<table>)`` immediately before each
+       migration's commit — scoped to the rebuilt tables so pre-existing
+       integrity issues elsewhere don't block the upgrade path."""
+
+    def test_migration_runner_uses_begin_immediate(self):
+        path = os.path.join(_REPO_ROOT, 'services', 'migrations', '__init__.py')
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        assert 'BEGIN IMMEDIATE' in body, (
+            "migration runner must use BEGIN IMMEDIATE so it acquires the "
+            "write lock up front (Pass 45.10)"
+        )
+        # Bare `BEGIN` (with no IMMEDIATE/DEFERRED/EXCLUSIVE qualifier) must
+        # not appear; it's the failure case we're trying to remove.
+        assert 'conn.execute("BEGIN")' not in body, (
+            "migration runner must not use the bare BEGIN form (Pass 45.10)"
+        )
+
+    def test_database_init_sets_busy_timeout(self):
+        path = os.path.join(_REPO_ROOT, 'services', 'database_init.py')
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        # Both connection sites — the migration runner connection and the
+        # ensure_user_tables connection — must set busy_timeout.
+        count = body.count('PRAGMA busy_timeout')
+        assert count >= 2, (
+            f"services/database_init.py has {count} busy_timeout pragma "
+            "settings; expected at least 2 (migration + user-tables conn) "
+            "(Pass 45.10)"
+        )
+
+    def test_backup_verify_sets_busy_timeout(self):
+        path = os.path.join(_REPO_ROOT, 'services', 'database.py')
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        # The verify connection in backup_database must set busy_timeout
+        # before running the integrity check.
+        idx = body.find('def backup_database')
+        next_def = body.find('\ndef ', idx + 1)
+        slice_body = body[idx:next_def] if next_def != -1 else body[idx:]
+        assert 'PRAGMA busy_timeout' in slice_body, (
+            "backup_database verify connection must set busy_timeout "
+            "(Pass 45.10)"
+        )
+
+    def test_rebuild_migrations_run_scoped_fk_check(self):
+        """Migrations 007/008/009 each rebuild tables with FOREIGN KEY
+        clauses; each must run a scoped foreign_key_check before commit."""
+        for stem in ('007_psn_user_id',
+                     '008_collector_trophies_user_id',
+                     '009_achievement_tables_user_id'):
+            path = os.path.join(
+                _REPO_ROOT, 'services', 'migrations', 'scripts', f'{stem}.py'
+            )
+            with open(path, encoding='utf-8') as f:
+                body = f.read()
+            assert 'PRAGMA foreign_key_check(' in body, (
+                f"migration {stem} must run a scoped foreign_key_check "
+                "(Pass 45.10)"
+            )
+
+    def test_migration_runner_fk_check_is_table_scoped(self):
+        """The runner-level (unscoped) foreign_key_check is too aggressive
+        for legacy installs — it catches pre-existing data-integrity
+        issues unrelated to the migration. Pass 45.10 keeps the FK check
+        in the rebuild migrations themselves and only scopes to the
+        rebuilt tables. The runner MUST NOT have an unscoped FK check."""
+        path = os.path.join(_REPO_ROOT, 'services', 'migrations', '__init__.py')
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        # The unscoped form `PRAGMA foreign_key_check"` (no table name)
+        # would catch every FK in the DB. Should not be in the runner.
+        assert 'PRAGMA foreign_key_check"' not in body, (
+            "migration runner must not run an unscoped foreign_key_check "
+            "— scope it to the rebuilt tables in the individual migrations "
+            "(Pass 45.10)"
+        )

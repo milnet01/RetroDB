@@ -81,7 +81,15 @@ def apply_pending(conn):
             continue
         module = _load(name)
         try:
-            conn.execute("BEGIN")
+            # Pass 45.10 — BEGIN IMMEDIATE acquires the write lock up
+            # front instead of waiting for the first write. Plain BEGIN
+            # (= BEGIN DEFERRED) lets concurrent readers sneak in between
+            # the BEGIN and the first DDL, and table-rebuild migrations
+            # (007/008/009) can deadlock under WAL when a long-running
+            # reader holds the write-blocking shared lock. With
+            # busy_timeout already set on the connection, IMMEDIATE will
+            # wait politely rather than fail-fast on contention.
+            conn.execute("BEGIN IMMEDIATE")
             module.apply(conn)
             conn.execute(f"PRAGMA user_version = {version}")
             conn.commit()

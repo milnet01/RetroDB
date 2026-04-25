@@ -322,7 +322,14 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: switch to `BEGIN IMMEDIATE`; add `busy_timeout = 5000` on
   all migration/init connections; pin foreign_key_check.
 - **Source**: indie-review 2026-04-25 theme T14 (Database lane H1+H2+H3).
-- **Status**: todo
+- **Status**: done (v3.5.25) — runner now uses `BEGIN IMMEDIATE`;
+  busy_timeout=5000 set on the migration, `ensure_user_tables`, and
+  `backup_database` verify connections; 007/008/009 each end with a
+  scoped `PRAGMA foreign_key_check(<table>)` (scoped, not unscoped, so
+  pre-existing FK debt elsewhere doesn't block the upgrade path on
+  legacy installs). 5 regression tests in
+  `tests/test_pass45_security.py::TestPass45_10*`. Two pre-existing
+  test fixtures updated to handle the new pragma + the seeded games row.
 
 #### Pass 45.11 `/api/settings/logging` POST bypasses validator (HIGH, S)
 

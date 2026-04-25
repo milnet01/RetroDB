@@ -122,6 +122,17 @@ def apply(conn):
 
     # defer_foreign_keys auto-resets at COMMIT — no explicit restoration needed.
 
+    # Pass 45.10 — scope FK check to the rebuilt table so pre-existing
+    # data-integrity issues elsewhere don't block the migration.
+    violations = cursor.execute(
+        "PRAGMA foreign_key_check(collector_trophies)"
+    ).fetchall()
+    if violations:
+        raise RuntimeError(
+            f"Migration 008 left foreign-key violations on collector_trophies: "
+            f"{violations}"
+        )
+
     logger.info(
         "collector_trophies rebuilt with (id, user_id) composite PK "
         "(backfilled %d rows to admin_id=%s)",

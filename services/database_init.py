@@ -55,6 +55,11 @@ def init_database():
         # connection. Writes to the DB header.
         conn.execute("PRAGMA journal_mode = WAL")
         conn.execute("PRAGMA journal_size_limit = 67108864")
+        # Pass 45.10 — busy_timeout lets BEGIN IMMEDIATE wait up to 5s
+        # for the write lock instead of failing fast under contention.
+        # Without this, a concurrent reader can make migrations or boot-
+        # time bookkeeping flake on multi-worker WSGI deploys.
+        conn.execute("PRAGMA busy_timeout = 5000")
         before = current_version(conn)
         applied = apply_pending(conn)
         if applied:
@@ -79,6 +84,10 @@ def ensure_user_tables():
     """
     conn = sqlite3.connect(config.DB_PATH)
     conn.row_factory = sqlite3.Row
+    # Pass 45.10 — match the migration runner's busy_timeout so the
+    # one-shot users-table bootstrap doesn't fail under WAL contention
+    # if a Pass 32.4 health probe happens to fire during boot.
+    conn.execute("PRAGMA busy_timeout = 5000")
     cursor = conn.cursor()
 
     cursor.execute("""

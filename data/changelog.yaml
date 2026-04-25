@@ -1,3 +1,20 @@
+- version: 3.5.25
+  date: 2026-04-25
+  tags:
+  - type: reliability
+    label: Pass 45.10 — Migration runner BEGIN IMMEDIATE + busy_timeout + scoped FK check
+  body: |
+    <ul>
+        <li><strong>Pass 45.10 (HIGH) &mdash; migration runner hardened against three failure modes</strong>. Indie-review 2026-04-25 theme T14 caught all three at once.</li>
+        <li><strong>(a) BEGIN &rarr; BEGIN IMMEDIATE</strong>. The runner used plain <code>BEGIN</code> (= <code>BEGIN DEFERRED</code>); concurrent readers could slip in between BEGIN and the first DDL. Under WAL a long-running reader would deadlock the rebuild migrations 007/008/009 that drop and recreate tables. Switched to <code>BEGIN IMMEDIATE</code> which acquires the write lock up front; with <code>busy_timeout</code> set, IMMEDIATE waits politely instead of fail-fasting on contention.</li>
+        <li><strong>(b) busy_timeout = 5000 on three connections</strong>. The migration runner connection (<code>services/database_init.py</code>), the <code>ensure_user_tables</code> bootstrap connection, and the <code>backup_database</code> verify connection all skipped <code>PRAGMA busy_timeout</code>. SQLite's default is zero, meaning any contended lock immediately raised; on a multi-worker WSGI deploy the boot or a backup-during-migration could flake. All three now wait up to 5 seconds.</li>
+        <li><strong>(c) Scoped <code>foreign_key_check</code> in rebuild migrations 007/008/009</strong>. Each rebuild now ends with <code>PRAGMA foreign_key_check(&lt;table&gt;)</code> on each rebuilt table immediately before commit; if the rebuild SQL had a typo that left a dangling FK reference, the migration aborts and rolls back instead of poisoning the DB for the next boot. Scoped (not unscoped) so pre-existing data-integrity issues in unrelated tables &mdash; e.g. orphaned achievement rows from games deleted before the FK was added &mdash; don't block the upgrade path on legacy installs.</li>
+        <li><strong>Test fixtures updated</strong>. <code>tests/test_database_backup.py::test_backup_corrupt_destination_is_removed</code> now also tolerates the <code>busy_timeout</code> pragma on the verify connection. <code>tests/test_pass31_migrations.py::test_legacy_gap_rows_backfill_to_admin</code> now seeds a parent <code>games</code> row before inserting the gap <code>game_achievement_progress</code> row so the new scoped FK check passes (the pre-Pass-45.10 test was relying on SQLite silently keeping the dangling reference).</li>
+        <li><strong>Source</strong> &mdash; indie-review 2026-04-25 theme T14 (Database lane H1+H2+H3). All three findings folded into a single sub-pass since they share the same migration-runner blast radius.</li>
+        <li><strong>Tests</strong>. <code>tests/test_pass45_security.py::TestPass45_10*</code> &mdash; 5 cases. Source-level: BEGIN IMMEDIATE in the runner, no bare BEGIN, busy_timeout in 2+ places in <code>database_init.py</code>, busy_timeout in the <code>backup_database</code> verify path, scoped <code>foreign_key_check(</code> in 007/008/009 specifically, no UNSCOPED check in the runner. Reverting any of the four production files fails its corresponding pin.</li>
+        <li><strong>Version bump 3.5.24 &rarr; 3.5.25</strong>: patch (migration durability + lock-contention hardening, no schema or surface change).</li>
+    </ul>
+
 - version: 3.5.24
   date: 2026-04-25
   tags:

@@ -257,6 +257,22 @@ def apply(conn):
 
     # defer_foreign_keys auto-resets at COMMIT — no explicit restoration needed.
 
+    # Pass 45.10 — scope FK check to the rebuilt achievement tables so
+    # pre-existing data-integrity issues elsewhere don't block the
+    # migration.
+    for table in ('game_achievement_progress', 'steam_achievements',
+                  'xbox_achievements'):
+        if not _table_exists(cursor, table):
+            continue
+        violations = cursor.execute(
+            f"PRAGMA foreign_key_check({table})"
+        ).fetchall()
+        if violations:
+            raise RuntimeError(
+                f"Migration 009 left foreign-key violations on {table}: "
+                f"{violations}"
+            )
+
     logger.info(
         "game_achievement_progress / steam_achievements / xbox_achievements "
         "now carry user_id (admin_id=%s)",

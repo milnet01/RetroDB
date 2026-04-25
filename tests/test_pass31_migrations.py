@@ -190,6 +190,17 @@ class TestAchievementUserIdMigration:
             finally:
                 migrations.MIGRATIONS = real
 
+            # Pass 45.10 — migration 009 now runs PRAGMA foreign_key_check
+            # before commit. Migration 009 adds FOREIGN KEY(game_id)
+            # REFERENCES games(id) on game_achievement_progress; we have to
+            # seed a parent games row so the check passes. Pre-45.10 the
+            # legacy gap row referenced a non-existent game_id and the
+            # rebuild silently kept the dangling reference.
+            conn.execute(
+                "INSERT INTO games (id, title, system_id, rom_path) "
+                "VALUES (?, ?, ?, ?)",
+                (100, 'Legacy Gap Test Game', 1, '/tmp/legacy_gap_test.rom'),
+            )
             conn.execute(
                 "INSERT INTO game_achievement_progress "
                 "(game_id, earned_achievements, total_achievements) VALUES (?, ?, ?)",
