@@ -34,6 +34,7 @@ MIGRATIONS = [
     '007_psn_user_id',
     '008_collector_trophies_user_id',
     '009_achievement_tables_user_id',
+    '010_user_game_views',
 ]
 
 

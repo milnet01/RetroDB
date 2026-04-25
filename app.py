@@ -1004,28 +1004,38 @@ def dashboard():
             LIMIT 5
         """)
 
-        # Get recently viewed games
+        # Pass 41.9 — recently-viewed and continue-playing now key on the
+        # per-user `user_game_views` table (migration 010). The previous
+        # shape sorted on the global `games.last_viewed` column, which
+        # leaked viewing history across users.
+        user_id = g.user['id']
+
         recently_viewed = query("""
             SELECT g.id, g.title, g.boxart, g.boxart_3d, g.system_id,
                    g.completion_status, s.name AS system_name
-            FROM games g
+            FROM user_game_views v
+            JOIN games g ON g.id = v.game_id
             JOIN systems s ON g.system_id = s.id
-            WHERE g.last_viewed IS NOT NULL
-            ORDER BY g.last_viewed DESC
+            WHERE v.user_id = ?
+            ORDER BY v.last_viewed DESC
             LIMIT 5
-        """)
+        """, (user_id,))
 
-        # Get continue playing games (in-progress)
+        # Get continue playing games (in-progress) — sorted by per-user
+        # last_viewed so the panel reflects this user's recent in-progress
+        # navigation, not whoever viewed last globally.
         continue_playing = query("""
             SELECT g.id, g.title, g.boxart, g.boxart_3d, g.system_id,
                    g.completion_status, g.playtime_estimate,
-                   s.name AS system_name
+                   s.name AS system_name,
+                   v.last_viewed
             FROM games g
             JOIN systems s ON g.system_id = s.id
+            LEFT JOIN user_game_views v ON v.game_id = g.id AND v.user_id = ?
             WHERE g.completion_status = 'in_progress'
-            ORDER BY g.last_viewed DESC
+            ORDER BY v.last_viewed DESC NULLS LAST, g.title ASC
             LIMIT 5
-        """)
+        """, (user_id,))
 
         # Get recently scraped games (from scrape_history JSON)
         recently_scraped = query("""

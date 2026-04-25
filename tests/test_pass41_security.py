@@ -1326,3 +1326,162 @@ class TestPass41_13BGemToggleForAttr:
             "mis-targeted `for=\"gemOtherPlatforms\"` attribute; "
             "drop it (implicit association via wrapping is correct)"
         )
+
+
+# -----------------------------------------------------------------------------
+# 41.9.A — track-view + completion drop @editor_required to permission-based
+# -----------------------------------------------------------------------------
+class TestPass41_9ATrackViewAuthz:
+    """`@editor_required` on `api_track_view` and `api_update_completion`
+    blocked Player and Viewer roles from marking their own gameplay
+    progress. Self-tracking is a per-user concern, not an editorial one.
+    Pass 41.9.A drops the decorator to `@login_required` +
+    `@permission_required('track_progress')`. Player and Editor roles
+    have the permission; Viewer does not."""
+
+    def test_track_view_uses_permission_decorator(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'routes/games.py'),
+            encoding='utf-8'
+        ).read()
+        idx = body.find('def api_track_view(')
+        assert idx != -1, "api_track_view not found"
+        # Look at the ~250 chars BEFORE the def for the decorator stack.
+        preamble = body[max(0, idx - 250):idx]
+        assert "@permission_required('track_progress')" in preamble, (
+            "api_track_view must use @permission_required('track_progress') "
+            "(Pass 41.9.A)"
+        )
+        assert '@editor_required' not in preamble, (
+            "api_track_view must drop @editor_required (Pass 41.9.A)"
+        )
+
+    def test_completion_uses_permission_decorator(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'routes/games.py'),
+            encoding='utf-8'
+        ).read()
+        idx = body.find('def api_update_completion(')
+        assert idx != -1, "api_update_completion not found"
+        preamble = body[max(0, idx - 300):idx]
+        assert "@permission_required('track_progress')" in preamble, (
+            "api_update_completion must use @permission_required('track_progress') "
+            "(Pass 41.9.A)"
+        )
+
+
+# -----------------------------------------------------------------------------
+# 41.9.B — last_viewed moved to per-user user_game_views table
+# -----------------------------------------------------------------------------
+class TestPass41_9BPerUserViews:
+    """Migration 010 creates `user_game_views(user_id, game_id, last_viewed)`.
+    `api_track_view` writes there via INSERT … ON CONFLICT upsert; the
+    dashboard reads its recently-viewed and continue-playing panels from
+    the same table joined per-user. The shared `games.last_viewed` column
+    is no longer written (kept for legacy rollback safety)."""
+
+    def test_migration_010_registered(self):
+        from services.migrations import MIGRATIONS
+        assert '010_user_game_views' in MIGRATIONS, (
+            "Migration 010_user_game_views must be registered (Pass 41.9.B)"
+        )
+
+    def test_track_view_upserts_user_game_views(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'routes/games.py'),
+            encoding='utf-8'
+        ).read()
+        # Strip comments so the explanatory comment doesn't false-positive.
+        code_only = '\n'.join(
+            line.split('#', 1)[0]
+            for line in body.splitlines()
+        )
+        assert 'INSERT INTO user_game_views' in code_only, (
+            "api_track_view must upsert into user_game_views (Pass 41.9.B)"
+        )
+        # And no longer touches the shared games.last_viewed column.
+        # (The legacy column survives but is not written; assert a per-user
+        # marker comment is present so a reader sees the contract.)
+        assert 'Pass 41.9' in body, (
+            "Pass 41.9 marker comment must explain the per-user move"
+        )
+
+    def test_dashboard_query_keys_on_user(self):
+        """Dashboard's recently-viewed query must JOIN user_game_views with
+        a `WHERE v.user_id = ?` filter — proves the cross-user leak is
+        closed at the read site, not just the write site."""
+        body = open(
+            os.path.join(_REPO_ROOT, 'app.py'),
+            encoding='utf-8'
+        ).read()
+        # Grab the recently_viewed query text by anchoring around the
+        # `recently_viewed = query` assignment.
+        idx = body.find('recently_viewed = query')
+        assert idx != -1, "recently_viewed query not found in app.py"
+        snippet = body[idx:idx + 800]
+        assert 'user_game_views' in snippet, (
+            "app.py recently_viewed query must JOIN user_game_views (Pass 41.9.B)"
+        )
+        assert 'v.user_id' in snippet, (
+            "app.py recently_viewed query must filter by v.user_id (Pass 41.9.B)"
+        )
+
+    def test_recently_viewed_endpoint_deleted(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'routes/games.py'),
+            encoding='utf-8'
+        ).read()
+        # Strip comments so the deletion-marker comment doesn't false-positive.
+        code_only = '\n'.join(
+            line.split('#', 1)[0]
+            for line in body.splitlines()
+        )
+        assert "@bp.route('/api/recently-viewed')" not in code_only, (
+            "Pass 41.9 — /api/recently-viewed route definition must be removed"
+        )
+        assert 'def api_recently_viewed' not in code_only, (
+            "Pass 41.9 — api_recently_viewed function must be removed"
+        )
+
+
+# -----------------------------------------------------------------------------
+# 41.9.C — generate_sort_title single-letter Roman heuristic tightened
+# -----------------------------------------------------------------------------
+class TestPass41_9CSortTitleHeuristic:
+    """`generate_sort_title('I am Setsuna')` previously returned `'01 am
+    Setsuna'` because the single-letter Roman pattern matched any
+    word-boundary `I`. Pass 41.9.C narrows the post-context: convert only
+    when at end-of-title, before a subtitle separator (`:`, `(`, `[`),
+    or before a whitespace-then-digit run. Multi-letter Romans (II/IV/IX)
+    are unaffected."""
+
+    def test_pronoun_I_not_converted(self):
+        from services.game_utils import generate_sort_title
+        # The motivating bug.
+        assert generate_sort_title('I am Setsuna') == 'I am Setsuna'
+
+    def test_eos_I_still_converted(self):
+        from services.game_utils import generate_sort_title
+        # "Final Fantasy I" — "I" at end-of-title is a sequel marker.
+        assert generate_sort_title('Final Fantasy I') == 'Final Fantasy 01'
+
+    def test_subtitle_separator_converts(self):
+        from services.game_utils import generate_sort_title
+        # "Final Fantasy I: Origins" — colon-anchored subtitle.
+        out = generate_sort_title('Final Fantasy I: Origins')
+        assert out.startswith('Final Fantasy 01'), (
+            f"Expected Final Fantasy I -> 01 before colon, got {out!r}"
+        )
+
+    def test_compound_name_still_skipped(self):
+        from services.game_utils import generate_sort_title
+        # I-Ninja, V-Rally, X-Men remain compound names — never convert.
+        assert generate_sort_title('I-Ninja') == 'I-Ninja'
+        # V-Rally has its own padded number.
+        out = generate_sort_title('V-Rally 3')
+        assert 'V-Rally' in out and '03' in out
+
+    def test_multi_letter_roman_unaffected(self):
+        from services.game_utils import generate_sort_title
+        # Sanity: the tightening only narrows single-letter Romans.
+        assert generate_sort_title('Final Fantasy IX') == 'Final Fantasy 09'

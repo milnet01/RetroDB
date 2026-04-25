@@ -80,7 +80,8 @@ class TestAuthGuards:
         '/api/games',
         '/api/games/find?q=test',
         '/api/games/search?title=test',
-        '/api/recently-viewed',
+        # Pass 41.9 — `/api/recently-viewed` removed (zero callers; the
+        # dashboard reads `user_game_views` directly via app.py).
     ])
     def test_protected_get_redirects_unauthenticated(self, client, path):
         resp = client.get(path, follow_redirects=False)

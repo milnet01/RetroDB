@@ -186,17 +186,17 @@ class TestScraperDownloadCaps:
 # 25.8 — List-endpoint row caps
 # ------------------------------
 class TestListRowCaps:
-    def test_recently_viewed_clamps_user_limit(self):
-        """`?limit=999999` must not flow straight into the SQL LIMIT clause."""
+    def test_recently_viewed_endpoint_removed(self):
+        """Pass 41.9 — `/api/recently-viewed` was deleted (zero callers;
+        the dashboard reads `user_game_views` per-user via inline query).
+        Confirm the rule is gone from the URL map so it can't be re-
+        registered without intent."""
         import app as app_module
-        import config
-        app_module.app.config['TESTING'] = True
-        client = app_module.app.test_client()
-        with client.session_transaction() as sess:
-            sess['user_id'] = 1
-        # Not a correctness test — smoke test that the clamp doesn't crash.
-        resp = client.get('/api/recently-viewed?limit=999999')
-        assert resp.status_code in (200, 302)
+        rules = {r.rule for r in app_module.app.url_map.iter_rules()}
+        assert '/api/recently-viewed' not in rules, (
+            "Pass 41.9 — /api/recently-viewed must be deleted; the per-user "
+            "dashboard query in app.py replaces it"
+        )
 
     def test_max_list_rows_constant(self):
         import config

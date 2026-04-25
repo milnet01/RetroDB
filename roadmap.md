@@ -749,7 +749,21 @@ paths or silent-corruption vectors under routine use.
   Roman-numeral heuristic: only convert when followed by digit, end-
   of-string, or adjacent to another numeral token.
 - **Source**: 2026-04-24 indie-review, game routes H1/H2/H3.
-- **Status**: todo
+- **Status**: done (v3.5.13) — A: `api_track_view` and
+  `api_update_completion` dropped from `@editor_required` to
+  `@login_required` + `@permission_required('track_progress')` so
+  Player and Editor roles can self-track. B: new `user_game_views`
+  table (migration 010) keyed on `(user_id, game_id)`; track-view now
+  upserts via `INSERT … ON CONFLICT DO UPDATE`; dashboard recently-
+  viewed + continue-playing panels JOIN per-user. `/api/recently-viewed`
+  endpoint deleted (zero callers). C: `generate_sort_title` single-
+  letter Roman pattern narrowed to `(?<![-\w])R(?=\s*$|\s*[:(\[]|\s+\d)`;
+  pronoun "I" no longer converts but EOS / subtitle / numeric-adjacent
+  cases still do. Tests:
+  `tests/test_pass41_security.py::TestPass41_9A/B/C` (11 cases). NOTE
+  for merger of PR #3 (feat/multi-emulator-launch): that branch
+  carries migration 010_emulators.py; rebase will need to renumber
+  it to 011_emulators.py.
 
 #### Pass 41.10 Settings/maintenance/tools — every destructive endpoint at `@login_required` + task-cancel authz + scan unboundedness
 

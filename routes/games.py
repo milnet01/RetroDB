@@ -17,7 +17,7 @@ from datetime import datetime, timezone
 import config
 import settings_manager
 from services.database import query, execute, safe_column
-from services.auth import login_required, editor_required, has_permission
+from services.auth import login_required, editor_required, has_permission, permission_required
 from services.api_helpers import handle_api_errors
 from services.security import safe_filename
 from services.game_utils import (
@@ -1097,9 +1097,18 @@ def api_games_bulk_edit():
 
 
 @bp.route('/api/game/<int:game_id>/completion', methods=['POST'])
-@editor_required
+@login_required
+@permission_required('track_progress')
 def api_update_completion(game_id):
-    """Update game completion status"""
+    """Update game completion status.
+
+    Pass 41.9 — drop @editor_required to login + 'track_progress' permission.
+    Marking your own copy as played/completed is a self-tracking action;
+    Player and Viewer roles legitimately want to do this. The completion
+    column is currently global on `games` (cross-user leak); the per-user
+    move is filed as a separate follow-up since it requires a schema
+    rename and front-end-side dashboard changes.
+    """
     try:
         data = request.get_json() or {}
         status = data.get('status', 'not_started')
@@ -1117,43 +1126,39 @@ def api_update_completion(game_id):
 
 
 @bp.route('/api/game/<int:game_id>/track-view', methods=['POST'])
-@editor_required
+@login_required
+@permission_required('track_progress')
 def api_track_view(game_id):
-    """Track that a game was viewed (for recently viewed)"""
+    """Track that a game was viewed (for recently viewed).
+
+    Pass 41.9 — write into per-user `user_game_views` table (migration 010)
+    instead of the shared `games.last_viewed` column. The shared-column
+    shape leaked viewing history across users; the per-user upsert keys
+    on (user_id, game_id) so each user's panel reflects only their own
+    navigation.
+    """
     try:
-        execute("UPDATE games SET last_viewed = ? WHERE id = ?",
-               (datetime.now(timezone.utc).isoformat(), game_id))
+        user_id = g.user['id'] if g.user else None
+        if user_id is None:
+            return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+        now_iso = datetime.now(timezone.utc).isoformat()
+        execute(
+            "INSERT INTO user_game_views (user_id, game_id, last_viewed) "
+            "VALUES (?, ?, ?) "
+            "ON CONFLICT(user_id, game_id) DO UPDATE SET "
+            "last_viewed = excluded.last_viewed",
+            (user_id, game_id, now_iso),
+        )
         return jsonify({'success': True})
     except Exception as e:
+        logger.error(f"track-view error: {e}")
         return jsonify({'success': False, 'error': 'An internal error occurred'})
 
 
-@bp.route('/api/recently-viewed')
-@login_required
-def api_recently_viewed():
-    """Get recently viewed games"""
-    try:
-        # Pass 25.8 — clamp the user-trusted ?limit. `?limit=999999`
-        # otherwise flows straight into the SQL LIMIT clause and produces a
-        # multi-MB JSON blob plus the JOIN cost.
-        user_limit = request.args.get('limit', 10, type=int) or 10
-        max_rows = getattr(config, 'MAX_LIST_ROWS', 500)
-        limit = max(1, min(user_limit, max_rows))
-        games = query("""
-            SELECT g.*, s.name as system_name
-            FROM games g
-            JOIN systems s ON g.system_id = s.id
-            WHERE g.last_viewed IS NOT NULL
-            ORDER BY g.last_viewed DESC
-            LIMIT ?
-        """, (limit,))
-
-        return jsonify({
-            'success': True,
-            'games': [dict(g) for g in games]
-        })
-    except Exception as e:
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+# Pass 41.9 — `/api/recently-viewed` deleted. Zero callers (the dashboard
+# uses an inline `query()` against `app.py:1008`, never this endpoint).
+# The cross-user leak it formerly returned is now closed at source: the
+# dashboard query joins `user_game_views` per-user (see app.py).
 
 
 @bp.route('/api/filter-games')
