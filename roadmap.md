@@ -300,7 +300,13 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: rename loop var to `genre_part`; remove lazy-init from GET
   paths (explicit POST at `:616` already exists).
 - **Source**: indie-review 2026-04-25 (Collections lane).
-- **Status**: todo
+- **Status**: done (v3.5.24) — genre loop renamed `genre_part`; both
+  GET handlers now call `_trophies_sorted(user_id) or
+  _empty_trophies_from_definitions()` so cold-cache renders an
+  in-memory roster from `TROPHY_DEFINITIONS` instead of writing rows;
+  explicit POST at line 616 is the only refresh path. 4 regression
+  tests in `tests/test_pass45_security.py::TestPass45_9*`; reverting
+  the fix fails all 4 (functional smoke pins zero writes from GET).
 
 #### Pass 45.10 Migration runner `BEGIN IMMEDIATE` + busy_timeout (HIGH, S)
 

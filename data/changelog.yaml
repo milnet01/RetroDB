@@ -1,3 +1,17 @@
+- version: 3.5.24
+  date: 2026-04-25
+  tags:
+  - type: correctness
+    label: Pass 45.9 — collector_trophies g-shadow + GET-mutates-DB regressions
+  body: |
+    <ul>
+        <li><strong>Pass 45.9.A &mdash; <code>flask.g</code> shadowed by genre loop variable (HIGH)</strong>. <code>routes/collector_trophies.py:_gather_collection_stats</code> contained <code>for g in (r['genre'] or '').split(',')</code> — the same regression Pass 41.8.A swept across the codebase. Any helper called downstream that did <code>from flask import g</code> in the same scope read the loop's last genre string instead of the request user, leading to false-positive permission checks and stat double-counting. Renamed to <code>genre_part</code>.</li>
+        <li><strong>Pass 45.9.B &mdash; GET handlers no longer mutate the database (HIGH)</strong>. <code>collector_trophies_page</code> (<code>GET /collector-trophies</code>) and <code>get_all_trophies</code> (<code>GET /api/collector-trophies</code>) called <code>_refresh_trophies(user_id)</code> when the user had no DB rows yet, INSERTing ~70 trophy rows + computing scores on every cold-cache page load. RFC 7231 says GET must be safe — it must not have observable side effects on shared state. The pattern also broke browser back-forward caching and caused subtle double-writes when two tabs opened the page in parallel. New <code>_empty_trophies_from_definitions</code> helper renders an in-memory roster from <code>TROPHY_DEFINITIONS</code> on cold cache (all unearned, progress=0); the explicit <code>POST /api/collector-trophies/refresh</code> button is the only path that materialises rows and computes scores.</li>
+        <li><strong>Source</strong> &mdash; indie-review 2026-04-25 (Game routes lane). Both bugs were caught by cold-read; the <code>g</code>-shadow was specifically called out as a re-occurrence of the Pass 41.8.A pattern.</li>
+        <li><strong>Tests</strong>. <code>tests/test_pass45_security.py::TestPass45_9*</code> &mdash; 4 cases. (1) Source grep against <code>routes/collector_trophies.py</code> confirms no <code>for g in</code> loop and the rename to <code>genre_part</code>. (2) Both GET handlers are scanned for <code>_refresh_trophies(</code> call sites — must be zero (docstring mentions are ignored via the precise `(` suffix match). (3) <code>_empty_trophies_from_definitions</code> returns 70 stubs with <code>progress=0</code> + <code>earned_at=None</code> and the column shape the template iterates. (4) Functional smoke: hit <code>GET /api/collector-trophies</code> with a stubbed empty DB and assert no <code>INSERT</code>/<code>UPDATE</code>/<code>DELETE</code> SQL was issued. Reverting the production fix fails all 4.</li>
+        <li><strong>Version bump 3.5.23 &rarr; 3.5.24</strong>: patch (correctness fix, no schema or surface change).</li>
+    </ul>
+
 - version: 3.5.23
   date: 2026-04-25
   tags:

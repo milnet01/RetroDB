@@ -1160,3 +1160,118 @@ class TestPass45_8RateLimits:
                 f"{endpoint} must be capped at 2/hour (Pass 45.8); "
                 f"expected line: {line!r}"
             )
+
+
+# -----------------------------------------------------------------------------
+# 45.9 — collector_trophies regressions
+# -----------------------------------------------------------------------------
+class TestPass45_9CollectorTrophies:
+    """Two regressions in routes/collector_trophies.py:
+
+    1. ``_gather_collection_stats`` looped with ``for g in (...).split(',')``
+       — same shape as the Pass 41.8.A sweep that renamed loop variables
+       shadowing ``flask.g``. Calling code that did ``from flask import g``
+       inside the same request scope read the loop's last genre string
+       instead of the request user.
+
+    2. ``collector_trophies_page`` (GET) and ``get_all_trophies`` (GET
+       /api/collector-trophies) called ``_refresh_trophies(user_id)`` when
+       the user had no rows yet, writing ~70 rows to the database.
+       RFC 7231 says GET must be safe — observable side effects on shared
+       state are forbidden. Pass 45.9 renders an in-memory roster from
+       TROPHY_DEFINITIONS on cold cache instead; the explicit POST
+       /api/collector-trophies/refresh button materialises the rows."""
+
+    def test_gather_stats_no_g_shadow(self):
+        """The genre loop must not rebind the name `g`."""
+        path = os.path.join(_REPO_ROOT, 'routes', 'collector_trophies.py')
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        assert "for g in" not in body, (
+            "collector_trophies must not bind a loop variable named `g` "
+            "— it shadows flask.g in the same request scope (Pass 45.9)"
+        )
+        # Specifically the genre split: the rename Pass 45.9 chose was
+        # `genre_part`. Pin so a future edit doesn't quietly revert.
+        assert 'for genre_part in' in body, (
+            "Pass 45.9 renamed the genre loop variable to `genre_part`"
+        )
+
+    def test_get_handlers_do_not_call_refresh(self):
+        """Neither GET handler may call _refresh_trophies. They render
+        from DB rows when present, in-memory roster from TROPHY_DEFINITIONS
+        when not."""
+        path = os.path.join(_REPO_ROOT, 'routes', 'collector_trophies.py')
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        # Find the page route and the GET API route bodies.
+        for func_name in ('def collector_trophies_page', 'def get_all_trophies'):
+            idx = body.find(func_name)
+            assert idx != -1, f"{func_name} must exist"
+            next_def = body.find('\ndef ', idx + 1)
+            slice_body = body[idx:next_def] if next_def != -1 else body[idx:]
+            # Check for an actual call: `_refresh_trophies(`. Docstring
+            # references in slice_body are fine (they document the fix).
+            assert '_refresh_trophies(' not in slice_body, (
+                f"{func_name} must NOT call _refresh_trophies(...) — that's "
+                "a DB write on a GET, violating RFC 7231 (Pass 45.9)"
+            )
+
+    def test_empty_roster_helper_returns_70_unearned_stubs(self):
+        """The cold-cache renderer must produce one stub per TROPHY_
+        DEFINITION, all with progress=0 and earned_at=None."""
+        from routes import collector_trophies
+        stubs = collector_trophies._empty_trophies_from_definitions()
+        assert len(stubs) == len(collector_trophies.TROPHY_DEFINITIONS)
+        for stub in stubs:
+            assert stub['progress'] == 0
+            assert stub['earned_at'] is None
+            # Same key shape the template iterates.
+            assert {'id', 'name', 'description', 'icon', 'tier',
+                    'category', 'threshold'} <= stub.keys()
+
+    def test_get_does_not_mutate_db(self, tmp_path, monkeypatch):
+        """Functional smoke: GET /api/collector-trophies on a brand-new
+        user must not cause any INSERT into collector_trophies."""
+        import app as app_module
+        import routes.collector_trophies as ct
+        import settings_manager as _settings_manager
+
+        executes = []
+
+        def fake_execute(sql, params=()):
+            executes.append((sql, params))
+            return None
+
+        # Stub the DB layer at the module level. _trophies_sorted reads
+        # via query() so we stub that to return [] (empty).
+        monkeypatch.setattr(ct, 'execute', fake_execute)
+        monkeypatch.setattr(ct, 'query',
+                            lambda sql, params=(), one=False: None if one else [])
+
+        # Bypass auth + setup wizard.
+        fake_user = {'id': 99, 'username': 'test', 'role': 'admin'}
+        monkeypatch.setattr(app_module, 'get_current_user', lambda: fake_user)
+        monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
+        monkeypatch.setattr(_settings_manager, 'load_settings',
+                            lambda: {'setup_completed': True})
+
+        app_module.app.config['TESTING'] = True
+        with app_module.app.test_client() as c:
+            resp = c.get('/api/collector-trophies', follow_redirects=False)
+
+        assert resp.status_code == 200, (
+            f"GET must succeed; got {resp.status_code}: "
+            f"{resp.get_data(as_text=True)[:200]}"
+        )
+        # Filter to writes (INSERT/UPDATE/DELETE). Pass 45.9 contract is
+        # zero writes from a GET handler.
+        writes = [
+            sql for (sql, _) in executes
+            if any(verb in sql.upper() for verb in
+                   ('INSERT INTO', 'UPDATE ', 'DELETE FROM'))
+        ]
+        assert not writes, (
+            f"GET /api/collector-trophies issued {len(writes)} writes; "
+            "must be zero (RFC 7231 / Pass 45.9). Writes: {writes!r}"
+        )
