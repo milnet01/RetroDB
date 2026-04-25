@@ -1317,5 +1317,15 @@
         setTimeout(() => obs.disconnect(), 5000);
     })();
     </script>
+
+    <!-- Pass 42 — multi-emulator launch indicator -->
+    {% if current_user %}
+    <div id="launch-indicator" class="launch-indicator hidden" aria-live="polite" title="Now playing">
+        <span class="launch-indicator-icon">▶</span>
+        <span class="launch-indicator-count" id="launch-count">0</span>
+        <span class="launch-indicator-text">running</span>
+    </div>
+    <script src="{{ asset_url('js/launch-indicator.js') }}" defer></script>
+    {% endif %}
 </body>
 </html>

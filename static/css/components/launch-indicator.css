@@ -1,0 +1,75 @@
+/* =============================================================================
+   Launch indicator — Pass 42 (multi-emulator launch)
+   ============================================================================= */
+
+.launch-indicator {
+    position: fixed;
+    bottom: var(--spacing-lg);
+    right: var(--spacing-lg);
+    z-index: 1000;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.9rem;
+    background: var(--bg-card);
+    border: 1px solid var(--primary-cyan);
+    border-radius: 999px;
+    box-shadow: 0 0 12px rgba(76, 201, 240, 0.35);
+    color: var(--text-primary);
+    font-family: var(--font-mono, monospace);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.launch-indicator.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+}
+
+.launch-indicator-icon {
+    color: var(--neon-green, #44ff66);
+    font-weight: bold;
+}
+
+.launch-indicator-count {
+    font-weight: bold;
+    color: var(--primary-cyan);
+}
+
+.launch-indicator-popover {
+    position: fixed;
+    bottom: calc(var(--spacing-lg) + 2.5rem);
+    right: var(--spacing-lg);
+    z-index: 1001;
+    min-width: 280px;
+    padding: var(--spacing-md);
+    background: var(--bg-card);
+    border: 1px solid var(--primary-cyan);
+    border-radius: var(--border-radius);
+    box-shadow: 0 0 20px rgba(76, 201, 240, 0.4);
+    color: var(--text-primary);
+}
+
+.launch-indicator-popover-title {
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    color: var(--primary-cyan);
+    margin-bottom: var(--spacing-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.launch-indicator-popover-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    padding: 0.4rem 0;
+    border-top: 1px solid var(--border-color, rgba(255,255,255,0.08));
+    font-size: 0.85rem;
+}
+.launch-indicator-popover-row:first-of-type {
+    border-top: none;
+}
