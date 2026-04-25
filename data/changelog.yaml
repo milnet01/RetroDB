@@ -1,3 +1,18 @@
+- version: 3.4.9
+  date: 2026-04-25
+  tags:
+  - type: reliability
+    label: Pass 40.9 — ImageResizeJob persistence, lock discipline, shutdown audit trail
+  body: |
+    <ul>
+        <li><strong>Pass 40.9 (CRITICAL) &mdash; <code>ImageResizeJob</code> brought up to <code>base.py</code> convention</strong>. The <code>_worker</code> never called <code>persist_job_start</code> / <code>persist_job_progress</code> / <code>persist_job_complete</code>, read and wrote <code>self.running</code> / <code>self.cancelled</code> / <code>self.current_index</code> / <code>self.total_images</code> / counters without <code>self._lock</code>, and <code>get_status()</code> read the same shared state lock-free. A bulk resize of 10000 boxart files interrupted at 8000 had zero DB record of ever running. <code>request_shutdown</code> at <code>base.py:56</code> included this job in its cancel candidates, but only set the in-memory <code>cancelled</code> flag &mdash; no persisted audit trail. Worst-of-both-worlds: the job acted cancellable but produced no cancellation record.</li>
+        <li><strong>Fix &mdash; persistence</strong>. <code>_worker</code> now calls <code>persist_job_start('image_resize', {'image_types': ...})</code> before the loop, <code>persist_job_progress</code> every 10 items / 30 s with <code>{current, total, processed, skipped, failed, upscaled, downscaled, current_item}</code>, <code>persist_job_complete</code> in <code>finally</code> with <code>resolve_terminal_status(self.cancelled)</code>. Failure path mirrors the museum / bulk-scrape pattern: <code>except</code> block calls <code>persist_job_complete(..., status='failed', ...)</code> + <code>persist_id = None</code> so the <code>finally</code>'s <code>if persist_id:</code> short-circuits (Pass 40.8 same idea).</li>
+        <li><strong>Fix &mdash; lock discipline</strong>. Every read and write of <code>self.{running, cancelled, completed, current_index, total_images, current_file, current_type, processed_count, skipped_count, upscaled_count, downscaled_count, failed_count, end_time, error_message}</code> in the worker loop, init/exit phases, and <code>get_status()</code> is now wrapped in <code>with self._lock:</code>. <code>get_status()</code> snapshots the shared state under the lock and computes the derived <code>elapsed</code> / <code>percent</code> outside &mdash; no torn reads.</li>
+        <li><strong>Tests</strong>. <code>TestPass40_9ImageResizeJobBaseConvention</code> &mdash; 7 source-level pins covering the helper imports, all four <code>persist_job_*</code> + <code>resolve_terminal_status</code> calls in <code>_worker</code>, <code>with self._lock</code> in <code>get_status</code>, and ≥ 2 lock blocks in the worker loop. 486 passed (was 479).</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 40.9 closed. 7 Tier-1 items remain.</li>
+        <li><strong>Version bump 3.4.8 &rarr; 3.4.9</strong>: patch (reliability; resumed image-resize jobs after a graceful shutdown will now restart from <code>job_queue</code> like every other persistent job &mdash; previously they would die silently).</li>
+    </ul>
+
 - version: 3.4.8
   date: 2026-04-25
   tags:

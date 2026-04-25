@@ -8,7 +8,15 @@
 import os
 import threading
 import logging
+import time
 from datetime import datetime, timezone
+
+from services.jobs.base import (
+    persist_job_start,
+    persist_job_progress,
+    persist_job_complete,
+    resolve_terminal_status,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +46,7 @@ class ImageResizeJob:
         self.start_time = None
         self.end_time = None
         self.error_message = None
+        self.persist_id = None
 
     def start(self, image_types=None):
         """Start bulk image standardization.
@@ -77,44 +86,81 @@ class ImageResizeJob:
         return {'success': True, 'message': 'Cancellation requested'}
 
     def get_status(self):
-        """Return current job status."""
+        """Return current job status.
+
+        Pass 40.9 — read every shared counter under self._lock so a status
+        poll racing with the worker thread can't see torn writes.
+        """
+        with self._lock:
+            running = self.running
+            cancelled = self.cancelled
+            completed = self.completed
+            current_index = self.current_index
+            total_images = self.total_images
+            current_file = self.current_file
+            current_type = self.current_type
+            processed_count = self.processed_count
+            skipped_count = self.skipped_count
+            upscaled_count = self.upscaled_count
+            downscaled_count = self.downscaled_count
+            failed_count = self.failed_count
+            start_time = self.start_time
+            end_time = self.end_time
+            error_message = self.error_message
+
         elapsed = None
-        if self.start_time:
+        if start_time:
             try:
-                start = datetime.fromisoformat(self.start_time)
-                end = datetime.fromisoformat(self.end_time) if self.end_time else datetime.now(timezone.utc)
+                start = datetime.fromisoformat(start_time)
+                end = datetime.fromisoformat(end_time) if end_time else datetime.now(timezone.utc)
                 elapsed = int((end - start).total_seconds())
             except (ValueError, TypeError):
                 pass
 
         return {
-            'running': self.running,
-            'cancelled': self.cancelled,
-            'completed': self.completed,
-            'current': self.current_index,
-            'total': self.total_images,
-            'current_file': self.current_file,
-            'current_type': self.current_type,
-            'processed': self.processed_count,
-            'skipped': self.skipped_count,
-            'upscaled': self.upscaled_count,
-            'downscaled': self.downscaled_count,
-            'failed': self.failed_count,
-            'percent': round(self.current_index / self.total_images * 100) if self.total_images else 0,
-            'start_time': self.start_time,
-            'end_time': self.end_time,
+            'running': running,
+            'cancelled': cancelled,
+            'completed': completed,
+            'current': current_index,
+            'total': total_images,
+            'current_file': current_file,
+            'current_type': current_type,
+            'processed': processed_count,
+            'skipped': skipped_count,
+            'upscaled': upscaled_count,
+            'downscaled': downscaled_count,
+            'failed': failed_count,
+            'percent': round(current_index / total_images * 100) if total_images else 0,
+            'start_time': start_time,
+            'end_time': end_time,
             'elapsed': elapsed,
-            'error_message': self.error_message,
+            'error_message': error_message,
         }
 
     def _worker(self, image_types):
-        """Background worker — scans directories and standardizes images."""
+        """Background worker — scans directories and standardizes images.
+
+        Pass 40.9 — full base.py convention:
+          * persist_job_start before the loop, persist_job_progress every
+            10 items / 30 s, persist_job_complete in finally
+          * every read/write of self.* counters is under self._lock
+          * resolve_terminal_status decides 'completed' vs 'cancelled'
+        Without this, a SIGTERM mid-bulk-resize loses up to 10000 items'
+        worth of progress and leaves no audit trail.
+        """
         import config
-        from services.image_utils import standardize_image
 
         SUPPORTED_EXTS = {'.jpg', '.jpeg', '.png', '.webp', '.gif'}
 
+        persist_id = None
+        last_persist_time = time.time()
         try:
+            persist_id = persist_job_start('image_resize', {
+                'image_types': list(image_types),
+            })
+            with self._lock:
+                self.persist_id = persist_id
+
             # Build file list
             files_to_process = []
             for img_type in image_types:
@@ -143,13 +189,12 @@ class ImageResizeJob:
                             'preserve_rgba': preserve_rgba,
                         })
 
-            self.total_images = len(files_to_process)
+            with self._lock:
+                self.total_images = len(files_to_process)
+                total = self.total_images
 
-            if self.total_images == 0:
+            if total == 0:
                 logger.info("Image resize: no images found to process")
-                self.running = False
-                self.completed = True
-                self.end_time = datetime.now(timezone.utc).isoformat()
                 return
 
             # Log per-type counts
@@ -161,47 +206,80 @@ class ImageResizeJob:
 
             current_type_name = None
             for i, item in enumerate(files_to_process):
-                if self.cancelled:
-                    break
+                with self._lock:
+                    if self.cancelled:
+                        break
 
-                self.current_index = i + 1
-                self.current_file = item['name']
-                self.current_type = item['type']
+                with self._lock:
+                    self.current_index = i + 1
+                    self.current_file = item['name']
+                    self.current_type = item['type']
 
                 # Log when switching image types
                 if item['type'] != current_type_name:
                     current_type_name = item['type']
                     logger.info(f"Image resize: starting {current_type_name} images...")
 
+                # Persist progress every 10 items or 30 seconds.
+                _now = time.time()
+                if persist_id and ((i % 10 == 0 or _now - last_persist_time >= 30) and i > 0):
+                    with self._lock:
+                        _progress = {
+                            'current': i,
+                            'total': self.total_images,
+                            'processed': self.processed_count,
+                            'skipped': self.skipped_count,
+                            'failed': self.failed_count,
+                            'upscaled': self.upscaled_count,
+                            'downscaled': self.downscaled_count,
+                            'current_item': item['name'],
+                        }
+                    persist_job_progress(persist_id, _progress)
+                    last_persist_time = _now
+
                 try:
                     result = _standardize_with_tracking(
                         item['path'], item['type'], item['target'], item['preserve_rgba']
                     )
-                    if result == 'skipped':
-                        self.skipped_count += 1
-                    elif result == 'upscaled':
-                        self.upscaled_count += 1
-                        self.processed_count += 1
-                    elif result == 'downscaled':
-                        self.downscaled_count += 1
-                        self.processed_count += 1
-                    else:
-                        self.skipped_count += 1
+                    with self._lock:
+                        if result == 'skipped':
+                            self.skipped_count += 1
+                        elif result == 'upscaled':
+                            self.upscaled_count += 1
+                            self.processed_count += 1
+                        elif result == 'downscaled':
+                            self.downscaled_count += 1
+                            self.processed_count += 1
+                        else:
+                            self.skipped_count += 1
                 except Exception as e:
                     logger.error(f"Image resize: failed on {item['type']}/{item['name']}: {e}", exc_info=True)
-                    self.failed_count += 1
+                    with self._lock:
+                        self.failed_count += 1
 
         except Exception as e:
             logger.error(f"Image resize worker error: {e}")
-            self.error_message = str(e)
+            with self._lock:
+                self.error_message = str(e)
+            if persist_id:
+                persist_job_complete(persist_id, status='failed', error=str(e))
+                persist_id = None
         finally:
-            self.running = False
-            self.completed = True
-            self.end_time = datetime.now(timezone.utc).isoformat()
+            with self._lock:
+                self.running = False
+                self.completed = True
+                self.end_time = datetime.now(timezone.utc).isoformat()
+                final_status = resolve_terminal_status(self.cancelled)
+                snapshot = (
+                    self.processed_count, self.skipped_count, self.failed_count,
+                    self.upscaled_count, self.downscaled_count,
+                )
+            if persist_id:
+                persist_job_complete(persist_id, status=final_status)
             logger.info(
-                f"Image resize complete: {self.processed_count} processed, "
-                f"{self.skipped_count} skipped, {self.failed_count} failed "
-                f"({self.upscaled_count} upscaled, {self.downscaled_count} downscaled)"
+                f"Image resize complete: {snapshot[0]} processed, "
+                f"{snapshot[1]} skipped, {snapshot[2]} failed "
+                f"({snapshot[3]} upscaled, {snapshot[4]} downscaled)"
             )
 
 

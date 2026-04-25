@@ -291,7 +291,13 @@ paths or silent-corruption vectors under routine use.
   from `request_shutdown` candidates and document in a docstring as
   non-recoverable.  Option (a) is the lower-risk path.
 - **Source**: 2026-04-24 indie-review, jobs C3.
-- **Status**: todo
+- **Status**: done (v3.4.9) — `_worker` now calls `persist_job_start` /
+  `persist_job_progress` (every 10 items or 30s) / `persist_job_complete`
+  with `resolve_terminal_status`; every shared-counter read/write is
+  inside `with self._lock`; `get_status()` snapshots state under the
+  lock and computes derived fields outside. Failure path mirrors the
+  museum/bulk-scrape pattern (`persist_id = None` after failure).
+  Tests: `test_pass40_security.py::TestPass40_9ImageResizeJobBaseConvention`.
 
 #### Pass 40.10 Rate-limit `time.sleep` blocks shutdown drain, loses progress (CRITICAL, M)
 

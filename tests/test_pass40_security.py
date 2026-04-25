@@ -753,3 +753,73 @@ class TestPass40_8MuseumJobFailedStatusPreserved:
         block = src[idx:idx + 800]
         assert 'persist_id = None' in block, \
             'unknown-provider branch must clear persist_id (Pass 40.8)'
+
+
+# -----------------------------------------------------------------------------
+# 40.9 — ImageResizeJob persistence + lock + shutdown recovery
+# -----------------------------------------------------------------------------
+class TestPass40_9ImageResizeJobBaseConvention:
+    """Pin that ImageResizeJob now uses persist_job_start/progress/complete
+    and locks every shared-counter access."""
+
+    def test_imports_persist_helpers(self):
+        from services.jobs import image_resize as mod
+        assert hasattr(mod, 'persist_job_start')
+        assert hasattr(mod, 'persist_job_progress')
+        assert hasattr(mod, 'persist_job_complete')
+        assert hasattr(mod, 'resolve_terminal_status')
+
+    def test_worker_calls_persist_job_start(self):
+        from services.jobs import image_resize as mod
+        src = open(mod.__file__).read()
+        idx = src.index('def _worker')
+        body = src[idx:]
+        assert 'persist_job_start(' in body, \
+            '_worker must call persist_job_start (Pass 40.9)'
+
+    def test_worker_calls_persist_job_progress(self):
+        from services.jobs import image_resize as mod
+        src = open(mod.__file__).read()
+        idx = src.index('def _worker')
+        body = src[idx:]
+        assert 'persist_job_progress(' in body, \
+            '_worker must call persist_job_progress (Pass 40.9)'
+
+    def test_worker_calls_persist_job_complete(self):
+        from services.jobs import image_resize as mod
+        src = open(mod.__file__).read()
+        idx = src.index('def _worker')
+        body = src[idx:]
+        assert 'persist_job_complete(' in body, \
+            '_worker must call persist_job_complete (Pass 40.9)'
+
+    def test_worker_uses_resolve_terminal_status(self):
+        from services.jobs import image_resize as mod
+        src = open(mod.__file__).read()
+        idx = src.index('def _worker')
+        body = src[idx:]
+        assert 'resolve_terminal_status(' in body, \
+            '_worker must call resolve_terminal_status (Pass 40.9)'
+
+    def test_get_status_takes_lock(self):
+        from services.jobs import image_resize as mod
+        src = open(mod.__file__).read()
+        idx = src.index('def get_status')
+        end = src.index('def _worker', idx)
+        body = src[idx:end]
+        assert 'with self._lock' in body, \
+            'get_status must take self._lock (Pass 40.9)'
+
+    def test_worker_locks_counter_writes(self):
+        """Counter writes (self.processed_count += 1, etc.) must be inside
+        a `with self._lock:` block."""
+        from services.jobs import image_resize as mod
+        src = open(mod.__file__).read()
+        idx = src.index('def _worker')
+        body = src[idx:]
+        # The naked `self.processed_count += 1` shape from before the fix
+        # must NOT exist outside a lock block — sample one of them.
+        # Easier: verify multiple `with self._lock:` appear in the loop.
+        loop_section = body[body.index('for i, item in enumerate'):]
+        assert loop_section.count('with self._lock:') >= 2, \
+            'worker loop must lock counter accesses (Pass 40.9)'
