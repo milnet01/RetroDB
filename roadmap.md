@@ -242,7 +242,11 @@ paths or silent-corruption vectors under routine use.
   `metadata_merger._download_and_finalize` or `base_scraper.download_image`.
   Both are functionally equivalent and hardened.
 - **Source**: 2026-04-24 indie-review, scraper adapters C1.
-- **Status**: todo
+- **Status**: done (v3.4.7) — `_download_tgdb_image` now delegates to
+  `base_scraper.download_image`; only TGDB-specific URL absolutization
+  and filename construction remain in the wrapper. SSRF gate +
+  redirect-walk + 50 MB streaming cap + partial-file cleanup all apply.
+  Tests: `test_pass40_security.py::TestPass40_7TgdbImageSsrf`.
 
 #### Pass 40.8 Museum job `finally` clobbers `failed` status back to `completed` (CRITICAL, S)
 

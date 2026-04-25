@@ -1,3 +1,17 @@
+- version: 3.4.7
+  date: 2026-04-25
+  tags:
+  - type: security
+    label: Pass 40.7 — TGDB image downloads now SSRF-gated
+  body: |
+    <ul>
+        <li><strong>Pass 40.7 (CRITICAL) &mdash; TGDB image SSRF closed</strong>. <code>scraper/scrape_thegamesdb.py::_download_tgdb_image</code> called <code>http_get(image_url, ...)</code> + <code>open(local_path, 'wb').write(response.content)</code> with no <code>validate_outbound_url</code>, no redirect-chain check, no <code>max_bytes</code>, no streaming. <code>requests</code> follows redirects by default, so a crafted TGDB CDN response with an image URL redirecting to <code>http://169.254.169.254/...</code> fetched AWS IMDS metadata and wrote it to <code>static/images/boxart/</code>. <code>base_scraper.download_image</code> is already hardened (Pass 32.6 SSRF gate, 32.7 redirect chain, 25.7 streaming size cap). CWE-918.</li>
+        <li><strong>Fix</strong>. <code>_download_tgdb_image</code> now delegates the actual fetch to <code>base_scraper.download_image</code>; only the TGDB-specific URL absolutization (<code>//</code> prefix, <code>https://cdn.thegamesdb.net/&hellip;</code> base) and filename construction stay in the wrapper. The hardened helper handles SSRF gating, redirect-walk validation, 50 MB streaming cap, partial-file cleanup on overflow, and finalize-pipeline (format normalize + responsive variants).</li>
+        <li><strong>Tests</strong>. <code>TestPass40_7TgdbImageSsrf</code> &mdash; 2 source-level pins (delegates to <code>download_image</code>; no direct <code>open(local_path, 'wb').write(response.content)</code>; module imports <code>download_image</code>). 477 passed (was 475).</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 40.7 closed. 9 Tier-1 items remain.</li>
+        <li><strong>Version bump 3.4.6 &rarr; 3.4.7</strong>: patch (security; observable change &mdash; oversized images that previously got written to disk now reject at 50 MB; private-IP redirects from TGDB rejected with a log line).</li>
+    </ul>
+
 - version: 3.4.6
   date: 2026-04-25
   tags:

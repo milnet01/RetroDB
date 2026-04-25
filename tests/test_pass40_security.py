@@ -694,3 +694,33 @@ class TestPass40_6RouteNormalization:
         window = src[max(0, idx - 200):idx + 400]
         assert 'normalize_players_value' in window, \
             'edit_metadata must call normalize_players_value (Pass 40.6)'
+
+
+# -----------------------------------------------------------------------------
+# 40.7 — TGDB image downloads bypass SSRF
+# -----------------------------------------------------------------------------
+class TestPass40_7TgdbImageSsrf:
+    """_download_tgdb_image must delegate to base_scraper.download_image
+    so the SSRF gate + size cap + redirect validation apply."""
+
+    def test_uses_hardened_download_image(self):
+        from scraper import scrape_thegamesdb as mod
+
+        src = open(mod.__file__).read()
+        if 'def _download_tgdb_image' in src:
+            idx = src.index('def _download_tgdb_image')
+            try:
+                end = src.index('\ndef ', idx + 1)
+            except ValueError:
+                end = len(src)
+            body = src[idx:end]
+            assert 'download_image(' in body, \
+                '_download_tgdb_image must delegate to base_scraper.download_image (Pass 40.7)'
+            # Must NOT contain the raw write that bypassed SSRF.
+            assert "open(local_path, 'wb')" not in body, \
+                '_download_tgdb_image must not write response.content directly (Pass 40.7)'
+
+    def test_imports_download_image(self):
+        from scraper import scrape_thegamesdb as mod
+        assert hasattr(mod, 'download_image'), \
+            'scrape_thegamesdb must import download_image from base_scraper (Pass 40.7)'

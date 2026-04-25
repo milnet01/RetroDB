@@ -17,7 +17,7 @@ import time
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import IMAGE_PATH, THEGAMESDB_API_KEY, THEGAMESDB_PUBLIC_API_KEY, TGDB_SYSTEM_MAP, TGDB_GENRE_MAP
 
-from scraper.base_scraper import http_get, get_scraper_conn
+from scraper.base_scraper import http_get, get_scraper_conn, download_image
 
 logger = logging.getLogger(__name__)
 
@@ -992,12 +992,21 @@ def apply_metadata_to_game(db_game_id, tgdb_data):
 # =============================================================================
 
 def _download_tgdb_image(db_game_id, image_url, image_type, suffix=''):
-    """Download image from URL"""
+    """Download a TGDB image to IMAGE_PATH/<image_type>/.
+
+    Pass 40.7 — delegates the actual fetch to base_scraper.download_image,
+    which enforces the SSRF gate (validate_outbound_url +
+    validate_redirect_chain), 50 MB streaming size cap, and partial-file
+    cleanup on overflow.  The previous implementation bypassed all three
+    via raw http_get + open().write(response.content), so a crafted TGDB
+    response with an image URL redirecting to e.g. 169.254.169.254 (AWS
+    IMDS) fetched cloud metadata into static/images/boxart/.  CWE-918.
+    """
     if not image_url:
         return None
 
     try:
-        # Make URL absolute
+        # Make URL absolute (TGDB CDN sometimes returns relative paths).
         if image_url.startswith('//'):
             image_url = 'https:' + image_url
         elif not image_url.startswith('http'):
@@ -1007,45 +1016,23 @@ def _download_tgdb_image(db_game_id, image_url, image_type, suffix=''):
                 image_url = f"https://cdn.thegamesdb.net/{image_url}"
 
         # Get file extension from URL or default to jpg, then translate to the
-        # configured ingest format (e.g. WebP) so freshly-scraped media is
-        # stored compressed from day one.
+        # configured ingest format (e.g. WebP).
         url_ext = os.path.splitext(image_url.split('?')[0])[1] or '.jpg'
         from services.image_utils import preferred_image_extension
         ext = preferred_image_extension(image_type, url_ext)
 
-        # Create filename with optional suffix
         filename = f"{db_game_id}_tgdb{suffix}{ext}"
         local_dir = os.path.join(IMAGE_PATH, image_type)
         os.makedirs(local_dir, exist_ok=True)
         local_path = os.path.join(local_dir, filename)
 
-        # Download using shared http_get with User-Agent header
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
-
         logger.info(f"Downloading image from: {image_url}")
-        response = http_get(image_url, headers=headers, timeout=30, retries=2)
-
-        if response is not None and response.status_code == 200:
-            with open(local_path, 'wb') as f:
-                f.write(response.content)
-
-            # Post-download pipeline: format-normalize + size standardize +
-            # responsive variants. Fanart is still size-skipped inside the
-            # helper via config.IMAGE_SKIP_TYPES.
-            try:
-                from services.image_utils import finalize_downloaded_image
-                finalize_downloaded_image(local_path, image_type)
-            except Exception:
-                pass
-
+        # download_image: SSRF-gated, redirect-validated, size-capped,
+        # auto-finalizes (format normalize + responsive variants).
+        if download_image(image_url, local_path, timeout=30):
             logger.info(f"Downloaded {image_type} for game {db_game_id}: {filename}")
             return filename
-        else:
-            status = response.status_code if response else 'no response'
-            logger.warning(f"Failed to download image: HTTP {status}")
-            return None
+        return None
 
     except Exception as e:
         logger.warning(f"Failed to download image: {e}")
