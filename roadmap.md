@@ -255,7 +255,14 @@ paths or silent-corruption vectors under routine use.
   time, OR filter on `mtime > scan_start_time`. Add `os.path.islink`
   skip in the iteration.
 - **Source**: indie-review 2026-04-25 (Image pipeline lane).
-- **Status**: todo
+- **Status**: done (v3.5.22) — each orphan dict carries `mtime` and
+  `scan_started_at`; `clean_orphaned_files` re-checks both at delete
+  time and skips files modified during the cleanup window. Symlinks
+  refused at both scan and clean (`os.path.islink` guard added in
+  `find_orphaned_media` and again in `clean_orphaned_files` as defence
+  in depth). 5 regression tests in
+  `tests/test_pass45_security.py::TestPass45_7*`; reverting the
+  `services/media_cleanup.py` change fails 4 of 5.
 
 #### Pass 45.8 Steam/Xbox/PSN/wishlist endpoint rate-limits (HIGH, S)
 

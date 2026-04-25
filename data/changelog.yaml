@@ -1,3 +1,18 @@
+- version: 3.5.22
+  date: 2026-04-25
+  tags:
+  - type: reliability
+    label: Pass 45.7 — Orphan-cleanup race + symlink guard
+  body: |
+    <ul>
+        <li><strong>Pass 45.7 (HIGH) &mdash; <code>clean_orphaned_files</code> no longer races concurrent scrapers</strong>. <code>find_orphaned_media</code> built a snapshot of "files not referenced by any game"; <code>clean_orphaned_files</code> then deleted from the snapshot. Between the two calls a scraper writing a freshly-rescraped <code>42_boxart_v2.webp</code> (and updating the row to point at it) raced the cleaner: v2 was on disk but not yet referenced at scan time, so the snapshot included it; then the row update landed; then the cleaner unlinked the file the row now pointed at. Same architectural shape as Pass 40.15's <code>hybrid_scraper</code> stale-clear race, just on a different code path.</li>
+        <li><strong>Fix</strong>. Each orphan dict now carries <code>mtime</code> (recorded at scan time) and <code>scan_started_at</code> (the wall-clock timestamp of when the scan began). At delete time the cleaner re-checks: file still exists, file is still not a symlink, and the file's current mtime hasn't moved past either the recorded value or the scan-start timestamp. Files that were touched during the cleanup window are skipped with a distinct info-level log line ("Skipping orphan candidate (modified during cleanup window): &hellip;") so the admin can see the cleaner deferred work rather than silently doing nothing.</li>
+        <li><strong>Symlink guard at both ends</strong>. <code>find_orphaned_media</code> now skips symlinks at scan time (<code>os.path.isfile</code> follows symlinks; a symlink to a regular file outside the media dirs would otherwise show up as a deletion candidate even though <code>os.remove</code> on a symlink only unlinks the link itself). <code>clean_orphaned_files</code> repeats the check at delete time as defence in depth — a symlink that appeared between scan and clean is also refused.</li>
+        <li><strong>Source</strong> &mdash; indie-review 2026-04-25 theme T6. Caught by Storage / persistence and Scraper orchestration lanes; both flagged the same architectural pattern.</li>
+        <li><strong>Tests</strong>. <code>tests/test_pass45_security.py::TestPass45_7*</code> &mdash; 5 cases. (1) Each orphan dict carries <code>mtime</code> + <code>scan_started_at</code>. (2) Symlinks inside the media tree are skipped at scan. (3) An orphan whose mtime is bumped past <code>scan_started_at</code> after the scan is preserved by the cleaner. (4) A symlink hand-crafted into a stale snapshot is refused at delete time. (5) Sanity: an unmodified orphan is still deleted normally so the new guards don't break the legitimate path. Reverting <code>media_cleanup.py</code> fails 4 of 5 cases &mdash; pinning behaviour, not source grep.</li>
+        <li><strong>Version bump 3.5.21 &rarr; 3.5.22</strong>: patch (race fix + filesystem hygiene, no schema or surface change).</li>
+    </ul>
+
 - version: 3.5.21
   date: 2026-04-25
   tags:

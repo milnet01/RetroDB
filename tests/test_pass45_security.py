@@ -941,3 +941,142 @@ class TestPass45_6DecompressionBomb:
             f"{bomb_catches} DecompressionBombError catches; "
             "every site must catch the bomb explicitly (Pass 45.6)"
         )
+
+
+# -----------------------------------------------------------------------------
+# 45.7 — Orphan-cleanup race + symlink guard
+# -----------------------------------------------------------------------------
+class TestPass45_7OrphanCleanupRace:
+    """``services.media_cleanup.find_orphaned_media`` builds a snapshot of
+    "files not referenced by any game"; ``clean_orphaned_files`` then
+    deletes from the snapshot. Between the two calls a scraper writing
+    a freshly-rescraped ``42_boxart_v2.webp`` (and updating the row
+    accordingly) can race the cleaner: v2 was on disk but not yet
+    referenced at scan time, so the snapshot includes it; then the row
+    update lands; then the cleaner unlinks the file the row now points
+    at. Pass 45.7 stamps each orphan dict with mtime + scan-start time,
+    and the cleaner refuses to unlink files modified during the cleanup
+    window. Symlinks are also refused at both ends (defence in depth)."""
+
+    def _make_layout(self, tmp_path, monkeypatch):
+        """Stand up a minimal config-like layout pointing at tmp_path."""
+        import config
+        monkeypatch.setattr(config, 'IMAGE_PATH', str(tmp_path / 'images'))
+        monkeypatch.setattr(config, 'STATIC_PATH', str(tmp_path / 'static'))
+        for sub in ('boxart', 'boxart_3d', 'screenshots', 'fanart', 'manuals'):
+            (tmp_path / 'images' / sub).mkdir(parents=True, exist_ok=True)
+        (tmp_path / 'static' / 'videos').mkdir(parents=True, exist_ok=True)
+
+    def test_find_attaches_mtime_and_scan_start(self, tmp_path, monkeypatch):
+        """Each orphan dict must carry ``mtime`` and ``scan_started_at``
+        so the cleaner can defeat the snapshot-then-delete race."""
+        self._make_layout(tmp_path, monkeypatch)
+        from services import media_cleanup
+
+        # Create one orphaned file (no game references it).
+        boxart = tmp_path / 'images' / 'boxart' / '99_boxart.png'
+        boxart.write_bytes(b'fake')
+
+        games = [{'id': 1, 'boxart': '', 'boxart_3d': '', 'screenshots': '',
+                  'fanart': '', 'video': '', 'manual': ''}]
+        orphaned, _ = media_cleanup.find_orphaned_media(games)
+        assert len(orphaned) == 1
+        entry = orphaned[0]
+        assert 'mtime' in entry, "orphan dict must include mtime (Pass 45.7)"
+        assert 'scan_started_at' in entry, (
+            "orphan dict must include scan_started_at (Pass 45.7)"
+        )
+
+    def test_find_skips_symlinks(self, tmp_path, monkeypatch):
+        """A symlink inside the media tree (rare but possible from manual
+        admin work) must never end up in the orphan list — ``os.remove``
+        on a symlink only unlinks the link, but defence in depth says
+        we shouldn't even consider it."""
+        self._make_layout(tmp_path, monkeypatch)
+        from services import media_cleanup
+
+        # Create a real file and a symlink pointing at it, both inside boxart.
+        real = tmp_path / 'images' / 'boxart' / '99_real.png'
+        real.write_bytes(b'real')
+        link = tmp_path / 'images' / 'boxart' / '99_link.png'
+        link.symlink_to(real)
+
+        games = [{'id': 1, 'boxart': '', 'boxart_3d': '', 'screenshots': '',
+                  'fanart': '', 'video': '', 'manual': ''}]
+        orphaned, _ = media_cleanup.find_orphaned_media(games)
+        paths = [o['path'] for o in orphaned]
+        assert str(real) in paths, "real file must be considered"
+        assert str(link) not in paths, (
+            "symlink must be skipped at scan time (Pass 45.7)"
+        )
+
+    def test_clean_skips_files_modified_during_cleanup_window(self, tmp_path, monkeypatch):
+        """If a scraper bumps the mtime between scan and clean, the
+        cleaner must refuse to unlink — that file may now be referenced
+        by a row inserted during the cleanup window."""
+        self._make_layout(tmp_path, monkeypatch)
+        from services import media_cleanup
+        import time as _time
+
+        target = tmp_path / 'images' / 'boxart' / '99_orphan.png'
+        target.write_bytes(b'orphan')
+
+        games = [{'id': 1, 'boxart': '', 'boxart_3d': '', 'screenshots': '',
+                  'fanart': '', 'video': '', 'manual': ''}]
+        orphaned, _ = media_cleanup.find_orphaned_media(games)
+        assert len(orphaned) == 1
+
+        # Simulate a scraper writing to the file AFTER scan_started_at
+        # by setting mtime forward 60 seconds.
+        future = _time.time() + 60
+        os.utime(str(target), (future, future))
+
+        deleted, errors, freed = media_cleanup.clean_orphaned_files(orphaned)
+        assert deleted == 0, (
+            "clean_orphaned_files must skip files modified after "
+            "scan_started_at (Pass 45.7)"
+        )
+        assert errors == 0
+        assert target.exists(), "the racing file must survive the cleanup"
+
+    def test_clean_skips_symlink_appearing_after_scan(self, tmp_path, monkeypatch):
+        """Even if a symlink somehow ended up in the orphan list (e.g.
+        from a stale snapshot built by a pre-Pass-45.7 caller), the
+        cleaner must refuse to unlink it."""
+        self._make_layout(tmp_path, monkeypatch)
+        from services import media_cleanup
+
+        real = tmp_path / 'images' / 'boxart' / '99_real.png'
+        real.write_bytes(b'real')
+        link = tmp_path / 'images' / 'boxart' / '99_link.png'
+        link.symlink_to(real)
+
+        # Hand-craft a stale snapshot that includes the symlink (no
+        # mtime / scan_started_at — to test the symlink branch alone).
+        stale = [{
+            'path': str(link), 'filename': '99_link.png',
+            'type': 'boxart', 'size': 4,
+        }]
+        deleted, errors, freed = media_cleanup.clean_orphaned_files(stale)
+        assert deleted == 0
+        assert errors == 0
+        assert link.exists(), "symlink must survive the cleanup (Pass 45.7)"
+
+    def test_clean_still_deletes_unmodified_orphans(self, tmp_path, monkeypatch):
+        """Sanity: the new guards must not block the legitimate path —
+        an orphan whose mtime is unchanged from scan time still gets
+        deleted normally."""
+        self._make_layout(tmp_path, monkeypatch)
+        from services import media_cleanup
+
+        target = tmp_path / 'images' / 'boxart' / '99_orphan.png'
+        target.write_bytes(b'orphan')
+
+        games = [{'id': 1, 'boxart': '', 'boxart_3d': '', 'screenshots': '',
+                  'fanart': '', 'video': '', 'manual': ''}]
+        orphaned, _ = media_cleanup.find_orphaned_media(games)
+        deleted, errors, freed = media_cleanup.clean_orphaned_files(orphaned)
+        assert deleted == 1
+        assert errors == 0
+        assert freed == 6
+        assert not target.exists()
