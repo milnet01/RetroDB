@@ -310,3 +310,74 @@ class TestPass41_2BConnectionLeaksClosed:
         assert 'get_request_db' in body, (
             "routes/trophies.py must import get_request_db (Pass 41.2.B)"
         )
+
+
+# -----------------------------------------------------------------------------
+# 41.3.A — install_global_redactor runs before basicConfig (no log gap)
+# -----------------------------------------------------------------------------
+class TestPass41_3ARedactorOrder:
+    """Records emitted between `logging.basicConfig()` and
+    `install_global_redactor()` previously bypassed the redactor's root-level
+    filter. The fix calls `install_global_redactor()` BEFORE basicConfig so
+    the root-logger filter is in place from the very first emit, and again
+    AFTER so the new StreamHandler also picks up the filter (idempotent)."""
+
+    def _read_app_py(self):
+        return open(os.path.join(_REPO_ROOT, 'app.py'), encoding='utf-8').read()
+
+    def test_redactor_install_precedes_basicconfig(self):
+        body = self._read_app_py()
+        first_redactor = body.find('install_global_redactor()')
+        first_basicconfig = body.find('logging.basicConfig(')
+        assert first_redactor != -1 and first_basicconfig != -1, (
+            "Both `install_global_redactor()` and `logging.basicConfig(` must "
+            "appear in app.py (Pass 41.3.A)"
+        )
+        assert first_redactor < first_basicconfig, (
+            "install_global_redactor() must be called before "
+            "logging.basicConfig() so the root-level filter catches any "
+            "records emitted during the gap (Pass 41.3.A)"
+        )
+
+
+# -----------------------------------------------------------------------------
+# 41.3.B — default-admin log line no longer reveals password
+# -----------------------------------------------------------------------------
+class TestPass41_3BAdminCredsLogLine:
+    """`services/database_init.py` previously emitted "Created default admin
+    user (username: admin, password: admin)" at INFO. The redactor's pattern
+    set doesn't match plaintext "password: X", so the credential survived to
+    log files. Fix: scrub the log line entirely — operators learn the bootstrap
+    convention from the README, not from logs."""
+
+    def test_password_string_absent_from_log_line(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'services/database_init.py'),
+            encoding='utf-8'
+        ).read()
+        # The log call still exists, but must not contain the literal
+        # "password: admin" or "password=admin" credential.
+        for needle in ('password: admin', 'password=admin', "password='admin'"):
+            assert needle not in body, (
+                f"services/database_init.py must not log default password "
+                f"({needle!r} present) (Pass 41.3.B)"
+            )
+
+
+# -----------------------------------------------------------------------------
+# 41.3.C — 'system' log category dropped from LOGGER_CATEGORIES
+# -----------------------------------------------------------------------------
+class TestPass41_3CSystemLogCategoryDropped:
+    """`'system'` was listed in LOGGER_CATEGORIES at log_manager.py:55 but
+    had no entry in CATEGORY_LOGGERS at :58 — so a `system_YYYY-MM-DD.log`
+    file was created on every category sweep with no records inside, which
+    misleads operators looking for system events. Drop the orphan."""
+
+    def test_system_not_in_logger_categories(self):
+        from log_manager import LOGGER_CATEGORIES, CATEGORY_LOGGERS
+        # Either drop 'system' entirely OR populate CATEGORY_LOGGERS for it.
+        if 'system' in LOGGER_CATEGORIES:
+            assert 'system' in CATEGORY_LOGGERS and CATEGORY_LOGGERS['system'], (
+                "'system' is in LOGGER_CATEGORIES but missing from "
+                "CATEGORY_LOGGERS — drop or populate (Pass 41.3.C)"
+            )

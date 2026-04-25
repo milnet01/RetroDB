@@ -147,7 +147,14 @@ def ensure_user_tables():
             VALUES (?)
         """, (admin_id,))
 
-        logger.info("Created default admin user (username: admin, password: admin)")
+        # Pass 41.3.B — log the username only. The bootstrap password is
+        # recorded in the README; emitting it to logs created a credential
+        # disclosure path that the redactor doesn't catch (its patterns target
+        # `password=X` in URLs / `"password": "X"` in JSON, not plaintext).
+        logger.info(
+            "Created default admin user (username: admin); "
+            "set the password on first login or via README bootstrap"
+        )
     else:
         admin_id = admin_row['id']
 

@@ -569,7 +569,15 @@ paths or silent-corruption vectors under routine use.
   `'system'` category.  Move `install_global_redactor` before
   `basicConfig`; scrub the default-creds log line.
 - **Source**: 2026-04-24 indie-review, app bootstrap H2/M3/M4.
-- **Status**: todo
+- **Status**: done (v3.5.3) — A: `install_global_redactor()` now runs
+  BEFORE `logging.basicConfig()` (and again after, idempotent) so the
+  root-level filter is in place from first emit. B: default-admin
+  log line scrubbed at `services/database_init.py` — username only,
+  no plaintext password. C: `'system'` dropped from
+  `log_manager.LOGGER_CATEGORIES` (was orphan: listed in categories,
+  missing from `CATEGORY_LOGGERS`, created empty daily files). CSP
+  nonce zombie deferred to Pass 41.12 (gated on inline-onclick removal).
+  Tests: `tests/test_pass41_security.py::TestPass41_3A/B/C` (3 cases).
 
 #### Pass 41.4 Scraper orchestration — ES-DE screenshot append lost + primary-source exceptions abort scrape
 

@@ -51,8 +51,12 @@ def install_request_id_factory():
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOGS_DIR = os.path.join(BASE_DIR, 'logs')
 
-# Logger categories
-LOGGER_CATEGORIES = ['scraping', 'rom_tools', 'rom_reports', 'image_resize', 'system']
+# Logger categories. Pass 41.3.C — `'system'` was historically listed but had
+# no entry in CATEGORY_LOGGERS, so each daily sweep created an empty
+# `system_YYYY-MM-DD.log` that misled operators searching for system events.
+# Dropped; system-level logs flow through the root logger's StreamHandler
+# (with redactor) rather than a dedicated category file.
+LOGGER_CATEGORIES = ['scraping', 'rom_tools', 'rom_reports', 'image_resize']
 
 # Category to logger name mapping
 CATEGORY_LOGGERS = {

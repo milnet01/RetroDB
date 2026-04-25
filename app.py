@@ -628,14 +628,20 @@ app.config['RPCS3_TROPHY_PATH'] = get_rpcs3_trophy_path()
 # Set up logging — install the request-id factory FIRST so basicConfig's
 # handler already has access to %(request_id)s on the very first record.
 log_manager.install_request_id_factory()
+# Pass 41.3.A — install the redactor on the root logger BEFORE basicConfig.
+# Records emitted between basicConfig and a later install_global_redactor()
+# previously bypassed the root-level filter; placing the install before
+# basicConfig closes that gap (the call below after basicConfig runs again to
+# attach the filter to the new StreamHandler — install_global_redactor is
+# idempotent).
+log_manager.install_global_redactor()
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(request_id)s - %(name)s - %(levelname)s - %(message)s'
 )
-# Install SecretRedactor on the root logger + its basicConfig StreamHandler
-# before any module-level logger fires. CategoryFileHandler already attaches
-# its own redactor; this adds the console-stream safety net that the
-# CategoryFileHandler path cannot cover.
+# Re-run to attach the redactor filter to the StreamHandler basicConfig just
+# created. CategoryFileHandler already attaches its own redactor; this adds
+# the console-stream safety net that the CategoryFileHandler path cannot cover.
 log_manager.install_global_redactor()
 logger = logging.getLogger(__name__)
 

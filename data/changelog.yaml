@@ -1,3 +1,19 @@
+- version: 3.5.3
+  date: 2026-04-25
+  tags:
+  - type: hardening
+    label: Pass 41.3 — bootstrap log hygiene (redactor order, default-creds line, dead 'system' category)
+  body: |
+    <ul>
+        <li><strong>Pass 41.3.A (MEDIUM) &mdash; redactor installed before basicConfig</strong>. <code>install_global_redactor()</code> previously ran AFTER <code>logging.basicConfig()</code>; any log record emitted in the window between the two calls bypassed the root-level redactor filter. The install now runs BEFORE basicConfig (root-level filter is in place from the very first emit) and again after (idempotent &mdash; attaches the filter to the new StreamHandler).</li>
+        <li><strong>Pass 41.3.B (MEDIUM) &mdash; default-admin password no longer logged</strong>. <code>services/database_init.py:150</code> emitted &ldquo;Created default admin user (username: admin, password: admin)&rdquo; at INFO. The redactor's pattern set targets <code>password=X</code> in URLs and <code>"password": "X"</code> in JSON &mdash; not plaintext &ldquo;password: admin&rdquo;, so the credential survived to log files. Scrubbed: line now records the username only, with a pointer to the README/login-flow for the bootstrap password.</li>
+        <li><strong>Pass 41.3.C (LOW) &mdash; dead <code>'system'</code> log category dropped</strong>. <code>log_manager.LOGGER_CATEGORIES</code> listed <code>'system'</code> at index 4 but <code>CATEGORY_LOGGERS</code> had no entry for it &mdash; so each daily category sweep created an empty <code>system_YYYY-MM-DD.log</code> that misled operators searching for system events. Dropped from the list. System-level logs continue to flow through the root logger's StreamHandler (with redactor) rather than a dedicated category file.</li>
+        <li><strong>CSP nonce zombie deferred</strong>. <code>g.csp_nonce</code> is generated per-request and exposed via <code>{{ csp_nonce }}</code>, but no template currently emits <code>nonce="..."</code> on inline <code>&lt;script&gt;</code> blocks. The Report-Only header itself is still useful (surfaces inline-script violations to the browser console). Wiring real opt-in is gated on Pass 41.12's inline-onclick removal &mdash; tracked there, not here.</li>
+        <li><strong>Tests</strong>. <code>TestPass41_3A/B/C</code> &mdash; 3 cases. Source-level pin that <code>install_global_redactor()</code> precedes <code>logging.basicConfig(</code> in app.py; pin that the literal &ldquo;password: admin&rdquo; is gone from <code>services/database_init.py</code>; runtime check that if <code>'system'</code> is in <code>LOGGER_CATEGORIES</code> it must also be in <code>CATEGORY_LOGGERS</code>.</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 41.3 closed. Pass 41 has 11 sub-passes remaining (41.4 &hellip; 41.14).</li>
+        <li><strong>Version bump 3.5.2 &rarr; 3.5.3</strong>: patch (log hygiene; no behavior change for end users beyond cleaner log files).</li>
+    </ul>
+
 - version: 3.5.2
   date: 2026-04-25
   tags:
