@@ -15,7 +15,7 @@ from services.database import query, execute
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import (
     hash_password, verify_password, needs_rehash, get_user_settings,
-    admin_required, login_required
+    admin_required, login_required, VALID_ROLES,
 )
 from services.security import rate_limit_login, record_login_attempt, safe_filename
 
@@ -173,7 +173,7 @@ def api_create_user():
     if not username:
         return error('Username is required', code=200)
 
-    if role not in ['admin', 'editor', 'viewer']:
+    if role not in VALID_ROLES:
         return error('Invalid role', code=200)
 
     # Check if username already exists
@@ -224,7 +224,7 @@ def api_update_user(user_id):
         updates.append('display_name = ?')
         params.append(data['display_name'])
     
-    if 'role' in data and data['role'] in ['admin', 'editor', 'viewer']:
+    if 'role' in data and data['role'] in VALID_ROLES:
         updates.append('role = ?')
         params.append(data['role'])
     

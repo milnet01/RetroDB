@@ -1,0 +1,63 @@
+# Pass 42 — Player role + new permissions.
+import os
+import pathlib
+
+_REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
+
+
+class TestRolePermissions:
+    def test_player_role_exists(self):
+        from services.auth import ROLE_PERMISSIONS
+        assert 'player' in ROLE_PERMISSIONS
+
+    def test_player_can_view_launch_track(self):
+        from services.auth import ROLE_PERMISSIONS
+        assert ROLE_PERMISSIONS['player'] == {'view', 'launch', 'track_progress'}
+
+    def test_admin_gains_launch_and_track(self):
+        from services.auth import ROLE_PERMISSIONS
+        assert 'launch' in ROLE_PERMISSIONS['admin']
+        assert 'track_progress' in ROLE_PERMISSIONS['admin']
+
+    def test_editor_gains_launch_and_track(self):
+        from services.auth import ROLE_PERMISSIONS
+        assert 'launch' in ROLE_PERMISSIONS['editor']
+        assert 'track_progress' in ROLE_PERMISSIONS['editor']
+
+    def test_viewer_unchanged(self):
+        from services.auth import ROLE_PERMISSIONS
+        assert ROLE_PERMISSIONS['viewer'] == {'view'}
+
+
+class TestValidRolesConstant:
+    def test_valid_roles_includes_player(self):
+        from services.auth import VALID_ROLES
+        assert 'player' in VALID_ROLES
+
+    def test_valid_roles_matches_role_permissions_keys(self):
+        from services.auth import VALID_ROLES, ROLE_PERMISSIONS
+        assert set(VALID_ROLES) == set(ROLE_PERMISSIONS.keys())
+
+
+class TestHasPermission:
+    """has_permission already exists; just verify the new perms route correctly."""
+    def test_player_has_launch(self, monkeypatch):
+        from services import auth
+        monkeypatch.setattr(auth, 'g', type('G', (), {'user': {'role': 'player'}})())
+        assert auth.has_permission('launch') is True
+        assert auth.has_permission('edit') is False
+
+    def test_viewer_lacks_launch(self, monkeypatch):
+        from services import auth
+        monkeypatch.setattr(auth, 'g', type('G', (), {'user': {'role': 'viewer'}})())
+        assert auth.has_permission('launch') is False
+
+
+class TestRouteAllowlistsUseConstant:
+    """The hard-coded ['admin','editor','viewer'] lists in routes/auth.py
+    are replaced by VALID_ROLES so adding a role only touches one file."""
+    def test_routes_auth_no_hardcoded_role_list(self):
+        path = _REPO_ROOT / 'routes' / 'auth.py'
+        src = path.read_text()
+        assert "['admin', 'editor', 'viewer']" not in src
+        assert 'VALID_ROLES' in src
