@@ -306,6 +306,17 @@ def download_image(url, dest_path, timeout=15):
     except Exception:
         max_bytes = 50 * 1024 * 1024
 
+    # Pass 40.15 — atomic write: stream into a tempfile in the same
+    # directory, fsync, then os.replace into the final path.  The
+    # previous version streamed `open(dest_path, 'wb')` directly; any
+    # mid-stream exception (connection reset, OOM, SIGKILL) left a
+    # partial file at dest_path, and the `if os.path.exists(dest_path)`
+    # short-circuit at the top of this function then treated the corrupt
+    # bytes as "already downloaded" forever.  Mirrors the
+    # metadata_merger._download_and_finalize scaffold.
+    import tempfile as _tempfile
+    tmp_fd = None
+    tmp_path = None
     try:
         # Walk the redirect chain manually so every hop goes through the
         # SSRF validator. If no redirect is returned, safe_url == url.
@@ -313,6 +324,13 @@ def download_image(url, dest_path, timeout=15):
         if err:
             logger.warning(f"SSRF block: redirect chain rejected for {url} ({err})")
             return False
+
+        # mkstemp gives us an exclusive-create file descriptor in the same
+        # directory as the destination — same filesystem so os.replace is
+        # an atomic rename.
+        tmp_fd, tmp_path = _tempfile.mkstemp(
+            prefix='.dl-', suffix='.part', dir=dest_dir or None,
+        )
         # stream=True so the whole response body isn't materialised in memory
         # before write; iter_content pipes directly to disk in 8 KB chunks.
         with _http_session.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as response:
@@ -326,21 +344,28 @@ def download_image(url, dest_path, timeout=15):
                 )
                 return False
             written = 0
-            with open(dest_path, 'wb') as f:
+            with os.fdopen(tmp_fd, 'wb') as f:
+                tmp_fd = None  # ownership transferred to the file object
                 for chunk in response.iter_content(chunk_size=8192):
                     if chunk:
                         written += len(chunk)
                         if written > max_bytes:
-                            f.close()
-                            try:
-                                os.remove(dest_path)
-                            except OSError:
-                                pass
                             logger.warning(
                                 f"Image download aborted: {safe_url} exceeded {max_bytes} bytes"
                             )
                             return False
                         f.write(chunk)
+                f.flush()
+                try:
+                    os.fsync(f.fileno())
+                except OSError:
+                    pass
+        # Atomic promote — between this point and the next line, dest_path
+        # either stays absent or contains the complete tempfile bytes;
+        # never a half-written body.
+        os.replace(tmp_path, dest_path)
+        tmp_path = None  # ownership transferred to dest_path
+
         # Post-download: re-encode to match extension (so dest_path=*.webp →
         # on-disk WebP bytes), standardize size, generate responsive variants.
         try:
@@ -355,6 +380,19 @@ def download_image(url, dest_path, timeout=15):
     except Exception as e:
         logger.warning(f"Image download error: {e}")
         return False
+    finally:
+        # Drop any orphaned tempfile so the directory never accumulates
+        # .dl-*.part files from interrupted downloads.
+        if tmp_fd is not None:
+            try:
+                os.close(tmp_fd)
+            except OSError:
+                pass
+        if tmp_path is not None:
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
 
 
 def rate_limit(delay=0.5):

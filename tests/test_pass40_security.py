@@ -1013,3 +1013,85 @@ class TestPass40_14PsnTrophyDetailXss:
             'game.title must be escaped in HTML-text context (Pass 40.14)'
         assert 'escAttr(game.boxart)' in body or 'escapeAttr(game.boxart)' in body, \
             'game.boxart must be escaped in HTML-attribute context (Pass 40.14)'
+
+
+# -----------------------------------------------------------------------------
+# 40.15 — base_scraper.download_image non-atomic + stale-clear race
+# -----------------------------------------------------------------------------
+class TestPass40_15DownloadImageAtomic:
+    """download_image must stream into a tempfile and os.replace; the stale
+    media auto-clear must condition the UPDATE on the observed filename."""
+
+    def test_download_image_uses_tempfile_and_replace(self):
+        """Check the live-code shape — strip `# ...` comments so a doc
+        block referencing the old pattern is allowed."""
+        import re
+        from scraper import base_scraper as mod
+        src = open(mod.__file__).read()
+        idx = src.index('def download_image(')
+        end = src.index('def rate_limit', idx)
+        body = src[idx:end]
+        live = re.sub(r'#[^\n]*', '', body)
+        assert 'mkstemp' in live, \
+            'download_image must allocate a tempfile (Pass 40.15)'
+        assert 'os.replace(' in live, \
+            'download_image must os.replace tmp → dest_path (Pass 40.15)'
+        assert "open(dest_path, 'wb')" not in live, \
+            'download_image must not stream directly to dest_path (Pass 40.15)'
+
+    def test_download_image_atomic_smoke(self, tmp_path, monkeypatch):
+        """Functional smoke: a successful download produces a complete
+        file at dest_path; no .dl-*.part file is left behind."""
+        from scraper import base_scraper as mod
+        from services import ssrf as ssrf_mod
+
+        # Bypass the SSRF gate + redirect-walk for the test (these are
+        # imported lazily inside the function — patch on the source module).
+        monkeypatch.setattr(ssrf_mod, 'validate_outbound_url',
+                            lambda url: (True, url, None))
+        monkeypatch.setattr(ssrf_mod, 'validate_redirect_chain',
+                            lambda *a, **kw: ('http://example.test/img.png', None))
+
+        # Stub _http_session.get to return a fake streaming response.
+        class _Resp:
+            status_code = 200
+            headers = {'Content-Length': '12'}
+
+            def iter_content(self, chunk_size):
+                yield b'\x89PNG\r\n\x1a\n0123'
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+        class _Session:
+            def get(self, *a, **kw):
+                return _Resp()
+
+        monkeypatch.setattr(mod, '_http_session', _Session())
+
+        dest = tmp_path / 'sub' / 'image.png'
+        ok = mod.download_image('http://example.test/img.png', str(dest))
+        assert ok is True
+        assert dest.exists()
+        # No leftover tempfile in the same directory.
+        leftover = list((tmp_path / 'sub').glob('.dl-*'))
+        assert not leftover, f"tempfile not cleaned up: {leftover}"
+
+    def test_stale_clear_binds_observed_filename(self):
+        """The hybrid_scraper stale-media UPDATE must include
+        `AND {field} = ?` so a concurrent upload between stat and UPDATE
+        doesn't get its new reference wiped."""
+        from scraper import hybrid_scraper as mod
+        src = open(mod.__file__).read()
+        # Search the stale-clear region.
+        idx = src.index('Cleared') if 'Cleared' in src else None
+        # Get the surrounding ~600 chars for the UPDATE.
+        if idx is not None:
+            window = src[max(0, idx - 800):idx + 200]
+            assert 'AND ' in window and ' = ?' in window, \
+                'stale-clear UPDATE must bind observed filename (Pass 40.15)'
+        else:
+            assert False, 'stale-media block missing (Pass 40.15)'

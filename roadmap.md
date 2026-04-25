@@ -455,7 +455,13 @@ paths or silent-corruption vectors under routine use.
 - **Source**: 2026-04-24 indie-review, scraper adapters H1 + image/media
   H1 + H2.  Upgraded to CRITICAL under threat-model calibration because
   combining all three yields silent cross-user data loss.
-- **Status**: todo
+- **Status**: done (v3.4.15) — `download_image` now uses
+  `tempfile.mkstemp` + fsync + `os.replace`; `finally` drops orphaned
+  `.dl-*.part` on any error path. `hybrid_scraper` stale-clear now
+  conditions the UPDATE on `AND {field} = ?` binding the observed
+  filename so concurrent uploads aren't wiped. Tests:
+  `test_pass40_security.py::TestPass40_15DownloadImageAtomic`
+  (source pin, functional smoke, conditional-UPDATE pin).
 
 #### Pass 40.16 Missing `docs/PROXY-DEPLOY.md` referenced in `app.py:147` (HIGH, S)
 

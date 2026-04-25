@@ -598,38 +598,57 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 'fanart': os.path.join(IMAGE_PATH, 'fanart'),
                 'manual': os.path.join(IMAGE_PATH, 'manuals'),
             }
-            stale_media = []
+            # Pass 40.15 — capture the (field, stale_filename) we observed at
+            # stat time so the UPDATE only NULLs the cell when it still holds
+            # that exact value.  Otherwise a concurrent upload between stat
+            # and UPDATE gets its new reference wiped and the file orphaned.
+            stale_media = []  # list of (field, stale_filename)
             for field, directory in _media_dirs.items():
-                if metadata.get(field):
-                    if not os.path.exists(os.path.join(directory, metadata[field])):
-                        logger.warning(f"Media file missing from disk, clearing: {field}={metadata[field]}")
+                value = metadata.get(field)
+                if value:
+                    if not os.path.exists(os.path.join(directory, value)):
+                        logger.warning(f"Media file missing from disk, clearing: {field}={value}")
                         metadata[field] = None
-                        stale_media.append(field)
+                        stale_media.append((field, value))
 
             # Video lives in STATIC_PATH/videos/
-            if metadata.get('video'):
-                if not os.path.exists(os.path.join(STATIC_PATH, 'videos', metadata['video'])):
-                    logger.warning(f"Media file missing from disk, clearing: video={metadata['video']}")
+            video_value = metadata.get('video')
+            if video_value:
+                if not os.path.exists(os.path.join(STATIC_PATH, 'videos', video_value)):
+                    logger.warning(f"Media file missing from disk, clearing: video={video_value}")
                     metadata['video'] = None
-                    stale_media.append('video')
+                    stale_media.append(('video', video_value))
 
             # Screenshots: filter out individual missing files
-            if metadata.get('screenshots'):
+            screenshots_value = metadata.get('screenshots')
+            if screenshots_value:
                 ss_dir = os.path.join(IMAGE_PATH, 'screenshots')
-                ss_list = [s.strip() for s in metadata['screenshots'].split(',') if s.strip()]
+                ss_list = [s.strip() for s in screenshots_value.split(',') if s.strip()]
                 valid_ss = [s for s in ss_list if os.path.exists(os.path.join(ss_dir, s))]
                 if len(valid_ss) < len(ss_list):
                     missing = [s for s in ss_list if s not in valid_ss]
                     logger.warning(f"Screenshot files missing from disk, removing: {missing}")
                     metadata['screenshots'] = ', '.join(valid_ss) if valid_ss else None
-                    stale_media.append('screenshots')
+                    stale_media.append(('screenshots', screenshots_value))
 
-            # Clear stale references from DB so COALESCE doesn't restore them
+            # Clear stale references from DB so COALESCE doesn't restore them.
+            # Pass 40.15 — the conditional `AND <field> = ?` WHERE protects
+            # against a concurrent upload that may have replaced the value
+            # between our os.path.exists check and this write.  Without it
+            # the new reference gets NULL'd and the just-uploaded file becomes
+            # an orphan that the next media-cleanup sweep will delete.
             if stale_media:
-                for field in stale_media:
-                    c.execute(f"UPDATE games SET {field} = NULL WHERE id = ?", (db_game_id,))
+                for field, stale_filename in stale_media:
+                    c.execute(
+                        f"UPDATE games SET {field} = NULL "
+                        f"WHERE id = ? AND {field} = ?",
+                        (db_game_id, stale_filename),
+                    )
                 conn.commit()
-                logger.info(f"Cleared {len(stale_media)} stale media reference(s) from DB: {stale_media}")
+                logger.info(
+                    f"Cleared {len(stale_media)} stale media reference(s) from DB: "
+                    f"{[f for f, _ in stale_media]}"
+                )
         else:
             logger.info(f"Force overwrite mode - starting with empty metadata for game {db_game_id}")
         

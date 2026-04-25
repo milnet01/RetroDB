@@ -1,3 +1,18 @@
+- version: 3.4.15
+  date: 2026-04-25
+  tags:
+  - type: reliability
+    label: Pass 40.15 — download_image atomic + stale-clear race fix
+  body: |
+    <ul>
+        <li><strong>Pass 40.15 (CRITICAL) &mdash; <code>base_scraper.download_image</code> now atomic + stale-clear race fixed</strong>. Two compounding integrity bugs: (1) <code>download_image</code> streamed <code>open(dest_path, 'wb')</code> directly to the final path. Any mid-stream exception (connection reset, OOM, SIGKILL) left a partial file at <code>dest_path</code>, and the <code>if os.path.exists(dest_path): return True</code> short-circuit at the top of the function then treated the corrupt bytes as "already downloaded" forever. (2) The stale-ref auto-clear in <code>hybrid_scraper</code> issued <code>UPDATE games SET {field} = NULL WHERE id = ?</code> without a check that the DB value still equaled the stale filename observed at <code>os.path.exists</code> time &mdash; so a concurrent upload between stat and UPDATE got its new reference wiped and the file orphaned. The orphan sweep then deleted the now-dangling file. Combined: silent cross-user data loss.</li>
+        <li><strong>Fix &mdash; atomic download</strong>. <code>download_image</code> now allocates a tempfile via <code>tempfile.mkstemp</code> in the same directory as <code>dest_path</code> (same filesystem so <code>os.replace</code> is an atomic rename), streams chunks into it with <code>os.fdopen</code>, <code>flush</code> + <code>os.fsync</code>, then <code>os.replace(tmp, dest_path)</code>. <code>finally</code> drops any orphaned <code>.dl-*.part</code> tempfile on every error path. Mirrors <code>metadata_merger._download_and_finalize</code>.</li>
+        <li><strong>Fix &mdash; conditional stale-clear</strong>. <code>hybrid_scraper</code> captures the (field, observed_filename) tuple at stat time. The <code>UPDATE</code> now reads <code>UPDATE games SET {field} = NULL WHERE id = ? AND {field} = ?</code> binding both the row id and the stale filename. A concurrent upload that races our stat doesn't get its new reference NULL'd. Same shape applied to the screenshots refresh.</li>
+        <li><strong>Tests</strong>. <code>TestPass40_15DownloadImageAtomic</code> &mdash; 3 cases: source-level pin (<code>mkstemp</code> + <code>os.replace</code> appear, no <code>open(dest_path, 'wb')</code> in live code), functional smoke (download produces a complete file at <code>dest_path</code> with no leftover <code>.dl-*.part</code>), source-level pin on the conditional <code>AND {field} = ?</code> stale-clear UPDATE. 501 passed (was 498).</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 40.15 closed. 1 Tier-1 item remains (40.16 docs).</li>
+        <li><strong>Version bump 3.4.14 &rarr; 3.4.15</strong>: patch (data integrity; observable change &mdash; partial files from interrupted downloads no longer survive as fake "already downloaded" entries on the next scrape).</li>
+    </ul>
+
 - version: 3.4.14
   date: 2026-04-25
   tags:
