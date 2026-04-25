@@ -199,21 +199,14 @@ def save_upload(file_storage, dest_dir, game_id, prefix, allowed_ext):
 
 
 def _atomic_write_bytes(path, raw):
-    """Write `raw` bytes to `path` atomically (tmp + os.replace)."""
-    dirname = os.path.dirname(path) or '.'
-    os.makedirs(dirname, exist_ok=True)
-    fd, tmp_path = tempfile.mkstemp(prefix='.upload_', dir=dirname)
-    try:
-        with os.fdopen(fd, 'wb') as f:
-            f.write(raw)
-        os.replace(tmp_path, path)
-    except Exception:
-        if os.path.exists(tmp_path):
-            try:
-                os.remove(tmp_path)
-            except OSError:
-                pass
-        raise
+    """Write `raw` bytes to `path` atomically.
+
+    Pass 45.5 — delegates to :func:`services.atomic_io.atomic_write_bytes`
+    so the fsync + chmod-before-replace + parent-directory fsync sequence
+    is shared across every atomic-write site in the codebase.
+    """
+    from services.atomic_io import atomic_write_bytes
+    atomic_write_bytes(path, raw)
 
 
 def save_screenshots(file_storages, game_id, existing_csv):

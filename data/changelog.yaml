@@ -1,3 +1,24 @@
+- version: 3.5.20
+  date: 2026-04-25
+  tags:
+  - type: reliability
+    label: Pass 45.5 — Atomic-write contract drift swept across 5 sites
+  body: |
+    <ul>
+        <li><strong>Pass 45.5 (HIGH) &mdash; one canonical atomic-write helper</strong>. Five places in the codebase had their own ad-hoc copy of the "tmp + os.replace" dance; each had drifted in subtle ways that the indie-review caught (theme T2). Added <code>services.atomic_io.atomic_write_bytes</code> and <code>atomic_write_text</code>, plus a shared <code>fsync_path</code> helper. Sequence is: <code>mkstemp</code> in the same directory &rarr; write &rarr; <code>flush</code> + <code>fsync(fd)</code> &rarr; <code>chmod</code> the tmpfile (so the final path never exists at the umask default) &rarr; <code>os.replace</code> &rarr; fsync the parent directory.</li>
+        <li><strong>Five sites brought into compliance</strong>:</li>
+        <ul>
+            <li><code>app.py:_get_secret_key</code> &mdash; was <code>open()</code> &rarr; <code>write()</code> &rarr; <code>chmod 0o600</code>, leaving a brief 0o644 window holding the Flask session secret key. Now <code>atomic_write_text(key_path, key, mode=0o600)</code>; chmod fires on the tmpfile before the rename, so the final path never exists with group/other read.</li>
+            <li><code>services/image_utils.py:_atomic_save</code> &mdash; the docstring claimed fsync but the previous version never called it. PIL's <code>img.save</code> closes the underlying file but doesn't fsync; a power loss between PIL's close and <code>os.replace</code> landed a 0-byte file at the destination on next mount. Now explicitly opens the tmp file read-only and fsyncs before the rename, then fsyncs the parent directory.</li>
+            <li><code>services/game_media_service.py:_atomic_write_bytes</code> &mdash; same missing-fsync shape. Now a thin delegate to <code>services.atomic_io.atomic_write_bytes</code>.</li>
+            <li><code>services/database.py:backup_database</code> &mdash; chmod ran <em>after</em> the integrity-check verify open, leaving the backup at 0o644 for the duration of <code>PRAGMA integrity_check</code>. Backups contain session cookies, password hashes, and OAuth tokens, so on a multi-user host this was a real exposure. Reordered: chmod immediately after <code>sqlite3.backup</code> returns, before the verify connect.</li>
+            <li><code>services/image_utils.py:_download_model</code> &mdash; used a static <code>dest + '.tmp'</code> suffix; concurrent model downloads from different workers (or a re-entry on cleanup) raced on the same temp path and could clobber an in-flight download. Now <code>tempfile.mkstemp</code> per attempt, with explicit fsync before <code>os.replace</code>.</li>
+        </ul>
+        <li><strong>Source</strong> &mdash; indie-review 2026-04-25 theme T2 (atomic-write contract drift). Caught independently by the Core app and Storage / persistence lanes.</li>
+        <li><strong>Tests</strong>. <code>tests/test_pass45_security.py::TestPass45_5*</code> &mdash; 8 cases. Helper-level: chmod-before-replace pin (mode bits exactly 0o600), unicode round-trip through <code>atomic_write_text</code>, <code>TypeError</code> on str passed to bytes helper, tempfile cleanup on failure path. Site-level: <code>_atomic_save</code> calls <code>os.fsync</code> at least once per save (counted via spy); <code>backup_database</code> chmod-before-verify pin via end-to-end smoke + source-position check (chmod offset must precede verify-open offset within the function body); <code>_get_secret_key</code> uses <code>atomic_write_text(... mode=0o600)</code>; <code>_download_model</code> uses <code>tempfile.mkstemp</code>, not the static suffix. Reverting the <code>backup_database</code> reorder fails the position check &mdash; pinning behaviour, not source grep alone.</li>
+        <li><strong>Version bump 3.5.19 &rarr; 3.5.20</strong>: patch (durability + secret-mode hardening, no schema or surface change).</li>
+    </ul>
+
 - version: 3.5.19
   date: 2026-04-25
   tags:

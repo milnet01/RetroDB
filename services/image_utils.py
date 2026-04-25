@@ -92,10 +92,10 @@ def _download_model(url, dest):
     from services.ssrf import validate_outbound_url, validate_and_pin_url, pin_host_ip
     from urllib.parse import urlparse as _urlparse
     os.makedirs(os.path.dirname(dest), exist_ok=True)
-    tmp = dest + '.tmp'
 
     urls_to_try = [url] + [u for u in _MODEL_URLS if u != url]
     last_err = None
+    dest_dir = os.path.dirname(dest) or '.'
 
     for try_url in urls_to_try:
         ok, reason, _ = validate_outbound_url(try_url, require_https=True)
@@ -111,6 +111,12 @@ def _download_model(url, dest):
             logger.warning(f"Skipping model URL (SSRF redirect): {try_url} — {err}")
             continue
         pinned_host = _urlparse(safe_url).hostname
+        # Pass 45.5 — mkstemp gives every download attempt its own tmp
+        # path; the previous static suffix raced with concurrent
+        # processes and could clobber an in-flight download from another
+        # worker.
+        tmp_fd, tmp = tempfile.mkstemp(prefix='.model_', suffix='.tmp', dir=dest_dir)
+        os.close(tmp_fd)
         try:
             logger.info(f"Downloading Real-ESRGAN ONNX model from {safe_url} …")
             headers = {'User-Agent': 'RetroDB/1.0 (ONNX model downloader)'}
@@ -123,6 +129,11 @@ def _download_model(url, dest):
                     for chunk in resp.iter_content(chunk_size=1024 * 256):
                         if chunk:
                             f.write(chunk)
+                    f.flush()
+                    try:
+                        os.fsync(f.fileno())
+                    except OSError:
+                        pass
             os.replace(tmp, dest)
             logger.info("Model download complete")
             return
@@ -130,7 +141,10 @@ def _download_model(url, dest):
             last_err = e
             logger.warning(f"Failed to download from {try_url}: {e}")
             if os.path.exists(tmp):
-                os.remove(tmp)
+                try:
+                    os.remove(tmp)
+                except OSError:
+                    pass
 
     raise RuntimeError(f"All model download URLs failed. Last error: {last_err}")
 
@@ -772,11 +786,13 @@ def _downscale_image(img, image_type, target):
 
 
 def _atomic_save(img, path, fmt, **save_kwargs):
-    """Pass 32.9 — save `img` to `path` atomically.
+    """Pass 32.9 / 45.5 — save `img` to `path` atomically.
 
-    Writes to a temp file in the same directory, fsyncs, and swaps into
-    place with os.replace. A mid-write OOM / I/O error / client-disconnect
-    can no longer leave a truncated file at `path`.
+    Writes to a temp file in the same directory, fsyncs the file *and* the
+    parent directory, and swaps into place with os.replace. A mid-write
+    OOM / I/O error / client-disconnect can no longer leave a truncated
+    file at `path`; a power loss after the rename can no longer lose the
+    directory entry on XFS or `nobarrier` mounts.
     """
     dirname = os.path.dirname(path) or '.'
     os.makedirs(dirname, exist_ok=True)
@@ -784,9 +800,28 @@ def _atomic_save(img, path, fmt, **save_kwargs):
     os.close(fd)
     try:
         img.save(tmp_path, fmt, **save_kwargs)
+        # Pass 45.5 — the docstring claimed fsync but the previous version
+        # never actually called it. PIL's img.save closes the underlying
+        # file but doesn't fsync; without the explicit fsync below, a
+        # power loss between PIL's close and os.replace lands a 0-byte or
+        # partially-flushed file at the final path on next mount.
+        sync_fd = os.open(tmp_path, os.O_RDONLY)
+        try:
+            os.fsync(sync_fd)
+        except OSError:
+            pass
+        finally:
+            os.close(sync_fd)
         os.replace(tmp_path, path)
+        tmp_path = None
+        # Fsync the directory so the rename is durable on next mount.
+        try:
+            from services.atomic_io import fsync_path
+            fsync_path(dirname)
+        except OSError:
+            pass
     except Exception:
-        if os.path.exists(tmp_path):
+        if tmp_path is not None and os.path.exists(tmp_path):
             try:
                 os.remove(tmp_path)
             except OSError:

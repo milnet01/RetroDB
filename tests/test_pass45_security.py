@@ -663,3 +663,185 @@ class TestPass45_4XssSinks:
             "settings.html must opt in to HTML on the two formatted-confirm "
             "callers (Pass 45.4)"
         )
+
+
+# -----------------------------------------------------------------------------
+# 45.5 — Atomic-write contract drift
+# -----------------------------------------------------------------------------
+class TestPass45_5AtomicWrite:
+    """Four ad-hoc copies of the "tmp + os.replace" dance had drifted:
+
+    1. ``app.py:_get_secret_key`` — opened, wrote, then chmod'd, leaving
+       the secret key at the umask default (typically 0o644) for a brief
+       window. Now uses ``atomic_write_text(path, key, mode=0o600)`` which
+       chmods the tmpfile *before* the rename.
+    2. ``services/image_utils.py:_atomic_save`` — docstring claimed fsync
+       but never called it; a power loss between PIL's close() and
+       os.replace landed a 0-byte file at the destination on next mount.
+    3. ``services/game_media_service.py:_atomic_write_bytes`` — same
+       missing-fsync shape. Now delegates to ``atomic_write_bytes``.
+    4. ``services/database.py:backup_database`` — chmod'd the backup file
+       *after* opening it for the integrity-check verify pass, leaving a
+       0o644 window for the duration of the check. Backups contain
+       session cookies, password hashes, and OAuth tokens.
+    5. ``services/image_utils.py:_download_model`` — used a static
+       ``dest + '.tmp'`` suffix; concurrent downloads from different
+       workers raced on the same temp path. Now uses ``mkstemp``.
+    """
+
+    def test_atomic_write_bytes_chmods_before_replace(self, tmp_path):
+        """The secret-key path needs the chmod to land *before* the rename
+        so the final path never exists at the umask default (0o644)."""
+        from services.atomic_io import atomic_write_bytes
+        target = tmp_path / 'secret.bin'
+        atomic_write_bytes(str(target), b'top-secret', mode=0o600)
+        assert target.read_bytes() == b'top-secret'
+        # Mode bits should be exactly 0o600 — no group/other read.
+        mode = target.stat().st_mode & 0o777
+        assert mode == 0o600, f"expected 0o600, got {oct(mode)}"
+
+    def test_atomic_write_text_round_trips_unicode(self, tmp_path):
+        from services.atomic_io import atomic_write_text
+        target = tmp_path / 'config.json'
+        atomic_write_text(str(target), '{"k": "ümlaut"}\n', mode=0o644)
+        assert target.read_text(encoding='utf-8') == '{"k": "ümlaut"}\n'
+
+    def test_atomic_write_bytes_rejects_str(self, tmp_path):
+        """Strings must go through atomic_write_text so the encoding is
+        explicit. Otherwise an accidental call with a unicode string
+        would silently TypeError inside f.write at runtime."""
+        from services.atomic_io import atomic_write_bytes
+        with pytest.raises(TypeError):
+            atomic_write_bytes(str(tmp_path / 'x'), 'not bytes')
+
+    def test_atomic_write_bytes_cleans_tmp_on_failure(self, tmp_path, monkeypatch):
+        """On any failure path the .atomic_* tmpfile must not be left
+        behind — it would otherwise accumulate after every crash."""
+        from services import atomic_io
+        target = tmp_path / 'sub' / 'fail.bin'
+
+        def boom(_path, _mode):
+            raise OSError("simulated chmod failure that we don't catch")
+
+        # Force os.replace itself to fail so the cleanup branch runs.
+        original_replace = os.replace
+        def failing_replace(*args, **kwargs):
+            raise OSError("simulated replace failure")
+        monkeypatch.setattr(os, 'replace', failing_replace)
+        with pytest.raises(OSError):
+            atomic_io.atomic_write_bytes(str(target), b'payload')
+        # Tempfiles use the .atomic_ prefix — none should remain.
+        leftover = list((tmp_path / 'sub').glob('.atomic_*'))
+        assert not leftover, f"tempfile not cleaned up: {leftover}"
+
+    def test_atomic_save_calls_fsync(self, tmp_path, monkeypatch):
+        """_atomic_save's docstring claimed fsync but the previous version
+        never called it. Pin the contract by counting fsync calls during
+        a save; without the fix os.fsync count is 0."""
+        from services import image_utils
+        from PIL import Image
+
+        fsync_calls = []
+        original_fsync = os.fsync
+        monkeypatch.setattr(os, 'fsync', lambda fd: fsync_calls.append(fd) or original_fsync(fd))
+
+        img = Image.new('RGB', (8, 8), color=(255, 0, 0))
+        out = tmp_path / 'img.png'
+        image_utils._atomic_save(img, str(out), 'PNG')
+
+        assert out.exists()
+        assert len(fsync_calls) >= 1, (
+            "_atomic_save must call os.fsync between PIL close and os.replace "
+            "(Pass 45.5)"
+        )
+
+    def test_backup_database_chmods_before_verify(self, tmp_path, monkeypatch):
+        """backup_database's chmod must fire before the integrity-check
+        verify open. Strategy: end-to-end smoke a real backup, then
+        grep the source for chmod-before-verify ordering.
+
+        sqlite3.Connection is C-immutable so we can't intercept execute()
+        at the class level; instead we (1) confirm the backup runs to
+        completion and (2) confirm the source has the chmod block before
+        the ``sqlite3.connect(dst_path)`` verify-open block."""
+        import services.database as db_mod
+        import sqlite3
+        import stat
+
+        # End-to-end smoke first: build a seed DB, call backup_database,
+        # verify the result file exists at 0o600.
+        src = tmp_path / 'src.db'
+        seed = sqlite3.connect(str(src))
+        seed.execute('CREATE TABLE t (x INTEGER)')
+        seed.execute('INSERT INTO t VALUES (1)')
+        seed.commit()
+        seed.close()
+        dst = tmp_path / 'backup.db'
+        db_mod.backup_database(str(src), str(dst))
+        assert dst.exists(), "backup_database must produce the destination file"
+        final_mode = stat.S_IMODE(dst.stat().st_mode)
+        assert final_mode == 0o600, (
+            f"backup file final mode should be 0o600, got {oct(final_mode)}"
+        )
+
+        # Source-level pin: chmod must precede the verify connect. Pull
+        # the function body and find the offsets of (a) the chmod call on
+        # dst_path and (b) the verify ``sqlite3.connect(dst_path)``.
+        path = os.path.join(_REPO_ROOT, 'services', 'database.py')
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        idx = body.find('def backup_database')
+        next_def = body.find('\ndef ', idx + 1)
+        body_slice = body[idx:next_def] if next_def != -1 else body[idx:]
+        chmod_pos = body_slice.find('os.chmod(dst_path')
+        verify_pos = body_slice.find('verify = sqlite3.connect(dst_path')
+        assert chmod_pos != -1, (
+            "backup_database must chmod dst_path"
+        )
+        assert verify_pos != -1, (
+            "backup_database must open dst_path for the integrity-check verify"
+        )
+        assert chmod_pos < verify_pos, (
+            "backup_database must chmod the destination BEFORE the "
+            "integrity-check verify connect (Pass 45.5). The previous "
+            "order left a 0o644 window for the duration of the check."
+        )
+
+    def test_secret_key_uses_atomic_write_text(self):
+        """app._get_secret_key must route through atomic_write_text with
+        mode=0o600 — bare open()+write()+chmod leaves a world-readable
+        window for the secret key."""
+        path = os.path.join(_REPO_ROOT, 'app.py')
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        # Find the _get_secret_key function body.
+        assert 'def _get_secret_key' in body
+        # The atomic helper must be referenced inside the function.
+        # Simple substring check — if someone reverts to bare open+chmod,
+        # `atomic_write_text(key_path, key, mode=0o600)` will be gone.
+        assert 'atomic_write_text(key_path, key, mode=0o600)' in body, (
+            "_get_secret_key must use atomic_write_text(..., mode=0o600) "
+            "(Pass 45.5)"
+        )
+
+    def test_download_model_uses_mkstemp(self):
+        """_download_model's tmp path must come from tempfile.mkstemp,
+        not the static `dest + '.tmp'` form that races with concurrent
+        downloads from different workers."""
+        path = os.path.join(_REPO_ROOT, 'services', 'image_utils.py')
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        # Find the _download_model function.
+        idx = body.find('def _download_model')
+        assert idx != -1
+        # Pull the function body up to the next top-level def.
+        next_def = body.find('\ndef ', idx + 1)
+        body_slice = body[idx:next_def] if next_def != -1 else body[idx:]
+        assert "tempfile.mkstemp" in body_slice, (
+            "_download_model must use tempfile.mkstemp for the tmp path "
+            "(Pass 45.5)"
+        )
+        assert "dest + '.tmp'" not in body_slice, (
+            "_download_model must not use the static `dest + '.tmp'` "
+            "suffix (race-prone, Pass 45.5)"
+        )

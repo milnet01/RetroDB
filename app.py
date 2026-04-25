@@ -112,10 +112,13 @@ def _get_secret_key():
         pass
     # Generate new key
     key = secrets.token_hex(32)
+    # Pass 45.5 — atomic_write_text chmods the tmpfile to 0o600 *before*
+    # the os.replace, so the final path never exists at the umask default
+    # (typically 0o644). The previous form was open→write→chmod, which
+    # left a brief world-readable window holding the secret key.
     try:
-        with open(key_path, 'w') as f:
-            f.write(key)
-        os.chmod(key_path, 0o600)
+        from services.atomic_io import atomic_write_text
+        atomic_write_text(key_path, key, mode=0o600)
     except OSError:
         pass
     return key

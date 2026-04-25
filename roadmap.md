@@ -212,7 +212,16 @@ paths or silent-corruption vectors under routine use.
   add `f.flush() + os.fsync(fd)` before `os.replace`; chmod before
   any reopen-for-verify.
 - **Source**: indie-review 2026-04-25 theme T2.
-- **Status**: todo
+- **Status**: done (v3.5.20) — added `services.atomic_io.atomic_write_
+  bytes` / `atomic_write_text` / `fsync_path`; threaded through all
+  five sites: `_get_secret_key` (mode=0o600 chmod-before-replace),
+  `_atomic_save` (added missing fsync the docstring claimed),
+  `_atomic_write_bytes` in game_media_service (delegates to helper),
+  `backup_database` (chmod reordered to fire before integrity-check
+  verify open), `_download_model` (mkstemp instead of static `.tmp`).
+  8 regression tests in `tests/test_pass45_security.py::TestPass45_5*`
+  pin the contracts; reverting `backup_database` reorder fails the
+  position check.
 
 #### Pass 45.6 Decompression-bomb / `MAX_IMAGE_PIXELS` global (HIGH, S)
 
