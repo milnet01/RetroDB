@@ -75,8 +75,16 @@ def _download_model(url, dest):
 
     Tries the given URL first, then falls back to alternate mirrors.
     Uses a browser-like User-Agent since some hosts block default urllib.
+
+    Pass 41.14.B — every URL is now run through `services.ssrf.validate_
+    outbound_url(require_https=True)` before dereference. `_MODEL_URLS` is
+    a hardcoded HuggingFace allowlist today, so the gate currently never
+    rejects anything; it's defensive against any future code path that
+    surfaces the URL via settings (a primitive that landed for `ROM_PATH`
+    in Pass 32.1) and bypasses outbound-URL hygiene.
     """
     import urllib.request
+    from services.ssrf import validate_outbound_url
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     tmp = dest + '.tmp'
 
@@ -84,6 +92,11 @@ def _download_model(url, dest):
     last_err = None
 
     for try_url in urls_to_try:
+        ok, reason, _ = validate_outbound_url(try_url, require_https=True)
+        if not ok:
+            last_err = RuntimeError(f"SSRF guard rejected {try_url}: {reason}")
+            logger.warning(f"Skipping model URL (SSRF): {try_url} — {reason}")
+            continue
         try:
             logger.info(f"Downloading Real-ESRGAN ONNX model from {try_url} …")
             req = urllib.request.Request(try_url, headers={

@@ -848,3 +848,128 @@ class TestPass41_11BMuseumGetIdempotent:
         assert '@editor_required' in block, (
             "Persistent cleanup must be admin/editor only (Pass 41.11.B)"
         )
+
+
+# -----------------------------------------------------------------------------
+# 41.14.A — compute_dhash widens except to catch DecompressionBombError
+# -----------------------------------------------------------------------------
+class TestPass41_14ADecompressionBomb:
+    """`scraper/image_dedup.py::compute_dhash` previously caught
+    `(OSError, ValueError)`. PIL's `DecompressionBombError` is a sibling
+    exception class (not a subclass of either), so a single bomb-image
+    in a scraped screenshot batch propagated out and aborted the dedup
+    loop for the whole game. Pass 41.14.A widens the catch."""
+
+    def test_decompressionbombexception_caught(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'scraper/image_dedup.py'),
+            encoding='utf-8'
+        ).read()
+        assert 'DecompressionBombError' in body, (
+            "compute_dhash must catch PIL.Image.DecompressionBombError "
+            "(Pass 41.14.A)"
+        )
+
+    def test_compute_dhash_returns_none_on_bomb(self, monkeypatch):
+        """Functional smoke: when PIL raises DecompressionBombError,
+        compute_dhash must return None instead of propagating."""
+        from PIL import Image
+        from scraper import image_dedup
+
+        def boom(*a, **kw):
+            raise Image.DecompressionBombError('test bomb')
+
+        monkeypatch.setattr(image_dedup.Image, 'open', boom)
+        assert image_dedup.compute_dhash('/dev/null') is None
+
+
+# -----------------------------------------------------------------------------
+# 41.14.B — ESRGAN model download routed through SSRF guard
+# -----------------------------------------------------------------------------
+class TestPass41_14BEsrganSsrfGate:
+    """`services/image_utils._download_model` previously ran
+    `urllib.request.urlopen(req, timeout=120)` directly. _MODEL_URLS is a
+    hardcoded HuggingFace allowlist today, so today there's no real SSRF
+    primitive — but if the URL becomes settings-editable in the future
+    (the way ROM_PATH did in Pass 32.1) the helper would be a wide-open
+    fetcher. Pass 41.14.B routes every URL through
+    `services.ssrf.validate_outbound_url(require_https=True)` first."""
+
+    def test_validate_outbound_url_imported_in_helper(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'services/image_utils.py'),
+            encoding='utf-8'
+        ).read()
+        assert 'validate_outbound_url' in body, (
+            "services/image_utils.py must call validate_outbound_url "
+            "before urlopen (Pass 41.14.B)"
+        )
+        # Confirm at least one call passes require_https=True. The first
+        # `validate_outbound_url` occurrence is the import line; check the
+        # actual call site (which contains both names on or near one line).
+        assert 'validate_outbound_url(try_url, require_https=True)' in body, (
+            "ESRGAN download must call validate_outbound_url(..., "
+            "require_https=True) (Pass 41.14.B)"
+        )
+
+
+# -----------------------------------------------------------------------------
+# 41.14.C — rglob() symlink-escape guards in scraper/rom_tools.py
+# -----------------------------------------------------------------------------
+class TestPass41_14CRglobSymlinkGuard:
+    """`Path.rglob()` follows symlinks on Python 3.12 (default changed in
+    3.13). A symlink to `/` placed inside ROM_PATH would let rom_tools'
+    archive/CHD/duplicate scanners enumerate the entire filesystem.
+    Pass 41.14.C adds a `_safe_under_root` helper and applies it to every
+    recursive walk."""
+
+    def test_helper_defined(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'scraper/rom_tools.py'),
+            encoding='utf-8'
+        ).read()
+        assert '_safe_under_root' in body, (
+            "scraper/rom_tools.py must define _safe_under_root (Pass 41.14.C)"
+        )
+        assert 'is_relative_to' in body, (
+            "_safe_under_root must use Path.is_relative_to to detect "
+            "symlinks escaping root (Pass 41.14.C)"
+        )
+
+    def test_helper_used_at_every_recursive_walk(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'scraper/rom_tools.py'),
+            encoding='utf-8'
+        ).read()
+        # Each rglob result must be filtered through _safe_under_root, OR
+        # be a tempdir-extract case that's outside the audit scope. Count
+        # both rglob uses and helper uses; the helper count must be > 0.
+        rglob_count = body.count('.rglob(')
+        # The helper is used as `_safe_under_root(...)` in filter expressions.
+        helper_uses = body.count('_safe_under_root(')
+        # The helper definition itself counts as 1 (it's referenced inside
+        # _safe_under_root's docstring/return). We expect at least 4
+        # call sites covering the audit-scope rglob walks (archive scanner
+        # filtered + recursive, CHD converter, duplicate finder).
+        assert helper_uses >= 5, (
+            f"Expected _safe_under_root to be used at >= 5 sites (definition "
+            f"+ 4 audit-scope rglob walks); found {helper_uses}. Total "
+            f"rglob call sites = {rglob_count}."
+        )
+
+    def test_safe_helper_rejects_escape(self, tmp_path):
+        """Functional smoke: the helper must reject a path whose resolved
+        location lies outside root."""
+        from scraper.rom_tools import _safe_under_root
+        from pathlib import Path
+        root = tmp_path / 'roms'
+        root.mkdir()
+        outside = tmp_path / 'outside.bin'
+        outside.write_bytes(b'x')
+        link = root / 'evil.bin'
+        link.symlink_to(outside)
+        assert _safe_under_root(link, root.resolve()) is False
+        # And accept a real file inside root.
+        legit = root / 'real.bin'
+        legit.write_bytes(b'y')
+        assert _safe_under_root(legit, root.resolve()) is True

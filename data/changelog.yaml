@@ -1,3 +1,18 @@
+- version: 3.5.9
+  date: 2026-04-25
+  tags:
+  - type: hardening
+    label: Pass 41.14 — PIL bomb caught; ESRGAN SSRF gate; rglob symlink escape
+  body: |
+    <ul>
+        <li><strong>Pass 41.14.A (MEDIUM) &mdash; <code>compute_dhash</code> catches DecompressionBombError</strong>. <code>scraper/image_dedup.py::compute_dhash</code> previously caught <code>(OSError, ValueError)</code>. PIL's <code>Image.DecompressionBombError</code> is a sibling exception class (not a subclass of either), so a single bomb-image in a scraped screenshot batch propagated out and aborted the dedup loop for the whole game. Catch widened to include the bomb error; <code>compute_dhash</code> returns <code>None</code> instead and the dedup loop continues with the rest of the batch.</li>
+        <li><strong>Pass 41.14.B (MEDIUM) &mdash; ESRGAN model download gated by SSRF</strong>. <code>services/image_utils._download_model</code> previously called <code>urllib.request.urlopen</code> directly. <code>_MODEL_URLS</code> is a hardcoded HuggingFace allowlist today (no live SSRF primitive), but if the URL becomes settings-editable in a future pass (the way <code>ROM_PATH</code> did in Pass 32.1) the helper would be a wide-open fetcher. Each URL now passes through <code>services.ssrf.validate_outbound_url(require_https=True)</code> before <code>urlopen</code>; rejected URLs are skipped with a <code>logger.warning</code>.</li>
+        <li><strong>Pass 41.14.C (MEDIUM) &mdash; <code>rglob()</code> symlink-escape guard</strong>. <code>Path.rglob()</code> follows symlinks on Python 3.12 (default behavior changed in 3.13). A symlink to <code>/</code> placed inside <code>ROM_PATH</code> would let rom_tools' archive/CHD/duplicate scanners enumerate the entire filesystem. New <code>scraper/rom_tools._safe_under_root(path, root_resolved)</code> helper verifies <code>path.resolve().is_relative_to(root_resolved)</code> and returns False on any <code>OSError</code>/<code>ValueError</code>. Applied to four recursive walks: <code>_find_archives_filtered</code>, <code>_find_archives</code>, <code>CHDConverter.find_convertible_files</code>, <code>DuplicateFinder._find_rom_files</code>.</li>
+        <li><strong>Tests</strong>. <code>TestPass41_14A/B/C</code> &mdash; 6 cases. 14A: source-level pin on <code>DecompressionBombError</code> in the except clause + functional smoke (monkeypatched <code>Image.open</code> raises bomb error, <code>compute_dhash</code> returns None). 14B: source-level pin on <code>validate_outbound_url(try_url, require_https=True)</code> literal call shape. 14C: source-level pin on the helper definition + at-least-5 use sites; functional smoke creates a real symlink in <code>tmp_path</code> escaping root and verifies the helper rejects it (and accepts a legitimate file inside root).</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 41.14 closed. Pass 41 has 5 sub-passes remaining (41.6 + 41.9 + 41.10 + 41.12 + 41.13, plus 41.5b carry-over).</li>
+        <li><strong>Version bump 3.5.8 &rarr; 3.5.9</strong>: patch (defense-in-depth bounds + SSRF gate + symlink hygiene).</li>
+    </ul>
+
 - version: 3.5.8
   date: 2026-04-25
   tags:

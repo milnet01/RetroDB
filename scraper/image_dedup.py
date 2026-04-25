@@ -41,7 +41,13 @@ def compute_dhash(image_path, hash_size=8):
             return diff
         finally:
             img.close()
-    except (OSError, ValueError):
+    except (OSError, ValueError, Image.DecompressionBombError):
+        # Pass 41.14.A — DecompressionBombError is a separate exception
+        # (not a subclass of OSError/ValueError) raised by PIL when an
+        # image's decoded pixel count exceeds Image.MAX_IMAGE_PIXELS. A
+        # single bomb-image in a scraped screenshot batch would otherwise
+        # propagate out of compute_dhash and abort the dedup loop for the
+        # whole game.
         return None
 
 

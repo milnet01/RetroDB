@@ -866,7 +866,16 @@ paths or silent-corruption vectors under routine use.
   rglob loop, check `archive_path.is_symlink() and resolved-path-
   under-root` before traversal.
 - **Source**: 2026-04-24 indie-review, image/media #8/#9/#10.
-- **Status**: todo
+- **Status**: done (v3.5.9) — A: `compute_dhash` except clause widened
+  to include `Image.DecompressionBombError` (sibling of OSError/ValueError;
+  was leaking through and aborting whole-game dedup loops). B: ESRGAN
+  `_download_model` runs every URL through
+  `services.ssrf.validate_outbound_url(require_https=True)` before
+  `urlopen`; defensive against future code paths that surface the URL via
+  settings. C: new `_safe_under_root(path, root_resolved)` helper guards
+  four `Path.rglob()` walks (archive scanner ×2, CHD converter, duplicate
+  finder) against symlinks pointing outside ROM root. Tests:
+  `tests/test_pass41_security.py::TestPass41_14A/B/C` (6 cases).
 
 ---
 

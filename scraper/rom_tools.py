@@ -20,6 +20,22 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
+def _safe_under_root(path: Path, root_resolved: Path) -> bool:
+    """Pass 41.14.C — guard rglob() against symlinks escaping ROM root.
+
+    `Path.rglob()` follows symlinks on Python 3.12 (default behavior
+    changed in 3.13). A symlink to `/` placed inside ROM_PATH would let
+    rom_tools' archive/CHD scanners enumerate the entire filesystem.
+    Resolve the candidate and confirm it sits under the resolved root
+    before processing.
+    """
+    try:
+        return path.resolve().is_relative_to(root_resolved)
+    except (OSError, ValueError):
+        return False
+
+
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
@@ -261,14 +277,19 @@ class ArchiveScanner:
         """Find all archive files, excluding specified folders"""
         archives = []
         excluded_lower = [p.lower() for p in excluded_paths]
-        
+        # Pass 41.14.C — resolve once; then drop any rglob result that
+        # leaves the root via a symlink.
+        root_resolved = root.resolve()
+
         for ext in types:
             for archive_path in root.rglob(f"*{ext}"):
+                if not _safe_under_root(archive_path, root_resolved):
+                    continue
                 # Check if any parent folder is in excluded list
                 path_parts = [p.lower() for p in archive_path.relative_to(root).parts]
                 if not any(excluded in path_parts for excluded in excluded_lower):
                     archives.append(archive_path)
-        
+
         return sorted(archives)
     
     def _check_archive_issues(self, archive_path: Path, root: Path, modes: Dict[str, bool]) -> List[Dict]:
@@ -890,10 +911,16 @@ class ArchiveScanner:
         """Find all archive files in directory"""
         archives = []
         extensions = set(self.config.archive_types)
-        
+        # Pass 41.14.C — resolve once; symlink-escape filter applied below
+        # for every recursive sweep.
+        root_resolved = root.resolve()
+
         if self.config.recursive_scan:
             for ext in extensions:
-                archives.extend(root.rglob(f"*{ext}"))
+                archives.extend(
+                    p for p in root.rglob(f"*{ext}")
+                    if _safe_under_root(p, root_resolved)
+                )
         else:
             for ext in extensions:
                 archives.extend(root.glob(f"*{ext}"))
@@ -1046,13 +1073,17 @@ class CHDConverter:
         root = Path(path)
         files = []
         
+        # Pass 41.14.C — symlink-escape guard for the recursive walk.
+        root_resolved = root.resolve()
         for ext in self.SUPPORTED_FORMATS:
             for f in root.rglob(f"*{ext}"):
+                if not _safe_under_root(f, root_resolved):
+                    continue
                 # Skip if CHD already exists
                 chd_path = f.with_suffix(".chd")
                 if self.config.chd_skip_existing and chd_path.exists():
                     continue
-                
+
                 files.append({
                     "path": str(f),
                     "name": f.name,
@@ -1060,7 +1091,7 @@ class CHDConverter:
                     "type": ext.upper()[1:],
                     "chd_exists": chd_path.exists()
                 })
-        
+
         return sorted(files, key=lambda x: x["name"])
     
     def convert(self, files: List[str], task: TaskStatus) -> Dict[str, Any]:
@@ -1447,14 +1478,19 @@ class DuplicateFinder:
         
         if not self.config.include_archives:
             extensions -= {".zip", ".7z", ".rar"}
-        
+
+        # Pass 41.14.C — symlink-escape guard for the recursive walk.
+        root_resolved = root.resolve()
         if self.config.recursive_scan:
             for ext in extensions:
-                files.extend(root.rglob(f"*{ext}"))
+                files.extend(
+                    p for p in root.rglob(f"*{ext}")
+                    if _safe_under_root(p, root_resolved)
+                )
         else:
             for ext in extensions:
                 files.extend(root.glob(f"*{ext}"))
-        
+
         return sorted(files)
     
     def _find_by_hash(self, files: List[Path], task: TaskStatus) -> List[Dict]:
