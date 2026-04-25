@@ -286,7 +286,12 @@ def download_image(url, dest_path, timeout=15):
     # 169.254.169.254 AWS IMDS, 127.0.0.1, 10/8, etc.). An attacker-controlled
     # upstream metadata record (TGDB, RAWG, …) can otherwise steer the
     # scraper into internal endpoints.
-    from services.ssrf import validate_outbound_url, validate_redirect_chain
+    # Pass 45.2: validate_and_pin_url walks the redirect chain through the
+    # SSRF gate AND captures the IP we'll pin via pin_host_ip() to defeat
+    # DNS rebinding between validate and GET (Pass 32.7 had only museum.py
+    # using the pin; every other scraper download path now uses it too).
+    from services.ssrf import validate_outbound_url, validate_and_pin_url, pin_host_ip
+    from urllib.parse import urlparse as _urlparse
     ok, _, _ = validate_outbound_url(url)
     if not ok:
         logger.warning(f"SSRF block: refusing to fetch {url}")
@@ -320,10 +325,13 @@ def download_image(url, dest_path, timeout=15):
     try:
         # Walk the redirect chain manually so every hop goes through the
         # SSRF validator. If no redirect is returned, safe_url == url.
-        safe_url, err = validate_redirect_chain(_http_session, url, max_redirects=3, timeout=timeout)
+        safe_url, pinned_ip, err = validate_and_pin_url(
+            _http_session, url, max_redirects=3, timeout=timeout,
+        )
         if err:
             logger.warning(f"SSRF block: redirect chain rejected for {url} ({err})")
             return False
+        pinned_host = _urlparse(safe_url).hostname
 
         # mkstemp gives us an exclusive-create file descriptor in the same
         # directory as the destination — same filesystem so os.replace is
@@ -333,7 +341,10 @@ def download_image(url, dest_path, timeout=15):
         )
         # stream=True so the whole response body isn't materialised in memory
         # before write; iter_content pipes directly to disk in 8 KB chunks.
-        with _http_session.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as response:
+        # Pass 45.2: pin_host_ip() forces every getaddrinfo for `pinned_host`
+        # within this thread to return `pinned_ip` for the duration of the GET,
+        # so a hostile DNS server can't flip the record after validation.
+        with pin_host_ip(pinned_host, pinned_ip), _http_session.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as response:
             if response.status_code != 200:
                 logger.warning(f"Image download failed: HTTP {response.status_code} - {safe_url}")
                 return False

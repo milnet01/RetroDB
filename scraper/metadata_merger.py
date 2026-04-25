@@ -71,7 +71,8 @@ def _download_and_finalize(url, local_path, image_type, *, timeout=15):
     Returns True on success, False on any failure.
     """
     import tempfile
-    from services.ssrf import validate_outbound_url, validate_redirect_chain
+    from services.ssrf import validate_outbound_url, validate_and_pin_url, pin_host_ip
+    from urllib.parse import urlparse as _urlparse
 
     if not url or not local_path:
         return False
@@ -80,10 +81,14 @@ def _download_and_finalize(url, local_path, image_type, *, timeout=15):
     if not ok:
         logger.warning(f"SSRF block: refusing to fetch {url}")
         return False
-    safe_url, err = validate_redirect_chain(requests, url, max_redirects=3, timeout=5)
+    # Pass 45.2: walk redirect chain + capture IP for DNS-rebinding pin.
+    safe_url, pinned_ip, err = validate_and_pin_url(
+        requests, url, max_redirects=3, timeout=5,
+    )
     if err:
         logger.warning(f"SSRF block: redirect chain rejected for {url} ({err})")
         return False
+    pinned_host = _urlparse(safe_url).hostname
 
     try:
         import config as _config
@@ -96,7 +101,7 @@ def _download_and_finalize(url, local_path, image_type, *, timeout=15):
     fd, tmp_path = tempfile.mkstemp(prefix='.dl_', dir=dirname)
     os.close(fd)
     try:
-        with requests.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as r:
+        with pin_host_ip(pinned_host, pinned_ip), requests.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as r:
             if r.status_code != 200:
                 logger.warning(f"Download failed: HTTP {r.status_code} — {safe_url}")
                 return False
@@ -879,15 +884,20 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             return _download_and_finalize(url, dest_path, image_type, timeout=timeout)
 
         # Non-image media (manuals, videos) — still SSRF-validate and stream.
-        from services.ssrf import validate_outbound_url, validate_redirect_chain
+        from services.ssrf import validate_outbound_url, validate_and_pin_url, pin_host_ip
+        from urllib.parse import urlparse as _urlparse
         ok, _, _ = validate_outbound_url(url)
         if not ok:
             logger.warning(f"SSRF block: refusing to fetch {url}")
             return False
-        safe_url, err = validate_redirect_chain(requests, url, max_redirects=3, timeout=5)
+        # Pass 45.2: walk redirect chain + capture IP for DNS-rebinding pin.
+        safe_url, pinned_ip, err = validate_and_pin_url(
+            requests, url, max_redirects=3, timeout=5,
+        )
         if err:
             logger.warning(f"SSRF block: redirect chain rejected for {url} ({err})")
             return False
+        pinned_host = _urlparse(safe_url).hostname
         try:
             import config as _config
             max_bytes = getattr(_config, 'MAX_MEDIA_DOWNLOAD_BYTES', 50 * 1024 * 1024)
@@ -895,7 +905,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             max_bytes = 50 * 1024 * 1024
         try:
             os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-            with requests.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as r:
+            with pin_host_ip(pinned_host, pinned_ip), requests.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as r:
                 if r.status_code != 200:
                     return False
                 declared = int(r.headers.get('Content-Length', 0) or 0)

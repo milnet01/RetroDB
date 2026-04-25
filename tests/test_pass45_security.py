@@ -299,6 +299,189 @@ class TestPass45_3AiFillIntFields:
         )
 
 
+# -----------------------------------------------------------------------------
+# 45.2 — DNS-rebinding TOCTOU on every scraper download path
+# -----------------------------------------------------------------------------
+class TestPass45_2DnsRebindingPin:
+    """Pass 32.7 introduced ``services.ssrf.pin_host_ip`` but only
+    ``routes/museum.py`` actually wrapped its GETs in it. Every other
+    scraper download path called ``validate_outbound_url`` then issued a
+    bare GET — between those two calls a hostile DNS record could flip
+    from a public A-record to 127.0.0.1, defeating the SSRF gate. Pass
+    45.2 introduces ``validate_and_pin_url`` and threads ``pin_host_ip``
+    through ``base_scraper.download_image``, ``metadata_merger._download_
+    and_finalize`` / ``_download_ss_media``, ``scrape_screenscraper.
+    download_media``, and ``services.image_utils._download_model``.
+
+    These tests pin the contract by stubbing the redirect-chain validator
+    and the outbound HTTP call, then checking that ``socket.getaddrinfo``
+    inside the GET resolves through the per-thread pin (i.e. returns the
+    pinned IP) rather than falling through to real DNS. We never let the
+    test fire a real network request.
+    """
+
+    @staticmethod
+    def _capture_pin_during_get():
+        """Build a fake response + a getter that records the pinned IP
+        observed at GET time. Returns (fake_get, observed)."""
+        import socket
+        from contextlib import contextmanager
+
+        observed = {}
+
+        class _FakeResp:
+            status_code = 200
+            headers = {'Content-Length': '5', 'Content-Type': 'image/png'}
+
+            def iter_content(self, chunk_size=8192):
+                yield b'PNG\x89\x00'
+
+            def raise_for_status(self):
+                return None
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *exc):
+                return False
+
+        @contextmanager
+        def fake_get(url, *args, **kwargs):
+            # At GET time, record what getaddrinfo returns for the host
+            # named in the URL — this is the moment that pin_host_ip()
+            # has to be active for DNS-rebinding to be defeated.
+            from urllib.parse import urlparse
+            host = urlparse(url).hostname
+            try:
+                infos = socket.getaddrinfo(host, None)
+                observed['ips'] = [info[4][0] for info in infos]
+            except Exception as e:
+                observed['error'] = repr(e)
+            yield _FakeResp()
+
+        return fake_get, observed
+
+    def _patch_validators(self, monkeypatch, pinned_ip='203.0.113.42'):
+        """Patch validate_redirect_chain + validate_outbound_url so the
+        helpers think every URL is safe and the pinned IP is `pinned_ip`."""
+        import services.ssrf as ssrf
+
+        def _fake_chain(session, url, *, max_redirects=3, timeout=5):
+            return url, None
+
+        def _fake_validate(url, *, require_https=False):
+            return True, url, [pinned_ip]
+
+        monkeypatch.setattr(ssrf, 'validate_redirect_chain', _fake_chain)
+        monkeypatch.setattr(ssrf, 'validate_outbound_url', _fake_validate)
+        return pinned_ip
+
+    def test_validate_and_pin_url_returns_resolved_ip(self, monkeypatch):
+        """The new helper must surface the IP captured from the final-URL
+        re-resolution so the caller has something to pass to pin_host_ip."""
+        ip = self._patch_validators(monkeypatch, pinned_ip='198.51.100.7')
+        from services.ssrf import validate_and_pin_url
+        safe_url, pinned_ip, err = validate_and_pin_url(
+            object(), 'https://example.com/x', max_redirects=3, timeout=5,
+        )
+        assert err is None
+        assert safe_url == 'https://example.com/x'
+        assert pinned_ip == ip
+
+    def test_validate_and_pin_url_propagates_chain_error(self, monkeypatch):
+        """A redirect-chain rejection must come back as the third tuple
+        element so callers can log/abort without a second probe."""
+        import services.ssrf as ssrf
+
+        monkeypatch.setattr(ssrf, 'validate_redirect_chain',
+                            lambda *a, **kw: (None, 'too many redirects'))
+        from services.ssrf import validate_and_pin_url
+        safe_url, pinned_ip, err = validate_and_pin_url(
+            object(), 'https://example.com/x',
+        )
+        assert safe_url is None
+        assert pinned_ip is None
+        assert err == 'too many redirects'
+
+    def test_base_scraper_download_image_pins_ip_for_get(self, tmp_path, monkeypatch):
+        """The scraper image-download path must hold a pin_host_ip context
+        for the duration of the GET — so getaddrinfo inside the GET resolves
+        to the pinned IP, not whatever DNS currently says."""
+        ip = self._patch_validators(monkeypatch, pinned_ip='203.0.113.55')
+        fake_get, observed = self._capture_pin_during_get()
+
+        from scraper import base_scraper
+        monkeypatch.setattr(base_scraper._http_session, 'get',
+                            lambda *a, **kw: fake_get(*a, **kw))
+        # Skip the post-download finalize step — we only care about the GET.
+        monkeypatch.setattr('services.image_utils.finalize_downloaded_image',
+                            lambda *a, **kw: None)
+
+        dest = tmp_path / 'boxart' / 'fake.png'
+        result = base_scraper.download_image(
+            'https://upstream.example.com/img.png', str(dest),
+        )
+        assert result is True
+        assert observed.get('ips') == [ip], (
+            f"GET observed ips={observed!r} — expected pin to inject {ip!r}; "
+            "if this is empty or different, pin_host_ip() is not wrapping the GET."
+        )
+
+    def test_metadata_merger_download_and_finalize_pins_ip(self, tmp_path, monkeypatch):
+        """metadata_merger._download_and_finalize must also pin the IP."""
+        ip = self._patch_validators(monkeypatch, pinned_ip='203.0.113.66')
+        fake_get, observed = self._capture_pin_during_get()
+
+        from scraper import metadata_merger
+        monkeypatch.setattr(metadata_merger.requests, 'get',
+                            lambda *a, **kw: fake_get(*a, **kw))
+        monkeypatch.setattr(metadata_merger, 'finalize_downloaded_image',
+                            lambda *a, **kw: None)
+
+        dest = tmp_path / 'boxart' / 'm.png'
+        result = metadata_merger._download_and_finalize(
+            'https://upstream.example.com/img.png', str(dest), 'boxart',
+        )
+        assert result is True
+        assert observed.get('ips') == [ip]
+
+    def test_scrape_screenscraper_download_media_pins_ip(self, tmp_path, monkeypatch):
+        """ScreenScraper download_media must pin the IP."""
+        ip = self._patch_validators(monkeypatch, pinned_ip='203.0.113.77')
+        fake_get, observed = self._capture_pin_during_get()
+
+        from scraper import scrape_screenscraper
+        monkeypatch.setattr(scrape_screenscraper._http_session, 'get',
+                            lambda *a, **kw: fake_get(*a, **kw))
+
+        dest = tmp_path / 'media.png'
+        result = scrape_screenscraper.download_media(
+            'https://www.screenscraper.fr/api/media.php?x=1', str(dest),
+        )
+        assert result is True
+        assert observed.get('ips') == [ip]
+
+    def test_image_utils_download_model_pins_ip(self, tmp_path, monkeypatch):
+        """services.image_utils._download_model must use pin_host_ip too —
+        the urllib path used to follow redirects through real DNS."""
+        ip = self._patch_validators(monkeypatch, pinned_ip='203.0.113.88')
+        fake_get, observed = self._capture_pin_during_get()
+
+        import services.image_utils as image_utils
+        # The function imports `requests` locally; monkeypatch the module.
+        import requests as _requests
+        monkeypatch.setattr(_requests, 'get',
+                            lambda *a, **kw: fake_get(*a, **kw))
+
+        dest = tmp_path / 'models' / 'realesrgan.onnx'
+        # Should succeed via the first URL and not raise.
+        image_utils._download_model(
+            'https://huggingface.co/Xenova/realesrgan-x4plus/resolve/main/model.onnx',
+            str(dest),
+        )
+        assert observed.get('ips') == [ip]
+
+
 def _stub_authenticated_admin(app_module):
     """Replace before_request user loader with a fake admin so the
     decorator's ``g.user`` lookup succeeds during the test.  We splice

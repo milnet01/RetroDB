@@ -129,7 +129,20 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: thread `pin_host_ip` through every `validate_outbound_url`
   call site or document the residual.
 - **Source**: indie-review 2026-04-25 theme T3.
-- **Status**: todo
+- **Status**: done (v3.5.17) — added `services.ssrf.validate_and_pin_url`
+  (walks redirect chain through SSRF gate + captures IP for pinning) and
+  threaded `pin_host_ip` through `scraper/base_scraper.download_image`,
+  `scraper/metadata_merger._download_and_finalize`, `scraper/metadata_
+  merger._download_ss_media`, `scraper/scrape_screenscraper.download_
+  media`, and `services/image_utils._download_model`. The last path was
+  switched from `urllib.urlopen` (auto-follows redirects through real
+  DNS) to `requests` with `allow_redirects=False` so each hop can be
+  pinned. `routes/museum.py:_is_public_https_url` is now a thin wrapper
+  around the new helper. 6 regression tests in
+  `tests/test_pass45_security.py::TestPass45_2*` capture what
+  `socket.getaddrinfo` returns at the moment of the GET — with the pin
+  active it returns the verified IP, without it real DNS is queried
+  (and fails with `gaierror` in the sandbox).
 
 #### Pass 45.3 AI Fill breaks fill-only invariant on integer columns (HIGH, S)
 

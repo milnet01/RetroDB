@@ -1047,8 +1047,12 @@ class TestPass40_15DownloadImageAtomic:
 
         # Bypass the SSRF gate + redirect-walk for the test (these are
         # imported lazily inside the function — patch on the source module).
+        # Pass 45.2: validate_and_pin_url calls validate_outbound_url(...,
+        # require_https=...) and consumes the third tuple element (resolved
+        # IPs) to pin against rebinding, so the stub must accept kwargs and
+        # return at least one IP.
         monkeypatch.setattr(ssrf_mod, 'validate_outbound_url',
-                            lambda url: (True, url, None))
+                            lambda url, **kw: (True, url, ['203.0.113.1']))
         monkeypatch.setattr(ssrf_mod, 'validate_redirect_chain',
                             lambda *a, **kw: ('http://example.test/img.png', None))
 

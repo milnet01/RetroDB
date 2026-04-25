@@ -26,27 +26,12 @@ logger = logging.getLogger(__name__)
 
 
 def _is_public_https_url(url, max_redirects=3):
-    """Pass 25.3 / 32.6 — SSRF guard. Accept the URL only if every host along
-    any redirect chain resolves to a public IP. Delegates to the shared
-    services.ssrf helpers so the allowlist stays consistent with the scraper
-    download path.
-
-    Returns:
-        (final_url, pinned_ip, error) — final_url is the safe URL to fetch
-        (with allow_redirects=False), pinned_ip is the IP to pin via
-        pin_host_ip() to defeat DNS rebinding (Pass 32.7), error is None on
-        success or a log string.
+    """Pass 25.3 / 32.6 / 45.2 — SSRF guard. Thin wrapper over
+    services.ssrf.validate_and_pin_url so this module's existing call sites
+    keep working.
     """
-    from services.ssrf import validate_outbound_url, validate_redirect_chain
-    # First, walk redirects with HEADs, validating each hop's DNS lookup.
-    final_url, err = validate_redirect_chain(requests, url, max_redirects=max_redirects, timeout=5)
-    if err:
-        return None, None, err
-    # Re-resolve the final URL to capture the IP we'll pin against rebinding.
-    ok, _, ips = validate_outbound_url(final_url)
-    if not ok or not ips:
-        return None, None, 'final URL re-validation failed'
-    return final_url, ips[0], None
+    from services.ssrf import validate_and_pin_url
+    return validate_and_pin_url(requests, url, max_redirects=max_redirects, timeout=5)
 
 # Serialize all rembg GPU work to prevent concurrent sessions from exhausting
 # GPU memory (ROCm/HIP workspace allocation failures → GPU hang).

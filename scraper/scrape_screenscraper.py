@@ -753,21 +753,26 @@ def download_media(url, dest_path, timeout=60):
     except Exception:
         max_bytes = 50 * 1024 * 1024
 
-    from services.ssrf import validate_outbound_url, validate_redirect_chain
+    from services.ssrf import validate_outbound_url, validate_and_pin_url, pin_host_ip
+    from urllib.parse import urlparse as _urlparse
     ok, _, _ = validate_outbound_url(url)
     if not ok:
         logger.warning(f"SSRF block: refusing to fetch {url}")
         return False
-    safe_url, err = validate_redirect_chain(_http_session, url, max_redirects=3, timeout=5)
+    # Pass 45.2: walk redirect chain + capture IP for DNS-rebinding pin.
+    safe_url, pinned_ip, err = validate_and_pin_url(
+        _http_session, url, max_redirects=3, timeout=5,
+    )
     if err:
         logger.warning(f"SSRF block: redirect chain rejected for {url} ({err})")
         return False
+    pinned_host = _urlparse(safe_url).hostname
 
     try:
         # Route through shared session for connection pooling (Pass 26.1).
         # stream=True is required for the mid-stream size cap below, so this
         # stays on _http_session.get rather than base_scraper.http_get.
-        with _http_session.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as response:
+        with pin_host_ip(pinned_host, pinned_ip), _http_session.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as response:
             if response.status_code != 200:
                 return False
             declared = int(response.headers.get('Content-Length', 0) or 0)

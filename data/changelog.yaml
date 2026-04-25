@@ -1,3 +1,18 @@
+- version: 3.5.17
+  date: 2026-04-25
+  tags:
+  - type: security
+    label: Pass 45.2 — DNS-rebinding pin on every scraper download path
+  body: |
+    <ul>
+        <li><strong>Pass 45.2 (HIGH) &mdash; <code>pin_host_ip</code> threaded through every scraper GET</strong>. Pass 32.7 introduced <code>services.ssrf.pin_host_ip</code> &mdash; a thread-local <code>socket.getaddrinfo</code> shim that locks DNS resolution to the IP that <code>validate_outbound_url</code> just verified &mdash; but only <code>routes/museum.py</code> actually wrapped its GET in it. Every other scraper download path called <code>validate_outbound_url</code>, then issued a bare <code>requests.get</code> (or <code>urllib.urlopen</code>); between those two calls a hostile DNS server could flip the A-record from a public IP to <code>127.0.0.1</code>, defeating the SSRF gate (classic DNS-rebinding TOCTOU). The third 14-agent indie review caught this independently in three lanes (Core app, Scraper orchestration, Per-source scrapers).</li>
+        <li><strong>New helper &mdash; <code>services.ssrf.validate_and_pin_url(session, url, ...)</code></strong>. Walks the redirect chain through the SSRF gate (each hop validated), then re-resolves the final URL to capture the IP for pinning. Returns <code>(safe_url, pinned_ip, error)</code> &mdash; pattern matches the existing <code>routes/museum.py:_is_public_https_url</code>, which is now a thin wrapper. Callers do <code>with pin_host_ip(host, ip), session.get(safe_url, allow_redirects=False) as r:</code> &mdash; the GET resolves through the per-thread pin instead of real DNS.</li>
+        <li><strong>Threaded through 5 download paths</strong>: <code>scraper/base_scraper.download_image</code> (every TGDB / RAWG / IGDB / ESDE image), <code>scraper/metadata_merger._download_and_finalize</code> (cumulative metadata image downloads), <code>scraper/metadata_merger._download_ss_media</code> (manuals + videos), <code>scraper/scrape_screenscraper.download_media</code> (ScreenScraper proprietary media URLs), and <code>services/image_utils._download_model</code> (Real-ESRGAN ONNX upscaler models). The last path was switched from <code>urllib.request.urlopen</code> (which auto-follows redirects through real DNS &mdash; a separate rebinding window) to <code>requests</code> with <code>allow_redirects=False</code> so the manual chain walker can pin every hop.</li>
+        <li><strong>Tests</strong>. <code>tests/test_pass45_security.py::TestPass45_2*</code> &mdash; 6 cases. <code>validate_and_pin_url</code> returns the resolved IP and propagates redirect-chain errors. The four scraper download functions are exercised with stubbed validators and a fake <code>session.get</code> that captures what <code>socket.getaddrinfo(host)</code> returns at the moment of the GET. With the production fix, the GET sees the pinned IP. Reverting <code>pin_host_ip</code> from <code>base_scraper.download_image</code> turns the GET into a real DNS query (which fails with <code>gaierror</code> in the test sandbox) &mdash; pinning behaviour, not source grep.</li>
+        <li><strong>One pre-existing test stub updated</strong>. <code>tests/test_pass40_security.py::test_download_image_atomic_smoke</code> stubbed <code>validate_outbound_url</code> with a positional-only lambda and returned <code>None</code> for the third tuple element. <code>validate_and_pin_url</code> now uses kwargs and consumes the resolved-IP list &mdash; stub updated to accept <code>**kw</code> and return a fake IP. Surface change in the helper, not in observable behaviour.</li>
+        <li><strong>Version bump 3.5.16 &rarr; 3.5.17</strong>: patch (security hardening, no schema or surface change).</li>
+    </ul>
+
 - version: 3.5.16
   date: 2026-04-25
   tags:

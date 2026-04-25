@@ -76,15 +76,21 @@ def _download_model(url, dest):
     Tries the given URL first, then falls back to alternate mirrors.
     Uses a browser-like User-Agent since some hosts block default urllib.
 
-    Pass 41.14.B — every URL is now run through `services.ssrf.validate_
+    Pass 41.14.B — every URL is run through `services.ssrf.validate_
     outbound_url(require_https=True)` before dereference. `_MODEL_URLS` is
     a hardcoded HuggingFace allowlist today, so the gate currently never
     rejects anything; it's defensive against any future code path that
     surfaces the URL via settings (a primitive that landed for `ROM_PATH`
     in Pass 32.1) and bypasses outbound-URL hygiene.
+
+    Pass 45.2 — switched from urllib (which auto-follows redirects through
+    real DNS) to requests + validate_and_pin_url + pin_host_ip so the GET
+    connects to the same IP that the SSRF gate just verified, defeating
+    DNS rebinding between validate and dereference.
     """
-    import urllib.request
-    from services.ssrf import validate_outbound_url
+    import requests
+    from services.ssrf import validate_outbound_url, validate_and_pin_url, pin_host_ip
+    from urllib.parse import urlparse as _urlparse
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     tmp = dest + '.tmp'
 
@@ -97,17 +103,26 @@ def _download_model(url, dest):
             last_err = RuntimeError(f"SSRF guard rejected {try_url}: {reason}")
             logger.warning(f"Skipping model URL (SSRF): {try_url} — {reason}")
             continue
+        safe_url, pinned_ip, err = validate_and_pin_url(
+            requests, try_url, max_redirects=3, timeout=10, require_https=True,
+        )
+        if err:
+            last_err = RuntimeError(f"SSRF guard rejected redirect chain for {try_url}: {err}")
+            logger.warning(f"Skipping model URL (SSRF redirect): {try_url} — {err}")
+            continue
+        pinned_host = _urlparse(safe_url).hostname
         try:
-            logger.info(f"Downloading Real-ESRGAN ONNX model from {try_url} …")
-            req = urllib.request.Request(try_url, headers={
-                'User-Agent': 'RetroDB/1.0 (ONNX model downloader)'
-            })
-            with urllib.request.urlopen(req, timeout=120) as resp, open(tmp, 'wb') as f:
-                while True:
-                    chunk = resp.read(1024 * 256)
-                    if not chunk:
-                        break
-                    f.write(chunk)
+            logger.info(f"Downloading Real-ESRGAN ONNX model from {safe_url} …")
+            headers = {'User-Agent': 'RetroDB/1.0 (ONNX model downloader)'}
+            with pin_host_ip(pinned_host, pinned_ip), requests.get(
+                safe_url, headers=headers, timeout=120,
+                stream=True, allow_redirects=False,
+            ) as resp:
+                resp.raise_for_status()
+                with open(tmp, 'wb') as f:
+                    for chunk in resp.iter_content(chunk_size=1024 * 256):
+                        if chunk:
+                            f.write(chunk)
             os.replace(tmp, dest)
             logger.info("Model download complete")
             return
