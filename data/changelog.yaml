@@ -1,3 +1,17 @@
+- version: 3.4.2
+  date: 2026-04-25
+  tags:
+  - type: security
+    label: Pass 40.2 — Arbitrary-path CHD convert / verify + os.remove primitive
+  body: |
+    <ul>
+        <li><strong>Pass 40.2 (CRITICAL) &mdash; CHD convert/verify path traversal closed</strong>. <code>POST /api/rom-tools/chd-converter/convert</code> and <code>/api/rom-tools/chd-verify/verify</code> previously took the <code>files[]</code> list straight from the request body and fed each entry into <code>subprocess.run([chdman_path, 'createcd', '-i', file_path, '-o', dst_path])</code>. With <code>chd_delete_originals=True</code>, the convert worker also called <code>os.remove(file_path)</code> on every path that chdman returned 0 for. The scan endpoints (<code>chd-converter/scan</code>, <code>chd-verify/scan</code>) correctly validated paths via <code>safe_path</code>, but the convert / verify endpoints didn't &mdash; a logged-in user could POST arbitrary paths and (a) trigger CHD work against files outside the ROM library, (b) get an <code>os.remove</code> primitive against any path the Flask process could write. CWE-22.</li>
+        <li><strong>Fix mirrors <code>api_duplicate_finder_delete</code></strong>. Both worker loops now check <code>safe_path(file_path, rom_root)</code> at the top of every iteration; rejected paths are recorded as failed/invalid in the task results and the loop skips to the next entry. <code>rom_root</code> is captured before the worker thread starts so it's stable across iterations. Log entry now reads "✗ Rejected (path outside ROM library): &lt;basename&gt;" so the operator sees the reject in the task log.</li>
+        <li><strong>Tests</strong>. <code>tests/test_pass40_security.py</code> gained <code>TestPass40_2ChdConvertVerifyPathValidation</code> &mdash; 4 cases: source-level pin that the convert worker calls <code>safe_path</code> on each <code>file_path</code>; same for the verify worker; end-to-end smoke that <code>POST /chd-converter/convert</code> with <code>['/etc/passwd', &lt;legit&gt;]</code> never feeds <code>/etc/passwd</code> to <code>subprocess.run</code>; an <code>os.remove</code>-monitor test that confirms <code>chd_delete_originals=True</code> cannot delete a file outside <code>rom_path</code>. Full suite 454 passed (was 450).</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 40.2 closed. 14 Tier-1 items remain (40.3 &ndash; 40.16).</li>
+        <li><strong>Version bump 3.4.1 &rarr; 3.4.2</strong>: patch (security fix; rejection of out-of-library paths is a new visible behavior in the task log only).</li>
+    </ul>
+
 - version: 3.4.1
   date: 2026-04-25
   tags:

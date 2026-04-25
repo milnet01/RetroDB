@@ -628,21 +628,37 @@ def api_chd_converter_convert():
     }
     _rom_tool_tasks[task_id] = task
     
+    rom_root = _get_rom_path()
+
     def run_conversion():
         for i, file_path in enumerate(files):
             if task['status'] == 'cancelled':
                 task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Conversion cancelled")
                 break
-            
+
+            # Pass 40.2 — every file_path must resolve under rom_root.
+            # api_chd_converter_scan validates the scan root, but the
+            # client can hand back arbitrary paths in the convert POST,
+            # which would otherwise feed straight into subprocess.run
+            # (CHD work) and os.remove (when chd_delete_originals=True).
+            if safe_path(file_path, rom_root) is None:
+                task['results']['failed'] += 1
+                task['logs'].append(
+                    f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Rejected (path outside ROM library): "
+                    f"{os.path.basename(file_path)}"
+                )
+                task['progress'] = i + 1
+                continue
+
             task['progress'] = i + 1
             task['current_file'] = os.path.basename(file_path)
             task['percent'] = round((i + 1) / len(files) * 100, 1) if files else 0
-            
+
             src_size = os.path.getsize(file_path)
             dst_path = os.path.splitext(file_path)[0] + '.chd'
-            
+
             task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Converting: {os.path.basename(file_path)}")
-            
+
             try:
                 cmd = [chdman_path, 'createcd', '-i', file_path, '-o', dst_path]
                 result = subprocess.run(cmd, capture_output=True, text=True, timeout=3600)
@@ -736,21 +752,34 @@ def api_chd_verify_verify():
     }
     _rom_tool_tasks[task_id] = task
     
+    rom_root = _get_rom_path()
+
     def run_verification():
         for i, file_path in enumerate(files):
             if task['status'] == 'cancelled':
                 break
-            
+
+            # Pass 40.2 — reject paths outside rom_root before running
+            # chdman verify on them.  Mirrors the convert endpoint guard.
+            if safe_path(file_path, rom_root) is None:
+                task['results']['invalid'] += 1
+                task['logs'].append(
+                    f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Rejected (path outside ROM library): "
+                    f"{os.path.basename(file_path)}"
+                )
+                task['progress'] = i + 1
+                continue
+
             task['progress'] = i + 1
             task['current_file'] = os.path.basename(file_path)
             task['percent'] = round((i + 1) / len(files) * 100, 1) if files else 0
-            
+
             file_size = os.path.getsize(file_path)
             task['results']['total_size'] += file_size
             task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Verifying: {os.path.basename(file_path)}")
-            
+
             try:
-                result = subprocess.run([chdman_path, 'verify', '-i', file_path], 
+                result = subprocess.run([chdman_path, 'verify', '-i', file_path],
                                       capture_output=True, text=True, timeout=600)
                 
                 if result.returncode == 0:

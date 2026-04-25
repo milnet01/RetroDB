@@ -130,7 +130,11 @@ paths or silent-corruption vectors under routine use.
   the `api_duplicate_finder_delete` pattern which already gets this
   right.
 - **Source**: 2026-04-24 indie-review, settings/maintenance/tools C2.
-- **Status**: todo
+- **Status**: done (v3.4.2) — both worker loops now validate
+  `safe_path(file_path, rom_root)` per iteration; rejected paths recorded
+  as failed/invalid and skipped (mirrors `api_duplicate_finder_delete`).
+  Tests: `test_pass40_security.py::TestPass40_2ChdConvertVerifyPathValidation`
+  (4 cases including an `os.remove`-monitor smoke).
 
 #### Pass 40.3 Archive-scanner batch extract + move to arbitrary paths (CRITICAL, S)
 

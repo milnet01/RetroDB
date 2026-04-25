@@ -253,3 +253,149 @@ class TestPass40_1RouteIntegration:
         else:
             assert resp.status_code in (400, 302, 403), \
                 f"unexpected status: {resp.status_code}"
+
+
+# -----------------------------------------------------------------------------
+# 40.2 — Arbitrary-path CHD convert + source file delete
+# -----------------------------------------------------------------------------
+class TestPass40_2ChdConvertVerifyPathValidation:
+    """The convert / verify worker loops must reject files outside rom_path
+    before invoking chdman or os.remove."""
+
+    def test_convert_worker_validates_each_path(self):
+        """Source pin: the run_conversion thread body must call safe_path
+        on each file_path inside the for-loop."""
+        from routes import tools as tools_mod
+
+        src = open(tools_mod.__file__).read()
+        # Slice to the run_conversion closure + its loop.
+        idx = src.index('def api_chd_converter_convert')
+        end = src.index('def api_chd_verify_scan', idx)
+        body = src[idx:end]
+        assert 'def run_conversion' in body
+        assert 'safe_path(file_path' in body, \
+            'api_chd_converter_convert worker must validate each file_path (Pass 40.2)'
+
+    def test_verify_worker_validates_each_path(self):
+        from routes import tools as tools_mod
+
+        src = open(tools_mod.__file__).read()
+        idx = src.index('def api_chd_verify_verify')
+        # The next route after verify is duplicate-finder; bound the slice there.
+        end = src.index('def api_duplicate_finder', idx)
+        body = src[idx:end]
+        assert 'def run_verification' in body
+        assert 'safe_path(file_path' in body, \
+            'api_chd_verify_verify worker must validate each file_path (Pass 40.2)'
+
+    def test_convert_e2e_rejects_traversal(self, tmp_path, monkeypatch):
+        """End-to-end smoke: POST with /etc/passwd in files[] never invokes
+        subprocess.run with that path.  Validation happens before chdman call."""
+        import app as app_module
+        from routes import tools as tools_mod
+
+        # Pin rom_path under tmpdir so traversal is unambiguous.
+        rom_root = tmp_path / 'roms'
+        rom_root.mkdir()
+        legit = rom_root / 'game.cue'
+        legit.write_text('FAKE')
+
+        monkeypatch.setattr(tools_mod, '_get_rom_path', lambda: str(rom_root))
+        # Pretend chdman is available.
+        monkeypatch.setattr(tools_mod.shutil, 'which', lambda _: '/usr/bin/chdman')
+
+        # Capture every subprocess.run argv to confirm none touched /etc/passwd.
+        seen_argv = []
+
+        class _FakeResult:
+            returncode = 1
+            stdout = ''
+            stderr = ''
+
+        def fake_run(cmd, **kwargs):
+            seen_argv.append(list(cmd))
+            return _FakeResult()
+
+        monkeypatch.setattr(tools_mod.subprocess, 'run', fake_run)
+
+        app_module.app.config['TESTING'] = True
+        client = app_module.app.test_client()
+        with client.session_transaction() as sess:
+            sess['user_id'] = 1
+
+        resp = client.post(
+            '/api/rom-tools/chd-converter/convert',
+            json={'files': ['/etc/passwd', str(legit)]},
+        )
+        # Even if route 302s for non-admin in test DB, no chdman invocation
+        # should ever target /etc/passwd.
+        if resp.status_code == 200:
+            # Worker thread runs async — give it a brief moment to iterate.
+            import time as _t
+            for _ in range(20):
+                if seen_argv:
+                    break
+                _t.sleep(0.05)
+            for argv in seen_argv:
+                assert '/etc/passwd' not in argv, \
+                    f'chdman invoked on traversal path: {argv}'
+
+    def test_convert_does_not_remove_arbitrary_file(self, tmp_path, monkeypatch):
+        """If chd_delete_originals is true, the os.remove must still be
+        gated by safe_path — a logged-in user can't trick the worker into
+        deleting /etc/something."""
+        import app as app_module
+        from routes import tools as tools_mod
+
+        rom_root = tmp_path / 'roms'
+        rom_root.mkdir()
+        decoy_target = tmp_path / 'outside.cue'
+        decoy_target.write_text('SHOULD NOT BE DELETED')
+
+        monkeypatch.setattr(tools_mod, '_get_rom_path', lambda: str(rom_root))
+        monkeypatch.setattr(tools_mod.shutil, 'which', lambda _: '/usr/bin/chdman')
+
+        # Force chd_delete_originals=True via fake config.
+        monkeypatch.setattr(
+            tools_mod, 'load_rom_tools_config',
+            lambda: {'chdman_path': 'chdman', 'chd_delete_originals': True},
+        )
+
+        # Pretend chdman succeeds and the .chd file exists, so the os.remove
+        # branch fires for any path that survives validation.
+        class _FakeResult:
+            returncode = 0
+            stdout = ''
+            stderr = ''
+
+        monkeypatch.setattr(tools_mod.subprocess, 'run',
+                            lambda cmd, **kw: _FakeResult())
+        monkeypatch.setattr(tools_mod.os.path, 'exists', lambda p: True)
+
+        # Track which paths os.remove was called on.
+        removed = []
+        original_remove = tools_mod.os.remove
+        monkeypatch.setattr(tools_mod.os, 'remove', lambda p: removed.append(p))
+
+        app_module.app.config['TESTING'] = True
+        client = app_module.app.test_client()
+        with client.session_transaction() as sess:
+            sess['user_id'] = 1
+
+        resp = client.post(
+            '/api/rom-tools/chd-converter/convert',
+            json={'files': [str(decoy_target)]},
+        )
+
+        # Allow the worker thread to drain.
+        if resp.status_code == 200:
+            import time as _t
+            for _ in range(40):
+                _t.sleep(0.025)
+                if removed:
+                    break
+
+        # The decoy path is OUTSIDE rom_root → safe_path rejects → os.remove
+        # never called on it.
+        assert str(decoy_target) not in removed, \
+            f'os.remove called on path outside rom_path: {removed}'
