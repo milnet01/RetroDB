@@ -216,6 +216,7 @@ from routes.steam_achievements import bp as steam_achievements_bp
 from routes.xbox_achievements import bp as xbox_achievements_bp
 from routes.game_imports import bp as game_imports_bp
 from routes.launch import bp as launch_bp
+from routes.emulators import bp as emulators_bp
 
 app.register_blueprint(clz_import_bp)
 app.register_blueprint(controllers_bp)
@@ -239,6 +240,7 @@ app.register_blueprint(steam_achievements_bp)
 app.register_blueprint(xbox_achievements_bp)
 app.register_blueprint(game_imports_bp)
 app.register_blueprint(launch_bp)
+app.register_blueprint(emulators_bp)
 
 # =============================================================================
 # PER-ROUTE RATE LIMITS (applied after blueprint registration)
