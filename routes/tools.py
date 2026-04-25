@@ -506,16 +506,22 @@ def api_archive_scanner_clean():
 
 
 @tools_bp.route('/api/rom-tools/archive-scanner/create-m3u', methods=['POST'])
-@login_required
+@admin_required
 @handle_api_errors
 def api_archive_scanner_create_m3u():
-    """Create M3U playlist for multi-file archive"""
+    """Create M3U playlist for multi-file archive.
+
+    Pass 40.3 — admin-only.  Previously @login_required, which let any
+    logged-in user run unzip/7z/unrar on archives anywhere the Flask UID
+    could read and shutil.move() the contents into staging_folder
+    (request-controlled).  staging_folder is no longer accepted from the
+    request body — the scanner uses its own server-side default.
+    """
     from scraper.rom_tools import ArchiveScanner, ROMToolsConfig
-    
+
     data = request.get_json() or {}
     path = data.get('path')
     move_to_staging = data.get('move_to_staging', True)
-    staging_folder = data.get('staging_folder')
 
     if not path:
         return error('No path provided', 400)
@@ -525,32 +531,45 @@ def api_archive_scanner_create_m3u():
 
     rom_config = ROMToolsConfig()
     scanner = ArchiveScanner(rom_config)
-    result = scanner.create_m3u_playlist(path, move_to_staging=move_to_staging,
-                                          staging_folder=staging_folder)
-    
+    # staging_folder intentionally omitted — scanner falls back to
+    # tempfile.gettempdir()/retrodb_m3u_staging.
+    result = scanner.create_m3u_playlist(path, move_to_staging=move_to_staging)
+
     return jsonify(result)
-    
+
 
 
 @tools_bp.route('/api/rom-tools/archive-scanner/batch-create-m3u', methods=['POST'])
-@login_required
+@admin_required
 @handle_api_errors
 def api_archive_scanner_batch_create_m3u():
-    """Create M3U playlists for multiple multi-file archives"""
+    """Create M3U playlists for multiple multi-file archives.
+
+    Pass 40.3 — admin-only; every entry in paths[] is safe_path-validated
+    before the scanner touches it; staging_folder is server-side only.
+    """
     from scraper.rom_tools import ArchiveScanner, ROMToolsConfig
-    
+
     data = request.get_json() or {}
     paths = data.get('paths', [])
     delete_archives = data.get('delete_archives', False)
-    staging_folder = data.get('staging_folder', os.path.join(tempfile.gettempdir(), 'retrodb_m3u_staging'))
-    
+
     if not paths:
         return error('No paths provided', 400)
-    
+
+    rom_root = _get_rom_path()
+    valid_paths = []
+    for p in paths:
+        if not isinstance(p, str) or safe_path(p, rom_root) is None:
+            return error(f'Invalid path: {p}', 400)
+        valid_paths.append(p)
+
+    staging_folder = os.path.join(tempfile.gettempdir(), 'retrodb_m3u_staging')
+
     rom_config = ROMToolsConfig()
     scanner = ArchiveScanner(rom_config)
-    result = scanner.batch_create_m3u(paths, delete_archives, staging_folder)
-    
+    result = scanner.batch_create_m3u(valid_paths, delete_archives, staging_folder)
+
     return jsonify(result)
     
 

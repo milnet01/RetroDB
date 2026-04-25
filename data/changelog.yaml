@@ -1,3 +1,19 @@
+- version: 3.4.3
+  date: 2026-04-25
+  tags:
+  - type: security
+    label: Pass 40.3 — Archive-scanner m3u admin + path validation
+  body: |
+    <ul>
+        <li><strong>Pass 40.3 (CRITICAL) &mdash; Archive-scanner m3u extraction confined</strong>. <code>POST /api/rom-tools/archive-scanner/create-m3u</code> and <code>/batch-create-m3u</code> were <code>@login_required</code>; both took an attacker-controlled <code>paths</code> list and <code>staging_folder</code> field, then ran <code>unzip</code>/<code>7z</code>/<code>unrar</code> on each archive and <code>shutil.move()</code>'d the contents into <code>staging_folder</code>. Logged-in users could extract archives anywhere the Flask UID had write access &mdash; e.g. <code>/etc/cron.d/</code> on a misconfigured deploy. CWE-22 + privilege confusion.</li>
+        <li><strong>Decorator</strong>. Both endpoints now <code>@admin_required</code>, matching the other destructive archive operations (<code>remove-files</code>, <code>clean</code>).</li>
+        <li><strong>Per-entry path validation</strong>. <code>batch_create_m3u</code> now loops <code>paths[]</code> up-front and rejects with 400 on the first entry that fails <code>safe_path(p, rom_root)</code>. <code>create_m3u</code> already had a single-path check on the <code>path</code> field.</li>
+        <li><strong><code>staging_folder</code> no longer client-controlled</strong>. The single-file endpoint drops the field entirely and lets the scanner fall back to its server-side default (<code>tempfile.gettempdir()/retrodb_m3u_staging</code>). The batch endpoint hard-codes the same default. <code>grep</code> across <code>templates/</code> and <code>static/js/</code> shows zero UI references to <code>staging_folder</code> &mdash; the parameter was vestigial.</li>
+        <li><strong>Tests</strong>. <code>tests/test_pass40_security.py</code> gained <code>TestPass40_3ArchiveScannerM3u</code> &mdash; 5 cases pinning <code>@admin_required</code> on both endpoints, per-path <code>safe_path</code> validation in batch, the <code>staging_folder</code>-no-longer-passthrough invariant, and an end-to-end test confirming <code>scanner.create_m3u_playlist</code> is never invoked with a path outside <code>rom_path</code>. Full suite 459 passed (was 454).</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 40.3 closed. 13 Tier-1 items remain (40.4 &ndash; 40.16).</li>
+        <li><strong>Version bump 3.4.2 &rarr; 3.4.3</strong>: patch (security fix; <code>staging_folder</code> field is now silently ignored on POSTs &mdash; vestigial UI parameter, no current callers).</li>
+    </ul>
+
 - version: 3.4.2
   date: 2026-04-25
   tags:

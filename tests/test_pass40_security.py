@@ -399,3 +399,115 @@ class TestPass40_2ChdConvertVerifyPathValidation:
         # never called on it.
         assert str(decoy_target) not in removed, \
             f'os.remove called on path outside rom_path: {removed}'
+
+
+# -----------------------------------------------------------------------------
+# 40.3 — Archive-scanner m3u admin + path validation
+# -----------------------------------------------------------------------------
+class TestPass40_3ArchiveScannerM3u:
+    """create_m3u and batch_create_m3u must be admin-only and must validate
+    per-entry paths; staging_folder must not be attacker-controlled."""
+
+    def test_create_m3u_requires_admin(self):
+        from routes import tools as tools_mod
+
+        src = open(tools_mod.__file__).read()
+        idx = src.index('def api_archive_scanner_create_m3u')
+        prelude = src[max(0, idx - 200):idx]
+        assert '@admin_required' in prelude, \
+            'api_archive_scanner_create_m3u must be admin-only (Pass 40.3)'
+
+    def test_batch_create_m3u_requires_admin(self):
+        from routes import tools as tools_mod
+
+        src = open(tools_mod.__file__).read()
+        idx = src.index('def api_archive_scanner_batch_create_m3u')
+        prelude = src[max(0, idx - 200):idx]
+        assert '@admin_required' in prelude, \
+            'api_archive_scanner_batch_create_m3u must be admin-only (Pass 40.3)'
+
+    def test_batch_validates_each_path(self):
+        """Source-level pin: the batch handler must safe_path-check each entry
+        in the paths[] list before passing them to the scanner."""
+        from routes import tools as tools_mod
+
+        src = open(tools_mod.__file__).read()
+        idx = src.index('def api_archive_scanner_batch_create_m3u')
+        # Bound the slice up to the next def.
+        end = src.index('\n@tools_bp.route', idx + 1)
+        body = src[idx:end]
+        assert 'safe_path(' in body, \
+            'batch_create_m3u must validate each path (Pass 40.3)'
+
+    def test_staging_folder_not_user_supplied(self):
+        """The handlers must not pass an attacker-supplied staging_folder
+        through to the scanner.  Either the kwarg is absent (server default
+        wins) or it's checked against an allowlist."""
+        from routes import tools as tools_mod
+
+        src = open(tools_mod.__file__).read()
+        idx = src.index('def api_archive_scanner_create_m3u')
+        end = src.index('# ====', idx)
+        body = src[idx:end]
+        # Reject the bare-passthrough pattern.  Acceptable shapes:
+        #   - no staging_folder=... in the call
+        #   - staging_folder=<a validated local var, not the raw request value>
+        # We pin: the literal `data.get('staging_folder')` must not be passed
+        # straight to the scanner.
+        bad_pattern = "staging_folder=data.get('staging_folder')"
+        assert bad_pattern not in body.replace(' ', '').replace('\n', ''), \
+            'staging_folder must not be raw-passed from request (Pass 40.3)'
+        bad_pattern2 = "staging_folder=staging_folder"
+        # If the var name `staging_folder` is reused, ensure it was assigned
+        # something other than `data.get('staging_folder')` directly above.
+        if bad_pattern2 in body.replace(' ', '').replace('\n', ''):
+            # The variable assignment must not be a raw request read.
+            assert "staging_folder = data.get('staging_folder')" not in body and \
+                   'staging_folder=data.get(' not in body.replace(' ', ''), \
+                'staging_folder still raw-read from request (Pass 40.3)'
+
+    def test_create_m3u_e2e_rejects_outside_rom_path(self, tmp_path, monkeypatch):
+        """End-to-end: POST to /create-m3u with a path outside rom_path
+        must not call scanner.create_m3u_playlist."""
+        import app as app_module
+        from routes import tools as tools_mod
+
+        rom_root = tmp_path / 'roms'
+        rom_root.mkdir()
+        outside = tmp_path / 'evil.zip'
+        outside.write_text('FAKE')
+
+        monkeypatch.setattr(tools_mod, '_get_rom_path', lambda: str(rom_root))
+
+        called_with = []
+
+        class _FakeScanner:
+            def __init__(self, _cfg):
+                pass
+
+            def create_m3u_playlist(self, archive_path, **kw):
+                called_with.append(archive_path)
+                return {'success': True}
+
+            def batch_create_m3u(self, paths, *args, **kwargs):
+                called_with.extend(paths)
+                return {'success': True}
+
+        # Patch the lazy import inside the handler.
+        import scraper.rom_tools as rt_mod
+        monkeypatch.setattr(rt_mod, 'ArchiveScanner', _FakeScanner)
+
+        app_module.app.config['TESTING'] = True
+        client = app_module.app.test_client()
+        with client.session_transaction() as sess:
+            sess['user_id'] = 1
+
+        resp = client.post(
+            '/api/rom-tools/archive-scanner/create-m3u',
+            json={'path': str(outside)},
+        )
+        # Either rejected (400) or auth-blocked (302/403); never reached scanner.
+        assert resp.status_code in (400, 302, 403, 500), \
+            f"unexpected: {resp.status_code}"
+        assert str(outside) not in called_with, \
+            'scanner.create_m3u_playlist invoked with out-of-library path'

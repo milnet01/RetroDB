@@ -148,7 +148,12 @@ paths or silent-corruption vectors under routine use.
   `safe_path(p, _get_rom_path())` validation; restrict `staging_folder`
   to a pre-approved list.
 - **Source**: 2026-04-24 indie-review, image/media #2.
-- **Status**: todo
+- **Status**: done (v3.4.3) — both endpoints raised to `@admin_required`;
+  `batch_create_m3u` loops paths up-front and rejects on first failed
+  `safe_path`; `staging_folder` no longer accepted from request body
+  (vestigial — zero UI callers; scanner uses its server-side default).
+  Tests: `test_pass40_security.py::TestPass40_3ArchiveScannerM3u`
+  (5 cases).
 
 #### Pass 40.4 Steam achievement IDOR — three queries missing `user_id` filter (CRITICAL, S)
 
