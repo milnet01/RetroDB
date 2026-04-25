@@ -70,7 +70,10 @@ def test_gc_removes_exited_after_ttl(registry):
 
 
 def test_gc_keeps_recent_exited(registry):
-    proc = MagicMock(); proc.poll.return_value = 0; proc.returncode = 0; proc.pid = 1
+    proc = MagicMock()
+    proc.poll.return_value = 0
+    proc.returncode = 0
+    proc.pid = 1
     registry.register(token='recent', proc=proc, game_id=1, emulator_id=1,
                       started_at=time.time())
     registry._mark_exited('recent', exit_time=time.time())
