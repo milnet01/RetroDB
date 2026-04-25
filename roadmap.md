@@ -860,7 +860,34 @@ paths or silent-corruption vectors under routine use.
   button groups with `<fieldset><legend>` or `<div role="group"
   aria-labelledby="...">` + heading.
 - **Source**: 2026-04-24 indie-review, templates H1/H2/H3/H4.
-- **Status**: todo
+- **Status**: partial (v3.5.12) — A (HIGH) + B (MEDIUM) closed: new Jinja
+  macro `nav_active(cond)` emits `class="nav-item active"` +
+  `aria-current="page"` together; all 17 sidebar nav links converted.
+  gem-modal exclusive toggle's wrapping label dropped the misleading
+  `for="gemOtherPlatforms"` (was focusing the sibling text input);
+  implicit association via wrapping is correct. C/D (div-as-button,
+  label-as-heading) deferred to Pass 41.13c carry-over — needs browser
+  verification across 8+ template files. Tests:
+  `tests/test_pass41_security.py::TestPass41_13A/B` (3 cases).
+
+#### Pass 41.13c Templates a11y carry-over (div-as-button + label-as-heading)
+
+- **Target**: 6 `<div onclick=>` / `<h2 onclick=>` primary actions in
+  `base.html`, `rom_tools_hub.html`, `game_detail.html`,
+  `duplicate_finder.html`, `screenshot_dedup.html`, `game_imports.html`.
+  Plus `<label>`-as-group-heading shapes in `wishlist.html`,
+  `lists.html`, `tags.html`, `logs.html`, `chd_converter.html`,
+  `rom_tools_settings.html`, `duplicate_finder.html`,
+  `_modals/rename_modal.html`.
+- **Why**: WCAG 2.1.1 (keyboard) — `<div onclick=>` is not focusable
+  and not Enter/Space-activatable. WCAG 1.3.1 / 4.1.2 — `<label>` over
+  a button group has no form control to associate with; should be
+  `<fieldset><legend>` or `<div role="group" aria-labelledby="...">`.
+- **Plan**: convert each `<div onclick=>` to `<button>` (preserves
+  click handlers, gains keyboard activation). Replace bare `<label>`
+  group headings with `<fieldset><legend>`. Browser-verify each page
+  on desktop + mobile (~375px) to confirm visual layout intact.
+- **Status**: todo (carry-over from Pass 41.13)
 
 #### Pass 41.14 Image/media — Pillow bomb-error not caught + ESRGAN SSRF gap + `rglob` follows symlinks
 

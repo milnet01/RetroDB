@@ -1,3 +1,18 @@
+- version: 3.5.12
+  date: 2026-04-25
+  tags:
+  - type: a11y
+    label: Pass 41.13 — sidebar aria-current + gem-toggle implicit association
+  body: |
+    <ul>
+        <li><strong>Pass 41.13.A (HIGH) &mdash; <code>aria-current="page"</code> on sidebar nav</strong>. WCAG 2.4.3 requires <code>aria-current="page"</code> on the link representing the user's current page so assistive tech (screen readers, voice navigation) can announce location. <code>templates/base.html:79-189</code> emitted the visual <code>active</code> class but no <code>aria-current</code>. New Jinja macro <code>nav_active(cond)</code> emits both atomically: <code>class="nav-item active" aria-current="page"</code> when the condition is true; just <code>class="nav-item"</code> otherwise. All 17 sidebar nav links converted to the macro form &mdash; no per-link condition duplication.</li>
+        <li><strong>Pass 41.13.B (MEDIUM) &mdash; gem-modal exclusive toggle implicit association</strong>. <code>templates/base.html:1177</code> wrapped the exclusive-toggle checkbox in <code>&lt;label class="toggle-switch" for="gemOtherPlatforms"&gt;</code>. The wrapping <code>&lt;label&gt;</code> implicitly associates with the <code>&lt;input&gt;</code> it contains (the checkbox), but the explicit <code>for="gemOtherPlatforms"</code> pointed at the SIBLING text input. Clicking the toggle focused the wrong control &mdash; functional bug, not just a11y. Dropped the explicit <code>for=</code>; implicit association via wrapping is correct.</li>
+        <li><strong>Deferred</strong> &mdash; converting six <code>&lt;div onclick=&gt;</code> / <code>&lt;h2 onclick=&gt;</code> primary actions to <code>&lt;button&gt;</code> (WCAG 2.1.1 keyboard) and replacing <code>&lt;label&gt;</code>-as-group-heading shapes with <code>&lt;fieldset&gt;&lt;legend&gt;</code> across 8+ template files. Each requires browser verification (visual + keyboard interaction); tracked as a follow-up sub-pass since the surface area spans <code>base.html</code>, <code>rom_tools_hub.html</code>, <code>game_detail.html</code>, <code>duplicate_finder.html</code>, <code>screenshot_dedup.html</code>, <code>game_imports.html</code>, plus the label-as-heading set (<code>wishlist/lists/tags/logs/chd_converter/rom_tools_settings/duplicate_finder/_modals/rename_modal</code>).</li>
+        <li><strong>Tests</strong>. <code>TestPass41_13A/B</code> &mdash; 3 cases. 13A: pin <code>nav_active</code> macro definition with <code>aria-current="page"</code> output; pin that no sidebar nav link still uses the legacy <code>class="nav-item {% if ... %}active{% endif %}"</code> shape (Jinja-comment-stripped grep). 13B: pin that the wrapping toggle label around <code>gemExclusiveToggle</code> no longer has <code>for="gemOtherPlatforms"</code>.</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 41.13 partial (A + B closed; div-as-button + label-as-heading deferred to a follow-up sub-pass with browser verification). Pass 41 has 3 sub-passes remaining (41.6 + 41.9 + 41.13c carry-over, plus 41.5b).</li>
+        <li><strong>Version bump 3.5.11 &rarr; 3.5.12</strong>: patch (a11y compliance: WCAG 2.4.3 sidebar location indicator + functional bug fix on gem-modal toggle).</li>
+    </ul>
+
 - version: 3.5.11
   date: 2026-04-25
   tags:

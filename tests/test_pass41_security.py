@@ -1241,3 +1241,88 @@ class TestPass41_12BNavigateToOpenRedirect:
             "Guard must explicitly reject `//`-prefixed protocol-relative "
             "URLs (Pass 41.12.B)"
         )
+
+
+# -----------------------------------------------------------------------------
+# 41.13.A — sidebar nav links emit aria-current="page" on the active link
+# -----------------------------------------------------------------------------
+class TestPass41_13ASidebarAriaCurrent:
+    """WCAG 2.4.3 requires `aria-current="page"` on the link representing
+    the user's current page. Without it, assistive tech can't tell which
+    sidebar item is the user's location. Pass 41.13.A adds a Jinja macro
+    `nav_active(cond)` that emits `class="nav-item active"` AND
+    `aria-current="page"` together, applied to all 17 sidebar nav links."""
+
+    def test_macro_defined(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'templates/base.html'),
+            encoding='utf-8'
+        ).read()
+        assert 'macro nav_active' in body, (
+            "Pass 41.13.A — `nav_active` Jinja macro must be defined "
+            "in base.html"
+        )
+        # Macro must emit aria-current="page" inside its conditional.
+        idx = body.find('macro nav_active')
+        macro_body = body[idx:idx + 400]
+        assert 'aria-current="page"' in macro_body, (
+            "nav_active macro must emit aria-current=\"page\" (Pass 41.13.A)"
+        )
+
+    def test_no_legacy_class_navitem_string(self):
+        """All sidebar nav links should use the macro form `{{ nav_active(...) }}`,
+        not the historical inline `class="nav-item {% if ... %}active{% endif %}"`
+        shape that didn't emit aria-current."""
+        body = open(
+            os.path.join(_REPO_ROOT, 'templates/base.html'),
+            encoding='utf-8'
+        ).read()
+        # Strip {# Jinja comments #} so the explanatory comment doesn't
+        # false-positive.
+        import re as _re
+        code_only = _re.sub(r'\{#.*?#\}', '', body, flags=_re.DOTALL)
+        legacy = code_only.count(
+            'class="nav-item {% if'
+        )
+        assert legacy == 0, (
+            f"Pass 41.13.A — {legacy} sidebar nav links still use the "
+            "legacy `class=\"nav-item {% if ... %}active{% endif %}\"` "
+            "shape; convert to `{{ nav_active(...) }}` macro"
+        )
+
+
+# -----------------------------------------------------------------------------
+# 41.13.B — gem-modal exclusive toggle drops the mis-targeted for= attr
+# -----------------------------------------------------------------------------
+class TestPass41_13BGemToggleForAttr:
+    """`<label class="toggle-switch" for="gemOtherPlatforms">` wrapped the
+    `<input id="gemExclusiveToggle">` checkbox but the explicit `for=`
+    pointed at the SIBLING text input. Clicking the toggle focused the
+    wrong control. Implicit-association via wrapping is the correct
+    pattern; the explicit for= is now removed."""
+
+    def test_toggle_label_has_no_for_attr(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'templates/base.html'),
+            encoding='utf-8'
+        ).read()
+        # Strip {# Jinja comments #} so the explanatory comment naming the
+        # historical attribute doesn't false-positive.
+        import re as _re
+        code_only = _re.sub(r'\{#.*?#\}', '', body, flags=_re.DOTALL)
+        # The wrapping toggle label that contains gemExclusiveToggle must
+        # NOT have `for="gemOtherPlatforms"`.
+        idx = code_only.find('id="gemExclusiveToggle"')
+        assert idx != -1, "gemExclusiveToggle input not found"
+        # Look at the ~250 chars BEFORE the input to find the wrapping
+        # <label class="toggle-switch" ...> that contains it.
+        preamble = code_only[max(0, idx - 250):idx]
+        # Find the last `<label class="toggle-switch"` opening tag.
+        last_label = preamble.rfind('<label class="toggle-switch"')
+        assert last_label != -1, "wrapping toggle <label> not found"
+        label_open_chunk = preamble[last_label:last_label + 200]
+        assert 'for="gemOtherPlatforms"' not in label_open_chunk, (
+            "Pass 41.13.B — wrapping toggle label still has the "
+            "mis-targeted `for=\"gemOtherPlatforms\"` attribute; "
+            "drop it (implicit association via wrapping is correct)"
+        )

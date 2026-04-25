@@ -76,23 +76,31 @@
                 {% endif %}
             </div>
             
+            {# Pass 41.13.A — single helper computes the `active` class +
+               `aria-current="page"` for sidebar nav links. WCAG 2.4.3
+               requires aria-current on the link representing the current
+               page; without it, assistive tech can't tell which sidebar
+               item is the user's location. #}
+            {%- macro nav_active(cond) -%}
+            class="nav-item{% if cond %} active{% endif %}"{% if cond %} aria-current="page"{% endif %}
+            {%- endmacro -%}
             <nav class="sidebar-nav">
                 {% if current_user %}
                 <div class="nav-section">
                     <div class="nav-section-title">Main</div>
-                    <a href="{{ url_for('dashboard') }}" class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                    <a href="{{ url_for('dashboard') }}" {{ nav_active(request.endpoint == 'dashboard') }}>
                         <span class="nav-icon">📊</span>
                         <span class="nav-text">Dashboard</span>
                     </a>
-                    <a href="{{ url_for('systems.systems') }}" class="nav-item {% if request.endpoint in ['systems.systems', 'systems.system_games', 'games.game_detail'] and request.args.get('from') != 'library' and request.args.get('from') != 'achievements' and request.args.get('from') != 'rom_reports' %}active{% endif %}">
+                    <a href="{{ url_for('systems.systems') }}" {{ nav_active(request.endpoint in ['systems.systems', 'systems.system_games', 'games.game_detail'] and request.args.get('from') != 'library' and request.args.get('from') != 'achievements' and request.args.get('from') != 'rom_reports') }}>
                         <span class="nav-icon">🖥️</span>
                         <span class="nav-text">Systems</span>
                     </a>
-                    <a href="{{ url_for('games.all_games') }}" class="nav-item {% if request.endpoint == 'games.all_games' or (request.endpoint == 'games.game_detail' and request.args.get('from') == 'library') %}active{% endif %}">
+                    <a href="{{ url_for('games.all_games') }}" {{ nav_active(request.endpoint == 'games.all_games' or (request.endpoint == 'games.game_detail' and request.args.get('from') == 'library')) }}>
                         <span class="nav-icon">📚</span>
                         <span class="nav-text">Library</span>
                     </a>
-                    <a href="{{ url_for('analytics') }}" class="nav-item {% if request.endpoint == 'analytics' %}active{% endif %}">
+                    <a href="{{ url_for('analytics') }}" {{ nav_active(request.endpoint == 'analytics') }}>
                         <span class="nav-icon">📈</span>
                         <span class="nav-text">Analytics</span>
                     </a>
@@ -100,23 +108,23 @@
 
                 <div class="nav-section">
                     <div class="nav-section-title">Trophies & Achievements</div>
-                    <a href="{{ url_for('trophies.trophies') }}" class="nav-item {% if request.endpoint == 'trophies.trophies' or request.endpoint == 'trophies.trophy_game' %}active{% endif %}">
+                    <a href="{{ url_for('trophies.trophies') }}" {{ nav_active(request.endpoint == 'trophies.trophies' or request.endpoint == 'trophies.trophy_game') }}>
                         <span class="nav-icon">🏆</span>
                         <span class="nav-text">RPCS3 Trophies</span>
                     </a>
-                    <a href="{{ url_for('trophies.psn_trophies') }}" class="nav-item {% if request.endpoint in ['trophies.psn_trophies', 'trophies.psn_trophy_detail'] %}active{% endif %}">
+                    <a href="{{ url_for('trophies.psn_trophies') }}" {{ nav_active(request.endpoint in ['trophies.psn_trophies', 'trophies.psn_trophy_detail']) }}>
                         <span class="nav-icon">🎮</span>
                         <span class="nav-text">PSN Trophies</span>
                     </a>
-                    <a href="{{ url_for('achievements.achievements') }}" class="nav-item {% if request.endpoint in ['achievements.achievements', 'achievements.achievements_system', 'achievements.achievement_game'] %}active{% endif %}">
+                    <a href="{{ url_for('achievements.achievements') }}" {{ nav_active(request.endpoint in ['achievements.achievements', 'achievements.achievements_system', 'achievements.achievement_game']) }}>
                         <span class="nav-icon">🎖️</span>
                         <span class="nav-text">Achievements</span>
                     </a>
-                    <a href="{{ url_for('steam_achievements.steam_achievements_landing') }}" class="nav-item {% if request.endpoint and request.endpoint.startswith('steam_achievements.') %}active{% endif %}">
+                    <a href="{{ url_for('steam_achievements.steam_achievements_landing') }}" {{ nav_active(request.endpoint and request.endpoint.startswith('steam_achievements.')) }}>
                         <span class="nav-icon">🟦</span>
                         <span class="nav-text">Steam Achievements</span>
                     </a>
-                    <a href="{{ url_for('xbox_achievements.xbox_achievements_landing') }}" class="nav-item {% if request.endpoint and request.endpoint.startswith('xbox_achievements.') %}active{% endif %}">
+                    <a href="{{ url_for('xbox_achievements.xbox_achievements_landing') }}" {{ nav_active(request.endpoint and request.endpoint.startswith('xbox_achievements.')) }}>
                         <span class="nav-icon">🟢</span>
                         <span class="nav-text">Xbox Achievements</span>
                     </a>
@@ -124,19 +132,19 @@
 
                 <div class="nav-section">
                     <div class="nav-section-title">My Collection</div>
-                    <a href="{{ url_for('collections.tags_page') }}" class="nav-item {% if request.endpoint == 'collections.tags_page' %}active{% endif %}">
+                    <a href="{{ url_for('collections.tags_page') }}" {{ nav_active(request.endpoint == 'collections.tags_page') }}>
                         <span class="nav-icon">🏷️</span>
                         <span class="nav-text">Tags</span>
                     </a>
-                    <a href="{{ url_for('collections.lists_page') }}" class="nav-item {% if request.endpoint in ['collections.lists_page', 'collections.list_detail_page'] %}active{% endif %}">
+                    <a href="{{ url_for('collections.lists_page') }}" {{ nav_active(request.endpoint in ['collections.lists_page', 'collections.list_detail_page']) }}>
                         <span class="nav-icon">📋</span>
                         <span class="nav-text">Lists</span>
                     </a>
-                    <a href="{{ url_for('collections.wishlist_page') }}" class="nav-item {% if request.endpoint == 'collections.wishlist_page' %}active{% endif %}">
+                    <a href="{{ url_for('collections.wishlist_page') }}" {{ nav_active(request.endpoint == 'collections.wishlist_page') }}>
                         <span class="nav-icon">⭐</span>
                         <span class="nav-text">Wishlist</span>
                     </a>
-                    <a href="{{ url_for('collector_trophies.collector_trophies_page') }}" class="nav-item {% if request.endpoint == 'collector_trophies.collector_trophies_page' %}active{% endif %}">
+                    <a href="{{ url_for('collector_trophies.collector_trophies_page') }}" {{ nav_active(request.endpoint == 'collector_trophies.collector_trophies_page') }}>
                         <span class="nav-icon">🏅</span>
                         <span class="nav-text">Collector Trophies</span>
                     </a>
@@ -144,15 +152,15 @@
 
                 <div class="nav-section">
                     <div class="nav-section-title">Tools</div>
-                    <a href="{{ url_for('reports.reports') }}" class="nav-item {% if request.endpoint == 'reports.reports' or (request.endpoint == 'games.game_detail' and request.args.get('from') == 'rom_reports') %}active{% endif %}">
+                    <a href="{{ url_for('reports.reports') }}" {{ nav_active(request.endpoint == 'reports.reports' or (request.endpoint == 'games.game_detail' and request.args.get('from') == 'rom_reports')) }}>
                         <span class="nav-icon">📊</span>
                         <span class="nav-text">ROM Reports</span>
                     </a>
-                    <a href="{{ url_for('game_imports.game_imports_page') }}" class="nav-item {% if request.endpoint == 'game_imports.game_imports_page' %}active{% endif %}">
+                    <a href="{{ url_for('game_imports.game_imports_page') }}" {{ nav_active(request.endpoint == 'game_imports.game_imports_page') }}>
                         <span class="nav-icon">📥</span>
                         <span class="nav-text">Game Imports</span>
                     </a>
-                    <a href="{{ url_for('tools.rom_tools_hub') }}" class="nav-item {% if request.endpoint in ['tools.rom_tools_hub', 'tools.archive_scanner', 'tools.chd_converter', 'tools.chd_verify', 'tools.multi_disc_organizer', 'tools.duplicate_finder', 'tools.screenshot_dedup', 'tools.rom_tools_settings'] %}active{% endif %}">
+                    <a href="{{ url_for('tools.rom_tools_hub') }}" {{ nav_active(request.endpoint in ['tools.rom_tools_hub', 'tools.archive_scanner', 'tools.chd_converter', 'tools.chd_verify', 'tools.multi_disc_organizer', 'tools.duplicate_finder', 'tools.screenshot_dedup', 'tools.rom_tools_settings']) }}>
                         <span class="nav-icon">🛠️</span>
                         <span class="nav-text">ROM Tools</span>
                     </a>
@@ -160,12 +168,12 @@
 
                 <div class="nav-section">
                     <div class="nav-section-title">Configuration</div>
-                    <a href="{{ url_for('settings.settings') }}" class="nav-item {% if request.endpoint == 'settings.settings' %}active{% endif %}">
+                    <a href="{{ url_for('settings.settings') }}" {{ nav_active(request.endpoint == 'settings.settings') }}>
                         <span class="nav-icon">⚙️</span>
                         <span class="nav-text">Settings</span>
                     </a>
                     {% if has_permission('system_functions') %}
-                    <a href="{{ url_for('logs.log_viewer') }}" class="nav-item {% if request.endpoint == 'logs.log_viewer' %}active{% endif %}">
+                    <a href="{{ url_for('logs.log_viewer') }}" {{ nav_active(request.endpoint == 'logs.log_viewer') }}>
                         <span class="nav-icon">📋</span>
                         <span class="nav-text">Log Viewer</span>
                     </a>
@@ -175,15 +183,15 @@
 
                 <div class="nav-section">
                     <div class="nav-section-title">Info</div>
-                    <a href="{{ url_for('museum.museum') }}" class="nav-item {% if request.endpoint and request.endpoint.startswith('museum.') %}active{% endif %}">
+                    <a href="{{ url_for('museum.museum') }}" {{ nav_active(request.endpoint and request.endpoint.startswith('museum.')) }}>
                         <span class="nav-icon">🏛️</span>
                         <span class="nav-text">Museum</span>
                     </a>
-                    <a href="{{ url_for('help_page') }}" class="nav-item {% if request.endpoint == 'help_page' %}active{% endif %}">
+                    <a href="{{ url_for('help_page') }}" {{ nav_active(request.endpoint == 'help_page') }}>
                         <span class="nav-icon">❓</span>
                         <span class="nav-text">Help</span>
                     </a>
-                    <a href="{{ url_for('changelog') }}" class="nav-item {% if request.endpoint == 'changelog' %}active{% endif %}">
+                    <a href="{{ url_for('changelog') }}" {{ nav_active(request.endpoint == 'changelog') }}>
                         <span class="nav-icon">📝</span>
                         <span class="nav-text">Changelog</span>
                     </a>
@@ -1166,7 +1174,14 @@
                         <div class="gem-field gem-field-full">
                             <label for="gemOtherPlatforms">Platform Availability</label>
                             <div class="gem-toggle-row">
-                                <label class="toggle-switch" for="gemOtherPlatforms">
+                                {# Pass 41.13.B — drop the wrong `for=` on
+                                   the wrapping toggle label. The wrapping
+                                   <label> implicitly associates with the
+                                   <input> it contains; the explicit
+                                   `for="gemOtherPlatforms"` pointed at the
+                                   sibling text-input, so clicking the toggle
+                                   focused the wrong control. #}
+                                <label class="toggle-switch">
                                     <input type="checkbox" id="gemExclusiveToggle" aria-label="Toggle platform exclusivity" onchange="updateModalExclusiveToggle()">
                                     <span class="toggle-slider"></span>
                                 </label>
