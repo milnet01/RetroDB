@@ -265,6 +265,15 @@ paths or silent-corruption vectors under routine use.
   `services/media_cleanup.py` change fails 4 of 5.
 
 #### Pass 45.8 Steam/Xbox/PSN/wishlist endpoint rate-limits (HIGH, S)
+- **Status**: done (v3.5.23) — 15 endpoints registered with caps in
+  `app.py` via the existing `_rate_limit` helper. Library-fetch
+  endpoints at 5/min, "sync everything" at 2/hour, credit probes at
+  30/min. 3 regression tests in
+  `tests/test_pass45_security.py::TestPass45_8*` pin the endpoints
+  exist + the source-level registration + the 2/hour cap on bulk
+  actions.
+
+
 
 - **Targets**: `app.py:266-300` registrations. Add for:
   `platform_import.api_steam_fetch_library`, `..._import`,

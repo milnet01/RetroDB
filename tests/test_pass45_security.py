@@ -1080,3 +1080,83 @@ class TestPass45_7OrphanCleanupRace:
         assert errors == 0
         assert freed == 6
         assert not target.exists()
+
+
+# -----------------------------------------------------------------------------
+# 45.8 — Steam/Xbox/PSN/wishlist endpoint rate-limits
+# -----------------------------------------------------------------------------
+class TestPass45_8RateLimits:
+    """Pass 41.10.D added rate-limits to the heavy filesystem-walk
+    endpoints. Pass 45.8 extends the same pattern to third-party-API
+    fan-out endpoints: a misclick or stuck XHR poll loop on the
+    Steam / Xbox / PSN library import flows can otherwise burn API
+    quota or trigger account bans (PSN especially has aggressive
+    per-account caps). Caps:
+      - 5/min for "fetch the whole library" actions (rare, admin-driven)
+      - 2/hour for "bulk refresh / sync everything" actions (cron-like)
+      - 30/min for credit-check probes (UI polling)"""
+
+    REQUIRED_ENDPOINTS = (
+        'platform_import.api_steam_fetch_library',
+        'platform_import.api_steam_import',
+        'platform_import.api_steam_sync_achievements',
+        'platform_import.api_xbox_fetch_library',
+        'platform_import.api_xbox_import',
+        'platform_import.api_xbox_sync_achievements',
+        'platform_import.api_psn_fetch_library',
+        'platform_import.api_psn_import',
+        'steam_achievements.api_steam_sync_all',
+        'xbox_achievements.api_xbox_sync_all',
+        'trophies.api_psn_sync_all',
+        'trophies.api_psn_bulk_refresh_start',
+        'collections.api_scrape_all_wishlist',
+        'scraper.api_check_scraper',
+        'scraper.api_scraper_allowance',
+    )
+
+    def test_required_endpoints_exist(self):
+        """Sanity: every endpoint Pass 45.8 rate-limits must actually be
+        registered. ``_rate_limit`` would raise on import if not, but
+        a bare grep doesn't catch a typo until app startup. Pin here."""
+        import app as app_module
+        for endpoint in self.REQUIRED_ENDPOINTS:
+            assert endpoint in app_module.app.view_functions, (
+                f"Endpoint {endpoint} is not registered; Pass 45.8 "
+                "rate-limit registration would fail at import"
+            )
+
+    def test_app_py_registers_rate_limits(self):
+        """app.py must contain a _rate_limit('endpoint', ...) call for
+        every endpoint in REQUIRED_ENDPOINTS. Source-grep test mirrors
+        Pass 41.10.D's pattern."""
+        path = os.path.join(_REPO_ROOT, 'app.py')
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        for endpoint in self.REQUIRED_ENDPOINTS:
+            assert f"_rate_limit('{endpoint}'" in body, (
+                f"app.py must register a rate limit for {endpoint} "
+                "(Pass 45.8)"
+            )
+
+    def test_bulk_actions_capped_at_two_per_hour(self):
+        """The "sync everything" actions must use 2/hour, not per-minute
+        — they're cron-like and should never legitimately run more than
+        a couple of times an hour."""
+        path = os.path.join(_REPO_ROOT, 'app.py')
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        bulk_endpoints = (
+            'platform_import.api_steam_sync_achievements',
+            'platform_import.api_xbox_sync_achievements',
+            'steam_achievements.api_steam_sync_all',
+            'xbox_achievements.api_xbox_sync_all',
+            'trophies.api_psn_sync_all',
+            'trophies.api_psn_bulk_refresh_start',
+            'collections.api_scrape_all_wishlist',
+        )
+        for endpoint in bulk_endpoints:
+            line = f"_rate_limit('{endpoint}', \"2 per hour\")"
+            assert line in body, (
+                f"{endpoint} must be capped at 2/hour (Pass 45.8); "
+                f"expected line: {line!r}"
+            )

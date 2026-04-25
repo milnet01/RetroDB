@@ -302,6 +302,32 @@ if limiter:
     _rate_limit('tools.api_duplicate_finder_scan', "5 per minute")
     _rate_limit('tools.api_screenshot_dedup_scan', "5 per minute")
 
+    # Pass 45.8 — third-party-API fan-out endpoints. Each call below issues
+    # tens-to-hundreds of remote requests against Steam / Xbox Live / PSN
+    # / IGDB / RAWG / TGDB. A misclick or stuck XHR loop can burn API
+    # quota or trigger account bans (PSN especially has aggressive
+    # per-account rate-limits). Caps mirror the Pass 41.10.D pattern:
+    #   5/min for "fetch the whole library" actions (rare admin-driven);
+    #   2/hour for "bulk refresh / sync everything" actions
+    #   (cron-like, never legitimate to run every minute).
+    _rate_limit('platform_import.api_steam_fetch_library', "5 per minute")
+    _rate_limit('platform_import.api_steam_import', "5 per minute")
+    _rate_limit('platform_import.api_steam_sync_achievements', "2 per hour")
+    _rate_limit('platform_import.api_xbox_fetch_library', "5 per minute")
+    _rate_limit('platform_import.api_xbox_import', "5 per minute")
+    _rate_limit('platform_import.api_xbox_sync_achievements', "2 per hour")
+    _rate_limit('platform_import.api_psn_fetch_library', "5 per minute")
+    _rate_limit('platform_import.api_psn_import', "5 per minute")
+    _rate_limit('steam_achievements.api_steam_sync_all', "2 per hour")
+    _rate_limit('xbox_achievements.api_xbox_sync_all', "2 per hour")
+    _rate_limit('trophies.api_psn_sync_all', "2 per hour")
+    _rate_limit('trophies.api_psn_bulk_refresh_start', "2 per hour")
+    _rate_limit('collections.api_scrape_all_wishlist', "2 per hour")
+    # Per-source scraper credit-check probes: a stuck UI poll loop can
+    # otherwise issue 60 calls/minute against TGDB / IGDB / etc.
+    _rate_limit('scraper.api_check_scraper', "30 per minute")
+    _rate_limit('scraper.api_scraper_allowance', "30 per minute")
+
 # =============================================================================
 # REQUEST-SCOPED DB CONNECTION CLEANUP
 # =============================================================================

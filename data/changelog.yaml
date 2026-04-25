@@ -1,3 +1,24 @@
+- version: 3.5.23
+  date: 2026-04-25
+  tags:
+  - type: security
+    label: Pass 45.8 — Rate-limit Steam/Xbox/PSN/wishlist fan-out endpoints
+  body: |
+    <ul>
+        <li><strong>Pass 45.8 (HIGH) &mdash; third-party-API fan-out endpoints now rate-limited</strong>. Pass 41.10.D capped the heavy filesystem-walk endpoints (archive scanner, CHD converter, etc.); the same pattern was missing for the platform-import / achievement-sync / wishlist-scrape endpoints. Each one fans out tens-to-hundreds of remote requests against Steam Web API, Xbox Live, PSN, IGDB, RAWG, and TheGamesDB. A misclick or stuck XHR poll loop in the UI could legitimately burn API quota and (more seriously) trigger account bans &mdash; PSN especially has aggressive per-account rate limits and revokes the NPSSO cookie on overuse.</li>
+        <li><strong>15 endpoints now capped</strong>:
+            <ul>
+                <li><strong>5/min</strong> for "fetch the whole library" actions (rare admin-driven): <code>platform_import.api_steam_fetch_library</code>, <code>api_steam_import</code>, <code>api_xbox_fetch_library</code>, <code>api_xbox_import</code>, <code>api_psn_fetch_library</code>, <code>api_psn_import</code>.</li>
+                <li><strong>2/hour</strong> for "sync everything" cron-like actions: <code>platform_import.api_{steam,xbox}_sync_achievements</code>, <code>steam_achievements.api_steam_sync_all</code>, <code>xbox_achievements.api_xbox_sync_all</code>, <code>trophies.api_psn_sync_all</code>, <code>trophies.api_psn_bulk_refresh_start</code>, <code>collections.api_scrape_all_wishlist</code>.</li>
+                <li><strong>30/min</strong> for credit-check probes (UI polling): <code>scraper.api_check_scraper</code>, <code>scraper.api_scraper_allowance</code>.</li>
+            </ul>
+        </li>
+        <li><strong>No new code paths</strong>. Reuses the existing <code>_rate_limit(endpoint, spec)</code> helper that Pass 34.4 introduced &mdash; raises a clear error at app import if any endpoint name has been renamed without updating the rate-limit registration.</li>
+        <li><strong>Source</strong> &mdash; indie-review 2026-04-25 theme T7 (third-party-API quota / abuse). Caught by Operations / CI and Game routes lanes.</li>
+        <li><strong>Tests</strong>. <code>tests/test_pass45_security.py::TestPass45_8*</code> &mdash; 3 cases. (1) Every endpoint Pass 45.8 references is actually registered (would otherwise fail at app import via <code>_rate_limit</code>). (2) Source grep against <code>app.py</code> confirms a <code>_rate_limit('endpoint', ...)</code> call exists for each. (3) The bulk "sync everything" endpoints are specifically capped at <code>"2 per hour"</code>, not per-minute &mdash; they're cron-like, never legitimately run more than a couple of times an hour. Reverting <code>app.py</code> fails 2 of 3 cases.</li>
+        <li><strong>Version bump 3.5.22 &rarr; 3.5.23</strong>: patch (third-party API hygiene, no schema or surface change).</li>
+    </ul>
+
 - version: 3.5.22
   date: 2026-04-25
   tags:
