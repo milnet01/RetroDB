@@ -1,3 +1,17 @@
+- version: 3.4.12
+  date: 2026-04-25
+  tags:
+  - type: security
+    label: Pass 40.12 — Toast-controller XSS on job.system_name closed
+  body: |
+    <ul>
+        <li><strong>Pass 40.12 (CRITICAL) &mdash; Toast queued-job XSS closed</strong>. <code>static/js/toast-controller.js::createQueuedToast</code> rendered <code>${job.system_name || 'Multi-System'}</code> directly into <code>toast.innerHTML</code> without escape. <code>${type}</code> and <code>${job.job_id}</code> were interpolated into an inline <code>onclick="event.stopPropagation(); UnifiedToastController.cancelQueued('${type}', '${job.job_id}')"</code> &mdash; a JS-string-in-HTML-attribute double-decode context that can't be safely escaped inline. Every other toast path uses <code>this.escapeHtml()</code>; this site was the anomaly. A system named <code>&lt;img src=x onerror=alert(1)&gt;</code> fired in admin context. CWE-79; Pass 29 / 36 regression.</li>
+        <li><strong>Fix</strong>. (1) <code>${job.system_name || 'Multi-System'}</code> is now <code>${this.escapeHtml(subtitleText)}</code> (text-context escape). <code>${config.name}</code> in the toast title is similarly wrapped. (2) The inline <code>onclick</code> is replaced with a <code>data-cancel-queued</code> attribute and a post-innerHTML <code>addEventListener('click', ...)</code> that closes over <code>type</code> + <code>job.job_id</code> as JS values &mdash; no string concatenation into HTML. Pattern matches <code>all-games-controller.js:1362</code> + <code>setup.html:360-393</code>.</li>
+        <li><strong>Tests</strong>. <code>TestPass40_12ToastControllerXss</code> &mdash; 2 source-level pins: no <code>onclick=&quot;...UnifiedToastController.cancelQueued(...)&quot;</code> string anywhere in the file; <code>job.system_name</code> never raw-interpolated. 494 passed (was 492). Bundle rebuilt via <code>python3 build_js.py</code>.</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 40.12 closed. 4 Tier-1 items remain.</li>
+        <li><strong>Version bump 3.4.11 &rarr; 3.4.12</strong>: patch (security; visible only on the queued-job toast — system names with HTML metacharacters now render literal characters instead of being parsed as markup).</li>
+    </ul>
+
 - version: 3.4.11
   date: 2026-04-25
   tags:

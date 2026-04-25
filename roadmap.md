@@ -376,7 +376,12 @@ paths or silent-corruption vectors under routine use.
   statement using `data-job-id` + `data-job-type` attributes via
   `escAttr` (pattern already in `all-games-controller.js:1362`).
 - **Source**: 2026-04-24 indie-review, frontend JS C1.
-- **Status**: todo
+- **Status**: done (v3.4.12) — `job.system_name` and `config.name` now
+  `escapeHtml`'d; inline `onclick="...cancelQueued('${type}', ...)"`
+  replaced with `data-cancel-queued` + post-innerHTML
+  `addEventListener` closing over `type`/`job.job_id` as JS values
+  (no string concat into HTML). Tests:
+  `test_pass40_security.py::TestPass40_12ToastControllerXss`.
 
 #### Pass 40.13 `showModal` HTML auto-detect heuristic is blocklist XSS sink (CRITICAL, M)
 

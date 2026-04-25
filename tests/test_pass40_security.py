@@ -912,3 +912,32 @@ class TestPass40_11ChdAtomicConversion:
         body = src[idx:end]
         assert 'chd_verify_after_convert' in body, \
             'inline CHD converter must honor chd_verify_after_convert (Pass 40.11)'
+
+
+# -----------------------------------------------------------------------------
+# 40.12 — Toast-controller XSS on job.system_name
+# -----------------------------------------------------------------------------
+class TestPass40_12ToastControllerXss:
+    """job.system_name was interpolated into toast.innerHTML without
+    escape; the inline onclick="...cancelQueued('${type}', '${job.job_id}')"
+    used a JS-string-in-HTML-attribute double-decode context."""
+
+    def test_no_inline_onclick_with_template_interpolation(self):
+        import os
+        repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        path = os.path.join(repo, 'static', 'js', 'toast-controller.js')
+        src = open(path).read()
+        # Find the cancelQueued path and assert no onclick="..." with
+        # ${...} interpolation remains.
+        assert "onclick=\"event.stopPropagation(); UnifiedToastController.cancelQueued" not in src, \
+            'inline onclick with cancelQueued must use addEventListener (Pass 40.12)'
+
+    def test_system_name_escaped(self):
+        import os
+        repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        path = os.path.join(repo, 'static', 'js', 'toast-controller.js')
+        src = open(path).read()
+        # The Queued-toast block: subtitle should not raw-interpolate
+        # job.system_name — it must go through escapeHtml.
+        assert '${job.system_name || \'Multi-System\'}' not in src, \
+            'job.system_name must not be raw-interpolated into innerHTML (Pass 40.12)'

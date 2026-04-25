@@ -1452,25 +1452,42 @@ const UnifiedToastController = {
         // Set CSS order at creation time (queued = order 90)
         toast.style.order = 90;
         toast.style.setProperty('--toast-color', config.queuedColor);
-        
+
+        // Pass 40.12 — escape every user-controlled value before
+        // interpolating into innerHTML.  job.system_name was previously
+        // rendered raw — a system named `<img src=x onerror=alert(1)>`
+        // fired in admin context (CWE-79).  type / job.job_id flowed
+        // through an inline onclick="..." JS-string-in-HTML-attribute
+        // double-decode context which can't be sanitized inline; we
+        // replace the onclick with an addEventListener wired off
+        // data-* attributes.
+        const subtitleText = job.system_name || 'Multi-System';
         toast.innerHTML = `
             <div class="toast-content queued">
                 <div class="toast-main">
                     <div class="toast-icon">${getThemedIcon(type, 'queued')}</div>
                     <div class="toast-info">
-                        <div class="toast-title">${config.name} Queued (#${position})</div>
-                        <div class="toast-subtitle">${job.system_name || 'Multi-System'}</div>
+                        <div class="toast-title">${this.escapeHtml(config.name)} Queued (#${position})</div>
+                        <div class="toast-subtitle">${this.escapeHtml(subtitleText)}</div>
                         <div class="toast-meta">${this.fmtNum(job.total)} games</div>
                     </div>
                 </div>
                 <div class="toast-controls">
-                    <button class="toast-btn cancel" onclick="event.stopPropagation(); UnifiedToastController.cancelQueued('${type}', '${job.job_id}')" title="Remove from queue">
+                    <button class="toast-btn cancel" data-cancel-queued title="Remove from queue">
                         ✕
                     </button>
                 </div>
             </div>
         `;
-        
+
+        const cancelBtn = toast.querySelector('[data-cancel-queued]');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                UnifiedToastController.cancelQueued(type, job.job_id);
+            });
+        }
+
         return toast;
     },
     
