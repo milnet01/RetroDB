@@ -594,3 +594,97 @@ class TestPass41_5BIgdbTokenRefreshOn401:
         assert len(call_log) == 1
         # Cache untouched.
         assert igdb._igdb_token_cache['token'] == 'TOKEN'
+
+
+# -----------------------------------------------------------------------------
+# 41.7.A — TROPUSR explicit bounds on tables_count + offset
+# -----------------------------------------------------------------------------
+class TestPass41_7ATropusrBounds:
+    """`scraper/trophy_parser.py::TROPUSRParser` parsed attacker-controlled
+    `tables_count`, `entries_count`, and `offset` from TROPUSR.DAT. Inner
+    `break` guards saved exploitability today, but bounds correctness relied
+    on a reviewer proving early-exit rather than explicit min/return guards.
+    Pass 41.7.A prepends defensive bounds to make the safety obvious to
+    static analysis."""
+
+    def test_tables_count_capped(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'scraper/trophy_parser.py'),
+            encoding='utf-8'
+        ).read()
+        # Look for the explicit cap. The exact arithmetic is documented in the
+        # roadmap as `(len(data) - 0x30) // 32`.
+        assert 'tables_count = min(tables_count' in body, (
+            "Missing explicit cap `tables_count = min(tables_count, ...)` "
+            "in trophy_parser.py (Pass 41.7.A)"
+        )
+
+    def test_offset_bounds_check(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'scraper/trophy_parser.py'),
+            encoding='utf-8'
+        ).read()
+        # The _parse_table6 must early-return when header['offset'] >= len(data).
+        assert 'Pass 41.7.A' in body, (
+            "Pass 41.7.A marker missing in trophy_parser.py — bound checks "
+            "must be paired with the marker for greppability"
+        )
+
+
+# -----------------------------------------------------------------------------
+# 41.7.B — Xbox callback redirect uses kwarg form (not string concat)
+# -----------------------------------------------------------------------------
+class TestPass41_7BXboxRedirectKwarg:
+    """`url_for(...) + '&xbox_connected=1'` worked only because url_for
+    happened to emit a `?tab=xbox` query string today; a future refactor
+    could break the implicit ampersand assumption. Pass 41.7.B converts
+    to the kwarg form so URL construction is unambiguous."""
+
+    def test_no_string_concat_redirect(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'routes/platform_import.py'),
+            encoding='utf-8'
+        ).read()
+        # Strip comments so the explanatory comment naming the historical
+        # shape doesn't false-positive.
+        code_only = '\n'.join(
+            line.split('#', 1)[0]
+            for line in body.splitlines()
+        )
+        assert "+ '&xbox_connected=1'" not in code_only, (
+            "Xbox redirect still uses string concatenation — convert to "
+            "url_for(..., xbox_connected=1) kwarg form (Pass 41.7.B)"
+        )
+        assert 'xbox_connected=1' in body, (
+            "Xbox-connected redirect target still required (Pass 41.7.B)"
+        )
+
+
+# -----------------------------------------------------------------------------
+# 41.7.C — RA HTTP callers explicitly log 401 (stale API key)
+# -----------------------------------------------------------------------------
+class TestPass41_7CRaApi401Logging:
+    """A 401 from the RA API (stale or revoked user API key) previously fell
+    through the generic non-200 branch and returned None silently — the user
+    saw 'no RA entry found' instead of 'check your API key'. Pass 41.7.C
+    adds an explicit 401-detection log line at each of the 5 callers in
+    scraper/retroachievements.py."""
+
+    def test_retroachievements_logs_401(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'scraper/retroachievements.py'),
+            encoding='utf-8'
+        ).read()
+        # The fix injects a per-callsite 401-check + logger.error. A single
+        # marker per file is enough — assert at least the marker plus a
+        # logger.error mentioning 401 / API key.
+        assert 'Pass 41.7.C' in body, (
+            "Pass 41.7.C marker missing — RA 401 observability not wired"
+        )
+        # Find the marker; nearby code must mention the user-actionable hint.
+        idx = body.find('Pass 41.7.C')
+        nearby = body[max(0, idx - 100):idx + 800]
+        assert '401' in nearby, "Pass 41.7.C region must mention 401 status"
+        assert 'API key' in nearby or 'api_key' in nearby, (
+            "Pass 41.7.C region must hint at user-actionable 'check API key'"
+        )

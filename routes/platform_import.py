@@ -481,7 +481,12 @@ def api_xbox_callback():
     save_tokens(tokens, g.user['id'])
 
     logger.info(f"Xbox: Connected as {gamertag} (XUID: {xuid}, user={g.user['id']})")
-    return redirect(url_for('game_imports.game_imports_page', tab='xbox') + '&xbox_connected=1')
+    # Pass 41.7.B — pass `xbox_connected=1` as a kwarg to url_for so URL
+    # construction is unambiguous. The previous `+ '&xbox_connected=1'`
+    # string concat worked only because url_for happened to emit `?tab=xbox`
+    # today; a future refactor that drops the query arg would have produced
+    # `/game-imports&xbox_connected=1` (broken path).
+    return redirect(url_for('game_imports.game_imports_page', tab='xbox', xbox_connected=1))
 
 
 @bp.route('/api/xbox/status')

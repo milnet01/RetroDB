@@ -1,3 +1,18 @@
+- version: 3.5.6
+  date: 2026-04-25
+  tags:
+  - type: hardening
+    label: Pass 41.7 — TROPUSR explicit bounds; Xbox redirect kwarg; RA 401 logging
+  body: |
+    <ul>
+        <li><strong>Pass 41.7.A (MEDIUM) &mdash; TROPUSR.DAT explicit bounds</strong>. <code>scraper/trophy_parser.py::TROPUSRParser</code> parsed attacker-controlled <code>tables_count</code>, <code>entries_count</code>, and <code>offset</code> values from PS3 trophy save files. The inner <code>break</code> guards (<code>if header_offset + 32 &gt; len(data): break</code>, <code>if entry_offset + entry_size &gt; len(data): break</code>) saved exploitability today, but bounds correctness relied on a reviewer proving early-exit rather than explicit min/return. Now prepends <code>tables_count = min(tables_count, max(0, (len(data) - 0x30) // 32))</code> and <code>if offset &gt;= len(data): return</code> in <code>_parse_table6</code>, making the safety obvious to static analysis.</li>
+        <li><strong>Pass 41.7.B (MEDIUM) &mdash; Xbox callback redirect uses kwarg form</strong>. <code>routes/platform_import.py:484</code> built the redirect target via <code>url_for('game_imports.game_imports_page', tab='xbox') + '&amp;xbox_connected=1'</code>. This worked only because <code>url_for</code> happened to emit a query string today (<code>?tab=xbox</code>); a future template-route refactor that drops the query arg would have produced <code>/game-imports&amp;xbox_connected=1</code> &mdash; a broken path. Converted to <code>url_for(..., tab='xbox', xbox_connected=1)</code> kwarg form so URL construction is unambiguous.</li>
+        <li><strong>Pass 41.7.C (MEDIUM) &mdash; RetroAchievements 401 logged explicitly</strong>. The 5 RA HTTP callers in <code>scraper/retroachievements.py</code> (<code>GetGameList</code>, <code>GetGame</code>, two <code>GetGameInfoAndUserProgress</code> variants, <code>GetUserSummary</code>) caught a 401 response in the generic <code>if response is not None and response.status_code == 200</code> miss-branch and silently returned None &mdash; the user saw &ldquo;no RA entry found&rdquo; with no indication that the API key was invalid. Each caller now emits a <code>logger.error</code> on 401 with the user-actionable hint (&ldquo;Re-enter the api_key in Settings &rarr; Scrapers&rdquo;).</li>
+        <li><strong>Tests</strong>. <code>TestPass41_7A/B/C</code> &mdash; 4 cases. Source-level pin on <code>tables_count = min(tables_count</code> idiom + the <code>Pass 41.7.A</code> marker for the offset bound; pin that the historical <code>+ '&amp;xbox_connected=1'</code> concat is gone (comment-stripped grep, since the explanatory comment quotes the historical shape); pin on the <code>Pass 41.7.C</code> marker + a logger.error mention of <code>401</code> + <code>API key</code>.</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 41.7 closed. Pass 41 has 8 sub-passes remaining (41.6 + 41.8 &hellip; 41.14, plus 41.5b carry-over).</li>
+        <li><strong>Version bump 3.5.5 &rarr; 3.5.6</strong>: patch (defense-in-depth bounds + observability + URL-construction hygiene).</li>
+    </ul>
+
 - version: 3.5.5
   date: 2026-04-25
   tags:

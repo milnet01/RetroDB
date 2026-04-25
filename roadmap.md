@@ -694,7 +694,16 @@ paths or silent-corruption vectors under routine use.
   response.status_code == 401: logger.error(...); return None` branch
   before the generic non-200 fallthrough.
 - **Source**: 2026-04-24 indie-review, OAuth H1/H2/M5.
-- **Status**: todo
+- **Status**: done (v3.5.6) — A: TROPUSR parser caps `tables_count` to
+  `(len(data) - 0x30) // 32` up-front and early-returns from
+  `_parse_table6` if `header['offset'] >= len(data)`. B: Xbox callback
+  redirect now `url_for('game_imports.game_imports_page', tab='xbox',
+  xbox_connected=1)` (kwarg form, no fragile string concat). C: 5
+  RetroAchievements HTTP callers (`GetGameList`, `GetGame`, two
+  `GetGameInfoAndUserProgress` variants, `GetUserSummary`) emit
+  `logger.error` on 401 with the user-actionable hint to re-enter
+  the API key in Settings → Scrapers. Tests:
+  `tests/test_pass41_security.py::TestPass41_7A/B/C` (4 cases).
 
 #### Pass 41.8 Achievements/trophies — `flask.g` shadow + achievement aggregation silent-drop
 

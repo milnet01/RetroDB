@@ -187,7 +187,14 @@ class TROPUSRParser:
             return self.entries
         
         tables_count = struct.unpack('>I', data[8:12])[0]
-        
+
+        # Pass 41.7.A — explicit defensive cap so static analysis doesn't have
+        # to prove safety from the inner `if header_offset + 32 > len(data):
+        # break` alone. tables_count comes from attacker-controlled file
+        # bytes; cap it to the maximum number of 32-byte table headers that
+        # can fit between offset 0x30 and end-of-data.
+        tables_count = min(tables_count, max(0, (len(data) - 0x30) // 32))
+
         # Parse table headers (start at 0x30, 32 bytes each)
         table_headers = []
         for i in range(tables_count):
@@ -220,7 +227,14 @@ class TROPUSRParser:
         # Entry size = entries_size + 0x10 (16-byte entry header)
         entry_size = header['entries_size'] + 0x10
         offset = header['offset']
-        
+
+        # Pass 41.7.A — defensive bound: header['offset'] is attacker-
+        # controlled. If it's already past end-of-data, the inner-loop
+        # `if entry_offset + entry_size > len(data): break` saves us today,
+        # but explicit early return makes the safety obvious.
+        if offset >= len(data):
+            return
+
         for i in range(header['entries_count']):
             entry_offset = offset + (i * entry_size)
             
