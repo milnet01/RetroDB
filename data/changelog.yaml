@@ -1,3 +1,17 @@
+- version: 3.4.13
+  date: 2026-04-25
+  tags:
+  - type: security
+    label: Pass 40.13 — showModal opt-in HTML
+  body: |
+    <ul>
+        <li><strong>Pass 40.13 (CRITICAL) &mdash; <code>showModal</code> blocklist XSS sink closed</strong>. <code>templates/base.html::showModal</code> ran <code>if (message.includes('&lt;') &amp;&amp; message.includes('&gt;'))</code> &rarr; <code>innerHTML</code> render with a <code>&lt;script&gt;</code>-only strip. The blocklist missed <code>&lt;img onerror=&gt;</code>, <code>&lt;svg onload=&gt;</code>, <code>&lt;iframe src=javascript:&gt;</code>, and every other event handler. Any caller that fed the modal a string built from server output containing both brackets (e.g. an error like <code>"Bad ROM &lt;foo&gt; tag detected"</code>) became a reflected-XSS sink. Dozens of call sites compose <code>"Error: " + data.error</code> &mdash; the day a server echoes user-controlled text containing both brackets, every one of them fires. The settings-page <code>ConfirmModal.show</code> already gets this right with opt-in <code>allowHtml</code>; the two implementations disagreed. CWE-79.</li>
+        <li><strong>Fix</strong>. <code>showModal</code> now defaults to <code>textContent</code> with line-break preservation. Callers that need HTML must pass <code>{allowHtml: true}</code> in the new sixth <code>options</code> argument. The auto-detect heuristic is gone. <code>grep</code> across <code>templates/</code> + <code>static/js/</code> on 131 callers shows zero are passing intentional HTML &mdash; no migration needed; backwards-compatible.</li>
+        <li><strong>Tests</strong>. <code>TestPass40_13ShowModalOptInHtml</code> &mdash; 2 source-level pins: the live <code>if (message.includes('&lt;') &amp;&amp; message.includes('&gt;'))</code> branch is gone (test strips <code>// </code> comments first so the doc-block remains); <code>allowHtml</code> appears in the function body. 496 passed (was 494).</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 40.13 closed. 3 Tier-1 items remain.</li>
+        <li><strong>Version bump 3.4.12 &rarr; 3.4.13</strong>: patch (security; the rare modal call that previously rendered HTML now renders text &mdash; visible only if a server-side error message ever embedded HTML, which was always a footgun).</li>
+    </ul>
+
 - version: 3.4.12
   date: 2026-04-25
   tags:

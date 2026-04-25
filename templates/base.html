@@ -382,19 +382,32 @@
     let modalCallback = null;
     let modalCancelCallback = null;
     
-    function showModal(title, message, onConfirm, showCancel = false, onCancel = null) {
+    function showModal(title, message, onConfirm, showCancel = false, onCancel = null, options = {}) {
+        // Pass 40.13 — default to textContent; require explicit
+        // {allowHtml: true} opt-in.  The previous
+        // `message.includes('<') && message.includes('>')` heuristic was a
+        // blocklist XSS sink: it innerHTML-rendered any string that
+        // happened to contain both brackets, then stripped only <script>
+        // tags — missing <img onerror=>, <svg onload=>,
+        // <iframe src=javascript:>, and every other event handler.  The
+        // day a server echoed user-controlled text containing both `<`
+        // and `>` (e.g. an error like "Bad ROM <foo> tag detected"),
+        // every page that called showModal became a reflected-XSS sink.
+        // grep across templates/ + static/js/ shows zero callers passing
+        // intentional HTML, so the auto-detect was pure footgun.  CWE-79.
         document.getElementById('customModalTitle').textContent = title;
         const msgEl = document.getElementById('customModalMessage');
-        if (message.includes('<') && message.includes('>')) {
-            // Developer-controlled HTML content — sanitize to remove script tags
+        if (options && options.allowHtml === true) {
+            // Caller is opting into HTML — they're responsible for the
+            // safety of `message`.  Strip <script> as a backstop.
             const temp = document.createElement('div');
             temp.innerHTML = message;
             temp.querySelectorAll('script').forEach(s => s.remove());
             msgEl.innerHTML = temp.innerHTML;
         } else {
-            // Plain text — use textContent to prevent XSS, then add line breaks
+            // Default — textContent + line breaks.  XSS-safe.
             msgEl.textContent = '';
-            message.split('\n').forEach((line, i) => {
+            String(message).split('\n').forEach((line, i) => {
                 if (i > 0) msgEl.appendChild(document.createElement('br'));
                 msgEl.appendChild(document.createTextNode(line));
             });

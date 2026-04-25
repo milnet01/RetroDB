@@ -399,7 +399,11 @@ paths or silent-corruption vectors under routine use.
   `<script>`-strip heuristic entirely.  Audit callers and migrate the
   handful that legitimately need HTML.
 - **Source**: 2026-04-24 indie-review, frontend JS C3.
-- **Status**: todo
+- **Status**: done (v3.4.13) — `showModal` defaults to `textContent`
+  with line-break preservation; opt-in `{allowHtml: true}` via new 6th
+  `options` argument. Auto-detect heuristic removed. 131 existing
+  callers all pass plain text, so no migration needed. Tests:
+  `test_pass40_security.py::TestPass40_13ShowModalOptInHtml`.
 
 #### Pass 40.14 PSN trophy-detail game-link search XSS (CRITICAL, S)
 

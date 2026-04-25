@@ -941,3 +941,40 @@ class TestPass40_12ToastControllerXss:
         # job.system_name — it must go through escapeHtml.
         assert '${job.system_name || \'Multi-System\'}' not in src, \
             'job.system_name must not be raw-interpolated into innerHTML (Pass 40.12)'
+
+
+# -----------------------------------------------------------------------------
+# 40.13 — showModal HTML auto-detect blocklist XSS sink
+# -----------------------------------------------------------------------------
+class TestPass40_13ShowModalOptInHtml:
+    """showModal must default to textContent; opt-in via {allowHtml: true}.
+    The old heuristic `message.includes('<') && message.includes('>')`
+    was a blocklist that <script>-stripped only — missing <img onerror=>,
+    <svg onload=>, etc."""
+
+    def test_no_includes_lt_gt_heuristic(self):
+        """The live `if (message.includes('<') && message.includes('>'))`
+        branch must be gone.  We strip `// ...` comments before scanning so
+        a Pass 40.13 doc-block referencing the old heuristic is allowed."""
+        import os, re
+        repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        path = os.path.join(repo, 'templates', 'base.html')
+        src = open(path).read()
+        idx = src.index('function showModal(')
+        end = src.index('function modalKeyHandler', idx)
+        body = src[idx:end]
+        # Strip single-line `//` comments so the test sees only live code.
+        live = re.sub(r'//[^\n]*', '', body)
+        assert "if (message.includes('<') && message.includes('>'))" not in live, \
+            'showModal must not auto-detect HTML via the includes() heuristic (Pass 40.13)'
+
+    def test_options_param_with_allowhtml(self):
+        import os
+        repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        path = os.path.join(repo, 'templates', 'base.html')
+        src = open(path).read()
+        idx = src.index('function showModal(')
+        end = src.index('function modalKeyHandler', idx)
+        body = src[idx:end]
+        assert 'allowHtml' in body, \
+            'showModal must accept opt-in {allowHtml: true} (Pass 40.13)'
