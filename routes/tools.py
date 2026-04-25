@@ -4,7 +4,7 @@ Handles ROM tools pages and API endpoints for archive scanning, CHD conversion,
 CHD verification, and duplicate finding.
 """
 
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, g
 from datetime import datetime
 import os
 import json
@@ -25,6 +25,10 @@ from services.database import query
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required, admin_required
 from services.security import safe_path
+from services.rom_tools_validators import (
+    validate_rom_tools_value,
+    known_rom_tools_keys,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -197,15 +201,40 @@ def rom_tools_settings():
 @login_required
 @handle_api_errors
 def api_rom_tools_settings():
-    """Get or update ROM Tools settings"""
+    """Get or update ROM Tools settings.
+
+    Pass 40.1 — POST is admin-only and runs every key/value through
+    validate_rom_tools_value().  The chdman_path field flows directly into
+    subprocess.run() argv[0], so writing it without a per-key allowlist is
+    a CWE-78 RCE primitive for any logged-in user.
+
+    GET stays accessible to every logged-in user because the archive
+    scanner page reads roms_path / excluded_paths / unwanted_patterns to
+    populate its scan UI.
+    """
     if request.method == 'GET':
         return jsonify(load_rom_tools_config())
-    else:
-        settings = request.get_json()
-        if save_rom_tools_config(settings):
-            return success()
-        else:
-            return error('Failed to save settings', 500)
+
+    if not g.user or g.user.get('role') != 'admin':
+        return error('Administrator privileges required', 403)
+
+    incoming = request.get_json() or {}
+    if not isinstance(incoming, dict):
+        return error('Settings payload must be an object', 400)
+
+    valid_keys = known_rom_tools_keys()
+    current = load_rom_tools_config()
+    for key, value in incoming.items():
+        if key not in valid_keys:
+            return error(f"Unknown setting key: {key}", 400)
+        ok, reason, cleaned = validate_rom_tools_value(key, value)
+        if not ok:
+            return error(f"Invalid value for '{key}': {reason}", 400)
+        current[key] = cleaned
+
+    if save_rom_tools_config(current):
+        return success()
+    return error('Failed to save settings', 500)
 
 
 @tools_bp.route('/api/rom-tools/status')
