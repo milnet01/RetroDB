@@ -1457,6 +1457,22 @@ def api_timezones():
 ensure_user_tables()
 init_database()
 
+# Pass 42 — seed emulator registry on startup (idempotent).  Runs after
+# init_database() so migration 010's tables exist; INSERT OR IGNORE on
+# emulators.name and (system_id, emulator_id) makes re-runs no-ops.
+try:
+    import sqlite3 as _sqlite
+    from services.emulator_seeder import seed_emulators_from_file
+    _seed_path = os.path.join(os.path.dirname(__file__), 'data', 'emulator_seeds.json')
+    if os.path.exists(_seed_path):
+        _seed_conn = _sqlite.connect(config.DB_PATH)
+        try:
+            seed_emulators_from_file(_seed_conn, _seed_path)
+        finally:
+            _seed_conn.close()
+except Exception as _e:
+    logger.error(f"Emulator seed failed: {_e}", exc_info=True)
+
 # Pass 41.1.C — surface accounts whose password_hash is below the current
 # OWASP floor (PBKDF2_ITERATIONS).  needs_rehash() only fires on the next
 # successful login, so dormant accounts retain pre-bump 100k-iteration
