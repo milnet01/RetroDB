@@ -1,3 +1,17 @@
+- version: 3.4.4
+  date: 2026-04-25
+  tags:
+  - type: security
+    label: Pass 40.4 — Steam achievement IDOR closed
+  body: |
+    <ul>
+        <li><strong>Pass 40.4 (CRITICAL) &mdash; Steam achievement IDOR closed</strong>. Migration 009 added <code>user_id</code> to <code>game_achievement_progress</code> and <code>steam_achievements</code>; <code>routes/xbox_achievements.py</code> filters every SELECT on it, but three queries in <code>routes/steam_achievements.py</code> (landing-page join, per-game progress, per-game achievements) silently dropped the filter. On a multi-user install, user A saw user B's earned-achievement counts and per-achievement unlock state. CWE-639 IDOR. Pass 31.4's commentary mentioned the scoping but the WHERE clauses didn't follow.</li>
+        <li><strong>Fix</strong>. Three queries gain <code>AND gap.user_id = ?</code> / <code>AND user_id = ?</code> bound to <code>g.user['id']</code>, mirroring <code>xbox_achievements_landing</code> and <code>xbox_achievement_game</code> (the correct template).</li>
+        <li><strong>Tests</strong>. <code>TestPass40_4SteamAchievementsUserScoping</code> &mdash; 2 source-level pins (landing query has <code>gap.user_id = ?</code> + binds <code>g.user['id']</code>; per-game has the filter on both sub-queries). 461 passed (was 459).</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 40.4 closed. 12 Tier-1 items remain.</li>
+        <li><strong>Version bump 3.4.3 &rarr; 3.4.4</strong>: patch (security; Steam achievement landing now empty for users with zero Steam syncs &mdash; previously bled cross-user data).</li>
+    </ul>
+
 - version: 3.4.3
   date: 2026-04-25
   tags:

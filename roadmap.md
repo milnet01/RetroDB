@@ -169,7 +169,10 @@ paths or silent-corruption vectors under routine use.
   `AND user_id = ?` into each of the three queries, bound to
   `g.user['id']`.
 - **Source**: 2026-04-24 indie-review, achievements/trophies C1.
-- **Status**: todo
+- **Status**: done (v3.4.4) — three Steam queries gained
+  `AND gap.user_id = ?` / `AND user_id = ?` bound to `g.user['id']`
+  (mirrors the Xbox blueprint). Tests:
+  `test_pass40_security.py::TestPass40_4SteamAchievementsUserScoping`.
 
 #### Pass 40.5 ETag cross-user cache bleed on `/api/games/card-data` (CRITICAL, S)
 

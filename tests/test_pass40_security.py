@@ -511,3 +511,38 @@ class TestPass40_3ArchiveScannerM3u:
             f"unexpected: {resp.status_code}"
         assert str(outside) not in called_with, \
             'scanner.create_m3u_playlist invoked with out-of-library path'
+
+
+# -----------------------------------------------------------------------------
+# 40.4 — Steam achievement IDOR (three queries missing user_id)
+# -----------------------------------------------------------------------------
+class TestPass40_4SteamAchievementsUserScoping:
+    """Migration 009 added user_id to game_achievement_progress and
+    steam_achievements; the three SELECTs in routes/steam_achievements.py
+    must filter on it (Xbox already does)."""
+
+    def test_landing_query_filters_user_id(self):
+        from routes import steam_achievements as mod
+
+        src = open(mod.__file__).read()
+        idx = src.index('def steam_achievements_landing')
+        end = src.index('def steam_achievement_game', idx)
+        body = src[idx:end]
+        assert 'gap.user_id = ?' in body, \
+            'landing query must filter game_achievement_progress on user_id (Pass 40.4)'
+        assert "g.user['id']" in body, \
+            'landing query must bind g.user[id] (Pass 40.4)'
+
+    def test_per_game_progress_query_filters_user_id(self):
+        from routes import steam_achievements as mod
+
+        src = open(mod.__file__).read()
+        idx = src.index('def steam_achievement_game')
+        # bound to the next def
+        end = src.index('\n@bp.route', idx + 1)
+        body = src[idx:end]
+        # Two queries to check inside this function: progress + achievements
+        assert body.count('user_id = ?') >= 2, \
+            'per-game route must filter both progress + steam_achievements on user_id (Pass 40.4)'
+        assert "g.user['id']" in body, \
+            'per-game route must bind g.user[id] (Pass 40.4)'

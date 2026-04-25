@@ -27,7 +27,8 @@ bp = Blueprint('steam_achievements', __name__)
 @bp.route('/steam-achievements')
 @login_required
 def steam_achievements_landing():
-    """Landing page: all games with Steam achievement progress."""
+    """Landing page: all games with Steam achievement progress (Pass 40.4 — per user)."""
+    user_id = g.user['id']
     games = query("""
         SELECT g.id, g.title, g.boxart, g.system_id, s.name as system_name,
                gap.earned_achievements, gap.total_achievements,
@@ -36,8 +37,9 @@ def steam_achievements_landing():
         JOIN systems s ON g.system_id = s.id
         JOIN game_achievement_progress gap ON g.id = gap.game_id
         WHERE gap.source = 'steam' AND g.steam_app_id IS NOT NULL
+          AND gap.user_id = ?
         ORDER BY g.title COLLATE NOCASE
-    """)
+    """, (user_id,))
 
     # Calculate overall stats
     total_games = len(games)
@@ -69,19 +71,20 @@ def steam_achievement_game(game_id):
     if not game:
         return "Game not found", 404
 
-    # Get achievement progress summary
+    # Get achievement progress summary (Pass 40.4 — per user).
+    user_id = g.user['id']
     progress = query("""
         SELECT earned_achievements, total_achievements, completion_percentage, last_synced
         FROM game_achievement_progress
-        WHERE game_id = ? AND source = 'steam'
-    """, (game_id,), one=True)
+        WHERE game_id = ? AND source = 'steam' AND user_id = ?
+    """, (game_id, user_id), one=True)
 
-    # Get individual achievements
+    # Get individual achievements (Pass 40.4 — per user).
     achievements = query("""
         SELECT * FROM steam_achievements
-        WHERE game_id = ?
+        WHERE game_id = ? AND user_id = ?
         ORDER BY achieved DESC, unlock_time DESC, name ASC
-    """, (game_id,))
+    """, (game_id, user_id))
 
     unlocked = [a for a in achievements if a['achieved']]
     locked = [a for a in achievements if not a['achieved']]
