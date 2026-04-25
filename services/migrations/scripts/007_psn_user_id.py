@@ -217,11 +217,12 @@ def _rebuild_psn_trophies(cursor, admin_id):
 def apply(conn):
     cursor = conn.cursor()
 
-    # Disable FK checks for the duration of the rebuild. The connection-level
-    # PRAGMA is a no-op if FKs were already off (which they are under the
-    # standard RetroDB init path), but leaving it explicit is defensive for
-    # callers that enable FKs elsewhere. Restored at the end.
-    cursor.execute("PRAGMA foreign_keys = OFF")
+    # Defer FK enforcement until COMMIT. `PRAGMA foreign_keys = OFF` is a
+    # no-op inside a transaction (SQLite docs: FK enforcement state cannot
+    # change mid-txn), but `defer_foreign_keys = ON` works inside a txn and
+    # is auto-reset at txn end. Lets the rebuild drop and recreate referenced
+    # tables atomically without spurious immediate-FK violations.
+    cursor.execute("PRAGMA defer_foreign_keys = ON")
 
     admin_id = _admin_user_id(cursor)
 
@@ -270,7 +271,7 @@ def apply(conn):
             )
         _rebuild_psn_trophies(cursor, admin_id)
 
-    cursor.execute("PRAGMA foreign_keys = ON")
+    # defer_foreign_keys auto-resets at COMMIT — no explicit restoration needed.
 
     logger.info(
         "psn_games / psn_trophies now carry user_id; npwr_id uniqueness is "

@@ -1,3 +1,17 @@
+- version: 3.5.2
+  date: 2026-04-25
+  tags:
+  - type: reliability
+    label: Pass 41.2 — migration FK pragma fixed; connection leaks closed
+  body: |
+    <ul>
+        <li><strong>Pass 41.2.A (HIGH) &mdash; migrations 007/008/009 used a no-op PRAGMA</strong>. <code>PRAGMA foreign_keys = OFF</code> issued from inside <code>apply()</code> ran after <code>BEGIN</code> in <code>services/migrations/__init__.py:83</code>. Per SQLite docs, the FK enforcement state cannot change mid-transaction &mdash; the PRAGMA was silently ignored. The migrations only happened to work today because no live FK references the rebuilt <code>psn_games</code> / <code>psn_trophies</code> / <code>collector_trophies</code> / <code>game_achievement_progress</code> / <code>steam_achievements</code> / <code>xbox_achievements</code> tables. A future migration introducing a deferred FK against any of them would silently corrupt on rebuild. Replaced with <code>PRAGMA defer_foreign_keys = ON</code>, which IS effective inside a transaction (auto-resets at COMMIT). The matching <code>PRAGMA foreign_keys = ON</code> restorations were similarly no-ops and have been removed.</li>
+        <li><strong>Pass 41.2.B (HIGH) &mdash; <code>get_db()</code> connection leaks routed through teardown</strong>. <code>routes/museum.py</code> (8 sites), <code>routes/tools.py:1316</code>, and <code>routes/trophies.py:1804</code> opened a fresh <code>sqlite3.Connection</code> via <code>get_db()</code> with no paired <code>.close()</code>. Each leak holds a file handle plus the 64 MB <code>cache_size</code> budget; under load this compounds. All 10 sites now use <code>get_request_db()</code>, which returns the connection stored on <code>flask.g.db</code> &mdash; closed automatically by the <code>teardown_appcontext</code> handler registered in <code>app.py</code>. No semantic change for callers (same <code>sqlite3.Connection</code> shape, same row factory).</li>
+        <li><strong>Tests</strong>. New <code>TestPass41_2AMigrationDeferForeignKeys</code> (3 cases) and <code>TestPass41_2BConnectionLeaksClosed</code> (3 cases). 41.2.A: source-level pin that the broken literal <code>PRAGMA foreign_keys = OFF</code> is gone from non-comment code, that <code>PRAGMA defer_foreign_keys = ON</code> appears, and an end-to-end fresh-DB migration run that reaches v9 and is idempotent on re-run. 41.2.B: source-level pin that no module among the three still calls bare <code>get_db()</code> for the fixed sites and that each imports <code>get_request_db</code>.</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 41.2 closed. Pass 41 has 12 sub-passes remaining (41.3 &hellip; 41.14).</li>
+        <li><strong>Version bump 3.5.1 &rarr; 3.5.2</strong>: patch (DB hygiene + leak closure; no behavior change for end users).</li>
+    </ul>
+
 - version: 3.5.1
   date: 2026-04-25
   tags:

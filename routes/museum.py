@@ -19,7 +19,7 @@ from urllib.parse import urlparse
 import threading
 
 import config
-from services.database import get_db
+from services.database import get_request_db
 from services.auth import login_required, editor_required
 
 logger = logging.getLogger(__name__)
@@ -146,7 +146,7 @@ def _find_hardware_image(folder):
 
 def _get_top_games(system_id, museum_data):
     """Get top 10 games combining DB critic scores and AI-cached data."""
-    db = get_db()
+    db = get_request_db()
 
     # Get top-scored games from DB with boxart
     db_games = db.execute("""
@@ -220,7 +220,7 @@ def _get_system_type(folder):
 @login_required
 def museum():
     """Museum landing page — timeline grouped by generation."""
-    db = get_db()
+    db = get_request_db()
 
     # Get all systems with game counts
     systems = db.execute("""
@@ -309,7 +309,7 @@ def museum():
 @login_required
 def museum_system(system_id):
     """Per-system museum page."""
-    db = get_db()
+    db = get_request_db()
 
     system = db.execute(
         "SELECT id, name, folder FROM systems WHERE id = ?", (system_id,)
@@ -379,7 +379,7 @@ def generate_system(system_id):
     )
     from services.jobs.museum import _build_museum_prompt, _build_top_games_prompt, _parse_museum_response
 
-    db = get_db()
+    db = get_request_db()
     system = db.execute(
         "SELECT id, name, folder FROM systems WHERE id = ?", (system_id,)
     ).fetchone()
@@ -531,7 +531,7 @@ def _propagate_controller_image(db, controller_id, image_filename):
 @editor_required
 def fetch_controller_image(controller_id):
     """Fetch and process a single controller image."""
-    db = get_db()
+    db = get_request_db()
     controller = db.execute(
         "SELECT id, name, manufacturer FROM controllers WHERE id = ?",
         (controller_id,)
@@ -567,7 +567,7 @@ def fetch_controller_image(controller_id):
 @editor_required
 def fetch_controller_images_bulk(system_id):
     """Bulk fetch controller images for a system."""
-    db = get_db()
+    db = get_request_db()
     controllers = db.execute(
         """SELECT c.id, c.name, c.manufacturer, c.image FROM controllers c
            JOIN system_controllers sc ON c.id = sc.controller_id
@@ -616,7 +616,7 @@ def upload_controller_image(controller_id):
     from PIL import Image
     import io
 
-    db = get_db()
+    db = get_request_db()
     controller = db.execute(
         "SELECT id, name FROM controllers WHERE id = ?",
         (controller_id,)
@@ -705,7 +705,7 @@ def remove_controller_bg(controller_id):
     from PIL import Image
     import io
 
-    db = get_db()
+    db = get_request_db()
     controller = db.execute(
         "SELECT id, name, image FROM controllers WHERE id = ?",
         (controller_id,)

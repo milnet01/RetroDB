@@ -545,7 +545,13 @@ paths or silent-corruption vectors under routine use.
   which works inside a txn.  (2) route every leaking `get_db()` through
   `get_request_db()` (teardown-managed).
 - **Source**: 2026-04-24 indie-review, database H1/H2.
-- **Status**: todo
+- **Status**: done (v3.5.2) — A: migrations 007/008/009 now use
+  `PRAGMA defer_foreign_keys = ON` (works inside a txn; auto-resets at
+  COMMIT) instead of the no-op `PRAGMA foreign_keys = OFF`. B: 10 leaking
+  sites in `routes/museum.py` (8), `routes/tools.py:1316`,
+  `routes/trophies.py:1804` routed through `get_request_db()` so the
+  teardown-appcontext handler closes them. Tests:
+  `tests/test_pass41_security.py::TestPass41_2A/B` (6 cases).
 
 #### Pass 41.3 App bootstrap — CSP nonce zombie + `'system'` log category dead + redactor ordering
 

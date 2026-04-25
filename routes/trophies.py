@@ -1800,8 +1800,8 @@ def api_psn_save_npsso():
         return jsonify({'success': False, 'error': 'No NPSSO token provided'})
 
     # Save to user settings
-    from services.database import get_db
-    db = get_db()
+    from services.database import get_request_db
+    db = get_request_db()
     db.execute("UPDATE user_settings SET psn_npsso = ?, psn_username = ? WHERE user_id = ?",
                (npsso, username, g.user['id']))
     db.commit()

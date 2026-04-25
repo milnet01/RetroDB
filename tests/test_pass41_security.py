@@ -179,3 +179,134 @@ class TestPass41_1CStaleHashSweep:
             "stale-hash sweep must emit logger.warning when count > 0 "
             "(Pass 41.1.C)"
         )
+
+
+# -----------------------------------------------------------------------------
+# 41.2.A — migrations 007/008/009 use defer_foreign_keys (works inside a txn)
+# -----------------------------------------------------------------------------
+class TestPass41_2AMigrationDeferForeignKeys:
+    """`PRAGMA foreign_keys = OFF` is a no-op inside a transaction (SQLite
+    docs: FK enforcement state cannot change mid-txn). Migrations 007/008/009
+    used that idiom and only happened to work because no live FK references
+    the rebuilt tables. Pass 41.2.A converts to `PRAGMA defer_foreign_keys =
+    ON`, which DOES work inside a transaction and is auto-reset at txn end."""
+
+    MIGRATION_FILES = (
+        'services/migrations/scripts/007_psn_user_id.py',
+        'services/migrations/scripts/008_collector_trophies_user_id.py',
+        'services/migrations/scripts/009_achievement_tables_user_id.py',
+    )
+
+    def _read(self, rel):
+        return open(os.path.join(_REPO_ROOT, rel), encoding='utf-8').read()
+
+    def test_no_more_foreign_keys_off_inside_apply(self):
+        """The broken `PRAGMA foreign_keys = OFF` literal must be gone — that
+        statement is silently ignored inside a transaction. Strip comments so
+        the explanatory inline comment naming the historical pragma doesn't
+        false-positive."""
+        for path in self.MIGRATION_FILES:
+            body = self._read(path)
+            code_only = '\n'.join(
+                line.split('#', 1)[0]
+                for line in body.splitlines()
+            )
+            assert 'PRAGMA foreign_keys = OFF' not in code_only, (
+                f"{path} still uses no-op `PRAGMA foreign_keys = OFF` "
+                "inside the migration transaction (Pass 41.2.A)"
+            )
+
+    def test_defer_foreign_keys_used_instead(self):
+        for path in self.MIGRATION_FILES:
+            body = self._read(path)
+            assert 'PRAGMA defer_foreign_keys = ON' in body, (
+                f"{path} must use `PRAGMA defer_foreign_keys = ON` instead "
+                "(Pass 41.2.A)"
+            )
+
+    def test_migrations_still_apply_cleanly(self, tmp_path, monkeypatch):
+        """End-to-end: a fresh DB must accept migrations 1..9 without error
+        after the FK pragma is replaced."""
+        import sqlite3
+        import config as cfg
+        db_path = tmp_path / 'mig.db'
+        monkeypatch.setattr(cfg, 'DB_PATH', str(db_path))
+
+        from services.database_init import init_database
+        from services.migrations import apply_pending, current_version, latest_version
+
+        init_database()  # creates baseline + applies all pending migrations
+
+        conn = sqlite3.connect(str(db_path))
+        try:
+            assert current_version(conn) >= 9
+            # Idempotency: re-running should be a no-op.
+            assert apply_pending(conn) == []
+            # Sanity: the rebuilt tables exist.
+            for table in ('psn_games', 'psn_trophies', 'collector_trophies',
+                          'game_achievement_progress', 'steam_achievements',
+                          'xbox_achievements'):
+                row = conn.execute(
+                    "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
+                    (table,)
+                ).fetchone()
+                assert row is not None, f"{table} missing after migrations"
+            assert latest_version() >= 9
+        finally:
+            conn.close()
+
+
+# -----------------------------------------------------------------------------
+# 41.2.B — connection leaks routed through teardown-managed get_request_db
+# -----------------------------------------------------------------------------
+class TestPass41_2BConnectionLeaksClosed:
+    """`get_db()` opens a fresh sqlite3.Connection that the caller must close.
+    routes/museum.py (8 sites), routes/tools.py:1316, routes/trophies.py:1804
+    used it without a paired `.close()`. Each leak holds a file handle plus
+    the 64 MB cache_size budget. Pass 41.2.B routes them through
+    `get_request_db()` which the teardown-appcontext handler closes."""
+
+    LEAKING_FILES = (
+        'routes/museum.py',
+        'routes/tools.py',
+        'routes/trophies.py',
+    )
+
+    def _read(self, rel):
+        return open(os.path.join(_REPO_ROOT, rel), encoding='utf-8').read()
+
+    def test_museum_uses_get_request_db(self):
+        body = self._read('routes/museum.py')
+        # Eight previously-leaking sites — none should call bare get_db().
+        # Tolerate the canonical import line itself.
+        for line in body.splitlines():
+            stripped = line.strip()
+            if stripped.startswith('#'):
+                continue
+            if 'get_db()' in stripped and 'get_request_db' not in stripped:
+                # The only acceptable shape is `from services.database import
+                # get_request_db` (no bare get_db calls in this module).
+                raise AssertionError(
+                    f"routes/museum.py still has bare get_db() call: {stripped!r} "
+                    "(Pass 41.2.B)"
+                )
+        assert 'get_request_db' in body, (
+            "routes/museum.py must import get_request_db (Pass 41.2.B)"
+        )
+
+    def test_tools_screenshot_dedup_uses_get_request_db(self):
+        body = self._read('routes/tools.py')
+        # The screenshot-dedup delete path at the previously-leaking line had
+        # `db = get_db()` without a close. Confirm a get_request_db site
+        # exists; the bare get_db() footprint here is shrinking on this pass.
+        assert 'get_request_db' in body, (
+            "routes/tools.py must import get_request_db (Pass 41.2.B)"
+        )
+
+    def test_trophies_psn_npsso_uses_get_request_db(self):
+        body = self._read('routes/trophies.py')
+        # The PSN /api/psn/save-npsso handler used get_db() without close.
+        # After the fix it must reach the request-scoped connection.
+        assert 'get_request_db' in body, (
+            "routes/trophies.py must import get_request_db (Pass 41.2.B)"
+        )

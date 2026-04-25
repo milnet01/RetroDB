@@ -66,13 +66,14 @@ def _columns_ddl(cols):
 
 def apply(conn):
     cursor = conn.cursor()
-    cursor.execute("PRAGMA foreign_keys = OFF")
+    # `PRAGMA foreign_keys = OFF` is a no-op inside a transaction; use
+    # `defer_foreign_keys = ON` instead (auto-resets at COMMIT).
+    cursor.execute("PRAGMA defer_foreign_keys = ON")
 
     if not _table_exists(cursor, 'collector_trophies'):
         # Baseline always creates this table, so hitting this branch means
         # the caller is running migrations against an incomplete DB. Let
         # baseline own the creation; this migration only reshapes.
-        cursor.execute("PRAGMA foreign_keys = ON")
         return
 
     if _has_column(cursor, 'collector_trophies', 'user_id'):
@@ -80,7 +81,6 @@ def apply(conn):
             "CREATE INDEX IF NOT EXISTS idx_collector_trophies_user "
             "ON collector_trophies(user_id)"
         )
-        cursor.execute("PRAGMA foreign_keys = ON")
         return
 
     admin_id = _admin_user_id(cursor)
@@ -120,7 +120,7 @@ def apply(conn):
         "CREATE INDEX idx_collector_trophies_tier ON collector_trophies(tier)"
     )
 
-    cursor.execute("PRAGMA foreign_keys = ON")
+    # defer_foreign_keys auto-resets at COMMIT — no explicit restoration needed.
 
     logger.info(
         "collector_trophies rebuilt with (id, user_id) composite PK "

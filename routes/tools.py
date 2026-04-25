@@ -1312,8 +1312,8 @@ def api_screenshot_dedup_delete():
             by_game[gid] = []
         by_game[gid].append(fn)
 
-    from services.database import get_db
-    db = get_db()
+    from services.database import get_request_db
+    db = get_request_db()
 
     for game_id, filenames in by_game.items():
         game = db.execute(

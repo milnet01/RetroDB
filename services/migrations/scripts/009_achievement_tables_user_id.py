@@ -186,7 +186,9 @@ def _rebuild_xbox_achievements(cursor, admin_id):
 
 def apply(conn):
     cursor = conn.cursor()
-    cursor.execute("PRAGMA foreign_keys = OFF")
+    # `PRAGMA foreign_keys = OFF` is a no-op inside a transaction; use
+    # `defer_foreign_keys = ON` instead (auto-resets at COMMIT).
+    cursor.execute("PRAGMA defer_foreign_keys = ON")
 
     admin_id = _admin_user_id(cursor)
 
@@ -253,7 +255,7 @@ def apply(conn):
         else:
             _rebuild_xbox_achievements(cursor, admin_id)
 
-    cursor.execute("PRAGMA foreign_keys = ON")
+    # defer_foreign_keys auto-resets at COMMIT — no explicit restoration needed.
 
     logger.info(
         "game_achievement_progress / steam_achievements / xbox_achievements "
