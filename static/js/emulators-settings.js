@@ -1,7 +1,7 @@
 // =============================================================================
 // RETRODB - Settings → Emulators page
 // =============================================================================
-// Pass 42 — wires the RetroArch auto-detect button, lists emulators in the
+// Pass 44 — wires the RetroArch auto-detect button, lists emulators in the
 // registry, and lists per-system mappings.  No bundled — page-specific JS.
 // =============================================================================
 

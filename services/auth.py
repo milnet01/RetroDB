@@ -47,7 +47,7 @@ ROLE_PERMISSIONS = {
     },
 }
 
-# Pass 42 — single source of truth for "what role values are accepted on
+# Pass 44 — single source of truth for "what role values are accepted on
 # user create/update".  Hoisted so routes/auth.py and any future role UI
 # never re-list the keys; adding a role only touches ROLE_PERMISSIONS.
 VALID_ROLES = tuple(ROLE_PERMISSIONS.keys())

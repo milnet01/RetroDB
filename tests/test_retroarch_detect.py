@@ -1,4 +1,4 @@
-# Pass 42 — RetroArch path auto-detect endpoint.
+# Pass 44 — RetroArch path auto-detect endpoint.
 import pytest
 
 

@@ -1,7 +1,7 @@
 // =============================================================================
 // RETRODB - Top-of-page launch indicator
 // =============================================================================
-// Pass 42 — polls /api/launches/active every 5s while the page is foregrounded.
+// Pass 44 — polls /api/launches/active every 5s while the page is foregrounded.
 // Shows the running count when non-zero, hidden otherwise.  Click reveals the
 // list with kill buttons.
 // =============================================================================

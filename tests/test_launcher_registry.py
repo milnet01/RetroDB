@@ -1,4 +1,4 @@
-# Pass 42 — ProcessRegistry: token registry + GC.
+# Pass 44 — ProcessRegistry: token registry + GC.
 import time
 from unittest.mock import MagicMock
 

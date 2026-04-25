@@ -244,7 +244,7 @@ app.register_blueprint(launch_bp)
 app.register_blueprint(emulators_bp)
 app.register_blueprint(launch_settings_bp)
 
-# Pass 42 — expose has_permission to templates as has_perm() so the ▶ Play
+# Pass 44 — expose has_permission to templates as has_perm() so the ▶ Play
 # button can be permission-gated in game_detail.html without leaking
 # launch URLs to viewers.
 from services.auth import has_permission as _has_permission_for_template
@@ -1463,7 +1463,7 @@ def api_timezones():
 ensure_user_tables()
 init_database()
 
-# Pass 42 — seed emulator registry on startup (idempotent).  Runs after
+# Pass 44 — seed emulator registry on startup (idempotent).  Runs after
 # init_database() so migration 010's tables exist; INSERT OR IGNORE on
 # emulators.name and (system_id, emulator_id) makes re-runs no-ops.
 try:

@@ -1,4 +1,4 @@
-# Pass 42 — multi-emulator launch: schema migration regression coverage.
+# Pass 44 — multi-emulator launch: schema migration regression coverage.
 import importlib.util
 import pathlib
 import sqlite3

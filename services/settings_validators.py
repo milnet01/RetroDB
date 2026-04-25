@@ -37,7 +37,7 @@ _ALLOWED_NAMING_TAGS = {
 }
 _ALLOWED_NOTIFICATION_LEVELS = {'success', 'info', 'warning', 'error'}
 
-# Pass 42 — multi-emulator launch.  Spec §Settings.
+# Pass 44 — multi-emulator launch.  Spec §Settings.
 _ALLOWED_LAUNCHER_BACKENDS = {'local', 'remote'}
 _ALLOWED_CONCURRENT_POLICIES = {'reject', 'kill_and_relaunch'}
 
@@ -203,7 +203,7 @@ def _logging_validator(value):
     return True, None, cleaned
 
 
-# Pass 42 — launch path validators.
+# Pass 44 — launch path validators.
 #
 # retroarch_binary may be empty (resolver fallback chain), an absolute
 # path, or the literal `flatpak run <app-id>` form.  No shell metacharacters
@@ -282,7 +282,7 @@ _VALIDATORS = {
     'article_placement': _enum_validator(_ALLOWED_ARTICLE_PLACEMENTS, 'article_placement'),
     'logging': _logging_validator,
 
-    # Pass 42 — multi-emulator launch
+    # Pass 44 — multi-emulator launch
     'retroarch_binary': _retroarch_binary_validator,
     'retroarch_cores_dir': _retroarch_cores_dir_validator,
     'launcher_backend': _enum_validator(_ALLOWED_LAUNCHER_BACKENDS, 'launcher_backend'),

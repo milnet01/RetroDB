@@ -479,7 +479,7 @@ def game_detail(game_id):
                     edition = request.form.get('edit_edition', '').strip()
                     description = request.form.get('edit_description', '').strip()
 
-                    # Pass 42 — multi-emulator launch overrides.
+                    # Pass 44 — multi-emulator launch overrides.
                     emu_override_raw = request.form.get('edit_emulator_override_id', '').strip()
                     try:
                         emulator_override_id = int(emu_override_raw) if emu_override_raw else None

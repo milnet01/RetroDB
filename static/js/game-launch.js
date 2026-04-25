@@ -1,7 +1,7 @@
 // =============================================================================
 // RETRODB - Game launch
 // =============================================================================
-// Pass 42 — wires the ▶ Play button on game_detail.html to
+// Pass 44 — wires the ▶ Play button on game_detail.html to
 // POST /api/game/<id>/launch.  On 409 (already running), prompts to kill
 // the prior instance and relaunch.  Surfaces errors via showNotification.
 // =============================================================================

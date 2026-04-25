@@ -3971,11 +3971,11 @@ function openEditModal() {
     // Initialize campaign toggle state
     initializeCampaignToggle();
 
-    // Pass 42 — populate the emulator override dropdown.
+    // Pass 44 — populate the emulator override dropdown.
     populateEmulatorOverrides();
 }
 
-// Pass 42 — multi-emulator launch: load the per-system emulator list into
+// Pass 44 — multi-emulator launch: load the per-system emulator list into
 // the override dropdown.  Honors data-current-override so the saved value
 // is pre-selected.
 async function populateEmulatorOverrides() {
@@ -5416,6 +5416,6 @@ document.querySelectorAll('.filter-link').forEach(link => {
 })();
 </script>
 
-<!-- Pass 42 — multi-emulator launch -->
+<!-- Pass 44 — multi-emulator launch -->
 <script src="{{ asset_url('js/game-launch.js') }}" defer></script>
 {% endblock %}

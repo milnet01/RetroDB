@@ -8,7 +8,7 @@
 #       LauncherError, BinaryNotFoundError, LaunchResolutionError,
 #   )
 #
-# Pass 42 — singleton factory keyed on the launcher_backend setting.  The
+# Pass 44 — singleton factory keyed on the launcher_backend setting.  The
 # singleton matters: LocalLauncher's in-memory ProcessRegistry must persist
 # across requests so /api/launches/active returns rows that were registered
 # by an earlier /api/game/<id>/launch call.
