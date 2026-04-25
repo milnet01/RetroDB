@@ -1,3 +1,17 @@
+- version: 3.5.16
+  date: 2026-04-25
+  tags:
+  - type: correctness
+    label: Pass 45.3 — AI Fill skip 0-valued int fields (preserve curated players/scores)
+  body: |
+    <ul>
+        <li><strong>Pass 45.3 (HIGH) &mdash; AI Fill no longer overwrites curated <code>players</code> with <code>0</code></strong>. <code>routes/games_ai.py:109</code> wrote bare <code>players = ?</code> (and the four score/count int columns) instead of the COALESCE-style fill-only pattern that <code>scraper/scrape_*.py</code> uses. When the AI returned <code>"0"</code> for a field it didn't know &mdash; common with Gemini and Claude when asked for a <code>max_players</code>-style integer they have no source for &mdash; the route happily wrote 0 over a curated <code>players=4</code>. Same shape for <code>critic_score</code>, <code>critic_score_count</code>, <code>user_score</code>, <code>user_score_count</code>: a NULL column got a spurious "AI filled this with 0" and was then marked as filled in <code>scrape_history</code>. After Pass 45.3, any int field that coerces to 0 is skipped, mirroring the CLAUDE.md scraper-fill-only invariant: an empty/unknown response never displaces existing data.</li>
+        <li><strong>Source</strong> &mdash; Game-routes lane finding H1 from the third 14-agent indie review (2026-04-25). Caught by cold-read against the documented fill-only contract; the existing <code>tests/test_scrape_fill_only.py</code> covered IGDB and TGDB but not the AI Fill UPDATE construction.</li>
+        <li><strong>Tests</strong>. <code>tests/test_pass45_security.py::TestPass45_3*</code> &mdash; 4 cases. The route is exercised end-to-end through Flask's test client with stubbed <code>get_current_user</code>, <code>query</code>, <code>execute</code>, and AI provider so the assertions read the actual SQL the UPDATE would have run: AI <code>"0"</code> on curated <code>players=4</code> emits no <code>players = ?</code> clause; AI <code>"0"</code> on curated <code>critic_score=NULL</code> emits no <code>critic_score = ?</code> clause; non-zero AI ints (<code>"2"</code>) still flow through; un-parseable AI strings (<code>"unknown"</code>) are skipped at the <code>int(float(value))</code> guard. Reverting the production fix fails 2/4 cases &mdash; pinning behaviour, not source grep.</li>
+        <li><strong>Scope &mdash; AI Fill only</strong>. The IGDB/TGDB/RAWG/ESDE scrapers already handle this correctly via their COALESCE clauses; <code>scraper/scrape_ai.py</code> didn't because it goes through the route's UPDATE-builder rather than an <code>apply_*_to_game()</code> helper. Pass 45.3 keeps the change local to <code>routes/games_ai.py</code> &mdash; no architectural reshape, no API change.</li>
+        <li><strong>Version bump 3.5.15 &rarr; 3.5.16</strong>: patch (correctness fix, no schema or surface change).</li>
+    </ul>
+
 - version: 3.5.15
   date: 2026-04-25
   tags:

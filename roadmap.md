@@ -142,7 +142,15 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: wrap integer column writes in `COALESCE(NULLIF(?, 0), col)`,
   or skip when `value == 0`.
 - **Source**: indie-review 2026-04-25 (Game routes lane H1).
-- **Status**: todo
+- **Status**: done (v3.5.16) — int fields coerced to 0 after `int(float(value))`
+  now skip the UPDATE clause (chose the simpler "skip" branch over COALESCE
+  NULLIF since the existing `should_apply` filter already guarantees we only
+  reach the int-coerce on values worth writing). Covers all 5 int columns
+  (`players`, `critic_score`, `critic_score_count`, `user_score`,
+  `user_score_count`). 4 regression tests in
+  `tests/test_pass45_security.py::TestPass45_3*` exercise the route
+  end-to-end with a stubbed AI provider — reverting the production fix
+  fails the curated-`players` and spurious-`critic_score` cases.
 
 #### Pass 45.4 XSS sinks in toast / HLTB / settings dialogs (HIGH, S)
 
