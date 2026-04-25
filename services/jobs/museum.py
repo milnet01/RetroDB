@@ -188,6 +188,10 @@ class MuseumGenerateJob:
                     self.end_time = datetime.now(timezone.utc).isoformat()
                 if persist_id:
                     persist_job_complete(persist_id, status='failed', error=self.error_message)
+                    # Pass 40.8 — clear so the finally block doesn't run a
+                    # second persist_job_complete that overwrites 'failed'
+                    # with 'completed'.  Same pattern as the except branch.
+                    persist_id = None
                 conn.close()
                 return
 
@@ -212,6 +216,9 @@ class MuseumGenerateJob:
                     self.end_time = datetime.now(timezone.utc).isoformat()
                 if persist_id:
                     persist_job_complete(persist_id, status='failed', error=self.error_message)
+                    # Pass 40.8 — clear so the finally block doesn't
+                    # double-persist and overwrite 'failed' with 'completed'.
+                    persist_id = None
                 conn.close()
                 return
 

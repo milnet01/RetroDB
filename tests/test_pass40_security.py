@@ -724,3 +724,32 @@ class TestPass40_7TgdbImageSsrf:
         from scraper import scrape_thegamesdb as mod
         assert hasattr(mod, 'download_image'), \
             'scrape_thegamesdb must import download_image from base_scraper (Pass 40.7)'
+
+
+# -----------------------------------------------------------------------------
+# 40.8 — Museum job finally clobbers failed → completed
+# -----------------------------------------------------------------------------
+class TestPass40_8MuseumJobFailedStatusPreserved:
+    """Both early-exit failure paths in services/jobs/museum.py must set
+    persist_id = None after persist_job_complete('failed') so the finally
+    block doesn't run a second persist_job_complete that overwrites the
+    failure with 'completed'."""
+
+    def test_no_provider_clears_persist_id(self):
+        from services.jobs import museum
+
+        src = open(museum.__file__).read()
+        idx = src.index("'No AI provider configured")
+        # Within the next ~600 chars, persist_id must be set to None.
+        block = src[idx:idx + 800]
+        assert 'persist_id = None' in block, \
+            'no-AI-provider branch must clear persist_id (Pass 40.8)'
+
+    def test_unknown_provider_clears_persist_id(self):
+        from services.jobs import museum
+
+        src = open(museum.__file__).read()
+        idx = src.index('Unknown AI provider')
+        block = src[idx:idx + 800]
+        assert 'persist_id = None' in block, \
+            'unknown-provider branch must clear persist_id (Pass 40.8)'

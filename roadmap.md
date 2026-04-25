@@ -265,7 +265,12 @@ paths or silent-corruption vectors under routine use.
   paths into guard-blocks so exactly one terminal persist runs in the
   `finally`.
 - **Source**: 2026-04-24 indie-review, jobs C1.
-- **Status**: todo
+- **Status**: done (v3.4.8) — both early-exit failure paths
+  (no-AI-provider, unknown-provider) now `persist_id = None` after the
+  `persist_job_complete('failed')` call, so the `finally` block's
+  `if persist_id:` guard short-circuits and the recorded failure
+  survives. Tests:
+  `test_pass40_security.py::TestPass40_8MuseumJobFailedStatusPreserved`.
 
 #### Pass 40.9 ImageResizeJob has no persistence, no lock, no shutdown recovery (CRITICAL, M)
 

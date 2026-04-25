@@ -1,3 +1,17 @@
+- version: 3.4.8
+  date: 2026-04-25
+  tags:
+  - type: security
+    label: Pass 40.8 — Museum job preserves failed status
+  body: |
+    <ul>
+        <li><strong>Pass 40.8 (CRITICAL) &mdash; Museum job <code>finally</code> no longer clobbers failure status</strong>. <code>services/jobs/museum.py::_worker</code> had two early-exit failure paths (no-AI-provider at line 184, unknown-provider at line 208) that called <code>persist_job_complete(persist_id, status='failed', ...)</code> + <code>return</code> without clearing <code>persist_id</code>. The <code>finally</code> block at line 324 then ran <code>persist_job_complete(persist_id, status=final_status)</code> a second time, where <code>final_status = resolve_terminal_status(self.cancelled)</code> &mdash; <code>'completed'</code> for the not-cancelled case &mdash; overwriting the recorded failure. Result: a misconfigured admin saw "Completed" in <code>job_queue</code> with no error trace. Silent data corruption.</li>
+        <li><strong>Fix</strong>. Both early-exit paths now <code>persist_id = None</code> after the <code>'failed'</code> persist (matches the <code>except</code> branch at 321-323 which already got this right). The <code>finally</code>'s <code>if persist_id:</code> guard then short-circuits and the failure status survives.</li>
+        <li><strong>Tests</strong>. <code>TestPass40_8MuseumJobFailedStatusPreserved</code> &mdash; 2 source-level pins (no-provider branch + unknown-provider branch each contain <code>persist_id = None</code>). 479 passed (was 477).</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 40.8 closed. 8 Tier-1 items remain.</li>
+        <li><strong>Version bump 3.4.7 &rarr; 3.4.8</strong>: patch (data integrity; admins running museum gen with no AI provider configured will now correctly see <code>job_queue.status='failed'</code> with the error message).</li>
+    </ul>
+
 - version: 3.4.7
   date: 2026-04-25
   tags:
