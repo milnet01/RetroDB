@@ -49,11 +49,14 @@ class TestLaunchEndpointBehavior:
     @pytest.fixture
     def logged_in_client(self, app_module, monkeypatch):
         """Stub get_current_user (which load_user calls) to inject a player.
-        Also seed a CSRF token so state-changing requests get past the
-        before_request CSRF gate."""
+        Also seed a CSRF token, and bypass the first-time-setup redirect
+        (which fires on CI's fresh checkout where settings.setup_completed
+        is False and rom_path is empty)."""
         monkeypatch.setattr('app.get_current_user',
                             lambda: {'id': 99, 'username': 'tester', 'role': 'player'})
         monkeypatch.setattr('app.get_user_settings', lambda _uid: {})
+        monkeypatch.setattr('app.settings_manager.load_settings',
+                            lambda: {'setup_completed': True, 'rom_path': '/tmp'})
         client = app_module.app.test_client()
         with client.session_transaction() as sess:
             sess['_csrf_token'] = 'test-csrf-token'
@@ -115,6 +118,8 @@ class TestLaunchEndpointBehavior:
         monkeypatch.setattr('app.get_current_user',
                             lambda: {'id': 1, 'username': 'viewer', 'role': 'viewer'})
         monkeypatch.setattr('app.get_user_settings', lambda _uid: {})
+        monkeypatch.setattr('app.settings_manager.load_settings',
+                            lambda: {'setup_completed': True, 'rom_path': '/tmp'})
         self._stub_resolver_and_launcher(monkeypatch)
         client = app_module.app.test_client()
         with client.session_transaction() as sess:

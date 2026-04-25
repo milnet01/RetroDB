@@ -34,6 +34,8 @@ class TestEmulatorCRUD:
         monkeypatch.setattr('app.get_current_user',
                             lambda: {'id': 1, 'username': 'admin', 'role': 'admin'})
         monkeypatch.setattr('app.get_user_settings', lambda _uid: {})
+        monkeypatch.setattr('app.settings_manager.load_settings',
+                            lambda: {'setup_completed': True, 'rom_path': '/tmp'})
         client = app_module.app.test_client()
         with client.session_transaction() as sess:
             sess['_csrf_token'] = 'tok'
@@ -76,6 +78,8 @@ class TestEmulatorCRUD:
         monkeypatch.setattr('app.get_current_user',
                             lambda: {'id': 1, 'username': 'v', 'role': 'viewer'})
         monkeypatch.setattr('app.get_user_settings', lambda _uid: {})
+        monkeypatch.setattr('app.settings_manager.load_settings',
+                            lambda: {'setup_completed': True, 'rom_path': '/tmp'})
         client = app_module.app.test_client()
         with client.session_transaction() as sess:
             sess['_csrf_token'] = 'tok'
