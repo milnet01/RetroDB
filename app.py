@@ -244,6 +244,12 @@ app.register_blueprint(launch_bp)
 app.register_blueprint(emulators_bp)
 app.register_blueprint(launch_settings_bp)
 
+# Pass 42 — expose has_permission to templates as has_perm() so the ▶ Play
+# button can be permission-gated in game_detail.html without leaking
+# launch URLs to viewers.
+from services.auth import has_permission as _has_permission_for_template
+app.jinja_env.globals['has_perm'] = _has_permission_for_template
+
 # =============================================================================
 # PER-ROUTE RATE LIMITS (applied after blueprint registration)
 # =============================================================================

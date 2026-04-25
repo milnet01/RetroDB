@@ -79,6 +79,12 @@
     </div>
     {% endif %}
     <div class="header-buttons">
+        {% if has_perm('launch') %}
+        <button id="play-btn" class="btn btn-primary" data-game-id="{{ game.id }}" onclick="launchGame(this)" title="Launch this game in the configured emulator">
+            <span class="btn-icon">▶</span>
+            Play
+        </button>
+        {% endif %}
         {% if game.scraped %}
         <button class="btn btn-danger-outline" onclick="confirmClearMetadata()">
             <span class="btn-icon">🗑️</span>
@@ -5380,4 +5386,7 @@ document.querySelectorAll('.filter-link').forEach(link => {
     }
 })();
 </script>
+
+<!-- Pass 42 — multi-emulator launch -->
+<script src="{{ asset_url('js/game-launch.js') }}" defer></script>
 {% endblock %}
