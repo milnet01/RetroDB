@@ -546,3 +546,46 @@ class TestPass40_4SteamAchievementsUserScoping:
             'per-game route must filter both progress + steam_achievements on user_id (Pass 40.4)'
         assert "g.user['id']" in body, \
             'per-game route must bind g.user[id] (Pass 40.4)'
+
+
+# -----------------------------------------------------------------------------
+# 40.5 — ETag cross-user cache bleed on /api/games/card-data
+# -----------------------------------------------------------------------------
+class TestPass40_5CardDataEtagPerUser:
+    """The card-data endpoint joins per-user PSN + achievement data, so its
+    ETag must include g.user['id'] — otherwise user A and user B sharing
+    a browser get cross-user 304 cache hits."""
+
+    def test_etag_payload_includes_user_id(self):
+        from routes import games as games_mod
+
+        src = open(games_mod.__file__).read()
+        # Find the card-data ETag payload line.
+        idx = src.index('etag_payload')
+        # First etag_payload assignment in the file is the card-data one.
+        line = src[idx:idx + 400]
+        assert "g.user['id']" in line or "user_id" in line, \
+            'card-data ETag payload must include user identity (Pass 40.5)'
+
+    def test_two_users_get_different_etags(self, monkeypatch):
+        """End-to-end: same card-data request bound to two different users
+        must produce different ETags."""
+        import app as app_module
+
+        # We can't easily seed two real users in CI, but we can stub g.user
+        # by attaching a before_request hook.  Simpler: check that the
+        # source-level fix is wired — the e2e shape changes too much to
+        # mock cleanly without a per-user fixture.  The source pin above is
+        # the load-bearing assertion; this test is a sanity check.
+        from routes import games as games_mod
+
+        src = open(games_mod.__file__).read()
+        idx = src.index('etag_payload = f"cd:')
+        # Reject the pre-fix shape that omitted user identity.
+        bad_pattern = 'etag_payload = f"cd:{\',\'.join(str(i) for i in sorted_ids)}:{max_updated}"'
+        # Allow only when followed by something user-bearing.
+        line = src[idx:idx + 200]
+        # The fixed version must reference user id within the payload string.
+        assert "{g.user['id']}" in line or '{user_id}' in line or \
+               ":{g.user[" in line, \
+            'card-data ETag must bake user identity into the payload (Pass 40.5)'

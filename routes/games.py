@@ -232,7 +232,11 @@ def api_games_card_data():
         one=True,
     )
     max_updated = (max_updated_row or {}).get('m') or ''
-    etag_payload = f"cd:{','.join(str(i) for i in sorted_ids)}:{max_updated}"
+    # Pass 40.5 — bake the user id into the ETag.  The response payload
+    # includes per-user PSN + achievement progress (joins below), so a
+    # globally-keyed ETag lets one user's browser serve another user's
+    # progress as a 304.  CWE-524.
+    etag_payload = f"cd:{g.user['id']}:{','.join(str(i) for i in sorted_ids)}:{max_updated}"
     etag = f'W/"{hashlib.md5(etag_payload.encode()).hexdigest()}"'
     if request.headers.get('If-None-Match') == etag:
         resp = make_response('', 304)

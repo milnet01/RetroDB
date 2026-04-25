@@ -1,3 +1,17 @@
+- version: 3.4.5
+  date: 2026-04-25
+  tags:
+  - type: security
+    label: Pass 40.5 — Card-data ETag cross-user cache bleed closed
+  body: |
+    <ul>
+        <li><strong>Pass 40.5 (CRITICAL) &mdash; Card-data ETag cross-user cache bleed closed</strong>. <code>/api/games/card-data</code> joins per-user PSN trophy and achievement progress into the response, but the ETag was keyed only on <code>cd:&lt;sorted-ids&gt;:&lt;max(games.updated_at)&gt;</code>. Two users sharing a browser (kiosk install, family laptop): user A loads /games, browser caches the response with ETag X; user B logs in and loads the same page, browser sends <code>If-None-Match: X</code>, server 304s, user B sees user A's PSN earned counts and achievement completion percentages. <code>Cache-Control: private</code> doesn't help &mdash; same browser, same user agent, same cache. CWE-524.</li>
+        <li><strong>Fix</strong>. <code>etag_payload</code> now prepends <code>g.user['id']</code> to the hash input: <code>cd:&lt;user_id&gt;:&lt;sorted-ids&gt;:&lt;max_updated&gt;</code>. Different users on the same client produce different ETags &mdash; no 304 cross-talk possible.</li>
+        <li><strong>Tests</strong>. <code>TestPass40_5CardDataEtagPerUser</code> &mdash; 2 source-level pins. 463 passed (was 461).</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 40.5 closed. 11 Tier-1 items remain.</li>
+        <li><strong>Version bump 3.4.4 &rarr; 3.4.5</strong>: patch (security; ETag changes will cause one extra GET per user-context switch on first load &mdash; expected).</li>
+    </ul>
+
 - version: 3.4.4
   date: 2026-04-25
   tags:

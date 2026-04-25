@@ -185,7 +185,10 @@ paths or silent-corruption vectors under routine use.
   on the same client.  CWE-524 cache-bleed.
 - **Plan**: append `str(g.user['id'])` to the ETag payload.
 - **Source**: 2026-04-24 indie-review, game routes C1.
-- **Status**: todo
+- **Status**: done (v3.4.5) — `etag_payload` now prepends
+  `g.user['id']`; different users on the same client produce different
+  ETags, no cross-user 304 reuse possible. Tests:
+  `test_pass40_security.py::TestPass40_5CardDataEtagPerUser`.
 
 #### Pass 40.6 `players` fill-only invariant broken at 3 sites (CRITICAL, S)
 
