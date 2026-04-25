@@ -110,7 +110,10 @@ paths or silent-corruption vectors under routine use.
   whatever future Player role lands). Make `permission_required` JSON-
   aware on `/api/*` routes (return 403 envelope, not 302).
 - **Source**: indie-review 2026-04-25 cross-cutting theme T1.
-- **Status**: todo (CRITICAL — unblock first)
+- **Status**: done (v3.5.15) — `track_progress` granted to admin / editor /
+  viewer; `permission_required` now returns 403 JSON envelope on `/api/*`
+  routes (page routes still flash+302). 5 regression tests in
+  `tests/test_pass45_security.py::TestPass45_1*`.
 
 #### Pass 45.2 SSRF DNS-rebinding TOCTOU on scraper download path (HIGH, M)
 
@@ -377,7 +380,10 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: dedent heredoc, OR factor to `scripts/ci_build_dist.py`
   invoked as `python scripts/ci_build_dist.py`.
 - **Source**: indie-review 2026-04-25 (Tests/tooling lane P1).
-- **Status**: todo
+- **Status**: done (v3.5.15) — both `python - <<'PY'` blocks (build ZIPs +
+  extract changelog) migrated to env-var + `python -c "$VAR"`; YAML `|`
+  block-literal strips the indent baseline before bash interpolates.
+  2 regression tests in `tests/test_pass45_security.py::TestPass45_19*`.
 
 #### Pass 45.20 chmod-after-verify race + `<button type="button">` sweep (MEDIUM, S)
 

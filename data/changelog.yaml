@@ -1,3 +1,18 @@
+- version: 3.5.15
+  date: 2026-04-25
+  tags:
+  - type: security
+    label: Pass 45.1 + 45.19 — track_progress permission grant; release.yml heredoc fix
+  body: |
+    <ul>
+        <li><strong>Pass 45.1 (CRITICAL) &mdash; <code>track_progress</code> permission granted to admin/editor/viewer</strong>. Pass 41.9.A added <code>@permission_required('track_progress')</code> to <code>api_track_view</code> and <code>api_update_completion</code> but never granted the permission to any role &mdash; <code>has_permission('track_progress')</code> returned False for every user including admin, redirecting both endpoints to <code>/dashboard</code>. The completion-toggle and recently-viewed dashboard panels were silently dead in production. <code>ROLE_PERMISSIONS</code> in <code>services/auth.py</code> now grants <code>track_progress</code> to all three signed-in roles; marking your own copy as played and recording last-viewed timestamps are self-tracking actions that have nothing to do with editorial rights, so even Viewer should have it.</li>
+        <li><strong>Pass 45.1 follow-up &mdash; <code>permission_required</code> is now JSON-aware</strong>. The decorator previously redirected to <code>/dashboard</code> on any permission denial. On <code>/api/*</code> routes, <code>fetch()</code> with credentials follows the redirect transparently and the calling JS receives a 200 of dashboard HTML &mdash; impossible to handle correctly. The decorator now returns <code>{success: false, error: ...}</code> with HTTP 401 (unauthenticated) or 403 (permission denied) on <code>/api/*</code>, and keeps the existing flash-and-redirect behaviour on page routes.</li>
+        <li><strong>Pass 45.19 (HIGH) &mdash; release workflow heredoc indentation fix</strong>. <code>.github/workflows/release.yml</code>'s build-ZIPs and extract-changelog steps both used <code>python - &lt;&lt;'PY'</code> with the Python body indented at the YAML baseline (10 spaces). Bash here-docs without the dash form preserve the indent and pass it to Python verbatim; Python rejected the very first statement with <code>IndentationError: unexpected indent</code>, silently breaking every tag-driven release since the workflow landed (v2.77.7). Both steps now pass the Python source via a YAML <code>|</code> block-literal env-var and run <code>python -c "$VAR"</code>; the YAML parser strips the indent baseline before bash sees the value.</li>
+        <li><strong>Source</strong> &mdash; both fixes are net-new findings from the third 14-agent indie review (2026-04-25). 45.1 was caught by the Auth and Game-routes lanes independently; 45.19 was caught by the Operations / CI lane.</li>
+        <li><strong>Tests</strong>. <code>tests/test_pass45_security.py::TestPass45_1*</code> &mdash; 5 cases: each role has the permission; permission-denied returns 403 JSON envelope on <code>/api/*</code>; page routes still flash + 302 to dashboard. <code>TestPass45_19*</code> &mdash; 2 cases: no remaining <code>&lt;&lt;'PY'</code> heredoc in release.yml; replacement uses env-var or out-of-band script.</li>
+        <li><strong>Version bump 3.5.14 &rarr; 3.5.15</strong>: patch (CRITICAL endpoint-dead fix + release-pipeline unblock).</li>
+    </ul>
+
 - version: 3.5.14
   date: 2026-04-25
   tags:

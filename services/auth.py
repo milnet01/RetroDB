@@ -28,16 +28,25 @@ __all__ = (
 # ROLE PERMISSIONS
 # =============================================================================
 
+# Pass 45.1 — `track_progress` is granted to every signed-in role.
+# Marking your own copy as played/100% and recording last-viewed timestamps
+# are self-tracking actions that have nothing to do with editing the
+# library; the indie-review caught Pass 41.9.A introducing the permission
+# on /api/game/<id>/track-view + /completion without granting it to anyone,
+# rendering both endpoints unreachable in production.
 ROLE_PERMISSIONS = {
     'admin': {
         'view', 'edit', 'delete_metadata', 'delete_rom', 'scrape',
-        'manage_users', 'manage_settings', 'system_functions'
+        'manage_users', 'manage_settings', 'system_functions',
+        'track_progress',
     },
     'editor': {
-        'view', 'edit', 'delete_metadata', 'scrape'
+        'view', 'edit', 'delete_metadata', 'scrape',
+        'track_progress',
     },
     'viewer': {
-        'view'
+        'view',
+        'track_progress',
     }
 }
 
@@ -250,10 +259,24 @@ def permission_required(permission):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
+            # Pass 45.1 — /api/* callers need the canonical JSON envelope,
+            # not a 302 to /dashboard.  fetch() with credentials follows
+            # the redirect transparently and the calling JS sees a 200 of
+            # dashboard HTML, which is impossible to handle correctly.
+            is_api = request.path.startswith('/api/')
             if not g.user:
+                if is_api:
+                    from services.api_helpers import error as api_error
+                    return api_error('Authentication required', 401)
                 flash('Please log in to access this page', 'warning')
                 return redirect(url_for('auth.login', next=request.url))
             if not has_permission(permission):
+                if is_api:
+                    from services.api_helpers import error as api_error
+                    return api_error(
+                        'You do not have permission to perform this action',
+                        403,
+                    )
                 flash('You do not have permission to access this feature', 'error')
                 return redirect(url_for('dashboard'))
             return f(*args, **kwargs)

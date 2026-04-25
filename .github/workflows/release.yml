@@ -46,22 +46,30 @@ jobs:
           pip install -r requirements.txt
           pip install cyclonedx-bom  # provides the `cyclonedx-py` CLI
 
+      # Pass 45.19 — the Python body is passed via an env-var with the YAML
+      # block-literal scalar, then run with `python -c "$VAR"`. The YAML
+      # parser strips the indent baseline from the env-var content before
+      # bash ever sees it. The older bash here-doc form preserved the
+      # 10-space YAML indent and Python rejected it with `IndentationError:
+      # unexpected indent`, which silently broke every tag-driven release
+      # since the workflow landed.
       - name: Build Linux / macOS / Windows ZIPs
+        env:
+          BUILD_DIST_SCRIPT: |
+            import os, sys
+            os.environ['STAGING_DIR_OVERRIDE'] = '/tmp/staging'
+            sys.path.insert(0, '.')
+            import build_dist
+            build_dist.STAGING_DIR = '/tmp/staging'
+            os.makedirs('/tmp/staging', exist_ok=True)
+            if hasattr(build_dist, 'main'):
+                build_dist.main()
         run: |
           mkdir -p /tmp/staging
           # build_dist.py writes to /mnt/Storage/Scripts/Linux/Staging_Area/RetroDB/ by default;
           # redirect via a tiny wrapper so CI writes to /tmp/staging instead.
           cp config.example.py config.py
-          python - <<'PY'
-          import os, sys
-          os.environ['STAGING_DIR_OVERRIDE'] = '/tmp/staging'
-          # build_dist.py reads STAGING_DIR at top level; we wrap to override.
-          sys.path.insert(0, '.')
-          import build_dist
-          build_dist.STAGING_DIR = '/tmp/staging'
-          os.makedirs('/tmp/staging', exist_ok=True)
-          build_dist.main() if hasattr(build_dist, 'main') else None
-          PY
+          python -c "$BUILD_DIST_SCRIPT"
           ls -la /tmp/staging
 
       - name: Generate SBOM (CycloneDX)
@@ -111,23 +119,26 @@ jobs:
 
       - name: Extract changelog entry
         id: changelog
+        env:
+          # Pass 45.19 — see the build step's note. Same bash-here-doc
+          # indent bug was here too; same fix.
+          EXTRACT_CHANGELOG_SCRIPT: |
+            import yaml, os, sys
+            tag = os.environ.get('GITHUB_REF_NAME', '').lstrip('v')
+            with open('data/changelog.yaml') as f:
+                entries = yaml.safe_load(f)
+            for e in entries:
+                if str(e.get('version')) == tag:
+                    body = e.get('body', '').strip()
+                    # GitHub Actions multi-line output
+                    print('body<<EOF')
+                    print(body)
+                    print('EOF')
+                    sys.exit(0)
+            print('body=No changelog entry found.')
         run: |
           pip install pyyaml
-          python - <<'PY' >> "$GITHUB_OUTPUT"
-          import yaml, os, sys
-          tag = os.environ.get('GITHUB_REF_NAME', '').lstrip('v')
-          with open('data/changelog.yaml') as f:
-              entries = yaml.safe_load(f)
-          for e in entries:
-              if str(e.get('version')) == tag:
-                  body = e.get('body', '').strip()
-                  # GitHub Actions multi-line output
-                  print('body<<EOF')
-                  print(body)
-                  print('EOF')
-                  sys.exit(0)
-          print('body=No changelog entry found.')
-          PY
+          python -c "$EXTRACT_CHANGELOG_SCRIPT" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda  # v3.0.0
