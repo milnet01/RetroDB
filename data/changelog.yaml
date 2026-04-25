@@ -1,3 +1,18 @@
+- version: 3.5.5
+  date: 2026-04-25
+  tags:
+  - type: security
+    label: Pass 41.5 — Steam/SS credential redaction; IGDB 401 token refresh
+  body: |
+    <ul>
+        <li><strong>Pass 41.5.A (HIGH) &mdash; redactor catches Steam <code>?key=</code> + ScreenScraper <code>?sspassword=</code></strong>. <code>services/log_redactor.py</code>'s URL-querystring allowlist covered <code>apikey/api_key/token/auth/pwd/password/devpassword/ssid</code> but missed Steam's <code>key=API_KEY_VALUE</code> and ScreenScraper's <code>sspassword=...</code>. Any <code>requests.HTTPError</code> stringified to logs (or any URL printed via <code>logger.info('%s', resp.url)</code>) leaked the Steam Web API key and the ScreenScraper user password. Both now redacted &mdash; the leading <code>[?&amp;]</code> boundary keeps <code>key</code> from over-matching <code>cache_key=</code> / <code>lookup_key=</code> patterns.</li>
+        <li><strong>Pass 41.5.B (HIGH) &mdash; IGDB 401 invalidates token cache + retries once</strong>. <code>scraper/scrape_igdb.py::igdb_request</code> previously called <code>r.raise_for_status()</code> on a 401, which propagated the error up the stack. The cached Twitch OAuth token in <code>_igdb_token_cache</code> stayed put, so every subsequent IGDB call in the same scrape pass replayed the dead token and silently returned empty results. Fix: detect <code>r.status_code == 401</code>, clear the cache (<code>'token' = None</code>, <code>'expires_at' = 0</code>), call <code>igdb_auth()</code> for a fresh token, and retry the request once with the new <code>Authorization: Bearer</code> header. Non-401 responses bubble through <code>raise_for_status</code> unchanged.</li>
+        <li><strong>Deferred</strong> &mdash; routing the 7 raw <code>requests.get/post</code> calls in <code>scraper/scrape_steam.py</code> and 3 in <code>scraper/hltb_lookup.py</code> through <code>base_scraper.http_get</code> / <code>http_post</code> for retry/backoff/size-cap. That's a mechanical 10-callsite refactor that warrants its own dedicated pass with case-by-case audit (response-shape contracts differ from <code>http_get</code>'s "return None on total failure" semantics). Tracked as carry-over in roadmap.</li>
+        <li><strong>Tests</strong>. <code>TestPass41_5A/B</code> &mdash; 5 cases. 5A: <code>redact()</code> redacts Steam <code>?key=</code> + ScreenScraper <code>?sspassword=</code>; <code>cache_key=</code> NOT redacted (false-positive guard). 5B: monkeypatched <code>http_post</code> stub returning 401 then 200 verifies <code>igdb_auth()</code> is called between, the second request uses the fresh token, and the cache is updated; a 500-only path verifies <code>igdb_auth</code> is NOT called for non-401 errors.</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 41.5 closed (sub-items A and B); H1/H4 (Steam/HLTB through base_scraper) carried over. Pass 41 has 9 sub-passes remaining (41.6 &hellip; 41.14).</li>
+        <li><strong>Version bump 3.5.4 &rarr; 3.5.5</strong>: patch (log redaction expansion + IGDB resilience).</li>
+    </ul>
+
 - version: 3.5.4
   date: 2026-04-25
   tags:

@@ -629,7 +629,26 @@ paths or silent-corruption vectors under routine use.
   (3) in `igdb_request`, on status 401, clear `_igdb_token_cache` and
   retry once with a fresh token.
 - **Source**: 2026-04-24 indie-review, scraper adapters H1/H2/H3/H4.
-- **Status**: todo
+- **Status**: partial (v3.5.5) — H2 (redactor) + H3 (IGDB 401) closed:
+  `key` and `sspassword` added to `services/log_redactor.py` URL-
+  querystring allowlist; `igdb_request` invalidates `_igdb_token_cache`
+  and retries once with a fresh token on 401. H1/H4 (route Steam +
+  HLTB raw `requests.get/post` through `base_scraper.http_get/post`)
+  carried over as a follow-up — 10 callsites need case-by-case audit
+  because `http_get` returns `None` on total failure where the current
+  code expects `requests.get` semantics. Tests:
+  `tests/test_pass41_security.py::TestPass41_5A/B` (5 cases).
+
+#### Pass 41.5b Steam + HLTB through base_scraper (carry-over from 41.5)
+
+- **Target**: `scraper/scrape_steam.py` (7 endpoints) and
+  `scraper/hltb_lookup.py` (3 endpoints) — raw `requests.get`/`requests.post`.
+- **Why**: `base_scraper.http_get` / `http_post` provide retry/backoff/
+  size-cap; raw `requests.*` skips that hardening.
+- **Plan**: replace each raw call with the `http_get`/`http_post` shape
+  (returns `Response` or `None`); add explicit `if resp is None:` guards
+  in callers that currently rely on `requests` raising on `None`.
+- **Status**: todo (carry-over from Pass 41.5)
 
 #### Pass 41.6 Jobs — cross-process singleton + persist-under-lock + PSN inner-thread unsync
 

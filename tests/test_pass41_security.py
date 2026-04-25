@@ -457,3 +457,140 @@ class TestPass41_4BPrimaryDispatchTryExcept:
         assert 'except Exception' in nearby, (
             "Pass 41.4.B region must contain an except Exception clause"
         )
+
+
+# -----------------------------------------------------------------------------
+# 41.5.A — log_redactor catches Steam `key=` and ScreenScraper `sspassword=`
+# -----------------------------------------------------------------------------
+class TestPass41_5ACredentialQuerystringRedaction:
+    """The querystring redaction allowlist previously covered apikey/api_key/
+    token/auth/pwd/password/devpassword/ssid but missed Steam's `key=`
+    parameter and ScreenScraper's `sspassword=`. A Steam HTTPError stringified
+    to logs leaked the API key in the URL. Pass 41.5 adds both names — the
+    leading [?&] boundary keeps `key` from over-matching `cache_key=` etc."""
+
+    def test_steam_api_key_redacted(self):
+        from services.log_redactor import redact
+        url = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=ABC123XYZ&steamid=76561"
+        out = redact(url)
+        assert 'ABC123XYZ' not in out, "Steam ?key= API value not redacted"
+        assert 'key=<redacted>' in out
+
+    def test_screenscraper_sspassword_redacted(self):
+        from services.log_redactor import redact
+        url = "https://www.screenscraper.fr/api2/jeuInfos.php?devid=foo&devpassword=BAR&ssid=u&sspassword=secret&output=json"
+        out = redact(url)
+        assert 'secret' not in out, "ScreenScraper sspassword= not redacted"
+        assert 'sspassword=<redacted>' in out
+        # devpassword (already covered) must remain redacted.
+        assert 'BAR' not in out
+
+    def test_cache_key_does_not_match(self):
+        """Pass 41.5 widens the allowlist with `key`. Confirm it doesn't
+        over-match `cache_key=` / `lookup_key=` style params (those have
+        `&cache_` / `&lookup_` before `key=`, so the [?&] boundary should
+        stop the match)."""
+        from services.log_redactor import redact
+        url = "https://example.com/x?cache_key=PUBLIC_VALUE&id=42"
+        out = redact(url)
+        assert 'PUBLIC_VALUE' in out, (
+            "redactor over-matched cache_key= (should only match `?key=` "
+            "or `&key=` literal)"
+        )
+
+
+# -----------------------------------------------------------------------------
+# 41.5.B — IGDB request retries with fresh token on 401
+# -----------------------------------------------------------------------------
+class TestPass41_5BIgdbTokenRefreshOn401:
+    """A stale Twitch OAuth token in `_igdb_token_cache` makes every IGDB
+    call return 401 silently for the rest of the scrape pass. Pass 41.5
+    detects the 401, clears the cache, calls `igdb_auth()` for a fresh
+    token, and retries the request once."""
+
+    def test_request_retries_with_fresh_token_on_401(self, monkeypatch):
+        from scraper import scrape_igdb as igdb
+
+        # Pretend the existing cache is "warm" with a stale token.
+        igdb._igdb_token_cache['token'] = 'STALE'
+        igdb._igdb_token_cache['expires_at'] = 9999999999
+
+        call_log = []
+
+        class _Resp:
+            def __init__(self, status):
+                self.status_code = status
+            def raise_for_status(self):
+                if self.status_code >= 400:
+                    raise RuntimeError(f"HTTP {self.status_code}")
+            def json(self):
+                return {"ok": True}
+
+        def fake_http_post(url, data=None, headers=None, **kw):
+            call_log.append({
+                'url': url,
+                'auth': headers.get('Authorization') if headers else None,
+            })
+            # First call: 401. Second call: 200.
+            if len(call_log) == 1:
+                return _Resp(401)
+            return _Resp(200)
+
+        def fake_auth():
+            igdb._igdb_token_cache['token'] = 'FRESH'
+            igdb._igdb_token_cache['expires_at'] = 9999999999
+            return 'FRESH'
+
+        monkeypatch.setattr(igdb, 'http_post', fake_http_post)
+        monkeypatch.setattr(igdb, 'igdb_auth', fake_auth)
+        monkeypatch.setattr(igdb, '_get_igdb_credentials',
+                            lambda: ('CID', 'CS'))
+
+        result = igdb.igdb_request('games', 'fields name;', 'STALE')
+        assert result == {"ok": True}
+        # Two requests: stale first, fresh retry second.
+        assert len(call_log) == 2
+        assert call_log[0]['auth'] == 'Bearer STALE'
+        assert call_log[1]['auth'] == 'Bearer FRESH'
+        # Cache is now updated.
+        assert igdb._igdb_token_cache['token'] == 'FRESH'
+
+    def test_request_does_not_retry_on_non_401(self, monkeypatch):
+        """A 500 should bubble through `raise_for_status` without triggering
+        a token refresh. Only 401 invalidates the cache."""
+        from scraper import scrape_igdb as igdb
+
+        igdb._igdb_token_cache['token'] = 'TOKEN'
+        igdb._igdb_token_cache['expires_at'] = 9999999999
+
+        call_log = []
+
+        class _Resp:
+            def __init__(self, status):
+                self.status_code = status
+            def raise_for_status(self):
+                if self.status_code >= 400:
+                    raise RuntimeError(f"HTTP {self.status_code}")
+            def json(self):
+                return {}
+
+        def fake_http_post(url, **kw):
+            call_log.append(url)
+            return _Resp(500)
+
+        def fake_auth():
+            raise AssertionError("igdb_auth should not be called on non-401")
+
+        monkeypatch.setattr(igdb, 'http_post', fake_http_post)
+        monkeypatch.setattr(igdb, 'igdb_auth', fake_auth)
+        monkeypatch.setattr(igdb, '_get_igdb_credentials',
+                            lambda: ('CID', 'CS'))
+
+        try:
+            igdb.igdb_request('games', 'fields name;', 'TOKEN')
+        except RuntimeError:
+            pass
+        # Single call — no token refresh attempted.
+        assert len(call_log) == 1
+        # Cache untouched.
+        assert igdb._igdb_token_cache['token'] == 'TOKEN'

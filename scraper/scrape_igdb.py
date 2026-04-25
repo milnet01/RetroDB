@@ -67,7 +67,14 @@ def igdb_auth():
         raise
 
 def igdb_request(endpoint, body, token):
-    """Make request to IGDB API"""
+    """Make request to IGDB API.
+
+    Pass 41.5 — on a 401 response (Twitch revoked / expired the token earlier
+    than the cached `expires_in` claimed), invalidate the token cache and
+    retry once with a freshly-issued token. Without this, a stale token
+    in the cache silently returns empty results for the rest of the scrape
+    pass and the user sees "no IGDB results" with no obvious cause.
+    """
     client_id, _ = _get_igdb_credentials()
     headers = {
         'Client-ID': client_id,
@@ -83,6 +90,26 @@ def igdb_request(endpoint, body, token):
     )
     if r is None:
         raise ConnectionError(f"IGDB API request to {endpoint} failed after retries")
+    if r.status_code == 401:
+        logger.warning(
+            "IGDB returned 401 for %s — clearing token cache and retrying once",
+            endpoint,
+        )
+        _igdb_token_cache['token'] = None
+        _igdb_token_cache['expires_at'] = 0
+        fresh_token = igdb_auth()
+        headers['Authorization'] = f'Bearer {fresh_token}'
+        r = http_post(
+            f"https://api.igdb.com/v4/{endpoint}",
+            data=body,
+            headers=headers,
+            timeout=30,
+            retries=2,
+        )
+        if r is None:
+            raise ConnectionError(
+                f"IGDB API request to {endpoint} failed after token refresh + retries"
+            )
     r.raise_for_status()
     return r.json()
 

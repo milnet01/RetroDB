@@ -28,7 +28,11 @@ _PATTERNS = [
     # Authorization header values: "Authorization: Bearer ..." / "Authorization: Basic ..."
     (re.compile(r'(Authorization:\s*(?:Bearer|Basic|XBL3\.0\s+x=[^;]+;))\s*\S+', re.IGNORECASE), r'\1 <redacted>'),
     # URL query params carrying credentials: ?apikey=... &password=... &token=...
-    (re.compile(r'([?&](?:apikey|api_key|token|auth|pwd|password|devpassword|ssid)=)([^&\s"\']+)', re.IGNORECASE), r'\1<redacted>'),
+    # Pass 41.5 — added `key` (Steam Web API: ?key=API_KEY_VALUE) and
+    # `sspassword` (ScreenScraper: ?sspassword=...). The leading `[?&]`
+    # boundary keeps `key` from over-matching `cache_key=` / `lookup_key=`
+    # variants (those start with `&cache_key=` etc., not `&key=`).
+    (re.compile(r'([?&](?:apikey|api_key|key|token|auth|pwd|password|devpassword|sspassword|ssid)=)([^&\s"\']+)', re.IGNORECASE), r'\1<redacted>'),
     # Raw "X-Auth: ..." / "X-API-Key: ..." header styles
     (re.compile(r'(X-(?:Auth|API-Key|Session-Token)[^:]*:\s*)\S+', re.IGNORECASE), r'\1<redacted>'),
     # Pass 24.8 — bare long tokens in sensitive-field contexts.
