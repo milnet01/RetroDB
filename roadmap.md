@@ -787,7 +787,12 @@ paths or silent-corruption vectors under routine use.
   museum generation can be prompted.  (2) move the stale-image
   cleanup to a background sweep or an `@editor_required` POST.
 - **Source**: 2026-04-24 indie-review, museum H1/H2.
-- **Status**: todo
+- **Status**: done (v3.5.8) — A: `_get_top_games` JSON decode failure
+  now logged at `logger.warning` (was silent `pass`). B: `museum_system`
+  GET handler clears stale controller-image refs in-memory only;
+  persistent cleanup moved to new admin POST
+  `/api/museum/cleanup-controller-images` (`@editor_required`).
+  Tests: `tests/test_pass41_security.py::TestPass41_11A/B` (4 cases).
 
 #### Pass 41.12 Frontend JS — fetch timeout + navigateTo open-redirect + inline-onclick JSON
 

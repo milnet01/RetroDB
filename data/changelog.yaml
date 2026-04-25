@@ -1,3 +1,17 @@
+- version: 3.5.8
+  date: 2026-04-25
+  tags:
+  - type: hardening
+    label: Pass 41.11 — museum silent decode logged; GET handler made idempotent
+  body: |
+    <ul>
+        <li><strong>Pass 41.11.A (MEDIUM) &mdash; museum top_games JSON decode failure logged</strong>. <code>routes/museum.py::_get_top_games</code> previously caught <code>(json.JSONDecodeError, TypeError): pass</code>, leaving the admin with an empty top-games block on the museum page and no breadcrumb when the cached LLM JSON was corrupt. Now logs at <code>logger.warning</code> with the exception and the system_id so the next museum generation can be prompted.</li>
+        <li><strong>Pass 41.11.B (MEDIUM) &mdash; museum_system GET handler no longer mutates DB</strong>. <code>routes/museum.py:347-351</code> ran <code>UPDATE controllers SET image = NULL WHERE id = ?</code> from inside the <code>museum_system</code> view function whenever it noticed a stale image filename. This violated RFC 7231 GET-idempotency &mdash; one user's page load rewrote globally-shared rows, and made caching/replay reasoning fragile. The view now clears stale refs in the in-memory render dict only (so the page still displays correctly without a broken-image icon); persistent cleanup runs from the new <code>POST /api/museum/cleanup-controller-images</code> endpoint, gated to <code>@editor_required</code>, which scans every controller row and clears refs whose backing files are missing. Returns <code>{cleared, scanned}</code>.</li>
+        <li><strong>Tests</strong>. <code>TestPass41_11A/B</code> &mdash; 4 cases. 11A: regex-extract <code>_get_top_games</code> body; pin a <code>logger.warning</code> call inside it. 11B: source-level extraction of the <code>museum_system</code> body (sliced to the next <code># =============</code> separator, comment-stripped) pinned to NOT contain <code>UPDATE controllers</code>; pin that the cleanup route definition appears with <code>methods=['POST']</code> and <code>@editor_required</code>.</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 41.11 closed. Pass 41 has 6 sub-passes remaining (41.6 + 41.9 + 41.10 + 41.12 + 41.13 + 41.14, plus 41.5b carry-over).</li>
+        <li><strong>Version bump 3.5.7 &rarr; 3.5.8</strong>: patch (observability + idempotency hygiene).</li>
+    </ul>
+
 - version: 3.5.7
   date: 2026-04-25
   tags:

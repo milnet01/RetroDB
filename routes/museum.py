@@ -189,8 +189,16 @@ def _get_top_games(system_id, museum_data):
                         'source': 'ai',
                     })
                     seen_titles.add(title)
-        except (json.JSONDecodeError, TypeError):
-            pass
+        except (json.JSONDecodeError, TypeError) as exc:
+            # Pass 41.11.A — log the decode failure at WARNING so an operator
+            # can prompt the next museum generation (the LLM occasionally
+            # returns truncated JSON). Previously a bare `pass` left the
+            # admin with an empty top-games list and no breadcrumb.
+            logger.warning(
+                "Museum top_games JSON decode failed for system_id=%s: %s",
+                getattr(museum_data, 'get', lambda _k: None)('system_id'),
+                exc,
+            )
 
     return top_games
 
@@ -340,14 +348,17 @@ def museum_system(system_id):
 
     controllers_dir = os.path.join(config.STATIC_PATH, 'images', 'controllers')
     controllers = []
+    # Pass 41.11.B — a GET handler must not mutate shared DB state (RFC 7231
+    # GET-idempotency). The previous shape ran `UPDATE controllers SET
+    # image = NULL` from inside this view, meaning one user's page load
+    # rewrote globally-visible state. Clear stale refs in the in-memory
+    # render dict only; persistent cleanup runs from POST
+    # /api/museum/cleanup-controller-images (admin-only) below.
     for ctrl in controllers_raw:
         ctrl = dict(ctrl)
         if ctrl.get('image'):
             img_path = os.path.join(controllers_dir, ctrl['image'])
             if not os.path.isfile(img_path):
-                logger.info(f"Museum: Clearing stale image ref '{ctrl['image']}' for controller {ctrl['id']}")
-                db.execute("UPDATE controllers SET image = NULL WHERE id = ?", (ctrl['id'],))
-                db.commit()
                 ctrl['image'] = None
         controllers.append(ctrl)
 
@@ -502,6 +513,34 @@ def cancel_generate():
     from services.jobs import museum_generate_job
     result = museum_generate_job.cancel()
     return jsonify(result)
+
+
+@bp.route('/api/museum/cleanup-controller-images', methods=['POST'])
+@editor_required
+def cleanup_controller_images():
+    """Pass 41.11.B — admin-triggered persistent cleanup of stale controller
+    image references. The per-system museum page no longer mutates DB state
+    inside its GET handler (it just nulls the in-memory render dict for
+    missing files). Operators can invoke this endpoint to do the persistent
+    sweep when they notice broken thumbnails.
+    """
+    db = get_request_db()
+    controllers_dir = os.path.join(config.STATIC_PATH, 'images', 'controllers')
+    rows = db.execute(
+        "SELECT id, image FROM controllers WHERE image IS NOT NULL AND image != ''"
+    ).fetchall()
+    cleared = 0
+    for row in rows:
+        img_path = os.path.join(controllers_dir, row['image'])
+        if not os.path.isfile(img_path):
+            db.execute(
+                "UPDATE controllers SET image = NULL WHERE id = ? AND image = ?",
+                (row['id'], row['image']),
+            )
+            cleared += 1
+    db.commit()
+    logger.info("Museum: cleanup-controller-images cleared %d stale refs", cleared)
+    return jsonify({'success': True, 'cleared': cleared, 'scanned': len(rows)})
 
 
 # =============================================================================

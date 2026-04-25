@@ -753,3 +753,98 @@ class TestPass41_8BAchievementAggregationDoc:
         assert 'user_id IS NULL' in nearby, (
             "Pass 41.8.B doc must give the `user_id IS NULL` diagnostic query"
         )
+
+
+# -----------------------------------------------------------------------------
+# 41.11.A — museum top_games JSON decode failure logged at WARNING
+# -----------------------------------------------------------------------------
+class TestPass41_11ATopGamesDecodeLogging:
+    """`_get_top_games` previously caught `(json.JSONDecodeError, TypeError):
+    pass`, leaving the admin with an empty top-games list and no breadcrumb
+    when the cached LLM JSON was corrupt. Pass 41.11.A logs the failure at
+    WARNING with the system_id so the next museum generation can be
+    prompted."""
+
+    def test_decode_error_no_silent_pass(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'routes/museum.py'),
+            encoding='utf-8'
+        ).read()
+        # Find the _get_top_games function and confirm its exception block
+        # no longer collapses to a bare `pass`.
+        import re as _re
+        m = _re.search(
+            r'def _get_top_games\b.*?(?=\ndef |\Z)',
+            body, _re.DOTALL,
+        )
+        assert m, "_get_top_games not found"
+        body_func = m.group()
+        # The except-clause must reach a logger.warning call (not just `pass`).
+        assert 'logger.warning' in body_func, (
+            "_get_top_games except clause must log decode failures at "
+            "WARNING (Pass 41.11.A)"
+        )
+
+
+# -----------------------------------------------------------------------------
+# 41.11.B — GET handler no longer issues UPDATE controllers SET image = NULL
+# -----------------------------------------------------------------------------
+class TestPass41_11BMuseumGetIdempotent:
+    """`museum_system` is a GET handler; it must not mutate shared state.
+    Previously it ran `UPDATE controllers SET image = NULL WHERE id = ?`
+    inside the view, violating RFC 7231 GET-idempotency and letting one
+    user's page load rewrite globally-shared rows. The cleanup is now an
+    admin-only POST at `/api/museum/cleanup-controller-images`."""
+
+    def test_get_view_does_not_update_controllers(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'routes/museum.py'),
+            encoding='utf-8'
+        ).read()
+        # Extract the museum_system function body — slice from `def
+        # museum_system` to the next `# =============` block separator.
+        start = body.find('def museum_system(system_id):')
+        assert start != -1, "museum_system function not found"
+        end_marker = body.find('# =============', start)
+        assert end_marker != -1, "comment separator after museum_system not found"
+        view_body = body[start:end_marker]
+        # Strip comments so the explanatory comment in the function (which
+        # quotes the historical UPDATE statement) doesn't false-positive.
+        code_only = '\n'.join(
+            line.split('#', 1)[0]
+            for line in view_body.splitlines()
+        )
+        assert 'UPDATE controllers' not in code_only, (
+            "museum_system GET handler still issues UPDATE controllers — "
+            "GET must be idempotent (Pass 41.11.B)"
+        )
+
+    def test_admin_cleanup_endpoint_registered(self):
+        # Source-level check (avoids triggering app.py's init_database under
+        # a stale DB user_version during local testing — CI is fine).
+        body = open(
+            os.path.join(_REPO_ROOT, 'routes/museum.py'),
+            encoding='utf-8'
+        ).read()
+        assert "/api/museum/cleanup-controller-images" in body, (
+            "Pass 41.11.B admin POST endpoint must be defined in museum.py"
+        )
+        assert "methods=['POST']" in body and "cleanup_controller_images" in body, (
+            "Pass 41.11.B endpoint must be POST and named cleanup_controller_images"
+        )
+
+    def test_admin_cleanup_endpoint_requires_editor(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'routes/museum.py'),
+            encoding='utf-8'
+        ).read()
+        import re as _re
+        m = _re.search(
+            r'@bp\.route\(.*cleanup-controller-images.*\).*?def cleanup_controller_images',
+            body, _re.DOTALL,
+        )
+        assert m, "cleanup_controller_images route definition not found"
+        block = m.group()
+        assert '@editor_required' in block, (
+            "Persistent cleanup must be admin/editor only (Pass 41.11.B)"
+        )
