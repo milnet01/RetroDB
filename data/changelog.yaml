@@ -1,3 +1,17 @@
+- version: 3.5.0
+  date: 2026-04-25
+  tags:
+  - type: docs
+    label: Pass 40.16 — docs/PROXY-DEPLOY.md authored; Tier-1 indie-review sweep complete
+  body: |
+    <ul>
+        <li><strong>Pass 40.16 (HIGH) &mdash; <code>docs/PROXY-DEPLOY.md</code> authored</strong>. <code>app.py:147</code> referenced the file as the trust contract for <code>RETRODB_TRUST_PROXY=1</code>, but the file didn't exist. Operators enabling proxy trust had no guidance on required nginx / Caddy / HAProxy header configuration; misconfigure and <code>X-Forwarded-For</code> becomes attacker-controlled, defeating the IP-based login throttle. The new doc explains the trust contract (one trusted hop; proxy must terminate TLS, must strip and re-emit XFF from the actual peer IP, must not forward XFH from untrusted clients), gives copy-paste configs for nginx, Caddy v2, and HAProxy, walks through verification (forge XFF from the client, confirm logs show the real IP), and notes the localhost-development trap (don't enable when there's no proxy).</li>
+        <li><strong>Tier-1 indie-review sweep COMPLETE</strong>. Sixteen CRITICAL/HIGH findings from the 2026-04-24 multi-agent independent review have all landed, one-per-commit per the remediation workflow. Total span v3.4.1 &rarr; v3.5.0 over 16 patch bumps + this minor: 40.1 (chdman_path RCE), 40.2 (CHD path traversal), 40.3 (archive-scanner m3u admin/path), 40.4 (Steam IDOR), 40.5 (ETag cache bleed), 40.6 (players fill-only invariant), 40.7 (TGDB SSRF), 40.8 (museum failed→completed clobber), 40.9 (image_resize persistence), 40.10 (shutdown-aware sleeps), 40.11 (CHD atomic + verify), 40.12 (toast XSS), 40.13 (showModal opt-in HTML), 40.14 (PSN trophy XSS), 40.15 (download_image atomic + stale-clear race), 40.16 (proxy docs).</li>
+        <li><strong>Tests</strong>. <code>TestPass40_16ProxyDeployDocs</code> &mdash; doc exists; covers <code>X-Forwarded-For</code>, <code>RETRODB_TRUST_PROXY</code>, <code>ProxyFix</code>, <code>nginx</code>, "one hop". 503 passed (was 501). Pass 40 added 47 regression cases across 16 sub-passes; full suite gain 428 → 503 (+75).</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 40 (Tier-1) closed entirely. Remaining: Tier-2 (44 HIGH findings &mdash; Pass 41 grouped by subsystem), Pass 38 (refactor &amp; consolidation), Pass 39 (CI/CD round 2).</li>
+        <li><strong>Version bump 3.4.15 &rarr; 3.5.0</strong>: minor (closes the Tier-1 sweep &mdash; meaningful security milestone, even though no single 40.16 line of code changed). Operators upgrading should read <code>docs/PROXY-DEPLOY.md</code> if running behind a reverse proxy.</li>
+    </ul>
+
 - version: 3.4.15
   date: 2026-04-25
   tags:

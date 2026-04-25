@@ -1095,3 +1095,32 @@ class TestPass40_15DownloadImageAtomic:
                 'stale-clear UPDATE must bind observed filename (Pass 40.15)'
         else:
             assert False, 'stale-media block missing (Pass 40.15)'
+
+
+# -----------------------------------------------------------------------------
+# 40.16 — Missing docs/PROXY-DEPLOY.md referenced in app.py:147
+# -----------------------------------------------------------------------------
+class TestPass40_16ProxyDeployDocs:
+    """app.py:147 references docs/PROXY-DEPLOY.md as the trust contract for
+    RETRODB_TRUST_PROXY=1 — the file must exist and document the required
+    proxy header configuration."""
+
+    def test_doc_exists(self):
+        import os
+        repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        path = os.path.join(repo, 'docs', 'PROXY-DEPLOY.md')
+        assert os.path.exists(path), \
+            'docs/PROXY-DEPLOY.md must exist (Pass 40.16)'
+
+    def test_doc_covers_required_sections(self):
+        import os
+        repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        path = os.path.join(repo, 'docs', 'PROXY-DEPLOY.md')
+        body = open(path).read()
+        # Must mention every load-bearing header / config knob.
+        for needle in (
+            'X-Forwarded-For', 'RETRODB_TRUST_PROXY', 'ProxyFix',
+            'nginx', 'one hop',
+        ):
+            assert needle in body, \
+                f'PROXY-DEPLOY.md must mention {needle!r} (Pass 40.16)'

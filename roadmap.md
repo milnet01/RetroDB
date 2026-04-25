@@ -479,7 +479,12 @@ paths or silent-corruption vectors under routine use.
   the false reference and inline a 3-line comment naming the hop
   assumption.  (a) is the right call — other operators will hit this.
 - **Source**: 2026-04-24 indie-review, app bootstrap H1.
-- **Status**: todo
+- **Status**: done (v3.5.0) — `docs/PROXY-DEPLOY.md` authored: trust
+  contract (one hop; proxy strips and re-emits XFF), copy-paste configs
+  for nginx / Caddy / HAProxy, verification walk-through (forge XFF
+  from client, confirm logs show the real IP), localhost-dev trap
+  notes. Tests:
+  `test_pass40_security.py::TestPass40_16ProxyDeployDocs`.
 
 ---
 
