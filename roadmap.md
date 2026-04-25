@@ -423,7 +423,11 @@ paths or silent-corruption vectors under routine use.
   to `data-game-id` + `addEventListener` so the single-quote sanitiser
   stops being load-bearing.
 - **Source**: 2026-04-24 indie-review, templates C1.
-- **Status**: todo
+- **Status**: done (v3.4.14) — local `esc` + `escAttr` helpers wrap
+  every text and attribute interpolation; inline `onclick="linkGame(...)"`
+  replaced with `data-link-game` + `data-game-{id,title,system}` and
+  a post-innerHTML `addEventListener` closing over the dataset values.
+  Tests: `test_pass40_security.py::TestPass40_14PsnTrophyDetailXss`.
 
 #### Pass 40.15 `base_scraper.download_image` non-atomic + stale-clear race (CRITICAL, S)
 

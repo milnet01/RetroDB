@@ -812,23 +812,48 @@ async function searchGamesForLink() {
             return;
         }
 
+        // Pass 40.14 — every user-authored field (game.title, game.boxart,
+        // game.system) flows into innerHTML; the previous version
+        // interpolated them raw into HTML-text and HTML-attribute
+        // contexts and ran a `.replace(/'/g, "\\'")` on title for the
+        // inline onclick — none of which protected the HTML-text /
+        // attribute decode that fires before the JS-string layer.  A
+        // title of `"><img src=x onerror=alert(1)>` escaped the div;
+        // boxart of `x" onerror=alert(1) x="` escaped the src attribute.
+        // Fix: every text-context interpolation goes through
+        // `escapeHtml`; every attribute-context interpolation
+        // additionally encodes `"`; the inline onclick is replaced
+        // with addEventListener so the JS-string concern is gone.
+        // CWE-79.
+        const esc = (s) => (window.escapeHtml ? window.escapeHtml(String(s || '')) : '');
+        const escAttr = (s) => esc(s).replace(/"/g, '&quot;');
         let html = '';
         for (const game of data.results) {
             const isPS = ['ps3', 'ps4', 'ps5', 'psvita', 'ps2', 'psx'].includes(game.folder);
             const thumbHtml = game.boxart
-                ? `<img src="/static/images/boxart/${game.boxart}" class="link-result-thumb" alt="">`
+                ? `<img src="/static/images/boxart/${escAttr(game.boxart)}" class="link-result-thumb" alt="">`
                 : `<div class="link-result-thumb" style="display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🎮</div>`;
 
             html += `
-                <div class="link-result-item" onclick="linkGame(${game.id}, '${game.title.replace(/'/g, "\\'")}', '${game.system}')">
+                <div class="link-result-item" data-link-game data-game-id="${escAttr(game.id)}" data-game-title="${escAttr(game.title)}" data-game-system="${escAttr(game.system)}">
                     ${thumbHtml}
                     <div class="link-result-info">
-                        <div class="link-result-title">${game.title}</div>
-                        <div class="link-result-system ${isPS ? 'link-result-ps' : ''}">${game.system}</div>
+                        <div class="link-result-title">${esc(game.title)}</div>
+                        <div class="link-result-system ${isPS ? 'link-result-ps' : ''}">${esc(game.system)}</div>
                     </div>
                 </div>`;
         }
         resultsDiv.innerHTML = html;
+        // Wire data-* link handlers — closes over real JS values, no string
+        // concat into HTML attribute contexts.
+        resultsDiv.querySelectorAll('[data-link-game]').forEach((row) => {
+            row.addEventListener('click', () => {
+                const id = parseInt(row.dataset.gameId, 10);
+                const title = row.dataset.gameTitle || '';
+                const system = row.dataset.gameSystem || '';
+                linkGame(id, title, system);
+            });
+        });
 
     } catch (error) {
         resultsDiv.innerHTML = '<div class="alert alert-error">❌ Search failed</div>';

@@ -1,3 +1,17 @@
+- version: 3.4.14
+  date: 2026-04-25
+  tags:
+  - type: security
+    label: Pass 40.14 — PSN trophy-detail game-link search XSS closed
+  body: |
+    <ul>
+        <li><strong>Pass 40.14 (CRITICAL) &mdash; PSN trophy-detail XSS closed</strong>. <code>templates/psn_trophy_detail.html::searchGames</code> built result-row HTML by string concatenation: <code>game.title</code> / <code>game.boxart</code> / <code>game.system</code> were interpolated raw into HTML-text contexts (<code>${game.title}</code>) and HTML-attribute contexts (<code>src="/static/images/boxart/${game.boxart}"</code>) and finally <code>resultsDiv.innerHTML = html;</code>. Mitigation was a <code>.replace(/'/g, "\\'")</code> on title for the inline <code>onclick="linkGame(${id}, '${title}', '${system}')"</code> JS-string context &mdash; nothing protected the HTML-text or attribute decode that fires before the JS-string layer. Title <code>"&gt;&lt;img src=x onerror=alert(1)&gt;</code> escaped the div; boxart <code>x" onerror=alert(1) x="</code> escaped the <code>src</code> attribute. <code>setup.html:360-393</code> already demonstrates the correct pattern. Pass 35 (XSS round 2) regression. CWE-79.</li>
+        <li><strong>Fix</strong>. Added local <code>esc</code> + <code>escAttr</code> helpers (<code>escAttr</code> is <code>esc</code> + <code>"</code> &rarr; <code>&amp;quot;</code>). Every text-context interpolation goes through <code>esc()</code>; every attribute-context interpolation through <code>escAttr()</code>. The inline <code>onclick</code> is replaced with <code>data-link-game</code> + <code>data-game-{id,title,system}</code> attributes and a post-innerHTML <code>addEventListener('click', ...)</code> that closes over the parsed <code>dataset</code> values &mdash; no string concatenation into HTML attributes / JS strings.</li>
+        <li><strong>Tests</strong>. <code>TestPass40_14PsnTrophyDetailXss</code> &mdash; 2 source-level pins: no <code>onclick="linkGame(${game.id}</code> string anywhere; the search-results loop calls <code>esc(game.title)</code> + <code>escAttr(game.boxart)</code>. 498 passed (was 496).</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 40.14 closed. 2 Tier-1 items remain.</li>
+        <li><strong>Version bump 3.4.13 &rarr; 3.4.14</strong>: patch (security; visible only on PSN trophy-detail link search &mdash; titles with HTML metacharacters now render literally).</li>
+    </ul>
+
 - version: 3.4.13
   date: 2026-04-25
   tags:

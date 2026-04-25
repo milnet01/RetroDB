@@ -978,3 +978,38 @@ class TestPass40_13ShowModalOptInHtml:
         body = src[idx:end]
         assert 'allowHtml' in body, \
             'showModal must accept opt-in {allowHtml: true} (Pass 40.13)'
+
+
+# -----------------------------------------------------------------------------
+# 40.14 — PSN trophy-detail game-link search XSS
+# -----------------------------------------------------------------------------
+class TestPass40_14PsnTrophyDetailXss:
+    """Game search results in psn_trophy_detail.html interpolate
+    user-authored game.title / game.boxart / game.system into innerHTML
+    text + attribute contexts; the old version used a single-quote
+    .replace() that didn't protect HTML attribute decoding."""
+
+    def test_inline_onclick_linkgame_removed(self):
+        import os
+        repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        path = os.path.join(repo, 'templates', 'psn_trophy_detail.html')
+        src = open(path).read()
+        # The dangerous inline onclick was:
+        #   onclick="linkGame(${game.id}, '${game.title.replace...}', ...)"
+        assert "onclick=\"linkGame(${game.id}" not in src, \
+            'inline onclick="linkGame(...)" must use addEventListener (Pass 40.14)'
+
+    def test_search_results_use_escape(self):
+        import os
+        repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        path = os.path.join(repo, 'templates', 'psn_trophy_detail.html')
+        src = open(path).read()
+        # The search-results loop must call esc() / escAttr().
+        idx = src.index('for (const game of data.results)')
+        # bound to the next async function
+        end = src.index('async function linkGame', idx)
+        body = src[idx:end]
+        assert 'esc(game.title)' in body or 'escapeHtml(game.title)' in body, \
+            'game.title must be escaped in HTML-text context (Pass 40.14)'
+        assert 'escAttr(game.boxart)' in body or 'escapeAttr(game.boxart)' in body, \
+            'game.boxart must be escaped in HTML-attribute context (Pass 40.14)'
