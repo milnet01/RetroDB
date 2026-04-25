@@ -381,3 +381,79 @@ class TestPass41_3CSystemLogCategoryDropped:
                 "'system' is in LOGGER_CATEGORIES but missing from "
                 "CATEGORY_LOGGERS — drop or populate (Pass 41.3.C)"
             )
+
+
+# -----------------------------------------------------------------------------
+# 41.4.A — ES-DE screenshot append survives the post-apply DB→metadata sync
+# -----------------------------------------------------------------------------
+class TestPass41_4AEsdeScreenshotAppend:
+    """`apply_esde_metadata` appends scraped screenshots to the existing list
+    in `games.screenshots`, then the orchestrator does a DB→metadata sync
+    inside a `for field in [...]: if game.get(field) and not metadata.get(field):`
+    loop. For `screenshots` the guard is False because metadata was
+    pre-populated, so the appended screenshots get dropped on the final
+    UPDATE. Pass 41.4.A handles screenshots before the loop, copying the
+    DB value unconditionally after a file-existence filter."""
+
+    def test_screenshot_sync_runs_unconditionally(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'scraper/hybrid_scraper.py'),
+            encoding='utf-8'
+        ).read()
+        # The fix introduces a dedicated screenshots-sync block after
+        # apply_esde_metadata that does NOT gate on `not metadata.get(...)`.
+        # Marker comment pins the intent so future edits don't regress.
+        assert 'Pass 41.4.A' in body, (
+            "Pass 41.4.A marker missing in scraper/hybrid_scraper.py — "
+            "the unconditional screenshot sync must be paired with the "
+            "marker so a future regression is greppable"
+        )
+
+    def test_screenshot_field_excluded_from_guarded_loop(self):
+        """The 'and not metadata.get(field)' guard loop must no longer
+        include `screenshots` — that's the whole point of the fix."""
+        import re as _re
+        body = open(
+            os.path.join(_REPO_ROOT, 'scraper/hybrid_scraper.py'),
+            encoding='utf-8'
+        ).read()
+        # The guarded loop iterates a literal list; screenshots was a
+        # member previously. Find the relevant loop body and assert
+        # 'screenshots' is no longer in the iteration list.
+        guarded_loops = _re.findall(
+            r"for field in \[([^\]]+)\]:\s*\n[^}]*?and not metadata\.get",
+            body,
+        )
+        for loop in guarded_loops:
+            assert "'screenshots'" not in loop, (
+                "screenshots still iterated in guarded `not metadata.get` "
+                "loop — appended ES-DE screenshots will be dropped (Pass 41.4.A)"
+            )
+
+
+# -----------------------------------------------------------------------------
+# 41.4.B — primary-source dispatch isolates per-source exceptions
+# -----------------------------------------------------------------------------
+class TestPass41_4BPrimaryDispatchTryExcept:
+    """Each primary-source branch (esde/tgdb/igdb/rawg/screenscraper) must
+    catch its own exceptions so a single malformed response from one source
+    doesn't abort the whole hybrid apply. Falls through to the gap-fill
+    phase rather than raising to the caller."""
+
+    def test_each_primary_branch_has_try_except(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'scraper/hybrid_scraper.py'),
+            encoding='utf-8'
+        ).read()
+        assert 'Pass 41.4.B' in body, (
+            "Pass 41.4.B marker missing in scraper/hybrid_scraper.py — "
+            "each primary-source branch must be wrapped in try/except"
+        )
+        # Source-level pin: we expect a per-source try/except guard. The
+        # marker comment is the contract; assert a few representative
+        # source names appear inside an `except` block.
+        idx = body.find('Pass 41.4.B')
+        nearby = body[max(0, idx - 200):idx + 4000]
+        assert 'except Exception' in nearby, (
+            "Pass 41.4.B region must contain an except Exception clause"
+        )

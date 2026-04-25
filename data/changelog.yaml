@@ -1,3 +1,17 @@
+- version: 3.5.4
+  date: 2026-04-25
+  tags:
+  - type: reliability
+    label: Pass 41.4 — ES-DE screenshot append survives sync; primary-source exceptions isolated
+  body: |
+    <ul>
+        <li><strong>Pass 41.4.A (HIGH) &mdash; ES-DE screenshot append no longer dropped</strong>. <code>apply_esde_metadata</code> appends scraped screenshots to <code>games.screenshots</code> rather than replacing &mdash; correct behavior, since ES-DE provides multiple screenshot files per game across visits. The orchestrator then ran a DB&rarr;metadata sync inside <code>for field in [...]: if game.get(field) and not metadata.get(field):</code>. For <code>screenshots</code> the guard returned False because <code>metadata['screenshots']</code> was pre-populated, so the appended scrape was silently dropped on the final UPDATE. Replaced with a dedicated unconditional sync block (file-existence filtered) that runs before the guarded loop; <code>screenshots</code> is no longer iterated by the loop.</li>
+        <li><strong>Pass 41.4.B (HIGH) &mdash; per-source try/except on primary dispatch</strong>. The fallback (gap-fill) phase wrapped each scraper call in its own try/except, but the primary-source dispatch did not &mdash; so one malformed IGDB/TGDB/RAWG/ScreenScraper response aborted the whole hybrid apply, even when fallbacks could have filled the gaps. Each branch (esde/tgdb/igdb/rawg/screenscraper) now logs its own failure at WARNING and falls through to the gap-fill phase. ES-DE branch additionally guards the fetch step (gamelist.xml parse) with <code>esde_details = None</code> on exception, dropping into the existing &ldquo;No ES-DE details found&rdquo; else-branch.</li>
+        <li><strong>Tests</strong>. <code>TestPass41_4A/B</code> &mdash; 3 cases. Source-level pin on the Pass 41.4.A marker comment + the screenshots-excluded loop list; pin on the Pass 41.4.B marker + the per-branch <code>except Exception</code> clause.</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 41.4 closed. Pass 41 has 10 sub-passes remaining (41.5 &hellip; 41.14).</li>
+        <li><strong>Version bump 3.5.3 &rarr; 3.5.4</strong>: patch (scraper resilience; users see fewer "scrape failed" toasts when one source has a transient parse error).</li>
+    </ul>
+
 - version: 3.5.3
   date: 2026-04-25
   tags:

@@ -598,7 +598,16 @@ paths or silent-corruption vectors under routine use.
   and fall through to gap-fill.  Track downloaded file paths in a
   local list and `os.remove` them on exception.
 - **Source**: 2026-04-24 indie-review, scraper orchestration H1/H2.
-- **Status**: todo
+- **Status**: done (v3.5.4) — A: post-`apply_esde_metadata` sync now copies
+  `screenshots` from the reloaded DB row unconditionally (file-existence
+  filtered) before the guarded loop; `screenshots` removed from the loop's
+  iteration list so the `not metadata.get(field)` guard never drops the
+  appended scrape. B: each primary-source branch (esde/tgdb/igdb/rawg/
+  screenscraper) wrapped in its own try/except — failure logged at
+  WARNING, fall through to gap-fill. ES-DE branch additionally guards
+  the gamelist.xml fetch with `esde_details = None` on exception, drops
+  into the existing "no details" else-branch. Tests:
+  `tests/test_pass41_security.py::TestPass41_4A/B` (3 cases).
 
 #### Pass 41.5 Scraper adapters — credential leak in logs + adapters bypassing `base_scraper`
 

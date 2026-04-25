@@ -661,30 +661,44 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         logger.info(f"Fetching from primary source: {primary_source}")
         
         if primary_source == 'esde':
-            # For ES-DE, we need to fetch the game details from gamelist.xml first
-            from scraper.scrape_esde import fetch_esde_game_details, apply_esde_metadata as apply_esde
-            
-            # If primary_data was provided (from search results), use it directly
-            # This fixes the bug where selecting an ES-DE result would fetch the wrong game
-            if primary_data and primary_data.get('source') == 'esde':
-                logger.info(f"Using provided ES-DE data for: {primary_data.get('name', 'Unknown')}")
-                esde_details = {
-                    'name': primary_data.get('name', ''),
-                    'description': primary_data.get('description', ''),
-                    'developer': primary_data.get('developer', ''),
-                    'publisher': primary_data.get('publisher', ''),
-                    'genre': primary_data.get('genre', ''),
-                    'release_date': primary_data.get('release_date', ''),
-                    'players': primary_data.get('players', ''),
-                    'esde_data': primary_data.get('esde_data', {})
-                }
-            else:
-                logger.info(f"Fetching ES-DE details for path: {primary_id}, folder: {system_folder}")
-                esde_details = fetch_esde_game_details(primary_id, system_folder)
+            # Pass 41.4.B (ES-DE branch) — guard the ES-DE primary dispatch
+            # with the same per-source try/except contract used for tgdb/igdb/
+            # rawg/screenscraper below. A malformed gamelist.xml row or a
+            # transient filesystem error during media copy must not abort the
+            # hybrid apply; on failure, fall through to the gap-fill phase.
+            esde_details = None
+            try:
+                # For ES-DE, we need to fetch the game details from gamelist.xml first
+                from scraper.scrape_esde import fetch_esde_game_details, apply_esde_metadata as apply_esde
+
+                # If primary_data was provided (from search results), use it directly
+                # This fixes the bug where selecting an ES-DE result would fetch the wrong game
+                if primary_data and primary_data.get('source') == 'esde':
+                    logger.info(f"Using provided ES-DE data for: {primary_data.get('name', 'Unknown')}")
+                    esde_details = {
+                        'name': primary_data.get('name', ''),
+                        'description': primary_data.get('description', ''),
+                        'developer': primary_data.get('developer', ''),
+                        'publisher': primary_data.get('publisher', ''),
+                        'genre': primary_data.get('genre', ''),
+                        'release_date': primary_data.get('release_date', ''),
+                        'players': primary_data.get('players', ''),
+                        'esde_data': primary_data.get('esde_data', {})
+                    }
+                else:
+                    logger.info(f"Fetching ES-DE details for path: {primary_id}, folder: {system_folder}")
+                    esde_details = fetch_esde_game_details(primary_id, system_folder)
+            except Exception as e:
+                logger.warning(f"Primary ES-DE fetch failed for {primary_id}: {e}; "
+                               "falling through to gap-fill")
+                esde_details = None
+            # `esde_details is None` already gates the apply block below; with
+            # the fetch inside try/except, an exception drops us into that
+            # else-branch (logged) without aborting the rest of the function.
             
             if esde_details:
                 logger.info(f"ES-DE details found: {esde_details.get('name', 'Unknown')}")
-                
+
                 # Apply ES-DE data to metadata
                 # As the primary (user-selected) source, always set title
                 # (matching IGDB/RAWG behavior). Other fields fill only if empty.
@@ -730,20 +744,27 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                     'video': os.path.join(STATIC_PATH, 'videos'),
                     'screenshots': os.path.join(IMAGE_PATH, 'screenshots'),
                 }
-                for field in ['boxart', 'boxart_3d', 'screenshots', 'fanart', 'video', 'manual']:
+                # Pass 41.4.A — screenshots are appended (not replaced) by
+                # apply_esde_metadata, so the DB value after the apply is the
+                # union of pre-existing + newly-scraped. The earlier
+                # `if not metadata.get(field)` guard treated a pre-populated
+                # metadata['screenshots'] as "no need to sync", silently
+                # dropping the appended scrape on the final UPDATE. Sync
+                # screenshots unconditionally, file-existence filtered.
+                if game.get('screenshots'):
+                    ss_list = [s.strip() for s in game['screenshots'].split(',') if s.strip()]
+                    valid = [s for s in ss_list if os.path.exists(
+                        os.path.join(_media_dir_map['screenshots'], s)
+                    )]
+                    if valid:
+                        metadata['screenshots'] = ', '.join(valid)
+                        if 'screenshots (ES-DE)' not in result['filled_fields']:
+                            result['filled_fields'].append('screenshots (ES-DE)')
+                for field in ['boxart', 'boxart_3d', 'fanart', 'video', 'manual']:
                     if game.get(field) and not metadata.get(field):
-                        # Verify the file(s) actually exist on disk
-                        if field == 'screenshots':
-                            ss_list = [s.strip() for s in game[field].split(',') if s.strip()]
-                            valid = [s for s in ss_list if os.path.exists(os.path.join(_media_dir_map[field], s))]
-                            if valid:
-                                metadata[field] = ', '.join(valid)
-                            else:
-                                continue
-                        else:
-                            if not os.path.exists(os.path.join(_media_dir_map[field], game[field])):
-                                continue
-                            metadata[field] = game[field]
+                        if not os.path.exists(os.path.join(_media_dir_map[field], game[field])):
+                            continue
+                        metadata[field] = game[field]
                         if field == 'boxart':
                             metadata['_boxart_source'] = 'esde'
                         if f'{field} (ES-DE)' not in result['filled_fields']:
@@ -753,65 +774,85 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             else:
                 logger.warning(f"No ES-DE details found for path: {primary_id}")
             
+        # Pass 41.4.B — wrap each primary-source dispatch in try/except so a
+        # malformed response from one provider doesn't abort the whole hybrid
+        # apply. Log the failure and fall through to the gap-fill phase, which
+        # may successfully populate the same fields from a fallback source.
         elif primary_source == 'tgdb':
-            tgdb_data = fetch_tgdb_extended(primary_id)
-            if tgdb_data:
-                sources_data['tgdb'] = tgdb_data
-                apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result)
-                result['sources_used'].append('TheGamesDB')
-                
+            try:
+                tgdb_data = fetch_tgdb_extended(primary_id)
+                if tgdb_data:
+                    sources_data['tgdb'] = tgdb_data
+                    apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result)
+                    result['sources_used'].append('TheGamesDB')
+            except Exception as e:
+                logger.warning(f"Primary TGDB fetch/apply failed for {primary_id}: {e}; "
+                               "falling through to gap-fill")
+
         elif primary_source == 'igdb':
-            igdb_data = fetch_igdb_extended(primary_id)
-            if igdb_data:
-                sources_data['igdb'] = igdb_data
-                apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result)
-                result['sources_used'].append('IGDB')
-        
+            try:
+                igdb_data = fetch_igdb_extended(primary_id)
+                if igdb_data:
+                    sources_data['igdb'] = igdb_data
+                    apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result)
+                    result['sources_used'].append('IGDB')
+            except Exception as e:
+                logger.warning(f"Primary IGDB fetch/apply failed for {primary_id}: {e}; "
+                               "falling through to gap-fill")
+
         elif primary_source == 'rawg':
-            from scraper.scrape_rawg import get_game_details as fetch_rawg
-            rawg_data = fetch_rawg(primary_id)
-            if rawg_data:
-                sources_data['rawg'] = rawg_data
-                apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result)
-                result['sources_used'].append('RAWG')
-        
+            try:
+                from scraper.scrape_rawg import get_game_details as fetch_rawg
+                rawg_data = fetch_rawg(primary_id)
+                if rawg_data:
+                    sources_data['rawg'] = rawg_data
+                    apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result)
+                    result['sources_used'].append('RAWG')
+            except Exception as e:
+                logger.warning(f"Primary RAWG fetch/apply failed for {primary_id}: {e}; "
+                               "falling through to gap-fill")
+
         elif primary_source == 'screenscraper':
-            from scraper.scraper_manager import get_cached_screenscraper_result
-            settings = load_scraper_settings()
-            api_keys = settings.get('api_keys', {})
-            ss_username = api_keys.get('screenscraper_username', '')
-            ss_password = api_keys.get('screenscraper_password', '')
-            
-            if ss_username and ss_password:
-                # Parse gameid:systemid format
-                ss_game_id = primary_id
-                ss_system_id = None
-                if ':' in str(primary_id):
-                    parts = str(primary_id).split(':')
-                    ss_game_id = parts[0]
-                    ss_system_id = parts[1] if len(parts) > 1 else None
-                
-                # Try to get cached search result first (ScreenScraper API doesn't support fetch by ID)
-                ss_data = get_cached_screenscraper_result(ss_game_id, ss_system_id)
-                
-                if ss_data:
-                    logger.info(f"Using cached ScreenScraper data for game {ss_game_id}")
-                    sources_data['screenscraper'] = ss_data
-                    apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result)
-                    result['sources_used'].append('ScreenScraper')
-                else:
-                    # Cache expired or not found - try ROM-based lookup as fallback
-                    logger.warning(f"ScreenScraper cache miss for {ss_game_id}:{ss_system_id}, trying ROM-based lookup")
-                    from scraper.scrape_screenscraper import get_game_info
-                    rom_path = game.get('rom_path', '')
-                    if rom_path and ss_system_id:
-                        ss_devid = api_keys.get('screenscraper_devid', '')
-                        ss_devpassword = api_keys.get('screenscraper_devpassword', '')
-                        ss_data = get_game_info(rom_path, system_folder, ss_username, ss_password, ss_devid, ss_devpassword)
-                        if ss_data and 'error' not in ss_data:
-                            sources_data['screenscraper'] = ss_data
-                            apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result)
-                            result['sources_used'].append('ScreenScraper')
+            try:
+                from scraper.scraper_manager import get_cached_screenscraper_result
+                settings = load_scraper_settings()
+                api_keys = settings.get('api_keys', {})
+                ss_username = api_keys.get('screenscraper_username', '')
+                ss_password = api_keys.get('screenscraper_password', '')
+
+                if ss_username and ss_password:
+                    # Parse gameid:systemid format
+                    ss_game_id = primary_id
+                    ss_system_id = None
+                    if ':' in str(primary_id):
+                        parts = str(primary_id).split(':')
+                        ss_game_id = parts[0]
+                        ss_system_id = parts[1] if len(parts) > 1 else None
+
+                    # Try to get cached search result first (ScreenScraper API doesn't support fetch by ID)
+                    ss_data = get_cached_screenscraper_result(ss_game_id, ss_system_id)
+
+                    if ss_data:
+                        logger.info(f"Using cached ScreenScraper data for game {ss_game_id}")
+                        sources_data['screenscraper'] = ss_data
+                        apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result)
+                        result['sources_used'].append('ScreenScraper')
+                    else:
+                        # Cache expired or not found - try ROM-based lookup as fallback
+                        logger.warning(f"ScreenScraper cache miss for {ss_game_id}:{ss_system_id}, trying ROM-based lookup")
+                        from scraper.scrape_screenscraper import get_game_info
+                        rom_path = game.get('rom_path', '')
+                        if rom_path and ss_system_id:
+                            ss_devid = api_keys.get('screenscraper_devid', '')
+                            ss_devpassword = api_keys.get('screenscraper_devpassword', '')
+                            ss_data = get_game_info(rom_path, system_folder, ss_username, ss_password, ss_devid, ss_devpassword)
+                            if ss_data and 'error' not in ss_data:
+                                sources_data['screenscraper'] = ss_data
+                                apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result)
+                                result['sources_used'].append('ScreenScraper')
+            except Exception as e:
+                logger.warning(f"Primary ScreenScraper fetch/apply failed for {primary_id}: {e}; "
+                               "falling through to gap-fill")
         
         # =============================================
         # FILL GAPS FROM SECONDARY SOURCES
