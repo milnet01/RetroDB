@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 
 from services.jobs.base import (
     _get_conn, persist_job_start, persist_job_progress, persist_job_complete,
-    resolve_terminal_status,
+    resolve_terminal_status, shutdown_requested,
 )
 
 logger = logging.getLogger(__name__)
@@ -276,7 +276,8 @@ class MuseumGenerateJob:
                         logger.warning(f"Museum: Empty AI response for {system_name}")
                         with self._lock:
                             self.failed_count += 1
-                        time.sleep(1.5)
+                        # Pass 40.10 — shutdown-aware rate-limit sleep.
+                        shutdown_requested.wait(1.5)
                         continue
 
                     data = _parse_museum_response(raw_text)
@@ -287,7 +288,8 @@ class MuseumGenerateJob:
                         logger.warning(f"Museum: No usable content for {system_name}")
                         with self._lock:
                             self.failed_count += 1
-                        time.sleep(1.5)
+                        # Pass 40.10 — shutdown-aware rate-limit sleep.
+                        shutdown_requested.wait(1.5)
                         continue
 
                     # Generate top games separately
@@ -318,8 +320,9 @@ class MuseumGenerateJob:
                     with self._lock:
                         self.failed_count += 1
 
-                # Rate limiting between systems
-                time.sleep(1.5)
+                # Rate limiting between systems — Pass 40.10:
+                # shutdown-aware sleep so SIGTERM collapses the wait.
+                shutdown_requested.wait(1.5)
 
         except Exception as e:
             logger.error(f"Museum generation worker error: {e}")

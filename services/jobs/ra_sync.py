@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 from services.jobs.base import (
     _get_conn, _commit_with_retry, _get_ra_credentials,
     persist_job_start, persist_job_progress, persist_job_complete,
-    resolve_terminal_status,
+    resolve_terminal_status, shutdown_requested,
 )
 
 logger = logging.getLogger(__name__)
@@ -355,8 +355,8 @@ class RASyncJob:
                         with self._lock:
                             self.failed_count += 1
 
-                    # Rate limit
-                    time.sleep(0.5)
+                    # Rate limit — Pass 40.10: shutdown-aware sleep.
+                    shutdown_requested.wait(0.5)
 
                 # Flush any remaining uncommitted writes
                 if _pending_commits > 0:

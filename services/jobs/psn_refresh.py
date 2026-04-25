@@ -13,7 +13,7 @@ from datetime import datetime
 from services.jobs.base import (
     _get_conn, _commit_with_retry, _download_psn_trophy_image,
     persist_job_start, persist_job_progress, persist_job_complete,
-    resolve_terminal_status,
+    resolve_terminal_status, shutdown_requested,
 )
 
 logger = logging.getLogger(__name__)
@@ -388,12 +388,16 @@ class PSNRefreshJob:
                         persist_job_progress(persist_id, _progress)
                         _last_persist_time = _now
 
-                    # Check for pause - wait until resumed (outside lock to avoid deadlock)
+                    # Check for pause - wait until resumed (outside lock to avoid deadlock).
+                    # Pass 40.10 — wait on shutdown_requested so a SIGTERM
+                    # short-circuits the pause loop instead of leaving the
+                    # daemon thread hanging until the next 0.2s tick.
                     while True:
                         with self._lock:
                             if not self.paused or self.cancelled:
                                 break
-                        time.sleep(0.2)
+                        if shutdown_requested.wait(0.2):
+                            break
 
                     with self._lock:
                         if self.cancelled:
@@ -430,7 +434,9 @@ class PSNRefreshJob:
                         logger.debug(f"PSN refresh: skipping {npwr_id} ({psn_game['title']}) — no matching trophy title from API")
                         with self._lock:
                             self.skipped_count += 1
-                        time.sleep(self.RATE_LIMIT_DELAY)
+                        # Pass 40.10 — wait on shutdown_requested so SIGTERM
+                        # collapses the rate-limit delay instead of blocking.
+                        shutdown_requested.wait(self.RATE_LIMIT_DELAY)
                         continue
 
                     try:
@@ -455,8 +461,8 @@ class PSNRefreshJob:
                         with self._lock:
                             self.failed_count += 1
 
-                    # Rate limit delay
-                    time.sleep(self.RATE_LIMIT_DELAY)
+                    # Rate limit delay — Pass 40.10: shutdown-aware sleep.
+                    shutdown_requested.wait(self.RATE_LIMIT_DELAY)
             finally:
                 write_conn.close()
 

@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from services.jobs.base import (
     _get_conn, _commit_with_retry,
     persist_job_start, persist_job_progress, persist_job_complete,
-    resolve_terminal_status,
+    resolve_terminal_status, shutdown_requested,
 )
 
 logger = logging.getLogger(__name__)
@@ -448,8 +448,9 @@ class SteamSyncJob:
                         with self._lock:
                             self.failed_count += 1
 
-                    # Rate limit: 1 request per second
-                    time.sleep(1.0)
+                    # Rate limit: 1 request per second — Pass 40.10:
+                    # shutdown-aware sleep so SIGTERM collapses the wait.
+                    shutdown_requested.wait(1.0)
 
                 if _pending_commits > 0:
                     _commit_with_retry(sync_conn)
@@ -764,7 +765,8 @@ class XboxSyncJob:
                         with self._lock:
                             self.failed_count += 1
 
-                    time.sleep(0.5)
+                    # Pass 40.10 — shutdown-aware rate-limit sleep.
+                    shutdown_requested.wait(0.5)
 
                 if _pending_commits > 0:
                     _commit_with_retry(sync_conn)

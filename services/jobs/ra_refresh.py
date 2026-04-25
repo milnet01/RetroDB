@@ -12,7 +12,7 @@ from services.achievement_linking import match_ra_game
 from services.jobs.base import (
     _get_conn, _commit_with_retry, _get_ra_credentials,
     persist_job_start, persist_job_progress, persist_job_complete,
-    resolve_terminal_status,
+    resolve_terminal_status, shutdown_requested,
 )
 
 logger = logging.getLogger(__name__)
@@ -302,8 +302,9 @@ class RARefreshJob:
                             else:
                                 ra_console_cache[console_id] = []
 
-                            # Rate limit after fetching console list
-                            time.sleep(1)
+                            # Rate limit after fetching console list —
+                            # Pass 40.10: shutdown-aware sleep.
+                            shutdown_requested.wait(1)
 
                         ra_games = ra_console_cache.get(console_id, [])
 

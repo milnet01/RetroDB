@@ -823,3 +823,40 @@ class TestPass40_9ImageResizeJobBaseConvention:
         loop_section = body[body.index('for i, item in enumerate'):]
         assert loop_section.count('with self._lock:') >= 2, \
             'worker loop must lock counter accesses (Pass 40.9)'
+
+
+# -----------------------------------------------------------------------------
+# 40.10 — Rate-limit time.sleep blocks shutdown drain
+# -----------------------------------------------------------------------------
+class TestPass40_10ShutdownAwareSleep:
+    """Per-iteration time.sleep(d) in long-running jobs must be replaced
+    with shutdown_requested.wait(d) so SIGTERM short-circuits the sleep
+    instead of expiring the drain budget."""
+
+    def test_no_bare_time_sleep_in_jobs(self):
+        """No services/jobs/{psn_refresh,platform_sync,ra_sync,ra_refresh,
+        museum}.py file should call time.sleep — every wait must go through
+        the shutdown event so the drain budget is honoured."""
+        import os
+        repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        offenders = []
+        for name in ('psn_refresh', 'platform_sync', 'ra_sync',
+                     'ra_refresh', 'museum'):
+            path = os.path.join(repo, 'services', 'jobs', f'{name}.py')
+            src = open(path).read()
+            for i, line in enumerate(src.splitlines(), start=1):
+                stripped = line.strip()
+                if stripped.startswith('#'):
+                    continue
+                if 'time.sleep(' in line:
+                    offenders.append(f'{name}.py:{i}: {stripped}')
+        assert not offenders, \
+            f'Pass 40.10: replace with shutdown_requested.wait()\n' + \
+            '\n'.join(offenders)
+
+    def test_each_job_imports_shutdown_event(self):
+        for name in ('psn_refresh', 'platform_sync', 'ra_sync',
+                     'ra_refresh', 'museum'):
+            mod = __import__(f'services.jobs.{name}', fromlist=['*'])
+            assert hasattr(mod, 'shutdown_requested'), \
+                f'{name}.py must import shutdown_requested (Pass 40.10)'

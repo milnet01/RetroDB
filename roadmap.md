@@ -319,7 +319,16 @@ paths or silent-corruption vectors under routine use.
   API call durations (30-60s is more honest for PSN/RA sync).  Pick one
   explicitly — document the decision.
 - **Source**: 2026-04-24 indie-review, jobs C2.
-- **Status**: todo
+- **Status**: done (v3.4.10) — every `time.sleep(d)` in
+  `services/jobs/{psn_refresh, platform_sync, ra_sync, ra_refresh,
+  museum}.py` replaced with `shutdown_requested.wait(d)`. SIGTERM now
+  collapses rate-limit waits in &lt; a few ms; the pause loop in
+  `psn_refresh._run_full_refresh` uses the same primitive so paused
+  jobs unblock too. Tests:
+  `test_pass40_security.py::TestPass40_10ShutdownAwareSleep`. (HTTP
+  timeout vs shutdown-budget tension was a separate point in the
+  finding — leaving outbound timeouts as-is for now; we trade SIGKILL
+  on rare in-flight HTTP calls for honest API durations.)
 
 #### Pass 40.11 CHD conversion non-atomic + dead `chd_verify_after_convert` (CRITICAL, M)
 

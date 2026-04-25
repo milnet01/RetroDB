@@ -1,3 +1,17 @@
+- version: 3.4.10
+  date: 2026-04-25
+  tags:
+  - type: reliability
+    label: Pass 40.10 — shutdown-aware rate-limit sleeps in long-running jobs
+  body: |
+    <ul>
+        <li><strong>Pass 40.10 (CRITICAL) &mdash; rate-limit <code>time.sleep</code> no longer blocks shutdown drain</strong>. Eight per-iteration sleeps across <code>services/jobs/{psn_refresh, platform_sync, ra_sync, ra_refresh, museum}.py</code> ranged from 0.5 s to 2.5 s and ignored both <code>self.cancelled</code> and <code>shutdown_requested</code>. Combined with blocking HTTP timeouts up to 300 s and <code>request_shutdown(timeout=5.0)</code>, a SIGTERM during any sleep or in-flight call expired the drain budget &mdash; the daemon thread got killed mid-operation, un-persisted progress was lost, DB writes possibly half-committed. <code>job_queue</code> rows stayed <code>status='running'</code> until the startup sweep marked them interrupted, and up to 30 s of committed work was re-done on resume.</li>
+        <li><strong>Fix</strong>. Every <code>time.sleep(d)</code> in those five files is now <code>shutdown_requested.wait(d)</code>. <code>Event.wait</code> short-circuits the moment <code>request_shutdown</code> sets the event &mdash; sleeps collapse to ≤ a few ms and the worker exits its loop. The pause-loop in <code>psn_refresh._run_full_refresh</code> uses the same primitive so SIGTERM unblocks paused jobs too. (Eight sleeps total: <code>psn_refresh</code> ×3, <code>platform_sync</code> ×2, <code>ra_sync</code> ×1, <code>ra_refresh</code> ×1, <code>museum</code> ×3.)</li>
+        <li><strong>Tests</strong>. <code>TestPass40_10ShutdownAwareSleep</code> &mdash; (1) walks every line of all five files and asserts <code>time.sleep(</code> appears nowhere; (2) imports each module and asserts <code>shutdown_requested</code> is exported. 488 passed (was 486).</li>
+        <li><strong>Roadmap status</strong> &mdash; Pass 40.10 closed. 6 Tier-1 items remain.</li>
+        <li><strong>Version bump 3.4.9 &rarr; 3.4.10</strong>: patch (reliability; observable change &mdash; clean shutdowns now drain background syncs in &lt; 5 s instead of getting SIGKILL'd).</li>
+    </ul>
+
 - version: 3.4.9
   date: 2026-04-25
   tags:
