@@ -13,6 +13,10 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from scraper.base_scraper import http_get, safe_json, rate_limit
+import config as _config
+
+# Pass 45.14 — cap RAWG JSON response, mirroring RA + AI + ScreenScraper.
+_RAWG_MAX_BYTES = getattr(_config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
 
 logger = logging.getLogger(__name__)
 
@@ -121,7 +125,7 @@ def _make_request(endpoint, params=None, max_retries=2):
 
     url = f"{BASE_URL}/{endpoint}"
 
-    response = http_get(url, params=params, timeout=20, retries=max_retries)
+    response = http_get(url, params=params, timeout=20, retries=max_retries, max_bytes=_RAWG_MAX_BYTES)
 
     if response is None:
         logger.warning(f"RAWG request failed (no response): {url}")

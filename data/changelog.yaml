@@ -1,3 +1,18 @@
+- version: 3.5.29
+  date: 2026-04-27
+  tags:
+  - type: security
+    label: Pass 45.14 — TGDB / RAWG / IGDB max_bytes response caps
+  body: |
+    <ul>
+        <li><strong>Pass 45.14 (MEDIUM) &mdash; closed the last three scrapers calling <code>http_get</code>/<code>http_post</code> without <code>max_bytes</code></strong>. RA + AI + ScreenScraper already passed the cap; TGDB / RAWG / IGDB were the holdouts.</li>
+        <li><strong>Threat</strong>: a malicious or buggy upstream returning a multi-gigabyte JSON body would force the scraper process to allocate enough RAM to OOM the host. Worst-case for IGDB (Twitch OAuth + primary v4 endpoint) and TGDB (verbose <code>Games</code> response with embedded boxart URLs). The cap matches existing precedent: <code>getattr(config, 'MAX_API_RESPONSE_BYTES', 10*1024*1024)</code> &mdash; 10 MiB, ample for legitimate responses (largest TGDB response observed is ~1.5 MiB).</li>
+        <li><strong>Sites updated</strong>: <code>scrape_thegamesdb.py:_tgdb_request</code> (1 call site); <code>scrape_rawg.py:_make_request</code> (1 call site); <code>scrape_igdb.py</code> (3 call sites: <code>igdb_auth()</code> Twitch OAuth, <code>igdb_request()</code> primary v4 endpoint, <code>igdb_request()</code> 401-retry path). Each module exports a private <code>_TGDB_MAX_BYTES</code>/<code>_RAWG_MAX_BYTES</code>/<code>_IGDB_MAX_BYTES</code> constant computed once at import time so the value can be asserted from tests without re-resolving config.</li>
+        <li><strong>Source</strong> &mdash; indie-review 2026-04-25 theme T4.</li>
+        <li><strong>Tests</strong>. <code>tests/test_pass45_security.py::TestPass45_14*</code> &mdash; 6 cases. (1) TGDB <code>_tgdb_request</code> forwards <code>max_bytes</code> to <code>http_get</code> and the value &ge; 1 MiB. (2) RAWG <code>_make_request</code> same. (3) IGDB <code>igdb_auth()</code> Twitch OAuth http_post carries <code>max_bytes</code>. (4) IGDB <code>igdb_request()</code> primary http_post carries <code>max_bytes</code>. (5) Source-position pin: <code>igdb_request</code>'s primary AND 401-retry http_post calls both carry <code>max_bytes</code> (count match). (6) Sanity: each module's constant resolves to the same config value RA / AI use. Reverting all three scraper files fails all 6. Suite 665 &rarr; 671.</li>
+        <li><strong>Version bump 3.5.28 &rarr; 3.5.29</strong>: patch (resource-cap hardening, no schema or surface change).</li>
+    </ul>
+
 - version: 3.5.28
   date: 2026-04-27
   tags:

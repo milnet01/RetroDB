@@ -1977,3 +1977,139 @@ class TestPass45_13IgdbCacheAndRedactor:
         redacted = redact(url)
         assert 'SECRET_KEY_HERE' not in redacted
         assert 'user' not in redacted.split('z=')[1].split('&')[0] if 'z=' in redacted else True
+
+
+# -----------------------------------------------------------------------------
+# 45.14 — TGDB / RAWG / IGDB max_bytes
+# -----------------------------------------------------------------------------
+class TestPass45_14ApiResponseCaps:
+    """Pass 45.14 closes the last three scrapers that called ``http_get``/
+    ``http_post`` without the ``max_bytes`` kwarg: TheGamesDB
+    (``scrape_thegamesdb.py``), RAWG (``scrape_rawg.py``), IGDB
+    (``scrape_igdb.py`` — three call sites: Twitch OAuth, primary IGDB
+    request, and the 401-retry).
+
+    Without ``max_bytes``, a malicious or buggy upstream returning a
+    multi-gigabyte JSON body would force the scraper process to allocate
+    enough RAM to OOM the host. The cap matches RetroAchievements + AI +
+    ScreenScraper precedent: ``getattr(config, 'MAX_API_RESPONSE_BYTES',
+    10*1024*1024)`` (10 MiB)."""
+
+    def test_tgdb_passes_max_bytes(self, monkeypatch):
+        """Functional: the TGDB request site forwards max_bytes to
+        http_get."""
+        from scraper import scrape_thegamesdb
+
+        captured = {}
+
+        def fake_http_get(url, **kwargs):
+            captured.update(kwargs)
+            return None  # signal failure path so we don't proceed
+
+        monkeypatch.setattr(scrape_thegamesdb, 'http_get', fake_http_get)
+        # Force a key to be available so the for-loop runs.
+        monkeypatch.setattr(scrape_thegamesdb, 'get_api_keys',
+                            lambda: ('pub_key', ''))
+        scrape_thegamesdb._tgdb_request('https://api.thegamesdb.net/v1/Games')
+        assert 'max_bytes' in captured, (
+            "Pass 45.14: TGDB http_get must be called with max_bytes"
+        )
+        assert captured['max_bytes'] >= 1024 * 1024, (
+            "max_bytes must be a sensible cap, not a tiny value"
+        )
+
+    def test_rawg_passes_max_bytes(self, monkeypatch):
+        """RAWG: max_bytes must reach http_get."""
+        from scraper import scrape_rawg
+
+        captured = {}
+
+        def fake_http_get(url, **kwargs):
+            captured.update(kwargs)
+            return None
+
+        monkeypatch.setattr(scrape_rawg, 'http_get', fake_http_get)
+        # _make_request signature: (endpoint, params=None, max_retries=2)
+        scrape_rawg._make_request('games', {'search': 'foo'})
+        assert 'max_bytes' in captured, (
+            "Pass 45.14: RAWG http_get must be called with max_bytes"
+        )
+
+    def test_igdb_auth_passes_max_bytes(self, monkeypatch):
+        """IGDB Twitch OAuth: max_bytes must reach http_post."""
+        from scraper import scrape_igdb
+        # Reset cache so we hit the http_post.
+        monkeypatch.setattr(scrape_igdb, '_igdb_token_cache',
+                            {'token': None, 'expires_at': 0})
+        monkeypatch.setattr(scrape_igdb, '_get_igdb_credentials',
+                            lambda: ('cid', 'csec'))
+
+        captured = {}
+
+        class _FakeResp:
+            status_code = 200
+            def raise_for_status(self): pass
+            def json(self): return {'access_token': 'x', 'expires_in': 100}
+
+        def fake_http_post(url, **kwargs):
+            captured.update(kwargs)
+            return _FakeResp()
+
+        monkeypatch.setattr(scrape_igdb, 'http_post', fake_http_post)
+        scrape_igdb.igdb_auth()
+        assert 'max_bytes' in captured, (
+            "Pass 45.14: IGDB Twitch OAuth http_post must pass max_bytes"
+        )
+
+    def test_igdb_request_passes_max_bytes(self, monkeypatch):
+        """IGDB primary endpoint: max_bytes must reach http_post."""
+        from scraper import scrape_igdb
+        monkeypatch.setattr(scrape_igdb, '_get_igdb_credentials',
+                            lambda: ('cid', 'csec'))
+
+        captured = {}
+
+        class _FakeResp:
+            status_code = 200
+            def raise_for_status(self): pass
+            def json(self): return [{'id': 1}]
+
+        def fake_http_post(url, **kwargs):
+            captured.update(kwargs)
+            return _FakeResp()
+
+        monkeypatch.setattr(scrape_igdb, 'http_post', fake_http_post)
+        scrape_igdb.igdb_request('games', 'where 1=1;', 'tok')
+        assert 'max_bytes' in captured, (
+            "Pass 45.14: IGDB primary request http_post must pass max_bytes"
+        )
+
+    def test_igdb_request_401_retry_passes_max_bytes(self, monkeypatch):
+        """The 401-retry path is a separate http_post call site —
+        max_bytes must be present there too."""
+        path = os.path.join(_REPO_ROOT, 'scraper', 'scrape_igdb.py')
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        # Find igdb_request and confirm both http_post calls inside it
+        # carry max_bytes.
+        idx = body.find('def igdb_request')
+        assert idx != -1
+        next_def = body.find('\ndef ', idx + 1)
+        slice_body = body[idx:next_def] if next_def != -1 else body[idx:]
+        post_count = slice_body.count('http_post(')
+        max_bytes_count = slice_body.count('max_bytes=')
+        assert max_bytes_count >= post_count, (
+            f"Pass 45.14: igdb_request has {post_count} http_post calls "
+            f"but only {max_bytes_count} max_bytes args — both primary and "
+            f"401-retry paths must carry the cap"
+        )
+
+    def test_max_bytes_value_matches_config(self):
+        """Sanity: each module's _MAX_BYTES constant resolves to the same
+        config value RA / AI use, with the same fallback default."""
+        from scraper import scrape_thegamesdb, scrape_rawg, scrape_igdb
+        import config
+        expected = getattr(config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
+        assert scrape_thegamesdb._TGDB_MAX_BYTES == expected
+        assert scrape_rawg._RAWG_MAX_BYTES == expected
+        assert scrape_igdb._IGDB_MAX_BYTES == expected

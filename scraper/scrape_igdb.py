@@ -13,10 +13,14 @@ import sys
 # Add parent directory to path for config import
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import DB_PATH, IMAGE_PATH, IGDB_PLATFORM_MAP
+import config as _config
 
 from scraper.base_scraper import http_post, download_image, get_scraper_conn
 
 logger = logging.getLogger(__name__)
+
+# Pass 45.14 — cap IGDB / Twitch JSON response sizes; matches RA + AI precedent.
+_IGDB_MAX_BYTES = getattr(_config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
 
 def _get_igdb_credentials():
     """Get IGDB credentials via centralized scraper_manager, falling back to config.py"""
@@ -61,7 +65,8 @@ def igdb_auth():
                     'grant_type': 'client_credentials'
                 },
                 timeout=10,
-                retries=2
+                retries=2,
+                max_bytes=_IGDB_MAX_BYTES,
             )
             if r is None:
                 raise ConnectionError("IGDB authentication request failed after retries")
@@ -97,7 +102,8 @@ def igdb_request(endpoint, body, token):
         data=body,
         headers=headers,
         timeout=30,
-        retries=2
+        retries=2,
+        max_bytes=_IGDB_MAX_BYTES,
     )
     if r is None:
         raise ConnectionError(f"IGDB API request to {endpoint} failed after retries")
@@ -120,6 +126,7 @@ def igdb_request(endpoint, body, token):
             headers=headers,
             timeout=30,
             retries=2,
+            max_bytes=_IGDB_MAX_BYTES,
         )
         if r is None:
             raise ConnectionError(

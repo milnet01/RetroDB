@@ -409,7 +409,12 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: pass `max_bytes=getattr(config, 'MAX_API_RESPONSE_BYTES',
   10*1024*1024)` (matches RA + AI + ScreenScraper precedent).
 - **Source**: indie-review 2026-04-25 theme T4.
-- **Status**: todo
+- **Status**: done (v3.5.29) — 5 call sites across `scrape_thegamesdb.py`,
+  `scrape_rawg.py`, `scrape_igdb.py` now pass `max_bytes` (resolved once at
+  module import via `_<module>_MAX_BYTES = getattr(config,
+  'MAX_API_RESPONSE_BYTES', 10*1024*1024)`). Both IGDB primary + 401-retry
+  http_post sites carry the cap. 6 regression tests in `TestPass45_14*`;
+  suite 665 → 671.
 
 #### Pass 45.15 Migration 010 missing CASCADE FKs (MEDIUM, S)
 

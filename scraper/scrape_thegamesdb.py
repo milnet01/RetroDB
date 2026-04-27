@@ -18,6 +18,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import IMAGE_PATH, THEGAMESDB_API_KEY, THEGAMESDB_PUBLIC_API_KEY, TGDB_SYSTEM_MAP, TGDB_GENRE_MAP
 
 from scraper.base_scraper import http_get, get_scraper_conn, download_image
+import config as _config
+
+# Pass 45.14 — every scraper API response cap, mirroring RA + AI + ScreenScraper.
+_TGDB_MAX_BYTES = getattr(_config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +86,7 @@ def _tgdb_request(url, params=None, timeout=30):
 
     for key_type, key in keys_to_try:
         params['apikey'] = key
-        response = http_get(url, params=params, timeout=timeout, retries=2)
+        response = http_get(url, params=params, timeout=timeout, retries=2, max_bytes=_TGDB_MAX_BYTES)
 
         if response is None:
             logger.error(f"TGDB request failed with {key_type} key (no response)")
