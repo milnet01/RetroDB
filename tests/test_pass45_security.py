@@ -1373,3 +1373,246 @@ class TestPass45_10MigrationHardening:
             "— scope it to the rebuilt tables in the individual migrations "
             "(Pass 45.10)"
         )
+
+
+# -----------------------------------------------------------------------------
+# 45.11 — Settings/scraper validators wired into POST endpoints
+# -----------------------------------------------------------------------------
+class TestPass45_11SettingsValidators:
+    """Pass 45.11 wires per-key validators into three POST endpoints that
+    previously wrote the request body verbatim:
+
+    1. ``/api/settings/logging`` — ``settings['logging'] = data`` was
+       unconditional. ``validate_settings_value('logging', data)`` exists at
+       services/settings_validators.py:182 but was never called.
+    2. ``/api/scraper-settings`` — ``priority``/``enabled``/``match_*`` were
+       persisted without type-checking; a string-instead-of-bool or bogus
+       scraper name in ``priority`` would crash scraper_manager next call.
+    3. ``/api/scraper-api-keys`` — every field accepted any JSON type;
+       ``ra_apikey=42`` would crash any ``f"...?y={key}"`` formatter that
+       expects a string.
+
+    Pass 45.11 adds ``services/scraper_settings_validators.py`` mirroring the
+    existing ``services/settings_validators.py`` pattern and threads the
+    validators through the three endpoints with a 400 envelope on failure."""
+
+    # ------- /api/settings/logging -----------------------------------------
+    def test_logging_endpoint_calls_validator(self, monkeypatch):
+        """Pure-function: call the validator on a malformed logging block
+        and confirm it rejects."""
+        from services.settings_validators import validate_settings_value
+        ok, reason, _ = validate_settings_value('logging', 'a string, not a dict')
+        assert ok is False
+        assert 'object' in reason.lower()
+
+    def test_logging_endpoint_rejects_malformed_with_400(self, monkeypatch):
+        """End-to-end: POST a non-dict logging body, expect 400 and a
+        validator-shaped error message."""
+        import app as app_module
+        import settings_manager as _settings_manager
+        fake_admin = {'id': 1, 'username': 'admin-stub', 'role': 'admin'}
+        monkeypatch.setattr(app_module, 'get_current_user', lambda: fake_admin)
+        monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
+        monkeypatch.setattr(_settings_manager, 'load_settings',
+                            lambda: {'setup_completed': True})
+        app_module.app.config['TESTING'] = True
+        with app_module.app.test_client() as c:
+            with c.session_transaction() as sess:
+                sess['_csrf_token'] = 'pass45_11-token'
+            resp = c.post(
+                '/api/settings/logging',
+                json='this is not a dict',
+                headers={'X-CSRF-Token': 'pass45_11-token'},
+            )
+        assert resp.status_code == 400, resp.get_data(as_text=True)
+        body = resp.get_json()
+        assert body['success'] is False
+        assert 'invalid logging settings' in body['error']
+
+    def test_logging_endpoint_rejects_unknown_category(self, monkeypatch):
+        """Unknown log category like 'rce_via_log_init' must be rejected."""
+        import app as app_module
+        import settings_manager as _settings_manager
+        fake_admin = {'id': 1, 'username': 'admin-stub', 'role': 'admin'}
+        monkeypatch.setattr(app_module, 'get_current_user', lambda: fake_admin)
+        monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
+        monkeypatch.setattr(_settings_manager, 'load_settings',
+                            lambda: {'setup_completed': True})
+        app_module.app.config['TESTING'] = True
+        with app_module.app.test_client() as c:
+            with c.session_transaction() as sess:
+                sess['_csrf_token'] = 'pass45_11-token'
+            resp = c.post(
+                '/api/settings/logging',
+                json={'rce_via_log_init': {'info': True}},
+                headers={'X-CSRF-Token': 'pass45_11-token'},
+            )
+        assert resp.status_code == 400
+        assert 'unknown log category' in resp.get_json()['error']
+
+    def test_logging_endpoint_route_calls_validator(self):
+        """Source-position pin: the route body must call
+        validate_settings_value before assigning settings['logging']."""
+        path = os.path.join(_REPO_ROOT, 'routes', 'settings.py')
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        idx = body.find('def api_save_logging_settings')
+        assert idx != -1
+        next_def = body.find('\ndef ', idx + 1)
+        slice_body = body[idx:next_def] if next_def != -1 else body[idx:]
+        v_pos = slice_body.find("validate_settings_value('logging'")
+        assign_pos = slice_body.find("settings['logging']")
+        assert v_pos != -1, (
+            "api_save_logging_settings must call validate_settings_value "
+            "('logging', ...) (Pass 45.11)"
+        )
+        assert v_pos < assign_pos, (
+            "validate_settings_value must run BEFORE settings['logging'] "
+            "is assigned (Pass 45.11)"
+        )
+
+    # ------- /api/scraper-settings ----------------------------------------
+    def test_scraper_settings_validator_rejects_bogus_priority(self):
+        """Pure-function: bogus scraper name in priority must be rejected."""
+        from services.scraper_settings_validators import validate_scraper_settings
+        ok, reason, _ = validate_scraper_settings({
+            'priority': ['esde', '../etc/passwd'],
+        })
+        assert ok is False
+        assert 'priority' in reason.lower()
+
+    def test_scraper_settings_validator_rejects_string_for_bool(self):
+        """enabled must be {scraper: bool}; reject string values."""
+        from services.scraper_settings_validators import validate_scraper_settings
+        ok, reason, _ = validate_scraper_settings({
+            'enabled': {'tgdb': 'yes'},
+        })
+        assert ok is False
+        assert 'true or false' in reason.lower()
+
+    def test_scraper_settings_validator_rejects_string_score(self):
+        """minimum_match_score must be int 0-1000."""
+        from services.scraper_settings_validators import validate_scraper_settings
+        ok, reason, _ = validate_scraper_settings({
+            'minimum_match_score': 'lots',
+        })
+        assert ok is False
+        assert 'integer' in reason.lower()
+
+    def test_scraper_settings_validator_rejects_unknown_top_level(self):
+        """Top-level unknown key must be rejected (allowlist behaviour)."""
+        from services.scraper_settings_validators import validate_scraper_settings
+        ok, reason, _ = validate_scraper_settings({
+            'rce_payload': 'hi',
+        })
+        assert ok is False
+        assert 'unknown' in reason.lower()
+
+    def test_scraper_settings_validator_accepts_valid_payload(self):
+        """Valid full-shape payload passes and round-trips intact."""
+        from services.scraper_settings_validators import validate_scraper_settings
+        ok, reason, cleaned = validate_scraper_settings({
+            'priority': ['esde', 'tgdb', 'igdb', 'rawg', 'screenscraper', 'ai'],
+            'enabled': {'esde': True, 'tgdb': False},
+            'minimum_match_score': 200,
+            'match_mode': 'criteria',
+            'match_criteria': {'platform_required': True, 'title_quality': 'close'},
+        })
+        assert ok is True, reason
+        assert cleaned['priority'] == ['esde', 'tgdb', 'igdb', 'rawg', 'screenscraper', 'ai']
+        assert cleaned['match_criteria']['title_quality'] == 'close'
+
+    def test_scraper_settings_endpoint_rejects_with_400(self, monkeypatch):
+        """End-to-end: bogus priority must return 400 from the route."""
+        import app as app_module
+        import settings_manager as _settings_manager
+        fake_admin = {'id': 1, 'username': 'admin-stub', 'role': 'admin'}
+        monkeypatch.setattr(app_module, 'get_current_user', lambda: fake_admin)
+        monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
+        monkeypatch.setattr(_settings_manager, 'load_settings',
+                            lambda: {'setup_completed': True})
+        app_module.app.config['TESTING'] = True
+        with app_module.app.test_client() as c:
+            with c.session_transaction() as sess:
+                sess['_csrf_token'] = 'pass45_11-token'
+            resp = c.post(
+                '/api/scraper-settings',
+                json={'priority': ['../etc/passwd']},
+                headers={'X-CSRF-Token': 'pass45_11-token'},
+            )
+        assert resp.status_code == 400, resp.get_data(as_text=True)
+        assert 'invalid scraper settings' in resp.get_json()['error']
+
+    # ------- /api/scraper-api-keys ----------------------------------------
+    def test_api_keys_validator_rejects_int_for_string(self):
+        """ra_apikey=42 must fail — every value is a string."""
+        from services.scraper_settings_validators import validate_scraper_api_keys
+        ok, reason, _ = validate_scraper_api_keys({'ra_apikey': 42})
+        assert ok is False
+        assert 'must be a string' in reason
+
+    def test_api_keys_validator_rejects_unknown_field(self):
+        """Allowlist: unknown api-key field is rejected."""
+        from services.scraper_settings_validators import validate_scraper_api_keys
+        ok, reason, _ = validate_scraper_api_keys({'rce_field': 'x'})
+        assert ok is False
+        assert 'unknown' in reason.lower()
+
+    def test_api_keys_validator_rejects_control_char(self):
+        """Reject NUL/CR/LF that would smuggle into log lines or
+        querystrings."""
+        from services.scraper_settings_validators import validate_scraper_api_keys
+        ok, reason, _ = validate_scraper_api_keys({'tgdb': 'abc\ndef'})
+        assert ok is False
+        assert 'control' in reason.lower()
+
+    def test_api_keys_validator_rejects_invalid_provider(self):
+        """ai_provider is enum-locked."""
+        from services.scraper_settings_validators import validate_scraper_api_keys
+        ok, reason, _ = validate_scraper_api_keys({'ai_provider': 'evil_llm'})
+        assert ok is False
+        assert 'ai_provider' in reason
+
+    def test_api_keys_validator_accepts_known_fields(self):
+        """All allowlisted fields must accept their normal string values."""
+        from services.scraper_settings_validators import validate_scraper_api_keys
+        ok, reason, cleaned = validate_scraper_api_keys({
+            'tgdb': 'a' * 64,
+            'igdb_client_id': 'twitch_client',
+            'ra_username': 'milnet',
+            'ai_provider': 'gemini',
+            'steam_id': '76561199800524431',
+        })
+        assert ok is True, reason
+        assert cleaned['tgdb'] == 'a' * 64
+
+    def test_api_keys_endpoint_rejects_with_400(self, monkeypatch):
+        """End-to-end: bogus type must return 400 from the route."""
+        import app as app_module
+        import settings_manager as _settings_manager
+        fake_admin = {'id': 1, 'username': 'admin-stub', 'role': 'admin'}
+        monkeypatch.setattr(app_module, 'get_current_user', lambda: fake_admin)
+        monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
+        monkeypatch.setattr(_settings_manager, 'load_settings',
+                            lambda: {'setup_completed': True})
+        app_module.app.config['TESTING'] = True
+        with app_module.app.test_client() as c:
+            with c.session_transaction() as sess:
+                sess['_csrf_token'] = 'pass45_11-token'
+            resp = c.post(
+                '/api/scraper-api-keys',
+                json={'ra_apikey': 42},
+                headers={'X-CSRF-Token': 'pass45_11-token'},
+            )
+        assert resp.status_code == 400, resp.get_data(as_text=True)
+        assert 'invalid api keys' in resp.get_json()['error']
+
+    # ------- import / wiring sanity ----------------------------------------
+    def test_scraper_routes_imports_validator(self):
+        """routes/scraper.py must import and call both validators."""
+        path = os.path.join(_REPO_ROOT, 'routes', 'scraper.py')
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        assert 'from services.scraper_settings_validators import' in body
+        assert 'validate_scraper_settings(' in body
+        assert 'validate_scraper_api_keys(' in body

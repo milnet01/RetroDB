@@ -345,7 +345,17 @@ paths or silent-corruption vectors under routine use.
   (`routes/scraper.py:228, 263`) — author per-key validators in
   `services/scraper_settings_validators.py`.
 - **Source**: indie-review 2026-04-25 (Maintenance/settings lane P1+P2).
-- **Status**: todo
+- **Status**: done (v3.5.26) — `/api/settings/logging` POST now routes through
+  `validate_settings_value('logging', data)` and returns 400 on malformed
+  bodies (Pass 32.2 validator was unwired). New
+  `services/scraper_settings_validators.py` mirrors the
+  `services/settings_validators.py` pattern with allowlists for `priority`,
+  `enabled`, `minimum_match_score`, `match_mode`, `match_criteria` (top-level
+  keys for `/api/scraper-settings`) and a 24-field allowlist for
+  `/api/scraper-api-keys` with type+length+control-char checks. `ai_provider`
+  enum-locked to `''/gemini/openai/claude`. 17 regression tests in
+  `TestPass45_11*` (pure-function + end-to-end + source-position pin); test
+  suite 633 → 650.
 
 #### Pass 45.12 Xbox refresh-token rotation hardening (HIGH, M)
 

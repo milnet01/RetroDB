@@ -1,3 +1,20 @@
+- version: 3.5.26
+  date: 2026-04-27
+  tags:
+  - type: security
+    label: Pass 45.11 — Per-key validators wired into 3 settings POST endpoints
+  body: |
+    <ul>
+        <li><strong>Pass 45.11 (HIGH) &mdash; three admin POST endpoints previously wrote the request body verbatim to disk</strong>. Indie-review 2026-04-25 theme Maintenance/settings P1+P2 caught all three on the same run.</li>
+        <li><strong>(a) <code>/api/settings/logging</code> POST</strong> assigned <code>settings['logging'] = data</code> unconditionally. The validator existed at <code>services/settings_validators.py:182</code> (<code>_logging_validator</code> — checks the category/level dict shape) but was never called. An admin session (or any caller that beat CSRF — admin endpoints are admin-only, but a malformed JSON body from a friendly source still survived) could persist a primitive instead of a nested dict, crashing <code>log_manager.setup_all_logging()</code> on next start. Now routes through <code>validate_settings_value('logging', data)</code> with a 400 envelope on failure.</li>
+        <li><strong>(b) <code>/api/scraper-settings</code> POST</strong> persisted <code>priority</code>, <code>enabled</code>, <code>minimum_match_score</code>, <code>match_mode</code>, and <code>match_criteria</code> with no type-checking. <code>priority=['../etc/passwd']</code> would survive to <code>scraper_settings.json</code> and crash <code>scraper_manager.scrape_game()</code> on the next priority lookup; <code>enabled={'tgdb': 'yes'}</code> (string-not-bool) would silently skip TGDB; <code>minimum_match_score='lots'</code> would <code>TypeError</code> in the threshold comparison. New <code>services/scraper_settings_validators.py</code> mirrors the existing <code>settings_validators.py</code> pattern with explicit per-shape validators for every persisted top-level key.</li>
+        <li><strong>(c) <code>/api/scraper-api-keys</code> POST</strong> accepted any JSON shape per field. <code>ra_apikey=42</code> (int) would crash any URL formatter expecting a string; control characters (<code>\\n</code>, <code>\\r</code>, NUL) in a key would smuggle into log lines and querystrings. New validator allowlists the exact set of API-key fields, requires every value be a string &le; 4096 chars with no control characters, and locks <code>ai_provider</code> to its enum (<code>''</code>/<code>gemini</code>/<code>openai</code>/<code>claude</code>). Runs AFTER the masked-sentinel substitution from Pass 26.5 so the cleaned data round-trips even when the frontend echoes the <code>***</code> display value.</li>
+        <li><strong>Sub-pass 45.11 hard contract</strong>: every persisted shape passes through a per-key validator. The runner-level allowlist plus the per-validator type-check matches the <code>services/rom_tools_validators.py</code> shape from Pass 40.1 (RCE via unvalidated <code>chdman_path</code>) — same pattern, same threat-model lineage.</li>
+        <li><strong>Source</strong> &mdash; indie-review 2026-04-25 (Maintenance/settings lane P1+P2).</li>
+        <li><strong>Tests</strong>. <code>tests/test_pass45_security.py::TestPass45_11*</code> &mdash; 17 cases across three endpoints: (1) pure-function validator tests confirm rejection of malformed shapes, (2) end-to-end POSTs with a CSRF token + monkeypatched admin loader confirm the routes return 400 with the canonical <code>{success: false, error: ...}</code> envelope, (3) source-position pin confirms <code>validate_settings_value('logging'</code> is called <em>before</em> <code>settings['logging']</code> is assigned, (4) wiring sanity asserts <code>routes/scraper.py</code> imports and calls both new validators. Reverting the route-level <code>validate_*</code> call fails the 400-envelope tests; the test suite grew 633 &rarr; 650.</li>
+        <li><strong>Version bump 3.5.25 &rarr; 3.5.26</strong>: patch (input-validation hardening, no schema or surface change).</li>
+    </ul>
+
 - version: 3.5.25
   date: 2026-04-25
   tags:
