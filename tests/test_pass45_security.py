@@ -2029,6 +2029,10 @@ class TestPass45_14ApiResponseCaps:
             return None
 
         monkeypatch.setattr(scrape_rawg, 'http_get', fake_http_get)
+        # CI has no data/scraper_settings.json, so the real _get_api_key
+        # returns '' and _make_request early-returns before the http_get
+        # call. Stub the key fetch.
+        monkeypatch.setattr(scrape_rawg, '_get_api_key', lambda: 'fake_key')
         # _make_request signature: (endpoint, params=None, max_retries=2)
         scrape_rawg._make_request('games', {'search': 'foo'})
         assert 'max_bytes' in captured, (
