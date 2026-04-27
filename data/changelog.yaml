@@ -1,3 +1,25 @@
+- version: 3.5.37
+  date: 2026-04-27
+  tags:
+  - type: bugfix
+    label: Pass 46.4 — Resilient logging handler + ESRGAN init diagnostic
+  body: |
+    <ul>
+        <li><strong>Pass 46.4 (bugfix / observability) &mdash; corrupt <code>data/settings.json</code> no longer silently disables Real-ESRGAN at startup</strong>. User reported "ESRGAN is no longer launching, nothing in terminal output." Investigation found <code>data/settings.json</code> contained <code>"logging": "this is not a dict"</code> &mdash; left over from an unsandboxed run of <code>test_logging_endpoint_rejects_malformed_with_400</code> (Pass 45.11 added the validator, but a regression where <code>save_settings</code> was called before validation had already polluted the file).</li>
+        <li><strong>Failure chain</strong>: corrupt settings &rarr; <code>CategoryFileHandler.emit</code> calls <code>'this is not a dict'.get(category, {})</code> &rarr; <code>AttributeError</code> on every <code>logger.info()</code> from a categorised logger &rarr; the <code>except</code> arm of <code>_init_upscaler</code>'s <code>logger.warning(...)</code> ALSO crashes &rarr; the eager warm-up's <code>except Exception: pass</code> in <code>app.py</code> swallows the whole thing. Operator sees nothing.</li>
+        <li><strong>Three fixes layered for defence in depth</strong>:
+            <ol>
+                <li><code>log_manager.CategoryFileHandler.emit</code> now guards <code>isinstance(log_settings, dict)</code> and <code>isinstance(category_settings, dict)</code> &mdash; if either is wrong-shaped (test pollution, hand edit, schema migration in flight), the handler falls back to "log everything" rather than raising into the caller's <code>logger.x()</code> site.</li>
+                <li><code>app.py</code> ESRGAN warm-up's <code>except</code> now <code>print(..., file=sys.stderr) + traceback.print_exc()</code> instead of <code>pass</code>. <em>Even if the logging subsystem is broken</em>, the ESRGAN init failure is now visible at startup. The previous comment "non-fatal; logged inside _init_upscaler" assumed logging was healthy &mdash; it broke that assumption.</li>
+                <li><code>tests/test_pass45_security.py</code> &mdash; the two malformed-payload tests now <code>monkeypatch.setattr(_settings_manager, 'save_settings', lambda _s: True)</code>. Belt-and-braces: even if the validator regresses, the test cannot write to the real <code>data/settings.json</code> ever again.</li>
+            </ol>
+        </li>
+        <li><strong>Verification</strong>. With the corrupt settings re-written deliberately and the hardened handler, <code>_get_upscaler()</code> now succeeds and prints <code>Real-ESRGAN ONNX loaded (CPU mode, tile=64px, max_tiles=100)</code> on stderr. Test suite: <code>tests/test_pass45_security.py::TestPass45_11SettingsValidators</code> 17/17 passed; <code>tests/test_observability.py + tests/test_log_redactor.py</code> 24/24 passed.</li>
+        <li><strong>User impact</strong>. After updating, restart the app once &mdash; <code>data/settings.json</code> has been repaired in-place to its proper shape. From here on, even if the file gets corrupted by some other path, ESRGAN init will print a clear error to the terminal instead of silently disabling.</li>
+        <li><strong>Source</strong> &mdash; user report 2026-04-27 ("It started the app and ESRGAN is no longer launching or at least it is showing nothing for it in the terminal output"). Live debugging session.</li>
+        <li><strong>Version bump 3.5.36 &rarr; 3.5.37</strong>: patch (bugfix; no behavior change to working installs).</li>
+    </ul>
+
 - version: 3.5.36
   date: 2026-04-27
   tags:

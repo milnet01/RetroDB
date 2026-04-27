@@ -1415,6 +1415,11 @@ class TestPass45_11SettingsValidators:
         monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
         monkeypatch.setattr(_settings_manager, 'load_settings',
                             lambda: {'setup_completed': True})
+        # Belt-and-braces: if validation ever regresses, save_settings must
+        # NOT touch the real data/settings.json — Pass 46.4 traced a silent
+        # ESRGAN-init outage to a stale `"this is not a dict"` value left
+        # in the user's settings.json by an unsandboxed earlier run.
+        monkeypatch.setattr(_settings_manager, 'save_settings', lambda _s: True)
         app_module.app.config['TESTING'] = True
         with app_module.app.test_client() as c:
             with c.session_transaction() as sess:
@@ -1438,6 +1443,7 @@ class TestPass45_11SettingsValidators:
         monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
         monkeypatch.setattr(_settings_manager, 'load_settings',
                             lambda: {'setup_completed': True})
+        monkeypatch.setattr(_settings_manager, 'save_settings', lambda _s: True)
         app_module.app.config['TESTING'] = True
         with app_module.app.test_client() as c:
             with c.session_transaction() as sess:

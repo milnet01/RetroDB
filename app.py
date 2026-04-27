@@ -1605,8 +1605,15 @@ if __name__ == '__main__':
         try:
             from services.image_utils import _get_upscaler
             _get_upscaler()  # triggers init + warm-up on main thread
-        except Exception:
-            pass  # non-fatal; logged inside _init_upscaler
+        except Exception as _upscaler_init_err:
+            # Pass 46.4 — _init_upscaler logs its own warning on the normal
+            # failure path, but if the *logging* subsystem itself is broken
+            # the warning never reaches the operator and ESRGAN silently
+            # disables. Print to stderr so even a log-subsystem outage is
+            # visible at startup.
+            import traceback
+            print(f"WARN: ESRGAN init failed: {_upscaler_init_err}", file=sys.stderr)
+            traceback.print_exc()
 
     host = config.SERVER_HOST
     port = config.SERVER_PORT

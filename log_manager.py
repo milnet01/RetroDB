@@ -178,20 +178,29 @@ class CategoryFileHandler(logging.Handler):
     def emit(self, record):
         """Emit a log record"""
         self._setup_handler()  # Check for date rollover
-        
-        # Check if this level should be logged based on settings
+
+        # If data/settings.json is malformed (e.g. `logging` got overwritten
+        # with a non-dict via test pollution or hand-edit), fall back to
+        # "log everything" — a raising handler propagates AttributeError
+        # into the caller's `logger.info(...)` site, which previously took
+        # the ESRGAN init's outer `except Exception` and silently disabled
+        # upscaling with no diagnostic.
         log_settings = get_logging_settings()
+        if not isinstance(log_settings, dict):
+            log_settings = {}
         category_settings = log_settings.get(self.category, {})
-        
+        if not isinstance(category_settings, dict):
+            category_settings = {}
+
         level_map = {
             logging.INFO: 'info',
             logging.WARNING: 'warning',
             logging.ERROR: 'error',
             logging.CRITICAL: 'error',
         }
-        
+
         level_key = level_map.get(record.levelno, 'info')
-        
+
         # Only log if this level is enabled for this category
         if category_settings.get(level_key, True):
             self.file_handler.emit(record)
