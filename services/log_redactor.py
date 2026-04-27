@@ -32,7 +32,11 @@ _PATTERNS = [
     # `sspassword` (ScreenScraper: ?sspassword=...). The leading `[?&]`
     # boundary keeps `key` from over-matching `cache_key=` / `lookup_key=`
     # variants (those start with `&cache_key=` etc., not `&key=`).
-    (re.compile(r'([?&](?:apikey|api_key|key|token|auth|pwd|password|devpassword|sspassword|ssid)=)([^&\s"\']+)', re.IGNORECASE), r'\1<redacted>'),
+    # Pass 45.13 — added `y` (RetroAchievements API key: ?y=KEY) and `z`
+    # (RA username: ?z=USER) — single-character names that the previous
+    # rule didn't cover. Same `[?&]` boundary so `?z=...` matches but
+    # `?fancy=...` and `?lazy=...` don't.
+    (re.compile(r'([?&](?:apikey|api_key|key|token|auth|pwd|password|devpassword|sspassword|ssid|y|z)=)([^&\s"\']+)', re.IGNORECASE), r'\1<redacted>'),
     # Raw "X-Auth: ..." / "X-API-Key: ..." header styles
     (re.compile(r'(X-(?:Auth|API-Key|Session-Token)[^:]*:\s*)\S+', re.IGNORECASE), r'\1<redacted>'),
     # Pass 24.8 — bare long tokens in sensitive-field contexts.

@@ -390,7 +390,15 @@ paths or silent-corruption vectors under routine use.
   `retroachievements._ra_console_cache_lock`. Add `y` and `z` to the
   URL-querystring redactor allowlist (narrow boundary `[?&]y=`).
 - **Source**: indie-review 2026-04-25 (Per-source scrapers lane).
-- **Status**: todo
+- **Status**: done (v3.5.28) — `scraper/scrape_igdb.py` adds
+  `_igdb_token_cache_lock = threading.Lock()` mirroring
+  `_ra_console_cache_lock`. Both `igdb_auth()` and the 401-retry cache
+  reset in `igdb_request()` now wrap their cache mutations in
+  `with _igdb_token_cache_lock:`. `services/log_redactor.py` extended
+  the URL-querystring allowlist to include `y` and `z` (RA's `?y=KEY&z=USER`
+  pattern) with the existing `[?&]` boundary so `?fancy=` / `?lazy=`
+  remain untouched. 7 regression tests in `TestPass45_13*`; suite 658 →
+  665.
 
 #### Pass 45.14 TGDB / RAWG / IGDB add `max_bytes` (MEDIUM, S)
 

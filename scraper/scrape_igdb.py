@@ -6,6 +6,7 @@
 
 import os
 import logging
+import threading
 from datetime import datetime
 import sys
 
@@ -29,42 +30,52 @@ def _get_igdb_credentials():
 # =============================================================================
 
 _igdb_token_cache = {'token': None, 'expires_at': 0}
+# Pass 45.13 — guard the cache mutation against concurrent background workers
+# (bulk scrape runs IGDB in a thread pool). Without the lock, two threads
+# hitting an expired token would each kick off a Twitch OAuth round trip and
+# the second one would clobber the first's freshly-stored token. Mirrors the
+# pattern in scraper/retroachievements.py:_ra_console_cache_lock.
+_igdb_token_cache_lock = threading.Lock()
+
 
 def igdb_auth():
     """Authenticate with IGDB via Twitch, with token caching."""
     import time
 
-    # Return cached token if still valid (with 60s safety margin)
-    if _igdb_token_cache['token'] and time.time() < _igdb_token_cache['expires_at'] - 60:
-        return _igdb_token_cache['token']
+    # Pass 45.13 — read + refresh under the lock so two threads can't both
+    # see "no cached token" simultaneously and both fire a Twitch OAuth call.
+    with _igdb_token_cache_lock:
+        # Return cached token if still valid (with 60s safety margin)
+        if _igdb_token_cache['token'] and time.time() < _igdb_token_cache['expires_at'] - 60:
+            return _igdb_token_cache['token']
 
-    client_id, client_secret = _get_igdb_credentials()
-    if not client_id or not client_secret:
-        raise ValueError("IGDB credentials not configured. Set them in Settings → Scrapers.")
-    try:
-        r = http_post(
-            "https://id.twitch.tv/oauth2/token",
-            data={
-                'client_id': client_id,
-                'client_secret': client_secret,
-                'grant_type': 'client_credentials'
-            },
-            timeout=10,
-            retries=2
-        )
-        if r is None:
-            raise ConnectionError("IGDB authentication request failed after retries")
-        r.raise_for_status()
-        data = r.json()
-        token = data['access_token']
-        expires_in = data.get('expires_in', 0)
-        _igdb_token_cache['token'] = token
-        _igdb_token_cache['expires_at'] = time.time() + expires_in
-        logger.info(f"IGDB token cached, expires in {expires_in}s")
-        return token
-    except Exception as e:
-        logger.error(f"IGDB authentication failed: {e}")
-        raise
+        client_id, client_secret = _get_igdb_credentials()
+        if not client_id or not client_secret:
+            raise ValueError("IGDB credentials not configured. Set them in Settings → Scrapers.")
+        try:
+            r = http_post(
+                "https://id.twitch.tv/oauth2/token",
+                data={
+                    'client_id': client_id,
+                    'client_secret': client_secret,
+                    'grant_type': 'client_credentials'
+                },
+                timeout=10,
+                retries=2
+            )
+            if r is None:
+                raise ConnectionError("IGDB authentication request failed after retries")
+            r.raise_for_status()
+            data = r.json()
+            token = data['access_token']
+            expires_in = data.get('expires_in', 0)
+            _igdb_token_cache['token'] = token
+            _igdb_token_cache['expires_at'] = time.time() + expires_in
+            logger.info(f"IGDB token cached, expires in {expires_in}s")
+            return token
+        except Exception as e:
+            logger.error(f"IGDB authentication failed: {e}")
+            raise
 
 def igdb_request(endpoint, body, token):
     """Make request to IGDB API.
@@ -95,8 +106,12 @@ def igdb_request(endpoint, body, token):
             "IGDB returned 401 for %s — clearing token cache and retrying once",
             endpoint,
         )
-        _igdb_token_cache['token'] = None
-        _igdb_token_cache['expires_at'] = 0
+        # Pass 45.13 — clear the cache under the lock too, so a parallel
+        # thread doesn't read the now-invalid token between our reset and
+        # the igdb_auth() refresh below.
+        with _igdb_token_cache_lock:
+            _igdb_token_cache['token'] = None
+            _igdb_token_cache['expires_at'] = 0
         fresh_token = igdb_auth()
         headers['Authorization'] = f'Bearer {fresh_token}'
         r = http_post(

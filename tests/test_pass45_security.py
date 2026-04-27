@@ -1810,3 +1810,170 @@ class TestPass45_12XboxTokenRotation:
 
 # Imported at top of module by some 45.12 tests; alias for convenience.
 import time
+
+
+# -----------------------------------------------------------------------------
+# 45.13 — IGDB token cache thread-safety + RA y/z URL redactor
+# -----------------------------------------------------------------------------
+class TestPass45_13IgdbCacheAndRedactor:
+    """Pass 45.13 closes two distinct findings on the same review pass:
+
+    1. ``scraper/scrape_igdb.py:_igdb_token_cache`` was a bare module-level
+       dict mutated from background threads (bulk scrape runs IGDB in a
+       thread pool). Two threads racing the cache-empty branch could each
+       fire a Twitch OAuth call and the second one would clobber the first
+       — same race the existing
+       ``scraper/retroachievements.py:_ra_console_cache_lock`` already
+       handles. Fix: wrap reads/writes in a ``threading.Lock``.
+    2. ``services/log_redactor.py`` URL-querystring rule covered the long
+       parameter names (``apikey``, ``token``, ``key``, ``sspassword``...)
+       but not the RetroAchievements single-character names: ``?y=API_KEY``
+       and ``?z=USERNAME``. If any caller logged the full URL after
+       requests had encoded the params, the API key would slip into
+       ``logs/scraping_*.log`` unredacted. Latent leak — no current
+       callsite logs the encoded URL, but the rule was missing from the
+       allowlist. Fix: add ``y`` and ``z`` with the existing ``[?&]`` boundary
+       so legitimate query names like ``?fancy=`` / ``?lazy=`` don't
+       false-positive."""
+
+    def test_igdb_token_cache_lock_exists(self):
+        """The lock object must exist and be a threading.Lock — the same
+        type the redaction tests use."""
+        from scraper import scrape_igdb
+        import threading
+        # threading.Lock returns a `lock` instance whose type isn't directly
+        # importable; check the acquire/release interface instead.
+        assert hasattr(scrape_igdb, '_igdb_token_cache_lock'), (
+            "Pass 45.13: scrape_igdb must define _igdb_token_cache_lock"
+        )
+        lock = scrape_igdb._igdb_token_cache_lock
+        assert hasattr(lock, 'acquire') and hasattr(lock, 'release'), (
+            "Pass 45.13: _igdb_token_cache_lock must be a threading lock"
+        )
+
+    def test_igdb_auth_acquires_lock(self, monkeypatch):
+        """Calling igdb_auth() must hold the lock during its critical
+        section. We assert this by replacing the lock with an instrumented
+        wrapper and confirming the http_post happens between
+        __enter__/__exit__."""
+        from scraper import scrape_igdb
+
+        class _SpyLock:
+            def __init__(self):
+                self.depth = 0
+                self.events = []
+
+            def __enter__(self):
+                self.depth += 1
+                self.events.append('enter')
+                return self
+
+            def __exit__(self, *a):
+                self.events.append('exit')
+                self.depth -= 1
+
+            # threading.Lock-compatible API for the rest of the codebase.
+            def acquire(self, *a, **kw):
+                return self.__enter__()
+
+            def release(self):
+                return self.__exit__(None, None, None)
+
+        spy = _SpyLock()
+        monkeypatch.setattr(scrape_igdb, '_igdb_token_cache_lock', spy)
+        # Reset cache so we hit the http_post branch.
+        monkeypatch.setattr(scrape_igdb, '_igdb_token_cache',
+                            {'token': None, 'expires_at': 0})
+        monkeypatch.setattr(scrape_igdb, '_get_igdb_credentials',
+                            lambda: ('cid', 'csec'))
+
+        class _FakeResp:
+            def __init__(self):
+                self.status_code = 200
+
+            def raise_for_status(self):
+                pass
+
+            def json(self):
+                # When http_post is called we should already be inside the
+                # lock. Capture lock depth at call time.
+                spy.events.append(f'http_post(depth={spy.depth})')
+                return {'access_token': 'abc', 'expires_in': 3600}
+
+        monkeypatch.setattr(scrape_igdb, 'http_post', lambda *a, **kw: _FakeResp())
+
+        scrape_igdb.igdb_auth()
+
+        # Lock must have entered before http_post and exited after it.
+        # Find the http_post event and confirm depth was at least 1.
+        http_event = next(e for e in spy.events if e.startswith('http_post'))
+        assert 'depth=1' in http_event, (
+            f"http_post must run inside the lock; events={spy.events}"
+        )
+        assert spy.events[0] == 'enter'
+        assert spy.events[-1] == 'exit'
+
+    def test_igdb_request_401_clears_cache_under_lock(self, monkeypatch):
+        """The 401-retry path also mutates the cache; that mutation must
+        run under the lock too."""
+        path = os.path.join(_REPO_ROOT, 'scraper', 'scrape_igdb.py')
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        # Find the 401 branch.
+        idx = body.find('if r.status_code == 401:')
+        assert idx != -1
+        # The cache reset (token=None) inside that branch must be inside a
+        # `with _igdb_token_cache_lock:` block. Look ahead 1 KB and confirm
+        # the lock acquire precedes the cache assignment.
+        slice_body = body[idx:idx + 2048]
+        lock_pos = slice_body.find('with _igdb_token_cache_lock:')
+        clear_pos = slice_body.find("_igdb_token_cache['token'] = None")
+        assert lock_pos != -1, (
+            "Pass 45.13: 401 branch must reset cache under the lock"
+        )
+        assert lock_pos < clear_pos, (
+            "Pass 45.13: lock must be acquired before clearing the cache"
+        )
+
+    def test_redactor_strips_ra_y_querystring(self):
+        """The y= querystring (RA API key) must be redacted in log output."""
+        from services.log_redactor import redact
+        url = "https://retroachievements.org/API/API_GetGame.php?i=1&y=bsPsMBglImmVf4mj14W3llur3m7DxaCC&u=milnet"
+        redacted = redact(url)
+        assert 'bsPsMBglImmVf4mj14W3llur3m7DxaCC' not in redacted, (
+            "Pass 45.13: the RA API key (?y=KEY) must be redacted"
+        )
+        assert 'y=<redacted>' in redacted
+
+    def test_redactor_strips_ra_z_querystring(self):
+        """The z= querystring (RA username) must also be redacted —
+        usernames link real-world identity to scraped activity, and
+        the redactor allowlist is narrow to begin with."""
+        from services.log_redactor import redact
+        url = "https://retroachievements.org/API/API_GetUserSummary.php?z=milnet&y=KEY"
+        redacted = redact(url)
+        assert 'z=milnet' not in redacted, (
+            "Pass 45.13: the RA username (?z=USER) must be redacted"
+        )
+        assert 'z=<redacted>' in redacted
+
+    def test_redactor_does_not_clobber_lazy_or_fancy(self):
+        """Single-character `y` / `z` allowlist must not over-match
+        innocent multi-letter query names like `?lazy=` or `?fancy=` —
+        the existing `[?&]` boundary handles this."""
+        from services.log_redactor import redact
+        url = "https://example.com/?fancy=true&lazy=1&category=gaming"
+        redacted = redact(url)
+        # Nothing in this URL is a credential; nothing must be redacted.
+        assert redacted == url, (
+            f"Pass 45.13: innocent params must not be redacted; got {redacted}"
+        )
+
+    def test_redactor_handles_y_at_url_start(self):
+        """Coverage: the `?y=` form (immediately after the ?) must work,
+        not just `&y=` after another param. Both share the `[?&]` class."""
+        from services.log_redactor import redact
+        url = "https://retroachievements.org/API/x.php?y=SECRET_KEY_HERE&z=user"
+        redacted = redact(url)
+        assert 'SECRET_KEY_HERE' not in redacted
+        assert 'user' not in redacted.split('z=')[1].split('&')[0] if 'z=' in redacted else True

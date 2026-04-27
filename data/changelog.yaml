@@ -1,3 +1,18 @@
+- version: 3.5.28
+  date: 2026-04-27
+  tags:
+  - type: security
+    label: Pass 45.13 — IGDB token cache thread-safety + RA y/z URL redactor
+  body: |
+    <ul>
+        <li><strong>Pass 45.13 (HIGH) &mdash; two distinct findings on the same review pass</strong>. Indie-review 2026-04-25 Per-source-scrapers lane.</li>
+        <li><strong>(a) IGDB token cache thread-safety</strong>. <code>scraper/scrape_igdb.py:_igdb_token_cache</code> was a bare module-level dict mutated from background threads (bulk scrape runs IGDB in a <code>ThreadPoolExecutor</code>). Two threads racing the cache-empty branch could each fire a Twitch OAuth call (one extra network round trip + one extra token-issued event in the Twitch dashboard); the second to return would clobber the first's freshly-stored token, so the first thread's cached token went immediately stale. Same race shape <code>scraper/retroachievements.py:_ra_console_cache_lock</code> already handles. Pass 45.13 wraps reads/writes in <code>threading.Lock()</code> &mdash; both the <code>igdb_auth()</code> read+write critical section AND the 401-retry cache reset in <code>igdb_request()</code> (which previously cleared <code>token=None</code> outside any lock).</li>
+        <li><strong>(b) RetroAchievements y/z URL redactor</strong>. The <code>services/log_redactor.py</code> URL-querystring rule covered the long parameter names (<code>apikey</code>, <code>token</code>, <code>key</code>, <code>sspassword</code> &hellip;) but not the RetroAchievements single-character names: <code>?y=API_KEY</code> (RA's API-key parameter) and <code>?z=USERNAME</code> (the user identity). If any caller logged the full URL after <code>requests</code> had encoded the params, the API key would slip into <code>logs/scraping_*.log</code> unredacted &mdash; a latent leak. No current callsite logs the encoded URL (<code>scraper/base_scraper.py:110</code> logs the bare base URL without params), but the rule was missing from the allowlist; one debug-level edit could turn it into a real leak. Added <code>y</code> and <code>z</code> to the allowlist with the existing <code>[?&amp;]</code> word boundary so legitimate query names like <code>?fancy=</code> / <code>?lazy=</code> still pass through unredacted.</li>
+        <li><strong>Source</strong> &mdash; indie-review 2026-04-25 (Per-source-scrapers lane).</li>
+        <li><strong>Tests</strong>. <code>tests/test_pass45_security.py::TestPass45_13*</code> &mdash; 7 cases. (1) <code>_igdb_token_cache_lock</code> exists and exposes the <code>acquire</code>/<code>release</code> threading-lock interface. (2) Instrumented spy lock confirms <code>http_post</code> runs at lock-depth=1 in <code>igdb_auth()</code>. (3) Source-position pin: 401-retry branch acquires the lock before clearing <code>_igdb_token_cache['token']</code>. (4) <code>?y=KEY</code> redacted to <code>y=&lt;redacted&gt;</code>. (5) <code>?z=USER</code> redacted. (6) <code>?fancy=</code>/<code>?lazy=</code> not over-matched. (7) <code>?y=</code> at URL start (immediately after the <code>?</code>) also redacted. Reverting <code>scraper/scrape_igdb.py</code> + <code>services/log_redactor.py</code> fails 6 of 7 (the false-positive guardrail test passes either way). Suite 658 &rarr; 665.</li>
+        <li><strong>Version bump 3.5.27 &rarr; 3.5.28</strong>: patch (concurrency hardening + log-leak prevention, no schema or surface change).</li>
+    </ul>
+
 - version: 3.5.27
   date: 2026-04-27
   tags:
