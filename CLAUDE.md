@@ -122,16 +122,22 @@ Themes: cyberpunk (default), matrix, amber, ocean, christian (Cathedral), blader
 
 ## Distribution (Patreon Releases)
 
+Two shapes:
+- **Source** — small zip; user installs Python + runs `pip install -r requirements.txt`. Cross-platform from one host.
+- **Standalone** — PyInstaller bundle (Python runtime + deps + assets baked in). User just unzips and runs `./retrodb`. PyInstaller has no cross-compile — must build on the target OS.
+
 ```bash
-python3 build_dist.py            # all 3 platforms
-python3 build_dist.py linux|macos|windows
+python3 build_dist.py                       # all 3 source ZIPs
+python3 build_dist.py linux|macos|windows   # one source ZIP
+python3 build_dist.py --standalone          # standalone for host platform
 ```
 
 - Output: `/mnt/Storage/Scripts/Linux/Staging_Area/RetroDB/`
-- Filename: `RetroDB-v{VERSION}-{Platform}.zip`
-- Excluded from ZIPs: `config.py`, `data/settings.json`, `data/scraper_settings.json`, `data/rom_tools_config.json`, `data/hltb_dataset.csv`, `.secret_key`, all scraped media (`static/images/{boxart,boxart_3d,screenshots,fanart,manuals,trophies}/`, `static/videos/`), all `.db` files. Per-platform: only that platform's start script (`start.sh` / `start.command` / `start.bat`).
+- Filename: `RetroDB-v{VERSION}-{Platform}.zip` (source) or `RetroDB-v{VERSION}-{Platform}-Standalone.zip`
+- Excluded from source ZIPs: `config.py`, `data/settings.json`, `data/scraper_settings.json`, `data/rom_tools_config.json`, `.secret_key`, all scraped media (`static/images/{boxart,boxart_3d,screenshots,fanart,manuals,trophies}/`, `static/videos/`), all `.db` files. Per-platform: only that platform's start script (`start.sh` / `start.command` / `start.bat`).
+- Standalone build is driven by `retrodb.spec` (PyInstaller onedir mode). Spec whitelists static subdirs explicitly to avoid sweeping in scraped media; new pip deps that PyInstaller's static analyser can't follow (string-imported via `importlib`) must be added to `HIDDEN_IMPORTS` in the spec.
 
-Pre-release checklist: bump version + changelog → ensure `config.example.py` matches any new settings → `python3 build_dist.py` → upload from staging.
+Pre-release checklist: bump version + changelog → ensure `config.example.py` matches any new settings → `python3 build_dist.py` (source) and/or `python3 build_dist.py --standalone` (host platform) → upload from staging.
 
 ---
 

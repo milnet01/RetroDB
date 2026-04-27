@@ -146,17 +146,52 @@ paths or silent-corruption vectors under routine use.
   requirements before running RetroDB. A PyInstaller binary lets them
   run a single executable on Linux/macOS/Windows. Both distribution
   channels remain (small source zip for users who already have Python;
-  ~150-250 MB binary for users who don't).
-- **Plan**: write `retrodb.spec` with:
-  - hidden imports (Flask blueprints, plugin discovery)
-  - data files (templates/, static/, data/changelog.yaml)
-  - excluded modules (Qt, matplotlib if pulled by pdfplumber)
-  - per-platform configurations (macOS .app bundle?)
-  Extend `build_dist.py` with a `--standalone` flag that invokes
-  `pyinstaller retrodb.spec` and produces
-  `RetroDB-v{VERSION}-{Platform}-Standalone.zip` alongside the existing
-  `RetroDB-v{VERSION}-{Platform}.zip`. PyInstaller can't cross-compile,
-  so each platform binary requires building on that platform's host.
+  ~3.7 GB binary for users who don't — onnxruntime + ROCm libs dominate).
+- **Status**: part 1 done (v3.5.38). Bundle builds, smoke-tests cleanly:
+  `Real-ESRGAN ONNX loaded`, Waitress serving, `/login` 200. PyInstaller
+  cannot cross-compile — `--standalone` only produces the host platform's
+  binary. Open follow-ups in part 2 / part 3.
+
+##### Part 2 (next) — frozen-mode user-data path
+
+- **Why**: today, when run from `dist/retrodb/retrodb`, `BASE_DIR =
+  dirname(__file__)` resolves to `_internal/` (PyInstaller MEIPASS in
+  onedir mode). User data — `database/`, `data/`, `logs/`, scraped media
+  — gets written into `_internal/` alongside bundled assets. Functional
+  (the dir is writable) but ugly: clobbers the "support files" boundary
+  and makes upgrades messy (user has to manually copy data out of an
+  old `_internal/` into a new one).
+- **Plan**: detect `getattr(sys, 'frozen', False)` in `config.py`. When
+  frozen, set `BASE_DIR = os.path.dirname(sys.executable)` (next to the
+  launcher, NOT inside `_internal/`). `STATIC_PATH` for the bundled
+  CSS/JS/font assets stays at `sys._MEIPASS/static`. Custom Flask static
+  route falls back to `BASE_DIR/static/images/` for scraped media so
+  `/static/images/boxart/<id>.webp` resolves correctly.
+- **Status**: todo
+
+##### Part 3 (optional) — CPU-only build variant
+
+- **Why**: `onnxruntime-rocm` pulls in ~2 GB of ROCm libs
+  (`librocsolver.so.0`, `libMIOpen.so.1`, `libamd_comgr.so.3`) for AMD
+  GPU acceleration. Users on Intel/NVIDIA CPUs gain nothing from these
+  but pay the download size.
+- **Plan**: add a `--standalone --cpu-only` flag that builds against a
+  CPU-only Python venv (vanilla `onnxruntime`, not `-rocm`). Estimated
+  bundle ~600 MB. Both variants ship; the page lists size +
+  GPU-acceleration trade-off so users self-select.
+- **Status**: todo
+
+##### Part 4 (optional) — CI matrix build for cross-platform binaries
+
+- **Why**: `--standalone` produces only the host's binary. To ship
+  Linux + macOS + Windows standalones from a single tag push, GitHub
+  Actions needs a 3-runner matrix (`ubuntu-latest`, `macos-latest`,
+  `windows-latest`).
+- **Plan**: extend `.github/workflows/release.yml` to spawn one
+  `pyinstaller retrodb.spec` job per OS on `tags: 'v*'` push, then
+  upload all 3 zips as release assets. Note this multiplies CI minutes
+  by 3× per release; might be worth gating behind a manual
+  workflow_dispatch for the standalone build.
 - **Status**: todo
 
 ---

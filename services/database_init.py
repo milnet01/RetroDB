@@ -82,6 +82,11 @@ def ensure_user_tables():
     one-shot bootstrap concern that doesn't fit the append-only schema
     migration model.
     """
+    # app.py runs this BEFORE init_database(), so the database/ dir may not
+    # exist yet on a fresh install (the bundled PyInstaller standalone has
+    # no database/ dir; init_database() creates it but only fires after
+    # ensure_user_tables). Hoist the makedirs here too — idempotent.
+    os.makedirs(os.path.dirname(config.DB_PATH), exist_ok=True)
     conn = sqlite3.connect(config.DB_PATH)
     conn.row_factory = sqlite3.Row
     # Pass 45.10 — match the migration runner's busy_timeout so the
