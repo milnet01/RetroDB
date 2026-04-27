@@ -1,3 +1,18 @@
+- version: 3.5.36
+  date: 2026-04-27
+  tags:
+  - type: deps
+    label: Pass 46.2 — Refresh pinned pip versions within current ranges
+  body: |
+    <ul>
+        <li><strong>Pass 46.2 (deps) &mdash; <code>pip-compile --upgrade</code> refresh of <code>requirements.lock</code></strong>. Picks up patch/minor releases that landed since the last lock without touching the version ceilings in <code>requirements.txt</code> (no breaking changes accepted in this pass).</li>
+        <li><strong>Notable upgrades</strong>: <code>certifi 2026.2.25 &rarr; 2026.4.22</code> (CA bundle refresh), <code>cryptography 46.0.7 &rarr; 47.0.0</code> (transitive via pdfminer-six; major bump but only used in PDF parsing path), <code>onnxruntime 1.24.4 &rarr; 1.25.0</code> (ESRGAN inference engine), <code>idna 3.11 &rarr; 3.13</code>, <code>click 8.3.2 &rarr; 8.3.3</code>, <code>packaging 26.1 &rarr; 26.2</code>.</li>
+        <li><strong>Removed transitives</strong>: <code>mpmath</code> and <code>sympy</code> &mdash; <code>onnxruntime 1.25</code> no longer pulls them as runtime dependencies. Repo install size drops by ~25 MB (sympy is a heavy package).</li>
+        <li><strong>Verification</strong>. Full test suite green (683 passed). App boot smoke-test: <code>/login</code> &rarr; 200, <code>/static/css/main.min.css</code> &rarr; 200. No deprecation warnings surfaced. Three system-level "incompatible" warnings (semgrep / pyopenssl / opentelemetry) are unrelated to RetroDB &mdash; they're constraints on machine-wide packages that don't intersect with the project's runtime imports.</li>
+        <li><strong>Source</strong> &mdash; user request 2026-04-27 ("upgrade all external libraries to the latest versions").</li>
+        <li><strong>Version bump 3.5.35 &rarr; 3.5.36</strong>: patch (deps refresh, no behavior or surface change).</li>
+    </ul>
+
 - version: 3.5.35
   date: 2026-04-27
   tags:

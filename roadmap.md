@@ -130,7 +130,13 @@ paths or silent-corruption vectors under routine use.
   --strip-extras`, run full pytest, fix any breakage. Bump the
   ceilings if any package's latest exceeds the current cap (Flask 4
   if released, numpy 3, etc.); document any version-locking decisions.
-- **Status**: todo
+- **Status**: done (v3.5.36) — 6 packages bumped (certifi, click,
+  cryptography 46→47, idna, onnxruntime 1.24→1.25, packaging). 2
+  transitives removed (mpmath, sympy — onnxruntime 1.25 no longer
+  pulls them). All ceilings in `requirements.txt` already
+  accommodated the new versions; no top-level constraint changes
+  needed. 683 tests green, app boots clean. Repo install footprint
+  drops ~25 MB from sympy removal.
 
 #### Pass 46.3 PyInstaller spec + dual-distribution `build_dist.py`
 
