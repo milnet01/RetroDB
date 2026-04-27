@@ -1616,3 +1616,197 @@ class TestPass45_11SettingsValidators:
         assert 'from services.scraper_settings_validators import' in body
         assert 'validate_scraper_settings(' in body
         assert 'validate_scraper_api_keys(' in body
+
+
+# -----------------------------------------------------------------------------
+# 45.12 — Xbox refresh-token rotation hardening
+# -----------------------------------------------------------------------------
+class TestPass45_12XboxTokenRotation:
+    """Pass 45.12 hardens the Xbox token-refresh path against three problems
+    in scraper/scrape_xbox.py:
+
+    1. **Refresh-on-every-call**: get_authenticated_session() refreshed the
+       access_token on every call regardless of validity, burning Microsoft
+       API quota and exposing every page load to a transient token-endpoint
+       outage. We now track ``expires_at = now + expires_in - 60s`` (60-sec
+       safety margin) and skip the refresh when the token is still fresh.
+    2. **Stuck-token loop**: when refresh returned None (revoked / 401 loop),
+       the function fell through silently. The dead token would survive
+       across requests and the user would see "Xbox connected" forever
+       despite no working session. Pass 45.12 calls ``clear_tokens(user_id)``
+       on refresh failure so the user is forced through the OAuth flow.
+    3. **Stale xuid/gamertag**: stored xuid/gamertag from the original OAuth
+       callback were carried across refreshes forever. A user who changed
+       their gamertag on Xbox.com would see the old value until they
+       disconnected/reconnected. Pass 45.12 drops xuid/gamertag from the
+       saved token dict on refresh so the XSTS/profile flow below
+       re-validates against the live account."""
+
+    def test_attach_expires_at_uses_60s_safety_margin(self):
+        """expires_at must be at least 60 seconds before the absolute
+        expiry to avoid riding the token to its final tick."""
+        import time as _time
+        from scraper.scrape_xbox import attach_expires_at
+        before = _time.time()
+        tokens = {'access_token': 'abc', 'expires_in': 3600}
+        attach_expires_at(tokens)
+        after = _time.time()
+        # Should be roughly now + (3600 - 60) = now + 3540.
+        assert tokens['expires_at'] >= before + 3540 - 1
+        assert tokens['expires_at'] <= after + 3540 + 1
+
+    def test_attach_expires_at_handles_missing_expires_in(self):
+        """Defaults to 3600s if expires_in is missing (Microsoft default)."""
+        import time as _time
+        from scraper.scrape_xbox import attach_expires_at
+        before = _time.time()
+        tokens = {'access_token': 'abc'}
+        attach_expires_at(tokens)
+        # Should be roughly now + (3600 - 60).
+        assert tokens['expires_at'] >= before + 3540 - 1
+
+    def test_attach_expires_at_handles_garbage_expires_in(self):
+        """Non-numeric expires_in falls back to default rather than crashing."""
+        from scraper.scrape_xbox import attach_expires_at
+        tokens = {'access_token': 'abc', 'expires_in': 'forever'}
+        attach_expires_at(tokens)
+        assert isinstance(tokens['expires_at'], (int, float))
+
+    def test_attach_expires_at_clamps_to_minimum_60s(self):
+        """A 1-second token still gets at least 60 seconds of validity, so
+        the negative `expires_in - 60` doesn't push expires_at into the
+        past (which would force an immediate re-refresh loop)."""
+        import time as _time
+        from scraper.scrape_xbox import attach_expires_at
+        before = _time.time()
+        tokens = {'access_token': 'abc', 'expires_in': 5}
+        attach_expires_at(tokens)
+        # max(60, 5-60) = 60, so expires_at is at least now+60.
+        assert tokens['expires_at'] >= before + 60 - 1
+
+    def test_fresh_token_skips_refresh(self, monkeypatch):
+        """A token with expires_at in the future must not trigger a
+        refresh_access_token call."""
+        from scraper import scrape_xbox
+
+        load_calls = []
+        refresh_calls = []
+        monkeypatch.setattr(scrape_xbox, 'load_tokens',
+                            lambda uid: {'access_token': 'still_good',
+                                         'refresh_token': 'rt',
+                                         'expires_at': time.time() + 1000})
+
+        def boom_refresh(*a, **kw):
+            refresh_calls.append(a)
+            return None
+        monkeypatch.setattr(scrape_xbox, 'refresh_access_token', boom_refresh)
+        monkeypatch.setattr(scrape_xbox, 'authenticate_xbox_live',
+                            lambda tok: ('xbl', 'hash'))
+        monkeypatch.setattr(scrape_xbox, 'get_xsts_token',
+                            lambda tok: ('xsts', 'xuid123'))
+
+        result = scrape_xbox.get_authenticated_session('cid', 'csec', 99)
+        assert result is not None, "session must succeed with fresh token"
+        assert refresh_calls == [], (
+            "Pass 45.12: refresh_access_token must not be called when "
+            "expires_at says the access_token is still valid"
+        )
+
+    def test_stale_token_triggers_refresh(self, monkeypatch):
+        """A token with expires_at in the past triggers a refresh."""
+        from scraper import scrape_xbox
+
+        refresh_calls = []
+        monkeypatch.setattr(scrape_xbox, 'load_tokens',
+                            lambda uid: {'access_token': 'old',
+                                         'refresh_token': 'rt',
+                                         'expires_at': time.time() - 1,
+                                         'xuid': 'old_xuid',
+                                         'gamertag': 'OldName'})
+
+        def fake_refresh(*a, **kw):
+            refresh_calls.append(a)
+            return {'access_token': 'new', 'refresh_token': 'rt2',
+                    'expires_in': 3600}
+        monkeypatch.setattr(scrape_xbox, 'refresh_access_token', fake_refresh)
+
+        saved = []
+        monkeypatch.setattr(scrape_xbox, 'save_tokens',
+                            lambda tokens, uid: saved.append(dict(tokens)))
+        monkeypatch.setattr(scrape_xbox, 'authenticate_xbox_live',
+                            lambda tok: ('xbl', 'hash'))
+        monkeypatch.setattr(scrape_xbox, 'get_xsts_token',
+                            lambda tok: ('xsts', 'xuid_new'))
+
+        scrape_xbox.get_authenticated_session('cid', 'csec', 99)
+        assert len(refresh_calls) == 1, "refresh must run on stale token"
+        assert len(saved) == 1, "saved token must be persisted"
+        # Pass 45.12 — saved tokens must have a fresh expires_at.
+        assert 'expires_at' in saved[0]
+        assert saved[0]['expires_at'] > time.time()
+        # Pass 45.12 — xuid/gamertag must have been dropped on refresh.
+        assert 'xuid' not in saved[0], (
+            "Pass 45.12: refresh must drop stored xuid so XSTS re-validates"
+        )
+        assert 'gamertag' not in saved[0], (
+            "Pass 45.12: refresh must drop stored gamertag so profile "
+            "lookup re-validates"
+        )
+
+    def test_failed_refresh_clears_tokens(self, monkeypatch):
+        """When refresh_access_token returns None, the user's stored tokens
+        must be cleared via clear_tokens(user_id) — otherwise the dead
+        refresh_token sits in the DB forever."""
+        from scraper import scrape_xbox
+
+        monkeypatch.setattr(scrape_xbox, 'load_tokens',
+                            lambda uid: {'access_token': '',
+                                         'refresh_token': 'revoked_rt',
+                                         'expires_at': time.time() - 1})
+        monkeypatch.setattr(scrape_xbox, 'refresh_access_token',
+                            lambda *a, **kw: None)
+
+        cleared = []
+        monkeypatch.setattr(scrape_xbox, 'clear_tokens',
+                            lambda uid: cleared.append(uid))
+        # save_tokens / authenticate paths must not be reached.
+        monkeypatch.setattr(scrape_xbox, 'save_tokens',
+                            lambda *a, **kw: pytest.fail(
+                                "save_tokens must not run when refresh fails"))
+        monkeypatch.setattr(scrape_xbox, 'authenticate_xbox_live',
+                            lambda tok: pytest.fail(
+                                "authenticate must not run when refresh fails"))
+
+        result = scrape_xbox.get_authenticated_session('cid', 'csec', 42)
+        assert result is None, "failed refresh must yield None session"
+        assert cleared == [42], (
+            "Pass 45.12: clear_tokens(user_id) must be called when refresh "
+            "returns None"
+        )
+
+    def test_oauth_callback_attaches_expires_at(self):
+        """routes/platform_import.py xbox_callback must call attach_expires_at
+        before save_tokens so the initial connect carries an expiry, not just
+        post-refresh saves."""
+        path = os.path.join(_REPO_ROOT, 'routes', 'platform_import.py')
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        idx = body.find('def api_xbox_callback')
+        assert idx != -1
+        next_def = body.find('\ndef ', idx + 1)
+        slice_body = body[idx:next_def] if next_def != -1 else body[idx:]
+        # Both calls must exist within the callback, and attach_expires_at
+        # must be ordered before save_tokens.
+        attach_pos = slice_body.find('attach_expires_at(tokens)')
+        save_pos = slice_body.find('save_tokens(tokens, g.user[\'id\'])')
+        assert attach_pos != -1, (
+            "Pass 45.12: xbox callback must call attach_expires_at(tokens)"
+        )
+        assert save_pos != -1, "xbox callback must call save_tokens"
+        assert attach_pos < save_pos, (
+            "attach_expires_at must run BEFORE save_tokens (Pass 45.12)"
+        )
+
+
+# Imported at top of module by some 45.12 tests; alias for convenience.
+import time

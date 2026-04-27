@@ -367,7 +367,15 @@ paths or silent-corruption vectors under routine use.
   `xuid`/`gamertag` on refresh; `clear_tokens(user_id)` when refresh
   returns None.
 - **Source**: indie-review 2026-04-25 (Platform imports lane H1).
-- **Status**: todo
+- **Status**: done (v3.5.27) — `scraper/scrape_xbox.py` now exports
+  `attach_expires_at(tokens)` which records `expires_at = now + max(60,
+  expires_in - 60)`. `get_authenticated_session` short-circuits the
+  refresh when the access_token is still fresh, drops stored `xuid`/
+  `gamertag` on refresh (XSTS/profile re-validates), and calls
+  `clear_tokens(user_id)` when refresh returns None. OAuth callback in
+  `routes/platform_import.py` also calls `attach_expires_at` before
+  `save_tokens` so the first connect carries an expiry. 8 regression
+  tests in `TestPass45_12*`; suite 650 → 658.
 
 #### Pass 45.13 IGDB token cache thread-safety + `y/z` redactor (HIGH, S)
 

@@ -8,6 +8,7 @@
 import logging
 import json
 import os
+import time
 import requests
 from urllib.parse import urlencode
 
@@ -233,6 +234,40 @@ def clear_tokens(user_id):
         logger.error(f"Failed to clear Xbox tokens (user={user_id}): {e}")
 
 
+def attach_expires_at(tokens):
+    """Compute and attach `expires_at` from `expires_in` (seconds-since-epoch).
+
+    Pass 45.12 — the previous implementation refreshed on every call to
+    `get_authenticated_session` because there was no expiry tracking. This
+    burned API quota and exposed every page load to a transient
+    Xbox-token-endpoint outage. We now record `expires_at` (epoch seconds)
+    with a 60-second safety margin so the next call can skip the refresh
+    if the token is still fresh. Mutates `tokens` in place; if `expires_in`
+    is missing or unparseable, defaults to one hour.
+    """
+    expires_in = tokens.get('expires_in', 3600)
+    try:
+        expires_in = int(expires_in)
+    except (TypeError, ValueError):
+        expires_in = 3600
+    # 60-second safety margin: don't ride the token to its absolute expiry,
+    # to avoid races between us and Xbox's clock.
+    tokens['expires_at'] = time.time() + max(60, expires_in - 60)
+    return tokens
+
+
+def _is_token_fresh(tokens):
+    """True if tokens have a stored access_token and a non-expired expires_at."""
+    if not tokens.get('access_token'):
+        return False
+    expires_at = tokens.get('expires_at')
+    if not isinstance(expires_at, (int, float)):
+        # Legacy tokens (pre-45.12) lack expires_at; treat as stale and
+        # refresh on first use after upgrade. Subsequent saves will record it.
+        return False
+    return expires_at > time.time()
+
+
 def get_authenticated_session(client_id, client_secret, user_id):
     """Get an authenticated Xbox session for the given user, refreshing
     tokens if needed.
@@ -256,14 +291,31 @@ def get_authenticated_session(client_id, client_secret, user_id):
     if not access_token and not refresh_token_val:
         return None
 
-    # Try refresh if we have a refresh token
-    if refresh_token_val:
+    # Pass 45.12 — only refresh when the access token is stale or missing.
+    # If `expires_at` says the token is still valid, skip the network round
+    # trip entirely.
+    if not _is_token_fresh(tokens) and refresh_token_val:
         new_tokens = refresh_access_token(client_id, client_secret, refresh_token_val)
         if new_tokens:
             access_token = new_tokens.get('access_token')
+            attach_expires_at(new_tokens)
+            # Pass 45.12 — drop stored xuid/gamertag on refresh so the
+            # XSTS / profile lookup below re-validates against the live
+            # account. Catches gamertag changes on Xbox.com that would
+            # otherwise show stale data forever.
+            tokens.pop('xuid', None)
+            tokens.pop('gamertag', None)
             tokens.update(new_tokens)
             save_tokens(tokens, user_id)
-        elif not access_token:
+        else:
+            # Pass 45.12 — refresh failed (revoked / 401-loop). Drop the dead
+            # token so the next access redirects through the OAuth flow
+            # instead of looping on a token Microsoft has already invalidated.
+            logger.warning(
+                "Xbox refresh failed for user=%s; clearing stored tokens",
+                user_id,
+            )
+            clear_tokens(user_id)
             return None
 
     # Authenticate with Xbox Live

@@ -1,3 +1,20 @@
+- version: 3.5.27
+  date: 2026-04-27
+  tags:
+  - type: security
+    label: Pass 45.12 — Xbox refresh-token rotation hardening
+  body: |
+    <ul>
+        <li><strong>Pass 45.12 (HIGH) &mdash; Xbox token-refresh path hardened against three latent failure modes</strong>. Indie-review 2026-04-25 Platform-imports lane H1.</li>
+        <li><strong>(a) Refresh-on-every-call &rarr; expires_at tracking</strong>. <code>get_authenticated_session</code> previously called <code>refresh_access_token</code> on every invocation regardless of whether the access_token was still valid, burning Microsoft API quota and exposing every page load to a transient token-endpoint outage. We now record <code>expires_at = now + expires_in - 60</code> (60-second safety margin so we never ride the token to its absolute expiry) and skip the refresh when the token is still fresh. The <code>attach_expires_at(tokens)</code> helper handles missing/non-numeric <code>expires_in</code> by defaulting to 3600s, and clamps the safety-margin subtraction to a minimum of 60s so a 1-second token still gets at least a minute of validity (preventing an immediate-re-refresh loop).</li>
+        <li><strong>(b) Stuck dead token &rarr; clear_tokens on refresh None</strong>. When <code>refresh_access_token</code> returned None (revoked refresh_token / 401-loop / Microsoft-side outage), the function previously fell through silently with the dead token still in the database. The user would see "Xbox connected" forever despite no working session. Pass 45.12 now calls <code>clear_tokens(user_id)</code> on refresh failure with a WARNING log line, forcing the user back through the OAuth consent flow and dropping the unusable refresh_token from the table.</li>
+        <li><strong>(c) Stale xuid/gamertag &rarr; drop on refresh</strong>. Stored <code>xuid</code> and <code>gamertag</code> from the original OAuth callback persisted across every refresh, so a user who changed their gamertag on Xbox.com saw the stale value in our UI until they manually disconnected/reconnected their account. Pass 45.12 pops both fields from the saved token dict on refresh; the XSTS &rarr; profile flow inside <code>get_authenticated_session</code> then re-validates against the live account on the next call.</li>
+        <li><strong>OAuth callback parity</strong>. <code>routes/platform_import.py:api_xbox_callback</code> now also calls <code>attach_expires_at(tokens)</code> before <code>save_tokens()</code>, so the initial OAuth connect carries an <code>expires_at</code> from day one (not just post-refresh saves). Without this, the very first authenticated session call after connect would force an immediate refresh.</li>
+        <li><strong>Source</strong> &mdash; indie-review 2026-04-25 (Platform-imports lane H1).</li>
+        <li><strong>Tests</strong>. <code>tests/test_pass45_security.py::TestPass45_12*</code> &mdash; 8 cases. (1) <code>attach_expires_at</code> records <code>now + 3540</code> (3600 - 60 safety margin) within tolerance. (2) Missing <code>expires_in</code> defaults to 3600. (3) Garbage <code>expires_in</code> ('forever') falls back without crashing. (4) Tiny <code>expires_in</code> (5s) clamps to a 60s floor. (5) Fresh token (expires_at in the future) skips <code>refresh_access_token</code> entirely. (6) Stale token triggers refresh, drops xuid/gamertag from the saved dict, and persists with a fresh <code>expires_at</code>. (7) Failed refresh calls <code>clear_tokens(user_id)</code>; <code>save_tokens</code> and <code>authenticate_xbox_live</code> are pinned to <code>pytest.fail</code> so the test fails if those paths run. (8) Source-position pin: callback's <code>attach_expires_at</code> call must precede <code>save_tokens</code>. Reverting <code>scraper/scrape_xbox.py</code> + <code>routes/platform_import.py</code> fails all 8. Suite 650 &rarr; 658.</li>
+        <li><strong>Version bump 3.5.26 &rarr; 3.5.27</strong>: patch (token-rotation hardening, no schema or surface change).</li>
+    </ul>
+
 - version: 3.5.26
   date: 2026-04-27
   tags:

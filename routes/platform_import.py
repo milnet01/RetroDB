@@ -417,7 +417,7 @@ def api_xbox_callback():
     """Handle Xbox OAuth callback."""
     from scraper.scrape_xbox import (
         exchange_code_for_tokens, authenticate_xbox_live, get_xsts_token,
-        save_tokens, get_gamertag, _get_auth_header
+        save_tokens, get_gamertag, _get_auth_header, attach_expires_at,
     )
 
     code = request.args.get('code')
@@ -478,6 +478,9 @@ def api_xbox_callback():
     tokens['xuid'] = xuid
     tokens['gamertag'] = gamertag
     tokens['connected_at'] = datetime.now(timezone.utc).isoformat()
+    # Pass 45.12 — record the token's absolute expiry so subsequent calls
+    # to get_authenticated_session can skip an unnecessary refresh.
+    attach_expires_at(tokens)
     save_tokens(tokens, g.user['id'])
 
     logger.info(f"Xbox: Connected as {gamertag} (XUID: {xuid}, user={g.user['id']})")
