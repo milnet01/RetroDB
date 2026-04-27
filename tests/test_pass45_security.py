@@ -2654,3 +2654,98 @@ class TestPass45_17ModalFocusTrapRollout:
         assert 'modalEl._focusTrapObserver) return' in slice_body, (
             "Pass 45.17: autoAttach must early-return when already attached"
         )
+
+
+# -----------------------------------------------------------------------------
+# 45.20 — chmod-after-verify race + button type sweep
+# -----------------------------------------------------------------------------
+class TestPass45_20ButtonTypeSweep:
+    """Pass 45.20 closes two findings:
+
+    1. **chmod-after-verify race** in ``services/database.py:backup_database``
+       — already fixed in Pass 45.5 (chmod re-ordered to fire BEFORE the
+       integrity-check open). The Pass-45.5 source-position pin lives in
+       ``TestPass45_5*``; this class only re-asserts the contract for
+       completeness.
+    2. **<button onclick="..."> without explicit type** — pre-pass audit
+       found 419 onclick-bearing buttons across templates without
+       ``type="button"``. Inside a ``<form>`` the browser default is
+       ``type="submit"``, so a click runs onclick AND submits the form,
+       posting the form's data and (often) reloading the page. Pass 45.20
+       sweeps every onclick-bearing button to add ``type="button"`` so
+       the explicit form-submit buttons remain the only submitters.
+
+    Note: the sweep adds ``type="button"`` everywhere uniformly. Buttons
+    OUTSIDE forms get a no-op (HTML default type is already ``submit``
+    only inside forms). Buttons that were INTENTIONALLY inside forms as
+    submit buttons typically didn't have onclick (they relied on the
+    form's submit handler), so the sweep doesn't break them."""
+
+    def test_chmod_before_verify_in_backup(self):
+        """Re-pin Pass 45.5 contract: chmod must precede the verify-open
+        in backup_database."""
+        path = os.path.join(_REPO_ROOT, 'services', 'database.py')
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        idx = body.find('def backup_database')
+        next_def = body.find('\ndef ', idx + 1)
+        slice_body = body[idx:next_def] if next_def != -1 else body[idx:]
+        chmod_pos = slice_body.find('os.chmod(dst_path, 0o600)')
+        verify_pos = slice_body.find('verify = sqlite3.connect(dst_path)')
+        assert chmod_pos != -1 and verify_pos != -1
+        assert chmod_pos < verify_pos, (
+            "Pass 45.20 (re-pin Pass 45.5): chmod must precede the verify-"
+            "open of the backup file"
+        )
+
+    def test_no_button_with_onclick_lacks_type(self):
+        """Sweep contract: every onclick-bearing button across all
+        templates must declare type=. The sweep added type=\"button\"
+        to all onclick buttons; this test fails if a future template
+        edit reintroduces an onclick button without an explicit type."""
+        import glob
+        import re
+        pattern = os.path.join(_REPO_ROOT, 'templates', '**', '*.html')
+        # Find every <button ...>` opening tag with onclick=, then check
+        # for type=.
+        button_re = re.compile(
+            r'<button(?:(?!\btype\s*=)[^>])*?onclick\s*=[^>]*?>',
+            re.IGNORECASE | re.DOTALL,
+        )
+        offenders = []
+        for path in glob.glob(pattern, recursive=True):
+            with open(path, encoding='utf-8') as f:
+                body = f.read()
+            matches = button_re.findall(body)
+            if matches:
+                offenders.append(
+                    f"{os.path.relpath(path, _REPO_ROOT)}: "
+                    f"{len(matches)} onclick button(s) without type"
+                )
+        assert not offenders, (
+            "Pass 45.20: every onclick-bearing button must declare "
+            "type=\"button\" so it doesn't accidentally submit an "
+            "enclosing form. Offenders:\n  " +
+            "\n  ".join(offenders)
+        )
+
+    def test_sweep_count_lower_bound(self):
+        """Sanity: the sweep should have produced ≥ 200 type=\"button\"
+        attributes across the templates tree (419 originals minus those
+        that were already typed correctly)."""
+        import glob
+        pattern = os.path.join(_REPO_ROOT, 'templates', '**', '*.html')
+        total = 0
+        for path in glob.glob(pattern, recursive=True):
+            with open(path, encoding='utf-8') as f:
+                # type="button" is the canonical attribute form. There may
+                # also be type='button' (single-quote) and a few others;
+                # count both forms for robustness.
+                body = f.read()
+                total += body.count('type="button"')
+                total += body.count("type='button'")
+        assert total >= 200, (
+            f"Pass 45.20 sweep lower bound: only {total} type=\"button\" "
+            "attributes found across templates (expected ≥ 200 — pre-pass "
+            "audit reported 419 onclick buttons missing the type)"
+        )

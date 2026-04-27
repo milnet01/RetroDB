@@ -532,7 +532,14 @@ paths or silent-corruption vectors under routine use.
   `type="button"` to every onclick-bearing button (or document `submit`
   intent where applicable).
 - **Source**: indie-review 2026-04-25 (Database M3, Templates 11).
-- **Status**: todo
+- **Status**: done (v3.5.33) — chmod-before-verify race already closed in
+  Pass 45.5; this sub-pass re-pins the contract via a second source-position
+  assertion in `TestPass45_20*` so reverting fails two passes worth of
+  tests. Button sweep: one-shot regex inserted `type="button"` next to
+  every onclick-bearing `<button>` across 30 templates (419 buttons →
+  zero remaining). Buttons outside forms get a no-op; buttons meant to
+  submit didn't have onclick to begin with so the sweep doesn't break
+  them. 3 regression tests in `TestPass45_20*`; suite 692 → 695.
 
 ---
 

@@ -209,7 +209,7 @@
                 <div class="about-modal glass-panel" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
                     <div class="about-modal-header">
                         <h2 id="aboutModalTitle">🎮 About RetroDB</h2>
-                        <button class="about-modal-close" onclick="hideAboutModal()" aria-label="Close">×</button>
+                        <button type="button" class="about-modal-close" onclick="hideAboutModal()" aria-label="Close">×</button>
                     </div>
                     <div class="about-modal-body">
                         <div class="about-logo">
@@ -282,7 +282,7 @@
     </div>
 
     <!-- Global Back to Top Button -->
-    <button id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()" title="Back to top" aria-label="Back to top">
+    <button type="button" id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()" title="Back to top" aria-label="Back to top">
         <span class="back-to-top-icon" aria-hidden="true">↑</span>
     </button>
 
@@ -291,14 +291,14 @@
         <div class="custom-modal-content" role="dialog" aria-modal="true" aria-labelledby="customModalTitle">
             <div class="custom-modal-header">
                 <h3 id="customModalTitle">Alert</h3>
-                <button class="custom-modal-close" onclick="closeModal()" aria-label="Close">×</button>
+                <button type="button" class="custom-modal-close" onclick="closeModal()" aria-label="Close">×</button>
             </div>
             <div class="custom-modal-body">
                 <p id="customModalMessage"></p>
             </div>
             <div class="custom-modal-footer">
-                <button id="customModalCancel" class="btn btn-secondary" onclick="closeModal()" style="display: none;">Cancel</button>
-                <button id="customModalConfirm" class="btn btn-primary" onclick="confirmModal()">OK</button>
+                <button type="button" id="customModalCancel" class="btn btn-secondary" onclick="closeModal()" style="display: none;">Cancel</button>
+                <button type="button" id="customModalConfirm" class="btn btn-primary" onclick="confirmModal()">OK</button>
             </div>
         </div>
     </div>
@@ -308,15 +308,15 @@
         <div class="custom-modal-content" style="max-width: 600px; max-height: 80vh;" role="dialog" aria-modal="true" aria-labelledby="folderBrowserTitle">
             <div class="custom-modal-header">
                 <h3 id="folderBrowserTitle">📁 Browse Folders</h3>
-                <button class="custom-modal-close" onclick="closeFolderBrowser()" aria-label="Close">×</button>
+                <button type="button" class="custom-modal-close" onclick="closeFolderBrowser()" aria-label="Close">×</button>
             </div>
             <div class="custom-modal-body" style="padding: 0;">
                 <div id="folderBrowserPath" style="padding: 0.75rem 1rem; background: var(--bg-darker); border-bottom: 1px solid var(--border-color); font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary); word-break: break-all;"></div>
                 <div id="folderBrowserList" style="max-height: 400px; overflow-y: auto; padding: 0.5rem;"></div>
             </div>
             <div class="custom-modal-footer">
-                <button class="btn btn-secondary" onclick="closeFolderBrowser()">Cancel</button>
-                <button class="btn btn-primary" onclick="selectFolderPath()">Select This Folder</button>
+                <button type="button" class="btn btn-secondary" onclick="closeFolderBrowser()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="selectFolderPath()">Select This Folder</button>
             </div>
         </div>
     </div>
@@ -640,13 +640,13 @@
         <div class="modal-content" style="max-width: 600px;" role="dialog" aria-modal="true" aria-labelledby="queueManagerTitle">
             <div class="modal-header">
                 <h2 id="queueManagerTitle">📋 Queue Manager</h2>
-                <button class="modal-close" onclick="closeQueueManager()" aria-label="Close queue manager">×</button>
+                <button type="button" class="modal-close" onclick="closeQueueManager()" aria-label="Close queue manager">×</button>
             </div>
             <div class="modal-body" id="queueManagerBody">
                 <!-- Content populated by JavaScript -->
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeQueueManager()">Close</button>
+                <button type="button" class="btn btn-secondary" onclick="closeQueueManager()">Close</button>
             </div>
         </div>
     </div>
@@ -763,7 +763,7 @@
                             <div class="queue-item-progress">${percent}% complete</div>
                         </div>
                         <div class="queue-item-controls">
-                            <button class="queue-btn" onclick="demoteRunningJob(); renderQueueManager();" ${queueLength === 0 ? 'disabled title="No queued jobs to swap with"' : 'title="Swap with next in queue"'}>
+                            <button type="button" class="queue-btn" onclick="demoteRunningJob(); renderQueueManager();" ${queueLength === 0 ? 'disabled title="No queued jobs to swap with"' : 'title="Swap with next in queue"'}>
                                 ↑ Demote
                             </button>
                         </div>
@@ -789,13 +789,13 @@
                             </div>
                             <div class="queue-item-controls">
                                 ${isFirst
-                                    ? `<button class="queue-btn" onclick="swapWithRunning('${job.job_id}'); renderQueueManager();" title="Run now (swap with running)">↓ Run Now</button>`
-                                    : `<button class="queue-btn" onclick="promoteQueuedJob('${job.job_id}'); renderQueueManager();" title="Run sooner">↓ Promote</button>`
+                                    ? `<button type="button" class="queue-btn" onclick="swapWithRunning('${job.job_id}'); renderQueueManager();" title="Run now (swap with running)">↓ Run Now</button>`
+                                    : `<button type="button" class="queue-btn" onclick="promoteQueuedJob('${job.job_id}'); renderQueueManager();" title="Run sooner">↓ Promote</button>`
                                 }
-                                <button class="queue-btn" onclick="demoteQueuedJob('${job.job_id}'); renderQueueManager();" ${isLast ? 'disabled' : ''} title="${isLast ? 'Already last in queue' : 'Run later'}">
+                                <button type="button" class="queue-btn" onclick="demoteQueuedJob('${job.job_id}'); renderQueueManager();" ${isLast ? 'disabled' : ''} title="${isLast ? 'Already last in queue' : 'Run later'}">
                                     ↑ Demote
                                 </button>
-                                <button class="queue-btn danger" onclick="cancelQueuedJob('${job.job_id}'); renderQueueManager();" title="Cancel this queued scrape">
+                                <button type="button" class="queue-btn danger" onclick="cancelQueuedJob('${job.job_id}'); renderQueueManager();" title="Cancel this queued scrape">
                                     ✕ Cancel
                                 </button>
                             </div>
@@ -857,7 +857,7 @@
     <!-- Game Detail Modal -->
     <div id="gameDetailModal" class="game-detail-modal" onclick="if(event.target===this)closeGameDetailModal()">
         <div class="game-detail-modal-content" role="dialog" aria-modal="true" aria-label="Game details">
-            <button class="game-detail-modal-close" onclick="closeGameDetailModal()" aria-label="Close game details">&times;</button>
+            <button type="button" class="game-detail-modal-close" onclick="closeGameDetailModal()" aria-label="Close game details">&times;</button>
 
             <!-- Loading State -->
             <div id="gameDetailLoading" class="game-detail-loading">
@@ -913,13 +913,13 @@
                     <a id="gdmViewFull" href="#" class="btn btn-primary">
                         <span class="btn-icon">📄</span> View Full Page
                     </a>
-                    <button id="gdmAiFill" class="btn btn-secondary" onclick="triggerAiFill()" title="Fill missing metadata with AI" style="display:none;">
+                    <button type="button" id="gdmAiFill" class="btn btn-secondary" onclick="triggerAiFill()" title="Fill missing metadata with AI" style="display:none;">
                         <span class="btn-icon">🤖</span> AI Fill
                     </button>
-                    <button id="gdmEdit" class="btn btn-warning" onclick="openGameEditModal()">
+                    <button type="button" id="gdmEdit" class="btn btn-warning" onclick="openGameEditModal()">
                         <span class="btn-icon">✏️</span> Edit
                     </button>
-                    <button class="btn btn-secondary" onclick="closeGameDetailModal()">Close</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeGameDetailModal()">Close</button>
                 </div>
             </div>
         </div>
@@ -928,9 +928,9 @@
     <!-- GDM Screenshot Lightbox -->
     <div id="gdmScreenshotLightbox" class="gdm-lightbox" onclick="if(event.target===this)GameDetailModal.closeLightbox()" role="dialog" aria-modal="true" aria-label="Screenshot viewer">
         <span class="gdm-lightbox-close" onclick="GameDetailModal.closeLightbox()" aria-label="Close screenshot viewer">&times;</span>
-        <button class="gdm-lightbox-nav prev" onclick="event.stopPropagation();GameDetailModal.navigateScreenshot(-1)" aria-label="Previous screenshot">&#8249;</button>
+        <button type="button" class="gdm-lightbox-nav prev" onclick="event.stopPropagation();GameDetailModal.navigateScreenshot(-1)" aria-label="Previous screenshot">&#8249;</button>
         <img id="gdmLightboxImage" class="gdm-lightbox-image" alt="Screenshot">
-        <button class="gdm-lightbox-nav next" onclick="event.stopPropagation();GameDetailModal.navigateScreenshot(1)" aria-label="Next screenshot">&#8250;</button>
+        <button type="button" class="gdm-lightbox-nav next" onclick="event.stopPropagation();GameDetailModal.navigateScreenshot(1)" aria-label="Next screenshot">&#8250;</button>
         <div class="gdm-lightbox-hint">Use &#8592; &#8594; arrow keys to navigate &bull; ESC to close</div>
         <div id="gdmLightboxCounter" class="gdm-lightbox-counter"></div>
     </div>
@@ -938,17 +938,17 @@
     <!-- Game Edit Modal -->
     <div id="gameEditModal" class="game-edit-modal" onclick="if(event.target===this)closeGameEditModal()">
         <div class="game-edit-modal-content" role="dialog" aria-modal="true" aria-labelledby="gemTitle">
-            <button class="game-edit-modal-close" onclick="closeGameEditModal()" aria-label="Close edit modal">&times;</button>
+            <button type="button" class="game-edit-modal-close" onclick="closeGameEditModal()" aria-label="Close edit modal">&times;</button>
 
             <div class="gem-header">
                 <h2 id="gemTitle" class="gem-title">Edit Game</h2>
                 <div class="gem-tabs" role="tablist" aria-label="Edit game sections">
-                    <button class="gem-tab active" data-tab="quick" onclick="switchEditTab('quick')" role="tab" aria-selected="true" aria-controls="gemTabQuick">⚡ Quick</button>
-                    <button class="gem-tab" data-tab="identity" onclick="switchEditTab('identity')" role="tab" aria-selected="false" aria-controls="gemTabIdentity">📝 Identity</button>
-                    <button class="gem-tab" data-tab="release" onclick="switchEditTab('release')" role="tab" aria-selected="false" aria-controls="gemTabRelease">📅 Release</button>
-                    <button class="gem-tab" data-tab="gameplay" onclick="switchEditTab('gameplay')" role="tab" aria-selected="false" aria-controls="gemTabGameplay">🎮 Gameplay</button>
-                    <button class="gem-tab" data-tab="technical" onclick="switchEditTab('technical')" role="tab" aria-selected="false" aria-controls="gemTabTechnical">⚙️ Technical</button>
-                    <button class="gem-tab" data-tab="description" onclick="switchEditTab('description')" role="tab" aria-selected="false" aria-controls="gemTabDescription">📖 Info</button>
+                    <button type="button" class="gem-tab active" data-tab="quick" onclick="switchEditTab('quick')" role="tab" aria-selected="true" aria-controls="gemTabQuick">⚡ Quick</button>
+                    <button type="button" class="gem-tab" data-tab="identity" onclick="switchEditTab('identity')" role="tab" aria-selected="false" aria-controls="gemTabIdentity">📝 Identity</button>
+                    <button type="button" class="gem-tab" data-tab="release" onclick="switchEditTab('release')" role="tab" aria-selected="false" aria-controls="gemTabRelease">📅 Release</button>
+                    <button type="button" class="gem-tab" data-tab="gameplay" onclick="switchEditTab('gameplay')" role="tab" aria-selected="false" aria-controls="gemTabGameplay">🎮 Gameplay</button>
+                    <button type="button" class="gem-tab" data-tab="technical" onclick="switchEditTab('technical')" role="tab" aria-selected="false" aria-controls="gemTabTechnical">⚙️ Technical</button>
+                    <button type="button" class="gem-tab" data-tab="description" onclick="switchEditTab('description')" role="tab" aria-selected="false" aria-controls="gemTabDescription">📖 Info</button>
                 </div>
             </div>
 
@@ -973,7 +973,7 @@
                                class="gem-input hltb-search-input"
                                placeholder="Search game title..."
                                style="margin-bottom: var(--spacing-sm);">
-                        <button class="btn-hltb" id="gemHltbLookupBtn" onclick="lookupHltbFromModal()">
+                        <button type="button" class="btn-hltb" id="gemHltbLookupBtn" onclick="lookupHltbFromModal()">
                             🔍 Lookup HLTB
                         </button>
 
@@ -1002,8 +1002,8 @@
                                     <span class="hltb-value" id="gemHltbComplete">-</span>
                                 </div>
                                 <div class="hltb-actions" style="margin-top: var(--spacing-md); display: flex; gap: var(--spacing-xs);">
-                                    <button class="btn btn-primary btn-sm" onclick="saveHltbFromModal()">✓ Save</button>
-                                    <button class="btn btn-secondary btn-sm" onclick="cancelHltbFromModal()">✕ Cancel</button>
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="saveHltbFromModal()">✓ Save</button>
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="cancelHltbFromModal()">✕ Cancel</button>
                                 </div>
                             </div>
                             <div class="hltb-empty" id="gemHltbError" style="display: none; color: var(--neon-red);"></div>
@@ -1015,7 +1015,7 @@
                                 <div class="hltb-empty">No playtime data</div>
                             </div>
                             <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                                <button class="btn btn-danger btn-sm" onclick="clearHltbFromModal()">✕ Clear</button>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="clearHltbFromModal()">✕ Clear</button>
                             </div>
                         </div>
                     </div>
@@ -1300,8 +1300,8 @@
                     <span class="btn-icon">🖼️</span> Images/Video
                 </a>
                 <div class="gem-footer-right">
-                    <button class="btn btn-secondary" onclick="closeGameEditModal()">Close</button>
-                    <button class="btn btn-primary" onclick="saveGameEdits()">
+                    <button type="button" class="btn btn-secondary" onclick="closeGameEditModal()">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="saveGameEdits()">
                         <span class="btn-icon">💾</span> Save Changes
                     </button>
                 </div>

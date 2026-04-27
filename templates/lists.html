@@ -10,7 +10,7 @@
         <p class="page-subtitle">Create custom lists to group and organize your games</p>
     </div>
     <div class="page-actions">
-        <button class="btn btn-primary" onclick="openCreateListModal()">
+        <button type="button" class="btn btn-primary" onclick="openCreateListModal()">
             <span class="btn-icon">+</span> New List
         </button>
     </div>
@@ -28,7 +28,7 @@
     <div class="empty-state-text">
         Create your first list to start curating your game collection.
     </div>
-    <button class="btn btn-primary" onclick="openCreateListModal()">
+    <button type="button" class="btn btn-primary" onclick="openCreateListModal()">
         <span class="btn-icon">+</span> Create List
     </button>
 </div>
@@ -38,7 +38,7 @@
     <div class="custom-modal-content" style="max-width: 500px;" role="dialog" aria-modal="true" aria-labelledby="listModalTitle">
         <div class="custom-modal-header">
             <h3 id="listModalTitle">New List</h3>
-            <button class="custom-modal-close" onclick="closeListModal()" aria-label="Close">&times;</button>
+            <button type="button" class="custom-modal-close" onclick="closeListModal()" aria-label="Close">&times;</button>
         </div>
         <div class="custom-modal-body">
             <input type="hidden" id="listEditId" value="">
@@ -73,8 +73,8 @@
             </div>
         </div>
         <div class="custom-modal-footer">
-            <button class="btn btn-secondary" onclick="closeListModal()">Cancel</button>
-            <button class="btn btn-primary" id="listSaveBtn" onclick="saveList()">Create List</button>
+            <button type="button" class="btn btn-secondary" onclick="closeListModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" id="listSaveBtn" onclick="saveList()">Create List</button>
         </div>
     </div>
 </div>
@@ -346,8 +346,8 @@ function renderLists() {
                         ${date ? `<span class="list-card-date">${date}</span>` : ''}
                     </div>
                     <div class="list-card-actions">
-                        <button class="list-action-btn" onclick="openEditListModal(${list.id})" title="Edit list">&#9998;</button>
-                        <button class="list-action-btn danger" onclick="confirmDeleteList(${list.id}, '${escapeAttr(list.name)}')" title="Delete list">&#10005;</button>
+                        <button type="button" class="list-action-btn" onclick="openEditListModal(${list.id})" title="Edit list">&#9998;</button>
+                        <button type="button" class="list-action-btn danger" onclick="confirmDeleteList(${list.id}, '${escapeAttr(list.name)}')" title="Delete list">&#10005;</button>
                     </div>
                 </div>
             </div>

@@ -5,7 +5,7 @@
     <div class="bulk-scrape-content glass-panel">
         <div class="bulk-scrape-header">
             <h2><span data-themed-icon="loading"></span> Bulk Scraping</h2>
-            <button class="modal-close-btn" onclick="closeBulkScrapeModal()" id="bulkCloseBtn" style="display: none;">×</button>
+            <button type="button" class="modal-close-btn" onclick="closeBulkScrapeModal()" id="bulkCloseBtn" style="display: none;">×</button>
         </div>
         <div class="bulk-scrape-body">
             <div class="bulk-progress-info">
@@ -38,14 +38,14 @@
                 </div>
             </div>
             <div class="bulk-controls-row" id="bulkControlsRow">
-                <button class="btn btn-secondary btn-sm" id="bulkBackgroundBtn" onclick="runInBackground()">
+                <button type="button" class="btn btn-secondary btn-sm" id="bulkBackgroundBtn" onclick="runInBackground()">
                     <span data-themed-icon="background"></span> Background
                 </button>
-                <button class="btn btn-warning btn-sm" id="bulkPauseBtn" onclick="toggleBulkPause()">
+                <button type="button" class="btn btn-warning btn-sm" id="bulkPauseBtn" onclick="toggleBulkPause()">
                     <span id="bulkPauseBtnIcon" data-themed-icon="paused"></span>
                     <span id="bulkPauseBtnText">Pause</span>
                 </button>
-                <button class="btn btn-danger btn-sm" id="bulkCancelBtn" onclick="cancelBulkScrape()">
+                <button type="button" class="btn btn-danger btn-sm" id="bulkCancelBtn" onclick="cancelBulkScrape()">
                     <span data-themed-icon="cancel"></span> Cancel
                 </button>
             </div>
@@ -66,7 +66,7 @@
             </div>
         </div>
         <div class="bulk-scrape-footer" id="bulkFooter" style="display: none;">
-            <button class="btn btn-primary" onclick="closeBulkScrapeModal(); location.reload();">Done</button>
+            <button type="button" class="btn btn-primary" onclick="closeBulkScrapeModal(); location.reload();">Done</button>
         </div>
     </div>
 </div>

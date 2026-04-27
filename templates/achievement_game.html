@@ -26,7 +26,7 @@
             <span class="btn-icon">🎮</span>
             View Game
         </a>
-        <button onclick="refreshRAProgress()" class="btn btn-secondary" id="refreshRABtn">
+        <button type="button" onclick="refreshRAProgress()" class="btn btn-secondary" id="refreshRABtn">
             <span class="btn-icon">🔄</span>
             Refresh RA
         </button>
@@ -151,7 +151,7 @@
                        value="{{ game.title }}"
                        placeholder="Search game title...">
 
-                <button class="btn-hltb" id="hltbLookupBtn" onclick="achLookupHLTB()">
+                <button type="button" class="btn-hltb" id="hltbLookupBtn" onclick="achLookupHLTB()">
                     🔍 Lookup HLTB
                 </button>
 
@@ -173,8 +173,8 @@
                         </div>
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm); display: flex; gap: var(--spacing-xs);">
-                        <button class="btn btn-sm btn-primary" onclick="achConfirmHLTB()">✓ Save</button>
-                        <button class="btn btn-sm btn-secondary" onclick="achCancelHLTB()">✕ Cancel</button>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="achConfirmHLTB()">✓ Save</button>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="achCancelHLTB()">✕ Cancel</button>
                     </div>
                 </div>
 
@@ -213,7 +213,7 @@
                         {% endif %}
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                        <button class="btn btn-sm btn-danger" onclick="achClearHLTB()">✕ Clear</button>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="achClearHLTB()">✕ Clear</button>
                     </div>
                 </div>
             </div>

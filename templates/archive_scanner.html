@@ -604,7 +604,7 @@
                     <span class="locked-prefix" id="basePath">{{ rom_path }}/</span>
                     <input type="text" id="romsPathSuffix" value="" placeholder="subfolder (optional)">
                 </div>
-                <button class="btn btn-secondary" onclick="browseFolder()">Browse</button>
+                <button type="button" class="btn btn-secondary" onclick="browseFolder()">Browse</button>
             </div>
         </div>
         <div class="form-group">
@@ -614,8 +614,8 @@
             </div>
             <div class="add-excluded-row">
                 <input type="text" class="form-input" id="newExcludedPath" placeholder="Enter folder name to exclude">
-                <button class="btn btn-secondary" onclick="addExcludedPath()">Add</button>
-                <button class="btn btn-secondary" onclick="browseExcluded()">Browse</button>
+                <button type="button" class="btn btn-secondary" onclick="addExcludedPath()">Add</button>
+                <button type="button" class="btn btn-secondary" onclick="browseExcluded()">Browse</button>
             </div>
         </div>
     </div>
@@ -677,23 +677,23 @@
     </div>
     
     <div class="btn-row">
-        <button class="btn btn-primary" id="startBtn" onclick="startScan()">
+        <button type="button" class="btn btn-primary" id="startBtn" onclick="startScan()">
             <span class="btn-icon">🔍</span> Start Scan
         </button>
-        <button class="btn btn-warning" id="pauseBtn" onclick="togglePause()" disabled>
+        <button type="button" class="btn btn-warning" id="pauseBtn" onclick="togglePause()" disabled>
             <span class="btn-icon" id="pauseIcon">⏸️</span> <span id="pauseText">Pause</span>
         </button>
-        <button class="btn btn-danger" id="cancelBtn" onclick="cancelScan()" disabled>
+        <button type="button" class="btn btn-danger" id="cancelBtn" onclick="cancelScan()" disabled>
             <span class="btn-icon">❌</span> Cancel
         </button>
-        <button class="btn btn-danger" id="clearBtn" onclick="clearResults()">
+        <button type="button" class="btn btn-danger" id="clearBtn" onclick="clearResults()">
             <span class="btn-icon">🗑️</span> Clear Log
         </button>
         <div style="flex: 1;"></div>
-        <button class="btn btn-danger" id="batchRemoveBtn" onclick="batchRemoveUnwanted()" disabled>
+        <button type="button" class="btn btn-danger" id="batchRemoveBtn" onclick="batchRemoveUnwanted()" disabled>
             <span class="btn-icon">🧹</span> Batch Remove
         </button>
-        <button class="btn btn-secondary" id="batchM3uBtn" onclick="batchCreateM3U()" disabled>
+        <button type="button" class="btn btn-secondary" id="batchM3uBtn" onclick="batchCreateM3U()" disabled>
             <span class="btn-icon">💿</span> Batch M3U
         </button>
     </div>
@@ -772,7 +772,7 @@
     <div class="archive-modal-content">
         <div class="archive-modal-header">
             <h3 id="archiveModalTitle">📦 Archive Contents</h3>
-            <button class="archive-modal-close" onclick="closeArchiveModal()">×</button>
+            <button type="button" class="archive-modal-close" onclick="closeArchiveModal()">×</button>
         </div>
         <div class="archive-modal-body">
             <ul class="archive-file-list" id="archiveFileList">
@@ -780,8 +780,8 @@
             </ul>
         </div>
         <div class="archive-modal-footer">
-            <button class="btn btn-secondary" onclick="closeArchiveModal()">Close</button>
-            <button class="btn btn-danger" id="removeSelectedBtn" onclick="removeSelectedFiles()">
+            <button type="button" class="btn btn-secondary" onclick="closeArchiveModal()">Close</button>
+            <button type="button" class="btn btn-danger" id="removeSelectedBtn" onclick="removeSelectedFiles()">
                 <span class="btn-icon">🗑️</span> Remove Selected
             </button>
 </div>
@@ -817,10 +817,10 @@
             </div>
         </div>
         <div class="batch-progress-footer">
-            <button class="btn btn-warning" id="batchPauseBtn" onclick="toggleBatchPause()">
+            <button type="button" class="btn btn-warning" id="batchPauseBtn" onclick="toggleBatchPause()">
                 <span class="btn-icon" id="batchPauseIcon">⏸️</span> <span id="batchPauseText">Pause</span>
             </button>
-            <button class="btn btn-danger" id="batchCancelBtn" onclick="cancelBatchOperation()">
+            <button type="button" class="btn btn-danger" id="batchCancelBtn" onclick="cancelBatchOperation()">
                 <span class="btn-icon">❌</span> Cancel
             </button>
         </div>
@@ -1042,7 +1042,7 @@ function renderExcludedBadges() {
     container.innerHTML = sorted.map(path => `
         <span class="excluded-badge">
             ${escapeHtml(path)}
-            <button class="remove-badge" onclick="removeExcludedPath('${escapeHtml(path)}')" title="Remove">×</button>
+            <button type="button" class="remove-badge" onclick="removeExcludedPath('${escapeHtml(path)}')" title="Remove">×</button>
         </span>
     `).join('');
 }
@@ -1301,9 +1301,9 @@ function updateResultsTable() {
             <td title="${result.type === 'multi-file' ? 'ROM files / Total files' : ''}">${fileCountDisplay}</td>
             <td class="path-cell" title="${escapeHtml(result.path)}" onclick="viewArchive('${escapeHtml(result.path)}', '${result.type}')">${escapeHtml(result.relative_path || result.path)}</td>
             <td class="action-cell">
-                <button class="action-btn" onclick="viewArchive('${escapeHtml(result.path)}', '${result.type}')">👁️ View</button>
-                ${result.type === 'unwanted' ? `<button class="action-btn danger" onclick="removeUnwanted('${escapeHtml(result.path)}')">🗑️</button>` : ''}
-                ${result.type === 'multi-file' ? `<button class="action-btn" onclick="createM3U('${escapeHtml(result.path)}')">💿</button>` : ''}
+                <button type="button" class="action-btn" onclick="viewArchive('${escapeHtml(result.path)}', '${result.type}')">👁️ View</button>
+                ${result.type === 'unwanted' ? `<button type="button" class="action-btn danger" onclick="removeUnwanted('${escapeHtml(result.path)}')">🗑️</button>` : ''}
+                ${result.type === 'multi-file' ? `<button type="button" class="action-btn" onclick="createM3U('${escapeHtml(result.path)}')">💿</button>` : ''}
             </td>
         </tr>
     `}).join('');

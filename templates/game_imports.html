@@ -160,16 +160,16 @@
 
     <!-- Tabs -->
     <div class="platform-tabs">
-        <button class="platform-tab{% if active_tab == 'clz' %} active{% endif %}" onclick="switchTab('clz')" id="tab-clz">
+        <button type="button" class="platform-tab{% if active_tab == 'clz' %} active{% endif %}" onclick="switchTab('clz')" id="tab-clz">
             <span class="tab-icon">📄</span> CLZ Import
         </button>
-        <button class="platform-tab{% if active_tab == 'steam' %} active{% endif %}" onclick="switchTab('steam')" id="tab-steam">
+        <button type="button" class="platform-tab{% if active_tab == 'steam' %} active{% endif %}" onclick="switchTab('steam')" id="tab-steam">
             <span class="tab-icon">🟦</span> Steam
         </button>
-        <button class="platform-tab{% if active_tab == 'xbox' %} active{% endif %}" onclick="switchTab('xbox')" id="tab-xbox">
+        <button type="button" class="platform-tab{% if active_tab == 'xbox' %} active{% endif %}" onclick="switchTab('xbox')" id="tab-xbox">
             <span class="tab-icon">🟢</span> Xbox
         </button>
-        <button class="platform-tab{% if active_tab == 'psn' %} active{% endif %}" onclick="switchTab('psn')" id="tab-psn">
+        <button type="button" class="platform-tab{% if active_tab == 'psn' %} active{% endif %}" onclick="switchTab('psn')" id="tab-psn">
             <span class="tab-icon">🔵</span> PSN
         </button>
     </div>
@@ -207,8 +207,8 @@
                 </div>
             </div>
             <div class="preview-controls">
-                <button class="btn btn-secondary btn-sm" onclick="selectAllNew('clz')">☑️ Select All New</button>
-                <button class="btn btn-secondary btn-sm" onclick="deselectAll('clz')">☐ Deselect All</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllNew('clz')">☑️ Select All New</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAll('clz')">☐ Deselect All</button>
                 <input type="text" id="clzSearch" placeholder="Search games..."
                        style="padding: 6px 12px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.85rem; min-width: 200px;">
             </div>
@@ -225,7 +225,7 @@
             </div>
             <div class="import-actions">
                 <span id="clzSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">0 games selected</span>
-                <button class="btn btn-primary" id="clzImportBtn" onclick="importClzGames()" disabled>📥 Import Selected</button>
+                <button type="button" class="btn btn-primary" id="clzImportBtn" onclick="importClzGames()" disabled>📥 Import Selected</button>
             </div>
         </div>
     </div>
@@ -246,7 +246,7 @@
             <div class="config-row">
                 <div class="config-field"><label for="steamApiKey">Steam Web API Key</label><input type="text" id="steamApiKey" placeholder="Your Steam Web API Key"></div>
                 <div class="config-field"><label for="steamId">Steam ID or Vanity URL</label><input type="text" id="steamId" placeholder="76561198012345678 or custom URL name"></div>
-                <button class="btn btn-primary" onclick="fetchSteamLibrary()" id="steamFetchBtn">📡 Fetch Library</button>
+                <button type="button" class="btn btn-primary" onclick="fetchSteamLibrary()" id="steamFetchBtn">📡 Fetch Library</button>
             </div>
         </div>
         <div class="profile-card" id="steamProfile" style="display: none;">
@@ -262,8 +262,8 @@
                 </div>
             </div>
             <div class="preview-controls">
-                <button class="btn btn-secondary btn-sm" onclick="selectAllNew('steam')">☑️ Select All New</button>
-                <button class="btn btn-secondary btn-sm" onclick="deselectAll('steam')">☐ Deselect All</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllNew('steam')">☑️ Select All New</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAll('steam')">☐ Deselect All</button>
                 <input type="text" id="steamSearch" placeholder="Search games..."
                        style="padding: 6px 12px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.85rem; min-width: 200px;">
             </div>
@@ -278,7 +278,7 @@
             </div>
             <div class="import-actions">
                 <span id="steamSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">0 games selected</span>
-                <button class="btn btn-primary" id="steamImportBtn" onclick="importGames('steam')" disabled>📥 Import Selected</button>
+                <button type="button" class="btn btn-primary" id="steamImportBtn" onclick="importGames('steam')" disabled>📥 Import Selected</button>
             </div>
         </div>
     </div>
@@ -300,12 +300,12 @@
                 <div class="auth-dot"></div>
                 <div><div id="xboxAuthText" style="color: var(--text-primary);">Not Connected</div><div id="xboxAuthDetail" style="color: var(--text-muted); font-size: 0.8rem;">Connect your Xbox account to import games</div></div>
                 <div style="margin-left: auto; display: flex; gap: var(--spacing-sm);">
-                    <button class="btn btn-primary btn-sm" onclick="connectXbox()" id="xboxConnectBtn">🔗 Connect Xbox Account</button>
-                    <button class="btn btn-secondary btn-sm" onclick="disconnectXbox()" id="xboxDisconnectBtn" style="display: none;">Disconnect</button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="connectXbox()" id="xboxConnectBtn">🔗 Connect Xbox Account</button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="disconnectXbox()" id="xboxDisconnectBtn" style="display: none;">Disconnect</button>
                 </div>
             </div>
             <div style="display: flex; gap: var(--spacing-md); align-items: center; margin-top: var(--spacing-md);" id="xboxFetchRow">
-                <button class="btn btn-primary" onclick="fetchXboxLibrary()" id="xboxFetchBtn" disabled>📡 Fetch Library</button>
+                <button type="button" class="btn btn-primary" onclick="fetchXboxLibrary()" id="xboxFetchBtn" disabled>📡 Fetch Library</button>
             </div>
         </div>
         <div class="preview-section" id="xboxPreview">
@@ -318,17 +318,17 @@
                 </div>
             </div>
             <div class="preview-controls">
-                <button class="btn btn-secondary btn-sm" onclick="selectAllNew('xbox')">☑️ Select All New</button>
-                <button class="btn btn-secondary btn-sm" onclick="deselectAll('xbox')">☐ Deselect All</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllNew('xbox')">☑️ Select All New</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAll('xbox')">☐ Deselect All</button>
                 <input type="text" id="xboxSearch" placeholder="Search games..."
                        style="padding: 6px 12px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.85rem; min-width: 200px;">
             </div>
             <div class="import-platform-filters" id="xboxPlatformFilters">
-                <button class="import-platform-filter-btn active" data-platform="all" onclick="setPlatformFilter('xbox', 'all')">All</button>
-                <button class="import-platform-filter-btn" data-platform="xbox360" onclick="setPlatformFilter('xbox', 'xbox360')">Xbox 360</button>
-                <button class="import-platform-filter-btn" data-platform="xboxone" onclick="setPlatformFilter('xbox', 'xboxone')">Xbox One</button>
-                <button class="import-platform-filter-btn" data-platform="xboxseriesx" onclick="setPlatformFilter('xbox', 'xboxseriesx')">Xbox Series</button>
-                <button class="import-platform-filter-btn" data-platform="windows" onclick="setPlatformFilter('xbox', 'windows')">PC</button>
+                <button type="button" class="import-platform-filter-btn active" data-platform="all" onclick="setPlatformFilter('xbox', 'all')">All</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="xbox360" onclick="setPlatformFilter('xbox', 'xbox360')">Xbox 360</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="xboxone" onclick="setPlatformFilter('xbox', 'xboxone')">Xbox One</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="xboxseriesx" onclick="setPlatformFilter('xbox', 'xboxseriesx')">Xbox Series</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="windows" onclick="setPlatformFilter('xbox', 'windows')">PC</button>
             </div>
             <div class="preview-table-container">
                 <table class="data-table">
@@ -341,7 +341,7 @@
             </div>
             <div class="import-actions">
                 <span id="xboxSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">0 games selected</span>
-                <button class="btn btn-primary" id="xboxImportBtn" onclick="importGames('xbox')" disabled>📥 Import Selected</button>
+                <button type="button" class="btn btn-primary" id="xboxImportBtn" onclick="importGames('xbox')" disabled>📥 Import Selected</button>
             </div>
         </div>
     </div>
@@ -364,7 +364,7 @@
                 <div class="auth-dot"></div>
                 <div><div id="psnAuthText" style="color: var(--text-primary);">Checking...</div><div id="psnAuthDetail" style="color: var(--text-muted); font-size: 0.8rem;"></div></div>
                 <div style="margin-left: auto; display: flex; gap: var(--spacing-sm);">
-                    <button class="btn btn-primary" onclick="fetchPsnLibrary()" id="psnFetchBtn" disabled>📡 Fetch Library</button>
+                    <button type="button" class="btn btn-primary" onclick="fetchPsnLibrary()" id="psnFetchBtn" disabled>📡 Fetch Library</button>
                 </div>
             </div>
         </div>
@@ -381,17 +381,17 @@
                 </div>
             </div>
             <div class="preview-controls">
-                <button class="btn btn-secondary btn-sm" onclick="selectAllNew('psn')">☑️ Select All New</button>
-                <button class="btn btn-secondary btn-sm" onclick="deselectAll('psn')">☐ Deselect All</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllNew('psn')">☑️ Select All New</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAll('psn')">☐ Deselect All</button>
                 <input type="text" id="psnSearch" placeholder="Search games..."
                        style="padding: 6px 12px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.85rem; min-width: 200px;">
             </div>
             <div class="import-platform-filters" id="psnPlatformFilters">
-                <button class="import-platform-filter-btn active" data-platform="all" onclick="setPlatformFilter('psn', 'all')">All</button>
-                <button class="import-platform-filter-btn" data-platform="ps5" onclick="setPlatformFilter('psn', 'ps5')">PS5</button>
-                <button class="import-platform-filter-btn" data-platform="ps4" onclick="setPlatformFilter('psn', 'ps4')">PS4</button>
-                <button class="import-platform-filter-btn" data-platform="ps3" onclick="setPlatformFilter('psn', 'ps3')">PS3</button>
-                <button class="import-platform-filter-btn" data-platform="psvita" onclick="setPlatformFilter('psn', 'psvita')">PS Vita</button>
+                <button type="button" class="import-platform-filter-btn active" data-platform="all" onclick="setPlatformFilter('psn', 'all')">All</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="ps5" onclick="setPlatformFilter('psn', 'ps5')">PS5</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="ps4" onclick="setPlatformFilter('psn', 'ps4')">PS4</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="ps3" onclick="setPlatformFilter('psn', 'ps3')">PS3</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="psvita" onclick="setPlatformFilter('psn', 'psvita')">PS Vita</button>
             </div>
             <div class="preview-table-container">
                 <table class="data-table">
@@ -404,7 +404,7 @@
             </div>
             <div class="import-actions">
                 <span id="psnSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">0 games selected</span>
-                <button class="btn btn-primary" id="psnImportBtn" onclick="importGames('psn')" disabled>📥 Import Selected</button>
+                <button type="button" class="btn btn-primary" id="psnImportBtn" onclick="importGames('psn')" disabled>📥 Import Selected</button>
             </div>
         </div>
     </div>

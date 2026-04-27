@@ -114,8 +114,8 @@
                 <span class="locked-path-prefix" id="basePath">{{ rom_path }}/</span>
                 <input type="text" id="subPath" placeholder="subfolder (optional)" value="">
             </div>
-            <button class="btn btn-secondary" onclick="openFolderBrowser('hiddenFullPath')">📁 Browse</button>
-            <button class="btn btn-primary" onclick="scanFiles()">🔍 Scan</button>
+            <button type="button" class="btn btn-secondary" onclick="openFolderBrowser('hiddenFullPath')">📁 Browse</button>
+            <button type="button" class="btn btn-primary" onclick="scanFiles()">🔍 Scan</button>
         </div>
         <input type="hidden" id="hiddenFullPath" value="{{ rom_path }}">
     </div>
@@ -192,8 +192,8 @@
     </div>
     
     <div class="btn-group">
-        <button class="btn btn-primary" id="convertBtn" onclick="startConversion()" disabled>🔄 Start Conversion</button>
-        <button class="btn btn-danger" id="cancelBtn" onclick="cancelConversion()" disabled>❌ Cancel</button>
+        <button type="button" class="btn btn-primary" id="convertBtn" onclick="startConversion()" disabled>🔄 Start Conversion</button>
+        <button type="button" class="btn btn-danger" id="cancelBtn" onclick="cancelConversion()" disabled>❌ Cancel</button>
     </div>
     
     <div class="progress-section" id="progressSection" style="display: none;">

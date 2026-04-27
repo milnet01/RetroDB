@@ -56,13 +56,13 @@
         </div>
 
         <div class="bulk-controls">
-            <button class="filter-btn bulk-btn" onclick="toggleBulkMode()" id="bulkModeBtn">
+            <button type="button" class="filter-btn bulk-btn" onclick="toggleBulkMode()" id="bulkModeBtn">
                 <span class="filter-icon">☑️</span> <span id="bulkModeText">Select</span>
             </button>
-            <button class="filter-btn bulk-action-btn" onclick="selectAllVisible()" id="selectAllBtn" style="display: none;">
+            <button type="button" class="filter-btn bulk-action-btn" onclick="selectAllVisible()" id="selectAllBtn" style="display: none;">
                 <span class="filter-icon">✅</span> Select All
             </button>
-            <button class="filter-btn bulk-action-btn" onclick="selectAllUnscraped()" id="selectUnscrapedBtn" style="display: none;">
+            <button type="button" class="filter-btn bulk-action-btn" onclick="selectAllUnscraped()" id="selectUnscrapedBtn" style="display: none;">
                 <span class="filter-icon">📋</span> Select Unscraped
             </button>
             <div class="bulk-mode-selector" id="bulkModeSelector" style="display: none;">
@@ -75,50 +75,50 @@
                     <span class="mode-label mode-on">📝 Fill Missing</span>
                 </div>
             </div>
-            <button class="filter-btn bulk-scrape-btn" onclick="startBulkScrape()" id="bulkScrapeBtn" style="display: none;">
+            <button type="button" class="filter-btn bulk-scrape-btn" onclick="startBulkScrape()" id="bulkScrapeBtn" style="display: none;">
                 <span class="filter-icon">⬇️</span> Scrape Selected (<span id="selectedCount">0</span>)
             </button>
-            <button class="filter-btn bulk-action-btn" onclick="startBulkEdit()" id="bulkEditBtn" style="display: none;">
+            <button type="button" class="filter-btn bulk-action-btn" onclick="startBulkEdit()" id="bulkEditBtn" style="display: none;">
                 <span class="filter-icon">✏️</span> Edit Selected (<span id="selectedEditCount">0</span>)
             </button>
         </div>
     </div>
 
     <div class="filter-buttons">
-        <button class="filter-btn" onclick="openFilterModal('genre')">
+        <button type="button" class="filter-btn" onclick="openFilterModal('genre')">
             <span class="filter-icon">🎭</span> Genre
         </button>
-        <button class="filter-btn" onclick="openFilterModal('franchise')">
+        <button type="button" class="filter-btn" onclick="openFilterModal('franchise')">
             <span class="filter-icon">📚</span> Series
         </button>
-        <button class="filter-btn" onclick="openFilterModal('publisher')">
+        <button type="button" class="filter-btn" onclick="openFilterModal('publisher')">
             <span class="filter-icon">🏢</span> Publisher
         </button>
-        <button class="filter-btn" onclick="openFilterModal('developer')">
+        <button type="button" class="filter-btn" onclick="openFilterModal('developer')">
             <span class="filter-icon">👨‍💻</span> Developer
         </button>
-        <button class="filter-btn" onclick="openFilterModal('modes')">
+        <button type="button" class="filter-btn" onclick="openFilterModal('modes')">
             <span class="filter-icon">👥</span> Players
         </button>
-        <button class="filter-btn" onclick="openFilterModal('perspective')">
+        <button type="button" class="filter-btn" onclick="openFilterModal('perspective')">
             <span class="filter-icon">👁️</span> Perspective
         </button>
-        <button class="filter-btn" onclick="openFilterModal('dimension')">
+        <button type="button" class="filter-btn" onclick="openFilterModal('dimension')">
             <span class="filter-icon">📐</span> Dimension
         </button>
-        <button class="filter-btn" onclick="openFilterModal('rating')">
+        <button type="button" class="filter-btn" onclick="openFilterModal('rating')">
             <span class="filter-icon">⭐</span> Rating
         </button>
-        <button class="filter-btn" onclick="openFilterModal('source')">
+        <button type="button" class="filter-btn" onclick="openFilterModal('source')">
             <span class="filter-icon">📋</span> Source
         </button>
-        <button class="filter-btn ra-filter-btn" onclick="toggleRAFilter()">
+        <button type="button" class="filter-btn ra-filter-btn" onclick="toggleRAFilter()">
             <span class="filter-icon">🏆</span> Has Achievements
         </button>
-        <button class="filter-btn bonus-filter-btn" onclick="toggleBonusDiscFilter()" title="Show/hide bonus discs (hidden by default)">
+        <button type="button" class="filter-btn bonus-filter-btn" onclick="toggleBonusDiscFilter()" title="Show/hide bonus discs (hidden by default)">
             <span class="filter-icon">🎁</span> <span id="bonusFilterText">Show Bonus</span>
         </button>
-        <button class="filter-btn clear-btn" onclick="clearFilters()" id="clearFiltersBtn" style="display: none;">
+        <button type="button" class="filter-btn clear-btn" onclick="clearFilters()" id="clearFiltersBtn" style="display: none;">
             <span class="filter-icon">✕</span> Clear
         </button>
     </div>
@@ -193,10 +193,10 @@
         <div class="filter-modal-header">
             <h2 id="filterModalTitle">Select Filter</h2>
             <div class="filter-mode-toggle" id="filterModeToggle" style="display:none;">
-                <button class="filter-mode-btn active" data-mode="include" onclick="setFilterMode(false)">IS</button>
-                <button class="filter-mode-btn" data-mode="exclude" onclick="setFilterMode(true)">IS NOT</button>
+                <button type="button" class="filter-mode-btn active" data-mode="include" onclick="setFilterMode(false)">IS</button>
+                <button type="button" class="filter-mode-btn" data-mode="exclude" onclick="setFilterMode(true)">IS NOT</button>
             </div>
-            <button class="modal-close-btn" onclick="closeFilterModal()" aria-label="Close filter">×</button>
+            <button type="button" class="modal-close-btn" onclick="closeFilterModal()" aria-label="Close filter">×</button>
         </div>
         <div class="filter-modal-body">
             <div class="filter-options" id="filterOptions"></div>

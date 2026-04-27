@@ -268,10 +268,10 @@
             <span class="scan-icon">🕐</span>
             <span class="scan-text">Last scan: <span class="scan-time"></span></span>
         </div>
-        <button class="btn btn-danger" onclick="clearScanResults()" title="Clear cached results">
+        <button type="button" class="btn btn-danger" onclick="clearScanResults()" title="Clear cached results">
             <span class="btn-icon">🗑️</span> Clear
         </button>
-        <button class="btn btn-primary" onclick="runFullScan()">
+        <button type="button" class="btn btn-primary" onclick="runFullScan()">
             <span class="btn-icon">🔄</span> Scan All ROMs
         </button>
     </div>
@@ -279,12 +279,12 @@
 
 <!-- Report Tabs -->
 <div class="report-tabs">
-    <button class="report-tab active" onclick="switchTab('naming')" id="tab-naming">
+    <button type="button" class="report-tab active" onclick="switchTab('naming')" id="tab-naming">
         <span class="tab-icon">📝</span>
         <span class="tab-label">Non-Standard Names</span>
         <span class="tab-count" id="count-naming">-</span>
     </button>
-    <button class="report-tab" onclick="switchTab('mismatch')" id="tab-mismatch">
+    <button type="button" class="report-tab" onclick="switchTab('mismatch')" id="tab-mismatch">
         <span class="tab-icon">⚠️</span>
         <span class="tab-label">Name Mismatches</span>
         <span class="tab-count" id="count-mismatch">-</span>
@@ -341,7 +341,7 @@
             <input type="text" id="filter-search" placeholder="Search filenames..." oninput="applyFilters()">
         </div>
         <div class="filter-group" style="margin-left: auto;">
-            <button class="btn btn-success" id="batchRenameBtn" onclick="startBatchRename()" disabled>
+            <button type="button" class="btn btn-success" id="batchRenameBtn" onclick="startBatchRename()" disabled>
                 <span class="btn-icon">✏️</span> Batch Rename (<span id="batchCount">0</span>)
             </button>
         </div>
@@ -416,7 +416,7 @@
             <input type="text" id="filter-mismatch-search" placeholder="Search..." oninput="applyMismatchFilters()">
         </div>
         <div class="filter-group" style="margin-left: auto;">
-            <button class="btn btn-success" id="mismatchBatchRenameBtn" onclick="startMismatchBatchRename()" disabled>
+            <button type="button" class="btn btn-success" id="mismatchBatchRenameBtn" onclick="startMismatchBatchRename()" disabled>
                 <span class="btn-icon">✏️</span> Batch Rename (<span id="mismatchBatchCount">0</span>)
             </button>
         </div>
@@ -464,7 +464,7 @@
     <div class="modal-content" style="max-width: 600px;">
         <div class="modal-header">
             <h2 id="batchModalTitle">✏️ Batch Rename</h2>
-            <button class="modal-close" onclick="closeBatchModal()" id="batchCloseBtn">&times;</button>
+            <button type="button" class="modal-close" onclick="closeBatchModal()" id="batchCloseBtn">&times;</button>
         </div>
         <div class="modal-body">
             <!-- Confirmation View -->
@@ -513,11 +513,11 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="closeBatchModal()" id="batchCancelBtn">Cancel</button>
-            <button class="btn btn-success" onclick="executeBatchRename()" id="batchStartBtn">
+            <button type="button" class="btn btn-secondary" onclick="closeBatchModal()" id="batchCancelBtn">Cancel</button>
+            <button type="button" class="btn btn-success" onclick="executeBatchRename()" id="batchStartBtn">
                 <span class="btn-icon">✏️</span> Start Rename
             </button>
-            <button class="btn btn-primary" onclick="closeBatchModal()" id="batchDoneBtn" style="display: none;">Done</button>
+            <button type="button" class="btn btn-primary" onclick="closeBatchModal()" id="batchDoneBtn" style="display: none;">Done</button>
         </div>
     </div>
 </div>
@@ -957,7 +957,7 @@ function renderNamingTable(items) {
             <td>${(item.issues || []).map(i => `<span class="issue-badge ${i}">${formatIssue(i)}</span>`).join(' ')}</td>
             <td class="suggested-name" title="${escapeHtml(item.suggested || '')}">${escapeHtml(item.suggested || '-')}</td>
             <td class="action-cell">
-                <button class="action-btn" onclick="viewGame(${item.game_id})">👁️</button>
+                <button type="button" class="action-btn" onclick="viewGame(${item.game_id})">👁️</button>
                 ${item.suggested ? `<button class="action-btn rename" data-game-id="${item.game_id}" data-suggested="${escapeHtml(item.suggested)}">✏️</button>` : ''}
             </td>
         </tr>
@@ -1077,7 +1077,7 @@ function renderMismatchTable(items) {
             <td>${escapeHtml(year)}</td>
             <td>${(item.mismatch_types || (item.mismatch_type ? [item.mismatch_type] : [])).map(t => `<span class="issue-badge name-mismatch">${t}</span>`).join(' ')}</td>
             <td class="action-cell">
-                <button class="action-btn" onclick="viewGame(${item.game_id})">👁️</button>
+                <button type="button" class="action-btn" onclick="viewGame(${item.game_id})">👁️</button>
                 <button class="action-btn rename" data-game-id="${item.game_id}">✏️</button>
             </td>
         </tr>`;

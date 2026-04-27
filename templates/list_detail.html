@@ -23,7 +23,7 @@
             <span class="count-number" id="listGameCount">{{ games|length|format_number }}</span>
             <span class="count-label">GAMES</span>
         </span>
-        <button class="btn btn-primary" onclick="openAddGameModal()">
+        <button type="button" class="btn btn-primary" onclick="openAddGameModal()">
             <span class="btn-icon">+</span> Add Games
         </button>
         <a href="{{ url_for('collections.lists_page') }}" class="btn btn-secondary">
@@ -60,7 +60,7 @@
                         <span class="list-game-system">{{ game.system_name or '' }}</span>
                     </td>
                     <td>
-                        <button class="list-action-btn danger" onclick="confirmRemoveGame({{ game.id }}, '{{ game.title|e }}')" title="Remove from list">&#10005;</button>
+                        <button type="button" class="list-action-btn danger" onclick="confirmRemoveGame({{ game.id }}, '{{ game.title|e }}')" title="Remove from list">&#10005;</button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -77,7 +77,7 @@
     <div class="empty-state-text">
         Add games from the library or use the button above.
     </div>
-    <button class="btn btn-primary" onclick="openAddGameModal()">
+    <button type="button" class="btn btn-primary" onclick="openAddGameModal()">
         <span class="btn-icon">+</span> Add Games
     </button>
 </div>
@@ -88,7 +88,7 @@
     <div class="custom-modal-content" style="max-width: 600px; max-height: 80vh;" role="dialog" aria-modal="true" aria-labelledby="addGameModalTitle">
         <div class="custom-modal-header">
             <h3 id="addGameModalTitle">Add Games to List</h3>
-            <button class="custom-modal-close" onclick="closeAddGameModal()" aria-label="Close">&times;</button>
+            <button type="button" class="custom-modal-close" onclick="closeAddGameModal()" aria-label="Close">&times;</button>
         </div>
         <div class="custom-modal-body" style="padding: 0;">
             <div class="add-game-search-bar">
@@ -96,7 +96,7 @@
                        placeholder="Search games by title..."
                        oninput="debounceGameSearch()"
                        onkeydown="if(event.key==='Enter')searchGamesForList()">
-                <button class="btn btn-primary btn-sm" onclick="searchGamesForList()">Search</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="searchGamesForList()">Search</button>
             </div>
             <div class="add-game-results" id="addGameResults">
                 <div class="add-game-hint">Type a game title and press Enter or click Search.</div>
@@ -439,7 +439,7 @@ async function searchGamesForList() {
                         <div class="add-game-result-title">${escapeHtml(g.title)}</div>
                         <div class="add-game-result-system">${escapeHtml(g.system_name || '')}</div>
                     </div>
-                    <button class="add-game-result-btn ${isAdded ? 'added' : ''}"
+                    <button type="button" class="add-game-result-btn ${isAdded ? 'added' : ''}"
                             id="addBtn_${g.id}"
                             onclick="addGameToList(${g.id}, this)"
                             ${isAdded ? 'disabled' : ''}>

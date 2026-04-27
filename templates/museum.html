@@ -14,7 +14,7 @@
             <span class="count-number">{{ content_count|format_number }}</span>
             <span class="count-label">/ {{ total_systems|format_number }} DOCUMENTED</span>
         </div>
-        <button class="btn btn-primary" id="generateAllBtn" onclick="startBulkGenerate()">
+        <button type="button" class="btn btn-primary" id="generateAllBtn" onclick="startBulkGenerate()">
             Generate All Content
         </button>
     </div>
@@ -24,7 +24,7 @@
 <div class="museum-progress glass-panel" id="generateProgress" style="display: none;">
     <div class="museum-progress-header">
         <span class="museum-progress-title" id="progressTitle">Generating content...</span>
-        <button class="btn btn-sm btn-danger" onclick="cancelBulkGenerate()" id="cancelGenBtn">Cancel</button>
+        <button type="button" class="btn btn-sm btn-danger" onclick="cancelBulkGenerate()" id="cancelGenBtn">Cancel</button>
     </div>
     <div class="progress-bar-container">
         <div class="progress-bar-fill" id="progressBar" style="width: 0%;"></div>

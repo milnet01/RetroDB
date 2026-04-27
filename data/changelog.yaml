@@ -1,3 +1,19 @@
+- version: 3.5.33
+  date: 2026-04-27
+  tags:
+  - type: correctness
+    label: Pass 45.20 — Button type="button" sweep + chmod-before-verify re-pin
+  body: |
+    <ul>
+        <li><strong>Pass 45.20 (MEDIUM) &mdash; closed two findings on the same review pass</strong>:</li>
+        <li><strong>(a) <code>&lt;button onclick&gt;</code> sweep &mdash; <code>type="button"</code> added to all 419 onclick-bearing buttons</strong>. The HTML <code>&lt;button&gt;</code> default type is <code>submit</code> when inside a <code>&lt;form&gt;</code>, so any click on an onclick-bearing button inside a form runs the onclick AND submits the form, posting the form data and (often) reloading the page. Pre-pass audit found 419 buttons across templates without an explicit type. Sweep done via a one-shot regex (<code>&lt;button</code> + attributes without <code>type=</code> + <code>onclick</code>) inserting <code>type="button"</code> right after <code>&lt;button</code>. 30 templates updated. Buttons OUTSIDE forms get a harmless no-op (default type is unchanged); buttons INTENTIONALLY meant to submit typically didn't have onclick (they used the form's submit handler), so the sweep doesn't break them.</li>
+        <li><strong>(b) <code>chmod-after-verify race</code> in <code>backup_database</code></strong> &mdash; already closed in Pass 45.5; this pass re-pins the contract via a fresh source-position assertion in <code>TestPass45_20*</code>. Reverting the chmod-then-verify ordering now fails two passes' worth of regression tests instead of one.</li>
+        <li><strong>Source</strong> &mdash; indie-review 2026-04-25 (Database M3 + Templates 11).</li>
+        <li><strong>Tests</strong>. <code>tests/test_pass45_security.py::TestPass45_20*</code> &mdash; 3 cases. (1) <code>chmod(0o600)</code> precedes <code>sqlite3.connect</code> for the verify-open in <code>backup_database</code>. (2) Zero onclick-bearing buttons across the templates tree lack an explicit <code>type=</code>. (3) Total <code>type="button"</code> count across templates &ge; 200 (sweep breadth). The <code>type="button"</code> count test guards against regression: a future bulk-edit that strips <code>type="button"</code> would fail the count check. Suite 692 &rarr; 695.</li>
+        <li><strong>Roadmap</strong>: Pass 45 progress now 19/20 (only Pass 45.18 source-grep test antipattern remains, gated on test-quality budget).</li>
+        <li><strong>Version bump 3.5.32 &rarr; 3.5.33</strong>: patch (input-handling correctness, no schema or surface change).</li>
+    </ul>
+
 - version: 3.5.32
   date: 2026-04-27
   tags:
