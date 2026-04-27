@@ -6,11 +6,9 @@
     <meta name="description" content="RetroDB - Retro Gaming ROM Library Manager">
     <title>{% block title %}RetroDB{% endblock %}</title>
     
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    
+    <!-- Fonts — Pass 46.1: locally vendored, no fonts.googleapis.com / fonts.gstatic.com fetches -->
+    <link rel="stylesheet" href="{{ asset_url('css/core/fonts.css') }}">
+
     <!-- Theme FOUC prevention: apply saved theme before CSS renders -->
     <script>
     (function(){

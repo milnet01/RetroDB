@@ -248,6 +248,23 @@ def _build_one(js_dir, bundle_name, order, do_minify):
     return original_size, final_size
 
 
+def _hash_vendor_files(js_dir):
+    """Hash every file under static/js/vendor/ for cache-busting via asset_url.
+
+    Vendor files (Chart.js, future bundled libraries) ship pre-minified from
+    upstream — we don't concatenate or transform them, just register their
+    SHA-256 prefix so a version bump invalidates the browser cache cleanly.
+    """
+    vendor_dir = js_dir / 'vendor'
+    if not vendor_dir.is_dir():
+        return {}
+    out = {}
+    for path in sorted(vendor_dir.iterdir()):
+        if path.is_file() and path.suffix in ('.js', '.mjs'):
+            out[f'js/vendor/{path.name}'] = _content_hash(path)
+    return out
+
+
 def build(do_minify=True):
     """Concatenate all JS files into core+games bundles, optionally minifying."""
     js_dir = get_js_dir()
@@ -262,6 +279,9 @@ def build(do_minify=True):
         totals[0] += orig
         totals[1] += final
         manifest_updates[f'js/{bundle_name}'] = _content_hash(js_dir / bundle_name)
+
+    # Register vendor files so asset_url() emits a content-hash query string.
+    manifest_updates.update(_hash_vendor_files(js_dir))
 
     update_manifest_entries(manifest_updates)
 

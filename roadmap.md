@@ -84,6 +84,77 @@ paths or silent-corruption vectors under routine use.
 
 ---
 
+### Pass 46 — vendor third-party assets / distribution self-containment (2026-04-27)
+
+> User-requested track: drop runtime CDN dependencies (Chart.js, Google
+> Fonts), refresh pinned pip versions within current ranges, and add a
+> PyInstaller-based "no Python install needed" distribution alongside the
+> existing source-zip distribution. Goal — let RetroDB run without
+> reaching out to third-party CDNs and let end users pick between
+> "needs Python" (small zip) and "self-contained" (bigger binary)
+> distribution channels.
+
+#### Pass 46.1 Vendor Chart.js + Google Fonts (privacy / offline)
+
+- **Targets**: `templates/analytics.html` (CDN Chart.js ref),
+  `templates/base.html` (Google Fonts ref).
+- **Why**: every browser load made requests to `cdn.jsdelivr.net`
+  (Chart.js) and `fonts.gstatic.com` + `fonts.googleapis.com` (3 font
+  families, 17 WOFF2 files) — third-party fetches that log IP +
+  User-Agent and add CDN failure modes. User asked for a no-CDN runtime.
+- **Plan**: vendor Chart.js v4.5.1 UMD bundle (~208 KB) into
+  `static/js/vendor/`, register it in the `asset_manifest.json` cache-
+  bust pipeline. Vendor 17 WOFF2 files (Orbitron variable + Rajdhani
+  5×3 subsets + Share Tech Mono) into `static/fonts/`, write a local
+  `static/css/core/fonts.css` with the @font-face block, drop the
+  preconnect + Google CSS link in `base.html`. One-shot bash script
+  `scripts/vendor_fonts.sh` for the font download (idempotent + WOFF2
+  magic-byte verification).
+- **Source**: user request 2026-04-27 ("can we get this project to a
+  point where there are no external dependencies?").
+- **Status**: done (v3.5.35) — 17 WOFF2 + Chart.js UMD bundle vendored
+  (~784 KB repo growth). Build scripts updated to hash vendor JS +
+  standalone fonts.css for per-file cache-busting. Smoke-tested:
+  `/login` response has zero `gstatic.com`/`googleapis.com` references
+  outside HTML comments; all three asset paths return 200 with valid
+  bytes. 683 tests green.
+
+#### Pass 46.2 Refresh pinned pip versions within current ranges
+
+- **Target**: `requirements.txt`, `requirements.lock`.
+- **Why**: lockfile pins are 2-week-old snapshots; latest patch/minor
+  releases within the existing version ceilings (Flask `<4.0`, Pillow
+  `<13.0`, etc.) include security fixes and bugfixes worth picking up
+  before the PyInstaller distribution work bakes them into a binary.
+- **Plan**: `pip-compile --upgrade requirements.txt -o requirements.lock
+  --strip-extras`, run full pytest, fix any breakage. Bump the
+  ceilings if any package's latest exceeds the current cap (Flask 4
+  if released, numpy 3, etc.); document any version-locking decisions.
+- **Status**: todo
+
+#### Pass 46.3 PyInstaller spec + dual-distribution `build_dist.py`
+
+- **Target**: new `retrodb.spec`, extended `build_dist.py`, distribution
+  README updates.
+- **Why**: end users currently must install Python + pip-install
+  requirements before running RetroDB. A PyInstaller binary lets them
+  run a single executable on Linux/macOS/Windows. Both distribution
+  channels remain (small source zip for users who already have Python;
+  ~150-250 MB binary for users who don't).
+- **Plan**: write `retrodb.spec` with:
+  - hidden imports (Flask blueprints, plugin discovery)
+  - data files (templates/, static/, data/changelog.yaml)
+  - excluded modules (Qt, matplotlib if pulled by pdfplumber)
+  - per-platform configurations (macOS .app bundle?)
+  Extend `build_dist.py` with a `--standalone` flag that invokes
+  `pyinstaller retrodb.spec` and produces
+  `RetroDB-v{VERSION}-{Platform}-Standalone.zip` alongside the existing
+  `RetroDB-v{VERSION}-{Platform}.zip`. PyInstaller can't cross-compile,
+  so each platform binary requires building on that platform's host.
+- **Status**: todo
+
+---
+
 ### Pass 45 — indie-review 2026-04-25 (post Pass 41 sweep)
 
 > Third 14-agent independent review (v3.5.14). 2 CRIT + 33 HIGH raw →

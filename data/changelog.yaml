@@ -1,3 +1,22 @@
+- version: 3.5.35
+  date: 2026-04-27
+  tags:
+  - type: privacy
+    label: Pass 46.1 — Vendor Chart.js + Google Fonts (no third-party CDN at runtime)
+  body: |
+    <ul>
+        <li><strong>Pass 46.1 (privacy / offline) &mdash; Chart.js and Google Fonts now ship locally instead of being fetched from <code>cdn.jsdelivr.net</code> and <code>fonts.gstatic.com</code> at page load</strong>. Two third-party runtime dependencies removed: every browser hitting RetroDB previously made requests to Google's CDN (which logs IP + User-Agent) and to jsDelivr. Vendoring keeps the look-and-feel identical, makes the app fully usable offline, and removes two CDN failure modes.</li>
+        <li><strong>Chart.js &mdash; 208 KB UMD bundle landed at <code>static/js/vendor/chart.umd.min.js</code></strong> (Chart.js v4.5.1, MIT). <code>templates/analytics.html</code> swaps the <code>cdn.jsdelivr.net/npm/chart.js</code> reference for <code>{{ asset_url('js/vendor/chart.umd.min.js') }}</code>. <code>build_js.py</code> gains a <code>_hash_vendor_files()</code> helper that registers SHA-256 prefixes for any file under <code>static/js/vendor/</code> in <code>asset_manifest.json</code>, so future Chart.js bumps invalidate the browser cache cleanly via the <code>?v=&lt;hash&gt;</code> query string.</li>
+        <li><strong>Google Fonts &mdash; 17 WOFF2 files landed at <code>static/fonts/</code></strong>. Orbitron is a single variable-font file (~12 KB) covering all 6 weights (400-900). Rajdhani has 5 weights &times; 3 subsets (latin, latin-ext, vietnamese) = 15 files; browsers download only the subsets whose <code>unicode-range</code> matches the rendered codepoints, so a Latin-only English install pulls ~250 KB of the 576 KB total. Share Tech Mono is a single weight, single subset (~13 KB).</li>
+        <li><strong>CSS rewrite &mdash; <code>static/css/core/fonts.css</code> serves the @font-face declarations</strong> with <code>src: url(/static/fonts/&lt;basename&gt;.woff2)</code> instead of the original <code>fonts.gstatic.com/...</code> URLs. Original CDN URLs preserved as a comment in the file for audit trail. <code>build_css.py</code> hashes <code>core/fonts.css</code> into the asset manifest (Pass 13.3) so per-file cache-busting works even though it's served standalone (not inlined into <code>main.min.css</code>).</li>
+        <li><strong><code>templates/base.html</code></strong> drops the two <code>&lt;link rel="preconnect"&gt;</code> tags and the <code>fonts.googleapis.com/css2?family=...</code> stylesheet reference, replacing them with a single <code>&lt;link rel="stylesheet"&gt;</code> for the locally-vendored <code>fonts.css</code>.</li>
+        <li><strong>Tooling &mdash; <code>scripts/vendor_fonts.sh</code></strong> is the one-shot download script (idempotent; verifies WOFF2 magic bytes after each <code>curl</code>; exits non-zero on any failure). Re-runnable when Google rotates the file revisions in their CSS (rare).</li>
+        <li><strong>Verification</strong>. <code>curl /login</code> response body contains zero references to <code>fonts.gstatic.com</code> or <code>fonts.googleapis.com</code> outside HTML comments. Direct fetches: <code>/static/css/core/fonts.css</code> &rarr; 200 OK 9.4 KB; <code>/static/fonts/&lt;orbitron-variable&gt;.woff2</code> &rarr; 200 OK 11.8 KB with valid <code>wOF2</code> magic; <code>/static/js/vendor/chart.umd.min.js</code> &rarr; 200 OK 208.5 KB. Full test suite green (683 passed).</li>
+        <li><strong>Disk impact</strong>. Repo gains 576 KB fonts + 208 KB Chart.js = ~784 KB. End-user runtime data transfer is unchanged (these were already downloaded on every first page load); the difference is now they come from your server instead of Google / jsDelivr.</li>
+        <li><strong>Source</strong> &mdash; user request: "can we get this project to a point where there are no external dependencies?" 2026-04-27.</li>
+        <li><strong>Version bump 3.5.34 &rarr; 3.5.35</strong>: patch (no behavior change, no schema change; static-asset reorg).</li>
+    </ul>
+
 - version: 3.5.34
   date: 2026-04-27
   tags:
