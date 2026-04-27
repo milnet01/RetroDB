@@ -449,7 +449,16 @@ paths or silent-corruption vectors under routine use.
   apply to every `class="* active"` nav link. Same WCAG 2.4.3 criterion
   Pass 41.13.A handled for the sidebar.
 - **Source**: indie-review 2026-04-25 theme T10 (Templates & CSS lane).
-- **Status**: todo
+- **Status**: done (v3.5.31) — chose one-time wiring over 70-call-site
+  refactor: new `_setupTabbarAriaCurrent` + `_syncAriaCurrent` in
+  `static/js/main.js` mounts a MutationObserver per `[data-tabbar]`
+  container that mirrors `.active` ↔ `aria-current="page"` on descendant
+  links. Templates updated: dashboard / analytics / museum nav (3 JS-
+  toggled tab bars), all 6 settings subnav containers, 7 rom-tools page-
+  link tabs (server-rendered with static `aria-current="page"`). Top-
+  level settings tabs use `role="tablist"` + `aria-selected` (correct
+  ARIA pattern for tabs proper) and were left unchanged. 7 regression
+  tests in `TestPass45_16*`; suite 678 → 685.
 
 #### Pass 45.17 `ModalFocusTrap` rollout to 20+ remaining dialogs (HIGH, M)
 

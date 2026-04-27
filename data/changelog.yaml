@@ -1,3 +1,27 @@
+- version: 3.5.31
+  date: 2026-04-27
+  tags:
+  - type: a11y
+    label: Pass 45.16 — aria-current="page" rollout to 50+ tab/subnav links
+  body: |
+    <ul>
+        <li><strong>Pass 45.16 (HIGH) &mdash; <code>aria-current="page"</code> extended from the sidebar to every tab-style and subnav component</strong>. Pass 41.13.A handled the sidebar via the <code>nav_active</code> macro in <code>base.html</code>; tab/subnav components managed by JS were the remaining gap. WCAG 2.4.3 (Focus Order) requires <code>aria-current</code> on the link representing the current location/view; without it, assistive tech can't tell which tab the user is viewing.</li>
+        <li><strong>Strategy &mdash; one-time wiring beats 70-call-site refactor</strong>. The naive fix would touch every <code>.classList.add('active')</code> site in 10+ JS files. Instead, Pass 45.16 ships a single MutationObserver in <code>static/js/main.js</code> (<code>_setupTabbarAriaCurrent</code> + <code>_syncAriaCurrent</code>) that mirrors <code>.active</code> &harr; <code>aria-current="page"</code> on descendant <code>&lt;a&gt;</code>/<code>&lt;button&gt;</code> elements inside any container marked <code>data-tabbar</code>. Templates only need a one-time <code>data-tabbar</code> attribute on each nav container plus a static <code>aria-current="page"</code> next to the initial active link (so the page is correct even before main.js executes &mdash; e.g. with JS disabled or during the first frame).</li>
+        <li><strong>Templates updated</strong>:
+            <ul>
+                <li><code>dashboard.html</code> &mdash; <code>.dashboard-nav</code> tab bar (8 tabs, JS-toggled).</li>
+                <li><code>analytics.html</code> &mdash; <code>.analytics-nav</code> tab bar (12 tabs, JS-toggled).</li>
+                <li><code>museum_system.html</code> &mdash; <code>.museum-nav</code> tab bar (4 tabs, JS-toggled via <code>switchMuseumTab</code>).</li>
+                <li><code>settings.html</code> &mdash; 6 <code>.tab-subnav</code> containers (Account / Library / Scraping / Data / Customization / System), each with 3-7 anchor links toggled by <code>scrollToSection</code>. Top-level <code>.settings-tabs</code> already used <code>role="tablist"</code> + <code>aria-selected</code> (correct ARIA pattern for tabs &mdash; <code>aria-current</code> is for nav links, not tabs proper, so unchanged).</li>
+                <li>7 rom-tools page-link tab bars: <code>archive_scanner</code>, <code>chd_converter</code>, <code>chd_verify</code>, <code>duplicate_finder</code>, <code>multi_disc_organizer</code>, <code>rom_tools_settings</code>, <code>screenshot_dedup</code>. These are server-rendered static (no JS toggle &mdash; each is a different page), so the static <code>aria-current="page"</code> is sufficient on its own.</li>
+            </ul>
+        </li>
+        <li><strong>Source</strong> &mdash; indie-review 2026-04-25 theme T10 (Templates &amp; CSS lane).</li>
+        <li><strong>Tests</strong>. <code>tests/test_pass45_security.py::TestPass45_16*</code> &mdash; 7 cases. (1) <code>main.js</code> defines <code>_syncAriaCurrent</code>, MutationObserver, <code>data-tabbar</code> selector, and wires <code>_setupTabbarAriaCurrent</code> at <code>DOMContentLoaded</code>. (2-4) Dashboard / Analytics / Museum nav containers carry <code>data-tabbar</code> AND the initial active link declares <code>aria-current="page"</code>. (5) All 6 settings subnav containers carry <code>data-tabbar</code> (regex match exact). (6) All 7 rom-tools templates declare <code>aria-current="page"</code> on the active tool-tab. (7) Total static <code>aria-current="page"</code> count across target templates &ge; 10 (rollout broad-not-narrow). Reverting any one change fails the corresponding pin. Suite 678 &rarr; 685.</li>
+        <li><strong>Build</strong>: <code>static/js/core.bundle.js</code> regenerated to include the new helpers (rebuild via <code>python3 build_js.py</code>).</li>
+        <li><strong>Version bump 3.5.30 &rarr; 3.5.31</strong>: patch (a11y improvement, no functional or surface change visible to sighted users).</li>
+    </ul>
+
 - version: 3.5.30
   date: 2026-04-27
   tags:

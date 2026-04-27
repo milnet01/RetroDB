@@ -4,8 +4,8 @@
 
 {% block content %}
 <!-- Sticky Dashboard Navigation -->
-<nav class="dashboard-nav" id="dashboardNav" data-sticky-nav>
-    <a href="#overview" class="dashboard-nav-link active" data-section="overview"><span class="tab-icon">📊</span> <span class="tab-label">Overview</span></a>
+<nav class="dashboard-nav" id="dashboardNav" data-sticky-nav data-tabbar>
+    <a href="#overview" class="dashboard-nav-link active" aria-current="page" data-section="overview"><span class="tab-icon">📊</span> <span class="tab-label">Overview</span></a>
     <a href="#systems" class="dashboard-nav-link" data-section="systems"><span class="tab-icon">🖥️</span> <span class="tab-label">Systems</span></a>
     {% if continue_playing %}<a href="#playing" class="dashboard-nav-link" data-section="playing"><span class="tab-icon">▶️</span> <span class="tab-label">Playing</span></a>{% endif %}
     {% if recent_games %}<a href="#added" class="dashboard-nav-link" data-section="added"><span class="tab-icon">🕹️</span> <span class="tab-label">Added</span></a>{% endif %}

@@ -41,7 +41,7 @@
 
 <!-- ==================== TAB: ACCOUNT ==================== -->
 <div class="settings-tab-panel active" id="tab-account" role="tabpanel" aria-label="Account settings">
-    <div class="tab-subnav sticky-subnav" data-sticky-nav id="subnav-account">
+    <div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-account">
         <a href="#profile" class="subnav-link active" onclick="scrollToSection('profile')">👤 My Profile</a>
         <a href="#timezone" class="subnav-link" onclick="scrollToSection('timezone')">🕐 Timezone</a>
         {% if current_user and current_user.role == 'admin' %}
@@ -404,7 +404,7 @@
 
 <!-- ==================== TAB: LIBRARY ==================== -->
 <div class="settings-tab-panel" id="tab-library" role="tabpanel" aria-label="Library settings">
-    <div class="tab-subnav sticky-subnav" data-sticky-nav id="subnav-library">
+    <div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-library">
         <a href="#library" class="subnav-link active" onclick="scrollToSection('library')">📁 Paths</a>
         <a href="#display" class="subnav-link" onclick="scrollToSection('display')">🖼️ Display</a>
         <a href="#rom-naming" class="subnav-link" onclick="scrollToSection('rom-naming')">📝 ROM Naming</a>
@@ -683,7 +683,7 @@
 
 <!-- ==================== TAB: SCRAPING ==================== -->
 <div class="settings-tab-panel" id="tab-scraping" role="tabpanel" aria-label="Scraping settings">
-    <div class="tab-subnav sticky-subnav" data-sticky-nav id="subnav-scraping">
+    <div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-scraping">
         <a href="#esde" class="subnav-link active" onclick="scrollToSection('esde')">🎮 ES-DE</a>
         <a href="#scraper" class="subnav-link" onclick="scrollToSection('scraper')">🔍 Scraper</a>
         {% if current_user and current_user.role == 'admin' %}
@@ -1284,7 +1284,7 @@
 
 <!-- ==================== TAB: DATA ==================== -->
 <div class="settings-tab-panel" id="tab-data" role="tabpanel" aria-label="Data settings">
-    <div class="tab-subnav sticky-subnav" data-sticky-nav id="subnav-data">
+    <div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-data">
         <a href="#stats" class="subnav-link active" onclick="scrollToSection('stats')">📊 Stats</a>
         <a href="#trophies" class="subnav-link" onclick="scrollToSection('trophies')">🏆 Trophies</a>
         <a href="#dropdowns" class="subnav-link" onclick="scrollToSection('dropdowns')">📋 Dropdowns</a>
@@ -1496,7 +1496,7 @@
 
 <!-- ==================== TAB: CUSTOMIZATION ==================== -->
 <div class="settings-tab-panel" id="tab-customization" role="tabpanel" aria-label="Customization settings">
-    <div class="tab-subnav sticky-subnav" data-sticky-nav id="subnav-customization">
+    <div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-customization">
         <a href="#notifications" class="subnav-link active" onclick="scrollToSection('notifications')">🔔 Notifications</a>
         <a href="#controllers" class="subnav-link" onclick="scrollToSection('controllers')">🎮 Controllers</a>
         <a href="#controllers-defaults" class="subnav-link" onclick="scrollToSection('controllers-defaults')">⚙️ System Defaults</a>
@@ -1811,7 +1811,7 @@
 
 <!-- ==================== TAB: SYSTEM ==================== -->
 <div class="settings-tab-panel" id="tab-system" role="tabpanel" aria-label="System settings">
-    <div class="tab-subnav sticky-subnav" data-sticky-nav id="subnav-system">
+    <div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-system">
         {% if current_user and current_user.role == 'admin' %}
         <a href="#maintenance" class="subnav-link active" onclick="scrollToSection('maintenance')">🛠️ Maintenance</a>
         <a href="#server" class="subnav-link" onclick="scrollToSection('server')">⚙️ Server</a>

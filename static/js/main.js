@@ -1665,3 +1665,64 @@ window.addEventListener('beforeunload', function() {
     if (_backToTopScrollHandler) { window.removeEventListener('scroll', _backToTopScrollHandler); _backToTopScrollHandler = null; }
     if (window.BackToTopController && BackToTopController.destroy) BackToTopController.destroy();
 });
+
+
+// =============================================================================
+// PASS 45.16 — aria-current="page" auto-sync for tab-style navs
+// =============================================================================
+// WCAG 2.4.3 (Focus Order) requires aria-current on the link representing the
+// current location/view. The sidebar already gets this via the `nav_active`
+// macro in base.html (Pass 41.13.A). Tab/subnav components that toggle .active
+// from JS need a separate pin: every container marked `data-tabbar` gets a
+// MutationObserver that mirrors `.active` ↔ `aria-current="page"` on its
+// descendant <a> / <button> elements.
+//
+// Why a MutationObserver instead of refactoring every toggle site: the existing
+// JS lives in 11+ templates and 2 bundled JS files. Touching all of them risks
+// regressions; observing the class change makes the contract a one-time wiring.
+// =============================================================================
+
+function _syncAriaCurrent(container) {
+    const items = container.querySelectorAll('a, button');
+    items.forEach(item => {
+        if (item.classList.contains('active')) {
+            item.setAttribute('aria-current', 'page');
+        } else if (item.hasAttribute('aria-current')) {
+            item.removeAttribute('aria-current');
+        }
+    });
+}
+
+const _ariaCurrentObservers = [];
+
+function _setupTabbarAriaCurrent() {
+    // Tear down any previous observers (defensive — DOMContentLoaded should
+    // only fire once but page-lifecycle teardown could re-bind).
+    _ariaCurrentObservers.forEach(o => o.disconnect());
+    _ariaCurrentObservers.length = 0;
+
+    document.querySelectorAll('[data-tabbar]').forEach(bar => {
+        _syncAriaCurrent(bar);
+        const obs = new MutationObserver(mutations => {
+            for (const m of mutations) {
+                if (m.attributeName === 'class') {
+                    _syncAriaCurrent(bar);
+                    return;
+                }
+            }
+        });
+        obs.observe(bar, {
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['class'],
+        });
+        _ariaCurrentObservers.push(obs);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', _setupTabbarAriaCurrent);
+
+window.addEventListener('beforeunload', function() {
+    _ariaCurrentObservers.forEach(o => o.disconnect());
+    _ariaCurrentObservers.length = 0;
+});

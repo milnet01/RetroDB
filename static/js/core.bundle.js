@@ -4455,4 +4455,47 @@ window.addEventListener('beforeunload', function() {
     if (window.BackToTopController && BackToTopController.destroy) BackToTopController.destroy();
 });
 
+function _syncAriaCurrent(container) {
+    const items = container.querySelectorAll('a, button');
+    items.forEach(item => {
+        if (item.classList.contains('active')) {
+            item.setAttribute('aria-current', 'page');
+        } else if (item.hasAttribute('aria-current')) {
+            item.removeAttribute('aria-current');
+        }
+    });
+}
+
+const _ariaCurrentObservers = [];
+
+function _setupTabbarAriaCurrent() {
+    _ariaCurrentObservers.forEach(o => o.disconnect());
+    _ariaCurrentObservers.length = 0;
+
+    document.querySelectorAll('[data-tabbar]').forEach(bar => {
+        _syncAriaCurrent(bar);
+        const obs = new MutationObserver(mutations => {
+            for (const m of mutations) {
+                if (m.attributeName === 'class') {
+                    _syncAriaCurrent(bar);
+                    return;
+                }
+            }
+        });
+        obs.observe(bar, {
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['class'],
+        });
+        _ariaCurrentObservers.push(obs);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', _setupTabbarAriaCurrent);
+
+window.addEventListener('beforeunload', function() {
+    _ariaCurrentObservers.forEach(o => o.disconnect());
+    _ariaCurrentObservers.length = 0;
+});
+
 })();
