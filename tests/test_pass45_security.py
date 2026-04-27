@@ -2113,3 +2113,204 @@ class TestPass45_14ApiResponseCaps:
         assert scrape_thegamesdb._TGDB_MAX_BYTES == expected
         assert scrape_rawg._RAWG_MAX_BYTES == expected
         assert scrape_igdb._IGDB_MAX_BYTES == expected
+
+
+# -----------------------------------------------------------------------------
+# 45.15 — Migration 011: user_game_views CASCADE FKs
+# -----------------------------------------------------------------------------
+class TestPass45_15UserGameViewsCascadeFK:
+    """Pass 45.15 closes a slow-orphan leak in user_game_views.
+
+    Migration 010 created the table with composite PK (user_id, game_id) but
+    no FOREIGN KEY clauses. When a game or user was deleted, rows in
+    user_game_views were left orphaned — the recently-viewed dropdown ran
+    the JOIN against `games` and silently skipped the orphans, but they
+    accumulated forever. Pass 45.15 ships migration 011 that rebuilds the
+    table with ``ON DELETE CASCADE`` on both FKs, prunes existing orphans
+    in the same transaction, and pins the contract via PRAGMA
+    foreign_key_check(user_game_views) before commit (Pass 45.10 pattern)."""
+
+    @pytest.fixture
+    def fresh_db(self, tmp_path):
+        """Build a SQLite DB with games + users + a pre-Pass-45.15
+        user_game_views table (no FKs) and run migration 011 against it."""
+        import sqlite3
+        db_path = tmp_path / 'test.db'
+        conn = sqlite3.connect(str(db_path))
+        conn.execute("PRAGMA foreign_keys = ON")
+        # Minimal schema: games + users + the legacy user_game_views.
+        conn.execute("CREATE TABLE games (id INTEGER PRIMARY KEY, name TEXT)")
+        conn.execute("CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT)")
+        conn.execute("""
+            CREATE TABLE user_game_views (
+                user_id     INTEGER NOT NULL,
+                game_id     INTEGER NOT NULL,
+                last_viewed TEXT NOT NULL,
+                PRIMARY KEY (user_id, game_id)
+            )
+        """)
+        conn.commit()
+        return conn
+
+    def test_migration_adds_two_fk_clauses(self, fresh_db):
+        """After migration 011, user_game_views must declare 2 FKs."""
+        import importlib
+        mod = importlib.import_module(
+            'services.migrations.scripts.011_user_game_views_cascade_fk'
+        )
+        mod.apply(fresh_db)
+        fresh_db.commit()
+        fks = fresh_db.execute(
+            "PRAGMA foreign_key_list(user_game_views)"
+        ).fetchall()
+        assert len(fks) == 2, (
+            f"Pass 45.15: user_game_views must have 2 FK clauses; got {fks}"
+        )
+        # Both FKs must declare ON DELETE CASCADE.
+        on_delete = {row[6] for row in fks}  # column index 6 is on_delete
+        assert on_delete == {'CASCADE'}, (
+            f"Pass 45.15: both FKs must use ON DELETE CASCADE; got {on_delete}"
+        )
+        targets = {row[2] for row in fks}  # column 2 is the parent table
+        assert targets == {'games', 'users'}
+
+    def test_cascade_delete_propagates_from_games(self, fresh_db):
+        """Deleting a game must propagate to user_game_views (cascade)."""
+        import importlib
+        mod = importlib.import_module(
+            'services.migrations.scripts.011_user_game_views_cascade_fk'
+        )
+        # Seed parent + child rows.
+        fresh_db.execute("INSERT INTO users(id, username) VALUES (1, 'a')")
+        fresh_db.execute("INSERT INTO games(id, name) VALUES (10, 'g')")
+        fresh_db.execute(
+            "INSERT INTO user_game_views(user_id, game_id, last_viewed) "
+            "VALUES (1, 10, '2026-04-27')"
+        )
+        fresh_db.commit()
+
+        mod.apply(fresh_db)
+        fresh_db.commit()
+
+        # Cascade must trigger on parent delete.
+        fresh_db.execute("DELETE FROM games WHERE id = 10")
+        fresh_db.commit()
+        rows = fresh_db.execute(
+            "SELECT user_id, game_id FROM user_game_views"
+        ).fetchall()
+        assert rows == [], (
+            "Pass 45.15: deleting a game must cascade to user_game_views"
+        )
+
+    def test_cascade_delete_propagates_from_users(self, fresh_db):
+        """Deleting a user must propagate to user_game_views (cascade)."""
+        import importlib
+        mod = importlib.import_module(
+            'services.migrations.scripts.011_user_game_views_cascade_fk'
+        )
+        fresh_db.execute("INSERT INTO users(id, username) VALUES (1, 'a')")
+        fresh_db.execute("INSERT INTO games(id, name) VALUES (10, 'g')")
+        fresh_db.execute(
+            "INSERT INTO user_game_views(user_id, game_id, last_viewed) "
+            "VALUES (1, 10, '2026-04-27')"
+        )
+        fresh_db.commit()
+
+        mod.apply(fresh_db)
+        fresh_db.commit()
+
+        fresh_db.execute("DELETE FROM users WHERE id = 1")
+        fresh_db.commit()
+        rows = fresh_db.execute(
+            "SELECT user_id, game_id FROM user_game_views"
+        ).fetchall()
+        assert rows == [], (
+            "Pass 45.15: deleting a user must cascade to user_game_views"
+        )
+
+    def test_migration_prunes_orphan_rows(self, fresh_db):
+        """Pre-existing orphans (rows pointing at deleted games/users) must
+        be dropped during the rebuild."""
+        import importlib
+        mod = importlib.import_module(
+            'services.migrations.scripts.011_user_game_views_cascade_fk'
+        )
+        fresh_db.execute("INSERT INTO users(id, username) VALUES (1, 'a')")
+        fresh_db.execute("INSERT INTO games(id, name) VALUES (10, 'g')")
+        # One valid row.
+        fresh_db.execute(
+            "INSERT INTO user_game_views(user_id, game_id, last_viewed) "
+            "VALUES (1, 10, '2026-04-27')"
+        )
+        # One orphan: game 99 doesn't exist.
+        fresh_db.execute(
+            "INSERT INTO user_game_views(user_id, game_id, last_viewed) "
+            "VALUES (1, 99, '2026-04-26')"
+        )
+        # One orphan: user 99 doesn't exist.
+        fresh_db.execute(
+            "INSERT INTO user_game_views(user_id, game_id, last_viewed) "
+            "VALUES (99, 10, '2026-04-25')"
+        )
+        fresh_db.commit()
+
+        mod.apply(fresh_db)
+        fresh_db.commit()
+
+        rows = fresh_db.execute(
+            "SELECT user_id, game_id FROM user_game_views ORDER BY user_id, game_id"
+        ).fetchall()
+        assert rows == [(1, 10)], (
+            f"Pass 45.15: orphans must be pruned; survivors={rows}"
+        )
+
+    def test_migration_is_idempotent(self, fresh_db):
+        """Running migration 011 twice must be a no-op the second time."""
+        import importlib
+        mod = importlib.import_module(
+            'services.migrations.scripts.011_user_game_views_cascade_fk'
+        )
+        # Seed and apply once.
+        fresh_db.execute("INSERT INTO users(id, username) VALUES (1, 'a')")
+        fresh_db.execute("INSERT INTO games(id, name) VALUES (10, 'g')")
+        fresh_db.execute(
+            "INSERT INTO user_game_views(user_id, game_id, last_viewed) "
+            "VALUES (1, 10, '2026-04-27')"
+        )
+        fresh_db.commit()
+        mod.apply(fresh_db)
+        fresh_db.commit()
+
+        # Second apply must not raise and must leave the row intact.
+        mod.apply(fresh_db)
+        fresh_db.commit()
+        rows = fresh_db.execute(
+            "SELECT user_id, game_id FROM user_game_views"
+        ).fetchall()
+        assert rows == [(1, 10)]
+        # Still 2 FKs.
+        fks = fresh_db.execute(
+            "PRAGMA foreign_key_list(user_game_views)"
+        ).fetchall()
+        assert len(fks) == 2
+
+    def test_migration_registered_in_runner(self):
+        """The migration must be appended to the MIGRATIONS list — without
+        this, it won't run on existing installs."""
+        from services import migrations
+        assert '011_user_game_views_cascade_fk' in migrations.MIGRATIONS
+        # And it must be the LAST entry (append-only contract).
+        assert migrations.MIGRATIONS[-1] == '011_user_game_views_cascade_fk'
+
+    def test_migration_runs_scoped_foreign_key_check(self):
+        """Pass 45.10 contract: rebuild migrations must pin a scoped
+        foreign_key_check on the rebuilt table before commit."""
+        path = os.path.join(
+            _REPO_ROOT, 'services', 'migrations', 'scripts',
+            '011_user_game_views_cascade_fk.py'
+        )
+        with open(path, encoding='utf-8') as f:
+            body = f.read()
+        assert 'PRAGMA foreign_key_check(user_game_views)' in body, (
+            "Pass 45.15 must run the scoped foreign_key_check (Pass 45.10 pattern)"
+        )

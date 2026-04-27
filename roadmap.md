@@ -426,7 +426,14 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: write migration 011 (or higher — collision-aware after
   feat/multi-emulator-launch merges) adding CASCADE FKs via table-rebuild.
 - **Source**: indie-review 2026-04-25 (Database lane M1).
-- **Status**: todo
+- **Status**: done (v3.5.30) — migration `011_user_game_views_cascade_fk`
+  rebuilds `user_game_views` with `FOREIGN KEY (game_id) REFERENCES
+  games(id) ON DELETE CASCADE` and `FOREIGN KEY (user_id) REFERENCES
+  users(id) ON DELETE CASCADE`. Pre-existing orphans dropped during the
+  INSERT (INNER JOIN both parents). Idempotent: skips rebuild if both FK
+  clauses already present. `PRAGMA foreign_key_check(user_game_views)`
+  before commit (Pass 45.10 pattern). 7 regression tests in
+  `TestPass45_15*`; suite 671 → 678.
 
 #### Pass 45.16 `aria-current` rollout to remaining 50+ nav links (HIGH, M)
 

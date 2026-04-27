@@ -1,3 +1,19 @@
+- version: 3.5.30
+  date: 2026-04-27
+  tags:
+  - type: reliability
+    label: Pass 45.15 — Migration 011 adds CASCADE FKs to user_game_views
+  body: |
+    <ul>
+        <li><strong>Pass 45.15 (MEDIUM) &mdash; <code>user_game_views</code> rebuilt with <code>ON DELETE CASCADE</code> on both FKs</strong>. Migration 010 created the table with composite PK <code>(user_id, game_id)</code> but no <code>FOREIGN KEY</code> clauses; when a game or user was deleted, rows in <code>user_game_views</code> were left orphaned. The recently-viewed dropdown ran the JOIN against <code>games</code> and silently skipped orphans, but they accumulated forever. On a long-lived install with regular game-deletes from rom-tools pipelines (chd_converter, duplicate_finder delete-and-replace, archive_scanner clean-and-import), the table could grow to tens of thousands of dead rows pointing nowhere.</li>
+        <li><strong>Why a rebuild &mdash; SQLite</strong>. <code>PRAGMA foreign_keys</code> only enforces FK clauses written into the <code>CREATE TABLE</code> statement; you can't <code>ALTER TABLE ADD CONSTRAINT</code>. The 12-step rebuild + scoped <code>foreign_key_check</code> (Pass 45.10 pattern) is the only safe way to retrofit FKs. Migration 011 follows that template: <code>defer_foreign_keys = ON</code> for the rebuild, INSERT via INNER JOIN to drop orphans in the same transaction (the equivalent of running <code>ON DELETE CASCADE</code> retroactively), DROP + RENAME, recreate the index, and run <code>PRAGMA foreign_key_check(user_game_views)</code> before commit so a bad rebuild aborts and rolls back.</li>
+        <li><strong>Idempotency contract</strong>. Re-running migration 011 is a no-op: it counts FK clauses on <code>user_game_views</code> via <code>PRAGMA foreign_key_list</code> and skips the rebuild if both are already present. Same shape as migrations 008 / 009 idempotency guards.</li>
+        <li><strong>Test-fixture courtesy</strong>. Minimal-schema test fixtures (Pass 31 migration tests) may run migrations against a DB without <code>games</code> / <code>users</code>; on those, an empty source table means nothing to migrate, so the orphan-pruning INSERT is gated on both parent tables existing. Production always has both (baseline + migration 005), so this guard is purely a test-fixture concession.</li>
+        <li><strong>Source</strong> &mdash; indie-review 2026-04-25 (Database lane M1).</li>
+        <li><strong>Tests</strong>. <code>tests/test_pass45_security.py::TestPass45_15*</code> &mdash; 7 cases. (1) After <code>apply()</code>, <code>user_game_views</code> declares 2 FKs both with <code>ON DELETE CASCADE</code> targeting <code>games</code> and <code>users</code>. (2-3) Functional cascade smoke: deleting a game (resp. user) removes the matching <code>user_game_views</code> row via SQLite's enforcement engine. (4) Pre-existing orphans (<code>game_id=99</code>, <code>user_id=99</code>) are dropped during the INSERT; only the valid row survives. (5) Idempotency: a second <code>apply()</code> call leaves the row intact and the FK count at 2. (6) Migration registered in the <code>MIGRATIONS</code> list (and is the LAST entry &mdash; append-only contract). (7) Source-position pin: <code>PRAGMA foreign_key_check(user_game_views)</code> present (Pass 45.10 pattern). Reverting the migration script + the runner registration fails all 7. Suite 671 &rarr; 678.</li>
+        <li><strong>Version bump 3.5.29 &rarr; 3.5.30</strong>: patch (FK retrofit, no schema-shape change visible to app code).</li>
+    </ul>
+
 - version: 3.5.29
   date: 2026-04-27
   tags:

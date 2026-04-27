@@ -35,6 +35,7 @@ MIGRATIONS = [
     '008_collector_trophies_user_id',
     '009_achievement_tables_user_id',
     '010_user_game_views',
+    '011_user_game_views_cascade_fk',
 ]
 
 
