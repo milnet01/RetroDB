@@ -1,3 +1,31 @@
+- version: 3.5.32
+  date: 2026-04-27
+  tags:
+  - type: a11y
+    label: Pass 45.17 — ModalFocusTrap rollout to 20+ remaining dialogs
+  body: |
+    <ul>
+        <li><strong>Pass 45.17 (HIGH) &mdash; <code>ModalFocusTrap</code> auto-attached to 12 dialogs that were silently leaking Tab focus to the page underneath</strong>. WCAG 2.1.2 (No Keyboard Trap, inverted) requires focus to be trapped inside a modal so the user can't tab through hidden controls behind it. The pre-pass audit found only 6 of 26 dialogs activated the trap; threading the trap through every open path is brittle (each modal owns its own open function in its own JS file).</li>
+        <li><strong>Strategy &mdash; opt-in auto-attach via <code>data-focus-trap</code></strong>. New <code>ModalFocusTrap.autoAttach(modalEl, opts)</code> in <code>static/js/utils.js</code> mounts a MutationObserver scoped to <code>attributeFilter: ['class']</code> that mirrors <code>.active</code> &harr; <code>activate</code>/<code>deactivate</code> on the trap. Trigger element is <code>document.activeElement</code> at the moment <code>.active</code> is added (matches the existing manual pattern). Idempotency guard via <code>modalEl._focusTrapObserver</code> marker prevents double-bind on SPA-style soft navigation. New <code>_setupAutoFocusTraps()</code> in <code>main.js</code> scans <code>[data-focus-trap]</code> at <code>DOMContentLoaded</code>; per-modal config via <code>data-focus-trap-onescape="closeFnName"</code> and <code>data-focus-trap-content=".css-selector"</code>.</li>
+        <li><strong>Modals auto-attached</strong>:
+            <ul>
+                <li><code>userModal</code>, <code>confirmModal</code>, <code>editControllerModal</code> &mdash; <code>settings.html</code></li>
+                <li><code>tagModal</code> &mdash; <code>tags.html</code></li>
+                <li><code>wishlistModal</code> &mdash; <code>wishlist.html</code></li>
+                <li><code>listModal</code> &mdash; <code>lists.html</code></li>
+                <li><code>addGameModal</code> &mdash; <code>list_detail.html</code></li>
+                <li><code>searchModal</code> &mdash; <code>compare_games.html</code></li>
+                <li><code>batchRenameModal</code> &mdash; <code>reports.html</code></li>
+                <li><code>scrapeModal</code>, <code>editModal</code>, <code>renameModal</code>, <code>boxartZoomModal</code> &mdash; <code>_modals/*.html</code> partials included by <code>game_detail.html</code> (12 dialogs total).</li>
+            </ul>
+        </li>
+        <li><strong>Why opt-in not auto-everywhere</strong>. Modals already wiring <code>ModalFocusTrap.activate()</code> manually (gameDetailModal, gameEditModal, customModal, queueManagerModal, folderBrowserModal, filter modal, bulk-edit/scrape modals, museum lightboxes &mdash; ~6-8 sites) are left alone. Adding <code>data-focus-trap</code> to them would double-attach (manual call + observer call). The opt-in attribute IS the contract: a modal either uses the manual API <em>or</em> the data-attribute, never both.</li>
+        <li><strong>Source</strong> &mdash; indie-review 2026-04-25 theme T11.</li>
+        <li><strong>Tests</strong>. <code>tests/test_pass45_security.py::TestPass45_17*</code> &mdash; 7 cases. (1) <code>autoAttach</code> defined in <code>utils.js</code> with MutationObserver + activate/deactivate. (2) <code>main.js</code> wires <code>_setupAutoFocusTraps</code> at <code>DOMContentLoaded</code>. (3) <code>userModal</code>/<code>confirmModal</code>/<code>editControllerModal</code> declare <code>data-focus-trap</code>. (4) Top-level template modals (tagModal, wishlistModal, listModal, addGameModal, searchModal, batchRenameModal) all marked. (5) <code>_modals/*.html</code> partials all marked (scrape/edit/rename/boxart_zoom). (6) Total <code>data-focus-trap</code> occurrence count &ge; 12 across the templates tree (rollout breadth check). (7) Idempotency: <code>autoAttach</code> uses <code>_focusTrapObserver</code> marker and early-returns when already bound. Suite 685 &rarr; 692.</li>
+        <li><strong>Build</strong>: <code>static/js/core.bundle.js</code> regenerated (rebuild via <code>python3 build_js.py</code>).</li>
+        <li><strong>Version bump 3.5.31 &rarr; 3.5.32</strong>: patch (a11y improvement, no functional change).</li>
+    </ul>
+
 - version: 3.5.31
   date: 2026-04-27
   tags:

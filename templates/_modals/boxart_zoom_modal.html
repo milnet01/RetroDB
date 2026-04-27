@@ -1,5 +1,5 @@
 {# Boxart zoom / lightbox — inherits game_detail.html context. #}
-<div id="boxartZoomModal" class="modal" onclick="closeBoxartZoom(event)">
+<div id="boxartZoomModal" class="modal" data-focus-trap data-focus-trap-onescape="closeBoxartZoom" onclick="closeBoxartZoom(event)">
     <span class="modal-close" onclick="closeBoxartZoom(event)">×</span>
     <img class="modal-content" id="boxartZoomImage" src="" alt="Game Cover">
 </div>

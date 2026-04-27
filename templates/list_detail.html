@@ -84,7 +84,7 @@
 {% endif %}
 
 <!-- Add Game Search Modal -->
-<div class="custom-modal" id="addGameModal" onclick="if(event.target===this)closeAddGameModal()">
+<div class="custom-modal" id="addGameModal" data-focus-trap data-focus-trap-onescape="closeAddGameModal" onclick="if(event.target===this)closeAddGameModal()">
     <div class="custom-modal-content" style="max-width: 600px; max-height: 80vh;" role="dialog" aria-modal="true" aria-labelledby="addGameModalTitle">
         <div class="custom-modal-header">
             <h3 id="addGameModalTitle">Add Games to List</h3>

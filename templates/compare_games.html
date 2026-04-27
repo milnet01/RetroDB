@@ -170,7 +170,7 @@
 {% endif %}
 
 <!-- Search Modal -->
-<div class="custom-modal" id="searchModal" onclick="if(event.target===this)closeSearchModal()">
+<div class="custom-modal" id="searchModal" data-focus-trap data-focus-trap-onescape="closeSearchModal" onclick="if(event.target===this)closeSearchModal()">
     <div class="custom-modal-content" style="max-width: 600px; max-height: 80vh;" role="dialog" aria-modal="true" aria-labelledby="searchModalTitle">
         <div class="custom-modal-header">
             <h3 id="searchModalTitle">Select a Game</h3>

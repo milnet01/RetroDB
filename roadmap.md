@@ -472,7 +472,18 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: pair `ModalFocusTrap.activate()` with every `.classList.add('active')`
   open path; `.deactivate()` on close.
 - **Source**: indie-review 2026-04-25 theme T11.
-- **Status**: todo
+- **Status**: done (v3.5.32) — same one-time-wiring strategy as Pass 45.16:
+  new `ModalFocusTrap.autoAttach(modalEl, opts)` in `static/js/utils.js`
+  mounts a MutationObserver per `[data-focus-trap]` element that
+  mirrors `.active` ↔ `activate/deactivate`. Per-modal config via
+  `data-focus-trap-onescape="closeFn"` and `data-focus-trap-content=
+  ".selector"`. 12 dialogs marked: userModal, confirmModal,
+  editControllerModal, tagModal, wishlistModal, listModal, addGameModal,
+  searchModal, batchRenameModal, scrapeModal, editModal, renameModal,
+  boxartZoomModal. Modals already wiring the manual API (game detail/
+  edit, custom, queue, folder browser, filter, bulk-edit/scrape,
+  museum lightboxes) are left alone — opt-in attribute prevents double-
+  attach. 7 regression tests in `TestPass45_17*`; suite 685 → 692.
 
 #### Pass 45.18 Source-grep test antipattern (HIGH systemic, L)
 

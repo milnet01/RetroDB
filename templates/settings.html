@@ -359,7 +359,7 @@
 </section>
 
 <!-- Add/Edit User Modal -->
-<div class="modal-overlay" id="userModal">
+<div class="modal-overlay" id="userModal" data-focus-trap data-focus-trap-onescape="closeUserModal">
     <div class="modal-content" style="max-width: 500px;" role="dialog" aria-modal="true" aria-labelledby="userModalTitle">
         <div class="modal-header">
             <h2 id="userModalTitle">Add User</h2>
@@ -1713,7 +1713,7 @@
 </section>
 
 <!-- Edit Controller Modal -->
-<div class="modal-overlay" id="editControllerModal">
+<div class="modal-overlay" id="editControllerModal" data-focus-trap data-focus-trap-onescape="closeEditControllerModal">
     <div class="modal-content" style="max-width: 600px;">
         <div class="modal-header">
             <h2>✏️ Edit Controller</h2>
@@ -2223,7 +2223,7 @@
 </div><!-- End tab-system -->
 
 <!-- Confirm Modal -->
-<div id="confirmModal" class="confirm-modal">
+<div id="confirmModal" class="confirm-modal" data-focus-trap data-focus-trap-content=".confirm-modal-content">
     <div class="confirm-modal-content glass-panel">
         <div class="confirm-modal-title" id="confirmTitle">Confirm Action</div>
         <div class="confirm-modal-message" id="confirmMessage">Are you sure?</div>

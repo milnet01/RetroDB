@@ -1726,3 +1726,40 @@ window.addEventListener('beforeunload', function() {
     _ariaCurrentObservers.forEach(o => o.disconnect());
     _ariaCurrentObservers.length = 0;
 });
+
+
+// =============================================================================
+// PASS 45.17 — auto-attach ModalFocusTrap to opt-in modals
+// =============================================================================
+// WCAG 2.1.2 (No Keyboard Trap, inverted — i.e. focus must be trapped inside
+// modals so Tab doesn't escape to the page underneath). The pre-Pass-45.17
+// audit found ~20 dialogs missing the focus trap. Threading the trap through
+// every open path is brittle (each modal has its own open function in its own
+// JS file); this auto-attach pattern lets a template opt in by adding
+// `data-focus-trap` to the modal root, with the trap mounted by a
+// MutationObserver that watches the `.active` class.
+//
+// Modals that already wire ModalFocusTrap.activate() manually (e.g.
+// gameDetailModal, gameEditModal, customModal, queueManagerModal,
+// folderBrowserModal, filter modal, bulk-edit/scrape modals, museum
+// lightboxes) are left alone — adding `data-focus-trap` to them would
+// double-attach. The opt-in attribute is the contract.
+// =============================================================================
+
+function _setupAutoFocusTraps() {
+    if (!window.ModalFocusTrap) return;
+    document.querySelectorAll('[data-focus-trap]').forEach(modalEl => {
+        const onEscapeFn = modalEl.getAttribute('data-focus-trap-onescape');
+        let onEscape = null;
+        if (onEscapeFn && typeof window[onEscapeFn] === 'function') {
+            onEscape = window[onEscapeFn];
+        }
+        const contentSelector = modalEl.getAttribute('data-focus-trap-content') || null;
+        ModalFocusTrap.autoAttach(modalEl, {
+            onEscape: onEscape,
+            contentSelector: contentSelector,
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', _setupAutoFocusTraps);

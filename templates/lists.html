@@ -34,7 +34,7 @@
 </div>
 
 <!-- Create/Edit List Modal -->
-<div class="custom-modal" id="listModal" onclick="if(event.target===this)closeListModal()">
+<div class="custom-modal" id="listModal" data-focus-trap data-focus-trap-onescape="closeListModal" onclick="if(event.target===this)closeListModal()">
     <div class="custom-modal-content" style="max-width: 500px;" role="dialog" aria-modal="true" aria-labelledby="listModalTitle">
         <div class="custom-modal-header">
             <h3 id="listModalTitle">New List</h3>

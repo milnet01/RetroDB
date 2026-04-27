@@ -1007,6 +1007,62 @@ const ModalFocusTrap = {
     deactivateAll() {
         while (this._stack.length > 0) this.deactivate();
     },
+
+    /**
+     * Pass 45.17 — auto-attach the focus trap to a modal whose `.active`
+     * class toggles open/closed. Useful for modals where the open/close
+     * functions are not in our control (or where threading the trap
+     * through every call site would be more error-prone than the
+     * MutationObserver). Idempotent: a second autoAttach() on the same
+     * element is a no-op.
+     *
+     * @param {HTMLElement} modalEl - the modal root (the element that
+     *     toggles `.active`).
+     * @param {Object} [opts]
+     * @param {Function} [opts.onEscape] - escape handler.
+     * @param {string}   [opts.contentSelector] - CSS selector for the
+     *     focus-trap target inside modalEl (defaults to `.modal-content`
+     *     or `.custom-modal-content`, falling back to modalEl itself).
+     */
+    autoAttach(modalEl, opts = {}) {
+        if (!modalEl || modalEl._focusTrapObserver) return;
+        const onEscape = opts.onEscape || null;
+        const contentSelector = opts.contentSelector || null;
+
+        // Pick the target each time it activates, since modal contents
+        // can be re-rendered between opens.
+        const _resolveTarget = () => {
+            if (contentSelector) {
+                return modalEl.querySelector(contentSelector) || modalEl;
+            }
+            return (modalEl.querySelector('.modal-content') ||
+                    modalEl.querySelector('.custom-modal-content') ||
+                    modalEl);
+        };
+
+        const obs = new MutationObserver(mutations => {
+            for (const m of mutations) {
+                if (m.attributeName !== 'class') continue;
+                const isActive = modalEl.classList.contains('active');
+                if (isActive && !modalEl._focusTrapActive) {
+                    modalEl._focusTrapActive = true;
+                    // document.activeElement at this moment is whatever
+                    // had focus when the open path called classList.add
+                    // — typically the trigger button.
+                    ModalFocusTrap.activate(
+                        _resolveTarget(),
+                        document.activeElement,
+                        { onEscape: onEscape },
+                    );
+                } else if (!isActive && modalEl._focusTrapActive) {
+                    modalEl._focusTrapActive = false;
+                    ModalFocusTrap.deactivate();
+                }
+            }
+        });
+        obs.observe(modalEl, { attributes: true, attributeFilter: ['class'] });
+        modalEl._focusTrapObserver = obs;
+    },
 };
 
 // =============================================================================
