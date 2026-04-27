@@ -502,7 +502,45 @@ paths or silent-corruption vectors under routine use.
   introspection rather than regex over `.py` files. L-sized — gate
   on test-quality budget pass.
 - **Source**: indie-review 2026-04-25 theme T7 (Tests/tooling lane).
-- **Status**: todo
+- **Status**: done (v3.5.34) — three-bucket audit instead of mass
+  rewrite. Bucket A (8 tests converted): `test_33_6_logout_clears_
+  session` (functional session-clear via test client), `test_34_5_log_
+  filename_uses_utc` (clock-pin via monkeypatched datetime), `test_35_
+  4_init_database_issues_wal` (PRAGMA queried from fresh DB), `test_
+  decode_error_no_silent_pass` (Pass 41.11.A — caplog of museum decode
+  failure), `test_admin_cleanup_endpoint_*` (Pass 41.11.B — `app.url_
+  map.iter_rules()` instead of source-grep), `test_recently_viewed_
+  endpoint_deleted` (Pass 41.9.B — URL-map absence check), `test_
+  helper_defined` (Pass 41.14.C — direct import), `test_bulk_scrape_
+  uses_singleton_lock` (Pass 41.6.A — `hasattr` introspection),
+  `test_rename_rom_rejects_path_traversal_in_filename` (exercise
+  `safe_filename()` with attack inputs), `test_uuid4_still_used` (Pass
+  41.10.C — uuid4 generated and import wired), and `test_worker_
+  invokes_full_persist_lifecycle` (Pass 40.9 — consolidates 4 prior
+  source-grep tests into one behavioral pin). Bucket B (~25 tests
+  kept, file-header annotated): cross-file invariants (no
+  `time.sleep` in jobs, no bare `get_db()` in routes, no `for g in`
+  shadows, no `foreign_keys = OFF` in migrations), JS/template
+  patterns (XSS sinks, AbortController, navigation guard, aria-current
+  macro), atomic-write `.part` + `os.replace` source pins, SQL JOIN-
+  on-user_id shapes, decorator-stack pins, PRAGMA `foreign_keys = ON`
+  (per-connection — functional check would only verify the test's own
+  connection). Bucket C (7 tests deleted): `test_post_handler_
+  validates_input` (Pass 40.1, redundant with e2e), `test_staging_
+  folder_not_user_supplied` (Pass 40.3, fragile shape-pin), `test_
+  two_users_get_different_etags` (Pass 40.5, admits not-actually-
+  e2e), `test_screenshot_sync_runs_unconditionally` (Pass 41.4.A,
+  pure marker tautology), `test_offset_bounds_check` (Pass 41.7.A,
+  marker tautology), `test_decompressionbombexception_caught` (Pass
+  41.14.A, duplicated by functional bomb test), `test_rate_limit_
+  applied_to_change_password` (24.4, duplicated by Pass 41.1.B
+  functional bucket-isolation), `test_igdb/tgdb_initializes_players_
+  none` (Pass 40.6, duplicated by `tests/test_scrape_fill_only.py`).
+  Suite 695 → 683 (−12 net). Fidelity-checked: temporarily reverting
+  `session.clear()` → `session.pop('user_id')` in `routes/auth.py`
+  fails `test_33_6_logout_clears_session`; reverting `journal_mode =
+  WAL` → `DELETE` in `services/database_init.py` fails `test_35_4_
+  init_database_issues_wal`. Both restored after verification.
 
 #### Pass 45.19 release.yml heredoc indentation (HIGH, S)
 

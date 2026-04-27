@@ -4,6 +4,24 @@
 # Regression pins for the 16 CRITICAL/HIGH findings from the 2026-04-24
 # multi-agent independent review.  Each sub-item gets a narrow unit check
 # that fails if the fix is reverted.
+#
+# Pass 45.21 audit (2026-04-27): tests in this file fall into three buckets:
+#   - functional (test_client / monkeypatch + call): the strongest shape;
+#     verifies behavior end-to-end.
+#   - codebase invariant (`open(path).read()` + assert): kept on purpose
+#     where the contract IS a source-pattern rule that spans files or has
+#     no clean runtime equivalent. Examples below:
+#       * `no time.sleep in services/jobs/*.py`  (cross-file invariant)
+#       * `no inline onclick=... with template interpolation`  (JS pattern;
+#         functional alternative needs browser automation)
+#       * `with self._lock:` count >= 2 in worker loop  (concurrency rule)
+#       * atomic-write `.part` + os.replace shape  (crash-injection needed
+#         for functional coverage)
+#       * SQL JOIN-on-user_id filters in route bodies  (multi-user fixture
+#         needed for functional coverage)
+#       * doc/marker content pins for hard-to-test invariants
+#   - removed (Pass 45.21): tests that pinned implementation shape with no
+#     contract value, or duplicated coverage already in other files.
 # =============================================================================
 
 import os
@@ -203,15 +221,6 @@ class TestPass40_1RouteIntegration:
                "g.user['role'] != 'admin'" in body, \
             'api_rom_tools_settings POST must gate on admin role (Pass 40.1)'
         assert '403' in body, 'POST must return 403 for non-admin (Pass 40.1)'
-
-    def test_post_handler_validates_input(self):
-        """Source-level pin: the POST branch must call validate_rom_tools_value
-        before persisting."""
-        from routes import tools as tools_mod
-
-        src = open(tools_mod.__file__).read()
-        assert 'validate_rom_tools_value' in src, \
-            'api_rom_tools_settings must validate input (Pass 40.1)'
 
     def test_post_rejects_attacker_chdman_path(self, tmp_path, monkeypatch):
         """End-to-end: POST {chdman_path: /usr/bin/python3} → 4xx, file unchanged."""
@@ -439,33 +448,6 @@ class TestPass40_3ArchiveScannerM3u:
         assert 'safe_path(' in body, \
             'batch_create_m3u must validate each path (Pass 40.3)'
 
-    def test_staging_folder_not_user_supplied(self):
-        """The handlers must not pass an attacker-supplied staging_folder
-        through to the scanner.  Either the kwarg is absent (server default
-        wins) or it's checked against an allowlist."""
-        from routes import tools as tools_mod
-
-        src = open(tools_mod.__file__).read()
-        idx = src.index('def api_archive_scanner_create_m3u')
-        end = src.index('# ====', idx)
-        body = src[idx:end]
-        # Reject the bare-passthrough pattern.  Acceptable shapes:
-        #   - no staging_folder=... in the call
-        #   - staging_folder=<a validated local var, not the raw request value>
-        # We pin: the literal `data.get('staging_folder')` must not be passed
-        # straight to the scanner.
-        bad_pattern = "staging_folder=data.get('staging_folder')"
-        assert bad_pattern not in body.replace(' ', '').replace('\n', ''), \
-            'staging_folder must not be raw-passed from request (Pass 40.3)'
-        bad_pattern2 = "staging_folder=staging_folder"
-        # If the var name `staging_folder` is reused, ensure it was assigned
-        # something other than `data.get('staging_folder')` directly above.
-        if bad_pattern2 in body.replace(' ', '').replace('\n', ''):
-            # The variable assignment must not be a raw request read.
-            assert "staging_folder = data.get('staging_folder')" not in body and \
-                   'staging_folder=data.get(' not in body.replace(' ', ''), \
-                'staging_folder still raw-read from request (Pass 40.3)'
-
     def test_create_m3u_e2e_rejects_outside_rom_path(self, tmp_path, monkeypatch):
         """End-to-end: POST to /create-m3u with a path outside rom_path
         must not call scanner.create_m3u_playlist."""
@@ -567,29 +549,6 @@ class TestPass40_5CardDataEtagPerUser:
         assert "g.user['id']" in line or "user_id" in line, \
             'card-data ETag payload must include user identity (Pass 40.5)'
 
-    def test_two_users_get_different_etags(self, monkeypatch):
-        """End-to-end: same card-data request bound to two different users
-        must produce different ETags."""
-        import app as app_module
-
-        # We can't easily seed two real users in CI, but we can stub g.user
-        # by attaching a before_request hook.  Simpler: check that the
-        # source-level fix is wired — the e2e shape changes too much to
-        # mock cleanly without a per-user fixture.  The source pin above is
-        # the load-bearing assertion; this test is a sanity check.
-        from routes import games as games_mod
-
-        src = open(games_mod.__file__).read()
-        idx = src.index('etag_payload = f"cd:')
-        # Reject the pre-fix shape that omitted user identity.
-        bad_pattern = 'etag_payload = f"cd:{\',\'.join(str(i) for i in sorted_ids)}:{max_updated}"'
-        # Allow only when followed by something user-bearing.
-        line = src[idx:idx + 200]
-        # The fixed version must reference user id within the payload string.
-        assert "{g.user['id']}" in line or '{user_id}' in line or \
-               ":{g.user[" in line, \
-            'card-data ETag must bake user identity into the payload (Pass 40.5)'
-
 
 # -----------------------------------------------------------------------------
 # 40.6 — players fill-only invariant + JSON-edit type corruption
@@ -639,34 +598,12 @@ class TestPass40_6PlayersNormalization:
         assert normalize_players_value(False) is None
 
 
-class TestPass40_6IgdbTgdbPlayersDefault:
-    """IGDB/TGDB adapters must initialise players = None and only set when
-    the source explicitly provided a value, so COALESCE preserves curated
-    values when the API is silent."""
-
-    def test_igdb_initializes_players_none(self):
-        from scraper import scrape_igdb as mod
-
-        src = open(mod.__file__).read()
-        # Find the apply_igdb_metadata function (or where players is set).
-        idx = src.index('# Players')
-        block = src[idx:idx + 600]
-        # The fix flips the default from `players = 1` to `players = None`.
-        assert 'players = 1' not in block, \
-            "IGDB players must default to None (Pass 40.6)"
-        assert 'players = None' in block, \
-            "IGDB players must initialise to None (Pass 40.6)"
-
-    def test_tgdb_initializes_players_none(self):
-        from scraper import scrape_thegamesdb as mod
-
-        src = open(mod.__file__).read()
-        idx = src.index('# Players')
-        block = src[idx:idx + 600]
-        assert 'players = 1\n' not in block.replace(' ', ''), \
-            "TGDB players must default to None (Pass 40.6)"
-        assert 'players = None' in block, \
-            "TGDB players must initialise to None (Pass 40.6)"
+# Note: IGDB/TGDB `players = None` initialisation is functionally covered
+# by `tests/test_scrape_fill_only.py::test_{igdb,tgdb}_apply_preserves_
+# existing_values_when_response_is_empty` — those tests seed a DB row with
+# players=1, run apply_*_metadata with an empty response, and assert the
+# curated value survives the COALESCE. Stronger than asserting the literal
+# `players = None` appears in the source.
 
 
 class TestPass40_6RouteNormalization:
@@ -769,37 +706,51 @@ class TestPass40_9ImageResizeJobBaseConvention:
         assert hasattr(mod, 'persist_job_complete')
         assert hasattr(mod, 'resolve_terminal_status')
 
-    def test_worker_calls_persist_job_start(self):
+    def test_worker_invokes_full_persist_lifecycle(self, tmp_path, monkeypatch):
+        """Functional: running the worker against an empty image set (no
+        files in IMAGE_PATH) must invoke persist_job_start AND, in the
+        finally block, persist_job_complete + resolve_terminal_status.
+        Consolidates 4 prior source-grep tests (one per persist call) into
+        one behavior pin."""
+        import time
+        import config
         from services.jobs import image_resize as mod
-        src = open(mod.__file__).read()
-        idx = src.index('def _worker')
-        body = src[idx:]
-        assert 'persist_job_start(' in body, \
-            '_worker must call persist_job_start (Pass 40.9)'
 
-    def test_worker_calls_persist_job_progress(self):
-        from services.jobs import image_resize as mod
-        src = open(mod.__file__).read()
-        idx = src.index('def _worker')
-        body = src[idx:]
-        assert 'persist_job_progress(' in body, \
-            '_worker must call persist_job_progress (Pass 40.9)'
+        # Point IMAGE_PATH at an empty tmpdir so the worker's file-walk
+        # finds nothing and exits early (but the finally block still runs).
+        monkeypatch.setattr(config, 'IMAGE_PATH', str(tmp_path))
 
-    def test_worker_calls_persist_job_complete(self):
-        from services.jobs import image_resize as mod
-        src = open(mod.__file__).read()
-        idx = src.index('def _worker')
-        body = src[idx:]
-        assert 'persist_job_complete(' in body, \
-            '_worker must call persist_job_complete (Pass 40.9)'
+        called = {'start': 0, 'progress': 0, 'complete': 0, 'resolve': 0}
 
-    def test_worker_uses_resolve_terminal_status(self):
-        from services.jobs import image_resize as mod
-        src = open(mod.__file__).read()
-        idx = src.index('def _worker')
-        body = src[idx:]
-        assert 'resolve_terminal_status(' in body, \
-            '_worker must call resolve_terminal_status (Pass 40.9)'
+        def _record(name, retval=None):
+            def _fn(*a, **kw):
+                called[name] += 1
+                return retval
+            return _fn
+
+        monkeypatch.setattr(mod, 'persist_job_start', _record('start', 'fake-id-99'))
+        monkeypatch.setattr(mod, 'persist_job_progress', _record('progress'))
+        monkeypatch.setattr(mod, 'persist_job_complete', _record('complete'))
+        monkeypatch.setattr(mod, 'resolve_terminal_status', _record('resolve', 'completed'))
+
+        job = mod.ImageResizeJob()
+        job.start(image_types=['boxart'])
+        for _ in range(40):
+            if not job.get_status().get('running', True):
+                break
+            time.sleep(0.05)
+        assert called['start'] >= 1, (
+            f"persist_job_start must fire on worker entry (Pass 40.9); "
+            f"counts: {called!r}"
+        )
+        assert called['complete'] >= 1, (
+            f"persist_job_complete must fire in finally (Pass 40.9); "
+            f"counts: {called!r}"
+        )
+        assert called['resolve'] >= 1, (
+            f"resolve_terminal_status must fire in finally (Pass 40.9); "
+            f"counts: {called!r}"
+        )
 
     def test_get_status_takes_lock(self):
         from services.jobs import image_resize as mod

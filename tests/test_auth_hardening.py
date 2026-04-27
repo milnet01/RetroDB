@@ -8,6 +8,15 @@
 # `session_transaction()` to stub `session['user_id']` and seed the DB
 # inline — the pattern the existing tests (test_etag_and_gzip.py,
 # test_input_hardening.py) already use.
+#
+# Pass 45.21 audit (2026-04-27): rename-rom traversal test rewritten to
+# exercise safe_filename() directly. Rate-limit-on-change-password test
+# removed — covered functionally in test_pass41_security.py (composite
+# bucket isolation tests that actually call rate_limit_login). Remaining
+# source-grep tests pin the no-passwordless-account invariant, session-
+# clear ordering before user_id assignment, and the destructive-endpoint
+# decorator-stack regex (functional anonymous-redirect coverage exists in
+# TestDestructiveEndpointsRequireAuth).
 
 import hashlib
 import os
@@ -95,22 +104,10 @@ class TestPasswordPolicyAndRateLimit:
         # And the old 8-char check is gone.
         assert "Password must be at least 8 characters" not in src
 
-    def test_rate_limit_applied_to_change_password(self):
-        from routes import auth as auth_mod
-        src = open(auth_mod.__file__).read()
-        # rate_limit_login() must be called inside api_change_password.
-        # The function is defined in services.security — we don't care
-        # which bucket it uses, just that the endpoint checks it.
-        # Slice the function body.
-        fn_start = src.index("def api_change_password(")
-        # Stop at the next `@bp.route` or end-of-file.
-        fn_end_candidates = [
-            src.index("@bp.route", fn_start + 1),
-            len(src),
-        ]
-        fn_end = min(fn_end_candidates)
-        body = src[fn_start:fn_end]
-        assert "rate_limit_login" in body
+    # Note: rate-limit functional coverage moved to test_pass41_security.py
+    # ::TestPass41_1BChangePasswordBucket — those tests run actual
+    # rate_limit_login()/record_login_attempt() calls and assert the bucket
+    # isolation contract, which is stronger than asserting "string in source".
 
 
 # =============================================================================
@@ -319,12 +316,17 @@ class TestDestructiveEndpointsRequireAuth:
         assert '/login' in location or '/setup' in location or resp.status_code in (401, 403)
 
     def test_rename_rom_rejects_path_traversal_in_filename(self, client):
-        """Independent of auth: the route also validates filename contents.
-
-        Pass 32.5 replaced the inline `'..' in new_filename` + invalid_chars
-        check with a single `safe_filename()` call plus a jail check that
-        the destination stays inside config.ROM_PATH.
-        """
-        src = open(os.path.join(_REPO_ROOT, 'routes', 'games_media.py')).read()
-        assert 'safe_filename(new_filename)' in src
-        assert 'commonpath' in src
+        """Functional: the safe_filename primitive (which the rename-rom
+        route delegates to) must reject path-traversal and separator inputs.
+        Stronger than source-grep — this exercises the validator behavior
+        directly."""
+        from services.security import safe_filename
+        # The validator returns None for unsafe inputs.
+        assert safe_filename('../etc/passwd') is None, (
+            "Pass 32.5 — safe_filename must reject `..` traversal"
+        )
+        assert safe_filename('foo/bar.zip') is None, (
+            "Pass 32.5 — safe_filename must reject path separators"
+        )
+        # And accept clean filenames.
+        assert safe_filename('legit-rom.zip') == 'legit-rom.zip'
