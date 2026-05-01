@@ -1,3 +1,18 @@
+- version: 3.5.42
+  date: 2026-05-02
+  tags:
+  - type: refactor
+    label: Pass 38.2 — Consolidate `load_scraper_settings` (re-export canonical from scraper_manager)
+  body: |
+    <ul>
+        <li><strong>Pass 38.2 — duplicate <code>load_scraper_settings</code> deleted</strong>. Two divergent loaders existed: <code>scraper/scraper_manager.py</code>'s canonical version (defaults from <code>config.py</code> for every supported source, 30s in-memory cache) and <code>scraper/metadata_merger.py</code>'s thin variant (returned <code>{'api_keys': {}, 'enabled': {}, 'priority': []}</code> on miss, no cache). Upstream <code>enabled.get('source')</code> lookups silently disagreed depending on which import path the caller used. Now <code>metadata_merger</code> just re-exports the canonical loader; <code>from scraper.metadata_merger import load_scraper_settings</code> and <code>from scraper.scraper_manager import load_scraper_settings</code> resolve to the same callable.</li>
+        <li><strong>Caller-side audit</strong> &mdash; three real call sites (<code>routes/bulk_scrape.py</code>, <code>services/wishlist_scraper.py</code>, <code>services/jobs/bulk_scrape.py</code>) all use the result via <code>enabled.get(src, True)</code> or as a passthrough; the canonical's fully-populated dict is strictly safer than the merger's empty-on-miss dict. None of the call sites read from inside a tight loop, so the canonical's 30s cache is fine (vs the merger's fresh-each-call disk read).</li>
+        <li><strong>Orphan cleanup</strong> &mdash; <code>json</code> import removed from <code>metadata_merger.py</code> (only the deleted body used it).</li>
+        <li><strong>Verification</strong>. Full pytest <strong>694 / 694 green</strong>. ruff clean. <code>m is s</code> assertion confirms the two import paths return the same function object after the refactor.</li>
+        <li><strong>Source</strong> &mdash; <code>roadmap.md</code> Pass 38.2.</li>
+        <li><strong>Version bump 3.5.41 &rarr; 3.5.42</strong>: patch (refactor; no behavior change to current call sites).</li>
+    </ul>
+
 - version: 3.5.41
   date: 2026-05-02
   tags:

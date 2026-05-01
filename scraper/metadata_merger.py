@@ -20,7 +20,6 @@
 
 import os
 import re
-import json
 import logging
 import requests
 
@@ -41,6 +40,13 @@ from scraper.metadata_normalizer import (
     alt_title_entry,
     merge_alt_titles,
 )
+# Pass 38.2 — canonical scraper-settings loader (defaults from config.py +
+# 30 s cache). Re-exported here so existing
+# `from scraper.metadata_merger import load_scraper_settings` callers get
+# the same fully-populated dict; this module previously shipped a divergent
+# loader that returned an empty `enabled: {}` on miss, so upstream
+# enabled-lookups silently disagreed with scraper_manager's view.
+from scraper.scraper_manager import load_scraper_settings  # noqa: F401
 
 logger = logging.getLogger(__name__)
 
@@ -167,27 +173,6 @@ __all__ = [
     'alt_title_entry',
     'merge_alt_titles',
 ]
-
-
-# =============================================================================
-# SCRAPER SETTINGS
-# =============================================================================
-
-def load_scraper_settings():
-    """Load scraper settings from file"""
-    settings_path = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-        'data', 'scraper_settings.json',
-    )
-
-    if os.path.exists(settings_path):
-        try:
-            with open(settings_path, 'r') as f:
-                return json.load(f)
-        except (json.JSONDecodeError, OSError) as e:
-            logger.warning(f"Failed to load scraper_settings.json: {e}")
-
-    return {'api_keys': {}, 'enabled': {}, 'priority': []}
 
 
 # =============================================================================

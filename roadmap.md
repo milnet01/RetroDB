@@ -1778,7 +1778,15 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: keep one loader; re-export from the other.  Pick the
   manager's behavior (defaults from `config.py`) as canonical.
 - **Source**: 2026-04-24 audit, Scraper orchestration M1.
-- **Status**: todo
+- **Status**: done (v3.5.42) — `scraper/metadata_merger.py`'s duplicate
+  loader deleted; the module now re-exports `load_scraper_settings`
+  from `scraper/scraper_manager.py` (the canonical, defaults-from-
+  config + 30 s cache version). Both
+  `from scraper.metadata_merger import load_scraper_settings` and
+  `from scraper.scraper_manager import load_scraper_settings` now
+  resolve to the same callable — `enabled` lookups via the merger no
+  longer disagree with the manager's view. All 3 caller sites
+  unchanged. 694/694 tests pass.
 
 #### Pass 38.3 Extract `installer_core.py` (MEDIUM, M)
 
