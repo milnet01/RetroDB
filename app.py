@@ -5,7 +5,7 @@
 # Features: ROM scanning, metadata scraping, beautiful cyberpunk UI
 # =============================================================================
 
-from flask import Flask, render_template, request, redirect, url_for, jsonify, session, g
+from flask import Flask, render_template, request, redirect, url_for, jsonify, session, g, send_from_directory, abort
 import sqlite3
 import gzip
 import os
@@ -100,7 +100,7 @@ def _get_secret_key():
     if env_key:
         return env_key
 
-    key_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', '.secret_key')
+    key_path = os.path.join(config.BASE_DIR, 'data', '.secret_key')
     os.makedirs(os.path.dirname(key_path), exist_ok=True)
     try:
         if os.path.exists(key_path):
@@ -159,6 +159,30 @@ if os.environ.get('RETRODB_TRUST_PROXY', '').lower() in ('true', '1', 'yes'):
         "RETRODB_TRUST_PROXY=1 — ProxyFix installed; trusting one hop of "
         "X-Forwarded-For / Proto / Host"
     )
+
+# =============================================================================
+# STATIC IMAGES — frozen-aware fallback route
+# =============================================================================
+# Pass 46.3 part 2 — `/static/images/<path>` paths span two roots in a
+# PyInstaller bundle: scraped media + uploaded avatars live under
+# config.IMAGE_PATH (writable, next to the launcher), while bundled defaults
+# (placeholder.png, hardware/, ratings/, systems/, controllers/, default
+# avatars/) are baked into config.STATIC_PATH/images (read-only MEIPASS).
+# Try the user dir first, fall back to the bundle.  In a non-frozen install
+# both roots resolve to the same directory and the fallback is a no-op.
+_BUNDLE_IMAGE_DIR = os.path.join(config.STATIC_PATH, 'images')
+
+
+@app.route('/static/images/<path:filepath>')
+def serve_static_image(filepath):
+    user_full = os.path.join(config.IMAGE_PATH, filepath)
+    if os.path.isfile(user_full):
+        return send_from_directory(config.IMAGE_PATH, filepath)
+    bundle_full = os.path.join(_BUNDLE_IMAGE_DIR, filepath)
+    if os.path.isfile(bundle_full):
+        return send_from_directory(_BUNDLE_IMAGE_DIR, filepath)
+    abort(404)
+
 
 # =============================================================================
 # RATE LIMITING
@@ -587,7 +611,8 @@ def validate_csrf():
 
     # Exempt endpoints that must work without a CSRF token
     csrf_exempt = {
-        'static', 'auth.api_login', 'auth.login', 'setup_api',
+        'static', 'serve_static_image',
+        'auth.api_login', 'auth.login', 'setup_api',
         'setup_browse_folders',
     }
     if request.endpoint in csrf_exempt:
@@ -606,7 +631,8 @@ def validate_csrf():
 def check_first_time_setup():
     """Redirect to setup wizard on first launch"""
     # Skip for static files, the setup route itself, and API endpoints used by setup
-    if not request.endpoint or request.endpoint in ('static', 'setup_page', 'setup_api',
+    if not request.endpoint or request.endpoint in ('static', 'serve_static_image',
+                                                     'setup_page', 'setup_api',
                                                      'setup_browse_folders',
                                                      'api_timezones',
                                                      'auth.api_login', 'auth.login', 'auth.logout'):
@@ -630,7 +656,8 @@ def check_force_password_change():
         return
     # Allow access to password change endpoint, logout, static, and setup
     allowed_endpoints = ('auth.api_change_password', 'auth.api_force_change_password',
-                         'auth.logout', 'static', 'setup_page', 'setup_api')
+                         'auth.logout', 'static', 'serve_static_image',
+                         'setup_page', 'setup_api')
     if request.endpoint in allowed_endpoints:
         return
     # Return the force change password page
@@ -934,7 +961,7 @@ def get_api_status():
 
     # Load scraper settings for API keys
     scraper_settings = {}
-    settings_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'scraper_settings.json')
+    settings_path = os.path.join(config.BASE_DIR, 'data', 'scraper_settings.json')
     if os.path.exists(settings_path):
         try:
             with open(settings_path, 'r') as f:
@@ -1252,7 +1279,7 @@ def analytics():
 def changelog():
     """Changelog page showing version history"""
     import yaml
-    yaml_path = os.path.join(os.path.dirname(__file__), 'data', 'changelog.yaml')
+    yaml_path = os.path.join(config.BUNDLE_DIR, 'data', 'changelog.yaml')
     with open(yaml_path, 'r') as f:
         entries = yaml.safe_load(f)
     return render_template('changelog.html', changelog=entries)
@@ -1404,7 +1431,7 @@ def setup_api():
         user_settings['esde_downloaded_media_path'] = data['esde_media_path']
 
     # 3. Save API keys to scraper_settings.json
-    scraper_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'scraper_settings.json')
+    scraper_path = os.path.join(config.BASE_DIR, 'data', 'scraper_settings.json')
     scraper_settings = {}
     if os.path.exists(scraper_path):
         try:
@@ -1586,11 +1613,12 @@ if __name__ == '__main__':
     for subdir in ['boxart', 'boxart_3d', 'screenshots', 'systems', 'ratings', 'fanart', 'videos', 'manuals', 'avatars', 'controllers']:
         os.makedirs(os.path.join(config.IMAGE_PATH, subdir), exist_ok=True)
 
-    # Create data directory for settings
-    os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data'), exist_ok=True)
+    # Create data directory for settings (anchored to BASE_DIR — see config.py;
+    # writable user-data root, not the bundled-assets root).
+    os.makedirs(os.path.join(config.BASE_DIR, 'data'), exist_ok=True)
 
-    # Create logs directory
-    os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs'), exist_ok=True)
+    # Create logs directory (BASE_DIR for the same reason).
+    os.makedirs(os.path.join(config.BASE_DIR, 'logs'), exist_ok=True)
 
     # Initialize file-based logging (only once)
     if is_reloader_process or not config.DEBUG_MODE:

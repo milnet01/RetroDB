@@ -152,7 +152,7 @@ paths or silent-corruption vectors under routine use.
   cannot cross-compile — `--standalone` only produces the host platform's
   binary. Open follow-ups in part 2 / part 3.
 
-##### Part 2 (next) — frozen-mode user-data path
+##### Part 2 — frozen-mode user-data path
 
 - **Why**: today, when run from `dist/retrodb/retrodb`, `BASE_DIR =
   dirname(__file__)` resolves to `_internal/` (PyInstaller MEIPASS in
@@ -167,7 +167,18 @@ paths or silent-corruption vectors under routine use.
   CSS/JS/font assets stays at `sys._MEIPASS/static`. Custom Flask static
   route falls back to `BASE_DIR/static/images/` for scraped media so
   `/static/images/boxart/<id>.webp` resolves correctly.
-- **Status**: todo
+- **Status**: done (v3.5.39) — `config.py` now exposes `BASE_DIR`
+  (writable user data root) and `BUNDLE_DIR` (read-only bundled assets
+  root); `IMAGE_PATH` + `DB_PATH` follow `BASE_DIR`, `STATIC_PATH`
+  follows `BUNDLE_DIR`. Eight call sites retargeted (settings_manager,
+  log_manager, routes.scraper, plus five sites in app.py) from local
+  `dirname(__file__)` to `config.BASE_DIR` / `config.BUNDLE_DIR`. New
+  `/static/images/<path>` route tries `BASE_DIR/static/images/` first,
+  falls back to `BUNDLE_DIR/static/images/`; in dev mode both roots are
+  identical and the fallback is a no-op. 11 regression tests in
+  `tests/test_pass46_frozen_paths.py` pin the dev-mode invariant,
+  frozen-mode split (monkeypatched `sys.frozen` + `sys._MEIPASS`),
+  dependent-modules anchor, and route behaviour. 694 / 694 tests green.
 
 ##### Part 3 (optional) — CPU-only build variant
 

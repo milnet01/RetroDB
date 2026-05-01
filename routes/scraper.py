@@ -40,8 +40,10 @@ logger = logging.getLogger(__name__)
 # CONSTANTS
 # =============================================================================
 
-# Path to scraper settings file - EXPORTED for use by app.py settings route
-SCRAPER_SETTINGS_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'scraper_settings.json')
+# Path to scraper settings file - EXPORTED for use by app.py settings route.
+# Anchored to config.BASE_DIR (writable user-data root) so the file lives
+# next to the launcher in a frozen bundle, not inside _internal/.
+SCRAPER_SETTINGS_FILE = os.path.join(config.BASE_DIR, 'data', 'scraper_settings.json')
 
 
 # =============================================================================

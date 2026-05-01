@@ -47,8 +47,11 @@ def install_request_id_factory():
 
     logging.setLogRecordFactory(factory)
 
-# Base directory
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Base directory.  Pulled from config so the logs dir tracks the writable
+# user-data root in a PyInstaller frozen bundle (Pass 46.3 part 2) rather
+# than _internal/logs/ next to the bundled assets.
+import config as _config
+BASE_DIR = _config.BASE_DIR
 LOGS_DIR = os.path.join(BASE_DIR, 'logs')
 
 # Logger categories. Pass 41.3.C — `'system'` was historically listed but had

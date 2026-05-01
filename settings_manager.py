@@ -11,12 +11,14 @@ import logging
 import threading
 
 from services.atomic_io import atomic_write_json
+import config
 
 logger = logging.getLogger(__name__)
 
-# Default settings file location
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SETTINGS_FILE = os.path.join(BASE_DIR, 'data', 'settings.json')
+# Default settings file location.  Pinned to config.BASE_DIR so the file lives
+# next to the executable in a PyInstaller frozen bundle (Pass 46.3 part 2),
+# not inside _internal/.
+SETTINGS_FILE = os.path.join(config.BASE_DIR, 'data', 'settings.json')
 
 # In-memory cache for settings
 _settings_cache = None

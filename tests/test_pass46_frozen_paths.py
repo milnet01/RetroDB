@@ -1,0 +1,195 @@
+# =============================================================================
+# Pass 46.3 part 2 — PyInstaller frozen-mode user-data path
+# =============================================================================
+# Regression pins for the BASE_DIR / BUNDLE_DIR split in config.py.
+#
+# In a normal `python app.py` install both roots resolve to the project
+# directory and these tests confirm the dev-mode invariant.  In a frozen
+# bundle BASE_DIR sits next to the launcher (writable user data) and
+# BUNDLE_DIR is sys._MEIPASS (read-only bundled assets); the split is
+# exercised by monkeypatching `sys.frozen` + `sys._MEIPASS` and re-importing
+# config.
+#
+# The serve_static_image() route is the runtime fallback that lets images
+# live in two roots: scraped media in BASE_DIR/static/images/ takes
+# precedence; bundled defaults in BUNDLE_DIR/static/images/ act as fallback.
+# =============================================================================
+
+import importlib
+import os
+import sys
+
+import pytest
+
+
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
+
+
+class TestPass46_3_DevModeInvariant:
+    """Outside a frozen bundle BASE_DIR and BUNDLE_DIR are the same
+    directory — no behavioural change for source-zip installs."""
+
+    def test_base_and_bundle_equal_in_dev(self):
+        import config
+        assert config.BASE_DIR == config.BUNDLE_DIR
+
+    def test_static_path_under_bundle_dir(self):
+        import config
+        assert config.STATIC_PATH == os.path.join(config.BUNDLE_DIR, "static")
+
+    def test_image_path_under_base_dir(self):
+        """IMAGE_PATH writes go to the user-data root, never the bundle."""
+        import config
+        assert config.IMAGE_PATH == os.path.join(config.BASE_DIR, "static", "images")
+
+    def test_db_path_under_base_dir(self):
+        """The SQLite file is user data — must live next to the launcher
+        in a frozen bundle, not inside _internal/database/."""
+        import config
+        # Honour env override but still assert the default points at BASE_DIR.
+        if not os.environ.get("RETRODB_DB_PATH"):
+            assert config.DB_PATH == os.path.join(config.BASE_DIR, "database", "roms.db")
+
+
+class TestPass46_3_FrozenModeSplit:
+    """Simulate `getattr(sys, 'frozen', False) is True` and confirm the
+    split kicks in: BASE_DIR moves to dirname(sys.executable), BUNDLE_DIR
+    moves to sys._MEIPASS, IMAGE_PATH stays anchored to BASE_DIR while
+    STATIC_PATH follows BUNDLE_DIR."""
+
+    def test_split_takes_effect_when_frozen(self, tmp_path, monkeypatch):
+        launcher_dir = tmp_path / "launcher"
+        meipass_dir = tmp_path / "_internal"
+        launcher_dir.mkdir()
+        meipass_dir.mkdir()
+        fake_exe = launcher_dir / "retrodb"
+        fake_exe.write_text("#!/bin/sh\n")
+
+        monkeypatch.setattr(sys, "frozen", True, raising=False)
+        monkeypatch.setattr(sys, "_MEIPASS", str(meipass_dir), raising=False)
+        monkeypatch.setattr(sys, "executable", str(fake_exe))
+        # Avoid the env override polluting the assertion.
+        monkeypatch.delenv("RETRODB_DB_PATH", raising=False)
+
+        # Force a fresh import so the module-level frozen check re-runs.
+        # Dependent modules (settings_manager, log_manager, routes.scraper,
+        # app) snapshot config.BASE_DIR at their own import time, so they
+        # must be evicted alongside config — both before this test
+        # (otherwise stale dev-mode paths leak in) and after (otherwise
+        # frozen-mode paths leak into subsequent tests).
+        _to_evict = ("config", "settings_manager", "log_manager",
+                     "routes.scraper", "app")
+        for mod in _to_evict:
+            sys.modules.pop(mod, None)
+        try:
+            config = importlib.import_module("config")
+            assert config.BASE_DIR == str(launcher_dir)
+            assert config.BUNDLE_DIR == str(meipass_dir)
+            assert config.STATIC_PATH == os.path.join(str(meipass_dir), "static")
+            assert config.IMAGE_PATH == os.path.join(str(launcher_dir), "static", "images")
+            assert config.DB_PATH == os.path.join(str(launcher_dir), "database", "roms.db")
+        finally:
+            # Evict the cached frozen-mode modules so the next caller
+            # re-imports them after pytest unwinds the monkeypatch stack
+            # (sys.frozen / sys._MEIPASS / sys.executable).  Re-importing
+            # config here would snapshot the still-monkeypatched sys state
+            # and leak the temp BASE_DIR into subsequent tests; the next
+            # `import config` (post-teardown) does the right thing.
+            for mod in _to_evict:
+                sys.modules.pop(mod, None)
+
+
+class TestPass46_3_DependentModulesFollowConfig:
+    """settings_manager, log_manager, and routes.scraper must derive their
+    on-disk paths from config.BASE_DIR — not from a local
+    dirname(__file__) snapshot — so they track the writable user-data root
+    in a frozen bundle."""
+
+    def test_settings_manager_anchored_to_config_base_dir(self):
+        import config
+        import settings_manager
+        assert settings_manager.SETTINGS_FILE == os.path.join(
+            config.BASE_DIR, "data", "settings.json"
+        )
+
+    def test_log_manager_anchored_to_config_base_dir(self):
+        import config
+        import log_manager
+        assert log_manager.LOGS_DIR == os.path.join(config.BASE_DIR, "logs")
+
+    def test_scraper_settings_file_anchored_to_config_base_dir(self):
+        import config
+        from routes import scraper
+        assert scraper.SCRAPER_SETTINGS_FILE == os.path.join(
+            config.BASE_DIR, "data", "scraper_settings.json"
+        )
+
+
+class TestPass46_3_StaticImageRoute:
+    """The /static/images/<path> route serves from BASE_DIR first, falls
+    back to BUNDLE_DIR. In dev mode both roots are the same directory so
+    we exercise the fallback by routing IMAGE_PATH at a temp dir while
+    leaving BUNDLE_DIR/static/images at the real bundled tree."""
+
+    @pytest.fixture
+    def client(self, tmp_path, monkeypatch):
+        # Re-import app with IMAGE_PATH redirected to an empty user dir.
+        # BUNDLE_DIR/static/images stays put, so placeholder.png still
+        # resolves through the fallback branch.
+        empty_user_images = tmp_path / "static" / "images"
+        empty_user_images.mkdir(parents=True)
+
+        sys.modules.pop("config", None)
+        sys.modules.pop("app", None)
+        config = importlib.import_module("config")
+        monkeypatch.setattr(config, "IMAGE_PATH", str(empty_user_images))
+        app_mod = importlib.import_module("app")
+        # The route captured _BUNDLE_IMAGE_DIR at import; rebind so the
+        # closure reads the live config.
+        monkeypatch.setattr(app_mod, "_BUNDLE_IMAGE_DIR",
+                            os.path.join(config.STATIC_PATH, "images"))
+        yield app_mod.app.test_client()
+        sys.modules.pop("app", None)
+        sys.modules.pop("config", None)
+        importlib.import_module("config")
+        importlib.import_module("app")
+
+    def test_user_dir_takes_precedence(self, tmp_path, monkeypatch):
+        """A file present in BASE_DIR/static/images must shadow any same-
+        named file in BUNDLE_DIR/static/images — scraped content wins."""
+        user_root = tmp_path / "user" / "static" / "images"
+        bundle_root = tmp_path / "bundle" / "static" / "images"
+        user_root.mkdir(parents=True)
+        bundle_root.mkdir(parents=True)
+        (user_root / "shared.png").write_bytes(b"USER_VERSION")
+        (bundle_root / "shared.png").write_bytes(b"BUNDLE_VERSION")
+
+        sys.modules.pop("config", None)
+        sys.modules.pop("app", None)
+        config = importlib.import_module("config")
+        monkeypatch.setattr(config, "IMAGE_PATH", str(user_root))
+        app_mod = importlib.import_module("app")
+        monkeypatch.setattr(app_mod, "_BUNDLE_IMAGE_DIR", str(bundle_root))
+
+        try:
+            r = app_mod.app.test_client().get("/static/images/shared.png")
+            assert r.status_code == 200
+            assert r.data == b"USER_VERSION"
+        finally:
+            sys.modules.pop("app", None)
+            sys.modules.pop("config", None)
+            importlib.import_module("config")
+            importlib.import_module("app")
+
+    def test_falls_back_to_bundle_when_user_missing(self, client):
+        """placeholder.png ships in the bundle; the empty user dir forces
+        the route to fall through to BUNDLE_DIR/static/images/."""
+        r = client.get("/static/images/placeholder.png")
+        assert r.status_code == 200
+        assert len(r.data) > 0
+
+    def test_returns_404_when_neither_root_has_file(self, client):
+        r = client.get("/static/images/totally/missing.png")
+        assert r.status_code == 404
