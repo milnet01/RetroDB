@@ -388,15 +388,6 @@ paths or silent-corruption vectors under routine use.
   `services/media_cleanup.py` change fails 4 of 5.
 
 #### Pass 45.8 Steam/Xbox/PSN/wishlist endpoint rate-limits (HIGH, S)
-- **Status**: done (v3.5.23) — 15 endpoints registered with caps in
-  `app.py` via the existing `_rate_limit` helper. Library-fetch
-  endpoints at 5/min, "sync everything" at 2/hour, credit probes at
-  30/min. 3 regression tests in
-  `tests/test_pass45_security.py::TestPass45_8*` pin the endpoints
-  exist + the source-level registration + the 2/hour cap on bulk
-  actions.
-
-
 
 - **Targets**: `app.py:266-300` registrations. Add for:
   `platform_import.api_steam_fetch_library`, `..._import`,
@@ -409,7 +400,13 @@ paths or silent-corruption vectors under routine use.
   or burn paid AI quota.
 - **Plan**: 5/min or 5/hour caps mirroring `tools.api_*_scan` block.
 - **Source**: indie-review 2026-04-25 theme T13.
-- **Status**: todo
+- **Status**: done (v3.5.23) — 15 endpoints registered with caps in
+  `app.py` via the existing `_rate_limit` helper. Library-fetch
+  endpoints at 5/min, "sync everything" at 2/hour, credit probes at
+  30/min. 3 regression tests in
+  `tests/test_pass45_security.py::TestPass45_8*` pin the endpoints
+  exist + the source-level registration + the 2/hour cap on bulk
+  actions.
 
 #### Pass 45.9 collector_trophies regressions (HIGH, S)
 
@@ -1488,9 +1485,10 @@ paths or silent-corruption vectors under routine use.
   30 s default `AbortController`; caller-supplied `signal` opts out.
   `_isSafeReturnUrl(url)` validates `navigateTo` redirect targets to
   same-origin paths or origins. M3 (inline-onclick → delegated listener
-  rewrite) deferred to Pass 42.7 — that's gated on the
-  PageLifecycle adopt-or-remove decision and unblocks Pass 41.3's CSP
-  nonce zombie cleanup. Tests:
+  rewrite) un-gated as of Pass 42.7 (v3.5.46) — PageLifecycle was
+  removed, so the listener-cleanup question is moot; M3 can be done
+  now with plain `addEventListener` and no centralized tracking. Open
+  as a future follow-up. Tests:
   `tests/test_pass41_security.py::TestPass41_12A/B` (5 cases).
 
 #### Pass 41.13 Templates / a11y — aria-current + div-as-button + mis-targeted label-for + label-as-group-heading
