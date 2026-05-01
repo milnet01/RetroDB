@@ -202,8 +202,8 @@ def calculate_checksums(file_path):
     try:
         import zlib
         
-        md5_hash = hashlib.md5()
-        sha1_hash = hashlib.sha1()
+        md5_hash = hashlib.md5(usedforsecurity=False)
+        sha1_hash = hashlib.sha1(usedforsecurity=False)
         crc32_value = 0
         
         with open(file_path, 'rb') as f:

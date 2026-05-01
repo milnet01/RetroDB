@@ -55,21 +55,14 @@ jobs:
       # since the workflow landed.
       - name: Build Linux / macOS / Windows ZIPs
         env:
-          BUILD_DIST_SCRIPT: |
-            import os, sys
-            os.environ['STAGING_DIR_OVERRIDE'] = '/tmp/staging'
-            sys.path.insert(0, '.')
-            import build_dist
-            build_dist.STAGING_DIR = '/tmp/staging'
-            os.makedirs('/tmp/staging', exist_ok=True)
-            if hasattr(build_dist, 'main'):
-                build_dist.main()
+          # build_dist.py reads RETRODB_STAGING_DIR for the output dir
+          # (Pass 39.6) — CI sets it here so we don't write to the
+          # maintainer's /mnt/Storage path that doesn't exist on the runner.
+          RETRODB_STAGING_DIR: /tmp/staging
         run: |
           mkdir -p /tmp/staging
-          # build_dist.py writes to /mnt/Storage/Scripts/Linux/Staging_Area/RetroDB/ by default;
-          # redirect via a tiny wrapper so CI writes to /tmp/staging instead.
           cp config.example.py config.py
-          python -c "$BUILD_DIST_SCRIPT"
+          python build_dist.py
           ls -la /tmp/staging
 
       - name: Generate SBOM (CycloneDX)

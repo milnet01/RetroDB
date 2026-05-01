@@ -92,7 +92,7 @@ def calculate_rom_hash(rom_path):
     loading entire files into memory.
     """
     try:
-        h = hashlib.md5()
+        h = hashlib.md5(usedforsecurity=False)
         with open(rom_path, 'rb') as f:
             for chunk in iter(lambda: f.read(8192), b''):
                 h.update(chunk)

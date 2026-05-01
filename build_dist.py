@@ -32,7 +32,13 @@ import zipfile
 
 
 # ── Staging area (outside project dir) ──────────────────────────────────────
-STAGING_DIR = '/mnt/Storage/Scripts/Linux/Staging_Area/RetroDB'
+# RETRODB_STAGING_DIR overrides the hardcoded path — used by release.yml
+# to redirect output to /tmp/staging on CI runners that don't have the
+# host's /mnt/Storage/ tree. Default mirrors the maintainer's local layout.
+STAGING_DIR = os.environ.get(
+    'RETRODB_STAGING_DIR',
+    '/mnt/Storage/Scripts/Linux/Staging_Area/RetroDB',
+)
 
 # ── Platform definitions ────────────────────────────────────────────────────
 # Each platform excludes the start scripts for the other two platforms

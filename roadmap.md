@@ -1600,7 +1600,10 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: copy release-workflow pattern; add comment with version
   next to each SHA for Dependabot legibility.
 - **Source**: 2026-04-24 audit, Tests/tooling/CI H1.
-- **Status**: todo
+- **Status**: done (v3.5.40) — three SHA pins added: checkout v4.3.1
+  (`34e114876b…`), setup-python v5.6.0 (`a26af69be9…`), upload-artifact
+  v4.6.2 (`ea165f8d65…`). Trailing `# vX.Y.Z` comment kept for
+  Dependabot legibility, mirrors release.yml convention.
 
 #### Pass 39.2 Explicit `permissions:` block on CI (HIGH, S)
 
@@ -1611,7 +1614,9 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: add `permissions: { contents: read }` at workflow level;
   let individual steps narrow further if needed.
 - **Source**: 2026-04-24 audit, Tests/tooling/CI H2.
-- **Status**: todo
+- **Status**: done (v3.5.40) — workflow-level `permissions:
+  contents: read` added in ci.yml, mirroring release.yml. CI never
+  writes to the repo, so this is the tightest viable scope.
 
 #### Pass 39.3 Hard-fail `pip-audit` + `semgrep` in CI (HIGH, S)
 
@@ -1624,7 +1629,13 @@ paths or silent-corruption vectors under routine use.
   bar ("audit-triage must actionable=0 for main merge") in
   CONTRIBUTING.md.
 - **Source**: 2026-04-24 audit, Tests/tooling/CI H3.
-- **Status**: todo
+- **Status**: done (v3.5.40) — pip-audit `continue-on-error: true`
+  flipped to hard-fail. Verified `pip-audit --strict` on the current
+  lockfile reports zero known vulnerabilities; new CVE surfacing now
+  blocks merge. Roadmap entry was stale on semgrep — already
+  hard-fail since Pass 30 debt sweep. CONTRIBUTING.md note skipped
+  (project has no CONTRIBUTING.md and the "audit-triage actionable=0"
+  bar is documented in CLAUDE.md / audit_hygiene.md).
 
 #### Pass 39.4 `requirements.lock` with `--generate-hashes` + `--require-hashes` install (MEDIUM, S)
 
@@ -1662,7 +1673,12 @@ paths or silent-corruption vectors under routine use.
   workflow.  Raise on `hasattr(build_dist, 'main') is False` rather
   than silently no-op.
 - **Source**: 2026-04-24 audit, Tests/tooling/CI M3.
-- **Status**: todo
+- **Status**: done (v3.5.40) — `STAGING_DIR =
+  os.environ.get('RETRODB_STAGING_DIR', …)` in build_dist.py;
+  release.yml replaces the inline Python wrapper script with `env:
+  RETRODB_STAGING_DIR: /tmp/staging` and a direct `python
+  build_dist.py` call. The `hasattr(build_dist, 'main')` no-op-mask
+  was an artifact of the wrapper script — gone with the wrapper.
 
 #### Pass 39.7 Rate-limit `api_reports_multidisc_scan` (MEDIUM, S)
 
@@ -1672,7 +1688,9 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: add a Flask-Limiter rule (or gate behind `@editor_required`
   since it's effectively a write-adjacent discovery).
 - **Source**: 2026-04-24 audit, Maintenance/settings M3.
-- **Status**: todo
+- **Status**: done (v3.5.40) — `_rate_limit('reports.api_reports_multidisc_scan',
+  "5 per minute")` registered in app.py alongside the existing
+  `tools.api_*_scan` block. Same family as Pass 41.10.D.
 
 #### Pass 39.8 Audit-hygiene: gitleaks allowlist for `tests/test_log_redactor.py` (LOW, S)
 
@@ -1684,7 +1702,8 @@ paths or silent-corruption vectors under routine use.
   `paths` array in `.gitleaks.toml` (narrow form — keep gitleaks
   active on other test files).
 - **Source**: 2026-04-24 audit, /audit triage config-tightening.
-- **Status**: todo
+- **Status**: done (v3.5.40) — path entry added to
+  `.gitleaks.toml`'s admin-runtime-state allowlist.
 
 #### Pass 39.9 Audit-hygiene: `usedforsecurity=False` kwarg on non-security MD5/SHA1 (LOW, S)
 
@@ -1702,7 +1721,12 @@ paths or silent-corruption vectors under routine use.
   constructors.  Run `bandit -ll scraper/ routes/` after — B324 count
   should drop to 0.
 - **Source**: 2026-04-24 audit (5th), /audit triage config-tightening.
-- **Status**: todo
+- **Status**: done (v3.5.40) — kwarg added to all five constructors:
+  `routes/games.py:241` (ETag MD5), `routes/tools.py:1208`
+  (user-selected file MD5; line drift from roadmap entry's stale
+  `:1071`), `scraper/retroachievements.py:95` (RA hash MD5),
+  `scraper/scrape_screenscraper.py:205-206` (MD5 + SHA1).
+  `bandit -ll` on the four files now reports zero B324.
 
 #### Pass 39.10 Audit-hygiene: gitleaks regex allowlist for Claude model literal (LOW, S)
 
@@ -1719,7 +1743,8 @@ paths or silent-corruption vectors under routine use.
   controlled Jinja markup, not user content).  Cheaper than hunting
   the gitleaks regex semantics.
 - **Source**: 2026-04-24 audit (5th), /audit triage config-tightening.
-- **Status**: todo
+- **Status**: done (v3.5.40) — path entry added to `.gitleaks.toml`
+  alongside the test_log_redactor entry from 39.8.
 
 ---
 

@@ -1205,7 +1205,7 @@ def _run_screenshot_dedup_scan(task, method, threshold):
             try:
                 size = os.path.getsize(filepath)
                 if method == 'hash':
-                    h = hashlib.md5()
+                    h = hashlib.md5(usedforsecurity=False)
                     with open(filepath, 'rb') as f:
                         for chunk in iter(lambda f=f: f.read(65536), b''):
                             h.update(chunk)
