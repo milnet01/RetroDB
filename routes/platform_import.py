@@ -8,7 +8,6 @@
 #   POST /api/steam/fetch-library          - Fetch Steam library
 #   POST /api/steam/import                 - Import selected Steam games
 #   POST /api/steam/sync-achievements      - Bulk achievement sync (background)
-#   POST /api/steam/sync-achievements/<id> - Single game achievement sync
 #   GET  /api/steam/sync-status            - Achievement sync job status
 #   POST /api/steam/cancel-sync            - Cancel achievement sync
 #   GET  /api/xbox/auth-url                - Get Xbox OAuth URL
@@ -296,70 +295,6 @@ def api_steam_sync_achievements():
     from services.jobs import steam_sync_job
     result = steam_sync_job.start(user_id=g.user['id'])
     return jsonify(result)
-
-
-@bp.route('/api/steam/sync-achievements/<int:game_id>', methods=['POST'])
-@editor_required
-def api_steam_sync_single(game_id):
-    """Sync achievements for a single Steam game (Pass 31.4 — per user)."""
-    from scraper.scrape_steam import get_player_achievements
-    from services.jobs.platform_sync import _upsert_steam_achievements, _get_steam_credentials
-
-    steam_api_key, steam_id = _get_steam_credentials(user_id=g.user['id'])
-    if not steam_api_key or not steam_id:
-        return jsonify({'success': False, 'error': 'Steam credentials not configured'})
-
-    game = query("SELECT id, title, steam_app_id FROM games WHERE id = ?", (game_id,), one=True)
-    if not game or not game['steam_app_id']:
-        return jsonify({'success': False, 'error': 'Game not found or not a Steam game'})
-
-    result = get_player_achievements(steam_api_key, steam_id, game['steam_app_id'])
-    if result is None:
-        return jsonify({'success': True, 'message': 'Game has no achievements'})
-
-    conn = None
-    try:
-        conn = get_db()
-        c = conn.cursor()
-
-        c.execute("""
-            INSERT INTO game_achievement_progress
-                (game_id, user_id, earned_achievements, total_achievements,
-                 completion_percentage, last_synced, steam_app_id, source)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'steam')
-            ON CONFLICT(game_id, user_id) DO UPDATE SET
-                earned_achievements = excluded.earned_achievements,
-                total_achievements = excluded.total_achievements,
-                completion_percentage = excluded.completion_percentage,
-                last_synced = excluded.last_synced,
-                steam_app_id = excluded.steam_app_id,
-                source = 'steam'
-        """, (
-            game_id,
-            g.user['id'],
-            result['earned'],
-            result['total'],
-            round(result['earned'] / result['total'] * 100, 1) if result['total'] > 0 else 0,
-            datetime.now(timezone.utc).isoformat(),
-            game['steam_app_id'],
-        ))
-
-        # Save individual achievements (Pass 31.2 — per user).
-        _upsert_steam_achievements(c, game_id, game['steam_app_id'], steam_api_key, result, g.user['id'])
-
-        conn.commit()
-
-        return jsonify({
-            'success': True,
-            'earned': result['earned'],
-            'total': result['total'],
-        })
-    except Exception as e:
-        logger.error(f"Steam achievement sync error for game {game_id}: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
-    finally:
-        if conn:
-            conn.close()
 
 
 @bp.route('/api/steam/sync-status')

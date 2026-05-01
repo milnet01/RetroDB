@@ -12,12 +12,9 @@
 # =============================================================================
 
 import logging
-import sqlite3
-from datetime import datetime, timezone
 
 from flask import Blueprint, render_template, jsonify, g
-import config
-from services.database import query, execute
+from services.database import query, execute, get_db
 from services.auth import login_required, editor_required
 
 logger = logging.getLogger(__name__)
@@ -117,7 +114,7 @@ def api_xbox_sync_single(game_id):
     """Sync achievements for a single Xbox game (Pass 31.2 — per user)."""
     from scraper.scrape_xbox import get_authenticated_session, get_achievements
     from routes.scraper import get_saved_api_keys
-    from services.jobs.platform_sync import _upsert_xbox_achievements
+    from services.jobs.platform_sync import _upsert_xbox_achievements, _upsert_xbox_progress
 
     api_keys = get_saved_api_keys()
     client_id = api_keys.get('xbox_client_id', '')
@@ -139,37 +136,15 @@ def api_xbox_sync_single(game_id):
     if result is None:
         return jsonify({'success': True, 'message': 'Game has no achievements', 'earned': 0, 'total': 0})
 
+    conn = None
     try:
-        conn = sqlite3.connect(config.DB_PATH)
-        conn.row_factory = sqlite3.Row
+        conn = get_db()
         c = conn.cursor()
 
-        c.execute("""
-            INSERT INTO game_achievement_progress
-                (game_id, user_id, earned_achievements, total_achievements,
-                 completion_percentage, last_synced, xbox_title_id, source)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'xbox')
-            ON CONFLICT(game_id, user_id) DO UPDATE SET
-                earned_achievements = excluded.earned_achievements,
-                total_achievements = excluded.total_achievements,
-                completion_percentage = excluded.completion_percentage,
-                last_synced = excluded.last_synced,
-                xbox_title_id = excluded.xbox_title_id,
-                source = 'xbox'
-        """, (
-            game_id,
-            user_id,
-            result['earned'],
-            result['total'],
-            round(result['earned'] / result['total'] * 100, 1) if result['total'] > 0 else 0,
-            datetime.now(timezone.utc).isoformat(),
-            game['xbox_title_id'],
-        ))
-
+        _upsert_xbox_progress(c, game_id, user_id, game['xbox_title_id'], result)
         _upsert_xbox_achievements(c, game_id, result.get('achievements', []), user_id)
 
         conn.commit()
-        conn.close()
 
         return jsonify({
             'success': True,
@@ -179,6 +154,9 @@ def api_xbox_sync_single(game_id):
     except Exception as e:
         logger.error(f"Xbox achievement sync error for game {game_id}: {e}")
         return jsonify({'success': False, 'error': 'An internal error occurred'})
+    finally:
+        if conn:
+            conn.close()
 
 
 @bp.route('/api/xbox-achievements/sync-status')

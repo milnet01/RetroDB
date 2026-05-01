@@ -76,6 +76,65 @@ def _get_xbox_credentials():
     return '', ''
 
 
+def _upsert_steam_progress(cursor, game_id, user_id, app_id, result):
+    """UPSERT game_achievement_progress for a Steam game (Pass 38.7).
+
+    Single source of truth for the row-level progress write — used by both
+    the bulk-sync job and the single-game route. `result` carries `earned`
+    and `total` from the Steam Web API response.
+    """
+    cursor.execute("""
+        INSERT INTO game_achievement_progress
+            (game_id, user_id, earned_achievements, total_achievements,
+             completion_percentage, last_synced, steam_app_id, source)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'steam')
+        ON CONFLICT(game_id, user_id) DO UPDATE SET
+            earned_achievements = excluded.earned_achievements,
+            total_achievements = excluded.total_achievements,
+            completion_percentage = excluded.completion_percentage,
+            last_synced = excluded.last_synced,
+            steam_app_id = excluded.steam_app_id,
+            source = 'steam'
+    """, (
+        game_id,
+        user_id,
+        result['earned'],
+        result['total'],
+        round(result['earned'] / result['total'] * 100, 1) if result['total'] > 0 else 0,
+        datetime.now(timezone.utc).isoformat(),
+        app_id,
+    ))
+
+
+def _upsert_xbox_progress(cursor, game_id, user_id, title_id, result):
+    """UPSERT game_achievement_progress for an Xbox game (Pass 38.7).
+
+    Single source of truth for the row-level progress write — used by both
+    the bulk-sync job and the single-game route.
+    """
+    cursor.execute("""
+        INSERT INTO game_achievement_progress
+            (game_id, user_id, earned_achievements, total_achievements,
+             completion_percentage, last_synced, xbox_title_id, source)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'xbox')
+        ON CONFLICT(game_id, user_id) DO UPDATE SET
+            earned_achievements = excluded.earned_achievements,
+            total_achievements = excluded.total_achievements,
+            completion_percentage = excluded.completion_percentage,
+            last_synced = excluded.last_synced,
+            xbox_title_id = excluded.xbox_title_id,
+            source = 'xbox'
+    """, (
+        game_id,
+        user_id,
+        result['earned'],
+        result['total'],
+        round(result['earned'] / result['total'] * 100, 1) if result['total'] > 0 else 0,
+        datetime.now(timezone.utc).isoformat(),
+        title_id,
+    ))
+
+
 def _upsert_steam_achievements(cursor, game_id, app_id, api_key, player_result, user_id):
     """Upsert individual Steam achievements for a game (Pass 31.2 — per user).
 
@@ -403,27 +462,9 @@ class SteamSyncJob:
                             continue
 
                         # Upsert into game_achievement_progress (Pass 31.2 — per user).
-                        sync_cursor.execute("""
-                            INSERT INTO game_achievement_progress
-                                (game_id, user_id, earned_achievements, total_achievements,
-                                 completion_percentage, last_synced, steam_app_id, source)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, 'steam')
-                            ON CONFLICT(game_id, user_id) DO UPDATE SET
-                                earned_achievements = excluded.earned_achievements,
-                                total_achievements = excluded.total_achievements,
-                                completion_percentage = excluded.completion_percentage,
-                                last_synced = excluded.last_synced,
-                                steam_app_id = excluded.steam_app_id,
-                                source = 'steam'
-                        """, (
-                            game['id'],
-                            self._user_id,
-                            result['earned'],
-                            result['total'],
-                            round(result['earned'] / result['total'] * 100, 1) if result['total'] > 0 else 0,
-                            datetime.now(timezone.utc).isoformat(),
-                            game['steam_app_id'],
-                        ))
+                        _upsert_steam_progress(
+                            sync_cursor, game['id'], self._user_id,
+                            game['steam_app_id'], result)
                         _pending_commits += 1
 
                         # Save individual achievements
@@ -721,27 +762,9 @@ class XboxSyncJob:
                                 self.skipped_count += 1
                             continue
 
-                        sync_cursor.execute("""
-                            INSERT INTO game_achievement_progress
-                                (game_id, user_id, earned_achievements, total_achievements,
-                                 completion_percentage, last_synced, xbox_title_id, source)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, 'xbox')
-                            ON CONFLICT(game_id, user_id) DO UPDATE SET
-                                earned_achievements = excluded.earned_achievements,
-                                total_achievements = excluded.total_achievements,
-                                completion_percentage = excluded.completion_percentage,
-                                last_synced = excluded.last_synced,
-                                xbox_title_id = excluded.xbox_title_id,
-                                source = 'xbox'
-                        """, (
-                            game['id'],
-                            self.user_id,
-                            result['earned'],
-                            result['total'],
-                            round(result['earned'] / result['total'] * 100, 1) if result['total'] > 0 else 0,
-                            datetime.now(timezone.utc).isoformat(),
-                            game['xbox_title_id'],
-                        ))
+                        _upsert_xbox_progress(
+                            sync_cursor, game['id'], self.user_id,
+                            game['xbox_title_id'], result)
                         _pending_commits += 1
 
                         # Save individual achievements

@@ -1847,7 +1847,20 @@ paths or silent-corruption vectors under routine use.
   `_upsert_xbox_progress(…)` helpers in
   `services/jobs/platform_sync.py`; collapse the routes.
 - **Source**: 2026-04-24 audit, Platform imports M1/M2.
-- **Status**: todo
+- **Status**: done (v3.5.44) — `_upsert_steam_progress` and
+  `_upsert_xbox_progress` helpers added to
+  `services/jobs/platform_sync.py`; bulk-sync job + active routes
+  (`steam_achievements.py`, `xbox_achievements.py`) all call them.
+  Both routes switched from `sqlite3.connect(config.DB_PATH)` to
+  `get_db()` (fixes missing PRAGMAs: busy_timeout, foreign_keys,
+  synchronous, cache_size, temp_store, mmap_size). Dead duplicate
+  `/api/steam/sync-achievements/<id>` route removed from
+  `routes/platform_import.py` (zero callers across .py/.js/.html);
+  active route at `/api/steam-achievements/sync/<id>` retained
+  (called from `templates/steam_achievement_game.html:288`). Xbox
+  had no equivalent dead duplicate — only one single-sync route.
+  Orphan imports (datetime/timezone/sqlite3/config) cleaned. Full
+  pytest 694/694 green.
 
 #### Pass 38.8 Consolidate resume-path boilerplate across job classes (LOW, M)
 

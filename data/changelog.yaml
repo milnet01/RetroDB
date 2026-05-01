@@ -1,3 +1,19 @@
+- version: 3.5.44
+  date: 2026-05-02
+  tags:
+  - type: refactor
+    label: Pass 38.7 — Consolidate Steam / Xbox single-sync UPSERTs + delete dead duplicate route
+  body: |
+    <ul>
+        <li><strong>Pass 38.7 — three near-identical UPSERTs collapsed</strong>. <code>game_achievement_progress</code> Steam and Xbox INSERT-ON-CONFLICT statements were duplicated across the bulk-sync job and the per-game routes. New helpers <code>_upsert_steam_progress(cursor, game_id, user_id, app_id, result)</code> and <code>_upsert_xbox_progress(cursor, game_id, user_id, title_id, result)</code> in <code>services/jobs/platform_sync.py</code> are now the single source of truth. Bulk-sync job (<code>platform_sync.py</code>) and active routes (<code>routes/steam_achievements.py</code>, <code>routes/xbox_achievements.py</code>) all call the helpers. Future SQL/column changes land in one place.</li>
+        <li><strong>get_db() bypass fixed</strong>. Both single-sync routes were calling <code>sqlite3.connect(config.DB_PATH)</code> directly instead of <code>get_db()</code> from <code>services/database.py</code>. That bypass missed six PRAGMA settings the rest of the app expects: <code>busy_timeout=5000</code> (no SQLITE_BUSY under contention), <code>foreign_keys=ON</code>, <code>synchronous=NORMAL</code>, <code>cache_size=-64000</code>, <code>temp_store=MEMORY</code>, <code>mmap_size=268435456</code>. Both routes now use <code>get_db()</code>; consistent with the rest of the codebase.</li>
+        <li><strong>Dead duplicate route deleted</strong>. <code>routes/platform_import.py</code> exposed <code>/api/steam/sync-achievements/&lt;id&gt;</code> with the same single-game-sync logic as <code>routes/steam_achievements.py</code>'s <code>/api/steam-achievements/sync/&lt;id&gt;</code>. Repo-wide grep across <code>.py</code>/<code>.js</code>/<code>.html</code>/<code>.md</code>: zero callers of the platform_import path; the active route is the steam_achievements one (called from <code>templates/steam_achievement_game.html:288</code>). Deleted the dead route + header-comment line. Xbox had only one single-sync route already (<code>xbox_achievements.py</code>) — no equivalent dead duplicate.</li>
+        <li><strong>Orphan imports cleaned</strong>. <code>datetime</code>/<code>timezone</code>/<code>sqlite3</code>/<code>config</code> imports removed from steam_achievements.py and xbox_achievements.py — only the deleted UPSERT body used them.</li>
+        <li><strong>Verification</strong>. Full pytest <strong>694 / 694 green</strong>. Import smoke confirms helpers + routes load. SQL is byte-identical to the pre-extraction inline form (helper bodies copied verbatim).</li>
+        <li><strong>Source</strong> &mdash; <code>roadmap.md</code> Pass 38.7.</li>
+        <li><strong>Version bump 3.5.43 &rarr; 3.5.44</strong>: patch (refactor + dead-code removal + bug fix on missing PRAGMAs).</li>
+    </ul>
+
 - version: 3.5.43
   date: 2026-05-02
   tags:
