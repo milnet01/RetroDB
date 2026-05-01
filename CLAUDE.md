@@ -2,11 +2,20 @@
 
 > Flask-based retro gaming ROM library manager with cyberpunk UI theme.
 
-**Screenshots:** User screenshots are always at `/home/ants/Pictures/`
+**Screenshots:** `/home/ants/Pictures/`
 
-The full file index, route table, service descriptions, JS-globals catalog, and
-design tokens were intentionally removed in favor of `ls routes/`, `grep`, and
-reading source. Keep this file to non-obvious contracts and mandatory workflow.
+This file holds only non-obvious project contracts and the mandatory workflow.
+For file index / routes / services / JS globals / design tokens, use `ls
+routes/`, `grep`, and the source.
+
+**Global rules apply.** `~/.claude/CLAUDE.md` covers development discipline
+(root-cause fixes, shortest correct implementation, reuse-before-rewrite,
+six-month test, current-idiom external libraries), git/CI cadence (private-repo
+push batching, PR-opt-in feature flow — neither currently active here), and the
+clarity rules (surface ambiguity, push back on over-complex framing,
+reproduce-before-fix, stay in lane on edits, state a `step → verify` plan for
+3+ step work). Don't restate them here — extend or override only when RetroDB
+genuinely diverges.
 
 ---
 
@@ -22,21 +31,22 @@ reading source. Keep this file to non-obvious contracts and mandatory workflow.
 7. Update this file if change adds/removes/renames routes, templates, bundled JS, CSS files, or alters page/asset wiring contracts
 
 ### Verification Before Declaring Done
-Tests authored alongside the implementation are regression pins, not correctness
-proofs — they encode the implementer's understanding, which may be wrong.
+Tests written alongside the implementation are regression pins, not correctness
+proofs. Never mark a task complete just because those tests pass.
 
-- **UI changes** (templates / CSS / JS / page-rendering routes): start dev server,
-  walk golden path in browser at desktop + mobile (~375px). DevTools Network to
-  verify runtime assumptions (WebP served? srcset picked `-md`? API shape matches
-  template?). DevTools Console for errors/warnings. Trigger one error path
-  (empty input, missing record, cancelled action), not just happy path.
-- **Backend-only**: unit tests + a single end-to-end smoke call (curl, invoke job).
-- State what was verified in the session summary; if something couldn't be tested
-  in-session, say so explicitly — never imply coverage that wasn't produced.
-- For architecturally significant passes (touches multiple subsystems, reshapes an
-  abstraction, changes security/auth/data flow): proactively recommend the user
-  run `/ultrareview` before merging. Only the user can launch it.
-- Never mark a task complete solely because the tests I wrote pass.
+- **UI changes** (templates / CSS / JS / page-rendering routes): start dev
+  server, walk the golden path in browser at desktop + mobile (~375px). DevTools
+  Network to confirm runtime assumptions (WebP served? srcset picked `-md`? API
+  shape matches template?). DevTools Console for errors/warnings. Trigger one
+  error path (empty input, missing record, cancelled action), not just happy.
+- **Backend-only**: unit tests + a single end-to-end smoke call (curl / invoke job).
+- State what was verified in the session summary. If something couldn't be
+  tested in-session, say so — never imply coverage that wasn't produced.
+- Architecturally significant passes (multi-subsystem, reshapes an abstraction,
+  touches security/auth/data flow): recommend the user run `/ultrareview` before
+  merging — only they can launch it.
+- For 3+ step work, post a `step → verify` plan up front (global §12) and tick
+  off as you go.
 
 ### Periodic Independent Review (Multi-Agent Audit)
 Run a multi-agent independent sweep at one of these triggers (whichever first):
