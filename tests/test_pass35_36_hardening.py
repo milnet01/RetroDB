@@ -214,8 +214,12 @@ def test_36_5_safe_parse_json_signature():
 
 
 def test_36_5_session_storage_sites_migrated():
-    """The four identified sessionStorage sites route through safeParseJSON."""
-    for relpath in ('static/js/all-games-controller.js', 'static/js/page-lifecycle.js', 'static/js/rom-tools.js'):
+    """The identified sessionStorage sites route through safeParseJSON.
+
+    Pass 42.7 removed `page-lifecycle.js` (467 LoC dead infrastructure, zero
+    consumers). The two remaining sessionStorage sites still pin the contract.
+    """
+    for relpath in ('static/js/all-games-controller.js', 'static/js/rom-tools.js'):
         src = open(os.path.join(_REPO_ROOT, relpath), encoding='utf-8').read()
         assert "safeParseJSON" in src, f"{relpath} missing safeParseJSON call"
 

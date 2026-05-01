@@ -1986,7 +1986,15 @@ paths or silent-corruption vectors under routine use.
   advertises the abstraction as canonical.  Either migrate the 10
   hot-path files or delete the module.
 - **Plan**: pick an option; don't leave the doc-vs-code drift.
-- **Status**: todo
+- **Status**: done (v3.5.46) — REMOVE option chosen (shorter, lower
+  risk; with zero consumers the "canonical" advertisement in
+  CLAUDE.md was misleading). `static/js/page-lifecycle.js` deleted;
+  `build_js.py` CORE_ORDER entry dropped; CLAUDE.md "Globals
+  defined in" list and "Lifecycle: PageLifecycle / DOMCache" bullet
+  removed. Test pin
+  `test_36_5_session_storage_sites_migrated` updated to drop the
+  page-lifecycle.js file reference (its `safeParseJSON` site no
+  longer exists). 694/694 tests green.
 
 #### Pass 42.8 Remove `/api/recently-viewed` + `ScraperManager.get_enabled_scrapers` + CSP nonce dead infrastructure (LOW, S — bundle)
 

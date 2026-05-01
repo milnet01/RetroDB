@@ -114,12 +114,11 @@ Rating images live in `static/images/ratings/{SYSTEM}/`. `RATING_IMAGE_MAP` in
 
 Use these names exactly in template `<script>` blocks — never invent aliases.
 Globals are defined in `static/js/utils.js`, `main.js`, `toast-controller.js`,
-`page-lifecycle.js`, `game-modals.js`. Read source for full signatures.
+`game-modals.js`. Read source for full signatures.
 
 - **Toasts/dialogs**: `showNotification(msg, type, duration?)`, `showConfirm(title, msg, onConfirm, opts?)`, `showModal(title, msg, onConfirm?, showCancel?, onCancel?)`.
 - **HTTP/storage**: `API.get/post/postForm`, `Storage.get/set/remove/clearAll`.
 - **Utilities**: `escapeHtml`, `formatNumber` (thin-space thousands), `formatBytes`, `copyToClipboard`, `debounce`, `throttle`, `DOM.$/$$/create/toggle/delegate`, `DateUtils`.
-- **Lifecycle**: `PageLifecycle` (timer/observer auto-cleanup), `DOMCache`.
 - **Game modals**: `GameDetailModal.open/close/clearCache`, `GameEditModal.open/save/close`, `HLTBManager.lookup/save/cancel/clear`, `triggerAiFill`.
 - **Sticky nav**: `StickyScroll.to(target)`, `.stackPositions()`, `.updateMargins()`. Mark sticky elements containing anchor links with `data-sticky-nav`. Scope to a container with `data-sticky-scope="containerId"` (height excluded from offsets for targets outside that container). Both `stackPositions()` + `updateMargins()` run on DOMContentLoaded in `main.js`; call them again after tab/panel switches that show/hide sticky navs.
 - **Themed icons**: `getThemedIcon(key, fallback?)` returns icons matching the current theme (e.g. `'error'` → `❌` on cyberpunk, `✗` on matrix). Keys: job types (`bulk-scrape`, `ra-sync`, `ra-refresh`...), states (`paused`, `resume`, `complete`, `queued`, `cancelled`), notifications (`success`, `error`, `warning`, `info`), stats (`stat-success`, `stat-failed`, `stat-skipped`), actions (`starting`, `running`, `cancel`, `save`, `loading`, `background`). In HTML use `data-themed-icon="key"` — `main.js` auto-populates on DOMContentLoaded.

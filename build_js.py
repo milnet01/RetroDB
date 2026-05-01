@@ -28,7 +28,6 @@ from pathlib import Path
 # sidebar + keyboard shortcuts).
 CORE_ORDER = [
     'utils.js',
-    'page-lifecycle.js',
     'toast-controller.js',
     'main.js',
 ]

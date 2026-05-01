@@ -1,3 +1,19 @@
+- version: 3.5.46
+  date: 2026-05-02
+  tags:
+  - type: cleanup
+    label: Pass 42.7 — Remove dead `page-lifecycle.js` (467 LoC, zero consumers)
+  body: |
+    <ul>
+        <li><strong>Pass 42.7 — `PageLifecycle` / `DOMCache` infrastructure deleted</strong>. <code>static/js/page-lifecycle.js</code> defined a timer/interval/observer/event-listener tracker advertised in <code>CLAUDE.md</code> as the canonical "Lifecycle" abstraction. Repo-wide grep across <code>.js</code>, <code>.html</code>, and <code>.bundle.js</code> exclusions: zero <code>PageLifecycle.*</code> and zero <code>DOMCache.*</code> consumers. 467 LoC of dead infrastructure shipped on every page load via <code>core.bundle.js</code>.</li>
+        <li><strong>Removed in three places</strong>: (1) <code>static/js/page-lifecycle.js</code> file deleted; (2) <code>build_js.py</code> <code>CORE_ORDER</code> entry removed; (3) <code>CLAUDE.md</code> Non-Obvious JS Contracts updated — <code>page-lifecycle.js</code> dropped from the "Globals defined in" list, "Lifecycle: PageLifecycle (timer/observer auto-cleanup), DOMCache" bullet removed entirely.</li>
+        <li><strong>Test pin updated</strong>: <code>test_36_5_session_storage_sites_migrated</code> dropped its <code>page-lifecycle.js</code> file reference (the file's <code>safeParseJSON</code> call site no longer exists). Two remaining sessionStorage call-sites (<code>all-games-controller.js</code>, <code>rom-tools.js</code>) still pinned. Test header note records the deletion.</li>
+        <li><strong>Why remove vs migrate</strong>: roadmap allowed either (migrate the 10 hot-path files OR delete the module). Migrate is M-sized, delete is S-sized; with zero consumers the abstraction has been load-bearing on no flow for long enough that the &ldquo;canonical&rdquo; framing in CLAUDE.md was misleading. Deleting is the shortest-correct fix (global rule §2). If a future need for centralized cleanup lands, re-introducing the abstraction <em>at that point</em> is cheap.</li>
+        <li><strong>Verification</strong>. <code>build_js.py</code> rebuilt <code>core.bundle.js</code> (now 3 source files instead of 4) + manifest. Full pytest <strong>694 / 694 green</strong>.</li>
+        <li><strong>Source</strong> &mdash; <code>roadmap.md</code> Pass 42.7.</li>
+        <li><strong>Version bump 3.5.45 &rarr; 3.5.46</strong>: patch (cleanup; net code shrink, no behavior change).</li>
+    </ul>
+
 - version: 3.5.45
   date: 2026-05-02
   tags:
