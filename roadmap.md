@@ -1815,7 +1815,10 @@ paths or silent-corruption vectors under routine use.
   branch never fires correctly on a failed build.  Zombie code.
 - **Plan**: replace with checks for `core.bundle.js` + `games.bundle.js`.
 - **Source**: 2026-04-24 audit, Tests/tooling/CI M1.
-- **Status**: todo
+- **Status**: done (v3.5.41) — both `install.py` and `install_gui.py`
+  now check `core.bundle.js` AND `games.bundle.js` for the
+  build-failed fallback ("use existing bundles" branch). Success-path
+  log message updated to name both bundles.
 
 #### Pass 38.6 Split `settings.html` by tab (LOW, M)
 
@@ -1896,7 +1899,10 @@ paths or silent-corruption vectors under routine use.
   admin-only page with session cookie.  Supply-chain attack surface.
 - **Plan**: either pin `@4.x.y` + `integrity="sha384-..."`
   `crossorigin="anonymous"`, or vendor to `/static/vendor/chart.js`.
-- **Status**: todo
+- **Status**: done — already addressed by Pass 46.1 (v3.5.35).
+  Chart.js v4.5.1 UMD bundle vendored to
+  `static/js/vendor/chart.umd.min.js`, served via the cache-busting
+  `asset_url()` pipeline. No CDN reference left in the templates.
 
 #### Pass 42.5 CHD converter dedup + `_persist_controller_image` (MEDIUM, M)
 
@@ -1942,7 +1948,12 @@ paths or silent-corruption vectors under routine use.
   - CSP nonce infrastructure is covered by FU.1; noted here for
     cross-reference.
 - **Plan**: delete the two zombie functions; FU.1 handles CSP.
-- **Status**: todo
+- **Status**: done (v3.5.41) — `routes/games.py` `/api/recently-viewed`
+  was already removed by Pass 41.9 (zero-callers JS-side); now
+  `ScraperManager.get_enabled_scrapers` deleted in
+  `scraper/scraper_manager.py` (zero callers across .py, .js, .html;
+  the `enabled` lookup it wrapped is read directly inside
+  `search_games`). CSP nonce infrastructure stays gated on FU.1.
 
 ---
 
@@ -2106,7 +2117,11 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   `http_get` retry/backoff semantics — the helper doesn't currently expose
   `stream=True`, so either add a flag or call `_http_session.get` directly
   for images.
-- **Status**: todo
+- **Status**: done — already addressed by Pass 40.7 (SSRF hardening).
+  `_download_tgdb_image` now delegates to `base_scraper.download_image`
+  which already does streamed `iter_content(8192)` writes with a 50 MB
+  cap. The original `response.content` buffering pattern this entry
+  describes is gone.
 
 #### FU.5 Group-label a11y pattern (LOW–MEDIUM, S–M)
 

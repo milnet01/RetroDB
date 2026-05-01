@@ -283,24 +283,6 @@ class ScraperManager:
         # Sources are determined dynamically now
         pass
 
-    def get_enabled_scrapers(self):
-        """Get list of currently enabled scrapers"""
-        enabled = load_scraper_enabled()
-        sources = []
-        if enabled.get('tgdb', True):
-            sources.append('thegamesdb')
-        if enabled.get('igdb', True):
-            sources.append('igdb')
-        if ESDE_AVAILABLE and enabled.get('esde', True):
-            sources.append('esde')
-        if RAWG_AVAILABLE and enabled.get('rawg', True):
-            sources.append('rawg')
-        if SCREENSCRAPER_AVAILABLE and enabled.get('screenscraper', False):
-            sources.append('screenscraper')
-        if AI_AVAILABLE and enabled.get('ai', False):
-            sources.append('ai')
-        return sources
-
     def search_games(self, title, system_name=None, system_folder=None, limit=10):
         """
         Search games using ALL available sources simultaneously

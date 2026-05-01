@@ -296,13 +296,16 @@ def main():
     if js_ok is None:
         print(f"  {_yellow('SKIP')}: build_js.py not found")
     elif js_ok:
-        print(f"  {_green('OK')}: app.bundle.js built")
+        print(f"  {_green('OK')}: core.bundle.js + games.bundle.js built")
     else:
-        js_path = os.path.join(base_dir, 'static', 'js', 'app.bundle.js')
-        if os.path.exists(js_path):
-            print(f"  {_yellow('WARN')}: JS build failed, using existing bundle")
+        # Pass 38.5 — Pass 13 split the single app.bundle.js into core +
+        # games. The "use existing bundle" fallback now checks both.
+        js_dir = os.path.join(base_dir, 'static', 'js')
+        if os.path.exists(os.path.join(js_dir, 'core.bundle.js')) and \
+           os.path.exists(os.path.join(js_dir, 'games.bundle.js')):
+            print(f"  {_yellow('WARN')}: JS build failed, using existing bundles")
         else:
-            print(f"  {_red('ERROR')}: JS build failed and no existing bundle found")
+            print(f"  {_red('ERROR')}: JS build failed and no existing bundles found")
             errors.append('JS bundle missing')
 
     # ── Summary ──────────────────────────────────────────────────────────

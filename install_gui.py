@@ -566,15 +566,18 @@ class InstallerApp:
             self._log('  build_js.py not found', 'warning')
             self._set_step(step, 'warning')
         elif js_ok:
-            self._log('  \u2713 app.bundle.js built', 'success')
+            self._log('  \u2713 core.bundle.js + games.bundle.js built', 'success')
             self._set_step(step, 'done')
         else:
-            js_path = os.path.join(base_dir, 'static', 'js', 'app.bundle.js')
-            if os.path.exists(js_path):
-                self._log('  Build failed, using existing bundle', 'warning')
+            # Pass 38.5 — Pass 13 split the single app.bundle.js into core +
+            # games. The "use existing bundle" fallback now checks both.
+            js_dir = os.path.join(base_dir, 'static', 'js')
+            if os.path.exists(os.path.join(js_dir, 'core.bundle.js')) and \
+               os.path.exists(os.path.join(js_dir, 'games.bundle.js')):
+                self._log('  Build failed, using existing bundles', 'warning')
                 self._set_step(step, 'warning')
             else:
-                self._log('  JS build failed — no bundle available', 'error')
+                self._log('  JS build failed — no bundles available', 'error')
                 self._set_step(step, 'failed')
                 errors.append('JS bundle')
 

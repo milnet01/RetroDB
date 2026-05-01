@@ -1,3 +1,18 @@
+- version: 3.5.41
+  date: 2026-05-02
+  tags:
+  - type: cleanup
+    label: Roadmap sweep — installer bundle-name drift (38.5), dead code (42.8), stale-status fixups
+  body: |
+    <ul>
+        <li><strong>Pass 38.5 — installer bundle-name drift fixed</strong>. Pass 13 (v2.84.2) split the single <code>app.bundle.js</code> into <code>core.bundle.js</code> + <code>games.bundle.js</code>; <code>build_js.py</code> deletes the old filename as a legacy artifact. Both <code>install.py</code> and <code>install_gui.py</code> were still checking <code>app.bundle.js</code> in their "use existing bundle" fallback — the branch could never fire correctly on a failed build. Updated to check both new bundle names; success-path log message names both. Zombie code from a long-landed split.</li>
+        <li><strong>Pass 42.8 — dead code removed</strong>. <code>ScraperManager.get_enabled_scrapers()</code> in <code>scraper/scraper_manager.py</code> deleted (zero callers across .py / .js / .html; <code>search_games</code> reads <code>load_scraper_enabled()</code> directly inline). The other Pass 42.8 target — <code>/api/recently-viewed</code> in <code>routes/games.py</code> — was already removed in Pass 41.9. CSP-nonce-dead-infrastructure stays gated on FU.1 (CSP enforcing flip).</li>
+        <li><strong>Stale-status fixups in roadmap.md</strong>. Three roadmap entries described work that was already done by later passes: FU.4 (TGDB streaming downloads — addressed by Pass 40.7's SSRF hardening, which routed TGDB images through <code>base_scraper.download_image</code>), Pass 42.4 (vendor Chart.js — addressed by Pass 46.1), and Pass 39.3 (semgrep hard-fail — already flipped in Pass 30 debt sweep). Marked done with cross-references; no code changes from these.</li>
+        <li><strong>Verification</strong>. <code>install.py</code> + <code>install_gui.py</code> AST-parse clean. Full pytest <strong>694 / 694 green</strong>. ruff clean. <code>scraper_manager</code> imports clean (verified <code>load_scraper_enabled</code> still has its real caller in <code>search_games</code>).</li>
+        <li><strong>Source</strong> &mdash; <code>roadmap.md</code> Pass 38.5 + Pass 42.8 + opportunistic stale-status sweep.</li>
+        <li><strong>Version bump 3.5.40 &rarr; 3.5.41</strong>: patch (cleanup; no behavior change).</li>
+    </ul>
+
 - version: 3.5.40
   date: 2026-05-02
   tags:
