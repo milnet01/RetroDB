@@ -1922,7 +1922,15 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: add `window.addEventListener('error', ...)` and
   `'unhandledrejection'` handlers that dispatch to the toast system,
   rate-limited to one surface every 5s to avoid feedback loops.
-- **Status**: todo
+- **Status**: done (v3.5.45) — handlers added in
+  `static/js/main.js` immediately after the global-state block.
+  Rate limit: one toast per 5 s via `_lastErrorToastAt` + `Date.now()`
+  guard. Filters cross-origin "Script error." noise (browsers
+  sanitize cross-origin script errors to that literal string with no
+  useful detail). Unhandled-rejection branch handles `Error`,
+  string, and arbitrary-object reasons (JSON.stringify + String()
+  fallback). Toast call wrapped in try/catch as defence-in-depth.
+  Bundle rebuilt; 694/694 tests green.
 
 #### Pass 42.4 Pin / vendor Chart.js (MEDIUM, S)
 

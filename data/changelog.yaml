@@ -1,3 +1,20 @@
+- version: 3.5.45
+  date: 2026-05-02
+  tags:
+  - type: enhancement
+    label: Pass 42.3 — Global `error` + `unhandledrejection` handlers surface failures to the toast system
+  body: |
+    <ul>
+        <li><strong>Pass 42.3 — global JS error surfacing</strong>. Two new top-level handlers in <code>static/js/main.js</code>: <code>window.addEventListener('error', ...)</code> and <code>window.addEventListener('unhandledrejection', ...)</code>. Both pipe into <code>showNotification(message, 'error')</code> so unhandled exceptions and rejected promises are visible to the user as toasts instead of dying silently in the console.</li>
+        <li><strong>Rate-limited to one toast every 5 seconds</strong>. <code>_lastErrorToastAt</code> module-local timestamp + <code>_ERROR_TOAST_INTERVAL_MS = 5000</code> guard. Prevents a runaway loop (e.g. a re-rendering component that throws each tick) from flooding the screen with toasts.</li>
+        <li><strong>Cross-origin "Script error." filtered</strong>. Browsers sanitize errors from scripts loaded from a different origin (or with no <code>crossorigin</code> attribute) to the literal string <code>"Script error."</code> with no file / line / stack. Nothing actionable to surface — handler skips those events.</li>
+        <li><strong>Unhandled rejection detail extraction</strong>. Handles <code>Error</code> instances (<code>r.message || r.name</code>), strings, and arbitrary objects (best-effort <code>JSON.stringify</code> with <code>String(r)</code> fallback for circular cases). Prefix is <em>"Unhandled rejection: …"</em>; the <code>error</code> handler uses <em>"Unexpected error: …"</em>.</li>
+        <li><strong>Toast call wrapped in try/catch</strong>. If the toast subsystem itself throws, the handler swallows the error rather than re-entering — the rate-limiter would already block, but defense in depth keeps an error-during-error from crashing the page.</li>
+        <li><strong>Verification</strong>. <code>build_js.py</code> rebuilt <code>core.bundle.js</code> + manifest. Full pytest <strong>694 / 694 green</strong> (Python tests; JS handlers are runtime-only).</li>
+        <li><strong>Source</strong> &mdash; <code>roadmap.md</code> Pass 42.3.</li>
+        <li><strong>Version bump 3.5.44 &rarr; 3.5.45</strong>: patch (additive observability, no behavior change to existing flows).</li>
+    </ul>
+
 - version: 3.5.44
   date: 2026-05-02
   tags:

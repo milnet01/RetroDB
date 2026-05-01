@@ -3032,6 +3032,38 @@ const RetroDBState = {
 let _animationObserver = null;
 let _backToTopScrollHandler = null;
 
+let _lastErrorToastAt = 0;
+const _ERROR_TOAST_INTERVAL_MS = 5000;
+
+function _surfaceError(prefix, detail) {
+    if (typeof showNotification !== 'function') return;
+    const now = Date.now();
+    if (now - _lastErrorToastAt < _ERROR_TOAST_INTERVAL_MS) return;
+    _lastErrorToastAt = now;
+    try {
+        showNotification(`${prefix}: ${detail}`, 'error');
+    } catch (_e) { /* swallow — never loop on a toast failure */ }
+}
+
+window.addEventListener('error', function(event) {
+    const msg = event.message || '';
+    if (!msg || msg === 'Script error.') return;
+    _surfaceError('Unexpected error', msg);
+});
+
+window.addEventListener('unhandledrejection', function(event) {
+    const r = event.reason;
+    let detail;
+    if (r instanceof Error) {
+        detail = r.message || r.name || 'unknown error';
+    } else if (typeof r === 'string') {
+        detail = r;
+    } else {
+        try { detail = JSON.stringify(r); } catch (_e) { detail = String(r); }
+    }
+    _surfaceError('Unhandled rejection', detail);
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     initializeSidebar();
     initializeSearch();
