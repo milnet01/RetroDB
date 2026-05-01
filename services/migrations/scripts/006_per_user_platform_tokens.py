@@ -23,20 +23,9 @@ import json
 import logging
 import os
 
+from services.migrations._helpers import _add_column_if_missing, _table_exists
+
 logger = logging.getLogger(__name__)
-
-
-def _table_exists(cursor, name):
-    return cursor.execute(
-        "SELECT 1 FROM sqlite_master WHERE type='table' AND name=?",
-        (name,),
-    ).fetchone() is not None
-
-
-def _add_column_if_missing(cursor, table, column, definition):
-    cols = {row[1] for row in cursor.execute(f"PRAGMA table_info({table})")}
-    if column not in cols:
-        cursor.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
 
 
 def _data_dir(cursor):

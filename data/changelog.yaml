@@ -1,3 +1,18 @@
+- version: 3.5.43
+  date: 2026-05-02
+  tags:
+  - type: refactor
+    label: Pass 42.2 — Deduplicate migration helpers into `services/migrations/_helpers.py`
+  body: |
+    <ul>
+        <li><strong>Pass 42.2 — five helper functions consolidated</strong>. <code>_table_exists</code>, <code>_has_column</code>, <code>_admin_user_id</code>, <code>_columns_ddl</code>, and <code>_add_column_if_missing</code> were copy-pasted across migrations 005 / 006 / 007 / 008 / 009 (between 1 and 5 of them per script). Now defined once in <code>services/migrations/_helpers.py</code>; each migration imports the names it uses. Underscore-prefix preserved on the public functions so existing call sites read unchanged after the import swap.</li>
+        <li><strong>Strict variant chosen</strong> &mdash; <code>_add_column_if_missing</code> uses the <code>PRAGMA table_info</code>-then-ALTER form (already used by 005/006). The baseline 001 variant swallows <code>sqlite3.OperationalError</code>, which masks unrelated errors (NOT NULL violations, syntax errors) on top of the duplicate-column case it's trying to handle. Strict catches duplicate-column safely without that masking.</li>
+        <li><strong>Migration 001 baseline kept out of scope</strong> &mdash; its lenient try/except predates this strict pattern and runs against legacy pre-versioned schemas whose error surface differs from the cleanly-versioned post-baseline path. Roadmap targeted "4-6 copies from individual migration scripts" which maps to 005-009 (5 scripts). 001 keeps its local helper; <code>_helpers.py</code> module docstring documents the deliberate split.</li>
+        <li><strong>Verification</strong>. Each of 6 migration scripts loads cleanly via <code>importlib</code>. <code>tests/test_migrations.py</code> + <code>tests/test_pass31_migrations.py</code>: 21 / 21 green &mdash; covers idempotency (apply_pending re-run after <code>user_version=0</code> reset), failed-migration rollback, all per-table backfill semantics, FK CASCADE behavior. Full pytest <strong>694 / 694 green</strong>.</li>
+        <li><strong>Source</strong> &mdash; <code>roadmap.md</code> Pass 42.2.</li>
+        <li><strong>Version bump 3.5.42 &rarr; 3.5.43</strong>: patch (refactor; pure code-move, no semantic change to migration behavior).</li>
+    </ul>
+
 - version: 3.5.42
   date: 2026-05-02
   tags:

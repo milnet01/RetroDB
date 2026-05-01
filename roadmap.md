@@ -1886,7 +1886,18 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: one `_helpers.py` with the strict variants; update all
   migration imports; add a schema-test that re-runs every migration
   on an empty DB to prove idempotency.
-- **Status**: todo
+- **Status**: done (v3.5.43) — `services/migrations/_helpers.py`
+  created with all 5 functions (strict `_add_column_if_missing`
+  variant: PRAGMA-check-then-ALTER, no swallowed
+  `OperationalError`). Migrations 005/006/007/008/009 import from
+  `_helpers`; local copies removed. Migration 001 kept out of scope
+  (its lenient try/except handles legacy pre-versioned schema and
+  runs only against `user_version=0` installs); module docstring
+  documents the deliberate split. Idempotency already covered by
+  `test_idempotent_baseline_can_run_twice` (apply_pending re-runs
+  after PRAGMA user_version=0 reset). `pytest tests/test_migrations
+  .py tests/test_pass31_migrations.py`: 21/21 green; full suite
+  694/694 green.
 
 #### Pass 42.3 Global `window.onerror` + `unhandledrejection` handler (MEDIUM, S)
 
@@ -1936,7 +1947,15 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: already scoped under Pass 41.5 for redactor; track the
   RA observability half here (5 call-site edits to surface 401 as a
   distinct error).
-- **Status**: todo
+- **Status**: done — both halves landed in earlier passes. Redactor
+  half: Pass 41.5 added `key` / `sspassword` patterns to
+  `services/log_redactor.py:39`; Pass 45.13 added `y` / `z` (RA
+  single-char param names). RA 401 observability half: Pass 41.7.C
+  added explicit 401 `logger.error(...)` calls in all 5 RA callers
+  (`search_game_by_name`, `get_game_info`, `get_user_game_progress`,
+  `get_user_game_progress_custom`, `get_user_summary`) with the
+  user-actionable hint "Re-enter the api_key in Settings →
+  Scrapers". Stale roadmap entry; verified 2026-05-02.
 
 #### Pass 42.7 Adopt or remove `PageLifecycle` (MEDIUM, M)
 
