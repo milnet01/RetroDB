@@ -407,8 +407,7 @@ class ArchiveScanner:
         try:
             # Get archive contents
             contents = self._list_archive_contents(archive_path)
-            file_count = len(contents)
-            
+
             # Check for corruption
             if modes.get("corrupted", True):
                 if not self._verify_archive(archive_path):
@@ -762,7 +761,6 @@ class ArchiveScanner:
             extract_folder.mkdir(parents=True, exist_ok=True)
             
             # Extract the archive
-            cmd_info = self.ARCHIVE_COMMANDS[ext]
             if ext == ".zip":
                 cmd = ["unzip", "-o", str(path), "-d", str(extract_folder)]
             elif ext == ".7z":

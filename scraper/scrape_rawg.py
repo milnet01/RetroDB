@@ -247,12 +247,6 @@ def get_game_details(game_id):
     if game.get('genres'):
         genres = [g.get('name') for g in game['genres'] if g.get('name')]
     
-    # Extract tags (can be useful for additional categorization)
-    tags = []
-    if game.get('tags'):
-        # Only get English tags
-        tags = [t.get('name') for t in game['tags'][:10] if t.get('name') and t.get('language') == 'eng']
-    
     # Extract ESRB rating
     esrb_rating = None
     if game.get('esrb_rating'):
