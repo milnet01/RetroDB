@@ -389,8 +389,8 @@
             <h2 class="card-title"><span>💿</span> CHD Converter Settings</h2>
         </div>
         <div class="card-body">
-        <div class="form-group">
-            <label>Conversion Options</label>
+        <div class="form-group" role="group" aria-labelledby="chdConversionOptionsLabel">
+            <div class="form-label" id="chdConversionOptionsLabel">Conversion Options</div>
             <div class="toggle-item">
                 <label class="toggle-switch">
                     <input type="checkbox" id="chdVerifyAfter" {% if settings.chd_verify_after_convert %}checked{% endif %}>
@@ -421,8 +421,8 @@
             <h2 class="card-title"><span>🔍</span> Duplicate Finder Defaults</h2>
         </div>
         <div class="card-body">
-        <div class="form-group">
-            <label>Default Options</label>
+        <div class="form-group" role="group" aria-labelledby="duplicateFinderDefaultsLabel">
+            <div class="form-label" id="duplicateFinderDefaultsLabel">Default Options</div>
             <div class="toggle-item">
                 <label class="toggle-switch">
                     <input type="checkbox" id="ignoreRegionTags" {% if settings.ignore_region_tags %}checked{% endif %}>

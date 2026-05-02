@@ -1,3 +1,37 @@
+- version: 3.5.51
+  date: 2026-05-02
+  tags:
+  - type: a11y
+    label: Pass 41.13c — div-as-button + label-as-group-heading sweep
+  body: |
+    <ul>
+        <li><strong>Pass 41.13c — Templates a11y carry-over from Pass 41.13</strong>. Six <code>&lt;div onclick=&gt;</code> primary actions converted to native <code>&lt;button&gt;</code> (or <code>&lt;label for=&gt;</code> where the click synthesizes a file-input click). One <code>&lt;h2 onclick=&gt;</code> disclosure restructured to wrap a <code>&lt;button aria-expanded&gt;</code> per the WAI-ARIA APG accordion pattern. Eight bare <code>&lt;label&gt;</code> group headings promoted to <code>&lt;div class="form-label"&gt;</code> (or styled span) with <code>role="group" aria-labelledby="..."</code> on the wrapping button-group container.</li>
+        <li><strong>Why</strong>. WCAG 2.1.1 (Keyboard) — <code>&lt;div onclick=&gt;</code> is not focusable and not Enter/Space-activatable; sighted-keyboard users and assistive tech alike skip past these primary actions. WCAG 1.3.1 / 4.1.2 — a <code>&lt;label&gt;</code> over a button group has no form control to associate with; screen readers announce nothing useful. Pass 41.13.A handled the sidebar; this carry-over closes the remaining 14 sites surfaced by the indie-review.</li>
+        <li><strong>div-as-button conversions</strong>:
+            <ul>
+                <li><code>templates/rom_tools_hub.html:201,214,227</code> — three tool cards (Image Resizer, Backfill Alternate Titles, Bulk HLTB Lookup) now <code>&lt;button type="button" class="tool-card"&gt;</code>. Sibling card at line 240 stayed <code>&lt;a&gt;</code> (it navigates).</li>
+                <li><code>templates/base.html:200</code> — sidebar-footer About-trigger now <code>&lt;button type="button" class="version-info"&gt;</code>.</li>
+                <li><code>templates/base.html:539,560</code> — folder-browser parent-row + child-rows (rendered from a JS template literal) now <code>&lt;button type="button" class="folder-item"&gt;</code>.</li>
+                <li><code>templates/game_detail.html:659</code> — <code>&lt;h2&gt;</code> wrapping a <code>&lt;button class="scrape-history-toggle" aria-expanded aria-controls&gt;</code>; <code>toggleScrapeHistory()</code> now flips <code>aria-expanded</code>.</li>
+                <li><code>templates/duplicate_finder.html:460</code> — <code>&lt;h4 class="duplicate-group-header"&gt;</code> wrapping a <code>&lt;button class="duplicate-group-toggle" aria-expanded aria-controls="group-${gi}"&gt;</code>; <code>toggleGroup()</code> flips <code>aria-expanded</code>.</li>
+                <li><code>templates/screenshot_dedup.html:481</code> — same pattern as duplicate_finder; <code>&lt;h4&gt;</code> wraps <code>&lt;button class="game-dedup-toggle"&gt;</code>; <code>toggleGame()</code> flips <code>aria-expanded</code>.</li>
+                <li><code>templates/game_imports.html:191</code> — CLZ upload area converted from <code>&lt;div onclick="document.getElementById('clzFileInput').click()"&gt;</code> to <code>&lt;label for="clzFileInput"&gt;</code> (the canonical pattern for a styled file-input trigger; native click + drag-drop preserved).</li>
+            </ul>
+        </li>
+        <li><strong>label-as-group-heading conversions</strong>:
+            <ul>
+                <li><code>wishlist.html:78</code> Priority, <code>lists.html:54</code> Icon, <code>tags.html:50</code> Tag Color — picker button-groups; bare <code>&lt;label class="form-label"&gt;</code> &rarr; <code>&lt;div class="form-label" id="..."&gt;</code> + <code>role="group" aria-labelledby="..."</code> on the picker container.</li>
+                <li><code>logs.html:748,768</code> Level/View — toolbar uses <code>&lt;span class="group-label"&gt;</code> to keep the existing <code>.toolbar-group</code> CSS (extended the rule to match both <code>label</code> and <code>.group-label</code>).</li>
+                <li><code>chd_converter.html:124</code> File Types to Convert, <code>rom_tools_settings.html:393,425</code> Conversion Options + Default Options, <code>duplicate_finder.html:231</code> Options — toggle-grid headings; <code>&lt;label&gt;</code> &rarr; <code>&lt;div class="form-label" id="..."&gt;</code> + <code>role="group" aria-labelledby="..."</code>.</li>
+                <li><code>_modals/rename_modal.html:8</code> "Current filename:" — labeled a read-only display <code>&lt;div&gt;</code>, not a form control. <code>&lt;label&gt;</code> &rarr; <code>&lt;div class="form-label"&gt;</code>.</li>
+            </ul>
+        </li>
+        <li><strong>CSS resets</strong>. Five <code>.tool-card</code> / <code>.version-info</code> / <code>.folder-item</code> / <code>.duplicate-group-toggle</code> / <code>.game-dedup-toggle</code> rules gained the standard button-as-styled-element reset (<code>background: transparent; border: none; font: inherit; text-align: left; width: 100%; appearance: none</code>) so the converted elements visually match the prior <code>&lt;div&gt;</code> / <code>&lt;a&gt;</code> rendering. CSS bundle rebuilt via <code>build_css.py</code>.</li>
+        <li><strong>Tests</strong>. 15 regression tests in <code>tests/test_pass41_security.py::TestPass41_13cDivAsButton</code> (7 cases) and <code>::TestPass41_13cLabelAsGroupHeading</code> (8 cases). Bucket B (cross-file invariant): asserting at the source-template level that <code>&lt;div onclick=&gt;</code> primary actions don't return and that ARIA wiring (role=group + aria-labelledby + aria-expanded + aria-controls) stays present. Suite 710 &rarr; 725.</li>
+        <li><strong>Source</strong>: <code>roadmap.md</code> Pass 41.13c (carry-over from indie-review 2026-04-24).</li>
+        <li><strong>Version bump 3.5.50 &rarr; 3.5.51</strong>: patch (a11y).</li>
+    </ul>
+
 - version: 3.5.50
   date: 2026-05-02
   tags:

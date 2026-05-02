@@ -65,35 +65,46 @@
 }
 
 .duplicate-group-header {
+    margin: 0;
+    background: var(--bg-dark);
+}
+
+.duplicate-group-toggle {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: var(--bg-dark);
     cursor: pointer;
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    appearance: none;
+    -webkit-appearance: none;
 }
 
-.duplicate-group-header:hover {
+.duplicate-group-toggle:hover {
     background: rgba(76, 201, 240, 0.05);
 }
 
-.duplicate-group-header h4 {
+.duplicate-group-toggle .duplicate-group-title {
     color: var(--text-primary);
     font-size: 0.95rem;
-    margin: 0;
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-.duplicate-group-header .group-stats {
+.duplicate-group-toggle .group-stats {
     display: flex;
     gap: 1rem;
     font-size: 0.85rem;
     color: var(--text-secondary);
 }
 
-.duplicate-group-header .group-stats .wasted {
+.duplicate-group-toggle .group-stats .wasted {
     color: var(--accent-pink);
 }
 
@@ -228,8 +239,8 @@
     </div>
     
     <div class="form-group">
-        <label>Options</label>
-        <div class="toggle-group">
+        <div class="form-label" id="duplicateFinderOptionsLabel">Options</div>
+        <div class="toggle-group" role="group" aria-labelledby="duplicateFinderOptionsLabel">
             <div class="toggle-item">
                 <label class="toggle-switch">
                     <input type="checkbox" id="optRecursive" aria-label="Recursive scan including subfolders" checked>
@@ -457,13 +468,15 @@ function renderDuplicateGroups() {
     duplicateGroups.forEach((group, gi) => {
         html += `
             <div class="duplicate-group">
-                <div class="duplicate-group-header" onclick="toggleGroup(${gi})">
-                    <h4><span id="arrow-${gi}">▼</span> ${escapeHtml(group.name)}</h4>
-                    <div class="group-stats">
-                        <span>${group.count} files</span>
-                        <span class="wasted">Wasted: ${formatBytes(group.wasted)}</span>
-                    </div>
-                </div>
+                <h4 class="duplicate-group-header">
+                    <button type="button" class="duplicate-group-toggle" onclick="toggleGroup(${gi})" aria-expanded="true" aria-controls="group-${gi}">
+                        <span class="duplicate-group-title"><span id="arrow-${gi}">▼</span> ${escapeHtml(group.name)}</span>
+                        <span class="group-stats">
+                            <span>${group.count} files</span>
+                            <span class="wasted">Wasted: ${formatBytes(group.wasted)}</span>
+                        </span>
+                    </button>
+                </h4>
                 <div class="duplicate-group-files" id="group-${gi}">
         `;
         
@@ -488,12 +501,15 @@ function renderDuplicateGroups() {
 function toggleGroup(gi) {
     const group = document.getElementById(`group-${gi}`);
     const arrow = document.getElementById(`arrow-${gi}`);
+    const btn = document.querySelector(`.duplicate-group-toggle[aria-controls="group-${gi}"]`);
     if (group.style.display === 'none') {
         group.style.display = 'block';
         arrow.textContent = '▼';
+        if (btn) btn.setAttribute('aria-expanded', 'true');
     } else {
         group.style.display = 'none';
         arrow.textContent = '▶';
+        if (btn) btn.setAttribute('aria-expanded', 'false');
     }
 }
 

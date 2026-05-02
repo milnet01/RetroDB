@@ -138,7 +138,8 @@
     gap: 8px;
 }
 
-.toolbar-group label {
+.toolbar-group label,
+.toolbar-group .group-label {
     font-size: 0.75rem;
     color: var(--text-muted);
     text-transform: uppercase;
@@ -745,8 +746,8 @@
     <div class="toolbar-separator"></div>
 
     <div class="toolbar-group">
-        <label>Level</label>
-        <div class="level-toggles">
+        <span class="group-label" id="logLevelLabel">Level</span>
+        <div class="level-toggles" role="group" aria-labelledby="logLevelLabel">
             <button type="button" class="level-btn active" data-level="INFO" onclick="LogViewer.toggleLevel('INFO', this)">INFO</button>
             <button type="button" class="level-btn active" data-level="WARNING" onclick="LogViewer.toggleLevel('WARNING', this)">WARN</button>
             <button type="button" class="level-btn active" data-level="ERROR" onclick="LogViewer.toggleLevel('ERROR', this)">ERROR</button>
@@ -765,8 +766,8 @@
     <div class="toolbar-separator"></div>
 
     <div class="toolbar-group view-toggle-group" id="viewToggleGroup">
-        <label>View</label>
-        <div class="view-toggle">
+        <span class="group-label" id="logViewLabel">View</span>
+        <div class="view-toggle" role="group" aria-labelledby="logViewLabel">
             <button type="button" class="view-btn active" data-view="grouped" onclick="LogViewer.setView('grouped', this)">Grouped</button>
             <button type="button" class="view-btn" data-view="flat" onclick="LogViewer.setView('flat', this)">Flat</button>
         </div>

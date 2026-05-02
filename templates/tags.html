@@ -47,8 +47,8 @@
                 <input type="text" id="tagNameInput" class="form-control" placeholder="e.g., Favorites, Backlog, Co-op..." maxlength="50">
             </div>
             <div class="form-group" style="margin-top: var(--spacing-md);">
-                <label class="form-label">Tag Color</label>
-                <div class="tag-color-picker" id="tagColorPicker">
+                <div class="form-label" id="tagColorLabel">Tag Color</div>
+                <div class="tag-color-picker" id="tagColorPicker" role="group" aria-labelledby="tagColorLabel">
                     <button type="button" class="tag-color-swatch active" data-color="#4cc9f0" style="background: #4cc9f0;" onclick="selectTagColor(this)" title="Cyan"></button>
                     <button type="button" class="tag-color-swatch" data-color="#f72585" style="background: #f72585;" onclick="selectTagColor(this)" title="Magenta"></button>
                     <button type="button" class="tag-color-swatch" data-color="#22c55e" style="background: #22c55e;" onclick="selectTagColor(this)" title="Green"></button>

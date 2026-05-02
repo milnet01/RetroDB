@@ -23,6 +23,12 @@
     text-decoration: none;
     color: inherit;
     cursor: pointer;
+    /* button-as-card reset (Pass 41.13c) */
+    font: inherit;
+    text-align: left;
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 .tool-card:hover {
@@ -198,7 +204,7 @@
         </div>
     </a>
 
-    <div class="tool-card" onclick="startImageResize()" style="cursor: pointer;">
+    <button type="button" class="tool-card" onclick="startImageResize()">
         <div class="tool-card-header">
             <div class="tool-card-icon">🖼️</div>
             <div class="tool-card-title">Image Resizer</div>
@@ -209,9 +215,9 @@
         <div class="tool-card-status">
             <span class="status-dot no-deps"></span> No dependencies required
         </div>
-    </div>
+    </button>
 
-    <div class="tool-card" onclick="startAltTitlesBackfill()" style="cursor: pointer;">
+    <button type="button" class="tool-card" onclick="startAltTitlesBackfill()">
         <div class="tool-card-header">
             <div class="tool-card-icon">&#127760;</div>
             <div class="tool-card-title">Backfill Alternate Titles</div>
@@ -222,9 +228,9 @@
         <div class="tool-card-status">
             <span class="status-dot no-deps"></span> Metadata only &middot; no media downloads
         </div>
-    </div>
+    </button>
 
-    <div class="tool-card" onclick="startHltbBulk()" style="cursor: pointer;">
+    <button type="button" class="tool-card" onclick="startHltbBulk()">
         <div class="tool-card-header">
             <div class="tool-card-icon">&#9201;</div>
             <div class="tool-card-title">Bulk HLTB Lookup</div>
@@ -235,7 +241,7 @@
         <div class="tool-card-status">
             <span class="status-dot no-deps"></span> Uses stored alternate titles
         </div>
-    </div>
+    </button>
 
     <a href="{{ url_for('games_hltb.hltb_review_page') }}" class="tool-card" id="hltbReviewCard" style="display:none;">
         <div class="tool-card-header">

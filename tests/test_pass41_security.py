@@ -1869,3 +1869,216 @@ class TestPass41_6CPsnFetchCancelEvent:
             "Pass 41.6.C — outer timeout handler must call fetch_cancelled.set() "
             "to tell the abandoned inner thread to stop writing shared state"
         )
+
+
+# -----------------------------------------------------------------------------
+# 41.13c — div-as-button → button + label-as-group-heading → div role=group
+# -----------------------------------------------------------------------------
+class TestPass41_13cDivAsButton:
+    """WCAG 2.1.1 (keyboard) requires interactive elements to be keyboard-
+    activatable. `<div onclick=>` is not focusable and not Enter/Space-
+    activatable. Pass 41.13c converts six div-as-button primary actions
+    (rom_tools_hub tool cards, base.html version-info + folder-item rows,
+    game_detail scrape-history disclosure, duplicate_finder + screenshot_dedup
+    group disclosures, game_imports CLZ upload area) to native buttons or
+    label-for-input."""
+
+    def test_rom_tools_hub_tool_cards_are_buttons(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'templates/rom_tools_hub.html'),
+            encoding='utf-8'
+        ).read()
+        # The three onclick-driven cards must be <button>, not <div>.
+        for handler in ('startImageResize', 'startAltTitlesBackfill', 'startHltbBulk'):
+            assert f'<button type="button" class="tool-card" onclick="{handler}()"' in body, (
+                f"Pass 41.13c — rom_tools_hub tool card invoking {handler}() "
+                "must be a <button>, not a <div onclick>"
+            )
+        assert '<div class="tool-card" onclick=' not in body, (
+            "Pass 41.13c — no <div class=\"tool-card\" onclick=> may remain "
+            "(WCAG 2.1.1 keyboard activation)"
+        )
+
+    def test_base_version_info_is_button(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'templates/base.html'),
+            encoding='utf-8'
+        ).read()
+        assert '<button type="button" class="version-info"' in body, (
+            "Pass 41.13c — sidebar version-info About-trigger must be a <button>"
+        )
+        assert '<div class="version-info" onclick=' not in body, (
+            "Pass 41.13c — no <div class=\"version-info\" onclick=> may remain"
+        )
+
+    def test_base_folder_browser_items_are_buttons(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'templates/base.html'),
+            encoding='utf-8'
+        ).read()
+        # The folder-item rows are rendered from a JS template literal in
+        # base.html; both parent and child rows should be buttons.
+        assert '<button type="button" class="folder-item folder-parent"' in body, (
+            "Pass 41.13c — folder-parent row must be a <button>"
+        )
+        assert '<button type="button" class="folder-item" onclick="navigateFolder' in body, (
+            "Pass 41.13c — folder-item row must be a <button>"
+        )
+
+    def test_game_detail_scrape_history_uses_button_with_aria_expanded(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'templates/game_detail.html'),
+            encoding='utf-8'
+        ).read()
+        assert '<button type="button" class="scrape-history-toggle"' in body, (
+            "Pass 41.13c — scrape-history disclosure must be a <button>"
+        )
+        assert 'aria-expanded="true"' in body and 'aria-controls="scrapeHistoryContent"' in body, (
+            "Pass 41.13c — scrape-history disclosure button must declare "
+            "aria-expanded + aria-controls (WAI-ARIA APG accordion pattern)"
+        )
+        assert "btn.setAttribute('aria-expanded'" in body, (
+            "Pass 41.13c — toggleScrapeHistory must flip aria-expanded on "
+            "the disclosure button"
+        )
+
+    def test_duplicate_finder_group_header_is_button(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'templates/duplicate_finder.html'),
+            encoding='utf-8'
+        ).read()
+        assert '<button type="button" class="duplicate-group-toggle"' in body, (
+            "Pass 41.13c — duplicate group header must be a <button> "
+            "(disclosure pattern)"
+        )
+        assert 'aria-expanded' in body and 'aria-controls="group-${gi}"' in body, (
+            "Pass 41.13c — duplicate group disclosure must declare "
+            "aria-expanded + aria-controls"
+        )
+        assert '<div class="duplicate-group-header" onclick=' not in body, (
+            "Pass 41.13c — no <div class=\"duplicate-group-header\" onclick=> "
+            "may remain"
+        )
+
+    def test_screenshot_dedup_game_header_is_button(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'templates/screenshot_dedup.html'),
+            encoding='utf-8'
+        ).read()
+        assert "class=\"game-dedup-toggle\"" in body, (
+            "Pass 41.13c — screenshot-dedup game header must be a <button> "
+            "with class 'game-dedup-toggle'"
+        )
+        assert 'aria-expanded' in body, (
+            "Pass 41.13c — screenshot-dedup disclosure must declare "
+            "aria-expanded"
+        )
+        assert "<div class=\"game-dedup-header\" onclick=" not in body, (
+            "Pass 41.13c — no <div class=\"game-dedup-header\" onclick=> "
+            "may remain"
+        )
+
+    def test_game_imports_clz_upload_area_is_label(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'templates/game_imports.html'),
+            encoding='utf-8'
+        ).read()
+        # The upload area triggers a hidden file input — proper semantic
+        # is <label for="...">, not <div onclick=document.getElementById...click()>.
+        assert '<label class="upload-area" id="clzUploadArea" for="clzFileInput">' in body, (
+            "Pass 41.13c — CLZ upload area must be a <label for=\"clzFileInput\">, "
+            "not a <div onclick=> that synthesizes a click"
+        )
+        assert "document.getElementById('clzFileInput').click()" not in body, (
+            "Pass 41.13c — synthetic click() trigger replaced by native "
+            "<label for=> association"
+        )
+
+
+class TestPass41_13cLabelAsGroupHeading:
+    """WCAG 1.3.1 / 4.1.2 — a `<label>` over a button group has no form
+    control to associate with. Pass 41.13c promotes those bare labels to
+    `<div class="form-label">` (or styled span) and adds `role="group"
+    aria-labelledby="..."` on the wrapper containing the buttons."""
+
+    def test_wishlist_priority_label_promoted(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'templates/wishlist.html'),
+            encoding='utf-8'
+        ).read()
+        assert '<div class="form-label" id="wishlistPriorityLabel">Priority</div>' in body, (
+            "Pass 41.13c — wishlist Priority label-as-heading must be a "
+            "<div class=\"form-label\">"
+        )
+        assert 'role="group" aria-labelledby="wishlistPriorityLabel"' in body, (
+            "Pass 41.13c — priority-picker must declare role=group + "
+            "aria-labelledby pointing at the label div"
+        )
+        assert '<label class="form-label">Priority</label>' not in body, (
+            "Pass 41.13c — bare <label class=form-label>Priority</label> "
+            "must not return"
+        )
+
+    def test_lists_icon_label_promoted(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'templates/lists.html'),
+            encoding='utf-8'
+        ).read()
+        assert '<div class="form-label" id="listIconLabel">Icon</div>' in body
+        assert 'role="group" aria-labelledby="listIconLabel"' in body
+
+    def test_tags_color_label_promoted(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'templates/tags.html'),
+            encoding='utf-8'
+        ).read()
+        assert '<div class="form-label" id="tagColorLabel">Tag Color</div>' in body
+        assert 'role="group" aria-labelledby="tagColorLabel"' in body
+
+    def test_logs_level_view_labels_promoted(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'templates/logs.html'),
+            encoding='utf-8'
+        ).read()
+        # logs uses the toolbar's group-label class to preserve toolbar styling.
+        assert '<span class="group-label" id="logLevelLabel">Level</span>' in body
+        assert '<span class="group-label" id="logViewLabel">View</span>' in body
+        assert 'aria-labelledby="logLevelLabel"' in body
+        assert 'aria-labelledby="logViewLabel"' in body
+
+    def test_chd_converter_file_types_label_promoted(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'templates/chd_converter.html'),
+            encoding='utf-8'
+        ).read()
+        assert '<div class="form-label" id="chdFileTypesLabel">File Types to Convert</div>' in body
+        assert 'aria-labelledby="chdFileTypesLabel"' in body
+
+    def test_rom_tools_settings_group_labels_promoted(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'templates/rom_tools_settings.html'),
+            encoding='utf-8'
+        ).read()
+        assert 'id="chdConversionOptionsLabel">Conversion Options</div>' in body
+        assert 'aria-labelledby="chdConversionOptionsLabel"' in body
+        assert 'id="duplicateFinderDefaultsLabel">Default Options</div>' in body
+        assert 'aria-labelledby="duplicateFinderDefaultsLabel"' in body
+
+    def test_duplicate_finder_options_label_promoted(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'templates/duplicate_finder.html'),
+            encoding='utf-8'
+        ).read()
+        assert '<div class="form-label" id="duplicateFinderOptionsLabel">Options</div>' in body
+        assert 'aria-labelledby="duplicateFinderOptionsLabel"' in body
+
+    def test_rename_modal_current_filename_not_label(self):
+        body = open(
+            os.path.join(_REPO_ROOT, 'templates/_modals/rename_modal.html'),
+            encoding='utf-8'
+        ).read()
+        assert '<div class="form-label">Current filename:</div>' in body, (
+            "Pass 41.13c — \"Current filename:\" must be a <div>, not a "
+            "<label> (no form control to associate)"
+        )
+        assert '<label>Current filename:</label>' not in body

@@ -1573,7 +1573,24 @@ paths or silent-corruption vectors under routine use.
   click handlers, gains keyboard activation). Replace bare `<label>`
   group headings with `<fieldset><legend>`. Browser-verify each page
   on desktop + mobile (~375px) to confirm visual layout intact.
-- **Status**: todo (carry-over from Pass 41.13)
+- **Status**: done (v3.5.51) — six div-as-button primary actions
+  converted to native `<button>` (rom_tools_hub × 3 tool cards,
+  base.html version-info + folder-item rows × 2, game_imports CLZ
+  upload area as `<label for=>`). Three disclosure patterns
+  restructured per WAI-ARIA APG accordion (game_detail scrape-
+  history, duplicate_finder group, screenshot_dedup game) — each
+  uses `<hN>` wrapping `<button aria-expanded aria-controls>` with
+  the toggle JS flipping aria-expanded. Eight bare-label group
+  headings promoted to `<div class="form-label" id="...">` (or
+  styled span) with `role="group" aria-labelledby="..."` on the
+  wrapping button-group container; chose the div+aria-labelledby
+  pattern over `<fieldset><legend>` because legend's default styling
+  is harder to override consistently and the wrapper containers
+  already exist. Five CSS rules gained the button-as-styled-element
+  reset (background:transparent; border:none; font:inherit;
+  text-align:left; width:100%; appearance:none). 15 regression
+  tests in `TestPass41_13cDivAsButton` (7) + `TestPass41_13c
+  LabelAsGroupHeading` (8); suite 710 → 725.
 
 #### Pass 41.14 Image/media — Pillow bomb-error not caught + ESRGAN SSRF gap + `rglob` follows symlinks
 

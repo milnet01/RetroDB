@@ -112,7 +112,7 @@
 .info-box-text { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; }
 
 /* Upload Area (CLZ) */
-.upload-area { border: 2px dashed var(--card-border); border-radius: var(--radius-lg); padding: var(--spacing-xl); text-align: center; cursor: pointer; transition: all 0.2s ease; margin-bottom: var(--spacing-lg); }
+.upload-area { display: block; border: 2px dashed var(--card-border); border-radius: var(--radius-lg); padding: var(--spacing-xl); text-align: center; cursor: pointer; transition: all 0.2s ease; margin-bottom: var(--spacing-lg); }
 .upload-area:hover, .upload-area.dragover { border-color: var(--primary-cyan); background: rgba(76, 201, 240, 0.05); }
 .upload-icon { font-size: 3rem; margin-bottom: var(--spacing-md); }
 .upload-text { color: var(--text-secondary); margin-bottom: var(--spacing-xs); }
@@ -188,11 +188,11 @@
 
         <div class="config-section">
             <h2>📄 Upload CLZ Export</h2>
-            <div class="upload-area" id="clzUploadArea" onclick="document.getElementById('clzFileInput').click()">
+            <label class="upload-area" id="clzUploadArea" for="clzFileInput">
                 <div class="upload-icon">📄</div>
                 <div class="upload-text">Click or drag a CLZ PDF file here</div>
                 <div class="upload-subtext">Supports PDF exports from CLZ Games app</div>
-            </div>
+            </label>
             <input type="file" id="clzFileInput" accept=".pdf" style="display: none;" onchange="uploadClzFile(this)">
         </div>
 

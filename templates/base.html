@@ -197,9 +197,9 @@
             </nav>
             
             <div class="sidebar-footer">
-                <div class="version-info" onclick="showAboutModal()" style="cursor: pointer;" title="Click for more info">
+                <button type="button" class="version-info" onclick="showAboutModal()" title="Click for more info">
                     <span class="version-icon">ℹ️</span> RetroDB v{{ config.APP_VERSION }}
-                </div>
+                </button>
             </div>
             
             <!-- About Modal (in sidebar to be globally available) -->
@@ -536,11 +536,11 @@
         // Parent folder link (if not at root)
         if (data.parent_path) {
             html += `
-                <div class="folder-item folder-parent" onclick="navigateFolder('${escapeAttr(data.parent_path)}')">
+                <button type="button" class="folder-item folder-parent" onclick="navigateFolder('${escapeAttr(data.parent_path)}')">
                     <span class="folder-icon">📁</span>
                     <span class="folder-name">..</span>
                     <span class="folder-info">Parent folder</span>
-                </div>
+                </button>
             `;
         }
         
@@ -557,11 +557,11 @@
             if (folder.subfolder_count > 0) info.push(`${folder.subfolder_count} folders`);
             
             html += `
-                <div class="folder-item" onclick="navigateFolder('${escapeAttr(folder.path)}')">
+                <button type="button" class="folder-item" onclick="navigateFolder('${escapeAttr(folder.path)}')">
                     <span class="folder-icon">📁</span>
                     <span class="folder-name">${escapeHtml(folder.name)}</span>
                     <span class="folder-info">${info.join(', ') || 'Empty'}</span>
-                </div>
+                </button>
             `;
         }
         
