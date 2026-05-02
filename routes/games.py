@@ -7,11 +7,8 @@
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, session, g, make_response, abort
 import hashlib
 import os
-import re
 import json
 import logging
-import time
-import threading
 from datetime import datetime, timezone
 
 import config
@@ -19,7 +16,6 @@ import settings_manager
 from services.database import query, execute, safe_column
 from services.auth import login_required, editor_required, has_permission, permission_required
 from services.api_helpers import handle_api_errors
-from services.security import safe_filename
 from services.game_utils import (
     reset_game_title_from_filename,
     get_ra_supported_systems,
@@ -373,7 +369,6 @@ def game_detail(game_id):
                             system_folder = game['system_folder'] if 'system_folder' in game.keys() else ''
 
                             if use_hybrid:
-                                from scraper.scraper_manager import scraper_manager
                                 all_results = session.get('last_search_results', [])
 
                                 # Parse explicit secondary selections from UI checkboxes

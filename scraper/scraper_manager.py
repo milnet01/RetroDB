@@ -38,7 +38,6 @@ except ImportError:
 # Cache helpers — re-exported for hybrid_scraper and any legacy importer.
 from scraper.scraper_cache import (
     cache_screenscraper_result,
-    get_cached_screenscraper_result,
 )
 from scraper.match_scorer import (
     calculate_ss_score,
@@ -220,7 +219,6 @@ try:
     from .scrape_rawg import (
         search_games as search_rawg,
         get_game_details as fetch_rawg,
-        check_api_status as check_rawg_status
     )
     RAWG_AVAILABLE = True
     logger.info("RAWG.io scraper module loaded successfully")
@@ -232,8 +230,6 @@ SCREENSCRAPER_AVAILABLE = False
 try:
     from .scrape_screenscraper import (
         search_game as search_screenscraper,
-        get_game_info as fetch_screenscraper,
-        check_credentials as check_screenscraper_status
     )
     SCREENSCRAPER_AVAILABLE = True
     logger.info("ScreenScraper scraper module loaded successfully")
@@ -243,10 +239,7 @@ except ImportError as e:
 # Try to import AI metadata scraper
 AI_AVAILABLE = False
 try:
-    from .scrape_ai import (
-        get_game_details as fetch_ai,
-        check_api_status as check_ai_status
-    )
+    import scraper.scrape_ai  # noqa: F401 — availability probe; functions called via scrape_ai module elsewhere
     AI_AVAILABLE = True
     logger.info("AI metadata scraper module loaded successfully")
 except ImportError as e:

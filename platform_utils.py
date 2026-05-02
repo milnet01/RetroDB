@@ -4,7 +4,6 @@
 # Used across the application to ensure Linux/Windows/macOS compatibility.
 # ================================================================================
 
-import os
 import sys
 import socket
 

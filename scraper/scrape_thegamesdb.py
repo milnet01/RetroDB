@@ -5,17 +5,15 @@
 # Uses cached lookups for publishers/developers/genres to minimize API calls.
 # =============================================================================
 
-import requests
 import os
 import re
-import json
 import logging
 import sys
 import time
 
 # Add parent directory to path for config import
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import IMAGE_PATH, THEGAMESDB_API_KEY, THEGAMESDB_PUBLIC_API_KEY, TGDB_SYSTEM_MAP, TGDB_GENRE_MAP
+from config import IMAGE_PATH, TGDB_SYSTEM_MAP, TGDB_GENRE_MAP
 
 from scraper.base_scraper import http_get, get_scraper_conn, download_image
 import config as _config

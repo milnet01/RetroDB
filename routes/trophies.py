@@ -7,14 +7,11 @@
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash, g
 import os
 import logging
-import json
 import requests
 import threading
-import sqlite3
-from datetime import datetime
 
 import config
-from services.database import get_db, query, execute
+from services.database import query, execute
 from services.auth import login_required, admin_required, editor_required, get_user_settings
 from services.jobs.base import _download_psn_trophy_image as download_psn_trophy_image
 

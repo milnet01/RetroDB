@@ -11,7 +11,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import IMAGE_PATH, STATIC_PATH
-from services.normalization import normalize_genre, normalize_modes
+from services.normalization import normalize_genre
 from services.game_utils import generate_sort_title, infer_rating_from_content, RATING_SYSTEM_KEYS, RATING_SYSTEMS
 from services.game_metadata_service import cross_map_ratings
 
@@ -20,16 +20,12 @@ logger = logging.getLogger(__name__)
 # Import individual scrapers
 from scraper.base_scraper import get_scraper_conn
 from scraper.scrape_esde import (
-    apply_esde_metadata,
-    extract_region_from_filename,
-    derive_game_modes
+    extract_region_from_filename
 )
 from scraper.scrape_thegamesdb import (
     fetch_game_details as fetch_tgdb_details,
-    _download_tgdb_image as download_tgdb_image,
 )
 from scraper.scrape_igdb import (
-    fetch_game_details as fetch_igdb_details,
     igdb_auth,
     igdb_request
 )

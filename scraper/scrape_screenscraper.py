@@ -10,7 +10,6 @@ API Documentation: https://www.screenscraper.fr/webapi2.php
 
 import requests
 import logging
-import time
 import hashlib
 import os
 

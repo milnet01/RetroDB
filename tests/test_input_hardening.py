@@ -4,8 +4,6 @@
 # they're not trying to reproduce the full end-to-end flow, only to ensure
 # the guard is in place and rejects the value it's supposed to reject.
 
-import os
-import sys
 from unittest.mock import patch, MagicMock
 
 import pytest

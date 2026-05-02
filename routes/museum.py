@@ -6,13 +6,11 @@
 # =============================================================================
 
 from flask import Blueprint, render_template, jsonify, request
-import ipaddress
 import json
 import os
 import re
 import logging
 import requests
-import socket
 import time
 from urllib.parse import urlparse
 

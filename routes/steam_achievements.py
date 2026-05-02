@@ -15,7 +15,7 @@ import logging
 
 from flask import Blueprint, render_template, jsonify, g
 
-from services.database import query, execute, get_db
+from services.database import query, get_db
 from services.auth import login_required, editor_required
 
 logger = logging.getLogger(__name__)

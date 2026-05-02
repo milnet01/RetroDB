@@ -1,3 +1,16 @@
+- version: 3.5.58
+  date: 2026-05-02
+  tags:
+  - type: chore
+    label: Sweep 71 unused imports across the repo
+  body: |
+    <ul>
+        <li><strong>Hygiene sweep — unused-import cleanup</strong>. <code>ruff check --select F401</code> reported 71 unused imports across 32 files (app.py, routes/, scraper/, services/, tests/). Driven by the rule-of-three guidance in <code>~/.claude/CLAUDE.md</code> §11 ("clean up orphans your own change creates") aggregated across recent passes — Pass 38.3 (installer split), Pass 38.7 (platform-sync consolidation), Pass 38.8 (resume-path helpers), Pass 42.1 (normalize_game_edit), Pass 42.5 (CHD converter dedup) all left dangling imports as their helpers shifted location.</li>
+        <li><strong>Auto-fixed (66)</strong>: <code>ruff check --select F401 --fix</code> handled module-level dead imports (e.g. <code>routes/achievements.py</code>'s <code>datetime</code> + <code>timezone</code>, <code>routes/games.py</code>'s <code>re</code> + <code>time</code> + <code>threading</code> + <code>safe_filename</code>, <code>routes/museum.py</code>'s <code>ipaddress</code> + <code>socket</code>, <code>routes/trophies.py</code>'s <code>json</code> + <code>sqlite3</code> + <code>datetime</code> + <code>get_db</code>) and inside-function imports (<code>scraper/retroachievements.py</code>'s <code>import time as _time</code>, <code>services/jobs/platform_sync.py</code>'s redundant <code>get_achievement_schema</code> at line 373 — already imported once at line 147).</li>
+        <li><strong>Manual sweep (5)</strong>: <code>scraper/scraper_manager.py</code>'s availability-probe blocks (RAWG / ScreenScraper / AI) carried <code>check_api_status as check_*_status</code> + <code>fetch_*</code> aliases that were never called — verified zero external callers (<code>routes/scraper.py</code> imports <code>check_api_status</code> directly from <code>scraper.scrape_ai</code>, not via the manager re-export). Removed the unused aliases; the AI block now reads <code>import scraper.scrape_ai  # noqa: F401 — availability probe</code> since none of its functions are surfaced through the manager namespace. RAWG / ScreenScraper still re-export the names that <em>are</em> used in this file.</li>
+        <li><strong>Test cleanup</strong>: 12 test files had unused imports (<code>pytest</code> on files using only <code>assert</code>, <code>os</code>/<code>sys</code> on files that don't touch the filesystem, redundant <code>import time</code> shadowing the function-local one). Same scope — kept under the F401 lint rule.</li>
+        <li><strong>Behaviour</strong>: zero functional change. Net diff <code>-53 lines</code> across 32 files; no runtime imports, no side-effects, no public-API surface changes. Suite 764/764 green; ruff <code>F401</code> count 71 → 0.</li>
+    </ul>
 - version: 3.5.57
   date: 2026-05-02
   tags:

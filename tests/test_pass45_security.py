@@ -185,7 +185,6 @@ class TestPass45_3AiFillIntFields:
     def _capture_updates(monkeypatch, *, ai_data, game_row):
         """Drive routes.games_ai.api_game_ai_fill end-to-end with stubbed I/O
         and return the (sql, values) tuple passed to ``execute``."""
-        import importlib
 
         import app as app_module
         import routes.games_ai as ga
@@ -866,7 +865,6 @@ class TestPass45_6DecompressionBomb:
     def test_image_utils_module_sets_max_image_pixels(self):
         """Importing services.image_utils must install the cap on the
         global Pillow Image module, not just inside one helper."""
-        import importlib
         import services.image_utils  # noqa: F401 — import for side-effect
         from PIL import Image
         # The cap is set in services/image_utils.py at import time.
@@ -1846,7 +1844,6 @@ class TestPass45_13IgdbCacheAndRedactor:
         """The lock object must exist and be a threading.Lock — the same
         type the redaction tests use."""
         from scraper import scrape_igdb
-        import threading
         # threading.Lock returns a `lock` instance whose type isn't directly
         # importable; check the acquire/release interface instead.
         assert hasattr(scrape_igdb, '_igdb_token_cache_lock'), (

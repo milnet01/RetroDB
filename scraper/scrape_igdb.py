@@ -12,7 +12,7 @@ import sys
 
 # Add parent directory to path for config import
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import DB_PATH, IMAGE_PATH, IGDB_PLATFORM_MAP
+from config import IMAGE_PATH, IGDB_PLATFORM_MAP
 import config as _config
 
 from scraper.base_scraper import http_post, download_image, get_scraper_conn

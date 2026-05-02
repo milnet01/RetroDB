@@ -6,7 +6,6 @@ Covers the Pass 11.1 upgrade from 100k to 600k iterations and the
 
 import hashlib
 
-import pytest
 
 from services.auth import (
     PBKDF2_ITERATIONS,

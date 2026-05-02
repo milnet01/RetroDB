@@ -1178,7 +1178,6 @@ class TestPass41_14CRglobSymlinkGuard:
         """Functional smoke: the helper must reject a path whose resolved
         location lies outside root."""
         from scraper.rom_tools import _safe_under_root
-        from pathlib import Path
         root = tmp_path / 'roms'
         root.mkdir()
         outside = tmp_path / 'outside.bin'
@@ -1750,7 +1749,7 @@ class TestPass41_6ASingletonLock:
         (non-blocking refusal). Real cross-process testing would need a
         subprocess; this verifies the same-process flock semantics."""
         from services.jobs.base import (
-            acquire_job_singleton_lock, release_job_singleton_lock,
+            acquire_job_singleton_lock,
         )
         try:
             import fcntl  # noqa: F401

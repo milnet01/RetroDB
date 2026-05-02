@@ -3,7 +3,6 @@
 # silently drop WebP conversion or break srcset emission.
 
 import io
-import os
 
 import pytest
 from PIL import Image
@@ -210,7 +209,6 @@ class TestFinalizePipeline:
     def test_jpeg_bytes_to_webp_path_full_pipeline(self, tmp_path, monkeypatch, jpeg_bytes):
         """End-to-end: bytes arrive as JPEG but path is `.webp` → ingest writes
         WebP, standardizes size, generates `-sm` / `-md` siblings."""
-        import config
         from services.image_utils import finalize_downloaded_image
 
         boxart_dir = tmp_path / 'boxart'

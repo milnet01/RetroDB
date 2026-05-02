@@ -18,7 +18,6 @@
 # decorator-stack regex (functional anonymous-redirect coverage exists in
 # TestDestructiveEndpointsRequireAuth).
 
-import hashlib
 import os
 import pytest
 

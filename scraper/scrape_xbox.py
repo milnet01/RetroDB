@@ -6,8 +6,6 @@
 # =============================================================================
 
 import logging
-import json
-import os
 import time
 import requests
 from urllib.parse import urlencode

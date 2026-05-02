@@ -6,7 +6,6 @@
 # =============================================================================
 
 from flask import Flask, render_template, request, redirect, url_for, jsonify, session, g, send_from_directory, abort
-import sqlite3
 import gzip
 import os
 import sys
@@ -15,8 +14,8 @@ import json
 import re
 import secrets
 import time
-from datetime import datetime, timedelta, timezone
-from zoneinfo import ZoneInfo, available_timezones
+from datetime import timedelta
+from zoneinfo import available_timezones
 
 # Prevent decompression bomb attacks from scraped/uploaded images
 from PIL import Image
@@ -55,15 +54,14 @@ import log_manager
 
 # Import services layer
 from services.atomic_io import atomic_write_json
-from services.database import query, execute
+from services.database import query
 from services.auth import (
     hash_password, get_current_user, get_user_settings,
-    has_permission, login_required, admin_required
+    has_permission, login_required
 )
 from services.game_utils import (
     get_rating_image_map_js, get_rating_system_names_js,
-    get_rating_crossmap_js, RATING_SYSTEM_KEYS,
-    RATING_SYSTEMS, RATING_VALUES
+    get_rating_crossmap_js, RATING_SYSTEM_KEYS
 )
 from services.template_filters import register_filters as _register_template_filters
 from services.database_init import init_database, ensure_user_tables

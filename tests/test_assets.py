@@ -2,7 +2,6 @@
 
 import json
 import os
-import tempfile
 from unittest.mock import patch
 
 import pytest
@@ -61,7 +60,6 @@ class TestAssetUrl:
 
         # Rewrite with a new hash and bump mtime explicitly — on fast filesystems
         # the second write can land in the same whole second.
-        import time as _time
         mtime1 = os.path.getmtime(manifest)
         manifest.write_text(json.dumps({'js/core.bundle.js': 'v2'}))
         new_mtime = mtime1 + 2

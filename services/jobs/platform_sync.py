@@ -370,7 +370,7 @@ class SteamSyncJob:
 
     def _run_sync(self):
         """Background sync thread"""
-        from scraper.scrape_steam import get_player_achievements, get_achievement_schema
+        from scraper.scrape_steam import get_player_achievements
 
         _last_persist_time = time.time()
         persist_id = None

@@ -14,7 +14,7 @@ import fnmatch
 import tempfile
 from pathlib import Path
 from datetime import datetime
-from typing import List, Set, Optional, Dict, Any
+from typing import List, Optional, Dict, Any
 from dataclasses import dataclass, field, asdict
 import logging
 

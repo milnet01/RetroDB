@@ -1192,7 +1192,7 @@ def reset_game_title_from_filename(game_id, conn=None):
     Returns:
         The new title, or None if failed
     """
-    from services.database import query, execute, get_db
+    from services.database import get_db
     
     close_conn = False
     if conn is None:

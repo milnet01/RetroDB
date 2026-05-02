@@ -10,7 +10,6 @@ import logging
 import hashlib
 import os
 import sys
-import json
 
 # Add parent directory to path for config import
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -156,7 +155,6 @@ def search_game_by_name(game_name, console_id):
     2. Word-based match (all significant words must be present)
     3. High similarity threshold (>85%)
     """
-    import time as _time
 
     username, api_key = get_ra_credentials()
 
