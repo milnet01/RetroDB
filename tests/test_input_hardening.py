@@ -186,18 +186,6 @@ class TestScraperDownloadCaps:
 # 25.8 — List-endpoint row caps
 # ------------------------------
 class TestListRowCaps:
-    def test_recently_viewed_endpoint_removed(self):
-        """Pass 41.9 — `/api/recently-viewed` was deleted (zero callers;
-        the dashboard reads `user_game_views` per-user via inline query).
-        Confirm the rule is gone from the URL map so it can't be re-
-        registered without intent."""
-        import app as app_module
-        rules = {r.rule for r in app_module.app.url_map.iter_rules()}
-        assert '/api/recently-viewed' not in rules, (
-            "Pass 41.9 — /api/recently-viewed must be deleted; the per-user "
-            "dashboard query in app.py replaces it"
-        )
-
     def test_max_list_rows_constant(self):
         import config
         assert hasattr(config, 'MAX_LIST_ROWS')

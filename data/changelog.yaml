@@ -1,3 +1,29 @@
+- version: 3.5.53
+  date: 2026-05-02
+  tags:
+  - type: refactor
+    label: Pass 42.9 — Test-suite hygiene sweep (drop 3 redundant tests)
+  body: |
+    <ul>
+        <li><strong>Pass 42.9 — test-suite hygiene sweep</strong>. Audited the entire 749-test suite for accuracy / validity / redundancy / duplication / efficiency. Result: 3 actionable removals, ~70 lines deleted, suite still green. The other ~95% of the suite is clean — independent invariants per file, no name collisions, lower-bound rollout counts robust to growth, and one prior "passes for the wrong reason" hazard already self-corrected (Pass 45.1's CSRF-shadowing fix).</li>
+        <li><strong>Removals</strong>:
+            <ul>
+                <li><strong>Literal duplicate</strong>. <code>tests/test_input_hardening.py::TestListRowCaps::test_recently_viewed_endpoint_removed</code> — same <code>'/api/recently-viewed' not in url_map</code> assertion as <code>tests/test_pass41_security.py::TestPass41_9BPerUserViews::test_recently_viewed_endpoint_deleted</code>. The Pass 41 copy is strictly stronger (also greps that the function symbol is gone from <code>routes/games.py</code>). Deleted the older copy.</li>
+                <li><strong>Misplaced literal duplicate</strong>. <code>tests/test_pass45_security.py::TestPass45_20ButtonTypeSweep::test_chmod_before_verify_in_backup</code> — re-pin of Pass 45.5 living in the unrelated button-sweep class. The Pass 45.5 home (<code>TestPass45_5AtomicWrite::test_backup_database_chmods_before_verify</code>) carries the same chmod-position assertion plus an end-to-end backup smoke that the misplaced copy omitted. Deleted.</li>
+                <li><strong>Subsumed regression marker</strong>. <code>tests/test_pass40_security.py::TestPass40_12ToastControllerXss::test_no_inline_onclick_with_template_interpolation</code> — historical pin for one specific <code>onclick="...cancelQueued..."</code> string. Now strictly subsumed by Pass 45.4's <code>test_toast_controller_has_no_inline_onclicks</code>, which asserts NO inline onclick anywhere in <code>toast-controller.js</code> — would catch any reintroduction of this exact bug shape. The class's other test (<code>test_system_name_escaped</code>) remains: it pins a different invariant (raw-interpolation of <code>job.system_name</code>) that no other test covers. Class docstring updated to record the subsumption.</li>
+            </ul>
+        </li>
+        <li><strong>Out of scope (considered, kept)</strong>:
+            <ul>
+                <li><code>_REPO_ROOT</code> module-level constant duplicated in 12 test files. Lifting it to <code>conftest.py</code> / a package <code>__init__.py</code> looked attractive but each occurrence is paired with a <code>sys.path.insert(0, _REPO_ROOT)</code> mutation that imports app modules; refactoring those would require either making <code>tests/</code> a Python package (changes pytest collection semantics, low-risk but real) or shimming through a helper module. Deferred — 12 lines of trivial duplication is cheaper than the import-path complexity.</li>
+                <li>10 tests use <code>'Pass NN.X' in body</code> comment-pin assertions. Fragile if comments rot, but each is paired with a structural assertion in a window — they degrade to false-negative-then-broken-test, not silent pass. Acceptable.</li>
+            </ul>
+        </li>
+        <li><strong>Suite</strong>: 749 → 746 tests (-3, no coverage loss). Wall-time 3.39s → 3.45s (within run-to-run noise). All green.</li>
+        <li><strong>Source</strong>: in-conversation audit 2026-05-02 ("audit of all tests: accurate / valid / redundant / duplicated / optimised / efficient").</li>
+        <li><strong>Version bump 3.5.52 &rarr; 3.5.53</strong>: patch (test-only cleanup, no production behaviour change).</li>
+    </ul>
+
 - version: 3.5.52
   date: 2026-05-02
   tags:

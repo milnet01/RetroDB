@@ -902,18 +902,12 @@ class TestPass40_11ChdAtomicConversion:
 # -----------------------------------------------------------------------------
 class TestPass40_12ToastControllerXss:
     """job.system_name was interpolated into toast.innerHTML without
-    escape; the inline onclick="...cancelQueued('${type}', '${job.job_id}')"
-    used a JS-string-in-HTML-attribute double-decode context."""
+    escape; the inline onclick was migrated to addEventListener.
 
-    def test_no_inline_onclick_with_template_interpolation(self):
-        import os
-        repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        path = os.path.join(repo, 'static', 'js', 'toast-controller.js')
-        src = open(path).read()
-        # Find the cancelQueued path and assert no onclick="..." with
-        # ${...} interpolation remains.
-        assert "onclick=\"event.stopPropagation(); UnifiedToastController.cancelQueued" not in src, \
-            'inline onclick with cancelQueued must use addEventListener (Pass 40.12)'
+    The "no inline onclick" half of this contract is now subsumed by
+    Pass 45.4's `test_toast_controller_has_no_inline_onclicks` (asserts the
+    strictly stronger property: NO inline onclick anywhere in the file).
+    Only the system_name escape pin lives here — no other test covers it."""
 
     def test_system_name_escaped(self):
         import os

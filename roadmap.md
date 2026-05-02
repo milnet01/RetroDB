@@ -2160,6 +2160,49 @@ paths or silent-corruption vectors under routine use.
   the `enabled` lookup it wrapped is read directly inside
   `search_games`). CSP nonce infrastructure stays gated on FU.1.
 
+#### Pass 42.9 Test-suite hygiene sweep (LOW, S)
+
+- **Target**: `tests/` — drop redundant / misplaced / subsumed tests
+  surfaced by an end-to-end audit (749-test suite, 12k LoC).
+- **Why**: The audit asked the six standard questions — accurate /
+  valid / redundant / duplicated / optimised / efficient. Suite is
+  fast (3.4s), green, and ~95% clean, but three tests had drifted into
+  redundancy as later passes pinned strictly-stronger invariants
+  elsewhere.
+- **Plan**: delete the three; record subsumption in the surviving
+  class's docstring so future-readers don't re-add the pin.
+- **Status**: done (v3.5.53) — three deletions, suite 749 → 746:
+  - `test_input_hardening.py::test_recently_viewed_endpoint_removed`
+    — literal duplicate of `test_pass41_security.py
+    ::test_recently_viewed_endpoint_deleted` (Pass 41 copy is
+    stronger; also greps the function symbol is gone).
+  - `test_pass45_security.py::TestPass45_20ButtonTypeSweep
+    ::test_chmod_before_verify_in_backup` — re-pin of Pass 45.5
+    misplaced in the button-sweep class. The Pass 45.5 home
+    (`TestPass45_5AtomicWrite::test_backup_database_chmods_before_
+    verify`) carries the same assertion plus an end-to-end backup
+    smoke.
+  - `test_pass40_security.py::TestPass40_12ToastControllerXss
+    ::test_no_inline_onclick_with_template_interpolation` — historical
+    pin for one specific `onclick=...cancelQueued...` string. Now
+    strictly subsumed by Pass 45.4's
+    `test_toast_controller_has_no_inline_onclicks` ("NO inline onclick
+    anywhere in toast-controller.js"). Sibling test
+    `test_system_name_escaped` retained — it pins a different
+    invariant (raw-interpolation of `job.system_name`) that no other
+    test covers; class docstring updated to record the subsumption.
+- **Out of scope** (considered, kept):
+  - `_REPO_ROOT = os.path.dirname(...)` constant duplicated across
+    12 test files. Lifting to `conftest.py` looked attractive but
+    each occurrence is paired with a `sys.path.insert` mutation;
+    refactoring would require either making `tests/` a Python package
+    (changes pytest collection semantics) or shimming through a
+    helper module. 12 lines of trivial duplication is cheaper.
+  - 10 tests use `'Pass NN.X' in body` comment-pin assertions.
+    Fragile if comments rot, but each is paired with a structural
+    assertion in a window — they degrade to broken-test, not silent
+    pass. Acceptable.
+
 ---
 
 ### Internationalization (i18n) — language packs

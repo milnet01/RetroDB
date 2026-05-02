@@ -2687,23 +2687,6 @@ class TestPass45_20ButtonTypeSweep:
     submit buttons typically didn't have onclick (they relied on the
     form's submit handler), so the sweep doesn't break them."""
 
-    def test_chmod_before_verify_in_backup(self):
-        """Re-pin Pass 45.5 contract: chmod must precede the verify-open
-        in backup_database."""
-        path = os.path.join(_REPO_ROOT, 'services', 'database.py')
-        with open(path, encoding='utf-8') as f:
-            body = f.read()
-        idx = body.find('def backup_database')
-        next_def = body.find('\ndef ', idx + 1)
-        slice_body = body[idx:next_def] if next_def != -1 else body[idx:]
-        chmod_pos = slice_body.find('os.chmod(dst_path, 0o600)')
-        verify_pos = slice_body.find('verify = sqlite3.connect(dst_path)')
-        assert chmod_pos != -1 and verify_pos != -1
-        assert chmod_pos < verify_pos, (
-            "Pass 45.20 (re-pin Pass 45.5): chmod must precede the verify-"
-            "open of the backup file"
-        )
-
     def test_no_button_with_onclick_lacks_type(self):
         """Sweep contract: every onclick-bearing button across all
         templates must declare type=. The sweep added type=\"button\"
