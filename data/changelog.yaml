@@ -1,3 +1,23 @@
+- version: 3.5.65
+  date: 2026-05-02
+  tags:
+  - type: refactor
+    label: Pass 38.1 (partial 4/4) — Extract `_normalize_ratings` from `apply_hybrid_metadata`
+  body: |
+    <ul>
+        <li><strong>Pass 38.1 fourth incremental extraction</strong>. Continuing v3.5.60, v3.5.62, v3.5.64. The "NORMALIZE VALUES BEFORE SAVE" block had 26 lines doing three rating-related things in sequence (ESRB letter normalize → cross-map empty → content-based inference fallback). Folded into a single helper.</li>
+        <li><strong>New helper</strong> <code>scraper.hybrid_scraper._normalize_ratings(metadata, result)</code>:
+            <ul>
+                <li><strong>Step 1 — ESRB letter normalize</strong>: <code>KA → E</code> and similar deprecated tags. Runs first so cross-map sees the canonical letter, not the deprecated form.</li>
+                <li><strong>Step 2 — cross-map empties</strong>: <code>services.game_metadata_service.cross_map_ratings</code> fills empty rating columns from any available rating. Each filled column gets a <code>'<col> (cross-map→<NAME>)'</code> entry in <code>result['filled_fields']</code>. <code>'RP'</code> (Rating Pending) is treated as empty inside cross_map_ratings.</li>
+                <li><strong>Step 3 — content-based inference</strong>: only fires when <em>every</em> rating column is empty/None/<code>'RP'</code>. <code>infer_rating_from_content(metadata)</code> walks title/genre/description heuristics and returns a tier-mapped dict. Adds a single <code>'ratings (inferred from content)'</code> entry on hit.</li>
+                <li><code>metadata.get('esrb_rating')</code> + <code>metadata.get(col)</code> instead of <code>metadata['key']</code> so a partial dict (missing keys) doesn't <code>KeyError</code>.</li>
+            </ul>
+        </li>
+        <li><strong>Callsite</strong>: <code>apply_hybrid_metadata</code>'s rating block (26 lines including blank-line separators) collapsed to 1 line.</li>
+        <li><strong>Test impact</strong>: new <code>tests/test_pass38_normalize_ratings_helper.py</code> (6 cases) — ESRB normalized before cross-map fires, cross-map fills empties from one source, all-filled is no-op, inference fires only when ratings empty, <code>'RP'</code>/<code>'rp'</code> treated as empty for the inference gate, missing <code>esrb_rating</code> key doesn't crash. Inference function is monkeypatched in two cases for deterministic dispatch checks. Suite 785/785 green (was 779).</li>
+        <li><strong>Roadmap impact</strong>: Pass 38.1 partial 4/4 — RA-check + region-normalize + scrape-history + ratings-normalize all extracted (~110 lines lifted out of <code>apply_hybrid_metadata</code> with 4 helper-level test files pinning their contracts). The remaining un-extracted blocks are the fallback loop (~305 lines, complex error handling across 5 scraper modules) and the long save UPDATE (~80 lines, ~50 columns, parameter-order-bug risk) — both warrant regression tests around the wider function before further extraction.</li>
+    </ul>
 - version: 3.5.64
   date: 2026-05-02
   tags:

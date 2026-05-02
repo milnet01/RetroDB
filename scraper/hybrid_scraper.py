@@ -482,6 +482,52 @@ def detect_controller_support(system_folder, modes):
 # HYBRID APPLY METADATA
 # =============================================================================
 
+def _normalize_ratings(metadata, result):
+    """Run the three rating-normalisation steps the save block needs:
+
+    1. Normalize ESRB to its canonical letter (KA → E, etc).
+    2. Cross-map empty rating fields from any available rating
+       (e.g. ESRB→PEGI, GRAC→ESRB) via `services.game_metadata_service.
+       cross_map_ratings`. 'RP' is treated as empty inside that helper.
+    3. Content-based inference as a final fallback when no rating
+       system has been filled at all (`infer_rating_from_content`).
+
+    Mutates `metadata` in place; appends descriptive entries to
+    `result['filled_fields']` for every change. Pass 38.1 partial —
+    extracted from the inline NORMALIZE VALUES BEFORE SAVE block.
+    """
+    # Normalize ESRB (KA → E, etc) before cross-mapping fires.
+    if metadata.get('esrb_rating'):
+        metadata['esrb_rating'] = normalize_esrb_rating(metadata['esrb_rating'])
+
+    # Cross-map empty rating fields from any available rating.
+    _bare = {k: metadata.get(RATING_SYSTEMS[k]['db_column']) for k in RATING_SYSTEM_KEYS}
+    _filled = cross_map_ratings(_bare)
+    for tgt_key in RATING_SYSTEM_KEYS:
+        tgt_col = RATING_SYSTEMS[tgt_key]['db_column']
+        new_val = _filled.get(tgt_key)
+        if new_val and new_val != (_bare.get(tgt_key) or ''):
+            metadata[tgt_col] = new_val
+            tgt_name = RATING_SYSTEMS[tgt_key]['name']
+            result['filled_fields'].append(f'{tgt_col} (cross-map→{tgt_name})')
+            logger.info(f"Auto-mapped rating → {tgt_name} '{new_val}'")
+
+    # Content-based rating inference (final fallback when nothing else fills).
+    has_any_rating = any(
+        metadata.get(RATING_SYSTEMS[k]['db_column']) not in (None, '', 'RP', 'rp')
+        for k in RATING_SYSTEM_KEYS
+    )
+    if not has_any_rating:
+        inferred = infer_rating_from_content(metadata)
+        if inferred:
+            for col, val in inferred.items():
+                metadata[col] = val
+            result['filled_fields'].append('ratings (inferred from content)')
+            logger.info(
+                f"Inferred ratings from content: tier mapped to {len(inferred)} systems"
+            )
+
+
 def _build_scrape_history_json(c, db_game_id, primary_source, metadata,
                                 result, force_overwrite):
     """Read the existing `games.scrape_history` JSON for `db_game_id`,
@@ -1347,36 +1393,8 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         # NORMALIZE VALUES BEFORE SAVE
         # =============================================
         
-        # Normalize ESRB rating (e.g., KA -> E)
-        if metadata['esrb_rating']:
-            metadata['esrb_rating'] = normalize_esrb_rating(metadata['esrb_rating'])
-
-        # Cross-map empty rating fields from any available rating.
-        # Single source of truth: services.game_metadata_service.cross_map_ratings
-        # ('RP' is treated as empty inside that helper).
-        _bare = {k: metadata.get(RATING_SYSTEMS[k]['db_column']) for k in RATING_SYSTEM_KEYS}
-        _filled = cross_map_ratings(_bare)
-        for tgt_key in RATING_SYSTEM_KEYS:
-            tgt_col = RATING_SYSTEMS[tgt_key]['db_column']
-            new_val = _filled.get(tgt_key)
-            if new_val and new_val != (_bare.get(tgt_key) or ''):
-                metadata[tgt_col] = new_val
-                tgt_name = RATING_SYSTEMS[tgt_key]['name']
-                result['filled_fields'].append(f'{tgt_col} (cross-map→{tgt_name})')
-                logger.info(f"Auto-mapped rating → {tgt_name} '{new_val}'")
-
-        # Content-based rating inference (final fallback when no ratings found)
-        has_any_rating = any(
-            metadata.get(RATING_SYSTEMS[k]['db_column']) not in (None, '', 'RP', 'rp')
-            for k in RATING_SYSTEM_KEYS
-        )
-        if not has_any_rating:
-            inferred = infer_rating_from_content(metadata)
-            if inferred:
-                for col, val in inferred.items():
-                    metadata[col] = val
-                result['filled_fields'].append('ratings (inferred from content)')
-                logger.info(f"Inferred ratings from content: tier mapped to {len(inferred)} systems")
+        # Pass 38.1 — rating normalize/cross-map/infer extracted to _normalize_ratings.
+        _normalize_ratings(metadata, result)
 
         # Normalize players: extract max number from ranges like "1-2", "1-4"
         if metadata.get('players'):
