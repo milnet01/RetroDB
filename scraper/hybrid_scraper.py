@@ -482,6 +482,48 @@ def detect_controller_support(system_folder, modes):
 # HYBRID APPLY METADATA
 # =============================================================================
 
+def _build_scrape_history_json(c, db_game_id, primary_source, metadata,
+                                result, force_overwrite):
+    """Read the existing `games.scrape_history` JSON for `db_game_id`,
+    append a new entry summarising this scrape, and return the
+    serialised JSON ready for the save UPDATE.
+
+    Pass 38.1 partial — extracted from the inline "CREATE SCRAPE HISTORY"
+    block inside `apply_hybrid_metadata`. The helper takes the caller's
+    cursor (no separate connection) so this stays inside the outer
+    transaction's lifetime; the saved row carries the same scrape_history
+    snapshot regardless of where the helper lives.
+
+    `existing_history` is robust against malformed JSON (rolled back to
+    `[]`) so a one-time DB corruption doesn't abort the scrape — the
+    entry just becomes the first of a fresh history list.
+    """
+    import json
+    from datetime import datetime
+
+    # `scrape_history` is part of the baseline games schema (migration 001),
+    # so it is always present on any DB that reached this code path.
+    c.execute("SELECT scrape_history FROM games WHERE id = ? LIMIT 1", (db_game_id,))
+    row = c.fetchone()
+    existing_history = []
+    if row and row[0]:
+        try:
+            existing_history = json.loads(row[0])
+        except (ValueError, TypeError):
+            existing_history = []
+
+    history_entry = {
+        'timestamp': datetime.now().isoformat(),
+        'primary_source': primary_source,
+        'sources_used': result['sources_used'],
+        'fields_filled': result['filled_fields'],
+        'fields_missing': [k for k, v in metadata.items() if not v],
+        'scrape_mode': 'full_rescrape' if force_overwrite else 'fill_missing',
+    }
+    existing_history.append(history_entry)
+    return json.dumps(existing_history)
+
+
 def _normalize_region(metadata, result):
     """Reduce `metadata['region']` to a single value, falling back to the
     user's `default_region` setting (default 'USA').
@@ -1296,35 +1338,11 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 # No DB default exists — only clear generic values
                 pass
         
-        # =============================================
-        # CREATE SCRAPE HISTORY
-        # =============================================
-        
-        import json
-        from datetime import datetime
-        
-        # `scrape_history` is part of the baseline games schema (migration 001),
-        # so it is always present on any DB that reached this code path.
-        c.execute("SELECT scrape_history FROM games WHERE id = ? LIMIT 1", (db_game_id,))
-        row = c.fetchone()
-        existing_history = []
-        if row and row[0]:
-            try:
-                existing_history = json.loads(row[0])
-            except (ValueError, TypeError):
-                existing_history = []
+        # Pass 38.1 — scrape-history build extracted to _build_scrape_history_json.
+        scrape_history_json = _build_scrape_history_json(
+            c, db_game_id, primary_source, metadata, result, force_overwrite
+        )
 
-        history_entry = {
-            'timestamp': datetime.now().isoformat(),
-            'primary_source': primary_source,
-            'sources_used': result['sources_used'],
-            'fields_filled': result['filled_fields'],
-            'fields_missing': [k for k, v in metadata.items() if not v],
-            'scrape_mode': 'full_rescrape' if force_overwrite else 'fill_missing'
-        }
-        existing_history.append(history_entry)
-        scrape_history_json = json.dumps(existing_history)
-        
         # =============================================
         # NORMALIZE VALUES BEFORE SAVE
         # =============================================

@@ -1896,17 +1896,21 @@ paths or silent-corruption vectors under routine use.
   `_save_game_row`, `_check_ra_matches` into separate helpers.
   Sibling mergers already extracted to `scraper/metadata_merger.py`.
 - **Source**: 2026-04-24 audit, Scraper orchestration M2.
-- **Status**: partial (v3.5.60, v3.5.62) — 2/4 sub-blocks extracted:
+- **Status**: partial (v3.5.60, v3.5.62, v3.5.64) — 3/4 sub-blocks extracted:
     - **RA-check (v3.5.60)**: `scraper.hybrid_scraper._apply_retroachievements_check(db_game_id, title, system_folder) -> bool`. Smallest + most self-contained of the four sub-blocks (31 lines, opens its own DB connection, mutates only RA columns, silently swallows exceptions). Callsite collapsed to 3 lines.
     - **Region-normalize (v3.5.62)**: `scraper.hybrid_scraper._normalize_region(metadata, result)`. Folded the two inline `settings_manager.load_settings()` branches (multi-value reduction + empty-region fallback) into a single helper that loads settings once. Callsite collapsed from 25 lines to 1 line.
+    - **Scrape-history (v3.5.64)**: `scraper.hybrid_scraper._build_scrape_history_json(c, db_game_id, primary_source, metadata, result, force_overwrite) -> str`. Reads `games.scrape_history` JSON, appends a new entry summarising the current scrape, returns serialised JSON ready for the save UPDATE. Takes the caller's cursor so the read stays inside the outer transaction's lifetime. Callsite collapsed from 28 lines to 4 lines; the function-local `import json` + `from datetime import datetime` moved into the helper.
   Tests: `tests/test_pass38_ra_check_helper.py` (4 cases) +
-  `tests/test_pass38_region_helper.py` (6 cases). Suite 774/774 green.
-  Remaining: fallback loop ~305 lines (would still benefit from
-  regression tests around the wider function first), save block
-  ~196 lines (the riskiest — heavy SQL + transaction control),
-  save-type / controller / curated-default-controller mini-blocks
-  (~30 lines, share the outer cursor and resist clean extraction
-  without cursor passing).
+  `tests/test_pass38_region_helper.py` (6 cases) +
+  `tests/test_pass38_scrape_history_helper.py` (5 cases). Suite
+  779/779 green.
+  Remaining: fallback loop ~305 lines (still risky — calls into all
+  5 fallback scraper modules with complex error handling),
+  save block ~168 lines net of scrape-history (dominated by a long
+  UPDATE statement touching ~50 columns; extracting the SQL would
+  risk subtle parameter-order bugs), save-type / controller /
+  curated-default-controller mini-blocks (~30 lines, share the
+  outer cursor and resist clean extraction without cursor passing).
 
 #### Pass 38.2 Consolidate `load_scraper_settings` (MEDIUM, S)
 

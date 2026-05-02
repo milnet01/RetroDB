@@ -1,3 +1,24 @@
+- version: 3.5.64
+  date: 2026-05-02
+  tags:
+  - type: refactor
+    label: Pass 38.1 (partial 3/4) — Extract `_build_scrape_history_json` from `apply_hybrid_metadata`
+  body: |
+    <ul>
+        <li><strong>Pass 38.1 third incremental extraction</strong>. Continuing v3.5.60 (RA-check) and v3.5.62 (region-normalize). The "CREATE SCRAPE HISTORY" sub-block at <code>apply_hybrid_metadata:1299-1326</code> reads <code>games.scrape_history</code> (JSON), appends a new entry summarising the current scrape, and serialises back to JSON for the save UPDATE. Extracted standalone so the contract can be tested without spinning up the full hybrid scraper.</li>
+        <li><strong>New helper</strong> <code>scraper.hybrid_scraper._build_scrape_history_json(c, db_game_id, primary_source, metadata, result, force_overwrite) -> str</code>:
+            <ul>
+                <li>Reads the existing JSON history (or starts with <code>[]</code> if the column is NULL or unparseable).</li>
+                <li>Appends a single entry: <code>timestamp</code> (ISO), <code>primary_source</code>, <code>sources_used</code>, <code>fields_filled</code>, <code>fields_missing</code> (computed from <code>metadata</code>), <code>scrape_mode</code> (<code>'fill_missing'</code> or <code>'full_rescrape'</code>).</li>
+                <li>Returns the serialised JSON ready for the save-block UPDATE.</li>
+                <li>Takes the caller's cursor (no separate connection) so this stays inside the outer transaction's lifetime.</li>
+                <li>Robust against malformed prior JSON (rolled back to <code>[]</code>) so a one-time DB corruption doesn't abort the scrape — same robustness the inline version had.</li>
+            </ul>
+        </li>
+        <li><strong>Callsite</strong>: <code>apply_hybrid_metadata</code>'s scrape-history block (28 lines including blank-line separators) collapsed to 4 lines. The two function-local <code>import json</code> + <code>from datetime import datetime</code> at lines 1303-1304 of the original moved into the helper (so the function body has fewer inline imports to read past).</li>
+        <li><strong>Test impact</strong>: new <code>tests/test_pass38_scrape_history_helper.py</code> (5 cases) — first-scrape (NULL prior), subsequent-scrape (appends), <code>force_overwrite</code> records <code>full_rescrape</code>, corrupted prior JSON resets to fresh list, <code>fields_missing</code> computed from falsy metadata values. Uses <code>tmp_path</code> + 1-row <code>games</code>-style table fixture with the helper called against a real <code>sqlite3.connect(...).cursor()</code> — no mocks. Suite 779/779 green (was 774).</li>
+        <li><strong>Roadmap impact</strong>: Pass 38.1 partial 3/4 (RA check + region normalize + scrape-history). Remaining: fallback loop ~305 lines (still risky — calls into all 5 fallback scraper modules with complex error handling), save block ~196 lines minus the 28-line scrape-history sub-block already done (still ~168 lines, dominated by the long UPDATE statement that touches ~50 columns; would benefit from extracting the SQL-generation but that risks subtle parameter-order bugs).</li>
+    </ul>
 - version: 3.5.63
   date: 2026-05-02
   tags:
