@@ -188,8 +188,6 @@ class BulkScrapeJob:
 
             # If a job is currently running and not completed, queue this one
             if self.running and not self.completed:
-                mode_label = 'Fill Missing' if scrape_mode == 'fill_missing' else 'Full Re-scrape'
-
                 # Reject duplicate: same system + same mode already running
                 if system_id is not None and system_id == self.system_id and scrape_mode == self.scrape_mode:
                     logger.info(f"Rejected duplicate bulk scrape for {system_name} (system_id={system_id}, mode={scrape_mode}) — already running")
@@ -664,7 +662,6 @@ class BulkScrapeJob:
         """Background thread that runs the actual scraping"""
         from scraper.scraper_manager import scraper_manager, load_scraper_settings, get_match_settings, passes_match_filter
         from services.game_metadata_service import apply_hybrid_metadata_to_game
-        from services.game_utils import get_system_type
 
         # Snapshot immutable job parameters at thread start — prevents corruption
         # if self is modified before this thread begins executing
@@ -845,9 +842,7 @@ class BulkScrapeJob:
                             continue
                         logger.info(f"Fill-missing for {title} - missing: {', '.join(missing)}")
 
-                    # Determine if computer system
                     system_folder = game_dict.get('system_folder', '').lower()
-                    system_type = get_system_type(system_folder)
 
                     # Search for metadata
                     system_name = game_dict.get('system_name', 'Unknown')

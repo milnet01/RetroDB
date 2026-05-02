@@ -142,7 +142,7 @@ def igdb_request(endpoint, body, token):
 def get_platform_id(system_name):
     """Get IGDB platform ID from system name"""
     if not system_name:
-        logger.info(f"IGDB get_platform_id: No system_name provided")
+        logger.info("IGDB get_platform_id: No system_name provided")
         return None
     
     system_key = system_name.lower().strip()
@@ -168,7 +168,7 @@ def get_platform_id(system_name):
             return value
     
     # Try partial match
-    logger.info(f"IGDB get_platform_id: No nospace match, trying partial...")
+    logger.info("IGDB get_platform_id: No nospace match, trying partial...")
     for key, value in IGDB_PLATFORM_MAP.items():
         key_nospace = key.replace(' ', '')
         if key_nospace in system_key_nospace or system_key_nospace in key_nospace:
@@ -237,7 +237,7 @@ def search_games(title, system_name=None, limit=10):
 
         # If no results with platform filter, try without
         if not results and platform_id:
-            logger.info(f"No IGDB results with platform filter, trying without...")
+            logger.info("No IGDB results with platform filter, trying without...")
             body = f"""
             search "{search_title}";
             fields id, name, first_release_date, platforms.id, platforms.name, platforms.abbreviation,

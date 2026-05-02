@@ -304,7 +304,7 @@ class RARefreshJob:
 
                         # Fetch console game list if not cached
                         if console_id not in ra_console_cache:
-                            url = f"https://retroachievements.org/API/API_GetGameList.php"
+                            url = "https://retroachievements.org/API/API_GetGameList.php"
                             params = {
                                 'z': ra_username,
                                 'y': ra_api_key,

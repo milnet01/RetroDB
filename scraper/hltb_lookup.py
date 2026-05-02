@@ -110,7 +110,7 @@ def _get_auth_token():
             _hp_key = data.get('hpKey')
             _hp_val = data.get('hpVal')
             _auth_token_time = time.time()
-            logger.debug(f"HLTB: Got new auth token")
+            logger.debug("HLTB: Got new auth token")
             return _auth_token, _hp_key, _hp_val
         else:
             logger.warning(f"HLTB: Auth token request failed with status {resp.status_code}")

@@ -284,7 +284,7 @@ def api_save_api_keys():
     # Save to file
     atomic_write_json(SCRAPER_SETTINGS_FILE, existing)
 
-    logger.info(f"Saved API keys for scrapers")
+    logger.info("Saved API keys for scrapers")
 
     return jsonify({'success': True, 'message': 'API keys saved'})
 

@@ -1583,7 +1583,7 @@ def api_psn_link_game():
 
         return jsonify({'success': True})
 
-    except Exception as e:
+    except Exception:
         return jsonify({'success': False, 'error': 'An internal error occurred'})
 
 
@@ -1656,7 +1656,7 @@ def api_psn_save_hltb():
         
         return jsonify({'success': True})
         
-    except Exception as e:
+    except Exception:
         return jsonify({'success': False, 'error': 'An internal error occurred'})
 
 
@@ -1764,7 +1764,7 @@ def api_psn_status():
             'username': online_id,
             'game_count': game_count
         })
-    except Exception as e:
+    except Exception:
         return jsonify({
             'success': False,
             'configured': True,

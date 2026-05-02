@@ -134,7 +134,7 @@ def main():
     elif installer_core.check_module('PIL'):
         print(f"  {_green('OK')}: Pillow already installed")
     else:
-        print(f"  Installing Pillow (image processing for avatars & image standardization)...")
+        print("  Installing Pillow (image processing for avatars & image standardization)...")
         result = installer_core.pip_install(['Pillow'], base_dir)
         if result.returncode == 0 and installer_core.check_module('PIL'):
             print(f"  {_green('OK')}: Pillow installed")
@@ -236,10 +236,10 @@ def main():
     else:
         print(f"  1. Start RetroDB:  {_cyan('./start.sh')}")
     print(f"  2. Open in browser: {_cyan('http://localhost:5000')}")
-    print(f"  3. Follow the setup wizard to configure paths and API keys")
+    print("  3. Follow the setup wizard to configure paths and API keys")
     print()
     print(f"  Default login:  {_bold('admin')} / {_bold('admin')}")
-    print(f"  (You'll be prompted to change the password on first login)")
+    print("  (You'll be prompted to change the password on first login)")
     print()
 
 

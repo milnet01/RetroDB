@@ -834,7 +834,7 @@ class TestPass40_10ShutdownAwareSleep:
                 if 'time.sleep(' in line:
                     offenders.append(f'{name}.py:{i}: {stripped}')
         assert not offenders, \
-            f'Pass 40.10: replace with shutdown_requested.wait()\n' + \
+            'Pass 40.10: replace with shutdown_requested.wait()\n' + \
             '\n'.join(offenders)
 
     def test_each_job_imports_shutdown_event(self):

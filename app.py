@@ -1651,7 +1651,7 @@ if __name__ == '__main__':
 
     if config.DEBUG_MODE:
         # Development: use Flask dev server with auto-reload
-        print(f"\n  * Running in DEBUG mode (Flask dev server)")
+        print("\n  * Running in DEBUG mode (Flask dev server)")
         print(f"  * Local:   http://localhost:{port}")
         print(f"  * Network: http://{local_ip}:{port}\n")
         app.run(debug=True, host=host, port=port)
@@ -1668,11 +1668,11 @@ if __name__ == '__main__':
         print("=" * 58)
         print(f"  {config.APP_NAME} v{config.APP_VERSION}")
         print("=" * 58)
-        print(f"  Server:  Waitress (production)")
+        print("  Server:  Waitress (production)")
         print(f"  Local:   http://localhost:{port}")
         print(f"  Network: http://{local_ip}:{port}")
         print("=" * 58)
-        print(f"  Press Ctrl+C to stop the server")
+        print("  Press Ctrl+C to stop the server")
         print()
 
         # A single /games or /dashboard load fires 20+ parallel XHRs (card

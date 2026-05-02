@@ -268,7 +268,7 @@ def scan_roms():
     conn.close()
     
     logger.info("=" * 60)
-    logger.info(f"ROM scan complete")
+    logger.info("ROM scan complete")
     logger.info(f"Systems processed: {systems_processed}")
     logger.info(f"New games added: {new_games}")
     logger.info("=" * 60)

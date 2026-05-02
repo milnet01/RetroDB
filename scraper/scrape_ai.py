@@ -1059,7 +1059,7 @@ def get_game_details(game_id, title, system_name, system_folder=None, existing_m
             msg += f" | {rejected_count} rejected/empty: {rejected}"
         logger.info(msg)
     else:
-        logger.warning(f"AI scraper: no valid fields parsed from response")
+        logger.warning("AI scraper: no valid fields parsed from response")
 
     return result
 

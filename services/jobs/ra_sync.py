@@ -298,7 +298,7 @@ class RASyncJob:
                     try:
                         # Fetch user progress from RA API
                         ra_game_id = game['ra_game_id']
-                        url = f"https://retroachievements.org/API/API_GetGameInfoAndUserProgress.php"
+                        url = "https://retroachievements.org/API/API_GetGameInfoAndUserProgress.php"
                         params = {
                             'z': ra_username,
                             'y': ra_api_key,

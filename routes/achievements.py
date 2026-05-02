@@ -332,7 +332,7 @@ def api_sync_system_achievements(system_id):
         system_log('info', f'RA Sync already running, queueing sync for {system["name"]}')
         return success(
             queued=True,
-            message=f'Sync queued. Will start after current sync completes.',
+            message='Sync queued. Will start after current sync completes.',
             sync_running=True,
             system_id=system_id,
             system_name=system['name'],

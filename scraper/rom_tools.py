@@ -657,7 +657,7 @@ class ArchiveScanner:
                 return {"success": True, "removed_count": len(actually_removed)}
             elif result.returncode == 0 and not actually_removed:
                 # Command succeeded but no files were removed - likely filename mismatch
-                logger.warning(f"Command succeeded but no files were actually removed. Possible filename mismatch.")
+                logger.warning("Command succeeded but no files were actually removed. Possible filename mismatch.")
                 logger.warning(f"Requested files: {files_to_remove}")
                 logger.warning(f"Files in archive: {list(contents_before)[:10]}...")
                 return {"success": False, "error": "No files were removed. The filenames may not match exactly."}

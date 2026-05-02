@@ -29,7 +29,6 @@ def api_bulk_scrape():
     """Bulk scrape a single game - called repeatedly by frontend (LEGACY - kept for compatibility)"""
     data = request.get_json()
     game_id = data.get('game_id')
-    system_id = data.get('system_id')
 
     if not game_id:
         return error('No game ID provided', code=200)

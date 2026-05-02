@@ -606,7 +606,7 @@ def fetch_esde_game_details(game_path, system_folder=None):
     logger.info(f"Decoded path: {decoded_game_path}")
     
     # Log first few stored paths for debugging
-    logger.info(f"Sample stored paths from gamelist:")
+    logger.info("Sample stored paths from gamelist:")
     for i, g in enumerate(games[:5]):
         logger.info(f"  [{i}] {g.get('path', 'NO PATH')}")
     

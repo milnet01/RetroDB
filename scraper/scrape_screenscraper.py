@@ -343,7 +343,7 @@ def search_game(game_title, system_folder, username, password, dev_id=None, dev_
                     elif "identifiants développeur" in response_lower or "developer" in response_lower:
                         # Dev credentials rejected - retry without them
                         if attempt == 0 and dev_id:
-                            logger.warning(f"ScreenScraper: Dev credentials rejected, retrying without them...")
+                            logger.warning("ScreenScraper: Dev credentials rejected, retrying without them...")
                             continue  # Try again without dev credentials
                         else:
                             logger.warning(f"ScreenScraper: Credentials error: {response_text[:100]}")
@@ -358,8 +358,8 @@ def search_game(game_title, system_folder, username, password, dev_id=None, dev_
                 # Try to parse JSON
                 try:
                     data = response.json()
-                except Exception as json_err:
-                    logger.info(f"ScreenScraper: Could not parse response as JSON (game likely not found)")
+                except Exception:
+                    logger.info("ScreenScraper: Could not parse response as JSON (game likely not found)")
                     return None
                 
                 if "response" in data and "jeux" in data["response"]:
@@ -391,7 +391,7 @@ def search_game(game_title, system_folder, username, password, dev_id=None, dev_
                         logger.info("ScreenScraper: Success without dev credentials")
                     return valid_results
                 else:
-                    logger.info(f"ScreenScraper: No 'jeux' in response")
+                    logger.info("ScreenScraper: No 'jeux' in response")
             else:
                 logger.warning(f"ScreenScraper API returned status {response.status_code}: {response.text[:200]}")
             
@@ -501,7 +501,7 @@ def get_game_info(rom_path, system_folder, username, password, dev_id=None, dev_
                     response_lower = response_text.lower()
                     if "identifiants développeur" in response_lower or "developer" in response_lower:
                         if attempt == 0 and dev_id:
-                            logger.warning(f"ScreenScraper: Dev credentials rejected, retrying without them...")
+                            logger.warning("ScreenScraper: Dev credentials rejected, retrying without them...")
                             continue  # Try again without dev credentials
                         else:
                             logger.warning(f"ScreenScraper: Credentials error: {response_text[:100]}")
@@ -510,7 +510,7 @@ def get_game_info(rom_path, system_folder, username, password, dev_id=None, dev_
                 try:
                     data = response.json()
                 except Exception:
-                    logger.warning(f"ScreenScraper: Invalid JSON response")
+                    logger.warning("ScreenScraper: Invalid JSON response")
                     return None
                 
                 if "response" not in data or "jeu" not in data["response"]:

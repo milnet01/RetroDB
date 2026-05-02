@@ -300,7 +300,7 @@ def build(do_minify=True):
         print(f"Removed legacy: {legacy.name}")
 
     print()
-    print(f"Excluded (loaded separately):")
+    print("Excluded (loaded separately):")
     for f in EXCLUDED:
         print(f"  - {f}")
     print()

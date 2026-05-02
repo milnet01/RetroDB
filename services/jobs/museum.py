@@ -436,7 +436,7 @@ def _build_museum_prompt(system_name, specs):
         specs_lines = []
         for key, val in specs.items():
             specs_lines.append(f"  {key}: {val}")
-        specs_context = f"\nKnown specifications:\n" + "\n".join(specs_lines)
+        specs_context = "\nKnown specifications:\n" + "\n".join(specs_lines)
 
     return f"""You are a gaming history expert. Write about the "{system_name}" gaming system.
 {specs_context}

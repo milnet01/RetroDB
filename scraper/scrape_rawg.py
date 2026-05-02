@@ -380,7 +380,7 @@ if __name__ == "__main__":
         print("✅ API is working")
         
         results = search_games("Super Mario World", "snes")
-        print(f"\nSearch results for 'Super Mario World':")
+        print("\nSearch results for 'Super Mario World':")
         for r in results[:3]:
             print(f"  - {r['name']} ({r['release_date']}) [ID: {r['id']}] ESRB: {r.get('esrb_rating')}")
         

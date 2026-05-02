@@ -348,7 +348,7 @@ class InstallerApp:
             return
 
         self._set_step(step, 'done')
-        self._log(f'  Version OK', 'success')
+        self._log('  Version OK', 'success')
         step += 1
         self._set_progress(step)
 

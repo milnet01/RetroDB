@@ -321,7 +321,7 @@ def api_list_backups():
                 })
 
         return jsonify({'success': True, 'backups': backups})
-    except Exception as e:
+    except Exception:
         return jsonify({'success': False, 'error': 'An internal error occurred'})
 
 
@@ -495,7 +495,7 @@ def api_get_all_settings():
             'settings': user_settings,
             'defaults': settings_manager.DEFAULT_SETTINGS
         })
-    except Exception as e:
+    except Exception:
         return jsonify({'success': False, 'error': 'An internal error occurred'})
 
 
@@ -557,7 +557,7 @@ def api_reset_settings():
             })
         else:
             return jsonify({'success': False, 'error': 'Failed to reset settings'})
-    except Exception as e:
+    except Exception:
         return jsonify({'success': False, 'error': 'An internal error occurred'})
 
 

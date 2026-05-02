@@ -978,9 +978,9 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                                         if 'ES-DE' not in result['sources_used']:
                                             result['sources_used'].append('ES-DE')
                                     else:
-                                        logger.info(f"ES-DE fallback: failed to fetch game details")
+                                        logger.info("ES-DE fallback: failed to fetch game details")
                                 else:
-                                    logger.info(f"ES-DE fallback: no path found in result")
+                                    logger.info("ES-DE fallback: no path found in result")
                             else:
                                 logger.info(f"ES-DE fallback: no results found for '{game_title}'")
                         
@@ -1053,7 +1053,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                             ss_devpassword = fallback_api_keys.get('screenscraper_devpassword', '')
 
                             if not ss_username or not ss_password:
-                                logger.info(f"ScreenScraper fallback skipped: missing credentials")
+                                logger.info("ScreenScraper fallback skipped: missing credentials")
                             else:
                                 logger.info(f"Trying ScreenScraper fallback for: '{game_title}'")
                                 from scraper.scrape_screenscraper import search_game, get_system_id
@@ -1101,7 +1101,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                         elif fallback_source == 'rawg':
                             rawg_api_key = fallback_api_keys.get('rawg_api_key', '') or fallback_api_keys.get('rawg', '')
                             if not rawg_api_key:
-                                logger.info(f"RAWG fallback skipped: missing API key")
+                                logger.info("RAWG fallback skipped: missing API key")
                             else:
                                 logger.info(f"Trying RAWG fallback for: '{game_title}'")
                                 from scraper.scrape_rawg import search_games as search_rawg, get_game_details as fetch_rawg
@@ -1225,7 +1225,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 if old_value and old_value != default_controller:
                     result['filled_fields'].append(f'controller_support (system default: {default_controller})')
                 elif not old_value:
-                    result['filled_fields'].append(f'controller_support (system default)')
+                    result['filled_fields'].append('controller_support (system default)')
                 logger.info(f"Using system default controller: {default_controller} (was: {old_value})")
             elif should_use_default_controller(metadata['controller_support']):
                 # No DB default exists — only clear generic values

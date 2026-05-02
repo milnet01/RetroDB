@@ -210,7 +210,7 @@ def build_standalone(base_dir, version, host_name):
         sys.exit(1)
 
     print(f"\n  Building standalone {host_name} bundle via PyInstaller…")
-    print(f"  (this takes 3–6 min and uses ~5 GB temp during the build)")
+    print("  (this takes 3–6 min and uses ~5 GB temp during the build)")
 
     # Wipe any prior PyInstaller output so we don't ship leftover files
     # from an aborted earlier run.

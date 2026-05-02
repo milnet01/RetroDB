@@ -1,3 +1,28 @@
+- version: 3.5.59
+  date: 2026-05-02
+  tags:
+  - type: chore
+    label: Sweep 35 placeholderless f-strings + 7 unused except / locals
+  body: |
+    <ul>
+        <li><strong>Hygiene continuation</strong> from v3.5.58. Two more ruff F-class buckets cleared:</li>
+        <li><strong>F541 — placeholderless f-strings (35 fixes)</strong>. Calls like <code>logger.debug(f"HLTB: Got new auth token")</code> + <code>print(f"\n  * Running in DEBUG mode")</code> + <code>message=f'Sync queued. Will start...'</code> stripped to plain strings. f-prefix without <code>{...}</code> is a no-op at best and a paper-cut for readers (looks like an interpolation bug waiting to happen). Touched 14 files (app.py, scraper/*, routes/*, services/jobs/*).</li>
+        <li><strong>F841 — unused locals (7 fixes)</strong>:
+            <ul>
+                <li><strong>Auto-fixable (4 cases)</strong>: <code>except Exception as e:</code> blocks where <code>e</code> was never logged or referenced — collapsed to <code>except Exception:</code>. <code>routes/settings.py</code> ×3 + <code>routes/trophies.py</code> ×3 + <code>scraper/scrape_screenscraper.py</code> (<code>json_err</code>). Same semantics, less noise.</li>
+                <li><strong>Manual sweep (3 cases, dead variables)</strong>:
+                    <ul>
+                        <li><code>routes/bulk_scrape.py:32</code> — <code>system_id = data.get('system_id')</code> in the legacy <code>/api/bulk-scrape</code> single-game endpoint never read; vestige from when the route dispatched by system. Deleted the assignment.</li>
+                        <li><code>services/jobs/bulk_scrape.py:191</code> — <code>mode_label = 'Fill Missing' if scrape_mode == 'fill_missing' else 'Full Re-scrape'</code> built but never used in the duplicate-job-rejection branch (the error string already names the system, not the mode). Deleted.</li>
+                        <li><code>services/jobs/bulk_scrape.py:848</code> — <code>system_type = get_system_type(system_folder)</code> assigned mid-loop and never read; orphan import <code>from services.game_utils import get_system_type</code> at line 665 also dropped.</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li><strong>Behaviour</strong>: zero functional change. F541 is purely cosmetic; F841 <code>except as e</code> simplification is semantically identical (no <code>e</code> reference removed); the three deleted dead variables had zero downstream readers.</li>
+        <li><strong>Remaining ruff F-class</strong>: 8 manual-review cases left (<code>file_count</code>, <code>cmd_info</code>, <code>tags</code> in scraper code that may be in-progress feature wiring; <code>original_*</code> + <code>load_calls</code> sentinels in test files using manual save/restore patterns) — deferred to a future sweep with case-by-case judgement.</li>
+        <li><strong>Test impact</strong>: zero new tests; suite 764/764 green.</li>
+    </ul>
 - version: 3.5.58
   date: 2026-05-02
   tags:
