@@ -17,6 +17,8 @@ import sys
 import subprocess
 import shutil
 
+import installer_core
+
 
 # =============================================================================
 # THEME COLOURS (matches RetroDB cyberpunk palette)
@@ -55,62 +57,13 @@ STEPS = [
 # =============================================================================
 # HELPERS
 # =============================================================================
-
-def detect_distro():
-    """Detect Linux distro family."""
-    if sys.platform != 'linux':
-        return sys.platform
-    try:
-        with open('/etc/os-release') as f:
-            content = f.read().lower()
-        for line in content.splitlines():
-            if line.startswith('id_like=') or line.startswith('id='):
-                val = line.split('=', 1)[1].strip('"\'')
-                if any(d in val for d in ('fedora', 'rhel', 'nobara')):
-                    return 'Fedora / Nobara'
-                if any(d in val for d in ('debian', 'ubuntu', 'mint', 'pop')):
-                    return 'Debian / Ubuntu'
-                if 'arch' in val:
-                    return 'Arch Linux'
-    except FileNotFoundError:
-        pass
-    if sys.platform == 'darwin':
-        return 'macOS'
-    return 'Linux'
-
+# Pass 38.3 — distro detection, pip install with PEP-668 fallback, module
+# probe, and build-script runner moved to `installer_core` (shared with the
+# CLI install.py). The GUI's `pip_install` always runs in quiet mode.
 
 def pip_install(args, cwd=None):
-    """Run pip install with --break-system-packages fallback."""
-    cmd = [sys.executable, '-m', 'pip', 'install', '-q'] + args
-    result = subprocess.run(cmd, capture_output=True, text=True, cwd=cwd)
-    if result.returncode != 0 and 'externally-managed-environment' in result.stderr:
-        cmd.append('--break-system-packages')
-        result = subprocess.run(cmd, capture_output=True, text=True, cwd=cwd)
-    return result
-
-
-def check_module(name):
-    """Check if a Python module is importable."""
-    try:
-        subprocess.run(
-            [sys.executable, '-c', f'import {name}'],
-            capture_output=True, check=True
-        )
-        return True
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        return False
-
-
-def run_build_script(base_dir, script_name):
-    """Run a build script, return (success, stdout)."""
-    script = os.path.join(base_dir, script_name)
-    if not os.path.exists(script):
-        return None, f'{script_name} not found'
-    result = subprocess.run(
-        [sys.executable, script],
-        capture_output=True, text=True, cwd=base_dir
-    )
-    return result.returncode == 0, result.stdout or result.stderr
+    """GUI shim: quiet pip install via the shared installer_core helper."""
+    return installer_core.pip_install(args, cwd, quiet=True)
 
 
 # =============================================================================
@@ -181,7 +134,7 @@ class InstallerApp:
         ).pack(anchor='w', pady=(0, 6))
 
         # ── System info ─────────────────────────────────────────────────
-        distro = detect_distro()
+        distro = installer_core.distro_label(installer_core.detect_distro())
         py_ver = f'{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}'
         info_text = f'Platform: {distro}    |    Python: {py_ver}    |    Path: {self.base_dir}'
 
@@ -387,9 +340,10 @@ class InstallerApp:
         major, minor, micro = sys.version_info[:3]
         self._log(f'Python {major}.{minor}.{micro}')
 
-        if major < 3 or (major == 3 and minor < 8):
+        if not installer_core.python_version_ok():
+            req_major, req_minor = installer_core.MIN_PYTHON
             self._set_step(step, 'failed')
-            self._log(f'Python 3.8+ required, found {major}.{minor}', 'error')
+            self._log(f'Python {req_major}.{req_minor}+ required, found {major}.{minor}', 'error')
             self._finish(False)
             return
 
@@ -424,18 +378,10 @@ class InstallerApp:
         self._set_step(step, 'running')
         self._log('Installing core dependencies...')
 
-        # Pass 39.4 — prefer the hashed lockfile (fail-closed on MITM / PyPI
-        # tamper). Fall back to requirements.txt only when the lockfile is
-        # absent (dev checkouts before lockfile regen).
-        lock_path = os.path.join(base_dir, 'requirements.lock')
-        req_path = os.path.join(base_dir, 'requirements.txt')
-        pip_args = None
-        if os.path.exists(lock_path):
-            pip_args = ['--require-hashes', '-r', lock_path]
-        elif os.path.exists(req_path):
+        pip_args, source = installer_core.select_pip_args(base_dir)
+        if source == 'fallback':
             self._log('  requirements.lock missing — falling back to '
                       'requirements.txt (no hash verification)', 'warning')
-            pip_args = ['-r', req_path]
         if pip_args is None:
             self._set_step(step, 'failed')
             self._log('  neither requirements.lock nor requirements.txt found', 'error')
@@ -450,23 +396,16 @@ class InstallerApp:
                         self._log(f'    {line.strip()}', 'error')
                 errors.append('Core dependencies')
             else:
-                # Verify each module
-                modules = [
-                    ('flask', 'Flask'),
-                    ('requests', 'Requests'),
-                    ('yaml', 'PyYAML'),
-                    ('waitress', 'Waitress'),
-                ]
                 ok = 0
-                for mod, name in modules:
-                    if check_module(mod):
+                for mod, name in installer_core.CORE_MODULES:
+                    if installer_core.check_module(mod):
                         ok += 1
                         self._log(f'  \u2713 {name}', 'success')
                     else:
                         self._log(f'  \u2717 {name} — not importable', 'error')
                         errors.append(f'{name} missing')
 
-                if ok == len(modules):
+                if ok == len(installer_core.CORE_MODULES):
                     self._set_step(step, 'done')
                 else:
                     self._set_step(step, 'failed')
@@ -478,13 +417,13 @@ class InstallerApp:
         self._set_step(step, 'running')
         self._log('Checking Pillow (image processing)...')
 
-        if check_module('PIL'):
+        if installer_core.check_module('PIL'):
             self._log('  Already installed', 'success')
             self._set_step(step, 'done')
         else:
             self._log('  Installing Pillow...')
             result = pip_install(['Pillow'], base_dir)
-            if result.returncode == 0 and check_module('PIL'):
+            if result.returncode == 0 and installer_core.check_module('PIL'):
                 self._log('  \u2713 Pillow installed', 'success')
                 self._set_step(step, 'done')
             else:
@@ -498,12 +437,7 @@ class InstallerApp:
         self._set_step(step, 'running')
         self._log('Setting up configuration files...')
 
-        config_copies = [
-            ('config.example.py', 'config.py'),
-            ('data/scraper_settings.example.json', 'data/scraper_settings.json'),
-            ('docs/psn-npsso.env.example', 'docs/psn-npsso.env'),
-        ]
-        for src_name, dst_name in config_copies:
+        for src_name, dst_name in installer_core.CONFIG_COPIES:
             src = os.path.join(base_dir, src_name)
             dst = os.path.join(base_dir, dst_name)
             if os.path.exists(dst):
@@ -523,23 +457,14 @@ class InstallerApp:
         self._set_step(step, 'running')
         self._log('Creating directories...')
 
-        directories = [
-            'database', 'logs', 'data',
-            'static/images/boxart', 'static/images/boxart_3d',
-            'static/images/screenshots', 'static/images/systems',
-            'static/images/ratings', 'static/images/fanart',
-            'static/videos', 'static/images/manuals',
-            'static/images/trophies', 'static/images/avatars',
-            'static/images/hardware',
-        ]
         created = 0
-        for d in directories:
+        for d in installer_core.DIRECTORIES:
             path = os.path.join(base_dir, d)
             if not os.path.exists(path):
                 os.makedirs(path, exist_ok=True)
                 created += 1
 
-        self._log(f'  {len(directories)} directories ready ({created} created)', 'success')
+        self._log(f'  {len(installer_core.DIRECTORIES)} directories ready ({created} created)', 'success')
         self._set_step(step, 'done')
         step += 1
         self._set_progress(step)
@@ -548,7 +473,7 @@ class InstallerApp:
         self._set_step(step, 'running')
         self._log('Building CSS bundle...')
 
-        css_ok, _css_msg = run_build_script(base_dir, 'build_css.py')
+        css_ok, _css_msg = installer_core.run_build_script(base_dir, 'build_css.py')
         if css_ok is None:
             self._log('  build_css.py not found', 'warning')
             self._set_step(step, 'warning')
@@ -572,7 +497,7 @@ class InstallerApp:
         self._set_step(step, 'running')
         self._log('Building JS bundle...')
 
-        js_ok, _js_msg = run_build_script(base_dir, 'build_js.py')
+        js_ok, _js_msg = installer_core.run_build_script(base_dir, 'build_js.py')
         if js_ok is None:
             self._log('  build_js.py not found', 'warning')
             self._set_step(step, 'warning')

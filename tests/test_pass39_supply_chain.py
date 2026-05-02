@@ -78,16 +78,31 @@ class TestPass39_4LockfileHashes:
 
     def test_installers_use_require_hashes(self):
         """Both install.py and install_gui.py prefer the hashed lockfile
-        with `--require-hashes` so a tampered wheel fails the install."""
+        with `--require-hashes` so a tampered wheel fails the install.
+        Pass 38.3 — both installers now route through
+        `installer_core.select_pip_args`; assert that helper emits
+        `--require-hashes` against the real lockfile and that both
+        installers import the shared module."""
+        import installer_core
+        repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        args, source = installer_core.select_pip_args(repo_root)
+        assert source == 'lock', (
+            f"installer_core.select_pip_args returned source={source!r} "
+            f"against the repo root — expected 'lock' (the committed "
+            f"requirements.lock should be the chosen path)."
+        )
+        assert '--require-hashes' in args, (
+            f"installer_core.select_pip_args must emit --require-hashes "
+            f"when the lockfile is present (got args={args!r}). MITM-"
+            f"tampered wheels would otherwise pass the install (Pass 39.4)."
+        )
         cli_src = self._read(self.INSTALL_CLI)
         gui_src = self._read(self.INSTALL_GUI)
         for name, src in (('install.py', cli_src), ('install_gui.py', gui_src)):
-            assert "'--require-hashes'" in src or '"--require-hashes"' in src, (
-                f"{name} must invoke pip with `--require-hashes` so MITM-"
-                f"tampered wheels are rejected (Pass 39.4)"
-            )
-            assert 'requirements.lock' in src, (
-                f"{name} must reference the hashed lockfile path"
+            assert 'installer_core' in src, (
+                f"{name} must import the shared installer_core module so "
+                f"it picks up the --require-hashes contract from "
+                f"select_pip_args (Pass 38.3 + 39.4)."
             )
 
     def test_ci_drift_check_uses_generate_hashes(self):

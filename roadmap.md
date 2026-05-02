@@ -1929,7 +1929,22 @@ paths or silent-corruption vectors under routine use.
   `check_module`, `run_build_script`, `CONFIG_COPIES`, `DIRECTORIES`,
   `do_install_step_*`; both frontends call into it.
 - **Source**: 2026-04-24 audit, Tests/tooling/CI M2.
-- **Status**: todo
+- **Status**: done (v3.5.56) — new `installer_core.py` (188 lines)
+  exposes `CONFIG_COPIES` (3-tuple), `DIRECTORIES` (14-tuple),
+  `CORE_MODULES` (4-tuple), `MIN_PYTHON` (3.8), `detect_distro()` /
+  `distro_label()` / `pip_install_hint()`, `pip_install(quiet=)`,
+  `check_module()`, `run_build_script() -> (ok_or_None, output)`,
+  `select_pip_args() -> (args, source)` (canonicalised Pass 39.4
+  lockfile selection), `python_version_ok()`. `install.py`
+  shrunk 360→247 lines (−31%); `install_gui.py` 668→593 (−11%).
+  GUI pip wrapper kept as a one-line `quiet=True` shim. Linux
+  distros outside fedora/debian/arch now surface as "Linux" in
+  both installers (was "unknown" in CLI, "Linux" in GUI — GUI
+  wins). `tests/test_pass39_supply_chain.py::
+  test_installers_use_require_hashes` rewritten as a Pass-45.18-
+  style functional pin: calls `installer_core.select_pip_args`
+  against the real lockfile + asserts both installers import the
+  shared module. 746/746 green.
 
 #### Pass 38.4 Extract Jinja macros (MEDIUM, M)
 

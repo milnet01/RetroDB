@@ -1,3 +1,31 @@
+- version: 3.5.56
+  date: 2026-05-02
+  tags:
+  - type: refactor
+    label: Pass 38.3 — Extract `installer_core.py` (CLI + GUI dedup)
+  body: |
+    <ul>
+        <li><strong>Pass 38.3 — `installer_core.py` extracted</strong>. <code>install.py</code> (CLI) and <code>install_gui.py</code> (Tkinter wizard) shared ~90% of their non-UI logic — distro detection, PEP-668-aware pip wrapper, module-importable probe, build-script runner, config-copy + directory + core-module manifests, lockfile-vs-fallback pip-args selector, Python version gate. Pass 38.5 (the <code>app.bundle.js</code> bundle-name drift between the two installer fallbacks) was the canary; the rule-of-three was already crossed five times over.</li>
+        <li><strong>New module</strong> <code>installer_core.py</code> (188 lines) exposes:
+            <ul>
+                <li><strong>Constants</strong>: <code>CONFIG_COPIES</code> (3 src→dst pairs), <code>DIRECTORIES</code> (14 paths), <code>CORE_MODULES</code> (4 import↔display pairs), <code>MIN_PYTHON</code> (3.8).</li>
+                <li><strong>Distro</strong>: <code>detect_distro()</code> returns canonical key (<code>'fedora' | 'debian' | 'arch' | 'darwin' | 'win32' | 'linux' | 'unknown'</code>); <code>distro_label(key)</code>, <code>pip_install_hint(key)</code>.</li>
+                <li><strong>Subprocess</strong>: <code>pip_install(args, base_dir, *, quiet=False)</code> with the existing <code>--break-system-packages</code> fallback; <code>check_module(name)</code>; <code>run_build_script(base_dir, script_name) -> (success_or_None, stdout_or_msg)</code>.</li>
+                <li><strong>Pass 39.4 contract</strong>: <code>select_pip_args(base_dir) -> (args, source)</code> — returns <code>(['--require-hashes', '-r', lock_path], 'lock')</code> when <code>requirements.lock</code> exists, <code>(['-r', req_path], 'fallback')</code> otherwise, <code>(None, 'missing')</code> if neither.</li>
+                <li><strong>Version gate</strong>: <code>python_version_ok()</code>.</li>
+            </ul>
+        </li>
+        <li><strong>install.py</strong> (CLI): 360 → 247 lines (−113 / −31%). All 5 private helpers (<code>_detect_distro</code>, <code>_pip_install_hint</code>, <code>_run_pip</code>, <code>_check_module</code>, <code>_build_script</code>) and the inline <code>config_copies</code> / <code>directories</code> / Python-version / lockfile-selection blocks deleted; calls now route through <code>installer_core.*</code>. UI loop (banner, step counters, coloured <code>print()</code>) unchanged.</li>
+        <li><strong>install_gui.py</strong> (Tkinter): 668 → 593 lines (−75 / −11%). Same shared logic deleted; <code>pip_install</code> kept as a 1-line shim that forwards to <code>installer_core.pip_install(..., quiet=True)</code> (GUI runs pip in <code>-q</code> mode). All <code>self._log()</code> + <code>self._set_step()</code> + queue-poll machinery untouched.</li>
+        <li><strong>Behaviour deltas</strong>:
+            <ul>
+                <li>Linux distros that don't match fedora / debian / arch (e.g. openSUSE, Gentoo) now surface as platform label "Linux" in both installers — previously the CLI showed the literal key "unknown" and the GUI already showed "Linux", so the GUI's behaviour wins. Cosmetic only — the pip-install hint on this fallback path was already the generic "Install pip for your distribution" string in both installers.</li>
+                <li>"Fedora / Nobara" (CLI label "Fedora/Nobara/RHEL", GUI label "Fedora / Nobara") + "Debian / Ubuntu" labels reconciled to the CLI's spacing: <code>Fedora/Nobara/RHEL</code>, <code>Debian/Ubuntu/Mint</code>. The GUI's banner reflects this.</li>
+                <li>No change to install steps, pip arguments (still <code>--require-hashes -r requirements.lock</code> when lockfile present, plain <code>-r requirements.txt</code> on fallback with the same warning), error handling, or build-script behaviour.</li>
+            </ul>
+        </li>
+        <li><strong>Test impact</strong>: <code>tests/test_pass39_supply_chain.py::test_installers_use_require_hashes</code> rewritten as a Pass-45.18-style functional pin — calls <code>installer_core.select_pip_args(repo_root)</code> against the real lockfile and asserts the returned <code>args</code> contain <code>--require-hashes</code> + <code>source == 'lock'</code>; then a single source-grep that both installers <code>import installer_core</code> (so they pick up the contract). Reverting the helper to drop <code>--require-hashes</code> still fails the test. Suite 746/746 green; no other test affected.</li>
+    </ul>
 - version: 3.5.55
   date: 2026-05-02
   tags:
