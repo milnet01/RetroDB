@@ -107,3 +107,76 @@ class TestPass39_4LockfileHashes:
                 f"ci.yml drift recompile must include --generate-hashes "
                 f"(line: {ln.strip()})"
             )
+
+
+# -----------------------------------------------------------------------------
+# 39.5 — Dependabot lockfile auto-regeneration workflow
+# -----------------------------------------------------------------------------
+class TestPass39_5DependabotLockfileWorkflow:
+    """Pass 39.5 closes the loop opened by Pass 39.4: every Dependabot bump
+    of requirements.txt would otherwise fail the CI lockfile-drift check
+    until a human regenerated requirements.lock by hand. The new workflow
+    `.github/workflows/dependabot-lockfile.yml` does that automatically
+    against the Dependabot PR branch."""
+
+    WORKFLOW = os.path.join(
+        _REPO_ROOT, '.github', 'workflows', 'dependabot-lockfile.yml'
+    )
+
+    def test_workflow_file_exists(self):
+        assert os.path.exists(self.WORKFLOW), (
+            "Pass 39.5 expects .github/workflows/dependabot-lockfile.yml "
+            "to exist — Dependabot bumps would otherwise leave the lockfile "
+            "out of sync until a human regenerates it."
+        )
+
+    def test_workflow_is_parseable_yaml_with_correct_shape(self):
+        """The workflow must trigger only on PRs that touch requirements.txt,
+        guard execution to the dependabot[bot] actor, request the
+        write-permissions needed to push back, and run pip-compile with
+        --generate-hashes (matches the lockfile recipe pinned in 39.4)."""
+        import yaml
+        with open(self.WORKFLOW, encoding='utf-8') as f:
+            cfg = yaml.safe_load(f)
+
+        # Path-scoped trigger on requirements.txt change.
+        # PyYAML rewrites the bare `on` key to True (boolean key) — accept
+        # both the unparsed string and the boolean form.
+        triggers = cfg.get('on') or cfg.get(True)
+        assert triggers, "workflow must declare triggers under `on:`"
+        pr = triggers.get('pull_request', {})
+        assert 'requirements.txt' in (pr.get('paths') or []), (
+            "workflow must scope to PRs touching requirements.txt"
+        )
+
+        # Only run for Dependabot-authored PRs.
+        regen_job = cfg.get('jobs', {}).get('regenerate-lockfile', {})
+        assert regen_job, "workflow must define a `regenerate-lockfile` job"
+        assert "dependabot[bot]" in str(regen_job.get('if', '')), (
+            "workflow must guard the regen job to dependabot[bot] actor"
+        )
+
+        # Permissions narrow but include contents:write for the push.
+        perms = cfg.get('permissions', {})
+        assert perms.get('contents') == 'write', (
+            "workflow must request contents:write so it can push the "
+            "regenerated lockfile back to the Dependabot PR branch"
+        )
+
+    def test_pip_compile_invocation_uses_generate_hashes(self):
+        """Without --generate-hashes the auto-regen would land an
+        unhashed lockfile that breaks `pip install --require-hashes` in
+        the installers (Pass 39.4)."""
+        with open(self.WORKFLOW, encoding='utf-8') as f:
+            src = f.read()
+        compile_lines = [
+            ln for ln in src.splitlines() if 'pip-compile' in ln
+        ]
+        assert compile_lines, (
+            "workflow has no pip-compile invocation — update this test"
+        )
+        # At least one of the pip-compile lines must carry --generate-hashes
+        # (the actual run command may span multiple continuation lines).
+        assert '--generate-hashes' in src, (
+            "workflow's pip-compile invocation must include --generate-hashes"
+        )

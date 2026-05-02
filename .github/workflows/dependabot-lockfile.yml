@@ -1,0 +1,74 @@
+name: Dependabot lockfile regeneration
+
+# Pass 39.5 — Dependabot bumps `requirements.txt` natively but doesn't know
+# how to recompile our pip-compile-generated `requirements.lock`. Without
+# this workflow, every Dependabot PR fails the lockfile-drift check in CI
+# until a human runs `pip-compile --generate-hashes` and pushes a follow-up
+# commit. This workflow does that automatically the moment Dependabot opens
+# the PR, then pushes the regenerated lockfile back to the same branch so
+# the original Dependabot PR goes green on its own.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "requirements.txt"
+
+# Allow this workflow to push a commit back to the Dependabot PR branch.
+# `pull-requests: write` is needed for the `gh` API call that re-runs the
+# subsequent CI workflow once the new commit lands. Scoped narrowly:
+# everything else stays read.
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: dependabot-lockfile-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  regenerate-lockfile:
+    # Only run for Dependabot PRs that actually touched requirements.txt;
+    # human-authored PRs already include the regenerated lockfile, and the
+    # `paths:` filter above keeps the workflow itself dormant.
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
+        with:
+          # The default GITHUB_TOKEN cannot trigger downstream workflows on
+          # the resulting push. We don't need a downstream re-run here — the
+          # original CI run on the Dependabot PR is what the lockfile commit
+          # is meant to satisfy. Keep the default token; no PAT required.
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.13"
+
+      - name: Install pip-tools
+        run: pip install pip-tools
+
+      - name: Regenerate requirements.lock with hashes
+        run: |
+          # Match exactly the recipe baked into the lockfile header so the
+          # CI drift check stays comparable. Pass 39.4 added --generate-hashes;
+          # without it the resulting lockfile won't satisfy `pip install
+          # --require-hashes` in the installers.
+          pip-compile --quiet --strip-extras --generate-hashes \
+            --output-file requirements.lock requirements.txt
+
+      - name: Commit and push if changed
+        run: |
+          if git diff --quiet -- requirements.lock; then
+            echo "No lockfile changes — Dependabot bump didn't move pinned versions."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add requirements.lock
+          git commit -m "deps: regenerate requirements.lock for Dependabot bump"
+          git push

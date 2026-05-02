@@ -1,3 +1,20 @@
+- version: 3.5.50
+  date: 2026-05-02
+  tags:
+  - type: ci
+    label: Pass 39.5 — Dependabot lockfile auto-regeneration workflow
+  body: |
+    <ul>
+        <li><strong>New workflow `.github/workflows/dependabot-lockfile.yml`</strong>. Triggers on <code>pull_request</code> events with <code>paths: requirements.txt</code>; runs only for Dependabot-authored PRs (<code>github.actor == 'dependabot[bot]'</code>). Checks out the PR branch, runs <code>pip-compile --strip-extras --generate-hashes</code> to regenerate <code>requirements.lock</code>, and pushes the result back to the Dependabot branch if anything changed. The Dependabot PR's original CI run picks up the new commit and goes green without human intervention.</li>
+        <li><strong>Why now</strong>: Pass 39.4 (just landed in v3.5.49) flipped the installers to <code>pip install --require-hashes</code> and the CI drift check to <code>--generate-hashes</code>. Both depend on the lockfile carrying SHA256s. Dependabot's <code>pip</code> ecosystem natively bumps <code>requirements.txt</code> but doesn't recompile pip-compile lockfiles — so every Dependabot PR was about to start failing the drift check until a human ran <code>pip-compile</code> by hand. This workflow closes that loop.</li>
+        <li><strong>Permissions</strong>: scoped to <code>contents: write</code> + <code>pull-requests: write</code> for the regen-and-push. Default GITHUB_TOKEN — no PAT required. The token can't re-trigger downstream workflows on its own pushes; that's by design here, since the original CI run on the Dependabot PR is exactly what the regenerated lockfile is meant to satisfy.</li>
+        <li><strong>Concurrency</strong>: <code>concurrency.group</code> keyed on PR number with <code>cancel-in-progress: true</code> — if Dependabot force-pushes a fresh batch, the in-flight regen is cancelled and a new one runs against the updated tip, avoiding stale lockfile commits.</li>
+        <li><strong>No-op on non-bumps</strong>: <code>git diff --quiet</code> short-circuits if pip-compile doesn't move anything (e.g. patch bump within an existing range that already pinned exactly).</li>
+        <li><strong>Source</strong> &mdash; <code>roadmap.md</code> Pass 39.5 (2026-04-24 audit, Tests/tooling/CI M5).</li>
+        <li><strong>Verification</strong>. Workflow YAML syntax verified by <code>python3 -c "import yaml; yaml.safe_load(open('.github/workflows/dependabot-lockfile.yml'))"</code>. Real-world test deferred to the next Dependabot run; failure mode (regen step fails or push refused) is observable in the workflow's run log without breaking the PR's underlying CI.</li>
+        <li><strong>Version bump 3.5.49 &rarr; 3.5.50</strong>: patch (CI infra; no app behaviour change).</li>
+    </ul>
+
 - version: 3.5.49
   date: 2026-05-02
   tags:

@@ -1697,7 +1697,24 @@ paths or silent-corruption vectors under routine use.
   `@dependabot pre-task` directive) that runs `pip-compile`; ensure
   the resulting diff is committed to the same PR.
 - **Source**: 2026-04-24 audit, Tests/tooling/CI M5.
-- **Status**: todo
+- **Status**: done (v3.5.50) — new workflow
+  `.github/workflows/dependabot-lockfile.yml`. Triggers on
+  `pull_request` events with `paths: requirements.txt`; guarded to
+  `github.actor == 'dependabot[bot]'`. Checks out the PR branch, runs
+  `pip-compile --strip-extras --generate-hashes` (matches the recipe
+  pinned by Pass 39.4), and pushes the regenerated lockfile back to
+  the Dependabot branch. Concurrency-keyed on PR number with
+  `cancel-in-progress` so a Dependabot force-push cancels the in-flight
+  regen. Permissions scoped to `contents: write` + `pull-requests:
+  write`; default `GITHUB_TOKEN` (no PAT). The original CI run on the
+  Dependabot PR picks up the new commit and goes green without human
+  intervention. `dependabot.yml` itself unchanged — `@dependabot
+  pre-task` doesn't exist; the auxiliary-workflow pattern is the
+  established GitHub solution. Tests:
+  `tests/test_pass39_supply_chain.py::TestPass39_5DependabotLockfileWorkflow`
+  (3 cases — file exists, YAML shape pin (path filter, actor guard,
+  contents:write permission), pip-compile invocation uses
+  --generate-hashes). Full pytest 710/710 green.
 
 #### Pass 39.6 `build_dist.py` env-configurable `STAGING_DIR` (MEDIUM, S)
 
