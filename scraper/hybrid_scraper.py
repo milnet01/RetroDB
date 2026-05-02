@@ -482,6 +482,47 @@ def detect_controller_support(system_folder, modes):
 # HYBRID APPLY METADATA
 # =============================================================================
 
+def _normalize_region(metadata, result):
+    """Reduce `metadata['region']` to a single value, falling back to the
+    user's `default_region` setting (default 'USA').
+
+    Two cases handled:
+      - Multi-value ('USA, Europe, Japan'): pick the first part that
+        matches a configured region option, else `default_region`.
+      - Empty: use `default_region` and record `'region (default)'` in
+        `result['filled_fields']`.
+      - Single-value: leave untouched.
+
+    Pass 38.1 partial — extracted from the inline normalize block in
+    `apply_hybrid_metadata`. The original loaded settings twice (once
+    per branch); here it's loaded once. `settings_manager.load_settings`
+    is cached internally, so the perf delta is nil; the visible win is
+    one try/except instead of two.
+    """
+    try:
+        from settings_manager import load_settings as _load_settings
+        _stg = _load_settings()
+        region_opts = [
+            r.lower()
+            for r in _stg.get('region_options', ['USA', 'Europe', 'Japan', 'World'])
+        ]
+        default_region = _stg.get('default_region', 'USA')
+    except Exception:
+        region_opts = ['usa', 'europe', 'japan', 'world']
+        default_region = 'USA'
+
+    region_value = metadata.get('region') or ''
+    if region_value:
+        if ',' in region_value:
+            parts = [p.strip() for p in region_value.split(',') if p.strip()]
+            matched = next((p for p in parts if p.lower() in region_opts), None)
+            metadata['region'] = matched or default_region
+        # Single-value path: leave as-is.
+    else:
+        metadata['region'] = default_region
+        result['filled_fields'].append('region (default)')
+
+
 def _apply_retroachievements_check(db_game_id, title, system_folder):
     """Look up RetroAchievements support for `(title, system_folder)` and
     update the games row if found. Returns True when RA data was written
@@ -1219,32 +1260,10 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             if metadata['region']:
                 result['filled_fields'].append('region (filename)')
 
-        # Region: ensure single value; fall back to default_region from settings
-        if metadata['region']:
-            # If region has multiple values, pick the first one that matches settings
-            if ',' in metadata['region']:
-                try:
-                    from settings_manager import load_settings as _ls
-                    _stg = _ls()
-                    region_opts = [r.lower() for r in _stg.get('region_options', ['USA', 'Europe', 'Japan', 'World'])]
-                    default_region = _stg.get('default_region', 'USA')
-                except Exception:
-                    region_opts = ['usa', 'europe', 'japan', 'world']
-                    default_region = 'USA'
-                parts = [p.strip() for p in metadata['region'].split(',') if p.strip()]
-                matched = next((p for p in parts if p.lower() in region_opts), None)
-                metadata['region'] = matched or default_region
-        else:
-            # No region at all — use default
-            try:
-                from settings_manager import load_settings as _ls
-                _stg = _ls()
-                default_region = _stg.get('default_region', 'USA')
-            except Exception:
-                default_region = 'USA'
-            metadata['region'] = default_region
-            result['filled_fields'].append('region (default)')
-        
+        # Pass 38.1 — region normalize extracted to _normalize_region.
+        _normalize_region(metadata, result)
+
+
         # Save type detection
         if not metadata['save_type']:
             metadata['save_type'] = detect_save_type(system_folder, metadata.get('title', ''))

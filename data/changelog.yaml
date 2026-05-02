@@ -1,3 +1,25 @@
+- version: 3.5.62
+  date: 2026-05-02
+  tags:
+  - type: refactor
+    label: Pass 38.1 (partial 2/4) — Extract `_normalize_region` from `apply_hybrid_metadata`
+  body: |
+    <ul>
+        <li><strong>Pass 38.1 second incremental extraction</strong>. Continuing v3.5.60 (RA-check helper). The normalize-region sub-block at <code>apply_hybrid_metadata:1222-1246</code> had two near-identical settings-load + default-fallback branches inline (one for multi-value reduction, one for empty-region fallback), each with its own <code>try/except</code> around <code>settings_manager.load_settings()</code>. Folded into a single helper that loads settings once and dispatches on the region value's shape.</li>
+        <li><strong>New helper</strong> <code>scraper.hybrid_scraper._normalize_region(metadata, result)</code>:
+            <ul>
+                <li><strong>Multi-value</strong> ('USA, Europe, Japan'): split on comma, pick the first part whose lowercase matches a configured <code>region_options</code> entry, else <code>default_region</code>.</li>
+                <li><strong>Empty / missing</strong>: use <code>default_region</code> (default 'USA') and append <code>'region (default)'</code> to <code>result['filled_fields']</code>.</li>
+                <li><strong>Single-value</strong>: leave untouched.</li>
+                <li><strong>Settings-load failure</strong>: fall back to hardcoded <code>['usa','europe','japan','world']</code> options + <code>'USA'</code> default — same fallback the inline version used.</li>
+                <li>Uses <code>metadata.get('region')</code> so a missing key doesn't <code>KeyError</code>.</li>
+            </ul>
+        </li>
+        <li><strong>Callsite</strong>: <code>apply_hybrid_metadata</code>'s normalize block (lines 1222-1246) collapsed from 25 lines to 1 line (<code>_normalize_region(metadata, result)</code>).</li>
+        <li><strong>Why two settings-loads were folded into one</strong>: the original loaded settings only inside the <code>if ',' in metadata['region']:</code> branch when single-value, and only loaded <code>default_region</code> (not <code>region_options</code>) in the empty-region branch. The fold loads both fields once for all branches; <code>settings_manager.load_settings</code> is internally cached, so the perf delta is nil. The visible win is one <code>try/except</code> instead of two.</li>
+        <li><strong>Test impact</strong>: new <code>tests/test_pass38_region_helper.py</code> (6 cases) — multi-value first-match, multi-value no-match → default, empty → default + tag, missing key, single-value untouched, settings-load failure fallback. Uses <code>monkeypatch.setitem(sys.modules, 'settings_manager', ...)</code> to stub the loader. Suite 774/774 green (was 768).</li>
+        <li><strong>Roadmap impact</strong>: Pass 38.1 partial 2/4 (RA check + region normalize). Remaining: fallback loop ~305 lines, save block ~196 lines, save-type / controller-support / curated-controller-override mini-blocks (~30 lines, share the outer cursor and resist clean extraction).</li>
+    </ul>
 - version: 3.5.61
   date: 2026-05-02
   tags:
