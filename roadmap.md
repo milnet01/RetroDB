@@ -1817,6 +1817,33 @@ paths or silent-corruption vectors under routine use.
 - **Status**: done (v3.5.40) — path entry added to `.gitleaks.toml`
   alongside the test_log_redactor entry from 39.8.
 
+#### Pass 39.11 Re-pin CI actions when upstream releases Node 24 builds (LOW, S)
+
+- **Target**: `.github/workflows/ci.yml:39, 41, 132` —
+  `actions/checkout@34e114876b… (v4.3.1)`,
+  `actions/setup-python@a26af69be9… (v5.6.0)`,
+  `actions/upload-artifact@ea165f8d65… (v4.6.2)`. Same SHA pins live in
+  `.github/workflows/release.yml`.
+- **Why**: the v3.5.52 push (CI run 25247530694) surfaced two
+  `Node.js 20 is deprecated` annotations against these three actions.
+  GitHub force-upgrades the runner to Node 24 today (so CI still
+  passes), but the long-term fix is a re-pin to a release that
+  natively targets Node 24 in its `action.yml`. The current pins are
+  the right ones for *now* per Pass 39.1's SHA-pinning contract — the
+  re-pin only happens when `actions/checkout`, `actions/setup-python`,
+  and `actions/upload-artifact` ship a new SemVer with a
+  `using: 'node24'` runtime.
+- **Plan**: when each upstream action releases a Node-24-native build,
+  bump the SHA + trailing `# vX.Y.Z` comment and let Dependabot's
+  github-actions ecosystem regenerate the lockstep. No code change
+  needed in RetroDB itself; the action versions are the only edits.
+- **Source**: GitHub deprecation notice
+  <https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/>;
+  surfaced post-push 2026-05-02.
+- **Status**: deferred — gated on upstream-action releases. Dependabot
+  github-actions config (`.github/dependabot.yml`) already watches
+  these three actions, so the re-pin will auto-PR when available.
+
 ---
 
 ### Refactoring & consolidation
