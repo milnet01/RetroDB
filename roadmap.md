@@ -1852,6 +1852,30 @@ paths or silent-corruption vectors under routine use.
   Python 3.12 and 3.13. The same SHAs apply across `ci.yml`,
   `dependabot-lockfile.yml`, and `release.yml`.
 
+#### Pass 39.12 Create the labels referenced by `.github/dependabot.yml` (LOW, S)
+
+- **Target**: GitHub repo labels (`gh label list`) vs.
+  `.github/dependabot.yml:25-27, 42-44`.
+- **Why**: `dependabot.yml` declares `labels: ["dependencies",
+  "python"]` (pip group) and `["dependencies", "github-actions"]`
+  (github-actions group). None of those labels existed on the repo,
+  so Dependabot logged `The following labels could not be found:
+  dependencies, python` on every PR open and applied no labels.
+  Cosmetic but breaks PR triage filters (`is:open label:dependencies`
+  returns nothing).
+- **Plan**: `gh label create` for the three missing names with sane
+  colors (#0366d6 / #3572A5 / #2088FF mirroring GitHub's pip / Python
+  / Actions iconography); retro-apply to any open Dependabot PR.
+- **Source**: surfaced post-PR-#1 merge 2026-05-02 by Dependabot's
+  comment thread on PR #2.
+- **Status**: done (2026-05-02) — three labels created via `gh label
+  create`: `dependencies` (#0366d6, "Pull requests that update a
+  dependency file"), `python` (#3572A5, "Python (pip) dependency
+  updates"), `github-actions` (#2088FF, "GitHub Actions workflow
+  updates"). Retro-applied to PR #2 via `gh pr edit --add-label
+  dependencies --add-label python` before merge. Future Dependabot
+  PRs auto-label correctly.
+
 ---
 
 ### Refactoring & consolidation
