@@ -370,6 +370,52 @@ def release_singleton_fd(job_obj, attr='_singleton_fd'):
 
 
 # =============================================================================
+# RESUME-PATH HELPERS (Pass 38.8)
+# =============================================================================
+# Six job classes (RASyncJob, RARefreshJob, SteamSyncJob, XboxSyncJob,
+# PSNRefreshJob, BulkScrapeJob) share the same `resume_from_params`
+# scaffolding: pad the ID list with None placeholders for already-processed
+# items, restore counts from progress, and (for the cross-process-locked
+# four) acquire the singleton lock or log + bail.  These helpers fold the
+# repeats so future divergences land in one place.
+
+def pad_resume_game_ids(resume_index, remaining_ids):
+    """Prepend `resume_index` None placeholders to `remaining_ids`.
+
+    The worker thread iterates the padded list by index, skipping Nones,
+    so its `current_index` stays consistent with the original total
+    rather than restarting from zero.  Used by every resume_from_params."""
+    return [None] * resume_index + list(remaining_ids)
+
+
+def restore_progress_counts(job, resume_index, progress):
+    """Inside-lock helper: write `current_index` + success/failed/skipped
+    counts onto `job` from the persisted `progress` dict.
+
+    Caller is responsible for holding `job._lock` and having already set
+    `job.running = True` / `job.reset()`.  `progress=None` is treated as
+    a fresh resume (all counts zero)."""
+    job.current_index = resume_index
+    job.success_count = progress.get('success', 0) if progress else 0
+    job.failed_count = progress.get('failed', 0) if progress else 0
+    job.skipped_count = progress.get('skipped', 0) if progress else 0
+
+
+def try_acquire_singleton_or_warn(lock_name, kind='resume'):
+    """Acquire the named cross-process job singleton lock or log a
+    warning and return None if it's held by another worker.
+
+    Centralises the "lock held by another worker process" warning
+    string used identically across five resume paths."""
+    singleton_fd = acquire_job_singleton_lock(lock_name)
+    if singleton_fd is None:
+        logger.warning(
+            f"{lock_name} {kind} refused: lock held by another worker process"
+        )
+    return singleton_fd
+
+
+# =============================================================================
 # JOB PERSISTENCE HELPERS (crash recovery)
 # =============================================================================
 

@@ -15,6 +15,8 @@ from services.jobs.base import (
     persist_job_start, persist_job_progress, persist_job_complete,
     resolve_terminal_status, shutdown_requested,
     acquire_job_singleton_lock, release_singleton_fd,
+    pad_resume_game_ids, restore_progress_counts,
+    try_acquire_singleton_or_warn,
 )
 
 logger = logging.getLogger(__name__)
@@ -229,26 +231,20 @@ class PSNRefreshJob:
                 if self.running and not self.completed:
                     return False
 
-                singleton_fd = acquire_job_singleton_lock('psn_refresh')
+                singleton_fd = try_acquire_singleton_or_warn('psn_refresh')
                 if singleton_fd is None:
-                    logger.warning(
-                        "PSN refresh resume refused: lock held by another worker process"
-                    )
                     return False
 
                 self.reset()
                 self._singleton_fd = singleton_fd
                 self.job_id = f"psn_refresh_{int(time.time())}_resume"
-                self.npwr_ids = [None] * resume_index + remaining_ids
+                self.npwr_ids = pad_resume_game_ids(resume_index, remaining_ids)
                 self._npsso = npsso
                 self._user_id = user_id
                 self.return_url = return_url
                 self.running = True
                 self.start_time = datetime.now()
-                self.current_index = resume_index
-                self.success_count = progress.get('success', 0)
-                self.failed_count = progress.get('failed', 0)
-                self.skipped_count = progress.get('skipped', 0)
+                restore_progress_counts(self, resume_index, progress)
                 self.current_game_title = 'Resuming...'
 
             self._thread = threading.Thread(target=self._run_refresh, daemon=True)

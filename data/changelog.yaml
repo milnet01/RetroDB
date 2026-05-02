@@ -1,3 +1,23 @@
+- version: 3.5.57
+  date: 2026-05-02
+  tags:
+  - type: refactor
+    label: Pass 38.8 — Extract resume-path helpers (6 job classes deduped)
+  body: |
+    <ul>
+        <li><strong>Pass 38.8 — resume-path helpers extracted</strong>. Six job classes (<code>RASyncJob</code>, <code>RARefreshJob</code>, <code>SteamSyncJob</code>, <code>XboxSyncJob</code>, <code>PSNRefreshJob</code>, <code>BulkScrapeJob</code>) all open their <code>resume_from_params</code> with the same scaffolding: pad the persisted ID list with <code>None</code> placeholders so the worker thread's <code>current_index</code> stays aligned with the original total, restore <code>success</code> / <code>failed</code> / <code>skipped</code> counts from the persisted progress dict, and (for the cross-process-locked four) acquire the singleton lock or log a warning and bail. Bulk scrape repeated the pad + restore pattern a third time inside its queued-job promote/demote paths. Eight callsites total, byte-identical inner bodies.</li>
+        <li><strong>New helpers</strong> in <code>services/jobs/base.py</code>:
+            <ul>
+                <li><code>pad_resume_game_ids(resume_index, remaining_ids) -> list</code>. Returns <code>[None] * resume_index + list(remaining_ids)</code>. Uses <code>list(...)</code> so a caller mutating the source after the call doesn't bleed back into the padded copy.</li>
+                <li><code>restore_progress_counts(job, resume_index, progress)</code>. Inside-lock helper that writes <code>current_index</code> + the three counters onto the job. <code>progress=None</code> zeros the counters (fresh resume from a snapshot without partial counts); missing keys default to 0 (older snapshots).</li>
+                <li><code>try_acquire_singleton_or_warn(lock_name, kind='resume') -> fd | None</code>. Wraps <code>acquire_job_singleton_lock</code> with the standard <code>"&lt;lock&gt; &lt;kind&gt; refused: lock held by another worker process"</code> warning so the message stays consistent across the five locked resume paths.</li>
+            </ul>
+        </li>
+        <li><strong>Callsites refactored</strong>: <code>services/jobs/ra_sync.py</code>, <code>ra_refresh.py</code>, <code>platform_sync.py</code> (Steam + Xbox), <code>psn_refresh.py</code>, <code>bulk_scrape.py</code> (resume_from_params + the two queued-promote branches in <code>_swap_running_job</code> and <code>_start_next_queued</code>). Each callsite shrank by ~5–8 lines; the warning string is no longer an in-place duplicate of itself five times.</li>
+        <li><strong>Bulk scrape exclusion</strong>: <code>BulkScrapeJob.resume_from_params</code> doesn't acquire the cross-process singleton lock — it has its own queue-based promote/demote mechanism that runs the lock acquisition elsewhere. Only the <code>pad_resume_game_ids</code> + <code>restore_progress_counts</code> helpers are wired in here; the <code>try_acquire_singleton_or_warn</code> helper isn't needed.</li>
+        <li><strong>Behaviour</strong>: zero functional change. The padded list, the warning text ("<code>&lt;lock_name&gt; resume refused: lock held by another worker process</code>"), and the count restoration are byte-identical to the inline versions they replaced. Existing job-singleton tests in <code>test_pass41_security.py</code> still pass without modification.</li>
+        <li><strong>Test impact</strong>: new <code>tests/test_pass38_resume_helpers.py</code> (18 tests) pins the helpers' contracts — <code>pad_resume_game_ids</code> with zero / non-zero / mutation-after-return, <code>restore_progress_counts</code> with full / None / missing-keys progress, <code>try_acquire_singleton_or_warn</code> success / failure / kind-kwarg paths, plus a parametrised source-grep regression that every refactored job module imports the helpers (so a future revert to inline <code>[None] * resume_index + ...</code> won't go unnoticed). Suite 764/764 green (was 746).</li>
+    </ul>
 - version: 3.5.56
   date: 2026-05-02
   tags:

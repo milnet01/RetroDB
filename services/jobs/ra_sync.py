@@ -15,6 +15,8 @@ from services.jobs.base import (
     persist_job_start, persist_job_progress, persist_job_complete,
     resolve_terminal_status, shutdown_requested,
     acquire_job_singleton_lock, release_singleton_fd,
+    pad_resume_game_ids, restore_progress_counts,
+    try_acquire_singleton_or_warn,
 )
 
 logger = logging.getLogger(__name__)
@@ -144,11 +146,8 @@ class RASyncJob:
             with self._lock:
                 if self.running:
                     return False
-                singleton_fd = acquire_job_singleton_lock('ra_sync')
+                singleton_fd = try_acquire_singleton_or_warn('ra_sync')
                 if singleton_fd is None:
-                    logger.warning(
-                        "RA sync resume refused: lock held by another worker process"
-                    )
                     return False
                 self.reset()
                 self._singleton_fd = singleton_fd
@@ -156,12 +155,9 @@ class RASyncJob:
                 self.system_id = system_id
                 self.system_name = system_name
                 self._user_id = user_id
-                self._resume_game_ids = [None] * resume_index + remaining_ids
+                self._resume_game_ids = pad_resume_game_ids(resume_index, remaining_ids)
                 self.running = True
-                self.current_index = resume_index
-                self.success_count = progress.get('success', 0)
-                self.failed_count = progress.get('failed', 0)
-                self.skipped_count = progress.get('skipped', 0)
+                restore_progress_counts(self, resume_index, progress)
 
             self._thread = threading.Thread(target=self._run_sync, daemon=True)
             self._thread.start()

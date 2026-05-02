@@ -15,6 +15,7 @@ from services.jobs.base import (
     _get_conn, persist_job_start, persist_job_progress, persist_job_complete,
     persist_job_queued, remove_queued_job, resolve_terminal_status,
     acquire_job_singleton_lock, release_job_singleton_lock,
+    pad_resume_game_ids, restore_progress_counts,
 )
 
 logger = logging.getLogger(__name__)
@@ -427,13 +428,8 @@ class BulkScrapeJob:
                 completed_before = partial.get('completed', 0)
 
                 if completed_before > 0:
-                    placeholder_ids = [None] * completed_before
-                    self.game_ids = placeholder_ids + self.game_ids
-                    self.current_index = completed_before
-
-                self.success_count = partial.get('success', 0)
-                self.failed_count = partial.get('failed', 0)
-                self.skipped_count = partial.get('skipped', 0)
+                    self.game_ids = pad_resume_game_ids(completed_before, self.game_ids)
+                restore_progress_counts(self, completed_before, partial)
 
                 logger.info(f"Restored partial progress for promoted job: {completed_before} done, continuing with {remaining_count} remaining")
 
@@ -511,13 +507,8 @@ class BulkScrapeJob:
                 completed_before = partial.get('completed', 0)
 
                 if completed_before > 0:
-                    placeholder_ids = [None] * completed_before
-                    self.game_ids = placeholder_ids + self.game_ids
-                    self.current_index = completed_before
-
-                self.success_count = partial.get('success', 0)
-                self.failed_count = partial.get('failed', 0)
-                self.skipped_count = partial.get('skipped', 0)
+                    self.game_ids = pad_resume_game_ids(completed_before, self.game_ids)
+                restore_progress_counts(self, completed_before, partial)
 
                 logger.info(f"Restored partial progress for promoted job: {completed_before} done, continuing with {remaining_count} remaining")
 
@@ -592,17 +583,14 @@ class BulkScrapeJob:
 
                 self.reset()
                 self.job_id = f"bulk_{int(time.time())}_resume"
-                self.game_ids = [None] * resume_index + remaining_ids
+                self.game_ids = pad_resume_game_ids(resume_index, remaining_ids)
                 self.system_id = system_id
                 self.system_name = system_name
                 self.return_url = return_url
                 self.scrape_mode = scrape_mode
                 self.running = True
                 self.start_time = datetime.now()
-                self.current_index = resume_index
-                self.success_count = progress.get('success', 0)
-                self.failed_count = progress.get('failed', 0)
-                self.skipped_count = progress.get('skipped', 0)
+                restore_progress_counts(self, resume_index, progress)
 
             self._thread = threading.Thread(target=self._run_scrape, daemon=True)
             self._thread.start()
@@ -659,17 +647,9 @@ class BulkScrapeJob:
                 original_total = partial.get('original_total', remaining_count)
                 completed_before = partial.get('completed', 0)
 
-                # Prepend placeholder IDs so total matches original
-                # These won't be processed since current_index will skip them
                 if completed_before > 0:
-                    placeholder_ids = [None] * completed_before
-                    self.game_ids = placeholder_ids + self.game_ids
-                    self.current_index = completed_before  # Start after the already-completed ones
-
-                # Restore counts
-                self.success_count = partial.get('success', 0)
-                self.failed_count = partial.get('failed', 0)
-                self.skipped_count = partial.get('skipped', 0)
+                    self.game_ids = pad_resume_game_ids(completed_before, self.game_ids)
+                restore_progress_counts(self, completed_before, partial)
 
                 logger.info(f"Restored partial progress for job {self.job_id}: {completed_before}/{original_total} done, continuing with {remaining_count} remaining")
 

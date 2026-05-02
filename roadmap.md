@@ -2018,7 +2018,29 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: extract `_apply_resume(self, game_ids, progress, **extra)`
   onto a thin mixin used by every job with resume support.
 - **Source**: 2026-04-24 audit, Background jobs M5.
-- **Status**: todo
+- **Status**: done (v3.5.57) — three free-function helpers in
+  `services/jobs/base.py` (chosen over a mixin: avoids forcing every
+  job class into an inheritance chain when only ~10 lines are
+  shared, and bulk_scrape's three callsites are inside class methods
+  that already inherit from object). `pad_resume_game_ids(resume_
+  index, remaining_ids)` returns `[None]*N + list(remaining)`;
+  `restore_progress_counts(job, resume_index, progress)` writes
+  `current_index` + the three counters under the caller's lock,
+  treating `progress=None` and missing keys as zero;
+  `try_acquire_singleton_or_warn(lock_name, kind='resume')` wraps
+  `acquire_job_singleton_lock` with the standard "lock held by
+  another worker process" warning. Eight callsites refactored:
+  `ra_sync.resume_from_params`, `ra_refresh.resume_from_params`,
+  `platform_sync.SteamSyncJob.resume_from_params` +
+  `XboxSyncJob.resume_from_params`, `psn_refresh.resume_from_
+  params`, `bulk_scrape.resume_from_params` + the two queued-job
+  promote branches in `_swap_running_job` and
+  `_start_next_queued`. Bulk scrape skips the singleton helper —
+  it uses a queue-based promote/demote that acquires the lock
+  elsewhere. `tests/test_pass38_resume_helpers.py` (18 tests)
+  pins the helper contracts plus a source-grep regression that
+  every refactored job module imports the helpers. Suite 764/764
+  green (was 746).
 
 #### Pass 42.1 Extract `_normalize_game_edit` helper (MEDIUM, M)
 
