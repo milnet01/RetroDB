@@ -1,3 +1,17 @@
+- version: 3.5.63
+  date: 2026-05-02
+  tags:
+  - type: chore
+    label: Sweep 24 modernization fixes (`{x!s}`, `key in dict`, redundant `noqa`)
+  body: |
+    <ul>
+        <li><strong>Hygiene continuation</strong> from v3.5.59 / v3.5.61. Three more ruff buckets cleared:</li>
+        <li><strong>RUF010 — explicit conversion flag (15 fixes)</strong>: <code>f"... {str(e)} ..."</code> rewritten to <code>f"... {e!s} ..."</code> across <code>scraper/rom_tools.py</code>, <code>services/jobs/psn_refresh.py</code>, <code>scraper/scraper_manager.py</code>, <code>scraper/scrape_xbox.py</code>, <code>scraper/metadata_merger.py</code>, <code>scraper/hybrid_scraper.py</code>. Same output, fewer characters; the <code>!s</code> flag is the modern Python idiom and avoids a redundant <code>str()</code> call. Mostly in error-message construction (<code>error_message = f"... {str(e)} ..."</code>).</li>
+        <li><strong>SIM118 — redundant <code>.keys()</code> (3 fixes)</strong>: <code>if k in d.keys():</code> → <code>if k in d:</code>. Faster and more pythonic.</li>
+        <li><strong>RUF100 — redundant <code>noqa</code> directives (6 fixes)</strong>: ruff verified that <code>F401</code> isn't currently flagging these import lines (the imports have detectable side effects or are referenced), so the directives are dead. Touched <code>tests/test_pass45_security.py</code> ×2 (image_utils + game_media_service side-effect import probes), <code>tests/test_pass41_security.py</code> (fcntl skip-probe), <code>tests/test_input_hardening.py</code> (museum-module smoke), <code>scraper/scrape_xbox.py</code> (XBOX_TOKEN_URL is a URL, not a credential — already obvious from the constant name), <code>scraper/scraper_manager.py</code> (the AI-availability probe added in v3.5.58 — ruff now sees the bare <code>import scraper.scrape_ai</code> as fine without the directive).</li>
+        <li><strong>Behaviour</strong>: zero functional change. Test suite 774/774 green. Net diff <code>+20 / -20</code> (mostly token-level swaps).</li>
+        <li><strong>Skipped buckets</strong>: SIM300 (15 yoda-condition cases) — ruff's "fix" sometimes flips two non-literal expressions and the result reads worse than the original; left for a more deliberate pass with case-by-case judgement. RUF001 (205 ambiguous-unicode cases) — all in changelog/docstrings using intentional <code>×</code> + <code>–</code> + similar typographic glyphs, not bugs.</li>
+    </ul>
 - version: 3.5.62
   date: 2026-05-02
   tags:

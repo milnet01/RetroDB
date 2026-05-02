@@ -1752,7 +1752,7 @@ class TestPass41_6ASingletonLock:
             acquire_job_singleton_lock,
         )
         try:
-            import fcntl  # noqa: F401
+            import fcntl
         except ImportError:
             import pytest
             pytest.skip('fcntl unavailable; helper is a no-op on this platform')

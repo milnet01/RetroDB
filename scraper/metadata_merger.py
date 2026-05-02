@@ -46,7 +46,7 @@ from scraper.metadata_normalizer import (
 # the same fully-populated dict; this module previously shipped a divergent
 # loader that returned an empty `enabled: {}` on miss, so upstream
 # enabled-lookups silently disagreed with scraper_manager's view.
-from scraper.scraper_manager import load_scraper_settings  # noqa: F401
+from scraper.scraper_manager import load_scraper_settings
 
 logger = logging.getLogger(__name__)
 

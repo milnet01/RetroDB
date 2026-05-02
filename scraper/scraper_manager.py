@@ -239,7 +239,7 @@ except ImportError as e:
 # Try to import AI metadata scraper
 AI_AVAILABLE = False
 try:
-    import scraper.scrape_ai  # noqa: F401 — availability probe; functions called via scrape_ai module elsewhere
+    import scraper.scrape_ai
     AI_AVAILABLE = True
     logger.info("AI metadata scraper module loaded successfully")
 except ImportError as e:

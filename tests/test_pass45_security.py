@@ -865,7 +865,7 @@ class TestPass45_6DecompressionBomb:
     def test_image_utils_module_sets_max_image_pixels(self):
         """Importing services.image_utils must install the cap on the
         global Pillow Image module, not just inside one helper."""
-        import services.image_utils  # noqa: F401 — import for side-effect
+        import services.image_utils
         from PIL import Image
         # The cap is set in services/image_utils.py at import time.
         assert Image.MAX_IMAGE_PIXELS is not None, (
@@ -880,7 +880,7 @@ class TestPass45_6DecompressionBomb:
     def test_game_media_service_module_sets_max_image_pixels(self):
         """Same contract for game_media_service — the upload validator
         runs through Pillow and needs the cap too."""
-        import services.game_media_service  # noqa: F401
+        import services.game_media_service
         from PIL import Image
         assert Image.MAX_IMAGE_PIXELS is not None
         assert Image.MAX_IMAGE_PIXELS <= 64_000_000

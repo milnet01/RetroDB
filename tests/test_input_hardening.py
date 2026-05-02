@@ -111,7 +111,7 @@ class TestMuseumUploadCap:
         # need multipart plumbing; here we just verify the config constant
         # exists and the route imports cleanly.
         import config
-        import routes.museum  # noqa: F401 — import smoke
+        import routes.museum
         assert hasattr(config, 'MUSEUM_UPLOAD_MAX_BYTES')
         assert config.MUSEUM_UPLOAD_MAX_BYTES >= 1024 * 1024
 

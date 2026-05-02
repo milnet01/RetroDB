@@ -302,9 +302,9 @@ class PSNRefreshJob:
                 with self._lock:
                     self.completed = True
                     self.running = False
-                    self.error_message = f"PSN authentication failed: {str(e)}"
+                    self.error_message = f"PSN authentication failed: {e!s}"
                 release_singleton_fd(self)
-                persist_job_complete(persist_id, status='failed', error=f"PSN authentication failed: {str(e)}")
+                persist_job_complete(persist_id, status='failed', error=f"PSN authentication failed: {e!s}")
                 return
 
             # Get trophy titles once (paginated — can be slow for large libraries)
@@ -391,9 +391,9 @@ class PSNRefreshJob:
                 with self._lock:
                     self.completed = True
                     self.running = False
-                    self.error_message = f"Failed to fetch trophy titles: {str(e)}"
+                    self.error_message = f"Failed to fetch trophy titles: {e!s}"
                 release_singleton_fd(self)
-                persist_job_complete(persist_id, status='failed', error=f"Failed to fetch trophy titles: {str(e)}")
+                persist_job_complete(persist_id, status='failed', error=f"Failed to fetch trophy titles: {e!s}")
                 return
 
             logger.info(f"Starting PSN refresh job {self.job_id} with {len(self.npwr_ids)} games")

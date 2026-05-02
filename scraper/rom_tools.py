@@ -373,7 +373,7 @@ class ArchiveScanner:
         except Exception as e:
             task.status = "error"
             task.error = str(e)
-            task.logs.append(f"[{self._timestamp()}] ERROR: {str(e)}")
+            task.logs.append(f"[{self._timestamp()}] ERROR: {e!s}")
             logger.error(f"Archive scan error: {e}")
         
         update_task(task)
@@ -1005,7 +1005,7 @@ class ArchiveScanner:
         except Exception as e:
             task.status = "error"
             task.error = str(e)
-            task.logs.append(f"[{self._timestamp()}] ERROR: {str(e)}")
+            task.logs.append(f"[{self._timestamp()}] ERROR: {e!s}")
             logger.error(f"Archive scan error: {e}")
         
         update_task(task)
@@ -1251,7 +1251,7 @@ class CHDConverter:
         except Exception as e:
             task.status = "error"
             task.error = str(e)
-            task.logs.append(f"[{self._timestamp()}] ERROR: {str(e)}")
+            task.logs.append(f"[{self._timestamp()}] ERROR: {e!s}")
             logger.error(f"CHD conversion error: {e}")
         
         update_task(task)
@@ -1390,7 +1390,7 @@ class CHDVerifier:
         except Exception as e:
             task.status = "error"
             task.error = str(e)
-            task.logs.append(f"[{self._timestamp()}] ERROR: {str(e)}")
+            task.logs.append(f"[{self._timestamp()}] ERROR: {e!s}")
             logger.error(f"CHD verify error: {e}")
         
         update_task(task)
@@ -1521,7 +1521,7 @@ class DuplicateFinder:
         except Exception as e:
             task.status = "error"
             task.error = str(e)
-            task.logs.append(f"[{self._timestamp()}] ERROR: {str(e)}")
+            task.logs.append(f"[{self._timestamp()}] ERROR: {e!s}")
             logger.error(f"Duplicate scan error: {e}")
         
         update_task(task)

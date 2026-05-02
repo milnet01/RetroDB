@@ -223,7 +223,7 @@ def extract_psn_platform(title):
     return platform
 
 
-from services.achievement_linking import (  # noqa: E402
+from services.achievement_linking import (
     clean_title_for_matching as _clean_title_for_matching,
     find_linked_game_for_psn as _find_linked_game_for_psn_impl,
 )
@@ -831,7 +831,7 @@ def psn_trophy_detail(npwr_id):
     
     # Debug: log first few trophies to understand data format
     for i, t in enumerate(trophies_list[:5]):
-        logger.info(f"  Trophy {i}: type={repr(t.get('trophy_type'))}, earned={repr(t.get('earned'))}, group_id={repr(t.get('group_id'))}, group_name={repr(t.get('group_name'))}")
+        logger.info(f"  Trophy {i}: type={t.get('trophy_type')!r}, earned={t.get('earned')!r}, group_id={t.get('group_id')!r}, group_name={t.get('group_name')!r}")
     
     for t in trophies_list:
         if not bool(t.get('earned')):
@@ -1410,7 +1410,7 @@ def api_psn_sync_game(npwr_id):
                     # Debug: log group info for first 5 trophies
                     if trophies_synced < 5:
                         api_name = group_names_from_api.get(group_id, 'NOT_FOUND')
-                        logger.info(f"Trophy {trophy_id}: group_id={repr(group_id)}, api_name={repr(api_name)}")
+                        logger.info(f"Trophy {trophy_id}: group_id={group_id!r}, api_name={api_name!r}")
                     
                     # Determine final group name - priority order:
                     # 1. User-edited custom name

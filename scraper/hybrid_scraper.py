@@ -658,7 +658,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         # UNLESS force_overwrite is True (full re-scrape mode)
         if not force_overwrite:
             import json as _json_prepop
-            for field in metadata.keys():
+            for field in metadata:
                 existing_value = game.get(field)
                 if existing_value:
                     # alternate_titles is stored as JSON in DB — decode to list
