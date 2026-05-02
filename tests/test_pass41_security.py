@@ -592,6 +592,152 @@ class TestPass41_5BIgdbTokenRefreshOn401:
 
 
 # -----------------------------------------------------------------------------
+# 41.6.A-extend — Apply singleton lock to remaining 9 job classes
+# -----------------------------------------------------------------------------
+class TestPass41_6AExtendSingletonLockOtherJobs:
+    """Pass 41.6.A landed the cross-process singleton lock on BulkScrapeJob.
+    Pass 41.6.A-extend applies the same pattern to every other long-running
+    job class so multi-worker WSGI deploys get a cross-process guard
+    everywhere. Contract: each module imports the helpers, every job's
+    start() / resume_from_params() acquires a uniquely-named lock, and every
+    terminal cleanup releases via the `release_singleton_fd(self)` helper."""
+
+    JOB_MODULES = [
+        ('services.jobs.image_resize', 'ImageResizeJob', 'image_resize'),
+        ('services.jobs.alt_titles_backfill', 'AltTitlesBackfillJob', 'alt_titles_backfill'),
+        ('services.jobs.hltb_bulk', 'HLTBBulkLookupJob', 'hltb_bulk'),
+        ('services.jobs.museum', 'MuseumGenerateJob', 'museum_generate'),
+        ('services.jobs.ra_sync', 'RASyncJob', 'ra_sync'),
+        ('services.jobs.ra_refresh', 'RARefreshJob', 'ra_refresh'),
+        ('services.jobs.psn_refresh', 'PSNRefreshJob', 'psn_refresh'),
+        ('services.jobs.platform_sync', 'SteamSyncJob', 'steam_sync'),
+        ('services.jobs.platform_sync', 'XboxSyncJob', 'xbox_sync'),
+    ]
+
+    def test_each_job_has_singleton_fd_attribute(self):
+        """Every job's __init__ sets `_singleton_fd = None` so the worker's
+        terminal cleanup can release safely (idempotent on un-acquired)."""
+        import importlib
+        for modname, clsname, _ in self.JOB_MODULES:
+            mod = importlib.import_module(modname)
+            cls = getattr(mod, clsname)
+            inst = cls()
+            assert hasattr(inst, '_singleton_fd'), (
+                f"{clsname} must define `_singleton_fd` in __init__"
+            )
+            assert inst._singleton_fd is None, (
+                f"{clsname}._singleton_fd must default to None"
+            )
+
+    def test_each_job_module_imports_helpers(self):
+        """Each module must `from services.jobs.base import
+        acquire_job_singleton_lock, release_singleton_fd` (both helpers
+        used together in the start/cleanup pattern)."""
+        import importlib
+        from services.jobs import base as job_base
+        for modname, _, _ in self.JOB_MODULES:
+            mod = importlib.import_module(modname)
+            assert hasattr(mod, 'acquire_job_singleton_lock'), (
+                f"{modname} must import acquire_job_singleton_lock"
+            )
+            assert hasattr(mod, 'release_singleton_fd'), (
+                f"{modname} must import release_singleton_fd"
+            )
+            # Same binding, not a re-implementation.
+            assert mod.acquire_job_singleton_lock is job_base.acquire_job_singleton_lock
+            assert mod.release_singleton_fd is job_base.release_singleton_fd
+
+    def test_each_start_acquires_lock_with_correct_name(self, monkeypatch):
+        """Hook acquire_job_singleton_lock; call each job's start() with
+        the lightest-weight valid args; assert the helper was invoked with
+        the expected job name. Worker thread starts a no-op via a stubbed
+        target so the test stays in-process."""
+        import importlib
+        captured = []
+        SENTINEL = 12345  # Any positive int that release helpers must accept.
+
+        def fake_acquire(name):
+            captured.append(name)
+            return SENTINEL
+
+        def fake_release(fd):
+            # Don't actually try to flock or close the SENTINEL int.
+            pass
+
+        # Stub Thread.start so worker bodies don't run.
+        import threading as _t
+        monkeypatch.setattr(_t.Thread, 'start', lambda self: None)
+
+        # Patch base.release_job_singleton_lock so release_singleton_fd's
+        # delegate doesn't call fcntl on the SENTINEL.
+        from services.jobs import base as job_base
+        monkeypatch.setattr(job_base, 'acquire_job_singleton_lock', fake_acquire)
+        monkeypatch.setattr(job_base, 'release_job_singleton_lock', fake_release)
+
+        # Each job module rebinds acquire_job_singleton_lock at import; patch
+        # the per-module symbol too.
+        for modname, _, _ in self.JOB_MODULES:
+            mod = importlib.import_module(modname)
+            monkeypatch.setattr(mod, 'acquire_job_singleton_lock', fake_acquire)
+
+        starters = {
+            'ImageResizeJob': lambda j: j.start(image_types=['boxart']),
+            'AltTitlesBackfillJob': lambda j: j.start(),
+            'HLTBBulkLookupJob': lambda j: j.start(),
+            'MuseumGenerateJob': lambda j: j.start(),
+            'RASyncJob': lambda j: j.start(system_id=1),
+            'RARefreshJob': lambda j: j.start(system_id=1),
+            'PSNRefreshJob': lambda j: j.start(['NPWR0001'], 'fake-npsso', user_id=1),
+            'SteamSyncJob': lambda j: j.start(user_id=1),
+            'XboxSyncJob': lambda j: j.start(user_id=1),
+        }
+
+        for modname, clsname, expected_name in self.JOB_MODULES:
+            mod = importlib.import_module(modname)
+            cls = getattr(mod, clsname)
+            inst = cls()
+            captured.clear()
+            result = starters[clsname](inst)
+            assert expected_name in captured, (
+                f"{clsname}.start() did not acquire lock named "
+                f"{expected_name!r}. Captured: {captured}"
+            )
+            assert result.get('success') is True, (
+                f"{clsname}.start() returned non-success with stubbed lock: {result}"
+            )
+            assert inst._singleton_fd == SENTINEL, (
+                f"{clsname}.start() must record the FD on self._singleton_fd"
+            )
+
+    def test_release_singleton_fd_helper_is_idempotent(self, monkeypatch):
+        """`release_singleton_fd(job)` clears the attribute; a second call
+        must be a no-op (idempotent — multiple terminal-cleanup branches in
+        a worker can call it without re-releasing or AttributeError)."""
+        from services.jobs.base import release_singleton_fd
+        from services.jobs import base as job_base
+
+        # Stub the underlying flock/close so the test FD doesn't need to be
+        # a real one.
+        released = []
+        monkeypatch.setattr(
+            job_base, 'release_job_singleton_lock',
+            lambda fd: released.append(fd)
+        )
+
+        class _Stub:
+            _singleton_fd = 99
+
+        s = _Stub()
+        release_singleton_fd(s)
+        assert s._singleton_fd is None
+        assert released == [99]
+        # Second call: still fine, no extra release.
+        release_singleton_fd(s)
+        assert s._singleton_fd is None
+        assert released == [99]
+
+
+# -----------------------------------------------------------------------------
 # 41.5b — Steam + HLTB raw requests routed through base_scraper.http_get/post
 # -----------------------------------------------------------------------------
 class TestPass41_5bSteamHltbThroughBaseScraper:

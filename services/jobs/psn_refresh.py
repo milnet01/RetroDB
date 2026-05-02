@@ -14,6 +14,7 @@ from services.jobs.base import (
     _get_conn, _commit_with_retry, _download_psn_trophy_image,
     persist_job_start, persist_job_progress, persist_job_complete,
     resolve_terminal_status, shutdown_requested,
+    acquire_job_singleton_lock, release_singleton_fd,
 )
 
 logger = logging.getLogger(__name__)
@@ -28,6 +29,7 @@ class PSNRefreshJob:
     def __init__(self):
         self._lock = threading.Lock()
         self._thread = None
+        self._singleton_fd = None
         self.reset()
 
     def reset(self):
@@ -114,7 +116,15 @@ class PSNRefreshJob:
             if self.running and not self.completed:
                 return {'success': False, 'error': 'PSN refresh already running'}
 
+            singleton_fd = acquire_job_singleton_lock('psn_refresh')
+            if singleton_fd is None:
+                return {
+                    'success': False,
+                    'error': 'PSN refresh is already running on another worker process.',
+                }
+
             self.reset()
+            self._singleton_fd = singleton_fd
             self.job_id = f"psn_refresh_{int(time.time())}"
             self.npwr_ids = npwr_ids
             self._npsso = npsso
@@ -219,7 +229,15 @@ class PSNRefreshJob:
                 if self.running and not self.completed:
                     return False
 
+                singleton_fd = acquire_job_singleton_lock('psn_refresh')
+                if singleton_fd is None:
+                    logger.warning(
+                        "PSN refresh resume refused: lock held by another worker process"
+                    )
+                    return False
+
                 self.reset()
+                self._singleton_fd = singleton_fd
                 self.job_id = f"psn_refresh_{int(time.time())}_resume"
                 self.npwr_ids = [None] * resume_index + remaining_ids
                 self._npsso = npsso
@@ -271,6 +289,7 @@ class PSNRefreshJob:
                     self.completed = True
                     self.running = False
                     self.error_message = "PSNAWP library not installed"
+                release_singleton_fd(self)
                 persist_job_complete(persist_id, status='failed', error="PSNAWP library not installed")
                 return
 
@@ -288,6 +307,7 @@ class PSNRefreshJob:
                     self.completed = True
                     self.running = False
                     self.error_message = f"PSN authentication failed: {str(e)}"
+                release_singleton_fd(self)
                 persist_job_complete(persist_id, status='failed', error=f"PSN authentication failed: {str(e)}")
                 return
 
@@ -350,6 +370,7 @@ class PSNRefreshJob:
                         self.completed = True
                         self.running = False
                         self.error_message = f"PSN trophy list fetch timed out after {FETCH_TIMEOUT}s — Sony API may be slow or unresponsive"
+                    release_singleton_fd(self)
                     persist_job_complete(persist_id, status='failed', error=f"Trophy list fetch timed out ({fetch_count[0]} fetched)")
                     return
 
@@ -362,6 +383,7 @@ class PSNRefreshJob:
                         self.completed = True
                         self.running = False
                         self.error_message = "No PSN trophy titles found"
+                    release_singleton_fd(self)
                     persist_job_complete(persist_id, status='failed', error="No trophy titles found")
                     return
 
@@ -374,6 +396,7 @@ class PSNRefreshJob:
                     self.completed = True
                     self.running = False
                     self.error_message = f"Failed to fetch trophy titles: {str(e)}"
+                release_singleton_fd(self)
                 persist_job_complete(persist_id, status='failed', error=f"Failed to fetch trophy titles: {str(e)}")
                 return
 
@@ -492,6 +515,7 @@ class PSNRefreshJob:
                 self.running = False
                 _final_status = resolve_terminal_status(self.cancelled)
                 logger.info(f"PSN Refresh completed: {self.success_count} success, {self.failed_count} failed, {self.skipped_count} skipped")
+            release_singleton_fd(self)
 
             persist_job_complete(persist_id, status=_final_status)
 
@@ -503,6 +527,7 @@ class PSNRefreshJob:
                 self.completed = True
                 self.running = False
                 self.error_message = str(e)
+            release_singleton_fd(self)
             persist_job_complete(persist_id, status='failed', error=str(e))
 
     def _sync_game_trophies(self, client, npwr_id, psn_game, target_title, conn):

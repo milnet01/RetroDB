@@ -20,6 +20,7 @@ from services.jobs.base import (
     _get_conn, _commit_with_retry,
     persist_job_start, persist_job_progress, persist_job_complete,
     resolve_terminal_status,
+    acquire_job_singleton_lock, release_singleton_fd,
 )
 
 logger = logging.getLogger(__name__)
@@ -31,6 +32,7 @@ class AltTitlesBackfillJob:
     def __init__(self):
         self._lock = threading.Lock()
         self._thread = None
+        self._singleton_fd = None
         self.reset()
 
     def reset(self):
@@ -61,7 +63,14 @@ class AltTitlesBackfillJob:
         with self._lock:
             if self.running:
                 return {'success': False, 'error': 'Alt-titles backfill already running'}
+            singleton_fd = acquire_job_singleton_lock('alt_titles_backfill')
+            if singleton_fd is None:
+                return {
+                    'success': False,
+                    'error': 'Alt-titles backfill is already running on another worker process.',
+                }
             self.reset()
+            self._singleton_fd = singleton_fd
             self.job_id = f"alt_titles_backfill_{int(time.time())}"
             self.running = True
             self.start_time = datetime.now(timezone.utc).isoformat()
@@ -134,6 +143,7 @@ class AltTitlesBackfillJob:
                 with self._lock:
                     self.completed = True
                     self.running = False
+                release_singleton_fd(self)
                 persist_job_complete(persist_id, status='completed')
                 return
 
@@ -261,6 +271,7 @@ class AltTitlesBackfillJob:
                     f"{self.no_new_alts_count} no new, {self.no_match_count} no match, "
                     f"{self.failed_count} failed"
                 )
+            release_singleton_fd(self)
 
             if persist_id:
                 persist_job_complete(persist_id, status=final_status)
@@ -271,5 +282,6 @@ class AltTitlesBackfillJob:
                 self.completed = True
                 self.running = False
                 self.error_message = str(e)
+            release_singleton_fd(self)
             if persist_id:
                 persist_job_complete(persist_id, status='failed', error=str(e))

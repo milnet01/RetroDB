@@ -1,3 +1,20 @@
+- version: 3.5.48
+  date: 2026-05-02
+  tags:
+  - type: hardening
+    label: Pass 41.6.A-extend — Cross-process singleton lock on remaining 9 job classes
+  body: |
+    <ul>
+        <li><strong>Pass 41.6.A landed `acquire_job_singleton_lock` on `BulkScrapeJob` only</strong>; this pass extends the same `fcntl.flock(LOCK_EX | LOCK_NB)` cross-process advisory lock to all 9 remaining job classes — <code>ImageResizeJob</code>, <code>AltTitlesBackfillJob</code>, <code>HLTBBulkLookupJob</code>, <code>MuseumGenerateJob</code>, <code>RASyncJob</code>, <code>RARefreshJob</code>, <code>PSNRefreshJob</code>, <code>SteamSyncJob</code>, <code>XboxSyncJob</code>. Multi-worker WSGI deploys (e.g. <code>gunicorn --workers 2</code>) can no longer accidentally run two copies of the same long-running job in parallel against the same DB / external API.</li>
+        <li><strong>New helper `release_singleton_fd(job_obj)`</strong> in <code>services/jobs/base.py</code> collapses the 3-line cleanup boilerplate to one line. Idempotent — safe to call from multiple terminal-cleanup branches without re-releasing or <code>AttributeError</code>. Replaces the inline <code>fd = getattr(self, '_singleton_fd', None); if fd is not None: release_job_singleton_lock(fd); self._singleton_fd = None</code> dance at every cleanup site.</li>
+        <li><strong>Pattern applied per job</strong>: (1) <code>__init__</code> sets <code>self._singleton_fd = None</code>; (2) <code>start()</code> acquires the lock keyed on the job name (<code>image_resize</code>, <code>alt_titles_backfill</code>, <code>hltb_bulk</code>, <code>museum_generate</code>, <code>ra_sync</code>, <code>ra_refresh</code>, <code>psn_refresh</code>, <code>steam_sync</code>, <code>xbox_sync</code>) and refuses with a worker-process-busy message on <code>None</code>; (3) every terminal cleanup (early-return validation paths, normal completion, exception path) calls <code>release_singleton_fd(self)</code> after toggling <code>self.running = False</code>.</li>
+        <li><strong>`resume_from_params` covered too</strong>. Five jobs (museum, ra_sync, ra_refresh, psn_refresh, steam_sync, xbox_sync) have a server-restart-resume entrypoint that also flips <code>running = True</code>; each now acquires its own lock and refuses with a logged warning if another worker holds it. Resume-without-lock would have silently shared state with a still-running fresh start on a different worker.</li>
+        <li><strong>Lock granularity</strong> is one <code>data/job_locks/&lt;job_name&gt;.lock</code> file per job class, so different jobs (e.g. ra_sync and museum_generate) can run concurrently — only the same-class re-entry is blocked. Same shape as the BulkScrapeJob reference.</li>
+        <li><strong>Verification</strong>. New regression class <code>TestPass41_6AExtendSingletonLockOtherJobs</code> (4 cases): <code>_singleton_fd</code> attribute pin, helper-import pin, functional <code>start()</code>-acquires-with-correct-name pin (monkeypatches <code>acquire_job_singleton_lock</code> + stubs <code>Thread.start</code>; asserts each of 9 jobs gets the expected name), and <code>release_singleton_fd</code> idempotency pin. Full pytest <strong>703 / 703 green</strong>.</li>
+        <li><strong>Source</strong> &mdash; <code>roadmap.md</code> Pass 41.6.A-extend (carry-over from Pass 41.6).</li>
+        <li><strong>Version bump 3.5.47 &rarr; 3.5.48</strong>: patch (hardening; behaviour-preserving for single-worker deploys, blocks accidental concurrent same-job starts under multi-worker).</li>
+    </ul>
+
 - version: 3.5.47
   date: 2026-05-02
   tags:

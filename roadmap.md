@@ -1326,7 +1326,24 @@ paths or silent-corruption vectors under routine use.
   with the job name; the FD lives on `self._singleton_fd`; the worker's
   terminal cleanup releases it. Each job's existing test fixture needs
   the same teardown release pattern as `tests/test_bulk_scrape_job.py`.
-- **Status**: todo (carry-over from Pass 41.6)
+- **Status**: done (v3.5.48) — all 9 job classes wired up. New helper
+  `services.jobs.base.release_singleton_fd(self)` collapses the 3-line
+  cleanup boilerplate to one line; idempotent across multiple terminal-
+  cleanup branches in a worker. Each job: (1) `__init__` sets
+  `_singleton_fd = None`; (2) `start()` acquires lock named
+  `image_resize` / `alt_titles_backfill` / `hltb_bulk` /
+  `museum_generate` / `ra_sync` / `ra_refresh` / `psn_refresh` /
+  `steam_sync` / `xbox_sync` and refuses with a worker-process-busy
+  message on `None`; (3) every cleanup path (early-return validations,
+  normal completion, exception path) calls `release_singleton_fd(self)`.
+  Six jobs with `resume_from_params` (museum, ra_sync, ra_refresh,
+  psn_refresh, steam_sync, xbox_sync) acquire their own locks too —
+  resume otherwise would silently shadow a fresh start on a different
+  worker. Existing test fixtures (`test_hltb_bulk.py`,
+  `test_museum_job.py`) don't call `start()` so no fixture changes
+  needed; new regression class `TestPass41_6AExtendSingletonLockOtherJobs`
+  (4 cases) functionally pins acquire-with-correct-name across all 9
+  classes plus helper idempotency.
 
 #### Pass 41.7 OAuth / trophy-parser — TROPUSR bounds hardening + Xbox redirect URL concat + RA 401 observability
 

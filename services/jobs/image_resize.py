@@ -16,6 +16,8 @@ from services.jobs.base import (
     persist_job_progress,
     persist_job_complete,
     resolve_terminal_status,
+    acquire_job_singleton_lock,
+    release_singleton_fd,
 )
 
 logger = logging.getLogger(__name__)
@@ -27,6 +29,7 @@ class ImageResizeJob:
     def __init__(self):
         self._lock = threading.Lock()
         self._thread = None
+        self._singleton_fd = None
         self.reset()
 
     def reset(self):
@@ -61,7 +64,15 @@ class ImageResizeJob:
             if self.running:
                 return {'success': False, 'error': 'Image resize already in progress'}
 
+            singleton_fd = acquire_job_singleton_lock('image_resize')
+            if singleton_fd is None:
+                return {
+                    'success': False,
+                    'error': 'Image resize is already running on another worker process.',
+                }
+
             self.reset()
+            self._singleton_fd = singleton_fd
             self.running = True
             self.start_time = datetime.now(timezone.utc).isoformat()
 
@@ -274,6 +285,7 @@ class ImageResizeJob:
                     self.processed_count, self.skipped_count, self.failed_count,
                     self.upscaled_count, self.downscaled_count,
                 )
+            release_singleton_fd(self)
             if persist_id:
                 persist_job_complete(persist_id, status=final_status)
             logger.info(

@@ -13,6 +13,7 @@ from services.jobs.base import (
     _get_conn, _commit_with_retry, _get_ra_credentials,
     persist_job_start, persist_job_progress, persist_job_complete,
     resolve_terminal_status, shutdown_requested,
+    acquire_job_singleton_lock, release_singleton_fd,
 )
 
 logger = logging.getLogger(__name__)
@@ -24,6 +25,7 @@ class RARefreshJob:
     def __init__(self):
         self._lock = threading.Lock()
         self._thread = None
+        self._singleton_fd = None
         self.reset()
 
     def reset(self):
@@ -73,7 +75,15 @@ class RARefreshJob:
             if self.running:
                 return {'success': False, 'error': 'Refresh already running'}
 
+            singleton_fd = acquire_job_singleton_lock('ra_refresh')
+            if singleton_fd is None:
+                return {
+                    'success': False,
+                    'error': 'RA refresh is already running on another worker process.',
+                }
+
             self.reset()
+            self._singleton_fd = singleton_fd
             self.job_id = f"ra_refresh_{int(time.time())}"
             self.system_id = system_id
             self.running = True
@@ -109,7 +119,14 @@ class RARefreshJob:
             with self._lock:
                 if self.running:
                     return False
+                singleton_fd = acquire_job_singleton_lock('ra_refresh')
+                if singleton_fd is None:
+                    logger.warning(
+                        "RA refresh resume refused: lock held by another worker process"
+                    )
+                    return False
                 self.reset()
+                self._singleton_fd = singleton_fd
                 self.job_id = f"ra_refresh_{int(time.time())}_resume"
                 self.system_id = system_id
                 self.system_name = system_name
@@ -152,6 +169,7 @@ class RARefreshJob:
                     self.completed = True
                     self.running = False
                     self.error_message = "RA API key or username not configured"
+                release_singleton_fd(self)
                 return
 
             # Import RA console mapping
@@ -162,6 +180,7 @@ class RARefreshJob:
                     self.completed = True
                     self.running = False
                     self.error_message = "RetroAchievements scraper not available"
+                release_singleton_fd(self)
                 return
 
             # Use pre-set game IDs from resume, or query from DB
@@ -246,6 +265,7 @@ class RARefreshJob:
                 with self._lock:
                     self.completed = True
                     self.running = False
+                release_singleton_fd(self)
                 persist_job_complete(persist_id, status='completed')
                 return
 
@@ -365,6 +385,7 @@ class RARefreshJob:
                 self.running = False
                 _final_status = resolve_terminal_status(self.cancelled)
                 logger.info(f"RA Refresh: Completed - Found {self.success_count} games with RA, {self.skipped_count} without, {self.failed_count} errors")
+            release_singleton_fd(self)
 
             if persist_id:
                 persist_job_complete(persist_id, status=_final_status)
@@ -375,5 +396,6 @@ class RARefreshJob:
                 self.completed = True
                 self.running = False
                 self.error_message = str(e)
+            release_singleton_fd(self)
             if persist_id:
                 persist_job_complete(persist_id, status='failed', error=str(e))

@@ -23,6 +23,7 @@ from services.jobs.base import (
     _get_conn, _commit_with_retry,
     persist_job_start, persist_job_progress, persist_job_complete,
     resolve_terminal_status,
+    acquire_job_singleton_lock, release_singleton_fd,
 )
 
 logger = logging.getLogger(__name__)
@@ -83,6 +84,7 @@ class HLTBBulkLookupJob:
     def __init__(self):
         self._lock = threading.Lock()
         self._thread = None
+        self._singleton_fd = None
         self.reset()
 
     def reset(self):
@@ -115,7 +117,14 @@ class HLTBBulkLookupJob:
         with self._lock:
             if self.running:
                 return {'success': False, 'error': 'HLTB bulk lookup already running'}
+            singleton_fd = acquire_job_singleton_lock('hltb_bulk')
+            if singleton_fd is None:
+                return {
+                    'success': False,
+                    'error': 'HLTB bulk lookup is already running on another worker process.',
+                }
             self.reset()
+            self._singleton_fd = singleton_fd
             self.job_id = f"hltb_bulk_{int(time.time())}"
             self.running = True
             self.only_missing = bool(only_missing)
@@ -188,6 +197,7 @@ class HLTBBulkLookupJob:
                 with self._lock:
                     self.completed = True
                     self.running = False
+                release_singleton_fd(self)
                 persist_job_complete(persist_id, status='completed')
                 return
 
@@ -323,6 +333,7 @@ class HLTBBulkLookupJob:
                     f"{self.queued_count} queued for review, "
                     f"{self.no_match_count} no match, {self.failed_count} failed"
                 )
+            release_singleton_fd(self)
 
             if persist_id:
                 persist_job_complete(persist_id, status=final_status)
@@ -333,5 +344,6 @@ class HLTBBulkLookupJob:
                 self.completed = True
                 self.running = False
                 self.error_message = str(e)
+            release_singleton_fd(self)
             if persist_id:
                 persist_job_complete(persist_id, status='failed', error=str(e))

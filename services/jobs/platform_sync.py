@@ -13,6 +13,7 @@ from services.jobs.base import (
     _get_conn, _commit_with_retry,
     persist_job_start, persist_job_progress, persist_job_complete,
     resolve_terminal_status, shutdown_requested,
+    acquire_job_singleton_lock, release_singleton_fd,
 )
 
 logger = logging.getLogger(__name__)
@@ -249,6 +250,7 @@ class SteamSyncJob:
     def __init__(self):
         self._lock = threading.Lock()
         self._thread = None
+        self._singleton_fd = None
         self.reset()
 
     def reset(self):
@@ -296,7 +298,14 @@ class SteamSyncJob:
         with self._lock:
             if self.running:
                 return {'success': False, 'error': 'Sync already running'}
+            singleton_fd = acquire_job_singleton_lock('steam_sync')
+            if singleton_fd is None:
+                return {
+                    'success': False,
+                    'error': 'Steam sync is already running on another worker process.',
+                }
             self.reset()
+            self._singleton_fd = singleton_fd
             self.job_id = f"steam_sync_{int(time.time())}"
             self.running = True
             self._user_id = user_id
@@ -330,7 +339,14 @@ class SteamSyncJob:
             with self._lock:
                 if self.running:
                     return False
+                singleton_fd = acquire_job_singleton_lock('steam_sync')
+                if singleton_fd is None:
+                    logger.warning(
+                        "Steam sync resume refused: lock held by another worker process"
+                    )
+                    return False
                 self.reset()
+                self._singleton_fd = singleton_fd
                 self.job_id = f"steam_sync_{int(time.time())}_resume"
                 self._resume_game_ids = [None] * resume_index + remaining_ids
                 self.running = True
@@ -370,6 +386,7 @@ class SteamSyncJob:
                     self.completed = True
                     self.running = False
                     self.error_message = "Steam API key or Steam ID not configured"
+                release_singleton_fd(self)
                 return
 
             # Use pre-set game IDs from resume, or query from DB
@@ -419,6 +436,7 @@ class SteamSyncJob:
                     self.completed = True
                     self.running = False
                     self.error_message = "No Steam games found to sync"
+                release_singleton_fd(self)
                 persist_job_complete(persist_id, status='completed', error="No Steam games found")
                 return
 
@@ -502,6 +520,7 @@ class SteamSyncJob:
                 self.completed = True
                 self.running = False
                 _final_status = resolve_terminal_status(self.cancelled)
+            release_singleton_fd(self)
 
             if persist_id:
                 persist_job_complete(persist_id, status=_final_status)
@@ -512,6 +531,7 @@ class SteamSyncJob:
                 self.completed = True
                 self.running = False
                 self.error_message = str(e)
+            release_singleton_fd(self)
             if persist_id:
                 persist_job_complete(persist_id, status='failed', error=str(e))
 
@@ -528,6 +548,7 @@ class XboxSyncJob:
     def __init__(self):
         self._lock = threading.Lock()
         self._thread = None
+        self._singleton_fd = None
         self.reset()
 
     def reset(self):
@@ -578,7 +599,14 @@ class XboxSyncJob:
         with self._lock:
             if self.running:
                 return {'success': False, 'error': 'Sync already running'}
+            singleton_fd = acquire_job_singleton_lock('xbox_sync')
+            if singleton_fd is None:
+                return {
+                    'success': False,
+                    'error': 'Xbox sync is already running on another worker process.',
+                }
             self.reset()
+            self._singleton_fd = singleton_fd
             self.job_id = f"xbox_sync_{int(time.time())}"
             self.user_id = user_id
             self.running = True
@@ -621,7 +649,14 @@ class XboxSyncJob:
             with self._lock:
                 if self.running:
                     return False
+                singleton_fd = acquire_job_singleton_lock('xbox_sync')
+                if singleton_fd is None:
+                    logger.warning(
+                        "Xbox sync resume refused: lock held by another worker process"
+                    )
+                    return False
                 self.reset()
+                self._singleton_fd = singleton_fd
                 self.job_id = f"xbox_sync_{int(time.time())}_resume"
                 self.user_id = user_id
                 self._resume_game_ids = [None] * resume_index + remaining_ids
@@ -661,6 +696,7 @@ class XboxSyncJob:
                     self.completed = True
                     self.running = False
                     self.error_message = "Xbox credentials not configured"
+                release_singleton_fd(self)
                 return
 
             session = get_authenticated_session(xbox_client_id, xbox_client_secret, self.user_id)
@@ -669,6 +705,7 @@ class XboxSyncJob:
                     self.completed = True
                     self.running = False
                     self.error_message = "Xbox authentication failed — please re-connect your Xbox account"
+                release_singleton_fd(self)
                 return
 
             # Use pre-set game IDs from resume, or query from DB
@@ -719,6 +756,7 @@ class XboxSyncJob:
                     self.completed = True
                     self.running = False
                     self.error_message = "No Xbox games found to sync"
+                release_singleton_fd(self)
                 persist_job_complete(persist_id, status='completed', error="No Xbox games found")
                 return
 
@@ -800,6 +838,7 @@ class XboxSyncJob:
                 self.completed = True
                 self.running = False
                 _final_status = resolve_terminal_status(self.cancelled)
+            release_singleton_fd(self)
 
             if persist_id:
                 persist_job_complete(persist_id, status=_final_status)
@@ -810,5 +849,6 @@ class XboxSyncJob:
                 self.completed = True
                 self.running = False
                 self.error_message = str(e)
+            release_singleton_fd(self)
             if persist_id:
                 persist_job_complete(persist_id, status='failed', error=str(e))

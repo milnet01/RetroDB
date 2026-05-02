@@ -358,6 +358,17 @@ def release_job_singleton_lock(fd):
         pass
 
 
+def release_singleton_fd(job_obj, attr='_singleton_fd'):
+    """Release the FD stored on `job_obj.<attr>` (if any) and clear the
+    attribute. Idempotent — safe to call from multiple terminal-cleanup
+    branches without re-releasing or AttributeError. Pass 41.6.A-extend
+    helper used by every job class with cross-process lock support."""
+    fd = getattr(job_obj, attr, None)
+    if fd is not None:
+        release_job_singleton_lock(fd)
+        setattr(job_obj, attr, None)
+
+
 # =============================================================================
 # JOB PERSISTENCE HELPERS (crash recovery)
 # =============================================================================

@@ -14,6 +14,7 @@ from services.jobs.base import (
     _get_conn, _commit_with_retry, _get_ra_credentials,
     persist_job_start, persist_job_progress, persist_job_complete,
     resolve_terminal_status, shutdown_requested,
+    acquire_job_singleton_lock, release_singleton_fd,
 )
 
 logger = logging.getLogger(__name__)
@@ -25,6 +26,7 @@ class RASyncJob:
     def __init__(self):
         self._lock = threading.Lock()
         self._thread = None
+        self._singleton_fd = None
         self.reset()
 
     def reset(self):
@@ -76,7 +78,15 @@ class RASyncJob:
             if self.running:
                 return {'success': False, 'error': 'Sync already running'}
 
+            singleton_fd = acquire_job_singleton_lock('ra_sync')
+            if singleton_fd is None:
+                return {
+                    'success': False,
+                    'error': 'RA sync is already running on another worker process.',
+                }
+
             self.reset()
+            self._singleton_fd = singleton_fd
             self.job_id = f"ra_sync_{int(time.time())}"
             self.system_id = system_id
             self.running = True
@@ -134,7 +144,14 @@ class RASyncJob:
             with self._lock:
                 if self.running:
                     return False
+                singleton_fd = acquire_job_singleton_lock('ra_sync')
+                if singleton_fd is None:
+                    logger.warning(
+                        "RA sync resume refused: lock held by another worker process"
+                    )
+                    return False
                 self.reset()
+                self._singleton_fd = singleton_fd
                 self.job_id = f"ra_sync_{int(time.time())}_resume"
                 self.system_id = system_id
                 self.system_name = system_name
@@ -178,6 +195,7 @@ class RASyncJob:
                     self.completed = True
                     self.running = False
                     self.error_message = "RA API key or username not configured"
+                release_singleton_fd(self)
                 return
 
             # Use pre-set game IDs from resume, preset from start(), or query from DB
@@ -242,6 +260,7 @@ class RASyncJob:
                     self.completed = True
                     self.running = False
                     self.error_message = "No games with RA IDs in this system"
+                release_singleton_fd(self)
                 persist_job_complete(persist_id, status='completed', error="No games with RA IDs in this system")
                 return
 
@@ -368,6 +387,7 @@ class RASyncJob:
                 self.completed = True
                 self.running = False
                 _final_status = resolve_terminal_status(self.cancelled)
+            release_singleton_fd(self)
 
             if persist_id:
                 persist_job_complete(persist_id, status=_final_status)
@@ -378,5 +398,6 @@ class RASyncJob:
                 self.completed = True
                 self.running = False
                 self.error_message = str(e)
+            release_singleton_fd(self)
             if persist_id:
                 persist_job_complete(persist_id, status='failed', error=str(e))
