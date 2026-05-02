@@ -1,3 +1,24 @@
+- version: 3.5.68
+  date: 2026-05-02
+  tags:
+  - type: fix
+    label: Restore module-level `import json` in `hybrid_scraper.py` + re-add `# noqa: S105` on `XBOX_TOKEN_URL`
+  body: |
+    <ul>
+        <li><strong>Two CI regressions from the just-pushed batch</strong>:
+            <ul>
+                <li><strong>F821 in <code>scraper/hybrid_scraper.py:1422</code></strong> — <code>json.dumps(metadata['alternate_titles'])</code> referenced an undefined name. Pass 38.1 partial 3/4 (v3.5.64) extracted <code>_build_scrape_history_json</code> and the function-local <code>import json</code> moved with it, but <code>apply_hybrid_metadata</code> retained an alt-titles JSON-encode block that was previously satisfied by that same in-function import. The branch only fires when <code>metadata['alternate_titles']</code> is populated — none of the 785 unit tests exercise that path against the real scraper code, which is why pytest stayed green while CI's <code>ruff check .</code> caught the static-analysis defect.</li>
+                <li><strong>S105 on <code>scraper/scrape_xbox.py:17</code></strong> — <code>XBOX_TOKEN_URL = 'https://login.live.com/oauth20_token.srf'</code>. v3.5.63's RUF100 sweep removed the <code>noqa: S105</code> comment claiming the directive was redundant; turned out it was load-bearing — the variable name pattern (anything containing <code>TOKEN</code>) trips bandit-style S105 even though the value is a public OAuth endpoint URL.</li>
+            </ul>
+        </li>
+        <li><strong>Fixes</strong>:
+            <ul>
+                <li><code>scraper/hybrid_scraper.py</code>: added <code>import json</code> at module top (alphabetised with the other stdlib imports). Function-local <code>import json</code> at line 547 inside <code>_build_scrape_history_json</code> kept untouched — stays in lane on edits, and ruff doesn't flag it.</li>
+                <li><code>scraper/scrape_xbox.py</code>: re-added <code>noqa: S105 — public OAuth endpoint URL, not a credential</code> on the <code>XBOX_TOKEN_URL</code> assignment. Same content as the directive that was there before v3.5.63 with a slightly more pointed reason.</li>
+            </ul>
+        </li>
+        <li><strong>Verification</strong>: <code>ruff check .</code> reports <em>All checks passed!</em>, both modules import cleanly, suite 785/785 green. Backlog note for a follow-up: write a regression test that calls <code>apply_hybrid_metadata</code> with a populated <code>alternate_titles</code> list so this branch is exercised in unit tests, not just by ruff. Filed as a backlog candidate but deliberately not added in this commit (stay in lane: this fix closes the CI red, the test gap is a separate item).</li>
+    </ul>
 - version: 3.5.67
   date: 2026-05-02
   tags:

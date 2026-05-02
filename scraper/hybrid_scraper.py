@@ -4,9 +4,10 @@
 # Combines metadata from ES-DE, TheGamesDB, and IGDB to fill all gaps
 # =============================================================================
 
+import json
+import logging
 import os
 import re
-import logging
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
