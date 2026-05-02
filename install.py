@@ -184,12 +184,20 @@ def main():
     # ── Step 3: Core Python dependencies ─────────────────────────────────
     step += 1
     print(f"{_bold(f'[{step}/{total_steps}]')} Installing core Python dependencies...")
+    # Pass 39.4 — prefer the hashed lockfile (fail-closed on MITM / PyPI
+    # tamper). Fall back to requirements.txt only when the lockfile is
+    # absent (e.g. dev environments on a fresh checkout before regen).
+    lock_path = os.path.join(base_dir, 'requirements.lock')
     req_path = os.path.join(base_dir, 'requirements.txt')
-    if not os.path.exists(req_path):
-        print(f"  {_red('ERROR')}: requirements.txt not found")
+    if os.path.exists(lock_path):
+        result = _run_pip(['--require-hashes', '-r', lock_path], base_dir)
+    elif os.path.exists(req_path):
+        print(f"  {_yellow('WARN')}: requirements.lock missing — falling back to "
+              f"requirements.txt (no hash verification)")
+        result = _run_pip(['-r', req_path], base_dir)
+    else:
+        print(f"  {_red('ERROR')}: neither requirements.lock nor requirements.txt found")
         sys.exit(1)
-
-    result = _run_pip(['-r', req_path], base_dir)
     if result.returncode != 0:
         print(f"  {_red('ERROR')}: pip install failed")
         # Show meaningful error lines (skip pip warnings about PATH)

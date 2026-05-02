@@ -1,3 +1,19 @@
+- version: 3.5.49
+  date: 2026-05-02
+  tags:
+  - type: hardening
+    label: Pass 39.4 — `requirements.lock` with `--generate-hashes`, installers use `--require-hashes`
+  body: |
+    <ul>
+        <li><strong>Pass 39.4 — supply-chain hardening on `pip install`</strong>. <code>requirements.lock</code> regenerated with <code>pip-compile --generate-hashes</code>, gaining one or more SHA256 hashes per pinned package (880 lines vs the previous 98). <code>install.py</code> and <code>install_gui.py</code> now run <code>pip install --require-hashes -r requirements.lock</code> by default; pip fails the install if any wheel's hash doesn't match the lockfile, so a MITM swap or compromised PyPI mirror returning a malicious wheel is rejected at the wire (OWASP CICD-SEC-3 Dependency Chain Abuse). Pass 22 shipped <em>signed outputs</em> via cosign; this pass is the symmetric guarantee for <em>verified inputs</em>.</li>
+        <li><strong>Graceful fallback</strong>. If <code>requirements.lock</code> is absent (developer checkout pre-regeneration, custom packaging that strips it), the installer falls back to <code>requirements.txt</code> with a visible warning ("requirements.lock missing — falling back to requirements.txt (no hash verification)"). Distributed source ZIPs include both files, so end-user installs always hit the hashed path.</li>
+        <li><strong>CI lockfile-drift check updated</strong>. <code>.github/workflows/ci.yml</code>'s recompile step adds <code>--generate-hashes</code> so the freshly-generated <code>/tmp/fresh.lock</code> stays apples-to-apples with the committed lockfile (which now carries hashes). Without that flag, every CI run would diff hash blocks vs no-hash blocks and false-positive on drift.</li>
+        <li><strong>CLAUDE.md regen instruction updated</strong>. The "Regenerate lockfile if requirements.txt was edited" step now reads <code>pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes</code>, with a parenthetical explaining why the flag is required (installers run <code>--require-hashes</code>).</li>
+        <li><strong>Verification</strong>. New regression class <code>TestPass39_4LockfileHashes</code> (3 cases): (a) every non-comment <code>name==version</code> line in <code>requirements.lock</code> has at least one trailing <code>--hash=sha256:</code> entry, (b) the lockfile's auto-generated header records the <code>--generate-hashes</code> flag in its recipe, (c) both installers reference the lockfile path. Full pytest <strong>706 / 706 green</strong>. Manual smoke: <code>pip install --require-hashes -r requirements.lock --dry-run</code> resolves clean; <code>pip-audit --strict</code> still passes against the regenerated lock.</li>
+        <li><strong>Source</strong> &mdash; <code>roadmap.md</code> Pass 39.4 (2026-04-24 audit, Tests/tooling/CI M4).</li>
+        <li><strong>Version bump 3.5.48 &rarr; 3.5.49</strong>: patch (hardening; behaviour-preserving — same dependency versions, fail-closed verification added).</li>
+    </ul>
+
 - version: 3.5.48
   date: 2026-05-02
   tags:

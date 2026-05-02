@@ -1674,7 +1674,18 @@ paths or silent-corruption vectors under routine use.
   --strip-extras --generate-hashes`; `pip install --require-hashes -r
   requirements.lock`.  Update CLAUDE.md regen instruction.
 - **Source**: 2026-04-24 audit, Tests/tooling/CI M4.
-- **Status**: todo
+- **Status**: done (v3.5.49) — `requirements.lock` regenerated with
+  `pip-compile --generate-hashes` (98 → 880 lines; one or more SHA256s
+  per pinned package). `install.py` and `install_gui.py` now run
+  `pip install --require-hashes -r requirements.lock` by default; both
+  fall back to `requirements.txt` with a visible warning if the
+  lockfile is absent (developer checkout pre-regeneration). CI's
+  lockfile-drift recompile step adds `--generate-hashes` so the
+  comparison stays apples-to-apples. CLAUDE.md regen instruction
+  updated. Tests: `tests/test_pass39_supply_chain.py::TestPass39_4LockfileHashes`
+  (4 cases — per-package hash count, lockfile-header recipe pin, both
+  installers reference `--require-hashes` + lockfile path, CI workflow
+  drift step uses `--generate-hashes`). Full pytest 707/707 green.
 
 #### Pass 39.5 Dependabot regenerates `requirements.lock` (MEDIUM, S)
 

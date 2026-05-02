@@ -424,13 +424,24 @@ class InstallerApp:
         self._set_step(step, 'running')
         self._log('Installing core dependencies...')
 
+        # Pass 39.4 — prefer the hashed lockfile (fail-closed on MITM / PyPI
+        # tamper). Fall back to requirements.txt only when the lockfile is
+        # absent (dev checkouts before lockfile regen).
+        lock_path = os.path.join(base_dir, 'requirements.lock')
         req_path = os.path.join(base_dir, 'requirements.txt')
-        if not os.path.exists(req_path):
+        pip_args = None
+        if os.path.exists(lock_path):
+            pip_args = ['--require-hashes', '-r', lock_path]
+        elif os.path.exists(req_path):
+            self._log('  requirements.lock missing — falling back to '
+                      'requirements.txt (no hash verification)', 'warning')
+            pip_args = ['-r', req_path]
+        if pip_args is None:
             self._set_step(step, 'failed')
-            self._log('  requirements.txt not found', 'error')
-            errors.append('Missing requirements.txt')
+            self._log('  neither requirements.lock nor requirements.txt found', 'error')
+            errors.append('Missing requirements file')
         else:
-            result = pip_install(['-r', req_path], base_dir)
+            result = pip_install(pip_args, base_dir)
             if result.returncode != 0:
                 self._set_step(step, 'failed')
                 self._log('  pip install failed', 'error')

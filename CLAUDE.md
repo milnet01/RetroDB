@@ -27,7 +27,7 @@ genuinely diverges.
 3. Rebuild CSS if any `static/css/**.css` changed: `python3 build_css.py`
 4. Rebuild JS if any bundled `static/js/*.js` changed: `python3 build_js.py`
 5. Run tests if any `services/*.py` or `scraper/*.py` changed: `python3 -m pytest`
-6. Regenerate lockfile if `requirements.txt` was edited: `pip-compile requirements.txt -o requirements.lock --strip-extras`
+6. Regenerate lockfile if `requirements.txt` was edited: `pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes` (Pass 39.4 — installers run `pip install --require-hashes`, so the lockfile must carry hashes)
 7. Update this file if change adds/removes/renames routes, templates, bundled JS, CSS files, or alters page/asset wiring contracts
 
 ### Verification Before Declaring Done

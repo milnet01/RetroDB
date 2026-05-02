@@ -113,14 +113,18 @@ jobs:
           # identical body. The 6-line auto-generated header differs by
           # output path between the two runs — strip it before diffing.
           cp requirements.lock /tmp/fresh.lock
-          pip-compile --quiet --strip-extras --output-file /tmp/fresh.lock requirements.txt
+          # Pass 39.4 — `--generate-hashes` so the regenerated lockfile carries
+          # per-package SHA256s; installers use `pip install --require-hashes`
+          # for fail-closed install on MITM / PyPI tamper. Diff stays apples-
+          # to-apples since the seed lockfile already has hashes.
+          pip-compile --quiet --strip-extras --generate-hashes --output-file /tmp/fresh.lock requirements.txt
           # Strip any leading `# ...` header lines (newer pip-compile emits a
           # 6-line comment block; older invocations produce none). Per-package
           # `# via` lines are indented with spaces so they don't match ^#.
           if ! diff -u <(grep -v '^#' requirements.lock) <(grep -v '^#' /tmp/fresh.lock); then
             echo ""
             echo "::error::requirements.lock is out of sync with requirements.txt."
-            echo "Run: pip-compile requirements.txt -o requirements.lock --strip-extras"
+            echo "Run: pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes"
             exit 1
           fi
 
