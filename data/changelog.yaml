@@ -1,3 +1,16 @@
+- version: 3.5.67
+  date: 2026-05-02
+  tags:
+  - type: a11y
+    label: FU.5 — Group-label pattern on multi-value tag pickers in edit/gem modals
+  body: |
+    <ul>
+        <li><strong>Roadmap follow-up FU.5 (group-label a11y pattern)</strong>. The seven multi-value picker fields in each of the edit modal and the gem modal (Genre, Play Modes, Game Structure, Perspective, Dimension, Controller Support, Save Type — 14 fields total) had <code>&lt;label for="<X>Dropdown"&gt;</code> pointing at the helper "+ Add" <code>&lt;select&gt;</code> instead of the chip container that holds the actual selected values. Screen readers announced the field name and then a combobox, missing the chip list entirely.</li>
+        <li><strong>Fix</strong>: each picker field is now wrapped in <code>role="group" aria-labelledby="<id>FieldLabel"</code>; the <code>&lt;label&gt;</code> is demoted to <code>&lt;div class="form-label"&gt;</code> with a stable id; the helper <code>&lt;select&gt;</code> gets its own <code>aria-label="Add <X>"</code> so its purpose is announced separately. Same pattern as <code>chd_converter.html</code> / <code>duplicate_finder.html</code> / <code>lists.html</code> / <code>tags.html</code> / <code>wishlist.html</code> already use — those were the cases FU.5 cited as <em>already done</em>; this commit closes the matching cases in the two edit-modal templates.</li>
+        <li><strong>Scope</strong>: <code>templates/_modals/edit_modal.html</code> 7 fields (lines 105–202) + <code>templates/base.html</code> gem modal 7 fields (lines 1092–1170). The custom-controller text input next to <code>controllerDropdown</code> in both files also got <code>aria-label="Custom controller name"</code> since it had no label association at all.</li>
+        <li><strong>What FU.5 still leaves open</strong>: the 33-case master list in the roadmap is mostly already done — toggle grids in <code>chd_converter.html:124</code>, <code>duplicate_finder.html:231</code>, <code>rom_tools_settings.html:393,425</code>, button groups in <code>lists.html:54</code> / <code>tags.html:50</code> / <code>wishlist.html:78</code>, and toolbar groups in <code>logs.html:748,768</code> all already use the <code>role="group" aria-labelledby</code> pattern. The five "prose-style labels in <code>settings.html</code>" cited at lines 171/433/461/580 are also already <code>&lt;div class="form-label"&gt;</code>. Line 912's <code>&lt;label for="matchPlatformRequired"&gt;</code> correctly associates with its checkbox (with a duplicate <code>aria-label</code> on the input — left for a future hygiene sweep).</li>
+        <li><strong>Behaviour</strong>: zero visual change; <code>.form-label</code> CSS already styles the demoted div identically to the prior <code>&lt;label&gt;</code>. Tab order, keyboard input, hidden-field POST values all unchanged. Suite 785/785 green.</li>
+    </ul>
 - version: 3.5.66
   date: 2026-05-02
   tags:

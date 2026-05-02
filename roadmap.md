@@ -2469,7 +2469,33 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   fieldset semantics don't fit. For prose-style labels heading a
   read-only display (e.g. `Database Location`), demote `<label>` to
   `<div class="form-label">` since there's no control to associate.
-- **Status**: todo
+- **Status**: partial (v3.5.67) — turned out most of the 33-case master
+  list was already addressed in earlier passes:
+  - **Toggle grids** (`chd_converter.html:124`, `duplicate_finder.html:231`,
+    `rom_tools_settings.html:393,425`) already use
+    `<div class="form-label" id="...Label">` + `role="group"
+    aria-labelledby="...Label"` on the surrounding container.
+  - **Button groups** (`lists.html:54` icon picker, `tags.html:50` color
+    swatches, `wishlist.html:78` priority radios) — same pattern, already
+    landed.
+  - **Toolbar level/view toggles** (`logs.html:748,768`) — already
+    `role="group" aria-labelledby`.
+  - **Prose-style labels** in `settings.html:171, 433, 461, 580` — already
+    demoted to `<div class="form-label">`. Line 912 is `<label
+    for="matchPlatformRequired">` which correctly associates with its
+    checkbox (a redundant `aria-label="Require platform match"` sits on
+    the input — minor hygiene, left for a future sweep).
+  - **Custom widgets in edit modals** (`_modals/edit_modal.html:106, 117,
+    145, 158, 169, 186, 201` + parallel gem modal in `base.html:1093,
+    1101, 1113, 1121, 1129, 1154, 1165`) — **closed in this pass**.
+    Each multi-value tag-picker field had a `<label for="<X>Dropdown">`
+    pointing at the helper "+ Add" `<select>` instead of the chip
+    container. AT announced the field name, then a combobox, missing the
+    chip list. Each field now wrapped in `role="group" aria-labelledby`
+    with the `<label>` demoted to `<div class="form-label">` with a
+    stable id; the helper select gets its own `aria-label="Add <X>"`.
+    14 fields total. Custom-controller text input also picked up
+    `aria-label="Custom controller name"`.
 
 ---
 

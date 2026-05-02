@@ -1089,19 +1089,19 @@
                 <!-- TAB: Gameplay -->
                 <div class="gem-tab-content" id="gemTabGameplay" role="tabpanel" aria-label="Gameplay">
                     <div class="gem-grid">
-                        <div class="gem-field gem-field-full">
-                            <label for="gemGenreDropdown">Genre</label>
+                        <div class="gem-field gem-field-full" role="group" aria-labelledby="gemGenreFieldLabel">
+                            <div class="form-label" id="gemGenreFieldLabel">Genre</div>
                             <div class="gem-tag-container" id="gemGenreContainer"></div>
                             <input type="hidden" id="gemGenreHidden">
-                            <select id="gemGenreDropdown" class="gem-tag-dropdown" onchange="addModalGenre(this.value); this.value='';">
+                            <select id="gemGenreDropdown" class="gem-tag-dropdown" onchange="addModalGenre(this.value); this.value='';" aria-label="Add genre">
                                 <option value="">+ Add genre...</option>
                             </select>
                         </div>
-                        <div class="gem-field gem-field-full">
-                            <label for="gemModesDropdown">Play Modes</label>
+                        <div class="gem-field gem-field-full" role="group" aria-labelledby="gemModesFieldLabel">
+                            <div class="form-label" id="gemModesFieldLabel">Play Modes</div>
                             <div class="gem-tag-container" id="gemModesContainer"></div>
                             <input type="hidden" id="gemModesHidden">
-                            <select id="gemModesDropdown" class="gem-tag-dropdown" onchange="addModalMode(this.value); this.value='';">
+                            <select id="gemModesDropdown" class="gem-tag-dropdown" onchange="addModalMode(this.value); this.value='';" aria-label="Add play mode">
                                 <option value="">+ Add mode...</option>
                             </select>
                         </div>
@@ -1109,27 +1109,27 @@
                             <label for="gemPlayers">Players</label>
                             <input type="number" id="gemPlayers" min="1" max="16" value="1">
                         </div>
-                        <div class="gem-field gem-field-full">
-                            <label for="gemGameStructureDropdown">Game Structure</label>
+                        <div class="gem-field gem-field-full" role="group" aria-labelledby="gemGameStructureFieldLabel">
+                            <div class="form-label" id="gemGameStructureFieldLabel">Game Structure</div>
                             <div class="gem-tag-container" id="gemGameStructureContainer"></div>
                             <input type="hidden" id="gemGameStructureHidden">
-                            <select id="gemGameStructureDropdown" class="gem-tag-dropdown" onchange="addModalGameStructure(this.value); this.value='';">
+                            <select id="gemGameStructureDropdown" class="gem-tag-dropdown" onchange="addModalGameStructure(this.value); this.value='';" aria-label="Add game structure">
                                 <option value="">+ Add structure...</option>
                             </select>
                         </div>
-                        <div class="gem-field gem-field-full">
-                            <label for="gemPerspectiveDropdown">Perspective</label>
+                        <div class="gem-field gem-field-full" role="group" aria-labelledby="gemPerspectiveFieldLabel">
+                            <div class="form-label" id="gemPerspectiveFieldLabel">Perspective</div>
                             <div class="gem-tag-container" id="gemPerspectiveContainer"></div>
                             <input type="hidden" id="gemPerspectiveHidden">
-                            <select id="gemPerspectiveDropdown" class="gem-tag-dropdown" onchange="addModalPerspective(this.value); this.value='';">
+                            <select id="gemPerspectiveDropdown" class="gem-tag-dropdown" onchange="addModalPerspective(this.value); this.value='';" aria-label="Add perspective">
                                 <option value="">+ Add perspective...</option>
                             </select>
                         </div>
-                        <div class="gem-field gem-field-full">
-                            <label for="gemDimensionDropdown">Dimension</label>
+                        <div class="gem-field gem-field-full" role="group" aria-labelledby="gemDimensionFieldLabel">
+                            <div class="form-label" id="gemDimensionFieldLabel">Dimension</div>
                             <div class="gem-tag-container" id="gemDimensionContainer"></div>
                             <input type="hidden" id="gemDimensionHidden">
-                            <select id="gemDimensionDropdown" class="gem-tag-dropdown" onchange="addModalDimension(this.value); this.value='';">
+                            <select id="gemDimensionDropdown" class="gem-tag-dropdown" onchange="addModalDimension(this.value); this.value='';" aria-label="Add dimension">
                                 <option value="">+ Add dimension...</option>
                             </select>
                         </div>
@@ -1150,22 +1150,22 @@
                 <!-- TAB: Technical -->
                 <div class="gem-tab-content" id="gemTabTechnical" role="tabpanel" aria-label="Technical">
                     <div class="gem-grid">
-                        <div class="gem-field gem-field-full">
-                            <label for="gemControllerDropdown">Controller Support</label>
+                        <div class="gem-field gem-field-full" role="group" aria-labelledby="gemControllerFieldLabel">
+                            <div class="form-label" id="gemControllerFieldLabel">Controller Support</div>
                             <div class="gem-tag-container" id="gemControllerContainer"></div>
                             <input type="hidden" id="gemControllerHidden">
                             <div class="gem-controller-inputs">
-                                <select id="gemControllerDropdown" class="gem-tag-dropdown" onchange="addModalController(this.value); this.value='';">
+                                <select id="gemControllerDropdown" class="gem-tag-dropdown" onchange="addModalController(this.value); this.value='';" aria-label="Add controller">
                                     <option value="">+ Add controller...</option>
                                 </select>
-                                <input type="text" id="gemControllerCustom" class="gem-custom-input" placeholder="Or type custom..." onkeypress="if(event.key==='Enter'){event.preventDefault();addModalController(this.value);this.value='';}">
+                                <input type="text" id="gemControllerCustom" class="gem-custom-input" aria-label="Custom controller name" placeholder="Or type custom..." onkeypress="if(event.key==='Enter'){event.preventDefault();addModalController(this.value);this.value='';}">
                             </div>
                         </div>
-                        <div class="gem-field gem-field-full">
-                            <label for="gemSaveTypeDropdown">Save Type</label>
+                        <div class="gem-field gem-field-full" role="group" aria-labelledby="gemSaveTypeFieldLabel">
+                            <div class="form-label" id="gemSaveTypeFieldLabel">Save Type</div>
                             <div class="gem-tag-container" id="gemSaveTypeContainer"></div>
                             <input type="hidden" id="gemSaveTypeHidden">
-                            <select id="gemSaveTypeDropdown" class="gem-tag-dropdown" onchange="addModalSaveType(this.value); this.value='';">
+                            <select id="gemSaveTypeDropdown" class="gem-tag-dropdown" onchange="addModalSaveType(this.value); this.value='';" aria-label="Add save type">
                                 <option value="">+ Add save type...</option>
                             </select>
                         </div>
