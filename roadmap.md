@@ -1840,9 +1840,17 @@ paths or silent-corruption vectors under routine use.
 - **Source**: GitHub deprecation notice
   <https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/>;
   surfaced post-push 2026-05-02.
-- **Status**: deferred — gated on upstream-action releases. Dependabot
-  github-actions config (`.github/dependabot.yml`) already watches
-  these three actions, so the re-pin will auto-PR when available.
+- **Status**: done (2026-05-02) — closed by merging Dependabot PR #1
+  (squash commit `ddd894c`), which the Dependabot github-actions
+  ecosystem had already opened against these three pins on
+  2026-04-23 (and refreshed against current main on the v3.5.52
+  push). Bumps re-pinned to: `actions/checkout` v4.3.1 → v6.0.2 (SHA
+  `de0fac2e…`), `actions/setup-python` v5.6.0 → v6.2.0 (SHA
+  `a309ff8b…`), `actions/upload-artifact` v4.6.2 → v7.0.1 (SHA
+  `043fb46d…`). All three majors target Node 24 natively in their
+  `action.yml`. Pre-merge CI on the PR branch was green on both
+  Python 3.12 and 3.13. The same SHAs apply across `ci.yml`,
+  `dependabot-lockfile.yml`, and `release.yml`.
 
 ---
 
