@@ -592,6 +592,90 @@ class TestPass41_5BIgdbTokenRefreshOn401:
 
 
 # -----------------------------------------------------------------------------
+# 41.5b — Steam + HLTB raw requests routed through base_scraper.http_get/post
+# -----------------------------------------------------------------------------
+class TestPass41_5bSteamHltbThroughBaseScraper:
+    """Pass 41.5 closed the IGDB 401 case but left raw `requests.get` /
+    `requests.post` in `scraper/scrape_steam.py` (7 sites) and
+    `scraper/hltb_lookup.py` (3 sites). Pass 41.5b replaces them with
+    `base_scraper.http_get` / `http_post` so Steam + HLTB calls inherit the
+    retry-on-429/5xx + jittered backoff + connection-pooled session shape
+    the rest of the scrapers use. The contract is a source-level invariant
+    (no raw `requests.{get,post}(` survives) plus an import pin (each
+    module pulls the helpers from base_scraper)."""
+
+    def test_scrape_steam_no_raw_requests_calls(self):
+        import re
+        with open(os.path.join(_REPO_ROOT, 'scraper', 'scrape_steam.py'),
+                  encoding='utf-8') as f:
+            src = f.read()
+        # Only `requests.get(` / `requests.post(` are forbidden — the module
+        # still imports `requests` for `requests.exceptions.HTTPError`.
+        assert not re.search(r'\brequests\.get\(', src), (
+            "scrape_steam.py still has a raw requests.get(...) — should be http_get"
+        )
+        assert not re.search(r'\brequests\.post\(', src), (
+            "scrape_steam.py still has a raw requests.post(...) — should be http_post"
+        )
+
+    def test_hltb_lookup_no_raw_requests_calls(self):
+        import re
+        with open(os.path.join(_REPO_ROOT, 'scraper', 'hltb_lookup.py'),
+                  encoding='utf-8') as f:
+            src = f.read()
+        assert not re.search(r'\brequests\.get\(', src), (
+            "hltb_lookup.py still has a raw requests.get(...) — should be http_get"
+        )
+        assert not re.search(r'\brequests\.post\(', src), (
+            "hltb_lookup.py still has a raw requests.post(...) — should be http_post"
+        )
+
+    def test_modules_export_base_scraper_helpers(self):
+        from scraper import scrape_steam, hltb_lookup
+        from scraper import base_scraper
+        # Both modules pulled http_get from base_scraper (binding identity).
+        assert scrape_steam.http_get is base_scraper.http_get, (
+            "scrape_steam.http_get must be the base_scraper helper"
+        )
+        assert hltb_lookup.http_get is base_scraper.http_get, (
+            "hltb_lookup.http_get must be the base_scraper helper"
+        )
+        assert hltb_lookup.http_post is base_scraper.http_post, (
+            "hltb_lookup.http_post must be the base_scraper helper"
+        )
+
+    def test_steam_resolve_returns_none_on_total_failure(self, monkeypatch):
+        """When http_get returns None (all retries exhausted), the Steam
+        wrappers must not crash on `.status_code` / `.raise_for_status()` —
+        they must return their established failure shape."""
+        from scraper import scrape_steam
+        monkeypatch.setattr(scrape_steam, 'http_get', lambda *a, **kw: None)
+
+        assert scrape_steam.resolve_vanity_url('K', 'gabe') is None
+        assert scrape_steam.get_owned_games('K', '76561') == []
+        assert scrape_steam.get_player_achievements('K', '76561', 1) is None
+        assert scrape_steam.get_achievement_schema('K', 1) == []
+        assert scrape_steam.get_player_summary('K', '76561') is None
+        assert scrape_steam.get_app_details(1) is None
+        result = scrape_steam.check_api_key('K')
+        assert result == {'valid': False, 'error': 'Connection error'}
+
+    def test_hltb_returns_none_on_total_failure(self, monkeypatch):
+        """When http_get / http_post return None, HLTB must surface a clean
+        None instead of dereferencing `.status_code`."""
+        from scraper import hltb_lookup
+        # Reset any cached token so _get_auth_token actually exercises the
+        # network shim under test.
+        hltb_lookup._auth_token = None
+        hltb_lookup._auth_token_time = 0
+        monkeypatch.setattr(hltb_lookup, 'http_get', lambda *a, **kw: None)
+        monkeypatch.setattr(hltb_lookup, 'http_post', lambda *a, **kw: None)
+
+        assert hltb_lookup._get_auth_token() == (None, None, None)
+        assert hltb_lookup._search_hltb('Tetris') is None
+
+
+# -----------------------------------------------------------------------------
 # 41.7.A — TROPUSR explicit bounds on tables_count + offset
 # -----------------------------------------------------------------------------
 class TestPass41_7ATropusrBounds:

@@ -6,8 +6,9 @@ Uses the HowLongToBeat API directly via /api/find endpoint.
 
 import logging
 import time
-import requests
 from difflib import SequenceMatcher
+
+from .base_scraper import http_get, http_post
 
 logger = logging.getLogger(__name__)
 
@@ -99,7 +100,10 @@ def _get_auth_token():
         # The init response now ships hpKey/hpVal alongside the token — required
         # for the anti-bot fingerprint check on the search endpoint.
         init_url = f"{HLTB_BASE_URL}/api/find/init?t={int(time.time() * 1000)}"
-        resp = requests.get(init_url, headers=HLTB_HEADERS, timeout=15)
+        resp = http_get(init_url, headers=HLTB_HEADERS, timeout=15)
+        if resp is None:
+            logger.warning("HLTB: Auth token request failed (no response)")
+            return None, None, None
         if resp.status_code == 200:
             data = resp.json()
             _auth_token = data.get('token', '')
@@ -171,12 +175,15 @@ def _search_hltb(game_title, platform='', year=None):
     search_headers, payload = _build_request(token, hp_key, hp_val)
 
     try:
-        resp = requests.post(
+        resp = http_post(
             f"{HLTB_BASE_URL}/api/find",
             headers=search_headers,
-            json=payload,
+            json_data=payload,
             timeout=30
         )
+        if resp is None:
+            logger.warning("HLTB: Search request failed (no response)")
+            return None
 
         if resp.status_code == 403:
             # Token expired / fingerprint rotated — clear cache and retry once.
@@ -189,12 +196,15 @@ def _search_hltb(game_title, platform='', year=None):
             token, hp_key, hp_val = _get_auth_token()
             if token:
                 search_headers, payload = _build_request(token, hp_key, hp_val)
-                resp = requests.post(
+                resp = http_post(
                     f"{HLTB_BASE_URL}/api/find",
                     headers=search_headers,
-                    json=payload,
+                    json_data=payload,
                     timeout=30
                 )
+                if resp is None:
+                    logger.warning("HLTB: Retry after token refresh failed (no response)")
+                    return None
 
         if resp.status_code == 200:
             data = resp.json()

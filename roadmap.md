@@ -1265,7 +1265,18 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: replace each raw call with the `http_get`/`http_post` shape
   (returns `Response` or `None`); add explicit `if resp is None:` guards
   in callers that currently rely on `requests` raising on `None`.
-- **Status**: todo (carry-over from Pass 41.5)
+- **Status**: done (v3.5.47) — all 7 Steam GETs + 1 HLTB GET + 2 HLTB POSTs
+  routed through `base_scraper.http_get` / `http_post`. Each call site got
+  an explicit `if resp is None:` early return preserving its original
+  failure shape (`None` / `[]` / `{'valid': False, 'error': 'Connection
+  error'}`); no behaviour change on success or on explicitly-handled status
+  codes (Steam 400, HLTB 403). HLTB's existing 403 token-refresh retry path
+  preserved with its own `None` guard. `requests` import retained in
+  `scrape_steam.py` only because `requests.exceptions.HTTPError` is
+  referenced as an explicit exception filter. Tests:
+  `tests/test_pass41_security.py::TestPass41_5bSteamHltbThroughBaseScraper`
+  (5 cases — source-grep + import-identity + functional `None`-handling
+  for all 7 Steam wrappers and both HLTB internals).
 
 #### Pass 41.6 Jobs — cross-process singleton + persist-under-lock + PSN inner-thread unsync
 

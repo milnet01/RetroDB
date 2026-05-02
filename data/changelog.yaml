@@ -1,3 +1,19 @@
+- version: 3.5.47
+  date: 2026-05-02
+  tags:
+  - type: hardening
+    label: Pass 41.5b — Route Steam + HLTB through `base_scraper.http_get` / `http_post`
+  body: |
+    <ul>
+        <li><strong>Pass 41.5b carry-over from 41.5</strong>. <code>scraper/scrape_steam.py</code> (7 raw <code>requests.get</code> call-sites) and <code>scraper/hltb_lookup.py</code> (1 <code>requests.get</code> + 2 <code>requests.post</code> call-sites) now go through <code>base_scraper.http_get</code> / <code>http_post</code>. That gets all 10 endpoints retry-on-429/5xx with jittered exponential backoff, request size caps when the helper grows them, and a single connection-pooled <code>requests.Session</code>. Previously, transient Steam/HLTB blips killed the call without retry.</li>
+        <li><strong>Contract shift handled at every call-site</strong>. <code>http_get</code> / <code>http_post</code> return <code>None</code> on total failure (timeout exhausted, connection error exhausted, unexpected exception) where raw <code>requests.get</code> would have raised. Each of the 10 sites gets an explicit <code>if resp is None:</code> guard before any <code>.status_code</code> / <code>.raise_for_status()</code> access, returning the same failure shape the old <code>except Exception</code> branch returned (<code>None</code> / <code>[]</code> / <code>{'valid': False, 'error': 'Connection error'}</code>).</li>
+        <li><strong>HLTB 403 token-refresh path preserved</strong>. <code>_search_hltb</code> still detects 403, clears the cached token + hp fingerprint, refreshes via <code>_get_auth_token</code>, and retries once. The refresh-retry call <em>also</em> goes through <code>http_post</code> with its own <code>None</code> guard so a token-refresh attempt that itself fails returns cleanly instead of dereferencing <code>None.status_code</code>.</li>
+        <li><strong>Stays in lane</strong> (global rule §11). Only the network-call layer changed. Public function signatures, return shapes, and downstream behaviour are byte-identical for the success path and the explicitly-handled status codes (Steam 400 = no achievements; HLTB 403 = token refresh). Module-level <code>requests</code> import retained in <code>scrape_steam.py</code> only because <code>requests.exceptions.HTTPError</code> is still referenced as an explicit exception filter.</li>
+        <li><strong>Verification</strong>. Smoke import: <code>from scraper import scrape_steam, hltb_lookup</code> resolves and exports the new <code>http_get</code> / <code>http_post</code> bindings. <code>tests/test_pass41_security.py::TestPass41_5bSteamHltbThroughBaseScraper</code> pins (a) zero <code>requests.get(</code> / <code>requests.post(</code> in either file, (b) both modules import <code>http_get</code> from <code>base_scraper</code>. Full pytest <strong>695 / 695 green</strong>.</li>
+        <li><strong>Source</strong> &mdash; <code>roadmap.md</code> Pass 41.5b (carry-over from 41.5).</li>
+        <li><strong>Version bump 3.5.46 &rarr; 3.5.47</strong>: patch (hardening; behaviour-preserving on success paths, retry-on-failure adds resilience).</li>
+    </ul>
+
 - version: 3.5.46
   date: 2026-05-02
   tags:
