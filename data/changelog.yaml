@@ -1,3 +1,15 @@
+- version: 3.5.66
+  date: 2026-05-02
+  tags:
+  - type: chore
+    label: Trim trailing whitespace in `scraper/hybrid_scraper.py` (post-Pass-38.1 cleanup)
+  body: |
+    <ul>
+        <li><strong>Post-extraction hygiene</strong>. After landing four Pass 38.1 helper extractions across v3.5.60 / v3.5.62 / v3.5.64 / v3.5.65, ruff <code>W293</code> + <code>W291</code> reported 81 trailing-whitespace hits in <code>scraper/hybrid_scraper.py</code>. All 81 are blank lines that carry leading whitespace from the indentation of nearby code (Python idiom of "blank line inside an if block keeps the indent for visual continuity") — invisible in the editor but flagged by ruff and visible in <code>git diff --check</code>.</li>
+        <li><strong>Scope</strong>: deliberately limited to <code>scraper/hybrid_scraper.py</code> — the file actively touched by Pass 38.1 extractions. Repo-wide W293 fix would be 1,195 line touches across many files; that's the kind of drive-by reformat global rule §11 warns against. Touching only the active file means git blame on the helpers stays clean (the whitespace touches sit in the same "Pass 38.1 wave" as the extractions themselves).</li>
+        <li><strong>Tool</strong>: <code>ruff check --select W293,W291 --fix scraper/hybrid_scraper.py</code> — 81 fixed, 0 remaining.</li>
+        <li><strong>Behaviour</strong>: zero functional change; suite 785/785 green. Net diff <code>+81 / -81</code> (every change is "blank line with N spaces" → "blank line").</li>
+    </ul>
 - version: 3.5.65
   date: 2026-05-02
   tags:
