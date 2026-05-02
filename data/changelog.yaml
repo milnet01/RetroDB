@@ -1,3 +1,45 @@
+- version: 3.5.54
+  date: 2026-05-02
+  tags:
+  - type: refactor
+    label: Pass 42.5 — CHD converter dedup + `_persist_controller_image` extraction
+  body: |
+    <ul>
+        <li><strong>Pass 42.5 — Rule-of-Three crossings collapsed</strong>. Two duplications surfaced by the post-Pass-37 indie-review (and by direct re-read of the audit pile) are now single-source. The Pass 40.11 atomic-write contract for CHD conversion (chdman → <code>.chd.part</code> → optional <code>chdman verify</code> → <code>os.replace</code> → optional original delete) lived in two places that could drift; the controller-image save+standardize pipeline lived in three. Both collapsed to one canonical helper apiece.</li>
+        <li><strong>CHD converter dedup</strong>:
+            <ul>
+                <li>New <code>scraper.rom_tools.convert_one_to_chd(src_path, chdman_path, *, do_verify, delete_original, skip_existing, convert_timeout, verify_timeout)</code> — pure per-file helper. No task-state bookkeeping; returns <code>{'status': 'success'|'failed'|'skipped', 'source', 'destination', 'original_size', 'compressed_size', 'error'}</code>. Carries the Pass 40.11 atomic-write contract end-to-end (clean stale tempfile, run chdman to <code>.chd.part</code>, optional verify against the tempfile, <code>os.replace</code> to final, delete original only after promotion, drop tempfile in <code>finally:</code> on any non-success path).</li>
+                <li><code>CHDConverter._convert_file</code> (~95 lines) now delegates to the helper and only handles <code>TaskStatus</code> bookkeeping (logs, counters, results dict). ~50 lines of duplicated subprocess/atomic-write logic gone.</li>
+                <li><code>routes/tools.py:api_chd_converter_convert.run_conversion</code> (~85 lines) now delegates likewise. The Pass 40.2 per-file <code>safe_path(file_path, rom_root)</code> guard stays at the route layer (the dict-task registry is route-local; the helper deliberately doesn't reach into either task model). ~50 lines collapsed.</li>
+                <li><strong>Behavioural delta</strong>: none. Same chdman invocation, same verify gate, same <code>os.replace</code> promotion, same delete-original ordering. Confirmed via the Pass 40.11 regression suite (now redirected to grep <code>convert_one_to_chd</code> directly + assert both call sites delegate, instead of duplicating the literal <code>.chd.part</code> grep at each site).</li>
+            </ul>
+        </li>
+        <li><strong>Controller-image save dedup</strong>:
+            <ul>
+                <li>New <code>routes.museum._persist_controller_image(controller_id, image_data) -> str | None</code> — RGBA convert, content-crop, save WebP at <code>static/images/controllers/&lt;id&gt;.webp</code>, run <code>standardize_downloaded_image</code>. Returns the saved filename, or <code>None</code> on PIL failure (logged).</li>
+                <li>Three call sites collapsed:
+                    <ul>
+                        <li><code>upload_controller_image</code> (POST /controller-image-upload).</li>
+                        <li><code>remove_controller_bg</code> (POST /controller-image-removebg).</li>
+                        <li><code>_fetch_and_process_image</code> (helper used by single-controller and bulk auto-fetch routes).</li>
+                    </ul>
+                </li>
+                <li>The DB <code>UPDATE</code> + <code>_propagate_controller_image</code> stay at the call site — the third call site doesn't do them (it returns the filename to <em>its</em> caller, which decides), and the second site has a "skip UPDATE if filename already matches" branch that the upload site doesn't. Pulling the DB layer into the helper would have re-introduced the divergence the helper is meant to remove.</li>
+                <li>~60 lines of duplication gone across the three sites.</li>
+            </ul>
+        </li>
+        <li><strong>Tests</strong>: <code>TestPass40_11ChdAtomicConversion</code> updated:
+            <ul>
+                <li>Two new pins on the helper itself (<code>test_helper_uses_tempfile</code>, <code>test_helper_runs_verify</code>) — they grep <code>convert_one_to_chd</code>'s body for <code>.chd.part</code> + <code>os.replace</code> + <code>verify</code> + <code>do_verify</code>.</li>
+                <li>Two delegation pins (<code>test_rom_tools_converter_delegates</code>, <code>test_routes_inline_worker_delegates</code>) — they grep each call site for <code>convert_one_to_chd(</code>. If a future edit re-inlines the chdman work at either site, the pin fires.</li>
+                <li>Class docstring updated to record the post-Pass-42.5 home of the contract.</li>
+            </ul>
+        </li>
+        <li><strong>Suite</strong>: 746 / 746 green, 3.41s. No new tests netted in (pin redirection is 4 → 4).</li>
+        <li><strong>Source</strong>: <code>roadmap.md</code> Pass 42.5 ("CHD converter dedup + <code>_persist_controller_image</code>"), originally surfaced by the post-Pass-37 14-agent indie review.</li>
+        <li><strong>Version bump 3.5.53 &rarr; 3.5.54</strong>: patch (refactor, no behaviour change).</li>
+    </ul>
+
 - version: 3.5.53
   date: 2026-05-02
   tags:

@@ -2105,7 +2105,28 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: keep the class; have `routes/tools.py` delegate.
   Extract `_persist_controller_image(controller_id,
   img_bytes_or_pil)` in `routes/museum.py`.
-- **Status**: todo
+- **Status**: done (v3.5.54) — both halves landed.
+  - **CHD dedup**: extracted module-level pure helper
+    `scraper.rom_tools.convert_one_to_chd(src_path, chdman_path, *,
+    do_verify, delete_original, skip_existing, convert_timeout,
+    verify_timeout)` carrying the Pass 40.11 atomic-write contract end-
+    to-end. Both `CHDConverter._convert_file` and
+    `routes/tools.py:api_chd_converter_convert.run_conversion` now
+    delegate to it; ~100 lines of duplicated subprocess/atomic-write
+    logic collapsed. Pass 40.2 per-file `safe_path` guard stays at the
+    route layer (the dict-task registry is route-local). The Pass
+    40.11 regression suite was redirected to grep the helper directly
+    + assert both call sites delegate via `convert_one_to_chd(`.
+  - **Controller image dedup**: new
+    `routes/museum.py:_persist_controller_image(controller_id,
+    image_data)` carries the RGBA→crop→WebP→standardize pipeline;
+    returns the saved filename or `None`. Three call sites collapsed
+    (`upload_controller_image`, `remove_controller_bg`,
+    `_fetch_and_process_image`); DB UPDATE + `_propagate_controller_image`
+    stay at each call site (the third site doesn't do them, and the
+    second has a divergent "skip UPDATE if filename matches" branch —
+    pulling DB into the helper would re-introduce the divergence).
+  - **Suite**: 746/746 green.
 
 #### Pass 42.6 RA 401 observability + Steam / SS log-redaction tightening (MEDIUM, S)
 

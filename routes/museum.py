@@ -532,6 +532,43 @@ def cleanup_controller_images():
 # API ROUTES — Controller Images
 # =============================================================================
 
+def _persist_controller_image(controller_id, image_data):
+    """Save image_data as ``controllers/<controller_id>.webp`` (RGBA, cropped, standardized).
+
+    Pass 42.5 — extracted from three near-identical 30-line blocks
+    (upload / removebg / fetch_and_process). Caller is responsible for
+    the DB UPDATE and ``_propagate_controller_image`` call (the upload
+    and removebg routes do them; ``_fetch_and_process_image`` returns
+    the filename to its caller, which decides).
+
+    Returns the saved filename on success, None on failure.
+    """
+    from PIL import Image
+    import io
+    try:
+        img = Image.open(io.BytesIO(bytes(image_data)))
+        img = img.convert('RGBA')
+        img = _crop_to_content(img)
+
+        controllers_dir = os.path.join(config.STATIC_PATH, 'images', 'controllers')
+        os.makedirs(controllers_dir, exist_ok=True)
+
+        filename = f"{controller_id}.webp"
+        filepath = os.path.join(controllers_dir, filename)
+        img.save(filepath, 'WEBP', quality=85)
+
+        try:
+            from services.image_utils import standardize_downloaded_image
+            standardize_downloaded_image(filepath, 'controllers')
+        except Exception:
+            pass
+
+        return filename
+    except Exception as e:
+        logger.error(f"Museum: Failed to persist controller image for {controller_id}: {e}")
+        return None
+
+
 def _propagate_controller_image(db, controller_id, image_filename):
     """Share a controller image with all sibling controllers (same name, different systems)."""
     controller = db.execute(
@@ -691,44 +728,22 @@ def upload_controller_image(controller_id):
         image_data = _remove_background(image_data, removebg_key)
 
     # Save as webp
-    try:
-        img = Image.open(io.BytesIO(bytes(image_data)))
-        img = img.convert('RGBA')
-        img = _crop_to_content(img)
-
-        controllers_dir = os.path.join(config.STATIC_PATH, 'images', 'controllers')
-        os.makedirs(controllers_dir, exist_ok=True)
-
-        filename = f"{controller_id}.webp"
-        filepath = os.path.join(controllers_dir, filename)
-        img.save(filepath, 'WEBP', quality=85)
-
-        # Standardize controller image size
-        try:
-            from services.image_utils import standardize_downloaded_image
-            standardize_downloaded_image(filepath, 'controllers')
-        except Exception:
-            pass
-
-        db.execute("UPDATE controllers SET image = ? WHERE id = ?", (filename, controller_id))
-        db.commit()
-        _propagate_controller_image(db, controller_id, filename)
-
-        logger.info(f"Museum: Uploaded image for {controller['name']}")
-        return jsonify({'success': True, 'image': filename})
-
-    except Exception as e:
-        logger.error(f"Museum: Failed to save uploaded image: {e}")
+    filename = _persist_controller_image(controller_id, image_data)
+    if not filename:
         return jsonify({'success': False, 'error': 'Failed to process image'})
+
+    db.execute("UPDATE controllers SET image = ? WHERE id = ?", (filename, controller_id))
+    db.commit()
+    _propagate_controller_image(db, controller_id, filename)
+
+    logger.info(f"Museum: Uploaded image for {controller['name']}")
+    return jsonify({'success': True, 'image': filename})
 
 
 @bp.route('/api/museum/controller-image-removebg/<int:controller_id>', methods=['POST'])
 @editor_required
 def remove_controller_bg(controller_id):
     """Re-process an existing controller image to remove its background."""
-    from PIL import Image
-    import io
-
     db = get_request_db()
     controller = db.execute(
         "SELECT id, name, image FROM controllers WHERE id = ?",
@@ -750,33 +765,21 @@ def remove_controller_bg(controller_id):
 
         removebg_key = _get_removebg_key()
         processed = _remove_background(image_data, removebg_key)
-
-        img = Image.open(io.BytesIO(bytes(processed)))
-        img = img.convert('RGBA')
-        img = _crop_to_content(img)
-
-        filename = f"{controller_id}.webp"
-        out_path = os.path.join(config.STATIC_PATH, 'images', 'controllers', filename)
-        img.save(out_path, 'WEBP', quality=85)
-
-        # Standardize controller image size
-        try:
-            from services.image_utils import standardize_downloaded_image
-            standardize_downloaded_image(out_path, 'controllers')
-        except Exception:
-            pass
-
-        if controller['image'] != filename:
-            db.execute("UPDATE controllers SET image = ? WHERE id = ?", (filename, controller_id))
-            db.commit()
-        _propagate_controller_image(db, controller_id, filename)
-
-        logger.info(f"Museum: Removed background for {controller['name']}")
-        return jsonify({'success': True, 'image': filename})
-
     except Exception as e:
         logger.error(f"Museum: Failed to remove background for {controller['name']}: {e}")
         return jsonify({'success': False, 'error': 'Background removal failed'})
+
+    filename = _persist_controller_image(controller_id, processed)
+    if not filename:
+        return jsonify({'success': False, 'error': 'Background removal failed'})
+
+    if controller['image'] != filename:
+        db.execute("UPDATE controllers SET image = ? WHERE id = ?", (filename, controller_id))
+        db.commit()
+    _propagate_controller_image(db, controller_id, filename)
+
+    logger.info(f"Museum: Removed background for {controller['name']}")
+    return jsonify({'success': True, 'image': filename})
 
 
 def _get_removebg_key():
@@ -1125,28 +1128,4 @@ def _fetch_and_process_image(controller_id, controller_name, manufacturer,
     # Remove background (rembg local AI, or remove.bg API if key configured)
     processed = _remove_background(image_data, removebg_key)
 
-    # Save as webp with transparency
-    try:
-        img = Image.open(io.BytesIO(bytes(processed)))
-        img = img.convert('RGBA')
-        img = _crop_to_content(img)
-
-        controllers_dir = os.path.join(config.STATIC_PATH, 'images', 'controllers')
-        os.makedirs(controllers_dir, exist_ok=True)
-
-        filename = f"{controller_id}.webp"
-        filepath = os.path.join(controllers_dir, filename)
-        img.save(filepath, 'WEBP', quality=85)
-
-        # Standardize controller image size
-        try:
-            from services.image_utils import standardize_downloaded_image
-            standardize_downloaded_image(filepath, 'controllers')
-        except Exception:
-            pass
-
-        return filename
-
-    except Exception as e:
-        logger.error(f"Museum: Failed to save controller image for {controller_name}: {e}")
-        return None
+    return _persist_controller_image(controller_id, processed)

@@ -852,49 +852,58 @@ class TestPass40_11ChdAtomicConversion:
     """chdman output must be written to a tempfile, optionally verified,
     and only os.replace'd to the final path on success.  Otherwise a
     mid-run kill leaves a truncated .chd that chd_skip_existing treats
-    as good on the next pass."""
+    as good on the next pass.
 
-    def test_rom_tools_converter_uses_tempfile(self):
+    Pass 42.5 — the per-file atomic-write contract moved into the shared
+    ``scraper.rom_tools.convert_one_to_chd`` helper; both call sites
+    (``CHDConverter._convert_file`` and ``api_chd_converter_convert``)
+    delegate to it. The pins below assert (a) the helper itself carries
+    the contract and (b) both call sites delegate, instead of grepping
+    `_convert_file` / `api_chd_converter_convert` for the literal
+    `.chd.part` string."""
+
+    def _convert_one_to_chd_body(self):
         from scraper import rom_tools as mod
         src = open(mod.__file__).read()
-        idx = src.index('def _convert_file')
-        end = src.index('def _timestamp', idx)
-        body = src[idx:end]
+        idx = src.index('def convert_one_to_chd')
+        end = src.index('\ndef ', idx + 1)
+        return src[idx:end]
+
+    def test_helper_uses_tempfile(self):
+        body = self._convert_one_to_chd_body()
         assert '.chd.part' in body, \
-            'CHDConverter._convert_file must write to .chd.part tempfile (Pass 40.11)'
+            'convert_one_to_chd must write to .chd.part tempfile (Pass 40.11)'
         assert 'os.replace(' in body, \
-            'CHDConverter._convert_file must os.replace tmp → dst (Pass 40.11)'
+            'convert_one_to_chd must os.replace tmp → dst (Pass 40.11)'
 
-    def test_rom_tools_converter_runs_verify(self):
+    def test_helper_runs_verify(self):
+        body = self._convert_one_to_chd_body()
+        assert 'do_verify' in body, \
+            'convert_one_to_chd must accept a do_verify flag (Pass 40.11)'
+        assert "'verify'" in body or '"verify"' in body, \
+            'convert_one_to_chd must call chdman verify when configured (Pass 40.11)'
+
+    def test_rom_tools_converter_delegates(self):
         from scraper import rom_tools as mod
         src = open(mod.__file__).read()
         idx = src.index('def _convert_file')
         end = src.index('def _timestamp', idx)
         body = src[idx:end]
+        assert 'convert_one_to_chd(' in body, \
+            'CHDConverter._convert_file must delegate to convert_one_to_chd (Pass 42.5)'
         assert 'chd_verify_after_convert' in body, \
-            'CHDConverter must read chd_verify_after_convert (Pass 40.11)'
-        assert "'verify'" in body or '"verify"' in body, \
-            'CHDConverter must call chdman verify when configured (Pass 40.11)'
+            'CHDConverter must read chd_verify_after_convert (Pass 40.11 / 42.5)'
 
-    def test_routes_inline_worker_uses_tempfile(self):
+    def test_routes_inline_worker_delegates(self):
         from routes import tools as mod
         src = open(mod.__file__).read()
         idx = src.index('def api_chd_converter_convert')
         end = src.index('def api_chd_verify_scan', idx)
         body = src[idx:end]
-        assert '.part' in body, \
-            'inline CHD converter must write to .chd.part (Pass 40.11)'
-        assert 'os.replace(' in body, \
-            'inline CHD converter must os.replace tmp → dst (Pass 40.11)'
-
-    def test_routes_inline_worker_runs_verify(self):
-        from routes import tools as mod
-        src = open(mod.__file__).read()
-        idx = src.index('def api_chd_converter_convert')
-        end = src.index('def api_chd_verify_scan', idx)
-        body = src[idx:end]
+        assert 'convert_one_to_chd(' in body, \
+            'api_chd_converter_convert must delegate to convert_one_to_chd (Pass 42.5)'
         assert 'chd_verify_after_convert' in body, \
-            'inline CHD converter must honor chd_verify_after_convert (Pass 40.11)'
+            'inline CHD converter must honor chd_verify_after_convert (Pass 40.11 / 42.5)'
 
 
 # -----------------------------------------------------------------------------
