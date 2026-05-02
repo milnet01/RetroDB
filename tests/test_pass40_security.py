@@ -608,29 +608,61 @@ class TestPass40_6PlayersNormalization:
 
 class TestPass40_6RouteNormalization:
     """api_game_edit + edit_metadata must run players through
-    normalize_players_value before binding to the INTEGER column."""
+    normalize_players_value before binding to the INTEGER column.
+    Pass 42.1 routed both edit paths through normalize_game_edit, which
+    internally calls normalize_players_value — the invariant moved one
+    layer up but is still pinned by these tests."""
 
-    def test_api_game_edit_normalizes_players(self):
+    def test_api_game_edit_normalizes_via_helper(self):
         from routes import games as games_mod
 
         src = open(games_mod.__file__).read()
         idx = src.index('def api_game_edit')
         end = src.index('@bp.route(\'/api/games/bulk-edit\'', idx)
         body = src[idx:end]
-        assert 'normalize_players_value' in body, \
-            'api_game_edit must call normalize_players_value (Pass 40.6)'
+        assert 'normalize_game_edit' in body, \
+            'api_game_edit must route through normalize_game_edit (Pass 42.1)'
 
-    def test_edit_metadata_normalizes_players(self):
+    def test_edit_metadata_normalizes_via_helper(self):
         from routes import games as games_mod
 
         src = open(games_mod.__file__).read()
-        # edit_metadata is the form-POST handler ahead of api_game_edit.
-        idx = src.index("edit_players")
-        # Within the surrounding ~600 chars, the players read must be wrapped
-        # in normalize_players_value(...).
-        window = src[max(0, idx - 200):idx + 400]
-        assert 'normalize_players_value' in window, \
-            'edit_metadata must call normalize_players_value (Pass 40.6)'
+        idx = src.index("action == 'edit_metadata'")
+        # Within the surrounding ~3000 chars, the helper call must appear.
+        window = src[idx:idx + 3000]
+        assert 'normalize_game_edit' in window, \
+            'edit_metadata must route through normalize_game_edit (Pass 42.1)'
+
+    def test_helper_calls_normalize_players_value(self):
+        """Pass 40.6 invariant — normalize_game_edit must apply the
+        players coercion that originally lived inline in both routes."""
+        from services import game_metadata_service as svc
+
+        src = open(svc.__file__).read()
+        idx = src.index('def normalize_game_edit')
+        end = src.index('\ndef ', idx + 1)
+        body = src[idx:end]
+        assert 'normalize_players_value' in body, \
+            'normalize_game_edit must call normalize_players_value (Pass 40.6)'
+
+    def test_helper_normalizes_string_range_to_int(self):
+        """Functional check that the helper actually coerces "1-4" → 4
+        (the Pass 40.6 contract)."""
+        from services.game_metadata_service import normalize_game_edit
+
+        out = normalize_game_edit({'players': '1-4'})
+        assert out['players'] == 4, (
+            'normalize_game_edit must coerce range "1-4" to max int=4 '
+            '(Pass 40.6 INTEGER column invariant)'
+        )
+
+        out = normalize_game_edit({'players': ''})
+        assert out['players'] is None, \
+            'normalize_game_edit must coerce empty string to None'
+
+        out = normalize_game_edit({'players': 'unknown'})
+        assert out['players'] is None, \
+            'normalize_game_edit must coerce non-numeric junk to None'
 
 
 # -----------------------------------------------------------------------------

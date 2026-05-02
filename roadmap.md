@@ -1956,7 +1956,26 @@ paths or silent-corruption vectors under routine use.
   arbitrary edit payload and returns a sanitised dict ready for UPDATE.
   Include `cross_map_ratings`, `generate_sort_title`, `players`
   coercion, `invalidate_filter_cache + invalidate_analytics_cache`.
-- **Status**: todo
+- **Status**: done (v3.5.52) — `services/game_metadata_service.
+  normalize_game_edit(payload)` is the single source of truth: strip +
+  empty-as-None on every string field, `release_date` validation
+  (slashes → dashes, junk → None, impossible calendar dates → None),
+  `players` routed through `normalize_players_value` (Pass 40.6
+  invariant), 8-system rating cross-map that fires only on keys
+  present in the payload (so JSON callers updating one rating don't
+  get the other seven written underneath), `sort_title` auto-
+  generation when title given but sort_title blank, `similar_games`
+  re-join. Helper is pure (does not mutate caller dict; cache
+  invalidation kept at call sites). `routes/games.py` form-POST and
+  JSON paths both delegate; three orphaned imports
+  (`cross_map_ratings`, `generate_sort_title`, `normalize_players_
+  value`) cleaned. Form-POST cache-invalidation gap closed inline —
+  it didn't call `invalidate_filter_cache`/`invalidate_analytics_
+  cache` previously, only the JSON path did. 22 new functional tests
+  in `tests/test_pass42_normalize_game_edit.py` (Strip / ReleaseDate
+  / Players / RatingsCrossMap / SortTitle / SimilarGames buckets);
+  Pass 40.6 source-grep tests rewritten to assert both edit paths
+  route through `normalize_game_edit`. Suite 725 → 749.
 
 #### Pass 42.2 Deduplicate migration helpers (MEDIUM, S)
 

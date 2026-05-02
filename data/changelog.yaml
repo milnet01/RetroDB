@@ -1,3 +1,30 @@
+- version: 3.5.52
+  date: 2026-05-02
+  tags:
+  - type: refactor
+    label: Pass 42.1 — Extract `normalize_game_edit` helper (single source of truth for two edit paths)
+  body: |
+    <ul>
+        <li><strong>Pass 42.1 — single source of truth for game-edit normalization</strong>. New <code>services/game_metadata_service.normalize_game_edit(payload)</code> takes a dict of edit fields and returns a sanitised dict ready for an UPDATE on the games row. The form-POST handler (<code>routes/games.py:edit_metadata</code>, ~60 lines of inline strip + cross-map + sort_title + players coercion) and the JSON handler (<code>api_game_edit</code>, ~30 lines of strip + release_date + players) now both delegate to this helper. Two prior divergences collapsed: form-POST cross-mapped ratings + auto-generated sort_title; JSON did neither. Now both do.</li>
+        <li><strong>Behaviour</strong>:
+            <ul>
+                <li><strong>Strip + empty-as-None</strong>. Every string value is whitespace-stripped; the empty string becomes <code>None</code>. Callers no longer need <code>.strip()</code> on every <code>request.form.get()</code>.</li>
+                <li><strong>release_date</strong>. <code>YYYY-MM-DD</code> or <code>YYYY/MM/DD</code> (slashes accepted; converted); junk → <code>None</code>; impossible calendar dates (e.g. Feb 30) → <code>None</code>.</li>
+                <li><strong>players</strong>. Routed through <code>normalize_players_value</code> so the INTEGER column stays well-typed (Pass 40.6 invariant). String "1-4" → 4 (max), "" → None, "unknown" → None, plain "2" → 2.</li>
+                <li><strong>Rating cross-map</strong>. Fires only on the rating keys present in the payload; only those keys are written back. JSON callers updating just <code>esrb_rating</code> do not get the other seven systems written underneath them. Form-POST callers (which always send all 8 rating keys) get the previous behaviour: empties filled from any provided rating via maturity-tier mapping.</li>
+                <li><strong>sort_title</strong>. Auto-generated from <code>title</code> when title is provided and sort_title is empty / missing. Explicit sort_title preserved.</li>
+                <li><strong>similar_games</strong>. Comma-separated list re-joined with <code>", "</code>; empty entries dropped.</li>
+                <li><strong>Keys absent from payload stay absent in result</strong>. Critical for the JSON path's <code>if field in normalized</code> filter — otherwise a request asking to clear one field would write None over every other column.</li>
+                <li><strong>Does not mutate caller dict</strong>. Shallow copy at the top.</li>
+            </ul>
+        </li>
+        <li><strong>Form-POST cache invalidation gap fixed</strong>. The <code>edit_metadata</code> form path didn't call <code>invalidate_filter_cache()</code> / <code>invalidate_analytics_cache()</code> &mdash; only the JSON path did. Stale filter facets and analytics widgets after manual edits via the form. Pass 42.1 closes that asymmetry along with the helper extraction.</li>
+        <li><strong>Dead-import cleanup</strong>. <code>routes/games.py</code> no longer imports <code>cross_map_ratings</code>, <code>generate_sort_title</code>, or <code>normalize_players_value</code> directly &mdash; all three are now used only inside the helper. Three orphaned imports removed.</li>
+        <li><strong>Tests</strong>. New <code>tests/test_pass42_normalize_game_edit.py</code> with 22 functional cases across 6 classes (Strip / ReleaseDate / Players / RatingsCrossMap / SortTitle / SimilarGames). Each tests the helper as a pure function &mdash; no DB fixtures, no Flask test client. Pinned the JSON-caller-doesn't-trigger-other-7-ratings invariant (the most subtle bit of the helper). Pass 40.6's two source-grep tests in <code>test_pass40_security.py</code> rewritten to match the new code shape: now check that both edit paths route through <code>normalize_game_edit</code> + a functional check that the helper coerces "1-4" → 4. Suite 725 → 749 (+24 net, after 2 source-grep tests gained a third functional sibling).</li>
+        <li><strong>Source</strong>: <code>roadmap.md</code> Pass 42.1 (2026-04-24 audit, Game routes H4 + C3 + Scraper adapters C2 — fold-in target).</li>
+        <li><strong>Version bump 3.5.51 &rarr; 3.5.52</strong>: patch (refactor; behaviour-preserving except for the cache-invalidation fix on form-POST, which was a gap closure).</li>
+    </ul>
+
 - version: 3.5.51
   date: 2026-05-02
   tags:

@@ -21,11 +21,9 @@ from services.auth import login_required, editor_required, has_permission, permi
 from services.api_helpers import handle_api_errors
 from services.security import safe_filename
 from services.game_utils import (
-    generate_sort_title,
     reset_game_title_from_filename,
     get_ra_supported_systems,
     get_preferred_rating, get_all_ratings,
-    normalize_players_value,
     RATING_SYSTEMS,
 )
 from services.game_query import (
@@ -35,8 +33,9 @@ from services.game_query import (
 )
 from services.analytics import invalidate_analytics_cache
 from services.game_metadata_service import (
-    cross_map_ratings, build_game_card,
+    build_game_card,
     apply_metadata_to_game, apply_hybrid_metadata_to_game,
+    normalize_game_edit,
 )
 from services.achievement_linking import (
     build_rpcs3_trophy_map, lookup_rpcs3_info,
@@ -435,66 +434,60 @@ def game_detail(game_id):
 
             elif action == 'edit_metadata':
                 try:
-                    # Get form data
-                    title = request.form.get('edit_title', '').strip()
-                    sort_title = request.form.get('edit_sort_title', '').strip()
-                    publisher = request.form.get('edit_publisher', '').strip()
-                    developer = request.form.get('edit_developer', '').strip()
-                    genre = request.form.get('edit_genre', '').strip()
-                    release_date = request.form.get('edit_release_date', '').strip()
-                    if release_date and '/' in release_date:
-                        release_date = release_date.replace('/', '-')
-                    if release_date:
-                        try:
-                            datetime.strptime(release_date, '%Y-%m-%d')
-                        except ValueError:
-                            release_date = ''
-                    region = request.form.get('edit_region', '').strip()
-                    franchise = request.form.get('edit_franchise', '').strip()
-                    other_platforms = request.form.get('edit_other_platforms', '').strip()
-                    modes = request.form.get('edit_modes', '').strip()
-                    campaign = request.form.get('edit_campaign', '').strip()
-                    game_structure = request.form.get('edit_game_structure', '').strip()
-                    perspective = request.form.get('edit_perspective', '').strip()
-                    dimension = request.form.get('edit_dimension', '').strip()
-                    controller_support_custom = request.form.get('edit_controller_support_custom', '').strip()
-                    controller_support_dropdown = request.form.get('edit_controller_support', '').strip()
-                    controller_support = controller_support_custom or controller_support_dropdown
-                    # Pass 40.6 — coerce "1-4" / "" / junk to int|None so
-                    # the INTEGER column stays well-typed.
-                    players = normalize_players_value(
-                        request.form.get('edit_players', '').strip()
+                    # Pass 42.1 — normalize through the shared helper so the
+                    # form-POST and JSON edit paths agree on every transform
+                    # (strip + empty-as-None, release_date validation, players
+                    # coercion, rating cross-map, sort_title auto-generation,
+                    # similar_games re-join).  controller_support has a custom
+                    # text override that takes priority over the dropdown,
+                    # so it is built before the helper runs.
+                    controller_support_input = (
+                        request.form.get('edit_controller_support_custom', '').strip()
+                        or request.form.get('edit_controller_support', '').strip()
                     )
-                    esrb_rating = request.form.get('edit_esrb_rating', '').strip()
-                    pegi_rating = request.form.get('edit_pegi_rating', '').strip()
-                    cero_rating = request.form.get('edit_cero_rating', '').strip()
-                    usk_rating = request.form.get('edit_usk_rating', '').strip()
-                    acb_rating = request.form.get('edit_acb_rating', '').strip()
-                    fpb_rating = request.form.get('edit_fpb_rating', '').strip()
-                    grac_rating = request.form.get('edit_grac_rating', '').strip()
-                    classind_rating = request.form.get('edit_classind_rating', '').strip()
-                    save_type = request.form.get('edit_save_type', '').strip()
-                    similar_games = request.form.get('edit_similar_games', '').strip()
-                    similar_games = ', '.join(part.strip() for part in similar_games.split(',') if part.strip())
-                    edition = request.form.get('edit_edition', '').strip()
-                    description = request.form.get('edit_description', '').strip()
-
-                    if title and not sort_title:
-                        sort_title = generate_sort_title(title)
-
-                    _mapped_ratings = cross_map_ratings({
-                        'esrb': esrb_rating, 'pegi': pegi_rating, 'cero': cero_rating,
-                        'usk': usk_rating, 'acb': acb_rating, 'fpb': fpb_rating,
-                        'grac': grac_rating, 'classind': classind_rating,
-                    })
-                    esrb_rating = _mapped_ratings['esrb']
-                    pegi_rating = _mapped_ratings['pegi']
-                    cero_rating = _mapped_ratings['cero']
-                    usk_rating = _mapped_ratings['usk']
-                    acb_rating = _mapped_ratings['acb']
-                    fpb_rating = _mapped_ratings['fpb']
-                    grac_rating = _mapped_ratings['grac']
-                    classind_rating = _mapped_ratings['classind']
+                    _form_keys = (
+                        'title', 'sort_title', 'publisher', 'developer',
+                        'genre', 'release_date', 'region', 'franchise',
+                        'other_platforms', 'modes', 'campaign', 'game_structure',
+                        'perspective', 'dimension', 'players',
+                        'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating',
+                        'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating',
+                        'save_type', 'similar_games', 'edition', 'description',
+                    )
+                    _payload = {
+                        k: request.form.get(f'edit_{k}', '')
+                        for k in _form_keys
+                    }
+                    _payload['controller_support'] = controller_support_input
+                    _normalized = normalize_game_edit(_payload)
+                    title = _normalized.get('title') or ''
+                    sort_title = _normalized.get('sort_title') or ''
+                    publisher = _normalized.get('publisher') or ''
+                    developer = _normalized.get('developer') or ''
+                    genre = _normalized.get('genre') or ''
+                    release_date = _normalized.get('release_date') or ''
+                    region = _normalized.get('region') or ''
+                    franchise = _normalized.get('franchise') or ''
+                    other_platforms = _normalized.get('other_platforms') or ''
+                    modes = _normalized.get('modes') or ''
+                    campaign = _normalized.get('campaign') or ''
+                    game_structure = _normalized.get('game_structure') or ''
+                    perspective = _normalized.get('perspective') or ''
+                    dimension = _normalized.get('dimension') or ''
+                    controller_support = _normalized.get('controller_support') or ''
+                    players = _normalized.get('players')
+                    esrb_rating = _normalized.get('esrb_rating') or ''
+                    pegi_rating = _normalized.get('pegi_rating') or ''
+                    cero_rating = _normalized.get('cero_rating') or ''
+                    usk_rating = _normalized.get('usk_rating') or ''
+                    acb_rating = _normalized.get('acb_rating') or ''
+                    fpb_rating = _normalized.get('fpb_rating') or ''
+                    grac_rating = _normalized.get('grac_rating') or ''
+                    classind_rating = _normalized.get('classind_rating') or ''
+                    save_type = _normalized.get('save_type') or ''
+                    similar_games = _normalized.get('similar_games') or ''
+                    edition = _normalized.get('edition') or ''
+                    description = _normalized.get('description') or ''
 
                     boxart_filename = game['boxart']
                     boxart_3d_filename = game['boxart_3d'] if game['boxart_3d'] else ''
@@ -588,6 +581,12 @@ def game_detail(game_id):
                     ))
 
                     message = "Metadata updated successfully!"
+
+                    # Pass 42.1 — match api_game_edit's cache discipline.  The
+                    # filter + analytics caches were stale until the next
+                    # full-rescrape if the user edited only via the form.
+                    invalidate_filter_cache()
+                    invalidate_analytics_cache()
 
                     game = query("""
                         SELECT g.*, s.name AS system_name, s.folder AS system_folder
@@ -920,28 +919,18 @@ def api_game_edit(game_id):
         'description'
     ]
 
+    # Pass 42.1 — single source of truth shared with the form-POST edit
+    # path: strip + empty-as-None, release_date validation, players coercion
+    # (Pass 40.6), rating cross-map, sort_title auto-generation.
+    payload = {k: data[k] for k in allowed_fields if k in data}
+    normalized = normalize_game_edit(payload)
+
     updates = []
     values = []
-
     for field in allowed_fields:
-        if field in data:
-            value = data[field]
-            if value == '':
-                value = None
-            if field == 'release_date' and value:
-                if '/' in value:
-                    value = value.replace('/', '-')
-                try:
-                    datetime.strptime(value, '%Y-%m-%d')
-                except ValueError:
-                    value = None
-            # Pass 40.6 — players is INTEGER, but SQLite weak typing accepts
-            # ranges like "1-4" verbatim and corrupts the column.  Normalize
-            # to int|None so COALESCE-style semantics on later scrapes hold.
-            if field == 'players':
-                value = normalize_players_value(value)
+        if field in normalized:
             updates.append(f"{field} = ?")
-            values.append(value)
+            values.append(normalized[field])
 
     if not updates:
         return jsonify({'success': False, 'error': 'No fields to update'}), 400

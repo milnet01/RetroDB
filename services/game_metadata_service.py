@@ -13,14 +13,26 @@
 # =============================================================================
 
 import logging
+from datetime import datetime
 
-from services.game_utils import map_rating, RATING_SYSTEM_KEYS
+from services.game_utils import (
+    map_rating,
+    RATING_SYSTEM_KEYS,
+    generate_sort_title,
+    normalize_players_value,
+)
 
 logger = logging.getLogger(__name__)
 
 # 'RP' is "Rating Pending" — not an actual maturity level. Treat it as empty
 # so cross-mapping replaces it with a real rating from another system.
 _RP_VALUES = frozenset({'RP', 'rp'})
+
+# Field groups used by normalize_game_edit (Pass 42.1).
+_GAME_EDIT_RATING_KEYS = (
+    'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating',
+    'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating',
+)
 
 
 def cross_map_ratings(ratings):
@@ -49,6 +61,91 @@ def cross_map_ratings(ratings):
                 result[tgt_key] = mapped
                 break
     return result
+
+
+def normalize_game_edit(payload):
+    """Sanitise a game-edit payload for an UPDATE on the games row.
+
+    Single source of truth for the form-POST (`game_view edit_metadata`)
+    and JSON (`api_game_edit`) edit paths — Pass 42.1 collapses the two
+    independent normalisations that had drifted (form-POST cross-mapped
+    ratings + generated sort_title; JSON did neither).
+
+    Behaviour:
+        - Strips whitespace on every string value; the empty string maps to None.
+        - `release_date`: accepts `YYYY-MM-DD` or `YYYY/MM/DD`; junk → None.
+        - `players`: routed through `normalize_players_value` so the INTEGER
+          column stays well-typed (Pass 40.6 invariant).
+        - 8-system rating cross-map: fires only on the rating keys that are
+          actually present in the payload, so callers that pass a single
+          rating field do not get the other seven written underneath them.
+        - `sort_title`: auto-generated from `title` when `title` is provided
+          and `sort_title` is empty / missing.
+        - `similar_games`: comma-separated list re-joined with one space after
+          each comma; empties dropped.
+
+    Args:
+        payload: dict of edit fields (raw values, possibly with surrounding
+                 whitespace, possibly with the empty string for "clear").
+
+    Returns:
+        dict: shallow copy of `payload` with the transforms above applied.
+              Keys absent from `payload` stay absent in the result.
+    """
+    out = dict(payload)
+
+    # Whitespace strip + empty-string-to-None on every string field.  This
+    # lets callers feed `request.form.get(...).strip()` or `request.json[k]`
+    # without per-field handling at the call site.
+    for k in list(out.keys()):
+        v = out[k]
+        if isinstance(v, str):
+            v = v.strip()
+            out[k] = v if v != '' else None
+
+    # release_date — accept slashes, validate YYYY-MM-DD, junk → None.
+    if out.get('release_date'):
+        rd = out['release_date']
+        if '/' in rd:
+            rd = rd.replace('/', '-')
+        try:
+            datetime.strptime(rd, '%Y-%m-%d')
+            out['release_date'] = rd
+        except ValueError:
+            out['release_date'] = None
+
+    # players — INTEGER column; Pass 40.6 invariant.
+    if 'players' in out:
+        out['players'] = normalize_players_value(out['players'])
+
+    # similar_games — re-join with single space after comma, drop empties.
+    if out.get('similar_games'):
+        out['similar_games'] = ', '.join(
+            part.strip() for part in out['similar_games'].split(',')
+            if part.strip()
+        )
+
+    # Rating cross-map.  Only run when at least one rating key is present
+    # in the payload, and only assign back the keys the caller actually
+    # included (so a JSON caller updating just `esrb_rating` does not have
+    # the other seven systems written by side effect).
+    rating_keys_present = [k for k in _GAME_EDIT_RATING_KEYS if k in payload]
+    if rating_keys_present:
+        rating_input = {
+            k.replace('_rating', ''): (out.get(k) or '')
+            for k in _GAME_EDIT_RATING_KEYS
+        }
+        mapped = cross_map_ratings(rating_input)
+        for k in rating_keys_present:
+            short = k.replace('_rating', '')
+            mapped_value = mapped.get(short, '')
+            out[k] = mapped_value if mapped_value else None
+
+    # sort_title — generate from title if title given and sort_title blank.
+    if out.get('title') and not out.get('sort_title'):
+        out['sort_title'] = generate_sort_title(out['title'])
+
+    return out
 
 
 def import_source_for_rom_path(rom_path):
