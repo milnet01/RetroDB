@@ -1,3 +1,25 @@
+- version: 3.5.60
+  date: 2026-05-02
+  tags:
+  - type: refactor
+    label: Pass 38.1 (partial) — Extract `_apply_retroachievements_check` from `apply_hybrid_metadata`
+  - type: chore
+    label: Annotate intentional `.online_id` side-effect calls in PSN auth (ruff B018)
+  body: |
+    <ul>
+        <li><strong>Pass 38.1 first incremental extraction</strong>. Pass 38.1 plans to split the 1,022-line <code>apply_hybrid_metadata</code> into four helpers (fallback loop, normalize, save, RA check) — its full scope is L. The RA-check block is the smallest of the four (~31 lines) and the most self-contained (opens its own DB connection, mutates only RA columns, silently swallows exceptions). Extract it standalone now to validate the helper-shape; the other three blocks follow when there's time and a benchmark/regression-test budget.</li>
+        <li><strong>New helper</strong> <code>scraper.hybrid_scraper._apply_retroachievements_check(db_game_id, title, system_folder) -> bool</code>:
+            <ul>
+                <li>Calls <code>scraper.retroachievements.check_retroachievements(title, system_folder)</code>, gracefully returns <code>False</code> on <code>None</code> / <code>has_achievements: False</code> / any raised exception.</li>
+                <li>On match: opens <code>get_scraper_conn()</code>, UPSERTs <code>has_retroachievements=1</code> + <code>ra_game_id</code> + <code>ra_achievement_count</code> + <code>ra_points</code>, returns <code>True</code> so the caller can append <code>'retroachievements'</code> to its <code>filled_fields</code> list.</li>
+                <li>Independent of the caller's transaction — uses a separate connection so an RA-write doesn't bind the outer scrape's lifetime, and a missing/down RA service can't poison the rest of the scrape.</li>
+            </ul>
+        </li>
+        <li><strong>Callsite</strong>: <code>apply_hybrid_metadata</code> tail (lines 1422-1452) collapsed from a 31-line inline block to 3 lines (<code>title_to_check = ...; if _apply_retroachievements_check(...): result['filled_fields'].append('retroachievements')</code>). Same behaviour, less function-body bloat to read past on every audit.</li>
+        <li><strong>Test impact</strong>: new <code>tests/test_pass38_ra_check_helper.py</code> (4 cases) pins the helper contracts — None-return / has_achievements=False / match-and-write / exception-swallow. Uses <code>tmp_path</code> + a 1-row <code>games</code> table fixture; <code>monkeypatch</code> to redirect <code>get_scraper_conn</code> at the temp DB. Reverts of the helper still fail at least one of the four. Suite 768/768 green (was 764).</li>
+        <li><strong>Roadmap impact</strong>: Pass 38.1 marked partial (1/4 sub-blocks landed). Remaining three (fallback loop ~305 lines, normalize ~44 lines, save ~196 lines) stay todo — the save block in particular is risky and would benefit from regression tests around the wider <code>apply_hybrid_metadata</code> first.</li>
+        <li><strong>Folded B018 fix</strong> (<code>routes/trophies.py</code>): two <code>psnawp.me().online_id</code> attribute-access expressions in <code>create_psn_client</code> are intentional — accessing <code>.online_id</code> triggers the PSNAWP authentication round-trip; the returned string is discarded. Ruff's B018 ("useless attribute access") flagged both. Annotated as <code>_ = psnawp.me().online_id</code> with a one-line comment so the intent is visible to readers and the lint is silenced without a <code>noqa</code> escape-hatch.</li>
+    </ul>
 - version: 3.5.59
   date: 2026-05-02
   tags:

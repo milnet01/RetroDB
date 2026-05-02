@@ -482,6 +482,52 @@ def detect_controller_support(system_folder, modes):
 # HYBRID APPLY METADATA
 # =============================================================================
 
+def _apply_retroachievements_check(db_game_id, title, system_folder):
+    """Look up RetroAchievements support for `(title, system_folder)` and
+    update the games row if found. Returns True when RA data was written
+    (caller should append 'retroachievements' to its filled_fields list).
+
+    Pass 38.1 partial extraction — this block was inline at the tail of
+    apply_hybrid_metadata; it opens its own connection (independent of
+    the caller's transaction) and silently swallows exceptions to keep
+    a missing/down RA service from poisoning the rest of the scrape.
+    """
+    try:
+        from scraper.retroachievements import check_retroachievements
+        ra_info = check_retroachievements(title, system_folder)
+        if not (ra_info and ra_info.get('has_achievements')):
+            return False
+        conn2 = get_scraper_conn()
+        try:
+            c2 = conn2.cursor()
+            c2.execute("""
+                UPDATE games SET
+                    has_retroachievements = 1,
+                    ra_game_id = ?,
+                    ra_achievement_count = ?,
+                    ra_points = ?
+                WHERE id = ?
+            """, (
+                ra_info.get('id'),
+                ra_info.get('achievement_count', 0),
+                ra_info.get('points', 0),
+                db_game_id,
+            ))
+            conn2.commit()
+        finally:
+            conn2.close()
+        logger.info(
+            f"Found RetroAchievements for game {db_game_id}: "
+            f"ID={ra_info.get('id')}, "
+            f"{ra_info.get('achievement_count')} achievements, "
+            f"{ra_info.get('points')} points"
+        )
+        return True
+    except Exception as e:
+        logger.debug(f"RetroAchievements check skipped: {e}")
+        return False
+
+
 def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                           secondary_sources=None, fill_gaps=True, force_overwrite=False,
                           primary_data=None, restrict_to_selected=False):
@@ -1418,39 +1464,12 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         ))
         
         conn.commit()
-        
-        # Check and update RetroAchievements status
-        try:
-            from scraper.retroachievements import check_retroachievements
-            title_to_check = metadata['title'] or game.get('title', '')
-            ra_info = check_retroachievements(title_to_check, system_folder)
-            if ra_info and ra_info.get('has_achievements'):
-                # Reopen connection to update RA status
-                conn2 = get_scraper_conn()
-                try:
-                    c2 = conn2.cursor()
-                    # Save all RA data including the game ID for achievement tracking
-                    c2.execute("""
-                        UPDATE games SET
-                            has_retroachievements = 1,
-                            ra_game_id = ?,
-                            ra_achievement_count = ?,
-                            ra_points = ?
-                        WHERE id = ?
-                    """, (
-                        ra_info.get('id'),
-                        ra_info.get('achievement_count', 0),
-                        ra_info.get('points', 0),
-                        db_game_id
-                    ))
-                    conn2.commit()
-                finally:
-                    conn2.close()
-                logger.info(f"Found RetroAchievements for game {db_game_id}: ID={ra_info.get('id')}, {ra_info.get('achievement_count')} achievements, {ra_info.get('points')} points")
-                result['filled_fields'].append('retroachievements')
-        except Exception as e:
-            logger.debug(f"RetroAchievements check skipped: {e}")
-        
+
+        # Pass 38.1 — RA-check extracted to _apply_retroachievements_check.
+        title_to_check = metadata['title'] or game.get('title', '')
+        if _apply_retroachievements_check(db_game_id, title_to_check, system_folder):
+            result['filled_fields'].append('retroachievements')
+
         # Calculate final missing fields
         result['missing_fields'] = [k for k, v in metadata.items() if not v]
         result['success'] = True

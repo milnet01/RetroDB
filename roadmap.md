@@ -1896,7 +1896,21 @@ paths or silent-corruption vectors under routine use.
   `_save_game_row`, `_check_ra_matches` into separate helpers.
   Sibling mergers already extracted to `scraper/metadata_merger.py`.
 - **Source**: 2026-04-24 audit, Scraper orchestration M2.
-- **Status**: todo
+- **Status**: partial (v3.5.60) — RA-check sub-block (1/4) extracted
+  to `scraper.hybrid_scraper._apply_retroachievements_check(db_game_
+  id, title, system_folder) -> bool`. Smallest + most self-contained
+  of the four sub-blocks (31 lines, opens its own DB connection,
+  mutates only RA columns, silently swallows exceptions to keep a
+  missing/down RA service from poisoning the rest of the scrape).
+  Callsite collapsed to 3 lines: helper returns True/False so the
+  caller decides whether to append `'retroachievements'` to
+  `filled_fields`. `tests/test_pass38_ra_check_helper.py` (4 cases —
+  None-return, has_achievements=False, match-and-write, exception-
+  swallow) pins the contracts. Suite 768/768 green.
+  Remaining three sub-blocks (fallback loop ~305 lines, normalize
+  ~44 lines, save ~196 lines) stay todo — the save block in
+  particular is risky and would benefit from regression tests around
+  the wider `apply_hybrid_metadata` before extraction.
 
 #### Pass 38.2 Consolidate `load_scraper_settings` (MEDIUM, S)
 

@@ -123,8 +123,9 @@ def create_psn_client(npsso):
             if refresh_expires > _time.time():
                 psnawp = PSNAWP(npsso)
                 psnawp.authenticator.token_response = cached_tokens
-                # Validate by making a lightweight call
-                psnawp.me().online_id
+                # Validate by making a lightweight call (.online_id access
+                # triggers the auth round-trip; result intentionally unused).
+                _ = psnawp.me().online_id
                 # Save refreshed tokens (access token may have been renewed)
                 _save_psn_tokens(psnawp.authenticator.token_response)
                 logger.info("PSN authenticated using cached tokens")
@@ -139,8 +140,9 @@ def create_psn_client(npsso):
     # Fresh auth via NPSSO
     try:
         psnawp = PSNAWP(npsso)
-        # Force authentication by making a call
-        psnawp.me().online_id
+        # Force authentication by making a call (.online_id access triggers
+        # the auth round-trip; result intentionally unused).
+        _ = psnawp.me().online_id
         # Cache the tokens for future use
         if psnawp.authenticator.token_response:
             _save_psn_tokens(psnawp.authenticator.token_response)
