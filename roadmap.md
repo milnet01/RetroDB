@@ -1956,7 +1956,10 @@ paths or silent-corruption vectors under routine use.
 - **Status**: done (v3.5.41) — both `install.py` and `install_gui.py`
   now check `core.bundle.js` AND `games.bundle.js` for the
   build-failed fallback ("use existing bundles" branch). Success-path
-  log message updated to name both bundles.
+  log message updated to name both bundles. v3.5.55 follow-up
+  swept the last three stale `app.bundle.js` references in
+  `build_js.py` (header docstring + `JS_ORDER` comment) and
+  `docs/README.md` (ASCII tree).
 
 #### Pass 38.6 Split `settings.html` by tab (LOW, M)
 

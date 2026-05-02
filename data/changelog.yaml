@@ -1,3 +1,26 @@
+- version: 3.5.55
+  date: 2026-05-02
+  tags:
+  - type: chore
+    label: Drop stale `app.bundle.js` references in build/docs comments
+  body: |
+    <ul>
+        <li><strong>Bundle-name drift follow-up to Pass 38.5</strong>. Pass 13 split the legacy single <code>app.bundle.js</code> into <code>core.bundle.js</code> + <code>games.bundle.js</code>; Pass 38.5 (v3.5.41) updated the installer fallback to check both new bundles. Three stale references survived in build script / repo doc comments — harmless but misleading on a cold read.</li>
+        <li><code>build_js.py</code>:
+            <ul>
+                <li>Header docstring usage example: <code>python build_js.py # Build app.bundle.js (minified)</code> → <code>python build_js.py # Build core.bundle.js + games.bundle.js (minified)</code>.</li>
+                <li><code>JS_ORDER</code> comment retitled — it isn't "for legacy app.bundle.js tests / verification" any more (no such tests exist); it's the combined source list <code>verify_files()</code> uses to confirm every bundled source is present before concatenation.</li>
+            </ul>
+        </li>
+        <li><code>docs/README.md</code> ASCII tree updated: <code>static/js/</code> now correctly shows <code>core.bundle.js</code> + <code>games.bundle.js</code> as the generated bundles.</li>
+        <li><strong>Kept on purpose</strong>:
+            <ul>
+                <li><code>build_js.py</code> still deletes <code>app.bundle.js</code> if it lingers on disk after a Pass-13-era upgrade. Cleanup-on-upgrade path; not stale.</li>
+                <li><code>install.py</code> + <code>install_gui.py</code> Pass 38.5 attribution comments next to the "use existing bundle" fallback document why the check looks at two filenames. Useful breadcrumb for future readers.</li>
+            </ul>
+        </li>
+        <li>No behaviour change; pure documentation / comment refresh.</li>
+    </ul>
 - version: 3.5.54
   date: 2026-05-02
   tags:

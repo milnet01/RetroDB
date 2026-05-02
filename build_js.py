@@ -4,7 +4,7 @@ RetroDB JS Build Script
 Concatenates and conservatively minifies deferred JS files into a single bundle.
 
 Usage:
-    python build_js.py              # Build app.bundle.js (minified)
+    python build_js.py              # Build core.bundle.js + games.bundle.js (minified)
     python build_js.py --dev        # Just verify all files exist
     python build_js.py --no-minify  # Concatenate without minifying
 
@@ -42,7 +42,8 @@ GAMES_ORDER = [
     'game-modals.js',
 ]
 
-# Combined order — used only for legacy app.bundle.js tests / verification.
+# Combined source list — used by verify_files() to check every bundled source
+# exists before any concatenation runs.
 JS_ORDER = CORE_ORDER + GAMES_ORDER
 
 # Files NOT included in any bundle (loaded separately)
