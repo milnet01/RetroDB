@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Emulators · Settings · RetroDB{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">🎮 Emulators</h1>
+    <p class="page-subtitle">Manage emulator binaries and per-system mappings used by the ▶ Play button.</p>
+</div>
+
+<!-- ================================================== -->
+<!-- RetroArch installation panel -->
+<!-- ================================================== -->
+<section class="settings-section">
+    <h2 class="section-title">RetroArch</h2>
+    <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+        RetroArch needs explicit binary + cores-dir paths because they typically live in different prefixes (system package, ~/.local, or a Flatpak sandbox).
+    </p>
+
+    <div class="form-group mb-md">
+        <label class="form-label" for="ra-binary">Binary</label>
+        <input type="text" class="form-input" id="ra-binary"
+               value="{{ retroarch_binary or '' }}"
+               placeholder="/usr/bin/retroarch  or  flatpak run org.libretro.RetroArch">
+    </div>
+    <div class="form-group mb-md">
+        <label class="form-label" for="ra-cores-dir">Cores directory</label>
+        <input type="text" class="form-input" id="ra-cores-dir"
+               value="{{ retroarch_cores_dir or '' }}"
+               placeholder="~/.config/retroarch/cores/">
+    </div>
+    <div style="display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
+        <button id="ra-detect-btn" class="btn btn-secondary"><span class="btn-icon">🔍</span> Auto-detect</button>
+        <button id="ra-save-btn" class="btn btn-primary"><span class="btn-icon">💾</span> Save</button>
+    </div>
+    <div id="ra-status" class="text-muted" style="font-size: 0.9rem;"></div>
+</section>
+
+<!-- ================================================== -->
+<!-- Pass 44.1B — Auto-detect AppImages -->
+<!-- ================================================== -->
+<section class="settings-section">
+    <h2 class="section-title">Auto-detect emulator AppImages</h2>
+    <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+        Walks the directories in <code>emulator_scan_paths</code>
+        ({{ emulator_scan_paths }}) for known emulator AppImages.
+        For each match, the corresponding registry entry's
+        <code>binary_path_override</code> can be set in one click.  Prefers
+        <code>&lt;name&gt;-portable.sh</code> wrapper scripts when present
+        alongside the AppImage so portable mode is preserved.
+    </p>
+    <div style="display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
+        <button id="emu-detect-btn" class="btn btn-secondary"><span class="btn-icon">🔍</span> Scan</button>
+        <button id="emu-apply-btn" class="btn btn-primary" disabled><span class="btn-icon">💾</span> Apply all</button>
+    </div>
+    <div id="emu-detect-status" class="text-muted" style="font-size: 0.9rem;"></div>
+    <div id="emu-detect-results" style="margin-top: var(--spacing-md);"></div>
+</section>
+
+<!-- ================================================== -->
+<!-- Emulators list -->
+<!-- ================================================== -->
+<section class="settings-section">
+    <h2 class="section-title">Registered emulators</h2>
+    <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+        RetroDB ships with a default registry seeded on first run.  Add custom emulators or edit the seeded entries.
+    </p>
+    <div style="overflow-x: auto;">
+        <table class="data-table" id="emulator-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Binary</th>
+                    <th>Path override</th>
+                    <th>Args template</th>
+                    <th>Type</th>
+                    <th>Enabled</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="emu-tbody">
+                <tr><td colspan="7" class="text-muted">Loading…</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- ================================================== -->
+<!-- Pass 44.1C — Edit-emulator modal -->
+<!-- ================================================== -->
+<div id="emuEditModal" class="scrape-modal">
+    <div class="scrape-modal-content" style="max-width: 720px;" role="dialog" aria-modal="true" aria-labelledby="emuEditModalHeading">
+        <div class="scrape-modal-header">
+            <h2 id="emuEditModalHeading">Edit emulator</h2>
+            <span class="scrape-modal-subtitle">Configure binary path, args template, and enabled state</span>
+            <button type="button" class="modal-close-btn" onclick="closeEmuEditModal()" aria-label="Close emulator edit modal">×</button>
+        </div>
+        <div class="scrape-modal-body">
+            <form id="emuEditForm" autocomplete="off">
+                <input type="hidden" name="id" id="emu_edit_id">
+                <div class="form-group mb-md">
+                    <label class="form-label" for="emu_edit_name">Name</label>
+                    <input type="text" class="form-input" id="emu_edit_name" name="name" required>
+                </div>
+                <div class="form-group mb-md">
+                    <label class="form-label" for="emu_edit_binary_name">Binary name (looked up on PATH)</label>
+                    <input type="text" class="form-input" id="emu_edit_binary_name" name="binary_name" required>
+                    <span class="field-tip">e.g. <code>retroarch</code>, <code>duckstation-qt</code>.  Used when no path override is set.</span>
+                </div>
+                <div class="form-group mb-md">
+                    <label class="form-label" for="emu_edit_binary_path_override">Binary path override</label>
+                    <input type="text" class="form-input" id="emu_edit_binary_path_override" name="binary_path_override" placeholder="(empty = look up binary_name on PATH)">
+                    <span class="field-tip">Absolute path to AppImage / portable script / system binary.  Wins over PATH lookup.</span>
+                </div>
+                <div class="form-group mb-md">
+                    <label class="form-label" for="emu_edit_args_template">Args template</label>
+                    <textarea class="form-input" id="emu_edit_args_template" name="args_template" rows="2" required></textarea>
+                    <span class="field-tip">Tokens: <code>{rom}</code> <code>{rom_dir}</code> <code>{rom_name}</code> <code>{retroarch_core}</code> <code>{disc_paths}</code> <code>{system_extra_args}</code> <code>{game_extra_args}</code></span>
+                </div>
+                <div class="form-group mb-md">
+                    <label class="form-label" for="emu_edit_description">Description</label>
+                    <input type="text" class="form-input" id="emu_edit_description" name="description">
+                </div>
+                <div class="form-group mb-md">
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" id="emu_edit_is_retroarch" name="is_retroarch">
+                        <span>This is a RetroArch entry (uses cores from <code>retroarch_cores_dir</code>)</span>
+                    </label>
+                </div>
+                <div class="form-group mb-md">
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" id="emu_edit_enabled" name="enabled" checked>
+                        <span>Enabled (uncheck to hide from launch)</span>
+                    </label>
+                </div>
+                <div style="display: flex; gap: var(--spacing-sm); justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeEmuEditModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><span class="btn-icon">💾</span> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================== -->
+<!-- Per-system mapping -->
+<!-- ================================================== -->
+<section class="settings-section">
+    <h2 class="section-title">Per-system mapping</h2>
+    <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+        For each system, the default emulator is starred (★).  Per-game overrides live in the edit-game modal.
+    </p>
+    <div id="mapping-body"><span class="text-muted">Loading…</span></div>
+</section>
+
+<script src="{{ asset_url('js/emulators-settings.js') }}" defer></script>
+{% endblock %}

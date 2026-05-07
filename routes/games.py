@@ -448,6 +448,7 @@ def game_detail(game_id):
                         'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating',
                         'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating',
                         'save_type', 'similar_games', 'edition', 'description',
+                        'launch_args_override',
                     )
                     _payload = {
                         k: request.form.get(f'edit_{k}', '')
@@ -483,6 +484,16 @@ def game_detail(game_id):
                     similar_games = _normalized.get('similar_games') or ''
                     edition = _normalized.get('edition') or ''
                     description = _normalized.get('description') or ''
+
+                    # Pass 44 — multi-emulator launch overrides. INTEGER column,
+                    # parsed separately because normalize_game_edit() only
+                    # handles strings.
+                    emu_override_raw = request.form.get('edit_emulator_override_id', '').strip()
+                    try:
+                        emulator_override_id = int(emu_override_raw) if emu_override_raw else None
+                    except ValueError:
+                        emulator_override_id = None
+                    launch_args_override = _normalized.get('launch_args_override')
 
                     boxart_filename = game['boxart']
                     boxart_3d_filename = game['boxart_3d'] if game['boxart_3d'] else ''
@@ -562,7 +573,9 @@ def game_detail(game_id):
                             boxart_3d = NULLIF(?, ''),
                             fanart = NULLIF(?, ''),
                             screenshots = NULLIF(?, ''),
-                            video = NULLIF(?, '')
+                            video = NULLIF(?, ''),
+                            emulator_override_id = ?,
+                            launch_args_override = ?
                         WHERE id = ?
                     """, (
                         title or game['title'],
@@ -572,6 +585,7 @@ def game_detail(game_id):
                         esrb_rating, pegi_rating, cero_rating, usk_rating, acb_rating, fpb_rating, grac_rating, classind_rating,
                         save_type, similar_games, edition, description,
                         boxart_filename, boxart_3d_filename, fanart_filename, screenshots, video_filename,
+                        emulator_override_id, launch_args_override,
                         game_id
                     ))
 

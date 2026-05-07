@@ -21,6 +21,7 @@ __all__ = (
     'get_current_user', 'get_user_settings', 'get_user_ra_credentials',
     'has_permission', 'login_required', 'permission_required',
     'admin_required', 'editor_required',
+    'ROLE_PERMISSIONS', 'VALID_ROLES',
 )
 
 
@@ -38,17 +39,24 @@ ROLE_PERMISSIONS = {
     'admin': {
         'view', 'edit', 'delete_metadata', 'delete_rom', 'scrape',
         'manage_users', 'manage_settings', 'system_functions',
-        'track_progress',
+        'launch', 'track_progress',
     },
     'editor': {
         'view', 'edit', 'delete_metadata', 'scrape',
-        'track_progress',
+        'launch', 'track_progress',
+    },
+    'player': {
+        'view', 'launch', 'track_progress',
     },
     'viewer': {
-        'view',
-        'track_progress',
-    }
+        'view', 'track_progress',
+    },
 }
+
+# Pass 44 — single source of truth for "what role values are accepted on
+# user create/update".  Hoisted so routes/auth.py and any future role UI
+# never re-list the keys; adding a role only touches ROLE_PERMISSIONS.
+VALID_ROLES = tuple(ROLE_PERMISSIONS.keys())
 
 
 # =============================================================================

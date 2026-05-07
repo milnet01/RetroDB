@@ -39,6 +39,7 @@ CSS_ORDER = [
     'components/progress.css',
     'components/tags.css',
     'components/queue-manager.css',
+    'components/launch-indicator.css',
 
     # 4. Features
     'features/game-cards.css',

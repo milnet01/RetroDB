@@ -240,6 +240,9 @@ from routes.platform_import import bp as platform_import_bp
 from routes.steam_achievements import bp as steam_achievements_bp
 from routes.xbox_achievements import bp as xbox_achievements_bp
 from routes.game_imports import bp as game_imports_bp
+from routes.launch import bp as launch_bp
+from routes.emulators import bp as emulators_bp
+from routes.launch_settings import bp as launch_settings_bp
 
 app.register_blueprint(clz_import_bp)
 app.register_blueprint(controllers_bp)
@@ -262,6 +265,15 @@ app.register_blueprint(platform_import_bp)
 app.register_blueprint(steam_achievements_bp)
 app.register_blueprint(xbox_achievements_bp)
 app.register_blueprint(game_imports_bp)
+app.register_blueprint(launch_bp)
+app.register_blueprint(emulators_bp)
+app.register_blueprint(launch_settings_bp)
+
+# Pass 44 — expose has_permission to templates as has_perm() so the ▶ Play
+# button can be permission-gated in game_detail.html without leaking
+# launch URLs to viewers.
+from services.auth import has_permission as _has_permission_for_template
+app.jinja_env.globals['has_perm'] = _has_permission_for_template
 
 # =============================================================================
 # PER-ROUTE RATE LIMITS (applied after blueprint registration)
@@ -1532,6 +1544,22 @@ def api_timezones():
 # owner-scoped queries introduced in Pass 27.
 ensure_user_tables()
 init_database()
+
+# Pass 44 — seed emulator registry on startup (idempotent).  Runs after
+# init_database() so migration 010's tables exist; INSERT OR IGNORE on
+# emulators.name and (system_id, emulator_id) makes re-runs no-ops.
+try:
+    import sqlite3 as _sqlite
+    from services.emulator_seeder import seed_emulators_from_file
+    _seed_path = os.path.join(os.path.dirname(__file__), 'data', 'emulator_seeds.json')
+    if os.path.exists(_seed_path):
+        _seed_conn = _sqlite.connect(config.DB_PATH)
+        try:
+            seed_emulators_from_file(_seed_conn, _seed_path)
+        finally:
+            _seed_conn.close()
+except Exception as _e:
+    logger.error(f"Emulator seed failed: {_e}", exc_info=True)
 
 # Pass 41.1.C — surface accounts whose password_hash is below the current
 # OWASP floor (PBKDF2_ITERATIONS).  needs_rehash() only fires on the next

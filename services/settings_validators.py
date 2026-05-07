@@ -37,6 +37,10 @@ _ALLOWED_NAMING_TAGS = {
 }
 _ALLOWED_NOTIFICATION_LEVELS = {'success', 'info', 'warning', 'error'}
 
+# Pass 44 — multi-emulator launch.  Spec §Settings.
+_ALLOWED_LAUNCHER_BACKENDS = {'local', 'remote'}
+_ALLOWED_CONCURRENT_POLICIES = {'reject', 'kill_and_relaunch'}
+
 
 def _path_validator(value):
     ok, result = validate_settings_path(value, allow_empty=True)
@@ -199,6 +203,55 @@ def _logging_validator(value):
     return True, None, cleaned
 
 
+# Pass 44 — launch path validators.
+#
+# retroarch_binary may be empty (resolver fallback chain), an absolute
+# path, or the literal `flatpak run <app-id>` form.  No shell metacharacters
+# are accepted: the resolver passes argv to subprocess.Popen with shell=False
+# and shlex.quote-s every variable, but defense in depth — reject obvious
+# injection attempts at the persistence boundary so a leaked admin session
+# can't poison the setting.
+import re as _re
+_FLATPAK_RUN_RE = _re.compile(r'^flatpak run [A-Za-z0-9._\-]+$')
+_ABS_PATH_RE = _re.compile(r'^/[A-Za-z0-9._/\-~ ]+$')
+_DIR_PATH_RE = _re.compile(r'^[A-Za-z0-9._/\-~ ]+$')
+
+
+def _retroarch_binary_validator(value):
+    if not isinstance(value, str):
+        return False, 'must be a string', None
+    stripped = value.strip()
+    if stripped == '':
+        return True, None, ''
+    if _FLATPAK_RUN_RE.match(stripped):
+        return True, None, stripped
+    if _ABS_PATH_RE.match(stripped):
+        return True, None, stripped
+    return False, 'must be empty, an absolute path, or "flatpak run <app-id>"', None
+
+
+def _retroarch_cores_dir_validator(value):
+    if not isinstance(value, str):
+        return False, 'must be a string', None
+    stripped = value.strip()
+    if stripped == '':
+        return True, None, ''
+    if _DIR_PATH_RE.match(stripped):
+        return True, None, stripped
+    return False, 'must be empty or a directory path', None
+
+
+def _launch_required_permission_validator(value):
+    """Must be a permission string actually granted by some role."""
+    if not isinstance(value, str):
+        return False, 'must be a string', None
+    from services.auth import ROLE_PERMISSIONS
+    all_perms = set().union(*ROLE_PERMISSIONS.values())
+    if value in all_perms:
+        return True, None, value
+    return False, f'must be a known permission ({sorted(all_perms)})', None
+
+
 # Mapping from settings-key → (key, value) -> (ok, reason, cleaned).
 # Every persisted key must appear here; unknown keys are rejected by callers.
 _VALIDATORS = {
@@ -228,6 +281,14 @@ _VALIDATORS = {
     'default_region': _string_validator(max_len=64),
     'article_placement': _enum_validator(_ALLOWED_ARTICLE_PLACEMENTS, 'article_placement'),
     'logging': _logging_validator,
+
+    # Pass 44 — multi-emulator launch
+    'retroarch_binary': _retroarch_binary_validator,
+    'retroarch_cores_dir': _retroarch_cores_dir_validator,
+    'launcher_backend': _enum_validator(_ALLOWED_LAUNCHER_BACKENDS, 'launcher_backend'),
+    'launch_required_permission': _launch_required_permission_validator,
+    'launch_concurrent_same_game': _enum_validator(_ALLOWED_CONCURRENT_POLICIES, 'launch_concurrent_same_game'),
+    'emulator_scan_paths': _string_validator(max_len=2000, allow_empty=True),
 }
 
 

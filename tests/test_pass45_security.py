@@ -2306,8 +2306,11 @@ class TestPass45_15UserGameViewsCascadeFK:
         this, it won't run on existing installs."""
         from services import migrations
         assert '011_user_game_views_cascade_fk' in migrations.MIGRATIONS
-        # And it must be the LAST entry (append-only contract).
-        assert migrations.MIGRATIONS[-1] == '011_user_game_views_cascade_fk'
+        # The cascade-FK migration must come immediately after its target
+        # (010_user_game_views) — append-only contract is preserved by
+        # putting subsequent migrations (012_emulators) at higher indices.
+        idx = migrations.MIGRATIONS.index('011_user_game_views_cascade_fk')
+        assert migrations.MIGRATIONS[idx - 1] == '010_user_game_views'
 
     def test_migration_runs_scoped_foreign_key_check(self):
         """Pass 45.10 contract: rebuild migrations must pin a scoped

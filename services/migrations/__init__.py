@@ -36,6 +36,7 @@ MIGRATIONS = [
     '009_achievement_tables_user_id',
     '010_user_game_views',
     '011_user_game_views_cascade_fk',
+    '012_emulators',
 ]
 
 

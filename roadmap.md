@@ -2931,6 +2931,26 @@ landing sequence stays legible.
   re-keyed to `(ip, user_id)` (isolated from `/api/login` and per-user),
   `count_stale_password_hashes()` startup sweep with `logger.warning`
   for active users below the OWASP PBKDF2 floor.  (v3.5.1)
+- [x] **Pass 44 (multi-emulator launch — MAJOR FEATURE, 20 sub-tasks)** —
+  ▶ Play button on game detail launches games via the right emulator
+  (RetroArch with the right core for libretro platforms, DuckStation /
+  PCSX2 / RPCS3 / Dolphin / mGBA / melonDS / Citra / PPSSPP / Cemu /
+  ScummVM / MAME for standalones).  Schema: migration 010 +
+  `emulators` / `system_emulators` tables + 12 emulator + 25 system-mapping
+  seed.  New `Player` role + `launch` / `track_progress` permissions.
+  Service layer: `services/launcher/` Protocol + LocalLauncher (Popen,
+  TERM/KILL escalation, stderr tail) + ProcessRegistry (in-memory, GC TTL).
+  `services/launch_resolver.py` turns game_id into argv via
+  per-game-override → system-default → fallback chain, RA-special-cased
+  for binary + cores dir, token-wise template substitution (no shell
+  injection), ROM-path scan-root validation.  Routes: `routes/launch.py`
+  (4 endpoints), `routes/emulators.py` (registry CRUD + admin page at
+  `/settings/emulators`), `routes/launch_settings.py`
+  (`/api/settings/retroarch/detect` probe).  UI: Play button (Jinja
+  `has_perm`-gated), Launch section in edit-game modal, Settings →
+  Emulators admin page (cyberpunk-themed), floating "now playing"
+  indicator with kill popover.  94 new tests across 12 files (607 total,
+  was 513).  (v3.6.0)
 
 ---
 

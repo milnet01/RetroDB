@@ -91,6 +91,21 @@ DEFAULT_SETTINGS = {
     # 'end' = sort-friendly: "Legend of Zelda, The", "Bug's Life, A"
     'article_placement': 'beginning',
 
+    # Pass 44 — multi-emulator launch settings.  See spec §Settings.
+    'retroarch_binary':              '',
+    'retroarch_cores_dir':           '',
+    'launcher_backend':              'local',
+    'launch_required_permission':    'launch',
+    'launch_concurrent_same_game':   'reject',
+    # Pass 44.1 — directories that the auto-detect probe walks for
+    # standalone-emulator AppImages.  Defaults cover the common spots:
+    # a top-level /mnt/Emulators tree (manual portable installs), the
+    # user's Downloads dir (newly-downloaded AppImages), ~/.local/bin
+    # (user-installed binaries), and /opt (system-wide manual installs).
+    # Colon-separated for portability (matches PATH); accepts both string
+    # and list forms via the validator.
+    'emulator_scan_paths': '/mnt/Emulators:~/Downloads:~/.local/bin:/opt',
+
     # Logging settings
     'logging': {
         'scraping': {

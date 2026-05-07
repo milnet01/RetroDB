@@ -1,0 +1,70 @@
+# Pass 44 — settings validators for the 5 new launch keys.
+
+
+def _ok(key, value):
+    from services.settings_validators import validate_settings_value
+    ok, _reason, _cleaned = validate_settings_value(key, value)
+    return ok
+
+
+class TestLaunchSettingsValidators:
+    def test_launcher_backend_accepts_local(self):
+        assert _ok('launcher_backend', 'local')
+
+    def test_launcher_backend_accepts_remote(self):
+        # Even though remote is NotImplementedError at runtime, the validator
+        # accepts it — the route raises later.  Setting validators are about
+        # data shape, not runtime feature gates.
+        assert _ok('launcher_backend', 'remote')
+
+    def test_launcher_backend_rejects_unknown(self):
+        assert not _ok('launcher_backend', 'spaceship')
+
+    def test_launch_concurrent_same_game_enum(self):
+        assert _ok('launch_concurrent_same_game', 'reject')
+        assert _ok('launch_concurrent_same_game', 'kill_and_relaunch')
+        assert not _ok('launch_concurrent_same_game', 'queue')
+
+    def test_launch_required_permission_must_be_known_perm(self):
+        assert _ok('launch_required_permission', 'launch')
+        assert _ok('launch_required_permission', 'view')
+        assert _ok('launch_required_permission', 'edit')
+        assert not _ok('launch_required_permission', 'fly')
+
+    def test_retroarch_binary_accepts_empty(self):
+        assert _ok('retroarch_binary', '')
+
+    def test_retroarch_binary_accepts_absolute_path(self):
+        assert _ok('retroarch_binary', '/usr/bin/retroarch')
+
+    def test_retroarch_binary_accepts_flatpak_run(self):
+        assert _ok('retroarch_binary', 'flatpak run org.libretro.RetroArch')
+
+    def test_retroarch_binary_rejects_command_injection(self):
+        assert not _ok('retroarch_binary', '/usr/bin/retroarch; rm -rf /')
+        assert not _ok('retroarch_binary', '/usr/bin/retroarch && evil')
+        assert not _ok('retroarch_binary', 'flatpak run x | sh')
+
+    def test_retroarch_cores_dir_accepts_empty(self):
+        assert _ok('retroarch_cores_dir', '')
+
+    def test_retroarch_cores_dir_accepts_path(self):
+        assert _ok('retroarch_cores_dir', '/usr/lib64/libretro/')
+
+
+class TestSettingsManagerHasNewKeys:
+    def test_default_settings_has_all_five(self):
+        import settings_manager
+        for k in ('retroarch_binary', 'retroarch_cores_dir', 'launcher_backend',
+                  'launch_required_permission', 'launch_concurrent_same_game'):
+            assert k in settings_manager.DEFAULT_SETTINGS, k
+
+    def test_default_values_are_valid(self):
+        """Sanity: every default value passes its own validator (otherwise
+        the import-time check in settings_validators.py would have raised)."""
+        import settings_manager
+        from services.settings_validators import validate_settings_value
+        for k in ('retroarch_binary', 'retroarch_cores_dir', 'launcher_backend',
+                  'launch_required_permission', 'launch_concurrent_same_game'):
+            ok, reason, _ = validate_settings_value(k, settings_manager.DEFAULT_SETTINGS[k])
+            assert ok, f"{k} default {settings_manager.DEFAULT_SETTINGS[k]!r}: {reason}"
