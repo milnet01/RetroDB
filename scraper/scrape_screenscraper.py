@@ -10,7 +10,6 @@ API Documentation: https://www.screenscraper.fr/webapi2.php
 
 import requests
 import logging
-import time
 import hashlib
 import os
 
@@ -202,8 +201,8 @@ def calculate_checksums(file_path):
     try:
         import zlib
         
-        md5_hash = hashlib.md5()
-        sha1_hash = hashlib.sha1()
+        md5_hash = hashlib.md5(usedforsecurity=False)
+        sha1_hash = hashlib.sha1(usedforsecurity=False)
         crc32_value = 0
         
         with open(file_path, 'rb') as f:
@@ -344,7 +343,7 @@ def search_game(game_title, system_folder, username, password, dev_id=None, dev_
                     elif "identifiants développeur" in response_lower or "developer" in response_lower:
                         # Dev credentials rejected - retry without them
                         if attempt == 0 and dev_id:
-                            logger.warning(f"ScreenScraper: Dev credentials rejected, retrying without them...")
+                            logger.warning("ScreenScraper: Dev credentials rejected, retrying without them...")
                             continue  # Try again without dev credentials
                         else:
                             logger.warning(f"ScreenScraper: Credentials error: {response_text[:100]}")
@@ -359,8 +358,8 @@ def search_game(game_title, system_folder, username, password, dev_id=None, dev_
                 # Try to parse JSON
                 try:
                     data = response.json()
-                except Exception as json_err:
-                    logger.info(f"ScreenScraper: Could not parse response as JSON (game likely not found)")
+                except Exception:
+                    logger.info("ScreenScraper: Could not parse response as JSON (game likely not found)")
                     return None
                 
                 if "response" in data and "jeux" in data["response"]:
@@ -392,7 +391,7 @@ def search_game(game_title, system_folder, username, password, dev_id=None, dev_
                         logger.info("ScreenScraper: Success without dev credentials")
                     return valid_results
                 else:
-                    logger.info(f"ScreenScraper: No 'jeux' in response")
+                    logger.info("ScreenScraper: No 'jeux' in response")
             else:
                 logger.warning(f"ScreenScraper API returned status {response.status_code}: {response.text[:200]}")
             
@@ -502,7 +501,7 @@ def get_game_info(rom_path, system_folder, username, password, dev_id=None, dev_
                     response_lower = response_text.lower()
                     if "identifiants développeur" in response_lower or "developer" in response_lower:
                         if attempt == 0 and dev_id:
-                            logger.warning(f"ScreenScraper: Dev credentials rejected, retrying without them...")
+                            logger.warning("ScreenScraper: Dev credentials rejected, retrying without them...")
                             continue  # Try again without dev credentials
                         else:
                             logger.warning(f"ScreenScraper: Credentials error: {response_text[:100]}")
@@ -511,7 +510,7 @@ def get_game_info(rom_path, system_folder, username, password, dev_id=None, dev_
                 try:
                     data = response.json()
                 except Exception:
-                    logger.warning(f"ScreenScraper: Invalid JSON response")
+                    logger.warning("ScreenScraper: Invalid JSON response")
                     return None
                 
                 if "response" not in data or "jeu" not in data["response"]:
@@ -753,21 +752,26 @@ def download_media(url, dest_path, timeout=60):
     except Exception:
         max_bytes = 50 * 1024 * 1024
 
-    from services.ssrf import validate_outbound_url, validate_redirect_chain
+    from services.ssrf import validate_outbound_url, validate_and_pin_url, pin_host_ip
+    from urllib.parse import urlparse as _urlparse
     ok, _, _ = validate_outbound_url(url)
     if not ok:
         logger.warning(f"SSRF block: refusing to fetch {url}")
         return False
-    safe_url, err = validate_redirect_chain(_http_session, url, max_redirects=3, timeout=5)
+    # Pass 45.2: walk redirect chain + capture IP for DNS-rebinding pin.
+    safe_url, pinned_ip, err = validate_and_pin_url(
+        _http_session, url, max_redirects=3, timeout=5,
+    )
     if err:
         logger.warning(f"SSRF block: redirect chain rejected for {url} ({err})")
         return False
+    pinned_host = _urlparse(safe_url).hostname
 
     try:
         # Route through shared session for connection pooling (Pass 26.1).
         # stream=True is required for the mid-stream size cap below, so this
         # stays on _http_session.get rather than base_scraper.http_get.
-        with _http_session.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as response:
+        with pin_host_ip(pinned_host, pinned_ip), _http_session.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as response:
             if response.status_code != 200:
                 return False
             declared = int(response.headers.get('Content-Length', 0) or 0)

@@ -1,10 +1,10 @@
 {# Edit Metadata modal — inherits game_detail.html context (game, user_settings, csrf_token). #}
-<div id="editModal" class="scrape-modal">
+<div id="editModal" class="scrape-modal" data-focus-trap data-focus-trap-content=".scrape-modal-content" data-focus-trap-onescape="closeEditModal">
     <div class="scrape-modal-content" style="max-width: 1100px;" role="dialog" aria-modal="true" aria-labelledby="editModalHeading">
         <div class="scrape-modal-header">
             <h2 id="editModalHeading">Edit Metadata</h2>
             <span class="scrape-modal-subtitle">Edit game information and upload custom images</span>
-            <button class="modal-close-btn" onclick="closeEditModal()" aria-label="Close edit modal">×</button>
+            <button type="button" class="modal-close-btn" onclick="closeEditModal()" aria-label="Close edit modal">×</button>
         </div>
 
         <div class="modal-top-actions">
@@ -102,23 +102,23 @@
                 <div class="edit-section">
                     <h3 class="edit-section-title">🎮 Gameplay</h3>
                     <div class="edit-grid">
-                        <div class="edit-field">
-                            <label for="genreDropdown">Genre</label>
+                        <div class="edit-field" role="group" aria-labelledby="editGenreFieldLabel">
+                            <div class="form-label" id="editGenreFieldLabel">Genre</div>
                             <div class="genre-select-container" id="genreContainer"></div>
                             <input type="hidden" name="edit_genre" id="edit_genre_hidden" value="{{ game.genre or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
-                                <select id="genreDropdown" class="form-select" onchange="addGenreFromDropdown()">
+                                <select id="genreDropdown" class="form-select" onchange="addGenreFromDropdown()" aria-label="Add genre">
                                     <option value="">+ Add genre...</option>
                                 </select>
                             </div>
                             <span class="field-tip">Click × to remove, use dropdown to add genres</span>
                         </div>
-                        <div class="edit-field">
-                            <label for="modesDropdown">Play Modes</label>
+                        <div class="edit-field" role="group" aria-labelledby="editModesFieldLabel">
+                            <div class="form-label" id="editModesFieldLabel">Play Modes</div>
                             <div class="genre-select-container" id="modesContainer"></div>
                             <input type="hidden" name="edit_modes" id="edit_modes_hidden" value="{{ game.modes or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
-                                <select id="modesDropdown" class="form-select" onchange="addModeFromDropdown()">
+                                <select id="modesDropdown" class="form-select" onchange="addModeFromDropdown()" aria-label="Add play mode">
                                     <option value="">+ Add mode...</option>
                                 </select>
                             </div>
@@ -141,36 +141,36 @@
                             <input type="hidden" name="edit_campaign" id="edit_campaign" value="{{ game.campaign or '' }}" />
                             <span class="field-tip">Does this game have a story campaign?</span>
                         </div>
-                        <div class="edit-field">
-                            <label for="gameStructureDropdown">Game Structure</label>
+                        <div class="edit-field" role="group" aria-labelledby="editGameStructureFieldLabel">
+                            <div class="form-label" id="editGameStructureFieldLabel">Game Structure</div>
                             <div class="genre-select-container" id="gameStructureContainer"></div>
                             <input type="hidden" name="edit_game_structure" id="edit_game_structure_hidden"
                                    value="{{ game.game_structure or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
                                 <select id="gameStructureDropdown" class="form-select"
-                                        onchange="addGameStructureFromDropdown()">
+                                        onchange="addGameStructureFromDropdown()" aria-label="Add game structure">
                                     <option value="">+ Add structure...</option>
                                 </select>
                             </div>
                             <span class="field-tip">Linear, Open World, Level-based, etc.</span>
                         </div>
-                        <div class="edit-field">
-                            <label for="perspectiveDropdown">Perspective</label>
+                        <div class="edit-field" role="group" aria-labelledby="editPerspectiveFieldLabel">
+                            <div class="form-label" id="editPerspectiveFieldLabel">Perspective</div>
                             <div class="genre-select-container" id="perspectiveContainer"></div>
                             <input type="hidden" name="edit_perspective" id="edit_perspective_hidden" value="{{ game.perspective or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
-                                <select id="perspectiveDropdown" class="form-select" onchange="addPerspectiveFromDropdown()">
+                                <select id="perspectiveDropdown" class="form-select" onchange="addPerspectiveFromDropdown()" aria-label="Add perspective">
                                     <option value="">+ Add perspective...</option>
                                 </select>
                             </div>
                             <span class="field-tip">First-Person, Third-Person, Side-Scroller, etc.</span>
                         </div>
-                        <div class="edit-field">
-                            <label for="dimensionDropdown">Dimension</label>
+                        <div class="edit-field" role="group" aria-labelledby="editDimensionFieldLabel">
+                            <div class="form-label" id="editDimensionFieldLabel">Dimension</div>
                             <div class="genre-select-container" id="dimensionContainer"></div>
                             <input type="hidden" name="edit_dimension" id="edit_dimension_hidden" value="{{ game.dimension or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
-                                <select id="dimensionDropdown" class="form-select" onchange="addDimensionFromDropdown()">
+                                <select id="dimensionDropdown" class="form-select" onchange="addDimensionFromDropdown()" aria-label="Add dimension">
                                     <option value="">+ Add dimension...</option>
                                 </select>
                             </div>
@@ -182,27 +182,28 @@
                 <div class="edit-section">
                     <h3 class="edit-section-title">⚙️ Technical</h3>
                     <div class="edit-grid">
-                        <div class="edit-field">
-                            <label for="controllerDropdown">Controller Support</label>
+                        <div class="edit-field" role="group" aria-labelledby="editControllerFieldLabel">
+                            <div class="form-label" id="editControllerFieldLabel">Controller Support</div>
                             <div class="controller-select-container" id="controllerContainer"></div>
                             <input type="hidden" name="edit_controller_support" id="edit_controller_hidden" value="{{ game.controller_support or '' }}" />
                             <div class="controller-dropdown">
-                                <select id="controllerDropdown" onchange="addControllerFromDropdown()">
+                                <select id="controllerDropdown" onchange="addControllerFromDropdown()" aria-label="Add controller">
                                     <option value="">+ Add controller...</option>
                                 </select>
                             </div>
                             <input type="text" id="controllerCustomInput"
+                                   aria-label="Custom controller name"
                                    placeholder="Or type custom and press Enter"
                                    style="margin-top: 8px;"
                                    onkeypress="if(event.key==='Enter'){event.preventDefault(); addCustomController();}" />
                             <span class="field-tip">Click ✕ to remove, use dropdown or type custom</span>
                         </div>
-                        <div class="edit-field">
-                            <label for="saveTypeDropdown">Save Type</label>
+                        <div class="edit-field" role="group" aria-labelledby="editSaveTypeFieldLabel">
+                            <div class="form-label" id="editSaveTypeFieldLabel">Save Type</div>
                             <div class="genre-select-container" id="saveTypeContainer"></div>
                             <input type="hidden" name="edit_save_type" id="edit_save_type_hidden" value="{{ game.save_type or '' }}" />
                             <div class="genre-dropdown" style="margin-top: 8px;">
-                                <select id="saveTypeDropdown" class="form-select" onchange="addSaveTypeFromDropdown()">
+                                <select id="saveTypeDropdown" class="form-select" onchange="addSaveTypeFromDropdown()" aria-label="Add save type">
                                     <option value="">+ Add save type...</option>
                                 </select>
                             </div>

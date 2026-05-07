@@ -10,7 +10,6 @@ import logging
 import hashlib
 import os
 import sys
-import json
 
 # Add parent directory to path for config import
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -92,7 +91,7 @@ def calculate_rom_hash(rom_path):
     loading entire files into memory.
     """
     try:
-        h = hashlib.md5()
+        h = hashlib.md5(usedforsecurity=False)
         with open(rom_path, 'rb') as f:
             for chunk in iter(lambda: f.read(8192), b''):
                 h.update(chunk)
@@ -156,7 +155,6 @@ def search_game_by_name(game_name, console_id):
     2. Word-based match (all significant words must be present)
     3. High similarity threshold (>85%)
     """
-    import time as _time
 
     username, api_key = get_ra_credentials()
 
@@ -250,6 +248,19 @@ def search_game_by_name(game_name, console_id):
             max_bytes = getattr(config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
             response = http_get(url, params=params, timeout=30, max_bytes=max_bytes)
 
+            # Pass 41.7.C — surface RetroAchievements 401 explicitly. The
+            # generic non-200 return-None branch buried "stale RA API key"
+            # under "no entry found"; users had no actionable hint. Log at
+            # ERROR with the user-actionable fix (re-enter API key in
+            # Settings → Scrapers) so the fault is visible in the log
+            # file when the UI shows an empty result.
+            if response is not None and response.status_code == 401:
+                logger.error(
+                    "RetroAchievements API returned 401 for GetGameList "
+                    "(console_id=%s) — your RA API key is invalid or revoked. "
+                    "Re-enter the api_key in Settings → Scrapers.",
+                    console_id,
+                )
             if response is None or response.status_code != 200:
                 return None
 
@@ -328,10 +339,19 @@ def get_game_info(game_id):
         }
         
         response = http_get(url, params=params, timeout=30, max_bytes=getattr(config, "MAX_API_RESPONSE_BYTES", 10 * 1024 * 1024))
-        
+
+        # Pass 41.7.C — same pattern as GetGameList above; explicit 401 log.
+        if response is not None and response.status_code == 401:
+            logger.error(
+                "RetroAchievements API returned 401 for GetGame "
+                "(game_id=%s) — your RA API key is invalid or revoked. "
+                "Re-enter the api_key in Settings → Scrapers.",
+                game_id,
+            )
+
         if response is not None and response.status_code == 200:
             data = response.json()
-            
+
             return {
                 'id': data.get('ID'),
                 'title': data.get('Title'),
@@ -394,12 +414,21 @@ def get_user_game_progress(game_id, username=None):
             'u': target_user,  # Target user to get progress for
             'g': game_id,
         }
-        
+
         response = http_get(url, params=params, timeout=30, max_bytes=getattr(config, "MAX_API_RESPONSE_BYTES", 10 * 1024 * 1024))
-        
+
+        # Pass 41.7.C — explicit 401 log (see GetGameList for context).
+        if response is not None and response.status_code == 401:
+            logger.error(
+                "RetroAchievements API returned 401 for GetGameInfoAndUserProgress "
+                "(game_id=%s, user=%s) — your RA API key is invalid or revoked. "
+                "Re-enter the api_key in Settings → Scrapers.",
+                game_id, target_user,
+            )
+
         if response is not None and response.status_code == 200:
             data = response.json()
-            
+
             # Parse achievements
             achievements = []
             achievements_raw = data.get('Achievements', {})
@@ -476,12 +505,21 @@ def get_user_game_progress_custom(game_id, username, api_key):
             'u': username,  # Target user to get progress for
             'g': game_id,
         }
-        
+
         response = http_get(url, params=params, timeout=30, max_bytes=getattr(config, "MAX_API_RESPONSE_BYTES", 10 * 1024 * 1024))
-        
+
+        # Pass 41.7.C — explicit 401 log (see GetGameList for context).
+        if response is not None and response.status_code == 401:
+            logger.error(
+                "RetroAchievements API returned 401 for GetGameInfoAndUserProgress "
+                "(per-user creds, game_id=%s, user=%s) — RA API key invalid "
+                "or revoked. Re-enter the api_key in Settings → Scrapers.",
+                game_id, username,
+            )
+
         if response is not None and response.status_code == 200:
             data = response.json()
-            
+
             # Parse achievements
             achievements = []
             achievements_raw = data.get('Achievements', {})
@@ -560,7 +598,16 @@ def get_user_summary(username=None):
         }
         
         response = http_get(url, params=params, timeout=30, max_bytes=getattr(config, "MAX_API_RESPONSE_BYTES", 10 * 1024 * 1024))
-        
+
+        # Pass 41.7.C — explicit 401 log (see GetGameList for context).
+        if response is not None and response.status_code == 401:
+            logger.error(
+                "RetroAchievements API returned 401 for GetUserSummary "
+                "(user=%s) — your RA API key is invalid or revoked. "
+                "Re-enter the api_key in Settings → Scrapers.",
+                target_user,
+            )
+
         if response is not None and response.status_code == 200:
             data = response.json()
             return {

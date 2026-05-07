@@ -102,7 +102,17 @@ def find_orphaned_media(games):
 
     A file is considered orphaned if its "<game_id>_" filename prefix does not
     match any live game ID and its filename is not referenced by any games row.
+
+    Pass 45.7 — each orphan dict carries the mtime observed at scan time AND
+    the scan-start timestamp. ``clean_orphaned_files`` later checks both:
+    if the file's current mtime is newer than the scan-start time, a scraper
+    has touched it between scan and delete (race) and we skip the unlink.
+    Also skips symlinks at scan time so a symlinked entry inside the media
+    dirs (rare but possible from manual admin work) can never be unlinked
+    by the cleaner.
     """
+    import time as _time
+
     game_ids = {g['id'] for g in games}
     referenced_files = _collect_referenced_files(games)
 
@@ -119,6 +129,7 @@ def find_orphaned_media(games):
 
     orphaned = []
     total_size = 0
+    scan_started_at = _time.time()
 
     for dir_path, media_type in media_dirs:
         if not os.path.exists(dir_path):
@@ -126,6 +137,14 @@ def find_orphaned_media(games):
 
         for filename in os.listdir(dir_path):
             filepath = os.path.join(dir_path, filename)
+            # Pass 45.7 — refuse to ever consider symlinks. ``os.remove``
+            # on a symlink unlinks the link itself (not the target), so
+            # the worst case is benign, but the orphan detector wasn't
+            # designed for them and a symlinked subdirectory inside the
+            # media tree would leak through ``os.path.isfile`` (which
+            # follows the link).
+            if os.path.islink(filepath):
+                continue
             if not os.path.isfile(filepath):
                 continue
 
@@ -154,34 +173,86 @@ def find_orphaned_media(games):
                             break
 
             if is_orphaned:
-                size = os.path.getsize(filepath)
+                try:
+                    stat = os.stat(filepath)
+                    size = stat.st_size
+                    mtime = stat.st_mtime
+                except OSError:
+                    continue
                 total_size += size
                 orphaned.append({
                     'path': filepath,
                     'filename': filename,
                     'type': media_type,
                     'size': size,
+                    # Pass 45.7 — recheck fields used by clean_orphaned_files
+                    # to defeat the snapshot-then-delete race. Both must be
+                    # carried in the dict so the route's preview→clean
+                    # sequence keeps working without an extra arg.
+                    'mtime': mtime,
+                    'scan_started_at': scan_started_at,
                 })
 
     return orphaned, total_size
 
 
 def clean_orphaned_files(files):
-    """Delete the given orphan file list. Returns (deleted, errors, freed_bytes)."""
+    """Delete the given orphan file list. Returns (deleted, errors, freed_bytes).
+
+    Pass 45.7 — at delete time we re-check three things to defeat the
+    snapshot-then-delete race against concurrent scrapers:
+      1. The file still exists (a peer cleaner / user-initiated delete
+         may already have removed it).
+      2. It's still NOT a symlink — defence in depth against admin
+         tinkering between scan and clean.
+      3. Its mtime is unchanged from scan time. A scraper that wrote
+         to ``42_boxart.webp`` between scan and clean bumps the mtime;
+         the file may now be referenced by a row that was inserted
+         after the scan started.
+    A skipped file is logged at info so admins can see the cleaner
+    deferred work rather than silently doing nothing.
+    """
     deleted = 0
     errors = 0
+    skipped = 0
     freed_size = 0
 
     for file_info in files:
         filepath = file_info['path']
         try:
-            if os.path.exists(filepath):
-                freed_size += os.path.getsize(filepath)
-                os.remove(filepath)
-                deleted += 1
-                logger.info(f"Deleted orphaned file: {filepath}")
+            if not os.path.exists(filepath):
+                continue
+            if os.path.islink(filepath):
+                logger.info(
+                    f"Skipping orphan candidate (symlink appeared after scan): {filepath}"
+                )
+                skipped += 1
+                continue
+            stat = os.stat(filepath)
+            scan_mtime = file_info.get('mtime')
+            scan_started_at = file_info.get('scan_started_at')
+            # If scan_started_at is unset (older callers), fall back to
+            # the strict mtime-equality check; if BOTH are unset, behave
+            # as before.
+            if scan_mtime is not None and stat.st_mtime > scan_mtime:
+                # File was modified after scan recorded its mtime.
+                # If we also know when the scan started, only refuse to
+                # delete if the modification happened *after* scan start
+                # (a scraper wrote to it during the cleanup window).
+                if scan_started_at is None or stat.st_mtime > scan_started_at:
+                    logger.info(
+                        f"Skipping orphan candidate (modified during cleanup window): {filepath}"
+                    )
+                    skipped += 1
+                    continue
+            freed_size += stat.st_size
+            os.remove(filepath)
+            deleted += 1
+            logger.info(f"Deleted orphaned file: {filepath}")
         except Exception as e:
             errors += 1
             logger.warning(f"Failed to delete orphaned file {filepath}: {e}")
 
+    if skipped:
+        logger.info(f"Orphan cleanup: skipped {skipped} files modified during the cleanup window")
     return deleted, errors, freed_size

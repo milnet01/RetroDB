@@ -32,11 +32,11 @@ jobs:
       # be force-pushed under Dependabot's feet, SHAs can't. Dependabot's
       # github-actions ecosystem (.github/dependabot.yml) will open PRs to
       # bump the SHA + trailing version comment together.
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           ref: ${{ github.event.inputs.tag || github.ref }}
 
-      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
         with:
           python-version: "3.13"
 
@@ -46,22 +46,23 @@ jobs:
           pip install -r requirements.txt
           pip install cyclonedx-bom  # provides the `cyclonedx-py` CLI
 
+      # Pass 45.19 — the Python body is passed via an env-var with the YAML
+      # block-literal scalar, then run with `python -c "$VAR"`. The YAML
+      # parser strips the indent baseline from the env-var content before
+      # bash ever sees it. The older bash here-doc form preserved the
+      # 10-space YAML indent and Python rejected it with `IndentationError:
+      # unexpected indent`, which silently broke every tag-driven release
+      # since the workflow landed.
       - name: Build Linux / macOS / Windows ZIPs
+        env:
+          # build_dist.py reads RETRODB_STAGING_DIR for the output dir
+          # (Pass 39.6) — CI sets it here so we don't write to the
+          # maintainer's /mnt/Storage path that doesn't exist on the runner.
+          RETRODB_STAGING_DIR: /tmp/staging
         run: |
           mkdir -p /tmp/staging
-          # build_dist.py writes to /mnt/Storage/Scripts/Linux/Staging_Area/RetroDB/ by default;
-          # redirect via a tiny wrapper so CI writes to /tmp/staging instead.
           cp config.example.py config.py
-          python - <<'PY'
-          import os, sys
-          os.environ['STAGING_DIR_OVERRIDE'] = '/tmp/staging'
-          # build_dist.py reads STAGING_DIR at top level; we wrap to override.
-          sys.path.insert(0, '.')
-          import build_dist
-          build_dist.STAGING_DIR = '/tmp/staging'
-          os.makedirs('/tmp/staging', exist_ok=True)
-          build_dist.main() if hasattr(build_dist, 'main') else None
-          PY
+          python build_dist.py
           ls -la /tmp/staging
 
       - name: Generate SBOM (CycloneDX)
@@ -111,23 +112,26 @@ jobs:
 
       - name: Extract changelog entry
         id: changelog
+        env:
+          # Pass 45.19 — see the build step's note. Same bash-here-doc
+          # indent bug was here too; same fix.
+          EXTRACT_CHANGELOG_SCRIPT: |
+            import yaml, os, sys
+            tag = os.environ.get('GITHUB_REF_NAME', '').lstrip('v')
+            with open('data/changelog.yaml') as f:
+                entries = yaml.safe_load(f)
+            for e in entries:
+                if str(e.get('version')) == tag:
+                    body = e.get('body', '').strip()
+                    # GitHub Actions multi-line output
+                    print('body<<EOF')
+                    print(body)
+                    print('EOF')
+                    sys.exit(0)
+            print('body=No changelog entry found.')
         run: |
           pip install pyyaml
-          python - <<'PY' >> "$GITHUB_OUTPUT"
-          import yaml, os, sys
-          tag = os.environ.get('GITHUB_REF_NAME', '').lstrip('v')
-          with open('data/changelog.yaml') as f:
-              entries = yaml.safe_load(f)
-          for e in entries:
-              if str(e.get('version')) == tag:
-                  body = e.get('body', '').strip()
-                  # GitHub Actions multi-line output
-                  print('body<<EOF')
-                  print(body)
-                  print('EOF')
-                  sys.exit(0)
-          print('body=No changelog entry found.')
-          PY
+          python -c "$EXTRACT_CHANGELOG_SCRIPT" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda  # v3.0.0

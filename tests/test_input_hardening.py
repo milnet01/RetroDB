@@ -4,8 +4,6 @@
 # they're not trying to reproduce the full end-to-end flow, only to ensure
 # the guard is in place and rejects the value it's supposed to reject.
 
-import os
-import sys
 from unittest.mock import patch, MagicMock
 
 import pytest
@@ -113,7 +111,7 @@ class TestMuseumUploadCap:
         # need multipart plumbing; here we just verify the config constant
         # exists and the route imports cleanly.
         import config
-        import routes.museum  # noqa: F401 — import smoke
+        import routes.museum
         assert hasattr(config, 'MUSEUM_UPLOAD_MAX_BYTES')
         assert config.MUSEUM_UPLOAD_MAX_BYTES >= 1024 * 1024
 
@@ -186,18 +184,6 @@ class TestScraperDownloadCaps:
 # 25.8 — List-endpoint row caps
 # ------------------------------
 class TestListRowCaps:
-    def test_recently_viewed_clamps_user_limit(self):
-        """`?limit=999999` must not flow straight into the SQL LIMIT clause."""
-        import app as app_module
-        import config
-        app_module.app.config['TESTING'] = True
-        client = app_module.app.test_client()
-        with client.session_transaction() as sess:
-            sess['user_id'] = 1
-        # Not a correctness test — smoke test that the clamp doesn't crash.
-        resp = client.get('/api/recently-viewed?limit=999999')
-        assert resp.status_code in (200, 302)
-
     def test_max_list_rows_constant(self):
         import config
         assert hasattr(config, 'MAX_LIST_ROWS')

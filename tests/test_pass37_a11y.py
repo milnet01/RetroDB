@@ -21,35 +21,66 @@ def _read(relpath):
 
 
 # -----------------------------------------------------------------------------
-# 37.1 — composite-field labels gained for= pointing at a real control
+# 37.1 — composite-field labels properly associated with their controls
 # -----------------------------------------------------------------------------
-def test_37_1_edit_modal_composite_labels_have_for():
-    """edit_modal.html: every composite <label> targets a valid id."""
+# Pass 37.1 originally fixed `<label for="<X>">` to point at the helper "+ Add"
+# dropdown (real focus target) instead of the hidden `<input>`.  FU.5 (v3.5.67)
+# strengthened this further: each multi-value tag-picker field is now a
+# `role="group" aria-labelledby="<id>FieldLabel"` container with the label
+# demoted to a `<div class="form-label" id="<id>FieldLabel">`, and the helper
+# `<select>` carries its own `aria-label="Add <X>"`.  Screen readers now anchor
+# the chip list to the field name instead of jumping straight to the combobox.
+def test_37_1_edit_modal_composite_labels_have_group_role():
+    """edit_modal.html: each composite tag-picker field is a labelled group."""
     src = _read('templates/_modals/edit_modal.html')
-    # No bare <label> without for= remains.
+    # No bare <label> without for= remains (the inner <label class="toggle-switch">
+    # variants always carry an attribute and are picked up by the substring guard).
     assert '<label>' not in src, 'edit_modal.html still has bare <label> with no for='
-    # Spot-check: the previously-broken for="edit_save_type" / "edit_modes"
-    # now point at the dropdown (real focus target), not the hidden <input>.
-    assert 'for="saveTypeDropdown">Save Type' in src
-    assert 'for="modesDropdown">Play Modes' in src
-    # Composite container fields now have proper for=
-    assert 'for="genreDropdown">Genre' in src
-    assert 'for="perspectiveDropdown">Perspective' in src
-    assert 'for="dimensionDropdown">Dimension' in src
-    assert 'for="controllerDropdown">Controller Support' in src
+    # The seven multi-value tag-picker fields use role="group" + aria-labelledby
+    # pointing at a div.form-label with a stable id.
+    for field, label_text in [
+        ('editGenreFieldLabel', 'Genre'),
+        ('editModesFieldLabel', 'Play Modes'),
+        ('editGameStructureFieldLabel', 'Game Structure'),
+        ('editPerspectiveFieldLabel', 'Perspective'),
+        ('editDimensionFieldLabel', 'Dimension'),
+        ('editControllerFieldLabel', 'Controller Support'),
+        ('editSaveTypeFieldLabel', 'Save Type'),
+    ]:
+        assert f'aria-labelledby="{field}"' in src, (
+            f'edit_modal.html: composite field missing aria-labelledby={field}')
+        assert f'id="{field}">{label_text}</div>' in src, (
+            f'edit_modal.html: missing div.form-label#{field}>{label_text}')
+    # Helper "+ Add" selects each carry their own aria-label so they're
+    # distinguishable from the chip container inside the group.
+    for needle in ('aria-label="Add genre"', 'aria-label="Add play mode"',
+                   'aria-label="Add game structure"', 'aria-label="Add perspective"',
+                   'aria-label="Add dimension"', 'aria-label="Add controller"',
+                   'aria-label="Add save type"'):
+        assert needle in src, f'edit_modal.html missing helper-select {needle}'
 
 
-def test_37_1_game_edit_modal_composite_labels_have_for():
-    """base.html gem-* modal: every composite <label> targets an id."""
+def test_37_1_game_edit_modal_composite_labels_have_group_role():
+    """base.html gem-* modal: same role="group" pattern as edit_modal.html."""
     src = _read('templates/base.html')
     # Scope to the gem-* modal tab-content block.
     gem_start = src.index('gemTabQuick')
     gem = src[gem_start:]
     # No bare <label> tags in the game-edit-modal.
     assert '<label>' not in gem, 'base.html gem-modal still has bare <label>'
-    assert 'for="gemGenreDropdown">Genre' in gem
-    assert 'for="gemModesDropdown">Play Modes' in gem
-    assert 'for="gemControllerDropdown">Controller Support' in gem
+    for field, label_text in [
+        ('gemGenreFieldLabel', 'Genre'),
+        ('gemModesFieldLabel', 'Play Modes'),
+        ('gemGameStructureFieldLabel', 'Game Structure'),
+        ('gemPerspectiveFieldLabel', 'Perspective'),
+        ('gemDimensionFieldLabel', 'Dimension'),
+        ('gemControllerFieldLabel', 'Controller Support'),
+        ('gemSaveTypeFieldLabel', 'Save Type'),
+    ]:
+        assert f'aria-labelledby="{field}"' in gem, (
+            f'gem modal: composite field missing aria-labelledby={field}')
+        assert f'id="{field}">{label_text}</div>' in gem, (
+            f'gem modal: missing div.form-label#{field}>{label_text}')
 
 
 # -----------------------------------------------------------------------------

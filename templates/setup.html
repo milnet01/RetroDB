@@ -13,12 +13,12 @@
 
     <!-- Tab Navigation -->
     <div class="setup-tabs" id="setupTabs">
-        <button class="setup-tab active" data-tab="welcome" onclick="showTab('welcome')">Welcome</button>
-        <button class="setup-tab" data-tab="admin" onclick="showTab('admin')">Admin</button>
-        <button class="setup-tab" data-tab="library" onclick="showTab('library')">Library</button>
-        <button class="setup-tab" data-tab="esde" onclick="showTab('esde')">ES-DE</button>
-        <button class="setup-tab" data-tab="apikeys" onclick="showTab('apikeys')">API Keys</button>
-        <button class="setup-tab" data-tab="complete" onclick="showTab('complete')">Complete</button>
+        <button type="button" class="setup-tab active" data-tab="welcome" onclick="showTab('welcome')">Welcome</button>
+        <button type="button" class="setup-tab" data-tab="admin" onclick="showTab('admin')">Admin</button>
+        <button type="button" class="setup-tab" data-tab="library" onclick="showTab('library')">Library</button>
+        <button type="button" class="setup-tab" data-tab="esde" onclick="showTab('esde')">ES-DE</button>
+        <button type="button" class="setup-tab" data-tab="apikeys" onclick="showTab('apikeys')">API Keys</button>
+        <button type="button" class="setup-tab" data-tab="complete" onclick="showTab('complete')">Complete</button>
     </div>
 
     <div id="error-banner" style="display: none; background: rgba(247, 37, 133, 0.15); border: 1px solid rgba(247, 37, 133, 0.4); border-radius: var(--radius-md); padding: var(--spacing-md); margin-bottom: var(--spacing-lg); color: var(--secondary-magenta);"></div>
@@ -82,7 +82,7 @@ SOFTWARE.</pre>
                 </div>
 
                 <div style="margin-top: var(--spacing-xl); text-align: right;">
-                    <button class="btn btn-primary" id="getStartedBtn" onclick="showTab('admin')" disabled>Get Started &rarr;</button>
+                    <button type="button" class="btn btn-primary" id="getStartedBtn" onclick="showTab('admin')" disabled>Get Started &rarr;</button>
                 </div>
             </div>
         </div>
@@ -116,8 +116,8 @@ SOFTWARE.</pre>
                     </small>
                 </div>
                 <div class="setup-nav">
-                    <button class="btn btn-secondary" onclick="showTab('welcome')">&larr; Back</button>
-                    <button class="btn btn-primary" onclick="showTab('library')">Next &rarr;</button>
+                    <button type="button" class="btn btn-secondary" onclick="showTab('welcome')">&larr; Back</button>
+                    <button type="button" class="btn btn-primary" onclick="showTab('library')">Next &rarr;</button>
                 </div>
             </div>
         </div>
@@ -141,8 +141,8 @@ SOFTWARE.</pre>
                     </small>
                 </div>
                 <div class="setup-nav">
-                    <button class="btn btn-secondary" onclick="showTab('admin')">&larr; Back</button>
-                    <button class="btn btn-primary" onclick="showTab('esde')">Next &rarr;</button>
+                    <button type="button" class="btn btn-secondary" onclick="showTab('admin')">&larr; Back</button>
+                    <button type="button" class="btn btn-primary" onclick="showTab('esde')">Next &rarr;</button>
                 </div>
             </div>
         </div>
@@ -187,8 +187,8 @@ SOFTWARE.</pre>
                 </div>
 
                 <div class="setup-nav">
-                    <button class="btn btn-secondary" onclick="showTab('library')">&larr; Back</button>
-                    <button class="btn btn-primary" onclick="showTab('apikeys')">Next &rarr;</button>
+                    <button type="button" class="btn btn-secondary" onclick="showTab('library')">&larr; Back</button>
+                    <button type="button" class="btn btn-primary" onclick="showTab('apikeys')">Next &rarr;</button>
                 </div>
             </div>
         </div>
@@ -266,8 +266,8 @@ SOFTWARE.</pre>
                 </details>
 
                 <div class="setup-nav">
-                    <button class="btn btn-secondary" onclick="showTab('esde')">&larr; Back</button>
-                    <button class="btn btn-primary" onclick="showTab('complete')">Next &rarr;</button>
+                    <button type="button" class="btn btn-secondary" onclick="showTab('esde')">&larr; Back</button>
+                    <button type="button" class="btn btn-primary" onclick="showTab('complete')">Next &rarr;</button>
                 </div>
             </div>
         </div>
@@ -280,9 +280,9 @@ SOFTWARE.</pre>
                 <h2 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Ready to Go!</h2>
                 <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">Click the button below to save your configuration and start using RetroDB.</p>
                 <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: var(--spacing-xl);">You can change any of these settings later via the Settings page.</p>
-                <button class="btn btn-primary" id="finishBtn" onclick="finishSetup()" style="font-size: 1.1rem; padding: var(--spacing-md) var(--spacing-xl);">Complete Setup</button>
+                <button type="button" class="btn btn-primary" id="finishBtn" onclick="finishSetup()" style="font-size: 1.1rem; padding: var(--spacing-md) var(--spacing-xl);">Complete Setup</button>
                 <div style="margin-top: var(--spacing-lg);">
-                    <button class="btn btn-secondary" onclick="showTab('apikeys')">&larr; Back</button>
+                    <button type="button" class="btn btn-secondary" onclick="showTab('apikeys')">&larr; Back</button>
                 </div>
             </div>
         </div>

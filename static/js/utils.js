@@ -254,18 +254,39 @@ const Storage = {
 // API HELPER
 // =============================================================================
 
+// Pass 41.12.A — default fetch timeout. Without an AbortController, a
+// hung server (or a request that fell into a captive portal) blocks the
+// pending Promise indefinitely; the spinner spins forever and the user
+// has no recovery path short of reload. 30 s is generous enough for the
+// largest legitimate API payload (card-data + filter-aggregates) on a
+// slow network and short enough to surface a stuck connection.
+const _API_DEFAULT_TIMEOUT_MS = 30000;
+
+function _withTimeout(opts) {
+    if (opts && opts.signal) {
+        return { opts, cleanup: null };  // caller controls cancellation
+    }
+    const ac = new AbortController();
+    const t = setTimeout(() => ac.abort(), _API_DEFAULT_TIMEOUT_MS);
+    return {
+        opts: Object.assign({}, opts, { signal: ac.signal }),
+        cleanup: () => clearTimeout(t),
+    };
+}
+
 const API = {
     /**
      * Make a GET request
      * @param {string} url - API endpoint
-     * @param {Object} options - Fetch options
+     * @param {Object} options - Fetch options (pass `signal` to opt out of default 30s timeout)
      * @returns {Promise<Object>} - Response data
      */
     async get(url, options = {}) {
+        const { opts, cleanup } = _withTimeout(options);
         try {
             const response = await fetch(url, {
                 method: 'GET',
-                ...options
+                ...opts
             });
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
@@ -274,26 +295,29 @@ const API = {
         } catch (error) {
             console.error('API GET error:', error);
             throw error;
+        } finally {
+            if (cleanup) cleanup();
         }
     },
-    
+
     /**
      * Make a POST request
      * @param {string} url - API endpoint
      * @param {Object} data - Request body
-     * @param {Object} options - Fetch options
+     * @param {Object} options - Fetch options (pass `signal` to opt out of default 30s timeout)
      * @returns {Promise<Object>} - Response data
      */
     async post(url, data = {}, options = {}) {
+        const { opts, cleanup } = _withTimeout(options);
         try {
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    ...options.headers
+                    ...opts.headers
                 },
                 body: JSON.stringify(data),
-                ...options
+                ...opts
             });
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
@@ -302,9 +326,11 @@ const API = {
         } catch (error) {
             console.error('API POST error:', error);
             throw error;
+        } finally {
+            if (cleanup) cleanup();
         }
     },
-    
+
     /**
      * Make a POST request with FormData
      * @param {string} url - API endpoint
@@ -312,10 +338,12 @@ const API = {
      * @returns {Promise<Object>} - Response data
      */
     async postForm(url, formData) {
+        const { opts, cleanup } = _withTimeout({});
         try {
             const response = await fetch(url, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                signal: opts.signal,
             });
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
@@ -324,6 +352,8 @@ const API = {
         } catch (error) {
             console.error('API POST form error:', error);
             throw error;
+        } finally {
+            if (cleanup) cleanup();
         }
     }
 };
@@ -976,6 +1006,62 @@ const ModalFocusTrap = {
      */
     deactivateAll() {
         while (this._stack.length > 0) this.deactivate();
+    },
+
+    /**
+     * Pass 45.17 — auto-attach the focus trap to a modal whose `.active`
+     * class toggles open/closed. Useful for modals where the open/close
+     * functions are not in our control (or where threading the trap
+     * through every call site would be more error-prone than the
+     * MutationObserver). Idempotent: a second autoAttach() on the same
+     * element is a no-op.
+     *
+     * @param {HTMLElement} modalEl - the modal root (the element that
+     *     toggles `.active`).
+     * @param {Object} [opts]
+     * @param {Function} [opts.onEscape] - escape handler.
+     * @param {string}   [opts.contentSelector] - CSS selector for the
+     *     focus-trap target inside modalEl (defaults to `.modal-content`
+     *     or `.custom-modal-content`, falling back to modalEl itself).
+     */
+    autoAttach(modalEl, opts = {}) {
+        if (!modalEl || modalEl._focusTrapObserver) return;
+        const onEscape = opts.onEscape || null;
+        const contentSelector = opts.contentSelector || null;
+
+        // Pick the target each time it activates, since modal contents
+        // can be re-rendered between opens.
+        const _resolveTarget = () => {
+            if (contentSelector) {
+                return modalEl.querySelector(contentSelector) || modalEl;
+            }
+            return (modalEl.querySelector('.modal-content') ||
+                    modalEl.querySelector('.custom-modal-content') ||
+                    modalEl);
+        };
+
+        const obs = new MutationObserver(mutations => {
+            for (const m of mutations) {
+                if (m.attributeName !== 'class') continue;
+                const isActive = modalEl.classList.contains('active');
+                if (isActive && !modalEl._focusTrapActive) {
+                    modalEl._focusTrapActive = true;
+                    // document.activeElement at this moment is whatever
+                    // had focus when the open path called classList.add
+                    // — typically the trigger button.
+                    ModalFocusTrap.activate(
+                        _resolveTarget(),
+                        document.activeElement,
+                        { onEscape: onEscape },
+                    );
+                } else if (!isActive && modalEl._focusTrapActive) {
+                    modalEl._focusTrapActive = false;
+                    ModalFocusTrap.deactivate();
+                }
+            }
+        });
+        obs.observe(modalEl, { attributes: true, attributeFilter: ['class'] });
+        modalEl._focusTrapObserver = obs;
     },
 };
 

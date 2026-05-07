@@ -14,6 +14,8 @@ from datetime import datetime, timezone
 from services.jobs.base import (
     _get_conn, persist_job_start, persist_job_progress, persist_job_complete,
     persist_job_queued, remove_queued_job, resolve_terminal_status,
+    acquire_job_singleton_lock, release_job_singleton_lock,
+    pad_resume_game_ids, restore_progress_counts,
 )
 
 logger = logging.getLogger(__name__)
@@ -49,6 +51,10 @@ class BulkScrapeJob:
         self._lock = threading.Lock()
         self._thread = None
         self._queue = []  # Queue of pending jobs
+        # Pass 41.6.A — cross-process advisory lock FD; None when no chain
+        # is active. Acquired in start(), released in _start_next_queued()
+        # when the queue empties.
+        self._singleton_fd = None
         self.reset()
 
     def reset(self):
@@ -182,8 +188,6 @@ class BulkScrapeJob:
 
             # If a job is currently running and not completed, queue this one
             if self.running and not self.completed:
-                mode_label = 'Fill Missing' if scrape_mode == 'fill_missing' else 'Full Re-scrape'
-
                 # Reject duplicate: same system + same mode already running
                 if system_id is not None and system_id == self.system_id and scrape_mode == self.scrape_mode:
                     logger.info(f"Rejected duplicate bulk scrape for {system_name} (system_id={system_id}, mode={scrape_mode}) — already running")
@@ -231,7 +235,20 @@ class BulkScrapeJob:
                     'queue_position': len(self._queue)
                 }
 
-            # No job running, start immediately
+            # No job running, start immediately. Pass 41.6.A — try the
+            # cross-process advisory lock first. If another worker is
+            # already running bulk_scrape (multi-worker WSGI deploy), the
+            # acquire returns None and we refuse the start. Held FD lives
+            # on `self._singleton_fd` for the whole queue-chain; released
+            # in `_start_next_queued` when the queue empties.
+            singleton_fd = acquire_job_singleton_lock('bulk_scrape')
+            if singleton_fd is None:
+                return {
+                    'success': False,
+                    'error': 'A bulk scrape is already running on another worker process. Wait for it to complete or stop the other worker.',
+                }
+            self._singleton_fd = singleton_fd
+
             self.reset()
             self.job_id = new_job_id
             self.game_ids = game_ids
@@ -409,13 +426,8 @@ class BulkScrapeJob:
                 completed_before = partial.get('completed', 0)
 
                 if completed_before > 0:
-                    placeholder_ids = [None] * completed_before
-                    self.game_ids = placeholder_ids + self.game_ids
-                    self.current_index = completed_before
-
-                self.success_count = partial.get('success', 0)
-                self.failed_count = partial.get('failed', 0)
-                self.skipped_count = partial.get('skipped', 0)
+                    self.game_ids = pad_resume_game_ids(completed_before, self.game_ids)
+                restore_progress_counts(self, completed_before, partial)
 
                 logger.info(f"Restored partial progress for promoted job: {completed_before} done, continuing with {remaining_count} remaining")
 
@@ -493,13 +505,8 @@ class BulkScrapeJob:
                 completed_before = partial.get('completed', 0)
 
                 if completed_before > 0:
-                    placeholder_ids = [None] * completed_before
-                    self.game_ids = placeholder_ids + self.game_ids
-                    self.current_index = completed_before
-
-                self.success_count = partial.get('success', 0)
-                self.failed_count = partial.get('failed', 0)
-                self.skipped_count = partial.get('skipped', 0)
+                    self.game_ids = pad_resume_game_ids(completed_before, self.game_ids)
+                restore_progress_counts(self, completed_before, partial)
 
                 logger.info(f"Restored partial progress for promoted job: {completed_before} done, continuing with {remaining_count} remaining")
 
@@ -574,17 +581,14 @@ class BulkScrapeJob:
 
                 self.reset()
                 self.job_id = f"bulk_{int(time.time())}_resume"
-                self.game_ids = [None] * resume_index + remaining_ids
+                self.game_ids = pad_resume_game_ids(resume_index, remaining_ids)
                 self.system_id = system_id
                 self.system_name = system_name
                 self.return_url = return_url
                 self.scrape_mode = scrape_mode
                 self.running = True
                 self.start_time = datetime.now()
-                self.current_index = resume_index
-                self.success_count = progress.get('success', 0)
-                self.failed_count = progress.get('failed', 0)
-                self.skipped_count = progress.get('skipped', 0)
+                restore_progress_counts(self, resume_index, progress)
 
             self._thread = threading.Thread(target=self._run_scrape, daemon=True)
             self._thread.start()
@@ -603,9 +607,18 @@ class BulkScrapeJob:
         return result.get('success', False)
 
     def _start_next_queued(self):
-        """Start the next job from the queue (called after current job completes)"""
+        """Start the next job from the queue (called after current job completes).
+
+        Pass 41.6.A — when the queue is empty, releases the cross-process
+        singleton FD held since the original `start()`. Subsequent
+        `start()` calls will acquire a fresh lock.
+        """
         with self._lock:
             if not self._queue:
+                fd = getattr(self, '_singleton_fd', None)
+                if fd is not None:
+                    release_job_singleton_lock(fd)
+                    self._singleton_fd = None
                 return False
 
             # Get next job from queue
@@ -632,17 +645,9 @@ class BulkScrapeJob:
                 original_total = partial.get('original_total', remaining_count)
                 completed_before = partial.get('completed', 0)
 
-                # Prepend placeholder IDs so total matches original
-                # These won't be processed since current_index will skip them
                 if completed_before > 0:
-                    placeholder_ids = [None] * completed_before
-                    self.game_ids = placeholder_ids + self.game_ids
-                    self.current_index = completed_before  # Start after the already-completed ones
-
-                # Restore counts
-                self.success_count = partial.get('success', 0)
-                self.failed_count = partial.get('failed', 0)
-                self.skipped_count = partial.get('skipped', 0)
+                    self.game_ids = pad_resume_game_ids(completed_before, self.game_ids)
+                restore_progress_counts(self, completed_before, partial)
 
                 logger.info(f"Restored partial progress for job {self.job_id}: {completed_before}/{original_total} done, continuing with {remaining_count} remaining")
 
@@ -657,7 +662,6 @@ class BulkScrapeJob:
         """Background thread that runs the actual scraping"""
         from scraper.scraper_manager import scraper_manager, load_scraper_settings, get_match_settings, passes_match_filter
         from services.game_metadata_service import apply_hybrid_metadata_to_game
-        from services.game_utils import get_system_type
 
         # Snapshot immutable job parameters at thread start — prevents corruption
         # if self is modified before this thread begins executing
@@ -838,9 +842,7 @@ class BulkScrapeJob:
                             continue
                         logger.info(f"Fill-missing for {title} - missing: {', '.join(missing)}")
 
-                    # Determine if computer system
                     system_folder = game_dict.get('system_folder', '').lower()
-                    system_type = get_system_type(system_folder)
 
                     # Search for metadata
                     system_name = game_dict.get('system_name', 'Unknown')

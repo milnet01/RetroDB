@@ -14,6 +14,7 @@ from datetime import datetime, timezone
 from services.jobs.base import (
     _get_conn, persist_job_start, persist_job_progress, persist_job_complete,
     resolve_terminal_status, shutdown_requested,
+    acquire_job_singleton_lock, release_singleton_fd,
 )
 
 logger = logging.getLogger(__name__)
@@ -25,6 +26,7 @@ class MuseumGenerateJob:
     def __init__(self):
         self._lock = threading.Lock()
         self._thread = None
+        self._singleton_fd = None
         self.reset()
 
     def reset(self):
@@ -58,7 +60,15 @@ class MuseumGenerateJob:
             if self.running:
                 return {'success': False, 'error': 'Generation already in progress'}
 
+            singleton_fd = acquire_job_singleton_lock('museum_generate')
+            if singleton_fd is None:
+                return {
+                    'success': False,
+                    'error': 'Museum generation is already running on another worker process.',
+                }
+
             self.reset()
+            self._singleton_fd = singleton_fd
             self.running = True
             self.overwrite = overwrite
             self.start_time = datetime.now(timezone.utc).isoformat()
@@ -111,7 +121,14 @@ class MuseumGenerateJob:
         with self._lock:
             if self.running:
                 return False
+            singleton_fd = acquire_job_singleton_lock('museum_generate')
+            if singleton_fd is None:
+                logger.warning(
+                    "Museum resume refused: lock held by another worker process"
+                )
+                return False
             self.reset()
+            self._singleton_fd = singleton_fd
             self.running = True
             self.overwrite = overwrite
             self.start_time = datetime.now(timezone.utc).isoformat()
@@ -174,6 +191,7 @@ class MuseumGenerateJob:
                     self.running = False
                     self.completed = True
                     self.end_time = datetime.now(timezone.utc).isoformat()
+                release_singleton_fd(self)
                 if persist_id:
                     persist_job_complete(persist_id, status='completed')
                 conn.close()
@@ -186,6 +204,7 @@ class MuseumGenerateJob:
                     self.running = False
                     self.error_message = 'No AI provider configured. Set up an AI provider in Settings.'
                     self.end_time = datetime.now(timezone.utc).isoformat()
+                release_singleton_fd(self)
                 if persist_id:
                     persist_job_complete(persist_id, status='failed', error=self.error_message)
                     # Pass 40.8 — clear so the finally block doesn't run a
@@ -214,6 +233,7 @@ class MuseumGenerateJob:
                     self.running = False
                     self.error_message = f'Unknown AI provider: {provider}'
                     self.end_time = datetime.now(timezone.utc).isoformat()
+                release_singleton_fd(self)
                 if persist_id:
                     persist_job_complete(persist_id, status='failed', error=self.error_message)
                     # Pass 40.8 — clear so the finally block doesn't
@@ -337,6 +357,7 @@ class MuseumGenerateJob:
                 self.completed = True
                 self.end_time = datetime.now(timezone.utc).isoformat()
                 final_status = resolve_terminal_status(self.cancelled)
+            release_singleton_fd(self)
             if persist_id:
                 persist_job_complete(persist_id, status=final_status)
             if conn:
@@ -415,7 +436,7 @@ def _build_museum_prompt(system_name, specs):
         specs_lines = []
         for key, val in specs.items():
             specs_lines.append(f"  {key}: {val}")
-        specs_context = f"\nKnown specifications:\n" + "\n".join(specs_lines)
+        specs_context = "\nKnown specifications:\n" + "\n".join(specs_lines)
 
     return f"""You are a gaming history expert. Write about the "{system_name}" gaming system.
 {specs_context}

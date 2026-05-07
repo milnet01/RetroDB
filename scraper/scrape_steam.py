@@ -6,7 +6,10 @@
 # =============================================================================
 
 import logging
-import requests
+
+import requests  # only for requests.exceptions.HTTPError reference
+
+from .base_scraper import http_get
 
 logger = logging.getLogger(__name__)
 
@@ -25,10 +28,12 @@ def resolve_vanity_url(api_key, vanity_name):
         str: 64-bit Steam ID, or None on failure
     """
     try:
-        resp = requests.get(f'{BASE_URL}/ISteamUser/ResolveVanityURL/v1/', params={
+        resp = http_get(f'{BASE_URL}/ISteamUser/ResolveVanityURL/v1/', params={
             'key': api_key,
             'vanityurl': vanity_name,
         }, timeout=15)
+        if resp is None:
+            return None
         resp.raise_for_status()
         data = resp.json().get('response', {})
         if data.get('success') == 1:
@@ -52,13 +57,15 @@ def get_owned_games(api_key, steam_id):
               rtime_last_played, img_icon_url
     """
     try:
-        resp = requests.get(f'{BASE_URL}/IPlayerService/GetOwnedGames/v1/', params={
+        resp = http_get(f'{BASE_URL}/IPlayerService/GetOwnedGames/v1/', params={
             'key': api_key,
             'steamid': steam_id,
             'include_appinfo': 1,
             'include_played_free_games': 1,
             'format': 'json',
         }, timeout=30)
+        if resp is None:
+            return []
         resp.raise_for_status()
         data = resp.json().get('response', {})
         games = data.get('games', [])
@@ -81,12 +88,14 @@ def get_player_achievements(api_key, steam_id, app_id):
         dict: {achievements: [...], total: int, earned: int} or None on error
     """
     try:
-        resp = requests.get(f'{BASE_URL}/ISteamUserStats/GetPlayerAchievements/v1/', params={
+        resp = http_get(f'{BASE_URL}/ISteamUserStats/GetPlayerAchievements/v1/', params={
             'key': api_key,
             'steamid': steam_id,
             'appid': app_id,
             'l': 'english',
         }, timeout=15)
+        if resp is None:
+            return None
 
         if resp.status_code == 400:
             # Game has no achievements or profile is private
@@ -124,11 +133,13 @@ def get_achievement_schema(api_key, app_id):
         list: Achievement schema dicts, or empty list on error
     """
     try:
-        resp = requests.get(f'{BASE_URL}/ISteamUserStats/GetSchemaForGame/v2/', params={
+        resp = http_get(f'{BASE_URL}/ISteamUserStats/GetSchemaForGame/v2/', params={
             'key': api_key,
             'appid': app_id,
             'l': 'english',
         }, timeout=15)
+        if resp is None:
+            return []
         resp.raise_for_status()
         data = resp.json().get('game', {})
         return data.get('availableGameStats', {}).get('achievements', [])
@@ -148,10 +159,12 @@ def get_player_summary(api_key, steam_id):
         dict: Player profile data, or None on error
     """
     try:
-        resp = requests.get(f'{BASE_URL}/ISteamUser/GetPlayerSummaries/v2/', params={
+        resp = http_get(f'{BASE_URL}/ISteamUser/GetPlayerSummaries/v2/', params={
             'key': api_key,
             'steamids': steam_id,
         }, timeout=15)
+        if resp is None:
+            return None
         resp.raise_for_status()
         players = resp.json().get('response', {}).get('players', [])
         if players:
@@ -172,9 +185,11 @@ def get_app_details(app_id):
         dict: App details including header_image, or None on error
     """
     try:
-        resp = requests.get(f'{STORE_URL}/appdetails', params={
+        resp = http_get(f'{STORE_URL}/appdetails', params={
             'appids': app_id,
         }, timeout=15)
+        if resp is None:
+            return None
         resp.raise_for_status()
         data = resp.json()
         app_data = data.get(str(app_id), {})
@@ -196,10 +211,12 @@ def check_api_key(api_key):
         dict: {valid: bool, error: str or None}
     """
     try:
-        resp = requests.get(f'{BASE_URL}/ISteamUser/GetPlayerSummaries/v2/', params={
+        resp = http_get(f'{BASE_URL}/ISteamUser/GetPlayerSummaries/v2/', params={
             'key': api_key,
             'steamids': '76561197960287930',  # Valve test account
         }, timeout=10)
+        if resp is None:
+            return {'valid': False, 'error': 'Connection error'}
         if resp.status_code == 200:
             return {'valid': True, 'error': None}
         elif resp.status_code == 403:

@@ -20,6 +20,47 @@ let _animationObserver = null;
 let _backToTopScrollHandler = null;
 
 // =============================================================================
+// GLOBAL ERROR HANDLERS (Pass 42.3)
+// =============================================================================
+// Surface unhandled errors and unhandled promise rejections to the user via
+// the toast system instead of letting them die silently in the console.
+// Rate-limited so a feedback loop can't flood the screen.
+
+let _lastErrorToastAt = 0;
+const _ERROR_TOAST_INTERVAL_MS = 5000;
+
+function _surfaceError(prefix, detail) {
+    if (typeof showNotification !== 'function') return;
+    const now = Date.now();
+    if (now - _lastErrorToastAt < _ERROR_TOAST_INTERVAL_MS) return;
+    _lastErrorToastAt = now;
+    try {
+        showNotification(`${prefix}: ${detail}`, 'error');
+    } catch (_e) { /* swallow — never loop on a toast failure */ }
+}
+
+window.addEventListener('error', function(event) {
+    // Cross-origin script errors arrive sanitized as "Script error." with no
+    // useful detail — nothing actionable to surface, skip.
+    const msg = event.message || '';
+    if (!msg || msg === 'Script error.') return;
+    _surfaceError('Unexpected error', msg);
+});
+
+window.addEventListener('unhandledrejection', function(event) {
+    const r = event.reason;
+    let detail;
+    if (r instanceof Error) {
+        detail = r.message || r.name || 'unknown error';
+    } else if (typeof r === 'string') {
+        detail = r;
+    } else {
+        try { detail = JSON.stringify(r); } catch (_e) { detail = String(r); }
+    }
+    _surfaceError('Unhandled rejection', detail);
+});
+
+// =============================================================================
 // DOM READY
 // =============================================================================
 
@@ -1665,3 +1706,101 @@ window.addEventListener('beforeunload', function() {
     if (_backToTopScrollHandler) { window.removeEventListener('scroll', _backToTopScrollHandler); _backToTopScrollHandler = null; }
     if (window.BackToTopController && BackToTopController.destroy) BackToTopController.destroy();
 });
+
+
+// =============================================================================
+// PASS 45.16 — aria-current="page" auto-sync for tab-style navs
+// =============================================================================
+// WCAG 2.4.3 (Focus Order) requires aria-current on the link representing the
+// current location/view. The sidebar already gets this via the `nav_active`
+// macro in base.html (Pass 41.13.A). Tab/subnav components that toggle .active
+// from JS need a separate pin: every container marked `data-tabbar` gets a
+// MutationObserver that mirrors `.active` ↔ `aria-current="page"` on its
+// descendant <a> / <button> elements.
+//
+// Why a MutationObserver instead of refactoring every toggle site: the existing
+// JS lives in 11+ templates and 2 bundled JS files. Touching all of them risks
+// regressions; observing the class change makes the contract a one-time wiring.
+// =============================================================================
+
+function _syncAriaCurrent(container) {
+    const items = container.querySelectorAll('a, button');
+    items.forEach(item => {
+        if (item.classList.contains('active')) {
+            item.setAttribute('aria-current', 'page');
+        } else if (item.hasAttribute('aria-current')) {
+            item.removeAttribute('aria-current');
+        }
+    });
+}
+
+const _ariaCurrentObservers = [];
+
+function _setupTabbarAriaCurrent() {
+    // Tear down any previous observers (defensive — DOMContentLoaded should
+    // only fire once but page-lifecycle teardown could re-bind).
+    _ariaCurrentObservers.forEach(o => o.disconnect());
+    _ariaCurrentObservers.length = 0;
+
+    document.querySelectorAll('[data-tabbar]').forEach(bar => {
+        _syncAriaCurrent(bar);
+        const obs = new MutationObserver(mutations => {
+            for (const m of mutations) {
+                if (m.attributeName === 'class') {
+                    _syncAriaCurrent(bar);
+                    return;
+                }
+            }
+        });
+        obs.observe(bar, {
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['class'],
+        });
+        _ariaCurrentObservers.push(obs);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', _setupTabbarAriaCurrent);
+
+window.addEventListener('beforeunload', function() {
+    _ariaCurrentObservers.forEach(o => o.disconnect());
+    _ariaCurrentObservers.length = 0;
+});
+
+
+// =============================================================================
+// PASS 45.17 — auto-attach ModalFocusTrap to opt-in modals
+// =============================================================================
+// WCAG 2.1.2 (No Keyboard Trap, inverted — i.e. focus must be trapped inside
+// modals so Tab doesn't escape to the page underneath). The pre-Pass-45.17
+// audit found ~20 dialogs missing the focus trap. Threading the trap through
+// every open path is brittle (each modal has its own open function in its own
+// JS file); this auto-attach pattern lets a template opt in by adding
+// `data-focus-trap` to the modal root, with the trap mounted by a
+// MutationObserver that watches the `.active` class.
+//
+// Modals that already wire ModalFocusTrap.activate() manually (e.g.
+// gameDetailModal, gameEditModal, customModal, queueManagerModal,
+// folderBrowserModal, filter modal, bulk-edit/scrape modals, museum
+// lightboxes) are left alone — adding `data-focus-trap` to them would
+// double-attach. The opt-in attribute is the contract.
+// =============================================================================
+
+function _setupAutoFocusTraps() {
+    if (!window.ModalFocusTrap) return;
+    document.querySelectorAll('[data-focus-trap]').forEach(modalEl => {
+        const onEscapeFn = modalEl.getAttribute('data-focus-trap-onescape');
+        let onEscape = null;
+        if (onEscapeFn && typeof window[onEscapeFn] === 'function') {
+            onEscape = window[onEscapeFn];
+        }
+        const contentSelector = modalEl.getAttribute('data-focus-trap-content') || null;
+        ModalFocusTrap.autoAttach(modalEl, {
+            onEscape: onEscape,
+            contentSelector: contentSelector,
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', _setupAutoFocusTraps);

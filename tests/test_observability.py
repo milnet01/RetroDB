@@ -150,7 +150,6 @@ class TestSlowRequestLogging:
         assert 'status=204' in msg
 
     def test_probe_endpoints_exempt_from_slow_log(self, client, caplog):
-        import app as app_module
         import config
 
         # Register a probe-named route that would otherwise be slow.

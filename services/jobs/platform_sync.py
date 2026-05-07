@@ -13,6 +13,9 @@ from services.jobs.base import (
     _get_conn, _commit_with_retry,
     persist_job_start, persist_job_progress, persist_job_complete,
     resolve_terminal_status, shutdown_requested,
+    acquire_job_singleton_lock, release_singleton_fd,
+    pad_resume_game_ids, restore_progress_counts,
+    try_acquire_singleton_or_warn,
 )
 
 logger = logging.getLogger(__name__)
@@ -74,6 +77,65 @@ def _get_xbox_credentials():
     except Exception as e:
         logger.warning(f"Could not load Xbox credentials: {e}")
     return '', ''
+
+
+def _upsert_steam_progress(cursor, game_id, user_id, app_id, result):
+    """UPSERT game_achievement_progress for a Steam game (Pass 38.7).
+
+    Single source of truth for the row-level progress write — used by both
+    the bulk-sync job and the single-game route. `result` carries `earned`
+    and `total` from the Steam Web API response.
+    """
+    cursor.execute("""
+        INSERT INTO game_achievement_progress
+            (game_id, user_id, earned_achievements, total_achievements,
+             completion_percentage, last_synced, steam_app_id, source)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'steam')
+        ON CONFLICT(game_id, user_id) DO UPDATE SET
+            earned_achievements = excluded.earned_achievements,
+            total_achievements = excluded.total_achievements,
+            completion_percentage = excluded.completion_percentage,
+            last_synced = excluded.last_synced,
+            steam_app_id = excluded.steam_app_id,
+            source = 'steam'
+    """, (
+        game_id,
+        user_id,
+        result['earned'],
+        result['total'],
+        round(result['earned'] / result['total'] * 100, 1) if result['total'] > 0 else 0,
+        datetime.now(timezone.utc).isoformat(),
+        app_id,
+    ))
+
+
+def _upsert_xbox_progress(cursor, game_id, user_id, title_id, result):
+    """UPSERT game_achievement_progress for an Xbox game (Pass 38.7).
+
+    Single source of truth for the row-level progress write — used by both
+    the bulk-sync job and the single-game route.
+    """
+    cursor.execute("""
+        INSERT INTO game_achievement_progress
+            (game_id, user_id, earned_achievements, total_achievements,
+             completion_percentage, last_synced, xbox_title_id, source)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'xbox')
+        ON CONFLICT(game_id, user_id) DO UPDATE SET
+            earned_achievements = excluded.earned_achievements,
+            total_achievements = excluded.total_achievements,
+            completion_percentage = excluded.completion_percentage,
+            last_synced = excluded.last_synced,
+            xbox_title_id = excluded.xbox_title_id,
+            source = 'xbox'
+    """, (
+        game_id,
+        user_id,
+        result['earned'],
+        result['total'],
+        round(result['earned'] / result['total'] * 100, 1) if result['total'] > 0 else 0,
+        datetime.now(timezone.utc).isoformat(),
+        title_id,
+    ))
 
 
 def _upsert_steam_achievements(cursor, game_id, app_id, api_key, player_result, user_id):
@@ -190,6 +252,7 @@ class SteamSyncJob:
     def __init__(self):
         self._lock = threading.Lock()
         self._thread = None
+        self._singleton_fd = None
         self.reset()
 
     def reset(self):
@@ -237,7 +300,14 @@ class SteamSyncJob:
         with self._lock:
             if self.running:
                 return {'success': False, 'error': 'Sync already running'}
+            singleton_fd = acquire_job_singleton_lock('steam_sync')
+            if singleton_fd is None:
+                return {
+                    'success': False,
+                    'error': 'Steam sync is already running on another worker process.',
+                }
             self.reset()
+            self._singleton_fd = singleton_fd
             self.job_id = f"steam_sync_{int(time.time())}"
             self.running = True
             self._user_id = user_id
@@ -271,15 +341,16 @@ class SteamSyncJob:
             with self._lock:
                 if self.running:
                     return False
+                singleton_fd = try_acquire_singleton_or_warn('steam_sync')
+                if singleton_fd is None:
+                    return False
                 self.reset()
+                self._singleton_fd = singleton_fd
                 self.job_id = f"steam_sync_{int(time.time())}_resume"
-                self._resume_game_ids = [None] * resume_index + remaining_ids
+                self._resume_game_ids = pad_resume_game_ids(resume_index, remaining_ids)
                 self.running = True
                 self._user_id = user_id
-                self.current_index = resume_index
-                self.success_count = progress.get('success', 0)
-                self.failed_count = progress.get('failed', 0)
-                self.skipped_count = progress.get('skipped', 0)
+                restore_progress_counts(self, resume_index, progress)
 
             self._thread = threading.Thread(target=self._run_sync, daemon=True)
             self._thread.start()
@@ -299,7 +370,7 @@ class SteamSyncJob:
 
     def _run_sync(self):
         """Background sync thread"""
-        from scraper.scrape_steam import get_player_achievements, get_achievement_schema
+        from scraper.scrape_steam import get_player_achievements
 
         _last_persist_time = time.time()
         persist_id = None
@@ -311,6 +382,7 @@ class SteamSyncJob:
                     self.completed = True
                     self.running = False
                     self.error_message = "Steam API key or Steam ID not configured"
+                release_singleton_fd(self)
                 return
 
             # Use pre-set game IDs from resume, or query from DB
@@ -360,6 +432,7 @@ class SteamSyncJob:
                     self.completed = True
                     self.running = False
                     self.error_message = "No Steam games found to sync"
+                release_singleton_fd(self)
                 persist_job_complete(persist_id, status='completed', error="No Steam games found")
                 return
 
@@ -403,27 +476,9 @@ class SteamSyncJob:
                             continue
 
                         # Upsert into game_achievement_progress (Pass 31.2 — per user).
-                        sync_cursor.execute("""
-                            INSERT INTO game_achievement_progress
-                                (game_id, user_id, earned_achievements, total_achievements,
-                                 completion_percentage, last_synced, steam_app_id, source)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, 'steam')
-                            ON CONFLICT(game_id, user_id) DO UPDATE SET
-                                earned_achievements = excluded.earned_achievements,
-                                total_achievements = excluded.total_achievements,
-                                completion_percentage = excluded.completion_percentage,
-                                last_synced = excluded.last_synced,
-                                steam_app_id = excluded.steam_app_id,
-                                source = 'steam'
-                        """, (
-                            game['id'],
-                            self._user_id,
-                            result['earned'],
-                            result['total'],
-                            round(result['earned'] / result['total'] * 100, 1) if result['total'] > 0 else 0,
-                            datetime.now(timezone.utc).isoformat(),
-                            game['steam_app_id'],
-                        ))
+                        _upsert_steam_progress(
+                            sync_cursor, game['id'], self._user_id,
+                            game['steam_app_id'], result)
                         _pending_commits += 1
 
                         # Save individual achievements
@@ -461,6 +516,7 @@ class SteamSyncJob:
                 self.completed = True
                 self.running = False
                 _final_status = resolve_terminal_status(self.cancelled)
+            release_singleton_fd(self)
 
             if persist_id:
                 persist_job_complete(persist_id, status=_final_status)
@@ -471,6 +527,7 @@ class SteamSyncJob:
                 self.completed = True
                 self.running = False
                 self.error_message = str(e)
+            release_singleton_fd(self)
             if persist_id:
                 persist_job_complete(persist_id, status='failed', error=str(e))
 
@@ -487,6 +544,7 @@ class XboxSyncJob:
     def __init__(self):
         self._lock = threading.Lock()
         self._thread = None
+        self._singleton_fd = None
         self.reset()
 
     def reset(self):
@@ -537,7 +595,14 @@ class XboxSyncJob:
         with self._lock:
             if self.running:
                 return {'success': False, 'error': 'Sync already running'}
+            singleton_fd = acquire_job_singleton_lock('xbox_sync')
+            if singleton_fd is None:
+                return {
+                    'success': False,
+                    'error': 'Xbox sync is already running on another worker process.',
+                }
             self.reset()
+            self._singleton_fd = singleton_fd
             self.job_id = f"xbox_sync_{int(time.time())}"
             self.user_id = user_id
             self.running = True
@@ -580,15 +645,16 @@ class XboxSyncJob:
             with self._lock:
                 if self.running:
                     return False
+                singleton_fd = try_acquire_singleton_or_warn('xbox_sync')
+                if singleton_fd is None:
+                    return False
                 self.reset()
+                self._singleton_fd = singleton_fd
                 self.job_id = f"xbox_sync_{int(time.time())}_resume"
                 self.user_id = user_id
-                self._resume_game_ids = [None] * resume_index + remaining_ids
+                self._resume_game_ids = pad_resume_game_ids(resume_index, remaining_ids)
                 self.running = True
-                self.current_index = resume_index
-                self.success_count = progress.get('success', 0)
-                self.failed_count = progress.get('failed', 0)
-                self.skipped_count = progress.get('skipped', 0)
+                restore_progress_counts(self, resume_index, progress)
 
             self._thread = threading.Thread(target=self._run_sync, daemon=True)
             self._thread.start()
@@ -620,6 +686,7 @@ class XboxSyncJob:
                     self.completed = True
                     self.running = False
                     self.error_message = "Xbox credentials not configured"
+                release_singleton_fd(self)
                 return
 
             session = get_authenticated_session(xbox_client_id, xbox_client_secret, self.user_id)
@@ -628,6 +695,7 @@ class XboxSyncJob:
                     self.completed = True
                     self.running = False
                     self.error_message = "Xbox authentication failed — please re-connect your Xbox account"
+                release_singleton_fd(self)
                 return
 
             # Use pre-set game IDs from resume, or query from DB
@@ -678,6 +746,7 @@ class XboxSyncJob:
                     self.completed = True
                     self.running = False
                     self.error_message = "No Xbox games found to sync"
+                release_singleton_fd(self)
                 persist_job_complete(persist_id, status='completed', error="No Xbox games found")
                 return
 
@@ -721,27 +790,9 @@ class XboxSyncJob:
                                 self.skipped_count += 1
                             continue
 
-                        sync_cursor.execute("""
-                            INSERT INTO game_achievement_progress
-                                (game_id, user_id, earned_achievements, total_achievements,
-                                 completion_percentage, last_synced, xbox_title_id, source)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, 'xbox')
-                            ON CONFLICT(game_id, user_id) DO UPDATE SET
-                                earned_achievements = excluded.earned_achievements,
-                                total_achievements = excluded.total_achievements,
-                                completion_percentage = excluded.completion_percentage,
-                                last_synced = excluded.last_synced,
-                                xbox_title_id = excluded.xbox_title_id,
-                                source = 'xbox'
-                        """, (
-                            game['id'],
-                            self.user_id,
-                            result['earned'],
-                            result['total'],
-                            round(result['earned'] / result['total'] * 100, 1) if result['total'] > 0 else 0,
-                            datetime.now(timezone.utc).isoformat(),
-                            game['xbox_title_id'],
-                        ))
+                        _upsert_xbox_progress(
+                            sync_cursor, game['id'], self.user_id,
+                            game['xbox_title_id'], result)
                         _pending_commits += 1
 
                         # Save individual achievements
@@ -777,6 +828,7 @@ class XboxSyncJob:
                 self.completed = True
                 self.running = False
                 _final_status = resolve_terminal_status(self.cancelled)
+            release_singleton_fd(self)
 
             if persist_id:
                 persist_job_complete(persist_id, status=_final_status)
@@ -787,5 +839,6 @@ class XboxSyncJob:
                 self.completed = True
                 self.running = False
                 self.error_message = str(e)
+            release_singleton_fd(self)
             if persist_id:
                 persist_job_complete(persist_id, status='failed', error=str(e))

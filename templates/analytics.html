@@ -4,8 +4,8 @@
 
 {% block content %}
 <!-- Sticky Analytics Navigation -->
-<nav class="analytics-nav" id="analyticsNav" data-sticky-nav>
-    <a href="#summary" class="analytics-nav-link active" data-section="summary"><span class="tab-icon">📊</span> <span class="tab-label">Summary</span></a>
+<nav class="analytics-nav" id="analyticsNav" data-sticky-nav data-tabbar>
+    <a href="#summary" class="analytics-nav-link active" aria-current="page" data-section="summary"><span class="tab-icon">📊</span> <span class="tab-label">Summary</span></a>
     <a href="#charts" class="analytics-nav-link" data-section="charts"><span class="tab-icon">📈</span> <span class="tab-label">Charts</span></a>
     <a href="#developers" class="analytics-nav-link" data-section="developers"><span class="tab-icon">🏢</span> <span class="tab-label">Developers</span></a>
     <a href="#gameplay" class="analytics-nav-link" data-section="gameplay"><span class="tab-icon">🎯</span> <span class="tab-label">Gameplay</span></a>
@@ -27,26 +27,26 @@
     </div>
     <div class="page-actions">
         <div class="export-dropdown" id="exportDropdown">
-            <button class="btn btn-secondary" onclick="toggleExportMenu()">
+            <button type="button" class="btn btn-secondary" onclick="toggleExportMenu()">
                 <span class="btn-icon">&#128230;</span>
                 Export
             </button>
             <div class="export-menu" id="exportMenu">
-                <button class="export-menu-item" onclick="exportAsPNG()">
+                <button type="button" class="export-menu-item" onclick="exportAsPNG()">
                     <span class="export-icon">&#128444;</span>
                     <div>
                         <div class="export-item-title">PNG Infographic</div>
                         <div class="export-item-desc">Save as shareable image</div>
                     </div>
                 </button>
-                <button class="export-menu-item" onclick="exportToClipboard()">
+                <button type="button" class="export-menu-item" onclick="exportToClipboard()">
                     <span class="export-icon">&#128203;</span>
                     <div>
                         <div class="export-item-title">Copy to Clipboard</div>
                         <div class="export-item-desc">Forum-ready text stats</div>
                     </div>
                 </button>
-                <button class="export-menu-item" onclick="exportAsCSV()">
+                <button type="button" class="export-menu-item" onclick="exportAsCSV()">
                     <span class="export-icon">&#128196;</span>
                     <div>
                         <div class="export-item-title">CSV Export</div>
@@ -55,7 +55,7 @@
                 </button>
             </div>
         </div>
-        <button class="btn btn-secondary" onclick="refreshAnalytics()">
+        <button type="button" class="btn btn-secondary" onclick="refreshAnalytics()">
             <span class="btn-icon">🔄</span>
             Refresh
         </button>
@@ -1512,7 +1512,7 @@ tr:nth-child(3) .rank-badge {
 {% endblock %}
 
 {% block scripts %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ asset_url('js/vendor/chart.umd.min.js') }}"></script>
 <script>
 // Chart.js default config for cyberpunk theme
 Chart.defaults.color = '#9aa0a6';

@@ -1,12 +1,20 @@
 # =============================================================================
 # Pass 33 + 34 — auth / session hardening + response envelope round 2
 # =============================================================================
+# Pass 45.21 audit (2026-04-27): converted 33.6 logout-clear (functional
+# session check), 34.5 UTC log filename (functional clock-pin) to behavior
+# tests. Remaining source-grep tests pin: avatar allowlist exclusion,
+# password-length checks in api_update_user, force_password_change flag,
+# session.clear()+CSRF rotation pattern across two functions, csrf_token
+# in /api/login response shape, zombie-helpers removed (codebase invariant),
+# rate-limiter raises RuntimeError on missing endpoint, asset_url
+# context-processor removal — all kept because the functional alternative
+# requires multi-role DB seeding or app re-init.
+# =============================================================================
 
 import os
 import sys
-import time
 
-import pytest
 
 _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _REPO_ROOT not in sys.path:
@@ -66,10 +74,22 @@ def test_33_5_session_rotation_on_change_password():
 # 33.6 — logout wipes the whole session
 # -----------------------------------------------------------------------------
 def test_33_6_logout_clears_session():
-    src = open(os.path.join(_REPO_ROOT, 'routes', 'auth.py'), encoding='utf-8').read()
-    body = src[src.index("def logout"):src.index("def logout") + 800]
-    assert "session.clear()" in body
-    assert "session.pop('user_id'" not in body
+    """Functional: hitting /logout must clear all session state, not just
+    pop user_id. We seed an unrelated session key, log out, and verify it's
+    also gone — proving session.clear() ran instead of a selective pop."""
+    import app as app_module
+    app_module.app.config['TESTING'] = True
+    client = app_module.app.test_client()
+    with client.session_transaction() as sess:
+        sess['user_id'] = 1
+        sess['unrelated_key'] = 'should be wiped on logout'
+    client.get('/logout', follow_redirects=False)
+    with client.session_transaction() as sess:
+        assert 'user_id' not in sess
+        assert 'unrelated_key' not in sess, (
+            "Pass 33.6 — logout must call session.clear() to wipe ALL keys, "
+            "not just session.pop('user_id')"
+        )
 
 
 # -----------------------------------------------------------------------------
@@ -178,11 +198,31 @@ def test_34_4_rate_limiter_helper_hard_fails():
 # -----------------------------------------------------------------------------
 # 34.5 — log rollover uses UTC
 # -----------------------------------------------------------------------------
-def test_34_5_log_filename_uses_utc():
-    src = open(os.path.join(_REPO_ROOT, 'log_manager.py'), encoding='utf-8').read()
-    # get_log_filename must call datetime.now(timezone.utc).
-    body = src[src.index("def get_log_filename"):src.index("def get_log_filename") + 600]
-    assert "datetime.now(timezone.utc)" in body
+def test_34_5_log_filename_uses_utc(monkeypatch):
+    """Functional: get_log_filename must produce the same date stamp
+    regardless of the local timezone — i.e. it derives the date from UTC."""
+    from datetime import datetime, timezone, timedelta
+    import log_manager
+
+    # Pin the wall-clock to a moment that's on different sides of midnight
+    # in different timezones — 2026-04-27T23:30:00+00:00 is still 2026-04-27
+    # in UTC but 2026-04-28 in UTC+02:00.
+    fixed_utc = datetime(2026, 4, 27, 23, 30, 0, tzinfo=timezone.utc)
+
+    class _FixedDateTime(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            if tz is None:
+                # Local time at UTC+02:00 would render as next-day midnight.
+                return fixed_utc.astimezone(timezone(timedelta(hours=2))).replace(tzinfo=None)
+            return fixed_utc.astimezone(tz)
+
+    monkeypatch.setattr(log_manager, 'datetime', _FixedDateTime)
+    fname = log_manager.get_log_filename('test')
+    assert '2026-04-27' in fname, (
+        f"Log filename must use UTC date (expected 2026-04-27 from "
+        f"23:30 UTC); got {fname!r}"
+    )
 
 
 # -----------------------------------------------------------------------------

@@ -4,8 +4,8 @@
 
 {% block content %}
 <!-- Sticky Dashboard Navigation -->
-<nav class="dashboard-nav" id="dashboardNav" data-sticky-nav>
-    <a href="#overview" class="dashboard-nav-link active" data-section="overview"><span class="tab-icon">📊</span> <span class="tab-label">Overview</span></a>
+<nav class="dashboard-nav" id="dashboardNav" data-sticky-nav data-tabbar>
+    <a href="#overview" class="dashboard-nav-link active" aria-current="page" data-section="overview"><span class="tab-icon">📊</span> <span class="tab-label">Overview</span></a>
     <a href="#systems" class="dashboard-nav-link" data-section="systems"><span class="tab-icon">🖥️</span> <span class="tab-label">Systems</span></a>
     {% if continue_playing %}<a href="#playing" class="dashboard-nav-link" data-section="playing"><span class="tab-icon">▶️</span> <span class="tab-label">Playing</span></a>{% endif %}
     {% if recent_games %}<a href="#added" class="dashboard-nav-link" data-section="added"><span class="tab-icon">🕹️</span> <span class="tab-label">Added</span></a>{% endif %}
@@ -19,7 +19,7 @@
     <span class="api-warning-icon">⚠️</span>
     <span class="api-warning-text">One or more configured APIs are offline</span>
     <a href="{{ url_for('settings.settings') }}" class="api-warning-link">Check Settings →</a>
-    <button class="api-warning-close" onclick="this.parentElement.style.display='none'">✕</button>
+    <button type="button" class="api-warning-close" onclick="this.parentElement.style.display='none'">✕</button>
 </div>
 
 <!-- Job Recovery Banner (shown when interrupted/queued jobs exist) -->
@@ -28,8 +28,8 @@
     <div class="job-recovery-header">
         <span class="job-recovery-icon">🔄</span>
         <span class="job-recovery-title">{{ recoverable_jobs|length }} interrupted job{{ 's' if recoverable_jobs|length != 1 else '' }} found</span>
-        <button class="btn btn-sm btn-primary" onclick="resumeAllRecoverableJobs()">Resume All</button>
-        <button class="btn btn-sm btn-secondary" onclick="dismissAllRecoverableJobs()">Dismiss All</button>
+        <button type="button" class="btn btn-sm btn-primary" onclick="resumeAllRecoverableJobs()">Resume All</button>
+        <button type="button" class="btn btn-sm btn-secondary" onclick="dismissAllRecoverableJobs()">Dismiss All</button>
     </div>
     {% for job in recoverable_jobs %}
     <div class="job-recovery-item" id="recoveryItem{{ job.id }}" data-can-resume="{{ 'true' if job.can_resume else 'false' }}">
@@ -39,9 +39,9 @@
         </span>
         <div class="job-recovery-actions">
             {% if job.can_resume %}
-            <button class="btn btn-sm btn-primary" onclick="resumeJob({{ job.id }})">{{ job.action_label }}</button>
+            <button type="button" class="btn btn-sm btn-primary" onclick="resumeJob({{ job.id }})">{{ job.action_label }}</button>
             {% endif %}
-            <button class="btn btn-sm btn-secondary" onclick="dismissJob({{ job.id }})">Dismiss</button>
+            <button type="button" class="btn btn-sm btn-secondary" onclick="dismissJob({{ job.id }})">Dismiss</button>
         </div>
     </div>
     {% endfor %}
@@ -55,11 +55,11 @@
         <p class="page-subtitle">Overview of your retro gaming collection</p>
     </div>
     <div class="page-actions">
-        <button class="btn btn-secondary" onclick="randomGame()" title="Pick a random game">
+        <button type="button" class="btn btn-secondary" onclick="randomGame()" title="Pick a random game">
             <span class="btn-icon">🎲</span>
             Random Game
         </button>
-        <button id="scanLibraryBtn" class="btn btn-primary" onclick="scanLibrary()">
+        <button type="button" id="scanLibraryBtn" class="btn btn-primary" onclick="scanLibrary()">
             <span class="btn-icon">🔍</span>
             Scan Library
         </button>

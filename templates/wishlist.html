@@ -10,10 +10,10 @@
         <p class="page-subtitle">Games you want to find and add to your collection</p>
     </div>
     <div class="page-actions">
-        <button class="btn btn-secondary" id="wishlistScrapeAllBtn" onclick="scrapeAllWishlist()" title="Scrape metadata for every un-scraped wishlist item">
+        <button type="button" class="btn btn-secondary" id="wishlistScrapeAllBtn" onclick="scrapeAllWishlist()" title="Scrape metadata for every un-scraped wishlist item">
             <span class="btn-icon">&#128270;</span> Scrape All
         </button>
-        <button class="btn btn-primary" onclick="openAddWishlistModal()">
+        <button type="button" class="btn btn-primary" onclick="openAddWishlistModal()">
             <span class="btn-icon">+</span> Add to Wishlist
         </button>
     </div>
@@ -21,12 +21,12 @@
 
 <!-- Priority Filter Tabs -->
 <div class="wishlist-filters">
-    <button class="filter-tab active" data-filter="all" onclick="filterWishlist('all', this)">All</button>
-    <button class="filter-tab" data-filter="1" onclick="filterWishlist('1', this)">Must Have</button>
-    <button class="filter-tab" data-filter="2" onclick="filterWishlist('2', this)">High</button>
-    <button class="filter-tab" data-filter="3" onclick="filterWishlist('3', this)">Medium</button>
-    <button class="filter-tab" data-filter="4" onclick="filterWishlist('4', this)">Low</button>
-    <button class="filter-tab" data-filter="5" onclick="filterWishlist('5', this)">Someday</button>
+    <button type="button" class="filter-tab active" data-filter="all" onclick="filterWishlist('all', this)">All</button>
+    <button type="button" class="filter-tab" data-filter="1" onclick="filterWishlist('1', this)">Must Have</button>
+    <button type="button" class="filter-tab" data-filter="2" onclick="filterWishlist('2', this)">High</button>
+    <button type="button" class="filter-tab" data-filter="3" onclick="filterWishlist('3', this)">Medium</button>
+    <button type="button" class="filter-tab" data-filter="4" onclick="filterWishlist('4', this)">Low</button>
+    <button type="button" class="filter-tab" data-filter="5" onclick="filterWishlist('5', this)">Someday</button>
 </div>
 
 <!-- Wishlist Items -->
@@ -41,17 +41,17 @@
     <div class="empty-state-text">
         Add games you're looking for to keep track of your wants.
     </div>
-    <button class="btn btn-primary" onclick="openAddWishlistModal()">
+    <button type="button" class="btn btn-primary" onclick="openAddWishlistModal()">
         <span class="btn-icon">+</span> Add First Item
     </button>
 </div>
 
 <!-- Add/Edit Wishlist Modal -->
-<div class="custom-modal" id="wishlistModal" onclick="if(event.target===this)closeWishlistModal()">
+<div class="custom-modal" id="wishlistModal" data-focus-trap data-focus-trap-onescape="closeWishlistModal" onclick="if(event.target===this)closeWishlistModal()">
     <div class="custom-modal-content" style="max-width: 500px;" role="dialog" aria-modal="true" aria-labelledby="wishlistModalTitle">
         <div class="custom-modal-header">
             <h3 id="wishlistModalTitle">Add to Wishlist</h3>
-            <button class="custom-modal-close" onclick="closeWishlistModal()" aria-label="Close">&times;</button>
+            <button type="button" class="custom-modal-close" onclick="closeWishlistModal()" aria-label="Close">&times;</button>
         </div>
         <div class="custom-modal-body">
             <input type="hidden" id="wishlistEditId" value="">
@@ -75,8 +75,8 @@
                 <datalist id="wishlistSystemOptions"></datalist>
             </div>
             <div class="form-group">
-                <label class="form-label">Priority</label>
-                <div class="priority-picker" id="priorityPicker">
+                <div class="form-label" id="wishlistPriorityLabel">Priority</div>
+                <div class="priority-picker" id="priorityPicker" role="group" aria-labelledby="wishlistPriorityLabel">
                     <button type="button" class="priority-option" data-priority="1" onclick="selectPriority(this)">
                         <span class="priority-dot" style="background: var(--neon-red);"></span> Must Have
                     </button>
@@ -109,8 +109,8 @@
             </div>
         </div>
         <div class="custom-modal-footer">
-            <button class="btn btn-secondary" onclick="closeWishlistModal()">Cancel</button>
-            <button class="btn btn-primary" id="wishlistSaveBtn" onclick="saveWishlistItem()">Add to Wishlist</button>
+            <button type="button" class="btn btn-secondary" onclick="closeWishlistModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" id="wishlistSaveBtn" onclick="saveWishlistItem()">Add to Wishlist</button>
         </div>
     </div>
 </div>
@@ -634,9 +634,9 @@ function renderWishlistCard(item) {
                 ${date ? `<div class="wishlist-item-date">Added ${date}</div>` : ''}
             </div>
             <div class="wishlist-item-actions">
-                <button class="wishlist-action-btn" onclick="scrapeWishlistItem(${item.id})" title="${rescrapeTitle}" ${rescrapeDisabled}>${rescrapeIcon}</button>
-                <button class="wishlist-action-btn" onclick="openEditWishlistModal(${item.id})" title="Edit">&#9998;</button>
-                <button class="wishlist-action-btn danger" onclick="confirmDeleteWishlistItem(${item.id}, '${escapeAttr(item.title)}')" title="Delete">&#10005;</button>
+                <button type="button" class="wishlist-action-btn" onclick="scrapeWishlistItem(${item.id})" title="${rescrapeTitle}" ${rescrapeDisabled}>${rescrapeIcon}</button>
+                <button type="button" class="wishlist-action-btn" onclick="openEditWishlistModal(${item.id})" title="Edit">&#9998;</button>
+                <button type="button" class="wishlist-action-btn danger" onclick="confirmDeleteWishlistItem(${item.id}, '${escapeAttr(item.title)}')" title="Delete">&#10005;</button>
             </div>
         </div>
     `;

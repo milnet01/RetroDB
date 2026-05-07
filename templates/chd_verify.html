@@ -88,7 +88,7 @@
         <span class="tab-icon">💿</span>
         <span class="tab-label">CHD Converter</span>
     </a>
-    <a href="{{ url_for('tools.chd_verify') }}" class="tool-tab active">
+    <a href="{{ url_for('tools.chd_verify') }}" class="tool-tab active" aria-current="page">
         <span class="tab-icon">✅</span>
         <span class="tab-label">CHD Verify</span>
     </a>
@@ -130,8 +130,8 @@
                 <span class="locked-path-prefix" id="basePath">{{ rom_path }}/</span>
                 <input type="text" id="subPath" placeholder="subfolder (optional)" value="">
             </div>
-            <button class="btn btn-secondary" onclick="openFolderBrowser('hiddenFullPath')">📁 Browse</button>
-            <button class="btn btn-primary" onclick="scanFiles()">🔍 Scan</button>
+            <button type="button" class="btn btn-secondary" onclick="openFolderBrowser('hiddenFullPath')">📁 Browse</button>
+            <button type="button" class="btn btn-primary" onclick="scanFiles()">🔍 Scan</button>
         </div>
         <input type="hidden" id="hiddenFullPath" value="{{ rom_path }}">
     </div>
@@ -148,8 +148,8 @@
     </div>
     <div class="card-body">
     <div class="btn-group">
-        <button class="btn btn-primary" id="verifyBtn" onclick="startVerification()" disabled>🔬 Start Verification</button>
-        <button class="btn btn-danger" id="cancelBtn" onclick="cancelVerification()" disabled>❌ Cancel</button>
+        <button type="button" class="btn btn-primary" id="verifyBtn" onclick="startVerification()" disabled>🔬 Start Verification</button>
+        <button type="button" class="btn btn-danger" id="cancelBtn" onclick="cancelVerification()" disabled>❌ Cancel</button>
     </div>
     
     <div class="progress-section" id="progressSection" style="display: none;">

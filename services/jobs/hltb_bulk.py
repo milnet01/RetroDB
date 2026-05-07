@@ -23,6 +23,7 @@ from services.jobs.base import (
     _get_conn, _commit_with_retry,
     persist_job_start, persist_job_progress, persist_job_complete,
     resolve_terminal_status,
+    acquire_job_singleton_lock, release_singleton_fd,
 )
 
 logger = logging.getLogger(__name__)
@@ -83,6 +84,7 @@ class HLTBBulkLookupJob:
     def __init__(self):
         self._lock = threading.Lock()
         self._thread = None
+        self._singleton_fd = None
         self.reset()
 
     def reset(self):
@@ -115,7 +117,14 @@ class HLTBBulkLookupJob:
         with self._lock:
             if self.running:
                 return {'success': False, 'error': 'HLTB bulk lookup already running'}
+            singleton_fd = acquire_job_singleton_lock('hltb_bulk')
+            if singleton_fd is None:
+                return {
+                    'success': False,
+                    'error': 'HLTB bulk lookup is already running on another worker process.',
+                }
             self.reset()
+            self._singleton_fd = singleton_fd
             self.job_id = f"hltb_bulk_{int(time.time())}"
             self.running = True
             self.only_missing = bool(only_missing)
@@ -188,6 +197,7 @@ class HLTBBulkLookupJob:
                 with self._lock:
                     self.completed = True
                     self.running = False
+                release_singleton_fd(self)
                 persist_job_complete(persist_id, status='completed')
                 return
 
@@ -203,15 +213,20 @@ class HLTBBulkLookupJob:
                         self.current_game = game['title']
                         self.current_system = game.get('system_name') or ''
 
+                    # Pass 41.6.B — snapshot under the lock, persist outside.
+                    # persist_job_progress is a SQLite write (10–50ms typical,
+                    # up to 30s under WAL contention) that previously blocked
+                    # every status-poll request taking the same lock.
                     if time.time() - last_persist >= 15:
                         _commit_with_retry(write_conn)
                         with self._lock:
-                            persist_job_progress(persist_id, {
+                            progress_payload = {
                                 'current': i + 1, 'total': len(games),
                                 'auto_applied': self.auto_applied_count,
                                 'queued': self.queued_count,
                                 'current_item': self.current_game,
-                            })
+                            }
+                        persist_job_progress(persist_id, progress_payload)
                         last_persist = time.time()
 
                     try:
@@ -318,6 +333,7 @@ class HLTBBulkLookupJob:
                     f"{self.queued_count} queued for review, "
                     f"{self.no_match_count} no match, {self.failed_count} failed"
                 )
+            release_singleton_fd(self)
 
             if persist_id:
                 persist_job_complete(persist_id, status=final_status)
@@ -328,5 +344,6 @@ class HLTBBulkLookupJob:
                 self.completed = True
                 self.running = False
                 self.error_message = str(e)
+            release_singleton_fd(self)
             if persist_id:
                 persist_job_complete(persist_id, status='failed', error=str(e))

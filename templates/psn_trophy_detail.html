@@ -20,7 +20,7 @@
 <div class="game-page-header">
     <h1 class="game-page-title">{{ psn_game.title }}</h1>
     <div class="header-buttons">
-        <button class="btn btn-secondary" onclick="refreshTrophies()" id="refreshBtn">
+        <button type="button" class="btn btn-secondary" onclick="refreshTrophies()" id="refreshBtn">
             <span class="btn-icon">🔄</span>
             Refresh
         </button>
@@ -153,7 +153,7 @@
                        value="{{ psn_game.title }}"
                        placeholder="Search game title...">
 
-                <button class="btn-hltb" id="hltbLookupBtn" onclick="lookupHLTB()">
+                <button type="button" class="btn-hltb" id="hltbLookupBtn" onclick="lookupHLTB()">
                     🔍 Lookup HLTB
                 </button>
 
@@ -175,8 +175,8 @@
                         </div>
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm); display: flex; gap: var(--spacing-xs);">
-                        <button class="btn btn-sm btn-primary" onclick="confirmHLTB()">✓ Save</button>
-                        <button class="btn btn-sm btn-secondary" onclick="cancelHLTB()">✕ Cancel</button>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="confirmHLTB()">✓ Save</button>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="cancelHLTB()">✕ Cancel</button>
                     </div>
                 </div>
 
@@ -208,7 +208,7 @@
                         </div>
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                        <button class="btn btn-sm btn-danger" onclick="clearHLTB()">✕ Clear</button>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="clearHLTB()">✕ Clear</button>
                     </div>
                 </div>
 
@@ -293,8 +293,8 @@
                         </div>
                     </a>
                     <div style="display: flex; gap: var(--spacing-xs); margin-top: var(--spacing-sm);">
-                        <button class="btn btn-sm btn-secondary" onclick="showLinkSearch()">Change</button>
-                        <button class="btn btn-sm btn-danger" onclick="unlinkGame()">Unlink</button>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="showLinkSearch()">Change</button>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="unlinkGame()">Unlink</button>
                     </div>
                 </div>
                 {% else %}
@@ -314,12 +314,12 @@
                                    placeholder="Search game title..."
                                    style="flex: 1;"
                                    onkeydown="if(event.key==='Enter') searchGamesForLink()">
-                            <button class="btn-hltb" onclick="searchGamesForLink()" style="width: auto; padding: 10px 16px;">Search</button>
+                            <button type="button" class="btn-hltb" onclick="searchGamesForLink()" style="width: auto; padding: 10px 16px;">Search</button>
                         </div>
                         <div id="gameLinkResults" style="margin-top: var(--spacing-sm); display: none; max-height: 300px; overflow-y: auto;">
                         </div>
                         {% if game %}
-                        <button class="btn btn-sm btn-secondary" style="margin-top: var(--spacing-sm);" onclick="cancelLinkSearch()">Cancel</button>
+                        <button type="button" class="btn btn-sm btn-secondary" style="margin-top: var(--spacing-sm);" onclick="cancelLinkSearch()">Cancel</button>
                         {% endif %}
                     </div>
                 </div>

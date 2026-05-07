@@ -47,12 +47,19 @@ def install_request_id_factory():
 
     logging.setLogRecordFactory(factory)
 
-# Base directory
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Base directory.  Pulled from config so the logs dir tracks the writable
+# user-data root in a PyInstaller frozen bundle (Pass 46.3 part 2) rather
+# than _internal/logs/ next to the bundled assets.
+import config as _config
+BASE_DIR = _config.BASE_DIR
 LOGS_DIR = os.path.join(BASE_DIR, 'logs')
 
-# Logger categories
-LOGGER_CATEGORIES = ['scraping', 'rom_tools', 'rom_reports', 'image_resize', 'system']
+# Logger categories. Pass 41.3.C — `'system'` was historically listed but had
+# no entry in CATEGORY_LOGGERS, so each daily sweep created an empty
+# `system_YYYY-MM-DD.log` that misled operators searching for system events.
+# Dropped; system-level logs flow through the root logger's StreamHandler
+# (with redactor) rather than a dedicated category file.
+LOGGER_CATEGORIES = ['scraping', 'rom_tools', 'rom_reports', 'image_resize']
 
 # Category to logger name mapping
 CATEGORY_LOGGERS = {
@@ -174,20 +181,29 @@ class CategoryFileHandler(logging.Handler):
     def emit(self, record):
         """Emit a log record"""
         self._setup_handler()  # Check for date rollover
-        
-        # Check if this level should be logged based on settings
+
+        # If data/settings.json is malformed (e.g. `logging` got overwritten
+        # with a non-dict via test pollution or hand-edit), fall back to
+        # "log everything" — a raising handler propagates AttributeError
+        # into the caller's `logger.info(...)` site, which previously took
+        # the ESRGAN init's outer `except Exception` and silently disabled
+        # upscaling with no diagnostic.
         log_settings = get_logging_settings()
+        if not isinstance(log_settings, dict):
+            log_settings = {}
         category_settings = log_settings.get(self.category, {})
-        
+        if not isinstance(category_settings, dict):
+            category_settings = {}
+
         level_map = {
             logging.INFO: 'info',
             logging.WARNING: 'warning',
             logging.ERROR: 'error',
             logging.CRITICAL: 'error',
         }
-        
+
         level_key = level_map.get(record.levelno, 'info')
-        
+
         # Only log if this level is enabled for this category
         if category_settings.get(level_key, True):
             self.file_handler.emit(record)

@@ -6,7 +6,6 @@
 
 from flask import Blueprint, render_template, redirect, url_for, jsonify, flash, g
 import logging
-from datetime import datetime, timezone
 
 from services.analytics import invalidate_analytics_cache
 from services.database import query, execute
@@ -80,6 +79,14 @@ def achievements_system(system_id):
     # Pass 31.2 — every JOIN on game_achievement_progress carries an ON-clause
     # filter on gap.user_id so each user sees their own earned counts. Without
     # the filter, the LEFT JOIN would aggregate across every user's rows.
+    # Pass 41.8 — `gap.user_id = ?` is a hard filter: rows with NULL user_id
+    # silently miss the join. Migration 009 (`009_achievement_tables_user_id.py`)
+    # back-fills every pre-migration row to the admin user_id and the column
+    # is `NOT NULL`, so the only way to land here with a NULL row is a manual
+    # SQL bypass. If a future operator hits an aggregation that looks "too
+    # empty" (e.g. someone restored a backup that pre-dates migration 009),
+    # check `SELECT COUNT(*) FROM game_achievement_progress WHERE user_id IS NULL`
+    # to confirm the cause.
     user_id = g.user['id']
     system = query("""
         SELECT s.id, s.name, s.folder, COUNT(g.id) as game_count,
@@ -325,7 +332,7 @@ def api_sync_system_achievements(system_id):
         system_log('info', f'RA Sync already running, queueing sync for {system["name"]}')
         return success(
             queued=True,
-            message=f'Sync queued. Will start after current sync completes.',
+            message='Sync queued. Will start after current sync completes.',
             sync_running=True,
             system_id=system_id,
             system_name=system['name'],

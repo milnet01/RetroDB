@@ -1655,21 +1655,32 @@ const HLTBManager = {
             <div class="hltb-results">
                 <div class="hltb-time-row">
                     <span class="hltb-label">Main Story</span>
-                    <span class="hltb-value">${data.main_story || '--'}</span>
+                    <span class="hltb-value">${data.main_story ? escapeHtml(String(data.main_story)) : '--'}</span>
                 </div>
                 <div class="hltb-time-row">
                     <span class="hltb-label">Main + Extras</span>
-                    <span class="hltb-value">${data.main_extra || '--'}</span>
+                    <span class="hltb-value">${data.main_extra ? escapeHtml(String(data.main_extra)) : '--'}</span>
                 </div>
                 <div class="hltb-time-row">
                     <span class="hltb-label">Completionist</span>
-                    <span class="hltb-value">${data.completionist || '--'}</span>
+                    <span class="hltb-value">${data.completionist ? escapeHtml(String(data.completionist)) : '--'}</span>
                 </div>
             </div>
             <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                <button class="btn btn-sm btn-danger" onclick="${ctx.clearFnName}()">✕ Clear</button>
+                <button class="btn btn-sm btn-danger" data-hltb-clear>✕ Clear</button>
             </div>
         `;
+        const clearBtn = savedDiv.querySelector('[data-hltb-clear]');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                const fn = window[ctx.clearFnName];
+                if (typeof fn === 'function') {
+                    fn();
+                } else {
+                    HLTBManager.clear(ctx);
+                }
+            });
+        }
     },
 
     /**

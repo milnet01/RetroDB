@@ -9,10 +9,10 @@
         <p class="page-subtitle">Review and approve bulk HowLongToBeat lookup matches that need a human glance.</p>
     </div>
     <div class="page-actions">
-        <button class="btn btn-success" id="approveAllBtn" onclick="hltbApproveAll()">
+        <button type="button" class="btn btn-success" id="approveAllBtn" onclick="hltbApproveAll()">
             <span class="btn-icon">&check;</span> Approve All
         </button>
-        <button class="btn btn-danger-outline" id="rejectAllBtn" onclick="hltbRejectAll()">
+        <button type="button" class="btn btn-danger-outline" id="rejectAllBtn" onclick="hltbRejectAll()">
             <span class="btn-icon">&times;</span> Reject All
         </button>
     </div>
@@ -23,9 +23,9 @@
 </div>
 
 <div class="hltb-review-filters">
-    <button class="filter-tab active" data-filter="all" onclick="hltbFilterReview('all', this)">All</button>
-    <button class="filter-tab" data-filter="alt_title" onclick="hltbFilterReview('alt_title', this)">Alt-title matches</button>
-    <button class="filter-tab" data-filter="low_confidence" onclick="hltbFilterReview('low_confidence', this)">Low confidence</button>
+    <button type="button" class="filter-tab active" data-filter="all" onclick="hltbFilterReview('all', this)">All</button>
+    <button type="button" class="filter-tab" data-filter="alt_title" onclick="hltbFilterReview('alt_title', this)">Alt-title matches</button>
+    <button type="button" class="filter-tab" data-filter="low_confidence" onclick="hltbFilterReview('low_confidence', this)">Low confidence</button>
 </div>
 
 <div class="hltb-review-list" id="hltbReviewList">
@@ -227,8 +227,8 @@ function hltbRenderPending() {
                     </div>
                 </div>
                 <div class="hltb-review-actions">
-                    <button class="btn btn-success btn-sm" onclick="hltbApprove(${item.id})">&check; Approve</button>
-                    <button class="btn btn-danger-outline btn-sm" onclick="hltbReject(${item.id})">&times; Reject</button>
+                    <button type="button" class="btn btn-success btn-sm" onclick="hltbApprove(${item.id})">&check; Approve</button>
+                    <button type="button" class="btn btn-danger-outline btn-sm" onclick="hltbReject(${item.id})">&times; Reject</button>
                 </div>
             </div>
         `;

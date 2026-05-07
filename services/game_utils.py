@@ -1192,7 +1192,7 @@ def reset_game_title_from_filename(game_id, conn=None):
     Returns:
         The new title, or None if failed
     """
-    from services.database import query, execute, get_db
+    from services.database import get_db
     
     close_conn = False
     if conn is None:
@@ -1324,9 +1324,16 @@ def generate_sort_title(title):
         padded = arabic.zfill(2)
 
         if roman in single_letter_romans:
-            # Skip if adjacent to a hyphen or word character (compound names)
-            # e.g. V-Rally, X-Men, I-Ninja — the letter is part of the name
-            pattern = r'(?<![-\w])' + roman + r'(?![-\w])'
+            # Pass 41.9.C — tightened heuristic. Previously the pattern was
+            # `(?<![-\w])X(?![-\w])`, which converts "I" inside any title
+            # where it stands as a separate word (e.g. "I am Setsuna" became
+            # "01 am Setsuna" — wrong; "I" there is the pronoun, not the
+            # numeral). The fix narrows the post-context to one of:
+            #   - end-of-title (`$`) — the conventional sequel position
+            #   - subtitle separator: `:` `(` `[` (with optional whitespace)
+            #   - whitespace + digit (e.g. "Mega Man X 2")
+            # The pre-context still rejects hyphen/word-char (X-Men, I-Ninja).
+            pattern = r'(?<![-\w])' + roman + r'(?=\s*$|\s*[:(\[]|\s+\d)'
         else:
             pattern = r'\b' + roman + r'\b'
 

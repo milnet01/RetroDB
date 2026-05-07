@@ -17,6 +17,13 @@ paths = [
   '''database/.*''',
   '''static/images/.*''',
   '''static/videos/.*''',
+  # Pass 39.8 — synthetic JWT fixture verifying the log redactor strips
+  # `eyJ...` tokens; intentional, recurs on every audit otherwise.
+  '''tests/test_log_redactor\.py$''',
+  # Pass 39.10 — Claude model literals embedded as <option value="..."> in
+  # the settings template trip generic-api-key (high-entropy attribute
+  # context); the regex allowlist below only matches the substring.
+  '''templates/settings\.html$''',
 ]
 
 [[allowlists]]

@@ -3,23 +3,42 @@
 RetroDB Distribution Builder
 Creates platform-specific distributable ZIP files for Patreon release.
 
+Two distribution shapes:
+
+  Source     — small ZIP, end user must install Python + run requirements.txt
+               (default; works on all 3 platforms from any host)
+  Standalone — self-contained PyInstaller bundle (Python runtime + deps + assets
+               baked in; user just unzips and runs the launcher). Built via
+               retrodb.spec; can ONLY produce the host platform's binary
+               (PyInstaller has no cross-compile).
+
 Outputs to: /mnt/Storage/Scripts/Linux/Staging_Area/RetroDB/
-Filenames:  RetroDB-vX.Y.Z-Linux.zip, RetroDB-vX.Y.Z-macOS.zip, RetroDB-vX.Y.Z-Windows.zip
+Filenames:  RetroDB-vX.Y.Z-Linux.zip            (source)
+            RetroDB-vX.Y.Z-Linux-Standalone.zip (standalone)
 
 Usage:
-    python build_dist.py            # Build all 3 platforms
-    python build_dist.py linux      # Build Linux only
-    python build_dist.py macos      # Build macOS only
-    python build_dist.py windows    # Build Windows only
+    python build_dist.py                          # All 3 source ZIPs
+    python build_dist.py linux                    # Linux source only
+    python build_dist.py --standalone             # Standalone for host platform
+    python build_dist.py --standalone linux       # Standalone Linux (host=Linux)
 """
 
 import os
+import platform
+import shutil
+import subprocess
 import sys
 import zipfile
 
 
 # ── Staging area (outside project dir) ──────────────────────────────────────
-STAGING_DIR = '/mnt/Storage/Scripts/Linux/Staging_Area/RetroDB'
+# RETRODB_STAGING_DIR overrides the hardcoded path — used by release.yml
+# to redirect output to /tmp/staging on CI runners that don't have the
+# host's /mnt/Storage/ tree. Default mirrors the maintainer's local layout.
+STAGING_DIR = os.environ.get(
+    'RETRODB_STAGING_DIR',
+    '/mnt/Storage/Scripts/Linux/Staging_Area/RetroDB',
+)
 
 # ── Platform definitions ────────────────────────────────────────────────────
 # Each platform excludes the start scripts for the other two platforms
@@ -39,7 +58,6 @@ EXCLUDE_FILES = {
     'data/xbox_tokens.json',
     'data/.secret_key',
     'data/retrodb.db',
-    'data/hltb_dataset.csv',
     'docs/psn-npsso.env',
     'RetroDB_Directory_Listing.txt',
     '.continueignore',
@@ -169,36 +187,130 @@ def build_platform(base_dir, version, platform_name, platform_cfg):
     return zip_path
 
 
+def _host_platform():
+    """Map platform.system() to one of {'Linux', 'macOS', 'Windows'}."""
+    sysname = platform.system()
+    if sysname == 'Darwin':
+        return 'macOS'
+    if sysname in ('Linux', 'Windows'):
+        return sysname
+    return None
+
+
+def build_standalone(base_dir, version, host_name):
+    """Run PyInstaller against retrodb.spec and zip dist/retrodb/ into a
+    Standalone bundle for the host platform.
+
+    PyInstaller cannot cross-compile — the produced zip is valid only for
+    the OS that built it. Linux→Linux, macOS→macOS, Windows→Windows.
+    """
+    spec_path = os.path.join(base_dir, 'retrodb.spec')
+    if not os.path.exists(spec_path):
+        print(f"ERROR: retrodb.spec not found at {spec_path}")
+        sys.exit(1)
+
+    print(f"\n  Building standalone {host_name} bundle via PyInstaller…")
+    print("  (this takes 3–6 min and uses ~5 GB temp during the build)")
+
+    # Wipe any prior PyInstaller output so we don't ship leftover files
+    # from an aborted earlier run.
+    for tmp_dir in ('build', 'dist'):
+        tmp_path = os.path.join(base_dir, tmp_dir)
+        if os.path.isdir(tmp_path):
+            shutil.rmtree(tmp_path)
+
+    # PyInstaller writes to ./build and ./dist; cwd must be project root.
+    result = subprocess.run(
+        ['pyinstaller', spec_path, '--noconfirm', '--log-level', 'WARN'],
+        cwd=base_dir,
+    )
+    if result.returncode != 0:
+        print(f"ERROR: PyInstaller exited {result.returncode}")
+        sys.exit(result.returncode)
+
+    bundle_dir = os.path.join(base_dir, 'dist', 'retrodb')
+    if not os.path.isdir(bundle_dir):
+        print(f"ERROR: PyInstaller produced no output at {bundle_dir}")
+        sys.exit(1)
+
+    zip_name = f"RetroDB-v{version}-{host_name}-Standalone.zip"
+    zip_path = os.path.join(STAGING_DIR, zip_name)
+    folder_name = f"RetroDB-v{version}-Standalone"
+    if os.path.exists(zip_path):
+        os.remove(zip_path)
+
+    print(f"  Packaging {zip_name}…")
+    file_count = 0
+    total_size = 0
+    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED, compresslevel=6) as zf:
+        # compresslevel=6 — bundle is already mostly compressed binaries
+        # (libMIOpen.so etc). Level 9 saves <1 % at 3× the CPU cost.
+        for root, _dirs, files in os.walk(bundle_dir):
+            for filename in files:
+                full_path = os.path.join(root, filename)
+                rel_path = os.path.relpath(full_path, bundle_dir)
+                arc_name = os.path.join(folder_name, rel_path)
+                zf.write(full_path, arc_name)
+                file_count += 1
+                total_size += os.path.getsize(full_path)
+
+    zip_size = os.path.getsize(zip_path)
+    ratio = (1 - zip_size / total_size) * 100 if total_size else 0
+    print(f"    Files: {file_count}  |  "
+          f"Size: {total_size / (1024*1024):.0f} MB → {zip_size / (1024*1024):.0f} MB  |  "
+          f"Compression: {ratio:.0f}%")
+    return zip_path
+
+
 def main():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     version = get_version(base_dir)
 
-    # Parse optional platform argument
+    # Parse args: optional --standalone flag + optional platform name
+    standalone = False
+    args = list(sys.argv[1:])
+    if '--standalone' in args:
+        standalone = True
+        args.remove('--standalone')
+
     requested = None
-    if len(sys.argv) > 1:
-        arg = sys.argv[1].lower()
+    if args:
+        arg = args[0].lower()
         platform_map = {'linux': 'Linux', 'macos': 'macOS', 'windows': 'Windows'}
         if arg in platform_map:
             requested = platform_map[arg]
         else:
-            print(f"Unknown platform: {sys.argv[1]}")
-            print("Usage: python build_dist.py [linux|macos|windows]")
+            print(f"Unknown platform: {args[0]}")
+            print("Usage: python build_dist.py [--standalone] [linux|macos|windows]")
             sys.exit(1)
 
     # Ensure staging directory exists
     os.makedirs(STAGING_DIR, exist_ok=True)
 
+    mode = 'Standalone (PyInstaller bundle)' if standalone else 'Source (Python required)'
     print(f"\n{'='*60}")
     print(f"  RetroDB v{version} — Distribution Builder")
+    print(f"  Mode:   {mode}")
     print(f"  Output: {STAGING_DIR}")
     print(f"{'='*60}")
 
-    platforms_to_build = {requested: PLATFORMS[requested]} if requested else PLATFORMS
-    built = []
-
-    for name, cfg in platforms_to_build.items():
-        path = build_platform(base_dir, version, name, cfg)
-        built.append(path)
+    if standalone:
+        host = _host_platform()
+        if host is None:
+            print(f"ERROR: unrecognised host OS '{platform.system()}' for --standalone")
+            sys.exit(1)
+        if requested and requested != host:
+            print(f"ERROR: PyInstaller cannot cross-compile. Host is '{host}', "
+                  f"but you asked for '{requested}'. Run on a {requested} host instead.")
+            sys.exit(1)
+        path = build_standalone(base_dir, version, host)
+        built = [path]
+    else:
+        platforms_to_build = {requested: PLATFORMS[requested]} if requested else PLATFORMS
+        built = []
+        for name, cfg in platforms_to_build.items():
+            path = build_platform(base_dir, version, name, cfg)
+            built.append(path)
 
     print(f"\n{'='*60}")
     print(f"  Done! {len(built)} ZIP(s) created:")

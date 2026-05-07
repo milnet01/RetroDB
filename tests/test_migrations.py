@@ -11,7 +11,6 @@ Verifies the PRAGMA user_version-driven migration runner:
 
 import os
 import sqlite3
-import sys
 import tempfile
 
 import pytest

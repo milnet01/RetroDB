@@ -61,6 +61,15 @@ def job():
         with j._lock:
             j.running = False
             j.completed = True
+        # Pass 41.6.A — release the singleton FD if start() acquired one
+        # in this test. The patched `_run_scrape` is a no-op, so
+        # `_start_next_queued`'s normal release path never fires; without
+        # this teardown the file lock survives the test and the next
+        # test's start() returns "already running on another worker".
+        from services.jobs.base import release_job_singleton_lock
+        if getattr(j, '_singleton_fd', None) is not None:
+            release_job_singleton_lock(j._singleton_fd)
+            j._singleton_fd = None
 
 
 class TestInitialState:

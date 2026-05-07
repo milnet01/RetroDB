@@ -13,6 +13,10 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from scraper.base_scraper import http_get, safe_json, rate_limit
+import config as _config
+
+# Pass 45.14 — cap RAWG JSON response, mirroring RA + AI + ScreenScraper.
+_RAWG_MAX_BYTES = getattr(_config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
 
 logger = logging.getLogger(__name__)
 
@@ -121,7 +125,7 @@ def _make_request(endpoint, params=None, max_retries=2):
 
     url = f"{BASE_URL}/{endpoint}"
 
-    response = http_get(url, params=params, timeout=20, retries=max_retries)
+    response = http_get(url, params=params, timeout=20, retries=max_retries, max_bytes=_RAWG_MAX_BYTES)
 
     if response is None:
         logger.warning(f"RAWG request failed (no response): {url}")
@@ -242,12 +246,6 @@ def get_game_details(game_id):
     genres = []
     if game.get('genres'):
         genres = [g.get('name') for g in game['genres'] if g.get('name')]
-    
-    # Extract tags (can be useful for additional categorization)
-    tags = []
-    if game.get('tags'):
-        # Only get English tags
-        tags = [t.get('name') for t in game['tags'][:10] if t.get('name') and t.get('language') == 'eng']
     
     # Extract ESRB rating
     esrb_rating = None
@@ -376,7 +374,7 @@ if __name__ == "__main__":
         print("✅ API is working")
         
         results = search_games("Super Mario World", "snes")
-        print(f"\nSearch results for 'Super Mario World':")
+        print("\nSearch results for 'Super Mario World':")
         for r in results[:3]:
             print(f"  - {r['name']} ({r['release_date']}) [ID: {r['id']}] ESRB: {r.get('esrb_rating')}")
         

@@ -17,13 +17,9 @@
 
 import logging
 
+from services.migrations._helpers import _add_column_if_missing
+
 logger = logging.getLogger(__name__)
-
-
-def _add_column_if_missing(cursor, table, column, definition):
-    cols = {row[1] for row in cursor.execute(f"PRAGMA table_info({table})")}
-    if column not in cols:
-        cursor.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
 
 
 def apply(conn):

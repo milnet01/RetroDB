@@ -95,11 +95,11 @@
                   style="font-size: 0.85rem; color: var(--text-muted);">
                 {% if system.last_synced %}Loading...{% else %}Never synced{% endif %}
             </span>
-            <button onclick="refreshSystemProgress()" class="btn btn-primary btn-sm" id="refreshBtn">
+            <button type="button" onclick="refreshSystemProgress()" class="btn btn-primary btn-sm" id="refreshBtn">
                 <span class="btn-icon">🔄</span>
                 <span class="btn-text">Sync Progress</span>
             </button>
-            <button onclick="clearSystemRAData()" class="btn btn-danger btn-sm" id="clearRABtn" title="Remove this system from Achievements">
+            <button type="button" onclick="clearSystemRAData()" class="btn btn-danger btn-sm" id="clearRABtn" title="Remove this system from Achievements">
                 <span class="btn-icon">🗑️</span>
                 <span class="btn-text">Clear RA Data</span>
             </button>

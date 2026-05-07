@@ -4,6 +4,24 @@
 # Regression pins for the 16 CRITICAL/HIGH findings from the 2026-04-24
 # multi-agent independent review.  Each sub-item gets a narrow unit check
 # that fails if the fix is reverted.
+#
+# Pass 45.21 audit (2026-04-27): tests in this file fall into three buckets:
+#   - functional (test_client / monkeypatch + call): the strongest shape;
+#     verifies behavior end-to-end.
+#   - codebase invariant (`open(path).read()` + assert): kept on purpose
+#     where the contract IS a source-pattern rule that spans files or has
+#     no clean runtime equivalent. Examples below:
+#       * `no time.sleep in services/jobs/*.py`  (cross-file invariant)
+#       * `no inline onclick=... with template interpolation`  (JS pattern;
+#         functional alternative needs browser automation)
+#       * `with self._lock:` count >= 2 in worker loop  (concurrency rule)
+#       * atomic-write `.part` + os.replace shape  (crash-injection needed
+#         for functional coverage)
+#       * SQL JOIN-on-user_id filters in route bodies  (multi-user fixture
+#         needed for functional coverage)
+#       * doc/marker content pins for hard-to-test invariants
+#   - removed (Pass 45.21): tests that pinned implementation shape with no
+#     contract value, or duplicated coverage already in other files.
 # =============================================================================
 
 import os
@@ -203,15 +221,6 @@ class TestPass40_1RouteIntegration:
                "g.user['role'] != 'admin'" in body, \
             'api_rom_tools_settings POST must gate on admin role (Pass 40.1)'
         assert '403' in body, 'POST must return 403 for non-admin (Pass 40.1)'
-
-    def test_post_handler_validates_input(self):
-        """Source-level pin: the POST branch must call validate_rom_tools_value
-        before persisting."""
-        from routes import tools as tools_mod
-
-        src = open(tools_mod.__file__).read()
-        assert 'validate_rom_tools_value' in src, \
-            'api_rom_tools_settings must validate input (Pass 40.1)'
 
     def test_post_rejects_attacker_chdman_path(self, tmp_path, monkeypatch):
         """End-to-end: POST {chdman_path: /usr/bin/python3} → 4xx, file unchanged."""
@@ -439,33 +448,6 @@ class TestPass40_3ArchiveScannerM3u:
         assert 'safe_path(' in body, \
             'batch_create_m3u must validate each path (Pass 40.3)'
 
-    def test_staging_folder_not_user_supplied(self):
-        """The handlers must not pass an attacker-supplied staging_folder
-        through to the scanner.  Either the kwarg is absent (server default
-        wins) or it's checked against an allowlist."""
-        from routes import tools as tools_mod
-
-        src = open(tools_mod.__file__).read()
-        idx = src.index('def api_archive_scanner_create_m3u')
-        end = src.index('# ====', idx)
-        body = src[idx:end]
-        # Reject the bare-passthrough pattern.  Acceptable shapes:
-        #   - no staging_folder=... in the call
-        #   - staging_folder=<a validated local var, not the raw request value>
-        # We pin: the literal `data.get('staging_folder')` must not be passed
-        # straight to the scanner.
-        bad_pattern = "staging_folder=data.get('staging_folder')"
-        assert bad_pattern not in body.replace(' ', '').replace('\n', ''), \
-            'staging_folder must not be raw-passed from request (Pass 40.3)'
-        bad_pattern2 = "staging_folder=staging_folder"
-        # If the var name `staging_folder` is reused, ensure it was assigned
-        # something other than `data.get('staging_folder')` directly above.
-        if bad_pattern2 in body.replace(' ', '').replace('\n', ''):
-            # The variable assignment must not be a raw request read.
-            assert "staging_folder = data.get('staging_folder')" not in body and \
-                   'staging_folder=data.get(' not in body.replace(' ', ''), \
-                'staging_folder still raw-read from request (Pass 40.3)'
-
     def test_create_m3u_e2e_rejects_outside_rom_path(self, tmp_path, monkeypatch):
         """End-to-end: POST to /create-m3u with a path outside rom_path
         must not call scanner.create_m3u_playlist."""
@@ -567,29 +549,6 @@ class TestPass40_5CardDataEtagPerUser:
         assert "g.user['id']" in line or "user_id" in line, \
             'card-data ETag payload must include user identity (Pass 40.5)'
 
-    def test_two_users_get_different_etags(self, monkeypatch):
-        """End-to-end: same card-data request bound to two different users
-        must produce different ETags."""
-        import app as app_module
-
-        # We can't easily seed two real users in CI, but we can stub g.user
-        # by attaching a before_request hook.  Simpler: check that the
-        # source-level fix is wired — the e2e shape changes too much to
-        # mock cleanly without a per-user fixture.  The source pin above is
-        # the load-bearing assertion; this test is a sanity check.
-        from routes import games as games_mod
-
-        src = open(games_mod.__file__).read()
-        idx = src.index('etag_payload = f"cd:')
-        # Reject the pre-fix shape that omitted user identity.
-        bad_pattern = 'etag_payload = f"cd:{\',\'.join(str(i) for i in sorted_ids)}:{max_updated}"'
-        # Allow only when followed by something user-bearing.
-        line = src[idx:idx + 200]
-        # The fixed version must reference user id within the payload string.
-        assert "{g.user['id']}" in line or '{user_id}' in line or \
-               ":{g.user[" in line, \
-            'card-data ETag must bake user identity into the payload (Pass 40.5)'
-
 
 # -----------------------------------------------------------------------------
 # 40.6 — players fill-only invariant + JSON-edit type corruption
@@ -639,61 +598,71 @@ class TestPass40_6PlayersNormalization:
         assert normalize_players_value(False) is None
 
 
-class TestPass40_6IgdbTgdbPlayersDefault:
-    """IGDB/TGDB adapters must initialise players = None and only set when
-    the source explicitly provided a value, so COALESCE preserves curated
-    values when the API is silent."""
-
-    def test_igdb_initializes_players_none(self):
-        from scraper import scrape_igdb as mod
-
-        src = open(mod.__file__).read()
-        # Find the apply_igdb_metadata function (or where players is set).
-        idx = src.index('# Players')
-        block = src[idx:idx + 600]
-        # The fix flips the default from `players = 1` to `players = None`.
-        assert 'players = 1' not in block, \
-            "IGDB players must default to None (Pass 40.6)"
-        assert 'players = None' in block, \
-            "IGDB players must initialise to None (Pass 40.6)"
-
-    def test_tgdb_initializes_players_none(self):
-        from scraper import scrape_thegamesdb as mod
-
-        src = open(mod.__file__).read()
-        idx = src.index('# Players')
-        block = src[idx:idx + 600]
-        assert 'players = 1\n' not in block.replace(' ', ''), \
-            "TGDB players must default to None (Pass 40.6)"
-        assert 'players = None' in block, \
-            "TGDB players must initialise to None (Pass 40.6)"
+# Note: IGDB/TGDB `players = None` initialisation is functionally covered
+# by `tests/test_scrape_fill_only.py::test_{igdb,tgdb}_apply_preserves_
+# existing_values_when_response_is_empty` — those tests seed a DB row with
+# players=1, run apply_*_metadata with an empty response, and assert the
+# curated value survives the COALESCE. Stronger than asserting the literal
+# `players = None` appears in the source.
 
 
 class TestPass40_6RouteNormalization:
     """api_game_edit + edit_metadata must run players through
-    normalize_players_value before binding to the INTEGER column."""
+    normalize_players_value before binding to the INTEGER column.
+    Pass 42.1 routed both edit paths through normalize_game_edit, which
+    internally calls normalize_players_value — the invariant moved one
+    layer up but is still pinned by these tests."""
 
-    def test_api_game_edit_normalizes_players(self):
+    def test_api_game_edit_normalizes_via_helper(self):
         from routes import games as games_mod
 
         src = open(games_mod.__file__).read()
         idx = src.index('def api_game_edit')
         end = src.index('@bp.route(\'/api/games/bulk-edit\'', idx)
         body = src[idx:end]
-        assert 'normalize_players_value' in body, \
-            'api_game_edit must call normalize_players_value (Pass 40.6)'
+        assert 'normalize_game_edit' in body, \
+            'api_game_edit must route through normalize_game_edit (Pass 42.1)'
 
-    def test_edit_metadata_normalizes_players(self):
+    def test_edit_metadata_normalizes_via_helper(self):
         from routes import games as games_mod
 
         src = open(games_mod.__file__).read()
-        # edit_metadata is the form-POST handler ahead of api_game_edit.
-        idx = src.index("edit_players")
-        # Within the surrounding ~600 chars, the players read must be wrapped
-        # in normalize_players_value(...).
-        window = src[max(0, idx - 200):idx + 400]
-        assert 'normalize_players_value' in window, \
-            'edit_metadata must call normalize_players_value (Pass 40.6)'
+        idx = src.index("action == 'edit_metadata'")
+        # Within the surrounding ~3000 chars, the helper call must appear.
+        window = src[idx:idx + 3000]
+        assert 'normalize_game_edit' in window, \
+            'edit_metadata must route through normalize_game_edit (Pass 42.1)'
+
+    def test_helper_calls_normalize_players_value(self):
+        """Pass 40.6 invariant — normalize_game_edit must apply the
+        players coercion that originally lived inline in both routes."""
+        from services import game_metadata_service as svc
+
+        src = open(svc.__file__).read()
+        idx = src.index('def normalize_game_edit')
+        end = src.index('\ndef ', idx + 1)
+        body = src[idx:end]
+        assert 'normalize_players_value' in body, \
+            'normalize_game_edit must call normalize_players_value (Pass 40.6)'
+
+    def test_helper_normalizes_string_range_to_int(self):
+        """Functional check that the helper actually coerces "1-4" → 4
+        (the Pass 40.6 contract)."""
+        from services.game_metadata_service import normalize_game_edit
+
+        out = normalize_game_edit({'players': '1-4'})
+        assert out['players'] == 4, (
+            'normalize_game_edit must coerce range "1-4" to max int=4 '
+            '(Pass 40.6 INTEGER column invariant)'
+        )
+
+        out = normalize_game_edit({'players': ''})
+        assert out['players'] is None, \
+            'normalize_game_edit must coerce empty string to None'
+
+        out = normalize_game_edit({'players': 'unknown'})
+        assert out['players'] is None, \
+            'normalize_game_edit must coerce non-numeric junk to None'
 
 
 # -----------------------------------------------------------------------------
@@ -769,37 +738,51 @@ class TestPass40_9ImageResizeJobBaseConvention:
         assert hasattr(mod, 'persist_job_complete')
         assert hasattr(mod, 'resolve_terminal_status')
 
-    def test_worker_calls_persist_job_start(self):
+    def test_worker_invokes_full_persist_lifecycle(self, tmp_path, monkeypatch):
+        """Functional: running the worker against an empty image set (no
+        files in IMAGE_PATH) must invoke persist_job_start AND, in the
+        finally block, persist_job_complete + resolve_terminal_status.
+        Consolidates 4 prior source-grep tests (one per persist call) into
+        one behavior pin."""
+        import time
+        import config
         from services.jobs import image_resize as mod
-        src = open(mod.__file__).read()
-        idx = src.index('def _worker')
-        body = src[idx:]
-        assert 'persist_job_start(' in body, \
-            '_worker must call persist_job_start (Pass 40.9)'
 
-    def test_worker_calls_persist_job_progress(self):
-        from services.jobs import image_resize as mod
-        src = open(mod.__file__).read()
-        idx = src.index('def _worker')
-        body = src[idx:]
-        assert 'persist_job_progress(' in body, \
-            '_worker must call persist_job_progress (Pass 40.9)'
+        # Point IMAGE_PATH at an empty tmpdir so the worker's file-walk
+        # finds nothing and exits early (but the finally block still runs).
+        monkeypatch.setattr(config, 'IMAGE_PATH', str(tmp_path))
 
-    def test_worker_calls_persist_job_complete(self):
-        from services.jobs import image_resize as mod
-        src = open(mod.__file__).read()
-        idx = src.index('def _worker')
-        body = src[idx:]
-        assert 'persist_job_complete(' in body, \
-            '_worker must call persist_job_complete (Pass 40.9)'
+        called = {'start': 0, 'progress': 0, 'complete': 0, 'resolve': 0}
 
-    def test_worker_uses_resolve_terminal_status(self):
-        from services.jobs import image_resize as mod
-        src = open(mod.__file__).read()
-        idx = src.index('def _worker')
-        body = src[idx:]
-        assert 'resolve_terminal_status(' in body, \
-            '_worker must call resolve_terminal_status (Pass 40.9)'
+        def _record(name, retval=None):
+            def _fn(*a, **kw):
+                called[name] += 1
+                return retval
+            return _fn
+
+        monkeypatch.setattr(mod, 'persist_job_start', _record('start', 'fake-id-99'))
+        monkeypatch.setattr(mod, 'persist_job_progress', _record('progress'))
+        monkeypatch.setattr(mod, 'persist_job_complete', _record('complete'))
+        monkeypatch.setattr(mod, 'resolve_terminal_status', _record('resolve', 'completed'))
+
+        job = mod.ImageResizeJob()
+        job.start(image_types=['boxart'])
+        for _ in range(40):
+            if not job.get_status().get('running', True):
+                break
+            time.sleep(0.05)
+        assert called['start'] >= 1, (
+            f"persist_job_start must fire on worker entry (Pass 40.9); "
+            f"counts: {called!r}"
+        )
+        assert called['complete'] >= 1, (
+            f"persist_job_complete must fire in finally (Pass 40.9); "
+            f"counts: {called!r}"
+        )
+        assert called['resolve'] >= 1, (
+            f"resolve_terminal_status must fire in finally (Pass 40.9); "
+            f"counts: {called!r}"
+        )
 
     def test_get_status_takes_lock(self):
         from services.jobs import image_resize as mod
@@ -851,7 +834,7 @@ class TestPass40_10ShutdownAwareSleep:
                 if 'time.sleep(' in line:
                     offenders.append(f'{name}.py:{i}: {stripped}')
         assert not offenders, \
-            f'Pass 40.10: replace with shutdown_requested.wait()\n' + \
+            'Pass 40.10: replace with shutdown_requested.wait()\n' + \
             '\n'.join(offenders)
 
     def test_each_job_imports_shutdown_event(self):
@@ -869,49 +852,58 @@ class TestPass40_11ChdAtomicConversion:
     """chdman output must be written to a tempfile, optionally verified,
     and only os.replace'd to the final path on success.  Otherwise a
     mid-run kill leaves a truncated .chd that chd_skip_existing treats
-    as good on the next pass."""
+    as good on the next pass.
 
-    def test_rom_tools_converter_uses_tempfile(self):
+    Pass 42.5 — the per-file atomic-write contract moved into the shared
+    ``scraper.rom_tools.convert_one_to_chd`` helper; both call sites
+    (``CHDConverter._convert_file`` and ``api_chd_converter_convert``)
+    delegate to it. The pins below assert (a) the helper itself carries
+    the contract and (b) both call sites delegate, instead of grepping
+    `_convert_file` / `api_chd_converter_convert` for the literal
+    `.chd.part` string."""
+
+    def _convert_one_to_chd_body(self):
         from scraper import rom_tools as mod
         src = open(mod.__file__).read()
-        idx = src.index('def _convert_file')
-        end = src.index('def _timestamp', idx)
-        body = src[idx:end]
+        idx = src.index('def convert_one_to_chd')
+        end = src.index('\ndef ', idx + 1)
+        return src[idx:end]
+
+    def test_helper_uses_tempfile(self):
+        body = self._convert_one_to_chd_body()
         assert '.chd.part' in body, \
-            'CHDConverter._convert_file must write to .chd.part tempfile (Pass 40.11)'
+            'convert_one_to_chd must write to .chd.part tempfile (Pass 40.11)'
         assert 'os.replace(' in body, \
-            'CHDConverter._convert_file must os.replace tmp → dst (Pass 40.11)'
+            'convert_one_to_chd must os.replace tmp → dst (Pass 40.11)'
 
-    def test_rom_tools_converter_runs_verify(self):
+    def test_helper_runs_verify(self):
+        body = self._convert_one_to_chd_body()
+        assert 'do_verify' in body, \
+            'convert_one_to_chd must accept a do_verify flag (Pass 40.11)'
+        assert "'verify'" in body or '"verify"' in body, \
+            'convert_one_to_chd must call chdman verify when configured (Pass 40.11)'
+
+    def test_rom_tools_converter_delegates(self):
         from scraper import rom_tools as mod
         src = open(mod.__file__).read()
         idx = src.index('def _convert_file')
         end = src.index('def _timestamp', idx)
         body = src[idx:end]
+        assert 'convert_one_to_chd(' in body, \
+            'CHDConverter._convert_file must delegate to convert_one_to_chd (Pass 42.5)'
         assert 'chd_verify_after_convert' in body, \
-            'CHDConverter must read chd_verify_after_convert (Pass 40.11)'
-        assert "'verify'" in body or '"verify"' in body, \
-            'CHDConverter must call chdman verify when configured (Pass 40.11)'
+            'CHDConverter must read chd_verify_after_convert (Pass 40.11 / 42.5)'
 
-    def test_routes_inline_worker_uses_tempfile(self):
+    def test_routes_inline_worker_delegates(self):
         from routes import tools as mod
         src = open(mod.__file__).read()
         idx = src.index('def api_chd_converter_convert')
         end = src.index('def api_chd_verify_scan', idx)
         body = src[idx:end]
-        assert '.part' in body, \
-            'inline CHD converter must write to .chd.part (Pass 40.11)'
-        assert 'os.replace(' in body, \
-            'inline CHD converter must os.replace tmp → dst (Pass 40.11)'
-
-    def test_routes_inline_worker_runs_verify(self):
-        from routes import tools as mod
-        src = open(mod.__file__).read()
-        idx = src.index('def api_chd_converter_convert')
-        end = src.index('def api_chd_verify_scan', idx)
-        body = src[idx:end]
+        assert 'convert_one_to_chd(' in body, \
+            'api_chd_converter_convert must delegate to convert_one_to_chd (Pass 42.5)'
         assert 'chd_verify_after_convert' in body, \
-            'inline CHD converter must honor chd_verify_after_convert (Pass 40.11)'
+            'inline CHD converter must honor chd_verify_after_convert (Pass 40.11 / 42.5)'
 
 
 # -----------------------------------------------------------------------------
@@ -919,18 +911,12 @@ class TestPass40_11ChdAtomicConversion:
 # -----------------------------------------------------------------------------
 class TestPass40_12ToastControllerXss:
     """job.system_name was interpolated into toast.innerHTML without
-    escape; the inline onclick="...cancelQueued('${type}', '${job.job_id}')"
-    used a JS-string-in-HTML-attribute double-decode context."""
+    escape; the inline onclick was migrated to addEventListener.
 
-    def test_no_inline_onclick_with_template_interpolation(self):
-        import os
-        repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        path = os.path.join(repo, 'static', 'js', 'toast-controller.js')
-        src = open(path).read()
-        # Find the cancelQueued path and assert no onclick="..." with
-        # ${...} interpolation remains.
-        assert "onclick=\"event.stopPropagation(); UnifiedToastController.cancelQueued" not in src, \
-            'inline onclick with cancelQueued must use addEventListener (Pass 40.12)'
+    The "no inline onclick" half of this contract is now subsumed by
+    Pass 45.4's `test_toast_controller_has_no_inline_onclicks` (asserts the
+    strictly stronger property: NO inline onclick anywhere in the file).
+    Only the system_name escape pin lives here — no other test covers it."""
 
     def test_system_name_escaped(self):
         import os
@@ -1047,8 +1033,12 @@ class TestPass40_15DownloadImageAtomic:
 
         # Bypass the SSRF gate + redirect-walk for the test (these are
         # imported lazily inside the function — patch on the source module).
+        # Pass 45.2: validate_and_pin_url calls validate_outbound_url(...,
+        # require_https=...) and consumes the third tuple element (resolved
+        # IPs) to pin against rebinding, so the stub must accept kwargs and
+        # return at least one IP.
         monkeypatch.setattr(ssrf_mod, 'validate_outbound_url',
-                            lambda url: (True, url, None))
+                            lambda url, **kw: (True, url, ['203.0.113.1']))
         monkeypatch.setattr(ssrf_mod, 'validate_redirect_chain',
                             lambda *a, **kw: ('http://example.test/img.png', None))
 

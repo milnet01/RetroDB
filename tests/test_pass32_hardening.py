@@ -124,7 +124,6 @@ def test_32_6_ssrf_validate_rejects_non_http_scheme():
 
 def test_32_7_pin_host_ip_is_thread_local():
     """Entering pin_host_ip on one thread must not affect others."""
-    import socket
     import threading
 
     from services.ssrf import pin_host_ip
@@ -157,7 +156,6 @@ def test_32_8_clz_pdf_constants_exist():
 
 
 def test_32_11_resolve_media_path_rejects_traversal():
-    import config
     from services.game_media_service import resolve_media_path
 
     # A DB value with enough traversal to actually escape STATIC_PATH must

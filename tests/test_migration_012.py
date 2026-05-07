@@ -6,9 +6,9 @@ import sqlite3
 _REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 
-def _load_migration_010():
-    p = _REPO_ROOT / 'services' / 'migrations' / 'scripts' / '010_emulators.py'
-    spec = importlib.util.spec_from_file_location('migration_010', p)
+def _load_migration_012():
+    p = _REPO_ROOT / 'services' / 'migrations' / 'scripts' / '012_emulators.py'
+    spec = importlib.util.spec_from_file_location('migration_012', p)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
@@ -23,11 +23,11 @@ def _seed_baseline_systems(conn):
     conn.commit()
 
 
-def test_migration_010_creates_tables_and_columns():
-    migration_010 = _load_migration_010()
+def test_migration_012_creates_tables_and_columns():
+    migration_012 = _load_migration_012()
     conn = sqlite3.connect(':memory:')
     _seed_baseline_systems(conn)
-    migration_010.apply(conn)
+    migration_012.apply(conn)
 
     c = conn.cursor()
     tables = {r[0] for r in c.execute("SELECT name FROM sqlite_master WHERE type='table'")}
@@ -48,22 +48,22 @@ def test_migration_010_creates_tables_and_columns():
     assert expected_se <= cols_se
 
 
-def test_migration_010_is_idempotent():
-    migration_010 = _load_migration_010()
+def test_migration_012_is_idempotent():
+    migration_012 = _load_migration_012()
     conn = sqlite3.connect(':memory:')
     _seed_baseline_systems(conn)
-    migration_010.apply(conn)
-    migration_010.apply(conn)
+    migration_012.apply(conn)
+    migration_012.apply(conn)
 
     c = conn.cursor()
     assert c.execute("SELECT COUNT(*) FROM emulators").fetchone()[0] == 0
 
 
-def test_migration_010_indexes_present():
-    migration_010 = _load_migration_010()
+def test_migration_012_indexes_present():
+    migration_012 = _load_migration_012()
     conn = sqlite3.connect(':memory:')
     _seed_baseline_systems(conn)
-    migration_010.apply(conn)
+    migration_012.apply(conn)
 
     c = conn.cursor()
     indexes = {r[0] for r in c.execute("SELECT name FROM sqlite_master WHERE type='index'")}
@@ -71,8 +71,8 @@ def test_migration_010_indexes_present():
     assert 'idx_system_emulators_default' in indexes
 
 
-def test_migration_010_listed_in_loader():
-    """The MIGRATIONS list must include '010_emulators' so apply_pending() picks it up."""
+def test_migration_012_listed_in_loader():
+    """The MIGRATIONS list must include '012_emulators' so apply_pending() picks it up."""
     from services.migrations import MIGRATIONS
-    assert '010_emulators' in MIGRATIONS
-    assert MIGRATIONS.index('010_emulators') == 9  # 0-indexed; 10th entry
+    assert '012_emulators' in MIGRATIONS
+    assert MIGRATIONS.index('012_emulators') == 11  # 0-indexed; 12th entry

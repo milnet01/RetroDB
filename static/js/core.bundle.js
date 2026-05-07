@@ -235,18 +235,33 @@ const Storage = {
     }
 };
 
+const _API_DEFAULT_TIMEOUT_MS = 30000;
+
+function _withTimeout(opts) {
+    if (opts && opts.signal) {
+        return { opts, cleanup: null };  // caller controls cancellation
+    }
+    const ac = new AbortController();
+    const t = setTimeout(() => ac.abort(), _API_DEFAULT_TIMEOUT_MS);
+    return {
+        opts: Object.assign({}, opts, { signal: ac.signal }),
+        cleanup: () => clearTimeout(t),
+    };
+}
+
 const API = {
     /**
      * Make a GET request
      * @param {string} url - API endpoint
-     * @param {Object} options - Fetch options
+     * @param {Object} options - Fetch options (pass `signal` to opt out of default 30s timeout)
      * @returns {Promise<Object>} - Response data
      */
     async get(url, options = {}) {
+        const { opts, cleanup } = _withTimeout(options);
         try {
             const response = await fetch(url, {
                 method: 'GET',
-                ...options
+                ...opts
             });
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
@@ -255,6 +270,8 @@ const API = {
         } catch (error) {
             console.error('API GET error:', error);
             throw error;
+        } finally {
+            if (cleanup) cleanup();
         }
     },
 
@@ -262,19 +279,20 @@ const API = {
      * Make a POST request
      * @param {string} url - API endpoint
      * @param {Object} data - Request body
-     * @param {Object} options - Fetch options
+     * @param {Object} options - Fetch options (pass `signal` to opt out of default 30s timeout)
      * @returns {Promise<Object>} - Response data
      */
     async post(url, data = {}, options = {}) {
+        const { opts, cleanup } = _withTimeout(options);
         try {
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    ...options.headers
+                    ...opts.headers
                 },
                 body: JSON.stringify(data),
-                ...options
+                ...opts
             });
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
@@ -283,6 +301,8 @@ const API = {
         } catch (error) {
             console.error('API POST error:', error);
             throw error;
+        } finally {
+            if (cleanup) cleanup();
         }
     },
 
@@ -293,10 +313,12 @@ const API = {
      * @returns {Promise<Object>} - Response data
      */
     async postForm(url, formData) {
+        const { opts, cleanup } = _withTimeout({});
         try {
             const response = await fetch(url, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                signal: opts.signal,
             });
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
@@ -305,6 +327,8 @@ const API = {
         } catch (error) {
             console.error('API POST form error:', error);
             throw error;
+        } finally {
+            if (cleanup) cleanup();
         }
     }
 };
@@ -896,6 +920,57 @@ const ModalFocusTrap = {
     deactivateAll() {
         while (this._stack.length > 0) this.deactivate();
     },
+
+    /**
+     * Pass 45.17 — auto-attach the focus trap to a modal whose `.active`
+     * class toggles open/closed. Useful for modals where the open/close
+     * functions are not in our control (or where threading the trap
+     * through every call site would be more error-prone than the
+     * MutationObserver). Idempotent: a second autoAttach() on the same
+     * element is a no-op.
+     *
+     * @param {HTMLElement} modalEl - the modal root (the element that
+     *     toggles `.active`).
+     * @param {Object} [opts]
+     * @param {Function} [opts.onEscape] - escape handler.
+     * @param {string}   [opts.contentSelector] - CSS selector for the
+     *     focus-trap target inside modalEl (defaults to `.modal-content`
+     *     or `.custom-modal-content`, falling back to modalEl itself).
+     */
+    autoAttach(modalEl, opts = {}) {
+        if (!modalEl || modalEl._focusTrapObserver) return;
+        const onEscape = opts.onEscape || null;
+        const contentSelector = opts.contentSelector || null;
+
+        const _resolveTarget = () => {
+            if (contentSelector) {
+                return modalEl.querySelector(contentSelector) || modalEl;
+            }
+            return (modalEl.querySelector('.modal-content') ||
+                    modalEl.querySelector('.custom-modal-content') ||
+                    modalEl);
+        };
+
+        const obs = new MutationObserver(mutations => {
+            for (const m of mutations) {
+                if (m.attributeName !== 'class') continue;
+                const isActive = modalEl.classList.contains('active');
+                if (isActive && !modalEl._focusTrapActive) {
+                    modalEl._focusTrapActive = true;
+                    ModalFocusTrap.activate(
+                        _resolveTarget(),
+                        document.activeElement,
+                        { onEscape: onEscape },
+                    );
+                } else if (!isActive && modalEl._focusTrapActive) {
+                    modalEl._focusTrapActive = false;
+                    ModalFocusTrap.deactivate();
+                }
+            }
+        });
+        obs.observe(modalEl, { attributes: true, attributeFilter: ['class'] });
+        modalEl._focusTrapObserver = obs;
+    },
 };
 
 RetroDB.debounce = debounce;
@@ -932,397 +1007,6 @@ window.DOM = DOM;
 window.DateUtils = DateUtils;
 window.StickyScroll = StickyScroll;
 window.ModalFocusTrap = ModalFocusTrap;
-
-})();
-
-(function(){
-/**
- * RetroDB Page Lifecycle & Cleanup Manager
- * Handles memory leak prevention, event listener cleanup, and page state management
- * Version: 1.19.0
- */
-
-window.RetroDB = window.RetroDB || {};
-
-const PageLifecycle = (function() {
-    'use strict';
-
-    const eventListeners = [];
-    const intervals = [];
-    const timeouts = [];
-    const observers = [];
-    const abortControllers = [];
-
-    let pageState = null;
-    let pageKey = null;
-
-    /**
-     * Add an event listener with automatic cleanup tracking
-     * @param {Element|Window|Document} target - Event target
-     * @param {string} type - Event type
-     * @param {Function} handler - Event handler
-     * @param {Object} options - Event listener options
-     * @returns {Function} - Removal function
-     */
-    function addEventListener(target, type, handler, options = {}) {
-        if (!target || typeof target.addEventListener !== 'function') {
-            console.warn('Invalid target for addEventListener');
-            return () => {};
-        }
-
-        target.addEventListener(type, handler, options);
-
-        const entry = { target, type, handler, options };
-        eventListeners.push(entry);
-
-        return () => removeEventListener(entry);
-    }
-
-    function removeEventListener(entry) {
-        const { target, type, handler, options } = entry;
-        target.removeEventListener(type, handler, options);
-
-        const index = eventListeners.indexOf(entry);
-        if (index > -1) {
-            eventListeners.splice(index, 1);
-        }
-    }
-
-    /**
-     * Set an interval with automatic cleanup tracking
-     */
-    function setInterval(callback, delay) {
-        const id = window.setInterval(callback, delay);
-        intervals.push(id);
-        return id;
-    }
-
-    function clearInterval(id) {
-        window.clearInterval(id);
-        const index = intervals.indexOf(id);
-        if (index > -1) {
-            intervals.splice(index, 1);
-        }
-    }
-
-    /**
-     * Set a timeout with automatic cleanup tracking
-     */
-    function setTimeout(callback, delay) {
-        const id = window.setTimeout(() => {
-            const index = timeouts.indexOf(id);
-            if (index > -1) {
-                timeouts.splice(index, 1);
-            }
-            callback();
-        }, delay);
-        timeouts.push(id);
-        return id;
-    }
-
-    function clearTimeout(id) {
-        window.clearTimeout(id);
-        const index = timeouts.indexOf(id);
-        if (index > -1) {
-            timeouts.splice(index, 1);
-        }
-    }
-
-    /**
-     * Create a MutationObserver with automatic cleanup tracking
-     */
-    function createObserver(callback) {
-        const observer = new MutationObserver(callback);
-        observers.push(observer);
-        return observer;
-    }
-
-    function disconnectObserver(observer) {
-        observer.disconnect();
-        const index = observers.indexOf(observer);
-        if (index > -1) {
-            observers.splice(index, 1);
-        }
-    }
-
-    /**
-     * Create an AbortController for fetch requests with cleanup tracking
-     */
-    function createAbortController() {
-        const controller = new AbortController();
-        abortControllers.push(controller);
-        return controller;
-    }
-
-    function removeAbortController(controller) {
-        const index = abortControllers.indexOf(controller);
-        if (index > -1) {
-            abortControllers.splice(index, 1);
-        }
-    }
-
-    /**
-     * Initialize page state tracking
-     * @param {string} key - Unique key for this page's state
-     */
-    function initPageState(key) {
-        pageKey = key;
-
-        const restored = safeParseJSON(pageKey, null, sessionStorage);
-        if (restored) {
-            pageState = restored;
-        }
-
-        return pageState;
-    }
-
-    /**
-     * Save current page state
-     */
-    function savePageState(state) {
-        pageState = { ...pageState, ...state };
-
-        if (pageKey) {
-            try {
-                sessionStorage.setItem(pageKey, JSON.stringify(pageState));
-            } catch (e) {
-                console.warn('Failed to save page state:', e);
-            }
-        }
-    }
-
-    /**
-     * Get current page state
-     */
-    function getPageState() {
-        return pageState;
-    }
-
-    /**
-     * Clear page state
-     */
-    function clearPageState() {
-        pageState = null;
-        if (pageKey) {
-            sessionStorage.removeItem(pageKey);
-        }
-    }
-
-    /**
-     * Save current scroll position
-     */
-    function saveScrollPosition() {
-        savePageState({ scrollY: window.scrollY });
-    }
-
-    /**
-     * Restore saved scroll position
-     * @param {number} delay - Delay before restoring (for DOM rendering)
-     */
-    function restoreScrollPosition(delay = 100) {
-        const state = getPageState();
-        if (state && typeof state.scrollY === 'number') {
-            window.setTimeout(() => {
-                window.scrollTo(0, state.scrollY);
-            }, delay);
-        }
-    }
-
-    const debounceTimeouts = new Map();
-
-    /**
-     * Debounce function with automatic cleanup
-     */
-    function debounce(key, func, wait) {
-        return function(...args) {
-            const existing = debounceTimeouts.get(key);
-            if (existing) {
-                window.clearTimeout(existing);
-            }
-
-            const timeout = window.setTimeout(() => {
-                debounceTimeouts.delete(key);
-                func.apply(this, args);
-            }, wait);
-
-            debounceTimeouts.set(key, timeout);
-        };
-    }
-
-    /**
-     * Clean up all tracked resources
-     */
-    function cleanup() {
-        eventListeners.forEach(entry => {
-            try {
-                entry.target.removeEventListener(entry.type, entry.handler, entry.options);
-            } catch (e) { /* Ignore errors during cleanup */ }
-        });
-        eventListeners.length = 0;
-
-        intervals.forEach(id => window.clearInterval(id));
-        intervals.length = 0;
-
-        timeouts.forEach(id => window.clearTimeout(id));
-        timeouts.length = 0;
-
-        observers.forEach(obs => {
-            try { obs.disconnect(); } catch (e) { /* Ignore */ }
-        });
-        observers.length = 0;
-
-        abortControllers.forEach(ctrl => {
-            try { ctrl.abort(); } catch (e) { /* Ignore */ }
-        });
-        abortControllers.length = 0;
-
-        debounceTimeouts.forEach(id => window.clearTimeout(id));
-        debounceTimeouts.clear();
-
-        if (typeof DOMCache !== 'undefined' && DOMCache.clear) {
-            DOMCache.clear();
-        }
-    }
-
-    /**
-     * Register cleanup on page unload
-     */
-    function registerUnloadCleanup() {
-        window.addEventListener('beforeunload', cleanup);
-
-        window.addEventListener('pagehide', (event) => {
-            if (event.persisted) {
-                saveScrollPosition();
-            } else {
-                cleanup();
-            }
-        });
-
-        window.addEventListener('pageshow', (event) => {
-            if (event.persisted) {
-                restoreScrollPosition(0);
-            }
-        });
-    }
-
-    if (typeof document !== 'undefined') {
-        registerUnloadCleanup();
-    }
-
-    return {
-        addEventListener,
-        removeEventListener: (entry) => removeEventListener(entry),
-
-        setInterval,
-        clearInterval,
-        setTimeout,
-        clearTimeout,
-
-        createObserver,
-        disconnectObserver,
-
-        createAbortController,
-        removeAbortController,
-
-        initPageState,
-        savePageState,
-        getPageState,
-        clearPageState,
-        saveScrollPosition,
-        restoreScrollPosition,
-
-        debounce,
-
-        cleanup,
-        registerUnloadCleanup
-    };
-})();
-
-RetroDB.PageLifecycle = PageLifecycle;
-window.PageLifecycle = PageLifecycle;
-
-const DOMCache = (function() {
-    'use strict';
-
-    const cache = new Map();
-    const MAX_CACHE_SIZE = 500;  // Prevent unbounded growth
-
-    /** Evict oldest entries if cache exceeds max size */
-    function _evictIfNeeded() {
-        if (cache.size <= MAX_CACHE_SIZE) return;
-        const excess = cache.size - MAX_CACHE_SIZE + 50;  // Evict 50 at a time
-        let removed = 0;
-        for (const key of cache.keys()) {
-            if (removed >= excess) break;
-            cache.delete(key);
-            removed++;
-        }
-    }
-
-    /**
-     * Get element by ID with caching
-     */
-    function getById(id) {
-        if (cache.has(id)) return cache.get(id);
-        const el = document.getElementById(id);
-        if (el) {
-            cache.set(id, el);
-            _evictIfNeeded();
-        }
-        return el;
-    }
-
-    /**
-     * Get elements by selector with caching
-     */
-    function query(selector) {
-        if (cache.has(selector)) return cache.get(selector);
-        const el = document.querySelector(selector);
-        if (el) {
-            cache.set(selector, el);
-            _evictIfNeeded();
-        }
-        return el;
-    }
-
-    /**
-     * Get all elements by selector with caching
-     */
-    function queryAll(selector) {
-        const key = `all:${selector}`;
-        const cached = cache.get(key);
-        if (cached !== undefined) return cached;
-        const els = document.querySelectorAll(selector);
-        cache.set(key, els);
-        _evictIfNeeded();
-        return els;
-    }
-
-    /**
-     * Invalidate cache entry
-     */
-    function invalidate(key) {
-        cache.delete(key);
-    }
-
-    /**
-     * Clear entire cache
-     */
-    function clear() {
-        cache.clear();
-    }
-
-    return {
-        getById,
-        query,
-        queryAll,
-        invalidate,
-        clear
-    };
-})();
-
-RetroDB.DOMCache = DOMCache;
-window.DOMCache = DOMCache;
 
 })();
 
@@ -1645,6 +1329,28 @@ const UnifiedToastController = {
         this.container.id = 'unifiedToastContainer';
         this.container.className = 'unified-toast-container';
         document.body.appendChild(this.container);
+
+        this.container.addEventListener('click', (e) => {
+            const target = e.target.closest('[data-toast-action]');
+            if (!target) return;
+            const action = target.dataset.toastAction;
+            const type = target.dataset.toastType;
+            if (action === 'navigate') {
+                this.navigateTo(type, target.dataset.toastReturnUrl || '');
+                return;
+            }
+            e.stopPropagation();
+            if (action === 'pause') {
+                this.togglePause(type);
+            } else if (action === 'cancel') {
+                this.cancel(type);
+            } else if (action === 'cancel-ra-queued') {
+                const raType = target.dataset.raType;
+                const raSystemIdRaw = target.dataset.raSystemId;
+                const raSystemId = raSystemIdRaw === '' ? null : Number(raSystemIdRaw);
+                this.cancelRAQueued(raType, Number.isFinite(raSystemId) ? raSystemId : null);
+            }
+        });
 
         this.positionContainer();
         this.positionBackToTop();
@@ -2188,9 +1894,8 @@ const UnifiedToastController = {
             ? `🔄 Sync: ${this.escapeHtml(item.systemName)}`
             : `🏆 Refresh: ${this.escapeHtml(item.systemName || 'All Systems')}`;
 
-        const cancelCall = item.type === 'sync'
-            ? `UnifiedToastController.cancelRAQueued('sync', ${item.systemId})`
-            : `UnifiedToastController.cancelRAQueued('refresh', ${item.systemId || 'null'})`;
+        const raType = item.type === 'sync' ? 'sync' : 'refresh';
+        const raSystemId = item.systemId == null ? '' : String(item.systemId);
 
         toast.innerHTML = `
             <div class="toast-content">
@@ -2202,7 +1907,7 @@ const UnifiedToastController = {
                     </div>
                 </div>
                 <div class="toast-controls">
-                    <button class="toast-btn cancel" onclick="event.stopPropagation(); ${cancelCall}" title="Remove from queue">
+                    <button class="toast-btn cancel" data-toast-action="cancel-ra-queued" data-ra-type="${this.escapeHtml(raType)}" data-ra-system-id="${this.escapeHtml(raSystemId)}" title="Remove from queue">
                         ✕
                     </button>
                 </div>
@@ -2367,7 +2072,7 @@ const UnifiedToastController = {
 
         return `
             <div class="toast-content">
-                <div class="toast-main" onclick="UnifiedToastController.navigateTo('${type}', '${data.return_url || ''}')">
+                <div class="toast-main" data-toast-action="navigate" data-toast-type="${this.escapeHtml(type)}" data-toast-return-url="${this.escapeHtml(data.return_url || '')}">
                     <div class="toast-icon ${isPaused ? 'paused' : ''}">${isPaused ? getThemedIcon(type, 'paused') : getThemedIcon(type)}</div>
                     <div class="toast-info">
                         <div class="toast-title ${isPaused ? 'paused' : ''}">${config.name} ${isPaused ? '(Paused)' : 'Running'}</div>
@@ -2385,11 +2090,11 @@ const UnifiedToastController = {
                 </div>
                 <div class="toast-controls">
                     ${type === 'bulk-scrape' || type === 'psn-refresh' ? `
-                    <button class="toast-btn pause" onclick="event.stopPropagation(); UnifiedToastController.togglePause('${type}')" title="${isPaused ? 'Resume' : 'Pause'}">
+                    <button class="toast-btn pause" data-toast-action="pause" data-toast-type="${this.escapeHtml(type)}" title="${isPaused ? 'Resume' : 'Pause'}">
                         <span data-pause-icon>${isPaused ? '▶️' : '⏸️'}</span>
                     </button>
                     ` : ''}
-                    <button class="toast-btn cancel" onclick="event.stopPropagation(); UnifiedToastController.cancel('${type}')" title="Cancel">
+                    <button class="toast-btn cancel" data-toast-action="cancel" data-toast-type="${this.escapeHtml(type)}" title="Cancel">
                         ✕
                     </button>
                 </div>
@@ -2759,7 +2464,17 @@ const UnifiedToastController = {
     },
 
     /**
-     * Navigate to the appropriate page
+     * Navigate to the appropriate page.
+     *
+     * Pass 41.12.B — open-redirect guard. The `returnUrl` argument flows
+     * from `localStorage.getItem('bulkScrapeReturnUrl')` and similar
+     * sources. localStorage is writable from any same-origin script, so
+     * an XSS payload (or a stale value left by a malicious extension)
+     * could land an attacker-controlled absolute URL here. Without
+     * validation, `window.location.href = 'https://evil.example/...'`
+     * would fire on the user's next toast click. Accept only:
+     *   (a) same-origin paths starting with `/` (e.g. `/all-games`)
+     *   (b) absolute URLs whose parsed origin matches the current page
      */
     navigateTo(type, returnUrl) {
         if (type === 'bulk-scrape') {
@@ -2767,11 +2482,30 @@ const UnifiedToastController = {
         }
 
         if (returnUrl && window.location.pathname !== returnUrl) {
-            window.location.href = returnUrl;
+            if (UnifiedToastController._isSafeReturnUrl(returnUrl)) {
+                window.location.href = returnUrl;
+            } else {
+                console.warn('navigateTo: rejecting unsafe returnUrl', returnUrl);
+            }
         } else if (type === 'ra-sync' || type === 'ra-refresh') {
             window.location.href = '/achievements';
         } else if (type === 'psn-refresh') {
             window.location.href = '/psn-trophies';
+        }
+    },
+
+    /**
+     * Pass 41.12.B — Validate that a navigation target is same-origin.
+     */
+    _isSafeReturnUrl(url) {
+        if (typeof url !== 'string' || !url) return false;
+        if (url.startsWith('/') && !url.startsWith('//')) return true;
+        try {
+            const parsed = new URL(url, window.location.origin);
+            return parsed.origin === window.location.origin &&
+                   (parsed.protocol === 'http:' || parsed.protocol === 'https:');
+        } catch (e) {
+            return false;
         }
     },
 
@@ -2906,6 +2640,38 @@ const RetroDBState = {
 
 let _animationObserver = null;
 let _backToTopScrollHandler = null;
+
+let _lastErrorToastAt = 0;
+const _ERROR_TOAST_INTERVAL_MS = 5000;
+
+function _surfaceError(prefix, detail) {
+    if (typeof showNotification !== 'function') return;
+    const now = Date.now();
+    if (now - _lastErrorToastAt < _ERROR_TOAST_INTERVAL_MS) return;
+    _lastErrorToastAt = now;
+    try {
+        showNotification(`${prefix}: ${detail}`, 'error');
+    } catch (_e) { /* swallow — never loop on a toast failure */ }
+}
+
+window.addEventListener('error', function(event) {
+    const msg = event.message || '';
+    if (!msg || msg === 'Script error.') return;
+    _surfaceError('Unexpected error', msg);
+});
+
+window.addEventListener('unhandledrejection', function(event) {
+    const r = event.reason;
+    let detail;
+    if (r instanceof Error) {
+        detail = r.message || r.name || 'unknown error';
+    } else if (typeof r === 'string') {
+        detail = r;
+    } else {
+        try { detail = JSON.stringify(r); } catch (_e) { detail = String(r); }
+    }
+    _surfaceError('Unhandled rejection', detail);
+});
 
 document.addEventListener('DOMContentLoaded', function() {
     initializeSidebar();
@@ -4380,5 +4146,66 @@ window.addEventListener('beforeunload', function() {
     if (_backToTopScrollHandler) { window.removeEventListener('scroll', _backToTopScrollHandler); _backToTopScrollHandler = null; }
     if (window.BackToTopController && BackToTopController.destroy) BackToTopController.destroy();
 });
+
+function _syncAriaCurrent(container) {
+    const items = container.querySelectorAll('a, button');
+    items.forEach(item => {
+        if (item.classList.contains('active')) {
+            item.setAttribute('aria-current', 'page');
+        } else if (item.hasAttribute('aria-current')) {
+            item.removeAttribute('aria-current');
+        }
+    });
+}
+
+const _ariaCurrentObservers = [];
+
+function _setupTabbarAriaCurrent() {
+    _ariaCurrentObservers.forEach(o => o.disconnect());
+    _ariaCurrentObservers.length = 0;
+
+    document.querySelectorAll('[data-tabbar]').forEach(bar => {
+        _syncAriaCurrent(bar);
+        const obs = new MutationObserver(mutations => {
+            for (const m of mutations) {
+                if (m.attributeName === 'class') {
+                    _syncAriaCurrent(bar);
+                    return;
+                }
+            }
+        });
+        obs.observe(bar, {
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['class'],
+        });
+        _ariaCurrentObservers.push(obs);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', _setupTabbarAriaCurrent);
+
+window.addEventListener('beforeunload', function() {
+    _ariaCurrentObservers.forEach(o => o.disconnect());
+    _ariaCurrentObservers.length = 0;
+});
+
+function _setupAutoFocusTraps() {
+    if (!window.ModalFocusTrap) return;
+    document.querySelectorAll('[data-focus-trap]').forEach(modalEl => {
+        const onEscapeFn = modalEl.getAttribute('data-focus-trap-onescape');
+        let onEscape = null;
+        if (onEscapeFn && typeof window[onEscapeFn] === 'function') {
+            onEscape = window[onEscapeFn];
+        }
+        const contentSelector = modalEl.getAttribute('data-focus-trap-content') || null;
+        ModalFocusTrap.autoAttach(modalEl, {
+            onEscape: onEscape,
+            contentSelector: contentSelector,
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', _setupAutoFocusTraps);
 
 })();

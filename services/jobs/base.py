@@ -257,6 +257,165 @@ def _download_psn_trophy_image(npwr_id, image_url, trophy_id=None):
 
 
 # =============================================================================
+# CROSS-PROCESS JOB SINGLETON LOCK (Pass 41.6.A)
+# =============================================================================
+#
+# Each job class keeps an in-memory `self.running` flag that prevents
+# concurrent starts within a single Python process. Multi-worker WSGI
+# deployments (e.g. `gunicorn --workers 2`) have no cross-process guard:
+# two workers can each run their own bulk-scrape against the same
+# system simultaneously, doubling API load and racing on DB writes.
+#
+# `acquire_job_singleton_lock(name)` opens an `fcntl.flock(LOCK_EX |
+# LOCK_NB)` advisory lock on a sentinel file under `data/job_locks/`.
+# A successful acquire returns the open file descriptor; the caller
+# must keep the FD open for the lifetime of the run and pass it to
+# `release_job_singleton_lock(fd)` from a `finally:` clause when done.
+# A failed acquire returns `None` and the caller should refuse the
+# `start()` request.
+#
+# The OS releases the lock automatically when the process dies (file
+# descriptor closed by kernel), so a SIGKILL'd worker doesn't leave
+# orphan locks. `flock` is process-scoped (not thread-scoped) — fine
+# for our case where each job runs at most one worker thread per process.
+#
+# Linux/macOS only — fcntl is unavailable on Windows. RetroDB ships
+# Linux containers as the deployment target; on Windows the helpers
+# are no-ops (in-memory `self.running` remains the only guard).
+
+_JOB_LOCK_DIR = None
+
+
+def _get_job_lock_dir():
+    global _JOB_LOCK_DIR
+    if _JOB_LOCK_DIR is not None:
+        return _JOB_LOCK_DIR
+    base = os.path.dirname(os.path.abspath(config.DB_PATH))
+    _JOB_LOCK_DIR = os.path.join(base, 'job_locks')
+    try:
+        os.makedirs(_JOB_LOCK_DIR, exist_ok=True)
+    except OSError as e:
+        logger.warning(f"Could not create job-lock dir {_JOB_LOCK_DIR}: {e}")
+    return _JOB_LOCK_DIR
+
+
+def acquire_job_singleton_lock(job_name):
+    """Pass 41.6.A — try to acquire a cross-process advisory lock for a
+    given job name (e.g. 'bulk_scrape', 'ra_sync').
+
+    Returns the open file descriptor on success, `None` on failure
+    (another process is already running this job). The caller must keep
+    the FD open for the duration of the run and pass it to
+    `release_job_singleton_lock(fd)` in a `finally:` clause.
+
+    On Windows / fcntl-unavailable platforms this is a no-op that always
+    returns a sentinel `0` (treat as "acquired"); the in-memory
+    `self.running` flag remains the only guard there.
+    """
+    try:
+        import fcntl
+    except ImportError:
+        # Windows / non-POSIX: no advisory locking available.
+        logger.debug(f"acquire_job_singleton_lock({job_name}): fcntl unavailable; falling back to in-memory guard only")
+        return 0
+    safe_name = ''.join(c for c in job_name if c.isalnum() or c in ('_', '-'))
+    if not safe_name:
+        return None
+    lock_path = os.path.join(_get_job_lock_dir(), f'{safe_name}.lock')
+    try:
+        fd = os.open(lock_path, os.O_CREAT | os.O_RDWR, 0o644)
+    except OSError as e:
+        logger.warning(f"Could not open job-lock file {lock_path}: {e}")
+        return None
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        logger.warning(f"Job '{job_name}' is already running on another worker; refusing concurrent start")
+        os.close(fd)
+        return None
+    except OSError as e:
+        # Some filesystems (NFS) don't support flock — treat as "no
+        # cross-process guard available" and let the caller proceed.
+        logger.warning(f"flock not supported on {lock_path}: {e}; in-memory guard only")
+        os.close(fd)
+        return 0
+    return fd
+
+
+def release_job_singleton_lock(fd):
+    """Release the lock acquired by `acquire_job_singleton_lock`. Safe to
+    call with `None` or the sentinel `0`."""
+    if fd is None or fd == 0:
+        return
+    try:
+        import fcntl
+        fcntl.flock(fd, fcntl.LOCK_UN)
+    except (ImportError, OSError):
+        pass
+    try:
+        os.close(fd)
+    except OSError:
+        pass
+
+
+def release_singleton_fd(job_obj, attr='_singleton_fd'):
+    """Release the FD stored on `job_obj.<attr>` (if any) and clear the
+    attribute. Idempotent — safe to call from multiple terminal-cleanup
+    branches without re-releasing or AttributeError. Pass 41.6.A-extend
+    helper used by every job class with cross-process lock support."""
+    fd = getattr(job_obj, attr, None)
+    if fd is not None:
+        release_job_singleton_lock(fd)
+        setattr(job_obj, attr, None)
+
+
+# =============================================================================
+# RESUME-PATH HELPERS (Pass 38.8)
+# =============================================================================
+# Six job classes (RASyncJob, RARefreshJob, SteamSyncJob, XboxSyncJob,
+# PSNRefreshJob, BulkScrapeJob) share the same `resume_from_params`
+# scaffolding: pad the ID list with None placeholders for already-processed
+# items, restore counts from progress, and (for the cross-process-locked
+# four) acquire the singleton lock or log + bail.  These helpers fold the
+# repeats so future divergences land in one place.
+
+def pad_resume_game_ids(resume_index, remaining_ids):
+    """Prepend `resume_index` None placeholders to `remaining_ids`.
+
+    The worker thread iterates the padded list by index, skipping Nones,
+    so its `current_index` stays consistent with the original total
+    rather than restarting from zero.  Used by every resume_from_params."""
+    return [None] * resume_index + list(remaining_ids)
+
+
+def restore_progress_counts(job, resume_index, progress):
+    """Inside-lock helper: write `current_index` + success/failed/skipped
+    counts onto `job` from the persisted `progress` dict.
+
+    Caller is responsible for holding `job._lock` and having already set
+    `job.running = True` / `job.reset()`.  `progress=None` is treated as
+    a fresh resume (all counts zero)."""
+    job.current_index = resume_index
+    job.success_count = progress.get('success', 0) if progress else 0
+    job.failed_count = progress.get('failed', 0) if progress else 0
+    job.skipped_count = progress.get('skipped', 0) if progress else 0
+
+
+def try_acquire_singleton_or_warn(lock_name, kind='resume'):
+    """Acquire the named cross-process job singleton lock or log a
+    warning and return None if it's held by another worker.
+
+    Centralises the "lock held by another worker process" warning
+    string used identically across five resume paths."""
+    singleton_fd = acquire_job_singleton_lock(lock_name)
+    if singleton_fd is None:
+        logger.warning(
+            f"{lock_name} {kind} refused: lock held by another worker process"
+        )
+    return singleton_fd
+
+
+# =============================================================================
 # JOB PERSISTENCE HELPERS (crash recovery)
 # =============================================================================
 

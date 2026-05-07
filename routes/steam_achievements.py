@@ -12,11 +12,10 @@
 # =============================================================================
 
 import logging
-from datetime import datetime, timezone
 
 from flask import Blueprint, render_template, jsonify, g
 
-from services.database import query, execute
+from services.database import query, get_db
 from services.auth import login_required, editor_required
 
 logger = logging.getLogger(__name__)
@@ -99,10 +98,12 @@ def steam_achievement_game(game_id):
 @editor_required
 def api_steam_sync_single(game_id):
     """Sync achievements for a single Steam game (Pass 31.4 — per user)."""
-    import sqlite3
-    import config
     from scraper.scrape_steam import get_player_achievements
-    from services.jobs.platform_sync import _upsert_steam_achievements, _get_steam_credentials
+    from services.jobs.platform_sync import (
+        _upsert_steam_achievements,
+        _upsert_steam_progress,
+        _get_steam_credentials,
+    )
 
     steam_api_key, steam_id = _get_steam_credentials(user_id=g.user['id'])
     if not steam_api_key or not steam_id:
@@ -116,37 +117,15 @@ def api_steam_sync_single(game_id):
     if result is None:
         return jsonify({'success': True, 'message': 'Game has no achievements', 'earned': 0, 'total': 0})
 
+    conn = None
     try:
-        conn = sqlite3.connect(config.DB_PATH)
-        conn.row_factory = sqlite3.Row
+        conn = get_db()
         c = conn.cursor()
 
-        c.execute("""
-            INSERT INTO game_achievement_progress
-                (game_id, user_id, earned_achievements, total_achievements,
-                 completion_percentage, last_synced, steam_app_id, source)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'steam')
-            ON CONFLICT(game_id, user_id) DO UPDATE SET
-                earned_achievements = excluded.earned_achievements,
-                total_achievements = excluded.total_achievements,
-                completion_percentage = excluded.completion_percentage,
-                last_synced = excluded.last_synced,
-                steam_app_id = excluded.steam_app_id,
-                source = 'steam'
-        """, (
-            game_id,
-            g.user['id'],
-            result['earned'],
-            result['total'],
-            round(result['earned'] / result['total'] * 100, 1) if result['total'] > 0 else 0,
-            datetime.now(timezone.utc).isoformat(),
-            game['steam_app_id'],
-        ))
-
+        _upsert_steam_progress(c, game_id, g.user['id'], game['steam_app_id'], result)
         _upsert_steam_achievements(c, game_id, game['steam_app_id'], steam_api_key, result, g.user['id'])
 
         conn.commit()
-        conn.close()
 
         return jsonify({
             'success': True,
@@ -156,6 +135,9 @@ def api_steam_sync_single(game_id):
     except Exception as e:
         logger.error(f"Steam achievement sync error for game {game_id}: {e}")
         return jsonify({'success': False, 'error': 'An internal error occurred'})
+    finally:
+        if conn:
+            conn.close()
 
 
 @bp.route('/api/steam-achievements/sync-status')

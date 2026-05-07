@@ -20,6 +20,7 @@ from services.jobs.base import (
     _get_conn, _commit_with_retry,
     persist_job_start, persist_job_progress, persist_job_complete,
     resolve_terminal_status,
+    acquire_job_singleton_lock, release_singleton_fd,
 )
 
 logger = logging.getLogger(__name__)
@@ -31,6 +32,7 @@ class AltTitlesBackfillJob:
     def __init__(self):
         self._lock = threading.Lock()
         self._thread = None
+        self._singleton_fd = None
         self.reset()
 
     def reset(self):
@@ -61,7 +63,14 @@ class AltTitlesBackfillJob:
         with self._lock:
             if self.running:
                 return {'success': False, 'error': 'Alt-titles backfill already running'}
+            singleton_fd = acquire_job_singleton_lock('alt_titles_backfill')
+            if singleton_fd is None:
+                return {
+                    'success': False,
+                    'error': 'Alt-titles backfill is already running on another worker process.',
+                }
             self.reset()
+            self._singleton_fd = singleton_fd
             self.job_id = f"alt_titles_backfill_{int(time.time())}"
             self.running = True
             self.start_time = datetime.now(timezone.utc).isoformat()
@@ -134,6 +143,7 @@ class AltTitlesBackfillJob:
                 with self._lock:
                     self.completed = True
                     self.running = False
+                release_singleton_fd(self)
                 persist_job_complete(persist_id, status='completed')
                 return
 
@@ -149,16 +159,22 @@ class AltTitlesBackfillJob:
                         self.current_game = game['title']
                         self.current_system = game.get('system_name') or ''
 
-                    # Periodic progress persistence
+                    # Periodic progress persistence — Pass 41.6.B: snapshot
+                    # job state under the lock, then release the lock before
+                    # the persist call. persist_job_progress writes to SQLite
+                    # (10–50ms typical, up to 30s under WAL contention) and
+                    # blocked every status-poll request that took the same
+                    # lock during the write window.
                     if time.time() - last_persist >= 15:
                         _commit_with_retry(write_conn)
                         with self._lock:
-                            persist_job_progress(persist_id, {
+                            progress_payload = {
                                 'current': i + 1, 'total': len(games),
                                 'updated': self.updated_count,
                                 'failed': self.failed_count,
                                 'current_item': self.current_game,
-                            })
+                            }
+                        persist_job_progress(persist_id, progress_payload)
                         last_persist = time.time()
 
                     try:
@@ -255,6 +271,7 @@ class AltTitlesBackfillJob:
                     f"{self.no_new_alts_count} no new, {self.no_match_count} no match, "
                     f"{self.failed_count} failed"
                 )
+            release_singleton_fd(self)
 
             if persist_id:
                 persist_job_complete(persist_id, status=final_status)
@@ -265,5 +282,6 @@ class AltTitlesBackfillJob:
                 self.completed = True
                 self.running = False
                 self.error_message = str(e)
+            release_singleton_fd(self)
             if persist_id:
                 persist_job_complete(persist_id, status='failed', error=str(e))

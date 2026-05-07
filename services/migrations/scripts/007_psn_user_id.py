@@ -35,6 +35,13 @@
 
 import logging
 
+from services.migrations._helpers import (
+    _admin_user_id,
+    _columns_ddl,
+    _has_column,
+    _table_exists,
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -90,31 +97,6 @@ _PSN_TROPHIES_COLUMNS = [
     ('rarity_label', 'TEXT'),
     ('description', 'TEXT'),
 ]
-
-
-def _table_exists(cursor, name):
-    return cursor.execute(
-        "SELECT 1 FROM sqlite_master WHERE type='table' AND name=?",
-        (name,),
-    ).fetchone() is not None
-
-
-def _has_column(cursor, table, column):
-    cols = {row[1] for row in cursor.execute(f"PRAGMA table_info({table})")}
-    return column in cols
-
-
-def _admin_user_id(cursor):
-    if not _table_exists(cursor, 'users'):
-        return None
-    row = cursor.execute(
-        "SELECT id FROM users WHERE role = 'admin' ORDER BY id LIMIT 1"
-    ).fetchone()
-    return row[0] if row else None
-
-
-def _columns_ddl(cols):
-    return ',\n    '.join(f"{name} {defn}" for name, defn in cols)
 
 
 def _create_psn_games_fresh(cursor):
@@ -217,11 +199,12 @@ def _rebuild_psn_trophies(cursor, admin_id):
 def apply(conn):
     cursor = conn.cursor()
 
-    # Disable FK checks for the duration of the rebuild. The connection-level
-    # PRAGMA is a no-op if FKs were already off (which they are under the
-    # standard RetroDB init path), but leaving it explicit is defensive for
-    # callers that enable FKs elsewhere. Restored at the end.
-    cursor.execute("PRAGMA foreign_keys = OFF")
+    # Defer FK enforcement until COMMIT. `PRAGMA foreign_keys = OFF` is a
+    # no-op inside a transaction (SQLite docs: FK enforcement state cannot
+    # change mid-txn), but `defer_foreign_keys = ON` works inside a txn and
+    # is auto-reset at txn end. Lets the rebuild drop and recreate referenced
+    # tables atomically without spurious immediate-FK violations.
+    cursor.execute("PRAGMA defer_foreign_keys = ON")
 
     admin_id = _admin_user_id(cursor)
 
@@ -270,7 +253,23 @@ def apply(conn):
             )
         _rebuild_psn_trophies(cursor, admin_id)
 
-    cursor.execute("PRAGMA foreign_keys = ON")
+    # defer_foreign_keys auto-resets at COMMIT — no explicit restoration needed.
+
+    # Pass 45.10 — fail loudly if the rebuild left dangling FK references
+    # IN THE TABLES THIS MIGRATION REBUILT. SQLite's plain foreign_key_check
+    # walks every FK in the whole DB; we scope to psn_games + psn_trophies
+    # so pre-existing data-integrity issues elsewhere (legacy installs that
+    # still have orphan rows from before the FK was added in another
+    # migration) don't block this one.
+    for table in ('psn_games', 'psn_trophies'):
+        violations = cursor.execute(
+            f"PRAGMA foreign_key_check({table})"
+        ).fetchall()
+        if violations:
+            raise RuntimeError(
+                f"Migration 007 left foreign-key violations on {table}: "
+                f"{violations}"
+            )
 
     logger.info(
         "psn_games / psn_trophies now carry user_id; npwr_id uniqueness is "

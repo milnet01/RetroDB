@@ -16,8 +16,8 @@ def db():
     c.execute("CREATE TABLE systems (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, folder TEXT UNIQUE)")
     c.execute("INSERT INTO systems (name, folder) VALUES ('Sony PlayStation', 'psx')")
     c.execute("INSERT INTO systems (name, folder) VALUES ('Sony PlayStation 2', 'ps2')")
-    p = _REPO_ROOT / 'services' / 'migrations' / 'scripts' / '010_emulators.py'
-    spec = importlib.util.spec_from_file_location('m010', p)
+    p = _REPO_ROOT / 'services' / 'migrations' / 'scripts' / '012_emulators.py'
+    spec = importlib.util.spec_from_file_location('m012', p)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     mod.apply(conn)

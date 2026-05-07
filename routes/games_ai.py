@@ -106,6 +106,12 @@ def api_game_ai_fill(game_id):
                         value = int(float(value))
                     except (ValueError, TypeError):
                         continue
+                    # Pass 45.3: AI returning 0 for an int field is "unknown",
+                    # not a legitimate score/count of zero — skip so curated
+                    # or previously-scraped non-zero values survive (matches
+                    # the scraper-fill-only invariant in CLAUDE.md).
+                    if value == 0:
+                        continue
                 all_updates.append(f"{field} = ?")
                 all_values.append(value)
                 filled_fields.append(field)

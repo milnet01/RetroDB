@@ -19,10 +19,10 @@
             <img src="{{ '/static/images/boxart/' + games[0].boxart if games[0].boxart else '/static/images/placeholder.png' }}"
                  alt="" class="slot-thumb">
             <span class="slot-title">{{ games[0].title }}</span>
-            <button class="slot-remove" onclick="removeSlot(0)" title="Remove">&times;</button>
+            <button type="button" class="slot-remove" onclick="removeSlot(0)" title="Remove">&times;</button>
         </div>
         {% else %}
-        <button class="slot-empty" onclick="openSearchModal(0)">
+        <button type="button" class="slot-empty" onclick="openSearchModal(0)">
             <span class="slot-empty-icon">+</span>
             <span class="slot-empty-text">Select Game 1</span>
         </button>
@@ -35,10 +35,10 @@
             <img src="{{ '/static/images/boxart/' + games[1].boxart if games[1].boxart else '/static/images/placeholder.png' }}"
                  alt="" class="slot-thumb">
             <span class="slot-title">{{ games[1].title }}</span>
-            <button class="slot-remove" onclick="removeSlot(1)" title="Remove">&times;</button>
+            <button type="button" class="slot-remove" onclick="removeSlot(1)" title="Remove">&times;</button>
         </div>
         {% else %}
-        <button class="slot-empty" onclick="openSearchModal(1)">
+        <button type="button" class="slot-empty" onclick="openSearchModal(1)">
             <span class="slot-empty-icon">+</span>
             <span class="slot-empty-text">Select Game 2</span>
         </button>
@@ -170,11 +170,11 @@
 {% endif %}
 
 <!-- Search Modal -->
-<div class="custom-modal" id="searchModal" onclick="if(event.target===this)closeSearchModal()">
+<div class="custom-modal" id="searchModal" data-focus-trap data-focus-trap-onescape="closeSearchModal" onclick="if(event.target===this)closeSearchModal()">
     <div class="custom-modal-content" style="max-width: 600px; max-height: 80vh;" role="dialog" aria-modal="true" aria-labelledby="searchModalTitle">
         <div class="custom-modal-header">
             <h3 id="searchModalTitle">Select a Game</h3>
-            <button class="custom-modal-close" onclick="closeSearchModal()" aria-label="Close">&times;</button>
+            <button type="button" class="custom-modal-close" onclick="closeSearchModal()" aria-label="Close">&times;</button>
         </div>
         <div class="custom-modal-body" style="padding: 0;">
             <div class="compare-search-bar">
@@ -182,7 +182,7 @@
                        placeholder="Search games by title..."
                        onkeydown="if(event.key==='Enter')searchForCompare()"
                        oninput="debounceCompareSearch()">
-                <button class="btn btn-primary btn-sm" onclick="searchForCompare()">Search</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="searchForCompare()">Search</button>
             </div>
             <div class="compare-search-results" id="compareSearchResults">
                 <div class="compare-search-hint">Type a game title to search.</div>

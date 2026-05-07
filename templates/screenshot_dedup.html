@@ -46,41 +46,52 @@
 }
 
 .game-dedup-header {
+    margin: 0;
+    background: var(--bg-dark);
+}
+
+.game-dedup-toggle {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: var(--bg-dark);
     cursor: pointer;
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    appearance: none;
+    -webkit-appearance: none;
 }
 
-.game-dedup-header:hover {
+.game-dedup-toggle:hover {
     background: rgba(76, 201, 240, 0.05);
 }
 
-.game-dedup-header h4 {
+.game-dedup-toggle .game-dedup-title {
     color: var(--text-primary);
     font-size: 0.95rem;
-    margin: 0;
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-.game-dedup-header .game-system {
+.game-dedup-toggle .game-system {
     font-size: 0.8rem;
     color: var(--text-muted);
     font-weight: normal;
 }
 
-.game-dedup-header .group-stats {
+.game-dedup-toggle .group-stats {
     display: flex;
     gap: 1rem;
     font-size: 0.85rem;
     color: var(--text-secondary);
 }
 
-.game-dedup-header .group-stats .reclaimable {
+.game-dedup-toggle .group-stats .reclaimable {
     color: var(--accent-pink);
 }
 
@@ -236,7 +247,7 @@
         <span class="tab-icon">🔍</span>
         <span class="tab-label">Duplicate Finder</span>
     </a>
-    <a href="{{ url_for('tools.screenshot_dedup') }}" class="tool-tab active">
+    <a href="{{ url_for('tools.screenshot_dedup') }}" class="tool-tab active" aria-current="page">
         <span class="tab-icon">📸</span>
         <span class="tab-label">Screenshot Dedup</span>
     </a>
@@ -271,10 +282,10 @@
             </div>
 
             <div class="form-group">
-                <button class="btn btn-primary" id="scanBtn" onclick="startScan()">
+                <button type="button" class="btn btn-primary" id="scanBtn" onclick="startScan()">
                     <span class="btn-icon" data-themed-icon="running"></span> Start Scan
                 </button>
-                <button class="btn btn-danger" id="cancelBtn" onclick="cancelScan()" style="display: none;">
+                <button type="button" class="btn btn-danger" id="cancelBtn" onclick="cancelScan()" style="display: none;">
                     Cancel
                 </button>
             </div>
@@ -324,8 +335,8 @@
     <div class="card-header">
         <h2 class="card-title"><span>📸</span> Duplicate Groups</h2>
         <div class="card-actions">
-            <button class="btn btn-secondary btn-sm" onclick="selectLargest()">Keep Largest</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteSelected()">Delete Unselected</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="selectLargest()">Keep Largest</button>
+            <button type="button" class="btn btn-danger btn-sm" onclick="deleteSelected()">Delete Unselected</button>
         </div>
     </div>
     <div class="card-body">
@@ -337,7 +348,7 @@
 <div class="scan-log-container" id="logContainer" style="display: none;">
     <div class="scan-log-header">
         <h4>Scan Log</h4>
-        <button class="btn btn-sm btn-danger" onclick="clearLog()">Clear</button>
+        <button type="button" class="btn btn-sm btn-danger" onclick="clearLog()">Clear</button>
     </div>
     <div class="scan-log-content" id="scanLog"></div>
 </div>
@@ -478,13 +489,14 @@ function renderResults() {
         }, 0);
 
         html += '<div class="game-dedup-group">';
-        html += '<div class="game-dedup-header" onclick="toggleGame(' + gi + ')">';
-        html += '<h4><span id="arrow-' + gi + '">&#9660;</span> ' + escapeHtml(game.game_title);
-        html += ' <span class="game-system">(' + escapeHtml(game.system_name) + ')</span></h4>';
-        html += '<div class="group-stats">';
+        html += '<h4 class="game-dedup-header">';
+        html += '<button type="button" class="game-dedup-toggle" onclick="toggleGame(' + gi + ')" aria-expanded="true" aria-controls="game-' + gi + '">';
+        html += '<span class="game-dedup-title"><span id="arrow-' + gi + '">&#9660;</span> ' + escapeHtml(game.game_title);
+        html += ' <span class="game-system">(' + escapeHtml(game.system_name) + ')</span></span>';
+        html += '<span class="group-stats">';
         html += '<span>' + totalDupes + ' duplicate(s)</span>';
         html += '<span class="reclaimable">' + formatBytes(totalSize) + '</span>';
-        html += '</div></div>';
+        html += '</span></button></h4>';
 
         html += '<div class="game-dedup-body" id="game-' + gi + '">';
 
@@ -523,12 +535,15 @@ function renderResults() {
 function toggleGame(gi) {
     var body = document.getElementById('game-' + gi);
     var arrow = document.getElementById('arrow-' + gi);
+    var btn = document.querySelector('.game-dedup-toggle[aria-controls="game-' + gi + '"]');
     if (body.style.display === 'none') {
         body.style.display = 'block';
         arrow.innerHTML = '&#9660;';
+        if (btn) btn.setAttribute('aria-expanded', 'true');
     } else {
         body.style.display = 'none';
         arrow.innerHTML = '&#9654;';
+        if (btn) btn.setAttribute('aria-expanded', 'false');
     }
 }
 

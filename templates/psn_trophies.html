@@ -12,7 +12,7 @@
     </div>
     <div class="header-actions">
         {% if psn_configured %}
-        <button onclick="syncTrophies()" class="btn btn-primary" id="syncTrophiesBtn">
+        <button type="button" onclick="syncTrophies()" class="btn btn-primary" id="syncTrophiesBtn">
             <span class="btn-icon">🔄</span>
             Sync Trophies
         </button>
@@ -45,7 +45,7 @@
         <p class="text-muted" style="margin-bottom: 20px;">
             Click "Sync Trophies" to fetch your trophy data from PlayStation Network.
         </p>
-        <button onclick="syncTrophies()" class="btn btn-primary">
+        <button type="button" onclick="syncTrophies()" class="btn btn-primary">
             <span class="btn-icon">🔄</span>
             Sync Trophies
         </button>
@@ -151,19 +151,19 @@
 
     <!-- Bulk Controls -->
     <div class="bulk-controls">
-        <button class="filter-btn bulk-btn" onclick="PSNTrophyController.toggleBulkMode()" id="psnBulkModeBtn">
+        <button type="button" class="filter-btn bulk-btn" onclick="PSNTrophyController.toggleBulkMode()" id="psnBulkModeBtn">
             <span class="filter-icon">☑️</span> <span id="psnBulkModeText">Select</span>
         </button>
-        <button class="filter-btn bulk-action-btn psn-bulk-action" onclick="PSNTrophyController.selectAllVisible()" id="psnSelectAllBtn" style="display: none;">
+        <button type="button" class="filter-btn bulk-action-btn psn-bulk-action" onclick="PSNTrophyController.selectAllVisible()" id="psnSelectAllBtn" style="display: none;">
             <span class="filter-icon">✅</span> All
         </button>
-        <button class="filter-btn bulk-action-btn psn-bulk-action" onclick="PSNTrophyController.selectNotSynced()" id="psnSelectNotSyncedBtn" style="display: none;" title="Select games without synced trophy details">
+        <button type="button" class="filter-btn bulk-action-btn psn-bulk-action" onclick="PSNTrophyController.selectNotSynced()" id="psnSelectNotSyncedBtn" style="display: none;" title="Select games without synced trophy details">
             <span class="filter-icon">🔄</span> Not Synced
         </button>
-        <button class="filter-btn bulk-action-btn psn-bulk-action" onclick="PSNTrophyController.selectIncomplete()" id="psnSelectIncompleteBtn" style="display: none;" title="Select games with < 100% progress">
+        <button type="button" class="filter-btn bulk-action-btn psn-bulk-action" onclick="PSNTrophyController.selectIncomplete()" id="psnSelectIncompleteBtn" style="display: none;" title="Select games with < 100% progress">
             <span class="filter-icon">📊</span> Incomplete
         </button>
-        <button class="filter-btn bulk-scrape-btn psn-bulk-action" onclick="startBulkRefresh()" id="psnBulkRefreshBtn" style="display: none;">
+        <button type="button" class="filter-btn bulk-scrape-btn psn-bulk-action" onclick="startBulkRefresh()" id="psnBulkRefreshBtn" style="display: none;">
             <span class="filter-icon">🔄</span> Sync Selected (<span id="psnSelectedCount">0</span>)
         </button>
     </div>
@@ -239,7 +239,7 @@
             </div>
         </div>
         <div id="syncFooter" class="modal-footer" style="display: none;">
-            <button class="btn btn-primary" onclick="closeSyncModal()">✓ Done</button>
+            <button type="button" class="btn btn-primary" onclick="closeSyncModal()">✓ Done</button>
         </div>
     </div>
 </div>
@@ -285,20 +285,20 @@
 
         <!-- Controls Row -->
         <div id="bulkControlsRow" class="modal-footer" style="display: flex; gap: var(--spacing-sm); justify-content: center;">
-            <button class="btn btn-warning btn-sm" onclick="toggleBulkPause()" id="bulkPauseBtn">
+            <button type="button" class="btn btn-warning btn-sm" onclick="toggleBulkPause()" id="bulkPauseBtn">
                 <span id="bulkPauseBtnIcon">⏸️</span> <span id="bulkPauseBtnText">Pause</span>
             </button>
-            <button class="btn btn-danger btn-sm" onclick="cancelBulkRefresh()">
+            <button type="button" class="btn btn-danger btn-sm" onclick="cancelBulkRefresh()">
                 ❌ Cancel
             </button>
-            <button class="btn btn-secondary btn-sm" onclick="psnRunInBackground()" id="bulkBackgroundBtn">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="psnRunInBackground()" id="bulkBackgroundBtn">
                 📤 Background
             </button>
         </div>
 
         <!-- Final Footer (shown when complete) -->
         <div id="bulkFooter" class="modal-footer" style="display: none;">
-            <button class="btn btn-primary" onclick="closeBulkRefreshModal(true)">
+            <button type="button" class="btn btn-primary" onclick="closeBulkRefreshModal(true)">
                 ✓ Done
             </button>
         </div>

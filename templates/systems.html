@@ -47,7 +47,7 @@
 <!-- Filter Results Bar -->
 <div class="filter-results-bar" id="filterResultsBar" style="display: none;">
     <span class="filter-results-text" id="filterResultsText"></span>
-    <button class="filter-clear-btn" onclick="clearAllSystemFilters()">✕ Clear</button>
+    <button type="button" class="filter-clear-btn" onclick="clearAllSystemFilters()">✕ Clear</button>
 </div>
 
 <!-- Systems Grid -->
@@ -89,7 +89,7 @@
                 </div>
             </div>
         </a>
-        <button class="specs-btn" onclick="showSpecs('{{ system.folder }}', event)" title="View Specifications">
+        <button type="button" class="specs-btn" onclick="showSpecs('{{ system.folder }}', event)" title="View Specifications">
             ℹ️
         </button>
     </div>
@@ -104,7 +104,7 @@
     <div class="empty-state-text">
         Scan your ROM library to add systems.
     </div>
-    <button class="btn btn-primary" onclick="scanLibrary()">
+    <button type="button" class="btn btn-primary" onclick="scanLibrary()">
         <span class="btn-icon">🔍</span>
         Scan Library
     </button>
@@ -116,7 +116,7 @@
     <div class="specs-modal-content glass-panel">
         <div class="specs-modal-header">
             <h2 id="specsTitle">System Specifications</h2>
-            <button class="modal-close-btn" onclick="closeSpecs()">×</button>
+            <button type="button" class="modal-close-btn" onclick="closeSpecs()">×</button>
         </div>
         <div class="specs-modal-body" id="specsBody">
             <!-- Specs will be inserted here -->

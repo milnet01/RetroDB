@@ -102,7 +102,8 @@ retrodb/
 │   ├── css/                  # Modular CSS (core/layout/components/features/pages)
 │   │   └── main.min.css      # Generated bundle
 │   ├── js/                   # Modular JS
-│   │   └── app.bundle.js     # Generated bundle
+│   │   ├── core.bundle.js    # Generated bundle (every page)
+│   │   └── games.bundle.js   # Generated bundle (game-centric pages)
 │   └── images/               # Media (boxart, screenshots, fanart, ratings, hardware)
 └── templates/                # 44 Jinja2 templates
 ```

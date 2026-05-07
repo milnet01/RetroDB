@@ -13,27 +13,27 @@
 
 <!-- Tab Navigation -->
 <div class="settings-tabs" id="settingsTabs" role="tablist" aria-label="Settings sections" data-sticky-nav>
-    <button class="settings-tab active" data-tab="account" onclick="switchSettingsTab('account')" role="tab" aria-selected="true" aria-controls="tab-account">
+    <button type="button" class="settings-tab active" data-tab="account" onclick="switchSettingsTab('account')" role="tab" aria-selected="true" aria-controls="tab-account">
         <span class="tab-icon">👤</span>
         <span class="tab-text">Account</span>
     </button>
-    <button class="settings-tab" data-tab="library" onclick="switchSettingsTab('library')" role="tab" aria-selected="false" aria-controls="tab-library">
+    <button type="button" class="settings-tab" data-tab="library" onclick="switchSettingsTab('library')" role="tab" aria-selected="false" aria-controls="tab-library">
         <span class="tab-icon">📁</span>
         <span class="tab-text">Library</span>
     </button>
-    <button class="settings-tab" data-tab="scraping" onclick="switchSettingsTab('scraping')" role="tab" aria-selected="false" aria-controls="tab-scraping">
+    <button type="button" class="settings-tab" data-tab="scraping" onclick="switchSettingsTab('scraping')" role="tab" aria-selected="false" aria-controls="tab-scraping">
         <span class="tab-icon">🔍</span>
         <span class="tab-text">Scraping</span>
     </button>
-    <button class="settings-tab" data-tab="data" onclick="switchSettingsTab('data')" role="tab" aria-selected="false" aria-controls="tab-data">
+    <button type="button" class="settings-tab" data-tab="data" onclick="switchSettingsTab('data')" role="tab" aria-selected="false" aria-controls="tab-data">
         <span class="tab-icon">📊</span>
         <span class="tab-text">Data</span>
     </button>
-    <button class="settings-tab" data-tab="customization" onclick="switchSettingsTab('customization')" role="tab" aria-selected="false" aria-controls="tab-customization">
+    <button type="button" class="settings-tab" data-tab="customization" onclick="switchSettingsTab('customization')" role="tab" aria-selected="false" aria-controls="tab-customization">
         <span class="tab-icon">🎨</span>
         <span class="tab-text">Customization</span>
     </button>
-    <button class="settings-tab" data-tab="system" onclick="switchSettingsTab('system')" role="tab" aria-selected="false" aria-controls="tab-system">
+    <button type="button" class="settings-tab" data-tab="system" onclick="switchSettingsTab('system')" role="tab" aria-selected="false" aria-controls="tab-system">
         <span class="tab-icon">⚙️</span>
         <span class="tab-text">System</span>
     </button>
@@ -41,7 +41,7 @@
 
 <!-- ==================== TAB: ACCOUNT ==================== -->
 <div class="settings-tab-panel active" id="tab-account" role="tabpanel" aria-label="Account settings">
-    <div class="tab-subnav sticky-subnav" data-sticky-nav id="subnav-account">
+    <div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-account">
         <a href="#profile" class="subnav-link active" onclick="scrollToSection('profile')">👤 My Profile</a>
         <a href="#timezone" class="subnav-link" onclick="scrollToSection('timezone')">🕐 Timezone</a>
         {% if current_user and current_user.role == 'admin' %}
@@ -271,7 +271,7 @@
                 — <a href="#" onclick="event.preventDefault(); useDetectedTimezone()" style="color: var(--primary-cyan);">Use detected</a>
             </span>
         </div>
-        <button onclick="saveTimezone()" class="btn btn-primary">💾 Save Timezone</button>
+        <button type="button" onclick="saveTimezone()" class="btn btn-primary">💾 Save Timezone</button>
     </div>
 </section>
 
@@ -345,9 +345,9 @@
                     </td>
                     <td>
                         <div style="display: flex; gap: 0.5rem;">
-                            <button class="btn btn-secondary btn-sm" onclick="editUser({{ user.id }})" title="Edit">✏️</button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="editUser({{ user.id }})" title="Edit">✏️</button>
                             {% if user.id != current_user.id %}
-                            <button class="btn btn-danger btn-sm" onclick="deleteUser({{ user.id }}, '{{ user.username }}')" title="Delete">🗑️</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteUser({{ user.id }}, '{{ user.username }}')" title="Delete">🗑️</button>
                             {% endif %}
                         </div>
                     </td>
@@ -359,11 +359,11 @@
 </section>
 
 <!-- Add/Edit User Modal -->
-<div class="modal-overlay" id="userModal">
+<div class="modal-overlay" id="userModal" data-focus-trap data-focus-trap-onescape="closeUserModal">
     <div class="modal-content" style="max-width: 500px;" role="dialog" aria-modal="true" aria-labelledby="userModalTitle">
         <div class="modal-header">
             <h2 id="userModalTitle">Add User</h2>
-            <button class="modal-close" onclick="closeUserModal()" aria-label="Close user modal">×</button>
+            <button type="button" class="modal-close" onclick="closeUserModal()" aria-label="Close user modal">×</button>
         </div>
         <div class="modal-body">
             <input type="hidden" id="editUserId" value="">
@@ -395,8 +395,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="closeUserModal()">Cancel</button>
-            <button class="btn btn-primary" onclick="saveUser()">Save User</button>
+            <button type="button" class="btn btn-secondary" onclick="closeUserModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="saveUser()">Save User</button>
         </div>
     </div>
 </div>
@@ -405,7 +405,7 @@
 
 <!-- ==================== TAB: LIBRARY ==================== -->
 <div class="settings-tab-panel" id="tab-library" role="tabpanel" aria-label="Library settings">
-    <div class="tab-subnav sticky-subnav" data-sticky-nav id="subnav-library">
+    <div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-library">
         <a href="#library" class="subnav-link active" onclick="scrollToSection('library')">📁 Paths</a>
         <a href="#display" class="subnav-link" onclick="scrollToSection('display')">🖼️ Display</a>
         <a href="#rom-naming" class="subnav-link" onclick="scrollToSection('rom-naming')">📝 ROM Naming</a>
@@ -437,11 +437,11 @@
         </div>
         
         <div style="margin-top: var(--spacing-xl); display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
-            <button onclick="savePathSettings()" class="btn btn-primary" id="savePathsBtn">
+            <button type="button" onclick="savePathSettings()" class="btn btn-primary" id="savePathsBtn">
                 <span class="btn-icon">💾</span>
                 Save Path Settings
             </button>
-            <button onclick="scanLibrary()" class="btn btn-secondary">
+            <button type="button" onclick="scanLibrary()" class="btn btn-secondary">
                 <span class="btn-icon">🔍</span>
                 Scan Library
             </button>
@@ -546,7 +546,7 @@
         </div>
 
         <div style="margin-top: var(--spacing-xl);">
-            <button onclick="saveDisplaySettings()" class="btn btn-primary" id="saveDisplayBtn">
+            <button type="button" onclick="saveDisplaySettings()" class="btn btn-primary" id="saveDisplayBtn">
                 <span class="btn-icon">💾</span>
                 Save Display Settings
             </button>
@@ -609,7 +609,7 @@
         </div>
 
         <div style="margin-top: var(--spacing-xl);">
-            <button onclick="saveNamingSettings()" class="btn btn-primary" id="saveNamingBtn">
+            <button type="button" onclick="saveNamingSettings()" class="btn btn-primary" id="saveNamingBtn">
                 <span class="btn-icon">💾</span>
                 Save Naming Settings
             </button>
@@ -629,15 +629,15 @@
         </p>
         
         <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; margin-bottom: var(--spacing-lg);">
-            <button onclick="detectBonusDiscs()" class="btn btn-primary" id="detectBonusBtn">
+            <button type="button" onclick="detectBonusDiscs()" class="btn btn-primary" id="detectBonusBtn">
                 <span class="btn-icon">🔍</span>
                 Auto-Detect Bonus Discs
             </button>
-            <button onclick="autoLinkBonusDiscs()" class="btn btn-secondary" id="autoLinkBonusBtn">
+            <button type="button" onclick="autoLinkBonusDiscs()" class="btn btn-secondary" id="autoLinkBonusBtn">
                 <span class="btn-icon">🔗</span>
                 Auto-Link to Parents
             </button>
-            <button onclick="viewBonusStats()" class="btn btn-secondary">
+            <button type="button" onclick="viewBonusStats()" class="btn btn-secondary">
                 <span class="btn-icon">📊</span>
                 View Stats
             </button>
@@ -661,11 +661,11 @@
     </div>
     <div class="card-body">
         <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; margin-bottom: var(--spacing-lg);">
-            <button onclick="createBackup()" class="btn btn-primary" id="createBackupBtn">
+            <button type="button" onclick="createBackup()" class="btn btn-primary" id="createBackupBtn">
                 <span class="btn-icon">💾</span>
                 Create Backup
             </button>
-            <button onclick="calculateStorage()" class="btn btn-secondary">
+            <button type="button" onclick="calculateStorage()" class="btn btn-secondary">
                 <span class="btn-icon">📊</span>
                 Calculate File Sizes
             </button>
@@ -684,7 +684,7 @@
 
 <!-- ==================== TAB: SCRAPING ==================== -->
 <div class="settings-tab-panel" id="tab-scraping" role="tabpanel" aria-label="Scraping settings">
-    <div class="tab-subnav sticky-subnav" data-sticky-nav id="subnav-scraping">
+    <div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-scraping">
         <a href="#esde" class="subnav-link active" onclick="scrollToSection('esde')">🎮 ES-DE</a>
         <a href="#scraper" class="subnav-link" onclick="scrollToSection('scraper')">🔍 Scraper</a>
         {% if current_user and current_user.role == 'admin' %}
@@ -723,11 +723,11 @@
         </div>
         
         <div style="margin-top: var(--spacing-xl); display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
-            <button onclick="savePathSettings()" class="btn btn-primary">
+            <button type="button" onclick="savePathSettings()" class="btn btn-primary">
                 <span class="btn-icon">💾</span>
                 Save Path Settings
             </button>
-            <button onclick="importSystemLogos()" class="btn btn-secondary" id="importLogosBtn">
+            <button type="button" onclick="importSystemLogos()" class="btn btn-secondary" id="importLogosBtn">
                 <span class="btn-icon">🖼️</span>
                 Import System Logos
             </button>
@@ -924,15 +924,15 @@
         </div>
 
         <div class="scraper-settings-actions">
-            <button onclick="saveScraperSettings()" class="btn btn-primary" id="saveScraperBtn">
+            <button type="button" onclick="saveScraperSettings()" class="btn btn-primary" id="saveScraperBtn">
                 <span class="btn-icon">💾</span>
                 Save Settings
             </button>
-            <button onclick="resetScraperPriority()" class="btn btn-secondary">
+            <button type="button" onclick="resetScraperPriority()" class="btn btn-secondary">
                 <span class="btn-icon">🔄</span>
                 Reset to Default
             </button>
-            <button onclick="checkRateLimits()" class="btn btn-secondary" id="checkRateLimitsBtn">
+            <button type="button" onclick="checkRateLimits()" class="btn btn-secondary" id="checkRateLimitsBtn">
                 <span class="btn-icon">📊</span>
                 Check Rate Limits
             </button>
@@ -1272,7 +1272,7 @@
         </div>
         
         <div style="margin-top: var(--spacing-xl);">
-            <button onclick="saveApiKeys()" class="btn btn-primary" id="saveApiKeysBtn">
+            <button type="button" onclick="saveApiKeys()" class="btn btn-primary" id="saveApiKeysBtn">
                 <span class="btn-icon">💾</span>
                 Save API Keys
             </button>
@@ -1285,7 +1285,7 @@
 
 <!-- ==================== TAB: DATA ==================== -->
 <div class="settings-tab-panel" id="tab-data" role="tabpanel" aria-label="Data settings">
-    <div class="tab-subnav sticky-subnav" data-sticky-nav id="subnav-data">
+    <div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-data">
         <a href="#stats" class="subnav-link active" onclick="scrollToSection('stats')">📊 Stats</a>
         <a href="#trophies" class="subnav-link" onclick="scrollToSection('trophies')">🏆 Trophies</a>
         <a href="#dropdowns" class="subnav-link" onclick="scrollToSection('dropdowns')">📋 Dropdowns</a>
@@ -1341,7 +1341,7 @@
         </p>
         
         <div style="margin-top: var(--spacing-xl);">
-            <button onclick="scanTrophies()" class="btn btn-primary" id="scanTrophiesBtn" {% if not config.RPCS3_TROPHY_PATH %}disabled{% endif %}>
+            <button type="button" onclick="scanTrophies()" class="btn btn-primary" id="scanTrophiesBtn" {% if not config.RPCS3_TROPHY_PATH %}disabled{% endif %}>
                 <span class="btn-icon">🔍</span>
                 Scan Trophies
             </button>
@@ -1369,7 +1369,7 @@
             <div id="genreOptions" class="options-list"></div>
             <div class="add-option-row">
                 <input type="text" id="newGenre" placeholder="New genre..." class="option-input">
-                <button onclick="addDropdownOption('genre', 'newGenre', 'genreOptions')" class="btn btn-sm btn-primary">Add</button>
+                <button type="button" onclick="addDropdownOption('genre', 'newGenre', 'genreOptions')" class="btn btn-sm btn-primary">Add</button>
             </div>
         </div>
         
@@ -1379,7 +1379,7 @@
             <div id="gameStructureOptions" class="options-list"></div>
             <div class="add-option-row">
                 <input type="text" id="newGameStructure" placeholder="New game structure..." class="option-input">
-                <button onclick="addDropdownOption('game_structure', 'newGameStructure', 'gameStructureOptions')" class="btn btn-sm btn-primary">Add</button>
+                <button type="button" onclick="addDropdownOption('game_structure', 'newGameStructure', 'gameStructureOptions')" class="btn btn-sm btn-primary">Add</button>
             </div>
         </div>
 
@@ -1389,7 +1389,7 @@
             <div id="perspectiveOptions" class="options-list"></div>
             <div class="add-option-row">
                 <input type="text" id="newPerspective" placeholder="New perspective..." class="option-input">
-                <button onclick="addDropdownOption('perspective', 'newPerspective', 'perspectiveOptions')" class="btn btn-sm btn-primary">Add</button>
+                <button type="button" onclick="addDropdownOption('perspective', 'newPerspective', 'perspectiveOptions')" class="btn btn-sm btn-primary">Add</button>
             </div>
         </div>
 
@@ -1399,7 +1399,7 @@
             <div id="dimensionOptions" class="options-list"></div>
             <div class="add-option-row">
                 <input type="text" id="newDimension" placeholder="New dimension..." class="option-input">
-                <button onclick="addDropdownOption('dimension', 'newDimension', 'dimensionOptions')" class="btn btn-sm btn-primary">Add</button>
+                <button type="button" onclick="addDropdownOption('dimension', 'newDimension', 'dimensionOptions')" class="btn btn-sm btn-primary">Add</button>
             </div>
         </div>
 
@@ -1409,7 +1409,7 @@
             <div id="gameModesOptions" class="options-list"></div>
             <div class="add-option-row">
                 <input type="text" id="newGameMode" placeholder="New play mode..." class="option-input">
-                <button onclick="addDropdownOption('game_modes', 'newGameMode', 'gameModesOptions')" class="btn btn-sm btn-primary">Add</button>
+                <button type="button" onclick="addDropdownOption('game_modes', 'newGameMode', 'gameModesOptions')" class="btn btn-sm btn-primary">Add</button>
             </div>
         </div>
 
@@ -1419,7 +1419,7 @@
             <div id="saveTypeOptions" class="options-list"></div>
             <div class="add-option-row">
                 <input type="text" id="newSaveType" placeholder="New save type..." class="option-input">
-                <button onclick="addDropdownOption('save_type', 'newSaveType', 'saveTypeOptions')" class="btn btn-sm btn-primary">Add</button>
+                <button type="button" onclick="addDropdownOption('save_type', 'newSaveType', 'saveTypeOptions')" class="btn btn-sm btn-primary">Add</button>
             </div>
         </div>
     </div>
@@ -1438,8 +1438,8 @@
 
         <!-- Field selector buttons -->
         <div style="display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-lg); flex-wrap: wrap; align-items: center;">
-            <button class="btn btn-primary norm-field-btn active" id="normBtnGenre" onclick="NormalizationManager.load('genre')">Genre</button>
-            <button class="btn btn-secondary norm-field-btn" id="normBtnModes" onclick="NormalizationManager.load('modes')">Modes</button>
+            <button type="button" class="btn btn-primary norm-field-btn active" id="normBtnGenre" onclick="NormalizationManager.load('genre')">Genre</button>
+            <button type="button" class="btn btn-secondary norm-field-btn" id="normBtnModes" onclick="NormalizationManager.load('modes')">Modes</button>
             <div style="margin-left: auto; display: flex; gap: var(--spacing-sm); align-items: center;">
                 <div class="toggle-item" style="display: flex; align-items: center; gap: var(--spacing-xs);">
                     <label class="toggle-switch" style="transform: scale(0.75);" for="normSelectAll">
@@ -1448,7 +1448,7 @@
                     </label>
                     <span class="toggle-label" style="font-size: 0.85rem; color: var(--text-secondary);">Show only values needing changes</span>
                 </div>
-                <button class="btn btn-sm btn-secondary" onclick="NormalizationManager.load()" id="normRefreshBtn">
+                <button type="button" class="btn btn-sm btn-secondary" onclick="NormalizationManager.load()" id="normRefreshBtn">
                     <span class="btn-icon">🔄</span> Refresh
                 </button>
             </div>
@@ -1479,8 +1479,8 @@
 
             <!-- Action buttons -->
             <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-lg); flex-wrap: wrap;">
-                <button class="btn btn-secondary" onclick="NormalizationManager.selectAllChanged()">Select All Changed</button>
-                <button class="btn btn-primary" onclick="NormalizationManager.apply()" id="normApplyBtn" disabled>
+                <button type="button" class="btn btn-secondary" onclick="NormalizationManager.selectAllChanged()">Select All Changed</button>
+                <button type="button" class="btn btn-primary" onclick="NormalizationManager.apply()" id="normApplyBtn" disabled>
                     Apply 0 Selected
                 </button>
             </div>
@@ -1497,7 +1497,7 @@
 
 <!-- ==================== TAB: CUSTOMIZATION ==================== -->
 <div class="settings-tab-panel" id="tab-customization" role="tabpanel" aria-label="Customization settings">
-    <div class="tab-subnav sticky-subnav" data-sticky-nav id="subnav-customization">
+    <div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-customization">
         <a href="#notifications" class="subnav-link active" onclick="scrollToSection('notifications')">🔔 Notifications</a>
         <a href="#controllers" class="subnav-link" onclick="scrollToSection('controllers')">🎮 Controllers</a>
         <a href="#controllers-defaults" class="subnav-link" onclick="scrollToSection('controllers-defaults')">⚙️ System Defaults</a>
@@ -1575,11 +1575,11 @@
             </div>
 
             <div style="margin-top: var(--spacing-lg); display: flex; gap: var(--spacing-md); align-items: center;">
-                <button onclick="saveNotificationSettings()" class="btn btn-primary" id="saveNotifSettingsBtn">
+                <button type="button" onclick="saveNotificationSettings()" class="btn btn-primary" id="saveNotifSettingsBtn">
                     <span class="btn-icon">💾</span>
                     Save Settings
                 </button>
-                <button onclick="testNotifications()" class="btn btn-secondary">
+                <button type="button" onclick="testNotifications()" class="btn btn-secondary">
                     <span class="btn-icon">🔔</span>
                     Test Notifications
                 </button>
@@ -1606,7 +1606,7 @@
             Assign a default controller to each system. Games will inherit this controller unless manually changed.
         </p>
         <div style="margin-bottom: var(--spacing-lg); display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
-            <button onclick="autoAssignDefaultControllers()" class="btn btn-primary" id="autoAssignBtn">
+            <button type="button" onclick="autoAssignDefaultControllers()" class="btn btn-primary" id="autoAssignBtn">
                 <span class="btn-icon">🎯</span>
                 Auto-Assign Defaults
             </button>
@@ -1691,7 +1691,7 @@
                 <textarea class="form-input" id="newControllerDescription" rows="2" placeholder="Brief description of the controller..."></textarea>
             </div>
             <div style="margin-top: var(--spacing-lg);">
-                <button onclick="addNewController()" class="btn btn-success">
+                <button type="button" onclick="addNewController()" class="btn btn-success">
                     <span class="btn-icon">➕</span>
                     Add Controller
                 </button>
@@ -1714,11 +1714,11 @@
 </section>
 
 <!-- Edit Controller Modal -->
-<div class="modal-overlay" id="editControllerModal">
+<div class="modal-overlay" id="editControllerModal" data-focus-trap data-focus-trap-onescape="closeEditControllerModal">
     <div class="modal-content" style="max-width: 600px;">
         <div class="modal-header">
             <h2>✏️ Edit Controller</h2>
-            <button class="modal-close" onclick="closeEditControllerModal()">×</button>
+            <button type="button" class="modal-close" onclick="closeEditControllerModal()">×</button>
         </div>
         <div class="modal-body">
             <input type="hidden" id="editControllerId">
@@ -1758,8 +1758,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="closeEditControllerModal()">Cancel</button>
-            <button class="btn btn-primary" onclick="saveControllerChanges()">
+            <button type="button" class="btn btn-secondary" onclick="closeEditControllerModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="saveControllerChanges()">
                 <span class="btn-icon">💾</span>
                 Save Changes
             </button>
@@ -1778,10 +1778,10 @@
         </p>
         
         <div style="margin-bottom: var(--spacing-lg); display: flex; gap: var(--spacing-md); flex-wrap: wrap; align-items: center;">
-            <button onclick="refreshSystemLogos()" class="btn btn-secondary" id="refreshLogosBtn">
+            <button type="button" onclick="refreshSystemLogos()" class="btn btn-secondary" id="refreshLogosBtn">
                 🔄 Refresh System Logos
             </button>
-            <button onclick="refreshSystemNames()" class="btn btn-secondary" id="refreshNamesBtn">
+            <button type="button" onclick="refreshSystemNames()" class="btn btn-secondary" id="refreshNamesBtn">
                 📝 Refresh System Names
             </button>
             <span class="text-muted" style="font-size: 0.85rem;">
@@ -1812,7 +1812,7 @@
 
 <!-- ==================== TAB: SYSTEM ==================== -->
 <div class="settings-tab-panel" id="tab-system" role="tabpanel" aria-label="System settings">
-    <div class="tab-subnav sticky-subnav" data-sticky-nav id="subnav-system">
+    <div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-system">
         {% if current_user and current_user.role == 'admin' %}
         <a href="#maintenance" class="subnav-link active" onclick="scrollToSection('maintenance')">🛠️ Maintenance</a>
         <a href="#server" class="subnav-link" onclick="scrollToSection('server')">⚙️ Server</a>
@@ -1830,7 +1830,7 @@
     <div class="card-body">
         <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; align-items: flex-start;">
             <div>
-                <button onclick="cleanMissingRoms()" class="btn btn-danger" id="cleanMissingBtn">
+                <button type="button" onclick="cleanMissingRoms()" class="btn btn-danger" id="cleanMissingBtn">
                     <span class="btn-icon">🧹</span>
                     Clean Missing ROMs
                 </button>
@@ -1839,7 +1839,7 @@
                 </p>
             </div>
             <div>
-                <button onclick="refreshRetroAchievements()" class="btn btn-primary" id="refreshRABtn">
+                <button type="button" onclick="refreshRetroAchievements()" class="btn btn-primary" id="refreshRABtn">
                     <span class="btn-icon">🏆</span>
                     Refresh RetroAchievements
                 </button>
@@ -1853,7 +1853,7 @@
                         <option value="{{ system.id }}">{{ system.name }}</option>
                         {% endfor %}
                     </select>
-                    <button onclick="clearRAData()" class="btn btn-danger" id="clearRABtn">
+                    <button type="button" onclick="clearRAData()" class="btn btn-danger" id="clearRABtn">
                         <span class="btn-icon">🗑️</span>
                         Clear RA Data
                     </button>
@@ -1874,7 +1874,7 @@
 
         <div style="display: flex; gap: var(--spacing-md); align-items: flex-start; flex-wrap: wrap; margin-bottom: var(--spacing-lg);">
             <div>
-                <button onclick="clearClzImports()" class="btn btn-danger" id="clearClzBtn">
+                <button type="button" onclick="clearClzImports()" class="btn btn-danger" id="clearClzBtn">
                     <span class="btn-icon">📋</span>
                     Clear CLZ Imports
                 </button>
@@ -1906,11 +1906,11 @@
                 </div>
             </div>
             <div style="display: flex; gap: var(--spacing-md); align-items: center;">
-                <button onclick="previewClearScrapedData()" class="btn btn-secondary" id="previewClearBtn">
+                <button type="button" onclick="previewClearScrapedData()" class="btn btn-secondary" id="previewClearBtn">
                     <span class="btn-icon">👁️</span>
                     Preview
                 </button>
-                <button onclick="clearScrapedData()" class="btn btn-danger" id="clearScrapedBtn">
+                <button type="button" onclick="clearScrapedData()" class="btn btn-danger" id="clearScrapedBtn">
                     <span class="btn-icon">🗑️</span>
                     Clear Scraped Data
                 </button>
@@ -1927,11 +1927,11 @@
             This cleans up leftover files from deleted games.
         </p>
         <div style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
-            <button onclick="previewOrphanedMedia()" class="btn btn-secondary" id="previewOrphanedBtn">
+            <button type="button" onclick="previewOrphanedMedia()" class="btn btn-secondary" id="previewOrphanedBtn">
                 <span class="btn-icon">🔍</span>
                 Scan for Orphaned Files
             </button>
-            <button onclick="cleanOrphanedMedia()" class="btn btn-danger" id="cleanOrphanedBtn" style="display: none;">
+            <button type="button" onclick="cleanOrphanedMedia()" class="btn btn-danger" id="cleanOrphanedBtn" style="display: none;">
                 <span class="btn-icon">🗑️</span>
                 Delete Orphaned Files
             </button>
@@ -1947,7 +1947,7 @@
             and ANALYZE to update query planner statistics.
         </p>
         <div>
-            <button onclick="optimizeDatabase()" class="btn btn-primary" id="optimizeDbBtn">
+            <button type="button" onclick="optimizeDatabase()" class="btn btn-primary" id="optimizeDbBtn">
                 <span class="btn-icon">⚡</span> Optimize Database
             </button>
         </div>
@@ -1961,7 +1961,7 @@
         <h2 class="card-title">Server Controls</h2>
     </div>
     <div class="card-body">
-        <button onclick="restartServer()" class="btn btn-warning">
+        <button type="button" onclick="restartServer()" class="btn btn-warning">
             <span class="btn-icon">🔄</span>
             Restart Server
         </button>
@@ -2149,7 +2149,7 @@
         
         <!-- Save Logging Settings Button -->
         <div style="margin-top: var(--spacing-xl); display: flex; gap: var(--spacing-md); flex-wrap: wrap; align-items: center;">
-            <button onclick="saveLoggingSettings()" class="btn btn-primary" id="saveLoggingBtn">
+            <button type="button" onclick="saveLoggingSettings()" class="btn btn-primary" id="saveLoggingBtn">
                 <span class="btn-icon">💾</span>
                 Save Logging Settings
             </button>
@@ -2162,11 +2162,11 @@
                 <span>📁</span> Log Files
             </h3>
             <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; align-items: center; margin-bottom: var(--spacing-md);">
-                <button onclick="loadLogFiles()" class="btn btn-secondary">
+                <button type="button" onclick="loadLogFiles()" class="btn btn-secondary">
                     <span class="btn-icon">🔄</span>
                     Refresh Log List
                 </button>
-                <button onclick="clearOldLogs()" class="btn btn-danger">
+                <button type="button" onclick="clearOldLogs()" class="btn btn-danger">
                     <span class="btn-icon">🧹</span>
                     Clear Logs Older Than 5 Days
                 </button>
@@ -2191,7 +2191,7 @@
             If a bulk scrape gets stuck or won't clear from the toast notification, use this button to force clear all bulk scrape state from your browser's local storage.
         </p>
         <div style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
-            <button onclick="clearStuckBulkScrape()" class="btn btn-danger">
+            <button type="button" onclick="clearStuckBulkScrape()" class="btn btn-danger">
                 <span class="btn-icon">🧹</span>
                 Clear Stuck Bulk Scrape
             </button>
@@ -2209,7 +2209,7 @@
             If achievement syncs get stuck or the queue won't process, use this button to clear the sync queue and reset the sync state.
         </p>
         <div style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
-            <button onclick="clearStuckRASync()" class="btn btn-danger">
+            <button type="button" onclick="clearStuckRASync()" class="btn btn-danger">
                 <span class="btn-icon">🧹</span>
                 Clear Stuck RA Sync
             </button>
@@ -2224,13 +2224,13 @@
 </div><!-- End tab-system -->
 
 <!-- Confirm Modal -->
-<div id="confirmModal" class="confirm-modal">
+<div id="confirmModal" class="confirm-modal" data-focus-trap data-focus-trap-content=".confirm-modal-content">
     <div class="confirm-modal-content glass-panel">
         <div class="confirm-modal-title" id="confirmTitle">Confirm Action</div>
         <div class="confirm-modal-message" id="confirmMessage">Are you sure?</div>
         <div class="confirm-modal-buttons">
-            <button class="btn btn-secondary" id="confirmCancelBtn" onclick="closeConfirmModal()">Cancel</button>
-            <button class="btn btn-danger" id="confirmBtn" onclick="executeConfirm()">Delete</button>
+            <button type="button" class="btn btn-secondary" id="confirmCancelBtn" onclick="closeConfirmModal()">Cancel</button>
+            <button type="button" class="btn btn-danger" id="confirmBtn" onclick="executeConfirm()">Delete</button>
         </div>
     </div>
 </div>
@@ -4107,10 +4107,10 @@ function detectBonusDiscs() {
                                     <br>${infoText}
                                 </div>
                                 <div style="display: flex; gap: var(--spacing-sm); flex-shrink: 0;">
-                                    <button class="btn btn-sm btn-secondary" onclick="showLinkOptions(${game.id}, ${game.system_id})">
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="showLinkOptions(${game.id}, ${game.system_id})">
                                         🔗 Link
                                     </button>
-                                    <button class="btn btn-sm btn-primary" onclick="markAsBonusDisc(${game.id})">
+                                    <button type="button" class="btn btn-sm btn-primary" onclick="markAsBonusDisc(${game.id})">
                                         🎁 Mark
                                     </button>
                                 </div>
@@ -4310,7 +4310,7 @@ function loadBackups() {
                             <span class="backup-name">📁 ${backup.filename}</span>
                             <span class="backup-meta">${backup.size} • ${backup.date}</span>
                         </div>
-                        <button class="btn btn-sm btn-warning" onclick="restoreBackup('${backup.filename}')">
+                        <button type="button" class="btn btn-sm btn-warning" onclick="restoreBackup('${backup.filename}')">
                             Restore
                         </button>
                     </div>
@@ -4369,9 +4369,19 @@ document.addEventListener('DOMContentLoaded', loadBackups);
 
 let pendingConfirmAction = null;
 
-function showConfirmModal(title, message, onConfirm) {
+// Pass 45.4 — default to textContent so callers can't accidentally turn
+// admin-curated values (controller name, system name, dropdown option,
+// upstream API error string) into an XSS sink. Callers that need
+// formatted HTML pass `{allowHtml: true}` to opt in, mirroring the
+// `ConfirmModal.show` helper in settings-page.js (Pass 29.1).
+function showConfirmModal(title, message, onConfirm, options = {}) {
     document.getElementById('confirmTitle').textContent = title;
-    document.getElementById('confirmMessage').innerHTML = message;  // Use innerHTML to support HTML content
+    const messageEl = document.getElementById('confirmMessage');
+    if (options.allowHtml) {
+        messageEl.innerHTML = message;
+    } else {
+        messageEl.textContent = message;
+    }
     pendingConfirmAction = onConfirm;
     
     // Show/hide cancel button and update confirm button text
@@ -4395,9 +4405,15 @@ function showConfirmModal(title, message, onConfirm) {
 }
 
 // Show info modal (just OK button)
-function showInfoModal(title, message, onOk) {
+// Pass 45.4 — same allowHtml opt-in as showConfirmModal.
+function showInfoModal(title, message, onOk, options = {}) {
     document.getElementById('confirmTitle').textContent = title;
-    document.getElementById('confirmMessage').innerHTML = message;  // Use innerHTML to support HTML content
+    const messageEl = document.getElementById('confirmMessage');
+    if (options.allowHtml) {
+        messageEl.innerHTML = message;
+    } else {
+        messageEl.textContent = message;
+    }
     pendingConfirmAction = onOk || null;
     
     const cancelBtn = document.getElementById('confirmCancelBtn');
@@ -5116,7 +5132,7 @@ async function loadDropdownOptions(category, containerId) {
             container.innerHTML = data.options.map(opt => `
                 <span class="option-tag">
                     ${opt.value}
-                    <button class="delete-btn" onclick="deleteDropdownOption(${opt.id}, '${category}', '${containerId}')" title="Delete">×</button>
+                    <button type="button" class="delete-btn" onclick="deleteDropdownOption(${opt.id}, '${category}', '${containerId}')" title="Delete">×</button>
                 </span>
             `).join('');
         } else {
@@ -5309,7 +5325,7 @@ async function loadSystemControllersTable() {
             const allLetters = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
             navLetters.innerHTML = allLetters.map(letter => {
                 const hasLetter = letterMap.has(letter);
-                return `<button class="sticky-nav-btn ${hasLetter ? '' : 'disabled'}" 
+                return `<button type="button" class="sticky-nav-btn ${hasLetter ? '' : 'disabled'}" 
                                 data-letter="${letter}" 
                                 onclick="scrollToSystemLetter('${letter}')"
                                 ${hasLetter ? '' : 'disabled'}>${letter}</button>`;
@@ -5469,10 +5485,10 @@ async function loadControllerLibrary() {
                                 ${c.description ? `<p style="margin: 0 0 8px 0; color: var(--text-secondary);">${c.description}</p>` : ''}
                                 ${c.button_layout ? `<p style="margin: 0; color: var(--text-muted);"><strong>Buttons:</strong> ${c.button_layout}</p>` : ''}
                                 <div style="margin-top: 8px; display: flex; gap: 8px;">
-                                    <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); openEditControllerModal(${c.id})">
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="event.stopPropagation(); openEditControllerModal(${c.id})">
                                         ✏️ Edit
                                     </button>
-                                    <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteController(${c.id}, '${c.name.replace(/'/g, "\\'")}')">
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteController(${c.id}, '${c.name.replace(/'/g, "\\'")}')">
                                         🗑️ Delete
                                     </button>
                                 </div>
@@ -6015,9 +6031,10 @@ async function clearScrapedData() {
     // Confirm first
     const systemName = systemId === 'all' ? 'ALL SYSTEMS' : systemSelect.options[systemSelect.selectedIndex].text;
     
+    // Pass 45.4 — escape system name; opt in to HTML for the formatting.
     showConfirmModal(
         '⚠️ Clear Scraped Data',
-        `This will clear all scraped metadata from games in <strong>${systemName}</strong>.<br><br>
+        `This will clear all scraped metadata from games in <strong>${escapeHtml(systemName)}</strong>.<br><br>
          ${deleteImages ? '<strong style="color: var(--neon-red);">⚠️ Downloaded images will also be deleted!</strong><br><br>' : ''}
          This cannot be undone. Are you sure?`,
         async () => {
@@ -6064,7 +6081,8 @@ async function clearScrapedData() {
                 btn.disabled = false;
                 btn.innerHTML = '<span class="btn-icon">🗑️</span> Clear Scraped Data';
             }
-        }
+        },
+        {allowHtml: true}
     );
 }
 
@@ -6243,9 +6261,12 @@ document.getElementById('confirmModal')?.addEventListener('click', function(e) {
 });
 
 async function deleteController(controllerId, controllerName) {
+    // Pass 45.4 — controllerName is admin-editable text; escape before
+    // interpolating into the HTML template, then opt in to HTML so the
+    // <strong> + <br><br> still render.
     showConfirmModal(
         '🗑️ Delete Controller',
-        `Are you sure you want to delete <strong>${controllerName}</strong>?<br><br>This will remove it from the library and any systems using it as default.`,
+        `Are you sure you want to delete <strong>${escapeHtml(controllerName)}</strong>?<br><br>This will remove it from the library and any systems using it as default.`,
         async () => {
             closeConfirmModal();
             try {
@@ -6275,7 +6296,8 @@ async function deleteController(controllerId, controllerName) {
                 console.error('Error deleting controller:', error);
                 showModal('❌ Error', 'Failed to delete controller');
             }
-        }
+        },
+        {allowHtml: true}
     );
 }
 
@@ -6955,13 +6977,13 @@ async function loadLogFiles() {
                         <td>${file.date}</td>
                         <td>${sizeKB} KB</td>
                         <td>
-                            <button onclick="viewLogFile('${file.filename}')" class="btn btn-sm btn-secondary">
+                            <button type="button" onclick="viewLogFile('${file.filename}')" class="btn btn-sm btn-secondary">
                                 👁️ View
                             </button>
-                            <button onclick="downloadLogFile('${file.filename}')" class="btn btn-sm btn-primary">
+                            <button type="button" onclick="downloadLogFile('${file.filename}')" class="btn btn-sm btn-primary">
                                 📥 Download
                             </button>
-                            <button onclick="deleteLogFile('${file.filename}')" class="btn btn-sm btn-danger">
+                            <button type="button" onclick="deleteLogFile('${file.filename}')" class="btn btn-sm btn-danger">
                                 🗑️
                             </button>
                         </td>

@@ -24,9 +24,13 @@ class TestRolePermissions:
         assert 'launch' in ROLE_PERMISSIONS['editor']
         assert 'track_progress' in ROLE_PERMISSIONS['editor']
 
-    def test_viewer_unchanged(self):
+    def test_viewer_has_view_and_track_progress(self):
+        # Pass 45.1 (landed on main while Pass 44 was in PR) widened viewer
+        # to include `track_progress` so self-tracking works for every
+        # signed-in role, including viewer. Merge of feat/multi-emulator-launch
+        # carries that fix forward.
         from services.auth import ROLE_PERMISSIONS
-        assert ROLE_PERMISSIONS['viewer'] == {'view'}
+        assert ROLE_PERMISSIONS['viewer'] == {'view', 'track_progress'}
 
 
 class TestValidRolesConstant:

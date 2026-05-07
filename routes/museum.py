@@ -6,47 +6,30 @@
 # =============================================================================
 
 from flask import Blueprint, render_template, jsonify, request
-import ipaddress
 import json
 import os
 import re
 import logging
 import requests
-import socket
 import time
 from urllib.parse import urlparse
 
 import threading
 
 import config
-from services.database import get_db
+from services.database import get_request_db
 from services.auth import login_required, editor_required
 
 logger = logging.getLogger(__name__)
 
 
 def _is_public_https_url(url, max_redirects=3):
-    """Pass 25.3 / 32.6 — SSRF guard. Accept the URL only if every host along
-    any redirect chain resolves to a public IP. Delegates to the shared
-    services.ssrf helpers so the allowlist stays consistent with the scraper
-    download path.
-
-    Returns:
-        (final_url, pinned_ip, error) — final_url is the safe URL to fetch
-        (with allow_redirects=False), pinned_ip is the IP to pin via
-        pin_host_ip() to defeat DNS rebinding (Pass 32.7), error is None on
-        success or a log string.
+    """Pass 25.3 / 32.6 / 45.2 — SSRF guard. Thin wrapper over
+    services.ssrf.validate_and_pin_url so this module's existing call sites
+    keep working.
     """
-    from services.ssrf import validate_outbound_url, validate_redirect_chain
-    # First, walk redirects with HEADs, validating each hop's DNS lookup.
-    final_url, err = validate_redirect_chain(requests, url, max_redirects=max_redirects, timeout=5)
-    if err:
-        return None, None, err
-    # Re-resolve the final URL to capture the IP we'll pin against rebinding.
-    ok, _, ips = validate_outbound_url(final_url)
-    if not ok or not ips:
-        return None, None, 'final URL re-validation failed'
-    return final_url, ips[0], None
+    from services.ssrf import validate_and_pin_url
+    return validate_and_pin_url(requests, url, max_redirects=max_redirects, timeout=5)
 
 # Serialize all rembg GPU work to prevent concurrent sessions from exhausting
 # GPU memory (ROCm/HIP workspace allocation failures → GPU hang).
@@ -146,7 +129,7 @@ def _find_hardware_image(folder):
 
 def _get_top_games(system_id, museum_data):
     """Get top 10 games combining DB critic scores and AI-cached data."""
-    db = get_db()
+    db = get_request_db()
 
     # Get top-scored games from DB with boxart
     db_games = db.execute("""
@@ -189,8 +172,16 @@ def _get_top_games(system_id, museum_data):
                         'source': 'ai',
                     })
                     seen_titles.add(title)
-        except (json.JSONDecodeError, TypeError):
-            pass
+        except (json.JSONDecodeError, TypeError) as exc:
+            # Pass 41.11.A — log the decode failure at WARNING so an operator
+            # can prompt the next museum generation (the LLM occasionally
+            # returns truncated JSON). Previously a bare `pass` left the
+            # admin with an empty top-games list and no breadcrumb.
+            logger.warning(
+                "Museum top_games JSON decode failed for system_id=%s: %s",
+                getattr(museum_data, 'get', lambda _k: None)('system_id'),
+                exc,
+            )
 
     return top_games
 
@@ -220,7 +211,7 @@ def _get_system_type(folder):
 @login_required
 def museum():
     """Museum landing page — timeline grouped by generation."""
-    db = get_db()
+    db = get_request_db()
 
     # Get all systems with game counts
     systems = db.execute("""
@@ -309,7 +300,7 @@ def museum():
 @login_required
 def museum_system(system_id):
     """Per-system museum page."""
-    db = get_db()
+    db = get_request_db()
 
     system = db.execute(
         "SELECT id, name, folder FROM systems WHERE id = ?", (system_id,)
@@ -340,14 +331,17 @@ def museum_system(system_id):
 
     controllers_dir = os.path.join(config.STATIC_PATH, 'images', 'controllers')
     controllers = []
+    # Pass 41.11.B — a GET handler must not mutate shared DB state (RFC 7231
+    # GET-idempotency). The previous shape ran `UPDATE controllers SET
+    # image = NULL` from inside this view, meaning one user's page load
+    # rewrote globally-visible state. Clear stale refs in the in-memory
+    # render dict only; persistent cleanup runs from POST
+    # /api/museum/cleanup-controller-images (admin-only) below.
     for ctrl in controllers_raw:
         ctrl = dict(ctrl)
         if ctrl.get('image'):
             img_path = os.path.join(controllers_dir, ctrl['image'])
             if not os.path.isfile(img_path):
-                logger.info(f"Museum: Clearing stale image ref '{ctrl['image']}' for controller {ctrl['id']}")
-                db.execute("UPDATE controllers SET image = NULL WHERE id = ?", (ctrl['id'],))
-                db.commit()
                 ctrl['image'] = None
         controllers.append(ctrl)
 
@@ -379,7 +373,7 @@ def generate_system(system_id):
     )
     from services.jobs.museum import _build_museum_prompt, _build_top_games_prompt, _parse_museum_response
 
-    db = get_db()
+    db = get_request_db()
     system = db.execute(
         "SELECT id, name, folder FROM systems WHERE id = ?", (system_id,)
     ).fetchone()
@@ -504,9 +498,74 @@ def cancel_generate():
     return jsonify(result)
 
 
+@bp.route('/api/museum/cleanup-controller-images', methods=['POST'])
+@editor_required
+def cleanup_controller_images():
+    """Pass 41.11.B — admin-triggered persistent cleanup of stale controller
+    image references. The per-system museum page no longer mutates DB state
+    inside its GET handler (it just nulls the in-memory render dict for
+    missing files). Operators can invoke this endpoint to do the persistent
+    sweep when they notice broken thumbnails.
+    """
+    db = get_request_db()
+    controllers_dir = os.path.join(config.STATIC_PATH, 'images', 'controllers')
+    rows = db.execute(
+        "SELECT id, image FROM controllers WHERE image IS NOT NULL AND image != ''"
+    ).fetchall()
+    cleared = 0
+    for row in rows:
+        img_path = os.path.join(controllers_dir, row['image'])
+        if not os.path.isfile(img_path):
+            db.execute(
+                "UPDATE controllers SET image = NULL WHERE id = ? AND image = ?",
+                (row['id'], row['image']),
+            )
+            cleared += 1
+    db.commit()
+    logger.info("Museum: cleanup-controller-images cleared %d stale refs", cleared)
+    return jsonify({'success': True, 'cleared': cleared, 'scanned': len(rows)})
+
+
 # =============================================================================
 # API ROUTES — Controller Images
 # =============================================================================
+
+def _persist_controller_image(controller_id, image_data):
+    """Save image_data as ``controllers/<controller_id>.webp`` (RGBA, cropped, standardized).
+
+    Pass 42.5 — extracted from three near-identical 30-line blocks
+    (upload / removebg / fetch_and_process). Caller is responsible for
+    the DB UPDATE and ``_propagate_controller_image`` call (the upload
+    and removebg routes do them; ``_fetch_and_process_image`` returns
+    the filename to its caller, which decides).
+
+    Returns the saved filename on success, None on failure.
+    """
+    from PIL import Image
+    import io
+    try:
+        img = Image.open(io.BytesIO(bytes(image_data)))
+        img = img.convert('RGBA')
+        img = _crop_to_content(img)
+
+        controllers_dir = os.path.join(config.STATIC_PATH, 'images', 'controllers')
+        os.makedirs(controllers_dir, exist_ok=True)
+
+        filename = f"{controller_id}.webp"
+        filepath = os.path.join(controllers_dir, filename)
+        img.save(filepath, 'WEBP', quality=85)
+
+        try:
+            from services.image_utils import standardize_downloaded_image
+            standardize_downloaded_image(filepath, 'controllers')
+        except Exception:
+            pass
+
+        return filename
+    except Exception as e:
+        logger.error(f"Museum: Failed to persist controller image for {controller_id}: {e}")
+        return None
+
 
 def _propagate_controller_image(db, controller_id, image_filename):
     """Share a controller image with all sibling controllers (same name, different systems)."""
@@ -531,7 +590,7 @@ def _propagate_controller_image(db, controller_id, image_filename):
 @editor_required
 def fetch_controller_image(controller_id):
     """Fetch and process a single controller image."""
-    db = get_db()
+    db = get_request_db()
     controller = db.execute(
         "SELECT id, name, manufacturer FROM controllers WHERE id = ?",
         (controller_id,)
@@ -567,7 +626,7 @@ def fetch_controller_image(controller_id):
 @editor_required
 def fetch_controller_images_bulk(system_id):
     """Bulk fetch controller images for a system."""
-    db = get_db()
+    db = get_request_db()
     controllers = db.execute(
         """SELECT c.id, c.name, c.manufacturer, c.image FROM controllers c
            JOIN system_controllers sc ON c.id = sc.controller_id
@@ -616,7 +675,7 @@ def upload_controller_image(controller_id):
     from PIL import Image
     import io
 
-    db = get_db()
+    db = get_request_db()
     controller = db.execute(
         "SELECT id, name FROM controllers WHERE id = ?",
         (controller_id,)
@@ -667,45 +726,23 @@ def upload_controller_image(controller_id):
         image_data = _remove_background(image_data, removebg_key)
 
     # Save as webp
-    try:
-        img = Image.open(io.BytesIO(bytes(image_data)))
-        img = img.convert('RGBA')
-        img = _crop_to_content(img)
-
-        controllers_dir = os.path.join(config.STATIC_PATH, 'images', 'controllers')
-        os.makedirs(controllers_dir, exist_ok=True)
-
-        filename = f"{controller_id}.webp"
-        filepath = os.path.join(controllers_dir, filename)
-        img.save(filepath, 'WEBP', quality=85)
-
-        # Standardize controller image size
-        try:
-            from services.image_utils import standardize_downloaded_image
-            standardize_downloaded_image(filepath, 'controllers')
-        except Exception:
-            pass
-
-        db.execute("UPDATE controllers SET image = ? WHERE id = ?", (filename, controller_id))
-        db.commit()
-        _propagate_controller_image(db, controller_id, filename)
-
-        logger.info(f"Museum: Uploaded image for {controller['name']}")
-        return jsonify({'success': True, 'image': filename})
-
-    except Exception as e:
-        logger.error(f"Museum: Failed to save uploaded image: {e}")
+    filename = _persist_controller_image(controller_id, image_data)
+    if not filename:
         return jsonify({'success': False, 'error': 'Failed to process image'})
+
+    db.execute("UPDATE controllers SET image = ? WHERE id = ?", (filename, controller_id))
+    db.commit()
+    _propagate_controller_image(db, controller_id, filename)
+
+    logger.info(f"Museum: Uploaded image for {controller['name']}")
+    return jsonify({'success': True, 'image': filename})
 
 
 @bp.route('/api/museum/controller-image-removebg/<int:controller_id>', methods=['POST'])
 @editor_required
 def remove_controller_bg(controller_id):
     """Re-process an existing controller image to remove its background."""
-    from PIL import Image
-    import io
-
-    db = get_db()
+    db = get_request_db()
     controller = db.execute(
         "SELECT id, name, image FROM controllers WHERE id = ?",
         (controller_id,)
@@ -726,33 +763,21 @@ def remove_controller_bg(controller_id):
 
         removebg_key = _get_removebg_key()
         processed = _remove_background(image_data, removebg_key)
-
-        img = Image.open(io.BytesIO(bytes(processed)))
-        img = img.convert('RGBA')
-        img = _crop_to_content(img)
-
-        filename = f"{controller_id}.webp"
-        out_path = os.path.join(config.STATIC_PATH, 'images', 'controllers', filename)
-        img.save(out_path, 'WEBP', quality=85)
-
-        # Standardize controller image size
-        try:
-            from services.image_utils import standardize_downloaded_image
-            standardize_downloaded_image(out_path, 'controllers')
-        except Exception:
-            pass
-
-        if controller['image'] != filename:
-            db.execute("UPDATE controllers SET image = ? WHERE id = ?", (filename, controller_id))
-            db.commit()
-        _propagate_controller_image(db, controller_id, filename)
-
-        logger.info(f"Museum: Removed background for {controller['name']}")
-        return jsonify({'success': True, 'image': filename})
-
     except Exception as e:
         logger.error(f"Museum: Failed to remove background for {controller['name']}: {e}")
         return jsonify({'success': False, 'error': 'Background removal failed'})
+
+    filename = _persist_controller_image(controller_id, processed)
+    if not filename:
+        return jsonify({'success': False, 'error': 'Background removal failed'})
+
+    if controller['image'] != filename:
+        db.execute("UPDATE controllers SET image = ? WHERE id = ?", (filename, controller_id))
+        db.commit()
+    _propagate_controller_image(db, controller_id, filename)
+
+    logger.info(f"Museum: Removed background for {controller['name']}")
+    return jsonify({'success': True, 'image': filename})
 
 
 def _get_removebg_key():
@@ -1101,28 +1126,4 @@ def _fetch_and_process_image(controller_id, controller_name, manufacturer,
     # Remove background (rembg local AI, or remove.bg API if key configured)
     processed = _remove_background(image_data, removebg_key)
 
-    # Save as webp with transparency
-    try:
-        img = Image.open(io.BytesIO(bytes(processed)))
-        img = img.convert('RGBA')
-        img = _crop_to_content(img)
-
-        controllers_dir = os.path.join(config.STATIC_PATH, 'images', 'controllers')
-        os.makedirs(controllers_dir, exist_ok=True)
-
-        filename = f"{controller_id}.webp"
-        filepath = os.path.join(controllers_dir, filename)
-        img.save(filepath, 'WEBP', quality=85)
-
-        # Standardize controller image size
-        try:
-            from services.image_utils import standardize_downloaded_image
-            standardize_downloaded_image(filepath, 'controllers')
-        except Exception:
-            pass
-
-        return filename
-
-    except Exception as e:
-        logger.error(f"Museum: Failed to save controller image for {controller_name}: {e}")
-        return None
+    return _persist_controller_image(controller_id, processed)

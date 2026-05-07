@@ -15,6 +15,28 @@ import threading
 logger = logging.getLogger(__name__)
 
 
+# Pass 45.6 — Pillow decompression-bomb cap. A 1 MB malicious PNG can
+# advertise dimensions that decode to 4+ GB of pixel data, OOM-killing
+# the worker. Pillow has a built-in cap (`Image.MAX_IMAGE_PIXELS`,
+# default ~89 megapixels) that emits a `DecompressionBombWarning`, but
+# it doesn't *raise* unless the value is set explicitly OR a stricter
+# value is configured. We set the cap once at module import so every
+# `Image.open` call site below inherits it. Pass 41.14.A applied this
+# only to `compute_dhash` in `image_dedup`; here we cover the rest of
+# the image stack (`_validate_image_bytes`, `_atomic_save`,
+# `standardize_image`, `finalize_downloaded_image`, `_OnnxUpscaler`).
+try:
+    from PIL import Image as _PIL_Image
+    import config as _config
+    _PIL_Image.MAX_IMAGE_PIXELS = getattr(_config, 'IMAGE_MAX_PIXELS', None) or 64_000_000
+    del _PIL_Image, _config
+except ImportError:
+    # Pillow is a hard runtime dependency; if it really is missing,
+    # individual call sites below will raise on their own `from PIL
+    # import Image` and the cap is moot.
+    pass
+
+
 # ---------------------------------------------------------------------------
 # Lazy-loaded Real-ESRGAN ONNX singleton
 # ---------------------------------------------------------------------------
@@ -75,26 +97,65 @@ def _download_model(url, dest):
 
     Tries the given URL first, then falls back to alternate mirrors.
     Uses a browser-like User-Agent since some hosts block default urllib.
+
+    Pass 41.14.B — every URL is run through `services.ssrf.validate_
+    outbound_url(require_https=True)` before dereference. `_MODEL_URLS` is
+    a hardcoded HuggingFace allowlist today, so the gate currently never
+    rejects anything; it's defensive against any future code path that
+    surfaces the URL via settings (a primitive that landed for `ROM_PATH`
+    in Pass 32.1) and bypasses outbound-URL hygiene.
+
+    Pass 45.2 — switched from urllib (which auto-follows redirects through
+    real DNS) to requests + validate_and_pin_url + pin_host_ip so the GET
+    connects to the same IP that the SSRF gate just verified, defeating
+    DNS rebinding between validate and dereference.
     """
-    import urllib.request
+    import requests
+    from services.ssrf import validate_outbound_url, validate_and_pin_url, pin_host_ip
+    from urllib.parse import urlparse as _urlparse
     os.makedirs(os.path.dirname(dest), exist_ok=True)
-    tmp = dest + '.tmp'
 
     urls_to_try = [url] + [u for u in _MODEL_URLS if u != url]
     last_err = None
+    dest_dir = os.path.dirname(dest) or '.'
 
     for try_url in urls_to_try:
+        ok, reason, _ = validate_outbound_url(try_url, require_https=True)
+        if not ok:
+            last_err = RuntimeError(f"SSRF guard rejected {try_url}: {reason}")
+            logger.warning(f"Skipping model URL (SSRF): {try_url} — {reason}")
+            continue
+        safe_url, pinned_ip, err = validate_and_pin_url(
+            requests, try_url, max_redirects=3, timeout=10, require_https=True,
+        )
+        if err:
+            last_err = RuntimeError(f"SSRF guard rejected redirect chain for {try_url}: {err}")
+            logger.warning(f"Skipping model URL (SSRF redirect): {try_url} — {err}")
+            continue
+        pinned_host = _urlparse(safe_url).hostname
+        # Pass 45.5 — mkstemp gives every download attempt its own tmp
+        # path; the previous static suffix raced with concurrent
+        # processes and could clobber an in-flight download from another
+        # worker.
+        tmp_fd, tmp = tempfile.mkstemp(prefix='.model_', suffix='.tmp', dir=dest_dir)
+        os.close(tmp_fd)
         try:
-            logger.info(f"Downloading Real-ESRGAN ONNX model from {try_url} …")
-            req = urllib.request.Request(try_url, headers={
-                'User-Agent': 'RetroDB/1.0 (ONNX model downloader)'
-            })
-            with urllib.request.urlopen(req, timeout=120) as resp, open(tmp, 'wb') as f:
-                while True:
-                    chunk = resp.read(1024 * 256)
-                    if not chunk:
-                        break
-                    f.write(chunk)
+            logger.info(f"Downloading Real-ESRGAN ONNX model from {safe_url} …")
+            headers = {'User-Agent': 'RetroDB/1.0 (ONNX model downloader)'}
+            with pin_host_ip(pinned_host, pinned_ip), requests.get(
+                safe_url, headers=headers, timeout=120,
+                stream=True, allow_redirects=False,
+            ) as resp:
+                resp.raise_for_status()
+                with open(tmp, 'wb') as f:
+                    for chunk in resp.iter_content(chunk_size=1024 * 256):
+                        if chunk:
+                            f.write(chunk)
+                    f.flush()
+                    try:
+                        os.fsync(f.fileno())
+                    except OSError:
+                        pass
             os.replace(tmp, dest)
             logger.info("Model download complete")
             return
@@ -102,7 +163,10 @@ def _download_model(url, dest):
             last_err = e
             logger.warning(f"Failed to download from {try_url}: {e}")
             if os.path.exists(tmp):
-                os.remove(tmp)
+                try:
+                    os.remove(tmp)
+                except OSError:
+                    pass
 
     raise RuntimeError(f"All model download URLs failed. Last error: {last_err}")
 
@@ -427,6 +491,11 @@ def _ensure_format_matches_extension(path):
             buffer = img.copy()
         _save_image(buffer, path)
         buffer.close()
+    except Image.DecompressionBombError as e:
+        # Pass 45.6 — log decompression bombs distinctly so the security
+        # log shows the rejected filename (a normal "format normalize
+        # failed" line could otherwise hide a bomb attempt).
+        logger.warning(f"Image format normalize: decompression bomb rejected for {path} ({e})")
     except Exception as e:
         logger.warning(f"Image format normalize failed for {path}: {e}")
 
@@ -497,6 +566,8 @@ def _make_responsive_variants(path, image_type):
                 variant = img.resize((target_w, new_h), Image.LANCZOS)
                 _save_image(variant, _variant_path(path, suffix))
                 variant.close()
+    except Image.DecompressionBombError as e:
+        logger.warning(f"Responsive variants: decompression bomb rejected for {path} ({e})")
     except Exception as e:
         logger.warning(f"Responsive variant generation failed for {path}: {e}")
 
@@ -532,6 +603,9 @@ def boxart_srcset(filename, sizes=None):
         from PIL import Image
         with Image.open(original_path) as img:
             orig_w = img.size[0]
+    except Image.DecompressionBombError as e:
+        logger.warning(f"boxart_srcset: decompression bomb rejected for {original_path} ({e})")
+        orig_w = 760
     except Exception:
         orig_w = 760
     candidates.append(f"/static/images/boxart/{filename} {orig_w}w")
@@ -593,6 +667,9 @@ def standardize_image(path, image_type, target, preserve_rgba=False):
         with Image.open(path) as src:
             src.load()
             img = src.copy()
+    except Image.DecompressionBombError as e:
+        logger.warning(f"Image standardize: decompression bomb rejected for {path} ({e})")
+        return
     except Exception as e:
         logger.warning(f"Image standardize: cannot open {path}: {e}")
         return
@@ -744,11 +821,13 @@ def _downscale_image(img, image_type, target):
 
 
 def _atomic_save(img, path, fmt, **save_kwargs):
-    """Pass 32.9 — save `img` to `path` atomically.
+    """Pass 32.9 / 45.5 — save `img` to `path` atomically.
 
-    Writes to a temp file in the same directory, fsyncs, and swaps into
-    place with os.replace. A mid-write OOM / I/O error / client-disconnect
-    can no longer leave a truncated file at `path`.
+    Writes to a temp file in the same directory, fsyncs the file *and* the
+    parent directory, and swaps into place with os.replace. A mid-write
+    OOM / I/O error / client-disconnect can no longer leave a truncated
+    file at `path`; a power loss after the rename can no longer lose the
+    directory entry on XFS or `nobarrier` mounts.
     """
     dirname = os.path.dirname(path) or '.'
     os.makedirs(dirname, exist_ok=True)
@@ -756,9 +835,28 @@ def _atomic_save(img, path, fmt, **save_kwargs):
     os.close(fd)
     try:
         img.save(tmp_path, fmt, **save_kwargs)
+        # Pass 45.5 — the docstring claimed fsync but the previous version
+        # never actually called it. PIL's img.save closes the underlying
+        # file but doesn't fsync; without the explicit fsync below, a
+        # power loss between PIL's close and os.replace lands a 0-byte or
+        # partially-flushed file at the final path on next mount.
+        sync_fd = os.open(tmp_path, os.O_RDONLY)
+        try:
+            os.fsync(sync_fd)
+        except OSError:
+            pass
+        finally:
+            os.close(sync_fd)
         os.replace(tmp_path, path)
+        tmp_path = None
+        # Fsync the directory so the rename is durable on next mount.
+        try:
+            from services.atomic_io import fsync_path
+            fsync_path(dirname)
+        except OSError:
+            pass
     except Exception:
-        if os.path.exists(tmp_path):
+        if tmp_path is not None and os.path.exists(tmp_path):
             try:
                 os.remove(tmp_path)
             except OSError:

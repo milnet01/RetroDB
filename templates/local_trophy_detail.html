@@ -176,10 +176,10 @@
                     {% endfor %}
                 </div>
                 <div class="hltb-actions">
-                    <button class="btn btn-sm btn-secondary" onclick="lookupHLTB()" id="hltbBtn">
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="lookupHLTB()" id="hltbBtn">
                         <span class="btn-icon">🔄</span> Refresh
                     </button>
-                    <button class="btn btn-sm btn-danger" onclick="clearHLTB()">
+                    <button type="button" class="btn btn-sm btn-danger" onclick="clearHLTB()">
                         <span class="btn-icon">✕</span> Clear
                     </button>
                 </div>
@@ -187,7 +187,7 @@
                 <div class="hltb-empty">No playtime data</div>
                 {% if game %}
                 <div class="hltb-actions">
-                    <button class="btn btn-sm btn-secondary" onclick="lookupHLTB()" id="hltbBtn">
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="lookupHLTB()" id="hltbBtn">
                         <span class="btn-icon">🔍</span> Lookup HLTB
                     </button>
                 </div>
@@ -390,10 +390,10 @@ async function lookupHLTB() {
                             </div>
                         </div>
                         <div class="hltb-actions">
-                            <button class="btn btn-sm btn-secondary" onclick="lookupHLTB()" id="hltbBtn">
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="lookupHLTB()" id="hltbBtn">
                                 <span class="btn-icon">🔄</span> Refresh
                             </button>
-                            <button class="btn btn-sm btn-danger" onclick="clearHLTB()">
+                            <button type="button" class="btn btn-sm btn-danger" onclick="clearHLTB()">
                                 <span class="btn-icon">✕</span> Clear
                             </button>
                         </div>`;
@@ -432,7 +432,7 @@ async function clearHLTB() {
                 section.innerHTML = `
                     <div class="hltb-empty">No playtime data</div>
                     <div class="hltb-actions">
-                        <button class="btn btn-sm btn-secondary" onclick="lookupHLTB()" id="hltbBtn">
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="lookupHLTB()" id="hltbBtn">
                             <span class="btn-icon">🔍</span> Lookup HLTB
                         </button>
                     </div>`;

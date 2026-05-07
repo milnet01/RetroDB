@@ -667,26 +667,49 @@ const HLTBManager = {
             </div>`;
         }
 
+        // Pass 45.4 — escape every HLTB-API string before it lands in
+        // innerHTML. The HowLongToBeat upstream returns plain "12½ Hours"
+        // strings today, but it's an external service we don't control;
+        // any future API drift, MITM, or compromised cache that injects
+        // `<img src=x onerror=...>` would otherwise execute in admin
+        // context. Mirrors the existing escapeHtml on data.match_name etc.
         savedDiv.innerHTML = `
             ${headerHtml}
             <div class="hltb-results">
                 <div class="hltb-time-row">
                     <span class="hltb-label">Main Story</span>
-                    <span class="hltb-value">${data.main_story || '--'}</span>
+                    <span class="hltb-value">${data.main_story ? escapeHtml(String(data.main_story)) : '--'}</span>
                 </div>
                 <div class="hltb-time-row">
                     <span class="hltb-label">Main + Extras</span>
-                    <span class="hltb-value">${data.main_extra || '--'}</span>
+                    <span class="hltb-value">${data.main_extra ? escapeHtml(String(data.main_extra)) : '--'}</span>
                 </div>
                 <div class="hltb-time-row">
                     <span class="hltb-label">Completionist</span>
-                    <span class="hltb-value">${data.completionist || '--'}</span>
+                    <span class="hltb-value">${data.completionist ? escapeHtml(String(data.completionist)) : '--'}</span>
                 </div>
             </div>
             <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                <button class="btn btn-sm btn-danger" onclick="${ctx.clearFnName}()">✕ Clear</button>
+                <button class="btn btn-sm btn-danger" data-hltb-clear>✕ Clear</button>
             </div>
         `;
+        // Pass 45.4 — drop the inline onclick form that interpolated
+        // ctx.clearFnName into a JS-string-in-HTML attribute. Internal
+        // today, but the family is what 40.13/45.4 are sweeping out.
+        // Resolve clearFnName to a function on `window` and bind it
+        // through addEventListener so HTML never gets a chance to
+        // JS-execute the attribute.
+        const clearBtn = savedDiv.querySelector('[data-hltb-clear]');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                const fn = window[ctx.clearFnName];
+                if (typeof fn === 'function') {
+                    fn();
+                } else {
+                    HLTBManager.clear(ctx);
+                }
+            });
+        }
     },
 
     /**

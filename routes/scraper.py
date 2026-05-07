@@ -25,6 +25,10 @@ import config
 from services.api_helpers import handle_api_errors
 from services.atomic_io import atomic_write_json
 from services.auth import admin_required
+from services.scraper_settings_validators import (
+    validate_scraper_settings,
+    validate_scraper_api_keys,
+)
 
 # Create blueprint
 scraper_bp = Blueprint('scraper', __name__)
@@ -36,8 +40,10 @@ logger = logging.getLogger(__name__)
 # CONSTANTS
 # =============================================================================
 
-# Path to scraper settings file - EXPORTED for use by app.py settings route
-SCRAPER_SETTINGS_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'scraper_settings.json')
+# Path to scraper settings file - EXPORTED for use by app.py settings route.
+# Anchored to config.BASE_DIR (writable user-data root) so the file lives
+# next to the launcher in a frozen bundle, not inside _internal/.
+SCRAPER_SETTINGS_FILE = os.path.join(config.BASE_DIR, 'data', 'scraper_settings.json')
 
 
 # =============================================================================
@@ -207,6 +213,13 @@ def api_save_scraper_settings():
     """Save scraper priority and settings"""
     data = request.get_json()
 
+    # Pass 45.11 — every persisted key validated against an allowlist; rejects
+    # malformed shapes (string instead of bool, bogus scraper names, etc.) that
+    # would otherwise crash scraper_manager on next call.
+    ok, reason, data = validate_scraper_settings(data)
+    if not ok:
+        return jsonify({'success': False, 'error': f'invalid scraper settings: {reason}'}), 400
+
     # Ensure data directory exists
     os.makedirs(os.path.dirname(SCRAPER_SETTINGS_FILE), exist_ok=True)
 
@@ -258,13 +271,20 @@ def api_save_api_keys():
             if field in data and is_masked_sentinel(data[field]):
                 data[field] = prior_keys.get(field, '')
 
+    # Pass 45.11 — every field allowlisted; values type-checked. Runs AFTER
+    # masked-sentinel substitution so the cleaned data round-trips even if the
+    # frontend echoes the *** display value.
+    ok, reason, data = validate_scraper_api_keys(data)
+    if not ok:
+        return jsonify({'success': False, 'error': f'invalid api keys: {reason}'}), 400
+
     # Update API keys
     existing['api_keys'] = data
 
     # Save to file
     atomic_write_json(SCRAPER_SETTINGS_FILE, existing)
 
-    logger.info(f"Saved API keys for scrapers")
+    logger.info("Saved API keys for scrapers")
 
     return jsonify({'success': True, 'message': 'API keys saved'})
 

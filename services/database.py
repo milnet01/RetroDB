@@ -292,8 +292,23 @@ def backup_database(src_path, dst_path):
     finally:
         src.close()
 
+    # Pass 45.5 — chmod *before* the integrity-check open so the backup
+    # never exists at the umask default while it holds session cookies,
+    # password hashes, and OAuth tokens. The previous order was
+    # backup → verify-open → chmod, which left a 0o644 window for the
+    # entire duration of PRAGMA integrity_check.
+    try:
+        os.chmod(dst_path, 0o600)
+    except OSError:
+        pass
+
     verify = sqlite3.connect(dst_path)
     try:
+        # Pass 45.10 — match the migration runner's busy_timeout. A
+        # backup-verify connection competing with a peer reader on the
+        # same file would otherwise fail-fast under SQLite's default
+        # zero timeout.
+        verify.execute("PRAGMA busy_timeout = 5000")
         result = verify.execute("PRAGMA integrity_check").fetchone()
     finally:
         verify.close()
@@ -305,15 +320,8 @@ def backup_database(src_path, dst_path):
             pass
         raise RuntimeError(f"backup failed integrity check: {result[0] if result else 'no result'}")
 
-    # Pass 35.1 — backups contain session cookies, password hashes, and
-    # OAuth tokens. sqlite3.connect() creates the file with the process
-    # umask (commonly 0644), leaving it group/world-readable. Tighten the
-    # mode and fsync both the file and its parent directory so a power
+    # Pass 35.1 — fsync both the file and its parent directory so a power
     # loss can't leave a directory entry pointing at empty contents.
-    try:
-        os.chmod(dst_path, 0o600)
-    except OSError:
-        pass
     try:
         _fsync_path(dst_path)
         _fsync_path(os.path.dirname(dst_path) or '.')

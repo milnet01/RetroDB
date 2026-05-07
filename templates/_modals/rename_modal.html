@@ -1,11 +1,11 @@
 {# Rename ROM file modal — inherits game_detail.html context. #}
-<div id="renameModal" class="rename-modal-overlay">
+<div id="renameModal" class="rename-modal-overlay" data-focus-trap data-focus-trap-content=".rename-modal" data-focus-trap-onescape="closeRenameModal">
     <div class="rename-modal" role="dialog" aria-modal="true" aria-labelledby="renameModalTitle">
         <h3 id="renameModalTitle">✏️ Rename ROM File</h3>
 
         <div class="error-message" id="renameError"></div>
 
-        <label>Current filename:</label>
+        <div class="form-label">Current filename:</div>
         <div class="current-name" id="renameCurrentName"></div>
 
         <label for="newFilename">New filename:</label>
@@ -16,8 +16,8 @@
         </div>
 
         <div class="btn-group">
-            <button class="btn-cancel" onclick="closeRenameModal()">Cancel</button>
-            <button class="btn-rename-confirm" onclick="confirmRename()">Rename File</button>
+            <button type="button" class="btn-cancel" onclick="closeRenameModal()">Cancel</button>
+            <button type="button" class="btn-rename-confirm" onclick="confirmRename()">Rename File</button>
         </div>
     </div>
 </div>

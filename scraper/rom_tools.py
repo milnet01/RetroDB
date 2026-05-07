@@ -14,11 +14,133 @@ import fnmatch
 import tempfile
 from pathlib import Path
 from datetime import datetime
-from typing import List, Set, Optional, Dict, Any
+from typing import List, Optional, Dict, Any
 from dataclasses import dataclass, field, asdict
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+def convert_one_to_chd(
+    src_path: str,
+    chdman_path: str,
+    *,
+    do_verify: bool = True,
+    delete_original: bool = False,
+    skip_existing: bool = True,
+    convert_timeout: int = 3600,
+    verify_timeout: int = 600,
+) -> Dict[str, Any]:
+    """Convert a single disc image to CHD atomically.
+
+    Pass 42.5 — pure per-file helper shared by ``CHDConverter._convert_file``
+    and ``routes/tools.py:api_chd_converter_convert``. No task-state
+    bookkeeping; the caller owns logs, progress, and registry updates.
+
+    Pass 40.11 atomic-write contract: chdman writes to a sibling
+    ``.chd.part`` tempfile, optional ``chdman verify`` runs against the
+    tempfile, and only a successful verify promotes via ``os.replace``.
+    On any failure or exception the tempfile is unlinked so a SIGKILL
+    mid-conversion can never leave a corrupt ``.chd`` that
+    ``skip_existing`` would treat as good on the next pass.
+
+    Returns a result dict shaped:
+        {
+            'source':          str — input path,
+            'destination':     str — output .chd path,
+            'original_size':   int,
+            'compressed_size': int (0 if not success),
+            'status':          'success' | 'failed' | 'skipped',
+            'error':           str (empty on success/skipped),
+        }
+    """
+    src = Path(src_path)
+    dst = src.with_suffix(".chd")
+    tmp = dst.with_suffix(".chd.part")
+
+    result: Dict[str, Any] = {
+        "source": str(src),
+        "destination": str(dst),
+        "original_size": src.stat().st_size if src.exists() else 0,
+        "compressed_size": 0,
+        "status": "pending",
+        "error": "",
+    }
+
+    if dst.exists() and skip_existing:
+        result["status"] = "skipped"
+        return result
+
+    try:
+        # Pass 40.11 — clean any stale tempfile from a prior failed run.
+        if tmp.exists():
+            try:
+                tmp.unlink()
+            except OSError:
+                pass
+
+        cmd = [chdman_path, "createcd", "-i", str(src), "-o", str(tmp)]
+        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=convert_timeout)
+
+        if proc.returncode != 0 or not tmp.exists():
+            result["status"] = "failed"
+            result["error"] = (proc.stderr[:500] if proc.stderr else "Unknown error")
+            return result
+
+        if do_verify:
+            verify = subprocess.run(
+                [chdman_path, "verify", "-i", str(tmp)],
+                capture_output=True, text=True, timeout=verify_timeout,
+            )
+            if verify.returncode != 0:
+                result["status"] = "failed"
+                result["error"] = (verify.stderr[:500] or "Verify failed")
+                return result
+
+        os.replace(str(tmp), str(dst))
+        result["status"] = "success"
+        result["compressed_size"] = dst.stat().st_size
+
+        # Delete original only after the verified .chd is in place.
+        if delete_original:
+            try:
+                src.unlink()
+            except OSError as e:
+                # Conversion succeeded; surface the delete failure but
+                # don't flip status — the .chd is good.
+                result["error"] = f"original-delete failed: {e}"
+        return result
+
+    except subprocess.TimeoutExpired:
+        result["status"] = "failed"
+        result["error"] = "Conversion timed out"
+        return result
+    except Exception as e:
+        result["status"] = "failed"
+        result["error"] = str(e)
+        return result
+    finally:
+        if result["status"] != "success" and tmp.exists():
+            try:
+                tmp.unlink()
+            except OSError:
+                pass
+
+
+def _safe_under_root(path: Path, root_resolved: Path) -> bool:
+    """Pass 41.14.C — guard rglob() against symlinks escaping ROM root.
+
+    `Path.rglob()` follows symlinks on Python 3.12 (default behavior
+    changed in 3.13). A symlink to `/` placed inside ROM_PATH would let
+    rom_tools' archive/CHD scanners enumerate the entire filesystem.
+    Resolve the candidate and confirm it sits under the resolved root
+    before processing.
+    """
+    try:
+        return path.resolve().is_relative_to(root_resolved)
+    except (OSError, ValueError):
+        return False
+
 
 # =============================================================================
 # CONFIGURATION
@@ -251,7 +373,7 @@ class ArchiveScanner:
         except Exception as e:
             task.status = "error"
             task.error = str(e)
-            task.logs.append(f"[{self._timestamp()}] ERROR: {str(e)}")
+            task.logs.append(f"[{self._timestamp()}] ERROR: {e!s}")
             logger.error(f"Archive scan error: {e}")
         
         update_task(task)
@@ -261,14 +383,19 @@ class ArchiveScanner:
         """Find all archive files, excluding specified folders"""
         archives = []
         excluded_lower = [p.lower() for p in excluded_paths]
-        
+        # Pass 41.14.C — resolve once; then drop any rglob result that
+        # leaves the root via a symlink.
+        root_resolved = root.resolve()
+
         for ext in types:
             for archive_path in root.rglob(f"*{ext}"):
+                if not _safe_under_root(archive_path, root_resolved):
+                    continue
                 # Check if any parent folder is in excluded list
                 path_parts = [p.lower() for p in archive_path.relative_to(root).parts]
                 if not any(excluded in path_parts for excluded in excluded_lower):
                     archives.append(archive_path)
-        
+
         return sorted(archives)
     
     def _check_archive_issues(self, archive_path: Path, root: Path, modes: Dict[str, bool]) -> List[Dict]:
@@ -280,8 +407,7 @@ class ArchiveScanner:
         try:
             # Get archive contents
             contents = self._list_archive_contents(archive_path)
-            file_count = len(contents)
-            
+
             # Check for corruption
             if modes.get("corrupted", True):
                 if not self._verify_archive(archive_path):
@@ -530,7 +656,7 @@ class ArchiveScanner:
                 return {"success": True, "removed_count": len(actually_removed)}
             elif result.returncode == 0 and not actually_removed:
                 # Command succeeded but no files were removed - likely filename mismatch
-                logger.warning(f"Command succeeded but no files were actually removed. Possible filename mismatch.")
+                logger.warning("Command succeeded but no files were actually removed. Possible filename mismatch.")
                 logger.warning(f"Requested files: {files_to_remove}")
                 logger.warning(f"Files in archive: {list(contents_before)[:10]}...")
                 return {"success": False, "error": "No files were removed. The filenames may not match exactly."}
@@ -635,7 +761,6 @@ class ArchiveScanner:
             extract_folder.mkdir(parents=True, exist_ok=True)
             
             # Extract the archive
-            cmd_info = self.ARCHIVE_COMMANDS[ext]
             if ext == ".zip":
                 cmd = ["unzip", "-o", str(path), "-d", str(extract_folder)]
             elif ext == ".7z":
@@ -880,7 +1005,7 @@ class ArchiveScanner:
         except Exception as e:
             task.status = "error"
             task.error = str(e)
-            task.logs.append(f"[{self._timestamp()}] ERROR: {str(e)}")
+            task.logs.append(f"[{self._timestamp()}] ERROR: {e!s}")
             logger.error(f"Archive scan error: {e}")
         
         update_task(task)
@@ -890,10 +1015,16 @@ class ArchiveScanner:
         """Find all archive files in directory"""
         archives = []
         extensions = set(self.config.archive_types)
-        
+        # Pass 41.14.C — resolve once; symlink-escape filter applied below
+        # for every recursive sweep.
+        root_resolved = root.resolve()
+
         if self.config.recursive_scan:
             for ext in extensions:
-                archives.extend(root.rglob(f"*{ext}"))
+                archives.extend(
+                    p for p in root.rglob(f"*{ext}")
+                    if _safe_under_root(p, root_resolved)
+                )
         else:
             for ext in extensions:
                 archives.extend(root.glob(f"*{ext}"))
@@ -1046,13 +1177,17 @@ class CHDConverter:
         root = Path(path)
         files = []
         
+        # Pass 41.14.C — symlink-escape guard for the recursive walk.
+        root_resolved = root.resolve()
         for ext in self.SUPPORTED_FORMATS:
             for f in root.rglob(f"*{ext}"):
+                if not _safe_under_root(f, root_resolved):
+                    continue
                 # Skip if CHD already exists
                 chd_path = f.with_suffix(".chd")
                 if self.config.chd_skip_existing and chd_path.exists():
                     continue
-                
+
                 files.append({
                     "path": str(f),
                     "name": f.name,
@@ -1060,7 +1195,7 @@ class CHDConverter:
                     "type": ext.upper()[1:],
                     "chd_exists": chd_path.exists()
                 })
-        
+
         return sorted(files, key=lambda x: x["name"])
     
     def convert(self, files: List[str], task: TaskStatus) -> Dict[str, Any]:
@@ -1116,7 +1251,7 @@ class CHDConverter:
         except Exception as e:
             task.status = "error"
             task.error = str(e)
-            task.logs.append(f"[{self._timestamp()}] ERROR: {str(e)}")
+            task.logs.append(f"[{self._timestamp()}] ERROR: {e!s}")
             logger.error(f"CHD conversion error: {e}")
         
         update_task(task)
@@ -1127,100 +1262,52 @@ class CHDConverter:
         return shutil.which(self.config.chdman_path) is not None
     
     def _convert_file(self, file_path: str, task: TaskStatus):
-        """Convert a single file to CHD atomically.
+        """Convert a single file to CHD via :func:`convert_one_to_chd`.
 
-        Pass 40.11 — chdman writes to a sibling .chd.part tempfile first;
-        if `chd_verify_after_convert` is on we run `chdman verify -i tmp`
-        before promoting; only then does os.replace move it to the final
-        path.  Any mid-conversion kill (timeout / SIGKILL / OOM) leaves
-        a .chd.part that we unlink, never a corrupted .chd that
-        chd_skip_existing would treat as good on the next pass.
+        The shared helper carries the Pass 40.11 atomic-write contract;
+        this method handles the task-state bookkeeping (logs, counters)
+        that the helper deliberately stays out of.
         """
-        src = Path(file_path)
-        dst = src.with_suffix(".chd")
-        tmp = dst.with_suffix(".chd.part")
+        src_name = Path(file_path).name
+        # Pass 42.5 — log the "Converting" line up-front to match prior
+        # behaviour. The helper only logs to its return dict.
+        task.logs.append(f"[{self._timestamp()}] Converting: {src_name}")
 
-        file_result = {
-            "source": str(src),
-            "destination": str(dst),
-            "original_size": src.stat().st_size,
-            "compressed_size": 0,
-            "status": "pending",
-            "error": ""
-        }
+        file_result = convert_one_to_chd(
+            file_path,
+            self.config.chdman_path,
+            do_verify=self.config.chd_verify_after_convert,
+            delete_original=self.config.chd_delete_originals,
+            skip_existing=self.config.chd_skip_existing,
+        )
+        status = file_result["status"]
 
-        try:
-            if dst.exists() and self.config.chd_skip_existing:
-                file_result["status"] = "skipped"
-                task.results["skipped"] += 1
-                task.logs.append(f"[{self._timestamp()}] Skipped (CHD exists): {src.name}")
-                task.results["files"].append(file_result)
-                return
-
-            # Clean up any stale tempfile from a previous failed run.
-            if tmp.exists():
-                try:
-                    tmp.unlink()
-                except OSError:
-                    pass
-
-            task.logs.append(f"[{self._timestamp()}] Converting: {src.name}")
-
-            cmd = [self.config.chdman_path, "createcd", "-i", str(src), "-o", str(tmp)]
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=3600)
-
-            if result.returncode != 0 or not tmp.exists():
-                file_result["status"] = "failed"
-                file_result["error"] = result.stderr[:500] if result.stderr else "Unknown error"
-                task.results["failed"] += 1
-                task.logs.append(f"[{self._timestamp()}] ✗ Failed: {src.name}")
-                return
-
-            # Optional verify before promoting the tempfile.
-            if self.config.chd_verify_after_convert:
-                verify = subprocess.run(
-                    [self.config.chdman_path, "verify", "-i", str(tmp)],
-                    capture_output=True, text=True, timeout=600,
-                )
-                if verify.returncode != 0:
-                    file_result["status"] = "failed"
-                    file_result["error"] = (verify.stderr[:500] or "Verify failed")
-                    task.results["failed"] += 1
-                    task.logs.append(f"[{self._timestamp()}] ✗ Verify failed: {src.name}")
-                    return
-
-            os.replace(str(tmp), str(dst))
-
-            file_result["status"] = "success"
-            file_result["compressed_size"] = dst.stat().st_size
+        if status == "skipped":
+            task.results["skipped"] += 1
+            task.logs.append(f"[{self._timestamp()}] Skipped (CHD exists): {src_name}")
+        elif status == "success":
             task.results["converted"] += 1
             task.results["original_size"] += file_result["original_size"]
             task.results["compressed_size"] += file_result["compressed_size"]
-            task.logs.append(f"[{self._timestamp()}] ✓ Converted: {src.name} ({self._format_size(file_result['compressed_size'])})")
-
-            # Delete original only after the verified .chd is in place.
-            if self.config.chd_delete_originals:
-                src.unlink()
-                task.logs.append(f"[{self._timestamp()}] Deleted original: {src.name}")
-
-        except subprocess.TimeoutExpired:
-            file_result["status"] = "failed"
-            file_result["error"] = "Conversion timed out"
+            task.logs.append(
+                f"[{self._timestamp()}] ✓ Converted: {src_name} "
+                f"({self._format_size(file_result['compressed_size'])})"
+            )
+            if self.config.chd_delete_originals and not file_result["error"]:
+                task.logs.append(f"[{self._timestamp()}] Deleted original: {src_name}")
+        else:
             task.results["failed"] += 1
-            task.logs.append(f"[{self._timestamp()}] ✗ Timeout: {src.name}")
-        except Exception as e:
-            file_result["status"] = "failed"
-            file_result["error"] = str(e)
-            task.results["failed"] += 1
-            task.logs.append(f"[{self._timestamp()}] ✗ Error: {src.name} - {e}")
-        finally:
-            # Drop any partial tempfile so the next run starts clean.
-            if tmp.exists() and file_result["status"] != "success":
-                try:
-                    tmp.unlink()
-                except OSError:
-                    pass
-            task.results["files"].append(file_result)
+            err = file_result.get("error", "")
+            if err == "Conversion timed out":
+                task.logs.append(f"[{self._timestamp()}] ✗ Timeout: {src_name}")
+            elif "Verify failed" in err or err == "Verify failed":
+                task.logs.append(f"[{self._timestamp()}] ✗ Verify failed: {src_name}")
+            elif err:
+                task.logs.append(f"[{self._timestamp()}] ✗ Error: {src_name} - {err}")
+            else:
+                task.logs.append(f"[{self._timestamp()}] ✗ Failed: {src_name}")
+
+        task.results["files"].append(file_result)
     
     def _timestamp(self) -> str:
         return datetime.now().strftime("%H:%M:%S")
@@ -1303,7 +1390,7 @@ class CHDVerifier:
         except Exception as e:
             task.status = "error"
             task.error = str(e)
-            task.logs.append(f"[{self._timestamp()}] ERROR: {str(e)}")
+            task.logs.append(f"[{self._timestamp()}] ERROR: {e!s}")
             logger.error(f"CHD verify error: {e}")
         
         update_task(task)
@@ -1434,7 +1521,7 @@ class DuplicateFinder:
         except Exception as e:
             task.status = "error"
             task.error = str(e)
-            task.logs.append(f"[{self._timestamp()}] ERROR: {str(e)}")
+            task.logs.append(f"[{self._timestamp()}] ERROR: {e!s}")
             logger.error(f"Duplicate scan error: {e}")
         
         update_task(task)
@@ -1447,14 +1534,19 @@ class DuplicateFinder:
         
         if not self.config.include_archives:
             extensions -= {".zip", ".7z", ".rar"}
-        
+
+        # Pass 41.14.C — symlink-escape guard for the recursive walk.
+        root_resolved = root.resolve()
         if self.config.recursive_scan:
             for ext in extensions:
-                files.extend(root.rglob(f"*{ext}"))
+                files.extend(
+                    p for p in root.rglob(f"*{ext}")
+                    if _safe_under_root(p, root_resolved)
+                )
         else:
             for ext in extensions:
                 files.extend(root.glob(f"*{ext}"))
-        
+
         return sorted(files)
     
     def _find_by_hash(self, files: List[Path], task: TaskStatus) -> List[Dict]:

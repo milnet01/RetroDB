@@ -7,11 +7,8 @@
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, session, g, make_response, abort
 import hashlib
 import os
-import re
 import json
 import logging
-import time
-import threading
 from datetime import datetime, timezone
 
 import config
@@ -19,13 +16,10 @@ import settings_manager
 from services.database import query, execute, safe_column
 from services.auth import login_required, editor_required, has_permission, permission_required
 from services.api_helpers import handle_api_errors
-from services.security import safe_filename
 from services.game_utils import (
-    generate_sort_title,
     reset_game_title_from_filename,
     get_ra_supported_systems,
     get_preferred_rating, get_all_ratings,
-    normalize_players_value,
     RATING_SYSTEMS,
 )
 from services.game_query import (
@@ -35,8 +29,9 @@ from services.game_query import (
 )
 from services.analytics import invalidate_analytics_cache
 from services.game_metadata_service import (
-    cross_map_ratings, build_game_card,
+    build_game_card,
     apply_metadata_to_game, apply_hybrid_metadata_to_game,
+    normalize_game_edit,
 )
 from services.achievement_linking import (
     build_rpcs3_trophy_map, lookup_rpcs3_info,
@@ -238,7 +233,7 @@ def api_games_card_data():
     # globally-keyed ETag lets one user's browser serve another user's
     # progress as a 304.  CWE-524.
     etag_payload = f"cd:{g.user['id']}:{','.join(str(i) for i in sorted_ids)}:{max_updated}"
-    etag = f'W/"{hashlib.md5(etag_payload.encode()).hexdigest()}"'
+    etag = f'W/"{hashlib.md5(etag_payload.encode(), usedforsecurity=False).hexdigest()}"'
     if request.headers.get('If-None-Match') == etag:
         resp = make_response('', 304)
         resp.headers['ETag'] = etag
@@ -374,7 +369,6 @@ def game_detail(game_id):
                             system_folder = game['system_folder'] if 'system_folder' in game.keys() else ''
 
                             if use_hybrid:
-                                from scraper.scraper_manager import scraper_manager
                                 all_results = session.get('last_search_results', [])
 
                                 # Parse explicit secondary selections from UI checkboxes
@@ -435,74 +429,71 @@ def game_detail(game_id):
 
             elif action == 'edit_metadata':
                 try:
-                    # Get form data
-                    title = request.form.get('edit_title', '').strip()
-                    sort_title = request.form.get('edit_sort_title', '').strip()
-                    publisher = request.form.get('edit_publisher', '').strip()
-                    developer = request.form.get('edit_developer', '').strip()
-                    genre = request.form.get('edit_genre', '').strip()
-                    release_date = request.form.get('edit_release_date', '').strip()
-                    if release_date and '/' in release_date:
-                        release_date = release_date.replace('/', '-')
-                    if release_date:
-                        try:
-                            datetime.strptime(release_date, '%Y-%m-%d')
-                        except ValueError:
-                            release_date = ''
-                    region = request.form.get('edit_region', '').strip()
-                    franchise = request.form.get('edit_franchise', '').strip()
-                    other_platforms = request.form.get('edit_other_platforms', '').strip()
-                    modes = request.form.get('edit_modes', '').strip()
-                    campaign = request.form.get('edit_campaign', '').strip()
-                    game_structure = request.form.get('edit_game_structure', '').strip()
-                    perspective = request.form.get('edit_perspective', '').strip()
-                    dimension = request.form.get('edit_dimension', '').strip()
-                    controller_support_custom = request.form.get('edit_controller_support_custom', '').strip()
-                    controller_support_dropdown = request.form.get('edit_controller_support', '').strip()
-                    controller_support = controller_support_custom or controller_support_dropdown
-                    # Pass 40.6 — coerce "1-4" / "" / junk to int|None so
-                    # the INTEGER column stays well-typed.
-                    players = normalize_players_value(
-                        request.form.get('edit_players', '').strip()
+                    # Pass 42.1 — normalize through the shared helper so the
+                    # form-POST and JSON edit paths agree on every transform
+                    # (strip + empty-as-None, release_date validation, players
+                    # coercion, rating cross-map, sort_title auto-generation,
+                    # similar_games re-join).  controller_support has a custom
+                    # text override that takes priority over the dropdown,
+                    # so it is built before the helper runs.
+                    controller_support_input = (
+                        request.form.get('edit_controller_support_custom', '').strip()
+                        or request.form.get('edit_controller_support', '').strip()
                     )
-                    esrb_rating = request.form.get('edit_esrb_rating', '').strip()
-                    pegi_rating = request.form.get('edit_pegi_rating', '').strip()
-                    cero_rating = request.form.get('edit_cero_rating', '').strip()
-                    usk_rating = request.form.get('edit_usk_rating', '').strip()
-                    acb_rating = request.form.get('edit_acb_rating', '').strip()
-                    fpb_rating = request.form.get('edit_fpb_rating', '').strip()
-                    grac_rating = request.form.get('edit_grac_rating', '').strip()
-                    classind_rating = request.form.get('edit_classind_rating', '').strip()
-                    save_type = request.form.get('edit_save_type', '').strip()
-                    similar_games = request.form.get('edit_similar_games', '').strip()
-                    similar_games = ', '.join(part.strip() for part in similar_games.split(',') if part.strip())
-                    edition = request.form.get('edit_edition', '').strip()
-                    description = request.form.get('edit_description', '').strip()
+                    _form_keys = (
+                        'title', 'sort_title', 'publisher', 'developer',
+                        'genre', 'release_date', 'region', 'franchise',
+                        'other_platforms', 'modes', 'campaign', 'game_structure',
+                        'perspective', 'dimension', 'players',
+                        'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating',
+                        'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating',
+                        'save_type', 'similar_games', 'edition', 'description',
+                        'launch_args_override',
+                    )
+                    _payload = {
+                        k: request.form.get(f'edit_{k}', '')
+                        for k in _form_keys
+                    }
+                    _payload['controller_support'] = controller_support_input
+                    _normalized = normalize_game_edit(_payload)
+                    title = _normalized.get('title') or ''
+                    sort_title = _normalized.get('sort_title') or ''
+                    publisher = _normalized.get('publisher') or ''
+                    developer = _normalized.get('developer') or ''
+                    genre = _normalized.get('genre') or ''
+                    release_date = _normalized.get('release_date') or ''
+                    region = _normalized.get('region') or ''
+                    franchise = _normalized.get('franchise') or ''
+                    other_platforms = _normalized.get('other_platforms') or ''
+                    modes = _normalized.get('modes') or ''
+                    campaign = _normalized.get('campaign') or ''
+                    game_structure = _normalized.get('game_structure') or ''
+                    perspective = _normalized.get('perspective') or ''
+                    dimension = _normalized.get('dimension') or ''
+                    controller_support = _normalized.get('controller_support') or ''
+                    players = _normalized.get('players')
+                    esrb_rating = _normalized.get('esrb_rating') or ''
+                    pegi_rating = _normalized.get('pegi_rating') or ''
+                    cero_rating = _normalized.get('cero_rating') or ''
+                    usk_rating = _normalized.get('usk_rating') or ''
+                    acb_rating = _normalized.get('acb_rating') or ''
+                    fpb_rating = _normalized.get('fpb_rating') or ''
+                    grac_rating = _normalized.get('grac_rating') or ''
+                    classind_rating = _normalized.get('classind_rating') or ''
+                    save_type = _normalized.get('save_type') or ''
+                    similar_games = _normalized.get('similar_games') or ''
+                    edition = _normalized.get('edition') or ''
+                    description = _normalized.get('description') or ''
 
-                    # Pass 44 — multi-emulator launch overrides.
+                    # Pass 44 — multi-emulator launch overrides. INTEGER column,
+                    # parsed separately because normalize_game_edit() only
+                    # handles strings.
                     emu_override_raw = request.form.get('edit_emulator_override_id', '').strip()
                     try:
                         emulator_override_id = int(emu_override_raw) if emu_override_raw else None
                     except ValueError:
                         emulator_override_id = None
-                    launch_args_override = request.form.get('edit_launch_args_override', '').strip() or None
-
-                    if title and not sort_title:
-                        sort_title = generate_sort_title(title)
-
-                    _mapped_ratings = cross_map_ratings({
-                        'esrb': esrb_rating, 'pegi': pegi_rating, 'cero': cero_rating,
-                        'usk': usk_rating, 'acb': acb_rating, 'fpb': fpb_rating,
-                        'grac': grac_rating, 'classind': classind_rating,
-                    })
-                    esrb_rating = _mapped_ratings['esrb']
-                    pegi_rating = _mapped_ratings['pegi']
-                    cero_rating = _mapped_ratings['cero']
-                    usk_rating = _mapped_ratings['usk']
-                    acb_rating = _mapped_ratings['acb']
-                    fpb_rating = _mapped_ratings['fpb']
-                    grac_rating = _mapped_ratings['grac']
-                    classind_rating = _mapped_ratings['classind']
+                    launch_args_override = _normalized.get('launch_args_override')
 
                     boxart_filename = game['boxart']
                     boxart_3d_filename = game['boxart_3d'] if game['boxart_3d'] else ''
@@ -599,6 +590,12 @@ def game_detail(game_id):
                     ))
 
                     message = "Metadata updated successfully!"
+
+                    # Pass 42.1 — match api_game_edit's cache discipline.  The
+                    # filter + analytics caches were stale until the next
+                    # full-rescrape if the user edited only via the form.
+                    invalidate_filter_cache()
+                    invalidate_analytics_cache()
 
                     game = query("""
                         SELECT g.*, s.name AS system_name, s.folder AS system_folder
@@ -931,28 +928,18 @@ def api_game_edit(game_id):
         'description'
     ]
 
+    # Pass 42.1 — single source of truth shared with the form-POST edit
+    # path: strip + empty-as-None, release_date validation, players coercion
+    # (Pass 40.6), rating cross-map, sort_title auto-generation.
+    payload = {k: data[k] for k in allowed_fields if k in data}
+    normalized = normalize_game_edit(payload)
+
     updates = []
     values = []
-
     for field in allowed_fields:
-        if field in data:
-            value = data[field]
-            if value == '':
-                value = None
-            if field == 'release_date' and value:
-                if '/' in value:
-                    value = value.replace('/', '-')
-                try:
-                    datetime.strptime(value, '%Y-%m-%d')
-                except ValueError:
-                    value = None
-            # Pass 40.6 — players is INTEGER, but SQLite weak typing accepts
-            # ranges like "1-4" verbatim and corrupts the column.  Normalize
-            # to int|None so COALESCE-style semantics on later scrapes hold.
-            if field == 'players':
-                value = normalize_players_value(value)
+        if field in normalized:
             updates.append(f"{field} = ?")
-            values.append(value)
+            values.append(normalized[field])
 
     if not updates:
         return jsonify({'success': False, 'error': 'No fields to update'}), 400
@@ -1111,7 +1098,15 @@ def api_games_bulk_edit():
 @login_required
 @permission_required('track_progress')
 def api_update_completion(game_id):
-    """Update game completion status"""
+    """Update game completion status.
+
+    Pass 41.9 — drop @editor_required to login + 'track_progress' permission.
+    Marking your own copy as played/completed is a self-tracking action;
+    Player and Viewer roles legitimately want to do this. The completion
+    column is currently global on `games` (cross-user leak); the per-user
+    move is filed as a separate follow-up since it requires a schema
+    rename and front-end-side dashboard changes.
+    """
     try:
         data = request.get_json() or {}
         status = data.get('status', 'not_started')
@@ -1132,41 +1127,36 @@ def api_update_completion(game_id):
 @login_required
 @permission_required('track_progress')
 def api_track_view(game_id):
-    """Track that a game was viewed (for recently viewed)"""
+    """Track that a game was viewed (for recently viewed).
+
+    Pass 41.9 — write into per-user `user_game_views` table (migration 010)
+    instead of the shared `games.last_viewed` column. The shared-column
+    shape leaked viewing history across users; the per-user upsert keys
+    on (user_id, game_id) so each user's panel reflects only their own
+    navigation.
+    """
     try:
-        execute("UPDATE games SET last_viewed = ? WHERE id = ?",
-               (datetime.now(timezone.utc).isoformat(), game_id))
+        user_id = g.user['id'] if g.user else None
+        if user_id is None:
+            return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+        now_iso = datetime.now(timezone.utc).isoformat()
+        execute(
+            "INSERT INTO user_game_views (user_id, game_id, last_viewed) "
+            "VALUES (?, ?, ?) "
+            "ON CONFLICT(user_id, game_id) DO UPDATE SET "
+            "last_viewed = excluded.last_viewed",
+            (user_id, game_id, now_iso),
+        )
         return jsonify({'success': True})
     except Exception as e:
+        logger.error(f"track-view error: {e}")
         return jsonify({'success': False, 'error': 'An internal error occurred'})
 
 
-@bp.route('/api/recently-viewed')
-@login_required
-def api_recently_viewed():
-    """Get recently viewed games"""
-    try:
-        # Pass 25.8 — clamp the user-trusted ?limit. `?limit=999999`
-        # otherwise flows straight into the SQL LIMIT clause and produces a
-        # multi-MB JSON blob plus the JOIN cost.
-        user_limit = request.args.get('limit', 10, type=int) or 10
-        max_rows = getattr(config, 'MAX_LIST_ROWS', 500)
-        limit = max(1, min(user_limit, max_rows))
-        games = query("""
-            SELECT g.*, s.name as system_name
-            FROM games g
-            JOIN systems s ON g.system_id = s.id
-            WHERE g.last_viewed IS NOT NULL
-            ORDER BY g.last_viewed DESC
-            LIMIT ?
-        """, (limit,))
-
-        return jsonify({
-            'success': True,
-            'games': [dict(g) for g in games]
-        })
-    except Exception as e:
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+# Pass 41.9 — `/api/recently-viewed` deleted. Zero callers (the dashboard
+# uses an inline `query()` against `app.py:1008`, never this endpoint).
+# The cross-user leak it formerly returned is now closed at source: the
+# dashboard query joins `user_game_views` per-user (see app.py).
 
 
 @bp.route('/api/filter-games')

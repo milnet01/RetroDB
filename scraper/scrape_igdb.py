@@ -6,16 +6,21 @@
 
 import os
 import logging
+import threading
 from datetime import datetime
 import sys
 
 # Add parent directory to path for config import
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import DB_PATH, IMAGE_PATH, IGDB_PLATFORM_MAP
+from config import IMAGE_PATH, IGDB_PLATFORM_MAP
+import config as _config
 
 from scraper.base_scraper import http_post, download_image, get_scraper_conn
 
 logger = logging.getLogger(__name__)
+
+# Pass 45.14 — cap IGDB / Twitch JSON response sizes; matches RA + AI precedent.
+_IGDB_MAX_BYTES = getattr(_config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
 
 def _get_igdb_credentials():
     """Get IGDB credentials via centralized scraper_manager, falling back to config.py"""
@@ -29,45 +34,63 @@ def _get_igdb_credentials():
 # =============================================================================
 
 _igdb_token_cache = {'token': None, 'expires_at': 0}
+# Pass 45.13 — guard the cache mutation against concurrent background workers
+# (bulk scrape runs IGDB in a thread pool). Without the lock, two threads
+# hitting an expired token would each kick off a Twitch OAuth round trip and
+# the second one would clobber the first's freshly-stored token. Mirrors the
+# pattern in scraper/retroachievements.py:_ra_console_cache_lock.
+_igdb_token_cache_lock = threading.Lock()
+
 
 def igdb_auth():
     """Authenticate with IGDB via Twitch, with token caching."""
     import time
 
-    # Return cached token if still valid (with 60s safety margin)
-    if _igdb_token_cache['token'] and time.time() < _igdb_token_cache['expires_at'] - 60:
-        return _igdb_token_cache['token']
+    # Pass 45.13 — read + refresh under the lock so two threads can't both
+    # see "no cached token" simultaneously and both fire a Twitch OAuth call.
+    with _igdb_token_cache_lock:
+        # Return cached token if still valid (with 60s safety margin)
+        if _igdb_token_cache['token'] and time.time() < _igdb_token_cache['expires_at'] - 60:
+            return _igdb_token_cache['token']
 
-    client_id, client_secret = _get_igdb_credentials()
-    if not client_id or not client_secret:
-        raise ValueError("IGDB credentials not configured. Set them in Settings → Scrapers.")
-    try:
-        r = http_post(
-            "https://id.twitch.tv/oauth2/token",
-            data={
-                'client_id': client_id,
-                'client_secret': client_secret,
-                'grant_type': 'client_credentials'
-            },
-            timeout=10,
-            retries=2
-        )
-        if r is None:
-            raise ConnectionError("IGDB authentication request failed after retries")
-        r.raise_for_status()
-        data = r.json()
-        token = data['access_token']
-        expires_in = data.get('expires_in', 0)
-        _igdb_token_cache['token'] = token
-        _igdb_token_cache['expires_at'] = time.time() + expires_in
-        logger.info(f"IGDB token cached, expires in {expires_in}s")
-        return token
-    except Exception as e:
-        logger.error(f"IGDB authentication failed: {e}")
-        raise
+        client_id, client_secret = _get_igdb_credentials()
+        if not client_id or not client_secret:
+            raise ValueError("IGDB credentials not configured. Set them in Settings → Scrapers.")
+        try:
+            r = http_post(
+                "https://id.twitch.tv/oauth2/token",
+                data={
+                    'client_id': client_id,
+                    'client_secret': client_secret,
+                    'grant_type': 'client_credentials'
+                },
+                timeout=10,
+                retries=2,
+                max_bytes=_IGDB_MAX_BYTES,
+            )
+            if r is None:
+                raise ConnectionError("IGDB authentication request failed after retries")
+            r.raise_for_status()
+            data = r.json()
+            token = data['access_token']
+            expires_in = data.get('expires_in', 0)
+            _igdb_token_cache['token'] = token
+            _igdb_token_cache['expires_at'] = time.time() + expires_in
+            logger.info(f"IGDB token cached, expires in {expires_in}s")
+            return token
+        except Exception as e:
+            logger.error(f"IGDB authentication failed: {e}")
+            raise
 
 def igdb_request(endpoint, body, token):
-    """Make request to IGDB API"""
+    """Make request to IGDB API.
+
+    Pass 41.5 — on a 401 response (Twitch revoked / expired the token earlier
+    than the cached `expires_in` claimed), invalidate the token cache and
+    retry once with a freshly-issued token. Without this, a stale token
+    in the cache silently returns empty results for the rest of the scrape
+    pass and the user sees "no IGDB results" with no obvious cause.
+    """
     client_id, _ = _get_igdb_credentials()
     headers = {
         'Client-ID': client_id,
@@ -79,10 +102,36 @@ def igdb_request(endpoint, body, token):
         data=body,
         headers=headers,
         timeout=30,
-        retries=2
+        retries=2,
+        max_bytes=_IGDB_MAX_BYTES,
     )
     if r is None:
         raise ConnectionError(f"IGDB API request to {endpoint} failed after retries")
+    if r.status_code == 401:
+        logger.warning(
+            "IGDB returned 401 for %s — clearing token cache and retrying once",
+            endpoint,
+        )
+        # Pass 45.13 — clear the cache under the lock too, so a parallel
+        # thread doesn't read the now-invalid token between our reset and
+        # the igdb_auth() refresh below.
+        with _igdb_token_cache_lock:
+            _igdb_token_cache['token'] = None
+            _igdb_token_cache['expires_at'] = 0
+        fresh_token = igdb_auth()
+        headers['Authorization'] = f'Bearer {fresh_token}'
+        r = http_post(
+            f"https://api.igdb.com/v4/{endpoint}",
+            data=body,
+            headers=headers,
+            timeout=30,
+            retries=2,
+            max_bytes=_IGDB_MAX_BYTES,
+        )
+        if r is None:
+            raise ConnectionError(
+                f"IGDB API request to {endpoint} failed after token refresh + retries"
+            )
     r.raise_for_status()
     return r.json()
 
@@ -93,7 +142,7 @@ def igdb_request(endpoint, body, token):
 def get_platform_id(system_name):
     """Get IGDB platform ID from system name"""
     if not system_name:
-        logger.info(f"IGDB get_platform_id: No system_name provided")
+        logger.info("IGDB get_platform_id: No system_name provided")
         return None
     
     system_key = system_name.lower().strip()
@@ -119,7 +168,7 @@ def get_platform_id(system_name):
             return value
     
     # Try partial match
-    logger.info(f"IGDB get_platform_id: No nospace match, trying partial...")
+    logger.info("IGDB get_platform_id: No nospace match, trying partial...")
     for key, value in IGDB_PLATFORM_MAP.items():
         key_nospace = key.replace(' ', '')
         if key_nospace in system_key_nospace or system_key_nospace in key_nospace:
@@ -188,7 +237,7 @@ def search_games(title, system_name=None, limit=10):
 
         # If no results with platform filter, try without
         if not results and platform_id:
-            logger.info(f"No IGDB results with platform filter, trying without...")
+            logger.info("No IGDB results with platform filter, trying without...")
             body = f"""
             search "{search_title}";
             fields id, name, first_release_date, platforms.id, platforms.name, platforms.abbreviation,

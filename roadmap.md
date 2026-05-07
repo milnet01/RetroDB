@@ -84,6 +84,836 @@ paths or silent-corruption vectors under routine use.
 
 ---
 
+### Pass 47 — Open-source release & donation funnel (2026-05-07)
+
+> User-requested track: flip the GitHub repo from private to public,
+> repurpose Patreon to a pure donation model (the app itself becomes
+> free), add GitHub Sponsors and Buy Me A Coffee, and surface donation
+> links from both the repo and the in-app About panel. The
+> marketing/distribution website (a separate property the user plans
+> to host RetroDB *and* their other apps under, with the same donation
+> model) is **out of scope** for this pass — see "Scope notes —
+> considered and dropped".
+>
+> **Recommended donation stack** (rationale captured here so future
+> sessions don't re-litigate the platform choice):
+>
+> 1. **GitHub Sponsors** — primary. Free for the recipient, integrated
+>    "Sponsor this project" button on the repo page, supports monthly +
+>    one-off, no platform fee beyond standard Stripe processing.
+>    Strongest alignment with the public-repo move; the donation CTA
+>    sits where prospective contributors are already looking.
+> 2. **Buy Me A Coffee** — secondary. Lowest-friction one-off-tip
+>    surface for users who don't want a monthly commitment or a GitHub
+>    account. ~5% platform fee + Stripe processing.
+> 3. **Patreon** — keep, but de-emphasise. Existing setup with zero
+>    subscribers; Patreon's 8–12% take is the steepest of the three so
+>    it should not be the primary CTA. Tier copy is rewritten so the
+>    perks are cosmetic (the app itself is free).
+>
+> Skipped on purpose: Open Collective (fiscal-host overhead is overkill
+> for a solo dev), Liberapay (audience too small for a third recurring
+> platform), Ko-fi (overlaps BMAC — pick one), PayPal Donate (clunky UX,
+> dilutes the funnel), crypto (high friction, signals "shady" to
+> mainstream users).
+
+#### Pass 47.1 Pre-publish hygiene sweep (HIGH, M)
+
+- **Target**: full git history, repo metadata, README, root community
+  files (`SECURITY.md`, issue / PR templates).
+- **Why**: visibility flip is irreversible in practice — anything ever
+  committed to any branch becomes public the instant the repo flips.
+  Need a clean sweep first, especially of pre-`.gitleaks.toml` history.
+- **Plan**:
+  1. **Secret-history sweep**: `gitleaks detect --source . --redact
+     --no-banner --log-opts="--all"` to scan every ref, not just
+     `HEAD`. If anything turns up, decide between (a) `git filter-repo`
+     to scrub history (rewrites SHAs — preferred *before* flipping),
+     or (b) rotate the leaked credential and accept the historical
+     exposure if scrubbing would be too disruptive.
+  2. **Excluded-paths sanity check**: confirm `config.py`,
+     `data/settings.json`, `data/scraper_settings.json`,
+     `data/rom_tools_config.json`, `.secret_key`, all `*.db`,
+     `static/images/{boxart,boxart_3d,screenshots,fanart,manuals,trophies}/`,
+     `static/videos/` are correctly `.gitignore`d AND have never been
+     tracked. `git log --all -- <path>` empty for each.
+  3. **Hardcoded-paths / personal-identifiers grep**:
+     `grep -rE "/home/(ants|[a-z]+)/|aant\.schemel|milnet01"
+     --exclude-dir=.git` — anything that ties source code to the local
+     dev box is parameterised or removed (test fixtures, log lines,
+     comments). Email + GitHub handle expected to remain in `LICENSE`,
+     `CONTRIBUTING.md`, and changelog entries — those are intended.
+  4. **`SECURITY.md`**: add a top-level disclosure policy (contact
+     email, expected response window, in/out-of-scope, "no bug
+     bounty"). GitHub renders this in the Security tab; a public repo
+     without one looks unmaintained.
+  5. **`.github/ISSUE_TEMPLATE/`**: minimal `bug_report.md` and
+     `feature_request.md` so first-time contributors don't dump
+     unstructured prose. Match the project's existing reproduction-
+     before-fix discipline (env / steps / expected vs actual / log
+     excerpt).
+  6. **`.github/PULL_REQUEST_TEMPLATE.md`**: short; mirrors the
+     project's commit-message contract (one-line title, "what / why"
+     body, mandatory-workflow checklist — version bumped, changelog
+     entry, tests run if applicable).
+  7. **README polish**: add a "Status" line ("Solo-developed; releases
+     on a best-effort cadence"), 2–3 representative screenshots, and a
+     "Support development" section anchored to 47.6's funding stack.
+  8. **Repo metadata**: write a one-line description, add 6–8 topics
+     (`rom-manager`, `retro-gaming`, `flask`, `python`, `emulation`,
+     `rom-library`, `self-hosted`, `gaming`) so the repo is
+     discoverable from GitHub search.
+- **Status**: todo
+
+#### Pass 47.2 Flip repo visibility private → public (MEDIUM, S)
+
+- **Target**: GitHub Settings → General → Danger Zone → Change
+  visibility (or `gh repo edit milnet01/RetroDB --visibility public
+  --accept-visibility-change-consequences`).
+- **Why**: gates 47.4–47.6. Public visibility is also what unlocks
+  unlimited Linux-runner CI minutes (private repos consume the
+  account's monthly Actions quota — see `~/.claude/CLAUDE.md` §6),
+  which retires the push-batching rule for this repo.
+- **Plan**:
+  1. Confirm 47.1 clean.
+  2. Flip visibility.
+  3. Verify GitHub Actions secrets (`GITHUB_TOKEN`, any custom
+     workflow secrets) still scope correctly. Repository secrets stay
+     scoped to the repo regardless of visibility, but tokens with
+     restricted-scope PATs may need rotation if their grant was
+     "private repos only".
+  4. **Update push-cadence expectations**: with the repo now public,
+     the global rule's PRIVATE-batching path no longer applies — push
+     freely after each release.
+- **Status**: blocked on 47.1
+
+#### Pass 47.3 Repurpose Patreon (free app, donation-only tiers) (MEDIUM, S)
+
+- **Target**: existing Patreon page (off-repo, web admin).
+- **Why**: existing setup with zero subscribers — the paywall is the
+  discovery bottleneck, not willingness-to-pay. Free + donate is the
+  standard play for niche FOSS hobbyist software.
+- **Plan**:
+  1. Update Patreon page copy: "RetroDB is now free and open source.
+     Patreon supports ongoing development." Strip any "buy access"
+     framing.
+  2. Re-tier the membership levels so they're cosmetic / appreciation
+     rather than gated content. Suggested tiers (sized so the highest
+     stays approachable — risk is patron expectations creeping into
+     roadmap influence at >$15):
+     - **Tip jar** ($1/mo) — name in CHANGELOG supporters list,
+       Discord role if/when a Discord exists.
+     - **Coffee** ($5/mo) — same, plus early access to release builds
+       (~1 week before public release).
+     - **Patron** ($15/mo) — same, plus a monthly behind-the-scenes
+       update post (single paragraph; not a content treadmill).
+  3. Add the Patreon URL to `.github/FUNDING.yml` (Pass 47.6).
+- **Status**: blocked on 47.2
+
+#### Pass 47.4 GitHub Sponsors (MEDIUM, M)
+
+- **Target**: <https://github.com/sponsors> waitlist + sponsor
+  profile.
+- **Why**: integrated with the public repo (Sponsor button on the repo
+  page), no platform fee beyond standard payment processing, supports
+  both monthly and one-off. Strongest alignment with the open-source
+  release.
+- **Plan**:
+  1. Apply at <https://github.com/sponsors>. Eligibility checks:
+     verified GitHub account, 2FA on, public profile photo + bio,
+     identity verification (passport / driver's licence) for
+     Stripe-Connect-equivalent payout setup. Approval can take 2–6
+     weeks, so start the application *early* — runs in parallel with
+     47.1 / 47.2 since the application is account-level, not
+     repo-level.
+  2. Once approved, configure tiers (mirror the Patreon tiers from
+     47.3 so prospective supporters can pick the platform they prefer
+     — same cosmetic perks).
+  3. Skip goal-based fundraising at first. Goals only feel real once
+     the audience is large enough that "$50/mo unlocks weekly
+     office-hours streams" isn't aspirational fanfic.
+- **Status**: application can start in parallel with 47.1; the
+  Sponsor button on the repo page is blocked on 47.2 (button only
+  renders for public repos).
+
+#### Pass 47.5 Buy Me A Coffee (LOW, S)
+
+- **Target**: <https://buymeacoffee.com> profile.
+- **Why**: lowest-friction one-off-tip surface for users without a
+  GitHub account or who don't want monthly commitment. Stripe-backed;
+  recipient pays standard processing fees (~2.9% + $0.30) plus 5% BMAC
+  fee.
+- **Plan**:
+  1. Sign up at <https://buymeacoffee.com>; pick a username matching
+     the GitHub handle (`milnet01`) for cross-platform consistency.
+  2. Add the BMAC URL to `.github/FUNDING.yml` (Pass 47.6) under the
+     `custom` field — BMAC isn't a natively-recognised FUNDING.yml
+     platform.
+  3. **Skip the BMAC "memberships" feature** — that overlaps
+     Patreon/Sponsors and fragments the monthly-tier story across
+     three platforms. Use BMAC strictly for one-off coffees.
+- **Status**: blocked on 47.2
+
+#### Pass 47.6 Donation surfaces in app + repo (MEDIUM, M)
+
+- **Target**: `.github/FUNDING.yml`, `README.md`, in-app
+  Settings/About surface.
+- **Why**: discovery — users only donate if they see the link. The
+  repo button (`FUNDING.yml`) covers GitHub visitors; the README
+  badges cover anyone reading docs; the in-app panel covers existing
+  users who never visit the repo.
+- **Plan**:
+  1. **`.github/FUNDING.yml`** with the platforms enabled in 47.3 / 47.4
+     / 47.5 (GitHub renders these as a "Sponsor this project"
+     dropdown):
+
+     ```yaml
+     github: [milnet01]
+     patreon: <username-from-47.3>
+     custom: ['https://buymeacoffee.com/<username-from-47.5>']
+     ```
+  2. **README.md** — add a "Support development" section above the
+     existing "License" section (line 122) with badges (Sponsor /
+     BMAC / Patreon) and a one-paragraph framing: "RetroDB is free
+     and open source. If it saves you time, consider tipping — every
+     bit helps keep solo development sustainable."
+  3. **In-app surface** — fold a "Support development" panel into the
+     existing settings page (`templates/settings.html`) or the About
+     modal. Three external links + a one-line note. **No paywalled
+     features, no nag dialogs** — those degrade trust faster than
+     they raise donations. A first-run notification *might* be worth
+     it (one-time, dismissable, never reappears) but skip on the
+     first cut and revisit if conversion stays at zero.
+  4. **Footer link** — single text link ("Support") in the page
+     footer next to the version / GitHub link if a footer exists. If
+     no footer exists today, *skip* — don't add chrome solely to
+     hold a donation link.
+  5. **CHANGELOG supporters list** — render contributors from the top
+     Patreon / Sponsors tier into a "Supporters" section at the
+     bottom of `data/changelog.yaml`'s release notes, fed manually
+     per release. Defer until there *are* supporters.
+- **Status**: blocked on 47.3 / 47.4 / 47.5 (need the platform URLs
+  to populate)
+
+---
+
+### Pass 46 — vendor third-party assets / distribution self-containment (2026-04-27)
+
+> User-requested track: drop runtime CDN dependencies (Chart.js, Google
+> Fonts), refresh pinned pip versions within current ranges, and add a
+> PyInstaller-based "no Python install needed" distribution alongside the
+> existing source-zip distribution. Goal — let RetroDB run without
+> reaching out to third-party CDNs and let end users pick between
+> "needs Python" (small zip) and "self-contained" (bigger binary)
+> distribution channels.
+
+#### Pass 46.1 Vendor Chart.js + Google Fonts (privacy / offline)
+
+- **Targets**: `templates/analytics.html` (CDN Chart.js ref),
+  `templates/base.html` (Google Fonts ref).
+- **Why**: every browser load made requests to `cdn.jsdelivr.net`
+  (Chart.js) and `fonts.gstatic.com` + `fonts.googleapis.com` (3 font
+  families, 17 WOFF2 files) — third-party fetches that log IP +
+  User-Agent and add CDN failure modes. User asked for a no-CDN runtime.
+- **Plan**: vendor Chart.js v4.5.1 UMD bundle (~208 KB) into
+  `static/js/vendor/`, register it in the `asset_manifest.json` cache-
+  bust pipeline. Vendor 17 WOFF2 files (Orbitron variable + Rajdhani
+  5×3 subsets + Share Tech Mono) into `static/fonts/`, write a local
+  `static/css/core/fonts.css` with the @font-face block, drop the
+  preconnect + Google CSS link in `base.html`. One-shot bash script
+  `scripts/vendor_fonts.sh` for the font download (idempotent + WOFF2
+  magic-byte verification).
+- **Source**: user request 2026-04-27 ("can we get this project to a
+  point where there are no external dependencies?").
+- **Status**: done (v3.5.35) — 17 WOFF2 + Chart.js UMD bundle vendored
+  (~784 KB repo growth). Build scripts updated to hash vendor JS +
+  standalone fonts.css for per-file cache-busting. Smoke-tested:
+  `/login` response has zero `gstatic.com`/`googleapis.com` references
+  outside HTML comments; all three asset paths return 200 with valid
+  bytes. 683 tests green.
+
+#### Pass 46.2 Refresh pinned pip versions within current ranges
+
+- **Target**: `requirements.txt`, `requirements.lock`.
+- **Why**: lockfile pins are 2-week-old snapshots; latest patch/minor
+  releases within the existing version ceilings (Flask `<4.0`, Pillow
+  `<13.0`, etc.) include security fixes and bugfixes worth picking up
+  before the PyInstaller distribution work bakes them into a binary.
+- **Plan**: `pip-compile --upgrade requirements.txt -o requirements.lock
+  --strip-extras`, run full pytest, fix any breakage. Bump the
+  ceilings if any package's latest exceeds the current cap (Flask 4
+  if released, numpy 3, etc.); document any version-locking decisions.
+- **Status**: done (v3.5.36) — 6 packages bumped (certifi, click,
+  cryptography 46→47, idna, onnxruntime 1.24→1.25, packaging). 2
+  transitives removed (mpmath, sympy — onnxruntime 1.25 no longer
+  pulls them). All ceilings in `requirements.txt` already
+  accommodated the new versions; no top-level constraint changes
+  needed. 683 tests green, app boots clean. Repo install footprint
+  drops ~25 MB from sympy removal.
+
+#### Pass 46.3 PyInstaller spec + dual-distribution `build_dist.py`
+
+- **Target**: new `retrodb.spec`, extended `build_dist.py`, distribution
+  README updates.
+- **Why**: end users currently must install Python + pip-install
+  requirements before running RetroDB. A PyInstaller binary lets them
+  run a single executable on Linux/macOS/Windows. Both distribution
+  channels remain (small source zip for users who already have Python;
+  ~3.7 GB binary for users who don't — onnxruntime + ROCm libs dominate).
+- **Status**: part 1 done (v3.5.38). Bundle builds, smoke-tests cleanly:
+  `Real-ESRGAN ONNX loaded`, Waitress serving, `/login` 200. PyInstaller
+  cannot cross-compile — `--standalone` only produces the host platform's
+  binary. Open follow-ups in part 2 / part 3.
+
+##### Part 2 — frozen-mode user-data path
+
+- **Why**: today, when run from `dist/retrodb/retrodb`, `BASE_DIR =
+  dirname(__file__)` resolves to `_internal/` (PyInstaller MEIPASS in
+  onedir mode). User data — `database/`, `data/`, `logs/`, scraped media
+  — gets written into `_internal/` alongside bundled assets. Functional
+  (the dir is writable) but ugly: clobbers the "support files" boundary
+  and makes upgrades messy (user has to manually copy data out of an
+  old `_internal/` into a new one).
+- **Plan**: detect `getattr(sys, 'frozen', False)` in `config.py`. When
+  frozen, set `BASE_DIR = os.path.dirname(sys.executable)` (next to the
+  launcher, NOT inside `_internal/`). `STATIC_PATH` for the bundled
+  CSS/JS/font assets stays at `sys._MEIPASS/static`. Custom Flask static
+  route falls back to `BASE_DIR/static/images/` for scraped media so
+  `/static/images/boxart/<id>.webp` resolves correctly.
+- **Status**: done (v3.5.39) — `config.py` now exposes `BASE_DIR`
+  (writable user data root) and `BUNDLE_DIR` (read-only bundled assets
+  root); `IMAGE_PATH` + `DB_PATH` follow `BASE_DIR`, `STATIC_PATH`
+  follows `BUNDLE_DIR`. Eight call sites retargeted (settings_manager,
+  log_manager, routes.scraper, plus five sites in app.py) from local
+  `dirname(__file__)` to `config.BASE_DIR` / `config.BUNDLE_DIR`. New
+  `/static/images/<path>` route tries `BASE_DIR/static/images/` first,
+  falls back to `BUNDLE_DIR/static/images/`; in dev mode both roots are
+  identical and the fallback is a no-op. 11 regression tests in
+  `tests/test_pass46_frozen_paths.py` pin the dev-mode invariant,
+  frozen-mode split (monkeypatched `sys.frozen` + `sys._MEIPASS`),
+  dependent-modules anchor, and route behaviour. 694 / 694 tests green.
+
+##### Part 3 (optional) — CPU-only build variant
+
+- **Why**: `onnxruntime-rocm` pulls in ~2 GB of ROCm libs
+  (`librocsolver.so.0`, `libMIOpen.so.1`, `libamd_comgr.so.3`) for AMD
+  GPU acceleration. Users on Intel/NVIDIA CPUs gain nothing from these
+  but pay the download size.
+- **Plan**: add a `--standalone --cpu-only` flag that builds against a
+  CPU-only Python venv (vanilla `onnxruntime`, not `-rocm`). Estimated
+  bundle ~600 MB. Both variants ship; the page lists size +
+  GPU-acceleration trade-off so users self-select.
+- **Status**: todo
+
+##### Part 4 (optional) — CI matrix build for cross-platform binaries
+
+- **Why**: `--standalone` produces only the host's binary. To ship
+  Linux + macOS + Windows standalones from a single tag push, GitHub
+  Actions needs a 3-runner matrix (`ubuntu-latest`, `macos-latest`,
+  `windows-latest`).
+- **Plan**: extend `.github/workflows/release.yml` to spawn one
+  `pyinstaller retrodb.spec` job per OS on `tags: 'v*'` push, then
+  upload all 3 zips as release assets. Note this multiplies CI minutes
+  by 3× per release; might be worth gating behind a manual
+  workflow_dispatch for the standalone build.
+- **Status**: todo
+
+---
+
+### Pass 45 — indie-review 2026-04-25 (post Pass 41 sweep)
+
+> Third 14-agent independent review (v3.5.14). 2 CRIT + 33 HIGH raw →
+> 1 CRITICAL + ~28 HIGH after threat-model calibration. The CRITICAL is
+> a net-new bug introduced by Pass 41.9; everything else is hardening or
+> contract drift surfaced by cold-read agents that don't share the
+> author's mental model. Cross-cutting themes (≥2 reviewers) flagged
+> independently: atomic-write drift, SSRF pin_host_ip unwired, source-
+> grep test antipattern, inline-onclick + CSP zombie nonce, aria-current
+> + ModalFocusTrap rollouts incomplete, Steam/Xbox/PSN sync rate-limit
+> gap, migration runner BEGIN DEFERRED.
+
+#### Pass 45.1 CRITICAL — `track_progress` permission unsatisfiable (CRITICAL, S)
+
+- **Targets**: `services/auth.py:31-42` (`ROLE_PERMISSIONS`) +
+  `routes/games.py:1101, 1130` (`@permission_required('track_progress')`).
+- **Why**: Pass 41.9.A added the decorator on `api_track_view` and
+  `api_update_completion` but never added the permission to any role.
+  `has_permission('track_progress')` returns False for every user
+  including admin → both endpoints redirect to `/dashboard`. Completion-
+  toggle and recently-viewed are dead in production. Caught by Auth +
+  Game routes lanes independently.
+- **Plan**: add `'track_progress'` to admin + editor + viewer (and
+  whatever future Player role lands). Make `permission_required` JSON-
+  aware on `/api/*` routes (return 403 envelope, not 302).
+- **Source**: indie-review 2026-04-25 cross-cutting theme T1.
+- **Status**: done (v3.5.15) — `track_progress` granted to admin / editor /
+  viewer; `permission_required` now returns 403 JSON envelope on `/api/*`
+  routes (page routes still flash+302). 5 regression tests in
+  `tests/test_pass45_security.py::TestPass45_1*`.
+
+#### Pass 45.2 SSRF DNS-rebinding TOCTOU on scraper download path (HIGH, M)
+
+- **Targets**: `services/ssrf.py:127` (`pin_host_ip`), threaded through
+  `scraper/base_scraper.download_image`,
+  `scraper/metadata_merger._download_and_finalize`,
+  `services/image_utils._download_model`.
+- **Why**: Pass 32.7 documented the rebinding protection but the helper
+  is consumed only by `routes/museum.py:1085`. Every other scraper path
+  calls `validate_outbound_url()` then GETs separately — adversarial DNS
+  flips A-records between validate and connect. Caught by Core app +
+  Scraper orchestration + Per-source scrapers lanes.
+- **Plan**: thread `pin_host_ip` through every `validate_outbound_url`
+  call site or document the residual.
+- **Source**: indie-review 2026-04-25 theme T3.
+- **Status**: done (v3.5.17) — added `services.ssrf.validate_and_pin_url`
+  (walks redirect chain through SSRF gate + captures IP for pinning) and
+  threaded `pin_host_ip` through `scraper/base_scraper.download_image`,
+  `scraper/metadata_merger._download_and_finalize`, `scraper/metadata_
+  merger._download_ss_media`, `scraper/scrape_screenscraper.download_
+  media`, and `services/image_utils._download_model`. The last path was
+  switched from `urllib.urlopen` (auto-follows redirects through real
+  DNS) to `requests` with `allow_redirects=False` so each hop can be
+  pinned. `routes/museum.py:_is_public_https_url` is now a thin wrapper
+  around the new helper. 6 regression tests in
+  `tests/test_pass45_security.py::TestPass45_2*` capture what
+  `socket.getaddrinfo` returns at the moment of the GET — with the pin
+  active it returns the verified IP, without it real DNS is queried
+  (and fails with `gaierror` in the sandbox).
+
+#### Pass 45.3 AI Fill breaks fill-only invariant on integer columns (HIGH, S)
+
+- **Targets**: `routes/games_ai.py:109` — `all_updates.append(f"{field} = ?")`.
+- **Why**: writes bare `field = ?` instead of `COALESCE(?, field)`.
+  `_int_fields` coerce path at `:106` writes `0` after `int(float("0"))`,
+  overwriting curated non-zero values (e.g. `players=4` clobbered by
+  AI returning `"0"`). CLAUDE.md scraper-fill-only invariant should
+  apply to AI Fill too.
+- **Plan**: wrap integer column writes in `COALESCE(NULLIF(?, 0), col)`,
+  or skip when `value == 0`.
+- **Source**: indie-review 2026-04-25 (Game routes lane H1).
+- **Status**: done (v3.5.16) — int fields coerced to 0 after `int(float(value))`
+  now skip the UPDATE clause (chose the simpler "skip" branch over COALESCE
+  NULLIF since the existing `should_apply` filter already guarantees we only
+  reach the int-coerce on values worth writing). Covers all 5 int columns
+  (`players`, `critic_score`, `critic_score_count`, `user_score`,
+  `user_score_count`). 4 regression tests in
+  `tests/test_pass45_security.py::TestPass45_3*` exercise the route
+  end-to-end with a stubbed AI provider — reverting the production fix
+  fails the curated-`players` and spurious-`critic_score` cases.
+
+#### Pass 45.4 XSS sinks in toast / HLTB / settings dialogs (HIGH, S)
+
+- **Targets**:
+  - `static/js/toast-controller.js:1171` — raw-interpolated `data.return_url`
+    in inline `onclick` JS-string. Pass 41.12.B's runtime guard fires too
+    late (URL already rendered as HTML).
+  - `static/js/game-modals.js:670-689` — `data.main_story/main_extra/
+    completionist` from HLTB API in `innerHTML` without `escapeHtml`.
+  - `templates/settings.html:4373, 4399` — `confirmMessage.innerHTML = message`
+    with comment `"Use innerHTML to support HTML content"`. Same family
+    as `showModal` Pass 40.13 closed.
+- **Plan**: migrate `toast-controller.js:1171` to delegated listener +
+  `data-` attr; wrap HLTB fields with `escapeHtml`; default
+  `showConfirmModal/showInfoModal` to `textContent` with `{allowHtml:true}`
+  opt-in mirroring Pass 40.13.
+- **Source**: indie-review 2026-04-25 theme T12.
+- **Status**: done (v3.5.18) — toast-controller's three inline onclicks
+  (active-toast navigate / pause / cancel + RA-queued cancel) replaced
+  with `data-toast-action` + a single delegated container click handler
+  that routes by action; all interpolated values run through
+  `escapeHtml`. HLTB `main_story/main_extra/completionist` wrapped in
+  `escapeHtml(String(...))`; HLTB clear button migrated from inline
+  onclick to `data-hltb-clear` + addEventListener. `showConfirmModal`/
+  `showInfoModal` in `settings.html` now accept `options` and default
+  to `textContent`; `clearScrapedData` and `deleteController` opt in
+  via `{allowHtml: true}` AND escape `systemName`/`controllerName`.
+  6 regression tests in `tests/test_pass45_security.py::TestPass45_4*`
+  pin each contract via source grep (mirrors Pass 40.13's pattern).
+  Pass 45.3 CI fix folded in: monkeypatch `settings_manager.load_
+  settings` so the empty-data CI environment doesn't 302 to /setup.
+
+#### Pass 45.5 Atomic-write contract drift (HIGH, M)
+
+- **Targets**:
+  - `app.py:115-120` `_get_secret_key` truncates without `os.replace`;
+    chmod-after-write leaves brief 644 window.
+  - `services/image_utils.py:759-779` `_atomic_save` claims fsync in
+    docstring but doesn't call `os.fsync`. Same in
+    `services/game_media_service.py:201-216` `_atomic_write_bytes`.
+  - `services/image_utils.py:88-118` `_download_model` uses static
+    `.tmp` suffix (race-prone with concurrent processes).
+  - `services/database.py:295` `backup_database` chmods after the
+    integrity-check open (mode-0644 window).
+- **Plan**: route everything through `services.atomic_io` (one helper);
+  add `f.flush() + os.fsync(fd)` before `os.replace`; chmod before
+  any reopen-for-verify.
+- **Source**: indie-review 2026-04-25 theme T2.
+- **Status**: done (v3.5.20) — added `services.atomic_io.atomic_write_
+  bytes` / `atomic_write_text` / `fsync_path`; threaded through all
+  five sites: `_get_secret_key` (mode=0o600 chmod-before-replace),
+  `_atomic_save` (added missing fsync the docstring claimed),
+  `_atomic_write_bytes` in game_media_service (delegates to helper),
+  `backup_database` (chmod reordered to fire before integrity-check
+  verify open), `_download_model` (mkstemp instead of static `.tmp`).
+  8 regression tests in `tests/test_pass45_security.py::TestPass45_5*`
+  pin the contracts; reverting `backup_database` reorder fails the
+  position check.
+
+#### Pass 45.6 Decompression-bomb / `MAX_IMAGE_PIXELS` global (HIGH, S)
+
+- **Targets**: `services/image_utils.py` + `services/game_media_service.py`
+  module imports; `_validate_image_bytes`, `_ensure_format_matches_extension`,
+  `standardize_image` exception handling.
+- **Why**: scraper-downloaded crafted PNG can decode to GBs of pixels.
+  Pass 41.14.A fixed `compute_dhash` for image_dedup; the rest of the
+  image stack still has no `Image.MAX_IMAGE_PIXELS` set and `verify()`
+  doesn't decode.
+- **Plan**: `Image.MAX_IMAGE_PIXELS = config.IMAGE_MAX_PIXELS or 64_000_000`
+  at module import in both files; explicit `DecompressionBombError` catch
+  at every `Image.open(...)` call site.
+- **Source**: indie-review 2026-04-25 theme T5.
+- **Status**: done (v3.5.21) — added `config.IMAGE_MAX_PIXELS` (default
+  64 megapixels), set `Image.MAX_IMAGE_PIXELS` at module-import time in
+  both `services/image_utils.py` and `services/game_media_service.py`,
+  and added explicit `DecompressionBombError` catches at every
+  `Image.open` site (5 total) with distinct log lines for forensics.
+  5 regression tests in `tests/test_pass45_security.py::TestPass45_6*`.
+
+#### Pass 45.7 Stale-ref orphan-cleanup race (HIGH, M)
+
+- **Targets**: `services/media_cleanup.py:127-187`.
+- **Why**: `clean_orphaned_files` deletes based on a snapshot taken by
+  `find_orphaned_media` at scan time. A scraper writing a new
+  `42_boxart.webp` between scan and delete loses the file. Same
+  architectural shape as Pass 40.15's `hybrid_scraper` stale-clear race.
+  Also: orphan deletion follows symlinks (no `os.path.islink` guard).
+- **Plan**: re-validate each candidate against fresh DB read at delete
+  time, OR filter on `mtime > scan_start_time`. Add `os.path.islink`
+  skip in the iteration.
+- **Source**: indie-review 2026-04-25 (Image pipeline lane).
+- **Status**: done (v3.5.22) — each orphan dict carries `mtime` and
+  `scan_started_at`; `clean_orphaned_files` re-checks both at delete
+  time and skips files modified during the cleanup window. Symlinks
+  refused at both scan and clean (`os.path.islink` guard added in
+  `find_orphaned_media` and again in `clean_orphaned_files` as defence
+  in depth). 5 regression tests in
+  `tests/test_pass45_security.py::TestPass45_7*`; reverting the
+  `services/media_cleanup.py` change fails 4 of 5.
+
+#### Pass 45.8 Steam/Xbox/PSN/wishlist endpoint rate-limits (HIGH, S)
+
+- **Targets**: `app.py:266-300` registrations. Add for:
+  `platform_import.api_steam_fetch_library`, `..._import`,
+  `..._sync_achievements`, Xbox + PSN siblings,
+  `trophies.api_psn_sync`, `..._sync_one`, `..._bulk_refresh_start`,
+  `collections.scrape_all_wishlist`,
+  `scraper.api_check_scraper`, `..._scraper_allowance`.
+- **Why**: each fans out hundreds of remote API calls; misclick or
+  stuck XHR can hammer Steam/Xbox/PSN APIs and trigger account bans
+  or burn paid AI quota.
+- **Plan**: 5/min or 5/hour caps mirroring `tools.api_*_scan` block.
+- **Source**: indie-review 2026-04-25 theme T13.
+- **Status**: done (v3.5.23) — 15 endpoints registered with caps in
+  `app.py` via the existing `_rate_limit` helper. Library-fetch
+  endpoints at 5/min, "sync everything" at 2/hour, credit probes at
+  30/min. 3 regression tests in
+  `tests/test_pass45_security.py::TestPass45_8*` pin the endpoints
+  exist + the source-level registration + the 2/hour cap on bulk
+  actions.
+
+#### Pass 45.9 collector_trophies regressions (HIGH, S)
+
+- **Targets**:
+  - `routes/collector_trophies.py:372` — `for g in (r['genre'] or '').split(',')`
+    is the exact Pass 41.8.A `flask.g` shadow pattern.
+  - `routes/collector_trophies.py:570-605` — `collector_trophies_page`
+    + `get_all_trophies` GET handlers call `_refresh_trophies` (writes
+    ~70 rows) on cold-cache. RFC 7231 GET-idempotency violation; same
+    family Pass 41.11.B closed for museum.
+- **Plan**: rename loop var to `genre_part`; remove lazy-init from GET
+  paths (explicit POST at `:616` already exists).
+- **Source**: indie-review 2026-04-25 (Collections lane).
+- **Status**: done (v3.5.24) — genre loop renamed `genre_part`; both
+  GET handlers now call `_trophies_sorted(user_id) or
+  _empty_trophies_from_definitions()` so cold-cache renders an
+  in-memory roster from `TROPHY_DEFINITIONS` instead of writing rows;
+  explicit POST at line 616 is the only refresh path. 4 regression
+  tests in `tests/test_pass45_security.py::TestPass45_9*`; reverting
+  the fix fails all 4 (functional smoke pins zero writes from GET).
+
+#### Pass 45.10 Migration runner `BEGIN IMMEDIATE` + busy_timeout (HIGH, S)
+
+- **Targets**:
+  - `services/migrations/__init__.py:84` — `conn.execute("BEGIN")` is
+    DEFERRED; table-rebuild migrations 007/008/009 deadlock under
+    concurrency.
+  - `services/database_init.py:48` — migration connection skips
+    `PRAGMA busy_timeout = 5000` (also `ensure_user_tables` at `:80`,
+    `backup_database` verify at `database.py:295`).
+  - migrations 007/008/009 — add `PRAGMA foreign_key_check` immediately
+    before COMMIT to fail loudly if rebuild ordering breaks.
+- **Plan**: switch to `BEGIN IMMEDIATE`; add `busy_timeout = 5000` on
+  all migration/init connections; pin foreign_key_check.
+- **Source**: indie-review 2026-04-25 theme T14 (Database lane H1+H2+H3).
+- **Status**: done (v3.5.25) — runner now uses `BEGIN IMMEDIATE`;
+  busy_timeout=5000 set on the migration, `ensure_user_tables`, and
+  `backup_database` verify connections; 007/008/009 each end with a
+  scoped `PRAGMA foreign_key_check(<table>)` (scoped, not unscoped, so
+  pre-existing FK debt elsewhere doesn't block the upgrade path on
+  legacy installs). 5 regression tests in
+  `tests/test_pass45_security.py::TestPass45_10*`. Two pre-existing
+  test fixtures updated to handle the new pragma + the seeded games row.
+
+#### Pass 45.11 `/api/settings/logging` POST bypasses validator (HIGH, S)
+
+- **Targets**: `routes/settings.py:579`.
+- **Why**: writes `data` directly to `settings['logging']` without
+  calling `validate_settings_value('logging', data)`. The validator
+  exists at `services/settings_validators.py:182-199` but is unwired.
+  An admin (or admin under XSRF, even though CSRF protected) can
+  persist a malformed logging block that crashes
+  `log_manager.setup_all_logging()` on next start.
+- **Plan**: route through `validate_settings_value`. Same for
+  `/api/scraper-settings` POST and `/api/scraper-api-keys` POST
+  (`routes/scraper.py:228, 263`) — author per-key validators in
+  `services/scraper_settings_validators.py`.
+- **Source**: indie-review 2026-04-25 (Maintenance/settings lane P1+P2).
+- **Status**: done (v3.5.26) — `/api/settings/logging` POST now routes through
+  `validate_settings_value('logging', data)` and returns 400 on malformed
+  bodies (Pass 32.2 validator was unwired). New
+  `services/scraper_settings_validators.py` mirrors the
+  `services/settings_validators.py` pattern with allowlists for `priority`,
+  `enabled`, `minimum_match_score`, `match_mode`, `match_criteria` (top-level
+  keys for `/api/scraper-settings`) and a 24-field allowlist for
+  `/api/scraper-api-keys` with type+length+control-char checks. `ai_provider`
+  enum-locked to `''/gemini/openai/claude`. 17 regression tests in
+  `TestPass45_11*` (pure-function + end-to-end + source-position pin); test
+  suite 633 → 650.
+
+#### Pass 45.12 Xbox refresh-token rotation hardening (HIGH, M)
+
+- **Targets**: `scraper/scrape_xbox.py:236-286`.
+- **Why**: refresh on every sync (no `expires_at` tracking); revocation
+  leaves stale tokens forever (no `clear_tokens` on 401-loop); `xuid`/
+  `gamertag` not re-validated on refresh.
+- **Plan**: track `expires_at = now + expires_in - 60s`; clear stored
+  `xuid`/`gamertag` on refresh; `clear_tokens(user_id)` when refresh
+  returns None.
+- **Source**: indie-review 2026-04-25 (Platform imports lane H1).
+- **Status**: done (v3.5.27) — `scraper/scrape_xbox.py` now exports
+  `attach_expires_at(tokens)` which records `expires_at = now + max(60,
+  expires_in - 60)`. `get_authenticated_session` short-circuits the
+  refresh when the access_token is still fresh, drops stored `xuid`/
+  `gamertag` on refresh (XSTS/profile re-validates), and calls
+  `clear_tokens(user_id)` when refresh returns None. OAuth callback in
+  `routes/platform_import.py` also calls `attach_expires_at` before
+  `save_tokens` so the first connect carries an expiry. 8 regression
+  tests in `TestPass45_12*`; suite 650 → 658.
+
+#### Pass 45.13 IGDB token cache thread-safety + `y/z` redactor (HIGH, S)
+
+- **Targets**:
+  - `scraper/scrape_igdb.py:31` — `_igdb_token_cache` mutated by
+    background threads without lock; concurrent expiry → duplicate
+    Twitch OAuth calls.
+  - `services/log_redactor.py:35` — RetroAchievements API key
+    (`?y=KEY`) and username (`?z=USER`) flow through unredacted if
+    any caller logs the full URL. Latent leak.
+- **Plan**: wrap cache in `threading.Lock` mirroring
+  `retroachievements._ra_console_cache_lock`. Add `y` and `z` to the
+  URL-querystring redactor allowlist (narrow boundary `[?&]y=`).
+- **Source**: indie-review 2026-04-25 (Per-source scrapers lane).
+- **Status**: done (v3.5.28) — `scraper/scrape_igdb.py` adds
+  `_igdb_token_cache_lock = threading.Lock()` mirroring
+  `_ra_console_cache_lock`. Both `igdb_auth()` and the 401-retry cache
+  reset in `igdb_request()` now wrap their cache mutations in
+  `with _igdb_token_cache_lock:`. `services/log_redactor.py` extended
+  the URL-querystring allowlist to include `y` and `z` (RA's `?y=KEY&z=USER`
+  pattern) with the existing `[?&]` boundary so `?fancy=` / `?lazy=`
+  remain untouched. 7 regression tests in `TestPass45_13*`; suite 658 →
+  665.
+
+#### Pass 45.14 TGDB / RAWG / IGDB add `max_bytes` (MEDIUM, S)
+
+- **Targets**: `scraper/scrape_thegamesdb.py:85,150,170,190`,
+  `scrape_rawg.py:124`, `scrape_igdb.py:84-90,102-108`.
+- **Why**: each calls `http_get` without `max_bytes`; OOM risk on
+  malicious or buggy upstream.
+- **Plan**: pass `max_bytes=getattr(config, 'MAX_API_RESPONSE_BYTES',
+  10*1024*1024)` (matches RA + AI + ScreenScraper precedent).
+- **Source**: indie-review 2026-04-25 theme T4.
+- **Status**: done (v3.5.29) — 5 call sites across `scrape_thegamesdb.py`,
+  `scrape_rawg.py`, `scrape_igdb.py` now pass `max_bytes` (resolved once at
+  module import via `_<module>_MAX_BYTES = getattr(config,
+  'MAX_API_RESPONSE_BYTES', 10*1024*1024)`). Both IGDB primary + 401-retry
+  http_post sites carry the cap. 6 regression tests in `TestPass45_14*`;
+  suite 665 → 671.
+
+#### Pass 45.15 Migration 010 missing CASCADE FKs (MEDIUM, S)
+
+- **Target**: `services/migrations/scripts/010_user_game_views.py:43-49`.
+- **Why**: composite PK exists but no `FOREIGN KEY (game_id) REFERENCES
+  games(id) ON DELETE CASCADE` and no `FOREIGN KEY (user_id) REFERENCES
+  users(id) ON DELETE CASCADE`. When games or users are deleted, rows
+  orphan; recently-viewed query joins return inconsistent results.
+- **Plan**: write migration 011 (or higher — collision-aware after
+  feat/multi-emulator-launch merges) adding CASCADE FKs via table-rebuild.
+- **Source**: indie-review 2026-04-25 (Database lane M1).
+- **Status**: done (v3.5.30) — migration `011_user_game_views_cascade_fk`
+  rebuilds `user_game_views` with `FOREIGN KEY (game_id) REFERENCES
+  games(id) ON DELETE CASCADE` and `FOREIGN KEY (user_id) REFERENCES
+  users(id) ON DELETE CASCADE`. Pre-existing orphans dropped during the
+  INSERT (INNER JOIN both parents). Idempotent: skips rebuild if both FK
+  clauses already present. `PRAGMA foreign_key_check(user_game_views)`
+  before commit (Pass 45.10 pattern). 7 regression tests in
+  `TestPass45_15*`; suite 671 → 678.
+
+#### Pass 45.16 `aria-current` rollout to remaining 50+ nav links (HIGH, M)
+
+- **Targets**: `templates/dashboard.html:8` (8 tabs),
+  `templates/analytics.html:8` (6 tabs),
+  `templates/museum_system.html:58` (4 tabs),
+  `templates/settings.html` 7 subnavs (~30 links),
+  `rom_tools_settings.html:249`, `duplicate_finder.html:174`,
+  `screenshot_dedup.html:239`, `chd_verify.html:91`,
+  `multi_disc_organizer.html:174`, `archive_scanner.html:564`,
+  `chd_converter.html:71`.
+- **Plan**: extract `nav_active(cond)` macro to a shared partial;
+  apply to every `class="* active"` nav link. Same WCAG 2.4.3 criterion
+  Pass 41.13.A handled for the sidebar.
+- **Source**: indie-review 2026-04-25 theme T10 (Templates & CSS lane).
+- **Status**: done (v3.5.31) — chose one-time wiring over 70-call-site
+  refactor: new `_setupTabbarAriaCurrent` + `_syncAriaCurrent` in
+  `static/js/main.js` mounts a MutationObserver per `[data-tabbar]`
+  container that mirrors `.active` ↔ `aria-current="page"` on descendant
+  links. Templates updated: dashboard / analytics / museum nav (3 JS-
+  toggled tab bars), all 6 settings subnav containers, 7 rom-tools page-
+  link tabs (server-rendered with static `aria-current="page"`). Top-
+  level settings tabs use `role="tablist"` + `aria-selected` (correct
+  ARIA pattern for tabs proper) and were left unchanged. 7 regression
+  tests in `TestPass45_16*`; suite 678 → 685.
+
+#### Pass 45.17 `ModalFocusTrap` rollout to 20+ remaining dialogs (HIGH, M)
+
+- **Targets**: `templates/base.html:290` `customModal`,
+  `:307` `folderBrowserModal`, `:640` queue-manager,
+  `:858` `gameDetailModal`, `:939` `gameEditModal`,
+  `_modals/scrape_modal.html`, `_modals/edit_modal.html`,
+  `_modals/filter_modal.html`, `wishlist.html:50`, `tags.html:37`.
+- **Why**: only 6/26 dialogs activate the focus trap; Tab key escapes
+  the modal (WCAG 2.1.2 No Keyboard Trap inverted — a focus-leak).
+- **Plan**: pair `ModalFocusTrap.activate()` with every `.classList.add('active')`
+  open path; `.deactivate()` on close.
+- **Source**: indie-review 2026-04-25 theme T11.
+- **Status**: done (v3.5.32) — same one-time-wiring strategy as Pass 45.16:
+  new `ModalFocusTrap.autoAttach(modalEl, opts)` in `static/js/utils.js`
+  mounts a MutationObserver per `[data-focus-trap]` element that
+  mirrors `.active` ↔ `activate/deactivate`. Per-modal config via
+  `data-focus-trap-onescape="closeFn"` and `data-focus-trap-content=
+  ".selector"`. 12 dialogs marked: userModal, confirmModal,
+  editControllerModal, tagModal, wishlistModal, listModal, addGameModal,
+  searchModal, batchRenameModal, scrapeModal, editModal, renameModal,
+  boxartZoomModal. Modals already wiring the manual API (game detail/
+  edit, custom, queue, folder browser, filter, bulk-edit/scrape,
+  museum lightboxes) are left alone — opt-in attribute prevents double-
+  attach. 7 regression tests in `TestPass45_17*`; suite 685 → 692.
+
+#### Pass 45.18 Source-grep test antipattern (HIGH systemic, L)
+
+- **Targets**: `tests/test_pass40_security.py`, `test_pass41_security.py`
+  (78 cases / 1645 LOC), `test_pass33_34_hardening.py`,
+  `test_pass35_36_hardening.py`, `test_auth_hardening.py`. ~140
+  `open(path).read()` + `getsource()` substring assertions across
+  these.
+- **Why**: tests fail on rename/refactor and pass on real regressions
+  when the implementer keeps the string. The "regression coverage"
+  is regression-of-our-own-fix, not contract verification.
+- **Plan**: rewrite as functional `client.get/post` assertions where
+  possible (Pass 40.x routes are testable via the test client).
+  Where source-grep is unavoidable (e.g. decorator presence), assert
+  via `app.view_functions[...].__wrapped__.__qualname__` or runtime
+  introspection rather than regex over `.py` files. L-sized — gate
+  on test-quality budget pass.
+- **Source**: indie-review 2026-04-25 theme T7 (Tests/tooling lane).
+- **Status**: done (v3.5.34) — three-bucket audit instead of mass
+  rewrite. Bucket A (8 tests converted): `test_33_6_logout_clears_
+  session` (functional session-clear via test client), `test_34_5_log_
+  filename_uses_utc` (clock-pin via monkeypatched datetime), `test_35_
+  4_init_database_issues_wal` (PRAGMA queried from fresh DB), `test_
+  decode_error_no_silent_pass` (Pass 41.11.A — caplog of museum decode
+  failure), `test_admin_cleanup_endpoint_*` (Pass 41.11.B — `app.url_
+  map.iter_rules()` instead of source-grep), `test_recently_viewed_
+  endpoint_deleted` (Pass 41.9.B — URL-map absence check), `test_
+  helper_defined` (Pass 41.14.C — direct import), `test_bulk_scrape_
+  uses_singleton_lock` (Pass 41.6.A — `hasattr` introspection),
+  `test_rename_rom_rejects_path_traversal_in_filename` (exercise
+  `safe_filename()` with attack inputs), `test_uuid4_still_used` (Pass
+  41.10.C — uuid4 generated and import wired), and `test_worker_
+  invokes_full_persist_lifecycle` (Pass 40.9 — consolidates 4 prior
+  source-grep tests into one behavioral pin). Bucket B (~25 tests
+  kept, file-header annotated): cross-file invariants (no
+  `time.sleep` in jobs, no bare `get_db()` in routes, no `for g in`
+  shadows, no `foreign_keys = OFF` in migrations), JS/template
+  patterns (XSS sinks, AbortController, navigation guard, aria-current
+  macro), atomic-write `.part` + `os.replace` source pins, SQL JOIN-
+  on-user_id shapes, decorator-stack pins, PRAGMA `foreign_keys = ON`
+  (per-connection — functional check would only verify the test's own
+  connection). Bucket C (7 tests deleted): `test_post_handler_
+  validates_input` (Pass 40.1, redundant with e2e), `test_staging_
+  folder_not_user_supplied` (Pass 40.3, fragile shape-pin), `test_
+  two_users_get_different_etags` (Pass 40.5, admits not-actually-
+  e2e), `test_screenshot_sync_runs_unconditionally` (Pass 41.4.A,
+  pure marker tautology), `test_offset_bounds_check` (Pass 41.7.A,
+  marker tautology), `test_decompressionbombexception_caught` (Pass
+  41.14.A, duplicated by functional bomb test), `test_rate_limit_
+  applied_to_change_password` (24.4, duplicated by Pass 41.1.B
+  functional bucket-isolation), `test_igdb/tgdb_initializes_players_
+  none` (Pass 40.6, duplicated by `tests/test_scrape_fill_only.py`).
+  Suite 695 → 683 (−12 net). Fidelity-checked: temporarily reverting
+  `session.clear()` → `session.pop('user_id')` in `routes/auth.py`
+  fails `test_33_6_logout_clears_session`; reverting `journal_mode =
+  WAL` → `DELETE` in `services/database_init.py` fails `test_35_4_
+  init_database_issues_wal`. Both restored after verification.
+
+#### Pass 45.19 release.yml heredoc indentation (HIGH, S)
+
+- **Target**: `.github/workflows/release.yml:55-64`.
+- **Why**: `python - <<'PY'` heredoc has 10 spaces of leading whitespace
+  on every line; `python -` reads stdin and parses module-level
+  indented code as `IndentationError`. The release workflow as written
+  cannot succeed; tag-driven release path likely unexercised since the
+  SHA-pin/SLSA refactor.
+- **Plan**: dedent heredoc, OR factor to `scripts/ci_build_dist.py`
+  invoked as `python scripts/ci_build_dist.py`.
+- **Source**: indie-review 2026-04-25 (Tests/tooling lane P1).
+- **Status**: done (v3.5.15) — both `python - <<'PY'` blocks (build ZIPs +
+  extract changelog) migrated to env-var + `python -c "$VAR"`; YAML `|`
+  block-literal strips the indent baseline before bash interpolates.
+  2 regression tests in `tests/test_pass45_security.py::TestPass45_19*`.
+
+#### Pass 45.20 chmod-after-verify race + `<button type="button">` sweep (MEDIUM, S)
+
+- **Targets**:
+  - `services/database.py:295-323` — chmod 0o600 happens after the
+    integrity-check open; brief 0644 window.
+  - 419 `<button onclick="..."` across templates without explicit
+    `type="button"`. Inside `<form>` defaults to submit → silent form
+    submission.
+- **Plan**: chmod before reopen for verify; sweep templates adding
+  `type="button"` to every onclick-bearing button (or document `submit`
+  intent where applicable).
+- **Source**: indie-review 2026-04-25 (Database M3, Templates 11).
+- **Status**: done (v3.5.33) — chmod-before-verify race already closed in
+  Pass 45.5; this sub-pass re-pins the contract via a second source-position
+  assertion in `TestPass45_20*` so reverting fails two passes worth of
+  tests. Button sweep: one-shot regex inserted `type="button"` next to
+  every onclick-bearing `<button>` across 30 templates (419 buttons →
+  zero remaining). Buttons outside forms get a no-op; buttons meant to
+  submit didn't have onclick to begin with so the sweep doesn't break
+  them. 3 regression tests in `TestPass45_20*`; suite 692 → 695.
+
+---
+
 ### Security & input hardening — Tier-1 (indie-review 2026-04-24)
 
 > Sixteen findings from the 14-agent independent review post-Pass 37 that
@@ -545,7 +1375,13 @@ paths or silent-corruption vectors under routine use.
   which works inside a txn.  (2) route every leaking `get_db()` through
   `get_request_db()` (teardown-managed).
 - **Source**: 2026-04-24 indie-review, database H1/H2.
-- **Status**: todo
+- **Status**: done (v3.5.2) — A: migrations 007/008/009 now use
+  `PRAGMA defer_foreign_keys = ON` (works inside a txn; auto-resets at
+  COMMIT) instead of the no-op `PRAGMA foreign_keys = OFF`. B: 10 leaking
+  sites in `routes/museum.py` (8), `routes/tools.py:1316`,
+  `routes/trophies.py:1804` routed through `get_request_db()` so the
+  teardown-appcontext handler closes them. Tests:
+  `tests/test_pass41_security.py::TestPass41_2A/B` (6 cases).
 
 #### Pass 41.3 App bootstrap — CSP nonce zombie + `'system'` log category dead + redactor ordering
 
@@ -563,7 +1399,15 @@ paths or silent-corruption vectors under routine use.
   `'system'` category.  Move `install_global_redactor` before
   `basicConfig`; scrub the default-creds log line.
 - **Source**: 2026-04-24 indie-review, app bootstrap H2/M3/M4.
-- **Status**: todo
+- **Status**: done (v3.5.3) — A: `install_global_redactor()` now runs
+  BEFORE `logging.basicConfig()` (and again after, idempotent) so the
+  root-level filter is in place from first emit. B: default-admin
+  log line scrubbed at `services/database_init.py` — username only,
+  no plaintext password. C: `'system'` dropped from
+  `log_manager.LOGGER_CATEGORIES` (was orphan: listed in categories,
+  missing from `CATEGORY_LOGGERS`, created empty daily files). CSP
+  nonce zombie deferred to Pass 41.12 (gated on inline-onclick removal).
+  Tests: `tests/test_pass41_security.py::TestPass41_3A/B/C` (3 cases).
 
 #### Pass 41.4 Scraper orchestration — ES-DE screenshot append lost + primary-source exceptions abort scrape
 
@@ -584,7 +1428,16 @@ paths or silent-corruption vectors under routine use.
   and fall through to gap-fill.  Track downloaded file paths in a
   local list and `os.remove` them on exception.
 - **Source**: 2026-04-24 indie-review, scraper orchestration H1/H2.
-- **Status**: todo
+- **Status**: done (v3.5.4) — A: post-`apply_esde_metadata` sync now copies
+  `screenshots` from the reloaded DB row unconditionally (file-existence
+  filtered) before the guarded loop; `screenshots` removed from the loop's
+  iteration list so the `not metadata.get(field)` guard never drops the
+  appended scrape. B: each primary-source branch (esde/tgdb/igdb/rawg/
+  screenscraper) wrapped in its own try/except — failure logged at
+  WARNING, fall through to gap-fill. ES-DE branch additionally guards
+  the gamelist.xml fetch with `esde_details = None` on exception, drops
+  into the existing "no details" else-branch. Tests:
+  `tests/test_pass41_security.py::TestPass41_4A/B` (3 cases).
 
 #### Pass 41.5 Scraper adapters — credential leak in logs + adapters bypassing `base_scraper`
 
@@ -606,7 +1459,37 @@ paths or silent-corruption vectors under routine use.
   (3) in `igdb_request`, on status 401, clear `_igdb_token_cache` and
   retry once with a fresh token.
 - **Source**: 2026-04-24 indie-review, scraper adapters H1/H2/H3/H4.
-- **Status**: todo
+- **Status**: partial (v3.5.5) — H2 (redactor) + H3 (IGDB 401) closed:
+  `key` and `sspassword` added to `services/log_redactor.py` URL-
+  querystring allowlist; `igdb_request` invalidates `_igdb_token_cache`
+  and retries once with a fresh token on 401. H1/H4 (route Steam +
+  HLTB raw `requests.get/post` through `base_scraper.http_get/post`)
+  carried over as a follow-up — 10 callsites need case-by-case audit
+  because `http_get` returns `None` on total failure where the current
+  code expects `requests.get` semantics. Tests:
+  `tests/test_pass41_security.py::TestPass41_5A/B` (5 cases).
+
+#### Pass 41.5b Steam + HLTB through base_scraper (carry-over from 41.5)
+
+- **Target**: `scraper/scrape_steam.py` (7 endpoints) and
+  `scraper/hltb_lookup.py` (3 endpoints) — raw `requests.get`/`requests.post`.
+- **Why**: `base_scraper.http_get` / `http_post` provide retry/backoff/
+  size-cap; raw `requests.*` skips that hardening.
+- **Plan**: replace each raw call with the `http_get`/`http_post` shape
+  (returns `Response` or `None`); add explicit `if resp is None:` guards
+  in callers that currently rely on `requests` raising on `None`.
+- **Status**: done (v3.5.47) — all 7 Steam GETs + 1 HLTB GET + 2 HLTB POSTs
+  routed through `base_scraper.http_get` / `http_post`. Each call site got
+  an explicit `if resp is None:` early return preserving its original
+  failure shape (`None` / `[]` / `{'valid': False, 'error': 'Connection
+  error'}`); no behaviour change on success or on explicitly-handled status
+  codes (Steam 400, HLTB 403). HLTB's existing 403 token-refresh retry path
+  preserved with its own `None` guard. `requests` import retained in
+  `scrape_steam.py` only because `requests.exceptions.HTTPError` is
+  referenced as an explicit exception filter. Tests:
+  `tests/test_pass41_security.py::TestPass41_5bSteamHltbThroughBaseScraper`
+  (5 cases — source-grep + import-identity + functional `None`-handling
+  for all 7 Steam wrappers and both HLTB internals).
 
 #### Pass 41.6 Jobs — cross-process singleton + persist-under-lock + PSN inner-thread unsync
 
@@ -630,7 +1513,50 @@ paths or silent-corruption vectors under routine use.
   `_fetch_titles` an explicit cancel event; treat the 300s timeout
   as "abandoned, may still run" and drop its state updates.
 - **Source**: 2026-04-24 indie-review, jobs H1/H2/H3.
-- **Status**: todo
+- **Status**: done (v3.5.14) — A: new
+  `services/jobs/base.acquire_job_singleton_lock(name)` /
+  `release_job_singleton_lock(fd)` helpers wrap
+  `fcntl.flock(LOCK_EX | LOCK_NB)` on a sentinel file under
+  `data/job_locks/`. Applied to `BulkScrapeJob` as the reference
+  implementation; Windows / NFS gracefully degrade. B: persist payload
+  snapshot under lock + persist call outside in
+  `alt_titles_backfill.py` and `hltb_bulk.py` (matches
+  `bulk_scrape.py:738-745` pattern). C: PSN `_fetch_titles` thread
+  gets an explicit `threading.Event` set on cancel AND on the 300s
+  timeout, so an abandoned inner thread stops writing shared state.
+  Tests: `tests/test_pass41_security.py::TestPass41_6A/B/C` (7 cases);
+  test fixtures updated to release the FD in teardown.
+
+#### Pass 41.6.A-extend Apply singleton lock to remaining 9 job classes (carry-over from 41.6)
+
+- **Target**: `ra_sync`, `ra_refresh`, `psn_refresh`,
+  `museum_generate`, `image_resize`, `steam_sync`, `xbox_sync`,
+  `alt_titles_backfill`, `hltb_bulk`.
+- **Why**: Pass 41.6.A landed the helper + the
+  `BulkScrapeJob` reference implementation; the other 9 job classes
+  still have no cross-process guard.
+- **Plan**: same pattern — `start()` calls `acquire_job_singleton_lock`
+  with the job name; the FD lives on `self._singleton_fd`; the worker's
+  terminal cleanup releases it. Each job's existing test fixture needs
+  the same teardown release pattern as `tests/test_bulk_scrape_job.py`.
+- **Status**: done (v3.5.48) — all 9 job classes wired up. New helper
+  `services.jobs.base.release_singleton_fd(self)` collapses the 3-line
+  cleanup boilerplate to one line; idempotent across multiple terminal-
+  cleanup branches in a worker. Each job: (1) `__init__` sets
+  `_singleton_fd = None`; (2) `start()` acquires lock named
+  `image_resize` / `alt_titles_backfill` / `hltb_bulk` /
+  `museum_generate` / `ra_sync` / `ra_refresh` / `psn_refresh` /
+  `steam_sync` / `xbox_sync` and refuses with a worker-process-busy
+  message on `None`; (3) every cleanup path (early-return validations,
+  normal completion, exception path) calls `release_singleton_fd(self)`.
+  Six jobs with `resume_from_params` (museum, ra_sync, ra_refresh,
+  psn_refresh, steam_sync, xbox_sync) acquire their own locks too —
+  resume otherwise would silently shadow a fresh start on a different
+  worker. Existing test fixtures (`test_hltb_bulk.py`,
+  `test_museum_job.py`) don't call `start()` so no fixture changes
+  needed; new regression class `TestPass41_6AExtendSingletonLockOtherJobs`
+  (4 cases) functionally pins acquire-with-correct-name across all 9
+  classes plus helper idempotency.
 
 #### Pass 41.7 OAuth / trophy-parser — TROPUSR bounds hardening + Xbox redirect URL concat + RA 401 observability
 
@@ -652,7 +1578,16 @@ paths or silent-corruption vectors under routine use.
   response.status_code == 401: logger.error(...); return None` branch
   before the generic non-200 fallthrough.
 - **Source**: 2026-04-24 indie-review, OAuth H1/H2/M5.
-- **Status**: todo
+- **Status**: done (v3.5.6) — A: TROPUSR parser caps `tables_count` to
+  `(len(data) - 0x30) // 32` up-front and early-returns from
+  `_parse_table6` if `header['offset'] >= len(data)`. B: Xbox callback
+  redirect now `url_for('game_imports.game_imports_page', tab='xbox',
+  xbox_connected=1)` (kwarg form, no fragile string concat). C: 5
+  RetroAchievements HTTP callers (`GetGameList`, `GetGame`, two
+  `GetGameInfoAndUserProgress` variants, `GetUserSummary`) emit
+  `logger.error` on 401 with the user-actionable hint to re-enter
+  the API key in Settings → Scrapers. Tests:
+  `tests/test_pass41_security.py::TestPass41_7A/B/C` (4 cases).
 
 #### Pass 41.8 Achievements/trophies — `flask.g` shadow + achievement aggregation silent-drop
 
@@ -669,7 +1604,16 @@ paths or silent-corruption vectors under routine use.
   tokens case) or document the silent-drop behavior and surface a
   warning in the aggregated view.
 - **Source**: 2026-04-24 indie-review, achievements/trophies H1/H2.
-- **Status**: todo
+- **Status**: done (v3.5.7) — A: every `for g in ...` shadow in
+  `routes/trophies.py` renamed (`ps_game` for PSN background sync
+  loops mirroring the existing comprehension; `tg` for trophy_groups
+  comprehensions; `game` for the per-request game-search loop).
+  B: comment block in `routes/achievements.py` documents the
+  `gap.user_id NOT NULL` invariant + the diagnostic query
+  (`SELECT COUNT(*) FROM game_achievement_progress WHERE user_id IS NULL`)
+  for operators hitting "too empty" aggregations after a pre-009
+  backup restore. Tests:
+  `tests/test_pass41_security.py::TestPass41_8A/B` (2 cases).
 
 #### Pass 41.9 Game routes — track-view / completion / recently-viewed / sort_title
 
@@ -689,7 +1633,21 @@ paths or silent-corruption vectors under routine use.
   Roman-numeral heuristic: only convert when followed by digit, end-
   of-string, or adjacent to another numeral token.
 - **Source**: 2026-04-24 indie-review, game routes H1/H2/H3.
-- **Status**: todo
+- **Status**: done (v3.5.13) — A: `api_track_view` and
+  `api_update_completion` dropped from `@editor_required` to
+  `@login_required` + `@permission_required('track_progress')` so
+  Player and Editor roles can self-track. B: new `user_game_views`
+  table (migration 010) keyed on `(user_id, game_id)`; track-view now
+  upserts via `INSERT … ON CONFLICT DO UPDATE`; dashboard recently-
+  viewed + continue-playing panels JOIN per-user. `/api/recently-viewed`
+  endpoint deleted (zero callers). C: `generate_sort_title` single-
+  letter Roman pattern narrowed to `(?<![-\w])R(?=\s*$|\s*[:(\[]|\s+\d)`;
+  pronoun "I" no longer converts but EOS / subtitle / numeric-adjacent
+  cases still do. Tests:
+  `tests/test_pass41_security.py::TestPass41_9A/B/C` (11 cases). NOTE
+  for merger of PR #3 (feat/multi-emulator-launch): that branch
+  carries migration 010_emulators.py; rebase will need to renumber
+  it to 011_emulators.py.
 
 #### Pass 41.10 Settings/maintenance/tools — every destructive endpoint at `@login_required` + task-cancel authz + scan unboundedness
 
@@ -710,7 +1668,16 @@ paths or silent-corruption vectors under routine use.
   slice → 32 bits, guessable across logged-in users).
 - **Source**: 2026-04-24 indie-review, settings/maintenance/tools
   H1/H2/H3.
-- **Status**: todo
+- **Status**: done (v3.5.10) — A: task cancel/pause/resume in
+  `routes/tools.py:328/344/364` raised to `@admin_required`. B: CHD
+  `convert` (line 626) and `verify` (line 797) raised to
+  `@admin_required`. C: 4 `task_id = str(uuid.uuid4())[:8]` sites now
+  use full UUID-4 strings (no slice). D: 5 scan endpoints
+  (`archive_scanner_scan`, `chd_converter_scan`, `chd_verify_scan`,
+  `duplicate_finder_scan`, `screenshot_dedup_scan`) raised to
+  `@editor_required` and registered with `5 per minute` Flask-Limiter
+  caps in `app.py`. Tests:
+  `tests/test_pass41_security.py::TestPass41_10A/B/C/D` (13 cases).
 
 #### Pass 41.11 Museum — silent JSON decode failure + GET-handler DB mutation
 
@@ -727,7 +1694,12 @@ paths or silent-corruption vectors under routine use.
   museum generation can be prompted.  (2) move the stale-image
   cleanup to a background sweep or an `@editor_required` POST.
 - **Source**: 2026-04-24 indie-review, museum H1/H2.
-- **Status**: todo
+- **Status**: done (v3.5.8) — A: `_get_top_games` JSON decode failure
+  now logged at `logger.warning` (was silent `pass`). B: `museum_system`
+  GET handler clears stale controller-image refs in-memory only;
+  persistent cleanup moved to new admin POST
+  `/api/museum/cleanup-controller-images` (`@editor_required`).
+  Tests: `tests/test_pass41_security.py::TestPass41_11A/B` (4 cases).
 
 #### Pass 41.12 Frontend JS — fetch timeout + navigateTo open-redirect + inline-onclick JSON
 
@@ -749,7 +1721,16 @@ paths or silent-corruption vectors under routine use.
   `PageLifecycle` in the canonical hot paths (museum, rom-tools,
   log-viewer) or delete the abstraction — pick one.
 - **Source**: 2026-04-24 indie-review, frontend JS H1/H2/H3/M3.
-- **Status**: todo
+- **Status**: partial (v3.5.11) — A (HIGH) + B (HIGH) closed:
+  `_withTimeout(opts)` wraps every `API.get/post/postForm` call in a
+  30 s default `AbortController`; caller-supplied `signal` opts out.
+  `_isSafeReturnUrl(url)` validates `navigateTo` redirect targets to
+  same-origin paths or origins. M3 (inline-onclick → delegated listener
+  rewrite) un-gated as of Pass 42.7 (v3.5.46) — PageLifecycle was
+  removed, so the listener-cleanup question is moot; M3 can be done
+  now with plain `addEventListener` and no centralized tracking. Open
+  as a future follow-up. Tests:
+  `tests/test_pass41_security.py::TestPass41_12A/B` (5 cases).
 
 #### Pass 41.13 Templates / a11y — aria-current + div-as-button + mis-targeted label-for + label-as-group-heading
 
@@ -778,7 +1759,51 @@ paths or silent-corruption vectors under routine use.
   button groups with `<fieldset><legend>` or `<div role="group"
   aria-labelledby="...">` + heading.
 - **Source**: 2026-04-24 indie-review, templates H1/H2/H3/H4.
-- **Status**: todo
+- **Status**: partial (v3.5.12) — A (HIGH) + B (MEDIUM) closed: new Jinja
+  macro `nav_active(cond)` emits `class="nav-item active"` +
+  `aria-current="page"` together; all 17 sidebar nav links converted.
+  gem-modal exclusive toggle's wrapping label dropped the misleading
+  `for="gemOtherPlatforms"` (was focusing the sibling text input);
+  implicit association via wrapping is correct. C/D (div-as-button,
+  label-as-heading) deferred to Pass 41.13c carry-over — needs browser
+  verification across 8+ template files. Tests:
+  `tests/test_pass41_security.py::TestPass41_13A/B` (3 cases).
+
+#### Pass 41.13c Templates a11y carry-over (div-as-button + label-as-heading)
+
+- **Target**: 6 `<div onclick=>` / `<h2 onclick=>` primary actions in
+  `base.html`, `rom_tools_hub.html`, `game_detail.html`,
+  `duplicate_finder.html`, `screenshot_dedup.html`, `game_imports.html`.
+  Plus `<label>`-as-group-heading shapes in `wishlist.html`,
+  `lists.html`, `tags.html`, `logs.html`, `chd_converter.html`,
+  `rom_tools_settings.html`, `duplicate_finder.html`,
+  `_modals/rename_modal.html`.
+- **Why**: WCAG 2.1.1 (keyboard) — `<div onclick=>` is not focusable
+  and not Enter/Space-activatable. WCAG 1.3.1 / 4.1.2 — `<label>` over
+  a button group has no form control to associate with; should be
+  `<fieldset><legend>` or `<div role="group" aria-labelledby="...">`.
+- **Plan**: convert each `<div onclick=>` to `<button>` (preserves
+  click handlers, gains keyboard activation). Replace bare `<label>`
+  group headings with `<fieldset><legend>`. Browser-verify each page
+  on desktop + mobile (~375px) to confirm visual layout intact.
+- **Status**: done (v3.5.51) — six div-as-button primary actions
+  converted to native `<button>` (rom_tools_hub × 3 tool cards,
+  base.html version-info + folder-item rows × 2, game_imports CLZ
+  upload area as `<label for=>`). Three disclosure patterns
+  restructured per WAI-ARIA APG accordion (game_detail scrape-
+  history, duplicate_finder group, screenshot_dedup game) — each
+  uses `<hN>` wrapping `<button aria-expanded aria-controls>` with
+  the toggle JS flipping aria-expanded. Eight bare-label group
+  headings promoted to `<div class="form-label" id="...">` (or
+  styled span) with `role="group" aria-labelledby="..."` on the
+  wrapping button-group container; chose the div+aria-labelledby
+  pattern over `<fieldset><legend>` because legend's default styling
+  is harder to override consistently and the wrapper containers
+  already exist. Five CSS rules gained the button-as-styled-element
+  reset (background:transparent; border:none; font:inherit;
+  text-align:left; width:100%; appearance:none). 15 regression
+  tests in `TestPass41_13cDivAsButton` (7) + `TestPass41_13c
+  LabelAsGroupHeading` (8); suite 710 → 725.
 
 #### Pass 41.14 Image/media — Pillow bomb-error not caught + ESRGAN SSRF gap + `rglob` follows symlinks
 
@@ -801,7 +1826,16 @@ paths or silent-corruption vectors under routine use.
   rglob loop, check `archive_path.is_symlink() and resolved-path-
   under-root` before traversal.
 - **Source**: 2026-04-24 indie-review, image/media #8/#9/#10.
-- **Status**: todo
+- **Status**: done (v3.5.9) — A: `compute_dhash` except clause widened
+  to include `Image.DecompressionBombError` (sibling of OSError/ValueError;
+  was leaking through and aborting whole-game dedup loops). B: ESRGAN
+  `_download_model` runs every URL through
+  `services.ssrf.validate_outbound_url(require_https=True)` before
+  `urlopen`; defensive against future code paths that surface the URL via
+  settings. C: new `_safe_under_root(path, root_resolved)` helper guards
+  four `Path.rglob()` walks (archive scanner ×2, CHD converter, duplicate
+  finder) against symlinks pointing outside ROM root. Tests:
+  `tests/test_pass41_security.py::TestPass41_14A/B/C` (6 cases).
 
 ---
 
@@ -822,7 +1856,10 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: copy release-workflow pattern; add comment with version
   next to each SHA for Dependabot legibility.
 - **Source**: 2026-04-24 audit, Tests/tooling/CI H1.
-- **Status**: todo
+- **Status**: done (v3.5.40) — three SHA pins added: checkout v4.3.1
+  (`34e114876b…`), setup-python v5.6.0 (`a26af69be9…`), upload-artifact
+  v4.6.2 (`ea165f8d65…`). Trailing `# vX.Y.Z` comment kept for
+  Dependabot legibility, mirrors release.yml convention.
 
 #### Pass 39.2 Explicit `permissions:` block on CI (HIGH, S)
 
@@ -833,7 +1870,9 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: add `permissions: { contents: read }` at workflow level;
   let individual steps narrow further if needed.
 - **Source**: 2026-04-24 audit, Tests/tooling/CI H2.
-- **Status**: todo
+- **Status**: done (v3.5.40) — workflow-level `permissions:
+  contents: read` added in ci.yml, mirroring release.yml. CI never
+  writes to the repo, so this is the tightest viable scope.
 
 #### Pass 39.3 Hard-fail `pip-audit` + `semgrep` in CI (HIGH, S)
 
@@ -846,7 +1885,13 @@ paths or silent-corruption vectors under routine use.
   bar ("audit-triage must actionable=0 for main merge") in
   CONTRIBUTING.md.
 - **Source**: 2026-04-24 audit, Tests/tooling/CI H3.
-- **Status**: todo
+- **Status**: done (v3.5.40) — pip-audit `continue-on-error: true`
+  flipped to hard-fail. Verified `pip-audit --strict` on the current
+  lockfile reports zero known vulnerabilities; new CVE surfacing now
+  blocks merge. Roadmap entry was stale on semgrep — already
+  hard-fail since Pass 30 debt sweep. CONTRIBUTING.md note skipped
+  (project has no CONTRIBUTING.md and the "audit-triage actionable=0"
+  bar is documented in CLAUDE.md / audit_hygiene.md).
 
 #### Pass 39.4 `requirements.lock` with `--generate-hashes` + `--require-hashes` install (MEDIUM, S)
 
@@ -859,7 +1904,18 @@ paths or silent-corruption vectors under routine use.
   --strip-extras --generate-hashes`; `pip install --require-hashes -r
   requirements.lock`.  Update CLAUDE.md regen instruction.
 - **Source**: 2026-04-24 audit, Tests/tooling/CI M4.
-- **Status**: todo
+- **Status**: done (v3.5.49) — `requirements.lock` regenerated with
+  `pip-compile --generate-hashes` (98 → 880 lines; one or more SHA256s
+  per pinned package). `install.py` and `install_gui.py` now run
+  `pip install --require-hashes -r requirements.lock` by default; both
+  fall back to `requirements.txt` with a visible warning if the
+  lockfile is absent (developer checkout pre-regeneration). CI's
+  lockfile-drift recompile step adds `--generate-hashes` so the
+  comparison stays apples-to-apples. CLAUDE.md regen instruction
+  updated. Tests: `tests/test_pass39_supply_chain.py::TestPass39_4LockfileHashes`
+  (4 cases — per-package hash count, lockfile-header recipe pin, both
+  installers reference `--require-hashes` + lockfile path, CI workflow
+  drift step uses `--generate-hashes`). Full pytest 707/707 green.
 
 #### Pass 39.5 Dependabot regenerates `requirements.lock` (MEDIUM, S)
 
@@ -871,7 +1927,24 @@ paths or silent-corruption vectors under routine use.
   `@dependabot pre-task` directive) that runs `pip-compile`; ensure
   the resulting diff is committed to the same PR.
 - **Source**: 2026-04-24 audit, Tests/tooling/CI M5.
-- **Status**: todo
+- **Status**: done (v3.5.50) — new workflow
+  `.github/workflows/dependabot-lockfile.yml`. Triggers on
+  `pull_request` events with `paths: requirements.txt`; guarded to
+  `github.actor == 'dependabot[bot]'`. Checks out the PR branch, runs
+  `pip-compile --strip-extras --generate-hashes` (matches the recipe
+  pinned by Pass 39.4), and pushes the regenerated lockfile back to
+  the Dependabot branch. Concurrency-keyed on PR number with
+  `cancel-in-progress` so a Dependabot force-push cancels the in-flight
+  regen. Permissions scoped to `contents: write` + `pull-requests:
+  write`; default `GITHUB_TOKEN` (no PAT). The original CI run on the
+  Dependabot PR picks up the new commit and goes green without human
+  intervention. `dependabot.yml` itself unchanged — `@dependabot
+  pre-task` doesn't exist; the auxiliary-workflow pattern is the
+  established GitHub solution. Tests:
+  `tests/test_pass39_supply_chain.py::TestPass39_5DependabotLockfileWorkflow`
+  (3 cases — file exists, YAML shape pin (path filter, actor guard,
+  contents:write permission), pip-compile invocation uses
+  --generate-hashes). Full pytest 710/710 green.
 
 #### Pass 39.6 `build_dist.py` env-configurable `STAGING_DIR` (MEDIUM, S)
 
@@ -884,7 +1957,12 @@ paths or silent-corruption vectors under routine use.
   workflow.  Raise on `hasattr(build_dist, 'main') is False` rather
   than silently no-op.
 - **Source**: 2026-04-24 audit, Tests/tooling/CI M3.
-- **Status**: todo
+- **Status**: done (v3.5.40) — `STAGING_DIR =
+  os.environ.get('RETRODB_STAGING_DIR', …)` in build_dist.py;
+  release.yml replaces the inline Python wrapper script with `env:
+  RETRODB_STAGING_DIR: /tmp/staging` and a direct `python
+  build_dist.py` call. The `hasattr(build_dist, 'main')` no-op-mask
+  was an artifact of the wrapper script — gone with the wrapper.
 
 #### Pass 39.7 Rate-limit `api_reports_multidisc_scan` (MEDIUM, S)
 
@@ -894,7 +1972,9 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: add a Flask-Limiter rule (or gate behind `@editor_required`
   since it's effectively a write-adjacent discovery).
 - **Source**: 2026-04-24 audit, Maintenance/settings M3.
-- **Status**: todo
+- **Status**: done (v3.5.40) — `_rate_limit('reports.api_reports_multidisc_scan',
+  "5 per minute")` registered in app.py alongside the existing
+  `tools.api_*_scan` block. Same family as Pass 41.10.D.
 
 #### Pass 39.8 Audit-hygiene: gitleaks allowlist for `tests/test_log_redactor.py` (LOW, S)
 
@@ -906,7 +1986,8 @@ paths or silent-corruption vectors under routine use.
   `paths` array in `.gitleaks.toml` (narrow form — keep gitleaks
   active on other test files).
 - **Source**: 2026-04-24 audit, /audit triage config-tightening.
-- **Status**: todo
+- **Status**: done (v3.5.40) — path entry added to
+  `.gitleaks.toml`'s admin-runtime-state allowlist.
 
 #### Pass 39.9 Audit-hygiene: `usedforsecurity=False` kwarg on non-security MD5/SHA1 (LOW, S)
 
@@ -924,7 +2005,12 @@ paths or silent-corruption vectors under routine use.
   constructors.  Run `bandit -ll scraper/ routes/` after — B324 count
   should drop to 0.
 - **Source**: 2026-04-24 audit (5th), /audit triage config-tightening.
-- **Status**: todo
+- **Status**: done (v3.5.40) — kwarg added to all five constructors:
+  `routes/games.py:241` (ETag MD5), `routes/tools.py:1208`
+  (user-selected file MD5; line drift from roadmap entry's stale
+  `:1071`), `scraper/retroachievements.py:95` (RA hash MD5),
+  `scraper/scrape_screenscraper.py:205-206` (MD5 + SHA1).
+  `bandit -ll` on the four files now reports zero B324.
 
 #### Pass 39.10 Audit-hygiene: gitleaks regex allowlist for Claude model literal (LOW, S)
 
@@ -941,7 +2027,67 @@ paths or silent-corruption vectors under routine use.
   controlled Jinja markup, not user content).  Cheaper than hunting
   the gitleaks regex semantics.
 - **Source**: 2026-04-24 audit (5th), /audit triage config-tightening.
-- **Status**: todo
+- **Status**: done (v3.5.40) — path entry added to `.gitleaks.toml`
+  alongside the test_log_redactor entry from 39.8.
+
+#### Pass 39.11 Re-pin CI actions when upstream releases Node 24 builds (LOW, S)
+
+- **Target**: `.github/workflows/ci.yml:39, 41, 132` —
+  `actions/checkout@34e114876b… (v4.3.1)`,
+  `actions/setup-python@a26af69be9… (v5.6.0)`,
+  `actions/upload-artifact@ea165f8d65… (v4.6.2)`. Same SHA pins live in
+  `.github/workflows/release.yml`.
+- **Why**: the v3.5.52 push (CI run 25247530694) surfaced two
+  `Node.js 20 is deprecated` annotations against these three actions.
+  GitHub force-upgrades the runner to Node 24 today (so CI still
+  passes), but the long-term fix is a re-pin to a release that
+  natively targets Node 24 in its `action.yml`. The current pins are
+  the right ones for *now* per Pass 39.1's SHA-pinning contract — the
+  re-pin only happens when `actions/checkout`, `actions/setup-python`,
+  and `actions/upload-artifact` ship a new SemVer with a
+  `using: 'node24'` runtime.
+- **Plan**: when each upstream action releases a Node-24-native build,
+  bump the SHA + trailing `# vX.Y.Z` comment and let Dependabot's
+  github-actions ecosystem regenerate the lockstep. No code change
+  needed in RetroDB itself; the action versions are the only edits.
+- **Source**: GitHub deprecation notice
+  <https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/>;
+  surfaced post-push 2026-05-02.
+- **Status**: done (2026-05-02) — closed by merging Dependabot PR #1
+  (squash commit `ddd894c`), which the Dependabot github-actions
+  ecosystem had already opened against these three pins on
+  2026-04-23 (and refreshed against current main on the v3.5.52
+  push). Bumps re-pinned to: `actions/checkout` v4.3.1 → v6.0.2 (SHA
+  `de0fac2e…`), `actions/setup-python` v5.6.0 → v6.2.0 (SHA
+  `a309ff8b…`), `actions/upload-artifact` v4.6.2 → v7.0.1 (SHA
+  `043fb46d…`). All three majors target Node 24 natively in their
+  `action.yml`. Pre-merge CI on the PR branch was green on both
+  Python 3.12 and 3.13. The same SHAs apply across `ci.yml`,
+  `dependabot-lockfile.yml`, and `release.yml`.
+
+#### Pass 39.12 Create the labels referenced by `.github/dependabot.yml` (LOW, S)
+
+- **Target**: GitHub repo labels (`gh label list`) vs.
+  `.github/dependabot.yml:25-27, 42-44`.
+- **Why**: `dependabot.yml` declares `labels: ["dependencies",
+  "python"]` (pip group) and `["dependencies", "github-actions"]`
+  (github-actions group). None of those labels existed on the repo,
+  so Dependabot logged `The following labels could not be found:
+  dependencies, python` on every PR open and applied no labels.
+  Cosmetic but breaks PR triage filters (`is:open label:dependencies`
+  returns nothing).
+- **Plan**: `gh label create` for the three missing names with sane
+  colors (#0366d6 / #3572A5 / #2088FF mirroring GitHub's pip / Python
+  / Actions iconography); retro-apply to any open Dependabot PR.
+- **Source**: surfaced post-PR-#1 merge 2026-05-02 by Dependabot's
+  comment thread on PR #2.
+- **Status**: done (2026-05-02) — three labels created via `gh label
+  create`: `dependencies` (#0366d6, "Pull requests that update a
+  dependency file"), `python` (#3572A5, "Python (pip) dependency
+  updates"), `github-actions` (#2088FF, "GitHub Actions workflow
+  updates"). Retro-applied to PR #2 via `gh pr edit --add-label
+  dependencies --add-label python` before merge. Future Dependabot
+  PRs auto-label correctly.
 
 ---
 
@@ -963,7 +2109,23 @@ paths or silent-corruption vectors under routine use.
   `_save_game_row`, `_check_ra_matches` into separate helpers.
   Sibling mergers already extracted to `scraper/metadata_merger.py`.
 - **Source**: 2026-04-24 audit, Scraper orchestration M2.
-- **Status**: todo
+- **Status**: partial (v3.5.60, v3.5.62, v3.5.64, v3.5.65) — 4 sub-blocks extracted:
+    - **RA-check (v3.5.60)**: `scraper.hybrid_scraper._apply_retroachievements_check(db_game_id, title, system_folder) -> bool`. Smallest + most self-contained of the four sub-blocks (31 lines, opens its own DB connection, mutates only RA columns, silently swallows exceptions). Callsite collapsed to 3 lines.
+    - **Region-normalize (v3.5.62)**: `scraper.hybrid_scraper._normalize_region(metadata, result)`. Folded the two inline `settings_manager.load_settings()` branches (multi-value reduction + empty-region fallback) into a single helper that loads settings once. Callsite collapsed from 25 lines to 1 line.
+    - **Scrape-history (v3.5.64)**: `scraper.hybrid_scraper._build_scrape_history_json(c, db_game_id, primary_source, metadata, result, force_overwrite) -> str`. Reads `games.scrape_history` JSON, appends a new entry summarising the current scrape, returns serialised JSON ready for the save UPDATE. Takes the caller's cursor so the read stays inside the outer transaction's lifetime. Callsite collapsed from 28 lines to 4 lines; the function-local `import json` + `from datetime import datetime` moved into the helper.
+    - **Ratings-normalize (v3.5.65)**: `scraper.hybrid_scraper._normalize_ratings(metadata, result)`. Combined ESRB-letter-normalize + cross-map-empties + content-based-inference into one helper. Callsite collapsed from 26 lines to 1 line.
+  Tests: `tests/test_pass38_ra_check_helper.py` (4 cases) +
+  `tests/test_pass38_region_helper.py` (6 cases) +
+  `tests/test_pass38_scrape_history_helper.py` (5 cases) +
+  `tests/test_pass38_normalize_ratings_helper.py` (6 cases). Suite
+  785/785 green.
+  Remaining un-extracted: fallback loop ~305 lines (still risky —
+  complex error handling across 5 scraper modules) + the long save
+  UPDATE (~80 lines, ~50 columns, parameter-order-bug risk) +
+  save-type / controller / curated-default-controller mini-blocks
+  (~30 lines, share the outer cursor). Both warrant regression
+  tests around the wider `apply_hybrid_metadata` before further
+  extraction.
 
 #### Pass 38.2 Consolidate `load_scraper_settings` (MEDIUM, S)
 
@@ -975,7 +2137,15 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: keep one loader; re-export from the other.  Pick the
   manager's behavior (defaults from `config.py`) as canonical.
 - **Source**: 2026-04-24 audit, Scraper orchestration M1.
-- **Status**: todo
+- **Status**: done (v3.5.42) — `scraper/metadata_merger.py`'s duplicate
+  loader deleted; the module now re-exports `load_scraper_settings`
+  from `scraper/scraper_manager.py` (the canonical, defaults-from-
+  config + 30 s cache version). Both
+  `from scraper.metadata_merger import load_scraper_settings` and
+  `from scraper.scraper_manager import load_scraper_settings` now
+  resolve to the same callable — `enabled` lookups via the merger no
+  longer disagree with the manager's view. All 3 caller sites
+  unchanged. 694/694 tests pass.
 
 #### Pass 38.3 Extract `installer_core.py` (MEDIUM, M)
 
@@ -988,7 +2158,22 @@ paths or silent-corruption vectors under routine use.
   `check_module`, `run_build_script`, `CONFIG_COPIES`, `DIRECTORIES`,
   `do_install_step_*`; both frontends call into it.
 - **Source**: 2026-04-24 audit, Tests/tooling/CI M2.
-- **Status**: todo
+- **Status**: done (v3.5.56) — new `installer_core.py` (188 lines)
+  exposes `CONFIG_COPIES` (3-tuple), `DIRECTORIES` (14-tuple),
+  `CORE_MODULES` (4-tuple), `MIN_PYTHON` (3.8), `detect_distro()` /
+  `distro_label()` / `pip_install_hint()`, `pip_install(quiet=)`,
+  `check_module()`, `run_build_script() -> (ok_or_None, output)`,
+  `select_pip_args() -> (args, source)` (canonicalised Pass 39.4
+  lockfile selection), `python_version_ok()`. `install.py`
+  shrunk 360→247 lines (−31%); `install_gui.py` 668→593 (−11%).
+  GUI pip wrapper kept as a one-line `quiet=True` shim. Linux
+  distros outside fedora/debian/arch now surface as "Linux" in
+  both installers (was "unknown" in CLI, "Linux" in GUI — GUI
+  wins). `tests/test_pass39_supply_chain.py::
+  test_installers_use_require_hashes` rewritten as a Pass-45.18-
+  style functional pin: calls `installer_core.select_pip_args`
+  against the real lockfile + asserts both installers import the
+  shared module. 746/746 green.
 
 #### Pass 38.4 Extract Jinja macros (MEDIUM, M)
 
@@ -1012,7 +2197,13 @@ paths or silent-corruption vectors under routine use.
   branch never fires correctly on a failed build.  Zombie code.
 - **Plan**: replace with checks for `core.bundle.js` + `games.bundle.js`.
 - **Source**: 2026-04-24 audit, Tests/tooling/CI M1.
-- **Status**: todo
+- **Status**: done (v3.5.41) — both `install.py` and `install_gui.py`
+  now check `core.bundle.js` AND `games.bundle.js` for the
+  build-failed fallback ("use existing bundles" branch). Success-path
+  log message updated to name both bundles. v3.5.55 follow-up
+  swept the last three stale `app.bundle.js` references in
+  `build_js.py` (header docstring + `JS_ORDER` comment) and
+  `docs/README.md` (ASCII tree).
 
 #### Pass 38.6 Split `settings.html` by tab (LOW, M)
 
@@ -1033,7 +2224,20 @@ paths or silent-corruption vectors under routine use.
   `_upsert_xbox_progress(…)` helpers in
   `services/jobs/platform_sync.py`; collapse the routes.
 - **Source**: 2026-04-24 audit, Platform imports M1/M2.
-- **Status**: todo
+- **Status**: done (v3.5.44) — `_upsert_steam_progress` and
+  `_upsert_xbox_progress` helpers added to
+  `services/jobs/platform_sync.py`; bulk-sync job + active routes
+  (`steam_achievements.py`, `xbox_achievements.py`) all call them.
+  Both routes switched from `sqlite3.connect(config.DB_PATH)` to
+  `get_db()` (fixes missing PRAGMAs: busy_timeout, foreign_keys,
+  synchronous, cache_size, temp_store, mmap_size). Dead duplicate
+  `/api/steam/sync-achievements/<id>` route removed from
+  `routes/platform_import.py` (zero callers across .py/.js/.html);
+  active route at `/api/steam-achievements/sync/<id>` retained
+  (called from `templates/steam_achievement_game.html:288`). Xbox
+  had no equivalent dead duplicate — only one single-sync route.
+  Orphan imports (datetime/timezone/sqlite3/config) cleaned. Full
+  pytest 694/694 green.
 
 #### Pass 38.8 Consolidate resume-path boilerplate across job classes (LOW, M)
 
@@ -1043,7 +2247,29 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: extract `_apply_resume(self, game_ids, progress, **extra)`
   onto a thin mixin used by every job with resume support.
 - **Source**: 2026-04-24 audit, Background jobs M5.
-- **Status**: todo
+- **Status**: done (v3.5.57) — three free-function helpers in
+  `services/jobs/base.py` (chosen over a mixin: avoids forcing every
+  job class into an inheritance chain when only ~10 lines are
+  shared, and bulk_scrape's three callsites are inside class methods
+  that already inherit from object). `pad_resume_game_ids(resume_
+  index, remaining_ids)` returns `[None]*N + list(remaining)`;
+  `restore_progress_counts(job, resume_index, progress)` writes
+  `current_index` + the three counters under the caller's lock,
+  treating `progress=None` and missing keys as zero;
+  `try_acquire_singleton_or_warn(lock_name, kind='resume')` wraps
+  `acquire_job_singleton_lock` with the standard "lock held by
+  another worker process" warning. Eight callsites refactored:
+  `ra_sync.resume_from_params`, `ra_refresh.resume_from_params`,
+  `platform_sync.SteamSyncJob.resume_from_params` +
+  `XboxSyncJob.resume_from_params`, `psn_refresh.resume_from_
+  params`, `bulk_scrape.resume_from_params` + the two queued-job
+  promote branches in `_swap_running_job` and
+  `_start_next_queued`. Bulk scrape skips the singleton helper —
+  it uses a queue-based promote/demote that acquires the lock
+  elsewhere. `tests/test_pass38_resume_helpers.py` (18 tests)
+  pins the helper contracts plus a source-grep regression that
+  every refactored job module imports the helpers. Suite 764/764
+  green (was 746).
 
 #### Pass 42.1 Extract `_normalize_game_edit` helper (MEDIUM, M)
 
@@ -1058,7 +2284,26 @@ paths or silent-corruption vectors under routine use.
   arbitrary edit payload and returns a sanitised dict ready for UPDATE.
   Include `cross_map_ratings`, `generate_sort_title`, `players`
   coercion, `invalidate_filter_cache + invalidate_analytics_cache`.
-- **Status**: todo
+- **Status**: done (v3.5.52) — `services/game_metadata_service.
+  normalize_game_edit(payload)` is the single source of truth: strip +
+  empty-as-None on every string field, `release_date` validation
+  (slashes → dashes, junk → None, impossible calendar dates → None),
+  `players` routed through `normalize_players_value` (Pass 40.6
+  invariant), 8-system rating cross-map that fires only on keys
+  present in the payload (so JSON callers updating one rating don't
+  get the other seven written underneath), `sort_title` auto-
+  generation when title given but sort_title blank, `similar_games`
+  re-join. Helper is pure (does not mutate caller dict; cache
+  invalidation kept at call sites). `routes/games.py` form-POST and
+  JSON paths both delegate; three orphaned imports
+  (`cross_map_ratings`, `generate_sort_title`, `normalize_players_
+  value`) cleaned. Form-POST cache-invalidation gap closed inline —
+  it didn't call `invalidate_filter_cache`/`invalidate_analytics_
+  cache` previously, only the JSON path did. 22 new functional tests
+  in `tests/test_pass42_normalize_game_edit.py` (Strip / ReleaseDate
+  / Players / RatingsCrossMap / SortTitle / SimilarGames buckets);
+  Pass 40.6 source-grep tests rewritten to assert both edit paths
+  route through `normalize_game_edit`. Suite 725 → 749.
 
 #### Pass 42.2 Deduplicate migration helpers (MEDIUM, S)
 
@@ -1072,7 +2317,18 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: one `_helpers.py` with the strict variants; update all
   migration imports; add a schema-test that re-runs every migration
   on an empty DB to prove idempotency.
-- **Status**: todo
+- **Status**: done (v3.5.43) — `services/migrations/_helpers.py`
+  created with all 5 functions (strict `_add_column_if_missing`
+  variant: PRAGMA-check-then-ALTER, no swallowed
+  `OperationalError`). Migrations 005/006/007/008/009 import from
+  `_helpers`; local copies removed. Migration 001 kept out of scope
+  (its lenient try/except handles legacy pre-versioned schema and
+  runs only against `user_version=0` installs); module docstring
+  documents the deliberate split. Idempotency already covered by
+  `test_idempotent_baseline_can_run_twice` (apply_pending re-runs
+  after PRAGMA user_version=0 reset). `pytest tests/test_migrations
+  .py tests/test_pass31_migrations.py`: 21/21 green; full suite
+  694/694 green.
 
 #### Pass 42.3 Global `window.onerror` + `unhandledrejection` handler (MEDIUM, S)
 
@@ -1084,7 +2340,15 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: add `window.addEventListener('error', ...)` and
   `'unhandledrejection'` handlers that dispatch to the toast system,
   rate-limited to one surface every 5s to avoid feedback loops.
-- **Status**: todo
+- **Status**: done (v3.5.45) — handlers added in
+  `static/js/main.js` immediately after the global-state block.
+  Rate limit: one toast per 5 s via `_lastErrorToastAt` + `Date.now()`
+  guard. Filters cross-origin "Script error." noise (browsers
+  sanitize cross-origin script errors to that literal string with no
+  useful detail). Unhandled-rejection branch handles `Error`,
+  string, and arbitrary-object reasons (JSON.stringify + String()
+  fallback). Toast call wrapped in try/catch as defence-in-depth.
+  Bundle rebuilt; 694/694 tests green.
 
 #### Pass 42.4 Pin / vendor Chart.js (MEDIUM, S)
 
@@ -1093,7 +2357,10 @@ paths or silent-corruption vectors under routine use.
   admin-only page with session cookie.  Supply-chain attack surface.
 - **Plan**: either pin `@4.x.y` + `integrity="sha384-..."`
   `crossorigin="anonymous"`, or vendor to `/static/vendor/chart.js`.
-- **Status**: todo
+- **Status**: done — already addressed by Pass 46.1 (v3.5.35).
+  Chart.js v4.5.1 UMD bundle vendored to
+  `static/js/vendor/chart.umd.min.js`, served via the cache-busting
+  `asset_url()` pipeline. No CDN reference left in the templates.
 
 #### Pass 42.5 CHD converter dedup + `_persist_controller_image` (MEDIUM, M)
 
@@ -1107,7 +2374,28 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: keep the class; have `routes/tools.py` delegate.
   Extract `_persist_controller_image(controller_id,
   img_bytes_or_pil)` in `routes/museum.py`.
-- **Status**: todo
+- **Status**: done (v3.5.54) — both halves landed.
+  - **CHD dedup**: extracted module-level pure helper
+    `scraper.rom_tools.convert_one_to_chd(src_path, chdman_path, *,
+    do_verify, delete_original, skip_existing, convert_timeout,
+    verify_timeout)` carrying the Pass 40.11 atomic-write contract end-
+    to-end. Both `CHDConverter._convert_file` and
+    `routes/tools.py:api_chd_converter_convert.run_conversion` now
+    delegate to it; ~100 lines of duplicated subprocess/atomic-write
+    logic collapsed. Pass 40.2 per-file `safe_path` guard stays at the
+    route layer (the dict-task registry is route-local). The Pass
+    40.11 regression suite was redirected to grep the helper directly
+    + assert both call sites delegate via `convert_one_to_chd(`.
+  - **Controller image dedup**: new
+    `routes/museum.py:_persist_controller_image(controller_id,
+    image_data)` carries the RGBA→crop→WebP→standardize pipeline;
+    returns the saved filename or `None`. Three call sites collapsed
+    (`upload_controller_image`, `remove_controller_bg`,
+    `_fetch_and_process_image`); DB UPDATE + `_propagate_controller_image`
+    stay at each call site (the third site doesn't do them, and the
+    second has a divergent "skip UPDATE if filename matches" branch —
+    pulling DB into the helper would re-introduce the divergence).
+  - **Suite**: 746/746 green.
 
 #### Pass 42.6 RA 401 observability + Steam / SS log-redaction tightening (MEDIUM, S)
 
@@ -1119,7 +2407,15 @@ paths or silent-corruption vectors under routine use.
 - **Plan**: already scoped under Pass 41.5 for redactor; track the
   RA observability half here (5 call-site edits to surface 401 as a
   distinct error).
-- **Status**: todo
+- **Status**: done — both halves landed in earlier passes. Redactor
+  half: Pass 41.5 added `key` / `sspassword` patterns to
+  `services/log_redactor.py:39`; Pass 45.13 added `y` / `z` (RA
+  single-char param names). RA 401 observability half: Pass 41.7.C
+  added explicit 401 `logger.error(...)` calls in all 5 RA callers
+  (`search_game_by_name`, `get_game_info`, `get_user_game_progress`,
+  `get_user_game_progress_custom`, `get_user_summary`) with the
+  user-actionable hint "Re-enter the api_key in Settings →
+  Scrapers". Stale roadmap entry; verified 2026-05-02.
 
 #### Pass 42.7 Adopt or remove `PageLifecycle` (MEDIUM, M)
 
@@ -1129,7 +2425,15 @@ paths or silent-corruption vectors under routine use.
   advertises the abstraction as canonical.  Either migrate the 10
   hot-path files or delete the module.
 - **Plan**: pick an option; don't leave the doc-vs-code drift.
-- **Status**: todo
+- **Status**: done (v3.5.46) — REMOVE option chosen (shorter, lower
+  risk; with zero consumers the "canonical" advertisement in
+  CLAUDE.md was misleading). `static/js/page-lifecycle.js` deleted;
+  `build_js.py` CORE_ORDER entry dropped; CLAUDE.md "Globals
+  defined in" list and "Lifecycle: PageLifecycle / DOMCache" bullet
+  removed. Test pin
+  `test_36_5_session_storage_sites_migrated` updated to drop the
+  page-lifecycle.js file reference (its `safeParseJSON` site no
+  longer exists). 694/694 tests green.
 
 #### Pass 42.8 Remove `/api/recently-viewed` + `ScraperManager.get_enabled_scrapers` + CSP nonce dead infrastructure (LOW, S — bundle)
 
@@ -1139,7 +2443,55 @@ paths or silent-corruption vectors under routine use.
   - CSP nonce infrastructure is covered by FU.1; noted here for
     cross-reference.
 - **Plan**: delete the two zombie functions; FU.1 handles CSP.
-- **Status**: todo
+- **Status**: done (v3.5.41) — `routes/games.py` `/api/recently-viewed`
+  was already removed by Pass 41.9 (zero-callers JS-side); now
+  `ScraperManager.get_enabled_scrapers` deleted in
+  `scraper/scraper_manager.py` (zero callers across .py, .js, .html;
+  the `enabled` lookup it wrapped is read directly inside
+  `search_games`). CSP nonce infrastructure stays gated on FU.1.
+
+#### Pass 42.9 Test-suite hygiene sweep (LOW, S)
+
+- **Target**: `tests/` — drop redundant / misplaced / subsumed tests
+  surfaced by an end-to-end audit (749-test suite, 12k LoC).
+- **Why**: The audit asked the six standard questions — accurate /
+  valid / redundant / duplicated / optimised / efficient. Suite is
+  fast (3.4s), green, and ~95% clean, but three tests had drifted into
+  redundancy as later passes pinned strictly-stronger invariants
+  elsewhere.
+- **Plan**: delete the three; record subsumption in the surviving
+  class's docstring so future-readers don't re-add the pin.
+- **Status**: done (v3.5.53) — three deletions, suite 749 → 746:
+  - `test_input_hardening.py::test_recently_viewed_endpoint_removed`
+    — literal duplicate of `test_pass41_security.py
+    ::test_recently_viewed_endpoint_deleted` (Pass 41 copy is
+    stronger; also greps the function symbol is gone).
+  - `test_pass45_security.py::TestPass45_20ButtonTypeSweep
+    ::test_chmod_before_verify_in_backup` — re-pin of Pass 45.5
+    misplaced in the button-sweep class. The Pass 45.5 home
+    (`TestPass45_5AtomicWrite::test_backup_database_chmods_before_
+    verify`) carries the same assertion plus an end-to-end backup
+    smoke.
+  - `test_pass40_security.py::TestPass40_12ToastControllerXss
+    ::test_no_inline_onclick_with_template_interpolation` — historical
+    pin for one specific `onclick=...cancelQueued...` string. Now
+    strictly subsumed by Pass 45.4's
+    `test_toast_controller_has_no_inline_onclicks` ("NO inline onclick
+    anywhere in toast-controller.js"). Sibling test
+    `test_system_name_escaped` retained — it pins a different
+    invariant (raw-interpolation of `job.system_name`) that no other
+    test covers; class docstring updated to record the subsumption.
+- **Out of scope** (considered, kept):
+  - `_REPO_ROOT = os.path.dirname(...)` constant duplicated across
+    12 test files. Lifting to `conftest.py` looked attractive but
+    each occurrence is paired with a `sys.path.insert` mutation;
+    refactoring would require either making `tests/` a Python package
+    (changes pytest collection semantics) or shimming through a
+    helper module. 12 lines of trivial duplication is cheaper.
+  - 10 tests use `'Pass NN.X' in body` comment-pin assertions.
+    Fragile if comments rot, but each is paired with a structural
+    assertion in a window — they degrade to broken-test, not silent
+    pass. Acceptable.
 
 ---
 
@@ -1303,7 +2655,11 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   `http_get` retry/backoff semantics — the helper doesn't currently expose
   `stream=True`, so either add a flag or call `_http_session.get` directly
   for images.
-- **Status**: todo
+- **Status**: done — already addressed by Pass 40.7 (SSRF hardening).
+  `_download_tgdb_image` now delegates to `base_scraper.download_image`
+  which already does streamed `iter_content(8192)` writes with a 50 MB
+  cap. The original `response.content` buffering pattern this entry
+  describes is gone.
 
 #### FU.5 Group-label a11y pattern (LOW–MEDIUM, S–M)
 
@@ -1326,7 +2682,33 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   fieldset semantics don't fit. For prose-style labels heading a
   read-only display (e.g. `Database Location`), demote `<label>` to
   `<div class="form-label">` since there's no control to associate.
-- **Status**: todo
+- **Status**: partial (v3.5.67) — turned out most of the 33-case master
+  list was already addressed in earlier passes:
+  - **Toggle grids** (`chd_converter.html:124`, `duplicate_finder.html:231`,
+    `rom_tools_settings.html:393,425`) already use
+    `<div class="form-label" id="...Label">` + `role="group"
+    aria-labelledby="...Label"` on the surrounding container.
+  - **Button groups** (`lists.html:54` icon picker, `tags.html:50` color
+    swatches, `wishlist.html:78` priority radios) — same pattern, already
+    landed.
+  - **Toolbar level/view toggles** (`logs.html:748,768`) — already
+    `role="group" aria-labelledby`.
+  - **Prose-style labels** in `settings.html:171, 433, 461, 580` — already
+    demoted to `<div class="form-label">`. Line 912 is `<label
+    for="matchPlatformRequired">` which correctly associates with its
+    checkbox (a redundant `aria-label="Require platform match"` sits on
+    the input — minor hygiene, left for a future sweep).
+  - **Custom widgets in edit modals** (`_modals/edit_modal.html:106, 117,
+    145, 158, 169, 186, 201` + parallel gem modal in `base.html:1093,
+    1101, 1113, 1121, 1129, 1154, 1165`) — **closed in this pass**.
+    Each multi-value tag-picker field had a `<label for="<X>Dropdown">`
+    pointing at the helper "+ Add" `<select>` instead of the chip
+    container. AT announced the field name, then a combobox, missing the
+    chip list. Each field now wrapped in `role="group" aria-labelledby`
+    with the `<label>` demoted to `<div class="form-label">` with a
+    stable id; the helper select gets its own `aria-label="Add <X>"`.
+    14 fields total. Custom-controller text input also picked up
+    `aria-label="Custom controller name"`.
 
 ---
 
@@ -1598,6 +2980,15 @@ not added to the roadmap. Document here so they don't keep re-appearing.
   self-hosted app. Covered by Pass 17.3 instead.
 - **Prometheus `/metrics`**: no scraper. Local `/health` + `/ready`
   (Pass 17.1) covers the actual need.
+- **Distribution / portfolio website** (per-user landing page hosting
+  RetroDB and the user's other apps with download links + donation
+  CTAs): a separate, multi-app effort outside RetroDB itself. Tracked
+  at the user's portfolio level, not in this roadmap. Pass 47 covers
+  donation surfacing inside the RetroDB repo + app — the landing site
+  comes later, host TBD (Cloudflare Pages / Netlify / GitHub Pages /
+  Vercel are all viable for a static multi-app site). Mentioned here
+  so the Pass 47 scope stays sharp and the website doesn't get
+  retrofitted into a RetroDB-shaped pass.
 
 ---
 

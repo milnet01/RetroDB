@@ -17,6 +17,18 @@ from services.security import safe_path
 
 logger = logging.getLogger(__name__)
 
+
+# Pass 45.6 — Pillow decompression-bomb cap (see services/image_utils.py
+# for the full motivation). Set once at module import so every Image.open
+# below — currently `_validate_image_bytes` — inherits the limit and
+# raises `Image.DecompressionBombError` instead of OOM-killing the worker.
+try:
+    from PIL import Image as _PIL_Image
+    _PIL_Image.MAX_IMAGE_PIXELS = getattr(config, 'IMAGE_MAX_PIXELS', None) or 64_000_000
+    del _PIL_Image
+except ImportError:
+    pass
+
 ALLOWED_IMAGE_EXT = frozenset({'jpg', 'jpeg', 'png', 'gif', 'webp'})
 ALLOWED_VIDEO_EXT = frozenset({'mp4', 'webm', 'ogg'})
 
@@ -47,6 +59,12 @@ def _validate_image_bytes(raw: bytes) -> bool:
         with Image.open(io.BytesIO(raw)) as im:
             im.verify()
         return True
+    except Image.DecompressionBombError as e:
+        # Pass 45.6 — log decompression-bomb attempts at warning so admins
+        # see them in the security log, not just a generic verify-failed
+        # line. The cap is set at module import via Image.MAX_IMAGE_PIXELS.
+        logger.warning(f"Image upload rejected: decompression bomb ({e})")
+        return False
     except Exception as e:
         logger.warning(f"Image upload rejected by PIL.verify(): {e}")
         return False
@@ -199,21 +217,14 @@ def save_upload(file_storage, dest_dir, game_id, prefix, allowed_ext):
 
 
 def _atomic_write_bytes(path, raw):
-    """Write `raw` bytes to `path` atomically (tmp + os.replace)."""
-    dirname = os.path.dirname(path) or '.'
-    os.makedirs(dirname, exist_ok=True)
-    fd, tmp_path = tempfile.mkstemp(prefix='.upload_', dir=dirname)
-    try:
-        with os.fdopen(fd, 'wb') as f:
-            f.write(raw)
-        os.replace(tmp_path, path)
-    except Exception:
-        if os.path.exists(tmp_path):
-            try:
-                os.remove(tmp_path)
-            except OSError:
-                pass
-        raise
+    """Write `raw` bytes to `path` atomically.
+
+    Pass 45.5 — delegates to :func:`services.atomic_io.atomic_write_bytes`
+    so the fsync + chmod-before-replace + parent-directory fsync sequence
+    is shared across every atomic-write site in the codebase.
+    """
+    from services.atomic_io import atomic_write_bytes
+    atomic_write_bytes(path, raw)
 
 
 def save_screenshots(file_storages, game_id, existing_csv):

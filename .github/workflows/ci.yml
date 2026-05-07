@@ -22,6 +22,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Tag references can be force-pushed under our feet; SHA pins can't.
+# Mirrors release.yml. Dependabot's github-actions ecosystem bumps the
+# SHA + trailing version comment together. OWASP CICD-SEC-4.
+permissions:
+  contents: read
+
 jobs:
   lint-and-smoke:
     runs-on: ubuntu-latest
@@ -36,9 +42,9 @@ jobs:
         python-version: ["3.12", "3.13"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
@@ -87,7 +93,9 @@ jobs:
       - name: pip-audit (CVEs in pinned lockfile)
         if: matrix.python-version == env.PRIMARY_PYTHON
         run: pip-audit --requirement requirements.lock --strict
-        continue-on-error: true  # Dependabot backlog first; flip to hard-fail once clean
+        # Hard-fail since Pass 39.3 (v3.5.40): lockfile clean, six audit
+        # cycles at 0/N actionable. New CVE surfacing means real action
+        # required (Dependabot bump or pin rationale), not silent warning.
 
       - name: Lockfile drift check
         if: matrix.python-version == env.PRIMARY_PYTHON
@@ -105,14 +113,18 @@ jobs:
           # identical body. The 6-line auto-generated header differs by
           # output path between the two runs — strip it before diffing.
           cp requirements.lock /tmp/fresh.lock
-          pip-compile --quiet --strip-extras --output-file /tmp/fresh.lock requirements.txt
+          # Pass 39.4 — `--generate-hashes` so the regenerated lockfile carries
+          # per-package SHA256s; installers use `pip install --require-hashes`
+          # for fail-closed install on MITM / PyPI tamper. Diff stays apples-
+          # to-apples since the seed lockfile already has hashes.
+          pip-compile --quiet --strip-extras --generate-hashes --output-file /tmp/fresh.lock requirements.txt
           # Strip any leading `# ...` header lines (newer pip-compile emits a
           # 6-line comment block; older invocations produce none). Per-package
           # `# via` lines are indented with spaces so they don't match ^#.
           if ! diff -u <(grep -v '^#' requirements.lock) <(grep -v '^#' /tmp/fresh.lock); then
             echo ""
             echo "::error::requirements.lock is out of sync with requirements.txt."
-            echo "Run: pip-compile requirements.txt -o requirements.lock --strip-extras"
+            echo "Run: pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes"
             exit 1
           fi
 
@@ -133,7 +145,7 @@ jobs:
 
       - name: Upload coverage artifact
         if: matrix.python-version == env.PRIMARY_PYTHON
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         with:
           name: coverage-xml
           path: coverage.xml

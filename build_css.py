@@ -222,7 +222,16 @@ def build(do_minify=True):
         f.write(combined)
 
     # Record content hash in the shared asset manifest (Pass 13.3).
-    _update_manifest({'css/main.min.css': _content_hash(output_path)})
+    manifest_updates = {'css/main.min.css': _content_hash(output_path)}
+
+    # Pass 46.1 — fonts.css is served standalone (not bundled into main.min.css)
+    # so per-file cache-busting is needed. Hash it whenever build runs so a
+    # font-set update propagates without a full APP_VERSION bump.
+    fonts_path = css_dir / 'core' / 'fonts.css'
+    if fonts_path.exists():
+        manifest_updates['css/core/fonts.css'] = _content_hash(fonts_path)
+
+    _update_manifest(manifest_updates)
 
     print("-" * 50)
     print(f"Source: {total_lines} lines across {len(CSS_ORDER)} files")

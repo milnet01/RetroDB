@@ -5,8 +5,7 @@
 # Features: ROM scanning, metadata scraping, beautiful cyberpunk UI
 # =============================================================================
 
-from flask import Flask, render_template, request, redirect, url_for, jsonify, session, g
-import sqlite3
+from flask import Flask, render_template, request, redirect, url_for, jsonify, session, g, send_from_directory, abort
 import gzip
 import os
 import sys
@@ -15,8 +14,8 @@ import json
 import re
 import secrets
 import time
-from datetime import datetime, timedelta, timezone
-from zoneinfo import ZoneInfo, available_timezones
+from datetime import timedelta
+from zoneinfo import available_timezones
 
 # Prevent decompression bomb attacks from scraped/uploaded images
 from PIL import Image
@@ -55,15 +54,14 @@ import log_manager
 
 # Import services layer
 from services.atomic_io import atomic_write_json
-from services.database import query, execute
+from services.database import query
 from services.auth import (
     hash_password, get_current_user, get_user_settings,
-    has_permission, login_required, admin_required
+    has_permission, login_required
 )
 from services.game_utils import (
     get_rating_image_map_js, get_rating_system_names_js,
-    get_rating_crossmap_js, RATING_SYSTEM_KEYS,
-    RATING_SYSTEMS, RATING_VALUES
+    get_rating_crossmap_js, RATING_SYSTEM_KEYS
 )
 from services.template_filters import register_filters as _register_template_filters
 from services.database_init import init_database, ensure_user_tables
@@ -100,7 +98,7 @@ def _get_secret_key():
     if env_key:
         return env_key
 
-    key_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', '.secret_key')
+    key_path = os.path.join(config.BASE_DIR, 'data', '.secret_key')
     os.makedirs(os.path.dirname(key_path), exist_ok=True)
     try:
         if os.path.exists(key_path):
@@ -112,10 +110,13 @@ def _get_secret_key():
         pass
     # Generate new key
     key = secrets.token_hex(32)
+    # Pass 45.5 — atomic_write_text chmods the tmpfile to 0o600 *before*
+    # the os.replace, so the final path never exists at the umask default
+    # (typically 0o644). The previous form was open→write→chmod, which
+    # left a brief world-readable window holding the secret key.
     try:
-        with open(key_path, 'w') as f:
-            f.write(key)
-        os.chmod(key_path, 0o600)
+        from services.atomic_io import atomic_write_text
+        atomic_write_text(key_path, key, mode=0o600)
     except OSError:
         pass
     return key
@@ -156,6 +157,30 @@ if os.environ.get('RETRODB_TRUST_PROXY', '').lower() in ('true', '1', 'yes'):
         "RETRODB_TRUST_PROXY=1 — ProxyFix installed; trusting one hop of "
         "X-Forwarded-For / Proto / Host"
     )
+
+# =============================================================================
+# STATIC IMAGES — frozen-aware fallback route
+# =============================================================================
+# Pass 46.3 part 2 — `/static/images/<path>` paths span two roots in a
+# PyInstaller bundle: scraped media + uploaded avatars live under
+# config.IMAGE_PATH (writable, next to the launcher), while bundled defaults
+# (placeholder.png, hardware/, ratings/, systems/, controllers/, default
+# avatars/) are baked into config.STATIC_PATH/images (read-only MEIPASS).
+# Try the user dir first, fall back to the bundle.  In a non-frozen install
+# both roots resolve to the same directory and the fallback is a no-op.
+_BUNDLE_IMAGE_DIR = os.path.join(config.STATIC_PATH, 'images')
+
+
+@app.route('/static/images/<path:filepath>')
+def serve_static_image(filepath):
+    user_full = os.path.join(config.IMAGE_PATH, filepath)
+    if os.path.isfile(user_full):
+        return send_from_directory(config.IMAGE_PATH, filepath)
+    bundle_full = os.path.join(_BUNDLE_IMAGE_DIR, filepath)
+    if os.path.isfile(bundle_full):
+        return send_from_directory(_BUNDLE_IMAGE_DIR, filepath)
+    abort(404)
+
 
 # =============================================================================
 # RATE LIMITING
@@ -302,6 +327,44 @@ if limiter:
     _rate_limit('museum.generate_system', "20 per hour")
     _rate_limit('museum.generate_all', "2 per hour")
     _rate_limit('collector_trophies.refresh_trophies', "10 per hour")
+
+    # Pass 41.10.D — heavy filesystem walks; cap at 5/min so a misclick in
+    # the UI or a runaway script can't hammer the disk on a multi-user host.
+    _rate_limit('tools.api_archive_scanner_scan', "5 per minute")
+    _rate_limit('tools.api_chd_converter_scan', "5 per minute")
+    _rate_limit('tools.api_chd_verify_scan', "5 per minute")
+    _rate_limit('tools.api_duplicate_finder_scan', "5 per minute")
+    _rate_limit('tools.api_screenshot_dedup_scan', "5 per minute")
+    # Pass 39.7 — same family as Pass 41.10.D: walks the filesystem under
+    # @login_required only (non-editor users can hit it), one cap per minute
+    # since a single scan can take seconds on large libraries.
+    _rate_limit('reports.api_reports_multidisc_scan', "5 per minute")
+
+    # Pass 45.8 — third-party-API fan-out endpoints. Each call below issues
+    # tens-to-hundreds of remote requests against Steam / Xbox Live / PSN
+    # / IGDB / RAWG / TGDB. A misclick or stuck XHR loop can burn API
+    # quota or trigger account bans (PSN especially has aggressive
+    # per-account rate-limits). Caps mirror the Pass 41.10.D pattern:
+    #   5/min for "fetch the whole library" actions (rare admin-driven);
+    #   2/hour for "bulk refresh / sync everything" actions
+    #   (cron-like, never legitimate to run every minute).
+    _rate_limit('platform_import.api_steam_fetch_library', "5 per minute")
+    _rate_limit('platform_import.api_steam_import', "5 per minute")
+    _rate_limit('platform_import.api_steam_sync_achievements', "2 per hour")
+    _rate_limit('platform_import.api_xbox_fetch_library', "5 per minute")
+    _rate_limit('platform_import.api_xbox_import', "5 per minute")
+    _rate_limit('platform_import.api_xbox_sync_achievements', "2 per hour")
+    _rate_limit('platform_import.api_psn_fetch_library', "5 per minute")
+    _rate_limit('platform_import.api_psn_import', "5 per minute")
+    _rate_limit('steam_achievements.api_steam_sync_all', "2 per hour")
+    _rate_limit('xbox_achievements.api_xbox_sync_all', "2 per hour")
+    _rate_limit('trophies.api_psn_sync_all', "2 per hour")
+    _rate_limit('trophies.api_psn_bulk_refresh_start', "2 per hour")
+    _rate_limit('collections.api_scrape_all_wishlist', "2 per hour")
+    # Per-source scraper credit-check probes: a stuck UI poll loop can
+    # otherwise issue 60 calls/minute against TGDB / IGDB / etc.
+    _rate_limit('scraper.api_check_scraper', "30 per minute")
+    _rate_limit('scraper.api_scraper_allowance', "30 per minute")
 
 # =============================================================================
 # REQUEST-SCOPED DB CONNECTION CLEANUP
@@ -562,7 +625,8 @@ def validate_csrf():
 
     # Exempt endpoints that must work without a CSRF token
     csrf_exempt = {
-        'static', 'auth.api_login', 'auth.login', 'setup_api',
+        'static', 'serve_static_image',
+        'auth.api_login', 'auth.login', 'setup_api',
         'setup_browse_folders',
     }
     if request.endpoint in csrf_exempt:
@@ -581,7 +645,8 @@ def validate_csrf():
 def check_first_time_setup():
     """Redirect to setup wizard on first launch"""
     # Skip for static files, the setup route itself, and API endpoints used by setup
-    if not request.endpoint or request.endpoint in ('static', 'setup_page', 'setup_api',
+    if not request.endpoint or request.endpoint in ('static', 'serve_static_image',
+                                                     'setup_page', 'setup_api',
                                                      'setup_browse_folders',
                                                      'api_timezones',
                                                      'auth.api_login', 'auth.login', 'auth.logout'):
@@ -605,7 +670,8 @@ def check_force_password_change():
         return
     # Allow access to password change endpoint, logout, static, and setup
     allowed_endpoints = ('auth.api_change_password', 'auth.api_force_change_password',
-                         'auth.logout', 'static', 'setup_page', 'setup_api')
+                         'auth.logout', 'static', 'serve_static_image',
+                         'setup_page', 'setup_api')
     if request.endpoint in allowed_endpoints:
         return
     # Return the force change password page
@@ -640,14 +706,20 @@ app.config['RPCS3_TROPHY_PATH'] = get_rpcs3_trophy_path()
 # Set up logging — install the request-id factory FIRST so basicConfig's
 # handler already has access to %(request_id)s on the very first record.
 log_manager.install_request_id_factory()
+# Pass 41.3.A — install the redactor on the root logger BEFORE basicConfig.
+# Records emitted between basicConfig and a later install_global_redactor()
+# previously bypassed the root-level filter; placing the install before
+# basicConfig closes that gap (the call below after basicConfig runs again to
+# attach the filter to the new StreamHandler — install_global_redactor is
+# idempotent).
+log_manager.install_global_redactor()
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(request_id)s - %(name)s - %(levelname)s - %(message)s'
 )
-# Install SecretRedactor on the root logger + its basicConfig StreamHandler
-# before any module-level logger fires. CategoryFileHandler already attaches
-# its own redactor; this adds the console-stream safety net that the
-# CategoryFileHandler path cannot cover.
+# Re-run to attach the redactor filter to the StreamHandler basicConfig just
+# created. CategoryFileHandler already attaches its own redactor; this adds
+# the console-stream safety net that the CategoryFileHandler path cannot cover.
 log_manager.install_global_redactor()
 logger = logging.getLogger(__name__)
 
@@ -903,7 +975,7 @@ def get_api_status():
 
     # Load scraper settings for API keys
     scraper_settings = {}
-    settings_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'scraper_settings.json')
+    settings_path = os.path.join(config.BASE_DIR, 'data', 'scraper_settings.json')
     if os.path.exists(settings_path):
         try:
             with open(settings_path, 'r') as f:
@@ -1002,28 +1074,38 @@ def dashboard():
             LIMIT 5
         """)
 
-        # Get recently viewed games
+        # Pass 41.9 — recently-viewed and continue-playing now key on the
+        # per-user `user_game_views` table (migration 010). The previous
+        # shape sorted on the global `games.last_viewed` column, which
+        # leaked viewing history across users.
+        user_id = g.user['id']
+
         recently_viewed = query("""
             SELECT g.id, g.title, g.boxart, g.boxart_3d, g.system_id,
                    g.completion_status, s.name AS system_name
-            FROM games g
+            FROM user_game_views v
+            JOIN games g ON g.id = v.game_id
             JOIN systems s ON g.system_id = s.id
-            WHERE g.last_viewed IS NOT NULL
-            ORDER BY g.last_viewed DESC
+            WHERE v.user_id = ?
+            ORDER BY v.last_viewed DESC
             LIMIT 5
-        """)
+        """, (user_id,))
 
-        # Get continue playing games (in-progress)
+        # Get continue playing games (in-progress) — sorted by per-user
+        # last_viewed so the panel reflects this user's recent in-progress
+        # navigation, not whoever viewed last globally.
         continue_playing = query("""
             SELECT g.id, g.title, g.boxart, g.boxart_3d, g.system_id,
                    g.completion_status, g.playtime_estimate,
-                   s.name AS system_name
+                   s.name AS system_name,
+                   v.last_viewed
             FROM games g
             JOIN systems s ON g.system_id = s.id
+            LEFT JOIN user_game_views v ON v.game_id = g.id AND v.user_id = ?
             WHERE g.completion_status = 'in_progress'
-            ORDER BY g.last_viewed DESC
+            ORDER BY v.last_viewed DESC NULLS LAST, g.title ASC
             LIMIT 5
-        """)
+        """, (user_id,))
 
         # Get recently scraped games (from scrape_history JSON)
         recently_scraped = query("""
@@ -1211,7 +1293,7 @@ def analytics():
 def changelog():
     """Changelog page showing version history"""
     import yaml
-    yaml_path = os.path.join(os.path.dirname(__file__), 'data', 'changelog.yaml')
+    yaml_path = os.path.join(config.BUNDLE_DIR, 'data', 'changelog.yaml')
     with open(yaml_path, 'r') as f:
         entries = yaml.safe_load(f)
     return render_template('changelog.html', changelog=entries)
@@ -1363,7 +1445,7 @@ def setup_api():
         user_settings['esde_downloaded_media_path'] = data['esde_media_path']
 
     # 3. Save API keys to scraper_settings.json
-    scraper_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'scraper_settings.json')
+    scraper_path = os.path.join(config.BASE_DIR, 'data', 'scraper_settings.json')
     scraper_settings = {}
     if os.path.exists(scraper_path):
         try:
@@ -1561,11 +1643,12 @@ if __name__ == '__main__':
     for subdir in ['boxart', 'boxart_3d', 'screenshots', 'systems', 'ratings', 'fanart', 'videos', 'manuals', 'avatars', 'controllers']:
         os.makedirs(os.path.join(config.IMAGE_PATH, subdir), exist_ok=True)
 
-    # Create data directory for settings
-    os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data'), exist_ok=True)
+    # Create data directory for settings (anchored to BASE_DIR — see config.py;
+    # writable user-data root, not the bundled-assets root).
+    os.makedirs(os.path.join(config.BASE_DIR, 'data'), exist_ok=True)
 
-    # Create logs directory
-    os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs'), exist_ok=True)
+    # Create logs directory (BASE_DIR for the same reason).
+    os.makedirs(os.path.join(config.BASE_DIR, 'logs'), exist_ok=True)
 
     # Initialize file-based logging (only once)
     if is_reloader_process or not config.DEBUG_MODE:
@@ -1580,8 +1663,15 @@ if __name__ == '__main__':
         try:
             from services.image_utils import _get_upscaler
             _get_upscaler()  # triggers init + warm-up on main thread
-        except Exception:
-            pass  # non-fatal; logged inside _init_upscaler
+        except Exception as _upscaler_init_err:
+            # Pass 46.4 — _init_upscaler logs its own warning on the normal
+            # failure path, but if the *logging* subsystem itself is broken
+            # the warning never reaches the operator and ESRGAN silently
+            # disables. Print to stderr so even a log-subsystem outage is
+            # visible at startup.
+            import traceback
+            print(f"WARN: ESRGAN init failed: {_upscaler_init_err}", file=sys.stderr)
+            traceback.print_exc()
 
     host = config.SERVER_HOST
     port = config.SERVER_PORT
@@ -1589,7 +1679,7 @@ if __name__ == '__main__':
 
     if config.DEBUG_MODE:
         # Development: use Flask dev server with auto-reload
-        print(f"\n  * Running in DEBUG mode (Flask dev server)")
+        print("\n  * Running in DEBUG mode (Flask dev server)")
         print(f"  * Local:   http://localhost:{port}")
         print(f"  * Network: http://{local_ip}:{port}\n")
         app.run(debug=True, host=host, port=port)
@@ -1606,11 +1696,11 @@ if __name__ == '__main__':
         print("=" * 58)
         print(f"  {config.APP_NAME} v{config.APP_VERSION}")
         print("=" * 58)
-        print(f"  Server:  Waitress (production)")
+        print("  Server:  Waitress (production)")
         print(f"  Local:   http://localhost:{port}")
         print(f"  Network: http://{local_ip}:{port}")
         print("=" * 58)
-        print(f"  Press Ctrl+C to stop the server")
+        print("  Press Ctrl+C to stop the server")
         print()
 
         # A single /games or /dashboard load fires 20+ parallel XHRs (card

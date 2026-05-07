@@ -2,11 +2,20 @@
 
 > Flask-based retro gaming ROM library manager with cyberpunk UI theme.
 
-**Screenshots:** User screenshots are always at `/home/ants/Pictures/`
+**Screenshots:** `/home/ants/Pictures/`
 
-The full file index, route table, service descriptions, JS-globals catalog, and
-design tokens were intentionally removed in favor of `ls routes/`, `grep`, and
-reading source. Keep this file to non-obvious contracts and mandatory workflow.
+This file holds only non-obvious project contracts and the mandatory workflow.
+For file index / routes / services / JS globals / design tokens, use `ls
+routes/`, `grep`, and the source.
+
+**Global rules apply.** `~/.claude/CLAUDE.md` covers development discipline
+(root-cause fixes, shortest correct implementation, reuse-before-rewrite,
+six-month test, current-idiom external libraries), git/CI cadence (private-repo
+push batching, PR-opt-in feature flow — neither currently active here), and the
+clarity rules (surface ambiguity, push back on over-complex framing,
+reproduce-before-fix, stay in lane on edits, state a `step → verify` plan for
+3+ step work). Don't restate them here — extend or override only when RetroDB
+genuinely diverges.
 
 ---
 
@@ -18,25 +27,26 @@ reading source. Keep this file to non-obvious contracts and mandatory workflow.
 3. Rebuild CSS if any `static/css/**.css` changed: `python3 build_css.py`
 4. Rebuild JS if any bundled `static/js/*.js` changed: `python3 build_js.py`
 5. Run tests if any `services/*.py` or `scraper/*.py` changed: `python3 -m pytest`
-6. Regenerate lockfile if `requirements.txt` was edited: `pip-compile requirements.txt -o requirements.lock --strip-extras`
+6. Regenerate lockfile if `requirements.txt` was edited: `pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes` (Pass 39.4 — installers run `pip install --require-hashes`, so the lockfile must carry hashes)
 7. Update this file if change adds/removes/renames routes, templates, bundled JS, CSS files, or alters page/asset wiring contracts
 
 ### Verification Before Declaring Done
-Tests authored alongside the implementation are regression pins, not correctness
-proofs — they encode the implementer's understanding, which may be wrong.
+Tests written alongside the implementation are regression pins, not correctness
+proofs. Never mark a task complete just because those tests pass.
 
-- **UI changes** (templates / CSS / JS / page-rendering routes): start dev server,
-  walk golden path in browser at desktop + mobile (~375px). DevTools Network to
-  verify runtime assumptions (WebP served? srcset picked `-md`? API shape matches
-  template?). DevTools Console for errors/warnings. Trigger one error path
-  (empty input, missing record, cancelled action), not just happy path.
-- **Backend-only**: unit tests + a single end-to-end smoke call (curl, invoke job).
-- State what was verified in the session summary; if something couldn't be tested
-  in-session, say so explicitly — never imply coverage that wasn't produced.
-- For architecturally significant passes (touches multiple subsystems, reshapes an
-  abstraction, changes security/auth/data flow): proactively recommend the user
-  run `/ultrareview` before merging. Only the user can launch it.
-- Never mark a task complete solely because the tests I wrote pass.
+- **UI changes** (templates / CSS / JS / page-rendering routes): start dev
+  server, walk the golden path in browser at desktop + mobile (~375px). DevTools
+  Network to confirm runtime assumptions (WebP served? srcset picked `-md`? API
+  shape matches template?). DevTools Console for errors/warnings. Trigger one
+  error path (empty input, missing record, cancelled action), not just happy.
+- **Backend-only**: unit tests + a single end-to-end smoke call (curl / invoke job).
+- State what was verified in the session summary. If something couldn't be
+  tested in-session, say so — never imply coverage that wasn't produced.
+- Architecturally significant passes (multi-subsystem, reshapes an abstraction,
+  touches security/auth/data flow): recommend the user run `/ultrareview` before
+  merging — only they can launch it.
+- For 3+ step work, post a `step → verify` plan up front (global §12) and tick
+  off as you go.
 
 ### Periodic Independent Review (Multi-Agent Audit)
 Run a multi-agent independent sweep at one of these triggers (whichever first):
@@ -104,12 +114,11 @@ Rating images live in `static/images/ratings/{SYSTEM}/`. `RATING_IMAGE_MAP` in
 
 Use these names exactly in template `<script>` blocks — never invent aliases.
 Globals are defined in `static/js/utils.js`, `main.js`, `toast-controller.js`,
-`page-lifecycle.js`, `game-modals.js`. Read source for full signatures.
+`game-modals.js`. Read source for full signatures.
 
 - **Toasts/dialogs**: `showNotification(msg, type, duration?)`, `showConfirm(title, msg, onConfirm, opts?)`, `showModal(title, msg, onConfirm?, showCancel?, onCancel?)`.
 - **HTTP/storage**: `API.get/post/postForm`, `Storage.get/set/remove/clearAll`.
 - **Utilities**: `escapeHtml`, `formatNumber` (thin-space thousands), `formatBytes`, `copyToClipboard`, `debounce`, `throttle`, `DOM.$/$$/create/toggle/delegate`, `DateUtils`.
-- **Lifecycle**: `PageLifecycle` (timer/observer auto-cleanup), `DOMCache`.
 - **Game modals**: `GameDetailModal.open/close/clearCache`, `GameEditModal.open/save/close`, `HLTBManager.lookup/save/cancel/clear`, `triggerAiFill`.
 - **Sticky nav**: `StickyScroll.to(target)`, `.stackPositions()`, `.updateMargins()`. Mark sticky elements containing anchor links with `data-sticky-nav`. Scope to a container with `data-sticky-scope="containerId"` (height excluded from offsets for targets outside that container). Both `stackPositions()` + `updateMargins()` run on DOMContentLoaded in `main.js`; call them again after tab/panel switches that show/hide sticky navs.
 - **Themed icons**: `getThemedIcon(key, fallback?)` returns icons matching the current theme (e.g. `'error'` → `❌` on cyberpunk, `✗` on matrix). Keys: job types (`bulk-scrape`, `ra-sync`, `ra-refresh`...), states (`paused`, `resume`, `complete`, `queued`, `cancelled`), notifications (`success`, `error`, `warning`, `info`), stats (`stat-success`, `stat-failed`, `stat-skipped`), actions (`starting`, `running`, `cancel`, `save`, `loading`, `background`). In HTML use `data-themed-icon="key"` — `main.js` auto-populates on DOMContentLoaded.
@@ -122,16 +131,22 @@ Themes: cyberpunk (default), matrix, amber, ocean, christian (Cathedral), blader
 
 ## Distribution (Patreon Releases)
 
+Two shapes:
+- **Source** — small zip; user installs Python + runs `pip install -r requirements.txt`. Cross-platform from one host.
+- **Standalone** — PyInstaller bundle (Python runtime + deps + assets baked in). User just unzips and runs `./retrodb`. PyInstaller has no cross-compile — must build on the target OS.
+
 ```bash
-python3 build_dist.py            # all 3 platforms
-python3 build_dist.py linux|macos|windows
+python3 build_dist.py                       # all 3 source ZIPs
+python3 build_dist.py linux|macos|windows   # one source ZIP
+python3 build_dist.py --standalone          # standalone for host platform
 ```
 
 - Output: `/mnt/Storage/Scripts/Linux/Staging_Area/RetroDB/`
-- Filename: `RetroDB-v{VERSION}-{Platform}.zip`
-- Excluded from ZIPs: `config.py`, `data/settings.json`, `data/scraper_settings.json`, `data/rom_tools_config.json`, `data/hltb_dataset.csv`, `.secret_key`, all scraped media (`static/images/{boxart,boxart_3d,screenshots,fanart,manuals,trophies}/`, `static/videos/`), all `.db` files. Per-platform: only that platform's start script (`start.sh` / `start.command` / `start.bat`).
+- Filename: `RetroDB-v{VERSION}-{Platform}.zip` (source) or `RetroDB-v{VERSION}-{Platform}-Standalone.zip`
+- Excluded from source ZIPs: `config.py`, `data/settings.json`, `data/scraper_settings.json`, `data/rom_tools_config.json`, `.secret_key`, all scraped media (`static/images/{boxart,boxart_3d,screenshots,fanart,manuals,trophies}/`, `static/videos/`), all `.db` files. Per-platform: only that platform's start script (`start.sh` / `start.command` / `start.bat`).
+- Standalone build is driven by `retrodb.spec` (PyInstaller onedir mode). Spec whitelists static subdirs explicitly to avoid sweeping in scraped media; new pip deps that PyInstaller's static analyser can't follow (string-imported via `importlib`) must be added to `HIDDEN_IMPORTS` in the spec.
 
-Pre-release checklist: bump version + changelog → ensure `config.example.py` matches any new settings → `python3 build_dist.py` → upload from staging.
+Pre-release checklist: bump version + changelog → ensure `config.example.py` matches any new settings → `python3 build_dist.py` (source) and/or `python3 build_dist.py --standalone` (host platform) → upload from staging.
 
 ---
 

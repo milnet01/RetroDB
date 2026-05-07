@@ -24,7 +24,7 @@
             <span class="btn-icon">🎮</span>
             View Game
         </a>
-        <button onclick="refreshAchievements()" class="btn btn-secondary" id="refreshBtn">
+        <button type="button" onclick="refreshAchievements()" class="btn btn-secondary" id="refreshBtn">
             <span class="btn-icon">🔄</span>
             Refresh
         </button>
@@ -115,7 +115,7 @@
             <div class="hltb-section" id="hltbSection">
                 <input type="text" id="hltbSearchQuery" class="hltb-search-input"
                        value="{{ game.title }}" placeholder="Search game title...">
-                <button class="btn-hltb" id="hltbLookupBtn" onclick="xboxLookupHLTB()">🔍 Lookup HLTB</button>
+                <button type="button" class="btn-hltb" id="hltbLookupBtn" onclick="xboxLookupHLTB()">🔍 Lookup HLTB</button>
 
                 <div id="hltbPending" style="display: none;">
                     <div class="hltb-match-header" id="hltbMatchHeader"></div>
@@ -125,8 +125,8 @@
                         <div class="hltb-time-row"><span class="hltb-label">Completionist</span><span class="hltb-value" id="hltbPendingComplete">--</span></div>
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm); display: flex; gap: var(--spacing-xs);">
-                        <button class="btn btn-sm btn-primary" onclick="xboxConfirmHLTB()">✓ Save</button>
-                        <button class="btn btn-sm btn-secondary" onclick="xboxCancelHLTB()">✕ Cancel</button>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="xboxConfirmHLTB()">✓ Save</button>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="xboxCancelHLTB()">✕ Cancel</button>
                     </div>
                 </div>
 
@@ -151,7 +151,7 @@
                         {% endif %}
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                        <button class="btn btn-sm btn-danger" onclick="xboxClearHLTB()">✕ Clear</button>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="xboxClearHLTB()">✕ Clear</button>
                     </div>
                 </div>
             </div>

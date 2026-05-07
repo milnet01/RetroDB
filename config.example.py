@@ -15,15 +15,30 @@
 #   RETRODB_SECRET_KEY    - Flask secret key (overrides auto-generated key)
 
 import os
+import sys
 
 # =============================================================================
 # INTERNAL PATHS (not user-configurable here — use Settings page)
 # =============================================================================
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# BASE_DIR  — writable user data root (database, logs, scraped media, settings).
+# BUNDLE_DIR — read-only app assets root (templates, CSS/JS/fonts, vendored docs).
+#
+# In a normal `python app.py` install they are the same directory.  In a
+# PyInstaller frozen bundle (Pass 46.3) BASE_DIR sits next to the launcher
+# while BUNDLE_DIR is sys._MEIPASS — the temp / onedir extraction root.  The
+# split keeps user data outside _internal/ so upgrades just replace the
+# bundle and the data dirs survive untouched.
+if getattr(sys, 'frozen', False):
+    BASE_DIR = os.path.dirname(os.path.abspath(sys.executable))
+    BUNDLE_DIR = getattr(sys, '_MEIPASS', BASE_DIR)
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    BUNDLE_DIR = BASE_DIR
+
 DB_PATH = os.environ.get('RETRODB_DB_PATH', os.path.join(BASE_DIR, "database", "roms.db"))
-STATIC_PATH = os.path.join(BASE_DIR, "static")
-IMAGE_PATH = os.path.join(STATIC_PATH, "images")
+STATIC_PATH = os.path.join(BUNDLE_DIR, "static")
+IMAGE_PATH = os.path.join(BASE_DIR, "static", "images")
 
 # Path defaults (empty — set via Settings page, stored in data/settings.json)
 ROM_PATH = ""
@@ -95,8 +110,8 @@ except ValueError:
 
 # Application metadata
 APP_NAME = "RetroDB"
-APP_VERSION = "3.6.1"
-APP_LAST_UPDATE = "2026-04-25"
+APP_VERSION = "3.6.2"
+APP_LAST_UPDATE = "2026-05-07"
 APP_DESCRIPTION = "Retro Gaming ROM Library Manager"
 
 # Supported image extensions for boxart/screenshots
@@ -144,6 +159,12 @@ MAX_API_RESPONSE_BYTES = 10 * 1024 * 1024      # 25.7 — scraper JSON response 
 MUSEUM_UPLOAD_MAX_BYTES = 10 * 1024 * 1024     # 25.4 — museum controller-image cap
 CLZ_PDF_MAX_PAGES = 500                        # 25.5 — CLZ PDF page-count ceiling
 MAX_LIST_ROWS = 500                            # 25.8 — list-endpoint row cap
+# Pass 45.6 — Pillow decompression-bomb cap. A maliciously-crafted PNG can
+# decode to gigabytes of pixel data even if the file itself is small. Caps
+# Image.MAX_IMAGE_PIXELS at module-import time in services/image_utils.py
+# and services/game_media_service.py. 64 megapixels (~8K × 8K) is well above
+# any legitimate game cover or screenshot.
+IMAGE_MAX_PIXELS = 64_000_000                  # 45.6 — Pillow decompression-bomb cap
 
 # Maximum results to show in search
 MAX_SEARCH_RESULTS = 10

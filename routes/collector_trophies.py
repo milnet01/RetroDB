@@ -366,13 +366,17 @@ def _gather_collection_stats(user_id=None):
     stats['total_hltb_hours'] = int(total_hours)
 
     # --- Collection: genres, franchise concentration, manufacturer spread ---
+    # Pass 45.9 — loop variable was named `g`, which shadows `flask.g` for
+    # the rest of the request scope (and corrupts every helper that reads
+    # `from flask import g; g.user`). Same regression Pass 41.8.A swept
+    # across the codebase. Renamed to `genre_part`.
     genre_rows = query("SELECT genre FROM games WHERE genre IS NOT NULL AND genre != ''")
     genres = set()
     for r in genre_rows:
-        for g in (r['genre'] or '').split(','):
-            g = g.strip()
-            if g:
-                genres.add(g)
+        for genre_part in (r['genre'] or '').split(','):
+            genre_part = genre_part.strip()
+            if genre_part:
+                genres.add(genre_part)
     stats['distinct_genres'] = len(genres)
 
     max_fran = query("""
@@ -567,15 +571,51 @@ def _trophies_sorted(user_id):
     )
 
 
+def _empty_trophies_from_definitions():
+    """Pass 45.9 — Render in-memory trophy stubs from TROPHY_DEFINITIONS.
+
+    Used by the GET handlers when the user has no rows yet, so a first-time
+    visitor still sees the full trophy roster without GET writing 70 rows
+    to the database (RFC 7231 says GET is safe — must not have observable
+    side effects on shared state). The user gets a normal empty-progress
+    rendering and the explicit POST /api/collector-trophies/refresh button
+    is what materialises the rows + computes scores.
+
+    Each stub mirrors the column shape of `collector_trophies` rows so the
+    template can iterate them identically to DB rows: progress=0,
+    earned_at=None.
+    """
+    tier_order = {'platinum': 1, 'gold': 2, 'silver': 3, 'bronze': 4}
+    stubs = [
+        {
+            'id': td['id'],
+            'name': td['name'],
+            'description': td['description'],
+            'icon': td['icon'],
+            'tier': td['tier'],
+            'category': td['category'],
+            'threshold': td['threshold'],
+            'progress': 0,
+            'earned_at': None,
+        }
+        for td in TROPHY_DEFINITIONS
+    ]
+    stubs.sort(key=lambda t: (tier_order.get(t['tier'], 99), t['name']))
+    return stubs
+
+
 @bp.route('/collector-trophies')
 @login_required
 def collector_trophies_page():
-    """Render the collector trophy showcase page."""
+    """Render the collector trophy showcase page.
+
+    Pass 45.9 — GET no longer triggers _refresh_trophies on cold cache.
+    The first visit renders an in-memory roster from TROPHY_DEFINITIONS
+    (all unearned); the explicit POST /api/collector-trophies/refresh
+    button is what writes rows and computes scores.
+    """
     user_id = g.user['id']
-    trophies = _trophies_sorted(user_id)
-    if not trophies:
-        _refresh_trophies(user_id=user_id)
-        trophies = _trophies_sorted(user_id)
+    trophies = _trophies_sorted(user_id) or _empty_trophies_from_definitions()
 
     rank = compute_collector_rank(trophies)
     earned_count = rank['earned_count']
@@ -597,12 +637,13 @@ def collector_trophies_page():
 @bp.route('/api/collector-trophies')
 @login_required
 def get_all_trophies():
-    """Return the caller's collector trophies with their current status."""
+    """Return the caller's collector trophies with their current status.
+
+    Pass 45.9 — GET no longer mutates the DB. See `collector_trophies_page`
+    for the rationale; same fix.
+    """
     user_id = g.user['id']
-    trophies = _trophies_sorted(user_id)
-    if not trophies:
-        _refresh_trophies(user_id=user_id)
-        trophies = _trophies_sorted(user_id)
+    trophies = _trophies_sorted(user_id) or _empty_trophies_from_definitions()
 
     rank = compute_collector_rank(trophies)
     return jsonify({

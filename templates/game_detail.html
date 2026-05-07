@@ -80,32 +80,32 @@
     {% endif %}
     <div class="header-buttons">
         {% if has_perm('launch') %}
-        <button id="play-btn" class="btn btn-primary" data-game-id="{{ game.id }}" onclick="launchGame(this)" title="Launch this game in the configured emulator">
+        <button type="button" id="play-btn" class="btn btn-primary" data-game-id="{{ game.id }}" onclick="launchGame(this)" title="Launch this game in the configured emulator">
             <span class="btn-icon">▶</span>
             Play
         </button>
         {% endif %}
         {% if game.scraped %}
-        <button class="btn btn-danger-outline" onclick="confirmClearMetadata()">
+        <button type="button" class="btn btn-danger-outline" onclick="confirmClearMetadata()">
             <span class="btn-icon">🗑️</span>
             Clear
         </button>
-        <button class="btn btn-secondary" onclick="openEditModal()">
+        <button type="button" class="btn btn-secondary" onclick="openEditModal()">
             <span class="btn-icon">✏️</span>
             Edit
         </button>
         {% endif %}
         {% if ai_scraper_enabled %}
-        <button id="pageAiFillBtn" class="btn btn-secondary" onclick="triggerPageAiFill(this)" title="Fill missing metadata with AI">
+        <button type="button" id="pageAiFillBtn" class="btn btn-secondary" onclick="triggerPageAiFill(this)" title="Fill missing metadata with AI">
             <span class="btn-icon">🤖</span>
             AI Fill
         </button>
         {% endif %}
-        <button class="btn btn-primary" onclick="openScrapeModal()">
+        <button type="button" class="btn btn-primary" onclick="openScrapeModal()">
             <span class="btn-icon">⬇️</span>
             Scrape
         </button>
-        <button class="btn btn-danger" onclick="deleteGame({{ game.id }})" title="Delete game from database">
+        <button type="button" class="btn btn-danger" onclick="deleteGame({{ game.id }})" title="Delete game from database">
             <span class="btn-icon">🗑️</span>
             Delete
         </button>
@@ -153,7 +153,7 @@
                 {% endif %}
                 <!-- Toggle button if both exist -->
                 {% if game.boxart and game.boxart_3d %}
-                <button class="boxart-toggle-btn {% if show_3d_initially %}active{% endif %}" onclick="toggleBoxartView()" title="Switch between 2D and 3D boxart">
+                <button type="button" class="boxart-toggle-btn {% if show_3d_initially %}active{% endif %}" onclick="toggleBoxartView()" title="Switch between 2D and 3D boxart">
                     <span id="boxartToggleIcon">{% if show_3d_initially %}📷{% else %}🎲{% endif %}</span>
                     <span id="boxartToggleText">{% if show_3d_initially %}2D{% else %}3D{% endif %}</span>
                 </button>
@@ -396,17 +396,17 @@
         <div class="media-section screenshots-section">
             <h2 class="media-title">📸 Screenshots ({{ game.screenshots.split(',') | length }})</h2>
             <div class="screenshots-wrapper">
-                <button class="screenshots-nav prev" onclick="scrollScreenshots(-1)" aria-label="Previous screenshots">‹</button>
+                <button type="button" class="screenshots-nav prev" onclick="scrollScreenshots(-1)" aria-label="Previous screenshots">‹</button>
                 <div class="screenshots-row" id="screenshotsRow">
                     {% for ss in game.screenshots.split(',') if ss %}
                     <div class="screenshot-thumb" data-filename="{{ ss.strip() }}">
                         <img src="{{ url_for('static', filename='images/screenshots/' + ss.strip()) }}"
                              alt="Screenshot {{ loop.index }}" loading="lazy" decoding="async">
-                        <button class="screenshot-delete-btn" onclick="event.stopPropagation(); deleteScreenshot('{{ ss.strip() }}')" title="Delete screenshot">×</button>
+                        <button type="button" class="screenshot-delete-btn" onclick="event.stopPropagation(); deleteScreenshot('{{ ss.strip() }}')" title="Delete screenshot">×</button>
                     </div>
                     {% endfor %}
                 </div>
-                <button class="screenshots-nav next" onclick="scrollScreenshots(1)" aria-label="Next screenshots">›</button>
+                <button type="button" class="screenshots-nav next" onclick="scrollScreenshots(1)" aria-label="Next screenshots">›</button>
             </div>
         </div>
         {% endif %}
@@ -453,7 +453,7 @@
                        value="{{ game.title }}"
                        placeholder="Search game title...">
 
-                <button class="btn-hltb" id="hltbLookupBtn" onclick="lookupHLTB()">
+                <button type="button" class="btn-hltb" id="hltbLookupBtn" onclick="lookupHLTB()">
                     🔍 Lookup HLTB
                 </button>
 
@@ -475,8 +475,8 @@
                         </div>
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm); display: flex; gap: var(--spacing-xs);">
-                        <button class="btn btn-sm btn-primary" onclick="confirmHLTB()">✓ Save</button>
-                        <button class="btn btn-sm btn-secondary" onclick="cancelHLTB()">✕ Cancel</button>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="confirmHLTB()">✓ Save</button>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="cancelHLTB()">✕ Cancel</button>
                     </div>
                 </div>
 
@@ -515,7 +515,7 @@
                         {% endif %}
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                        <button class="btn btn-sm btn-danger" onclick="clearHLTB()">✕ Clear</button>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="clearHLTB()">✕ Clear</button>
                     </div>
                 </div>
             </div>
@@ -550,7 +550,7 @@
                 <div class="ed-row">
                     <span class="ed-label">File:</span>
                     <span class="ed-value mono" id="currentFilename">{{ game.rom_path.split('/')[-1] }}</span>
-                    <button class="btn-rename" onclick="openRenameModal()" title="Rename ROM file">✏️</button>
+                    <button type="button" class="btn-rename" onclick="openRenameModal()" title="Rename ROM file">✏️</button>
                 </div>
                 <div class="ed-row">
                     <span class="ed-label">Path:</span>
@@ -662,8 +662,10 @@
     <!-- Scrape History -->
     {% if game.scrape_history %}
     <div class="scrape-history-section">
-        <h2 class="section-title-sm" onclick="toggleScrapeHistory()" style="cursor: pointer;">
-            📜 Scrape History <span id="scrapeHistoryArrow">▼</span>
+        <h2 class="section-title-sm">
+            <button type="button" class="scrape-history-toggle" onclick="toggleScrapeHistory()" aria-expanded="true" aria-controls="scrapeHistoryContent">
+                📜 Scrape History <span id="scrapeHistoryArrow">▼</span>
+            </button>
         </h2>
         <div id="scrapeHistoryContent" class="scrape-history-content">
             {% if game.scrape_history is iterable and game.scrape_history is not string %}
@@ -3124,10 +3126,23 @@ body:has(.game-fanart-bg.active)::before {
 }
 
 .scrape-history-section .section-title-sm {
+    margin-bottom: 1rem;
+}
+
+.scrape-history-section .scrape-history-toggle {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    padding: 0;
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 .scrape-history-content {
@@ -3374,12 +3389,15 @@ const currentControllerSupport = {{ game.controller_support|tojson|default('""')
 function toggleScrapeHistory() {
     const content = document.getElementById('scrapeHistoryContent');
     const arrow = document.getElementById('scrapeHistoryArrow');
+    const btn = document.querySelector('.scrape-history-toggle');
     if (content.style.display === 'none') {
         content.style.display = 'block';
         arrow.textContent = '▼';
+        if (btn) btn.setAttribute('aria-expanded', 'true');
     } else {
         content.style.display = 'none';
         arrow.textContent = '▶';
+        if (btn) btn.setAttribute('aria-expanded', 'false');
     }
 }
 
@@ -4474,10 +4492,10 @@ function showBulkScrapeConflictModal(gameId) {
                 <p style="margin-top: 12px;">What would you like to do?</p>
             </div>
             <div class="confirm-modal-footer">
-                <button class="btn btn-secondary" onclick="closeBulkConflictModal()">
+                <button type="button" class="btn btn-secondary" onclick="closeBulkConflictModal()">
                     Cancel
                 </button>
-                <button class="btn btn-primary" onclick="scrapeNowRemoveFromBulk(${gameId})">
+                <button type="button" class="btn btn-primary" onclick="scrapeNowRemoveFromBulk(${gameId})">
                     Scrape Now (Remove from Bulk)
                 </button>
             </div>
@@ -5186,7 +5204,7 @@ async function confirmHLTB() {
                     </div>
                 </div>
                 <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                    <button class="btn btn-sm btn-danger" onclick="clearHLTB()">✕ Clear</button>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="clearHLTB()">✕ Clear</button>
                 </div>
             `;
 

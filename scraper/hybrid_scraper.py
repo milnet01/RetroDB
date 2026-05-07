@@ -4,14 +4,15 @@
 # Combines metadata from ES-DE, TheGamesDB, and IGDB to fill all gaps
 # =============================================================================
 
+import json
+import logging
 import os
 import re
-import logging
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import IMAGE_PATH, STATIC_PATH
-from services.normalization import normalize_genre, normalize_modes
+from services.normalization import normalize_genre
 from services.game_utils import generate_sort_title, infer_rating_from_content, RATING_SYSTEM_KEYS, RATING_SYSTEMS
 from services.game_metadata_service import cross_map_ratings
 
@@ -20,16 +21,12 @@ logger = logging.getLogger(__name__)
 # Import individual scrapers
 from scraper.base_scraper import get_scraper_conn
 from scraper.scrape_esde import (
-    apply_esde_metadata,
-    extract_region_from_filename,
-    derive_game_modes
+    extract_region_from_filename
 )
 from scraper.scrape_thegamesdb import (
     fetch_game_details as fetch_tgdb_details,
-    _download_tgdb_image as download_tgdb_image,
 )
 from scraper.scrape_igdb import (
-    fetch_game_details as fetch_igdb_details,
     igdb_auth,
     igdb_request
 )
@@ -219,13 +216,13 @@ def should_use_default_controller(controller_value):
     """Check if the controller value is generic and should be replaced with system default"""
     if not controller_value:
         return True
-    
+
     # Check if it's a generic value
     controller_lower = controller_value.lower().strip()
     for generic in GENERIC_CONTROLLER_VALUES:
         if controller_lower == generic or controller_lower.startswith(generic):
             return True
-    
+
     return False
 
 # normalize_title, normalize_esrb_rating imported from scraper.metadata_normalizer
@@ -282,7 +279,7 @@ def fetch_igdb_extended(game_id):
     """Fetch extended game information from IGDB including franchise, similar games, ratings, etc."""
     try:
         token = igdb_auth()
-        
+
         # Note: time_to_beat was deprecated, using external_games for HLTB instead
         body = f"""
         fields name, first_release_date,
@@ -299,12 +296,12 @@ def fetch_igdb_extended(game_id):
                rating, rating_count, aggregated_rating, aggregated_rating_count;
         where id = {game_id};
         """
-        
+
         results = igdb_request("games", body, token)
-        
+
         if results:
             game = results[0]
-            
+
             # Process franchise
             franchise = None
             if game.get('franchise'):
@@ -313,24 +310,24 @@ def fetch_igdb_extended(game_id):
                 franchise = game['franchises'][0].get('name')
             elif game.get('collection'):
                 franchise = game['collection'].get('name')
-            
+
             # Process similar games
             similar = []
             if game.get('similar_games'):
                 for sg in game['similar_games'][:5]:
                     similar.append(sg.get('name', ''))
-            
+
             # Process critic/user scores
             critic_score = game.get('aggregated_rating')  # 0-100 scale
             critic_score_count = game.get('aggregated_rating_count')
             user_score = game.get('rating')  # 0-100 scale
             user_score_count = game.get('rating_count')
-            
+
             if critic_score:
                 logger.info(f"IGDB critic score: {critic_score:.1f} ({critic_score_count} reviews)")
             if user_score:
                 logger.info(f"IGDB user score: {user_score:.1f} ({user_score_count} ratings)")
-            
+
             # Process player perspectives
             perspectives = []
             if game.get('player_perspectives'):
@@ -346,12 +343,12 @@ def fetch_igdb_extended(game_id):
                 'user_score_count': user_score_count,
                 'perspective': ', '.join(perspectives) if perspectives else None,
             }
-            
+
             logger.info(f"IGDB extended details fetched for game ID: {game_id}")
             return game
-        
+
         return None
-        
+
     except Exception as e:
         logger.error(f"IGDB extended fetch error: {e}")
         return None
@@ -367,18 +364,18 @@ def fetch_tgdb_extended(game_id):
         details = fetch_tgdb_details(game_id)
         if not details:
             return None
-        
+
         # TGDB doesn't have franchise/series in basic API, but we can derive from game title
         # Look for common patterns like "Final Fantasy VII" -> "Final Fantasy"
         title = details.get('name', '')
         franchise = extract_franchise_from_title(title)
-        
+
         details['_extended'] = {
             'franchise': franchise,
         }
-        
+
         return details
-        
+
     except Exception as e:
         logger.error(f"TGDB extended fetch error: {e}")
         return None
@@ -398,7 +395,7 @@ def extract_franchise_from_title(title):
         r'^(.+?):\s+.+$',
         r'^(.+?)\s+-\s+.+$',
     ]
-    
+
     for pattern in franchise_patterns:
         match = re.match(pattern, title)
         if match:
@@ -406,7 +403,7 @@ def extract_franchise_from_title(title):
             # Only return if franchise is substantial
             if len(franchise) > 3:
                 return franchise
-    
+
     return None
 
 
@@ -416,21 +413,21 @@ def extract_franchise_from_title(title):
 
 def detect_save_type(system_folder, title):
     """Detect likely save type based on system and game era"""
-    
+
     # Systems that typically use battery saves
     battery_systems = ['nes', 'snes', 'gb', 'gbc', 'gba', 'genesis', 'megadrive', 'n64']
-    
+
     # Systems that use memory cards
     memcard_systems = ['psx', 'ps2', 'gc', 'dreamcast', 'saturn']
-    
+
     # Systems that use internal storage
     internal_systems = ['ps3', 'xbox', 'xbox360', 'wii', 'wiiu', 'switch', 'psp', 'psvita']
-    
+
     # Cartridge systems without saves (passwords common)
     password_systems = ['atari2600', 'atari5200', 'atari7800', 'colecovision', 'intellivision']
-    
+
     system = system_folder.lower()
-    
+
     if system in battery_systems:
         return "Battery Save / SRAM"
     elif system in memcard_systems:
@@ -449,25 +446,25 @@ def detect_save_type(system_folder, title):
 
 def detect_controller_support(system_folder, modes):
     """Detect controller support based on system"""
-    
+
     system = system_folder.lower()
-    
+
     # Standard controller
     standard = ['nes', 'snes', 'genesis', 'megadrive', 'mastersystem', 'psx', 'ps2', 'ps3',
                 'saturn', 'dreamcast', 'xbox', 'xbox360', 'n64', 'gc', 'atari2600', 'neogeo']
-    
+
     # Motion controls
     motion = ['wii', 'wiiu']
-    
+
     # Handheld (built-in)
-    handheld = ['gb', 'gbc', 'gba', 'nds', 'n3ds', 'psp', 'psvita', 'gamegear', 'atarilynx', 
+    handheld = ['gb', 'gbc', 'gba', 'nds', 'n3ds', 'psp', 'psvita', 'gamegear', 'atarilynx',
                 'ngp', 'ngpc', 'wonderswan', 'wonderswancolor']
-    
+
     # Touch screen
     touch = ['nds', 'n3ds', 'psvita']
-    
+
     support = []
-    
+
     if system in standard:
         support.append("Standard Controller")
     if system in motion:
@@ -476,15 +473,190 @@ def detect_controller_support(system_folder, modes):
         support.append("Built-in Controls")
     if system in touch:
         support.append("Touch Screen")
-    
+
     # Note: Multiplayer is a game mode, not a controller type - handled in 'modes' field
-    
+
     return ', '.join(support) if support else None
 
 
 # =============================================================================
 # HYBRID APPLY METADATA
 # =============================================================================
+
+def _normalize_ratings(metadata, result):
+    """Run the three rating-normalisation steps the save block needs:
+
+    1. Normalize ESRB to its canonical letter (KA → E, etc).
+    2. Cross-map empty rating fields from any available rating
+       (e.g. ESRB→PEGI, GRAC→ESRB) via `services.game_metadata_service.
+       cross_map_ratings`. 'RP' is treated as empty inside that helper.
+    3. Content-based inference as a final fallback when no rating
+       system has been filled at all (`infer_rating_from_content`).
+
+    Mutates `metadata` in place; appends descriptive entries to
+    `result['filled_fields']` for every change. Pass 38.1 partial —
+    extracted from the inline NORMALIZE VALUES BEFORE SAVE block.
+    """
+    # Normalize ESRB (KA → E, etc) before cross-mapping fires.
+    if metadata.get('esrb_rating'):
+        metadata['esrb_rating'] = normalize_esrb_rating(metadata['esrb_rating'])
+
+    # Cross-map empty rating fields from any available rating.
+    _bare = {k: metadata.get(RATING_SYSTEMS[k]['db_column']) for k in RATING_SYSTEM_KEYS}
+    _filled = cross_map_ratings(_bare)
+    for tgt_key in RATING_SYSTEM_KEYS:
+        tgt_col = RATING_SYSTEMS[tgt_key]['db_column']
+        new_val = _filled.get(tgt_key)
+        if new_val and new_val != (_bare.get(tgt_key) or ''):
+            metadata[tgt_col] = new_val
+            tgt_name = RATING_SYSTEMS[tgt_key]['name']
+            result['filled_fields'].append(f'{tgt_col} (cross-map→{tgt_name})')
+            logger.info(f"Auto-mapped rating → {tgt_name} '{new_val}'")
+
+    # Content-based rating inference (final fallback when nothing else fills).
+    has_any_rating = any(
+        metadata.get(RATING_SYSTEMS[k]['db_column']) not in (None, '', 'RP', 'rp')
+        for k in RATING_SYSTEM_KEYS
+    )
+    if not has_any_rating:
+        inferred = infer_rating_from_content(metadata)
+        if inferred:
+            for col, val in inferred.items():
+                metadata[col] = val
+            result['filled_fields'].append('ratings (inferred from content)')
+            logger.info(
+                f"Inferred ratings from content: tier mapped to {len(inferred)} systems"
+            )
+
+
+def _build_scrape_history_json(c, db_game_id, primary_source, metadata,
+                                result, force_overwrite):
+    """Read the existing `games.scrape_history` JSON for `db_game_id`,
+    append a new entry summarising this scrape, and return the
+    serialised JSON ready for the save UPDATE.
+
+    Pass 38.1 partial — extracted from the inline "CREATE SCRAPE HISTORY"
+    block inside `apply_hybrid_metadata`. The helper takes the caller's
+    cursor (no separate connection) so this stays inside the outer
+    transaction's lifetime; the saved row carries the same scrape_history
+    snapshot regardless of where the helper lives.
+
+    `existing_history` is robust against malformed JSON (rolled back to
+    `[]`) so a one-time DB corruption doesn't abort the scrape — the
+    entry just becomes the first of a fresh history list.
+    """
+    import json
+    from datetime import datetime
+
+    # `scrape_history` is part of the baseline games schema (migration 001),
+    # so it is always present on any DB that reached this code path.
+    c.execute("SELECT scrape_history FROM games WHERE id = ? LIMIT 1", (db_game_id,))
+    row = c.fetchone()
+    existing_history = []
+    if row and row[0]:
+        try:
+            existing_history = json.loads(row[0])
+        except (ValueError, TypeError):
+            existing_history = []
+
+    history_entry = {
+        'timestamp': datetime.now().isoformat(),
+        'primary_source': primary_source,
+        'sources_used': result['sources_used'],
+        'fields_filled': result['filled_fields'],
+        'fields_missing': [k for k, v in metadata.items() if not v],
+        'scrape_mode': 'full_rescrape' if force_overwrite else 'fill_missing',
+    }
+    existing_history.append(history_entry)
+    return json.dumps(existing_history)
+
+
+def _normalize_region(metadata, result):
+    """Reduce `metadata['region']` to a single value, falling back to the
+    user's `default_region` setting (default 'USA').
+
+    Two cases handled:
+      - Multi-value ('USA, Europe, Japan'): pick the first part that
+        matches a configured region option, else `default_region`.
+      - Empty: use `default_region` and record `'region (default)'` in
+        `result['filled_fields']`.
+      - Single-value: leave untouched.
+
+    Pass 38.1 partial — extracted from the inline normalize block in
+    `apply_hybrid_metadata`. The original loaded settings twice (once
+    per branch); here it's loaded once. `settings_manager.load_settings`
+    is cached internally, so the perf delta is nil; the visible win is
+    one try/except instead of two.
+    """
+    try:
+        from settings_manager import load_settings as _load_settings
+        _stg = _load_settings()
+        region_opts = [
+            r.lower()
+            for r in _stg.get('region_options', ['USA', 'Europe', 'Japan', 'World'])
+        ]
+        default_region = _stg.get('default_region', 'USA')
+    except Exception:
+        region_opts = ['usa', 'europe', 'japan', 'world']
+        default_region = 'USA'
+
+    region_value = metadata.get('region') or ''
+    if region_value:
+        if ',' in region_value:
+            parts = [p.strip() for p in region_value.split(',') if p.strip()]
+            matched = next((p for p in parts if p.lower() in region_opts), None)
+            metadata['region'] = matched or default_region
+        # Single-value path: leave as-is.
+    else:
+        metadata['region'] = default_region
+        result['filled_fields'].append('region (default)')
+
+
+def _apply_retroachievements_check(db_game_id, title, system_folder):
+    """Look up RetroAchievements support for `(title, system_folder)` and
+    update the games row if found. Returns True when RA data was written
+    (caller should append 'retroachievements' to its filled_fields list).
+
+    Pass 38.1 partial extraction — this block was inline at the tail of
+    apply_hybrid_metadata; it opens its own connection (independent of
+    the caller's transaction) and silently swallows exceptions to keep
+    a missing/down RA service from poisoning the rest of the scrape.
+    """
+    try:
+        from scraper.retroachievements import check_retroachievements
+        ra_info = check_retroachievements(title, system_folder)
+        if not (ra_info and ra_info.get('has_achievements')):
+            return False
+        conn2 = get_scraper_conn()
+        try:
+            c2 = conn2.cursor()
+            c2.execute("""
+                UPDATE games SET
+                    has_retroachievements = 1,
+                    ra_game_id = ?,
+                    ra_achievement_count = ?,
+                    ra_points = ?
+                WHERE id = ?
+            """, (
+                ra_info.get('id'),
+                ra_info.get('achievement_count', 0),
+                ra_info.get('points', 0),
+                db_game_id,
+            ))
+            conn2.commit()
+        finally:
+            conn2.close()
+        logger.info(
+            f"Found RetroAchievements for game {db_game_id}: "
+            f"ID={ra_info.get('id')}, "
+            f"{ra_info.get('achievement_count')} achievements, "
+            f"{ra_info.get('points')} points"
+        )
+        return True
+    except Exception as e:
+        logger.debug(f"RetroAchievements check skipped: {e}")
+        return False
+
 
 def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                           secondary_sources=None, fill_gaps=True, force_overwrite=False,
@@ -516,7 +688,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         'missing_fields': [],
         'sources_used': []
     }
-    
+
     try:
         # Get current game data
         c.execute("SELECT * FROM games WHERE id = ?", (db_game_id,))
@@ -526,7 +698,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             result['success'] = False
             return result
         game = dict(row)
-        
+
         # Initialize metadata dict
         metadata = {
             'title': None,
@@ -575,7 +747,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         # UNLESS force_overwrite is True (full re-scrape mode)
         if not force_overwrite:
             import json as _json_prepop
-            for field in metadata.keys():
+            for field in metadata:
                 existing_value = game.get(field)
                 if existing_value:
                     # alternate_titles is stored as JSON in DB — decode to list
@@ -651,40 +823,54 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 )
         else:
             logger.info(f"Force overwrite mode - starting with empty metadata for game {db_game_id}")
-        
+
         sources_data = {}
-        
+
         # =============================================
         # FETCH DATA FROM PRIMARY SOURCE
         # =============================================
-        
+
         logger.info(f"Fetching from primary source: {primary_source}")
-        
+
         if primary_source == 'esde':
-            # For ES-DE, we need to fetch the game details from gamelist.xml first
-            from scraper.scrape_esde import fetch_esde_game_details, apply_esde_metadata as apply_esde
-            
-            # If primary_data was provided (from search results), use it directly
-            # This fixes the bug where selecting an ES-DE result would fetch the wrong game
-            if primary_data and primary_data.get('source') == 'esde':
-                logger.info(f"Using provided ES-DE data for: {primary_data.get('name', 'Unknown')}")
-                esde_details = {
-                    'name': primary_data.get('name', ''),
-                    'description': primary_data.get('description', ''),
-                    'developer': primary_data.get('developer', ''),
-                    'publisher': primary_data.get('publisher', ''),
-                    'genre': primary_data.get('genre', ''),
-                    'release_date': primary_data.get('release_date', ''),
-                    'players': primary_data.get('players', ''),
-                    'esde_data': primary_data.get('esde_data', {})
-                }
-            else:
-                logger.info(f"Fetching ES-DE details for path: {primary_id}, folder: {system_folder}")
-                esde_details = fetch_esde_game_details(primary_id, system_folder)
-            
+            # Pass 41.4.B (ES-DE branch) — guard the ES-DE primary dispatch
+            # with the same per-source try/except contract used for tgdb/igdb/
+            # rawg/screenscraper below. A malformed gamelist.xml row or a
+            # transient filesystem error during media copy must not abort the
+            # hybrid apply; on failure, fall through to the gap-fill phase.
+            esde_details = None
+            try:
+                # For ES-DE, we need to fetch the game details from gamelist.xml first
+                from scraper.scrape_esde import fetch_esde_game_details, apply_esde_metadata as apply_esde
+
+                # If primary_data was provided (from search results), use it directly
+                # This fixes the bug where selecting an ES-DE result would fetch the wrong game
+                if primary_data and primary_data.get('source') == 'esde':
+                    logger.info(f"Using provided ES-DE data for: {primary_data.get('name', 'Unknown')}")
+                    esde_details = {
+                        'name': primary_data.get('name', ''),
+                        'description': primary_data.get('description', ''),
+                        'developer': primary_data.get('developer', ''),
+                        'publisher': primary_data.get('publisher', ''),
+                        'genre': primary_data.get('genre', ''),
+                        'release_date': primary_data.get('release_date', ''),
+                        'players': primary_data.get('players', ''),
+                        'esde_data': primary_data.get('esde_data', {})
+                    }
+                else:
+                    logger.info(f"Fetching ES-DE details for path: {primary_id}, folder: {system_folder}")
+                    esde_details = fetch_esde_game_details(primary_id, system_folder)
+            except Exception as e:
+                logger.warning(f"Primary ES-DE fetch failed for {primary_id}: {e}; "
+                               "falling through to gap-fill")
+                esde_details = None
+            # `esde_details is None` already gates the apply block below; with
+            # the fetch inside try/except, an exception drops us into that
+            # else-branch (logged) without aborting the rest of the function.
+
             if esde_details:
                 logger.info(f"ES-DE details found: {esde_details.get('name', 'Unknown')}")
-                
+
                 # Apply ES-DE data to metadata
                 # As the primary (user-selected) source, always set title
                 # (matching IGDB/RAWG behavior). Other fields fill only if empty.
@@ -709,18 +895,18 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 if esde_details.get('players') and not metadata['players']:
                     metadata['players'] = esde_details['players']
                     result['filled_fields'].append('players (ES-DE)')
-                
+
                 # Now apply ES-DE media (boxart, screenshots, etc.) - pass existing metadata
                 # Pass force_overwrite to ensure media is replaced in full rescrape mode
-                apply_esde(db_game_id, esde_details.get('esde_data', {}), system_folder, 
+                apply_esde(db_game_id, esde_details.get('esde_data', {}), system_folder,
                           existing_boxart=metadata.get('boxart'),
                           existing_screenshots=metadata.get('screenshots'),
                           force_overwrite=force_overwrite)
-                
+
                 # Refresh game data from DB
                 c.execute("SELECT * FROM games WHERE id = ?", (db_game_id,))
                 game = dict(c.fetchone())
-                
+
                 # Update metadata with any media that was copied (verify files exist)
                 _media_dir_map = {
                     'boxart': os.path.join(IMAGE_PATH, 'boxart'),
@@ -730,96 +916,123 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                     'video': os.path.join(STATIC_PATH, 'videos'),
                     'screenshots': os.path.join(IMAGE_PATH, 'screenshots'),
                 }
-                for field in ['boxart', 'boxart_3d', 'screenshots', 'fanart', 'video', 'manual']:
+                # Pass 41.4.A — screenshots are appended (not replaced) by
+                # apply_esde_metadata, so the DB value after the apply is the
+                # union of pre-existing + newly-scraped. The earlier
+                # `if not metadata.get(field)` guard treated a pre-populated
+                # metadata['screenshots'] as "no need to sync", silently
+                # dropping the appended scrape on the final UPDATE. Sync
+                # screenshots unconditionally, file-existence filtered.
+                if game.get('screenshots'):
+                    ss_list = [s.strip() for s in game['screenshots'].split(',') if s.strip()]
+                    valid = [s for s in ss_list if os.path.exists(
+                        os.path.join(_media_dir_map['screenshots'], s)
+                    )]
+                    if valid:
+                        metadata['screenshots'] = ', '.join(valid)
+                        if 'screenshots (ES-DE)' not in result['filled_fields']:
+                            result['filled_fields'].append('screenshots (ES-DE)')
+                for field in ['boxart', 'boxart_3d', 'fanart', 'video', 'manual']:
                     if game.get(field) and not metadata.get(field):
-                        # Verify the file(s) actually exist on disk
-                        if field == 'screenshots':
-                            ss_list = [s.strip() for s in game[field].split(',') if s.strip()]
-                            valid = [s for s in ss_list if os.path.exists(os.path.join(_media_dir_map[field], s))]
-                            if valid:
-                                metadata[field] = ', '.join(valid)
-                            else:
-                                continue
-                        else:
-                            if not os.path.exists(os.path.join(_media_dir_map[field], game[field])):
-                                continue
-                            metadata[field] = game[field]
+                        if not os.path.exists(os.path.join(_media_dir_map[field], game[field])):
+                            continue
+                        metadata[field] = game[field]
                         if field == 'boxart':
                             metadata['_boxart_source'] = 'esde'
                         if f'{field} (ES-DE)' not in result['filled_fields']:
                             result['filled_fields'].append(f'{field} (ES-DE)')
-                
+
                 result['sources_used'].append('ES-DE')
             else:
                 logger.warning(f"No ES-DE details found for path: {primary_id}")
-            
+
+        # Pass 41.4.B — wrap each primary-source dispatch in try/except so a
+        # malformed response from one provider doesn't abort the whole hybrid
+        # apply. Log the failure and fall through to the gap-fill phase, which
+        # may successfully populate the same fields from a fallback source.
         elif primary_source == 'tgdb':
-            tgdb_data = fetch_tgdb_extended(primary_id)
-            if tgdb_data:
-                sources_data['tgdb'] = tgdb_data
-                apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result)
-                result['sources_used'].append('TheGamesDB')
-                
+            try:
+                tgdb_data = fetch_tgdb_extended(primary_id)
+                if tgdb_data:
+                    sources_data['tgdb'] = tgdb_data
+                    apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result)
+                    result['sources_used'].append('TheGamesDB')
+            except Exception as e:
+                logger.warning(f"Primary TGDB fetch/apply failed for {primary_id}: {e}; "
+                               "falling through to gap-fill")
+
         elif primary_source == 'igdb':
-            igdb_data = fetch_igdb_extended(primary_id)
-            if igdb_data:
-                sources_data['igdb'] = igdb_data
-                apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result)
-                result['sources_used'].append('IGDB')
-        
+            try:
+                igdb_data = fetch_igdb_extended(primary_id)
+                if igdb_data:
+                    sources_data['igdb'] = igdb_data
+                    apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result)
+                    result['sources_used'].append('IGDB')
+            except Exception as e:
+                logger.warning(f"Primary IGDB fetch/apply failed for {primary_id}: {e}; "
+                               "falling through to gap-fill")
+
         elif primary_source == 'rawg':
-            from scraper.scrape_rawg import get_game_details as fetch_rawg
-            rawg_data = fetch_rawg(primary_id)
-            if rawg_data:
-                sources_data['rawg'] = rawg_data
-                apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result)
-                result['sources_used'].append('RAWG')
-        
+            try:
+                from scraper.scrape_rawg import get_game_details as fetch_rawg
+                rawg_data = fetch_rawg(primary_id)
+                if rawg_data:
+                    sources_data['rawg'] = rawg_data
+                    apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result)
+                    result['sources_used'].append('RAWG')
+            except Exception as e:
+                logger.warning(f"Primary RAWG fetch/apply failed for {primary_id}: {e}; "
+                               "falling through to gap-fill")
+
         elif primary_source == 'screenscraper':
-            from scraper.scraper_manager import get_cached_screenscraper_result
-            settings = load_scraper_settings()
-            api_keys = settings.get('api_keys', {})
-            ss_username = api_keys.get('screenscraper_username', '')
-            ss_password = api_keys.get('screenscraper_password', '')
-            
-            if ss_username and ss_password:
-                # Parse gameid:systemid format
-                ss_game_id = primary_id
-                ss_system_id = None
-                if ':' in str(primary_id):
-                    parts = str(primary_id).split(':')
-                    ss_game_id = parts[0]
-                    ss_system_id = parts[1] if len(parts) > 1 else None
-                
-                # Try to get cached search result first (ScreenScraper API doesn't support fetch by ID)
-                ss_data = get_cached_screenscraper_result(ss_game_id, ss_system_id)
-                
-                if ss_data:
-                    logger.info(f"Using cached ScreenScraper data for game {ss_game_id}")
-                    sources_data['screenscraper'] = ss_data
-                    apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result)
-                    result['sources_used'].append('ScreenScraper')
-                else:
-                    # Cache expired or not found - try ROM-based lookup as fallback
-                    logger.warning(f"ScreenScraper cache miss for {ss_game_id}:{ss_system_id}, trying ROM-based lookup")
-                    from scraper.scrape_screenscraper import get_game_info
-                    rom_path = game.get('rom_path', '')
-                    if rom_path and ss_system_id:
-                        ss_devid = api_keys.get('screenscraper_devid', '')
-                        ss_devpassword = api_keys.get('screenscraper_devpassword', '')
-                        ss_data = get_game_info(rom_path, system_folder, ss_username, ss_password, ss_devid, ss_devpassword)
-                        if ss_data and 'error' not in ss_data:
-                            sources_data['screenscraper'] = ss_data
-                            apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result)
-                            result['sources_used'].append('ScreenScraper')
-        
+            try:
+                from scraper.scraper_manager import get_cached_screenscraper_result
+                settings = load_scraper_settings()
+                api_keys = settings.get('api_keys', {})
+                ss_username = api_keys.get('screenscraper_username', '')
+                ss_password = api_keys.get('screenscraper_password', '')
+
+                if ss_username and ss_password:
+                    # Parse gameid:systemid format
+                    ss_game_id = primary_id
+                    ss_system_id = None
+                    if ':' in str(primary_id):
+                        parts = str(primary_id).split(':')
+                        ss_game_id = parts[0]
+                        ss_system_id = parts[1] if len(parts) > 1 else None
+
+                    # Try to get cached search result first (ScreenScraper API doesn't support fetch by ID)
+                    ss_data = get_cached_screenscraper_result(ss_game_id, ss_system_id)
+
+                    if ss_data:
+                        logger.info(f"Using cached ScreenScraper data for game {ss_game_id}")
+                        sources_data['screenscraper'] = ss_data
+                        apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result)
+                        result['sources_used'].append('ScreenScraper')
+                    else:
+                        # Cache expired or not found - try ROM-based lookup as fallback
+                        logger.warning(f"ScreenScraper cache miss for {ss_game_id}:{ss_system_id}, trying ROM-based lookup")
+                        from scraper.scrape_screenscraper import get_game_info
+                        rom_path = game.get('rom_path', '')
+                        if rom_path and ss_system_id:
+                            ss_devid = api_keys.get('screenscraper_devid', '')
+                            ss_devpassword = api_keys.get('screenscraper_devpassword', '')
+                            ss_data = get_game_info(rom_path, system_folder, ss_username, ss_password, ss_devid, ss_devpassword)
+                            if ss_data and 'error' not in ss_data:
+                                sources_data['screenscraper'] = ss_data
+                                apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result)
+                                result['sources_used'].append('ScreenScraper')
+            except Exception as e:
+                logger.warning(f"Primary ScreenScraper fetch/apply failed for {primary_id}: {e}; "
+                               "falling through to gap-fill")
+
         # =============================================
         # FILL GAPS FROM SECONDARY SOURCES
         # =============================================
-        
+
         if fill_gaps:
             missing = [k for k, v in metadata.items() if not v]
-            
+
             # Get game title for searching other scrapers
             # Prefer the metadata title from the primary source (user's selection)
             # since it's the canonical title they chose. This ensures fallback
@@ -854,35 +1067,35 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                     logger.info(f"Using ROM filename-derived title for fallback search: '{game_title}' (from: {filename})")
                 else:
                     game_title = game.get('title', '')
-            
+
             # Get system info for searching
             c.execute("SELECT s.name, s.folder FROM systems s JOIN games g ON g.system_id = s.id WHERE g.id = ?", (db_game_id,))
             sys_info = c.fetchone()
             system_name = sys_info[0] if sys_info else ''
-            
+
             if missing and game_title:
                 logger.info(f"Missing fields: {missing}")
                 logger.info(f"Searching other scrapers for: '{game_title}' on {system_name}")
-                
+
                 # Get user's scraper priority from settings
                 fallback_settings = load_scraper_settings()
                 user_priority = fallback_settings.get('priority', ['screenscraper', 'esde', 'tgdb', 'igdb'])
                 fallback_api_keys = fallback_settings.get('api_keys', {})
                 fallback_enabled = fallback_settings.get('enabled', {})
-                
+
                 # Map internal names to priority list names
                 source_name_map = {
                     'screenscraper': 'screenscraper',
-                    'esde': 'esde', 
+                    'esde': 'esde',
                     'tgdb': 'tgdb',
                     'thegamesdb': 'tgdb',
                     'igdb': 'igdb',
                     'rawg': 'rawg'
                 }
-                
+
                 # Get the normalized primary source name
                 primary_normalized = source_name_map.get(primary_source, primary_source)
-                
+
                 # Build fallback list: user priority order, excluding primary and disabled scrapers
                 fallback_scrapers = []
                 for scraper in user_priority:
@@ -906,18 +1119,18 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                                          if s in selected_scrapers or s == 'ai']
 
                 logger.info(f"Primary source: {primary_source} -> Fallback scrapers in priority order: {fallback_scrapers}")
-                
+
                 for fallback_source in fallback_scrapers:
                     # Re-check missing fields
                     missing = [k for k, v in metadata.items() if not v]
                     if not missing:
                         break  # All fields filled
-                    
+
                     # Skip if scraper is disabled
                     if not fallback_enabled.get(fallback_source, True):
                         logger.info(f"Fallback scraper {fallback_source} is disabled, skipping")
                         continue
-                    
+
                     try:
                         if fallback_source == 'esde':
                             # Try ES-DE fallback
@@ -929,7 +1142,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                                 esde_path = esde_match.get('id')  # ES-DE uses 'id' which contains the path
                                 if esde_path:
                                     logger.info(f"Found ES-DE match: {esde_match.get('name')} (Path: {esde_path})")
-                                    
+
                                     esde_data = fetch_esde_game_details(esde_path, system_folder)
                                     if esde_data:
                                         sources_data['esde'] = esde_data
@@ -941,16 +1154,16 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                                         if 'ES-DE' not in result['sources_used']:
                                             result['sources_used'].append('ES-DE')
                                     else:
-                                        logger.info(f"ES-DE fallback: failed to fetch game details")
+                                        logger.info("ES-DE fallback: failed to fetch game details")
                                 else:
-                                    logger.info(f"ES-DE fallback: no path found in result")
+                                    logger.info("ES-DE fallback: no path found in result")
                             else:
                                 logger.info(f"ES-DE fallback: no results found for '{game_title}'")
-                        
+
                         elif fallback_source == 'tgdb':
                             logger.info(f"Trying TGDB fallback for: '{game_title}'")
                             tgdb_id = None
-                            
+
                             # First check if we have it in secondary_sources
                             # Pick the best title match (not just the first result)
                             if secondary_sources:
@@ -958,7 +1171,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                                 tgdb_info = _pick_best_secondary(tgdb_candidates, game_title)
                                 if tgdb_info:
                                     tgdb_id = tgdb_info['id']
-                            
+
                             # If not, search for it (fetch multiple and pick best match)
                             if not tgdb_id:
                                 from scraper.scrape_thegamesdb import search_games as search_tgdb
@@ -969,7 +1182,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                                     logger.info(f"Found TGDB match: {tgdb_match.get('name')} (ID: {tgdb_id})")
                                 else:
                                     logger.info(f"TGDB fallback: no results found for '{game_title}'")
-                            
+
                             if tgdb_id:
                                 tgdb_data = fetch_tgdb_extended(tgdb_id)
                                 if tgdb_data:
@@ -977,11 +1190,11 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                                     apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=True)
                                     if 'TheGamesDB' not in result['sources_used']:
                                         result['sources_used'].append('TheGamesDB')
-                        
+
                         elif fallback_source == 'igdb':
                             logger.info(f"Trying IGDB fallback for: '{game_title}'")
                             igdb_id = None
-                            
+
                             # First check if we have it in secondary_sources
                             # Pick the best title match (not just the first result)
                             if secondary_sources:
@@ -989,7 +1202,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                                 igdb_info = _pick_best_secondary(igdb_candidates, game_title)
                                 if igdb_info:
                                     igdb_id = igdb_info['id']
-                            
+
                             # If not, search for it (fetch multiple and pick best match)
                             if not igdb_id:
                                 from scraper.scrape_igdb import search_games as search_igdb
@@ -1000,7 +1213,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                                     logger.info(f"Found IGDB match: {igdb_match.get('name')} (ID: {igdb_id})")
                                 else:
                                     logger.info(f"IGDB fallback: no results found for '{game_title}'")
-                            
+
                             if igdb_id:
                                 igdb_data = fetch_igdb_extended(igdb_id)
                                 if igdb_data:
@@ -1008,7 +1221,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                                     apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=True)
                                     if 'IGDB' not in result['sources_used']:
                                         result['sources_used'].append('IGDB')
-                        
+
                         elif fallback_source == 'screenscraper':
                             ss_username = fallback_api_keys.get('screenscraper_username', '')
                             ss_password = fallback_api_keys.get('screenscraper_password', '')
@@ -1016,7 +1229,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                             ss_devpassword = fallback_api_keys.get('screenscraper_devpassword', '')
 
                             if not ss_username or not ss_password:
-                                logger.info(f"ScreenScraper fallback skipped: missing credentials")
+                                logger.info("ScreenScraper fallback skipped: missing credentials")
                             else:
                                 logger.info(f"Trying ScreenScraper fallback for: '{game_title}'")
                                 from scraper.scrape_screenscraper import search_game, get_system_id
@@ -1060,11 +1273,11 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                                     apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_only=True)
                                     if 'ScreenScraper' not in result['sources_used']:
                                         result['sources_used'].append('ScreenScraper')
-                        
+
                         elif fallback_source == 'rawg':
                             rawg_api_key = fallback_api_keys.get('rawg_api_key', '') or fallback_api_keys.get('rawg', '')
                             if not rawg_api_key:
-                                logger.info(f"RAWG fallback skipped: missing API key")
+                                logger.info("RAWG fallback skipped: missing API key")
                             else:
                                 logger.info(f"Trying RAWG fallback for: '{game_title}'")
                                 from scraper.scrape_rawg import search_games as search_rawg, get_game_details as fetch_rawg
@@ -1127,7 +1340,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         # =============================================
         # DETECT ADDITIONAL METADATA
         # =============================================
-        
+
         # Region from filename if not set
         if not metadata['region']:
             rom_path = game.get('rom_path', '')
@@ -1136,38 +1349,16 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             if metadata['region']:
                 result['filled_fields'].append('region (filename)')
 
-        # Region: ensure single value; fall back to default_region from settings
-        if metadata['region']:
-            # If region has multiple values, pick the first one that matches settings
-            if ',' in metadata['region']:
-                try:
-                    from settings_manager import load_settings as _ls
-                    _stg = _ls()
-                    region_opts = [r.lower() for r in _stg.get('region_options', ['USA', 'Europe', 'Japan', 'World'])]
-                    default_region = _stg.get('default_region', 'USA')
-                except Exception:
-                    region_opts = ['usa', 'europe', 'japan', 'world']
-                    default_region = 'USA'
-                parts = [p.strip() for p in metadata['region'].split(',') if p.strip()]
-                matched = next((p for p in parts if p.lower() in region_opts), None)
-                metadata['region'] = matched or default_region
-        else:
-            # No region at all — use default
-            try:
-                from settings_manager import load_settings as _ls
-                _stg = _ls()
-                default_region = _stg.get('default_region', 'USA')
-            except Exception:
-                default_region = 'USA'
-            metadata['region'] = default_region
-            result['filled_fields'].append('region (default)')
-        
+        # Pass 38.1 — region normalize extracted to _normalize_region.
+        _normalize_region(metadata, result)
+
+
         # Save type detection
         if not metadata['save_type']:
             metadata['save_type'] = detect_save_type(system_folder, metadata.get('title', ''))
             if metadata['save_type']:
                 result['filled_fields'].append('save_type (detected)')
-        
+
         # Controller support detection
         if not metadata['controller_support']:
             metadata['controller_support'] = detect_controller_support(
@@ -1175,7 +1366,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             )
             if metadata['controller_support']:
                 result['filled_fields'].append('controller_support (detected)')
-        
+
         # Always prefer curated DB default controller over scraped/AI values
         c.execute("SELECT system_id FROM games WHERE id = ?", (db_game_id,))
         sys_row = c.fetchone()
@@ -1188,75 +1379,23 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 if old_value and old_value != default_controller:
                     result['filled_fields'].append(f'controller_support (system default: {default_controller})')
                 elif not old_value:
-                    result['filled_fields'].append(f'controller_support (system default)')
+                    result['filled_fields'].append('controller_support (system default)')
                 logger.info(f"Using system default controller: {default_controller} (was: {old_value})")
             elif should_use_default_controller(metadata['controller_support']):
                 # No DB default exists — only clear generic values
                 pass
-        
-        # =============================================
-        # CREATE SCRAPE HISTORY
-        # =============================================
-        
-        import json
-        from datetime import datetime
-        
-        # `scrape_history` is part of the baseline games schema (migration 001),
-        # so it is always present on any DB that reached this code path.
-        c.execute("SELECT scrape_history FROM games WHERE id = ? LIMIT 1", (db_game_id,))
-        row = c.fetchone()
-        existing_history = []
-        if row and row[0]:
-            try:
-                existing_history = json.loads(row[0])
-            except (ValueError, TypeError):
-                existing_history = []
 
-        history_entry = {
-            'timestamp': datetime.now().isoformat(),
-            'primary_source': primary_source,
-            'sources_used': result['sources_used'],
-            'fields_filled': result['filled_fields'],
-            'fields_missing': [k for k, v in metadata.items() if not v],
-            'scrape_mode': 'full_rescrape' if force_overwrite else 'fill_missing'
-        }
-        existing_history.append(history_entry)
-        scrape_history_json = json.dumps(existing_history)
-        
+        # Pass 38.1 — scrape-history build extracted to _build_scrape_history_json.
+        scrape_history_json = _build_scrape_history_json(
+            c, db_game_id, primary_source, metadata, result, force_overwrite
+        )
+
         # =============================================
         # NORMALIZE VALUES BEFORE SAVE
         # =============================================
-        
-        # Normalize ESRB rating (e.g., KA -> E)
-        if metadata['esrb_rating']:
-            metadata['esrb_rating'] = normalize_esrb_rating(metadata['esrb_rating'])
 
-        # Cross-map empty rating fields from any available rating.
-        # Single source of truth: services.game_metadata_service.cross_map_ratings
-        # ('RP' is treated as empty inside that helper).
-        _bare = {k: metadata.get(RATING_SYSTEMS[k]['db_column']) for k in RATING_SYSTEM_KEYS}
-        _filled = cross_map_ratings(_bare)
-        for tgt_key in RATING_SYSTEM_KEYS:
-            tgt_col = RATING_SYSTEMS[tgt_key]['db_column']
-            new_val = _filled.get(tgt_key)
-            if new_val and new_val != (_bare.get(tgt_key) or ''):
-                metadata[tgt_col] = new_val
-                tgt_name = RATING_SYSTEMS[tgt_key]['name']
-                result['filled_fields'].append(f'{tgt_col} (cross-map→{tgt_name})')
-                logger.info(f"Auto-mapped rating → {tgt_name} '{new_val}'")
-
-        # Content-based rating inference (final fallback when no ratings found)
-        has_any_rating = any(
-            metadata.get(RATING_SYSTEMS[k]['db_column']) not in (None, '', 'RP', 'rp')
-            for k in RATING_SYSTEM_KEYS
-        )
-        if not has_any_rating:
-            inferred = infer_rating_from_content(metadata)
-            if inferred:
-                for col, val in inferred.items():
-                    metadata[col] = val
-                result['filled_fields'].append('ratings (inferred from content)')
-                logger.info(f"Inferred ratings from content: tier mapped to {len(inferred)} systems")
+        # Pass 38.1 — rating normalize/cross-map/infer extracted to _normalize_ratings.
+        _normalize_ratings(metadata, result)
 
         # Normalize players: extract max number from ranges like "1-2", "1-4"
         if metadata.get('players'):
@@ -1379,51 +1518,24 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             scrape_history_json,
             db_game_id
         ))
-        
+
         conn.commit()
-        
-        # Check and update RetroAchievements status
-        try:
-            from scraper.retroachievements import check_retroachievements
-            title_to_check = metadata['title'] or game.get('title', '')
-            ra_info = check_retroachievements(title_to_check, system_folder)
-            if ra_info and ra_info.get('has_achievements'):
-                # Reopen connection to update RA status
-                conn2 = get_scraper_conn()
-                try:
-                    c2 = conn2.cursor()
-                    # Save all RA data including the game ID for achievement tracking
-                    c2.execute("""
-                        UPDATE games SET
-                            has_retroachievements = 1,
-                            ra_game_id = ?,
-                            ra_achievement_count = ?,
-                            ra_points = ?
-                        WHERE id = ?
-                    """, (
-                        ra_info.get('id'),
-                        ra_info.get('achievement_count', 0),
-                        ra_info.get('points', 0),
-                        db_game_id
-                    ))
-                    conn2.commit()
-                finally:
-                    conn2.close()
-                logger.info(f"Found RetroAchievements for game {db_game_id}: ID={ra_info.get('id')}, {ra_info.get('achievement_count')} achievements, {ra_info.get('points')} points")
-                result['filled_fields'].append('retroachievements')
-        except Exception as e:
-            logger.debug(f"RetroAchievements check skipped: {e}")
-        
+
+        # Pass 38.1 — RA-check extracted to _apply_retroachievements_check.
+        title_to_check = metadata['title'] or game.get('title', '')
+        if _apply_retroachievements_check(db_game_id, title_to_check, system_folder):
+            result['filled_fields'].append('retroachievements')
+
         # Calculate final missing fields
         result['missing_fields'] = [k for k, v in metadata.items() if not v]
         result['success'] = True
-        
+
         logger.info(f"Hybrid metadata applied to game {db_game_id}")
         logger.info(f"Sources used: {result['sources_used']}")
         logger.info(f"Filled: {len(result['filled_fields'])}, Missing: {len(result['missing_fields'])}")
-        
+
         return result
-        
+
     except Exception as e:
         logger.error(f"Error applying hybrid metadata: {e}")
         conn.rollback()

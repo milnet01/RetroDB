@@ -23,7 +23,7 @@ import settings_manager
 from services.atomic_io import atomic_write_json
 from services.database import query
 from services.api_helpers import handle_api_errors, success, error
-from services.auth import login_required, admin_required
+from services.auth import login_required, admin_required, editor_required
 from services.security import safe_path
 from services.rom_tools_validators import (
     validate_rom_tools_value,
@@ -325,9 +325,16 @@ def api_rom_tools_task_status(task_id):
 
 
 @tools_bp.route('/api/rom-tools/task/<task_id>/cancel', methods=['POST'])
-@login_required
+@admin_required
 def api_rom_tools_task_cancel(task_id):
-    """Cancel a running task"""
+    """Cancel a running task. Pass 41.10 — admin-only.
+
+    Previously @login_required, which let any logged-in user (Player /
+    Viewer) cancel an admin's in-flight scan/convert task by guessing the
+    8-char task_id (32 bits, brute-forceable across 100s of attempts).
+    The full-UUID swap below removes the guessability path; admin-only
+    closes the legitimate-but-unauthorized cancellation vector.
+    """
     task = _rom_tool_tasks.get(task_id)
     if task and task.get('status') == 'running':
         task['status'] = 'cancelled'
@@ -341,9 +348,9 @@ def api_rom_tools_task_cancel(task_id):
 
 
 @tools_bp.route('/api/rom-tools/task/<task_id>/pause', methods=['POST'])
-@login_required
+@admin_required
 def api_rom_tools_task_pause(task_id):
-    """Pause a running task"""
+    """Pause a running task. Pass 41.10 — admin-only (see _cancel)."""
     from scraper.rom_tools import get_task, update_task
     
     task = _rom_tool_tasks.get(task_id)
@@ -361,9 +368,9 @@ def api_rom_tools_task_pause(task_id):
 
 
 @tools_bp.route('/api/rom-tools/task/<task_id>/resume', methods=['POST'])
-@login_required
+@admin_required
 def api_rom_tools_task_resume(task_id):
-    """Resume a paused task"""
+    """Resume a paused task. Pass 41.10 — admin-only (see _cancel)."""
     from scraper.rom_tools import get_task, update_task
     
     task = _rom_tool_tasks.get(task_id)
@@ -385,7 +392,7 @@ def api_rom_tools_task_resume(task_id):
 # =============================================================================
 
 @tools_bp.route('/api/rom-tools/archive-scanner/scan', methods=['POST'])
-@login_required
+@editor_required  # Pass 41.10.D — heavy filesystem walk; rate-limited in app.py
 @handle_api_errors
 def api_archive_scanner_scan():
     """Start archive scanning for issues"""
@@ -579,7 +586,7 @@ def api_archive_scanner_batch_create_m3u():
 # =============================================================================
 
 @tools_bp.route('/api/rom-tools/chd-converter/scan', methods=['POST'])
-@login_required
+@editor_required  # Pass 41.10.D — heavy filesystem walk; rate-limited in app.py
 @handle_api_errors
 def api_chd_converter_scan():
     """Scan for convertible disc images"""
@@ -617,10 +624,17 @@ def api_chd_converter_scan():
 
 
 @tools_bp.route('/api/rom-tools/chd-converter/convert', methods=['POST'])
-@login_required
+@admin_required
 @handle_api_errors
 def api_chd_converter_convert():
-    """Start CHD conversion"""
+    """Start CHD conversion. Pass 41.10 — admin-only.
+
+    Converts disc-image source files in-place (and optionally deletes the
+    originals when chd_delete_originals=True). Pass 40.2 already gates the
+    file paths via safe_path; admin-only closes the remaining gap where
+    a logged-in non-admin could trigger a long-running conversion or
+    source deletion across the ROM tree.
+    """
     data = request.get_json() or {}
     files = data.get('files', [])
     settings = load_rom_tools_config()
@@ -630,7 +644,10 @@ def api_chd_converter_convert():
         return error('chdman not found. Please install MAME tools.', 400)
     
     _cleanup_completed_tasks()
-    task_id = str(uuid.uuid4())[:8]
+    # Pass 41.10 — full UUID (no [:8] slice). 32 bits gave attackers ~4.3B
+    # values to brute-force, which is insufficient for a per-process task
+    # registry that keeps state for the lifetime of long-running scans.
+    task_id = str(uuid.uuid4())
     task = {
         'task_id': task_id,
         'task_type': 'chd_convert',
@@ -649,7 +666,16 @@ def api_chd_converter_convert():
     
     rom_root = _get_rom_path()
 
+    do_verify = settings.get('chd_verify_after_convert', True)
+    delete_originals = settings.get('chd_delete_originals', False)
+
     def run_conversion():
+        # Pass 42.5 — atomic per-file work delegates to the shared
+        # ``convert_one_to_chd`` helper in scraper.rom_tools. This route
+        # owns the dict-based task registry; the helper owns the .chd.part
+        # → verify → os.replace contract from Pass 40.11.
+        from scraper.rom_tools import convert_one_to_chd
+
         for i, file_path in enumerate(files):
             if task['status'] == 'cancelled':
                 task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Conversion cancelled")
@@ -672,74 +698,36 @@ def api_chd_converter_convert():
             task['progress'] = i + 1
             task['current_file'] = os.path.basename(file_path)
             task['percent'] = round((i + 1) / len(files) * 100, 1) if files else 0
-
-            src_size = os.path.getsize(file_path)
-            dst_path = os.path.splitext(file_path)[0] + '.chd'
-            tmp_path = dst_path + '.part'
-
             task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] Converting: {os.path.basename(file_path)}")
 
-            # Pass 40.11 — atomic write: chdman → .chd.part, optional verify,
-            # then os.replace.  Mirrors CHDConverter._convert_file.  Without
-            # this, a SIGKILL mid-conversion left a truncated .chd that
-            # chd_skip_existing then treated as good on the next run.
-            chd_succeeded = False
-            try:
-                # Clean up any stale tempfile from a previous failed run.
-                if os.path.exists(tmp_path):
-                    try:
-                        os.remove(tmp_path)
-                    except OSError:
-                        pass
+            file_result = convert_one_to_chd(
+                file_path,
+                chdman_path,
+                do_verify=do_verify,
+                delete_original=delete_originals,
+                skip_existing=False,  # scan endpoint already filtered out existing .chd; convert what we're handed.
+            )
+            status = file_result['status']
 
-                cmd = [chdman_path, 'createcd', '-i', file_path, '-o', tmp_path]
-                result = subprocess.run(cmd, capture_output=True, text=True, timeout=3600)
-
-                if result.returncode != 0 or not os.path.exists(tmp_path):
-                    task['results']['failed'] += 1
-                    task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Failed")
-                else:
-                    if settings.get('chd_verify_after_convert', True):
-                        verify = subprocess.run(
-                            [chdman_path, 'verify', '-i', tmp_path],
-                            capture_output=True, text=True, timeout=600,
-                        )
-                        if verify.returncode != 0:
-                            task['results']['failed'] += 1
-                            task['logs'].append(
-                                f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Verify failed"
-                            )
-                        else:
-                            os.replace(tmp_path, dst_path)
-                            chd_succeeded = True
-                    else:
-                        os.replace(tmp_path, dst_path)
-                        chd_succeeded = True
-
-                    if chd_succeeded:
-                        dst_size = os.path.getsize(dst_path)
-                        task['results']['converted'] += 1
-                        task['results']['original_size'] += src_size
-                        task['results']['compressed_size'] += dst_size
-                        task['results']['files'].append({
-                            'source': file_path, 'destination': dst_path,
-                            'original_size': src_size, 'compressed_size': dst_size, 'status': 'success'
-                        })
-                        task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✓ Converted")
-
-                        if settings.get('chd_delete_originals', False):
-                            os.remove(file_path)
-            except Exception as e:
+            if status == 'success':
+                task['results']['converted'] += 1
+                task['results']['original_size'] += file_result['original_size']
+                task['results']['compressed_size'] += file_result['compressed_size']
+                task['results']['files'].append(file_result)
+                task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✓ Converted")
+            else:
                 task['results']['failed'] += 1
-                logger.error(f"CHD conversion error for {file_path}: {e}")
-                task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Error processing file")
-            finally:
-                if not chd_succeeded and os.path.exists(tmp_path):
-                    try:
-                        os.remove(tmp_path)
-                    except OSError:
-                        pass
-        
+                err = file_result.get('error', '')
+                if 'Verify failed' in err or err == 'Verify failed':
+                    task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Verify failed")
+                elif err == 'Conversion timed out':
+                    task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Timeout")
+                elif err:
+                    logger.error(f"CHD conversion error for {file_path}: {err}")
+                    task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Error processing file")
+                else:
+                    task['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] ✗ Failed")
+
         task['status'] = 'completed' if task['status'] != 'cancelled' else 'cancelled'
         task['end_time'] = datetime.now()
         if task['results']['original_size'] > 0:
@@ -761,7 +749,7 @@ def api_chd_converter_convert():
 # =============================================================================
 
 @tools_bp.route('/api/rom-tools/chd-verify/scan', methods=['POST'])
-@login_required
+@editor_required  # Pass 41.10.D — heavy filesystem walk; rate-limited in app.py
 @handle_api_errors
 def api_chd_verify_scan():
     """Scan for CHD files"""
@@ -781,7 +769,7 @@ def api_chd_verify_scan():
 
 
 @tools_bp.route('/api/rom-tools/chd-verify/verify', methods=['POST'])
-@login_required
+@admin_required
 @handle_api_errors
 def api_chd_verify_verify():
     """Start CHD verification"""
@@ -794,7 +782,10 @@ def api_chd_verify_verify():
         return error('chdman not found', 400)
     
     _cleanup_completed_tasks()
-    task_id = str(uuid.uuid4())[:8]
+    # Pass 41.10 — full UUID (no [:8] slice). 32 bits gave attackers ~4.3B
+    # values to brute-force, which is insufficient for a per-process task
+    # registry that keeps state for the lifetime of long-running scans.
+    task_id = str(uuid.uuid4())
     task = {
         'task_id': task_id,
         'task_type': 'chd_verify',
@@ -872,7 +863,7 @@ def api_chd_verify_verify():
 # =============================================================================
 
 @tools_bp.route('/api/rom-tools/duplicate-finder/scan', methods=['POST'])
-@login_required
+@editor_required  # Pass 41.10.D — heavy filesystem walk; rate-limited in app.py
 @handle_api_errors
 def api_duplicate_finder_scan():
     """Start duplicate file scanning"""
@@ -890,7 +881,10 @@ def api_duplicate_finder_scan():
         return error(f'Path does not exist: {path}', 400)
 
     _cleanup_completed_tasks()
-    task_id = str(uuid.uuid4())[:8]
+    # Pass 41.10 — full UUID (no [:8] slice). 32 bits gave attackers ~4.3B
+    # values to brute-force, which is insufficient for a per-process task
+    # registry that keeps state for the lifetime of long-running scans.
+    task_id = str(uuid.uuid4())
     task = {
         'task_id': task_id,
         'task_type': 'duplicate_scan',
@@ -1182,7 +1176,7 @@ def _run_screenshot_dedup_scan(task, method, threshold):
             try:
                 size = os.path.getsize(filepath)
                 if method == 'hash':
-                    h = hashlib.md5()
+                    h = hashlib.md5(usedforsecurity=False)
                     with open(filepath, 'rb') as f:
                         for chunk in iter(lambda f=f: f.read(65536), b''):
                             h.update(chunk)
@@ -1252,7 +1246,7 @@ def screenshot_dedup():
 
 
 @tools_bp.route('/api/rom-tools/screenshot-dedup/scan', methods=['POST'])
-@login_required
+@editor_required  # Pass 41.10.D — heavy filesystem walk; rate-limited in app.py
 @handle_api_errors
 def api_screenshot_dedup_scan():
     """Start screenshot deduplication scan"""
@@ -1261,7 +1255,10 @@ def api_screenshot_dedup_scan():
     threshold = int(data.get('threshold', 10))
 
     _cleanup_completed_tasks()
-    task_id = str(uuid.uuid4())[:8]
+    # Pass 41.10 — full UUID (no [:8] slice). 32 bits gave attackers ~4.3B
+    # values to brute-force, which is insufficient for a per-process task
+    # registry that keeps state for the lifetime of long-running scans.
+    task_id = str(uuid.uuid4())
     task = {
         'task_id': task_id,
         'task_type': 'screenshot_dedup',
@@ -1312,8 +1309,8 @@ def api_screenshot_dedup_delete():
             by_game[gid] = []
         by_game[gid].append(fn)
 
-    from services.database import get_db
-    db = get_db()
+    from services.database import get_request_db
+    db = get_request_db()
 
     for game_id, filenames in by_game.items():
         game = db.execute(

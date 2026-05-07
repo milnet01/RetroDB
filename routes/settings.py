@@ -321,7 +321,7 @@ def api_list_backups():
                 })
 
         return jsonify({'success': True, 'backups': backups})
-    except Exception as e:
+    except Exception:
         return jsonify({'success': False, 'error': 'An internal error occurred'})
 
 
@@ -495,7 +495,7 @@ def api_get_all_settings():
             'settings': user_settings,
             'defaults': settings_manager.DEFAULT_SETTINGS
         })
-    except Exception as e:
+    except Exception:
         return jsonify({'success': False, 'error': 'An internal error occurred'})
 
 
@@ -557,7 +557,7 @@ def api_reset_settings():
             })
         else:
             return jsonify({'success': False, 'error': 'Failed to reset settings'})
-    except Exception as e:
+    except Exception:
         return jsonify({'success': False, 'error': 'An internal error occurred'})
 
 
@@ -572,11 +572,18 @@ def api_save_logging_settings():
     try:
         data = request.get_json()
 
+        # Pass 45.11 — route through validate_settings_value so a malformed
+        # logging block can't crash log_manager.setup_all_logging() on next
+        # start. The validator is the same one /api/settings/<key> uses.
+        ok, reason, cleaned = validate_settings_value('logging', data)
+        if not ok:
+            return jsonify({'success': False, 'error': f'invalid logging settings: {reason}'}), 400
+
         # Get current settings
         settings = settings_manager.load_settings()
 
-        # Update logging section
-        settings['logging'] = data
+        # Update logging section with validator-cleaned value
+        settings['logging'] = cleaned
 
         # Save settings
         if settings_manager.save_settings(settings):

@@ -7,14 +7,11 @@
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash, g
 import os
 import logging
-import json
 import requests
 import threading
-import sqlite3
-from datetime import datetime
 
 import config
-from services.database import get_db, query, execute
+from services.database import query, execute
 from services.auth import login_required, admin_required, editor_required, get_user_settings
 from services.jobs.base import _download_psn_trophy_image as download_psn_trophy_image
 
@@ -126,8 +123,9 @@ def create_psn_client(npsso):
             if refresh_expires > _time.time():
                 psnawp = PSNAWP(npsso)
                 psnawp.authenticator.token_response = cached_tokens
-                # Validate by making a lightweight call
-                psnawp.me().online_id
+                # Validate by making a lightweight call (.online_id access
+                # triggers the auth round-trip; result intentionally unused).
+                _ = psnawp.me().online_id
                 # Save refreshed tokens (access token may have been renewed)
                 _save_psn_tokens(psnawp.authenticator.token_response)
                 logger.info("PSN authenticated using cached tokens")
@@ -142,8 +140,9 @@ def create_psn_client(npsso):
     # Fresh auth via NPSSO
     try:
         psnawp = PSNAWP(npsso)
-        # Force authentication by making a call
-        psnawp.me().online_id
+        # Force authentication by making a call (.online_id access triggers
+        # the auth round-trip; result intentionally unused).
+        _ = psnawp.me().online_id
         # Cache the tokens for future use
         if psnawp.authenticator.token_response:
             _save_psn_tokens(psnawp.authenticator.token_response)
@@ -224,7 +223,7 @@ def extract_psn_platform(title):
     return platform
 
 
-from services.achievement_linking import (  # noqa: E402
+from services.achievement_linking import (
     clean_title_for_matching as _clean_title_for_matching,
     find_linked_game_for_psn as _find_linked_game_for_psn_impl,
 )
@@ -783,7 +782,8 @@ def psn_trophy_detail(npwr_id):
         WHERE psn_game_id = ?
         ORDER BY group_id
     """, (psn_game['id'],))
-    groups_list = [dict(g) for g in trophy_groups] if trophy_groups else []
+    # Pass 41.8 — `tg` instead of `g` to avoid shadowing flask.g.
+    groups_list = [dict(tg) for tg in trophy_groups] if trophy_groups else []
     
     # Build group order map (default/base game first, then DLC in order)
     # 'default' gets order 0, DLC groups like '001', '002' get 1, 2, etc.
@@ -831,7 +831,7 @@ def psn_trophy_detail(npwr_id):
     
     # Debug: log first few trophies to understand data format
     for i, t in enumerate(trophies_list[:5]):
-        logger.info(f"  Trophy {i}: type={repr(t.get('trophy_type'))}, earned={repr(t.get('earned'))}, group_id={repr(t.get('group_id'))}, group_name={repr(t.get('group_name'))}")
+        logger.info(f"  Trophy {i}: type={t.get('trophy_type')!r}, earned={t.get('earned')!r}, group_id={t.get('group_id')!r}, group_name={t.get('group_name')!r}")
     
     for t in trophies_list:
         if not bool(t.get('earned')):
@@ -1072,11 +1072,16 @@ def _run_psn_full_sync(psnawp, user_id):
             """).fetchall()
 
             ps_by_folder = {}
-            for g in all_ps_games:
-                folder = g['folder']
+            # Pass 41.8 — loop var renamed from `g` to `ps_game` to avoid
+            # shadowing the module-level `from flask import g`. Background
+            # sync threads have no request context, so `g` would surface
+            # only as a typing/IDE hazard, but the shadow is fragile under
+            # future refactors that move this body into a request handler.
+            for ps_game in all_ps_games:
+                folder = ps_game['folder']
                 if folder not in ps_by_folder:
                     ps_by_folder[folder] = []
-                ps_by_folder[folder].append(g)
+                ps_by_folder[folder].append(ps_game)
 
             platform_map = {'PS3': 'ps3', 'PS4': 'ps4', 'PS5': 'ps5', 'PSVITA': 'psvita', 'PS Vita': 'psvita'}
 
@@ -1115,23 +1120,26 @@ def _run_psn_full_sync(psnawp, user_id):
                     sf = platform_map.get(platform, '')
 
                     if clean_title:
+                        # Pass 41.8 — `ps_game` instead of `g` to avoid
+                        # shadowing flask.g (mirrors the loop above and
+                        # the existing_groups comprehension at :1384).
                         if sf and sf in ps_by_folder:
-                            for g in ps_by_folder[sf]:
-                                if _clean_title_for_matching(g['title']) == clean_title:
-                                    linked_game_id = g['id']
+                            for ps_game in ps_by_folder[sf]:
+                                if _clean_title_for_matching(ps_game['title']) == clean_title:
+                                    linked_game_id = ps_game['id']
                                     break
 
                         if not linked_game_id:
-                            for g in all_ps_games:
-                                if _clean_title_for_matching(g['title']) == clean_title:
-                                    linked_game_id = g['id']
+                            for ps_game in all_ps_games:
+                                if _clean_title_for_matching(ps_game['title']) == clean_title:
+                                    linked_game_id = ps_game['id']
                                     break
 
                         if not linked_game_id:
-                            for g in all_ps_games:
-                                db_clean = _clean_title_for_matching(g['title'])
+                            for ps_game in all_ps_games:
+                                db_clean = _clean_title_for_matching(ps_game['title'])
                                 if db_clean and (clean_title in db_clean or db_clean in clean_title):
-                                    linked_game_id = g['id']
+                                    linked_game_id = ps_game['id']
                                     break
 
                     # Pass 31.1 — per-user rows. Conflict key is (npwr_id, user_id).
@@ -1381,7 +1389,8 @@ def api_psn_sync_game(npwr_id):
                 SELECT DISTINCT group_id, group_name FROM psn_trophies
                 WHERE psn_game_id = ? AND group_id != 'default'
             """, (psn_game['id'],))
-            custom_group_names = {g['group_id']: g['group_name'] for g in existing_groups} if existing_groups else {}
+            # Pass 41.8 — `tg` instead of `g` to avoid shadowing flask.g.
+            custom_group_names = {tg['group_id']: tg['group_name'] for tg in existing_groups} if existing_groups else {}
             
             for trophy in trophies:
                 try:
@@ -1401,7 +1410,7 @@ def api_psn_sync_game(npwr_id):
                     # Debug: log group info for first 5 trophies
                     if trophies_synced < 5:
                         api_name = group_names_from_api.get(group_id, 'NOT_FOUND')
-                        logger.info(f"Trophy {trophy_id}: group_id={repr(group_id)}, api_name={repr(api_name)}")
+                        logger.info(f"Trophy {trophy_id}: group_id={group_id!r}, api_name={api_name!r}")
                     
                     # Determine final group name - priority order:
                     # 1. User-edited custom name
@@ -1576,7 +1585,7 @@ def api_psn_link_game():
 
         return jsonify({'success': True})
 
-    except Exception as e:
+    except Exception:
         return jsonify({'success': False, 'error': 'An internal error occurred'})
 
 
@@ -1606,13 +1615,16 @@ def api_psn_search_games():
 
         results = []
         if games:
-            for g in games:
+            # Pass 41.8 — `game` instead of `g` to avoid shadowing flask.g
+            # (this loop runs inside a request handler that does access
+            # flask.g via @login_required's get_current_user).
+            for game in games:
                 results.append({
-                    'id': g['id'],
-                    'title': g['title'],
-                    'system': g['system_name'],
-                    'folder': g['system_folder'],
-                    'boxart': g['boxart']
+                    'id': game['id'],
+                    'title': game['title'],
+                    'system': game['system_name'],
+                    'folder': game['system_folder'],
+                    'boxart': game['boxart']
                 })
 
         return jsonify({'results': results})
@@ -1646,7 +1658,7 @@ def api_psn_save_hltb():
         
         return jsonify({'success': True})
         
-    except Exception as e:
+    except Exception:
         return jsonify({'success': False, 'error': 'An internal error occurred'})
 
 
@@ -1754,7 +1766,7 @@ def api_psn_status():
             'username': online_id,
             'game_count': game_count
         })
-    except Exception as e:
+    except Exception:
         return jsonify({
             'success': False,
             'configured': True,
@@ -1800,8 +1812,8 @@ def api_psn_save_npsso():
         return jsonify({'success': False, 'error': 'No NPSSO token provided'})
 
     # Save to user settings
-    from services.database import get_db
-    db = get_db()
+    from services.database import get_request_db
+    db = get_request_db()
     db.execute("UPDATE user_settings SET psn_npsso = ?, psn_username = ? WHERE user_id = ?",
                (npsso, username, g.user['id']))
     db.commit()

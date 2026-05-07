@@ -14,6 +14,9 @@ from services.jobs.base import (
     _get_conn, _commit_with_retry, _download_psn_trophy_image,
     persist_job_start, persist_job_progress, persist_job_complete,
     resolve_terminal_status, shutdown_requested,
+    acquire_job_singleton_lock, release_singleton_fd,
+    pad_resume_game_ids, restore_progress_counts,
+    try_acquire_singleton_or_warn,
 )
 
 logger = logging.getLogger(__name__)
@@ -28,6 +31,7 @@ class PSNRefreshJob:
     def __init__(self):
         self._lock = threading.Lock()
         self._thread = None
+        self._singleton_fd = None
         self.reset()
 
     def reset(self):
@@ -114,7 +118,15 @@ class PSNRefreshJob:
             if self.running and not self.completed:
                 return {'success': False, 'error': 'PSN refresh already running'}
 
+            singleton_fd = acquire_job_singleton_lock('psn_refresh')
+            if singleton_fd is None:
+                return {
+                    'success': False,
+                    'error': 'PSN refresh is already running on another worker process.',
+                }
+
             self.reset()
+            self._singleton_fd = singleton_fd
             self.job_id = f"psn_refresh_{int(time.time())}"
             self.npwr_ids = npwr_ids
             self._npsso = npsso
@@ -219,18 +231,20 @@ class PSNRefreshJob:
                 if self.running and not self.completed:
                     return False
 
+                singleton_fd = try_acquire_singleton_or_warn('psn_refresh')
+                if singleton_fd is None:
+                    return False
+
                 self.reset()
+                self._singleton_fd = singleton_fd
                 self.job_id = f"psn_refresh_{int(time.time())}_resume"
-                self.npwr_ids = [None] * resume_index + remaining_ids
+                self.npwr_ids = pad_resume_game_ids(resume_index, remaining_ids)
                 self._npsso = npsso
                 self._user_id = user_id
                 self.return_url = return_url
                 self.running = True
                 self.start_time = datetime.now()
-                self.current_index = resume_index
-                self.success_count = progress.get('success', 0)
-                self.failed_count = progress.get('failed', 0)
-                self.skipped_count = progress.get('skipped', 0)
+                restore_progress_counts(self, resume_index, progress)
                 self.current_game_title = 'Resuming...'
 
             self._thread = threading.Thread(target=self._run_refresh, daemon=True)
@@ -271,6 +285,7 @@ class PSNRefreshJob:
                     self.completed = True
                     self.running = False
                     self.error_message = "PSNAWP library not installed"
+                release_singleton_fd(self)
                 persist_job_complete(persist_id, status='failed', error="PSNAWP library not installed")
                 return
 
@@ -287,8 +302,9 @@ class PSNRefreshJob:
                 with self._lock:
                     self.completed = True
                     self.running = False
-                    self.error_message = f"PSN authentication failed: {str(e)}"
-                persist_job_complete(persist_id, status='failed', error=f"PSN authentication failed: {str(e)}")
+                    self.error_message = f"PSN authentication failed: {e!s}"
+                release_singleton_fd(self)
+                persist_job_complete(persist_id, status='failed', error=f"PSN authentication failed: {e!s}")
                 return
 
             # Get trophy titles once (paginated — can be slow for large libraries)
@@ -302,17 +318,33 @@ class PSNRefreshJob:
                 trophy_titles = {}
                 fetch_error = [None]  # mutable for closure
                 fetch_count = [0]  # mutable counter for progress
+                # Pass 41.6.C — explicit cancel event for the inner thread.
+                # Previously the inner thread read `self.cancelled` directly
+                # (without the lock) and the outer 300s join was the only
+                # way to stop it. If the join timed out, the abandoned
+                # thread kept iterating `client.trophy_titles()` and
+                # mutating shared state (trophy_titles dict, fetch_count,
+                # self.current_game_title). The event below is set both on
+                # user-cancel and on timeout, so the abandoned thread sees
+                # the signal on its next iteration and exits without
+                # writing further.
+                fetch_cancelled = threading.Event()
 
                 def _fetch_titles():
                     try:
                         for t in client.trophy_titles():
-                            if self.cancelled:
-                                logger.info("PSN refresh: trophy title fetch cancelled by user")
+                            if fetch_cancelled.is_set() or self.cancelled:
+                                logger.info("PSN refresh: trophy title fetch cancelled")
                                 break
                             trophy_titles[t.np_communication_id] = t
                             fetch_count[0] += 1
                             if fetch_count[0] % 25 == 0:
                                 logger.info(f"PSN refresh: fetched {fetch_count[0]} trophy titles so far...")
+                            # Drop the broadcast progress write on the floor
+                            # if we've already been told to stop — saves a
+                            # last gratuitous lock acquire after cancel.
+                            if fetch_cancelled.is_set():
+                                break
                             with self._lock:
                                 self.current_game_title = f'Fetching PSN trophy list... ({fetch_count[0]} found)'
                     except Exception as e:
@@ -324,11 +356,17 @@ class PSNRefreshJob:
                 fetch_thread.join(timeout=FETCH_TIMEOUT)
 
                 if fetch_thread.is_alive():
-                    logger.error(f"PSN refresh: trophy list fetch timed out after {FETCH_TIMEOUT}s (fetched {fetch_count[0]} so far)")
+                    # Pass 41.6.C — tell the abandoned inner thread to stop
+                    # writing to shared state on its next iteration. We
+                    # don't wait on it (daemon thread; process exit will
+                    # reap if it's truly stuck on a network read).
+                    fetch_cancelled.set()
+                    logger.error(f"PSN refresh: trophy list fetch timed out after {FETCH_TIMEOUT}s (fetched {fetch_count[0]} so far); abandoned thread told to exit")
                     with self._lock:
                         self.completed = True
                         self.running = False
                         self.error_message = f"PSN trophy list fetch timed out after {FETCH_TIMEOUT}s — Sony API may be slow or unresponsive"
+                    release_singleton_fd(self)
                     persist_job_complete(persist_id, status='failed', error=f"Trophy list fetch timed out ({fetch_count[0]} fetched)")
                     return
 
@@ -341,6 +379,7 @@ class PSNRefreshJob:
                         self.completed = True
                         self.running = False
                         self.error_message = "No PSN trophy titles found"
+                    release_singleton_fd(self)
                     persist_job_complete(persist_id, status='failed', error="No trophy titles found")
                     return
 
@@ -352,8 +391,9 @@ class PSNRefreshJob:
                 with self._lock:
                     self.completed = True
                     self.running = False
-                    self.error_message = f"Failed to fetch trophy titles: {str(e)}"
-                persist_job_complete(persist_id, status='failed', error=f"Failed to fetch trophy titles: {str(e)}")
+                    self.error_message = f"Failed to fetch trophy titles: {e!s}"
+                release_singleton_fd(self)
+                persist_job_complete(persist_id, status='failed', error=f"Failed to fetch trophy titles: {e!s}")
                 return
 
             logger.info(f"Starting PSN refresh job {self.job_id} with {len(self.npwr_ids)} games")
@@ -471,6 +511,7 @@ class PSNRefreshJob:
                 self.running = False
                 _final_status = resolve_terminal_status(self.cancelled)
                 logger.info(f"PSN Refresh completed: {self.success_count} success, {self.failed_count} failed, {self.skipped_count} skipped")
+            release_singleton_fd(self)
 
             persist_job_complete(persist_id, status=_final_status)
 
@@ -482,6 +523,7 @@ class PSNRefreshJob:
                 self.completed = True
                 self.running = False
                 self.error_message = str(e)
+            release_singleton_fd(self)
             persist_job_complete(persist_id, status='failed', error=str(e))
 
     def _sync_game_trophies(self, client, npwr_id, psn_game, target_title, conn):

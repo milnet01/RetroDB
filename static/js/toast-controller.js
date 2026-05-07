@@ -352,7 +352,38 @@ const UnifiedToastController = {
         this.container.id = 'unifiedToastContainer';
         this.container.className = 'unified-toast-container';
         document.body.appendChild(this.container);
-        
+
+        // Pass 45.4 — single delegated click handler routes every toast
+        // action (navigate / pause / cancel / cancel-ra-queued). Replaces
+        // the inline onclick="UnifiedToastController.foo('${value}')"
+        // pattern that interpolated values directly into a JS-string-in-
+        // HTML-attribute context (XSS sink: a malicious return_url could
+        // break out of the quotes and execute arbitrary JS at parse time,
+        // before the runtime _isSafeReturnUrl guard ever fired).
+        this.container.addEventListener('click', (e) => {
+            const target = e.target.closest('[data-toast-action]');
+            if (!target) return;
+            const action = target.dataset.toastAction;
+            const type = target.dataset.toastType;
+            if (action === 'navigate') {
+                this.navigateTo(type, target.dataset.toastReturnUrl || '');
+                return;
+            }
+            // All button actions stop propagation so the parent
+            // toast-main navigate doesn't also fire.
+            e.stopPropagation();
+            if (action === 'pause') {
+                this.togglePause(type);
+            } else if (action === 'cancel') {
+                this.cancel(type);
+            } else if (action === 'cancel-ra-queued') {
+                const raType = target.dataset.raType;
+                const raSystemIdRaw = target.dataset.raSystemId;
+                const raSystemId = raSystemIdRaw === '' ? null : Number(raSystemIdRaw);
+                this.cancelRAQueued(raType, Number.isFinite(raSystemId) ? raSystemId : null);
+            }
+        });
+
         // Position container dynamically - try multiple times to ensure layout is ready
         this.positionContainer();
         this.positionBackToTop();
@@ -973,11 +1004,12 @@ const UnifiedToastController = {
             ? `🔄 Sync: ${this.escapeHtml(item.systemName)}`
             : `🏆 Refresh: ${this.escapeHtml(item.systemName || 'All Systems')}`;
         
-        // Build cancel function call
-        const cancelCall = item.type === 'sync'
-            ? `UnifiedToastController.cancelRAQueued('sync', ${item.systemId})`
-            : `UnifiedToastController.cancelRAQueued('refresh', ${item.systemId || 'null'})`;
-        
+        // Pass 45.4 — drop the inline onclick + ${cancelCall} JS-string-in-
+        // HTML interpolation; use data-* attributes + addEventListener so
+        // item.systemId can never escape the JS-string context.
+        const raType = item.type === 'sync' ? 'sync' : 'refresh';
+        const raSystemId = item.systemId == null ? '' : String(item.systemId);
+
         toast.innerHTML = `
             <div class="toast-content">
                 <div class="toast-main">
@@ -988,7 +1020,7 @@ const UnifiedToastController = {
                     </div>
                 </div>
                 <div class="toast-controls">
-                    <button class="toast-btn cancel" onclick="event.stopPropagation(); ${cancelCall}" title="Remove from queue">
+                    <button class="toast-btn cancel" data-toast-action="cancel-ra-queued" data-ra-type="${this.escapeHtml(raType)}" data-ra-system-id="${this.escapeHtml(raSystemId)}" title="Remove from queue">
                         ✕
                     </button>
                 </div>
@@ -1168,7 +1200,7 @@ const UnifiedToastController = {
 
         return `
             <div class="toast-content">
-                <div class="toast-main" onclick="UnifiedToastController.navigateTo('${type}', '${data.return_url || ''}')">
+                <div class="toast-main" data-toast-action="navigate" data-toast-type="${this.escapeHtml(type)}" data-toast-return-url="${this.escapeHtml(data.return_url || '')}">
                     <div class="toast-icon ${isPaused ? 'paused' : ''}">${isPaused ? getThemedIcon(type, 'paused') : getThemedIcon(type)}</div>
                     <div class="toast-info">
                         <div class="toast-title ${isPaused ? 'paused' : ''}">${config.name} ${isPaused ? '(Paused)' : 'Running'}</div>
@@ -1186,11 +1218,11 @@ const UnifiedToastController = {
                 </div>
                 <div class="toast-controls">
                     ${type === 'bulk-scrape' || type === 'psn-refresh' ? `
-                    <button class="toast-btn pause" onclick="event.stopPropagation(); UnifiedToastController.togglePause('${type}')" title="${isPaused ? 'Resume' : 'Pause'}">
+                    <button class="toast-btn pause" data-toast-action="pause" data-toast-type="${this.escapeHtml(type)}" title="${isPaused ? 'Resume' : 'Pause'}">
                         <span data-pause-icon>${isPaused ? '▶️' : '⏸️'}</span>
                     </button>
                     ` : ''}
-                    <button class="toast-btn cancel" onclick="event.stopPropagation(); UnifiedToastController.cancel('${type}')" title="Cancel">
+                    <button class="toast-btn cancel" data-toast-action="cancel" data-toast-type="${this.escapeHtml(type)}" title="Cancel">
                         ✕
                     </button>
                 </div>
@@ -1593,7 +1625,17 @@ const UnifiedToastController = {
     },
     
     /**
-     * Navigate to the appropriate page
+     * Navigate to the appropriate page.
+     *
+     * Pass 41.12.B — open-redirect guard. The `returnUrl` argument flows
+     * from `localStorage.getItem('bulkScrapeReturnUrl')` and similar
+     * sources. localStorage is writable from any same-origin script, so
+     * an XSS payload (or a stale value left by a malicious extension)
+     * could land an attacker-controlled absolute URL here. Without
+     * validation, `window.location.href = 'https://evil.example/...'`
+     * would fire on the user's next toast click. Accept only:
+     *   (a) same-origin paths starting with `/` (e.g. `/all-games`)
+     *   (b) absolute URLs whose parsed origin matches the current page
      */
     navigateTo(type, returnUrl) {
         if (type === 'bulk-scrape') {
@@ -1601,11 +1643,32 @@ const UnifiedToastController = {
         }
 
         if (returnUrl && window.location.pathname !== returnUrl) {
-            window.location.href = returnUrl;
+            if (UnifiedToastController._isSafeReturnUrl(returnUrl)) {
+                window.location.href = returnUrl;
+            } else {
+                console.warn('navigateTo: rejecting unsafe returnUrl', returnUrl);
+            }
         } else if (type === 'ra-sync' || type === 'ra-refresh') {
             window.location.href = '/achievements';
         } else if (type === 'psn-refresh') {
             window.location.href = '/psn-trophies';
+        }
+    },
+
+    /**
+     * Pass 41.12.B — Validate that a navigation target is same-origin.
+     */
+    _isSafeReturnUrl(url) {
+        if (typeof url !== 'string' || !url) return false;
+        // Same-origin path: starts with `/` but not `//` (which would be
+        // protocol-relative and could land on any host).
+        if (url.startsWith('/') && !url.startsWith('//')) return true;
+        try {
+            const parsed = new URL(url, window.location.origin);
+            return parsed.origin === window.location.origin &&
+                   (parsed.protocol === 'http:' || parsed.protocol === 'https:');
+        } catch (e) {
+            return false;
         }
     },
     

@@ -1,5 +1,5 @@
 # =============================================================================
-# Migration 010 — multi-emulator launch (Pass 44)
+# Migration 012 — multi-emulator launch (Pass 44)
 # =============================================================================
 # Adds the emulator registry (`emulators`) and per-system mapping
 # (`system_emulators`) tables, plus two override columns on `games`. Mirrors

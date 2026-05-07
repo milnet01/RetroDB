@@ -24,6 +24,13 @@
 
 import logging
 
+from services.migrations._helpers import (
+    _admin_user_id,
+    _columns_ddl,
+    _has_column,
+    _table_exists,
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -42,31 +49,6 @@ _GAP_COLUMNS = [
     ('xbox_title_id', 'TEXT'),
     ('source', "TEXT DEFAULT 'ra'"),
 ]
-
-
-def _table_exists(cursor, name):
-    return cursor.execute(
-        "SELECT 1 FROM sqlite_master WHERE type='table' AND name=?",
-        (name,),
-    ).fetchone() is not None
-
-
-def _has_column(cursor, table, column):
-    cols = {row[1] for row in cursor.execute(f"PRAGMA table_info({table})")}
-    return column in cols
-
-
-def _admin_user_id(cursor):
-    if not _table_exists(cursor, 'users'):
-        return None
-    row = cursor.execute(
-        "SELECT id FROM users WHERE role = 'admin' ORDER BY id LIMIT 1"
-    ).fetchone()
-    return row[0] if row else None
-
-
-def _columns_ddl(cols):
-    return ',\n    '.join(f"{name} {defn}" for name, defn in cols)
 
 
 def _rebuild_game_achievement_progress(cursor, admin_id):
@@ -186,7 +168,9 @@ def _rebuild_xbox_achievements(cursor, admin_id):
 
 def apply(conn):
     cursor = conn.cursor()
-    cursor.execute("PRAGMA foreign_keys = OFF")
+    # `PRAGMA foreign_keys = OFF` is a no-op inside a transaction; use
+    # `defer_foreign_keys = ON` instead (auto-resets at COMMIT).
+    cursor.execute("PRAGMA defer_foreign_keys = ON")
 
     admin_id = _admin_user_id(cursor)
 
@@ -253,7 +237,23 @@ def apply(conn):
         else:
             _rebuild_xbox_achievements(cursor, admin_id)
 
-    cursor.execute("PRAGMA foreign_keys = ON")
+    # defer_foreign_keys auto-resets at COMMIT — no explicit restoration needed.
+
+    # Pass 45.10 — scope FK check to the rebuilt achievement tables so
+    # pre-existing data-integrity issues elsewhere don't block the
+    # migration.
+    for table in ('game_achievement_progress', 'steam_achievements',
+                  'xbox_achievements'):
+        if not _table_exists(cursor, table):
+            continue
+        violations = cursor.execute(
+            f"PRAGMA foreign_key_check({table})"
+        ).fetchall()
+        if violations:
+            raise RuntimeError(
+                f"Migration 009 left foreign-key violations on {table}: "
+                f"{violations}"
+            )
 
     logger.info(
         "game_achievement_progress / steam_achievements / xbox_achievements "

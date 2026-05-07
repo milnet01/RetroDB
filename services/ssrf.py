@@ -138,6 +138,35 @@ def pin_host_ip(host, ip):
         _pinned.value = previous
 
 
+def validate_and_pin_url(session, url, *, max_redirects=3, timeout=5, require_https=False):
+    """Walk the redirect chain through the SSRF gate, then re-resolve the
+    final URL to capture the IP that the caller will pin via pin_host_ip().
+
+    This is the canonical helper for any outbound GET that needs DNS-rebinding
+    protection (Pass 32.7 / 45.2). Pattern at the call site:
+
+        safe_url, pinned_ip, err = validate_and_pin_url(session, url)
+        if err:
+            return False
+        host = urlparse(safe_url).hostname
+        with pin_host_ip(host, pinned_ip), session.get(safe_url, ...) as r:
+            ...
+
+    Returns:
+        (safe_url, pinned_ip, None) on success
+        (None, None, error_reason) on failure
+    """
+    safe_url, err = validate_redirect_chain(
+        session, url, max_redirects=max_redirects, timeout=timeout,
+    )
+    if err:
+        return None, None, err
+    ok, _, ips = validate_outbound_url(safe_url, require_https=require_https)
+    if not ok or not ips:
+        return None, None, 'final URL re-validation failed'
+    return safe_url, ips[0], None
+
+
 def validate_redirect_chain(session, start_url, *, max_redirects=3, timeout=5):
     """Follow a redirect chain manually, validating each hop.
 
