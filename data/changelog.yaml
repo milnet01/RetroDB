@@ -1,3 +1,15 @@
+- version: 3.5.69
+  date: 2026-05-07
+  tags:
+  - type: tooling
+    label: Add `scripts/fix_onnxruntime_rocm_execstack.py` (AMD GPU local dev workaround)
+  body: |
+    <ul>
+        <li><strong>Local dev tooling, not a runtime change</strong>. AMD's <code>onnxruntime-rocm</code> 1.22.2.post1 wheel ships <code>onnxruntime_pybind11_state.so</code> and <code>libonnxruntime.so.1.22.2</code> with <code>PT_GNU_STACK = RWE</code> (executable-stack request). glibc 2.41+ refuses to honour that and aborts <code>import onnxruntime</code> with <em>cannot enable executable stack as shared object requires: Invalid argument</em>. Surfaced on the dev box (glibc 2.43, kernel 7.0.2) after Dependabot PR #2 (v3.5.50 era) bumped <code>requirements.txt</code> from <code>onnxruntime&gt;=1.15</code> to <code>onnxruntime&gt;=1.25.1,&lt;2.0</code> — that pulled the CPU-only <code>onnxruntime</code> wheel into <code>~/.local/lib/python3.13/site-packages/</code> and its files overwrote the ROCm wheel's files; once the CPU package was uninstalled and <code>onnxruntime-rocm</code> reinstalled, the underlying glibc/PT_GNU_STACK rejection was exposed.</li>
+        <li><strong>Fix</strong>: <code>scripts/fix_onnxruntime_rocm_execstack.py</code> locates the live <code>onnxruntime/capi/</code> via <code>importlib.util.find_spec("onnxruntime")</code> (so it works for user-site, system-site, or virtualenv) and clears <code>PF_X</code> in the <code>PT_GNU_STACK</code> program header of <code>onnxruntime_pybind11_state.so</code> + every <code>libonnxruntime.so.*</code>. The flag is purely declarative; the code never asks for an executable stack at runtime, so clearing it is safe. Idempotent — re-running on already-clean files is a no-op.</li>
+        <li><strong>Re-run trigger</strong>: any <code>pip install -r requirements.txt</code> / <code>pip install --require-hashes -r requirements.lock</code> / <code>pip install --force-reinstall onnxruntime-rocm</code> overwrites the patched <code>.so</code> files. After such an install, run <code>python3 scripts/fix_onnxruntime_rocm_execstack.py</code> once before starting the server. CPU-only hosts (the source-zip distribution path) don't have <code>onnxruntime-rocm</code> installed and the script exits with a friendly "not importable" message — no harm.</li>
+        <li><strong>Verification</strong>: post-patch, <code>python3 -c "import onnxruntime as ort; print(ort.get_available_providers())"</code> returns <code>['MIGraphXExecutionProvider', 'ROCMExecutionProvider', 'CPUExecutionProvider']</code> (was <code>['AzureExecutionProvider', 'CPUExecutionProvider']</code>); RetroDB startup log reads <em>Real-ESRGAN ONNX loaded (ROCm (AMD GPU) mode, tile=64px, max_tiles=1024)</em>. AMD upstream fix would be relinking the wheel with <code>-z noexecstack</code>; until they ship that, this script stays.</li>
+    </ul>
 - version: 3.5.68
   date: 2026-05-02
   tags:
