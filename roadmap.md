@@ -84,6 +84,219 @@ paths or silent-corruption vectors under routine use.
 
 ---
 
+### Pass 47 — Open-source release & donation funnel (2026-05-07)
+
+> User-requested track: flip the GitHub repo from private to public,
+> repurpose Patreon to a pure donation model (the app itself becomes
+> free), add GitHub Sponsors and Buy Me A Coffee, and surface donation
+> links from both the repo and the in-app About panel. The
+> marketing/distribution website (a separate property the user plans
+> to host RetroDB *and* their other apps under, with the same donation
+> model) is **out of scope** for this pass — see "Scope notes —
+> considered and dropped".
+>
+> **Recommended donation stack** (rationale captured here so future
+> sessions don't re-litigate the platform choice):
+>
+> 1. **GitHub Sponsors** — primary. Free for the recipient, integrated
+>    "Sponsor this project" button on the repo page, supports monthly +
+>    one-off, no platform fee beyond standard Stripe processing.
+>    Strongest alignment with the public-repo move; the donation CTA
+>    sits where prospective contributors are already looking.
+> 2. **Buy Me A Coffee** — secondary. Lowest-friction one-off-tip
+>    surface for users who don't want a monthly commitment or a GitHub
+>    account. ~5% platform fee + Stripe processing.
+> 3. **Patreon** — keep, but de-emphasise. Existing setup with zero
+>    subscribers; Patreon's 8–12% take is the steepest of the three so
+>    it should not be the primary CTA. Tier copy is rewritten so the
+>    perks are cosmetic (the app itself is free).
+>
+> Skipped on purpose: Open Collective (fiscal-host overhead is overkill
+> for a solo dev), Liberapay (audience too small for a third recurring
+> platform), Ko-fi (overlaps BMAC — pick one), PayPal Donate (clunky UX,
+> dilutes the funnel), crypto (high friction, signals "shady" to
+> mainstream users).
+
+#### Pass 47.1 Pre-publish hygiene sweep (HIGH, M)
+
+- **Target**: full git history, repo metadata, README, root community
+  files (`SECURITY.md`, issue / PR templates).
+- **Why**: visibility flip is irreversible in practice — anything ever
+  committed to any branch becomes public the instant the repo flips.
+  Need a clean sweep first, especially of pre-`.gitleaks.toml` history.
+- **Plan**:
+  1. **Secret-history sweep**: `gitleaks detect --source . --redact
+     --no-banner --log-opts="--all"` to scan every ref, not just
+     `HEAD`. If anything turns up, decide between (a) `git filter-repo`
+     to scrub history (rewrites SHAs — preferred *before* flipping),
+     or (b) rotate the leaked credential and accept the historical
+     exposure if scrubbing would be too disruptive.
+  2. **Excluded-paths sanity check**: confirm `config.py`,
+     `data/settings.json`, `data/scraper_settings.json`,
+     `data/rom_tools_config.json`, `.secret_key`, all `*.db`,
+     `static/images/{boxart,boxart_3d,screenshots,fanart,manuals,trophies}/`,
+     `static/videos/` are correctly `.gitignore`d AND have never been
+     tracked. `git log --all -- <path>` empty for each.
+  3. **Hardcoded-paths / personal-identifiers grep**:
+     `grep -rE "/home/(ants|[a-z]+)/|aant\.schemel|milnet01"
+     --exclude-dir=.git` — anything that ties source code to the local
+     dev box is parameterised or removed (test fixtures, log lines,
+     comments). Email + GitHub handle expected to remain in `LICENSE`,
+     `CONTRIBUTING.md`, and changelog entries — those are intended.
+  4. **`SECURITY.md`**: add a top-level disclosure policy (contact
+     email, expected response window, in/out-of-scope, "no bug
+     bounty"). GitHub renders this in the Security tab; a public repo
+     without one looks unmaintained.
+  5. **`.github/ISSUE_TEMPLATE/`**: minimal `bug_report.md` and
+     `feature_request.md` so first-time contributors don't dump
+     unstructured prose. Match the project's existing reproduction-
+     before-fix discipline (env / steps / expected vs actual / log
+     excerpt).
+  6. **`.github/PULL_REQUEST_TEMPLATE.md`**: short; mirrors the
+     project's commit-message contract (one-line title, "what / why"
+     body, mandatory-workflow checklist — version bumped, changelog
+     entry, tests run if applicable).
+  7. **README polish**: add a "Status" line ("Solo-developed; releases
+     on a best-effort cadence"), 2–3 representative screenshots, and a
+     "Support development" section anchored to 47.6's funding stack.
+  8. **Repo metadata**: write a one-line description, add 6–8 topics
+     (`rom-manager`, `retro-gaming`, `flask`, `python`, `emulation`,
+     `rom-library`, `self-hosted`, `gaming`) so the repo is
+     discoverable from GitHub search.
+- **Status**: todo
+
+#### Pass 47.2 Flip repo visibility private → public (MEDIUM, S)
+
+- **Target**: GitHub Settings → General → Danger Zone → Change
+  visibility (or `gh repo edit milnet01/RetroDB --visibility public
+  --accept-visibility-change-consequences`).
+- **Why**: gates 47.4–47.6. Public visibility is also what unlocks
+  unlimited Linux-runner CI minutes (private repos consume the
+  account's monthly Actions quota — see `~/.claude/CLAUDE.md` §6),
+  which retires the push-batching rule for this repo.
+- **Plan**:
+  1. Confirm 47.1 clean.
+  2. Flip visibility.
+  3. Verify GitHub Actions secrets (`GITHUB_TOKEN`, any custom
+     workflow secrets) still scope correctly. Repository secrets stay
+     scoped to the repo regardless of visibility, but tokens with
+     restricted-scope PATs may need rotation if their grant was
+     "private repos only".
+  4. **Update push-cadence expectations**: with the repo now public,
+     the global rule's PRIVATE-batching path no longer applies — push
+     freely after each release.
+- **Status**: blocked on 47.1
+
+#### Pass 47.3 Repurpose Patreon (free app, donation-only tiers) (MEDIUM, S)
+
+- **Target**: existing Patreon page (off-repo, web admin).
+- **Why**: existing setup with zero subscribers — the paywall is the
+  discovery bottleneck, not willingness-to-pay. Free + donate is the
+  standard play for niche FOSS hobbyist software.
+- **Plan**:
+  1. Update Patreon page copy: "RetroDB is now free and open source.
+     Patreon supports ongoing development." Strip any "buy access"
+     framing.
+  2. Re-tier the membership levels so they're cosmetic / appreciation
+     rather than gated content. Suggested tiers (sized so the highest
+     stays approachable — risk is patron expectations creeping into
+     roadmap influence at >$15):
+     - **Tip jar** ($1/mo) — name in CHANGELOG supporters list,
+       Discord role if/when a Discord exists.
+     - **Coffee** ($5/mo) — same, plus early access to release builds
+       (~1 week before public release).
+     - **Patron** ($15/mo) — same, plus a monthly behind-the-scenes
+       update post (single paragraph; not a content treadmill).
+  3. Add the Patreon URL to `.github/FUNDING.yml` (Pass 47.6).
+- **Status**: blocked on 47.2
+
+#### Pass 47.4 GitHub Sponsors (MEDIUM, M)
+
+- **Target**: <https://github.com/sponsors> waitlist + sponsor
+  profile.
+- **Why**: integrated with the public repo (Sponsor button on the repo
+  page), no platform fee beyond standard payment processing, supports
+  both monthly and one-off. Strongest alignment with the open-source
+  release.
+- **Plan**:
+  1. Apply at <https://github.com/sponsors>. Eligibility checks:
+     verified GitHub account, 2FA on, public profile photo + bio,
+     identity verification (passport / driver's licence) for
+     Stripe-Connect-equivalent payout setup. Approval can take 2–6
+     weeks, so start the application *early* — runs in parallel with
+     47.1 / 47.2 since the application is account-level, not
+     repo-level.
+  2. Once approved, configure tiers (mirror the Patreon tiers from
+     47.3 so prospective supporters can pick the platform they prefer
+     — same cosmetic perks).
+  3. Skip goal-based fundraising at first. Goals only feel real once
+     the audience is large enough that "$50/mo unlocks weekly
+     office-hours streams" isn't aspirational fanfic.
+- **Status**: application can start in parallel with 47.1; the
+  Sponsor button on the repo page is blocked on 47.2 (button only
+  renders for public repos).
+
+#### Pass 47.5 Buy Me A Coffee (LOW, S)
+
+- **Target**: <https://buymeacoffee.com> profile.
+- **Why**: lowest-friction one-off-tip surface for users without a
+  GitHub account or who don't want monthly commitment. Stripe-backed;
+  recipient pays standard processing fees (~2.9% + $0.30) plus 5% BMAC
+  fee.
+- **Plan**:
+  1. Sign up at <https://buymeacoffee.com>; pick a username matching
+     the GitHub handle (`milnet01`) for cross-platform consistency.
+  2. Add the BMAC URL to `.github/FUNDING.yml` (Pass 47.6) under the
+     `custom` field — BMAC isn't a natively-recognised FUNDING.yml
+     platform.
+  3. **Skip the BMAC "memberships" feature** — that overlaps
+     Patreon/Sponsors and fragments the monthly-tier story across
+     three platforms. Use BMAC strictly for one-off coffees.
+- **Status**: blocked on 47.2
+
+#### Pass 47.6 Donation surfaces in app + repo (MEDIUM, M)
+
+- **Target**: `.github/FUNDING.yml`, `README.md`, in-app
+  Settings/About surface.
+- **Why**: discovery — users only donate if they see the link. The
+  repo button (`FUNDING.yml`) covers GitHub visitors; the README
+  badges cover anyone reading docs; the in-app panel covers existing
+  users who never visit the repo.
+- **Plan**:
+  1. **`.github/FUNDING.yml`** with the platforms enabled in 47.3 / 47.4
+     / 47.5 (GitHub renders these as a "Sponsor this project"
+     dropdown):
+
+     ```yaml
+     github: [milnet01]
+     patreon: <username-from-47.3>
+     custom: ['https://buymeacoffee.com/<username-from-47.5>']
+     ```
+  2. **README.md** — add a "Support development" section above the
+     existing "License" section (line 122) with badges (Sponsor /
+     BMAC / Patreon) and a one-paragraph framing: "RetroDB is free
+     and open source. If it saves you time, consider tipping — every
+     bit helps keep solo development sustainable."
+  3. **In-app surface** — fold a "Support development" panel into the
+     existing settings page (`templates/settings.html`) or the About
+     modal. Three external links + a one-line note. **No paywalled
+     features, no nag dialogs** — those degrade trust faster than
+     they raise donations. A first-run notification *might* be worth
+     it (one-time, dismissable, never reappears) but skip on the
+     first cut and revisit if conversion stays at zero.
+  4. **Footer link** — single text link ("Support") in the page
+     footer next to the version / GitHub link if a footer exists. If
+     no footer exists today, *skip* — don't add chrome solely to
+     hold a donation link.
+  5. **CHANGELOG supporters list** — render contributors from the top
+     Patreon / Sponsors tier into a "Supporters" section at the
+     bottom of `data/changelog.yaml`'s release notes, fed manually
+     per release. Defer until there *are* supporters.
+- **Status**: blocked on 47.3 / 47.4 / 47.5 (need the platform URLs
+  to populate)
+
+---
+
 ### Pass 46 — vendor third-party assets / distribution self-containment (2026-04-27)
 
 > User-requested track: drop runtime CDN dependencies (Chart.js, Google
@@ -2747,6 +2960,15 @@ not added to the roadmap. Document here so they don't keep re-appearing.
   self-hosted app. Covered by Pass 17.3 instead.
 - **Prometheus `/metrics`**: no scraper. Local `/health` + `/ready`
   (Pass 17.1) covers the actual need.
+- **Distribution / portfolio website** (per-user landing page hosting
+  RetroDB and the user's other apps with download links + donation
+  CTAs): a separate, multi-app effort outside RetroDB itself. Tracked
+  at the user's portfolio level, not in this roadmap. Pass 47 covers
+  donation surfacing inside the RetroDB repo + app — the landing site
+  comes later, host TBD (Cloudflare Pages / Netlify / GitHub Pages /
+  Vercel are all viable for a static multi-app site). Mentioned here
+  so the Pass 47 scope stays sharp and the website doesn't get
+  retrofitted into a RetroDB-shaped pass.
 
 ---
 
