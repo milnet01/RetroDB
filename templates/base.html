@@ -470,10 +470,19 @@
         showModal('Alert', message);
     };
     
-    // Confirm dialog (4th arg may be onCancel function or options object)
+    // Confirm dialog (4th arg may be onCancel function or options object).
+    // Pass 3.6.3 — also forward an options object to showModal so callers can
+    // opt into {allowHtml:true} via showConfirm. Previously the options arg
+    // was accepted in the signature but dropped on the floor.
     function showConfirm(title, message, onConfirm, optionsOrOnCancel = null) {
-        const onCancel = typeof optionsOrOnCancel === 'function' ? optionsOrOnCancel : null;
-        showModal(title, message, onConfirm, true, onCancel);
+        let onCancel = null;
+        let options = {};
+        if (typeof optionsOrOnCancel === 'function') {
+            onCancel = optionsOrOnCancel;
+        } else if (optionsOrOnCancel && typeof optionsOrOnCancel === 'object') {
+            options = optionsOrOnCancel;
+        }
+        showModal(title, message, onConfirm, true, onCancel, options);
     }
     
     // ==========================================================================

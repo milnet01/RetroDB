@@ -1100,7 +1100,7 @@ function viewGame(gameId) {
 
 // Rename file
 async function renameFile(gameId, newName) {
-    showConfirm('✏️ Rename File', `Rename ROM file to:<br><code>${newName}</code>`, async function() {
+    showConfirm('✏️ Rename File', `Rename ROM file to:<br><code>${escapeHtml(newName)}</code>`, async function() {
         try {
             const response = await fetch('/api/reports/rename-rom', {
                 method: 'POST',
@@ -1119,7 +1119,7 @@ async function renameFile(gameId, newName) {
         } catch (error) {
             showModal('❌ Error', error.message);
         }
-    });
+    }, { allowHtml: true });
 }
 
 // Rename to scraped title — show confirmation with context
@@ -1188,7 +1188,7 @@ function renameToScraped(item) {
         } catch (error) {
             showModal('❌ Error', error.message);
         }
-    });
+    }, { allowHtml: true });
 }
 
 // ==================== BATCH RENAME FUNCTIONS ====================
