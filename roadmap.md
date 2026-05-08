@@ -1949,11 +1949,11 @@ paths or silent-corruption vectors under routine use.
 #### Pass 39.6 `build_dist.py` env-configurable `STAGING_DIR` (MEDIUM, S)
 
 - **Target**: `build_dist.py:22`; `release.yml:55-64`.
-- **Why**: hardcoded absolute path `/mnt/Storage/Scripts/Linux/Staging_Area/RetroDB`.
+- **Why**: hardcoded absolute path `/mnt/Emulators/Scripts/Linux/Staging_Area/RetroDB`.
   Release workflow monkey-patches `build_dist.STAGING_DIR` inline —
   fragile; `main()` return is also `None`-masked.
 - **Plan**: `STAGING_DIR = os.environ.get('RETRODB_STAGING_DIR',
-  '/mnt/Storage/...')`; set `env: RETRODB_STAGING_DIR:` in the
+  '/mnt/Emulators/...')`; set `env: RETRODB_STAGING_DIR:` in the
   workflow.  Raise on `hasattr(build_dist, 'main') is False` rather
   than silently no-op.
 - **Source**: 2026-04-24 audit, Tests/tooling/CI M3.
@@ -3051,7 +3051,7 @@ The 14-subsystem partition that produced this audit is:
 Each agent gets the same brief, scoped to its subsystem:
 
 > You are performing an INDEPENDENT code review of ONE subsystem of RetroDB.
-> Project root: `/mnt/Storage/Scripts/Linux/RetroDB`.  You do not know what
+> Project root: `/mnt/Emulators/Scripts/Linux/RetroDB`.  You do not know what
 > the orchestrator thinks about this code.  Fresh eyes.
 >
 > **Scope:** `<paths>` — review ONLY these files.

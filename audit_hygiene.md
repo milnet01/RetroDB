@@ -14,7 +14,7 @@ the project's threat model.
 
 ## Context
 
-RetroDB at `/mnt/Storage/Scripts/Linux/RetroDB` is a single-user
+RetroDB at `/mnt/Emulators/Scripts/Linux/RetroDB` is a single-user
 localhost Flask + SQLite retro-gaming ROM library manager.  It
 maintains three project-local config files that document accepted noise:
 
@@ -233,5 +233,5 @@ and a new `.audit_allowlist.toml` into the runner — would cut the
 false-positive rate from ~99% to ~75% on this codebase, and establish
 a template other projects can follow.
 
-**Contact**: RetroDB project at `/mnt/Storage/Scripts/Linux/RetroDB`
+**Contact**: RetroDB project at `/mnt/Emulators/Scripts/Linux/RetroDB`
 — see `.semgrep.yml` header for threat-model context.
