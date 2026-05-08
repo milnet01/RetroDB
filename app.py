@@ -1627,7 +1627,45 @@ if _is_worker:
 # =============================================================================
 
 if __name__ == '__main__':
-    from platform_utils import get_local_ip
+    import errno
+    from platform_utils import get_local_ip, IS_WINDOWS, IS_MACOS
+
+    def _die_port_in_use(port: int) -> None:
+        """Print a cross-platform diagnostic for EADDRINUSE and exit."""
+        if IS_WINDOWS:
+            find_cmd = f'netstat -ano | findstr :{port}'
+            kill_cmd = 'taskkill /PID <PID> /F'
+        elif IS_MACOS:
+            find_cmd = f'lsof -nP -iTCP:{port} -sTCP:LISTEN'
+            kill_cmd = 'kill <PID>'
+        else:  # Linux / other Unix
+            find_cmd = f"ss -ltnp | grep ':{port}'"
+            kill_cmd = 'kill <PID>'
+
+        msg = [
+            '',
+            '=' * 60,
+            f'  ERROR: Port {port} is already in use',
+            '=' * 60,
+            '',
+            f'  Another process on this machine is bound to port {port}.',
+            '  RetroDB cannot start until that process releases the port',
+            '  (or you switch RetroDB to a different port).',
+            '',
+            '  Find the process:',
+            f'    {find_cmd}',
+            '',
+            '  Stop it (substitute the PID from the line above):',
+            f'    {kill_cmd}',
+            '',
+            '  Or change SERVER_PORT in config.py to a free port',
+            '  (e.g. 5001) and restart RetroDB.',
+            '',
+            '=' * 60,
+            '',
+        ]
+        print('\n'.join(msg), file=sys.stderr)
+        sys.exit(1)
 
     # Flask debug mode runs a reloader that spawns a subprocess
     # Only log startup info in the main process (when WERKZEUG_RUN_MAIN is set)
@@ -1682,7 +1720,12 @@ if __name__ == '__main__':
         print("\n  * Running in DEBUG mode (Flask dev server)")
         print(f"  * Local:   http://localhost:{port}")
         print(f"  * Network: http://{local_ip}:{port}\n")
-        app.run(debug=True, host=host, port=port)
+        try:
+            app.run(debug=True, host=host, port=port)
+        except OSError as _bind_err:
+            if _bind_err.errno == errno.EADDRINUSE:
+                _die_port_in_use(port)
+            raise
     else:
         # Production: use Waitress WSGI server
         try:
@@ -1708,4 +1751,9 @@ if __name__ == '__main__':
         # queued behind each other and every page load flooded the log with
         # "Task queue depth" warnings. 16 gives comfortable headroom for a
         # local single-user / small-household workload without being wasteful.
-        serve(app, host=host, port=port, threads=16)
+        try:
+            serve(app, host=host, port=port, threads=16)
+        except OSError as _bind_err:
+            if _bind_err.errno == errno.EADDRINUSE:
+                _die_port_in_use(port)
+            raise

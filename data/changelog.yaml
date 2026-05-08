@@ -1,3 +1,23 @@
+- version: 3.6.4
+  date: 2026-05-08
+  tags:
+  - type: fix
+    label: Startup — friendly cross-platform message when port is already in use
+  body: |
+    <ul>
+        <li><strong>Before</strong>. Starting RetroDB while another process held port 5000 surfaced a raw Python traceback ending in <code>OSError: [Errno 98] Address already in use</code>. The traceback assumes Linux <code>errno</code>, doesn't tell the user which port is conflicting, and gives no actions to recover. Hostile to non-developer users on macOS / Windows where the errno number changes (48 / 10048) but the cause is the same.</li>
+        <li><strong>After</strong>. <code>app.py</code> now wraps both <code>app.run()</code> (debug) and <code>waitress.serve()</code> (production) in a try/except that catches <code>OSError</code> with <code>errno == errno.EADDRINUSE</code> and prints a framed, action-oriented message (<code>app.py:1631-1666</code> + the two <code>try/except</code> blocks at the launch sites). The message:
+            <ul>
+                <li>Names the actual port (taken from <code>config.SERVER_PORT</code>) — not a hard-coded "5000".</li>
+                <li>Shows the platform-correct <strong>find</strong> command — <code>ss -ltnp | grep ':PORT'</code> on Linux, <code>lsof -nP -iTCP:PORT -sTCP:LISTEN</code> on macOS, <code>netstat -ano | findstr :PORT</code> on Windows. Detected via existing <code>platform_utils.IS_WINDOWS</code> / <code>IS_MACOS</code> flags so the snippet shown matches the user's OS only — no noise from irrelevant platforms.</li>
+                <li>Shows the platform-correct <strong>kill</strong> command — <code>kill &lt;PID&gt;</code> on Unix, <code>taskkill /PID &lt;PID&gt; /F</code> on Windows.</li>
+                <li>Offers the universal fallback: <em>change <code>SERVER_PORT</code> in <code>config.py</code> to a free port (e.g. 5001) and restart</em>.</li>
+            </ul>
+        </li>
+        <li><strong>Why <code>errno.EADDRINUSE</code> and not <code>errno == 98</code></strong>. Python's stdlib <code>errno</code> module exposes the constant with the right value per OS — 98 on Linux, 48 on macOS, 10048 on Windows — so a single check works on all three target platforms without runtime branching on the numeric value.</li>
+        <li><strong>Scope</strong>. Only <code>EADDRINUSE</code> is special-cased; other <code>OSError</code> variants (e.g. <code>EACCES</code> on a privileged port without root, missing IPv6 stack, etc.) fall through to the original traceback unchanged. Keeping the catch narrow avoids hiding genuinely-unfamiliar bind failures behind a generic message.</li>
+        <li><strong>Patch bump 3.6.3 → 3.6.4</strong>: startup-UX fix only, no behavior or schema change.</li>
+    </ul>
 - version: 3.6.3
   date: 2026-05-08
   tags:
