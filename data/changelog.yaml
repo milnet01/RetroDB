@@ -1,3 +1,25 @@
+- version: 3.6.11
+  date: 2026-05-17
+  tags:
+  - type: fix
+    label: HLTB endpoint rename — /api/find → /api/bleed (HLTB rolled the rename around 2026-05; the old URL now 404s)
+  - type: fix
+    label: Hot-fix — tests/test_hltb_endpoint.py asserted /api/bleed 8 times but scraper/hltb_lookup.py still pointed at /api/find on origin; CI was red
+  body: |
+    <ul>
+        <li><strong>Hot-fix #2 — second CI red found while triaging working-tree strays</strong>. <code>tests/test_hltb_endpoint.py</code> was committed in v3.6.9 (and earlier) with assertions like <code>'/api/bleed/init' in src</code> and <code>src.count('/api/bleed') >= 3</code>. The production rename in <code>scraper/hltb_lookup.py</code> was sitting unstaged in the working tree; a fresh checkout of origin/main failed the HLTB source-grep tests.</li>
+        <li><strong>HLTB endpoint rename history (whack-a-mole)</strong>:
+            <ul>
+                <li>pre-2026-04: <code>/api/finder</code> — 404</li>
+                <li>2026-04..05: <code>/api/find/init</code> + <code>/api/find</code> — 404 (renamed again around 2026-05)</li>
+                <li>2026-05+: <code>/api/bleed/init</code> + <code>/api/bleed</code> — current (verified via the site's own JS chunks under <code>_next/static/chunks/*.js</code>)</li>
+            </ul>
+        </li>
+        <li><strong>Why it matters for users</strong>. Without this fix any HLTB lookup (one-shot from the game-detail modal, or the bulk-scrape pass) silently 404s and returns <code>None</code>. The user sees "no playtime found" with no indication that the upstream URL was rejected. The fix unblocks every HLTB code path.</li>
+        <li><strong>Single file changed</strong>: <code>scraper/hltb_lookup.py</code> — three URL literals updated (<code>/api/find/init</code> → <code>/api/bleed/init</code>; two <code>/api/find</code> POST sites → <code>/api/bleed</code>), module docstring + rename-history comment block refreshed.</li>
+        <li><strong>Patch bump 3.6.10 → 3.6.11</strong>: production HLTB unblock + CI hot-fix.</li>
+    </ul>
+
 - version: 3.6.10
   date: 2026-05-17
   tags:
