@@ -12,6 +12,7 @@ Usage:
     handler.addFilter(SecretRedactor())
 """
 
+import collections.abc
 import logging
 import re
 
@@ -95,18 +96,34 @@ class SecretRedactor(logging.Filter):
         """
         try:
             # Bytes args: render via decode so regexes see the token.
+            # Dict args (`logger.info("%(k)s", {'k': ...})` → LogRecord
+            # collapses these to `record.args == {'k': ...}`) must stay a
+            # mapping so getMessage() can resolve named placeholders;
+            # only tuple/scalar args get the bytes-decode pass.
             if record.args:
-                normalized_args = record.args if isinstance(record.args, tuple) else (record.args,)
-                decoded = []
-                for a in normalized_args:
-                    if isinstance(a, (bytes, bytearray)):
-                        try:
-                            decoded.append(a.decode('utf-8', errors='replace'))
-                        except Exception:
-                            decoded.append(repr(a))
-                    else:
-                        decoded.append(a)
-                record.args = tuple(decoded)
+                if isinstance(record.args, collections.abc.Mapping):
+                    decoded_map = {}
+                    for k, v in record.args.items():
+                        if isinstance(v, (bytes, bytearray)):
+                            try:
+                                decoded_map[k] = v.decode('utf-8', errors='replace')
+                            except Exception:
+                                decoded_map[k] = repr(v)
+                        else:
+                            decoded_map[k] = v
+                    record.args = decoded_map
+                else:
+                    normalized_args = record.args if isinstance(record.args, tuple) else (record.args,)
+                    decoded = []
+                    for a in normalized_args:
+                        if isinstance(a, (bytes, bytearray)):
+                            try:
+                                decoded.append(a.decode('utf-8', errors='replace'))
+                            except Exception:
+                                decoded.append(repr(a))
+                        else:
+                            decoded.append(a)
+                    record.args = tuple(decoded)
 
             rendered = record.getMessage()
             record.msg = redact(rendered)

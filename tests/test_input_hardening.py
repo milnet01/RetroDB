@@ -9,6 +9,20 @@ from unittest.mock import patch, MagicMock
 import pytest
 
 
+def _fake_http_response(status_code=200, headers=None):
+    """Build a MagicMock that mimics requests.Response inside a `with` block.
+
+    Extracted from inline construction across multiple TestScraperDownloadCaps
+    tests — the `__enter__`/`__exit__` wiring was identical in every site.
+    """
+    resp = MagicMock()
+    resp.status_code = status_code
+    resp.headers = headers or {}
+    resp.__enter__ = MagicMock(return_value=resp)
+    resp.__exit__ = MagicMock(return_value=False)
+    return resp
+
+
 # 25.1 — ES-DE path-traversal guard
 # ---------------------------------
 # The resolve_media_path() helper is defined inside apply_esde_metadata,
@@ -48,9 +62,12 @@ class TestESDEPathTraversal:
 # -------------------------------------
 # The multidisc-scan endpoint now returns 400 for an unknown system.
 class TestReportsSystemWhitelist:
-    def test_unknown_system_returns_400(self):
+    def test_unknown_system_returns_400(self, monkeypatch):
         import app as app_module
-        app_module.app.config['TESTING'] = True
+        # Use monkeypatch.setitem so TESTING is automatically restored after
+        # the test — never leak the mutation onto the shared app.config object
+        # for sibling tests (xdist-safe).
+        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
         client = app_module.app.test_client()
         with client.session_transaction() as sess:
             sess['user_id'] = 1
@@ -74,14 +91,17 @@ class TestMuseumSSRFGuard:
         safe_url, pinned_ip, err = _is_public_https_url('http://127.0.0.1/admin')
         assert safe_url is None
         assert pinned_ip is None
-        assert 'disallowed IP range' in err or 'loopback' in err.lower() or '127' in err
+        # Canonical rejection reason from services.ssrf.validate_outbound_url.
+        # Pinning the exact prefix means a refactor that drops or reshapes the
+        # message will fail loudly instead of silently degrading the assertion.
+        assert err.startswith('disallowed IP range:'), err
 
     def test_rfc1918_rejected(self):
         from routes.museum import _is_public_https_url
         safe_url, pinned_ip, err = _is_public_https_url('http://10.0.0.1/foo')
         assert safe_url is None
         assert pinned_ip is None
-        assert err  # some rejection reason
+        assert err.startswith('disallowed IP range:'), err
 
     def test_link_local_rejected(self):
         from routes.museum import _is_public_https_url
@@ -89,7 +109,7 @@ class TestMuseumSSRFGuard:
         safe_url, pinned_ip, err = _is_public_https_url('http://169.254.169.254/latest/meta-data/')
         assert safe_url is None
         assert pinned_ip is None
-        assert err
+        assert err.startswith('disallowed IP range:'), err
 
     def test_non_http_scheme_rejected(self):
         from routes.museum import _is_public_https_url
@@ -108,12 +128,18 @@ class TestMuseumUploadCap:
         # Flask's MAX_CONTENT_LENGTH (64 MB by default) catches bodies larger
         # than that; the MUSEUM_UPLOAD_MAX_BYTES (10 MB) catches the 10–64 MB
         # band that the global cap wouldn't. A true integration test would
-        # need multipart plumbing; here we just verify the config constant
-        # exists and the route imports cleanly.
+        # need multipart plumbing; here we pin the relationship between the
+        # two caps so they can't drift apart silently — the museum cap must
+        # always be at most the global Flask cap, otherwise the museum guard
+        # would never fire (Flask aborts the request first).
         import config
-        import routes.museum
+        import routes.museum  # noqa: F401 — import-clean smoke check
         assert hasattr(config, 'MUSEUM_UPLOAD_MAX_BYTES')
         assert config.MUSEUM_UPLOAD_MAX_BYTES >= 1024 * 1024
+        # config.MAX_UPLOAD_BYTES is the value Flask sets as app.config['MAX_CONTENT_LENGTH']
+        # (see app.py: `app.config['MAX_CONTENT_LENGTH'] = config.MAX_UPLOAD_BYTES`).
+        assert hasattr(config, 'MAX_UPLOAD_BYTES')
+        assert config.MUSEUM_UPLOAD_MAX_BYTES <= config.MAX_UPLOAD_BYTES
 
 
 # 25.5 — CLZ PDF page-cap + temp cleanup
@@ -128,7 +154,8 @@ class TestCLZPDFBounds:
         """The route now wraps pdfplumber.open in try/finally so tmp_path
         is deleted on exception paths, not just success paths."""
         import routes.clz_import as mod
-        src = open(mod.__file__).read()
+        with open(mod.__file__, encoding='utf-8') as f:
+            src = f.read()
         # Verify the try/finally structure is present
         assert 'finally:' in src
         assert 'os.unlink(tmp_path)' in src
@@ -160,11 +187,10 @@ class TestScraperDownloadCaps:
         from scraper import base_scraper
 
         # Fake response that claims 100 MB Content-Length (above 50 MB cap).
-        fake_resp = MagicMock()
-        fake_resp.status_code = 200
-        fake_resp.headers = {'Content-Length': str(100 * 1024 * 1024)}
-        fake_resp.__enter__ = MagicMock(return_value=fake_resp)
-        fake_resp.__exit__ = MagicMock(return_value=False)
+        fake_resp = _fake_http_response(
+            status_code=200,
+            headers={'Content-Length': str(100 * 1024 * 1024)},
+        )
 
         with patch.object(base_scraper._http_session, 'get', return_value=fake_resp):
             ok = base_scraper.download_image(

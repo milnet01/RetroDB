@@ -27,109 +27,64 @@
 import os
 import sys
 
+import pytest
+
 _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
+
+# c-006 DU-1: collapse ~15 inlined `open(mod.__file__).read()` + index-slice
+# patterns onto shared helpers so a file rename fails one place, not 15.
+from tests._util import read_module_source, read_source, slice_function  # noqa: E402, F401
 
 
 # -----------------------------------------------------------------------------
 # 40.1 — RCE via unvalidated chdman_path in rom_tools_config.json POST
 # -----------------------------------------------------------------------------
 class TestPass40_1ChdmanPathValidator:
-    """Validator must reject attacker-supplied paths to arbitrary binaries."""
+    """Validator must reject attacker-supplied paths to arbitrary binaries.
 
-    def test_bare_chdman_accepted(self):
+    c-006 P-1: collapsed from 12 single-method tests into two parametrize
+    tables (accept + reject) so the input vector and contract are visible
+    in one place and a new attack case is one row to add."""
+
+    # Each row: (input_value, expected_cleaned).  Empty string normalizes
+    # to the bare basename so the default install path is valid.
+    ACCEPT_CASES = [
+        ('chdman', 'chdman'),
+        ('', 'chdman'),
+        ('chdman.exe', 'chdman.exe'),
+        ('/usr/bin/chdman', '/usr/bin/chdman'),
+        ('/usr/local/bin/chdman', '/usr/local/bin/chdman'),
+    ]
+
+    # Each row: (input_value, label) — label is for failure attribution.
+    REJECT_CASES = [
+        ('/usr/bin/python3', 'CWE-78 argv0 substitution'),
+        ('/tmp/evil', 'writable tmpdir basename'),
+        ('/home/attacker/chdman', 'user-writable home'),
+        ('/usr/bin/../tmp/evil', 'path traversal'),
+        ('./chdman', 'relative path'),
+        ('/usr/bin/sh', 'wrong basename under allowed dir'),
+        (12345, 'non-string int'),
+        (['/usr/bin/chdman'], 'non-string list'),
+    ]
+
+    @pytest.mark.parametrize("value,expected_cleaned", ACCEPT_CASES)
+    def test_chdman_path_accepted(self, value, expected_cleaned):
         from services.rom_tools_validators import validate_rom_tools_value
 
-        ok, reason, cleaned = validate_rom_tools_value('chdman_path', 'chdman')
-        assert ok, f"bare 'chdman' should be accepted: {reason}"
-        assert cleaned == 'chdman'
+        ok, reason, cleaned = validate_rom_tools_value('chdman_path', value)
+        assert ok, f"value={value!r} should be accepted: {reason}"
+        assert cleaned == expected_cleaned
 
-    def test_empty_string_normalized_to_chdman(self):
+    @pytest.mark.parametrize("value,label", REJECT_CASES)
+    def test_chdman_path_rejected(self, value, label):
         from services.rom_tools_validators import validate_rom_tools_value
 
-        ok, _, cleaned = validate_rom_tools_value('chdman_path', '')
-        assert ok
-        assert cleaned == 'chdman'
-
-    def test_chdman_exe_accepted(self):
-        from services.rom_tools_validators import validate_rom_tools_value
-
-        ok, _, cleaned = validate_rom_tools_value('chdman_path', 'chdman.exe')
-        assert ok
-        assert cleaned == 'chdman.exe'
-
-    def test_python3_argv0_substitution_rejected(self):
-        """The CWE-78 attack vector: writing python3 as chdman_path so that
-        subsequent CHD conversion runs python3 with attacker-controlled argv."""
-        from services.rom_tools_validators import validate_rom_tools_value
-
-        ok, reason, _ = validate_rom_tools_value('chdman_path', '/usr/bin/python3')
-        assert not ok
-        assert reason
-
-    def test_tmp_path_rejected(self):
-        """Writable directories are off-limits — a logged-in user with file
-        access could drop a malicious binary there."""
-        from services.rom_tools_validators import validate_rom_tools_value
-
-        ok, reason, _ = validate_rom_tools_value('chdman_path', '/tmp/evil')
-        assert not ok
-        assert reason
-
-    def test_home_dir_rejected(self):
-        from services.rom_tools_validators import validate_rom_tools_value
-
-        ok, reason, _ = validate_rom_tools_value('chdman_path', '/home/attacker/chdman')
-        assert not ok
-        assert reason
-
-    def test_traversal_rejected(self):
-        from services.rom_tools_validators import validate_rom_tools_value
-
-        ok, reason, _ = validate_rom_tools_value(
-            'chdman_path', '/usr/bin/../tmp/evil'
-        )
-        assert not ok
-        assert reason
-
-    def test_relative_path_rejected(self):
-        from services.rom_tools_validators import validate_rom_tools_value
-
-        ok, reason, _ = validate_rom_tools_value('chdman_path', './chdman')
-        assert not ok
-
-    def test_wrong_basename_rejected(self):
-        """Even under /usr/bin, only the chdman binary is permitted."""
-        from services.rom_tools_validators import validate_rom_tools_value
-
-        ok, reason, _ = validate_rom_tools_value('chdman_path', '/usr/bin/sh')
-        assert not ok
-
-    def test_usr_bin_chdman_accepted(self):
-        from services.rom_tools_validators import validate_rom_tools_value
-
-        ok, _, cleaned = validate_rom_tools_value('chdman_path', '/usr/bin/chdman')
-        assert ok
-        assert cleaned == '/usr/bin/chdman'
-
-    def test_usr_local_bin_chdman_accepted(self):
-        from services.rom_tools_validators import validate_rom_tools_value
-
-        ok, _, cleaned = validate_rom_tools_value(
-            'chdman_path', '/usr/local/bin/chdman'
-        )
-        assert ok
-        assert cleaned == '/usr/local/bin/chdman'
-
-    def test_non_string_rejected(self):
-        from services.rom_tools_validators import validate_rom_tools_value
-
-        ok, _, _ = validate_rom_tools_value('chdman_path', 12345)
-        assert not ok
-
-        ok, _, _ = validate_rom_tools_value('chdman_path', ['/usr/bin/chdman'])
-        assert not ok
+        ok, reason, _ = validate_rom_tools_value('chdman_path', value)
+        assert not ok, f"value={value!r} ({label}) should be rejected"
+        assert reason, f"validator must emit a reason for {value!r}"
 
 
 class TestPass40_1OtherSettingsValidators:
@@ -212,7 +167,7 @@ class TestPass40_1RouteIntegration:
         therefore a method-aware in-handler check, not a top-level decorator."""
         from routes import tools as tools_mod
 
-        src = open(tools_mod.__file__).read()
+        src = read_module_source(tools_mod)
         idx = src.index('def api_rom_tools_settings')
         # Within the function body (next ~1500 chars), the POST branch must
         # raise 403 for non-admin callers.
@@ -223,15 +178,27 @@ class TestPass40_1RouteIntegration:
         assert '403' in body, 'POST must return 403 for non-admin (Pass 40.1)'
 
     def test_post_rejects_attacker_chdman_path(self, tmp_path, monkeypatch):
-        """End-to-end: POST {chdman_path: /usr/bin/python3} → 4xx, file unchanged."""
+        """End-to-end: POST {chdman_path: /usr/bin/python3} → validator
+        rejects, file unchanged.
+
+        c-006 A-1 fix: previously this test relied on user_id=1 being admin
+        in the seeded DB.  On a fresh CI checkout (or a re-seeded DB) the
+        route 302'd to /login before the validator branch ran, so the
+        assertion `status_code in (400, 302, 403)` passed vacuously and
+        gave the validator zero coverage.  We now monkeypatch
+        `get_current_user` to return a real admin stub and seed CSRF +
+        setup_completed so the validator branch is actually exercised.
+
+        c-006 ST-1: TESTING flag set via monkeypatch.setitem so the
+        module-level app singleton's TESTING value is restored after."""
         import json as _json
         import app as app_module
+        import settings_manager as _settings_manager
         from routes import tools as tools_mod
 
         # Redirect rom_tools_config.json into tmpdir for isolation.
         cfg_path = tmp_path / 'rom_tools_config.json'
         original_load = tools_mod.load_rom_tools_config
-        original_save = tools_mod.save_rom_tools_config
 
         def fake_load():
             if cfg_path.exists():
@@ -245,23 +212,35 @@ class TestPass40_1RouteIntegration:
         monkeypatch.setattr(tools_mod, 'load_rom_tools_config', fake_load)
         monkeypatch.setattr(tools_mod, 'save_rom_tools_config', fake_save)
 
-        app_module.app.config['TESTING'] = True
+        # Pin an admin user so the route runs past `@admin_required`. Bypass
+        # the first-time-setup redirect, which otherwise fires on CI's empty
+        # settings.json.
+        fake_admin = {'id': 1, 'username': 'admin-stub', 'role': 'admin'}
+        monkeypatch.setattr(app_module, 'get_current_user', lambda: fake_admin)
+        monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
+        monkeypatch.setattr(_settings_manager, 'load_settings',
+                            lambda: {'setup_completed': True, 'rom_path': '/tmp'})
+
+        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
         client = app_module.app.test_client()
         with client.session_transaction() as sess:
-            sess['user_id'] = 1  # admin in seeded DB; if not present, route 302s
+            sess['user_id'] = 1
+            sess['_csrf_token'] = 'pass40-csrf-token'
 
         resp = client.post(
             '/api/rom-tools/settings',
             json={'chdman_path': '/usr/bin/python3'},
+            headers={'X-CSRF-Token': 'pass40-csrf-token'},
         )
-        # Either 400 (validator fired) or 302/403 (no admin in test DB).
-        # The one outcome we must NEVER see is 200 with the dangerous value persisted.
-        if resp.status_code == 200:
-            assert not cfg_path.exists() or \
-                _json.loads(cfg_path.read_text()).get('chdman_path') != '/usr/bin/python3'
-        else:
-            assert resp.status_code in (400, 302, 403), \
-                f"unexpected status: {resp.status_code}"
+        # Validator must fire — 400 with the dangerous value not persisted.
+        assert resp.status_code == 400, (
+            f"validator branch must reject the attacker payload (got "
+            f"{resp.status_code}: {resp.get_data(as_text=True)[:200]})"
+        )
+        # Never persisted to disk under any branch.
+        if cfg_path.exists():
+            assert _json.loads(cfg_path.read_text()).get('chdman_path') \
+                != '/usr/bin/python3'
 
 
 # -----------------------------------------------------------------------------
@@ -276,7 +255,7 @@ class TestPass40_2ChdConvertVerifyPathValidation:
         on each file_path inside the for-loop."""
         from routes import tools as tools_mod
 
-        src = open(tools_mod.__file__).read()
+        src = read_module_source(tools_mod)
         # Slice to the run_conversion closure + its loop.
         idx = src.index('def api_chd_converter_convert')
         end = src.index('def api_chd_verify_scan', idx)
@@ -288,7 +267,7 @@ class TestPass40_2ChdConvertVerifyPathValidation:
     def test_verify_worker_validates_each_path(self):
         from routes import tools as tools_mod
 
-        src = open(tools_mod.__file__).read()
+        src = read_module_source(tools_mod)
         idx = src.index('def api_chd_verify_verify')
         # The next route after verify is duplicate-finder; bound the slice there.
         end = src.index('def api_duplicate_finder', idx)
@@ -299,8 +278,16 @@ class TestPass40_2ChdConvertVerifyPathValidation:
 
     def test_convert_e2e_rejects_traversal(self, tmp_path, monkeypatch):
         """End-to-end smoke: POST with /etc/passwd in files[] never invokes
-        subprocess.run with that path.  Validation happens before chdman call."""
+        subprocess.run with that path.  Validation happens before chdman call.
+
+        c-006 F-1 fix: previously polled `seen_argv` with sleep(0.05) × 20 on
+        a daemon thread, which could vacuously pass on a slow CI runner that
+        hadn't scheduled the thread before the assertion fired. We now force
+        the worker thread to run synchronously by stubbing Thread.start so
+        the inner target completes before the route returns."""
         import app as app_module
+        import settings_manager as _settings_manager
+        import threading as _threading
         from routes import tools as tools_mod
 
         # Pin rom_path under tmpdir so traversal is unambiguous.
@@ -327,33 +314,52 @@ class TestPass40_2ChdConvertVerifyPathValidation:
 
         monkeypatch.setattr(tools_mod.subprocess, 'run', fake_run)
 
-        app_module.app.config['TESTING'] = True
+        # Run the worker synchronously so we don't race the assertion against
+        # a daemon-thread schedule.  Thread.start -> Thread.run executes the
+        # target inline; the route returns 200 only after the work finishes.
+        monkeypatch.setattr(_threading.Thread, 'start',
+                            lambda self: self.run())
+
+        # Pin admin so the route runs past the auth guard rather than 302'ing.
+        fake_admin = {'id': 1, 'username': 'admin-stub', 'role': 'admin'}
+        monkeypatch.setattr(app_module, 'get_current_user', lambda: fake_admin)
+        monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
+        monkeypatch.setattr(_settings_manager, 'load_settings',
+                            lambda: {'setup_completed': True, 'rom_path': str(rom_root)})
+
+        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
         client = app_module.app.test_client()
         with client.session_transaction() as sess:
             sess['user_id'] = 1
+            sess['_csrf_token'] = 'pass40-csrf-token'
 
         resp = client.post(
             '/api/rom-tools/chd-converter/convert',
             json={'files': ['/etc/passwd', str(legit)]},
+            headers={'X-CSRF-Token': 'pass40-csrf-token'},
         )
-        # Even if route 302s for non-admin in test DB, no chdman invocation
-        # should ever target /etc/passwd.
-        if resp.status_code == 200:
-            # Worker thread runs async — give it a brief moment to iterate.
-            import time as _t
-            for _ in range(20):
-                if seen_argv:
-                    break
-                _t.sleep(0.05)
-            for argv in seen_argv:
-                assert '/etc/passwd' not in argv, \
-                    f'chdman invoked on traversal path: {argv}'
+        assert resp.status_code == 200, (
+            f"expected 200 once admin is pinned, got {resp.status_code}: "
+            f"{resp.get_data(as_text=True)[:200]}"
+        )
+        # No chdman invocation may have targeted /etc/passwd.
+        for argv in seen_argv:
+            assert '/etc/passwd' not in argv, (
+                f'chdman invoked on traversal path: {argv}'
+            )
 
     def test_convert_does_not_remove_arbitrary_file(self, tmp_path, monkeypatch):
         """If chd_delete_originals is true, the os.remove must still be
         gated by safe_path — a logged-in user can't trick the worker into
-        deleting /etc/something."""
+        deleting /etc/something.
+
+        c-006 F-1 fix: same synchronous-worker pattern as the traversal test
+        — we run the daemon thread inline via Thread.start → Thread.run so
+        the post-response inspection isn't racing against a delayed
+        schedule."""
         import app as app_module
+        import settings_manager as _settings_manager
+        import threading as _threading
         from routes import tools as tools_mod
 
         rom_root = tmp_path / 'roms'
@@ -383,31 +389,96 @@ class TestPass40_2ChdConvertVerifyPathValidation:
 
         # Track which paths os.remove was called on.
         removed = []
-        original_remove = tools_mod.os.remove
         monkeypatch.setattr(tools_mod.os, 'remove', lambda p: removed.append(p))
 
-        app_module.app.config['TESTING'] = True
+        # Synchronous worker — see F-1 note in test_convert_e2e_rejects_traversal.
+        monkeypatch.setattr(_threading.Thread, 'start',
+                            lambda self: self.run())
+
+        # Pin admin so the route runs past the auth guard.
+        fake_admin = {'id': 1, 'username': 'admin-stub', 'role': 'admin'}
+        monkeypatch.setattr(app_module, 'get_current_user', lambda: fake_admin)
+        monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
+        monkeypatch.setattr(_settings_manager, 'load_settings',
+                            lambda: {'setup_completed': True, 'rom_path': str(rom_root)})
+
+        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
         client = app_module.app.test_client()
         with client.session_transaction() as sess:
             sess['user_id'] = 1
+            sess['_csrf_token'] = 'pass40-csrf-token'
 
         resp = client.post(
             '/api/rom-tools/chd-converter/convert',
             json={'files': [str(decoy_target)]},
+            headers={'X-CSRF-Token': 'pass40-csrf-token'},
         )
-
-        # Allow the worker thread to drain.
-        if resp.status_code == 200:
-            import time as _t
-            for _ in range(40):
-                _t.sleep(0.025)
-                if removed:
-                    break
-
+        assert resp.status_code == 200, (
+            f"expected 200 once admin is pinned, got {resp.status_code}: "
+            f"{resp.get_data(as_text=True)[:200]}"
+        )
         # The decoy path is OUTSIDE rom_root → safe_path rejects → os.remove
         # never called on it.
         assert str(decoy_target) not in removed, \
             f'os.remove called on path outside rom_path: {removed}'
+
+    def test_convert_with_only_out_of_bound_files_invokes_no_chdman(
+        self, tmp_path, monkeypatch,
+    ):
+        """c-006 C-1 coverage gap: when *every* file in the payload is
+        out-of-bounds, the worker must reject all of them and never invoke
+        chdman.  Previously coverage only included the "one good + one bad"
+        case, which could pass vacuously."""
+        import app as app_module
+        import settings_manager as _settings_manager
+        import threading as _threading
+        from routes import tools as tools_mod
+
+        rom_root = tmp_path / 'roms'
+        rom_root.mkdir()
+
+        monkeypatch.setattr(tools_mod, '_get_rom_path', lambda: str(rom_root))
+        monkeypatch.setattr(tools_mod.shutil, 'which', lambda _: '/usr/bin/chdman')
+
+        seen_argv = []
+
+        class _FakeResult:
+            returncode = 1
+            stdout = ''
+            stderr = ''
+
+        monkeypatch.setattr(tools_mod.subprocess, 'run',
+                            lambda cmd, **kw: (seen_argv.append(list(cmd)) or _FakeResult()))
+
+        monkeypatch.setattr(_threading.Thread, 'start',
+                            lambda self: self.run())
+
+        fake_admin = {'id': 1, 'username': 'admin-stub', 'role': 'admin'}
+        monkeypatch.setattr(app_module, 'get_current_user', lambda: fake_admin)
+        monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
+        monkeypatch.setattr(_settings_manager, 'load_settings',
+                            lambda: {'setup_completed': True, 'rom_path': str(rom_root)})
+
+        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
+        client = app_module.app.test_client()
+        with client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['_csrf_token'] = 'pass40-csrf-token'
+
+        resp = client.post(
+            '/api/rom-tools/chd-converter/convert',
+            json={'files': ['/etc/passwd', '/etc/shadow']},
+            headers={'X-CSRF-Token': 'pass40-csrf-token'},
+        )
+        # Either the route 4xx-rejects up front, or the worker rejects each
+        # file inside the loop — under no path may chdman see these argvs.
+        assert resp.status_code in (200, 400, 422), (
+            f"unexpected status: {resp.status_code}"
+        )
+        assert not seen_argv, (
+            f'chdman invoked with out-of-bound argv when no good files were '
+            f'in the payload: {seen_argv}'
+        )
 
 
 # -----------------------------------------------------------------------------
@@ -420,7 +491,7 @@ class TestPass40_3ArchiveScannerM3u:
     def test_create_m3u_requires_admin(self):
         from routes import tools as tools_mod
 
-        src = open(tools_mod.__file__).read()
+        src = read_module_source(tools_mod)
         idx = src.index('def api_archive_scanner_create_m3u')
         prelude = src[max(0, idx - 200):idx]
         assert '@admin_required' in prelude, \
@@ -429,7 +500,7 @@ class TestPass40_3ArchiveScannerM3u:
     def test_batch_create_m3u_requires_admin(self):
         from routes import tools as tools_mod
 
-        src = open(tools_mod.__file__).read()
+        src = read_module_source(tools_mod)
         idx = src.index('def api_archive_scanner_batch_create_m3u')
         prelude = src[max(0, idx - 200):idx]
         assert '@admin_required' in prelude, \
@@ -440,7 +511,7 @@ class TestPass40_3ArchiveScannerM3u:
         in the paths[] list before passing them to the scanner."""
         from routes import tools as tools_mod
 
-        src = open(tools_mod.__file__).read()
+        src = read_module_source(tools_mod)
         idx = src.index('def api_archive_scanner_batch_create_m3u')
         # Bound the slice up to the next def.
         end = src.index('\n@tools_bp.route', idx + 1)
@@ -479,7 +550,7 @@ class TestPass40_3ArchiveScannerM3u:
         import scraper.rom_tools as rt_mod
         monkeypatch.setattr(rt_mod, 'ArchiveScanner', _FakeScanner)
 
-        app_module.app.config['TESTING'] = True
+        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
         client = app_module.app.test_client()
         with client.session_transaction() as sess:
             sess['user_id'] = 1
@@ -506,7 +577,7 @@ class TestPass40_4SteamAchievementsUserScoping:
     def test_landing_query_filters_user_id(self):
         from routes import steam_achievements as mod
 
-        src = open(mod.__file__).read()
+        src = read_module_source(mod)
         idx = src.index('def steam_achievements_landing')
         end = src.index('def steam_achievement_game', idx)
         body = src[idx:end]
@@ -518,7 +589,7 @@ class TestPass40_4SteamAchievementsUserScoping:
     def test_per_game_progress_query_filters_user_id(self):
         from routes import steam_achievements as mod
 
-        src = open(mod.__file__).read()
+        src = read_module_source(mod)
         idx = src.index('def steam_achievement_game')
         # bound to the next def
         end = src.index('\n@bp.route', idx + 1)
@@ -541,7 +612,7 @@ class TestPass40_5CardDataEtagPerUser:
     def test_etag_payload_includes_user_id(self):
         from routes import games as games_mod
 
-        src = open(games_mod.__file__).read()
+        src = read_module_source(games_mod)
         # Find the card-data ETag payload line.
         idx = src.index('etag_payload')
         # First etag_payload assignment in the file is the card-data one.
@@ -616,7 +687,7 @@ class TestPass40_6RouteNormalization:
     def test_api_game_edit_normalizes_via_helper(self):
         from routes import games as games_mod
 
-        src = open(games_mod.__file__).read()
+        src = read_module_source(games_mod)
         idx = src.index('def api_game_edit')
         end = src.index('@bp.route(\'/api/games/bulk-edit\'', idx)
         body = src[idx:end]
@@ -626,7 +697,7 @@ class TestPass40_6RouteNormalization:
     def test_edit_metadata_normalizes_via_helper(self):
         from routes import games as games_mod
 
-        src = open(games_mod.__file__).read()
+        src = read_module_source(games_mod)
         idx = src.index("action == 'edit_metadata'")
         # Within the surrounding ~3000 chars, the helper call must appear.
         window = src[idx:idx + 3000]
@@ -638,7 +709,7 @@ class TestPass40_6RouteNormalization:
         players coercion that originally lived inline in both routes."""
         from services import game_metadata_service as svc
 
-        src = open(svc.__file__).read()
+        src = read_module_source(svc)
         idx = src.index('def normalize_game_edit')
         end = src.index('\ndef ', idx + 1)
         body = src[idx:end]
@@ -675,7 +746,7 @@ class TestPass40_7TgdbImageSsrf:
     def test_uses_hardened_download_image(self):
         from scraper import scrape_thegamesdb as mod
 
-        src = open(mod.__file__).read()
+        src = read_module_source(mod)
         if 'def _download_tgdb_image' in src:
             idx = src.index('def _download_tgdb_image')
             try:
@@ -707,7 +778,7 @@ class TestPass40_8MuseumJobFailedStatusPreserved:
     def test_no_provider_clears_persist_id(self):
         from services.jobs import museum
 
-        src = open(museum.__file__).read()
+        src = read_module_source(museum)
         idx = src.index("'No AI provider configured")
         # Within the next ~600 chars, persist_id must be set to None.
         block = src[idx:idx + 800]
@@ -717,7 +788,7 @@ class TestPass40_8MuseumJobFailedStatusPreserved:
     def test_unknown_provider_clears_persist_id(self):
         from services.jobs import museum
 
-        src = open(museum.__file__).read()
+        src = read_module_source(museum)
         idx = src.index('Unknown AI provider')
         block = src[idx:idx + 800]
         assert 'persist_id = None' in block, \
@@ -743,8 +814,14 @@ class TestPass40_9ImageResizeJobBaseConvention:
         files in IMAGE_PATH) must invoke persist_job_start AND, in the
         finally block, persist_job_complete + resolve_terminal_status.
         Consolidates 4 prior source-grep tests (one per persist call) into
-        one behavior pin."""
-        import time
+        one behavior pin.
+
+        c-006 F-2 fix: previously polled `job.get_status()` with sleep(0.05)
+        × 40.  We now signal a threading.Event from inside the
+        `persist_job_complete` stub — the worker's finally calls it AFTER
+        `resolve_terminal_status`, so by the time we wake up both lifecycle
+        helpers have already fired."""
+        import threading
         import config
         from services.jobs import image_resize as mod
 
@@ -753,6 +830,7 @@ class TestPass40_9ImageResizeJobBaseConvention:
         monkeypatch.setattr(config, 'IMAGE_PATH', str(tmp_path))
 
         called = {'start': 0, 'progress': 0, 'complete': 0, 'resolve': 0}
+        done = threading.Event()
 
         def _record(name, retval=None):
             def _fn(*a, **kw):
@@ -760,17 +838,31 @@ class TestPass40_9ImageResizeJobBaseConvention:
                 return retval
             return _fn
 
+        def _record_and_signal(name, retval=None):
+            """persist_job_complete runs LAST in the worker's finally (after
+            resolve_terminal_status). Signal on it so the test wakes up
+            with the full lifecycle already recorded."""
+            def _fn(*a, **kw):
+                called[name] += 1
+                done.set()
+                return retval
+            return _fn
+
         monkeypatch.setattr(mod, 'persist_job_start', _record('start', 'fake-id-99'))
         monkeypatch.setattr(mod, 'persist_job_progress', _record('progress'))
-        monkeypatch.setattr(mod, 'persist_job_complete', _record('complete'))
-        monkeypatch.setattr(mod, 'resolve_terminal_status', _record('resolve', 'completed'))
+        monkeypatch.setattr(mod, 'persist_job_complete',
+                            _record_and_signal('complete'))
+        monkeypatch.setattr(mod, 'resolve_terminal_status',
+                            _record('resolve', 'completed'))
 
         job = mod.ImageResizeJob()
         job.start(image_types=['boxart'])
-        for _ in range(40):
-            if not job.get_status().get('running', True):
-                break
-            time.sleep(0.05)
+        # 2 s ceiling matches the prior poll budget; in practice this returns
+        # within a couple of ms because the worker exits as soon as the empty
+        # image set finishes enumerating.
+        assert done.wait(timeout=2.0), (
+            f"worker did not signal completion within 2 s; counts: {called!r}"
+        )
         assert called['start'] >= 1, (
             f"persist_job_start must fire on worker entry (Pass 40.9); "
             f"counts: {called!r}"
@@ -786,7 +878,7 @@ class TestPass40_9ImageResizeJobBaseConvention:
 
     def test_get_status_takes_lock(self):
         from services.jobs import image_resize as mod
-        src = open(mod.__file__).read()
+        src = read_module_source(mod)
         idx = src.index('def get_status')
         end = src.index('def _worker', idx)
         body = src[idx:end]
@@ -797,7 +889,7 @@ class TestPass40_9ImageResizeJobBaseConvention:
         """Counter writes (self.processed_count += 1, etc.) must be inside
         a `with self._lock:` block."""
         from services.jobs import image_resize as mod
-        src = open(mod.__file__).read()
+        src = read_module_source(mod)
         idx = src.index('def _worker')
         body = src[idx:]
         # The naked `self.processed_count += 1` shape from before the fix
@@ -864,7 +956,7 @@ class TestPass40_11ChdAtomicConversion:
 
     def _convert_one_to_chd_body(self):
         from scraper import rom_tools as mod
-        src = open(mod.__file__).read()
+        src = read_module_source(mod)
         idx = src.index('def convert_one_to_chd')
         end = src.index('\ndef ', idx + 1)
         return src[idx:end]
@@ -885,7 +977,7 @@ class TestPass40_11ChdAtomicConversion:
 
     def test_rom_tools_converter_delegates(self):
         from scraper import rom_tools as mod
-        src = open(mod.__file__).read()
+        src = read_module_source(mod)
         idx = src.index('def _convert_file')
         end = src.index('def _timestamp', idx)
         body = src[idx:end]
@@ -896,7 +988,7 @@ class TestPass40_11ChdAtomicConversion:
 
     def test_routes_inline_worker_delegates(self):
         from routes import tools as mod
-        src = open(mod.__file__).read()
+        src = read_module_source(mod)
         idx = src.index('def api_chd_converter_convert')
         end = src.index('def api_chd_verify_scan', idx)
         body = src[idx:end]
@@ -1013,7 +1105,7 @@ class TestPass40_15DownloadImageAtomic:
         block referencing the old pattern is allowed."""
         import re
         from scraper import base_scraper as mod
-        src = open(mod.__file__).read()
+        src = read_module_source(mod)
         idx = src.index('def download_image(')
         end = src.index('def rate_limit', idx)
         body = src[idx:end]
@@ -1075,7 +1167,7 @@ class TestPass40_15DownloadImageAtomic:
         `AND {field} = ?` so a concurrent upload between stat and UPDATE
         doesn't get its new reference wiped."""
         from scraper import hybrid_scraper as mod
-        src = open(mod.__file__).read()
+        src = read_module_source(mod)
         # Search the stale-clear region.
         idx = src.index('Cleared') if 'Cleared' in src else None
         # Get the surrounding ~600 chars for the UPDATE.

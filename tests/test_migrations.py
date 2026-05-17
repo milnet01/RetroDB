@@ -12,6 +12,7 @@ Verifies the PRAGMA user_version-driven migration runner:
 import os
 import sqlite3
 import tempfile
+from datetime import datetime
 
 import pytest
 
@@ -157,10 +158,12 @@ class TestApplyPending:
                 migrations.apply_pending(conn)
             conn.close()
 
-    def test_idempotent_baseline_can_run_twice(self):
+    def test_forced_rerun_from_zero_does_not_raise(self):
         """Sanity check that running 001 against an already-migrated DB is a
         no-op — protects against future edits to 001 that break legacy
-        compatibility."""
+        compatibility. Renamed from `test_idempotent_baseline_can_run_twice`
+        per audit LOW (the name now describes the actual behaviour: force
+        user_version=0 and re-run, not generic idempotency)."""
         with tempfile.TemporaryDirectory() as tmp:
             path = os.path.join(tmp, 'fresh.db')
             conn = _open(path)
@@ -195,7 +198,10 @@ class TestUpdatedAtTriggers:
             assert row[0] is not None and row[0].endswith('Z')
 
     def test_update_refreshes_updated_at(self):
-        import time
+        # No `time.sleep` here: force a backdated baseline via UPDATE and then
+        # verify the next normal UPDATE triggers a strictly-later stamp. This
+        # avoids racing against SQLite's millisecond strftime precision on slow
+        # CI/Windows runners where two `'now'` calls 10ms apart can collide.
         with tempfile.TemporaryDirectory() as tmp:
             path = os.path.join(tmp, 'upd.db')
             conn = _open(path)
@@ -206,14 +212,39 @@ class TestUpdatedAtTriggers:
                 "VALUES (1, 'Test', 'ps1/test.bin')"
             )
             conn.commit()
-            first = conn.execute("SELECT id, updated_at FROM games").fetchone()
-            time.sleep(0.01)
-            conn.execute("UPDATE games SET title = 'Renamed' WHERE id = ?", (first[0],))
+            game_id = conn.execute("SELECT id FROM games").fetchone()[0]
+
+            # Force an unambiguously old baseline so the trigger fires with a
+            # strictly larger 'now()'. Direct column UPDATE skips the trigger
+            # (trigger fires on UPDATE of other columns, and is_recursive=NO).
+            baseline = '2000-01-01T00:00:00.000Z'
+            conn.execute(
+                "UPDATE games SET updated_at = ? WHERE id = ?",
+                (baseline, game_id),
+            )
             conn.commit()
-            second = conn.execute("SELECT updated_at FROM games WHERE id = ?", (first[0],)).fetchone()
+            first = conn.execute(
+                "SELECT updated_at FROM games WHERE id = ?", (game_id,)
+            ).fetchone()
+
+            # Normal column update — trigger should overwrite updated_at with
+            # the current timestamp, which must be > the seeded 2000 baseline.
+            conn.execute(
+                "UPDATE games SET title = 'Renamed' WHERE id = ?", (game_id,)
+            )
+            conn.commit()
+            second = conn.execute(
+                "SELECT updated_at FROM games WHERE id = ?", (game_id,)
+            ).fetchone()
             conn.close()
-            assert second[0] > first[1], \
-                f"updated_at did not advance: before={first[1]!r} after={second[0]!r}"
+
+            # Parse rather than lex-compare so a future trigger format change
+            # (precision drop, missing Z, etc.) fails loudly instead of silently
+            # returning the wrong order.
+            before = datetime.fromisoformat(first[0].rstrip('Z'))
+            after = datetime.fromisoformat(second[0].rstrip('Z'))
+            assert after > before, \
+                f"updated_at did not advance: before={first[0]!r} after={second[0]!r}"
 
     def test_legacy_rows_backfilled(self):
         """Rows present before the column was added should come out with a
@@ -268,7 +299,7 @@ class TestCollectionsOwnerId:
                     f"missing owner_id index on {table}"
             conn.close()
 
-    def test_backfill_assigns_legacy_rows_to_admin(self):
+    def test_backfill_assigns_legacy_rows_to_admin(self, monkeypatch):
         with tempfile.TemporaryDirectory() as tmp:
             path = os.path.join(tmp, 'backfill.db')
 
@@ -289,13 +320,13 @@ class TestCollectionsOwnerId:
             conn.commit()
 
             # Stop migrations after 001 so we can seed legacy rows without
-            # owner_id, then re-run apply_pending to land 005.
+            # owner_id, then re-run apply_pending to land 005. Use
+            # monkeypatch (not try/finally) so the global list is restored
+            # even if the test is killed mid-run (SIGKILL/OOM).
             real_list = migrations.MIGRATIONS
-            try:
-                migrations.MIGRATIONS = real_list[:1]  # only 001_baseline
-                migrations.apply_pending(conn)
-            finally:
-                migrations.MIGRATIONS = real_list
+            monkeypatch.setattr(migrations, 'MIGRATIONS', real_list[:1])  # only 001_baseline
+            migrations.apply_pending(conn)
+            monkeypatch.setattr(migrations, 'MIGRATIONS', real_list)
 
             conn.execute("INSERT INTO tags (name) VALUES ('legacy_tag')")
             conn.execute("INSERT INTO lists (name) VALUES ('legacy_list')")

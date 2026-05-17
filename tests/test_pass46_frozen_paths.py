@@ -127,36 +127,48 @@ class TestPass46_3_DependentModulesFollowConfig:
         )
 
 
+@pytest.fixture
+def reloaded_app(monkeypatch):
+    """Re-import config + app with overridable IMAGE_PATH / bundle root,
+    then restore both module bindings on teardown.
+
+    c-006 FX-1 fix: the prior TestPass46_3_StaticImageRoute.client fixture
+    duplicated manual `sys.modules.pop` + `importlib.import_module` blocks
+    inside two of its three tests.  Centralising the eviction-and-reload
+    pattern here removes the duplication and makes the teardown order
+    explicit (app before config, both before re-import) so a flaky run
+    can't leave a half-loaded module behind."""
+
+    def _reload(image_path, bundle_root=None):
+        sys.modules.pop("app", None)
+        sys.modules.pop("config", None)
+        config = importlib.import_module("config")
+        monkeypatch.setattr(config, "IMAGE_PATH", str(image_path))
+        app_mod = importlib.import_module("app")
+        bundle_dir = (
+            str(bundle_root) if bundle_root is not None
+            else os.path.join(config.STATIC_PATH, "images")
+        )
+        monkeypatch.setattr(app_mod, "_BUNDLE_IMAGE_DIR", bundle_dir)
+        return app_mod
+
+    yield _reload
+
+    # Always evict + re-import in the same order so subsequent tests see
+    # a fresh, real-config copy of both modules.
+    sys.modules.pop("app", None)
+    sys.modules.pop("config", None)
+    importlib.import_module("config")
+    importlib.import_module("app")
+
+
 class TestPass46_3_StaticImageRoute:
     """The /static/images/<path> route serves from BASE_DIR first, falls
     back to BUNDLE_DIR. In dev mode both roots are the same directory so
     we exercise the fallback by routing IMAGE_PATH at a temp dir while
     leaving BUNDLE_DIR/static/images at the real bundled tree."""
 
-    @pytest.fixture
-    def client(self, tmp_path, monkeypatch):
-        # Re-import app with IMAGE_PATH redirected to an empty user dir.
-        # BUNDLE_DIR/static/images stays put, so placeholder.png still
-        # resolves through the fallback branch.
-        empty_user_images = tmp_path / "static" / "images"
-        empty_user_images.mkdir(parents=True)
-
-        sys.modules.pop("config", None)
-        sys.modules.pop("app", None)
-        config = importlib.import_module("config")
-        monkeypatch.setattr(config, "IMAGE_PATH", str(empty_user_images))
-        app_mod = importlib.import_module("app")
-        # The route captured _BUNDLE_IMAGE_DIR at import; rebind so the
-        # closure reads the live config.
-        monkeypatch.setattr(app_mod, "_BUNDLE_IMAGE_DIR",
-                            os.path.join(config.STATIC_PATH, "images"))
-        yield app_mod.app.test_client()
-        sys.modules.pop("app", None)
-        sys.modules.pop("config", None)
-        importlib.import_module("config")
-        importlib.import_module("app")
-
-    def test_user_dir_takes_precedence(self, tmp_path, monkeypatch):
+    def test_user_dir_takes_precedence(self, tmp_path, reloaded_app):
         """A file present in BASE_DIR/static/images must shadow any same-
         named file in BUNDLE_DIR/static/images — scraped content wins."""
         user_root = tmp_path / "user" / "static" / "images"
@@ -166,30 +178,24 @@ class TestPass46_3_StaticImageRoute:
         (user_root / "shared.png").write_bytes(b"USER_VERSION")
         (bundle_root / "shared.png").write_bytes(b"BUNDLE_VERSION")
 
-        sys.modules.pop("config", None)
-        sys.modules.pop("app", None)
-        config = importlib.import_module("config")
-        monkeypatch.setattr(config, "IMAGE_PATH", str(user_root))
-        app_mod = importlib.import_module("app")
-        monkeypatch.setattr(app_mod, "_BUNDLE_IMAGE_DIR", str(bundle_root))
+        app_mod = reloaded_app(user_root, bundle_root)
+        r = app_mod.app.test_client().get("/static/images/shared.png")
+        assert r.status_code == 200
+        assert r.data == b"USER_VERSION"
 
-        try:
-            r = app_mod.app.test_client().get("/static/images/shared.png")
-            assert r.status_code == 200
-            assert r.data == b"USER_VERSION"
-        finally:
-            sys.modules.pop("app", None)
-            sys.modules.pop("config", None)
-            importlib.import_module("config")
-            importlib.import_module("app")
-
-    def test_falls_back_to_bundle_when_user_missing(self, client):
+    def test_falls_back_to_bundle_when_user_missing(self, tmp_path, reloaded_app):
         """placeholder.png ships in the bundle; the empty user dir forces
         the route to fall through to BUNDLE_DIR/static/images/."""
-        r = client.get("/static/images/placeholder.png")
+        empty_user_images = tmp_path / "static" / "images"
+        empty_user_images.mkdir(parents=True)
+        app_mod = reloaded_app(empty_user_images)
+        r = app_mod.app.test_client().get("/static/images/placeholder.png")
         assert r.status_code == 200
         assert len(r.data) > 0
 
-    def test_returns_404_when_neither_root_has_file(self, client):
-        r = client.get("/static/images/totally/missing.png")
+    def test_returns_404_when_neither_root_has_file(self, tmp_path, reloaded_app):
+        empty_user_images = tmp_path / "static" / "images"
+        empty_user_images.mkdir(parents=True)
+        app_mod = reloaded_app(empty_user_images)
+        r = app_mod.app.test_client().get("/static/images/totally/missing.png")
         assert r.status_code == 404

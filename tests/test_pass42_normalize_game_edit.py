@@ -12,6 +12,8 @@
 import os
 import sys
 
+import pytest
+
 _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
@@ -67,20 +69,15 @@ class TestNormalizePlayers:
     """Pinned the Pass 40.6 invariant: players is INTEGER, weak typing
     must not let "1-4" leak into the column."""
 
-    def test_range_to_max_int(self):
-        assert normalize_game_edit({'players': '1-4'})['players'] == 4
-
-    def test_plain_int_string(self):
-        assert normalize_game_edit({'players': '2'})['players'] == 2
-
-    def test_int_passthrough(self):
-        assert normalize_game_edit({'players': 2})['players'] == 2
-
-    def test_empty_to_none(self):
-        assert normalize_game_edit({'players': ''})['players'] is None
-
-    def test_junk_to_none(self):
-        assert normalize_game_edit({'players': 'unknown'})['players'] is None
+    @pytest.mark.parametrize("val,expected", [
+        ('1-4', 4),     # range → max
+        ('2', 2),       # plain numeric string
+        (2, 2),         # int passthrough
+        ('', None),     # empty → cleared
+        ('unknown', None),  # junk → cleared (so COALESCE preserves curated)
+    ])
+    def test_players_coercion(self, val, expected):
+        assert normalize_game_edit({'players': val})['players'] == expected
 
 
 class TestNormalizeRatingsCrossMap:
@@ -126,11 +123,14 @@ class TestNormalizeRatingsCrossMap:
 class TestNormalizeSortTitle:
     def test_auto_generates_when_title_given(self):
         out = normalize_game_edit({'title': 'Final Fantasy IX'})
-        # generate_sort_title pads roman numerals to two-digit arabic.
-        assert out['sort_title'], 'sort_title must auto-fill when title given'
-        # Sanity: the sort_title differs from the raw title (transformation
-        # actually happened).
-        assert out['sort_title'] != 'Final Fantasy IX' or 'IX' not in out['title']
+        # generate_sort_title pads roman numerals to two-digit arabic, so
+        # "IX" → "09".  Anchor the exact expected output — the prior
+        # disjunctive (`!= 'Final Fantasy IX' or 'IX' not in out['title']`)
+        # was unfalsifiable in practice (c-006 A-2 finding).
+        assert out['sort_title'] == 'Final Fantasy 09', (
+            f"sort_title must transform roman numerals to padded arabic, "
+            f"got {out['sort_title']!r}"
+        )
 
     def test_explicit_sort_title_preserved(self):
         out = normalize_game_edit({

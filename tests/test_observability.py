@@ -9,13 +9,33 @@ from unittest.mock import patch
 
 import pytest
 
+from tests._util import REPO_ROOT
 
-@pytest.fixture(scope="module")
+
+@pytest.fixture
 def client():
+    """Function-scoped Flask test client.
+
+    Previously module-scoped, which silently relied on `log_manager`'s
+    install-once globals (`_request_id_installed`, replaced log-record
+    factory) persisting across tests. Function scope keeps the surface
+    area small enough that per-test mutations of caplog / handlers
+    don't leak between tests in the same module."""
+    import log_manager
     import app as app_module
     app_module.app.config['TESTING'] = True
+
+    # Snapshot the log-record factory so we can restore on teardown if a
+    # test calls install_request_id_factory(); otherwise the install-once
+    # flag persists for the rest of the session.
+    original_factory = logging.getLogRecordFactory()
+    original_installed_flag = getattr(log_manager, '_request_id_installed', False)
+
     with app_module.app.test_client() as c:
         yield c
+
+    logging.setLogRecordFactory(original_factory)
+    log_manager._request_id_installed = original_installed_flag
 
 
 class TestHealthProbe:
@@ -111,7 +131,7 @@ class TestRequestIdFactory:
              'log_manager.install_request_id_factory(); '
              'r = logging.getLogRecordFactory()("t", logging.INFO, "/", 1, "m", (), None); '
              'print(repr(r.request_id))'],
-            capture_output=True, text=True, cwd='.'
+            capture_output=True, text=True, cwd=str(REPO_ROOT)
         )
         assert proc.returncode == 0, proc.stderr
         assert "'-'" in proc.stdout
@@ -121,6 +141,7 @@ class TestSlowRequestLogging:
     """Slow-request middleware logs a WARNING for handlers above threshold."""
 
     def test_fast_request_does_not_log(self, client, caplog):
+        caplog.clear()  # don't inherit records from earlier tests in the module
         with caplog.at_level(logging.WARNING):
             resp = client.get('/health')
             assert resp.status_code == 200
@@ -155,6 +176,7 @@ class TestSlowRequestLogging:
         # Register a probe-named route that would otherwise be slow.
         # Can't rename /health/ready, so simulate by forcing threshold=0
         # which short-circuits. This test confirms the threshold knob works.
+        caplog.clear()  # don't inherit records from earlier tests in the module
         with patch.object(config, 'SLOW_REQUEST_MS', 0):
             with caplog.at_level(logging.WARNING):
                 resp = client.get('/health')

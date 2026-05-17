@@ -141,3 +141,21 @@ class TestAltTitleFallback:
         # "Rockman" vs "Rockman Dash", so primary should win.
         assert result['match_name'] == 'Mega Man Zero'
         assert result['matched_via_alternate'] is False
+
+    def test_search_exception_returns_none(self):
+        """COV-1: if `_search_hltb` raises, the top-level try/except in
+        `lookup_playtime` must swallow it and return None — never propagate
+        the error to the caller. A regression here would crash the scraper
+        on any network blip instead of degrading gracefully."""
+
+        def boom(title, platform='', year=None):
+            raise RuntimeError('network down')
+
+        with patch.object(hltb_lookup, '_search_hltb', side_effect=boom):
+            result = hltb_lookup.lookup_playtime(
+                'Anything',
+                system_folder='nes',
+                alternate_titles=['Also Anything'],
+            )
+
+        assert result is None

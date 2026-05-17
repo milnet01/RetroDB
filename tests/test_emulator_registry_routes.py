@@ -1,6 +1,8 @@
 # Pass 44 — emulator registry CRUD route tests.
 import pytest
 
+from tests._util import read_source
+
 
 def test_emulator_routes_registered():
     import app as app_module
@@ -13,7 +15,7 @@ def test_emulator_routes_registered():
 
 def test_mutating_routes_require_admin():
     """POST/PUT/DELETE handlers should be admin-only."""
-    src = open('routes/emulators.py').read()
+    src = read_source('routes/emulators.py')
     # Each mutating handler must be decorated with @admin_required
     # (or @permission_required('manage_settings')).
     assert '@admin_required' in src or "permission_required('manage_settings')" in src
@@ -90,6 +92,20 @@ class TestEmulatorCRUD:
         assert 'binary_path_override' in captured['sql']
         assert '/opt/foo.AppImage' in captured['args']
 
+    def test_admin_can_delete(self, admin_client, monkeypatch):
+        captured = {}
+
+        def _execute(sql, args=()):
+            captured['sql'] = sql
+            captured['args'] = args
+            return 1
+
+        monkeypatch.setattr('routes.emulators.execute', _execute)
+        rv = admin_client.delete('/api/emulators/7', headers=self._csrf())
+        assert rv.status_code == 200
+        assert 'DELETE FROM emulators' in captured['sql']
+        assert 7 in captured['args']
+
     def test_viewer_cannot_create(self, monkeypatch):
         import app as app_module
         monkeypatch.setattr('app.get_current_user',
@@ -103,5 +119,19 @@ class TestEmulatorCRUD:
         rv = client.post('/api/emulators',
                          json={'name': 'X', 'binary_name': 'x', 'args_template': '{rom}'},
                          headers={'X-CSRF-Token': 'tok'})
+        # admin_required redirects non-admins
+        assert rv.status_code in (302, 403)
+
+    def test_viewer_cannot_delete(self, monkeypatch):
+        import app as app_module
+        monkeypatch.setattr('app.get_current_user',
+                            lambda: {'id': 1, 'username': 'v', 'role': 'viewer'})
+        monkeypatch.setattr('app.get_user_settings', lambda _uid: {})
+        monkeypatch.setattr('app.settings_manager.load_settings',
+                            lambda: {'setup_completed': True, 'rom_path': '/tmp'})
+        client = app_module.app.test_client()
+        with client.session_transaction() as sess:
+            sess['_csrf_token'] = 'tok'
+        rv = client.delete('/api/emulators/7', headers={'X-CSRF-Token': 'tok'})
         # admin_required redirects non-admins
         assert rv.status_code in (302, 403)

@@ -11,3 +11,7 @@ from __future__ import annotations
 # (e.g. QT_QPA_PLATFORM=minimal) still win.
 import os
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+
+# Re-export shared utilities so test files can `from tests._util import ...`
+# without each one re-computing REPO_ROOT and inserting sys.path.
+from tests._util import REPO_ROOT, read_source, slice_function, count_except_blocks  # noqa: E402,F401

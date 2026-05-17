@@ -9,20 +9,21 @@
 # =============================================================================
 
 import json
-import os
+import re
 import sqlite3
-import sys
 
 import pytest
 
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _REPO_ROOT not in sys.path:
-    sys.path.insert(0, _REPO_ROOT)
+from tests._util import REPO_ROOT  # noqa: F401  (ensures sys.path is set)
 
 
 @pytest.fixture
-def cursor(tmp_path):
-    """Return a sqlite3 cursor against a 1-row games-style table."""
+def connection(tmp_path):
+    """Return a sqlite3 Connection against a 1-row games-style table.
+
+    Test bodies obtain a cursor via ``connection.cursor()`` — the fixture
+    name was previously ``cursor`` but it returned the Connection, which
+    was a Pass-c-006 N-1 finding."""
     db_path = tmp_path / 'test.db'
     conn = sqlite3.connect(str(db_path))
     conn.execute("""
@@ -35,13 +36,13 @@ def cursor(tmp_path):
 
 
 class TestBuildScrapeHistoryJson:
-    def test_first_scrape_creates_single_entry_history(self, cursor):
+    def test_first_scrape_creates_single_entry_history(self, connection):
         """No prior scrape_history (NULL) — helper starts a fresh list."""
         from scraper import hybrid_scraper
 
-        cursor.execute("INSERT INTO games (id, scrape_history) VALUES (1, NULL)")
-        cursor.commit()
-        c = cursor.cursor()
+        connection.execute("INSERT INTO games (id, scrape_history) VALUES (1, NULL)")
+        connection.commit()
+        c = connection.cursor()
         result = {'sources_used': ['IGDB'], 'filled_fields': ['title (IGDB)']}
         metadata = {'title': 'Sonic', 'genre': ''}
 
@@ -56,21 +57,26 @@ class TestBuildScrapeHistoryJson:
         assert entry['fields_filled'] == ['title (IGDB)']
         assert entry['fields_missing'] == ['genre']  # empty metadata key
         assert entry['scrape_mode'] == 'fill_missing'
-        assert 'timestamp' in entry  # ISO string, format-loose
+        # ISO-8601 prefix (YYYY-MM-DDTHH:MM:SS); avoids the c-006 D-1 finding
+        # where "key present" was the only check and any junk value passed.
+        assert isinstance(entry['timestamp'], str)
+        assert re.match(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}', entry['timestamp']), (
+            f"timestamp must be ISO-8601, got {entry['timestamp']!r}"
+        )
 
-    def test_subsequent_scrape_appends_to_existing_history(self, cursor):
+    def test_subsequent_scrape_appends_to_existing_history(self, connection):
         """Existing history JSON is parsed and appended to."""
         from scraper import hybrid_scraper
 
         prior = [{'timestamp': '2026-04-01T00:00:00', 'primary_source': 'tgdb',
                   'sources_used': ['TGDB'], 'fields_filled': [],
                   'fields_missing': [], 'scrape_mode': 'fill_missing'}]
-        cursor.execute(
+        connection.execute(
             "INSERT INTO games (id, scrape_history) VALUES (1, ?)",
             (json.dumps(prior),),
         )
-        cursor.commit()
-        c = cursor.cursor()
+        connection.commit()
+        c = connection.cursor()
         result = {'sources_used': ['IGDB'], 'filled_fields': []}
         metadata = {'title': 'Sonic'}
 
@@ -82,14 +88,14 @@ class TestBuildScrapeHistoryJson:
         assert history[0]['primary_source'] == 'tgdb'  # original preserved
         assert history[1]['primary_source'] == 'igdb'
 
-    def test_force_overwrite_records_full_rescrape_mode(self, cursor):
+    def test_force_overwrite_records_full_rescrape_mode(self, connection):
         """`scrape_mode` reflects whether this is a fill or a full re-scrape —
         downstream UI uses this to colour-code the audit trail."""
         from scraper import hybrid_scraper
 
-        cursor.execute("INSERT INTO games (id, scrape_history) VALUES (1, NULL)")
-        cursor.commit()
-        c = cursor.cursor()
+        connection.execute("INSERT INTO games (id, scrape_history) VALUES (1, NULL)")
+        connection.commit()
+        c = connection.cursor()
         result = {'sources_used': [], 'filled_fields': []}
 
         out = hybrid_scraper._build_scrape_history_json(
@@ -98,18 +104,18 @@ class TestBuildScrapeHistoryJson:
         history = json.loads(out)
         assert history[0]['scrape_mode'] == 'full_rescrape'
 
-    def test_corrupted_existing_history_resets_to_fresh_list(self, cursor):
+    def test_corrupted_existing_history_resets_to_fresh_list(self, connection):
         """If `scrape_history` is unparseable (DB corruption / partial write),
         the helper rolls back to `[]` so the new scrape entry becomes the
         first of a fresh list. Same robustness the inline version had."""
         from scraper import hybrid_scraper
 
-        cursor.execute(
+        connection.execute(
             "INSERT INTO games (id, scrape_history) VALUES (1, ?)",
             ('{not-valid-json',),
         )
-        cursor.commit()
-        c = cursor.cursor()
+        connection.commit()
+        c = connection.cursor()
         result = {'sources_used': ['IGDB'], 'filled_fields': []}
 
         out = hybrid_scraper._build_scrape_history_json(
@@ -119,14 +125,14 @@ class TestBuildScrapeHistoryJson:
         assert len(history) == 1
         assert history[0]['primary_source'] == 'igdb'
 
-    def test_fields_missing_lists_empty_metadata_keys(self, cursor):
+    def test_fields_missing_lists_empty_metadata_keys(self, connection):
         """The `fields_missing` entry is computed from `metadata` — every
         key whose value is falsy is reported missing."""
         from scraper import hybrid_scraper
 
-        cursor.execute("INSERT INTO games (id, scrape_history) VALUES (1, NULL)")
-        cursor.commit()
-        c = cursor.cursor()
+        connection.execute("INSERT INTO games (id, scrape_history) VALUES (1, NULL)")
+        connection.commit()
+        c = connection.cursor()
         result = {'sources_used': [], 'filled_fields': []}
         metadata = {
             'title': 'Sonic',  # filled

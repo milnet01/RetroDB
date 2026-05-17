@@ -1,11 +1,24 @@
 # Pass 44 — Launcher Protocol + dataclasses shape pin.
+from pathlib import Path
+
 import pytest
+
+from services.launcher.base import (
+    BinaryNotFoundError,
+    LaunchContext,
+    LaunchHandle,
+    LaunchResolutionError,
+    LaunchStatus,
+    Launcher,
+    LauncherError,
+)
 
 
 class TestLaunchContext:
+    """Pin the LaunchContext dataclass field names, types, and optional
+    fields — keeps the resolver → runner contract from drifting silently."""
+
     def test_construct_minimal(self):
-        from pathlib import Path
-        from services.launcher.base import LaunchContext
         ctx = LaunchContext(
             game_id=1, emulator_id=1,
             binary=Path('/usr/bin/retroarch'),
@@ -13,11 +26,11 @@ class TestLaunchContext:
             token='abc',
         )
         assert ctx.game_id == 1
-        assert ctx.argv[0].endswith('retroarch')
+        # Exact match — guards against argv[0] being a wrapper script with a
+        # name that merely ends in 'retroarch' (ASSERT-2).
+        assert ctx.argv[0] == '/usr/bin/retroarch'
 
     def test_optional_cwd_env(self):
-        from pathlib import Path
-        from services.launcher.base import LaunchContext
         ctx = LaunchContext(
             game_id=1, emulator_id=1,
             binary=Path('/usr/bin/x'),
@@ -29,46 +42,52 @@ class TestLaunchContext:
 
 
 class TestLaunchHandle:
+    """Pin the LaunchHandle dataclass — frozen instance returned by Launcher.launch."""
+
     def test_construct(self):
-        from services.launcher.base import LaunchHandle
         h = LaunchHandle(token='t', pid=42, game_id=1, emulator_id=2, started_at=100.0)
         assert h.pid == 42
 
     def test_frozen(self):
-        from services.launcher.base import LaunchHandle
         h = LaunchHandle(token='t', pid=42, game_id=1, emulator_id=2, started_at=100.0)
         with pytest.raises((AttributeError, TypeError)):
             h.pid = 99
 
 
 class TestLaunchStatus:
+    """Pin the LaunchStatus state literal + exit_code/runtime_s shape."""
+
     def test_running_state(self):
-        from services.launcher.base import LaunchStatus
         s = LaunchStatus(state='running', exit_code=None, runtime_s=2.5)
         assert s.state == 'running'
         assert s.exit_code is None
 
     def test_exited_state(self):
-        from services.launcher.base import LaunchStatus
         s = LaunchStatus(state='exited', exit_code=0, runtime_s=120.0)
         assert s.state == 'exited'
         assert s.exit_code == 0
 
 
 class TestExceptions:
+    """Pin the launcher exception hierarchy so callers can catch by base."""
+
     def test_resolution_error_inherits_launcher_error(self):
-        from services.launcher.base import LaunchResolutionError, LauncherError
         assert issubclass(LaunchResolutionError, LauncherError)
 
     def test_binary_not_found_inherits_launcher_error(self):
-        from services.launcher.base import BinaryNotFoundError, LauncherError
         assert issubclass(BinaryNotFoundError, LauncherError)
 
 
 class TestLauncherProtocol:
+    """Pin the structural Protocol — `launch`, `status`, `kill`, `active` must
+    all be callable attributes on the class, not e.g. accidentally replaced
+    by data attributes after a refactor."""
+
     def test_protocol_methods(self):
-        from services.launcher.base import Launcher
-        assert hasattr(Launcher, 'launch')
-        assert hasattr(Launcher, 'status')
-        assert hasattr(Launcher, 'kill')
-        assert hasattr(Launcher, 'active')
+        # callable() check distinguishes 'method renamed to wrong case' or
+        # 'method replaced by a data attribute' from the correct shape, where
+        # plain hasattr would pass either failure mode (ACC-3).
+        assert callable(getattr(Launcher, 'launch', None))
+        assert callable(getattr(Launcher, 'status', None))
+        assert callable(getattr(Launcher, 'kill', None))
+        assert callable(getattr(Launcher, 'active', None))

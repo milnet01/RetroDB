@@ -18,6 +18,8 @@
 import os
 import sys
 
+import pytest
+
 _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
@@ -33,23 +35,22 @@ class TestPass41_1ALoginRequiredAllowList:
     Pass 41.1.A drops the allow-list; routes that should be public must not
     apply the decorator."""
 
-    def test_decorator_has_no_endpoint_allowlist(self):
+    # c-006 P-3: parametrize so each failing needle reports independently
+    # instead of stopping at the first assertion.
+    @pytest.mark.parametrize("needle", [
+        "request.endpoint in",
+        "'auth.api_login'",
+        "'help_page'",
+        "'changelog'",
+    ])
+    def test_decorator_has_no_endpoint_allowlist(self, needle):
         from inspect import getsource
         import services.auth as a
 
         body = getsource(a.login_required)
-        # Strip comments + docstrings so a documentation reference to the
-        # historical names doesn't false-positive.  The legacy literal
-        # appeared as `request.endpoint in [...]`.
-        for needle in (
-            "request.endpoint in",
-            "'auth.api_login'",
-            "'help_page'",
-            "'changelog'",
-        ):
-            assert needle not in body, (
-                f"login_required must not contain {needle!r} (Pass 41.1.A)"
-            )
+        assert needle not in body, (
+            f"login_required must not contain {needle!r} (Pass 41.1.A)"
+        )
 
     def test_decorator_still_redirects_anonymous(self):
         """Sanity: removing the allow-list must not break the anonymous
@@ -65,6 +66,26 @@ class TestPass41_1ALoginRequiredAllowList:
 # -----------------------------------------------------------------------------
 # 41.1.B — api_change_password rate bucket re-keyed per (ip, user_id)
 # -----------------------------------------------------------------------------
+@pytest.fixture
+def _cleared_login_attempts():
+    """Snapshot + clear services.security._login_attempts around the test.
+
+    Pass-c-006 I-2 fix: the two TestPass41_1BChangePasswordBucket functional
+    tests used to call `sec._login_attempts.clear()` inline.  Centralising the
+    snapshot/restore here makes the isolation explicit and survives any
+    parallel-runner reordering."""
+    import services.security as sec
+    with sec._lock:
+        saved = dict(sec._login_attempts)
+        sec._login_attempts.clear()
+    try:
+        yield sec
+    finally:
+        with sec._lock:
+            sec._login_attempts.clear()
+            sec._login_attempts.update(saved)
+
+
 class TestPass41_1BChangePasswordBucket:
     """Sharing the /api/login IP-only bucket meant 5 failed change-password
     attempts from user A locked out /api/login for every other user on the
@@ -104,13 +125,10 @@ class TestPass41_1BChangePasswordBucket:
             "(Pass 41.1.B)"
         )
 
-    def test_change_password_bucket_isolated_from_login_bucket(self):
+    def test_change_password_bucket_isolated_from_login_bucket(self, _cleared_login_attempts):
         """Functional smoke: 6 failures into a (ip, user_id) bucket must NOT
         throttle the IP-only login bucket."""
-        import services.security as sec
-
-        with sec._lock:
-            sec._login_attempts.clear()
+        sec = _cleared_login_attempts
         ip = "203.0.113.55"
         cpw_bucket = f"{ip}:cpw:42"
         for _ in range(6):
@@ -120,13 +138,10 @@ class TestPass41_1BChangePasswordBucket:
         # Login bucket from the same IP stays clear.
         assert sec.rate_limit_login(ip) is True
 
-    def test_change_password_bucket_per_user(self):
+    def test_change_password_bucket_per_user(self, _cleared_login_attempts):
         """Functional smoke: user A's failures must NOT throttle user B from
         the same IP."""
-        import services.security as sec
-
-        with sec._lock:
-            sec._login_attempts.clear()
+        sec = _cleared_login_attempts
         ip = "203.0.113.66"
         for _ in range(6):
             sec.record_login_attempt(f"{ip}:cpw:1", success=False)
@@ -436,21 +451,19 @@ class TestPass41_4BPrimaryDispatchTryExcept:
     phase rather than raising to the caller."""
 
     def test_each_primary_branch_has_try_except(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'scraper/hybrid_scraper.py'),
-            encoding='utf-8'
-        ).read()
-        assert 'Pass 41.4.B' in body, (
-            "Pass 41.4.B marker missing in scraper/hybrid_scraper.py — "
-            "each primary-source branch must be wrapped in try/except"
-        )
-        # Source-level pin: we expect a per-source try/except guard. The
-        # marker comment is the contract; assert a few representative
-        # source names appear inside an `except` block.
-        idx = body.find('Pass 41.4.B')
-        nearby = body[max(0, idx - 200):idx + 4000]
-        assert 'except Exception' in nearby, (
-            "Pass 41.4.B region must contain an except Exception clause"
+        """c-006 A-3 fix: previously asserted the literal 'Pass 41.4.B'
+        comment marker existed — a refactor that kept the comment but
+        removed the try/except would pass.  We now AST-walk
+        `apply_hybrid_metadata` and count Try nodes: at least 5 (one per
+        primary-source dispatch: esde / tgdb / igdb / rawg / screenscraper)."""
+        from tests._util import count_except_blocks, read_source
+
+        src = read_source('scraper/hybrid_scraper.py')
+        count = count_except_blocks(src, 'apply_hybrid_metadata')
+        assert count >= 5, (
+            f"apply_hybrid_metadata must contain at least 5 try/except blocks "
+            f"(one per primary-source dispatch); AST counted {count} "
+            f"(Pass 41.4.B)"
         )
 
 
@@ -503,12 +516,19 @@ class TestPass41_5BIgdbTokenRefreshOn401:
     detects the 401, clears the cache, calls `igdb_auth()` for a fresh
     token, and retries the request once."""
 
-    def test_request_retries_with_fresh_token_on_401(self, monkeypatch):
+    @staticmethod
+    def _stub_igdb_with_401_then_200(monkeypatch):
+        """Shared setup for the SP-1 split below: install a stale token cache
+        and an HTTP fake that returns 401 first, 200 second; return (igdb,
+        call_log, result)."""
         from scraper import scrape_igdb as igdb
 
-        # Pretend the existing cache is "warm" with a stale token.
-        igdb._igdb_token_cache['token'] = 'STALE'
-        igdb._igdb_token_cache['expires_at'] = 9999999999
+        # c-006 I-1 fix: swap the module-level cache via monkeypatch so the
+        # original dict reference is restored on teardown.
+        monkeypatch.setattr(
+            igdb, '_igdb_token_cache',
+            {'token': 'STALE', 'expires_at': 9999999999},
+        )
 
         call_log = []
 
@@ -526,7 +546,6 @@ class TestPass41_5BIgdbTokenRefreshOn401:
                 'url': url,
                 'auth': headers.get('Authorization') if headers else None,
             })
-            # First call: 401. Second call: 200.
             if len(call_log) == 1:
                 return _Resp(401)
             return _Resp(200)
@@ -542,12 +561,23 @@ class TestPass41_5BIgdbTokenRefreshOn401:
                             lambda: ('CID', 'CS'))
 
         result = igdb.igdb_request('games', 'fields name;', 'STALE')
+        return igdb, call_log, result
+
+    def test_401_retry_returns_correct_result(self, monkeypatch):
+        """c-006 SP-1 split: interaction shape — the stale 401 triggers a
+        retry against the same URL with a Bearer FRESH header, and the
+        retried response is what the caller receives."""
+        _, call_log, result = self._stub_igdb_with_401_then_200(monkeypatch)
         assert result == {"ok": True}
-        # Two requests: stale first, fresh retry second.
-        assert len(call_log) == 2
+        assert len(call_log) == 2, f"expected stale + fresh request, got {call_log!r}"
         assert call_log[0]['auth'] == 'Bearer STALE'
         assert call_log[1]['auth'] == 'Bearer FRESH'
-        # Cache is now updated.
+
+    def test_401_retry_updates_cache(self, monkeypatch):
+        """c-006 SP-1 split: state shape — the on-disk token cache is
+        updated to the fresh token after a 401 retry, so the next call
+        doesn't replay the stale-401-retry loop."""
+        igdb, _, _ = self._stub_igdb_with_401_then_200(monkeypatch)
         assert igdb._igdb_token_cache['token'] == 'FRESH'
 
     def test_request_does_not_retry_on_non_401(self, monkeypatch):
@@ -555,8 +585,11 @@ class TestPass41_5BIgdbTokenRefreshOn401:
         a token refresh. Only 401 invalidates the cache."""
         from scraper import scrape_igdb as igdb
 
-        igdb._igdb_token_cache['token'] = 'TOKEN'
-        igdb._igdb_token_cache['expires_at'] = 9999999999
+        # c-006 I-1 fix: same monkeypatch-swap pattern as the 401 test above.
+        monkeypatch.setattr(
+            igdb, '_igdb_token_cache',
+            {'token': 'TOKEN', 'expires_at': 9999999999},
+        )
 
         call_log = []
 

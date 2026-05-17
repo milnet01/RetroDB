@@ -1,4 +1,4 @@
-# Tests for alternate-title merging in scraper/metadata_normalizer.py
+"""Tests for alt_title_entry and merge_alt_titles in scraper/metadata_normalizer.py."""
 
 import json
 
@@ -70,6 +70,15 @@ class TestMergeAltTitles:
     def test_drops_entries_without_title(self):
         new = [{"region": "JP"}, {"title": ""}, None, {"title": "Rockman"}]
         merged = merge_alt_titles(None, new)
+        assert merged == [{"title": "Rockman"}]
+
+    def test_drops_existing_entries_without_title(self):
+        """COV-1: the `existing` list also gets filtered for malformed
+        dicts (e.g. corrupt DB rows with `region` but no `title`). The
+        new-entries path was already covered; this pins the existing-
+        list path too."""
+        existing = [{"region": "JP"}, {"title": "Rockman"}]
+        merged = merge_alt_titles(existing, [])
         assert merged == [{"title": "Rockman"}]
 
     def test_preserves_region_and_source(self):

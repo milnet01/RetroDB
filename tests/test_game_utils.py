@@ -6,6 +6,8 @@ past (F601 duplicate-key maps, article placement, rating cross-mapping) so
 future refactors don't silently change behaviour.
 """
 
+import pytest
+
 from services.game_utils import (
     move_article_to_beginning,
     move_article_to_end,
@@ -18,32 +20,30 @@ from services.game_utils import (
 # -- Article placement -------------------------------------------------------
 
 class TestArticleMovement:
-    def test_leading_the_moves_to_end(self):
-        assert move_article_to_end("The Legend of Zelda") == "Legend of Zelda, The"
+    @pytest.mark.parametrize("title, expected", [
+        # Leading articles move to the end.
+        ("The Legend of Zelda", "Legend of Zelda, The"),
+        ("A Bug's Life", "Bug's Life, A"),
+        ("An American Tail", "American Tail, An"),
+        # No leading article — pass through unchanged.
+        ("Metal Gear Solid", "Metal Gear Solid"),
+        # Abbreviations / hyphenated words must NOT be treated as articles.
+        ("A.L.F.", "A.L.F."),
+        ("A-Team", "A-Team"),
+        # Boundary cases.
+        ("", ""),
+    ])
+    def test_move_article_to_end(self, title, expected):
+        assert move_article_to_end(title) == expected
 
-    def test_leading_a_moves_to_end(self):
-        assert move_article_to_end("A Bug's Life") == "Bug's Life, A"
-
-    def test_leading_an_moves_to_end(self):
-        assert move_article_to_end("An American Tail") == "American Tail, An"
-
-    def test_no_article_passthrough(self):
-        assert move_article_to_end("Metal Gear Solid") == "Metal Gear Solid"
-
-    def test_trailing_the_moves_to_beginning(self):
-        assert move_article_to_beginning("Legend of Zelda, The") == "The Legend of Zelda"
-
-    def test_trailing_article_is_case_insensitive(self):
-        assert move_article_to_beginning("Legend of Zelda, the") == "the Legend of Zelda"
-
-    def test_abbreviation_not_treated_as_article(self):
-        # The regex uses negative lookahead for '.' or '-' so "A.L.F." / "A-Team" stay put.
-        assert move_article_to_end("A.L.F.") == "A.L.F."
-        assert move_article_to_end("A-Team") == "A-Team"
-
-    def test_empty_string_returns_empty(self):
-        assert move_article_to_end("") == ""
-        assert move_article_to_beginning("") == ""
+    @pytest.mark.parametrize("title, expected", [
+        ("Legend of Zelda, The", "The Legend of Zelda"),
+        # Case-insensitive trailing article.
+        ("Legend of Zelda, the", "the Legend of Zelda"),
+        ("", ""),
+    ])
+    def test_move_article_to_beginning(self, title, expected):
+        assert move_article_to_beginning(title) == expected
 
     def test_none_returns_none(self):
         assert move_article_to_end(None) is None

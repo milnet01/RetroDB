@@ -48,12 +48,23 @@ def job():
 
     # Patch persistence + connection helpers + the thread target so start()
     # never talks to the real DB or spawns a real scraper.
+    #
+    # v3.6.7 — also patch `acquire_job_singleton_lock` to return the
+    # sentinel `0` ("acquired, no real lock"). Without this, `start()`
+    # calls fcntl.flock against the shared on-disk file
+    # `<DB_DIR>/job_locks/bulk_scrape.lock`, and if a live RetroDB server
+    # is running on this machine and currently holds that lock (e.g. the
+    # user's local dev server with an interrupted job), every test that
+    # invokes `start()` returns `success=False` with "already running on
+    # another worker". The sentinel `0` is later passed to
+    # `release_job_singleton_lock(0)` which is a documented no-op.
     with patch.object(bulk_scrape_mod, '_get_conn', return_value=mem_db), \
          patch.object(bulk_scrape_mod, 'persist_job_start', return_value=None), \
          patch.object(bulk_scrape_mod, 'persist_job_progress', return_value=None), \
          patch.object(bulk_scrape_mod, 'persist_job_complete', return_value=None), \
          patch.object(bulk_scrape_mod, 'persist_job_queued', return_value=999), \
          patch.object(bulk_scrape_mod, 'remove_queued_job', return_value=None), \
+         patch.object(bulk_scrape_mod, 'acquire_job_singleton_lock', return_value=0), \
          patch.object(BulkScrapeJob, '_run_scrape', lambda self: None):
         j = BulkScrapeJob()
         yield j
@@ -134,6 +145,18 @@ class TestStart:
         result = job.start([100], system_id=1, scrape_mode='full_rescrape')
         assert result['success'] is True
         assert result['queued'] is True
+
+    def test_start_with_empty_game_ids(self, job):
+        """COV-2: `start([], system_id=…)` is currently a valid call path
+        (nothing in bulk_scrape.py guards against it). Pin today's
+        contract — succeeds with total=0 — so any future change that
+        rejects empty lists at this layer fails this test and forces a
+        review of the call-sites in `routes/bulk_scrape.py`."""
+        result = job.start([], system_id=1)
+        assert result['success'] is True
+        assert result['queued'] is False
+        assert result['total'] == 0
+        assert job.game_ids == []
 
 
 class TestPauseResume:

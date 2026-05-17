@@ -72,7 +72,11 @@ def test_migration_012_indexes_present():
 
 
 def test_migration_012_listed_in_loader():
-    """The MIGRATIONS list must include '012_emulators' so apply_pending() picks it up."""
+    """The MIGRATIONS list must include '012_emulators' so apply_pending() picks
+    it up, and it must immediately follow 011_user_game_views_cascade_fk.
+    Asserting the relative position (rather than a hardcoded index 11) lets new
+    migrations land before 011 without flipping this test red."""
     from services.migrations import MIGRATIONS
     assert '012_emulators' in MIGRATIONS
-    assert MIGRATIONS.index('012_emulators') == 11  # 0-indexed; 12th entry
+    assert MIGRATIONS.index('012_emulators') == \
+        MIGRATIONS.index('011_user_game_views_cascade_fk') + 1

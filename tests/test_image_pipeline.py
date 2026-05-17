@@ -7,6 +7,15 @@ import io
 import pytest
 from PIL import Image
 
+import config
+from services import image_utils
+from services.image_utils import (
+    _ensure_format_matches_extension,
+    _make_responsive_variants,
+    boxart_srcset,
+    finalize_downloaded_image,
+)
+
 
 @pytest.fixture
 def jpeg_bytes():
@@ -27,26 +36,18 @@ class TestPreferredImageExtension:
     """`preferred_image_extension` drives the on-ingest format decision."""
 
     def test_webp_mode_boxart(self, monkeypatch):
-        import config
-        from services import image_utils
         monkeypatch.setattr(config, 'IMAGE_FORMAT', 'webp', raising=False)
         assert image_utils.preferred_image_extension('boxart', '.jpg') == '.webp'
 
     def test_webp_mode_screenshots(self, monkeypatch):
-        import config
-        from services import image_utils
         monkeypatch.setattr(config, 'IMAGE_FORMAT', 'webp', raising=False)
         assert image_utils.preferred_image_extension('screenshots', '.png') == '.webp'
 
     def test_jpeg_mode_keeps_jpg(self, monkeypatch):
-        import config
-        from services import image_utils
         monkeypatch.setattr(config, 'IMAGE_FORMAT', 'jpeg', raising=False)
         assert image_utils.preferred_image_extension('boxart', '.jpg') == '.jpg'
 
     def test_jpeg_mode_downgrades_png(self, monkeypatch):
-        import config
-        from services import image_utils
         monkeypatch.setattr(config, 'IMAGE_FORMAT', 'jpeg', raising=False)
         assert image_utils.preferred_image_extension('boxart', '.png') == '.jpg'
 
@@ -54,22 +55,16 @@ class TestPreferredImageExtension:
         """Animated GIFs must survive the pipeline unchanged — re-encoding as
         WebP here would silently drop all frames beyond the first on Pillow
         versions that default to single-frame WebP save."""
-        import config
-        from services import image_utils
         monkeypatch.setattr(config, 'IMAGE_FORMAT', 'webp', raising=False)
         assert image_utils.preferred_image_extension('boxart', '.gif') == '.gif'
 
     def test_video_type_passthrough(self, monkeypatch):
         """Videos and manuals aren't convertible image types."""
-        import config
-        from services import image_utils
         monkeypatch.setattr(config, 'IMAGE_FORMAT', 'webp', raising=False)
         assert image_utils.preferred_image_extension('video', '.mp4') == '.mp4'
         assert image_utils.preferred_image_extension('manual', '.pdf') == '.pdf'
 
     def test_accepts_ext_without_dot(self, monkeypatch):
-        import config
-        from services import image_utils
         monkeypatch.setattr(config, 'IMAGE_FORMAT', 'webp', raising=False)
         assert image_utils.preferred_image_extension('boxart', 'jpg') == '.webp'
 
@@ -78,7 +73,6 @@ class TestFormatNormalize:
     """Re-encoding when on-disk bytes don't match filename extension."""
 
     def test_jpeg_written_to_webp_path_is_reencoded(self, tmp_path, jpeg_bytes):
-        from services.image_utils import _ensure_format_matches_extension
         # JPEG payload under a .webp filename (simulating the on-ingest flow
         # where the caller chose the target format via the path alone).
         path = tmp_path / 'foo.webp'
@@ -90,7 +84,6 @@ class TestFormatNormalize:
             assert img.format == 'WEBP'
 
     def test_matching_format_is_noop(self, tmp_path):
-        from services.image_utils import _ensure_format_matches_extension
         path = tmp_path / 'foo.webp'
         Image.new('RGB', (10, 10)).save(path, format='WEBP')
         before = path.read_bytes()
@@ -101,20 +94,32 @@ class TestFormatNormalize:
         assert path.read_bytes() == before
 
     def test_unknown_extension_is_skipped(self, tmp_path, jpeg_bytes):
-        from services.image_utils import _ensure_format_matches_extension
         path = tmp_path / 'foo.bmp'
         path.write_bytes(jpeg_bytes)
         _ensure_format_matches_extension(str(path))
         # File should be left untouched (no PIL re-save attempted).
         assert path.read_bytes() == jpeg_bytes
 
+    def test_unidentified_image_error_handled(self, tmp_path):
+        """COV-3: PIL.UnidentifiedImageError on corrupt bytes must be
+        swallowed — the function logs and returns without raising. A
+        regression that lets the exception escape would crash every
+        finalize call for a malformed download."""
+        path = tmp_path / 'bad.webp'
+        path.write_bytes(b'not a real image, just garbage')
+
+        # Must not raise. The corrupt file is left on disk untouched —
+        # the caller's later logic will handle the missing valid image.
+        _ensure_format_matches_extension(str(path))
+
+        assert path.exists()
+        assert path.read_bytes() == b'not a real image, just garbage'
+
 
 class TestResponsiveVariants:
     """`-sm` and `-md` sibling generation for boxart."""
 
     def test_variants_written_for_boxart(self, tmp_path):
-        from services.image_utils import _make_responsive_variants
-
         path = tmp_path / 'game.webp'
         Image.new('RGB', (800, 1120), color='blue').save(path, format='WEBP')
         _make_responsive_variants(str(path), 'boxart')
@@ -131,8 +136,6 @@ class TestResponsiveVariants:
 
     def test_variants_skipped_for_small_source(self, tmp_path):
         """Source narrower than a variant target must NOT be upscaled."""
-        from services.image_utils import _make_responsive_variants
-
         path = tmp_path / 'small.webp'
         Image.new('RGB', (120, 160)).save(path, format='WEBP')
         _make_responsive_variants(str(path), 'boxart')
@@ -143,8 +146,6 @@ class TestResponsiveVariants:
 
     def test_screenshots_skip_variants(self, tmp_path):
         """Only boxart-family types get variants; screenshots don't."""
-        from services.image_utils import _make_responsive_variants
-
         path = tmp_path / 'shot.webp'
         Image.new('RGB', (1920, 1080)).save(path, format='WEBP')
         _make_responsive_variants(str(path), 'screenshots')
@@ -152,20 +153,31 @@ class TestResponsiveVariants:
         assert not (tmp_path / 'shot-md.webp').exists()
 
 
+@pytest.fixture
+def boxart_with_files(tmp_path, monkeypatch):
+    """Shared setup for srcset tests: redirect IMAGE_PATH at tmp_path,
+    make a boxart/ dir, and let the caller drop variant files into it.
+    Returns (boxart_dir, write_variant) where write_variant(name, w, h)
+    writes a WebP at `boxart_dir/name` of the given dimensions.
+    """
+    monkeypatch.setattr(config, 'IMAGE_PATH', str(tmp_path), raising=False)
+    boxart_dir = tmp_path / 'boxart'
+    boxart_dir.mkdir()
+
+    def write_variant(name, width, height):
+        Image.new('RGB', (width, height)).save(boxart_dir / name, format='WEBP')
+
+    return boxart_dir, write_variant
+
+
 class TestBoxartSrcset:
     """Server-side srcset builder used by the detail-page hero `<img>`."""
 
-    def test_emits_candidates_when_variants_exist(self, tmp_path, monkeypatch):
-        import config
-        from services import image_utils
-        # Redirect IMAGE_PATH at the module that `boxart_srcset` reads it from.
-        monkeypatch.setattr(config, 'IMAGE_PATH', str(tmp_path), raising=False)
-
-        boxart_dir = tmp_path / 'boxart'
-        boxart_dir.mkdir()
-        Image.new('RGB', (800, 1120)).save(boxart_dir / 'g.webp', format='WEBP')
-        Image.new('RGB', (160, 224)).save(boxart_dir / 'g-sm.webp', format='WEBP')
-        Image.new('RGB', (320, 448)).save(boxart_dir / 'g-md.webp', format='WEBP')
+    def test_emits_candidates_when_variants_exist(self, boxart_with_files):
+        _, write_variant = boxart_with_files
+        write_variant('g.webp', 800, 1120)
+        write_variant('g-sm.webp', 160, 224)
+        write_variant('g-md.webp', 320, 448)
 
         srcset = image_utils.boxart_srcset('g.webp')
         assert 'g-sm.webp 160w' in srcset
@@ -174,29 +186,21 @@ class TestBoxartSrcset:
         assert 'g.webp' in srcset
 
     def test_empty_for_missing_boxart(self, tmp_path, monkeypatch):
-        import config
-        from services import image_utils
         monkeypatch.setattr(config, 'IMAGE_FORMAT', 'webp', raising=False)
         monkeypatch.setattr(config, 'IMAGE_PATH', str(tmp_path), raising=False)
         (tmp_path / 'boxart').mkdir()
         assert image_utils.boxart_srcset('does-not-exist.webp') == ''
 
     def test_empty_for_none_or_empty_string(self):
-        from services.image_utils import boxart_srcset
         assert boxart_srcset(None) == ''
         assert boxart_srcset('') == ''
 
-    def test_skips_missing_variant_siblings(self, tmp_path, monkeypatch):
+    def test_skips_missing_variant_siblings(self, boxart_with_files):
         """If `-sm` is missing but `-md` exists, srcset must include only `-md`
         plus the original — never emit a candidate URL that would 404."""
-        import config
-        from services import image_utils
-        monkeypatch.setattr(config, 'IMAGE_PATH', str(tmp_path), raising=False)
-
-        boxart_dir = tmp_path / 'boxart'
-        boxart_dir.mkdir()
-        Image.new('RGB', (800, 1120)).save(boxart_dir / 'g.webp', format='WEBP')
-        Image.new('RGB', (320, 448)).save(boxart_dir / 'g-md.webp', format='WEBP')
+        _, write_variant = boxart_with_files
+        write_variant('g.webp', 800, 1120)
+        write_variant('g-md.webp', 320, 448)
 
         srcset = image_utils.boxart_srcset('g.webp')
         assert 'g-sm.webp' not in srcset
@@ -209,8 +213,6 @@ class TestFinalizePipeline:
     def test_jpeg_bytes_to_webp_path_full_pipeline(self, tmp_path, monkeypatch, jpeg_bytes):
         """End-to-end: bytes arrive as JPEG but path is `.webp` → ingest writes
         WebP, standardizes size, generates `-sm` / `-md` siblings."""
-        from services.image_utils import finalize_downloaded_image
-
         boxart_dir = tmp_path / 'boxart'
         boxart_dir.mkdir()
         path = boxart_dir / 'game.webp'

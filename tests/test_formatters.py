@@ -1,5 +1,7 @@
 # Tests for services/formatters.py
 
+import pytest
+
 from services.formatters import format_size, get_manufacturer, MANUFACTURER_MAP
 
 
@@ -35,25 +37,22 @@ class TestFormatSize:
 
 
 class TestGetManufacturer:
-    def test_nintendo_consoles(self):
-        assert get_manufacturer('nes') == 'Nintendo'
-        assert get_manufacturer('snes') == 'Nintendo'
-        assert get_manufacturer('switch') == 'Nintendo'
-        assert get_manufacturer('gba') == 'Nintendo'
-
-    def test_sony_consoles(self):
-        assert get_manufacturer('psx') == 'Sony'
-        assert get_manufacturer('ps5') == 'Sony'
-        assert get_manufacturer('psvita') == 'Sony'
-
-    def test_sega_consoles(self):
-        assert get_manufacturer('genesis') == 'Sega'
-        assert get_manufacturer('saturn') == 'Sega'
-        assert get_manufacturer('dreamcast') == 'Sega'
-
-    def test_microsoft_consoles(self):
-        assert get_manufacturer('xbox') == 'Microsoft'
-        assert get_manufacturer('xbox360') == 'Microsoft'
+    @pytest.mark.parametrize("folder, expected", [
+        ('nes', 'Nintendo'),
+        ('snes', 'Nintendo'),
+        ('switch', 'Nintendo'),
+        ('gba', 'Nintendo'),
+        ('psx', 'Sony'),
+        ('ps5', 'Sony'),
+        ('psvita', 'Sony'),
+        ('genesis', 'Sega'),
+        ('saturn', 'Sega'),
+        ('dreamcast', 'Sega'),
+        ('xbox', 'Microsoft'),
+        ('xbox360', 'Microsoft'),
+    ])
+    def test_known_console_folders(self, folder, expected):
+        assert get_manufacturer(folder) == expected
 
     def test_case_insensitive(self):
         assert get_manufacturer('NES') == 'Nintendo'

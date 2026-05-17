@@ -37,12 +37,13 @@ _METADATA_KEYS = [
 ]
 
 
-def _blank_metadata():
-    return {k: '' for k in _METADATA_KEYS}
-
-
-def _blank_result():
-    return {'filled_fields': []}
+@pytest.fixture
+def blank():
+    """Fresh (meta, result) tuple — fixture replaces 30+ inline
+    `_blank_metadata()`/`_blank_result()` call pairs (audit MED finding).
+    `meta` is a dict of every metadata key set to '', `result` tracks
+    filled-field provenance."""
+    return ({k: '' for k in _METADATA_KEYS}, {'filled_fields': []})
 
 
 # ---------------------------------------------------------------------------
@@ -50,9 +51,8 @@ def _blank_result():
 # ---------------------------------------------------------------------------
 
 class TestApplyTgdb:
-    def test_fills_empty_text_fields(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_fills_empty_text_fields(self, blank):
+        meta, result = blank
         tgdb = {
             'name': 'Chrono Trigger',
             'publisher': 'Squaresoft',
@@ -75,38 +75,33 @@ class TestApplyTgdb:
         assert meta['modes'] == 'Single-Player'
         assert any('title (TGDB)' == f for f in result['filled_fields'])
 
-    def test_fill_only_true_preserves_existing_non_title_fields(self):
-        meta = _blank_metadata()
+    def test_fill_only_true_preserves_existing_non_title_fields(self, blank):
+        meta, result = blank
         meta['publisher'] = 'Pre-existing'
-        result = _blank_result()
         tgdb = {'name': 'X', 'publisher': 'Replacement'}
         apply_tgdb_to_metadata(meta, tgdb, db_game_id=1, result=result, fill_only=True)
         assert meta['publisher'] == 'Pre-existing'
 
-    def test_fill_only_false_overwrites_title(self):
-        meta = _blank_metadata()
+    def test_fill_only_false_overwrites_title(self, blank):
+        meta, result = blank
         meta['title'] = 'Stale'
-        result = _blank_result()
         apply_tgdb_to_metadata(meta, {'name': 'Fresh'}, db_game_id=1, result=result, fill_only=False)
         assert meta['title'] == 'Fresh'
 
-    def test_fill_only_true_keeps_existing_title(self):
-        meta = _blank_metadata()
+    def test_fill_only_true_keeps_existing_title(self, blank):
+        meta, result = blank
         meta['title'] = 'Original'
-        result = _blank_result()
         apply_tgdb_to_metadata(meta, {'name': 'Override'}, db_game_id=1, result=result, fill_only=True)
         assert meta['title'] == 'Original'
 
-    def test_players_greater_than_one_sets_multiplayer_mode(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_players_greater_than_one_sets_multiplayer_mode(self, blank):
+        meta, result = blank
         apply_tgdb_to_metadata(meta, {'players': 4}, db_game_id=1, result=result)
         assert meta['players'] == 4
         assert meta['modes'] == 'Single-Player, Multiplayer'
 
-    def test_pegi_parsed_from_rating(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_pegi_parsed_from_rating(self, blank):
+        meta, result = blank
         apply_tgdb_to_metadata(meta, {'rating': 'PEGI 16'}, db_game_id=1, result=result)
         assert meta['pegi_rating'] == 'PEGI 16'
 
@@ -116,9 +111,11 @@ class TestApplyTgdb:
 # ---------------------------------------------------------------------------
 
 class TestApplyIgdb:
-    def test_fills_basic_text_fields(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_fills_empty_text_fields(self, blank):
+        # Renamed from test_fills_basic_text_fields → test_fills_empty_text_fields
+        # so the naming matches the TGDB / RAWG / ScreenScraper counterparts
+        # (audit LOW naming finding).
+        meta, result = blank
         igdb = {
             'name': 'Halo: Combat Evolved',
             'involved_companies': [
@@ -137,23 +134,20 @@ class TestApplyIgdb:
         assert meta['description'] == 'Master Chief saves the galaxy.'
         assert meta['players'] == 4
 
-    def test_storyline_preferred_over_summary_for_description(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_storyline_preferred_over_summary_for_description(self, blank):
+        meta, result = blank
         igdb = {'storyline': 'Long story.', 'summary': 'Short.'}
         apply_igdb_to_metadata(meta, igdb, db_game_id=1, result=result)
         assert meta['description'] == 'Long story.'
 
-    def test_release_date_converted_from_unix_timestamp(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_release_date_converted_from_unix_timestamp(self, blank):
+        meta, result = blank
         # 2001-11-15 UTC
         apply_igdb_to_metadata(meta, {'first_release_date': 1005782400}, db_game_id=1, result=result)
         assert meta['release_date'] == '2001-11-15'
 
-    def test_age_rating_category_map(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_age_rating_category_map(self, blank):
+        meta, result = blank
         igdb = {
             'age_ratings': [
                 {'category': 1, 'rating': 11},  # ESRB M
@@ -168,17 +162,15 @@ class TestApplyIgdb:
         assert meta['cero_rating'] == 'Z'
         assert meta['usk_rating'] == '18'
 
-    def test_unknown_rating_category_ignored(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_unknown_rating_category_ignored(self, blank):
+        meta, result = blank
         # Category 99 doesn't exist in IGDB's schema.
         apply_igdb_to_metadata(meta, {'age_ratings': [{'category': 99, 'rating': 1}]}, db_game_id=1, result=result)
         assert meta['esrb_rating'] == ''
         assert meta['pegi_rating'] == ''
 
-    def test_extended_fields_applied_when_empty(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_extended_fields_applied_when_empty(self, blank):
+        meta, result = blank
         igdb = {
             '_extended': {
                 'franchise': 'Halo',
@@ -200,10 +192,9 @@ class TestApplyIgdb:
         assert meta['critic_score_count'] == 120
         assert meta['user_score'] == 91.0
 
-    def test_alternate_names_merged_with_region(self):
-        meta = _blank_metadata()
+    def test_alternate_names_merged_with_region(self, blank):
+        meta, result = blank
         meta['title'] = 'Mega Man'
-        result = _blank_result()
         igdb = {
             'alternative_names': [
                 {'name': 'Rockman', 'comment': 'Japan'},
@@ -222,9 +213,8 @@ class TestApplyIgdb:
 # ---------------------------------------------------------------------------
 
 class TestApplyRawg:
-    def test_fills_empty_fields_with_fill_only_true(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_fills_empty_fields_with_fill_only_true(self, blank):
+        meta, result = blank
         rawg = {
             'name': 'Portal',
             'description': 'Puzzle with portals.',
@@ -246,33 +236,29 @@ class TestApplyRawg:
         assert meta['esrb_rating'] == 'T'
         assert meta['critic_score'] == 90
 
-    def test_fill_only_false_overwrites_only_title(self):
+    def test_fill_only_false_overwrites_only_title(self, blank):
         # Pass 23.2: only title overwrites on primary source, matching
         # TGDB / IGDB / ScreenScraper. Other fields are always fill-only.
-        meta = _blank_metadata()
+        meta, result = blank
         meta.update({'title': 'Old', 'developer': 'OldDev'})
-        result = _blank_result()
         rawg = {'name': 'New', 'developer': 'NewDev'}
         apply_rawg_to_metadata(meta, rawg, db_game_id=1, result=result, fill_only=False)
         assert meta['title'] == 'New'
         assert meta['developer'] == 'OldDev'
 
-    def test_release_date_truncated_to_iso(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_release_date_truncated_to_iso(self, blank):
+        meta, result = blank
         apply_rawg_to_metadata(meta, {'release_date': '2007-10-10T00:00:00Z'}, db_game_id=1, result=result)
         assert meta['release_date'] == '2007-10-10'
 
-    def test_release_date_too_short_ignored(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_release_date_too_short_ignored(self, blank):
+        meta, result = blank
         apply_rawg_to_metadata(meta, {'release_date': '2007'}, db_game_id=1, result=result)
         assert meta['release_date'] == ''
 
-    def test_franchise_only_fills_empty(self):
-        meta = _blank_metadata()
+    def test_franchise_only_fills_empty(self, blank):
+        meta, result = blank
         meta['franchise'] = 'Existing'
-        result = _blank_result()
         # Note: franchise handling in RAWG ignores fill_only and only fills empty.
         apply_rawg_to_metadata(meta, {'franchise': 'Other'}, db_game_id=1, result=result, fill_only=False)
         assert meta['franchise'] == 'Existing'
@@ -283,9 +269,8 @@ class TestApplyRawg:
 # ---------------------------------------------------------------------------
 
 class TestApplyScreenScraper:
-    def test_get_localized_region_priority(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_get_localized_region_priority(self, blank):
+        meta, result = blank
         ss = {
             'noms': [
                 {'region': 'jp', 'text': 'Rockman'},
@@ -296,9 +281,8 @@ class TestApplyScreenScraper:
         apply_screenscraper_to_metadata(meta, ss, db_game_id=1, result=result)
         assert meta['title'] == 'Mega Man'
 
-    def test_region_tagged_alt_titles(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_region_tagged_alt_titles(self, blank):
+        meta, result = blank
         ss = {
             'noms': [
                 {'region': 'us', 'text': 'Mega Man'},
@@ -314,9 +298,8 @@ class TestApplyScreenScraper:
         assert 'Mega Man EU' in titles
         assert 'Mega Man' not in titles
 
-    def test_fills_developer_publisher_from_dict_or_str(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_fills_developer_publisher_from_dict_or_str(self, blank):
+        meta, result = blank
         ss = {
             'developpeur': {'text': 'Capcom'},
             'editeur': 'Nintendo',
@@ -325,9 +308,8 @@ class TestApplyScreenScraper:
         assert meta['developer'] == 'Capcom'
         assert meta['publisher'] == 'Nintendo'
 
-    def test_classifications_map_to_rating_fields(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_classifications_map_to_rating_fields(self, blank):
+        meta, result = blank
         ss = {
             'classifications': [
                 {'type': 'ESRB', 'text': 'T'},
@@ -344,17 +326,15 @@ class TestApplyScreenScraper:
         assert meta['usk_rating'] == '12'
         assert meta['acb_rating'] == 'M'
 
-    def test_note_converted_0_20_to_0_100(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_note_converted_0_20_to_0_100(self, blank):
+        meta, result = blank
         # ScreenScraper note is 0-20 scale; 17.0 → 85.0
         apply_screenscraper_to_metadata(meta, {'note': {'text': '17.0'}}, db_game_id=1, result=result)
         assert meta['user_score'] == 85.0
 
-    def test_existing_text_fields_not_overwritten(self):
-        meta = _blank_metadata()
+    def test_existing_text_fields_not_overwritten(self, blank):
+        meta, result = blank
         meta.update({'description': 'Existing desc', 'developer': 'Existing dev'})
-        result = _blank_result()
         ss = {
             'synopsis': [{'region': 'us', 'text': 'New desc'}],
             'developpeur': 'New dev',
@@ -369,17 +349,15 @@ class TestApplyScreenScraper:
 # ---------------------------------------------------------------------------
 
 class TestApplyAi:
-    def test_none_data_is_noop(self):
-        meta = _blank_metadata()
+    def test_none_data_is_noop(self, blank):
+        meta, result = blank
         meta['title'] = 'Keep me'
-        result = _blank_result()
         apply_ai_to_metadata(meta, None, db_game_id=1, result=result)
         assert meta['title'] == 'Keep me'
         assert result['filled_fields'] == []
 
-    def test_fills_simple_text_fields_when_empty(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_fills_simple_text_fields_when_empty(self, blank):
+        meta, result = blank
         ai = {
             'description': 'Auto desc.',
             'developer': 'DevCo',
@@ -396,14 +374,13 @@ class TestApplyAi:
         assert meta['region'] == 'World'
         assert meta['franchise'] == 'MyFranchise'
 
-    def test_fill_only_true_preserves_existing_non_validate_fields(self):
-        meta = _blank_metadata()
+    def test_fill_only_true_preserves_existing_non_validate_fields(self, blank):
+        meta, result = blank
         meta['description'] = 'Original desc'
-        result = _blank_result()
         apply_ai_to_metadata(meta, {'description': 'AI override'}, db_game_id=1, result=result, fill_only=True)
         assert meta['description'] == 'Original desc'
 
-    def test_validate_fields_always_applied_even_when_fill_only(self):
+    def test_validate_fields_always_applied_even_when_fill_only(self, blank):
         # VALIDATE_FIELDS (from scrape_ai) always override — AI is treated as
         # a correction source for those. Sanity-check with a known entry.
         from scraper.scrape_ai import VALIDATE_FIELDS
@@ -412,22 +389,19 @@ class TestApplyAi:
         field = next(iter(VALIDATE_FIELDS))
         if field not in _METADATA_KEYS:
             pytest.skip(f"VALIDATE_FIELDS entry {field} not in test metadata skeleton")
-        meta = _blank_metadata()
+        meta, result = blank
         meta[field] = 'stale'
-        result = _blank_result()
         apply_ai_to_metadata(meta, {field: 'corrected'}, db_game_id=1, result=result, fill_only=True)
         assert meta[field] == 'corrected'
 
-    def test_scores_coerced_to_int(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_scores_coerced_to_int(self, blank):
+        meta, result = blank
         ai = {'critic_score': '87.6', 'user_score': 92}
         apply_ai_to_metadata(meta, ai, db_game_id=1, result=result)
         assert meta['critic_score'] == 87
         assert meta['user_score'] == 92
 
-    def test_non_numeric_score_silently_dropped(self):
-        meta = _blank_metadata()
-        result = _blank_result()
+    def test_non_numeric_score_silently_dropped(self, blank):
+        meta, result = blank
         apply_ai_to_metadata(meta, {'critic_score': 'not a number'}, db_game_id=1, result=result)
         assert meta['critic_score'] == ''

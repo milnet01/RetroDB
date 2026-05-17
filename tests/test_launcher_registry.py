@@ -61,9 +61,12 @@ def test_gc_removes_exited_after_ttl(registry):
     exited_proc.poll.return_value = 1
     exited_proc.returncode = 1
     exited_proc.pid = 1
+    # Single wall-clock baseline keeps start/exit offsets internally consistent
+    # even if time.time() stalls or jitters between the two calls.
+    t = time.time()
     registry.register(token='gone', proc=exited_proc, game_id=1, emulator_id=1,
-                      started_at=time.time() - 3.0)
-    registry._mark_exited('gone', exit_time=time.time() - 2.0)  # 2s ago, ttl=1.0
+                      started_at=t - 3.0)
+    registry._mark_exited('gone', exit_time=t - 2.0)  # 2s ago, ttl=1.0
 
     registry.gc()
     assert registry.get('gone') is None

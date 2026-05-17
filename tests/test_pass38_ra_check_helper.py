@@ -23,25 +23,34 @@ if _REPO_ROOT not in sys.path:
 
 @pytest.fixture
 def temp_db(tmp_path, monkeypatch):
-    """Set up a minimal games table the helper can update."""
+    """Set up a minimal games table the helper can update.
+
+    The sqlite3 connection is wrapped in a `with` block so it commits and
+    closes deterministically even if the seed fails mid-fixture (test-audit
+    FIX-1). Note: a sqlite3 context manager commits on success and rolls
+    back on exception — it does NOT close the connection. We close
+    explicitly afterwards inside the same try/finally surface.
+    """
     db_path = tmp_path / 'test.db'
     conn = sqlite3.connect(str(db_path))
-    conn.execute("""
-        CREATE TABLE games (
-            id INTEGER PRIMARY KEY,
-            title TEXT,
-            has_retroachievements INTEGER DEFAULT 0,
-            ra_game_id INTEGER,
-            ra_achievement_count INTEGER,
-            ra_points INTEGER
-        )
-    """)
-    conn.execute(
-        "INSERT INTO games (id, title) VALUES (?, ?)",
-        (42, 'Sonic the Hedgehog'),
-    )
-    conn.commit()
-    conn.close()
+    try:
+        with conn:
+            conn.execute("""
+                CREATE TABLE games (
+                    id INTEGER PRIMARY KEY,
+                    title TEXT,
+                    has_retroachievements INTEGER DEFAULT 0,
+                    ra_game_id INTEGER,
+                    ra_achievement_count INTEGER,
+                    ra_points INTEGER
+                )
+            """)
+            conn.execute(
+                "INSERT INTO games (id, title) VALUES (?, ?)",
+                (42, 'Sonic the Hedgehog'),
+            )
+    finally:
+        conn.close()
 
     # Point both config.DB_PATH and the scraper-conn helper at the temp DB.
     import config as _config
@@ -149,3 +158,28 @@ class TestApplyRetroachievementsCheck:
         assert result is False
         assert any('RetroAchievements check skipped' in rec.message
                    for rec in caplog.records)
+
+    @pytest.mark.parametrize('exc_factory', [
+        # The two most-likely real-world exceptions from a network call —
+        # `requests.Timeout` (DNS / TCP / read timeout) and
+        # `requests.ConnectionError` (service down, refused) — must also
+        # be caught even though they're distinct classes from RuntimeError
+        # (test-audit COV-2).
+        lambda: __import__('requests').exceptions.Timeout('simulated read timeout'),
+        lambda: __import__('requests').exceptions.ConnectionError('simulated refused'),
+    ])
+    def test_returns_false_on_network_exceptions(self, temp_db, exc_factory):
+        from scraper import hybrid_scraper
+
+        def _boom(*_args, **_kwargs):
+            raise exc_factory()
+
+        with patch('scraper.retroachievements.check_retroachievements',
+                   side_effect=_boom):
+            result = hybrid_scraper._apply_retroachievements_check(
+                42, 'Sonic the Hedgehog', 'genesis'
+            )
+        assert result is False, (
+            "helper must swallow requests-network exceptions so a flaky RA "
+            "host can't poison the rest of a scrape"
+        )

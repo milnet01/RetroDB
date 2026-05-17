@@ -55,6 +55,8 @@ class TestResumeFromParams:
 
         job = MuseumGenerateJob()
 
+        from services.jobs.base import release_singleton_fd
+
         # Stub _worker so it just records the resume_index it sees.
         seen_resume_index = {}
         worker_finished = threading.Event()
@@ -67,6 +69,10 @@ class TestResumeFromParams:
                 seen_resume_index['skipped'] = self.skipped_count
                 seen_resume_index['overwrite'] = self.overwrite
             finally:
+                # Release the process-level singleton FD so later tests in
+                # the same session can re-acquire it (real _worker does the
+                # same).
+                release_singleton_fd(self)
                 with self._lock:
                     self.running = False
                     self.completed = True
@@ -78,12 +84,56 @@ class TestResumeFromParams:
                 progress={'current': 3, 'success': 2, 'failed': 1, 'skipped': 0},
             )
             assert ok is True
-            assert worker_finished.wait(timeout=2.0)
+            assert worker_finished.wait(timeout=2.0), \
+                f"Worker thread did not finish within 2s; job state: {job.get_status()!r}"
 
         assert seen_resume_index['value'] == 3
         assert seen_resume_index['success'] == 2
         assert seen_resume_index['failed'] == 1
         assert seen_resume_index['overwrite'] is True
+
+    def test_resume_with_no_progress_starts_from_zero(self):
+        """Coverage gap (audit MED): `progress=None` is the first-time-start
+        case — resume_from_params must treat it as resume_index == 0 and
+        leave counters at their defaults rather than crashing on None lookup."""
+        from services.jobs.museum import MuseumGenerateJob
+        from services.jobs.base import release_singleton_fd
+
+        job = MuseumGenerateJob()
+        seen = {}
+        worker_finished = threading.Event()
+
+        def fake_worker(self, system_ids=None):
+            try:
+                seen['resume_index'] = self._resume_index
+                seen['success'] = self.success_count
+                seen['failed'] = self.failed_count
+                seen['skipped'] = self.skipped_count
+            finally:
+                # Release the process-level singleton FD so subsequent tests
+                # in the same session can re-acquire it (real _worker does
+                # the same — fake_worker must mirror).
+                release_singleton_fd(self)
+                with self._lock:
+                    self.running = False
+                    self.completed = True
+                worker_finished.set()
+
+        with patch.object(MuseumGenerateJob, '_worker', fake_worker):
+            ok = job.resume_from_params(
+                params={'system_ids': [1, 2], 'overwrite': False},
+                progress=None,
+            )
+            assert ok is True, \
+                "resume_from_params returned False — singleton lock likely " \
+                "held by an earlier test that didn't release it"
+            assert worker_finished.wait(timeout=2.0), \
+                f"Worker thread did not finish within 2s; job state: {job.get_status()!r}"
+
+        assert seen['resume_index'] == 0
+        assert seen['success'] == 0
+        assert seen['failed'] == 0
+        assert seen['skipped'] == 0
 
     def test_resume_refuses_when_already_running(self):
         from services.jobs.museum import MuseumGenerateJob

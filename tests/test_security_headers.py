@@ -56,10 +56,10 @@ class TestPermissionsPolicy:
 class TestHstsEnvGated:
     """16.4: HSTS only when SESSION_COOKIE_SECURE is on (TLS in front)."""
 
-    def test_hsts_absent_on_plain_http(self, client):
+    def test_hsts_absent_on_plain_http(self, client, monkeypatch):
         # Default test config has SESSION_COOKIE_SECURE=False
         import app as app_module
-        app_module.app.config['SESSION_COOKIE_SECURE'] = False
+        monkeypatch.setitem(app_module.app.config, 'SESSION_COOKIE_SECURE', False)
         resp = client.get('/health')
         assert 'Strict-Transport-Security' not in resp.headers
 
@@ -99,9 +99,13 @@ class TestCspReportOnly:
         resp2 = client.get('/health')
         import re
         pat = re.compile(r"'nonce-([^']+)'")
-        n1 = pat.search(resp1.headers['Content-Security-Policy-Report-Only']).group(1)
-        n2 = pat.search(resp2.headers['Content-Security-Policy-Report-Only']).group(1)
-        assert n1 != n2, "CSP nonce must be per-request, not reused"
+        csp1 = resp1.headers['Content-Security-Policy-Report-Only']
+        csp2 = resp2.headers['Content-Security-Policy-Report-Only']
+        m1 = pat.search(csp1)
+        m2 = pat.search(csp2)
+        assert m1 is not None, f"Nonce not found in CSP: {csp1[:100]}"
+        assert m2 is not None, f"Nonce not found in CSP: {csp2[:100]}"
+        assert m1.group(1) != m2.group(1), "CSP nonce must be per-request, not reused"
 
     def test_csp_includes_core_directives(self, client):
         resp = client.get('/health')

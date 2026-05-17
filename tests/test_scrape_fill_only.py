@@ -57,13 +57,13 @@ def _make_conn_with_existing_row(**values):
 
 
 @pytest.fixture
-def _noop_download(monkeypatch):
+def noop_download(monkeypatch):
     """Neutralise image-download helpers so tests don't touch the network."""
     monkeypatch.setattr(scrape_igdb, 'download_image', lambda *a, **kw: None)
     monkeypatch.setattr(scrape_thegamesdb, '_download_tgdb_image', lambda *a, **kw: None, raising=False)
 
 
-def test_igdb_apply_preserves_existing_values_when_response_is_empty(monkeypatch, _noop_download):
+def test_igdb_apply_preserves_existing_values_when_response_is_empty(monkeypatch, noop_download):
     conn = _make_conn_with_existing_row(
         id=1, title='Chrono Trigger', publisher='Squaresoft',
         developer='Square', release_date='1995-03-11', genre='RPG',
@@ -92,7 +92,7 @@ def test_igdb_apply_preserves_existing_values_when_response_is_empty(monkeypatch
     assert row['boxart'] == 'static/images/boxart/1.jpg'
 
 
-def test_tgdb_apply_preserves_existing_values_when_response_is_empty(monkeypatch, _noop_download):
+def test_tgdb_apply_preserves_existing_values_when_response_is_empty(monkeypatch, noop_download):
     conn = _make_conn_with_existing_row(
         id=1, title='Mega Man X', publisher='Capcom',
         developer='Capcom', release_date='1993-12-17', genre='Platformer',
@@ -132,3 +132,41 @@ def test_tgdb_apply_preserves_existing_values_when_response_is_empty(monkeypatch
     assert row['modes'] == 'Single-player'
     assert row['description'] == 'SNES action platformer.'
     assert row['boxart'] == 'static/images/boxart/1.jpg'
+
+
+# -----------------------------------------------------------------------------
+# Failure-path coverage (test-audit c-007 LOW-3)
+# -----------------------------------------------------------------------------
+#
+# The above tests pin the happy path. These pin the failure path: when the
+# scraper hits a DB error (e.g. connection dies mid-UPDATE), `apply_metadata_
+# to_game` must catch it and return False rather than re-raising. A silent
+# True on failure would let downstream callers assume the row was updated.
+
+class _FailingConn:
+    """Connection that raises on .cursor() so the scraper enters its except branch."""
+
+    def cursor(self):
+        raise sqlite3.OperationalError("simulated DB failure")
+
+    def rollback(self):
+        pass
+
+    def close(self):
+        pass
+
+
+def test_igdb_apply_returns_false_when_db_fails(monkeypatch, noop_download):
+    """A DB error inside `apply_metadata_to_game` must surface as False
+    (not a silent True, not a re-raise). Pins the COALESCE invariant's
+    failure-side contract."""
+    monkeypatch.setattr(scrape_igdb, 'get_scraper_conn', lambda: _FailingConn())
+    result = scrape_igdb.apply_metadata_to_game(999, {'name': 'No Such Game'})
+    assert result is False
+
+
+def test_tgdb_apply_returns_false_when_db_fails(monkeypatch, noop_download):
+    """Mirror of the IGDB failure-path test for the TGDB scraper."""
+    monkeypatch.setattr(scrape_thegamesdb, 'get_scraper_conn', lambda: _FailingConn())
+    result = scrape_thegamesdb.apply_metadata_to_game(999, {'game_title': 'No Such Game'})
+    assert result is False

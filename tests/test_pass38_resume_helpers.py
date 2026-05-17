@@ -146,6 +146,13 @@ class TestCallsitesUseHelpers:
         'services/jobs/bulk_scrape.py',
     )
 
+    # bulk_scrape uses a queue-based promote/demote mechanism instead of
+    # the cross-process singleton lock, so it's excluded from the
+    # try_acquire_singleton_or_warn assertion. Derive the list from
+    # JOB_MODULES so the two parametrize decorators can't drift
+    # (test-audit VERB-2).
+    SINGLETON_MODULES = tuple(m for m in JOB_MODULES if 'bulk_scrape' not in m)
+
     @pytest.mark.parametrize('rel_path', JOB_MODULES)
     def test_module_imports_pad_and_restore(self, rel_path):
         path = os.path.join(_REPO_ROOT, rel_path)
@@ -160,12 +167,7 @@ class TestCallsitesUseHelpers:
             f"(Pass 38.8)."
         )
 
-    @pytest.mark.parametrize('rel_path', (
-        'services/jobs/ra_sync.py',
-        'services/jobs/ra_refresh.py',
-        'services/jobs/platform_sync.py',
-        'services/jobs/psn_refresh.py',
-    ))
+    @pytest.mark.parametrize('rel_path', SINGLETON_MODULES)
     def test_singleton_module_uses_try_acquire_helper(self, rel_path):
         """Bulk scrape resume doesn't take the cross-process lock (it has
         a queue-based promote/demote mechanism instead), so it's excluded

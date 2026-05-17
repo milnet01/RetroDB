@@ -1,3 +1,93 @@
+- version: 3.6.8
+  date: 2026-05-17
+  tags:
+  - type: fix
+    label: Test-suite audit fix-pass — 119 findings resolved across 30+ test files
+  - type: fix
+    label: services/log_redactor.py — mapping-style log args now redacted and survive %(name)s formatting
+  - type: refactor
+    label: tests/_util.py — shared REPO_ROOT + read_source + slice_function for source-grep tests
+  body: |
+    <ul>
+        <li><strong>Full test-suite audit fix-pass</strong>. Ran <code>/test-audit</code> across the 65-file pytest suite, then applied every finding produced (CRITICAL, HIGH, MED, LOW, INFO — nothing skipped). 119 findings resolved in total, dispatched to 7 parallel fix subagents grouped by audit chunk. Full suite went 899 → 955 passing tests (net +56 from parametrize splits and new coverage-gap tests) and the suite is faster than before despite the new tests, thanks to the PBKDF2-iterations fix below.</li>
+        <li><strong>CRITICAL — <code>tests/test_bulk_scrape_race.py:111</code></strong>. Two back-to-back assertions contradicted each other (<code>assert job.job_id == first_id</code> followed by <code>assert job.job_id == queued_id</code>). Line 111 always failed, so the actual regression check at line 116 was unreachable. The author had even left a comment noting the assertion was wrong. Deleted the dead assertion; added a queue-ordering pin so both halves of the post-swap contract are now verified.</li>
+        <li><strong>Production fix — <code>services/log_redactor.py</code></strong>. New coverage test (<code>test_filter_redacts_dict_args</code>) for mapping-style log args (e.g. <code>logger.info("got %(token)s", {'token': jwt})</code>) exposed a real bug: the existing filter wrapped a non-tuple <code>record.args</code> in a tuple, breaking <code>%(name)s</code>-style formatting downstream. Fixed by branching on <code>collections.abc.Mapping</code> and preserving the mapping shape through the redactor.</li>
+        <li><strong>Performance — <code>tests/test_auth_hashing.py</code></strong>. Four <code>hash_password()</code> calls were running at the production PBKDF2 iteration count (600 000), adding ~1.5–3 s per suite run. Format/round-trip tests now pass <code>iterations=1</code>; one dedicated test (<code>test_pbkdf2_iterations_meets_owasp_floor</code>) asserts the production constant is still ≥ 600 000.</li>
+        <li><strong>Isolation theme (~12 sites)</strong>. The audit's #1 finding cluster: module-level singletons mutated without <code>monkeypatch.setattr/setitem</code>. Fixed across <code>test_auth_hardening</code> (<code>_db_pool</code>), <code>test_input_hardening</code> + <code>test_pass33_34_hardening</code> + <code>test_pass40_security</code> (<code>app.config['TESTING']</code>), <code>test_log_redactor</code> (root-logger filters), <code>test_observability</code> (request-id factory), <code>test_pass32_hardening</code> (<code>ra._ra_console_cache</code>), <code>test_pass33_34_hardening</code> + <code>test_pass41_security</code> (<code>sec._login_attempts</code>), <code>test_pass41_security</code> (<code>igdb._igdb_token_cache</code>), <code>test_migrations</code> (<code>MIGRATIONS</code> global), <code>test_security_headers</code> (<code>SESSION_COOKIE_SECURE</code>). All now restore-on-teardown automatically.</li>
+        <li><strong>Source-grep boilerplate consolidated</strong>. New <code>tests/_util.py</code> exposes <code>REPO_ROOT</code>, <code>read_source(rel_path)</code>, <code>read_module_source(mod)</code>, <code>slice_function(src, name)</code>, <code>count_except_blocks(src, function_name)</code>. Replaces the <code>_REPO_ROOT</code> + <code>sys.path.insert</code> + <code>open(__file__).read()</code> pattern that was copy-pasted across 5+ files (~23 occurrences inside <code>test_pass40_security.py</code> alone). Re-exported via <code>conftest.py</code> for ergonomic imports.</li>
+        <li><strong>Vacuous-pass assertions</strong>. Several "passes whatever happens" assertions caught and pinned:
+            <ul>
+                <li><code>test_pass35_36_hardening.py:261</code> — <code>or "Pass 36.8" in gm</code> escape-hatch made the left side irrelevant. Dropped.</li>
+                <li><code>test_pass42_normalize_game_edit.py:132</code> — disjunctive <code>!= 'Final Fantasy IX' or 'IX' not in title</code>. Replaced with exact-output match.</li>
+                <li><code>test_pass40_security.py:259</code> — Validator test passed via the 302 auth-block branch without ever invoking the validator. Pinned admin auth so the validator branch is actually exercised.</li>
+                <li><code>test_pass29_frontend.py:59</code> — <code>src.count('options.allowHtml') >= 2</code> passed even if both hits were in comments. Now slices each function body individually via the new <code>_js_method_body</code> helper.</li>
+            </ul>
+        </li>
+        <li><strong>Parametrise sweep (~10 sites)</strong>. Collapsed table-driven duplicated tests into <code>@pytest.mark.parametrize</code> blocks in <code>test_formatters</code>, <code>test_game_utils</code>, <code>test_hltb_bulk</code>, <code>test_launch_settings_validators</code>, <code>test_metadata_merger</code>, <code>test_pass32_hardening</code>, <code>test_pass37_a11y</code>, <code>test_pass40_security</code>, <code>test_pass41_security</code>, <code>test_pass42_normalize_game_edit</code>. Cleaner failure attribution and shorter files.</li>
+        <li><strong>Flakiness — sleep-based polling</strong>. Replaced <code>time.sleep(...)</code> + deadline loops in <code>test_launcher_local.py</code> with a <code>_poll_exited()</code> helper that uses <code>pytest.fail()</code> on deadline breach. Replaced <code>time.sleep(0.01)</code> in <code>test_migrations.py:210</code> (used to force SQLite trigger timestamp to advance) with an explicit seed-then-update strategy. Replaced demote-test busy-poll with <code>threading.Event.wait()</code> mirroring the swap-test pattern.</li>
+        <li><strong>New coverage tests</strong>. Added tests for previously-uncovered paths: HLTB <code>except Exception → return None</code>; PIL <code>UnidentifiedImageError</code>; IPv6 private SSRF rejection; <code>shutil.which</code> returning <code>None</code>; <code>BulkScrapeJob.start([])</code>; <code>backup_database</code> missing destination dir; emulator-registry DELETE handler (admin + viewer); <code>resume_from_params(progress=None)</code>; <code>requests.Timeout</code>/<code>ConnectionError</code> swallowed by RA check helper; convert-with-only-out-of-bound-files chdman case.</li>
+        <li><strong>Gitleaks-bait literal removed</strong>. <code>tests/test_auth_hardening.py:261</code> had <code>AIzaSyABCDEFGHIJKLMNOPQRSTUVWXYZ01234567</code> — the real Google API-key prefix <code>AIzaSy</code> slipped past gitleaks today (one char over the rule window) but a rule update would have turned it into a CI red. Replaced with <code>FAKE_API_KEY_…</code>; redactor's field-name trigger still matches.</li>
+        <li><strong>Patch bump 3.6.7 → 3.6.8</strong>: test-suite cleanup + 1 production-code bug fix (log redactor mapping args); no user-visible behaviour change. Full audit reports preserved under <code>.test-audit-reports/</code> for reference.</li>
+    </ul>
+- version: 3.6.7
+  date: 2026-05-17
+  tags:
+  - type: fix
+    label: Bulk Scrape cancel modal — set expectation that the current game still finishes
+  - type: fix
+    label: 19 bulk_scrape tests — patch acquire_job_singleton_lock so tests don't contend with the live server's flock
+  body: |
+    <ul>
+        <li><strong>Cancel-bulk-scrape modal copy</strong>. User cancelled an in-flight bulk scrape and the "Bulk Scrape Running" progress toast kept ticking on every page navigation for ~60 seconds. Working as designed — <code>BulkScrapeJob.cancel()</code> sets <code>self.cancelled = True</code> and the scrape loop only checks that flag between games — but the modal didn't say so, making it look broken. <code>static/js/bulk-scrape.js:350</code> now mentions the 10–60 s delay so users don't double-click cancel or worry that the toast is stuck.</li>
+        <li><strong>19 pre-existing bulk_scrape test failures</strong>. <code>tests/test_bulk_scrape_job.py</code> + <code>tests/test_bulk_scrape_race.py</code> were red on clean <code>main</code> (verified by stash + replay against <code>a624f0e</code>). Symptom: every test that called <code>job.start(...)</code> got <code>{'success': False, 'error': 'A bulk scrape is already running on another worker process...'}</code> with the log message "Job 'bulk_scrape' is already running on another worker; refusing concurrent start". <strong>Root cause</strong>: the Pass 41.6.A cross-process singleton (<code>acquire_job_singleton_lock</code> calling <code>fcntl.flock(LOCK_EX | LOCK_NB)</code> on <code>&lt;DB_DIR&gt;/job_locks/bulk_scrape.lock</code>) lives outside the in-memory state the fixture stubs out — so when a developer's local RetroDB server was running with an active or interrupted bulk_scrape, it held the file lock <em>and the tests on the same machine failed every time</em>. <code>lsof database/job_locks/bulk_scrape.lock</code> confirmed PID 111810 (the running <code>python3 app.py</code>) was the holder. <strong>Fix</strong>: both fixtures now <code>patch.object(bulk_scrape_mod, 'acquire_job_singleton_lock', return_value=0)</code> — the sentinel <code>0</code> is the documented "no real FD, treat as acquired" return value, and <code>release_job_singleton_lock(0)</code> is a documented no-op so the existing teardown stays valid. Tests now decouple from any flock on disk.</li>
+        <li><strong>Why this manifested now and not earlier</strong>. The project moved from <code>/mnt/Storage</code> → <code>/mnt/Games</code> in commit <code>a624f0e</code>. <code>_JOB_LOCK_DIR</code> is derived from <code>config.DB_PATH</code>, which after the move points at <code>database/</code> under the new tree. A server started before the move (or one started after that picked up an old in-DB "interrupted" entry) holds the lock that the test process — running in the SAME new path — now collides with. The fixture predates Pass 41.6.A and was never updated to stub the lock call.</li>
+        <li><strong>Full suite</strong>. <code>python3 -m pytest</code> → <strong>899 passed</strong>, 0 failed (was 880 + 19 red). Includes the 10 new tests from v3.6.5 (scan_library rom_path) and the 3 from v3.6.6 (HLTB endpoint pin).</li>
+        <li><strong>Patch bump 3.6.6 → 3.6.7</strong>: UX-copy fix + test-infra fix; no production behaviour change.</li>
+    </ul>
+- version: 3.6.6
+  date: 2026-05-17
+  tags:
+  - type: fix
+    label: HLTB lookup — track HowLongToBeat's endpoint rename (/api/find → /api/bleed)
+  body: |
+    <ul>
+        <li><strong>Symptom</strong>. HLTB Search from any game's edit modal silently returned no hits for games HLTB clearly has (e.g. <em>Scrapland</em> at <code>howlongtobeat.com/game/8187</code>). Server logs showed the smoking gun: <code>scraper.base_scraper - WARNING - HTTP GET failed: 404 - https://howlongtobeat.com/api/find/init?t=…</code> firing twice in a row (initial call + token-refresh retry branch in <code>_get_auth_token</code>), each retry hitting the same dead URL.</li>
+        <li><strong>Cause</strong>. HLTB renamed their search API again — third move in eighteen months. Rename history:
+            <ul>
+                <li><code>pre-2026-04</code> — <code>/api/finder</code> (originally <code>/api/search</code> for the legacy v1 API)</li>
+                <li><code>2026-04..05</code> — <code>/api/find</code> (the previous fix)</li>
+                <li><code>2026-05+</code> — <code>/api/bleed</code> (current)</li>
+            </ul>
+            Confirmed by greping HLTB's own Next.js JS chunks (<code>_next/static/chunks/*.js</code>) for the new path — it now lives in the same code that previously referenced <code>/api/find</code>. The init response shape (<code>{token, hpKey, hpVal}</code>) and the search body schema both kept stable across the rename, so the only fix was the URL string.</li>
+        <li><strong>Fix</strong>. <code>scraper/hltb_lookup.py</code> — all three live references swapped: <code>_get_auth_token</code>'s init URL (line 110), <code>_search_hltb</code>'s primary POST (line 186), and the token-refresh retry POST (line 207). Module docstring + function docstring updated. The rename-history comment block now documents the full whack-a-mole so the next move has a single place to update.</li>
+        <li><strong>Tests</strong>. <code>tests/test_hltb_endpoint.py</code> (3 new) — source-level pins on the live URL: (a) <code>/api/bleed/init</code> present, (b) at least three references to <code>/api/bleed</code> (init + search + retry), (c) no live (non-comment) line references the renamed-away <code>/api/find/</code> or <code>/api/finder</code>. The existing <code>tests/test_hltb_alt_titles.py</code> tests stub <code>_search_hltb</code> wholesale so they don't catch URL drift; the new file is the dedicated tripwire. <strong>When HLTB renames again</strong>, these three tests fail first — probe <code>https://howlongtobeat.com/api/&lt;NEW&gt;/init?t=&lt;ms&gt;</code> with the existing browser headers, update the constant + rename-history comment, and ship.</li>
+        <li><strong>Patch bump 3.6.5 → 3.6.6</strong>: external-API tracking fix only; no behaviour or schema change beyond restoring the lookup that was broken on the user's install.</li>
+    </ul>
+- version: 3.6.5
+  date: 2026-05-17
+  tags:
+  - type: fix
+    label: Scan Library — resolves rom_path at runtime + surfaces a real error when unset
+  - type: fix
+    label: Bonus Disc Statistics modal — rendered HTML markup as plaintext (allowHtml missing)
+  body: |
+    <ul>
+        <li><strong>Symptom</strong>. Clicking <strong>Scan Library</strong> on the Dashboard never picked up new ROMs in <code>xbox/</code>, <code>xbox360/</code>, or anywhere else. The button briefly spun, then flashed a green "Library scan complete! Found 0 new games." toast — indistinguishable from a real empty-scan result. Today's <code>logs/rom_tools_2026-05-17.log</code> shows the real cause: <code>scraper.scan_roms | ROM path does not exist:</code> (trailing colon, empty path).</li>
+        <li><strong>Cause #1 — import-time binding of an empty default</strong>. <code>scraper/scan_roms.py</code> did <code>from config import ROM_PATH</code> at module top. <code>config.ROM_PATH</code> is the hardcoded <code>""</code> default (<code>config.py:41</code>) and is <em>never mutated at runtime</em> — effective path resolution lives in <code>settings_manager.get_effective_path('rom_path', ...)</code>, which only <code>app.py</code> reads (into Flask's <code>app.config['ROM_PATH']</code>). The scanner saw <code>""</code> regardless of what the user typed into Settings → Paths. <code>services/rom_scanner.py</code> (the inline fallback) had the same shape — <code>rom_path = config.ROM_PATH</code> directly. <code>routes/reports.py</code> had four more direct reads (multi-disc scan, create-M3U) with the same bug.</li>
+        <li><strong>Cause #2 — silent success on misconfig</strong>. <code>scan_roms()</code> returned <code>0</code> when the path didn't exist; <code>routes/maintenance.py:api_scan</code> wrapped that in <code>success(new_games=0, ...)</code>; the JS toasted the success message. From the user's seat the scan looked successful but did nothing.</li>
+        <li><strong>Fix</strong>.
+            <ul>
+                <li><code>services/rom_scanner.py</code> — new <code>RomPathNotConfigured</code> exception; <code>run_inline_scan()</code> resolves <code>rom_path</code> via <code>settings_manager.get_effective_path</code> and raises when empty.</li>
+                <li><code>scraper/scan_roms.py</code> — dropped the <code>from config import ROM_PATH</code> module-level binding; resolves rom_path inside <code>scan_roms()</code> at call time; raises <code>RomPathNotConfigured</code> from the same shared module so the HTTP layer has one type to catch.</li>
+                <li><code>routes/maintenance.py:api_scan</code> — catches <code>RomPathNotConfigured</code> → returns 400 with the user-facing message "ROM path not configured. Go to Settings → Paths to set it."</li>
+                <li><code>static/js/main.js:scanLibrary()</code> — switched from <code>API.post</code> (which throws on 4xx and discards the JSON body) to a raw <code>fetch</code> so the remediation message reaches the user toast.</li>
+                <li><code>routes/reports.py</code> — new <code>_get_rom_path()</code> helper using <code>settings_manager</code>; four direct <code>config.ROM_PATH</code> reads (multi-disc scan loop + create-M3U + its <code>safe_path</code> jail) now go through it, with an early-return error when unset.</li>
+            </ul>
+        </li>
+        <li><strong>Tests</strong>. <code>tests/test_scan_library_rom_path.py</code> (7 new) pins: (a) source-level — no module-level <code>from config import ROM_PATH</code> in either scanner; no <code>rom_path = config.ROM_PATH</code> direct read; (b) behavioural — both <code>scan_roms()</code> and <code>run_inline_scan()</code> find a seeded ROM when <code>settings_manager.get_effective_path</code> returns a tmpdir; (c) loud-failure — both raise <code>RomPathNotConfigured</code> when the resolver returns <code>""</code>; (d) end-to-end — <code>POST /api/scan</code> returns <code>4xx success=False</code> with a remediation message mentioning "rom path" and "settings".</li>
+        <li><strong>Also in 3.6.5 — Bonus Disc Statistics modal</strong>. <code>templates/settings.html:viewBonusStats()</code> called <code>showModal('📊 Bonus Disc Statistics', '&lt;div&gt;…&lt;/div&gt;')</code> without the <code>{ allowHtml: true }</code> sixth-arg opt-in landed in Pass 40.13. The XSS-safe textContent default kicked in and rendered the literal <code>&lt;div style=…&gt;</code> source on screen instead of the four bonus-disc counts.  Same shape as the v3.6.3 rename-modal bug, different caller.  All four interpolated values are <code>COUNT(*)</code> integers from <code>routes/bonus_discs.py:322</code>, so no <code>escapeHtml</code> wrap is needed for XSS — only the option flag.</li>
+        <li><strong>Patch bump 3.6.4 → 3.6.5</strong>: two behaviour-correcting fixes; no schema change, no API contract change beyond the new 4xx-with-remediation on a previously-silent failure.</li>
+    </ul>
 - version: 3.6.4
   date: 2026-05-08
   tags:

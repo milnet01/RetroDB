@@ -26,11 +26,26 @@ if _REPO_ROOT not in sys.path:
 
 @pytest.fixture
 def stub_settings(monkeypatch):
-    """Make `from settings_manager import load_settings` return a known dict."""
+    """Make `from settings_manager import load_settings` return a known dict.
+
+    Returns a factory: call `stub_settings({...})` from inside the test to
+    set the payload. The fixture also installs a sane default payload up
+    front so a test that forgets to call the factory still gets a defined
+    `load_settings` and produces a clear assertion failure rather than an
+    `AttributeError: module 'settings_manager' has no attribute
+    'load_settings'` (test-audit FIX-2).
+    """
     import sys as _sys
     import types
 
     fake_module = types.ModuleType('settings_manager')
+
+    # Sane default — covers tests that don't override and gives a
+    # deterministic baseline for ones that do.
+    def _default_load():
+        return {'region_options': ['USA'], 'default_region': 'USA'}
+
+    fake_module.load_settings = _default_load
 
     def _factory(payload):
         def _load_settings():

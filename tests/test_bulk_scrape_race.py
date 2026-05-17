@@ -11,7 +11,6 @@ the new state is only written after the old worker actually exits.
 """
 
 import threading
-import time
 from unittest.mock import patch
 
 import pytest
@@ -40,12 +39,17 @@ def job_with_real_thread():
             super().__init__()
             _instances.append(self)
 
+    # v3.6.7 — also patch `acquire_job_singleton_lock` to the sentinel `0`
+    # so tests don't contend with the production server's flock on
+    # `<DB_DIR>/job_locks/bulk_scrape.lock`. See the matching comment in
+    # tests/test_bulk_scrape_job.py for the full rationale.
     with patch.object(bulk_scrape_mod, '_get_conn', return_value=mem_db), \
          patch.object(bulk_scrape_mod, 'persist_job_start', return_value=None), \
          patch.object(bulk_scrape_mod, 'persist_job_progress', return_value=None), \
          patch.object(bulk_scrape_mod, 'persist_job_complete', return_value=None), \
          patch.object(bulk_scrape_mod, 'persist_job_queued', return_value=999), \
-         patch.object(bulk_scrape_mod, 'remove_queued_job', return_value=None):
+         patch.object(bulk_scrape_mod, 'remove_queued_job', return_value=None), \
+         patch.object(bulk_scrape_mod, 'acquire_job_singleton_lock', return_value=0):
         yield _TrackingJob
 
     from services.jobs.base import release_job_singleton_lock
@@ -55,8 +59,8 @@ def job_with_real_thread():
             inst._singleton_fd = None
 
 
-class TestSwapWaitsForWorkerExit:
-    def test_swap_does_not_reset_state_until_worker_exits(self, job_with_real_thread):
+class TestSwapJobOrdering:
+    def test_new_job_counters_start_clean_after_cancel(self, job_with_real_thread):
         """The new job's state must not be visible until the old worker has
         exited — otherwise counters from the new job could be attributed to
         the old job's last game."""
@@ -102,21 +106,21 @@ class TestSwapWaitsForWorkerExit:
             assert swap_done.wait(timeout=5.0), \
                 "Swap blocked too long — join() likely missing or wrong thread"
 
-            # New job's state should now be in place.
-            assert job.job_id == first_id  # first_id was repushed at front
-            # Note: swap puts old job at front of queue, then runs queued job
-            # The swap target was queued_id, so that's now job_id
-            # Actually the implementation stores old as queue[0] and runs new
-            # so job.job_id should be queued_id.
+            # New job's state should now be in place. swap_with_running puts
+            # the old job at the front of the queue and sets job_id to the
+            # promoted queued_id — so job_id must equal queued_id, and the
+            # old first_id must be the next entry in the queue.
             assert job.job_id == queued_id
+            assert job._queue and job._queue[0]['job_id'] == first_id
 
             worker_can_exit.set()
             swap_thread.join(timeout=2.0)
 
 
-class TestDemoteWaitsForWorkerExit:
-    def test_demote_does_not_reset_state_until_worker_exits(self, job_with_real_thread):
+class TestDemoteJobOrdering:
+    def test_demoted_job_state_only_resets_after_worker_exits(self, job_with_real_thread):
         worker_observed_cancel = threading.Event()
+        worker_can_exit = threading.Event()
 
         def slow_worker(self):
             while True:
@@ -124,7 +128,10 @@ class TestDemoteWaitsForWorkerExit:
                     if self.cancelled:
                         worker_observed_cancel.set()
                         return
-                time.sleep(0.05)
+                # Mirror the swap test pattern — a blocking wait on a shared
+                # event instead of busy-polling with time.sleep().
+                if worker_can_exit.wait(timeout=0.05):
+                    return
 
         with patch.object(BulkScrapeJob, '_run_scrape', slow_worker):
             JobCls = job_with_real_thread

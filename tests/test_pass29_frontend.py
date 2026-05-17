@@ -7,18 +7,62 @@
 # =============================================================================
 
 import os
-import sys
 
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _REPO_ROOT not in sys.path:
-    sys.path.insert(0, _REPO_ROOT)
-
-_JS_DIR = os.path.join(_REPO_ROOT, 'static', 'js')
+from tests._util import REPO_ROOT, read_source
 
 
-def _read(path):
-    with open(os.path.join(_JS_DIR, path), encoding='utf-8') as f:
-        return f.read()
+def _read_js(name):
+    """Read a JS file under static/js/. Thin wrapper over the shared helper."""
+    return read_source(os.path.join('static', 'js', name))
+
+
+def _js_method_body(src, method_name):
+    """Slice the body of a JS method declared as `name(args) {`.
+
+    JS isn't AST-parsed by `tests._util.slice_function` (which is Python-only),
+    so we do a paren-then-brace-balanced scan. We:
+      1. Find `<method_name>(` at the start of the declaration.
+      2. Walk forward, balancing `()` to skip past the parameter list
+         (including `options = {}` defaults — that `{` is paren-scoped,
+         not the function body).
+      3. Find the first `{` after the matched closing `)` — that is the
+         function body's opening brace.
+      4. Balance `{}` from there to find the matching close.
+    Returns the text from the body opening `{` to the matching `}` (inclusive).
+    """
+    needle = method_name + '('
+    idx = src.index(needle)
+    # Walk the parameter list with paren balancing.
+    paren_depth = 0
+    i = idx + len(method_name)  # positioned at '('
+    while i < len(src):
+        ch = src[i]
+        if ch == '(':
+            paren_depth += 1
+        elif ch == ')':
+            paren_depth -= 1
+            if paren_depth == 0:
+                i += 1
+                break
+        i += 1
+    else:
+        raise AssertionError(f"unbalanced parens in JS method {method_name!r}")
+    # Skip whitespace to find the body opening brace.
+    while i < len(src) and src[i] != '{':
+        i += 1
+    if i >= len(src):
+        raise AssertionError(f"no body `{{` after {method_name!r} params")
+    brace = i
+    depth = 0
+    for j in range(brace, len(src)):
+        ch = src[j]
+        if ch == '{':
+            depth += 1
+        elif ch == '}':
+            depth -= 1
+            if depth == 0:
+                return src[brace:j + 1]
+    raise AssertionError(f"unbalanced braces in JS method {method_name!r}")
 
 
 def test_29_2_csrf_shim_present_in_base_template():
@@ -26,9 +70,7 @@ def test_29_2_csrf_shim_present_in_base_template():
     Confirm it's still there so API.post / API.postForm (which use global
     fetch) continue to auto-attach X-CSRF-Token on every non-GET.
     """
-    base_html = os.path.join(_REPO_ROOT, 'templates', 'base.html')
-    with open(base_html, encoding='utf-8') as f:
-        src = f.read()
+    src = read_source(os.path.join('templates', 'base.html'))
     assert 'window.fetch = function' in src
     assert 'X-CSRF-Token' in src
     assert "meta[name=\"csrf-token\"]" in src
@@ -36,7 +78,7 @@ def test_29_2_csrf_shim_present_in_base_template():
 
 def test_29_4_safeParseJSON_defined_and_exposed():
     """Pass 29.4 — helper exists and is on window for cross-bundle use."""
-    utils = _read('utils.js')
+    utils = _read_js('utils.js')
     assert 'function safeParseJSON' in utils
     assert 'window.safeParseJSON = safeParseJSON' in utils
 
@@ -49,7 +91,7 @@ def test_29_4_no_unguarded_localstorage_json_parse_in_audited_files():
     without a surrounding try/catch is a regression.
     """
     for fname in ('toast-controller.js', 'main.js', 'game-list.js', 'achievements.js'):
-        src = _read(fname)
+        src = _read_js(fname)
         # No direct JSON.parse(localStorage.getItem(...)) left.
         assert 'JSON.parse(localStorage.getItem(' not in src, (
             f"{fname} still has an unguarded JSON.parse(localStorage.getItem(...))"
@@ -59,10 +101,20 @@ def test_29_4_no_unguarded_localstorage_json_parse_in_audited_files():
 def test_29_1_confirmmodal_defaults_to_textcontent():
     """Pass 29.1 — settings-page.js ConfirmModal now uses textContent
     unless callers opt into HTML via options.allowHtml.
+
+    Anchor the `options.allowHtml` check to the bodies of `show` and
+    `showInfo` rather than a global `src.count(...)`, so the assertion
+    can't pass from comments or unrelated occurrences (test-audit ASSERT-1).
     """
-    src = _read('settings-page.js')
-    # Both entry points (show, showInfo) gained the allowHtml branch.
-    assert src.count('options.allowHtml') >= 2
+    src = _read_js('settings-page.js')
+    show_body = _js_method_body(src, 'show')
+    show_info_body = _js_method_body(src, 'showInfo')
+    assert 'options.allowHtml' in show_body, (
+        "show() must guard innerHTML behind options.allowHtml"
+    )
+    assert 'options.allowHtml' in show_info_body, (
+        "showInfo() must guard innerHTML behind options.allowHtml"
+    )
     assert 'messageEl.textContent = message' in src
 
 
@@ -70,12 +122,14 @@ def test_29_1_trophies_render_escapes_icon_url():
     """Pass 29.1 — trophies.js renderCard now wraps trophy.icon_url in
     escapeHtml before interpolating into the <img src="..."> attribute.
     """
-    src = _read('trophies.js')
+    src = _read_js('trophies.js')
     assert 'iconUrlSafe = trophy.icon_url ? escapeHtml(trophy.icon_url)' in src
 
 
 def test_29_1_achievements_render_escapes_badge_url():
-    src = _read('achievements.js')
+    """Pass 29.1 — achievements.js renderCard escapes badge_url before
+    img src interpolation."""
+    src = _read_js('achievements.js')
     assert 'badgeUrlSafe = achievement.badge_url ? escapeHtml(achievement.badge_url)' in src
 
 
@@ -83,7 +137,7 @@ def test_29_3_filter_modal_uses_ModalFocusTrap():
     """Pass 29.3 — the filter modal's standalone document keydown listener
     was removed in favor of ModalFocusTrap's stacked onEscape callback.
     """
-    src = _read('all-games-controller.js')
+    src = _read_js('all-games-controller.js')
     assert 'ModalFocusTrap.activate(modal' in src
     assert '_filterModalTrapActive' in src
     # No standalone _onFilterKeydown registered directly on document any more.
@@ -96,7 +150,7 @@ def test_29_3_lightbox_activates_focus_trap():
     Pass 36.8 further removed the standalone arrow-only keydown handler;
     arrows now route via ModalFocusTrap's onArrowLeft / onArrowRight.
     """
-    src = _read('game-modals.js')
+    src = _read_js('game-modals.js')
     assert 'ModalFocusTrap.activate(lb' in src
     # Pass 36.8 removal: no document-level keydown handler should remain
     # on the lightbox path; arrow callbacks are wired via the trap.
@@ -109,7 +163,11 @@ def test_29_5_global_search_uses_abort_controller():
     """Pass 29.5 — performGlobalSearch aborts any in-flight request before
     issuing a new one, and silently ignores AbortError on the stale promise.
     """
-    src = _read('main.js')
+    src = _read_js('main.js')
     assert '_globalSearchController = null' in src
     assert '_globalSearchController.abort()' in src
     assert "error.name === 'AbortError'" in src
+
+
+# Backwards-compat alias: REPO_ROOT was previously exposed at module scope.
+_REPO_ROOT = REPO_ROOT

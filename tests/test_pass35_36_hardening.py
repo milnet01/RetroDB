@@ -16,11 +16,11 @@ import os
 import re
 import sqlite3
 import stat
-import sys
 
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _REPO_ROOT not in sys.path:
-    sys.path.insert(0, _REPO_ROOT)
+import pytest
+
+# REPO_ROOT/sys.path setup is centralised in tests/_util.py (test-audit DUP-1).
+from tests._util import REPO_ROOT, read_source
 
 
 # -----------------------------------------------------------------------------
@@ -50,15 +50,12 @@ def test_35_1_backup_mode_is_0600(tmp_path):
 
 
 def test_35_1_fsync_helper_exists_and_handles_missing_path():
+    """The fsync helper must surface OSError to callers (idiomatic
+    pytest.raises form — test-audit NAMING-2)."""
     from services.database import _fsync_path
 
-    # Helper exists and raises a reasonable error when path is bogus.
-    try:
+    with pytest.raises(OSError):
         _fsync_path("/nonexistent/really/not/a/path")
-    except OSError:
-        pass  # expected
-    else:
-        raise AssertionError("expected OSError on missing path")
 
 
 # -----------------------------------------------------------------------------
@@ -66,7 +63,7 @@ def test_35_1_fsync_helper_exists_and_handles_missing_path():
 # -----------------------------------------------------------------------------
 def test_35_2_atomic_write_json_fsync_dir(tmp_path):
     """Source-level check — verify the fsync path is wired in the source."""
-    src = open(os.path.join(_REPO_ROOT, 'services', 'atomic_io.py'), encoding='utf-8').read()
+    src = read_source(os.path.join('services', 'atomic_io.py'))
     # Comment marker AND the fsync(directory_fd) call.
     assert "Pass 35.2" in src
     assert "os.open(directory, os.O_RDONLY)" in src
@@ -91,7 +88,7 @@ def test_35_3_init_database_issues_foreign_keys_on():
     runtime check would only verify the test's own connection state, not
     that init_database wires it for every future connection through
     get_db() (which is the actual user-facing path)."""
-    src = open(os.path.join(_REPO_ROOT, 'services', 'database_init.py'), encoding='utf-8').read()
+    src = read_source(os.path.join('services', 'database_init.py'))
     body = src[src.index("def init_database("):src.index("def ensure_user_tables(")]
     assert "PRAGMA foreign_keys = ON" in body
 
@@ -100,7 +97,7 @@ def test_35_4_get_db_no_longer_issues_journal_mode():
     """get_db() should leave journal_mode and journal_size_limit to init.
     Codebase invariant: the pragma calls must not appear in get_db's body
     (ensures we don't double-issue them on every connection acquire)."""
-    src = open(os.path.join(_REPO_ROOT, 'services', 'database.py'), encoding='utf-8').read()
+    src = read_source(os.path.join('services', 'database.py'))
     get_db_body = src[src.index("def get_db("):src.index("def get_request_db(")]
     assert "PRAGMA journal_mode = WAL" not in get_db_body
     assert "PRAGMA journal_size_limit" not in get_db_body
@@ -109,7 +106,6 @@ def test_35_4_get_db_no_longer_issues_journal_mode():
 def test_35_4_init_database_issues_wal(tmp_path, monkeypatch):
     """Functional: after init_database(), the DB file's journal_mode must be
     WAL (queryable via PRAGMA on a fresh connection)."""
-    import sqlite3
     import config as cfg
     monkeypatch.setattr(cfg, 'DB_PATH', str(tmp_path / 'wal.db'))
     from services.database_init import init_database
@@ -134,7 +130,7 @@ def test_35_5_add_column_helper_exists():
 
 
 def test_35_5_no_more_try_except_alter_blocks():
-    src = open(os.path.join(_REPO_ROOT, 'services', 'database_init.py'), encoding='utf-8').read()
+    src = read_source(os.path.join('services', 'database_init.py'))
     # No raw "ALTER TABLE ... ADD COLUMN" outside the helper body — every
     # ALTER must flow through _add_column_if_missing.
     body = src[src.index("def ensure_user_tables("):]
@@ -161,7 +157,7 @@ def test_35_5_add_column_helper_is_idempotent(tmp_path):
 # -----------------------------------------------------------------------------
 def test_36_1_escattr_js_string_escape():
     """escAttr must escape ' < \\ newline to \\uXXXX / \\xXX JS escapes."""
-    src = open(os.path.join(_REPO_ROOT, 'static', 'js', 'all-games-controller.js'), encoding='utf-8').read()
+    src = read_source(os.path.join('static', 'js', 'all-games-controller.js'))
     # Grab a wide window around the escAttr definition to include the
     # leading comment block with the Pass marker.
     fn_start = src.index("Pass 36.1")
@@ -177,7 +173,7 @@ def test_36_1_escattr_js_string_escape():
 # 36.3 — museum controller image uses DOM API, not innerHTML concat
 # -----------------------------------------------------------------------------
 def test_36_3_museum_uses_create_element():
-    src = open(os.path.join(_REPO_ROOT, 'static', 'js', 'museum.js'), encoding='utf-8').read()
+    src = read_source(os.path.join('static', 'js', 'museum.js'))
     body = src[src.index("function _updateControllerImage("):src.index("function _showControllerOverlay(")]
     # No innerHTML string concat inside the rebuilt helpers.
     assert "imgContainer.innerHTML" not in body
@@ -191,7 +187,7 @@ def test_36_3_museum_uses_create_element():
 # 36.4 — log-viewer escapes all dynamic fields + allowlists level
 # -----------------------------------------------------------------------------
 def test_36_4_log_viewer_escapes_dynamic_fields():
-    src = open(os.path.join(_REPO_ROOT, 'static', 'js', 'log-viewer.js'), encoding='utf-8').read()
+    src = read_source(os.path.join('static', 'js', 'log-viewer.js'))
     # The definition (not a call) — match the opening brace form.
     fn_start = src.index("renderLine(line) {")
     body = src[fn_start:fn_start + 2000]
@@ -207,7 +203,7 @@ def test_36_4_log_viewer_escapes_dynamic_fields():
 # 36.5 — safeParseJSON accepts storage argument
 # -----------------------------------------------------------------------------
 def test_36_5_safe_parse_json_signature():
-    src = open(os.path.join(_REPO_ROOT, 'static', 'js', 'utils.js'), encoding='utf-8').read()
+    src = read_source(os.path.join('static', 'js', 'utils.js'))
     assert "function safeParseJSON(key, fallback, storage)" in src
     assert "storage || localStorage" in src
 
@@ -219,7 +215,7 @@ def test_36_5_session_storage_sites_migrated():
     consumers). The two remaining sessionStorage sites still pin the contract.
     """
     for relpath in ('static/js/all-games-controller.js', 'static/js/rom-tools.js'):
-        src = open(os.path.join(_REPO_ROOT, relpath), encoding='utf-8').read()
+        src = read_source(relpath)
         assert "safeParseJSON" in src, f"{relpath} missing safeParseJSON call"
 
 
@@ -227,7 +223,7 @@ def test_36_5_session_storage_sites_migrated():
 # 36.7 — DOM.create defaults to textContent; DOM.createHTML is opt-in
 # -----------------------------------------------------------------------------
 def test_36_7_dom_create_textcontent_default():
-    src = open(os.path.join(_REPO_ROOT, 'static', 'js', 'utils.js'), encoding='utf-8').read()
+    src = read_source(os.path.join('static', 'js', 'utils.js'))
     create_start = src.index("create(tag, attrs = {}, content = '')")
     create_end = src.index("createHTML(", create_start)
     create_body = src[create_start:create_end]
@@ -237,7 +233,7 @@ def test_36_7_dom_create_textcontent_default():
 
 
 def test_36_7_dom_create_html_helper_exists():
-    src = open(os.path.join(_REPO_ROOT, 'static', 'js', 'utils.js'), encoding='utf-8').read()
+    src = read_source(os.path.join('static', 'js', 'utils.js'))
     # Match the actual function definition (with opening brace + args
     # including a default). Docstrings sometimes reference the function
     # name, so we anchor against the definition shape.
@@ -251,7 +247,7 @@ def test_36_7_dom_create_html_helper_exists():
 # 36.8 — ModalFocusTrap accepts arrow callbacks
 # -----------------------------------------------------------------------------
 def test_36_8_modal_focus_trap_supports_arrows():
-    src = open(os.path.join(_REPO_ROOT, 'static', 'js', 'utils.js'), encoding='utf-8').read()
+    src = read_source(os.path.join('static', 'js', 'utils.js'))
     activate_body = src[src.index("activate(modalEl, triggerEl, opts = {})"):
                         src.index("activate(modalEl, triggerEl, opts = {})") + 2500]
     assert "onArrowLeft" in activate_body
@@ -260,13 +256,18 @@ def test_36_8_modal_focus_trap_supports_arrows():
 
 def test_36_8_redundant_keydown_handlers_removed():
     """game-modals.js and museum.js no longer register lightbox-scoped
-    document keydown handlers — they route through ModalFocusTrap."""
-    gm = open(os.path.join(_REPO_ROOT, 'static', 'js', 'game-modals.js'), encoding='utf-8').read()
-    # The dead handler was at line 2063; the replacement comment references 36.8.
-    assert gm.count("document.addEventListener('keydown'") <= 0 or \
-        "Pass 36.8" in gm
+    document keydown handlers — they route through ModalFocusTrap.
 
-    museum = open(os.path.join(_REPO_ROOT, 'static', 'js', 'museum.js'), encoding='utf-8').read()
+    Both files are asserted with `== 0` unconditionally — the previous
+    `or "Pass 36.8" in gm` escape hatch let any comment mentioning the
+    pass identifier mask a regressed handler (test-audit ASSERT-2)."""
+    gm = read_source(os.path.join('static', 'js', 'game-modals.js'))
+    assert gm.count("document.addEventListener('keydown'") == 0, (
+        "game-modals.js still registers a document-level keydown handler — "
+        "arrow callbacks should route through ModalFocusTrap (Pass 36.8)"
+    )
+
+    museum = read_source(os.path.join('static', 'js', 'museum.js'))
     # Museum's only remaining keydown listener should be none — trap handles it.
     assert museum.count("document.addEventListener('keydown'") == 0
 
@@ -275,7 +276,7 @@ def test_36_8_redundant_keydown_handlers_removed():
 # 36.9 — Storage.clearAll prefix list covers all known keys
 # -----------------------------------------------------------------------------
 def test_36_9_clear_all_includes_queue_keys():
-    src = open(os.path.join(_REPO_ROOT, 'static', 'js', 'utils.js'), encoding='utf-8').read()
+    src = read_source(os.path.join('static', 'js', 'utils.js'))
     body = src[src.index("clearAll()"):src.index("clearAll()") + 1500]
     for key in ('retrodb', 'bulkScrape', 'sidebar', 'raOperationsQueue', 'raSyncQueue', 'toast_completion_'):
         assert f"'{key}'" in body, f"clearAll missing prefix {key!r}"
@@ -285,7 +286,7 @@ def test_36_9_clear_all_includes_queue_keys():
 # 36.10 — notification container split into polite + assertive
 # -----------------------------------------------------------------------------
 def test_36_10_assertive_container():
-    src = open(os.path.join(_REPO_ROOT, 'static', 'js', 'utils.js'), encoding='utf-8').read()
+    src = read_source(os.path.join('static', 'js', 'utils.js'))
     assert "assertiveContainer" in src
     assert 'aria-live' in src
     assert 'assertive' in src
@@ -293,3 +294,7 @@ def test_36_10_assertive_container():
                     src.index("_containerFor")]
     assert "'alert'" in init_body or '"alert"' in init_body
     assert "'assertive'" in init_body or '"assertive"' in init_body
+
+
+# Backwards-compat alias.
+_REPO_ROOT = REPO_ROOT

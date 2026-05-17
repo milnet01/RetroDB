@@ -98,11 +98,16 @@ class TestInstallGlobalRedactor:
         # Start clean so a prior test run doesn't taint the count.
         root.filters = [f for f in root.filters if not isinstance(f, SecretRedactor)]
 
-        log_manager.install_global_redactor()
-        log_manager.install_global_redactor()  # second call must not duplicate
+        try:
+            log_manager.install_global_redactor()
+            log_manager.install_global_redactor()  # second call must not duplicate
 
-        redactors = [f for f in root.filters if isinstance(f, SecretRedactor)]
-        assert len(redactors) == 1
+            redactors = [f for f in root.filters if isinstance(f, SecretRedactor)]
+            assert len(redactors) == 1
+        finally:
+            # Strip whatever SecretRedactor instances this test installed so
+            # subsequent tests / files see a clean root logger.
+            root.filters = [f for f in root.filters if not isinstance(f, SecretRedactor)]
 
     def test_install_covers_basicconfig_handler(self, caplog):
         import io
@@ -121,3 +126,27 @@ class TestInstallGlobalRedactor:
             assert attached is True
         finally:
             root.removeHandler(handler)
+            # Strip any redactor this call attached to the root logger so
+            # subsequent tests / files see a clean filter list.
+            root.filters = [f for f in root.filters if not isinstance(f, SecretRedactor)]
+
+    def test_filter_redacts_dict_args(self):
+        """Coverage gap (audit MED): SecretRedactor.filter must also redact
+        dict-style log args. `logger.info("%(token)s", {'token': ...})` lands
+        in a LogRecord as `args=({'token': ...},)` — a 1-tuple wrapping the
+        mapping; that's the form the filter must handle."""
+        jwt = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ4In0.abc123DEFghi456jklMNOpqrSTU"
+        f = SecretRedactor()
+        record = logging.LogRecord(
+            name="scraper",
+            level=logging.INFO,
+            pathname="",
+            lineno=0,
+            msg="got token %(val)s",
+            args=({'val': jwt},),
+            exc_info=None,
+        )
+        f.filter(record)
+        formatted = record.getMessage()
+        assert jwt not in formatted
+        assert "<redacted-jwt>" in formatted

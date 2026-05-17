@@ -13,19 +13,19 @@
 # =============================================================================
 
 import os
-import sys
+from collections import OrderedDict
 
+import pytest
 
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _REPO_ROOT not in sys.path:
-    sys.path.insert(0, _REPO_ROOT)
+# REPO_ROOT/sys.path setup is centralised in tests/_util.py (test-audit DUP-1).
+from tests._util import REPO_ROOT, read_source
 
 
 # -----------------------------------------------------------------------------
 # 33.2 — avatar no longer in api_user_settings allowlist
 # -----------------------------------------------------------------------------
 def test_33_2_avatar_not_in_allowed_fields():
-    src = open(os.path.join(_REPO_ROOT, 'routes', 'auth.py'), encoding='utf-8').read()
+    src = read_source(os.path.join('routes', 'auth.py'))
     # The allowlist string must not contain 'avatar'.
     # Extract the allowed_fields list literal and verify.
     start = src.index("allowed_fields = [")
@@ -38,7 +38,7 @@ def test_33_2_avatar_not_in_allowed_fields():
 # 33.3 — password length enforced in api_update_user
 # -----------------------------------------------------------------------------
 def test_33_3_update_user_enforces_length():
-    src = open(os.path.join(_REPO_ROOT, 'routes', 'auth.py'), encoding='utf-8').read()
+    src = read_source(os.path.join('routes', 'auth.py'))
     # Find api_update_user and confirm the 12-char check is present after the
     # new_password branch.
     start = src.index("def api_update_user")
@@ -50,7 +50,7 @@ def test_33_3_update_user_enforces_length():
 # 33.4 — admin-reset sets force_password_change
 # -----------------------------------------------------------------------------
 def test_33_4_force_change_on_admin_reset():
-    src = open(os.path.join(_REPO_ROOT, 'routes', 'auth.py'), encoding='utf-8').read()
+    src = read_source(os.path.join('routes', 'auth.py'))
     start = src.index("def api_update_user")
     body = src[start:start + 3000]
     assert "force_password_change = ?" in body
@@ -60,25 +60,28 @@ def test_33_4_force_change_on_admin_reset():
 # -----------------------------------------------------------------------------
 # 33.5 — session rotation + fresh CSRF token on password change
 # -----------------------------------------------------------------------------
-def test_33_5_session_rotation_on_change_password():
-    src = open(os.path.join(_REPO_ROOT, 'routes', 'auth.py'), encoding='utf-8').read()
-    # Both api_change_password and api_force_change_password must call
-    # session.clear() after the UPDATE and mint a fresh CSRF token.
-    for fn in ("api_change_password", "api_force_change_password"):
-        body = src[src.index(f"def {fn}"):src.index(f"def {fn}") + 2500]
-        assert "session.clear()" in body, f"{fn} missing session.clear()"
-        assert "session['_csrf_token']" in body, f"{fn} missing CSRF rotation"
+@pytest.mark.parametrize('fn', ['api_change_password', 'api_force_change_password'])
+def test_33_5_session_rotation_on_change_password(fn):
+    """Each function gets its own test node so pytest's output names the
+    failing branch explicitly (test-audit SPLIT-4)."""
+    src = read_source(os.path.join('routes', 'auth.py'))
+    body = src[src.index(f"def {fn}"):src.index(f"def {fn}") + 2500]
+    assert "session.clear()" in body, f"{fn} missing session.clear()"
+    assert "session['_csrf_token']" in body, f"{fn} missing CSRF rotation"
 
 
 # -----------------------------------------------------------------------------
 # 33.6 — logout wipes the whole session
 # -----------------------------------------------------------------------------
-def test_33_6_logout_clears_session():
+def test_33_6_logout_clears_session(monkeypatch):
     """Functional: hitting /logout must clear all session state, not just
     pop user_id. We seed an unrelated session key, log out, and verify it's
-    also gone — proving session.clear() ran instead of a selective pop."""
+    also gone — proving session.clear() ran instead of a selective pop.
+
+    Use `monkeypatch.setitem` for the TESTING flag so the shared app
+    singleton's config is restored on test exit (test-audit ISO-3)."""
     import app as app_module
-    app_module.app.config['TESTING'] = True
+    monkeypatch.setitem(app_module.app.config, 'TESTING', True)
     client = app_module.app.test_client()
     with client.session_transaction() as sess:
         sess['user_id'] = 1
@@ -96,9 +99,18 @@ def test_33_6_logout_clears_session():
 # 33.8 — api_login returns csrf_token in success body
 # -----------------------------------------------------------------------------
 def test_33_8_login_returns_csrf_token():
-    src = open(os.path.join(_REPO_ROOT, 'routes', 'auth.py'), encoding='utf-8').read()
+    """Anchor to the exact return-construction (`csrf_token=_ensure_csrf`)
+    so the assertion can't pass from a `csrf_token=None` assignment, a
+    comment, or an unrelated variable name (test-audit ASSERT-4)."""
+    src = read_source(os.path.join('routes', 'auth.py'))
     body = src[src.index("def api_login"):src.index("def logout")]
-    assert "csrf_token=" in body
+    # The success() call hands back the freshly-minted token explicitly —
+    # this is the line that wires the value into the JSON envelope.
+    assert "csrf_token=_ensure_csrf" in body, (
+        "api_login must return the minted token via "
+        "`return success(..., csrf_token=_ensure_csrf)` so clients can "
+        "refresh a pre-login token without an extra GET round-trip"
+    )
 
 
 # -----------------------------------------------------------------------------
@@ -106,16 +118,20 @@ def test_33_8_login_returns_csrf_token():
 # -----------------------------------------------------------------------------
 def test_33_9_rate_limiter_is_ordered_dict():
     import services.security as sec
-    from collections import OrderedDict
     assert isinstance(sec._login_attempts, OrderedDict)
 
 
-def test_33_9_rate_limit_functional():
+def test_33_9_rate_limit_functional(monkeypatch):
+    """The rate-limiter must trip after MAX_ATTEMPTS=5 failures and reset
+    on a successful login.
+
+    Swap in a fresh OrderedDict for the duration of the test so the inline
+    `.clear()` is no longer needed and post-test state can't leak into
+    subsequent tests (test-audit ISO-2).
+    """
     import services.security as sec
 
-    # Reset the shared state for a deterministic test.
-    with sec._lock:
-        sec._login_attempts.clear()
+    monkeypatch.setattr(sec, '_login_attempts', OrderedDict())
 
     ip = '203.0.113.99'
     # 4 failures — still allowed.
@@ -170,7 +186,7 @@ def test_33_10_hex_rule_no_longer_clobbers_git_sha():
 # 34.3 — zombie helpers removed
 # -----------------------------------------------------------------------------
 def test_34_3_app_zombie_helpers_removed():
-    src = open(os.path.join(_REPO_ROOT, 'app.py'), encoding='utf-8').read()
+    src = read_source('app.py')
     assert 'def log_to_category' not in src
     # system_log MAY appear as the name inside the deletion comment; check
     # that no function is defined.
@@ -178,7 +194,7 @@ def test_34_3_app_zombie_helpers_removed():
 
 
 def test_34_3_log_manager_zombie_helpers_removed():
-    src = open(os.path.join(_REPO_ROOT, 'log_manager.py'), encoding='utf-8').read()
+    src = read_source('log_manager.py')
     for name in ('get_scraping_log_files', 'log_scraping', 'log_rom_tools', 'log_rom_reports'):
         assert f'def {name}(' not in src, f'{name} should have been removed'
 
@@ -190,7 +206,7 @@ def test_34_4_rate_limiter_helper_hard_fails():
     """The helper exists and fails loud when endpoint is missing. We can't
     easily import app.py twice, so rely on a source-level check.
     """
-    src = open(os.path.join(_REPO_ROOT, 'app.py'), encoding='utf-8').read()
+    src = read_source('app.py')
     assert 'def _rate_limit(' in src
     assert "raise RuntimeError" in src[src.index("def _rate_limit("):src.index("def _rate_limit(") + 1500]
 
@@ -200,7 +216,14 @@ def test_34_4_rate_limiter_helper_hard_fails():
 # -----------------------------------------------------------------------------
 def test_34_5_log_filename_uses_utc(monkeypatch):
     """Functional: get_log_filename must produce the same date stamp
-    regardless of the local timezone — i.e. it derives the date from UTC."""
+    regardless of the local timezone — i.e. it derives the date from UTC.
+
+    The fake datetime subclass overrides `now`, `utcnow`, AND `today` so
+    the test still pins the contract even if `get_log_filename` is ever
+    refactored to call a different entry point (test-audit FLAKY-1).
+    `freezegun` would be a cleaner one-stop substitute but isn't a project
+    dependency.
+    """
     from datetime import datetime, timezone, timedelta
     import log_manager
 
@@ -217,6 +240,18 @@ def test_34_5_log_filename_uses_utc(monkeypatch):
                 return fixed_utc.astimezone(timezone(timedelta(hours=2))).replace(tzinfo=None)
             return fixed_utc.astimezone(tz)
 
+        @classmethod
+        def utcnow(cls):
+            # Naive UTC clock — matches stdlib's deprecated utcnow shape.
+            return fixed_utc.replace(tzinfo=None)
+
+        @classmethod
+        def today(cls):
+            # `today()` historically returns local midnight; reflect the
+            # +02:00 skew we use for `now(None)` so test stays internally
+            # consistent.
+            return fixed_utc.astimezone(timezone(timedelta(hours=2))).replace(tzinfo=None)
+
     monkeypatch.setattr(log_manager, 'datetime', _FixedDateTime)
     fname = log_manager.get_log_filename('test')
     assert '2026-04-27' in fname, (
@@ -229,7 +264,7 @@ def test_34_5_log_filename_uses_utc(monkeypatch):
 # 34.6 — asset_url single source of truth
 # -----------------------------------------------------------------------------
 def test_34_6_asset_url_not_in_inject_config():
-    src = open(os.path.join(_REPO_ROOT, 'app.py'), encoding='utf-8').read()
+    src = read_source('app.py')
     # inject_config should not emit asset_url via the context-processor dict.
     # Our Pass 34.6 comment lives where the dict entry used to be.
     inject_start = src.index("def inject_config")
@@ -244,6 +279,10 @@ def test_34_6_asset_url_not_in_inject_config():
 # 33.1 — ProxyFix env-gated
 # -----------------------------------------------------------------------------
 def test_33_1_proxyfix_wired_under_flag():
-    src = open(os.path.join(_REPO_ROOT, 'app.py'), encoding='utf-8').read()
+    src = read_source('app.py')
     assert "RETRODB_TRUST_PROXY" in src
     assert "ProxyFix(app.wsgi_app" in src
+
+
+# Backwards-compat alias retained for any external imports.
+_REPO_ROOT = REPO_ROOT

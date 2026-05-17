@@ -90,7 +90,7 @@ class TestBackupDatabase:
                 holder.rollback()
                 holder.close()
 
-    def test_backup_corrupt_destination_is_removed(self):
+    def test_backup_corrupt_destination_is_removed(self, monkeypatch):
         """If the verify step finds the destination corrupt, the helper
         must delete the partial file and raise — never hand back a broken
         backup. We simulate the failure by stubbing the verify connection
@@ -133,11 +133,26 @@ class TestBackupDatabase:
                     return _FakeVerifyConn()
                 return real_connect(path, *args, **kwargs)
 
-            db_mod.sqlite3.connect = fake_connect
-            try:
-                with pytest.raises(RuntimeError, match='integrity check'):
-                    backup_database(src, dst)
-                assert not os.path.exists(dst), \
-                    "corrupt backup file must be removed after integrity check fails"
-            finally:
-                db_mod.sqlite3.connect = real_connect
+            # `monkeypatch.setattr` restores the original automatically even
+            # if an assertion below raises — no manual try/finally needed.
+            monkeypatch.setattr(db_mod.sqlite3, 'connect', fake_connect)
+            with pytest.raises(RuntimeError, match='integrity check'):
+                backup_database(src, dst)
+            assert not os.path.exists(dst), \
+                "corrupt backup file must be removed after integrity check fails"
+
+    def test_backup_missing_destination_dir(self):
+        """Pin the contract for a destination whose parent directory does
+        not exist. `backup_database` opens a sqlite3 connection on dst,
+        which surfaces `sqlite3.OperationalError: unable to open database
+        file` rather than silently creating the directory."""
+        with tempfile.TemporaryDirectory() as tmp:
+            src = os.path.join(tmp, 'src.db')
+            dst = os.path.join(tmp, 'subdir', 'dst.db')  # subdir never created
+            _populate(src)
+
+            with pytest.raises(sqlite3.OperationalError):
+                backup_database(src, dst)
+
+            assert not os.path.exists(dst), \
+                "no backup file should remain when the destination dir is missing"

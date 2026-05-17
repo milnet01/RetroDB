@@ -58,9 +58,13 @@ def isolated_singletons():
 class TestRequestShutdown:
     def test_sets_shutdown_event(self):
         base_mod.shutdown_requested.clear()
-        base_mod.request_shutdown(timeout=0.1)
-        assert base_mod.shutdown_requested.is_set()
-        base_mod.shutdown_requested.clear()
+        try:
+            base_mod.request_shutdown(timeout=0.1)
+            assert base_mod.shutdown_requested.is_set()
+        finally:
+            # Always clear so a failed assertion above doesn't leak the set
+            # state into subsequent tests in the same session.
+            base_mod.shutdown_requested.clear()
 
     def test_calls_cancel_on_running_jobs(self, isolated_singletons):
         running = _FakeJob(running=True)
@@ -79,11 +83,12 @@ class TestRequestShutdown:
         jobs_pkg.bulk_scrape_job = slow
 
         t0 = time.monotonic()
-        base_mod.request_shutdown(timeout=2.0)
+        base_mod.request_shutdown(timeout=0.5)
         elapsed = time.monotonic() - t0
 
         # cancel() set the exit event, so the slow thread should exit
-        # quickly — well under the 2s timeout.
+        # quickly — well under the 0.5s timeout. The 1.5s upper bound is
+        # generous headroom for loaded CI runners.
         assert elapsed < 1.5, f"request_shutdown took {elapsed:.2f}s, should be fast"
         assert not slow._thread.is_alive()
 
@@ -101,8 +106,15 @@ class TestRequestShutdown:
             base_mod.request_shutdown(timeout=0.3)
             elapsed = time.monotonic() - t0
 
-            assert 0.2 < elapsed < 1.0, \
+            # Upper bound proves the timeout caps the wait. The lower bound
+            # has been replaced with a thread-liveness check — proving the
+            # stuck worker is still alive when shutdown returns is a stronger
+            # statement than wall-clock minimums (which fail on fast machines
+            # where join() can return slightly early).
+            assert elapsed < 1.0, \
                 f"request_shutdown took {elapsed:.2f}s, expected ~0.3s"
+            assert stuck._thread.is_alive(), \
+                "stuck worker should still be running after timed-out shutdown"
         finally:
             stuck._exit.set()
             stuck._thread.join(timeout=1.0)

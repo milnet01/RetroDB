@@ -8,6 +8,9 @@ import pytest
 _REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 
+_SEEDS_PATH = str(_REPO_ROOT / 'data' / 'emulator_seeds.json')
+
+
 @pytest.fixture
 def db():
     """In-memory DB with baseline systems + the new emulator tables already applied."""
@@ -25,11 +28,17 @@ def db():
     conn.close()
 
 
-def test_seeder_inserts_emulators(db):
+@pytest.fixture
+def seeded_db(db):
+    """`db` with emulator seed data loaded — common setup for three tests
+    that previously each repeated the seed call inline."""
     from services.emulator_seeder import seed_emulators_from_file
-    seed_emulators_from_file(db, str(_REPO_ROOT / 'data' / 'emulator_seeds.json'))
+    seed_emulators_from_file(db, _SEEDS_PATH)
+    return db
 
-    c = db.cursor()
+
+def test_seeder_inserts_emulators(seeded_db):
+    c = seeded_db.cursor()
     rows = c.execute("SELECT name FROM emulators ORDER BY name").fetchall()
     names = {r[0] for r in rows}
     assert 'RetroArch' in names
@@ -37,11 +46,8 @@ def test_seeder_inserts_emulators(db):
     assert 'PCSX2' in names
 
 
-def test_seeder_inserts_system_emulators(db):
-    from services.emulator_seeder import seed_emulators_from_file
-    seed_emulators_from_file(db, str(_REPO_ROOT / 'data' / 'emulator_seeds.json'))
-
-    c = db.cursor()
+def test_seeder_inserts_system_emulators(seeded_db):
+    c = seeded_db.cursor()
     psx_default = c.execute("""
         SELECT e.name FROM system_emulators se
         JOIN emulators e ON e.id = se.emulator_id
@@ -51,11 +57,8 @@ def test_seeder_inserts_system_emulators(db):
     assert psx_default[0] == 'DuckStation'
 
 
-def test_seeder_skips_unknown_system_folders(db):
-    from services.emulator_seeder import seed_emulators_from_file
-    seed_emulators_from_file(db, str(_REPO_ROOT / 'data' / 'emulator_seeds.json'))
-
-    c = db.cursor()
+def test_seeder_skips_unknown_system_folders(seeded_db):
+    c = seeded_db.cursor()
     cnt = c.execute("""
         SELECT COUNT(*) FROM system_emulators se
         JOIN systems s ON s.id = se.system_id
@@ -65,14 +68,21 @@ def test_seeder_skips_unknown_system_folders(db):
 
 
 def test_seeder_is_idempotent(db):
+    """The intent is 'running seed twice doesn't double-insert' — assert
+    count equality before/after the second run, not a hardcoded literal
+    that breaks every time someone adds an emulator to the seed file."""
     from services.emulator_seeder import seed_emulators_from_file
-    path = str(_REPO_ROOT / 'data' / 'emulator_seeds.json')
-    seed_emulators_from_file(db, path)
-    seed_emulators_from_file(db, path)
 
+    seed_emulators_from_file(db, _SEEDS_PATH)
     c = db.cursor()
-    n_emu = c.execute("SELECT COUNT(*) FROM emulators").fetchone()[0]
-    n_se = c.execute("SELECT COUNT(*) FROM system_emulators").fetchone()[0]
-    assert n_emu == 12
-    # 2 mappings for psx + 1 for ps2; others skipped because folder absent
-    assert n_se == 3
+    emu_before = c.execute("SELECT COUNT(*) FROM emulators").fetchone()[0]
+    se_before = c.execute("SELECT COUNT(*) FROM system_emulators").fetchone()[0]
+    # Sanity floor — seed file isn't empty.
+    assert emu_before > 0
+
+    seed_emulators_from_file(db, _SEEDS_PATH)
+    emu_after = c.execute("SELECT COUNT(*) FROM emulators").fetchone()[0]
+    se_after = c.execute("SELECT COUNT(*) FROM system_emulators").fetchone()[0]
+
+    assert emu_after == emu_before
+    assert se_after == se_before

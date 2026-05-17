@@ -1,5 +1,7 @@
 # Pass 44 — settings validators for the 5 new launch keys.
 
+import pytest
+
 
 def _ok(key, value):
     from services.settings_validators import validate_settings_value
@@ -20,15 +22,19 @@ class TestLaunchSettingsValidators:
     def test_launcher_backend_rejects_unknown(self):
         assert not _ok('launcher_backend', 'spaceship')
 
-    def test_launch_concurrent_same_game_enum(self):
-        assert _ok('launch_concurrent_same_game', 'reject')
-        assert _ok('launch_concurrent_same_game', 'kill_and_relaunch')
-        assert not _ok('launch_concurrent_same_game', 'queue')
+    @pytest.mark.parametrize('value,expected', [
+        ('reject', True),
+        ('kill_and_relaunch', True),
+        ('queue', False),
+    ])
+    def test_launch_concurrent_same_game_enum(self, value, expected):
+        assert _ok('launch_concurrent_same_game', value) is expected
 
-    def test_launch_required_permission_must_be_known_perm(self):
-        assert _ok('launch_required_permission', 'launch')
-        assert _ok('launch_required_permission', 'view')
-        assert _ok('launch_required_permission', 'edit')
+    @pytest.mark.parametrize('permission', ['launch', 'view', 'edit'])
+    def test_launch_required_permission_accepts_known(self, permission):
+        assert _ok('launch_required_permission', permission)
+
+    def test_launch_required_permission_rejects_unknown(self):
         assert not _ok('launch_required_permission', 'fly')
 
     def test_retroarch_binary_accepts_empty(self):
@@ -40,10 +46,13 @@ class TestLaunchSettingsValidators:
     def test_retroarch_binary_accepts_flatpak_run(self):
         assert _ok('retroarch_binary', 'flatpak run org.libretro.RetroArch')
 
-    def test_retroarch_binary_rejects_command_injection(self):
-        assert not _ok('retroarch_binary', '/usr/bin/retroarch; rm -rf /')
-        assert not _ok('retroarch_binary', '/usr/bin/retroarch && evil')
-        assert not _ok('retroarch_binary', 'flatpak run x | sh')
+    @pytest.mark.parametrize('payload', [
+        '/usr/bin/retroarch; rm -rf /',
+        '/usr/bin/retroarch && evil',
+        'flatpak run x | sh',
+    ])
+    def test_retroarch_binary_rejects_command_injection(self, payload):
+        assert not _ok('retroarch_binary', payload)
 
     def test_retroarch_cores_dir_accepts_empty(self):
         assert _ok('retroarch_cores_dir', '')
