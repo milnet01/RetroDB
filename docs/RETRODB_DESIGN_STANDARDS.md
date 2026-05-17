@@ -259,8 +259,8 @@
 .form-input {
     width: 100%;
     padding: 0.75rem 1rem;
-    background: var(--bg-darker, #0d1117);
-    border: 1px solid var(--border-color, #2a3542);
+    background: var(--bg-dark);
+    border: 1px solid var(--card-border);
     border-radius: var(--radius-md);
     color: var(--text-primary);
     font-family: var(--font-primary);
@@ -567,7 +567,7 @@ RetroDB supports 7 themes, each with CSS variable overrides and an animated canv
 4. Add dispatch cases in `apply()` and `_startEffectLoop()`
 5. Add cleanup in `_destroyCanvas()` for any state properties
 6. Add theme option card in `settings.html` Display Preferences section
-7. Run `python3 build_js.py` to rebuild the bundle
+7. No bundle rebuild needed — `theme.js` is loaded standalone (not in `core.bundle.js`) for FOUC prevention; the `?v={{ config.APP_VERSION }}` cache-bust picks up the change on next version bump.
 
 ### Background Effects (Legacy)
 
@@ -681,12 +681,17 @@ Game cards open modals instead of navigating to pages. Located in `base.html`.
 
 ## 13. Toast Notifications
 
+Global function defined in `static/js/utils.js`. Call as:
+
 ```javascript
-showToast('Message', 'success');  // Green
-showToast('Message', 'error');    // Red
-showToast('Message', 'info');     // Cyan
-showToast('Message', 'warning');  // Orange
+showNotification('Message', 'success');  // Green
+showNotification('Message', 'error');    // Red
+showNotification('Message', 'info');     // Cyan
+showNotification('Message', 'warning');  // Orange
+showNotification('Auto-dismisses in 3s', 'info', 3000);  // 4th arg: duration in ms
 ```
+
+Two related dialog primitives live in `templates/base.html` (so the CSP-nonce script-tag can inline them): `showConfirm(title, msg, onConfirm, opts?)` and `showModal(title, msg, onConfirm?, showCancel?, onCancel?)`. See CLAUDE.md "Non-Obvious JS / Template Contracts" for the full surface.
 
 ---
 
@@ -758,7 +763,7 @@ Color-coded pill badges indicating the platform type of a gaming system. Used on
 <span class="system-type-badge {{ system.system_type|lower }}">{{ system.system_type }}</span>
 ```
 
-**Note**: The systems page uses `.system-type-tag` as the class name; the dashboard and settings pages use `.system-type-badge`. Both follow the same color scheme.
+**Canonical class**: `.system-type-badge` (dashboard + settings). The legacy `.system-type-tag` class is still wired up in `templates/systems.html` for the systems page and JS-rendered cards within it; consolidating onto `.system-type-badge` is a known follow-up. Both follow the same color scheme.
 
 | Class | Color | CSS Variable | System Type |
 |-------|-------|-------------|-------------|
@@ -920,7 +925,7 @@ datetime_obj.strftime('%Y-%m-%d %H:%M:%S')
 
 ### Overview
 
-RetroDB uses a **modular CSS system**. All styles are split into individual files under `static/css/`, imported in a defined order by `main-new.css`, and concatenated into `main.min.css` by `build_css.py`. The base template (`templates/base.html`) loads only `main.min.css`.
+RetroDB uses a **modular CSS system**. All styles are split into individual files under `static/css/` and concatenated into `main.min.css` by `build_css.py`. The canonical load order is the `CSS_ORDER` list in `build_css.py`; `static/css/main.css` is a maintained `@import` chain that mirrors that order for local development. The base template (`templates/base.html`) loads only `main.min.css`.
 
 ### File Structure & Load Order
 
@@ -945,7 +950,8 @@ static/css/
 │   ├── toasts.css      #    Toast notification system
 │   ├── progress.css    #    Progress bars, loading states, rate-limit cards
 │   ├── tags.css        #    Tag/chip components
-│   └── queue-manager.css  # Scrape queue manager component
+│   ├── queue-manager.css  # Scrape queue manager component
+│   └── launch-indicator.css  # Launch-state indicator chip
 ├── features/           # 4. FEATURES — domain-specific compound components
 │   ├── game-cards.css  #    Game card grid and card internals
 │   ├── game-modals.css #    Game detail/edit modal system
@@ -961,7 +967,7 @@ static/css/
 │   ├── backgrounds.css #    Mist/fog, scanlines, gradient backgrounds
 │   └── animations.css  #    Keyframe animations, transitions
 ├── utilities.css       # 7. UTILITIES — last (for override capability)
-├── main-new.css        # Development entry point (@import chain)
+├── main.css            # Development entry point (@import chain mirrors build_css.py CSS_ORDER)
 └── main.min.css        # Production bundle (built by build_css.py)
 ```
 
@@ -986,7 +992,7 @@ static/css/
    ```bash
    python3 build_css.py
    ```
-5. **If adding a new CSS file**, add it to both `main-new.css` (in the correct section) and `build_css.py` (`CSS_ORDER` list) at the same position.
+5. **If adding a new CSS file**, add it to both `main.css` (in the correct section) and `build_css.py` (`CSS_ORDER` list — the canonical source of truth) at the same position.
 6. **Load order matters**: Variables → Reset → Typography → Layout → Components → Features → Pages → Effects → Utilities → Responsive. Later files can override earlier ones. Utilities load near-last intentionally.
 
 ### Decision Flowchart
@@ -1017,7 +1023,7 @@ Is this style used on 2+ pages?
    - Minor bump (x.**N+1**.0) for new features, enhancements
    - Major bump (**N+1**.0.0) for major releases, breaking changes
 2. **Add a changelog entry** at the top of `data/changelog.yaml` with:
-   - `version`, `date` (YYYY/MM/DD), `tags` (type: feature/minor/patch), and `body` (HTML summary)
+   - `version`, `date` (YYYY-MM-DD — matches the on-disk format), `tags` (type: feature/minor/patch), and `body` (HTML summary)
 
 ### Changelog Tag Types
 | Tag | Use For |

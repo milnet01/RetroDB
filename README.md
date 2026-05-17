@@ -5,7 +5,7 @@
 ## Features
 
 ### Library & Metadata
-- **Multi-System Library** - Supports 277 gaming platforms from Atari 2600 to PS5
+- **Multi-System Library** - Supports 150+ gaming platforms from Atari 2600 to PS5
 - **Hybrid Metadata Scraping** - Combines data from TheGamesDB, IGDB, RAWG, ScreenScraper, and ES-DE gamelists
 - **AI Fill** - Intelligent metadata gap-filling using Gemini, OpenAI, or Claude
 - **Multi-Rating System** - 8 international age rating systems (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd) with cross-mapping
@@ -30,13 +30,15 @@
 - **Museum** - Interactive gaming system encyclopedia with AI-generated content
 
 ### UI & System
-- **7 Themes** - Cyberpunk, Matrix, Amber, Ocean, Cathedral, Blade Runner, and Elite 1984 (vector starfield) with animated canvas effects
+- **7 Themes** - Cyberpunk, Matrix, Amber, Ocean, Cathedral (`christian` in code), Blade Runner, and Elite 1984 (vector starfield) with animated canvas effects
 - **Multi-User Support** - Role-based access control (admin, editor, viewer)
 - **How Long to Beat** - Playtime estimates for your games
 - **Log Viewer** - Unified log browser across all categories
 - **Genre Normalization** - Automatic normalization with custom rules
 
 ## Quick Start
+
+> **End users:** download the source ZIP from Releases and follow the steps below. **Developers:** `git clone` the repo and see [CONTRIBUTING.md](CONTRIBUTING.md) for the dev setup instead.
 
 ### 1. Extract
 
@@ -67,7 +69,7 @@ Open your browser to `http://localhost:5000` and follow the setup wizard.
 
 ## Requirements
 
-- **Python** 3.8 or higher
+- **Python** 3.10 or higher (CI tests on 3.12 and 3.13)
 - **pip** (Python package manager)
 - **Web Browser** (Chrome, Firefox, Safari, Edge)
 
@@ -114,7 +116,7 @@ RetroDB runs on **Linux**, **Windows**, and **macOS**. Platform-specific launche
 
 ## Updating
 
-1. Back up your `config.py`, `data/settings.json`, and `database/` folder
+1. Back up the entire `data/` directory (covers `config.py` via separate copy, `settings.json`, `scraper_settings.json`, `rom_tools_config.json`, `psn_tokens.json`, `xbox_tokens.json`, `.secret_key`, and the DB) and the `database/` folder
 2. Extract the new version over the existing installation
 3. Run `python install.py` to install any new dependencies
 4. Your database and settings will be preserved

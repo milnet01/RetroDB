@@ -9,9 +9,10 @@ This document defines the official ROM file naming conventions for RetroDB. Foll
 
 ## Core Principles
 
-1. **Natural article placement** - Keep articles (A, An, The) at the beginning
+1. **Article placement** - Default keeps articles (A, An, The) at the beginning
    - ✅ `The Legend of Zelda`
    - ❌ `Legend of Zelda, The`
+   - *Configurable*: the `article_placement` setting (Settings → Library) accepts `beginning` (default) or `end`. When set to `end`, the validator inverts and prefers the comma-suffix form (`Legend of Zelda, The`). Pick one and stick with it across the library.
 
 2. **Spaces over underscores** - Use natural spacing
    - ✅ `Super Mario Bros`
@@ -96,6 +97,8 @@ When a ROM works for multiple regions, use **USA** as the default for consoles.
 | `Brazil` | Brazilian release |
 | `Korea` | Korean release |
 
+> The table above is the **canonical curated set**. Any No-Intro / TOSEC / Redump-style region or language tag the scraper recognises (e.g. `(Asia)`, `(USA, Europe)`, `(En,Fr,De,Es,It)`, `(PAL)`, `(NTSC)`) is also accepted — the table is a recommendation, not a closed allowlist.
+
 ### Optional Tags (Console)
 
 Only include when applicable:
@@ -109,6 +112,8 @@ Only include when applicable:
 | `(Demo)` | Demo/trial version |
 | `(Unl)` | Unlicensed |
 | Edition names | `(Greatest Hits)`, `(Player's Choice)`, `(Platinum)`, `(Collector's Edition)`, etc. |
+
+> **Parser caveat** — the ROM Reports "publisher" check (computer systems) treats any non-year parenthetical as a publisher. Edition names like `(Collector's Edition)` therefore satisfy the publisher check by accident. On computer systems put edition names **after** the publisher tag (`(1989) (Broderbund) (Collector's Edition)`) so the publisher position holds an actual publisher.
 
 ---
 
@@ -214,13 +219,15 @@ The M3U file follows the same naming convention as regular ROMs, but with `.m3u`
 
 **Console (default):**
 ```
-{Game Name} ({Region}).m3u
+Game Name (Region).m3u
 ```
 
 **Computer:**
 ```
-{Game Name} ({Year}) ({Publisher}).m3u
+Game Name (Year) (Publisher).m3u
 ```
+
+(Notation matches the rest of this doc — no `{braces}`. The Quick Reference section at the end shows the `{}` template form for clarity.)
 
 ### M3U File Contents
 
@@ -239,7 +246,7 @@ Final Fantasy VII/Final Fantasy VII (Disc 3 of 3) (USA).bin
 Each disc file inside the folder follows the standard naming with disc indicator:
 
 ```
-{Game Name} (Disc X of Y) ({Region}).{ext}
+Game Name (Disc X of Y) (Region).ext
 ```
 
 ### Folder Naming

@@ -32,7 +32,8 @@ When `RETRODB_TRUST_PROXY=1` is set:
 If your deployment chains multiple proxies (CDN → LB → app), you must:
 
 - Set `x_for`, `x_proto`, `x_host` to the number of trusted hops in
-  `app.py:153`.
+  the `ProxyFix(...)` call in `app.py` (inside the
+  `RETRODB_TRUST_PROXY` branch).
 - Audit every hop in the chain for the same strip-and-re-emit guarantee.
 
 ## nginx
@@ -48,7 +49,7 @@ server {
     client_max_body_size 100m;
 
     location / {
-        proxy_pass http://127.0.0.1:8765;
+        proxy_pass http://127.0.0.1:5000;
 
         # Strip the client-supplied header — never trust it.
         # nginx's `proxy_set_header X-Forwarded-For ...` overwrites; the
@@ -73,11 +74,13 @@ server {
 }
 ```
 
-Set on the RetroDB process:
+Set on the RetroDB process (substitute your `RETRODB_PORT` if you changed the default of `5000`):
 
 ```bash
-RETRODB_TRUST_PROXY=1 RETRODB_SECURE_COOKIES=true python3 main.py
+RETRODB_TRUST_PROXY=1 RETRODB_SECURE_COOKIES=true python3 app.py
 ```
+
+(Or use `./start.sh` / `start.bat` / `start.command` — they exec `app.py` with the env vars from the parent shell.)
 
 ## Caddy
 
@@ -86,7 +89,7 @@ Caddy v2 strips and re-emits `X-Forwarded-For` by default with
 
 ```caddy
 retrodb.example.com {
-    reverse_proxy 127.0.0.1:8765 {
+    reverse_proxy 127.0.0.1:5000 {
         header_up X-Real-IP {remote_host}
     }
 }
@@ -104,7 +107,7 @@ frontend retrodb_https
     default_backend retrodb_app
 
 backend retrodb_app
-    server app1 127.0.0.1:8765
+    server app1 127.0.0.1:5000
 ```
 
 ## Verifying the configuration
@@ -128,8 +131,17 @@ makes any forged `X-Forwarded-For` instantly trusted.
 
 ## Related
 
-- `app.py:139-158` — ProxyFix wiring.
+- `app.py` — ProxyFix wiring (inside the `RETRODB_TRUST_PROXY` env-gate; grep `ProxyFix` to find it).
 - `services/security.py::rate_limit_login` — the IP-based login throttle
   that depends on a real `remote_addr`.
 - Pass 40.16 in `roadmap.md` — the indie-review finding that prompted
   this document.
+
+## Upload limits
+
+Flask caps request bodies at `config.MAX_UPLOAD_BYTES` (see `app.py`). The nginx
+example above sets `client_max_body_size 100m;`. **If you raise the Flask
+limit, also raise the proxy limit** — otherwise nginx returns 413 before the
+request reaches Waitress and the new cap is silently bypassed. Caddy and
+HAProxy have their own equivalents (`request_body { max_size … }` /
+`http-request deny if { req.body_size gt … }`).

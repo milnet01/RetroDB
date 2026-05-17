@@ -1,5 +1,7 @@
 # Legal Notices
 
+> RetroDB source code is released under the [MIT License](LICENSE). This file covers **trademark, ROM, and third-party API policy** — see LICENSE for the source-code terms.
+
 ## Trademarks
 
 System logos and platform names included in RetroDB are trademarks of their respective owners:
@@ -39,7 +41,7 @@ RetroDB integrates with the following third-party services. Users must comply wi
 - **ScreenScraper** - [https://www.screenscraper.fr](https://www.screenscraper.fr) - Retro gaming database
 - **RetroAchievements** - [https://retroachievements.org](https://retroachievements.org) - Achievement tracking for retro games
 - **HowLongToBeat** - [https://howlongtobeat.com](https://howlongtobeat.com) - Game completion time estimates
-- **PlayStation Network** - Trophy data access requires a valid PSN account
+- **PlayStation Network** - [https://www.playstation.com](https://www.playstation.com) - Trophy data access requires a valid PSN account
 
 API keys and credentials are the user's responsibility. RetroDB does not provide API keys.
 

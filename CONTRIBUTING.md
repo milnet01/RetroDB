@@ -6,7 +6,7 @@ Thank you for your interest in contributing to RetroDB! This guide will help you
 
 ### Prerequisites
 
-- Python 3.8+
+- Python 3.10+ (CI tests on 3.12 and 3.13)
 - pip
 - Git
 
@@ -14,6 +14,8 @@ Thank you for your interest in contributing to RetroDB! This guide will help you
 
 1. **Clone the repository:**
    ```bash
+   # Replace YOUR_USERNAME with your GitHub fork-owner (or use the upstream URL
+   # once published).
    git clone https://github.com/YOUR_USERNAME/RetroDB.git
    cd RetroDB
    ```
@@ -37,75 +39,22 @@ Thank you for your interest in contributing to RetroDB! This guide will help you
 
 ## Project Architecture
 
-```
-RetroDB/
-├── app.py                  # Main Flask application, routes, initialization
-├── config.py               # Configuration (paths, API keys, constants)
-├── settings_manager.py     # User-editable settings (data/settings.json)
-├── platform_utils.py       # Cross-platform OS detection and helpers
-├── log_manager.py          # File-based logging system
-├── build_css.py            # CSS build script (modular -> bundled)
-├── install.py              # Cross-platform installer
-│
-├── routes/                 # Flask blueprints (20+ route files)
-│   ├── auth.py             # Authentication and user management
-│   ├── games.py            # Game list, detail, edit, bulk edit, search
-│   ├── games_hltb.py       # HowLongToBeat API endpoints
-│   ├── systems.py          # System browsing
-│   ├── settings.py         # Settings UI
-│   ├── tools.py            # ROM tools (archive, CHD, duplicates)
-│   ├── scraper.py          # Scraper config
-│   ├── bulk_scrape.py      # Bulk scraping queue
-│   ├── reports.py          # ROM reports
-│   ├── achievements.py     # RetroAchievements
-│   ├── trophies.py         # PS3 & PSN trophies
-│   ├── steam_achievements.py
-│   ├── xbox_achievements.py
-│   ├── museum.py           # System encyclopedia
-│   ├── collections.py      # Tags, lists, wishlist
-│   ├── collector_trophies.py
-│   ├── platform_import.py  # Steam / Xbox / PSN library import
-│   └── ...
-│
-├── scraper/                # Scraping backends
-│   ├── scraper_manager.py  # Orchestrates hybrid scraping
-│   ├── hybrid_scraper.py   # Multi-source scraper
-│   ├── rom_tools.py        # Archive/CHD/duplicate tools backend
-│   ├── scrape_steam.py     # Steam Web API
-│   ├── scrape_xbox.py      # Xbox Live API (OAuth)
-│   └── ...
-│
-├── services/               # Service layer
-│   ├── database.py         # SQLite query helpers, safe_column allowlist
-│   ├── database_init.py    # Schema bootstrap + migrations
-│   ├── auth.py             # Auth helpers (hashing, permissions)
-│   ├── security.py         # Path validation, rate limiting
-│   ├── analytics.py        # Analytics data helpers (20 functions)
-│   ├── formatters.py       # format_size, get_manufacturer
-│   ├── template_filters.py # Jinja filters
-│   ├── game_query.py       # Shared game-list query helpers
-│   ├── game_utils.py       # Title parsing, ratings, system constants
-│   ├── image_utils.py      # Real-ESRGAN upscaling, Lanczos downscaling
-│   ├── normalization.py    # Genre/modes normalization
-│   ├── log_redactor.py     # Logs secret-redaction filter
-│   └── jobs/               # Background job package (bulk scrape, RA sync, PSN, etc.)
-│
-├── tests/                  # pytest suite
-├── .github/workflows/      # CI + release pipelines
-│
-├── templates/              # Jinja2 HTML templates
-├── static/                 # CSS, JS, images
-│   ├── css/                # Modular CSS (built by build_css.py)
-│   └── js/                 # JavaScript modules
-│
-├── data/                   # Runtime data (settings, scraper config)
-├── database/               # SQLite databases
-└── logs/                   # Application logs
-```
+Top-level layout (run `ls` for the live tree; this list rots fast):
+
+- `app.py`, `config.py`, `config.example.py`, `settings_manager.py`, `platform_utils.py`, `log_manager.py` — Flask entrypoint, configuration, cross-platform helpers, file-based logger.
+- `build_css.py`, `build_js.py`, `build_dist.py`, `install.py`, `install_gui.py`, `retrodb.spec` — build & packaging.
+- `routes/` — Flask blueprints (30 route files at time of writing; `ls routes/` for the current set).
+- `scraper/` — metadata sources + the hybrid orchestrator (TGDB, IGDB, RAWG, ScreenScraper, ES-DE, Steam, Xbox, RetroAchievements, AI Fill, plus shared `base_scraper.py`, `metadata_merger.py`, `match_scorer.py`, `metadata_normalizer.py`, `title_normalizer.py`, `scraper_cache.py`).
+- `services/` — business logic and shared helpers (auth, security, database, atomic IO, log redaction, image pipeline, achievements linking, game utilities, jobs package, launcher package, migrations package, validators…).
+- `services/jobs/` — background-job classes (bulk_scrape, hltb_bulk, image_resize, museum, platform_sync, psn_refresh, ra_refresh, ra_sync, alt_titles_backfill) on top of `base.py`.
+- `services/migrations/scripts/` — versioned schema migrations (`001_baseline.py` … `012_emulators.py` at time of writing).
+- `templates/` — Jinja2 templates; `static/css/` and `static/js/` — modular CSS/JS built by `build_css.py` / `build_js.py`.
+- `tests/`, `.github/workflows/` — pytest suite + CI/release pipelines.
+- `data/`, `database/`, `logs/` — runtime state (not in source ZIPs; see `build_dist.py`).
 
 ## Code Style
 
-RetroDB follows the conventions documented in `RETRODB_DESIGN_STANDARDS.md`. Key points:
+RetroDB follows the conventions documented in [docs/RETRODB_DESIGN_STANDARDS.md](docs/RETRODB_DESIGN_STANDARDS.md). Key points:
 
 - **Python**: Standard Python conventions, 4-space indentation
 - **Templates**: Jinja2 with `{% extends "base.html" %}`
@@ -150,14 +99,14 @@ RetroDB follows the conventions documented in `RETRODB_DESIGN_STANDARDS.md`. Key
 RetroDB has a pytest suite under `tests/`:
 
 ```bash
-python3 -m pytest                # run everything (fast — all tests are unit-level)
+python3 -m pytest                # run the full suite
 python3 -m pytest tests/test_game_utils.py -v   # one file, verbose
 ```
 
+Most tests are unit-level; a handful (DB backup, migrations, image pipeline, observability) run as integration tests. The full suite finishes in well under a minute on a developer laptop.
+
 Every push and PR runs the suite on CI (`.github/workflows/ci.yml`) along with ruff
-(`ruff check .`), a semgrep security scan, and an import smoke test. New service code
-in `services/*.py` or `scraper/*.py` **must** ship with tests — the CI workflow
-considers a ruff/pytest failure blocking.
+(`ruff check .`), `pip-audit`, a lockfile-drift check, a semgrep security scan, and an import smoke test. New service code in `services/*.py` or `scraper/*.py` **must** ship with tests — the CI workflow considers a ruff / pytest / pip-audit / lockfile-drift failure blocking.
 
 ### Manual QA workflow
 

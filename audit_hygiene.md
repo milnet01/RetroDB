@@ -18,9 +18,11 @@ RetroDB at `/mnt/Games/Scripts/Linux/RetroDB` is a single-user
 localhost Flask + SQLite retro-gaming ROM library manager.  It
 maintains three project-local config files that document accepted noise:
 
-- `.semgrep.yml` — threat model header (lines 40-80) + list of 13
-  upstream rule IDs to exclude, with one-line anchors explaining WHY
-  each fires but isn't a bug.
+- `.semgrep.yml` — threat-model header + "Known-safe SQL patterns"
+  block + a list of **14** upstream rule IDs to exclude, with a
+  one-line anchor for each explaining WHY it fires but isn't a bug.
+  (Line numbers drift — grep for `# Excluded upstream rules` to land
+  in the right block.)
 - `.gitleaks.toml` — allowlist for `logs/`, `data/*.json` tokens,
   admin-editable settings files.
 - `pyproject.toml` `[tool.ruff.lint.ignore]` — project-accepted Ruff
@@ -41,7 +43,7 @@ actually reads these files.
 | Bandit | 60 | 60 (mirrored in `pyproject.toml`) | 0 |
 | Custom grep — secrets | 28 | 28 (admin-settings lookups) | 0 |
 | Custom grep — debug/temp | 24 | 24 (diagnostic logging) | 0 |
-| Mypy | 20 | 20 (missing stub packages) | 0 |
+| Mypy (CI-only) | 20 | 20 (missing stub packages) | 0 |
 | Custom grep — cmd injection | 9 | 9 (subprocess on validated paths) | 0 |
 | Hardcoded IPs/HTTP | 7 | 7 (vendor hostnames) | 0 |
 | Weak crypto (MD5/SHA1) | 4 | 4 (API contract) | 0 |
@@ -57,9 +59,9 @@ actually reads these files.
 
 ### 1. Respect `.semgrep.yml`'s documented invocation (HIGH impact, S)
 
-The `.semgrep.yml` file in the project root documents, **in the header
-comment block (lines 18-34)**, the exact Semgrep invocation that
-produces zero noise on this codebase:
+The `.semgrep.yml` file in the project root documents, **in the
+header comment block (the "Usage" section near the top)**, the exact
+Semgrep invocation that produces zero noise on this codebase:
 
 ```bash
 EXCLUDES=$(awk '/^# Excluded upstream rules/,/^# RetroDB-specific/' .semgrep.yml \
@@ -129,7 +131,7 @@ for any `S<nnn>` codes, map them to bandit rule IDs (the mapping is
 
 ---
 
-### 3. Support a project-local grep-rule allowlist (MEDIUM impact, M)
+### 3. Support a project-local grep-rule allowlist (MEDIUM impact, M) — *Proposal, not yet implemented*
 
 The ants-audit runner ships with hard-coded custom grep rules that fire
 on patterns like:
@@ -177,10 +179,11 @@ rate to 25%+.
 
 ---
 
-### 4. Document the calibration chain (LOW impact, S)
+### 4. Document the calibration chain (LOW impact, S) — *Proposal, not yet implemented*
 
 For any project using the audit tool, generate (or prompt the user to
-create) a single `docs/AUDIT_CALIBRATION.md` that indexes:
+create) a single `docs/AUDIT_CALIBRATION.md` (does not yet exist in
+this repo) that indexes:
 
 - Where each tool's config lives (`.semgrep.yml`, `.gitleaks.toml`,
   `pyproject.toml`, `.audit_allowlist.toml`)
@@ -195,12 +198,14 @@ exists.
 
 ### 5. Auto-install stub packages for mypy (LOW impact, S)
 
-Mypy's 20 findings on RetroDB are all "Library stubs not installed" for
-`requests`, `PyYAML`, `waitress`, etc.  These are free to install
-(`pip install types-requests types-PyYAML types-waitress`) and
-deterministic — the audit tool could detect them in a dry run and
-either auto-install in an isolated venv or emit a single "install
-these stubs" hint rather than 20 separate findings.
+Mypy runs in **CI only** on this project (`.pre-commit-config.yaml`
+intentionally excludes mypy locally — see the comment in that file
+explaining why). Its 20 findings on RetroDB are all "Library stubs
+not installed" for `requests`, `PyYAML`, `waitress`, etc.  These are
+free to install (`pip install types-requests types-PyYAML
+types-waitress`) and deterministic — the audit-CI step could detect
+them in a dry run and either auto-install in an isolated venv or emit
+a single "install these stubs" hint rather than 20 separate findings.
 
 ---
 

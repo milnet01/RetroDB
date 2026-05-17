@@ -31,6 +31,32 @@ HIGH → MEDIUM → LOW). The 2026-04-24 indie-review Tier-1 sweep (Pass 40)
 is highest priority overall — sixteen findings carry concrete exploit
 paths or silent-corruption vectors under routine use.
 
+### 📝 Cold-eyes 2026-05-18
+
+> Docs reviewed: 12 across 7 lanes. Loops to clean: 2. Findings fixed: ~30 verified + 8 new spec docs authored.
+
+Full `/cold-eyes` documentation sweep with parallel per-lane reviewers
+(contracts / design-standards / ops-install / roadmap-active /
+roadmap-history / dev-hygiene / spec-gaps), all severities folded in,
+two verify loops to convergence.
+
+- **CLAUDE.md** — 8 fixes: showConfirm/showModal definition site (`templates/base.html` not utils/main/toast/game-modals); EXCLUDE_FILES list rewrite (full set + `data/.secret_key` + INCLUDE_IMAGE_DIRS semantics); STAGING_DIR default path; "22 sections" → "25 sections"; lockfile-hashes "MUST" softened to "prefers, falls back"; `/ultrareview` annotated as Claude Code skill; `data-sticky-scope` claim removed (not implemented); `getThemedIcon` location corrected to `static/js/toast-controller.js`; `--break-system-packages` made cross-platform-conditional.
+- **README.md** — 5 fixes: Python floor 3.8 → 3.10; system count 277 → 150+ (verified against `config.py`); Cathedral display ↔ `christian` token mapping documented; backup-on-update list expanded; end-user-vs-dev install ambiguity resolved.
+- **CONTRIBUTING.md** — 5 fixes: Python floor 3.8 → 3.10; `YOUR_USERNAME` placeholder annotated; relative link `docs/RETRODB_DESIGN_STANDARDS.md` corrected; stale 60-line architecture tree replaced with one-line `ls`-pointer; CI checklist expanded (pip-audit + lockfile-drift).
+- **LEGAL.md** — 2 fixes: LICENSE pointer added at top; PSN URL added.
+- **docs/STANDARDS_ADDENDUM.md** — 3 fixes: stale `1.20.1` example refreshed to `3.6.14`; "MAJOR.FEATURE.PATCH" → "MAJOR.MINOR.PATCH"; "5 log categories" → "4" (`system` dropped per Pass 41.3.C); "should be incorporated" TODO banner removed.
+- **docs/RETRODB_DESIGN_STANDARDS.md** — 9 fixes: §13 `showToast` → `showNotification`; §20 `main-new.css` → `main.css` (3 sites) + `CSS_ORDER` clarified as canonical; §16 `system-type-badge` declared canonical (legacy `.system-type-tag` flagged); §21 changelog date format `YYYY/MM/DD` → `YYYY-MM-DD`; §6.3 `--bg-darker` → `--bg-dark`, `--border-color` → `--card-border` (real CSS vars); §20 `launch-indicator.css` added to inventory; §8 step 7 "rebuild bundle" corrected (`theme.js` not bundled).
+- **docs/PROXY-DEPLOY.md** — 4 fixes: `main.py` → `app.py` (broken on copy-paste); port `8765` → `5000` (4 sites); `app.py:153` line-number anchor replaced with symbol name; `MAX_UPLOAD_BYTES` vs `client_max_body_size` warning added.
+- **docs/ROM_NAMING_STANDARD.md** — 4 fixes: `article_placement` setting caveat added to Core Principle 1; edition-vs-publisher parser-caveat added; region table annotated as curated subset; M3U template `{}` notation reconciled with the rest of the doc.
+- **docs/README.md** — replaced root-README duplicate with a proper docs-folder index pointing at the 8 new specs.
+- **audit_hygiene.md** — 4 fixes: "13 upstream rules" → "14" (`.semgrep.yml:34` also fixed); line-range "40-80" → grep-anchor pattern; "lines 18-34" → grep-anchor; mypy marked CI-only; §3 and §4 marked "Proposed — not yet implemented".
+- **roadmap.md** — 7 fixes: `/mnt/Emulators/` → `/mnt/Games/` in §How-to-run reviewer brief (was sending 14 agents to wrong path); `services/security.py` path fix in §How-to-run partition; Pass 39.6 status-path narrative rewritten with the 2026-05-08 hub-move context; Done-index intro adds "pass numbers reflect planning order" + "LOC numbers are at-landing" notes; Pass 41.13 status sub-letter labels fixed (B is HIGH not MEDIUM); Pass 41.5b → 41.5.B and Pass 41.13c → 41.13.C (consistent suffix convention); new `### v3.5.x — Tier-2 hardening` + `### v3.6.x — multi-emulator launch + audits` Done-index rollup blocks added covering ~60 passes that had landed but were missing from the index.
+- **.semgrep.yml** — 1 fix: "13 excludes" → "14" in the Verified-2026-04-21 header note.
+- **New specs authored** — 8 files in `docs/specs/` covering subsystems that had no contract doc: `jobs.md` (background-job lifecycle, singleton-lock contract, recovery, toast-UI contract), `scrapers.md` (hybrid orchestration, fill-only invariant, COALESCE pattern, source inventory), `auth.md` (roles, permission matrix, per-user partitioning, session model, CSRF), `settings.md` (5-store layering + precedence + atomic-write contract), `api-contracts.md` (envelope, ETag, gzip, rate-limit buckets, status-code policy), `image-pipeline.md` (ESRGAN + Lanczos + WebP variants + dedup + ROCm trap), `migrations.md` (runner + numbering + backup + rollback), `themes.md` (full theme contract: CSS layer + JS ThemeManager + canvas effects + themed icons + FOUC prevention).
+- **CSRF exempt-set duplication** — `auth.md` declared canonical owner; `api-contracts.md §9.1` now points at it instead of listing the set independently.
+- **MCP feedback** — captured in `/mnt/Games/Scripts/Linux/RetroDB_Ants_MCP_Feedback.md` (appended to the existing test-audit feedback). Two HIGH suggestions: case-insensitive contract-name matching in `cold_eyes_partition` + `project_layout`; `data/changelog.yaml` recognition alongside `CHANGELOG.md`. One correctness call-out: `cold_eyes_partition` summary field mentioned files not in `doc_paths`.
+- **Source**: cold-eyes-2026-05-18 docs sweep.
+
 ### Carry-overs from landed passes
 
 #### Pass 2 — continue gradual migration of `jsonify({'success': …})` → `success()` / `error()`
@@ -1469,7 +1495,7 @@ paths or silent-corruption vectors under routine use.
   code expects `requests.get` semantics. Tests:
   `tests/test_pass41_security.py::TestPass41_5A/B` (5 cases).
 
-#### Pass 41.5b Steam + HLTB through base_scraper (carry-over from 41.5)
+#### Pass 41.5.B Steam + HLTB through base_scraper (carry-over from 41.5)
 
 - **Target**: `scraper/scrape_steam.py` (7 endpoints) and
   `scraper/hltb_lookup.py` (3 endpoints) — raw `requests.get`/`requests.post`.
@@ -1759,17 +1785,19 @@ paths or silent-corruption vectors under routine use.
   button groups with `<fieldset><legend>` or `<div role="group"
   aria-labelledby="...">` + heading.
 - **Source**: 2026-04-24 indie-review, templates H1/H2/H3/H4.
-- **Status**: partial (v3.5.12) — A (HIGH) + B (MEDIUM) closed: new Jinja
+- **Status**: partial (v3.5.12) — A (HIGH aria-current) + B (HIGH
+  wrapping-label toggle) closed: new Jinja
   macro `nav_active(cond)` emits `class="nav-item active"` +
   `aria-current="page"` together; all 17 sidebar nav links converted.
   gem-modal exclusive toggle's wrapping label dropped the misleading
-  `for="gemOtherPlatforms"` (was focusing the sibling text input);
-  implicit association via wrapping is correct. C/D (div-as-button,
-  label-as-heading) deferred to Pass 41.13c carry-over — needs browser
-  verification across 8+ template files. Tests:
+  `for="gemOtherPlatforms"` (was focusing the sibling text input —
+  functional keyboard-focus bug, HIGH, not MEDIUM);
+  implicit association via wrapping is correct. C (HIGH div-as-button)
+  and D (MEDIUM label-as-heading) deferred to Pass 41.13c carry-over —
+  needs browser verification across 8+ template files. Tests:
   `tests/test_pass41_security.py::TestPass41_13A/B` (3 cases).
 
-#### Pass 41.13c Templates a11y carry-over (div-as-button + label-as-heading)
+#### Pass 41.13.C Templates a11y carry-over (div-as-button + label-as-heading)
 
 - **Target**: 6 `<div onclick=>` / `<h2 onclick=>` primary actions in
   `base.html`, `rom_tools_hub.html`, `game_detail.html`,
@@ -1949,11 +1977,13 @@ paths or silent-corruption vectors under routine use.
 #### Pass 39.6 `build_dist.py` env-configurable `STAGING_DIR` (MEDIUM, S)
 
 - **Target**: `build_dist.py:22`; `release.yml:55-64`.
-- **Why**: hardcoded absolute path `/mnt/Emulators/Scripts/Linux/Staging_Area/RetroDB`.
-  Release workflow monkey-patches `build_dist.STAGING_DIR` inline —
-  fragile; `main()` return is also `None`-masked.
+- **Why**: hardcoded absolute path under the maintainer-local staging tree
+  (`/mnt/Storage/Scripts/Linux/Staging_Area/RetroDB` at landing; was originally
+  `/mnt/Emulators/...` pre-2026-05-08 hub move). Release workflow
+  monkey-patches `build_dist.STAGING_DIR` inline — fragile; `main()` return is
+  also `None`-masked.
 - **Plan**: `STAGING_DIR = os.environ.get('RETRODB_STAGING_DIR',
-  '/mnt/Emulators/...')`; set `env: RETRODB_STAGING_DIR:` in the
+  '/mnt/Storage/...')`; set `env: RETRODB_STAGING_DIR:` in the
   workflow.  Raise on `hasattr(build_dist, 'main') is False` rather
   than silently no-op.
 - **Source**: 2026-04-24 audit, Tests/tooling/CI M3.
@@ -2717,7 +2747,14 @@ weren't worth blocking the ship on.  Ordered by rough priority.
 Compact one-liner per landed pass.  Detail lives in git history
 (`git log --grep "v2.83"` or similar), in `data/changelog.yaml`, and
 in the commit messages themselves.  Listed in version order so the
-landing sequence stays legible.
+landing sequence stays legible — Pass numbers reflect planning order
+and may jump (e.g. Pass 17 → 16 → 23 → 19) because rows are sorted
+by landed version.
+
+LOC numbers in the historical rows below reflect the file size **at
+the time the pass landed**, not the current file size.  Subsequent
+edits drift the numbers; do not "correct" them — the historical figure
+is the audit trail.
 
 ### v2.83.x — Refactoring waves (Passes 2–10)
 
@@ -2952,6 +2989,59 @@ landing sequence stays legible.
   indicator with kill popover.  94 new tests across 12 files (607 total,
   was 513).  (v3.6.0)
 
+### v3.5.x — Tier-2 hardening + indie-review-2026-04-25 + refactor wave + CI hardening
+
+The v3.5 line landed the bulk of Pass 41 (tier-2 hardening), Pass 45
+(indie-review 2026-04-25 — 20 sub-items), Pass 38/42 (refactor +
+consolidation waves), Pass 39 (CI/CD hardening round 2), Pass 46.1/46.2
+(vendor third-party assets + pip pin refresh), and partials of Pass
+43 (i18n) and Pass 47 (open-source flip prep). Per-version detail is
+in `data/changelog.yaml`; per-pass detail is in the Active section of
+this file. Each landed-in-v3.5.x pass is annotated with the version
+in its **Status** line; `grep "done (v3.5" roadmap.md` enumerates all.
+
+- [x] **Pass 41.2–41.14** — Tier-2 hardening across all 14 subsystems
+  (auth, database, app bootstrap, scraper orchestration, scraper
+  adapters, jobs, OAuth/trophy parser, achievements/trophies, game
+  routes, settings/maintenance/tools, museum, frontend JS, templates
+  /a11y, image/media).  See Pass 41.1–41.14 entries above and
+  `tests/test_pass41_security.py`.  (v3.5.1 – v3.5.14)
+- [x] **Pass 45.1–45.20** — Indie-review 2026-04-25 sweep (post-Pass-41
+  cross-cutting themes T1–T14).  See Pass 45.x entries above; tests
+  at `tests/test_pass45_security.py`.  (v3.5.15 – v3.5.33)
+- [x] **Pass 46.1 + 46.2 + 46.3 part 1** — Vendor Chart.js + 17 WOFF2
+  + pip pin refresh (6 packages) + PyInstaller spec scaffolding.  See
+  Pass 46.x entries; tests at `tests/test_pass46_*`.  (v3.5.35 –
+  v3.5.39)
+- [x] **Pass 38 + Pass 42 refactor waves** — `apply_hybrid_metadata`
+  partial extraction, scraper-settings consolidation, `installer_core.py`
+  extraction, Jinja-macro extraction, removed `app.bundle.js` from
+  installers, dead-code sweep, migration-helper dedup, global window
+  error/unhandledrejection handler, RA 401 observability, settings.html
+  split deferred.  See Pass 38.x / 42.x entries.  (v3.5.41 – v3.5.65)
+- [x] **Pass 39.1–39.12** — CI/CD hardening round 2: SHA-pin actions,
+  explicit `permissions:`, hard-fail pip-audit + semgrep, hash-locked
+  `requirements.lock`, Dependabot lockfile regen workflow,
+  env-configurable `STAGING_DIR`, multidisc-scan rate limit, gitleaks
+  allowlist for test fixtures, `usedforsecurity=False` MD5/SHA1,
+  gitleaks regex allowlist for Claude model literals, re-pin notes,
+  Dependabot label scaffolding.  (v3.5.40 / 2026-05-02 dated entries)
+- [x] **Pass 47 partials** — Pre-publish hygiene sweep + repo
+  visibility flip prep (Pass 47.1–47.2 in flight as of v3.6.x).
+
+### v3.6.x — Multi-emulator launch + test-suite audits + dependency bumps + small fixes
+
+- [x] **Pass 44** — Multi-emulator launch (see entry above).  (v3.6.0)
+- [x] **Test-suite audits + hot-fixes + UX fixes + bonus stats opt-in
+  + project-path migration follow-through + AMD ROCm helper script**
+  — three test-suite audit fix-passes resolving 119 + 100 + 133 raw
+  findings (v3.6.8 / v3.6.9 / v3.6.14); two hot-fixes (HLTB endpoint
+  `/api/find`→`/api/bleed`, scan 4xx when `rom_path` unset) (v3.6.10–
+  v3.6.11); UX fix-pass (v3.6.12); CLAUDE.md staged-tree workflow
+  note (between v3.6.13 and v3.6.14); dependency bumps (requests /
+  onnxruntime / numpy) (v3.6.13).  See `data/changelog.yaml` for
+  per-version detail.  (v3.6.1 – v3.6.14)
+
 ---
 
 ## Scope notes — considered and dropped
@@ -3033,7 +3123,7 @@ Whichever comes first.
 
 The 14-subsystem partition that produced this audit is:
 
-1. **Auth & security** — `services/auth.py`, `security.py`, `log_redactor.py`, `routes/auth.py`
+1. **Auth & security** — `services/auth.py`, `services/security.py`, `services/log_redactor.py`, `routes/auth.py`
 2. **Database & schema** — `services/database.py`, `database_init.py`
 3. **Scraper orchestration & metadata** — `scraper/scraper_manager.py`, `hybrid_scraper.py`, `metadata_merger.py`, `metadata_normalizer.py`, `match_scorer.py`, `title_normalizer.py`, `scraper_cache.py`, `image_dedup.py`, `services/game_metadata_service.py`
 4. **Per-source scrapers** — `scraper/base_scraper.py`, `scrape_igdb.py`, `scrape_thegamesdb.py`, `scrape_rawg.py`, `scrape_screenscraper.py`, `scrape_esde.py`, `scrape_ai.py`, `retroachievements.py`
@@ -3051,7 +3141,7 @@ The 14-subsystem partition that produced this audit is:
 Each agent gets the same brief, scoped to its subsystem:
 
 > You are performing an INDEPENDENT code review of ONE subsystem of RetroDB.
-> Project root: `/mnt/Emulators/Scripts/Linux/RetroDB`.  You do not know what
+> Project root: `/mnt/Games/Scripts/Linux/RetroDB`.  You do not know what
 > the orchestrator thinks about this code.  Fresh eyes.
 >
 > **Scope:** `<paths>` — review ONLY these files.
