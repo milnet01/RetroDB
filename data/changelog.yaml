@@ -1,3 +1,25 @@
+- version: 3.6.13
+  date: 2026-05-17
+  tags:
+  - type: chore
+    label: Dependency bumps — requests 2.33.1 → 2.34.2, onnxruntime 1.25.1 → 1.26.0, numpy 2.4.4 → 2.4.5
+  - type: chore
+    label: requirements.lock regenerated with --generate-hashes (Pass 39.4 invariant)
+  body: |
+    <ul>
+        <li><strong>Dependency floor bumps</strong>. Audit of <code>requirements.txt</code> vs PyPI's current releases found three packages behind:
+            <ul>
+                <li><strong>requests 2.33.1 → 2.34.2</strong> (minor). Network/security-bearing library; minor bumps may carry CVE fixes. No API changes affecting RetroDB's <code>http_get</code>/<code>http_post</code> shims.</li>
+                <li><strong>onnxruntime 1.25.1 → 1.26.0</strong> (minor). For CPU-only installs (CI / non-AMD users). AMD GPU users continue to use <code>onnxruntime-rocm</code> outside the requirements.txt path; the floor bump does not affect their install.</li>
+                <li><strong>numpy 2.4.4 → 2.4.5</strong> (patch). Carries fixes for the array-ufunc dispatch path; no API change.</li>
+            </ul>
+        </li>
+        <li><strong>Lockfile regenerated</strong> via <code>pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes</code> (Pass 39.4 invariant — installers run <code>pip install --require-hashes</code>, so the lockfile must carry SHA256 hashes for every wheel).</li>
+        <li><strong>Verification</strong>: full pytest suite (1001 tests) green against requests 2.34.2 + numpy 2.4.5 installed locally. onnxruntime 1.26.0 verified at the lockfile resolution layer only — the dev box runs <code>onnxruntime-rocm</code> for ROCm GPU acceleration and vanilla onnxruntime would shadow it, so the local install step was skipped (intentional).</li>
+        <li><strong>AMD GPU users</strong>: if you upgraded <code>onnxruntime-rocm</code> separately, re-run <code>scripts/fix_onnxruntime_rocm_execstack.py</code> (CPU shadow + glibc 2.41 exec-stack patch) and <code>scripts/fix_onnxruntime_rocm_libhipblas.sh</code> (legacy hipBLAS/rocSOLVER ABIs for the pre-built ROCm provider .so). Neither is needed for the CPU-only floor bump in this release.</li>
+        <li><strong>Patch bump 3.6.12 → 3.6.13</strong>: dependency hygiene only; no user-visible behaviour change.</li>
+    </ul>
+
 - version: 3.6.12
   date: 2026-05-17
   tags:
