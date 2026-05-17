@@ -9,14 +9,9 @@
 # generate_sort_title; api_game_edit (JSON) did neither.
 # =============================================================================
 
-import os
-import sys
-
 import pytest
 
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _REPO_ROOT not in sys.path:
-    sys.path.insert(0, _REPO_ROOT)
+from tests._util import REPO_ROOT as _REPO_ROOT  # noqa: F401
 
 from services.game_metadata_service import normalize_game_edit
 

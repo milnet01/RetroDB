@@ -85,3 +85,15 @@ class TestSlowQueryGate:
             _log_if_slow("CREATE TABLE x (...)", None, time.perf_counter() - 1.0)
         assert len(capture_db_log.records) == 1
         assert 'args=0' in capture_db_log.records[0].getMessage()
+
+    def test_non_iterable_args_logs_minus_one(self, capture_db_log):
+        """The `TypeError` fallback in _log_if_slow (services/database.py:42-43)
+        fires when `len(args)` raises — e.g. when a future caller passes an
+        integer or other non-Sized object. The handler files this as
+        `arg_count = -1` so the log line still emits cleanly. Mirror shape of
+        `test_non_sequence_args_still_logs` — same threshold/back-date pattern,
+        same single-record assertion."""
+        with patch.object(config, 'SLOW_QUERY_MS', 10):
+            _log_if_slow("SELECT * FROM games", 42, time.perf_counter() - 1.0)
+        assert len(capture_db_log.records) == 1
+        assert 'args=-1' in capture_db_log.records[0].getMessage()

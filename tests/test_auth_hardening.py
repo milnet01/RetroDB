@@ -21,7 +21,7 @@
 import os
 import pytest
 
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from tests._util import REPO_ROOT as _REPO_ROOT, read_module_source, read_source
 
 
 # =============================================================================
@@ -39,7 +39,7 @@ class TestPasswordRequiredForAllRoles:
         # (Full integration test would need to seed such a user; this
         # code-path pin protects against regressions that re-introduce
         # the passwordless branch.)
-        src = open(auth_mod.__file__).read()
+        src = read_module_source(auth_mod)
         assert "This account has no password set" in src
         # And the prior `if user['role'] == 'admin':` gate is gone.
         assert "if user['role'] == 'admin':" not in src
@@ -61,7 +61,7 @@ class TestPasswordRequiredForAllRoles:
         """Pass 24.1 migration: new editor/viewer accounts now get the
         same `changeme` + force_password_change=1 onboarding as admin."""
         from routes import auth as auth_mod
-        src = open(auth_mod.__file__).read()
+        src = read_module_source(auth_mod)
         # The legacy `password_hash = None` branch is gone; every role
         # gets a hashed password (explicit or default).
         assert "password_hash = None" not in src
@@ -83,7 +83,7 @@ class TestSessionRotationOnLogin:
         file. Pair this with the behavioural test below."""
         import ast
         from routes import auth as auth_mod
-        src = open(auth_mod.__file__).read()
+        src = read_module_source(auth_mod)
         tree = ast.parse(src)
         login_fn = next(
             (n for n in ast.walk(tree)
@@ -163,7 +163,7 @@ class TestForcePasswordChangeMiddleware:
 class TestPasswordPolicyAndRateLimit:
     def test_min_length_raised_to_12(self):
         from routes import auth as auth_mod
-        src = open(auth_mod.__file__).read()
+        src = read_module_source(auth_mod)
         # Both api_change_password and api_force_change_password now check 12.
         assert src.count("Password must be at least 12 characters") >= 2
         # And the old 8-char check is gone.
@@ -207,15 +207,15 @@ class TestEditorRequiredOnDestructiveEndpoints:
         import re as _re
         for endpoint, _path, _method in self.DESTRUCTIVE_ENDPOINTS:
             module_name, view_name = endpoint.split('.', 1)
-            module_path = os.path.join(_REPO_ROOT, 'routes', f'{module_name}.py')
-            src = open(module_path).read()
+            rel_path = os.path.join('routes', f'{module_name}.py')
+            src = read_source(rel_path)
             # Find the decorator stack above `def view_name(`
             pat = _re.compile(
                 rf'((?:@\w+(?:\([^)]*\))?\s*\n)+)\s*def {view_name}\b',
                 _re.MULTILINE,
             )
             m = pat.search(src)
-            assert m, f"Could not locate {endpoint} in {module_path}"
+            assert m, f"Could not locate {endpoint} in {rel_path}"
             decorators = m.group(1)
             assert '@editor_required' in decorators, \
                 f"{endpoint} should be @editor_required, got: {decorators!r}"
@@ -238,7 +238,7 @@ class TestXboxOAuthState:
 
     def test_callback_verifies_state(self):
         from routes import platform_import as pi_mod
-        src = open(pi_mod.__file__).read()
+        src = read_module_source(pi_mod)
         # Both the generate-state (auth_url) and verify-state (callback)
         # sides of the handshake must be present.
         assert "flask_session['oauth_state_xbox']" in src

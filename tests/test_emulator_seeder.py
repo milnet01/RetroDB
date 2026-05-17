@@ -5,15 +5,22 @@ import sqlite3
 
 import pytest
 
-_REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
+from tests._util import REPO_ROOT as _REPO_ROOT_STR
+
+_REPO_ROOT = pathlib.Path(_REPO_ROOT_STR)
 
 
 _SEEDS_PATH = str(_REPO_ROOT / 'data' / 'emulator_seeds.json')
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def db():
-    """In-memory DB with baseline systems + the new emulator tables already applied."""
+    """In-memory DB with baseline systems + the new emulator tables already applied.
+
+    Module-scoped: schema setup is read-only relative to test logic (no test
+    in this file mutates the schema), so running the 012_emulators.py
+    migration once per module is enough. The `seeded_db` fixture stays
+    function-scoped because it writes seed data."""
     conn = sqlite3.connect(':memory:')
     c = conn.cursor()
     c.execute("CREATE TABLE systems (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, folder TEXT UNIQUE)")

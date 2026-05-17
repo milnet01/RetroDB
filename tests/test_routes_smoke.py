@@ -8,18 +8,9 @@
 import pytest
 
 
-@pytest.fixture(scope="module")
-def client():
-    import app as app_module
-    # Snapshot + restore — monkeypatch is not available in module-scoped fixtures,
-    # and a bare assignment would leak TESTING=True to every subsequent module.
-    _orig_testing = app_module.app.config.get('TESTING', False)
-    app_module.app.config['TESTING'] = True
-    try:
-        with app_module.app.test_client() as c:
-            yield c
-    finally:
-        app_module.app.config['TESTING'] = _orig_testing
+# Note: the `app_client` fixture lives in tests/conftest.py — function-scoped
+# (not module-scoped) so monkeypatch is available. Tests that previously took
+# `client` now take `app_client`.
 
 
 class TestRouteRegistration:
@@ -65,7 +56,7 @@ class TestRouteRegistration:
         'games_media.api_delete_screenshot': '/api/delete-screenshot/<int:game_id>',
     }
 
-    def test_all_expected_endpoints_exist(self, client):
+    def test_all_expected_endpoints_exist(self, app_client):
         import app as app_module
         rules = {r.endpoint: r.rule for r in app_module.app.url_map.iter_rules()}
         missing = []
@@ -89,8 +80,8 @@ class TestAuthGuards:
         # Pass 41.9 — `/api/recently-viewed` removed (zero callers; the
         # dashboard reads `user_game_views` directly via app.py).
     ])
-    def test_protected_get_redirects_unauthenticated(self, client, path):
-        resp = client.get(path, follow_redirects=False)
+    def test_protected_get_redirects_unauthenticated(self, app_client, path):
+        resp = app_client.get(path, follow_redirects=False)
         # login_required redirects unauthenticated GETs. Destination is /login
         # on a set-up install, or /setup when the first-time-setup middleware
         # detects a blank DB (e.g. on a fresh CI runner). Either proves the
@@ -101,8 +92,28 @@ class TestAuthGuards:
         assert '/login' in location or '/setup' in location, \
             f"Expected redirect to /login or /setup for {path}, got {location!r}"
 
-    def test_login_page_accessible(self, client):
-        resp = client.get('/login', follow_redirects=False)
+    @pytest.mark.parametrize("path", [
+        '/api/delete-game/1',
+        '/api/rename-rom/1',
+        '/api/hltb/bulk/start',
+    ])
+    def test_protected_post_redirects_unauthenticated(self, app_client, path):
+        """Write endpoints must reject unauthenticated POSTs. An unauthenticated
+        POST to a mutating endpoint is more dangerous than a GET — pin the
+        login_required guard on a sample of them."""
+        resp = app_client.post(path, follow_redirects=False)
+        # Same shape as the GET case: 30x redirect to /login or /setup, or a
+        # 4xx explicit rejection (401/403). Either proves the endpoint isn't
+        # mutating state for unauthenticated callers.
+        assert resp.status_code in (301, 302, 303, 401, 403), \
+            f"Expected auth rejection for POST {path}, got {resp.status_code}"
+        if resp.status_code in (301, 302, 303):
+            location = resp.headers.get('Location', '')
+            assert '/login' in location or '/setup' in location, \
+                f"Expected redirect to /login or /setup for POST {path}, got {location!r}"
+
+    def test_login_page_accessible(self, app_client):
+        resp = app_client.get('/login', follow_redirects=False)
         # /login itself must be reachable without auth. On a fresh install the
         # first-time-setup middleware may redirect it to /setup; either is OK.
         if resp.status_code in (301, 302, 303):
@@ -114,9 +125,9 @@ class TestAuthGuards:
 class TestHLTBSearchAuth:
     """HLTB endpoints should reject unauthenticated POSTs."""
 
-    def test_hltb_search_requires_auth(self, client):
-        resp = client.post('/api/hltb/search', json={'query': 'test'},
-                           follow_redirects=False)
+    def test_hltb_search_requires_auth(self, app_client):
+        resp = app_client.post('/api/hltb/search', json={'query': 'test'},
+                               follow_redirects=False)
         assert resp.status_code in (301, 302, 303, 401, 403), \
             f"HLTB search should require auth, got {resp.status_code}"
 
@@ -124,8 +135,8 @@ class TestHLTBSearchAuth:
 class TestLocalSearchInputValidation:
     """Tests for /api/games/find input-handling that don't require DB state."""
 
-    def test_find_requires_login(self, client):
-        resp = client.get('/api/games/find?q=zelda', follow_redirects=False)
+    def test_find_requires_login(self, app_client):
+        resp = app_client.get('/api/games/find?q=zelda', follow_redirects=False)
         assert resp.status_code in (301, 302, 303), \
             f"/api/games/find should require auth, got {resp.status_code}"
         location = resp.headers.get('Location', '')

@@ -50,9 +50,11 @@ class TestBuildGamesQuery:
         sql, vals = _build_games_query({'system': '42'})
         assert "g.system_id = ?" in sql
         # The SUT passes params['system'] verbatim — value comes off the query
-        # string as a str. Pin the actual type so a future int-coercion in the
-        # SUT shows up here (was: `42 in vals or '42' in vals`, ambiguous).
-        assert '42' in vals
+        # string as a str. Pin the exact bound-value list so a future
+        # int-coercion (or an extra append elsewhere) shows up here. The
+        # earlier `'42' in vals` form would have passed for any vals list
+        # that contained '42' anywhere, including as a LIKE pattern fragment.
+        assert vals == ['42']
 
     def test_search_filter_escapes_wildcards(self):
         sql, vals = _build_games_query({'search': '100%'})
@@ -68,9 +70,10 @@ class TestBuildGamesQuery:
     def test_letter_alpha_binds_upper(self):
         sql, vals = _build_games_query({'letter': 'z'})
         # The SUT does `values.append(letter.upper())` — the bound value
-        # must be the literal string 'Z'. Was: substring on str(vals), which
-        # would also pass for vals containing 'ZERO' or any 'Z*' string.
-        assert 'Z' in vals
+        # must be the literal string 'Z'. `'Z' in vals` alone would pass
+        # for a vals list with 'ZERO' or duplicate 'Z' entries; pin the
+        # count to 1 so a stray extra append elsewhere lights this up.
+        assert 'Z' in vals and vals.count('Z') == 1
 
     def test_ra_only_filter(self):
         sql, vals = _build_games_query({'ra_only': '1'})

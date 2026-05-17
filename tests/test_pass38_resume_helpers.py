@@ -155,11 +155,15 @@ class TestCallsitesUseHelpers:
         path = os.path.join(_REPO_ROOT, rel_path)
         with open(path, encoding='utf-8') as f:
             src = f.read()
-        assert 'pad_resume_game_ids' in src, (
+        # c-005 LOW fix: trailing `(` ensures we catch the CALL site, not just
+        # the import line — a refactor that imports the helper but still uses
+        # the legacy inline `[None] * resume_index + remaining_ids` pattern
+        # was previously a blind spot.
+        assert 'pad_resume_game_ids(' in src, (
             f"{rel_path} must import + call pad_resume_game_ids "
             f"(Pass 38.8) — inline `[None] * resume_index + …` regressed."
         )
-        assert 'restore_progress_counts' in src, (
+        assert 'restore_progress_counts(' in src, (
             f"{rel_path} must import + call restore_progress_counts "
             f"(Pass 38.8)."
         )

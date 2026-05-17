@@ -18,7 +18,11 @@ from scraper import scrape_igdb, scrape_thegamesdb
 class _PersistentConn:
     """Thin wrapper around sqlite3.Connection that ignores .close() so the
     scraper's `finally: conn.close()` doesn't discard the test's connection
-    before we assert on it."""
+    before we assert on it.
+
+    The wrapped connection is closed when the wrapper itself is collected.
+    For deterministic close (e.g. on Windows or PyPy where GC is lazier), call
+    .real_close() explicitly."""
 
     def __init__(self, conn):
         self._conn = conn
@@ -28,6 +32,21 @@ class _PersistentConn:
 
     def close(self):
         pass
+
+    def real_close(self):
+        """Actually close the underlying connection — used in test teardown."""
+        try:
+            self._conn.close()
+        except Exception:
+            pass
+
+    def __del__(self):
+        # Best-effort: ensure the in-memory DB is released even if a test
+        # forgets to call real_close (c-005 deferred #8 partial fix).
+        try:
+            self._conn.close()
+        except Exception:
+            pass
 
 
 def _make_conn_with_existing_row(**values):

@@ -11,12 +11,16 @@ TRUE = shutil.which('true')
 FALSE = shutil.which('false')
 
 
-def _poll_exited(launcher, token, deadline_s=2.0):
+def _poll_exited(launcher, token, deadline_s=5.0):
     """Poll launcher.status(token) until state == 'exited' or deadline passes.
 
     Returns the final status. Fails the test loudly with the last-observed
     status if the deadline is breached — replaces the prior pattern of a
     bare poll loop whose timeout surfaced as a silent downstream assert.
+
+    Default 5s (was 2s) tolerates slow CI scheduler reaping of `/bin/true`
+    and `/bin/false` children without flaking; the test still fails on a
+    genuinely stuck child.
     """
     deadline = time.time() + deadline_s
     st = None
@@ -82,7 +86,10 @@ def test_status_unknown_token_raises():
     from services.launcher.local import LocalLauncher
     from services.launcher.base import LauncherError
     launcher = LocalLauncher()
-    with pytest.raises(LauncherError):
+    # Pin the exact error wording — a refactor that raises LauncherError with a
+    # generic message (e.g. "internal error") should fail this test loudly
+    # rather than pass silently. Production message is "unknown token: <token>".
+    with pytest.raises(LauncherError, match=r"unknown token.*does-not-exist"):
         launcher.status('does-not-exist')
 
 

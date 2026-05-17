@@ -52,6 +52,7 @@ def test_probe_cores_dir_returns_string(monkeypatch):
 
 
 def test_validate_binary_handles_empty():
+    """An empty string is rejected (no binary configured)."""
     from routes.launch_settings import _validate_binary
     info = _validate_binary('')
     assert info.get('error') == 'empty'
@@ -66,6 +67,7 @@ def test_validate_binary_rejects_nonexistent():
 
 
 def test_validate_cores_dir_handles_empty():
+    """An empty string is rejected (no cores dir configured)."""
     from routes.launch_settings import _validate_cores_dir
     info = _validate_cores_dir('')
     assert info.get('error') == 'empty'
@@ -81,6 +83,7 @@ def test_validate_cores_dir_rejects_nondir(tmp_path):
 
 
 def test_validate_cores_dir_accepts_dir_with_cores(tmp_path):
+    """A real directory containing core files validates."""
     from routes.launch_settings import _validate_cores_dir
     (tmp_path / 'snes9x_libretro.so').write_bytes(b'\x7fELF')
     info = _validate_cores_dir(str(tmp_path))
@@ -88,6 +91,7 @@ def test_validate_cores_dir_accepts_dir_with_cores(tmp_path):
 
 
 def test_validate_cores_dir_rejects_dir_without_cores(tmp_path):
+    """A real directory without any core files is rejected."""
     from routes.launch_settings import _validate_cores_dir
     info = _validate_cores_dir(str(tmp_path))
     assert 'error' in info

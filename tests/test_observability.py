@@ -13,34 +13,41 @@ from tests._util import REPO_ROOT
 
 
 @pytest.fixture
-def client():
+def client(monkeypatch):
     """Function-scoped Flask test client.
 
     Previously module-scoped, which silently relied on `log_manager`'s
     install-once globals (`_request_id_installed`, replaced log-record
     factory) persisting across tests. Function scope keeps the surface
     area small enough that per-test mutations of caplog / handlers
-    don't leak between tests in the same module."""
+    don't leak between tests in the same module.
+
+    Uses `monkeypatch.setitem` / `setattr` for the TESTING flag and
+    `_request_id_installed` so teardown happens via the pytest fixture
+    machinery rather than a manual try/finally (test-audit ISO finding).
+    The log-record factory itself isn't a simple module attribute, so it
+    still needs an explicit restore in `finally`."""
     import log_manager
     import app as app_module
-    # Snapshot TESTING alongside the log-factory globals so it restores
-    # consistently — bare assignment would leak True onward.
-    _orig_testing = app_module.app.config.get('TESTING', False)
-    app_module.app.config['TESTING'] = True
 
-    # Snapshot the log-record factory so we can restore on teardown if a
-    # test calls install_request_id_factory(); otherwise the install-once
-    # flag persists for the rest of the session.
+    # Snapshot TESTING + install-once flag via monkeypatch so they
+    # restore automatically on test exit.
+    monkeypatch.setitem(app_module.app.config, 'TESTING', True)
+    monkeypatch.setattr(
+        log_manager, '_request_id_installed',
+        getattr(log_manager, '_request_id_installed', False),
+        raising=False,
+    )
+
+    # The log-record factory is set via logging.setLogRecordFactory(),
+    # not stored as a module attribute, so monkeypatch can't snapshot
+    # it. Capture + restore explicitly.
     original_factory = logging.getLogRecordFactory()
-    original_installed_flag = getattr(log_manager, '_request_id_installed', False)
-
     try:
         with app_module.app.test_client() as c:
             yield c
     finally:
         logging.setLogRecordFactory(original_factory)
-        log_manager._request_id_installed = original_installed_flag
-        app_module.app.config['TESTING'] = _orig_testing
 
 
 class TestHealthProbe:
@@ -126,20 +133,18 @@ class TestRequestIdFactory:
             int(record.request_id, 16)  # parses cleanly as hex
 
     def test_factory_returns_dash_with_no_request_context(self):
-        """Verified in a fresh process because the module-scoped client
-        fixture holds a request context open across all tests in this file."""
-        import subprocess
-        import sys
-        proc = subprocess.run(
-            [sys.executable, '-c',
-             'import log_manager, logging; '
-             'log_manager.install_request_id_factory(); '
-             'r = logging.getLogRecordFactory()("t", logging.INFO, "/", 1, "m", (), None); '
-             'print(repr(r.request_id))'],
-            capture_output=True, text=True, cwd=str(REPO_ROOT)
+        """Outside any Flask request context, the factory must stamp
+        records with the '-' sentinel — not crash, not leak a stale
+        request_id. Runs in-process: the `client` fixture is now
+        function-scoped (no shared request context to escape), so the
+        previous subprocess scaffolding is unnecessary."""
+        import log_manager
+        log_manager.install_request_id_factory()
+        # Build a log record explicitly outside any test_request_context.
+        record = logging.getLogRecordFactory()(
+            't', logging.INFO, '/', 1, 'm', (), None
         )
-        assert proc.returncode == 0, proc.stderr
-        assert "'-'" in proc.stdout
+        assert record.request_id == '-'
 
 
 class TestSlowRequestLogging:

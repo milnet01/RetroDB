@@ -16,15 +16,10 @@
 # =============================================================================
 
 import os
-import sys
 
 import pytest
 
-from tests._util import read_source, slice_function  # noqa: E402
-
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _REPO_ROOT not in sys.path:
-    sys.path.insert(0, _REPO_ROOT)
+from tests._util import REPO_ROOT as _REPO_ROOT, read_source, slice_function  # noqa: E402
 
 
 # -----------------------------------------------------------------------------
@@ -69,23 +64,20 @@ class TestPass41_1ALoginRequiredAllowList:
 # 41.1.B — api_change_password rate bucket re-keyed per (ip, user_id)
 # -----------------------------------------------------------------------------
 @pytest.fixture
-def _cleared_login_attempts():
-    """Snapshot + clear services.security._login_attempts around the test.
+def cleared_login_attempts(monkeypatch):
+    """Swap services.security._login_attempts for an empty dict around the test.
 
-    Pass-c-006 I-2 fix: the two TestPass41_1BChangePasswordBucket functional
-    tests used to call `sec._login_attempts.clear()` inline.  Centralising the
-    snapshot/restore here makes the isolation explicit and survives any
-    parallel-runner reordering."""
+    Pass-c-006 I-2 fix: originally took the module lock and snapshot/restored
+    the dict, which is unsafe under pytest-xdist (two tests sharing the same
+    interpreter race on the snapshot/clear/restore cycle).  Using
+    monkeypatch.setattr to swap the dict reference gives automatic
+    single-test-scope teardown and removes the parallel-runner hazard.
+    The leading-underscore alias is gone too (c-005 LOW finding) since
+    pytest fixtures with leading underscores still leak to other modules
+    despite the misleading "private" hint."""
     import services.security as sec
-    with sec._lock:
-        saved = dict(sec._login_attempts)
-        sec._login_attempts.clear()
-    try:
-        yield sec
-    finally:
-        with sec._lock:
-            sec._login_attempts.clear()
-            sec._login_attempts.update(saved)
+    monkeypatch.setattr(sec, '_login_attempts', {})
+    yield sec
 
 
 class TestPass41_1BChangePasswordBucket:
@@ -121,10 +113,10 @@ class TestPass41_1BChangePasswordBucket:
             "(Pass 41.1.B)"
         )
 
-    def test_change_password_bucket_isolated_from_login_bucket(self, _cleared_login_attempts):
+    def test_change_password_bucket_isolated_from_login_bucket(self, cleared_login_attempts):
         """Functional smoke: 6 failures into a (ip, user_id) bucket must NOT
         throttle the IP-only login bucket."""
-        sec = _cleared_login_attempts
+        sec = cleared_login_attempts
         ip = "203.0.113.55"
         cpw_bucket = f"{ip}:cpw:42"
         for _ in range(6):
@@ -134,10 +126,10 @@ class TestPass41_1BChangePasswordBucket:
         # Login bucket from the same IP stays clear.
         assert sec.rate_limit_login(ip) is True
 
-    def test_change_password_bucket_per_user(self, _cleared_login_attempts):
+    def test_change_password_bucket_per_user(self, cleared_login_attempts):
         """Functional smoke: user A's failures must NOT throttle user B from
         the same IP."""
-        sec = _cleared_login_attempts
+        sec = cleared_login_attempts
         ip = "203.0.113.66"
         for _ in range(6):
             sec.record_login_attempt(f"{ip}:cpw:1", success=False)
@@ -184,9 +176,7 @@ class TestPass41_1CStaleHashSweep:
     def test_app_wires_startup_sweep(self):
         """Source-level pin: app.py must invoke the sweep and emit a warning
         when stale hashes are found."""
-        body = open(
-            os.path.join(_REPO_ROOT, 'app.py'), encoding='utf-8'
-        ).read()
+        body = read_source('app.py')
         assert 'count_stale_password_hashes' in body, (
             "app.py must call count_stale_password_hashes() at startup "
             "(Pass 41.1.C)"
@@ -217,16 +207,13 @@ class TestPass41_2AMigrationDeferForeignKeys:
         'services/migrations/scripts/009_achievement_tables_user_id.py',
     )
 
-    def _read(self, rel):
-        return open(os.path.join(_REPO_ROOT, rel), encoding='utf-8').read()
-
     def test_no_more_foreign_keys_off_inside_apply(self):
         """The broken `PRAGMA foreign_keys = OFF` literal must be gone — that
         statement is silently ignored inside a transaction. Strip comments so
         the explanatory inline comment naming the historical pragma doesn't
         false-positive."""
         for path in self.MIGRATION_FILES:
-            body = self._read(path)
+            body = read_source(path)
             code_only = '\n'.join(
                 line.split('#', 1)[0]
                 for line in body.splitlines()
@@ -238,7 +225,7 @@ class TestPass41_2AMigrationDeferForeignKeys:
 
     def test_defer_foreign_keys_used_instead(self):
         for path in self.MIGRATION_FILES:
-            body = self._read(path)
+            body = read_source(path)
             assert 'PRAGMA defer_foreign_keys = ON' in body, (
                 f"{path} must use `PRAGMA defer_foreign_keys = ON` instead "
                 "(Pass 41.2.A)"
@@ -292,11 +279,8 @@ class TestPass41_2BConnectionLeaksClosed:
         'routes/trophies.py',
     )
 
-    def _read(self, rel):
-        return open(os.path.join(_REPO_ROOT, rel), encoding='utf-8').read()
-
     def test_museum_uses_get_request_db(self):
-        body = self._read('routes/museum.py')
+        body = read_source('routes/museum.py')
         # Eight previously-leaking sites — none should call bare get_db().
         # Tolerate the canonical import line itself.
         for line in body.splitlines():
@@ -315,7 +299,7 @@ class TestPass41_2BConnectionLeaksClosed:
         )
 
     def test_tools_screenshot_dedup_uses_get_request_db(self):
-        body = self._read('routes/tools.py')
+        body = read_source('routes/tools.py')
         # The screenshot-dedup delete path at the previously-leaking line had
         # `db = get_db()` without a close. Confirm a get_request_db site
         # exists; the bare get_db() footprint here is shrinking on this pass.
@@ -324,7 +308,7 @@ class TestPass41_2BConnectionLeaksClosed:
         )
 
     def test_trophies_psn_npsso_uses_get_request_db(self):
-        body = self._read('routes/trophies.py')
+        body = read_source('routes/trophies.py')
         # The PSN /api/psn/save-npsso handler used get_db() without close.
         # After the fix it must reach the request-scoped connection.
         assert 'get_request_db' in body, (
@@ -342,11 +326,8 @@ class TestPass41_3ARedactorOrder:
     the root-logger filter is in place from the very first emit, and again
     AFTER so the new StreamHandler also picks up the filter (idempotent)."""
 
-    def _read_app_py(self):
-        return open(os.path.join(_REPO_ROOT, 'app.py'), encoding='utf-8').read()
-
     def test_redactor_install_precedes_basicconfig(self):
-        body = self._read_app_py()
+        body = read_source('app.py')
         first_redactor = body.find('install_global_redactor()')
         first_basicconfig = body.find('logging.basicConfig(')
         assert first_redactor != -1 and first_basicconfig != -1, (
@@ -371,10 +352,7 @@ class TestPass41_3BAdminCredsLogLine:
     convention from the README, not from logs."""
 
     def test_password_string_absent_from_log_line(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'services/database_init.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('services/database_init.py')
         # The log call still exists, but must not contain the literal
         # "password: admin" or "password=admin" credential.
         for needle in ('password: admin', 'password=admin', "password='admin'"):
@@ -419,10 +397,7 @@ class TestPass41_4AEsdeScreenshotAppend:
         """The 'and not metadata.get(field)' guard loop must no longer
         include `screenshots` — that's the whole point of the fix."""
         import re as _re
-        body = open(
-            os.path.join(_REPO_ROOT, 'scraper/hybrid_scraper.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('scraper/hybrid_scraper.py')
         # The guarded loop iterates a literal list; screenshots was a
         # member previously. Find the relevant loop body and assert
         # 'screenshots' is no longer in the iteration list.
@@ -863,10 +838,7 @@ class TestPass41_7ATropusrBounds:
     static analysis."""
 
     def test_tables_count_capped(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'scraper/trophy_parser.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('scraper/trophy_parser.py')
         # Look for the explicit cap. The exact arithmetic is documented in the
         # roadmap as `(len(data) - 0x30) // 32`.
         assert 'tables_count = min(tables_count' in body, (
@@ -885,10 +857,7 @@ class TestPass41_7BXboxRedirectKwarg:
     to the kwarg form so URL construction is unambiguous."""
 
     def test_no_string_concat_redirect(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'routes/platform_import.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('routes/platform_import.py')
         # Strip comments so the explanatory comment naming the historical
         # shape doesn't false-positive.
         code_only = '\n'.join(
@@ -915,10 +884,7 @@ class TestPass41_7CRaApi401Logging:
     scraper/retroachievements.py."""
 
     def test_retroachievements_logs_401(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'scraper/retroachievements.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('scraper/retroachievements.py')
         # The fix injects a per-callsite 401-check + logger.error. A single
         # marker per file is enough — assert at least the marker plus a
         # logger.error mentioning 401 / API key.
@@ -946,10 +912,7 @@ class TestPass41_8AFlaskGShadow:
     matches the existing `existing_groups` comprehension at :1384."""
 
     def test_no_for_g_in_loops(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'routes/trophies.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('routes/trophies.py')
         # Strip comments so the explanatory comment doesn't false-positive.
         code_only = '\n'.join(
             line.split('#', 1)[0]
@@ -957,8 +920,11 @@ class TestPass41_8AFlaskGShadow:
         )
         # `for g in ...` (with whitespace boundaries) must be absent from
         # routes/trophies.py — including any list/dict comprehension.
+        # Trailing `\s` tightens the right boundary so `for g in(...)`-style
+        # generator-expression usages (where `\b` may not match adjacent to
+        # `(`) also get caught (c-005 LOW finding).
         import re as _re
-        matches = _re.findall(r'\bfor\s+g\s+in\b', code_only)
+        matches = _re.findall(r'\bfor\s+g\s+in\s', code_only)
         assert not matches, (
             f"routes/trophies.py still has `for g in ...` shadow(s) "
             f"({len(matches)} occurrences) — rename loop var to ps_game "
@@ -979,10 +945,7 @@ class TestPass41_8BAchievementAggregationDoc:
     to check."""
 
     def test_null_userid_invariant_documented(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'routes/achievements.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('routes/achievements.py')
         assert 'Pass 41.8' in body, (
             "routes/achievements.py must document the gap.user_id NOT NULL "
             "invariant (Pass 41.8.B)"
@@ -1052,10 +1015,7 @@ class TestPass41_11BMuseumGetIdempotent:
     admin-only POST at `/api/museum/cleanup-controller-images`."""
 
     def test_get_view_does_not_update_controllers(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'routes/museum.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('routes/museum.py')
         # Extract the museum_system function body — slice from `def
         # museum_system` to the next `# =============` block separator.
         start = body.find('def museum_system(system_id):')
@@ -1153,10 +1113,7 @@ class TestPass41_14BEsrganSsrfGate:
         module-level binding doesn't intercept it. The literal call shape
         `validate_outbound_url(try_url, require_https=True)` IS the contract
         — both that the gate is invoked AND that it requires HTTPS."""
-        body = open(
-            os.path.join(_REPO_ROOT, 'services/image_utils.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('services/image_utils.py')
         assert 'validate_outbound_url' in body, (
             "services/image_utils.py must call validate_outbound_url "
             "before urlopen (Pass 41.14.B)"
@@ -1184,10 +1141,7 @@ class TestPass41_14CRglobSymlinkGuard:
         assert callable(_safe_under_root)
 
     def test_helper_used_at_every_recursive_walk(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'scraper/rom_tools.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('scraper/rom_tools.py')
         # Each rglob result must be filtered through _safe_under_root, OR
         # be a tempdir-extract case that's outside the audit scope. Count
         # both rglob uses and helper uses; the helper count must be > 0.
@@ -1231,10 +1185,7 @@ class TestPass41_10ATaskAuthz:
     41.10.A raises all three to @admin_required."""
 
     def test_task_cancel_requires_admin(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'routes/tools.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('routes/tools.py')
         # Locate the cancel route's decorator stack; expect @admin_required.
         idx = body.find("/api/rom-tools/task/<task_id>/cancel")
         assert idx != -1, "cancel route not found"
@@ -1244,10 +1195,7 @@ class TestPass41_10ATaskAuthz:
         )
 
     def test_task_pause_requires_admin(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'routes/tools.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('routes/tools.py')
         idx = body.find("/api/rom-tools/task/<task_id>/pause")
         assert idx != -1, "pause route not found"
         block = body[idx:idx + 200]
@@ -1256,10 +1204,7 @@ class TestPass41_10ATaskAuthz:
         )
 
     def test_task_resume_requires_admin(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'routes/tools.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('routes/tools.py')
         idx = body.find("/api/rom-tools/task/<task_id>/resume")
         assert idx != -1, "resume route not found"
         block = body[idx:idx + 200]
@@ -1277,10 +1222,7 @@ class TestPass41_10BConvertVerifyAuthz:
     safe_path; Pass 41.10.B closes the remaining gap by requiring admin."""
 
     def test_chd_convert_requires_admin(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'routes/tools.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('routes/tools.py')
         idx = body.find("/api/rom-tools/chd-converter/convert")
         assert idx != -1, "chd-converter/convert route not found"
         block = body[idx:idx + 300]
@@ -1289,10 +1231,7 @@ class TestPass41_10BConvertVerifyAuthz:
         )
 
     def test_chd_verify_requires_admin(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'routes/tools.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('routes/tools.py')
         idx = body.find("/api/rom-tools/chd-verify/verify")
         assert idx != -1, "chd-verify/verify route not found"
         block = body[idx:idx + 200]
@@ -1316,10 +1255,7 @@ class TestPass41_10CTaskIdFullUuid:
         literally "the `[:8]` slice must never reappear here". A functional
         equivalent (assert task_ids are 36 chars) is below; this test pins
         the slice idiom directly so a partial revert is caught."""
-        body = open(
-            os.path.join(_REPO_ROOT, 'routes/tools.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('routes/tools.py')
         # Strip comments so the explanatory comment doesn't false-positive.
         code_only = '\n'.join(
             line.split('#', 1)[0]
@@ -1415,10 +1351,7 @@ class TestPass41_12AFetchTimeout:
     control cancellation can pass their own `signal`."""
 
     def test_abortcontroller_used(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'static/js/utils.js'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('static/js/utils.js')
         assert 'AbortController' in body, (
             "API.* must use AbortController for default timeout (Pass 41.12.A)"
         )
@@ -1429,10 +1362,7 @@ class TestPass41_12AFetchTimeout:
     def test_caller_signal_respected(self):
         """If caller passes their own signal, the helper should NOT clobber
         it with a timed AbortController."""
-        body = open(
-            os.path.join(_REPO_ROOT, 'static/js/utils.js'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('static/js/utils.js')
         assert 'opts.signal' in body or 'options.signal' in body, (
             "API.* timeout must opt out when caller passes signal (Pass 41.12.A)"
         )
@@ -1450,10 +1380,7 @@ class TestPass41_12BNavigateToOpenRedirect:
     is either a `/`-rooted path or a same-origin URL."""
 
     def test_isSafeReturnUrl_helper_present(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'static/js/toast-controller.js'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('static/js/toast-controller.js')
         assert '_isSafeReturnUrl' in body, (
             "Open-redirect guard helper must exist (Pass 41.12.B)"
         )
@@ -1463,10 +1390,7 @@ class TestPass41_12BNavigateToOpenRedirect:
         )
 
     def test_navigateTo_consults_guard(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'static/js/toast-controller.js'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('static/js/toast-controller.js')
         # The navigateTo function must call the guard before assigning
         # window.location.href.
         idx = body.find('navigateTo(type, returnUrl)')
@@ -1483,10 +1407,7 @@ class TestPass41_12BNavigateToOpenRedirect:
         and resolves to a different host. The guard must reject it."""
         # Source-level pin: we explicitly check that the helper rejects
         # `//`-prefixed input (the common protocol-relative attack shape).
-        body = open(
-            os.path.join(_REPO_ROOT, 'static/js/toast-controller.js'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('static/js/toast-controller.js')
         # Locate the helper *definition* (skip past the call site that uses
         # the same identifier above).
         idx = body.find('_isSafeReturnUrl(url) {')
@@ -1509,10 +1430,7 @@ class TestPass41_13ASidebarAriaCurrent:
     `aria-current="page"` together, applied to all 17 sidebar nav links."""
 
     def test_macro_defined(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'templates/base.html'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('templates/base.html')
         assert 'macro nav_active' in body, (
             "Pass 41.13.A — `nav_active` Jinja macro must be defined "
             "in base.html"
@@ -1528,10 +1446,7 @@ class TestPass41_13ASidebarAriaCurrent:
         """All sidebar nav links should use the macro form `{{ nav_active(...) }}`,
         not the historical inline `class="nav-item {% if ... %}active{% endif %}"`
         shape that didn't emit aria-current."""
-        body = open(
-            os.path.join(_REPO_ROOT, 'templates/base.html'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('templates/base.html')
         # Strip {# Jinja comments #} so the explanatory comment doesn't
         # false-positive.
         import re as _re
@@ -1557,10 +1472,7 @@ class TestPass41_13BGemToggleForAttr:
     pattern; the explicit for= is now removed."""
 
     def test_toggle_label_has_no_for_attr(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'templates/base.html'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('templates/base.html')
         # Strip {# Jinja comments #} so the explanatory comment naming the
         # historical attribute doesn't false-positive.
         import re as _re
@@ -1595,10 +1507,7 @@ class TestPass41_9ATrackViewAuthz:
     have the permission; Viewer does not."""
 
     def test_track_view_uses_permission_decorator(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'routes/games.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('routes/games.py')
         idx = body.find('def api_track_view(')
         assert idx != -1, "api_track_view not found"
         # Look at the ~250 chars BEFORE the def for the decorator stack.
@@ -1612,10 +1521,7 @@ class TestPass41_9ATrackViewAuthz:
         )
 
     def test_completion_uses_permission_decorator(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'routes/games.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('routes/games.py')
         idx = body.find('def api_update_completion(')
         assert idx != -1, "api_update_completion not found"
         preamble = body[max(0, idx - 300):idx]
@@ -1642,10 +1548,7 @@ class TestPass41_9BPerUserViews:
         )
 
     def test_track_view_upserts_user_game_views(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'routes/games.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('routes/games.py')
         # Strip comments so the explanatory comment doesn't false-positive.
         code_only = '\n'.join(
             line.split('#', 1)[0]
@@ -1665,10 +1568,7 @@ class TestPass41_9BPerUserViews:
         """Dashboard's recently-viewed query must JOIN user_game_views with
         a `WHERE v.user_id = ?` filter — proves the cross-user leak is
         closed at the read site, not just the write site."""
-        body = open(
-            os.path.join(_REPO_ROOT, 'app.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('app.py')
         # Grab the recently_viewed query text by anchoring around the
         # `recently_viewed = query` assignment.
         idx = body.find('recently_viewed = query')
@@ -1828,10 +1728,7 @@ class TestPass41_6BPersistOutsideLock:
     lock, then releases the lock before the persist call."""
 
     def test_alt_titles_backfill_persists_outside_lock(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'services/jobs/alt_titles_backfill.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('services/jobs/alt_titles_backfill.py')
         # The Pass 41.6.B marker comment is the contract.
         assert 'Pass 41.6.B' in body, (
             "alt_titles_backfill.py must carry the Pass 41.6.B marker"
@@ -1851,10 +1748,7 @@ class TestPass41_6BPersistOutsideLock:
         )
 
     def test_hltb_bulk_persists_outside_lock(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'services/jobs/hltb_bulk.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('services/jobs/hltb_bulk.py')
         assert 'Pass 41.6.B' in body, (
             "hltb_bulk.py must carry the Pass 41.6.B marker"
         )
@@ -1881,10 +1775,7 @@ class TestPass41_6CPsnFetchCancelEvent:
     on its next iteration."""
 
     def test_fetch_cancelled_event_present(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'services/jobs/psn_refresh.py'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('services/jobs/psn_refresh.py')
         assert 'fetch_cancelled = threading.Event()' in body, (
             "Pass 41.6.C — psn_refresh.py must define a threading.Event "
             "for cancellation of the inner _fetch_titles thread"
@@ -1912,10 +1803,7 @@ class TestPass41_13cDivAsButton:
     label-for-input."""
 
     def test_rom_tools_hub_tool_cards_are_buttons(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'templates/rom_tools_hub.html'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('templates/rom_tools_hub.html')
         # The three onclick-driven cards must be <button>, not <div>.
         for handler in ('startImageResize', 'startAltTitlesBackfill', 'startHltbBulk'):
             assert f'<button type="button" class="tool-card" onclick="{handler}()"' in body, (
@@ -1928,10 +1816,7 @@ class TestPass41_13cDivAsButton:
         )
 
     def test_base_version_info_is_button(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'templates/base.html'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('templates/base.html')
         assert '<button type="button" class="version-info"' in body, (
             "Pass 41.13c — sidebar version-info About-trigger must be a <button>"
         )
@@ -1940,10 +1825,7 @@ class TestPass41_13cDivAsButton:
         )
 
     def test_base_folder_browser_items_are_buttons(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'templates/base.html'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('templates/base.html')
         # The folder-item rows are rendered from a JS template literal in
         # base.html; both parent and child rows should be buttons.
         assert '<button type="button" class="folder-item folder-parent"' in body, (
@@ -1954,10 +1836,7 @@ class TestPass41_13cDivAsButton:
         )
 
     def test_game_detail_scrape_history_uses_button_with_aria_expanded(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'templates/game_detail.html'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('templates/game_detail.html')
         assert '<button type="button" class="scrape-history-toggle"' in body, (
             "Pass 41.13c — scrape-history disclosure must be a <button>"
         )
@@ -1971,10 +1850,7 @@ class TestPass41_13cDivAsButton:
         )
 
     def test_duplicate_finder_group_header_is_button(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'templates/duplicate_finder.html'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('templates/duplicate_finder.html')
         assert '<button type="button" class="duplicate-group-toggle"' in body, (
             "Pass 41.13c — duplicate group header must be a <button> "
             "(disclosure pattern)"
@@ -1989,10 +1865,7 @@ class TestPass41_13cDivAsButton:
         )
 
     def test_screenshot_dedup_game_header_is_button(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'templates/screenshot_dedup.html'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('templates/screenshot_dedup.html')
         assert "class=\"game-dedup-toggle\"" in body, (
             "Pass 41.13c — screenshot-dedup game header must be a <button> "
             "with class 'game-dedup-toggle'"
@@ -2007,10 +1880,7 @@ class TestPass41_13cDivAsButton:
         )
 
     def test_game_imports_clz_upload_area_is_label(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'templates/game_imports.html'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('templates/game_imports.html')
         # The upload area triggers a hidden file input — proper semantic
         # is <label for="...">, not <div onclick=document.getElementById...click()>.
         assert '<label class="upload-area" id="clzUploadArea" for="clzFileInput">' in body, (
@@ -2030,10 +1900,7 @@ class TestPass41_13cLabelAsGroupHeading:
     aria-labelledby="..."` on the wrapper containing the buttons."""
 
     def test_wishlist_priority_label_promoted(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'templates/wishlist.html'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('templates/wishlist.html')
         assert '<div class="form-label" id="wishlistPriorityLabel">Priority</div>' in body, (
             "Pass 41.13c — wishlist Priority label-as-heading must be a "
             "<div class=\"form-label\">"
@@ -2048,26 +1915,17 @@ class TestPass41_13cLabelAsGroupHeading:
         )
 
     def test_lists_icon_label_promoted(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'templates/lists.html'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('templates/lists.html')
         assert '<div class="form-label" id="listIconLabel">Icon</div>' in body
         assert 'role="group" aria-labelledby="listIconLabel"' in body
 
     def test_tags_color_label_promoted(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'templates/tags.html'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('templates/tags.html')
         assert '<div class="form-label" id="tagColorLabel">Tag Color</div>' in body
         assert 'role="group" aria-labelledby="tagColorLabel"' in body
 
     def test_logs_level_view_labels_promoted(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'templates/logs.html'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('templates/logs.html')
         # logs uses the toolbar's group-label class to preserve toolbar styling.
         assert '<span class="group-label" id="logLevelLabel">Level</span>' in body
         assert '<span class="group-label" id="logViewLabel">View</span>' in body
@@ -2075,36 +1933,24 @@ class TestPass41_13cLabelAsGroupHeading:
         assert 'aria-labelledby="logViewLabel"' in body
 
     def test_chd_converter_file_types_label_promoted(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'templates/chd_converter.html'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('templates/chd_converter.html')
         assert '<div class="form-label" id="chdFileTypesLabel">File Types to Convert</div>' in body
         assert 'aria-labelledby="chdFileTypesLabel"' in body
 
     def test_rom_tools_settings_group_labels_promoted(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'templates/rom_tools_settings.html'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('templates/rom_tools_settings.html')
         assert 'id="chdConversionOptionsLabel">Conversion Options</div>' in body
         assert 'aria-labelledby="chdConversionOptionsLabel"' in body
         assert 'id="duplicateFinderDefaultsLabel">Default Options</div>' in body
         assert 'aria-labelledby="duplicateFinderDefaultsLabel"' in body
 
     def test_duplicate_finder_options_label_promoted(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'templates/duplicate_finder.html'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('templates/duplicate_finder.html')
         assert '<div class="form-label" id="duplicateFinderOptionsLabel">Options</div>' in body
         assert 'aria-labelledby="duplicateFinderOptionsLabel"' in body
 
     def test_rename_modal_current_filename_not_label(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'templates/_modals/rename_modal.html'),
-            encoding='utf-8'
-        ).read()
+        body = read_source('templates/_modals/rename_modal.html')
         assert '<div class="form-label">Current filename:</div>' in body, (
             "Pass 41.13c — \"Current filename:\" must be a <div>, not a "
             "<label> (no form control to associate)"

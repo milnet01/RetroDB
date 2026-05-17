@@ -90,3 +90,4 @@ class TestMergeAltTitles:
         assert merged[0]["region"] == "JP"
         assert merged[0]["source"] == "igdb"
         assert merged[1]["region"] == "US"
+        assert merged[1]["source"] == "screenscraper"

@@ -12,6 +12,22 @@ from __future__ import annotations
 import os
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
+import pytest  # noqa: E402
+
 # Re-export shared utilities so test files can `from tests._util import ...`
 # without each one re-computing REPO_ROOT and inserting sys.path.
-from tests._util import REPO_ROOT, read_source, slice_function, count_except_blocks  # noqa: E402,F401
+from tests._util import REPO_ROOT, read_source, read_module_source, slice_function, count_except_blocks  # noqa: E402,F401
+
+
+@pytest.fixture
+def app_client(monkeypatch):
+    """Function-scoped Flask test client with TESTING=True restored on teardown.
+
+    Replaces the verbatim per-module 'client' fixture inlined in
+    test_routes_smoke.py and test_security_headers.py. Function-scoped (not
+    module-scoped) so monkeypatch is available — the consolidated pattern
+    matches every other client-needing test in the suite.
+    """
+    import app as app_module
+    monkeypatch.setitem(app_module.app.config, 'TESTING', True)
+    yield app_module.app.test_client()

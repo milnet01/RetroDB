@@ -26,15 +26,12 @@
 
 from __future__ import annotations
 
-import os
-import sys
-
 import pytest
 
-
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _REPO_ROOT not in sys.path:
-    sys.path.insert(0, _REPO_ROOT)
+# `_util` performs the sys.path insert + REPO_ROOT computation centrally so the
+# repo-root modules this file imports (scraper.scan_roms, services.rom_scanner)
+# resolve. `read_source` replaces the open()-and-read source-grep boilerplate.
+from tests._util import read_source
 
 
 # -----------------------------------------------------------------------------
@@ -153,9 +150,7 @@ class TestScanRomsImportTimeBinding:
     function body instead."""
 
     def test_scan_roms_does_not_bind_rom_path_at_import(self):
-        path = os.path.join(_REPO_ROOT, 'scraper', 'scan_roms.py')
-        with open(path, encoding='utf-8') as f:
-            src = f.read()
+        src = read_source('scraper/scan_roms.py')
         assert 'from config import ROM_PATH' not in src, (
             'scraper/scan_roms.py must NOT bind ROM_PATH at import time — '
             'config.ROM_PATH is the hardcoded `""` default and is never '
@@ -166,9 +161,7 @@ class TestScanRomsImportTimeBinding:
     def test_rom_scanner_does_not_read_config_rom_path_directly(self):
         """The inline fallback in services/rom_scanner.py had the same bug:
         `rom_path = config.ROM_PATH` reads the hardcoded `""` default."""
-        path = os.path.join(_REPO_ROOT, 'services', 'rom_scanner.py')
-        with open(path, encoding='utf-8') as f:
-            src = f.read()
+        src = read_source('services/rom_scanner.py')
         assert 'rom_path = config.ROM_PATH' not in src, (
             'services/rom_scanner.py must resolve rom_path via '
             'settings_manager.get_effective_path, not by reading the '

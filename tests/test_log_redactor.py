@@ -1,28 +1,47 @@
 """Tests for the SecretRedactor log filter."""
 
 import logging
+
+import pytest
+
 from services.log_redactor import redact, SecretRedactor
 
 
 class TestRedactPatterns:
     def test_jwt_is_redacted(self):
+        # Kept separate because it asserts both "<redacted-jwt>" in output
+        # AND the original JWT not in output — dual assertion doesn't fit
+        # the (input, secret, tag) shape cleanly.
         jwt = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NSIsIm5hbWUiOiJhYWFhIn0.abc123DEF456ghi"
         assert "<redacted-jwt>" in redact(f"got token {jwt} from idp")
         assert jwt not in redact(f"got token {jwt} from idp")
 
-    def test_access_token_json_field_is_redacted(self):
-        payload = '{"access_token": "super-secret-value-1234", "token_type": "Bearer"}'
-        out = redact(payload)
-        assert "super-secret-value-1234" not in out
-        assert "<redacted>" in out
-
-    def test_authorization_header_is_redacted(self):
-        line = "Request: Authorization: Bearer abc.def.ghi"
-        out = redact(line)
-        assert "abc.def.ghi" not in out
-        assert "<redacted>" in out
+    @pytest.mark.parametrize(
+        'input_str,secret,tag',
+        [
+            (
+                '{"access_token": "super-secret-value-1234", "token_type": "Bearer"}',
+                'super-secret-value-1234',
+                '<redacted>',
+            ),
+            (
+                'Request: Authorization: Bearer abc.def.ghi',
+                'abc.def.ghi',
+                '<redacted>',
+            ),
+        ],
+        ids=['access_token_json_field', 'authorization_header'],
+    )
+    def test_secret_token_patterns_are_redacted(self, input_str, secret, tag):
+        """Pin the `secret NOT IN out` + `tag IN out` invariant across all
+        token-shaped patterns. New patterns: add a row, not a test."""
+        out = redact(input_str)
+        assert secret not in out
+        assert tag in out
 
     def test_apikey_query_param_is_redacted(self):
+        # Kept separate — also asserts non-secret query params survive,
+        # which is a positive preservation check the others don't have.
         url = "https://api.example.com/search?apikey=ABCD1234&q=zelda"
         out = redact(url)
         assert "ABCD1234" not in out

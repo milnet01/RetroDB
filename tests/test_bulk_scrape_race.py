@@ -43,6 +43,10 @@ def job_with_real_thread():
     # so tests don't contend with the production server's flock on
     # `<DB_DIR>/job_locks/bulk_scrape.lock`. See the matching comment in
     # tests/test_bulk_scrape_job.py for the full rationale.
+    # TODO: extract patch stanza — this 7-line block is duplicated verbatim in
+    # tests/test_bulk_scrape_job.py (the `job` fixture). Refactor into a shared
+    # helper (conftest.py or tests/_bulk_scrape_fixtures.py) so adding a new
+    # persistence helper in `bulk_scrape_mod` only needs one update site.
     with patch.object(bulk_scrape_mod, '_get_conn', return_value=mem_db), \
          patch.object(bulk_scrape_mod, 'persist_job_start', return_value=None), \
          patch.object(bulk_scrape_mod, 'persist_job_progress', return_value=None), \
@@ -174,3 +178,11 @@ class TestDemoteJobOrdering:
                 f"Demoted job should be on the queue exactly once; "
                 f"got _queue={job._queue!r}"
             )
+
+            # Release the promoted worker thread so it can exit cleanly.
+            # After demote_running() promotes the next queued job, a new
+            # worker enters slow_worker's loop on worker_can_exit.wait();
+            # without this set() it would spin (daemon thread) for the
+            # remainder of the pytest session. Mirrors the swap test cleanup
+            # at line 121.
+            worker_can_exit.set()

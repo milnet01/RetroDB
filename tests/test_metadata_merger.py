@@ -111,10 +111,7 @@ class TestApplyTgdb:
 # ---------------------------------------------------------------------------
 
 class TestApplyIgdb:
-    def test_fills_empty_text_fields(self, blank):
-        # Renamed from test_fills_basic_text_fields → test_fills_empty_text_fields
-        # so the naming matches the TGDB / RAWG / ScreenScraper counterparts
-        # (audit LOW naming finding).
+    def test_fills_empty_text_fields_including_company_mapping(self, blank):
         meta, result = blank
         igdb = {
             'name': 'Halo: Combat Evolved',
@@ -389,6 +386,24 @@ class TestApplyAi:
         meta['description'] = 'Original desc'
         apply_ai_to_metadata(meta, {'description': 'AI override'}, db_game_id=1, result=result, fill_only=True)
         assert meta['description'] == 'Original desc'
+
+    def test_apply_ai_fill_only_false_overwrites_existing_fields(self, blank):
+        """fill_only=False is the overwrite path — pre-existing values get
+        replaced. Mirrors the TGDB `test_fill_only_false_overwrites_title`
+        for the AI source so a regression that silently flips the default
+        back to fill-only would fail loudly."""
+        meta, result = blank
+        meta['description'] = 'Original desc'
+        meta['publisher'] = 'Original pub'
+        apply_ai_to_metadata(
+            meta,
+            {'description': 'AI override', 'publisher': 'AI pub'},
+            db_game_id=1,
+            result=result,
+            fill_only=False,
+        )
+        assert meta['description'] == 'AI override'
+        assert meta['publisher'] == 'AI pub'
 
     def test_validate_fields_always_applied_even_when_fill_only(self, blank):
         # VALIDATE_FIELDS (from scrape_ai) always override — AI is treated as

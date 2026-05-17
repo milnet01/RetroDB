@@ -23,12 +23,9 @@ from __future__ import annotations
 
 import ast
 import os
-import sys
+import re
 
-
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _REPO_ROOT not in sys.path:
-    sys.path.insert(0, _REPO_ROOT)
+from tests._util import REPO_ROOT as _REPO_ROOT
 
 
 def _strip_docstrings(src: str) -> str:
@@ -84,7 +81,14 @@ class TestHLTBEndpointPin:
     def test_search_url_points_to_bleed(self):
         src = self._read_source()
         # Two POSTs to /api/bleed — initial search + token-refresh retry.
-        assert src.count('"/api/bleed"') + src.count("'/api/bleed'") + src.count('/api/bleed') >= 3, (
+        # Strict regex: match `/api/bleed` followed immediately by a closing
+        # quote (single or double). That excludes `/api/bleed/init` (which
+        # would have a `/` after `bleed`) — the bug the looser substring
+        # count had: every `/api/bleed/init` line incremented the bare
+        # `src.count('/api/bleed')` total, so a file with zero search calls
+        # and three init lines would still pass.
+        bleed_full_path_hits = re.findall(r"/api/bleed['\"]", src)
+        assert len(bleed_full_path_hits) >= 2, (
             'scraper/hltb_lookup.py must POST to /api/bleed for the search '
             'call (and again in the token-expired retry branch). The init '
             'and search endpoints rename in lockstep, so updating one and '

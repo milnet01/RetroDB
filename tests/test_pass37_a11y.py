@@ -101,18 +101,25 @@ def test_37_2_psn_trophies_modals_activate_focus_trap():
     src = read_source('templates/psn_trophies.html')
     # Pass 37.2 marker comments are fine but not required; what matters is that
     # ModalFocusTrap.activate is called for both syncModal and bulkRefreshModal,
-    # with matching deactivate on close paths. Lower bound was `>= 4` for
-    # deactivate; actual count grew to 7 (sync + bulk + error + open/close paths).
-    # Tighten to a balanced equality check — any drop in deactivate calls is now
-    # caught instead of silently degrading the focus-trap teardown coverage.
-    assert src.count('ModalFocusTrap.activate') == 2, (
-        f"Expected 2 ModalFocusTrap.activate calls (sync+bulk); "
-        f"got {src.count('ModalFocusTrap.activate')}"
+    # with matching deactivate on close paths.
+    #
+    # Lower-bound rather than exact-count assertions so adding a third modal
+    # or an extra close path (e.g. new error branch) doesn't flip the test
+    # red — the contract is "trap is always activated and always released
+    # on every close path," not "exactly N call sites" (test-audit ACCURACY
+    # fix).
+    activate_count = src.count('ModalFocusTrap.activate')
+    deactivate_count = src.count('ModalFocusTrap.deactivate')
+    assert activate_count >= 2, (
+        f"Expected at least 2 ModalFocusTrap.activate calls "
+        f"(sync + bulk modal); got {activate_count}"
     )
-    assert src.count('ModalFocusTrap.deactivate') == 7, (
-        f"Expected 7 ModalFocusTrap.deactivate calls "
-        f"(sync open/close+esc, bulk open/close+esc, error path); "
-        f"got {src.count('ModalFocusTrap.deactivate')}"
+    # Each activate should have at least 2 deactivate paths: close button
+    # + Escape/error. `>= activate_count * 2` is the structural floor.
+    assert deactivate_count >= activate_count * 2, (
+        f"Expected at least {activate_count * 2} ModalFocusTrap.deactivate "
+        f"calls (>=2 per activate: close button + esc/error path); "
+        f"got {deactivate_count}"
     )
 
 

@@ -1,6 +1,5 @@
 # Pass 44 — ProcessRegistry: token registry + GC.
-import time
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -56,34 +55,38 @@ def test_find_by_game_returns_running(registry, fake_proc):
 
 
 def test_gc_removes_exited_after_ttl(registry):
-    """Exited entries linger for post_exit_ttl_s, then are GC'd."""
+    """Exited entries linger for post_exit_ttl_s, then are GC'd.
+
+    Anchor TTL math to a frozen clock — `time.time()` jitter on a loaded CI
+    runner could otherwise corrupt the cutoff arithmetic. Patches
+    `services.launcher.registry.time.time` (the only call site that the
+    test exercises in `gc()`).
+    """
     exited_proc = MagicMock()
     exited_proc.poll.return_value = 1
     exited_proc.returncode = 1
     exited_proc.pid = 1
-    # Single wall-clock baseline keeps start/exit offsets internally consistent
-    # even if time.time() stalls or jitters between the two calls.
-    t = time.time()
+    t = 10_000.0
     registry.register(token='gone', proc=exited_proc, game_id=1, emulator_id=1,
                       started_at=t - 3.0)
     registry._mark_exited('gone', exit_time=t - 2.0)  # 2s ago, ttl=1.0
 
-    registry.gc()
+    with patch('services.launcher.registry.time.time', return_value=t):
+        registry.gc()
     assert registry.get('gone') is None
 
 
 def test_gc_keeps_recent_exited(registry):
+    """Frozen clock — exit was at `t`, GC runs at `t`, so cutoff = t - ttl
+    is strictly less than exit_time and the entry is preserved."""
     proc = MagicMock()
     proc.poll.return_value = 0
     proc.returncode = 0
     proc.pid = 1
-    # Single baseline — twin time.time() calls could yield exit_time >
-    # started_at + post_exit_ttl_s under CI scheduler jitter, making the
-    # entry GC'd immediately. Mirror the sibling test_gc_removes_exited_after_ttl
-    # fix from v3.6.8.
-    t = time.time()
+    t = 10_000.0
     registry.register(token='recent', proc=proc, game_id=1, emulator_id=1,
                       started_at=t)
     registry._mark_exited('recent', exit_time=t)
-    registry.gc()
+    with patch('services.launcher.registry.time.time', return_value=t):
+        registry.gc()
     assert registry.get('recent') is not None

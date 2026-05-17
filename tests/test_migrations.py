@@ -20,6 +20,11 @@ from services import migrations
 
 
 def _open(path):
+    # NOTE: a near-twin exists in tests/test_pass31_migrations.py with
+    # `conn.row_factory = sqlite3.Row` set. Kept separate intentionally —
+    # this file's tests use positional row access (row[0]), the other
+    # uses name access (row['col']). Don't merge without auditing both
+    # call patterns.
     return sqlite3.connect(path)
 
 
@@ -241,8 +246,8 @@ class TestUpdatedAtTriggers:
             # Parse rather than lex-compare so a future trigger format change
             # (precision drop, missing Z, etc.) fails loudly instead of silently
             # returning the wrong order.
-            before = datetime.fromisoformat(first[0].rstrip('Z'))
-            after = datetime.fromisoformat(second[0].rstrip('Z'))
+            before = datetime.fromisoformat(first[0].replace('Z', '+00:00'))
+            after = datetime.fromisoformat(second[0].replace('Z', '+00:00'))
             assert after > before, \
                 f"updated_at did not advance: before={first[0]!r} after={second[0]!r}"
 

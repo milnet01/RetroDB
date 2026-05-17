@@ -35,6 +35,43 @@ def _get_esde_media_path():
 logger = logging.getLogger(__name__)
 
 
+def _allowed_esde_roots(gamelist_dir=None, esde_base=None, downloaded_media_base=None):
+    """Return realpath roots that ES-DE media paths must sit under.
+
+    Lifted to module scope (was a closure inside apply_esde_metadata)
+    so the path-traversal guard is directly importable from tests.
+    """
+    roots = []
+    for p in (gamelist_dir, esde_base, downloaded_media_base,
+              _get_esde_media_path(), _get_rom_path()):
+        if p:
+            try:
+                roots.append(os.path.realpath(p))
+            except OSError:
+                continue
+    return roots
+
+
+def _within_allowed_root(candidate, allowed_roots):
+    """Return True iff `candidate` resolves under one of `allowed_roots`.
+
+    Lifted to module scope from apply_esde_metadata so the test suite
+    can exercise the Pass 25.1 ES-DE path-traversal guard without
+    reaching into a nested closure.
+    """
+    try:
+        resolved = os.path.realpath(candidate)
+    except OSError:
+        return False
+    for root in allowed_roots:
+        try:
+            if os.path.commonpath([resolved, root]) == root:
+                return True
+        except ValueError:
+            continue
+    return False
+
+
 # =============================================================================
 # PLATFORM NAME NORMALIZATION
 # =============================================================================
@@ -805,38 +842,16 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None, existing_boxa
         # `IMAGE_PATH`. We now verify the resolved path sits under an
         # allowlist of known ES-DE / ROM roots via `os.path.commonpath`,
         # which handles `..` segments and symlinks-as-components correctly.
-        def _allowed_esde_roots():
-            roots = []
-            for p in (gamelist_dir, esde_base, downloaded_media_base,
-                      _get_esde_media_path(), _get_rom_path()):
-                if p:
-                    try:
-                        roots.append(os.path.realpath(p))
-                    except OSError:
-                        continue
-            return roots
-
-        def _within_allowed_root(candidate):
-            try:
-                resolved = os.path.realpath(candidate)
-            except OSError:
-                return False
-            for root in _allowed_esde_roots():
-                try:
-                    if os.path.commonpath([resolved, root]) == root:
-                        return True
-                except ValueError:
-                    # commonpath raises when paths are on different drives
-                    # (Windows) or one is relative — skip, not a match.
-                    continue
-            return False
+        def _check_allowed(candidate):
+            roots = _allowed_esde_roots(gamelist_dir, esde_base, downloaded_media_base)
+            return _within_allowed_root(candidate, roots)
 
         def resolve_media_path(media_path):
             if not media_path:
                 return None
 
             if media_path.startswith('/'):
-                if os.path.exists(media_path) and _within_allowed_root(media_path):
+                if os.path.exists(media_path) and _check_allowed(media_path):
                     return media_path
                 if os.path.exists(media_path):
                     logger.warning(
@@ -858,7 +873,7 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None, existing_boxa
 
             for base in possible_bases:
                 full_path = os.path.join(base, media_path)
-                if os.path.exists(full_path) and _within_allowed_root(full_path):
+                if os.path.exists(full_path) and _check_allowed(full_path):
                     logger.info(f"  Found media at: {full_path}")
                     return full_path
 

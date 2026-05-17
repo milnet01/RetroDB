@@ -5,49 +5,40 @@
 import pytest
 
 
-@pytest.fixture(scope="module")
-def client():
-    import app as app_module
-    # Snapshot + restore — monkeypatch is not available in module-scoped fixtures,
-    # and a bare assignment would leak TESTING=True to every subsequent module.
-    _orig_testing = app_module.app.config.get('TESTING', False)
-    app_module.app.config['TESTING'] = True
-    try:
-        with app_module.app.test_client() as c:
-            yield c
-    finally:
-        app_module.app.config['TESTING'] = _orig_testing
+# Note: the `app_client` fixture lives in tests/conftest.py — function-scoped
+# (not module-scoped) so monkeypatch is available. Tests that previously took
+# `client` now take `app_client`.
 
 
 class TestLegacyHeadersStillPresent:
     """The three baseline headers from Pass 11 must remain."""
 
-    def test_content_type_options(self, client):
-        resp = client.get('/health')
+    def test_content_type_options(self, app_client):
+        resp = app_client.get('/health')
         assert resp.headers.get('X-Content-Type-Options') == 'nosniff'
 
-    def test_frame_options(self, client):
-        resp = client.get('/health')
+    def test_frame_options(self, app_client):
+        resp = app_client.get('/health')
         assert resp.headers.get('X-Frame-Options') == 'SAMEORIGIN'
 
-    def test_referrer_policy(self, client):
-        resp = client.get('/health')
+    def test_referrer_policy(self, app_client):
+        resp = app_client.get('/health')
         assert resp.headers.get('Referrer-Policy') == 'strict-origin-when-cross-origin'
 
 
 class TestXxssProtectionRemoved:
     """16.1: The deprecated X-XSS-Protection header must not be sent."""
 
-    def test_xxss_protection_absent(self, client):
-        resp = client.get('/health')
+    def test_xxss_protection_absent(self, app_client):
+        resp = app_client.get('/health')
         assert 'X-XSS-Protection' not in resp.headers
 
 
 class TestPermissionsPolicy:
     """16.3: Opt out of browser APIs RetroDB never uses."""
 
-    def test_permissions_policy_present(self, client):
-        resp = client.get('/health')
+    def test_permissions_policy_present(self, app_client):
+        resp = app_client.get('/health')
         assert 'Permissions-Policy' in resp.headers
 
     @pytest.mark.parametrize("feature", [
@@ -55,11 +46,11 @@ class TestPermissionsPolicy:
         'payment', 'usb', 'interest-cohort',
         'browsing-topics',
     ])
-    def test_permissions_policy_disables_sensors(self, client, feature):
+    def test_permissions_policy_disables_sensors(self, app_client, feature):
         # Parametrized so each feature is its own pytest node — a regression
         # that drops 3 of the 7 features shows all three failures at once
         # instead of stopping at the first.
-        resp = client.get('/health')
+        resp = app_client.get('/health')
         pp = resp.headers['Permissions-Policy']
         assert f'{feature}=()' in pp, f"{feature} not disabled in Permissions-Policy"
 
@@ -67,48 +58,44 @@ class TestPermissionsPolicy:
 class TestHstsEnvGated:
     """16.4: HSTS only when SESSION_COOKIE_SECURE is on (TLS in front)."""
 
-    def test_hsts_absent_on_plain_http(self, client, monkeypatch):
+    def test_hsts_absent_on_plain_http(self, app_client, monkeypatch):
         # Default test config has SESSION_COOKIE_SECURE=False
         import app as app_module
         monkeypatch.setitem(app_module.app.config, 'SESSION_COOKIE_SECURE', False)
-        resp = client.get('/health')
+        resp = app_client.get('/health')
         assert 'Strict-Transport-Security' not in resp.headers
 
-    def test_hsts_present_when_secure_cookies_enabled(self, client):
+    def test_hsts_present_when_secure_cookies_enabled(self, app_client, monkeypatch):
         import app as app_module
-        original = app_module.app.config.get('SESSION_COOKIE_SECURE')
-        try:
-            app_module.app.config['SESSION_COOKIE_SECURE'] = True
-            resp = client.get('/health')
-            hsts = resp.headers.get('Strict-Transport-Security', '')
-            assert 'max-age=' in hsts
-            assert 'includeSubDomains' in hsts
-        finally:
-            app_module.app.config['SESSION_COOKIE_SECURE'] = original
+        monkeypatch.setitem(app_module.app.config, 'SESSION_COOKIE_SECURE', True)
+        resp = app_client.get('/health')
+        hsts = resp.headers.get('Strict-Transport-Security', '')
+        assert 'max-age=' in hsts
+        assert 'includeSubDomains' in hsts
 
 
 class TestCspReportOnly:
     """16.2: CSP ships in Report-Only until template migration is done."""
 
-    def test_csp_report_only_present(self, client):
-        resp = client.get('/health')
+    def test_csp_report_only_present(self, app_client):
+        resp = app_client.get('/health')
         assert 'Content-Security-Policy-Report-Only' in resp.headers
 
-    def test_csp_enforcing_not_sent(self, client):
+    def test_csp_enforcing_not_sent(self, app_client):
         """While templates still use inline handlers, the enforcing header
         must stay absent — otherwise pages would break silently."""
-        resp = client.get('/health')
+        resp = app_client.get('/health')
         assert 'Content-Security-Policy' not in resp.headers
 
-    def test_csp_has_nonce(self, client):
-        resp = client.get('/health')
+    def test_csp_has_nonce(self, app_client):
+        resp = app_client.get('/health')
         csp = resp.headers['Content-Security-Policy-Report-Only']
         assert "'nonce-" in csp
 
-    def test_csp_nonce_changes_per_request(self, client):
+    def test_csp_nonce_changes_per_request(self, app_client):
         import re
-        resp1 = client.get('/health')
-        resp2 = client.get('/health')
+        resp1 = app_client.get('/health')
+        resp2 = app_client.get('/health')
         pat = re.compile(r"'nonce-([^']+)'")
         csp1 = resp1.headers['Content-Security-Policy-Report-Only']
         csp2 = resp2.headers['Content-Security-Policy-Report-Only']
@@ -123,14 +110,14 @@ class TestCspReportOnly:
         'img-src', 'font-src', 'connect-src',
         'frame-ancestors', 'base-uri', 'form-action',
     ])
-    def test_csp_includes_core_directives(self, client, directive):
+    def test_csp_includes_core_directives(self, app_client, directive):
         # Parametrized so multi-directive regressions show all failures at once.
-        resp = client.get('/health')
+        resp = app_client.get('/health')
         csp = resp.headers['Content-Security-Policy-Report-Only']
         assert directive in csp, f"Missing directive: {directive}"
 
-    def test_csp_blocks_objects(self, client):
-        resp = client.get('/health')
+    def test_csp_blocks_objects(self, app_client):
+        resp = app_client.get('/health')
         csp = resp.headers['Content-Security-Policy-Report-Only']
         assert "object-src 'none'" in csp
 
@@ -158,7 +145,7 @@ class TestCspNonceInTemplateContext:
             )
             assert len(rendered) >= 20  # token_urlsafe(16) is ~22 chars
 
-    def test_response_header_nonce_matches_template_nonce(self, client):
+    def test_response_header_nonce_matches_template_nonce(self, app_client):
         """End-to-end pair: a real request's CSP header nonce must equal the
         Jinja-rendered nonce for the same request. Captures the value via a
         per-request before_request hook so we don't rely on /health rendering
@@ -168,18 +155,19 @@ class TestCspNonceInTemplateContext:
         import flask
         captured = {}
 
-        # Use a one-shot after_request hook to capture g.csp_nonce for this
-        # request only. monkeypatch isn't needed — the hook is wrapped in a
-        # try/finally that pops it off the app's deferred-callbacks list.
+        # Use a one-shot before_request hook to capture g.csp_nonce for this
+        # request only. We save a reference to the appended function and
+        # remove by value (not positional pop) so a concurrent test that
+        # also mutated `before_request_funcs[None]` between append and
+        # cleanup can't cause us to remove the wrong entry.
         def _capture():
             captured['nonce'] = flask.g.get('csp_nonce', '')
-        app_module.app.before_request_funcs.setdefault(None, []).append(
-            lambda: _capture()
-        )
+        appended_fn = _capture
+        app_module.app.before_request_funcs.setdefault(None, []).append(appended_fn)
         try:
-            resp = client.get('/health')
+            resp = app_client.get('/health')
         finally:
-            app_module.app.before_request_funcs[None].pop()
+            app_module.app.before_request_funcs[None].remove(appended_fn)
 
         csp = resp.headers.get('Content-Security-Policy-Report-Only', '')
         m = re.search(r"'nonce-([^']+)'", csp)

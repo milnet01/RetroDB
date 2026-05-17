@@ -4,9 +4,12 @@
 # they're not trying to reproduce the full end-to-end flow, only to ensure
 # the guard is in place and rejects the value it's supposed to reject.
 
+import os
 from unittest.mock import patch, MagicMock
 
 import pytest
+
+from tests._util import slice_function, read_module_source
 
 
 def _fake_http_response(status_code=200, headers=None):
@@ -25,37 +28,21 @@ def _fake_http_response(status_code=200, headers=None):
 
 # 25.1 — ES-DE path-traversal guard
 # ---------------------------------
-# The resolve_media_path() helper is defined inside apply_esde_metadata,
-# so we can't import it directly. Instead, verify the module-level
-# helpers exist and that the allowlist-based commonpath check rejects
-# an obvious traversal (/etc/passwd) when given a realistic root.
+# `_within_allowed_root` and `_allowed_esde_roots` were lifted to module
+# scope in scrape_esde.py (Pass 25.1) precisely so the path-traversal
+# guard could be exercised directly from tests instead of mirrored.
 class TestESDEPathTraversal:
     def test_within_allowed_root_rejects_outside_paths(self, tmp_path):
-        allowed_root = str(tmp_path)
-        # Build a tiny helper that mirrors the _within_allowed_root logic
-        # verbatim — keeps the test self-contained and avoids the nested
-        # closure scope of the real helper.
-        import os as _os
+        from scraper.scrape_esde import _within_allowed_root
 
-        def check(candidate, roots):
-            try:
-                resolved = _os.path.realpath(candidate)
-            except OSError:
-                return False
-            for root in roots:
-                try:
-                    if _os.path.commonpath([resolved, root]) == root:
-                        return True
-                except ValueError:
-                    continue
-            return False
+        allowed_root = os.path.realpath(str(tmp_path))
 
-        assert check(str(tmp_path / 'legit.png'), [allowed_root]) is True
+        assert _within_allowed_root(str(tmp_path / 'legit.png'), [allowed_root]) is True
         # Absolute outside path — rejected
-        assert check('/etc/passwd', [allowed_root]) is False
+        assert _within_allowed_root('/etc/passwd', [allowed_root]) is False
         # Traversal that escapes the root — rejected
         escape = str(tmp_path / '..' / '..' / '..' / 'etc' / 'passwd')
-        assert check(escape, [allowed_root]) is False
+        assert _within_allowed_root(escape, [allowed_root]) is False
 
 
 # 25.2 — /api/reports system whitelist
@@ -69,14 +56,22 @@ class TestReportsSystemWhitelist:
         # for sibling tests (xdist-safe).
         monkeypatch.setitem(app_module.app.config, 'TESTING', True)
         client = app_module.app.test_client()
+        # Inject a session that satisfies both the @login_required guard
+        # (user_id present) and the @app.before_request CSRF token check
+        # (_csrf_token + matching X-CSRF-Token header on POST).
+        csrf_token = 'test-csrf-token'
         with client.session_transaction() as sess:
             sess['user_id'] = 1
+            sess['_csrf_token'] = csrf_token
         resp = client.post(
             '/api/reports/multidisc-scan',
             json={'system': '../../etc'},
+            headers={'X-CSRF-Token': csrf_token},
         )
-        # Either 400 (whitelist working) or 302 (not authed on fresh CI DB).
-        assert resp.status_code in (400, 302, 403)
+        # 400 = whitelist working. If 302/403 shows up the auth/CSRF bypass
+        # isn't taking — that's a setup gap to fix, not a reason to widen
+        # this assertion.
+        assert resp.status_code == 400
 
 
 # 25.3 — Museum SSRF guard
@@ -126,7 +121,7 @@ class TestMuseumSSRFGuard:
         safe_url, pinned_ip, err = _is_public_https_url('http://[::1]/admin')
         assert safe_url is None
         assert pinned_ip is None
-        assert err  # any non-empty rejection reason
+        assert err.startswith('disallowed IP range:'), err
 
     def test_ipv6_link_local_rejected(self):
         """IPv6 link-local (`fe80::/10`) maps to the IPv4 169.254.0.0/16
@@ -135,7 +130,7 @@ class TestMuseumSSRFGuard:
         safe_url, pinned_ip, err = _is_public_https_url('http://[fe80::1]/foo')
         assert safe_url is None
         assert pinned_ip is None
-        assert err
+        assert err.startswith('disallowed IP range:'), err
 
 
 # 25.4 — Museum upload size cap
@@ -171,13 +166,18 @@ class TestCLZPDFBounds:
 
     def test_try_finally_cleanup(self):
         """The route now wraps pdfplumber.open in try/finally so tmp_path
-        is deleted on exception paths, not just success paths."""
+        is deleted on exception paths, not just success paths.
+
+        Slice the api_clz_parse body so the assertion can't pass on
+        unrelated try/finally blocks elsewhere in the file (clz_import
+        has at least two `finally:` blocks — lines 412 and 646).
+        """
         import routes.clz_import as mod
-        with open(mod.__file__, encoding='utf-8') as f:
-            src = f.read()
-        # Verify the try/finally structure is present
-        assert 'finally:' in src
-        assert 'os.unlink(tmp_path)' in src
+        src = read_module_source(mod)
+        slice_src = slice_function(src, 'api_clz_parse')
+        assert slice_src, 'api_clz_parse not found in routes/clz_import.py'
+        assert 'finally:' in slice_src
+        assert 'os.unlink(tmp_path)' in slice_src
 
 
 # 25.6 — MAX_VIDEO_SIZE

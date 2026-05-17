@@ -25,16 +25,16 @@ def app_with_manifest(tmp_path):
         # Snapshot + restore the module-level cache so a failed test doesn't
         # leak its populated state to siblings (xdist-safe). Direct dict
         # assignment can't be wrapped by monkeypatch — use the surrounding
-        # try/finally instead.
-        _orig_mtime = assets._MANIFEST_CACHE.get('mtime', 0)
-        _orig_data = dict(assets._MANIFEST_CACHE.get('data', {}))
+        # try/finally instead. Snapshot the entire dict so future cache keys
+        # (e.g. `etag`) are preserved without per-key book-keeping.
+        _orig_cache = dict(assets._MANIFEST_CACHE)
         assets._MANIFEST_CACHE['mtime'] = 0
         assets._MANIFEST_CACHE['data'] = {}
         try:
             yield app, manifest
         finally:
-            assets._MANIFEST_CACHE['mtime'] = _orig_mtime
-            assets._MANIFEST_CACHE['data'] = _orig_data
+            assets._MANIFEST_CACHE.clear()
+            assets._MANIFEST_CACHE.update(_orig_cache)
 
 
 class TestAssetUrl:

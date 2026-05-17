@@ -26,17 +26,12 @@
 
 import os
 import re
-import sys
 
 import pytest
 
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _REPO_ROOT not in sys.path:
-    sys.path.insert(0, _REPO_ROOT)
-
 # c-006 DU-1: collapse ~15 inlined `open(mod.__file__).read()` + index-slice
 # patterns onto shared helpers so a file rename fails one place, not 15.
-from tests._util import read_module_source, read_source, slice_function  # noqa: E402, F401
+from tests._util import REPO_ROOT as _REPO_ROOT, read_module_source, read_source, slice_function  # noqa: E402, F401
 
 
 # -----------------------------------------------------------------------------
@@ -567,7 +562,9 @@ class TestPass40_3ArchiveScannerM3u:
             json={'path': str(outside)},
         )
         # Either rejected (400) or auth-blocked (302/403); never reached scanner.
-        assert resp.status_code in (400, 302, 403, 500), \
+        # 500 is intentionally excluded — that would be an unhandled error, not
+        # a valid security outcome.
+        assert resp.status_code in (400, 302, 403), \
             f"unexpected: {resp.status_code}"
         assert str(outside) not in called_with, \
             'scanner.create_m3u_playlist invoked with out-of-library path'
@@ -633,47 +630,40 @@ class TestPass40_5CardDataEtagPerUser:
 # -----------------------------------------------------------------------------
 class TestPass40_6PlayersNormalization:
     """Helper rejects junk strings, normalizes ranges to max, returns None
-    for the absent / invalid case so COALESCE preserves curated values."""
+    for the absent / invalid case so COALESCE preserves curated values.
 
-    def test_none_returns_none(self):
-        from services.game_utils import normalize_players_value
-        assert normalize_players_value(None) is None
+    c-005 VERB fix: collapsed from 9 single-assertion methods into one
+    parametrized table — input vector + expected output now visible at a
+    glance, and a new case is one row to add."""
 
-    def test_empty_string_returns_none(self):
+    @pytest.mark.parametrize("value,expected", [
+        # None / empty / whitespace → None (clear / absent)
+        (None, None),
+        ('', None),
+        ('   ', None),
+        # Plain ints pass through
+        (1, 1),
+        (4, 4),
+        # Zero / "0" → None (no game has zero players)
+        (0, None),
+        ('0', None),
+        # Numeric strings
+        ('1', 1),
+        ('  4  ', 4),
+        # Ranges → max
+        ('1-4', 4),
+        ('2-8', 8),
+        ('1-16', 16),
+        # Garbage strings → None (so COALESCE preserves curated)
+        ('many', None),
+        ('1.0e9', None),
+        # Bools are not valid player counts
+        (True, None),
+        (False, None),
+    ])
+    def test_normalize_players_value(self, value, expected):
         from services.game_utils import normalize_players_value
-        assert normalize_players_value('') is None
-        assert normalize_players_value('   ') is None
-
-    def test_int_passthrough(self):
-        from services.game_utils import normalize_players_value
-        assert normalize_players_value(1) == 1
-        assert normalize_players_value(4) == 4
-
-    def test_zero_returns_none(self):
-        from services.game_utils import normalize_players_value
-        assert normalize_players_value(0) is None
-        assert normalize_players_value('0') is None
-
-    def test_string_int(self):
-        from services.game_utils import normalize_players_value
-        assert normalize_players_value('1') == 1
-        assert normalize_players_value('  4  ') == 4
-
-    def test_range_takes_max(self):
-        from services.game_utils import normalize_players_value
-        assert normalize_players_value('1-4') == 4
-        assert normalize_players_value('2-8') == 8
-        assert normalize_players_value('1-16') == 16
-
-    def test_garbage_string_returns_none(self):
-        from services.game_utils import normalize_players_value
-        assert normalize_players_value('many') is None
-        assert normalize_players_value('1.0e9') is None
-
-    def test_bool_rejected(self):
-        from services.game_utils import normalize_players_value
-        assert normalize_players_value(True) is None
-        assert normalize_players_value(False) is None
+        assert normalize_players_value(value) == expected
 
 
 # Note: IGDB/TGDB `players = None` initialisation is functionally covered
@@ -864,11 +854,12 @@ class TestPass40_9ImageResizeJobBaseConvention:
 
         job = mod.ImageResizeJob()
         job.start(image_types=['boxart'])
-        # 2 s ceiling matches the prior poll budget; in practice this returns
-        # within a couple of ms because the worker exits as soon as the empty
-        # image set finishes enumerating.
-        assert done.wait(timeout=2.0), (
-            f"worker did not signal completion within 2 s; counts: {called!r}"
+        # 5 s ceiling matches other worker tests (was 2 s; bumped after c-005
+        # flakiness audit flagged the OS scheduler hazard on heavily-loaded CI).
+        # In practice this returns within a couple of ms because the worker
+        # exits as soon as the empty image set finishes enumerating.
+        assert done.wait(timeout=5.0), (
+            f"worker did not signal completion within 5 s; counts: {called!r}"
         )
         assert called['start'] >= 1, (
             f"persist_job_start must fire on worker entry (Pass 40.9); "
@@ -1019,10 +1010,7 @@ class TestPass40_12ToastControllerXss:
     Only the system_name escape pin lives here — no other test covers it."""
 
     def test_system_name_escaped(self):
-        import os
-        repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        path = os.path.join(repo, 'static', 'js', 'toast-controller.js')
-        src = open(path).read()
+        src = read_source('static/js/toast-controller.js')
         # The Queued-toast block: subtitle should not raw-interpolate
         # job.system_name — it must go through escapeHtml.
         assert '${job.system_name || \'Multi-System\'}' not in src, \
@@ -1042,10 +1030,7 @@ class TestPass40_13ShowModalOptInHtml:
         """The live `if (message.includes('<') && message.includes('>'))`
         branch must be gone.  We strip `// ...` comments before scanning so
         a Pass 40.13 doc-block referencing the old heuristic is allowed."""
-        import os, re
-        repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        path = os.path.join(repo, 'templates', 'base.html')
-        src = open(path).read()
+        src = read_source('templates/base.html')
         idx = src.index('function showModal(')
         end = src.index('function modalKeyHandler', idx)
         body = src[idx:end]
@@ -1055,10 +1040,7 @@ class TestPass40_13ShowModalOptInHtml:
             'showModal must not auto-detect HTML via the includes() heuristic (Pass 40.13)'
 
     def test_options_param_with_allowhtml(self):
-        import os
-        repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        path = os.path.join(repo, 'templates', 'base.html')
-        src = open(path).read()
+        src = read_source('templates/base.html')
         idx = src.index('function showModal(')
         end = src.index('function modalKeyHandler', idx)
         body = src[idx:end]
@@ -1076,20 +1058,14 @@ class TestPass40_14PsnTrophyDetailXss:
     .replace() that didn't protect HTML attribute decoding."""
 
     def test_inline_onclick_linkgame_removed(self):
-        import os
-        repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        path = os.path.join(repo, 'templates', 'psn_trophy_detail.html')
-        src = open(path).read()
+        src = read_source('templates/psn_trophy_detail.html')
         # The dangerous inline onclick was:
         #   onclick="linkGame(${game.id}, '${game.title.replace...}', ...)"
         assert "onclick=\"linkGame(${game.id}" not in src, \
             'inline onclick="linkGame(...)" must use addEventListener (Pass 40.14)'
 
     def test_search_results_use_escape(self):
-        import os
-        repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        path = os.path.join(repo, 'templates', 'psn_trophy_detail.html')
-        src = open(path).read()
+        src = read_source('templates/psn_trophy_detail.html')
         # The search-results loop must call esc() / escAttr().
         idx = src.index('for (const game of data.results)')
         # bound to the next async function
@@ -1203,10 +1179,7 @@ class TestPass40_16ProxyDeployDocs:
             'docs/PROXY-DEPLOY.md must exist (Pass 40.16)'
 
     def test_doc_covers_required_sections(self):
-        import os
-        repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        path = os.path.join(repo, 'docs', 'PROXY-DEPLOY.md')
-        body = open(path).read()
+        body = read_source('docs/PROXY-DEPLOY.md')
         # Must mention every load-bearing header / config knob.
         for needle in (
             'X-Forwarded-For', 'RETRODB_TRUST_PROXY', 'ProxyFix',

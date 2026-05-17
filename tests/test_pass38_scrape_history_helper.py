@@ -11,6 +11,7 @@
 import json
 import re
 import sqlite3
+from datetime import datetime, timedelta
 
 import pytest
 
@@ -69,6 +70,16 @@ class TestBuildScrapeHistoryJson:
         assert isinstance(entry['timestamp'], str)
         assert re.match(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}', entry['timestamp']), (
             f"timestamp must be ISO-8601, got {entry['timestamp']!r}"
+        )
+        # c-005 LOW fix: recency check — format-only pin would pass for a
+        # hardcoded epoch string like "2000-01-01T00:00:00". Assert the
+        # timestamp is within the last 5 seconds (the helper writes
+        # datetime.now() so a fresh write must satisfy this).
+        assert datetime.fromisoformat(entry['timestamp']) > (
+            datetime.now() - timedelta(seconds=5)
+        ), (
+            f"timestamp must be fresh, got {entry['timestamp']!r} "
+            "(more than 5 s in the past suggests a hardcoded value)"
         )
 
     def test_subsequent_scrape_appends_to_existing_history(self, connection):

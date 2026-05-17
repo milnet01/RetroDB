@@ -21,10 +21,7 @@ import sys
 
 import pytest
 
-
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _REPO_ROOT not in sys.path:
-    sys.path.insert(0, _REPO_ROOT)
+from tests._util import REPO_ROOT as _REPO_ROOT  # noqa: F401
 
 
 class TestPass46_3_DevModeInvariant:
@@ -53,13 +50,42 @@ class TestPass46_3_DevModeInvariant:
             assert config.DB_PATH == os.path.join(config.BASE_DIR, "database", "roms.db")
 
 
+# Modules that snapshot `config.BASE_DIR` at import time. When the frozen-mode
+# test rewrites BASE_DIR, every one of these must be evicted from sys.modules
+# so a fresh import re-runs the path-anchoring code. Shared between the
+# frozen-mode test and the reloaded_app fixture.
+_CONFIG_DEPENDENT_MODULES = (
+    "config", "settings_manager", "log_manager", "routes.scraper", "app",
+)
+
+
+@pytest.fixture
+def evict_config_modules():
+    """Pop every config-dependent module from sys.modules before the test, and
+    again on teardown so frozen-mode paths can't leak into subsequent tests.
+
+    c-005 deferred #4 fix: extracted from the manual eviction boilerplate that
+    used to live inline in test_split_takes_effect_when_frozen. The fixture's
+    teardown half also doesn't re-import — re-importing config here would
+    snapshot the still-monkeypatched sys.frozen / sys._MEIPASS state and leak
+    the temp BASE_DIR forward. The next `import config` happens after the
+    monkeypatch stack unwinds, which gets the real dev-mode paths."""
+    for mod in _CONFIG_DEPENDENT_MODULES:
+        sys.modules.pop(mod, None)
+    yield
+    for mod in _CONFIG_DEPENDENT_MODULES:
+        sys.modules.pop(mod, None)
+
+
 class TestPass46_3_FrozenModeSplit:
     """Simulate `getattr(sys, 'frozen', False) is True` and confirm the
     split kicks in: BASE_DIR moves to dirname(sys.executable), BUNDLE_DIR
     moves to sys._MEIPASS, IMAGE_PATH stays anchored to BASE_DIR while
     STATIC_PATH follows BUNDLE_DIR."""
 
-    def test_split_takes_effect_when_frozen(self, tmp_path, monkeypatch):
+    def test_split_takes_effect_when_frozen(
+        self, tmp_path, monkeypatch, evict_config_modules,
+    ):
         launcher_dir = tmp_path / "launcher"
         meipass_dir = tmp_path / "_internal"
         launcher_dir.mkdir()
@@ -73,32 +99,15 @@ class TestPass46_3_FrozenModeSplit:
         # Avoid the env override polluting the assertion.
         monkeypatch.delenv("RETRODB_DB_PATH", raising=False)
 
-        # Force a fresh import so the module-level frozen check re-runs.
-        # Dependent modules (settings_manager, log_manager, routes.scraper,
-        # app) snapshot config.BASE_DIR at their own import time, so they
-        # must be evicted alongside config — both before this test
-        # (otherwise stale dev-mode paths leak in) and after (otherwise
-        # frozen-mode paths leak into subsequent tests).
-        _to_evict = ("config", "settings_manager", "log_manager",
-                     "routes.scraper", "app")
-        for mod in _to_evict:
-            sys.modules.pop(mod, None)
-        try:
-            config = importlib.import_module("config")
-            assert config.BASE_DIR == str(launcher_dir)
-            assert config.BUNDLE_DIR == str(meipass_dir)
-            assert config.STATIC_PATH == os.path.join(str(meipass_dir), "static")
-            assert config.IMAGE_PATH == os.path.join(str(launcher_dir), "static", "images")
-            assert config.DB_PATH == os.path.join(str(launcher_dir), "database", "roms.db")
-        finally:
-            # Evict the cached frozen-mode modules so the next caller
-            # re-imports them after pytest unwinds the monkeypatch stack
-            # (sys.frozen / sys._MEIPASS / sys.executable).  Re-importing
-            # config here would snapshot the still-monkeypatched sys state
-            # and leak the temp BASE_DIR into subsequent tests; the next
-            # `import config` (post-teardown) does the right thing.
-            for mod in _to_evict:
-                sys.modules.pop(mod, None)
+        # evict_config_modules has already popped the snapshot-prone modules
+        # both before and (on teardown) after this test. Re-import config now
+        # so the module-level frozen check re-runs against the patched sys.
+        config = importlib.import_module("config")
+        assert config.BASE_DIR == str(launcher_dir)
+        assert config.BUNDLE_DIR == str(meipass_dir)
+        assert config.STATIC_PATH == os.path.join(str(meipass_dir), "static")
+        assert config.IMAGE_PATH == os.path.join(str(launcher_dir), "static", "images")
+        assert config.DB_PATH == os.path.join(str(launcher_dir), "database", "roms.db")
 
 
 class TestPass46_3_DependentModulesFollowConfig:

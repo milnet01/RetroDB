@@ -1,7 +1,35 @@
 # Pass 44 — emulator registry CRUD route tests.
 import pytest
 
-from tests._util import read_source
+
+# Module-level sentinels: hardcoded test values, kept in one place so the
+# token literal in the session and the X-CSRF-Token header can't drift, and
+# so the rom_path stub is clearly a fake (won't accidentally pass any
+# real-directory existence check the route might grow).
+_CSRF_TOKEN = 'tok'
+_FAKE_ROM_PATH = '/nonexistent/rom-path-stub'
+
+
+def _make_client(monkeypatch, role):
+    """Build a Flask test client logged in as the given role.
+
+    Shared by `admin_client` and `viewer_client` fixtures — both tests need
+    identical session + monkeypatch wiring, only the role string differs.
+    The source-grep `test_mutating_routes_require_admin` check was removed
+    in favour of the HTTP-level viewer-blocked tests below: a source grep
+    for `@admin_required` passes if the decorator appears anywhere in the
+    file, even on a read-only route, so it provided false confidence.
+    """
+    import app as app_module
+    monkeypatch.setattr('app.get_current_user',
+                        lambda: {'id': 1, 'username': role, 'role': role})
+    monkeypatch.setattr('app.get_user_settings', lambda _uid: {})
+    monkeypatch.setattr('app.settings_manager.load_settings',
+                        lambda: {'setup_completed': True, 'rom_path': _FAKE_ROM_PATH})
+    client = app_module.app.test_client()
+    with client.session_transaction() as sess:
+        sess['_csrf_token'] = _CSRF_TOKEN
+    return client
 
 
 def test_emulator_routes_registered():
@@ -11,14 +39,6 @@ def test_emulator_routes_registered():
     assert '/api/emulators/<int:emulator_id>' in rules
     assert '/api/system_emulators' in rules
     assert '/api/emulators/for-system/<int:system_id>' in rules
-
-
-def test_mutating_routes_require_admin():
-    """POST/PUT/DELETE handlers should be admin-only."""
-    src = read_source('routes/emulators.py')
-    # Each mutating handler must be decorated with @admin_required
-    # (or @permission_required('manage_settings')).
-    assert '@admin_required' in src or "permission_required('manage_settings')" in src
 
 
 def test_unauth_list_blocked():
@@ -32,19 +52,14 @@ def test_unauth_list_blocked():
 class TestEmulatorCRUD:
     @pytest.fixture
     def admin_client(self, monkeypatch):
-        import app as app_module
-        monkeypatch.setattr('app.get_current_user',
-                            lambda: {'id': 1, 'username': 'admin', 'role': 'admin'})
-        monkeypatch.setattr('app.get_user_settings', lambda _uid: {})
-        monkeypatch.setattr('app.settings_manager.load_settings',
-                            lambda: {'setup_completed': True, 'rom_path': '/tmp'})
-        client = app_module.app.test_client()
-        with client.session_transaction() as sess:
-            sess['_csrf_token'] = 'tok'
-        return client
+        return _make_client(monkeypatch, 'admin')
+
+    @pytest.fixture
+    def viewer_client(self, monkeypatch):
+        return _make_client(monkeypatch, 'viewer')
 
     def _csrf(self):
-        return {'X-CSRF-Token': 'tok'}
+        return {'X-CSRF-Token': _CSRF_TOKEN}
 
     def test_admin_can_list(self, admin_client, monkeypatch):
         monkeypatch.setattr('routes.emulators.query',
@@ -106,32 +121,14 @@ class TestEmulatorCRUD:
         assert 'DELETE FROM emulators' in captured['sql']
         assert 7 in captured['args']
 
-    def test_viewer_cannot_create(self, monkeypatch):
-        import app as app_module
-        monkeypatch.setattr('app.get_current_user',
-                            lambda: {'id': 1, 'username': 'v', 'role': 'viewer'})
-        monkeypatch.setattr('app.get_user_settings', lambda _uid: {})
-        monkeypatch.setattr('app.settings_manager.load_settings',
-                            lambda: {'setup_completed': True, 'rom_path': '/tmp'})
-        client = app_module.app.test_client()
-        with client.session_transaction() as sess:
-            sess['_csrf_token'] = 'tok'
-        rv = client.post('/api/emulators',
-                         json={'name': 'X', 'binary_name': 'x', 'args_template': '{rom}'},
-                         headers={'X-CSRF-Token': 'tok'})
+    def test_viewer_cannot_create(self, viewer_client):
+        rv = viewer_client.post('/api/emulators',
+                                json={'name': 'X', 'binary_name': 'x', 'args_template': '{rom}'},
+                                headers=self._csrf())
         # admin_required redirects non-admins
         assert rv.status_code in (302, 403)
 
-    def test_viewer_cannot_delete(self, monkeypatch):
-        import app as app_module
-        monkeypatch.setattr('app.get_current_user',
-                            lambda: {'id': 1, 'username': 'v', 'role': 'viewer'})
-        monkeypatch.setattr('app.get_user_settings', lambda _uid: {})
-        monkeypatch.setattr('app.settings_manager.load_settings',
-                            lambda: {'setup_completed': True, 'rom_path': '/tmp'})
-        client = app_module.app.test_client()
-        with client.session_transaction() as sess:
-            sess['_csrf_token'] = 'tok'
-        rv = client.delete('/api/emulators/7', headers={'X-CSRF-Token': 'tok'})
+    def test_viewer_cannot_delete(self, viewer_client):
+        rv = viewer_client.delete('/api/emulators/7', headers=self._csrf())
         # admin_required redirects non-admins
         assert rv.status_code in (302, 403)

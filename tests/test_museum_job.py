@@ -84,8 +84,9 @@ class TestResumeFromParams:
                 progress={'current': 3, 'success': 2, 'failed': 1, 'skipped': 0},
             )
             assert ok is True
-            assert worker_finished.wait(timeout=2.0), \
-                f"Worker thread did not finish within 2s; job state: {job.get_status()!r}"
+            # generous wall-clock guard, not a timing assertion
+            assert worker_finished.wait(timeout=10.0), \
+                f"Worker thread did not finish within 10s; job state: {job.get_status()!r}"
 
         assert seen_resume_index['value'] == 3
         assert seen_resume_index['success'] == 2
@@ -127,8 +128,9 @@ class TestResumeFromParams:
             assert ok is True, \
                 "resume_from_params returned False — singleton lock likely " \
                 "held by an earlier test that didn't release it"
-            assert worker_finished.wait(timeout=2.0), \
-                f"Worker thread did not finish within 2s; job state: {job.get_status()!r}"
+            # generous wall-clock guard, not a timing assertion
+            assert worker_finished.wait(timeout=10.0), \
+                f"Worker thread did not finish within 10s; job state: {job.get_status()!r}"
 
         assert seen['resume_index'] == 0
         assert seen['success'] == 0
@@ -138,7 +140,11 @@ class TestResumeFromParams:
     def test_resume_refuses_when_already_running(self):
         from services.jobs.museum import MuseumGenerateJob
         job = MuseumGenerateJob()
-        job.running = True
+        # Set under the lock so we exercise the same code path the
+        # production `resume_from_params` uses to read `self.running`
+        # (test-audit ISO finding: don't bypass _lock in tests).
+        with job._lock:
+            job.running = True
 
         ok = job.resume_from_params(
             params={'system_ids': [1], 'overwrite': False},

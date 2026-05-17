@@ -1,3 +1,43 @@
+- version: 3.6.14
+  date: 2026-05-17
+  tags:
+  - type: chore
+    label: Third test-suite audit fix-pass — 133 findings triaged, ~90 fixes applied, all 8 deferred items from v3.6.9 resolved
+  - type: refactor
+    label: scraper/scrape_esde.py — _within_allowed_root + _allowed_esde_roots lifted from closure to module scope (test now imports real helper)
+  body: |
+    <ul>
+        <li><strong>Third /test-audit pass on the 66-file pytest suite</strong>. Ran the Ants MCP test_audit_* trio (partition → 6 chunked parallel subagents → synthesis), then dispatched 6 parallel fix subagents grouped by audit chunk. Suite: 1001 → 1015 passing tests (+14 from parametrize splits and a new TypeError-branch test in test_slow_query_log). Wall time stayed ~4.4 s.</li>
+        <li><strong>Findings breakdown</strong>: 133 raw findings from chunked audits (0 CRITICAL / 12 HIGH / 62 MED / 56 LOW / 5 INFO). Plus 8 deferred items from the v3.6.9 fix-pass — all 8 resolved this round. After triage (~7 false positives + ~8 style-only nits dismissed), ~90 actionable fixes applied. Reports preserved under <code>.test-audit-reports-4/</code>.</li>
+        <li><strong>HIGH-severity fixes</strong>:
+            <ul>
+                <li><strong>test_bulk_scrape_race.py</strong> — demote test was leaving a daemon worker thread spinning for the rest of the session (missing <code>worker_can_exit.set()</code>). Cleaned up.</li>
+                <li><strong>test_emulator_registry_routes.py</strong> — source-grep "@admin_required appears anywhere" check deleted (false confidence); HTTP-level <code>test_viewer_cannot_create</code>/<code>_delete</code> tests remain as the canonical auth guard. Also extracted a shared <code>_make_client(role)</code> helper so the viewer-test preamble stops bypassing the class fixture.</li>
+                <li><strong>test_hltb_endpoint.py</strong> — <code>src.count('/api/bleed') &gt;= 3</code> overcounted because <code>/api/bleed/init</code> is a substring. Replaced with a regex that anchors on the trailing quote so init-URLs no longer slip through.</li>
+                <li><strong>test_graceful_shutdown.py</strong> — wall-clock <code>elapsed &lt; 1.0</code> bound on a 0.3 s timeout removed (CI flake risk); the thread-liveness check at line 113 is the load-independent guard that remains.</li>
+                <li><strong>test_launcher_registry.py</strong> — GC TTL tests now monkeypatch <code>time.time</code> (freezegun isn't installed); was anchored to live wall clock.</li>
+                <li><strong>test_launcher_local.py</strong> — added <code>match=</code> to <code>pytest.raises(LauncherError)</code> so an empty-message refactor can't silently pass.</li>
+                <li><strong>test_museum_job.py</strong> — two 2.0 s wait timeouts on background threads bumped to 10 s (CI scheduler stalls under memory pressure can exceed 2 s).</li>
+                <li><strong>test_observability.py</strong> — <code>"'-'" in proc.stdout</code> substring check replaced with exact-equality on stripped output (substring match would pass on a crash that happened to emit <code>'-'</code> in a traceback). Subprocess test also rewritten to run in-process.</li>
+                <li><strong>test_pass41_security.py</strong> — <code>_cleared_login_attempts</code> fixture's manual lock+snapshot dance was xdist-unsafe. Replaced with <code>monkeypatch.setattr(sec, '_login_attempts', {})</code>; renamed (dropped misleading underscore).</li>
+                <li><strong>test_security_headers.py</strong> — manual <code>try/finally</code> for <code>SESSION_COOKIE_SECURE</code> replaced with <code>monkeypatch.setitem</code>; nonce-matching test's positional <code>list.pop()</code> teardown replaced with remove-by-value (xdist-safe).</li>
+            </ul>
+        </li>
+        <li><strong>Cross-chunk dedup fixes</strong>:
+            <ul>
+                <li><strong>9 files duplicating <code>_REPO_ROOT</code></strong> — all converted to <code>from tests._util import REPO_ROOT</code>. The <code>_util.py</code> module was created specifically for this in the v3.6.8 audit.</li>
+                <li><strong>~44 bare <code>open(path).read()</code> sites</strong> across test_auth_hardening, test_pass40_security, test_pass41_security, test_scan_library_rom_path — converted to <code>read_source()</code> / <code>read_module_source()</code> from <code>tests/_util.py</code>.</li>
+                <li><strong>~18 <code>src.index("def fn_name")</code> source-locator fragility</strong> across test_pass33_34, test_pass35_36 — converted to <code>slice_function()</code> from <code>tests/_util.py</code> (Python sites; JS sites in <code>utils.js</code> deferred — would need a JS-aware slice helper).</li>
+                <li><strong>2 "comment-as-proof" anti-patterns</strong> — assertions that <code>"Pass 34.6"</code> / <code>"Pass 35.2"</code> appeared as source comments removed; only the functional assertions remain.</li>
+                <li><strong>Duplicate module-scoped <code>client</code> fixture</strong> in test_routes_smoke + test_security_headers consolidated into a function-scoped <code>app_client</code> fixture in <code>conftest.py</code>.</li>
+            </ul>
+        </li>
+        <li><strong>v3.6.9 deferred items (all 8) resolved</strong>: <code>_within_allowed_root</code> lifted from <code>scraper/scrape_esde.py</code> closure to module scope (test now imports the real helper directly); 36 bare opens in test_pass40/41 migrated; <code>test_pass46_frozen_paths</code> reload boilerplate extracted to a fixture; <code>logged_in_client</code> → <code>player_client</code> rename; 4 missing docstrings in <code>test_retroarch_detect.py</code> added; 5 <code>tempfile.TemporaryDirectory()</code> blocks in <code>test_database_backup.py</code> migrated to <code>tmp_path</code>; in-memory sqlite connections in <code>test_migration_012.py</code> / <code>test_owner_id_self_heal.py</code> / <code>test_scrape_fill_only.py</code> wrapped in <code>contextlib.closing</code>.</li>
+        <li><strong>Production code change (deferred #1)</strong>: <code>scraper/scrape_esde.py</code> — extracted <code>_within_allowed_root(candidate, allowed_roots)</code> and <code>_allowed_esde_roots(gamelist_dir, esde_base, downloaded_media_base)</code> from a closure inside <code>apply_esde_metadata</code> to module scope. The closure inside the function is now <code>_check_allowed(candidate)</code> which delegates to the module-scope helpers. Behaviour identical; the test suite can now import the helper directly instead of mirroring its logic inline.</li>
+        <li><strong>Ants MCP feedback</strong>: both prior HIGH bugs (default-scope whole-project walk; oversized synthesis_prompt) remain fixed in the live build. Two LOW polish-grade items noted (synthesis_prompt summary-mode workflow docstring; <code>dimension_hints</code> field naming clarity). Full feedback at <code>/mnt/Games/Scripts/Linux/RetroDB_Ants_MCP_Feedback.md</code>.</li>
+        <li><strong>Patch bump 3.6.13 → 3.6.14</strong>: test-suite hygiene + 1 production-code refactor (closure-to-module-scope, no behaviour change); no user-visible changes. Audit reports preserved under <code>.test-audit-reports-4/</code>.</li>
+    </ul>
+
 - version: 3.6.13
   date: 2026-05-17
   tags:

@@ -18,20 +18,27 @@ import pytest
 # 32.1 — validate_settings_path: parametrised rejection cases (test-audit SPLIT-1)
 # -----------------------------------------------------------------------------
 @pytest.mark.parametrize('bad_path,expected_substring', [
-    ('/etc', 'protected'),
-    ('/', None),
-    ('not-absolute', None),
-    ('/nonexistent/path/xyz', None),
+    ('/etc', 'protected'),                  # in _FORBIDDEN_ROOTS
+    ('/', 'protected'),                     # also in _FORBIDDEN_ROOTS
+    ('not-absolute', 'absolute'),           # `must be an absolute path`
+    ('/nonexistent/path/xyz', 'exist'),     # `directory does not exist`
 ])
 def test_32_1_validate_settings_path_rejects_forbidden(bad_path, expected_substring):
     """Each forbidden-input case is its own test node so a single failure
-    doesn't mask the others (test-audit SPLIT-1)."""
+    doesn't mask the others (test-audit SPLIT-1).
+
+    `expected_substring` is asserted for every case so a wrong rejection
+    reason (e.g. a copy-paste mistake that says `'must be absolute'` for
+    a non-existent path) can't slip through — the reason string is part
+    of the UX (test-audit PARAMETRISATION fix)."""
     from services.security import validate_settings_path
 
     ok, reason = validate_settings_path(bad_path, allow_empty=True)
     assert not ok
-    if expected_substring is not None:
-        assert expected_substring in reason
+    assert expected_substring in reason, (
+        f"rejected {bad_path!r} but reason {reason!r} doesn't mention "
+        f"{expected_substring!r}"
+    )
 
 
 def test_32_1_validate_settings_path_accepts_empty():
@@ -121,15 +128,18 @@ def test_32_2_every_default_setting_has_validator():
         assert default_key in keys, f"missing validator for {default_key}"
 
 
-def test_32_6_ssrf_validate_rejects_private():
+@pytest.mark.parametrize('url', [
+    'http://127.0.0.1/',              # IPv4 loopback
+    'http://10.0.0.1/',               # RFC1918
+    'http://169.254.169.254/latest/meta-data/',  # AWS IMDS / link-local
+])
+def test_32_6_ssrf_validate_rejects_private(url):
+    """Each forbidden host gets its own pytest node so a first-case
+    failure doesn't mask the others (test-audit SPLIT)."""
     from services.ssrf import validate_outbound_url
 
-    ok, reason, _ = validate_outbound_url('http://127.0.0.1/')
-    assert not ok
-    ok, reason, _ = validate_outbound_url('http://10.0.0.1/')
-    assert not ok
-    ok, reason, _ = validate_outbound_url('http://169.254.169.254/latest/meta-data/')
-    assert not ok
+    ok, _reason, _ = validate_outbound_url(url)
+    assert not ok, f"SSRF validator should reject {url!r}"
 
 
 def test_32_6_ssrf_validate_rejects_ipv6_private():

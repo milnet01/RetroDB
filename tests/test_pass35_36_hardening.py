@@ -64,8 +64,9 @@ def test_35_1_fsync_helper_exists_and_handles_missing_path():
 def test_35_2_atomic_write_json_fsync_dir(tmp_path):
     """Source-level check — verify the fsync path is wired in the source."""
     src = read_source(os.path.join('services', 'atomic_io.py'))
-    # Comment marker AND the fsync(directory_fd) call.
-    assert "Pass 35.2" in src
+    # The fsync-the-parent-directory idiom — load-bearing assertion.
+    # (Previously also asserted a "Pass 35.2" comment marker; that
+    # was comment-as-proof and got removed in the test-audit fix-pass.)
     assert "os.open(directory, os.O_RDONLY)" in src
 
 

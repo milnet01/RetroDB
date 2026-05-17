@@ -8,9 +8,6 @@
 # (partial 4/4) extracted the trio into a single helper.
 # =============================================================================
 
-from tests._util import REPO_ROOT as _REPO_ROOT  # noqa: F401
-
-
 class TestNormalizeRatings:
     def test_esrb_normalized_before_cross_map(self):
         """KA → E (deprecated ESRB tag → modern equivalent). Cross-map then

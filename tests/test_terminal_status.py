@@ -5,37 +5,37 @@ final and not recoverable) so `mark_jobs_interrupted` at startup can see
 the running rows again.
 """
 
+import pytest
+
 from services.jobs.base import resolve_terminal_status, shutdown_requested
 
 
-def test_clean_completion_returns_completed():
-    """A job that finishes without cancellation maps to 'completed'."""
+@pytest.fixture(autouse=True)
+def reset_shutdown_event():
+    """Ensure every test sees a cleared `shutdown_requested` event, regardless
+    of leakage from a prior test that set it and failed before its own cleanup
+    ran. Clearing on both sides of the yield protects subsequent tests too."""
     shutdown_requested.clear()
-    assert resolve_terminal_status(cancelled=False) == 'completed'
-
-
-def test_user_cancel_returns_cancelled():
-    """A user-initiated cancel (no shutdown pending) maps to 'cancelled' — final."""
+    yield
     shutdown_requested.clear()
-    assert resolve_terminal_status(cancelled=True) == 'cancelled'
 
 
-def test_shutdown_takes_precedence_over_user_cancel():
-    """During SIGTERM drain, j.cancel() sets self.cancelled = True, so the
-    terminal branch sees both signals. Shutdown must win — the row stays
-    recoverable for the next startup's sweep rather than being filed as
-    a final user cancel."""
-    shutdown_requested.set()
-    try:
-        assert resolve_terminal_status(cancelled=True) == 'interrupted'
-        assert resolve_terminal_status(cancelled=False) == 'interrupted'
-    finally:
-        shutdown_requested.clear()
-
-
-def test_event_clear_restores_normal_mapping():
-    """Clearing shutdown_requested returns the mapping to its non-shutdown shape."""
-    shutdown_requested.set()
-    shutdown_requested.clear()
-    assert resolve_terminal_status(cancelled=False) == 'completed'
-    assert resolve_terminal_status(cancelled=True) == 'cancelled'
+@pytest.mark.parametrize("set_event,cancelled,expected", [
+    # Clean completion — no shutdown, not cancelled — maps to 'completed'.
+    (False, False, 'completed'),
+    # User-initiated cancel — no shutdown pending — maps to final 'cancelled'.
+    (False, True, 'cancelled'),
+    # SIGTERM drain — shutdown set, j.cancel() also flipped cancelled=True.
+    # Shutdown must win so the row stays recoverable for the next startup
+    # sweep rather than being filed as a final user cancel.
+    (True, True, 'interrupted'),
+    # SIGTERM drain on a job that hadn't been user-cancelled yet — same
+    # interrupted outcome.
+    (True, False, 'interrupted'),
+])
+def test_resolve_terminal_status_mapping(set_event, cancelled, expected):
+    """Truth table for resolve_terminal_status across the (shutdown × cancelled)
+    matrix. Shutdown overrides the user-cancel signal in both columns."""
+    if set_event:
+        shutdown_requested.set()
+    assert resolve_terminal_status(cancelled=cancelled) == expected

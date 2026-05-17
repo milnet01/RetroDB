@@ -58,6 +58,11 @@ def job():
     # invokes `start()` returns `success=False` with "already running on
     # another worker". The sentinel `0` is later passed to
     # `release_job_singleton_lock(0)` which is a documented no-op.
+    # TODO: extract patch stanza — this 7-line block is duplicated verbatim in
+    # tests/test_bulk_scrape_race.py (the `job_with_real_thread` fixture).
+    # Refactor into a shared helper (conftest.py or tests/_bulk_scrape_fixtures.py)
+    # so adding a new persistence helper in `bulk_scrape_mod` only needs one
+    # update site.
     with patch.object(bulk_scrape_mod, '_get_conn', return_value=mem_db), \
          patch.object(bulk_scrape_mod, 'persist_job_start', return_value=None), \
          patch.object(bulk_scrape_mod, 'persist_job_progress', return_value=None), \

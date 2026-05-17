@@ -18,20 +18,62 @@ from collections import OrderedDict
 import pytest
 
 # REPO_ROOT/sys.path setup is centralised in tests/_util.py (test-audit DUP-1).
-from tests._util import REPO_ROOT, read_source
+from tests._util import REPO_ROOT, read_source, slice_function
+
+
+# -----------------------------------------------------------------------------
+# 33.1 — ProxyFix env-gated
+# -----------------------------------------------------------------------------
+def test_33_1_proxyfix_wired_under_flag():
+    src = read_source('app.py')
+    assert "RETRODB_TRUST_PROXY" in src
+    assert "ProxyFix(app.wsgi_app" in src
 
 
 # -----------------------------------------------------------------------------
 # 33.2 — avatar no longer in api_user_settings allowlist
 # -----------------------------------------------------------------------------
 def test_33_2_avatar_not_in_allowed_fields():
+    import ast
+
     src = read_source(os.path.join('routes', 'auth.py'))
-    # The allowlist string must not contain 'avatar'.
-    # Extract the allowed_fields list literal and verify.
-    start = src.index("allowed_fields = [")
-    end = src.index("]", start)
-    literal = src[start:end + 1]
-    assert "'avatar'" not in literal and '"avatar"' not in literal
+    # Parse the AST and find the `allowed_fields = [...]` assignment
+    # inside api_user_settings. AST-level extraction so a nested `]`
+    # inside the list (or an `'avatar'` mention in a surrounding
+    # comment / docstring) can't false-trigger the check
+    # (test-audit ACCURACY fix). The previous `src.index("]", ...)`
+    # window terminated at the first `]` which was fine for the list
+    # literal, but slicing the whole function body matched stray
+    # comment text.
+    tree = ast.parse(src)
+    fn = next(
+        (n for n in ast.walk(tree)
+         if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))
+         and n.name == 'api_user_settings'),
+        None,
+    )
+    assert fn is not None, "api_user_settings not found in routes/auth.py"
+    allowed_fields = None
+    for node in ast.walk(fn):
+        if isinstance(node, ast.Assign):
+            for target in node.targets:
+                if isinstance(target, ast.Name) and target.id == 'allowed_fields':
+                    allowed_fields = node.value
+                    break
+        if allowed_fields is not None:
+            break
+    assert allowed_fields is not None, \
+        "allowed_fields = [...] assignment not found in api_user_settings"
+    assert isinstance(allowed_fields, ast.List), \
+        f"expected allowed_fields to be a list literal, got {type(allowed_fields).__name__}"
+    field_names = {
+        elt.value for elt in allowed_fields.elts
+        if isinstance(elt, ast.Constant) and isinstance(elt.value, str)
+    }
+    assert 'avatar' not in field_names, (
+        f"avatar must not be in api_user_settings.allowed_fields "
+        f"(got: {sorted(field_names)})"
+    )
 
 
 # -----------------------------------------------------------------------------
@@ -39,10 +81,11 @@ def test_33_2_avatar_not_in_allowed_fields():
 # -----------------------------------------------------------------------------
 def test_33_3_update_user_enforces_length():
     src = read_source(os.path.join('routes', 'auth.py'))
-    # Find api_update_user and confirm the 12-char check is present after the
-    # new_password branch.
-    start = src.index("def api_update_user")
-    body = src[start:start + 3000]
+    # AST-slice api_update_user so a future growth past the old `+3000`
+    # window can't silently truncate the body and false-pass the check
+    # (test-audit ERROR-HANDLING fix).
+    body = slice_function(src, 'api_update_user')
+    assert body, "api_update_user not found in routes/auth.py"
     assert "len(raw_password) < 12" in body
 
 
@@ -51,8 +94,8 @@ def test_33_3_update_user_enforces_length():
 # -----------------------------------------------------------------------------
 def test_33_4_force_change_on_admin_reset():
     src = read_source(os.path.join('routes', 'auth.py'))
-    start = src.index("def api_update_user")
-    body = src[start:start + 3000]
+    body = slice_function(src, 'api_update_user')
+    assert body, "api_update_user not found in routes/auth.py"
     assert "force_password_change = ?" in body
     assert "skip_force_change" in body
 
@@ -65,7 +108,8 @@ def test_33_5_session_rotation_on_change_password(fn):
     """Each function gets its own test node so pytest's output names the
     failing branch explicitly (test-audit SPLIT-4)."""
     src = read_source(os.path.join('routes', 'auth.py'))
-    body = src[src.index(f"def {fn}"):src.index(f"def {fn}") + 2500]
+    body = slice_function(src, fn)
+    assert body, f"{fn} not found in routes/auth.py"
     assert "session.clear()" in body, f"{fn} missing session.clear()"
     assert "session['_csrf_token']" in body, f"{fn} missing CSRF rotation"
 
@@ -207,8 +251,9 @@ def test_34_4_rate_limiter_helper_hard_fails():
     easily import app.py twice, so rely on a source-level check.
     """
     src = read_source('app.py')
-    assert 'def _rate_limit(' in src
-    assert "raise RuntimeError" in src[src.index("def _rate_limit("):src.index("def _rate_limit(") + 1500]
+    body = slice_function(src, '_rate_limit')
+    assert body, "_rate_limit not found in app.py"
+    assert "raise RuntimeError" in body
 
 
 # -----------------------------------------------------------------------------
@@ -266,21 +311,9 @@ def test_34_5_log_filename_uses_utc(monkeypatch):
 def test_34_6_asset_url_not_in_inject_config():
     src = read_source('app.py')
     # inject_config should not emit asset_url via the context-processor dict.
-    # Our Pass 34.6 comment lives where the dict entry used to be.
-    inject_start = src.index("def inject_config")
-    inject_body = src[inject_start:inject_start + 3000]
-    # Comment present = removal landed.
-    assert "Pass 34.6" in inject_body
-    # And the bare key mapping is gone.
+    inject_body = slice_function(src, 'inject_config')
+    assert inject_body, "inject_config not found in app.py"
+    # The bare key mapping must be gone — this is the load-bearing
+    # contract. (Previous version also asserted a comment marker; that
+    # was comment-as-proof and got removed in the test-audit fix-pass.)
     assert "'asset_url': asset_url" not in inject_body
-
-
-# -----------------------------------------------------------------------------
-# 33.1 — ProxyFix env-gated
-# -----------------------------------------------------------------------------
-def test_33_1_proxyfix_wired_under_flag():
-    src = read_source('app.py')
-    assert "RETRODB_TRUST_PROXY" in src
-    assert "ProxyFix(app.wsgi_app" in src
-
-

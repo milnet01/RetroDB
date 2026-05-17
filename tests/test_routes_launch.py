@@ -47,7 +47,7 @@ class TestLaunchEndpointBehavior:
     response codes for each branch in the request handler."""
 
     @pytest.fixture
-    def logged_in_client(self, app_module, monkeypatch):
+    def player_client(self, app_module, monkeypatch):
         """Stub get_current_user (which load_user calls) to inject a player.
         Also seed a CSRF token, and bypass the first-time-setup redirect
         (which fires on CI's fresh checkout where settings.setup_completed
@@ -85,30 +85,30 @@ class TestLaunchEndpointBehavior:
         monkeypatch.setattr('routes.launch.resolve_launch_context', lambda gid: fake_ctx)
         return launcher
 
-    def test_player_can_launch(self, logged_in_client, monkeypatch):
+    def test_player_can_launch(self, player_client, monkeypatch):
         launcher = self._stub_resolver_and_launcher(monkeypatch)
-        rv = logged_in_client.post('/api/game/1/launch', headers=self._csrf_headers())
+        rv = player_client.post('/api/game/1/launch', headers=self._csrf_headers())
         assert rv.status_code == 202
         body = rv.get_json()
         assert body['success'] is True
         assert body['data']['token'] == 'tok-1'
 
-    def test_404_when_resolver_says_game_missing(self, logged_in_client, monkeypatch):
+    def test_404_when_resolver_says_game_missing(self, player_client, monkeypatch):
         from services.launcher.base import LaunchResolutionError
         launcher = self._stub_resolver_and_launcher(monkeypatch)
 
         def _raise(_gid):
             raise LaunchResolutionError('game_id 9999 not found')
         monkeypatch.setattr('routes.launch.resolve_launch_context', _raise)
-        rv = logged_in_client.post('/api/game/9999/launch', headers=self._csrf_headers())
+        rv = player_client.post('/api/game/9999/launch', headers=self._csrf_headers())
         assert rv.status_code == 422
 
-    def test_409_when_same_game_already_running(self, logged_in_client, monkeypatch):
+    def test_409_when_same_game_already_running(self, player_client, monkeypatch):
         from unittest.mock import MagicMock
         launcher = self._stub_resolver_and_launcher(monkeypatch)
         existing = MagicMock(token='other', game_id=1, pid=1, emulator_id=1, started_at=0.0)
         launcher.active.return_value = [existing]
-        rv = logged_in_client.post('/api/game/1/launch', headers=self._csrf_headers())
+        rv = player_client.post('/api/game/1/launch', headers=self._csrf_headers())
         assert rv.status_code == 409
         body = rv.get_json()
         assert body['existing_token'] == 'other'

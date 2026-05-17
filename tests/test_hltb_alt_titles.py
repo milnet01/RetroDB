@@ -88,8 +88,12 @@ class TestAltTitleFallback:
                 alternate_titles=['doki doki panic', 'DOKI DOKI PANIC'],
             )
 
-        # Only the primary title should have been searched (once per step).
-        # Any attempt to re-search the same title would count additional times.
+        # The contract under test is de-duplication: case-equal alt titles
+        # must NOT trigger an additional search pass for the same title.
+        # We assert on the *set* of titles searched, not the call count —
+        # the production code may run multiple graduated-fallback search
+        # steps for the primary title, and the exact number of those steps
+        # is not part of this test's contract (it's covered elsewhere).
         unique_titles = set(calls)
         assert unique_titles == {'Doki Doki Panic'}
 

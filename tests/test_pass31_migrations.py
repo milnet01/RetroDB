@@ -16,6 +16,11 @@ from services import migrations
 
 
 def _open(path):
+    # NOTE: a near-twin exists in tests/test_migrations.py without the
+    # `row_factory = sqlite3.Row` line. Kept separate intentionally —
+    # this file's tests use name access (row['col']), the other uses
+    # positional (row[0]). Don't merge without auditing both call
+    # patterns.
     conn = sqlite3.connect(path)
     conn.row_factory = sqlite3.Row
     return conn
@@ -76,17 +81,15 @@ class TestPSNUserIdMigration:
 
     def test_two_users_can_have_same_npwr_id(self, migrated_db):
         """The whole point of Pass 31.1 — two users with the same game sync
-        each get their own row, no more cross-user clobbering."""
-        migrated_db.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT, role TEXT DEFAULT 'admin'
-            )
-        """)
-        migrated_db.executemany(
-            "INSERT INTO users (role) VALUES (?)",
-            [('admin',), ('editor',)],
-        )
+        each get their own row, no more cross-user clobbering.
 
+        We don't seed a `users` table here — psn_games.user_id is a bare
+        INTEGER, not a FK to users(id), so the test cares only about the
+        composite UNIQUE(npwr_id, user_id) shape on psn_games. The
+        previous version created a redundant users table with
+        `IF NOT EXISTS`, which would have masked a regression where the
+        migration silently failed to create the table (test-audit
+        FIXTURE finding)."""
         migrated_db.execute(
             "INSERT INTO psn_games (npwr_id, user_id, title, earned_bronze) VALUES (?, ?, ?, ?)",
             ('NPWR12345', 1, 'The Same Game', 5),
