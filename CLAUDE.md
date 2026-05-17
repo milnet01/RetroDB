@@ -141,7 +141,7 @@ python3 build_dist.py linux|macos|windows   # one source ZIP
 python3 build_dist.py --standalone          # standalone for host platform
 ```
 
-- Output: `/mnt/Emulators/Scripts/Linux/Staging_Area/RetroDB/` (override with `RETRODB_STAGING_DIR` env var — see Pass 39.6 in roadmap)
+- Output: `/mnt/Games/Scripts/Linux/Staging_Area/RetroDB/` (override with `RETRODB_STAGING_DIR` env var — see Pass 39.6 in roadmap)
 - Filename: `RetroDB-v{VERSION}-{Platform}.zip` (source) or `RetroDB-v{VERSION}-{Platform}-Standalone.zip`
 - Excluded from source ZIPs: `config.py`, `data/settings.json`, `data/scraper_settings.json`, `data/rom_tools_config.json`, `.secret_key`, all scraped media (`static/images/{boxart,boxart_3d,screenshots,fanart,manuals,trophies}/`, `static/videos/`), all `.db` files. Per-platform: only that platform's start script (`start.sh` / `start.command` / `start.bat`).
 - Standalone build is driven by `retrodb.spec` (PyInstaller onedir mode). Spec whitelists static subdirs explicitly to avoid sweeping in scraped media; new pip deps that PyInstaller's static analyser can't follow (string-imported via `importlib`) must be added to `HIDDEN_IMPORTS` in the spec.
