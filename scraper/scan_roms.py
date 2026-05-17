@@ -11,8 +11,11 @@ from datetime import datetime, timezone
 
 # Add parent directory to path for config import
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import ROM_PATH, SYSTEM_NAME_MAP
+import config
+import settings_manager
+from config import SYSTEM_NAME_MAP
 from scraper.base_scraper import get_scraper_conn
+from services.rom_scanner import RomPathNotConfigured
 
 logger = logging.getLogger(__name__)
 
@@ -93,14 +96,27 @@ def clean_title(filename):
 # =============================================================================
 
 def scan_roms():
-    """Scan ROM directories and add games to database"""
+    """Scan ROM directories and add games to database.
+
+    Resolves rom_path at call time via settings_manager — config.ROM_PATH
+    is the hardcoded `""` default and is never mutated at runtime (v3.6.5).
+    Raises RomPathNotConfigured when rom_path is empty/missing so the HTTP
+    layer can surface a remediation message instead of a silent 0-result.
+    """
+    rom_path = settings_manager.get_effective_path('rom_path', config.ROM_PATH)
+
     logger.info("=" * 60)
     logger.info("Starting ROM scan")
-    logger.info(f"ROM Path: {ROM_PATH}")
+    logger.info(f"ROM Path: {rom_path}")
     logger.info("=" * 60)
-    
-    if not os.path.exists(ROM_PATH):
-        logger.error(f"ROM path does not exist: {ROM_PATH}")
+
+    if not rom_path or not rom_path.strip():
+        raise RomPathNotConfigured(
+            "ROM path not configured. Go to Settings → Paths to set it."
+        )
+
+    if not os.path.exists(rom_path):
+        logger.error(f"ROM path does not exist: {rom_path}")
         return 0
     
     conn = get_scraper_conn()
@@ -111,14 +127,14 @@ def scan_roms():
     
     # Sort system folders alphabetically
     try:
-        folders = sorted(os.listdir(ROM_PATH), key=str.lower)
+        folders = sorted(os.listdir(rom_path), key=str.lower)
     except Exception as e:
         logger.error(f"Error listing ROM directory: {e}")
         conn.close()
         return 0
-    
+
     for folder in folders:
-        system_path = os.path.join(ROM_PATH, folder)
+        system_path = os.path.join(rom_path, folder)
         
         if not os.path.isdir(system_path):
             continue

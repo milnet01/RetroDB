@@ -15,7 +15,7 @@ import logging
 
 import config
 from services.analytics import invalidate_analytics_cache
-from services.api_helpers import handle_api_errors, success
+from services.api_helpers import error, handle_api_errors, success
 from services.database import get_db, query
 from services.auth import admin_required, login_required
 from services.game_cleanup import (
@@ -25,7 +25,7 @@ from services.game_cleanup import (
     preview_scraped_data,
 )
 from services.media_cleanup import clean_orphaned_files, find_orphaned_media
-from services.rom_scanner import run_inline_scan
+from services.rom_scanner import RomPathNotConfigured, run_inline_scan
 
 logger = logging.getLogger(__name__)
 
@@ -50,12 +50,21 @@ def api_status():
 @admin_required
 @handle_api_errors
 def api_scan():
-    """Scan ROM library"""
+    """Scan ROM library.
+
+    v3.6.5 — RomPathNotConfigured is converted to a 4xx with a remediation
+    message so the user sees "ROM path not configured. Go to Settings → Paths
+    to set it." instead of a misleading green "scan complete, 0 new games"
+    toast (the previous behaviour, caused by an empty config.ROM_PATH).
+    """
     try:
-        from scraper.scan_roms import scan_roms
-        new_games = scan_roms()
-    except ImportError:
-        new_games = run_inline_scan()
+        try:
+            from scraper.scan_roms import scan_roms
+            new_games = scan_roms()
+        except ImportError:
+            new_games = run_inline_scan()
+    except RomPathNotConfigured as exc:
+        return error(str(exc), 400)
 
     if new_games:
         invalidate_analytics_cache()

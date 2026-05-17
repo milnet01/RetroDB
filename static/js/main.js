@@ -770,20 +770,30 @@ function confirmReset(form) {
 async function scanLibrary() {
     const btn = document.getElementById('scanLibraryBtn');
     if (!btn) return;
-    
+
     const originalText = btn.innerHTML;
-    
+
     btn.innerHTML = '<span class="loading-spinner"></span> Scanning...';
     btn.disabled = true;
-    
-    try {
-        const data = await API.post('/api/scan');
 
-        if (data.success) {
+    // v3.6.5 — Use raw fetch so the response body (which carries the
+    // "ROM path not configured" remediation message on 4xx) reaches the
+    // user instead of being swallowed by API.post's throw-on-!ok wrapper.
+    try {
+        const response = await fetch('/api/scan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: '{}',
+        });
+        let data = null;
+        try { data = await response.json(); } catch (_) { /* non-JSON body */ }
+
+        if (response.ok && data && data.success) {
             showNotification('Library scan complete! Found ' + (data.new_games || 0) + ' new games.', 'success');
             setTimeout(() => location.reload(), 1500);
         } else {
-            showNotification(data.error || 'Scan failed', 'error');
+            const msg = (data && data.error) || `Scan failed (HTTP ${response.status})`;
+            showNotification(msg, 'error');
         }
     } catch (error) {
         showNotification('Error scanning library: ' + error.message, 'error');

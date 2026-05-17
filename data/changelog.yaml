@@ -1,3 +1,22 @@
+- version: 3.6.10
+  date: 2026-05-17
+  tags:
+  - type: fix
+    label: /api/scan — empty rom_path now returns 400 with remediation message instead of misleading "0 new games" success toast
+  - type: fix
+    label: scan_roms.py + rom_scanner.py — resolve rom_path via settings_manager at call time, not from config.ROM_PATH at import time
+  - type: fix
+    label: Hot-fix — services/rom_scanner.RomPathNotConfigured was referenced by tests/test_scan_library_rom_path.py since v3.6.8 but never committed; CI restored to green
+  body: |
+    <ul>
+        <li><strong>Hot-fix — CI was red on origin/main</strong>. <code>tests/test_scan_library_rom_path.py</code> was committed in v3.6.8 (and refreshed in v3.6.9's <code>monkeypatch.setitem</code> sweep) but imported a <code>RomPathNotConfigured</code> class that had never been committed alongside it — it only existed in the unstaged working tree. A fresh checkout would fail 7 tests. v3.6.10 lands the missing production code and restores the suite to green on the remote.</li>
+        <li><strong>Bug fix — silent "scan complete, 0 new games"</strong>. Before: <code>/api/scan</code> with an unset <code>rom_path</code> setting returned <code>{success: true, new_games: 0}</code> because <code>scan_roms()</code> read <code>config.ROM_PATH</code> (the hardcoded <code>""</code> default that is never mutated at runtime), then exited the for-loop with no folders to walk, then reported 0. The user saw a green toast claiming success and assumed their library was empty. After: the scanner resolves <code>rom_path</code> at call time via <code>settings_manager.get_effective_path</code>, and raises <code>RomPathNotConfigured</code> when empty. <code>routes/maintenance.api_scan</code> catches it and returns a 4xx with the remediation message "ROM path not configured. Go to Settings → Paths to set it."</li>
+        <li><strong>Frontend — <code>static/js/main.js</code> scanLibrary()</strong>. Replaced <code>API.post('/api/scan')</code> with a raw <code>fetch</code> so the response body (which carries the remediation message on 4xx) reaches the user. <code>API.post</code> throws on <code>!response.ok</code> and the catch branch only saw <code>error.message</code>, not the JSON body. Now the toast shows the actual error string.</li>
+        <li><strong>Bug fix — <code>routes/reports.py</code> multi-disc scan</strong>. Same root cause: <code>os.path.join(config.ROM_PATH, system)</code> at line ~422 used the unmutated hardcoded default. Now resolves via <code>_get_rom_path()</code> helper and returns 400 if unset.</li>
+        <li><strong>Bundle rebuilt</strong>. <code>static/js/core.bundle.js</code> regenerated; <code>asset_manifest.json</code> bumped for core only (games bundle untouched in this commit — the bulk-scrape cancel UX is a separate thread).</li>
+        <li><strong>Patch bump 3.6.9 → 3.6.10</strong>: user-visible bug fix (the misleading "0 new games" toast) + CI hot-fix for the missing production code.</li>
+    </ul>
+
 - version: 3.6.9
   date: 2026-05-17
   tags:

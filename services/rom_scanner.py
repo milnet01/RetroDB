@@ -11,10 +11,23 @@ import os
 from datetime import datetime, timezone
 
 import config
+import settings_manager
 from services.database import get_db_with_context
 from services.game_utils import find_image_file
 
 logger = logging.getLogger(__name__)
+
+
+class RomPathNotConfigured(RuntimeError):
+    """Raised when /api/scan (or either scanner) is invoked without a
+    rom_path in settings.json.  The HTTP layer converts this to a 4xx with
+    a remediation message instead of letting it surface as success-with-0,
+    which the old code did by silently returning 0 from scan_roms().
+
+    v3.6.5 — previously the scanner read config.ROM_PATH directly, which is
+    the hardcoded `""` default (never mutated at runtime).  Effective path
+    resolution lives in settings_manager.get_effective_path; the scanner
+    must call it at runtime, not snapshot ROM_PATH at import time."""
 
 
 _TAGS = (
@@ -68,10 +81,14 @@ def run_inline_scan():
     """Inline ROM scanning when scraper.scan_roms module is not available."""
     new_games = 0
 
+    rom_path = settings_manager.get_effective_path('rom_path', config.ROM_PATH)
+    if not rom_path or not rom_path.strip():
+        raise RomPathNotConfigured(
+            "ROM path not configured. Go to Settings → Paths to set it."
+        )
+
     with get_db_with_context() as conn:
         c = conn.cursor()
-
-        rom_path = config.ROM_PATH
 
         for folder in sorted(os.listdir(rom_path)):
             system_path = os.path.join(rom_path, folder)

@@ -29,6 +29,14 @@ logger = logging.getLogger('rom_reports')
 # Create blueprint
 reports_bp = Blueprint('reports', __name__)
 
+
+def _get_rom_path():
+    """v3.6.5 — resolve rom_path at call time via settings_manager.
+    config.ROM_PATH is the hardcoded `""` default and is never mutated at
+    runtime; reading it directly meant multi-disc scan / create-M3U used an
+    empty base path regardless of user settings."""
+    return settings_manager.get_effective_path('rom_path', config.ROM_PATH)
+
 # =============================================================================
 # CONSTANTS - ROM Naming Standards
 # =============================================================================
@@ -414,9 +422,13 @@ def api_reports_multidisc_scan():
     
     multi_disc_games = []
     scanned_systems = []
-    
+
+    rom_path = _get_rom_path()
+    if not rom_path:
+        return error('ROM path not configured. Go to Settings → Paths to set it.', 400)
+
     for system in disc_systems:
-        system_path = os.path.join(config.ROM_PATH, system)
+        system_path = os.path.join(rom_path, system)
         if not os.path.exists(system_path):
             continue
         
@@ -576,10 +588,14 @@ def api_reports_organize_multidisc():
     if not system or not name or not files:
         return error('Missing required parameters', 400)
 
-    system_path = os.path.join(config.ROM_PATH, system)
+    rom_path = _get_rom_path()
+    if not rom_path:
+        return error('ROM path not configured. Go to Settings → Paths to set it.', 400)
+
+    system_path = os.path.join(rom_path, system)
     folder_path = os.path.join(system_path, name)
 
-    if safe_path(folder_path, config.ROM_PATH) is None:
+    if safe_path(folder_path, rom_path) is None:
         return error('Invalid path', 400)
     m3u_path = os.path.join(system_path, f"{name}.m3u")
 
