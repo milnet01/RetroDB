@@ -40,6 +40,17 @@ proofs. Never mark a task complete just because those tests pass.
   shape matches template?). DevTools Console for errors/warnings. Trigger one
   error path (empty input, missing record, cancelled action), not just happy.
 - **Backend-only**: unit tests + a single end-to-end smoke call (curl / invoke job).
+- **Tests that import new symbols (or grep for new strings) must run against a
+  staged-only tree, not against your working copy.** Whenever a test commit adds
+  an `import X` for a new symbol from production code, asserts on a string
+  literal the production code is also about to grow, or grep-checks for a class
+  / route / decorator name that doesn't ship yet, do `git stash --keep-index &&
+  pytest <that test file> && git stash pop` (or stash everything and re-run the
+  full suite) before committing. The risk this catches: the production half of
+  the change still sits unstaged in the working tree, the tests pass locally
+  because the symbol is in scope, and a fresh checkout of `main` lights up red.
+  Two CI-red situations during the 2026-05-17 audit cycle (`RomPathNotConfigured`
+  in v3.6.8/v3.6.9, `/api/bleed` in v3.6.9) came from exactly this miss.
 - State what was verified in the session summary. If something couldn't be
   tested in-session, say so — never imply coverage that wasn't produced.
 - Architecturally significant passes (multi-subsystem, reshapes an abstraction,
