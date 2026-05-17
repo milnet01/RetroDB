@@ -77,8 +77,13 @@ def test_gc_keeps_recent_exited(registry):
     proc.poll.return_value = 0
     proc.returncode = 0
     proc.pid = 1
+    # Single baseline — twin time.time() calls could yield exit_time >
+    # started_at + post_exit_ttl_s under CI scheduler jitter, making the
+    # entry GC'd immediately. Mirror the sibling test_gc_removes_exited_after_ttl
+    # fix from v3.6.8.
+    t = time.time()
     registry.register(token='recent', proc=proc, game_id=1, emulator_id=1,
-                      started_at=time.time())
-    registry._mark_exited('recent', exit_time=time.time())
+                      started_at=t)
+    registry._mark_exited('recent', exit_time=t)
     registry.gc()
     assert registry.get('recent') is not None

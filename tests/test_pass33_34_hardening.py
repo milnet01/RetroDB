@@ -284,5 +284,3 @@ def test_33_1_proxyfix_wired_under_flag():
     assert "ProxyFix(app.wsgi_app" in src
 
 
-# Backwards-compat alias retained for any external imports.
-_REPO_ROOT = REPO_ROOT

@@ -8,14 +8,7 @@
 # (partial 4/4) extracted the trio into a single helper.
 # =============================================================================
 
-import os
-import sys
-
-import pytest
-
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _REPO_ROOT not in sys.path:
-    sys.path.insert(0, _REPO_ROOT)
+from tests._util import REPO_ROOT as _REPO_ROOT  # noqa: F401
 
 
 class TestNormalizeRatings:

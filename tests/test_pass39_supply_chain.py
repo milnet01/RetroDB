@@ -9,11 +9,10 @@
 
 import os
 import re
-import sys
 
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _REPO_ROOT not in sys.path:
-    sys.path.insert(0, _REPO_ROOT)
+import pytest
+
+from tests._util import REPO_ROOT as _REPO_ROOT
 
 
 # -----------------------------------------------------------------------------
@@ -75,6 +74,29 @@ class TestPass39_4LockfileHashes:
             "pip-compile requirements.txt -o requirements.lock "
             "--strip-extras --generate-hashes"
         )
+
+    def test_select_pip_args_falls_back_when_lockfile_missing(self, tmp_path):
+        """Cover the 'fallback' branch — base_dir with only requirements.txt
+        must yield `-r requirements.txt` and source='fallback'. The default
+        repo-root call exercises the 'lock' branch only.
+        Pass 39.4 — installers ship requirements.lock; the fallback exists
+        for fresh dev checkouts before lockfile regen."""
+        import installer_core
+        (tmp_path / 'requirements.txt').write_text('flask==3.0.0\n')
+        args, source = installer_core.select_pip_args(str(tmp_path))
+        assert source == 'fallback', (
+            f"With only requirements.txt present, expected source='fallback'; "
+            f"got {source!r}"
+        )
+        assert args == ['-r', str(tmp_path / 'requirements.txt')]
+
+    def test_select_pip_args_returns_missing_when_neither_present(self, tmp_path):
+        """Empty base_dir — no lockfile, no requirements — must return
+        (None, 'missing'). Installer callers branch on this."""
+        import installer_core
+        args, source = installer_core.select_pip_args(str(tmp_path))
+        assert args is None
+        assert source == 'missing'
 
     def test_installers_use_require_hashes(self):
         """Both install.py and install_gui.py prefer the hashed lockfile
@@ -150,7 +172,10 @@ class TestPass39_5DependabotLockfileWorkflow:
         guard execution to the dependabot[bot] actor, request the
         write-permissions needed to push back, and run pip-compile with
         --generate-hashes (matches the lockfile recipe pinned in 39.4)."""
-        import yaml
+        # pyyaml is a hard dependency in requirements.txt but installer
+        # environments without it should skip cleanly rather than crash
+        # at collection time.
+        yaml = pytest.importorskip("yaml")
         with open(self.WORKFLOW, encoding='utf-8') as f:
             cfg = yaml.safe_load(f)
 

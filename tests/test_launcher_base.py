@@ -83,11 +83,12 @@ class TestLauncherProtocol:
     all be callable attributes on the class, not e.g. accidentally replaced
     by data attributes after a refactor."""
 
-    def test_protocol_methods(self):
+    @pytest.mark.parametrize("method", ['launch', 'status', 'kill', 'active'])
+    def test_protocol_method_is_callable(self, method):
         # callable() check distinguishes 'method renamed to wrong case' or
         # 'method replaced by a data attribute' from the correct shape, where
-        # plain hasattr would pass either failure mode (ACC-3).
-        assert callable(getattr(Launcher, 'launch', None))
-        assert callable(getattr(Launcher, 'status', None))
-        assert callable(getattr(Launcher, 'kill', None))
-        assert callable(getattr(Launcher, 'active', None))
+        # plain hasattr would pass either failure mode (ACC-3). Parametrized
+        # so a regression that deletes 3 of 4 methods reports 3 failures
+        # instead of stopping at the first.
+        attr = getattr(Launcher, method, None)
+        assert callable(attr), f"Launcher.{method} is not callable: {attr!r}"

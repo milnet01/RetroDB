@@ -58,6 +58,7 @@ class TestSlowQueryGate:
                 (),
                 time.perf_counter() - 1.0,
             )
+        assert len(capture_db_log.records) >= 1, "_log_if_slow did not emit a WARNING record"
         msg = capture_db_log.records[0].getMessage()
         assert 'SELECT * FROM games' in msg
         assert '\n' not in msg
@@ -66,9 +67,17 @@ class TestSlowQueryGate:
         long_sql = "SELECT * FROM games WHERE title = '" + ("x" * 1000) + "'"
         with patch.object(config, 'SLOW_QUERY_MS', 10):
             _log_if_slow(long_sql, (), time.perf_counter() - 1.0)
+        assert len(capture_db_log.records) >= 1, "_log_if_slow did not emit a WARNING record"
         msg = capture_db_log.records[0].getMessage()
-        # Truncated to 500 chars + ellipsis sentinel
+        # Truncated to 500 chars + ellipsis sentinel; pin the size bound so a
+        # regression that removes the cap (or bumps it 10×) is caught — prior
+        # assertion only checked for the '...' marker, which can appear in
+        # any-length message.
         assert '...' in msg
+        assert len(msg) < 700, (
+            f"Message length {len(msg)} exceeds the 500-char SQL truncation "
+            f"budget (plus ~200 chars of label/duration prefix)."
+        )
 
     def test_non_sequence_args_still_logs(self, capture_db_log):
         # execute_script passes a raw string, not a tuple.

@@ -169,5 +169,3 @@ def test_29_5_global_search_uses_abort_controller():
     assert "error.name === 'AbortError'" in src
 
 
-# Backwards-compat alias: REPO_ROOT was previously exposed at module scope.
-_REPO_ROOT = REPO_ROOT

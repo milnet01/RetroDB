@@ -11,8 +11,7 @@ from collections import OrderedDict
 
 import pytest
 
-# REPO_ROOT/sys.path setup is centralised in tests/_util.py (test-audit DUP-1).
-from tests._util import REPO_ROOT  # noqa: F401
+# sys.path setup runs via tests/conftest.py at session start; no local import needed.
 
 
 # -----------------------------------------------------------------------------

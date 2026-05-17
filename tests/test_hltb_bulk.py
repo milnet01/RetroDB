@@ -53,6 +53,17 @@ class TestFormatPlaytimeStr:
     def test_all_none(self):
         assert _format_playtime_str(None, None, None) is None
 
+    def test_main_missing_extras_and_completionist_present(self):
+        """Main absent but Extras + Completionist present — function must
+        emit the available pair without trying to format the None Main.
+        Uncovered branch flagged by audit (LOW): the (None, 8.0, 12.0)
+        partial-present input combination."""
+        s = _format_playtime_str(None, 8.0, 12.0)
+        assert s is not None
+        # Order is canonical Main | Extras | 100%. Main is absent, so the
+        # result should still contain the other two.
+        assert '8' in s and '12' in s
+
     def test_zero_treated_as_missing(self):
         """A zero playtime is the API's 'no data' sentinel — the formatter
         must treat 0 the same as None and skip that part of the string."""

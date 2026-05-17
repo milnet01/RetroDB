@@ -20,6 +20,8 @@ import sys
 
 import pytest
 
+from tests._util import read_source, slice_function  # noqa: E402
+
 _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
@@ -94,13 +96,12 @@ class TestPass41_1BChangePasswordBucket:
     (user A's failures don't block user B)."""
 
     def test_change_password_does_not_pass_bare_ip_to_rate_limit(self):
-        src = open(
-            os.path.join(_REPO_ROOT, 'routes', 'auth.py'), encoding='utf-8'
-        ).read()
-        body = src[
-            src.index("def api_change_password"):
-            src.index("def api_force_change_password")
-        ]
+        # slice_function is AST-based, so a reorder of api_change_password
+        # vs api_force_change_password no longer produces a vacuous empty
+        # slice (prior bug: src[A:B] with A > B returned ""; assertion
+        # 'X not in ""' passed regardless).
+        body = slice_function(read_source('routes/auth.py'), 'api_change_password')
+        assert body, "api_change_password not found in routes/auth.py"
         # The legacy IP-only call was the bug — a composite bucket key must
         # be threaded in instead.
         assert "rate_limit_login(client_ip)" not in body, (
@@ -110,13 +111,8 @@ class TestPass41_1BChangePasswordBucket:
         assert "g.user['id']" in body or "user_id" in body
 
     def test_record_login_attempt_uses_composite_bucket(self):
-        src = open(
-            os.path.join(_REPO_ROOT, 'routes', 'auth.py'), encoding='utf-8'
-        ).read()
-        body = src[
-            src.index("def api_change_password"):
-            src.index("def api_force_change_password")
-        ]
+        body = slice_function(read_source('routes/auth.py'), 'api_change_password')
+        assert body, "api_change_password not found in routes/auth.py"
         # record_login_attempt must use the same composite bucket as
         # rate_limit_login — otherwise the failure counter goes into the
         # wrong bucket and the lockout never triggers.
@@ -844,9 +840,10 @@ class TestPass41_5bSteamHltbThroughBaseScraper:
         None instead of dereferencing `.status_code`."""
         from scraper import hltb_lookup
         # Reset any cached token so _get_auth_token actually exercises the
-        # network shim under test.
-        hltb_lookup._auth_token = None
-        hltb_lookup._auth_token_time = 0
+        # network shim under test. monkeypatch restores the prior cache on
+        # teardown — bare assignment would leak None onward.
+        monkeypatch.setattr(hltb_lookup, '_auth_token', None)
+        monkeypatch.setattr(hltb_lookup, '_auth_token_time', 0)
         monkeypatch.setattr(hltb_lookup, 'http_get', lambda *a, **kw: None)
         monkeypatch.setattr(hltb_lookup, 'http_post', lambda *a, **kw: None)
 
@@ -1094,12 +1091,12 @@ class TestPass41_11BMuseumGetIdempotent:
             "Pass 41.11.B — cleanup endpoint must accept POST"
         )
 
-    def test_admin_cleanup_endpoint_requires_editor(self):
+    def test_admin_cleanup_endpoint_requires_editor(self, monkeypatch):
         """Functional: anonymous POST to the cleanup endpoint must redirect
         (302/401/403); a logged-in caller would still need editor role, but
         anonymous rejection alone proves an auth decorator fired."""
         import app as app_module
-        app_module.app.config['TESTING'] = True
+        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
         client = app_module.app.test_client()
         resp = client.post(
             '/api/museum/cleanup-controller-images',
@@ -1372,39 +1369,38 @@ class TestPass41_10DScanAuthzAndRateLimit:
         '/api/rom-tools/screenshot-dedup/scan',
     )
 
-    def test_each_scan_requires_editor(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'routes/tools.py'),
-            encoding='utf-8'
-        ).read()
-        for route in self.SCAN_ROUTES:
-            idx = body.find(route)
-            assert idx != -1, f"{route} route not found"
-            block = body[idx:idx + 250]
-            assert '@editor_required' in block, (
-                f"{route} must be @editor_required (Pass 41.10.D)"
-            )
+    SCAN_FUNCTIONS = (
+        'tools.api_archive_scanner_scan',
+        'tools.api_chd_converter_scan',
+        'tools.api_chd_verify_scan',
+        'tools.api_duplicate_finder_scan',
+        'tools.api_screenshot_dedup_scan',
+    )
 
-    def test_rate_limits_registered(self):
-        body = open(
-            os.path.join(_REPO_ROOT, 'app.py'),
-            encoding='utf-8'
-        ).read()
+    @pytest.mark.parametrize("route", SCAN_ROUTES)
+    def test_each_scan_requires_editor(self, route):
+        # Parametrized — first-failure loop hid which of the 5 routes broke.
+        body = read_source('routes/tools.py')
+        idx = body.find(route)
+        assert idx != -1, f"{route} route not found"
+        block = body[idx:idx + 250]
+        assert '@editor_required' in block, (
+            f"{route} must be @editor_required (Pass 41.10.D)"
+        )
+
+    @pytest.mark.parametrize("fn", SCAN_FUNCTIONS)
+    def test_rate_limits_registered(self, fn):
+        # Parametrized — first-failure loop hid which of the 5 endpoints
+        # was missing its _rate_limit registration.
+        body = read_source('app.py')
         # Each scan endpoint must have a _rate_limit registration; the
         # spec is "5 per minute". Source-level pin (CI's Flask-Limiter
         # registration test would otherwise need a live limiter, which
         # depends on FLASK_LIMITER_ENABLED).
-        for fn in (
-            'tools.api_archive_scanner_scan',
-            'tools.api_chd_converter_scan',
-            'tools.api_chd_verify_scan',
-            'tools.api_duplicate_finder_scan',
-            'tools.api_screenshot_dedup_scan',
-        ):
-            assert f"_rate_limit('{fn}', \"5 per minute\")" in body, (
-                f"Missing _rate_limit('{fn}', '5 per minute') in app.py "
-                "(Pass 41.10.D)"
-            )
+        assert f"_rate_limit('{fn}', \"5 per minute\")" in body, (
+            f"Missing _rate_limit('{fn}', '5 per minute') in app.py "
+            "(Pass 41.10.D)"
+        )
 
 
 # -----------------------------------------------------------------------------

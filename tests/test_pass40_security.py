@@ -25,6 +25,7 @@
 # =============================================================================
 
 import os
+import re
 import sys
 
 import pytest
@@ -97,17 +98,20 @@ class TestPass40_1OtherSettingsValidators:
         assert not ok
         assert 'unknown' in reason.lower()
 
-    def test_bool_fields(self):
+    @pytest.mark.parametrize("key", [
+        'recursive_scan', 'verify_integrity', 'generate_m3u',
+        'remove_unwanted', 'chd_verify_after_convert',
+        'chd_delete_originals', 'chd_skip_existing',
+        'ignore_region_tags', 'include_archives',
+    ])
+    def test_bool_fields(self, key):
+        # Parametrized — first-failure loop hid which of the 9 keys broke.
         from services.rom_tools_validators import validate_rom_tools_value
 
-        for key in ('recursive_scan', 'verify_integrity', 'generate_m3u',
-                    'remove_unwanted', 'chd_verify_after_convert',
-                    'chd_delete_originals', 'chd_skip_existing',
-                    'ignore_region_tags', 'include_archives'):
-            ok, _, cleaned = validate_rom_tools_value(key, True)
-            assert ok and cleaned is True, f"{key} should accept True"
-            ok, _, _ = validate_rom_tools_value(key, 'yes')
-            assert not ok, f"{key} should reject string"
+        ok, _, cleaned = validate_rom_tools_value(key, True)
+        assert ok and cleaned is True, f"{key} should accept True"
+        ok, _, _ = validate_rom_tools_value(key, 'yes')
+        assert not ok, f"{key} should reject string"
 
     def test_archive_types_list(self):
         from services.rom_tools_validators import validate_rom_tools_value
@@ -170,12 +174,15 @@ class TestPass40_1RouteIntegration:
         src = read_module_source(tools_mod)
         idx = src.index('def api_rom_tools_settings')
         # Within the function body (next ~1500 chars), the POST branch must
-        # raise 403 for non-admin callers.
+        # raise 403 for non-admin callers. Strip comments first so a stale
+        # `# old: g.user.get('role') != 'admin'` doesn't satisfy the
+        # disjunction once the live code is moved out of the window.
         body = src[idx:idx + 1500]
-        assert "g.user.get('role') != 'admin'" in body or \
-               "g.user['role'] != 'admin'" in body, \
+        body_live = re.sub(r'#[^\n]*', '', body)
+        assert "g.user.get('role') != 'admin'" in body_live or \
+               "g.user['role'] != 'admin'" in body_live, \
             'api_rom_tools_settings POST must gate on admin role (Pass 40.1)'
-        assert '403' in body, 'POST must return 403 for non-admin (Pass 40.1)'
+        assert '403' in body_live, 'POST must return 403 for non-admin (Pass 40.1)'
 
     def test_post_rejects_attacker_chdman_path(self, tmp_path, monkeypatch):
         """End-to-end: POST {chdman_path: /usr/bin/python3} → validator
@@ -918,7 +925,8 @@ class TestPass40_10ShutdownAwareSleep:
         for name in ('psn_refresh', 'platform_sync', 'ra_sync',
                      'ra_refresh', 'museum'):
             path = os.path.join(repo, 'services', 'jobs', f'{name}.py')
-            src = open(path).read()
+            with open(path, encoding='utf-8') as f:
+                src = f.read()
             for i, line in enumerate(src.splitlines(), start=1):
                 stripped = line.strip()
                 if stripped.startswith('#'):

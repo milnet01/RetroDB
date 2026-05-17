@@ -8,9 +8,15 @@ import pytest
 @pytest.fixture(scope="module")
 def client():
     import app as app_module
+    # Snapshot + restore — monkeypatch is not available in module-scoped fixtures,
+    # and a bare assignment would leak TESTING=True to every subsequent module.
+    _orig_testing = app_module.app.config.get('TESTING', False)
     app_module.app.config['TESTING'] = True
-    with app_module.app.test_client() as c:
-        yield c
+    try:
+        with app_module.app.test_client() as c:
+            yield c
+    finally:
+        app_module.app.config['TESTING'] = _orig_testing
 
 
 class TestLegacyHeadersStillPresent:
@@ -44,13 +50,18 @@ class TestPermissionsPolicy:
         resp = client.get('/health')
         assert 'Permissions-Policy' in resp.headers
 
-    def test_permissions_policy_disables_sensors(self, client):
+    @pytest.mark.parametrize("feature", [
+        'camera', 'microphone', 'geolocation',
+        'payment', 'usb', 'interest-cohort',
+        'browsing-topics',
+    ])
+    def test_permissions_policy_disables_sensors(self, client, feature):
+        # Parametrized so each feature is its own pytest node — a regression
+        # that drops 3 of the 7 features shows all three failures at once
+        # instead of stopping at the first.
         resp = client.get('/health')
         pp = resp.headers['Permissions-Policy']
-        for feature in ('camera', 'microphone', 'geolocation',
-                        'payment', 'usb', 'interest-cohort',
-                        'browsing-topics'):
-            assert f'{feature}=()' in pp, f"{feature} not disabled in Permissions-Policy"
+        assert f'{feature}=()' in pp, f"{feature} not disabled in Permissions-Policy"
 
 
 class TestHstsEnvGated:
@@ -95,9 +106,9 @@ class TestCspReportOnly:
         assert "'nonce-" in csp
 
     def test_csp_nonce_changes_per_request(self, client):
+        import re
         resp1 = client.get('/health')
         resp2 = client.get('/health')
-        import re
         pat = re.compile(r"'nonce-([^']+)'")
         csp1 = resp1.headers['Content-Security-Policy-Report-Only']
         csp2 = resp2.headers['Content-Security-Policy-Report-Only']
@@ -107,13 +118,16 @@ class TestCspReportOnly:
         assert m2 is not None, f"Nonce not found in CSP: {csp2[:100]}"
         assert m1.group(1) != m2.group(1), "CSP nonce must be per-request, not reused"
 
-    def test_csp_includes_core_directives(self, client):
+    @pytest.mark.parametrize("directive", [
+        'default-src', 'script-src', 'style-src',
+        'img-src', 'font-src', 'connect-src',
+        'frame-ancestors', 'base-uri', 'form-action',
+    ])
+    def test_csp_includes_core_directives(self, client, directive):
+        # Parametrized so multi-directive regressions show all failures at once.
         resp = client.get('/health')
         csp = resp.headers['Content-Security-Policy-Report-Only']
-        for directive in ('default-src', 'script-src', 'style-src',
-                          'img-src', 'font-src', 'connect-src',
-                          'frame-ancestors', 'base-uri', 'form-action'):
-            assert directive in csp, f"Missing directive: {directive}"
+        assert directive in csp, f"Missing directive: {directive}"
 
     def test_csp_blocks_objects(self, client):
         resp = client.get('/health')
@@ -122,14 +136,57 @@ class TestCspReportOnly:
 
 
 class TestCspNonceInTemplateContext:
-    """The {{ csp_nonce }} Jinja global must match what's sent in the header."""
+    """The {{ csp_nonce }} Jinja global must match what's sent in the header.
 
-    def test_nonce_exposed_via_context_processor(self):
+    A two-nonce split — context processor and response writer reading different
+    attributes — would silently break every inline `<script nonce="…">` because
+    the nonce in the rendered HTML wouldn't appear in the CSP header.
+    """
+
+    def test_nonce_in_template_matches_g_csp_nonce(self):
+        """Match contract — the value the template renders must be the same
+        value `services.middleware.set_security_headers` puts in the header
+        (both read `flask.g.csp_nonce`). Equality, not just non-empty."""
         import app as app_module
+        from flask import g, render_template_string
         with app_module.app.test_request_context('/', method='GET'):
             app_module.assign_request_id()
-            # Render a trivial inline template using the processor.
-            from flask import render_template_string
             rendered = render_template_string('{{ csp_nonce }}')
-            assert rendered
+            assert rendered == g.csp_nonce, (
+                f"Template renders {rendered!r}; g.csp_nonce={g.csp_nonce!r} — "
+                "context processor and request hook disagree"
+            )
             assert len(rendered) >= 20  # token_urlsafe(16) is ~22 chars
+
+    def test_response_header_nonce_matches_template_nonce(self, client):
+        """End-to-end pair: a real request's CSP header nonce must equal the
+        Jinja-rendered nonce for the same request. Captures the value via a
+        per-request before_request hook so we don't rely on /health rendering
+        anything (it returns JSON)."""
+        import re
+        import app as app_module
+        import flask
+        captured = {}
+
+        # Use a one-shot after_request hook to capture g.csp_nonce for this
+        # request only. monkeypatch isn't needed — the hook is wrapped in a
+        # try/finally that pops it off the app's deferred-callbacks list.
+        def _capture():
+            captured['nonce'] = flask.g.get('csp_nonce', '')
+        app_module.app.before_request_funcs.setdefault(None, []).append(
+            lambda: _capture()
+        )
+        try:
+            resp = client.get('/health')
+        finally:
+            app_module.app.before_request_funcs[None].pop()
+
+        csp = resp.headers.get('Content-Security-Policy-Report-Only', '')
+        m = re.search(r"'nonce-([^']+)'", csp)
+        assert m is not None, f"No nonce in CSP header: {csp[:200]}"
+        header_nonce = m.group(1)
+        assert captured['nonce'] == header_nonce, (
+            f"Template-side nonce ({captured['nonce']!r}) does not match "
+            f"the header nonce ({header_nonce!r}) — silent inline-script "
+            "blocking risk"
+        )

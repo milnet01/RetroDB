@@ -263,6 +263,16 @@ class TestApplyRawg:
         apply_rawg_to_metadata(meta, {'franchise': 'Other'}, db_game_id=1, result=result, fill_only=False)
         assert meta['franchise'] == 'Existing'
 
+    def test_franchise_preserved_when_fill_only_true(self, blank):
+        """fill_only=True must also leave a populated franchise untouched.
+        Earlier test only covered fill_only=False; this pins the invariant
+        from the other direction — a refactor that swaps the logic for
+        franchise alone would have been invisible."""
+        meta, result = blank
+        meta['franchise'] = 'Existing'
+        apply_rawg_to_metadata(meta, {'franchise': 'Other'}, db_game_id=1, result=result, fill_only=True)
+        assert meta['franchise'] == 'Existing'
+
 
 # ---------------------------------------------------------------------------
 # ScreenScraper

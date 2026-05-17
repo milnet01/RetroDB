@@ -98,9 +98,14 @@ class TestSwapJobOrdering:
             swap_thread = threading.Thread(target=do_swap)
             swap_thread.start()
 
-            # Worker should observe cancel quickly (within 0.5s).
-            assert worker_observed_cancel.wait(timeout=2.0), \
-                "Worker never observed cancel flag"
+            # Worker should observe cancel quickly (within 0.5s on a healthy
+            # runner). Use 5.0s ceiling to match the swap.join timeout — under
+            # CI load the worker's 50ms poll loop can briefly stall.
+            observed = worker_observed_cancel.wait(timeout=5.0)
+            assert observed, (
+                "Worker never observed cancel flag — "
+                f"job.cancelled={job.cancelled!r}, _queue={job._queue!r}"
+            )
 
             # Swap must finish promptly after worker exits.
             assert swap_done.wait(timeout=5.0), \
@@ -147,8 +152,25 @@ class TestDemoteJobOrdering:
             t = threading.Thread(target=do_demote)
             t.start()
 
-            assert worker_observed_cancel.wait(timeout=2.0), \
-                "Worker never observed cancel flag"
+            observed = worker_observed_cancel.wait(timeout=5.0)
+            assert observed, (
+                "Worker never observed cancel flag — "
+                f"job.cancelled={job.cancelled!r}"
+            )
             assert demote_done.wait(timeout=5.0), \
                 "Demote blocked too long — join() likely missing or wrong thread"
             t.join(timeout=2.0)
+
+            # Post-demote state — proves the join semantics aren't the only
+            # thing being verified. demote_running promotes the next queued
+            # job to running and pushes the demoted one back onto the queue,
+            # so .running stays True but the queue should have exactly 1
+            # entry (the previously-running job, now queued).
+            assert job.running is True, (
+                f"After demote, the next queued job should be running; "
+                f"running={job.running!r}"
+            )
+            assert len(job._queue) == 1, (
+                f"Demoted job should be on the queue exactly once; "
+                f"got _queue={job._queue!r}"
+            )

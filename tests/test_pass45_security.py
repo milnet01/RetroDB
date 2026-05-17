@@ -65,9 +65,11 @@ class TestPass45_1TrackProgressPermission:
         import settings_manager as _settings_manager
 
         # Stash the permission map, drop track_progress so the decorator
-        # denies access, then restore on teardown.
+        # denies access. monkeypatch restores on teardown — atomic with the
+        # TESTING mutation below, so a SIGKILL/OOM between the two won't
+        # leave admin in a half-modified state.
         original = auth_mod.ROLE_PERMISSIONS['admin'].copy()
-        auth_mod.ROLE_PERMISSIONS['admin'] = original - {'track_progress'}
+        monkeypatch.setitem(auth_mod.ROLE_PERMISSIONS, 'admin', original - {'track_progress'})
 
         # Bypass the DB-backed user loader and the first-time-setup redirect
         # (CI's empty data/ directory has no settings.json → 302 to /setup).
@@ -77,19 +79,16 @@ class TestPass45_1TrackProgressPermission:
         monkeypatch.setattr(_settings_manager, 'load_settings',
                             lambda: {'setup_completed': True})
 
-        try:
-            app_module.app.config['TESTING'] = True
-            with app_module.app.test_client() as c:
-                with c.session_transaction() as sess:
-                    sess['_csrf_token'] = 'pass45_1-csrf-token'
-                resp = c.post(
-                    '/api/game/1/completion',
-                    json={'status': 'played'},
-                    headers={'X-CSRF-Token': 'pass45_1-csrf-token'},
-                    follow_redirects=False,
-                )
-        finally:
-            auth_mod.ROLE_PERMISSIONS['admin'] = original
+        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
+        with app_module.app.test_client() as c:
+            with c.session_transaction() as sess:
+                sess['_csrf_token'] = 'pass45_1-csrf-token'
+            resp = c.post(
+                '/api/game/1/completion',
+                json={'status': 'played'},
+                headers={'X-CSRF-Token': 'pass45_1-csrf-token'},
+                follow_redirects=False,
+            )
 
         assert resp.status_code == 403, (
             f"Expected 403 on permission denied, got {resp.status_code} "
@@ -234,7 +233,7 @@ class TestPass45_3AiFillIntFields:
         monkeypatch.setattr(_settings_manager, 'load_settings',
                             lambda: {'setup_completed': True})
 
-        app_module.app.config['TESTING'] = True
+        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
         with app_module.app.test_client() as c:
             with c.session_transaction() as sess:
                 sess['_csrf_token'] = 'test-csrf-token-pass45_3'
@@ -1254,7 +1253,7 @@ class TestPass45_9CollectorTrophies:
         monkeypatch.setattr(_settings_manager, 'load_settings',
                             lambda: {'setup_completed': True})
 
-        app_module.app.config['TESTING'] = True
+        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
         with app_module.app.test_client() as c:
             resp = c.get('/api/collector-trophies', follow_redirects=False)
 
@@ -1418,7 +1417,7 @@ class TestPass45_11SettingsValidators:
         # ESRGAN-init outage to a stale `"this is not a dict"` value left
         # in the user's settings.json by an unsandboxed earlier run.
         monkeypatch.setattr(_settings_manager, 'save_settings', lambda _s: True)
-        app_module.app.config['TESTING'] = True
+        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
         with app_module.app.test_client() as c:
             with c.session_transaction() as sess:
                 sess['_csrf_token'] = 'pass45_11-token'
@@ -1442,7 +1441,7 @@ class TestPass45_11SettingsValidators:
         monkeypatch.setattr(_settings_manager, 'load_settings',
                             lambda: {'setup_completed': True})
         monkeypatch.setattr(_settings_manager, 'save_settings', lambda _s: True)
-        app_module.app.config['TESTING'] = True
+        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
         with app_module.app.test_client() as c:
             with c.session_transaction() as sess:
                 sess['_csrf_token'] = 'pass45_11-token'
@@ -1535,7 +1534,7 @@ class TestPass45_11SettingsValidators:
         monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
         monkeypatch.setattr(_settings_manager, 'load_settings',
                             lambda: {'setup_completed': True})
-        app_module.app.config['TESTING'] = True
+        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
         with app_module.app.test_client() as c:
             with c.session_transaction() as sess:
                 sess['_csrf_token'] = 'pass45_11-token'
@@ -1599,7 +1598,7 @@ class TestPass45_11SettingsValidators:
         monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
         monkeypatch.setattr(_settings_manager, 'load_settings',
                             lambda: {'setup_completed': True})
-        app_module.app.config['TESTING'] = True
+        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
         with app_module.app.test_client() as c:
             with c.session_transaction() as sess:
                 sess['_csrf_token'] = 'pass45_11-token'

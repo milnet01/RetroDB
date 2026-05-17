@@ -44,13 +44,13 @@ class TestPasswordRequiredForAllRoles:
         # And the prior `if user['role'] == 'admin':` gate is gone.
         assert "if user['role'] == 'admin':" not in src
 
-    def test_login_endpoint_rejects_missing_user_id(self):
+    def test_login_endpoint_rejects_missing_user_id(self, monkeypatch):
         """ACC-1 behavioural pair: the source-grep above only confirms the
         rejection string exists. This test calls the real endpoint with
         an empty body and asserts the auth flow actually runs (no 500,
         and a friendly error rather than an open-door pass)."""
         import app as app_module
-        app_module.app.config['TESTING'] = True
+        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
         with app_module.app.test_client() as client:
             resp = client.post('/api/login', json={})
             # Endpoint reachable (no 500) and refuses the request — exact
@@ -124,14 +124,14 @@ class TestSessionRotationOnLogin:
             "session.clear() must come before any session[...] = ... assignment"
         )
 
-    def test_login_endpoint_reachable_and_clears_session(self):
+    def test_login_endpoint_reachable_and_clears_session(self, monkeypatch):
         """ACC-2 behavioural pair: drive the real endpoint. Pre-seed an
         attacker-style session value, hit `/api/login` with an obviously-
         bad payload, and confirm the endpoint runs end-to-end. A regression
         that makes `session.clear()` unreachable would show up as a 500
         here, while the AST check above pins the ordering."""
         import app as app_module
-        app_module.app.config['TESTING'] = True
+        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
         with app_module.app.test_client() as client:
             with client.session_transaction() as sess:
                 sess['leftover_pre_login'] = 'attacker-planted'
@@ -370,9 +370,15 @@ class TestDestructiveEndpointsRequireAuth:
     @pytest.fixture(scope="class")
     def client(self):
         import app as app_module
+        # Snapshot + restore — monkeypatch is unavailable in class-scoped
+        # fixtures and a bare assignment would leak TESTING=True onward.
+        _orig_testing = app_module.app.config.get('TESTING', False)
         app_module.app.config['TESTING'] = True
-        with app_module.app.test_client() as c:
-            yield c
+        try:
+            with app_module.app.test_client() as c:
+                yield c
+        finally:
+            app_module.app.config['TESTING'] = _orig_testing
 
     @pytest.mark.parametrize("path", [
         '/api/delete-game/1',

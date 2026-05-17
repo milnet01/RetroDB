@@ -82,14 +82,11 @@ class TestRequestShutdown:
         slow = _FakeJob(running=True, slow=True)
         jobs_pkg.bulk_scrape_job = slow
 
-        t0 = time.monotonic()
         base_mod.request_shutdown(timeout=0.5)
-        elapsed = time.monotonic() - t0
-
-        # cancel() set the exit event, so the slow thread should exit
-        # quickly — well under the 0.5s timeout. The 1.5s upper bound is
-        # generous headroom for loaded CI runners.
-        assert elapsed < 1.5, f"request_shutdown took {elapsed:.2f}s, should be fast"
+        # The thread-liveness check is the real contract: cancel() set the exit
+        # event, so request_shutdown's join() must have observed the thread exit
+        # before returning. A wall-clock bound on top of that is flake-bait on
+        # loaded CI runners — the join semantic already pins what we care about.
         assert not slow._thread.is_alive()
 
     def test_timeout_caps_drain_wait(self, isolated_singletons):

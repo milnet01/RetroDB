@@ -49,7 +49,10 @@ class TestBuildGamesQuery:
     def test_system_filter(self):
         sql, vals = _build_games_query({'system': '42'})
         assert "g.system_id = ?" in sql
-        assert 42 in vals or '42' in vals
+        # The SUT passes params['system'] verbatim — value comes off the query
+        # string as a str. Pin the actual type so a future int-coercion in the
+        # SUT shows up here (was: `42 in vals or '42' in vals`, ambiguous).
+        assert '42' in vals
 
     def test_search_filter_escapes_wildcards(self):
         sql, vals = _build_games_query({'search': '100%'})
@@ -64,7 +67,10 @@ class TestBuildGamesQuery:
 
     def test_letter_alpha_binds_upper(self):
         sql, vals = _build_games_query({'letter': 'z'})
-        assert "'Z'" in str(vals) or 'Z' in vals
+        # The SUT does `values.append(letter.upper())` — the bound value
+        # must be the literal string 'Z'. Was: substring on str(vals), which
+        # would also pass for vals containing 'ZERO' or any 'Z*' string.
+        assert 'Z' in vals
 
     def test_ra_only_filter(self):
         sql, vals = _build_games_query({'ra_only': '1'})

@@ -17,9 +17,15 @@ import pytest
 @pytest.fixture(scope="module")
 def client():
     import app as app_module
+    # Snapshot + restore — monkeypatch is unavailable in module-scoped fixtures
+    # and a bare assignment would leak TESTING=True to every subsequent module.
+    _orig_testing = app_module.app.config.get('TESTING', False)
     app_module.app.config['TESTING'] = True
-    with app_module.app.test_client() as c:
-        yield c
+    try:
+        with app_module.app.test_client() as c:
+            yield c
+    finally:
+        app_module.app.config['TESTING'] = _orig_testing
 
 
 class TestGzipCompression:
@@ -68,11 +74,11 @@ class TestCardDataETag:
     with a stub.
     """
 
-    def test_request_parity(self):
+    def test_request_parity(self, monkeypatch):
         """Two requests with identical If-None-Match must hit the 304 fast
         path after the first populates the ETag."""
         import app as app_module
-        app_module.app.config['TESTING'] = True
+        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
         client = app_module.app.test_client()
 
         # Bypass login_required + CSRF by logging in through the test_client's

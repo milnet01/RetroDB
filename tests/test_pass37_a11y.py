@@ -101,9 +101,19 @@ def test_37_2_psn_trophies_modals_activate_focus_trap():
     src = read_source('templates/psn_trophies.html')
     # Pass 37.2 marker comments are fine but not required; what matters is that
     # ModalFocusTrap.activate is called for both syncModal and bulkRefreshModal,
-    # with matching deactivate on close paths.
-    assert src.count('ModalFocusTrap.activate') >= 2
-    assert src.count('ModalFocusTrap.deactivate') >= 4  # sync + bulk + error paths
+    # with matching deactivate on close paths. Lower bound was `>= 4` for
+    # deactivate; actual count grew to 7 (sync + bulk + error + open/close paths).
+    # Tighten to a balanced equality check — any drop in deactivate calls is now
+    # caught instead of silently degrading the focus-trap teardown coverage.
+    assert src.count('ModalFocusTrap.activate') == 2, (
+        f"Expected 2 ModalFocusTrap.activate calls (sync+bulk); "
+        f"got {src.count('ModalFocusTrap.activate')}"
+    )
+    assert src.count('ModalFocusTrap.deactivate') == 7, (
+        f"Expected 7 ModalFocusTrap.deactivate calls "
+        f"(sync open/close+esc, bulk open/close+esc, error path); "
+        f"got {src.count('ModalFocusTrap.deactivate')}"
+    )
 
 
 # -----------------------------------------------------------------------------
@@ -127,15 +137,29 @@ def test_37_3_effects_backgrounds_reduced_motion():
 # 37.4 — rel="noopener noreferrer" on every target="_blank"
 # -----------------------------------------------------------------------------
 def test_37_4_target_blank_has_rel_noopener():
-    """Every <a target="_blank"> across templates/ ships rel=noopener noreferrer."""
+    """Every <a target="_blank"> across templates/ ships rel=noopener noreferrer.
+
+    Earlier version only checked that *some* `rel=` was present, which would
+    have happily accepted `rel="nofollow"` and still leak window.opener. The
+    docstring claims "noopener noreferrer" — assert it."""
     offenders = []
     for p in pathlib.Path(os.path.join(REPO_ROOT, 'templates')).rglob('*.html'):
         src = p.read_text(encoding='utf-8')
         for m in re.finditer(r'<a\b[^>]*?target="_blank"[^>]*?>', src, re.IGNORECASE):
             tag = m.group(0)
-            if not re.search(r'\brel\s*=', tag, re.IGNORECASE):
-                offenders.append(f"{p.relative_to(REPO_ROOT)}: {tag[:120]}")
-    assert not offenders, 'target=_blank without rel=:\n' + '\n'.join(offenders)
+            rel_match = re.search(r'\brel\s*=\s*["\']([^"\']+)["\']', tag, re.IGNORECASE)
+            if rel_match is None:
+                offenders.append(f"{p.relative_to(REPO_ROOT)}: missing rel=: {tag[:120]}")
+                continue
+            rel_value = rel_match.group(1).lower()
+            # Both tokens required — noopener stops the new tab from
+            # window.opener-ing back; noreferrer also strips the Referer header.
+            if 'noopener' not in rel_value or 'noreferrer' not in rel_value:
+                offenders.append(
+                    f"{p.relative_to(REPO_ROOT)}: rel={rel_value!r} "
+                    f"missing 'noopener' or 'noreferrer': {tag[:120]}"
+                )
+    assert not offenders, 'target=_blank without rel=noopener noreferrer:\n' + '\n'.join(offenders)
 
 
 # -----------------------------------------------------------------------------
@@ -232,5 +256,3 @@ def test_37_7_game_list_no_residual_3b82f6_or_fff_on_ratings():
     assert 'var(--text-on-color)' in esrb
 
 
-# Backwards-compat alias.
-_REPO_ROOT = REPO_ROOT

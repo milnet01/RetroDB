@@ -289,7 +289,7 @@ class TestApiScanRomPathNotConfigured:
             _settings_manager, 'get_effective_path',
             lambda key, fallback='': '',
         )
-        app_module.app.config['TESTING'] = True
+        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
         return app_module.app.test_client()
 
     def test_api_scan_returns_error_when_rom_path_unset(self, monkeypatch):

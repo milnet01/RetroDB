@@ -164,7 +164,7 @@ class TestAchievementUserIdMigration:
         assert rows[0]['achieved'] == 0
         assert rows[1]['achieved'] == 1
 
-    def test_legacy_gap_rows_backfill_to_admin(self, tmp_path):
+    def test_legacy_gap_rows_backfill_to_admin(self, tmp_path, monkeypatch):
         """Legacy install path — game_achievement_progress already has rows
         from a pre-31 install. Migration 009 backfills them to the admin.
 
@@ -178,13 +178,13 @@ class TestAchievementUserIdMigration:
             admin_id = _seed_admin(conn)
 
             # Stop after baseline (001) so we can seed gap rows in the old shape,
-            # then run 009 as a reshape step.
-            real = migrations.MIGRATIONS
-            try:
-                migrations.MIGRATIONS = real[:4]  # 001..004 — gap table exists
-                migrations.apply_pending(conn)
-            finally:
-                migrations.MIGRATIONS = real
+            # then run 009 as a reshape step. Use monkeypatch (not try/finally)
+            # so the global list is restored even if the test is killed
+            # mid-run (SIGKILL/OOM) — same rationale as test_migrations.py:324.
+            real_list = migrations.MIGRATIONS
+            monkeypatch.setattr(migrations, 'MIGRATIONS', real_list[:4])  # 001..004 — gap table exists
+            migrations.apply_pending(conn)
+            monkeypatch.setattr(migrations, 'MIGRATIONS', real_list)
 
             # Pass 45.10 — migration 009 now runs PRAGMA foreign_key_check
             # before commit. Migration 009 adds FOREIGN KEY(game_id)

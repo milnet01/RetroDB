@@ -68,12 +68,15 @@ class TestSettingsManagerHasNewKeys:
                   'launch_required_permission', 'launch_concurrent_same_game'):
             assert k in settings_manager.DEFAULT_SETTINGS, k
 
-    def test_default_values_are_valid(self):
+    @pytest.mark.parametrize("k", [
+        'retroarch_binary', 'retroarch_cores_dir', 'launcher_backend',
+        'launch_required_permission', 'launch_concurrent_same_game',
+    ])
+    def test_default_value_is_valid(self, k):
         """Sanity: every default value passes its own validator (otherwise
-        the import-time check in settings_validators.py would have raised)."""
+        the import-time check in settings_validators.py would have raised).
+        Parametrized so one broken default doesn't hide the others."""
         import settings_manager
         from services.settings_validators import validate_settings_value
-        for k in ('retroarch_binary', 'retroarch_cores_dir', 'launcher_backend',
-                  'launch_required_permission', 'launch_concurrent_same_game'):
-            ok, reason, _ = validate_settings_value(k, settings_manager.DEFAULT_SETTINGS[k])
-            assert ok, f"{k} default {settings_manager.DEFAULT_SETTINGS[k]!r}: {reason}"
+        ok, reason, _ = validate_settings_value(k, settings_manager.DEFAULT_SETTINGS[k])
+        assert ok, f"{k} default {settings_manager.DEFAULT_SETTINGS[k]!r}: {reason}"

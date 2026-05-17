@@ -287,14 +287,15 @@ def test_36_9_clear_all_includes_queue_keys():
 # -----------------------------------------------------------------------------
 def test_36_10_assertive_container():
     src = read_source(os.path.join('static', 'js', 'utils.js'))
-    assert "assertiveContainer" in src
-    assert 'aria-live' in src
-    assert 'assertive' in src
+    # Slice the Notifications.init() body first so the aria-live / assertive
+    # grepss are scoped to that constructor — a stray mention elsewhere in
+    # the 2000-line file (docstring, comment) would otherwise satisfy them.
     init_body = src[src.index("init() {", src.index("Notifications")):
                     src.index("_containerFor")]
+    assert "assertiveContainer" in init_body
+    assert 'aria-live' in init_body
+    assert 'assertive' in init_body
     assert "'alert'" in init_body or '"alert"' in init_body
     assert "'assertive'" in init_body or '"assertive"' in init_body
 
 
-# Backwards-compat alias.
-_REPO_ROOT = REPO_ROOT

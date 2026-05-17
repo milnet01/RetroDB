@@ -62,3 +62,14 @@ def test_pick_best_secondary_returns_none_when_below_threshold():
     candidates = [{'source': 'tgdb', 'id': 1, 'name': 'Totally Different'}]
     best = _pick_best_secondary(candidates, 'Castlevania', min_title_score=200)
     assert best is None
+
+
+def test_pick_best_fallback_returns_none_on_empty_list():
+    """Empty candidate list must return None, not raise IndexError /
+    StopIteration. The outer except Exception in callers would swallow
+    the raise but lose the regression signal."""
+    assert _pick_best_fallback([], 'Castlevania', min_title_score=0) is None
+
+
+def test_pick_best_secondary_returns_none_on_empty_list():
+    assert _pick_best_secondary([], 'Castlevania', min_title_score=0) is None

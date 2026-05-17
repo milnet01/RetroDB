@@ -1,8 +1,10 @@
 # Pass 44 — Player role + new permissions.
-import os
 import pathlib
 
-_REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
+from tests._util import REPO_ROOT
+
+# Local Path wrapper — file uses `/`-operator path arithmetic in 4 places.
+_REPO_ROOT = pathlib.Path(REPO_ROOT)
 
 
 class TestRolePermissions:

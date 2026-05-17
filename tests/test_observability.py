@@ -23,6 +23,9 @@ def client():
     don't leak between tests in the same module."""
     import log_manager
     import app as app_module
+    # Snapshot TESTING alongside the log-factory globals so it restores
+    # consistently — bare assignment would leak True onward.
+    _orig_testing = app_module.app.config.get('TESTING', False)
     app_module.app.config['TESTING'] = True
 
     # Snapshot the log-record factory so we can restore on teardown if a
@@ -31,11 +34,13 @@ def client():
     original_factory = logging.getLogRecordFactory()
     original_installed_flag = getattr(log_manager, '_request_id_installed', False)
 
-    with app_module.app.test_client() as c:
-        yield c
-
-    logging.setLogRecordFactory(original_factory)
-    log_manager._request_id_installed = original_installed_flag
+    try:
+        with app_module.app.test_client() as c:
+            yield c
+    finally:
+        logging.setLogRecordFactory(original_factory)
+        log_manager._request_id_installed = original_installed_flag
+        app_module.app.config['TESTING'] = _orig_testing
 
 
 class TestHealthProbe:

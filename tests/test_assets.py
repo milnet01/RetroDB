@@ -22,10 +22,19 @@ def app_with_manifest(tmp_path):
     with patch.object(assets, 'config') as mock_cfg:
         mock_cfg.STATIC_PATH = str(static_dir)
         mock_cfg.APP_VERSION = '2.84.2'
-        # Reset the module-level cache so each test starts fresh.
+        # Snapshot + restore the module-level cache so a failed test doesn't
+        # leak its populated state to siblings (xdist-safe). Direct dict
+        # assignment can't be wrapped by monkeypatch — use the surrounding
+        # try/finally instead.
+        _orig_mtime = assets._MANIFEST_CACHE.get('mtime', 0)
+        _orig_data = dict(assets._MANIFEST_CACHE.get('data', {}))
         assets._MANIFEST_CACHE['mtime'] = 0
         assets._MANIFEST_CACHE['data'] = {}
-        yield app, manifest
+        try:
+            yield app, manifest
+        finally:
+            assets._MANIFEST_CACHE['mtime'] = _orig_mtime
+            assets._MANIFEST_CACHE['data'] = _orig_data
 
 
 class TestAssetUrl:

@@ -23,7 +23,11 @@ def connection(tmp_path):
 
     Test bodies obtain a cursor via ``connection.cursor()`` — the fixture
     name was previously ``cursor`` but it returned the Connection, which
-    was a Pass-c-006 N-1 finding."""
+    was a Pass-c-006 N-1 finding.
+
+    Yields with explicit close in teardown — CPython's refcount closes
+    promptly today, but PyPy / pytest-xdist process reuse can hold the
+    WAL lock past test boundaries without the explicit close."""
     db_path = tmp_path / 'test.db'
     conn = sqlite3.connect(str(db_path))
     conn.execute("""
@@ -32,7 +36,10 @@ def connection(tmp_path):
             scrape_history TEXT
         )
     """)
-    return conn
+    try:
+        yield conn
+    finally:
+        conn.close()
 
 
 class TestBuildScrapeHistoryJson:

@@ -9,16 +9,12 @@
 # RA service can't poison the rest of the scrape.
 # =============================================================================
 
-import os
 import sqlite3
-import sys
 from unittest.mock import patch
 
 import pytest
 
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _REPO_ROOT not in sys.path:
-    sys.path.insert(0, _REPO_ROOT)
+from tests._util import REPO_ROOT as _REPO_ROOT  # noqa: F401
 
 
 @pytest.fixture

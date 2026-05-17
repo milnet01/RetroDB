@@ -109,7 +109,9 @@ class TestInstallGlobalRedactor:
             # subsequent tests / files see a clean root logger.
             root.filters = [f for f in root.filters if not isinstance(f, SecretRedactor)]
 
-    def test_install_covers_basicconfig_handler(self, caplog):
+    def test_install_covers_basicconfig_handler(self):
+        # caplog removed — it was an unused fixture parameter (the assertion
+        # below reads `handler.filters`, not captured log records).
         import io
         import log_manager
 
@@ -123,7 +125,10 @@ class TestInstallGlobalRedactor:
         try:
             log_manager.install_global_redactor()
             attached = any(isinstance(f, SecretRedactor) for f in handler.filters)
-            assert attached is True
+            assert attached, (
+                "install_global_redactor() did not attach a SecretRedactor "
+                "to the root StreamHandler"
+            )
         finally:
             root.removeHandler(handler)
             # Strip any redactor this call attached to the root logger so

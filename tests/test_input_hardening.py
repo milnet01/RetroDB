@@ -118,6 +118,25 @@ class TestMuseumSSRFGuard:
         assert pinned_ip is None
         assert 'scheme' in err.lower()
 
+    def test_ipv6_loopback_rejected(self):
+        """IPv6 SSRF coverage — the production guard uses the `ipaddress`
+        module which classifies `::1` as loopback. A fast-path regression
+        that early-returns on IPv4-shaped literals would miss this."""
+        from routes.museum import _is_public_https_url
+        safe_url, pinned_ip, err = _is_public_https_url('http://[::1]/admin')
+        assert safe_url is None
+        assert pinned_ip is None
+        assert err  # any non-empty rejection reason
+
+    def test_ipv6_link_local_rejected(self):
+        """IPv6 link-local (`fe80::/10`) maps to the IPv4 169.254.0.0/16
+        AWS-IMDS class of SSRF targets — same severity, IPv6 surface."""
+        from routes.museum import _is_public_https_url
+        safe_url, pinned_ip, err = _is_public_https_url('http://[fe80::1]/foo')
+        assert safe_url is None
+        assert pinned_ip is None
+        assert err
+
 
 # 25.4 — Museum upload size cap
 # -----------------------------
