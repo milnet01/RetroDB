@@ -189,7 +189,19 @@ two verify loops to convergence.
      (`rom-manager`, `retro-gaming`, `flask`, `python`, `emulation`,
      `rom-library`, `self-hosted`, `gaming`) so the repo is
      discoverable from GitHub search.
-- **Status**: todo
+- **Status**: shipped in v3.6.15. Items 1 (gitleaks --all clean: 0
+  leaks / 203 commits scanned), 2 (every excluded path verified
+  `git log --all` empty), 3 (one real cleanup — stray Inkscape
+  export-filename in `static/images/systems/cps.svg`; the rest are
+  intentional dev-box-aware test fixtures + UX placeholders + the
+  maintainer's own CLAUDE.md note), 4 (SECURITY.md authored), 5
+  (3 issue-template files incl. `config.yml` routing security to PVR
+  and questions to Discussions), 6 (PR template authored), 7
+  (Status line + Support-development section pointing at GitHub
+  Sponsors — screenshots deferred, maintainer needs to curate; the
+  Patreon / BMAC URLs land in Pass 47.6 once the platforms are set
+  up). Item 8 (repo description + topics) deferred to Pass 47.2 —
+  the `gh repo edit` call is paired with the visibility flip.
 
 #### Pass 47.2 Flip repo visibility private → public (MEDIUM, S)
 
@@ -3041,6 +3053,14 @@ in its **Status** line; `grep "done (v3.5" roadmap.md` enumerates all.
   note (between v3.6.13 and v3.6.14); dependency bumps (requests /
   onnxruntime / numpy) (v3.6.13).  See `data/changelog.yaml` for
   per-version detail.  (v3.6.1 – v3.6.14)
+- [x] **Pass 47.1** — pre-publish hygiene sweep: gitleaks-all clean
+  (0 leaks / 203 commits); every excluded path `git log --all` empty;
+  one stray Inkscape host-path stripped from `static/images/systems/cps.svg`;
+  `SECURITY.md` authored; `.github/ISSUE_TEMPLATE/` + `PULL_REQUEST_TEMPLATE.md`
+  authored; README adds a Status line and a Support-development section
+  pointing at GitHub Sponsors. Items 7-screenshots and 8-repo-metadata
+  deferred to a maintainer-curation step and Pass 47.2 respectively.
+  (v3.6.15)
 
 ---
 

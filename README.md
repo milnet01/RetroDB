@@ -2,6 +2,8 @@
 
 **Retro Gaming ROM Library Manager** - A web-based application for organizing, scraping metadata, and managing your retro game ROM collection.
 
+> **Status:** Solo-developed; releases on a best-effort cadence. See [`SECURITY.md`](SECURITY.md) for the security disclosure policy and [`CONTRIBUTING.md`](CONTRIBUTING.md) for the developer setup.
+
 ## Features
 
 ### Library & Metadata
@@ -120,6 +122,16 @@ RetroDB runs on **Linux**, **Windows**, and **macOS**. Platform-specific launche
 2. Extract the new version over the existing installation
 3. Run `python install.py` to install any new dependencies
 4. Your database and settings will be preserved
+
+## Support development
+
+RetroDB is free and open source. If it saves you time, consider tipping —
+every bit helps keep solo development sustainable.
+
+- **GitHub Sponsors:** [github.com/sponsors/milnet01](https://github.com/sponsors/milnet01)
+
+(Additional donation surfaces — Patreon, Buy Me A Coffee — are linked from
+[`.github/FUNDING.yml`](.github/FUNDING.yml) as they come online.)
 
 ## License
 

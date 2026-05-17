@@ -1,3 +1,28 @@
+- version: 3.6.15
+  date: 2026-05-18
+  tags:
+  - type: chore
+    label: Pass 47.1 — pre-publish hygiene sweep (SECURITY.md + issue/PR templates + README polish)
+  - type: chore
+    label: Stray dev-host path scrubbed from static/images/systems/cps.svg (Inkscape export metadata)
+  body: |
+    <ul>
+        <li><strong>Pass 47.1 pre-publish hygiene sweep</strong>. Last gate before flipping the GitHub repo from private to public. All eight planned items either completed or verified clean — see roadmap.md §Pass 47.1 for the full plan.
+            <ul>
+                <li><strong>Secret-history sweep (clean)</strong>. <code>gitleaks detect --source . --redact --no-banner --log-opts="--all"</code> across every ref returned <em>no leaks</em> (203 commits, 16.48 MB scanned in 978 ms). Pre-<code>.gitleaks.toml</code> history is clear; no <code>git filter-repo</code> or credential rotation needed.</li>
+                <li><strong>Excluded-paths sanity check (clean)</strong>. <code>git log --all --</code> empty for every sensitive path: <code>config.py</code>, <code>data/{settings,scraper_settings,rom_tools_config,psn_tokens,xbox_tokens}.json</code>, <code>data/.secret_key</code>, all <code>*.db</code> / <code>*.db-journal</code> / <code>*.db-wal</code>, all six scraped-media dirs under <code>static/images/</code> (<code>boxart</code>, <code>boxart_3d</code>, <code>screenshots</code>, <code>fanart</code>, <code>manuals</code>, <code>trophies</code>), and <code>static/videos/</code>. <code>.gitignore</code> covers each (whitelist semantics for the four <code>INCLUDE_IMAGE_DIRS</code>).</li>
+                <li><strong>Hardcoded-paths / personal-identifiers grep</strong>. <code>grep -rE "/home/(ants|[a-z]+)/|aant\.schemel|milnet01"</code> across the source tree. Findings categorised: intentional (CLAUDE.md "Maintainer-only" screenshot pointer; roadmap.md §Pass 47 plan text and FUNDING.yml handle; <code>test_pass40_security.py</code> attacker-path fixtures; <code>templates/{settings,setup}.html</code> <code>/home/user/</code> placeholder UX hints — platform-aware in <code>setup.html</code>) — left as-is. One real cleanup: <code>static/images/systems/cps.svg</code> carried an Inkscape <code>export-filename="/home/leon/..."</code> attribute from the upstream EmulationStation-DE artist (third-party asset metadata, not RetroDB-authored). Stripped. SVG renders identically (export-filename is an editor-tooling hint, never a renderable attribute).</li>
+                <li><strong>SECURITY.md authored</strong>. Top-level disclosure policy. Sections: how to report (private email + GitHub PVR), what to include, response expectations (7-day ack / 14-day triage / fix-or-workaround per-severity), no-bug-bounty statement, in-scope (auth/AuthZ across viewer/editor/admin roles, injection, XSS in <code>showNotification</code>/<code>showModal</code> sinks, path traversal, SSRF, decompression bombs, log-redactor bypasses, security-impact races), out-of-scope (open-internet exposure of a localhost app, single-user self-DoS, admin-editable rate-limit defaults, upstream-dep CVEs not exercised by RetroDB), coordinated-disclosure timeline.</li>
+                <li><strong>Issue templates (<code>.github/ISSUE_TEMPLATE/</code>)</strong>: <code>bug_report.md</code> (env / RetroDB version / install type / steps / expected vs actual / log excerpt, with pointer to <code>logs/{app,scraper,job}.log</code> categories and a note that the log redactor strips secrets before write so the file is generally safe to share), <code>feature_request.md</code> (what / why / concrete example / considered alternatives / out-of-scope), <code>config.yml</code> turns off blank issues and routes security reports to GitHub's PVR while questions go to Discussions.</li>
+                <li><strong><code>.github/PULL_REQUEST_TEMPLATE.md</code></strong>: what/why/how + the mandatory-workflow checklist from CLAUDE.md (version bump, changelog entry, CSS rebuild, JS rebuild, pytest run, lockfile regen, CLAUDE.md update) + a "Verification" section asking for the concrete test plan the author actually ran (e.g. "walked the edit-game flow at desktop + mobile" not just "ran pytest").</li>
+                <li><strong>README.md polish</strong>: Status line ("Solo-developed; releases on a best-effort cadence") under the tagline with SECURITY.md + CONTRIBUTING.md pointers; "Support development" section above License pointing at GitHub Sponsors with a parenthetical that Patreon / Buy Me A Coffee links will populate via <code>.github/FUNDING.yml</code> as Pass 47.3 / 47.5 ship. Screenshots intentionally deferred — those are maintainer-only artefacts that need a curation pass; the section will land in a follow-up when the maintainer picks 2–3 representative shots.</li>
+                <li><strong>Repo metadata (description + topics)</strong>: deferred to Pass 47.2 — that's the visibility flip, and the <code>gh repo edit</code> call is paired with it.</li>
+            </ul>
+        </li>
+        <li><strong>Roadmap</strong>: Pass 47.1 status flipped to shipped. Pass 47.2 (private→public visibility flip) is the next gate — that one's user-driven; no Claude-code action.</li>
+        <li><strong>Patch bump 3.6.14 → 3.6.15</strong>: docs + community files + one stray-metadata cleanup. No user-visible behaviour change.</li>
+    </ul>
+
 - version: 3.6.14
   date: 2026-05-17
   tags:
