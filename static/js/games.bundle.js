@@ -412,7 +412,13 @@ const BulkScrapeController = {
      */
     cancel() {
         const _wi2 = typeof getThemedIcon === 'function' ? getThemedIcon('warning') : '⚠️';
-        showConfirm(`${_wi2} Cancel Bulk Scrape`, 'Are you sure you want to cancel the bulk scrape?', async () => {
+        showConfirm(
+            `${_wi2} Cancel Bulk Scrape`,
+            'Are you sure you want to cancel the bulk scrape?\n\n' +
+            'Note: the current game will finish scraping (usually 10–60 seconds) ' +
+            'before the cancel takes effect — the progress toast will keep ' +
+            'updating during that window.',
+            async () => {
             try {
                 const data = await API.post('/api/bulk-scrape-job/cancel');
 

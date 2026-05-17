@@ -349,7 +349,18 @@ const BulkScrapeController = {
      */
     cancel() {
         const _wi2 = typeof getThemedIcon === 'function' ? getThemedIcon('warning') : '⚠️';
-        showConfirm(`${_wi2} Cancel Bulk Scrape`, 'Are you sure you want to cancel the bulk scrape?', async () => {
+        // v3.6.7 — cancel is cooperative: the scrape loop only checks the
+        // cancel flag between games, so the *current* game's scrape still
+        // finishes (typically 10-60 s for a single API + media download).
+        // Surface that explicitly so users don't think cancel is broken
+        // when the progress toast keeps ticking for a bit after they confirm.
+        showConfirm(
+            `${_wi2} Cancel Bulk Scrape`,
+            'Are you sure you want to cancel the bulk scrape?\n\n' +
+            'Note: the current game will finish scraping (usually 10–60 seconds) ' +
+            'before the cancel takes effect — the progress toast will keep ' +
+            'updating during that window.',
+            async () => {
             try {
                 const data = await API.post('/api/bulk-scrape-job/cancel');
 

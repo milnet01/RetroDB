@@ -4173,14 +4173,24 @@ function viewBonusStats() {
         .then(r => r.json())
         .then(data => {
             if (data.success) {
-                showModal('📊 Bonus Disc Statistics', `
+                // v3.6.5 — opt into HTML rendering. Same class of bug as v3.6.3
+                // rename modals: showModal defaults to textContent (Pass 40.13)
+                // so without {allowHtml: true} the <div>/<p> source leaks
+                // verbatim into the modal body. All four interpolated values
+                // are server-side COUNT(*) integers (routes/bonus_discs.py:322),
+                // so no escapeHtml is needed for XSS, but the option flag is.
+                showModal(
+                    '📊 Bonus Disc Statistics',
+                    `
                     <div style="font-size: 1.1rem;">
                         <p><strong>Total Bonus Discs:</strong> ${data.total_bonus}</p>
                         <p><strong>Linked to Parent:</strong> ${data.linked}</p>
                         <p><strong>Unlinked:</strong> ${data.unlinked}</p>
                         <p><strong>Games with Bonus Content:</strong> ${data.parents_with_bonus}</p>
                     </div>
-                `);
+                `,
+                    null, false, null, { allowHtml: true }
+                );
             } else {
                 showNotification('Failed to load stats: ' + data.error, 'error');
             }

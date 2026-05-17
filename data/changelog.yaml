@@ -1,3 +1,18 @@
+- version: 3.6.12
+  date: 2026-05-17
+  tags:
+  - type: ux
+    label: Bulk-scrape cancel confirm now warns the user that cancel is cooperative (current game finishes before the cancel takes effect)
+  - type: fix
+    label: Bonus disc stats modal — opt into HTML rendering so the body renders instead of leaking the source verbatim (same class as v3.6.3)
+  body: |
+    <ul>
+        <li><strong>Bulk-scrape cancel UX (<code>static/js/bulk-scrape.js</code>)</strong>. The cancel-bulk-scrape confirm dialog now explains that cancel is cooperative — the worker only checks the cancel flag <em>between</em> games, so the currently-scraping game (typically 10–60 s for one API call + media download) still finishes before the cancel actually takes effect. Previously the progress toast kept ticking after the user clicked Cancel and they would think cancel was broken. The behaviour is unchanged; only the confirm copy is.</li>
+        <li><strong>Bonus disc stats modal (<code>templates/settings.html</code>)</strong>. <code>viewBonusStats()</code> calls <code>showModal('📊 Bonus Disc Statistics', html)</code> with a multi-line HTML body. Since Pass 40.13 (showModal blocklist → opt-in allowlist) <code>showModal</code> defaults to <code>textContent</code> rendering — without <code>{allowHtml: true}</code> the <code>&lt;div&gt;</code>/<code>&lt;p&gt;</code> source leaked into the modal body verbatim. Same class of bug as v3.6.3 (ROM Reports rename modal). All four interpolated values are server-side <code>COUNT(*)</code> integers (<code>routes/bonus_discs.py:322</code>) so no escapeHtml is needed for XSS, but the option flag is.</li>
+        <li><strong>Bundle rebuild</strong>. <code>static/js/games.bundle.js</code> + <code>asset_manifest.json</code> updated for bulk-scrape.js change. <code>core.bundle.js</code> not touched in this commit.</li>
+        <li><strong>Patch bump 3.6.11 → 3.6.12</strong>: two small user-visible UX fixes.</li>
+    </ul>
+
 - version: 3.6.11
   date: 2026-05-17
   tags:
