@@ -545,7 +545,36 @@ are tracked here so the next pass picks them up:
      bottom of `data/changelog.yaml`'s release notes, fed manually
      per release. Defer until there *are* supporters.
 - **Status**: blocked on 47.3 / 47.4 / 47.5 (need the platform URLs
-  to populate)
+  to populate). The Sponsors-only subset is unblocked — see 47.6.A.
+
+#### Pass 47.6.A In-app sponsorship link (GitHub Sponsors only) (LOW, S)
+
+- **Target**: in-app surface — settings page (likely the
+  `templates/_settings_tabs/system.html` partial or About modal) +
+  optional footer link.
+- **Why**: Pass 47.6's full plan is blocked on 47.3 + 47.5 (need Patreon
+  + BMAC usernames). GitHub Sponsors is already live
+  (<https://github.com/sponsors/milnet01>) and already in
+  `.github/FUNDING.yml`. There's no reason to delay the in-app discovery
+  surface until *all three* platforms are wired — start with Sponsors,
+  add the others when 47.6 lands.
+- **Plan**:
+  1. **Settings → System tab.** Add a "Support development" panel with
+     a single-link card pointing at <https://github.com/sponsors/milnet01>,
+     a one-line framing ("RetroDB is free and open source. If it saves
+     you time, consider sponsoring — every bit helps keep solo development
+     sustainable."), and the GitHub Sponsors mark. Use existing card +
+     theme tokens; no new CSS components.
+  2. **About modal.** Add the same link as a secondary surface for
+     users who never visit Settings.
+  3. **No nag dialog, no paywalled features**, no first-run modal —
+     trust costs more than the marginal conversion would earn. A footer
+     link is fine if a footer exists; otherwise skip per 47.6 step 4.
+  4. **Open in a new tab** (`target="_blank" rel="noopener noreferrer"`)
+     so the user doesn't lose their place.
+- **Source**: user-request-2026-05-18 (post-public-flip follow-up).
+- **Status**: ready to start; 47.6 can absorb Patreon + BMAC additions
+  once those land.
 
 ---
 
