@@ -12,10 +12,10 @@ on:
 # CI green through the transition without pinning action versions we don't control.
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
-  # Python used for "run-once" steps (semgrep, pip-audit, lockfile-drift,
-  # coverage). The matrix still runs ruff + import smoke + pytest on every
-  # listed interpreter, but these heavier steps skip non-primary interpreters
-  # to keep wall-clock reasonable — their result is interpreter-independent.
+  # The single interpreter the run-once / interpreter-independent checks use
+  # (semgrep, pip-audit, lockfile-drift, coverage). The lint-and-smoke matrix
+  # runs ruff + import-smoke + pytest on every listed interpreter; the dedicated
+  # `semgrep` / `pip-audit` / `lockfile-drift` jobs always run on this one.
   PRIMARY_PYTHON: "3.13"
 
 concurrency:
@@ -29,6 +29,11 @@ permissions:
   contents: read
 
 jobs:
+  # ---------------------------------------------------------------------------
+  # lint-and-smoke — per-interpreter ruff + import smoke + pytest. Heavy
+  # checks (semgrep / pip-audit / lockfile-drift) moved to dedicated jobs
+  # below so the matrix lanes can finish faster on the critical path.
+  # ---------------------------------------------------------------------------
   lint-and-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -54,20 +59,20 @@ jobs:
 
       # uv cache, keyed on the exact lockfile. Same lockfile → instant warm
       # cache, near-zero install time. Lockfile change → cold install (still
-      # uv-fast). Audit-tool versions live in this step's run-script so a
-      # lockfile-only change hits this cache; an audit-tool bump invalidates
-      # it via the script-hash component of the key.
+      # uv-fast). The `lint-and-smoke-v2` suffix isolates this cache from the
+      # dedicated audit-job caches that install a different (much smaller)
+      # tool set under the same lockfile hash.
       - name: Cache uv wheels
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
         with:
           path: ~/.cache/uv
-          key: uv-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('requirements.lock') }}-audit-v2
+          key: uv-lint-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('requirements.lock') }}-v2
           restore-keys: |
-            uv-${{ runner.os }}-py${{ matrix.python-version }}-
+            uv-lint-${{ runner.os }}-py${{ matrix.python-version }}-
 
-      - name: Install runtime + audit deps (uv)
+      - name: Install runtime + test deps (uv)
         run: |
-          # uv is ~10–30× faster than pip's resolver. We install once into the
+          # uv is ~10–30× faster than pip's resolver. Install once into the
           # system Python that setup-python provisioned (no separate venv —
           # all subsequent steps `python -m <x>` against the same interpreter).
           #
@@ -77,85 +82,13 @@ jobs:
           # would force a resolver round-trip; the lock is exact.
           python -m pip install --upgrade pip uv
           uv pip install --system --require-hashes -r requirements.lock
-          # Audit tooling lives outside the lock (CI-only, not user-shipped).
-          # pytest-xdist + pytest-randomly added 2026-05-18: faster suite +
-          # surfaces order-dependence locally instead of leaking into main.
+          # Test-only tooling (not user-shipped). semgrep/pip-audit/pip-tools
+          # moved to the dedicated jobs below, so this install stays lean.
           uv pip install --system \
-            ruff semgrep pytest pytest-cov pytest-xdist pytest-randomly \
-            pip-audit pip-tools
+            ruff pytest pytest-cov pytest-xdist pytest-randomly
 
       - name: Ruff (bugs only — E, F, B, S)
         run: ruff check .
-
-      - name: Semgrep (calibrated via .semgrep.yml exclusions)
-        if: matrix.python-version == env.PRIMARY_PYTHON
-        run: |
-          # .semgrep.yml documents 13 upstream rule IDs as noise-only on this
-          # codebase (three consecutive audits, 0/105 actionable). The raw
-          # upstream packs would surface them every run. Parse the list out
-          # of the doc comments and feed it back as --exclude-rule flags.
-          EXCLUDES=$(awk '/^# Excluded upstream rules/,/^# RetroDB-specific/' .semgrep.yml \
-                     | grep -oE '^#   [a-z][a-z0-9._-]+\.[a-z0-9._-]+' \
-                     | awk '{print "--exclude-rule " $2}' | tr '\n' ' ')
-          echo "Applying exclusions:"; echo "$EXCLUDES" | tr ' ' '\n' | grep -v '^$' || true
-          semgrep \
-            --config p/security-audit \
-            --config p/python \
-            --config p/flask \
-            --config .semgrep.yml \
-            --error \
-            --timeout 60 \
-            --metrics=off \
-            --exclude logs \
-            --exclude data \
-            --exclude database \
-            --exclude static/images \
-            --exclude static/videos \
-            $EXCLUDES \
-            .
-        # Hard-fail since v2.98.1 (Pass 30 debt sweep): with the calibrated
-        # exclusion list in .semgrep.yml, CI runs at 0 findings. If a new
-        # finding lands it's either a real bug or a new noise pattern that
-        # needs a documented exclusion — either way, green CI should mean
-        # zero.
-
-      - name: pip-audit (CVEs in pinned lockfile)
-        if: matrix.python-version == env.PRIMARY_PYTHON
-        run: pip-audit --requirement requirements.lock --strict
-        # Hard-fail since Pass 39.3 (v3.5.40): lockfile clean, six audit
-        # cycles at 0/N actionable. New CVE surfacing means real action
-        # required (Dependabot bump or pin rationale), not silent warning.
-
-      - name: Lockfile drift check
-        if: matrix.python-version == env.PRIMARY_PYTHON
-        run: |
-          # CLAUDE.md says "regenerate lockfile if requirements.txt was edited"
-          # — this step turns that honor-system rule into a hard check.
-          #
-          # Semantic intent: catch "someone added a dep to requirements.txt
-          # but forgot to recompile the lock", NOT "upstream released a point
-          # version newer than what we've pinned" (that's Dependabot's job).
-          #
-          # Implementation: seed /tmp/fresh.lock with the existing lock, then
-          # recompile. pip-compile honors existing pins unless the input
-          # constraints actually force a change, so a clean PR produces an
-          # identical body. The 6-line auto-generated header differs by
-          # output path between the two runs — strip it before diffing.
-          cp requirements.lock /tmp/fresh.lock
-          # Pass 39.4 — `--generate-hashes` so the regenerated lockfile carries
-          # per-package SHA256s; installers use `pip install --require-hashes`
-          # for fail-closed install on MITM / PyPI tamper. Diff stays apples-
-          # to-apples since the seed lockfile already has hashes.
-          pip-compile --quiet --strip-extras --generate-hashes --output-file /tmp/fresh.lock requirements.txt
-          # Strip any leading `# ...` header lines (newer pip-compile emits a
-          # 6-line comment block; older invocations produce none). Per-package
-          # `# via` lines are indented with spaces so they don't match ^#.
-          if ! diff -u <(grep -v '^#' requirements.lock) <(grep -v '^#' /tmp/fresh.lock); then
-            echo ""
-            echo "::error::requirements.lock is out of sync with requirements.txt."
-            echo "Run: pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes"
-            exit 1
-          fi
 
       - name: Import smoke test
         env:
@@ -190,3 +123,148 @@ jobs:
           name: coverage-xml
           path: coverage.xml
           if-no-files-found: ignore
+
+  # ---------------------------------------------------------------------------
+  # semgrep — security scan of the source tree. Independent of the matrix
+  # (result is interpreter-independent). Runs in parallel with lint-and-smoke
+  # so the critical path is max(lanes), not sum.
+  # ---------------------------------------------------------------------------
+  semgrep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
+        with:
+          python-version: ${{ env.PRIMARY_PYTHON }}
+
+      - name: Cache uv wheels (semgrep)
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        with:
+          path: ~/.cache/uv
+          # Tool-only cache; no project lockfile in the key because semgrep
+          # doesn't read the lockfile, only the tool's own pins matter.
+          key: uv-semgrep-${{ runner.os }}-py${{ env.PRIMARY_PYTHON }}-v2
+
+      - name: Install semgrep (uv)
+        run: |
+          python -m pip install --upgrade pip uv
+          uv pip install --system semgrep
+
+      - name: Semgrep (calibrated via .semgrep.yml exclusions)
+        run: |
+          # .semgrep.yml documents 13 upstream rule IDs as noise-only on this
+          # codebase (three consecutive audits, 0/105 actionable). The raw
+          # upstream packs would surface them every run. Parse the list out
+          # of the doc comments and feed it back as --exclude-rule flags.
+          EXCLUDES=$(awk '/^# Excluded upstream rules/,/^# RetroDB-specific/' .semgrep.yml \
+                     | grep -oE '^#   [a-z][a-z0-9._-]+\.[a-z0-9._-]+' \
+                     | awk '{print "--exclude-rule " $2}' | tr '\n' ' ')
+          echo "Applying exclusions:"; echo "$EXCLUDES" | tr ' ' '\n' | grep -v '^$' || true
+          semgrep \
+            --config p/security-audit \
+            --config p/python \
+            --config p/flask \
+            --config .semgrep.yml \
+            --error \
+            --timeout 60 \
+            --metrics=off \
+            --exclude logs \
+            --exclude data \
+            --exclude database \
+            --exclude static/images \
+            --exclude static/videos \
+            $EXCLUDES \
+            .
+        # Hard-fail since v2.98.1 (Pass 30 debt sweep): with the calibrated
+        # exclusion list in .semgrep.yml, CI runs at 0 findings. If a new
+        # finding lands it's either a real bug or a new noise pattern that
+        # needs a documented exclusion — either way, green CI should mean
+        # zero.
+
+  # ---------------------------------------------------------------------------
+  # pip-audit — CVE check against requirements.lock. Also interpreter-
+  # independent; runs in parallel.
+  # ---------------------------------------------------------------------------
+  pip-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
+        with:
+          python-version: ${{ env.PRIMARY_PYTHON }}
+
+      - name: Cache uv wheels (pip-audit)
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        with:
+          path: ~/.cache/uv
+          key: uv-audit-${{ runner.os }}-py${{ env.PRIMARY_PYTHON }}-v2
+
+      - name: Install pip-audit (uv)
+        run: |
+          python -m pip install --upgrade pip uv
+          uv pip install --system pip-audit
+
+      - name: pip-audit (CVEs in pinned lockfile)
+        run: pip-audit --requirement requirements.lock --strict
+        # Hard-fail since Pass 39.3 (v3.5.40): lockfile clean, six audit
+        # cycles at 0/N actionable. New CVE surfacing means real action
+        # required (Dependabot bump or pin rationale), not silent warning.
+
+  # ---------------------------------------------------------------------------
+  # lockfile-drift — pip-compile round-trip to catch "added a dep to
+  # requirements.txt but forgot to recompile the lock".
+  # ---------------------------------------------------------------------------
+  lockfile-drift:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
+        with:
+          python-version: ${{ env.PRIMARY_PYTHON }}
+
+      - name: Cache uv wheels (lockfile-drift)
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        with:
+          path: ~/.cache/uv
+          key: uv-drift-${{ runner.os }}-py${{ env.PRIMARY_PYTHON }}-v2
+
+      - name: Install pip-tools (uv)
+        run: |
+          python -m pip install --upgrade pip uv
+          uv pip install --system pip-tools
+
+      - name: Lockfile drift check
+        run: |
+          # CLAUDE.md says "regenerate lockfile if requirements.txt was edited"
+          # — this step turns that honor-system rule into a hard check.
+          #
+          # Semantic intent: catch "someone added a dep to requirements.txt
+          # but forgot to recompile the lock", NOT "upstream released a point
+          # version newer than what we've pinned" (that's Dependabot's job).
+          #
+          # Implementation: seed /tmp/fresh.lock with the existing lock, then
+          # recompile. pip-compile honors existing pins unless the input
+          # constraints actually force a change, so a clean PR produces an
+          # identical body. The 6-line auto-generated header differs by
+          # output path between the two runs — strip it before diffing.
+          cp requirements.lock /tmp/fresh.lock
+          # Pass 39.4 — `--generate-hashes` so the regenerated lockfile carries
+          # per-package SHA256s; installers use `pip install --require-hashes`
+          # for fail-closed install on MITM / PyPI tamper. Diff stays apples-
+          # to-apples since the seed lockfile already has hashes.
+          pip-compile --quiet --strip-extras --generate-hashes --output-file /tmp/fresh.lock requirements.txt
+          # Strip any leading `# ...` header lines (newer pip-compile emits a
+          # 6-line comment block; older invocations produce none). Per-package
+          # `# via` lines are indented with spaces so they don't match ^#.
+          if ! diff -u <(grep -v '^#' requirements.lock) <(grep -v '^#' /tmp/fresh.lock); then
+            echo ""
+            echo "::error::requirements.lock is out of sync with requirements.txt."
+            echo "Run: pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes"
+            exit 1
+          fi

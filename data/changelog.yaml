@@ -1,3 +1,18 @@
+- version: 3.6.24
+  date: 2026-05-18
+  tags:
+  - type: chore
+    label: CI hardening C — split semgrep / pip-audit / lockfile-drift into parallel jobs
+  body: |
+    <ul>
+      <li><strong>Three new top-level jobs</strong> in <code>.github/workflows/ci.yml</code>: <code>semgrep</code>, <code>pip-audit</code>, <code>lockfile-drift</code>. Each runs on its own runner in parallel with <code>lint-and-smoke</code> instead of stacking serially on the primary-interpreter lane. Each new job installs only its single tool (semgrep / pip-audit / pip-tools) via uv — no project-runtime deps, no lockfile install — so the install step finishes in seconds.</li>
+      <li><strong>Critical-path math</strong>: before this commit, the 3.13 lane carried semgrep (~10 s) + pip-audit (~8 s) + lockfile-drift (~12 s) ≈ 30 s of serial audit work after the install. With the split, those three run concurrently with each other AND with the lint-and-smoke matrix. Expected critical path: <code>max(lint-and-smoke 3.12, lint-and-smoke 3.13 minus the 30 s, semgrep, pip-audit, lockfile-drift)</code> — probably whichever of the cold-cache installs finishes last.</li>
+      <li><strong>Cache keys per-job</strong>: <code>uv-lint-…</code>, <code>uv-semgrep-…</code>, <code>uv-audit-…</code>, <code>uv-drift-…</code>. Each job's cache is isolated so installing semgrep doesn't bloat the lint-and-smoke cache with tooling that lane no longer needs. The lockfile-hash component only appears in <code>uv-lint</code>'s key (the only job that installs from the lockfile); tool-only jobs use a static key that only changes on tool-version bumps.</li>
+      <li><strong>lint-and-smoke leaner</strong>: dropped <code>semgrep</code>, <code>pip-audit</code>, <code>pip-tools</code> from its install. Now installs only <code>ruff</code>, <code>pytest</code>, <code>pytest-cov</code>, <code>pytest-xdist</code>, <code>pytest-randomly</code> on top of the lockfile.</li>
+      <li><strong>Test suite</strong>: 1,130 passing.</li>
+      <li><strong>Patch bump 3.6.23 → 3.6.24</strong>: CI-only. Zero behaviour change in the running app.</li>
+    </ul>
+
 - version: 3.6.23
   date: 2026-05-18
   tags:
