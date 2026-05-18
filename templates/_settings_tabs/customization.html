@@ -1,0 +1,314 @@
+{% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
+<div class="settings-tab-panel" id="tab-customization" role="tabpanel" aria-label="Customization settings">
+    {% call tab_subnav('customization') %}
+        {{ subnav_link('notifications', '🔔 Notifications', active=True) }}
+        {{ subnav_link('controllers', '🎮 Controllers') }}
+        {{ subnav_link('controllers-defaults', '⚙️ System Defaults') }}
+        {{ subnav_link('controllers-add', '➕ Add Controller') }}
+        {{ subnav_link('controllers-library', '📚 Library') }}
+        {{ subnav_link('logos', '🖼️ Logos') }}
+    {% endcall %}
+
+    <!-- Notification Settings -->
+    <section class="card mb-xl" id="notifications">
+        <div class="card-header">
+            <h2 class="card-title">🔔 Notification Settings</h2>
+        </div>
+        <div class="card-body">
+            <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
+                Configure how long toast notifications stay visible before automatically dismissing. Set to 0 for notifications that only close when clicked.
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-lg);">
+                <!-- Success Timeout -->
+                <div class="form-group">
+                    <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);" for="notifTimeoutSuccess">
+                        <span style="color: var(--neon-green);">✅</span> Success Notifications
+                    </label>
+                    <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                        <input type="number" class="form-input" id="notifTimeoutSuccess"
+                               value="{{ settings.notification_timeouts.success if settings.notification_timeouts else 3 }}"
+                               min="0" max="60" step="1" style="width: 80px;">
+                        <span class="text-muted">seconds</span>
+                    </div>
+                    <span class="field-tip">Shown after successful operations</span>
+                </div>
+
+                <!-- Info Timeout -->
+                <div class="form-group">
+                    <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);" for="notifTimeoutInfo">
+                        <span style="color: var(--primary-cyan);">ℹ️</span> Info Notifications
+                    </label>
+                    <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                        <input type="number" class="form-input" id="notifTimeoutInfo"
+                               value="{{ settings.notification_timeouts.info if settings.notification_timeouts else 3 }}"
+                               min="0" max="60" step="1" style="width: 80px;">
+                        <span class="text-muted">seconds</span>
+                    </div>
+                    <span class="field-tip">General information messages</span>
+                </div>
+
+                <!-- Warning Timeout -->
+                <div class="form-group">
+                    <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);" for="notifTimeoutWarning">
+                        <span style="color: var(--neon-orange);">⚠️</span> Warning Notifications
+                    </label>
+                    <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                        <input type="number" class="form-input" id="notifTimeoutWarning"
+                               value="{{ settings.notification_timeouts.warning if settings.notification_timeouts else 5 }}"
+                               min="0" max="60" step="1" style="width: 80px;">
+                        <span class="text-muted">seconds</span>
+                    </div>
+                    <span class="field-tip">Warnings that need attention</span>
+                </div>
+
+                <!-- Error Timeout -->
+                <div class="form-group">
+                    <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);" for="notifTimeoutError">
+                        <span style="color: var(--neon-red);">❌</span> Error Notifications
+                    </label>
+                    <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                        <input type="number" class="form-input" id="notifTimeoutError"
+                               value="{{ settings.notification_timeouts.error if settings.notification_timeouts else 8 }}"
+                               min="0" max="60" step="1" style="width: 80px;">
+                        <span class="text-muted">seconds</span>
+                    </div>
+                    <span class="field-tip">Errors stay longer for readability</span>
+                </div>
+            </div>
+
+            <div style="margin-top: var(--spacing-lg); display: flex; gap: var(--spacing-md); align-items: center;">
+                <button type="button" onclick="saveNotificationSettings()" class="btn btn-primary" id="saveNotifSettingsBtn">
+                    <span class="btn-icon">💾</span>
+                    Save Settings
+                </button>
+                <button type="button" onclick="testNotifications()" class="btn btn-secondary">
+                    <span class="btn-icon">🔔</span>
+                    Test Notifications
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Controller Management -->
+    <section class="card mb-xl" id="controllers">
+    <div class="card-header">
+        <h2 class="card-title">🎮 Controller Management</h2>
+    </div>
+    <div class="card-body">
+        <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
+            Manage controllers and assign default controllers to each system. The default controller will automatically appear for all games in that system.
+        </p>
+        
+        <!-- System Default Controllers Section -->
+        <div id="controllers-defaults"></div>
+        <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
+            <span>⚙️</span> System Default Controllers
+        </h3>
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            Assign a default controller to each system. Games will inherit this controller unless manually changed.
+        </p>
+        <div style="margin-bottom: var(--spacing-lg); display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
+            <button type="button" onclick="autoAssignDefaultControllers()" class="btn btn-primary" id="autoAssignBtn">
+                <span class="btn-icon">🎯</span>
+                Auto-Assign Defaults
+            </button>
+            <span class="text-muted" style="font-size: 0.85rem; align-self: center;">
+                Automatically assigns appropriate controllers to all systems based on hardware type
+            </span>
+        </div>
+        <div id="autoAssignResult" style="margin-bottom: var(--spacing-lg); display: none;"></div>
+        
+        <!-- System Controller Assignments - Wrapped with sticky nav -->
+        <div class="system-controllers-wrapper" id="systemControllersWrapper">
+            <!-- Sticky Navigation -->
+            <div class="system-controllers-sticky-nav" id="systemControllersStickyNav" data-sticky-nav data-sticky-scope="systemControllersWrapper">
+                <span class="sticky-nav-label">Jump to:</span>
+                <div class="sticky-nav-letters" id="systemControllersNavLetters">
+                    <!-- Letters populated by JavaScript -->
+                </div>
+            </div>
+            
+            <!-- System Controller Grid -->
+            <div class="system-controller-grid" id="systemControllersGrid">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Add New Controller Section -->
+        <div id="controllers-add"></div>
+        <h3 class="section-title" style="margin-bottom: var(--spacing-md); margin-top: var(--spacing-xl);">
+            <span>➕</span> Add New Controller
+        </h3>
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            Add a custom controller to the library. Select one or more systems, or leave empty for "Universal" controllers.
+        </p>
+        <div class="add-controller-form glass-panel" style="padding: var(--spacing-lg); margin-bottom: var(--spacing-xl);">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md);">
+                <div class="form-group">
+                    <label class="form-label" for="newControllerName">Controller Name <span style="color: var(--neon-red);">*</span></label>
+                    <input type="text" class="form-input" id="newControllerName" placeholder="e.g., SNES Mouse">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="newControllerSystemSelect">Systems</label>
+                    <div class="system-tags-container" id="newControllerSystemTags" style="display: flex; flex-wrap: wrap; gap: 6px; min-height: 38px; padding: 6px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-md); margin-bottom: 6px;">
+                        <!-- Tags added here -->
+                    </div>
+                    <select class="form-select" id="newControllerSystemSelect" onchange="addSystemToController('new')">
+                        <option value="">+ Add system...</option>
+                        <!-- Populated by JavaScript -->
+                    </select>
+                    <span class="field-tip">Leave empty for Universal controllers. Select multiple systems for shared controllers.</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="newControllerManufacturer">Manufacturer</label>
+                    <input type="text" class="form-input" id="newControllerManufacturer" 
+                           list="manufacturerSuggestions" placeholder="e.g., Nintendo, Sony, or custom...">
+                    <datalist id="manufacturerSuggestions">
+                        <option value="Nintendo">
+                        <option value="Sega">
+                        <option value="Sony">
+                        <option value="Atari">
+                        <option value="NEC">
+                        <option value="SNK">
+                        <option value="Microsoft">
+                        <option value="Commodore">
+                        <option value="Mattel">
+                        <option value="Coleco">
+                        <option value="Bandai">
+                        <option value="Third Party">
+                        <option value="Other">
+                    </datalist>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="newControllerYear">Release Year</label>
+                    <input type="number" class="form-input" id="newControllerYear" placeholder="e.g., 1992" min="1970" max="2030">
+                </div>
+            </div>
+            <div class="form-group" style="margin-top: var(--spacing-md);">
+                <label class="form-label" for="newControllerButtons">Button Layout</label>
+                <input type="text" class="form-input" id="newControllerButtons" placeholder="e.g., D-Pad, A, B, Start, Select">
+            </div>
+            <div class="form-group" style="margin-top: var(--spacing-md);">
+                <label class="form-label" for="newControllerDescription">Description</label>
+                <textarea class="form-input" id="newControllerDescription" rows="2" placeholder="Brief description of the controller..."></textarea>
+            </div>
+            <div style="margin-top: var(--spacing-lg);">
+                <button type="button" onclick="addNewController()" class="btn btn-success">
+                    <span class="btn-icon">➕</span>
+                    Add Controller
+                </button>
+            </div>
+        </div>
+        
+        <!-- Controller Library Section -->
+        <div id="controllers-library"></div>
+        <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
+            <span>📚</span> Controller Library
+        </h3>
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            All controllers in the database, sorted alphabetically by manufacturer. Click to expand details. You can delete custom controllers.
+        </p>
+        
+        <div class="controller-library" id="controllerLibrary">
+            <!-- Populated by JavaScript -->
+        </div>
+    </div>
+</section>
+
+<!-- Edit Controller Modal -->
+<div class="modal-overlay" id="editControllerModal" data-focus-trap data-focus-trap-onescape="closeEditControllerModal">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h2>✏️ Edit Controller</h2>
+            <button type="button" class="modal-close" onclick="closeEditControllerModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="editControllerId">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md);">
+                <div class="form-group">
+                    <label class="form-label" for="editControllerName">Controller Name <span style="color: var(--neon-red);">*</span></label>
+                    <input type="text" class="form-input" id="editControllerName" placeholder="e.g., SNES Mouse">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editControllerSystemSelect">Systems</label>
+                    <div class="system-tags-container" id="editControllerSystemTags" style="display: flex; flex-wrap: wrap; gap: 6px; min-height: 38px; padding: 6px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-md); margin-bottom: 6px;">
+                        <!-- Tags added here -->
+                    </div>
+                    <select class="form-select" id="editControllerSystemSelect" onchange="addSystemToController('edit')">
+                        <option value="">+ Add system...</option>
+                        <!-- Populated by JavaScript -->
+                    </select>
+                    <span class="field-tip">Leave empty for Universal controllers.</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editControllerManufacturer">Manufacturer</label>
+                    <input type="text" class="form-input" id="editControllerManufacturer" 
+                           list="manufacturerSuggestions" placeholder="e.g., Nintendo, Sony, or custom...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editControllerYear">Release Year</label>
+                    <input type="number" class="form-input" id="editControllerYear" placeholder="e.g., 1992" min="1970" max="2030">
+                </div>
+            </div>
+            <div class="form-group" style="margin-top: var(--spacing-md);">
+                <label class="form-label" for="editControllerButtons">Button Layout</label>
+                <input type="text" class="form-input" id="editControllerButtons" placeholder="e.g., D-Pad, A, B, Start, Select">
+            </div>
+            <div class="form-group" style="margin-top: var(--spacing-md);">
+                <label class="form-label" for="editControllerDescription">Description</label>
+                <textarea class="form-input" id="editControllerDescription" rows="2" placeholder="Brief description of the controller..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeEditControllerModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="saveControllerChanges()">
+                <span class="btn-icon">💾</span>
+                Save Changes
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- System Logo Reference -->
+<section class="card mb-xl" id="logos">
+    <div class="card-header">
+        <h2 class="card-title">🖼️ System Logo Reference</h2>
+    </div>
+    <div class="card-body">
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            System logos should be placed in <code>static/images/systems/</code> and named to match the system folder name with a supported extension (<code>.png</code>, <code>.webp</code>, <code>.jpg</code>, or <code>.svg</code>).
+        </p>
+        
+        <div style="margin-bottom: var(--spacing-lg); display: flex; gap: var(--spacing-md); flex-wrap: wrap; align-items: center;">
+            <button type="button" onclick="refreshSystemLogos()" class="btn btn-secondary" id="refreshLogosBtn">
+                🔄 Refresh System Logos
+            </button>
+            <button type="button" onclick="refreshSystemNames()" class="btn btn-secondary" id="refreshNamesBtn">
+                📝 Refresh System Names
+            </button>
+            <span class="text-muted" style="font-size: 0.85rem;">
+                Updates database with detected logos and correct system names
+            </span>
+        </div>
+        
+        <div class="logo-reference-table">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>System</th>
+                        <th>Type</th>
+                        <th>Folder Name</th>
+                        <th>Required Logo Filename</th>
+                        <th>Logo Status</th>
+                        <th>Hardware Image</th>
+                    </tr>
+                </thead>
+                <tbody id="logoReferenceBody">
+                    <!-- Populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</div><!-- End tab-customization -->

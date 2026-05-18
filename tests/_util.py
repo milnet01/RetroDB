@@ -29,6 +29,24 @@ def read_source(rel_path: str) -> str:
         return f.read()
 
 
+def read_settings_with_partials() -> str:
+    """Return `templates/settings.html` concatenated with every
+    `templates/_settings_tabs/*.html` partial.
+
+    Pass 38.6 split the settings page into a thin shell that `{% include %}`s
+    six tab partials. Source-grep tests that used to look for a string in
+    `settings.html` keep working if they search the union — the string still
+    lives in the rendered page, just in a different file on disk.
+    """
+    import glob
+    parts = [read_source("templates/settings.html")]
+    pattern = os.path.join(REPO_ROOT, "templates", "_settings_tabs", "*.html")
+    for path in sorted(glob.glob(pattern)):
+        with open(path, encoding="utf-8") as f:
+            parts.append(f.read())
+    return "\n".join(parts)
+
+
 def read_module_source(mod) -> str:
     """Return the text of an already-imported module's source file.
 

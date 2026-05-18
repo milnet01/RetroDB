@@ -1,0 +1,278 @@
+{% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
+<div class="settings-tab-panel" id="tab-library" role="tabpanel" aria-label="Library settings">
+    {% call tab_subnav('library') %}
+        {{ subnav_link('library', '📁 Paths', active=True) }}
+        {{ subnav_link('display', '🖼️ Display') }}
+        {{ subnav_link('rom-naming', '📝 ROM Naming') }}
+        {{ subnav_link('backup', '💾 Backup') }}
+    {% endcall %}
+
+    <!-- Library Settings -->
+    <section class="card mb-xl" id="library">
+    <div class="card-header">
+        <h2 class="card-title">Library Settings</h2>
+    </div>
+    <div class="card-body">
+        <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
+            Configure the paths to your ROM library, ES-DE data, and other integrations.
+        </p>
+
+        <div class="form-group mb-lg">
+            <label class="form-label" for="romPathInput">ROM Library Path</label>
+            <input type="text" id="romPathInput" class="form-input"
+                   placeholder="e.g. /home/user/ROMS"
+                   style="font-family: var(--font-mono);">
+            <span class="form-hint" id="romPathDefault"></span>
+        </div>
+        
+        <div class="form-group mb-lg">
+            <div class="form-label">Database Location</div>
+            <span class="detail-value" style="font-family: var(--font-mono);">{{ config.DB_PATH }}</span>
+            <span class="form-hint">Database path cannot be changed via UI</span>
+        </div>
+        
+        <div style="margin-top: var(--spacing-xl); display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
+            <button type="button" onclick="savePathSettings()" class="btn btn-primary" id="savePathsBtn">
+                <span class="btn-icon">💾</span>
+                Save Path Settings
+            </button>
+            <button type="button" onclick="scanLibrary()" class="btn btn-secondary">
+                <span class="btn-icon">🔍</span>
+                Scan Library
+            </button>
+        </div>
+        <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-sm);">
+            Changes to ROM path require a restart to take full effect
+        </p>
+    </div>
+</section>
+
+<!-- Display Preferences -->
+<section class="card mb-xl" id="display">
+    <div class="card-header">
+        <h2 class="card-title">🖼️ Display Preferences</h2>
+    </div>
+    <div class="card-body">
+        <div class="form-group mb-lg">
+            <div class="form-label" id="themeSelectorLabel">Theme</div>
+            <div class="theme-selector" id="themeSelector" role="radiogroup" aria-labelledby="themeSelectorLabel">
+                <div class="theme-option" data-theme="cyberpunk" onclick="ThemeManager.apply('cyberpunk')">
+                    <div class="theme-preview">
+                        <span class="theme-swatch" style="background: #4cc9f0;"></span>
+                        <span class="theme-swatch" style="background: #f72585;"></span>
+                        <span class="theme-swatch" style="background: #0a0e17;"></span>
+                    </div>
+                    <span class="theme-name">Cyberpunk</span>
+                </div>
+                <div class="theme-option" data-theme="matrix" onclick="ThemeManager.apply('matrix')">
+                    <div class="theme-preview">
+                        <span class="theme-swatch" style="background: #00ff41;"></span>
+                        <span class="theme-swatch" style="background: #008f11;"></span>
+                        <span class="theme-swatch" style="background: #000000;"></span>
+                    </div>
+                    <span class="theme-name">Matrix</span>
+                </div>
+                <div class="theme-option" data-theme="amber" onclick="ThemeManager.apply('amber')">
+                    <div class="theme-preview">
+                        <span class="theme-swatch" style="background: #ffb000;"></span>
+                        <span class="theme-swatch" style="background: #ff6600;"></span>
+                        <span class="theme-swatch" style="background: #0a0800;"></span>
+                    </div>
+                    <span class="theme-name">Retro Amber</span>
+                </div>
+                <div class="theme-option" data-theme="ocean" onclick="ThemeManager.apply('ocean')">
+                    <div class="theme-preview">
+                        <span class="theme-swatch" style="background: #4dabf7;"></span>
+                        <span class="theme-swatch" style="background: #20c997;"></span>
+                        <span class="theme-swatch" style="background: #040810;"></span>
+                    </div>
+                    <span class="theme-name">Midnight Ocean</span>
+                </div>
+                <div class="theme-option" data-theme="christian" onclick="ThemeManager.apply('christian')">
+                    <div class="theme-preview">
+                        <span class="theme-swatch" style="background: #d4a843;"></span>
+                        <span class="theme-swatch" style="background: #7b4db0;"></span>
+                        <span class="theme-swatch" style="background: #0c0810;"></span>
+                    </div>
+                    <span class="theme-name">Cathedral</span>
+                </div>
+                <div class="theme-option" data-theme="bladerunner" onclick="ThemeManager.apply('bladerunner')">
+                    <div class="theme-preview">
+                        <span class="theme-swatch" style="background: #1a9fff;"></span>
+                        <span class="theme-swatch" style="background: #ff2d7c;"></span>
+                        <span class="theme-swatch" style="background: #06080e;"></span>
+                    </div>
+                    <span class="theme-name">Blade Runner</span>
+                </div>
+                <div class="theme-option" data-theme="elite" onclick="ThemeManager.apply('elite')">
+                    <div class="theme-preview">
+                        <span class="theme-swatch" style="background: #00ff00;"></span>
+                        <span class="theme-swatch" style="background: #cccccc;"></span>
+                        <span class="theme-swatch" style="background: #000000;"></span>
+                    </div>
+                    <span class="theme-name">Elite</span>
+                </div>
+            </div>
+            <span class="form-hint">Theme applies instantly. Changes are saved automatically.</span>
+        </div>
+
+        <div class="form-group mb-lg">
+            <label class="form-label" for="preferredBoxartSelect">Preferred Boxart Style</label>
+            <select id="preferredBoxartSelect" class="form-select" style="max-width: 300px;">
+                <option value="2d">2D Boxart (Standard)</option>
+                <option value="3d">3D Boxart (with 2D fallback)</option>
+            </select>
+            <span class="form-hint">When 3D is selected, 2D boxart will be shown if no 3D version exists</span>
+        </div>
+
+        <div class="form-group mb-lg">
+            <label class="form-label" for="preferredRatingSelect">Preferred Age Rating System</label>
+            <select id="preferredRatingSelect" class="form-select" style="max-width: 300px;">
+                <option value="esrb">ESRB (North America)</option>
+                <option value="pegi">PEGI (Europe)</option>
+                <option value="cero">CERO (Japan)</option>
+                <option value="usk">USK (Germany)</option>
+                <option value="acb">ACB (Australia)</option>
+                <option value="fpb">FPB (South Africa)</option>
+                <option value="grac">GRAC (South Korea)</option>
+                <option value="classind">ClassInd (Brazil)</option>
+            </select>
+            <span class="form-hint">Ratings from other systems are cross-mapped when the preferred system's rating is unavailable</span>
+        </div>
+
+        <div style="margin-top: var(--spacing-xl);">
+            <button type="button" onclick="saveDisplaySettings()" class="btn btn-primary" id="saveDisplayBtn">
+                <span class="btn-icon">💾</span>
+                Save Display Settings
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- ROM Naming Conventions -->
+<section class="card mb-xl" id="rom-naming">
+    <div class="card-header">
+        <h2 class="card-title">📝 ROM Naming Conventions</h2>
+    </div>
+    <div class="card-body">
+        <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
+            Configure the filename pattern for each system type. Title is always first.
+            Add tags in the order they should appear in filenames (e.g., <code>Title (Region).zip</code>).
+        </p>
+
+        <div class="form-group mb-lg">
+            <label class="form-label" for="articlePlacementSelect">Article Placement</label>
+            <p class="text-muted" style="margin-bottom: var(--spacing-sm); font-size: 0.85rem;">
+                Controls where articles (A, An, The) appear in game titles and ROM filenames.
+            </p>
+            <select id="articlePlacementSelect" class="form-select" style="max-width: 400px;" onchange="renderNamingBuilder()">
+                <option value="beginning">Beginning (natural) — "The Legend of Zelda"</option>
+                <option value="end">End (sort-friendly) — "Legend of Zelda, The"</option>
+            </select>
+            <span class="form-hint">Applies to new scrapes and rename suggestions. Existing titles are not changed automatically.</span>
+        </div>
+
+        <div class="form-group mb-lg">
+            <div class="form-label" id="regionOptionsLabel">Region Options</div>
+            <p class="text-muted" style="margin-bottom: var(--spacing-sm); font-size: 0.85rem;">
+                Configure the available region values and default. The default region is used when scraping if no region is detected.
+            </p>
+            <div id="regionOptionsContainer" role="list" aria-labelledby="regionOptionsLabel" style="display: flex; flex-wrap: wrap; gap: var(--spacing-xs); margin-bottom: var(--spacing-sm);">
+                {% for r in user_settings.get('region_options', ['USA', 'Europe', 'Japan', 'World']) %}
+                <span class="badge badge-info" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; font-size: 0.85rem;">
+                    {{ r }}
+                    <button type="button" class="btn-icon-only" onclick="removeRegionOption(this, '{{ r }}')" title="Remove" style="background:none; border:none; color:var(--neon-red); cursor:pointer; font-size:1rem; padding:0 2px;">&times;</button>
+                </span>
+                {% endfor %}
+            </div>
+            <div style="display: flex; gap: var(--spacing-sm); max-width: 400px;">
+                <input type="text" id="newRegionInput" class="form-input" placeholder="Add region..." style="flex:1;" onkeydown="if(event.key==='Enter'){event.preventDefault();addRegionOption();}">
+                <button type="button" class="btn btn-sm btn-secondary" onclick="addRegionOption()">Add</button>
+            </div>
+            <div style="margin-top: var(--spacing-sm);">
+                <label class="form-label" style="font-size:0.85rem;" for="defaultRegionSelect">Default Region</label>
+                <select id="defaultRegionSelect" class="form-select" style="max-width: 200px;">
+                    {% for r in user_settings.get('region_options', ['USA', 'Europe', 'Japan', 'World']) %}
+                    <option value="{{ r }}"{% if r == user_settings.get('default_region', 'USA') %} selected{% endif %}>{{ r }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div id="namingConventionBuilder">
+            <!-- Rows generated by JS -->
+        </div>
+
+        <div style="margin-top: var(--spacing-xl);">
+            <button type="button" onclick="saveNamingSettings()" class="btn btn-primary" id="saveNamingBtn">
+                <span class="btn-icon">💾</span>
+                Save Naming Settings
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Bonus Disc Management -->
+<section class="card mb-xl" id="bonus-discs">
+    <div class="card-header">
+        <h2 class="card-title">🎁 Bonus Disc Management</h2>
+    </div>
+    <div class="card-body">
+        <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
+            Bonus discs (making-of, behind the scenes, extras) are hidden by default on game listing pages.
+            Use this section to auto-detect and link bonus discs to their parent games.
+        </p>
+        
+        <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; margin-bottom: var(--spacing-lg);">
+            <button type="button" onclick="detectBonusDiscs()" class="btn btn-primary" id="detectBonusBtn">
+                <span class="btn-icon">🔍</span>
+                Auto-Detect Bonus Discs
+            </button>
+            <button type="button" onclick="autoLinkBonusDiscs()" class="btn btn-secondary" id="autoLinkBonusBtn">
+                <span class="btn-icon">🔗</span>
+                Auto-Link to Parents
+            </button>
+            <button type="button" onclick="viewBonusStats()" class="btn btn-secondary">
+                <span class="btn-icon">📊</span>
+                View Stats
+            </button>
+        </div>
+        
+        <div id="bonusDiscResult" style="display: none; margin-top: var(--spacing-lg);"></div>
+        
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
+            📋 Detected Bonus Discs
+        </h3>
+        <div id="detectedBonusDiscs" class="glass-panel" style="padding: var(--spacing-md); min-height: 100px;">
+            <span class="text-muted">Click "Auto-Detect Bonus Discs" to scan your library</span>
+        </div>
+    </div>
+</section>
+
+<!-- Database Backup & Restore -->
+<section class="card mb-xl" id="backup">
+    <div class="card-header">
+        <h2 class="card-title">Database Backup & Restore</h2>
+    </div>
+    <div class="card-body">
+        <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; margin-bottom: var(--spacing-lg);">
+            <button type="button" onclick="createBackup()" class="btn btn-primary" id="createBackupBtn">
+                <span class="btn-icon">💾</span>
+                Create Backup
+            </button>
+            <button type="button" onclick="calculateStorage()" class="btn btn-secondary">
+                <span class="btn-icon">📊</span>
+                Calculate File Sizes
+            </button>
+        </div>
+        <p class="text-muted" style="font-size: 0.85rem; margin-bottom: var(--spacing-lg);">
+            Create backups before making major changes to your library
+        </p>
+        
+        <h3 class="section-title" style="margin-top: var(--spacing-lg);">Available Backups</h3>
+        <div id="backupsList" style="margin-top: var(--spacing-md);">
+            <p class="text-muted">Loading backups...</p>
+        </div>
+    </div>
+</section>
+</div><!-- End tab-library -->

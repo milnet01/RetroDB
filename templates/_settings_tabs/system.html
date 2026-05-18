@@ -1,0 +1,413 @@
+{% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
+<div class="settings-tab-panel" id="tab-system" role="tabpanel" aria-label="System settings">
+    {% set _is_admin = current_user and current_user.role == 'admin' %}
+    {% call tab_subnav('system') %}
+        {% if _is_admin %}
+        {{ subnav_link('maintenance', '🛠️ Maintenance', active=True) }}
+        {{ subnav_link('server', '⚙️ Server') }}
+        {% endif %}
+        {{ subnav_link('logging', '📋 Logging', active=not _is_admin) }}
+        {{ subnav_link('troubleshooting', '🔧 Troubleshooting') }}
+    {% endcall %}
+
+    <!-- Database Maintenance (Admin Only) -->
+    {% if current_user and current_user.role == 'admin' %}
+    <section class="card" id="maintenance">
+    <div class="card-header">
+        <h2 class="card-title">Database Maintenance</h2>
+    </div>
+    <div class="card-body">
+        <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; align-items: flex-start;">
+            <div>
+                <button type="button" onclick="cleanMissingRoms()" class="btn btn-danger" id="cleanMissingBtn">
+                    <span class="btn-icon">🧹</span>
+                    Clean Missing ROMs
+                </button>
+                <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-sm);">
+                    Remove database entries for ROMs that have been deleted from disk
+                </p>
+            </div>
+            <div>
+                <button type="button" onclick="refreshRetroAchievements()" class="btn btn-primary" id="refreshRABtn">
+                    <span class="btn-icon">🏆</span>
+                    Refresh RetroAchievements
+                </button>
+                <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-sm);">
+                    Scan all games and update RetroAchievements status (may take a while)
+                </p>
+                <div style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap; margin-top: var(--spacing-md);">
+                    <select id="clearRASystemSelect" class="form-select" style="max-width: 300px;">
+                        <option value="all">All Systems</option>
+                        {% for system in systems %}
+                        <option value="{{ system.id }}">{{ system.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" onclick="clearRAData()" class="btn btn-danger" id="clearRABtn">
+                        <span class="btn-icon">🗑️</span>
+                        Clear RA Data
+                    </button>
+                </div>
+                <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-sm);">
+                    Clear RetroAchievements game IDs and progress data for selected system (or all systems)
+                </p>
+            </div>
+        </div>
+        <div id="cleanMissingResult" style="margin-top: var(--spacing-md); display: none;"></div>
+        <div id="refreshRAResult" style="margin-top: var(--spacing-md); display: none;"></div>
+        <div id="clearRAResult" style="margin-top: var(--spacing-md); display: none;"></div>
+        
+        <!-- Clear Data Section -->
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
+            <span>🗑️</span> Clear Data
+        </h3>
+
+        <div style="display: flex; gap: var(--spacing-md); align-items: flex-start; flex-wrap: wrap; margin-bottom: var(--spacing-lg);">
+            <div>
+                <button type="button" onclick="clearClzImports()" class="btn btn-danger" id="clearClzBtn">
+                    <span class="btn-icon">📋</span>
+                    Clear CLZ Imports
+                </button>
+                <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-sm);">
+                    Remove all games imported via CLZ Games Import
+                </p>
+            </div>
+        </div>
+        <div id="clearClzResult" style="margin-top: var(--spacing-md); display: none;"></div>
+
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            Clear scraped metadata from games to start fresh. Useful before a full re-scrape.
+            <strong>Note:</strong> This does NOT delete your game entries, only the scraped metadata (description, genre, publisher, ratings, images, etc.)
+        </p>
+        <div class="clear-scrape-options" style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+            <div class="clear-scrape-row" style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
+                <select id="clearScrapedSystemSelect" class="form-select" style="max-width: 300px;">
+                    <option value="all">All Systems</option>
+                    {% for system in systems %}
+                    <option value="{{ system.id }}">{{ system.name }}</option>
+                    {% endfor %}
+                </select>
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="clearImagesCheckbox" aria-label="Also delete downloaded images">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">Also delete downloaded images</span>
+                </div>
+            </div>
+            <div style="display: flex; gap: var(--spacing-md); align-items: center;">
+                <button type="button" onclick="previewClearScrapedData()" class="btn btn-secondary" id="previewClearBtn">
+                    <span class="btn-icon">👁️</span>
+                    Preview
+                </button>
+                <button type="button" onclick="clearScrapedData()" class="btn btn-danger" id="clearScrapedBtn">
+                    <span class="btn-icon">🗑️</span>
+                    Clear Scraped Data
+                </button>
+            </div>
+        </div>
+        <div id="clearScrapedResult" style="margin-top: var(--spacing-md); display: none;"></div>
+        
+        <!-- Orphaned Media Cleanup Section -->
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
+            <span>🗂️</span> Orphaned Media Cleanup
+        </h3>
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            Find and delete media files (boxart, screenshots, videos, etc.) for ROMs that no longer exist in the database. 
+            This cleans up leftover files from deleted games.
+        </p>
+        <div style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
+            <button type="button" onclick="previewOrphanedMedia()" class="btn btn-secondary" id="previewOrphanedBtn">
+                <span class="btn-icon">🔍</span>
+                Scan for Orphaned Files
+            </button>
+            <button type="button" onclick="cleanOrphanedMedia()" class="btn btn-danger" id="cleanOrphanedBtn" style="display: none;">
+                <span class="btn-icon">🗑️</span>
+                Delete Orphaned Files
+            </button>
+        </div>
+        <div id="orphanedMediaResult" style="margin-top: var(--spacing-md); display: none;"></div>
+
+        <!-- Database Optimization Section -->
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
+            <span>💾</span> Database Optimization
+        </h3>
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            Optimize the database for better performance. Runs VACUUM to reclaim unused space
+            and ANALYZE to update query planner statistics.
+        </p>
+        <div>
+            <button type="button" onclick="optimizeDatabase()" class="btn btn-primary" id="optimizeDbBtn">
+                <span class="btn-icon">⚡</span> Optimize Database
+            </button>
+        </div>
+        <div id="optimizeDbResult" style="margin-top: var(--spacing-md); display: none;"></div>
+    </div>
+</section>
+
+<!-- Server Controls -->
+<section class="card" id="server">
+    <div class="card-header">
+        <h2 class="card-title">Server Controls</h2>
+    </div>
+    <div class="card-body">
+        <button type="button" onclick="restartServer()" class="btn btn-warning">
+            <span class="btn-icon">🔄</span>
+            Restart Server
+        </button>
+        <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-sm);">
+            Restart the Flask server (useful after configuration changes)
+        </p>
+    </div>
+</section>
+{% endif %}
+
+<!-- Logging Settings -->
+<section class="card mt-xl" id="logging">
+    <div class="card-header">
+        <h2 class="card-title">📋 Logging Settings</h2>
+    </div>
+    <div class="card-body">
+        <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
+            Configure which log levels are written to log files. Logs are saved to the <code>logs/</code> folder with date-based filenames (e.g., <code>scraping_2026-01-21.log</code>).
+        </p>
+        
+        <!-- Scraping Logs -->
+        <div class="log-category-section">
+            <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
+                <span>🔍</span> Scraping Logs
+            </h3>
+            <p class="text-muted" style="font-size: 0.85rem; margin-bottom: var(--spacing-md);">
+                Logs from metadata scraping operations (IGDB, TGDB, ScreenScraper, RAWG, ES-DE)
+            </p>
+            <div class="log-toggles">
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="log_scraping_info" id="log_scraping_info" aria-label="Enable scraping informational logs" {% if settings.logging.scraping.info %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">ℹ️ Informational</span>
+                </div>
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="log_scraping_warning" id="log_scraping_warning" aria-label="Enable scraping warning logs" {% if settings.logging.scraping.warning %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">⚠️ Warnings</span>
+                </div>
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="log_scraping_error" id="log_scraping_error" aria-label="Enable scraping error logs" {% if settings.logging.scraping.error %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">❌ Errors</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ROM Tools Logs -->
+        <div class="log-category-section" style="margin-top: var(--spacing-xl);">
+            <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
+                <span>🛠️</span> ROM Tools Logs
+            </h3>
+            <p class="text-muted" style="font-size: 0.85rem; margin-bottom: var(--spacing-md);">
+                Logs from ROM scanning, CHD conversion, archive extraction, and M3U creation
+            </p>
+            <div class="log-toggles">
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="log_rom_tools_info" id="log_rom_tools_info" aria-label="Enable ROM tools informational logs" {% if settings.logging.rom_tools.info %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">ℹ️ Informational</span>
+                </div>
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="log_rom_tools_warning" id="log_rom_tools_warning" aria-label="Enable ROM tools warning logs" {% if settings.logging.rom_tools.warning %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">⚠️ Warnings</span>
+                </div>
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="log_rom_tools_error" id="log_rom_tools_error" aria-label="Enable ROM tools error logs" {% if settings.logging.rom_tools.error %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">❌ Errors</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ROM Reports Logs -->
+        <div class="log-category-section" style="margin-top: var(--spacing-xl);">
+            <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
+                <span>📊</span> ROM Reports Logs
+            </h3>
+            <p class="text-muted" style="font-size: 0.85rem; margin-bottom: var(--spacing-md);">
+                Logs from ROM naming checks, mismatch detection, and batch rename operations
+            </p>
+            <div class="log-toggles">
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="log_rom_reports_info" id="log_rom_reports_info" aria-label="Enable ROM reports informational logs" {% if settings.logging.rom_reports.info %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">ℹ️ Informational</span>
+                </div>
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="log_rom_reports_warning" id="log_rom_reports_warning" aria-label="Enable ROM reports warning logs" {% if settings.logging.rom_reports.warning %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">⚠️ Warnings</span>
+                </div>
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="log_rom_reports_error" id="log_rom_reports_error" aria-label="Enable ROM reports error logs" {% if settings.logging.rom_reports.error %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">❌ Errors</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Image Resize Logs -->
+        <div class="log-category-section" style="margin-top: var(--spacing-xl);">
+            <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
+                <span>🖼️</span> Image Resize Logs
+            </h3>
+            <p class="text-muted" style="font-size: 0.85rem; margin-bottom: var(--spacing-md);">
+                Logs from image standardization (upscale/downscale) operations
+            </p>
+            <div class="log-toggles">
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="log_image_resize_info" id="log_image_resize_info" aria-label="Enable image resize informational logs" {% if settings.logging.image_resize.info %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">ℹ️ Informational</span>
+                </div>
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="log_image_resize_warning" id="log_image_resize_warning" aria-label="Enable image resize warning logs" {% if settings.logging.image_resize.warning %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">⚠️ Warnings</span>
+                </div>
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="log_image_resize_error" id="log_image_resize_error" aria-label="Enable image resize error logs" {% if settings.logging.image_resize.error %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">❌ Errors</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Logs -->
+        <div class="log-category-section" style="margin-top: var(--spacing-xl);">
+            <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
+                <span>🖥️</span> System Logs
+            </h3>
+            <p class="text-muted" style="font-size: 0.85rem; margin-bottom: var(--spacing-md);">
+                General system operations including achievements sync, page loads, and API calls
+            </p>
+            <div class="log-toggles">
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="log_system_info" id="log_system_info" aria-label="Enable system informational logs" {% if settings.logging.system.info %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">ℹ️ Informational</span>
+                </div>
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="log_system_warning" id="log_system_warning" aria-label="Enable system warning logs" {% if settings.logging.system.warning %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">⚠️ Warnings</span>
+                </div>
+                <div class="toggle-item">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="log_system_error" id="log_system_error" aria-label="Enable system error logs" {% if settings.logging.system.error %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">❌ Errors</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Save Logging Settings Button -->
+        <div style="margin-top: var(--spacing-xl); display: flex; gap: var(--spacing-md); flex-wrap: wrap; align-items: center;">
+            <button type="button" onclick="saveLoggingSettings()" class="btn btn-primary" id="saveLoggingBtn">
+                <span class="btn-icon">💾</span>
+                Save Logging Settings
+            </button>
+            <span id="loggingSettingsResult" style="font-size: 0.9rem;"></span>
+        </div>
+        
+        <!-- Log Files Section -->
+        <div style="margin-top: var(--spacing-2xl); padding-top: var(--spacing-lg); border-top: 1px solid var(--card-border);">
+            <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
+                <span>📁</span> Log Files
+            </h3>
+            <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; align-items: center; margin-bottom: var(--spacing-md);">
+                <button type="button" onclick="loadLogFiles()" class="btn btn-secondary">
+                    <span class="btn-icon">🔄</span>
+                    Refresh Log List
+                </button>
+                <button type="button" onclick="clearOldLogs()" class="btn btn-danger">
+                    <span class="btn-icon">🧹</span>
+                    Clear Logs Older Than 5 Days
+                </button>
+            </div>
+            <div id="logFilesContainer" style="margin-top: var(--spacing-md);">
+                <p class="text-muted">Click "Refresh Log List" to see available log files.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Troubleshooting -->
+<section class="card mt-xl" id="troubleshooting">
+    <div class="card-header">
+        <h2 class="card-title">🔧 Troubleshooting</h2>
+    </div>
+    <div class="card-body">
+        <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
+            <span>🔄</span> Bulk Scrape Issues
+        </h3>
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            If a bulk scrape gets stuck or won't clear from the toast notification, use this button to force clear all bulk scrape state from your browser's local storage.
+        </p>
+        <div style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
+            <button type="button" onclick="clearStuckBulkScrape()" class="btn btn-danger">
+                <span class="btn-icon">🧹</span>
+                Clear Stuck Bulk Scrape
+            </button>
+            <span id="bulkScrapeClearResult" role="status" aria-live="polite" style="font-size: 0.9rem;"></span>
+        </div>
+        <div id="bulkScrapeStatusInfo" style="margin-top: var(--spacing-lg); padding: var(--spacing-md); background: rgba(0, 0, 0, 0.2); border-radius: var(--radius-md);">
+            <h5 style="color: var(--text-secondary); margin-bottom: var(--spacing-sm);">Current Bulk Scrape State:</h5>
+            <pre id="bulkScrapeStateDisplay" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); white-space: pre-wrap; margin: 0;">Loading...</pre>
+        </div>
+        
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
+            <span>🏆</span> Achievement Sync Issues
+        </h3>
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            If achievement syncs get stuck or the queue won't process, use this button to clear the sync queue and reset the sync state.
+        </p>
+        <div style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
+            <button type="button" onclick="clearStuckRASync()" class="btn btn-danger">
+                <span class="btn-icon">🧹</span>
+                Clear Stuck RA Sync
+            </button>
+            <span id="raSyncClearResult" role="status" aria-live="polite" style="font-size: 0.9rem;"></span>
+        </div>
+        <div id="raSyncStatusInfo" style="margin-top: var(--spacing-lg); padding: var(--spacing-md); background: rgba(0, 0, 0, 0.2); border-radius: var(--radius-md);">
+            <h5 style="color: var(--text-secondary); margin-bottom: var(--spacing-sm);">Current RA Sync Queue:</h5>
+            <pre id="raSyncStateDisplay" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); white-space: pre-wrap; margin: 0;">Loading...</pre>
+        </div>
+    </div>
+</section>
+</div><!-- End tab-system -->

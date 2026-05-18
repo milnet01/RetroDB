@@ -1,0 +1,600 @@
+{% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
+<div class="settings-tab-panel" id="tab-scraping" role="tabpanel" aria-label="Scraping settings">
+    {% call tab_subnav('scraping') %}
+        {{ subnav_link('esde', '🎮 ES-DE', active=True) }}
+        {{ subnav_link('scraper', '🔍 Scraper') }}
+        {% if current_user and current_user.role == 'admin' %}
+        {{ subnav_link('apikeys', '🔑 API Keys') }}
+        {% endif %}
+    {% endcall %}
+
+    <!-- ES-DE Integration -->
+    <section class="card mb-xl" id="esde">
+    <div class="card-header">
+        <h2 class="card-title">ES-DE Integration</h2>
+    </div>
+    <div class="card-body">
+        <div class="form-group mb-lg">
+            <label class="form-label" for="esdeGamelistsInput">ES-DE Gamelists Path</label>
+            <input type="text" id="esdeGamelistsInput" class="form-input"
+                   placeholder="e.g. /home/user/.es-de/gamelists"
+                   style="font-family: var(--font-mono);">
+            <span class="form-hint" id="esdeGamelistsDefault"></span>
+        </div>
+        
+        <div class="form-group mb-lg">
+            <label class="form-label" for="esdeMediaInput">ES-DE Downloaded Media Path</label>
+            <input type="text" id="esdeMediaInput" class="form-input"
+                   placeholder="Leave blank to auto-detect from gamelists path"
+                   style="font-family: var(--font-mono);">
+            <span class="form-hint" id="esdeMediaDefault">Default: Loading...</span>
+        </div>
+        
+        <div class="form-group mb-lg">
+            <label class="form-label" for="rpcs3TrophyInput">RPCS3 Trophy Path</label>
+            <input type="text" id="rpcs3TrophyInput" class="form-input"
+                   placeholder="e.g. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+                   style="font-family: var(--font-mono);">
+            <span class="form-hint" id="rpcs3TrophyDefault"></span>
+        </div>
+        
+        <div style="margin-top: var(--spacing-xl); display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
+            <button type="button" onclick="savePathSettings()" class="btn btn-primary">
+                <span class="btn-icon">💾</span>
+                Save Path Settings
+            </button>
+            <button type="button" onclick="importSystemLogos()" class="btn btn-secondary" id="importLogosBtn">
+                <span class="btn-icon">🖼️</span>
+                Import System Logos
+            </button>
+        </div>
+        <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-sm);">
+            Import system logos from your ES-DE installation
+        </p>
+        <div id="logoImportResult" style="margin-top: var(--spacing-md);"></div>
+    </div>
+</section>
+
+<!-- Scraper Configuration -->
+<section class="card mb-xl" id="scraper">
+    <div class="card-header">
+        <h2 class="card-title">Scraper Configuration</h2>
+    </div>
+    <div class="card-body">
+        <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
+            Enable/disable scrapers and drag to set priority order. The scraper at the top will be tried first during bulk scraping.
+        </p>
+        
+        <div class="scraper-priority-list" id="scraperPriorityList">
+            <!-- ES-DE -->
+            <div class="scraper-priority-item" data-scraper="esde" draggable="true">
+                <div class="scraper-drag-handle">⋮⋮</div>
+                <div class="scraper-priority-rank">1</div>
+                <div class="scraper-info">
+                    <span class="scraper-name">📁 ES-DE (Local)</span>
+                    <p class="text-muted">Import from your local gamelist.xml files</p>
+                </div>
+                <div class="scraper-online-status">
+                    <span class="status-dot local"></span>
+                    <span class="status-text">Local</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-esde" aria-label="Enable ES-DE local scraper" {{ 'checked' if scraper_settings.enabled.esde else '' }} onchange="toggleScraper('esde', this.checked)">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            
+            <!-- TheGamesDB -->
+            <div class="scraper-priority-item" data-scraper="tgdb" draggable="true">
+                <div class="scraper-drag-handle">⋮⋮</div>
+                <div class="scraper-priority-rank">2</div>
+                <div class="scraper-info">
+                    <span class="scraper-name">🎮 TheGamesDB</span>
+                    <p class="text-muted">Primary online scraper for game metadata</p>
+                </div>
+                <div class="scraper-online-status" id="status-tgdb">
+                    <span class="status-dot checking"></span>
+                    <span class="status-text">Checking...</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-tgdb" aria-label="Enable TheGamesDB scraper" {{ 'checked' if scraper_settings.enabled.tgdb else '' }} onchange="toggleScraper('tgdb', this.checked)">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            
+            <!-- IGDB -->
+            <div class="scraper-priority-item" data-scraper="igdb" draggable="true">
+                <div class="scraper-drag-handle">⋮⋮</div>
+                <div class="scraper-priority-rank">3</div>
+                <div class="scraper-info">
+                    <span class="scraper-name">🌐 IGDB</span>
+                    <p class="text-muted">Comprehensive game database by Twitch</p>
+                </div>
+                <div class="scraper-online-status" id="status-igdb">
+                    <span class="status-dot checking"></span>
+                    <span class="status-text">Checking...</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-igdb" aria-label="Enable IGDB scraper" {{ 'checked' if scraper_settings.enabled.igdb else '' }} onchange="toggleScraper('igdb', this.checked)">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            
+            <!-- RAWG.io -->
+            <div class="scraper-priority-item" data-scraper="rawg" draggable="true">
+                <div class="scraper-drag-handle">⋮⋮</div>
+                <div class="scraper-priority-rank">4</div>
+                <div class="scraper-info">
+                    <span class="scraper-name">🎮 RAWG.io</span>
+                    <p class="text-muted">Large game database with ESRB ratings and Metacritic scores</p>
+                </div>
+                <div class="scraper-online-status" id="status-rawg">
+                    <span class="status-dot checking"></span>
+                    <span class="status-text">Checking...</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-rawg" aria-label="Enable RAWG.io scraper" {{ 'checked' if scraper_settings.enabled.rawg else '' }} onchange="toggleScraper('rawg', this.checked)">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            
+            <!-- ScreenScraper -->
+            <div class="scraper-priority-item" data-scraper="screenscraper" draggable="true">
+                <div class="scraper-drag-handle">⋮⋮</div>
+                <div class="scraper-priority-rank">5</div>
+                <div class="scraper-info">
+                    <span class="scraper-name">🖥️ ScreenScraper</span>
+                    <p class="text-muted">Comprehensive retro gaming database with media (requires account)</p>
+                </div>
+                <div class="scraper-online-status" id="status-screenscraper">
+                    <span class="status-dot checking"></span>
+                    <span class="status-text">Checking...</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-screenscraper" aria-label="Enable ScreenScraper scraper" {{ 'checked' if scraper_settings.enabled.screenscraper else '' }} onchange="toggleScraper('screenscraper', this.checked)">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="scraper-priority-item" data-scraper="ai" draggable="true">
+                <div class="scraper-drag-handle">⋮⋮</div>
+                <div class="scraper-priority-rank">6</div>
+                <div class="scraper-info">
+                    <span class="scraper-name">🤖 AI Metadata</span>
+                    <p class="text-muted">AI-powered gap-filler (Gemini, OpenAI, or Claude) &mdash; fills text fields only</p>
+                </div>
+                <div class="scraper-online-status" id="status-ai">
+                    <span class="status-dot checking"></span>
+                    <span class="status-text">Checking...</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-ai" aria-label="Enable AI metadata scraper" {{ 'checked' if scraper_settings.enabled.ai else '' }} onchange="toggleScraper('ai', this.checked)">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+        
+        <!-- Bulk Scrape Match Filtering -->
+        <div class="match-filter-section">
+            <h3 class="match-filter-title">Bulk Scrape Match Filtering</h3>
+            <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+                Controls which search results are accepted during bulk scraping. Results that don't pass the filter are skipped.
+            </p>
+
+            <div class="match-filter-mode">
+                <label class="toggle-switch" style="margin-right: var(--spacing-sm);">
+                    <input type="checkbox" id="matchModeToggle" onchange="toggleMatchMode(this.checked)" aria-label="Use advanced criteria mode">
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="text-secondary">Use advanced criteria instead of score threshold</span>
+            </div>
+
+            <!-- Score Mode (default) -->
+            <div class="match-filter-panel" id="matchScorePanel">
+                <div class="match-score-input-row">
+                    <label for="matchMinScore" class="form-label">Minimum Match Score</label>
+                    <input type="number" id="matchMinScore" class="form-input" style="width: 100px;"
+                           min="0" max="600" step="10" value="200"
+                           onchange="scraperSettings.minimum_match_score = parseInt(this.value) || 200">
+                </div>
+                <div class="match-score-guide">
+                    <table class="match-score-table">
+                        <thead>
+                            <tr><th>Score Range</th><th>What It Means</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="badge badge-success">400-550</span></td><td>Exact title + platform + date + priority boost</td></tr>
+                            <tr><td><span class="badge badge-cyan">300-400</span></td><td>Exact title + some bonuses</td></tr>
+                            <tr><td><span class="badge badge-warning">200-300</span></td><td>Close title match + platform confirmed</td></tr>
+                            <tr><td><span class="badge badge-error">100-200</span></td><td>Partial match or missing platform</td></tr>
+                            <tr><td><span class="badge badge-muted">0-100</span></td><td>Weak match — likely wrong game</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Criteria Mode (advanced) -->
+            <div class="match-filter-panel" id="matchCriteriaPanel" style="display: none;">
+                <div class="match-criteria-row">
+                    <div class="match-criteria-field">
+                        <label for="matchTitleQuality" class="form-label">Minimum Title Quality</label>
+                        <select id="matchTitleQuality" class="form-select" onchange="updateMatchCriteria()">
+                            <option value="exact">Exact (score &ge; 280)</option>
+                            <option value="close" selected>Close (score &ge; 150)</option>
+                            <option value="partial">Partial (score &ge; 50)</option>
+                            <option value="any">Any (no minimum)</option>
+                        </select>
+                    </div>
+                    <div class="match-criteria-field">
+                        <label class="form-label" for="matchPlatformRequired">Platform Match Required</label>
+                        <div style="padding-top: 0.35rem;">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="matchPlatformRequired" checked onchange="updateMatchCriteria()" aria-label="Require platform match">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="text-secondary" style="margin-left: var(--spacing-sm);">Only accept results matching the game's system</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="scraper-settings-actions">
+            <button type="button" onclick="saveScraperSettings()" class="btn btn-primary" id="saveScraperBtn">
+                <span class="btn-icon">💾</span>
+                Save Settings
+            </button>
+            <button type="button" onclick="resetScraperPriority()" class="btn btn-secondary">
+                <span class="btn-icon">🔄</span>
+                Reset to Default
+            </button>
+            <button type="button" onclick="checkRateLimits()" class="btn btn-secondary" id="checkRateLimitsBtn">
+                <span class="btn-icon">📊</span>
+                Check Rate Limits
+            </button>
+        </div>
+        <div id="scraperSettingsResult" role="status" aria-live="polite" style="margin-top: var(--spacing-md);"></div>
+        <div id="rateLimitsResult" role="status" aria-live="polite" style="margin-top: var(--spacing-md);"></div>
+    </div>
+</section>
+
+<!-- API Keys Configuration (Admin Only) -->
+{% if current_user and current_user.role == 'admin' %}
+<section class="card mb-xl" id="apikeys">
+    <div class="card-header">
+        <h2 class="card-title">🔑 API Keys</h2>
+    </div>
+    <div class="card-body">
+        <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
+            Configure API keys for online scrapers. Keys are stored locally and never shared.
+        </p>
+        
+        <div class="api-key-list">
+            <!-- TheGamesDB -->
+            <div class="api-key-item">
+                <div class="api-key-header">
+                    <span class="api-key-name">🎮 TheGamesDB — Public API Key</span>
+                    <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Keys →</a>
+                </div>
+                <input type="text" id="apikey-tgdb-public" class="api-key-input"
+                       value="{{ scraper_settings.api_keys.tgdb_public }}"
+                       placeholder="Per-IP rate limit — used as primary for scraping">
+                <span class="text-muted" style="font-size: 0.8rem; margin-top: 2px; display: block;">Primary key. Per-IP rate limit, best for regular use.</span>
+            </div>
+
+            <div class="api-key-item">
+                <div class="api-key-header">
+                    <span class="api-key-name">🎮 TheGamesDB — Private API Key</span>
+                </div>
+                <input type="text" id="apikey-tgdb" class="api-key-input"
+                       value="{{ scraper_settings.api_keys.tgdb }}"
+                       placeholder="Shared monthly pool — used as fallback">
+                <span class="text-muted" style="font-size: 0.8rem; margin-top: 2px; display: block;">Fallback key. Shared monthly pool (~6,000 req/month).</span>
+            </div>
+            
+            <!-- IGDB -->
+            <div class="api-key-item">
+                <div class="api-key-header">
+                    <span class="api-key-name">🌐 IGDB / Twitch Client ID</span>
+                    <a href="https://api-docs.igdb.com/#getting-started" target="_blank" rel="noopener noreferrer" class="api-key-link">Get Credentials →</a>
+                </div>
+                <input type="text" id="apikey-igdb-client-id" class="api-key-input" 
+                       value="{{ scraper_settings.api_keys.igdb_client_id }}" 
+                       placeholder="Enter Twitch Client ID">
+            </div>
+            
+            <div class="api-key-item">
+                <div class="api-key-header">
+                    <span class="api-key-name">🌐 IGDB / Twitch Client Secret</span>
+                </div>
+                <input type="password" id="apikey-igdb-client-secret" class="api-key-input" 
+                       value="{{ scraper_settings.api_keys.igdb_client_secret }}" 
+                       placeholder="Enter Twitch Client Secret">
+            </div>
+            
+            <!-- RAWG.io -->
+            <div class="api-key-item">
+                <div class="api-key-header">
+                    <span class="api-key-name">🎮 RAWG.io API Key</span>
+                    <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
+                </div>
+                <input type="text" id="apikey-rawg" class="api-key-input" 
+                       value="{{ scraper_settings.api_keys.rawg }}" 
+                       placeholder="Enter RAWG.io API key">
+            </div>
+            
+            <!-- ScreenScraper -->
+            <div class="api-key-item" style="border-top: 1px solid rgba(76, 201, 240, 0.2); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
+                <div class="api-key-header">
+                    <span class="api-key-name">🖥️ ScreenScraper Username</span>
+                    <a href="https://www.screenscraper.fr/membreinscription.php" target="_blank" rel="noopener noreferrer" class="api-key-link">Register →</a>
+                </div>
+                <input type="text" id="apikey-screenscraper-username" class="api-key-input" 
+                       value="{{ scraper_settings.api_keys.screenscraper_username }}" 
+                       placeholder="Your member account username">
+            </div>
+            
+            <div class="api-key-item">
+                <div class="api-key-header">
+                    <span class="api-key-name">🖥️ ScreenScraper Password</span>
+                </div>
+                <input type="password" id="apikey-screenscraper-password" class="api-key-input" 
+                       value="{{ scraper_settings.api_keys.screenscraper_password }}" 
+                       placeholder="Your member account login password">
+            </div>
+            
+            <div class="api-key-item">
+                <div class="api-key-header">
+                    <span class="api-key-name">🖥️ ScreenScraper Developer ID</span>
+                    <a href="https://www.screenscraper.fr/forumsujets.php?frub=12" target="_blank" rel="noopener noreferrer" class="api-key-link">Request Dev Access →</a>
+                </div>
+                <input type="text" id="apikey-screenscraper-devid" class="api-key-input" 
+                       value="{{ scraper_settings.api_keys.screenscraper_devid }}" 
+                       placeholder="Dev Username from developer area">
+            </div>
+            
+            <div class="api-key-item">
+                <div class="api-key-header">
+                    <span class="api-key-name">🖥️ ScreenScraper Developer Password</span>
+                </div>
+                <input type="password" id="apikey-screenscraper-devpassword" class="api-key-input" 
+                       value="{{ scraper_settings.api_keys.screenscraper_devpassword }}" 
+                       placeholder="Password from developer area (NOT debug password)">
+            </div>
+            
+            <!-- RetroAchievements -->
+            <div class="api-key-item" style="border-top: 1px solid rgba(76, 201, 240, 0.2); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
+                <div class="api-key-header">
+                    <span class="api-key-name">🏆 RetroAchievements Username</span>
+                    <a href="https://retroachievements.org/" target="_blank" rel="noopener noreferrer" class="api-key-link">Register →</a>
+                </div>
+                <input type="text" id="apikey-ra-username" class="api-key-input" 
+                       value="{{ scraper_settings.api_keys.ra_username }}" 
+                       placeholder="Your RetroAchievements username">
+            </div>
+            
+            <div class="api-key-item">
+                <div class="api-key-header">
+                    <span class="api-key-name">🏆 RetroAchievements API Key</span>
+                    <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
+                </div>
+                <input type="text" id="apikey-ra-apikey" class="api-key-input"
+                       value="{{ scraper_settings.api_keys.ra_apikey }}"
+                       placeholder="Web API Key from Settings > Keys">
+            </div>
+
+            <!-- Steam -->
+            <div class="api-key-item" style="border-top: 1px solid rgba(76, 201, 240, 0.2); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
+                <div class="api-key-header">
+                    <span class="api-key-name">🎮 Steam Web API Key</span>
+                    <a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
+                </div>
+                <input type="text" id="apikey-steam-api-key" class="api-key-input"
+                       value="{{ scraper_settings.api_keys.steam_api_key }}"
+                       placeholder="Your Steam Web API Key">
+            </div>
+            <div class="api-key-item">
+                <div class="api-key-header">
+                    <span class="api-key-name">🎮 Steam ID</span>
+                </div>
+                <input type="text" id="apikey-steam-id" class="api-key-input"
+                       value="{{ scraper_settings.api_keys.steam_id }}"
+                       placeholder="17-digit Steam ID or custom URL name">
+                <span class="text-muted" style="font-size: 0.8rem; margin-top: 2px; display: block;">Your 17-digit Steam ID (e.g. 76561198012345678) or custom URL name. Find it at <a href="https://steamid.io" target="_blank" rel="noopener noreferrer" style="color: var(--primary-cyan);">steamid.io</a></span>
+            </div>
+
+            <!-- Xbox Setup Wizard -->
+            <div style="border-top: 1px solid rgba(76, 201, 240, 0.2); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md);">
+                    <span class="api-key-name" style="font-size: 1rem;">🟢 Xbox Live Integration</span>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="toggleXboxWizard()" id="xboxWizardToggle" style="font-size: 0.8rem;">
+                        Show Setup Guide
+                    </button>
+                </div>
+
+                <!-- Collapsible Wizard -->
+                <div id="xboxSetupWizard" style="display: none; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0 0 var(--spacing-lg);">
+                        Xbox integration requires a free Azure AD app registration. Follow these steps:
+                    </p>
+
+                    <div style="display: flex; flex-direction: column; gap: var(--spacing-lg);">
+                        <!-- Step 1 -->
+                        <div style="display: flex; gap: var(--spacing-md); align-items: flex-start;">
+                            <span style="background: #22c55e; color: var(--bg-darkest); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; margin-top: 2px;">1</span>
+                            <div>
+                                <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 4px;">Create an Azure AD App Registration</div>
+                                <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0 0 8px;">Go to the Azure Portal and create a new app registration. Use any name (e.g. "RetroDB").</p>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="window.open('https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/CreateApplicationBlade/quickStartType//isMSAApp/true', '_blank')">
+                                    Open Azure Portal
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div style="display: flex; gap: var(--spacing-md); align-items: flex-start;">
+                            <span style="background: #22c55e; color: var(--bg-darkest); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; margin-top: 2px;">2</span>
+                            <div>
+                                <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 4px;">Set the Redirect URI</div>
+                                <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0 0 8px;">Under <strong>Authentication</strong>, add a <strong>Web</strong> platform redirect URI:</p>
+                                <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                                    <code id="xboxRedirectUri" style="background: var(--bg-medium); padding: 6px 12px; border-radius: var(--radius-sm); border: 1px solid var(--card-border); color: var(--primary-cyan); font-size: 0.85rem; flex: 1; user-select: all;">http://localhost:5000/api/xbox/callback</code>
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="copyXboxRedirectUri()" title="Copy redirect URI">
+                                        Copy
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div style="display: flex; gap: var(--spacing-md); align-items: flex-start;">
+                            <span style="background: #22c55e; color: var(--bg-darkest); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; margin-top: 2px;">3</span>
+                            <div>
+                                <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 4px;">Add Xbox Live API Permission</div>
+                                <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Under <strong>API permissions</strong> &rarr; <strong>Add a permission</strong> &rarr; <strong>Xbox Live</strong> &rarr; check <strong>XboxLive.signin</strong>. Then click "Grant admin consent".</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 4 -->
+                        <div style="display: flex; gap: var(--spacing-md); align-items: flex-start;">
+                            <span style="background: #22c55e; color: var(--bg-darkest); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; margin-top: 2px;">4</span>
+                            <div>
+                                <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 4px;">Copy the Application (Client) ID</div>
+                                <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">From the app's <strong>Overview</strong> page, copy the "Application (client) ID" and paste it below.</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 5 -->
+                        <div style="display: flex; gap: var(--spacing-md); align-items: flex-start;">
+                            <span style="background: #22c55e; color: var(--bg-darkest); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; margin-top: 2px;">5</span>
+                            <div>
+                                <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 4px;">Create a Client Secret</div>
+                                <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Under <strong>Certificates &amp; secrets</strong> &rarr; <strong>New client secret</strong>. Copy the <strong>Value</strong> (not the Secret ID) and paste it below.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input fields (always visible) -->
+                <div class="api-key-item">
+                    <div class="api-key-header">
+                        <span class="api-key-name">🟢 Xbox Client ID</span>
+                    </div>
+                    <input type="text" id="apikey-xbox-client-id" class="api-key-input"
+                           value="{{ scraper_settings.api_keys.xbox_client_id }}"
+                           placeholder="Application (client) ID from Azure">
+                </div>
+                <div class="api-key-item">
+                    <div class="api-key-header">
+                        <span class="api-key-name">🟢 Xbox Client Secret</span>
+                    </div>
+                    <input type="password" id="apikey-xbox-client-secret" class="api-key-input"
+                           value="{{ scraper_settings.api_keys.xbox_client_secret }}"
+                           placeholder="Client secret Value from Azure">
+                </div>
+            </div>
+
+            <!-- AI Metadata -->
+            <div class="api-key-item" style="border-top: 1px solid rgba(76, 201, 240, 0.2); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
+                <div class="api-key-header">
+                    <span class="api-key-name">🤖 AI Metadata Provider</span>
+                </div>
+                <select id="apikey-ai-provider" class="api-key-input" onchange="updateAIProviderFields()" style="cursor: pointer;">
+                    <option value="">-- Select Provider --</option>
+                    <option value="gemini" {{ 'selected' if scraper_settings.api_keys.ai_provider == 'gemini' else '' }}>Google Gemini</option>
+                    <option value="openai" {{ 'selected' if scraper_settings.api_keys.ai_provider == 'openai' else '' }}>OpenAI</option>
+                    <option value="claude" {{ 'selected' if scraper_settings.api_keys.ai_provider == 'claude' else '' }}>Anthropic Claude</option>
+                </select>
+                <span class="text-muted" style="font-size: 0.8rem; margin-top: 2px; display: block;">AI fills text-only fields (genre, structure, perspective, etc.). API usage costs apply.</span>
+            </div>
+
+            <!-- Gemini fields -->
+            <div id="ai-fields-gemini" style="display: none;">
+                <div class="api-key-item">
+                    <div class="api-key-header">
+                        <span class="api-key-name">🤖 Gemini API Key</span>
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
+                    </div>
+                    <input type="text" id="apikey-ai-gemini-key" class="api-key-input"
+                           value="{{ scraper_settings.api_keys.ai_gemini_api_key }}"
+                           placeholder="Enter Google Gemini API key">
+                </div>
+                <div class="api-key-item">
+                    <div class="api-key-header">
+                        <span class="api-key-name">🤖 Gemini Model</span>
+                    </div>
+                    <select id="apikey-ai-gemini-model" class="api-key-input" style="cursor: pointer;">
+                        <option value="gemini-2.5-flash-lite" {{ 'selected' if scraper_settings.api_keys.ai_gemini_model == 'gemini-2.5-flash-lite' else '' }}>Gemini 2.5 Flash Lite — $0.10 in / $0.40 out per 1M tokens (Recommended)</option>
+                        <option value="gemini-2.5-flash" {{ 'selected' if scraper_settings.api_keys.ai_gemini_model == 'gemini-2.5-flash' else '' }}>Gemini 2.5 Flash — $0.15 in / $0.60 out per 1M tokens</option>
+                        <option value="gemini-3-flash-preview" {{ 'selected' if scraper_settings.api_keys.ai_gemini_model == 'gemini-3-flash-preview' else '' }}>Gemini 3 Flash (Preview) — $0.50 in / $3.00 out per 1M tokens</option>
+                        <option value="gemini-2.5-pro" {{ 'selected' if scraper_settings.api_keys.ai_gemini_model == 'gemini-2.5-pro' else '' }}>Gemini 2.5 Pro — $1.25 in / $10.00 out per 1M tokens</option>
+                    </select>
+                </div>
+                <div class="api-key-item">
+                    <div class="api-key-header">
+                        <span class="api-key-name">☁️ GCP Project ID</span>
+                        <span class="text-muted" style="font-size: 0.75rem;">Optional — required for Google Cloud billing credits</span>
+                    </div>
+                    <input type="text" id="apikey-ai-gemini-project-id" class="api-key-input"
+                           value="{{ scraper_settings.api_keys.ai_gemini_project_id }}"
+                           placeholder="e.g. my-project-123456">
+                </div>
+            </div>
+
+            <!-- OpenAI fields -->
+            <div id="ai-fields-openai" style="display: none;">
+                <div class="api-key-item">
+                    <div class="api-key-header">
+                        <span class="api-key-name">🤖 OpenAI API Key</span>
+                        <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
+                    </div>
+                    <input type="text" id="apikey-ai-openai-key" class="api-key-input"
+                           value="{{ scraper_settings.api_keys.ai_openai_api_key }}"
+                           placeholder="Enter OpenAI API key">
+                </div>
+                <div class="api-key-item">
+                    <div class="api-key-header">
+                        <span class="api-key-name">🤖 OpenAI Model</span>
+                    </div>
+                    <select id="apikey-ai-openai-model" class="api-key-input" style="cursor: pointer;">
+                        <option value="gpt-4o-mini" {{ 'selected' if scraper_settings.api_keys.ai_openai_model == 'gpt-4o-mini' else '' }}>GPT-4o Mini — $0.15 in / $0.60 out per 1M tokens (Recommended)</option>
+                        <option value="gpt-4o" {{ 'selected' if scraper_settings.api_keys.ai_openai_model == 'gpt-4o' else '' }}>GPT-4o — $2.50 in / $10.00 out per 1M tokens</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Claude fields -->
+            <div id="ai-fields-claude" style="display: none;">
+                <div class="api-key-item">
+                    <div class="api-key-header">
+                        <span class="api-key-name">🤖 Anthropic API Key</span>
+                        <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
+                    </div>
+                    <input type="text" id="apikey-ai-claude-key" class="api-key-input"
+                           value="{{ scraper_settings.api_keys.ai_claude_api_key }}"
+                           placeholder="Enter Anthropic API key">
+                </div>
+                <div class="api-key-item">
+                    <div class="api-key-header">
+                        <span class="api-key-name">🤖 Claude Model</span>
+                    </div>
+                    <select id="apikey-ai-claude-model" class="api-key-input" style="cursor: pointer;">
+                        <option value="claude-haiku-4-5-20251001" {{ 'selected' if scraper_settings.api_keys.ai_claude_model == 'claude-haiku-4-5-20251001' else '' }}>Claude Haiku 4.5 — $1.00 in / $5.00 out per 1M tokens (Recommended)</option>
+                        <option value="claude-sonnet-4-5-20250929" {{ 'selected' if scraper_settings.api_keys.ai_claude_model == 'claude-sonnet-4-5-20250929' else '' }}>Claude Sonnet 4.5 — $3.00 in / $15.00 out per 1M tokens</option>
+                        <option value="claude-opus-4-6" {{ 'selected' if scraper_settings.api_keys.ai_claude_model == 'claude-opus-4-6' else '' }}>Claude Opus 4.6 — $15.00 in / $75.00 out per 1M tokens</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: var(--spacing-xl);">
+            <button type="button" onclick="saveApiKeys()" class="btn btn-primary" id="saveApiKeysBtn">
+                <span class="btn-icon">💾</span>
+                Save API Keys
+            </button>
+        </div>
+        <div id="apiKeysResult" role="status" aria-live="polite" style="margin-top: var(--spacing-md);"></div>
+    </div>
+</section>
+{% endif %}
+</div><!-- End tab-scraping -->

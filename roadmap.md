@@ -2295,7 +2295,44 @@ two verify loops to convergence.
   scraping,data,customization,system}.html`; `{% include %}` from a
   thin shell; preserve anchor IDs for sticky nav.
 - **Source**: 2026-04-24 audit, Templates & CSS M3.
-- **Status**: todo
+- **Status**: done (v3.6.17) — six panels extracted into
+  `templates/_settings_tabs/{account,library,scraping,data,
+  customization,system}.html` (named per the project's existing
+  `_macros/` / `_modals/` convention rather than the plan's
+  `_partials/settings_*` placeholder). Shell `templates/settings.html`
+  dropped 7,368 → 5,201 lines; each tab swapped to a single
+  `{% include "_settings_tabs/<tab>.html" %}` line, comment markers
+  preserved. Per-partial line counts: account 362, library 277,
+  scraping 599, data 210, customization 313, system 412. Each partial
+  re-imports `tab_subnav` / `subnav_link` from
+  `_macros/sticky_subnav.html` for standalone-render safety.
+  Anchors verified: all 19 `subnav_link('X')` targets (profile /
+  timezone / users / library / display / rom-naming / backup / esde /
+  scraper / apikeys / stats / trophies / dropdowns / normalization /
+  notifications / controllers / logos / maintenance / server /
+  logging / troubleshooting) still resolve to their `id="X"` sections.
+  End-to-end Flask test-client GET `/settings` returns 200 with all 6
+  panels and every anchor present (431 KB rendered output, parity
+  with pre-split). Regression file
+  `tests/test_pass38_settings_tabs.py` (45 cases) pins partial
+  existence, opening-div shape, end-marker, macro re-import,
+  shell-is-thin (line-count ceiling and absence of inline
+  `settings-tab-panel` blocks), functional Jinja render via a
+  permissive `_SilentUndefined` stand-in (no Flask context needed),
+  per-partial anchor preservation, and a union-count check that all 6
+  `tab_subnav(...)` calls are still present. New helper
+  `tests._util.read_settings_with_partials()` returns
+  `settings.html` ∪ every `_settings_tabs/*.html` so source-grep tests
+  that used to grep `settings.html` keep tracking the rendered page
+  after the split. Three pre-existing tests widened to use it:
+  `test_pass37_a11y.py::test_37_6_settings_result_containers_have_
+  live_regions` (aria-live result containers now in
+  `scraping.html` partial), `test_pass45_security.py::test_settings_
+  subnavs_all_marked` (six `{% call tab_subnav %}` invocations now
+  one per partial), `test_pass45_security.py::test_settings_modals_
+  marked` (userModal now in `account.html` partial,
+  editControllerModal now in `customization.html` partial,
+  confirmModal still in the shell). Suite 1,039 → 1,084 (+45) green.
 
 #### Pass 38.7 Consolidate duplicate platform-sync endpoints (MEDIUM, S)
 
@@ -3108,6 +3145,12 @@ in its **Status** line; `grep "done (v3.5" roadmap.md` enumerates all.
   `_modals/select_filter_modal.html` ({% include %} partial for
   `all_games.html` + `system_games.html`). Pass 10 closed
   substantively. Suite 1015 → 1039 (+24). (v3.6.16)
+- [x] **Pass 38.6** — Split `settings.html` by tab: six panels
+  extracted into `_settings_tabs/{account,library,scraping,data,
+  customization,system}.html`; shell shrank 7,368 → 5,201 lines.
+  Three pre-existing source-grep tests widened via new helper
+  `tests._util.read_settings_with_partials()`. Suite 1039 → 1084
+  (+45). (v3.6.17)
 
 ---
 

@@ -1,3 +1,25 @@
+- version: 3.6.17
+  date: 2026-05-18
+  tags:
+  - type: refactor
+    label: Pass 38.6 — split settings.html into per-tab partials
+  body: |
+    <ul>
+        <li><strong>Pass 38.6 closed</strong> — <code>templates/settings.html</code> dropped from 7,368 lines to 5,201 by extracting each of its six tab panels into <code>templates/_settings_tabs/{account,library,scraping,data,customization,system}.html</code>. The shell now <code>{% include %}</code>s each partial; rendered HTML, anchor IDs, sticky-subnav wiring, and a11y attributes are byte-for-byte preserved. Future CSP, a11y, and i18n sweeps that bottlenecked on the single-file blob can now operate on one tab at a time.
+            <ul>
+                <li><strong>Partial directory</strong>: new <code>templates/_settings_tabs/</code> (alongside the existing <code>_macros/</code> and <code>_modals/</code> convention). Each partial opens with <code>{% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}</code> so it renders standalone — a consumer doesn't have to thread macro imports through manually.</li>
+                <li><strong>Six panels extracted (per-line counts)</strong>: account 362, library 277, scraping 599, data 210, customization 313, system 412.</li>
+                <li><strong>Anchor preservation</strong>: every <code>id="..."</code> section anchor referenced by a <code>subnav_link('X')</code> call still resolves — verified at 19 anchor IDs (profile / timezone / users / library / display / rom-naming / backup / esde / scraper / apikeys / stats / trophies / dropdowns / normalization / notifications / controllers / logos / maintenance / server / logging / troubleshooting). Sticky-scroll subnav links continue to scroll to their targets.</li>
+            </ul>
+        </li>
+        <li><strong>End-to-end render</strong>: <code>/settings</code> renders to 200 with all 6 panel <code>&lt;div class="settings-tab-panel"&gt;</code> wrappers present and every expected section anchor reachable (Flask test client against the real settings_manager + admin session).</li>
+        <li><strong>Regression tests</strong>: <code>tests/test_pass38_settings_tabs.py</code> — 45 cases (existence + opening-div shape + closing-marker + macro re-import per partial, shell-is-thin checks including a &lt; 5,500-line ceiling, functional Jinja renders via a permissive <code>_SilentUndefined</code> stand-in, anchor-preservation pin per partial, subnav-call-count pin across the union). New helper <code>tests._util.read_settings_with_partials()</code> returns the shell text concatenated with every partial — drop-in widening for source-grep tests that used to read only <code>settings.html</code>.</li>
+        <li><strong>Three pre-existing source-grep tests widened</strong>: <code>test_pass37_a11y.py::test_37_6_settings_result_containers_have_live_regions</code>, <code>test_pass45_security.py::test_settings_subnavs_all_marked</code>, <code>test_pass45_security.py::test_settings_modals_marked</code> all flipped to <code>read_settings_with_partials()</code> so the contracts they pin (aria-live containers, six <code>tab_subnav</code> call sites, three modals carrying <code>data-focus-trap</code>) keep tracking the rendered page after the split.</li>
+        <li><strong>Test suite</strong>: 1,039 → 1,084 (+45). Full pytest green.</li>
+        <li><strong>Roadmap</strong>: Pass 38.6 status flipped from <code>todo</code> to <code>done (v3.6.17)</code>.</li>
+        <li><strong>Patch bump 3.6.16 → 3.6.17</strong>: refactor-only. No user-visible behaviour change.</li>
+    </ul>
+
 - version: 3.6.16
   date: 2026-05-18
   tags:

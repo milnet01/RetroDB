@@ -13,7 +13,7 @@ import re
 import pytest
 
 # REPO_ROOT/sys.path setup is centralised in tests/_util.py (test-audit DUP-1).
-from tests._util import REPO_ROOT, read_source
+from tests._util import REPO_ROOT, read_settings_with_partials, read_source
 
 
 # -----------------------------------------------------------------------------
@@ -230,7 +230,10 @@ def test_37_6_base_flash_has_aria_live():
 
 
 def test_37_6_settings_result_containers_have_live_regions():
-    src = read_source('templates/settings.html')
+    # Pass 38.6 split settings.html into _settings_tabs/*.html partials —
+    # these containers now live in `_settings_tabs/scraping.html`. Search
+    # the union of shell + partials so the pin still tracks the rendered page.
+    src = read_settings_with_partials()
     for needle in (
         'id="scraperSettingsResult" role="status" aria-live="polite"',
         'id="rateLimitsResult" role="status" aria-live="polite"',

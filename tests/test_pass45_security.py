@@ -11,6 +11,7 @@ import os
 import pytest
 
 from tests._util import REPO_ROOT as _REPO_ROOT  # noqa: F401
+from tests._util import read_settings_with_partials
 
 
 # -----------------------------------------------------------------------------
@@ -2440,14 +2441,14 @@ class TestPass45_16AriaCurrentRollout:
         assert 'data-sticky-nav data-tabbar' in rendered
         assert 'id="subnav-x"' in rendered
 
-        # All 6 call sites still wired in settings.html.
-        path = os.path.join(_REPO_ROOT, 'templates', 'settings.html')
-        with open(path, encoding='utf-8') as f:
-            body = f.read()
+        # All 6 call sites still wired across the settings page. Pass 38.6
+        # split settings.html into _settings_tabs/*.html partials, so the
+        # call sites now live one per partial instead of all in one file.
+        body = read_settings_with_partials()
         call_count = body.count('{% call tab_subnav(')
         assert call_count == 6, (
-            f"Pass 45.16: expected 6 `tab_subnav(...)` calls in settings.html; "
-            f"found {call_count}"
+            f"Pass 45.16: expected 6 `tab_subnav(...)` calls across "
+            f"settings.html + partials; found {call_count}"
         )
 
     def test_rom_tools_tabs_have_aria_current(self):
@@ -2560,11 +2561,11 @@ class TestPass45_17ModalFocusTrapRollout:
         )
 
     def test_settings_modals_marked(self):
-        """userModal, confirmModal, editControllerModal in settings.html
-        must declare data-focus-trap."""
-        path = os.path.join(_REPO_ROOT, 'templates', 'settings.html')
-        with open(path, encoding='utf-8') as f:
-            body = f.read()
+        """userModal, confirmModal, editControllerModal on the settings page
+        must declare data-focus-trap. Pass 38.6 moved userModal into
+        _settings_tabs/account.html and editControllerModal into
+        _settings_tabs/customization.html — search across the union."""
+        body = read_settings_with_partials()
         assert ('id="userModal" data-focus-trap' in body), (
             "Pass 45.17: userModal must declare data-focus-trap"
         )

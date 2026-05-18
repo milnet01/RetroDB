@@ -1,0 +1,363 @@
+{% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
+<div class="settings-tab-panel active" id="tab-account" role="tabpanel" aria-label="Account settings">
+    {% call tab_subnav('account') %}
+        {{ subnav_link('profile', '👤 My Profile', active=True) }}
+        {{ subnav_link('timezone', '🕐 Timezone') }}
+        {% if current_user and current_user.role == 'admin' %}
+        {{ subnav_link('users', '👥 Users') }}
+        {% endif %}
+    {% endcall %}
+
+<!-- My Profile Section -->
+<section class="card mb-xl" id="profile">
+    <div class="card-header">
+        <h2 class="card-title">👤 My Profile</h2>
+    </div>
+    <div class="card-body">
+        {% if current_user %}
+        <div class="profile-header" style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--card-border);">
+            <div class="profile-avatar-wrapper" onclick="openAvatarPicker()" title="Change avatar">
+                {% set profile_avatar_url = get_avatar_url(current_user, current_user_settings) %}
+                <div class="profile-avatar" id="profileAvatar" style="width: 80px; height: 80px; background: var(--bg-lighter); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; border: 2px solid var(--primary-cyan); cursor: pointer; position: relative; overflow: hidden;">
+                    {% if profile_avatar_url %}
+                    <img src="{{ profile_avatar_url }}" alt="" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                    {% else %}
+                    {% if current_user.role == 'admin' %}👑{% elif current_user.role == 'editor' %}✏️{% else %}👤{% endif %}
+                    {% endif %}
+                </div>
+                <div class="avatar-edit-overlay">📷</div>
+            </div>
+            <div>
+                <h3 style="margin: 0; color: var(--text-primary);">{{ current_user.display_name or current_user.username }}</h3>
+                <p style="margin: 0.25rem 0 0; color: var(--text-secondary);">@{{ current_user.username }}</p>
+                <span class="badge {% if current_user.role == 'admin' %}badge-purple{% elif current_user.role == 'editor' %}badge-success{% else %}badge-warning{% endif %}" style="margin-top: 0.5rem;">
+                    {{ current_user.role | upper }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Avatar Picker Modal -->
+        <div class="avatar-picker-overlay" id="avatarPickerOverlay" onclick="if(event.target===this)closeAvatarPicker()">
+            <div class="avatar-picker-modal" role="dialog" aria-modal="true" aria-label="Choose avatar">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 style="margin: 0; font-family: var(--font-heading); color: var(--primary-cyan);">Choose Avatar</h3>
+                    <button type="button" onclick="closeAvatarPicker()" style="background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer;">&times;</button>
+                </div>
+
+                <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">Select a default avatar or upload your own image.</p>
+
+                <div class="avatar-grid" id="avatarGrid">
+                    {% for i in range(1, 9) %}
+                    <div class="avatar-option {% if current_user_settings and current_user_settings.avatar == 'default_' ~ i %}selected{% endif %}" data-avatar="default_{{ i }}" onclick="selectDefaultAvatar('default_{{ i }}', this)">
+                        <img src="/static/images/avatars/default_{{ i }}.svg" alt="Avatar {{ i }}">
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="avatar-upload-zone" id="avatarUploadZone">
+                    <input type="file" id="avatarFileInput" accept=".jpg,.jpeg,.png,.gif,.webp" style="display: none;" onchange="uploadCustomAvatar(this)">
+                    <div onclick="document.getElementById('avatarFileInput').click()" style="cursor: pointer; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📤</div>
+                        <p style="color: var(--text-secondary); margin: 0; font-size: 0.85rem;">Click to upload custom image</p>
+                        <p style="color: var(--text-muted); margin: 0.25rem 0 0; font-size: 0.75rem;">JPG, PNG, GIF, WebP &mdash; Max 2MB</p>
+                    </div>
+                </div>
+
+                {% set has_avatar = current_user_settings and current_user_settings.avatar %}
+                <div id="avatarRemoveRow" style="text-align: center; margin-top: 0.75rem; {% if not has_avatar %}display: none;{% endif %}">
+                    <a href="#" onclick="removeAvatar(); return false;" style="color: var(--neon-red); font-size: 0.85rem;">Remove avatar</a>
+                </div>
+
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeAvatarPicker()">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="avatarSaveBtn" onclick="saveAvatarChoice()">Save</button>
+                </div>
+            </div>
+        </div>
+        
+        <h3 class="section-title" style="margin-bottom: var(--spacing-md);">🏆 Trophy Settings</h3>
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            Configure your personal RPCS3 trophy path to view your PS3 trophies.
+        </p>
+        
+        <div class="form-group mb-lg">
+            <label class="form-label" for="userTrophyPath">Your RPCS3 Trophy Path</label>
+            <input type="text" class="form-input" id="userTrophyPath" 
+                   value="{{ current_user_settings.rpcs3_trophy_path if current_user_settings else '' }}"
+                   placeholder="/path/to/your/RPCS3/dev_hdd0/home/00000001/trophy">
+            <span class="field-tip">Path to your RPCS3 trophy folder (e.g., /home/user/RPCS3/dev_hdd0/home/00000001/trophy)</span>
+        </div>
+        
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">🎖️ RetroAchievements Settings</h3>
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            Configure your RetroAchievements credentials to view your achievement progress.
+        </p>
+        
+        <div class="form-group mb-md">
+            <label class="form-label" for="userRaUsername">Your RA Username</label>
+            <input type="text" class="form-input" id="userRaUsername" 
+                   value="{{ current_user_settings.ra_username if current_user_settings else '' }}"
+                   placeholder="YourRAUsername">
+        </div>
+        
+        <div class="form-group mb-lg">
+            <label class="form-label" for="userRaApiKey">Your RA API Key</label>
+            <input type="password" class="form-input" id="userRaApiKey" 
+                   value="{{ current_user_settings.ra_api_key if current_user_settings else '' }}"
+                   placeholder="Your RetroAchievements API Key">
+            <span class="field-tip">Get your API key from <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer" style="color: var(--primary-cyan);">RetroAchievements Control Panel</a></span>
+        </div>
+        
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">🎮 PlayStation Network</h3>
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            Connect your PSN account to sync trophies from PS3, PS4, PS5, and PS Vita games.
+        </p>
+
+        <!-- PSN Token Status Banner -->
+        <div id="psnTokenStatus" style="display: none; padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg); align-items: center; gap: var(--spacing-sm);">
+        </div>
+
+        <div class="form-group mb-md">
+            <label class="form-label" for="userPsnUsername">PSN Username</label>
+            <input type="text" class="form-input" id="userPsnUsername"
+                   value="{{ current_user_settings.psn_username if current_user_settings else '' }}"
+                   placeholder="YourPSNOnlineID">
+            <span class="field-tip">Your PlayStation Network Online ID (auto-detected on connection)</span>
+        </div>
+
+        <!-- NPSSO Setup Wizard -->
+        <div style="background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+            <div class="form-label" style="margin-bottom: var(--spacing-md); font-size: 1rem;">NPSSO Token Setup</div>
+
+            <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+                <!-- Step 1 -->
+                <div style="display: flex; gap: var(--spacing-md); align-items: flex-start;">
+                    <span style="background: var(--primary-cyan); color: var(--bg-darkest); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; margin-top: 2px;">1</span>
+                    <div style="flex: 1;">
+                        <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 4px;">Open Sony's account page</div>
+                        <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0 0 8px;">Log in with your PlayStation account (if not already), then the page will show your NPSSO token as JSON.</p>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="window.open('https://ca.account.sony.com/api/v1/ssocookie', '_blank')">
+                            Open Sony Account Page
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div style="display: flex; gap: var(--spacing-md); align-items: flex-start;">
+                    <span style="background: var(--primary-cyan); color: var(--bg-darkest); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; margin-top: 2px;">2</span>
+                    <div style="flex: 1;">
+                        <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 4px;">Copy the page content</div>
+                        <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Select all (<kbd style="background: var(--bg-medium); padding: 1px 6px; border-radius: 3px; border: 1px solid var(--card-border); font-size: 0.8rem;">Ctrl+A</kbd>) and copy (<kbd style="background: var(--bg-medium); padding: 1px 6px; border-radius: 3px; border: 1px solid var(--card-border); font-size: 0.8rem;">Ctrl+C</kbd>). You can copy the entire JSON &mdash; we'll extract the token automatically.</p>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div style="display: flex; gap: var(--spacing-md); align-items: flex-start;">
+                    <span style="background: var(--primary-cyan); color: var(--bg-darkest); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; margin-top: 2px;">3</span>
+                    <div style="flex: 1;">
+                        <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 4px;">Paste the token</div>
+                        <div style="display: flex; gap: var(--spacing-sm); align-items: center; flex-wrap: wrap;">
+                            <input type="password" class="form-input" id="userPsnNpsso"
+                                   value="{{ current_user_settings.psn_npsso if current_user_settings else '' }}"
+                                   placeholder="Paste JSON or token here"
+                                   style="flex: 1; min-width: 200px;"
+                                   oninput="psnNpssoAutoDetect(this)">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="psnPasteFromClipboard()" title="Read from clipboard">
+                                Paste &amp; Detect
+                            </button>
+                        </div>
+                        <div id="psnNpssoDetectResult" role="status" aria-live="polite" style="margin-top: 6px; font-size: 0.85rem;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick save + test -->
+            <div style="margin-top: var(--spacing-lg); padding-top: var(--spacing-md); border-top: 1px solid var(--card-border); display: flex; gap: var(--spacing-sm); align-items: center; flex-wrap: wrap;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="psnQuickSaveAndTest()" id="psnQuickSaveBtn">
+                    Save &amp; Test Connection
+                </button>
+                <span id="psnTestResult" style="font-size: 0.85rem;"></span>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="saveUserSettings()">
+            Save My Settings
+        </button>
+        
+        {% if current_user.role == 'admin' %}
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">🔐 Change Password</h3>
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            Admin accounts require a password for login.
+        </p>
+        
+        <div class="form-group mb-md">
+            <label class="form-label" for="currentPassword">Current Password</label>
+            <input type="password" class="form-input" id="currentPassword" placeholder="Enter current password">
+        </div>
+        
+        <div class="form-group mb-lg">
+            <label class="form-label" for="newPassword">New Password</label>
+            <input type="password" class="form-input" id="newPassword" placeholder="Enter new password">
+        </div>
+        
+        <button type="button" class="btn btn-warning" onclick="changePassword()">
+            🔐 Change Password
+        </button>
+        {% endif %}
+        {% else %}
+        <p class="text-muted">Please log in to view your profile settings.</p>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Timezone Section -->
+<section class="card mb-xl" id="timezone">
+    <div class="card-header">
+        <h2 class="card-title">🕐 Timezone</h2>
+    </div>
+    <div class="card-body">
+        <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
+            Set your timezone to ensure all dates and times display correctly.
+        </p>
+        <div class="form-group mb-lg">
+            <label class="form-label" for="tzSearchInput">Timezone</label>
+            <input type="text" id="tzSearchInput" class="form-input"
+                   placeholder="Search timezones..." autocomplete="off"
+                   style="margin-bottom: var(--spacing-sm);">
+            <select id="tzSelect" class="form-input" size="8" style="font-family: var(--font-mono); font-size: 0.85rem;"></select>
+            <span class="field-tip">
+                Browser detected: <span id="detectedTimezone"></span>
+                — <a href="#" onclick="event.preventDefault(); useDetectedTimezone()" style="color: var(--primary-cyan);">Use detected</a>
+            </span>
+        </div>
+        <button type="button" onclick="saveTimezone()" class="btn btn-primary">💾 Save Timezone</button>
+    </div>
+</section>
+
+<!-- User Management Section (Admin Only) -->
+{% if current_user and current_user.role == 'admin' %}
+<section class="card mb-xl" id="users">
+    <div class="card-header">
+        <h2 class="card-title">👥 User Management</h2>
+    </div>
+    <div class="card-body">
+        <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
+            Manage users who can access RetroDB. Admin users require a password to login, while Editor and Viewer users can login with a single click.
+        </p>
+        
+        <div style="display: flex; justify-content: flex-end; margin-bottom: var(--spacing-lg);">
+            <button type="button" class="btn btn-primary" onclick="showAddUserModal()">
+                ➕ Add User
+            </button>
+        </div>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Trophy Path</th>
+                    <th>RA Username</th>
+                    <th>Last Login</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="usersTableBody">
+                {% for user in users %}
+                <tr data-user-id="{{ user.id }}">
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 1.25rem;">
+                                {% if user.role == 'admin' %}👑{% elif user.role == 'editor' %}✏️{% else %}👤{% endif %}
+                            </span>
+                            <div>
+                                <div style="font-weight: 600;">{{ user.display_name or user.username }}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-secondary);">@{{ user.username }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge {% if user.role == 'admin' %}badge-purple{% elif user.role == 'editor' %}badge-success{% else %}badge-warning{% endif %}">
+                            {{ user.role | upper }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if user.rpcs3_trophy_path %}
+                        <span class="badge badge-success">✓ Configured</span>
+                        {% else %}
+                        <span class="badge badge-secondary">Not Set</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.ra_username %}
+                        <span style="color: var(--primary-cyan);">{{ user.ra_username }}</span>
+                        {% else %}
+                        <span class="badge badge-secondary">Not Set</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.last_login %}
+                        {{ user.last_login|tz('short') }}
+                        {% else %}
+                        <span class="text-muted">Never</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="editUser({{ user.id }})" title="Edit">✏️</button>
+                            {% if user.id != current_user.id %}
+                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteUser({{ user.id }}, '{{ user.username }}')" title="Delete">🗑️</button>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Add/Edit User Modal -->
+<div class="modal-overlay" id="userModal" data-focus-trap data-focus-trap-onescape="closeUserModal">
+    <div class="modal-content" style="max-width: 500px;" role="dialog" aria-modal="true" aria-labelledby="userModalTitle">
+        <div class="modal-header">
+            <h2 id="userModalTitle">Add User</h2>
+            <button type="button" class="modal-close" onclick="closeUserModal()" aria-label="Close user modal">×</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="editUserId" value="">
+            
+            <div class="form-group mb-md">
+                <label class="form-label" for="userUsername">Username *</label>
+                <input type="text" class="form-input" id="userUsername" placeholder="username">
+            </div>
+            
+            <div class="form-group mb-md">
+                <label class="form-label" for="userDisplayName">Display Name</label>
+                <input type="text" class="form-input" id="userDisplayName" placeholder="Display Name">
+            </div>
+            
+            <div class="form-group mb-md">
+                <label class="form-label" for="userRole">Role *</label>
+                <select class="form-select" id="userRole">
+                    <option value="viewer">Viewer - Read only access</option>
+                    <option value="player">Player - Can launch and track progress</option>
+                    <option value="editor">Editor - Can edit games and scrape</option>
+                    <option value="admin">Admin - Full access</option>
+                </select>
+            </div>
+            
+            <div class="form-group mb-md" id="resetPasswordGroup" style="display: none;">
+                <label class="form-label" for="userNewPassword">Reset Password</label>
+                <input type="password" class="form-input" id="userNewPassword" placeholder="Leave blank to keep current">
+                <span class="field-tip">Only for admin accounts</span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeUserModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="saveUser()">Save User</button>
+        </div>
+    </div>
+</div>
+{% endif %}
+</div><!-- End tab-account -->
