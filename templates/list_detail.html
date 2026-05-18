@@ -1,14 +1,14 @@
 {% extends "base.html" %}
+{% from "_macros/breadcrumb.html" import breadcrumb %}
 
 {% block title %}{{ list.name }} - Lists - RetroDB{% endblock %}
 
 {% block content %}
 <!-- Breadcrumb -->
-<nav class="breadcrumb" aria-label="Breadcrumb">
-    <a href="{{ url_for('collections.lists_page') }}" class="breadcrumb-link">Lists</a>
-    <span class="breadcrumb-separator">/</span>
-    <span class="breadcrumb-current">{{ list.name }}</span>
-</nav>
+{{ breadcrumb([
+    ('Lists', url_for('collections.lists_page')),
+    (list.name, None),
+]) }}
 
 <!-- Page Header -->
 <div class="page-header">
@@ -339,34 +339,6 @@
 
 .form-control:focus {
     border-color: var(--primary-cyan);
-}
-
-/* Breadcrumb */
-.breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-md);
-    font-size: 0.85rem;
-}
-
-.breadcrumb-link {
-    color: var(--text-secondary);
-    text-decoration: none;
-    transition: color var(--transition-fast);
-}
-
-.breadcrumb-link:hover {
-    color: var(--primary-cyan);
-}
-
-.breadcrumb-separator {
-    color: var(--text-muted);
-}
-
-.breadcrumb-current {
-    color: var(--text-primary);
-    font-weight: 600;
 }
 
 @media (max-width: 768px) {

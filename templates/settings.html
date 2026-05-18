@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
 
 {% block title %}Settings - RetroDB{% endblock %}
 
@@ -41,13 +42,13 @@
 
 <!-- ==================== TAB: ACCOUNT ==================== -->
 <div class="settings-tab-panel active" id="tab-account" role="tabpanel" aria-label="Account settings">
-    <div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-account">
-        <a href="#profile" class="subnav-link active" onclick="scrollToSection('profile')">👤 My Profile</a>
-        <a href="#timezone" class="subnav-link" onclick="scrollToSection('timezone')">🕐 Timezone</a>
+    {% call tab_subnav('account') %}
+        {{ subnav_link('profile', '👤 My Profile', active=True) }}
+        {{ subnav_link('timezone', '🕐 Timezone') }}
         {% if current_user and current_user.role == 'admin' %}
-        <a href="#users" class="subnav-link" onclick="scrollToSection('users')">👥 Users</a>
+        {{ subnav_link('users', '👥 Users') }}
         {% endif %}
-    </div>
+    {% endcall %}
 
 <!-- My Profile Section -->
 <section class="card mb-xl" id="profile">
@@ -405,12 +406,12 @@
 
 <!-- ==================== TAB: LIBRARY ==================== -->
 <div class="settings-tab-panel" id="tab-library" role="tabpanel" aria-label="Library settings">
-    <div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-library">
-        <a href="#library" class="subnav-link active" onclick="scrollToSection('library')">📁 Paths</a>
-        <a href="#display" class="subnav-link" onclick="scrollToSection('display')">🖼️ Display</a>
-        <a href="#rom-naming" class="subnav-link" onclick="scrollToSection('rom-naming')">📝 ROM Naming</a>
-        <a href="#backup" class="subnav-link" onclick="scrollToSection('backup')">💾 Backup</a>
-    </div>
+    {% call tab_subnav('library') %}
+        {{ subnav_link('library', '📁 Paths', active=True) }}
+        {{ subnav_link('display', '🖼️ Display') }}
+        {{ subnav_link('rom-naming', '📝 ROM Naming') }}
+        {{ subnav_link('backup', '💾 Backup') }}
+    {% endcall %}
 
     <!-- Library Settings -->
     <section class="card mb-xl" id="library">
@@ -684,13 +685,13 @@
 
 <!-- ==================== TAB: SCRAPING ==================== -->
 <div class="settings-tab-panel" id="tab-scraping" role="tabpanel" aria-label="Scraping settings">
-    <div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-scraping">
-        <a href="#esde" class="subnav-link active" onclick="scrollToSection('esde')">🎮 ES-DE</a>
-        <a href="#scraper" class="subnav-link" onclick="scrollToSection('scraper')">🔍 Scraper</a>
+    {% call tab_subnav('scraping') %}
+        {{ subnav_link('esde', '🎮 ES-DE', active=True) }}
+        {{ subnav_link('scraper', '🔍 Scraper') }}
         {% if current_user and current_user.role == 'admin' %}
-        <a href="#apikeys" class="subnav-link" onclick="scrollToSection('apikeys')">🔑 API Keys</a>
+        {{ subnav_link('apikeys', '🔑 API Keys') }}
         {% endif %}
-    </div>
+    {% endcall %}
 
     <!-- ES-DE Integration -->
     <section class="card mb-xl" id="esde">
@@ -1285,12 +1286,12 @@
 
 <!-- ==================== TAB: DATA ==================== -->
 <div class="settings-tab-panel" id="tab-data" role="tabpanel" aria-label="Data settings">
-    <div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-data">
-        <a href="#stats" class="subnav-link active" onclick="scrollToSection('stats')">📊 Stats</a>
-        <a href="#trophies" class="subnav-link" onclick="scrollToSection('trophies')">🏆 Trophies</a>
-        <a href="#dropdowns" class="subnav-link" onclick="scrollToSection('dropdowns')">📋 Dropdowns</a>
-        <a href="#normalization" class="subnav-link" onclick="scrollToSection('normalization')">🔄 Normalization</a>
-    </div>
+    {% call tab_subnav('data') %}
+        {{ subnav_link('stats', '📊 Stats', active=True) }}
+        {{ subnav_link('trophies', '🏆 Trophies') }}
+        {{ subnav_link('dropdowns', '📋 Dropdowns') }}
+        {{ subnav_link('normalization', '🔄 Normalization') }}
+    {% endcall %}
 
     <!-- Statistics -->
     <section class="card mb-xl" id="stats">
@@ -1497,14 +1498,14 @@
 
 <!-- ==================== TAB: CUSTOMIZATION ==================== -->
 <div class="settings-tab-panel" id="tab-customization" role="tabpanel" aria-label="Customization settings">
-    <div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-customization">
-        <a href="#notifications" class="subnav-link active" onclick="scrollToSection('notifications')">🔔 Notifications</a>
-        <a href="#controllers" class="subnav-link" onclick="scrollToSection('controllers')">🎮 Controllers</a>
-        <a href="#controllers-defaults" class="subnav-link" onclick="scrollToSection('controllers-defaults')">⚙️ System Defaults</a>
-        <a href="#controllers-add" class="subnav-link" onclick="scrollToSection('controllers-add')">➕ Add Controller</a>
-        <a href="#controllers-library" class="subnav-link" onclick="scrollToSection('controllers-library')">📚 Library</a>
-        <a href="#logos" class="subnav-link" onclick="scrollToSection('logos')">🖼️ Logos</a>
-    </div>
+    {% call tab_subnav('customization') %}
+        {{ subnav_link('notifications', '🔔 Notifications', active=True) }}
+        {{ subnav_link('controllers', '🎮 Controllers') }}
+        {{ subnav_link('controllers-defaults', '⚙️ System Defaults') }}
+        {{ subnav_link('controllers-add', '➕ Add Controller') }}
+        {{ subnav_link('controllers-library', '📚 Library') }}
+        {{ subnav_link('logos', '🖼️ Logos') }}
+    {% endcall %}
 
     <!-- Notification Settings -->
     <section class="card mb-xl" id="notifications">
@@ -1812,14 +1813,15 @@
 
 <!-- ==================== TAB: SYSTEM ==================== -->
 <div class="settings-tab-panel" id="tab-system" role="tabpanel" aria-label="System settings">
-    <div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-system">
-        {% if current_user and current_user.role == 'admin' %}
-        <a href="#maintenance" class="subnav-link active" onclick="scrollToSection('maintenance')">🛠️ Maintenance</a>
-        <a href="#server" class="subnav-link" onclick="scrollToSection('server')">⚙️ Server</a>
+    {% set _is_admin = current_user and current_user.role == 'admin' %}
+    {% call tab_subnav('system') %}
+        {% if _is_admin %}
+        {{ subnav_link('maintenance', '🛠️ Maintenance', active=True) }}
+        {{ subnav_link('server', '⚙️ Server') }}
         {% endif %}
-        <a href="#logging" class="subnav-link {% if not current_user or current_user.role != 'admin' %}active{% endif %}" onclick="scrollToSection('logging')">📋 Logging</a>
-        <a href="#troubleshooting" class="subnav-link" onclick="scrollToSection('troubleshooting')">🔧 Troubleshooting</a>
-    </div>
+        {{ subnav_link('logging', '📋 Logging', active=not _is_admin) }}
+        {{ subnav_link('troubleshooting', '🔧 Troubleshooting') }}
+    {% endcall %}
 
     <!-- Database Maintenance (Admin Only) -->
     {% if current_user and current_user.role == 'admin' %}

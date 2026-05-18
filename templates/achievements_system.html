@@ -1,15 +1,15 @@
 {% extends "base.html" %}
+{% from "_macros/breadcrumb.html" import breadcrumb %}
 {% set needs_games_bundle = true %}
 
 {% block title %}{{ system.name }} Achievements - RetroDB{% endblock %}
 
 {% block content %}
 <!-- Breadcrumb -->
-<nav class="breadcrumb">
-    <a href="{{ url_for('achievements.achievements') }}">RetroAchievements</a>
-    <span class="breadcrumb-separator">›</span>
-    <span class="breadcrumb-current">{{ system.name }}</span>
-</nav>
+{{ breadcrumb([
+    ('RetroAchievements', url_for('achievements.achievements')),
+    (system.name, None),
+]) }}
 
 <!-- Page Header -->
 <div class="page-header">

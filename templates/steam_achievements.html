@@ -1,13 +1,14 @@
 {% extends "base.html" %}
+{% from "_macros/breadcrumb.html" import breadcrumb %}
 {% set needs_games_bundle = true %}
 
 {% block title %}Steam Achievements - RetroDB{% endblock %}
 
 {% block content %}
 <!-- Breadcrumb -->
-<nav class="breadcrumb">
-    <span class="breadcrumb-current">Steam Achievements</span>
-</nav>
+{{ breadcrumb([
+    ('Steam Achievements', None),
+]) }}
 
 <!-- Page Header -->
 <div class="page-header">

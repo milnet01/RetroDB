@@ -1,0 +1,26 @@
+{# Select-Filter modal — used on the all-games / system-games library views.
+
+   Rendered hidden; the all-games-controller JS toggles `.active` to open
+   and populates `#filterOptions` with the current field's option set.
+   `#filterModeToggle` is only revealed for fields that support IS / IS NOT
+   inversion. Closes via `closeFilterModal()` (defined in
+   all-games-controller.js).
+
+   Distinct from `_modals/filter_modal.html`, which is the game-detail
+   similar-games filter (different shape, different controller).
+#}
+<div id="filterModal" class="filter-modal">
+    <div class="filter-modal-content glass-panel" role="dialog" aria-modal="true" aria-labelledby="filterModalTitle">
+        <div class="filter-modal-header">
+            <h2 id="filterModalTitle">Select Filter</h2>
+            <div class="filter-mode-toggle" id="filterModeToggle" style="display:none;">
+                <button type="button" class="filter-mode-btn active" data-mode="include" onclick="setFilterMode(false)">IS</button>
+                <button type="button" class="filter-mode-btn" data-mode="exclude" onclick="setFilterMode(true)">IS NOT</button>
+            </div>
+            <button type="button" class="modal-close-btn" onclick="closeFilterModal()" aria-label="Close filter">×</button>
+        </div>
+        <div class="filter-modal-body">
+            <div class="filter-options" id="filterOptions"></div>
+        </div>
+    </div>
+</div>

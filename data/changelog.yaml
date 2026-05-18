@@ -1,3 +1,23 @@
+- version: 3.6.16
+  date: 2026-05-18
+  tags:
+  - type: refactor
+    label: Pass 38.4 — Jinja macros (breadcrumb + sticky-subnav) + select-filter modal partial
+  body: |
+    <ul>
+        <li><strong>Pass 38.4 closed</strong> — three duplicated template shapes carved into reusable macros / partials. Pure refactor; rendered HTML and a11y attributes preserved.
+            <ul>
+                <li><strong>Breadcrumb macro</strong> (<code>templates/_macros/breadcrumb.html</code>). <code>breadcrumb([(label, url), ...])</code> emits the canonical <code>&lt;nav class="breadcrumb" aria-label="Breadcrumb"&gt;</code> shape with <code>›</code> separators; items with <code>url=None</code> render as <code>.breadcrumb-current</code>. <strong>11 templates converted</strong>: <code>achievement_game</code>, <code>achievements_system</code>, <code>game_detail</code> (conditional branches lifted into a single <code>_trail</code> set), <code>list_detail</code>, <code>local_trophy_detail</code>, <code>psn_trophy_detail</code>, <code>steam_achievement_game</code>, <code>steam_achievements</code>, <code>system_games</code>, <code>xbox_achievement_game</code>, <code>xbox_achievements</code>. <code>list_detail.html</code>'s page-scoped <code>.breadcrumb-link</code> / <code>.breadcrumb-current</code> CSS removed (orphaned by the macro standardisation onto the global <code>typography.css</code> rules — the global <code>.breadcrumb a</code> selector already covers the styling).</li>
+                <li><strong>Sticky-subnav macros</strong> (<code>templates/_macros/sticky_subnav.html</code>). <code>tab_subnav(tab_id)</code> emits the <code>&lt;div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-X"&gt;</code> wrapper StickyScroll discovers; <code>subnav_link(href, label, active=False)</code> emits the canonical anchor with the <code>scrollToSection('X')</code> hook. All <strong>6 subnav blocks in <code>settings.html</code></strong> (account / library / scraping / data / customization / system) converted to <code>{% call tab_subnav(...) %}</code> blocks — admin-conditional links and the system-tab's "active depends on role" branch preserved via boolean args.</li>
+                <li><strong>Select-Filter modal partial</strong> (<code>templates/_modals/select_filter_modal.html</code>). The <code>&lt;div id="filterModal" class="filter-modal"&gt;</code> Select-Filter dialog used by <code>all_games.html</code> and <code>system_games.html</code> extracted as a single <code>{% include %}</code>. Distinct from the existing <code>_modals/filter_modal.html</code> (game-detail similar-games filter — different shape, different controller); the new partial documents that boundary in its header comment.</li>
+            </ul>
+        </li>
+        <li><strong>Regression tests</strong>: <code>tests/test_pass38_template_macros.py</code> — 24 cases. Functional pins on the macro output (renders correct wrapper, treats <code>url=None</code> as current, separator-count matches item-count-minus-one, single-item shape, active-flag styling, <code>tab_subnav</code> attributes, <code>subnav_link</code> hook); source-grep regressions confirm every consumer imports its macro and that the inline HTML shapes can't drift back in. Suite 1015 → 1039 (+24).</li>
+        <li><strong>Pass 45.16 test rewrite</strong>: <code>test_settings_subnavs_all_marked</code> was a source-grep test counting raw <code>class="tab-subnav sticky-subnav"</code> occurrences — broken by the macro extraction even though the contract still holds. Converted to a Pass-45.18-style functional pin: renders the macro and asserts the StickyScroll attributes are present, plus a separate check that all 6 <code>tab_subnav(...)</code> call sites remain in <code>settings.html</code>.</li>
+        <li><strong>Roadmap</strong>: Pass 38.4 status flipped from <code>todo</code> to <code>done (v3.6.16)</code>.</li>
+        <li><strong>Patch bump 3.6.15 → 3.6.16</strong>: refactor-only. No user-visible behaviour change.</li>
+    </ul>
+
 - version: 3.6.15
   date: 2026-05-18
   tags:

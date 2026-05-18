@@ -2228,7 +2228,47 @@ two verify loops to convergence.
   `_macros/sticky_subnav.html`, `_macros/filter_modal.html`.  Closes
   Pass 10 substantively.
 - **Source**: 2026-04-24 audit, Templates & CSS M2.
-- **Status**: todo
+- **Status**: done (v3.6.16) — three of the four target shapes carved
+  out; ratings-select left as a future follow-up because re-scan found
+  the rule-of-three not yet crossed (full 8-system block exists only in
+  `_modals/edit_modal.html`; `_bulk_edit_modal.html` has a different
+  shape with `data-field=` hooks). Three extractions landed:
+    - **`_macros/breadcrumb.html`** with macro `breadcrumb(items)`.
+      `items` is a list of `(label, url)` tuples; `url=None` renders
+      as `.breadcrumb-current`. Standardised on `›` separators and
+      `aria-label="Breadcrumb"`. **11 templates converted**:
+      `achievement_game`, `achievements_system`, `game_detail`
+      (conditional `?from=...` branches lifted into a single `_trail`
+      set), `list_detail`, `local_trophy_detail`, `psn_trophy_detail`,
+      `steam_achievement_game`, `steam_achievements`, `system_games`,
+      `xbox_achievement_game`, `xbox_achievements`. Page-scoped
+      `.breadcrumb-link` / `.breadcrumb-current` CSS in
+      `list_detail.html` removed as orphaned by the conversion (the
+      global `.breadcrumb a` selector in `core/typography.css` already
+      covers the styling — original page-local rules were a redundant
+      copy with cosmetic divergences).
+    - **`_macros/sticky_subnav.html`** with `tab_subnav(tab_id)` (a
+      `{% call %}`-shaped wrapper macro) and `subnav_link(href, label,
+      active=False)`. All **6 subnav blocks in `settings.html`**
+      (account / library / scraping / data / customization / system)
+      converted; admin-conditional links and the system-tab's
+      "active depends on role" branch preserved via a boolean arg.
+    - **`_modals/select_filter_modal.html`** — the `<div
+      id="filterModal" class="filter-modal">` Select-Filter dialog used
+      by `all_games.html` and `system_games.html` extracted as a single
+      `{% include %}` partial. Distinct from the existing
+      `_modals/filter_modal.html` (game-detail similar-games filter);
+      header comment documents the boundary so a future patch doesn't
+      collapse them.
+  Tests: `tests/test_pass38_template_macros.py` (24 cases — functional
+  pins on the macro output plus source-grep regressions that the
+  inline HTML shapes can't drift back in). Pass 45.16's
+  `test_settings_subnavs_all_marked` rewritten as a Pass-45.18-style
+  functional pin (renders the macro, asserts the StickyScroll
+  attributes; the settings.html check now counts `{% call tab_subnav(`
+  call sites instead of raw HTML). Suite 1015 → 1039 (+24). Pass 10
+  closed substantively — `templates/_macros/` now exists with three
+  members.
 
 #### Pass 38.5 Delete `app.bundle.js` references in installers (MEDIUM, S)
 
@@ -3061,6 +3101,13 @@ in its **Status** line; `grep "done (v3.5" roadmap.md` enumerates all.
   pointing at GitHub Sponsors. Items 7-screenshots and 8-repo-metadata
   deferred to a maintainer-curation step and Pass 47.2 respectively.
   (v3.6.15)
+- [x] **Pass 38.4** — Jinja macros + select-filter modal partial:
+  `_macros/breadcrumb.html` (`breadcrumb(items)`; 11 templates
+  converted), `_macros/sticky_subnav.html` (`tab_subnav` /
+  `subnav_link`; all 6 settings subnav blocks converted),
+  `_modals/select_filter_modal.html` ({% include %} partial for
+  `all_games.html` + `system_games.html`). Pass 10 closed
+  substantively. Suite 1015 → 1039 (+24). (v3.6.16)
 
 ---
 

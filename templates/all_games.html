@@ -188,21 +188,7 @@
 {% include '_bulk_edit_modal.html' %}
 
 <!-- Filter Modal -->
-<div id="filterModal" class="filter-modal">
-    <div class="filter-modal-content glass-panel" role="dialog" aria-modal="true" aria-labelledby="filterModalTitle">
-        <div class="filter-modal-header">
-            <h2 id="filterModalTitle">Select Filter</h2>
-            <div class="filter-mode-toggle" id="filterModeToggle" style="display:none;">
-                <button type="button" class="filter-mode-btn active" data-mode="include" onclick="setFilterMode(false)">IS</button>
-                <button type="button" class="filter-mode-btn" data-mode="exclude" onclick="setFilterMode(true)">IS NOT</button>
-            </div>
-            <button type="button" class="modal-close-btn" onclick="closeFilterModal()" aria-label="Close filter">×</button>
-        </div>
-        <div class="filter-modal-body">
-            <div class="filter-options" id="filterOptions"></div>
-        </div>
-    </div>
-</div>
+{% include '_modals/select_filter_modal.html' %}
 
 {% endblock %}
 

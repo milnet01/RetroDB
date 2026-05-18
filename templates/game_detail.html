@@ -1,29 +1,29 @@
 {% extends "base.html" %}
+{% from "_macros/breadcrumb.html" import breadcrumb %}
 {% set needs_games_bundle = true %}
 
 {% block title %}{{ game.title }} - RetroDB{% endblock %}
 
 {% block content %}
 <!-- Fanart Background -->
-<div class="game-fanart-bg {% if game.fanart %}active{% endif %}" 
+<div class="game-fanart-bg {% if game.fanart %}active{% endif %}"
      {% if game.fanart %}style="background-image: url('{{ url_for('static', filename='images/fanart/' + game.fanart) }}')"{% endif %}></div>
 
 <!-- Breadcrumb -->
-<nav class="breadcrumb" aria-label="Breadcrumb">
-    {% if request.args.get('from') == 'library' %}
-    <a href="{{ url_for('games.all_games') }}">Library</a>
-    {% elif request.args.get('from') == 'rom_reports' %}
-    <a href="{{ url_for('reports.reports') }}">ROM Reports</a>
-    {% elif request.args.get('from') == 'achievements' %}
-    <a href="{{ url_for('achievements.achievements') }}">RetroAchievements</a>
-    {% else %}
-    <a href="{{ url_for('systems.systems') }}">Systems</a>
-    <span class="breadcrumb-separator">›</span>
-    <a href="{{ url_for('systems.system_games', system_id=game.system_id) }}">{{ game.system_name }}</a>
-    {% endif %}
-    <span class="breadcrumb-separator">›</span>
-    <span class="breadcrumb-current">{{ game.title }}</span>
-</nav>
+{% set _from = request.args.get('from') %}
+{% if _from == 'library' %}
+    {% set _trail = [('Library', url_for('games.all_games'))] %}
+{% elif _from == 'rom_reports' %}
+    {% set _trail = [('ROM Reports', url_for('reports.reports'))] %}
+{% elif _from == 'achievements' %}
+    {% set _trail = [('RetroAchievements', url_for('achievements.achievements'))] %}
+{% else %}
+    {% set _trail = [
+        ('Systems', url_for('systems.systems')),
+        (game.system_name, url_for('systems.system_games', system_id=game.system_id)),
+    ] %}
+{% endif %}
+{{ breadcrumb(_trail + [(game.title, None)]) }}
 
 <!-- Message Display -->
 {% if message %}

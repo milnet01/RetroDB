@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros/breadcrumb.html" import breadcrumb %}
 {% set needs_games_bundle = true %}
 
 {% block title %}{{ psn_game.title }} Trophies - RetroDB{% endblock %}
@@ -10,11 +11,10 @@
 {% endif %}
 
 <!-- Breadcrumb -->
-<nav class="breadcrumb">
-    <a href="{{ url_for('trophies.psn_trophies') }}">PSN Trophies</a>
-    <span class="breadcrumb-separator">›</span>
-    <span class="breadcrumb-current">{{ psn_game.title }}</span>
-</nav>
+{{ breadcrumb([
+    ('PSN Trophies', url_for('trophies.psn_trophies')),
+    (psn_game.title, None),
+]) }}
 
 <!-- Game Header -->
 <div class="game-page-header">

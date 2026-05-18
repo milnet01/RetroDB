@@ -1,0 +1,27 @@
+{# Sticky tab-subnav macros.
+
+    Usage:
+        {% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
+        {% call tab_subnav('library') %}
+            {{ subnav_link('library', '📁 Paths', active=True) }}
+            {{ subnav_link('display', '🖼️ Display') }}
+            {{ subnav_link('rom-naming', '📝 ROM Naming') }}
+        {% endcall %}
+
+    `tab_subnav(tab_id)` emits the `<div class="tab-subnav sticky-subnav"
+    data-sticky-nav data-tabbar id="subnav-<tab_id>">` wrapper that StickyScroll
+    discovers. The `{% call %}` body is the link list.
+
+    `subnav_link(href, label, active=False)` emits an in-page anchor with the
+    standard `.subnav-link` styling and the `scrollToSection('<href>')` hook.
+    `href` is the section's id without the leading `#`.
+#}
+{% macro tab_subnav(tab_id) %}
+<div class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar id="subnav-{{ tab_id }}">
+    {{ caller() }}
+</div>
+{% endmacro %}
+
+{%- macro subnav_link(href, label, active=False) -%}
+<a href="#{{ href }}" class="subnav-link{% if active %} active{% endif %}" onclick="scrollToSection('{{ href }}')">{{ label }}</a>
+{%- endmacro -%}

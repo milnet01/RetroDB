@@ -1,0 +1,27 @@
+{# Breadcrumb navigation macro.
+
+    Usage:
+        {% from "_macros/breadcrumb.html" import breadcrumb %}
+        {{ breadcrumb([
+            ('Systems', url_for('systems.systems')),
+            (system.name, None),
+        ]) }}
+
+    Each item is a (label, url) tuple. Items with url=None are rendered as
+    the current page (no link, .breadcrumb-current). Items with a url are
+    rendered as links. Separator is "›" (matches convention across the app).
+#}
+{% macro breadcrumb(items) %}
+<nav class="breadcrumb" aria-label="Breadcrumb">
+    {%- for label, href in items -%}
+        {%- if href %}
+    <a href="{{ href }}">{{ label }}</a>
+        {%- else %}
+    <span class="breadcrumb-current">{{ label }}</span>
+        {%- endif %}
+        {%- if not loop.last %}
+    <span class="breadcrumb-separator">›</span>
+        {%- endif %}
+    {%- endfor %}
+</nav>
+{% endmacro %}

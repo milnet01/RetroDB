@@ -2416,17 +2416,38 @@ class TestPass45_16AriaCurrentRollout:
         assert 'class="museum-nav-item active" aria-current="page"' in body
 
     def test_settings_subnavs_all_marked(self):
-        """All 6 settings subnav containers must carry data-tabbar."""
+        """All 6 settings subnav containers must carry data-tabbar.
+
+        Pass 38.4 extracted the `tab_subnav(...)` macro
+        (`templates/_macros/sticky_subnav.html`) — the raw `<div
+        class="tab-subnav sticky-subnav" data-sticky-nav data-tabbar>`
+        shape now lives only in the macro definition. Functional pin
+        below renders the macro and asserts the attributes; the
+        settings.html check just confirms all 6 call sites still exist.
+        """
+        # Functional pin: the macro emits the StickyScroll contract.
+        from jinja2 import Environment, FileSystemLoader, select_autoescape
+        env = Environment(
+            loader=FileSystemLoader(os.path.join(_REPO_ROOT, 'templates')),
+            autoescape=select_autoescape(['html']),
+        )
+        tmpl = env.from_string(
+            "{% from '_macros/sticky_subnav.html' import tab_subnav %}"
+            "{% call tab_subnav('x') %}{% endcall %}"
+        )
+        rendered = tmpl.render()
+        assert 'class="tab-subnav sticky-subnav"' in rendered
+        assert 'data-sticky-nav data-tabbar' in rendered
+        assert 'id="subnav-x"' in rendered
+
+        # All 6 call sites still wired in settings.html.
         path = os.path.join(_REPO_ROOT, 'templates', 'settings.html')
         with open(path, encoding='utf-8') as f:
             body = f.read()
-        # Pre-Pass-45.16 there were 6 `.tab-subnav` divs; each must be marked.
-        subnav_count = body.count('class="tab-subnav sticky-subnav"')
-        # Each of the 6 subnav containers must carry data-tabbar.
-        marked = body.count('data-sticky-nav data-tabbar id="subnav-')
-        assert marked == 6, (
-            f"Pass 45.16: expected 6 settings subnavs marked data-tabbar; "
-            f"found {marked} marked, {subnav_count} total subnav containers"
+        call_count = body.count('{% call tab_subnav(')
+        assert call_count == 6, (
+            f"Pass 45.16: expected 6 `tab_subnav(...)` calls in settings.html; "
+            f"found {call_count}"
         )
 
     def test_rom_tools_tabs_have_aria_current(self):

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros/breadcrumb.html" import breadcrumb %}
 
 {% block title %}{{ trophy_set.title }} Trophies - RetroDB{% endblock %}
 
@@ -9,11 +10,10 @@
 {% endif %}
 
 <!-- Breadcrumb -->
-<nav class="breadcrumb">
-    <a href="{{ url_for('trophies.trophies') }}">RPCS3 Trophies</a>
-    <span class="breadcrumb-separator">›</span>
-    <span class="breadcrumb-current">{{ trophy_set.title }}</span>
-</nav>
+{{ breadcrumb([
+    ('RPCS3 Trophies', url_for('trophies.trophies')),
+    (trophy_set.title, None),
+]) }}
 
 <!-- Game Header -->
 <div class="game-page-header">
