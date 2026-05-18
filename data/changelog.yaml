@@ -1,3 +1,24 @@
+- version: 3.6.20
+  date: 2026-05-18
+  tags:
+  - type: refactor
+    label: FU.1 (partial) — CSP-enforcing prep, phase A
+  body: |
+    <ul>
+        <li><strong>FU.1 phase A landed</strong> — first cut of the migration that lets CSP flip from <code>Content-Security-Policy-Report-Only</code> to enforcing. Two of the three blocking sources are now CSP-clean: every inline <code>&lt;script&gt;</code> block ships with a nonce, and every inline <code>onerror=</code> handler has moved to either a data-attribute-driven delegated listener or a per-page <code>addEventListener('error', …)</code> wired in the template's nonced script block. The remaining blocker — ~594 inline <code>onclick</code> handlers across templates — is a separate later phase; the header stays in Report-Only until that ships too.
+            <ul>
+                <li><strong>Nonces on inline scripts</strong> — 46 inline <code>&lt;script&gt;</code> blocks across 38 templates (plus 7 in <code>base.html</code>) now carry <code>nonce="{{ csp_nonce }}"</code>. The per-request nonce is already wired in <code>app.py</code> (<code>g.csp_nonce = secrets.token_urlsafe(16)</code>) and exposed via the Jinja context; this pass just makes the existing infrastructure load-bearing.</li>
+                <li><strong>Delegated image-error handler</strong> — new <code>initializeImageErrorHandling()</code> in <code>static/js/main.js</code> registers a capture-phase <code>error</code> listener at the document level (the <code>error</code> event does not bubble, so capture is required). Templates mark images with <code>data-on-error="&lt;action&gt;"</code> and any action-specific data attributes. Supported actions: <code>hide</code>, <code>hide-show-next</code>, <code>hide-show-id</code> + <code>data-on-error-target-id</code>, <code>src</code> + <code>data-on-error-src</code>, <code>outer-html</code> + <code>data-on-error-html</code>. The handler strips the marker after firing so a failing fallback can't loop back through.</li>
+                <li><strong>Onerror migration</strong> — every live <code>onerror=</code> attribute in templates is gone. ~36 simple cases moved to the data-attribute pattern; 3 complex two-step fallback chains (<code>game_detail.html</code> 3D→2D→placeholder, <code>psn_trophy_detail.html</code> local→IGDB→default, <code>psn_trophies.html</code> dynamically-rendered card thumb) moved to per-page <code>addEventListener</code> blocks inside the existing nonced <code>&lt;script&gt;</code>. Visible behaviour is byte-for-byte preserved.</li>
+                <li><strong>Regression contract</strong> — <code>tests/test_fu1_csp.py</code> ships 10 cases: no bare <code>&lt;script&gt;</code> tags in any template, total nonced-script count holds a hard floor of 40, no <code>onerror=</code> attribute survives in HTML, <code>initializeImageErrorHandling</code> exists and is wired into <code>DOMContentLoaded</code>, the listener uses capture phase (<code>error</code> events don't bubble), and each of the 5 action verbs is handled in the dispatch.</li>
+                <li><strong>Bundle rebuild</strong> — <code>core.bundle.js</code> regenerated to include the new <code>main.js</code> additions. Cache-busting via <code>asset_manifest.json</code> SHA-256 picks up the change.</li>
+                <li><strong>Test suite</strong>: 1,097 → 1,107 (+10). Full pytest green.</li>
+                <li><strong>Roadmap</strong>: FU.1 status updated to <code>partial (v3.6.20)</code> — onclick migration + report-only → enforcing flip still queued.</li>
+                <li><strong>Patch bump 3.6.19 → 3.6.20</strong>: refactor-only. CSP remains in Report-Only mode; the visible app behaviour is unchanged for end users. The console-noise inventory for the next FU.1 phase will only contain the onclick-handler violations.</li>
+            </ul>
+        </li>
+    </ul>
+
 - version: 3.6.19
   date: 2026-05-18
   tags:

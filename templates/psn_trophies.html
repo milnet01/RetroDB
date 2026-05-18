@@ -861,7 +861,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 // ============================================
 // SERVER DATA
 // ============================================
@@ -1188,12 +1188,14 @@ const PSNTrophyController = (function() {
             return formatNumber(earned) + ' / ' + formatNumber(total);
         }
 
-        // Image: local first, CDN fallback, then emoji
+        // Image: local first, CDN fallback, then emoji. Inline `onerror=`
+        // can't ship under CSP enforcing, so the fallback chain is wired
+        // post-insertion via addEventListener (see below).
         const localSrc = '/static/images/trophies/' + escapeHtml(game.npwr_id) + '/ICON0.PNG';
         const cdnSrc = escapeHtml(game.icon_url || '');
-        const imgFallback = cdnSrc
-            ? "if(this.dataset.fb){this.onerror=null;this.outerHTML='&#127918;'}else{this.dataset.fb='1';this.src='" + cdnSrc + "'}"
-            : "this.onerror=null;this.outerHTML='&#127918;'";
+        const imgFallbackAttrs = cdnSrc
+            ? ' data-on-error-fallback-src="' + cdnSrc + '"'
+            : ' data-on-error-final="emoji"';
 
         const checkboxDisplay = bulkMode ? 'block' : 'none';
         const isSelected = selectedGames.has(game.npwr_id);
@@ -1206,7 +1208,7 @@ const PSNTrophyController = (function() {
             '</div>' +
             '<a href="/psn-trophies/' + escapeHtml(game.npwr_id) + '" class="psn-trophy-game-card">' +
                 '<div class="psn-trophy-game-thumb">' +
-                    '<img src="' + localSrc + '" alt="' + escapeHtml(game.title) + '" loading="lazy" decoding="async" onerror="' + imgFallback + '">' +
+                    '<img src="' + localSrc + '" alt="' + escapeHtml(game.title) + '" loading="lazy" decoding="async"' + imgFallbackAttrs + ' class="psn-game-thumb-img">' +
                 '</div>' +
                 '<div class="psn-trophy-game-info">' +
                     '<div>' +
@@ -1247,6 +1249,23 @@ const PSNTrophyController = (function() {
             '</a>';
 
         if (isSelected) wrapper.classList.add('selected');
+
+        // FU.1 — wire the local-PNG → CDN → emoji fallback chain via
+        // addEventListener so the card can ship under CSP enforcing
+        // (inline `onerror=` is forbidden).
+        const thumb = wrapper.querySelector('.psn-game-thumb-img');
+        if (thumb) {
+            thumb.addEventListener('error', function() {
+                if (this.dataset.fb) {
+                    this.outerHTML = '🎮';
+                } else if (this.dataset.onErrorFallbackSrc) {
+                    this.dataset.fb = '1';
+                    this.src = this.dataset.onErrorFallbackSrc;
+                } else {
+                    this.outerHTML = '🎮';
+                }
+            });
+        }
 
         return wrapper;
     }

@@ -2683,6 +2683,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeTooltips();
     initializeConfirmDialogs();
     initializeBackToTop();
+    initializeImageErrorHandling();
 
     if (typeof getThemedIcon === 'function') {
         document.querySelectorAll('[data-themed-icon]').forEach(el => {
@@ -2739,6 +2740,38 @@ function initializeBackToTop() {
             ToastController.positionBackToTop();
         }
     }, 250), { passive: true });
+}
+
+function initializeImageErrorHandling() {
+    document.addEventListener('error', function(event) {
+        const target = event.target;
+        if (!target || !target.dataset) return;
+        const action = target.dataset.onError;
+        if (!action) return;
+
+        delete target.dataset.onError;
+
+        if (action === 'hide') {
+            target.style.display = 'none';
+        } else if (action === 'hide-show-next') {
+            target.style.display = 'none';
+            const sibling = target.nextElementSibling;
+            if (sibling) sibling.style.display = 'flex';
+        } else if (action === 'hide-show-id') {
+            target.style.display = 'none';
+            const targetId = target.dataset.onErrorTargetId;
+            if (targetId) {
+                const placeholder = document.getElementById(targetId);
+                if (placeholder) placeholder.style.display = 'flex';
+            }
+        } else if (action === 'src') {
+            const src = target.dataset.onErrorSrc;
+            if (src) target.src = src;
+        } else if (action === 'outer-html') {
+            const html = target.dataset.onErrorHtml;
+            if (html) target.outerHTML = html;
+        }
+    }, /* useCapture */ true);
 }
 
 function initializeSidebar() {

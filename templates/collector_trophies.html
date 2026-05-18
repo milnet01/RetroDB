@@ -473,7 +473,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 async function refreshTrophies() {
     const btn = document.getElementById('refreshBtn');
     btn.disabled = true;

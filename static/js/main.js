@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeTooltips();
     initializeConfirmDialogs();
     initializeBackToTop();
+    initializeImageErrorHandling();
 
     // Apply themed icons to all [data-themed-icon] elements
     if (typeof getThemedIcon === 'function') {
@@ -142,6 +143,62 @@ function initializeBackToTop() {
             ToastController.positionBackToTop();
         }
     }, 250), { passive: true });
+}
+
+// =============================================================================
+// DELEGATED IMAGE ERROR HANDLING (FU.1)
+// =============================================================================
+// CSP-enforcing mode forbids inline `onerror="..."` attributes. Templates
+// now mark images with `data-on-error="<action>"` and any action-specific
+// attributes; a single document-level capture-phase listener dispatches.
+// The handler removes the marker after firing so the fallback's own
+// failure can't loop back through here.
+//
+// Supported actions:
+//   hide               — `target.style.display = 'none'` (the no-fallback case).
+//   hide-show-next     — also `display:'flex'` on `target.nextElementSibling`
+//                        (cover image + adjacent placeholder pattern).
+//   hide-show-id       — also `display:'flex'` on the element whose id is
+//                        in `data-on-error-target-id`.
+//   src                — `target.src = target.dataset.onErrorSrc`
+//                        (drop-in default-image replacement).
+//   outer-html         — `target.outerHTML = target.dataset.onErrorHtml`
+//                        (used for trophy emoji fallbacks).
+
+function initializeImageErrorHandling() {
+    document.addEventListener('error', function(event) {
+        const target = event.target;
+        if (!target || !target.dataset) return;
+        const action = target.dataset.onError;
+        if (!action) return;
+
+        // Strip the marker first so a fallback that also fails (e.g. the
+        // default trophy image was deleted) can't re-enter this handler
+        // and loop. `event.preventDefault()` is intentionally not called
+        // — other listeners may still want to know an image failed.
+        delete target.dataset.onError;
+
+        if (action === 'hide') {
+            target.style.display = 'none';
+        } else if (action === 'hide-show-next') {
+            target.style.display = 'none';
+            const sibling = target.nextElementSibling;
+            if (sibling) sibling.style.display = 'flex';
+        } else if (action === 'hide-show-id') {
+            target.style.display = 'none';
+            const targetId = target.dataset.onErrorTargetId;
+            if (targetId) {
+                const placeholder = document.getElementById(targetId);
+                if (placeholder) placeholder.style.display = 'flex';
+            }
+        } else if (action === 'src') {
+            const src = target.dataset.onErrorSrc;
+            if (src) target.src = src;
+        } else if (action === 'outer-html') {
+            const html = target.dataset.onErrorHtml;
+            if (html) target.outerHTML = html;
+        }
+    }, /* useCapture */ true);
 }
 
 // =============================================================================

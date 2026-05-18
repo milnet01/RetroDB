@@ -830,7 +830,7 @@
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/rom-tools.js') }}?v={{ config.APP_VERSION }}"></script>
-<script>
+<script nonce="{{ csp_nonce }}">
 let currentTaskId = null;
 let isPaused = false;
 let scanResults = [];

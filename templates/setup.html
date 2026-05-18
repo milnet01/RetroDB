@@ -292,7 +292,7 @@ SOFTWARE.</pre>
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 const tabs = ['welcome', 'admin', 'library', 'esde', 'apikeys', 'complete'];
 
 function updateGetStartedBtn() {

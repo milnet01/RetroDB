@@ -424,7 +424,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 async function refreshRAProgress() {
     const btn = document.getElementById('refreshRABtn');
     if (btn) {

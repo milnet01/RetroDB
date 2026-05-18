@@ -415,7 +415,7 @@
     <div class="loading-content"><div class="loading-spinner"></div><div id="loadingText">Processing...</div></div>
 </div>
 
-<script>
+<script nonce="{{ csp_nonce }}">
 // =============================================================================
 // STATE
 // =============================================================================
@@ -752,7 +752,7 @@ function renderTable(platform) {
         const idx = state[platform].games.indexOf(game);
         if (platform === 'steam') {
             tr.innerHTML = `<td class="checkbox-cell"><input type="checkbox" class="${platform}-checkbox" data-index="${idx}" ${!isNew ? 'disabled' : ''} onchange="updateSelection('${platform}')"></td>
-                <td class="icon-cell">${game.icon_url ? `<img src="${escapeHtml(game.icon_url)}" alt="" loading="lazy" onerror="this.style.display='none'">` : ''}</td>
+                <td class="icon-cell">${game.icon_url ? `<img src="${escapeHtml(game.icon_url)}" alt="" loading="lazy" data-on-error="hide">` : ''}</td>
                 <td>${escapeHtml(game.name)}</td>
                 <td>${game.playtime > 0 ? formatPlaytime(game.playtime) : '<span style="color:var(--text-muted)">—</span>'}</td>
                 <td>${game.last_played > 0 ? formatTimestamp(game.last_played) : '<span style="color:var(--text-muted)">—</span>'}</td>
@@ -760,7 +760,7 @@ function renderTable(platform) {
         } else if (platform === 'psn') {
             const progress = game.trophy_progress || 0;
             tr.innerHTML = `<td class="checkbox-cell"><input type="checkbox" class="${platform}-checkbox" data-index="${idx}" ${!isNew ? 'disabled' : ''} onchange="updateSelection('${platform}')"></td>
-                <td class="icon-cell">${game.icon_url ? `<img src="${escapeHtml(game.icon_url)}" alt="" loading="lazy" onerror="this.style.display='none'">` : ''}</td>
+                <td class="icon-cell">${game.icon_url ? `<img src="${escapeHtml(game.icon_url)}" alt="" loading="lazy" data-on-error="hide">` : ''}</td>
                 <td>${escapeHtml(game.name)}</td>
                 <td><span class="platform-badge">${escapeHtml(game.system_name || game.platform_display)}</span></td>
                 <td><div class="trophy-progress-bar"><div class="trophy-progress-track"><div class="trophy-progress-fill" style="width:${progress}%"></div></div><span class="trophy-progress-text">${progress}%</span></div></td>

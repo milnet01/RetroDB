@@ -260,7 +260,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 function selectUser(userId, role) {
     if (role === 'admin') {
         // Show password modal for admin

@@ -2731,7 +2731,22 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   files or nonced blocks (`<script nonce="{{ csp_nonce }}">`), then change
   the header name from `Content-Security-Policy-Report-Only` to
   `Content-Security-Policy` in `app.py::set_security_headers`.
-- **Status**: todo
+- **Status**: partial (v3.6.20). Phase A landed — every inline
+  `<script>` block carries `nonce="{{ csp_nonce }}"` (46 blocks across
+  38 templates) and every live `onerror=` attribute has moved to either
+  a `data-on-error="<action>"` marker (handled by the document-level
+  capture-phase listener in `static/js/main.js::initializeImageError
+  Handling`) or a per-page `addEventListener('error', …)` block in the
+  template's nonced `<script>`. Supported actions: `hide`,
+  `hide-show-next`, `hide-show-id`, `src`, `outer-html`. Regression
+  pins in `tests/test_fu1_csp.py` (10 cases).
+- **Still queued for FU.1**: ~594 inline `onclick` handlers (the bulk
+  of the work; needs a delegated `data-action` pattern + per-page
+  controller wiring), ~80 `onchange`, plus a handful of `onsubmit`,
+  `oninput`, `onkeydown`, `onkeypress`, `onmouseover`. Once those are
+  migrated, flip the header name from
+  `Content-Security-Policy-Report-Only` to `Content-Security-Policy`
+  in `app.py::set_security_headers` and drop this entry.
 
 #### FU.2 Grid-card `srcset` for boxart (LOW, M)
 

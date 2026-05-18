@@ -354,7 +354,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 const listId = {{ list.id }};
 let gameSearchTimeout = null;
 const existingGameIds = new Set([{% for g in games %}{{ g.id }},{% endfor %}]);

@@ -269,7 +269,7 @@
 
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 async function refreshAchievements() {
     const btn = document.getElementById('refreshBtn');
     btn.disabled = true;

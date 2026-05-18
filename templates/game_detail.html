@@ -138,7 +138,8 @@
                      style="{% if show_3d_initially %}display: none;{% endif %}"
                      onclick="openBoxartZoom('{{ url_for('static', filename='images/boxart/' + game.boxart) }}')"
                      title="Click to zoom"
-                     onerror="this.style.display='none'; var p=document.getElementById('boxartPlaceholder'); if(p) p.style.display='flex';">
+                     data-on-error="hide-show-id"
+                     data-on-error-target-id="boxartPlaceholder">
                 {% endif %}
                 <!-- 3D Boxart -->
                 {% if game.boxart_3d %}
@@ -149,7 +150,7 @@
                      style="{% if not show_3d_initially and game.boxart %}display: none;{% endif %}"
                      onclick="openBoxartZoom('{{ url_for('static', filename='images/boxart_3d/' + game.boxart_3d) }}')"
                      title="Click to zoom"
-                     onerror="this.style.display='none'; var b2d=document.getElementById('boxart2d'); if(b2d){b2d.style.display='block';}else{var p=document.getElementById('boxartPlaceholder'); if(p) p.style.display='flex';}">
+                     data-on-error="hide-3d-fallback-2d">
                 {% endif %}
                 <!-- Toggle button if both exist -->
                 {% if game.boxart and game.boxart_3d %}
@@ -3375,7 +3376,7 @@ body:has(.game-fanart-bg.active)::before {
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 // Game ID for API calls
 const gameId = {{ game.id }};
 const systemFolder = "{{ game.system_folder }}";
@@ -4998,7 +4999,7 @@ function openGameDetailFilterModal(filterType, filterValue, sortBy = null) {
                         <a href="/game/${game.id}" class="filter-game-item">
                             <img src="${thumbUrl}" alt="${game.title}" class="filter-game-thumb"
                                  loading="lazy" decoding="async"
-                                 onerror="this.style.display='none'">
+                                 data-on-error="hide">
                             <div class="filter-game-info">
                                 <div class="filter-game-title">${game.title}</div>
                                 <div class="filter-game-system">${game.system_name || 'Unknown System'}</div>
@@ -5315,6 +5316,26 @@ document.addEventListener('keydown', function(e) {
             boxartModal.classList.remove('active');
         }
     }
+});
+
+// FU.1 — per-page error handler for the 3D boxart. Two-step fallback (hide
+// 3D → swap to 2D if present → else show the shared placeholder) doesn't
+// fit the generic main.js delegated actions, so it lives here as a one-shot
+// listener wired at DOMContentLoaded. Inline `onerror=…` would be blocked
+// once CSP flips to enforcing.
+document.addEventListener('DOMContentLoaded', function() {
+    const boxart3d = document.getElementById('boxart3d');
+    if (!boxart3d || boxart3d.dataset.onError !== 'hide-3d-fallback-2d') return;
+    boxart3d.addEventListener('error', function() {
+        this.style.display = 'none';
+        const b2d = document.getElementById('boxart2d');
+        if (b2d) {
+            b2d.style.display = 'block';
+        } else {
+            const p = document.getElementById('boxartPlaceholder');
+            if (p) p.style.display = 'flex';
+        }
+    }, { once: true });
 });
 
 // ============================================

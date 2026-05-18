@@ -486,7 +486,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 let allItems = [];
 let selectedPriority = 2;
 let activeFilter = 'all';

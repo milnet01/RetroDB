@@ -524,7 +524,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 let namingIssues = [];
 let mismatchIssues = [];
 let allSystems = [];

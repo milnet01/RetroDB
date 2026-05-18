@@ -1513,7 +1513,7 @@ tr:nth-child(3) .rank-badge {
 
 {% block scripts %}
 <script src="{{ asset_url('js/vendor/chart.umd.min.js') }}"></script>
-<script>
+<script nonce="{{ csp_nonce }}">
 // Chart.js default config for cyberpunk theme
 Chart.defaults.color = '#9aa0a6';
 Chart.defaults.borderColor = 'rgba(42, 53, 66, 0.5)';

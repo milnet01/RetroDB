@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ asset_url('css/core/fonts.css') }}">
 
     <!-- Theme FOUC prevention: apply saved theme before CSS renders -->
-    <script>
+    <script nonce="{{ csp_nonce }}">
     (function(){
         var t = localStorage.getItem('retrodb-theme');
         if (t && t !== 'cyberpunk') document.documentElement.setAttribute('data-theme', t);
@@ -320,7 +320,7 @@
     </div>
     
     <!-- Notification Settings (from user preferences) -->
-    <script>
+    <script nonce="{{ csp_nonce }}">
         window.NOTIFICATION_TIMEOUTS = {
             success: {{ user_settings.notification_timeouts.success if user_settings and user_settings.notification_timeouts else 3 }},
             info: {{ user_settings.notification_timeouts.info if user_settings and user_settings.notification_timeouts else 3 }},
@@ -359,7 +359,7 @@
     <script src="{{ url_for('static', filename='js/theme.js') }}?v={{ config.APP_VERSION }}"></script>
 
     <!-- Rating system globals (used by game-modals.js and all-games-controller.js) -->
-    <script>
+    <script nonce="{{ csp_nonce }}">
         window.PREFERRED_RATING_SYSTEM = window.PREFERRED_RATING_SYSTEM || '{{ user_settings.get("preferred_rating_system", "esrb") }}';
         window.RATING_IMAGE_MAP = window.RATING_IMAGE_MAP || {{ rating_image_map_js | tojson }};
         window.RATING_SYSTEM_NAMES = window.RATING_SYSTEM_NAMES || {{ rating_system_names_js | tojson }};
@@ -375,7 +375,7 @@
     <!-- Games JavaScript Bundle (filters + bulk-scrape + bulk-edit + game-list + game-modals) - loaded only on templates that opt in via {% raw %}{% set needs_games_bundle = true %}{% endraw %} -->
     <script defer src="{{ asset_url('js/games.bundle.js') }}"></script>
     {% endif %}
-    <script>
+    <script nonce="{{ csp_nonce }}">
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof DateUtils !== 'undefined') {
                 DateUtils.setTimezone('{{ user_timezone|default("UTC") }}');
@@ -384,7 +384,7 @@
     </script>
     
     <!-- Custom Modal Functions -->
-    <script>
+    <script nonce="{{ csp_nonce }}">
     let modalCallback = null;
     let modalCancelCallback = null;
     
@@ -658,7 +658,7 @@
         </div>
     </div>
     
-    <script>
+    <script nonce="{{ csp_nonce }}">
     // =============================================================================
     // Queue Manager Functions (Queue Manager Modal)
     // Queue manipulation APIs - used by onclick handlers in queue manager modal
@@ -1321,7 +1321,7 @@
     {% block scripts %}{% endblock %}
 
     <!-- Disable browser auto-fill site-wide -->
-    <script>
+    <script nonce="{{ csp_nonce }}">
     document.querySelectorAll('form').forEach(f => f.setAttribute('autocomplete', 'off'));
     document.querySelectorAll('input, textarea, select').forEach(el => el.setAttribute('autocomplete', 'off'));
     (function() {

@@ -680,7 +680,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 // System specifications data from config
 const systemSpecs = {{ system_specs | tojson }};
 

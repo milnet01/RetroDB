@@ -366,7 +366,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 let allTags = [];
 let selectedTagColor = '#4cc9f0';
 let expandedTagId = null;

@@ -44,7 +44,8 @@
             {% elif psn_game.npwr_id %}
             <img src="{{ url_for('static', filename='images/trophies/' + psn_game.npwr_id + '/ICON0.PNG') }}"
                  alt="{{ psn_game.title }}" class="game-boxart-image"
-                 onerror="if(this.dataset.fb){this.onerror=null;this.outerHTML='<div class=\'game-boxart-image\' style=\'width:200px;height:200px;background:var(--bg-medium);display:flex;align-items:center;justify-content:center;font-size:3rem;border-radius:var(--radius-md);\'>🎮</div>'}else{this.dataset.fb='1';this.src='{{ psn_game.icon_url or '' }}'}">
+                 id="psnHeroBoxart"
+                 data-on-error-fallback-src="{{ psn_game.icon_url or '' }}">
             {% else %}
             <div class="game-boxart-image" style="width:200px;height:200px;background:var(--bg-medium);display:flex;align-items:center;justify-content:center;font-size:3rem;border-radius:var(--radius-md);">🎮</div>
             {% endif %}
@@ -119,19 +120,19 @@
                 </div>
                 <div class="trophy-summary-counts">
                     <span class="trophy-count platinum">
-                        <img src="{{ url_for('static', filename='images/trophies/platinum.png') }}" alt="P" onerror="this.outerHTML='🏆'">
+                        <img src="{{ url_for('static', filename='images/trophies/platinum.png') }}" alt="P" data-on-error="outer-html" data-on-error-html="🏆">
                         {{ stats.platinum_earned|format_number }} / {{ stats.platinum_total|format_number }}
                     </span>
                     <span class="trophy-count gold">
-                        <img src="{{ url_for('static', filename='images/trophies/gold.png') }}" alt="G" onerror="this.outerHTML='🥇'">
+                        <img src="{{ url_for('static', filename='images/trophies/gold.png') }}" alt="G" data-on-error="outer-html" data-on-error-html="🥇">
                         {{ stats.gold_earned|format_number }} / {{ stats.gold_total|format_number }}
                     </span>
                     <span class="trophy-count silver">
-                        <img src="{{ url_for('static', filename='images/trophies/silver.png') }}" alt="S" onerror="this.outerHTML='🥈'">
+                        <img src="{{ url_for('static', filename='images/trophies/silver.png') }}" alt="S" data-on-error="outer-html" data-on-error-html="🥈">
                         {{ stats.silver_earned|format_number }} / {{ stats.silver_total|format_number }}
                     </span>
                     <span class="trophy-count bronze">
-                        <img src="{{ url_for('static', filename='images/trophies/bronze.png') }}" alt="B" onerror="this.outerHTML='🥉'">
+                        <img src="{{ url_for('static', filename='images/trophies/bronze.png') }}" alt="B" data-on-error="outer-html" data-on-error-html="🥉">
                         {{ stats.bronze_earned|format_number }} / {{ stats.bronze_total|format_number }}
                     </span>
                 </div>
@@ -351,11 +352,13 @@
                             <div class="trophy-item-icon">
                                 <img src="{{ url_for('static', filename='images/trophies/' + psn_game.npwr_id + '/TROP' + '%03d'|format(trophy.trophy_id) + '.PNG') }}"
                                      alt="{{ trophy.name }}"
-                                     onerror="if(this.dataset.fb){this.onerror=null;this.src='{{ url_for('static', filename='images/trophies/' + {'P':'platinum','G':'gold','S':'silver','B':'bronze'}.get(trophy.trophy_type, 'bronze') + '.png') }}'}else{this.dataset.fb='1';this.src='{{ trophy.icon_url or '' }}'}">
+                                     class="psn-trophy-icon"
+                                     data-on-error-fallback-src="{{ trophy.icon_url or '' }}"
+                                     data-on-error-final-src="{{ url_for('static', filename='images/trophies/' + {'P':'platinum','G':'gold','S':'silver','B':'bronze'}.get(trophy.trophy_type, 'bronze') + '.png') }}">
                                 <img src="{{ url_for('static', filename='images/trophies/' + {'P':'platinum','G':'gold','S':'silver','B':'bronze'}.get(trophy.trophy_type, 'bronze') + '.png') }}"
                                      class="trophy-type-badge"
                                      alt="{{ trophy.trophy_type }}"
-                                     onerror="this.style.display='none'">
+                                     data-on-error="hide">
                             </div>
                             <div class="trophy-item-info">
                                 <div class="trophy-item-name">{{ trophy.name }}</div>
@@ -383,12 +386,12 @@
                             <img src="{{ trophy.icon_url }}" alt="{{ trophy.name }}">
                             {% else %}
                             <img src="{{ url_for('static', filename='images/trophies/' + {'P':'platinum','G':'gold','S':'silver','B':'bronze'}.get(trophy.trophy_type, 'bronze') + '.png') }}" alt="{{ trophy.trophy_type }}"
-                                 onerror="this.src='{{ url_for('static', filename='images/trophies/default_trophy.png') }}'">
+                                 data-on-error="src" data-on-error-src="{{ url_for('static', filename='images/trophies/default_trophy.png') }}">
                             {% endif %}
                             <img src="{{ url_for('static', filename='images/trophies/' + {'P':'platinum','G':'gold','S':'silver','B':'bronze'}.get(trophy.trophy_type, 'bronze') + '.png') }}"
                                  class="trophy-type-badge"
                                  alt="{{ trophy.trophy_type }}"
-                                 onerror="this.style.display='none'">
+                                 data-on-error="hide">
                         </div>
                         <div class="trophy-item-info">
                             <div class="trophy-item-name">{{ trophy.name }}</div>
@@ -435,11 +438,13 @@
                             <div class="trophy-item-icon">
                                 <img src="{{ url_for('static', filename='images/trophies/' + psn_game.npwr_id + '/TROP' + '%03d'|format(trophy.trophy_id) + '.PNG') }}"
                                      alt="{{ trophy.name }}"
-                                     onerror="if(this.dataset.fb){this.onerror=null;this.src='{{ url_for('static', filename='images/trophies/' + {'P':'platinum','G':'gold','S':'silver','B':'bronze'}.get(trophy.trophy_type, 'bronze') + '.png') }}'}else{this.dataset.fb='1';this.src='{{ trophy.icon_url or '' }}'}">
+                                     class="psn-trophy-icon"
+                                     data-on-error-fallback-src="{{ trophy.icon_url or '' }}"
+                                     data-on-error-final-src="{{ url_for('static', filename='images/trophies/' + {'P':'platinum','G':'gold','S':'silver','B':'bronze'}.get(trophy.trophy_type, 'bronze') + '.png') }}">
                                 <img src="{{ url_for('static', filename='images/trophies/' + {'P':'platinum','G':'gold','S':'silver','B':'bronze'}.get(trophy.trophy_type, 'bronze') + '.png') }}"
                                      class="trophy-type-badge"
                                      alt="{{ trophy.trophy_type }}"
-                                     onerror="this.style.display='none'">
+                                     data-on-error="hide">
                             </div>
                             <div class="trophy-item-info">
                                 <div class="trophy-item-name">{{ trophy.name }}</div>
@@ -464,12 +469,12 @@
                             <img src="{{ trophy.icon_url }}" alt="{{ trophy.name }}">
                             {% else %}
                             <img src="{{ url_for('static', filename='images/trophies/' + {'P':'platinum','G':'gold','S':'silver','B':'bronze'}.get(trophy.trophy_type, 'bronze') + '.png') }}" alt="{{ trophy.trophy_type }}"
-                                 onerror="this.src='{{ url_for('static', filename='images/trophies/default_trophy.png') }}'">
+                                 data-on-error="src" data-on-error-src="{{ url_for('static', filename='images/trophies/default_trophy.png') }}">
                             {% endif %}
                             <img src="{{ url_for('static', filename='images/trophies/' + {'P':'platinum','G':'gold','S':'silver','B':'bronze'}.get(trophy.trophy_type, 'bronze') + '.png') }}"
                                  class="trophy-type-badge"
                                  alt="{{ trophy.trophy_type }}"
-                                 onerror="this.style.display='none'">
+                                 data-on-error="hide">
                         </div>
                         <div class="trophy-item-info">
                             <div class="trophy-item-name">{{ trophy.name }}</div>
@@ -674,8 +679,55 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 const npwrId = "{{ psn_game.npwr_id }}";
+
+// FU.1 — replace the inline `onerror=…` fallback dance with delegated
+// listeners. CSP enforcing forbids the inline form; the visible behaviour
+// is the same.
+//   .psn-trophy-icon: try local PNG → IGDB icon (fallback-src) → default
+//                     trophy-type PNG (final-src).
+//   #psnHeroBoxart:    try local PSN icon → IGDB icon (fallback-src) →
+//                     emoji placeholder div.
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.psn-trophy-icon').forEach(function(img) {
+        img.addEventListener('error', function() {
+            if (this.dataset.fb) {
+                const finalSrc = this.dataset.onErrorFinalSrc;
+                if (finalSrc) this.src = finalSrc;
+                this.dataset.fb = '2';  // sentinel — no further fallback
+            } else if (this.dataset.fb === undefined || this.dataset.fb === '') {
+                const fallback = this.dataset.onErrorFallbackSrc;
+                this.dataset.fb = '1';
+                if (fallback) {
+                    this.src = fallback;
+                } else {
+                    // No IGDB fallback — jump straight to the default.
+                    const finalSrc = this.dataset.onErrorFinalSrc;
+                    if (finalSrc) this.src = finalSrc;
+                    this.dataset.fb = '2';
+                }
+            }
+        });
+    });
+
+    const hero = document.getElementById('psnHeroBoxart');
+    if (hero) {
+        hero.addEventListener('error', function() {
+            if (this.dataset.fb) {
+                this.outerHTML = '<div class="game-boxart-image" style="width:200px;height:200px;background:var(--bg-medium);display:flex;align-items:center;justify-content:center;font-size:3rem;border-radius:var(--radius-md);">🎮</div>';
+            } else {
+                this.dataset.fb = '1';
+                const fallback = this.dataset.onErrorFallbackSrc;
+                if (fallback) {
+                    this.src = fallback;
+                } else {
+                    this.outerHTML = '<div class="game-boxart-image" style="width:200px;height:200px;background:var(--bg-medium);display:flex;align-items:center;justify-content:center;font-size:3rem;border-radius:var(--radius-md);">🎮</div>';
+                }
+            }
+        });
+    }
+});
 
 // Refresh trophies from PSN
 async function refreshTrophies() {

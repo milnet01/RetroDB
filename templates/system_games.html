@@ -203,7 +203,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
     // Server-provided data for the controller
     window.FILTER_OPTIONS = {{ filter_options | tojson }};
     window.PREFERRED_BOXART = '{{ user_settings.get("preferred_boxart", "2d") }}';
@@ -213,7 +213,7 @@
     window.AVAILABLE_LETTERS = {{ available_letters | tojson }};
 </script>
 <script src="{{ url_for('static', filename='js/all-games-controller.js') }}?v={{ config.APP_VERSION }}"></script>
-<script>
+<script nonce="{{ csp_nonce }}">
     // Initialize with system-specific configuration
     document.addEventListener('DOMContentLoaded', function() {
         AllGamesController.init({

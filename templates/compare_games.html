@@ -543,7 +543,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 let selectedGameIds = [{{ games[0].id if games|length > 0 else 'null' }}, {{ games[1].id if games|length > 1 else 'null' }}];
 let activeSlot = 0;
 let compareSearchTimeout = null;

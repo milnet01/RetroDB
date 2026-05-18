@@ -108,7 +108,7 @@
                          width="80" height="80"
                          loading="lazy"
                          decoding="async"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                         data-on-error="hide-show-next">
                     <div class="no-boxart" style="display: none;">🟦</div>
                     {% else %}
                     <div class="no-boxart">🟦</div>
@@ -145,7 +145,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 let syncPollInterval = null;
 
 async function syncAll() {

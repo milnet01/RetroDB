@@ -267,7 +267,7 @@
 
                         {% if boxart_to_show %}
                             <img src="{{ url_for('static', filename='images/' + boxart_folder + '/' + boxart_to_show) }}"
-                                 alt="{{ game.title }}" class="game-row-boxart{% if use_3d %} boxart-3d{% endif %}" loading="lazy" decoding="async" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                 alt="{{ game.title }}" class="game-row-boxart{% if use_3d %} boxart-3d{% endif %}" loading="lazy" decoding="async" data-on-error="hide-show-next">
                             <div class="game-row-boxart-placeholder" style="display: none;">🎮</div>
                         {% else %}
                             <div class="game-row-boxart-placeholder">🎮</div>
@@ -328,7 +328,7 @@
 
                         {% if boxart_to_show %}
                             <img src="{{ url_for('static', filename='images/' + boxart_folder + '/' + boxart_to_show) }}"
-                                 alt="{{ game.title }}" class="game-row-boxart{% if use_3d %} boxart-3d{% endif %}" loading="lazy" decoding="async" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                 alt="{{ game.title }}" class="game-row-boxart{% if use_3d %} boxart-3d{% endif %}" loading="lazy" decoding="async" data-on-error="hide-show-next">
                             <div class="game-row-boxart-placeholder" style="display: none;">🎮</div>
                         {% else %}
                             <div class="game-row-boxart-placeholder">🎮</div>
@@ -403,7 +403,7 @@
 
                         {% if boxart_to_show %}
                             <img src="{{ url_for('static', filename='images/' + boxart_folder + '/' + boxart_to_show) }}"
-                                 alt="{{ game.title }}" class="game-row-boxart{% if use_3d %} boxart-3d{% endif %}" loading="lazy" decoding="async" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                 alt="{{ game.title }}" class="game-row-boxart{% if use_3d %} boxart-3d{% endif %}" loading="lazy" decoding="async" data-on-error="hide-show-next">
                             <div class="game-row-boxart-placeholder" style="display: none;">🎮</div>
                         {% else %}
                             <div class="game-row-boxart-placeholder">🎮</div>
@@ -469,7 +469,7 @@
 
                         {% if boxart_to_show %}
                             <img src="{{ url_for('static', filename='images/' + boxart_folder + '/' + boxart_to_show) }}"
-                                 alt="{{ game.title }}" class="game-row-boxart{% if use_3d %} boxart-3d{% endif %}" loading="lazy" decoding="async" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                 alt="{{ game.title }}" class="game-row-boxart{% if use_3d %} boxart-3d{% endif %}" loading="lazy" decoding="async" data-on-error="hide-show-next">
                             <div class="game-row-boxart-placeholder" style="display: none;">🎮</div>
                         {% else %}
                             <div class="game-row-boxart-placeholder">🎮</div>
@@ -1008,7 +1008,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 // Job Recovery Banner actions
 function resumeJob(jobId) {
     const item = document.getElementById('recoveryItem' + jobId);

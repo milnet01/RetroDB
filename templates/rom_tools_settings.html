@@ -456,7 +456,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 // Track unwanted patterns and excluded paths
 let unwantedPatterns = {{ settings.unwanted_patterns | tojson }};
 let excludedPaths = {{ settings.excluded_paths | default([]) | tojson }};

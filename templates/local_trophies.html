@@ -58,28 +58,28 @@
     <div class="card-body">
         <div class="trophy-overview">
             <div class="trophy-stat platinum">
-                <img src="{{ url_for('static', filename='images/trophies/platinum.png') }}" alt="Platinum" onerror="this.outerHTML='🏆'">
+                <img src="{{ url_for('static', filename='images/trophies/platinum.png') }}" alt="Platinum" data-on-error="outer-html" data-on-error-html="🏆">
                 <div class="trophy-stat-info">
                     <span class="trophy-stat-label">Platinum</span>
                     <span class="trophy-stat-value">{{ totals.P[0]|format_number }} / {{ totals.P[1]|format_number }}</span>
                 </div>
             </div>
             <div class="trophy-stat gold">
-                <img src="{{ url_for('static', filename='images/trophies/gold.png') }}" alt="Gold" onerror="this.outerHTML='🥇'">
+                <img src="{{ url_for('static', filename='images/trophies/gold.png') }}" alt="Gold" data-on-error="outer-html" data-on-error-html="🥇">
                 <div class="trophy-stat-info">
                     <span class="trophy-stat-label">Gold</span>
                     <span class="trophy-stat-value">{{ totals.G[0]|format_number }} / {{ totals.G[1]|format_number }}</span>
                 </div>
             </div>
             <div class="trophy-stat silver">
-                <img src="{{ url_for('static', filename='images/trophies/silver.png') }}" alt="Silver" onerror="this.outerHTML='🥈'">
+                <img src="{{ url_for('static', filename='images/trophies/silver.png') }}" alt="Silver" data-on-error="outer-html" data-on-error-html="🥈">
                 <div class="trophy-stat-info">
                     <span class="trophy-stat-label">Silver</span>
                     <span class="trophy-stat-value">{{ totals.S[0]|format_number }} / {{ totals.S[1]|format_number }}</span>
                 </div>
             </div>
             <div class="trophy-stat bronze">
-                <img src="{{ url_for('static', filename='images/trophies/bronze.png') }}" alt="Bronze" onerror="this.outerHTML='🥉'">
+                <img src="{{ url_for('static', filename='images/trophies/bronze.png') }}" alt="Bronze" data-on-error="outer-html" data-on-error-html="🥉">
                 <div class="trophy-stat-info">
                     <span class="trophy-stat-label">Bronze</span>
                     <span class="trophy-stat-value">{{ totals.B[0]|format_number }} / {{ totals.B[1]|format_number }}</span>
@@ -120,7 +120,8 @@
                     {% else %}
                     <img src="{{ url_for('static', filename='images/trophies/' + npwr_id + '/ICON0.PNG') }}"
                          alt="{{ ts.title }}" loading="lazy" decoding="async"
-                         onerror="this.src='{{ url_for('static', filename='images/placeholder.png') }}'">
+                         data-on-error="src"
+                         data-on-error-src="{{ url_for('static', filename='images/placeholder.png') }}">
                     {% endif %}
                 </div>
                 <div class="trophy-game-info">
@@ -134,19 +135,19 @@
                     </div>
                     <div class="trophy-game-counts">
                         <span class="trophy-mini platinum">
-                            <img src="{{ url_for('static', filename='images/trophies/platinum.png') }}" alt="P" onerror="this.outerHTML='🏆'">
+                            <img src="{{ url_for('static', filename='images/trophies/platinum.png') }}" alt="P" data-on-error="outer-html" data-on-error-html="🏆">
                             {{ counts.P[0]|format_number }} / {{ counts.P[1]|format_number }}
                         </span>
                         <span class="trophy-mini gold">
-                            <img src="{{ url_for('static', filename='images/trophies/gold.png') }}" alt="G" onerror="this.outerHTML='🥇'">
+                            <img src="{{ url_for('static', filename='images/trophies/gold.png') }}" alt="G" data-on-error="outer-html" data-on-error-html="🥇">
                             {{ counts.G[0]|format_number }} / {{ counts.G[1]|format_number }}
                         </span>
                         <span class="trophy-mini silver">
-                            <img src="{{ url_for('static', filename='images/trophies/silver.png') }}" alt="S" onerror="this.outerHTML='🥈'">
+                            <img src="{{ url_for('static', filename='images/trophies/silver.png') }}" alt="S" data-on-error="outer-html" data-on-error-html="🥈">
                             {{ counts.S[0]|format_number }} / {{ counts.S[1]|format_number }}
                         </span>
                         <span class="trophy-mini bronze">
-                            <img src="{{ url_for('static', filename='images/trophies/bronze.png') }}" alt="B" onerror="this.outerHTML='🥉'">
+                            <img src="{{ url_for('static', filename='images/trophies/bronze.png') }}" alt="B" data-on-error="outer-html" data-on-error-html="🥉">
                             {{ counts.B[0]|format_number }} / {{ counts.B[1]|format_number }}
                         </span>
                     </div>
@@ -383,7 +384,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 // Initialize alphabet nav
 if (typeof AlphabetNav !== 'undefined') {
     AlphabetNav.init({ itemSelector: '.trophy-game-card' });
