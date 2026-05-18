@@ -222,6 +222,46 @@ def api_image_resize_cancel():
 
 
 # =============================================================================
+# BULK JPEG/PNG → WEBP MIGRATION (FU.3)
+# =============================================================================
+# Convert legacy .jpg / .png library files to .webp in-place. Walks every
+# games.boxart / boxart_3d / fanart / screenshots filename, re-encodes any
+# convertible original as a sibling .webp, updates the DB pointer, then
+# deletes the original after the new file verifies. Manuals (PDF) and
+# existing .webp / .gif entries pass through.
+
+@bp.route('/api/maintenance/convert-to-webp/start', methods=['POST'])
+@admin_required
+@handle_api_errors
+def api_convert_to_webp_start():
+    """Start the bulk JPEG/PNG → WebP migration job."""
+    from services.jobs import webp_migrate_job
+    result = webp_migrate_job.start()
+    return jsonify(result)
+
+
+@bp.route('/api/maintenance/convert-to-webp/status', methods=['GET'])
+@login_required
+@handle_api_errors
+def api_convert_to_webp_status():
+    """Poll WebP migration status."""
+    from services.jobs import webp_migrate_job
+    status = webp_migrate_job.get_status()
+    status['success'] = True
+    return jsonify(status)
+
+
+@bp.route('/api/maintenance/convert-to-webp/cancel', methods=['POST'])
+@admin_required
+@handle_api_errors
+def api_convert_to_webp_cancel():
+    """Cancel the running WebP migration."""
+    from services.jobs import webp_migrate_job
+    result = webp_migrate_job.cancel()
+    return jsonify(result)
+
+
+# =============================================================================
 # ALTERNATE TITLES BACKFILL JOB
 # =============================================================================
 

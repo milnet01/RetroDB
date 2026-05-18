@@ -2769,7 +2769,20 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   original after verifying the `.webp` opens cleanly.  Disk-space guard
   (refuse to start if free space < 2× current media size).  Background job
   following the `ImageResizeJob` pattern with status/cancel endpoints.
-- **Status**: todo
+- **Status**: done (v3.6.19). `services/jobs/webp_migrate.py::WebPMigrateJob`
+  follows the ImageResizeJob shape (singleton lock, persist_job_*
+  checkpointing, lock-guarded counter reads). Per-file flow: PIL save →
+  PIL verify → DB UPDATE → unlink original (in that order, so a crash
+  leaves at worst an orphan `.webp` + intact original). Screenshots CSV
+  handled with exact-entry read-modify-write under a `WHERE
+  screenshots = ?` guard against concurrent edit-modal writes. Boxart
+  variant `-sm` / `-md` siblings cleaned + regenerated against the new
+  `.webp`. Resume-aware: an already-present `<stem>.webp` is adopted
+  without re-encoding. Manuals (PDF) skipped. Three admin-gated routes
+  in `routes/maintenance.py` (`/api/maintenance/convert-to-webp/start|status|cancel`).
+  9 regression tests in `tests/test_webp_migrate.py` pinning filter
+  behaviour, atomicity, CSV-collision safety, verification rollback,
+  variant sync, resume path, disk-space guard, and lock-guarded status.
 
 #### FU.4 Stream large image downloads in the TGDB scraper (LOW, S)
 

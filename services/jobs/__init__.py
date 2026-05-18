@@ -30,6 +30,7 @@ from services.jobs.ra_refresh import RARefreshJob
 from services.jobs.psn_refresh import PSNRefreshJob
 from services.jobs.museum import MuseumGenerateJob
 from services.jobs.image_resize import ImageResizeJob
+from services.jobs.webp_migrate import WebPMigrateJob
 from services.jobs.platform_sync import SteamSyncJob, XboxSyncJob
 from services.jobs.alt_titles_backfill import AltTitlesBackfillJob
 from services.jobs.hltb_bulk import HLTBBulkLookupJob
@@ -45,6 +46,7 @@ ra_refresh_job = RARefreshJob()
 psn_refresh_job = PSNRefreshJob()
 museum_generate_job = MuseumGenerateJob()
 image_resize_job = ImageResizeJob()
+webp_migrate_job = WebPMigrateJob()
 steam_sync_job = SteamSyncJob()
 xbox_sync_job = XboxSyncJob()
 alt_titles_backfill_job = AltTitlesBackfillJob()
@@ -73,6 +75,7 @@ __all__ = [
     'PSNRefreshJob',
     'MuseumGenerateJob',
     'ImageResizeJob',
+    'WebPMigrateJob',
     'SteamSyncJob',
     'XboxSyncJob',
     'AltTitlesBackfillJob',
@@ -84,6 +87,7 @@ __all__ = [
     'psn_refresh_job',
     'museum_generate_job',
     'image_resize_job',
+    'webp_migrate_job',
     'steam_sync_job',
     'xbox_sync_job',
     'alt_titles_backfill_job',

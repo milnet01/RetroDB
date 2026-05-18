@@ -1,3 +1,27 @@
+- version: 3.6.19
+  date: 2026-05-18
+  tags:
+  - type: feat
+    label: FU.3 — bulk JPEG/PNG → WebP migration endpoint
+  body: |
+    <ul>
+        <li><strong>FU.3 closed</strong> — new admin-gated background job converts every legacy <code>.jpg</code> / <code>.jpeg</code> / <code>.png</code> file referenced from <code>games.boxart</code>, <code>games.boxart_3d</code>, <code>games.fanart</code>, and <code>games.screenshots</code> (comma-split) to <code>.webp</code> in-place, then updates the DB filename and deletes the original. PDF manuals and pre-existing <code>.webp</code> / <code>.gif</code> entries pass through. WebP averages 25-35% smaller than JPEG at equivalent visual quality, so a library that originally landed on the JPEG pipeline can be brought down to WebP without a re-scrape.
+            <ul>
+                <li><strong>Job class</strong> — new <code>services/jobs/webp_migrate.py::WebPMigrateJob</code> follows the <code>ImageResizeJob</code> shape: cross-process singleton lock (<code>webp_migrate.lock</code>), <code>persist_job_start</code> / <code>_progress</code> / <code>_complete</code> checkpointing, lock-guarded counter reads, cancel + status snapshot APIs.</li>
+                <li><strong>Atomicity contract</strong> — for each file: open with PIL, save sibling <code>.webp</code> via <code>_save_image</code>, re-open and <code>verify()</code> the new file, only then UPDATE the DB column, only then delete the original. A mid-conversion crash leaves at worst an orphan <code>.webp</code> + intact original; the DB never points at a missing file.</li>
+                <li><strong>Disk-space precheck</strong> — refuses to start when <code>shutil.disk_usage(IMAGE_PATH).free &lt; 2 × in_scope_bytes</code>. Conservative because PNG-to-WebP at high quality can occasionally grow the file slightly; the 2× cushion covers tmp files held during atomic save plus the brief window where both formats coexist.</li>
+                <li><strong>CSV handling</strong> — <code>screenshots</code> is comma-split. The migrator reads the current value, finds the exact entry, swaps just that one, rejoins, and UPDATEs with the original CSV as a guard against concurrent edit-modal writes. Order is preserved; sibling entries are byte-for-byte unchanged (including near-collision substrings like <code>extra.jpg</code> when <code>a.jpg</code> is the target).</li>
+                <li><strong>Variant sync</strong> — boxart-family conversions also wipe legacy <code>-sm.jpg</code> / <code>-md.png</code> siblings and re-run <code>_make_responsive_variants</code> against the new <code>.webp</code> primary, keeping FU.2's grid-card srcset honest.</li>
+                <li><strong>Resume-friendly</strong> — if <code>&lt;stem&gt;.webp</code> already exists when the migrator visits <code>&lt;stem&gt;.jpg</code> (partial prior pass), the migrator adopts the existing <code>.webp</code>: points the DB at it and removes the stale <code>.jpg</code> without re-encoding.</li>
+                <li><strong>Routes</strong> — three admin-gated endpoints in <code>routes/maintenance.py</code>: <code>POST /api/maintenance/convert-to-webp/start</code>, <code>GET /api/maintenance/convert-to-webp/status</code>, <code>POST /api/maintenance/convert-to-webp/cancel</code>. Same auth posture as the existing image-resize trio.</li>
+                <li><strong>Regression tests</strong> — <code>tests/test_webp_migrate.py</code> ships 9 cases covering worklist filtering (drops WebP/GIF, drops stale DB pointers, CSV split), per-file conversion (DB swap + disk swap + original deletion in lock-step), CSV exact-entry replacement against near-collision siblings, resume of partial prior runs, verification-failure rollback (original + DB untouched on bad <code>.webp</code>), variant cleanup + regeneration, disk-space guard refusing on tight free space, and lock-guarded status snapshot.</li>
+                <li><strong>Fixture note</strong> — <code>tests/test_pass46_frozen_paths.py</code> evicts <code>config</code> from <code>sys.modules</code> mid-suite, producing two distinct <code>config</code> module objects in play. The <code>webp_env</code> fixture walks the visible references (<code>sys.modules['config']</code>, <code>services.jobs.base.config</code>, <code>services.image_utils.config</code>) and monkeypatches each so DB_PATH / IMAGE_PATH stay coherent regardless of which side of the eviction the consumer module was loaded on. Full pytest green: 1,092 → 1,097.</li>
+                <li><strong>Roadmap</strong> — FU.3 status flipped from <code>todo</code> to <code>done (v3.6.19)</code>.</li>
+                <li><strong>Patch bump 3.6.18 → 3.6.19</strong>: additive (new endpoints + new job class). No DB migration; in-flight library state is fully forward-compatible (every existing <code>.jpg</code> / <code>.png</code> still serves until the maintainer runs the job).</li>
+            </ul>
+        </li>
+    </ul>
+
 - version: 3.6.18
   date: 2026-05-18
   tags:
