@@ -55,6 +55,17 @@ class TestReportsSystemWhitelist:
         # the test — never leak the mutation onto the shared app.config object
         # for sibling tests (xdist-safe).
         monkeypatch.setitem(app_module.app.config, 'TESTING', True)
+        # Bypass the first-time-setup redirect: on a fresh CI checkout
+        # `settings_manager.load_settings()` returns `setup_completed=False`
+        # and `rom_path=''`, which the before-request middleware then redirects
+        # to `/setup` (302), defeating the whitelist assertion below. Stub
+        # both settings and `get_current_user` so the auth+setup path lets
+        # the request reach the whitelist check.
+        monkeypatch.setattr('app.get_current_user',
+                            lambda: {'id': 1, 'username': 'admin', 'role': 'admin'})
+        monkeypatch.setattr('app.get_user_settings', lambda _uid: {})
+        monkeypatch.setattr('app.settings_manager.load_settings',
+                            lambda: {'setup_completed': True, 'rom_path': '/tmp'})
         client = app_module.app.test_client()
         # Inject a session that satisfies both the @login_required guard
         # (user_id present) and the @app.before_request CSRF token check

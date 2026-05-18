@@ -1,3 +1,16 @@
+- version: 3.6.22
+  date: 2026-05-18
+  tags:
+  - type: fix
+    label: CI green — urllib3 CVE bump + first-time-setup redirect stub
+  body: |
+    <ul>
+      <li><strong>urllib3 2.6.3 → 2.7.0</strong> in <code>requirements.lock</code> (CVE-2026-44431, CVE-2026-44432). Regenerated via <code>pip-compile --upgrade-package urllib3</code> with <code>--strip-extras --generate-hashes</code>. <code>pip-audit --strict</code> now reports clean.</li>
+      <li><strong>Fix flaky <code>test_unknown_system_returns_400</code></strong> in <code>tests/test_input_hardening.py</code>. On a fresh CI checkout, <code>settings_manager.load_settings()</code> returns <code>setup_completed=False</code> and <code>rom_path=''</code>, so the before-request middleware redirects to <code>/setup</code> (302) before the whitelist check fires — the assertion expected 400 and saw 302. Added the same three-stub pattern used in the other auth tests: <code>app.get_current_user</code>, <code>app.get_user_settings</code>, <code>app.settings_manager.load_settings</code> via monkeypatch, returning a setup-completed admin user. CI green on both 3.12 and 3.13. (Failing across the last 12 commits on <code>main</code> — predates the v3.6.21 test-audit pass; closed here.)</li>
+      <li><strong>Test suite</strong>: 1,130 passing (unchanged from v3.6.21).</li>
+      <li><strong>Patch bump 3.6.21 → 3.6.22</strong>: CI-fix + dep-bump only. Zero behaviour change in the running app; urllib3's wire shape is back-compat for the <code>requests</code> usage in the scrapers.</li>
+    </ul>
+
 - version: 3.6.21
   date: 2026-05-18
   tags:
