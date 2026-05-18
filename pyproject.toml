@@ -60,7 +60,10 @@ ignore = [
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
-addopts = "-ra --strict-markers"
+# --strict-markers: typo in @pytest.mark.<x> fails fast instead of no-op'ing.
+# --strict-config: typo in [tool.pytest.ini_options] (or in pytest.ini / setup.cfg)
+#   fails fast instead of silently ignoring a section we thought was active.
+addopts = "-ra --strict-markers --strict-config"
 
 # Coverage (Pass 22.3). No threshold gate yet — establish a baseline first,
 # then raise the floor in a later pass. CI prints term-missing + uploads XML.

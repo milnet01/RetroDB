@@ -1,3 +1,19 @@
+- version: 3.6.23
+  date: 2026-05-18
+  tags:
+  - type: chore
+    label: CI hardening A+B — uv install + xdist + pytest-randomly + strict-config
+  body: |
+    <ul>
+      <li><strong>Switch dep install from pip to uv</strong> in <code>.github/workflows/ci.yml</code>. uv resolves and installs ~10–30× faster than pip's resolver, and the workflow now installs against <code>requirements.lock</code> with <code>--require-hashes</code> (fail-closed under PyPI tamper / MITM, matching <code>install.py</code>'s secure path from Pass 39.4) instead of the unpinned <code>requirements.txt</code>. setup-python's <code>cache: pip</code> dropped — uv has its own cache at <code>~/.cache/uv</code>, keyed by lockfile-hash via <code>actions/cache</code>. Same lockfile → instant warm cache.</li>
+      <li><strong>pytest-xdist via <code>-n 4 --dist=loadfile</code></strong> in CI. <code>loadfile</code> keeps all tests from one file on the same worker so module-scoped fixtures stay correct (loadbalance would split them across workers and break). Local-suite wall-clock: 6 s → 3.8 s. Adds <code>--durations=20</code> so the slowest 20 tests surface in the CI log on every run.</li>
+      <li><strong>pytest-randomly added</strong>. Default-seed random ordering surfaces tests that depend on hidden cross-file state — the same class of issue as the <code>test_unknown_system_returns_400</code> regression that v3.6.22 closed (test_input_hardening relied on a sibling test having set <code>TESTING=True</code> via raw config assignment). Three local runs with randomly-seeded order: clean across 1,130 tests. Seed is logged at the top of every pytest output so a CI flake can be reproduced with <code>pytest --randomly-seed=&lt;N&gt;</code>.</li>
+      <li><strong><code>--strict-config</code> added to pytest addopts</strong> alongside the existing <code>--strict-markers</code>. A typo in <code>[tool.pytest.ini_options]</code> (or in <code>pytest.ini</code> / <code>setup.cfg</code>) now fails fast instead of being silently ignored as an unrecognised section.</li>
+      <li><strong>Expected wall-clock improvement</strong>: ~1m16s → ~30–40s for the typical green run, with the bulk of the saving on dep-install. Cold cache (lockfile change) is uv-fast; warm cache (no lockfile change) is near-instant.</li>
+      <li><strong>Test suite</strong>: 1,130 passing.</li>
+      <li><strong>Patch bump 3.6.22 → 3.6.23</strong>: CI-only. Zero behaviour change in the running app.</li>
+    </ul>
+
 - version: 3.6.22
   date: 2026-05-18
   tags:
