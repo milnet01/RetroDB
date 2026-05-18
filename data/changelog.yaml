@@ -1,3 +1,23 @@
+- version: 3.6.18
+  date: 2026-05-18
+  tags:
+  - type: feat
+    label: FU.2 — grid-card boxart srcset
+  body: |
+    <ul>
+        <li><strong>FU.2 closed</strong> — game cards on the <code>/games</code> Library and <code>/system/&lt;id&gt;</code> pages now emit a responsive <code>srcset</code> on each boxart <code>&lt;img&gt;</code>, so the browser can pick the 160 w (<code>-sm</code>) or 320 w (<code>-md</code>) variant instead of always loading the full ~760 w original. Card boxart payload drops 60-80% on a 500-item page.
+            <ul>
+                <li><strong>Batch existence cache</strong> — new <code>boxart_dir_listing(image_type)</code> in <code>services/image_utils.py</code> does one <code>os.scandir</code> of <code>static/images/boxart/</code> (and one of <code>boxart_3d/</code>) per request, memoized on <code>flask.g</code>. Card-render loops then check membership in a Python set instead of stat-ing the filesystem 500× and re-opening 500 PIL images. Falls back to the per-file path when called outside a request (e.g. detail-page hero).</li>
+                <li><strong><code>boxart_srcset()</code> extended</strong> — now takes optional <code>image_type</code> (<code>boxart</code> / <code>boxart_3d</code>) and <code>existing=&lt;set&gt;</code> arguments. In batch mode it skips <code>os.path.exists</code> + <code>PIL.Image.open</code> entirely and uses a 760 w fallback for the original's width descriptor. The detail-page hero <code>&lt;img&gt;</code> still uses the PIL-backed path so its width descriptor matches the actual pixel width.</li>
+                <li><strong><code>build_game_card()</code> emits srcset</strong> — adds <code>boxart_srcset</code> and <code>boxart_3d_srcset</code> fields to every card dict shipped from <code>/api/games</code> and <code>/api/games/card-data</code>. Both endpoints already loop through <code>build_game_card</code>, so they share the same per-request directory cache.</li>
+                <li><strong>JS card renderer</strong> — <code>static/js/all-games-controller.js::renderGameCard</code> emits <code>srcset="…"</code> + <code>sizes="(max-width: 768px) 100px, 135px"</code> on the boxart <code>&lt;img&gt;</code> when the card payload carries the field; falls through to the legacy single-source form when absent (forward-compatible with the existing client cache). The <code>onerror</code> fallback now also clears <code>srcset</code>/<code>sizes</code> so the 3D-to-2D failover keeps working.</li>
+                <li><strong>Regression tests</strong> — <code>tests/test_image_pipeline.py</code> picks up four new cases: <code>test_batch_mode_uses_existing_set_no_pil</code> (trip-wire on <code>PIL.Image.open</code> in batch mode), <code>test_batch_mode_empty_when_filename_absent</code>, <code>test_boxart_dir_listing_scandir</code>, and <code>test_boxart_3d_image_type</code>. Full pytest green: 1,088 → 1,092.</li>
+                <li><strong>Roadmap</strong> — FU.2 status flipped from <code>todo</code> to <code>done (v3.6.18)</code>.</li>
+                <li><strong>Patch bump 3.6.17 → 3.6.18</strong>: additive (new <code>srcset</code> field on card payload); pre-FU.2 clients ignore the field, post-FU.2 clients use it. No DB migration, no behaviour change for the detail-page hero.</li>
+            </ul>
+        </li>
+    </ul>
+
 - version: 3.6.17
   date: 2026-05-18
   tags:

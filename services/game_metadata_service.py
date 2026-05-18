@@ -21,6 +21,7 @@ from services.game_utils import (
     generate_sort_title,
     normalize_players_value,
 )
+from services.image_utils import boxart_srcset, boxart_dir_listing
 
 logger = logging.getLogger(__name__)
 
@@ -211,6 +212,25 @@ def build_game_card(row, rpcs3_info=None, include_source_flag=False):
         'rpcs3_earned': rpcs3_info['earned'] if rpcs3_info else None,
         'rpcs3_total': rpcs3_info['total'] if rpcs3_info else None,
     })
+
+    # Pass FU.2 — emit pre-computed `srcset` strings so the JS card renderer
+    # can pick a 160 w / 320 w variant instead of always fetching the full
+    # 1080 h original. `boxart_dir_listing` memoizes one `os.scandir` per
+    # request on `flask.g`, so a 500-card page does two scans total instead
+    # of N × (stat + PIL.Image.open) calls.
+    if card.get('boxart'):
+        card['boxart_srcset'] = boxart_srcset(
+            card['boxart'],
+            image_type='boxart',
+            existing=boxart_dir_listing('boxart'),
+        )
+    if card.get('boxart_3d'):
+        card['boxart_3d_srcset'] = boxart_srcset(
+            card['boxart_3d'],
+            image_type='boxart_3d',
+            existing=boxart_dir_listing('boxart_3d'),
+        )
+
     if include_source_flag:
         card['is_clz_import'] = import_source == 'clz'
     return card

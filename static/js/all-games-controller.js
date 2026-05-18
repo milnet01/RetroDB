@@ -459,10 +459,20 @@ const AllGamesController = (function() {
         let boxartHtml;
         if (boxartToShow) {
             const fallbackAttr = fallbackBoxart
-                ? ` onerror="this.onerror=null; this.classList.remove('boxart-3d'); this.src='/static/images/boxart/${esc(fallbackBoxart)}';"`
+                ? ` onerror="this.onerror=null; this.classList.remove('boxart-3d'); this.removeAttribute('srcset'); this.removeAttribute('sizes'); this.src='/static/images/boxart/${esc(fallbackBoxart)}';"`
                 : ` onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"`;
+            // Pass FU.2 — pre-computed srcset (boxart 160 w / 320 w variants
+            // plus the original) shipped from build_game_card(). `sizes`
+            // mirrors the card-boxart-section CSS: 100 px on the ≤768 px
+            // breakpoint, 135 px above it. Falls through to the legacy
+            // single-source img when the field is absent (e.g. card data
+            // produced before this pass).
+            const srcset = use3d ? game.boxart_3d_srcset : game.boxart_srcset;
+            const responsiveAttr = srcset
+                ? ` srcset="${esc(srcset)}" sizes="(max-width: 768px) 100px, 135px"`
+                : '';
             boxartHtml = `
-                <img src="/static/images/${boxartFolder}/${esc(boxartToShow)}"
+                <img src="/static/images/${boxartFolder}/${esc(boxartToShow)}"${responsiveAttr}
                      alt="${esc(game.title)}"
                      class="game-boxart-img${use3d ? ' boxart-3d' : ''}"
                      loading="lazy"

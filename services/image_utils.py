@@ -572,29 +572,54 @@ def _make_responsive_variants(path, image_type):
         logger.warning(f"Responsive variant generation failed for {path}: {e}")
 
 
-def boxart_srcset(filename, sizes=None):
+def boxart_srcset(filename, sizes=None, image_type='boxart', existing=None):
     """Return a `srcset` string for a boxart filename, skipping missing variants.
 
     `filename` is the bare filename stored in the DB (e.g. `12_tgdb.webp`).
-    The original plus each existing `-sm` / `-md` sibling is included so the
-    browser can pick the smallest candidate that satisfies the rendered width.
-    Returns an empty string when the original is missing.
+    `image_type` is the subdirectory under `static/images/` — `boxart` (default)
+    or `boxart_3d`. The original plus each existing `-sm` / `-md` sibling is
+    included so the browser can pick the smallest candidate that satisfies the
+    rendered width. Returns an empty string when the original is missing.
+
+    `existing` is an optional pre-computed set of filenames in the target
+    directory (see `boxart_dir_listing()`). Supplying it lets the caller batch
+    existence checks across many filenames — the function then skips the
+    per-file `os.path.exists` calls and the PIL `Image.open` width read, using
+    a conservative fallback (760 w) for the original's width descriptor.
+    Without it, the function falls back to the per-file path used by the
+    detail-page hero `<img>`.
     """
     import config
 
     if not filename:
         return ''
 
-    boxart_dir = os.path.join(config.IMAGE_PATH, 'boxart')
+    boxart_dir = os.path.join(config.IMAGE_PATH, image_type)
+
+    if existing is not None:
+        if filename not in existing:
+            return ''
+        candidates = []
+        for suffix, target_w in (sizes or _RESPONSIVE_VARIANTS.get(image_type, _RESPONSIVE_VARIANTS['boxart'])):
+            variant_filename = os.path.basename(_variant_path(filename, suffix))
+            if variant_filename in existing:
+                candidates.append(f"/static/images/{image_type}/{variant_filename} {target_w}w")
+        # Skip PIL open in batch mode — 500 PIL reads per request defeats the
+        # whole point of grid-card srcset. The 760 fallback is a 7:10 boxart
+        # ratio at the standardized 1080 height; the browser only picks the
+        # original when DPR demands it.
+        candidates.append(f"/static/images/{image_type}/{filename} 760w")
+        return ', '.join(candidates) if candidates else ''
+
     original_path = os.path.join(boxart_dir, filename)
     if not os.path.exists(original_path):
         return ''
 
     candidates = []
-    for suffix, target_w in (sizes or _RESPONSIVE_VARIANTS['boxart']):
+    for suffix, target_w in (sizes or _RESPONSIVE_VARIANTS.get(image_type, _RESPONSIVE_VARIANTS['boxart'])):
         variant_filename = os.path.basename(_variant_path(filename, suffix))
         if os.path.exists(os.path.join(boxart_dir, variant_filename)):
-            candidates.append(f"/static/images/boxart/{variant_filename} {target_w}w")
+            candidates.append(f"/static/images/{image_type}/{variant_filename} {target_w}w")
 
     # Width descriptor for the original: use actual pixel width when cheap to
     # read; otherwise fall back to a conservative upper bound (the
@@ -608,9 +633,50 @@ def boxart_srcset(filename, sizes=None):
         orig_w = 760
     except Exception:
         orig_w = 760
-    candidates.append(f"/static/images/boxart/{filename} {orig_w}w")
+    candidates.append(f"/static/images/{image_type}/{filename} {orig_w}w")
 
     return ', '.join(candidates)
+
+
+def boxart_dir_listing(image_type='boxart'):
+    """Return the set of filenames in `static/images/<image_type>/`.
+
+    Used by `build_game_card()` to batch-check boxart existence across many
+    cards per request (one `os.scandir` instead of N `os.path.exists` + N
+    `PIL.Image.open` calls). The result is cached on `flask.g` for the
+    lifetime of the request — call this once before a card-rendering loop and
+    pass the returned set to `boxart_srcset(filename, existing=...)`.
+
+    Returns an empty set if the directory is missing or unreadable, so callers
+    can pass the result through unconditionally — `'' in empty_set` is `False`
+    and `boxart_srcset` correctly returns `''` when the file is unknown.
+    """
+    import config
+
+    cache_attr = f'_boxart_listing_{image_type}'
+    try:
+        from flask import g, has_request_context
+        if has_request_context():
+            cached = getattr(g, cache_attr, None)
+            if cached is not None:
+                return cached
+    except Exception:
+        has_request_context = lambda: False  # noqa: E731
+
+    directory = os.path.join(config.IMAGE_PATH, image_type)
+    try:
+        listing = {entry.name for entry in os.scandir(directory) if entry.is_file()}
+    except (FileNotFoundError, NotADirectoryError, PermissionError, OSError):
+        listing = set()
+
+    try:
+        from flask import g, has_request_context
+        if has_request_context():
+            setattr(g, cache_attr, listing)
+    except Exception:
+        pass
+
+    return listing
 
 
 def standardize_downloaded_image(path, image_type):

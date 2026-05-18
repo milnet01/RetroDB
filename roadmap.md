@@ -2745,7 +2745,16 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   `services/game_metadata_service.py` so every card payload includes a
   pre-computed `boxart_srcset` field.  Update
   `static/js/all-games-controller.js` to emit the field when present.
-- **Status**: todo
+- **Status**: done (v3.6.18). `boxart_dir_listing()` memoizes one
+  `os.scandir` per `image_type` on `flask.g`; `boxart_srcset()` gained
+  optional `image_type` + `existing=<set>` arguments that skip
+  `PIL.Image.open` in batch mode (760 w fallback descriptor for the
+  original). `build_game_card()` emits `boxart_srcset` and
+  `boxart_3d_srcset` fields; `renderGameCard()` in `all-games-controller.js`
+  emits `srcset` + `sizes="(max-width: 768px) 100px, 135px"` when present,
+  and the 3D→2D `onerror` fallback now clears both attributes. Trip-wire
+  test (`test_batch_mode_uses_existing_set_no_pil`) pins the no-PIL
+  contract.
 
 #### FU.3 Bulk JPEG→WebP migration endpoint (LOW, M)
 

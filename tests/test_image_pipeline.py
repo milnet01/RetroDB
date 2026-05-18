@@ -206,6 +206,60 @@ class TestBoxartSrcset:
         assert 'g-sm.webp' not in srcset
         assert 'g-md.webp 320w' in srcset
 
+    def test_batch_mode_uses_existing_set_no_pil(self, boxart_with_files, monkeypatch):
+        """Pass FU.2 — batch mode skips per-file os.path.exists + PIL.open
+        so a 500-card render does N set-membership checks, not N stat calls."""
+        _, write_variant = boxart_with_files
+        write_variant('g.webp', 800, 1120)
+        write_variant('g-sm.webp', 160, 224)
+        # Note: no g-md.webp on disk.
+
+        # Trip-wire: any PIL.Image.open call in batch mode is a perf regression.
+        from PIL import Image as _PIL
+        opens = []
+        original_open = _PIL.open
+        monkeypatch.setattr(_PIL, 'open', lambda *a, **kw: opens.append(a) or original_open(*a, **kw))
+
+        existing = {'g.webp', 'g-sm.webp'}
+        srcset = image_utils.boxart_srcset('g.webp', existing=existing)
+
+        assert opens == [], "batch mode must not call PIL.Image.open"
+        assert 'g-sm.webp 160w' in srcset
+        assert 'g-md.webp' not in srcset
+        assert 'g.webp 760w' in srcset  # batch mode uses 760 fallback width
+
+    def test_batch_mode_empty_when_filename_absent(self):
+        """Filename missing from the existence set → '' (no candidate emitted)."""
+        assert image_utils.boxart_srcset('gone.webp', existing={'a.webp', 'b.webp'}) == ''
+
+    def test_boxart_dir_listing_scandir(self, boxart_with_files):
+        boxart_dir, write_variant = boxart_with_files
+        write_variant('a.webp', 800, 1120)
+        write_variant('b.webp', 800, 1120)
+        listing = image_utils.boxart_dir_listing('boxart')
+        assert 'a.webp' in listing
+        assert 'b.webp' in listing
+        # Subdir entries are excluded by the is_file() guard.
+        (boxart_dir / 'sub').mkdir()
+        listing = image_utils.boxart_dir_listing('boxart')
+        assert 'sub' not in listing
+
+    def test_boxart_3d_image_type(self, tmp_path, monkeypatch):
+        """`image_type='boxart_3d'` resolves the right subdir + URL prefix."""
+        monkeypatch.setattr(config, 'IMAGE_PATH', str(tmp_path), raising=False)
+        boxart_3d_dir = tmp_path / 'boxart_3d'
+        boxart_3d_dir.mkdir()
+        Image.new('RGB', (800, 1120)).save(boxart_3d_dir / 'g.webp', format='WEBP')
+        Image.new('RGB', (160, 224)).save(boxart_3d_dir / 'g-sm.webp', format='WEBP')
+
+        srcset = image_utils.boxart_srcset(
+            'g.webp',
+            image_type='boxart_3d',
+            existing={'g.webp', 'g-sm.webp'},
+        )
+        assert '/static/images/boxart_3d/g-sm.webp 160w' in srcset
+        assert '/static/images/boxart/g.webp' not in srcset
+
 
 class TestFinalizePipeline:
     """Full post-download pipeline: normalize + standardize + variants."""
