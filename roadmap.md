@@ -428,7 +428,14 @@ are tracked here so the next pass picks them up:
   4. **Update push-cadence expectations**: with the repo now public,
      the global rule's PRIVATE-batching path no longer applies — push
      freely after each release.
-- **Status**: blocked on 47.1
+- **Status**: done (2026-05-18). Flipped via `gh repo edit milnet01/RetroDB
+  --visibility public --accept-visibility-change-consequences`.
+  `gh secret list` returned empty (no Actions secrets to verify scope on).
+  `.github/FUNDING.yml` already wires GitHub Sponsors (`github: [milnet01]`);
+  Sponsors profile is approved + live at <https://github.com/sponsors/milnet01>
+  (resolved out-of-band ahead of the flip). Patreon + BMAC entries in
+  FUNDING.yml remain pending on 47.3 + 47.5. Push-batching rule retired
+  for this repo.
 
 #### Pass 47.3 Repurpose Patreon (free app, donation-only tiers) (MEDIUM, S)
 
@@ -475,9 +482,11 @@ are tracked here so the next pass picks them up:
   3. Skip goal-based fundraising at first. Goals only feel real once
      the audience is large enough that "$50/mo unlocks weekly
      office-hours streams" isn't aspirational fanfic.
-- **Status**: application can start in parallel with 47.1; the
-  Sponsor button on the repo page is blocked on 47.2 (button only
-  renders for public repos).
+- **Status**: done (2026-05-18). Sponsors profile is live at
+  <https://github.com/sponsors/milnet01> (resolved out-of-band ahead of
+  the 47.2 flip). `.github/FUNDING.yml` carries `github: [milnet01]`,
+  so the Sponsor button now renders on the public repo page. Tier
+  configuration left to operator-side admin once 47.3 lands.
 
 #### Pass 47.5 Buy Me A Coffee (LOW, S)
 
