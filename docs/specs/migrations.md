@@ -38,7 +38,7 @@ backups, rollback), and what the contract is for any future migration.
 | Backup behaviour and backup retention | What "append-only" means at the source-edit level |
 | Rollback story (backup-restore vs `user_version` rewind) | |
 | Cascade-FK pattern for table rebuilds | |
-| Walk-through of the 12 currently-landed migrations | |
+| Walk-through of every landed migration | |
 
 Read §25 first for the authoring rules. Come back here when you need to know
 *what the runner does to your file at boot* or *what guarantees the system
@@ -98,14 +98,19 @@ pins it).
    against a schema that already carries the changes, possibly raising a
    non-idempotent error.
 
-**Why this matters in practice.** Roadmap Pass 41.2 is a cautionary tale: the
-original migrations 007/008/009 used `PRAGMA foreign_keys = OFF` inside the
-runner's transaction. SQLite silently ignores FK-state changes mid-transaction,
-so the PRAGMA was a no-op. The fix wasn't to edit 007–009; it was to switch
-them to `PRAGMA defer_foreign_keys = ON` (which *does* work in a txn) **as a
-new migration policy applied to all future rebuilds**, plus a runner-level
-change. The author edits never went back into landed files because production
-DBs had already executed them — there was no "second chance" to slip a fix in.
+**Why this matters in practice.** Roadmap Pass 41.2 (shipped v3.5.2) is the
+worked exception that proves the rule. The original migrations 007/008/009
+used `PRAGMA foreign_keys = OFF` inside the runner's transaction. SQLite
+silently ignores FK-state changes mid-transaction, so the PRAGMA was a no-op.
+Because the broken PRAGMA had **no observable effect on the schema** (the
+rebuild ran fine without it), editing the landed migration files to switch
+to `PRAGMA defer_foreign_keys = ON` was idempotent in practice — re-applying
+the edited migration on a DB that already carried the rebuild was a no-op
+(`IF NOT EXISTS` + `_has_column` checks). That's the narrow carve-out: an
+edit to a landed migration is permitted only when the edit's effect on a
+DB that already ran the old body is provably nil. The runner-level edit
+(switching `BEGIN` to `BEGIN IMMEDIATE`, plus the defer-FK swap) landed in
+the same pass.
 
 ---
 
@@ -167,6 +172,17 @@ runner's job. The migration's DDL/data changes and the matching
 `PRAGMA user_version = N` are inside the same transaction, so a crash mid-DDL
 cannot leave the database with the new schema but the old version (or vice
 versa).
+
+> ⚠️ Migration 012 (`services/migrations/scripts/012_emulators.py`) currently
+> calls `conn.commit()` inside `apply()` — predating this rule. That commit
+> ends the runner's outer transaction **before** the `PRAGMA user_version = N`
+> bump that follows; the runner's `conn.commit()` after the bump still runs,
+> so on a normal apply the DB ends in the right state. The weaker guarantee
+> is the crash window: if the process dies between the inline commit and the
+> version bump, the DDL is committed but `user_version` is still at the old
+> number. `IF NOT EXISTS` on every `CREATE TABLE` in 012 makes the re-apply
+> idempotent in practice, but the atomicity invariant in §3 doesn't hold for
+> this migration alone. Don't copy that shape into new migrations.
 
 **Lock acquisition mode (Pass 45.10):**
 
@@ -259,7 +275,8 @@ This is the only "undo" the system offers for a bad restore.
 - **Deleting an entry from `MIGRATIONS`.** Forbidden (§4). Removing migration
   N renumbers every later migration by minus one, which means every production
   DB at `user_version > N` is now ahead of `latest_version()`, and the runner
-  raises "DB is newer than the build."
+  raises `RuntimeError("Database user_version (N) is newer than the latest
+  migration this build knows about (M). Refusing to run.")`.
 
 If you genuinely need to undo a migration's effect on a live install, the path
 is: **add a new migration** (`NNN+1_undo_xyz.py`) that reverses the change
@@ -283,7 +300,11 @@ pre-existing table.
 def apply(conn):
     cursor = conn.cursor()
 
-    # 1. Idempotency: skip if the FKs are already in place.
+    # 1. Idempotency: skip if the FKs are already in place. `_foreign_key_count`
+    #    is a per-migration local helper (defined inline in
+    #    `services/migrations/scripts/011_user_game_views_cascade_fk.py:42-44`,
+    #    not in `_helpers.py`) — counts rows in `PRAGMA foreign_key_list(table)`.
+    #    Copy it into your migration if you need it.
     if not _table_exists(cursor, 'user_game_views'):
         return
     if _foreign_key_count(cursor, 'user_game_views') >= 2:
@@ -340,7 +361,9 @@ Notes:
   (the latter is a no-op inside a transaction — Pass 41.2).
 - Always end with a scoped `PRAGMA foreign_key_check(<table>)` — the unscoped
   form catches every FK in the DB, which is too aggressive on legacy installs
-  that may have unrelated dangling refs.
+  that may have unrelated dangling refs. Every landed table-rebuild migration
+  (007 / 008 / 009 / 011) follows this — grep `foreign_key_check` across
+  `services/migrations/scripts/` to confirm.
 - The orphan-pruning INNER JOIN doubles as a "retroactive CASCADE." Document
   it in the migration header so reviewers understand the row-count delta.
 
@@ -374,9 +397,14 @@ Things to copy when authoring a similar migration:
   same vendor list on every user forever. Author seed-loading as a separate,
   config-driven boot-time step.
 - **`CREATE TABLE IF NOT EXISTS` is idempotent**; `ALTER TABLE ADD COLUMN` is
-  not (re-running raises `duplicate column name`). Use the local
-  `_add_column_if_missing` helper (defined inline in 012, or import from
-  `services.migrations._helpers` in newer migrations).
+  not (re-running raises `duplicate column name`). **New migrations must
+  import the strict helper from `services.migrations._helpers`** —
+  `_add_column_if_missing` there checks `_has_column()` first and only ALTERs
+  when missing. The inline `try/except sqlite3.OperationalError: pass` shape
+  in 012 is the pre-Pass-42.2 pattern and is **not** the model to copy; it
+  silently swallows non-duplicate-column SQL errors. Migration 012's inline
+  helper is the last remaining instance and is left in place per the
+  append-only rule.
 - **FK clauses on brand-new tables are free.** You only need the table-rebuild
   procedure (§9) when adding FKs to a table that already exists in production.
 
@@ -416,8 +444,21 @@ Reference: roadmap Pass 44.
 8. **Write the test** at `tests/test_migration_<N>.py` (newer pattern) or
    extend `tests/test_migrations.py` (older multi-class pattern). See §12.
 9. **Manual smoke**: open a copy of a real DB at the previous version, run
-   `python -c "import sqlite3, services.migrations as m; c = sqlite3.connect('roms.db'); print(m.apply_pending(c)); c.close()"`,
-   verify the version advances and no rows went missing.
+   the snippet below, verify the version advances and no rows went missing.
+   The runner relies on the four boot PRAGMAs that `database_init.init_database`
+   sets — applying migrations through a bare `sqlite3.connect` will fail-fast
+   under WAL contention.
+
+   ```python
+   import sqlite3, config, services.migrations as m
+   c = sqlite3.connect(config.DB_PATH)
+   c.execute("PRAGMA foreign_keys = ON")
+   c.execute("PRAGMA journal_mode = WAL")
+   c.execute("PRAGMA synchronous = NORMAL")
+   c.execute("PRAGMA busy_timeout = 5000")
+   print(m.apply_pending(c))
+   c.close()
+   ```
 10. **Cross-platform check.** SQLite is uniform across platforms; the gotcha
     is path separators and file permissions in helper code. If your migration
     reads sibling files (e.g. migration 006 ingests `data/psn_tokens.json`),
@@ -471,7 +512,7 @@ your migration — not in the runner.
 
 ---
 
-## 13. The 12 currently-landed migrations
+## 13. Landed migrations
 
 | # | File | Purpose | Notes |
 | --- | --- | --- | --- |
@@ -486,7 +527,7 @@ your migration — not in the runner.
 | 009 | `009_achievement_tables_user_id.py` | Add `user_id` to `game_achievement_progress`, `steam_achievements`, `xbox_achievements`. | Pass 31.2. Mix of table-rebuild (one table) + additive ALTER (two tables). |
 | 010 | `010_user_game_views.py` | Create `user_game_views` (per-user recently-viewed timestamps). | Pass 41.9. `games.last_viewed` becomes vestigial — kept, no longer written. |
 | 011 | `011_user_game_views_cascade_fk.py` | Rebuild `user_game_views` with `ON DELETE CASCADE` FKs. | Pass 45.15. Canonical CASCADE-FK rebuild example (§9). |
-| 012 | `012_emulators.py` | Create `emulators` + `system_emulators`; add `emulator_override_id` / `launch_args_override` to `games`. | Pass 44. Canonical "new tables + additive columns" example (§10). Seed data loads separately from `data/emulator_seeds.json`. |
+| 012 | `012_emulators.py` | Create `emulators` + `system_emulators`; add `emulator_override_id` / `launch_args_override` to `games`. | Pass 44. Reference for the "new tables + additive columns" shape (§10), with two pre-Pass-42.2 caveats: it carries an inline `_add_column_if_missing` instead of importing the strict helper, and it calls `conn.commit()` mid-`apply()`. Don't copy either pattern into new migrations. Seed data loads separately from `data/emulator_seeds.json`. |
 
 ---
 

@@ -4,7 +4,7 @@
 
 ## Trademarks
 
-System logos and platform names included in RetroDB are trademarks of their respective owners:
+System logos and platform names included in RetroDB are trademarks of their respective owners. The list below is illustrative, not exhaustive — RetroDB supports 150+ systems and many more publishers; any trademark not enumerated here remains the property of its owner all the same:
 
 - **Nintendo** - Nintendo Entertainment System, Super Nintendo, Game Boy, Nintendo 64, GameCube, Wii, Wii U, Nintendo Switch, Nintendo DS, Nintendo 3DS, Virtual Boy, and related logos are trademarks of Nintendo Co., Ltd.
 - **Sony** - PlayStation, PS2, PS3, PS4, PSP, PS Vita, and related logos are trademarks of Sony Interactive Entertainment Inc.
@@ -45,6 +45,3 @@ RetroDB integrates with the following third-party services. Users must comply wi
 
 API keys and credentials are the user's responsibility. RetroDB does not provide API keys.
 
-## License
-
-RetroDB is released under the [MIT License](LICENSE). See the LICENSE file for full details.

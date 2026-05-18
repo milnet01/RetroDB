@@ -68,7 +68,7 @@ guarded routes — never just one.
   endpoints were unreachable until Pass 45.1 (CRITICAL) fixed the matrix.
 - `delete_rom` is admin-only; editor's `delete_metadata` removes the DB
   row but not the file on disk — two destructive surfaces, two perms.
-- `viewer` is read-only with one carve-out: `track_progress`.
+- `viewer` can read everything (`view`) and self-track (`track_progress`); no mutating perms — read-only with one self-mutation carve-out.
 
 ---
 
@@ -114,7 +114,14 @@ apply the decorator — there is no allow-list.
 on `/api/*` is mandatory. A pre-Pass-45.1 decorator returned a 302 on
 every failure; `fetch()` followed it transparently and the caller saw a
 200 of dashboard HTML, which is impossible to handle. Pinned by
-`tests/test_pass45_security.py::TestPass45_1*`.
+`tests/test_pass45_security.py::TestPass45_1TrackProgressPermission`.
+
+> ⚠️ `admin_required` and `editor_required` (`services/auth.py:295-336`)
+> still emit the redirect form on `/api/*` failures — Pass 45.1 only
+> migrated `permission_required`. Today this is safe because the two
+> decorators are used only on page routes; if you reach for them on an
+> `/api/*` route, compose `permission_required('manage_users')` (or
+> equivalent) instead, or migrate both decorators first.
 
 ### Adding a new permission
 1. Add the key to the right rows in `services.auth.ROLE_PERMISSIONS`.
@@ -209,9 +216,10 @@ callers. Routes MUST go through this module, not raw SQL. Pinned by
 
 **RA credential resolution** —
 `services.auth.get_user_ra_credentials()` prefers the logged-in user's
-per-account creds from `user_settings` and falls back to `config.py` /
-`settings.json` if unset. This is the **only** install-wide fallback
-permitted; every other read scopes by `g.user['id']` strictly.
+per-account creds from `user_settings` and, on miss, delegates to
+`scraper.retroachievements.get_ra_credentials()`, which reads the install-wide
+fallback from `config.py` / `settings.json`. This is the **only** install-wide
+fallback permitted; every other read scopes by `g.user['id']` strictly.
 
 ---
 
@@ -264,11 +272,14 @@ login.
 Cheat Sheet floor for PBKDF2-SHA256). 16-byte hex salt. Stored format:
 
 ```
-pbkdf2:<iterations>:<salt_hex>:<hash_hex>
+# Current format (v2.84.0 onward)
+pbkdf2:<iterations_decimal>:<salt_hex>:<hash_hex>
+
+# Legacy format (pre-v2.84.0) — no prefix, iteration count fixed at 100,000
+<salt_hex>:<hash_hex>
 ```
 
-Pre-v2.84.0 hashes used the legacy `<salt>:<hash>` format at 100k
-iterations. `verify_password()` accepts both; `needs_rehash()` flags any
+`verify_password()` accepts both formats; `needs_rehash()` flags any
 below-floor or malformed hash, and `api_login` rehashes to the current
 format on successful login. Compliance pin:
 `tests/test_auth_hashing.py::test_pbkdf2_iterations_meets_owasp_floor`.
@@ -323,9 +334,16 @@ per-key TTL (the previous form was a soft-DoS amplifier).
   legacy IP-only bucket was shared with `/api/login`, so 5 failed
   change-password attempts on a shared LAN locked everyone else out of
   `/api/login`. The composite bucket isolates change-password from
-  login AND from other users on the same IP.
-- `/api/profile/force-change-password` — not rate-limited (user already
-  authenticated; only failure mode is the length floor).
+  login AND from other users on the same IP. Backing storage: the same
+  `_login_attempts` `OrderedDict` in `services/security.py` that serves
+  `/api/login`; `_MAX_ENTRIES = 10000` LRU eviction is therefore global
+  across both bucket families.
+- `/api/profile/force-change-password` — **intentionally not rate-limited.**
+  The endpoint re-verifies the user's current password before accepting
+  the new one, so it carries some brute-force surface, but the caller is
+  already authenticated and the bootstrap credential pair is documented
+  publicly in the README. Reconsider this carve-out if the endpoint ever
+  becomes reachable pre-auth.
 
 **Open-redirect protection:** `api_login` parses `next` via `urlparse`
 and rejects any URL with a `netloc`, `scheme`, or backslash
@@ -394,8 +412,10 @@ made the calling JS see a 200 of dashboard HTML — silent failure, no
 toast, server log showed a 200. JSON envelope on `/api/*` is mandatory.
 
 Builders live in `services/api_helpers.py`: `success(...)`,
-`error(message, code=400, **extra)`, `@handle_api_errors`. See §17 of
-`docs/RETRODB_DESIGN_STANDARDS.md` for the broader JSON envelope contract.
+`error(message, code=400, **extra)`, `@handle_api_errors`. The JSON envelope
+contract is owned by [`api-contracts.md`](api-contracts.md); see also §22 of
+`docs/RETRODB_DESIGN_STANDARDS.md` for the surrounding security-headers
+context.
 
 ---
 

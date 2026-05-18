@@ -30,6 +30,6 @@ This directory holds project-internal documentation. Project-wide entry points (
 ## Other
 
 - [`psn-npsso.env.example`](psn-npsso.env.example) — Template env file for PSN integration (real value lives in `data/psn_tokens.json`, never in this repo).
-- [`requirements.txt`](requirements.txt) — Pinned deps for building this docs tree, if applicable.
+- [`requirements.txt`](requirements.txt) — historical copy of the project's runtime requirements (the canonical file is `../requirements.txt`; this one is kept for legacy tooling only — don't edit it directly).
 
 For the user-facing intro / install / features list, see [`../README.md`](../README.md). For contributor onboarding, see [`../CONTRIBUTING.md`](../CONTRIBUTING.md). For trademark, ROM-distribution, and third-party-API policy, see [`../LEGAL.md`](../LEGAL.md).

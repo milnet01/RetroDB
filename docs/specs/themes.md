@@ -37,7 +37,7 @@ display name — see §8.
 | Midnight Ocean      | `ocean`            | `#4dabf7` blue             | `#20c997` teal                    | Moon shimmer column + horizontal wave lines       | Maintained                              |
 | Cathedral           | `christian`        | `#d4a843` gold             | `#7b4db0` royal-purple            | Golden dust motes + divine light beam             | Maintained; legacy token name           |
 | Blade Runner        | `bladerunner`      | `#1a9fff` electric-blue    | `#ff2d7c` neon-pink               | Neon rain streaks + neon glow pools               | Maintained                              |
-| Elite 1984          | `elite`            | `#00ff00` vector-green     | `#cccccc` vector-white            | 1984-style vector starfield (hyperspace streaks)  | Maintained                              |
+| Elite               | `elite`            | `#00ff00` vector-green     | `#cccccc` vector-white            | 1984-style vector starfield (hyperspace streaks)  | Maintained                              |
 
 Notes:
 
@@ -329,12 +329,13 @@ Three themes display under a different name than their `data-theme` token:
 |----------------------------|--------------------|--------------------------------------------------------|
 | Cathedral                  | `christian`        | Legacy key — predates the Cathedral re-branding        |
 | Blade Runner               | `bladerunner`      | Tokens are `[a-z]` only (HTML attribute hygiene)       |
-| Elite 1984                 | `elite`            | Tokens are `[a-z]` only — year and brand stripped      |
+| Elite                      | `elite`            | Settings UI label is just "Elite" (Elite 1984 inspiration is the design heritage, not the user-facing name) |
 
 Tokens are stable across versions; the display name lives in
-`templates/settings.html` (Display Preferences section, around line 455) and
-can be changed freely without invalidating saved preferences. Renaming a
-**token** would silently reset every user back to cyberpunk — don't.
+`templates/_settings_tabs/library.html` (the `themeSelector` `<div>` opens
+around line 58; the per-theme cards follow) and can be changed freely
+without invalidating saved preferences. Renaming a **token** would silently
+reset every user back to cyberpunk — don't.
 
 ---
 
@@ -417,15 +418,17 @@ the one most easily missed.
    prevents leftover state from contaminating the next theme.
 
 6. **Add the icon table.** New entry in `ThemeIcons` in
-   `static/js/toast-controller.js` (around line 72). All 26 keys (see §7) MUST
-   be present — `getThemedIcon` falls back per-key to cyberpunk, so missing
-   keys won't crash, but it'll look incoherent. Pick glyphs that match the
-   theme's aesthetic. **This step is also where bundle membership matters:**
-   `toast-controller.js` *is* in `core.bundle.js`, so you must run
-   `python3 build_js.py` after editing.
+   `static/js/toast-controller.js` (line 72). All keys listed in the §7
+   category table MUST be present — `getThemedIcon` falls back per-key to
+   cyberpunk, so missing keys won't crash, but it'll look incoherent. Pick
+   glyphs that match the theme's aesthetic. **This step is also where bundle
+   membership matters:** `toast-controller.js` *is* in `core.bundle.js`, so
+   you must run `python3 build_js.py` after editing.
 
-7. **Add the picker UI.** New `.theme-option` card in `templates/settings.html`
-   under the Display Preferences section (around line 455):
+7. **Add the picker UI.** New `.theme-option` card in
+   `templates/_settings_tabs/library.html` under the Display Preferences
+   section (the `themeSelector` `<div>` opens around line 58; insert the new
+   card alongside the existing ones):
 
    ```html
    <div class="theme-option" data-theme="newtheme" onclick="ThemeManager.apply('newtheme')">
@@ -536,4 +539,4 @@ What is **not** automated-tested:
 - `static/css/core/themes.css` — per-theme variable overrides
 - `static/css/core/variables.css` — `:root` baseline
 - `templates/base.html` — FOUC script + standalone `theme.js` `<script>` tag
-- `templates/settings.html` Display Preferences — theme picker UI
+- `templates/_settings_tabs/library.html` Display Preferences — theme picker UI

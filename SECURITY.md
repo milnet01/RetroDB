@@ -39,8 +39,8 @@ timelines:
   next normal release.
 
 There is **no bug bounty**. This is a hobby project; financial reward
-isn't on offer. Credit in the changelog and a thank-you in `CONTRIBUTING.md`
-are.
+isn't on offer. Credit in the changelog is offered (unless you ask to
+remain anonymous).
 
 ## In Scope
 

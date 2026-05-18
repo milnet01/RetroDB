@@ -1,6 +1,6 @@
 # Background Jobs Subsystem
 
-> **TL;DR.** Ten singleton job classes share one `services/jobs/base.py` toolkit:
+> **TL;DR.** Eleven singleton job classes share one `services/jobs/base.py` toolkit:
 > a `job_queue` table for crash recovery, an `fcntl.flock`-based cross-process
 > singleton, a `self.cancelled` cooperative-cancel flag, and a module-level
 > `shutdown_requested` Event for SIGTERM drain. New jobs subclass nothing —
@@ -8,7 +8,7 @@
 > using the `tests/test_bulk_scrape_job.py` patching stanza.
 
 Cross-references: [`CLAUDE.md`](../../CLAUDE.md) (project-level rules),
-[`roadmap.md`](../../roadmap.md) Pass 40.9 / 40.10 / 41.6 / 41.6.A-extend,
+[`roadmap.md`](../../roadmap.md) Pass 40.9 / 40.10 / 41.6 / 41.6.D / FU.3,
 [`docs/RETRODB_DESIGN_STANDARDS.md`](../RETRODB_DESIGN_STANDARDS.md) §13
 (toasts) and §14 (bulk-operation progress UI).
 
@@ -29,7 +29,7 @@ can be resumed (or surfaced) on the next start.
 
 ## 2. Inventory
 
-Nine files, ten singleton classes (`platform_sync.py` hosts two — Steam + Xbox). All live in `services/jobs/`. The singleton instances are at the bottom of [`services/jobs/__init__.py`](../../services/jobs/__init__.py).
+Ten files, eleven singleton classes (`platform_sync.py` hosts two — Steam + Xbox). All live in `services/jobs/`. The singleton instances are at the bottom of [`services/jobs/__init__.py`](../../services/jobs/__init__.py).
 
 | File | Class | Singleton name | What it does |
 |------|-------|----------------|--------------|
@@ -42,6 +42,7 @@ Nine files, ten singleton classes (`platform_sync.py` hosts two — Steam + Xbox
 | `platform_sync.py` | `SteamSyncJob`, `XboxSyncJob` | `steam_sync_job`, `xbox_sync_job` | Per-user Steam / Xbox achievement-progress sync (one file, two classes). |
 | `alt_titles_backfill.py` | `AltTitlesBackfillJob` | `alt_titles_backfill_job` | Walks scraped games to refresh `games.alternate_titles` without re-pulling other metadata. |
 | `hltb_bulk.py` | `HLTBBulkLookupJob` | `hltb_bulk_job` | Bulk HowLongToBeat lookup — auto-applies high-confidence primary matches, queues the rest into `hltb_pending_matches` for review. |
+| `webp_migrate.py` | `WebPMigrateJob` | `webp_migrate_job` | Bulk JPEG/PNG → WebP format migration for boxart / boxart_3d / fanart / screenshots (FU.3, v3.6.19). |
 
 ## 3. Lifecycle / states
 
@@ -147,8 +148,10 @@ CREATE INDEX idx_job_queue_status ON job_queue(status);
 
 **Why every persist call uses `_retry_on_locked`:** the long-lived
 progress connection in a worker can race with the queue-table writes from
-HTTP-handler threads. Helpers in `base.py` retry 5× with exponential
-backoff before raising.
+HTTP-handler threads. The `_retry_on_locked` helper retries **3×** by
+default (4 total attempts) with exponential backoff before raising; the
+high-traffic helpers `persist_job_progress` and `_commit_with_retry`
+override `max_retries=5`.
 
 ## 5. Singleton-lock contract
 
@@ -180,12 +183,16 @@ Lock-name → DB column-name mapping (used in routes / `request_shutdown`):
 | Lock file | Job singleton |
 |-----------|---------------|
 | `bulk_scrape.lock` | `bulk_scrape_job` |
-| `ra_sync.lock`, `ra_refresh.lock` | RA sync / refresh |
-| `psn_refresh.lock` | PSN refresh |
-| `museum_generate.lock` | Museum generate |
-| `image_resize.lock` | Image resize |
-| `steam_sync.lock`, `xbox_sync.lock` | Platform sync |
-| `alt_titles_backfill.lock`, `hltb_bulk.lock` | Maintenance jobs |
+| `ra_sync.lock` | `ra_sync_job` |
+| `ra_refresh.lock` | `ra_refresh_job` |
+| `psn_refresh.lock` | `psn_refresh_job` |
+| `museum_generate.lock` | `museum_generate_job` |
+| `image_resize.lock` | `image_resize_job` |
+| `steam_sync.lock` | `steam_sync_job` |
+| `xbox_sync.lock` | `xbox_sync_job` |
+| `alt_titles_backfill.lock` | `alt_titles_backfill_job` |
+| `hltb_bulk.lock` | `hltb_bulk_job` |
+| `webp_migrate.lock` | `webp_migrate_job` |
 
 **Degradation notes** (`base.py:316-341`):
 
@@ -205,7 +212,9 @@ The `release_singleton_fd(self)` helper
 from multiple branches of a terminal cleanup without re-releasing.
 
 History: Pass 41.6 landed the helper + `BulkScrapeJob` reference
-implementation; Pass 41.6.A-extend rolled it out to the other nine classes.
+implementation; Pass 41.6.D rolled it out to nine more job classes. When
+`WebPMigrateJob` landed later (FU.3, v3.6.19) it followed the same pattern
+from the start, bringing the total to eleven.
 
 ## 6. Cancellation semantics
 
@@ -243,7 +252,11 @@ under the lock and `time.sleep(0.2)` between polls. `cancel()` clears
 
 PSNRefreshJob has an extra inner thread (`_fetch_titles`) with its own
 `threading.Event` cancel signal — that pattern is the exception, not the
-rule, and exists because the outer 300 s join() can time out (Pass 41.6 C).
+rule, and exists because the outer `fetch_thread.join(timeout=FETCH_TIMEOUT)`
+(`FETCH_TIMEOUT = 300` seconds, defined inside the relevant method in
+`services/jobs/psn_refresh.py`) can time out — see Pass 41.6 in
+`roadmap.md`, sub-item (3) of the original plan ("`_fetch_titles` inner
+thread cancel event").
 
 ## 7. `processing` field contract
 
@@ -272,7 +285,17 @@ two-zone progress layout and the toast detail-line table.
 
 1. Sets the module-level `shutdown_requested` Event — collapses every
    `shutdown_requested.wait(d)` in every worker to ~0 ms.
-2. Calls `.cancel()` on each running singleton.
+2. Calls `.cancel()` on each running singleton. The candidate list in
+   `services/jobs/base.py::request_shutdown` enumerates:
+   `bulk_scrape_job`, `ra_sync_job`, `ra_refresh_job`, `psn_refresh_job`,
+   `museum_generate_job`, `image_resize_job`, `steam_sync_job`,
+   `xbox_sync_job`, `alt_titles_backfill_job`, `hltb_bulk_job`. **Note:**
+   `webp_migrate_job` is intentionally absent today — SIGTERM mid-WebP
+   migration leaves the row `running` until `mark_jobs_interrupted` flips
+   it on next start, then the user re-runs the job from the top
+   (WebPMigrateJob is idempotent; it adopts existing `.webp` siblings on
+   restart). If you want SIGTERM to cancel `webp_migrate_job` actively,
+   add it to the candidate list.
 3. `join(timeout=)` on each worker thread until the total budget
    (default 5 s) expires.
 
@@ -291,11 +314,15 @@ Anything not persisted in the last progress-tick window (≤ 10 items or
    `BulkScrapeJob` deduplicates by `(system_id, scrape_mode)` and
    auto-dismisses losers (`base.py:606`).
 4. User clicks "Resume" → route calls `<job>.resume_from_params(params,
-   progress)` which restarts the worker at `progress['current']`. Seven
-   classes implement resume (bulk_scrape, ra_sync, ra_refresh, psn_refresh,
-   steam_sync, xbox_sync, museum_generate) using the shared
-   `pad_resume_game_ids` / `restore_progress_counts` /
-   `try_acquire_singleton_or_warn` helpers in `base.py:382-415`.
+   progress)` which restarts the worker at `progress['current']`. **Seven
+   classes implement resume**: `BulkScrapeJob`, `RASyncJob`, `RARefreshJob`,
+   `PSNRefreshJob`, `SteamSyncJob`, `XboxSyncJob`, `MuseumGenerateJob`.
+   Use the shared `pad_resume_game_ids` / `restore_progress_counts` /
+   `try_acquire_singleton_or_warn` helpers in `services/jobs/base.py`
+   (search the symbol names; line numbers drift). The remaining four
+   singletons (`ImageResizeJob`, `AltTitlesBackfillJob`,
+   `HLTBBulkLookupJob`, `WebPMigrateJob`) have no `resume_from_params`
+   — they're idempotent and re-run from the top after `interrupted`.
 
 **`params` must include enough to resume.** Most jobs persist the full
 `game_ids` list in `params` so resume doesn't have to re-query — this
@@ -498,8 +525,9 @@ Wire-up checklist:
    (look at `routes/maintenance.py` for the simplest pattern, or
    `routes/bulk_scrape.py` for full queue handling).
 4. **Add the toast-type wiring** in
-   `static/js/toast-controller.js` (the detail-line dispatch around line
-   1125 + the `getTypeFromKey` mapping ~line 1065).
+   `static/js/toast-controller.js` — extend the `getTypeConfig(type)` switch
+   (around line 1063; grep the symbol name to find it) and the detail-line
+   dispatch that follows.
 5. **(Optional) resume support** — implement `resume_from_params(params,
    progress)`; use `pad_resume_game_ids` + `restore_progress_counts` +
    `try_acquire_singleton_or_warn` from `base.py:382-415` to keep the
@@ -547,12 +575,16 @@ These are the contract; new jobs and refactors must keep them all true.
 
 1. **Every read/write of a shared counter is under `self._lock`.** Reading
    without the lock can return torn writes; writing without it loses
-   updates. `get_status()` snapshots under the lock and computes derived
-   fields outside.
+   updates. `get_status()` may compute derived fields (e.g. `percent`,
+   `processing`) inside the same `with self._lock:` block — the rule is that
+   the counters themselves are never read outside the lock, not that the
+   computation has to happen after lock release.
 2. **Every status persist call (`persist_job_start` / `_progress` /
    `_complete`) happens outside `self._lock`.** Persistence opens its own
    sqlite connection and can take 10-50 ms under WAL contention; holding
-   the in-job lock across that blocks status polls (Pass 41.6 B).
+   the in-job lock across that blocks status polls — see Pass 41.6 in
+   `roadmap.md`, sub-item (2) of the original plan ("move persist_job_progress
+   outside the lock block").
 3. **Every per-iteration delay uses `shutdown_requested.wait(d)`, not
    `time.sleep(d)`.** Bare sleeps block SIGTERM drain (Pass 40.10).
 4. **The terminal status comes from `resolve_terminal_status(self.cancelled)`,

@@ -75,12 +75,28 @@
 ```
 
 #### Status Colors
+
+Two separate token families with overlapping intent — `--status-*` is the
+canonical UI-state surface (use these for success/warning/error toasts,
+form-validation badges, and the launch-indicator chip). `--neon-*` are the
+high-saturation palette tokens (use these for accent borders, tag pills, and
+decorative highlights — they aren't interchangeable with the status set).
+
 ```css
---status-success: #00e676    /* Also --neon-green: #22c55e */
---status-warning: #ffab00    /* Also --neon-orange: #f59e0b */
---status-error: #ff5252      /* Also --neon-red: #ef4444 */
---status-info: var(--primary-cyan)
---neon-gray: #64748b
+/* Canonical status surface */
+--status-success:   #00e676
+--status-warning:   #ffab00
+--status-error:     #ff5252
+--status-info:      var(--primary-cyan)   /* alias — inherits */
+--status-online:    /* per-theme set */
+--status-offline:   /* per-theme set */
+--status-connected: var(--primary-cyan)   /* alias — inherits */
+
+/* Accent palette — decorative, not status-bearing */
+--neon-green:  #22c55e
+--neon-orange: #f59e0b
+--neon-red:    #ef4444
+--neon-gray:   #64748b
 ```
 
 ---
@@ -688,7 +704,7 @@ showNotification('Message', 'success');  // Green
 showNotification('Message', 'error');    // Red
 showNotification('Message', 'info');     // Cyan
 showNotification('Message', 'warning');  // Orange
-showNotification('Auto-dismisses in 3s', 'info', 3000);  // 4th arg: duration in ms
+showNotification('Auto-dismisses in 3s', 'info', 3000);  // 3rd positional arg = duration in ms (optional)
 ```
 
 Two related dialog primitives live in `templates/base.html` (so the CSP-nonce script-tag can inline them): `showConfirm(title, msg, onConfirm, opts?)` and `showModal(title, msg, onConfirm?, showCancel?, onCancel?)`. See CLAUDE.md "Non-Obvious JS / Template Contracts" for the full surface.
@@ -934,7 +950,9 @@ static/css/
 ├── core/               # 1. CORE — loaded first
 │   ├── variables.css   #    CSS custom properties (:root)
 │   ├── reset.css       #    Browser reset / normalize
-│   └── typography.css  #    Font faces, heading hierarchy
+│   ├── typography.css  #    Heading hierarchy, font-family stacks
+│   ├── fonts.css       #    @font-face declarations (local + fallback chain)
+│   └── themes.css      #    [data-theme="..."] per-theme variable overrides
 ├── layout/             # 2. LAYOUT
 │   ├── layout.css      #    Page grid, main content area
 │   ├── sidebar.css     #    Sidebar navigation
@@ -1082,9 +1100,9 @@ Is this style used on 2+ pages?
 - The following headers are set on every response via `@app.after_request` in `app.py`:
   - `X-Content-Type-Options: nosniff`
   - `X-Frame-Options: SAMEORIGIN`
-  - `X-XSS-Protection: 1; mode=block`
   - `Referrer-Policy: strict-origin-when-cross-origin`
-- **Future recommendation**: Add a Content Security Policy (CSP) header once inline styles/scripts are refactored to external files.
+- `X-XSS-Protection` is **intentionally not set** — the legacy XSS Auditor was removed from Chromium/Edge and Safari, can introduce its own information-leak vulnerabilities on Firefox, and is superseded by CSP. Do not re-add it without removing this comment first (see `app.py::set_security_headers`).
+- **CSP rollout in progress** — `FU.1` in `roadmap.md` is staging a report-only → enforcing migration; v3.6.20 landed phase A (every inline `onclick=` migrated to event-bound listeners + `csp_nonce` wired through `base.html`).
 
 ### Login Security
 - Minimum password length: 8 characters.
@@ -1198,8 +1216,11 @@ File placement rules are in §20 (CSS Architecture).
 | Partials / macros | `_leading_underscore.html` | `_bulk_scrape_modal.html`, `_bulk_edit_modal.html` |
 | Jinja macros | `snake_case` | `{% macro rating_badge(system, value) %}` |
 
-Partials and macros should go under `templates/_partials/` or
-`templates/_modals/` (to be introduced in Pass 9 — see `roadmap.md`).
+Partials and macros live under `templates/_macros/` (Jinja macros — e.g.
+`_macros/breadcrumb.html`, `_macros/sticky_subnav.html`),
+`templates/_modals/` (modal partials — e.g. `_modals/select_filter_modal.html`),
+and `templates/_settings_tabs/` (the six settings-page panel partials added
+in Pass 38.6 — `account / library / scraping / data / customization / system`).
 
 ### 24.5 Database
 
@@ -1213,9 +1234,12 @@ Partials and macros should go under `templates/_partials/` or
 
 ### 24.6 Changelog / version artefacts
 
-See §21 for tag types.  Entries in `data/changelog.yaml` use `type`
-values from a fixed set (`enhancement`, `fix`, `chore`, `security`, etc.);
-see §17 for the full list.
+See §21 for tag types and §17 for the colour reference of the tags
+documented as the canonical-display set. The `data/changelog.yaml`
+`type` field is **not** strictly closed — historical entries use values
+outside the canonical set (release-naming themes, minor variations). New
+entries should prefer the §17 set when possible; treat off-set values
+in old entries as historical and don't retroactively rewrite them.
 
 ### 24.7 When to rename
 
@@ -1240,7 +1264,9 @@ user_version`. Every migration is run at most once per install.
 ### 25.1 Authoring a migration
 
 1. Create `services/migrations/scripts/NNN_short_description.py` where
-   `NNN` is the next zero-padded number (currently `004_…` is next).
+   `NNN` is the next zero-padded number. Find the current next-number with
+   `ls services/migrations/scripts/ | tail -1` — at time of writing 012 is
+   the latest landed, so the next would be 013.
 2. The module must expose a single function:
    ```python
    def apply(conn):
@@ -1299,5 +1325,7 @@ the rewrite logic against representative fixtures.
 
 ---
 
-*Document Version: 2.5.0*
-*Last Updated: 2026-04-23*
+*This doc is bumped whenever a roadmap pass touches its content; see the git
+log for change history. The standalone document-version footer is intentionally
+omitted — `APP_VERSION` in `config.py` is the single project-wide version
+token.*

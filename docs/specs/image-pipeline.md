@@ -101,13 +101,19 @@ on ingest:
 | `.jpg`    | boxart            | `.webp`           | `.jpg`            |
 | `.png`    | boxart            | `.webp`           | `.jpg`            |
 | `.gif`    | boxart            | `.gif` (preserve) | `.gif` (preserve) |
-| `.mp4`    | video             | `.mp4`            | `.mp4`            |
-| `.pdf`    | manual            | `.pdf`            | `.pdf`            |
+
+The table above lists the **convertible image types** only. Non-convertible
+types — anything whose `image_type` is not in `_CONVERTIBLE_TYPES = {boxart,
+boxart_3d, screenshots, fanart, controllers, hardware}` — bypass
+`preferred_image_extension()` entirely and keep their original extension
+regardless of `IMAGE_FORMAT`. That covers videos (`.mp4`), manuals (`.pdf`),
+and anything else the function isn't asked to decide about. Don't add new
+extension rows to the table for non-image types — wire the new `image_type`
+into `_CONVERTIBLE_TYPES` if it should be re-encoded, otherwise leave it out.
 
 GIFs are never re-encoded — `img.save(path, 'GIF')` without `save_all`
 flattens animated GIFs to the first frame, so the only safe path is
-passthrough. Videos and manuals aren't in `_CONVERTIBLE_TYPES`, so they
-keep whatever extension they arrived with.
+passthrough.
 
 **Pass 45.6 — `MAX_IMAGE_PIXELS` cap.** Pillow's
 `Image.MAX_IMAGE_PIXELS` is set at module import in both
@@ -125,9 +131,15 @@ in the security log rather than a generic "format normalize failed").
 screenshot batch aborted the whole dedup loop for the game being
 scraped.
 
-`app.py:22` sets a stricter 25 MP cap globally for any other Pillow
-call sites; the 64 MP image-pipeline cap is per-module and overrides it
-where the pipeline runs.
+`app.py:22` sets a stricter 25 MP cap before any other Pillow call sites.
+`Image.MAX_IMAGE_PIXELS` is a process-global singleton (the last assignment
+wins), so the effective cap at any moment depends on import order: once
+`services/image_utils.py` has been imported anywhere in the process, the 64 MP
+cap is live everywhere. In practice the pipeline modules load lazily inside
+`scraper/` and `services/jobs/`, so the 25 MP cap holds for the first few
+requests and the 64 MP cap holds once the image pipeline is warm. If you need
+a single source of truth, set `config.IMAGE_MAX_PIXELS` and reference it from
+both modules instead of relying on import-order convergence.
 
 ---
 
@@ -276,16 +288,22 @@ conservative width descriptor (PIL-read width if cheap, else 760 px as
 a 7:10 ratio upper bound for a 1080-tall standardized boxart). Missing
 original → empty string, so templates can `{% if srcset %}` cleanly.
 
-Pass 18.3 wired this into the detail-page hero only. The card-grid
-case is deliberately deferred (FU.2 in roadmap) because 500 cards × per-
-card `stat` would be expensive without a request-scoped batch
-existence cache; the plan is a single `os.scandir` per request feeding
-`boxart_srcset` from `build_game_card()`.
+Pass 18.3 wired this into the detail-page hero. **FU.2 (v3.6.18)
+extended it to the card grid.** The grid path uses a request-scoped batch
+existence cache to avoid 500-cards × per-card `stat`:
+`services/image_utils.py::boxart_dir_listing()` memoizes a single
+`os.scandir()` per request against `flask.g`, and
+`boxart_srcset(filename, existing=…)` skips the PIL width-read in batch
+mode (falls back to a 760 px width descriptor).
+`services/game_metadata_service.py::build_game_card()` emits
+`boxart_srcset` + `boxart_3d_srcset` on every card payload, and the
+front-end's `renderGameCard()` consumes them — clearing `srcset` and
+`sizes` in the 3D → 2D `onerror` fallback so the swap renders cleanly.
 
 Variants are regenerated unconditionally on each finalize call (and
 after every `ImageResizeJob` write) so they never drift from the
-primary. The bulk JPEG → WebP migration endpoint (FU.3 in roadmap) is
-also deferred.
+primary. **FU.3 (v3.6.19)** landed the bulk JPEG/PNG → WebP migration
+endpoint — see §12.1 below for the contract.
 
 ---
 
@@ -380,7 +398,10 @@ entire filesystem — same shape of bug applies to media directories,
 though the orphan cleaner takes the `os.listdir` route (one level) so
 the rglob risk is concentrated in `scraper/rom_tools.py`.
 
-**Safe pattern** (used in `rom_tools.py:386, 1018, 1180, 1538`):
+**Safe pattern** (used at every ROM_PATH-walk site in
+`scraper/rom_tools.py` — `grep -n "rglob" scraper/rom_tools.py` to enumerate;
+each is guarded by `_safe_under_root(p, root_resolved)`, defined near the
+top of the module):
 
 ```python
 root = pathlib.Path(ROM_PATH).resolve()
@@ -430,7 +451,51 @@ each save it regenerates the responsive variants so cards pick up the
 new primary on the next page load.
 
 The job does **not** convert `.jpg` / `.png` to `.webp` — extensions
-are preserved. The bulk-format-migration endpoint is FU.3 (deferred).
+are preserved. For format migration, use `WebPMigrateJob` (§12.1).
+
+**Failure handling.** Per-file exceptions raised inside
+`_standardize_with_tracking` are caught, logged at WARNING (with the
+filename), and the loop continues; the offending file is bucketed as
+`'failed'` and surfaces in the job-status snapshot via `failed_count`
+alongside `skipped` / `upscaled` / `downscaled`. The job only aborts
+early on cancel, pause, or shutdown — never on a single bad file.
+
+### 12.1 `WebPMigrateJob` (FU.3, v3.6.19)
+
+`services/jobs/webp_migrate.py::WebPMigrateJob` (singleton
+`webp_migrate_job`). REST surface:
+`POST /api/maintenance/convert-to-webp/{start,status,cancel}` in
+`routes/maintenance.py`.
+
+- **Worklist:** the `_SOURCES` tuple at `services/jobs/webp_migrate.py:34-39`
+  enumerates four columns — `boxart`, `boxart_3d`, `fanart`, `screenshots`
+  (with `is_csv=True` for the last one). Manuals are out of scope by
+  omission, not by skip-branch (the `manual` column is simply not in
+  `_SOURCES`). The per-file filter is the allowlist
+  `_CONVERTIBLE_EXTS = {'.jpg', '.jpeg', '.png'}`
+  (`webp_migrate.py:44`); anything else — `.gif`, `.webp`, `.bmp`, etc. —
+  is left untouched (`.gif` because Pillow's animated-WebP output is lossy;
+  others because they're too rare to handle without per-format edge-case
+  coverage).
+- **Per-file order:** PIL save to a `.webp` sibling → integrity-verify
+  the new file (open + `verify()`) → DB `UPDATE` to the new filename →
+  unlink the original. If verify fails the partial `.webp` is removed
+  and the original is left untouched; the file is bucketed as failed.
+- **Disk-space precheck:** runs inside `_run()` after the worker thread
+  has spun (so `start()` itself returns immediately with `success: True`).
+  The precheck sums the byte size of every in-scope file
+  (`in_scope_bytes`). If `free < 2 × in_scope_bytes` the job logs a
+  human-readable error, transitions to `failed`, and surfaces the reason
+  via `get_status()` — WebP is usually smaller, but the 2× floor covers
+  the transient "old + new both on disk" window per file.
+- **Resume:** the job adopts an existing `.webp` sibling if it appears
+  intact (open + `verify()`); the original is unlinked, the DB row
+  updated, and the file counted as already-migrated.
+- **Responsive variants:** after each successful conversion, the legacy
+  `-sm.jpg` / `-md.png` siblings are wiped and `_make_responsive_variants`
+  re-runs against the new primary so srcset stays consistent.
+- **Lock:** `database/job_locks/webp_migrate.lock` (singleton, same
+  pattern as Pass 41.6.A).
 
 ---
 

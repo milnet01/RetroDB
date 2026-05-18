@@ -5,6 +5,16 @@ identified in successive reviews (2026-04-21 onwards). Items are ordered so
 that earlier passes establish the patterns used by later ones (service-layer
 carve-outs, response helpers, etc.).
 
+> **Find a specific pass:** `grep -nE "^#### Pass [0-9]+(\.[0-9]+)?(\.[A-Z])?" roadmap.md` lists every pass with its line number. For free-text search use `git log --grep "Pass 41.6"` or `grep "FU.2" roadmap.md`.
+
+## Table of contents
+
+- [§ Active](#active) — open work, grouped by theme
+- [§ Doc-sweep history](#doc-sweep-history) — meta-log of cold-eyes / indie-review sessions
+- [§ Done index](#done-index) — landed passes, organised by shipped version
+- [§ Scope notes — considered and dropped](#scope-notes--considered-and-dropped) — work explicitly excluded
+- [§ Periodic Independent Review](#periodic-independent-review) — cadence and procedure for the multi-agent audit
+
 Each item lists:
 - **Target** — file(s) and approximate line range / LOC
 - **Why** — the specific issue (oversized function, duplicated logic, mixed
@@ -14,7 +24,12 @@ Each item lists:
 - **Est. reduction** — rough LOC delta in the source file
 - **Status** — `todo` / `in-progress` / `done`
 
-Open items are grouped by theme below; ship Tier-1 items (Pass 40) first.
+Open items are grouped by theme below. The 2026-04-24 Tier-1 indie-review
+sweep (Pass 40) is fully landed (v3.4.1 → v3.5.0) — current highest-priority
+active work is the FU.x follow-up chain (CSP enforcing, srcset, WebP
+migration), the Pass 38.1 hybrid-scraper fallback-loop carve-out, and the
+Pass 47.x fundraising-platform chain.
+
 The compact "Done index" near the bottom lists landed passes by version —
 detail lives in git history (`git log --grep "Pass NN"`).
 
@@ -24,21 +39,30 @@ re-running the multi-agent audit that surfaces new passes.
 
 ---
 
+<a id="active"></a>
+
 ## Active
 
 Grouped by theme. Within each theme, items ordered by priority (CRITICAL →
 HIGH → MEDIUM → LOW). The 2026-04-24 indie-review Tier-1 sweep (Pass 40)
-is highest priority overall — sixteen findings carry concrete exploit
-paths or silent-corruption vectors under routine use.
+fully landed. FU.2 (grid-card srcset, v3.6.18) and FU.3 (WebP migration,
+v3.6.19) have also landed; the remaining top-priority work is FU.1 phase B/C
+(flip CSP from report-only to enforcing and remove `unsafe-inline`), the
+Pass 38.1 hybrid-scraper fallback-loop carve-out, and the Pass 47.x
+fundraising-platform chain.
 
-### 📝 Cold-eyes 2026-05-18
+<a id="doc-sweep-history"></a>
 
-> Docs reviewed: 12 across 7 lanes. Loops to clean: 2. Findings fixed: ~30 verified + 8 new spec docs authored.
+### Cold-eyes 2026-05-18 (doc-sweep history)
 
-Full `/cold-eyes` documentation sweep with parallel per-lane reviewers
-(contracts / design-standards / ops-install / roadmap-active /
-roadmap-history / dev-hygiene / spec-gaps), all severities folded in,
-two verify loops to convergence.
+> Docs reviewed: 12. Reviewer lanes: 7 (contracts / design-standards /
+> ops-install / roadmap-active / roadmap-history / dev-hygiene / spec-gaps).
+> Loops to clean: 2. Findings fixed: 30 verified + 8 new spec docs authored.
+> Audit trail; not actionable open work — see git log around 2026-05-18
+> for per-file diffs.
+
+Full `/cold-eyes` documentation sweep with parallel per-lane reviewers,
+all severities folded in, two verify loops to convergence.
 
 - **CLAUDE.md** — 8 fixes: showConfirm/showModal definition site (`templates/base.html` not utils/main/toast/game-modals); EXCLUDE_FILES list rewrite (full set + `data/.secret_key` + INCLUDE_IMAGE_DIRS semantics); STAGING_DIR default path; "22 sections" → "25 sections"; lockfile-hashes "MUST" softened to "prefers, falls back"; `/ultrareview` annotated as Claude Code skill; `data-sticky-scope` claim removed (not implemented); `getThemedIcon` location corrected to `static/js/toast-controller.js`; `--break-system-packages` made cross-platform-conditional.
 - **README.md** — 5 fixes: Python floor 3.8 → 3.10; system count 277 → 150+ (verified against `config.py`); Cathedral display ↔ `christian` token mapping documented; backup-on-update list expanded; end-user-vs-dev install ambiguity resolved.
@@ -56,6 +80,187 @@ two verify loops to convergence.
 - **CSRF exempt-set duplication** — `auth.md` declared canonical owner; `api-contracts.md §9.1` now points at it instead of listing the set independently.
 - **MCP feedback** — captured in `/mnt/Games/Scripts/Linux/RetroDB_Ants_MCP_Feedback.md` (appended to the existing test-audit feedback). Two HIGH suggestions: case-insensitive contract-name matching in `cold_eyes_partition` + `project_layout`; `data/changelog.yaml` recognition alongside `CHANGELOG.md`. One correctness call-out: `cold_eyes_partition` summary field mentioned files not in `doc_paths`.
 - **Source**: cold-eyes-2026-05-18 docs sweep.
+
+#### Cold-eyes 2026-05-18 sweep #2
+
+Second full `/cold-eyes` sweep on the same day after the 2026-05-18 #1
+landed — driven by user request to re-cover all lanes after the FU.x
+follow-up chain shipped (v3.6.18 / v3.6.19 / v3.6.20). Two loops to
+convergence. 20 doc files edited; ~100 findings across all severities
+verified and fixed in-place. Per-doc highlights:
+
+- **CLAUDE.md** — 7 fixes: DB path corrected (`database/roms.db` not
+  `data/retrodb.db`); `/ultrareview` glossed inline; staging-binary
+  description corrected; theme list rewritten "display-name first"; the
+  hard-coded `/home/ants/Pictures/` operator path removed; `background`
+  themed-icon bucketed under job-states; theme list deduplicated.
+- **README.md** — 3 fixes: backup-on-update list expanded into
+  three-thing list (database/data/config); new "Deployment" section
+  pointing at `docs/PROXY-DEPLOY.md`; theme naming order canonicalised
+  to "Cathedral (`christian` internal key)".
+- **CONTRIBUTING.md** — 5 fixes: clone URL rewritten with upstream +
+  fork variants; Python-version row delegated to README; `database/roms.db`
+  delete now carries a backup-first warning + `RETRODB_DB_PATH` alternative;
+  `30 route files at time of writing` snapshot removed; CI checklist
+  rewritten as full blocking-list (six checks, every one hard-fail).
+- **SECURITY.md** — 1 fix: "thank-you in CONTRIBUTING.md" promise rewritten
+  to "Credit in the changelog (unless you ask to remain anonymous)".
+- **LEGAL.md** — 2 fixes: trademark list annotated as illustrative;
+  duplicate closing License section removed.
+- **roadmap.md** — 6 fixes: TOC + grep recipe added at top; `<a id="…">`
+  anchors added; `Pass 41.6.A-extend` renamed to `Pass 41.6.D`; lowercase
+  `41.13c` survivor → `41.13.C`; §Active opener rewritten; v3.6.18 / 19 / 20
+  added to v3.6.x rollup; Cold-eyes 2026-05-18 #2 entry added (this block);
+  doc-sweep meta heading restructured + emoji dropped.
+- **docs/RETRODB_DESIGN_STANDARDS.md** — 6 fixes: §22 X-XSS-Protection
+  line replaced with "intentionally not set" + rationale; §20 CSS tree
+  added `themes.css` + `fonts.css` to `core/`; §22 CSP "Future
+  recommendation" replaced with FU.1-in-progress note; §23 partials/macros
+  rewritten in present tense (real dirs); status vs neon colour tokens
+  split into distinct token families with explicit guidance on which
+  controls which; standalone doc-version footer dropped.
+- **docs/STANDARDS_ADDENDUM.md** — 2 fixes: stale `3.6.14` / `2026-05-17`
+  example replaced with `X.Y.Z` / `YYYY-MM-DD` placeholders; §16 → §17
+  changelog-tags anchor fix.
+- **docs/specs/api-contracts.md** — 8 fixes: 202 row now reserved /
+  not-currently-emitted; 422 row marked aspirational + new §3.2 describes
+  the legacy auth-validator shape; bulk-scrape paths corrected to
+  hyphen-not-slash form; `/ready` shape documented with `str(e)` carve-out;
+  §1 cross-reference dropped the wrong §10 claim; CSP table row updated
+  to FU.1 chain; `_rate_limit` "in addition to" wording; CSRF "HMAC-equivalent"
+  rewritten as "per-session random token, constant-time compared".
+- **docs/specs/auth.md** — 5 fixes: §11 cross-reference corrected to
+  api-contracts.md + §22; §9 change-password bucket now names the shared
+  `_login_attempts` OrderedDict + LRU eviction; §9 force-change rate-limit
+  justification rewritten with explicit carve-out condition;
+  `TestPass45_1*` glob replaced with exact class name; §3 viewer line
+  rewritten; admin_required/editor_required asymmetric-on-`/api/*` warning
+  callout added; §8 PBKDF2 legacy format shown side-by-side.
+- **docs/specs/image-pipeline.md** — 5 fixes: FU.2 + FU.3 "deferred"
+  paragraphs rewritten as "v3.6.18/19 landed" with contract detail;
+  new §12.1 `WebPMigrateJob` section documenting worklist (`_SOURCES` +
+  `_CONVERTIBLE_EXTS = {.jpg, .jpeg, .png}`), per-file order, disk-space
+  precheck (runs inside `_run()`, not `start()`), resume by adopting
+  existing `.webp` siblings; format-decision table cleaned (non-image
+  rows replaced with prose note); §11 `rom_tools.py` line numbers
+  replaced with grep recipe; §3 `MAX_IMAGE_PIXELS` clarified as
+  process-global singleton (import-order-dependent); §12 `ImageResizeJob`
+  failure-handling bullet added.
+- **docs/specs/jobs.md** — 8 fixes: §2 inventory "Ten singletons" →
+  "Eleven singletons" + new `WebPMigrateJob` row; TL;DR count updated;
+  §4 `_retry_on_locked` "5×" → "3× by default; progress + commit override
+  to 5×"; §5 lock table de-collapsed into per-singleton rows; §6 magic
+  300 s → `FETCH_TIMEOUT = 300` named constant; §8 candidate list
+  enumerated + `webp_migrate_job` carve-out called out; §8 resume-class
+  count corrected (seven) and the four non-resuming jobs named; §13
+  invariant 1 softened (counter reads under lock, derived fields can be
+  inside the same `with`); §11 step 4 `getTypeFromKey` → `getTypeConfig`;
+  §6/§13 Pass 41.6 sub-letter cites replaced with prose pointers.
+- **docs/specs/migrations.md** — 7 fixes: §6 explicit callout for
+  migration 012's inline `conn.commit()` + the crash-window semantics
+  (rewritten to match runner code precisely); §3 quoted error string;
+  §10 `_add_column_if_missing` strict helper required for new migrations;
+  §11 smoke-test command rewritten with `config.DB_PATH` + four boot
+  PRAGMAs; §13 heading rename; §13 migration 012 row caveat; §4 Pass 41.2
+  narrative rewritten with worked-exception framing; `_foreign_key_count`
+  helper home clarified (per-migration local in 011, not in `_helpers.py`).
+- **docs/specs/scrapers.md** — 6 fixes: §2 AI key names corrected to
+  `ai_*` prefix; §2 RAWG key clarified (`rawg` JSON, `RAWG_API_KEY` fallback);
+  §5 fill-only invariant split into "scraper UPDATEs" (COALESCE) vs
+  "AI Fill" (bare `field = ?` + `should_apply` filter) with audit-column
+  exception called out; §3 fallback breaker list narrowed to actual five
+  sources; §4 `user_score` FIELD_SOURCES row corrected (rawg → igdb →
+  screenscraper → ai); §4 `save_type` carve-out described (`['manual']`
+  sentinel); §6 priority-boost formula rewritten.
+- **docs/specs/settings.md** — 9 fixes: explicit blockquote that
+  `settings_manager.py` lives at project root (no `services.` prefix);
+  §322 line citation; "Convention (not enforced by code)" framing for
+  the validators-at-route-layer rule; six-tab partial paths replacing
+  stale `templates/settings.html`; `static/js/settings-page.js` /
+  `emulators-settings.js` replacing non-existent `static/js/settings.js`;
+  canonical test home `tests/test_launch_settings_validators.py` (not
+  `test_settings_validators.py`); `validate_rom_tools_value` testability
+  entry added; `_deep_merge` list-replacement caveat; store-count
+  reconciled to six (matches table).
+- **docs/specs/themes.md** — 5 fixes: theme picker path corrected to
+  `templates/_settings_tabs/library.html`; "Elite 1984" → "Elite"
+  canonicalised across §2 / §8 / §10; `26 keys` → "see §7 category table";
+  last "See also" path updated.
+- **docs/PROXY-DEPLOY.md** — 5 fixes: opener softened ("required when
+  behind a proxy"); ProxyFix multi-hop note now acknowledges patch-every-upgrade
+  burden + env-var feature-request pointer; upload-limits cite corrected
+  to `config.py` (was `app.py`); pass-ID anchor genericised; Related-section
+  grep pointer instead of bare ID.
+- **docs/ROM_NAMING_STANDARD.md** — 7 fixes: M3U folder/M3U structure
+  example rewritten with `(USA)` tags everywhere consistent (top, middle,
+  table); disc-file naming rule clarified (folder + M3U must agree, disc
+  base names free); region table annotated against `region_re` actual
+  allowlist; validation-rules list extended with issue codes; meta-apology
+  parenthetical deleted; archive-scanner staging folder corrected to
+  hard-coded `tempfile.gettempdir()/retrodb_m3u_staging` (not configurable);
+  Systems Classification points at `services.game_utils::get_system_type`;
+  standalone version + date footer dropped.
+- **docs/README.md** — 1 fix: `docs/requirements.txt` description corrected
+  (historical copy of project deps, not docs-build deps).
+- **audit_hygiene.md** — 1 fix: "0 actionable findings" claim dated +
+  "verify before quoting" disclaimer added.
+- **Source**: cold-eyes-2026-05-18 sweep #2 (post-FU.x).
+
+#### Cold-eyes 2026-05-18 #2 — deferred items folded into roadmap
+
+The sweep surfaced several items the cold-eyes skill flags as code-side
+(out of scope for a docs-review skill) or as known follow-up gaps. They
+are tracked here so the next pass picks them up:
+
+- **`services/jobs/base.py::request_shutdown` candidate list** — does
+  not include `webp_migrate_job` today, so SIGTERM mid-WebP-migration
+  doesn't actively cancel the job (relies on `mark_jobs_interrupted` +
+  user-driven re-run on next boot). Decide: add `webp_migrate_job` to
+  the candidate list (active cancel on SIGTERM), or document the carve-out
+  in the spec as intentional. Spec currently documents the carve-out.
+- **`services/jobs/base.py:270` code comment** — says `data/job_locks/`
+  but the resolved path is `database/job_locks/`. Stale code comment.
+- **`services/jobs/base.py:375` resume-helpers docstring** — says "Six
+  job classes" but grep across `services/jobs/*.py` for
+  `def resume_from_params` returns seven. Doc on the spec side now says
+  seven; sync the code-side docstring.
+- **`tests/test_migrations.py:351-353`** — comment encodes the inverted
+  boot order (`ensure_user_tables` after `init_database`). The test
+  passes because it manually skips `ensure_user_tables`, but the comment
+  contradicts `app.py:1545-1546`. Update the comment.
+- **`build_dist.py:38-40` `STAGING_DIR` default** — still points at the
+  retired `/mnt/Storage/Scripts/Linux/Staging_Area/RetroDB` drive. The
+  env-var override (`RETRODB_STAGING_DIR`) covers production use, but the
+  default is dead. Bump the default to the current `/mnt/Games/…` path
+  or to a portable home-dir fallback.
+- **`services/jobs/webp_migrate.py` disk-space precheck position** —
+  precheck runs inside `_run()` after the worker spins, so `start()`
+  returns `success: True` even when the precheck will fail. Move the
+  precheck into `start()` so the user sees the refusal synchronously.
+- **`scraper/rom_tools.py:804`** — `extract_folder.rglob(...)` runs
+  without the `_safe_under_root` guard the other rglob sites carry. The
+  root is a tempdir (not user-controlled) so the risk is bounded, but
+  the invariant should explicitly cover this case (either guard it or
+  document the carve-out).
+- **`retrodb.spec:96` vs `build_dist.py:77` `INCLUDE_IMAGE_DIRS`** — the
+  PyInstaller spec bundles `static/images/controllers/` into standalone
+  builds; the source ZIPs omit it. Decide whether controller images
+  ship with both shapes (add to `INCLUDE_IMAGE_DIRS`) or neither (drop
+  from `retrodb.spec`).
+- **`templates/base.html` line cite for `<meta name="csrf-token">`** —
+  `api-contracts.md` cites lines 340-352 (the fetch patch); the meta tag
+  itself is at line 27. Minor — refine the cite.
+- **`docs/specs/auth.md` — no TOC** on a 508-line spec; same for several
+  other specs >300 lines. Token-tax for LLM implementers; add anchor lists.
+- **`CLAUDE.md` — no TOC** on a 191-line file with 7 H2s.
+- **`atomic_write_bytes` vs `atomic_write_text` clarification** — the
+  settings spec describes `.secret_key` write semantics as going through
+  `atomic_write_bytes(..., mode=0o600)`; the actual call is
+  `atomic_write_text(..., mode=0o600)` at `app.py:118-119`, and
+  `atomic_write_bytes` itself defaults to `0o644`. Spec wording needs
+  a final pass.
+
+- **Source**: cold-eyes-2026-05-18 sweep #2.
 
 ### Carry-overs from landed passes
 
@@ -310,11 +515,11 @@ two verify loops to convergence.
      patreon: <username-from-47.3>
      custom: ['https://buymeacoffee.com/<username-from-47.5>']
      ```
-  2. **README.md** — add a "Support development" section above the
-     existing "License" section (line 122) with badges (Sponsor /
-     BMAC / Patreon) and a one-paragraph framing: "RetroDB is free
-     and open source. If it saves you time, consider tipping — every
-     bit helps keep solo development sustainable."
+  2. **README.md** — the "Support development" section landed in Pass 47.1
+     (currently above the License section; grep `## Support development`
+     to find it). Pass 47.6 step 2 is to expand it with badges (Sponsor /
+     BMAC / Patreon) once the BMAC/Patreon usernames from 47.3/47.5 are
+     live. Don't add a second section — extend the existing one.
   3. **In-app surface** — fold a "Support development" panel into the
      existing settings page (`templates/settings.html`) or the About
      modal. Three external links + a one-line note. **No paywalled
@@ -1565,7 +1770,7 @@ two verify loops to convergence.
   Tests: `tests/test_pass41_security.py::TestPass41_6A/B/C` (7 cases);
   test fixtures updated to release the FD in teardown.
 
-#### Pass 41.6.A-extend Apply singleton lock to remaining 9 job classes (carry-over from 41.6)
+#### Pass 41.6.D Apply singleton lock to remaining 9 job classes (carry-over from 41.6.A)
 
 - **Target**: `ra_sync`, `ra_refresh`, `psn_refresh`,
   `museum_generate`, `image_resize`, `steam_sync`, `xbox_sync`,
@@ -1805,7 +2010,7 @@ two verify loops to convergence.
   `for="gemOtherPlatforms"` (was focusing the sibling text input —
   functional keyboard-focus bug, HIGH, not MEDIUM);
   implicit association via wrapping is correct. C (HIGH div-as-button)
-  and D (MEDIUM label-as-heading) deferred to Pass 41.13c carry-over —
+  and D (MEDIUM label-as-heading) deferred to Pass 41.13.C carry-over —
   needs browser verification across 8+ template files. Tests:
   `tests/test_pass41_security.py::TestPass41_13A/B` (3 cases).
 
@@ -2868,6 +3073,8 @@ weren't worth blocking the ship on.  Ordered by rough priority.
 
 ---
 
+<a id="done-index"></a>
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
@@ -3188,8 +3395,28 @@ in its **Status** line; `grep "done (v3.5" roadmap.md` enumerates all.
   Three pre-existing source-grep tests widened via new helper
   `tests._util.read_settings_with_partials()`. Suite 1039 → 1084
   (+45). (v3.6.17)
+- [x] **FU.2** — Grid-card boxart srcset: `boxart_dir_listing()`
+  request-scoped scandir cache + `boxart_srcset(filename, existing=…)`
+  batch mode (no per-card PIL width read); `build_game_card()` emits
+  `boxart_srcset` / `boxart_3d_srcset`; `renderGameCard()` clears
+  `srcset`/`sizes` in the 3D→2D `onerror` fallback. (v3.6.18)
+- [x] **FU.3** — Bulk JPEG/PNG → WebP migration endpoint:
+  `services/jobs/webp_migrate.py::WebPMigrateJob` (singleton
+  `webp_migrate_job`); `POST /api/maintenance/convert-to-webp/
+  {start,status,cancel}` in `routes/maintenance.py`. Worklist covers
+  boxart / boxart_3d / fanart / screenshots; manuals + gifs skipped;
+  pre-flight disk-space precheck (refuse if `free < 2 × in_scope_bytes`);
+  resumes by adopting existing `.webp` siblings; wipes legacy
+  `-sm.jpg` / `-md.png` and re-runs `_make_responsive_variants`
+  after each conversion. (v3.6.19)
+- [x] **FU.1 phase A** — CSP enforcing prep: every inline `onclick=`
+  on dialog controls migrated to event-bound listeners + `csp_nonce`
+  wired through `base.html`. Phase B (flip CSP to enforcing mode) and
+  Phase C (remove `unsafe-inline`/`unsafe-eval`) still active. (v3.6.20)
 
 ---
+
+<a id="scope-notes--considered-and-dropped"></a>
 
 ## Scope notes — considered and dropped
 
@@ -3244,6 +3471,8 @@ handed to the audit-tool maintainer without any RetroDB-specific
 context.
 
 ---
+
+<a id="periodic-independent-review"></a>
 
 ## Periodic Independent Review
 

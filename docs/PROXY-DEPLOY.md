@@ -1,7 +1,9 @@
 # Reverse-Proxy Deployment
 
 This document describes the nginx / Caddy / HAProxy configuration required
-when running RetroDB behind a reverse proxy with `RETRODB_TRUST_PROXY=1`.
+when running RetroDB behind a reverse proxy. Setting `RETRODB_TRUST_PROXY=1`
+without one of these in front is unsupported — the trust contract below
+explains why.
 
 ## Why this matters
 
@@ -31,9 +33,12 @@ When `RETRODB_TRUST_PROXY=1` is set:
 
 If your deployment chains multiple proxies (CDN → LB → app), you must:
 
-- Set `x_for`, `x_proto`, `x_host` to the number of trusted hops in
-  the `ProxyFix(...)` call in `app.py` (inside the
-  `RETRODB_TRUST_PROXY` branch).
+- Patch the `ProxyFix(x_for=1, x_proto=1, x_host=1, x_prefix=0)` call in
+  `app.py` (inside the `RETRODB_TRUST_PROXY` branch) so that
+  `x_for` / `x_proto` / `x_host` equal the number of trusted hops. There
+  is no env-var or settings knob for this today — every upgrade has to
+  re-apply the patch. If you need this configurable, file an issue
+  requesting a `RETRODB_PROXY_HOPS` env var.
 - Audit every hop in the chain for the same strip-and-re-emit guarantee.
 
 ## nginx
@@ -131,15 +136,19 @@ makes any forged `X-Forwarded-For` instantly trusted.
 
 ## Related
 
-- `app.py` — ProxyFix wiring (inside the `RETRODB_TRUST_PROXY` env-gate; grep `ProxyFix` to find it).
+- `app.py::set_security_headers` and the ProxyFix wiring (inside the
+  `RETRODB_TRUST_PROXY` env-gate; grep `ProxyFix` to find it).
 - `services/security.py::rate_limit_login` — the IP-based login throttle
   that depends on a real `remote_addr`.
-- Pass 40.16 in `roadmap.md` — the indie-review finding that prompted
-  this document.
+- The reverse-proxy / X-Forwarded-For trust audit in `roadmap.md`
+  (search "X-Forwarded-For" or "ProxyFix") — the indie-review finding
+  that prompted this document.
 
 ## Upload limits
 
-Flask caps request bodies at `config.MAX_UPLOAD_BYTES` (see `app.py`). The nginx
+Flask caps request bodies at `config.MAX_UPLOAD_BYTES`. The constant lives in
+`config.py` (mirror in `config.example.py`); `app.py` only reads it into
+`MAX_CONTENT_LENGTH`. The nginx
 example above sets `client_max_body_size 100m;`. **If you raise the Flask
 limit, also raise the proxy limit** — otherwise nginx returns 413 before the
 request reaches Waitress and the new cap is silently bypassed. Caddy and

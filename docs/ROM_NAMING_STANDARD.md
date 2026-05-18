@@ -1,7 +1,7 @@
 # RetroDB ROM Naming Standard
 
-> **Version**: 1.1  
-> **Last Updated**: 2026-01-20
+> The project-wide version token is `APP_VERSION` in `config.py`; this doc
+> tracks no standalone version. See git log for change history.
 
 This document defines the official ROM file naming conventions for RetroDB. Following these standards ensures consistency, proper sorting, and accurate matching between filenames and scraped metadata.
 
@@ -97,7 +97,16 @@ When a ROM works for multiple regions, use **USA** as the default for consoles.
 | `Brazil` | Brazilian release |
 | `Korea` | Korean release |
 
-> The table above is the **canonical curated set**. Any No-Intro / TOSEC / Redump-style region or language tag the scraper recognises (e.g. `(Asia)`, `(USA, Europe)`, `(En,Fr,De,Es,It)`, `(PAL)`, `(NTSC)`) is also accepted — the table is a recommendation, not a closed allowlist.
+> The table above is the **canonical curated set**. The ROM Reports
+> region check (`routes/reports.py::region_re`) recognises a fixed
+> alternation: `USA`, `Europe`, `Japan`, `World`, `Germany`, `France`,
+> `Spain`, `Italy`, `Australia`, `Brazil`, `Korea`, `Asia`, `En`, `Eu`,
+> `JP`, `US`. Other No-Intro / TOSEC / Redump tags like `(PAL)`,
+> `(NTSC)`, `(En,Fr,De,Es,It)` are recognised by ES-DE and by external
+> scrapers as region/language markers, but ROM Reports will currently
+> flag them as `missing-region`. If you rely on the ROM Reports
+> validator, stick to the alternation above; if you don't, broader tags
+> still parse downstream.
 
 ### Optional Tags (Console)
 
@@ -167,6 +176,11 @@ When a game was released in multiple regions, use **Europe** as the default for 
 
 ## Systems Classification
 
+The mapping from system → `console` / `computer` lives in code at
+`services.game_utils::get_system_type` (used by `routes/reports.py::141`).
+To add a new system or change the classification of an existing one,
+edit that function — the lists below are illustrative.
+
 ### Console Systems (use Region, default USA)
 
 - Nintendo: NES, SNES, N64, GameCube, Wii, Wii U, Switch
@@ -201,12 +215,13 @@ Multi-disc games require special handling for ES-DE compatibility. RetroDB uses 
 
 ### M3U Playlist Structure
 
-An M3U game consists of three components that must share the same base name:
+An M3U game consists of three components that must share the same base name
+(including any region/year/publisher tag):
 
 ```
 roms/psx/
-├── Final Fantasy VII.m3u           # M3U playlist file (this is the "ROM" in RetroDB)
-└── Final Fantasy VII/              # Game folder (same name as M3U, no extension)
+├── Final Fantasy VII (USA).m3u     # M3U playlist file (this is the "ROM" in RetroDB)
+└── Final Fantasy VII (USA)/        # Game folder — same base name as M3U, no .m3u extension
     ├── noload.txt                  # Prevents ES-DE from scanning this folder
     ├── Final Fantasy VII (Disc 1 of 3) (USA).bin
     ├── Final Fantasy VII (Disc 2 of 3) (USA).bin
@@ -227,23 +242,28 @@ Game Name (Region).m3u
 Game Name (Year) (Publisher).m3u
 ```
 
-(Notation matches the rest of this doc — no `{braces}`. The Quick Reference section at the end shows the `{}` template form for clarity.)
 
 ### M3U File Contents
 
 The M3U file contains relative paths to each disc file:
 
 ```
-Final Fantasy VII/Final Fantasy VII (Disc 1 of 3) (USA).bin
-Final Fantasy VII/Final Fantasy VII (Disc 2 of 3) (USA).bin
-Final Fantasy VII/Final Fantasy VII (Disc 3 of 3) (USA).bin
+Final Fantasy VII (USA)/Final Fantasy VII (Disc 1 of 3) (USA).bin
+Final Fantasy VII (USA)/Final Fantasy VII (Disc 2 of 3) (USA).bin
+Final Fantasy VII (USA)/Final Fantasy VII (Disc 3 of 3) (USA).bin
 ```
 
-**Format:** `{FolderName}/{DiscFilename}`
+**Format:** `{FolderName}/{DiscFilename}` — the `{FolderName}` portion must
+match the M3U's base name (without `.m3u`) exactly, region tag included.
 
 ### Disc File Naming
 
-Each disc file inside the folder follows the standard naming with disc indicator:
+Each disc file inside the folder follows the standard naming with disc
+indicator. **The disc file's base name does not have to match the folder's
+base name** — the M3U contents (relative paths) are what stitch them
+together, so short forms like `FF7 (Disc 1 of 3).bin` are fine inside a
+`Final Fantasy VII (USA)/` folder as long as the M3U lists the correct
+relative paths. New rips should still use the canonical form:
 
 ```
 Game Name (Disc X of Y) (Region).ext
@@ -286,7 +306,11 @@ RetroDB's Archive Scanner can automatically create M3U playlists:
 
 1. **Scan** for multi-file archives
 2. **Create M3U** extracts the archive, creates the folder structure, adds `noload.txt`, and generates the M3U playlist
-3. **Original archive** is moved to a staging folder for manual deletion after verification
+3. **Original archive** is moved to a server-side staging folder
+   (`{tempfile.gettempdir()}/retrodb_m3u_staging` — not configurable from
+   the UI; the path is hard-coded in `routes/tools.py`). Manual deletion
+   after verification keeps the original around as a fallback if the
+   extracted set is rejected.
 
 ---
 
@@ -296,13 +320,16 @@ RetroDB Reports will check for the following:
 
 ### Non-Standard Filename Issues
 
-1. **Missing region** (console) - No region tag found
-2. **Missing year** (computer) - No year tag found
-3. **Missing publisher** (computer) - No publisher tag found
-4. **Invalid characters** - Contains `:`, `?`, `*`, etc.
-5. **Underscore usage** - Contains underscores instead of spaces
-6. **Bracket mismatch** - Uses `[]` instead of `()`
-7. **Moved article** - Article at end like "Legend of Zelda, The"
+(Code in parentheses = the issue code emitted by the validator in
+`routes/reports.py` — use these when filtering reports programmatically.)
+
+1. **Missing region** (console) — No region tag found (`missing-region`)
+2. **Missing year** (computer) — No year tag found (`missing-year`)
+3. **Missing publisher** (computer) — No publisher tag found (`missing-publisher`)
+4. **Invalid characters** — Contains `:`, `?`, `*`, etc. (`invalid-chars`)
+5. **Underscore usage** — Contains underscores instead of spaces (`underscore`)
+6. **Bracket mismatch** — Uses `[]` instead of `()` (`bracket`)
+7. **Moved article** — Article at end like "Legend of Zelda, The" (`moved-article`)
 
 ### Name Mismatch Issues
 

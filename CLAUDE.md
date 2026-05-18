@@ -6,8 +6,6 @@ This file holds only non-obvious project contracts and the mandatory workflow.
 For file index / routes / services / JS globals / design tokens, use `ls
 routes/`, `grep`, and the source.
 
-**Maintainer-only:** screenshots live at `/home/ants/Pictures/` on the dev box.
-
 **Global rules apply.** `~/.claude/CLAUDE.md` covers development discipline
 (root-cause fixes, shortest correct implementation, reuse-before-rewrite,
 six-month test, current-idiom external libraries), git/CI cadence (private-repo
@@ -54,9 +52,11 @@ proofs. Never mark a task complete just because those tests pass.
 - State what was verified in the session summary. If something couldn't be
   tested in-session, say so — never imply coverage that wasn't produced.
 - Architecturally significant passes (multi-subsystem, reshapes an abstraction,
-  touches security/auth/data flow): recommend the user run `/ultrareview` (the
-  Claude Code multi-agent cloud review — user-triggered, billed; you cannot
-  launch it) before merging.
+  touches security/auth/data flow): recommend the user run `/ultrareview` before
+  merging. `/ultrareview` is a Claude Code slash-command that dispatches a
+  multi-agent cloud review of the current branch (or PR number) — it is
+  user-triggered and billed; a Claude Code session cannot launch it itself.
+  Maintainer-only.
 - For 3+ step work, post a `step → verify` plan up front (global §12) and tick
   off as you go.
 
@@ -136,11 +136,11 @@ signatures.
 - **Utilities**: `escapeHtml`, `formatNumber` (thin-space thousands), `formatBytes`, `copyToClipboard`, `debounce`, `throttle`, `DOM.$/$$/create/toggle/delegate`, `DateUtils`.
 - **Game modals**: `GameDetailModal.open/close/clearCache`, `GameEditModal.open/save/close`, `HLTBManager.lookup/save/cancel/clear`, `triggerAiFill`.
 - **Sticky nav**: `StickyScroll.to(target)`, `.stackPositions()`, `.updateMargins()`. Mark sticky elements containing anchor links with `data-sticky-nav`. Both `stackPositions()` + `updateMargins()` run on DOMContentLoaded in `main.js`; call them again after tab/panel switches that show/hide sticky navs.
-- **Themed icons**: `getThemedIcon(key, fallback?)` (defined in `static/js/toast-controller.js`) returns icons matching the current theme (e.g. `'error'` → `❌` on cyberpunk, `✗` on matrix). Keys: job types (`bulk-scrape`, `ra-sync`, `ra-refresh`...), states (`paused`, `resume`, `complete`, `queued`, `cancelled`), notifications (`success`, `error`, `warning`, `info`), stats (`stat-success`, `stat-failed`, `stat-skipped`), actions (`starting`, `running`, `cancel`, `save`, `loading`, `background`). In HTML use `data-themed-icon="key"` — `main.js` auto-populates on DOMContentLoaded.
+- **Themed icons**: `getThemedIcon(key, fallback?)` (defined in `static/js/toast-controller.js`) returns icons matching the current theme (e.g. `'error'` → `❌` on cyberpunk, `✗` on matrix). Keys: job types (`bulk-scrape`, `ra-sync`, `ra-refresh`...), job states (`paused`, `resume`, `complete`, `queued`, `cancelled`, `background`), notifications (`success`, `error`, `warning`, `info`), stats (`stat-success`, `stat-failed`, `stat-skipped`), actions (`starting`, `running`, `cancel`, `save`, `loading`). `background` is a state, not an action — matches the bucketing in `toast-controller.js` and `docs/specs/themes.md` §7. In HTML use `data-themed-icon="key"` — `main.js` auto-populates on DOMContentLoaded.
 - **A11y**: `ModalFocusTrap.activate(modalEl, triggerEl, {onEscape, autoFocus})` / `.deactivate()` — WCAG 2.4.3, stacks for nested modals, restores focus to trigger on close.
 - **Number formatting**: Jinja `{{ value|format_number }}`; JS `formatNumber(value)`.
 
-Themes: cyberpunk (default), matrix, amber, ocean, christian (Cathedral), bladerunner, elite (Elite 1984).
+Themes (display name on left, `internal key` in backticks): Cyberpunk (`cyberpunk`, default), Matrix (`matrix`), Amber (`amber`), Ocean (`ocean`), Cathedral (`christian`), Blade Runner (`bladerunner`), Elite (`elite`).
 
 ---
 
@@ -148,7 +148,7 @@ Themes: cyberpunk (default), matrix, amber, ocean, christian (Cathedral), blader
 
 Two shapes:
 - **Source** — small zip; user installs Python + runs `pip install -r requirements.txt`. Cross-platform from one host.
-- **Standalone** — PyInstaller bundle (Python runtime + deps + assets baked in). User just unzips and runs `./retrodb`. PyInstaller has no cross-compile — must build on the target OS.
+- **Standalone** — PyInstaller bundle (Python runtime + deps + assets baked in). User unzips and double-clicks the platform's launcher (`start.sh` / `start.command` / `start.bat`) — the PyInstaller `retrodb` binary sits next to it. PyInstaller has no cross-compile — must build on the target OS.
 
 ```bash
 python3 build_dist.py                       # all 3 source ZIPs
@@ -158,7 +158,7 @@ python3 build_dist.py --standalone          # standalone for host platform
 
 - Output: `STAGING_DIR` constant in `build_dist.py` (currently defaults to a maintainer-local path under `/mnt/Storage/Scripts/Linux/Staging_Area/RetroDB`; override with `RETRODB_STAGING_DIR` env var — see Pass 39.6 in roadmap).
 - Filename: `RetroDB-v{VERSION}-{Platform}.zip` (source) or `RetroDB-v{VERSION}-{Platform}-Standalone.zip`
-- Excluded from source ZIPs: see the `EXCLUDE_FILES`, `EXCLUDE_DIRS`, `EXCLUDE_EXTENSIONS` and the `INCLUDE_IMAGE_DIRS` whitelist in `build_dist.py` (the canonical list). At time of writing this excludes user config (`config.py`, `data/{settings,scraper_settings,rom_tools_config,psn_tokens,xbox_tokens}.json`, `data/.secret_key`), the runtime DB (`data/retrodb.db`, all `.db*` / `.log` files), and scraped media (`static/videos/`, plus every `static/images/<dir>/` that is not in `INCLUDE_IMAGE_DIRS = {'hardware','ratings','systems','avatars'}`). Per-platform: only that platform's start script (`start.sh` / `start.command` / `start.bat`).
+- Excluded from source ZIPs: see the `EXCLUDE_FILES`, `EXCLUDE_DIRS`, `EXCLUDE_EXTENSIONS` and the `INCLUDE_IMAGE_DIRS` whitelist in `build_dist.py` (the canonical list). At time of writing this excludes user config (`config.py`, `data/{settings,scraper_settings,rom_tools_config,psn_tokens,xbox_tokens}.json`, `data/.secret_key`), the runtime DB (the whole `database/` dir — covers `database/roms.db`; `data/retrodb.db` is also listed as a legacy path, and all `.db*` / `.log` files are excluded by extension), and scraped media (`static/videos/`, plus every `static/images/<dir>/` that is not in `INCLUDE_IMAGE_DIRS = {'hardware','ratings','systems','avatars'}`). Per-platform: only that platform's start script (`start.sh` / `start.command` / `start.bat`).
 - Standalone build is driven by `retrodb.spec` (PyInstaller onedir mode). Spec whitelists static subdirs explicitly to avoid sweeping in scraped media; new pip deps that PyInstaller's static analyser can't follow (string-imported via `importlib`) must be added to `HIDDEN_IMPORTS` in the spec.
 
 Pre-release checklist: bump version + changelog → ensure `config.example.py` matches any new settings → `python3 build_dist.py` (source) and/or `python3 build_dist.py --standalone` (host platform) → upload from staging.

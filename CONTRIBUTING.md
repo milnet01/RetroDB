@@ -6,7 +6,7 @@ Thank you for your interest in contributing to RetroDB! This guide will help you
 
 ### Prerequisites
 
-- Python 3.10+ (CI tests on 3.12 and 3.13)
+- Python 3.10+ (see [README.md § Requirements](README.md#requirements) for the supported version matrix).
 - pip
 - Git
 
@@ -14,9 +14,10 @@ Thank you for your interest in contributing to RetroDB! This guide will help you
 
 1. **Clone the repository:**
    ```bash
-   # Replace YOUR_USERNAME with your GitHub fork-owner (or use the upstream URL
-   # once published).
-   git clone https://github.com/YOUR_USERNAME/RetroDB.git
+   # Upstream (read-only for most contributors):
+   git clone https://github.com/milnet01/RetroDB.git
+   # Or your fork (preferred if you plan to open a PR):
+   #   git clone https://github.com/YOUR_USERNAME/RetroDB.git
    cd RetroDB
    ```
 
@@ -43,7 +44,7 @@ Top-level layout (run `ls` for the live tree; this list rots fast):
 
 - `app.py`, `config.py`, `config.example.py`, `settings_manager.py`, `platform_utils.py`, `log_manager.py` — Flask entrypoint, configuration, cross-platform helpers, file-based logger.
 - `build_css.py`, `build_js.py`, `build_dist.py`, `install.py`, `install_gui.py`, `retrodb.spec` — build & packaging.
-- `routes/` — Flask blueprints (30 route files at time of writing; `ls routes/` for the current set).
+- `routes/` — Flask blueprints (`ls routes/` for the current set).
 - `scraper/` — metadata sources + the hybrid orchestrator (TGDB, IGDB, RAWG, ScreenScraper, ES-DE, Steam, Xbox, RetroAchievements, AI Fill, plus shared `base_scraper.py`, `metadata_merger.py`, `match_scorer.py`, `metadata_normalizer.py`, `title_normalizer.py`, `scraper_cache.py`).
 - `services/` — business logic and shared helpers (auth, security, database, atomic IO, log redaction, image pipeline, achievements linking, game utilities, jobs package, launcher package, migrations package, validators…).
 - `services/jobs/` — background-job classes (bulk_scrape, hltb_bulk, image_resize, museum, platform_sync, psn_refresh, ra_refresh, ra_sync, alt_titles_backfill) on top of `base.py`.
@@ -105,14 +106,22 @@ python3 -m pytest tests/test_game_utils.py -v   # one file, verbose
 
 Most tests are unit-level; a handful (DB backup, migrations, image pipeline, observability) run as integration tests. The full suite finishes in well under a minute on a developer laptop.
 
-Every push and PR runs the suite on CI (`.github/workflows/ci.yml`) along with ruff
-(`ruff check .`), `pip-audit`, a lockfile-drift check, a semgrep security scan, and an import smoke test. New service code in `services/*.py` or `scraper/*.py` **must** ship with tests — the CI workflow considers a ruff / pytest / pip-audit / lockfile-drift failure blocking.
+Every push and PR runs the suite on CI (`.github/workflows/ci.yml`) along with:
+
+- `ruff check .`
+- `pytest`
+- `pip-audit`
+- lockfile-drift check
+- semgrep security scan
+- import smoke test
+
+New service code in `services/*.py` or `scraper/*.py` **must** ship with tests. **Every check in the list above is blocking** — ruff, pytest, pip-audit, lockfile-drift, semgrep (runs with `--error`), and the import smoke test all fail the build on regression.
 
 ### Manual QA workflow
 
 For changes that touch UI or external integrations, also do:
 
-1. Start fresh: delete `database/roms.db` and run the app
+1. Start fresh. **Back up your library first** — this destroys all scanned games and settings. Either copy `database/roms.db` somewhere safe and delete the original, or point `RETRODB_DB_PATH` at a throwaway file (`export RETRODB_DB_PATH=/tmp/retrodb-qa.db`) and run the app.
 2. Complete the setup wizard
 3. Scan a ROM library
 4. Test scraping (single + bulk)

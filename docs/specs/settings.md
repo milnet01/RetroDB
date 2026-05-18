@@ -5,7 +5,7 @@
 
 ## Purpose
 
-RetroDB has accumulated five overlapping settings stores. Some are baked at
+RetroDB has accumulated six overlapping settings stores. Some are baked at
 install time (`config.py`), some are operator-overridable via environment
 variables, some are user-editable through the admin UI as JSON blobs on disk,
 and one (per-user OAuth tokens) lives in SQLite so multi-user installs don't
@@ -16,7 +16,11 @@ territory: pick the right store, wire a validator, and the rest of the system
 will load the value through helpers that handle caching, atomic writes, and
 authorization.
 
-## The five stores
+## The six stores
+
+We count by storage medium (file / env / SQLite row): two storage media for
+`config.py` + env vars, three JSON files, and one DB table. Source-of-truth
+precedence is the separate axis covered under "Precedence" below.
 
 | Store | Format | Owner | Writeable from UI? | Validator |
 | --- | --- | --- | --- | --- |
@@ -27,9 +31,8 @@ authorization.
 | `data/rom_tools_config.json` | JSON object | UI (ROM Tools Settings, `@admin_required` on POST) | Yes | `services/rom_tools_validators.py` (`validate_rom_tools_value`) |
 | DB `user_platform_tokens` table | SQLite row per `(user_id, platform)` | UI (login / OAuth flow, per user) | Yes — owned by the authenticated user | `services/platform_tokens.py` accessor (typed JSON blob) |
 
-The DB-backed token row is technically a sixth store, but it lives behind the
-same kind of typed accessor module as the JSON stores so it appears in the
-table for symmetry.
+The DB-backed token row lives behind the same kind of typed accessor module
+as the JSON stores; it appears in the table for symmetry.
 
 ### What lives where
 
@@ -51,6 +54,11 @@ table for symmetry.
   priority/enabled flags, notification timeouts, naming convention, logging
   config, RetroArch launch settings. Full default set lives in
   `settings_manager.DEFAULT_SETTINGS`.
+
+> **Module location.** `settings_manager.py` lives at the **project root**
+> (next to `app.py`, `config.py`) and is imported as `import settings_manager`
+> — there is no `services.settings_manager` package. Every reference to
+> `settings_manager.X` in this spec means the root module.
 - **`data/scraper_settings.json`** — scraper `priority`, `enabled`,
   `minimum_match_score`, `match_mode`, `match_criteria`, and the `api_keys`
   block (TGDB, IGDB, RAWG, ScreenScraper, RetroAchievements, Steam, Xbox, and
@@ -83,7 +91,11 @@ For values that exist in more than one store, the resolution order is:
    `settings_manager.py`, used when `settings.json` is missing the key. The
    `_deep_merge` in `load_settings()` overlays saved values on top of these
    defaults so a newly-added default automatically appears for existing
-   installs.
+   installs. **Caveat:** `_deep_merge` recurses on dicts only — list-valued
+   defaults (e.g. `scraper_priority`, `region_options`) are replaced
+   wholesale by the saved value, so adding a new entry to a list default
+   will NOT appear for an existing install. For those, ship a migration
+   that mutates `data/settings.json` instead of relying on default-overlay.
 
 The collision points worth knowing:
 
@@ -167,18 +179,27 @@ Note the explicit `isinstance(value, bool)` rejection — without it, Python's
 `bool ⊂ int` would let `True` slip through as `1` and break downstream
 consumers that switch on the value.
 
-Validators are invoked at the **route layer**, never inside service code.
-Service code reads cached values via the store's manager helper and trusts
-the shape. This separation means:
+**Convention (not enforced by code):** validators are invoked at the
+**route layer** (every POST handler runs them before persistence), never
+inside service code. Service code reads cached values via the store's
+manager helper and trusts the shape. This separation means:
 
 - Route validates → cleaned value → write.
 - Service reads → already-clean value → use.
 
-The settings-validators module also has an import-time cross-check
-(`settings_validators.py:320`) that raises `RuntimeError` if anyone adds a
-new key to `DEFAULT_SETTINGS` without wiring a validator entry. Adding a
-key without the validator turns the next `import settings_validators` into
-a startup error — the test suite catches it before merge.
+The validator modules themselves live under `services/`
+(`services/settings_validators.py`, `services/scraper_settings_validators.py`,
+`services/rom_tools_validators.py`), but the call-sites are the route
+modules (`routes/settings.py`, `routes/scraper.py`, `routes/tools.py`). No
+test pins this — if a future service-layer caller imported a validator the
+build would still pass; the rule is a code-review concern.
+
+The settings-validators module has an import-time cross-check
+(`services/settings_validators.py:322`, inside the block starting at line
+320) that raises `RuntimeError` if anyone adds a new key to
+`DEFAULT_SETTINGS` without wiring a validator entry. Adding a key without
+the validator turns the next `import settings_validators` into a startup
+error — the test suite catches it before merge.
 
 ## API endpoints
 
@@ -238,11 +259,16 @@ in the Settings page).
 4. **Decide on restart semantics.** If consumers cache the value at startup,
    add `'enable_telemetry'` to `settings_manager.RESTART_REQUIRED_SETTINGS`
    so the UI prompts for a restart. Pure-runtime reads can be left out.
-5. **Wire the UI.** Add the toggle in `templates/settings.html` and the
-   frontend save handler (`static/js/settings.js`) so the value rides in
+5. **Wire the UI.** Add the toggle to the relevant settings-page partial
+   under `templates/_settings_tabs/<tab>.html` — pick from `account`,
+   `library`, `scraping`, `data`, `customization`, `system` (Pass 38.6 split
+   `templates/settings.html` into these six partials). The frontend save
+   handler lives in `static/js/settings-page.js` (launch-emulator-specific
+   keys belong in `static/js/emulators-settings.js`). The value rides in
    the next `/api/settings` POST.
-6. **Add a test.** In `tests/test_settings_validators.py` (or
-   `tests/test_launch_settings_validators.py` for the launch-key style),
+6. **Add a test.** In `tests/test_launch_settings_validators.py` (the
+   canonical home for new validator tests; previously-named
+   `test_settings_validators.py` does not exist — don't create it),
    add `_ok('enable_telemetry', True)` and `_ok('enable_telemetry', 'yes')`
    asserting accept/reject. The fixture pattern (see Testability) does the
    per-test isolation for you.
@@ -290,13 +316,20 @@ def _ok(key, value):
 ```
 
 …wraps the validator call so test bodies are one-liners
-(`assert _ok('launcher_backend', 'local')`). For tests that need a clean
-settings file on disk (i.e. exercising the full route handler, not just the
-validator), use a `tmp_path` fixture and monkeypatch
-`settings_manager.SETTINGS_FILE` to point at the tempdir. The cache
-(`_settings_cache_mtime`) invalidates itself by mtime so the
-test doesn't need to call `_invalidate_cache()` manually unless it's
-mutating the file outside of `save_settings`.
+(`assert _ok('launcher_backend', 'local')`). For ROM-tools keys, the
+equivalent entry point is `validate_rom_tools_value(key, value)` from
+`services.rom_tools_validators` (same shape — `ok, reason, cleaned`).
+For tests that need a clean settings file on disk (i.e. exercising the
+full route handler, not just the validator), use a `tmp_path` fixture and
+monkeypatch `settings_manager.SETTINGS_FILE` to point at the tempdir. The
+cache (`_settings_cache_mtime`) invalidates itself by mtime so the test
+doesn't need to call `_invalidate_cache()` manually unless it's mutating
+the file outside of `save_settings`.
+
+After adding a new validator entry, run
+`python3 -m pytest tests/test_launch_settings_validators.py` to confirm
+the import-time cross-check still fires — that test passes if and only if
+every key in `DEFAULT_SETTINGS` has a validator entry.
 
 For the scraper-settings validators, call `validate_scraper_settings(body)`
 and `validate_scraper_api_keys(body)` directly with crafted dicts — they're

@@ -28,10 +28,14 @@ maintains three project-local config files that document accepted noise:
 - `pyproject.toml` `[tool.ruff.lint.ignore]` — project-accepted Ruff
   S-codes (bandit equivalents), mirroring the semgrep excludes.
 
-Three consecutive audits (2026-04-20, 2026-04-21 ×2) produced
-**0 actionable findings**.  The threat model is stable; the noise
-categories are known.  What's missing is tool-side orchestration that
-actually reads these files.
+As of **2026-04-21**, three consecutive `/audit` runs (2026-04-20,
+2026-04-21 ×2) produced 0 actionable findings.  The threat model is
+stable; the noise categories are known.  What's missing is tool-side
+orchestration that actually reads these files.
+
+> **Verify before quoting this count.** The clean-pass count rots as soon
+> as the codebase changes — re-run `/audit` before citing the "0
+> actionable findings" claim in a release note or design discussion.
 
 ---
 

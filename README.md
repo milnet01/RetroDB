@@ -32,7 +32,7 @@
 - **Museum** - Interactive gaming system encyclopedia with AI-generated content
 
 ### UI & System
-- **7 Themes** - Cyberpunk, Matrix, Amber, Ocean, Cathedral (`christian` in code), Blade Runner, and Elite 1984 (vector starfield) with animated canvas effects
+- **7 Themes** - Cyberpunk, Matrix, Amber, Ocean, Cathedral (`christian` internal key), Blade Runner, and Elite (vector starfield) with animated canvas effects
 - **Multi-User Support** - Role-based access control (admin, editor, viewer)
 - **How Long to Beat** - Playtime estimates for your games
 - **Log Viewer** - Unified log browser across all categories
@@ -116,9 +116,20 @@ RetroDB runs on **Linux**, **Windows**, and **macOS**. Platform-specific launche
 | Windows | `start.bat` | Windows 10/11 |
 | macOS | `start.command` | Double-clickable from Finder |
 
+## Deployment
+
+The default `start.sh` / `start.bat` / `start.command` launchers bind RetroDB to
+`localhost` — fine for single-machine use. If you want to access RetroDB from
+other devices on your LAN, follow the reverse-proxy guide in
+[`docs/PROXY-DEPLOY.md`](docs/PROXY-DEPLOY.md). Putting RetroDB directly on a
+non-localhost interface without a proxy in front of it is unsupported.
+
 ## Updating
 
-1. Back up the entire `data/` directory (covers `config.py` via separate copy, `settings.json`, `scraper_settings.json`, `rom_tools_config.json`, `psn_tokens.json`, `xbox_tokens.json`, `.secret_key`, and the DB) and the `database/` folder
+1. Back up your install. Three things to copy:
+   - `database/` — the live SQLite DB lives here (`database/roms.db`).
+   - `data/` — settings (`settings.json`, `scraper_settings.json`, `rom_tools_config.json`, `psn_tokens.json`, `xbox_tokens.json`, `.secret_key`).
+   - `config.py` — at the project root; copy it separately.
 2. Extract the new version over the existing installation
 3. Run `python install.py` to install any new dependencies
 4. Your database and settings will be preserved

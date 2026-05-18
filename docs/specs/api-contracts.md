@@ -4,10 +4,11 @@
 > error shape, status-code policy, ETag / gzip / rate-limit / security-header
 > behaviour, CSRF, pagination, request-body limits, and known invariants.
 >
-> Cross-reference: `docs/RETRODB_DESIGN_STANDARDS.md` §10 (API Response Format)
-> and §22 (Security Standards, including "Error Message Sanitization").
-> Source of truth lives in `services/api_helpers.py`, `services/security.py`,
-> `services/auth.py`, and `app.py` (middleware section).
+> Cross-reference: `docs/RETRODB_DESIGN_STANDARDS.md` §22 (Security Standards,
+> including "Error Message Sanitization"). The API response envelope is owned
+> by this spec (not the standards doc) — `services/api_helpers.py` is the
+> canonical implementation. Other helpers referenced here live in
+> `services/security.py`, `services/auth.py`, and `app.py` (middleware section).
 
 ---
 
@@ -79,10 +80,17 @@ Return type is `(jsonify(...), status_code)` — return it directly, do not unpa
 
 ### 2.3 No envelope variants
 
-`/health` and `/ready` are the only intentional exceptions — both return
-`{"status": "..."}` without `success`/`error`, because they predate the helper
-and exist for systemd / Docker / reverse-proxy probes that expect a status
-string. Do not copy this shape for new routes.
+`/health` and `/ready` are the only intentional exceptions — both predate the
+helper and exist for systemd / Docker / reverse-proxy probes that expect a
+status string. Actual shapes:
+
+- `/health` → `{"status": "ok"}` (HTTP 200).
+- `/ready` (DB probe pass) → `{"status": "ready"}` (HTTP 200).
+- `/ready` (DB probe fail) → `{"status": "not_ready", "error": str(e)}` (HTTP 503).
+
+The `str(e)` in the 503 failure body is a deliberate operator-debug carve-out
+— `/ready` is operator-facing, not a public `/api/*` endpoint, so the §13
+sanitisation rule does not apply. Do not copy this shape for new routes.
 
 ---
 
@@ -92,7 +100,7 @@ string. Do not copy this shape for new routes.
 |---|---|
 | **200 OK** | Successful read or write that returned data. Default for `success()`. |
 | **201 Created** | A new resource was persisted and you want the client to know the canonical URL — include the new id in the envelope. RetroDB rarely uses this; `success(id=…)` at 200 is more common. |
-| **202 Accepted** | Job-style endpoints (`/api/bulk-scrape/job/start`, `/api/maintenance/alt-titles-backfill/start`) that hand off to a background thread and return a job id. The status endpoint polls for completion. |
+| **202 Accepted** | Reserved for job-style endpoints that hand off to a background thread. **Not currently emitted by any route** — today's job-start endpoints (e.g. `/api/bulk-scrape-job/start`, `/api/maintenance/alt-titles-backfill/start`) return 200 with `success(job_id=…)`. Treat 202 as the target shape for new background-hand-off routes if they need an explicit "queued, not done" signal. |
 | **204 No Content** | Reserved; not currently used. Prefer `success()` so the envelope stays uniform. |
 | **400 Bad Request** | Malformed request (missing required field, unparseable JSON, invalid query-param combo). |
 | **401 Unauthorized** | `/api/*` caller is not logged in. Emitted by `permission_required` when `g.user` is None on an API path (`services/auth.py:276-278`). |
@@ -100,8 +108,8 @@ string. Do not copy this shape for new routes.
 | **404 Not Found** | Resource id does not exist, or path is unrecognised. The global 404 handler (`app.py:543-548`) emits the standard envelope for any `/api/*` path. |
 | **409 Conflict** | A write would violate a uniqueness constraint or duplicate an in-flight job. Currently used sparingly; most write conflicts surface as 400 with a descriptive `error`. |
 | **413 Payload Too Large** | Werkzeug raises this from `MAX_CONTENT_LENGTH` before the handler runs. `app.py:560-575` converts it to the standard envelope for `/api/*`. |
-| **422 Unprocessable Entity** | Validation failed on otherwise well-formed input (e.g. password < 12 chars, invalid rating value). Include a `field` kwarg when the failure is field-scoped. |
-| **429 Too Many Requests** | Rate-limit triggered. Both the custom IP/user bucket (login + change-password) and Flask-Limiter use 429. |
+| **422 Unprocessable Entity** | **Spec target for new routes**; not currently emitted on the auth/profile paths. Legacy validators in `routes/auth.py` return 200 with `success: false` and no `field` kwarg (e.g. password < 12 chars, invalid rating value) — see §3.2 below. New routes that validate well-formed input should emit 422 with a `field=` kwarg when the failure is field-scoped. |
+| **429 Too Many Requests** | Rate-limit triggered. Both the custom IP/user bucket (login + change-password) and Flask-Limiter use 429 as the status code. Envelope shape differs — the custom bucket returns the standard `error()` envelope; Flask-Limiter returns plain HTML/text (its built-in default). See §7.3. |
 | **500 Internal Server Error** | Unhandled exception. The `@handle_api_errors` decorator (§4) emits the standard envelope; the global 500 handler does the same for anything that escapes. |
 | **503 Service Unavailable** | `/ready` only — DB probe failed. |
 
@@ -118,7 +126,18 @@ The decorator family in `services/auth.py` distinguishes API and HTML paths via
 `admin_required` and `editor_required` currently emit the redirect form even on
 API paths — they predate Pass 45.1's API-aware split. Routes that need an API
 envelope from admin gating should compose `permission_required('manage_users')`
-instead.
+instead. Migrating those two decorators to the API-aware shape is tracked in
+`roadmap.md` (search "admin_required").
+
+### 3.2 Validation-failure shape (current vs target)
+
+Today's auth/profile validators return `error('…', code=200)` with no `field=`
+kwarg — see `routes/auth.py` (every validate-and-reject site uses
+`success: false` at HTTP 200). The 400/422 row in the table above is the spec
+target for new routes, not a description of what ships. When migrating an
+existing validator, switch the call from `error('…', code=200)` to
+`error('…', code=422, field='username')` in lockstep with any test that
+asserts on the status code.
 
 ---
 
@@ -291,8 +310,9 @@ Current registrations (read `app.py:303-367` for the live list):
 | Scraper credit probes | 30/min | `scraper.api_check_scraper`, `scraper.api_scraper_allowance` |
 
 `editor_required` is the standard substitute on low-cost write paths — no
-rate-limit, but only admin/editor roles can mutate. Pair `_rate_limit` with
-`editor_required` (not as a replacement) whenever fan-out cost is non-trivial.
+rate-limit, but only admin/editor roles can mutate. Add `_rate_limit` *in
+addition to* `editor_required` (not instead of it) whenever fan-out cost is
+non-trivial.
 
 ### 7.3 429 envelope
 
@@ -315,7 +335,7 @@ Set on every response by `set_security_headers` `@after_request`
 | `Referrer-Policy` | `strict-origin-when-cross-origin` | Always. |
 | `Permissions-Policy` | `browsing-topics=(), camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=(), accelerometer=(), gyroscope=(), magnetometer=(), midi=()` | Opt out of every browser API RetroDB never touches. |
 | `Strict-Transport-Security` | `max-age=31536000; includeSubDomains` | **Only** when `SESSION_COOKIE_SECURE` is on. Sending HSTS over plain HTTP would be misleading; on localhost it's a no-op anyway. |
-| `Content-Security-Policy-Report-Only` | `default-src 'self'; script-src 'self' 'nonce-{nonce}' https://cdn.jsdelivr.net; …` | **Report-only currently.** Flipping to enforcing mode is tracked as a future hardening pass; blocker is migrating the remaining inline event handlers in templates to delegated listeners. Nonce is per-request, generated in `before_request` (`g.csp_nonce`), and exposed to templates as `{{ csp_nonce }}`. |
+| `Content-Security-Policy-Report-Only` | `default-src 'self'; script-src 'self' 'nonce-{nonce}' https://cdn.jsdelivr.net; …` | **Report-only currently.** Flipping to enforcing mode is the FU.1 follow-up chain in `roadmap.md`; v3.6.20 landed phase A (every inline `onclick=` migrated to event-bound listeners + `csp_nonce` wired through `base.html`). Phase B flips to enforcing; Phase C removes `unsafe-inline`/`unsafe-eval`. Nonce is per-request, generated in `before_request` (`g.csp_nonce`), and exposed to templates as `{{ csp_nonce }}`. |
 | `X-XSS-Protection` | *(intentionally absent)* | The XSS Auditor was removed from Chromium/Edge and lives only in Safari; leaving it unset matches current OWASP guidance. |
 
 Pinned by `tests/test_security_headers.py`.
@@ -324,8 +344,10 @@ Pinned by `tests/test_security_headers.py`.
 
 ## 9. CSRF
 
-Custom HMAC-equivalent token, not Flask-WTF — see design-standards §22 "CSRF
-Protection" for the design rationale.
+Custom per-session random token (`secrets.token_hex(32)`), constant-time
+compared with `secrets.compare_digest`. **Not** an HMAC — no key, no message.
+See design-standards §22 "CSRF Protection" for the rationale (we don't need
+HMAC because the token is opaque session state, not signed content).
 
 ### 9.1 Server side
 
@@ -337,7 +359,7 @@ Protection" for the design rationale.
   - `X-CSRF-Token` request header, or
   - `_csrf_token` form field (multipart uploads).
 - Failure → 403 JSON envelope (never a redirect).
-- Exempt endpoints: see [`auth.md §10`](auth.md) — `auth.md` is the canonical owner of the exempt set so the list does not drift between specs.
+- Exempt endpoints: see [`auth.md §10 CSRF`](auth.md#10-csrf) — `auth.md` is the canonical owner of the exempt set so the list does not drift between specs.
 - Logout (`session.clear()`) drops the old token; `ensure_csrf_token` re-seeds
   on the next request.
 
@@ -421,10 +443,15 @@ paths, no long-polling (in the HTTP-hold sense). Every job-style endpoint uses
 short polls against a status route:
 
 ```
-POST /api/bulk-scrape/job/start     → 202 + {job_id}
-GET  /api/bulk-scrape/job/status    → 200 + {processing, complete, results, …}
-POST /api/bulk-scrape/job/cancel    → 200
+POST /api/bulk-scrape-job/start     → 200 + success(job_id=…)
+GET  /api/bulk-scrape-job/status    → 200 + success(processing=…, complete=…, results=…)
+POST /api/bulk-scrape-job/cancel    → 200 + success(…)
 ```
+
+(Note the path segment is `bulk-scrape-job` — single hyphen-separated noun —
+not `bulk-scrape/job/...`. Same applies to `webp-migrate-job` and
+`alt-titles-backfill` job-start endpoints; verify against `routes/` before
+copying.)
 
 UI polls `…/status` at ~1 Hz from JS. Cancellation flips a flag the worker
 checks between items.

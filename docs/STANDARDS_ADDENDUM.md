@@ -10,8 +10,8 @@ When releasing any version update, complete ALL of the following steps:
 
 ### 1. Update config.py + config.example.py (Required)
 ```python
-APP_VERSION = "3.6.14"          # Version number: MAJOR.MINOR.PATCH
-APP_LAST_UPDATE = "2026-05-17"  # Today's date in YYYY-MM-DD format
+APP_VERSION = "X.Y.Z"           # Version number: MAJOR.MINOR.PATCH (placeholder; pick the next version per the table below)
+APP_LAST_UPDATE = "YYYY-MM-DD"  # Today's date in YYYY-MM-DD format
 ```
 
 **Version Format**: `MAJOR.MINOR.PATCH` (e.g., v3.6.14)
@@ -36,7 +36,7 @@ Add a new changelog entry at the TOP of `data/changelog.yaml`:
     </ul>
 ```
 
-**Changelog Tag Types** — see `RETRODB_DESIGN_STANDARDS.md` §16 for full color reference:
+**Changelog Tag Types** — see `RETRODB_DESIGN_STANDARDS.md` §17 for full color reference:
 - `feature` - New features (cyan)
 - `enhancement` - Enhancements to existing features (green)
 - `minor` - Minor improvements (purple)

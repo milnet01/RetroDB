@@ -27,12 +27,12 @@ See also: CLAUDE.md "Scraper fill-only invariant" and "Schema / data shapes"; [`
 | ES-DE             | `scraper/scrape_esde.py`          | local-gamelist  | No (reads ES-DE folders on disk)                                          | Primary metadata + media when user has scraped via ES-DE; canonical `apply_*` pattern (see §5)    |
 | TheGamesDB        | `scraper/scrape_thegamesdb.py`    | remote          | `tgdb_apikey`                                                             | Metadata + boxart + screenshots + fanart; platform-specific covers                                |
 | IGDB              | `scraper/scrape_igdb.py`          | remote          | `igdb_client_id` + `igdb_client_secret`                                   | Richest metadata (genres, modes, perspectives, age ratings × 7 systems, franchise, similar games) |
-| RAWG.io           | `scraper/scrape_rawg.py`          | remote          | `rawg_api_key`                                                            | Metacritic critic score, user score, ESRB; platform-specific boxart                               |
+| RAWG.io           | `scraper/scrape_rawg.py`          | remote          | `rawg` (settings key; falls back to `RAWG_API_KEY` in `config.py`)        | Metacritic critic score, user score, ESRB; platform-specific boxart                               |
 | ScreenScraper     | `scraper/scrape_screenscraper.py` | remote          | `screenscraper_username` + `_password` + `_devid` + `_devpassword`        | Retro-specific metadata, regional alt titles, system-specific media (boxart 3D, video, manual)    |
 | Steam             | `scraper/scrape_steam.py`         | remote          | No (public store API)                                                     | PC port metadata; HLTB-adjacent enrichment                                                        |
 | Xbox              | `scraper/scrape_xbox.py`          | remote          | No (public store API)                                                     | Xbox port metadata; achievement-adjacent enrichment                                               |
 | RetroAchievements | `scraper/retroachievements.py`    | remote          | `ra_apikey`                                                               | `has_retroachievements`, `ra_game_id`, `ra_achievement_count`, `ra_points` (tail of hybrid apply) |
-| AI Fill           | `scraper/scrape_ai.py`            | AI              | One of: `gemini_api_key`, `openai_api_key`, `anthropic_api_key`           | Final gap-fill for text-only fields; never media (see §12)                                        |
+| AI Fill           | `scraper/scrape_ai.py`            | AI              | One of: `ai_gemini_api_key`, `ai_openai_api_key`, `ai_anthropic_api_key` (+ optional `ai_gemini_project_id`) | Final gap-fill for text-only fields; never media (see §12)                                        |
 | HLTB              | `scraper/hltb_lookup.py`          | remote          | No (public site scrape)                                                   | Playtime estimates (main / extra / completionist) for HowLongToBeat                               |
 
 Per-source disable + priority: `data/scraper_settings.json` → `enabled` + `priority`. The first enabled source in priority order whose API key is configured wins as primary when the user picks one; the rest fall back in priority order (see §3).
@@ -52,7 +52,7 @@ Walk order:
 
 1. **Primary fetch** — `_pick_best_secondary` if the user picked from search results, else freshly fetched via the source-specific `fetch_*_extended` / `fetch_*_game_details`. Each primary dispatch is wrapped in `try / except` (Pass 41.4.B) so a malformed response from one provider falls through to gap-fill rather than aborting the whole hybrid apply.
 2. **Apply primary** — call the matching `apply_<src>_to_metadata(metadata, data, db_game_id, result, fill_only=False)` from `metadata_merger.py`. `fill_only=False` lets the primary overwrite `title` only (other fields stay fill-only across both modes).
-3. **Gap fill** — compute `missing = [k for k, v in metadata.items() if not v]`. Walk user priority (skipping primary, disabled sources, and sources already applied). When `restrict_to_selected=True` and the caller passed `secondary_sources`, fallback is further restricted to that allowlist (plus AI). Each fallback runs under the per-source circuit breaker (`_<src>_breaker` in `scraper_manager`) — five consecutive failures opens the breaker for 120 s.
+3. **Gap fill** — compute `missing = [k for k, v in metadata.items() if not v]`. Walk user priority (skipping primary, disabled sources, and sources already applied). When `restrict_to_selected=True` and the caller passed `secondary_sources`, fallback is further restricted to that allowlist (plus AI). Each fallback for **TGDB, IGDB, RAWG, ScreenScraper, and AI** runs under the per-source circuit breaker (`_<src>_breaker` in `scraper_manager`) — five consecutive failures opens the breaker for 120 s. ES-DE, Steam, Xbox, RetroAchievements, and HLTB do not have breakers (see §11).
 4. **Post-merge passes** — region inference from filename (`extract_region_from_filename`), region single-value reduction (`_normalize_region`), save-type detection (`detect_save_type`), controller support detection (`detect_controller_support`), curated DB-default controller override (`get_system_default_controller_name`), rating normalize + cross-map + content-inference (`_normalize_ratings`), `players` integer-coercion via `re.findall(r'\d+', ...)` + `max(...)`, sort-title regeneration.
 5. **Single fill-only UPDATE** — one statement with `COALESCE(?, col)` on every column (see §5 for the exact SQL).
 6. **RA tail** — `_apply_retroachievements_check` opens its own connection, looks up the game by title + system folder, and updates `has_retroachievements` / `ra_*` columns on hit. Exceptions are swallowed so a down RA service can't poison the rest of the scrape.
@@ -63,7 +63,7 @@ The single UPDATE is **not** wrapped in a try/except fallback: a failure means `
 
 ## 4. Merge priority
 
-Defined in `hybrid_scraper.FIELD_SOURCES`. Reading order = preference order. Within a single hybrid run the *primary* source applies first (regardless of where it sits in FIELD_SOURCES); secondaries then walk in user-priority order, filling only what the primary left empty.
+Defined in `hybrid_scraper.FIELD_SOURCES`. Reading order = preference order. Within a single hybrid run the *primary* source applies first (regardless of where it sits in FIELD_SOURCES); secondaries then walk in user-priority order, filling only what the primary left empty. The table below shows the most relevant fields; the canonical mapping is the `FIELD_SOURCES` dict in `scraper/hybrid_scraper.py` (grep for the name). A few metadata-dict keys (`dimension`, `perspective`, `game_structure`, `edition`, `campaign`, `other_platforms`, `alternate_titles`, `sort_title`) are filled by per-source mergers in `metadata_merger.py` directly and don't carry their own FIELD_SOURCES row. `save_type` is a special case — it has a sentinel `FIELD_SOURCES['save_type'] = ['manual']` entry that prevents normal-source filling and defers to the `detect_save_type` post-merge pass instead.
 
 | Field                                                                                          | Preference order                                |
 |------------------------------------------------------------------------------------------------|--------------------------------------------------|
@@ -80,7 +80,8 @@ Defined in `hybrid_scraper.FIELD_SOURCES`. Reading order = preference order. Wit
 | region                                                                                         | esde → screenscraper → filename                 |
 | franchise                                                                                      | igdb → tgdb                                     |
 | similar_games / playtime_estimate / controller_support                                         | igdb                                            |
-| critic_score / critic_score_count / user_score / user_score_count                              | rawg → igdb → ai                                |
+| critic_score / critic_score_count                                                              | rawg → igdb → ai                                |
+| user_score / user_score_count                                                                  | rawg → igdb → screenscraper → ai                |
 
 Tie-breakers:
 
@@ -93,9 +94,33 @@ Tie-breakers:
 
 ## 5. Fill-only invariant
 
-**The rule:** every `?` in a scraper UPDATE statement MUST be wrapped in `COALESCE(?, column_name)` so that an empty value from the upstream preserves whatever's already in the column. This applies to every source (`scrape_esde`, `scrape_igdb`, `scrape_thegamesdb`, `scrape_rawg`, `scrape_screenscraper`, AI Fill via `routes/games_ai.py`, and the orchestrator's own composite UPDATE in `hybrid_scraper`).
+**The rule (scraper UPDATEs):** every `?` bound to a metadata-source value
+in a scraper `UPDATE games` statement MUST be wrapped in
+`COALESCE(?, column_name)` so an empty value from the upstream preserves
+whatever's already in the column. Sources that own a direct `UPDATE games`:
+`scrape_esde`, `scrape_igdb`, `scrape_thegamesdb`, and the hybrid
+orchestrator's composite UPDATE in `hybrid_scraper`. `scrape_rawg` and
+`scrape_screenscraper` do **not** own a direct `UPDATE games` — they write
+through `scraper/metadata_merger.py::apply_*_to_metadata`, which feeds
+into the hybrid UPDATE; the COALESCE protection therefore happens once,
+in `hybrid_scraper`.
 
-**The bug class it prevents:** bare `publisher = ?, developer = ?` in `apply_metadata_to_game` means that a TGDB or IGDB response that didn't return publisher/developer (very common — partial records) will silently NULL the column on every re-scrape. Pass 30.4 fixed the original instance for `publisher`/`developer`. Pass 40.6 closed the variant on `players` where the dict was initialised to `1` (so `COALESCE(1, players)` always returned 1 — the `COALESCE` was correct, the initialiser was wrong; fixed via `normalize_players_value` returning `int|None`). Pass 45.3 closed the same shape in AI Fill where bare `field = ?` writes after `int(float("0"))` were clobbering curated `players=4` with `0`.
+**Audit-column exception.** A handful of columns are bare by design,
+because they're status / audit data — overwriting them is the point. As
+of the current code base that means `scrape_history = ?` and
+`scraped = 1` in the hybrid UPDATE, and `scraped = 1` in
+`scrape_igdb.apply_metadata_to_game`. Leave those bare.
+
+**AI Fill is a separate path.** `routes/games_ai.py` does **not** use the
+COALESCE wrapper. It builds the `UPDATE games` with bare `field = ?`
+clauses and protects the fill-only contract one layer up via a
+`should_apply` pre-filter plus the Pass 45.3 "skip int=0" guard
+(`int(float("0"))` and similar empty-int sentinels are filtered before
+the clause is appended). Don't wrap the AI Fill UPDATEs in COALESCE —
+that would block the cross-map / rating-inference paths that intentionally
+overwrite (because the user opted into AI fill).
+
+**The bug class scraper-COALESCE prevents:** bare `publisher = ?, developer = ?` in `apply_metadata_to_game` means that a TGDB or IGDB response that didn't return publisher/developer (very common — partial records) will silently NULL the column on every re-scrape. Pass 30.4 fixed the original instance for `publisher`/`developer`. Pass 40.6 closed the variant on `players` where the dict was initialised to `1` (so `COALESCE(1, players)` always returned 1 — the `COALESCE` was correct, the initialiser was wrong; fixed via `normalize_players_value` returning `int|None`). Pass 45.3 closed the same shape in AI Fill where bare `field = ?` writes after `int(float("0"))` were clobbering curated `players=4` with `0` — fixed by the `should_apply` skip-empty-int guard, not by adding COALESCE.
 
 **Canonical site:** `scraper/scrape_esde.py::apply_esde_metadata`:
 
@@ -124,7 +149,7 @@ The hybrid orchestrator's UPDATE in `apply_hybrid_metadata` is the same pattern 
 
 **Exception:** Full Re-scrape mode in `hybrid_scraper` (`force_overwrite=True`) intentionally bypasses fill-only — the user opted in. ES-DE in this mode still defers media deletion until a replacement is confirmed found.
 
-**Test pin:** `tests/test_scrape_fill_only.py` exercises both IGDB and TGDB with an existing populated row + an empty API response and asserts every column survives. Re-asserts the failure-side contract too (DB error → `apply_metadata_to_game` returns `False`, not `True`, not a re-raise).
+**Test pin:** `tests/test_scrape_fill_only.py` exercises both IGDB and TGDB with an existing populated row + an empty API response and asserts every column survives. Re-asserts the failure-side contract too (DB error → `apply_metadata_to_game` returns `False`, not `True`, not a re-raise). ES-DE, the hybrid orchestrator UPDATE, and AI Fill are **not** currently covered by this test — extending coverage is a known roadmap item.
 
 **When adding a new field** to the metadata dict in `hybrid_scraper.apply_hybrid_metadata`, add the corresponding column to the UPDATE binding tuple AND wrap the `?` in COALESCE in the same commit, and add a regression case to `tests/test_scrape_fill_only.py`. Drift between the metadata dict and the UPDATE tuple is precisely why the UPDATE has no try/except fallback — silent drift is the bug; loud failure is the contract.
 
@@ -150,7 +175,7 @@ Per-source extras layer on top via `calculate_<src>_score`:
 - **+10-20 for region** — US/WORLD preferred (TGDB: `USA`/`WORLD` +20, `EUROPE`/`UK` +10; SS: `US`/`WOR` +20, `EU`/`UK` +10; IGDB has no region signal in search).
 - **RAWG only**: +15 if Metacritic present, +10 if image present.
 
-After per-source scoring, `ScraperManager.search_games` adds a **priority boost** based on the user's `priority` list: first source +50, second +40, third +30, etc. (multiplied by `(len(priority) - idx) * 10`). Meaningful enough to break ties, not large enough to override a clear title/platform mismatch.
+After per-source scoring, `ScraperManager.search_games` adds a **priority boost** based on the user's `priority` list: `boost = (len(priority) - idx) * 10` — first source +50, second +40, third +30, etc. for a five-source priority list. Meaningful enough to break ties, not large enough to override a clear title/platform mismatch.
 
 Selection thresholds:
 
