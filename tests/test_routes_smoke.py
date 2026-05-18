@@ -71,12 +71,25 @@ class TestRouteRegistration:
 class TestAuthGuards:
     """Protected endpoints must redirect unauthenticated users to /login."""
 
+    # Expanded auth-guard sweep (test-audit c-006 MED): the previous
+    # 5-route list covered only a sample of the 22 EXPECTED_ENDPOINTS.
+    # Below we drive every protected GET endpoint that doesn't require
+    # a path-variable lookup (the `<int:game_id>` routes get covered by
+    # the explicit `/api/delete-game/1` etc. cases). A blueprint that
+    # registers cleanly but 500s on every authenticated request used to
+    # slip through this smoke layer.
     @pytest.mark.parametrize("path", [
         '/games',
         '/compare',
         '/api/games',
         '/api/games/find?q=test',
         '/api/games/search?title=test',
+        '/hltb/review',
+        '/api/hltb/bulk/status',
+        '/api/hltb/pending',
+        '/api/maintenance/alt-titles-backfill/status',
+        '/api/games/compare?ids=1,2',
+        '/api/games/1/similar',
         # Pass 41.9 — `/api/recently-viewed` removed (zero callers; the
         # dashboard reads `user_game_views` directly via app.py).
     ])
@@ -95,7 +108,16 @@ class TestAuthGuards:
     @pytest.mark.parametrize("path", [
         '/api/delete-game/1',
         '/api/rename-rom/1',
+        '/api/delete-screenshot/1',
         '/api/hltb/bulk/start',
+        '/api/hltb/bulk/cancel',
+        '/api/hltb/pending/1/approve',
+        '/api/hltb/pending/1/reject',
+        '/api/hltb/pending/approve-all',
+        '/api/hltb/pending/reject-all',
+        '/api/game/1/ai-fill',
+        '/api/maintenance/alt-titles-backfill/start',
+        '/api/maintenance/alt-titles-backfill/cancel',
     ])
     def test_protected_post_redirects_unauthenticated(self, app_client, path):
         """Write endpoints must reject unauthenticated POSTs. An unauthenticated

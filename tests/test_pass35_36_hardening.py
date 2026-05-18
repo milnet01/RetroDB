@@ -20,7 +20,7 @@ import stat
 import pytest
 
 # REPO_ROOT/sys.path setup is centralised in tests/_util.py (test-audit DUP-1).
-from tests._util import REPO_ROOT, read_source
+from tests._util import REPO_ROOT, read_source, slice_function, js_method_body
 
 
 # -----------------------------------------------------------------------------
@@ -89,8 +89,13 @@ def test_35_3_init_database_issues_foreign_keys_on():
     runtime check would only verify the test's own connection state, not
     that init_database wires it for every future connection through
     get_db() (which is the actual user-facing path)."""
+    # AST-based slice — robust to source ordering / refactoring
+    # (test-audit c-004 MED): the previous raw `src[index..index]` would
+    # have produced an empty string if `ensure_user_tables` were ever
+    # declared before `init_database`, silently passing the assertion.
     src = read_source(os.path.join('services', 'database_init.py'))
-    body = src[src.index("def init_database("):src.index("def ensure_user_tables(")]
+    body = slice_function(src, 'init_database')
+    assert body, "init_database function not found in services/database_init.py"
     assert "PRAGMA foreign_keys = ON" in body
 
 
@@ -99,7 +104,8 @@ def test_35_4_get_db_no_longer_issues_journal_mode():
     Codebase invariant: the pragma calls must not appear in get_db's body
     (ensures we don't double-issue them on every connection acquire)."""
     src = read_source(os.path.join('services', 'database.py'))
-    get_db_body = src[src.index("def get_db("):src.index("def get_request_db(")]
+    get_db_body = slice_function(src, 'get_db')
+    assert get_db_body, "get_db function not found in services/database.py"
     assert "PRAGMA journal_mode = WAL" not in get_db_body
     assert "PRAGMA journal_size_limit" not in get_db_body
 
@@ -132,11 +138,14 @@ def test_35_5_add_column_helper_exists():
 
 def test_35_5_no_more_try_except_alter_blocks():
     src = read_source(os.path.join('services', 'database_init.py'))
-    # No raw "ALTER TABLE ... ADD COLUMN" outside the helper body — every
-    # ALTER must flow through _add_column_if_missing.
-    body = src[src.index("def ensure_user_tables("):]
-    # Count 'ALTER TABLE' occurrences — expect 1 (inside _add_column_if_missing),
-    # which is defined BEFORE ensure_user_tables, so body shouldn't have any.
+    # No raw "ALTER TABLE ... ADD COLUMN" inside ensure_user_tables —
+    # every ALTER must flow through _add_column_if_missing. Use AST-based
+    # slice so this is robust to the helper's source position
+    # (test-audit c-004 MED): the previous `src[index:]` scanned all
+    # remaining lines, which incidentally includes any function declared
+    # later in the file and would have produced a misleading failure.
+    body = slice_function(src, 'ensure_user_tables')
+    assert body, "ensure_user_tables function not found in services/database_init.py"
     assert "ALTER TABLE" not in body
 
 
@@ -159,9 +168,12 @@ def test_35_5_add_column_helper_is_idempotent(tmp_path):
 def test_36_1_escattr_js_string_escape():
     """escAttr must escape ' < \\ newline to \\uXXXX / \\xXX JS escapes."""
     src = read_source(os.path.join('static', 'js', 'all-games-controller.js'))
-    # Grab a wide window around the escAttr definition to include the
-    # leading comment block with the Pass marker.
-    fn_start = src.index("Pass 36.1")
+    # Anchor to the function definition rather than the "Pass 36.1"
+    # comment marker (test-audit c-004 MED): a future cleanup that
+    # rephrases or removes the comment would have raised ValueError
+    # from `src.index('Pass 36.1')` and surfaced as a pytest ERROR
+    # rather than a clean FAILED.
+    fn_start = src.index("function escAttr(")
     fn_end = src.index("// =========", fn_start)
     body = src[fn_start:fn_end]
     # The key indicator: a regex match against a safelist, with backslash
@@ -175,7 +187,11 @@ def test_36_1_escattr_js_string_escape():
 # -----------------------------------------------------------------------------
 def test_36_3_museum_uses_create_element():
     src = read_source(os.path.join('static', 'js', 'museum.js'))
-    body = src[src.index("function _updateControllerImage("):src.index("function _showControllerOverlay(")]
+    # Brace-balanced slice — robust to reordering of the two helpers
+    # (test-audit c-004 MED). The previous raw `src[index..index]` would
+    # have produced a backward range (empty string) if _showControllerOverlay
+    # were declared before _updateControllerImage.
+    body = js_method_body(src, '_updateControllerImage')
     # No innerHTML string concat inside the rebuilt helpers.
     assert "imgContainer.innerHTML" not in body
     assert "placeholder.innerHTML" not in body
@@ -189,9 +205,10 @@ def test_36_3_museum_uses_create_element():
 # -----------------------------------------------------------------------------
 def test_36_4_log_viewer_escapes_dynamic_fields():
     src = read_source(os.path.join('static', 'js', 'log-viewer.js'))
-    # The definition (not a call) — match the opening brace form.
-    fn_start = src.index("renderLine(line) {")
-    body = src[fn_start:fn_start + 2000]
+    # Brace-balanced slice — the previous 2000-char window would
+    # silently truncate if renderLine grew, letting trailing
+    # assertions pass vacuously (test-audit c-004 MED).
+    body = js_method_body(src, 'renderLine')
     # Allowlist set for the CSS class context.
     assert "DEBUG" in body and "CRITICAL" in body
     # Every interpolated field escaped.

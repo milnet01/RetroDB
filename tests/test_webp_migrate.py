@@ -314,7 +314,13 @@ class TestWebPMigrateJobLifecycle:
 
         job = mod.WebPMigrateJob()
         job.start()
-        assert done.wait(timeout=5.0)
+        # Diagnostic message on timeout so a CI failure surfaces the
+        # job state rather than a bare AssertionError (test-audit c-006
+        # HIGH flakiness).
+        assert done.wait(timeout=5.0), (
+            f"webp migration worker did not finish in 5s; "
+            f"job state: {job.get_status()!r}"
+        )
         status = job.get_status()
         assert status['error_message'] is not None
         assert 'free disk' in status['error_message'].lower()

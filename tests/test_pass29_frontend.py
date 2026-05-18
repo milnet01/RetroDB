@@ -8,61 +8,12 @@
 
 import os
 
-from tests._util import REPO_ROOT, read_source
+from tests._util import REPO_ROOT, read_source, js_method_body as _js_method_body
 
 
 def _read_js(name):
     """Read a JS file under static/js/. Thin wrapper over the shared helper."""
     return read_source(os.path.join('static', 'js', name))
-
-
-def _js_method_body(src, method_name):
-    """Slice the body of a JS method declared as `name(args) {`.
-
-    JS isn't AST-parsed by `tests._util.slice_function` (which is Python-only),
-    so we do a paren-then-brace-balanced scan. We:
-      1. Find `<method_name>(` at the start of the declaration.
-      2. Walk forward, balancing `()` to skip past the parameter list
-         (including `options = {}` defaults — that `{` is paren-scoped,
-         not the function body).
-      3. Find the first `{` after the matched closing `)` — that is the
-         function body's opening brace.
-      4. Balance `{}` from there to find the matching close.
-    Returns the text from the body opening `{` to the matching `}` (inclusive).
-    """
-    needle = method_name + '('
-    idx = src.index(needle)
-    # Walk the parameter list with paren balancing.
-    paren_depth = 0
-    i = idx + len(method_name)  # positioned at '('
-    while i < len(src):
-        ch = src[i]
-        if ch == '(':
-            paren_depth += 1
-        elif ch == ')':
-            paren_depth -= 1
-            if paren_depth == 0:
-                i += 1
-                break
-        i += 1
-    else:
-        raise AssertionError(f"unbalanced parens in JS method {method_name!r}")
-    # Skip whitespace to find the body opening brace.
-    while i < len(src) and src[i] != '{':
-        i += 1
-    if i >= len(src):
-        raise AssertionError(f"no body `{{` after {method_name!r} params")
-    brace = i
-    depth = 0
-    for j in range(brace, len(src)):
-        ch = src[j]
-        if ch == '{':
-            depth += 1
-        elif ch == '}':
-            depth -= 1
-            if depth == 0:
-                return src[brace:j + 1]
-    raise AssertionError(f"unbalanced braces in JS method {method_name!r}")
 
 
 def test_29_2_csrf_shim_present_in_base_template():

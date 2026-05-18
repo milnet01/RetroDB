@@ -472,10 +472,19 @@ class TestPass40_2ChdConvertVerifyPathValidation:
             json={'files': ['/etc/passwd', '/etc/shadow']},
             headers={'X-CSRF-Token': 'pass40-csrf-token'},
         )
-        # Either the route 4xx-rejects up front, or the worker rejects each
-        # file inside the loop — under no path may chdman see these argvs.
+        # The correctness pin is `not seen_argv` — chdman must never see
+        # the out-of-bound paths. Either the route 4xx-rejects up front
+        # (400/422) or the worker rejects each file inside the loop and
+        # the route returns 200 with no work done. The earlier
+        # `assert resp.status_code in (200, 400, 422)` was a loose three-
+        # way check that hid which branch fired; making the response-code
+        # assertion expressive (any of three known statuses) is fine as
+        # long as the argv guard carries the real contract (test-audit
+        # c-005 MED).
         assert resp.status_code in (200, 400, 422), (
-            f"unexpected status: {resp.status_code}"
+            f"unexpected status: {resp.status_code} (expected one of "
+            "200/400/422 — route either 4xx-rejects up front or returns "
+            "200 with the worker no-oping)"
         )
         assert not seen_argv, (
             f'chdman invoked with out-of-bound argv when no good files were '
@@ -744,18 +753,26 @@ class TestPass40_7TgdbImageSsrf:
         from scraper import scrape_thegamesdb as mod
 
         src = read_module_source(mod)
-        if 'def _download_tgdb_image' in src:
-            idx = src.index('def _download_tgdb_image')
-            try:
-                end = src.index('\ndef ', idx + 1)
-            except ValueError:
-                end = len(src)
-            body = src[idx:end]
-            assert 'download_image(' in body, \
-                '_download_tgdb_image must delegate to base_scraper.download_image (Pass 40.7)'
-            # Must NOT contain the raw write that bypassed SSRF.
-            assert "open(local_path, 'wb')" not in body, \
-                '_download_tgdb_image must not write response.content directly (Pass 40.7)'
+        # Make the function-rename case fail loudly rather than silently
+        # skipping the SSRF contract assertions (test-audit c-005 MED):
+        # the previous `if 'def _download_tgdb_image' in src:` wrapper
+        # let the body checks vanish if the function were renamed or
+        # inlined, with the test still reporting green.
+        assert 'def _download_tgdb_image' in src, (
+            "_download_tgdb_image not found in scraper/scrape_thegamesdb.py "
+            "— if the function was renamed/inlined, update this Pass 40.7 pin"
+        )
+        idx = src.index('def _download_tgdb_image')
+        try:
+            end = src.index('\ndef ', idx + 1)
+        except ValueError:
+            end = len(src)
+        body = src[idx:end]
+        assert 'download_image(' in body, \
+            '_download_tgdb_image must delegate to base_scraper.download_image (Pass 40.7)'
+        # Must NOT contain the raw write that bypassed SSRF.
+        assert "open(local_path, 'wb')" not in body, \
+            '_download_tgdb_image must not write response.content directly (Pass 40.7)'
 
     def test_imports_download_image(self):
         from scraper import scrape_thegamesdb as mod

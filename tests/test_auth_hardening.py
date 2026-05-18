@@ -48,14 +48,29 @@ class TestPasswordRequiredForAllRoles:
         """ACC-1 behavioural pair: the source-grep above only confirms the
         rejection string exists. This test calls the real endpoint with
         an empty body and asserts the auth flow actually runs (no 500,
-        and a friendly error rather than an open-door pass)."""
+        and a friendly error rather than an open-door pass).
+
+        The endpoint returns HTTP 200 with `success=False` for refusal
+        modes (the project's `success()` helper wraps every response;
+        4xx status would have to come from CSRF/rate-limit middleware,
+        not the route). So we tighten the test from `< 500` (test-audit
+        c-001 LOW) by *also* asserting the success envelope is False —
+        catching the "200 OK with success=True" open-door regression."""
         import app as app_module
         monkeypatch.setitem(app_module.app.config, 'TESTING', True)
         with app_module.app.test_client() as client:
             resp = client.post('/api/login', json={})
-            # Endpoint reachable (no 500) and refuses the request — exact
-            # status varies with rate-limit state and CSRF middleware.
-            assert resp.status_code < 500
+            assert resp.status_code < 500, f"server error: {resp.status_code}"
+            # If the status is 200 (the typical envelope path), the JSON
+            # body's `success` must be False. 4xx/429 are also legitimate
+            # refusal modes (CSRF, rate-limit) and don't need to surface
+            # a JSON envelope.
+            if resp.status_code == 200:
+                body = resp.get_json(silent=True) or {}
+                assert body.get('success') is not True, (
+                    f"open-door pass — login returned 200 with success=True "
+                    f"on empty body: {body!r}"
+                )
 
     def test_create_user_seeds_changeme_for_non_admin(self):
         """Pass 24.1 migration: new editor/viewer accounts now get the
@@ -129,14 +144,25 @@ class TestSessionRotationOnLogin:
         attacker-style session value, hit `/api/login` with an obviously-
         bad payload, and confirm the endpoint runs end-to-end. A regression
         that makes `session.clear()` unreachable would show up as a 500
-        here, while the AST check above pins the ordering."""
+        here, while the AST check above pins the ordering.
+
+        Tighten the previous `< 500` boundary by also asserting the JSON
+        envelope's `success` is False for the 200 path — catches the
+        "200 OK with success=True" open-door regression (test-audit
+        c-001 LOW)."""
         import app as app_module
         monkeypatch.setitem(app_module.app.config, 'TESTING', True)
         with app_module.app.test_client() as client:
             with client.session_transaction() as sess:
                 sess['leftover_pre_login'] = 'attacker-planted'
             resp = client.post('/api/login', json={'user_id': 999999, 'password': 'x'})
-            assert resp.status_code < 500
+            assert resp.status_code < 500, f"server error: {resp.status_code}"
+            if resp.status_code == 200:
+                body = resp.get_json(silent=True) or {}
+                assert body.get('success') is not True, (
+                    f"open-door pass — login returned 200 with success=True "
+                    f"for non-existent user 999999: {body!r}"
+                )
 
 
 # =============================================================================

@@ -129,32 +129,22 @@ def test_32_2_every_default_setting_has_validator():
 
 
 @pytest.mark.parametrize('url', [
-    'http://127.0.0.1/',              # IPv4 loopback
-    'http://10.0.0.1/',               # RFC1918
-    'http://169.254.169.254/latest/meta-data/',  # AWS IMDS / link-local
+    'http://127.0.0.1/',                            # IPv4 loopback
+    'http://10.0.0.1/',                             # RFC1918
+    'http://169.254.169.254/latest/meta-data/',     # AWS IMDS / link-local
+    'http://[::1]/',                                # IPv6 loopback
+    'http://[fc00::1]/',                            # IPv6 unique-local
 ])
 def test_32_6_ssrf_validate_rejects_private(url):
     """Each forbidden host gets its own pytest node so a first-case
-    failure doesn't mask the others (test-audit SPLIT)."""
+    failure doesn't mask the others (test-audit SPLIT). IPv6 cases were
+    promoted into this parametrize block from a standalone function so
+    new IP classes can be added in one place (test-audit c-004 LOW
+    parametrisation)."""
     from services.ssrf import validate_outbound_url
 
     ok, _reason, _ = validate_outbound_url(url)
     assert not ok, f"SSRF validator should reject {url!r}"
-
-
-def test_32_6_ssrf_validate_rejects_ipv6_private():
-    """IPv6 loopback (::1) and unique-local (fc00::/7) must be rejected too —
-    test-audit COV-1. If `validate_outbound_url` ever degrades to an IPv4-only
-    blocklist, this test catches it before IPv6 SSRF becomes exploitable."""
-    from services.ssrf import validate_outbound_url
-
-    # ::1 is the IPv6 loopback address (literal must be wrapped in [] in URLs).
-    ok, _reason, _ = validate_outbound_url('http://[::1]/')
-    assert not ok, "IPv6 loopback ::1 must be rejected"
-
-    # fc00::/7 is the IPv6 unique-local block (equivalent to RFC1918 in v4).
-    ok, _reason, _ = validate_outbound_url('http://[fc00::1]/')
-    assert not ok, "IPv6 unique-local fc00::/7 must be rejected"
 
 
 def test_32_6_ssrf_validate_rejects_non_http_scheme():

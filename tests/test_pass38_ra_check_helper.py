@@ -18,7 +18,7 @@ from tests._util import REPO_ROOT as _REPO_ROOT  # noqa: F401
 
 
 @pytest.fixture
-def temp_db(tmp_path, monkeypatch):
+def temp_db_path(tmp_path, monkeypatch):
     """Set up a minimal games table the helper can update.
 
     The sqlite3 connection is wrapped in a `with` block so it commits and
@@ -65,7 +65,7 @@ def temp_db(tmp_path, monkeypatch):
 
 class TestApplyRetroachievementsCheck:
     def test_returns_false_and_no_db_write_when_check_returns_none(
-        self, temp_db, monkeypatch
+        self, temp_db_path, monkeypatch
     ):
         """check_retroachievements may return None for unknown systems —
         helper must not write to DB and must return False so the caller
@@ -79,7 +79,7 @@ class TestApplyRetroachievementsCheck:
             )
         assert result is False
 
-        conn = sqlite3.connect(temp_db)
+        conn = sqlite3.connect(temp_db_path)
         try:
             row = conn.execute(
                 "SELECT has_retroachievements FROM games WHERE id = 42"
@@ -88,7 +88,7 @@ class TestApplyRetroachievementsCheck:
             conn.close()
         assert row[0] == 0  # no DB write
 
-    def test_returns_false_when_has_achievements_is_false(self, temp_db):
+    def test_returns_false_when_has_achievements_is_false(self, temp_db_path):
         """check_retroachievements returns a dict with has_achievements=False
         for games on RA-supported systems that don't themselves have an
         achievement set. No DB write, no 'retroachievements' append."""
@@ -103,7 +103,7 @@ class TestApplyRetroachievementsCheck:
             )
         assert result is False
 
-    def test_writes_ra_columns_and_returns_true_on_match(self, temp_db):
+    def test_writes_ra_columns_and_returns_true_on_match(self, temp_db_path):
         """Match path — helper writes has_retroachievements=1 + the three
         RA columns and returns True (caller appends to filled_fields)."""
         from scraper import hybrid_scraper
@@ -121,7 +121,7 @@ class TestApplyRetroachievementsCheck:
             )
         assert result is True
 
-        conn = sqlite3.connect(temp_db)
+        conn = sqlite3.connect(temp_db_path)
         try:
             row = conn.execute(
                 "SELECT has_retroachievements, ra_game_id, "
@@ -135,7 +135,7 @@ class TestApplyRetroachievementsCheck:
         assert row[2] == 50
         assert row[3] == 750
 
-    def test_returns_false_and_swallows_exception(self, temp_db, caplog):
+    def test_returns_false_and_swallows_exception(self, temp_db_path, caplog):
         """check_retroachievements may raise (network failure, missing
         credentials, RA service down). Helper must catch and return False
         so the rest of the scrape continues — that's the contract Pass
@@ -164,7 +164,7 @@ class TestApplyRetroachievementsCheck:
         lambda: __import__('requests').exceptions.Timeout('simulated read timeout'),
         lambda: __import__('requests').exceptions.ConnectionError('simulated refused'),
     ])
-    def test_returns_false_on_network_exceptions(self, temp_db, exc_factory):
+    def test_returns_false_on_network_exceptions(self, temp_db_path, exc_factory):
         from scraper import hybrid_scraper
 
         def _boom(*_args, **_kwargs):

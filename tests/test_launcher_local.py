@@ -61,8 +61,10 @@ def test_launch_quick_exit_reaps_cleanly():
     ctx = LaunchContext(game_id=2, emulator_id=2, binary=Path(TRUE),
                         argv=[TRUE], token='t2')
     launcher.launch(ctx)
+    # _poll_exited returns a LaunchStatus or calls pytest.fail — never
+    # returns None — so the prior `assert st is not None` was a dead guard
+    # (test-audit c-003 LOW).
     st = _poll_exited(launcher, 't2')
-    assert st is not None, "poll loop never set st"
     assert st.state == 'exited'
     assert st.exit_code == 0
 
@@ -78,7 +80,6 @@ def test_launch_failed_exit_code_propagates():
                         argv=[FALSE], token='t3')
     launcher.launch(ctx)
     st = _poll_exited(launcher, 't3')
-    assert st is not None, "poll loop never set st"
     assert st.exit_code == 1
 
 

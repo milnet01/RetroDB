@@ -32,6 +32,14 @@ class TestPass39_4LockfileHashes:
     CI_WORKFLOW = os.path.join(_REPO_ROOT, '.github', 'workflows', 'ci.yml')
 
     def _read(self, path):
+        # Existence-check before open so a fresh checkout missing one of
+        # LOCKFILE/INSTALL_CLI/INSTALL_GUI/CI_WORKFLOW surfaces a clean
+        # assertion error rather than a raw FileNotFoundError traceback
+        # (test-audit c-005 LOW error_handling).
+        assert os.path.exists(path), (
+            f"required project file missing: {path!r} — this test class "
+            "expects the file to ship in the repo"
+        )
         with open(path, encoding='utf-8') as f:
             return f.read()
 

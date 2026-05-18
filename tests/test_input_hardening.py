@@ -80,31 +80,30 @@ class TestReportsSystemWhitelist:
 class TestMuseumSSRFGuard:
     # Pass 32.7 expanded the return tuple from (safe_url, err) to
     # (safe_url, pinned_ip, err) so callers can defeat DNS rebinding.
-    def test_private_ip_rejected(self):
-        from routes.museum import _is_public_https_url
-        # 127.0.0.1 explicit — no DNS needed
-        safe_url, pinned_ip, err = _is_public_https_url('http://127.0.0.1/admin')
-        assert safe_url is None
-        assert pinned_ip is None
-        # Canonical rejection reason from services.ssrf.validate_outbound_url.
-        # Pinning the exact prefix means a refactor that drops or reshapes the
-        # message will fail loudly instead of silently degrading the assertion.
-        assert err.startswith('disallowed IP range:'), err
 
-    def test_rfc1918_rejected(self):
+    # Five IP-range cases share an identical assertion shape — collapsed
+    # into one parametrize block (test-audit c-003 MED). The
+    # `test_non_http_scheme_rejected` case stays standalone since it
+    # asserts a different error prefix.
+    @pytest.mark.parametrize("url,label", [
+        ('http://127.0.0.1/admin', 'ipv4_loopback'),
+        ('http://10.0.0.1/foo', 'rfc1918'),
+        ('http://169.254.169.254/latest/meta-data/', 'ipv4_link_local_imds'),
+        ('http://[::1]/admin', 'ipv6_loopback'),
+        ('http://[fe80::1]/foo', 'ipv6_link_local'),
+    ])
+    def test_private_or_link_local_ip_rejected(self, url, label):
+        """Every private/link-local IP class must produce the canonical
+        `disallowed IP range:` rejection from
+        `services.ssrf.validate_outbound_url`. Pinning the exact prefix
+        means a refactor that drops or reshapes the message will fail
+        loudly instead of silently degrading the assertion."""
         from routes.museum import _is_public_https_url
-        safe_url, pinned_ip, err = _is_public_https_url('http://10.0.0.1/foo')
+        safe_url, pinned_ip, err = _is_public_https_url(url)
         assert safe_url is None
         assert pinned_ip is None
-        assert err.startswith('disallowed IP range:'), err
-
-    def test_link_local_rejected(self):
-        from routes.museum import _is_public_https_url
-        # AWS IMDS endpoint — the canonical SSRF target
-        safe_url, pinned_ip, err = _is_public_https_url('http://169.254.169.254/latest/meta-data/')
-        assert safe_url is None
-        assert pinned_ip is None
-        assert err.startswith('disallowed IP range:'), err
+        assert err.startswith('disallowed IP range:'), \
+            f"[{label}] expected 'disallowed IP range:' prefix, got: {err!r}"
 
     def test_non_http_scheme_rejected(self):
         from routes.museum import _is_public_https_url
@@ -112,25 +111,6 @@ class TestMuseumSSRFGuard:
         assert safe_url is None
         assert pinned_ip is None
         assert 'scheme' in err.lower()
-
-    def test_ipv6_loopback_rejected(self):
-        """IPv6 SSRF coverage — the production guard uses the `ipaddress`
-        module which classifies `::1` as loopback. A fast-path regression
-        that early-returns on IPv4-shaped literals would miss this."""
-        from routes.museum import _is_public_https_url
-        safe_url, pinned_ip, err = _is_public_https_url('http://[::1]/admin')
-        assert safe_url is None
-        assert pinned_ip is None
-        assert err.startswith('disallowed IP range:'), err
-
-    def test_ipv6_link_local_rejected(self):
-        """IPv6 link-local (`fe80::/10`) maps to the IPv4 169.254.0.0/16
-        AWS-IMDS class of SSRF targets — same severity, IPv6 surface."""
-        from routes.museum import _is_public_https_url
-        safe_url, pinned_ip, err = _is_public_https_url('http://[fe80::1]/foo')
-        assert safe_url is None
-        assert pinned_ip is None
-        assert err.startswith('disallowed IP range:'), err
 
 
 # 25.4 — Museum upload size cap

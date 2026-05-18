@@ -3,29 +3,32 @@ import pytest
 
 
 @pytest.fixture
-def app_module():
+def app_module(monkeypatch):
+    """Return the app module with TESTING=True applied.
+
+    Without TESTING=True the unauthenticated route tests below would
+    accept a 5xx (not in the expected set, so they fail "correctly" but
+    for the wrong reason — the assertion can't distinguish auth-rejected
+    from internal-error). Apply via monkeypatch so the flag is restored
+    on teardown (test-audit c-006 MED isolation)."""
     import app as mod
+    monkeypatch.setitem(mod.app.config, 'TESTING', True)
     return mod
 
 
-def test_launch_route_registered(app_module):
+@pytest.mark.parametrize("path", [
+    '/api/game/<int:game_id>/launch',
+    '/api/launch/<token>/status',
+    '/api/launch/<token>/kill',
+    '/api/launches/active',
+])
+def test_launch_routes_registered(app_module, path):
+    """All four launch-subsystem routes must be registered. Collapsed from
+    four near-identical single-route tests (test-audit c-006 MED
+    parametrisation) — a single failure now surfaces once, and adding a
+    new launch route requires only adding to the parametrize list."""
     rules = {r.rule for r in app_module.app.url_map.iter_rules()}
-    assert '/api/game/<int:game_id>/launch' in rules
-
-
-def test_status_route_registered(app_module):
-    rules = {r.rule for r in app_module.app.url_map.iter_rules()}
-    assert '/api/launch/<token>/status' in rules
-
-
-def test_kill_route_registered(app_module):
-    rules = {r.rule for r in app_module.app.url_map.iter_rules()}
-    assert '/api/launch/<token>/kill' in rules
-
-
-def test_active_route_registered(app_module):
-    rules = {r.rule for r in app_module.app.url_map.iter_rules()}
-    assert '/api/launches/active' in rules
+    assert path in rules
 
 
 def test_unauth_launch_returns_401_or_redirect(app_module):
@@ -42,25 +45,36 @@ def test_active_endpoint_unauth_blocked(app_module):
     assert rv.status_code in (302, 401, 403)
 
 
+def _make_authed_client(app_module, monkeypatch, role, *, user_id=99,
+                        username='tester'):
+    """Build a Flask test client logged in as `role`, with CSRF seeded.
+
+    Shared by the `player_client` fixture and the standalone
+    test_viewer_blocked_403 case (test-audit c-006 MED duplication):
+    both setups previously copy-pasted the same triple of monkeypatches
+    and CSRF seed. Centralising here means a future stub-shape change
+    propagates to one site."""
+    monkeypatch.setattr('app.get_current_user',
+                        lambda: {'id': user_id, 'username': username, 'role': role})
+    monkeypatch.setattr('app.get_user_settings', lambda _uid: {})
+    monkeypatch.setattr('app.settings_manager.load_settings',
+                        lambda: {'setup_completed': True, 'rom_path': '/tmp'})
+    client = app_module.app.test_client()
+    with client.session_transaction() as sess:
+        sess['_csrf_token'] = 'test-csrf-token'
+    return client
+
+
 class TestLaunchEndpointBehavior:
     """Drive the route through monkeypatched resolver + launcher to verify
     response codes for each branch in the request handler."""
 
     @pytest.fixture
     def player_client(self, app_module, monkeypatch):
-        """Stub get_current_user (which load_user calls) to inject a player.
-        Also seed a CSRF token, and bypass the first-time-setup redirect
-        (which fires on CI's fresh checkout where settings.setup_completed
-        is False and rom_path is empty)."""
-        monkeypatch.setattr('app.get_current_user',
-                            lambda: {'id': 99, 'username': 'tester', 'role': 'player'})
-        monkeypatch.setattr('app.get_user_settings', lambda _uid: {})
-        monkeypatch.setattr('app.settings_manager.load_settings',
-                            lambda: {'setup_completed': True, 'rom_path': '/tmp'})
-        client = app_module.app.test_client()
-        with client.session_transaction() as sess:
-            sess['_csrf_token'] = 'test-csrf-token'
-        yield client
+        """Player-role client. Bypasses first-time-setup redirect (which
+        fires on a fresh checkout where settings.setup_completed is False
+        and rom_path is empty)."""
+        yield _make_authed_client(app_module, monkeypatch, 'player')
 
     def _csrf_headers(self):
         return {'X-CSRF-Token': 'test-csrf-token'}
@@ -115,15 +129,11 @@ class TestLaunchEndpointBehavior:
 
     def test_viewer_blocked_403(self, app_module, monkeypatch):
         """A viewer cannot launch even though they're logged in."""
-        monkeypatch.setattr('app.get_current_user',
-                            lambda: {'id': 1, 'username': 'viewer', 'role': 'viewer'})
-        monkeypatch.setattr('app.get_user_settings', lambda _uid: {})
-        monkeypatch.setattr('app.settings_manager.load_settings',
-                            lambda: {'setup_completed': True, 'rom_path': '/tmp'})
+        client = _make_authed_client(
+            app_module, monkeypatch, 'viewer',
+            user_id=1, username='viewer',
+        )
         self._stub_resolver_and_launcher(monkeypatch)
-        client = app_module.app.test_client()
-        with client.session_transaction() as sess:
-            sess['_csrf_token'] = 'test-csrf-token'
         rv = client.post('/api/game/1/launch', headers=self._csrf_headers())
         # has_permission('launch') returns False for viewer; route returns 403
         assert rv.status_code == 403

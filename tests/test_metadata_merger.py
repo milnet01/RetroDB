@@ -51,6 +51,16 @@ def blank():
 # ---------------------------------------------------------------------------
 
 class TestApplyTgdb:
+    # Note (test-audit c-004 false positive): the audit suggested a
+    # `test_none_data_is_noop` mirroring TestApplyAi. Verification shows
+    # the TGDB/IGDB mergers have no internal None guard (unlike AI) — and
+    # don't need one, because all callers in scraper/hybrid_scraper.py
+    # and services/wishlist_scraper.py gate on `if data:` before calling.
+    # A None-defensive test here would either fail (function raises
+    # AttributeError) or require adding defensive code for a case that
+    # can't happen at any call site (global rule §0). Documented and
+    # skipped.
+
     def test_fills_empty_text_fields(self, blank):
         meta, result = blank
         tgdb = {
@@ -111,6 +121,9 @@ class TestApplyTgdb:
 # ---------------------------------------------------------------------------
 
 class TestApplyIgdb:
+    # See TestApplyTgdb header note — same false-positive reasoning
+    # (test-audit c-004 coverage_gaps deferred as a non-issue).
+
     def test_fills_empty_text_fields_including_company_mapping(self, blank):
         meta, result = blank
         igdb = {

@@ -50,7 +50,12 @@ class TestLaunchHandle:
 
     def test_frozen(self):
         h = LaunchHandle(token='t', pid=42, game_id=1, emulator_id=2, started_at=100.0)
-        with pytest.raises((AttributeError, TypeError)):
+        # Frozen dataclass raises FrozenInstanceError (a subclass of
+        # AttributeError on Py 3.11+). The previous `(AttributeError,
+        # TypeError)` tuple let an unrelated TypeError satisfy the test;
+        # narrow to AttributeError so the intent stays pinned
+        # (test-audit c-003 LOW).
+        with pytest.raises(AttributeError):
             h.pid = 99
 
 

@@ -134,6 +134,54 @@ def test_extra_args_auto_appended(tmpdb):
     assert '-renderer' in ctx.argv and 'vulkan' in ctx.argv
 
 
+def test_launch_args_override_appended(tmpdb):
+    """games.launch_args_override (per-game arg suffix) must be appended
+    to the resolved argv. The tmpdb fixture seeds this column but no test
+    previously exercised the code path that reads it (test-audit c-003
+    LOW coverage_gaps)."""
+    tmpdb['conn'].execute(
+        "UPDATE games SET launch_args_override = '--fullscreen --no-throttle' "
+        "WHERE id = 1"
+    )
+    tmpdb['conn'].commit()
+    from services.launch_resolver import resolve_launch_context
+    ctx = resolve_launch_context(game_id=1)
+    assert '--fullscreen' in ctx.argv, (
+        f"launch_args_override tokens missing from argv: {ctx.argv!r}"
+    )
+    assert '--no-throttle' in ctx.argv
+
+
+def test_bonus_disc_paths_included(tmpdb, tmp_path):
+    """games.bonus_discs rows (multi-disc games) must be expanded into
+    argv via the {disc_paths} template token. The tmpdb fixture defined
+    the bonus_discs table but no test previously exercised the
+    `_disc_paths_for_game` -> `vars_dict['disc_paths']` -> template
+    substitution chain (test-audit c-003 LOW coverage_gaps)."""
+    disc2 = tmpdb['rom_file'].parent / 'crash_disc2.bin'
+    disc2.write_text('disc2-bytes')
+    tmpdb['conn'].execute(
+        "INSERT INTO bonus_discs (parent_game_id, rom_path) VALUES (1, ?)",
+        (str(disc2),),
+    )
+    # Use a template that references {disc_paths} explicitly so the
+    # resolver wires the bonus-discs lookup into argv. Production
+    # DuckStation templates that lack the token would not expand the
+    # discs; this test is for the expansion code path, not the default
+    # template.
+    tmpdb['conn'].execute(
+        "UPDATE emulators SET args_template = ? WHERE name = 'DuckStation'",
+        ('-batch "{rom}" --extra-discs {disc_paths}',),
+    )
+    tmpdb['conn'].commit()
+    from services.launch_resolver import resolve_launch_context
+    ctx = resolve_launch_context(game_id=1)
+    argv_joined = ' '.join(ctx.argv)
+    assert str(disc2) in argv_joined, (
+        f"bonus disc path {str(disc2)!r} not expanded into argv: {ctx.argv!r}"
+    )
+
+
 def test_token_is_random_per_call(tmpdb):
     from services.launch_resolver import resolve_launch_context
     a = resolve_launch_context(game_id=1)

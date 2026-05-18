@@ -28,6 +28,37 @@ def test_probe_binary_falls_through_to_which(monkeypatch):
     assert result == '/somewhere/retroarch'
 
 
+def test_probe_binary_returns_first_chain_hit(monkeypatch):
+    """If multiple chain candidates exist, the first one in `_BIN_CHAIN`
+    wins. Pins the priority ordering — a regression that flipped the
+    order (e.g. flatpak-first when /usr/bin is present) would silently
+    break user expectations on packaged distros (test-audit c-006 LOW
+    coverage_gaps)."""
+    from routes import launch_settings as ls
+
+    first_choice = ls._BIN_CHAIN[0]  # canonical highest-priority candidate
+    fallback_choice = ls._BIN_CHAIN[-1]  # last (lowest priority)
+
+    # Pretend ONLY first_choice exists; nothing else.
+    def _exists(self):
+        return str(self) == first_choice
+    monkeypatch.setattr(ls.Path, 'exists', _exists, raising=False)
+    monkeypatch.setattr(ls, 'os', __import__('os'))
+    # os.access in production checks X_OK; stub to True for the chain hit.
+    monkeypatch.setattr(ls.os, 'access', lambda p, mode: p == first_choice)
+    monkeypatch.setattr(
+        ls.shutil, 'which',
+        lambda name: f"/should-not-be-called/{name}",
+    )
+
+    result = ls._probe_retroarch_binary()
+    assert result == first_choice, (
+        f"chain order broken: expected {first_choice!r}, got {result!r} "
+        f"(fallback was {fallback_choice!r}; shutil.which would have returned "
+        f"a marker if the chain fell through)"
+    )
+
+
 def test_probe_binary_returns_none_when_which_fails(monkeypatch):
     """When no chain path exists AND shutil.which returns None (no RetroArch
     anywhere on PATH), the probe must return a falsy value — never invent a

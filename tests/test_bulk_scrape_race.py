@@ -15,9 +15,11 @@ from unittest.mock import patch
 
 import pytest
 
-from services.jobs import bulk_scrape as bulk_scrape_mod
 from services.jobs.bulk_scrape import BulkScrapeJob
-from tests.test_bulk_scrape_job import _make_memory_db
+from tests._bulk_scrape_fixtures import (
+    bulk_scrape_persistence_patches,
+    make_memory_db,
+)
 
 
 @pytest.fixture
@@ -26,8 +28,10 @@ def job_with_real_thread():
 
     Unlike the main `job` fixture we don't stub `_run_scrape` to a no-op —
     we replace it with a controllable stub so the race is testable.
+    The persistence + singleton-lock stub stanza lives in
+    `tests/_bulk_scrape_fixtures.py` (test-audit c-001 MED duplication).
     """
-    mem_db = _make_memory_db()
+    mem_db = make_memory_db()
     # Pass 41.6.A — track BulkScrapeJob instances created via this fixture
     # so we can release any singleton FDs they acquired in teardown. Without
     # this, the cross-process flock survives the test and the next test's
@@ -39,21 +43,7 @@ def job_with_real_thread():
             super().__init__()
             _instances.append(self)
 
-    # v3.6.7 — also patch `acquire_job_singleton_lock` to the sentinel `0`
-    # so tests don't contend with the production server's flock on
-    # `<DB_DIR>/job_locks/bulk_scrape.lock`. See the matching comment in
-    # tests/test_bulk_scrape_job.py for the full rationale.
-    # TODO: extract patch stanza — this 7-line block is duplicated verbatim in
-    # tests/test_bulk_scrape_job.py (the `job` fixture). Refactor into a shared
-    # helper (conftest.py or tests/_bulk_scrape_fixtures.py) so adding a new
-    # persistence helper in `bulk_scrape_mod` only needs one update site.
-    with patch.object(bulk_scrape_mod, '_get_conn', return_value=mem_db), \
-         patch.object(bulk_scrape_mod, 'persist_job_start', return_value=None), \
-         patch.object(bulk_scrape_mod, 'persist_job_progress', return_value=None), \
-         patch.object(bulk_scrape_mod, 'persist_job_complete', return_value=None), \
-         patch.object(bulk_scrape_mod, 'persist_job_queued', return_value=999), \
-         patch.object(bulk_scrape_mod, 'remove_queued_job', return_value=None), \
-         patch.object(bulk_scrape_mod, 'acquire_job_singleton_lock', return_value=0):
+    with bulk_scrape_persistence_patches(mem_db):
         yield _TrackingJob
 
     from services.jobs.base import release_job_singleton_lock

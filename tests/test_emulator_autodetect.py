@@ -89,8 +89,12 @@ def test_detect_endpoint_registered():
     assert '/api/settings/emulators/detect' in rules
 
 
-def test_unauth_detect_blocked():
+def test_unauth_detect_blocked(monkeypatch):
     import app as app_module
+    # TESTING=True ensures Flask propagates exceptions through the test
+    # client so we don't accept a 500 in the `in (302, 401, 403)` set
+    # by mistake (test-audit c-002 MED isolation).
+    monkeypatch.setitem(app_module.app.config, 'TESTING', True)
     client = app_module.app.test_client()
     rv = client.post('/api/settings/emulators/detect')
     assert rv.status_code in (302, 401, 403)

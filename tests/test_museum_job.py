@@ -28,6 +28,7 @@ class TestPersistenceContract:
         """get_status() must take self._lock per the audit finding —
         otherwise a worker mid-update can serve a torn dict."""
         from services.jobs.museum import MuseumGenerateJob
+        from services.jobs.base import release_singleton_fd
 
         job = MuseumGenerateJob()
 
@@ -42,9 +43,18 @@ class TestPersistenceContract:
             def __exit__(self_inner, *a):
                 return original_lock.__exit__(*a)
 
-        job._lock = TrackingLock()
-        job.get_status()
-        assert acquired, "get_status() did not acquire self._lock"
+        try:
+            job._lock = TrackingLock()
+            job.get_status()
+            assert acquired, "get_status() did not acquire self._lock"
+        finally:
+            # Release the process-level singleton FD so later tests in
+            # the session can re-acquire it. Without this, the
+            # `resume_from_params` calls in subsequent tests fail with
+            # "singleton lock likely held by an earlier test" (test-
+            # audit c-004 HIGH isolation — matches the release pattern
+            # already used inside `fake_worker` below).
+            release_singleton_fd(job)
 
 
 class TestResumeFromParams:

@@ -69,8 +69,12 @@ class TestGetManufacturer:
         """Regression for F601 duplicate-key bugs. Reparse source to catch
         the 'last wins' silent override that ruff flagged in earlier audits."""
         import ast
-        from pathlib import Path
-        src = Path('services/formatters.py').read_text()
+        # Use REPO_ROOT-anchored read_source so the test runs from any CWD —
+        # the previous `Path('services/formatters.py')` would FileNotFoundError
+        # when pytest was invoked from outside the repo root (test-audit
+        # c-002 MED hardcoded_data).
+        from tests._util import read_source
+        src = read_source('services/formatters.py')
         tree = ast.parse(src)
         for node in ast.walk(tree):
             if isinstance(node, ast.Assign) and any(

@@ -54,6 +54,7 @@ class TestBuildScrapeHistoryJson:
         result = {'sources_used': ['IGDB'], 'filled_fields': ['title (IGDB)']}
         metadata = {'title': 'Sonic', 'genre': ''}
 
+        before = datetime.now()
         out = hybrid_scraper._build_scrape_history_json(
             c, 1, 'igdb', metadata, result, force_overwrite=False,
         )
@@ -71,15 +72,20 @@ class TestBuildScrapeHistoryJson:
         assert re.match(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}', entry['timestamp']), (
             f"timestamp must be ISO-8601, got {entry['timestamp']!r}"
         )
-        # c-005 LOW fix: recency check — format-only pin would pass for a
-        # hardcoded epoch string like "2000-01-01T00:00:00". Assert the
-        # timestamp is within the last 5 seconds (the helper writes
-        # datetime.now() so a fresh write must satisfy this).
-        assert datetime.fromisoformat(entry['timestamp']) > (
-            datetime.now() - timedelta(seconds=5)
-        ), (
-            f"timestamp must be fresh, got {entry['timestamp']!r} "
-            "(more than 5 s in the past suggests a hardcoded value)"
+        # Recency check — format-only pin would pass for a hardcoded epoch
+        # string like "2000-01-01T00:00:00". Assert the timestamp is fresh
+        # using a bounded two-sided window: we capture `before` *before*
+        # the helper call (the caller below is responsible for that) and
+        # compare against `now()` here. A single-sided "more recent than
+        # now() - 5 s" fails under CI pause/swap; the two-sided form is
+        # robust because both endpoints move with real elapsed time
+        # (test-audit c-005 HIGH).
+        ts = datetime.fromisoformat(entry['timestamp'])
+        now = datetime.now()
+        assert before - timedelta(seconds=1) <= ts <= now + timedelta(seconds=1), (
+            f"timestamp must be inside the call window "
+            f"[{before.isoformat()} .. {now.isoformat()}], "
+            f"got {entry['timestamp']!r}"
         )
 
     def test_subsequent_scrape_appends_to_existing_history(self, connection):
@@ -157,10 +163,16 @@ class TestBuildScrapeHistoryJson:
             'genre': '',        # missing (empty string)
             'year': None,       # missing (None)
             'players': 0,       # missing (zero is falsy)
+            # `False` boundary — pin that bool(False) is treated the
+            # same as int(0) by the helper's falsy check (test-audit
+            # c-005 MED coverage_gaps).
+            'active': False,
         }
 
         out = hybrid_scraper._build_scrape_history_json(
             c, 1, 'igdb', metadata, result, force_overwrite=False,
         )
         history = json.loads(out)
-        assert set(history[0]['fields_missing']) == {'genre', 'year', 'players'}
+        assert set(history[0]['fields_missing']) == {
+            'genre', 'year', 'players', 'active',
+        }

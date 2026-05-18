@@ -17,16 +17,21 @@ from services.image_utils import (
 )
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def jpeg_bytes():
-    """Raw JPEG payload for a trivial test image."""
+    """Raw JPEG payload for a trivial test image.
+
+    Module-scoped — these payloads are read-only and consumed by ~4 tests;
+    function scope re-encoded the 800x1120 image 4× (5-15 ms each) per
+    pytest invocation (test-audit c-003 LOW performance)."""
     buf = io.BytesIO()
     Image.new('RGB', (800, 1120), color=(200, 100, 50)).save(buf, format='JPEG', quality=85)
     return buf.getvalue()
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def png_bytes():
+    """Same module-scope rationale as `jpeg_bytes` above."""
     buf = io.BytesIO()
     Image.new('RGBA', (800, 1120), color=(0, 0, 255, 255)).save(buf, format='PNG')
     return buf.getvalue()
@@ -35,21 +40,22 @@ def png_bytes():
 class TestPreferredImageExtension:
     """`preferred_image_extension` drives the on-ingest format decision."""
 
-    def test_webp_mode_boxart(self, monkeypatch):
-        monkeypatch.setattr(config, 'IMAGE_FORMAT', 'webp', raising=False)
-        assert image_utils.preferred_image_extension('boxart', '.jpg') == '.webp'
-
-    def test_webp_mode_screenshots(self, monkeypatch):
-        monkeypatch.setattr(config, 'IMAGE_FORMAT', 'webp', raising=False)
-        assert image_utils.preferred_image_extension('screenshots', '.png') == '.webp'
-
-    def test_jpeg_mode_keeps_jpg(self, monkeypatch):
-        monkeypatch.setattr(config, 'IMAGE_FORMAT', 'jpeg', raising=False)
-        assert image_utils.preferred_image_extension('boxart', '.jpg') == '.jpg'
-
-    def test_jpeg_mode_downgrades_png(self, monkeypatch):
-        monkeypatch.setattr(config, 'IMAGE_FORMAT', 'jpeg', raising=False)
-        assert image_utils.preferred_image_extension('boxart', '.png') == '.jpg'
+    # Six near-identical test methods collapsed into one parametrize
+    # block (test-audit c-003 MED). The `test_gif_always_preserved`
+    # case stays standalone because it warrants a dedicated docstring
+    # explaining the multi-frame-loss risk on Pillow's WebP save path.
+    @pytest.mark.parametrize("img_format,img_type,ext_in,ext_out", [
+        ('webp', 'boxart', '.jpg', '.webp'),
+        ('webp', 'screenshots', '.png', '.webp'),
+        ('jpeg', 'boxart', '.jpg', '.jpg'),
+        ('jpeg', 'boxart', '.png', '.jpg'),
+        ('webp', 'video', '.mp4', '.mp4'),
+        ('webp', 'manual', '.pdf', '.pdf'),
+        ('webp', 'boxart', 'jpg', '.webp'),  # no-leading-dot input
+    ])
+    def test_format_decision(self, monkeypatch, img_format, img_type, ext_in, ext_out):
+        monkeypatch.setattr(config, 'IMAGE_FORMAT', img_format, raising=False)
+        assert image_utils.preferred_image_extension(img_type, ext_in) == ext_out
 
     def test_gif_always_preserved(self, monkeypatch):
         """Animated GIFs must survive the pipeline unchanged — re-encoding as
@@ -57,16 +63,6 @@ class TestPreferredImageExtension:
         versions that default to single-frame WebP save."""
         monkeypatch.setattr(config, 'IMAGE_FORMAT', 'webp', raising=False)
         assert image_utils.preferred_image_extension('boxart', '.gif') == '.gif'
-
-    def test_video_type_passthrough(self, monkeypatch):
-        """Videos and manuals aren't convertible image types."""
-        monkeypatch.setattr(config, 'IMAGE_FORMAT', 'webp', raising=False)
-        assert image_utils.preferred_image_extension('video', '.mp4') == '.mp4'
-        assert image_utils.preferred_image_extension('manual', '.pdf') == '.pdf'
-
-    def test_accepts_ext_without_dot(self, monkeypatch):
-        monkeypatch.setattr(config, 'IMAGE_FORMAT', 'webp', raising=False)
-        assert image_utils.preferred_image_extension('boxart', 'jpg') == '.webp'
 
 
 class TestFormatNormalize:

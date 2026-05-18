@@ -145,6 +145,18 @@ class TestAltTitleFallback:
         # "Rockman" vs "Rockman Dash", so primary should win.
         assert result['match_name'] == 'Mega Man Zero'
         assert result['matched_via_alternate'] is False
+        # Pin the scoring mechanism — a regression that returned the same
+        # match_name via the alt path (silently flipping the winning
+        # comparator) would pass the name + flag checks but break the
+        # contract (test-audit c-002 MED coverage_gaps).
+        assert 'match_confidence' in result, (
+            "match_confidence must be present so the scoring contract is testable"
+        )
+        assert isinstance(result['match_confidence'], (int, float)) and \
+            result['match_confidence'] > 0, (
+            f"match_confidence must be a positive score, got "
+            f"{result['match_confidence']!r}"
+        )
 
     def test_search_exception_returns_none(self):
         """COV-1: if `_search_hltb` raises, the top-level try/except in

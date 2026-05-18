@@ -175,17 +175,16 @@ class _FailingConn:
         pass
 
 
-def test_igdb_apply_returns_false_when_db_fails(monkeypatch, noop_download):
+@pytest.mark.parametrize("scraper_module,empty_response", [
+    (scrape_igdb, {'name': 'No Such Game'}),
+    (scrape_thegamesdb, {'game_title': 'No Such Game'}),
+])
+def test_apply_returns_false_when_db_fails(scraper_module, empty_response,
+                                            monkeypatch, noop_download):
     """A DB error inside `apply_metadata_to_game` must surface as False
     (not a silent True, not a re-raise). Pins the COALESCE invariant's
-    failure-side contract."""
-    monkeypatch.setattr(scrape_igdb, 'get_scraper_conn', lambda: _FailingConn())
-    result = scrape_igdb.apply_metadata_to_game(999, {'name': 'No Such Game'})
-    assert result is False
-
-
-def test_tgdb_apply_returns_false_when_db_fails(monkeypatch, noop_download):
-    """Mirror of the IGDB failure-path test for the TGDB scraper."""
-    monkeypatch.setattr(scrape_thegamesdb, 'get_scraper_conn', lambda: _FailingConn())
-    result = scrape_thegamesdb.apply_metadata_to_game(999, {'game_title': 'No Such Game'})
+    failure-side contract for both scrapers — collapsed from twin
+    standalone tests (test-audit c-006 LOW parametrisation)."""
+    monkeypatch.setattr(scraper_module, 'get_scraper_conn', lambda: _FailingConn())
+    result = scraper_module.apply_metadata_to_game(999, empty_response)
     assert result is False

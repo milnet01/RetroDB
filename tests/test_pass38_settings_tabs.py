@@ -215,6 +215,17 @@ class TestAnchorsPreserved:
         "system": ["maintenance", "server", "logging", "troubleshooting"],
     }
 
+    def test_expected_anchors_covers_all_tabs(self):
+        """The EXPECTED_ANCHORS dict must mirror the TABS tuple exactly —
+        a new tab without a matching entry would surface as a confusing
+        KeyError inside `test_partial_keeps_expected_anchors` rather
+        than a clean failure here (test-audit c-005 LOW parametrisation)."""
+        assert set(self.EXPECTED_ANCHORS) == set(TABS), (
+            f"EXPECTED_ANCHORS drift — only in dict: "
+            f"{set(self.EXPECTED_ANCHORS) - set(TABS)!r}; "
+            f"only in TABS: {set(TABS) - set(self.EXPECTED_ANCHORS)!r}"
+        )
+
     @pytest.mark.parametrize("tab", TABS)
     def test_partial_keeps_expected_anchors(self, tab):
         """Every anchor the subnav-link calls jump to must still resolve.

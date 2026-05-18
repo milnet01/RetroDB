@@ -12,29 +12,15 @@ The real `_run_scrape()` is a network-heavy loop; here it's stubbed to a no-op
 so the state machine can be exercised without spawning scrapers.
 """
 
-import sqlite3
 from unittest.mock import patch
 
 import pytest
 
-from services.jobs import bulk_scrape as bulk_scrape_mod
 from services.jobs.bulk_scrape import BulkScrapeJob
-
-
-def _make_memory_db():
-    """Build a minimal in-memory DB the job's `start()` can query for system/game titles."""
-    conn = sqlite3.connect(':memory:', check_same_thread=False)
-    conn.row_factory = sqlite3.Row
-    conn.executescript("""
-        CREATE TABLE systems (id INTEGER PRIMARY KEY, name TEXT);
-        CREATE TABLE games (id INTEGER PRIMARY KEY, title TEXT, system_id INTEGER);
-        INSERT INTO systems (id, name) VALUES (1, 'NES'), (2, 'SNES');
-        INSERT INTO games (id, title, system_id) VALUES
-            (100, 'Super Mario Bros', 1),
-            (101, 'Zelda', 1),
-            (200, 'F-Zero', 2);
-    """)
-    return conn
+from tests._bulk_scrape_fixtures import (
+    bulk_scrape_persistence_patches,
+    make_memory_db as _make_memory_db,
+)
 
 
 @pytest.fixture
@@ -43,33 +29,13 @@ def job():
 
     Yields the job; on teardown, forces running/completed flags so anything
     the state machine might have started settles instead of leaking threads.
+    The persistence + singleton-lock patches now live in
+    `tests/_bulk_scrape_fixtures.py` so adding a new helper requires one
+    update site (test-audit c-001 MED duplication).
     """
     mem_db = _make_memory_db()
 
-    # Patch persistence + connection helpers + the thread target so start()
-    # never talks to the real DB or spawns a real scraper.
-    #
-    # v3.6.7 — also patch `acquire_job_singleton_lock` to return the
-    # sentinel `0` ("acquired, no real lock"). Without this, `start()`
-    # calls fcntl.flock against the shared on-disk file
-    # `<DB_DIR>/job_locks/bulk_scrape.lock`, and if a live RetroDB server
-    # is running on this machine and currently holds that lock (e.g. the
-    # user's local dev server with an interrupted job), every test that
-    # invokes `start()` returns `success=False` with "already running on
-    # another worker". The sentinel `0` is later passed to
-    # `release_job_singleton_lock(0)` which is a documented no-op.
-    # TODO: extract patch stanza — this 7-line block is duplicated verbatim in
-    # tests/test_bulk_scrape_race.py (the `job_with_real_thread` fixture).
-    # Refactor into a shared helper (conftest.py or tests/_bulk_scrape_fixtures.py)
-    # so adding a new persistence helper in `bulk_scrape_mod` only needs one
-    # update site.
-    with patch.object(bulk_scrape_mod, '_get_conn', return_value=mem_db), \
-         patch.object(bulk_scrape_mod, 'persist_job_start', return_value=None), \
-         patch.object(bulk_scrape_mod, 'persist_job_progress', return_value=None), \
-         patch.object(bulk_scrape_mod, 'persist_job_complete', return_value=None), \
-         patch.object(bulk_scrape_mod, 'persist_job_queued', return_value=999), \
-         patch.object(bulk_scrape_mod, 'remove_queued_job', return_value=None), \
-         patch.object(bulk_scrape_mod, 'acquire_job_singleton_lock', return_value=0), \
+    with bulk_scrape_persistence_patches(mem_db), \
          patch.object(BulkScrapeJob, '_run_scrape', lambda self: None):
         j = BulkScrapeJob()
         yield j

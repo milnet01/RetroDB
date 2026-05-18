@@ -101,6 +101,11 @@ def test_needs_rehash_flags_malformed_hash(h):
     assert needs_rehash(h) is True
 
 
-@pytest.mark.parametrize("h", ["", "garbage", "pbkdf2:bad:salt:hash"])
+@pytest.mark.parametrize("h", ["", "garbage", "pbkdf2:bad:salt:hash", None])
 def test_verify_rejects_malformed_hash(h):
+    """Empty/garbage/parsed-but-invalid hashes — and the explicit `None`
+    case (pre-Pass-24 accounts where `password_hash` was NULL in the DB).
+    Without the `None` case, a regression that lets `verify_password(x, None)`
+    raise `AttributeError` instead of cleanly returning `False` would
+    cause a 500 on login against a legacy account (test-audit c-001 MED)."""
     assert verify_password("x", h) is False

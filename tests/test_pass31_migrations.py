@@ -185,7 +185,12 @@ class TestAchievementUserIdMigration:
             # so the global list is restored even if the test is killed
             # mid-run (SIGKILL/OOM) — same rationale as test_migrations.py:324.
             real_list = migrations.MIGRATIONS
-            monkeypatch.setattr(migrations, 'MIGRATIONS', real_list[:4])  # 001..004 — gap table exists
+            # Stop after migration 004_updated_at (gap table still exists).
+            # Using the name lookup rather than a hardcoded `[:4]` so a new
+            # migration inserted before 004 doesn't silently truncate at
+            # the wrong cut-point (test-audit c-004 LOW hardcoded_data).
+            cut_after = real_list.index('004_games_updated_at') + 1
+            monkeypatch.setattr(migrations, 'MIGRATIONS', real_list[:cut_after])
             migrations.apply_pending(conn)
             monkeypatch.setattr(migrations, 'MIGRATIONS', real_list)
 

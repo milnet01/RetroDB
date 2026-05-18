@@ -3109,6 +3109,139 @@ weren't worth blocking the ship on.  Ordered by rough priority.
     14 fields total. Custom-controller text input also picked up
     `aria-label="Custom controller name"`.
 
+#### FU.6 Test-audit 2026-05-18 deferred items (LOW–MEDIUM, M)
+
+- **Context**: `/test-audit` 2026-05-18 (v3.6.21) folded ~85 actionable
+  findings across 70 pytest files. The HIGH-severity items and the
+  surgical MEDIUM/LOW fixes landed in v3.6.21 (see changelog 3.6.21 for
+  the per-item list). The items below are deferred because they need
+  bigger structural changes than a quality-only fix-pass should make.
+- **Why**: each one is real test-quality debt — flake risk, vacuous
+  assertion, copy-paste fixture surface — but not load-bearing today.
+  Bundle them into a single follow-up so the next test-pass touches each
+  file once.
+- **Plan** (per finding):
+  - **Extract admin-stub fixture** (c-005 LOW duplication) — 8+ sites
+    across `tests/test_pass40_security.py` + `tests/test_pass45_security.py`
+    inline the same `fake_admin = {…}` + `monkeypatch.setattr(app_module,
+    'get_current_user', …)` + `…get_user_settings` + `…load_settings` +
+    `…config['TESTING']` stanza. Lift into a `@pytest.fixture
+    admin_test_client(monkeypatch)` in `conftest.py` returning
+    `(client, csrf_token)`. Any future user-dict schema change then
+    propagates to one site.
+  - **Split `test_pass40_security.py`** (1190 lines, 16 sub-passes —
+    c-005 LOW splitting) at the 40.1–40.8 / 40.9–40.16 boundary so a
+    shared-infrastructure import failure doesn't surface as 16 separate
+    failures with no clear root cause.
+  - **Split `test_input_hardening.py`** (255 lines, 8 unrelated
+    security subsystems — c-003 LOW splitting): ES-DE path traversal,
+    report whitelist, museum SSRF, museum upload cap, CLZ PDF bounds,
+    video upload cap, scraper download caps, rate-limit registration.
+    Splitting lets the heaviest test in each file (Flask app import)
+    only fire when that subsystem actually needs it.
+  - **`test_launcher_local` subprocess flake** (c-003 MED flakiness) —
+    the 5 s poll-and-sleep deadline against `/bin/true` / `/bin/false`
+    real subprocesses is documented flake-bait (the bump from 2 s → 5 s
+    is in source comments). Expose a `LocalLauncher.wait(timeout)` that
+    wraps `proc.wait(timeout)` so tests can join synchronously; add a
+    `local_launcher` fixture that kills any leaked children on teardown
+    (c-003 MED isolation, same file).
+  - **Replace source-grep `test_status_snapshot_holds_lock`**
+    (c-006 INFO accuracy) — `inspect.getsource(...).contains('with
+    self._lock')` is satisfied by any comment containing the string,
+    and breaks under a `_lock → _mutex` rename. Replace with a
+    behavioural test: drive `get_status()` from a second thread while
+    the worker holds the lock, assert the returned snapshot is
+    consistent. Source-grep can stay as a secondary pin but isn't the
+    primary contract.
+  - **Tighten `test_webp_migrate` `saved >= 0`** (c-006 MED) — at
+    integration scope, use a real JPEG/PNG sample image known to
+    compress, assert `saved > 0`. Keep the type check at unit scope.
+  - **`test_graceful_shutdown` wall-clock joins** (c-002 HIGH
+    flakiness) — three tests pass `timeout=0.3/0.5 s` to
+    `request_shutdown()` with fakes that complete instantly. For
+    instant-fake tests tighten to `timeout=0.01`; for the
+    stuck-worker `test_timeout_caps_drain_wait`, mock `Thread.join`
+    to record calls rather than blocking on a real thread.
+  - **`seeded_db` fixture rollback** (c-002 HIGH isolation) — the
+    function-scoped `seeded_db` in `tests/test_emulator_seeder.py`
+    writes to a module-scoped `db` without teardown rollback;
+    `test_seeder_is_idempotent` then takes raw `db` and relies on
+    sibling-test seed-data for its `emu_before > 0` floor. Add
+    teardown rollback to `seeded_db`, OR give the idempotency test
+    a fresh connection it seeds twice.
+  - **Consolidate `_open()` migration helpers** (c-004 MED
+    duplication) — `tests/test_migrations.py:22` and
+    `tests/test_pass31_migrations.py:24` carry near-twin `_open()`
+    helpers; the don't-merge contract lives in a comment. Promote to
+    `tests/conftest.py` as `open_db_positional(path)` and
+    `open_db_named(path)` with the row-access distinction
+    documented in one place.
+  - **Split multi-assertion `test_failed_migration_rolls_back_and_keeps_version`**
+    (c-004 MED splitting) at `tests/test_migrations.py:114` — currently
+    asserts both DDL rollback AND `user_version` non-advancement in
+    one body; split so a failure in one doesn't mask the other.
+  - **`test_pass40_security.py:861 done.wait(timeout=5.0)`** (c-005
+    MED flakiness) — bump to `@pytest.mark.timeout(15)` so xdist
+    kills rather than hangs, OR call `Thread.run()` synchronously in
+    the same pattern as the sibling test at line 323.
+  - **Coalesce `test_pass40_security` monkeypatches** (c-005 MED
+    isolation) — 8 sites independently patch the same module-level
+    `app_module.get_current_user` / `get_user_settings` /
+    `load_settings`. Under xdist these can race; the same admin-stub
+    fixture extraction above closes this finding.
+  - **`_isolated_db` class method → pytest fixture**
+    (c-001 LOW fixtures) — `tests/test_auth_hardening.py:261` exposes
+    `_isolated_db` as a plain class method requiring callers to
+    pass `tmp_path` and `monkeypatch` through manually. Convert to
+    a function-scoped `@pytest.fixture` so the calling convention
+    matches the rest of the suite.
+  - **`_PersistentConn.__del__` → fixture teardown** (c-006 MED
+    setup_teardown) — `tests/test_scrape_fill_only.py:52` relies on
+    GC-driven `__del__` for connection close, which is best-effort
+    on PyPy / under pytest-xdist process reuse. Wrap in a fixture
+    or `try/finally` that calls `conn.real_close()` explicitly.
+  - **`test_slow_query_log` fast-query 100 ms threshold**
+    (c-006 HIGH flakiness) — `_log_if_slow(start=time.perf_counter(),
+    threshold=100ms)` is only safe if the gap between the
+    `perf_counter()` call and the threshold check stays under
+    100 ms; GIL contention can stretch that. Patch
+    `time.perf_counter` inside `_log_if_slow` OR back-date the start
+    with a small negative buffer so a >100 ms hiccup can't cross
+    the threshold.
+  - **`test_pass46_frozen_paths` teardown error-masking**
+    (c-006 LOW flakiness) — the `reloaded_app` fixture's teardown
+    calls `importlib.import_module('config')` / `import_module('app')`
+    unconditionally; if reload fails, the pytest ERROR masks the
+    originating test failure. Wrap teardown reimports in
+    `try/except Exception` with `warnings.warn`.
+  - **Docstrings on 8/10 functions in `test_retroarch_detect.py`**
+    (c-006 LOW doc_strings) — explain what UI behaviour each
+    function pins (Settings UI silently-accepts-bad-path concern,
+    etc.) — one-liners.
+  - **`REPO_ROOT` shadow in `test_fu1_csp.py:22`** (c-002 LOW
+    naming) — imported as `str` from `tests._util`, immediately
+    re-bound as `pathlib.Path`; `read_source` also imported but
+    unused. Drop the str-form import + remove the unused
+    `read_source` import.
+  - **`test_fu1_csp.py:64` magic-count floor `>= 40`** (c-002 LOW
+    hardcoded_data) — drifts over time as templates are added or
+    consolidated. Either drop (the `test_no_unnonced_inline_script_block`
+    structural test is the authoritative gate) or generate the floor
+    dynamically from the current count with a documented regeneration
+    step.
+  - **`test_graceful_shutdown::test_sets_shutdown_event timeout=0.1`**
+    (c-002 LOW performance) — all singletons are `None`, so the test
+    waits 100 ms for nothing. Pass `timeout=0`.
+  - **`test_auth_hashing::test_needs_rehash_flags_low_iteration_pbkdf2`**
+    (c-001 LOW performance) — `hash_password("x", iterations=100_000)`
+    pays ~30-80 ms of real PBKDF2 work to inspect the output prefix.
+    Synthesise the hash string directly:
+    `f"pbkdf2:100000:{'a'*32}:{'b'*64}"` (already the pattern used at
+    `:93`).
+- **Status**: planned. Folded from `/test-audit` 2026-05-18 sweep
+  (see changelog 3.6.21). Lanes: tests.
+
 ---
 
 <a id="done-index"></a>

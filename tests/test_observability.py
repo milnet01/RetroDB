@@ -99,10 +99,27 @@ class TestReadyProbe:
                 assert 'DB locked' in body['error']
 
 
+@pytest.fixture
+def factory_snapshot():
+    """Snapshot and restore `logging.getLogRecordFactory()` around tests
+    that call `log_manager.install_request_id_factory()` directly.
+
+    Without this, `TestRequestIdFactory` tests permanently replace the
+    global log-record factory, leaking the mutation into any subsequent
+    test in the session (test-audit c-004 HIGH isolation finding).
+    The `client` fixture already does this for its dependents — these
+    three tests bypass `client`, so they need their own restore hook."""
+    original = logging.getLogRecordFactory()
+    try:
+        yield
+    finally:
+        logging.setLogRecordFactory(original)
+
+
 class TestRequestIdFactory:
     """Every LogRecord must carry a request_id attribute."""
 
-    def test_record_has_request_id_attribute(self):
+    def test_record_has_request_id_attribute(self, factory_snapshot):
         """All records, everywhere, must have .request_id — format strings
         reference %(request_id)s and a missing attr would raise KeyError
         inside the logging subsystem."""
@@ -116,7 +133,7 @@ class TestRequestIdFactory:
         # request_id is always a string — either 8-char hex or the '-' sentinel.
         assert isinstance(record.request_id, str)
 
-    def test_record_has_request_id_inside_request_context(self):
+    def test_record_has_request_id_inside_request_context(self, factory_snapshot):
         import app as app_module
         import log_manager
         log_manager.install_request_id_factory()
@@ -132,7 +149,7 @@ class TestRequestIdFactory:
             assert len(record.request_id) == 8
             int(record.request_id, 16)  # parses cleanly as hex
 
-    def test_factory_returns_dash_with_no_request_context(self):
+    def test_factory_returns_dash_with_no_request_context(self, factory_snapshot):
         """Outside any Flask request context, the factory must stamp
         records with the '-' sentinel — not crash, not leak a stale
         request_id. Runs in-process: the `client` fixture is now

@@ -885,18 +885,32 @@ class TestPass41_7CRaApi401Logging:
 
     def test_retroachievements_logs_401(self):
         body = read_source('scraper/retroachievements.py')
-        # The fix injects a per-callsite 401-check + logger.error. A single
-        # marker per file is enough — assert at least the marker plus a
-        # logger.error mentioning 401 / API key.
-        assert 'Pass 41.7.C' in body, (
-            "Pass 41.7.C marker missing — RA 401 observability not wired"
+        # Pin the user-actionable behaviour (`401` status + `API key` hint
+        # near each callsite) rather than the comment marker. The previous
+        # `'Pass 41.7.C' in body` assertion was comment-as-proof — a
+        # refactor that kept the comment but moved the log call would
+        # pass; conversely, dropping the comment during cleanup would
+        # fail the test for the wrong reason (test-audit c-005 MED).
+        # We scan the file body directly for the two hint strings inside
+        # close proximity (any 401-handler is fine for the contract).
+        assert '401' in body, "scraper/retroachievements.py must mention 401 status anywhere"
+        assert 'API key' in body or 'api_key' in body, (
+            "scraper/retroachievements.py must hint at user-actionable 'check API key'"
         )
-        # Find the marker; nearby code must mention the user-actionable hint.
-        idx = body.find('Pass 41.7.C')
-        nearby = body[max(0, idx - 100):idx + 800]
-        assert '401' in nearby, "Pass 41.7.C region must mention 401 status"
-        assert 'API key' in nearby or 'api_key' in nearby, (
-            "Pass 41.7.C region must hint at user-actionable 'check API key'"
+        # Pin the proximity contract: at least one '401' must sit within
+        # 800 chars of an 'API key'/'api_key' mention (the user-facing
+        # log line). This catches the "401 mentioned somewhere unrelated"
+        # weakness without anchoring to a comment.
+        import re as _re
+        windowed = False
+        for m in _re.finditer(r'401', body):
+            nearby = body[max(0, m.start() - 100):m.start() + 800]
+            if 'API key' in nearby or 'api_key' in nearby:
+                windowed = True
+                break
+        assert windowed, (
+            "scraper/retroachievements.py must wire a '401' detection log "
+            "with the 'API key' user-actionable hint within proximity (Pass 41.7.C)"
         )
 
 
@@ -946,19 +960,27 @@ class TestPass41_8BAchievementAggregationDoc:
 
     def test_null_userid_invariant_documented(self):
         body = read_source('routes/achievements.py')
-        assert 'Pass 41.8' in body, (
-            "routes/achievements.py must document the gap.user_id NOT NULL "
-            "invariant (Pass 41.8.B)"
+        # The doc-contract is: somewhere in routes/achievements.py, a
+        # comment must reference migration 009 (the backfill) and the
+        # `user_id IS NULL` diagnostic query — close enough together to
+        # be a single explanation. Anchoring on the Pass-NN marker is
+        # comment-as-proof and brittle (test-audit c-005 MED): drop the
+        # marker assertion and verify the substantive content directly.
+        assert '009' in body, (
+            "routes/achievements.py must reference migration 009 (the backfill)"
         )
-        # The doc must mention migration 009 + `user_id IS NULL` so an
-        # operator hitting the silent-drop knows the diagnostic query.
-        idx = body.find('Pass 41.8')
-        nearby = body[max(0, idx - 100):idx + 800]
-        assert '009' in nearby, (
-            "Pass 41.8.B doc must reference migration 009 (the backfill)"
+        assert 'user_id IS NULL' in body, (
+            "routes/achievements.py must give the `user_id IS NULL` diagnostic query"
         )
-        assert 'user_id IS NULL' in nearby, (
-            "Pass 41.8.B doc must give the `user_id IS NULL` diagnostic query"
+        # Proximity check: the two must sit within ~800 chars of each
+        # other so they form a coherent explanation, not two unrelated
+        # mentions elsewhere in the file.
+        idx_009 = body.find('009')
+        idx_null = body.find('user_id IS NULL')
+        assert abs(idx_009 - idx_null) <= 800, (
+            "Pass 41.8.B docstring fragments are too far apart "
+            f"(migration 009 at {idx_009}, 'user_id IS NULL' at {idx_null}) — "
+            "they must form a single coherent explanation"
         )
 
 

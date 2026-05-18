@@ -139,6 +139,16 @@ class TestSweepOldJobHistory:
 
         assert base_mod.sweep_old_job_history(retention_days=-1) == 0
 
+        # Verify the row is still present — a bug that swept rows AND
+        # returned 0 would pass the count assertion above (test-audit
+        # c-003 LOW coverage_gaps; matches the pattern in the sibling
+        # `test_retention_zero_disables_sweep` at line 127-131).
+        verify = _open(db_path)
+        try:
+            assert verify.execute("SELECT COUNT(*) FROM job_queue").fetchone()[0] == 1
+        finally:
+            verify.close()
+
     def test_missing_completed_at_is_not_pruned(self, db_path):
         """A terminal row without a completed_at (older data before the
         column was populated) shouldn't be swept — we can't know its age."""

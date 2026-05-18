@@ -65,6 +65,41 @@ def test_migration_012_is_idempotent():
         assert c.execute("SELECT COUNT(*) FROM emulators").fetchone()[0] == 0
 
 
+def test_migration_012_is_idempotent_with_existing_emulator_rows():
+    """If migration 012 ever grows a seed step that inserts default
+    emulator rows, re-running must not duplicate them. Pre-populate a row
+    after the first apply and assert the second apply preserves the
+    count exactly (test-audit c-004 MED coverage_gaps — the only
+    idempotency test covered the empty case, missing duplicate-insert
+    regressions)."""
+    migration_012 = _load_migration_012()
+    with contextlib.closing(sqlite3.connect(':memory:')) as conn:
+        _seed_baseline_systems(conn)
+        migration_012.apply(conn)
+
+        c = conn.cursor()
+        # Insert a sentinel emulator row that mimics what a future seed
+        # step would add. The row uses only columns guaranteed by the
+        # migration's CREATE TABLE; if the schema gains required cols
+        # later, expand this dict to match.
+        c.execute(
+            "INSERT INTO emulators (name, binary_name, args_template) "
+            "VALUES (?, ?, ?)",
+            ('SentinelEmu', 'sentinelbin', '{rom}'),
+        )
+        conn.commit()
+        count_before = c.execute("SELECT COUNT(*) FROM emulators").fetchone()[0]
+        assert count_before == 1
+
+        migration_012.apply(conn)
+
+        count_after = c.execute("SELECT COUNT(*) FROM emulators").fetchone()[0]
+        assert count_after == count_before, (
+            f"migration 012 duplicated existing emulator rows: "
+            f"{count_before} -> {count_after}"
+        )
+
+
 def test_migration_012_indexes_present():
     migration_012 = _load_migration_012()
     with contextlib.closing(sqlite3.connect(':memory:')) as conn:

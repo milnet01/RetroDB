@@ -146,8 +146,14 @@ def test_33_8_login_returns_csrf_token():
     """Anchor to the exact return-construction (`csrf_token=_ensure_csrf`)
     so the assertion can't pass from a `csrf_token=None` assignment, a
     comment, or an unrelated variable name (test-audit ASSERT-4)."""
+    # Use AST-based slice_function so the assertion can't be fooled by
+    # source ordering (test-audit c-004 MED): if `logout` appears before
+    # `api_login` in the file, the previous raw slice produced an empty
+    # string and the assertion vacuously passed.
+    from tests._util import slice_function
     src = read_source(os.path.join('routes', 'auth.py'))
-    body = src[src.index("def api_login"):src.index("def logout")]
+    body = slice_function(src, 'api_login')
+    assert body, "api_login function not found in routes/auth.py"
     # The success() call hands back the freshly-minted token explicitly —
     # this is the line that wires the value into the JSON envelope.
     assert "csrf_token=_ensure_csrf" in body, (

@@ -41,8 +41,13 @@ def test_emulator_routes_registered():
     assert '/api/emulators/for-system/<int:system_id>' in rules
 
 
-def test_unauth_list_blocked():
+def test_unauth_list_blocked(monkeypatch):
     import app as app_module
+    # TESTING=True so the test client doesn't swallow exceptions silently
+    # (test-audit c-002 MED isolation): without it a 500 from internal
+    # error would NOT match `in (302, 401, 403)` but the test author's
+    # intent — exercise the auth redirect — would be invisible.
+    monkeypatch.setitem(app_module.app.config, 'TESTING', True)
     client = app_module.app.test_client()
     rv = client.get('/api/emulators')
     # login_required short-circuits — redirect to /login
@@ -105,7 +110,15 @@ class TestEmulatorCRUD:
         assert rv.status_code == 200
         # The UPDATE should set binary_path_override to the supplied path.
         assert 'binary_path_override' in captured['sql']
-        assert '/opt/foo.AppImage' in captured['args']
+        # `in` on a list/tuple checks element equality — pin the value
+        # explicitly (without indexing, which would over-pin SQL param
+        # order). This is enough to catch a regression that drops or
+        # silently rewrites the path arg, while leaving the SQL param
+        # order free to vary (test-audit c-002 MED assertions).
+        assert '/opt/foo.AppImage' in tuple(captured['args']), (
+            f"expected '/opt/foo.AppImage' as a positional arg, "
+            f"got args={captured['args']!r}"
+        )
 
     def test_admin_can_delete(self, admin_client, monkeypatch):
         captured = {}
