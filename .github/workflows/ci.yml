@@ -63,7 +63,7 @@ jobs:
       # dedicated audit-job caches that install a different (much smaller)
       # tool set under the same lockfile hash.
       - name: Cache uv wheels
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
         with:
           path: ~/.cache/uv
           key: uv-lint-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('requirements.lock') }}-v2
@@ -140,7 +140,7 @@ jobs:
           python-version: ${{ env.PRIMARY_PYTHON }}
 
       - name: Cache uv wheels (semgrep)
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
         with:
           path: ~/.cache/uv
           # Tool-only cache; no project lockfile in the key because semgrep
@@ -198,7 +198,7 @@ jobs:
           python-version: ${{ env.PRIMARY_PYTHON }}
 
       - name: Cache uv wheels (pip-audit)
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
         with:
           path: ~/.cache/uv
           key: uv-audit-${{ runner.os }}-py${{ env.PRIMARY_PYTHON }}-v2
@@ -229,7 +229,7 @@ jobs:
           python-version: ${{ env.PRIMARY_PYTHON }}
 
       - name: Cache uv wheels (lockfile-drift)
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
         with:
           path: ~/.cache/uv
           key: uv-drift-${{ runner.os }}-py${{ env.PRIMARY_PYTHON }}-v2
