@@ -1,3 +1,15 @@
+- version: 3.6.25
+  date: 2026-06-04
+  tags:
+  - type: fix
+    label: Back-to-top button threw "scrollToTop is not defined" on non-game pages
+  body: |
+    <ul>
+      <li><strong>Root cause</strong>: the back-to-top button lives in <code>base.html</code> (rendered on every page), but its <code>onclick="scrollToTop()"</code> handler was defined only in <code>static/js/game-list.js</code> — which is compiled into <code>games.bundle.js</code> and loads <em>only</em> on game-centric pages. On any other page (settings, log viewer, ROM tools, museum, …) clicking the button threw <code>Uncaught ReferenceError: scrollToTop is not defined</code>. The button's show/hide-on-scroll logic already lived in the core bundle (<code>main.js</code>); only the click handler was missing there.</li>
+      <li><strong>Fix</strong>: defined the canonical <code>window.scrollToTop</code> in <code>main.js</code> (core bundle, loaded on every page), next to the existing <code>initializeBackToTop()</code> visibility logic. On game pages <code>game-list.js</code> still reassigns it to <code>BackToTopController.scrollToTop</code> — identical smooth-scroll behaviour, so game pages are unchanged.</li>
+      <li><strong>Patch bump 3.6.24 → 3.6.25</strong>.</li>
+    </ul>
+
 - version: 3.6.24
   date: 2026-05-18
   tags:
@@ -524,7 +536,7 @@
   date: 2026-05-02
   tags:
   - type: fix
-    label: Restore module-level `import json` in `hybrid_scraper.py` + re-add `# noqa: S105` on `XBOX_TOKEN_URL`
+    label: "Restore module-level `import json` in `hybrid_scraper.py` + re-add `# noqa: S105` on `XBOX_TOKEN_URL`"
   body: |
     <ul>
         <li><strong>Two CI regressions from the just-pushed batch</strong>:

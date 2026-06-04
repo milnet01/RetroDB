@@ -2742,6 +2742,8 @@ function initializeBackToTop() {
     }, 250), { passive: true });
 }
 
+window.scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
 function initializeImageErrorHandling() {
     document.addEventListener('error', function(event) {
         const target = event.target;

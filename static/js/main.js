@@ -145,6 +145,13 @@ function initializeBackToTop() {
     }, 250), { passive: true });
 }
 
+// Global click handler for the back-to-top button. The button lives in
+// base.html (every page), so its onclick handler must be in the core bundle —
+// game-list.js (games bundle) only loads on game-centric pages. On those pages
+// game-list.js reassigns this to BackToTopController.scrollToTop (identical
+// behaviour). Without this, non-game pages threw "scrollToTop is not defined".
+window.scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
 // =============================================================================
 // DELEGATED IMAGE ERROR HANDLING (FU.1)
 // =============================================================================
