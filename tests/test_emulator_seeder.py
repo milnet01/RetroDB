@@ -74,6 +74,35 @@ def test_seeder_skips_unknown_system_folders(seeded_db):
     assert cnt == 0
 
 
+def test_seeder_configures_c64_with_vice():
+    """C64 ships a default emulator mapping (RetroArch + VICE x64sc core) so
+    Commodore 64 games launch out of the box — regression for the reported
+    'No emulator configured for system Commodore 64'."""
+    conn = sqlite3.connect(':memory:')
+    c = conn.cursor()
+    c.execute("CREATE TABLE systems (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, folder TEXT UNIQUE)")
+    c.execute("INSERT INTO systems (name, folder) VALUES ('Commodore 64', 'c64')")
+    p = _REPO_ROOT / 'services' / 'migrations' / 'scripts' / '012_emulators.py'
+    spec = importlib.util.spec_from_file_location('m012_c64', p)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    mod.apply(conn)
+
+    from services.emulator_seeder import seed_emulators_from_file
+    seed_emulators_from_file(conn, _SEEDS_PATH)
+
+    row = c.execute("""
+        SELECT e.name, se.retroarch_core FROM system_emulators se
+        JOIN emulators e ON e.id = se.emulator_id
+        JOIN systems s ON s.id = se.system_id
+        WHERE s.folder = 'c64' AND se.is_default = 1
+    """).fetchone()
+    conn.close()
+    assert row is not None, "C64 has no default emulator mapping in the seed"
+    assert row[0] == 'RetroArch'
+    assert row[1] == 'vice_x64sc_libretro.so'
+
+
 def test_seeder_is_idempotent(db):
     """The intent is 'running seed twice doesn't double-insert' — assert
     count equality before/after the second run, not a hardcoded literal

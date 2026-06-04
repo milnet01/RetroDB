@@ -1,3 +1,16 @@
+- version: 3.6.28
+  date: 2026-06-04
+  tags:
+  - type: fix
+    label: Commodore 64 ships a default emulator (RetroArch + VICE) so games launch
+  body: |
+    <ul>
+      <li><strong>Report</strong>: launching a Commodore 64 game failed with <code>No emulator configured for system 'Commodore 64'</code>. Root cause: the startup emulator seed (<code>data/emulator_seeds.json</code>) covered ~24 popular systems but not C64, so the <code>system_emulators</code> table had no mapping for it and the launch resolver had nothing to pick.</li>
+      <li><strong>Fix</strong>: added a default C64 mapping to the seed — RetroArch + the accurate VICE core <code>vice_x64sc_libretro.so</code>. The seeder is idempotent (<code>INSERT OR IGNORE</code>, skips systems whose folder isn't present), so existing installs pick it up on next startup and fresh installs get it out of the box. Regression test added (+1).</li>
+      <li><strong>Note</strong>: the RetroArch <em>binary</em> path is per-machine and stays user-configured via Settings &rarr; Emulators &rarr; Binary path override (e.g. an AppImage) — not shipped in the shared seed.</li>
+      <li><strong>Patch bump 3.6.27 → 3.6.28</strong>.</li>
+    </ul>
+
 - version: 3.6.27
   date: 2026-06-04
   tags:
