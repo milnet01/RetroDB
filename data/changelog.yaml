@@ -1,3 +1,14 @@
+- version: 3.6.26
+  date: 2026-06-04
+  tags:
+  - type: security
+    label: idna 3.13 → 3.18 (CVE-2026-45409)
+  body: |
+    <ul>
+      <li><strong>CVE-2026-45409</strong> in <code>idna</code> (transitive dep via <code>requests</code>), fixed upstream in 3.15. Surgically upgraded the lockfile pin <code>idna 3.13 → 3.18</code> (latest) with <code>pip-compile --upgrade-package idna</code> — no other package moved. This unblocks the <code>pip-audit</code> CI job, which began failing once the CVE was published (it was failing on every commit regardless of content, not just app changes).</li>
+      <li><strong>Patch bump 3.6.25 → 3.6.26</strong>: dependency-only, zero app behaviour change.</li>
+    </ul>
+
 - version: 3.6.25
   date: 2026-06-04
   tags:
