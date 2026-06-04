@@ -280,3 +280,38 @@ class TestFinalizePipeline:
 
         assert (boxart_dir / 'game-sm.webp').exists()
         assert (boxart_dir / 'game-md.webp').exists()
+
+
+class TestGpuFallbackWarning:
+    """`_gpu_fallback_warning` turns a silent GPU->CPU fallback (e.g. a missing
+    librocsolver.so.0 after a ROCm upgrade) into an actionable pointer at the
+    repair script. Pins the detection so the diagnostic doesn't regress."""
+
+    def test_warns_when_rocm_requested_but_not_active(self):
+        msg = image_utils._gpu_fallback_warning(
+            ['ROCMExecutionProvider', 'CPUExecutionProvider'],
+            ['CPUExecutionProvider'],
+        )
+        assert msg is not None
+        assert 'ROCMExecutionProvider' in msg
+        # Must name the repair script so recovery is one command.
+        assert image_utils._ROCM_REPAIR_SCRIPT in msg
+
+    def test_silent_when_rocm_activated(self):
+        assert image_utils._gpu_fallback_warning(
+            ['ROCMExecutionProvider', 'CPUExecutionProvider'],
+            ['ROCMExecutionProvider', 'CPUExecutionProvider'],
+        ) is None
+
+    def test_silent_when_cpu_only_requested(self):
+        # No GPU requested (CPU-only host / disabled GPU) — nothing to warn about.
+        assert image_utils._gpu_fallback_warning(
+            ['CPUExecutionProvider'], ['CPUExecutionProvider'],
+        ) is None
+
+    def test_warns_for_cuda_too(self):
+        msg = image_utils._gpu_fallback_warning(
+            ['CUDAExecutionProvider', 'CPUExecutionProvider'],
+            ['CPUExecutionProvider'],
+        )
+        assert msg is not None and 'CUDAExecutionProvider' in msg

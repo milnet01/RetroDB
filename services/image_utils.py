@@ -316,6 +316,33 @@ def _get_upscaler():
     return _upscaler
 
 
+# Repair script surfaced when a GPU provider was requested but silently fell
+# back to CPU (usually a missing ROCm system library after a ROCm upgrade).
+_ROCM_REPAIR_SCRIPT = 'scripts/fix_onnxruntime_rocm_rocsolver.sh'
+_GPU_PROVIDERS = ('ROCMExecutionProvider', 'CUDAExecutionProvider')
+
+
+def _gpu_fallback_warning(requested, active):
+    """Return an actionable warning when a GPU provider was requested but none
+    activated (so inference silently fell back to CPU), else None.
+
+    The usual cause on the AMD box is a missing ROCm system library
+    (e.g. librocsolver.so.0) after a ROCm upgrade: onnxruntime logs a cryptic
+    provider-load error and drops to CPU. This turns that into a clear pointer
+    at the repair script.
+    """
+    requested_gpu = [p for p in requested if p in _GPU_PROVIDERS]
+    if not requested_gpu or any(p in active for p in _GPU_PROVIDERS):
+        return None
+    return (
+        f"Real-ESRGAN: GPU provider(s) {requested_gpu} requested but none "
+        f"activated — running on CPU. This usually means a ROCm/CUDA system "
+        f"library failed to load (often after a ROCm upgrade); see the "
+        f"onnxruntime error logged above for the exact library. To repair, run "
+        f"`{_ROCM_REPAIR_SCRIPT}` then restart."
+    )
+
+
 def _init_upscaler(allow_gpu=True):
     """Initialize the ONNX upscaler session with the specified provider strategy."""
     global _upscaler
@@ -357,6 +384,11 @@ def _init_upscaler(allow_gpu=True):
 
         session = ort.InferenceSession(model_path, providers=providers)
         active = session.get_providers()
+
+        # Surface a silent GPU->CPU fallback with a pointer to the repair script.
+        _fallback_msg = _gpu_fallback_warning(providers, active)
+        if _fallback_msg:
+            logger.warning(_fallback_msg)
 
         # Auto-detect tile size from the model's expected input shape
         # Some ONNX models have fixed input dims (e.g. 64x64)

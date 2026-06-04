@@ -1,3 +1,15 @@
+- version: 3.6.27
+  date: 2026-06-04
+  tags:
+  - type: improvement
+    label: Self-healing for the ROCm GPU upscaler (missing librocsolver.so.0)
+  body: |
+    <ul>
+      <li><strong>New repair script</strong> <code>scripts/fix_onnxruntime_rocm_rocsolver.sh</code>: idempotent, one-command recovery for the "<code>librocsolver.so.0: cannot open shared object file</code>" failure that drops Real-ESRGAN from GPU to CPU. It auto-detects the host's ROCm point release + SLES tag from the installed <code>rocblas</code>, fetches the <em>matching</em> <code>rocsolver</code> rpm from AMD's official repo, imports AMD's signing key if needed, installs it via zypper and refreshes the linker cache. Refuses to run against a ROCm 7.x host (whose rocsolver links <code>librocblas.so.5</code>, incompatible with the onnxruntime-rocm wheel's <code>librocblas.so.4</code>). Sits alongside the existing <code>fix_onnxruntime_rocm_execstack.py</code> and <code>fix_onnxruntime_rocm_libhipblas.sh</code>.</li>
+      <li><strong>Startup diagnostic</strong>: <code>services/image_utils.py</code> now detects a silent GPU&rarr;CPU fallback (a GPU provider was requested but none activated) and logs an actionable warning naming the repair script, instead of leaving only onnxruntime's cryptic provider-load error. Extracted as the pure helper <code>_gpu_fallback_warning()</code> with regression tests (+4).</li>
+      <li><strong>Patch bump 3.6.26 → 3.6.27</strong>: maintainer tooling + logging; no change to in-app behaviour.</li>
+    </ul>
+
 - version: 3.6.26
   date: 2026-06-04
   tags:
