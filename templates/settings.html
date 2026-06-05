@@ -4060,7 +4060,11 @@ async function cleanOrphanedMedia() {
                 btn.innerHTML = '<span class="btn-icon">🗑️</span> Delete Orphaned Files';
             }
         },
-        {danger: true}
+        // Pass 45.4 hardened showConfirmModal to default to textContent; this
+        // message embeds <br> tags (and only a numeric count — no user input),
+        // so it must opt into HTML or the breaks render literally. Mirrors the
+        // deleteController confirm. (`danger` was never read by showConfirmModal.)
+        {allowHtml: true}
     );
 }
 

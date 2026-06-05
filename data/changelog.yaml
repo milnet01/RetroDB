@@ -1,3 +1,16 @@
+- version: 3.6.31
+  date: 2026-06-05
+  tags:
+  - type: fix
+    label: Orphaned-media delete confirm rendered literal &lt;br&gt; tags
+  body: |
+    <ul>
+      <li><strong>Report</strong>: surfaced during the in-browser verification of v3.6.30 — the "Delete Orphaned Files" confirmation dialog (Settings &rarr; System &rarr; Maintenance) showed the literal text <code>&lt;br&gt;&lt;br&gt;Proceed?</code> instead of a blank line before "Proceed?".</li>
+      <li><strong>Cause</strong>: Pass 45.4 (v3.5.18) hardened <code>showConfirmModal</code> to default to <code>textContent</code> (XSS-safe) with an <code>{allowHtml: true}</code> opt-in, and migrated the sibling confirms (clear-scraped-data, delete-controller). The orphaned-media confirm was missed: its message embeds <code>&lt;br&gt;&lt;br&gt;</code> but passed only <code>{danger: true}</code> (a flag <code>showConfirmModal</code> never reads), so the breaks rendered as literal text.</li>
+      <li><strong>Fix</strong>: the confirm now opts into <code>{allowHtml: true}</code>, mirroring the delete-controller confirm. Safe — the message contains only a numeric count, no user input. Cosmetic only; no behaviour change to the delete itself.</li>
+      <li><strong>Patch bump 3.6.30 &rarr; 3.6.31</strong>.</li>
+    </ul>
+
 - version: 3.6.30
   date: 2026-06-05
   tags:
