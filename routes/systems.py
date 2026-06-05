@@ -154,10 +154,13 @@ def update_system_types(cursor, overwrite=False):
         folder = system['folder'].lower()
         system_type = SYSTEM_TYPE_MAP.get(folder, None)
 
-        # Try partial matching
+        # Try partial matching. Pass 48.5 — only `key in folder` (the folder
+        # name CONTAINS a known system key, e.g. 'snes_eu' → 'snes'). The old
+        # reverse direction `folder in key` mis-typed short folders: 'nes' is a
+        # substring of 'snes', so an NES folder inherited the SNES type.
         if not system_type:
             for key, stype in SYSTEM_TYPE_MAP.items():
-                if key in folder or folder in key:
+                if key in folder:
                     system_type = stype
                     break
 

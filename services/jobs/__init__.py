@@ -1,8 +1,12 @@
 # =============================================================================
 # RETRODB - Background Job Services Package
 # =============================================================================
-# Re-exports all public names for backward compatibility.
-# Existing code using `from services.jobs import X` continues to work.
+# Re-exports the job classes, their singleton instances, and the persistence
+# helpers that external code (routes, services) imports as `from services.jobs
+# import X`. This is a backward-compat SUBSET, not the full surface: lower-level
+# helpers (resolve_terminal_status, shutdown_requested, the singleton-lock
+# helpers, etc.) are imported directly from `services.jobs.base` by the job
+# modules themselves and are intentionally not re-exported here.
 # =============================================================================
 
 # Shared helpers

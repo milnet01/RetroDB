@@ -21,7 +21,7 @@ from services.game_utils import (
     get_ra_supported_systems,
     get_preferred_rating, get_all_ratings,
     normalize_players_value,
-    RATING_SYSTEMS,
+    RATING_SYSTEMS, RATING_SYSTEM_KEYS,
 )
 from services.game_query import (
     escape_like, get_retroachievements_info, get_trophy_info_for_game,
@@ -32,7 +32,14 @@ from services.analytics import invalidate_analytics_cache
 from services.game_metadata_service import (
     build_game_card,
     apply_metadata_to_game, apply_hybrid_metadata_to_game,
-    normalize_game_edit,
+    normalize_game_edit, cross_map_ratings,
+)
+
+# Single source of truth for the completion-status whitelist, shared by the
+# single-edit endpoint (api_update_completion) and bulk-edit (Pass 48.5 — bulk
+# edit previously wrote completion_status without validating it).
+VALID_COMPLETION_STATUSES = (
+    'not_started', 'in_progress', 'played', 'completed', '100_percent',
 )
 from services.achievement_linking import (
     build_rpcs3_trophy_map, lookup_rpcs3_info,
@@ -989,6 +996,13 @@ def api_games_bulk_edit():
     if not fields:
         return jsonify({'success': False, 'error': 'No fields to update'}), 400
 
+    # Pass 48.5 — validate completion_status against the same whitelist the
+    # single-edit endpoint enforces (bulk edit previously stored the raw value).
+    if 'completion_status' in fields:
+        cs = fields['completion_status']
+        if cs not in ('', None) and cs not in VALID_COMPLETION_STATUSES:
+            return jsonify({'success': False, 'error': 'Invalid completion status'}), 400
+
     # Pass 32.12: gate this set at a single safe_column() call site per
     # interpolation; the allowlist itself is frozen below so a future edit
     # can't bypass the validator by mutating the list in flight.
@@ -1083,6 +1097,37 @@ def api_games_bulk_edit():
                         updates
                     )
 
+        # Pass 48.5 — cross-map ratings like the single-edit path. When a bulk
+        # edit set any rating system, fill each game's still-empty rating
+        # systems from whatever ratings it now holds. cross_map_ratings only
+        # fills empties, so a curated value in another system is never
+        # overwritten (safe across a heterogeneous selection).
+        rating_columns = [f'{k}_rating' for k in RATING_SYSTEM_KEYS]
+        applied_ratings = [c for c in rating_columns if c in fields and c in bulk_allowed_fields]
+        if applied_ratings:
+            col_list = ', '.join(rating_columns)
+            placeholders = ','.join('?' for _ in game_ids)
+            rows = cursor.execute(
+                f"SELECT id, {col_list} FROM games WHERE id IN ({placeholders})",
+                tuple(game_ids),
+            ).fetchall()
+            for row in rows:
+                current = {RATING_SYSTEM_KEYS[i]: (row[i + 1] or '') for i in range(len(RATING_SYSTEM_KEYS))}
+                mapped = cross_map_ratings(current)
+                changed = {
+                    f'{k}_rating': mapped[k]
+                    for k in RATING_SYSTEM_KEYS
+                    if mapped.get(k) and mapped[k] != current[k]
+                }
+                if changed:
+                    set_clause = ', '.join(
+                        f"{safe_column(c, bulk_allowed_fields)} = ?" for c in changed
+                    )
+                    cursor.execute(
+                        f"UPDATE games SET {set_clause} WHERE id = ?",
+                        (*changed.values(), row[0]),
+                    )
+
         conn.commit()
 
     # Pass 34.7: keep structured — user_id + field names + count only.
@@ -1120,8 +1165,7 @@ def api_update_completion(game_id):
         data = request.get_json() or {}
         status = data.get('status', 'not_started')
 
-        valid_statuses = ['not_started', 'in_progress', 'played', 'completed', '100_percent']
-        if status not in valid_statuses:
+        if status not in VALID_COMPLETION_STATUSES:
             return jsonify({'success': False, 'error': 'Invalid status'})
 
         execute("UPDATE games SET completion_status = ? WHERE id = ?", (status, game_id))
@@ -1243,16 +1287,17 @@ def api_filter_games():
         """, (f'%{escape_like(filter_value)}%',))
 
     result_games = []
-    for g in games:
+    # Pass 48.5 — loop var `row` (not `g`) to avoid shadowing `from flask import g`.
+    for row in games:
         result_games.append({
-            'id': g['id'],
-            'title': g['title'],
-            'system_name': g['system_name'],
-            'boxart': g['boxart'],
-            'genre': g['genre'],
-            'release_date': g['release_date'],
-            'publisher': g['publisher'],
-            'developer': g['developer']
+            'id': row['id'],
+            'title': row['title'],
+            'system_name': row['system_name'],
+            'boxart': row['boxart'],
+            'genre': row['genre'],
+            'release_date': row['release_date'],
+            'publisher': row['publisher'],
+            'developer': row['developer']
         })
 
     return jsonify({'success': True, 'games': result_games, 'sort': sort_by})

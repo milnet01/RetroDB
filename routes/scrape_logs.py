@@ -203,6 +203,11 @@ def api_view_log_compat(filename):
         if not safe_filename(filename):
             return jsonify({'success': False, 'error': 'Invalid filename'}), 400
 
+        # Pass 48.5 — enforce the same VALID_PREFIXES allowlist the sibling log
+        # endpoints use; this compat alias previously checked only safe_filename.
+        if not any(filename.startswith(p) for p in VALID_PREFIXES):
+            return jsonify({'success': False, 'error': 'Invalid log file'}), 400
+
         lines = request.args.get('lines', 100, type=int)
         content = log_manager.get_log_content(filename, lines=lines)
 

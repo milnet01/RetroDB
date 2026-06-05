@@ -426,7 +426,7 @@ def detect_save_type(system_folder, title):
     # Cartridge systems without saves (passwords common)
     password_systems = ['atari2600', 'atari5200', 'atari7800', 'colecovision', 'intellivision']
 
-    system = system_folder.lower()
+    system = (system_folder or '').lower()  # Pass 48.5 — guard None system_folder
 
     if system in battery_systems:
         return "Battery Save / SRAM"
@@ -447,7 +447,7 @@ def detect_save_type(system_folder, title):
 def detect_controller_support(system_folder, modes):
     """Detect controller support based on system"""
 
-    system = system_folder.lower()
+    system = (system_folder or '').lower()  # Pass 48.5 — guard None system_folder
 
     # Standard controller
     standard = ['nes', 'snes', 'genesis', 'megadrive', 'mastersystem', 'psx', 'ps2', 'ps3',

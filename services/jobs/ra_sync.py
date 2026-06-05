@@ -319,10 +319,21 @@ class RASyncJob:
                             # Calculate points from individual achievements
                             achievements = data.get('Achievements', {})
                             if isinstance(achievements, dict):
-                                achievements = achievements.values()
+                                achievements = list(achievements.values())
+                            else:
+                                achievements = list(achievements or [])
                             total_points = sum(int(a.get('Points', 0)) for a in achievements)
                             earned_points = sum(int(a.get('Points', 0)) for a in achievements
                                                 if a.get('DateEarned') is not None)
+
+                            # Pass 48.4 — when the API omits the per-achievement
+                            # Achievements payload but the game does have
+                            # achievements (total_achievements > 0), the points
+                            # sums collapse to 0. Skip the points columns on the
+                            # UPDATE path so a transient empty payload can't wipe
+                            # a previously-synced good value. (A brand-new row
+                            # still inserts 0 — there's no prior value to keep.)
+                            skip_points = 1 if (not achievements and total_achievements > 0) else 0
 
                             # Update total count on games table
                             ra_cursor.execute(
@@ -339,13 +350,13 @@ class RASyncJob:
                                     ra_game_id = excluded.ra_game_id,
                                     earned_achievements = excluded.earned_achievements,
                                     total_achievements = excluded.total_achievements,
-                                    earned_points = excluded.earned_points,
-                                    total_points = excluded.total_points,
+                                    earned_points = CASE WHEN ? THEN game_achievement_progress.earned_points ELSE excluded.earned_points END,
+                                    total_points = CASE WHEN ? THEN game_achievement_progress.total_points ELSE excluded.total_points END,
                                     completion_percentage = excluded.completion_percentage,
                                     last_synced = excluded.last_synced,
                                     source = 'ra'
                             """, (game['id'], self._user_id, game['ra_game_id'], earned, total_achievements,
-                                  earned_points, total_points, pct, now_iso))
+                                  earned_points, total_points, pct, now_iso, skip_points, skip_points))
                             _pending_commits += 2
 
                             # Batch commit every 3 successful writes to minimize lock hold time

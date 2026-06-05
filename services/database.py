@@ -257,9 +257,15 @@ def execute_many(sql, args_list):
 def execute_script(sql_script):
     """
     Execute multiple SQL statements from a script.
-    
+
     Useful for running migrations or initialization scripts.
-    
+
+    NOT ATOMIC: SQLite's ``executescript`` COMMITs any pending transaction
+    before it runs and auto-commits as it goes, so a failure midway leaves the
+    already-executed statements committed — the except-branch rollback below
+    cannot undo them. Make each script idempotent (``IF NOT EXISTS`` etc.) and
+    don't rely on all-or-nothing semantics (Pass 48.5).
+
     Args:
         sql_script: String containing multiple SQL statements separated by semicolons
     
@@ -335,8 +341,12 @@ def backup_database(src_path, dst_path):
     # entire duration of PRAGMA integrity_check.
     try:
         os.chmod(dst_path, 0o600)
-    except OSError:
-        pass
+    except OSError as e:
+        # Pass 48.5 — don't swallow silently: a failed chmod leaves the backup
+        # at the umask default (potentially 0o644) while it holds session
+        # cookies, password hashes and OAuth tokens. Surface it so the operator
+        # can tighten permissions (e.g. on a filesystem that ignores chmod).
+        logger.warning(f"Could not chmod backup {dst_path} to 0o600: {e}")
 
     verify = sqlite3.connect(dst_path)
     try:
@@ -394,10 +404,17 @@ def get_db_with_context():
             return self.conn
         
         def __exit__(self, exc_type, exc_val, exc_tb):
+            # Pass 48.4 — explicit rollback on the error path (legibility, rather
+            # than relying on close()'s implicit rollback) and close() in finally
+            # so a commit that itself raises can't leak the connection.
             if self.conn:
-                if exc_type is None:
-                    self.conn.commit()
-                self.conn.close()
+                try:
+                    if exc_type is None:
+                        self.conn.commit()
+                    else:
+                        self.conn.rollback()
+                finally:
+                    self.conn.close()
             return False  # Don't suppress exceptions
     
     return DBContextManager()

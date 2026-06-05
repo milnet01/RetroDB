@@ -339,6 +339,42 @@ def api_restore(filename):
         if not os.path.exists(backup_path):
             return jsonify({'success': False, 'error': 'Backup file not found'})
 
+        # Pass 48.5 — refuse to restore while a background job is running. A
+        # job thread holds an open handle to the live DB and would keep writing
+        # to the swapped-out inode mid-restore (lost writes / split-brain).
+        # job_queue.status = 'running' is the cross-process source of truth.
+        try:
+            active_jobs = get_db().execute(
+                "SELECT COUNT(*) FROM job_queue WHERE status = 'running'"
+            ).fetchone()[0]
+        except Exception:
+            active_jobs = 0  # table absent on a fresh DB → nothing running
+        if active_jobs:
+            return jsonify({
+                'success': False,
+                'error': 'A background job is running. Wait for it to finish before restoring.'
+            }), 409
+
+        # Pass 48.5 — integrity-gate the backup BEFORE the destructive swap. A
+        # truncated/corrupt backup os.replace'd over the live DB is unrecoverable
+        # short of the pre_restore_* copy. Open read-only so we don't spawn
+        # -wal/-shm side files next to the backup.
+        try:
+            import sqlite3 as _sqlite3
+            chk = _sqlite3.connect(f"file:{backup_path}?mode=ro", uri=True)
+            try:
+                integrity = chk.execute('PRAGMA integrity_check').fetchone()
+            finally:
+                chk.close()
+        except Exception as e:
+            logger.warning(f"Restore aborted — backup unreadable: {e}")
+            integrity = None
+        if not integrity or integrity[0] != 'ok':
+            return jsonify({
+                'success': False,
+                'error': 'Backup failed its integrity check; restore aborted.'
+            }), 400
+
         # Create a backup of current db before restoring (online backup API
         # → consistent snapshot of the live, possibly-being-written DB).
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')

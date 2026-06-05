@@ -17,6 +17,7 @@ import sys
 import os
 import json
 import time
+import threading
 
 try:
     from circuitbreaker import circuit, CircuitBreakerError
@@ -62,10 +63,20 @@ MIN_MATCH_SCORE = 200
 _settings_cache = None
 _settings_cache_time = 0
 _SETTINGS_CACHE_TTL = 30  # seconds
+# Pass 48.5 — bulk-scrape runs this from worker threads; the lock makes the
+# check-then-rebuild-then-store sequence atomic so two threads can't race on the
+# module-global cache (and a reader never sees a half-populated rebuild).
+_settings_lock = threading.Lock()
 
 
 def load_scraper_settings():
     """Load all scraper settings from file, with config.py as fallback"""
+    global _settings_cache, _settings_cache_time
+    with _settings_lock:
+        return _load_scraper_settings_locked()
+
+
+def _load_scraper_settings_locked():
     global _settings_cache, _settings_cache_time
     now = time.time()
     if _settings_cache is not None and (now - _settings_cache_time) < _SETTINGS_CACHE_TTL:

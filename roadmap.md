@@ -373,19 +373,25 @@ are tracked here so the next pass picks them up:
   - ✅ **done v3.6.30** — `image_utils._make_responsive_variants` never prunes a
     now-oversized `-sm`/`-md` sibling when the primary shrinks — srcset can serve
     a stale variant (Lane 6). Now unlinks the stale sibling on the skip branch.
-  - `services/jobs/__init__.py` `__all__` claims to re-export names it doesn't
-    (e.g. `resolve_terminal_status`); add them or soften the comment (Lane 7).
-  - `bulk_scrape` pause loop sleeps on `time.sleep(0.2)` instead of
-    `shutdown_requested.wait(...)`, so a paused job doesn't collapse on SIGTERM —
-    mirror the `psn_refresh` fix (Lane 7).
-  - `clz_import` import-time dedup reads the entire `games` table; scope by
-    target `system_id IN (...)` like the parse path already does (Lane 10).
+  - ✅ **done v3.6.33** — `services/jobs/__init__.py` `__all__`/comment claimed
+    to "re-export all public names" but omitted `resolve_terminal_status`,
+    `shutdown_requested`, the singleton-lock helpers, etc. (imported directly
+    from `services.jobs.base`). Comment softened to describe the backward-compat
+    subset accurately (Lane 7).
+  - ✅ **done v3.6.33** — `bulk_scrape` pause loop now waits on
+    `shutdown_requested.wait(0.2)` instead of `time.sleep(0.2)`, so a paused job
+    collapses on SIGTERM (mirrors the `psn_refresh` fix) (Lane 7).
+  - ✅ **done v3.6.33** — `clz_import` import-time dedup now scopes by target
+    `system_id IN (...)` (collected from the import payload) instead of scanning
+    the whole `games` table (Lane 10).
   - `.pre-commit-config.yaml` ruff (`v0.8.4`) + gitleaks (`v8.21.2`) `rev:` pins
     are stale vs the CI ruff; `pre-commit autoupdate` (global rule 5a) (Lane 14).
 
 #### Pass 48.4 Loop-2 cold-review deferrals (LOW, S)
-- **Status**: 📋 Planned (both Lane-6 `media_cleanup` items — preview→clean
-  window + relpath base — done v3.6.30; jobs/route/CI items below remain open)
+- **Status**: 📋 Planned (Lane-6 `media_cleanup` items done v3.6.30; bulk_scrape
+  resume flock + ra_sync points + psn_sync_state + db `__exit__` done v3.6.33;
+  only the `game-launch.js` (Lane 12) and dependabot/ci.yml (Lane 14) items
+  remain — see Batch C)
 - **Source**: the second (cold) indie-review loop surfaced these after the
   loop-1 fixes landed. All LOW under the single-user-localhost model.
 - **Items**:
@@ -401,21 +407,23 @@ are tracked here so the next pass picks them up:
     `'static' in dir_path` substring test — fragile if `IMAGE_PATH` ever moves
     outside `static/` (it does, in standalone builds) (Lane 6). Each `media_dirs`
     entry now carries an explicit `rel_base`.
-  - `bulk_scrape` resume path starts `_run_scrape` without acquiring the
-    `bulk_scrape` cross-process singleton flock (Lane 7).
-  - `ra_sync` recomputes `total_points`/`earned_points` from each game's
-    `Achievements` payload and UPSERTs 0 over a good value when the payload is
-    empty but `total_achievements > 0`; skip the points columns in that case
-    (Lane 7).
-  - `_psn_sync_state` (trophies.py) is a single module-global; key it by
-    `user_id` so concurrent PSN syncs don't block each other or leak the other
-    user's current-game title through the status endpoint (Lane 10).
+  - ✅ **done v3.6.33** — `bulk_scrape` resume-after-restart path
+    (`resume_from_params`) now acquires the `bulk_scrape` cross-process
+    singleton flock (`try_acquire_singleton_or_warn`) before starting
+    `_run_scrape`, refusing if another worker holds it (Lane 7).
+  - ✅ **done v3.6.33** — `ra_sync` now skips the `earned_points`/`total_points`
+    columns on the UPSERT UPDATE path when the `Achievements` payload is empty
+    but `total_achievements > 0`, so a transient empty payload can't wipe a good
+    value (Lane 7).
+  - ✅ **done v3.6.33** — `_psn_sync_state` (trophies.py) is now a per-user
+    registry keyed by `user_id`, so concurrent PSN syncs don't block each other
+    or leak the other user's current-game title (Lane 10).
   - `game-launch.js` kill-instance `fetch` has no `.ok` check before retrying
     the launch — a failed kill surfaces as a confusing "already running" error
-    (Lane 12).
-  - `services/database.py` `get_db_with_context.__exit__` relies on `close()`'s
-    implicit rollback on the exception path; add an explicit `rollback()` for
-    legibility (Lane 2).
+    (Lane 12). — see Batch C
+  - ✅ **done v3.6.33** — `services/database.py` `get_db_with_context.__exit__`
+    now rolls back explicitly on the error path and closes in `finally` (also
+    fixes the LOW-tail "leaks on a failing commit" item) (Lane 2).
   - `.github/dependabot.yml` covers only pip + github-actions, not the
     `pre-commit` ecosystem (pairs with 48.3's stale-pins item); and `ci.yml`
     scrapes the semgrep `--exclude-rule` set out of `.semgrep.yml` comment prose
@@ -423,9 +431,10 @@ are tracked here so the next pass picks them up:
     structured key (Lane 14).
 
 #### Pass 48.5 Loop-3 cold-review deferrals (MEDIUM, M)
-- **Status**: 📋 Planned (Lane-6 "responsive variants leaked on per-game
-  deletion" item done v3.6.30; IGDB/TGDB media-replace done v3.6.32; the
-  DB-restore-integrity and LOW-tail items remain open)
+- **Status**: 📋 Nearly done (Lane-6 variant-leak done v3.6.30; IGDB/TGDB
+  media-replace done v3.6.32; DB-restore-integrity + all LOW-tail items done
+  v3.6.33 EXCEPT `ensure_user_tables` connection-leak, deferred as a
+  disproportionate re-indent — see LOW tail)
 - **Source**: the third (cold) indie-review loop — confirmed all loop-1/loop-2
   fixes held (no resurfacing), then surfaced this deeper batch. Calibrated to
   single-user-localhost.
@@ -444,24 +453,34 @@ are tracked here so the next pass picks them up:
     unlinked; the `-sm`/`-md` siblings written by `_make_responsive_variants`
     survived until a manual orphan sweep — 2-4 stranded files per deleted game
     with boxart. `delete_game_images` now unlinks the variant siblings.
-  - **DB restore has no integrity gate** (`settings.py` `api_restore`): a
-    truncated/corrupt backup is `os.replace`d over the live DB with no
-    `PRAGMA integrity_check`, and a running background job can write to the
-    swapped inode mid-restore. Fix: integrity-check the backup before swap and
-    refuse restore while a job is active.
-- **LOW tail** (each independent): `metadata_merger` `_settings_cache` /
-  `scraper_manager._settings_cache` mutated without a lock under bulk-scrape
-  threads; `hybrid_scraper.detect_save_type/detect_controller_support` crash on
-  `system_folder=None` (guard with `(x or '')`); bulk-edit `completion_status`
-  and rating fields skip the single-edit whitelist/cross-map; `for g in games`
-  shadows Flask `g` in `api_filter_games`; `execute_script` rollback can't undo
-  `executescript`'s implicit pre-commit (document non-atomic);
-  `get_db_with_context.__exit__` leaks on a failing commit (move close to
-  finally); `ensure_user_tables` leaks its connection on exception;
-  `backup_database` chmod-fail is silent; `systems.update_system_types`
-  `folder in key` half mis-types short folders; `scrape_logs.api_view_log_compat`
-  skips the `VALID_PREFIXES` check its siblings enforce; `clz_import` dedup reads
-  the whole games table (scope to target systems like the parse step).
+  - ✅ **done v3.6.33** — **DB restore has no integrity gate** (`settings.py`
+    `api_restore`): now runs `PRAGMA integrity_check` on the backup (opened
+    read-only) before the destructive `os.replace`, and refuses the restore
+    (HTTP 409) while any `job_queue.status = 'running'` row exists.
+- **LOW tail** (each independent): ✅ **all done v3.6.33 except
+  `ensure_user_tables`** —
+  - ✅ `scraper_manager._settings_cache` now lock-guarded under bulk-scrape
+    threads (`metadata_merger` has no such cache — the original note was
+    imprecise);
+  - ✅ `hybrid_scraper.detect_save_type/detect_controller_support` guard
+    `system_folder=None` via `(x or '').lower()`;
+  - ✅ bulk-edit now validates `completion_status` against the shared whitelist
+    and cross-maps ratings per game (fill-empty only);
+  - ✅ `for g in games` in `api_filter_games` renamed to `row` (no flask.g
+    shadow);
+  - ✅ `execute_script` docstring documents its non-atomicity;
+  - ✅ `get_db_with_context.__exit__` leak-on-failing-commit fixed (close in
+    `finally`) — folded into the 48.4 `__exit__` fix;
+  - 📋 **DEFERRED** — `ensure_user_tables` leaks its connection on exception: the
+    clean fix (wrap the ~85-line body in try/finally) is a disproportionate
+    re-indent for a boot-time bootstrap that aborts startup on failure anyway;
+    left for a dedicated `contextlib.closing` refactor;
+  - ✅ `backup_database` chmod-fail now logs a warning instead of silent `pass`;
+  - ✅ `systems.update_system_types` partial match dropped the buggy `folder in
+    key` direction (`'nes'` no longer inherits the `'snes'` type);
+  - ✅ `scrape_logs.api_view_log_compat` now enforces the `VALID_PREFIXES`
+    allowlist its siblings use;
+  - ✅ `clz_import` dedup scoped to target systems (done with the 48.3 item).
 
 ---
 

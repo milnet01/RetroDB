@@ -576,10 +576,21 @@ def api_clz_import():
         conn = get_db()
         c = conn.cursor()
 
-        # Build normalized lookup for duplicate detection (handles diacritics/punctuation)
+        # Build normalized lookup for duplicate detection (handles diacritics/punctuation).
+        # Pass 48.3 — scope to the target systems (like the parse path at
+        # api_clz_parse) instead of scanning the whole games table; an import
+        # only ever collides with games in the systems it targets.
+        target_system_ids = sorted({
+            g.get('system_id') for g in games if g.get('system_id') is not None
+        })
         existing_norm = set()
-        for row in c.execute("SELECT title, system_id FROM games").fetchall():
-            existing_norm.add((normalize_title(row['title']), row['system_id']))
+        if target_system_ids:
+            placeholders = ','.join('?' * len(target_system_ids))
+            for row in c.execute(
+                f"SELECT title, system_id FROM games WHERE system_id IN ({placeholders})",
+                target_system_ids,
+            ).fetchall():
+                existing_norm.add((normalize_title(row['title']), row['system_id']))
 
         for game in games:
             try:

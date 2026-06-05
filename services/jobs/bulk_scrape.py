@@ -15,7 +15,8 @@ from services.jobs.base import (
     _get_conn, persist_job_start, persist_job_progress, persist_job_complete,
     persist_job_queued, remove_queued_job, resolve_terminal_status,
     acquire_job_singleton_lock, release_job_singleton_lock,
-    pad_resume_game_ids, restore_progress_counts,
+    pad_resume_game_ids, restore_progress_counts, shutdown_requested,
+    try_acquire_singleton_or_warn,
 )
 
 logger = logging.getLogger(__name__)
@@ -579,7 +580,17 @@ class BulkScrapeJob:
                     )
                     return True
 
+                # Pass 48.4 — acquire the cross-process singleton before
+                # starting the worker. The post-restart resume path previously
+                # spawned `_run_scrape` without the flock that `start()` holds,
+                # so on a multi-worker deploy two workers could both resume the
+                # same interrupted job. Refuse (return False) if another worker
+                # already holds it.
+                singleton_fd = try_acquire_singleton_or_warn('bulk_scrape')
+                if singleton_fd is None:
+                    return False
                 self.reset()
+                self._singleton_fd = singleton_fd
                 self.job_id = f"bulk_{int(time.time())}_resume"
                 self.game_ids = pad_resume_game_ids(resume_index, remaining_ids)
                 self.system_id = system_id
@@ -757,12 +768,16 @@ class BulkScrapeJob:
                         except sqlite3.Error:
                             pass
 
-                # Check for pause - wait until resumed
+                # Check for pause - wait until resumed.
+                # Pass 48.4 — wait on shutdown_requested so a SIGTERM
+                # short-circuits the pause loop instead of leaving the daemon
+                # thread hanging until the next 0.2s tick (mirrors psn_refresh).
                 while True:
                     with self._lock:
                         if not self.paused or self.cancelled:
                             break
-                    time.sleep(0.2)
+                    if shutdown_requested.wait(0.2):
+                        break
 
                 # Double-check cancel after pause
                 with self._lock:

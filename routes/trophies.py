@@ -944,34 +944,49 @@ def psn_trophy_detail(npwr_id):
 # PSN API ROUTES
 # -----------------------------------------------------------------------------
 
-_psn_sync_state = {
-    'running': False,
-    'phase': 'idle',
-    'total': 0,
-    'current': 0,
-    'current_game': '',
-    'games_synced': 0,
-    'images_downloaded': 0,
-    'error': None
-}
+# Pass 48.4 — per-user sync state. A single module-global dict blocked a second
+# user from syncing while another's sync ran, and leaked the other user's
+# current-game title through the status endpoint. Keyed by user_id; the lock
+# guards both the registry and individual state reads.
+_psn_sync_states = {}  # user_id -> per-user sync state dict
 _psn_sync_lock = threading.Lock()
+
+
+def _new_psn_sync_state():
+    return {
+        'running': False,
+        'phase': 'idle',
+        'total': 0,
+        'current': 0,
+        'current_game': '',
+        'games_synced': 0,
+        'images_downloaded': 0,
+        'error': None,
+    }
+
+
+def _psn_state_for(user_id):
+    """Return the per-user sync state, creating it on first access.
+    Caller must hold _psn_sync_lock."""
+    return _psn_sync_states.setdefault(user_id, _new_psn_sync_state())
 
 
 @bp.route('/api/psn/sync', methods=['POST'])
 @login_required
 def api_psn_sync_all():
     """Start PSN trophy sync as a background job"""
-    global _psn_sync_state
+    uid = g.user['id']
 
     with _psn_sync_lock:
-        if _psn_sync_state['running']:
+        state = _psn_state_for(uid)
+        if state['running']:
             return jsonify({'success': False, 'error': 'Sync already in progress'})
 
         psnawp, error = get_psn_client()
         if error:
             return jsonify({'success': False, 'error': error})
 
-        _psn_sync_state.update({
+        state.update({
             'running': True, 'phase': 'connecting', 'total': 0, 'current': 0,
             'current_game': 'Connecting to PSN...', 'games_synced': 0,
             'images_downloaded': 0, 'error': None
@@ -980,7 +995,7 @@ def api_psn_sync_all():
     # Pass 27.2 — capture the dispatching user's id; the worker thread has
     # no Flask request context to read g.user from.
     t = threading.Thread(
-        target=_run_psn_full_sync, args=(psnawp, g.user['id']), daemon=True,
+        target=_run_psn_full_sync, args=(psnawp, uid), daemon=True,
     )
     t.start()
 
@@ -992,7 +1007,7 @@ def api_psn_sync_all():
 def api_psn_sync_status():
     """Get current PSN full sync progress"""
     with _psn_sync_lock:
-        state = dict(_psn_sync_state)
+        state = dict(_psn_state_for(g.user['id']))
     return jsonify({'success': True, **state})
 
 
@@ -1003,15 +1018,16 @@ def _run_psn_full_sync(psnawp, user_id):
     psn_sync_status by `WHERE user_id = ?` so two PSN-connected accounts
     don't overwrite each other's `last_full_sync` / avatar / trophy_level.
     """
-    global _psn_sync_state
+    with _psn_sync_lock:
+        state = _psn_state_for(user_id)
 
     try:
         client = psnawp.me()
         username = client.online_id
 
         with _psn_sync_lock:
-            _psn_sync_state['phase'] = 'fetching'
-            _psn_sync_state['current_game'] = 'Fetching game list from PSN...'
+            state['phase'] = 'fetching'
+            state['current_game'] = 'Fetching game list from PSN...'
 
         # Fetch trophy level and avatar URL from PSN profile
         trophy_level = 0
@@ -1040,8 +1056,8 @@ def _run_psn_full_sync(psnawp, user_id):
         trophy_titles = list(client.trophy_titles())
         total = len(trophy_titles)
         with _psn_sync_lock:
-            _psn_sync_state['total'] = total
-            _psn_sync_state['phase'] = 'syncing'
+            state['total'] = total
+            state['phase'] = 'syncing'
 
         # Use shared connection factory for consistent PRAGMAs (WAL, 30s busy_timeout, etc.)
         from services.jobs.base import _get_conn, _commit_with_retry
@@ -1087,12 +1103,12 @@ def _run_psn_full_sync(psnawp, user_id):
 
             for i, title in enumerate(trophy_titles):
                 with _psn_sync_lock:
-                    _psn_sync_state['current'] = i + 1
+                    state['current'] = i + 1
 
                 try:
                     npwr_id = title.np_communication_id
                     with _psn_sync_lock:
-                        _psn_sync_state['current_game'] = title.title_name
+                        state['current_game'] = title.title_name
 
                     earned_counts = {
                         'platinum': title.earned_trophies.platinum if title.earned_trophies else 0,
@@ -1185,10 +1201,10 @@ def _run_psn_full_sync(psnawp, user_id):
                         result = download_psn_trophy_image(npwr_id, icon_url)
                         if result:
                             with _psn_sync_lock:
-                                _psn_sync_state['images_downloaded'] += 1
+                                state['images_downloaded'] += 1
 
                     with _psn_sync_lock:
-                        _psn_sync_state['games_synced'] += 1
+                        state['games_synced'] += 1
 
                 except Exception as game_error:
                     logger.warning(f"Error syncing PSN game {title.title_name}: {game_error}")
@@ -1196,7 +1212,7 @@ def _run_psn_full_sync(psnawp, user_id):
 
             # Final commit for remaining games + sync status update
             with _psn_sync_lock:
-                games_synced = _psn_sync_state['games_synced']
+                games_synced = state['games_synced']
             conn.execute("""
                 UPDATE psn_sync_status SET sync_in_progress = 0, total_games = ?
                 WHERE user_id = ?
@@ -1206,15 +1222,15 @@ def _run_psn_full_sync(psnawp, user_id):
             conn.close()
 
         with _psn_sync_lock:
-            _psn_sync_state['phase'] = 'complete'
-            _psn_sync_state['running'] = False
+            state['phase'] = 'complete'
+            state['running'] = False
 
     except Exception as e:
         logger.error(f"PSN sync error: {e}")
         with _psn_sync_lock:
-            _psn_sync_state['phase'] = 'error'
-            _psn_sync_state['error'] = 'PSN sync failed. Check logs for details.'
-            _psn_sync_state['running'] = False
+            state['phase'] = 'error'
+            state['error'] = 'PSN sync failed. Check logs for details.'
+            state['running'] = False
         try:
             from services.jobs.base import _get_conn as _get_err_conn
             err_conn = _get_err_conn()

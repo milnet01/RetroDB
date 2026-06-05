@@ -1,3 +1,20 @@
+- version: 3.6.33
+  date: 2026-06-05
+  tags:
+  - type: fix
+    label: Jobs / concurrency / DB hardening (Pass 48 Batch B — Lane 2/7/10)
+  body: |
+    <ul>
+      <li><strong>DB restore integrity gate (Pass 48.5)</strong>: <code>api_restore</code> now (a) refuses to restore while a background job is running (a job thread holds the live DB and would keep writing to the swapped-out inode), and (b) runs <code>PRAGMA integrity_check</code> on the backup <em>before</em> the destructive <code>os.replace</code> — a truncated/corrupt backup is rejected instead of clobbering the live DB.</li>
+      <li><strong>Per-user PSN sync state (Pass 48.4)</strong>: <code>_psn_sync_state</code> was a single module-global, so one user's sync blocked another's and leaked the other user's current-game title through the status endpoint. State is now keyed by <code>user_id</code>.</li>
+      <li><strong>RA-sync points guard (Pass 48.4)</strong>: when RetroAchievements omits the per-achievement payload but the game has achievements, the points sums collapsed to 0 and the UPSERT wiped a previously-synced good value. The points columns are now skipped on the UPDATE path in that case.</li>
+      <li><strong>bulk_scrape (Pass 48.3/48.4)</strong>: the pause loop now waits on <code>shutdown_requested</code> so SIGTERM collapses a paused job immediately; the post-restart resume path now acquires the cross-process singleton flock before starting the worker (multi-worker safety).</li>
+      <li><strong>DB context manager (Pass 48.4)</strong>: <code>get_db_with_context().__exit__</code> now rolls back explicitly on the error path and closes the connection in a <code>finally</code> so a failing commit can't leak it.</li>
+      <li><strong>Bulk edit parity (Pass 48.5)</strong>: bulk edit now validates <code>completion_status</code> against the same whitelist as single edit, and cross-maps ratings per game (fill-empty only — curated values preserved).</li>
+      <li><strong>Smaller hardening (Pass 48.5)</strong>: backup DB restore guard for <code>job_queue</code>; CLZ import dedup scoped to target systems (no full-table scan); <code>detect_save_type</code>/<code>detect_controller_support</code> guard a <code>None</code> system folder; <code>update_system_types</code> no longer mis-types short folders (<code>'nes'</code> ⊄ <code>'snes'</code>); the log-view compat alias enforces the <code>VALID_PREFIXES</code> allowlist; <code>backup_database</code> logs a failed chmod instead of swallowing it; scraper-settings cache is now lock-guarded; <code>execute_script</code> documents its non-atomicity; a <code>flask.g</code> shadow in <code>api_filter_games</code> was renamed; <code>jobs/__init__</code> re-export comment corrected.</li>
+      <li><strong>Patch bump 3.6.32 &rarr; 3.6.33</strong>.</li>
+    </ul>
+
 - version: 3.6.32
   date: 2026-06-05
   tags:
