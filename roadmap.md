@@ -337,7 +337,9 @@ are tracked here so the next pass picks them up:
   to "overwrites any field a source provides." Design call — not a silent fix.
 
 #### Pass 48.2 media_cleanup orphan-match precision (LOW, S)
-- **Status**: 📋 Planned
+- **Status**: ✅ Done (v3.6.30) — substring reference test replaced with a
+  basename-equality match (still protects path-form refs); `referenced_files`
+  audited (bare filenames / container paths). Regression: `tests/test_pass48_media_cleanup.py`.
 - **Lane**: image pipeline (Lane 6)
 - **Finding**: `media_cleanup.py` falls back to a substring test
   (`if filename in ref`) after the exact-membership checks, making the orphan
@@ -346,7 +348,8 @@ are tracked here so the next pass picks them up:
   path prefix. Needs an audit of how `referenced_files` is built before tightening.
 
 #### Pass 48.3 Assorted LOW/INFO review notes (LOW, S)
-- **Status**: 📋 Planned
+- **Status**: 📋 Planned (Lane-6 `_make_responsive_variants` pruning item done
+  v3.6.30; the scraper/jobs/CI items below remain open)
 - **Items** (each independent, low blast radius):
   - `scrape_esde.apply_esde_metadata` sets `scraped = 1` even when no field was
     filled, excluding the game from later `WHERE scraped = 0` bulk passes — gate
@@ -357,8 +360,9 @@ are tracked here so the next pass picks them up:
   - IGDB `apply_metadata_to_game` keys age ratings on `age_ratings.category`;
     confirm against current IGDB v4 docs (the field is migrating to
     `organization`/`rating_category`) and add a fallback if deprecated (Lane 4).
-  - `image_utils._make_responsive_variants` never prunes a now-oversized `-sm`/
-    `-md` sibling when the primary shrinks — srcset can serve a stale variant (Lane 6).
+  - ✅ **done v3.6.30** — `image_utils._make_responsive_variants` never prunes a
+    now-oversized `-sm`/`-md` sibling when the primary shrinks — srcset can serve
+    a stale variant (Lane 6). Now unlinks the stale sibling on the skip branch.
   - `services/jobs/__init__.py` `__all__` claims to re-export names it doesn't
     (e.g. `resolve_terminal_status`); add them or soften the comment (Lane 7).
   - `bulk_scrape` pause loop sleeps on `time.sleep(0.2)` instead of
@@ -370,18 +374,23 @@ are tracked here so the next pass picks them up:
     are stale vs the CI ruff; `pre-commit autoupdate` (global rule 5a) (Lane 14).
 
 #### Pass 48.4 Loop-2 cold-review deferrals (LOW, S)
-- **Status**: 📋 Planned
+- **Status**: 📋 Planned (both Lane-6 `media_cleanup` items — preview→clean
+  window + relpath base — done v3.6.30; jobs/route/CI items below remain open)
 - **Source**: the second (cold) indie-review loop surfaced these after the
   loop-1 fixes landed. All LOW under the single-user-localhost model.
 - **Items**:
-  - `media_cleanup` `/clean` re-scans for orphans milliseconds before deleting
-    instead of reusing the previewed list, so the Pass 45.7 mtime race-defense
-    doesn't cover the preview→clean window it was built for; have `/clean`
-    accept the previewed file list from the client (Lane 6, MEDIUM-ish but
-    needs a route+client change).
-  - `media_cleanup.py:165` picks the relpath base via a `'static' in dir_path`
-    substring test — fragile if `IMAGE_PATH` ever moves outside `static/`; pass
-    the correct base per `media_dirs` tuple (Lane 6).
+  - ✅ **done v3.6.30** — `media_cleanup` `/clean` re-scans for orphans
+    milliseconds before deleting instead of reusing the previewed list, so the
+    Pass 45.7 mtime race-defense doesn't cover the preview→clean window it was
+    built for (Lane 6). Resolved by keeping the server-side re-scan (so the file
+    SET stays trustworthy) but having the client echo back the preview's
+    scan-start time as a `scan_started_override`, so any candidate modified
+    since the preview is skipped — simpler and safer than accepting a
+    client-supplied delete list.
+  - ✅ **done v3.6.30** — `media_cleanup.py` picked the relpath base via a
+    `'static' in dir_path` substring test — fragile if `IMAGE_PATH` ever moves
+    outside `static/` (it does, in standalone builds) (Lane 6). Each `media_dirs`
+    entry now carries an explicit `rel_base`.
   - `bulk_scrape` resume path starts `_run_scrape` without acquiring the
     `bulk_scrape` cross-process singleton flock (Lane 7).
   - `ra_sync` recomputes `total_points`/`earned_points` from each game's
@@ -404,7 +413,9 @@ are tracked here so the next pass picks them up:
     structured key (Lane 14).
 
 #### Pass 48.5 Loop-3 cold-review deferrals (MEDIUM, M)
-- **Status**: 📋 Planned
+- **Status**: 📋 Planned (Lane-6 "responsive variants leaked on per-game
+  deletion" item done v3.6.30; the IGDB/TGDB media-replace, DB-restore-integrity,
+  and LOW-tail items remain open)
 - **Source**: the third (cold) indie-review loop — confirmed all loop-1/loop-2
   fixes held (no resurfacing), then surfaced this deeper batch. Calibrated to
   single-user-localhost.
@@ -417,11 +428,11 @@ are tracked here so the next pass picks them up:
     one and the screenshots column is replaced, not appended — violating the
     documented media fill-only invariant. Fix: read existing media first, fill
     only when empty, append screenshots (mirror ES-DE). Related to Pass 48.1.
-  - **Responsive variants leaked on per-game deletion** (`media_cleanup.py`
-    `delete_game_images`): only the bare DB filename is unlinked; the
-    `-sm`/`-md` siblings written by `_make_responsive_variants` survive until a
-    manual orphan sweep — 2-4 stranded files per deleted game with boxart. Fix:
-    unlink the variant siblings in `delete_game_images`.
+  - ✅ **done v3.6.30** — **Responsive variants leaked on per-game deletion**
+    (`media_cleanup.py` `delete_game_images`): only the bare DB filename was
+    unlinked; the `-sm`/`-md` siblings written by `_make_responsive_variants`
+    survived until a manual orphan sweep — 2-4 stranded files per deleted game
+    with boxart. `delete_game_images` now unlinks the variant siblings.
   - **DB restore has no integrity gate** (`settings.py` `api_restore`): a
     truncated/corrupt backup is `os.replace`d over the live DB with no
     `PRAGMA integrity_check`, and a running background job can write to the

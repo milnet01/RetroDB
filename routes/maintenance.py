@@ -146,7 +146,16 @@ def api_orphaned_media_clean():
     """Delete orphaned media files"""
     games = query("SELECT id, boxart, boxart_3d, screenshots, fanart, video, manual FROM games")
     orphaned, _ = find_orphaned_media(games)
-    deleted, errors, freed_size = clean_orphaned_files(orphaned)
+    # Pass 48.4 — honour the original preview scan-start so a file written by
+    # a concurrent scraper during the preview→clean window is skipped. The
+    # client echoes back the timestamp it received from /preview; a missing or
+    # malformed value falls back to the re-scan's own race guard.
+    payload = request.get_json(silent=True) or {}
+    try:
+        override = float(payload['scan_started_at'])
+    except (KeyError, TypeError, ValueError):
+        override = None
+    deleted, errors, freed_size = clean_orphaned_files(orphaned, scan_started_override=override)
     return success(
         deleted=deleted,
         errors=errors,

@@ -4021,8 +4021,15 @@ async function cleanOrphanedMedia() {
             btn.innerHTML = '<span class="btn-icon">⏳</span> Deleting...';
             
             try {
+                // Pass 48.4 — echo back the scan-start time from the preview
+                // so the server skips files a scraper touched during the
+                // preview→clean window (the orphan dicts all carry the same
+                // scan_started_at recorded when /preview ran).
+                const previewScanStart = orphanedMediaList[0] && orphanedMediaList[0].scan_started_at;
                 const response = await fetch('/api/orphaned-media/clean', {
-                    method: 'POST'
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ scan_started_at: previewScanStart })
                 });
                 const data = await response.json();
                 

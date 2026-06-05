@@ -589,14 +589,25 @@ def _make_responsive_variants(path, image_type):
             img.load()
             src_w, src_h = img.size
             for suffix, target_w in sizes:
+                variant_file = _variant_path(path, suffix)
                 if src_w <= target_w:
                     # Source is already smaller than the variant target —
                     # skip to avoid upscaling the variant unnecessarily.
+                    # Pass 48.3 — but if a larger original previously produced
+                    # this variant and the primary has since shrunk (e.g. a
+                    # re-scrape at lower resolution), the stale sibling would
+                    # still be picked up by boxart_srcset. Prune it so srcset
+                    # never serves a variant wider than the current primary.
+                    if os.path.exists(variant_file):
+                        try:
+                            os.remove(variant_file)
+                        except OSError as e:
+                            logger.warning(f"Could not prune stale variant {variant_file}: {e}")
                     continue
                 ratio = target_w / src_w
                 new_h = max(1, int(src_h * ratio))
                 variant = img.resize((target_w, new_h), Image.LANCZOS)
-                _save_image(variant, _variant_path(path, suffix))
+                _save_image(variant, variant_file)
                 variant.close()
     except Image.DecompressionBombError as e:
         logger.warning(f"Responsive variants: decompression bomb rejected for {path} ({e})")

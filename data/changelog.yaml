@@ -1,3 +1,19 @@
+- version: 3.6.30
+  date: 2026-06-05
+  tags:
+  - type: fix
+    label: Media-pipeline cleanup — stranded responsive variants + orphan-sweep precision
+  body: |
+    <ul>
+      <li><strong>What</strong>: the Lane-6 (image pipeline) subset of the Pass 48 audit/indie-review deferrals — four related fixes so responsive boxart variants and the orphan-media sweep stop leaving (or wrongly sparing) files on disk.</li>
+      <li><strong>Stranded variants on delete</strong> (Pass 48.5): deleting a game only unlinked the primary boxart/boxart_3d file, leaving its responsive <code>-sm</code>/<code>-md</code> siblings (written by the responsive-variant generator) on disk until the next orphan sweep — 2-4 stranded files per deleted game with boxart. <code>delete_game_images</code> now removes the siblings alongside the primary.</li>
+      <li><strong>Stale variant served after shrink</strong> (Pass 48.3): when a re-scrape replaced a primary image with a smaller one (narrower than a variant breakpoint), the old larger <code>-sm</code>/<code>-md</code> from the previous image survived and <code>boxart_srcset</code> kept serving it. The variant generator now prunes a stale sibling in that case so srcset never offers a variant wider than the current primary.</li>
+      <li><strong>Orphan-match precision</strong> (Pass 48.2): the orphan detector's reference check used a substring test (<code>filename in ref</code>), so a name like <code>1.png</code> was spared by an unrelated reference such as <code>21.png</code>. It now matches on basename, which still protects path-form references (<code>images/boxart/foo.png</code>, <code>/static/.../foo.png</code>) without the false substring matches.</li>
+      <li><strong>Preview&rarr;clean race window + path base</strong> (Pass 48.4): the orphan <em>Clean</em> action re-scanned at delete time, which reset the Pass 45.7 race-defense window and erased the very preview&rarr;clean gap it was built to protect; the client now echoes the preview's scan-start so a file a scraper wrote during the review window is skipped. Also replaced a fragile <code>'static' in dir_path</code> substring test for the relpath base with an explicit per-directory base (correct in standalone/PyInstaller builds where <code>STATIC_PATH</code> and <code>IMAGE_PATH</code> diverge). The media-layout table is now built at call time so it tracks the live config paths.</li>
+      <li><strong>Tests</strong>: new <code>tests/test_pass48_media_cleanup.py</code> (+12) pins all four fixes — sibling deletion, stale-variant pruning, basename precision, the rescan-window override, and the divergent-path relpath base.</li>
+      <li><strong>Patch bump 3.6.29 &rarr; 3.6.30</strong>. Remaining Pass 48 items (scraper fill-only, jobs, CI/packaging, and the other 48.3/48.4/48.5 bullets) stay open on the roadmap.</li>
+    </ul>
+
 - version: 3.6.29
   date: 2026-06-05
   tags:
