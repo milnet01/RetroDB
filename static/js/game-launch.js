@@ -29,10 +29,17 @@
 
             if (rv.status === 409 && body.existing_token) {
                 if (confirm('This game is already running.  Kill the existing process and relaunch?')) {
-                    await fetch(`/api/launch/${body.existing_token}/kill`, {
+                    // Pass 48.4 — check the kill succeeded before retrying. A
+                    // failed kill (process unkillable, token expired) otherwise
+                    // surfaces as a second confusing "already running" 409.
+                    const killRv = await fetch(`/api/launch/${body.existing_token}/kill`, {
                         method: 'POST',
                         headers: {'X-CSRF-Token': csrfToken()},
                     });
+                    if (!killRv.ok) {
+                        const killBody = await killRv.json().catch(() => ({}));
+                        throw new Error(killBody.error || 'Could not stop the running instance.');
+                    }
                     // Retry the launch once
                     const rv2 = await fetch(`/api/game/${gid}/launch`, {
                         method: 'POST',

@@ -1,3 +1,17 @@
+- version: 3.6.34
+  date: 2026-06-05
+  tags:
+  - type: fix
+    label: CI / tooling / launch-UX (Pass 48 Batch C — Lane 12/14)
+  body: |
+    <ul>
+      <li><strong>Game-launch kill check (Pass 48.4)</strong>: <code>game-launch.js</code> now checks the kill request succeeded (<code>.ok</code>) before retrying the launch. A failed kill previously fell through to a second confusing "already running" error; it now reports a clear "could not stop the running instance" message.</li>
+      <li><strong>Semgrep exclusion list de-fragilised (Pass 48.4)</strong>: CI built its <code>--exclude-rule</code> set by <code>awk</code>-scraping comment prose out of <code>.semgrep.yml</code> — a reformat of those comments would have silently emptied the exclusion set. The 14 rule IDs now live in a structured <code>.semgrep-excludes.txt</code> that CI reads directly (and hard-fails if it comes back empty); <code>.semgrep.yml</code> keeps the per-rule rationale as the human reference.</li>
+      <li><strong>Dependabot covers pre-commit (Pass 48.4)</strong>: added the <code>pre-commit</code> ecosystem so the hook revs stay current automatically.</li>
+      <li><strong>Stale pre-commit pins bumped (Pass 48.3)</strong>: ruff-pre-commit <code>v0.8.4 &rarr; v0.15.16</code>, gitleaks <code>v8.21.2 &rarr; v8.30.1</code> — back in lockstep with CI's (unpinned, latest) ruff.</li>
+      <li><strong>Patch bump 3.6.33 &rarr; 3.6.34</strong>.</li>
+    </ul>
+
 - version: 3.6.33
   date: 2026-06-05
   tags:

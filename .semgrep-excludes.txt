@@ -1,0 +1,27 @@
+# Semgrep --exclude-rule allowlist (Pass 48.4).
+#
+# Machine-readable source of the upstream rule IDs documented as known-noise on
+# this codebase. CI reads THIS file to build the `--exclude-rule` flags, instead
+# of awk-scraping the `# Excluded upstream rules` comment block in .semgrep.yml
+# (a reformat of those comments would have silently emptied the exclusion set).
+#
+# The WHY for each ID — the per-rule anchor explaining why it fires but isn't a
+# bug here — still lives in .semgrep.yml under "Excluded upstream rules". Keep
+# the two in sync: add a rule here AND document its rationale there.
+#
+# Format: one rule ID per line. Blank lines and `#` comments are ignored.
+
+python.flask.security.audit.debug-enabled.debug-enabled
+python.flask.security.audit.directly-returned-format-string.directly-returned-format-string
+python.flask.security.injection.tainted-sql-string.tainted-sql-string
+python.lang.security.audit.dangerous-os-exec-tainted-env-args.dangerous-os-exec-tainted-env-args
+python.flask.security.open-redirect.open-redirect
+python.lang.security.insecure-hash-algorithms-md5.insecure-hash-algorithm-md5
+python.lang.security.insecure-hash-algorithms.insecure-hash-algorithm-sha1
+python.lang.security.audit.dynamic-urllib-use-detected.dynamic-urllib-use-detected
+python.lang.security.use-defused-xml.use-defused-xml
+generic.html-templates.security.unquoted-attribute-var.unquoted-attribute-var
+generic.html-templates.security.var-in-script-tag.var-in-script-tag
+generic.html-templates.security.var-in-href.var-in-href
+python.flask.security.xss.audit.template-unescaped-with-safe.template-unescaped-with-safe
+python.lang.security.audit.logging.logger-credential-leak.python-logger-credential-disclosure

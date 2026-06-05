@@ -42,3 +42,23 @@ updates:
     labels:
       - "dependencies"
       - "github-actions"
+
+  # Pass 48.4 — keep the .pre-commit-config.yaml hook revs (ruff, gitleaks)
+  # current; previously they drifted (v0.8.4 ruff vs CI's latest) until a manual
+  # `pre-commit autoupdate`. Dependabot's native pre-commit support bumps them.
+  - package-ecosystem: "pre-commit"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      pre-commit:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "pre-commit"

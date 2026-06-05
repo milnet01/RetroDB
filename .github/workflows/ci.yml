@@ -152,15 +152,20 @@ jobs:
           python -m pip install --upgrade pip uv
           uv pip install --system semgrep
 
-      - name: Semgrep (calibrated via .semgrep.yml exclusions)
+      - name: Semgrep (calibrated via .semgrep-excludes.txt)
         run: |
-          # .semgrep.yml documents 13 upstream rule IDs as noise-only on this
-          # codebase (three consecutive audits, 0/105 actionable). The raw
-          # upstream packs would surface them every run. Parse the list out
-          # of the doc comments and feed it back as --exclude-rule flags.
-          EXCLUDES=$(awk '/^# Excluded upstream rules/,/^# RetroDB-specific/' .semgrep.yml \
-                     | grep -oE '^#   [a-z][a-z0-9._-]+\.[a-z0-9._-]+' \
-                     | awk '{print "--exclude-rule " $2}' | tr '\n' ' ')
+          # .semgrep-excludes.txt is the structured source of the upstream rule
+          # IDs documented as noise-only on this codebase (Pass 48.4 — replaced
+          # the awk-scrape of .semgrep.yml comment prose, which a reformat could
+          # silently empty). One ID per line; blank lines and `#` comments
+          # ignored. The per-rule rationale still lives in .semgrep.yml.
+          EXCLUDES=$(grep -vE '^\s*(#|$)' .semgrep-excludes.txt \
+                     | awk '{print "--exclude-rule " $1}' | tr '\n' ' ')
+          # Fail loudly if the exclusion list came back empty — that means the
+          # file was renamed/emptied, not that there's nothing to exclude.
+          if [ -z "$EXCLUDES" ]; then
+            echo "::error::.semgrep-excludes.txt yielded no rule IDs"; exit 1
+          fi
           echo "Applying exclusions:"; echo "$EXCLUDES" | tr ' ' '\n' | grep -v '^$' || true
           semgrep \
             --config p/security-audit \

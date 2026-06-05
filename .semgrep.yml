@@ -17,12 +17,13 @@
 #
 # Usage
 # -----
-# Invoke Semgrep with upstream packs AND this file. Synthesise the
-# `--exclude-rule` flags from the list under "Excluded upstream rules" below:
+# Invoke Semgrep with upstream packs AND this file. The `--exclude-rule` IDs
+# live in the structured file `.semgrep-excludes.txt` (Pass 48.4 — one ID per
+# line; CI reads it directly so a reformat of the comment block below can't
+# silently empty the set). Synthesise the flags with:
 #
-#   EXCLUDES=$(awk '/^# Excluded upstream rules/,/^# RetroDB-specific/' .semgrep.yml \
-#              | grep -oE '^#   [a-z][a-z0-9._-]+\.[a-z0-9._-]+' \
-#              | awk '{print "--exclude-rule " $2}' | tr '\n' ' ')
+#   EXCLUDES=$(grep -vE '^\s*(#|$)' .semgrep-excludes.txt \
+#              | awk '{print "--exclude-rule " $1}' | tr '\n' ' ')
 #   semgrep \
 #     --config p/security-audit --config p/python --config p/flask \
 #     --config .semgrep.yml \
@@ -92,10 +93,13 @@
 #
 # Excluded upstream rules
 # -----------------------
-# These rule IDs are noise-only on RetroDB. Pass `--exclude-rule` per ID to
-# skip them on audit runs. If a NEW finding for one of these rules appears in
-# a file or code pattern not listed below, investigate — the exclusion list
-# is calibrated for the current codebase, and a new site may be a real bug.
+# These rule IDs are noise-only on RetroDB. The machine-readable list CI feeds
+# to `--exclude-rule` is `.semgrep-excludes.txt` (Pass 48.4); the per-ID
+# rationale below is the human reference. KEEP THE TWO IN SYNC — adding a rule
+# means appending it there AND documenting WHY here. If a NEW finding for one of
+# these rules appears in a file or code pattern not listed below, investigate —
+# the exclusion list is calibrated for the current codebase, and a new site may
+# be a real bug.
 #
 #   python.flask.security.audit.debug-enabled.debug-enabled
 #     Anchor: app.py:1238 is env-gated (config.DEBUG_MODE / RETRODB_DEBUG).

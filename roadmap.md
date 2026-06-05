@@ -353,9 +353,9 @@ are tracked here so the next pass picks them up:
   path prefix. Needs an audit of how `referenced_files` is built before tightening.
 
 #### Pass 48.3 Assorted LOW/INFO review notes (LOW, S)
-- **Status**: 📋 Planned (Lane-6 `_make_responsive_variants` pruning item done
-  v3.6.30; all three Lane-4 scraper items done v3.6.32; the jobs/CI items below
-  remain open)
+- **Status**: ✅ Done (Lane-6 variant-pruning v3.6.30; three Lane-4 scraper items
+  v3.6.32; jobs items v3.6.33; pre-commit pins + dependabot v3.6.34 — all items
+  landed)
 - **Items** (each independent, low blast radius):
   - ✅ **done v3.6.32** — `scrape_esde.apply_esde_metadata` set `scraped = 1`
     even when no field was filled, excluding the game from later
@@ -384,14 +384,15 @@ are tracked here so the next pass picks them up:
   - ✅ **done v3.6.33** — `clz_import` import-time dedup now scopes by target
     `system_id IN (...)` (collected from the import payload) instead of scanning
     the whole `games` table (Lane 10).
-  - `.pre-commit-config.yaml` ruff (`v0.8.4`) + gitleaks (`v8.21.2`) `rev:` pins
-    are stale vs the CI ruff; `pre-commit autoupdate` (global rule 5a) (Lane 14).
+  - ✅ **done v3.6.34** — `.pre-commit-config.yaml` ruff `v0.8.4 → v0.15.16` +
+    gitleaks `v8.21.2 → v8.30.1`, back in lockstep with CI's unpinned-latest
+    ruff. Dependabot now covers the `pre-commit` ecosystem so they stay current
+    (Lane 14).
 
 #### Pass 48.4 Loop-2 cold-review deferrals (LOW, S)
-- **Status**: 📋 Planned (Lane-6 `media_cleanup` items done v3.6.30; bulk_scrape
-  resume flock + ra_sync points + psn_sync_state + db `__exit__` done v3.6.33;
-  only the `game-launch.js` (Lane 12) and dependabot/ci.yml (Lane 14) items
-  remain — see Batch C)
+- **Status**: ✅ Done (Lane-6 `media_cleanup` v3.6.30; bulk_scrape resume flock +
+  ra_sync points + psn_sync_state + db `__exit__` v3.6.33; game-launch.js +
+  dependabot/ci.yml v3.6.34 — all items landed)
 - **Source**: the second (cold) indie-review loop surfaced these after the
   loop-1 fixes landed. All LOW under the single-user-localhost model.
 - **Items**:
@@ -418,17 +419,18 @@ are tracked here so the next pass picks them up:
   - ✅ **done v3.6.33** — `_psn_sync_state` (trophies.py) is now a per-user
     registry keyed by `user_id`, so concurrent PSN syncs don't block each other
     or leak the other user's current-game title (Lane 10).
-  - `game-launch.js` kill-instance `fetch` has no `.ok` check before retrying
-    the launch — a failed kill surfaces as a confusing "already running" error
-    (Lane 12). — see Batch C
+  - ✅ **done v3.6.34** — `game-launch.js` kill-instance `fetch` now checks
+    `.ok` before retrying the launch; a failed kill reports "could not stop the
+    running instance" instead of a confusing second "already running" 409
+    (Lane 12).
   - ✅ **done v3.6.33** — `services/database.py` `get_db_with_context.__exit__`
     now rolls back explicitly on the error path and closes in `finally` (also
     fixes the LOW-tail "leaks on a failing commit" item) (Lane 2).
-  - `.github/dependabot.yml` covers only pip + github-actions, not the
-    `pre-commit` ecosystem (pairs with 48.3's stale-pins item); and `ci.yml`
+  - ✅ **done v3.6.34** — `.github/dependabot.yml` now covers the `pre-commit`
+    ecosystem (pairs with 48.3's stale-pins item); and `ci.yml` no longer awk-
     scrapes the semgrep `--exclude-rule` set out of `.semgrep.yml` comment prose
-    via awk — a reformat silently empties the exclusion set. Move the IDs to a
-    structured key (Lane 14).
+    — the 14 IDs moved to a structured `.semgrep-excludes.txt` that CI reads
+    directly (hard-failing if it's empty) (Lane 14).
 
 #### Pass 48.5 Loop-3 cold-review deferrals (MEDIUM, M)
 - **Status**: 📋 Nearly done (Lane-6 variant-leak done v3.6.30; IGDB/TGDB
