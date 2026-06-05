@@ -258,7 +258,10 @@ def api_rom_tools_browse_folders():
         current_real = os.path.realpath(current_path)
         base_real = os.path.realpath(base_path)
 
-        if not current_real.startswith(base_real):
+        # Boundary-aware containment: a bare startswith() lets a sibling like
+        # /roms_other slip past /roms. Require an exact match or a path
+        # separator immediately after the base.
+        if not (current_real == base_real or current_real.startswith(base_real + os.sep)):
             current_path = base_path
             current_real = base_real
     except (OSError, ValueError):

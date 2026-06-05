@@ -773,11 +773,17 @@ def standardize_image(path, image_type, target, preserve_rgba=False):
         return
 
     try:
-        # For controllers/hardware, crop excess transparent space first
+        # For controllers/hardware, crop excess transparent space first.
+        # crop() returns a NEW image; close the source copy so a bulk job of
+        # 10k boxart doesn't leak one file descriptor per cropped/resized image
+        # (the Pass 32.9 FD-exhaustion regression — only the final img was
+        # closed in `finally`, every intermediate reassignment leaked).
         if image_type in ('controllers', 'hardware') and img.mode == 'RGBA':
             bbox = img.getbbox()
             if bbox:
-                img = img.crop(bbox)
+                cropped = img.crop(bbox)
+                img.close()
+                img = cropped
 
         # Determine current relevant dimension
         w, h = img.size
@@ -791,10 +797,15 @@ def standardize_image(path, image_type, target, preserve_rgba=False):
         if config.IMAGE_UPSCALE_THRESHOLD <= ratio <= config.IMAGE_DOWNSCALE_THRESHOLD:
             return
 
+        # _upscale_image / _downscale_image always return a NEW PIL image and
+        # never close their input, so close the source copy after reassigning.
         if ratio < config.IMAGE_UPSCALE_THRESHOLD:
-            img = _upscale_image(img, image_type, target, preserve_rgba)
+            resized = _upscale_image(img, image_type, target, preserve_rgba)
         else:
-            img = _downscale_image(img, image_type, target)
+            resized = _downscale_image(img, image_type, target)
+        if resized is not img:
+            img.close()
+        img = resized
 
         if img is not None:
             _save_image(img, path)

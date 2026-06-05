@@ -313,16 +313,19 @@ def _get_rating_data():
                    OR g.cero_rating = 'A' OR g.usk_rating IN ('0', '6')
                    OR g.acb_rating IN ('G', 'PG') OR g.grac_rating = 'ALL'
                    OR g.classind_rating IN ('L', '10')
+                   OR g.fpb_rating IN ('A', 'PG', '7-9 PG')
                    THEN 1 ELSE 0 END) as family,
                SUM(CASE WHEN g.esrb_rating IN ('E10+', 'T') OR g.pegi_rating IN ('PEGI 12', 'PEGI 16')
                    OR g.cero_rating IN ('B', 'C') OR g.usk_rating IN ('12', '16')
                    OR g.acb_rating IN ('M', 'MA15+') OR g.grac_rating IN ('12', '15')
                    OR g.classind_rating IN ('12', '14', '16')
+                   OR g.fpb_rating IN ('10', '10-12 PG', '13', '16')
                    THEN 1 ELSE 0 END) as teen,
                SUM(CASE WHEN g.esrb_rating IN ('M', 'AO') OR g.pegi_rating = 'PEGI 18'
                    OR g.cero_rating IN ('D', 'Z') OR g.usk_rating = '18'
                    OR g.acb_rating = 'R18+' OR g.grac_rating = '18'
                    OR g.classind_rating = '18'
+                   OR g.fpb_rating = '18'
                    THEN 1 ELSE 0 END) as mature
         FROM systems s
         JOIN games g ON s.id = g.system_id

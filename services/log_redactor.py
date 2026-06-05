@@ -128,6 +128,20 @@ class SecretRedactor(logging.Filter):
             rendered = record.getMessage()
             record.msg = redact(rendered)
             record.args = None
+
+            # Exception tracebacks bypass the getMessage() redaction above: the
+            # handler's formatter renders record.exc_info into record.exc_text
+            # AFTER this filter runs and appends it verbatim. A scraper
+            # exception whose repr carries a token-bearing URL would land in the
+            # log unredacted. Pre-render + redact it here and cache into
+            # exc_text so the formatter reuses our scrubbed copy. Same for
+            # stack_info.
+            if record.exc_info and not record.exc_text:
+                record.exc_text = logging.Formatter().formatException(record.exc_info)
+            if record.exc_text:
+                record.exc_text = redact(record.exc_text)
+            if record.stack_info:
+                record.stack_info = redact(record.stack_info)
         except Exception:
             # Last-resort: fall back to the old behaviour so a
             # redactor bug doesn't drop the log line entirely.

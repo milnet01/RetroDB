@@ -20,6 +20,7 @@ from services.game_utils import (
     reset_game_title_from_filename,
     get_ra_supported_systems,
     get_preferred_rating, get_all_ratings,
+    normalize_players_value,
     RATING_SYSTEMS,
 )
 from services.game_query import (
@@ -1000,7 +1001,10 @@ def api_games_bulk_edit():
     })
 
     # Fields that support append mode
-    appendable_fields = ['genre', 'publisher', 'developer', 'franchise', 'region', 'game_structure', 'perspective', 'dimension']
+    # region is a single-value, dropdown-driven field (not comma-separated
+    # multi-value) — appending would corrupt it into "USA, Europe", which the
+    # filters / default_region / detail display all treat as one value.
+    appendable_fields = ['genre', 'publisher', 'developer', 'franchise', 'game_structure', 'perspective', 'dimension']
 
     # Separate append fields from replace fields
     append_fields = {}
@@ -1022,6 +1026,11 @@ def api_games_bulk_edit():
         if mode == 'append' and safe_field in appendable_fields and value:
             append_fields[safe_field] = value
         else:
+            if safe_field == 'players':
+                # players is INTEGER; coerce ranges/junk to the max int like the
+                # form-POST and JSON edit paths do, so bulk edit can't store a
+                # string in the column.
+                value = normalize_players_value(value)
             replace_updates.append(f"{safe_field} = ?")
             replace_values.append(value)
 

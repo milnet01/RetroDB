@@ -215,7 +215,12 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
 
     # Players/Modes
     if not metadata['players']:
-        players = tgdb_data.get('players')
+        # Coerce through the canonical normalizer: TGDB can return players as a
+        # string or "1-4" range, and the old bare `players > 1` raised
+        # TypeError on a str, silently aborting the entire TGDB apply. This
+        # also normalizes ranges to the max int for the INTEGER column.
+        from services.game_utils import normalize_players_value
+        players = normalize_players_value(tgdb_data.get('players'))
         if players:
             metadata['players'] = players
             if not metadata['modes']:
@@ -236,8 +241,12 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
                     metadata['esrb_rating'] = esrb_val
                     result['filled_fields'].append('esrb_rating (TGDB)')
             elif any(esrb in rating_upper for esrb in ['E ', 'E10+', 'T ', 'M ', 'AO', 'RP', 'EC']):
+                # Match the ESRB code as a whole token, not a bare-letter
+                # substring: "M - MATURE" must map to M, but a substring test
+                # finds the 'E' in "MATURE" first and mis-maps it to E.
+                tokens = set(re.split(r'[^A-Z0-9+]+', rating_upper))
                 for esrb in ['E10+', 'EC', 'E', 'T', 'M', 'AO', 'RP']:
-                    if esrb in rating_upper:
+                    if esrb in tokens:
                         metadata['esrb_rating'] = esrb
                         result['filled_fields'].append('esrb_rating (TGDB)')
                         break
@@ -296,10 +305,13 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
     # Extended data
     if tgdb_data.get('_extended'):
         ext = tgdb_data['_extended']
-        if ext.get('franchise') and (not metadata['franchise'] or not fill_only):
+        # Fill-only: franchise is not a title, so even on the TGDB primary path
+        # (fill_only=False) it must not overwrite an existing/curated franchise.
+        # IGDB and RAWG already guard with `not metadata['franchise']` only;
+        # the old `or not fill_only` here let TGDB clobber a curated value.
+        if ext.get('franchise') and not metadata['franchise']:
             metadata['franchise'] = ext['franchise']
-            if fill_only:
-                result['filled_fields'].append('franchise (TGDB)')
+            result['filled_fields'].append('franchise (TGDB)')
 
 
 # =============================================================================

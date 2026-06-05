@@ -19,6 +19,7 @@ from services.database import query, execute
 from services.game_metadata_service import cross_map_ratings
 from services.game_utils import (
     generate_sort_title, infer_rating_from_content,
+    normalize_players_value,
     RATING_SYSTEM_KEYS, RATING_SYSTEMS,
 )
 
@@ -101,7 +102,15 @@ def api_game_ai_fill(game_id):
                 logger.info(f"AI fill: correcting {field}: '{current}' → '{value}'")
 
             if should_apply:
-                if field in _int_fields:
+                if field == 'players':
+                    # AI is prompted to return players as a range ("1-4"), which
+                    # int(float()) below would reject — dropping the field. Route
+                    # it through the canonical normalizer (range → max int) like
+                    # the form/JSON/bulk edit paths do.
+                    value = normalize_players_value(value)
+                    if value is None:
+                        continue
+                elif field in _int_fields:
                     try:
                         value = int(float(value))
                     except (ValueError, TypeError):

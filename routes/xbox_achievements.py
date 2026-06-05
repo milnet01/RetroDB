@@ -168,7 +168,7 @@ def api_xbox_sync_status():
 
 
 @bp.route('/api/xbox-achievements/sync-all', methods=['POST'])
-@login_required
+@editor_required
 def api_xbox_sync_all():
     """Start bulk Xbox achievement sync (Pass 27.3 — per current user)."""
     from services.jobs import xbox_sync_job

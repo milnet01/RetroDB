@@ -485,9 +485,15 @@ def apply_metadata_to_game(db_game_id, igdb_data):
         else:
             release_date = ''
         
-        # Genre
+        # Genre — normalize to the hyphenated canonical forms (FIELD_SCHEMAS).
+        # This single-source apply path is a fallback when the hybrid fetch
+        # fails; without normalization it would write raw IGDB labels like
+        # "Role-playing (RPG)" instead of the canonical "RPG", fragmenting the
+        # genre filter. The hybrid path already normalizes; do it here too so
+        # the contract holds regardless of caller.
+        from services.normalization import normalize_genre
         genres = igdb_data.get('genres', [])
-        genre = ', '.join(g['name'] for g in genres) if genres else ''
+        genre = normalize_genre(', '.join(g['name'] for g in genres)) if genres else ''
         
         # Age ratings - IGDB category: 1=ESRB, 2=PEGI
         # ESRB ratings: 6=RP, 7=EC, 8=E, 9=E10+, 10=T, 11=M, 12=AO

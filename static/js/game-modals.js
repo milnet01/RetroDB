@@ -326,7 +326,7 @@ const GameDetailModal = {
         const videoPlayer = document.getElementById('gdmVideoPlayer');
         if (game.video && videoEl && videoPlayer) {
             const ext = game.video.split('.').pop();
-            videoPlayer.innerHTML = `<source src="/static/videos/${encodeURIComponent(game.video)}" type="video/${ext}">`;
+            videoPlayer.innerHTML = `<source src="/static/videos/${encodeURIComponent(game.video)}" type="video/${escapeHtml(ext)}">`;
             videoPlayer.load();
             videoEl.style.display = 'block';
         } else if (videoEl) {

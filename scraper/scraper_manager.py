@@ -36,8 +36,13 @@ except ImportError:
     config = None
 
 # Cache helpers — re-exported for hybrid_scraper and any legacy importer.
+# get_cached_screenscraper_result MUST be re-exported here: hybrid_scraper
+# imports it from this module, and its absence raised an ImportError that the
+# surrounding try/except swallowed, silently disabling ScreenScraper-as-primary
+# scraping entirely.
 from scraper.scraper_cache import (
     cache_screenscraper_result,
+    get_cached_screenscraper_result,
 )
 from scraper.match_scorer import (
     calculate_ss_score,

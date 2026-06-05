@@ -1,3 +1,22 @@
+- version: 3.6.29
+  date: 2026-06-05
+  tags:
+  - type: fix
+    label: Multi-agent audit fix-pass (/audit + /indie-review, 14 subsystems)
+  body: |
+    <ul>
+      <li><strong>What</strong>: ran the static-analysis audit plus a 14-subsystem independent code review over three cold loops and folded in every verified finding across all severities. One CRITICAL, one HIGH, the rest correctness/robustness hardening — all calibrated to the single-user-localhost threat model.</li>
+      <li><strong>CRITICAL — ScreenScraper-as-primary scraping was silently dead</strong>: <code>hybrid_scraper</code> imported <code>get_cached_screenscraper_result</code> from a module that never re-exported it, raising an <code>ImportError</code> that a surrounding try/except swallowed — so selecting ScreenScraper as the primary source always degraded to the fallback scrapers. Re-exported the function so SS-primary works again.</li>
+      <li><strong>HIGH — standalone build skipped the emulators migration</strong>: <code>retrodb.spec</code>'s <code>HIDDEN_IMPORTS</code> stopped at migration 011, so the PyInstaller standalone build never applied <code>012_emulators</code> (a fresh standalone install had no emulators schema). Added the import, plus a CI test that fails if the spec's migration list ever drifts from the registry again.</li>
+      <li><strong>Data-loss guards</strong>: (1) single-system RetroAchievements refresh no longer wipes <code>ra_game_id</code> on <em>other</em> systems (scoped the stale-entry cleanup to the refreshed system); (2) "clean missing ROMs" no longer mass-deletes when a ROM drive/share is merely unmounted (skips a game whose parent directory is also gone); (3) "refresh system types" no longer nulls a hand-set system type for folders it can't auto-detect; (4) uploaded screenshots now index from the highest existing number rather than the list length, so a gapped list can't overwrite an existing screenshot.</li>
+      <li><strong>Scraper fill-only &amp; normalization</strong>: TGDB on the primary path no longer overwrites a curated <code>franchise</code>; a string/range <code>players</code> value (e.g. "1-4") from TGDB/ES-DE/AI-fill is coerced to the max int instead of raising and silently dropping the field; the single-source IGDB/TGDB and ES-DE apply paths now normalize genres to the canonical hyphenated forms; and a verbose TGDB ESRB string like "M - Mature" no longer mis-maps to "E" (the 'E' in "MATURE").</li>
+      <li><strong>Correctness</strong>: bulk-edit "append" mode removed for the single-value <code>region</code> field (appending corrupted it); the rating-distribution chart now buckets FPB-rated games (previously counted in the total but dropped from family/teen/mature); image standardize closes intermediate PIL images (file-descriptor leak on large bulk jobs); DB write helpers roll back a failed statement on the shared request connection.</li>
+      <li><strong>Security hardening (localhost-calibrated)</strong>: log redactor now scrubs exception tracebacks / stack info (token-bearing scraper exception URLs could land unredacted); bulk Xbox achievement sync and the Steam/Xbox/PSN library-import routes now require editor role to match Steam/CLZ; the ROM-tools folder browser uses boundary-aware path containment (a sibling like <code>/roms_other</code> no longer slips past <code>/roms</code>); several scraped/admin strings that built HTML now escape (similar-games, archive scanner, HLTB match, bonus-disc detector, log session times); collections owner-filter fails closed with no user; bonus-disc auto-link escapes LIKE wildcards; frontend <code>API.post</code> no longer drops Content-Type if a caller passes options; museum cancel handles request failure.</li>
+      <li><strong>Release/tooling</strong>: release workflow installs from the hash-pinned <code>requirements.lock</code> (matching the SBOM) instead of the unpinned <code>requirements.txt</code>; <code>retrodb.spec</code> no longer bundles scraped <code>controllers/</code> media; <code>start.sh</code> guards its <code>cd</code>; removed a dead <code>PKG_MGR</code> variable in <code>setup.sh</code>; refreshed stale Semgrep threat-model anchors.</li>
+      <li>Regression tests added for the TGDB players-coercion and franchise fill-only fixes (+4). Deferred items (force-rescrape "replaces everything" reconciliation, orphan-match precision, a few LOW notes) logged to the roadmap.</li>
+      <li><strong>Patch bump 3.6.28 → 3.6.29</strong>.</li>
+    </ul>
+
 - version: 3.6.28
   date: 2026-06-04
   tags:

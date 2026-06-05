@@ -535,7 +535,7 @@ const BulkEditController = (function() {
     let gameIds = [];
     let _abortController = null;
 
-    const APPENDABLE_FIELDS = ['genre', 'publisher', 'developer', 'franchise', 'region', 'game_structure'];
+    const APPENDABLE_FIELDS = ['genre', 'publisher', 'developer', 'franchise', 'game_structure'];
 
     /**
      * Open the bulk edit modal with the given game IDs
@@ -1338,7 +1338,7 @@ const GameDetailModal = {
         const videoPlayer = document.getElementById('gdmVideoPlayer');
         if (game.video && videoEl && videoPlayer) {
             const ext = game.video.split('.').pop();
-            videoPlayer.innerHTML = `<source src="/static/videos/${encodeURIComponent(game.video)}" type="video/${ext}">`;
+            videoPlayer.innerHTML = `<source src="/static/videos/${encodeURIComponent(game.video)}" type="video/${escapeHtml(ext)}">`;
             videoPlayer.load();
             videoEl.style.display = 'block';
         } else if (videoEl) {

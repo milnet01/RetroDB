@@ -194,7 +194,7 @@ def api_steam_fetch_library():
 
 
 @bp.route('/api/steam/import', methods=['POST'])
-@login_required
+@editor_required
 def api_steam_import():
     """Import selected Steam games into the library."""
     data = request.get_json()
@@ -549,7 +549,7 @@ def api_xbox_fetch_library():
 
 
 @bp.route('/api/xbox/import', methods=['POST'])
-@login_required
+@editor_required
 def api_xbox_import():
     """Import selected Xbox games into the library."""
     data = request.get_json()
@@ -650,7 +650,7 @@ def api_xbox_import():
 
 
 @bp.route('/api/xbox/sync-achievements', methods=['POST'])
-@login_required
+@editor_required
 def api_xbox_sync_achievements():
     """Start bulk Xbox achievement sync (background job).
 
@@ -908,7 +908,7 @@ def _build_psn_library_response(games_data, from_api=False):
 
 
 @bp.route('/api/psn/import', methods=['POST'])
-@login_required
+@editor_required
 def api_psn_import():
     """Import selected PSN games into the library."""
     data = request.get_json()

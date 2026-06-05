@@ -917,8 +917,14 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None, existing_boxa
         developer = resolve_publisher_developer(raw_developer, 'developer')
         publisher = resolve_publisher_developer(raw_publisher, 'publisher')
         
-        genre = esde_data.get('genre', '') or game_data.get('genre', '')
-        players = esde_data.get('players', '1') or game_data.get('players', '1')
+        # Normalize genre to canonical hyphenated forms and players to the max
+        # int — consistent with the IGDB/TGDB apply paths. Without this, ES-DE
+        # gamelist genres ("Shoot 'Em Up") fragment the genre filter and a
+        # players range ("1-4") lands as a string in the INTEGER column.
+        from services.normalization import normalize_genre
+        from services.game_utils import normalize_players_value
+        genre = normalize_genre(esde_data.get('genre', '') or game_data.get('genre', ''))
+        players = normalize_players_value(esde_data.get('players', '1') or game_data.get('players', '1'))
         
         # Format release date
         release_date = esde_data.get('releasedate', '') or game_data.get('release_date', '')

@@ -11,6 +11,7 @@ import logging
 
 from services.database import query, execute
 from services.game_utils import is_bonus_disc_title, extract_base_game_title
+from services.game_query import escape_like
 from services.auth import login_required, editor_required
 from services.api_helpers import handle_api_errors
 
@@ -370,18 +371,21 @@ def api_auto_link_bonus_discs():
 
         # Try to find and link parent
         if game['base_title']:
+            # Escape LIKE wildcards so a base_title containing % or _ matches
+            # literally instead of over-matching unrelated titles.
+            base_like = escape_like(game['base_title'])
             # Look for exact or close title match
             parent = query("""
                 SELECT id FROM games
                 WHERE system_id = ?
                   AND id != ?
                   AND (is_bonus_disc = 0 OR is_bonus_disc IS NULL)
-                  AND (title = ? OR title LIKE ?)
+                  AND (title = ? OR title LIKE ? ESCAPE '\\')
                 ORDER BY
                     CASE WHEN title = ? THEN 0 ELSE 1 END
                 LIMIT 1
             """, (game['system_id'], game['id'], game['base_title'],
-                  f"{game['base_title']}%", game['base_title']), one=True)
+                  f"{base_like}%", game['base_title']), one=True)
 
             if parent:
                 execute("UPDATE games SET parent_game_id = ? WHERE id = ?",

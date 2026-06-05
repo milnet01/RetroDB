@@ -315,6 +315,134 @@ are tracked here so the next pass picks them up:
 
 ---
 
+### Pass 48 — audit + indie-review fix-pass deferrals (2026-06-05)
+
+> Source: `/audit` (static analysis) + `/indie-review` (14-subsystem cold
+> review) run at v3.6.28. The bulk of findings landed directly in v3.6.29
+> (see changelog). These are the items deliberately deferred — design
+> decisions, risk-of-regression LOWs, and INFO-grade notes — calibrated to the
+> single-user-localhost threat model. False positives logged to
+> `.ants_review_falsepos.jsonl` (incl. the `get_db()`-vs-`g.db` mis-read).
+
+#### Pass 48.1 Force-rescrape "replaces everything" reconciliation (MEDIUM, M)
+- **Status**: 📋 Planned
+- **Lane**: scraper orchestration (Lane 3)
+- **Finding**: `hybrid_scraper` force_overwrite mode skips pre-population but the
+  final save still wraps every field in `COALESCE(?, column)`, so a field no
+  source fills keeps its old DB value. CLAUDE.md claims Full Re-scrape "replaces
+  everything" — it only replaces fields a source actually provides, and the
+  stale-media-on-disk clear is also skipped in force mode.
+- **Decision**: either save raw (non-COALESCE) for non-media text fields in
+  force mode AND re-run the disk-validation/stale-clear, OR soften the doc claim
+  to "overwrites any field a source provides." Design call — not a silent fix.
+
+#### Pass 48.2 media_cleanup orphan-match precision (LOW, S)
+- **Status**: 📋 Planned
+- **Lane**: image pipeline (Lane 6)
+- **Finding**: `media_cleanup.py` falls back to a substring test
+  (`if filename in ref`) after the exact-membership checks, making the orphan
+  count imprecise. It currently errs toward *under*-deletion (safe), so changing
+  it risks flipping to over-deletion (data loss) if any DB reference stores a
+  path prefix. Needs an audit of how `referenced_files` is built before tightening.
+
+#### Pass 48.3 Assorted LOW/INFO review notes (LOW, S)
+- **Status**: 📋 Planned
+- **Items** (each independent, low blast radius):
+  - `scrape_esde.apply_esde_metadata` sets `scraped = 1` even when no field was
+    filled, excluding the game from later `WHERE scraped = 0` bulk passes — gate
+    on ≥1 field filled (Lane 4).
+  - `scrape_screenscraper.download_media` writes non-atomically (bare
+    `open(...,'wb')`); reuse the tempfile + `os.replace` pattern from
+    `base_scraper.download_image` (Lane 4).
+  - IGDB `apply_metadata_to_game` keys age ratings on `age_ratings.category`;
+    confirm against current IGDB v4 docs (the field is migrating to
+    `organization`/`rating_category`) and add a fallback if deprecated (Lane 4).
+  - `image_utils._make_responsive_variants` never prunes a now-oversized `-sm`/
+    `-md` sibling when the primary shrinks — srcset can serve a stale variant (Lane 6).
+  - `services/jobs/__init__.py` `__all__` claims to re-export names it doesn't
+    (e.g. `resolve_terminal_status`); add them or soften the comment (Lane 7).
+  - `bulk_scrape` pause loop sleeps on `time.sleep(0.2)` instead of
+    `shutdown_requested.wait(...)`, so a paused job doesn't collapse on SIGTERM —
+    mirror the `psn_refresh` fix (Lane 7).
+  - `clz_import` import-time dedup reads the entire `games` table; scope by
+    target `system_id IN (...)` like the parse path already does (Lane 10).
+  - `.pre-commit-config.yaml` ruff (`v0.8.4`) + gitleaks (`v8.21.2`) `rev:` pins
+    are stale vs the CI ruff; `pre-commit autoupdate` (global rule 5a) (Lane 14).
+
+#### Pass 48.4 Loop-2 cold-review deferrals (LOW, S)
+- **Status**: 📋 Planned
+- **Source**: the second (cold) indie-review loop surfaced these after the
+  loop-1 fixes landed. All LOW under the single-user-localhost model.
+- **Items**:
+  - `media_cleanup` `/clean` re-scans for orphans milliseconds before deleting
+    instead of reusing the previewed list, so the Pass 45.7 mtime race-defense
+    doesn't cover the preview→clean window it was built for; have `/clean`
+    accept the previewed file list from the client (Lane 6, MEDIUM-ish but
+    needs a route+client change).
+  - `media_cleanup.py:165` picks the relpath base via a `'static' in dir_path`
+    substring test — fragile if `IMAGE_PATH` ever moves outside `static/`; pass
+    the correct base per `media_dirs` tuple (Lane 6).
+  - `bulk_scrape` resume path starts `_run_scrape` without acquiring the
+    `bulk_scrape` cross-process singleton flock (Lane 7).
+  - `ra_sync` recomputes `total_points`/`earned_points` from each game's
+    `Achievements` payload and UPSERTs 0 over a good value when the payload is
+    empty but `total_achievements > 0`; skip the points columns in that case
+    (Lane 7).
+  - `_psn_sync_state` (trophies.py) is a single module-global; key it by
+    `user_id` so concurrent PSN syncs don't block each other or leak the other
+    user's current-game title through the status endpoint (Lane 10).
+  - `game-launch.js` kill-instance `fetch` has no `.ok` check before retrying
+    the launch — a failed kill surfaces as a confusing "already running" error
+    (Lane 12).
+  - `services/database.py` `get_db_with_context.__exit__` relies on `close()`'s
+    implicit rollback on the exception path; add an explicit `rollback()` for
+    legibility (Lane 2).
+  - `.github/dependabot.yml` covers only pip + github-actions, not the
+    `pre-commit` ecosystem (pairs with 48.3's stale-pins item); and `ci.yml`
+    scrapes the semgrep `--exclude-rule` set out of `.semgrep.yml` comment prose
+    via awk — a reformat silently empties the exclusion set. Move the IDs to a
+    structured key (Lane 14).
+
+#### Pass 48.5 Loop-3 cold-review deferrals (MEDIUM, M)
+- **Status**: 📋 Planned
+- **Source**: the third (cold) indie-review loop — confirmed all loop-1/loop-2
+  fixes held (no resurfacing), then surfaced this deeper batch. Calibrated to
+  single-user-localhost.
+- **MEDIUM items**:
+  - **Single-source IGDB/TGDB apply replaces curated media** (`scrape_igdb.py`
+    `apply_metadata_to_game`, `scrape_thegamesdb.py` ditto): unlike
+    `apply_esde_metadata`, these download boxart/screenshots/fanart
+    unconditionally and `COALESCE`-write a non-null new value, so on the hybrid
+    *fallback* path (primary fetch failed) a fresh boxart overwrites a curated
+    one and the screenshots column is replaced, not appended — violating the
+    documented media fill-only invariant. Fix: read existing media first, fill
+    only when empty, append screenshots (mirror ES-DE). Related to Pass 48.1.
+  - **Responsive variants leaked on per-game deletion** (`media_cleanup.py`
+    `delete_game_images`): only the bare DB filename is unlinked; the
+    `-sm`/`-md` siblings written by `_make_responsive_variants` survive until a
+    manual orphan sweep — 2-4 stranded files per deleted game with boxart. Fix:
+    unlink the variant siblings in `delete_game_images`.
+  - **DB restore has no integrity gate** (`settings.py` `api_restore`): a
+    truncated/corrupt backup is `os.replace`d over the live DB with no
+    `PRAGMA integrity_check`, and a running background job can write to the
+    swapped inode mid-restore. Fix: integrity-check the backup before swap and
+    refuse restore while a job is active.
+- **LOW tail** (each independent): `metadata_merger` `_settings_cache` /
+  `scraper_manager._settings_cache` mutated without a lock under bulk-scrape
+  threads; `hybrid_scraper.detect_save_type/detect_controller_support` crash on
+  `system_folder=None` (guard with `(x or '')`); bulk-edit `completion_status`
+  and rating fields skip the single-edit whitelist/cross-map; `for g in games`
+  shadows Flask `g` in `api_filter_games`; `execute_script` rollback can't undo
+  `executescript`'s implicit pre-commit (document non-atomic);
+  `get_db_with_context.__exit__` leaks on a failing commit (move close to
+  finally); `ensure_user_tables` leaks its connection on exception;
+  `backup_database` chmod-fail is silent; `systems.update_system_types`
+  `folder in key` half mis-types short folders; `scrape_logs.api_view_log_compat`
+  skips the `VALID_PREFIXES` check its siblings enforce; `clz_import` dedup reads
+  the whole games table (scope to target systems like the parse step).
+
+---
+
 ### Pass 47 — Open-source release & donation funnel (2026-05-07)
 
 > User-requested track: flip the GitHub repo from private to public,

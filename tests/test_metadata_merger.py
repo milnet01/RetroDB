@@ -110,10 +110,56 @@ class TestApplyTgdb:
         assert meta['players'] == 4
         assert meta['modes'] == 'Single-Player, Multiplayer'
 
+    def test_players_string_range_normalized_not_raising(self, blank):
+        """Indie-review fix: a string/range players value (e.g. '1-4') used to
+        hit `players > 1` and raise TypeError, silently aborting the whole TGDB
+        apply. It must now coerce through normalize_players_value to the max
+        int and set the multiplayer mode."""
+        meta, result = blank
+        apply_tgdb_to_metadata(meta, {'players': '1-4'}, db_game_id=1, result=result)
+        assert meta['players'] == 4
+        assert meta['modes'] == 'Single-Player, Multiplayer'
+
+    def test_players_string_single_sets_single_player(self, blank):
+        meta, result = blank
+        apply_tgdb_to_metadata(meta, {'players': '1'}, db_game_id=1, result=result)
+        assert meta['players'] == 1
+        assert meta['modes'] == 'Single-Player'
+
+    def test_franchise_not_overwritten_on_primary_path(self, blank):
+        """Indie-review fix: fill-only invariant — TGDB on the primary path
+        (fill_only=False) must NOT overwrite an existing/curated franchise.
+        The old `or not fill_only` clause let it clobber the value; IGDB/RAWG
+        already guard with `not metadata['franchise']`."""
+        meta, result = blank
+        meta['franchise'] = 'Curated Series'
+        tgdb = {'name': 'X', '_extended': {'franchise': 'Other Series'}}
+        apply_tgdb_to_metadata(meta, tgdb, db_game_id=1, result=result, fill_only=False)
+        assert meta['franchise'] == 'Curated Series'
+
+    def test_franchise_fills_when_empty(self, blank):
+        meta, result = blank
+        tgdb = {'name': 'X', '_extended': {'franchise': 'New Series'}}
+        apply_tgdb_to_metadata(meta, tgdb, db_game_id=1, result=result, fill_only=False)
+        assert meta['franchise'] == 'New Series'
+
     def test_pegi_parsed_from_rating(self, blank):
         meta, result = blank
         apply_tgdb_to_metadata(meta, {'rating': 'PEGI 16'}, db_game_id=1, result=result)
         assert meta['pegi_rating'] == 'PEGI 16'
+
+    def test_esrb_verbose_string_maps_to_correct_code(self, blank):
+        """Indie-review fix: a verbose ESRB string like 'M - Mature' must map to
+        M. The old substring test found the 'E' in 'MATURE' first and mis-set
+        esrb_rating to 'E'."""
+        meta, result = blank
+        apply_tgdb_to_metadata(meta, {'rating': 'M - Mature'}, db_game_id=1, result=result)
+        assert meta['esrb_rating'] == 'M'
+
+    def test_esrb_teen_verbose_string(self, blank):
+        meta, result = blank
+        apply_tgdb_to_metadata(meta, {'rating': 'T - Teen'}, db_game_id=1, result=result)
+        assert meta['esrb_rating'] == 'T'
 
 
 # ---------------------------------------------------------------------------

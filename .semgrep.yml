@@ -132,18 +132,24 @@
 #     for type annotations only; actual parsing uses defusedxml.
 #
 #   generic.html-templates.security.unquoted-attribute-var.unquoted-attribute-var
-#     Anchor: templates/settings.html emits literal `checked`/`selected`
-#     strings from server-side conditionals — attacker-controlled text never
-#     flows through these attributes. Admin-only page.
+#     Anchor: templates/base.html and templates/_settings_tabs/scraping.html
+#     (the settings page was split into per-tab partials) emit literal
+#     `checked`/`selected`/value strings from server-side conditionals —
+#     attacker-controlled text never flows through these attributes.
+#     Admin-only settings surface.
 #
 #   generic.html-templates.security.var-in-script-tag.var-in-script-tag
 #     Anchor: templates/base.html emits admin-editable user_settings dicts
 #     through `|tojson` (valid JS literal encoding). Admin authors the data.
 #
 #   generic.html-templates.security.var-in-href.var-in-href
-#     Anchor: templates/game_detail.html:269 renders the RetroAchievements
-#     game URL, which is always `https://retroachievements.org/game/{ID}`
-#     sourced from the RA API client. Not user-controllable.
+#     Anchors: (1) templates/game_detail.html renders the RetroAchievements
+#     game URL, always `https://retroachievements.org/game/{ID}` sourced from
+#     the RA API client. (2) templates/_macros/breadcrumb.html renders the
+#     `href` from caller (label, url) tuples — every call site passes a
+#     url_for(...) result or None in the url position (verified 2026-06-05);
+#     user data only reaches the auto-escaped {{ label }} text node. Neither
+#     href is user-controllable.
 #
 #   python.flask.security.xss.audit.template-unescaped-with-safe.template-unescaped-with-safe
 #     Anchor: templates/changelog.html:30 renders entry.body HTML authored in

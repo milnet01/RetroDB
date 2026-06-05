@@ -54,6 +54,18 @@ def clean_missing_roms():
         if rom_path.startswith(_VIRTUAL_ROM_PREFIXES):
             continue
         if not os.path.exists(rom_path):
+            # Guard against a transiently-offline mount (NFS / USB / external
+            # drive): if the ROM's own parent directory is also gone, the
+            # file's absence is ambiguous and could be an unmounted share —
+            # skip it rather than risk mass-deleting an entire library. A
+            # genuinely-removed ROM leaves its parent directory intact, so it
+            # is still caught. The user can re-scan once the mount is back.
+            # Only apply the guard when there IS a parent dir to test — a bare
+            # filename (dirname == '') has no mount to check, so fall through
+            # and treat its absence as genuinely-missing.
+            parent = os.path.dirname(rom_path)
+            if parent and not os.path.isdir(parent):
+                continue
             missing.append({
                 'id': game['id'],
                 'title': game['title'],
@@ -169,10 +181,14 @@ def clear_scraped_data(system_id=None, delete_images=False):
     cleared = len(game_ids_to_reset)
 
     if game_ids_to_reset:
+        # try/finally so a raise inside reset_game_title_from_filename can't
+        # leak this fresh connection (get_db() opens a new handle each call).
         conn = get_db()
-        for game_id in game_ids_to_reset:
-            reset_game_title_from_filename(game_id, conn)
-        conn.close()
+        try:
+            for game_id in game_ids_to_reset:
+                reset_game_title_from_filename(game_id, conn)
+        finally:
+            conn.close()
 
     logger.info(
         f"Cleared scraped data from {cleared} games"

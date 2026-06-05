@@ -286,13 +286,13 @@ const API = {
         const { opts, cleanup } = _withTimeout(options);
         try {
             const response = await fetch(url, {
+                ...opts,
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     ...opts.headers
                 },
                 body: JSON.stringify(data),
-                ...opts
             });
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);

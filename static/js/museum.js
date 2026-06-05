@@ -47,6 +47,11 @@ function cancelBulkGenerate() {
             if (data.success) {
                 showNotification('Cancellation requested', 'warning');
             }
+        })
+        .catch(function () {
+            // API.post rejects on HTTP error / 30s timeout; surface it instead
+            // of leaving an unhandled rejection and no user feedback.
+            showNotification('Cancel request failed', 'warning');
         });
 }
 

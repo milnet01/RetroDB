@@ -1926,10 +1926,10 @@ function detectBonusDiscs() {
                         // Build info text
                         let infoText = '';
                         if (game.match_source === 'filename' && game.filename) {
-                            infoText = `<span class="text-muted" style="font-size: 0.8rem;">Detected from filename: ${game.filename}</span><br>`;
+                            infoText = `<span class="text-muted" style="font-size: 0.8rem;">Detected from filename: ${escapeHtml(game.filename)}</span><br>`;
                         }
                         if (game.base_title) {
-                            infoText += `<span style="font-size: 0.85rem;">🔍 Will search for: <strong style="color: var(--neon-green);">${game.base_title}</strong></span>`;
+                            infoText += `<span style="font-size: 0.85rem;">🔍 Will search for: <strong style="color: var(--neon-green);">${escapeHtml(game.base_title)}</strong></span>`;
                         } else {
                             infoText += `<span class="text-muted" style="font-size: 0.85rem;">⚠️ Could not extract parent title - manual linking required</span>`;
                         }
@@ -1937,8 +1937,8 @@ function detectBonusDiscs() {
                         html += `
                             <div class="bonus-disc-detected-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-sm); border-bottom: 1px solid var(--card-border);">
                                 <div style="flex: 1;">
-                                    <strong>${game.title}</strong>
-                                    <span class="badge badge-secondary" style="margin-left: var(--spacing-sm); font-size: 0.7rem;">${game.system_name || 'Unknown System'}</span>
+                                    <strong>${escapeHtml(game.title)}</strong>
+                                    <span class="badge badge-secondary" style="margin-left: var(--spacing-sm); font-size: 0.7rem;">${escapeHtml(game.system_name || 'Unknown System')}</span>
                                     <br>${infoText}
                                 </div>
                                 <div style="display: flex; gap: var(--spacing-sm); flex-shrink: 0;">

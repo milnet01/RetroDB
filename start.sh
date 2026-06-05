@@ -18,7 +18,7 @@ export HSA_OVERRIDE_GFX_VERSION=10.3.0
 
 # Get script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
+cd "$SCRIPT_DIR" || exit 1
 
 echo -e "${CYAN}"
 echo "╔══════════════════════════════════════════════════════════════╗"

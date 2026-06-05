@@ -367,8 +367,8 @@ async function lookupHLTB() {
                     if (data.match_name) {
                         matchHeader = `
                             <div class="hltb-match-header">
-                                <span class="hltb-match-title">${data.match_name}</span>
-                                ${data.match_platform ? `<span class="hltb-match-platform">${data.match_platform}</span>` : ''}
+                                <span class="hltb-match-title">${escapeHtml(data.match_name)}</span>
+                                ${data.match_platform ? `<span class="hltb-match-platform">${escapeHtml(data.match_platform)}</span>` : ''}
                                 ${confidence ? `<span class="hltb-match-confidence">${confidence}% match</span>` : ''}
                             </div>`;
                     }

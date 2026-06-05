@@ -10,6 +10,7 @@
 import io
 import logging
 import os
+import re
 import tempfile
 
 import config
@@ -240,7 +241,16 @@ def save_screenshots(file_storages, game_id, existing_csv):
 
     ss_dir = image_dir('screenshots')
     os.makedirs(ss_dir, exist_ok=True)
-    next_idx = len(existing) + 1
+    # Derive the next index from the HIGHEST existing index, not the list
+    # length. A gapped CSV (e.g. after stale-ref pruning removed `<id>_ss2`)
+    # would make len()+1 reuse an in-use index, overwriting a screenshot on
+    # disk and appending a duplicate filename to the CSV.
+    max_idx = 0
+    for s in existing:
+        m = re.search(r'_ss(\d+)\.', s)
+        if m:
+            max_idx = max(max_idx, int(m.group(1)))
+    next_idx = max_idx + 1
     for f in valid:
         original = f.filename
         ext = original.rsplit('.', 1)[-1].lower() if '.' in original else ''

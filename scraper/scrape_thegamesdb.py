@@ -867,12 +867,16 @@ def apply_metadata_to_game(db_game_id, tgdb_data):
         if not esrb_rating and rating:
             esrb_rating = rating
 
-        # Genre
+        # Genre — normalize to hyphenated canonical forms (FIELD_SCHEMAS). This
+        # single-source apply is a fallback when the hybrid fetch fails; the
+        # hybrid path normalizes, so do it here too to keep the genre-filter
+        # canonical regardless of caller.
+        from services.normalization import normalize_genre
         genres = tgdb_data.get('genres', [])
         if isinstance(genres, list):
-            genre = ', '.join(str(g).strip() for g in genres if g)
+            genre = normalize_genre(', '.join(str(g).strip() for g in genres if g))
         else:
-            genre = str(genres) if genres else ''
+            genre = normalize_genre(str(genres)) if genres else ''
 
         # Players — Pass 40.6: leave as None when TGDB doesn't supply a
         # value (or supplies one that doesn't parse).  COALESCE(?, players)

@@ -135,9 +135,19 @@ SYSTEM_TYPE_MAP = {
 # =============================================================================
 
 
-def update_system_types(cursor):
-    """Auto-populate system types based on folder names"""
-    cursor.execute("SELECT id, folder FROM systems WHERE system_type IS NULL OR system_type = ''")
+def update_system_types(cursor, overwrite=False):
+    """Auto-populate system types based on folder names.
+
+    By default (``overwrite=False``) only fills systems with no type yet, so a
+    hand-set type is never touched. With ``overwrite=True`` (the refresh path)
+    every system whose folder *is* auto-detectable is re-detected, but a system
+    whose folder has no detection rule keeps its existing (manually-set) type —
+    we only UPDATE when a type was actually detected.
+    """
+    if overwrite:
+        cursor.execute("SELECT id, folder FROM systems")
+    else:
+        cursor.execute("SELECT id, folder FROM systems WHERE system_type IS NULL OR system_type = ''")
     systems = cursor.fetchall()
 
     for system in systems:
@@ -305,9 +315,12 @@ def api_refresh_system_types():
         conn = get_db()
         cursor = conn.cursor()
 
-        # Clear existing types and re-detect
-        cursor.execute("UPDATE systems SET system_type = NULL")
-        update_system_types(cursor)
+        # Re-run auto-detection, overwriting auto-detectable folders in place.
+        # Previously this wiped ALL types to NULL first, which permanently lost
+        # the manually-set type of any system whose folder has no detection
+        # rule (those never got re-populated). update_system_types(overwrite=True)
+        # re-detects detectable folders and leaves undetectable manual types intact.
+        update_system_types(cursor, overwrite=True)
 
         conn.commit()
         return jsonify({'success': True, 'message': 'System types refreshed'})

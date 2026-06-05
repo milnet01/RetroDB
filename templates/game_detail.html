@@ -4997,15 +4997,15 @@ function openGameDetailFilterModal(filterType, filterValue, sortBy = null) {
                     
                     html += `
                         <a href="/game/${game.id}" class="filter-game-item">
-                            <img src="${thumbUrl}" alt="${game.title}" class="filter-game-thumb"
+                            <img src="${thumbUrl}" alt="${escapeHtml(game.title)}" class="filter-game-thumb"
                                  loading="lazy" decoding="async"
                                  data-on-error="hide">
                             <div class="filter-game-info">
-                                <div class="filter-game-title">${game.title}</div>
-                                <div class="filter-game-system">${game.system_name || 'Unknown System'}</div>
+                                <div class="filter-game-title">${escapeHtml(game.title)}</div>
+                                <div class="filter-game-system">${escapeHtml(game.system_name || 'Unknown System')}</div>
                                 <div class="filter-game-meta">
-                                    ${game.release_date ? '📅 ' + game.release_date + ' ' : ''}
-                                    ${game.genre ? '• ' + game.genre : ''}
+                                    ${game.release_date ? '📅 ' + escapeHtml(game.release_date) + ' ' : ''}
+                                    ${game.genre ? '• ' + escapeHtml(game.genre) : ''}
                                 </div>
                             </div>
                         </a>
@@ -5437,12 +5437,12 @@ document.querySelectorAll('.filter-link').forEach(link => {
         const data = await resp.json();
         if (data.games && data.games.length > 0) {
             grid.innerHTML = data.games.map(g => {
-                const boxart = g.boxart ? `/static/images/boxart/${g.boxart}` : '/static/images/placeholder.png';
-                return `<a href="/game/${g.id}" class="similar-game-card" title="${g.reason || ''}">
+                const boxart = g.boxart ? `/static/images/boxart/${encodeURIComponent(g.boxart)}` : '/static/images/placeholder.png';
+                return `<a href="/game/${g.id}" class="similar-game-card" title="${escapeHtml(g.reason || '')}">
                     <img src="${boxart}" alt="" loading="lazy">
                     <div class="sg-info">
-                        <span class="sg-title">${g.title}</span>
-                        <span class="sg-system">${g.system_name}</span>
+                        <span class="sg-title">${escapeHtml(g.title)}</span>
+                        <span class="sg-system">${escapeHtml(g.system_name)}</span>
                     </div>
                 </a>`;
             }).join('');

@@ -41,7 +41,12 @@ def _owner_clause(table_alias=''):
     (e.g. 't' for `tags t`); pass '' for unaliased SELECT * style queries.
     """
     col = f"{table_alias}.owner_id" if table_alias else "owner_id"
-    if g.user and g.user['role'] == 'admin':
+    if not g.user:
+        # Fail closed: with no authenticated user, match no rows rather than
+        # dereferencing g.user['id'] and raising. All callers are
+        # @login_required today, but this keeps the helper safe if one isn't.
+        return ("1=0", ())
+    if g.user['role'] == 'admin':
         return ("1=1", ())
     return (f"{col} = ?", (g.user['id'],))
 

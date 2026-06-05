@@ -191,8 +191,21 @@ def execute(sql, args=()):
     """
     conn = get_request_db()
     _t0 = time.perf_counter()
-    cur = conn.execute(sql, args)
-    conn.commit()
+    try:
+        cur = conn.execute(sql, args)
+        conn.commit()
+    except Exception:
+        # The connection is request-scoped (shared on flask.g) and reused for
+        # every query in the request. Roll back the failed statement's implicit
+        # transaction so a later same-request execute() can't commit half-open
+        # state left behind by this failure. Guard the rollback so its own
+        # failure can't mask the original exception (callers catch e.g.
+        # sqlite3.IntegrityError on the bare `raise`).
+        try:
+            conn.rollback()
+        except Exception:
+            pass
+        raise
     _log_if_slow(sql, args, _t0)
     return cur.lastrowid
 
@@ -225,8 +238,18 @@ def execute_many(sql, args_list):
     """
     conn = get_request_db()
     _t0 = time.perf_counter()
-    cur = conn.executemany(sql, args_list)
-    conn.commit()
+    try:
+        cur = conn.executemany(sql, args_list)
+        conn.commit()
+    except Exception:
+        # See execute(): roll back so a failed batch can't leave the shared
+        # request connection in a half-open transaction (rollback guarded so it
+        # can't mask the original exception).
+        try:
+            conn.rollback()
+        except Exception:
+            pass
+        raise
     _log_if_slow(sql, args_list, _t0)
     return cur.rowcount
 
@@ -247,8 +270,21 @@ def execute_script(sql_script):
         ''')
     """
     conn = get_request_db()
-    conn.executescript(sql_script)
-    conn.commit()
+    try:
+        conn.executescript(sql_script)
+        conn.commit()
+    except Exception:
+        # executescript implicitly commits pending work first, then runs the
+        # statements; on a mid-script failure roll back so the shared request
+        # connection isn't left in a half-open transaction (matches execute()).
+        # Note: this can't undo statements executescript already auto-committed
+        # before the failure — see roadmap Pass 48.5. Rollback guarded so it
+        # can't mask the original exception.
+        try:
+            conn.rollback()
+        except Exception:
+            pass
+        raise
 
 
 def _fsync_path(path):

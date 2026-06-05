@@ -1,0 +1,8 @@
+
+{"review_kind":"audit","claim":"shellcheck cannot follow `. /etc/os-release` (external system file) at setup.sh:51","rationale":"setup.sh sources the OS-provided /etc/os-release for distro detection; the file is not in-repo so shellcheck cannot resolve it. Info-level, not a bug. Adding a source= directive is ceremony for a non-CI-gated script.","topic":"shellcheck-external-source","timestamp":"2026-06-05"}
+
+{"review_kind":"audit","claim":"`A && { B } ","rationale":"","topic":"shellcheck-and-or-safe","timestamp":"2026-06-05"}
+
+{"review_kind":"audit","claim":"useless cat at scripts/fix_onnxruntime_rocm_rocsolver.sh:62","rationale":"Style-only (SC2002 is in shellcheck `style` tier). `cat file ","topic":"shellcheck-style-cat","timestamp":"2026-06-05"}
+
+{"review_kind":"indie-review","claim":"maintenance.api_database_optimize closes the g-scoped DB connection, breaking later same-request queries","rationale":"FALSE POSITIVE: get_db() (services/database.py:78) ALWAYS opens a fresh sqlite3 connection — it never returns the flask.g-cached connection (that is get_request_db()). api_database_optimize (routes/maintenance.py:166) runs VACUUM/ANALYZE on that dedicated fresh connection and closes only it; g.db is untouched. Verified 2026-06-05. The Lane 9 reviewer assumed get_db()==g.db, which is not the codebase's contract.","topic":"get_db-fresh-connection-not-g-db","timestamp":"2026-06-05"}

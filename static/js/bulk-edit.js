@@ -13,7 +13,9 @@ const BulkEditController = (function() {
     let _abortController = null;
 
     // Fields that support append mode (comma-separated values)
-    const APPENDABLE_FIELDS = ['genre', 'publisher', 'developer', 'franchise', 'region', 'game_structure'];
+    // Keep in lockstep with appendable_fields in routes/games.py (region is a
+    // single-value field and is intentionally NOT appendable).
+    const APPENDABLE_FIELDS = ['genre', 'publisher', 'developer', 'franchise', 'game_structure'];
 
     /**
      * Open the bulk edit modal with the given game IDs

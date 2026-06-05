@@ -446,7 +446,7 @@ const LogViewer = {
             if (session.system) {
                 chunks.push(`<span class="session-system">${this.escapeHtml(session.system)}</span>`);
             }
-            chunks.push(`<span class="session-time">${session.startTime}</span>`);
+            chunks.push(`<span class="session-time">${this.escapeHtml(session.startTime)}</span>`);
             chunks.push(`<span class="session-badge ${badgeClass}">${badgeLabel}</span>`);
             chunks.push(`<span class="session-line-count">${session.filteredLines.length} lines</span>`);
             chunks.push(`</div>`);

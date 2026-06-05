@@ -1356,7 +1356,7 @@ async function viewArchive(path, type) {
                 fileList.innerHTML = data.files.map((file) => {
                     return `
                         <li class="archive-file-item">
-                            <span class="file-name">${file.name}</span>
+                            <span class="file-name">${escapeHtml(file.name)}</span>
                             <span class="file-size">${formatBytes(file.size)}</span>
                         </li>
                     `;
@@ -1368,7 +1368,7 @@ async function viewArchive(path, type) {
                     return `
                         <li class="archive-file-item">
                             <input type="checkbox" id="file_${index}" value="${escapeHtml(file.name)}" ${unwanted ? 'checked' : ''}>
-                            <span class="file-name ${unwanted ? 'file-unwanted' : ''}">${file.name}</span>
+                            <span class="file-name ${unwanted ? 'file-unwanted' : ''}">${escapeHtml(file.name)}</span>
                             <span class="file-size">${formatBytes(file.size)}</span>
                         </li>
                     `;

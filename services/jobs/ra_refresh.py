@@ -362,13 +362,24 @@ class RARefreshJob:
                 # Final commit for remaining updates
                 _commit_with_retry(write_conn)
 
-                # Clean up stale RA entries
+                # Clean up stale RA entries. Scope to the refreshed system when
+                # this is a single-system refresh — an unscoped wipe would null
+                # ra_game_id for matching rows on OTHER systems that a prior
+                # scan left in the (has_retroachievements=0, ra_game_id set)
+                # state, silently losing their RA links.
                 if not self.cancelled:
                     wc = write_conn.cursor()
-                    wc.execute("""
-                        UPDATE games SET ra_game_id = NULL, has_retroachievements = 0
-                        WHERE ra_game_id IS NOT NULL AND has_retroachievements = 0
-                    """)
+                    if self.system_id:
+                        wc.execute("""
+                            UPDATE games SET ra_game_id = NULL, has_retroachievements = 0
+                            WHERE ra_game_id IS NOT NULL AND has_retroachievements = 0
+                              AND system_id = ?
+                        """, (self.system_id,))
+                    else:
+                        wc.execute("""
+                            UPDATE games SET ra_game_id = NULL, has_retroachievements = 0
+                            WHERE ra_game_id IS NOT NULL AND has_retroachievements = 0
+                        """)
                     cleaned = wc.rowcount
                     _commit_with_retry(write_conn)
                     if cleaned > 0:

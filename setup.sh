@@ -45,7 +45,6 @@ echo -e "${NC}"
 
 # ── Detect distro ────────────────────────────────────────────────────────────
 DISTRO="unknown"
-PKG_MGR=""
 
 if [ -f /etc/os-release ]; then
     . /etc/os-release
@@ -53,19 +52,15 @@ if [ -f /etc/os-release ]; then
     case "$ID_COMBINED" in
         *nobara*|*fedora*|*rhel*|*centos*)
             DISTRO="fedora"
-            PKG_MGR="dnf"
             ;;
         *debian*|*ubuntu*|*mint*|*pop*)
             DISTRO="debian"
-            PKG_MGR="apt"
             ;;
         *arch*|*manjaro*|*endeavour*)
             DISTRO="arch"
-            PKG_MGR="pacman"
             ;;
         *opensuse*|*suse*)
             DISTRO="suse"
-            PKG_MGR="zypper"
             ;;
     esac
     echo -e "  Detected: ${BOLD}${PRETTY_NAME:-$ID}${NC}"

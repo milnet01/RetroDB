@@ -17,9 +17,11 @@ import time
 from datetime import timedelta
 from zoneinfo import available_timezones
 
-# Prevent decompression bomb attacks from scraped/uploaded images
-from PIL import Image
-Image.MAX_IMAGE_PIXELS = 25_000_000  # ~25MP, sufficient for boxart/screenshots
+# Decompression-bomb cap (Pillow MAX_IMAGE_PIXELS) is set canonically from
+# config.IMAGE_MAX_PIXELS at import time in services/image_utils.py and
+# services/game_media_service.py — the single source of truth. A hardcoded
+# value here was silently overridden by those modules (import order), so it's
+# intentionally not set in app.py.
 
 # ---------------------------------------------------------------------------
 # ROCm GPU environment — MUST be set before any library loads ROCm/MIOpen.

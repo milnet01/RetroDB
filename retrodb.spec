@@ -42,6 +42,7 @@ _MIGRATION_SCRIPTS = [
     'services.migrations.scripts.009_achievement_tables_user_id',
     'services.migrations.scripts.010_user_game_views',
     'services.migrations.scripts.011_user_game_views_cascade_fk',
+    'services.migrations.scripts.012_emulators',
 ]
 
 # Some pip packages have their own runtime imports that PyInstaller's
@@ -93,7 +94,6 @@ DATAS = [
     ('static/images/ratings', 'static/images/ratings'),
     ('static/images/systems', 'static/images/systems'),
     ('static/images/avatars', 'static/images/avatars'),
-    ('static/images/controllers', 'static/images/controllers'),
     # User-scraped: boxart, boxart_3d, fanart, screenshots, manuals, trophies,
     # static/videos/ — explicitly NOT bundled. Live in the writable image
     # dir at runtime; populated by the scraper.

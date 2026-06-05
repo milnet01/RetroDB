@@ -43,7 +43,11 @@ jobs:
       - name: Install build + SBOM tooling
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          # Install from the hash-pinned lockfile (not the unpinned
+          # requirements.txt): the SBOM below is generated from
+          # requirements.lock, so the release build environment must match
+          # the exact dependency set the SBOM describes.
+          pip install --require-hashes -r requirements.lock
           pip install cyclonedx-bom  # provides the `cyclonedx-py` CLI
 
       # Pass 45.19 — the Python body is passed via an env-var with the YAML
