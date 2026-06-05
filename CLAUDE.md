@@ -89,12 +89,12 @@ has seen the raw output. Triage into new roadmap passes after.
 - When a system has curated default controllers in the DB, they always override scraped/AI controller values.
 
 ### Media handling
-- Media fields (boxart, boxart_3d, screenshots, fanart, video, manual) are never replaced during normal scraping — only filled when empty. Screenshots are always appended, never replaced. To get new media: clear it from the edit modal first, then re-scrape. Full Re-scrape mode overrides this and replaces everything.
+- Media fields (boxart, boxart_3d, screenshots, fanart, video, manual) are never replaced during normal scraping — only filled when empty. Screenshots are always appended, never replaced. To get new media: clear it from the edit modal first, then re-scrape. Full Re-scrape mode overrides this and overwrites any field a source actually provides (and re-downloads media whose file is missing from disk); fields no source fills keep their existing value — hand-curated data is not blanked.
 - During pre-population, media files are validated on disk — stale DB references (file deleted, filename still in DB) are auto-cleared so scrapers can re-download.
 
 ### Scraper fill-only invariant
 - Every `apply_*_to_game()` UPDATE in `scraper/scrape_*.py` MUST wrap every `?` in `COALESCE(?, column_name)` so an empty response from IGDB/TGDB/RAWG/etc. preserves the existing scraped or curated value. Bare `publisher = ?, developer = ?` is a bug (Pass 30.4 fix). `scrape_esde.apply_esde_metadata` is the canonical pattern. `tests/test_scrape_fill_only.py` pins the contract for IGDB + TGDB.
-- The only exception is Full Re-scrape mode in `hybrid_scraper` (user-requested overwrite of everything).
+- The only exception is Full Re-scrape mode in `hybrid_scraper` (user-requested overwrite of any field a source provides; fields no source fills are preserved, not blanked).
 
 ### Multi-rating system (8 systems)
 ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd — DB columns `{system}_rating`.

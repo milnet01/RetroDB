@@ -325,7 +325,12 @@ are tracked here so the next pass picks them up:
 > `.ants_review_falsepos.jsonl` (incl. the `get_db()`-vs-`g.db` mis-read).
 
 #### Pass 48.1 Force-rescrape "replaces everything" reconciliation (MEDIUM, M)
-- **Status**: 📋 Planned
+- **Status**: ✅ Done (v3.6.32) — user chose "keep current behaviour, fix the
+  docs". CLAUDE.md media-handling claim softened to "overwrites any field a
+  source provides; fields no source fills are preserved". Force mode now also
+  validates the DB's existing media against disk and NULLs references to deleted
+  files (`hybrid_scraper` force branch) so they re-download instead of being
+  restored by COALESCE.
 - **Lane**: scraper orchestration (Lane 3)
 - **Finding**: `hybrid_scraper` force_overwrite mode skips pre-population but the
   final save still wraps every field in `COALESCE(?, column)`, so a field no
@@ -349,17 +354,22 @@ are tracked here so the next pass picks them up:
 
 #### Pass 48.3 Assorted LOW/INFO review notes (LOW, S)
 - **Status**: 📋 Planned (Lane-6 `_make_responsive_variants` pruning item done
-  v3.6.30; the scraper/jobs/CI items below remain open)
+  v3.6.30; all three Lane-4 scraper items done v3.6.32; the jobs/CI items below
+  remain open)
 - **Items** (each independent, low blast radius):
-  - `scrape_esde.apply_esde_metadata` sets `scraped = 1` even when no field was
-    filled, excluding the game from later `WHERE scraped = 0` bulk passes — gate
-    on ≥1 field filled (Lane 4).
-  - `scrape_screenscraper.download_media` writes non-atomically (bare
-    `open(...,'wb')`); reuse the tempfile + `os.replace` pattern from
-    `base_scraper.download_image` (Lane 4).
-  - IGDB `apply_metadata_to_game` keys age ratings on `age_ratings.category`;
-    confirm against current IGDB v4 docs (the field is migrating to
-    `organization`/`rating_category`) and add a fallback if deprecated (Lane 4).
+  - ✅ **done v3.6.32** — `scrape_esde.apply_esde_metadata` set `scraped = 1`
+    even when no field was filled, excluding the game from later
+    `WHERE scraped = 0` bulk passes. Now gated on ≥1 field filled (`region`,
+    derived from the ROM filename, excluded from the test) (Lane 4).
+  - ✅ **done v3.6.32** — `scrape_screenscraper.download_media` wrote
+    non-atomically (bare `open(...,'wb')`); now uses the tempfile + `fsync` +
+    `os.replace` pattern from `base_scraper.download_image` (Lane 4).
+  - ✅ **done v3.6.32** — IGDB `apply_metadata_to_game` keyed age ratings on the
+    deprecated `age_ratings.category` enum. Confirmed via the IGDB v4 proto that
+    `organization`/`rating_category` are now reference objects (not enums); the
+    scraper requests both shapes, detects ESRB/PEGI from the legacy enum or the
+    org name, and best-effort-parses the new rating string (degrades to empty,
+    never mis-rates) (Lane 4).
   - ✅ **done v3.6.30** — `image_utils._make_responsive_variants` never prunes a
     now-oversized `-sm`/`-md` sibling when the primary shrinks — srcset can serve
     a stale variant (Lane 6). Now unlinks the stale sibling on the skip branch.
@@ -414,20 +424,21 @@ are tracked here so the next pass picks them up:
 
 #### Pass 48.5 Loop-3 cold-review deferrals (MEDIUM, M)
 - **Status**: 📋 Planned (Lane-6 "responsive variants leaked on per-game
-  deletion" item done v3.6.30; the IGDB/TGDB media-replace, DB-restore-integrity,
-  and LOW-tail items remain open)
+  deletion" item done v3.6.30; IGDB/TGDB media-replace done v3.6.32; the
+  DB-restore-integrity and LOW-tail items remain open)
 - **Source**: the third (cold) indie-review loop — confirmed all loop-1/loop-2
   fixes held (no resurfacing), then surfaced this deeper batch. Calibrated to
   single-user-localhost.
 - **MEDIUM items**:
-  - **Single-source IGDB/TGDB apply replaces curated media** (`scrape_igdb.py`
-    `apply_metadata_to_game`, `scrape_thegamesdb.py` ditto): unlike
-    `apply_esde_metadata`, these download boxart/screenshots/fanart
-    unconditionally and `COALESCE`-write a non-null new value, so on the hybrid
-    *fallback* path (primary fetch failed) a fresh boxart overwrites a curated
-    one and the screenshots column is replaced, not appended — violating the
-    documented media fill-only invariant. Fix: read existing media first, fill
-    only when empty, append screenshots (mirror ES-DE). Related to Pass 48.1.
+  - ✅ **done v3.6.32** — **Single-source IGDB/TGDB apply replaces curated media**
+    (`scrape_igdb.py` `apply_metadata_to_game`, `scrape_thegamesdb.py` ditto):
+    unlike `apply_esde_metadata`, these downloaded boxart/screenshots/fanart
+    unconditionally and `COALESCE`-wrote a non-null new value, so on the hybrid
+    *fallback* path a fresh boxart overwrote a curated one and the screenshots
+    column was replaced, not appended. Both now read existing media first:
+    boxart/fanart fill only when empty, screenshots append (de-duped,
+    order-preserving). Regression: `tests/test_scrape_fill_only.py`. Resolved
+    alongside Pass 48.1.
   - ✅ **done v3.6.30** — **Responsive variants leaked on per-game deletion**
     (`media_cleanup.py` `delete_game_images`): only the bare DB filename was
     unlinked; the `-sm`/`-md` siblings written by `_make_responsive_variants`

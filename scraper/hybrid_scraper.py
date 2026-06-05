@@ -823,6 +823,45 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 )
         else:
             logger.info(f"Force overwrite mode - starting with empty metadata for game {db_game_id}")
+            # Pass 48.1 — even in force mode, validate the DB's existing media
+            # against disk and NULL any reference whose file is gone. Force mode
+            # starts from empty metadata, so the apply COALESCE would otherwise
+            # restore a stale reference to a deleted file whenever no source
+            # supplies replacement media. Mirrors the fill-path stale-clear above
+            # but reads from the DB row (`game`) since metadata is empty here.
+            _media_dirs = {
+                'boxart': os.path.join(IMAGE_PATH, 'boxart'),
+                'boxart_3d': os.path.join(IMAGE_PATH, 'boxart_3d'),
+                'fanart': os.path.join(IMAGE_PATH, 'fanart'),
+                'manual': os.path.join(IMAGE_PATH, 'manuals'),
+            }
+            _force_stale = []  # list of (field, stale_filename)
+            for field, directory in _media_dirs.items():
+                value = game.get(field)
+                if value and not os.path.exists(os.path.join(directory, value)):
+                    _force_stale.append((field, value))
+            video_value = game.get('video')
+            if video_value and not os.path.exists(os.path.join(STATIC_PATH, 'videos', video_value)):
+                _force_stale.append(('video', video_value))
+            # Screenshots: clear the column only when EVERY referenced file is
+            # gone (single-value clears can't express a partial prune here).
+            ss_value = game.get('screenshots')
+            if ss_value:
+                ss_dir = os.path.join(IMAGE_PATH, 'screenshots')
+                ss_list = [s.strip() for s in ss_value.split(',') if s.strip()]
+                if ss_list and not any(os.path.exists(os.path.join(ss_dir, s)) for s in ss_list):
+                    _force_stale.append(('screenshots', ss_value))
+            if _force_stale:
+                for field, stale_filename in _force_stale:
+                    c.execute(
+                        f"UPDATE games SET {field} = NULL WHERE id = ? AND {field} = ?",
+                        (db_game_id, stale_filename),
+                    )
+                conn.commit()
+                logger.info(
+                    f"Force mode: cleared {len(_force_stale)} stale media reference(s): "
+                    f"{[f for f, _ in _force_stale]}"
+                )
 
         sources_data = {}
 

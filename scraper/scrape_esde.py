@@ -1136,7 +1136,20 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None, existing_boxa
         
         # Derive game modes from players
         modes = derive_game_modes(players)
-        
+
+        # Pass 48.3 — only flip `scraped = 1` when ES-DE actually filled at least
+        # one metadata/media field. `region` is excluded from the test: it's
+        # derived from the ROM filename, not from ES-DE, so it's always present
+        # and would make the gate trivially true. Without this gate a game that
+        # ES-DE has no data for is marked scraped and silently dropped from later
+        # `WHERE scraped = 0` bulk passes. COALESCE(?, scraped) keeps the prior
+        # flag (0) when nothing was filled.
+        any_field_filled = any((
+            name, publisher, developer, release_date, genre, players, modes,
+            description, boxart_filename, boxart_3d_filename, screenshots_str,
+            fanart_filename, video_filename, manual_filename,
+        ))
+
         # Update database - use COALESCE to preserve existing data if new data is empty
         c.execute("""
             UPDATE games SET
@@ -1155,7 +1168,7 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None, existing_boxa
                 video = COALESCE(?, video),
                 manual = COALESCE(?, manual),
                 region = COALESCE(?, region),
-                scraped = 1
+                scraped = COALESCE(?, scraped)
             WHERE id = ?
         """, (
             name if name else None,
@@ -1173,6 +1186,7 @@ def apply_esde_metadata(db_game_id, game_data, system_folder=None, existing_boxa
             video_filename,
             manual_filename,
             region,
+            1 if any_field_filled else None,
             db_game_id
         ))
         

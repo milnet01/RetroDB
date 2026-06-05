@@ -1,3 +1,19 @@
+- version: 3.6.32
+  date: 2026-06-05
+  tags:
+  - type: fix
+    label: Scraper fill-only & media invariants (Pass 48 Batch A — Lane 3/4)
+  body: |
+    <ul>
+      <li><strong>IGDB/TGDB media fill-only (Pass 48.5)</strong>: the single-source IGDB and TheGamesDB <code>apply_metadata_to_game</code> paths run as a hybrid <em>fallback</em> (primary fetch failed). They previously downloaded boxart/fanart unconditionally and <code>COALESCE</code>-wrote a non-null value, overwriting curated boxart and <em>replacing</em> the screenshots column &mdash; violating the documented media fill-only invariant. They now read existing media first: boxart/fanart download only when empty, and screenshots <strong>append</strong> (de-duplicated, order-preserving), mirroring <code>scrape_esde</code>.</li>
+      <li><strong>ES-DE <code>scraped</code> gate (Pass 48.3)</strong>: <code>apply_esde_metadata</code> set <code>scraped = 1</code> even when ES-DE filled no field, excluding the game from later <code>WHERE scraped = 0</code> bulk passes. The flag now flips only when at least one metadata/media field was actually filled (<code>region</code>, derived from the ROM filename, is excluded from the test).</li>
+      <li><strong>ScreenScraper atomic media write (Pass 48.3)</strong>: <code>download_media</code> streamed straight into <code>open(dest_path, 'wb')</code>, leaving a partial file on any mid-stream failure that later "already exists" guards treated as complete. Now writes to a tempfile + <code>fsync</code> + <code>os.replace</code>, matching <code>base_scraper.download_image</code>.</li>
+      <li><strong>IGDB age-rating field migration (Pass 48.3)</strong>: IGDB v4 is deprecating the integer <code>age_ratings.category</code>/<code>rating</code> enums in favour of <code>organization</code>/<code>rating_category</code> reference objects. The scraper now requests both shapes and detects ESRB/PEGI from the legacy enum <em>or</em> the organization name, with a best-effort fallback parse of the new rating string &mdash; degrading to empty (preserved by COALESCE) rather than mis-rating.</li>
+      <li><strong>Full Re-scrape doc reconciliation (Pass 48.1)</strong>: CLAUDE.md claimed Full Re-scrape "replaces everything", but the apply path keeps the safer COALESCE behaviour (fields no source fills retain their curated value). Docs corrected to match; force mode now also re-runs the stale-media-on-disk check (NULLing references to deleted files so they re-download) instead of skipping it.</li>
+      <li>Regression coverage: 3 new tests in <code>tests/test_scrape_fill_only.py</code> (IGDB/TGDB curated-media-preserve + screenshots-append, plus fill-when-empty counterpart). Full suite green (pre-existing order-dependent flakiness unchanged).</li>
+      <li><strong>Patch bump 3.6.31 &rarr; 3.6.32</strong>.</li>
+    </ul>
+
 - version: 3.6.31
   date: 2026-06-05
   tags:

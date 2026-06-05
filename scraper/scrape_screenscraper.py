@@ -780,24 +780,53 @@ def download_media(url, dest_path, timeout=60):
                     f"ScreenScraper media rejected: declared {declared} bytes exceeds {max_bytes}"
                 )
                 return False
+            # Pass 48.3 — atomic write: stream into a tempfile in the same
+            # directory, fsync, then os.replace into the final path. Mirrors
+            # base_scraper.download_image (Pass 40.15). The previous bare
+            # open(dest_path, 'wb') left a partial file at dest_path on any
+            # mid-stream failure (connection reset, SIGKILL), and the
+            # "already exists, skip" guards elsewhere then treated the corrupt
+            # bytes as a complete download forever.
+            import tempfile as _tempfile
+            dest_dir = os.path.dirname(dest_path)
+            if dest_dir:
+                os.makedirs(dest_dir, exist_ok=True)
+            tmp_fd, tmp_path = _tempfile.mkstemp(
+                prefix='.dl-', suffix='.part', dir=dest_dir or None,
+            )
             written = 0
-            with open(dest_path, 'wb') as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    if not chunk:
-                        continue
-                    written += len(chunk)
-                    if written > max_bytes:
-                        f.close()
-                        try:
-                            os.remove(dest_path)
-                        except OSError:
-                            pass
-                        logger.warning(
-                            f"ScreenScraper media aborted: exceeded {max_bytes} bytes"
-                        )
-                        return False
-                    f.write(chunk)
-            return True
+            try:
+                with os.fdopen(tmp_fd, 'wb') as f:
+                    tmp_fd = None  # ownership transferred to the file object
+                    for chunk in response.iter_content(chunk_size=8192):
+                        if not chunk:
+                            continue
+                        written += len(chunk)
+                        if written > max_bytes:
+                            logger.warning(
+                                f"ScreenScraper media aborted: exceeded {max_bytes} bytes"
+                            )
+                            return False
+                        f.write(chunk)
+                    f.flush()
+                    try:
+                        os.fsync(f.fileno())
+                    except OSError:
+                        pass
+                os.replace(tmp_path, dest_path)
+                tmp_path = None  # ownership transferred to dest_path
+                return True
+            finally:
+                if tmp_fd is not None:
+                    try:
+                        os.close(tmp_fd)
+                    except OSError:
+                        pass
+                if tmp_path is not None:
+                    try:
+                        os.remove(tmp_path)
+                    except OSError:
+                        pass
     except Exception as e:
         logger.error(f"Error downloading media: {e}")
     return False

@@ -424,6 +424,7 @@ def fetch_game_details(game_id):
         fields name, first_release_date,
                involved_companies.company.name, involved_companies.developer, involved_companies.publisher,
                genres.name, age_ratings.category, age_ratings.rating,
+               age_ratings.organization.name, age_ratings.rating_category.rating,
                game_modes.name, player_perspectives.name,
                multiplayer_modes.offlinemax, multiplayer_modes.onlinemax,
                multiplayer_modes.campaigncoop, multiplayer_modes.splitscreen,
@@ -457,7 +458,19 @@ def apply_metadata_to_game(db_game_id, igdb_data):
     try:
         conn = get_scraper_conn()
         c = conn.cursor()
-        
+
+        # Pass 48.5 — media fill-only invariant. This single-source apply is a
+        # hybrid *fallback* (primary fetch failed); without reading existing
+        # media first it COALESCE-wrote a fresh boxart/fanart over a curated one
+        # and REPLACED the screenshots column instead of appending. Read the
+        # current values so boxart/fanart download only when empty and
+        # screenshots append (mirrors scrape_esde's "augment, don't replace").
+        c.execute("SELECT boxart, screenshots, fanart FROM games WHERE id = ?", (db_game_id,))
+        _existing = c.fetchone()
+        existing_boxart = (_existing[0] if _existing else None) or ''
+        existing_screenshots = (_existing[1] if _existing else None) or ''
+        existing_fanart = (_existing[2] if _existing else None) or ''
+
         # Extract publisher and developer
         publisher = ''
         developer = ''
@@ -506,15 +519,49 @@ def apply_metadata_to_game(db_game_id, igdb_data):
         for age_rating in age_ratings:
             category = age_rating.get('category')
             rating_value = age_rating.get('rating')
-            
-            if category == 1:  # ESRB
+
+            # Pass 48.3 — IGDB v4 is deprecating the integer `category`/`rating`
+            # enums in favour of `organization`/`rating_category` reference
+            # objects (expanded here via organization.name / rating_category.rating).
+            # Detect the rating body from the legacy int OR the org name so
+            # detection survives the migration; fall back to parsing the new
+            # rating string when the legacy `rating` enum is gone. Degrades to
+            # empty (preserved by COALESCE) if neither shape is present.
+            org = age_rating.get('organization')
+            org_name = (org.get('name') if isinstance(org, dict) else '') or ''
+            rc = age_rating.get('rating_category')
+            rc_name = (rc.get('rating') if isinstance(rc, dict) else '') or ''
+            is_esrb = category == 1 or org_name.upper() == 'ESRB'
+            is_pegi = category == 2 or org_name.upper() == 'PEGI'
+
+            if is_esrb:
                 esrb_map = {6: 'RP', 7: 'EC', 8: 'E', 9: 'E10+', 10: 'T', 11: 'M', 12: 'AO'}
                 esrb_rating = esrb_map.get(rating_value, '')
+                if not esrb_rating and rc_name:
+                    # New-shape string. Match against the documented ESRB rating
+                    # NAMES (longest first so "Everyone 10+" wins over "Everyone").
+                    # Best-effort: the exact rating_category.rating wording is not
+                    # yet confirmed against live IGDB data — degrades to empty.
+                    esrb_names = (
+                        ('everyone 10', 'E10+'), ('adults only', 'AO'),
+                        ('early childhood', 'EC'), ('rating pending', 'RP'),
+                        ('everyone', 'E'), ('teen', 'T'), ('mature', 'M'),
+                    )
+                    low = rc_name.lower()
+                    for name, code in esrb_names:
+                        if name in low or rc_name.strip().upper() == code:
+                            esrb_rating = code
+                            break
                 if esrb_rating:
                     logger.info(f"IGDB ESRB rating: {esrb_rating}")
-            elif category == 2:  # PEGI
+            elif is_pegi:
                 pegi_map = {1: '3', 2: '7', 3: '12', 4: '16', 5: '18'}
                 pegi_number = pegi_map.get(rating_value, '')
+                if not pegi_number and rc_name:
+                    import re
+                    m = re.search(r'\b(3|7|12|16|18)\b', rc_name)
+                    if m:
+                        pegi_number = m.group(1)
                 if pegi_number:
                     pegi_rating = f"PEGI {pegi_number}"
                     logger.info(f"IGDB PEGI rating: {pegi_rating}")
@@ -542,9 +589,9 @@ def apply_metadata_to_game(db_game_id, igdb_data):
         # Description
         description = igdb_data.get('storyline', igdb_data.get('summary', ''))
         
-        # Download cover art
+        # Download cover art — fill-only: skip when the game already has boxart.
         boxart = None
-        if 'cover' in igdb_data and 'url' in igdb_data['cover']:
+        if not existing_boxart and 'cover' in igdb_data and 'url' in igdb_data['cover']:
             boxart_url = igdb_data['cover']['url'].replace('t_thumb', 't_cover_big')
             if not boxart_url.startswith('http'):
                 boxart_url = f"https:{boxart_url}"
@@ -583,9 +630,9 @@ def apply_metadata_to_game(db_game_id, igdb_data):
                     else:
                         logger.warning(f"Failed to download screenshot from {screenshot_url}")
         
-        # Download fanart/artwork (first one only)
+        # Download fanart/artwork (first one only) — fill-only: skip when present.
         fanart = None
-        if 'artworks' in igdb_data and igdb_data['artworks']:
+        if not existing_fanart and 'artworks' in igdb_data and igdb_data['artworks']:
             artwork = igdb_data['artworks'][0]
             if 'url' in artwork:
                 artwork_url = artwork['url'].replace('t_thumb', 't_1080p')
@@ -617,7 +664,12 @@ def apply_metadata_to_game(db_game_id, igdb_data):
         
         # Update game record (including title)
         scraped_title = igdb_data.get('name', '')
-        screenshots_str = ','.join(screenshots) if screenshots else None
+        # Screenshots append (never replace): merge existing + newly downloaded,
+        # de-duplicated, order-preserving. Deterministic filenames make this
+        # idempotent across re-scrapes.
+        _existing_ss = [s for s in existing_screenshots.split(',') if s]
+        _merged_ss = _existing_ss + [s for s in screenshots if s not in _existing_ss]
+        screenshots_str = ','.join(_merged_ss) if _merged_ss else None
         
         # Fill-only writes: COALESCE preserves prior scraped/curated values when
         # the IGDB response is empty for a field. Matches scrape_esde's pattern.

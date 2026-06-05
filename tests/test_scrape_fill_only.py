@@ -175,6 +175,91 @@ class _FailingConn:
         pass
 
 
+# -----------------------------------------------------------------------------
+# Media fill-only / screenshots-append (Pass 48.5)
+# -----------------------------------------------------------------------------
+#
+# The single-source IGDB/TGDB apply paths run as a hybrid *fallback* (primary
+# fetch failed). They must honour the documented media invariant: never replace
+# curated boxart/fanart, and APPEND screenshots rather than replacing the
+# column. Before Pass 48.5 they downloaded + COALESCE-wrote a fresh boxart over
+# a curated one and overwrote the screenshots column on the fallback path.
+
+
+def test_igdb_apply_does_not_overwrite_curated_media_and_appends_screenshots(monkeypatch, tmp_path):
+    conn = _make_conn_with_existing_row(
+        id=1, title='Curated Game',
+        boxart='curated_box.webp', screenshots='old_ss.webp',
+        fanart='curated_fan.webp',
+    )
+    monkeypatch.setattr(scrape_igdb, 'get_scraper_conn', lambda: conn)
+    # Downloads "succeed" so the guard (not the no-op) is what protects media.
+    monkeypatch.setattr(scrape_igdb, 'download_image', lambda *a, **kw: True)
+    monkeypatch.setattr(scrape_igdb, 'IMAGE_PATH', str(tmp_path), raising=False)
+
+    igdb_data = {
+        'name': 'Curated Game',
+        'cover': {'url': '//img/t_thumb/box.jpg'},
+        'screenshots': [{'url': '//img/t_thumb/s1.jpg'}, {'url': '//img/t_thumb/s2.jpg'}],
+        'artworks': [{'url': '//img/t_thumb/a1.jpg'}],
+    }
+    assert scrape_igdb.apply_metadata_to_game(1, igdb_data) is True
+
+    row = conn.execute("SELECT boxart, screenshots, fanart FROM games WHERE id=1").fetchone()
+    assert row['boxart'] == 'curated_box.webp'      # fill-only: not overwritten
+    assert row['fanart'] == 'curated_fan.webp'      # fill-only: not overwritten
+    ss = row['screenshots'].split(',')
+    assert ss[0] == 'old_ss.webp'                   # existing kept, first
+    assert len(ss) == 3                             # two new appended
+
+
+def test_tgdb_apply_does_not_overwrite_curated_media_and_appends_screenshots(monkeypatch, tmp_path):
+    conn = _make_conn_with_existing_row(
+        id=1, title='Curated Game',
+        boxart='curated_box.webp', screenshots='old_ss.webp',
+        fanart='curated_fan.webp',
+    )
+    monkeypatch.setattr(scrape_thegamesdb, 'get_scraper_conn', lambda: conn)
+    monkeypatch.setattr(
+        scrape_thegamesdb, '_download_tgdb_image',
+        lambda db_id, url, kind, suffix='': f"{db_id}{suffix}.webp",
+        raising=False,
+    )
+
+    tgdb_data = {
+        'name': 'Curated Game',
+        'boxart_url': 'http://x/box.jpg',
+        'screenshot_urls': ['http://x/s1.jpg', 'http://x/s2.jpg'],
+        'fanart_urls': ['http://x/f1.jpg'],
+    }
+    assert scrape_thegamesdb.apply_metadata_to_game(1, tgdb_data) is True
+
+    row = conn.execute("SELECT boxart, screenshots, fanart FROM games WHERE id=1").fetchone()
+    assert row['boxart'] == 'curated_box.webp'      # fill-only: not overwritten
+    assert row['fanart'] == 'curated_fan.webp'      # fill-only: not overwritten
+    ss = row['screenshots'].split(',')
+    assert ss[0] == 'old_ss.webp'                   # existing kept, first
+    assert len(ss) == 3                             # two new appended
+
+
+def test_igdb_apply_fills_media_when_empty(monkeypatch, tmp_path):
+    """Counterpart: when media columns are empty, the fallback still fills them."""
+    conn = _make_conn_with_existing_row(id=1, title='Blank Game')
+    monkeypatch.setattr(scrape_igdb, 'get_scraper_conn', lambda: conn)
+    monkeypatch.setattr(scrape_igdb, 'download_image', lambda *a, **kw: True)
+    monkeypatch.setattr(scrape_igdb, 'IMAGE_PATH', str(tmp_path), raising=False)
+
+    igdb_data = {
+        'name': 'Blank Game',
+        'cover': {'url': '//img/t_thumb/box.jpg'},
+        'screenshots': [{'url': '//img/t_thumb/s1.jpg'}],
+    }
+    assert scrape_igdb.apply_metadata_to_game(1, igdb_data) is True
+    row = conn.execute("SELECT boxart, screenshots FROM games WHERE id=1").fetchone()
+    assert row['boxart']                            # filled from empty
+    assert len(row['screenshots'].split(',')) == 1
+
+
 @pytest.mark.parametrize("scraper_module,empty_response", [
     (scrape_igdb, {'name': 'No Such Game'}),
     (scrape_thegamesdb, {'game_title': 'No Such Game'}),

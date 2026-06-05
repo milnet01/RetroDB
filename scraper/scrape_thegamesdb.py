@@ -815,6 +815,16 @@ def apply_metadata_to_game(db_game_id, tgdb_data):
 
         logger.info(f"Applying TGDB metadata for game {db_game_id}")
 
+        # Pass 48.5 — media fill-only invariant. As a hybrid *fallback* path this
+        # must not overwrite curated boxart/fanart or replace the screenshots
+        # column. Read current media so boxart/fanart download only when empty
+        # and screenshots append (mirrors scrape_esde's "augment, don't replace").
+        c.execute("SELECT boxart, screenshots, fanart FROM games WHERE id = ?", (db_game_id,))
+        _existing = c.fetchone()
+        existing_boxart = (_existing[0] if _existing else None) or ''
+        existing_screenshots = (_existing[1] if _existing else None) or ''
+        existing_fanart = (_existing[2] if _existing else None) or ''
+
         # Extract data with defaults
         publisher = tgdb_data.get('publisher', '') or ''
         developer = tgdb_data.get('developer', '') or ''
@@ -897,13 +907,13 @@ def apply_metadata_to_game(db_game_id, tgdb_data):
         # Game title from scraped data
         scraped_title = tgdb_data.get('name', '') or tgdb_data.get('game_title', '')
 
-        # Download boxart
+        # Download boxart — fill-only: skip when the game already has boxart.
         boxart = None
         boxart_url = tgdb_data.get('boxart_url')
-        if boxart_url:
+        if not existing_boxart and boxart_url:
             boxart = _download_tgdb_image(db_game_id, boxart_url, 'boxart')
 
-        # Download screenshots
+        # Download screenshots, then append to existing (never replace).
         screenshots = []
         screenshot_urls = tgdb_data.get('screenshot_urls', [])
         for i, ss_url in enumerate(screenshot_urls[:5]):  # Limit to 5 screenshots
@@ -911,12 +921,14 @@ def apply_metadata_to_game(db_game_id, tgdb_data):
             if ss_filename:
                 screenshots.append(ss_filename)
 
-        screenshots_str = ','.join(screenshots) if screenshots else None
+        _existing_ss = [s for s in existing_screenshots.split(',') if s]
+        _merged_ss = _existing_ss + [s for s in screenshots if s not in _existing_ss]
+        screenshots_str = ','.join(_merged_ss) if _merged_ss else None
 
-        # Download fanart (first one only for background use)
+        # Download fanart (first one only) — fill-only: skip when present.
         fanart = None
         fanart_urls = tgdb_data.get('fanart_urls', [])
-        if fanart_urls:
+        if not existing_fanart and fanart_urls:
             fanart = _download_tgdb_image(db_game_id, fanart_urls[0], 'fanart', suffix='_fanart')
 
         # Log values
