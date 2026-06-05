@@ -93,89 +93,95 @@ def ensure_user_tables():
     # one-shot users-table bootstrap doesn't fail under WAL contention
     # if a Pass 32.4 health probe happens to fire during boot.
     conn.execute("PRAGMA busy_timeout = 5000")
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL UNIQUE COLLATE NOCASE,
-            display_name TEXT,
-            password_hash TEXT,
-            role TEXT NOT NULL DEFAULT 'viewer',
-            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-            last_login TEXT,
-            is_active BOOLEAN DEFAULT 1,
-            force_password_change BOOLEAN DEFAULT 0
-        )
-    """)
-
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS user_settings (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL UNIQUE,
-            rpcs3_trophy_path TEXT DEFAULT '',
-            ra_username TEXT DEFAULT '',
-            ra_api_key TEXT DEFAULT '',
-            theme_preference TEXT DEFAULT 'default',
-            items_per_page INTEGER DEFAULT 50,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        )
-    """)
-
-    # Pass 35.5 — additive columns needed for legacy databases that were
-    # created before the newer CREATE TABLE shapes shipped. Rolled out of
-    # try/except ALTER blocks into an explicit column-existence probe so
-    # re-execution is obviously idempotent (no silently-swallowed
-    # OperationalError covering unrelated schema bugs). Keep the probe
-    # here rather than in a numbered migration because `ensure_user_tables`
-    # is the per-boot bootstrap that owns the users/user_settings tables
-    # AND has to run before migrations 005-009 see rows to backfill.
-    _add_column_if_missing(cursor, 'users', 'force_password_change', 'BOOLEAN DEFAULT 0')
-    for _col, _defn in (
-        ('avatar', "TEXT DEFAULT ''"),
-        ('timezone', "TEXT DEFAULT 'UTC'"),
-        # Pass 31.4 — Steam API key + Steam ID per user. Pre-31 these lived
-        # in the shared data/scraper_settings.json blob (install-wide) so
-        # any logged-in user could launch a sync under the admin's
-        # credentials.
-        ('psn_username', "TEXT DEFAULT ''"),
-        ('psn_npsso', "TEXT DEFAULT ''"),
-        ('steam_api_key', "TEXT DEFAULT ''"),
-        ('steam_id', "TEXT DEFAULT ''"),
-    ):
-        _add_column_if_missing(cursor, 'user_settings', _col, _defn)
-
-    cursor.execute("SELECT id FROM users WHERE role = 'admin' LIMIT 1")
-    admin_row = cursor.fetchone()
-
-    if not admin_row:
-        default_password_hash = hash_password('admin')
-        cursor.execute("""
-            INSERT INTO users (username, display_name, password_hash, role, force_password_change)
-            VALUES (?, ?, ?, ?, ?)
-        """, ('admin', 'Administrator', default_password_hash, 'admin', 1))
-        admin_id = cursor.lastrowid
+    # Pass 48.5 — wrap the bootstrap body in try/finally so a mid-way failure
+    # (CREATE/ALTER/INSERT flaking under WAL contention) still closes the
+    # connection, matching init_database()'s pattern above. Startup aborts on
+    # failure either way, but the handle no longer waits on GC to drop the lock.
+    try:
+        cursor = conn.cursor()
 
         cursor.execute("""
-            INSERT INTO user_settings (user_id)
-            VALUES (?)
-        """, (admin_id,))
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL UNIQUE COLLATE NOCASE,
+                display_name TEXT,
+                password_hash TEXT,
+                role TEXT NOT NULL DEFAULT 'viewer',
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                last_login TEXT,
+                is_active BOOLEAN DEFAULT 1,
+                force_password_change BOOLEAN DEFAULT 0
+            )
+        """)
 
-        # Pass 41.3.B — log the username only. The bootstrap password is
-        # recorded in the README; emitting it to logs created a credential
-        # disclosure path that the redactor doesn't catch (its patterns target
-        # `password=X` in URLs / `"password": "X"` in JSON, not plaintext).
-        logger.info(
-            "Created default admin user (username: admin); "
-            "set the password on first login or via README bootstrap"
-        )
-    else:
-        admin_id = admin_row['id']
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS user_settings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL UNIQUE,
+                rpcs3_trophy_path TEXT DEFAULT '',
+                ra_username TEXT DEFAULT '',
+                ra_api_key TEXT DEFAULT '',
+                theme_preference TEXT DEFAULT 'default',
+                items_per_page INTEGER DEFAULT 50,
+                FOREIGN KEY (user_id) REFERENCES users(id)
+            )
+        """)
 
-    _backfill_null_owner_ids(cursor, admin_id)
+        # Pass 35.5 — additive columns needed for legacy databases that were
+        # created before the newer CREATE TABLE shapes shipped. Rolled out of
+        # try/except ALTER blocks into an explicit column-existence probe so
+        # re-execution is obviously idempotent (no silently-swallowed
+        # OperationalError covering unrelated schema bugs). Keep the probe
+        # here rather than in a numbered migration because `ensure_user_tables`
+        # is the per-boot bootstrap that owns the users/user_settings tables
+        # AND has to run before migrations 005-009 see rows to backfill.
+        _add_column_if_missing(cursor, 'users', 'force_password_change', 'BOOLEAN DEFAULT 0')
+        for _col, _defn in (
+            ('avatar', "TEXT DEFAULT ''"),
+            ('timezone', "TEXT DEFAULT 'UTC'"),
+            # Pass 31.4 — Steam API key + Steam ID per user. Pre-31 these lived
+            # in the shared data/scraper_settings.json blob (install-wide) so
+            # any logged-in user could launch a sync under the admin's
+            # credentials.
+            ('psn_username', "TEXT DEFAULT ''"),
+            ('psn_npsso', "TEXT DEFAULT ''"),
+            ('steam_api_key', "TEXT DEFAULT ''"),
+            ('steam_id', "TEXT DEFAULT ''"),
+        ):
+            _add_column_if_missing(cursor, 'user_settings', _col, _defn)
 
-    conn.commit()
-    conn.close()
+        cursor.execute("SELECT id FROM users WHERE role = 'admin' LIMIT 1")
+        admin_row = cursor.fetchone()
+
+        if not admin_row:
+            default_password_hash = hash_password('admin')
+            cursor.execute("""
+                INSERT INTO users (username, display_name, password_hash, role, force_password_change)
+                VALUES (?, ?, ?, ?, ?)
+            """, ('admin', 'Administrator', default_password_hash, 'admin', 1))
+            admin_id = cursor.lastrowid
+
+            cursor.execute("""
+                INSERT INTO user_settings (user_id)
+                VALUES (?)
+            """, (admin_id,))
+
+            # Pass 41.3.B — log the username only. The bootstrap password is
+            # recorded in the README; emitting it to logs created a credential
+            # disclosure path that the redactor doesn't catch (its patterns target
+            # `password=X` in URLs / `"password": "X"` in JSON, not plaintext).
+            logger.info(
+                "Created default admin user (username: admin); "
+                "set the password on first login or via README bootstrap"
+            )
+        else:
+            admin_id = admin_row['id']
+
+        _backfill_null_owner_ids(cursor, admin_id)
+
+        conn.commit()
+    finally:
+        conn.close()
 
 
 def _backfill_null_owner_ids(cursor, admin_id):

@@ -1,3 +1,14 @@
+- version: 3.6.35
+  date: 2026-06-05
+  tags:
+  - type: fix
+    label: Boot bootstrap connection-leak fix (Pass 48.5 final deferral)
+  body: |
+    <ul>
+      <li><strong>ensure_user_tables connection leak (Pass 48.5)</strong>: the per-boot user-table bootstrap (<code>services/database_init.py</code>) opened its SQLite connection but only closed it on the success path. A failure mid-bootstrap (a CREATE/ALTER/INSERT flaking under WAL contention) left the handle open until garbage collection released the lock. The body is now wrapped in <code>try/finally</code> so the connection always closes, matching the sibling <code>init_database()</code> pattern. This was the last deferred item in the Pass 48 audit/indie-review fix-pass.</li>
+      <li><strong>Patch bump 3.6.34 &rarr; 3.6.35</strong>.</li>
+    </ul>
+
 - version: 3.6.34
   date: 2026-06-05
   tags:

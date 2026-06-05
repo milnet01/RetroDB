@@ -325,7 +325,7 @@ are tracked here so the next pass picks them up:
 > `.ants_review_falsepos.jsonl` (incl. the `get_db()`-vs-`g.db` mis-read).
 
 #### Pass 48.1 Force-rescrape "replaces everything" reconciliation (MEDIUM, M)
-- **Status**: ✅ Done (v3.6.32) — user chose "keep current behaviour, fix the
+- **Status**: done (v3.6.32) — user chose "keep current behaviour, fix the
   docs". CLAUDE.md media-handling claim softened to "overwrites any field a
   source provides; fields no source fills are preserved". Force mode now also
   validates the DB's existing media against disk and NULLs references to deleted
@@ -342,7 +342,7 @@ are tracked here so the next pass picks them up:
   to "overwrites any field a source provides." Design call — not a silent fix.
 
 #### Pass 48.2 media_cleanup orphan-match precision (LOW, S)
-- **Status**: ✅ Done (v3.6.30) — substring reference test replaced with a
+- **Status**: done (v3.6.30) — substring reference test replaced with a
   basename-equality match (still protects path-form refs); `referenced_files`
   audited (bare filenames / container paths). Regression: `tests/test_pass48_media_cleanup.py`.
 - **Lane**: image pipeline (Lane 6)
@@ -353,7 +353,7 @@ are tracked here so the next pass picks them up:
   path prefix. Needs an audit of how `referenced_files` is built before tightening.
 
 #### Pass 48.3 Assorted LOW/INFO review notes (LOW, S)
-- **Status**: ✅ Done (Lane-6 variant-pruning v3.6.30; three Lane-4 scraper items
+- **Status**: done (Lane-6 variant-pruning v3.6.30; three Lane-4 scraper items
   v3.6.32; jobs items v3.6.33; pre-commit pins + dependabot v3.6.34 — all items
   landed)
 - **Items** (each independent, low blast radius):
@@ -390,7 +390,7 @@ are tracked here so the next pass picks them up:
     (Lane 14).
 
 #### Pass 48.4 Loop-2 cold-review deferrals (LOW, S)
-- **Status**: ✅ Done (Lane-6 `media_cleanup` v3.6.30; bulk_scrape resume flock +
+- **Status**: done (Lane-6 `media_cleanup` v3.6.30; bulk_scrape resume flock +
   ra_sync points + psn_sync_state + db `__exit__` v3.6.33; game-launch.js +
   dependabot/ci.yml v3.6.34 — all items landed)
 - **Source**: the second (cold) indie-review loop surfaced these after the
@@ -433,10 +433,10 @@ are tracked here so the next pass picks them up:
     directly (hard-failing if it's empty) (Lane 14).
 
 #### Pass 48.5 Loop-3 cold-review deferrals (MEDIUM, M)
-- **Status**: 📋 Nearly done (Lane-6 variant-leak done v3.6.30; IGDB/TGDB
-  media-replace done v3.6.32; DB-restore-integrity + all LOW-tail items done
-  v3.6.33 EXCEPT `ensure_user_tables` connection-leak, deferred as a
-  disproportionate re-indent — see LOW tail)
+- **Status**: done (Lane-6 variant-leak done v3.6.30; IGDB/TGDB
+  media-replace done v3.6.32; DB-restore-integrity + LOW-tail items done
+  v3.6.33; final `ensure_user_tables` connection-leak done v3.6.35 — all items
+  landed)
 - **Source**: the third (cold) indie-review loop — confirmed all loop-1/loop-2
   fixes held (no resurfacing), then surfaced this deeper batch. Calibrated to
   single-user-localhost.
@@ -473,10 +473,12 @@ are tracked here so the next pass picks them up:
   - ✅ `execute_script` docstring documents its non-atomicity;
   - ✅ `get_db_with_context.__exit__` leak-on-failing-commit fixed (close in
     `finally`) — folded into the 48.4 `__exit__` fix;
-  - 📋 **DEFERRED** — `ensure_user_tables` leaks its connection on exception: the
-    clean fix (wrap the ~85-line body in try/finally) is a disproportionate
-    re-indent for a boot-time bootstrap that aborts startup on failure anyway;
-    left for a dedicated `contextlib.closing` refactor;
+  - ✅ **done v3.6.35** — `ensure_user_tables` leaked its connection on
+    exception: the body is now wrapped in `try/finally` (matching the sibling
+    `init_database()` pattern in the same file) so a mid-bootstrap failure
+    still closes the handle instead of waiting on GC to drop the WAL lock.
+    Verified both paths: happy-path seeds the admin row, error-path closes the
+    connection despite a forced mid-body exception;
   - ✅ `backup_database` chmod-fail now logs a warning instead of silent `pass`;
   - ✅ `systems.update_system_types` partial match dropped the buggy `folder in
     key` direction (`'nes'` no longer inherits the `'snes'` type);
