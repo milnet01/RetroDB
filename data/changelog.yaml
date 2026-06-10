@@ -1,3 +1,16 @@
+- version: 3.6.37
+  date: 2026-06-10
+  tags:
+  - type: refactor
+    label: Finish carving apply_hybrid_metadata into helpers (Pass 38.1)
+  body: |
+    <ul>
+      <li><strong>Three more helpers extracted from <code>apply_hybrid_metadata</code> (Pass 38.1)</strong>: the hybrid scraper's central apply function shed three large inline blocks into named, independently-testable helpers in <code>scraper/hybrid_scraper.py</code> &mdash; <code>_run_fallbacks()</code> (the ~300-line FILL GAPS FROM SECONDARY SOURCES loop), <code>_save_game_row()</code> (the COALESCE fill-only save UPDATE), and <code>_normalize_players_and_sort_title()</code> (the pre-save players range&rarr;max + sort_title regen). Behaviour is unchanged &mdash; pure relocation guarded by the existing scraper integration tests.</li>
+      <li><strong>Caught an extraction bug before it shipped</strong>: the ES-DE fallback branch references <code>force_overwrite</code>, which had to be threaded into the new <code>_run_fallbacks()</code> signature &mdash; a latent <code>NameError</code> surfaced by a lint pass and now covered.</li>
+      <li><strong>15 new unit tests</strong> pin each helper's contract in isolation (player-range normalization edge cases, fill-only COALESCE semantics, ROM-filename search-title derivation), following the established <code>test_pass38_*_helper.py</code> pattern. <code>apply_hybrid_metadata</code> drops from ~924 to ~510 lines.</li>
+      <li><strong>Patch bump 3.6.36 &rarr; 3.6.37</strong>.</li>
+    </ul>
+
 - version: 3.6.36
   date: 2026-06-10
   tags:

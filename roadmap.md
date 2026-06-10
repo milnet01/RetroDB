@@ -2592,23 +2592,27 @@ are tracked here so the next pass picks them up:
   `_save_game_row`, `_check_ra_matches` into separate helpers.
   Sibling mergers already extracted to `scraper/metadata_merger.py`.
 - **Source**: 2026-04-24 audit, Scraper orchestration M2.
-- **Status**: partial (v3.5.60, v3.5.62, v3.5.64, v3.5.65) — 4 sub-blocks extracted:
+- **Status**: done (v3.6.37) — all four sub-blocks named in the Plan now extracted across v3.5.60–v3.6.37:
     - **RA-check (v3.5.60)**: `scraper.hybrid_scraper._apply_retroachievements_check(db_game_id, title, system_folder) -> bool`. Smallest + most self-contained of the four sub-blocks (31 lines, opens its own DB connection, mutates only RA columns, silently swallows exceptions). Callsite collapsed to 3 lines.
     - **Region-normalize (v3.5.62)**: `scraper.hybrid_scraper._normalize_region(metadata, result)`. Folded the two inline `settings_manager.load_settings()` branches (multi-value reduction + empty-region fallback) into a single helper that loads settings once. Callsite collapsed from 25 lines to 1 line.
     - **Scrape-history (v3.5.64)**: `scraper.hybrid_scraper._build_scrape_history_json(c, db_game_id, primary_source, metadata, result, force_overwrite) -> str`. Reads `games.scrape_history` JSON, appends a new entry summarising the current scrape, returns serialised JSON ready for the save UPDATE. Takes the caller's cursor so the read stays inside the outer transaction's lifetime. Callsite collapsed from 28 lines to 4 lines; the function-local `import json` + `from datetime import datetime` moved into the helper.
     - **Ratings-normalize (v3.5.65)**: `scraper.hybrid_scraper._normalize_ratings(metadata, result)`. Combined ESRB-letter-normalize + cross-map-empties + content-based-inference into one helper. Callsite collapsed from 26 lines to 1 line.
-  Tests: `tests/test_pass38_ra_check_helper.py` (4 cases) +
-  `tests/test_pass38_region_helper.py` (6 cases) +
-  `tests/test_pass38_scrape_history_helper.py` (5 cases) +
-  `tests/test_pass38_normalize_ratings_helper.py` (6 cases). Suite
-  785/785 green.
-  Remaining un-extracted: fallback loop ~305 lines (still risky —
-  complex error handling across 5 scraper modules) + the long save
-  UPDATE (~80 lines, ~50 columns, parameter-order-bug risk) +
-  save-type / controller / curated-default-controller mini-blocks
-  (~30 lines, share the outer cursor). Both warrant regression
-  tests around the wider `apply_hybrid_metadata` before further
-  extraction.
+    - **Run-fallbacks (v3.6.37)**: `scraper.hybrid_scraper._run_fallbacks(metadata, result, sources_data, game, db_game_id, primary_source, system_folder, secondary_sources, restrict_to_selected, force_overwrite, c)`. The ~300-line FILL GAPS FROM SECONDARY SOURCES loop (priority build + per-scraper search/apply across ES-DE/TGDB/IGDB/RAWG/ScreenScraper/AI, each isolated in try/except). `force_overwrite` had to be threaded into the signature — the ES-DE fallback branch used it; a latent NameError caught by ruff before commit. Callsite collapsed to one guarded call under `if fill_gaps:`.
+    - **Save-game-row (v3.6.37)**: `scraper.hybrid_scraper._save_game_row(c, metadata, scrape_history_json, db_game_id)`. The COALESCE fill-only save UPDATE (~50 columns) plus the `_boxart_source` pop + alternate_titles JSON-encode. Caller still owns the commit. Callsite collapsed from ~110 lines to 1.
+    - **Players/sort-title-normalize (v3.6.37)**: `scraper.hybrid_scraper._normalize_players_and_sort_title(metadata)`. Pre-save players range→max reduction + sort_title regen. Callsite collapsed from 11 lines to 1.
+  Tests: `tests/test_pass38_ra_check_helper.py` (4) +
+  `tests/test_pass38_region_helper.py` (6) +
+  `tests/test_pass38_scrape_history_helper.py` (5) +
+  `tests/test_pass38_normalize_ratings_helper.py` (6) +
+  `tests/test_pass38_players_sort_helper.py` (9) +
+  `tests/test_pass38_save_game_row_helper.py` (4) +
+  `tests/test_pass38_run_fallbacks_helper.py` (2). `apply_hybrid_metadata`
+  is down from ~924 to ~510 lines; suite green aside from the 6
+  pre-existing `test_pass48_media_cleanup` order-pollution failures.
+  Residual (out of original Plan scope): the PRIMARY SOURCE fetch
+  if/elif (~200 lines) and the pre-populate + media-validation block
+  (~120 lines) remain inline — a future pass could carve these to push
+  the function below ~300 lines.
 
 #### Pass 38.2 Consolidate `load_scraper_settings` (MEDIUM, S)
 
