@@ -746,8 +746,15 @@ are tracked here so the next pass picks them up:
   4. **Open in a new tab** (`target="_blank" rel="noopener noreferrer"`)
      so the user doesn't lose their place.
 - **Source**: user-request-2026-05-18 (post-public-flip follow-up).
-- **Status**: ready to start; 47.6 can absorb Patreon + BMAC additions
-  once those land.
+- **Status**: done (2026-06-10, v3.6.36). Added a "💝 Support
+  Development" card to Settings → System (visible to all users, with a
+  `#support` subnav entry) and a "💝 Sponsor" button to the About modal,
+  both linking <https://github.com/sponsors/milnet01> in a new tab
+  (`rel="noopener noreferrer"`). No nag dialog / paywall / first-run
+  modal. Reused existing `.card` / `.btn` / `.subnav-link` styling — no
+  new CSS. Verified via an authenticated render of `/settings` (admin
+  session) through the Flask test client — all surfaces present. Pass
+  47.6 stays open to absorb Patreon + BMAC additions once those land.
 
 ---
 
