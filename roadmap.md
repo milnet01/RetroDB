@@ -1913,7 +1913,7 @@ are tracked here so the next pass picks them up:
   (3) in `igdb_request`, on status 401, clear `_igdb_token_cache` and
   retry once with a fresh token.
 - **Source**: 2026-04-24 indie-review, scraper adapters H1/H2/H3/H4.
-- **Status**: partial (v3.5.5) — H2 (redactor) + H3 (IGDB 401) closed:
+- **Status**: done (H2/H3 v3.5.5; H1/H4 v3.5.47) — H2 (redactor) + H3 (IGDB 401) closed:
   `key` and `sspassword` added to `services/log_redactor.py` URL-
   querystring allowlist; `igdb_request` invalidates `_igdb_token_cache`
   and retries once with a fresh token on 401. H1/H4 (route Steam +
@@ -1922,6 +1922,11 @@ are tracked here so the next pass picks them up:
   because `http_get` returns `None` on total failure where the current
   code expects `requests.get` semantics. Tests:
   `tests/test_pass41_security.py::TestPass41_5A/B` (5 cases).
+  Closed (2026-06-10): H1/H4 carry-over landed in Pass 41.5.B
+  (done v3.5.47) — all 7 Steam + 3 HLTB endpoints route through
+  `base_scraper.http_get`/`http_post`, each call site guarded with
+  `if resp is None:`; verified by
+  `TestPass41_5bSteamHltbThroughBaseScraper`. Parent now fully resolved.
 
 #### Pass 41.5.B Steam + HLTB through base_scraper (carry-over from 41.5)
 
@@ -2175,16 +2180,23 @@ are tracked here so the next pass picks them up:
   `PageLifecycle` in the canonical hot paths (museum, rom-tools,
   log-viewer) or delete the abstraction — pick one.
 - **Source**: 2026-04-24 indie-review, frontend JS H1/H2/H3/M3.
-- **Status**: partial (v3.5.11) — A (HIGH) + B (HIGH) closed:
+- **Status**: done (A/B v3.5.11; M3 v3.5.18) — A (HIGH) + B (HIGH) closed:
   `_withTimeout(opts)` wraps every `API.get/post/postForm` call in a
   30 s default `AbortController`; caller-supplied `signal` opts out.
   `_isSafeReturnUrl(url)` validates `navigateTo` redirect targets to
   same-origin paths or origins. M3 (inline-onclick → delegated listener
   rewrite) un-gated as of Pass 42.7 (v3.5.46) — PageLifecycle was
   removed, so the listener-cleanup question is moot; M3 can be done
-  now with plain `addEventListener` and no centralized tracking. Open
-  as a future follow-up. Tests:
-  `tests/test_pass41_security.py::TestPass41_12A/B` (5 cases).
+  now with plain `addEventListener` and no centralized tracking.
+  Closed (2026-06-10): M3 landed in Pass 45.4 (done v3.5.18, which
+  strictly subsumed it) — the inline `onclick` toast actions
+  (navigate / pause / cancel) were replaced with a single delegated
+  container click handler keyed off `data-toast-action` /
+  `data-toast-return-url`; no inline `onclick` remains in
+  `toast-controller.js` (comments only) and `core.bundle.js` carries
+  the delegated handler. Tests:
+  `tests/test_pass41_security.py::TestPass41_12A/B` (5 cases) +
+  `tests/test_pass45_security.py::TestPass45_4*`.
 
 #### Pass 41.13 Templates / a11y — aria-current + div-as-button + mis-targeted label-for + label-as-group-heading
 
@@ -2213,7 +2225,7 @@ are tracked here so the next pass picks them up:
   button groups with `<fieldset><legend>` or `<div role="group"
   aria-labelledby="...">` + heading.
 - **Source**: 2026-04-24 indie-review, templates H1/H2/H3/H4.
-- **Status**: partial (v3.5.12) — A (HIGH aria-current) + B (HIGH
+- **Status**: done (A/B v3.5.12; C/D v3.5.51) — A (HIGH aria-current) + B (HIGH
   wrapping-label toggle) closed: new Jinja
   macro `nav_active(cond)` emits `class="nav-item active"` +
   `aria-current="page"` together; all 17 sidebar nav links converted.
@@ -2224,6 +2236,12 @@ are tracked here so the next pass picks them up:
   and D (MEDIUM label-as-heading) deferred to Pass 41.13.C carry-over —
   needs browser verification across 8+ template files. Tests:
   `tests/test_pass41_security.py::TestPass41_13A/B` (3 cases).
+  Closed (2026-06-10): C/D carry-over landed in Pass 41.13.C
+  (done v3.5.51) — 6 scoped div/h2-`onclick` primary actions converted
+  to native `<button>`/disclosure patterns, 8 label-as-group-heading
+  shapes promoted to `role="group"` + `aria-labelledby`; verified by
+  `TestPass41_13cDivAsButton` + `TestPass41_13cLabelAsGroupHeading`.
+  Parent now fully resolved.
 
 #### Pass 41.13.C Templates a11y carry-over (div-as-button + label-as-heading)
 
