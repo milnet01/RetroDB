@@ -3068,6 +3068,13 @@ are tracked here so the next pass picks them up:
 
 #### Pass 43.1 Wire Flask-Babel + extract first language pack (HIGH, L)
 
+> **Re-scoped (design pending) — see `docs/superpowers/specs/2026-06-10-i18n-foundation-design.md`.**
+> The full-scope plan below (all ~45 files, `de/fr/es/it/ja/pt_BR` roster,
+> `settings.html` section) is superseded: 43.1 now lands i18n *machinery + a
+> single-page pilot* only. The bulk template/string migration + real catalogs move
+> to a new Pass 43.5 (created when the foundation lands). Trust the spec, not the
+> body below, for 43.1 scope.
+
 - **Target**: every user-facing UI string in `templates/*.html` (45
   files, ~3-4k strings), `routes/*.py` flash + error messages, and
   `services/api_helpers.py::error()` callers.  JS strings (toasts,
