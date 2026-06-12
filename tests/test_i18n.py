@@ -125,8 +125,11 @@ def test_validator_rejects_unknown_locale(monkeypatch):
     client, headers = _authed_client(monkeypatch)
     resp = client.post('/api/users/settings',
                        json={'locale_preference': 'qq_GONE'}, headers=headers)
-    assert resp.status_code == 400
+    # code=200 success:false envelope — the route's convention (API.post throws
+    # on non-2xx, so validation errors ride a 200 and the client reads `success`).
+    assert resp.status_code == 200
     assert resp.get_json()['success'] is False
+    assert resp.get_json()['error'] == 'Invalid locale'
 
 
 # ---------------------------------------------------------------------------

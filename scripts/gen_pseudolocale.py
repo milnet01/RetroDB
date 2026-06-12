@@ -25,6 +25,7 @@ machine.
 """
 
 import os
+import re
 import sys
 
 from babel.messages.pofile import read_po, write_po
@@ -45,27 +46,40 @@ _ACCENT = str.maketrans({
     'a': 'à', 'b': 'ƀ', 'c': 'ç', 'd': 'ð', 'e': 'é', 'f': 'ƒ', 'g': 'ĝ',
     'h': 'ĥ', 'i': 'ì', 'j': 'ĵ', 'k': 'ķ', 'l': 'ļ', 'm': 'ɱ', 'n': 'ñ',
     'o': 'ö', 'p': 'þ', 'q': 'ɋ', 'r': 'ŕ', 's': 'š', 't': 'ţ', 'u': 'ü',
-    'v': 'ⱴ', 'w': 'ŵ', 'x': ' x', 'y': 'ý', 'z': 'ž',
+    'v': 'ⱴ', 'w': 'ŵ', 'x': 'ж', 'y': 'ý', 'z': 'ž',
     'A': 'À', 'B': 'Ɓ', 'C': 'Ç', 'D': 'Ð', 'E': 'É', 'F': 'Ƒ', 'G': 'Ĝ',
     'H': 'Ĥ', 'I': 'Ì', 'J': 'Ĵ', 'K': 'Ķ', 'L': 'Ļ', 'M': 'Ɱ', 'N': 'Ñ',
     'O': 'Ö', 'P': 'Þ', 'Q': 'Ɋ', 'R': 'Ŕ', 'S': 'Š', 'T': 'Ţ', 'U': 'Ü',
-    'V': ' V', 'W': 'Ŵ', 'X': 'X', 'Y': 'Ý', 'Z': 'Ž',
+    'V': 'Ѵ', 'W': 'Ŵ', 'X': 'Ж', 'Y': 'Ý', 'Z': 'Ž',
 })
 
 
-def pseudo(text):
-    """Bracket + accent a source string; leave gettext placeholders intact.
+# Substitutions that must survive verbatim or the runtime format breaks:
+# gettext-named (%(name)s), literal %%, printf with optional flags/width/
+# precision (%d, %-10.2f, …), and brace-style ({name}). Kept as a single
+# capturing group so re.split yields them at odd indices (see pseudo()).
+_PLACEHOLDER_RE = re.compile(
+    r'(%\([^)]*\)[diouxXeEfFgGsrc%]'   # %(name)s / %(n)d
+    r'|%%'                              # literal percent
+    r'|%[-+ #0]*\d*(?:\.\d+)?[diouxXeEfFgGsrc]'  # %d, %-10.2f, %5s …
+    r'|\{[^}]*\})'                      # {name}
+)
 
-    ``%(name)s`` / ``%s`` / ``{name}`` substitutions must survive verbatim or
-    the runtime format breaks, so only the surrounding literal text is accented.
-    For the pilot's simple strings there are no placeholders, but the guard
-    keeps the generator correct as more strings get wrapped.
+
+def pseudo(text):
+    """Bracket + accent a source string; leave substitution placeholders intact.
+
+    ``re.split`` with a capturing group interleaves the matched placeholders
+    (odd indices) with the literal runs between them (even indices), so we
+    accent only the even runs and pass placeholders through verbatim. This is
+    correct for literal text that merely *starts* with ``%`` or ``{`` — the old
+    content-prefix guard mis-skipped those. The pilot has no placeholders, but
+    the generator stays correct as Pass 43.5 wraps formatted strings.
     """
-    import re
-    parts = re.split(r'(%\([^)]*\)[a-z]|%[sd]|\{[^}]*\})', text)
+    parts = _PLACEHOLDER_RE.split(text)
     accented = ''.join(
-        p if (p.startswith('%') or p.startswith('{')) else p.translate(_ACCENT)
-        for p in parts
+        part if i % 2 else part.translate(_ACCENT)
+        for i, part in enumerate(parts)
     )
     return f'⟦{accented}⟧'
 

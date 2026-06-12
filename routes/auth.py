@@ -304,8 +304,10 @@ def api_user_settings():
             return success(settings=dict(settings))
         return success(settings={})
     
-    # POST - update settings
-    data = request.get_json()
+    # POST - update settings. silent=True + `or {}` so a non-JSON body yields an
+    # empty dict (→ "No changes made") rather than faulting the membership tests
+    # below with a TypeError on None — matches the house idiom across routes.
+    data = request.get_json(silent=True) or {}
 
     updates = []
     params = []
@@ -329,7 +331,10 @@ def api_user_settings():
     # snapshot) so a catalog added after process start is accepted and a
     # removed one cannot be persisted.
     if 'locale_preference' in data and data['locale_preference'] not in available_locales():
-        return error('Invalid locale', code=400)
+        # code=200 (success:false envelope) to match every other validation
+        # error in this route — API.post throws on non-2xx, so a 400 would
+        # surface as a generic "Network error" toast instead of this message.
+        return error('Invalid locale', code=200)
 
     for field in allowed_fields:
         if field in data:

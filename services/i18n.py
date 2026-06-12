@@ -29,6 +29,10 @@ PSEUDO_LOCALE = 'eo'
 # bundled assets), mirroring config.STATIC_PATH, so the path resolves
 # identically in a source checkout and a frozen PyInstaller bundle — more
 # robust than a root_path-relative 'translations' string under PyInstaller.
+# Single directory by design: app.py feeds this same value to Flask-Babel's
+# BABEL_TRANSLATION_DIRECTORIES (which treats it as a ';'-separated list), and
+# available_locales() globs it as one path. A real catalog root never contains
+# a literal ';', so the two readers stay in lockstep on every supported OS.
 TRANSLATIONS_DIR = os.path.join(config.BUNDLE_DIR, 'translations')
 
 
