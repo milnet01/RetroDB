@@ -3066,57 +3066,39 @@ are tracked here so the next pass picks them up:
 > data (titles, descriptions, scraper output) deliberately untranslated
 > because that's content, not chrome.
 
-#### Pass 43.1 Wire Flask-Babel + extract first language pack (HIGH, L)
+#### Pass 43.1 i18n foundation — Flask-Babel machinery + login pilot (HIGH, L)
 
-> **Re-scoped (design pending) — see `docs/superpowers/specs/2026-06-10-i18n-foundation-design.md`.**
-> The full-scope plan below (all ~45 files, `de/fr/es/it/ja/pt_BR` roster,
-> `settings.html` section) is superseded: 43.1 now lands i18n *machinery + a
-> single-page pilot* only. The bulk template/string migration + real catalogs move
-> to a new Pass 43.5 (created when the foundation lands). Trust the spec, not the
-> body below, for 43.1 scope.
-
-- **Target**: every user-facing UI string in `templates/*.html` (45
-  files, ~3-4k strings), `routes/*.py` flash + error messages, and
-  `services/api_helpers.py::error()` callers.  JS strings (toasts,
-  modals, dialog labels) live separately — see 43.3.
-- **Why**: RetroDB is a single-binary Flask app, single-household
-  deployments often have non-English-speaking family members.  No
-  language-switch primitive exists today; everything is hard-coded
-  English.  Flask-Babel is the standard plugin and folds cleanly into
-  Jinja's auto-escape pipeline.
-- **Plan**:
-  1. Add `flask-babel` to `requirements.txt` + `requirements.lock`.
-  2. Initialize `Babel(app)` in `app.py`; locale selector reads
-     `g.user_settings.locale_preference` first, then session, then
-     `Accept-Language` header, then `BABEL_DEFAULT_LOCALE='en'`.
-  3. Migrate templates progressively: wrap visible strings in
-     `{{ _('...') }}` / `{% trans %}...{% endtrans %}`.  Keep
-     attribute strings (`title=`, `aria-label=`, `placeholder=`) in
-     scope.  Don't translate template comments or class names.
-  4. Migrate Python flash + error sites: `flash(_('Please log in'))`,
-     `error(_('Invalid CSRF token'), 403)`.
-  5. `pybabel extract -F babel.cfg -o messages.pot .`; commit
-     `messages.pot` as the canonical extraction snapshot.
-  6. `pybabel init -i messages.pot -d translations -l en` (and any
-     additional shipped languages: probably `de`, `fr`, `es`, `it`,
-     `ja`, `pt_BR` to start).  Compile with `pybabel compile -d
-     translations`.
-  7. Add a Settings → Language section to `templates/settings.html`
-     (per-user locale_preference) with a dropdown of available
-     translations enumerated from `translations/` at request time.
-- **Caveats**:
-  - DB content (game titles, alternate_titles, description, genre
-    canonical forms) is NOT translated — it's raw scraper data and
-    canonical genre values feed FIELD_SCHEMAS-driven validation.
-    Translating "First-Person-Shooter" would corrupt the schema; the
-    scraper writes the canonical English form, the UI displays a
-    translated label via a separate i18n map keyed on the canonical.
-  - Theme display names ("Cyberpunk", "Matrix") are left as-is —
-    they're brand-style identifiers, not chrome.
-  - Multi-rating system labels (ESRB, PEGI, etc.) stay as-is — these
-    are official trademarks.
-- **Source**: net-new feature ask 2026-04-25.
-- **Status**: todo
+- **Target**: the server-side i18n *machinery* + a single-page pilot. NOT the
+  bulk template/string migration or real-language catalogs — those are Pass 43.5.
+- **Why**: single-household deployments often have non-English-speaking family
+  members; no language-switch primitive existed. Flask-Babel is the standard
+  plugin and folds into Jinja's autoescape pipeline.
+- **Delivered**:
+  - `flask-babel>=4.0` in `requirements.txt` + `requirements.lock`;
+    `Babel(app, locale_selector=…)` in `app.py`.
+  - Locale chain: user pref → `session['locale']` → `Accept-Language` → `'en'`,
+    every branch membership-guarded so a stale/removed locale degrades to `'en'`
+    instead of raising.
+  - `services/i18n.py` — `available_locales()` (single source of truth shared by
+    the selector, the route validator, and the dropdown), `PSEUDO_LOCALE='eo'`
+    (INV-1: CLDR `en_XA` is unparseable in Babel 2.18, so the pseudolocale is
+    housed under `eo` but always labelled "Pseudo"), and `locale_display_name()`.
+  - `user_settings.locale_preference` column + request-time validation in
+    `routes/auth.py::api_user_settings`; Settings → Display Preferences →
+    Language dropdown (reloads to re-render).
+  - `scripts/gen_pseudolocale.py` + committed `translations/eo/` `.po`/`.mo`;
+    `babel.cfg` + `messages.pot`; `retrodb.spec` bundles `translations/`.
+  - Pilot: `templates/login.html` + the logout flash fully wrapped (JS strings
+    left English to mark the Pass 43.3 boundary); `tests/test_i18n.py` pins the
+    chain, the validator, and a login completeness scan.
+  - Contract doc `docs/specs/i18n.md`; CLAUDE.md "After Every Code Change" wrap
+    line + `docs/specs/` reference entry.
+- **Caveats** (unchanged, still hold): DB content (titles, canonical genre
+  values) is NOT translated — canonical English feeds FIELD_SCHEMAS validation;
+  theme names + rating-system trademarks stay as-is.
+- **Source**: net-new feature ask 2026-04-25. Design:
+  `docs/superpowers/specs/2026-06-10-i18n-foundation-design.md` (cold-eyes clean).
+- **Status**: done (v3.7.0, 2026-06-12). Follow-on bulk migration = Pass 43.5.
 
 #### Pass 43.2 Translate canonical genre / dimension / perspective labels (MEDIUM, M)
 
@@ -3164,6 +3146,32 @@ are tracked here so the next pass picks them up:
   RTL translation lands — a feature without a user is dead weight.
 - **Status**: deferred — gated on Pass 43.1 plus a translator who
   ships an RTL `.po`.
+
+#### Pass 43.5 Bulk template/string migration + real-language catalogs (MEDIUM, L)
+
+- **Target**: the ~60 remaining `templates/*.html` (top-level + nested under
+  `_settings_tabs/`, `_modals/`, `_macros/`), `routes/*.py` flash + error sites,
+  and `services/api_helpers.py::error()` callers — every server-rendered string
+  the Pass 43.1 pilot didn't reach.
+- **Why**: 43.1 shipped the machinery and proved it on `login.html`, but the
+  rest of the UI is still hard-coded English. This is the mechanical follow-on
+  that makes the whole app translatable.
+- **Plan**:
+  1. Wrap visible strings progressively in `{{ _('...') }}` /
+     `{% trans %}…{% endtrans %}`, including `title=` / `aria-label=` /
+     `placeholder=` attributes. Skip JS-constructed strings (Pass 43.3) and
+     canonical DB values (Pass 43.2). Re-extract + regen the pseudolocale after
+     each batch (`docs/specs/i18n.md` §4) and use the "Pseudo" locale to find
+     any string the batch missed.
+  2. Source real human-language catalogs (likely `de`, `fr`, `es`, `it`, `ja`,
+     `pt_BR` to start) — `pybabel init -i messages.pot -d translations -l <code>`,
+     translate the `.po`, `pybabel compile`. Each shipped catalog auto-appears in
+     the Settings dropdown via `available_locales()`.
+  3. Add a CI extraction-freshness gate (fail if `pybabel extract` would change
+     `messages.pot` — i.e. a new unwrapped-then-wrapped string wasn't re-extracted).
+- **Source**: carved out of the original Pass 43.1 full-scope plan when 43.1 was
+  re-scoped to machinery+pilot (design spec, 2026-06-10).
+- **Status**: todo — unblocked now that the 43.1 foundation has landed.
 
 ---
 

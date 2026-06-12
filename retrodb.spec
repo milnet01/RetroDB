@@ -98,6 +98,10 @@ DATAS = [
     # static/videos/ — explicitly NOT bundled. Live in the writable image
     # dir at runtime; populated by the scraper.
     ('data/changelog.yaml', 'data'),
+    # i18n catalogs (Pass 43.1) — .po/.mo are committed and have no build step
+    # on the user's machine, so the bundle must carry them or it ships with no
+    # translations (the dropdown would collapse to English-only).
+    ('translations', 'translations'),
     # Bundled docs the help-page route reads from disk.
     ('docs', 'docs'),
     # Note: HLTB lookups go through the live API at runtime — no dataset

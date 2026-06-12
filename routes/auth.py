@@ -5,6 +5,7 @@
 # =============================================================================
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, g
+from flask_babel import _
 from datetime import datetime, timezone
 from urllib.parse import urlparse
 import os
@@ -13,6 +14,7 @@ import time
 import config
 from services.database import query, execute
 from services.api_helpers import handle_api_errors, success, error
+from services.i18n import available_locales
 from services.auth import (
     hash_password, verify_password, needs_rehash, get_user_settings,
     admin_required, login_required, VALID_ROLES,
@@ -138,7 +140,7 @@ def logout():
     app.py's ensure_csrf_token hook.
     """
     session.clear()
-    flash('You have been logged out', 'info')
+    flash(_('You have been logged out'), 'info')
     return redirect(url_for('auth.login'))
 
 
@@ -320,7 +322,14 @@ def api_user_settings():
     allowed_fields = [
         'rpcs3_trophy_path', 'ra_username', 'ra_api_key', 'theme_preference',
         'items_per_page', 'psn_username', 'psn_npsso', 'timezone',
+        'locale_preference',
     ]
+
+    # Pass 43.1 — validate the locale at request time (not against a frozen
+    # snapshot) so a catalog added after process start is accepted and a
+    # removed one cannot be persisted.
+    if 'locale_preference' in data and data['locale_preference'] not in available_locales():
+        return error('Invalid locale', code=400)
 
     for field in allowed_fields:
         if field in data:

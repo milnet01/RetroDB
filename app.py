@@ -161,6 +161,55 @@ if os.environ.get('RETRODB_TRUST_PROXY', '').lower() in ('true', '1', 'yes'):
     )
 
 # =============================================================================
+# INTERNATIONALIZATION (Pass 43.1 — i18n foundation)
+# =============================================================================
+# Flask-Babel with source-text message IDs (the gettext standard): strings are
+# wrapped {{ _('Save') }} and the English source IS the catalog key. Per-locale
+# .po/.mo catalogs live under translations/ (committed; bundled in retrodb.spec).
+from flask_babel import Babel
+from services.i18n import available_locales, TRANSLATIONS_DIR
+
+app.config['BABEL_DEFAULT_LOCALE'] = 'en'
+app.config['BABEL_TRANSLATION_DIRECTORIES'] = TRANSLATIONS_DIR
+
+
+def select_locale():
+    """Locale-selection chain: user pref -> session -> Accept-Language -> 'en'.
+
+    Every branch is guarded by membership in available_locales(), so a
+    stale/removed locale never raises — it degrades to 'en'.
+    """
+    locales = available_locales()
+    # 1. logged-in user's saved preference (g.user_settings is a plain dict;
+    #    .get() returns None for a legacy row predating the column).
+    if g.get('user_settings'):
+        pref = g.user_settings.get('locale_preference')
+        if pref and pref in locales:
+            return pref
+    # 2. transient per-session switch — intentionally retained but unreachable
+    #    in v1 (no UI writes session['locale']); kept for a future
+    #    anon-switcher. Not dead code.
+    sess = session.get('locale')
+    if sess and sess in locales:
+        return sess
+    # 3. browser Accept-Language
+    best = request.accept_languages.best_match(locales)
+    if best:
+        return best
+    # 4. default
+    return 'en'
+
+
+babel = Babel(app, locale_selector=select_locale)
+
+# Settings "Language" dropdown reads these (services/i18n.py is the single
+# source of truth shared with the selector chain + the route validator).
+from services.i18n import locale_display_name
+app.jinja_env.globals['available_locales'] = available_locales
+app.jinja_env.globals['locale_display_name'] = locale_display_name
+
+
+# =============================================================================
 # STATIC IMAGES — frozen-aware fallback route
 # =============================================================================
 # Pass 46.3 part 2 — `/static/images/<path>` paths span two roots in a

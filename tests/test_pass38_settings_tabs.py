@@ -175,6 +175,10 @@ def jinja_env():
         g=_SilentUndefined(),  # Flask request-globals proxy
         request=_SilentUndefined(),
         get_avatar_url=lambda *a, **kw: None,
+        # Pass 43.1 — library.html's Language dropdown calls these app globals
+        # (registered in app.py); stub them so the partial renders standalone.
+        available_locales=lambda: ("en",),
+        locale_display_name=lambda code: code,
         tz=lambda *a, **kw: "",
         format_number=str,
     )

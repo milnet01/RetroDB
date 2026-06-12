@@ -27,6 +27,7 @@ genuinely diverges.
 5. Run tests if any `services/*.py` or `scraper/*.py` changed: `python3 -m pytest`
 6. Regenerate lockfile if `requirements.txt` was edited: `pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes` (Pass 39.4 — `install.py` prefers `--require-hashes` when `requirements.lock` is present and falls back to `requirements.txt` otherwise; keep the lockfile current so the secure path stays the default)
 7. Update this file if change adds/removes/renames routes, templates, bundled JS, CSS files, or alters page/asset wiring contracts
+8. Wrap any new user-facing string in `_()` (templates `{{ _('...') }}`, Python `flash(_('...'))`) and regenerate catalogs — see `docs/specs/i18n.md` §2/§4. JS strings are out of scope until Pass 43.3.
 
 ### Verification Before Declaring Done
 Tests written alongside the implementation are regression pins, not correctness
@@ -170,6 +171,7 @@ Pre-release checklist: bump version + changelog → ensure `config.example.py` m
 - `docs/RETRODB_DESIGN_STANDARDS.md` — Full UI/CSS/JS/API standards (25 sections; §23 controller naming, §25 schema migrations)
 - `docs/STANDARDS_ADDENDUM.md` — Version checklist, logging system
 - `docs/ROM_NAMING_STANDARD.md` — ROM file naming
+- `docs/specs/` — Per-feature design/contract docs (`api-contracts`, `auth`, `image-pipeline`, `jobs`, `migrations`, `scrapers`, `settings`, `themes`, `i18n`). Read the relevant one before touching that subsystem.
 - `docs/theme_contrast.md` — Generated WCAG output (`scripts/audit_contrast.py`); regenerate when theme colors change
 - `roadmap.md` — Backlog of refactoring/security/perf/a11y/observability/migrations/CI/ops passes. Includes "Scope notes — considered and dropped". Check before proposing net-new architectural work.
 - `audit_hygiene.md` — Portable `/audit`-skill recommendations (not RetroDB-specific)

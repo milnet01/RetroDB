@@ -147,6 +147,9 @@ def ensure_user_tables():
             ('psn_npsso', "TEXT DEFAULT ''"),
             ('steam_api_key', "TEXT DEFAULT ''"),
             ('steam_id', "TEXT DEFAULT ''"),
+            # Pass 43.1 — per-user UI language. Validated at write time against
+            # services.i18n.available_locales() in routes/auth.py.
+            ('locale_preference', "TEXT DEFAULT 'en'"),
         ):
             _add_column_if_missing(cursor, 'user_settings', _col, _defn)
 

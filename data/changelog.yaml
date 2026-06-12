@@ -1,3 +1,18 @@
+- version: 3.7.0
+  date: 2026-06-12
+  tags:
+  - type: feature
+    label: Internationalization foundation + login pilot (Pass 43.1)
+  body: |
+    <ul>
+      <li><strong>The app can now speak more than English (Pass 43.1)</strong>: this lays the groundwork for translating RetroDB's interface. It wires in <a href="https://python-babel.github.io/flask-babel/">Flask-Babel</a> (the standard translation engine) with a clear language-picking order &mdash; your saved preference first, then the browser's language, then English as the fallback &mdash; that can never crash on an unknown language, it just falls back to English.</li>
+      <li><strong>Pick your language in Settings</strong>: <strong>Settings &rarr; Display Preferences</strong> gains a <strong>Language</strong> dropdown next to the Theme picker. Choosing a language saves it to your profile and reloads the page in that language. Each person on the household install gets their own language.</li>
+      <li><strong>A built-in "Pseudo" language for quality-checking</strong>: a special test language renders every translatable string wrapped in brackets with accents (e.g. <code>Save</code> &rarr; <code>&#x27E6;&#x160;&#xE0;&#x2C74;&#xE9;&#x27E7;</code>). Switch to it and any text that <em>isn't</em> bracketed is a string we forgot to make translatable &mdash; a permanent at-a-glance coverage check, not throwaway scaffolding.</li>
+      <li><strong>Proven end-to-end on the login screen</strong>: the login page and the "You have been logged out" message are the first fully-translatable surfaces. The rest of the app's ~60 templates and real human-language translations (German, French, &hellip;) follow in Pass 43.5; client-side popups follow in Pass 43.3.</li>
+      <li>New regression tests pin the language-picking order, the validation, and a scan proving every visible string on the login page is translatable. Translation files ship pre-compiled in both the source and standalone downloads &mdash; no extra setup on your machine.</li>
+      <li><strong>Minor bump 3.6.37 &rarr; 3.7.0</strong> (new feature).</li>
+    </ul>
+
 - version: 3.6.37
   date: 2026-06-10
   tags:

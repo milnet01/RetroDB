@@ -223,6 +223,23 @@ const UserManager = {
     },
 
     /**
+     * Save the UI language preference, then reload so the page re-renders in
+     * the new locale (Pass 43.1). A second open tab keeps its locale until its
+     * own reload — acceptable for v1 (no live broadcast).
+     */
+    saveLanguage(locale) {
+        API.post('/api/users/settings', { locale_preference: locale })
+            .then(result => {
+                if (result.success) {
+                    location.reload();
+                } else {
+                    showNotification(result.error || 'Failed to save language', 'error');
+                }
+            })
+            .catch(() => showNotification('Network error saving language', 'error'));
+    },
+
+    /**
      * Change current user's password
      */
     changePassword() {

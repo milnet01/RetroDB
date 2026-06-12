@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Login - RetroDB{% endblock %}
+{% block title %}{{ _('Login') }} - RetroDB{% endblock %}
 
 {% block styles %}
 <style>
@@ -200,8 +200,8 @@
 <div class="login-container">
     <div class="login-card">
         <div class="login-header">
-            <h1>🎮 Welcome to RetroDB</h1>
-            <p>Select your profile to continue</p>
+            <h1>🎮 {{ _('Welcome to RetroDB') }}</h1>
+            <p>{{ _('Select your profile to continue') }}</p>
         </div>
         
         {% if users %}
@@ -231,7 +231,7 @@
         {% else %}
         <div class="empty-users">
             <div class="icon">🔐</div>
-            <p>No users found. Please contact your administrator.</p>
+            <p>{{ _('No users found. Please contact your administrator.') }}</p>
         </div>
         {% endif %}
     </div>
@@ -240,17 +240,17 @@
 <!-- Password Modal for Admin Users -->
 <div class="password-modal" id="passwordModal">
     <div class="password-dialog">
-        <h3>🔐 Admin Login</h3>
+        <h3>🔐 {{ _('Admin Login') }}</h3>
         <form id="passwordForm">
             <input type="hidden" id="selectedUserId" name="user_id" value="">
             <div class="form-group">
-                <label class="form-label" for="passwordInput">Password</label>
-                <input type="password" class="form-input" id="passwordInput" name="password" placeholder="Enter admin password" autocomplete="current-password">
+                <label class="form-label" for="passwordInput">{{ _('Password') }}</label>
+                <input type="password" class="form-input" id="passwordInput" name="password" placeholder="{{ _('Enter admin password') }}" autocomplete="current-password">
                 <div class="login-error" id="loginError"></div>
             </div>
             <div class="btn-group">
-                <button type="button" class="btn btn-secondary" onclick="closePasswordModal()">Cancel</button>
-                <button type="submit" class="btn btn-primary">Login</button>
+                <button type="button" class="btn btn-secondary" onclick="closePasswordModal()">{{ _('Cancel') }}</button>
+                <button type="submit" class="btn btn-primary">{{ _('Login') }}</button>
             </div>
         </form>
     </div>
@@ -260,6 +260,7 @@
 {% endblock %}
 
 {% block scripts %}
+{# i18n: Pass 43.3 boundary — JS strings localized separately #}
 <script nonce="{{ csp_nonce }}">
 function selectUser(userId, role) {
     if (role === 'admin') {

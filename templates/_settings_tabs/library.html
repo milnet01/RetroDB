@@ -116,6 +116,23 @@
             <span class="form-hint">Theme applies instantly. Changes are saved automatically.</span>
         </div>
 
+        {# Pass 43.1 — per-user UI language. Mirrors the Theme control's
+           label-div + aria-labelledby pairing for an accessible name. Unlike
+           Theme (instant, JS-applied) this is a plain <select> POSTed to
+           /api/users/settings; the page reloads to re-render in the new locale. #}
+        <div class="form-group mb-lg">
+            <div class="form-label" id="languageSelectLabel">Language</div>
+            <select id="languageSelect" class="form-select" style="max-width: 300px;"
+                    aria-labelledby="languageSelectLabel"
+                    onchange="UserManager.saveLanguage(this.value)">
+                {% set current_locale = (current_user_settings.get('locale_preference') if current_user_settings else 'en') or 'en' %}
+                {% for code in available_locales() %}
+                <option value="{{ code }}" {% if code == current_locale %}selected{% endif %}>{{ locale_display_name(code) }}</option>
+                {% endfor %}
+            </select>
+            <span class="form-hint">Changes the interface language. The page reloads when you switch.</span>
+        </div>
+
         <div class="form-group mb-lg">
             <label class="form-label" for="preferredBoxartSelect">Preferred Boxart Style</label>
             <select id="preferredBoxartSelect" class="form-select" style="max-width: 300px;">
