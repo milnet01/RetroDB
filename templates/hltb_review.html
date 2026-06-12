@@ -5,27 +5,27 @@
 {% block content %}
 <div class="page-header">
     <div>
-        <h1 class="page-title">HLTB Pending Matches</h1>
-        <p class="page-subtitle">Review and approve bulk HowLongToBeat lookup matches that need a human glance.</p>
+        <h1 class="page-title">{{ _('HLTB Pending Matches') }}</h1>
+        <p class="page-subtitle">{{ _('Review and approve bulk HowLongToBeat lookup matches that need a human glance.') }}</p>
     </div>
     <div class="page-actions">
         <button type="button" class="btn btn-success" id="approveAllBtn" onclick="hltbApproveAll()">
-            <span class="btn-icon">&check;</span> Approve All
+            <span class="btn-icon">&check;</span> {{ _('Approve All') }}
         </button>
         <button type="button" class="btn btn-danger-outline" id="rejectAllBtn" onclick="hltbRejectAll()">
-            <span class="btn-icon">&times;</span> Reject All
+            <span class="btn-icon">&times;</span> {{ _('Reject All') }}
         </button>
     </div>
 </div>
 
 <div class="hltb-review-summary" id="hltbReviewSummary" style="margin-bottom: 1rem; color: var(--text-secondary);">
-    Loading pending matches&hellip;
+    {{ _('Loading pending matches&hellip;') }}
 </div>
 
 <div class="hltb-review-filters">
-    <button type="button" class="filter-tab active" data-filter="all" onclick="hltbFilterReview('all', this)">All</button>
-    <button type="button" class="filter-tab" data-filter="alt_title" onclick="hltbFilterReview('alt_title', this)">Alt-title matches</button>
-    <button type="button" class="filter-tab" data-filter="low_confidence" onclick="hltbFilterReview('low_confidence', this)">Low confidence</button>
+    <button type="button" class="filter-tab active" data-filter="all" onclick="hltbFilterReview('all', this)">{{ _('All') }}</button>
+    <button type="button" class="filter-tab" data-filter="alt_title" onclick="hltbFilterReview('alt_title', this)">{{ _('Alt-title matches') }}</button>
+    <button type="button" class="filter-tab" data-filter="low_confidence" onclick="hltbFilterReview('low_confidence', this)">{{ _('Low confidence') }}</button>
 </div>
 
 <div class="hltb-review-list" id="hltbReviewList">
@@ -34,8 +34,8 @@
 
 <div class="empty-state" id="hltbReviewEmpty" style="display: none;">
     <div class="empty-state-icon">&check;</div>
-    <div class="empty-state-title">No pending HLTB matches</div>
-    <div class="empty-state-text">Run a bulk HLTB lookup from the ROM Tools Hub to queue matches for review here.</div>
+    <div class="empty-state-title">{{ _('No pending HLTB matches') }}</div>
+    <div class="empty-state-text">{{ _('Run a bulk HLTB lookup from the ROM Tools Hub to queue matches for review here.') }}</div>
 </div>
 
 <style>

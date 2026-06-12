@@ -214,12 +214,12 @@ const UserManager = {
         API.post('/api/users/settings', data)
             .then(result => {
                 if (result.success) {
-                    showNotification('Your settings have been saved!', 'success');
+                    showNotification(t('Your settings have been saved!'), 'success');
                 } else {
-                    showNotification(result.error || 'Failed to save settings', 'error');
+                    showNotification(result.error || t('Failed to save settings'), 'error');
                 }
             })
-            .catch(() => showNotification('Network error saving settings', 'error'));
+            .catch(() => showNotification(t('Network error saving settings'), 'error'));
     },
 
     /**
@@ -233,10 +233,10 @@ const UserManager = {
                 if (result.success) {
                     location.reload();
                 } else {
-                    showNotification(result.error || 'Failed to save language', 'error');
+                    showNotification(result.error || t('Failed to save language'), 'error');
                 }
             })
-            .catch(() => showNotification('Network error saving language', 'error'));
+            .catch(() => showNotification(t('Network error saving language'), 'error'));
     },
 
     /**
@@ -247,7 +247,7 @@ const UserManager = {
         const newPassword = document.getElementById('newPassword')?.value || '';
 
         if (!newPassword) {
-            showNotification('Please enter a new password', 'warning');
+            showNotification(t('Please enter a new password'), 'warning');
             return;
         }
 
@@ -257,21 +257,21 @@ const UserManager = {
         })
             .then(result => {
                 if (result.success) {
-                    showNotification('Password changed successfully!', 'success');
+                    showNotification(t('Password changed successfully!'), 'success');
                     document.getElementById('currentPassword').value = '';
                     document.getElementById('newPassword').value = '';
                 } else {
-                    showNotification(result.error || 'Failed to change password', 'error');
+                    showNotification(result.error || t('Failed to change password'), 'error');
                 }
             })
-            .catch(() => showNotification('Network error changing password', 'error'));
+            .catch(() => showNotification(t('Network error changing password'), 'error'));
     },
 
     /**
      * Show add user modal
      */
     showAddModal() {
-        document.getElementById('userModalTitle').textContent = 'Add User';
+        document.getElementById('userModalTitle').textContent = t('Add User');
         document.getElementById('editUserId').value = '';
         document.getElementById('userUsername').value = '';
         document.getElementById('userUsername').disabled = false;
@@ -291,7 +291,7 @@ const UserManager = {
                 if (data.success) {
                     const user = data.users.find(u => u.id === userId);
                     if (user) {
-                        document.getElementById('userModalTitle').textContent = 'Edit User';
+                        document.getElementById('userModalTitle').textContent = t('Edit User');
                         document.getElementById('editUserId').value = userId;
                         document.getElementById('userUsername').value = user.username;
                         document.getElementById('userUsername').disabled = true;
@@ -340,14 +340,14 @@ const UserManager = {
         API.post(url, data)
             .then(result => {
                 if (result.success) {
-                    showNotification(result.message || 'User saved successfully!', 'success');
+                    showNotification(result.message || t('User saved successfully!'), 'success');
                     this.closeModal();
                     setTimeout(() => location.reload(), 1000);
                 } else {
-                    showNotification(result.error || 'Failed to save user', 'error');
+                    showNotification(result.error || t('Failed to save user'), 'error');
                 }
             })
-            .catch(() => showNotification('Network error saving user', 'error'));
+            .catch(() => showNotification(t('Network error saving user'), 'error'));
     },
 
     /**
@@ -357,20 +357,20 @@ const UserManager = {
      */
     delete(userId, username) {
         showConfirm(
-            '🗑️ Delete User',
-            `Are you sure you want to delete user "${username}"? This action cannot be undone.`,
+            '🗑️ ' + t('Delete User'),
+            t('Are you sure you want to delete user "{username}"? This action cannot be undone.', {username: username}),
             () => {
                 API.post(`/api/users/${userId}/delete`)
                     .then(result => {
                         if (result.success) {
-                            showNotification('User deleted successfully', 'success');
+                            showNotification(t('User deleted successfully'), 'success');
                             const row = document.querySelector(`tr[data-user-id="${userId}"]`);
                             if (row) row.remove();
                         } else {
-                            showNotification(result.error || 'Failed to delete user', 'error');
+                            showNotification(result.error || t('Failed to delete user'), 'error');
                         }
                     })
-                    .catch(() => showNotification('Network error deleting user', 'error'));
+                    .catch(() => showNotification(t('Network error deleting user'), 'error'));
             },
             {danger: true}
         );
@@ -406,10 +406,10 @@ const PathSettings = {
                     const esdeMediaDefault = document.getElementById('esdeMediaDefault');
                     const rpcs3Default = document.getElementById('rpcs3TrophyDefault');
 
-                    if (romDefault) romDefault.textContent = 'Default: ' + (data.config_defaults.rom_path || '(not set)');
-                    if (esdeGlDefault) esdeGlDefault.textContent = 'Default: ' + (data.config_defaults.esde_gamelists || '(not set)');
-                    if (esdeMediaDefault) esdeMediaDefault.textContent = 'Default: ' + (data.config_defaults.esde_media || '(auto-detect)');
-                    if (rpcs3Default) rpcs3Default.textContent = 'Default: ' + (data.config_defaults.rpcs3_trophy || '(not set)');
+                    if (romDefault) romDefault.textContent = t('Default: {value}', {value: data.config_defaults.rom_path || t('(not set)')});
+                    if (esdeGlDefault) esdeGlDefault.textContent = t('Default: {value}', {value: data.config_defaults.esde_gamelists || t('(not set)')});
+                    if (esdeMediaDefault) esdeMediaDefault.textContent = t('Default: {value}', {value: data.config_defaults.esde_media || t('(auto-detect)')});
+                    if (rpcs3Default) rpcs3Default.textContent = t('Default: {value}', {value: data.config_defaults.rpcs3_trophy || t('(not set)')});
                 }
             })
             .catch(e => console.error('Failed to load path settings:', e));
@@ -429,15 +429,15 @@ const PathSettings = {
         API.post('/api/settings/paths', data)
             .then(result => {
                 if (result.success) {
-                    showNotification('Path settings saved!', 'success');
+                    showNotification(t('Path settings saved!'), 'success');
                     if (result.restart_required) {
-                        showNotification('Restart required for changes to take full effect', 'warning');
+                        showNotification(t('Restart required for changes to take full effect'), 'warning');
                     }
                 } else {
-                    showNotification('Failed to save: ' + result.error, 'error');
+                    showNotification(t('Failed to save: {error}', {error: result.error}), 'error');
                 }
             })
-            .catch(e => showNotification('Error saving settings: ' + e, 'error'));
+            .catch(e => showNotification(t('Error saving settings: {error}', {error: e}), 'error'));
     }
 };
 
@@ -478,12 +478,12 @@ const DisplaySettings = {
         API.post('/api/settings', data)
             .then(result => {
                 if (result.success) {
-                    showNotification('Display settings saved!', 'success');
+                    showNotification(t('Display settings saved!'), 'success');
                 } else {
-                    showNotification('Failed to save: ' + result.error, 'error');
+                    showNotification(t('Failed to save: {error}', {error: result.error}), 'error');
                 }
             })
-            .catch(e => showNotification('Error saving settings: ' + e, 'error'));
+            .catch(e => showNotification(t('Error saving settings: {error}', {error: e}), 'error'));
     }
 };
 
@@ -501,7 +501,7 @@ const NotificationSettings = {
 
         const originalText = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = '<span class="btn-icon">⏳</span> Saving...';
+        btn.innerHTML = '<span class="btn-icon">⏳</span> ' + t('Saving...');
 
         const data = {
             notification_timeouts: {
@@ -521,15 +521,15 @@ const NotificationSettings = {
                     if (typeof Notifications !== 'undefined') {
                         Notifications.timeouts = data.notification_timeouts;
                     }
-                    showNotification('Notification settings saved!', 'success');
+                    showNotification(t('Notification settings saved!'), 'success');
                 } else {
-                    showNotification('Failed to save: ' + result.error, 'error');
+                    showNotification(t('Failed to save: {error}', {error: result.error}), 'error');
                 }
             })
             .catch(e => {
                 btn.disabled = false;
                 btn.innerHTML = originalText;
-                showNotification('Error saving settings: ' + e, 'error');
+                showNotification(t('Error saving settings: {error}', {error: e}), 'error');
             });
     },
 
@@ -542,10 +542,10 @@ const NotificationSettings = {
         const warningTimeout = parseInt(document.getElementById('notifTimeoutWarning')?.value) || 5;
         const errorTimeout = parseInt(document.getElementById('notifTimeoutError')?.value) || 8;
 
-        showNotification(`Success - disappears in ${successTimeout}s`, 'success', successTimeout * 1000);
-        showNotification(`Info - disappears in ${infoTimeout}s`, 'info', infoTimeout * 1000);
-        showNotification(`Warning - disappears in ${warningTimeout}s`, 'warning', warningTimeout * 1000);
-        showNotification(`Error - disappears in ${errorTimeout}s`, 'error', errorTimeout * 1000);
+        showNotification(t('Success - disappears in {n}s', {n: successTimeout}), 'success', successTimeout * 1000);
+        showNotification(t('Info - disappears in {n}s', {n: infoTimeout}), 'info', infoTimeout * 1000);
+        showNotification(t('Warning - disappears in {n}s', {n: warningTimeout}), 'warning', warningTimeout * 1000);
+        showNotification(t('Error - disappears in {n}s', {n: errorTimeout}), 'error', errorTimeout * 1000);
     }
 };
 
@@ -584,11 +584,11 @@ const ConfirmModal = {
 
         if (isInfoModal) {
             cancelBtn.style.display = 'none';
-            confirmBtn.textContent = 'OK';
+            confirmBtn.textContent = t('OK');
             confirmBtn.className = 'btn btn-primary';
         } else {
             cancelBtn.style.display = '';
-            confirmBtn.textContent = 'Confirm';
+            confirmBtn.textContent = t('Confirm');
             confirmBtn.className = options.danger ? 'btn btn-danger' : 'btn btn-primary';
         }
 
@@ -617,7 +617,7 @@ const ConfirmModal = {
         const confirmBtn = document.getElementById('confirmBtn');
 
         cancelBtn.style.display = 'none';
-        confirmBtn.textContent = 'OK';
+        confirmBtn.textContent = t('OK');
         confirmBtn.className = 'btn btn-primary';
 
         document.getElementById('confirmModal').classList.add('active');
@@ -635,7 +635,7 @@ const ConfirmModal = {
         const confirmBtn = document.getElementById('confirmBtn');
         if (cancelBtn) cancelBtn.style.display = '';
         if (confirmBtn) {
-            confirmBtn.textContent = 'Confirm';
+            confirmBtn.textContent = t('Confirm');
             confirmBtn.className = 'btn btn-primary';
         }
     },
@@ -710,7 +710,7 @@ const ScraperConfig = {
                             indicator.className = 'status-indicator ' +
                                 (status.configured ? 'status-ok' : 'status-missing');
                             indicator.title = status.configured ?
-                                'API configured' : 'API key missing';
+                                t('API configured') : t('API key missing');
                         }
                     });
                 }
@@ -784,14 +784,14 @@ const ScraperConfig = {
         API.post('/api/settings/scrapers', { priority, enabled })
             .then(result => {
                 if (result.success) {
-                    showNotification('Scraper settings saved!', 'success');
+                    showNotification(t('Scraper settings saved!'), 'success');
                     this.settings.priority = priority;
                     this.settings.enabled = enabled;
                 } else {
-                    showNotification('Failed to save: ' + result.error, 'error');
+                    showNotification(t('Failed to save: {error}', {error: result.error}), 'error');
                 }
             })
-            .catch(e => showNotification('Error saving settings: ' + e, 'error'));
+            .catch(e => showNotification(t('Error saving settings: {error}', {error: e}), 'error'));
     },
 
     /**
@@ -813,13 +813,13 @@ const ScraperConfig = {
         API.post('/api/settings/api-keys', data)
             .then(result => {
                 if (result.success) {
-                    showNotification('API keys saved!', 'success');
+                    showNotification(t('API keys saved!'), 'success');
                     this.checkStatus();
                 } else {
-                    showNotification('Failed to save: ' + result.error, 'error');
+                    showNotification(t('Failed to save: {error}', {error: result.error}), 'error');
                 }
             })
-            .catch(e => showNotification('Error saving API keys: ' + e, 'error'));
+            .catch(e => showNotification(t('Error saving API keys: {error}', {error: e}), 'error'));
     }
 };
 
@@ -866,14 +866,14 @@ const LogoReference = {
                     <td>
                         ${logoSafe ?
                             `<img src="/static/images/logos/${logoSafe}" alt="${nameSafe}" style="height: 24px;">` :
-                            '<span class="text-muted">No logo</span>'
+                            `<span class="text-muted">${t('No logo')}</span>`
                         }
                     </td>
                 </tr>
             `;
         });
 
-        container.innerHTML = html || '<tr><td colspan="3">No systems found</td></tr>';
+        container.innerHTML = html || `<tr><td colspan="3">${t('No systems found')}</td></tr>`;
     }
 };
 
@@ -890,27 +890,27 @@ const DatabaseBackup = {
         if (!btn) return;
 
         btn.disabled = true;
-        btn.innerHTML = '<span class="btn-icon">⏳</span> Creating backup...';
+        btn.innerHTML = '<span class="btn-icon">⏳</span> ' + t('Creating backup...');
 
         API.post('/api/backup/create')
             .then(data => {
                 btn.disabled = false;
-                btn.innerHTML = '<span class="btn-icon">💾</span> Create Backup';
+                btn.innerHTML = '<span class="btn-icon">💾</span> ' + t('Create Backup');
 
                 if (data.success) {
-                    showNotification('Backup created successfully!', 'success');
+                    showNotification(t('Backup created successfully!'), 'success');
                     // Refresh backup list if exists
                     if (typeof this.loadList === 'function') {
                         this.loadList();
                     }
                 } else {
-                    showNotification('Backup failed: ' + data.error, 'error');
+                    showNotification(t('Backup failed: {error}', {error: data.error}), 'error');
                 }
             })
             .catch(e => {
                 btn.disabled = false;
-                btn.innerHTML = '<span class="btn-icon">💾</span> Create Backup';
-                showNotification('Error creating backup: ' + e, 'error');
+                btn.innerHTML = '<span class="btn-icon">💾</span> ' + t('Create Backup');
+                showNotification(t('Error creating backup: {error}', {error: e}), 'error');
             });
     },
 
@@ -920,19 +920,19 @@ const DatabaseBackup = {
      */
     restore(filename) {
         showConfirm(
-            '⚠️ Restore Database',
-            `Are you sure you want to restore from "${filename}"? This will replace all current data.`,
+            '⚠️ ' + t('Restore Database'),
+            t('Are you sure you want to restore from "{filename}"? This will replace all current data.', {filename: filename}),
             () => {
                 API.post('/api/backup/restore', { filename })
                     .then(data => {
                         if (data.success) {
-                            showNotification('Database restored! Reloading...', 'success');
+                            showNotification(t('Database restored! Reloading...'), 'success');
                             setTimeout(() => location.reload(), 2000);
                         } else {
-                            showNotification('Restore failed: ' + data.error, 'error');
+                            showNotification(t('Restore failed: {error}', {error: data.error}), 'error');
                         }
                     })
-                    .catch(e => showNotification('Error restoring: ' + e, 'error'));
+                    .catch(e => showNotification(t('Error restoring: {error}', {error: e}), 'error'));
             },
             {danger: true}
         );
@@ -1012,12 +1012,12 @@ const NormalizationManager = {
                 if (tableContainer) tableContainer.style.display = '';
                 this.render();
             } else {
-                showNotification(result.error || 'Failed to load normalization data', 'error');
+                showNotification(result.error || t('Failed to load normalization data'), 'error');
             }
         } catch (err) {
             if (loading) loading.style.display = 'none';
             console.error('Normalization load error:', err);
-            showNotification('Failed to load normalization data', 'error');
+            showNotification(t('Failed to load normalization data'), 'error');
         }
     },
 
@@ -1131,7 +1131,7 @@ const NormalizationManager = {
         const mappings = this.getSelectedMappings();
         const btn = document.getElementById('normApplyBtn');
         if (btn) {
-            btn.textContent = `Apply ${formatNumber(mappings.length)} Selected`;
+            btn.textContent = t('Apply {n} Selected', {n: formatNumber(mappings.length)});
             btn.disabled = mappings.length === 0;
         }
     },
@@ -1146,17 +1146,20 @@ const NormalizationManager = {
         // Build confirmation message — escapeHtml from utils.js per security standards
         let msg = '<div style="max-height: 300px; overflow-y: auto; margin-bottom: var(--spacing-sm);">';
         msg += '<table style="width: 100%; font-size: 0.85rem;">';
-        msg += '<tr style="border-bottom: 1px solid var(--border-subtle);"><th style="text-align:left; padding: 4px;">From</th><th style="text-align:left; padding: 4px;">To</th><th style="text-align:right; padding: 4px;">Games</th></tr>';
+        msg += `<tr style="border-bottom: 1px solid var(--border-subtle);"><th style="text-align:left; padding: 4px;">${t('From')}</th><th style="text-align:left; padding: 4px;">${t('To')}</th><th style="text-align:right; padding: 4px;">${t('Games')}</th></tr>`;
         mappings.forEach(m => {
             msg += `<tr><td style="padding: 4px;"><code>${escapeHtml(m.old)}</code></td>`;
             msg += `<td style="padding: 4px;"><code>${escapeHtml(m.new)}</code></td>`;
             msg += `<td style="text-align:right; padding: 4px;">${m.count}</td></tr>`;
         });
         msg += '</table></div>';
-        msg += `<p>Apply ${mappings.length} normalization rule${mappings.length !== 1 ? 's' : ''}?</p>`;
+        const ruleQuestion = mappings.length !== 1
+            ? t('Apply {n} normalization rules?', {n: mappings.length})
+            : t('Apply {n} normalization rule?', {n: mappings.length});
+        msg += `<p>${ruleQuestion}</p>`;
 
         // Use custom confirm dialog — never browser confirm() per standards
-        showConfirm('Apply Normalization', msg, async () => {
+        showConfirm(t('Apply Normalization'), msg, async () => {
             await this._doApply(mappings);
         });
     },
@@ -1168,7 +1171,7 @@ const NormalizationManager = {
         const btn = document.getElementById('normApplyBtn');
         if (btn) {
             btn.disabled = true;
-            btn.textContent = 'Applying...';
+            btn.textContent = t('Applying...');
         }
 
         try {
@@ -1179,17 +1182,17 @@ const NormalizationManager = {
 
             if (result.success) {
                 showNotification(
-                    `Normalization applied: ${formatNumber(result.games_updated)} games updated, ${formatNumber(result.rules_saved)} rules saved`,
+                    t('Normalization applied: {games} games updated, {rules} rules saved', {games: formatNumber(result.games_updated), rules: formatNumber(result.rules_saved)}),
                     'success'
                 );
                 // Reload to show updated data
                 await this.load();
             } else {
-                showNotification(result.error || 'Failed to apply normalization', 'error');
+                showNotification(result.error || t('Failed to apply normalization'), 'error');
             }
         } catch (err) {
             console.error('Normalization apply error:', err);
-            showNotification('Failed to apply normalization', 'error');
+            showNotification(t('Failed to apply normalization'), 'error');
         } finally {
             if (btn) {
                 btn.disabled = false;

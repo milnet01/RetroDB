@@ -154,23 +154,23 @@
     <div class="import-header">
         <div class="page-title">
             <span style="font-size: 2rem;">📥</span>
-            <h1>Game Imports</h1>
+            <h1>{{ _('Game Imports') }}</h1>
         </div>
     </div>
 
     <!-- Tabs -->
     <div class="platform-tabs">
         <button type="button" class="platform-tab{% if active_tab == 'clz' %} active{% endif %}" onclick="switchTab('clz')" id="tab-clz">
-            <span class="tab-icon">📄</span> CLZ Import
+            <span class="tab-icon">📄</span> {{ _('CLZ Import') }}
         </button>
         <button type="button" class="platform-tab{% if active_tab == 'steam' %} active{% endif %}" onclick="switchTab('steam')" id="tab-steam">
-            <span class="tab-icon">🟦</span> Steam
+            <span class="tab-icon">🟦</span> {{ _('Steam') }}
         </button>
         <button type="button" class="platform-tab{% if active_tab == 'xbox' %} active{% endif %}" onclick="switchTab('xbox')" id="tab-xbox">
-            <span class="tab-icon">🟢</span> Xbox
+            <span class="tab-icon">🟢</span> {{ _('Xbox') }}
         </button>
         <button type="button" class="platform-tab{% if active_tab == 'psn' %} active{% endif %}" onclick="switchTab('psn')" id="tab-psn">
-            <span class="tab-icon">🔵</span> PSN
+            <span class="tab-icon">🔵</span> {{ _('PSN') }}
         </button>
     </div>
 
@@ -181,17 +181,17 @@
         <div class="info-box">
             <span>ℹ️</span>
             <span class="info-box-text">
-                Import games from a <strong>CLZ Games</strong> PDF export. Export your collection from the CLZ app,
-                then upload the PDF here.
+                {% trans %}Import games from a <strong>CLZ Games</strong> PDF export. Export your collection from the CLZ app,
+                then upload the PDF here.{% endtrans %}
             </span>
         </div>
 
         <div class="config-section">
-            <h2>📄 Upload CLZ Export</h2>
+            <h2>📄 {{ _('Upload CLZ Export') }}</h2>
             <label class="upload-area" id="clzUploadArea" for="clzFileInput">
                 <div class="upload-icon">📄</div>
-                <div class="upload-text">Click or drag a CLZ PDF file here</div>
-                <div class="upload-subtext">Supports PDF exports from CLZ Games app</div>
+                <div class="upload-text">{{ _('Click or drag a CLZ PDF file here') }}</div>
+                <div class="upload-subtext">{{ _('Supports PDF exports from CLZ Games app') }}</div>
             </label>
             <input type="file" id="clzFileInput" accept=".pdf" style="display: none;" onchange="uploadClzFile(this)">
         </div>
@@ -199,33 +199,33 @@
         <!-- CLZ Preview -->
         <div class="preview-section" id="clzPreview">
             <div class="preview-header">
-                <h2>📋 CLZ Library</h2>
+                <h2>📋 {{ _('CLZ Library') }}</h2>
                 <div class="preview-stats">
-                    <div class="stat-item"><div class="stat-value" id="clzTotal">0</div><div class="stat-label">Total</div></div>
-                    <div class="stat-item new-games"><div class="stat-value" id="clzNew">0</div><div class="stat-label">New</div></div>
-                    <div class="stat-item existing"><div class="stat-value" id="clzExisting">0</div><div class="stat-label">Already Imported</div></div>
+                    <div class="stat-item"><div class="stat-value" id="clzTotal">0</div><div class="stat-label">{{ _('Total') }}</div></div>
+                    <div class="stat-item new-games"><div class="stat-value" id="clzNew">0</div><div class="stat-label">{{ _('New') }}</div></div>
+                    <div class="stat-item existing"><div class="stat-value" id="clzExisting">0</div><div class="stat-label">{{ _('Already Imported') }}</div></div>
                 </div>
             </div>
             <div class="preview-controls">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllNew('clz')">☑️ Select All New</button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAll('clz')">☐ Deselect All</button>
-                <input type="text" id="clzSearch" placeholder="Search games..."
+                <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllNew('clz')">☑️ {{ _('Select All New') }}</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAll('clz')">☐ {{ _('Deselect All') }}</button>
+                <input type="text" id="clzSearch" placeholder="{{ _('Search games...') }}"
                        style="padding: 6px 12px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.85rem; min-width: 200px;">
             </div>
             <div class="preview-table-container">
                 <table class="data-table">
                     <thead><tr>
                         <th class="checkbox-cell"><input type="checkbox" id="clzSelectAll" onchange="toggleSelectAll('clz')"></th>
-                        <th>Game</th>
-                        <th>Platform</th>
-                        <th>Status</th>
+                        <th>{{ _('Game') }}</th>
+                        <th>{{ _('Platform') }}</th>
+                        <th>{{ _('Status') }}</th>
                     </tr></thead>
                     <tbody id="clzTableBody"></tbody>
                 </table>
             </div>
             <div class="import-actions">
-                <span id="clzSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">0 games selected</span>
-                <button type="button" class="btn btn-primary" id="clzImportBtn" onclick="importClzGames()" disabled>📥 Import Selected</button>
+                <span id="clzSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">{{ _('0 games selected') }}</span>
+                <button type="button" class="btn btn-primary" id="clzImportBtn" onclick="importClzGames()" disabled>📥 {{ _('Import Selected') }}</button>
             </div>
         </div>
     </div>
@@ -237,16 +237,16 @@
         <div class="info-box">
             <span>ℹ️</span>
             <span class="info-box-text">
-                Import your Steam game library. Games are created under the <strong>Microsoft Windows</strong> system.
-                Configure your Steam API key and Steam ID in <a href="{{ url_for('settings.settings') }}#apikeys" style="color: var(--primary-cyan);">Settings &rarr; API Keys</a>, or enter them below.
+                {% trans settings_url=url_for('settings.settings') ~ '#apikeys' %}Import your Steam game library. Games are created under the <strong>Microsoft Windows</strong> system.
+                Configure your Steam API key and Steam ID in <a href="{{ settings_url }}" style="color: var(--primary-cyan);">Settings &rarr; API Keys</a>, or enter them below.{% endtrans %}
             </span>
         </div>
         <div class="config-section" id="steamConfig">
-            <h2>🔑 Steam Credentials</h2>
+            <h2>🔑 {{ _('Steam Credentials') }}</h2>
             <div class="config-row">
-                <div class="config-field"><label for="steamApiKey">Steam Web API Key</label><input type="text" id="steamApiKey" placeholder="Your Steam Web API Key"></div>
-                <div class="config-field"><label for="steamId">Steam ID or Vanity URL</label><input type="text" id="steamId" placeholder="76561198012345678 or custom URL name"></div>
-                <button type="button" class="btn btn-primary" onclick="fetchSteamLibrary()" id="steamFetchBtn">📡 Fetch Library</button>
+                <div class="config-field"><label for="steamApiKey">{{ _('Steam Web API Key') }}</label><input type="text" id="steamApiKey" placeholder="{{ _('Your Steam Web API Key') }}"></div>
+                <div class="config-field"><label for="steamId">{{ _('Steam ID or Vanity URL') }}</label><input type="text" id="steamId" placeholder="{{ _('76561198012345678 or custom URL name') }}"></div>
+                <button type="button" class="btn btn-primary" onclick="fetchSteamLibrary()" id="steamFetchBtn">📡 {{ _('Fetch Library') }}</button>
             </div>
         </div>
         <div class="profile-card" id="steamProfile" style="display: none;">
@@ -254,31 +254,31 @@
         </div>
         <div class="preview-section" id="steamPreview">
             <div class="preview-header">
-                <h2>📋 Steam Library</h2>
+                <h2>📋 {{ _('Steam Library') }}</h2>
                 <div class="preview-stats">
-                    <div class="stat-item"><div class="stat-value" id="steamTotal">0</div><div class="stat-label">Total</div></div>
-                    <div class="stat-item new-games"><div class="stat-value" id="steamNew">0</div><div class="stat-label">New</div></div>
-                    <div class="stat-item existing"><div class="stat-value" id="steamExisting">0</div><div class="stat-label">Already Imported</div></div>
+                    <div class="stat-item"><div class="stat-value" id="steamTotal">0</div><div class="stat-label">{{ _('Total') }}</div></div>
+                    <div class="stat-item new-games"><div class="stat-value" id="steamNew">0</div><div class="stat-label">{{ _('New') }}</div></div>
+                    <div class="stat-item existing"><div class="stat-value" id="steamExisting">0</div><div class="stat-label">{{ _('Already Imported') }}</div></div>
                 </div>
             </div>
             <div class="preview-controls">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllNew('steam')">☑️ Select All New</button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAll('steam')">☐ Deselect All</button>
-                <input type="text" id="steamSearch" placeholder="Search games..."
+                <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllNew('steam')">☑️ {{ _('Select All New') }}</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAll('steam')">☐ {{ _('Deselect All') }}</button>
+                <input type="text" id="steamSearch" placeholder="{{ _('Search games...') }}"
                        style="padding: 6px 12px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.85rem; min-width: 200px;">
             </div>
             <div class="preview-table-container">
                 <table class="data-table">
                     <thead><tr>
                         <th class="checkbox-cell"><input type="checkbox" id="steamSelectAll" onchange="toggleSelectAll('steam')"></th>
-                        <th class="icon-cell"></th><th>Game</th><th>Playtime</th><th>Last Played</th><th>Status</th>
+                        <th class="icon-cell"></th><th>{{ _('Game') }}</th><th>{{ _('Playtime') }}</th><th>{{ _('Last Played') }}</th><th>{{ _('Status') }}</th>
                     </tr></thead>
                     <tbody id="steamTableBody"></tbody>
                 </table>
             </div>
             <div class="import-actions">
-                <span id="steamSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">0 games selected</span>
-                <button type="button" class="btn btn-primary" id="steamImportBtn" onclick="importGames('steam')" disabled>📥 Import Selected</button>
+                <span id="steamSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">{{ _('0 games selected') }}</span>
+                <button type="button" class="btn btn-primary" id="steamImportBtn" onclick="importGames('steam')" disabled>📥 {{ _('Import Selected') }}</button>
             </div>
         </div>
     </div>
@@ -290,58 +290,58 @@
         <div class="info-box">
             <span>ℹ️</span>
             <span class="info-box-text">
-                Import your Xbox game library. Games are assigned to their correct Xbox system.
-                You need an Azure AD app registration &mdash; configure credentials in <a href="{{ url_for('settings.settings') }}#apikeys" style="color: var(--primary-cyan);">Settings &rarr; API Keys</a>.
+                {% trans settings_url=url_for('settings.settings') ~ '#apikeys' %}Import your Xbox game library. Games are assigned to their correct Xbox system.
+                You need an Azure AD app registration &mdash; configure credentials in <a href="{{ settings_url }}" style="color: var(--primary-cyan);">Settings &rarr; API Keys</a>.{% endtrans %}
             </span>
         </div>
         <div class="config-section" id="xboxConfig">
-            <h2>🔐 Xbox Account</h2>
+            <h2>🔐 {{ _('Xbox Account') }}</h2>
             <div class="auth-status disconnected" id="xboxAuthStatus">
                 <div class="auth-dot"></div>
-                <div><div id="xboxAuthText" style="color: var(--text-primary);">Not Connected</div><div id="xboxAuthDetail" style="color: var(--text-muted); font-size: 0.8rem;">Connect your Xbox account to import games</div></div>
+                <div><div id="xboxAuthText" style="color: var(--text-primary);">{{ _('Not Connected') }}</div><div id="xboxAuthDetail" style="color: var(--text-muted); font-size: 0.8rem;">{{ _('Connect your Xbox account to import games') }}</div></div>
                 <div style="margin-left: auto; display: flex; gap: var(--spacing-sm);">
-                    <button type="button" class="btn btn-primary btn-sm" onclick="connectXbox()" id="xboxConnectBtn">🔗 Connect Xbox Account</button>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="disconnectXbox()" id="xboxDisconnectBtn" style="display: none;">Disconnect</button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="connectXbox()" id="xboxConnectBtn">🔗 {{ _('Connect Xbox Account') }}</button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="disconnectXbox()" id="xboxDisconnectBtn" style="display: none;">{{ _('Disconnect') }}</button>
                 </div>
             </div>
             <div style="display: flex; gap: var(--spacing-md); align-items: center; margin-top: var(--spacing-md);" id="xboxFetchRow">
-                <button type="button" class="btn btn-primary" onclick="fetchXboxLibrary()" id="xboxFetchBtn" disabled>📡 Fetch Library</button>
+                <button type="button" class="btn btn-primary" onclick="fetchXboxLibrary()" id="xboxFetchBtn" disabled>📡 {{ _('Fetch Library') }}</button>
             </div>
         </div>
         <div class="preview-section" id="xboxPreview">
             <div class="preview-header">
-                <h2>📋 Xbox Library</h2>
+                <h2>📋 {{ _('Xbox Library') }}</h2>
                 <div class="preview-stats">
-                    <div class="stat-item"><div class="stat-value" id="xboxTotal">0</div><div class="stat-label">Total</div></div>
-                    <div class="stat-item new-games"><div class="stat-value" id="xboxNew">0</div><div class="stat-label">New</div></div>
-                    <div class="stat-item existing"><div class="stat-value" id="xboxExisting">0</div><div class="stat-label">Already Imported</div></div>
+                    <div class="stat-item"><div class="stat-value" id="xboxTotal">0</div><div class="stat-label">{{ _('Total') }}</div></div>
+                    <div class="stat-item new-games"><div class="stat-value" id="xboxNew">0</div><div class="stat-label">{{ _('New') }}</div></div>
+                    <div class="stat-item existing"><div class="stat-value" id="xboxExisting">0</div><div class="stat-label">{{ _('Already Imported') }}</div></div>
                 </div>
             </div>
             <div class="preview-controls">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllNew('xbox')">☑️ Select All New</button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAll('xbox')">☐ Deselect All</button>
-                <input type="text" id="xboxSearch" placeholder="Search games..."
+                <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllNew('xbox')">☑️ {{ _('Select All New') }}</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAll('xbox')">☐ {{ _('Deselect All') }}</button>
+                <input type="text" id="xboxSearch" placeholder="{{ _('Search games...') }}"
                        style="padding: 6px 12px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.85rem; min-width: 200px;">
             </div>
             <div class="import-platform-filters" id="xboxPlatformFilters">
-                <button type="button" class="import-platform-filter-btn active" data-platform="all" onclick="setPlatformFilter('xbox', 'all')">All</button>
-                <button type="button" class="import-platform-filter-btn" data-platform="xbox360" onclick="setPlatformFilter('xbox', 'xbox360')">Xbox 360</button>
-                <button type="button" class="import-platform-filter-btn" data-platform="xboxone" onclick="setPlatformFilter('xbox', 'xboxone')">Xbox One</button>
-                <button type="button" class="import-platform-filter-btn" data-platform="xboxseriesx" onclick="setPlatformFilter('xbox', 'xboxseriesx')">Xbox Series</button>
-                <button type="button" class="import-platform-filter-btn" data-platform="windows" onclick="setPlatformFilter('xbox', 'windows')">PC</button>
+                <button type="button" class="import-platform-filter-btn active" data-platform="all" onclick="setPlatformFilter('xbox', 'all')">{{ _('All') }}</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="xbox360" onclick="setPlatformFilter('xbox', 'xbox360')">{{ _('Xbox 360') }}</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="xboxone" onclick="setPlatformFilter('xbox', 'xboxone')">{{ _('Xbox One') }}</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="xboxseriesx" onclick="setPlatformFilter('xbox', 'xboxseriesx')">{{ _('Xbox Series') }}</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="windows" onclick="setPlatformFilter('xbox', 'windows')">{{ _('PC') }}</button>
             </div>
             <div class="preview-table-container">
                 <table class="data-table">
                     <thead><tr>
                         <th class="checkbox-cell"><input type="checkbox" id="xboxSelectAll" onchange="toggleSelectAll('xbox')"></th>
-                        <th>Game</th><th>Platform</th><th>Gamerscore</th><th>Status</th>
+                        <th>{{ _('Game') }}</th><th>{{ _('Platform') }}</th><th>{{ _('Gamerscore') }}</th><th>{{ _('Status') }}</th>
                     </tr></thead>
                     <tbody id="xboxTableBody"></tbody>
                 </table>
             </div>
             <div class="import-actions">
-                <span id="xboxSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">0 games selected</span>
-                <button type="button" class="btn btn-primary" id="xboxImportBtn" onclick="importGames('xbox')" disabled>📥 Import Selected</button>
+                <span id="xboxSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">{{ _('0 games selected') }}</span>
+                <button type="button" class="btn btn-primary" id="xboxImportBtn" onclick="importGames('xbox')" disabled>📥 {{ _('Import Selected') }}</button>
             </div>
         </div>
     </div>
@@ -353,18 +353,18 @@
         <div class="info-box">
             <span>ℹ️</span>
             <span class="info-box-text">
-                Import your PlayStation game library. Games come from your PSN trophy list.
-                Configure your PSN NPSSO token in <a href="{{ url_for('settings.settings') }}#apikeys" style="color: var(--primary-cyan);">Settings &rarr; API Keys</a>.
-                For faster imports, sync your trophies first via the <a href="{{ url_for('trophies.psn_trophies') }}" style="color: var(--primary-cyan);">PSN Trophies</a> page.
+                {% trans settings_url=url_for('settings.settings') ~ '#apikeys', trophies_url=url_for('trophies.psn_trophies') %}Import your PlayStation game library. Games come from your PSN trophy list.
+                Configure your PSN NPSSO token in <a href="{{ settings_url }}" style="color: var(--primary-cyan);">Settings &rarr; API Keys</a>.
+                For faster imports, sync your trophies first via the <a href="{{ trophies_url }}" style="color: var(--primary-cyan);">PSN Trophies</a> page.{% endtrans %}
             </span>
         </div>
         <div class="config-section" id="psnConfig">
-            <h2>🔐 PSN Account</h2>
+            <h2>🔐 {{ _('PSN Account') }}</h2>
             <div class="auth-status disconnected" id="psnAuthStatus">
                 <div class="auth-dot"></div>
-                <div><div id="psnAuthText" style="color: var(--text-primary);">Checking...</div><div id="psnAuthDetail" style="color: var(--text-muted); font-size: 0.8rem;"></div></div>
+                <div><div id="psnAuthText" style="color: var(--text-primary);">{{ _('Checking...') }}</div><div id="psnAuthDetail" style="color: var(--text-muted); font-size: 0.8rem;"></div></div>
                 <div style="margin-left: auto; display: flex; gap: var(--spacing-sm);">
-                    <button type="button" class="btn btn-primary" onclick="fetchPsnLibrary()" id="psnFetchBtn" disabled>📡 Fetch Library</button>
+                    <button type="button" class="btn btn-primary" onclick="fetchPsnLibrary()" id="psnFetchBtn" disabled>📡 {{ _('Fetch Library') }}</button>
                 </div>
             </div>
         </div>
@@ -373,38 +373,38 @@
         </div>
         <div class="preview-section" id="psnPreview">
             <div class="preview-header">
-                <h2>📋 PSN Library</h2>
+                <h2>📋 {{ _('PSN Library') }}</h2>
                 <div class="preview-stats">
-                    <div class="stat-item"><div class="stat-value" id="psnTotal">0</div><div class="stat-label">Total</div></div>
-                    <div class="stat-item new-games"><div class="stat-value" id="psnNew">0</div><div class="stat-label">New</div></div>
-                    <div class="stat-item existing"><div class="stat-value" id="psnExisting">0</div><div class="stat-label">Already Imported</div></div>
+                    <div class="stat-item"><div class="stat-value" id="psnTotal">0</div><div class="stat-label">{{ _('Total') }}</div></div>
+                    <div class="stat-item new-games"><div class="stat-value" id="psnNew">0</div><div class="stat-label">{{ _('New') }}</div></div>
+                    <div class="stat-item existing"><div class="stat-value" id="psnExisting">0</div><div class="stat-label">{{ _('Already Imported') }}</div></div>
                 </div>
             </div>
             <div class="preview-controls">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllNew('psn')">☑️ Select All New</button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAll('psn')">☐ Deselect All</button>
-                <input type="text" id="psnSearch" placeholder="Search games..."
+                <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllNew('psn')">☑️ {{ _('Select All New') }}</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAll('psn')">☐ {{ _('Deselect All') }}</button>
+                <input type="text" id="psnSearch" placeholder="{{ _('Search games...') }}"
                        style="padding: 6px 12px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.85rem; min-width: 200px;">
             </div>
             <div class="import-platform-filters" id="psnPlatformFilters">
-                <button type="button" class="import-platform-filter-btn active" data-platform="all" onclick="setPlatformFilter('psn', 'all')">All</button>
-                <button type="button" class="import-platform-filter-btn" data-platform="ps5" onclick="setPlatformFilter('psn', 'ps5')">PS5</button>
-                <button type="button" class="import-platform-filter-btn" data-platform="ps4" onclick="setPlatformFilter('psn', 'ps4')">PS4</button>
-                <button type="button" class="import-platform-filter-btn" data-platform="ps3" onclick="setPlatformFilter('psn', 'ps3')">PS3</button>
-                <button type="button" class="import-platform-filter-btn" data-platform="psvita" onclick="setPlatformFilter('psn', 'psvita')">PS Vita</button>
+                <button type="button" class="import-platform-filter-btn active" data-platform="all" onclick="setPlatformFilter('psn', 'all')">{{ _('All') }}</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="ps5" onclick="setPlatformFilter('psn', 'ps5')">{{ _('PS5') }}</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="ps4" onclick="setPlatformFilter('psn', 'ps4')">{{ _('PS4') }}</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="ps3" onclick="setPlatformFilter('psn', 'ps3')">{{ _('PS3') }}</button>
+                <button type="button" class="import-platform-filter-btn" data-platform="psvita" onclick="setPlatformFilter('psn', 'psvita')">{{ _('PS Vita') }}</button>
             </div>
             <div class="preview-table-container">
                 <table class="data-table">
                     <thead><tr>
                         <th class="checkbox-cell"><input type="checkbox" id="psnSelectAll" onchange="toggleSelectAll('psn')"></th>
-                        <th class="icon-cell"></th><th>Game</th><th>Platform</th><th>Trophy Progress</th><th>Status</th>
+                        <th class="icon-cell"></th><th>{{ _('Game') }}</th><th>{{ _('Platform') }}</th><th>{{ _('Trophy Progress') }}</th><th>{{ _('Status') }}</th>
                     </tr></thead>
                     <tbody id="psnTableBody"></tbody>
                 </table>
             </div>
             <div class="import-actions">
-                <span id="psnSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">0 games selected</span>
-                <button type="button" class="btn btn-primary" id="psnImportBtn" onclick="importGames('psn')" disabled>📥 Import Selected</button>
+                <span id="psnSelectedInfo" style="color: var(--text-secondary); margin-right: auto;">{{ _('0 games selected') }}</span>
+                <button type="button" class="btn btn-primary" id="psnImportBtn" onclick="importGames('psn')" disabled>📥 {{ _('Import Selected') }}</button>
             </div>
         </div>
     </div>
@@ -412,7 +412,7 @@
 
 <!-- Loading Overlay -->
 <div class="loading-overlay" id="loadingOverlay">
-    <div class="loading-content"><div class="loading-spinner"></div><div id="loadingText">Processing...</div></div>
+    <div class="loading-content"><div class="loading-spinner"></div><div id="loadingText">{{ _('Processing...') }}</div></div>
 </div>
 
 <script nonce="{{ csp_nonce }}">

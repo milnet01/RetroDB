@@ -10,34 +10,34 @@
 <!-- Page Header -->
 <div class="page-header">
     <div>
-        <h1 class="page-title glitch-text" data-text="All Games">All Games</h1>
+        <h1 class="page-title glitch-text" data-text="{{ _('All Games') }}">{{ _('All Games') }}</h1>
         <p class="page-subtitle">
-            <span id="totalGamesCount">{{ total_games|format_number }}</span> games across all systems
+            <span id="totalGamesCount">{{ total_games|format_number }}</span> {{ _('games across all systems') }}
             {% if total_missing > 0 %}
-                • <span style="color: var(--status-warning);"><span id="totalMissingCount">{{ total_missing|format_number }}</span> missing metadata</span>
+                • <span style="color: var(--status-warning);"><span id="totalMissingCount">{{ total_missing|format_number }}</span> {{ _('missing metadata') }}</span>
             {% endif %}
         </p>
     </div>
 </div>
 
 <!-- Filter Bar -->
-<div class="filter-bar-new glass-panel" role="search" aria-label="Game filters">
+<div class="filter-bar-new glass-panel" role="search" aria-label="{{ _('Game filters') }}">
     <div class="filter-bar-top">
         <div class="search-box-integrated">
             <span class="search-icon-inside">🔍</span>
             <input type="text"
                    id="gameSearch"
                    class="search-input-integrated"
-                   placeholder="Search games..."
-                   aria-label="Search games"
+                   placeholder="{{ _('Search games...') }}"
+                   aria-label="{{ _('Search games') }}"
                    autocomplete="off"
                    style="padding-left: 36px;">
-            <button type="button" class="search-clear-btn" id="searchClearBtn" onclick="clearSearch()" title="Clear search">×</button>
+            <button type="button" class="search-clear-btn" id="searchClearBtn" onclick="clearSearch()" title="{{ _('Clear search') }}">×</button>
         </div>
 
         <div class="system-select-wrapper">
-            <select id="systemFilter" class="system-select-styled" aria-label="Filter by system" onchange="filterGames()">
-                <option value="">All Systems</option>
+            <select id="systemFilter" class="system-select-styled" aria-label="{{ _('Filter by system') }}" onchange="filterGames()">
+                <option value="">{{ _('All Systems') }}</option>
                 {% for system in systems %}
                 <option value="{{ system.id }}">{{ system.name }}</option>
                 {% endfor %}
@@ -45,94 +45,94 @@
         </div>
 
         <div class="system-select-wrapper">
-            <select id="systemTypeFilter" class="system-select-styled" aria-label="Filter by system type" onchange="filterGames()">
-                <option value="">All Types</option>
-                <option value="Console">🎮 Console</option>
-                <option value="Handheld">📱 Handheld</option>
-                <option value="Computer">💻 Computer</option>
-                <option value="Arcade">🕹️ Arcade</option>
-                <option value="Engine">⚙️ Engine</option>
+            <select id="systemTypeFilter" class="system-select-styled" aria-label="{{ _('Filter by system type') }}" onchange="filterGames()">
+                <option value="">{{ _('All Types') }}</option>
+                <option value="Console">🎮 {{ _('Console') }}</option>
+                <option value="Handheld">📱 {{ _('Handheld') }}</option>
+                <option value="Computer">💻 {{ _('Computer') }}</option>
+                <option value="Arcade">🕹️ {{ _('Arcade') }}</option>
+                <option value="Engine">⚙️ {{ _('Engine') }}</option>
             </select>
         </div>
 
         <div class="bulk-controls">
             <button type="button" class="filter-btn bulk-btn" onclick="toggleBulkMode()" id="bulkModeBtn">
-                <span class="filter-icon">☑️</span> <span id="bulkModeText">Select</span>
+                <span class="filter-icon">☑️</span> <span id="bulkModeText">{{ _('Select') }}</span>
             </button>
             <button type="button" class="filter-btn bulk-action-btn" onclick="selectAllVisible()" id="selectAllBtn" style="display: none;">
-                <span class="filter-icon">✅</span> Select All
+                <span class="filter-icon">✅</span> {{ _('Select All') }}
             </button>
             <button type="button" class="filter-btn bulk-action-btn" onclick="selectAllUnscraped()" id="selectUnscrapedBtn" style="display: none;">
-                <span class="filter-icon">📋</span> Select Unscraped
+                <span class="filter-icon">📋</span> {{ _('Select Unscraped') }}
             </button>
             <div class="bulk-mode-selector" id="bulkModeSelector" style="display: none;">
                 <div class="scrape-mode-toggle">
-                    <span class="mode-label mode-off">🔄 Full Re-scrape</span>
+                    <span class="mode-label mode-off">🔄 {{ _('Full Re-scrape') }}</span>
                     <label class="toggle-switch">
-                        <input type="checkbox" id="scrapeModeToggle" aria-label="Toggle between full re-scrape and fill missing mode" checked />
+                        <input type="checkbox" id="scrapeModeToggle" aria-label="{{ _('Toggle between full re-scrape and fill missing mode') }}" checked />
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="mode-label mode-on">📝 Fill Missing</span>
+                    <span class="mode-label mode-on">📝 {{ _('Fill Missing') }}</span>
                 </div>
             </div>
             <button type="button" class="filter-btn bulk-scrape-btn" onclick="startBulkScrape()" id="bulkScrapeBtn" style="display: none;">
-                <span class="filter-icon">⬇️</span> Scrape Selected (<span id="selectedCount">0</span>)
+                <span class="filter-icon">⬇️</span> {{ _('Scrape Selected') }} (<span id="selectedCount">0</span>)
             </button>
             <button type="button" class="filter-btn bulk-action-btn" onclick="startBulkEdit()" id="bulkEditBtn" style="display: none;">
-                <span class="filter-icon">✏️</span> Edit Selected (<span id="selectedEditCount">0</span>)
+                <span class="filter-icon">✏️</span> {{ _('Edit Selected') }} (<span id="selectedEditCount">0</span>)
             </button>
         </div>
     </div>
 
     <div class="filter-buttons">
         <button type="button" class="filter-btn" onclick="openFilterModal('genre')">
-            <span class="filter-icon">🎭</span> Genre
+            <span class="filter-icon">🎭</span> {{ _('Genre') }}
         </button>
         <button type="button" class="filter-btn" onclick="openFilterModal('franchise')">
-            <span class="filter-icon">📚</span> Series
+            <span class="filter-icon">📚</span> {{ _('Series') }}
         </button>
         <button type="button" class="filter-btn" onclick="openFilterModal('publisher')">
-            <span class="filter-icon">🏢</span> Publisher
+            <span class="filter-icon">🏢</span> {{ _('Publisher') }}
         </button>
         <button type="button" class="filter-btn" onclick="openFilterModal('developer')">
-            <span class="filter-icon">👨‍💻</span> Developer
+            <span class="filter-icon">👨‍💻</span> {{ _('Developer') }}
         </button>
         <button type="button" class="filter-btn" onclick="openFilterModal('modes')">
-            <span class="filter-icon">👥</span> Players
+            <span class="filter-icon">👥</span> {{ _('Players') }}
         </button>
         <button type="button" class="filter-btn" onclick="openFilterModal('perspective')">
-            <span class="filter-icon">👁️</span> Perspective
+            <span class="filter-icon">👁️</span> {{ _('Perspective') }}
         </button>
         <button type="button" class="filter-btn" onclick="openFilterModal('dimension')">
-            <span class="filter-icon">📐</span> Dimension
+            <span class="filter-icon">📐</span> {{ _('Dimension') }}
         </button>
         <button type="button" class="filter-btn" onclick="openFilterModal('rating')">
-            <span class="filter-icon">⭐</span> Rating
+            <span class="filter-icon">⭐</span> {{ _('Rating') }}
         </button>
         <button type="button" class="filter-btn" onclick="openFilterModal('source')">
-            <span class="filter-icon">📋</span> Source
+            <span class="filter-icon">📋</span> {{ _('Source') }}
         </button>
         <button type="button" class="filter-btn ra-filter-btn" onclick="toggleRAFilter()">
-            <span class="filter-icon">🏆</span> Has Achievements
+            <span class="filter-icon">🏆</span> {{ _('Has Achievements') }}
         </button>
-        <button type="button" class="filter-btn bonus-filter-btn" onclick="toggleBonusDiscFilter()" title="Show/hide bonus discs (hidden by default)">
-            <span class="filter-icon">🎁</span> <span id="bonusFilterText">Show Bonus</span>
+        <button type="button" class="filter-btn bonus-filter-btn" onclick="toggleBonusDiscFilter()" title="{{ _('Show/hide bonus discs (hidden by default)') }}">
+            <span class="filter-icon">🎁</span> <span id="bonusFilterText">{{ _('Show Bonus') }}</span>
         </button>
         <button type="button" class="filter-btn clear-btn" onclick="clearFilters()" id="clearFiltersBtn" style="display: none;">
-            <span class="filter-icon">✕</span> Clear
+            <span class="filter-icon">✕</span> {{ _('Clear') }}
         </button>
     </div>
 </div>
 
 <!-- Active Filters Display -->
 <div class="active-filters" id="activeFilters" style="display: none;">
-    <span class="active-filters-label">Active Filters:</span>
+    <span class="active-filters-label">{{ _('Active Filters:') }}</span>
     <div class="active-filter-tags" id="activeFilterTags"></div>
 </div>
 
 <!-- Alphabet Jump Navigation -->
-<div class="alphabet-nav glass-panel" id="alphabetNav" role="navigation" aria-label="Alphabetical jump navigation">
-    <span class="alphabet-label">Jump to:</span>
+<div class="alphabet-nav glass-panel" id="alphabetNav" role="navigation" aria-label="{{ _('Alphabetical jump navigation') }}">
+    <span class="alphabet-label">{{ _('Jump to:') }}</span>
     <div class="alphabet-letters">
         <button class="alphabet-btn" data-letter="#">#</button>
         <button class="alphabet-btn" data-letter="A">A</button>
@@ -166,7 +166,7 @@
 
 <!-- Games Count -->
 <div class="games-count-bar">
-    <span class="showing-text">SHOWING <span id="visibleCount">0</span> OF <span id="totalFilteredCount">{{ total_games|format_number }}</span> GAMES</span>
+    <span class="showing-text">{{ _('SHOWING') }} <span id="visibleCount">0</span> {{ _('OF') }} <span id="totalFilteredCount">{{ total_games|format_number }}</span> {{ _('GAMES') }}</span>
 </div>
 
 <!-- Games Grid (populated by JS) -->
@@ -175,7 +175,7 @@
 <!-- Loading Indicator -->
 <div id="gamesLoading" class="games-loading" style="text-align: center; padding: 3rem;">
     <div class="loading-spinner"></div>
-    <p style="color: var(--text-muted); margin-top: 1rem;">Loading games...</p>
+    <p style="color: var(--text-muted); margin-top: 1rem;">{{ _('Loading games...') }}</p>
 </div>
 
 <!-- Infinite Scroll Trigger -->

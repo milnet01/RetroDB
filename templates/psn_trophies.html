@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 {% set needs_games_bundle = true %}
 
-{% block title %}PSN Trophies - RetroDB{% endblock %}
+{% block title %}{{ _('PSN Trophies') }} - RetroDB{% endblock %}
 
 {% block content %}
 <!-- Page Header -->
 <div class="page-header">
     <div>
-        <h1 class="page-title">🏆 PSN Trophies</h1>
-        <p class="page-subtitle">PlayStation Network{% if psn_profile %} · {{ psn_profile.online_id }}{% endif %}</p>
+        <h1 class="page-title">🏆 {{ _('PSN Trophies') }}</h1>
+        <p class="page-subtitle">{{ _('PlayStation Network') }}{% if psn_profile %} · {{ psn_profile.online_id }}{% endif %}</p>
     </div>
     <div class="header-actions">
         {% if psn_configured %}
         <button type="button" onclick="syncTrophies()" class="btn btn-primary" id="syncTrophiesBtn">
             <span class="btn-icon">🔄</span>
-            Sync Trophies
+            {{ _('Sync Trophies') }}
         </button>
         {% endif %}
     </div>
@@ -25,13 +25,13 @@
 <section class="card">
     <div class="card-body" style="text-align: center; padding: 60px 20px;">
         <div style="font-size: 4rem; margin-bottom: 20px;">🎮</div>
-        <h2 style="margin-bottom: 10px;">PSN Not Configured</h2>
+        <h2 style="margin-bottom: 10px;">{{ _('PSN Not Configured') }}</h2>
         <p class="text-muted" style="margin-bottom: 20px;">
-            Configure your PSN NPSSO token in your profile settings to sync your PlayStation Network trophies.
+            {{ _('Configure your PSN NPSSO token in your profile settings to sync your PlayStation Network trophies.') }}
         </p>
         <a href="{{ url_for('settings.settings') }}#profile" class="btn btn-primary">
             <span class="btn-icon">👤</span>
-            Go to My Profile
+            {{ _('Go to My Profile') }}
         </a>
     </div>
 </section>
@@ -41,13 +41,13 @@
 <section class="card">
     <div class="card-body" style="text-align: center; padding: 60px 20px;">
         <div style="font-size: 4rem; margin-bottom: 20px;">🏆</div>
-        <h2 style="margin-bottom: 10px;">No PSN Trophies Found</h2>
+        <h2 style="margin-bottom: 10px;">{{ _('No PSN Trophies Found') }}</h2>
         <p class="text-muted" style="margin-bottom: 20px;">
-            Click "Sync Trophies" to fetch your trophy data from PlayStation Network.
+            {{ _('Click "Sync Trophies" to fetch your trophy data from PlayStation Network.') }}
         </p>
         <button type="button" onclick="syncTrophies()" class="btn btn-primary">
             <span class="btn-icon">🔄</span>
-            Sync Trophies
+            {{ _('Sync Trophies') }}
         </button>
     </div>
 </section>
@@ -64,114 +64,114 @@
     </div>
     <div class="psn-profile-info">
         <div class="psn-username">{{ psn_profile.online_id }}</div>
-        <div class="psn-level">{% if psn_profile.trophy_level %}PSN Level {{ psn_profile.trophy_level|format_number }} · {% endif %}{{ total_games|format_number }} Games with Trophies</div>
+        <div class="psn-level">{% if psn_profile.trophy_level %}{% trans level=psn_profile.trophy_level|format_number %}PSN Level {{ level }}{% endtrans %} · {% endif %}{% trans count=total_games|format_number %}{{ count }} Games with Trophies{% endtrans %}</div>
     </div>
     <div class="psn-sync-status">
-        Last synced<br>
-        <span class="sync-time">{{ psn_profile.last_sync|tz('short') if psn_profile.last_sync else 'Never' }}</span>
+        {{ _('Last synced') }}<br>
+        <span class="sync-time">{{ psn_profile.last_sync|tz('short') if psn_profile.last_sync else _('Never') }}</span>
     </div>
 </div>
 
 <!-- Stats Bar -->
-<div class="psn-stats-bar" aria-label="Trophy statistics">
+<div class="psn-stats-bar" aria-label="{{ _('Trophy statistics') }}">
     <div class="psn-stat-box">
-        <div class="stat-icon"><img src="{{ url_for('static', filename='images/trophies/platinum.png') }}" alt="Platinum" class="trophy-stat-icon"></div>
+        <div class="stat-icon"><img src="{{ url_for('static', filename='images/trophies/platinum.png') }}" alt="{{ _('Platinum') }}" class="trophy-stat-icon"></div>
         <div class="stat-details">
-            <div class="stat-label">Platinum</div>
+            <div class="stat-label">{{ _('Platinum') }}</div>
             <div class="stat-value platinum">{{ stats.platinum_earned|default(0)|format_number }} / {{ stats.platinum_total|default(0)|format_number }}</div>
         </div>
     </div>
     <div class="psn-stat-box">
-        <div class="stat-icon"><img src="{{ url_for('static', filename='images/trophies/gold.png') }}" alt="Gold" class="trophy-stat-icon"></div>
+        <div class="stat-icon"><img src="{{ url_for('static', filename='images/trophies/gold.png') }}" alt="{{ _('Gold') }}" class="trophy-stat-icon"></div>
         <div class="stat-details">
-            <div class="stat-label">Gold</div>
+            <div class="stat-label">{{ _('Gold') }}</div>
             <div class="stat-value gold">{{ stats.gold_earned|default(0)|format_number }} / {{ stats.gold_total|default(0)|format_number }}</div>
         </div>
     </div>
     <div class="psn-stat-box">
-        <div class="stat-icon"><img src="{{ url_for('static', filename='images/trophies/silver.png') }}" alt="Silver" class="trophy-stat-icon"></div>
+        <div class="stat-icon"><img src="{{ url_for('static', filename='images/trophies/silver.png') }}" alt="{{ _('Silver') }}" class="trophy-stat-icon"></div>
         <div class="stat-details">
-            <div class="stat-label">Silver</div>
+            <div class="stat-label">{{ _('Silver') }}</div>
             <div class="stat-value silver">{{ stats.silver_earned|default(0)|format_number }} / {{ stats.silver_total|default(0)|format_number }}</div>
         </div>
     </div>
     <div class="psn-stat-box">
-        <div class="stat-icon"><img src="{{ url_for('static', filename='images/trophies/bronze.png') }}" alt="Bronze" class="trophy-stat-icon"></div>
+        <div class="stat-icon"><img src="{{ url_for('static', filename='images/trophies/bronze.png') }}" alt="{{ _('Bronze') }}" class="trophy-stat-icon"></div>
         <div class="stat-details">
-            <div class="stat-label">Bronze</div>
+            <div class="stat-label">{{ _('Bronze') }}</div>
             <div class="stat-value bronze">{{ stats.bronze_earned|default(0)|format_number }} / {{ stats.bronze_total|default(0)|format_number }}</div>
         </div>
     </div>
 </div>
 
 <!-- Filter Bar -->
-<div class="filter-bar-new glass-panel psn-filter-bar" role="search" aria-label="Trophy filters">
+<div class="filter-bar-new glass-panel psn-filter-bar" role="search" aria-label="{{ _('Trophy filters') }}">
     <div class="search-box-integrated">
         <span class="search-icon-inside">🔍</span>
         <input type="text"
                id="gameSearch"
                class="search-input-integrated"
-               placeholder="Search games..."
-               aria-label="Search trophy games"
+               placeholder="{{ _('Search games...') }}"
+               aria-label="{{ _('Search trophy games') }}"
                autocomplete="off"
                style="padding-left: 36px;">
-        <button type="button" class="search-clear-btn" id="searchClearBtn" title="Clear search">×</button>
+        <button type="button" class="search-clear-btn" id="searchClearBtn" title="{{ _('Clear search') }}">×</button>
     </div>
 
     <!-- Platform Filter Buttons -->
-    <div class="psn-platform-filters" role="group" aria-label="Filter by platform">
-        <button class="platform-filter-btn active" data-platform="all" aria-label="All platforms">
-            All<span class="filter-count">({{ total_games|format_number }})</span>
+    <div class="psn-platform-filters" role="group" aria-label="{{ _('Filter by platform') }}">
+        <button class="platform-filter-btn active" data-platform="all" aria-label="{{ _('All platforms') }}">
+            {{ _('All') }}<span class="filter-count">({{ total_games|format_number }})</span>
         </button>
-        <button class="platform-filter-btn" data-platform="ps5" aria-label="PlayStation 5">
+        <button class="platform-filter-btn" data-platform="ps5" aria-label="{{ _('PlayStation 5') }}">
             PS5<span class="filter-count">({{ platform_counts.ps5|default(0) }})</span>
         </button>
-        <button class="platform-filter-btn" data-platform="ps4" aria-label="PlayStation 4">
+        <button class="platform-filter-btn" data-platform="ps4" aria-label="{{ _('PlayStation 4') }}">
             PS4<span class="filter-count">({{ platform_counts.ps4|default(0) }})</span>
         </button>
-        <button class="platform-filter-btn" data-platform="ps3" aria-label="PlayStation 3">
+        <button class="platform-filter-btn" data-platform="ps3" aria-label="{{ _('PlayStation 3') }}">
             PS3<span class="filter-count">({{ platform_counts.ps3|default(0) }})</span>
         </button>
-        <button class="platform-filter-btn" data-platform="vita" aria-label="PlayStation Vita">
+        <button class="platform-filter-btn" data-platform="vita" aria-label="{{ _('PlayStation Vita') }}">
             PS Vita<span class="filter-count">({{ platform_counts.vita|default(0) }})</span>
         </button>
     </div>
 
     <!-- Sort -->
     <div class="psn-sort-wrapper">
-        <select id="sortSelect" aria-label="Sort trophies by">
-            <option value="name-asc">Name A-Z</option>
-            <option value="name-desc">Name Z-A</option>
-            <option value="progress-desc">Progress ↓</option>
-            <option value="progress-asc">Progress ↑</option>
-            <option value="recent">Recently Played</option>
-            <option value="platform">Platform</option>
+        <select id="sortSelect" aria-label="{{ _('Sort trophies by') }}">
+            <option value="name-asc">{{ _('Name A-Z') }}</option>
+            <option value="name-desc">{{ _('Name Z-A') }}</option>
+            <option value="progress-desc">{{ _('Progress') }} ↓</option>
+            <option value="progress-asc">{{ _('Progress') }} ↑</option>
+            <option value="recent">{{ _('Recently Played') }}</option>
+            <option value="platform">{{ _('Platform') }}</option>
         </select>
     </div>
 
     <!-- Bulk Controls -->
     <div class="bulk-controls">
         <button type="button" class="filter-btn bulk-btn" onclick="PSNTrophyController.toggleBulkMode()" id="psnBulkModeBtn">
-            <span class="filter-icon">☑️</span> <span id="psnBulkModeText">Select</span>
+            <span class="filter-icon">☑️</span> <span id="psnBulkModeText">{{ _('Select') }}</span>
         </button>
         <button type="button" class="filter-btn bulk-action-btn psn-bulk-action" onclick="PSNTrophyController.selectAllVisible()" id="psnSelectAllBtn" style="display: none;">
-            <span class="filter-icon">✅</span> All
+            <span class="filter-icon">✅</span> {{ _('All') }}
         </button>
-        <button type="button" class="filter-btn bulk-action-btn psn-bulk-action" onclick="PSNTrophyController.selectNotSynced()" id="psnSelectNotSyncedBtn" style="display: none;" title="Select games without synced trophy details">
-            <span class="filter-icon">🔄</span> Not Synced
+        <button type="button" class="filter-btn bulk-action-btn psn-bulk-action" onclick="PSNTrophyController.selectNotSynced()" id="psnSelectNotSyncedBtn" style="display: none;" title="{{ _('Select games without synced trophy details') }}">
+            <span class="filter-icon">🔄</span> {{ _('Not Synced') }}
         </button>
-        <button type="button" class="filter-btn bulk-action-btn psn-bulk-action" onclick="PSNTrophyController.selectIncomplete()" id="psnSelectIncompleteBtn" style="display: none;" title="Select games with < 100% progress">
-            <span class="filter-icon">📊</span> Incomplete
+        <button type="button" class="filter-btn bulk-action-btn psn-bulk-action" onclick="PSNTrophyController.selectIncomplete()" id="psnSelectIncompleteBtn" style="display: none;" title="{% trans %}Select games with < 100% progress{% endtrans %}">
+            <span class="filter-icon">📊</span> {{ _('Incomplete') }}
         </button>
         <button type="button" class="filter-btn bulk-scrape-btn psn-bulk-action" onclick="startBulkRefresh()" id="psnBulkRefreshBtn" style="display: none;">
-            <span class="filter-icon">🔄</span> Sync Selected (<span id="psnSelectedCount">0</span>)
+            <span class="filter-icon">🔄</span> {% trans %}Sync Selected{% endtrans %} (<span id="psnSelectedCount">0</span>)
         </button>
     </div>
 </div>
 
 <!-- Alphabet Jump Navigation -->
-<div class="alphabet-nav glass-panel" id="alphabetNav" role="navigation" aria-label="Alphabetical jump navigation">
-    <span class="alphabet-label">Jump to:</span>
+<div class="alphabet-nav glass-panel" id="alphabetNav" role="navigation" aria-label="{{ _('Alphabetical jump navigation') }}">
+    <span class="alphabet-label">{{ _('Jump to:') }}</span>
     <div class="alphabet-letters">
         <button class="alphabet-btn" data-letter="#">#</button>
         <button class="alphabet-btn" data-letter="A">A</button>
@@ -205,7 +205,7 @@
 
 <!-- Games Count -->
 <div class="games-count-bar">
-    <span class="showing-text">SHOWING <span id="visibleCount">0</span> OF <span id="totalFilteredCount">{{ total_games|format_number }}</span> GAMES</span>
+    <span class="showing-text">{{ _('SHOWING') }} <span id="visibleCount">0</span> {{ _('OF') }} <span id="totalFilteredCount">{{ total_games|format_number }}</span> {{ _('GAMES') }}</span>
 </div>
 
 <!-- Games Grid (populated by JS) -->
@@ -214,7 +214,7 @@
 <!-- Loading Indicator -->
 <div id="gamesLoading" class="games-loading" style="text-align: center; padding: 3rem;">
     <div class="loading-spinner"></div>
-    <p style="color: var(--text-muted); margin-top: 1rem;">Loading games...</p>
+    <p style="color: var(--text-muted); margin-top: 1rem;">{{ _('Loading games...') }}</p>
 </div>
 
 <!-- Infinite Scroll Trigger -->
@@ -225,21 +225,21 @@
 <div id="syncModal" class="modal">
     <div class="modal-content glass-panel" role="dialog" aria-modal="true" aria-labelledby="syncModalTitle">
         <div class="modal-header">
-            <h2 id="syncModalTitle">🔄 Syncing PSN Trophies</h2>
+            <h2 id="syncModalTitle">🔄 {{ _('Syncing PSN Trophies') }}</h2>
         </div>
         <div class="modal-body">
-            <p id="syncStatus">Connecting to PlayStation Network...</p>
+            <p id="syncStatus">{{ _('Connecting to PlayStation Network...') }}</p>
             <p id="syncCurrentGame" style="font-size: 0.85rem; color: var(--primary-cyan); margin: 8px 0; min-height: 1.2em;"></p>
             <div class="progress-bar" style="margin-top: 15px;">
                 <div class="progress-fill" id="syncProgress" style="width: 0%"></div>
             </div>
             <div id="syncStats" style="display: none; margin-top: 12px; font-size: 0.8rem; color: var(--text-secondary); display: flex; justify-content: center; gap: var(--spacing-lg);">
-                <span>🎮 <span id="syncGameCount">0</span> synced</span>
-                <span>🖼️ <span id="syncImageCount">0</span> images</span>
+                <span>🎮 <span id="syncGameCount">0</span> {{ _('synced') }}</span>
+                <span>🖼️ <span id="syncImageCount">0</span> {{ _('images') }}</span>
             </div>
         </div>
         <div id="syncFooter" class="modal-footer" style="display: none;">
-            <button type="button" class="btn btn-primary" onclick="closeSyncModal()">✓ Done</button>
+            <button type="button" class="btn btn-primary" onclick="closeSyncModal()">✓ {{ _('Done') }}</button>
         </div>
     </div>
 </div>
@@ -248,10 +248,10 @@
 <div id="bulkRefreshModal" class="modal">
     <div class="modal-content glass-panel" style="max-width: 500px;" role="dialog" aria-modal="true" aria-labelledby="bulkRefreshModalTitle">
         <div class="modal-header">
-            <h2 id="bulkRefreshModalTitle">🔄 Bulk Trophy Refresh</h2>
+            <h2 id="bulkRefreshModalTitle">🔄 {{ _('Bulk Trophy Refresh') }}</h2>
         </div>
         <div class="modal-body">
-            <p id="bulkRefreshStatus">Starting bulk refresh...</p>
+            <p id="bulkRefreshStatus">{{ _('Starting bulk refresh...') }}</p>
             <p class="bulk-current-game" id="bulkCurrentGame" style="font-size: 0.9rem; color: var(--primary-cyan); margin: 10px 0;">--</p>
 
             <div class="progress-bar" style="margin: 15px 0;">
@@ -266,40 +266,40 @@
             <div id="bulkResultsLive" class="bulk-results-row" style="display: flex; justify-content: center; gap: var(--spacing-lg); margin-top: 15px;">
                 <div class="result-item">
                     <span class="result-icon">✅</span>
-                    <span id="bulkSuccessLive">0</span> synced
+                    <span id="bulkSuccessLive">0</span> {{ _('synced') }}
                 </div>
                 <div class="result-item">
                     <span class="result-icon">❌</span>
-                    <span id="bulkFailedLive">0</span> failed
+                    <span id="bulkFailedLive">0</span> {{ _('failed') }}
                 </div>
                 <div class="result-item">
                     <span class="result-icon">⏭️</span>
-                    <span id="bulkSkippedLive">0</span> skipped
+                    <span id="bulkSkippedLive">0</span> {{ _('skipped') }}
                 </div>
             </div>
 
             <p class="rate-limit-notice" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 15px; text-align: center;">
-                ⏱️ Rate limited: ~2.5 seconds between games to respect PSN API limits
+                ⏱️ {{ _('Rate limited: ~2.5 seconds between games to respect PSN API limits') }}
             </p>
         </div>
 
         <!-- Controls Row -->
         <div id="bulkControlsRow" class="modal-footer" style="display: flex; gap: var(--spacing-sm); justify-content: center;">
             <button type="button" class="btn btn-warning btn-sm" onclick="toggleBulkPause()" id="bulkPauseBtn">
-                <span id="bulkPauseBtnIcon">⏸️</span> <span id="bulkPauseBtnText">Pause</span>
+                <span id="bulkPauseBtnIcon">⏸️</span> <span id="bulkPauseBtnText">{{ _('Pause') }}</span>
             </button>
             <button type="button" class="btn btn-danger btn-sm" onclick="cancelBulkRefresh()">
-                ❌ Cancel
+                ❌ {{ _('Cancel') }}
             </button>
             <button type="button" class="btn btn-secondary btn-sm" onclick="psnRunInBackground()" id="bulkBackgroundBtn">
-                📤 Background
+                📤 {{ _('Background') }}
             </button>
         </div>
 
         <!-- Final Footer (shown when complete) -->
         <div id="bulkFooter" class="modal-footer" style="display: none;">
             <button type="button" class="btn btn-primary" onclick="closeBulkRefreshModal(true)">
-                ✓ Done
+                ✓ {{ _('Done') }}
             </button>
         </div>
     </div>

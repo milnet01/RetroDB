@@ -136,7 +136,7 @@ const RARefreshController = {
 
         const _ti = typeof getThemedIcon === 'function' ? getThemedIcon : (k) => ({ starting: '\u23F3', queued: '\uD83D\uDCCB', running: '\u23F3', error: '\u274C' }[k] || k);
         const originalText = btn.innerHTML;
-        btn.innerHTML = `<span class="filter-icon">${_ti('starting')}</span> Starting...`;
+        btn.innerHTML = `<span class="filter-icon">${_ti('starting')}</span> ${t('Starting...')}`;
         btn.disabled = true;
 
         try {
@@ -168,9 +168,9 @@ const RARefreshController = {
                     }
 
                     // Update button to show queued state
-                    btn.innerHTML = `<span class="filter-icon">${_ti('queued')}</span> Queued`;
+                    btn.innerHTML = `<span class="filter-icon">${_ti('queued')}</span> ${t('Queued')}`;
                     if (typeof showNotification !== 'undefined') {
-                        showNotification('Added to queue - will start when current operation completes', 'info');
+                        showNotification(t('Added to queue - will start when current operation completes'), 'info');
                     }
                     return;
                 }
@@ -196,20 +196,20 @@ const RARefreshController = {
                 }
 
                 // Update button to show running state
-                btn.innerHTML = `<span class="filter-icon">${_ti('running')}</span> Running...`;
+                btn.innerHTML = `<span class="filter-icon">${_ti('running')}</span> ${t('Running...')}`;
                 if (typeof showNotification !== 'undefined') {
-                    showNotification(`Refreshing RA for ${systemName || 'system'}...`, 'info');
+                    showNotification(t('Refreshing RA for {system}...', {system: systemName || t('system')}), 'info');
                 }
             } else {
                 if (typeof showModal !== 'undefined') {
-                    showModal(`${_ti('error')} Error`, data.error || 'Unknown error');
+                    showModal(`${_ti('error')} ${t('Error')}`, data.error || t('Unknown error'));
                 }
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
         } catch (err) {
             if (typeof showModal !== 'undefined') {
-                showModal(`${_ti('error')} Error`, 'Error refreshing RetroAchievements: ' + err.message);
+                showModal(`${_ti('error')} ${t('Error')}`, t('Error refreshing RetroAchievements: ') + err.message);
             }
             btn.innerHTML = originalText;
             btn.disabled = false;

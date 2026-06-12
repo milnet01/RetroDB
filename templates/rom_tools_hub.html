@@ -103,12 +103,12 @@
 {% block content %}
 <div class="page-header">
     <div>
-        <h1 class="page-title">ROM Tools</h1>
-        <p class="page-subtitle">Utilities for managing, converting, and organizing your ROM collection</p>
+        <h1 class="page-title">{{ _('ROM Tools') }}</h1>
+        <p class="page-subtitle">{{ _('Utilities for managing, converting, and organizing your ROM collection') }}</p>
     </div>
     <div class="page-actions">
         <a href="{{ url_for('tools.rom_tools_settings') }}" class="btn btn-secondary">
-            <span class="btn-icon">⚙️</span> Settings
+            <span class="btn-icon">⚙️</span> {{ _('Settings') }}
         </a>
     </div>
 </div>
@@ -117,16 +117,16 @@
     <a href="{{ url_for('tools.archive_scanner') }}" class="tool-card">
         <div class="tool-card-header">
             <div class="tool-card-icon">📦</div>
-            <div class="tool-card-title">Archive Scanner</div>
+            <div class="tool-card-title">{{ _('Archive Scanner') }}</div>
         </div>
         <div class="tool-card-desc">
-            Scan ROM archives for corruption, unwanted files, and multi-file disc images. Clean up and create M3U playlists automatically.
+            {{ _('Scan ROM archives for corruption, unwanted files, and multi-file disc images. Clean up and create M3U playlists automatically.') }}
         </div>
         <div class="tool-card-status">
             {% if tool_status.tools.get('7z') or tool_status.tools.get('unzip') %}
-            <span class="status-dot available"></span> Tools available
+            <span class="status-dot available"></span> {{ _('Tools available') }}
             {% else %}
-            <span class="status-dot unavailable"></span> Requires 7z or unzip
+            <span class="status-dot unavailable"></span> {{ _('Requires 7z or unzip') }}
             {% endif %}
         </div>
     </a>
@@ -134,16 +134,16 @@
     <a href="{{ url_for('tools.chd_converter') }}" class="tool-card">
         <div class="tool-card-header">
             <div class="tool-card-icon">💿</div>
-            <div class="tool-card-title">CHD Converter</div>
+            <div class="tool-card-title">{{ _('CHD Converter') }}</div>
         </div>
         <div class="tool-card-desc">
-            Convert disc images (ISO, CUE/BIN, GDI) to compressed CHD format. Save significant storage space while maintaining full compatibility.
+            {{ _('Convert disc images (ISO, CUE/BIN, GDI) to compressed CHD format. Save significant storage space while maintaining full compatibility.') }}
         </div>
         <div class="tool-card-status">
             {% if tool_status.tools.get('chdman') %}
-            <span class="status-dot available"></span> chdman available
+            <span class="status-dot available"></span> {{ _('chdman available') }}
             {% else %}
-            <span class="status-dot unavailable"></span> Requires chdman (MAME tools)
+            <span class="status-dot unavailable"></span> {{ _('Requires chdman (MAME tools)') }}
             {% endif %}
         </div>
     </a>
@@ -151,16 +151,16 @@
     <a href="{{ url_for('tools.chd_verify') }}" class="tool-card">
         <div class="tool-card-header">
             <div class="tool-card-icon">✅</div>
-            <div class="tool-card-title">CHD Verify</div>
+            <div class="tool-card-title">{{ _('CHD Verify') }}</div>
         </div>
         <div class="tool-card-desc">
-            Verify the integrity of your CHD files to detect corruption. Ensure your compressed disc images are valid and playable.
+            {{ _('Verify the integrity of your CHD files to detect corruption. Ensure your compressed disc images are valid and playable.') }}
         </div>
         <div class="tool-card-status">
             {% if tool_status.tools.get('chdman') %}
-            <span class="status-dot available"></span> chdman available
+            <span class="status-dot available"></span> {{ _('chdman available') }}
             {% else %}
-            <span class="status-dot unavailable"></span> Requires chdman (MAME tools)
+            <span class="status-dot unavailable"></span> {{ _('Requires chdman (MAME tools)') }}
             {% endif %}
         </div>
     </a>
@@ -168,104 +168,104 @@
     <a href="{{ url_for('tools.duplicate_finder') }}" class="tool-card">
         <div class="tool-card-header">
             <div class="tool-card-icon">🔍</div>
-            <div class="tool-card-title">Duplicate Finder</div>
+            <div class="tool-card-title">{{ _('Duplicate Finder') }}</div>
         </div>
         <div class="tool-card-desc">
-            Find duplicate ROMs by hash, filename, or both. Identify wasted storage from region variants and redundant copies.
+            {{ _('Find duplicate ROMs by hash, filename, or both. Identify wasted storage from region variants and redundant copies.') }}
         </div>
         <div class="tool-card-status">
-            <span class="status-dot no-deps"></span> No dependencies required
+            <span class="status-dot no-deps"></span> {{ _('No dependencies required') }}
         </div>
     </a>
 
     <a href="{{ url_for('tools.multi_disc_organizer') }}" class="tool-card">
         <div class="tool-card-header">
             <div class="tool-card-icon">📀</div>
-            <div class="tool-card-title">Multi-Disc Organizer</div>
+            <div class="tool-card-title">{{ _('Multi-Disc Organizer') }}</div>
         </div>
         <div class="tool-card-desc">
-            Organize multi-disc games into proper folder structures and generate M3U playlists for seamless disc-swapping in emulators.
+            {{ _('Organize multi-disc games into proper folder structures and generate M3U playlists for seamless disc-swapping in emulators.') }}
         </div>
         <div class="tool-card-status">
-            <span class="status-dot no-deps"></span> No dependencies required
+            <span class="status-dot no-deps"></span> {{ _('No dependencies required') }}
         </div>
     </a>
 
     <a href="{{ url_for('tools.screenshot_dedup') }}" class="tool-card">
         <div class="tool-card-header">
             <div class="tool-card-icon">📸</div>
-            <div class="tool-card-title">Screenshot Dedup</div>
+            <div class="tool-card-title">{{ _('Screenshot Dedup') }}</div>
         </div>
         <div class="tool-card-desc">
-            Find and remove duplicate screenshots per game using exact file hash or visual similarity matching. Free up storage and clean up your media library.
+            {{ _('Find and remove duplicate screenshots per game using exact file hash or visual similarity matching. Free up storage and clean up your media library.') }}
         </div>
         <div class="tool-card-status">
-            <span class="status-dot no-deps"></span> No dependencies required
+            <span class="status-dot no-deps"></span> {{ _('No dependencies required') }}
         </div>
     </a>
 
     <button type="button" class="tool-card" onclick="startImageResize()">
         <div class="tool-card-header">
             <div class="tool-card-icon">🖼️</div>
-            <div class="tool-card-title">Image Resizer</div>
+            <div class="tool-card-title">{{ _('Image Resizer') }}</div>
         </div>
         <div class="tool-card-desc">
-            Standardize all images to consistent sizes using AI upscaling (Real-ESRGAN) for small images and Lanczos downscaling for large ones. Targets 1080px height for boxart/screenshots and 1280px longest edge for controllers/hardware.
+            {{ _('Standardize all images to consistent sizes using AI upscaling (Real-ESRGAN) for small images and Lanczos downscaling for large ones. Targets 1080px height for boxart/screenshots and 1280px longest edge for controllers/hardware.') }}
         </div>
         <div class="tool-card-status">
-            <span class="status-dot no-deps"></span> No dependencies required
+            <span class="status-dot no-deps"></span> {{ _('No dependencies required') }}
         </div>
     </button>
 
     <button type="button" class="tool-card" onclick="startAltTitlesBackfill()">
         <div class="tool-card-header">
             <div class="tool-card-icon">&#127760;</div>
-            <div class="tool-card-title">Backfill Alternate Titles</div>
+            <div class="tool-card-title">{{ _('Backfill Alternate Titles') }}</div>
         </div>
         <div class="tool-card-desc">
-            Scan your library for regional / alternate game titles (e.g. &ldquo;Action in New York&rdquo; = &ldquo;S.C.A.T.&rdquo; = &ldquo;Final Mission&rdquo;) without re-scraping media. Uses the same IGDB and ScreenScraper search results that would fire during a scrape, just extracting the alt names.
+            {{ _('Scan your library for regional / alternate game titles (e.g. &ldquo;Action in New York&rdquo; = &ldquo;S.C.A.T.&rdquo; = &ldquo;Final Mission&rdquo;) without re-scraping media. Uses the same IGDB and ScreenScraper search results that would fire during a scrape, just extracting the alt names.') }}
         </div>
         <div class="tool-card-status">
-            <span class="status-dot no-deps"></span> Metadata only &middot; no media downloads
+            <span class="status-dot no-deps"></span> {{ _('Metadata only &middot; no media downloads') }}
         </div>
     </button>
 
     <button type="button" class="tool-card" onclick="startHltbBulk()">
         <div class="tool-card-header">
             <div class="tool-card-icon">&#9201;</div>
-            <div class="tool-card-title">Bulk HLTB Lookup</div>
+            <div class="tool-card-title">{{ _('Bulk HLTB Lookup') }}</div>
         </div>
         <div class="tool-card-desc">
-            Fetch HowLongToBeat playtime for every game. High-confidence primary-title matches apply automatically; alt-title matches and low-confidence hits are queued for review so you can approve or reject in bulk.
+            {{ _('Fetch HowLongToBeat playtime for every game. High-confidence primary-title matches apply automatically; alt-title matches and low-confidence hits are queued for review so you can approve or reject in bulk.') }}
         </div>
         <div class="tool-card-status">
-            <span class="status-dot no-deps"></span> Uses stored alternate titles
+            <span class="status-dot no-deps"></span> {{ _('Uses stored alternate titles') }}
         </div>
     </button>
 
     <a href="{{ url_for('games_hltb.hltb_review_page') }}" class="tool-card" id="hltbReviewCard" style="display:none;">
         <div class="tool-card-header">
             <div class="tool-card-icon">&#128214;</div>
-            <div class="tool-card-title">HLTB Pending Review <span id="hltbPendingCount" class="badge badge-warning" style="margin-left: 0.5rem;">0</span></div>
+            <div class="tool-card-title">{{ _('HLTB Pending Review') }} <span id="hltbPendingCount" class="badge badge-warning" style="margin-left: 0.5rem;">0</span></div>
         </div>
         <div class="tool-card-desc">
-            Review and approve HLTB matches that were flagged during a bulk lookup &mdash; alt-title matches and anything below the confidence threshold.
+            {{ _('Review and approve HLTB matches that were flagged during a bulk lookup &mdash; alt-title matches and anything below the confidence threshold.') }}
         </div>
         <div class="tool-card-status">
-            <span class="status-dot no-deps"></span> Requires review
+            <span class="status-dot no-deps"></span> {{ _('Requires review') }}
         </div>
     </a>
 
     <a href="{{ url_for('tools.rom_tools_settings') }}" class="tool-card">
         <div class="tool-card-header">
             <div class="tool-card-icon">⚙️</div>
-            <div class="tool-card-title">Tool Settings</div>
+            <div class="tool-card-title">{{ _('Tool Settings') }}</div>
         </div>
         <div class="tool-card-desc">
-            Configure paths, external tool locations, archive types, and other preferences shared across all ROM tools.
+            {{ _('Configure paths, external tool locations, archive types, and other preferences shared across all ROM tools.') }}
         </div>
         <div class="tool-card-status">
-            <span class="status-dot no-deps"></span> Configuration
+            <span class="status-dot no-deps"></span> {{ _('Configuration') }}
         </div>
     </a>
 </div>

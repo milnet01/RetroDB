@@ -27,7 +27,11 @@ genuinely diverges.
 5. Run tests if any `services/*.py` or `scraper/*.py` changed: `python3 -m pytest`
 6. Regenerate lockfile if `requirements.txt` was edited: `pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes` (Pass 39.4 — `install.py` prefers `--require-hashes` when `requirements.lock` is present and falls back to `requirements.txt` otherwise; keep the lockfile current so the secure path stays the default)
 7. Update this file if change adds/removes/renames routes, templates, bundled JS, CSS files, or alters page/asset wiring contracts
-8. Wrap any new user-facing string in `_()` (templates `{{ _('...') }}`, Python `flash(_('...'))`) and regenerate catalogs — see `docs/specs/i18n.md` §2/§4. JS strings are out of scope until Pass 43.3.
+8. Wrap any new user-facing string for i18n and regenerate catalogs — see `docs/specs/i18n.md` §2/§4/§6/§7:
+   - Templates `{{ _('...') }}` / `{% trans %}`; Python `flash(_('...'))` / `error(_('...'))`.
+   - **JS** (toasts, modal copy): `t('...')` — string literals only (see §6); `python3 build_js.py` regenerates `services/js_i18n_strings.py` (runtime manifest + `_()` bridge anchors that carry JS msgids into the catalog via the Python extractor — there is no `[javascript:]` babel mapping).
+   - **Canonical multi-value labels** (genre/perspective/dimension/modes/game_structure): never wrap the value; it's translated for display via `display_field_value()` (server) / `tField()` (JS) — see §7. Add new canonical values to `services/i18n_labels.py` or `tests/test_i18n_labels.py` fails.
+   - Regenerate: `python3 build_js.py && pybabel extract -F babel.cfg --ignore-dirs='.* __pycache__ node_modules venv .venv env build dist staging tests' -o messages.pot . && pybabel update -i messages.pot -d translations && python3 scripts/gen_pseudolocale.py && pybabel compile -d translations`. CI gate: `python3 scripts/check_i18n_fresh.py`. (The `--ignore-dirs` flag is mandatory — Babel otherwise skips the `_`-prefixed template partials; keep it identical to `check_i18n_fresh.py`.)
 
 ### Verification Before Declaring Done
 Tests written alongside the implementation are regression pins, not correctness

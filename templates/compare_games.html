@@ -6,8 +6,8 @@
 <!-- Page Header -->
 <div class="page-header">
     <div>
-        <h1 class="page-title">Compare Games</h1>
-        <p class="page-subtitle">Side-by-side metadata comparison</p>
+        <h1 class="page-title">{{ _('Compare Games') }}</h1>
+        <p class="page-subtitle">{{ _('Side-by-side metadata comparison') }}</p>
     </div>
 </div>
 
@@ -19,28 +19,28 @@
             <img src="{{ '/static/images/boxart/' + games[0].boxart if games[0].boxart else '/static/images/placeholder.png' }}"
                  alt="" class="slot-thumb">
             <span class="slot-title">{{ games[0].title }}</span>
-            <button type="button" class="slot-remove" onclick="removeSlot(0)" title="Remove">&times;</button>
+            <button type="button" class="slot-remove" onclick="removeSlot(0)" title="{{ _('Remove') }}">&times;</button>
         </div>
         {% else %}
         <button type="button" class="slot-empty" onclick="openSearchModal(0)">
             <span class="slot-empty-icon">+</span>
-            <span class="slot-empty-text">Select Game 1</span>
+            <span class="slot-empty-text">{{ _('Select Game 1') }}</span>
         </button>
         {% endif %}
     </div>
-    <div class="compare-vs">VS</div>
+    <div class="compare-vs">{{ _('VS') }}</div>
     <div class="compare-slot" id="slot1">
         {% if games|length > 1 %}
         <div class="slot-filled" data-game-id="{{ games[1].id }}">
             <img src="{{ '/static/images/boxart/' + games[1].boxart if games[1].boxart else '/static/images/placeholder.png' }}"
                  alt="" class="slot-thumb">
             <span class="slot-title">{{ games[1].title }}</span>
-            <button type="button" class="slot-remove" onclick="removeSlot(1)" title="Remove">&times;</button>
+            <button type="button" class="slot-remove" onclick="removeSlot(1)" title="{{ _('Remove') }}">&times;</button>
         </div>
         {% else %}
         <button type="button" class="slot-empty" onclick="openSearchModal(1)">
             <span class="slot-empty-icon">+</span>
-            <span class="slot-empty-text">Select Game 2</span>
+            <span class="slot-empty-text">{{ _('Select Game 2') }}</span>
         </button>
         {% endif %}
     </div>
@@ -52,46 +52,46 @@
     <table class="compare-table">
         <thead>
             <tr>
-                <th class="compare-label-col">Field</th>
+                <th class="compare-label-col">{{ _('Field') }}</th>
                 <th class="compare-game-col">
                     <a href="/game/{{ games[0].id }}">{{ games[0].title }}</a>
                 </th>
                 <th class="compare-game-col">
                     <a href="/game/{{ games[1].id }}">{{ games[1].title }}</a>
                 </th>
-                <th class="compare-match-col">Match</th>
+                <th class="compare-match-col">{{ _('Match') }}</th>
             </tr>
         </thead>
         <tbody>
             {% set fields = [
-                ('System', 'system_name'),
-                ('Developer', 'developer'),
-                ('Publisher', 'publisher'),
-                ('Release Date', 'release_date'),
-                ('Genre', 'genre'),
-                ('Franchise', 'franchise'),
-                ('Region', 'region'),
-                ('Players', 'players'),
-                ('Modes', 'modes'),
-                ('Perspective', 'perspective'),
-                ('Dimension', 'dimension'),
-                ('ESRB Rating', 'esrb_rating'),
-                ('PEGI Rating', 'pegi_rating'),
-                ('CERO Rating', 'cero_rating'),
-                ('USK Rating', 'usk_rating'),
-                ('ACB Rating', 'acb_rating'),
-                ('FPB Rating', 'fpb_rating'),
-                ('GRAC Rating', 'grac_rating'),
-                ('ClassInd Rating', 'classind_rating'),
-                ('Rating', 'rating'),
-                ('Playtime Estimate', 'playtime_estimate'),
-                ('Controller Support', 'controller_support'),
-                ('Save Type', 'save_type'),
-                ('File Size', 'file_size'),
-                ('ROM Path', 'rom_path'),
-                ('Scraped', 'scraped'),
-                ('Similar Games', 'similar_games'),
-                ('Description', 'description'),
+                (_('System'), 'system_name'),
+                (_('Developer'), 'developer'),
+                (_('Publisher'), 'publisher'),
+                (_('Release Date'), 'release_date'),
+                (_('Genre'), 'genre'),
+                (_('Franchise'), 'franchise'),
+                (_('Region'), 'region'),
+                (_('Players'), 'players'),
+                (_('Modes'), 'modes'),
+                (_('Perspective'), 'perspective'),
+                (_('Dimension'), 'dimension'),
+                (_('ESRB Rating'), 'esrb_rating'),
+                (_('PEGI Rating'), 'pegi_rating'),
+                (_('CERO Rating'), 'cero_rating'),
+                (_('USK Rating'), 'usk_rating'),
+                (_('ACB Rating'), 'acb_rating'),
+                (_('FPB Rating'), 'fpb_rating'),
+                (_('GRAC Rating'), 'grac_rating'),
+                (_('ClassInd Rating'), 'classind_rating'),
+                (_('Rating'), 'rating'),
+                (_('Playtime Estimate'), 'playtime_estimate'),
+                (_('Controller Support'), 'controller_support'),
+                (_('Save Type'), 'save_type'),
+                (_('File Size'), 'file_size'),
+                (_('ROM Path'), 'rom_path'),
+                (_('Scraped'), 'scraped'),
+                (_('Similar Games'), 'similar_games'),
+                (_('Description'), 'description'),
             ] %}
 
             {% for label, field in fields %}

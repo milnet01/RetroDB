@@ -3115,7 +3115,10 @@ are tracked here so the next pass picks them up:
   `modes`, `game_structure`.  Filter pages render translated labels
   but submit canonical English values to the API; the controller
   layer never sees translated tokens.
-- **Status**: todo
+- **Status**: done (v3.8.0) — `services/i18n_labels.py` (81 canonical labels +
+  `display_field_value()`); wired through `game_detail.html` (server) and
+  `tField()` / `window.FIELD_LABELS` (JS card genre, filter modals, edit-modal
+  chips). Filter values stay canonical. Drift guard in `tests/test_i18n_labels.py`.
 
 #### Pass 43.3 JS-side i18n bundle (MEDIUM, M)
 
@@ -3130,7 +3133,11 @@ are tracked here so the next pass picks them up:
   `t('toast.scrape_started')` helper.  Build step: a Python script
   that walks JS for `t('...')` keys and ensures every key exists in
   the locale map; CI fails the build on missing keys.
-- **Status**: todo
+- **Status**: done (v3.8.0) — `t()`/`tField()` in `utils.js`; `window.I18N`
+  emitted in `base.html` from the `js_i18n_map()` global. `build_js.py` regex-
+  scans JS and writes `services/js_i18n_strings.py` (runtime keys + `_()` bridge
+  anchors — no `[javascript:]` mapping, since Babel's JS extractor mis-parses the
+  codebase). CI gate `scripts/check_i18n_fresh.py`. ~340 JS strings wrapped.
 
 #### Pass 43.4 RTL layout support (LOW, L)
 
@@ -3171,7 +3178,15 @@ are tracked here so the next pass picks them up:
      `messages.pot` — i.e. a new unwrapped-then-wrapped string wasn't re-extracted).
 - **Source**: carved out of the original Pass 43.1 full-scope plan when 43.1 was
   re-scoped to machinery+pilot (design spec, 2026-06-10).
-- **Status**: todo — unblocked now that the 43.1 foundation has landed.
+- **Status**: done (v3.8.0) — ~60 templates + 11 route flash sites wrapped
+  (`_()` / `{% trans %}`, incl. title/aria-label/placeholder); 6 machine-
+  translated catalogs (`de fr es it ja pt_BR`, ~1600 msgids each, 100% filled) +
+  pseudolocale. CI extraction-freshness gate added (`scripts/check_i18n_fresh.py`,
+  with the mandatory `--ignore-dirs` flag — Babel skips `_`-prefixed partials by
+  default). `<html lang>` now tracks the active locale. **Follow-ons noted**:
+  exhaustive `error()`-caller wrapping (hundreds of API JSON errors) and the
+  ~1800-line `help.html` manual body were left for a focused pass; a few labels
+  (wishlist Priority, etc.) the agents missed are findable via the Pseudo locale.
 
 ---
 

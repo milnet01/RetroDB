@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_locale_tag() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,11 +30,11 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
 </head>
 <body data-mist-enabled="{{ user_settings.get('enable_mist_effect', true)|lower }}">
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <a href="#main-content" class="skip-link">{{ _('Skip to main content') }}</a>
     <div class="app-container">
         <!-- Sidebar Navigation -->
         {% if not setup_mode %}
-        <nav class="sidebar" aria-label="Main navigation">
+        <nav class="sidebar" aria-label="{{ _('Main navigation') }}">
             <div class="sidebar-header">
                 <a href="{{ url_for('dashboard') }}" class="logo">
                     <div class="logo-icon">🎮</div>
@@ -58,18 +58,18 @@
                                 {% if collector_rank %}
                                 <a href="{{ url_for('collector_trophies.collector_trophies_page') }}"
                                    class="user-indicator-rank rank-tier-{{ collector_rank.tier_index }}"
-                                   title="{{ collector_rank.points }} trophy points · {{ collector_rank.earned_count }}/{{ collector_rank.total_count }} trophies{% if collector_rank.next_name %} · Next: {{ collector_rank.next_name }} @ {{ collector_rank.next_threshold }} pts{% else %} · Max rank reached!{% endif %}">
+                                   title="{% trans points=collector_rank.points, earned=collector_rank.earned_count, total=collector_rank.total_count %}{{ points }} trophy points · {{ earned }}/{{ total }} trophies{% endtrans %}{% if collector_rank.next_name %} · {% trans next_name=collector_rank.next_name, next_threshold=collector_rank.next_threshold %}Next: {{ next_name }} @ {{ next_threshold }} pts{% endtrans %}{% else %} · {{ _('Max rank reached!') }}{% endif %}">
                                     🏆 {{ collector_rank.name }}
                                 </a>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
-                    <a href="{{ url_for('auth.logout') }}" class="user-logout-btn" title="Logout" aria-label="Logout">🚪</a>
+                    <a href="{{ url_for('auth.logout') }}" class="user-logout-btn" title="{{ _('Logout') }}" aria-label="{{ _('Logout') }}">🚪</a>
                 </div>
                 {% else %}
                 <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-sm" style="width: 100%; margin-top: var(--spacing-md);">
-                    <span>🔐</span> Login
+                    <span>🔐</span> {{ _('Login') }}
                 </a>
                 {% endif %}
             </div>
@@ -85,119 +85,119 @@
             <nav class="sidebar-nav">
                 {% if current_user %}
                 <div class="nav-section">
-                    <div class="nav-section-title">Main</div>
+                    <div class="nav-section-title">{{ _('Main') }}</div>
                     <a href="{{ url_for('dashboard') }}" {{ nav_active(request.endpoint == 'dashboard') }}>
                         <span class="nav-icon">📊</span>
-                        <span class="nav-text">Dashboard</span>
+                        <span class="nav-text">{{ _('Dashboard') }}</span>
                     </a>
                     <a href="{{ url_for('systems.systems') }}" {{ nav_active(request.endpoint in ['systems.systems', 'systems.system_games', 'games.game_detail'] and request.args.get('from') != 'library' and request.args.get('from') != 'achievements' and request.args.get('from') != 'rom_reports') }}>
                         <span class="nav-icon">🖥️</span>
-                        <span class="nav-text">Systems</span>
+                        <span class="nav-text">{{ _('Systems') }}</span>
                     </a>
                     <a href="{{ url_for('games.all_games') }}" {{ nav_active(request.endpoint == 'games.all_games' or (request.endpoint == 'games.game_detail' and request.args.get('from') == 'library')) }}>
                         <span class="nav-icon">📚</span>
-                        <span class="nav-text">Library</span>
+                        <span class="nav-text">{{ _('Library') }}</span>
                     </a>
                     <a href="{{ url_for('analytics') }}" {{ nav_active(request.endpoint == 'analytics') }}>
                         <span class="nav-icon">📈</span>
-                        <span class="nav-text">Analytics</span>
+                        <span class="nav-text">{{ _('Analytics') }}</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">Trophies & Achievements</div>
+                    <div class="nav-section-title">{{ _('Trophies & Achievements') }}</div>
                     <a href="{{ url_for('trophies.trophies') }}" {{ nav_active(request.endpoint == 'trophies.trophies' or request.endpoint == 'trophies.trophy_game') }}>
                         <span class="nav-icon">🏆</span>
-                        <span class="nav-text">RPCS3 Trophies</span>
+                        <span class="nav-text">{{ _('RPCS3 Trophies') }}</span>
                     </a>
                     <a href="{{ url_for('trophies.psn_trophies') }}" {{ nav_active(request.endpoint in ['trophies.psn_trophies', 'trophies.psn_trophy_detail']) }}>
                         <span class="nav-icon">🎮</span>
-                        <span class="nav-text">PSN Trophies</span>
+                        <span class="nav-text">{{ _('PSN Trophies') }}</span>
                     </a>
                     <a href="{{ url_for('achievements.achievements') }}" {{ nav_active(request.endpoint in ['achievements.achievements', 'achievements.achievements_system', 'achievements.achievement_game']) }}>
                         <span class="nav-icon">🎖️</span>
-                        <span class="nav-text">Achievements</span>
+                        <span class="nav-text">{{ _('Achievements') }}</span>
                     </a>
                     <a href="{{ url_for('steam_achievements.steam_achievements_landing') }}" {{ nav_active(request.endpoint and request.endpoint.startswith('steam_achievements.')) }}>
                         <span class="nav-icon">🟦</span>
-                        <span class="nav-text">Steam Achievements</span>
+                        <span class="nav-text">{{ _('Steam Achievements') }}</span>
                     </a>
                     <a href="{{ url_for('xbox_achievements.xbox_achievements_landing') }}" {{ nav_active(request.endpoint and request.endpoint.startswith('xbox_achievements.')) }}>
                         <span class="nav-icon">🟢</span>
-                        <span class="nav-text">Xbox Achievements</span>
+                        <span class="nav-text">{{ _('Xbox Achievements') }}</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">My Collection</div>
+                    <div class="nav-section-title">{{ _('My Collection') }}</div>
                     <a href="{{ url_for('collections.tags_page') }}" {{ nav_active(request.endpoint == 'collections.tags_page') }}>
                         <span class="nav-icon">🏷️</span>
-                        <span class="nav-text">Tags</span>
+                        <span class="nav-text">{{ _('Tags') }}</span>
                     </a>
                     <a href="{{ url_for('collections.lists_page') }}" {{ nav_active(request.endpoint in ['collections.lists_page', 'collections.list_detail_page']) }}>
                         <span class="nav-icon">📋</span>
-                        <span class="nav-text">Lists</span>
+                        <span class="nav-text">{{ _('Lists') }}</span>
                     </a>
                     <a href="{{ url_for('collections.wishlist_page') }}" {{ nav_active(request.endpoint == 'collections.wishlist_page') }}>
                         <span class="nav-icon">⭐</span>
-                        <span class="nav-text">Wishlist</span>
+                        <span class="nav-text">{{ _('Wishlist') }}</span>
                     </a>
                     <a href="{{ url_for('collector_trophies.collector_trophies_page') }}" {{ nav_active(request.endpoint == 'collector_trophies.collector_trophies_page') }}>
                         <span class="nav-icon">🏅</span>
-                        <span class="nav-text">Collector Trophies</span>
+                        <span class="nav-text">{{ _('Collector Trophies') }}</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">Tools</div>
+                    <div class="nav-section-title">{{ _('Tools') }}</div>
                     <a href="{{ url_for('reports.reports') }}" {{ nav_active(request.endpoint == 'reports.reports' or (request.endpoint == 'games.game_detail' and request.args.get('from') == 'rom_reports')) }}>
                         <span class="nav-icon">📊</span>
-                        <span class="nav-text">ROM Reports</span>
+                        <span class="nav-text">{{ _('ROM Reports') }}</span>
                     </a>
                     <a href="{{ url_for('game_imports.game_imports_page') }}" {{ nav_active(request.endpoint == 'game_imports.game_imports_page') }}>
                         <span class="nav-icon">📥</span>
-                        <span class="nav-text">Game Imports</span>
+                        <span class="nav-text">{{ _('Game Imports') }}</span>
                     </a>
                     <a href="{{ url_for('tools.rom_tools_hub') }}" {{ nav_active(request.endpoint in ['tools.rom_tools_hub', 'tools.archive_scanner', 'tools.chd_converter', 'tools.chd_verify', 'tools.multi_disc_organizer', 'tools.duplicate_finder', 'tools.screenshot_dedup', 'tools.rom_tools_settings']) }}>
                         <span class="nav-icon">🛠️</span>
-                        <span class="nav-text">ROM Tools</span>
+                        <span class="nav-text">{{ _('ROM Tools') }}</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">Configuration</div>
+                    <div class="nav-section-title">{{ _('Configuration') }}</div>
                     <a href="{{ url_for('settings.settings') }}" {{ nav_active(request.endpoint == 'settings.settings') }}>
                         <span class="nav-icon">⚙️</span>
-                        <span class="nav-text">Settings</span>
+                        <span class="nav-text">{{ _('Settings') }}</span>
                     </a>
                     {% if has_permission('system_functions') %}
                     <a href="{{ url_for('logs.log_viewer') }}" {{ nav_active(request.endpoint == 'logs.log_viewer') }}>
                         <span class="nav-icon">📋</span>
-                        <span class="nav-text">Log Viewer</span>
+                        <span class="nav-text">{{ _('Log Viewer') }}</span>
                     </a>
                     {% endif %}
                 </div>
                 {% endif %}
 
                 <div class="nav-section">
-                    <div class="nav-section-title">Info</div>
+                    <div class="nav-section-title">{{ _('Info') }}</div>
                     <a href="{{ url_for('museum.museum') }}" {{ nav_active(request.endpoint and request.endpoint.startswith('museum.')) }}>
                         <span class="nav-icon">🏛️</span>
-                        <span class="nav-text">Museum</span>
+                        <span class="nav-text">{{ _('Museum') }}</span>
                     </a>
                     <a href="{{ url_for('help_page') }}" {{ nav_active(request.endpoint == 'help_page') }}>
                         <span class="nav-icon">❓</span>
-                        <span class="nav-text">Help</span>
+                        <span class="nav-text">{{ _('Help') }}</span>
                     </a>
                     <a href="{{ url_for('changelog') }}" {{ nav_active(request.endpoint == 'changelog') }}>
                         <span class="nav-icon">📝</span>
-                        <span class="nav-text">Changelog</span>
+                        <span class="nav-text">{{ _('Changelog') }}</span>
                     </a>
                 </div>
             </nav>
             
             <div class="sidebar-footer">
-                <button type="button" class="version-info" onclick="showAboutModal()" title="Click for more info">
+                <button type="button" class="version-info" onclick="showAboutModal()" title="{{ _('Click for more info') }}">
                     <span class="version-icon">ℹ️</span> RetroDB v{{ config.APP_VERSION }}
                 </button>
             </div>
@@ -206,8 +206,8 @@
             <div class="about-modal-overlay" id="aboutModalOverlay" onclick="if(event.target===this)hideAboutModal()">
                 <div class="about-modal glass-panel" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
                     <div class="about-modal-header">
-                        <h2 id="aboutModalTitle">🎮 About RetroDB</h2>
-                        <button type="button" class="about-modal-close" onclick="hideAboutModal()" aria-label="Close">×</button>
+                        <h2 id="aboutModalTitle">🎮 {{ _('About') }} RetroDB</h2>
+                        <button type="button" class="about-modal-close" onclick="hideAboutModal()" aria-label="{{ _('Close') }}">×</button>
                     </div>
                     <div class="about-modal-body">
                         <div class="about-logo">
@@ -216,27 +216,27 @@
                         </div>
                         <div class="about-details">
                             <div class="about-item">
-                                <span class="about-label">Version</span>
+                                <span class="about-label">{{ _('Version') }}</span>
                                 <span class="about-value">{{ config.APP_VERSION }}</span>
                             </div>
                             <div class="about-item">
-                                <span class="about-label">Last Updated</span>
+                                <span class="about-label">{{ _('Last Updated') }}</span>
                                 <span class="about-value">{{ config.APP_LAST_UPDATE }}</span>
                             </div>
                             <div class="about-item about-description">
-                                <span class="about-label">Description</span>
+                                <span class="about-label">{{ _('Description') }}</span>
                                 <span class="about-value">{{ config.APP_DESCRIPTION }}</span>
                             </div>
                         </div>
                         <div class="about-links">
                             <a href="{{ url_for('changelog') }}" class="btn btn-secondary btn-sm">
-                                <span>📜</span> Changelog
+                                <span>📜</span> {{ _('Changelog') }}
                             </a>
                             <a href="{{ url_for('help_page') }}" class="btn btn-secondary btn-sm">
-                                <span>❓</span> Help
+                                <span>❓</span> {{ _('Help') }}
                             </a>
                             <a href="https://github.com/sponsors/milnet01" class="btn btn-secondary btn-sm" target="_blank" rel="noopener noreferrer">
-                                <span>💝</span> Sponsor
+                                <span>💝</span> {{ _('Sponsor') }}
                             </a>
                         </div>
                     </div>
@@ -251,7 +251,7 @@
             <div class="content-wrapper">
                 <!-- Mobile Menu Toggle -->
                 {% if not setup_mode %}
-                <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                <button class="mobile-menu-toggle" aria-label="{{ _('Toggle menu') }}">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -283,7 +283,7 @@
     </div>
 
     <!-- Global Back to Top Button -->
-    <button type="button" id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()" title="Back to top" aria-label="Back to top">
+    <button type="button" id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()" title="{{ _('Back to top') }}" aria-label="{{ _('Back to top') }}">
         <span class="back-to-top-icon" aria-hidden="true">↑</span>
     </button>
 
@@ -291,15 +291,15 @@
     <div id="customModal" class="custom-modal" onclick="if(event.target === this) closeModal()">
         <div class="custom-modal-content" role="dialog" aria-modal="true" aria-labelledby="customModalTitle">
             <div class="custom-modal-header">
-                <h3 id="customModalTitle">Alert</h3>
-                <button type="button" class="custom-modal-close" onclick="closeModal()" aria-label="Close">×</button>
+                <h3 id="customModalTitle">{{ _('Alert') }}</h3>
+                <button type="button" class="custom-modal-close" onclick="closeModal()" aria-label="{{ _('Close') }}">×</button>
             </div>
             <div class="custom-modal-body">
                 <p id="customModalMessage"></p>
             </div>
             <div class="custom-modal-footer">
-                <button type="button" id="customModalCancel" class="btn btn-secondary" onclick="closeModal()" style="display: none;">Cancel</button>
-                <button type="button" id="customModalConfirm" class="btn btn-primary" onclick="confirmModal()">OK</button>
+                <button type="button" id="customModalCancel" class="btn btn-secondary" onclick="closeModal()" style="display: none;">{{ _('Cancel') }}</button>
+                <button type="button" id="customModalConfirm" class="btn btn-primary" onclick="confirmModal()">{{ _('OK') }}</button>
             </div>
         </div>
     </div>
@@ -308,16 +308,16 @@
     <div id="folderBrowserModal" class="custom-modal" onclick="if(event.target === this) closeFolderBrowser()">
         <div class="custom-modal-content" style="max-width: 600px; max-height: 80vh;" role="dialog" aria-modal="true" aria-labelledby="folderBrowserTitle">
             <div class="custom-modal-header">
-                <h3 id="folderBrowserTitle">📁 Browse Folders</h3>
-                <button type="button" class="custom-modal-close" onclick="closeFolderBrowser()" aria-label="Close">×</button>
+                <h3 id="folderBrowserTitle">📁 {{ _('Browse Folders') }}</h3>
+                <button type="button" class="custom-modal-close" onclick="closeFolderBrowser()" aria-label="{{ _('Close') }}">×</button>
             </div>
             <div class="custom-modal-body" style="padding: 0;">
                 <div id="folderBrowserPath" style="padding: 0.75rem 1rem; background: var(--bg-darker); border-bottom: 1px solid var(--border-color); font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary); word-break: break-all;"></div>
                 <div id="folderBrowserList" style="max-height: 400px; overflow-y: auto; padding: 0.5rem;"></div>
             </div>
             <div class="custom-modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeFolderBrowser()">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="selectFolderPath()">Select This Folder</button>
+                <button type="button" class="btn btn-secondary" onclick="closeFolderBrowser()">{{ _('Cancel') }}</button>
+                <button type="button" class="btn btn-primary" onclick="selectFolderPath()">{{ _('Select This Folder') }}</button>
             </div>
         </div>
     </div>
@@ -370,6 +370,13 @@
         window.RATING_TO_TIER = window.RATING_TO_TIER || {{ rating_to_tier_js | tojson }};
         window.TIER_TO_RATING = window.TIER_TO_RATING || {{ tier_to_rating_js | tojson }};
         window.IS_ADMIN = {{ 'true' if current_user and current_user.role == 'admin' else 'false' }};
+    </script>
+
+    <!-- i18n maps (Pass 43.3/43.2) — synchronous, before the deferred bundles, so
+         t()/tField() have their data ready. Locale-aware Jinja globals, once per page. -->
+    <script nonce="{{ csp_nonce }}">
+        window.I18N = {{ js_i18n_map() | tojson }};
+        window.FIELD_LABELS = {{ field_labels_map() | tojson }};
     </script>
 
     <!-- Core JavaScript Bundle (utils + page-lifecycle + toast-controller + main) - loaded on every page -->
@@ -649,14 +656,14 @@
     <div class="modal-overlay" id="queueManagerModal">
         <div class="modal-content" style="max-width: 600px;" role="dialog" aria-modal="true" aria-labelledby="queueManagerTitle">
             <div class="modal-header">
-                <h2 id="queueManagerTitle">📋 Queue Manager</h2>
-                <button type="button" class="modal-close" onclick="closeQueueManager()" aria-label="Close queue manager">×</button>
+                <h2 id="queueManagerTitle">📋 {{ _('Queue Manager') }}</h2>
+                <button type="button" class="modal-close" onclick="closeQueueManager()" aria-label="{{ _('Close queue manager') }}">×</button>
             </div>
             <div class="modal-body" id="queueManagerBody">
                 <!-- Content populated by JavaScript -->
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeQueueManager()">Close</button>
+                <button type="button" class="btn btn-secondary" onclick="closeQueueManager()">{{ _('Close') }}</button>
             </div>
         </div>
     </div>
@@ -866,13 +873,13 @@
 
     <!-- Game Detail Modal -->
     <div id="gameDetailModal" class="game-detail-modal" onclick="if(event.target===this)closeGameDetailModal()">
-        <div class="game-detail-modal-content" role="dialog" aria-modal="true" aria-label="Game details">
-            <button type="button" class="game-detail-modal-close" onclick="closeGameDetailModal()" aria-label="Close game details">&times;</button>
+        <div class="game-detail-modal-content" role="dialog" aria-modal="true" aria-label="{{ _('Game details') }}">
+            <button type="button" class="game-detail-modal-close" onclick="closeGameDetailModal()" aria-label="{{ _('Close game details') }}">&times;</button>
 
             <!-- Loading State -->
             <div id="gameDetailLoading" class="game-detail-loading">
                 <div class="loading-spinner"></div>
-                <p>Loading game details...</p>
+                <p>{{ _('Loading game details...') }}</p>
             </div>
 
             <!-- Content (hidden while loading) -->
@@ -899,10 +906,10 @@
 
                 <!-- Details Grid -->
                 <div class="gdm-details-grid">
-                    <div class="gdm-detail"><span class="label">Developer</span><span id="gdmDeveloper"></span></div>
-                    <div class="gdm-detail"><span class="label">Publisher</span><span id="gdmPublisher"></span></div>
-                    <div class="gdm-detail"><span class="label">Genre</span><span id="gdmGenre"></span></div>
-                    <div class="gdm-detail"><span class="label">Franchise</span><span id="gdmFranchise"></span></div>
+                    <div class="gdm-detail"><span class="label">{{ _('Developer') }}</span><span id="gdmDeveloper"></span></div>
+                    <div class="gdm-detail"><span class="label">{{ _('Publisher') }}</span><span id="gdmPublisher"></span></div>
+                    <div class="gdm-detail"><span class="label">{{ _('Genre') }}</span><span id="gdmGenre"></span></div>
+                    <div class="gdm-detail"><span class="label">{{ _('Franchise') }}</span><span id="gdmFranchise"></span></div>
                 </div>
 
                 <!-- Achievements Badge (if applicable) -->
@@ -914,84 +921,84 @@
                 <!-- Video (if available) -->
                 <div id="gdmVideo" class="gdm-video" style="display:none;">
                     <video id="gdmVideoPlayer" controls preload="metadata">
-                        Your browser does not support the video tag.
+                        {{ _('Your browser does not support the video tag.') }}
                     </video>
                 </div>
 
                 <!-- Actions -->
                 <div class="gdm-actions">
                     <a id="gdmViewFull" href="#" class="btn btn-primary">
-                        <span class="btn-icon">📄</span> View Full Page
+                        <span class="btn-icon">📄</span> {{ _('View Full Page') }}
                     </a>
-                    <button type="button" id="gdmAiFill" class="btn btn-secondary" onclick="triggerAiFill()" title="Fill missing metadata with AI" style="display:none;">
-                        <span class="btn-icon">🤖</span> AI Fill
+                    <button type="button" id="gdmAiFill" class="btn btn-secondary" onclick="triggerAiFill()" title="{{ _('Fill missing metadata with AI') }}" style="display:none;">
+                        <span class="btn-icon">🤖</span> {{ _('AI Fill') }}
                     </button>
                     <button type="button" id="gdmEdit" class="btn btn-warning" onclick="openGameEditModal()">
-                        <span class="btn-icon">✏️</span> Edit
+                        <span class="btn-icon">✏️</span> {{ _('Edit') }}
                     </button>
-                    <button type="button" class="btn btn-secondary" onclick="closeGameDetailModal()">Close</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeGameDetailModal()">{{ _('Close') }}</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- GDM Screenshot Lightbox -->
-    <div id="gdmScreenshotLightbox" class="gdm-lightbox" onclick="if(event.target===this)GameDetailModal.closeLightbox()" role="dialog" aria-modal="true" aria-label="Screenshot viewer">
-        <span class="gdm-lightbox-close" onclick="GameDetailModal.closeLightbox()" aria-label="Close screenshot viewer">&times;</span>
-        <button type="button" class="gdm-lightbox-nav prev" onclick="event.stopPropagation();GameDetailModal.navigateScreenshot(-1)" aria-label="Previous screenshot">&#8249;</button>
-        <img id="gdmLightboxImage" class="gdm-lightbox-image" alt="Screenshot">
-        <button type="button" class="gdm-lightbox-nav next" onclick="event.stopPropagation();GameDetailModal.navigateScreenshot(1)" aria-label="Next screenshot">&#8250;</button>
-        <div class="gdm-lightbox-hint">Use &#8592; &#8594; arrow keys to navigate &bull; ESC to close</div>
+    <div id="gdmScreenshotLightbox" class="gdm-lightbox" onclick="if(event.target===this)GameDetailModal.closeLightbox()" role="dialog" aria-modal="true" aria-label="{{ _('Screenshot viewer') }}">
+        <span class="gdm-lightbox-close" onclick="GameDetailModal.closeLightbox()" aria-label="{{ _('Close screenshot viewer') }}">&times;</span>
+        <button type="button" class="gdm-lightbox-nav prev" onclick="event.stopPropagation();GameDetailModal.navigateScreenshot(-1)" aria-label="{{ _('Previous screenshot') }}">&#8249;</button>
+        <img id="gdmLightboxImage" class="gdm-lightbox-image" alt="{{ _('Screenshot') }}">
+        <button type="button" class="gdm-lightbox-nav next" onclick="event.stopPropagation();GameDetailModal.navigateScreenshot(1)" aria-label="{{ _('Next screenshot') }}">&#8250;</button>
+        <div class="gdm-lightbox-hint">{{ _('Use &#8592; &#8594; arrow keys to navigate &bull; ESC to close') }}</div>
         <div id="gdmLightboxCounter" class="gdm-lightbox-counter"></div>
     </div>
 
     <!-- Game Edit Modal -->
     <div id="gameEditModal" class="game-edit-modal" onclick="if(event.target===this)closeGameEditModal()">
         <div class="game-edit-modal-content" role="dialog" aria-modal="true" aria-labelledby="gemTitle">
-            <button type="button" class="game-edit-modal-close" onclick="closeGameEditModal()" aria-label="Close edit modal">&times;</button>
+            <button type="button" class="game-edit-modal-close" onclick="closeGameEditModal()" aria-label="{{ _('Close edit modal') }}">&times;</button>
 
             <div class="gem-header">
-                <h2 id="gemTitle" class="gem-title">Edit Game</h2>
-                <div class="gem-tabs" role="tablist" aria-label="Edit game sections">
-                    <button type="button" class="gem-tab active" data-tab="quick" onclick="switchEditTab('quick')" role="tab" aria-selected="true" aria-controls="gemTabQuick">⚡ Quick</button>
-                    <button type="button" class="gem-tab" data-tab="identity" onclick="switchEditTab('identity')" role="tab" aria-selected="false" aria-controls="gemTabIdentity">📝 Identity</button>
-                    <button type="button" class="gem-tab" data-tab="release" onclick="switchEditTab('release')" role="tab" aria-selected="false" aria-controls="gemTabRelease">📅 Release</button>
-                    <button type="button" class="gem-tab" data-tab="gameplay" onclick="switchEditTab('gameplay')" role="tab" aria-selected="false" aria-controls="gemTabGameplay">🎮 Gameplay</button>
-                    <button type="button" class="gem-tab" data-tab="technical" onclick="switchEditTab('technical')" role="tab" aria-selected="false" aria-controls="gemTabTechnical">⚙️ Technical</button>
-                    <button type="button" class="gem-tab" data-tab="description" onclick="switchEditTab('description')" role="tab" aria-selected="false" aria-controls="gemTabDescription">📖 Info</button>
+                <h2 id="gemTitle" class="gem-title">{{ _('Edit Game') }}</h2>
+                <div class="gem-tabs" role="tablist" aria-label="{{ _('Edit game sections') }}">
+                    <button type="button" class="gem-tab active" data-tab="quick" onclick="switchEditTab('quick')" role="tab" aria-selected="true" aria-controls="gemTabQuick">⚡ {{ _('Quick') }}</button>
+                    <button type="button" class="gem-tab" data-tab="identity" onclick="switchEditTab('identity')" role="tab" aria-selected="false" aria-controls="gemTabIdentity">📝 {{ _('Identity') }}</button>
+                    <button type="button" class="gem-tab" data-tab="release" onclick="switchEditTab('release')" role="tab" aria-selected="false" aria-controls="gemTabRelease">📅 {{ _('Release') }}</button>
+                    <button type="button" class="gem-tab" data-tab="gameplay" onclick="switchEditTab('gameplay')" role="tab" aria-selected="false" aria-controls="gemTabGameplay">🎮 {{ _('Gameplay') }}</button>
+                    <button type="button" class="gem-tab" data-tab="technical" onclick="switchEditTab('technical')" role="tab" aria-selected="false" aria-controls="gemTabTechnical">⚙️ {{ _('Technical') }}</button>
+                    <button type="button" class="gem-tab" data-tab="description" onclick="switchEditTab('description')" role="tab" aria-selected="false" aria-controls="gemTabDescription">📖 {{ _('Info') }}</button>
                 </div>
             </div>
 
             <div class="gem-body">
                 <!-- TAB: Quick (Completion + HLTB) -->
-                <div class="gem-tab-content active" id="gemTabQuick" role="tabpanel" aria-label="Quick edit">
+                <div class="gem-tab-content active" id="gemTabQuick" role="tabpanel" aria-label="{{ _('Quick edit') }}">
                     <div class="gem-section">
-                        <label class="gem-label" for="gemCompletionStatus">Completion Status</label>
+                        <label class="gem-label" for="gemCompletionStatus">{{ _('Completion Status') }}</label>
                         <select id="gemCompletionStatus" class="gem-select" onchange="updateGameCompletion()">
-                            <option value="not_started">📋 Not Started</option>
-                            <option value="in_progress">🎮 In Progress</option>
-                            <option value="played">🕹️ Played</option>
-                            <option value="completed">✅ Completed</option>
-                            <option value="100_percent">🏆 100%</option>
+                            <option value="not_started">📋 {{ _('Not Started') }}</option>
+                            <option value="in_progress">🎮 {{ _('In Progress') }}</option>
+                            <option value="played">🕹️ {{ _('Played') }}</option>
+                            <option value="completed">✅ {{ _('Completed') }}</option>
+                            <option value="100_percent">🏆 {% trans %}100%{% endtrans %}</option>
                         </select>
                     </div>
 
                     <div class="gem-section">
-                        <label class="gem-label" for="gemHltbSearchQuery">HowLongToBeat</label>
+                        <label class="gem-label" for="gemHltbSearchQuery">{{ _('HowLongToBeat') }}</label>
                         <input type="text"
                                id="gemHltbSearchQuery"
                                class="gem-input hltb-search-input"
-                               placeholder="Search game title..."
+                               placeholder="{{ _('Search game title...') }}"
                                style="margin-bottom: var(--spacing-sm);">
                         <button type="button" class="btn-hltb" id="gemHltbLookupBtn" onclick="lookupHltbFromModal()">
-                            🔍 Lookup HLTB
+                            🔍 {{ _('Lookup HLTB') }}
                         </button>
 
                         <!-- Pending results (shown before confirmation) -->
                         <div id="gemHltbPending" style="display: none; margin-top: var(--spacing-md); padding: var(--spacing-md); background: rgba(0,0,0,0.2); border-radius: var(--radius-md);">
                             <div class="hltb-loading" id="gemHltbSearching" style="display: none;">
                                 <div class="loading-spinner-small"></div>
-                                <span>Searching HowLongToBeat...</span>
+                                <span>{{ _('Searching HowLongToBeat...') }}</span>
                             </div>
                             <div id="gemHltbResult">
                                 <div class="hltb-match-header" id="gemHltbMatchHeader">
@@ -1000,20 +1007,20 @@
                                     <span class="hltb-match-confidence" id="gemHltbMatchConfidence"></span>
                                 </div>
                                 <div class="hltb-time-row">
-                                    <span class="hltb-label">Main Story</span>
+                                    <span class="hltb-label">{{ _('Main Story') }}</span>
                                     <span class="hltb-value" id="gemHltbMain">-</span>
                                 </div>
                                 <div class="hltb-time-row">
-                                    <span class="hltb-label">Main + Extras</span>
+                                    <span class="hltb-label">{{ _('Main + Extras') }}</span>
                                     <span class="hltb-value" id="gemHltbExtras">-</span>
                                 </div>
                                 <div class="hltb-time-row">
-                                    <span class="hltb-label">Completionist</span>
+                                    <span class="hltb-label">{{ _('Completionist') }}</span>
                                     <span class="hltb-value" id="gemHltbComplete">-</span>
                                 </div>
                                 <div class="hltb-actions" style="margin-top: var(--spacing-md); display: flex; gap: var(--spacing-xs);">
-                                    <button type="button" class="btn btn-primary btn-sm" onclick="saveHltbFromModal()">✓ Save</button>
-                                    <button type="button" class="btn btn-secondary btn-sm" onclick="cancelHltbFromModal()">✕ Cancel</button>
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="saveHltbFromModal()">✓ {{ _('Save') }}</button>
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="cancelHltbFromModal()">✕ {{ _('Cancel') }}</button>
                                 </div>
                             </div>
                             <div class="hltb-empty" id="gemHltbError" style="display: none; color: var(--neon-red);"></div>
@@ -1022,137 +1029,137 @@
                         <!-- Saved results -->
                         <div id="gemHltbSaved" style="display: none; margin-top: var(--spacing-md);">
                             <div id="gemHltbDisplay" class="hltb-compact">
-                                <div class="hltb-empty">No playtime data</div>
+                                <div class="hltb-empty">{{ _('No playtime data') }}</div>
                             </div>
                             <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                                <button type="button" class="btn btn-danger btn-sm" onclick="clearHltbFromModal()">✕ Clear</button>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="clearHltbFromModal()">✕ {{ _('Clear') }}</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- TAB: Identity -->
-                <div class="gem-tab-content" id="gemTabIdentity" role="tabpanel" aria-label="Identity">
+                <div class="gem-tab-content" id="gemTabIdentity" role="tabpanel" aria-label="{{ _('Identity') }}">
                     <div class="gem-grid">
                         <div class="gem-field">
-                            <label for="gemTitle_field">Title</label>
+                            <label for="gemTitle_field">{{ _('Title') }}</label>
                             <input type="text" id="gemTitle_field">
                         </div>
                         <div class="gem-field">
-                            <label for="gemSortTitle">Sort Title</label>
+                            <label for="gemSortTitle">{{ _('Sort Title') }}</label>
                             <div class="gem-field-row">
-                                <input type="text" id="gemSortTitle" placeholder="Auto-generated from title">
+                                <input type="text" id="gemSortTitle" placeholder="{{ _('Auto-generated from title') }}">
                                 <button type="button" class="btn btn-secondary btn-sm" onclick="generateModalSortTitle()">⚡</button>
                             </div>
                         </div>
                         <div class="gem-field">
-                            <label for="gemFranchise">Franchise / Series</label>
+                            <label for="gemFranchise">{{ _('Franchise / Series') }}</label>
                             <div class="toggle-row" style="margin-bottom: var(--spacing-sm);">
                                 <label class="toggle-switch" for="gemFranchise">
-                                    <input type="checkbox" id="gemFranchiseToggle" aria-label="Toggle franchise status" onchange="updateGemFranchiseToggle()">
+                                    <input type="checkbox" id="gemFranchiseToggle" aria-label="{{ _('Toggle franchise status') }}" onchange="updateGemFranchiseToggle()">
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <span id="gemFranchiseLabel" class="toggle-label" style="margin-left: var(--spacing-sm);">Standalone</span>
+                                <span id="gemFranchiseLabel" class="toggle-label" style="margin-left: var(--spacing-sm);">{{ _('Standalone') }}</span>
                             </div>
-                            <input type="text" id="gemFranchise" placeholder="e.g., Final Fantasy, Crash Bandicoot">
+                            <input type="text" id="gemFranchise" placeholder="{{ _('e.g., Final Fantasy, Crash Bandicoot') }}">
                         </div>
                         <div class="gem-field">
-                            <label for="gemSimilarGames">Similar Games</label>
-                            <input type="text" id="gemSimilarGames" placeholder="Game 1, Game 2, Game 3">
+                            <label for="gemSimilarGames">{{ _('Similar Games') }}</label>
+                            <input type="text" id="gemSimilarGames" placeholder="{{ _('Game 1, Game 2, Game 3') }}">
                         </div>
                         <div class="gem-field">
-                            <label for="gemEdition">Edition</label>
-                            <input type="text" id="gemEdition" placeholder="Standard, Collector's, GOTY">
+                            <label for="gemEdition">{{ _('Edition') }}</label>
+                            <input type="text" id="gemEdition" placeholder="{{ _('Standard, Collector&#39;s, GOTY') }}">
                         </div>
                     </div>
                 </div>
 
                 <!-- TAB: Release Info -->
-                <div class="gem-tab-content" id="gemTabRelease" role="tabpanel" aria-label="Release info">
+                <div class="gem-tab-content" id="gemTabRelease" role="tabpanel" aria-label="{{ _('Release info') }}">
                     <div class="gem-grid">
                         <div class="gem-field">
-                            <label for="gemReleaseDate">Release Date</label>
+                            <label for="gemReleaseDate">{{ _('Release Date') }}</label>
                             <div style="display:flex; gap:4px; align-items:center;">
-                                <input type="text" id="gemReleaseDate" placeholder="YYYY-MM-DD" style="flex:1;">
+                                <input type="text" id="gemReleaseDate" placeholder="{{ _('YYYY-MM-DD') }}" style="flex:1;">
                                 <input type="date" id="gemReleaseDatePicker" tabindex="-1" aria-hidden="true" style="position:absolute; opacity:0; width:0; height:0; pointer-events:none;">
-                                <button type="button" class="btn btn-sm btn-secondary" onclick="var p=document.getElementById('gemReleaseDatePicker');p.value=document.getElementById('gemReleaseDate').value;p.showPicker()" title="Pick date" style="padding:4px 8px; font-size:1rem;">📅</button>
+                                <button type="button" class="btn btn-sm btn-secondary" onclick="var p=document.getElementById('gemReleaseDatePicker');p.value=document.getElementById('gemReleaseDate').value;p.showPicker()" title="{{ _('Pick date') }}" style="padding:4px 8px; font-size:1rem;">📅</button>
                             </div>
                         </div>
                         <div class="gem-field">
-                            <label for="gemRegion">Region</label>
+                            <label for="gemRegion">{{ _('Region') }}</label>
                             <select id="gemRegion">
-                                <option value="">— Select —</option>
+                                <option value="">{{ _('— Select —') }}</option>
                                 {% for r in user_settings.get('region_options', ['USA', 'Europe', 'Japan', 'World']) %}
                                 <option value="{{ r }}"{% if r == user_settings.get('default_region', 'USA') %} selected{% endif %}>{{ r }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="gem-field">
-                            <label for="gemPublisher">Publisher</label>
-                            <input type="text" id="gemPublisher" placeholder="Sony, Nintendo">
+                            <label for="gemPublisher">{{ _('Publisher') }}</label>
+                            <input type="text" id="gemPublisher" placeholder="{{ _('Sony, Nintendo') }}">
                         </div>
                         <div class="gem-field">
-                            <label for="gemDeveloper">Developer</label>
-                            <input type="text" id="gemDeveloper" placeholder="Naughty Dog, Insomniac">
+                            <label for="gemDeveloper">{{ _('Developer') }}</label>
+                            <input type="text" id="gemDeveloper" placeholder="{{ _('Naughty Dog, Insomniac') }}">
                         </div>
                     </div>
                 </div>
 
                 <!-- TAB: Gameplay -->
-                <div class="gem-tab-content" id="gemTabGameplay" role="tabpanel" aria-label="Gameplay">
+                <div class="gem-tab-content" id="gemTabGameplay" role="tabpanel" aria-label="{{ _('Gameplay') }}">
                     <div class="gem-grid">
                         <div class="gem-field gem-field-full" role="group" aria-labelledby="gemGenreFieldLabel">
-                            <div class="form-label" id="gemGenreFieldLabel">Genre</div>
+                            <div class="form-label" id="gemGenreFieldLabel">{{ _('Genre') }}</div>
                             <div class="gem-tag-container" id="gemGenreContainer"></div>
                             <input type="hidden" id="gemGenreHidden">
-                            <select id="gemGenreDropdown" class="gem-tag-dropdown" onchange="addModalGenre(this.value); this.value='';" aria-label="Add genre">
-                                <option value="">+ Add genre...</option>
+                            <select id="gemGenreDropdown" class="gem-tag-dropdown" onchange="addModalGenre(this.value); this.value='';" aria-label="{{ _('Add genre') }}">
+                                <option value="">{{ _('+ Add genre...') }}</option>
                             </select>
                         </div>
                         <div class="gem-field gem-field-full" role="group" aria-labelledby="gemModesFieldLabel">
-                            <div class="form-label" id="gemModesFieldLabel">Play Modes</div>
+                            <div class="form-label" id="gemModesFieldLabel">{{ _('Play Modes') }}</div>
                             <div class="gem-tag-container" id="gemModesContainer"></div>
                             <input type="hidden" id="gemModesHidden">
-                            <select id="gemModesDropdown" class="gem-tag-dropdown" onchange="addModalMode(this.value); this.value='';" aria-label="Add play mode">
-                                <option value="">+ Add mode...</option>
+                            <select id="gemModesDropdown" class="gem-tag-dropdown" onchange="addModalMode(this.value); this.value='';" aria-label="{{ _('Add play mode') }}">
+                                <option value="">{{ _('+ Add mode...') }}</option>
                             </select>
                         </div>
                         <div class="gem-field">
-                            <label for="gemPlayers">Players</label>
+                            <label for="gemPlayers">{{ _('Players') }}</label>
                             <input type="number" id="gemPlayers" min="1" max="16" value="1">
                         </div>
                         <div class="gem-field gem-field-full" role="group" aria-labelledby="gemGameStructureFieldLabel">
-                            <div class="form-label" id="gemGameStructureFieldLabel">Game Structure</div>
+                            <div class="form-label" id="gemGameStructureFieldLabel">{{ _('Game Structure') }}</div>
                             <div class="gem-tag-container" id="gemGameStructureContainer"></div>
                             <input type="hidden" id="gemGameStructureHidden">
-                            <select id="gemGameStructureDropdown" class="gem-tag-dropdown" onchange="addModalGameStructure(this.value); this.value='';" aria-label="Add game structure">
-                                <option value="">+ Add structure...</option>
+                            <select id="gemGameStructureDropdown" class="gem-tag-dropdown" onchange="addModalGameStructure(this.value); this.value='';" aria-label="{{ _('Add game structure') }}">
+                                <option value="">{{ _('+ Add structure...') }}</option>
                             </select>
                         </div>
                         <div class="gem-field gem-field-full" role="group" aria-labelledby="gemPerspectiveFieldLabel">
-                            <div class="form-label" id="gemPerspectiveFieldLabel">Perspective</div>
+                            <div class="form-label" id="gemPerspectiveFieldLabel">{{ _('Perspective') }}</div>
                             <div class="gem-tag-container" id="gemPerspectiveContainer"></div>
                             <input type="hidden" id="gemPerspectiveHidden">
-                            <select id="gemPerspectiveDropdown" class="gem-tag-dropdown" onchange="addModalPerspective(this.value); this.value='';" aria-label="Add perspective">
-                                <option value="">+ Add perspective...</option>
+                            <select id="gemPerspectiveDropdown" class="gem-tag-dropdown" onchange="addModalPerspective(this.value); this.value='';" aria-label="{{ _('Add perspective') }}">
+                                <option value="">{{ _('+ Add perspective...') }}</option>
                             </select>
                         </div>
                         <div class="gem-field gem-field-full" role="group" aria-labelledby="gemDimensionFieldLabel">
-                            <div class="form-label" id="gemDimensionFieldLabel">Dimension</div>
+                            <div class="form-label" id="gemDimensionFieldLabel">{{ _('Dimension') }}</div>
                             <div class="gem-tag-container" id="gemDimensionContainer"></div>
                             <input type="hidden" id="gemDimensionHidden">
-                            <select id="gemDimensionDropdown" class="gem-tag-dropdown" onchange="addModalDimension(this.value); this.value='';" aria-label="Add dimension">
-                                <option value="">+ Add dimension...</option>
+                            <select id="gemDimensionDropdown" class="gem-tag-dropdown" onchange="addModalDimension(this.value); this.value='';" aria-label="{{ _('Add dimension') }}">
+                                <option value="">{{ _('+ Add dimension...') }}</option>
                             </select>
                         </div>
                         <div class="gem-field">
-                            <label for="gemCampaignToggle">Campaign Mode</label>
+                            <label for="gemCampaignToggle">{{ _('Campaign Mode') }}</label>
                             <div class="gem-toggle-row">
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="gemCampaignToggle" aria-label="Toggle campaign mode" onchange="updateModalCampaignLabel()">
+                                    <input type="checkbox" id="gemCampaignToggle" aria-label="{{ _('Toggle campaign mode') }}" onchange="updateModalCampaignLabel()">
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <span id="gemCampaignLabel" class="gem-toggle-label">Unknown</span>
+                                <span id="gemCampaignLabel" class="gem-toggle-label">{{ _('Unknown') }}</span>
                                 <input type="hidden" id="gemCampaign" value="">
                             </div>
                         </div>
@@ -1160,29 +1167,29 @@
                 </div>
 
                 <!-- TAB: Technical -->
-                <div class="gem-tab-content" id="gemTabTechnical" role="tabpanel" aria-label="Technical">
+                <div class="gem-tab-content" id="gemTabTechnical" role="tabpanel" aria-label="{{ _('Technical') }}">
                     <div class="gem-grid">
                         <div class="gem-field gem-field-full" role="group" aria-labelledby="gemControllerFieldLabel">
-                            <div class="form-label" id="gemControllerFieldLabel">Controller Support</div>
+                            <div class="form-label" id="gemControllerFieldLabel">{{ _('Controller Support') }}</div>
                             <div class="gem-tag-container" id="gemControllerContainer"></div>
                             <input type="hidden" id="gemControllerHidden">
                             <div class="gem-controller-inputs">
-                                <select id="gemControllerDropdown" class="gem-tag-dropdown" onchange="addModalController(this.value); this.value='';" aria-label="Add controller">
-                                    <option value="">+ Add controller...</option>
+                                <select id="gemControllerDropdown" class="gem-tag-dropdown" onchange="addModalController(this.value); this.value='';" aria-label="{{ _('Add controller') }}">
+                                    <option value="">{{ _('+ Add controller...') }}</option>
                                 </select>
-                                <input type="text" id="gemControllerCustom" class="gem-custom-input" aria-label="Custom controller name" placeholder="Or type custom..." onkeypress="if(event.key==='Enter'){event.preventDefault();addModalController(this.value);this.value='';}">
+                                <input type="text" id="gemControllerCustom" class="gem-custom-input" aria-label="{{ _('Custom controller name') }}" placeholder="{{ _('Or type custom...') }}" onkeypress="if(event.key==='Enter'){event.preventDefault();addModalController(this.value);this.value='';}">
                             </div>
                         </div>
                         <div class="gem-field gem-field-full" role="group" aria-labelledby="gemSaveTypeFieldLabel">
-                            <div class="form-label" id="gemSaveTypeFieldLabel">Save Type</div>
+                            <div class="form-label" id="gemSaveTypeFieldLabel">{{ _('Save Type') }}</div>
                             <div class="gem-tag-container" id="gemSaveTypeContainer"></div>
                             <input type="hidden" id="gemSaveTypeHidden">
-                            <select id="gemSaveTypeDropdown" class="gem-tag-dropdown" onchange="addModalSaveType(this.value); this.value='';" aria-label="Add save type">
-                                <option value="">+ Add save type...</option>
+                            <select id="gemSaveTypeDropdown" class="gem-tag-dropdown" onchange="addModalSaveType(this.value); this.value='';" aria-label="{{ _('Add save type') }}">
+                                <option value="">{{ _('+ Add save type...') }}</option>
                             </select>
                         </div>
                         <div class="gem-field gem-field-full">
-                            <label for="gemOtherPlatforms">Platform Availability</label>
+                            <label for="gemOtherPlatforms">{{ _('Platform Availability') }}</label>
                             <div class="gem-toggle-row">
                                 {# Pass 41.13.B — drop the wrong `for=` on
                                    the wrapping toggle label. The wrapping
@@ -1192,31 +1199,31 @@
                                    sibling text input, so clicking the toggle
                                    focused the wrong control. #}
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="gemExclusiveToggle" aria-label="Toggle platform exclusivity" onchange="updateModalExclusiveToggle()">
+                                    <input type="checkbox" id="gemExclusiveToggle" aria-label="{{ _('Toggle platform exclusivity') }}" onchange="updateModalExclusiveToggle()">
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <span id="gemExclusiveLabel" class="gem-toggle-label">Exclusive</span>
+                                <span id="gemExclusiveLabel" class="gem-toggle-label">{{ _('Exclusive') }}</span>
                             </div>
-                            <input type="text" id="gemOtherPlatforms" placeholder="Xbox 360, PC, Switch" style="margin-top: var(--spacing-sm);">
+                            <input type="text" id="gemOtherPlatforms" placeholder="{{ _('Xbox 360, PC, Switch') }}" style="margin-top: var(--spacing-sm);">
                             <input type="hidden" id="gemOtherPlatformsHidden">
                         </div>
                         <div class="gem-field">
-                            <label for="gemEsrbRating">ESRB (North America)</label>
+                            <label for="gemEsrbRating">{{ _('ESRB (North America)') }}</label>
                             <select id="gemEsrbRating">
-                                <option value="">-- None --</option>
-                                <option value="EC">EC - Early Childhood</option>
-                                <option value="E">E - Everyone</option>
-                                <option value="E10+">E10+ - Everyone 10+</option>
-                                <option value="T">T - Teen</option>
-                                <option value="M">M - Mature</option>
-                                <option value="AO">AO - Adults Only</option>
-                                <option value="RP">RP - Rating Pending</option>
+                                <option value="">{{ _('-- None --') }}</option>
+                                <option value="EC">{{ _('EC - Early Childhood') }}</option>
+                                <option value="E">{{ _('E - Everyone') }}</option>
+                                <option value="E10+">{{ _('E10+ - Everyone 10+') }}</option>
+                                <option value="T">{{ _('T - Teen') }}</option>
+                                <option value="M">{{ _('M - Mature') }}</option>
+                                <option value="AO">{{ _('AO - Adults Only') }}</option>
+                                <option value="RP">{{ _('RP - Rating Pending') }}</option>
                             </select>
                         </div>
                         <div class="gem-field">
-                            <label for="gemPegiRating">PEGI (Europe)</label>
+                            <label for="gemPegiRating">{{ _('PEGI (Europe)') }}</label>
                             <select id="gemPegiRating">
-                                <option value="">-- None --</option>
+                                <option value="">{{ _('-- None --') }}</option>
                                 <option value="PEGI 3">PEGI 3</option>
                                 <option value="PEGI 7">PEGI 7</option>
                                 <option value="PEGI 12">PEGI 12</option>
@@ -1225,20 +1232,20 @@
                             </select>
                         </div>
                         <div class="gem-field">
-                            <label for="gemCeroRating">CERO (Japan)</label>
+                            <label for="gemCeroRating">{{ _('CERO (Japan)') }}</label>
                             <select id="gemCeroRating">
-                                <option value="">-- None --</option>
-                                <option value="A">A - All Ages</option>
-                                <option value="B">B - Ages 12+</option>
-                                <option value="C">C - Ages 15+</option>
-                                <option value="D">D - Ages 17+</option>
-                                <option value="Z">Z - Ages 18+</option>
+                                <option value="">{{ _('-- None --') }}</option>
+                                <option value="A">{{ _('A - All Ages') }}</option>
+                                <option value="B">{{ _('B - Ages 12+') }}</option>
+                                <option value="C">{{ _('C - Ages 15+') }}</option>
+                                <option value="D">{{ _('D - Ages 17+') }}</option>
+                                <option value="Z">{{ _('Z - Ages 18+') }}</option>
                             </select>
                         </div>
                         <div class="gem-field">
-                            <label for="gemUskRating">USK (Germany)</label>
+                            <label for="gemUskRating">{{ _('USK (Germany)') }}</label>
                             <select id="gemUskRating">
-                                <option value="">-- None --</option>
+                                <option value="">{{ _('-- None --') }}</option>
                                 <option value="0">USK 0</option>
                                 <option value="6">USK 6</option>
                                 <option value="12">USK 12</option>
@@ -1247,21 +1254,21 @@
                             </select>
                         </div>
                         <div class="gem-field">
-                            <label for="gemAcbRating">ACB (Australia)</label>
+                            <label for="gemAcbRating">{{ _('ACB (Australia)') }}</label>
                             <select id="gemAcbRating">
-                                <option value="">-- None --</option>
-                                <option value="G">G - General</option>
-                                <option value="PG">PG - Parental Guidance</option>
-                                <option value="M">M - Mature</option>
-                                <option value="MA15+">MA15+ - Restricted</option>
-                                <option value="R18+">R18+ - Restricted</option>
+                                <option value="">{{ _('-- None --') }}</option>
+                                <option value="G">{{ _('G - General') }}</option>
+                                <option value="PG">{{ _('PG - Parental Guidance') }}</option>
+                                <option value="M">{{ _('M - Mature') }}</option>
+                                <option value="MA15+">{{ _('MA15+ - Restricted') }}</option>
+                                <option value="R18+">{{ _('R18+ - Restricted') }}</option>
                             </select>
                         </div>
                         <div class="gem-field">
-                            <label for="gemFpbRating">FPB (South Africa)</label>
+                            <label for="gemFpbRating">{{ _('FPB (South Africa)') }}</label>
                             <select id="gemFpbRating">
-                                <option value="">-- None --</option>
-                                <option value="A">A - All Ages</option>
+                                <option value="">{{ _('-- None --') }}</option>
+                                <option value="A">{{ _('A - All Ages') }}</option>
                                 <option value="PG">PG</option>
                                 <option value="7-9 PG">7-9 PG</option>
                                 <option value="10">10</option>
@@ -1272,20 +1279,20 @@
                             </select>
                         </div>
                         <div class="gem-field">
-                            <label for="gemGracRating">GRAC (South Korea)</label>
+                            <label for="gemGracRating">{{ _('GRAC (South Korea)') }}</label>
                             <select id="gemGracRating">
-                                <option value="">-- None --</option>
-                                <option value="ALL">ALL - All Ages</option>
+                                <option value="">{{ _('-- None --') }}</option>
+                                <option value="ALL">{{ _('ALL - All Ages') }}</option>
                                 <option value="12">12+</option>
                                 <option value="15">15+</option>
                                 <option value="18">18+</option>
                             </select>
                         </div>
                         <div class="gem-field">
-                            <label for="gemClassindRating">ClassInd (Brazil)</label>
+                            <label for="gemClassindRating">{{ _('ClassInd (Brazil)') }}</label>
                             <select id="gemClassindRating">
-                                <option value="">-- None --</option>
-                                <option value="L">L - General</option>
+                                <option value="">{{ _('-- None --') }}</option>
+                                <option value="L">{{ _('L - General') }}</option>
                                 <option value="10">10</option>
                                 <option value="12">12</option>
                                 <option value="14">14</option>
@@ -1297,22 +1304,22 @@
                 </div>
 
                 <!-- TAB: Description -->
-                <div class="gem-tab-content" id="gemTabDescription" role="tabpanel" aria-label="Description">
+                <div class="gem-tab-content" id="gemTabDescription" role="tabpanel" aria-label="{{ _('Description') }}">
                     <div class="gem-field gem-field-full">
-                        <label for="gemDescription">Game Description</label>
-                        <textarea id="gemDescription" rows="8" placeholder="Enter game description..."></textarea>
+                        <label for="gemDescription">{{ _('Game Description') }}</label>
+                        <textarea id="gemDescription" rows="8" placeholder="{{ _('Enter game description...') }}"></textarea>
                     </div>
                 </div>
             </div>
 
             <div class="gem-footer">
                 <a id="gemFullEdit" href="#" class="btn btn-secondary">
-                    <span class="btn-icon">🖼️</span> Images/Video
+                    <span class="btn-icon">🖼️</span> {{ _('Images/Video') }}
                 </a>
                 <div class="gem-footer-right">
-                    <button type="button" class="btn btn-secondary" onclick="closeGameEditModal()">Close</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeGameEditModal()">{{ _('Close') }}</button>
                     <button type="button" class="btn btn-primary" onclick="saveGameEdits()">
-                        <span class="btn-icon">💾</span> Save Changes
+                        <span class="btn-icon">💾</span> {{ _('Save Changes') }}
                     </button>
                 </div>
             </div>
@@ -1345,10 +1352,10 @@
 
     <!-- Pass 44 — multi-emulator launch indicator -->
     {% if current_user %}
-    <div id="launch-indicator" class="launch-indicator hidden" aria-live="polite" title="Now playing">
+    <div id="launch-indicator" class="launch-indicator hidden" aria-live="polite" title="{{ _('Now playing') }}">
         <span class="launch-indicator-icon">▶</span>
         <span class="launch-indicator-count" id="launch-count">0</span>
-        <span class="launch-indicator-text">running</span>
+        <span class="launch-indicator-text">{{ _('running') }}</span>
     </div>
     <script src="{{ asset_url('js/launch-indicator.js') }}" defer></script>
     {% endif %}

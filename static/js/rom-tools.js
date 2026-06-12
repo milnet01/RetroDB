@@ -249,7 +249,7 @@ const ProgressTracker = {
      * Reset progress to initial state
      */
     reset() {
-        this.update(0, 'Ready', 0, 0);
+        this.update(0, t('Ready'), 0, 0);
     },
 
     /**
@@ -257,7 +257,7 @@ const ProgressTracker = {
      * @param {Object} task - Task status object
      */
     updateFromTask(task) {
-        const status = task.current_file ? `Processing: ${task.current_file}` : 'Processing...';
+        const status = task.current_file ? t('Processing: {file}', {file: task.current_file}) : t('Processing...');
         this.update(task.percent || 0, status, task.progress, task.total);
     }
 };
@@ -330,14 +330,14 @@ const BatchOperations = {
      */
     async execute(options) {
         const {
-            title = 'Confirm Action',
-            message = 'Are you sure?',
+            title = t('Confirm Action'),
+            message = t('Are you sure?'),
             endpoint,
             data,
             onSuccess,
             onError,
-            successMessage = 'Operation completed',
-            errorMessage = 'Operation failed'
+            successMessage = t('Operation completed'),
+            errorMessage = t('Operation failed')
         } = options;
 
         // Show confirmation if title/message provided
@@ -380,7 +380,7 @@ const BatchOperations = {
 
 const ResultsTable = {
     container: null,
-    emptyMessage: 'No results',
+    emptyMessage: t('No results'),
     columns: [],
 
     /**
@@ -389,7 +389,7 @@ const ResultsTable = {
      */
     init(options = {}) {
         this.container = document.getElementById(options.containerId || 'resultsBody');
-        this.emptyMessage = options.emptyMessage || 'No results';
+        this.emptyMessage = options.emptyMessage || t('No results');
         this.columns = options.columns || [];
     },
 
@@ -531,12 +531,12 @@ const PauseButton = {
 
         if (this.isPaused) {
             if (this.iconElement) this.iconElement.textContent = '▶️';
-            if (this.textElement) this.textElement.textContent = 'Resume';
+            if (this.textElement) this.textElement.textContent = t('Resume');
             this.element.classList.remove('btn-warning');
             this.element.classList.add('btn-success');
         } else {
             if (this.iconElement) this.iconElement.textContent = '⏸️';
-            if (this.textElement) this.textElement.textContent = 'Pause';
+            if (this.textElement) this.textElement.textContent = t('Pause');
             this.element.classList.remove('btn-success');
             this.element.classList.add('btn-warning');
         }

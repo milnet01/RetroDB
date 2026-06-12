@@ -5,6 +5,7 @@
 # =============================================================================
 
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash, g
+from flask_babel import gettext as _
 import os
 import logging
 import requests
@@ -374,7 +375,7 @@ def trophies():
     trophy_path = get_user_trophy_path()
     
     if not trophy_path:
-        flash('Please configure your RPCS3 Trophy Path in your profile settings to view trophies', 'info')
+        flash(_('Please configure your RPCS3 Trophy Path in your profile settings to view trophies'), 'info')
         return render_template('local_trophies.html',
                              trophy_sets={},
                              totals={'P': (0, 0), 'G': (0, 0), 'S': (0, 0), 'B': (0, 0)},
@@ -405,7 +406,7 @@ def trophy_game(npwr_id):
     trophy_sets, _ = get_trophy_data()
     
     if npwr_id not in trophy_sets:
-        flash('Trophy set not found', 'error')
+        flash(_('Trophy set not found'), 'error')
         return redirect(url_for('.trophies'))
     
     trophy_set = trophy_sets[npwr_id]
@@ -743,7 +744,7 @@ def psn_trophy_detail(npwr_id):
     )
     
     if not psn_game:
-        flash('PSN game not found', 'error')
+        flash(_('PSN game not found'), 'error')
         return redirect(url_for('.psn_trophies'))
     
     psn_game = dict(psn_game)

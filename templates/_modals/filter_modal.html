@@ -2,20 +2,20 @@
 <div id="filterModal" class="scrape-modal">
     <div class="scrape-modal-content" style="max-width: 700px;" role="dialog" aria-modal="true" aria-labelledby="filterModalTitle">
         <div class="scrape-modal-header">
-            <h2 id="filterModalTitle">Filter Games</h2>
+            <h2 id="filterModalTitle">{{ _('Filter Games') }}</h2>
             <span id="filterModalSubtitle" class="scrape-modal-subtitle"></span>
-            <button type="button" class="modal-close-btn" onclick="closeGameDetailFilterModal()" aria-label="Close filter modal">×</button>
+            <button type="button" class="modal-close-btn" onclick="closeGameDetailFilterModal()" aria-label="{{ _('Close filter modal') }}">×</button>
         </div>
 
         <div class="scrape-modal-body">
             <div class="filter-sort-controls" id="filterSortControls">
-                <span class="sort-label">Sort by:</span>
-                <button type="button" class="sort-btn active" data-sort="title" onclick="changeFilterSort('title')">📝 Title</button>
-                <button type="button" class="sort-btn" data-sort="release_date" onclick="changeFilterSort('release_date')">📅 Release Date</button>
-                <button type="button" class="sort-btn" data-sort="platform" onclick="changeFilterSort('platform')">🎮 Platform</button>
+                <span class="sort-label">{{ _('Sort by:') }}</span>
+                <button type="button" class="sort-btn active" data-sort="title" onclick="changeFilterSort('title')">📝 {{ _('Title') }}</button>
+                <button type="button" class="sort-btn" data-sort="release_date" onclick="changeFilterSort('release_date')">📅 {{ _('Release Date') }}</button>
+                <button type="button" class="sort-btn" data-sort="platform" onclick="changeFilterSort('platform')">🎮 {{ _('Platform') }}</button>
             </div>
             <div id="filterResults" class="filter-results">
-                <div class="scrape-results-loading">Loading games...</div>
+                <div class="scrape-results-loading">{{ _('Loading games...') }}</div>
             </div>
         </div>
     </div>

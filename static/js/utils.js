@@ -84,6 +84,50 @@ function formatRatio(numerator, denominator) {
     return `${formatNumber(numerator)} / ${formatNumber(denominator)}`;
 }
 
+// =============================================================================
+// I18N (Pass 43.3) — client-side string translation
+// =============================================================================
+// Source-text message IDs, same convention as the server `_()` path.
+// `window.I18N` (JS UI strings) and `window.FIELD_LABELS` (canonical genre /
+// perspective / dimension / modes / game_structure labels) are emitted once per
+// full-page render in base.html, locale-aware. See docs/specs/i18n.md §6/§7.
+
+/**
+ * Translate a UI string by its English source text.
+ * @param {string} msgid - English source string (must be a literal at call
+ *   sites so build_js.py / pybabel can extract it).
+ * @param {Object} [params] - Optional {key: value} for `{key}` brace
+ *   substitution, e.g. t('Scraped {n} games', {n: 5}).
+ * @returns {string} - Translated string, or the source if untranslated.
+ */
+function t(msgid, params) {
+    let s = (window.I18N && window.I18N[msgid]) || msgid;
+    if (params) {
+        for (const k in params) {
+            s = s.split('{' + k + '}').join(params[k]);
+        }
+    }
+    return s;
+}
+
+/**
+ * Translate a canonical multi-value field label for display. The stored /
+ * submitted value stays canonical English — this only changes the visible label.
+ * @param {string} value - Comma-separated canonical value (e.g. "Action, RPG").
+ * @returns {string} - Same structure with each token translated; unknown tokens
+ *   (user-added values) pass through unchanged.
+ */
+function tField(value) {
+    if (!value) return '';
+    const labels = window.FIELD_LABELS || {};
+    return value
+        .split(',')
+        .map(tok => tok.trim())
+        .filter(Boolean)
+        .map(tok => labels[tok] || tok)
+        .join(', ');
+}
+
 /**
  * Escape HTML entities
  * @param {string} text - Text to escape
@@ -1074,6 +1118,8 @@ RetroDB.throttle = throttle;
 RetroDB.formatBytes = formatBytes;
 RetroDB.formatNumber = formatNumber;
 RetroDB.formatRatio = formatRatio;
+RetroDB.t = t;
+RetroDB.tField = tField;
 RetroDB.escapeHtml = escapeHtml;
 RetroDB.copyToClipboard = copyToClipboard;
 RetroDB.Storage = Storage;
@@ -1090,6 +1136,8 @@ RetroDB.ModalFocusTrap = ModalFocusTrap;
 // EXPORT GLOBALS (backward compatibility)
 // =============================================================================
 
+window.t = t;
+window.tField = tField;
 window.debounce = debounce;
 window.throttle = throttle;
 window.formatBytes = formatBytes;

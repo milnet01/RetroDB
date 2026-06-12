@@ -81,6 +81,42 @@ function formatRatio(numerator, denominator) {
 }
 
 /**
+ * Translate a UI string by its English source text.
+ * @param {string} msgid - English source string (must be a literal at call
+ *   sites so build_js.py / pybabel can extract it).
+ * @param {Object} [params] - Optional {key: value} for `{key}` brace
+ *   substitution, e.g. t('Scraped {n} games', {n: 5}).
+ * @returns {string} - Translated string, or the source if untranslated.
+ */
+function t(msgid, params) {
+    let s = (window.I18N && window.I18N[msgid]) || msgid;
+    if (params) {
+        for (const k in params) {
+            s = s.split('{' + k + '}').join(params[k]);
+        }
+    }
+    return s;
+}
+
+/**
+ * Translate a canonical multi-value field label for display. The stored /
+ * submitted value stays canonical English — this only changes the visible label.
+ * @param {string} value - Comma-separated canonical value (e.g. "Action, RPG").
+ * @returns {string} - Same structure with each token translated; unknown tokens
+ *   (user-added values) pass through unchanged.
+ */
+function tField(value) {
+    if (!value) return '';
+    const labels = window.FIELD_LABELS || {};
+    return value
+        .split(',')
+        .map(tok => tok.trim())
+        .filter(Boolean)
+        .map(tok => labels[tok] || tok)
+        .join(', ');
+}
+
+/**
  * Escape HTML entities
  * @param {string} text - Text to escape
  * @returns {string} - Escaped text
@@ -978,6 +1014,8 @@ RetroDB.throttle = throttle;
 RetroDB.formatBytes = formatBytes;
 RetroDB.formatNumber = formatNumber;
 RetroDB.formatRatio = formatRatio;
+RetroDB.t = t;
+RetroDB.tField = tField;
 RetroDB.escapeHtml = escapeHtml;
 RetroDB.copyToClipboard = copyToClipboard;
 RetroDB.Storage = Storage;
@@ -990,6 +1028,8 @@ RetroDB.DateUtils = DateUtils;
 RetroDB.StickyScroll = StickyScroll;
 RetroDB.ModalFocusTrap = ModalFocusTrap;
 
+window.t = t;
+window.tField = tField;
 window.debounce = debounce;
 window.throttle = throttle;
 window.formatBytes = formatBytes;
@@ -1655,12 +1695,12 @@ const UnifiedToastController = {
             if (!localStorage.getItem(completionKey)) {
                 localStorage.setItem(completionKey, 'true');
                 if (data.error) {
-                    showNotification(`${typeConfig.name} failed: ${data.error}`, 'error');
+                    showNotification(t('{job} failed: {error}', {job: typeConfig.name, error: data.error}), 'error');
                 } else if (data.cancelled) {
-                    showNotification(`${typeConfig.name} cancelled`, 'warning');
+                    showNotification(t('{job} cancelled', {job: typeConfig.name}), 'warning');
                 } else {
                     const total = data.success || data.processed || 0;
-                    showNotification(`${typeConfig.name} completed (${total} processed)`, 'success');
+                    showNotification(t('{job} completed ({n} processed)', {job: typeConfig.name, n: total}), 'success');
                 }
             }
         }
@@ -1744,7 +1784,7 @@ const UnifiedToastController = {
                         running: true,
                         completed: false,
                         current_system: next.systemName,
-                        current_game: 'Starting...',
+                        current_game: t('Starting...'),
                         total: next.gameCount || 0,
                         current: 0,
                         percent: 0,
@@ -1891,8 +1931,8 @@ const UnifiedToastController = {
         toast.style.setProperty('--toast-color', config.queuedColor);
 
         const title = item.type === 'sync'
-            ? `🔄 Sync: ${this.escapeHtml(item.systemName)}`
-            : `🏆 Refresh: ${this.escapeHtml(item.systemName || 'All Systems')}`;
+            ? `🔄 ${this.escapeHtml(t('Sync: {system}', {system: item.systemName}))}`
+            : `🏆 ${this.escapeHtml(t('Refresh: {system}', {system: item.systemName || t('All Systems')}))}`;
 
         const raType = item.type === 'sync' ? 'sync' : 'refresh';
         const raSystemId = item.systemId == null ? '' : String(item.systemId);
@@ -1903,11 +1943,11 @@ const UnifiedToastController = {
                     <div class="toast-icon">${getThemedIcon(item.type === 'sync' ? 'ra-sync' : 'ra-refresh', 'queued')}</div>
                     <div class="toast-info">
                         <div class="toast-title">${title}</div>
-                        <div class="toast-subtitle"><span class="queue-position">#${position}</span> in queue${item.gameCount ? ` • ${this.fmtNum(item.gameCount)} games` : ''}</div>
+                        <div class="toast-subtitle"><span class="queue-position">#${position}</span> ${this.escapeHtml(t('in queue'))}${item.gameCount ? ` • ${this.escapeHtml(t('{n} games', {n: this.fmtNum(item.gameCount)}))}` : ''}</div>
                     </div>
                 </div>
                 <div class="toast-controls">
-                    <button class="toast-btn cancel" data-toast-action="cancel-ra-queued" data-ra-type="${this.escapeHtml(raType)}" data-ra-system-id="${this.escapeHtml(raSystemId)}" title="Remove from queue">
+                    <button class="toast-btn cancel" data-toast-action="cancel-ra-queued" data-ra-type="${this.escapeHtml(raType)}" data-ra-system-id="${this.escapeHtml(raSystemId)}" title="${this.escapeHtml(t('Remove from queue'))}">
                         ✕
                     </button>
                 </div>
@@ -2002,11 +2042,11 @@ const UnifiedToastController = {
 
         let currentItem;
         if (type === 'image-resize') {
-            currentItem = data.current_file || 'Processing...';
+            currentItem = data.current_file || t('Processing...');
         } else if (type === 'ra-refresh' || type === 'psn-refresh') {
-            currentItem = data.current_game || 'Processing...';
+            currentItem = data.current_game || t('Processing...');
         } else {
-            currentItem = data.current_game || data.current_system || 'Processing...';
+            currentItem = data.current_game || data.current_system || t('Processing...');
         }
 
         const fmt = (n) => this.fmtNum(n);
@@ -2023,7 +2063,7 @@ const UnifiedToastController = {
         } else if (type === 'ra-refresh') {
             statsHTML = `
                 <div class="toast-stats">
-                    <span class="stat success">${getThemedIcon('ra-sync')} <span class="stat-value" data-stat="success">${fmt(data.success)}</span> found</span>
+                    <span class="stat success">${getThemedIcon('ra-sync')} <span class="stat-value" data-stat="success">${fmt(data.success)}</span> ${this.escapeHtml(t('found'))}</span>
                 </div>
             `;
         } else if (type === 'psn-refresh') {
@@ -2075,7 +2115,7 @@ const UnifiedToastController = {
                 <div class="toast-main" data-toast-action="navigate" data-toast-type="${this.escapeHtml(type)}" data-toast-return-url="${this.escapeHtml(data.return_url || '')}">
                     <div class="toast-icon ${isPaused ? 'paused' : ''}">${isPaused ? getThemedIcon(type, 'paused') : getThemedIcon(type)}</div>
                     <div class="toast-info">
-                        <div class="toast-title ${isPaused ? 'paused' : ''}">${config.name} ${isPaused ? '(Paused)' : 'Running'}</div>
+                        <div class="toast-title ${isPaused ? 'paused' : ''}">${config.name} ${isPaused ? t('(Paused)') : t('Running')}</div>
                         ${systemNameHTML}
                         <div class="toast-subtitle" data-subtitle>${this.escapeHtml(currentItem)}</div>
                         ${npwrHTML}
@@ -2090,11 +2130,11 @@ const UnifiedToastController = {
                 </div>
                 <div class="toast-controls">
                     ${type === 'bulk-scrape' || type === 'psn-refresh' ? `
-                    <button class="toast-btn pause" data-toast-action="pause" data-toast-type="${this.escapeHtml(type)}" title="${isPaused ? 'Resume' : 'Pause'}">
+                    <button class="toast-btn pause" data-toast-action="pause" data-toast-type="${this.escapeHtml(type)}" title="${this.escapeHtml(isPaused ? t('Resume') : t('Pause'))}">
                         <span data-pause-icon>${isPaused ? '▶️' : '⏸️'}</span>
                     </button>
                     ` : ''}
-                    <button class="toast-btn cancel" data-toast-action="cancel" data-toast-type="${this.escapeHtml(type)}" title="Cancel">
+                    <button class="toast-btn cancel" data-toast-action="cancel" data-toast-type="${this.escapeHtml(type)}" title="${this.escapeHtml(t('Cancel'))}">
                         ✕
                     </button>
                 </div>
@@ -2119,11 +2159,11 @@ const UnifiedToastController = {
 
         let currentItem;
         if (type === 'image-resize') {
-            currentItem = data.current_file || 'Processing...';
+            currentItem = data.current_file || t('Processing...');
         } else if (type === 'ra-refresh' || type === 'psn-refresh') {
-            currentItem = data.current_game || 'Processing...';
+            currentItem = data.current_game || t('Processing...');
         } else {
-            currentItem = data.current_game || data.current_system || 'Processing...';
+            currentItem = data.current_game || data.current_system || t('Processing...');
         }
 
         const isComplete = data.completed;
@@ -2138,7 +2178,7 @@ const UnifiedToastController = {
 
         const title = toast.querySelector('.toast-title');
         if (title) {
-            const statusText = isComplete ? 'Complete' : (isPaused ? '(Paused)' : 'Running');
+            const statusText = isComplete ? t('Complete') : (isPaused ? t('(Paused)') : t('Running'));
             title.textContent = `${config.name} ${statusText}`;
             title.classList.toggle('paused', isPaused);
         }
@@ -2230,7 +2270,7 @@ const UnifiedToastController = {
 
         const pauseBtn = toast.querySelector('.toast-btn.pause');
         if (pauseBtn) {
-            pauseBtn.title = isPaused ? 'Resume' : 'Pause';
+            pauseBtn.title = isPaused ? t('Resume') : t('Pause');
             pauseBtn.classList.toggle('is-paused', isPaused);
         }
     },
@@ -2332,19 +2372,19 @@ const UnifiedToastController = {
         toast.style.order = 90;
         toast.style.setProperty('--toast-color', config.queuedColor);
 
-        const subtitleText = job.system_name || 'Multi-System';
+        const subtitleText = job.system_name || t('Multi-System');
         toast.innerHTML = `
             <div class="toast-content queued">
                 <div class="toast-main">
                     <div class="toast-icon">${getThemedIcon(type, 'queued')}</div>
                     <div class="toast-info">
-                        <div class="toast-title">${this.escapeHtml(config.name)} Queued (#${position})</div>
+                        <div class="toast-title">${this.escapeHtml(t('{job} Queued (#{position})', {job: config.name, position: position}))}</div>
                         <div class="toast-subtitle">${this.escapeHtml(subtitleText)}</div>
-                        <div class="toast-meta">${this.fmtNum(job.total)} games</div>
+                        <div class="toast-meta">${this.escapeHtml(t('{n} games', {n: this.fmtNum(job.total)}))}</div>
                     </div>
                 </div>
                 <div class="toast-controls">
-                    <button class="toast-btn cancel" data-cancel-queued title="Remove from queue">
+                    <button class="toast-btn cancel" data-cancel-queued title="${this.escapeHtml(t('Remove from queue'))}">
                         ✕
                     </button>
                 </div>
@@ -2399,7 +2439,7 @@ const UnifiedToastController = {
     cancel(type) {
         const config = this.getTypeConfig(type);
         if (typeof showConfirm === 'function') {
-            showConfirm(`⚠️ Cancel ${config.name}`, `Are you sure you want to cancel?`, async () => {
+            showConfirm(t('⚠️ Cancel {job}', {job: config.name}), t('Are you sure you want to cancel?'), async () => {
                 await this.performCancel(type);
             });
         } else {
@@ -2657,7 +2697,7 @@ function _surfaceError(prefix, detail) {
 window.addEventListener('error', function(event) {
     const msg = event.message || '';
     if (!msg || msg === 'Script error.') return;
-    _surfaceError('Unexpected error', msg);
+    _surfaceError(t('Unexpected error'), msg);
 });
 
 window.addEventListener('unhandledrejection', function(event) {
@@ -2670,7 +2710,7 @@ window.addEventListener('unhandledrejection', function(event) {
     } else {
         try { detail = JSON.stringify(r); } catch (_e) { detail = String(r); }
     }
-    _surfaceError('Unhandled rejection', detail);
+    _surfaceError(t('Unhandled rejection'), detail);
 });
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -2928,7 +2968,7 @@ function displaySearchResults(results) {
     if (!container) return;
 
     if (!results || results.length === 0) {
-        container.innerHTML = '<div class="search-no-results">No results found</div>';
+        container.innerHTML = `<div class="search-no-results">${escapeHtml(t('No results found'))}</div>`;
     } else {
         container.innerHTML = results.map(result => `
             <a href="${encodeURI(result.url)}" class="search-result-item">
@@ -2951,7 +2991,7 @@ function hideSearchResults() {
 function showSearchLoading() {
     const container = document.getElementById('searchResults');
     if (container) {
-        container.innerHTML = '<div class="search-loading"><span class="loading-spinner"></span> Searching...</div>';
+        container.innerHTML = `<div class="search-loading"><span class="loading-spinner"></span> ${escapeHtml(t('Searching...'))}</div>`;
         container.classList.add('active');
     }
 }
@@ -3098,8 +3138,8 @@ function updateEmptyState(containerSelector, items) {
             emptyState.className = 'empty-state';
             emptyState.innerHTML = `
                 <div class="empty-state-icon">🔍</div>
-                <div class="empty-state-title">No results found</div>
-                <div class="empty-state-text">Try adjusting your search or filters</div>
+                <div class="empty-state-title">${escapeHtml(t('No results found'))}</div>
+                <div class="empty-state-text">${escapeHtml(t('Try adjusting your search or filters'))}</div>
             `;
             container.appendChild(emptyState);
         }
@@ -3298,7 +3338,7 @@ function initializeConfirmDialogs() {
             e.preventDefault();
             const message = this.dataset.confirm;
             const target = this;
-            showConfirm('⚠️ Confirm', message, () => {
+            showConfirm(t('⚠️ Confirm'), message, () => {
                 target.removeAttribute('data-confirm');
                 target.click();
                 target.setAttribute('data-confirm', message);
@@ -3309,7 +3349,7 @@ function initializeConfirmDialogs() {
 
 function confirmReset(form) {
     if (window.event) window.event.preventDefault();
-    showConfirm('🗑️ Reset Metadata', 'Are you sure you want to reset all metadata for this game? This will delete boxart and screenshots.', () => {
+    showConfirm(t('🗑️ Reset Metadata'), t('Are you sure you want to reset all metadata for this game? This will delete boxart and screenshots.'), () => {
         form.submit();
     });
     return false;
@@ -3321,7 +3361,7 @@ async function scanLibrary() {
 
     const originalText = btn.innerHTML;
 
-    btn.innerHTML = '<span class="loading-spinner"></span> Scanning...';
+    btn.innerHTML = `<span class="loading-spinner"></span> ${escapeHtml(t('Scanning...'))}`;
     btn.disabled = true;
 
     try {
@@ -3334,14 +3374,14 @@ async function scanLibrary() {
         try { data = await response.json(); } catch (_) { /* non-JSON body */ }
 
         if (response.ok && data && data.success) {
-            showNotification('Library scan complete! Found ' + (data.new_games || 0) + ' new games.', 'success');
+            showNotification(t('Library scan complete! Found {n} new games.', {n: data.new_games || 0}), 'success');
             setTimeout(() => location.reload(), 1500);
         } else {
-            const msg = (data && data.error) || `Scan failed (HTTP ${response.status})`;
+            const msg = (data && data.error) || t('Scan failed (HTTP {status})', {status: response.status});
             showNotification(msg, 'error');
         }
     } catch (error) {
-        showNotification('Error scanning library: ' + error.message, 'error');
+        showNotification(t('Error scanning library: {error}', {error: error.message}), 'error');
     } finally {
         btn.innerHTML = originalText;
         btn.disabled = false;
@@ -3350,10 +3390,10 @@ async function scanLibrary() {
 
 async function restartServer() {
     showConfirm(
-        '🔄 Restart Server',
-        'Are you sure you want to restart the server?',
+        t('🔄 Restart Server'),
+        t('Are you sure you want to restart the server?'),
         async function() {
-            showNotification('Restarting server...', 'info');
+            showNotification(t('Restarting server...'), 'info');
 
             try {
                 await API.post('/api/restart');
@@ -3377,7 +3417,7 @@ async function checkServerStatus() {
     const checkStatus = async () => {
         try {
             await API.get('/api/status');
-            showNotification('Server restarted successfully!', 'success');
+            showNotification(t('Server restarted successfully!'), 'success');
             setTimeout(() => location.reload(), 1000);
             return true;
         } catch (error) {
@@ -3387,7 +3427,7 @@ async function checkServerStatus() {
         if (attempts < maxAttempts) {
             setTimeout(checkStatus, 1000);
         } else {
-            showNotification('Could not reconnect to server. Please refresh manually.', 'error');
+            showNotification(t('Could not reconnect to server. Please refresh manually.'), 'error');
         }
     };
 
@@ -3396,54 +3436,54 @@ async function checkServerStatus() {
 
 async function cleanMissingRoms() {
     showConfirm(
-        '🧹 Clean Missing ROMs',
-        'This will remove database entries for ROM files that no longer exist on disk. This cannot be undone. Continue?',
+        t('🧹 Clean Missing ROMs'),
+        t('This will remove database entries for ROM files that no longer exist on disk. This cannot be undone. Continue?'),
         async function() {
             const btn = document.getElementById('cleanMissingBtn');
             const resultDiv = document.getElementById('cleanMissingResult');
 
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = '<span class="btn-icon">⏳</span> Scanning...';
+                btn.innerHTML = `<span class="btn-icon">⏳</span> ${escapeHtml(t('Scanning...'))}`;
             }
 
             try {
                 const data = await API.post('/api/clean-missing-roms');
 
                 if (data.success) {
-                    showNotification(`Removed ${formatNumber(data.removed)} games with missing ROMs`, 'success');
+                    showNotification(t('Removed {n} games with missing ROMs', {n: formatNumber(data.removed)}), 'success');
 
                     if (resultDiv) {
                         if (data.removed > 0) {
                             let html = `<div class="glass-panel" style="padding: var(--spacing-md); background: rgba(239, 68, 68, 0.1);">`;
-                            html += `<strong style="color: var(--danger-red);">Removed ${formatNumber(data.removed)} games:</strong>`;
+                            html += `<strong style="color: var(--danger-red);">${escapeHtml(t('Removed {n} games:', {n: formatNumber(data.removed)}))}</strong>`;
                             html += `<ul style="margin-top: var(--spacing-sm); font-size: 0.9rem;">`;
                             for (const game of data.removed_games) {
                                 html += `<li>${escapeHtml(game.title)}</li>`;
                             }
                             if (data.removed > 50) {
-                                html += `<li>... and ${formatNumber(data.removed - 50)} more</li>`;
+                                html += `<li>${escapeHtml(t('... and {n} more', {n: formatNumber(data.removed - 50)}))}</li>`;
                             }
                             html += `</ul></div>`;
                             resultDiv.innerHTML = html;
                         } else {
                             resultDiv.innerHTML = `<div class="glass-panel" style="padding: var(--spacing-md); background: rgba(76, 201, 240, 0.1);">
-                                <strong style="color: var(--primary-cyan);">✓ All ROMs accounted for!</strong>
-                                <p style="margin-top: var(--spacing-xs);">No missing ROM files found.</p>
+                                <strong style="color: var(--primary-cyan);">✓ ${escapeHtml(t('All ROMs accounted for!'))}</strong>
+                                <p style="margin-top: var(--spacing-xs);">${escapeHtml(t('No missing ROM files found.'))}</p>
                             </div>`;
                         }
                         resultDiv.style.display = 'block';
                     }
                 } else {
-                    showNotification(data.error || 'Failed to clean missing ROMs', 'error');
+                    showNotification(data.error || t('Failed to clean missing ROMs'), 'error');
                 }
             } catch (error) {
                 console.error('Error cleaning missing ROMs:', error);
-                showNotification('Failed to clean missing ROMs', 'error');
+                showNotification(t('Failed to clean missing ROMs'), 'error');
             } finally {
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = '<span class="btn-icon">🧹</span> Clean Missing ROMs';
+                    btn.innerHTML = `<span class="btn-icon">🧹</span> ${escapeHtml(t('Clean Missing ROMs'))}`;
                 }
             }
         },
@@ -3453,53 +3493,53 @@ async function cleanMissingRoms() {
 
 async function clearClzImports() {
     showConfirm(
-        '📋 Clear CLZ Imports',
-        'This will remove ALL games imported via CLZ Games Import from the database. This cannot be undone. Continue?',
+        t('📋 Clear CLZ Imports'),
+        t('This will remove ALL games imported via CLZ Games Import from the database. This cannot be undone. Continue?'),
         async function() {
             const btn = document.getElementById('clearClzBtn');
             const resultDiv = document.getElementById('clearClzResult');
 
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = '<span class="btn-icon">⏳</span> Removing...';
+                btn.innerHTML = `<span class="btn-icon">⏳</span> ${escapeHtml(t('Removing...'))}`;
             }
 
             try {
                 const data = await API.post('/api/clear-clz-imports');
 
                 if (data.success) {
-                    showNotification(`Removed ${formatNumber(data.removed)} CLZ Import games`, 'success');
+                    showNotification(t('Removed {n} CLZ Import games', {n: formatNumber(data.removed)}), 'success');
 
                     if (resultDiv) {
                         if (data.removed > 0) {
                             let html = `<div class="glass-panel" style="padding: var(--spacing-md); background: rgba(239, 68, 68, 0.1);">`;
-                            html += `<strong style="color: var(--danger-red);">Removed ${formatNumber(data.removed)} CLZ Import games:</strong>`;
+                            html += `<strong style="color: var(--danger-red);">${escapeHtml(t('Removed {n} CLZ Import games:', {n: formatNumber(data.removed)}))}</strong>`;
                             html += `<ul style="margin-top: var(--spacing-sm); font-size: 0.9rem;">`;
                             for (const game of data.removed_games) {
                                 html += `<li>${escapeHtml(game.title)}</li>`;
                             }
                             if (data.removed > 50) {
-                                html += `<li>... and ${formatNumber(data.removed - 50)} more</li>`;
+                                html += `<li>${escapeHtml(t('... and {n} more', {n: formatNumber(data.removed - 50)}))}</li>`;
                             }
                             html += `</ul></div>`;
                             resultDiv.innerHTML = html;
                         } else {
                             resultDiv.innerHTML = `<div class="glass-panel" style="padding: var(--spacing-md); background: rgba(76, 201, 240, 0.1);">
-                                <strong style="color: var(--primary-cyan);">✓ No CLZ Import games found</strong>
+                                <strong style="color: var(--primary-cyan);">✓ ${escapeHtml(t('No CLZ Import games found'))}</strong>
                             </div>`;
                         }
                         resultDiv.style.display = 'block';
                     }
                 } else {
-                    showNotification(data.error || 'Failed to clear CLZ imports', 'error');
+                    showNotification(data.error || t('Failed to clear CLZ imports'), 'error');
                 }
             } catch (error) {
                 console.error('Error clearing CLZ imports:', error);
-                showNotification('Failed to clear CLZ imports', 'error');
+                showNotification(t('Failed to clear CLZ imports'), 'error');
             } finally {
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = '<span class="btn-icon">📋</span> Clear CLZ Imports';
+                    btn.innerHTML = `<span class="btn-icon">📋</span> ${escapeHtml(t('Clear CLZ Imports'))}`;
                 }
             }
         },
@@ -3509,15 +3549,15 @@ async function clearClzImports() {
 
 async function refreshRetroAchievements() {
     showConfirm(
-        '🏆 Refresh RetroAchievements',
-        'This will scan all games and update their RetroAchievements status. This may take several minutes for large collections. Continue?',
+        t('🏆 Refresh RetroAchievements'),
+        t('This will scan all games and update their RetroAchievements status. This may take several minutes for large collections. Continue?'),
         async function() {
             const btn = document.getElementById('refreshRABtn');
             const resultDiv = document.getElementById('refreshRAResult');
 
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = '<span class="btn-icon">⏳</span> Starting...';
+                btn.innerHTML = `<span class="btn-icon">⏳</span> ${escapeHtml(t('Starting...'))}`;
             }
 
             try {
@@ -3544,10 +3584,10 @@ async function refreshRetroAchievements() {
                         }
 
                         if (btn) {
-                            btn.innerHTML = '<span class="btn-icon">📋</span> Queued';
+                            btn.innerHTML = `<span class="btn-icon">📋</span> ${escapeHtml(t('Queued'))}`;
                         }
 
-                        showNotification('Added to queue - will start when current operation completes', 'info');
+                        showNotification(t('Added to queue - will start when current operation completes'), 'info');
                         return;
                     }
 
@@ -3555,8 +3595,8 @@ async function refreshRetroAchievements() {
                         const initialData = {
                             running: true,
                             completed: false,
-                            current_system: 'Starting...',
-                            current_game: 'Initializing...',
+                            current_system: t('Starting...'),
+                            current_game: t('Initializing...'),
                             total: 0,
                             current: 0,
                             processed: 0,
@@ -3571,21 +3611,21 @@ async function refreshRetroAchievements() {
                     }
 
                     if (btn) {
-                        btn.innerHTML = '<span class="btn-icon">⏳</span> Running...';
+                        btn.innerHTML = `<span class="btn-icon">⏳</span> ${escapeHtml(t('Running...'))}`;
                     }
                 } else {
-                    showNotification(data.error || 'Failed to start RetroAchievements refresh', 'error');
+                    showNotification(data.error || t('Failed to start RetroAchievements refresh'), 'error');
                     if (btn) {
                         btn.disabled = false;
-                        btn.innerHTML = '<span class="btn-icon">🏆</span> Refresh RetroAchievements';
+                        btn.innerHTML = `<span class="btn-icon">🏆</span> ${escapeHtml(t('Refresh RetroAchievements'))}`;
                     }
                 }
             } catch (error) {
                 console.error('Error starting RetroAchievements refresh:', error);
-                showNotification('Failed to start RetroAchievements refresh', 'error');
+                showNotification(t('Failed to start RetroAchievements refresh'), 'error');
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = '<span class="btn-icon">🏆</span> Refresh RetroAchievements';
+                    btn.innerHTML = `<span class="btn-icon">🏆</span> ${escapeHtml(t('Refresh RetroAchievements'))}`;
                 }
             }
         }
@@ -3606,11 +3646,11 @@ async function clearRAData() {
         : 'all systems';
 
     const confirmMsg = systemId === 'all'
-        ? 'This will clear ALL RetroAchievements game IDs and progress data from your database. You will need to run "Refresh RetroAchievements" again afterwards to re-scan your games. Continue?'
-        : `This will clear RetroAchievements game IDs and progress data for "${systemName}". Continue?`;
+        ? t('This will clear ALL RetroAchievements game IDs and progress data from your database. You will need to run "Refresh RetroAchievements" again afterwards to re-scan your games. Continue?')
+        : t('This will clear RetroAchievements game IDs and progress data for "{system}". Continue?', {system: systemName});
 
     showConfirm(
-        '🗑️ Clear RetroAchievements Data',
+        t('🗑️ Clear RetroAchievements Data'),
         confirmMsg,
         async function() {
             const btn = document.getElementById('clearRABtn');
@@ -3618,7 +3658,7 @@ async function clearRAData() {
 
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = '<span class="btn-icon">⏳</span> Clearing...';
+                btn.innerHTML = `<span class="btn-icon">⏳</span> ${escapeHtml(t('Clearing...'))}`;
             }
 
             try {
@@ -3630,27 +3670,27 @@ async function clearRAData() {
 
                 if (data.success) {
                     const msg = systemId === 'all'
-                        ? `Cleared RA data for ${formatNumber(data.cleared)} games`
-                        : `Cleared RA data for ${formatNumber(data.cleared)} games in ${systemName}`;
+                        ? t('Cleared RA data for {n} games', {n: formatNumber(data.cleared)})
+                        : t('Cleared RA data for {n} games in {system}', {n: formatNumber(data.cleared), system: systemName});
                     showNotification(msg, 'success');
 
                     if (resultDiv) {
                         resultDiv.innerHTML = `<div class="glass-panel" style="padding: var(--spacing-md); background: rgba(76, 201, 240, 0.1);">
-                            <strong style="color: var(--primary-cyan);">✓ RA Data Cleared</strong>
-                            <p style="margin-top: var(--spacing-xs);">Cleared RetroAchievements data for ${formatNumber(data.cleared)} games. Run "Refresh RetroAchievements" to re-scan with updated matching.</p>
+                            <strong style="color: var(--primary-cyan);">✓ ${escapeHtml(t('RA Data Cleared'))}</strong>
+                            <p style="margin-top: var(--spacing-xs);">${escapeHtml(t('Cleared RetroAchievements data for {n} games. Run "Refresh RetroAchievements" to re-scan with updated matching.', {n: formatNumber(data.cleared)}))}</p>
                         </div>`;
                         resultDiv.style.display = 'block';
                     }
                 } else {
-                    showNotification(data.error || 'Failed to clear RA data', 'error');
+                    showNotification(data.error || t('Failed to clear RA data'), 'error');
                 }
             } catch (error) {
                 console.error('Error clearing RA data:', error);
-                showNotification('Failed to clear RA data', 'error');
+                showNotification(t('Failed to clear RA data'), 'error');
             } finally {
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = '<span class="btn-icon">🗑️</span> Clear RA Data';
+                    btn.innerHTML = `<span class="btn-icon">🗑️</span> ${escapeHtml(t('Clear RA Data'))}`;
                 }
             }
         },
@@ -3665,7 +3705,7 @@ async function searchGame(gameId, title) {
     if (!resultsContainer || !searchBtn) return;
 
     const originalText = searchBtn.innerHTML;
-    searchBtn.innerHTML = '<span class="loading-spinner"></span> Searching...';
+    searchBtn.innerHTML = `<span class="loading-spinner"></span> ${escapeHtml(t('Searching...'))}`;
     searchBtn.disabled = true;
 
     try {
@@ -3677,15 +3717,15 @@ async function searchGame(gameId, title) {
             resultsContainer.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-state-icon">🔍</div>
-                    <div class="empty-state-title">No results found</div>
-                    <div class="empty-state-text">Try modifying the search title</div>
+                    <div class="empty-state-title">${escapeHtml(t('No results found'))}</div>
+                    <div class="empty-state-text">${escapeHtml(t('Try modifying the search title'))}</div>
                 </div>
             `;
         }
     } catch (error) {
         resultsContainer.innerHTML = `
             <div class="alert alert-error">
-                Error searching: ${error.message}
+                ${escapeHtml(t('Error searching: {error}', {error: error.message}))}
             </div>
         `;
     } finally {
@@ -3718,15 +3758,15 @@ function displayScraperResults(results, gameId) {
                     <div class="search-result-meta">
                         <span class="source-badge ${result.source}">${result.source.toUpperCase()}</span>
                         ${result.release_date ? `<span>${result.release_date.substring(0, 4)}</span>` : ''}
-                        ${result.score ? `<span>Score: ${result.score.toFixed(1)}</span>` : ''}
+                        ${result.score ? `<span>${escapeHtml(t('Score: {score}', {score: result.score.toFixed(1)}))}</span>` : ''}
                     </div>
-                    ${altChips ? `<div class="search-result-alts"><span class="search-result-alts-label">Also known as:</span> ${altChips}</div>` : ''}
+                    ${altChips ? `<div class="search-result-alts"><span class="search-result-alts-label">${escapeHtml(t('Also known as:'))}</span> ${altChips}</div>` : ''}
                 </div>
                 <form method="POST" style="margin: 0;">
                     <input type="hidden" name="action" value="apply">
                     <input type="hidden" name="game_source" value="${result.source}_${result.id}">
                     <button type="submit" class="btn btn-success btn-sm">
-                        Apply
+                        ${escapeHtml(t('Apply'))}
                     </button>
                 </form>
             </div>
@@ -4041,9 +4081,9 @@ function _renderShortcutKeys(combo) {
 function _buildShortcutsBody() {
     const buckets = new Map();
     const addEntry = (combo, meta) => {
-        const cat = meta.category || 'Other';
+        const cat = t(meta.category || 'Other');
         if (!buckets.has(cat)) buckets.set(cat, []);
-        buckets.get(cat).push({ combo, description: meta.description });
+        buckets.get(cat).push({ combo, description: t(meta.description) });
     };
     Object.entries(KeyboardShortcuts.shortcuts).forEach(([k, v]) => addEntry(k, v));
     Object.entries(KeyboardShortcuts.gameShortcuts).forEach(([k, v]) => addEntry(k, v));
@@ -4073,8 +4113,8 @@ function showShortcutsModal() {
         modal.innerHTML = `
             <div class="custom-modal-content" style="max-width: 600px;" role="dialog" aria-modal="true" aria-labelledby="shortcutsModalTitle">
                 <div class="custom-modal-header">
-                    <h3 id="shortcutsModalTitle">⌨️ Keyboard Shortcuts</h3>
-                    <button class="custom-modal-close" onclick="closeShortcutsModal()" aria-label="Close keyboard shortcuts">×</button>
+                    <h3 id="shortcutsModalTitle">⌨️ ${escapeHtml(t('Keyboard Shortcuts'))}</h3>
+                    <button class="custom-modal-close" onclick="closeShortcutsModal()" aria-label="${escapeHtml(t('Close keyboard shortcuts'))}">×</button>
                 </div>
                 <div class="custom-modal-body" id="shortcutsModalBody">${body}</div>
             </div>
@@ -4137,12 +4177,12 @@ function updateCompletionStatus(gameId, status) {
     API.post(`/api/game/${gameId}/completion`, { status: status })
         .then(data => {
             if (data.success) {
-                showNotification('Completion status updated', 'success');
+                showNotification(t('Completion status updated'), 'success');
             } else {
-            showNotification('Failed to update status: ' + data.error, 'error');
+            showNotification(t('Failed to update status: {error}', {error: data.error}), 'error');
         }
     })
-    .catch(e => showNotification('Error updating status', 'error'));
+    .catch(e => showNotification(t('Error updating status'), 'error'));
 }
 
 RetroDB.scanLibrary = scanLibrary;

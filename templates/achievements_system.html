@@ -7,7 +7,7 @@
 {% block content %}
 <!-- Breadcrumb -->
 {{ breadcrumb([
-    ('RetroAchievements', url_for('achievements.achievements')),
+    (_('RetroAchievements'), url_for('achievements.achievements')),
     (system.name, None),
 ]) }}
 
@@ -15,15 +15,15 @@
 <div class="page-header">
     <div>
         <h1 class="page-title">🏆 {{ system.name }}</h1>
-        <p class="page-subtitle">{{ games|length }} games with achievements{% if ra_username %} - {{ ra_username }}{% endif %}</p>
+        <p class="page-subtitle">{% trans count=games|length %}{{ count }} games with achievements{% endtrans %}{% if ra_username %} - {{ ra_username }}{% endif %}</p>
     </div>
 </div>
 
 {% if not ra_configured %}
 <div class="alert alert-warning" style="margin-bottom: var(--spacing-xl);">
-    <strong>⚠️ RetroAchievements Not Configured</strong><br>
-    To view your personal progress, configure your RetroAchievements username and API key in your 
-    <a href="{{ url_for('settings.settings') }}#profile">Profile Settings</a>.
+    <strong>⚠️ {{ _('RetroAchievements Not Configured') }}</strong><br>
+    {{ _('To view your personal progress, configure your RetroAchievements username and API key in your') }}
+    <a href="{{ url_for('settings.settings') }}#profile">{{ _('Profile Settings') }}</a>.
 </div>
 {% endif %}
 
@@ -34,21 +34,21 @@
             <div class="achievement-stat">
                 <div class="achievement-stat-icon">🎮</div>
                 <div class="achievement-stat-info">
-                    <span class="achievement-stat-label">Total Games</span>
+                    <span class="achievement-stat-label">{{ _('Total Games') }}</span>
                     <span class="achievement-stat-value">{{ (overall_stats.total_games or 0)|format_number }}</span>
                 </div>
             </div>
             <div class="achievement-stat">
                 <div class="achievement-stat-icon">📺</div>
                 <div class="achievement-stat-info">
-                    <span class="achievement-stat-label">Systems</span>
+                    <span class="achievement-stat-label">{{ _('Systems') }}</span>
                     <span class="achievement-stat-value">{{ all_systems|length|format_number }}</span>
                 </div>
             </div>
             <div class="achievement-stat">
                 <div class="achievement-stat-icon">🏆</div>
                 <div class="achievement-stat-info">
-                    <span class="achievement-stat-label">Total Achievements</span>
+                    <span class="achievement-stat-label">{{ _('Total Achievements') }}</span>
                     <span class="achievement-stat-value">
                         {% if ra_configured %}
                         <span id="overallEarnedAchievements">{{ (overall_stats.earned_achievements or 0)|format_number }}</span> /
@@ -60,7 +60,7 @@
             <div class="achievement-stat">
                 <div class="achievement-stat-icon">⭐</div>
                 <div class="achievement-stat-info">
-                    <span class="achievement-stat-label">Total Points</span>
+                    <span class="achievement-stat-label">{{ _('Total Points') }}</span>
                     <span class="achievement-stat-value">
                         {% if ra_configured %}
                         <span id="overallEarnedPoints">{{ (overall_stats.earned_points or 0)|format_number }}</span> /
@@ -93,15 +93,15 @@
             <span class="cache-status" id="cacheStatus" 
                   data-last-synced="{{ system.last_synced or '' }}"
                   style="font-size: 0.85rem; color: var(--text-muted);">
-                {% if system.last_synced %}Loading...{% else %}Never synced{% endif %}
+                {% if system.last_synced %}{{ _('Loading...') }}{% else %}{{ _('Never synced') }}{% endif %}
             </span>
             <button type="button" onclick="refreshSystemProgress()" class="btn btn-primary btn-sm" id="refreshBtn">
                 <span class="btn-icon">🔄</span>
-                <span class="btn-text">Sync Progress</span>
+                <span class="btn-text">{{ _('Sync Progress') }}</span>
             </button>
-            <button type="button" onclick="clearSystemRAData()" class="btn btn-danger btn-sm" id="clearRABtn" title="Remove this system from Achievements">
+            <button type="button" onclick="clearSystemRAData()" class="btn btn-danger btn-sm" id="clearRABtn" title="{{ _('Remove this system from Achievements') }}">
                 <span class="btn-icon">🗑️</span>
-                <span class="btn-text">Clear RA Data</span>
+                <span class="btn-text">{{ _('Clear RA Data') }}</span>
             </button>
         </div>
         {% endif %}
@@ -111,14 +111,14 @@
             <div class="achievement-stat">
                 <div class="achievement-stat-icon">🎮</div>
                 <div class="achievement-stat-info">
-                    <span class="achievement-stat-label">Games</span>
+                    <span class="achievement-stat-label">{{ _('Games') }}</span>
                     <span class="achievement-stat-value">{{ games|length }}</span>
                 </div>
             </div>
             <div class="achievement-stat">
                 <div class="achievement-stat-icon">🏆</div>
                 <div class="achievement-stat-info">
-                    <span class="achievement-stat-label">Achievements</span>
+                    <span class="achievement-stat-label">{{ _('Achievements') }}</span>
                     <span class="achievement-stat-value">
                         {% if ra_configured %}
                         <span id="systemEarned">{{ (system.earned_achievements or 0)|format_number }}</span> /
@@ -130,7 +130,7 @@
             <div class="achievement-stat">
                 <div class="achievement-stat-icon">⭐</div>
                 <div class="achievement-stat-info">
-                    <span class="achievement-stat-label">Points</span>
+                    <span class="achievement-stat-label">{{ _('Points') }}</span>
                     <span class="achievement-stat-value">
                         {% if ra_configured %}
                         <span id="systemPoints">{{ (system.earned_points or 0)|format_number }}</span> /
@@ -143,7 +143,7 @@
             <div class="achievement-stat games-started">
                 <div class="achievement-stat-icon">▶️</div>
                 <div class="achievement-stat-info">
-                    <span class="achievement-stat-label">In Progress</span>
+                    <span class="achievement-stat-label">{{ _('In Progress') }}</span>
                     <span class="achievement-stat-value" id="systemStarted">-</span>
                 </div>
             </div>
@@ -156,15 +156,15 @@
 <div class="filter-bar glass-panel" style="padding: var(--spacing-md); margin-bottom: var(--spacing-lg);">
     <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-md); align-items: center;">
         <div class="form-group" style="margin: 0; flex: 1; min-width: 200px;">
-            <input type="text" class="form-input" id="gameSearch" placeholder="🔍 Search games..." onkeyup="filterGames()">
+            <input type="text" class="form-input" id="gameSearch" placeholder="🔍 {{ _('Search games...') }}" onkeyup="filterGames()">
         </div>
         {% if ra_configured %}
         <div class="form-group" style="margin: 0;">
             <select class="form-select" id="progressFilter" onchange="filterGames()">
-                <option value="">All Games</option>
-                <option value="in-progress">In Progress</option>
-                <option value="not-started">Not Started</option>
-                <option value="completed">Completed (100%)</option>
+                <option value="">{{ _('All Games') }}</option>
+                <option value="in-progress">{{ _('In Progress') }}</option>
+                <option value="not-started">{{ _('Not Started') }}</option>
+                <option value="completed">{% trans %}Completed (100%){% endtrans %}</option>
             </select>
         </div>
         {% endif %}
@@ -174,7 +174,7 @@
 <!-- Alphabet Jump Navigation -->
 {% if games|length >= 20 %}
 <div class="alphabet-nav" id="alphabetNav">
-    <span class="alphabet-label">Jump to:</span>
+    <span class="alphabet-label">{{ _('Jump to:') }}</span>
     <div class="alphabet-letters">
         <button class="alphabet-btn" data-letter="#">#</button>
         {% for letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' %}
@@ -223,7 +223,7 @@
                     {% else %}
                     <div class="achievement-game-progress">
                         <div class="achievement-progress-text">
-                            <span>{{ (game.ra_achievement_count or 0)|format_number }}</span> achievements
+                            {% trans count=(game.ra_achievement_count or 0)|format_number %}<span>{{ count }}</span> achievements{% endtrans %}
                         </div>
                     </div>
                     {% endif %}

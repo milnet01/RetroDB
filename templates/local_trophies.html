@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 {% set needs_games_bundle = true %}
 
-{% block title %}Trophies - RetroDB{% endblock %}
+{% block title %}{{ _('Trophies') }} - RetroDB{% endblock %}
 
 {% block content %}
 <!-- Page Header -->
 <div class="page-header">
     <div>
-        <h1 class="page-title">🏆 PlayStation 3 Trophies</h1>
-        <p class="page-subtitle">RPCS3 Trophy Collection{% if current_user %} - {{ current_user.display_name or current_user.username }}{% endif %}</p>
+        <h1 class="page-title">🏆 {{ _('PlayStation 3 Trophies') }}</h1>
+        <p class="page-subtitle">{{ _('RPCS3 Trophy Collection') }}{% if current_user %} - {{ current_user.display_name or current_user.username }}{% endif %}</p>
     </div>
     <div class="header-actions">
         {% if trophy_path_configured %}
         <button type="button" onclick="scanTrophies()" class="btn btn-primary" id="scanTrophiesBtn">
             <span class="btn-icon">🔍</span>
-            Scan Trophies
+            {{ _('Scan Trophies') }}
         </button>
         {% endif %}
     </div>
@@ -25,13 +25,13 @@
 <section class="card">
     <div class="card-body" style="text-align: center; padding: 60px 20px;">
         <div style="font-size: 4rem; margin-bottom: 20px;">⚙️</div>
-        <h2 style="margin-bottom: 10px;">Trophy Path Not Configured</h2>
+        <h2 style="margin-bottom: 10px;">{{ _('Trophy Path Not Configured') }}</h2>
         <p class="text-muted" style="margin-bottom: 20px;">
-            Configure your personal RPCS3 trophy folder path in your profile settings to view your trophies.
+            {{ _('Configure your personal RPCS3 trophy folder path in your profile settings to view your trophies.') }}
         </p>
         <a href="{{ url_for('settings.settings') }}#profile" class="btn btn-primary">
             <span class="btn-icon">👤</span>
-            Go to My Profile
+            {{ _('Go to My Profile') }}
         </a>
     </div>
 </section>
@@ -41,13 +41,13 @@
 <section class="card">
     <div class="card-body" style="text-align: center; padding: 60px 20px;">
         <div style="font-size: 4rem; margin-bottom: 20px;">🏆</div>
-        <h2 style="margin-bottom: 10px;">No Trophies Found</h2>
+        <h2 style="margin-bottom: 10px;">{{ _('No Trophies Found') }}</h2>
         <p class="text-muted" style="margin-bottom: 20px;">
-            Click "Scan Trophies" to search for trophy data in your RPCS3 installation.
+            {{ _('Click "Scan Trophies" to search for trophy data in your RPCS3 installation.') }}
         </p>
         <button type="button" onclick="scanTrophies()" class="btn btn-primary">
             <span class="btn-icon">🔍</span>
-            Scan Trophies
+            {{ _('Scan Trophies') }}
         </button>
     </div>
 </section>
@@ -58,30 +58,30 @@
     <div class="card-body">
         <div class="trophy-overview">
             <div class="trophy-stat platinum">
-                <img src="{{ url_for('static', filename='images/trophies/platinum.png') }}" alt="Platinum" data-on-error="outer-html" data-on-error-html="🏆">
+                <img src="{{ url_for('static', filename='images/trophies/platinum.png') }}" alt="{{ _('Platinum') }}" data-on-error="outer-html" data-on-error-html="🏆">
                 <div class="trophy-stat-info">
-                    <span class="trophy-stat-label">Platinum</span>
+                    <span class="trophy-stat-label">{{ _('Platinum') }}</span>
                     <span class="trophy-stat-value">{{ totals.P[0]|format_number }} / {{ totals.P[1]|format_number }}</span>
                 </div>
             </div>
             <div class="trophy-stat gold">
-                <img src="{{ url_for('static', filename='images/trophies/gold.png') }}" alt="Gold" data-on-error="outer-html" data-on-error-html="🥇">
+                <img src="{{ url_for('static', filename='images/trophies/gold.png') }}" alt="{{ _('Gold') }}" data-on-error="outer-html" data-on-error-html="🥇">
                 <div class="trophy-stat-info">
-                    <span class="trophy-stat-label">Gold</span>
+                    <span class="trophy-stat-label">{{ _('Gold') }}</span>
                     <span class="trophy-stat-value">{{ totals.G[0]|format_number }} / {{ totals.G[1]|format_number }}</span>
                 </div>
             </div>
             <div class="trophy-stat silver">
-                <img src="{{ url_for('static', filename='images/trophies/silver.png') }}" alt="Silver" data-on-error="outer-html" data-on-error-html="🥈">
+                <img src="{{ url_for('static', filename='images/trophies/silver.png') }}" alt="{{ _('Silver') }}" data-on-error="outer-html" data-on-error-html="🥈">
                 <div class="trophy-stat-info">
-                    <span class="trophy-stat-label">Silver</span>
+                    <span class="trophy-stat-label">{{ _('Silver') }}</span>
                     <span class="trophy-stat-value">{{ totals.S[0]|format_number }} / {{ totals.S[1]|format_number }}</span>
                 </div>
             </div>
             <div class="trophy-stat bronze">
-                <img src="{{ url_for('static', filename='images/trophies/bronze.png') }}" alt="Bronze" data-on-error="outer-html" data-on-error-html="🥉">
+                <img src="{{ url_for('static', filename='images/trophies/bronze.png') }}" alt="{{ _('Bronze') }}" data-on-error="outer-html" data-on-error-html="🥉">
                 <div class="trophy-stat-info">
-                    <span class="trophy-stat-label">Bronze</span>
+                    <span class="trophy-stat-label">{{ _('Bronze') }}</span>
                     <span class="trophy-stat-value">{{ totals.B[0]|format_number }} / {{ totals.B[1]|format_number }}</span>
                 </div>
             </div>
@@ -92,7 +92,7 @@
 <!-- Alphabet Jump Navigation -->
 {% if trophy_sets|length >= 20 %}
 <div class="alphabet-nav" id="alphabetNav">
-    <span class="alphabet-label">Jump to:</span>
+    <span class="alphabet-label">{{ _('Jump to:') }}</span>
     <div class="alphabet-letters">
         <button class="alphabet-btn" data-letter="#">#</button>
         {% for letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' %}
@@ -105,7 +105,7 @@
 <!-- Games List -->
 <section class="card">
     <div class="card-header">
-        <h2 class="card-title">Games ({{ trophy_sets|length }})</h2>
+        <h2 class="card-title">{% trans count=trophy_sets|length %}Games ({{ count }}){% endtrans %}</h2>
     </div>
     <div class="card-body">
         <div class="trophy-games-grid">
@@ -163,10 +163,10 @@
 <div id="scanModal" class="modal">
     <div class="modal-content glass-panel">
         <div class="modal-header">
-            <h2>🔍 Scanning Trophies</h2>
+            <h2>🔍 {{ _('Scanning Trophies') }}</h2>
         </div>
         <div class="modal-body">
-            <p id="scanStatus">Scanning trophy folders...</p>
+            <p id="scanStatus">{{ _('Scanning trophy folders...') }}</p>
             <div class="progress-bar" style="margin-top: 15px;">
                 <div class="progress-fill" id="scanProgress" style="width: 0%"></div>
             </div>

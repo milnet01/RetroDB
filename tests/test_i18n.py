@@ -92,7 +92,7 @@ def test_selector_stale_locale_does_not_raise_falls_through():
 
 
 # ---------------------------------------------------------------------------
-# Locale validator on /api/users/settings (§4)
+# Locale validator on /api/users/settings (§3)
 # ---------------------------------------------------------------------------
 
 def _authed_client(monkeypatch, no_op_execute=True):
@@ -133,7 +133,7 @@ def test_validator_rejects_unknown_locale(monkeypatch):
 
 
 # ---------------------------------------------------------------------------
-# Pseudolocale render + coverage signal (§7)
+# Pseudolocale render + coverage signal (§5)
 # ---------------------------------------------------------------------------
 
 def test_wrapped_string_pseudolocalized_unwrapped_control_stays_english():
@@ -144,14 +144,19 @@ def test_wrapped_string_pseudolocalized_unwrapped_control_stays_english():
         assert translated != 'Welcome to RetroDB'
         assert BRACKET in translated
         # A string that was never wrapped in source (so never extracted) stays
-        # English — this is the coverage signal the pseudolocale provides.
-        control = gettext('This sentence is deliberately never wrapped in source')
+        # English — this is the coverage signal the pseudolocale provides. The
+        # msgid is assembled at runtime (not a literal) precisely so `pybabel
+        # extract` — which scans tests/ too under babel.cfg's [python: **.py] —
+        # cannot pull it into the catalog; a literal here would be bracketed and
+        # invert this assertion.
+        never_wrapped = 'This sentence is ' + 'deliberately never wrapped in source'
+        control = gettext(never_wrapped)
         assert control == 'This sentence is deliberately never wrapped in source'
         assert BRACKET not in control
 
 
 # ---------------------------------------------------------------------------
-# Pilot completeness scan (§6 acceptance criterion, §7)
+# Pilot completeness scan (§8 acceptance criterion, §5)
 # ---------------------------------------------------------------------------
 
 def test_login_pilot_every_visible_string_pseudolocalized(monkeypatch):

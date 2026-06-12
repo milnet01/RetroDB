@@ -498,7 +498,7 @@ const AllGamesController = (function() {
         let metaHtml = '';
         if (game.genre) {
             const firstGenre = game.genre.split(',')[0].trim();
-            metaHtml += `<div class="meta-item"><span class="meta-label">Genre</span><span class="meta-value meta-clickable" onclick="event.preventDefault();event.stopPropagation();if(event.shiftKey)AllGamesController.applyExcludeFilterDirect('genre','${escAttr(firstGenre)}');else AllGamesController.applyFilterDirect('genre','${escAttr(firstGenre)}')" title="Click to filter, Shift+click to exclude">${esc(firstGenre)}</span></div>`;
+            metaHtml += `<div class="meta-item"><span class="meta-label">Genre</span><span class="meta-value meta-clickable" onclick="event.preventDefault();event.stopPropagation();if(event.shiftKey)AllGamesController.applyExcludeFilterDirect('genre','${escAttr(firstGenre)}');else AllGamesController.applyFilterDirect('genre','${escAttr(firstGenre)}')" title="Click to filter, Shift+click to exclude">${esc(tField(firstGenre))}</span></div>`;
         }
         if (game.franchise) {
             metaHtml += `<div class="meta-item"><span class="meta-label">Series</span><span class="meta-value meta-clickable" onclick="event.preventDefault();event.stopPropagation();if(event.shiftKey)AllGamesController.applyExcludeFilterDirect('franchise','${escAttr(game.franchise)}');else AllGamesController.applyFilterDirect('franchise','${escAttr(game.franchise)}')" title="Click to filter, Shift+click to exclude">${esc(game.franchise.substring(0, 20))}${game.franchise.length > 20 ? '...' : ''}</span></div>`;
@@ -682,13 +682,13 @@ const AllGamesController = (function() {
         modal.classList.remove('exclude-mode');
 
         const titles = {
-            genre: 'Select Genre', franchise: 'Select Series',
-            publisher: 'Select Publisher', developer: 'Select Developer',
-            modes: 'Select Play Mode', perspective: 'Select Perspective',
-            dimension: 'Select Dimension',
-            rating: 'Select Rating', source: 'Select Source'
+            genre: t('Select Genre'), franchise: t('Select Series'),
+            publisher: t('Select Publisher'), developer: t('Select Developer'),
+            modes: t('Select Play Mode'), perspective: t('Select Perspective'),
+            dimension: t('Select Dimension'),
+            rating: t('Select Rating'), source: t('Select Source')
         };
-        if (title) title.textContent = titles[filterType] || 'Select Filter';
+        if (title) title.textContent = titles[filterType] || t('Select Filter');
 
         // Show/hide mode toggle (not for source)
         const toggleEl = document.getElementById('filterModeToggle');
@@ -704,19 +704,19 @@ const AllGamesController = (function() {
         if (filterType === 'source') {
             optionsEl.innerHTML = `
                 <div class="filter-option" onclick="AllGamesController.applyFilter('source','rom')">
-                    <span class="filter-option-name">ROM Files</span>
+                    <span class="filter-option-name">${esc(t('ROM Files'))}</span>
                 </div>
                 <div class="filter-option" onclick="AllGamesController.applyFilter('source','clz')">
-                    <span class="filter-option-name">CLZ Imports</span>
+                    <span class="filter-option-name">${esc(t('CLZ Imports'))}</span>
                 </div>
                 <div class="filter-option" onclick="AllGamesController.applyFilter('source','steam')">
-                    <span class="filter-option-name">Steam Imports</span>
+                    <span class="filter-option-name">${esc(t('Steam Imports'))}</span>
                 </div>
                 <div class="filter-option" onclick="AllGamesController.applyFilter('source','xbox')">
-                    <span class="filter-option-name">Xbox Imports</span>
+                    <span class="filter-option-name">${esc(t('Xbox Imports'))}</span>
                 </div>
                 <div class="filter-option" onclick="AllGamesController.applyFilter('source','psn')">
-                    <span class="filter-option-name">PSN Imports</span>
+                    <span class="filter-option-name">${esc(t('PSN Imports'))}</span>
                 </div>`;
             modal.classList.add('active');
             _activateFilterModalTrap(modal);
@@ -738,7 +738,7 @@ const AllGamesController = (function() {
                     html += `<div class="filter-option" onclick="AllGamesController.handleFilterOptionClick('rating','${escAttr(val)}')">${esc(val)} <span class="filter-option-count">(${formatNumber(cnt)})</span></div>`;
                 });
             }
-            optionsEl.innerHTML = html || '<div class="filter-empty">No ratings available</div>';
+            optionsEl.innerHTML = html || `<div class="filter-empty">${esc(t('No ratings available'))}</div>`;
             modal.classList.add('active');
             _activateFilterModalTrap(modal);
             return;
@@ -747,11 +747,11 @@ const AllGamesController = (function() {
         // Generic: use FILTER_OPTIONS from server
         const opts = (window.FILTER_OPTIONS || {})[filterType] || [];
         if (opts.length === 0) {
-            optionsEl.innerHTML = '<div class="filter-empty">No options available</div>';
+            optionsEl.innerHTML = `<div class="filter-empty">${esc(t('No options available'))}</div>`;
         } else {
             optionsEl.innerHTML = opts.map(([val, cnt]) =>
                 `<div class="filter-option" onclick="AllGamesController.handleFilterOptionClick('${filterType}','${escAttr(val)}')">
-                    <span class="filter-option-name">${esc(val)}</span>
+                    <span class="filter-option-name">${esc(tField(val))}</span>
                     <span class="filter-option-count">(${formatNumber(cnt)})</span>
                 </div>`
             ).join('');
@@ -879,7 +879,7 @@ const AllGamesController = (function() {
         document.querySelector('.ra-filter-btn')?.classList.remove('active');
         document.querySelector('.bonus-filter-btn')?.classList.remove('active');
         const bonusText = document.getElementById('bonusFilterText');
-        if (bonusText) bonusText.textContent = 'Show Bonus';
+        if (bonusText) bonusText.textContent = t('Show Bonus');
 
         // Remove active alphabet button
         document.querySelectorAll('.alphabet-btn.active').forEach(b => b.classList.remove('active'));
@@ -907,11 +907,11 @@ const AllGamesController = (function() {
         if (filters.show_bonus === '1') {
             delete filters.show_bonus;
             btn?.classList.remove('active');
-            if (textEl) textEl.textContent = 'Show Bonus';
+            if (textEl) textEl.textContent = t('Show Bonus');
         } else {
             filters.show_bonus = '1';
             btn?.classList.add('active');
-            if (textEl) textEl.textContent = 'Hide Bonus';
+            if (textEl) textEl.textContent = t('Hide Bonus');
         }
         resetAndFetch();
     }
@@ -956,18 +956,18 @@ const AllGamesController = (function() {
                 // Exclude filter tags (red theme with NOT prefix)
                 html += displayExcludeFilters.map(([k, v]) =>
                     `<span class="filter-tag filter-tag-exclude">
-                        ${icons[k] || ''} NOT ${esc(String(v))}
+                        ${icons[k] || ''} ${esc(t('NOT'))} ${esc(String(v))}
                         <span class="filter-tag-remove" onclick="AllGamesController.removeExcludeFilter('${k}')">&#215;</span>
                     </span>`
                 ).join('');
 
                 if (hasRA) {
-                    html += `<span class="filter-tag ra-tag">&#127942; Has Achievements
+                    html += `<span class="filter-tag ra-tag">&#127942; ${esc(t('Has Achievements'))}
                         <span class="filter-tag-remove" onclick="AllGamesController.toggleRAFilter()">&#215;</span></span>`;
                 }
                 if (hasBonus) {
                     html += `<span class="filter-tag" style="background:rgba(168,85,247,0.15);border-color:#a855f7;color:#a855f7;">
-                        &#127873; Showing Bonus Discs
+                        &#127873; ${esc(t('Showing Bonus Discs'))}
                         <span class="filter-tag-remove" onclick="AllGamesController.toggleBonusDiscFilter()">&#215;</span></span>`;
                 }
 
@@ -1103,7 +1103,7 @@ const AllGamesController = (function() {
 
         if (bulkMode) {
             btn?.classList.add('active');
-            if (text) text.textContent = 'Cancel';
+            if (text) text.textContent = t('Cancel');
             checkboxes.forEach(cb => cb.style.display = 'block');
             if (selectAllBtn) selectAllBtn.style.display = 'flex';
             if (selectUnscrapedBtn) selectUnscrapedBtn.style.display = 'flex';
@@ -1112,7 +1112,7 @@ const AllGamesController = (function() {
             if (editBtn) editBtn.style.display = 'flex';
         } else {
             btn?.classList.remove('active');
-            if (text) text.textContent = 'Select';
+            if (text) text.textContent = t('Select');
             checkboxes.forEach(cb => cb.style.display = 'none');
             if (selectAllBtn) selectAllBtn.style.display = 'none';
             if (selectUnscrapedBtn) selectUnscrapedBtn.style.display = 'none';
@@ -1179,7 +1179,7 @@ const AllGamesController = (function() {
                 updateSelectedCount();
 
                 if (typeof showNotification === 'function') {
-                    showNotification(`Selected ${data.ids.length} games across all pages`, 'info');
+                    showNotification(t('Selected {count} games across all pages', {count: data.ids.length}), 'info');
                 }
             }
         } catch (err) {
@@ -1223,7 +1223,7 @@ const AllGamesController = (function() {
                 updateSelectedCount();
 
                 if (typeof showNotification === 'function') {
-                    showNotification(`Selected ${data.ids.length} unscraped games across all pages`, 'info');
+                    showNotification(t('Selected {count} unscraped games across all pages', {count: data.ids.length}), 'info');
                 }
             }
         } catch (err) {
@@ -1241,7 +1241,7 @@ const AllGamesController = (function() {
     function startBulkScrape() {
         if (selectedGames.size === 0) {
             if (typeof showModal === 'function') {
-                showModal('No Games Selected', 'Please select at least one game to scrape.');
+                showModal(t('No Games Selected'), t('Please select at least one game to scrape.'));
             }
             return;
         }
@@ -1253,7 +1253,7 @@ const AllGamesController = (function() {
     function startBulkEdit() {
         if (selectedGames.size === 0) {
             if (typeof showModal === 'function') {
-                showModal('No Games Selected', 'Please select at least one game to edit.');
+                showModal(t('No Games Selected'), t('Please select at least one game to edit.'));
             }
             return;
         }
@@ -1312,7 +1312,7 @@ const AllGamesController = (function() {
                 if (filters.show_bonus === '1') {
                     document.querySelector('.bonus-filter-btn')?.classList.add('active');
                     const bt = document.getElementById('bonusFilterText');
-                    if (bt) bt.textContent = 'Hide Bonus';
+                    if (bt) bt.textContent = t('Hide Bonus');
                 }
                 if (filters.letter) {
                     activeLetterJump = filters.letter;

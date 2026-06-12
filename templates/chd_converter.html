@@ -58,149 +58,149 @@
 
 {% block content %}
 <div class="page-header">
-    <h1>🔧 ROM Tools</h1>
-    <p>Manage, organize, and optimize your ROM collection.</p>
+    <h1>🔧 {{ _('ROM Tools') }}</h1>
+    <p>{{ _('Manage, organize, and optimize your ROM collection.') }}</p>
 </div>
 
 <!-- Tool Tabs -->
 <nav class="tool-tabs">
     <a href="{{ url_for('tools.archive_scanner') }}" class="tool-tab">
         <span class="tab-icon">📦</span>
-        <span class="tab-label">Archive Scanner</span>
+        <span class="tab-label">{{ _('Archive Scanner') }}</span>
     </a>
     <a href="{{ url_for('tools.chd_converter') }}" class="tool-tab active" aria-current="page">
         <span class="tab-icon">💿</span>
-        <span class="tab-label">CHD Converter</span>
+        <span class="tab-label">{{ _('CHD Converter') }}</span>
     </a>
     <a href="{{ url_for('tools.chd_verify') }}" class="tool-tab">
         <span class="tab-icon">✅</span>
-        <span class="tab-label">CHD Verify</span>
+        <span class="tab-label">{{ _('CHD Verify') }}</span>
     </a>
     <a href="{{ url_for('tools.multi_disc_organizer') }}" class="tool-tab">
         <span class="tab-icon">💽</span>
-        <span class="tab-label">Multi-Disc Organizer</span>
+        <span class="tab-label">{{ _('Multi-Disc Organizer') }}</span>
     </a>
     <a href="{{ url_for('tools.duplicate_finder') }}" class="tool-tab">
         <span class="tab-icon">🔍</span>
-        <span class="tab-label">Duplicate Finder</span>
+        <span class="tab-label">{{ _('Duplicate Finder') }}</span>
     </a>
     <a href="{{ url_for('tools.screenshot_dedup') }}" class="tool-tab">
         <span class="tab-icon">📸</span>
-        <span class="tab-label">Screenshot Dedup</span>
+        <span class="tab-label">{{ _('Screenshot Dedup') }}</span>
     </a>
     <a href="{{ url_for('tools.rom_tools_settings') }}" class="tool-tab">
         <span class="tab-icon">⚙️</span>
-        <span class="tab-label">Settings</span>
+        <span class="tab-label">{{ _('Settings') }}</span>
     </a>
 </nav>
 
 <div class="info-banner">
     <span class="info-icon">💡</span>
     <div class="info-text">
-        <h4>About CHD Format</h4>
-        <p>CHD (Compressed Hunks of Data) is a lossless compression format designed for disc images. It can reduce file sizes by 30-70% while maintaining perfect compatibility with emulators like PCSX2, Dolphin, and MAME.</p>
+        <h4>{{ _('About CHD Format') }}</h4>
+        <p>{% trans %}CHD (Compressed Hunks of Data) is a lossless compression format designed for disc images. It can reduce file sizes by 30-70% while maintaining perfect compatibility with emulators like PCSX2, Dolphin, and MAME.{% endtrans %}</p>
     </div>
 </div>
 
 <div class="card">
     <div class="card-header">
-        <h2 class="card-title"><span>📁</span> Source Files</h2>
+        <h2 class="card-title"><span>📁</span> {{ _('Source Files') }}</h2>
     </div>
     <div class="card-body">
     <div class="form-group">
-        <label for="subPath">Source Folder</label>
+        <label for="subPath">{{ _('Source Folder') }}</label>
         <div class="form-row" style="display: flex; gap: 0.5rem;">
             <div class="locked-path-wrapper" style="flex: 1;">
                 <span class="locked-path-prefix" id="basePath">{{ rom_path }}/</span>
-                <input type="text" id="subPath" placeholder="subfolder (optional)" value="">
+                <input type="text" id="subPath" placeholder="{{ _('subfolder (optional)') }}" value="">
             </div>
-            <button type="button" class="btn btn-secondary" onclick="openFolderBrowser('hiddenFullPath')">📁 Browse</button>
-            <button type="button" class="btn btn-primary" onclick="scanFiles()">🔍 Scan</button>
+            <button type="button" class="btn btn-secondary" onclick="openFolderBrowser('hiddenFullPath')">📁 {{ _('Browse') }}</button>
+            <button type="button" class="btn btn-primary" onclick="scanFiles()">🔍 {{ _('Scan') }}</button>
         </div>
         <input type="hidden" id="hiddenFullPath" value="{{ rom_path }}">
     </div>
-    
+
     <div class="form-group">
-        <div class="form-label" id="chdFileTypesLabel">File Types to Convert</div>
+        <div class="form-label" id="chdFileTypesLabel">{{ _('File Types to Convert') }}</div>
         <div class="toggle-grid" role="group" aria-labelledby="chdFileTypesLabel">
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="typeIso" aria-label="Convert ISO files" checked onchange="updateToggleLabel(this)">
+                    <input type="checkbox" id="typeIso" aria-label="{{ _('Convert ISO files') }}" checked onchange="updateToggleLabel(this)">
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label active" onclick="document.getElementById('typeIso').click()">ISO (.iso)</span>
+                <span class="toggle-label active" onclick="document.getElementById('typeIso').click()">{{ _('ISO (.iso)') }}</span>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="typeCue" aria-label="Convert BIN/CUE files" checked onchange="updateToggleLabel(this)">
+                    <input type="checkbox" id="typeCue" aria-label="{{ _('Convert BIN/CUE files') }}" checked onchange="updateToggleLabel(this)">
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label active" onclick="document.getElementById('typeCue').click()">BIN/CUE (.cue)</span>
+                <span class="toggle-label active" onclick="document.getElementById('typeCue').click()">{{ _('BIN/CUE (.cue)') }}</span>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="typeGdi" aria-label="Convert GDI files" checked onchange="updateToggleLabel(this)">
+                    <input type="checkbox" id="typeGdi" aria-label="{{ _('Convert GDI files') }}" checked onchange="updateToggleLabel(this)">
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label active" onclick="document.getElementById('typeGdi').click()">GDI (.gdi)</span>
+                <span class="toggle-label active" onclick="document.getElementById('typeGdi').click()">{{ _('GDI (.gdi)') }}</span>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="typeMds" aria-label="Convert MDF/MDS files" onchange="updateToggleLabel(this)">
+                    <input type="checkbox" id="typeMds" aria-label="{{ _('Convert MDF/MDS files') }}" onchange="updateToggleLabel(this)">
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label" onclick="document.getElementById('typeMds').click()">MDF/MDS (.mds)</span>
+                <span class="toggle-label" onclick="document.getElementById('typeMds').click()">{{ _('MDF/MDS (.mds)') }}</span>
             </div>
         </div>
     </div>
-    
+
     <div class="file-list" id="fileList">
-        <div class="empty-state">Click "Scan for Files" to find disc images</div>
+        <div class="empty-state">{{ _('Click "Scan for Files" to find disc images') }}</div>
     </div>
     </div>
 </div>
 
 <div class="card">
     <div class="card-header">
-        <h2 class="card-title"><span>⚙️</span> Conversion Options</h2>
+        <h2 class="card-title"><span>⚙️</span> {{ _('Conversion Options') }}</h2>
     </div>
     <div class="card-body">
     <div class="form-group">
         <div class="toggle-grid">
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="optVerify" aria-label="Verify after conversion" checked onchange="updateToggleLabel(this)">
+                    <input type="checkbox" id="optVerify" aria-label="{{ _('Verify after conversion') }}" checked onchange="updateToggleLabel(this)">
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label active" onclick="document.getElementById('optVerify').click()">Verify after conversion</span>
+                <span class="toggle-label active" onclick="document.getElementById('optVerify').click()">{{ _('Verify after conversion') }}</span>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="optDelete" aria-label="Delete original files after success" onchange="updateToggleLabel(this)">
+                    <input type="checkbox" id="optDelete" aria-label="{{ _('Delete original files after success') }}" onchange="updateToggleLabel(this)">
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label" onclick="document.getElementById('optDelete').click()">Delete original files after success</span>
+                <span class="toggle-label" onclick="document.getElementById('optDelete').click()">{{ _('Delete original files after success') }}</span>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="optSkip" aria-label="Skip existing CHD files" checked onchange="updateToggleLabel(this)">
+                    <input type="checkbox" id="optSkip" aria-label="{{ _('Skip existing CHD files') }}" checked onchange="updateToggleLabel(this)">
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label active" onclick="document.getElementById('optSkip').click()">Skip existing CHD files</span>
+                <span class="toggle-label active" onclick="document.getElementById('optSkip').click()">{{ _('Skip existing CHD files') }}</span>
             </div>
         </div>
     </div>
-    
+
     <div class="btn-group">
-        <button type="button" class="btn btn-primary" id="convertBtn" onclick="startConversion()" disabled>🔄 Start Conversion</button>
-        <button type="button" class="btn btn-danger" id="cancelBtn" onclick="cancelConversion()" disabled>❌ Cancel</button>
+        <button type="button" class="btn btn-primary" id="convertBtn" onclick="startConversion()" disabled>🔄 {{ _('Start Conversion') }}</button>
+        <button type="button" class="btn btn-danger" id="cancelBtn" onclick="cancelConversion()" disabled>❌ {{ _('Cancel') }}</button>
     </div>
-    
+
     <div class="progress-section" id="progressSection" style="display: none;">
         <div class="progress-bar-container">
             <div class="progress-bar-fill" id="progressBar">0%</div>
         </div>
-        <p id="progressStatus" style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">Preparing...</p>
+        <p id="progressStatus" style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">{{ _('Preparing...') }}</p>
     </div>
     
     <div class="scan-log" id="conversionLog" style="display: none;"></div>
@@ -209,25 +209,25 @@
 
 <div class="card">
     <div class="card-header">
-        <h2 class="card-title"><span>📊</span> Conversion Statistics</h2>
+        <h2 class="card-title"><span>📊</span> {{ _('Conversion Statistics') }}</h2>
     </div>
     <div class="card-body">
     <div class="stats-grid">
         <div class="stat-box">
             <div class="stat-value" id="statConverted">0</div>
-            <div class="stat-label">Files Converted</div>
+            <div class="stat-label">{{ _('Files Converted') }}</div>
         </div>
         <div class="stat-box">
             <div class="stat-value" id="statOriginal">0 GB</div>
-            <div class="stat-label">Original Size</div>
+            <div class="stat-label">{{ _('Original Size') }}</div>
         </div>
         <div class="stat-box">
             <div class="stat-value" id="statCompressed">0 GB</div>
-            <div class="stat-label">Compressed Size</div>
+            <div class="stat-label">{{ _('Compressed Size') }}</div>
         </div>
         <div class="stat-box">
             <div class="stat-value" id="statSaved">0%</div>
-            <div class="stat-label">Space Saved</div>
+            <div class="stat-label">{{ _('Space Saved') }}</div>
         </div>
     </div>
     </div>

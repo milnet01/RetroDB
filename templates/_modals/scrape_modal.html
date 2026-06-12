@@ -2,9 +2,9 @@
 <div id="scrapeModal" class="scrape-modal" data-focus-trap data-focus-trap-content=".scrape-modal-content" data-focus-trap-onescape="closeScrapeModal">
     <div class="scrape-modal-content" role="dialog" aria-modal="true" aria-labelledby="scrapeModalHeading">
         <div class="scrape-modal-header">
-            <h2 id="scrapeModalHeading">Search Metadata</h2>
-            <span class="scrape-modal-subtitle" id="scrapeModalSubtitle">Search enabled scrapers for metadata and boxart.</span>
-            <button type="button" class="modal-close-btn" onclick="closeScrapeModal()" aria-label="Close scrape modal">×</button>
+            <h2 id="scrapeModalHeading">{{ _('Search Metadata') }}</h2>
+            <span class="scrape-modal-subtitle" id="scrapeModalSubtitle">{{ _('Search enabled scrapers for metadata and boxart.') }}</span>
+            <button type="button" class="modal-close-btn" onclick="closeScrapeModal()" aria-label="{{ _('Close scrape modal') }}">×</button>
         </div>
 
         <div class="scrape-modal-body">
@@ -13,8 +13,8 @@
                     <input type="text"
                            id="scrapeSearchInput"
                            value="{{ game.title }}"
-                           placeholder="Enter game title to search..."
-                           aria-label="Search game title for scraping"
+                           placeholder="{{ _('Enter game title to search...') }}"
+                           aria-label="{{ _('Search game title for scraping') }}"
                            autocomplete="off">
                     <button type="submit" class="btn btn-primary">
                         <span class="btn-icon">🔍</span>
@@ -24,7 +24,7 @@
 
             <div id="scrapeResults" class="scrape-results">
                 <div class="scrape-results-placeholder">
-                    Enter a title to search for matches.
+                    {{ _('Enter a title to search for matches.') }}
                 </div>
             </div>
         </div>
@@ -36,7 +36,7 @@
                 <input type="hidden" name="action" value="reset">
                 <button type="button" class="btn btn-danger btn-sm" onclick="showConfirm('🗑️ Reset Metadata', 'Reset all metadata including boxart and screenshots? This cannot be undone.', function() { document.getElementById('resetMetadataForm').submit(); })">
                     <span class="btn-icon">🗑️</span>
-                    Reset Metadata
+                    {{ _('Reset Metadata') }}
                 </button>
             </form>
         </div>

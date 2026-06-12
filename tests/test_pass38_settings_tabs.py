@@ -52,9 +52,12 @@ class TestPartialsExist:
         # The `active` class only belongs to the account partial — the
         # initially-visible tab. The others get it from JS on switch.
         active_marker = " active" if tab == "account" else ""
+        # The aria-label VALUE is i18n-wrapped (Pass 43.5), so pin only the
+        # structural attributes up to `aria-label=` — the label text is now a
+        # `{{ _('…') }}` and not a stable literal.
         opening = (
             f'<div class="settings-tab-panel{active_marker}" id="tab-{tab}" '
-            f'role="tabpanel" aria-label="{tab.capitalize()} settings">'
+            f'role="tabpanel" aria-label='
         )
         assert opening in src, (
             f"{tab}.html should open with the panel wrapper:\n{opening}"
@@ -159,7 +162,11 @@ def jinja_env():
     env = Environment(
         loader=FileSystemLoader(str(TEMPLATES_DIR)),
         autoescape=select_autoescape(["html"]),
+        extensions=["jinja2.ext.i18n"],
     )
+    # Partials carry {{ _('…') }} / {% trans %} after the Pass 43.5 i18n sweep;
+    # install null translations so they render standalone (msgid -> source text).
+    env.install_null_translations(newstyle=True)
     # Replace the strict `Undefined` with our permissive stand-in so any
     # name a partial reaches for resolves to a chainable empty value.
     env.globals.update(

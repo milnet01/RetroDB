@@ -6,11 +6,11 @@
 <!-- Page Header -->
 <div class="page-header">
     <div>
-        <h1 class="page-title">Changelog</h1>
-        <p class="page-subtitle">Version history and release notes</p>
+        <h1 class="page-title">{{ _('Changelog') }}</h1>
+        <p class="page-subtitle">{{ _('Version history and release notes') }}</p>
     </div>
     <div class="page-actions">
-        <span class="version-badge">Current: v{{ config.APP_VERSION }}</span>
+        <span class="version-badge">{% trans version=config.APP_VERSION %}Current: v{{ version }}{% endtrans %}</span>
     </div>
 </div>
 

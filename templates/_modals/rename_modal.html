@@ -1,23 +1,23 @@
 {# Rename ROM file modal — inherits game_detail.html context. #}
 <div id="renameModal" class="rename-modal-overlay" data-focus-trap data-focus-trap-content=".rename-modal" data-focus-trap-onescape="closeRenameModal">
     <div class="rename-modal" role="dialog" aria-modal="true" aria-labelledby="renameModalTitle">
-        <h3 id="renameModalTitle">✏️ Rename ROM File</h3>
+        <h3 id="renameModalTitle">✏️ {{ _('Rename ROM File') }}</h3>
 
         <div class="error-message" id="renameError"></div>
 
-        <div class="form-label">Current filename:</div>
+        <div class="form-label">{{ _('Current filename:') }}</div>
         <div class="current-name" id="renameCurrentName"></div>
 
-        <label for="newFilename">New filename:</label>
-        <input type="text" id="newFilename" placeholder="Enter new filename (without extension)">
+        <label for="newFilename">{{ _('New filename:') }}</label>
+        <input type="text" id="newFilename" placeholder="{{ _('Enter new filename (without extension)') }}">
 
         <div class="warning">
-            ⚠️ <strong>Warning:</strong> This will rename the actual ROM file on disk. Make sure the filename is correct before proceeding. The file extension will be preserved automatically.
+            ⚠️ <strong>{{ _('Warning:') }}</strong> {{ _('This will rename the actual ROM file on disk. Make sure the filename is correct before proceeding. The file extension will be preserved automatically.') }}
         </div>
 
         <div class="btn-group">
-            <button type="button" class="btn-cancel" onclick="closeRenameModal()">Cancel</button>
-            <button type="button" class="btn-rename-confirm" onclick="confirmRename()">Rename File</button>
+            <button type="button" class="btn-cancel" onclick="closeRenameModal()">{{ _('Cancel') }}</button>
+            <button type="button" class="btn-rename-confirm" onclick="confirmRename()">{{ _('Rename File') }}</button>
         </div>
     </div>
 </div>

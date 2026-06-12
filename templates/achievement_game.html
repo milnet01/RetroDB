@@ -12,7 +12,7 @@
 
 <!-- Breadcrumb -->
 {{ breadcrumb([
-    ('RetroAchievements', url_for('achievements.achievements')),
+    (_('RetroAchievements'), url_for('achievements.achievements')),
     (game.system_name, url_for('achievements.achievements_system', system_id=game.system_id)),
     (game.title, None),
 ]) }}
@@ -23,16 +23,16 @@
     <div class="header-buttons">
         <a href="{{ url_for('games.game_detail', game_id=game.id) }}?from=achievements" class="btn btn-secondary">
             <span class="btn-icon">🎮</span>
-            View Game
+            {{ _('View Game') }}
         </a>
         <button type="button" onclick="refreshRAProgress()" class="btn btn-secondary" id="refreshRABtn">
             <span class="btn-icon">🔄</span>
-            Refresh RA
+            {{ _('Refresh RA') }}
         </button>
         {% if progress %}
         <a href="{{ progress.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
             <span class="btn-icon">🔗</span>
-            RetroAchievements
+            {{ _('RetroAchievements') }}
         </a>
         {% endif %}
     </div>
@@ -67,7 +67,7 @@
                 {% if game.description %}
                 {{ game.description[:500] }}{% if game.description|length > 500 %}...{% endif %}
                 {% else %}
-                <span class="text-muted">No description available.</span>
+                <span class="text-muted">{{ _('No description available.') }}</span>
                 {% endif %}
             </div>
 
@@ -76,19 +76,19 @@
             <div class="key-details">
                 {% if game.publisher %}
                 <div class="kd-item">
-                    <span class="kd-label">Publisher</span>
+                    <span class="kd-label">{{ _('Publisher') }}</span>
                     <span class="kd-value">{{ game.publisher.split(',')[0] }}</span>
                 </div>
                 {% endif %}
                 {% if game.developer %}
                 <div class="kd-item">
-                    <span class="kd-label">Developer</span>
+                    <span class="kd-label">{{ _('Developer') }}</span>
                     <span class="kd-value">{{ game.developer.split(',')[0] }}</span>
                 </div>
                 {% endif %}
                 {% if game.franchise %}
                 <div class="kd-item">
-                    <span class="kd-label">Series</span>
+                    <span class="kd-label">{{ _('Series') }}</span>
                     <span class="kd-value">{{ game.franchise }}</span>
                 </div>
                 {% endif %}
@@ -103,7 +103,7 @@
         <div class="card-body">
             <div class="trophy-summary">
                 <div class="trophy-summary-header">
-                    <span class="trophy-summary-title">🏆 Achievement Progress</span>
+                    <span class="trophy-summary-title">🏆 {{ _('Achievement Progress') }}</span>
                     <span class="trophy-summary-total">{{ progress.unlocked_count|format_number }} / {{ progress.achievement_count|format_number }}</span>
                 </div>
                 <div class="trophy-summary-progress">
@@ -115,12 +115,12 @@
                 <div class="trophy-summary-counts">
                     <span class="trophy-count">
                         <span class="stat-icon">⭐</span>
-                        {{ progress.earned_points|format_number }} / {{ progress.total_points|format_number }} Points
+                        {% trans earned=progress.earned_points|format_number, total=progress.total_points|format_number %}{{ earned }} / {{ total }} Points{% endtrans %}
                     </span>
                     {% if progress.unlocked_hardcore > 0 %}
                     <span class="trophy-count" style="color: var(--neon-orange);">
                         <span class="stat-icon">🔥</span>
-                        {{ progress.unlocked_hardcore }} Hardcore
+                        {% trans count=progress.unlocked_hardcore %}{{ count }} Hardcore{% endtrans %}
                     </span>
                     {% endif %}
                 </div>
@@ -131,8 +131,8 @@
     <div class="achievement-error-notice" style="margin-bottom: var(--spacing-xl);">
         <span class="error-icon">⚠️</span>
         <div class="error-content">
-            <strong>Could not load achievement data</strong>
-            <span>Check your RetroAchievements credentials in Settings.</span>
+            <strong>{{ _('Could not load achievement data') }}</strong>
+            <span>{{ _('Check your RetroAchievements credentials in Settings.') }}</span>
         </div>
     </div>
     {% endif %}
@@ -141,17 +141,17 @@
     <div class="bottom-row">
         <!-- Playtime Estimate -->
         <div class="bottom-section">
-            <h3 class="section-title-sm">⏱️ How Long to Beat</h3>
+            <h3 class="section-title-sm">⏱️ {{ _('How Long to Beat') }}</h3>
             <div class="hltb-section" id="hltbSection">
                 <!-- Search Input -->
                 <input type="text"
                        id="hltbSearchQuery"
                        class="hltb-search-input"
                        value="{{ game.title }}"
-                       placeholder="Search game title...">
+                       placeholder="{{ _('Search game title...') }}">
 
                 <button type="button" class="btn-hltb" id="hltbLookupBtn" onclick="achLookupHLTB()">
-                    🔍 Lookup HLTB
+                    🔍 {{ _('Lookup HLTB') }}
                 </button>
 
                 <!-- Pending results (shown before confirmation) -->
@@ -159,21 +159,21 @@
                     <div class="hltb-match-header" id="hltbMatchHeader"></div>
                     <div class="hltb-results">
                         <div class="hltb-time-row">
-                            <span class="hltb-label">Main Story</span>
+                            <span class="hltb-label">{{ _('Main Story') }}</span>
                             <span class="hltb-value" id="hltbPendingMain">--</span>
                         </div>
                         <div class="hltb-time-row">
-                            <span class="hltb-label">Main + Extras</span>
+                            <span class="hltb-label">{{ _('Main + Extras') }}</span>
                             <span class="hltb-value" id="hltbPendingExtra">--</span>
                         </div>
                         <div class="hltb-time-row">
-                            <span class="hltb-label">Completionist</span>
+                            <span class="hltb-label">{{ _('Completionist') }}</span>
                             <span class="hltb-value" id="hltbPendingComplete">--</span>
                         </div>
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm); display: flex; gap: var(--spacing-xs);">
-                        <button type="button" class="btn btn-sm btn-primary" onclick="achConfirmHLTB()">✓ Save</button>
-                        <button type="button" class="btn btn-sm btn-secondary" onclick="achCancelHLTB()">✕ Cancel</button>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="achConfirmHLTB()">✓ {{ _('Save') }}</button>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="achCancelHLTB()">✕ {{ _('Cancel') }}</button>
                     </div>
                 </div>
 
@@ -192,27 +192,27 @@
                         {% for part in playtime_parts %}
                         {% set kv = part.split(': ') %}
                         <div class="hltb-time-row">
-                            <span class="hltb-label">{% if kv[0] == 'Main' %}Main Story{% elif kv[0] == 'Main+Extras' %}Main + Extras{% elif kv[0] == '100%' %}Completionist{% else %}{{ kv[0] }}{% endif %}</span>
+                            <span class="hltb-label">{% if kv[0] == 'Main' %}{{ _('Main Story') }}{% elif kv[0] == 'Main+Extras' %}{{ _('Main + Extras') }}{% elif kv[0] == '100%' %}{{ _('Completionist') }}{% else %}{{ kv[0] }}{% endif %}</span>
                             <span class="hltb-value">{{ kv[1] if kv|length > 1 else '--' }}</span>
                         </div>
                         {% endfor %}
                         {% else %}
                         <div class="hltb-time-row">
-                            <span class="hltb-label">Main Story</span>
+                            <span class="hltb-label">{{ _('Main Story') }}</span>
                             <span class="hltb-value" id="hltbMain">--</span>
                         </div>
                         <div class="hltb-time-row">
-                            <span class="hltb-label">Main + Extras</span>
+                            <span class="hltb-label">{{ _('Main + Extras') }}</span>
                             <span class="hltb-value" id="hltbMainExtra">--</span>
                         </div>
                         <div class="hltb-time-row">
-                            <span class="hltb-label">Completionist</span>
+                            <span class="hltb-label">{{ _('Completionist') }}</span>
                             <span class="hltb-value" id="hltbComplete">--</span>
                         </div>
                         {% endif %}
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                        <button type="button" class="btn btn-sm btn-danger" onclick="achClearHLTB()">✕ Clear</button>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="achClearHLTB()">✕ {{ _('Clear') }}</button>
                     </div>
                 </div>
             </div>
@@ -220,48 +220,48 @@
 
         <!-- More Details -->
         <div class="bottom-section">
-            <h3 class="section-title-sm">📋 More Details</h3>
+            <h3 class="section-title-sm">📋 {{ _('More Details') }}</h3>
             <div class="more-details">
                 <div class="md-item" style="grid-column: span 2;">
-                    <span class="md-label">System</span>
+                    <span class="md-label">{{ _('System') }}</span>
                     <span class="md-value">{{ game.system_name }}</span>
                 </div>
                 <div class="md-item">
-                    <span class="md-label">First Achievement</span>
-                    <span class="md-value">{{ first_achievement_date if first_achievement_date else 'Never' }}</span>
+                    <span class="md-label">{{ _('First Achievement') }}</span>
+                    <span class="md-value">{{ first_achievement_date if first_achievement_date else _('Never') }}</span>
                 </div>
                 <div class="md-item">
-                    <span class="md-label">Last Achievement</span>
-                    <span class="md-value">{{ last_achievement_date if last_achievement_date else 'Never' }}</span>
+                    <span class="md-label">{{ _('Last Achievement') }}</span>
+                    <span class="md-value">{{ last_achievement_date if last_achievement_date else _('Never') }}</span>
                 </div>
                 {% if game.genre %}
                 <div class="md-item">
-                    <span class="md-label">Genre</span>
+                    <span class="md-label">{{ _('Genre') }}</span>
                     <span class="md-value">{{ game.genre }}</span>
                 </div>
                 {% endif %}
                 {% if game.modes %}
                 <div class="md-item">
-                    <span class="md-label">Modes</span>
+                    <span class="md-label">{{ _('Modes') }}</span>
                     <span class="md-value">{{ game.modes }}</span>
                 </div>
                 {% endif %}
                 {% if game.save_type %}
                 <div class="md-item">
-                    <span class="md-label">Save</span>
+                    <span class="md-label">{{ _('Save') }}</span>
                     <span class="md-value">{{ game.save_type }}</span>
                 </div>
                 {% endif %}
                 {% if game.input_type %}
                 <div class="md-item">
-                    <span class="md-label">Input</span>
+                    <span class="md-label">{{ _('Input') }}</span>
                     <span class="md-value">{{ game.input_type }}</span>
                 </div>
                 {% endif %}
                 {% if progress and progress.achievement_count %}
                 <div class="md-item">
-                    <span class="md-label">Achievements</span>
-                    <span class="md-value">{{ progress.achievement_count|format_number }} total</span>
+                    <span class="md-label">{{ _('Achievements') }}</span>
+                    <span class="md-value">{% trans count=progress.achievement_count|format_number %}{{ count }} total{% endtrans %}</span>
                 </div>
                 {% endif %}
             </div>
@@ -276,7 +276,7 @@
     {% set unlocked = progress.achievements|selectattr('is_unlocked')|list %}
     <section class="card trophy-column">
         <div class="card-header">
-            <h2 class="card-title">✓ Unlocked ({{ unlocked|length }})</h2>
+            <h2 class="card-title">✓ {% trans count=unlocked|length %}Unlocked ({{ count }}){% endtrans %}</h2>
         </div>
         <div class="card-body">
             <div class="trophy-list">
@@ -296,7 +296,7 @@
                             <div class="trophy-item-meta">
                                 <span class="trophy-type-label achievement-points">{{ ach.points }} pts</span>
                                 {% if ach.is_unlocked_hardcore %}
-                                <span class="trophy-type-label hardcore">🔥 Hardcore</span>
+                                <span class="trophy-type-label hardcore">🔥 {{ _('Hardcore') }}</span>
                                 {% endif %}
                                 {% if ach.date_earned %}
                                 <span class="trophy-timestamp">🕐 {{ ach.date_earned|tz('short') }}</span>
@@ -306,7 +306,7 @@
                     </div>
                     {% endfor %}
                 {% else %}
-                    <div class="trophy-empty">No achievements unlocked yet</div>
+                    <div class="trophy-empty">{{ _('No achievements unlocked yet') }}</div>
                 {% endif %}
             </div>
         </div>
@@ -316,7 +316,7 @@
     {% set locked = progress.achievements|rejectattr('is_unlocked')|list %}
     <section class="card trophy-column">
         <div class="card-header">
-            <h2 class="card-title">🔒 Locked ({{ locked|length }})</h2>
+            <h2 class="card-title">🔒 {% trans count=locked|length %}Locked ({{ count }}){% endtrans %}</h2>
         </div>
         <div class="card-body">
             <div class="trophy-list">
@@ -342,7 +342,7 @@
                     </div>
                     {% endfor %}
                 {% else %}
-                    <div class="trophy-empty">All achievements unlocked! 🎉</div>
+                    <div class="trophy-empty">{{ _('All achievements unlocked!') }} 🎉</div>
                 {% endif %}
             </div>
         </div>
@@ -351,10 +351,10 @@
 {% elif not progress %}
 <div class="empty-state" style="margin-top: var(--spacing-xl);">
     <div class="empty-state-icon">⚠️</div>
-    <div class="empty-state-title">Achievement Data Unavailable</div>
+    <div class="empty-state-title">{{ _('Achievement Data Unavailable') }}</div>
     <div class="empty-state-text">
-        Could not fetch achievement progress from RetroAchievements.<br>
-        Please check your API credentials in Settings.
+        {{ _('Could not fetch achievement progress from RetroAchievements.') }}<br>
+        {{ _('Please check your API credentials in Settings.') }}
     </div>
 </div>
 {% endif %}

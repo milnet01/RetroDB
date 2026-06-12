@@ -696,117 +696,117 @@
 
 {% block content %}
 <div class="log-viewer-header">
-    <h1>Log Viewer</h1>
+    <h1>{{ _('Log Viewer') }}</h1>
 </div>
 
 <!-- Category Tabs -->
 <div class="log-category-tabs" id="categoryTabs">
     <button type="button" class="category-tab active" data-category="" onclick="LogViewer.setCategory('', this)">
-        All <span class="category-tab-count" id="countAll">0</span>
+        {{ _('All') }} <span class="category-tab-count" id="countAll">0</span>
     </button>
     <button type="button" class="category-tab" data-category="scraping" onclick="LogViewer.setCategory('scraping', this)">
-        Scraping <span class="category-tab-count" id="countScraping">0</span>
+        {{ _('Scraping') }} <span class="category-tab-count" id="countScraping">0</span>
     </button>
     <button type="button" class="category-tab" data-category="rom_tools" onclick="LogViewer.setCategory('rom_tools', this)">
-        ROM Tools <span class="category-tab-count" id="countRomTools">0</span>
+        {{ _('ROM Tools') }} <span class="category-tab-count" id="countRomTools">0</span>
     </button>
     <button type="button" class="category-tab" data-category="rom_reports" onclick="LogViewer.setCategory('rom_reports', this)">
-        Reports <span class="category-tab-count" id="countReports">0</span>
+        {{ _('Reports') }} <span class="category-tab-count" id="countReports">0</span>
     </button>
     <button type="button" class="category-tab" data-category="image_resize" onclick="LogViewer.setCategory('image_resize', this)">
-        Image Resize <span class="category-tab-count" id="countImageResize">0</span>
+        {{ _('Image Resize') }} <span class="category-tab-count" id="countImageResize">0</span>
     </button>
     <button type="button" class="category-tab" data-category="system" onclick="LogViewer.setCategory('system', this)">
-        System <span class="category-tab-count" id="countSystem">0</span>
+        {{ _('System') }} <span class="category-tab-count" id="countSystem">0</span>
     </button>
 </div>
 
 <!-- Toolbar -->
 <div class="log-toolbar">
     <div class="toolbar-group">
-        <label for="logFileSelect">File</label>
+        <label for="logFileSelect">{{ _('File') }}</label>
         <select id="logFileSelect" class="log-file-select">
-            <option value="">Loading...</option>
+            <option value="">{{ _('Loading...') }}</option>
         </select>
         <div class="log-file-actions" id="fileActions" style="display: none;">
-            <button type="button" class="log-file-btn" onclick="LogViewer.downloadFile()" title="Download">Download</button>
-            <button type="button" class="log-file-btn delete-btn" onclick="LogViewer.deleteFile()" title="Delete">Delete</button>
+            <button type="button" class="log-file-btn" onclick="LogViewer.downloadFile()" title="{{ _('Download') }}">{{ _('Download') }}</button>
+            <button type="button" class="log-file-btn delete-btn" onclick="LogViewer.deleteFile()" title="{{ _('Delete') }}">{{ _('Delete') }}</button>
         </div>
     </div>
 
     <div class="toolbar-separator"></div>
 
     <div class="toolbar-group">
-        <label for="timeFrom">Time</label>
-        <input type="time" id="timeFrom" class="time-input" step="1" placeholder="From">
+        <label for="timeFrom">{{ _('Time') }}</label>
+        <input type="time" id="timeFrom" class="time-input" step="1" placeholder="{{ _('From') }}">
         <span style="color: var(--text-muted); font-size: 0.8rem;">—</span>
-        <input type="time" id="timeTo" class="time-input" step="1" placeholder="To">
+        <input type="time" id="timeTo" class="time-input" step="1" placeholder="{{ _('To') }}">
     </div>
 
     <div class="toolbar-separator"></div>
 
     <div class="toolbar-group">
-        <span class="group-label" id="logLevelLabel">Level</span>
+        <span class="group-label" id="logLevelLabel">{{ _('Level') }}</span>
         <div class="level-toggles" role="group" aria-labelledby="logLevelLabel">
-            <button type="button" class="level-btn active" data-level="INFO" onclick="LogViewer.toggleLevel('INFO', this)">INFO</button>
-            <button type="button" class="level-btn active" data-level="WARNING" onclick="LogViewer.toggleLevel('WARNING', this)">WARN</button>
-            <button type="button" class="level-btn active" data-level="ERROR" onclick="LogViewer.toggleLevel('ERROR', this)">ERROR</button>
+            <button type="button" class="level-btn active" data-level="INFO" onclick="LogViewer.toggleLevel('INFO', this)">{{ _('INFO') }}</button>
+            <button type="button" class="level-btn active" data-level="WARNING" onclick="LogViewer.toggleLevel('WARNING', this)">{{ _('WARN') }}</button>
+            <button type="button" class="level-btn active" data-level="ERROR" onclick="LogViewer.toggleLevel('ERROR', this)">{{ _('ERROR') }}</button>
         </div>
     </div>
 
     <div class="toolbar-separator"></div>
 
     <div class="toolbar-group">
-        <label for="logModuleFilter">Source</label>
+        <label for="logModuleFilter">{{ _('Source') }}</label>
         <select id="logModuleFilter" class="log-module-select" onchange="LogViewer.setModuleFilter(this.value)">
-            <option value="">All Sources</option>
+            <option value="">{{ _('All Sources') }}</option>
         </select>
     </div>
 
     <div class="toolbar-separator"></div>
 
     <div class="toolbar-group view-toggle-group" id="viewToggleGroup">
-        <span class="group-label" id="logViewLabel">View</span>
+        <span class="group-label" id="logViewLabel">{{ _('View') }}</span>
         <div class="view-toggle" role="group" aria-labelledby="logViewLabel">
-            <button type="button" class="view-btn active" data-view="grouped" onclick="LogViewer.setView('grouped', this)">Grouped</button>
-            <button type="button" class="view-btn" data-view="flat" onclick="LogViewer.setView('flat', this)">Flat</button>
+            <button type="button" class="view-btn active" data-view="grouped" onclick="LogViewer.setView('grouped', this)">{{ _('Grouped') }}</button>
+            <button type="button" class="view-btn" data-view="flat" onclick="LogViewer.setView('flat', this)">{{ _('Flat') }}</button>
         </div>
     </div>
 
     <div class="toolbar-separator" id="viewToggleSep"></div>
 
     <div class="toolbar-group" style="flex: 1;">
-        <label for="logSearch">Search</label>
-        <input type="text" id="logSearch" class="log-search" placeholder="Filter log lines...">
+        <label for="logSearch">{{ _('Search') }}</label>
+        <input type="text" id="logSearch" class="log-search" placeholder="{{ _('Filter log lines...') }}">
     </div>
 
-    <button type="button" class="log-reset-btn" onclick="LogViewer.resetFilters()">Reset</button>
+    <button type="button" class="log-reset-btn" onclick="LogViewer.resetFilters()">{{ _('Reset') }}</button>
 </div>
 
 <!-- Stats Bar -->
 <div class="log-stats-bar" id="logStatsBar" style="display: none;">
     <div class="log-stat">
-        <span>Total:</span>
+        <span>{{ _('Total:') }}</span>
         <span class="log-stat-value" id="statTotal">0</span>
     </div>
     <div class="log-stat">
-        <span>Showing:</span>
+        <span>{{ _('Showing:') }}</span>
         <span class="log-stat-value" id="statShowing">0</span>
     </div>
     <div class="log-stat info">
-        <span>INFO:</span>
+        <span>{{ _('INFO:') }}</span>
         <span class="log-stat-value" id="statInfo">0</span>
     </div>
     <div class="log-stat warn">
-        <span>WARN:</span>
+        <span>{{ _('WARN:') }}</span>
         <span class="log-stat-value" id="statWarn">0</span>
     </div>
     <div class="log-stat error">
-        <span>ERROR:</span>
+        <span>{{ _('ERROR:') }}</span>
         <span class="log-stat-value" id="statError">0</span>
     </div>
     <div class="log-stat sessions" id="statSessionsWrap">
-        <span>Sessions:</span>
+        <span>{{ _('Sessions:') }}</span>
         <span class="log-stat-value" id="statSessions">0</span>
     </div>
 </div>
@@ -814,7 +814,7 @@
 <!-- Log Content -->
 <div class="log-container" id="logContainer">
     <div class="log-empty">
-        <div class="log-empty-icon">Select a log file to view</div>
+        <div class="log-empty-icon">{{ _('Select a log file to view') }}</div>
     </div>
 </div>
 {% endblock %}

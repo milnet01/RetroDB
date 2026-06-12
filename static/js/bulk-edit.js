@@ -23,7 +23,7 @@ const BulkEditController = (function() {
      */
     async function open(ids) {
         if (!ids || ids.length === 0) {
-            showModal('No Games Selected', 'Please select at least one game to edit.');
+            showModal(t('No Games Selected'), t('Please select at least one game to edit.'));
             return;
         }
 
@@ -72,7 +72,7 @@ const BulkEditController = (function() {
         const select = document.getElementById('bulkEditGameStructure');
         if (!select) return;
 
-        select.innerHTML = '<option value="">-- Don\'t change --</option>';
+        select.innerHTML = `<option value="">${t("-- Don't change --")}</option>`;
 
         try {
             const data = await API.get('/api/dropdown-options/game_structure', {
@@ -100,7 +100,7 @@ const BulkEditController = (function() {
         const select = document.getElementById('bulkEditPerspective');
         if (!select) return;
 
-        select.innerHTML = '<option value="">-- Don\'t change --</option>';
+        select.innerHTML = `<option value="">${t("-- Don't change --")}</option>`;
 
         try {
             const data = await API.get('/api/dropdown-options/perspective', {
@@ -128,7 +128,7 @@ const BulkEditController = (function() {
         const select = document.getElementById('bulkEditDimension');
         if (!select) return;
 
-        select.innerHTML = '<option value="">-- Don\'t change --</option>';
+        select.innerHTML = `<option value="">${t("-- Don't change --")}</option>`;
 
         try {
             const data = await API.get('/api/dropdown-options/dimension', {
@@ -156,7 +156,7 @@ const BulkEditController = (function() {
         const select = document.getElementById('bulkEditGenre');
         if (!select) return;
 
-        select.innerHTML = '<option value="">-- Don\'t change --</option>';
+        select.innerHTML = `<option value="">${t("-- Don't change --")}</option>`;
 
         try {
             const data = await API.get('/api/dropdown-options/genre', {
@@ -226,15 +226,15 @@ const BulkEditController = (function() {
         const fields = collectChanges();
 
         if (Object.keys(fields).length === 0) {
-            showModal('No Changes', 'Please change at least one field before applying.');
+            showModal(t('No Changes'), t('Please change at least one field before applying.'));
             return;
         }
 
         const fieldNames = Object.keys(fields).map(f => f.replace(/_/g, ' ')).join(', ');
-        const msg = `Update ${formatNumber(gameIds.length)} game${gameIds.length !== 1 ? 's' : ''}?\n\nFields: ${fieldNames}`;
+        const msg = t('Update {count} game(s)?\n\nFields: {fields}', { count: formatNumber(gameIds.length), fields: fieldNames });
 
         // Use custom confirm dialog — never browser confirm() per standards
-        showConfirm('Confirm Bulk Edit', msg, async function() {
+        showConfirm(t('Confirm Bulk Edit'), msg, async function() {
             await sendBulkEdit(fields);
         });
     }
@@ -247,7 +247,7 @@ const BulkEditController = (function() {
         const applyBtn = document.getElementById('bulkEditApplyBtn');
         if (applyBtn) {
             applyBtn.disabled = true;
-            applyBtn.textContent = 'Applying...';
+            applyBtn.textContent = t('Applying...');
         }
 
         try {
@@ -269,19 +269,19 @@ const BulkEditController = (function() {
 
             if (data.success) {
                 close();
-                showNotification(`Successfully updated ${formatNumber(data.updated)} games`, 'success');
+                showNotification(t('Successfully updated {count} games', {count: formatNumber(data.updated)}), 'success');
                 // Reload page to reflect changes
                 setTimeout(() => location.reload(), 500);
             } else {
-                showModal('Error', data.error || 'Unknown error occurred.');
+                showModal(t('Error'), data.error || t('Unknown error occurred.'));
             }
         } catch (err) {
             console.error('Bulk edit error:', err);
-            showModal('Error', 'Failed to apply bulk edit. Check console for details.');
+            showModal(t('Error'), t('Failed to apply bulk edit. Check console for details.'));
         } finally {
             if (applyBtn) {
                 applyBtn.disabled = false;
-                applyBtn.textContent = 'Apply Changes';
+                applyBtn.textContent = t('Apply Changes');
             }
         }
     }

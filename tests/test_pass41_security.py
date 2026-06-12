@@ -1949,14 +1949,15 @@ class TestPass41_13cLabelAsGroupHeading:
     def test_logs_level_view_labels_promoted(self):
         body = read_source('templates/logs.html')
         # logs uses the toolbar's group-label class to preserve toolbar styling.
-        assert '<span class="group-label" id="logLevelLabel">Level</span>' in body
-        assert '<span class="group-label" id="logViewLabel">View</span>' in body
+        # Label text is i18n-wrapped (Pass 43.5) — pin the promoted element, not text.
+        assert '<span class="group-label" id="logLevelLabel">' in body
+        assert '<span class="group-label" id="logViewLabel">' in body
         assert 'aria-labelledby="logLevelLabel"' in body
         assert 'aria-labelledby="logViewLabel"' in body
 
     def test_chd_converter_file_types_label_promoted(self):
         body = read_source('templates/chd_converter.html')
-        assert '<div class="form-label" id="chdFileTypesLabel">File Types to Convert</div>' in body
+        assert '<div class="form-label" id="chdFileTypesLabel">' in body
         assert 'aria-labelledby="chdFileTypesLabel"' in body
 
     def test_rom_tools_settings_group_labels_promoted(self):
@@ -1968,13 +1969,13 @@ class TestPass41_13cLabelAsGroupHeading:
 
     def test_duplicate_finder_options_label_promoted(self):
         body = read_source('templates/duplicate_finder.html')
-        assert '<div class="form-label" id="duplicateFinderOptionsLabel">Options</div>' in body
+        assert '<div class="form-label" id="duplicateFinderOptionsLabel">' in body
         assert 'aria-labelledby="duplicateFinderOptionsLabel"' in body
 
     def test_rename_modal_current_filename_not_label(self):
         body = read_source('templates/_modals/rename_modal.html')
-        assert '<div class="form-label">Current filename:</div>' in body, (
+        assert '<div class="form-label">{{ _(\'Current filename:\') }}</div>' in body, (
             "Pass 41.13c — \"Current filename:\" must be a <div>, not a "
-            "<label> (no form control to associate)"
+            "<label> (no form control to associate). Text i18n-wrapped (Pass 43.5)."
         )
         assert '<label>Current filename:</label>' not in body

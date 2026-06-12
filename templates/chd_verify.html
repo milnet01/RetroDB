@@ -74,89 +74,89 @@
 
 {% block content %}
 <div class="page-header">
-    <h1>🔧 ROM Tools</h1>
-    <p>Manage, organize, and optimize your ROM collection.</p>
+    <h1>🔧 {{ _('ROM Tools') }}</h1>
+    <p>{{ _('Manage, organize, and optimize your ROM collection.') }}</p>
 </div>
 
 <!-- Tool Tabs -->
 <nav class="tool-tabs">
     <a href="{{ url_for('tools.archive_scanner') }}" class="tool-tab">
         <span class="tab-icon">📦</span>
-        <span class="tab-label">Archive Scanner</span>
+        <span class="tab-label">{{ _('Archive Scanner') }}</span>
     </a>
     <a href="{{ url_for('tools.chd_converter') }}" class="tool-tab">
         <span class="tab-icon">💿</span>
-        <span class="tab-label">CHD Converter</span>
+        <span class="tab-label">{{ _('CHD Converter') }}</span>
     </a>
     <a href="{{ url_for('tools.chd_verify') }}" class="tool-tab active" aria-current="page">
         <span class="tab-icon">✅</span>
-        <span class="tab-label">CHD Verify</span>
+        <span class="tab-label">{{ _('CHD Verify') }}</span>
     </a>
     <a href="{{ url_for('tools.multi_disc_organizer') }}" class="tool-tab">
         <span class="tab-icon">💽</span>
-        <span class="tab-label">Multi-Disc Organizer</span>
+        <span class="tab-label">{{ _('Multi-Disc Organizer') }}</span>
     </a>
     <a href="{{ url_for('tools.duplicate_finder') }}" class="tool-tab">
         <span class="tab-icon">🔍</span>
-        <span class="tab-label">Duplicate Finder</span>
+        <span class="tab-label">{{ _('Duplicate Finder') }}</span>
     </a>
     <a href="{{ url_for('tools.screenshot_dedup') }}" class="tool-tab">
         <span class="tab-icon">📸</span>
-        <span class="tab-label">Screenshot Dedup</span>
+        <span class="tab-label">{{ _('Screenshot Dedup') }}</span>
     </a>
     <a href="{{ url_for('tools.rom_tools_settings') }}" class="tool-tab">
         <span class="tab-icon">⚙️</span>
-        <span class="tab-label">Settings</span>
+        <span class="tab-label">{{ _('Settings') }}</span>
     </a>
 </nav>
 
 <div class="info-banner">
     <span class="info-icon">💡</span>
     <div class="info-text">
-        <h4>Why Verify CHD Files?</h4>
-        <p>CHD files contain internal checksums. Verification ensures the file data matches these checksums, detecting corruption from storage errors, incomplete downloads, or bad conversions.</p>
+        <h4>{{ _('Why Verify CHD Files?') }}</h4>
+        <p>{{ _('CHD files contain internal checksums. Verification ensures the file data matches these checksums, detecting corruption from storage errors, incomplete downloads, or bad conversions.') }}</p>
     </div>
 </div>
 
 <div class="card">
     <div class="card-header">
-        <h2 class="card-title"><span>📁</span> CHD Files</h2>
+        <h2 class="card-title"><span>📁</span> {{ _('CHD Files') }}</h2>
     </div>
     <div class="card-body">
     <div class="form-group">
-        <label for="subPath">Source Folder</label>
+        <label for="subPath">{{ _('Source Folder') }}</label>
         <div class="form-row" style="display: flex; gap: 0.5rem;">
             <div class="locked-path-wrapper" style="flex: 1;">
                 <span class="locked-path-prefix" id="basePath">{{ rom_path }}/</span>
-                <input type="text" id="subPath" placeholder="subfolder (optional)" value="">
+                <input type="text" id="subPath" placeholder="{{ _('subfolder (optional)') }}" value="">
             </div>
-            <button type="button" class="btn btn-secondary" onclick="openFolderBrowser('hiddenFullPath')">📁 Browse</button>
-            <button type="button" class="btn btn-primary" onclick="scanFiles()">🔍 Scan</button>
+            <button type="button" class="btn btn-secondary" onclick="openFolderBrowser('hiddenFullPath')">📁 {{ _('Browse') }}</button>
+            <button type="button" class="btn btn-primary" onclick="scanFiles()">🔍 {{ _('Scan') }}</button>
         </div>
         <input type="hidden" id="hiddenFullPath" value="{{ rom_path }}">
     </div>
-    
+
     <div class="file-list" id="fileList">
-        <div class="empty-state">Click "Scan for CHD Files" to find files</div>
+        <div class="empty-state">{{ _('Click "Scan for CHD Files" to find files') }}</div>
     </div>
     </div>
 </div>
 
 <div class="card">
     <div class="card-header">
-        <h2 class="card-title"><span>⚙️</span> Verification</h2>
+        <h2 class="card-title"><span>⚙️</span> {{ _('Verification') }}</h2>
     </div>
     <div class="card-body">
     <div class="btn-group">
-        <button type="button" class="btn btn-primary" id="verifyBtn" onclick="startVerification()" disabled>🔬 Start Verification</button>
-        <button type="button" class="btn btn-danger" id="cancelBtn" onclick="cancelVerification()" disabled>❌ Cancel</button>
+        <button type="button" class="btn btn-primary" id="verifyBtn" onclick="startVerification()" disabled>🔬 {{ _('Start Verification') }}</button>
+        <button type="button" class="btn btn-danger" id="cancelBtn" onclick="cancelVerification()" disabled>❌ {{ _('Cancel') }}</button>
     </div>
-    
+
     <div class="progress-section" id="progressSection" style="display: none;">
         <div class="progress-bar-container">
             <div class="progress-bar-fill" id="progressBar">0%</div>
         </div>
-        <p id="progressStatus" style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">Preparing...</p>
+        <p id="progressStatus" style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">{{ _('Preparing...') }}</p>
     </div>
     
     <div class="scan-log" id="verifyLog" style="display: none;"></div>
@@ -165,25 +165,25 @@
 
 <div class="card">
     <div class="card-header">
-        <h2 class="card-title"><span>📊</span> Verification Results</h2>
+        <h2 class="card-title"><span>📊</span> {{ _('Verification Results') }}</h2>
     </div>
     <div class="card-body">
     <div class="stats-grid">
         <div class="stat-box">
             <div class="stat-value" id="statTotal">0</div>
-            <div class="stat-label">Total Files</div>
+            <div class="stat-label">{{ _('Total Files') }}</div>
         </div>
         <div class="stat-box valid">
             <div class="stat-value" id="statValid">0</div>
-            <div class="stat-label">Valid</div>
+            <div class="stat-label">{{ _('Valid') }}</div>
         </div>
         <div class="stat-box invalid">
             <div class="stat-value" id="statInvalid">0</div>
-            <div class="stat-label">Invalid</div>
+            <div class="stat-label">{{ _('Invalid') }}</div>
         </div>
         <div class="stat-box">
             <div class="stat-value" id="statSize">0 GB</div>
-            <div class="stat-label">Total Size</div>
+            <div class="stat-label">{{ _('Total Size') }}</div>
         </div>
     </div>
     </div>

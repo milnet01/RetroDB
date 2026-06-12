@@ -65,13 +65,13 @@ const BulkScrapeController = {
         el.skippedLive.textContent = '0';
         const _ti = typeof getThemedIcon === 'function' ? getThemedIcon : (k) => ({ paused: '⏸️', resume: '▶️', cancelled: '❌', 'stat-success': '✅', 'stat-failed': '❌', 'stat-skipped': '⏭️' }[k] || k);
         el.pauseIcon.textContent = _ti('paused');
-        el.pauseText.textContent = 'Pause';
+        el.pauseText.textContent = t('Pause');
         el.pauseBtn.classList.remove('btn-success');
         el.pauseBtn.classList.add('btn-warning');
 
         // Use provided first game title if available
-        el.currentGame.textContent = firstGame || 'Starting...';
-        el.status.textContent = firstGame ? `Scraped 0/${formatNumber(totalGames)} - 0%` : 'Initializing bulk scrape...';
+        el.currentGame.textContent = firstGame || t('Starting...');
+        el.status.textContent = firstGame ? t('Scraped 0/{total} - 0%', {total: formatNumber(totalGames)}) : t('Initializing bulk scrape...');
         el.results.style.display = 'none';
         el.resultsLive.style.display = 'flex';
         el.footer.style.display = 'none';
@@ -89,7 +89,7 @@ const BulkScrapeController = {
     async start(gameIds, systemId = null, scrapeMode = 'fill_missing') {
         if (gameIds.length === 0) {
             const _wi = typeof getThemedIcon === 'function' ? getThemedIcon('warning') : '⚠️';
-            showModal(`${_wi} No Games Selected`, 'Please select at least one game to scrape.');
+            showModal(`${_wi} ${t('No Games Selected')}`, t('Please select at least one game to scrape.'));
             return;
         }
         
@@ -109,7 +109,7 @@ const BulkScrapeController = {
                 if (data.queued) {
                     // Job was queued, show queued notification and exit bulk mode
                     const _qi = typeof getThemedIcon === 'function' ? getThemedIcon('queued') : '📋';
-                    showModal(`${_qi} Queued`, `Your bulk scrape has been queued (position ${data.queue_position}). It will start automatically when the current scrape finishes.`);
+                    showModal(`${_qi} ${t('Queued')}`, t('Your bulk scrape has been queued (position {position}). It will start automatically when the current scrape finishes.', {position: data.queue_position}));
                     
                     // Exit bulk mode if the function exists on this page
                     if (typeof exitBulkMode === 'function') {
@@ -163,13 +163,13 @@ const BulkScrapeController = {
                     showNotification(data.error, 'warning');
                 } else {
                     const _ei2 = typeof getThemedIcon === 'function' ? getThemedIcon('error') : '❌';
-                    showModal(`${_ei2} Error`, data.error || 'Failed to start bulk scrape');
+                    showModal(`${_ei2} ${t('Error')}`, data.error || t('Failed to start bulk scrape'));
                 }
             }
         } catch (error) {
             console.error('Error starting bulk scrape:', error);
             const _ei3 = typeof getThemedIcon === 'function' ? getThemedIcon('error') : '❌';
-            showModal(`${_ei3} Error`, 'Network error starting bulk scrape');
+            showModal(`${_ei3} ${t('Error')}`, t('Network error starting bulk scrape'));
         }
     },
     
@@ -229,7 +229,7 @@ const BulkScrapeController = {
     updateUI(data) {
         const el = this.getElements();
         
-        el.currentGame.textContent = data.current_game || 'Processing...';
+        el.currentGame.textContent = data.current_game || t('Processing...');
         el.progress.textContent = formatNumber(data.processing || 1);
         el.total.textContent = formatNumber(data.total || 0);
         el.successLive.textContent = formatNumber(data.success || 0);
@@ -244,17 +244,17 @@ const BulkScrapeController = {
         
         const _ti = typeof getThemedIcon === 'function' ? getThemedIcon : (k) => ({ paused: '⏸️', resume: '▶️', cancelled: '❌' }[k] || k);
         if (data.paused) {
-            el.status.textContent = `${_ti('paused')} Paused - Click Resume to continue`;
+            el.status.textContent = `${_ti('paused')} ${t('Paused - Click Resume to continue')}`;
             el.pauseIcon.textContent = _ti('resume');
-            el.pauseText.textContent = 'Resume';
+            el.pauseText.textContent = t('Resume');
             el.pauseBtn.classList.remove('btn-warning');
             el.pauseBtn.classList.add('btn-success');
         } else if (data.cancelled) {
-            el.status.textContent = `${_ti('cancelled')} Cancelled`;
+            el.status.textContent = `${_ti('cancelled')} ${t('Cancelled')}`;
         } else {
-            el.status.textContent = `Scraped ${formatNumber(processed)} / ${formatNumber(data.total)} - ${percent}%`;
+            el.status.textContent = t('Scraped {processed} / {total} - {percent}%', {processed: formatNumber(processed), total: formatNumber(data.total), percent: percent});
             el.pauseIcon.textContent = _ti('paused');
-            el.pauseText.textContent = 'Pause';
+            el.pauseText.textContent = t('Pause');
             el.pauseBtn.classList.remove('btn-success');
             el.pauseBtn.classList.add('btn-warning');
         }
@@ -275,11 +275,11 @@ const BulkScrapeController = {
 
         const _ti = typeof getThemedIcon === 'function' ? getThemedIcon : (k) => ({ cancelled: '❌' }[k] || k);
         if (data.cancelled) {
-            el.status.textContent = `${_ti('cancelled')} Cancelled by user`;
+            el.status.textContent = `${_ti('cancelled')} ${t('Cancelled by user')}`;
             // Keep the last game title visible
         } else {
-            el.status.textContent = 'Bulk scraping complete!';
-            el.currentGame.textContent = 'Done';
+            el.status.textContent = t('Bulk scraping complete!');
+            el.currentGame.textContent = t('Done');
         }
 
         el.successFinal.textContent = formatNumber(data.success || 0);
@@ -355,11 +355,8 @@ const BulkScrapeController = {
         // Surface that explicitly so users don't think cancel is broken
         // when the progress toast keeps ticking for a bit after they confirm.
         showConfirm(
-            `${_wi2} Cancel Bulk Scrape`,
-            'Are you sure you want to cancel the bulk scrape?\n\n' +
-            'Note: the current game will finish scraping (usually 10–60 seconds) ' +
-            'before the cancel takes effect — the progress toast will keep ' +
-            'updating during that window.',
+            `${_wi2} ${t('Cancel Bulk Scrape')}`,
+            t('Are you sure you want to cancel the bulk scrape?\n\nNote: the current game will finish scraping (usually 10–60 seconds) before the cancel takes effect — the progress toast will keep updating during that window.'),
             async () => {
             try {
                 const data = await API.post('/api/bulk-scrape-job/cancel');

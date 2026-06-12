@@ -145,12 +145,12 @@ const BulkScrapeController = {
         el.skippedLive.textContent = '0';
         const _ti = typeof getThemedIcon === 'function' ? getThemedIcon : (k) => ({ paused: '⏸️', resume: '▶️', cancelled: '❌', 'stat-success': '✅', 'stat-failed': '❌', 'stat-skipped': '⏭️' }[k] || k);
         el.pauseIcon.textContent = _ti('paused');
-        el.pauseText.textContent = 'Pause';
+        el.pauseText.textContent = t('Pause');
         el.pauseBtn.classList.remove('btn-success');
         el.pauseBtn.classList.add('btn-warning');
 
-        el.currentGame.textContent = firstGame || 'Starting...';
-        el.status.textContent = firstGame ? `Scraped 0/${formatNumber(totalGames)} - 0%` : 'Initializing bulk scrape...';
+        el.currentGame.textContent = firstGame || t('Starting...');
+        el.status.textContent = firstGame ? t('Scraped 0/{total} - 0%', {total: formatNumber(totalGames)}) : t('Initializing bulk scrape...');
         el.results.style.display = 'none';
         el.resultsLive.style.display = 'flex';
         el.footer.style.display = 'none';
@@ -168,7 +168,7 @@ const BulkScrapeController = {
     async start(gameIds, systemId = null, scrapeMode = 'fill_missing') {
         if (gameIds.length === 0) {
             const _wi = typeof getThemedIcon === 'function' ? getThemedIcon('warning') : '⚠️';
-            showModal(`${_wi} No Games Selected`, 'Please select at least one game to scrape.');
+            showModal(`${_wi} ${t('No Games Selected')}`, t('Please select at least one game to scrape.'));
             return;
         }
 
@@ -187,7 +187,7 @@ const BulkScrapeController = {
             if (data.success) {
                 if (data.queued) {
                     const _qi = typeof getThemedIcon === 'function' ? getThemedIcon('queued') : '📋';
-                    showModal(`${_qi} Queued`, `Your bulk scrape has been queued (position ${data.queue_position}). It will start automatically when the current scrape finishes.`);
+                    showModal(`${_qi} ${t('Queued')}`, t('Your bulk scrape has been queued (position {position}). It will start automatically when the current scrape finishes.', {position: data.queue_position}));
 
                     if (typeof exitBulkMode === 'function') {
                         exitBulkMode();
@@ -236,13 +236,13 @@ const BulkScrapeController = {
                     showNotification(data.error, 'warning');
                 } else {
                     const _ei2 = typeof getThemedIcon === 'function' ? getThemedIcon('error') : '❌';
-                    showModal(`${_ei2} Error`, data.error || 'Failed to start bulk scrape');
+                    showModal(`${_ei2} ${t('Error')}`, data.error || t('Failed to start bulk scrape'));
                 }
             }
         } catch (error) {
             console.error('Error starting bulk scrape:', error);
             const _ei3 = typeof getThemedIcon === 'function' ? getThemedIcon('error') : '❌';
-            showModal(`${_ei3} Error`, 'Network error starting bulk scrape');
+            showModal(`${_ei3} ${t('Error')}`, t('Network error starting bulk scrape'));
         }
     },
 
@@ -298,7 +298,7 @@ const BulkScrapeController = {
     updateUI(data) {
         const el = this.getElements();
 
-        el.currentGame.textContent = data.current_game || 'Processing...';
+        el.currentGame.textContent = data.current_game || t('Processing...');
         el.progress.textContent = formatNumber(data.processing || 1);
         el.total.textContent = formatNumber(data.total || 0);
         el.successLive.textContent = formatNumber(data.success || 0);
@@ -312,17 +312,17 @@ const BulkScrapeController = {
 
         const _ti = typeof getThemedIcon === 'function' ? getThemedIcon : (k) => ({ paused: '⏸️', resume: '▶️', cancelled: '❌' }[k] || k);
         if (data.paused) {
-            el.status.textContent = `${_ti('paused')} Paused - Click Resume to continue`;
+            el.status.textContent = `${_ti('paused')} ${t('Paused - Click Resume to continue')}`;
             el.pauseIcon.textContent = _ti('resume');
-            el.pauseText.textContent = 'Resume';
+            el.pauseText.textContent = t('Resume');
             el.pauseBtn.classList.remove('btn-warning');
             el.pauseBtn.classList.add('btn-success');
         } else if (data.cancelled) {
-            el.status.textContent = `${_ti('cancelled')} Cancelled`;
+            el.status.textContent = `${_ti('cancelled')} ${t('Cancelled')}`;
         } else {
-            el.status.textContent = `Scraped ${formatNumber(processed)} / ${formatNumber(data.total)} - ${percent}%`;
+            el.status.textContent = t('Scraped {processed} / {total} - {percent}%', {processed: formatNumber(processed), total: formatNumber(data.total), percent: percent});
             el.pauseIcon.textContent = _ti('paused');
-            el.pauseText.textContent = 'Pause';
+            el.pauseText.textContent = t('Pause');
             el.pauseBtn.classList.remove('btn-success');
             el.pauseBtn.classList.add('btn-warning');
         }
@@ -342,10 +342,10 @@ const BulkScrapeController = {
 
         const _ti = typeof getThemedIcon === 'function' ? getThemedIcon : (k) => ({ cancelled: '❌' }[k] || k);
         if (data.cancelled) {
-            el.status.textContent = `${_ti('cancelled')} Cancelled by user`;
+            el.status.textContent = `${_ti('cancelled')} ${t('Cancelled by user')}`;
         } else {
-            el.status.textContent = 'Bulk scraping complete!';
-            el.currentGame.textContent = 'Done';
+            el.status.textContent = t('Bulk scraping complete!');
+            el.currentGame.textContent = t('Done');
         }
 
         el.successFinal.textContent = formatNumber(data.success || 0);
@@ -413,11 +413,8 @@ const BulkScrapeController = {
     cancel() {
         const _wi2 = typeof getThemedIcon === 'function' ? getThemedIcon('warning') : '⚠️';
         showConfirm(
-            `${_wi2} Cancel Bulk Scrape`,
-            'Are you sure you want to cancel the bulk scrape?\n\n' +
-            'Note: the current game will finish scraping (usually 10–60 seconds) ' +
-            'before the cancel takes effect — the progress toast will keep ' +
-            'updating during that window.',
+            `${_wi2} ${t('Cancel Bulk Scrape')}`,
+            t('Are you sure you want to cancel the bulk scrape?\n\nNote: the current game will finish scraping (usually 10–60 seconds) before the cancel takes effect — the progress toast will keep updating during that window.'),
             async () => {
             try {
                 const data = await API.post('/api/bulk-scrape-job/cancel');
@@ -543,7 +540,7 @@ const BulkEditController = (function() {
      */
     async function open(ids) {
         if (!ids || ids.length === 0) {
-            showModal('No Games Selected', 'Please select at least one game to edit.');
+            showModal(t('No Games Selected'), t('Please select at least one game to edit.'));
             return;
         }
 
@@ -584,7 +581,7 @@ const BulkEditController = (function() {
         const select = document.getElementById('bulkEditGameStructure');
         if (!select) return;
 
-        select.innerHTML = '<option value="">-- Don\'t change --</option>';
+        select.innerHTML = `<option value="">${t("-- Don't change --")}</option>`;
 
         try {
             const data = await API.get('/api/dropdown-options/game_structure', {
@@ -612,7 +609,7 @@ const BulkEditController = (function() {
         const select = document.getElementById('bulkEditPerspective');
         if (!select) return;
 
-        select.innerHTML = '<option value="">-- Don\'t change --</option>';
+        select.innerHTML = `<option value="">${t("-- Don't change --")}</option>`;
 
         try {
             const data = await API.get('/api/dropdown-options/perspective', {
@@ -640,7 +637,7 @@ const BulkEditController = (function() {
         const select = document.getElementById('bulkEditDimension');
         if (!select) return;
 
-        select.innerHTML = '<option value="">-- Don\'t change --</option>';
+        select.innerHTML = `<option value="">${t("-- Don't change --")}</option>`;
 
         try {
             const data = await API.get('/api/dropdown-options/dimension', {
@@ -668,7 +665,7 @@ const BulkEditController = (function() {
         const select = document.getElementById('bulkEditGenre');
         if (!select) return;
 
-        select.innerHTML = '<option value="">-- Don\'t change --</option>';
+        select.innerHTML = `<option value="">${t("-- Don't change --")}</option>`;
 
         try {
             const data = await API.get('/api/dropdown-options/genre', {
@@ -736,14 +733,14 @@ const BulkEditController = (function() {
         const fields = collectChanges();
 
         if (Object.keys(fields).length === 0) {
-            showModal('No Changes', 'Please change at least one field before applying.');
+            showModal(t('No Changes'), t('Please change at least one field before applying.'));
             return;
         }
 
         const fieldNames = Object.keys(fields).map(f => f.replace(/_/g, ' ')).join(', ');
-        const msg = `Update ${formatNumber(gameIds.length)} game${gameIds.length !== 1 ? 's' : ''}?\n\nFields: ${fieldNames}`;
+        const msg = t('Update {count} game(s)?\n\nFields: {fields}', { count: formatNumber(gameIds.length), fields: fieldNames });
 
-        showConfirm('Confirm Bulk Edit', msg, async function() {
+        showConfirm(t('Confirm Bulk Edit'), msg, async function() {
             await sendBulkEdit(fields);
         });
     }
@@ -756,7 +753,7 @@ const BulkEditController = (function() {
         const applyBtn = document.getElementById('bulkEditApplyBtn');
         if (applyBtn) {
             applyBtn.disabled = true;
-            applyBtn.textContent = 'Applying...';
+            applyBtn.textContent = t('Applying...');
         }
 
         try {
@@ -777,18 +774,18 @@ const BulkEditController = (function() {
 
             if (data.success) {
                 close();
-                showNotification(`Successfully updated ${formatNumber(data.updated)} games`, 'success');
+                showNotification(t('Successfully updated {count} games', {count: formatNumber(data.updated)}), 'success');
                 setTimeout(() => location.reload(), 500);
             } else {
-                showModal('Error', data.error || 'Unknown error occurred.');
+                showModal(t('Error'), data.error || t('Unknown error occurred.'));
             }
         } catch (err) {
             console.error('Bulk edit error:', err);
-            showModal('Error', 'Failed to apply bulk edit. Check console for details.');
+            showModal(t('Error'), t('Failed to apply bulk edit. Check console for details.'));
         } finally {
             if (applyBtn) {
                 applyBtn.disabled = false;
-                applyBtn.textContent = 'Apply Changes';
+                applyBtn.textContent = t('Apply Changes');
             }
         }
     }
@@ -943,7 +940,7 @@ const RARefreshController = {
 
         const _ti = typeof getThemedIcon === 'function' ? getThemedIcon : (k) => ({ starting: '\u23F3', queued: '\uD83D\uDCCB', running: '\u23F3', error: '\u274C' }[k] || k);
         const originalText = btn.innerHTML;
-        btn.innerHTML = `<span class="filter-icon">${_ti('starting')}</span> Starting...`;
+        btn.innerHTML = `<span class="filter-icon">${_ti('starting')}</span> ${t('Starting...')}`;
         btn.disabled = true;
 
         try {
@@ -970,9 +967,9 @@ const RARefreshController = {
                         }
                     }
 
-                    btn.innerHTML = `<span class="filter-icon">${_ti('queued')}</span> Queued`;
+                    btn.innerHTML = `<span class="filter-icon">${_ti('queued')}</span> ${t('Queued')}`;
                     if (typeof showNotification !== 'undefined') {
-                        showNotification('Added to queue - will start when current operation completes', 'info');
+                        showNotification(t('Added to queue - will start when current operation completes'), 'info');
                     }
                     return;
                 }
@@ -996,20 +993,20 @@ const RARefreshController = {
                     UnifiedToastController.broadcast('job-started', 'ra-refresh', initialData);
                 }
 
-                btn.innerHTML = `<span class="filter-icon">${_ti('running')}</span> Running...`;
+                btn.innerHTML = `<span class="filter-icon">${_ti('running')}</span> ${t('Running...')}`;
                 if (typeof showNotification !== 'undefined') {
-                    showNotification(`Refreshing RA for ${systemName || 'system'}...`, 'info');
+                    showNotification(t('Refreshing RA for {system}...', {system: systemName || t('system')}), 'info');
                 }
             } else {
                 if (typeof showModal !== 'undefined') {
-                    showModal(`${_ti('error')} Error`, data.error || 'Unknown error');
+                    showModal(`${_ti('error')} ${t('Error')}`, data.error || t('Unknown error'));
                 }
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
         } catch (err) {
             if (typeof showModal !== 'undefined') {
-                showModal(`${_ti('error')} Error`, 'Error refreshing RetroAchievements: ' + err.message);
+                showModal(`${_ti('error')} ${t('Error')}`, t('Error refreshing RetroAchievements: ') + err.message);
             }
             btn.innerHTML = originalText;
             btn.disabled = false;
@@ -1197,10 +1194,10 @@ const GameDetailModal = {
                     }
                     this.populate(data.game);
                 } else {
-                    this.showError(data.error || 'Failed to load game');
+                    this.showError(data.error || t('Failed to load game'));
                 }
             })
-            .catch(err => this.showError('Network error'));
+            .catch(err => this.showError(t('Network error')));
     },
 
     /**
@@ -1224,7 +1221,7 @@ const GameDetailModal = {
 
         const playersEl = document.getElementById('gdmPlayers');
         if (game.players) {
-            playersEl.textContent = `${game.players} Player${game.players > 1 ? 's' : ''}`;
+            playersEl.textContent = t('{n} Player(s)', {n: game.players});
             playersEl.style.display = '';
         } else {
             playersEl.style.display = 'none';
@@ -1238,13 +1235,13 @@ const GameDetailModal = {
             boxart.style.display = 'none';
         }
 
-        const desc = game.description || 'No description available.';
+        const desc = game.description || t('No description available.');
         document.getElementById('gdmDescription').textContent =
             desc.length > 300 ? desc.substring(0, 300) + '...' : desc;
 
         document.getElementById('gdmDeveloper').textContent = game.developer || '-';
         document.getElementById('gdmPublisher').textContent = game.publisher || '-';
-        document.getElementById('gdmGenre').textContent = game.genre || '-';
+        document.getElementById('gdmGenre').textContent = tField(game.genre) || '-';
         document.getElementById('gdmFranchise').textContent = game.franchise || '-';
 
         const ratingsEl = document.getElementById('gdmRatings');
@@ -1262,10 +1259,10 @@ const GameDetailModal = {
         const completionEl = document.getElementById('gdmCompletion');
         if (game.completion_status && game.completion_status !== 'not_started') {
             const completionLabels = {
-                'in_progress': 'In Progress',
-                'played': 'Played',
-                'completed': 'Completed',
-                '100_percent': '100%'
+                'in_progress': t('In Progress'),
+                'played': t('Played'),
+                'completed': t('Completed'),
+                '100_percent': t('100%')
             };
             const label = completionLabels[game.completion_status] || game.completion_status;
             completionEl.innerHTML = `<span class="completion-badge status-${game.completion_status}">${label}</span>`;
@@ -1288,7 +1285,7 @@ const GameDetailModal = {
             const label = srcLabels[src] || 'Achievements';
             achHtml += `<span class="game-badge achievement-progress ${src} ${pctClass}" title="${label}: ${earned}/${game.achievement_total} (${pct}%)">${iconImg} ${earned}/${game.achievement_total}<span class="ach-bar"><span class="ach-fill" style="width:${pct}%"></span></span></span>`;
         } else if (game.has_retroachievements && game.ra_achievement_count) {
-            achHtml += `<span class="ra-badge-modal">${getThemedIcon('ra-sync', '🏆')} ${formatNumber(game.ra_achievement_count)} Achievements</span>`;
+            achHtml += `<span class="ra-badge-modal">${getThemedIcon('ra-sync', '🏆')} ${t('{count} Achievements', {count: formatNumber(game.ra_achievement_count)})}</span>`;
         }
 
         if (game.psn_total > 0 && game.psn_earned != null) {
@@ -1367,7 +1364,7 @@ const GameDetailModal = {
     showError(message) {
         document.getElementById('gameDetailLoading').innerHTML =
             `<p style="color: var(--neon-red);">${escapeHtml(message)}</p>
-             <button class="btn btn-secondary" onclick="closeGameDetailModal()">Close</button>`;
+             <button class="btn btn-secondary" onclick="closeGameDetailModal()">${escapeHtml(t('Close'))}</button>`;
     },
 
     /**
@@ -1464,14 +1461,14 @@ const HLTBManager = {
     lookup(ctx) {
         const query = document.getElementById(ctx.searchInputId)?.value?.trim();
         if (!query) {
-            showNotification('Please enter a game title', 'warning');
+            showNotification(t('Please enter a game title'), 'warning');
             return;
         }
 
         const btn = document.getElementById(ctx.lookupBtnId);
         if (btn) {
             btn.disabled = true;
-            btn.innerHTML = '⏳ Searching...';
+            btn.innerHTML = t('⏳ Searching...');
         }
 
         const pendingDiv = document.getElementById(ctx.pendingDivId);
@@ -1496,7 +1493,7 @@ const HLTBManager = {
             if (searchingDiv) searchingDiv.style.display = 'none';
             if (btn) {
                 btn.disabled = false;
-                btn.innerHTML = '🔍 Lookup HLTB';
+                btn.innerHTML = t('🔍 Lookup HLTB');
             }
 
             if (data.success && data.result) {
@@ -1525,7 +1522,7 @@ const HLTBManager = {
 
                 if (matchTitle) matchTitle.textContent = pending.match_name;
                 if (matchPlatform) matchPlatform.textContent = pending.match_platform;
-                if (matchConfidence) matchConfidence.textContent = confidence > 0 ? `${confidence}% match` : '';
+                if (matchConfidence) matchConfidence.textContent = confidence > 0 ? t('{confidence}% match', {confidence: confidence}) : '';
 
                 if (matchHeader) {
                     let headerHtml = `<span class="hltb-match-title">${escapeHtml(pending.match_name)}</span>`;
@@ -1533,7 +1530,7 @@ const HLTBManager = {
                         headerHtml += `<span class="hltb-match-platform">${escapeHtml(pending.match_platform)}</span>`;
                     }
                     if (pending.platform_mismatch) {
-                        headerHtml += `<span class="hltb-match-warning">Platform not found</span>`;
+                        headerHtml += `<span class="hltb-match-warning">${escapeHtml(t('Platform not found'))}</span>`;
                     }
                     if (pending.release_year) {
                         headerHtml += `<span class="hltb-match-year">${escapeHtml(String(pending.release_year))}</span>`;
@@ -1542,10 +1539,10 @@ const HLTBManager = {
                         headerHtml += `<span class="hltb-match-developer">${escapeHtml(pending.developer)}</span>`;
                     }
                     if (confidence > 0) {
-                        headerHtml += `<span class="hltb-match-confidence">${confidence}% match</span>`;
+                        headerHtml += `<span class="hltb-match-confidence">${escapeHtml(t('{confidence}% match', {confidence: confidence}))}</span>`;
                     }
                     if (pending.matched_via_alternate && pending.search_term_used) {
-                        headerHtml += `<span class="hltb-match-alt-notice" title="Matched using this alternate/regional title — confirm it refers to the same game before saving.">⚡ via &ldquo;${escapeHtml(pending.search_term_used)}&rdquo;</span>`;
+                        headerHtml += `<span class="hltb-match-alt-notice" title="${escapeHtml(t('Matched using this alternate/regional title — confirm it refers to the same game before saving.'))}">${t('⚡ via')} &ldquo;${escapeHtml(pending.search_term_used)}&rdquo;</span>`;
                     }
                     matchHeader.innerHTML = headerHtml;
                 }
@@ -1561,20 +1558,20 @@ const HLTBManager = {
                 if (resultDiv) resultDiv.style.display = 'block';
                 if (pending.matched_via_alternate && pending.search_term_used) {
                     showNotification(
-                        `Matched via alternate title "${pending.search_term_used}" — HLTB shows it as "${pending.match_name}". Confirm before saving.`,
+                        t('Matched via alternate title "{term}" — HLTB shows it as "{match}". Confirm before saving.', {term: pending.search_term_used, match: pending.match_name}),
                         'warning',
                         9000
                     );
                 } else {
-                    showNotification('Match found - please confirm to save', 'info');
+                    showNotification(t('Match found - please confirm to save'), 'info');
                 }
             } else {
                 if (pendingDiv && !resultDiv) pendingDiv.style.display = 'none';
                 if (errorDiv) {
-                    errorDiv.textContent = data.error || 'No results found on HowLongToBeat';
+                    errorDiv.textContent = data.error || t('No results found on HowLongToBeat');
                     errorDiv.style.display = 'block';
                 } else {
-                    showNotification(data.error || 'No HLTB data found', 'warning');
+                    showNotification(data.error || t('No HLTB data found'), 'warning');
                 }
             }
         })
@@ -1583,13 +1580,13 @@ const HLTBManager = {
             if (pendingDiv && !resultDiv) pendingDiv.style.display = 'none';
             if (btn) {
                 btn.disabled = false;
-                btn.innerHTML = '🔍 Lookup HLTB';
+                btn.innerHTML = t('🔍 Lookup HLTB');
             }
             if (errorDiv) {
-                errorDiv.textContent = 'Error connecting to HowLongToBeat';
+                errorDiv.textContent = t('Error connecting to HowLongToBeat');
                 errorDiv.style.display = 'block';
             } else {
-                showNotification('Error looking up HLTB', 'error');
+                showNotification(t('Error looking up HLTB'), 'error');
             }
         });
     },
@@ -1626,12 +1623,12 @@ const HLTBManager = {
                 if (ctx.onSave) ctx.onSave(pending, playtime);
 
                 HLTBManager.pendingData[ctx.name] = null;
-                showNotification('HLTB data saved', 'success');
+                showNotification(t('HLTB data saved'), 'success');
             } else {
-                showNotification('Failed to save HLTB: ' + (data.error || 'Unknown error'), 'error');
+                showNotification(t('Failed to save HLTB: ') + (data.error || t('Unknown error')), 'error');
             }
         })
-        .catch(err => showNotification('Error saving HLTB data', 'error'));
+        .catch(err => showNotification(t('Error saving HLTB data'), 'error'));
     },
 
     /**
@@ -1649,10 +1646,10 @@ const HLTBManager = {
             headerHtml = `<div class="hltb-match-header">
                 <span class="hltb-match-title">${escapeHtml(data.match_name)}</span>
                 ${data.match_platform ? `<span class="hltb-match-platform">${escapeHtml(data.match_platform)}</span>` : ''}
-                ${data.platform_mismatch ? `<span class="hltb-match-warning">Platform not found</span>` : ''}
+                ${data.platform_mismatch ? `<span class="hltb-match-warning">${escapeHtml(t('Platform not found'))}</span>` : ''}
                 ${data.release_year ? `<span class="hltb-match-year">${escapeHtml(String(data.release_year))}</span>` : ''}
                 ${data.developer ? `<span class="hltb-match-developer">${escapeHtml(data.developer)}</span>` : ''}
-                ${confidence > 0 ? `<span class="hltb-match-confidence">${confidence}% match</span>` : ''}
+                ${confidence > 0 ? `<span class="hltb-match-confidence">${escapeHtml(t('{confidence}% match', {confidence: confidence}))}</span>` : ''}
             </div>`;
         }
 
@@ -1660,20 +1657,20 @@ const HLTBManager = {
             ${headerHtml}
             <div class="hltb-results">
                 <div class="hltb-time-row">
-                    <span class="hltb-label">Main Story</span>
+                    <span class="hltb-label">${escapeHtml(t('Main Story'))}</span>
                     <span class="hltb-value">${data.main_story ? escapeHtml(String(data.main_story)) : '--'}</span>
                 </div>
                 <div class="hltb-time-row">
-                    <span class="hltb-label">Main + Extras</span>
+                    <span class="hltb-label">${escapeHtml(t('Main + Extras'))}</span>
                     <span class="hltb-value">${data.main_extra ? escapeHtml(String(data.main_extra)) : '--'}</span>
                 </div>
                 <div class="hltb-time-row">
-                    <span class="hltb-label">Completionist</span>
+                    <span class="hltb-label">${escapeHtml(t('Completionist'))}</span>
                     <span class="hltb-value">${data.completionist ? escapeHtml(String(data.completionist)) : '--'}</span>
                 </div>
             </div>
             <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                <button class="btn btn-sm btn-danger" data-hltb-clear>✕ Clear</button>
+                <button class="btn btn-sm btn-danger" data-hltb-clear>${escapeHtml(t('✕ Clear'))}</button>
             </div>
         `;
         const clearBtn = savedDiv.querySelector('[data-hltb-clear]');
@@ -1699,7 +1696,7 @@ const HLTBManager = {
         const savedDiv = document.getElementById(ctx.savedDivId);
         if (pendingDiv) pendingDiv.style.display = 'none';
         if (ctx.hasSavedData && savedDiv) savedDiv.style.display = 'block';
-        showNotification('HLTB lookup cancelled', 'info');
+        showNotification(t('HLTB lookup cancelled'), 'info');
     },
 
     /**
@@ -1707,7 +1704,7 @@ const HLTBManager = {
      * @param {Object} ctx - Context configuration object
      */
     clear(ctx) {
-        showConfirm('🗑️ Clear HLTB Data', 'Clear HLTB data for this game?', () => {
+        showConfirm(t('🗑️ Clear HLTB Data'), t('Clear HLTB data for this game?'), () => {
             const clearPromise = ctx.customClear
                 ? ctx.customClear()
                 : API.post(`/api/hltb-clear/${ctx.gameId}`);
@@ -1718,12 +1715,12 @@ const HLTBManager = {
                     const savedDiv = document.getElementById(ctx.savedDivId);
                     if (savedDiv) savedDiv.style.display = 'none';
                     if (ctx.onClear) ctx.onClear();
-                    showNotification('HLTB data cleared', 'success');
+                    showNotification(t('HLTB data cleared'), 'success');
                 } else {
-                    showNotification('Failed to clear HLTB: ' + (data.error || 'Unknown error'), 'error');
+                    showNotification(t('Failed to clear HLTB: ') + (data.error || t('Unknown error')), 'error');
                 }
             })
-            .catch(err => showNotification('Error clearing HLTB data', 'error'));
+            .catch(err => showNotification(t('Error clearing HLTB data'), 'error'));
         });
     }
 };
@@ -1800,7 +1797,7 @@ const GameEditModal = {
 
         this.currentData = game;
 
-        document.getElementById('gemTitle').textContent = `Edit: ${game.title}`;
+        document.getElementById('gemTitle').textContent = t('Edit: {title}', {title: game.title});
 
         this.switchTab('quick');
 
@@ -1855,7 +1852,7 @@ const GameEditModal = {
         document.getElementById('gemHltbSearchQuery').value = game.title || '';
         document.getElementById('gemHltbPending').style.display = 'none';
         document.getElementById('gemHltbLookupBtn').disabled = false;
-        document.getElementById('gemHltbLookupBtn').innerHTML = '🔍 Lookup HLTB';
+        document.getElementById('gemHltbLookupBtn').innerHTML = t('🔍 Lookup HLTB');
         this.pendingHltbData = null;
 
         editModal.classList.add('active');
@@ -1964,7 +1961,7 @@ const GameEditModal = {
 
         const saveBtn = document.querySelector('.gem-footer-right .btn-primary');
         const originalText = saveBtn.innerHTML;
-        saveBtn.innerHTML = '<span class="btn-icon">⏳</span> Saving...';
+        saveBtn.innerHTML = `<span class="btn-icon">⏳</span> ${t('Saving...')}`;
         saveBtn.disabled = true;
 
         API.post(`/api/game/${this.currentData.id}/edit`, formData)
@@ -1978,7 +1975,7 @@ const GameEditModal = {
                 document.getElementById('gdmTitle').textContent = formData.title;
                 document.getElementById('gdmDeveloper').textContent = formData.developer || '-';
                 document.getElementById('gdmPublisher').textContent = formData.publisher || '-';
-                document.getElementById('gdmGenre').textContent = formData.genre || '-';
+                document.getElementById('gdmGenre').textContent = tField(formData.genre) || '-';
                 document.getElementById('gdmFranchise').textContent = formData.franchise || '-';
 
                 if (formData.description) {
@@ -2003,18 +2000,18 @@ const GameEditModal = {
 
                 const _ti = typeof getThemedIcon === 'function' ? getThemedIcon : (k) => ({ save: '✅', error: '❌' }[k] || k);
                 if (typeof showModal === 'function') {
-                    showModal(`${_ti('save')} Saved`, 'Game details updated successfully.');
+                    showModal(`${_ti('save')} ${t('Saved')}`, t('Game details updated successfully.'));
                 }
             } else {
                 const _ti = typeof getThemedIcon === 'function' ? getThemedIcon : (k) => ({ error: '❌' }[k] || k);
-                showModal(`${_ti('error')} Save Failed`, 'Failed to save: ' + (data.error || 'Unknown error'));
+                showModal(`${_ti('error')} ${t('Save Failed')}`, t('Failed to save: ') + (data.error || t('Unknown error')));
             }
         })
         .catch(err => {
             saveBtn.innerHTML = originalText;
             saveBtn.disabled = false;
             const _ti = typeof getThemedIcon === 'function' ? getThemedIcon : (k) => ({ error: '❌' }[k] || k);
-            showModal(`${_ti('error')} Error`, 'Error saving game: ' + err.message);
+            showModal(`${_ti('error')} ${t('Error')}`, t('Error saving game: ') + err.message);
         });
     },
 
@@ -2202,10 +2199,10 @@ const GameEditModal = {
 
                 const completionEl = document.getElementById('gdmCompletion');
                 const labels = {
-                    'in_progress': 'In Progress',
-                    'played': 'Played',
-                    'completed': 'Completed',
-                    '100_percent': '100%'
+                    'in_progress': t('In Progress'),
+                    'played': t('Played'),
+                    'completed': t('Completed'),
+                    '100_percent': t('100%')
                 };
                 const emojis = {
                     'in_progress': '🎮',
@@ -2235,7 +2232,7 @@ const GameEditModal = {
                         } else if (badgeContainer) {
                             completionBadge = document.createElement('span');
                             completionBadge.className = `game-badge completion ${statusClass}`;
-                            completionBadge.title = 'Completion Status';
+                            completionBadge.title = t('Completion Status');
                             completionBadge.textContent = badgeContent;
                             badgeContainer.insertBefore(completionBadge, badgeContainer.firstChild);
                         }
@@ -2245,19 +2242,19 @@ const GameEditModal = {
                 }
             } else {
                 const _ei = typeof getThemedIcon === 'function' ? getThemedIcon('error') : '❌';
-                showModal(`${_ei} Update Failed`, 'Failed to update completion status: ' + (data.error || 'Unknown error'));
+                showModal(`${_ei} ${t('Update Failed')}`, t('Failed to update completion status: ') + (data.error || t('Unknown error')));
             }
         })
         .catch(err => {
             const _ei = typeof getThemedIcon === 'function' ? getThemedIcon('error') : '❌';
-            showModal(`${_ei} Error`, 'Error updating completion status');
+            showModal(`${_ei} ${t('Error')}`, t('Error updating completion status'));
         });
     },
 
     _createTag(container, className, value, onRemove) {
         const tag = document.createElement('span');
         tag.className = className;
-        tag.textContent = value + ' ';
+        tag.textContent = tField(value) + ' ';
         const btn = document.createElement('span');
         btn.className = className === 'controller-tag' ? 'remove-controller' : 'remove-genre';
         btn.textContent = '×';
@@ -2621,15 +2618,15 @@ const GameEditModal = {
         if (value === 'Yes' || value === '1' || value === 1) {
             toggle.checked = true;
             toggle.indeterminate = false;
-            label.textContent = 'Yes';
+            label.textContent = t('Yes');
         } else if (value === 'No' || value === '0' || value === 0) {
             toggle.checked = false;
             toggle.indeterminate = false;
-            label.textContent = 'No';
+            label.textContent = t('No');
         } else {
             toggle.checked = false;
             toggle.indeterminate = false;
-            label.textContent = 'No';
+            label.textContent = t('No');
         }
     },
 
@@ -2645,10 +2642,10 @@ const GameEditModal = {
 
         if (toggle.checked) {
             hidden.value = 'Yes';
-            label.textContent = 'Yes';
+            label.textContent = t('Yes');
         } else {
             hidden.value = 'No';
-            label.textContent = 'No';
+            label.textContent = t('No');
         }
     },
 
@@ -2661,7 +2658,7 @@ const GameEditModal = {
         const isExclusive = !otherPlatforms || otherPlatforms.toLowerCase() === 'exclusive';
 
         toggle.checked = isExclusive;
-        label.textContent = isExclusive ? 'Exclusive' : 'Multi-platform';
+        label.textContent = isExclusive ? t('Exclusive') : t('Multi-platform');
         input.style.display = isExclusive ? 'none' : 'block';
         input.value = isExclusive ? '' : otherPlatforms;
         hidden.value = otherPlatforms || '';
@@ -2674,11 +2671,11 @@ const GameEditModal = {
         const hidden = document.getElementById('gemOtherPlatformsHidden');
 
         if (toggle.checked) {
-            label.textContent = 'Exclusive';
+            label.textContent = t('Exclusive');
             input.style.display = 'none';
             hidden.value = 'Exclusive';
         } else {
-            label.textContent = 'Multi-platform';
+            label.textContent = t('Multi-platform');
             input.style.display = 'block';
             hidden.value = input.value;
         }
@@ -2702,7 +2699,7 @@ const GameEditModal = {
         const isStandalone = !franchise || franchise.toLowerCase() === 'standalone';
 
         toggle.checked = isStandalone;
-        label.textContent = isStandalone ? 'Standalone' : 'Part of a Series';
+        label.textContent = isStandalone ? t('Standalone') : t('Part of a Series');
         input.style.display = isStandalone ? 'none' : 'block';
         if (isStandalone) input.value = '';
     },

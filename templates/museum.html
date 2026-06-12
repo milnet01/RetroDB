@@ -7,15 +7,15 @@
 <div class="page-header">
     <div>
         <h1 class="page-title glitch-text" data-text="Museum">Mus<span class="title-accent">eum</span></h1>
-        <p class="page-subtitle">Gaming system encyclopedia &mdash; history, specs, and legacy</p>
+        <p class="page-subtitle">{{ _('Gaming system encyclopedia — history, specs, and legacy') }}</p>
     </div>
     <div class="page-actions">
         <div class="console-count-badge">
             <span class="count-number">{{ content_count|format_number }}</span>
-            <span class="count-label">/ {{ total_systems|format_number }} DOCUMENTED</span>
+            <span class="count-label">{% trans total=total_systems|format_number %}/ {{ total }} DOCUMENTED{% endtrans %}</span>
         </div>
         <button type="button" class="btn btn-primary" id="generateAllBtn" onclick="startBulkGenerate()">
-            Generate All Content
+            {{ _('Generate All Content') }}
         </button>
     </div>
 </div>
@@ -23,18 +23,18 @@
 <!-- Generation Progress Bar (hidden by default) -->
 <div class="museum-progress glass-panel" id="generateProgress" style="display: none;">
     <div class="museum-progress-header">
-        <span class="museum-progress-title" id="progressTitle">Generating content...</span>
-        <button type="button" class="btn btn-sm btn-danger" onclick="cancelBulkGenerate()" id="cancelGenBtn">Cancel</button>
+        <span class="museum-progress-title" id="progressTitle">{{ _('Generating content...') }}</span>
+        <button type="button" class="btn btn-sm btn-danger" onclick="cancelBulkGenerate()" id="cancelGenBtn">{{ _('Cancel') }}</button>
     </div>
     <div class="progress-bar-container">
         <div class="progress-bar-fill" id="progressBar" style="width: 0%;"></div>
     </div>
     <div class="museum-progress-stats">
-        <span id="progressCurrent">0</span> / <span id="progressTotal">0</span> systems
+        <span id="progressCurrent">0</span> / <span id="progressTotal">0</span> {{ _('systems') }}
         &mdash;
-        <span class="text-success" id="progressSuccess">0</span> success,
-        <span class="text-warning" id="progressSkipped">0</span> skipped,
-        <span class="text-error" id="progressFailed">0</span> failed
+        <span class="text-success" id="progressSuccess">0</span> {{ _('success,') }}
+        <span class="text-warning" id="progressSkipped">0</span> {{ _('skipped,') }}
+        <span class="text-error" id="progressFailed">0</span> {{ _('failed') }}
         &mdash;
         <span id="progressSystem">...</span>
     </div>
@@ -47,18 +47,18 @@
         <input type="text"
                id="museumSearch"
                class="search-input"
-               placeholder="Search systems..."
+               placeholder="{{ _('Search systems...') }}"
                autocomplete="off"
                oninput="filterMuseumSystems()">
     </div>
     <div class="filter-buttons">
         <select id="museumTypeFilter" class="filter-select" onchange="filterMuseumSystems()">
-            <option value="">All Types</option>
-            <option value="Console">&#127918; Console</option>
-            <option value="Handheld">&#128241; Handheld</option>
-            <option value="Computer">&#128187; Computer</option>
-            <option value="Arcade">&#128377;&#65039; Arcade</option>
-            <option value="Engine">&#9881;&#65039; Engine</option>
+            <option value="">{{ _('All Types') }}</option>
+            <option value="Console">&#127918; {{ _('Console') }}</option>
+            <option value="Handheld">&#128241; {{ _('Handheld') }}</option>
+            <option value="Computer">&#128187; {{ _('Computer') }}</option>
+            <option value="Arcade">&#128377;&#65039; {{ _('Arcade') }}</option>
+            <option value="Engine">&#9881;&#65039; {{ _('Engine') }}</option>
         </select>
     </div>
 </div>
@@ -74,7 +74,7 @@
                 {% if era %}
                 <span class="museum-era-date">{{ era }}</span>
                 {% endif %}
-                <span class="museum-era-count">{{ gen_systems|length }} system{{ 's' if gen_systems|length != 1 }}</span>
+                <span class="museum-era-count">{% trans count=gen_systems|length %}{{ count }} system{% pluralize %}{{ count }} systems{% endtrans %}</span>
             </div>
         </div>
 
@@ -106,7 +106,7 @@
                     </div>
                 </div>
                 {% if sys.has_content %}
-                <span class="museum-content-indicator" title="Content generated">&#10003;</span>
+                <span class="museum-content-indicator" title="{{ _('Content generated') }}">&#10003;</span>
                 {% endif %}
             </a>
             {% endfor %}
@@ -118,14 +118,14 @@
 {% if total_systems == 0 %}
 <div class="empty-state glass-panel">
     <div class="empty-state-icon">&#127963;&#65039;</div>
-    <h3 class="empty-state-title">No Systems Found</h3>
-    <p class="empty-state-text">Scan your ROM library first to populate the museum.</p>
+    <h3 class="empty-state-title">{{ _('No Systems Found') }}</h3>
+    <p class="empty-state-text">{{ _('Scan your ROM library first to populate the museum.') }}</p>
 </div>
 {% endif %}
 
 <!-- Hardware Image Lightbox -->
-<div id="museumHardwareLightbox" class="museum-lightbox" onclick="if(event.target===this)closeHardwareLightbox()" role="dialog" aria-modal="true" aria-label="Hardware image viewer">
-    <span class="museum-lightbox-close" onclick="closeHardwareLightbox()" aria-label="Close hardware viewer">&times;</span>
+<div id="museumHardwareLightbox" class="museum-lightbox" onclick="if(event.target===this)closeHardwareLightbox()" role="dialog" aria-modal="true" aria-label="{{ _('Hardware image viewer') }}">
+    <span class="museum-lightbox-close" onclick="closeHardwareLightbox()" aria-label="{{ _('Close hardware viewer') }}">&times;</span>
     <img id="museumHwLightboxImage" class="museum-lightbox-image" alt="Hardware">
     <div id="museumHwLightboxTitle" class="museum-lightbox-title"></div>
 </div>

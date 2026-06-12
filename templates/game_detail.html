@@ -12,14 +12,14 @@
 <!-- Breadcrumb -->
 {% set _from = request.args.get('from') %}
 {% if _from == 'library' %}
-    {% set _trail = [('Library', url_for('games.all_games'))] %}
+    {% set _trail = [(_('Library'), url_for('games.all_games'))] %}
 {% elif _from == 'rom_reports' %}
-    {% set _trail = [('ROM Reports', url_for('reports.reports'))] %}
+    {% set _trail = [(_('ROM Reports'), url_for('reports.reports'))] %}
 {% elif _from == 'achievements' %}
-    {% set _trail = [('RetroAchievements', url_for('achievements.achievements'))] %}
+    {% set _trail = [(_('RetroAchievements'), url_for('achievements.achievements'))] %}
 {% else %}
     {% set _trail = [
-        ('Systems', url_for('systems.systems')),
+        (_('Systems'), url_for('systems.systems')),
         (game.system_name, url_for('systems.system_games', system_id=game.system_id)),
     ] %}
 {% endif %}
@@ -44,21 +44,21 @@
     <div class="game-title-row">
         <h1 class="game-page-title">{{ game.title }}</h1>
         {% if is_clz_import %}
-        <span class="platform-import-badge clz" title="CLZ Import - No ROM file"><img src="{{ url_for('static', filename='images/trophies/clz-games-web.svg') }}" alt="CLZ" class="platform-import-icon"> CLZ Import</span>
+        <span class="platform-import-badge clz" title="{{ _('CLZ Import - No ROM file') }}"><img src="{{ url_for('static', filename='images/trophies/clz-games-web.svg') }}" alt="CLZ" class="platform-import-icon"> {{ _('CLZ Import') }}</span>
         {% elif is_steam_import %}
-        <span class="platform-import-badge steam" title="Steam Import - No ROM file"><img src="{{ url_for('static', filename='images/trophies/steam.png') }}" alt="Steam" class="platform-import-icon"> Steam Import</span>
+        <span class="platform-import-badge steam" title="{{ _('Steam Import - No ROM file') }}"><img src="{{ url_for('static', filename='images/trophies/steam.png') }}" alt="Steam" class="platform-import-icon"> {{ _('Steam Import') }}</span>
         {% elif is_xbox_import %}
-        <span class="platform-import-badge xbox" title="Xbox Import - No ROM file"><img src="{{ url_for('static', filename='images/trophies/xbox.png') }}" alt="Xbox" class="platform-import-icon"> Xbox Import</span>
+        <span class="platform-import-badge xbox" title="{{ _('Xbox Import - No ROM file') }}"><img src="{{ url_for('static', filename='images/trophies/xbox.png') }}" alt="Xbox" class="platform-import-icon"> {{ _('Xbox Import') }}</span>
         {% elif is_psn_import %}
-        <span class="platform-import-badge psn" title="PSN Import - No ROM file"><img src="{{ url_for('static', filename='images/trophies/psn.png') }}" alt="PlayStation" class="platform-import-icon"> PSN Import</span>
+        <span class="platform-import-badge psn" title="{{ _('PSN Import - No ROM file') }}"><img src="{{ url_for('static', filename='images/trophies/psn.png') }}" alt="PlayStation" class="platform-import-icon"> {{ _('PSN Import') }}</span>
         {% endif %}
         {% if game.is_bonus_disc %}
-        <span class="bonus-disc-badge" title="This is a bonus/extra disc">🎁 Bonus Disc</span>
+        <span class="bonus-disc-badge" title="{{ _('This is a bonus/extra disc') }}">🎁 {{ _('Bonus Disc') }}</span>
         {% endif %}
     </div>
     {% if parent_game %}
     <div class="parent-game-link">
-        <span style="color: var(--text-secondary);">Part of:</span>
+        <span style="color: var(--text-secondary);">{{ _('Part of:') }}</span>
         <a href="{{ url_for('games.game_detail', game_id=parent_game.id) }}" class="parent-game-link-btn">
             {% if parent_game.boxart %}
             <img src="{{ url_for('static', filename='images/boxart/' ~ parent_game.boxart) }}" alt="" class="parent-game-thumb">
@@ -69,9 +69,9 @@
     {% endif %}
     {% if alternate_titles %}
     <div class="alternate-titles">
-        <span class="alternate-titles-label">Also known as:</span>
+        <span class="alternate-titles-label">{{ _('Also known as:') }}</span>
         {% for alt in alternate_titles %}
-        <span class="alt-title-chip" {% if alt.region %}title="{{ alt.region }}{% if alt.source %} · {{ alt.source }}{% endif %}"{% elif alt.source %}title="Source: {{ alt.source }}"{% endif %}>
+        <span class="alt-title-chip" {% if alt.region %}title="{{ alt.region }}{% if alt.source %} · {{ alt.source }}{% endif %}"{% elif alt.source %}title="{% trans source=alt.source %}Source: {{ source }}{% endtrans %}"{% endif %}>
             {% if alt.region %}<span class="alt-title-region">{{ alt.region }}</span>{% endif %}
             <span class="alt-title-text">{{ alt.title }}</span>
         </span>
@@ -80,34 +80,34 @@
     {% endif %}
     <div class="header-buttons">
         {% if has_perm('launch') %}
-        <button type="button" id="play-btn" class="btn btn-primary" data-game-id="{{ game.id }}" onclick="launchGame(this)" title="Launch this game in the configured emulator">
+        <button type="button" id="play-btn" class="btn btn-primary" data-game-id="{{ game.id }}" onclick="launchGame(this)" title="{{ _('Launch this game in the configured emulator') }}">
             <span class="btn-icon">▶</span>
-            Play
+            {{ _('Play') }}
         </button>
         {% endif %}
         {% if game.scraped %}
         <button type="button" class="btn btn-danger-outline" onclick="confirmClearMetadata()">
             <span class="btn-icon">🗑️</span>
-            Clear
+            {{ _('Clear') }}
         </button>
         <button type="button" class="btn btn-secondary" onclick="openEditModal()">
             <span class="btn-icon">✏️</span>
-            Edit
+            {{ _('Edit') }}
         </button>
         {% endif %}
         {% if ai_scraper_enabled %}
-        <button type="button" id="pageAiFillBtn" class="btn btn-secondary" onclick="triggerPageAiFill(this)" title="Fill missing metadata with AI">
+        <button type="button" id="pageAiFillBtn" class="btn btn-secondary" onclick="triggerPageAiFill(this)" title="{{ _('Fill missing metadata with AI') }}">
             <span class="btn-icon">🤖</span>
-            AI Fill
+            {{ _('AI Fill') }}
         </button>
         {% endif %}
         <button type="button" class="btn btn-primary" onclick="openScrapeModal()">
             <span class="btn-icon">⬇️</span>
-            Scrape
+            {{ _('Scrape') }}
         </button>
-        <button type="button" class="btn btn-danger" onclick="deleteGame({{ game.id }})" title="Delete game from database">
+        <button type="button" class="btn btn-danger" onclick="deleteGame({{ game.id }})" title="{{ _('Delete game from database') }}">
             <span class="btn-icon">🗑️</span>
-            Delete
+            {{ _('Delete') }}
         </button>
     </div>
 </div>
@@ -137,7 +137,7 @@
                      fetchpriority="high"
                      style="{% if show_3d_initially %}display: none;{% endif %}"
                      onclick="openBoxartZoom('{{ url_for('static', filename='images/boxart/' + game.boxart) }}')"
-                     title="Click to zoom"
+                     title="{{ _('Click to zoom') }}"
                      data-on-error="hide-show-id"
                      data-on-error-target-id="boxartPlaceholder">
                 {% endif %}
@@ -149,12 +149,12 @@
                      id="boxart3d"
                      style="{% if not show_3d_initially and game.boxart %}display: none;{% endif %}"
                      onclick="openBoxartZoom('{{ url_for('static', filename='images/boxart_3d/' + game.boxart_3d) }}')"
-                     title="Click to zoom"
+                     title="{{ _('Click to zoom') }}"
                      data-on-error="hide-3d-fallback-2d">
                 {% endif %}
                 <!-- Toggle button if both exist -->
                 {% if game.boxart and game.boxart_3d %}
-                <button type="button" class="boxart-toggle-btn {% if show_3d_initially %}active{% endif %}" onclick="toggleBoxartView()" title="Switch between 2D and 3D boxart">
+                <button type="button" class="boxart-toggle-btn {% if show_3d_initially %}active{% endif %}" onclick="toggleBoxartView()" title="{{ _('Switch between 2D and 3D boxart') }}">
                     <span id="boxartToggleIcon">{% if show_3d_initially %}📷{% else %}🎲{% endif %}</span>
                     <span id="boxartToggleText">{% if show_3d_initially %}2D{% else %}3D{% endif %}</span>
                 </button>
@@ -176,28 +176,28 @@
             <div class="quick-tags">
                 <span class="tag tag-system">📁 {{ game.system_name }}</span>
                 {% if game.release_date %}<span class="tag tag-date">📅 {{ game.release_date[:4] if game.release_date|length > 4 else game.release_date }}</span>{% endif %}
-                {% if game.players %}<span class="game-badge players">👥 {{ game.players }} Player{% if game.players != '1' and game.players != 1 %}s{% endif %}</span>{% endif %}
+                {% if game.players %}<span class="game-badge players">👥 {{ game.players }} {% if game.players != '1' and game.players != 1 %}{{ _('Players') }}{% else %}{{ _('Player') }}{% endif %}</span>{% endif %}
                 {% if game.region %}<span class="game-badge region">🌍 {{ game.region }}</span>{% endif %}
 
                 <!-- Critic/User Scores -->
                 {% if game.critic_score %}
-                <span class="game-badge score-badge critic-score {% if game.critic_score >= 75 %}score-good{% elif game.critic_score >= 50 %}score-mixed{% else %}score-bad{% endif %}" title="Critic Score ({{ game.critic_score_count or '?' }} reviews)">
+                <span class="game-badge score-badge critic-score {% if game.critic_score >= 75 %}score-good{% elif game.critic_score >= 50 %}score-mixed{% else %}score-bad{% endif %}" title="{% trans count=game.critic_score_count or '?' %}Critic Score ({{ count }} reviews){% endtrans %}">
                     ⭐ {{ game.critic_score|round|int }}
                 </span>
                 {% endif %}
                 {% if game.user_score %}
-                <span class="game-badge score-badge user-score {% if game.user_score >= 75 %}score-good{% elif game.user_score >= 50 %}score-mixed{% else %}score-bad{% endif %}" title="User Score ({{ game.user_score_count or '?' }} ratings)">
+                <span class="game-badge score-badge user-score {% if game.user_score >= 75 %}score-good{% elif game.user_score >= 50 %}score-mixed{% else %}score-bad{% endif %}" title="{% trans count=game.user_score_count or '?' %}User Score ({{ count }} ratings){% endtrans %}">
                     👤 {{ game.user_score|round|int }}
                 </span>
                 {% endif %}
                 
                 <!-- Completion Status Dropdown -->
                 <div class="completion-dropdown-wrapper">
-                    <select id="completionStatus" class="completion-select" aria-label="Completion status" onchange="updateCompletionStatus({{ game.id }}, this.value)">
-                        <option value="not_started" {% if not game.completion_status or game.completion_status == 'not_started' %}selected{% endif %}>📋 Not Started</option>
-                        <option value="in_progress" {% if game.completion_status == 'in_progress' %}selected{% endif %}>🎮 In Progress</option>
-                        <option value="played" {% if game.completion_status == 'played' %}selected{% endif %}>🕹️ Played</option>
-                        <option value="completed" {% if game.completion_status == 'completed' %}selected{% endif %}>✅ Completed</option>
+                    <select id="completionStatus" class="completion-select" aria-label="{{ _('Completion status') }}" onchange="updateCompletionStatus({{ game.id }}, this.value)">
+                        <option value="not_started" {% if not game.completion_status or game.completion_status == 'not_started' %}selected{% endif %}>📋 {{ _('Not Started') }}</option>
+                        <option value="in_progress" {% if game.completion_status == 'in_progress' %}selected{% endif %}>🎮 {{ _('In Progress') }}</option>
+                        <option value="played" {% if game.completion_status == 'played' %}selected{% endif %}>🕹️ {{ _('Played') }}</option>
+                        <option value="completed" {% if game.completion_status == 'completed' %}selected{% endif %}>✅ {{ _('Completed') }}</option>
                         <option value="100_percent" {% if game.completion_status == '100_percent' %}selected{% endif %}>🏆 100%</option>
                     </select>
                 </div>
@@ -208,7 +208,7 @@
                 {% if game.description %}
                 {{ game.description[:500] }}{% if game.description|length > 500 %}...{% endif %}
                 {% else %}
-                <span class="no-data">No description available. Click "Scrape" to fetch metadata.</span>
+                <span class="no-data">{{ _('No description available. Click "Scrape" to fetch metadata.') }}</span>
                 {% endif %}
             </div>
             
@@ -216,7 +216,7 @@
             <div class="key-details">
                 {% if game.publisher %}
                 <div class="kd-item">
-                    <span class="kd-label">Publisher</span>
+                    <span class="kd-label">{{ _('Publisher') }}</span>
                     <span class="kd-value">
                         {% set publishers = game.publisher.split(',') %}
                         {% for pub in publishers %}
@@ -228,7 +228,7 @@
                 {% endif %}
                 {% if game.developer %}
                 <div class="kd-item">
-                    <span class="kd-label">Developer</span>
+                    <span class="kd-label">{{ _('Developer') }}</span>
                     <span class="kd-value">
                         {% set developers = game.developer.split(',') %}
                         {% for dev in developers %}
@@ -240,19 +240,19 @@
                 {% endif %}
                 {% if game.genre %}
                 <div class="kd-item">
-                    <span class="kd-label">Genre</span>
+                    <span class="kd-label">{{ _('Genre') }}</span>
                     <span class="kd-value">
                         {% set genres = game.genre.split(',') %}
                         {% for genre in genres %}
                             {% set genre_trimmed = genre.strip() %}
-                            <a href="#" class="filter-link" data-filter-type="genre" data-filter-value="{{ genre_trimmed }}">{{ genre_trimmed }}</a>{% if not loop.last %}, {% endif %}
+                            <a href="#" class="filter-link" data-filter-type="genre" data-filter-value="{{ genre_trimmed }}">{{ display_field_value('genre', genre_trimmed) }}</a>{% if not loop.last %}, {% endif %}
                         {% endfor %}
                     </span>
                 </div>
                 {% endif %}
                 {% if game.franchise %}
                 <div class="kd-item">
-                    <span class="kd-label">Series</span>
+                    <span class="kd-label">{{ _('Series') }}</span>
                     <a href="#" class="kd-value franchise filter-link" data-filter-type="franchise" data-filter-value="{{ game.franchise }}">{{ game.franchise }}</a>
                 </div>
                 {% endif %}
@@ -271,7 +271,7 @@
                     <a href="{{ url_for('achievements.achievement_game', game_id=game.id) }}" class="achievement-item ra">
                         <img src="{{ url_for('static', filename='images/trophies/ra.webp') }}" alt="RetroAchievements" class="achievement-platform-icon">
                         <div class="achievement-info">
-                            <span class="achievement-label">RetroAchievements</span>
+                            <span class="achievement-label">{{ _('RetroAchievements') }}</span>
                             <div class="achievement-progress">
                                 <span class="achievement-bar"><span class="achievement-fill ra-fill" style="width: {{ ra_pct }}%"></span></span>
                                 <span class="achievement-stats">{{ ra_earned|format_number }} / {{ ra_total|format_number }}</span>
@@ -279,9 +279,9 @@
                         </div>
                         <span class="achievement-arrow">→</span>
                     </a>
-                    <a href="{{ retroachievements.url }}" target="_blank" rel="noopener noreferrer" class="achievement-ext-link ra" title="View on RetroAchievements.org">
+                    <a href="{{ retroachievements.url }}" target="_blank" rel="noopener noreferrer" class="achievement-ext-link ra" title="{{ _('View on RetroAchievements.org') }}">
                         <img src="{{ url_for('static', filename='images/trophies/ra.webp') }}" alt="" class="achievement-ext-icon">
-                        <span>RA Site</span>
+                        <span>{{ _('RA Site') }}</span>
                         <span class="ext-arrow">↗</span>
                     </a>
                 </div>
@@ -293,7 +293,7 @@
                 <a href="{{ url_for('steam_achievements.steam_achievement_game', game_id=game.id) }}" class="achievement-item steam">
                     <img src="{{ url_for('static', filename='images/trophies/steam.png') }}" alt="Steam" class="achievement-platform-icon">
                     <div class="achievement-info">
-                        <span class="achievement-label">Steam Achievements</span>
+                        <span class="achievement-label">{{ _('Steam Achievements') }}</span>
                         <div class="achievement-progress">
                             <span class="achievement-bar"><span class="achievement-fill steam-fill" style="width: {{ steam_pct }}%"></span></span>
                             <span class="achievement-stats">{{ steam_counts.earned|format_number }} / {{ steam_counts.total|format_number }}</span>
@@ -309,7 +309,7 @@
                 <a href="{{ url_for('xbox_achievements.xbox_achievement_game', game_id=game.id) }}" class="achievement-item xbox">
                     <img src="{{ url_for('static', filename='images/trophies/xbox.png') }}" alt="Xbox" class="achievement-platform-icon">
                     <div class="achievement-info">
-                        <span class="achievement-label">Xbox Achievements</span>
+                        <span class="achievement-label">{{ _('Xbox Achievements') }}</span>
                         <div class="achievement-progress">
                             <span class="achievement-bar"><span class="achievement-fill xbox-fill" style="width: {{ xbox_pct }}%"></span></span>
                             <span class="achievement-stats">{{ xbox_counts.earned|format_number }} / {{ xbox_counts.total|format_number }}{% if xbox_counts.total_gs %} · {{ xbox_counts.earned_gs|format_number }}G{% endif %}</span>
@@ -324,7 +324,7 @@
                 <a href="{{ url_for('trophies.psn_trophy_detail', npwr_id=psn_progress.npwr_id) }}" class="achievement-item psn">
                     <img src="{{ url_for('static', filename='images/trophies/psn.png') }}" alt="PlayStation" class="achievement-platform-icon">
                     <div class="achievement-info">
-                        <span class="achievement-label">PSN Trophies</span>
+                        <span class="achievement-label">{{ _('PSN Trophies') }}</span>
                         <div class="achievement-progress">
                             {% set psn_pct = ((psn_progress.earned_total / psn_progress.defined_total * 100) if psn_progress.defined_total else 0)|round(1) %}
                             <span class="achievement-bar"><span class="achievement-fill psn-fill" style="width: {{ psn_pct }}%"></span></span>
@@ -349,7 +349,7 @@
                 <a href="{{ url_for('trophies.trophy_game', npwr_id=npwr_id) }}" class="achievement-item rpcs3">
                     <img src="{{ url_for('static', filename='images/trophies/rpcs3.png') }}" alt="RPCS3" class="achievement-platform-icon">
                     <div class="achievement-info">
-                        <span class="achievement-label">RPCS3 Trophies</span>
+                        <span class="achievement-label">{{ _('RPCS3 Trophies') }}</span>
                         <div class="achievement-progress">
                             <span class="achievement-bar"><span class="achievement-fill rpcs3-fill" style="width: {{ trophy_set.completion_percentage|round(1) }}%"></span></span>
                             <span class="achievement-stats">{{ trophy_set.completion_percentage|round(1) }}%</span>
@@ -382,7 +382,7 @@
             </div>
             {% elif pref_rating and pref_rating.image %}
             <div class="hero-age-ratings">
-                <div class="hero-rating-item" title="{{ pref_rating.name }} ({{ pref_rating.region }}): {{ pref_rating.value }}{% if pref_rating.crossmapped %} (cross-mapped){% endif %}">
+                <div class="hero-rating-item" title="{{ pref_rating.name }} ({{ pref_rating.region }}): {{ pref_rating.value }}{% if pref_rating.crossmapped %} {{ _('(cross-mapped)') }}{% endif %}">
                     <img src="{{ url_for('static', filename='images/ratings/' + pref_rating.image) }}" alt="{{ pref_rating.value }}">
                 </div>
             </div>
@@ -395,30 +395,30 @@
     <div class="media-row">
         {% if game.screenshots %}
         <div class="media-section screenshots-section">
-            <h2 class="media-title">📸 Screenshots ({{ game.screenshots.split(',') | length }})</h2>
+            <h2 class="media-title">📸 {% trans count=game.screenshots.split(',') | length %}Screenshots ({{ count }}){% endtrans %}</h2>
             <div class="screenshots-wrapper">
-                <button type="button" class="screenshots-nav prev" onclick="scrollScreenshots(-1)" aria-label="Previous screenshots">‹</button>
+                <button type="button" class="screenshots-nav prev" onclick="scrollScreenshots(-1)" aria-label="{{ _('Previous screenshots') }}">‹</button>
                 <div class="screenshots-row" id="screenshotsRow">
                     {% for ss in game.screenshots.split(',') if ss %}
                     <div class="screenshot-thumb" data-filename="{{ ss.strip() }}">
                         <img src="{{ url_for('static', filename='images/screenshots/' + ss.strip()) }}"
                              alt="Screenshot {{ loop.index }}" loading="lazy" decoding="async">
-                        <button type="button" class="screenshot-delete-btn" onclick="event.stopPropagation(); deleteScreenshot('{{ ss.strip() }}')" title="Delete screenshot">×</button>
+                        <button type="button" class="screenshot-delete-btn" onclick="event.stopPropagation(); deleteScreenshot('{{ ss.strip() }}')" title="{{ _('Delete screenshot') }}">×</button>
                     </div>
                     {% endfor %}
                 </div>
-                <button type="button" class="screenshots-nav next" onclick="scrollScreenshots(1)" aria-label="Next screenshots">›</button>
+                <button type="button" class="screenshots-nav next" onclick="scrollScreenshots(1)" aria-label="{{ _('Next screenshots') }}">›</button>
             </div>
         </div>
         {% endif %}
         
         {% if game.video %}
         <div class="media-section video-section">
-            <h2 class="media-title">🎬 Video</h2>
+            <h2 class="media-title">🎬 {{ _('Video') }}</h2>
             <div class="video-compact">
                 <video id="gameVideo" controls preload="metadata" poster="{{ url_for('static', filename='images/boxart/' + game.boxart) if game.boxart else '' }}">
                     <source src="{{ url_for('static', filename='videos/' + game.video) }}" type="video/{{ game.video.split('.')[-1] }}">
-                    Your browser does not support the video tag.
+                    {{ _('Your browser does not support the video tag.') }}
                 </video>
             </div>
         </div>
@@ -430,7 +430,7 @@
     <div class="bottom-row">
         <!-- Similar Games -->
         <div class="bottom-section">
-            <h2 class="section-title-sm">🎯 Similar Games</h2>
+            <h2 class="section-title-sm">🎯 {{ _('Similar Games') }}</h2>
             {% if game.similar_games %}
             <div class="similar-tags" style="margin-bottom: 0.75rem;">
                 {% for sg in game.similar_games.split(',')[:5] if sg.strip() %}
@@ -439,23 +439,23 @@
             </div>
             {% endif %}
             <div id="similarGamesGrid" class="similar-games-grid">
-                <div style="color: var(--text-muted); font-size: 0.85rem;">Loading recommendations...</div>
+                <div style="color: var(--text-muted); font-size: 0.85rem;">{{ _('Loading recommendations...') }}</div>
             </div>
         </div>
         
         <!-- Playtime Estimate -->
         <div class="bottom-section">
-            <h2 class="section-title-sm">⏱️ How Long to Beat</h2>
+            <h2 class="section-title-sm">⏱️ {{ _('How Long to Beat') }}</h2>
             <div class="hltb-section" id="hltbSection">
                 <!-- Search Input -->
                 <input type="text"
                        id="hltbSearchQuery"
                        class="hltb-search-input"
                        value="{{ game.title }}"
-                       placeholder="Search game title...">
+                       placeholder="{{ _('Search game title...') }}">
 
                 <button type="button" class="btn-hltb" id="hltbLookupBtn" onclick="lookupHLTB()">
-                    🔍 Lookup HLTB
+                    🔍 {{ _('Lookup HLTB') }}
                 </button>
 
                 <!-- Pending results (shown before confirmation) -->
@@ -463,21 +463,21 @@
                     <div class="hltb-match-header" id="hltbMatchHeader"></div>
                     <div class="hltb-results">
                         <div class="hltb-time-row">
-                            <span class="hltb-label">Main Story</span>
+                            <span class="hltb-label">{{ _('Main Story') }}</span>
                             <span class="hltb-value" id="hltbPendingMain">--</span>
                         </div>
                         <div class="hltb-time-row">
-                            <span class="hltb-label">Main + Extras</span>
+                            <span class="hltb-label">{{ _('Main + Extras') }}</span>
                             <span class="hltb-value" id="hltbPendingExtra">--</span>
                         </div>
                         <div class="hltb-time-row">
-                            <span class="hltb-label">Completionist</span>
+                            <span class="hltb-label">{{ _('Completionist') }}</span>
                             <span class="hltb-value" id="hltbPendingComplete">--</span>
                         </div>
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm); display: flex; gap: var(--spacing-xs);">
-                        <button type="button" class="btn btn-sm btn-primary" onclick="confirmHLTB()">✓ Save</button>
-                        <button type="button" class="btn btn-sm btn-secondary" onclick="cancelHLTB()">✕ Cancel</button>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="confirmHLTB()">✓ {{ _('Save') }}</button>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="cancelHLTB()">✕ {{ _('Cancel') }}</button>
                     </div>
                 </div>
 
@@ -487,7 +487,7 @@
                     <div class="hltb-match-header">
                         <span class="hltb-match-title">{{ game.hltb_match_name }}</span>
                         {% if game.hltb_match_platform %}<span class="hltb-match-platform">{{ game.hltb_match_platform }}</span>{% endif %}
-                        {% if game.hltb_match_confidence %}<span class="hltb-match-confidence">{{ [(game.hltb_match_confidence * 100) | round | int, 100] | min }}% match</span>{% endif %}
+                        {% if game.hltb_match_confidence %}<span class="hltb-match-confidence">{% trans pct=[(game.hltb_match_confidence * 100) | round | int, 100] | min %}{{ pct }}% match{% endtrans %}</span>{% endif %}
                     </div>
                     {% endif %}
                     <div class="hltb-results">
@@ -496,27 +496,27 @@
                         {% for part in playtime_parts %}
                         {% set kv = part.split(': ') %}
                         <div class="hltb-time-row">
-                            <span class="hltb-label">{% if kv[0] == 'Main' %}Main Story{% elif kv[0] == 'Main+Extras' %}Main + Extras{% elif kv[0] == '100%' %}Completionist{% else %}{{ kv[0] }}{% endif %}</span>
+                            <span class="hltb-label">{% if kv[0] == 'Main' %}{{ _('Main Story') }}{% elif kv[0] == 'Main+Extras' %}{{ _('Main + Extras') }}{% elif kv[0] == '100%' %}{{ _('Completionist') }}{% else %}{{ kv[0] }}{% endif %}</span>
                             <span class="hltb-value">{{ kv[1] if kv|length > 1 else '--' }}</span>
                         </div>
                         {% endfor %}
                         {% else %}
                         <div class="hltb-time-row">
-                            <span class="hltb-label">Main Story</span>
+                            <span class="hltb-label">{{ _('Main Story') }}</span>
                             <span class="hltb-value" id="hltbMain">--</span>
                         </div>
                         <div class="hltb-time-row">
-                            <span class="hltb-label">Main + Extras</span>
+                            <span class="hltb-label">{{ _('Main + Extras') }}</span>
                             <span class="hltb-value" id="hltbMainExtra">--</span>
                         </div>
                         <div class="hltb-time-row">
-                            <span class="hltb-label">Completionist</span>
+                            <span class="hltb-label">{{ _('Completionist') }}</span>
                             <span class="hltb-value" id="hltbComplete">--</span>
                         </div>
                         {% endif %}
                     </div>
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                        <button type="button" class="btn btn-sm btn-danger" onclick="clearHLTB()">✕ Clear</button>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="clearHLTB()">✕ {{ _('Clear') }}</button>
                     </div>
                 </div>
             </div>
@@ -524,108 +524,108 @@
         
         <!-- Extra Details -->
         <div class="bottom-section">
-            <h2 class="section-title-sm">📋 More Details</h2>
+            <h2 class="section-title-sm">📋 {{ _('More Details') }}</h2>
             <div class="extra-details">
                 {% if is_platform_import %}
                 <div class="ed-row clz-notice">
-                    <span class="ed-label">Source:</span>
+                    <span class="ed-label">{{ _('Source:') }}</span>
                     <span class="ed-value clz-import-text">
                         {% if is_clz_import %}
-                        <img src="{{ url_for('static', filename='images/trophies/clz-games-web.svg') }}" alt="CLZ" class="platform-import-icon"> CLZ Games Import (No ROM file)
+                        <img src="{{ url_for('static', filename='images/trophies/clz-games-web.svg') }}" alt="CLZ" class="platform-import-icon"> {{ _('CLZ Games Import (No ROM file)') }}
                         {% elif is_steam_import %}
-                        <img src="{{ url_for('static', filename='images/trophies/steam.png') }}" alt="Steam" class="platform-import-icon"> Steam Import (No ROM file)
+                        <img src="{{ url_for('static', filename='images/trophies/steam.png') }}" alt="Steam" class="platform-import-icon"> {{ _('Steam Import (No ROM file)') }}
                         {% elif is_xbox_import %}
-                        <img src="{{ url_for('static', filename='images/trophies/xbox.png') }}" alt="Xbox" class="platform-import-icon"> Xbox Import (No ROM file)
+                        <img src="{{ url_for('static', filename='images/trophies/xbox.png') }}" alt="Xbox" class="platform-import-icon"> {{ _('Xbox Import (No ROM file)') }}
                         {% elif is_psn_import %}
-                        <img src="{{ url_for('static', filename='images/trophies/psn.png') }}" alt="PlayStation" class="platform-import-icon"> PSN Import (No ROM file)
+                        <img src="{{ url_for('static', filename='images/trophies/psn.png') }}" alt="PlayStation" class="platform-import-icon"> {{ _('PSN Import (No ROM file)') }}
                         {% endif %}
                     </span>
                 </div>
                 {% if is_clz_import and game.clz_title and game.clz_title != game.title %}
                 <div class="ed-row">
-                    <span class="ed-label">Original Title:</span>
+                    <span class="ed-label">{{ _('Original Title:') }}</span>
                     <span class="ed-value">{{ game.clz_title }}</span>
                 </div>
                 {% endif %}
                 {% else %}
                 <div class="ed-row">
-                    <span class="ed-label">File:</span>
+                    <span class="ed-label">{{ _('File:') }}</span>
                     <span class="ed-value mono" id="currentFilename">{{ game.rom_path.split('/')[-1] }}</span>
-                    <button type="button" class="btn-rename" onclick="openRenameModal()" title="Rename ROM file">✏️</button>
+                    <button type="button" class="btn-rename" onclick="openRenameModal()" title="{{ _('Rename ROM file') }}">✏️</button>
                 </div>
                 <div class="ed-row">
-                    <span class="ed-label">Path:</span>
+                    <span class="ed-label">{{ _('Path:') }}</span>
                     <span class="ed-value mono path-value" id="currentPath" title="{{ game.rom_path }}">{{ game.rom_path }}</span>
                 </div>
                 {% endif %}
                 {% if game.edition %}
                 <div class="ed-row">
-                    <span class="ed-label">Edition:</span>
+                    <span class="ed-label">{{ _('Edition:') }}</span>
                     <span class="ed-value">{{ game.edition }}</span>
                 </div>
                 {% endif %}
                 {% if game.other_platforms %}
                 <div class="ed-row">
                     {% if game.other_platforms == 'Exclusive' %}
-                    <span class="ed-label">Exclusive:</span>
-                    <span class="ed-value">Yes</span>
+                    <span class="ed-label">{{ _('Exclusive:') }}</span>
+                    <span class="ed-value">{{ _('Yes') }}</span>
                     {% else %}
-                    <span class="ed-label">Also On:</span>
+                    <span class="ed-label">{{ _('Also On:') }}</span>
                     <span class="ed-value">{{ game.other_platforms }}</span>
                     {% endif %}
                 </div>
                 {% endif %}
                 {% if game.modes %}
                 <div class="ed-row">
-                    <span class="ed-label">Modes:</span>
-                    <span class="ed-value">{{ game.modes }}</span>
+                    <span class="ed-label">{{ _('Modes:') }}</span>
+                    <span class="ed-value">{{ display_field_value('modes', game.modes) }}</span>
                 </div>
                 {% endif %}
                 {% if game.players %}
                 <div class="ed-row">
-                    <span class="ed-label">Players:</span>
+                    <span class="ed-label">{{ _('Players:') }}</span>
                     <span class="ed-value">{{ game.players }}</span>
                 </div>
                 {% endif %}
                 {% if game.campaign == 'Yes' or game.campaign == 'No' %}
                 <div class="ed-row">
-                    <span class="ed-label">Campaign:</span>
+                    <span class="ed-label">{{ _('Campaign:') }}</span>
                     <span class="ed-value">{{ game.campaign }}</span>
                 </div>
                 {% endif %}
                 {% if game.game_structure %}
                 <div class="ed-row">
-                    <span class="ed-label">Structure:</span>
-                    <span class="ed-value">{{ game.game_structure }}</span>
+                    <span class="ed-label">{{ _('Structure:') }}</span>
+                    <span class="ed-value">{{ display_field_value('game_structure', game.game_structure) }}</span>
                 </div>
                 {% endif %}
                 {% if game.perspective %}
                 <div class="ed-row">
-                    <span class="ed-label">Perspective:</span>
-                    <span class="ed-value">{{ game.perspective }}</span>
+                    <span class="ed-label">{{ _('Perspective:') }}</span>
+                    <span class="ed-value">{{ display_field_value('perspective', game.perspective) }}</span>
                 </div>
                 {% endif %}
                 {% if game.dimension %}
                 <div class="ed-row">
-                    <span class="ed-label">Dimension:</span>
-                    <span class="ed-value">{{ game.dimension }}</span>
+                    <span class="ed-label">{{ _('Dimension:') }}</span>
+                    <span class="ed-value">{{ display_field_value('dimension', game.dimension) }}</span>
                 </div>
                 {% endif %}
                 {% if game.save_type %}
                 <div class="ed-row">
-                    <span class="ed-label">Save:</span>
+                    <span class="ed-label">{{ _('Save:') }}</span>
                     <span class="ed-value">{{ game.save_type }}</span>
                 </div>
                 {% endif %}
                 {% if game.controller_support %}
                 <div class="ed-row">
-                    <span class="ed-label">Input:</span>
+                    <span class="ed-label">{{ _('Input:') }}</span>
                     <span class="ed-value">{{ game.controller_support }}</span>
                 </div>
                 {% endif %}
                 <div class="ed-row">
-                    <span class="ed-label">Scraped:</span>
-                    <span class="ed-value {% if game.scraped %}text-success{% else %}text-warning{% endif %}">{{ 'Yes' if game.scraped else 'No' }}</span>
+                    <span class="ed-label">{{ _('Scraped:') }}</span>
+                    <span class="ed-value {% if game.scraped %}text-success{% else %}text-warning{% endif %}">{{ _('Yes') if game.scraped else _('No') }}</span>
                 </div>
             </div>
         </div>
@@ -633,7 +633,7 @@
         <!-- Bonus Discs Section (only show if this game has linked bonus discs) -->
         {% if bonus_discs %}
         <div class="bottom-section bonus-discs-section">
-            <h2 class="section-title-sm">🎁 Bonus Content</h2>
+            <h2 class="section-title-sm">🎁 {{ _('Bonus Content') }}</h2>
             <div class="bonus-discs-list">
                 {% for disc in bonus_discs %}
                 <a href="{{ url_for('games.game_detail', game_id=disc.id) }}" class="bonus-disc-item">
@@ -655,7 +655,7 @@
     <div class="manual-link">
         <a href="{{ url_for('static', filename='images/manuals/' + game.manual) }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
             <span class="btn-icon">📖</span>
-            View Manual (PDF)
+            {{ _('View Manual (PDF)') }}
         </a>
     </div>
     {% endif %}
@@ -665,7 +665,7 @@
     <div class="scrape-history-section">
         <h2 class="section-title-sm">
             <button type="button" class="scrape-history-toggle" onclick="toggleScrapeHistory()" aria-expanded="true" aria-controls="scrapeHistoryContent">
-                📜 Scrape History <span id="scrapeHistoryArrow">▼</span>
+                📜 {{ _('Scrape History') }} <span id="scrapeHistoryArrow">▼</span>
             </button>
         </h2>
         <div id="scrapeHistoryContent" class="scrape-history-content">
@@ -676,7 +676,7 @@
                     <span class="history-date">{{ entry['timestamp']|tz('short') }}</span>
                     {% if entry.get('scrape_mode') %}
                     <span class="history-mode {{ 'mode-full' if entry['scrape_mode'] == 'full_rescrape' else 'mode-fill' }}">
-                        {{ '🔄 Full Re-scrape' if entry['scrape_mode'] == 'full_rescrape' else '📝 Fill Missing' }}
+                        {% if entry['scrape_mode'] == 'full_rescrape' %}🔄 {{ _('Full Re-scrape') }}{% else %}📝 {{ _('Fill Missing') }}{% endif %}
                     </span>
                     {% endif %}
                     <span class="history-sources">
@@ -690,16 +690,16 @@
                                                (source == 'ScreenScraper' and primary == 'screenscraper') or
                                                (source == 'RAWG' and primary == 'rawg') %}
                             {% if is_primary %}
-                            <span class="source-badge source-{{ source | lower | replace(' ', '-') }} primary-source" title="Primary scraper">{{ source }}</span>
+                            <span class="source-badge source-{{ source | lower | replace(' ', '-') }} primary-source" title="{{ _('Primary scraper') }}">{{ source }}</span>
                             {% else %}
-                            <span class="source-badge source-{{ source | lower | replace(' ', '-') }} fallback-source" title="Fallback scraper">{{ source }}</span>
+                            <span class="source-badge source-{{ source | lower | replace(' ', '-') }} fallback-source" title="{{ _('Fallback scraper') }}">{{ source }}</span>
                             {% endif %}
                         {% endfor %}
                     </span>
                 </div>
                 <div class="history-fields">
                     <div class="fields-filled">
-                        <strong>Fields filled:</strong>
+                        <strong>{{ _('Fields filled:') }}</strong>
                         {% if entry['fields_filled'] %}
                         <ul>
                             {% for field in entry['fields_filled'] %}
@@ -707,12 +707,12 @@
                             {% endfor %}
                         </ul>
                         {% else %}
-                        <span class="text-muted">None</span>
+                        <span class="text-muted">{{ _('None') }}</span>
                         {% endif %}
                     </div>
                     {% if entry['fields_missing'] %}
                     <div class="fields-missing">
-                        <strong>Still missing:</strong>
+                        <strong>{{ _('Still missing:') }}</strong>
                         <span class="text-muted">{{ entry['fields_missing'] | join(', ') }}</span>
                     </div>
                     {% endif %}

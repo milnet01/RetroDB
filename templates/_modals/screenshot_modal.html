@@ -1,9 +1,9 @@
 {# Screenshot carousel viewer — inherits game_detail.html context. #}
-<div id="screenshotModal" class="modal" role="dialog" aria-modal="true" aria-label="Screenshot viewer">
-    <span class="modal-close" aria-label="Close screenshot viewer">×</span>
-    <button class="modal-nav prev" aria-label="Previous screenshot">‹</button>
+<div id="screenshotModal" class="modal" role="dialog" aria-modal="true" aria-label="{{ _('Screenshot viewer') }}">
+    <span class="modal-close" aria-label="{{ _('Close screenshot viewer') }}">×</span>
+    <button class="modal-nav prev" aria-label="{{ _('Previous screenshot') }}">‹</button>
     <img class="modal-content" id="modalImage" alt="Screenshot">
-    <button class="modal-nav next" aria-label="Next screenshot">›</button>
-    <div class="modal-hint">Use ← → arrow keys to navigate • ESC to close</div>
+    <button class="modal-nav next" aria-label="{{ _('Next screenshot') }}">›</button>
+    <div class="modal-hint">{{ _('Use ← → arrow keys to navigate • ESC to close') }}</div>
     <div id="modalCounter" class="modal-counter"></div>
 </div>

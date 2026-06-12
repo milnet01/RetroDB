@@ -221,72 +221,72 @@
 
 {% block content %}
 <div class="page-header">
-    <h1>ROM Tools</h1>
-    <p>Manage, organize, and optimize your ROM collection.</p>
+    <h1>{{ _('ROM Tools') }}</h1>
+    <p>{{ _('Manage, organize, and optimize your ROM collection.') }}</p>
 </div>
 
 <!-- Tool Tabs -->
 <nav class="tool-tabs">
     <a href="{{ url_for('tools.archive_scanner') }}" class="tool-tab">
         <span class="tab-icon">📦</span>
-        <span class="tab-label">Archive Scanner</span>
+        <span class="tab-label">{{ _('Archive Scanner') }}</span>
     </a>
     <a href="{{ url_for('tools.chd_converter') }}" class="tool-tab">
         <span class="tab-icon">💿</span>
-        <span class="tab-label">CHD Converter</span>
+        <span class="tab-label">{{ _('CHD Converter') }}</span>
     </a>
     <a href="{{ url_for('tools.chd_verify') }}" class="tool-tab">
         <span class="tab-icon">✅</span>
-        <span class="tab-label">CHD Verify</span>
+        <span class="tab-label">{{ _('CHD Verify') }}</span>
     </a>
     <a href="{{ url_for('tools.multi_disc_organizer') }}" class="tool-tab">
         <span class="tab-icon">💽</span>
-        <span class="tab-label">Multi-Disc Organizer</span>
+        <span class="tab-label">{{ _('Multi-Disc Organizer') }}</span>
     </a>
     <a href="{{ url_for('tools.duplicate_finder') }}" class="tool-tab">
         <span class="tab-icon">🔍</span>
-        <span class="tab-label">Duplicate Finder</span>
+        <span class="tab-label">{{ _('Duplicate Finder') }}</span>
     </a>
     <a href="{{ url_for('tools.screenshot_dedup') }}" class="tool-tab active" aria-current="page">
         <span class="tab-icon">📸</span>
-        <span class="tab-label">Screenshot Dedup</span>
+        <span class="tab-label">{{ _('Screenshot Dedup') }}</span>
     </a>
     <a href="{{ url_for('tools.rom_tools_settings') }}" class="tool-tab">
         <span class="tab-icon">⚙️</span>
-        <span class="tab-label">Settings</span>
+        <span class="tab-label">{{ _('Settings') }}</span>
     </a>
 </nav>
 
 <div class="card">
     <div class="card-header">
-        <h2 class="card-title"><span>📸</span> Scan Configuration</h2>
+        <h2 class="card-title"><span>📸</span> {{ _('Scan Configuration') }}</h2>
     </div>
     <div class="card-body">
         <div class="form-row" style="display: flex; gap: 1rem; align-items: end; flex-wrap: wrap;">
             <div class="form-group" style="flex: 1; min-width: 200px;">
-                <label for="scanMethod">Detection Method</label>
+                <label for="scanMethod">{{ _('Detection Method') }}</label>
                 <select class="styled-select" id="scanMethod" onchange="toggleThreshold()">
-                    <option value="hash">Exact Hash (MD5) &mdash; identical files only</option>
-                    <option value="visual">Visual Similarity &mdash; perceptual hash comparison</option>
+                    <option value="hash">{{ _('Exact Hash (MD5) &mdash; identical files only') }}</option>
+                    <option value="visual">{{ _('Visual Similarity &mdash; perceptual hash comparison') }}</option>
                 </select>
             </div>
 
             <div class="form-group" id="thresholdGroup" style="display: none;">
-                <label for="threshold">Similarity Threshold</label>
+                <label for="threshold">{{ _('Similarity Threshold') }}</label>
                 <div class="threshold-group">
                     <input type="range" id="threshold" min="1" max="20" value="10"
                            oninput="document.getElementById('thresholdVal').textContent = this.value">
                     <span class="threshold-value" id="thresholdVal">10</span>
-                    <span style="font-size: 0.8rem; color: var(--text-muted);">Lower = stricter</span>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">{{ _('Lower = stricter') }}</span>
                 </div>
             </div>
 
             <div class="form-group">
                 <button type="button" class="btn btn-primary" id="scanBtn" onclick="startScan()">
-                    <span class="btn-icon" data-themed-icon="running"></span> Start Scan
+                    <span class="btn-icon" data-themed-icon="running"></span> {{ _('Start Scan') }}
                 </button>
                 <button type="button" class="btn btn-danger" id="cancelBtn" onclick="cancelScan()" style="display: none;">
-                    Cancel
+                    {{ _('Cancel') }}
                 </button>
             </div>
         </div>
@@ -297,9 +297,9 @@
             </div>
             <div class="progress-details">
                 <div class="progress-status">
-                    <strong id="progressCount">0</strong> / <span id="progressTotal">0</span> games scanned
+                    <strong id="progressCount">0</strong> / <span id="progressTotal">0</span> {{ _('games scanned') }}
                 </div>
-                <div class="progress-action" id="progressAction">Initializing...</div>
+                <div class="progress-action" id="progressAction">{{ _('Initializing...') }}</div>
             </div>
         </div>
     </div>
@@ -307,25 +307,25 @@
 
 <div class="card">
     <div class="card-header">
-        <h2 class="card-title"><span data-themed-icon="stat-success"></span> Scan Results</h2>
+        <h2 class="card-title"><span data-themed-icon="stat-success"></span> {{ _('Scan Results') }}</h2>
     </div>
     <div class="card-body">
         <div class="stats-grid">
             <div class="stat-box">
                 <div class="stat-value" id="statScanned">0</div>
-                <div class="stat-label">Games Scanned</div>
+                <div class="stat-label">{{ _('Games Scanned') }}</div>
             </div>
             <div class="stat-box warning">
                 <div class="stat-value" id="statGamesWithDupes">0</div>
-                <div class="stat-label">Games with Duplicates</div>
+                <div class="stat-label">{{ _('Games with Duplicates') }}</div>
             </div>
             <div class="stat-box danger">
                 <div class="stat-value" id="statDuplicates">0</div>
-                <div class="stat-label">Total Duplicates</div>
+                <div class="stat-label">{{ _('Total Duplicates') }}</div>
             </div>
             <div class="stat-box danger">
                 <div class="stat-value" id="statReclaimable">0 B</div>
-                <div class="stat-label">Space Reclaimable</div>
+                <div class="stat-label">{{ _('Space Reclaimable') }}</div>
             </div>
         </div>
     </div>
@@ -333,10 +333,10 @@
 
 <div class="card" id="resultsCard" style="display: none;">
     <div class="card-header">
-        <h2 class="card-title"><span>📸</span> Duplicate Groups</h2>
+        <h2 class="card-title"><span>📸</span> {{ _('Duplicate Groups') }}</h2>
         <div class="card-actions">
-            <button type="button" class="btn btn-secondary btn-sm" onclick="selectLargest()">Keep Largest</button>
-            <button type="button" class="btn btn-danger btn-sm" onclick="deleteSelected()">Delete Unselected</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="selectLargest()">{{ _('Keep Largest') }}</button>
+            <button type="button" class="btn btn-danger btn-sm" onclick="deleteSelected()">{{ _('Delete Unselected') }}</button>
         </div>
     </div>
     <div class="card-body">
@@ -347,8 +347,8 @@
 <!-- Log Section -->
 <div class="scan-log-container" id="logContainer" style="display: none;">
     <div class="scan-log-header">
-        <h4>Scan Log</h4>
-        <button type="button" class="btn btn-sm btn-danger" onclick="clearLog()">Clear</button>
+        <h4>{{ _('Scan Log') }}</h4>
+        <button type="button" class="btn btn-sm btn-danger" onclick="clearLog()">{{ _('Clear') }}</button>
     </div>
     <div class="scan-log-content" id="scanLog"></div>
 </div>

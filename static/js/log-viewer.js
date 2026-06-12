@@ -20,11 +20,11 @@ const LogViewer = {
 
     // Category display names
     CATEGORY_LABELS: {
-        'scraping': 'Scraping',
-        'rom_tools': 'ROM Tools',
-        'rom_reports': 'Reports',
-        'image_resize': 'Image Resize',
-        'system': 'System'
+        'scraping': t('Scraping'),
+        'rom_tools': t('ROM Tools'),
+        'rom_reports': t('Reports'),
+        'image_resize': t('Image Resize'),
+        'system': t('System')
     },
 
     // Session-start patterns (only meaningful for scraping logs)
@@ -130,7 +130,7 @@ const LogViewer = {
             ? this.allFiles.filter(f => f.category === this.currentCategory)
             : this.allFiles;
 
-        select.innerHTML = '<option value="">-- Select log file --</option>';
+        select.innerHTML = `<option value="">${t('-- Select log file --')}</option>`;
 
         files.forEach(f => {
             const sizeKB = (f.size / 1024).toFixed(1);
@@ -158,14 +158,14 @@ const LogViewer = {
             document.getElementById('fileActions').style.display = 'none';
             document.getElementById('logStatsBar').style.display = 'none';
             document.getElementById('logContainer').innerHTML =
-                '<div class="log-empty"><div class="log-empty-icon">No log files in this category</div></div>';
+                `<div class="log-empty"><div class="log-empty-icon">${t('No log files in this category')}</div></div>`;
         }
     },
 
     async loadFile(filename) {
         this.currentFile = filename;
         const container = document.getElementById('logContainer');
-        container.innerHTML = '<div class="log-loading"><div class="loading-spinner"></div> Loading log file...</div>';
+        container.innerHTML = `<div class="log-loading"><div class="loading-spinner"></div> ${t('Loading log file...')}</div>`;
 
         // Show file action buttons
         document.getElementById('fileActions').style.display = 'flex';
@@ -173,7 +173,7 @@ const LogViewer = {
         try {
             const data = await API.get(`/api/logs/content/${encodeURIComponent(filename)}`);
             if (!data.success) {
-                container.innerHTML = `<div class="log-empty"><div class="log-empty-icon">${escapeHtml(data.error || 'Error loading file')}</div></div>`;
+                container.innerHTML = `<div class="log-empty"><div class="log-empty-icon">${escapeHtml(data.error || t('Error loading file'))}</div></div>`;
                 return;
             }
 
@@ -184,7 +184,7 @@ const LogViewer = {
             this.applySmartViewMode();
             this.render();
         } catch (e) {
-            container.innerHTML = '<div class="log-empty"><div class="log-empty-icon">Error loading log file</div></div>';
+            container.innerHTML = `<div class="log-empty"><div class="log-empty-icon">${t('Error loading log file')}</div></div>`;
             console.error('Error loading log file:', e);
         }
     },
@@ -228,22 +228,22 @@ const LogViewer = {
         if (!this.currentFile) return;
         const filename = this.currentFile;
 
-        showConfirm('Delete Log File', `Are you sure you want to delete "${filename}"?`, async () => {
+        showConfirm(t('Delete Log File'), t('Are you sure you want to delete "{filename}"?', {filename: filename}), async () => {
             try {
                 const resp = await fetch(`/api/logs/delete/${encodeURIComponent(filename)}`, {
                     method: 'DELETE'
                 });
                 const data = await resp.json();
                 if (data.success) {
-                    showNotification('Log file deleted', 'success');
+                    showNotification(t('Log file deleted'), 'success');
                     this.currentFile = null;
                     document.getElementById('fileActions').style.display = 'none';
                     await this.loadFileList();
                 } else {
-                    showNotification(data.error || 'Failed to delete', 'error');
+                    showNotification(data.error || t('Failed to delete'), 'error');
                 }
             } catch (e) {
-                showNotification('Error deleting log file', 'error');
+                showNotification(t('Error deleting log file'), 'error');
             }
         });
     },
@@ -325,7 +325,7 @@ const LogViewer = {
                 currentSession.endTime = line.time;
             } else {
                 currentSession = {
-                    title: 'Pre-session log entries',
+                    title: t('Pre-session log entries'),
                     system: '',
                     startTime: line.time,
                     endTime: line.time,
@@ -410,7 +410,7 @@ const LogViewer = {
         const container = document.getElementById('logContainer');
 
         if (filtered.length === 0) {
-            container.innerHTML = '<div class="log-empty"><div class="log-empty-icon">No log lines match current filters</div></div>';
+            container.innerHTML = `<div class="log-empty"><div class="log-empty-icon">${t('No log lines match current filters')}</div></div>`;
             return;
         }
 
@@ -429,7 +429,7 @@ const LogViewer = {
         const container = document.getElementById('logContainer');
 
         if (filtered.length === 0) {
-            container.innerHTML = '<div class="log-empty"><div class="log-empty-icon">No sessions match current filters</div></div>';
+            container.innerHTML = `<div class="log-empty"><div class="log-empty-icon">${t('No sessions match current filters')}</div></div>`;
             return;
         }
 
@@ -448,7 +448,7 @@ const LogViewer = {
             }
             chunks.push(`<span class="session-time">${this.escapeHtml(session.startTime)}</span>`);
             chunks.push(`<span class="session-badge ${badgeClass}">${badgeLabel}</span>`);
-            chunks.push(`<span class="session-line-count">${session.filteredLines.length} lines</span>`);
+            chunks.push(`<span class="session-line-count">${t('{n} lines', {n: session.filteredLines.length})}</span>`);
             chunks.push(`</div>`);
 
             chunks.push(`<div class="log-session-body">`);
@@ -589,7 +589,7 @@ const LogViewer = {
 
         const select = document.getElementById('logModuleFilter');
         const current = select.value;
-        select.innerHTML = '<option value="">All Sources</option>';
+        select.innerHTML = `<option value="">${t('All Sources')}</option>`;
 
         const sorted = [...modules].sort();
         for (const mod of sorted) {

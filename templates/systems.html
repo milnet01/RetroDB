@@ -6,13 +6,13 @@
 <!-- Page Header -->
 <div class="page-header">
     <div>
-        <h1 class="page-title glitch-text" data-text="Gaming Systems">Gaming Sys<span class="title-accent">tems</span></h1>
-        <p class="page-subtitle">Select a console to view your library.</p>
+        <h1 class="page-title glitch-text" data-text="{{ _('Gaming Systems') }}">{{ _('Gaming Sys') }}<span class="title-accent">{{ _('tems') }}</span></h1>
+        <p class="page-subtitle">{{ _('Select a console to view your library.') }}</p>
     </div>
     <div class="page-actions">
         <div class="console-count-badge">
             <span class="count-number">{{ systems|length|format_number }}</span>
-            <span class="count-label">CONSOLES DETECTED</span>
+            <span class="count-label">{{ _('CONSOLES DETECTED') }}</span>
         </div>
     </div>
 </div>
@@ -21,25 +21,25 @@
 <div class="filter-bar">
     <div class="search-box">
         <span class="search-icon">🔍</span>
-        <input type="text" 
-               id="systemSearch" 
-               class="search-input" 
-               placeholder="Search systems..."
+        <input type="text"
+               id="systemSearch"
+               class="search-input"
+               placeholder="{{ _('Search systems...') }}"
                autocomplete="off">
     </div>
     <div class="filter-buttons">
         <select id="systemTypeFilter" class="filter-select" onchange="applySystemFilters()">
-            <option value="">All Types</option>
-            <option value="Console">🎮 Console</option>
-            <option value="Handheld">📱 Handheld</option>
-            <option value="Computer">💻 Computer</option>
-            <option value="Arcade">🕹️ Arcade</option>
-            <option value="Engine">⚙️ Engine</option>
+            <option value="">{{ _('All Types') }}</option>
+            <option value="Console">🎮 {{ _('Console') }}</option>
+            <option value="Handheld">📱 {{ _('Handheld') }}</option>
+            <option value="Computer">💻 {{ _('Computer') }}</option>
+            <option value="Arcade">🕹️ {{ _('Arcade') }}</option>
+            <option value="Engine">⚙️ {{ _('Engine') }}</option>
         </select>
         <select id="featureFilter" class="filter-select" onchange="applySystemFilters()">
-            <option value="">All Features</option>
-            <option value="ra">🏆 RetroAchievements</option>
-            <option value="trophies">🏅 Local Trophies</option>
+            <option value="">{{ _('All Features') }}</option>
+            <option value="ra">🏆 {{ _('RetroAchievements') }}</option>
+            <option value="trophies">🏅 {{ _('Local Trophies') }}</option>
         </select>
     </div>
 </div>
@@ -47,7 +47,7 @@
 <!-- Filter Results Bar -->
 <div class="filter-results-bar" id="filterResultsBar" style="display: none;">
     <span class="filter-results-text" id="filterResultsText"></span>
-    <button type="button" class="filter-clear-btn" onclick="clearAllSystemFilters()">✕ Clear</button>
+    <button type="button" class="filter-clear-btn" onclick="clearAllSystemFilters()">✕ {{ _('Clear') }}</button>
 </div>
 
 <!-- Systems Grid -->
@@ -75,21 +75,21 @@
                 <div class="system-card-stats">
                     <span class="rom-count-badge">{{ system.rom_count|format_number }} ROM{{ 's' if system.rom_count != 1 else '' }}</span>
                     {% if system.missing_count and system.missing_count > 0 %}
-                    <span class="missing-count-badge">{{ system.missing_count|format_number }} unscraped</span>
+                    <span class="missing-count-badge">{{ system.missing_count|format_number }} {{ _('unscraped') }}</span>
                     {% endif %}
                     {% if system.system_type %}
                     <span class="system-type-tag {{ system.system_type|lower }}">{{ system.system_type }}</span>
                     {% endif %}
                     {% if features.get('ra_supported') %}
-                    <span class="system-feature-badge ra-badge" title="Supports RetroAchievements">🏆 RA</span>
+                    <span class="system-feature-badge ra-badge" title="{{ _('Supports RetroAchievements') }}">🏆 {{ _('RA') }}</span>
                     {% endif %}
                     {% if features.get('local_trophies') %}
-                    <span class="system-feature-badge trophy-badge" title="Local Trophies (RPCS3)">🏅 Trophies</span>
+                    <span class="system-feature-badge trophy-badge" title="{{ _('Local Trophies (RPCS3)') }}">🏅 {{ _('Trophies') }}</span>
                     {% endif %}
                 </div>
             </div>
         </a>
-        <button type="button" class="specs-btn" onclick="showSpecs('{{ system.folder }}', event)" title="View Specifications">
+        <button type="button" class="specs-btn" onclick="showSpecs('{{ system.folder }}', event)" title="{{ _('View Specifications') }}">
             ℹ️
         </button>
     </div>
@@ -100,13 +100,13 @@
 {% if not systems %}
 <div class="empty-state">
     <div class="empty-state-icon">🎮</div>
-    <div class="empty-state-title">No Systems Found</div>
+    <div class="empty-state-title">{{ _('No Systems Found') }}</div>
     <div class="empty-state-text">
-        Scan your ROM library to add systems.
+        {{ _('Scan your ROM library to add systems.') }}
     </div>
     <button type="button" class="btn btn-primary" onclick="scanLibrary()">
         <span class="btn-icon">🔍</span>
-        Scan Library
+        {{ _('Scan Library') }}
     </button>
 </div>
 {% endif %}
@@ -115,7 +115,7 @@
 <div id="specsModal" class="specs-modal">
     <div class="specs-modal-content glass-panel">
         <div class="specs-modal-header">
-            <h2 id="specsTitle">System Specifications</h2>
+            <h2 id="specsTitle">{{ _('System Specifications') }}</h2>
             <button type="button" class="modal-close-btn" onclick="closeSpecs()">×</button>
         </div>
         <div class="specs-modal-body" id="specsBody">

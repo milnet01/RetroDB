@@ -12,8 +12,8 @@ let _pollTimer = null;
 
 function startBulkGenerate() {
     showConfirm(
-        'Generate All Museum Content',
-        'This will use your configured AI provider to generate history and top games for all systems. This may take several minutes and use API credits. Continue?',
+        t('Generate All Museum Content'),
+        t('This will use your configured AI provider to generate history and top games for all systems. This may take several minutes and use API credits. Continue?'),
         function () {
             _doBulkGenerate(false);
         }
@@ -27,16 +27,16 @@ function _doBulkGenerate(overwrite) {
     API.post('/api/museum/generate-all', { overwrite: overwrite })
         .then(function (data) {
             if (data.success) {
-                showNotification('Museum generation started', 'info');
+                showNotification(t('Museum generation started'), 'info');
                 _showProgress();
                 _startPolling();
             } else {
-                showNotification(data.error || 'Failed to start generation', 'error');
+                showNotification(data.error || t('Failed to start generation'), 'error');
                 if (btn) btn.disabled = false;
             }
         })
         .catch(function () {
-            showNotification('Failed to start generation', 'error');
+            showNotification(t('Failed to start generation'), 'error');
             if (btn) btn.disabled = false;
         });
 }
@@ -45,13 +45,13 @@ function cancelBulkGenerate() {
     API.post('/api/museum/cancel-generate')
         .then(function (data) {
             if (data.success) {
-                showNotification('Cancellation requested', 'warning');
+                showNotification(t('Cancellation requested'), 'warning');
             }
         })
         .catch(function () {
             // API.post rejects on HTTP error / 30s timeout; surface it instead
             // of leaving an unhandled rejection and no user feedback.
-            showNotification('Cancel request failed', 'warning');
+            showNotification(t('Cancel request failed'), 'warning');
         });
 }
 
@@ -109,11 +109,11 @@ function _pollStatus() {
             var title = document.getElementById('progressTitle');
             if (title) {
                 if (s.cancelled) {
-                    title.textContent = 'Cancelled';
+                    title.textContent = t('Cancelled');
                 } else if (s.completed) {
-                    title.textContent = 'Complete!';
+                    title.textContent = t('Complete!');
                 } else {
-                    title.textContent = 'Generating content...';
+                    title.textContent = t('Generating content...');
                 }
             }
 
@@ -129,11 +129,14 @@ function _pollStatus() {
                 if (s.error_message) {
                     showNotification(s.error_message, 'error');
                 } else if (s.cancelled) {
-                    showNotification('Generation cancelled', 'warning');
+                    showNotification(t('Generation cancelled'), 'warning');
                 } else {
                     showNotification(
-                        'Generation complete: ' + formatNumber(s.success_count) + ' generated, ' +
-                        formatNumber(s.skipped_count) + ' skipped, ' + formatNumber(s.failed_count) + ' failed',
+                        t('Generation complete: {generated} generated, {skipped} skipped, {failed} failed', {
+                            generated: formatNumber(s.success_count),
+                            skipped: formatNumber(s.skipped_count),
+                            failed: formatNumber(s.failed_count)
+                        }),
                         'success'
                     );
                     // Reload to show updated content indicators
@@ -155,28 +158,28 @@ function generateContent(systemId) {
     var btn = document.getElementById('generateBtn');
     if (btn) {
         btn.disabled = true;
-        btn.textContent = 'Generating...';
+        btn.textContent = t('Generating...');
     }
 
     API.post('/api/museum/generate/' + systemId)
         .then(function (data) {
             if (data.success) {
-                showNotification('Content generated successfully', 'success');
+                showNotification(t('Content generated successfully'), 'success');
                 // Reload to display new content
                 setTimeout(function () { location.reload(); }, 1000);
             } else {
-                showNotification(data.error || 'Generation failed', 'error');
+                showNotification(data.error || t('Generation failed'), 'error');
                 if (btn) {
                     btn.disabled = false;
-                    btn.textContent = 'Generate Content';
+                    btn.textContent = t('Generate Content');
                 }
             }
         })
         .catch(function () {
-            showNotification('Generation request failed', 'error');
+            showNotification(t('Generation request failed'), 'error');
             if (btn) {
                 btn.disabled = false;
-                btn.textContent = 'Generate Content';
+                btn.textContent = t('Generate Content');
             }
         });
 }
@@ -202,7 +205,7 @@ function _updateControllerImage(controllerId, imageFilename) {
 
     var img = document.createElement('img');
     img.setAttribute('src', '/static/images/controllers/' + encodeURIComponent(imageFilename) + '?t=' + Date.now());
-    img.setAttribute('alt', 'Controller');
+    img.setAttribute('alt', t('Controller'));
     img.setAttribute('loading', 'lazy');
     img.addEventListener('click', function () { openControllerLightbox(img); });
 
@@ -210,8 +213,8 @@ function _updateControllerImage(controllerId, imageFilename) {
     actions.className = 'museum-controller-image-actions';
     var replaceBtn = document.createElement('button');
     replaceBtn.className = 'btn btn-xs btn-ghost';
-    replaceBtn.title = 'Upload replacement image';
-    replaceBtn.textContent = 'Replace';
+    replaceBtn.title = t('Upload replacement image');
+    replaceBtn.textContent = t('Replace');
     replaceBtn.addEventListener('click', function (e) {
         e.stopPropagation();
         uploadControllerImage(safeControllerId);
@@ -246,11 +249,11 @@ function _resetPlaceholder(controllerId) {
     actions.className = 'museum-controller-image-actions';
     var searchBtn = document.createElement('button');
     searchBtn.className = 'btn btn-sm btn-ghost';
-    searchBtn.textContent = 'Search';
+    searchBtn.textContent = t('Search');
     searchBtn.addEventListener('click', function () { fetchControllerImage(safeControllerId); });
     var uploadBtn = document.createElement('button');
     uploadBtn.className = 'btn btn-sm btn-ghost';
-    uploadBtn.textContent = 'Upload';
+    uploadBtn.textContent = t('Upload');
     uploadBtn.addEventListener('click', function () { uploadControllerImage(safeControllerId); });
     actions.append(searchBtn, uploadBtn);
 
@@ -278,22 +281,22 @@ function _removeControllerOverlay(controllerId) {
 }
 
 function removeControllerBg(controllerId) {
-    _showControllerOverlay(controllerId, 'Removing background\u2026');
+    _showControllerOverlay(controllerId, t('Removing background\u2026'));
 
     API.post('/api/museum/controller-image-removebg/' + controllerId)
         .then(function (data) {
             _removeControllerOverlay(controllerId);
             if (data.success && data.image) {
-                showNotification('Background removed', 'success');
+                showNotification(t('Background removed'), 'success');
                 _updateControllerImage(controllerId, data.image);
             } else {
-                showNotification(data.error || 'Background removal failed', 'error');
+                showNotification(data.error || t('Background removal failed'), 'error');
                 location.reload();
             }
         })
         .catch(function () {
             _removeControllerOverlay(controllerId);
-            showNotification('Background removal failed', 'error');
+            showNotification(t('Background removal failed'), 'error');
             location.reload();
         });
 }
@@ -302,21 +305,21 @@ function fetchControllerImage(controllerId) {
     var card = document.querySelector('[data-controller-id="' + controllerId + '"]');
     var placeholder = card ? card.querySelector('.museum-controller-placeholder') : null;
     if (placeholder) {
-        placeholder.innerHTML = '<span class="spinner"></span><span class="text-muted" style="font-size:0.75rem">Searching &amp; removing background...</span>';
+        placeholder.innerHTML = `<span class="spinner"></span><span class="text-muted" style="font-size:0.75rem">${t('Searching & removing background...')}</span>`;
     }
 
     API.post('/api/museum/controller-image/' + controllerId)
         .then(function (data) {
             if (data.success && data.image) {
-                showNotification('Controller image saved', 'success');
+                showNotification(t('Controller image saved'), 'success');
                 _updateControllerImage(controllerId, data.image);
             } else {
-                showNotification(data.error || 'Failed to fetch image', 'error');
+                showNotification(data.error || t('Failed to fetch image'), 'error');
                 _resetPlaceholder(controllerId);
             }
         })
         .catch(function () {
-            showNotification('Failed to fetch controller image', 'error');
+            showNotification(t('Failed to fetch controller image'), 'error');
             _resetPlaceholder(controllerId);
         });
 }
@@ -331,21 +334,21 @@ function handleControllerUpload(controllerId, input) {
 
     var file = input.files[0];
     if (file.size > 10 * 1024 * 1024) {
-        showNotification('Image must be under 10MB', 'error');
+        showNotification(t('Image must be under 10MB'), 'error');
         input.value = '';
         return;
     }
 
     showConfirm(
-        'Upload Controller Image',
-        'Remove background from the uploaded image?',
+        t('Upload Controller Image'),
+        t('Remove background from the uploaded image?'),
         function () { _doUpload(controllerId, file, true); },
         function () { _doUpload(controllerId, file, false); }
     );
 }
 
 function _doUpload(controllerId, file, removeBg) {
-    var msg = removeBg ? 'Uploading & removing background\u2026' : 'Uploading\u2026';
+    var msg = removeBg ? t('Uploading & removing background\u2026') : t('Uploading\u2026');
     _showControllerOverlay(controllerId, msg);
 
     var formData = new FormData();
@@ -356,16 +359,16 @@ function _doUpload(controllerId, file, removeBg) {
         .then(function (data) {
             _removeControllerOverlay(controllerId);
             if (data.success && data.image) {
-                showNotification('Controller image uploaded', 'success');
+                showNotification(t('Controller image uploaded'), 'success');
                 _updateControllerImage(controllerId, data.image);
             } else {
-                showNotification(data.error || 'Upload failed', 'error');
+                showNotification(data.error || t('Upload failed'), 'error');
                 _resetPlaceholder(controllerId);
             }
         })
         .catch(function () {
             _removeControllerOverlay(controllerId);
-            showNotification('Upload failed', 'error');
+            showNotification(t('Upload failed'), 'error');
             _resetPlaceholder(controllerId);
         });
 
@@ -376,27 +379,27 @@ function _doUpload(controllerId, file, removeBg) {
 
 function fetchAllControllerImages(systemId) {
     showConfirm(
-        'Fetch All Controller Images',
-        'This will search for and download images for all controllers without images. Continue?',
+        t('Fetch All Controller Images'),
+        t('This will search for and download images for all controllers without images. Continue?'),
         function () {
-            showNotification('Fetching controller images...', 'info');
+            showNotification(t('Fetching controller images...'), 'info');
             API.post('/api/museum/controller-images-bulk/' + systemId)
                 .then(function (data) {
                     if (data.success) {
                         var r = data.results;
                         showNotification(
-                            r.success + ' fetched, ' + r.skipped + ' skipped, ' + r.failed + ' failed',
+                            t('{fetched} fetched, {skipped} skipped, {failed} failed', {fetched: r.success, skipped: r.skipped, failed: r.failed}),
                             r.success > 0 ? 'success' : 'warning'
                         );
                         if (r.success > 0) {
                             setTimeout(function () { location.reload(); }, 1500);
                         }
                     } else {
-                        showNotification(data.error || 'Bulk fetch failed', 'error');
+                        showNotification(data.error || t('Bulk fetch failed'), 'error');
                     }
                 })
                 .catch(function () {
-                    showNotification('Bulk fetch request failed', 'error');
+                    showNotification(t('Bulk fetch request failed'), 'error');
                 });
         }
     );

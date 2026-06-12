@@ -30,7 +30,7 @@ const TrophySync = {
 
         if (btn) {
             btn.disabled = true;
-            btn.innerHTML = '<span class="btn-icon">🔄</span> Syncing...';
+            btn.innerHTML = '<span class="btn-icon">🔄</span> ' + t('Syncing...');
         }
 
         try {
@@ -38,7 +38,7 @@ const TrophySync = {
 
             if (data.success) {
                 if (typeof showNotification === 'function') {
-                    showNotification('Trophies synced successfully!', 'success');
+                    showNotification(t('Trophies synced successfully!'), 'success');
                 }
                 if (options.onSuccess) {
                     options.onSuccess(data);
@@ -48,13 +48,13 @@ const TrophySync = {
                 }
             } else {
                 if (typeof showNotification === 'function') {
-                    showNotification(data.error || 'Failed to sync trophies', 'error');
+                    showNotification(data.error || t('Failed to sync trophies'), 'error');
                 }
             }
         } catch (error) {
             console.error('Error syncing trophies:', error);
             if (typeof showNotification === 'function') {
-                showNotification('Network error syncing trophies', 'error');
+                showNotification(t('Network error syncing trophies'), 'error');
             }
         } finally {
             if (btn) {

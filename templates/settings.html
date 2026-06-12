@@ -1,42 +1,42 @@
 {% extends "base.html" %}
 {% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
 
-{% block title %}Settings - RetroDB{% endblock %}
+{% block title %}{{ _('Settings') }} - RetroDB{% endblock %}
 
 {% block content %}
 <!-- Page Header -->
 <div class="page-header">
     <div>
-        <h1 class="page-title">Settings</h1>
-        <p class="page-subtitle">Configure your RetroDB installation</p>
+        <h1 class="page-title">{{ _('Settings') }}</h1>
+        <p class="page-subtitle">{{ _('Configure your RetroDB installation') }}</p>
     </div>
 </div>
 
 <!-- Tab Navigation -->
-<div class="settings-tabs" id="settingsTabs" role="tablist" aria-label="Settings sections" data-sticky-nav>
+<div class="settings-tabs" id="settingsTabs" role="tablist" aria-label="{{ _('Settings sections') }}" data-sticky-nav>
     <button type="button" class="settings-tab active" data-tab="account" onclick="switchSettingsTab('account')" role="tab" aria-selected="true" aria-controls="tab-account">
         <span class="tab-icon">👤</span>
-        <span class="tab-text">Account</span>
+        <span class="tab-text">{{ _('Account') }}</span>
     </button>
     <button type="button" class="settings-tab" data-tab="library" onclick="switchSettingsTab('library')" role="tab" aria-selected="false" aria-controls="tab-library">
         <span class="tab-icon">📁</span>
-        <span class="tab-text">Library</span>
+        <span class="tab-text">{{ _('Library') }}</span>
     </button>
     <button type="button" class="settings-tab" data-tab="scraping" onclick="switchSettingsTab('scraping')" role="tab" aria-selected="false" aria-controls="tab-scraping">
         <span class="tab-icon">🔍</span>
-        <span class="tab-text">Scraping</span>
+        <span class="tab-text">{{ _('Scraping') }}</span>
     </button>
     <button type="button" class="settings-tab" data-tab="data" onclick="switchSettingsTab('data')" role="tab" aria-selected="false" aria-controls="tab-data">
         <span class="tab-icon">📊</span>
-        <span class="tab-text">Data</span>
+        <span class="tab-text">{{ _('Data') }}</span>
     </button>
     <button type="button" class="settings-tab" data-tab="customization" onclick="switchSettingsTab('customization')" role="tab" aria-selected="false" aria-controls="tab-customization">
         <span class="tab-icon">🎨</span>
-        <span class="tab-text">Customization</span>
+        <span class="tab-text">{{ _('Customization') }}</span>
     </button>
     <button type="button" class="settings-tab" data-tab="system" onclick="switchSettingsTab('system')" role="tab" aria-selected="false" aria-controls="tab-system">
         <span class="tab-icon">⚙️</span>
-        <span class="tab-text">System</span>
+        <span class="tab-text">{{ _('System') }}</span>
     </button>
 </div>
 
@@ -61,11 +61,11 @@
 <!-- Confirm Modal -->
 <div id="confirmModal" class="confirm-modal" data-focus-trap data-focus-trap-content=".confirm-modal-content">
     <div class="confirm-modal-content glass-panel">
-        <div class="confirm-modal-title" id="confirmTitle">Confirm Action</div>
-        <div class="confirm-modal-message" id="confirmMessage">Are you sure?</div>
+        <div class="confirm-modal-title" id="confirmTitle">{{ _('Confirm Action') }}</div>
+        <div class="confirm-modal-message" id="confirmMessage">{{ _('Are you sure?') }}</div>
         <div class="confirm-modal-buttons">
-            <button type="button" class="btn btn-secondary" id="confirmCancelBtn" onclick="closeConfirmModal()">Cancel</button>
-            <button type="button" class="btn btn-danger" id="confirmBtn" onclick="executeConfirm()">Delete</button>
+            <button type="button" class="btn btn-secondary" id="confirmCancelBtn" onclick="closeConfirmModal()">{{ _('Cancel') }}</button>
+            <button type="button" class="btn btn-danger" id="confirmBtn" onclick="executeConfirm()">{{ _('Delete') }}</button>
         </div>
     </div>
 </div>

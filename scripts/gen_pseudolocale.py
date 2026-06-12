@@ -13,11 +13,19 @@ The catalog is housed under the ``eo`` (Esperanto) CLDR code — see
 ``services/i18n.py::PSEUDO_LOCALE`` / INV-1 — but always labelled "Pseudo" in
 the UI.
 
-Workflow (run from the repo root, after wrapping new strings):
+Workflow (run from the repo root, after wrapping new strings). This script is
+step 3 of the full pipeline — see ``docs/specs/i18n.md`` §4 for the canonical,
+authoritative version (including the ``build_js.py`` JS-manifest refresh and the
+``pybabel update``/``init`` steps for the real human catalogs, neither of which
+this script touches):
 
-    pybabel extract -F babel.cfg -o messages.pot .
-    python3 scripts/gen_pseudolocale.py
-    pybabel compile -d translations
+    # 1. snapshot msgids (--ignore-dirs is mandatory — see docs/specs/i18n.md §4)
+    pybabel extract -F babel.cfg \
+        --ignore-dirs='.* __pycache__ node_modules venv .venv env build dist staging tests' \
+        -o messages.pot .
+    pybabel update  -i messages.pot -d translations       # 2. merge real catalogs
+    python3 scripts/gen_pseudolocale.py                   # 3. regen pseudolocale
+    pybabel compile -d translations                       # 4. compile -> .mo
 
 Both the generated ``.po`` and the compiled ``.mo`` are committed so the
 source-zip and PyInstaller distributions need no build step on the user's
@@ -96,7 +104,13 @@ def main():
     # machine-generated and complete, so clear the flag.
     catalog.fuzzy = False
     for message in catalog:
-        if message.id:  # skip the header (empty id)
+        if not message.id:  # skip the header (empty id)
+            continue
+        if message.pluralizable:
+            # message.id is a (singular, plural) tuple; pseudo-localize each
+            # form. PSEUDO_LOCALE ('eo') has 2 plural forms, matching the pair.
+            message.string = tuple(pseudo(form) for form in message.id)
+        else:
             message.string = pseudo(message.id)
 
     os.makedirs(os.path.dirname(PO_PATH), exist_ok=True)

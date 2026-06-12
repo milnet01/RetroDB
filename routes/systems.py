@@ -5,6 +5,7 @@
 # =============================================================================
 
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash
+from flask_babel import gettext as _
 import os
 import logging
 
@@ -216,7 +217,7 @@ def system_games(system_id):
     try:
         system = query("SELECT * FROM systems WHERE id = ?", (system_id,), one=True)
         if not system:
-            flash("System not found", "error")
+            flash(_("System not found"), "error")
             return redirect(url_for('systems.systems'))
 
         counts = query("""

@@ -5,6 +5,7 @@
 # =============================================================================
 
 from flask import Blueprint, render_template, redirect, url_for, jsonify, flash, g
+from flask_babel import gettext as _
 import logging
 
 from services.analytics import invalidate_analytics_cache
@@ -44,7 +45,7 @@ def achievements():
     """, one=True)
     
     if not first_system:
-        flash('No games with RetroAchievements found in your library', 'info')
+        flash(_('No games with RetroAchievements found in your library'), 'info')
         return redirect(url_for('dashboard'))
     
     # Return a minimal page that checks localStorage for last system
@@ -103,7 +104,7 @@ def achievements_system(system_id):
     """, (user_id, system_id), one=True)
 
     if not system:
-        flash('System not found or has no achievement games', 'warning')
+        flash(_('System not found or has no achievement games'), 'warning')
         return redirect(url_for('dashboard'))
 
     # Get games for this system with the caller's stored progress
@@ -166,11 +167,11 @@ def achievement_game(game_id):
     """, (game_id,), one=True)
     
     if not game:
-        flash('Game not found', 'error')
+        flash(_('Game not found'), 'error')
         return redirect(url_for('.achievements'))
-    
+
     if not game['ra_game_id']:
-        flash('This game does not have RetroAchievements data', 'error')
+        flash(_('This game does not have RetroAchievements data'), 'error')
         return redirect(url_for('game_detail', game_id=game_id))
     
     username, api_key = get_user_ra_credentials()

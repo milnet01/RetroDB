@@ -732,12 +732,12 @@ const UnifiedToastController = {
             if (!localStorage.getItem(completionKey)) {
                 localStorage.setItem(completionKey, 'true');
                 if (data.error) {
-                    showNotification(`${typeConfig.name} failed: ${data.error}`, 'error');
+                    showNotification(t('{job} failed: {error}', {job: typeConfig.name, error: data.error}), 'error');
                 } else if (data.cancelled) {
-                    showNotification(`${typeConfig.name} cancelled`, 'warning');
+                    showNotification(t('{job} cancelled', {job: typeConfig.name}), 'warning');
                 } else {
                     const total = data.success || data.processed || 0;
-                    showNotification(`${typeConfig.name} completed (${total} processed)`, 'success');
+                    showNotification(t('{job} completed ({n} processed)', {job: typeConfig.name, n: total}), 'success');
                 }
             }
         }
@@ -838,7 +838,7 @@ const UnifiedToastController = {
                         running: true,
                         completed: false,
                         current_system: next.systemName,
-                        current_game: 'Starting...',
+                        current_game: t('Starting...'),
                         total: next.gameCount || 0,
                         current: 0,
                         percent: 0,
@@ -1000,9 +1000,9 @@ const UnifiedToastController = {
         toast.style.setProperty('--toast-color', config.queuedColor);
         
         // Build title based on type
-        const title = item.type === 'sync' 
-            ? `🔄 Sync: ${this.escapeHtml(item.systemName)}`
-            : `🏆 Refresh: ${this.escapeHtml(item.systemName || 'All Systems')}`;
+        const title = item.type === 'sync'
+            ? `🔄 ${this.escapeHtml(t('Sync: {system}', {system: item.systemName}))}`
+            : `🏆 ${this.escapeHtml(t('Refresh: {system}', {system: item.systemName || t('All Systems')}))}`;
         
         // Pass 45.4 — drop the inline onclick + ${cancelCall} JS-string-in-
         // HTML interpolation; use data-* attributes + addEventListener so
@@ -1016,11 +1016,11 @@ const UnifiedToastController = {
                     <div class="toast-icon">${getThemedIcon(item.type === 'sync' ? 'ra-sync' : 'ra-refresh', 'queued')}</div>
                     <div class="toast-info">
                         <div class="toast-title">${title}</div>
-                        <div class="toast-subtitle"><span class="queue-position">#${position}</span> in queue${item.gameCount ? ` • ${this.fmtNum(item.gameCount)} games` : ''}</div>
+                        <div class="toast-subtitle"><span class="queue-position">#${position}</span> ${this.escapeHtml(t('in queue'))}${item.gameCount ? ` • ${this.escapeHtml(t('{n} games', {n: this.fmtNum(item.gameCount)}))}` : ''}</div>
                     </div>
                 </div>
                 <div class="toast-controls">
-                    <button class="toast-btn cancel" data-toast-action="cancel-ra-queued" data-ra-type="${this.escapeHtml(raType)}" data-ra-system-id="${this.escapeHtml(raSystemId)}" title="Remove from queue">
+                    <button class="toast-btn cancel" data-toast-action="cancel-ra-queued" data-ra-type="${this.escapeHtml(raType)}" data-ra-system-id="${this.escapeHtml(raSystemId)}" title="${this.escapeHtml(t('Remove from queue'))}">
                         ✕
                     </button>
                 </div>
@@ -1126,11 +1126,11 @@ const UnifiedToastController = {
         // Build subtitle - game name only (system shown separately)
         let currentItem;
         if (type === 'image-resize') {
-            currentItem = data.current_file || 'Processing...';
+            currentItem = data.current_file || t('Processing...');
         } else if (type === 'ra-refresh' || type === 'psn-refresh') {
-            currentItem = data.current_game || 'Processing...';
+            currentItem = data.current_game || t('Processing...');
         } else {
-            currentItem = data.current_game || data.current_system || 'Processing...';
+            currentItem = data.current_game || data.current_system || t('Processing...');
         }
 
         // System name for image-resize shows the current image type folder
@@ -1149,7 +1149,7 @@ const UnifiedToastController = {
         } else if (type === 'ra-refresh') {
             statsHTML = `
                 <div class="toast-stats">
-                    <span class="stat success">${getThemedIcon('ra-sync')} <span class="stat-value" data-stat="success">${fmt(data.success)}</span> found</span>
+                    <span class="stat success">${getThemedIcon('ra-sync')} <span class="stat-value" data-stat="success">${fmt(data.success)}</span> ${this.escapeHtml(t('found'))}</span>
                 </div>
             `;
         } else if (type === 'psn-refresh') {
@@ -1203,7 +1203,7 @@ const UnifiedToastController = {
                 <div class="toast-main" data-toast-action="navigate" data-toast-type="${this.escapeHtml(type)}" data-toast-return-url="${this.escapeHtml(data.return_url || '')}">
                     <div class="toast-icon ${isPaused ? 'paused' : ''}">${isPaused ? getThemedIcon(type, 'paused') : getThemedIcon(type)}</div>
                     <div class="toast-info">
-                        <div class="toast-title ${isPaused ? 'paused' : ''}">${config.name} ${isPaused ? '(Paused)' : 'Running'}</div>
+                        <div class="toast-title ${isPaused ? 'paused' : ''}">${config.name} ${isPaused ? t('(Paused)') : t('Running')}</div>
                         ${systemNameHTML}
                         <div class="toast-subtitle" data-subtitle>${this.escapeHtml(currentItem)}</div>
                         ${npwrHTML}
@@ -1218,11 +1218,11 @@ const UnifiedToastController = {
                 </div>
                 <div class="toast-controls">
                     ${type === 'bulk-scrape' || type === 'psn-refresh' ? `
-                    <button class="toast-btn pause" data-toast-action="pause" data-toast-type="${this.escapeHtml(type)}" title="${isPaused ? 'Resume' : 'Pause'}">
+                    <button class="toast-btn pause" data-toast-action="pause" data-toast-type="${this.escapeHtml(type)}" title="${this.escapeHtml(isPaused ? t('Resume') : t('Pause'))}">
                         <span data-pause-icon>${isPaused ? '▶️' : '⏸️'}</span>
                     </button>
                     ` : ''}
-                    <button class="toast-btn cancel" data-toast-action="cancel" data-toast-type="${this.escapeHtml(type)}" title="Cancel">
+                    <button class="toast-btn cancel" data-toast-action="cancel" data-toast-type="${this.escapeHtml(type)}" title="${this.escapeHtml(t('Cancel'))}">
                         ✕
                     </button>
                 </div>
@@ -1250,11 +1250,11 @@ const UnifiedToastController = {
         // Build subtitle - game name only (system shown separately)
         let currentItem;
         if (type === 'image-resize') {
-            currentItem = data.current_file || 'Processing...';
+            currentItem = data.current_file || t('Processing...');
         } else if (type === 'ra-refresh' || type === 'psn-refresh') {
-            currentItem = data.current_game || 'Processing...';
+            currentItem = data.current_game || t('Processing...');
         } else {
-            currentItem = data.current_game || data.current_system || 'Processing...';
+            currentItem = data.current_game || data.current_system || t('Processing...');
         }
 
         // Update color
@@ -1272,7 +1272,7 @@ const UnifiedToastController = {
         // Update title
         const title = toast.querySelector('.toast-title');
         if (title) {
-            const statusText = isComplete ? 'Complete' : (isPaused ? '(Paused)' : 'Running');
+            const statusText = isComplete ? t('Complete') : (isPaused ? t('(Paused)') : t('Running'));
             title.textContent = `${config.name} ${statusText}`;
             title.classList.toggle('paused', isPaused);
         }
@@ -1371,7 +1371,7 @@ const UnifiedToastController = {
         
         const pauseBtn = toast.querySelector('.toast-btn.pause');
         if (pauseBtn) {
-            pauseBtn.title = isPaused ? 'Resume' : 'Pause';
+            pauseBtn.title = isPaused ? t('Resume') : t('Pause');
             pauseBtn.classList.toggle('is-paused', isPaused);
         }
     },
@@ -1493,19 +1493,19 @@ const UnifiedToastController = {
         // double-decode context which can't be sanitized inline; we
         // replace the onclick with an addEventListener wired off
         // data-* attributes.
-        const subtitleText = job.system_name || 'Multi-System';
+        const subtitleText = job.system_name || t('Multi-System');
         toast.innerHTML = `
             <div class="toast-content queued">
                 <div class="toast-main">
                     <div class="toast-icon">${getThemedIcon(type, 'queued')}</div>
                     <div class="toast-info">
-                        <div class="toast-title">${this.escapeHtml(config.name)} Queued (#${position})</div>
+                        <div class="toast-title">${this.escapeHtml(t('{job} Queued (#{position})', {job: config.name, position: position}))}</div>
                         <div class="toast-subtitle">${this.escapeHtml(subtitleText)}</div>
-                        <div class="toast-meta">${this.fmtNum(job.total)} games</div>
+                        <div class="toast-meta">${this.escapeHtml(t('{n} games', {n: this.fmtNum(job.total)}))}</div>
                     </div>
                 </div>
                 <div class="toast-controls">
-                    <button class="toast-btn cancel" data-cancel-queued title="Remove from queue">
+                    <button class="toast-btn cancel" data-cancel-queued title="${this.escapeHtml(t('Remove from queue'))}">
                         ✕
                     </button>
                 </div>
@@ -1560,7 +1560,7 @@ const UnifiedToastController = {
     cancel(type) {
         const config = this.getTypeConfig(type);
         if (typeof showConfirm === 'function') {
-            showConfirm(`⚠️ Cancel ${config.name}`, `Are you sure you want to cancel?`, async () => {
+            showConfirm(t('⚠️ Cancel {job}', {job: config.name}), t('Are you sure you want to cancel?'), async () => {
                 await this.performCancel(type);
             });
         } else {

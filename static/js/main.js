@@ -44,7 +44,7 @@ window.addEventListener('error', function(event) {
     // useful detail — nothing actionable to surface, skip.
     const msg = event.message || '';
     if (!msg || msg === 'Script error.') return;
-    _surfaceError('Unexpected error', msg);
+    _surfaceError(t('Unexpected error'), msg);
 });
 
 window.addEventListener('unhandledrejection', function(event) {
@@ -57,7 +57,7 @@ window.addEventListener('unhandledrejection', function(event) {
     } else {
         try { detail = JSON.stringify(r); } catch (_e) { detail = String(r); }
     }
-    _surfaceError('Unhandled rejection', detail);
+    _surfaceError(t('Unhandled rejection'), detail);
 });
 
 // =============================================================================
@@ -382,7 +382,7 @@ function displaySearchResults(results) {
     if (!container) return;
     
     if (!results || results.length === 0) {
-        container.innerHTML = '<div class="search-no-results">No results found</div>';
+        container.innerHTML = `<div class="search-no-results">${escapeHtml(t('No results found'))}</div>`;
     } else {
         container.innerHTML = results.map(result => `
             <a href="${encodeURI(result.url)}" class="search-result-item">
@@ -405,7 +405,7 @@ function hideSearchResults() {
 function showSearchLoading() {
     const container = document.getElementById('searchResults');
     if (container) {
-        container.innerHTML = '<div class="search-loading"><span class="loading-spinner"></span> Searching...</div>';
+        container.innerHTML = `<div class="search-loading"><span class="loading-spinner"></span> ${escapeHtml(t('Searching...'))}</div>`;
         container.classList.add('active');
     }
 }
@@ -559,8 +559,8 @@ function updateEmptyState(containerSelector, items) {
             emptyState.className = 'empty-state';
             emptyState.innerHTML = `
                 <div class="empty-state-icon">🔍</div>
-                <div class="empty-state-title">No results found</div>
-                <div class="empty-state-text">Try adjusting your search or filters</div>
+                <div class="empty-state-title">${escapeHtml(t('No results found'))}</div>
+                <div class="empty-state-text">${escapeHtml(t('Try adjusting your search or filters'))}</div>
             `;
             container.appendChild(emptyState);
         }
@@ -808,7 +808,7 @@ function initializeConfirmDialogs() {
             e.preventDefault();
             const message = this.dataset.confirm;
             const target = this;
-            showConfirm('⚠️ Confirm', message, () => {
+            showConfirm(t('⚠️ Confirm'), message, () => {
                 // Re-trigger the action without the confirm listener
                 target.removeAttribute('data-confirm');
                 target.click();
@@ -821,7 +821,7 @@ function initializeConfirmDialogs() {
 // Specific confirm for reset
 function confirmReset(form) {
     if (window.event) window.event.preventDefault();
-    showConfirm('🗑️ Reset Metadata', 'Are you sure you want to reset all metadata for this game? This will delete boxart and screenshots.', () => {
+    showConfirm(t('🗑️ Reset Metadata'), t('Are you sure you want to reset all metadata for this game? This will delete boxart and screenshots.'), () => {
         form.submit();
     });
     return false;
@@ -837,7 +837,7 @@ async function scanLibrary() {
 
     const originalText = btn.innerHTML;
 
-    btn.innerHTML = '<span class="loading-spinner"></span> Scanning...';
+    btn.innerHTML = `<span class="loading-spinner"></span> ${escapeHtml(t('Scanning...'))}`;
     btn.disabled = true;
 
     // v3.6.5 — Use raw fetch so the response body (which carries the
@@ -853,14 +853,14 @@ async function scanLibrary() {
         try { data = await response.json(); } catch (_) { /* non-JSON body */ }
 
         if (response.ok && data && data.success) {
-            showNotification('Library scan complete! Found ' + (data.new_games || 0) + ' new games.', 'success');
+            showNotification(t('Library scan complete! Found {n} new games.', {n: data.new_games || 0}), 'success');
             setTimeout(() => location.reload(), 1500);
         } else {
-            const msg = (data && data.error) || `Scan failed (HTTP ${response.status})`;
+            const msg = (data && data.error) || t('Scan failed (HTTP {status})', {status: response.status});
             showNotification(msg, 'error');
         }
     } catch (error) {
-        showNotification('Error scanning library: ' + error.message, 'error');
+        showNotification(t('Error scanning library: {error}', {error: error.message}), 'error');
     } finally {
         btn.innerHTML = originalText;
         btn.disabled = false;
@@ -869,10 +869,10 @@ async function scanLibrary() {
 
 async function restartServer() {
     showConfirm(
-        '🔄 Restart Server',
-        'Are you sure you want to restart the server?',
+        t('🔄 Restart Server'),
+        t('Are you sure you want to restart the server?'),
         async function() {
-            showNotification('Restarting server...', 'info');
+            showNotification(t('Restarting server...'), 'info');
             
             try {
                 await API.post('/api/restart');
@@ -898,7 +898,7 @@ async function checkServerStatus() {
     const checkStatus = async () => {
         try {
             await API.get('/api/status');
-            showNotification('Server restarted successfully!', 'success');
+            showNotification(t('Server restarted successfully!'), 'success');
             setTimeout(() => location.reload(), 1000);
             return true;
         } catch (error) {
@@ -909,7 +909,7 @@ async function checkServerStatus() {
         if (attempts < maxAttempts) {
             setTimeout(checkStatus, 1000);
         } else {
-            showNotification('Could not reconnect to server. Please refresh manually.', 'error');
+            showNotification(t('Could not reconnect to server. Please refresh manually.'), 'error');
         }
     };
     
@@ -918,54 +918,54 @@ async function checkServerStatus() {
 
 async function cleanMissingRoms() {
     showConfirm(
-        '🧹 Clean Missing ROMs',
-        'This will remove database entries for ROM files that no longer exist on disk. This cannot be undone. Continue?',
+        t('🧹 Clean Missing ROMs'),
+        t('This will remove database entries for ROM files that no longer exist on disk. This cannot be undone. Continue?'),
         async function() {
             const btn = document.getElementById('cleanMissingBtn');
             const resultDiv = document.getElementById('cleanMissingResult');
-            
+
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = '<span class="btn-icon">⏳</span> Scanning...';
+                btn.innerHTML = `<span class="btn-icon">⏳</span> ${escapeHtml(t('Scanning...'))}`;
             }
-            
+
             try {
                 const data = await API.post('/api/clean-missing-roms');
 
                 if (data.success) {
-                    showNotification(`Removed ${formatNumber(data.removed)} games with missing ROMs`, 'success');
+                    showNotification(t('Removed {n} games with missing ROMs', {n: formatNumber(data.removed)}), 'success');
 
                     if (resultDiv) {
                         if (data.removed > 0) {
                             let html = `<div class="glass-panel" style="padding: var(--spacing-md); background: rgba(239, 68, 68, 0.1);">`;
-                            html += `<strong style="color: var(--danger-red);">Removed ${formatNumber(data.removed)} games:</strong>`;
+                            html += `<strong style="color: var(--danger-red);">${escapeHtml(t('Removed {n} games:', {n: formatNumber(data.removed)}))}</strong>`;
                             html += `<ul style="margin-top: var(--spacing-sm); font-size: 0.9rem;">`;
                             for (const game of data.removed_games) {
                                 html += `<li>${escapeHtml(game.title)}</li>`;
                             }
                             if (data.removed > 50) {
-                                html += `<li>... and ${formatNumber(data.removed - 50)} more</li>`;
+                                html += `<li>${escapeHtml(t('... and {n} more', {n: formatNumber(data.removed - 50)}))}</li>`;
                             }
                             html += `</ul></div>`;
                             resultDiv.innerHTML = html;
                         } else {
                             resultDiv.innerHTML = `<div class="glass-panel" style="padding: var(--spacing-md); background: rgba(76, 201, 240, 0.1);">
-                                <strong style="color: var(--primary-cyan);">✓ All ROMs accounted for!</strong>
-                                <p style="margin-top: var(--spacing-xs);">No missing ROM files found.</p>
+                                <strong style="color: var(--primary-cyan);">✓ ${escapeHtml(t('All ROMs accounted for!'))}</strong>
+                                <p style="margin-top: var(--spacing-xs);">${escapeHtml(t('No missing ROM files found.'))}</p>
                             </div>`;
                         }
                         resultDiv.style.display = 'block';
                     }
                 } else {
-                    showNotification(data.error || 'Failed to clean missing ROMs', 'error');
+                    showNotification(data.error || t('Failed to clean missing ROMs'), 'error');
                 }
             } catch (error) {
                 console.error('Error cleaning missing ROMs:', error);
-                showNotification('Failed to clean missing ROMs', 'error');
+                showNotification(t('Failed to clean missing ROMs'), 'error');
             } finally {
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = '<span class="btn-icon">🧹</span> Clean Missing ROMs';
+                    btn.innerHTML = `<span class="btn-icon">🧹</span> ${escapeHtml(t('Clean Missing ROMs'))}`;
                 }
             }
         },
@@ -975,53 +975,53 @@ async function cleanMissingRoms() {
 
 async function clearClzImports() {
     showConfirm(
-        '📋 Clear CLZ Imports',
-        'This will remove ALL games imported via CLZ Games Import from the database. This cannot be undone. Continue?',
+        t('📋 Clear CLZ Imports'),
+        t('This will remove ALL games imported via CLZ Games Import from the database. This cannot be undone. Continue?'),
         async function() {
             const btn = document.getElementById('clearClzBtn');
             const resultDiv = document.getElementById('clearClzResult');
 
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = '<span class="btn-icon">⏳</span> Removing...';
+                btn.innerHTML = `<span class="btn-icon">⏳</span> ${escapeHtml(t('Removing...'))}`;
             }
 
             try {
                 const data = await API.post('/api/clear-clz-imports');
 
                 if (data.success) {
-                    showNotification(`Removed ${formatNumber(data.removed)} CLZ Import games`, 'success');
+                    showNotification(t('Removed {n} CLZ Import games', {n: formatNumber(data.removed)}), 'success');
 
                     if (resultDiv) {
                         if (data.removed > 0) {
                             let html = `<div class="glass-panel" style="padding: var(--spacing-md); background: rgba(239, 68, 68, 0.1);">`;
-                            html += `<strong style="color: var(--danger-red);">Removed ${formatNumber(data.removed)} CLZ Import games:</strong>`;
+                            html += `<strong style="color: var(--danger-red);">${escapeHtml(t('Removed {n} CLZ Import games:', {n: formatNumber(data.removed)}))}</strong>`;
                             html += `<ul style="margin-top: var(--spacing-sm); font-size: 0.9rem;">`;
                             for (const game of data.removed_games) {
                                 html += `<li>${escapeHtml(game.title)}</li>`;
                             }
                             if (data.removed > 50) {
-                                html += `<li>... and ${formatNumber(data.removed - 50)} more</li>`;
+                                html += `<li>${escapeHtml(t('... and {n} more', {n: formatNumber(data.removed - 50)}))}</li>`;
                             }
                             html += `</ul></div>`;
                             resultDiv.innerHTML = html;
                         } else {
                             resultDiv.innerHTML = `<div class="glass-panel" style="padding: var(--spacing-md); background: rgba(76, 201, 240, 0.1);">
-                                <strong style="color: var(--primary-cyan);">✓ No CLZ Import games found</strong>
+                                <strong style="color: var(--primary-cyan);">✓ ${escapeHtml(t('No CLZ Import games found'))}</strong>
                             </div>`;
                         }
                         resultDiv.style.display = 'block';
                     }
                 } else {
-                    showNotification(data.error || 'Failed to clear CLZ imports', 'error');
+                    showNotification(data.error || t('Failed to clear CLZ imports'), 'error');
                 }
             } catch (error) {
                 console.error('Error clearing CLZ imports:', error);
-                showNotification('Failed to clear CLZ imports', 'error');
+                showNotification(t('Failed to clear CLZ imports'), 'error');
             } finally {
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = '<span class="btn-icon">📋</span> Clear CLZ Imports';
+                    btn.innerHTML = `<span class="btn-icon">📋</span> ${escapeHtml(t('Clear CLZ Imports'))}`;
                 }
             }
         },
@@ -1031,15 +1031,15 @@ async function clearClzImports() {
 
 async function refreshRetroAchievements() {
     showConfirm(
-        '🏆 Refresh RetroAchievements',
-        'This will scan all games and update their RetroAchievements status. This may take several minutes for large collections. Continue?',
+        t('🏆 Refresh RetroAchievements'),
+        t('This will scan all games and update their RetroAchievements status. This may take several minutes for large collections. Continue?'),
         async function() {
             const btn = document.getElementById('refreshRABtn');
             const resultDiv = document.getElementById('refreshRAResult');
-            
+
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = '<span class="btn-icon">⏳</span> Starting...';
+                btn.innerHTML = `<span class="btn-icon">⏳</span> ${escapeHtml(t('Starting...'))}`;
             }
             
             try {
@@ -1072,10 +1072,10 @@ async function refreshRetroAchievements() {
                         
                         // Update button to show queued state
                         if (btn) {
-                            btn.innerHTML = '<span class="btn-icon">📋</span> Queued';
+                            btn.innerHTML = `<span class="btn-icon">📋</span> ${escapeHtml(t('Queued'))}`;
                         }
-                        
-                        showNotification('Added to queue - will start when current operation completes', 'info');
+
+                        showNotification(t('Added to queue - will start when current operation completes'), 'info');
                         return;
                     }
                     
@@ -1084,8 +1084,8 @@ async function refreshRetroAchievements() {
                         const initialData = {
                             running: true,
                             completed: false,
-                            current_system: 'Starting...',
-                            current_game: 'Initializing...',
+                            current_system: t('Starting...'),
+                            current_game: t('Initializing...'),
                             total: 0,
                             current: 0,
                             processed: 0,
@@ -1101,21 +1101,21 @@ async function refreshRetroAchievements() {
 
                     // Update button to show running state
                     if (btn) {
-                        btn.innerHTML = '<span class="btn-icon">⏳</span> Running...';
+                        btn.innerHTML = `<span class="btn-icon">⏳</span> ${escapeHtml(t('Running...'))}`;
                     }
                 } else {
-                    showNotification(data.error || 'Failed to start RetroAchievements refresh', 'error');
+                    showNotification(data.error || t('Failed to start RetroAchievements refresh'), 'error');
                     if (btn) {
                         btn.disabled = false;
-                        btn.innerHTML = '<span class="btn-icon">🏆</span> Refresh RetroAchievements';
+                        btn.innerHTML = `<span class="btn-icon">🏆</span> ${escapeHtml(t('Refresh RetroAchievements'))}`;
                     }
                 }
             } catch (error) {
                 console.error('Error starting RetroAchievements refresh:', error);
-                showNotification('Failed to start RetroAchievements refresh', 'error');
+                showNotification(t('Failed to start RetroAchievements refresh'), 'error');
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = '<span class="btn-icon">🏆</span> Refresh RetroAchievements';
+                    btn.innerHTML = `<span class="btn-icon">🏆</span> ${escapeHtml(t('Refresh RetroAchievements'))}`;
                 }
             }
         }
@@ -1141,11 +1141,11 @@ async function clearRAData() {
         : 'all systems';
     
     const confirmMsg = systemId === 'all'
-        ? 'This will clear ALL RetroAchievements game IDs and progress data from your database. You will need to run "Refresh RetroAchievements" again afterwards to re-scan your games. Continue?'
-        : `This will clear RetroAchievements game IDs and progress data for "${systemName}". Continue?`;
-    
+        ? t('This will clear ALL RetroAchievements game IDs and progress data from your database. You will need to run "Refresh RetroAchievements" again afterwards to re-scan your games. Continue?')
+        : t('This will clear RetroAchievements game IDs and progress data for "{system}". Continue?', {system: systemName});
+
     showConfirm(
-        '🗑️ Clear RetroAchievements Data',
+        t('🗑️ Clear RetroAchievements Data'),
         confirmMsg,
         async function() {
             const btn = document.getElementById('clearRABtn');
@@ -1153,40 +1153,40 @@ async function clearRAData() {
             
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = '<span class="btn-icon">⏳</span> Clearing...';
+                btn.innerHTML = `<span class="btn-icon">⏳</span> ${escapeHtml(t('Clearing...'))}`;
             }
-            
+
             try {
                 // Use system-specific or all endpoint
-                const endpoint = systemId === 'all' 
-                    ? '/api/clear-ra-data' 
+                const endpoint = systemId === 'all'
+                    ? '/api/clear-ra-data'
                     : `/api/clear-ra-data/${systemId}`;
-                    
+
                 const data = await API.post(endpoint);
 
                 if (data.success) {
                     const msg = systemId === 'all'
-                        ? `Cleared RA data for ${formatNumber(data.cleared)} games`
-                        : `Cleared RA data for ${formatNumber(data.cleared)} games in ${systemName}`;
+                        ? t('Cleared RA data for {n} games', {n: formatNumber(data.cleared)})
+                        : t('Cleared RA data for {n} games in {system}', {n: formatNumber(data.cleared), system: systemName});
                     showNotification(msg, 'success');
 
                     if (resultDiv) {
                         resultDiv.innerHTML = `<div class="glass-panel" style="padding: var(--spacing-md); background: rgba(76, 201, 240, 0.1);">
-                            <strong style="color: var(--primary-cyan);">✓ RA Data Cleared</strong>
-                            <p style="margin-top: var(--spacing-xs);">Cleared RetroAchievements data for ${formatNumber(data.cleared)} games. Run "Refresh RetroAchievements" to re-scan with updated matching.</p>
+                            <strong style="color: var(--primary-cyan);">✓ ${escapeHtml(t('RA Data Cleared'))}</strong>
+                            <p style="margin-top: var(--spacing-xs);">${escapeHtml(t('Cleared RetroAchievements data for {n} games. Run "Refresh RetroAchievements" to re-scan with updated matching.', {n: formatNumber(data.cleared)}))}</p>
                         </div>`;
                         resultDiv.style.display = 'block';
                     }
                 } else {
-                    showNotification(data.error || 'Failed to clear RA data', 'error');
+                    showNotification(data.error || t('Failed to clear RA data'), 'error');
                 }
             } catch (error) {
                 console.error('Error clearing RA data:', error);
-                showNotification('Failed to clear RA data', 'error');
+                showNotification(t('Failed to clear RA data'), 'error');
             } finally {
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = '<span class="btn-icon">🗑️</span> Clear RA Data';
+                    btn.innerHTML = `<span class="btn-icon">🗑️</span> ${escapeHtml(t('Clear RA Data'))}`;
                 }
             }
         },
@@ -1205,7 +1205,7 @@ async function searchGame(gameId, title) {
     if (!resultsContainer || !searchBtn) return;
     
     const originalText = searchBtn.innerHTML;
-    searchBtn.innerHTML = '<span class="loading-spinner"></span> Searching...';
+    searchBtn.innerHTML = `<span class="loading-spinner"></span> ${escapeHtml(t('Searching...'))}`;
     searchBtn.disabled = true;
     
     try {
@@ -1217,15 +1217,15 @@ async function searchGame(gameId, title) {
             resultsContainer.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-state-icon">🔍</div>
-                    <div class="empty-state-title">No results found</div>
-                    <div class="empty-state-text">Try modifying the search title</div>
+                    <div class="empty-state-title">${escapeHtml(t('No results found'))}</div>
+                    <div class="empty-state-text">${escapeHtml(t('Try modifying the search title'))}</div>
                 </div>
             `;
         }
     } catch (error) {
         resultsContainer.innerHTML = `
             <div class="alert alert-error">
-                Error searching: ${error.message}
+                ${escapeHtml(t('Error searching: {error}', {error: error.message}))}
             </div>
         `;
     } finally {
@@ -1258,15 +1258,15 @@ function displayScraperResults(results, gameId) {
                     <div class="search-result-meta">
                         <span class="source-badge ${result.source}">${result.source.toUpperCase()}</span>
                         ${result.release_date ? `<span>${result.release_date.substring(0, 4)}</span>` : ''}
-                        ${result.score ? `<span>Score: ${result.score.toFixed(1)}</span>` : ''}
+                        ${result.score ? `<span>${escapeHtml(t('Score: {score}', {score: result.score.toFixed(1)}))}</span>` : ''}
                     </div>
-                    ${altChips ? `<div class="search-result-alts"><span class="search-result-alts-label">Also known as:</span> ${altChips}</div>` : ''}
+                    ${altChips ? `<div class="search-result-alts"><span class="search-result-alts-label">${escapeHtml(t('Also known as:'))}</span> ${altChips}</div>` : ''}
                 </div>
                 <form method="POST" style="margin: 0;">
                     <input type="hidden" name="action" value="apply">
                     <input type="hidden" name="game_source" value="${result.source}_${result.id}">
                     <button type="submit" class="btn btn-success btn-sm">
-                        Apply
+                        ${escapeHtml(t('Apply'))}
                     </button>
                 </form>
             </div>
@@ -1609,9 +1609,9 @@ function _buildShortcutsBody() {
     // single source of truth (KeyboardShortcuts.shortcuts + .gameShortcuts).
     const buckets = new Map();
     const addEntry = (combo, meta) => {
-        const cat = meta.category || 'Other';
+        const cat = t(meta.category || 'Other');
         if (!buckets.has(cat)) buckets.set(cat, []);
-        buckets.get(cat).push({ combo, description: meta.description });
+        buckets.get(cat).push({ combo, description: t(meta.description) });
     };
     Object.entries(KeyboardShortcuts.shortcuts).forEach(([k, v]) => addEntry(k, v));
     Object.entries(KeyboardShortcuts.gameShortcuts).forEach(([k, v]) => addEntry(k, v));
@@ -1641,8 +1641,8 @@ function showShortcutsModal() {
         modal.innerHTML = `
             <div class="custom-modal-content" style="max-width: 600px;" role="dialog" aria-modal="true" aria-labelledby="shortcutsModalTitle">
                 <div class="custom-modal-header">
-                    <h3 id="shortcutsModalTitle">⌨️ Keyboard Shortcuts</h3>
-                    <button class="custom-modal-close" onclick="closeShortcutsModal()" aria-label="Close keyboard shortcuts">×</button>
+                    <h3 id="shortcutsModalTitle">⌨️ ${escapeHtml(t('Keyboard Shortcuts'))}</h3>
+                    <button class="custom-modal-close" onclick="closeShortcutsModal()" aria-label="${escapeHtml(t('Close keyboard shortcuts'))}">×</button>
                 </div>
                 <div class="custom-modal-body" id="shortcutsModalBody">${body}</div>
             </div>
@@ -1717,12 +1717,12 @@ function updateCompletionStatus(gameId, status) {
     API.post(`/api/game/${gameId}/completion`, { status: status })
         .then(data => {
             if (data.success) {
-                showNotification('Completion status updated', 'success');
+                showNotification(t('Completion status updated'), 'success');
             } else {
-            showNotification('Failed to update status: ' + data.error, 'error');
+            showNotification(t('Failed to update status: {error}', {error: data.error}), 'error');
         }
     })
-    .catch(e => showNotification('Error updating status', 'error'));
+    .catch(e => showNotification(t('Error updating status'), 'error'));
 }
 
 // =============================================================================

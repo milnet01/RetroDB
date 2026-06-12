@@ -5,6 +5,7 @@
 # =============================================================================
 
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, session, g, make_response, abort
+from flask_babel import gettext as _
 import hashlib
 import os
 import json
@@ -320,7 +321,7 @@ def game_detail(game_id):
         """, (game_id,), one=True)
 
         if not game:
-            flash("Game not found", "error")
+            flash(_("Game not found"), "error")
             return redirect(url_for('games.all_games'))
 
         # Get full system info
@@ -659,7 +660,7 @@ def game_detail(game_id):
 
         # Parse scrape_history JSON if present
         if game is None:
-            flash("Game not found after update", "error")
+            flash(_("Game not found after update"), "error")
             return redirect(url_for('games.all_games'))
 
         game_dict = dict(game)

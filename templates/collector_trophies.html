@@ -1,23 +1,23 @@
 {% extends "base.html" %}
 
-{% block title %}Collector Trophies - RetroDB{% endblock %}
+{% block title %}{{ _('Collector Trophies') }} - RetroDB{% endblock %}
 
 {% block content %}
 <!-- Page Header -->
 <div class="page-header">
     <div>
-        <h1 class="page-title">Collector Trophies</h1>
-        <p class="page-subtitle">Track your collection milestones and earn trophies</p>
+        <h1 class="page-title">{{ _('Collector Trophies') }}</h1>
+        <p class="page-subtitle">{{ _('Track your collection milestones and earn trophies') }}</p>
     </div>
     <div class="page-actions">
         <div class="trophy-summary">
             <span class="trophy-summary-count" id="earnedCount">{{ earned_count }}</span>
             <span class="trophy-summary-sep">/</span>
             <span class="trophy-summary-total">{{ total_count }}</span>
-            <span class="trophy-summary-label">EARNED</span>
+            <span class="trophy-summary-label">{{ _('EARNED') }}</span>
         </div>
         <button type="button" class="btn btn-primary" onclick="refreshTrophies()" id="refreshBtn">
-            Refresh Progress
+            {{ _('Refresh Progress') }}
         </button>
     </div>
 </div>
@@ -28,18 +28,18 @@
     <div class="collector-rank-title">
         <span class="collector-rank-icon">&#127942;</span>
         <div>
-            <div class="collector-rank-label">Collector Rank</div>
+            <div class="collector-rank-label">{{ _('Collector Rank') }}</div>
             <div class="collector-rank-name">{{ rank.name }}</div>
         </div>
     </div>
     <div class="collector-rank-progress">
         <div class="collector-rank-points">
-            <span class="collector-rank-points-value">{{ rank.points }}</span> trophy points
+            {% trans points=rank.points %}<span class="collector-rank-points-value">{{ points }}</span> trophy points{% endtrans %}
         </div>
         {% if rank.next_name %}
         <div class="collector-rank-next">
             <div class="collector-rank-next-label">
-                Next: <strong>{{ rank.next_name }}</strong> at {{ rank.next_threshold }} pts
+                {% trans next_name=rank.next_name, next_threshold=rank.next_threshold %}Next: <strong>{{ next_name }}</strong> at {{ next_threshold }} pts{% endtrans %}
                 <span class="collector-rank-next-pct">({{ rank.progress_percent }}%)</span>
             </div>
             <div class="collector-rank-next-bar">
@@ -47,7 +47,7 @@
             </div>
         </div>
         {% else %}
-        <div class="collector-rank-max">Maximum rank reached. Flawless.</div>
+        <div class="collector-rank-max">{{ _('Maximum rank reached. Flawless.') }}</div>
         {% endif %}
     </div>
 </div>
@@ -61,10 +61,10 @@
 
 <!-- Tier Sections -->
 {% set tiers = [
-    ('platinum', 'Platinum', 'Legendary milestones'),
-    ('gold', 'Gold', 'Expert-level achievements'),
-    ('silver', 'Silver', 'Intermediate milestones'),
-    ('bronze', 'Bronze', 'Getting started')
+    ('platinum', _('Platinum'), _('Legendary milestones')),
+    ('gold', _('Gold'), _('Expert-level achievements')),
+    ('silver', _('Silver'), _('Intermediate milestones')),
+    ('bronze', _('Bronze'), _('Getting started'))
 ] %}
 
 {% for tier_id, tier_name, tier_desc in tiers %}
@@ -94,7 +94,7 @@
                 <div class="trophy-card-name">{{ trophy.name }}</div>
                 <div class="trophy-card-desc">{{ trophy.description }}</div>
                 {% if trophy.earned_at %}
-                <div class="trophy-card-earned">Earned {{ trophy.earned_at[:10] }}</div>
+                <div class="trophy-card-earned">{% trans date=trophy.earned_at[:10] %}Earned {{ date }}{% endtrans %}</div>
                 {% else %}
                 <div class="trophy-card-progress-bar">
                     <div class="trophy-card-progress-fill"

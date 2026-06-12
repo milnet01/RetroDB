@@ -1,34 +1,34 @@
 {% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
-<div class="settings-tab-panel" id="tab-data" role="tabpanel" aria-label="Data settings">
+<div class="settings-tab-panel" id="tab-data" role="tabpanel" aria-label="{{ _('Data settings') }}">
     {% call tab_subnav('data') %}
-        {{ subnav_link('stats', '📊 Stats', active=True) }}
-        {{ subnav_link('trophies', '🏆 Trophies') }}
-        {{ subnav_link('dropdowns', '📋 Dropdowns') }}
-        {{ subnav_link('normalization', '🔄 Normalization') }}
+        {{ subnav_link('stats', '📊 ' ~ _('Stats'), active=True) }}
+        {{ subnav_link('trophies', '🏆 ' ~ _('Trophies')) }}
+        {{ subnav_link('dropdowns', '📋 ' ~ _('Dropdowns')) }}
+        {{ subnav_link('normalization', '🔄 ' ~ _('Normalization')) }}
     {% endcall %}
 
     <!-- Statistics -->
     <section class="card mb-xl" id="stats">
     <div class="card-header">
-        <h2 class="card-title">Library Statistics</h2>
+        <h2 class="card-title">{{ _('Library Statistics') }}</h2>
     </div>
     <div class="card-body">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--spacing-lg);">
             <div class="text-center">
                 <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-cyan);">{{ stats.total_systems }}</div>
-                <div class="text-muted">Systems</div>
+                <div class="text-muted">{{ _('Systems') }}</div>
             </div>
             <div class="text-center">
                 <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-cyan);">{{ stats.total_games }}</div>
-                <div class="text-muted">Total Games</div>
+                <div class="text-muted">{{ _('Total Games') }}</div>
             </div>
             <div class="text-center">
                 <div style="font-size: 2.5rem; font-weight: 700; color: var(--status-success);">{{ stats.scraped_games }}</div>
-                <div class="text-muted">With Metadata</div>
+                <div class="text-muted">{{ _('With Metadata') }}</div>
             </div>
             <div class="text-center">
                 <div style="font-size: 2.5rem; font-weight: 700; color: var(--status-warning);">{{ stats.missing_metadata }}</div>
-                <div class="text-muted">Missing Metadata</div>
+                <div class="text-muted">{{ _('Missing Metadata') }}</div>
             </div>
         </div>
     </div>
@@ -37,31 +37,31 @@
 <!-- RPCS3 Trophy Settings -->
 <section class="card mb-xl" id="trophies">
     <div class="card-header">
-        <h2 class="card-title">🏆 RPCS3 Trophy Settings</h2>
+        <h2 class="card-title">🏆 {{ _('RPCS3 Trophy Settings') }}</h2>
     </div>
     <div class="card-body">
         <div class="detail-item mb-lg">
-            <span class="detail-label">RPCS3 Trophy Path</span>
+            <span class="detail-label">{{ _('RPCS3 Trophy Path') }}</span>
             <span class="detail-value" style="font-family: var(--font-mono);">
                 {% if config.RPCS3_TROPHY_PATH %}
                     {{ config.RPCS3_TROPHY_PATH }}
                 {% else %}
-                    <span class="text-muted">(Not configured)</span>
+                    <span class="text-muted">{{ _('(Not configured)') }}</span>
                 {% endif %}
             </span>
         </div>
         <p class="text-muted" style="font-size: 0.8rem; margin-top: var(--spacing-xs);">
-            Set the RPCS3 Trophy Path in <strong>ES-DE Integration</strong> above<br>
-            Example: <code>/path/to/rpcs3/dev_hdd0/home/00000001/trophy</code>
+            {% trans %}Set the RPCS3 Trophy Path in <strong>ES-DE Integration</strong> above{% endtrans %}<br>
+            {{ _('Example:') }} <code>/path/to/rpcs3/dev_hdd0/home/00000001/trophy</code>
         </p>
         
         <div style="margin-top: var(--spacing-xl);">
             <button type="button" onclick="scanTrophies()" class="btn btn-primary" id="scanTrophiesBtn" {% if not config.RPCS3_TROPHY_PATH %}disabled{% endif %}>
                 <span class="btn-icon">🔍</span>
-                Scan Trophies
+                {{ _('Scan Trophies') }}
             </button>
             <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-sm);">
-                Scan your RPCS3 trophy folder for unlocked trophies
+                {{ _('Scan your RPCS3 trophy folder for unlocked trophies') }}
             </p>
         </div>
         <div id="trophyScanResult" style="margin-top: var(--spacing-md);"></div>
@@ -71,70 +71,70 @@
 <!-- Dropdown Options Management -->
 <section class="card mb-xl" id="dropdowns">
     <div class="card-header">
-        <h2 class="card-title">📋 Dropdown Options</h2>
+        <h2 class="card-title">📋 {{ _('Dropdown Options') }}</h2>
     </div>
     <div class="card-body">
         <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
-            Manage the options available in dropdown menus when editing games.
+            {{ _('Manage the options available in dropdown menus when editing games.') }}
         </p>
         
         <!-- Genre -->
         <div class="dropdown-manager" style="margin-bottom: var(--spacing-xl);">
-            <h3 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Genre</h3>
+            <h3 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">{{ _('Genre') }}</h3>
             <div id="genreOptions" class="options-list"></div>
             <div class="add-option-row">
-                <input type="text" id="newGenre" placeholder="New genre..." class="option-input">
-                <button type="button" onclick="addDropdownOption('genre', 'newGenre', 'genreOptions')" class="btn btn-sm btn-primary">Add</button>
+                <input type="text" id="newGenre" placeholder="{{ _('New genre...') }}" class="option-input">
+                <button type="button" onclick="addDropdownOption('genre', 'newGenre', 'genreOptions')" class="btn btn-sm btn-primary">{{ _('Add') }}</button>
             </div>
         </div>
         
         <!-- Game Structure -->
         <div class="dropdown-manager" style="margin-bottom: var(--spacing-xl);">
-            <h3 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Game Structure</h3>
+            <h3 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">{{ _('Game Structure') }}</h3>
             <div id="gameStructureOptions" class="options-list"></div>
             <div class="add-option-row">
-                <input type="text" id="newGameStructure" placeholder="New game structure..." class="option-input">
-                <button type="button" onclick="addDropdownOption('game_structure', 'newGameStructure', 'gameStructureOptions')" class="btn btn-sm btn-primary">Add</button>
+                <input type="text" id="newGameStructure" placeholder="{{ _('New game structure...') }}" class="option-input">
+                <button type="button" onclick="addDropdownOption('game_structure', 'newGameStructure', 'gameStructureOptions')" class="btn btn-sm btn-primary">{{ _('Add') }}</button>
             </div>
         </div>
 
         <!-- Perspective -->
         <div class="dropdown-manager" style="margin-bottom: var(--spacing-xl);">
-            <h3 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Perspective</h3>
+            <h3 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">{{ _('Perspective') }}</h3>
             <div id="perspectiveOptions" class="options-list"></div>
             <div class="add-option-row">
-                <input type="text" id="newPerspective" placeholder="New perspective..." class="option-input">
-                <button type="button" onclick="addDropdownOption('perspective', 'newPerspective', 'perspectiveOptions')" class="btn btn-sm btn-primary">Add</button>
+                <input type="text" id="newPerspective" placeholder="{{ _('New perspective...') }}" class="option-input">
+                <button type="button" onclick="addDropdownOption('perspective', 'newPerspective', 'perspectiveOptions')" class="btn btn-sm btn-primary">{{ _('Add') }}</button>
             </div>
         </div>
 
         <!-- Dimension -->
         <div class="dropdown-manager" style="margin-bottom: var(--spacing-xl);">
-            <h3 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Dimension</h3>
+            <h3 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">{{ _('Dimension') }}</h3>
             <div id="dimensionOptions" class="options-list"></div>
             <div class="add-option-row">
-                <input type="text" id="newDimension" placeholder="New dimension..." class="option-input">
-                <button type="button" onclick="addDropdownOption('dimension', 'newDimension', 'dimensionOptions')" class="btn btn-sm btn-primary">Add</button>
+                <input type="text" id="newDimension" placeholder="{{ _('New dimension...') }}" class="option-input">
+                <button type="button" onclick="addDropdownOption('dimension', 'newDimension', 'dimensionOptions')" class="btn btn-sm btn-primary">{{ _('Add') }}</button>
             </div>
         </div>
 
         <!-- Play Modes -->
         <div class="dropdown-manager" style="margin-bottom: var(--spacing-xl);">
-            <h3 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Play Modes</h3>
+            <h3 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">{{ _('Play Modes') }}</h3>
             <div id="gameModesOptions" class="options-list"></div>
             <div class="add-option-row">
-                <input type="text" id="newGameMode" placeholder="New play mode..." class="option-input">
-                <button type="button" onclick="addDropdownOption('game_modes', 'newGameMode', 'gameModesOptions')" class="btn btn-sm btn-primary">Add</button>
+                <input type="text" id="newGameMode" placeholder="{{ _('New play mode...') }}" class="option-input">
+                <button type="button" onclick="addDropdownOption('game_modes', 'newGameMode', 'gameModesOptions')" class="btn btn-sm btn-primary">{{ _('Add') }}</button>
             </div>
         </div>
 
         <!-- Save Type -->
         <div class="dropdown-manager" style="margin-bottom: var(--spacing-xl);">
-            <h3 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">Save Type</h3>
+            <h3 style="color: var(--primary-cyan); margin-bottom: var(--spacing-md);">{{ _('Save Type') }}</h3>
             <div id="saveTypeOptions" class="options-list"></div>
             <div class="add-option-row">
-                <input type="text" id="newSaveType" placeholder="New save type..." class="option-input">
-                <button type="button" onclick="addDropdownOption('save_type', 'newSaveType', 'saveTypeOptions')" class="btn btn-sm btn-primary">Add</button>
+                <input type="text" id="newSaveType" placeholder="{{ _('New save type...') }}" class="option-input">
+                <button type="button" onclick="addDropdownOption('save_type', 'newSaveType', 'saveTypeOptions')" class="btn btn-sm btn-primary">{{ _('Add') }}</button>
             </div>
         </div>
     </div>
@@ -144,27 +144,27 @@
 <!-- Data Normalization -->
 <section class="card mb-xl" id="normalization">
     <div class="card-header">
-        <h2 class="card-title">🔄 Data Normalization</h2>
+        <h2 class="card-title">🔄 {{ _('Data Normalization') }}</h2>
     </div>
     <div class="card-body">
         <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
-            Fix inconsistent genre and mode values across your library. Custom rules are saved and automatically apply to future scrapes.
+            {{ _('Fix inconsistent genre and mode values across your library. Custom rules are saved and automatically apply to future scrapes.') }}
         </p>
 
         <!-- Field selector buttons -->
         <div style="display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-lg); flex-wrap: wrap; align-items: center;">
-            <button type="button" class="btn btn-primary norm-field-btn active" id="normBtnGenre" onclick="NormalizationManager.load('genre')">Genre</button>
-            <button type="button" class="btn btn-secondary norm-field-btn" id="normBtnModes" onclick="NormalizationManager.load('modes')">Modes</button>
+            <button type="button" class="btn btn-primary norm-field-btn active" id="normBtnGenre" onclick="NormalizationManager.load('genre')">{{ _('Genre') }}</button>
+            <button type="button" class="btn btn-secondary norm-field-btn" id="normBtnModes" onclick="NormalizationManager.load('modes')">{{ _('Modes') }}</button>
             <div style="margin-left: auto; display: flex; gap: var(--spacing-sm); align-items: center;">
                 <div class="toggle-item" style="display: flex; align-items: center; gap: var(--spacing-xs);">
                     <label class="toggle-switch" style="transform: scale(0.75);" for="normSelectAll">
                         <input type="checkbox" id="normFilterChanged" onchange="NormalizationManager.toggleFilter()">
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="toggle-label" style="font-size: 0.85rem; color: var(--text-secondary);">Show only values needing changes</span>
+                    <span class="toggle-label" style="font-size: 0.85rem; color: var(--text-secondary);">{{ _('Show only values needing changes') }}</span>
                 </div>
                 <button type="button" class="btn btn-sm btn-secondary" onclick="NormalizationManager.load()" id="normRefreshBtn">
-                    <span class="btn-icon">🔄</span> Refresh
+                    <span class="btn-icon">🔄</span> {{ _('Refresh') }}
                 </button>
             </div>
         </div>
@@ -172,7 +172,7 @@
         <!-- Loading state -->
         <div id="normLoading" style="display: none; text-align: center; padding: var(--spacing-xl);">
             <div class="loading-spinner"></div>
-            <p class="text-muted" style="margin-top: var(--spacing-sm);">Loading values...</p>
+            <p class="text-muted" style="margin-top: var(--spacing-sm);">{{ _('Loading values...') }}</p>
         </div>
 
         <!-- Results table -->
@@ -181,10 +181,10 @@
                 <table class="data-table" style="width: 100%;">
                     <thead>
                         <tr>
-                            <th style="width: 40px;"><input type="checkbox" id="normSelectAll" onchange="NormalizationManager.toggleSelectAll(this.checked)" title="Select/deselect all"></th>
-                            <th>Current Value</th>
-                            <th style="width: 80px; text-align: right;">Games</th>
-                            <th style="min-width: 200px;">Normalize To</th>
+                            <th style="width: 40px;"><input type="checkbox" id="normSelectAll" onchange="NormalizationManager.toggleSelectAll(this.checked)" title="{{ _('Select/deselect all') }}"></th>
+                            <th>{{ _('Current Value') }}</th>
+                            <th style="width: 80px; text-align: right;">{{ _('Games') }}</th>
+                            <th style="min-width: 200px;">{{ _('Normalize To') }}</th>
                         </tr>
                     </thead>
                     <tbody id="normTableBody">
@@ -194,7 +194,7 @@
 
             <!-- Action buttons -->
             <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-lg); flex-wrap: wrap;">
-                <button type="button" class="btn btn-secondary" onclick="NormalizationManager.selectAllChanged()">Select All Changed</button>
+                <button type="button" class="btn btn-secondary" onclick="NormalizationManager.selectAllChanged()">{{ _('Select All Changed') }}</button>
                 <button type="button" class="btn btn-primary" onclick="NormalizationManager.apply()" id="normApplyBtn" disabled>
                     Apply 0 Selected
                 </button>
@@ -203,7 +203,7 @@
 
         <!-- Empty state -->
         <div id="normEmpty" style="display: none; text-align: center; padding: var(--spacing-xl); color: var(--text-muted);">
-            <p>No values found for this field. Make sure your library has games with metadata.</p>
+            <p>{{ _('No values found for this field. Make sure your library has games with metadata.') }}</p>
         </div>
     </div>
 </section>

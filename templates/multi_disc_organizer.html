@@ -153,94 +153,94 @@
 
 {% block content %}
 <div class="page-header">
-    <h1>🔧 ROM Tools</h1>
-    <p>Manage, organize, and optimize your ROM collection.</p>
+    <h1>🔧 {{ _('ROM Tools') }}</h1>
+    <p>{{ _('Manage, organize, and optimize your ROM collection.') }}</p>
 </div>
 
 <!-- Tool Tabs -->
 <nav class="tool-tabs">
     <a href="{{ url_for('tools.archive_scanner') }}" class="tool-tab">
         <span class="tab-icon">📦</span>
-        <span class="tab-label">Archive Scanner</span>
+        <span class="tab-label">{{ _('Archive Scanner') }}</span>
     </a>
     <a href="{{ url_for('tools.chd_converter') }}" class="tool-tab">
         <span class="tab-icon">💿</span>
-        <span class="tab-label">CHD Converter</span>
+        <span class="tab-label">{{ _('CHD Converter') }}</span>
     </a>
     <a href="{{ url_for('tools.chd_verify') }}" class="tool-tab">
         <span class="tab-icon">✅</span>
-        <span class="tab-label">CHD Verify</span>
+        <span class="tab-label">{{ _('CHD Verify') }}</span>
     </a>
     <a href="{{ url_for('tools.multi_disc_organizer') }}" class="tool-tab active" aria-current="page">
         <span class="tab-icon">💽</span>
-        <span class="tab-label">Multi-Disc Organizer</span>
+        <span class="tab-label">{{ _('Multi-Disc Organizer') }}</span>
     </a>
     <a href="{{ url_for('tools.duplicate_finder') }}" class="tool-tab">
         <span class="tab-icon">🔍</span>
-        <span class="tab-label">Duplicate Finder</span>
+        <span class="tab-label">{{ _('Duplicate Finder') }}</span>
     </a>
     <a href="{{ url_for('tools.screenshot_dedup') }}" class="tool-tab">
         <span class="tab-icon">📸</span>
-        <span class="tab-label">Screenshot Dedup</span>
+        <span class="tab-label">{{ _('Screenshot Dedup') }}</span>
     </a>
     <a href="{{ url_for('tools.rom_tools_settings') }}" class="tool-tab">
         <span class="tab-icon">⚙️</span>
-        <span class="tab-label">Settings</span>
+        <span class="tab-label">{{ _('Settings') }}</span>
     </a>
 </nav>
 
 <div class="card">
     <div class="card-header">
-        <h2 class="card-title"><span>💽</span> Multi-Disc Game Organizer</h2>
+        <h2 class="card-title"><span>💽</span> {{ _('Multi-Disc Game Organizer') }}</h2>
     </div>
     <div class="card-body">
     <div class="info-box">
-        <h4>📋 What This Tool Does</h4>
+        <h4>📋 {{ _('What This Tool Does') }}</h4>
         <ul>
-            <li>Scans for multi-disc game files (Disc 1, Disc 2, etc.) that aren't properly organized</li>
-            <li>Creates a folder for each game with the disc files inside</li>
-            <li>Adds a <code>noload.txt</code> file to prevent ES-DE from scanning individual discs</li>
-            <li>Creates an M3U playlist file for ES-DE compatibility</li>
+            <li>{{ _("Scans for multi-disc game files (Disc 1, Disc 2, etc.) that aren't properly organized") }}</li>
+            <li>{{ _('Creates a folder for each game with the disc files inside') }}</li>
+            <li>{% trans %}Adds a <code>noload.txt</code> file to prevent ES-DE from scanning individual discs{% endtrans %}</li>
+            <li>{{ _('Creates an M3U playlist file for ES-DE compatibility') }}</li>
         </ul>
     </div>
-    
+
     <div class="scanner-controls">
         <div class="filter-group">
-            <label for="multidisc-system">System:</label>
+            <label for="multidisc-system">{{ _('System:') }}</label>
             <select id="multidisc-system">
-                <option value="">All Disc Systems</option>
+                <option value="">{{ _('All Disc Systems') }}</option>
                 {% for system in systems %}
                 <option value="{{ system.folder }}">{{ system.name }}</option>
                 {% endfor %}
             </select>
         </div>
         <button type="button" class="btn btn-primary" onclick="scanMultiDisc()">
-            <span class="btn-icon">🔍</span> Scan for Loose Discs
+            <span class="btn-icon">🔍</span> {{ _('Scan for Loose Discs') }}
         </button>
         <button type="button" class="btn btn-success" onclick="organizeAllMultiDisc()" id="organizeAllBtn" disabled>
-            <span class="btn-icon">📁</span> Organize All
+            <span class="btn-icon">📁</span> {{ _('Organize All') }}
         </button>
     </div>
-    
+
     <div id="multidisc-progress" style="display: none; margin-bottom: 1rem;">
         <div class="progress-container">
             <div class="progress-bar" id="multidisc-progress-bar" style="width: 0%;">0%</div>
         </div>
         <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.85rem;">
-            <span id="multidisc-status">Scanning...</span>
-            <span id="multidisc-count">0 found</span>
+            <span id="multidisc-status">{{ _('Scanning...') }}</span>
+            <span id="multidisc-count">{{ _('0 found') }}</span>
         </div>
     </div>
-    
+
     <div class="results-table-container">
         <table class="data-table">
             <thead>
                 <tr>
-                    <th style="width: 100px;">System</th>
-                    <th>Game Name</th>
-                    <th style="width: 80px;">Discs</th>
-                    <th>Files</th>
-                    <th style="width: 140px;">Action</th>
+                    <th style="width: 100px;">{{ _('System') }}</th>
+                    <th>{{ _('Game Name') }}</th>
+                    <th style="width: 80px;">{{ _('Discs') }}</th>
+                    <th>{{ _('Files') }}</th>
+                    <th style="width: 140px;">{{ _('Action') }}</th>
                 </tr>
             </thead>
             <tbody id="multidisc-results">
@@ -248,21 +248,21 @@
                     <td colspan="5">
                         <div class="empty-state">
                             <div class="icon">💽</div>
-                            <p>Click "Scan for Loose Discs" to find multi-disc games that need to be organized.</p>
+                            <p>{{ _('Click "Scan for Loose Discs" to find multi-disc games that need to be organized.') }}</p>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
-    
+
     <div class="stats-row" id="scan-stats" style="display: none;">
         <div class="stat-item">
-            <span>Systems scanned:</span>
+            <span>{{ _('Systems scanned:') }}</span>
             <span class="value" id="stat-systems">0</span>
         </div>
         <div class="stat-item">
-            <span>Games found:</span>
+            <span>{{ _('Games found:') }}</span>
             <span class="value" id="stat-games">0</span>
         </div>
     </div>

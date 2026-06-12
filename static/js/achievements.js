@@ -31,10 +31,10 @@ const RASync = {
 
         if (btn) {
             btn.disabled = true;
-            btn.innerHTML = '<span class="btn-icon">🔄</span> Starting...';
+            btn.innerHTML = '<span class="btn-icon">🔄</span> ' + t('Starting...');
         }
         if (statusEl) {
-            statusEl.textContent = 'Syncing...';
+            statusEl.textContent = t('Syncing...');
             statusEl.style.display = 'inline';
         }
 
@@ -55,9 +55,9 @@ const RASync = {
         } catch (e) {
             console.error('Error starting sync:', e);
             if (btn) {
-                btn.innerHTML = '<span class="btn-icon">❌</span> Network error';
+                btn.innerHTML = '<span class="btn-icon">❌</span> ' + t('Network error');
                 setTimeout(() => {
-                    btn.innerHTML = '<span class="btn-icon">🔄</span> Sync Progress';
+                    btn.innerHTML = '<span class="btn-icon">🔄</span> ' + t('Sync Progress');
                     btn.disabled = false;
                 }, 3000);
             }
@@ -97,13 +97,13 @@ const RASync = {
         }
 
         if (typeof showModal === 'function') {
-            showModal('📋 Sync Queued', `${data.system_name} has been added to the sync queue.`);
+            showModal('📋 ' + t('Sync Queued'), t('{system} has been added to the sync queue.', {system: data.system_name}));
         }
 
         if (btn) {
-            btn.innerHTML = '<span class="btn-icon">📋</span> Queued';
+            btn.innerHTML = '<span class="btn-icon">📋</span> ' + t('Queued');
             setTimeout(() => {
-                btn.innerHTML = '<span class="btn-icon">🔄</span> Sync Progress';
+                btn.innerHTML = '<span class="btn-icon">🔄</span> ' + t('Sync Progress');
                 btn.disabled = false;
             }, 2000);
         }
@@ -132,7 +132,7 @@ const RASync = {
         }
 
         if (btn) {
-            btn.innerHTML = '<span class="btn-icon">🔄</span> Syncing...';
+            btn.innerHTML = '<span class="btn-icon">🔄</span> ' + t('Syncing...');
         }
     },
 
@@ -142,20 +142,20 @@ const RASync = {
     handleError(data, btn, statusEl) {
         if (data.already_running) {
             if (btn) {
-                btn.innerHTML = '<span class="btn-icon">🔄</span> Already Syncing';
+                btn.innerHTML = '<span class="btn-icon">🔄</span> ' + t('Already Syncing');
                 setTimeout(() => {
-                    btn.innerHTML = '<span class="btn-icon">🔄</span> Sync Progress';
+                    btn.innerHTML = '<span class="btn-icon">🔄</span> ' + t('Sync Progress');
                     btn.disabled = false;
                 }, 2000);
             }
             if (typeof showModal === 'function') {
-                showModal('ℹ️ Sync In Progress', data.error || 'This system is already being synced.');
+                showModal('ℹ️ ' + t('Sync In Progress'), data.error || t('This system is already being synced.'));
             }
         } else {
             if (btn) {
-                btn.innerHTML = `<span class="btn-icon">❌</span> ${escapeHtml(data.error || 'Sync failed')}`;
+                btn.innerHTML = `<span class="btn-icon">❌</span> ${escapeHtml(data.error || t('Sync failed'))}`;
                 setTimeout(() => {
-                    btn.innerHTML = '<span class="btn-icon">🔄</span> Sync Progress';
+                    btn.innerHTML = '<span class="btn-icon">🔄</span> ' + t('Sync Progress');
                     btn.disabled = false;
                 }, 3000);
             }
@@ -179,32 +179,32 @@ const RASync = {
                     btn.innerHTML = `<span class="btn-icon">🔄</span> ${formatNumber(data.processed || 0)} / ${formatNumber(data.total || 0)}`;
                 }
                 if (statusEl) {
-                    statusEl.textContent = `Syncing: ${formatNumber(data.processed || 0)} / ${formatNumber(data.total || 0)}`;
+                    statusEl.textContent = t('Syncing: {processed} / {total}', {processed: formatNumber(data.processed || 0), total: formatNumber(data.total || 0)});
                 }
 
                 // Continue polling
                 this.pollTimeout = setTimeout(() => this.pollStatus(options), 2000);
             } else if (data.completed) {
                 if (btn) {
-                    btn.innerHTML = '<span class="btn-icon">✅</span> Complete!';
+                    btn.innerHTML = '<span class="btn-icon">✅</span> ' + t('Complete!');
                     btn.disabled = false;
                     setTimeout(() => {
-                        btn.innerHTML = '<span class="btn-icon">🔄</span> Sync Progress';
+                        btn.innerHTML = '<span class="btn-icon">🔄</span> ' + t('Sync Progress');
                     }, 3000);
                 }
                 if (statusEl) {
-                    statusEl.textContent = 'Just synced';
+                    statusEl.textContent = t('Just synced');
                 }
                 this.isLoading = false;
 
                 if (typeof showNotification === 'function') {
-                    showNotification('Sync complete! Refresh page to see updated progress.', 'success');
+                    showNotification(t('Sync complete! Refresh page to see updated progress.'), 'success');
                 }
             } else {
                 // Not running
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = '<span class="btn-icon">🔄</span> Sync Progress';
+                    btn.innerHTML = '<span class="btn-icon">🔄</span> ' + t('Sync Progress');
                 }
                 this.isLoading = false;
             }
@@ -220,37 +220,37 @@ const RASync = {
      */
     async clearSystemData(systemId, systemName) {
         showConfirm(
-            '🗑️ Clear RetroAchievements Data',
-            `This will remove "${systemName}" from the Achievements page. Continue?`,
+            '🗑️ ' + t('Clear RetroAchievements Data'),
+            t('This will remove "{system}" from the Achievements page. Continue?', {system: systemName}),
             async () => {
                 const btn = document.getElementById('clearRABtn');
 
                 if (btn) {
                     btn.disabled = true;
-                    btn.innerHTML = '<span class="btn-icon">⏳</span> Clearing...';
+                    btn.innerHTML = '<span class="btn-icon">⏳</span> ' + t('Clearing...');
                 }
 
                 try {
                     const data = await API.post(`/api/clear-ra-data/${systemId}`);
 
                     if (data.success) {
-                        showNotification(`Cleared RA data for ${formatNumber(data.cleared)} games in ${systemName}`, 'success');
+                        showNotification(t('Cleared RA data for {count} games in {system}', {count: formatNumber(data.cleared), system: systemName}), 'success');
                         setTimeout(() => {
                             window.location.href = '/achievements';
                         }, 1500);
                     } else {
-                        showNotification(data.error || 'Failed to clear RA data', 'error');
+                        showNotification(data.error || t('Failed to clear RA data'), 'error');
                         if (btn) {
                             btn.disabled = false;
-                            btn.innerHTML = '<span class="btn-icon">🗑️</span> Clear RA Data';
+                            btn.innerHTML = '<span class="btn-icon">🗑️</span> ' + t('Clear RA Data');
                         }
                     }
                 } catch (error) {
                     console.error('Error clearing RA data:', error);
-                    showNotification('Failed to clear RA data', 'error');
+                    showNotification(t('Failed to clear RA data'), 'error');
                     if (btn) {
                         btn.disabled = false;
-                        btn.innerHTML = '<span class="btn-icon">🗑️</span> Clear RA Data';
+                        btn.innerHTML = '<span class="btn-icon">🗑️</span> ' + t('Clear RA Data');
                     }
                 }
             }
@@ -330,7 +330,7 @@ const AchievementCard = {
                 <div class="achievement-info">
                     <div class="achievement-title">${titleSafe}</div>
                     <div class="achievement-description">${escapeHtml(achievement.description || '')}</div>
-                    ${achievement.points ? `<div class="achievement-points">${achievement.points} pts</div>` : ''}
+                    ${achievement.points ? `<div class="achievement-points">${t('{points} pts', {points: achievement.points})}</div>` : ''}
                 </div>
             </div>
         `;
@@ -344,7 +344,7 @@ const AchievementCard = {
      */
     renderList(achievements, options = {}) {
         if (!achievements || achievements.length === 0) {
-            return '<div class="no-achievements">No achievements found</div>';
+            return `<div class="no-achievements">${t('No achievements found')}</div>`;
         }
 
         const { showEarnedFirst = true, limit = null } = options;

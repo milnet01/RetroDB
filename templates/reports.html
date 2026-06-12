@@ -260,19 +260,19 @@
 <!-- Page Header -->
 <div class="page-header">
     <div>
-        <h1 class="page-title">📊 ROM Reports</h1>
-        <p class="page-subtitle">Analyze ROM filenames against naming standards and scraped metadata</p>
+        <h1 class="page-title">📊 {{ _('ROM Reports') }}</h1>
+        <p class="page-subtitle">{{ _('Analyze ROM filenames against naming standards and scraped metadata') }}</p>
     </div>
     <div class="page-actions" style="display: flex; align-items: center; gap: 1rem;">
         <div class="last-scan-indicator" id="last-scan-indicator" style="display: none;">
             <span class="scan-icon">🕐</span>
-            <span class="scan-text">Last scan: <span class="scan-time"></span></span>
+            <span class="scan-text">{{ _('Last scan:') }} <span class="scan-time"></span></span>
         </div>
-        <button type="button" class="btn btn-danger" onclick="clearScanResults()" title="Clear cached results">
-            <span class="btn-icon">🗑️</span> Clear
+        <button type="button" class="btn btn-danger" onclick="clearScanResults()" title="{{ _('Clear cached results') }}">
+            <span class="btn-icon">🗑️</span> {{ _('Clear') }}
         </button>
         <button type="button" class="btn btn-primary" onclick="runFullScan()">
-            <span class="btn-icon">🔄</span> Scan All ROMs
+            <span class="btn-icon">🔄</span> {{ _('Scan All ROMs') }}
         </button>
     </div>
 </div>
@@ -281,12 +281,12 @@
 <div class="report-tabs">
     <button type="button" class="report-tab active" onclick="switchTab('naming')" id="tab-naming">
         <span class="tab-icon">📝</span>
-        <span class="tab-label">Non-Standard Names</span>
+        <span class="tab-label">{{ _('Non-Standard Names') }}</span>
         <span class="tab-count" id="count-naming">-</span>
     </button>
     <button type="button" class="report-tab" onclick="switchTab('mismatch')" id="tab-mismatch">
         <span class="tab-icon">⚠️</span>
-        <span class="tab-label">Name Mismatches</span>
+        <span class="tab-label">{{ _('Name Mismatches') }}</span>
         <span class="tab-count" id="count-mismatch">-</span>
     </button>
 </div>
@@ -296,53 +296,53 @@
     <div class="stats-summary">
         <div class="stat-box warning">
             <div class="stat-value" id="stat-missing-region">-</div>
-            <div class="stat-label">Missing Region</div>
+            <div class="stat-label">{{ _('Missing Region') }}</div>
         </div>
         <div class="stat-box warning">
             <div class="stat-value" id="stat-missing-year">-</div>
-            <div class="stat-label">Missing Year</div>
+            <div class="stat-label">{{ _('Missing Year') }}</div>
         </div>
         <div class="stat-box warning">
             <div class="stat-value" id="stat-missing-publisher">-</div>
-            <div class="stat-label">Missing Publisher</div>
+            <div class="stat-label">{{ _('Missing Publisher') }}</div>
         </div>
         <div class="stat-box error">
             <div class="stat-value" id="stat-invalid-chars">-</div>
-            <div class="stat-label">Invalid Characters</div>
+            <div class="stat-label">{{ _('Invalid Characters') }}</div>
         </div>
         <div class="stat-box">
             <div class="stat-value" id="stat-other-issues">-</div>
-            <div class="stat-label">Other Issues</div>
+            <div class="stat-label">{{ _('Other Issues') }}</div>
         </div>
     </div>
     
     <div class="filter-bar">
         <div class="filter-group">
-            <label for="filter-system">System:</label>
+            <label for="filter-system">{{ _('System:') }}</label>
             <select id="filter-system" onchange="applyFilters()">
-                <option value="">All Systems</option>
+                <option value="">{{ _('All Systems') }}</option>
             </select>
         </div>
         <div class="filter-group">
-            <label for="filter-issue">Issue Type:</label>
+            <label for="filter-issue">{{ _('Issue Type:') }}</label>
             <select id="filter-issue" onchange="applyFilters()">
-                <option value="">All Issues</option>
-                <option value="missing-region">Missing Region</option>
-                <option value="missing-year">Missing Year</option>
-                <option value="missing-publisher">Missing Publisher</option>
-                <option value="invalid-chars">Invalid Characters</option>
-                <option value="underscore">Contains Underscores</option>
-                <option value="bracket">Wrong Brackets</option>
-                <option value="moved-article">Moved Article</option>
+                <option value="">{{ _('All Issues') }}</option>
+                <option value="missing-region">{{ _('Missing Region') }}</option>
+                <option value="missing-year">{{ _('Missing Year') }}</option>
+                <option value="missing-publisher">{{ _('Missing Publisher') }}</option>
+                <option value="invalid-chars">{{ _('Invalid Characters') }}</option>
+                <option value="underscore">{{ _('Contains Underscores') }}</option>
+                <option value="bracket">{{ _('Wrong Brackets') }}</option>
+                <option value="moved-article">{{ _('Moved Article') }}</option>
             </select>
         </div>
         <div class="filter-group">
-            <label for="filter-search">Search:</label>
-            <input type="text" id="filter-search" placeholder="Search filenames..." oninput="applyFilters()">
+            <label for="filter-search">{{ _('Search:') }}</label>
+            <input type="text" id="filter-search" placeholder="{{ _('Search filenames...') }}" oninput="applyFilters()">
         </div>
         <div class="filter-group" style="margin-left: auto;">
             <button type="button" class="btn btn-success" id="batchRenameBtn" onclick="startBatchRename()" disabled>
-                <span class="btn-icon">✏️</span> Batch Rename (<span id="batchCount">0</span>)
+                <span class="btn-icon">✏️</span> {{ _('Batch Rename') }} (<span id="batchCount">0</span>)
             </button>
         </div>
     </div>
@@ -352,16 +352,16 @@
             <thead>
                 <tr>
                     <th class="sortable" style="width: 100px;" data-sort="system" data-tab="naming" onclick="sortColumn('naming', 'system', event)">
-                        System <span class="sort-indicator"></span>
+                        {{ _('System') }} <span class="sort-indicator"></span>
                     </th>
                     <th class="sortable active" data-sort="filename" data-tab="naming" onclick="sortColumn('naming', 'filename', event)">
-                        Current Filename <span class="sort-indicator">▲</span>
+                        {{ _('Current Filename') }} <span class="sort-indicator">▲</span>
                     </th>
-                    <th style="width: 150px;">Issues</th>
+                    <th style="width: 150px;">{{ _('Issues') }}</th>
                     <th class="sortable" data-sort="suggested" data-tab="naming" onclick="sortColumn('naming', 'suggested', event)">
-                        Suggested Name <span class="sort-indicator"></span>
+                        {{ _('Suggested Name') }} <span class="sort-indicator"></span>
                     </th>
-                    <th style="width: 100px;">Action</th>
+                    <th style="width: 100px;">{{ _('Action') }}</th>
                 </tr>
             </thead>
             <tbody id="naming-results">
@@ -369,7 +369,7 @@
                     <td colspan="5">
                         <div class="empty-state">
                             <div class="icon">📊</div>
-                            <p>Click "Scan All ROMs" to analyze your ROM collection against the naming standard.</p>
+                            <p>{{ _('Click "Scan All ROMs" to analyze your ROM collection against the naming standard.') }}</p>
                         </div>
                     </td>
                 </tr>
@@ -383,41 +383,41 @@
     <div class="stats-summary">
         <div class="stat-box warning">
             <div class="stat-value" id="stat-title-mismatch">-</div>
-            <div class="stat-label">Title Mismatch</div>
+            <div class="stat-label">{{ _('Title Mismatch') }}</div>
         </div>
         <div class="stat-box">
             <div class="stat-value" id="stat-region-mismatch">-</div>
-            <div class="stat-label">Region Mismatch</div>
+            <div class="stat-label">{{ _('Region Mismatch') }}</div>
         </div>
         <div class="stat-box">
             <div class="stat-value" id="stat-year-mismatch">-</div>
-            <div class="stat-label">Year Mismatch</div>
+            <div class="stat-label">{{ _('Year Mismatch') }}</div>
         </div>
     </div>
     
     <div class="filter-bar">
         <div class="filter-group">
-            <label for="filter-mismatch-system">System:</label>
+            <label for="filter-mismatch-system">{{ _('System:') }}</label>
             <select id="filter-mismatch-system" onchange="applyMismatchFilters()">
-                <option value="">All Systems</option>
+                <option value="">{{ _('All Systems') }}</option>
             </select>
         </div>
         <div class="filter-group">
-            <label for="filter-mismatch-type">Mismatch Type:</label>
+            <label for="filter-mismatch-type">{{ _('Mismatch Type:') }}</label>
             <select id="filter-mismatch-type" onchange="applyMismatchFilters()">
-                <option value="">All Types</option>
-                <option value="title">Title Mismatch</option>
-                <option value="region">Region Mismatch</option>
-                <option value="year">Year Mismatch</option>
+                <option value="">{{ _('All Types') }}</option>
+                <option value="title">{{ _('Title Mismatch') }}</option>
+                <option value="region">{{ _('Region Mismatch') }}</option>
+                <option value="year">{{ _('Year Mismatch') }}</option>
             </select>
         </div>
         <div class="filter-group">
-            <label for="filter-mismatch-search">Search:</label>
-            <input type="text" id="filter-mismatch-search" placeholder="Search..." oninput="applyMismatchFilters()">
+            <label for="filter-mismatch-search">{{ _('Search:') }}</label>
+            <input type="text" id="filter-mismatch-search" placeholder="{{ _('Search...') }}" oninput="applyMismatchFilters()">
         </div>
         <div class="filter-group" style="margin-left: auto;">
             <button type="button" class="btn btn-success" id="mismatchBatchRenameBtn" onclick="startMismatchBatchRename()" disabled>
-                <span class="btn-icon">✏️</span> Batch Rename (<span id="mismatchBatchCount">0</span>)
+                <span class="btn-icon">✏️</span> {{ _('Batch Rename') }} (<span id="mismatchBatchCount">0</span>)
             </button>
         </div>
     </div>
@@ -427,22 +427,22 @@
             <thead>
                 <tr>
                     <th class="sortable" style="width: 100px;" data-sort="system" data-tab="mismatch" onclick="sortColumn('mismatch', 'system', event)">
-                        System <span class="sort-indicator"></span>
+                        {{ _('System') }} <span class="sort-indicator"></span>
                     </th>
                     <th class="sortable active" data-sort="filename" data-tab="mismatch" onclick="sortColumn('mismatch', 'filename', event)">
-                        Current Filename <span class="sort-indicator">▲</span>
+                        {{ _('Current Filename') }} <span class="sort-indicator">▲</span>
                     </th>
                     <th class="sortable" data-sort="scraped_title" data-tab="mismatch" onclick="sortColumn('mismatch', 'scraped_title', event)">
-                        Scraped Title <span class="sort-indicator"></span>
+                        {{ _('Scraped Title') }} <span class="sort-indicator"></span>
                     </th>
                     <th class="sortable" style="width: 100px;" data-sort="region" data-tab="mismatch" onclick="sortColumn('mismatch', 'region', event)">
-                        Region <span class="sort-indicator"></span>
+                        {{ _('Region') }} <span class="sort-indicator"></span>
                     </th>
                     <th class="sortable" style="width: 80px;" data-sort="year" data-tab="mismatch" onclick="sortColumn('mismatch', 'year', event)">
-                        Year <span class="sort-indicator"></span>
+                        {{ _('Year') }} <span class="sort-indicator"></span>
                     </th>
-                    <th style="width: 120px;">Mismatch</th>
-                    <th style="width: 100px;">Action</th>
+                    <th style="width: 120px;">{{ _('Mismatch') }}</th>
+                    <th style="width: 100px;">{{ _('Action') }}</th>
                 </tr>
             </thead>
             <tbody id="mismatch-results">
@@ -450,7 +450,7 @@
                     <td colspan="7">
                         <div class="empty-state">
                             <div class="icon">⚠️</div>
-                            <p>Click "Scan All ROMs" to find filenames that don't match scraped metadata.</p>
+                            <p>{{ _("Click \"Scan All ROMs\" to find filenames that don't match scraped metadata.") }}</p>
                         </div>
                     </td>
                 </tr>
@@ -463,20 +463,20 @@
 <div class="modal-overlay" id="batchRenameModal" data-focus-trap data-focus-trap-onescape="closeBatchRenameModal">
     <div class="modal-content" style="max-width: 600px;">
         <div class="modal-header">
-            <h2 id="batchModalTitle">✏️ Batch Rename</h2>
+            <h2 id="batchModalTitle">✏️ {{ _('Batch Rename') }}</h2>
             <button type="button" class="modal-close" onclick="closeBatchModal()" id="batchCloseBtn">&times;</button>
         </div>
         <div class="modal-body">
             <!-- Confirmation View -->
             <div id="batchConfirmView">
-                <p style="margin-bottom: 1rem;">This will rename <strong id="batchTotalCount">0</strong> ROM files to their suggested names.</p>
+                <p style="margin-bottom: 1rem;">{% trans %}This will rename <strong id="batchTotalCount">0</strong> ROM files to their suggested names.{% endtrans %}</p>
                 <div class="batch-filter-info" style="background: rgba(76, 201, 240, 0.1); border: 1px solid rgba(76, 201, 240, 0.3); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem;">
                     <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                        <div><strong>System:</strong> <span id="batchFilterSystem">All Systems</span></div>
-                        <div><strong>Issue Type:</strong> <span id="batchFilterIssue">All Issues</span></div>
+                        <div><strong>{{ _('System:') }}</strong> <span id="batchFilterSystem">{{ _('All Systems') }}</span></div>
+                        <div><strong>{{ _('Issue Type:') }}</strong> <span id="batchFilterIssue">{{ _('All Issues') }}</span></div>
                     </div>
                 </div>
-                <p style="color: var(--neon-orange); font-size: 0.9rem;">⚠️ This action cannot be undone. Make sure you have backups.</p>
+                <p style="color: var(--neon-orange); font-size: 0.9rem;">⚠️ {{ _('This action cannot be undone. Make sure you have backups.') }}</p>
             </div>
             
             <!-- Progress View -->
@@ -484,15 +484,15 @@
                 <div class="batch-stats" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
                     <div class="batch-stat" style="text-align: center; padding: 0.75rem; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: var(--radius-md);">
                         <div style="font-size: 1.5rem; font-weight: 700; color: var(--neon-green);" id="batchSuccessCount">0</div>
-                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Success</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">{{ _('Success') }}</div>
                     </div>
                     <div class="batch-stat" style="text-align: center; padding: 0.75rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: var(--radius-md);">
                         <div style="font-size: 1.5rem; font-weight: 700; color: var(--neon-red);" id="batchFailedCount">0</div>
-                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Failed</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">{{ _('Failed') }}</div>
                     </div>
                     <div class="batch-stat" style="text-align: center; padding: 0.75rem; background: rgba(100, 116, 139, 0.1); border: 1px solid rgba(100, 116, 139, 0.3); border-radius: var(--radius-md);">
                         <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-secondary);" id="batchRemainingCount">0</div>
-                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Remaining</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">{{ _('Remaining') }}</div>
                     </div>
                 </div>
                 
@@ -501,23 +501,23 @@
                 </div>
                 
                 <div id="batchCurrentFile" style="font-size: 0.8rem; color: var(--text-secondary); font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 1rem;">
-                    Preparing...
+                    {{ _('Preparing...') }}
                 </div>
             </div>
             
             <!-- Complete View -->
             <div id="batchCompleteView" style="display: none; text-align: center;">
                 <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
-                <h3 style="color: var(--neon-green); margin-bottom: 0.5rem;">Batch Rename Complete</h3>
+                <h3 style="color: var(--neon-green); margin-bottom: 0.5rem;">{{ _('Batch Rename Complete') }}</h3>
                 <p id="batchCompleteMessage" style="color: var(--text-secondary);"></p>
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="closeBatchModal()" id="batchCancelBtn">Cancel</button>
+            <button type="button" class="btn btn-secondary" onclick="closeBatchModal()" id="batchCancelBtn">{{ _('Cancel') }}</button>
             <button type="button" class="btn btn-success" onclick="executeBatchRename()" id="batchStartBtn">
-                <span class="btn-icon">✏️</span> Start Rename
+                <span class="btn-icon">✏️</span> {{ _('Start Rename') }}
             </button>
-            <button type="button" class="btn btn-primary" onclick="closeBatchModal()" id="batchDoneBtn" style="display: none;">Done</button>
+            <button type="button" class="btn btn-primary" onclick="closeBatchModal()" id="batchDoneBtn" style="display: none;">{{ _('Done') }}</button>
         </div>
     </div>
 </div>

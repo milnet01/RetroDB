@@ -2,24 +2,24 @@
 {% from "_macros/breadcrumb.html" import breadcrumb %}
 {% set needs_games_bundle = true %}
 
-{% block title %}Steam Achievements - RetroDB{% endblock %}
+{% block title %}{{ _('Steam Achievements') }} - RetroDB{% endblock %}
 
 {% block content %}
 <!-- Breadcrumb -->
 {{ breadcrumb([
-    ('Steam Achievements', None),
+    (_('Steam Achievements'), None),
 ]) }}
 
 <!-- Page Header -->
 <div class="page-header">
     <div>
-        <h1 class="page-title">🟦 Steam Achievements</h1>
-        <p class="page-subtitle">{{ stats.total_games|format_number }} games with achievement data</p>
+        <h1 class="page-title">🟦 {{ _('Steam Achievements') }}</h1>
+        <p class="page-subtitle">{% trans count=stats.total_games|format_number %}{{ count }} games with achievement data{% endtrans %}</p>
     </div>
     <div style="display: flex; gap: var(--spacing-sm);">
         <button type="button" onclick="syncAll()" class="btn btn-primary" id="syncAllBtn">
             <span class="btn-icon">🔄</span>
-            <span class="btn-text">Sync All</span>
+            <span class="btn-text">{{ _('Sync All') }}</span>
         </button>
     </div>
 </div>
@@ -31,28 +31,28 @@
             <div class="achievement-stat">
                 <div class="achievement-stat-icon">🎮</div>
                 <div class="achievement-stat-info">
-                    <span class="achievement-stat-label">Total Games</span>
+                    <span class="achievement-stat-label">{{ _('Total Games') }}</span>
                     <span class="achievement-stat-value">{{ stats.total_games|format_number }}</span>
                 </div>
             </div>
             <div class="achievement-stat">
                 <div class="achievement-stat-icon">🏆</div>
                 <div class="achievement-stat-info">
-                    <span class="achievement-stat-label">Total Achievements</span>
+                    <span class="achievement-stat-label">{{ _('Total Achievements') }}</span>
                     <span class="achievement-stat-value">{{ stats.total_achievements|format_number }}</span>
                 </div>
             </div>
             <div class="achievement-stat">
                 <div class="achievement-stat-icon">✅</div>
                 <div class="achievement-stat-info">
-                    <span class="achievement-stat-label">Earned</span>
+                    <span class="achievement-stat-label">{{ _('Earned') }}</span>
                     <span class="achievement-stat-value">{{ stats.total_earned|format_number }}</span>
                 </div>
             </div>
             <div class="achievement-stat">
                 <div class="achievement-stat-icon">📊</div>
                 <div class="achievement-stat-info">
-                    <span class="achievement-stat-label">Avg. Completion</span>
+                    <span class="achievement-stat-label">{{ _('Avg. Completion') }}</span>
                     <span class="achievement-stat-value">{{ stats.avg_completion }}%</span>
                 </div>
             </div>
@@ -64,14 +64,14 @@
 <div class="filter-bar glass-panel" style="padding: var(--spacing-md); margin-bottom: var(--spacing-lg);">
     <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-md); align-items: center;">
         <div class="form-group" style="margin: 0; flex: 1; min-width: 200px;">
-            <input type="text" class="form-input" id="gameSearch" placeholder="🔍 Search games..." onkeyup="filterGames()">
+            <input type="text" class="form-input" id="gameSearch" placeholder="🔍 {{ _('Search games...') }}" onkeyup="filterGames()">
         </div>
         <div class="form-group" style="margin: 0;">
             <select class="form-select" id="progressFilter" onchange="filterGames()">
-                <option value="">All Games</option>
-                <option value="in-progress">In Progress</option>
-                <option value="not-started">Not Started</option>
-                <option value="completed">Completed (100%)</option>
+                <option value="">{{ _('All Games') }}</option>
+                <option value="in-progress">{{ _('In Progress') }}</option>
+                <option value="not-started">{{ _('Not Started') }}</option>
+                <option value="completed">{% trans %}Completed (100%){% endtrans %}</option>
             </select>
         </div>
     </div>
@@ -80,7 +80,7 @@
 <!-- Alphabet Jump Navigation -->
 {% if games|length >= 20 %}
 <div class="alphabet-nav" id="alphabetNav">
-    <span class="alphabet-label">Jump to:</span>
+    <span class="alphabet-label">{{ _('Jump to:') }}</span>
     <div class="alphabet-letters">
         <button class="alphabet-btn" data-letter="#">#</button>
         {% for letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' %}
@@ -134,10 +134,10 @@
 {% else %}
 <div class="empty-state" style="margin-top: var(--spacing-xl);">
     <div class="empty-state-icon">🟦</div>
-    <div class="empty-state-title">No Steam Achievements</div>
+    <div class="empty-state-title">{{ _('No Steam Achievements') }}</div>
     <div class="empty-state-text">
-        Import Steam games and sync achievements to see them here.<br>
-        Go to <a href="{{ url_for('game_imports.game_imports_page') }}?tab=steam" style="color: var(--primary-cyan);">Game Imports</a> to get started.
+        {{ _('Import Steam games and sync achievements to see them here.') }}<br>
+        {% trans url=url_for('game_imports.game_imports_page') ~ '?tab=steam' %}Go to <a href="{{ url }}" style="color: var(--primary-cyan);">Game Imports</a> to get started.{% endtrans %}
     </div>
 </div>
 {% endif %}

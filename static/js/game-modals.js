@@ -169,10 +169,10 @@ const GameDetailModal = {
                     }
                     this.populate(data.game);
                 } else {
-                    this.showError(data.error || 'Failed to load game');
+                    this.showError(data.error || t('Failed to load game'));
                 }
             })
-            .catch(err => this.showError('Network error'));
+            .catch(err => this.showError(t('Network error')));
     },
 
     /**
@@ -199,7 +199,7 @@ const GameDetailModal = {
         // Players badge
         const playersEl = document.getElementById('gdmPlayers');
         if (game.players) {
-            playersEl.textContent = `${game.players} Player${game.players > 1 ? 's' : ''}`;
+            playersEl.textContent = t('{n} Player(s)', {n: game.players});
             playersEl.style.display = '';
         } else {
             playersEl.style.display = 'none';
@@ -215,14 +215,14 @@ const GameDetailModal = {
         }
 
         // Description (truncate to 300 chars)
-        const desc = game.description || 'No description available.';
+        const desc = game.description || t('No description available.');
         document.getElementById('gdmDescription').textContent =
             desc.length > 300 ? desc.substring(0, 300) + '...' : desc;
 
         // Details
         document.getElementById('gdmDeveloper').textContent = game.developer || '-';
         document.getElementById('gdmPublisher').textContent = game.publisher || '-';
-        document.getElementById('gdmGenre').textContent = game.genre || '-';
+        document.getElementById('gdmGenre').textContent = tField(game.genre) || '-';
         document.getElementById('gdmFranchise').textContent = game.franchise || '-';
 
         // Ratings — admin sees all age ratings, users see preferred only
@@ -242,10 +242,10 @@ const GameDetailModal = {
         const completionEl = document.getElementById('gdmCompletion');
         if (game.completion_status && game.completion_status !== 'not_started') {
             const completionLabels = {
-                'in_progress': 'In Progress',
-                'played': 'Played',
-                'completed': 'Completed',
-                '100_percent': '100%'
+                'in_progress': t('In Progress'),
+                'played': t('Played'),
+                'completed': t('Completed'),
+                '100_percent': t('100%')
             };
             const label = completionLabels[game.completion_status] || game.completion_status;
             completionEl.innerHTML = `<span class="completion-badge status-${game.completion_status}">${label}</span>`;
@@ -271,7 +271,7 @@ const GameDetailModal = {
             achHtml += `<span class="game-badge achievement-progress ${src} ${pctClass}" title="${label}: ${earned}/${game.achievement_total} (${pct}%)">${iconImg} ${earned}/${game.achievement_total}<span class="ach-bar"><span class="ach-fill" style="width:${pct}%"></span></span></span>`;
         } else if (game.has_retroachievements && game.ra_achievement_count) {
             // Fallback: show RA count without progress if no user sync
-            achHtml += `<span class="ra-badge-modal">${getThemedIcon('ra-sync', '🏆')} ${formatNumber(game.ra_achievement_count)} Achievements</span>`;
+            achHtml += `<span class="ra-badge-modal">${getThemedIcon('ra-sync', '🏆')} ${t('{count} Achievements', {count: formatNumber(game.ra_achievement_count)})}</span>`;
         }
 
         // PSN trophies
@@ -357,7 +357,7 @@ const GameDetailModal = {
     showError(message) {
         document.getElementById('gameDetailLoading').innerHTML =
             `<p style="color: var(--neon-red);">${escapeHtml(message)}</p>
-             <button class="btn btn-secondary" onclick="closeGameDetailModal()">Close</button>`;
+             <button class="btn btn-secondary" onclick="closeGameDetailModal()">${escapeHtml(t('Close'))}</button>`;
     },
 
     /**
@@ -464,14 +464,14 @@ const HLTBManager = {
     lookup(ctx) {
         const query = document.getElementById(ctx.searchInputId)?.value?.trim();
         if (!query) {
-            showNotification('Please enter a game title', 'warning');
+            showNotification(t('Please enter a game title'), 'warning');
             return;
         }
 
         const btn = document.getElementById(ctx.lookupBtnId);
         if (btn) {
             btn.disabled = true;
-            btn.innerHTML = '⏳ Searching...';
+            btn.innerHTML = t('⏳ Searching...');
         }
 
         // Hide saved, show pending area if it exists
@@ -497,7 +497,7 @@ const HLTBManager = {
             if (searchingDiv) searchingDiv.style.display = 'none';
             if (btn) {
                 btn.disabled = false;
-                btn.innerHTML = '🔍 Lookup HLTB';
+                btn.innerHTML = t('🔍 Lookup HLTB');
             }
 
             if (data.success && data.result) {
@@ -528,7 +528,7 @@ const HLTBManager = {
 
                 if (matchTitle) matchTitle.textContent = pending.match_name;
                 if (matchPlatform) matchPlatform.textContent = pending.match_platform;
-                if (matchConfidence) matchConfidence.textContent = confidence > 0 ? `${confidence}% match` : '';
+                if (matchConfidence) matchConfidence.textContent = confidence > 0 ? t('{confidence}% match', {confidence: confidence}) : '';
 
                 // For simpler templates that use a single header element
                 if (matchHeader) {
@@ -537,7 +537,7 @@ const HLTBManager = {
                         headerHtml += `<span class="hltb-match-platform">${escapeHtml(pending.match_platform)}</span>`;
                     }
                     if (pending.platform_mismatch) {
-                        headerHtml += `<span class="hltb-match-warning">Platform not found</span>`;
+                        headerHtml += `<span class="hltb-match-warning">${escapeHtml(t('Platform not found'))}</span>`;
                     }
                     if (pending.release_year) {
                         headerHtml += `<span class="hltb-match-year">${escapeHtml(String(pending.release_year))}</span>`;
@@ -546,10 +546,10 @@ const HLTBManager = {
                         headerHtml += `<span class="hltb-match-developer">${escapeHtml(pending.developer)}</span>`;
                     }
                     if (confidence > 0) {
-                        headerHtml += `<span class="hltb-match-confidence">${confidence}% match</span>`;
+                        headerHtml += `<span class="hltb-match-confidence">${escapeHtml(t('{confidence}% match', {confidence: confidence}))}</span>`;
                     }
                     if (pending.matched_via_alternate && pending.search_term_used) {
-                        headerHtml += `<span class="hltb-match-alt-notice" title="Matched using this alternate/regional title — confirm it refers to the same game before saving.">⚡ via &ldquo;${escapeHtml(pending.search_term_used)}&rdquo;</span>`;
+                        headerHtml += `<span class="hltb-match-alt-notice" title="${escapeHtml(t('Matched using this alternate/regional title — confirm it refers to the same game before saving.'))}">${t('⚡ via')} &ldquo;${escapeHtml(pending.search_term_used)}&rdquo;</span>`;
                     }
                     matchHeader.innerHTML = headerHtml;
                 }
@@ -566,21 +566,21 @@ const HLTBManager = {
                 if (resultDiv) resultDiv.style.display = 'block';
                 if (pending.matched_via_alternate && pending.search_term_used) {
                     showNotification(
-                        `Matched via alternate title "${pending.search_term_used}" — HLTB shows it as "${pending.match_name}". Confirm before saving.`,
+                        t('Matched via alternate title "{term}" — HLTB shows it as "{match}". Confirm before saving.', {term: pending.search_term_used, match: pending.match_name}),
                         'warning',
                         9000
                     );
                 } else {
-                    showNotification('Match found - please confirm to save', 'info');
+                    showNotification(t('Match found - please confirm to save'), 'info');
                 }
             } else {
                 // No results — hide pending section so Save button isn't exposed
                 if (pendingDiv && !resultDiv) pendingDiv.style.display = 'none';
                 if (errorDiv) {
-                    errorDiv.textContent = data.error || 'No results found on HowLongToBeat';
+                    errorDiv.textContent = data.error || t('No results found on HowLongToBeat');
                     errorDiv.style.display = 'block';
                 } else {
-                    showNotification(data.error || 'No HLTB data found', 'warning');
+                    showNotification(data.error || t('No HLTB data found'), 'warning');
                 }
             }
         })
@@ -590,13 +590,13 @@ const HLTBManager = {
             if (pendingDiv && !resultDiv) pendingDiv.style.display = 'none';
             if (btn) {
                 btn.disabled = false;
-                btn.innerHTML = '🔍 Lookup HLTB';
+                btn.innerHTML = t('🔍 Lookup HLTB');
             }
             if (errorDiv) {
-                errorDiv.textContent = 'Error connecting to HowLongToBeat';
+                errorDiv.textContent = t('Error connecting to HowLongToBeat');
                 errorDiv.style.display = 'block';
             } else {
-                showNotification('Error looking up HLTB', 'error');
+                showNotification(t('Error looking up HLTB'), 'error');
             }
         });
     },
@@ -637,12 +637,12 @@ const HLTBManager = {
                 if (ctx.onSave) ctx.onSave(pending, playtime);
 
                 HLTBManager.pendingData[ctx.name] = null;
-                showNotification('HLTB data saved', 'success');
+                showNotification(t('HLTB data saved'), 'success');
             } else {
-                showNotification('Failed to save HLTB: ' + (data.error || 'Unknown error'), 'error');
+                showNotification(t('Failed to save HLTB: ') + (data.error || t('Unknown error')), 'error');
             }
         })
-        .catch(err => showNotification('Error saving HLTB data', 'error'));
+        .catch(err => showNotification(t('Error saving HLTB data'), 'error'));
     },
 
     /**
@@ -660,10 +660,10 @@ const HLTBManager = {
             headerHtml = `<div class="hltb-match-header">
                 <span class="hltb-match-title">${escapeHtml(data.match_name)}</span>
                 ${data.match_platform ? `<span class="hltb-match-platform">${escapeHtml(data.match_platform)}</span>` : ''}
-                ${data.platform_mismatch ? `<span class="hltb-match-warning">Platform not found</span>` : ''}
+                ${data.platform_mismatch ? `<span class="hltb-match-warning">${escapeHtml(t('Platform not found'))}</span>` : ''}
                 ${data.release_year ? `<span class="hltb-match-year">${escapeHtml(String(data.release_year))}</span>` : ''}
                 ${data.developer ? `<span class="hltb-match-developer">${escapeHtml(data.developer)}</span>` : ''}
-                ${confidence > 0 ? `<span class="hltb-match-confidence">${confidence}% match</span>` : ''}
+                ${confidence > 0 ? `<span class="hltb-match-confidence">${escapeHtml(t('{confidence}% match', {confidence: confidence}))}</span>` : ''}
             </div>`;
         }
 
@@ -677,20 +677,20 @@ const HLTBManager = {
             ${headerHtml}
             <div class="hltb-results">
                 <div class="hltb-time-row">
-                    <span class="hltb-label">Main Story</span>
+                    <span class="hltb-label">${escapeHtml(t('Main Story'))}</span>
                     <span class="hltb-value">${data.main_story ? escapeHtml(String(data.main_story)) : '--'}</span>
                 </div>
                 <div class="hltb-time-row">
-                    <span class="hltb-label">Main + Extras</span>
+                    <span class="hltb-label">${escapeHtml(t('Main + Extras'))}</span>
                     <span class="hltb-value">${data.main_extra ? escapeHtml(String(data.main_extra)) : '--'}</span>
                 </div>
                 <div class="hltb-time-row">
-                    <span class="hltb-label">Completionist</span>
+                    <span class="hltb-label">${escapeHtml(t('Completionist'))}</span>
                     <span class="hltb-value">${data.completionist ? escapeHtml(String(data.completionist)) : '--'}</span>
                 </div>
             </div>
             <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                <button class="btn btn-sm btn-danger" data-hltb-clear>✕ Clear</button>
+                <button class="btn btn-sm btn-danger" data-hltb-clear>${escapeHtml(t('✕ Clear'))}</button>
             </div>
         `;
         // Pass 45.4 — drop the inline onclick form that interpolated
@@ -722,7 +722,7 @@ const HLTBManager = {
         const savedDiv = document.getElementById(ctx.savedDivId);
         if (pendingDiv) pendingDiv.style.display = 'none';
         if (ctx.hasSavedData && savedDiv) savedDiv.style.display = 'block';
-        showNotification('HLTB lookup cancelled', 'info');
+        showNotification(t('HLTB lookup cancelled'), 'info');
     },
 
     /**
@@ -730,7 +730,7 @@ const HLTBManager = {
      * @param {Object} ctx - Context configuration object
      */
     clear(ctx) {
-        showConfirm('🗑️ Clear HLTB Data', 'Clear HLTB data for this game?', () => {
+        showConfirm(t('🗑️ Clear HLTB Data'), t('Clear HLTB data for this game?'), () => {
             // Use custom clear if provided, otherwise default API
             const clearPromise = ctx.customClear
                 ? ctx.customClear()
@@ -742,12 +742,12 @@ const HLTBManager = {
                     const savedDiv = document.getElementById(ctx.savedDivId);
                     if (savedDiv) savedDiv.style.display = 'none';
                     if (ctx.onClear) ctx.onClear();
-                    showNotification('HLTB data cleared', 'success');
+                    showNotification(t('HLTB data cleared'), 'success');
                 } else {
-                    showNotification('Failed to clear HLTB: ' + (data.error || 'Unknown error'), 'error');
+                    showNotification(t('Failed to clear HLTB: ') + (data.error || t('Unknown error')), 'error');
                 }
             })
-            .catch(err => showNotification('Error clearing HLTB data', 'error'));
+            .catch(err => showNotification(t('Error clearing HLTB data'), 'error'));
         });
     }
 };
@@ -832,7 +832,7 @@ const GameEditModal = {
         this.currentData = game;
 
         // Update title
-        document.getElementById('gemTitle').textContent = `Edit: ${game.title}`;
+        document.getElementById('gemTitle').textContent = t('Edit: {title}', {title: game.title});
 
         // Reset to Quick tab
         this.switchTab('quick');
@@ -897,7 +897,7 @@ const GameEditModal = {
         document.getElementById('gemHltbSearchQuery').value = game.title || '';
         document.getElementById('gemHltbPending').style.display = 'none';
         document.getElementById('gemHltbLookupBtn').disabled = false;
-        document.getElementById('gemHltbLookupBtn').innerHTML = '🔍 Lookup HLTB';
+        document.getElementById('gemHltbLookupBtn').innerHTML = t('🔍 Lookup HLTB');
         this.pendingHltbData = null;
 
         // Show modal
@@ -1017,7 +1017,7 @@ const GameEditModal = {
         // Show saving state
         const saveBtn = document.querySelector('.gem-footer-right .btn-primary');
         const originalText = saveBtn.innerHTML;
-        saveBtn.innerHTML = '<span class="btn-icon">⏳</span> Saving...';
+        saveBtn.innerHTML = `<span class="btn-icon">⏳</span> ${t('Saving...')}`;
         saveBtn.disabled = true;
 
         API.post(`/api/game/${this.currentData.id}/edit`, formData)
@@ -1033,7 +1033,7 @@ const GameEditModal = {
                 document.getElementById('gdmTitle').textContent = formData.title;
                 document.getElementById('gdmDeveloper').textContent = formData.developer || '-';
                 document.getElementById('gdmPublisher').textContent = formData.publisher || '-';
-                document.getElementById('gdmGenre').textContent = formData.genre || '-';
+                document.getElementById('gdmGenre').textContent = tField(formData.genre) || '-';
                 document.getElementById('gdmFranchise').textContent = formData.franchise || '-';
 
                 if (formData.description) {
@@ -1062,18 +1062,18 @@ const GameEditModal = {
                 // Show success message
                 const _ti = typeof getThemedIcon === 'function' ? getThemedIcon : (k) => ({ save: '✅', error: '❌' }[k] || k);
                 if (typeof showModal === 'function') {
-                    showModal(`${_ti('save')} Saved`, 'Game details updated successfully.');
+                    showModal(`${_ti('save')} ${t('Saved')}`, t('Game details updated successfully.'));
                 }
             } else {
                 const _ti = typeof getThemedIcon === 'function' ? getThemedIcon : (k) => ({ error: '❌' }[k] || k);
-                showModal(`${_ti('error')} Save Failed`, 'Failed to save: ' + (data.error || 'Unknown error'));
+                showModal(`${_ti('error')} ${t('Save Failed')}`, t('Failed to save: ') + (data.error || t('Unknown error')));
             }
         })
         .catch(err => {
             saveBtn.innerHTML = originalText;
             saveBtn.disabled = false;
             const _ti = typeof getThemedIcon === 'function' ? getThemedIcon : (k) => ({ error: '❌' }[k] || k);
-            showModal(`${_ti('error')} Error`, 'Error saving game: ' + err.message);
+            showModal(`${_ti('error')} ${t('Error')}`, t('Error saving game: ') + err.message);
         });
     },
 
@@ -1271,10 +1271,10 @@ const GameEditModal = {
                 // Update the detail modal display
                 const completionEl = document.getElementById('gdmCompletion');
                 const labels = {
-                    'in_progress': 'In Progress',
-                    'played': 'Played',
-                    'completed': 'Completed',
-                    '100_percent': '100%'
+                    'in_progress': t('In Progress'),
+                    'played': t('Played'),
+                    'completed': t('Completed'),
+                    '100_percent': t('100%')
                 };
                 const emojis = {
                     'in_progress': '🎮',
@@ -1305,7 +1305,7 @@ const GameEditModal = {
                         } else if (badgeContainer) {
                             completionBadge = document.createElement('span');
                             completionBadge.className = `game-badge completion ${statusClass}`;
-                            completionBadge.title = 'Completion Status';
+                            completionBadge.title = t('Completion Status');
                             completionBadge.textContent = badgeContent;
                             badgeContainer.insertBefore(completionBadge, badgeContainer.firstChild);
                         }
@@ -1315,12 +1315,12 @@ const GameEditModal = {
                 }
             } else {
                 const _ei = typeof getThemedIcon === 'function' ? getThemedIcon('error') : '❌';
-                showModal(`${_ei} Update Failed`, 'Failed to update completion status: ' + (data.error || 'Unknown error'));
+                showModal(`${_ei} ${t('Update Failed')}`, t('Failed to update completion status: ') + (data.error || t('Unknown error')));
             }
         })
         .catch(err => {
             const _ei = typeof getThemedIcon === 'function' ? getThemedIcon('error') : '❌';
-            showModal(`${_ei} Error`, 'Error updating completion status');
+            showModal(`${_ei} ${t('Error')}`, t('Error updating completion status'));
         });
     },
 
@@ -1331,7 +1331,9 @@ const GameEditModal = {
     _createTag(container, className, value, onRemove) {
         const tag = document.createElement('span');
         tag.className = className;
-        tag.textContent = value + ' ';
+        // Display the translated label (canonical genre/perspective/etc.); the
+        // stored value + remove callback keep the canonical English token (43-2).
+        tag.textContent = tField(value) + ' ';
         const btn = document.createElement('span');
         btn.className = className === 'controller-tag' ? 'remove-controller' : 'remove-genre';
         btn.textContent = '×';
@@ -1719,15 +1721,15 @@ const GameEditModal = {
         if (value === 'Yes' || value === '1' || value === 1) {
             toggle.checked = true;
             toggle.indeterminate = false;
-            label.textContent = 'Yes';
+            label.textContent = t('Yes');
         } else if (value === 'No' || value === '0' || value === 0) {
             toggle.checked = false;
             toggle.indeterminate = false;
-            label.textContent = 'No';
+            label.textContent = t('No');
         } else {
             toggle.checked = false;
             toggle.indeterminate = false;
-            label.textContent = 'No';
+            label.textContent = t('No');
         }
     },
 
@@ -1744,10 +1746,10 @@ const GameEditModal = {
 
         if (toggle.checked) {
             hidden.value = 'Yes';
-            label.textContent = 'Yes';
+            label.textContent = t('Yes');
         } else {
             hidden.value = 'No';
-            label.textContent = 'No';
+            label.textContent = t('No');
         }
     },
 
@@ -1765,7 +1767,7 @@ const GameEditModal = {
         const isExclusive = !otherPlatforms || otherPlatforms.toLowerCase() === 'exclusive';
 
         toggle.checked = isExclusive;
-        label.textContent = isExclusive ? 'Exclusive' : 'Multi-platform';
+        label.textContent = isExclusive ? t('Exclusive') : t('Multi-platform');
         input.style.display = isExclusive ? 'none' : 'block';
         input.value = isExclusive ? '' : otherPlatforms;
         hidden.value = otherPlatforms || '';
@@ -1778,11 +1780,11 @@ const GameEditModal = {
         const hidden = document.getElementById('gemOtherPlatformsHidden');
 
         if (toggle.checked) {
-            label.textContent = 'Exclusive';
+            label.textContent = t('Exclusive');
             input.style.display = 'none';
             hidden.value = 'Exclusive';
         } else {
-            label.textContent = 'Multi-platform';
+            label.textContent = t('Multi-platform');
             input.style.display = 'block';
             hidden.value = input.value;
         }
@@ -1810,7 +1812,7 @@ const GameEditModal = {
         const isStandalone = !franchise || franchise.toLowerCase() === 'standalone';
 
         toggle.checked = isStandalone;
-        label.textContent = isStandalone ? 'Standalone' : 'Part of a Series';
+        label.textContent = isStandalone ? t('Standalone') : t('Part of a Series');
         input.style.display = isStandalone ? 'none' : 'block';
         if (isStandalone) input.value = '';
     },

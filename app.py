@@ -208,6 +208,36 @@ from services.i18n import locale_display_name
 app.jinja_env.globals['available_locales'] = available_locales
 app.jinja_env.globals['locale_display_name'] = locale_display_name
 
+# i18n display helpers (Pass 43.2/43.3). All three are Jinja globals called once
+# per full-page render in base.html — NOT routed through inject_config (which
+# fires per-partial). flask_babel.gettext is the request-aware translator; using
+# the active locale, js_i18n_map() builds window.I18N and field_labels_map()
+# builds window.FIELD_LABELS. See docs/specs/i18n.md §6/§7.
+from flask_babel import gettext as _flask_gettext
+from services.i18n_labels import display_field_value, field_labels_map
+from services.js_i18n_strings import JS_I18N_KEYS
+
+
+def js_i18n_map():
+    """{ msgid: translation } for the JS-used msgids, active locale (window.I18N)."""
+    return {msgid: _flask_gettext(msgid) for msgid in JS_I18N_KEYS}
+
+
+app.jinja_env.globals['display_field_value'] = display_field_value
+app.jinja_env.globals['field_labels_map'] = field_labels_map
+app.jinja_env.globals['js_i18n_map'] = js_i18n_map
+
+
+def current_locale_tag():
+    """Active locale as an HTML lang tag (underscore -> hyphen, e.g. pt_BR ->
+    pt-BR) for the <html lang> attribute. Defaults to 'en' outside a request."""
+    from flask_babel import get_locale
+    locale = get_locale()
+    return str(locale).replace('_', '-') if locale else 'en'
+
+
+app.jinja_env.globals['current_locale_tag'] = current_locale_tag
+
 
 # =============================================================================
 # STATIC IMAGES — frozen-aware fallback route

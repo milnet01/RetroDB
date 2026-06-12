@@ -160,120 +160,120 @@
 
 {% block content %}
 <div class="page-header">
-    <h1>🔧 ROM Tools</h1>
-    <p>Manage, organize, and optimize your ROM collection.</p>
+    <h1>🔧 {{ _('ROM Tools') }}</h1>
+    <p>{{ _('Manage, organize, and optimize your ROM collection.') }}</p>
 </div>
 
 <!-- Tool Tabs -->
 <nav class="tool-tabs">
     <a href="{{ url_for('tools.archive_scanner') }}" class="tool-tab">
         <span class="tab-icon">📦</span>
-        <span class="tab-label">Archive Scanner</span>
+        <span class="tab-label">{{ _('Archive Scanner') }}</span>
     </a>
     <a href="{{ url_for('tools.chd_converter') }}" class="tool-tab">
         <span class="tab-icon">💿</span>
-        <span class="tab-label">CHD Converter</span>
+        <span class="tab-label">{{ _('CHD Converter') }}</span>
     </a>
     <a href="{{ url_for('tools.chd_verify') }}" class="tool-tab">
         <span class="tab-icon">✅</span>
-        <span class="tab-label">CHD Verify</span>
+        <span class="tab-label">{{ _('CHD Verify') }}</span>
     </a>
     <a href="{{ url_for('tools.multi_disc_organizer') }}" class="tool-tab">
         <span class="tab-icon">💽</span>
-        <span class="tab-label">Multi-Disc Organizer</span>
+        <span class="tab-label">{{ _('Multi-Disc Organizer') }}</span>
     </a>
     <a href="{{ url_for('tools.duplicate_finder') }}" class="tool-tab active" aria-current="page">
         <span class="tab-icon">🔍</span>
-        <span class="tab-label">Duplicate Finder</span>
+        <span class="tab-label">{{ _('Duplicate Finder') }}</span>
     </a>
     <a href="{{ url_for('tools.screenshot_dedup') }}" class="tool-tab">
         <span class="tab-icon">📸</span>
-        <span class="tab-label">Screenshot Dedup</span>
+        <span class="tab-label">{{ _('Screenshot Dedup') }}</span>
     </a>
     <a href="{{ url_for('tools.rom_tools_settings') }}" class="tool-tab">
         <span class="tab-icon">⚙️</span>
-        <span class="tab-label">Settings</span>
+        <span class="tab-label">{{ _('Settings') }}</span>
     </a>
 </nav>
 
 <div class="warning-banner">
     <span class="warning-icon">⚠️</span>
     <div class="warning-text">
-        <h4>Careful Review Recommended</h4>
-        <p>Always review duplicates before deleting. Some "duplicates" may be different versions (regions, revisions) you might want to keep.</p>
+        <h4>{{ _('Careful Review Recommended') }}</h4>
+        <p>{{ _('Always review duplicates before deleting. Some "duplicates" may be different versions (regions, revisions) you might want to keep.') }}</p>
     </div>
 </div>
 
 <div class="card">
     <div class="card-header">
-        <h2 class="card-title"><span>📁</span> Scan Configuration</h2>
+        <h2 class="card-title"><span>📁</span> {{ _('Scan Configuration') }}</h2>
     </div>
     <div class="card-body">
     <div class="form-row">
         <div class="form-group flex-1">
-            <label for="subPath">Source Folder</label>
+            <label for="subPath">{{ _('Source Folder') }}</label>
             <div class="input-with-browse">
                 <div class="locked-path-wrapper">
                     <span class="locked-path-prefix" id="pathPrefix">{{ rom_path }}/</span>
-                    <input type="text" id="subPath" placeholder="subfolder (optional)" value="">
+                    <input type="text" id="subPath" placeholder="{{ _('subfolder (optional)') }}" value="">
                 </div>
-                <button type="button" class="btn btn-secondary" onclick="openFolderBrowser('hiddenFullPath')">📁 Browse</button>
+                <button type="button" class="btn btn-secondary" onclick="openFolderBrowser('hiddenFullPath')">📁 {{ _('Browse') }}</button>
             </div>
             <input type="hidden" id="hiddenFullPath" value="{{ rom_path }}">
         </div>
-        
+
         <div class="form-group">
-            <label for="scanMethod">Detection Method</label>
+            <label for="scanMethod">{{ _('Detection Method') }}</label>
             <select class="styled-select" id="scanMethod">
-                <option value="hash">🔐 By File Hash (Accurate but slow)</option>
-                <option value="name" selected>📝 By Filename (Fast)</option>
-                <option value="both">🔄 Combined (Hash + Name)</option>
+                <option value="hash">🔐 {{ _('By File Hash (Accurate but slow)') }}</option>
+                <option value="name" selected>📝 {{ _('By Filename (Fast)') }}</option>
+                <option value="both">🔄 {{ _('Combined (Hash + Name)') }}</option>
             </select>
         </div>
-        
+
         <div class="form-group">
             <button type="button" class="btn btn-primary" id="scanBtn" onclick="startScan()">
-                <span class="btn-icon">🔍</span> Start Scan
+                <span class="btn-icon">🔍</span> {{ _('Start Scan') }}
             </button>
         </div>
     </div>
-    
+
     <div class="form-group">
-        <div class="form-label" id="duplicateFinderOptionsLabel">Options</div>
+        <div class="form-label" id="duplicateFinderOptionsLabel">{{ _('Options') }}</div>
         <div class="toggle-group" role="group" aria-labelledby="duplicateFinderOptionsLabel">
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="optRecursive" aria-label="Recursive scan including subfolders" checked>
+                    <input type="checkbox" id="optRecursive" aria-label="{{ _('Recursive scan including subfolders') }}" checked>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label">Recursive scan (include subfolders)</span>
+                <span class="toggle-label">{{ _('Recursive scan (include subfolders)') }}</span>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="optIgnoreRegion" aria-label="Ignore region tags" checked>
+                    <input type="checkbox" id="optIgnoreRegion" aria-label="{{ _('Ignore region tags') }}" checked>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label">Ignore region tags (USA, Europe, etc.)</span>
+                <span class="toggle-label">{{ _('Ignore region tags (USA, Europe, etc.)') }}</span>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="optArchives" aria-label="Include archives in scan">
+                    <input type="checkbox" id="optArchives" aria-label="{{ _('Include archives in scan') }}">
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label">Include archives (.zip, .7z, .rar)</span>
+                <span class="toggle-label">{{ _('Include archives (.zip, .7z, .rar)') }}</span>
             </div>
         </div>
     </div>
-    
+
     <div class="progress-section" id="progressSection" style="display: none;">
         <div class="progress-bar-container">
             <div class="progress-bar-fill" id="progressBar">0%</div>
         </div>
         <div class="progress-details">
             <div class="progress-status">
-                <strong id="progressCount">0</strong> / <span id="progressTotal">0</span> files processed
+                <strong id="progressCount">0</strong> / <span id="progressTotal">0</span> {{ _('files processed') }}
             </div>
-            <div class="progress-action" id="progressAction">Initializing...</div>
+            <div class="progress-action" id="progressAction">{{ _('Initializing...') }}</div>
         </div>
     </div>
     </div>
@@ -281,25 +281,25 @@
 
 <div class="card">
     <div class="card-header">
-        <h2 class="card-title"><span>📊</span> Scan Results</h2>
+        <h2 class="card-title"><span>📊</span> {{ _('Scan Results') }}</h2>
     </div>
     <div class="card-body">
     <div class="stats-grid">
         <div class="stat-box">
             <div class="stat-value" id="statScanned">0</div>
-            <div class="stat-label">Files Scanned</div>
+            <div class="stat-label">{{ _('Files Scanned') }}</div>
         </div>
         <div class="stat-box warning">
             <div class="stat-value" id="statGroups">0</div>
-            <div class="stat-label">Duplicate Groups</div>
+            <div class="stat-label">{{ _('Duplicate Groups') }}</div>
         </div>
         <div class="stat-box danger">
             <div class="stat-value" id="statDuplicates">0</div>
-            <div class="stat-label">Duplicate Files</div>
+            <div class="stat-label">{{ _('Duplicate Files') }}</div>
         </div>
         <div class="stat-box danger">
             <div class="stat-value" id="statWasted">0 GB</div>
-            <div class="stat-label">Wasted Space</div>
+            <div class="stat-label">{{ _('Wasted Space') }}</div>
         </div>
     </div>
     </div>
@@ -307,15 +307,15 @@
 
 <div class="card" id="resultsCard" style="display: none;">
     <div class="card-header">
-        <h2 class="card-title"><span>📁</span> Duplicate Groups</h2>
+        <h2 class="card-title"><span>📁</span> {{ _('Duplicate Groups') }}</h2>
     </div>
     <div class="card-body">
     <div class="duplicate-groups" id="duplicateGroups"></div>
-    
+
     <div class="action-bar">
-        <button type="button" class="btn btn-secondary" onclick="selectNewest()">📅 Keep Newest</button>
-        <button type="button" class="btn btn-secondary" onclick="selectSmallest()">📦 Keep Smallest</button>
-        <button type="button" class="btn btn-danger" onclick="deleteSelected()">🗑️ Delete Unselected</button>
+        <button type="button" class="btn btn-secondary" onclick="selectNewest()">📅 {{ _('Keep Newest') }}</button>
+        <button type="button" class="btn btn-secondary" onclick="selectSmallest()">📦 {{ _('Keep Smallest') }}</button>
+        <button type="button" class="btn btn-danger" onclick="deleteSelected()">🗑️ {{ _('Delete Unselected') }}</button>
     </div>
     </div>
 </div>
@@ -323,8 +323,8 @@
 <!-- Log Section -->
 <div class="scan-log-container" id="logContainer" style="display: none;">
     <div class="scan-log-header">
-        <h4>📋 Scan Log</h4>
-        <button type="button" class="btn btn-sm btn-danger" onclick="clearLog()">Clear</button>
+        <h4>📋 {{ _('Scan Log') }}</h4>
+        <button type="button" class="btn btn-sm btn-danger" onclick="clearLog()">{{ _('Clear') }}</button>
     </div>
     <div class="scan-log-content" id="scanLog"></div>
 </div>

@@ -5,20 +5,20 @@
 {% block content %}
 <!-- Sticky Dashboard Navigation -->
 <nav class="dashboard-nav" id="dashboardNav" data-sticky-nav data-tabbar>
-    <a href="#overview" class="dashboard-nav-link active" aria-current="page" data-section="overview"><span class="tab-icon">📊</span> <span class="tab-label">Overview</span></a>
-    <a href="#systems" class="dashboard-nav-link" data-section="systems"><span class="tab-icon">🖥️</span> <span class="tab-label">Systems</span></a>
-    {% if continue_playing %}<a href="#playing" class="dashboard-nav-link" data-section="playing"><span class="tab-icon">▶️</span> <span class="tab-label">Playing</span></a>{% endif %}
-    {% if recent_games %}<a href="#added" class="dashboard-nav-link" data-section="added"><span class="tab-icon">🕹️</span> <span class="tab-label">Added</span></a>{% endif %}
-    {% if recently_viewed %}<a href="#viewed" class="dashboard-nav-link" data-section="viewed"><span class="tab-icon">👁️</span> <span class="tab-label">Viewed</span></a>{% endif %}
-    {% if recently_scraped %}<a href="#scraped" class="dashboard-nav-link" data-section="scraped"><span class="tab-icon">🔄</span> <span class="tab-label">Scraped</span></a>{% endif %}
-    <a href="#status" class="dashboard-nav-link" data-section="status"><span class="tab-icon">📡</span> <span class="tab-label">Status</span></a>
+    <a href="#overview" class="dashboard-nav-link active" aria-current="page" data-section="overview"><span class="tab-icon">📊</span> <span class="tab-label">{{ _('Overview') }}</span></a>
+    <a href="#systems" class="dashboard-nav-link" data-section="systems"><span class="tab-icon">🖥️</span> <span class="tab-label">{{ _('Systems') }}</span></a>
+    {% if continue_playing %}<a href="#playing" class="dashboard-nav-link" data-section="playing"><span class="tab-icon">▶️</span> <span class="tab-label">{{ _('Playing') }}</span></a>{% endif %}
+    {% if recent_games %}<a href="#added" class="dashboard-nav-link" data-section="added"><span class="tab-icon">🕹️</span> <span class="tab-label">{{ _('Added') }}</span></a>{% endif %}
+    {% if recently_viewed %}<a href="#viewed" class="dashboard-nav-link" data-section="viewed"><span class="tab-icon">👁️</span> <span class="tab-label">{{ _('Viewed') }}</span></a>{% endif %}
+    {% if recently_scraped %}<a href="#scraped" class="dashboard-nav-link" data-section="scraped"><span class="tab-icon">🔄</span> <span class="tab-label">{{ _('Scraped') }}</span></a>{% endif %}
+    <a href="#status" class="dashboard-nav-link" data-section="status"><span class="tab-icon">📡</span> <span class="tab-label">{{ _('Status') }}</span></a>
 </nav>
 
 <!-- API Warning Banner (hidden by default, shown by JS if offline APIs detected) -->
 <div id="apiWarningBanner" class="api-warning-banner" style="display: none;">
     <span class="api-warning-icon">⚠️</span>
-    <span class="api-warning-text">One or more configured APIs are offline</span>
-    <a href="{{ url_for('settings.settings') }}" class="api-warning-link">Check Settings →</a>
+    <span class="api-warning-text">{{ _('One or more configured APIs are offline') }}</span>
+    <a href="{{ url_for('settings.settings') }}" class="api-warning-link">{{ _('Check Settings →') }}</a>
     <button type="button" class="api-warning-close" onclick="this.parentElement.style.display='none'">✕</button>
 </div>
 
@@ -27,9 +27,9 @@
 <div class="job-recovery-banner" id="jobRecoveryBanner">
     <div class="job-recovery-header">
         <span class="job-recovery-icon">🔄</span>
-        <span class="job-recovery-title">{{ recoverable_jobs|length }} interrupted job{{ 's' if recoverable_jobs|length != 1 else '' }} found</span>
-        <button type="button" class="btn btn-sm btn-primary" onclick="resumeAllRecoverableJobs()">Resume All</button>
-        <button type="button" class="btn btn-sm btn-secondary" onclick="dismissAllRecoverableJobs()">Dismiss All</button>
+        <span class="job-recovery-title">{% trans count=recoverable_jobs|length %}{{ count }} interrupted job found{% pluralize %}{{ count }} interrupted jobs found{% endtrans %}</span>
+        <button type="button" class="btn btn-sm btn-primary" onclick="resumeAllRecoverableJobs()">{{ _('Resume All') }}</button>
+        <button type="button" class="btn btn-sm btn-secondary" onclick="dismissAllRecoverableJobs()">{{ _('Dismiss All') }}</button>
     </div>
     {% for job in recoverable_jobs %}
     <div class="job-recovery-item" id="recoveryItem{{ job.id }}" data-can-resume="{{ 'true' if job.can_resume else 'false' }}">
@@ -41,7 +41,7 @@
             {% if job.can_resume %}
             <button type="button" class="btn btn-sm btn-primary" onclick="resumeJob({{ job.id }})">{{ job.action_label }}</button>
             {% endif %}
-            <button type="button" class="btn btn-sm btn-secondary" onclick="dismissJob({{ job.id }})">Dismiss</button>
+            <button type="button" class="btn btn-sm btn-secondary" onclick="dismissJob({{ job.id }})">{{ _('Dismiss') }}</button>
         </div>
     </div>
     {% endfor %}
@@ -51,17 +51,17 @@
 <!-- Page Header -->
 <div class="page-header" id="overview">
     <div>
-        <h1 class="page-title">Dashboard</h1>
-        <p class="page-subtitle">Overview of your retro gaming collection</p>
+        <h1 class="page-title">{{ _('Dashboard') }}</h1>
+        <p class="page-subtitle">{{ _('Overview of your retro gaming collection') }}</p>
     </div>
     <div class="page-actions">
-        <button type="button" class="btn btn-secondary" onclick="randomGame()" title="Pick a random game">
+        <button type="button" class="btn btn-secondary" onclick="randomGame()" title="{{ _('Pick a random game') }}">
             <span class="btn-icon">🎲</span>
-            Random Game
+            {{ _('Random Game') }}
         </button>
         <button type="button" id="scanLibraryBtn" class="btn btn-primary" onclick="scanLibrary()">
             <span class="btn-icon">🔍</span>
-            Scan Library
+            {{ _('Scan Library') }}
         </button>
     </div>
 </div>
@@ -78,19 +78,19 @@
         <div class="health-score-value">{{ stats.health_score|round(0)|int }}%</div>
     </div>
     <div class="health-score-info">
-        <h3 class="health-score-title">Collection Health</h3>
-        <p class="health-score-desc">Metadata completeness across your library</p>
+        <h3 class="health-score-title">{{ _('Collection Health') }}</h3>
+        <p class="health-score-desc">{{ _('Metadata completeness across your library') }}</p>
         <div class="health-score-breakdown">
             <span class="health-pill {% if stats.health_score >= 80 %}good{% elif stats.health_score >= 60 %}okay{% elif stats.health_score >= 40 %}warn{% else %}bad{% endif %}">
-                {% if stats.health_score >= 80 %}Excellent{% elif stats.health_score >= 60 %}Good{% elif stats.health_score >= 40 %}Fair{% else %}Needs Work{% endif %}
+                {% if stats.health_score >= 80 %}{{ _('Excellent') }}{% elif stats.health_score >= 60 %}{{ _('Good') }}{% elif stats.health_score >= 40 %}{{ _('Fair') }}{% else %}{{ _('Needs Work') }}{% endif %}
             </span>
         </div>
     </div>
     <div class="health-mini-rings">
         {% for field in [
-            {'label': 'Boxart', 'pct': stats.health_boxart_pct},
-            {'label': 'Descriptions', 'pct': stats.health_desc_pct},
-            {'label': 'Achievements', 'pct': stats.health_ra_pct},
+            {'label': _('Boxart'), 'pct': stats.health_boxart_pct},
+            {'label': _('Descriptions'), 'pct': stats.health_desc_pct},
+            {'label': _('Achievements'), 'pct': stats.health_ra_pct},
         ] %}
         <div class="health-mini-gauge">
             <div class="health-mini-ring">
@@ -112,44 +112,44 @@
 <div class="stats-grid">
     <div class="stat-card">
         <div class="stat-card-header">
-            <span class="stat-label">Total Systems</span>
+            <span class="stat-label">{{ _('Total Systems') }}</span>
             <div class="stat-icon">🖥️</div>
         </div>
         <div class="stat-value">{{ stats.total_systems|format_number }}</div>
-        <div class="stat-subtitle">Gaming platforms</div>
+        <div class="stat-subtitle">{{ _('Gaming platforms') }}</div>
     </div>
 
     <div class="stat-card">
         <div class="stat-card-header">
-            <span class="stat-label">Total Games</span>
+            <span class="stat-label">{{ _('Total Games') }}</span>
             <div class="stat-icon">🎮</div>
         </div>
         <div class="stat-value">{{ stats.total_games|format_number }}</div>
-        <div class="stat-subtitle">ROMs in library</div>
+        <div class="stat-subtitle">{{ _('ROMs in library') }}</div>
     </div>
 
     <div class="stat-card warning">
         <div class="stat-card-header">
-            <span class="stat-label">Missing Metadata</span>
+            <span class="stat-label">{{ _('Missing Metadata') }}</span>
             <div class="stat-icon">⚠️</div>
         </div>
         <div class="stat-value">{{ stats.missing_metadata|format_number }}</div>
         <div class="stat-subtitle">
             {% if stats.missing_metadata > 0 %}
-                <a href="{{ url_for('games.all_games') }}" style="color: inherit;">Action required</a>
+                <a href="{{ url_for('games.all_games') }}" style="color: inherit;">{{ _('Action required') }}</a>
             {% else %}
-                All games scraped
+                {{ _('All games scraped') }}
             {% endif %}
         </div>
     </div>
 
     <div class="stat-card success">
         <div class="stat-card-header">
-            <span class="stat-label">Complete</span>
+            <span class="stat-label">{{ _('Complete') }}</span>
             <div class="stat-icon">✅</div>
         </div>
         <div class="stat-value">{{ stats.scraped_games|format_number }}</div>
-        <div class="stat-subtitle">Games with metadata</div>
+        <div class="stat-subtitle">{{ _('Games with metadata') }}</div>
     </div>
 </div>
 
@@ -157,44 +157,44 @@
 <div class="stats-grid">
     <div class="stat-card">
         <div class="stat-card-header">
-            <span class="stat-label">Total Storage</span>
+            <span class="stat-label">{{ _('Total Storage') }}</span>
             <div class="stat-icon">💾</div>
         </div>
         <div class="stat-value">{{ stats.total_storage|format_size }}</div>
-        <div class="stat-subtitle">ROM library size</div>
+        <div class="stat-subtitle">{{ _('ROM library size') }}</div>
     </div>
 
     <div class="stat-card {% if stats.completion_rate >= 50 %}success{% elif stats.completion_rate >= 25 %}{% else %}warning{% endif %}">
         <div class="stat-card-header">
-            <span class="stat-label">Completion Rate</span>
+            <span class="stat-label">{{ _('Completion Rate') }}</span>
             <div class="stat-icon">🏆</div>
         </div>
         <div class="stat-value">{{ stats.completion_rate }}%</div>
-        <div class="stat-subtitle">{{ stats.completed_games|format_number }} games beaten</div>
+        <div class="stat-subtitle">{% trans count=stats.completed_games, n=stats.completed_games|format_number %}{{ n }} game beaten{% pluralize %}{{ n }} games beaten{% endtrans %}</div>
     </div>
 
     <div class="stat-card">
         <div class="stat-card-header">
-            <span class="stat-label">Achievements</span>
+            <span class="stat-label">{{ _('Achievements') }}</span>
             <div class="stat-icon">⭐</div>
         </div>
         <div class="stat-value">{{ stats.total_earned_achievements|format_number }}</div>
         <div class="stat-subtitle">
             {% if stats.total_available_achievements > 0 %}
-                of {{ stats.total_available_achievements|format_number }} available
+                {% trans n=stats.total_available_achievements|format_number %}of {{ n }} available{% endtrans %}
             {% else %}
-                RetroAchievements earned
+                {{ _('RetroAchievements earned') }}
             {% endif %}
         </div>
     </div>
 
     <div class="stat-card">
         <div class="stat-card-header">
-            <span class="stat-label">Playtime</span>
+            <span class="stat-label">{{ _('Playtime') }}</span>
             <div class="stat-icon">⏱️</div>
         </div>
         <div class="stat-value">{{ stats.total_hltb_hours|format_number }}h</div>
-        <div class="stat-subtitle">Estimated total (HLTB)</div>
+        <div class="stat-subtitle">{{ _('Estimated total (HLTB)') }}</div>
     </div>
 </div>
 
@@ -204,8 +204,8 @@
 <!-- Your Systems Section -->
 <section class="card systems-section" id="systems">
     <div class="card-header">
-        <h2 class="card-title"><span>🖥️</span> Top Systems by Game Count</h2>
-        <a href="{{ url_for('systems.systems') }}" class="section-link">View All Systems →</a>
+        <h2 class="card-title"><span>🖥️</span> {{ _('Top Systems by Game Count') }}</h2>
+        <a href="{{ url_for('systems.systems') }}" class="section-link">{{ _('View All Systems →') }}</a>
     </div>
 
     <div class="systems-grid" style="padding: var(--spacing-lg);">
@@ -232,7 +232,7 @@
                 <div class="system-progress">
                     <div class="system-progress-bar" style="width: {{ scraped_pct|round(0)|int }}%"></div>
                 </div>
-                <div class="system-progress-label">{{ scraped_pct|round(0)|int }}% scraped</div>
+                <div class="system-progress-label">{% trans pct=scraped_pct|round(0)|int %}{{ pct }}% scraped{% endtrans %}</div>
             </div>
         </a>
         {% endfor %}
@@ -243,17 +243,17 @@
 {% if continue_playing %}
 <section class="card recent-section" id="playing">
     <div class="card-header">
-        <h2 class="card-title"><span>▶️</span> Continue Playing</h2>
+        <h2 class="card-title"><span>▶️</span> {{ _('Continue Playing') }}</h2>
     </div>
 
     <div class="games-table-container" style="border: none; border-radius: 0;">
         <table class="games-table">
             <thead>
                 <tr>
-                    <th style="width: 80px;">Boxart</th>
-                    <th>Title</th>
-                    <th>System</th>
-                    <th>Playtime</th>
+                    <th style="width: 80px;">{{ _('Boxart') }}</th>
+                    <th>{{ _('Title') }}</th>
+                    <th>{{ _('System') }}</th>
+                    <th>{{ _('Playtime') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -284,7 +284,7 @@
                         </a>
                     </td>
                     <td>
-                        <span class="completion-badge in-progress">In Progress</span>
+                        <span class="completion-badge in-progress">{{ _('In Progress') }}</span>
                         {% if game.playtime_estimate %}
                             <span class="playtime-hint">{{ game.playtime_estimate.split('|')[0].strip() if '|' in (game.playtime_estimate or '') else game.playtime_estimate }}</span>
                         {% endif %}
@@ -301,20 +301,20 @@
 {% if recent_games %}
 <section class="card recent-section" id="added">
     <div class="card-header">
-        <h2 class="card-title"><span>🕹️</span> Recently Added</h2>
-        <a href="{{ url_for('games.all_games') }}" class="section-link">View All Games →</a>
+        <h2 class="card-title"><span>🕹️</span> {{ _('Recently Added') }}</h2>
+        <a href="{{ url_for('games.all_games') }}" class="section-link">{{ _('View All Games →') }}</a>
     </div>
 
     <div class="games-table-container" style="border: none; border-radius: 0;">
         <table class="games-table">
             <thead>
                 <tr>
-                    <th style="width: 80px;">Boxart</th>
-                    <th>Title</th>
-                    <th>System</th>
-                    <th>Genre</th>
-                    <th>Year</th>
-                    <th>Status</th>
+                    <th style="width: 80px;">{{ _('Boxart') }}</th>
+                    <th>{{ _('Title') }}</th>
+                    <th>{{ _('System') }}</th>
+                    <th>{{ _('Genre') }}</th>
+                    <th>{{ _('Year') }}</th>
+                    <th>{{ _('Status') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -362,9 +362,9 @@
                     </td>
                     <td>
                         {% if game.scraped %}
-                            <span class="metadata-status complete">✓ Scraped</span>
+                            <span class="metadata-status complete">✓ {{ _('Scraped') }}</span>
                         {% else %}
-                            <span class="metadata-status missing">⚠ Missing</span>
+                            <span class="metadata-status missing">⚠ {{ _('Missing') }}</span>
                         {% endif %}
                     </td>
                 </tr>
@@ -379,17 +379,17 @@
 {% if recently_viewed %}
 <section class="card recent-section" id="viewed">
     <div class="card-header">
-        <h2 class="card-title"><span>👁️</span> Recently Viewed</h2>
+        <h2 class="card-title"><span>👁️</span> {{ _('Recently Viewed') }}</h2>
     </div>
 
     <div class="games-table-container" style="border: none; border-radius: 0;">
         <table class="games-table">
             <thead>
                 <tr>
-                    <th style="width: 80px;">Boxart</th>
-                    <th>Title</th>
-                    <th>System</th>
-                    <th>Completion</th>
+                    <th style="width: 80px;">{{ _('Boxart') }}</th>
+                    <th>{{ _('Title') }}</th>
+                    <th>{{ _('System') }}</th>
+                    <th>{{ _('Completion') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -422,13 +422,13 @@
                     <td>
                         {% set status = game.completion_status or 'not_started' %}
                         {% if status == 'not_started' %}
-                            <span class="completion-badge not-started">Not Started</span>
+                            <span class="completion-badge not-started">{{ _('Not Started') }}</span>
                         {% elif status == 'in_progress' %}
-                            <span class="completion-badge in-progress">In Progress</span>
+                            <span class="completion-badge in-progress">{{ _('In Progress') }}</span>
                         {% elif status == 'played' %}
-                            <span class="completion-badge played">Played</span>
+                            <span class="completion-badge played">{{ _('Played') }}</span>
                         {% elif status == 'completed' %}
-                            <span class="completion-badge completed">Completed</span>
+                            <span class="completion-badge completed">{{ _('Completed') }}</span>
                         {% elif status == '100_percent' %}
                             <span class="completion-badge perfect">100%</span>
                         {% endif %}
@@ -445,17 +445,17 @@
 {% if recently_scraped %}
 <section class="card recent-section" id="scraped">
     <div class="card-header">
-        <h2 class="card-title"><span>🔄</span> Recently Scraped</h2>
+        <h2 class="card-title"><span>🔄</span> {{ _('Recently Scraped') }}</h2>
     </div>
 
     <div class="games-table-container" style="border: none; border-radius: 0;">
         <table class="games-table">
             <thead>
                 <tr>
-                    <th style="width: 80px;">Boxart</th>
-                    <th>Title</th>
-                    <th>System</th>
-                    <th>Status</th>
+                    <th style="width: 80px;">{{ _('Boxart') }}</th>
+                    <th>{{ _('Title') }}</th>
+                    <th>{{ _('System') }}</th>
+                    <th>{{ _('Status') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -486,7 +486,7 @@
                         </a>
                     </td>
                     <td>
-                        <span class="metadata-status complete">✓ Scraped</span>
+                        <span class="metadata-status complete">✓ {{ _('Scraped') }}</span>
                     </td>
                 </tr>
                 {% endfor %}
@@ -499,23 +499,23 @@
 <!-- System Status Section (moved below content sections) -->
 <section class="card status-section" id="status">
     <div class="card-header">
-        <h2 class="card-title"><span>📡</span> System Status</h2>
+        <h2 class="card-title"><span>📡</span> {{ _('System Status') }}</h2>
     </div>
 
     <div class="status-item">
         <div class="status-info">
             <span class="status-indicator online"></span>
-            <span class="status-name">Database Service</span>
+            <span class="status-name">{{ _('Database Service') }}</span>
         </div>
-        <span class="status-badge online">Online</span>
+        <span class="status-badge online">{{ _('Online') }}</span>
     </div>
 
     <div class="status-item">
         <div class="status-info">
             <span class="status-indicator online"></span>
-            <span class="status-name">ES-DE Local Scraper</span>
+            <span class="status-name">{{ _('ES-DE Local Scraper') }}</span>
         </div>
-        <span class="status-badge connected">Available</span>
+        <span class="status-badge connected">{{ _('Available') }}</span>
     </div>
 
     <div class="status-item" id="status-rawg">
@@ -524,7 +524,7 @@
             <span class="status-name">RAWG.io API</span>
         </div>
         <span class="status-badge {{ 'checking' if api_status.rawg else 'offline' }}">
-            {{ 'Checking...' if api_status.rawg else ('Disabled' if api_status._disabled.rawg else 'Not Configured') }}
+            {{ _('Checking...') if api_status.rawg else (_('Disabled') if api_status._disabled.rawg else _('Not Configured')) }}
         </span>
     </div>
 
@@ -534,7 +534,7 @@
             <span class="status-name">IGDB API</span>
         </div>
         <span class="status-badge {{ 'checking' if api_status.igdb else 'offline' }}">
-            {{ 'Checking...' if api_status.igdb else ('Disabled' if api_status._disabled.igdb else 'Not Configured') }}
+            {{ _('Checking...') if api_status.igdb else (_('Disabled') if api_status._disabled.igdb else _('Not Configured')) }}
         </span>
     </div>
 
@@ -544,7 +544,7 @@
             <span class="status-name">RetroAchievements API</span>
         </div>
         <span class="status-badge {{ 'connected' if api_status.retroachievements else 'offline' }}">
-            {{ 'Configured' if api_status.retroachievements else 'Not Configured' }}
+            {{ _('Configured') if api_status.retroachievements else _('Not Configured') }}
         </span>
     </div>
 
@@ -554,7 +554,7 @@
             <span class="status-name">ScreenScraper API</span>
         </div>
         <span class="status-badge {{ 'checking' if api_status.screenscraper else 'offline' }}">
-            {{ 'Checking...' if api_status.screenscraper else ('Disabled' if api_status._disabled.screenscraper else 'Not Configured') }}
+            {{ _('Checking...') if api_status.screenscraper else (_('Disabled') if api_status._disabled.screenscraper else _('Not Configured')) }}
         </span>
     </div>
 
@@ -564,7 +564,7 @@
             <span class="status-name">TheGamesDB API</span>
         </div>
         <span class="status-badge {{ 'checking' if api_status.tgdb else 'offline' }}">
-            {{ 'Checking...' if api_status.tgdb else ('Disabled' if api_status._disabled.tgdb else 'Not Configured') }}
+            {{ _('Checking...') if api_status.tgdb else (_('Disabled') if api_status._disabled.tgdb else _('Not Configured')) }}
         </span>
     </div>
 </section>

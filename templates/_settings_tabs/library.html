@@ -1,48 +1,48 @@
 {% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
-<div class="settings-tab-panel" id="tab-library" role="tabpanel" aria-label="Library settings">
+<div class="settings-tab-panel" id="tab-library" role="tabpanel" aria-label="{{ _('Library settings') }}">
     {% call tab_subnav('library') %}
-        {{ subnav_link('library', '📁 Paths', active=True) }}
-        {{ subnav_link('display', '🖼️ Display') }}
-        {{ subnav_link('rom-naming', '📝 ROM Naming') }}
-        {{ subnav_link('backup', '💾 Backup') }}
+        {{ subnav_link('library', '📁 ' ~ _('Paths'), active=True) }}
+        {{ subnav_link('display', '🖼️ ' ~ _('Display')) }}
+        {{ subnav_link('rom-naming', '📝 ' ~ _('ROM Naming')) }}
+        {{ subnav_link('backup', '💾 ' ~ _('Backup')) }}
     {% endcall %}
 
     <!-- Library Settings -->
     <section class="card mb-xl" id="library">
     <div class="card-header">
-        <h2 class="card-title">Library Settings</h2>
+        <h2 class="card-title">{{ _('Library Settings') }}</h2>
     </div>
     <div class="card-body">
         <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
-            Configure the paths to your ROM library, ES-DE data, and other integrations.
+            {{ _('Configure the paths to your ROM library, ES-DE data, and other integrations.') }}
         </p>
 
         <div class="form-group mb-lg">
-            <label class="form-label" for="romPathInput">ROM Library Path</label>
+            <label class="form-label" for="romPathInput">{{ _('ROM Library Path') }}</label>
             <input type="text" id="romPathInput" class="form-input"
-                   placeholder="e.g. /home/user/ROMS"
+                   placeholder="{{ _('e.g. /home/user/ROMS') }}"
                    style="font-family: var(--font-mono);">
             <span class="form-hint" id="romPathDefault"></span>
         </div>
         
         <div class="form-group mb-lg">
-            <div class="form-label">Database Location</div>
+            <div class="form-label">{{ _('Database Location') }}</div>
             <span class="detail-value" style="font-family: var(--font-mono);">{{ config.DB_PATH }}</span>
-            <span class="form-hint">Database path cannot be changed via UI</span>
+            <span class="form-hint">{{ _('Database path cannot be changed via UI') }}</span>
         </div>
         
         <div style="margin-top: var(--spacing-xl); display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
             <button type="button" onclick="savePathSettings()" class="btn btn-primary" id="savePathsBtn">
                 <span class="btn-icon">💾</span>
-                Save Path Settings
+                {{ _('Save Path Settings') }}
             </button>
             <button type="button" onclick="scanLibrary()" class="btn btn-secondary">
                 <span class="btn-icon">🔍</span>
-                Scan Library
+                {{ _('Scan Library') }}
             </button>
         </div>
         <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-sm);">
-            Changes to ROM path require a restart to take full effect
+            {{ _('Changes to ROM path require a restart to take full effect') }}
         </p>
     </div>
 </section>
@@ -50,11 +50,11 @@
 <!-- Display Preferences -->
 <section class="card mb-xl" id="display">
     <div class="card-header">
-        <h2 class="card-title">🖼️ Display Preferences</h2>
+        <h2 class="card-title">🖼️ {{ _('Display Preferences') }}</h2>
     </div>
     <div class="card-body">
         <div class="form-group mb-lg">
-            <div class="form-label" id="themeSelectorLabel">Theme</div>
+            <div class="form-label" id="themeSelectorLabel">{{ _('Theme') }}</div>
             <div class="theme-selector" id="themeSelector" role="radiogroup" aria-labelledby="themeSelectorLabel">
                 <div class="theme-option" data-theme="cyberpunk" onclick="ThemeManager.apply('cyberpunk')">
                     <div class="theme-preview">
@@ -62,7 +62,7 @@
                         <span class="theme-swatch" style="background: #f72585;"></span>
                         <span class="theme-swatch" style="background: #0a0e17;"></span>
                     </div>
-                    <span class="theme-name">Cyberpunk</span>
+                    <span class="theme-name">{{ _('Cyberpunk') }}</span>
                 </div>
                 <div class="theme-option" data-theme="matrix" onclick="ThemeManager.apply('matrix')">
                     <div class="theme-preview">
@@ -70,7 +70,7 @@
                         <span class="theme-swatch" style="background: #008f11;"></span>
                         <span class="theme-swatch" style="background: #000000;"></span>
                     </div>
-                    <span class="theme-name">Matrix</span>
+                    <span class="theme-name">{{ _('Matrix') }}</span>
                 </div>
                 <div class="theme-option" data-theme="amber" onclick="ThemeManager.apply('amber')">
                     <div class="theme-preview">
@@ -78,7 +78,7 @@
                         <span class="theme-swatch" style="background: #ff6600;"></span>
                         <span class="theme-swatch" style="background: #0a0800;"></span>
                     </div>
-                    <span class="theme-name">Retro Amber</span>
+                    <span class="theme-name">{{ _('Retro Amber') }}</span>
                 </div>
                 <div class="theme-option" data-theme="ocean" onclick="ThemeManager.apply('ocean')">
                     <div class="theme-preview">
@@ -86,7 +86,7 @@
                         <span class="theme-swatch" style="background: #20c997;"></span>
                         <span class="theme-swatch" style="background: #040810;"></span>
                     </div>
-                    <span class="theme-name">Midnight Ocean</span>
+                    <span class="theme-name">{{ _('Midnight Ocean') }}</span>
                 </div>
                 <div class="theme-option" data-theme="christian" onclick="ThemeManager.apply('christian')">
                     <div class="theme-preview">
@@ -94,7 +94,7 @@
                         <span class="theme-swatch" style="background: #7b4db0;"></span>
                         <span class="theme-swatch" style="background: #0c0810;"></span>
                     </div>
-                    <span class="theme-name">Cathedral</span>
+                    <span class="theme-name">{{ _('Cathedral') }}</span>
                 </div>
                 <div class="theme-option" data-theme="bladerunner" onclick="ThemeManager.apply('bladerunner')">
                     <div class="theme-preview">
@@ -102,7 +102,7 @@
                         <span class="theme-swatch" style="background: #ff2d7c;"></span>
                         <span class="theme-swatch" style="background: #06080e;"></span>
                     </div>
-                    <span class="theme-name">Blade Runner</span>
+                    <span class="theme-name">{{ _('Blade Runner') }}</span>
                 </div>
                 <div class="theme-option" data-theme="elite" onclick="ThemeManager.apply('elite')">
                     <div class="theme-preview">
@@ -110,10 +110,10 @@
                         <span class="theme-swatch" style="background: #cccccc;"></span>
                         <span class="theme-swatch" style="background: #000000;"></span>
                     </div>
-                    <span class="theme-name">Elite</span>
+                    <span class="theme-name">{{ _('Elite') }}</span>
                 </div>
             </div>
-            <span class="form-hint">Theme applies instantly. Changes are saved automatically.</span>
+            <span class="form-hint">{{ _('Theme applies instantly. Changes are saved automatically.') }}</span>
         </div>
 
         {# Pass 43.1 — per-user UI language. Mirrors the Theme control's
@@ -121,7 +121,7 @@
            Theme (instant, JS-applied) this is a plain <select> POSTed to
            /api/users/settings; the page reloads to re-render in the new locale. #}
         <div class="form-group mb-lg">
-            <div class="form-label" id="languageSelectLabel">Language</div>
+            <div class="form-label" id="languageSelectLabel">{{ _('Language') }}</div>
             <select id="languageSelect" class="form-select" style="max-width: 300px;"
                     aria-labelledby="languageSelectLabel"
                     onchange="UserManager.saveLanguage(this.value)">
@@ -130,37 +130,37 @@
                 <option value="{{ code }}" {% if code == current_locale %}selected{% endif %}>{{ locale_display_name(code) }}</option>
                 {% endfor %}
             </select>
-            <span class="form-hint">Changes the interface language. The page reloads when you switch.</span>
+            <span class="form-hint">{{ _('Changes the interface language. The page reloads when you switch.') }}</span>
         </div>
 
         <div class="form-group mb-lg">
-            <label class="form-label" for="preferredBoxartSelect">Preferred Boxart Style</label>
+            <label class="form-label" for="preferredBoxartSelect">{{ _('Preferred Boxart Style') }}</label>
             <select id="preferredBoxartSelect" class="form-select" style="max-width: 300px;">
-                <option value="2d">2D Boxart (Standard)</option>
-                <option value="3d">3D Boxart (with 2D fallback)</option>
+                <option value="2d">{{ _('2D Boxart (Standard)') }}</option>
+                <option value="3d">{{ _('3D Boxart (with 2D fallback)') }}</option>
             </select>
-            <span class="form-hint">When 3D is selected, 2D boxart will be shown if no 3D version exists</span>
+            <span class="form-hint">{{ _('When 3D is selected, 2D boxart will be shown if no 3D version exists') }}</span>
         </div>
 
         <div class="form-group mb-lg">
-            <label class="form-label" for="preferredRatingSelect">Preferred Age Rating System</label>
+            <label class="form-label" for="preferredRatingSelect">{{ _('Preferred Age Rating System') }}</label>
             <select id="preferredRatingSelect" class="form-select" style="max-width: 300px;">
-                <option value="esrb">ESRB (North America)</option>
-                <option value="pegi">PEGI (Europe)</option>
-                <option value="cero">CERO (Japan)</option>
-                <option value="usk">USK (Germany)</option>
-                <option value="acb">ACB (Australia)</option>
-                <option value="fpb">FPB (South Africa)</option>
-                <option value="grac">GRAC (South Korea)</option>
-                <option value="classind">ClassInd (Brazil)</option>
+                <option value="esrb">{{ _('ESRB (North America)') }}</option>
+                <option value="pegi">{{ _('PEGI (Europe)') }}</option>
+                <option value="cero">{{ _('CERO (Japan)') }}</option>
+                <option value="usk">{{ _('USK (Germany)') }}</option>
+                <option value="acb">{{ _('ACB (Australia)') }}</option>
+                <option value="fpb">{{ _('FPB (South Africa)') }}</option>
+                <option value="grac">{{ _('GRAC (South Korea)') }}</option>
+                <option value="classind">{{ _('ClassInd (Brazil)') }}</option>
             </select>
-            <span class="form-hint">Ratings from other systems are cross-mapped when the preferred system's rating is unavailable</span>
+            <span class="form-hint">{{ _("Ratings from other systems are cross-mapped when the preferred system's rating is unavailable") }}</span>
         </div>
 
         <div style="margin-top: var(--spacing-xl);">
             <button type="button" onclick="saveDisplaySettings()" class="btn btn-primary" id="saveDisplayBtn">
                 <span class="btn-icon">💾</span>
-                Save Display Settings
+                {{ _('Save Display Settings') }}
             </button>
         </div>
     </div>
@@ -169,30 +169,30 @@
 <!-- ROM Naming Conventions -->
 <section class="card mb-xl" id="rom-naming">
     <div class="card-header">
-        <h2 class="card-title">📝 ROM Naming Conventions</h2>
+        <h2 class="card-title">📝 {{ _('ROM Naming Conventions') }}</h2>
     </div>
     <div class="card-body">
         <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
-            Configure the filename pattern for each system type. Title is always first.
-            Add tags in the order they should appear in filenames (e.g., <code>Title (Region).zip</code>).
+            {% trans %}Configure the filename pattern for each system type. Title is always first.
+            Add tags in the order they should appear in filenames (e.g., <code>Title (Region).zip</code>).{% endtrans %}
         </p>
 
         <div class="form-group mb-lg">
-            <label class="form-label" for="articlePlacementSelect">Article Placement</label>
+            <label class="form-label" for="articlePlacementSelect">{{ _('Article Placement') }}</label>
             <p class="text-muted" style="margin-bottom: var(--spacing-sm); font-size: 0.85rem;">
-                Controls where articles (A, An, The) appear in game titles and ROM filenames.
+                {{ _('Controls where articles (A, An, The) appear in game titles and ROM filenames.') }}
             </p>
             <select id="articlePlacementSelect" class="form-select" style="max-width: 400px;" onchange="renderNamingBuilder()">
-                <option value="beginning">Beginning (natural) — "The Legend of Zelda"</option>
-                <option value="end">End (sort-friendly) — "Legend of Zelda, The"</option>
+                <option value="beginning">{{ _('Beginning (natural) — "The Legend of Zelda"') }}</option>
+                <option value="end">{{ _('End (sort-friendly) — "Legend of Zelda, The"') }}</option>
             </select>
-            <span class="form-hint">Applies to new scrapes and rename suggestions. Existing titles are not changed automatically.</span>
+            <span class="form-hint">{{ _('Applies to new scrapes and rename suggestions. Existing titles are not changed automatically.') }}</span>
         </div>
 
         <div class="form-group mb-lg">
-            <div class="form-label" id="regionOptionsLabel">Region Options</div>
+            <div class="form-label" id="regionOptionsLabel">{{ _('Region Options') }}</div>
             <p class="text-muted" style="margin-bottom: var(--spacing-sm); font-size: 0.85rem;">
-                Configure the available region values and default. The default region is used when scraping if no region is detected.
+                {{ _('Configure the available region values and default. The default region is used when scraping if no region is detected.') }}
             </p>
             <div id="regionOptionsContainer" role="list" aria-labelledby="regionOptionsLabel" style="display: flex; flex-wrap: wrap; gap: var(--spacing-xs); margin-bottom: var(--spacing-sm);">
                 {% for r in user_settings.get('region_options', ['USA', 'Europe', 'Japan', 'World']) %}

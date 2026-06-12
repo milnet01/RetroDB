@@ -71,8 +71,11 @@ def test_37_1_composite_labels_have_group_role(template_rel, prefix, scope_marke
         assert f'aria-labelledby="{field_id}"' in scoped, (
             f'{label_kind}: composite field missing aria-labelledby={field_id}'
         )
-        assert f'id="{field_id}">{label_text}</div>' in scoped, (
-            f'{label_kind}: missing div.form-label#{field_id}>{label_text}'
+        # The label text is i18n-wrapped (Pass 43.5), so pin the promoted
+        # label div by id, not by its (now {{ _('…') }}) text content.
+        assert f'id="{field_id}">' in scoped, (
+            f'{label_kind}: missing div.form-label#{field_id} (label '
+            f'"{label_text}" is i18n-wrapped)'
         )
 
 
@@ -82,15 +85,12 @@ def test_37_1_edit_modal_helper_selects_have_aria_labels():
     edit_modal.html — the gem-modal helper-select markup uses a
     different pattern (covered by its own aria-labelledby chain)."""
     src = read_source('templates/_modals/edit_modal.html')
-    for needle in (
-        'aria-label="Add genre"',
-        'aria-label="Add play mode"',
-        'aria-label="Add game structure"',
-        'aria-label="Add perspective"',
-        'aria-label="Add dimension"',
-        'aria-label="Add controller"',
-        'aria-label="Add save type"',
+    # aria-label values are i18n-wrapped (Pass 43.5): aria-label="{{ _('Add genre') }}".
+    for label in (
+        'Add genre', 'Add play mode', 'Add game structure', 'Add perspective',
+        'Add dimension', 'Add controller', 'Add save type',
     ):
+        needle = 'aria-label="{{ _(\'%s\') }}"' % label
         assert needle in src, f'edit_modal.html missing helper-select {needle}'
 
 
