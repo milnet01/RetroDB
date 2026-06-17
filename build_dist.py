@@ -21,6 +21,7 @@ Usage:
     python build_dist.py linux                    # Linux source only
     python build_dist.py --standalone             # Standalone for host platform
     python build_dist.py --standalone linux       # Standalone Linux (host=Linux)
+    python build_dist.py --standalone --cpu-only  # CPU-only standalone (~600 MB)
 """
 
 import os
@@ -197,31 +198,81 @@ def _host_platform():
     return None
 
 
-def build_standalone(base_dir, version, host_name):
+def _cpu_build_python(base_dir):
+    """Create (or reuse) an isolated CPU-only build venv and return its python.
+
+    The Standalone bundle inherits whatever onnxruntime flavour is installed in
+    the build environment. The maintainer's working env typically has
+    onnxruntime-rocm (~2 GB of ROCm libs) for AMD GPU acceleration, which bloats
+    the bundle to ~3.7 GB. requirements.txt pins the *vanilla* CPU onnxruntime,
+    so building inside a clean venv yields the ~600 MB CPU variant regardless of
+    the host env. The two flavours share an import name (`onnxruntime`) and
+    cannot coexist in one interpreter, hence a separate venv rather than an
+    in-place package swap.
+
+    The venv lives under STAGING_DIR (outside the project tree, so it never
+    leaks into a source ZIP) and is reused across runs. Delete it to force a
+    clean rebuild. requirements.txt (not the hash-pinned lock) is used so the
+    resolver can pick the host platform's CPU wheels — this is a convenience
+    binary, not the hash-attested source release.
+    """
+    venv_dir = os.path.join(STAGING_DIR, '.cpu-build-venv')
+    bin_dir = 'Scripts' if os.name == 'nt' else 'bin'
+    py = os.path.join(venv_dir, bin_dir, 'python.exe' if os.name == 'nt' else 'python')
+
+    if not os.path.exists(py):
+        print(f"  Creating CPU-only build venv at {venv_dir} …")
+        subprocess.run([sys.executable, '-m', 'venv', venv_dir], check=True)
+
+    print("  Installing CPU deps (vanilla onnxruntime) + PyInstaller into venv …")
+    subprocess.run([py, '-m', 'pip', 'install', '--upgrade', '--quiet', 'pip'], check=True)
+    subprocess.run(
+        [py, '-m', 'pip', 'install', '--quiet', '-r',
+         os.path.join(base_dir, 'requirements.txt'), 'pyinstaller'],
+        check=True,
+    )
+    return py
+
+
+def build_standalone(base_dir, version, host_name, cpu_only=False):
     """Run PyInstaller against retrodb.spec and zip dist/retrodb/ into a
     Standalone bundle for the host platform.
 
     PyInstaller cannot cross-compile — the produced zip is valid only for
     the OS that built it. Linux→Linux, macOS→macOS, Windows→Windows.
+
+    cpu_only=True builds inside an isolated CPU-only venv (see
+    _cpu_build_python) and tags the artifact `-CPU`, producing the smaller
+    ~600 MB bundle that ships alongside the full GPU-accelerated one.
     """
     spec_path = os.path.join(base_dir, 'retrodb.spec')
     if not os.path.exists(spec_path):
         print(f"ERROR: retrodb.spec not found at {spec_path}")
         sys.exit(1)
 
-    print(f"\n  Building standalone {host_name} bundle via PyInstaller…")
+    variant = '-CPU' if cpu_only else ''
+    print(f"\n  Building standalone {host_name}{variant} bundle via PyInstaller…")
     print("  (this takes 3–6 min and uses ~5 GB temp during the build)")
 
     # Wipe any prior PyInstaller output so we don't ship leftover files
-    # from an aborted earlier run.
+    # from an aborted earlier run. (The CPU venv lives under STAGING_DIR, not
+    # here, so it survives the wipe and is reused.)
     for tmp_dir in ('build', 'dist'):
         tmp_path = os.path.join(base_dir, tmp_dir)
         if os.path.isdir(tmp_path):
             shutil.rmtree(tmp_path)
 
+    # cpu_only runs PyInstaller from the isolated venv's interpreter so the
+    # bundle picks up that venv's CPU onnxruntime; otherwise use the host's
+    # `pyinstaller` on PATH (inherits the host env's onnxruntime flavour).
+    if cpu_only:
+        pyinstaller_cmd = [_cpu_build_python(base_dir), '-m', 'PyInstaller']
+    else:
+        pyinstaller_cmd = ['pyinstaller']
+
     # PyInstaller writes to ./build and ./dist; cwd must be project root.
     result = subprocess.run(
-        ['pyinstaller', spec_path, '--noconfirm', '--log-level', 'WARN'],
+        pyinstaller_cmd + [spec_path, '--noconfirm', '--log-level', 'WARN'],
         cwd=base_dir,
     )
     if result.returncode != 0:
@@ -233,9 +284,9 @@ def build_standalone(base_dir, version, host_name):
         print(f"ERROR: PyInstaller produced no output at {bundle_dir}")
         sys.exit(1)
 
-    zip_name = f"RetroDB-v{version}-{host_name}-Standalone.zip"
+    zip_name = f"RetroDB-v{version}-{host_name}{variant}-Standalone.zip"
     zip_path = os.path.join(STAGING_DIR, zip_name)
-    folder_name = f"RetroDB-v{version}-Standalone"
+    folder_name = f"RetroDB-v{version}{variant}-Standalone"
     if os.path.exists(zip_path):
         os.remove(zip_path)
 
@@ -266,12 +317,21 @@ def main():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     version = get_version(base_dir)
 
-    # Parse args: optional --standalone flag + optional platform name
+    # Parse args: optional --standalone / --cpu-only flags + optional platform
     standalone = False
+    cpu_only = False
     args = list(sys.argv[1:])
     if '--standalone' in args:
         standalone = True
         args.remove('--standalone')
+    if '--cpu-only' in args:
+        cpu_only = True
+        args.remove('--cpu-only')
+
+    if cpu_only and not standalone:
+        print("ERROR: --cpu-only is only valid together with --standalone.")
+        print("Usage: python build_dist.py [--standalone [--cpu-only]] [linux|macos|windows]")
+        sys.exit(1)
 
     requested = None
     if args:
@@ -281,13 +341,16 @@ def main():
             requested = platform_map[arg]
         else:
             print(f"Unknown platform: {args[0]}")
-            print("Usage: python build_dist.py [--standalone] [linux|macos|windows]")
+            print("Usage: python build_dist.py [--standalone [--cpu-only]] [linux|macos|windows]")
             sys.exit(1)
 
     # Ensure staging directory exists
     os.makedirs(STAGING_DIR, exist_ok=True)
 
-    mode = 'Standalone (PyInstaller bundle)' if standalone else 'Source (Python required)'
+    if standalone:
+        mode = 'Standalone CPU-only (PyInstaller bundle)' if cpu_only else 'Standalone (PyInstaller bundle)'
+    else:
+        mode = 'Source (Python required)'
     print(f"\n{'='*60}")
     print(f"  RetroDB v{version} — Distribution Builder")
     print(f"  Mode:   {mode}")
@@ -303,7 +366,7 @@ def main():
             print(f"ERROR: PyInstaller cannot cross-compile. Host is '{host}', "
                   f"but you asked for '{requested}'. Run on a {requested} host instead.")
             sys.exit(1)
-        path = build_standalone(base_dir, version, host)
+        path = build_standalone(base_dir, version, host, cpu_only=cpu_only)
         built = [path]
     else:
         platforms_to_build = {requested: PLATFORMS[requested]} if requested else PLATFORMS

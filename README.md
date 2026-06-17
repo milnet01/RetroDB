@@ -136,6 +136,8 @@ non-localhost interface without a proxy in front of it is unsupported.
 
 ## Support development
 
+[![Sponsor on GitHub](https://img.shields.io/github/sponsors/milnet01?label=Sponsor&logo=github&color=ea4aaa)](https://github.com/sponsors/milnet01)
+
 RetroDB is free and open source. If it saves you time, consider tipping —
 every bit helps keep solo development sustainable.
 

@@ -8,6 +8,10 @@ on:
       tag:
         description: "Tag to release (e.g. v2.77.6)"
         required: true
+      build_standalone:
+        description: "Also build standalone PyInstaller binaries (Linux/macOS/Windows). ~600 MB each; triples CI minutes."
+        type: boolean
+        default: false
 
 # Force Node 24 for all JavaScript actions — see .github/workflows/ci.yml.
 env:
@@ -150,3 +154,79 @@ jobs:
             /tmp/staging/SHA256SUMS.txt
             /tmp/staging/*.sig
             /tmp/staging/*.pem
+
+  # ---------------------------------------------------------------------------
+  # Optional standalone PyInstaller binaries (Pass 46.3 Part 4).
+  # ---------------------------------------------------------------------------
+  # Gated to a MANUAL workflow_dispatch that opts in via build_standalone=true —
+  # never runs on an automatic tag push. Each OS bundle is ~600 MB and the build
+  # is slow, so a 3-OS matrix triples CI minutes per release (the trade-off
+  # called out in the roadmap). PyInstaller cannot cross-compile, hence one
+  # native runner per target OS. Runs after build-and-release so the draft
+  # release already exists to attach assets to.
+  build-standalone:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.build_standalone }}
+    needs: build-and-release
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
+        with:
+          python-version: "3.13"
+
+      - name: Build CPU-only standalone bundle
+        shell: bash
+        env:
+          # runner.temp is the cross-OS writable scratch dir (the source job's
+          # hardcoded /tmp/staging isn't valid on the Windows runner).
+          RETRODB_STAGING_DIR: ${{ runner.temp }}/staging
+        run: |
+          mkdir -p "$RETRODB_STAGING_DIR"
+          cp config.example.py config.py
+          # --cpu-only builds in an isolated venv with vanilla onnxruntime,
+          # producing the portable ~600 MB CPU bundle. CI runners have no AMD
+          # GPU, so the CPU variant is the only sensible one to ship from here;
+          # the flag also keeps the artifact name (-CPU) unambiguous against a
+          # maintainer's locally-built GPU bundle.
+          python build_dist.py --standalone --cpu-only
+          ls -la "$RETRODB_STAGING_DIR"
+
+      - name: Emit SHA-256 checksum per zip
+        shell: bash
+        env:
+          RETRODB_STAGING_DIR: ${{ runner.temp }}/staging
+          # Env-var block scalar + `python -c` — the repo's standard idiom for
+          # inline Python in this workflow (see the build job's Pass 45.19 note:
+          # bash heredocs inherit the YAML indent and break with IndentationError).
+          # Python is used over sha256sum/shasum so the step is identical on all
+          # three runner OSes.
+          CHECKSUM_SCRIPT: |
+            import hashlib, glob, os
+            staging = os.environ['RETRODB_STAGING_DIR']
+            for z in sorted(glob.glob(os.path.join(staging, 'RetroDB-*-Standalone.zip'))):
+                h = hashlib.sha256()
+                with open(z, 'rb') as f:
+                    for chunk in iter(lambda: f.read(1 << 20), b''):
+                        h.update(chunk)
+                with open(z + '.sha256', 'w') as out:
+                    out.write(h.hexdigest() + '  ' + os.path.basename(z) + '\n')
+                print(z + '.sha256')
+        run: python -c "$CHECKSUM_SCRIPT"
+
+      - name: Upload standalone bundle to release
+        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda  # v3.0.0
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          draft: true
+          files: |
+            ${{ runner.temp }}/staging/RetroDB-*-Standalone.zip
+            ${{ runner.temp }}/staging/RetroDB-*-Standalone.zip.sha256

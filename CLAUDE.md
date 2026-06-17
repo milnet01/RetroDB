@@ -159,12 +159,15 @@ Two shapes:
 python3 build_dist.py                       # all 3 source ZIPs
 python3 build_dist.py linux|macos|windows   # one source ZIP
 python3 build_dist.py --standalone          # standalone for host platform
+python3 build_dist.py --standalone --cpu-only  # CPU-only standalone (~600 MB, -CPU suffix)
 ```
 
 - Output: `STAGING_DIR` constant in `build_dist.py` (currently defaults to a maintainer-local path under `/mnt/Storage/Scripts/Linux/Staging_Area/RetroDB`; override with `RETRODB_STAGING_DIR` env var — see Pass 39.6 in roadmap).
 - Filename: `RetroDB-v{VERSION}-{Platform}.zip` (source) or `RetroDB-v{VERSION}-{Platform}-Standalone.zip`
 - Excluded from source ZIPs: see the `EXCLUDE_FILES`, `EXCLUDE_DIRS`, `EXCLUDE_EXTENSIONS` and the `INCLUDE_IMAGE_DIRS` whitelist in `build_dist.py` (the canonical list). At time of writing this excludes user config (`config.py`, `data/{settings,scraper_settings,rom_tools_config,psn_tokens,xbox_tokens}.json`, `data/.secret_key`), the runtime DB (the whole `database/` dir — covers `database/roms.db`; `data/retrodb.db` is also listed as a legacy path, and all `.db*` / `.log` files are excluded by extension), and scraped media (`static/videos/`, plus every `static/images/<dir>/` that is not in `INCLUDE_IMAGE_DIRS = {'hardware','ratings','systems','avatars'}`). Per-platform: only that platform's start script (`start.sh` / `start.command` / `start.bat`).
 - Standalone build is driven by `retrodb.spec` (PyInstaller onedir mode). Spec whitelists static subdirs explicitly to avoid sweeping in scraped media; new pip deps that PyInstaller's static analyser can't follow (string-imported via `importlib`) must be added to `HIDDEN_IMPORTS` in the spec.
+- `--cpu-only` (Pass 46.3 Part 3) builds the standalone inside an isolated venv under `STAGING_DIR/.cpu-build-venv` (vanilla CPU `onnxruntime` from `requirements.txt` + PyInstaller), so it produces the ~600 MB CPU bundle even on the maintainer's AMD box where `onnxruntime-rocm` is installed system-wide (the two flavours share the `onnxruntime` import name and can't coexist). Artifacts get a `-CPU` filename suffix. Plain `--standalone` inherits whatever onnxruntime is in the current env (GPU/ROCm locally; CPU on a clean checkout, since `requirements.txt` pins vanilla).
+- CI standalone build (Pass 46.3 Part 4): `.github/workflows/release.yml` has a `build-standalone` job — a `[ubuntu, macos, windows]-latest` matrix gated behind `workflow_dispatch` + `build_standalone: true` (never fires on an automatic tag push; triples CI minutes). Each runner builds `--standalone --cpu-only` and attaches the zip + SHA-256 to the draft release.
 
 Pre-release checklist: bump version + changelog → ensure `config.example.py` matches any new settings → `python3 build_dist.py` (source) and/or `python3 build_dist.py --standalone` (host platform) → upload from staging.
 

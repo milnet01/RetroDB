@@ -719,6 +719,16 @@ are tracked here so the next pass picks them up:
      per release. Defer until there *are* supporters.
 - **Status**: blocked on 47.3 / 47.4 / 47.5 (need the platform URLs
   to populate). The Sponsors-only subset is unblocked — see 47.6.A.
+  Progress (v3.8.1): unblocked prep landed — `.github/FUNDING.yml` now
+  carries commented Patreon/`custom` BMAC placeholders ready to uncomment
+  once those accounts exist; README "Support development" gained the live
+  GitHub Sponsors badge (step 2 — BMAC/Patreon badges still wait on
+  47.3/47.5); and the in-app Settings "Support Development" panel (added
+  by 47.6.A in v3.6.36) was i18n-wrapped — it had been missed by the Pass
+  43.5 bulk migration, so it + its 3 strings are now in all 6 catalogs.
+  Remaining: populate FUNDING patreon/custom + README BMAC/Patreon badges
+  once 47.3/47.5 accounts are live; footer link (step 4) skipped — no
+  footer; supporters list (step 5) deferred until there are supporters.
 
 #### Pass 47.6.A In-app sponsorship link (GitHub Sponsors only) (LOW, S)
 
@@ -821,10 +831,13 @@ are tracked here so the next pass picks them up:
   run a single executable on Linux/macOS/Windows. Both distribution
   channels remain (small source zip for users who already have Python;
   ~3.7 GB binary for users who don't — onnxruntime + ROCm libs dominate).
-- **Status**: part 1 done (v3.5.38). Bundle builds, smoke-tests cleanly:
-  `Real-ESRGAN ONNX loaded`, Waitress serving, `/login` 200. PyInstaller
+- **Status**: done (v3.8.1) — all four parts complete. Part 1 (v3.5.38):
+  bundle builds, smoke-tests cleanly (`Real-ESRGAN ONNX loaded`, Waitress
+  serving, `/login` 200). Part 2 (v3.5.39): frozen-mode user-data split.
+  Parts 3 + 4 (v3.8.1): `--cpu-only` build variant + the workflow_dispatch-
+  gated 3-OS CI matrix (see the per-part status notes below). PyInstaller
   cannot cross-compile — `--standalone` only produces the host platform's
-  binary. Open follow-ups in part 2 / part 3.
+  binary; the CI matrix is how all three OS bundles ship from one trigger.
 
 ##### Part 2 — frozen-mode user-data path
 
@@ -864,7 +877,15 @@ are tracked here so the next pass picks them up:
   CPU-only Python venv (vanilla `onnxruntime`, not `-rocm`). Estimated
   bundle ~600 MB. Both variants ship; the page lists size +
   GPU-acceleration trade-off so users self-select.
-- **Status**: todo
+- **Status**: done (v3.8.1) — `build_dist.py` gains `--cpu-only` (only
+  valid with `--standalone`). It builds in an isolated venv under
+  STAGING_DIR (`_cpu_build_python()`): vanilla onnxruntime from
+  requirements.txt + PyInstaller, so the bundle is CPU regardless of the
+  maintainer's GPU-polluted local env (the two onnxruntime flavours share
+  the `onnxruntime` import name and can't coexist — hence the venv, not an
+  in-place swap). Artifacts tagged `-CPU` (`RetroDB-vX.Y.Z-<plat>-CPU-
+  Standalone.zip`). Arg parsing + validation verified; the full multi-GB
+  PyInstaller build was NOT run in-session (too heavy).
 
 ##### Part 4 (optional) — CI matrix build for cross-platform binaries
 
@@ -877,7 +898,16 @@ are tracked here so the next pass picks them up:
   upload all 3 zips as release assets. Note this multiplies CI minutes
   by 3× per release; might be worth gating behind a manual
   workflow_dispatch for the standalone build.
-- **Status**: todo
+- **Status**: done (v3.8.1) — `.github/workflows/release.yml` gains a
+  `build-standalone` job: a `[ubuntu, macos, windows]-latest` matrix
+  (`fail-fast: false`) gated behind `workflow_dispatch` +
+  `build_standalone: true` so it NEVER fires on an automatic tag push
+  (avoids the 3× CI-minute cost on every release). Each runner builds
+  `--standalone --cpu-only` (CI has no AMD GPU; CPU is the right variant to
+  ship + keeps the `-CPU` name unambiguous), emits a per-zip SHA-256
+  (cross-OS via `python -c`, the repo's Pass-45.19 idiom — no heredoc), and
+  attaches to the draft release (`needs: build-and-release`). YAML validated;
+  not executed in CI in-session.
 
 ---
 
@@ -3187,6 +3217,35 @@ are tracked here so the next pass picks them up:
   exhaustive `error()`-caller wrapping (hundreds of API JSON errors) and the
   ~1800-line `help.html` manual body were left for a focused pass; a few labels
   (wishlist Priority, etc.) the agents missed are findable via the Pseudo locale.
+
+#### Pass 43.6 i18n follow-ons — help.html manual + exhaustive error() wrapping (LOW, L)
+
+- **Target**: `templates/help.html` (~2000 lines, currently English-only bar
+  the page title + subtitle), the remaining `error()` / API-JSON-error callers
+  across `routes/*.py` + `services/api_helpers.py`, and the handful of stray
+  visible labels (wishlist Priority, etc.) the 43.5 agents missed.
+- **Why**: 43.5 wrapped the UI chrome but deliberately deferred (a) the
+  long-form help manual and (b) the deep `error()`-caller surface as a focused
+  follow-on — see the Pass 43.5 status note. Surfaced again 2026-06-17 when the
+  user asked whether multi-language support covers the help section (it does
+  not). Wrapping `help.html` is mechanical but large; the *translation* of
+  ~2000 lines of prose into the 6 shipped catalogs is the real cost, and until
+  that exists every locale falls back to English help via gettext — so wrapping
+  alone buys little. Long-form docs staying source-language is the norm for
+  niche FOSS; this item exists so the gap is a tracked decision, not an
+  accident.
+- **Plan**:
+  1. Decide per-surface whether to wrap-and-translate or formally scope out.
+     The help manual is the expensive one — consider wrapping the section
+     headings / nav only (cheap, high-visibility) and leaving body prose
+     English, or deferring entirely.
+  2. For `error()` callers: wrap progressively, re-extract + regen pseudolocale
+     per batch (`docs/specs/i18n.md` §4), use the Pseudo locale to catch misses.
+  3. Document whatever is intentionally left English-only in `docs/specs/i18n.md`
+     §1 (scope) so the boundary is explicit.
+- **Source**: user-request-2026-06-17 (help-section i18n question); carved from
+  the Pass 43.5 "Follow-ons noted" status line.
+- **Status**: todo
 
 ---
 
