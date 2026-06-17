@@ -3537,6 +3537,18 @@ weren't worth blocking the ship on.  Ordered by rough priority.
 
 <a id="done-index"></a>
 
+#### Pass 49.1 Changelog pagination — "Load More" to cap initial render (MEDIUM, M)
+- **Status**: todo
+- **Target**: `/changelog` route (`app.py::changelog`), `templates/changelog.html`.
+- **Why**: the changelog renders all 788+ entries server-side in one response (~550 ms `slow_request` warnings observed on /changelog). Most readers only look at the latest few releases; rendering the full history every visit is wasted work and a slow first paint.
+- **Plan**:
+  1. Render the first X entries (e.g. 20) on initial load.
+  2. Add a "Load More" button that loads the next X, and so on.
+  3. Two shapes: (a) server-paginated — the route accepts `?offset=&limit=` and returns a partial the button appends (reduces payload — preferred, matches the perf motivation); (b) client-side reveal — emit all, hide beyond X, JS unhides (simpler, no payload win).
+  4. Keep the per-locale merge (Pass 43.6, docs/specs/i18n.md §9) intact — paginate AFTER the version-merge so translated recent entries still win.
+  5. i18n: wrap the "Load More" label (`{{ _('Load More') }}`, or `t('Load More')` if JS-built).
+- **Source**: user-request-2026-06-17 (deferred — perf/UX enhancement).
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
