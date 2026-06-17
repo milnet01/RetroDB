@@ -84,8 +84,11 @@ jobs:
           uv pip install --system --require-hashes -r requirements.lock
           # Test-only tooling (not user-shipped). semgrep/pip-audit/pip-tools
           # moved to the dedicated jobs below, so this install stays lean.
+          # beautifulsoup4: tests/test_i18n.py parses rendered HTML with bs4 to
+          # assert pseudolocalization coverage (Pass 43.x); the dep was missed
+          # here, keeping the pytest job red since v3.7.0.
           uv pip install --system \
-            ruff pytest pytest-cov pytest-xdist pytest-randomly
+            ruff pytest pytest-cov pytest-xdist pytest-randomly beautifulsoup4
 
       - name: Ruff (bugs only — E, F, B, S)
         run: ruff check .

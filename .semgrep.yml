@@ -118,6 +118,13 @@
 #     (`os.execv(sys.executable, [sys.executable] + sys.argv)`), behind
 #     @admin_required. sys.argv is process-own, not request data.
 #
+#   python.lang.security.audit.dangerous-subprocess-use-tainted-env-args.dangerous-subprocess-use-tainted-env-args
+#     Anchor: build_dist.py `_cpu_build_python()` (Pass 46.3 Part 3) runs
+#     venv-create + pip-install with paths derived from RETRODB_STAGING_DIR.
+#     That env var is maintainer/CI-set (Pass 39.6), not request data, and
+#     build_dist.py is a maintainer-run packaging script that never serves a
+#     request. Direct sibling of the os-exec rule above.
+#
 #   python.flask.security.open-redirect.open-redirect
 #     Anchor: routes/platform_import.py:429 passes the flagged value as a
 #     url_for query-string parameter, not as a redirect target.
