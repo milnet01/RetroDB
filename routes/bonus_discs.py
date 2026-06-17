@@ -5,6 +5,7 @@
 # =============================================================================
 
 from flask import Blueprint, request, jsonify
+from flask_babel import gettext as _
 import os
 import re
 import logging
@@ -187,11 +188,11 @@ def link_bonus_disc_to_parent(bonus_game_id, parent_game_id):
         parent = query("SELECT id, title, system_id FROM games WHERE id = ?", (parent_game_id,), one=True)
 
         if not bonus:
-            return {'success': False, 'error': 'Bonus disc not found'}
+            return {'success': False, 'error': _('Bonus disc not found')}
         if not parent:
-            return {'success': False, 'error': 'Parent game not found'}
+            return {'success': False, 'error': _('Parent game not found')}
         if bonus['system_id'] != parent['system_id']:
-            return {'success': False, 'error': 'Bonus disc and parent game must be in the same system'}
+            return {'success': False, 'error': _('Bonus disc and parent game must be in the same system')}
 
         # Update the bonus disc
         execute("""
@@ -205,7 +206,7 @@ def link_bonus_disc_to_parent(bonus_game_id, parent_game_id):
 
     except Exception as e:
         logger.error(f"Error linking bonus disc: {e}")
-        return {'success': False, 'error': 'An internal error occurred'}
+        return {'success': False, 'error': _('An internal error occurred')}
 
 
 def unlink_bonus_disc(bonus_game_id):
@@ -223,7 +224,7 @@ def unlink_bonus_disc(bonus_game_id):
 
     except Exception as e:
         logger.error(f"Error unlinking bonus disc: {e}")
-        return {'success': False, 'error': 'An internal error occurred'}
+        return {'success': False, 'error': _('An internal error occurred')}
 
 
 def get_bonus_discs_for_game(parent_game_id):
@@ -259,7 +260,7 @@ def api_get_potential_parents(game_id):
     """Get potential parent games for a bonus disc"""
     game = query("SELECT system_id FROM games WHERE id = ?", (game_id,), one=True)
     if not game:
-        return jsonify({'success': False, 'error': 'Game not found'})
+        return jsonify({'success': False, 'error': _('Game not found')})
 
     parents = find_potential_parent_games(game_id, game['system_id'])
     return jsonify({'success': True, 'parents': parents})
@@ -275,7 +276,7 @@ def api_link_bonus_disc():
     parent_id = data.get('parent_id')
 
     if not bonus_id or not parent_id:
-        return jsonify({'success': False, 'error': 'Missing bonus_id or parent_id'})
+        return jsonify({'success': False, 'error': _('Missing bonus_id or parent_id')})
 
     result = link_bonus_disc_to_parent(bonus_id, parent_id)
     return jsonify(result)
@@ -300,7 +301,7 @@ def api_mark_bonus_disc():
     is_bonus = data.get('is_bonus', True)
 
     if not game_id:
-        return jsonify({'success': False, 'error': 'Missing game_id'})
+        return jsonify({'success': False, 'error': _('Missing game_id')})
 
     execute("UPDATE games SET is_bonus_disc = ? WHERE id = ?",
            (1 if is_bonus else 0, game_id))

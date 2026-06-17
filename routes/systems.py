@@ -279,7 +279,7 @@ def api_get_systems():
         })
     except Exception as e:
         logger.error(f"Get systems error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+        return jsonify({'success': False, 'error': _('An internal error occurred')})
 
 
 # DEPRECATED: This endpoint duplicates /api/systems (api_get_systems).
@@ -303,7 +303,7 @@ def api_update_system_type():
     system_type = data.get('system_type', '').strip()
 
     if not system_id:
-        return jsonify({'success': False, 'error': 'System ID required'}), 400
+        return jsonify({'success': False, 'error': _('System ID required')}), 400
 
     execute("UPDATE systems SET system_type = ? WHERE id = ?", (system_type, system_id))
     return jsonify({'success': True, 'message': f'System type updated to {system_type}'})
@@ -436,7 +436,7 @@ def api_import_logos():
     except ImportError:
         return jsonify({
             'success': False,
-            'error': 'ES-DE scraper not available'
+            'error': _('ES-DE scraper not available')
         }), 500
 
 
@@ -464,4 +464,4 @@ def api_calculate_storage():
         })
     except Exception as e:
         logger.error(f"Storage calculation error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+        return jsonify({'success': False, 'error': _('An internal error occurred')})

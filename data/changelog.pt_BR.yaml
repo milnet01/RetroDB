@@ -1,0 +1,68 @@
+- version: 3.9.0
+  date: '2026-06-17'
+  tags:
+  - type: feature
+    label: Manual de ajuda e notas das versões recentes agora traduzidos para os 6 idiomas
+  body: "<ul>\n  <li><strong>O manual de Ajuda completo dentro do aplicativo agora está disponível nos\
+    \ seis\n    idiomas</strong> &mdash; alemão, francês, espanhol, italiano, japonês\n    e português\
+    \ do Brasil &mdash; não apenas em inglês. O RetroDB mostra o\n    manual no idioma que você escolheu\
+    \ nas Configurações e recorre discretamente\n    ao inglês caso algo ainda não esteja traduzido.</li>\n\
+    \  <li><strong>Este Changelog agora também aparece no seu idioma</strong> nas\n    versões mais recentes,\
+    \ e as novas versões serão traduzidas a partir de agora.\n    O histórico mais antigo permanece em\
+    \ inglês.</li>\n  <li><strong>A página da Lista de Desejos e os últimos resquícios de texto em inglês</strong>\n\
+    \    &mdash; um conjunto de mensagens pop-up de erro e de status que tinham passado batido\n    quando\
+    \ os pacotes de idioma chegaram na 3.8.0 &mdash; agora são traduzidos\n    corretamente em todo o\
+    \ aplicativo.</li>\n</ul>\n"
+- version: 3.8.2
+  date: '2026-06-17'
+  tags:
+  - type: security
+    label: Atualização de dependência de segurança + correções de CI
+  body: "<ul>\n  <li><strong>Segurança:</strong> atualizamos a biblioteca <code>cryptography</code>\n\
+    \    embarcada (47 → 49) para resolver um aviso publicado (GHSA-537c-gmf6-5ccf).\n    Sem mudança\
+    \ de comportamento — apenas uma versão mais segura.</li>\n  <li>Corrigimos a esteira de testes automatizados:\
+    \ um auxiliar usado só nos testes\n    que estava faltando (<code>beautifulsoup4</code>) vinha falhando\
+    \ a execução dos testes desde a v3.7.0,\n    e o novo script de empacotamento disparava uma verificação\
+    \ de análise estática que é\n    um falso-positivo conhecido (ele executa comandos de build confiáveis,\
+    \ não entrada do usuário)\n    — agora documentado e calibrado. Apenas manutenção; nada muda no\n\
+    \    aplicativo em si.</li>\n</ul>\n"
+- version: 3.8.1
+  date: '2026-06-17'
+  tags:
+  - type: improvement
+    label: Opção de download menor, organização das doações e correção de tradução (Pass 46.3 / 47.6)
+  body: "<ul>\n  <li><strong>Um download muito menor está a caminho.</strong> A\n    versão pronta para\
+    \ usar do tipo \"é só descompactar e clicar duas vezes\" do RetroDB agora pode ser\n    gerada em\
+    \ uma variante <strong>somente CPU</strong> (~600&nbsp;MB) para quem\n    não tem uma placa de vídeo\
+    \ AMD &mdash; cerca de um sexto do tamanho da versão\n    completa. As duas serão oferecidas lado\
+    \ a lado para você escolher a que\n    combina com a sua máquina.</li>\n  <li><strong>O painel \"\
+    Apoie o Desenvolvimento\" nas Configurações agora é traduzido</strong>\n    junto com o resto do aplicativo\
+    \ &mdash; ele tinha sido deixado por acidente em\n    inglês quando os pacotes de idioma chegaram\
+    \ na 3.8.0.</li>\n  <li>Organizamos os links de doação (selo do GitHub Sponsors no README; o\n   \
+    \ arquivo de financiamento está pronto para o Patreon e o Buy&nbsp;Me&nbsp;A&nbsp;Coffee assim que\n\
+    \    forem configurados). Sem telas insistentes pedindo dinheiro, nunca.</li>\n  <li>Nos bastidores:\
+    \ a esteira de lançamento agora consegue gerar as versões\n    prontas para usar para Windows, macOS\
+    \ e Linux automaticamente. Observação: o longo\n    manual de <em>Ajuda</em> dentro do aplicativo\
+    \ ainda está somente em inglês por enquanto &mdash; isso está\n    registrado como trabalho futuro.</li>\n\
+    </ul>\n"
+- version: 3.8.0
+  date: '2026-06-12'
+  tags:
+  - type: feature
+    label: Tradução completa da interface + 6 idiomas (Pass 43.2/43.3/43.5)
+  body: "<ul>\n  <li><strong>O RetroDB agora fala 6 idiomas a mais.</strong> Aproveitando a\n    base\
+    \ feita na 3.7.0, toda a interface foi tornada traduzível e\n    traduzida por máquina para <strong>alemão,\
+    \ francês, espanhol, italiano,\n    japonês e português do Brasil</strong>. Escolha o seu idioma em\n\
+    \    Configurações &rarr; Preferências de Exibição &rarr; Idioma; ele segue a sua\n    preferência\
+    \ salva, depois o seu navegador e, por fim, recorre ao inglês &mdash; nunca\n    fica travado em um\
+    \ idioma que esteja faltando.</li>\n  <li><strong>Tudo o que aparece na tela está coberto</strong>:\
+    \ textos e botões das páginas,\n    mensagens pop-up (as pequenas notificações &ldquo;toast&rdquo;),\
+    \ os diálogos de\n    edição e de configurações, dicas e rótulos para leitores de tela. Gêneros de\
+    \ jogo,\n    perspectivas e modos de jogo (por exemplo, &ldquo;First-Person-Shooter&rdquo;) agora\n\
+    \    aparecem no seu idioma também &mdash; enquanto os dados subjacentes permanecem em\n    inglês,\
+    \ para que a sua biblioteca e os filtros continuem funcionando exatamente como antes.</li>\n  <li>Um\
+    \ idioma <strong>&ldquo;Pseudo&rdquo; embutido</strong> (visível no\n    menu de Idioma) é uma ferramenta\
+    \ de QA para tradutores que coloca colchetes e acentos em cada\n    rótulo, deixando na hora óbvio\
+    \ se algum texto foi esquecido.</li>\n  <li>As traduções por máquina são um ponto de partida e podem\
+    \ soar um pouco duras em\n    alguns lugares &mdash; elas são fáceis de refinar com o tempo, e qualquer\
+    \ texto sem\n    tradução simplesmente aparece em inglês.</li>\n</ul>\n"

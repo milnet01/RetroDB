@@ -21,17 +21,18 @@ genuinely diverges.
 
 ### After Every Code Change
 1. Bump version in `config.py` AND `config.example.py` (`APP_VERSION` + `APP_LAST_UPDATE`)
-2. Add changelog entry at top of `data/changelog.yaml`
+2. Add changelog entry at top of `data/changelog.yaml`. For a real release, also translate the **recent** entry (current line onward; deep history stays English) into each per-locale `data/changelog.<locale>.yaml` (the human-translation locales in `docs/specs/i18n.md` §9 — a different delivery path from the installed UI-catalog set `services/i18n.py::available_locales()` derives, §3). Repeat `version`, `date`, and every tag verbatim — the `/changelog` route swaps the whole entry in by version, so anything omitted is dropped, not inherited (Pass 43.6). Skip for internal/no-release bumps.
 3. Rebuild CSS if any `static/css/**.css` changed: `python3 build_css.py`
 4. Rebuild JS if any bundled `static/js/*.js` changed: `python3 build_js.py`
 5. Run tests if any `services/*.py` or `scraper/*.py` changed: `python3 -m pytest`
 6. Regenerate lockfile if `requirements.txt` was edited: `pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes` (Pass 39.4 — `install.py` prefers `--require-hashes` when `requirements.lock` is present and falls back to `requirements.txt` otherwise; keep the lockfile current so the secure path stays the default)
 7. Update this file if change adds/removes/renames routes, templates, bundled JS, CSS files, or alters page/asset wiring contracts
-8. Wrap any new user-facing string for i18n and regenerate catalogs — see `docs/specs/i18n.md` §2/§4/§6/§7:
+8. Wrap any new user-facing string for i18n and regenerate catalogs — see `docs/specs/i18n.md` §2/§4/§6/§7/§9:
    - Templates `{{ _('...') }}` / `{% trans %}`; Python `flash(_('...'))` / `error(_('...'))`.
    - **JS** (toasts, modal copy): `t('...')` — string literals only (see §6); `python3 build_js.py` regenerates `services/js_i18n_strings.py` (runtime manifest + `_()` bridge anchors that carry JS msgids into the catalog via the Python extractor — there is no `[javascript:]` babel mapping).
    - **Canonical multi-value labels** (genre/perspective/dimension/modes/game_structure): never wrap the value; it's translated for display via `display_field_value()` (server) / `tField()` (JS) — see §7. Add new canonical values to `services/i18n_labels.py` or `tests/test_i18n_labels.py` fails.
    - Regenerate: `python3 build_js.py && pybabel extract -F babel.cfg --ignore-dirs='.* __pycache__ node_modules venv .venv env build dist staging tests' -o messages.pot . && pybabel update -i messages.pot -d translations && python3 scripts/gen_pseudolocale.py && pybabel compile -d translations`. CI gate: `python3 scripts/check_i18n_fresh.py`. (The `--ignore-dirs` flag is mandatory — Babel otherwise skips the `_`-prefixed template partials; keep it identical to `check_i18n_fresh.py`.)
+   - **Long-form content** (the help manual + changelog) is NOT in the catalog — it's translated as whole per-locale files (`templates/help.<locale>.html`, `data/changelog.<locale>.yaml`) with English fallback (Pass 43.6, `docs/specs/i18n.md` §9). If you materially edit `templates/help.html` structure, mirror it into each `help.<locale>.html` (keep `id`/`href="#..."` anchors byte-identical, leave `<code>`/`<pre>` English).
 
 ### Verification Before Declaring Done
 Tests written alongside the implementation are regression pins, not correctness

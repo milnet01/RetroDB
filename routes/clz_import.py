@@ -5,6 +5,7 @@
 # =============================================================================
 
 from flask import Blueprint, request, redirect, url_for
+from flask_babel import gettext as _
 import os
 import re
 import tempfile
@@ -253,26 +254,26 @@ def api_clz_parse():
         import pdfplumber
     except ImportError:
         return error(
-            'pdfplumber module not installed. Please run: pip install pdfplumber --break-system-packages',
+            _('pdfplumber module not installed. Please run: pip install pdfplumber --break-system-packages'),
             400,
         )
 
     if 'file' not in request.files:
-        return error('No file uploaded', code=200)
+        return error(_('No file uploaded'), code=200)
 
     file = request.files['file']
     if not file.filename.lower().endswith('.pdf'):
-        return error('File must be a PDF', code=200)
+        return error(_('File must be a PDF'), code=200)
 
     # Read file content for size and magic byte validation
     MAX_PDF_SIZE = 50 * 1024 * 1024  # 50MB
     content = file.read()
 
     if len(content) > MAX_PDF_SIZE:
-        return error(f'File too large ({len(content) // (1024*1024)}MB). Maximum size is 50MB', 400)
+        return error(_('File too large (%(size)sMB). Maximum size is 50MB') % {'size': len(content) // (1024*1024)}, 400)
 
     if not content.startswith(b'%PDF'):
-        return error('Invalid PDF file (bad magic bytes)', 400)
+        return error(_('Invalid PDF file (bad magic bytes)'), 400)
 
     # Save to temp file
     with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp:
@@ -296,7 +297,7 @@ def api_clz_parse():
         with pdfplumber.open(tmp_path) as pdf:
             if len(pdf.pages) > max_pages:
                 return error(
-                    f'PDF has {len(pdf.pages)} pages; maximum is {max_pages}.',
+                    _('PDF has %(pages)s pages; maximum is %(max)s.') % {'pages': len(pdf.pages), 'max': max_pages},
                     code=400,
                 )
             # Store column mapping from first page (subsequent pages may not have headers)
@@ -565,7 +566,7 @@ def api_clz_import():
     games = data.get('games', [])
 
     if not games:
-        return error('No games to import', code=200)
+        return error(_('No games to import'), code=200)
 
     imported = 0
     skipped = 0

@@ -55,16 +55,16 @@ def api_login():
     # Rate limit login attempts
     client_ip = request.remote_addr or '127.0.0.1'
     if not rate_limit_login(client_ip):
-        return error('Too many login attempts. Please try again later.', 429)
+        return error(_('Too many login attempts. Please try again later.'), 429)
 
     if not user_id:
-        return error('No user selected', code=200)
+        return error(_('No user selected'), code=200)
 
     user = query("SELECT * FROM users WHERE id = ? AND is_active = 1", (user_id,), one=True)
 
     if not user:
         record_login_attempt(client_ip, False)
-        return error('User not found', code=200)
+        return error(_('User not found'), code=200)
 
     # Pass 24.1 — every role requires a password.
     if not user['password_hash']:
@@ -74,14 +74,14 @@ def api_login():
         # came here to fix.
         record_login_attempt(client_ip, False)
         return error(
-            'This account has no password set. Ask an administrator to set one.',
+            _('This account has no password set. Ask an administrator to set one.'),
             code=200,
         )
     if not password:
-        return error('Password required', code=200, needs_password=True)
+        return error(_('Password required'), code=200, needs_password=True)
     if not verify_password(password, user['password_hash']):
         record_login_attempt(client_ip, False)
-        return error('Invalid password', code=200)
+        return error(_('Invalid password'), code=200)
 
     # Migrate legacy (pre-v2.84.0) password hash to current OWASP floor.
     # We have the plaintext here, so this is the natural rehash point.
@@ -173,15 +173,15 @@ def api_create_user():
     role = data.get('role', 'viewer')
 
     if not username:
-        return error('Username is required', code=200)
+        return error(_('Username is required'), code=200)
 
     if role not in VALID_ROLES:
-        return error('Invalid role', code=200)
+        return error(_('Invalid role'), code=200)
 
     # Check if username already exists
     existing = query("SELECT id FROM users WHERE username = ?", (username,), one=True)
     if existing:
-        return error('Username already exists', code=200)
+        return error(_('Username already exists'), code=200)
 
     # Pass 24.1 — every role now requires a password, so every new account
     # seeds the same `changeme` + force_password_change=1 onboarding flow
@@ -191,7 +191,7 @@ def api_create_user():
     raw_password = data.get('password', '').strip()
     if raw_password:
         if len(raw_password) < 12:
-            return error('Password must be at least 12 characters', code=200)
+            return error(_('Password must be at least 12 characters'), code=200)
         password_hash = hash_password(raw_password)
         must_change = 0
     else:
@@ -217,7 +217,7 @@ def api_update_user(user_id):
     
     user = query("SELECT * FROM users WHERE id = ?", (user_id,), one=True)
     if not user:
-        return error('User not found', code=200)
+        return error(_('User not found'), code=200)
 
     updates = []
     params = []
@@ -240,7 +240,7 @@ def api_update_user(user_id):
         # password via this endpoint, violating the Pass 24.4 contract.
         raw_password = data['new_password']
         if len(raw_password) < 12:
-            return error('Password must be at least 12 characters', code=200)
+            return error(_('Password must be at least 12 characters'), code=200)
         updates.append('password_hash = ?')
         params.append(hash_password(raw_password))
         # Pass 33.4: admin-reset passwords must trigger a force-change on
@@ -265,16 +265,16 @@ def api_delete_user(user_id):
     """Delete a user (admin only)"""
     user = query("SELECT * FROM users WHERE id = ?", (user_id,), one=True)
     if not user:
-        return error('User not found', code=200)
+        return error(_('User not found'), code=200)
 
     # Can't delete yourself
     if g.user['id'] == user_id:
-        return error('Cannot delete your own account', code=200)
+        return error(_('Cannot delete your own account'), code=200)
 
     # Can't delete the last admin
     admin_count = query("SELECT COUNT(*) as count FROM users WHERE role = 'admin' AND is_active = 1", one=True)
     if user['role'] == 'admin' and admin_count['count'] <= 1:
-        return error('Cannot delete the last admin user', code=200)
+        return error(_('Cannot delete the last admin user'), code=200)
 
     # Delete custom avatar file if one exists
     user_settings = get_user_settings(user_id)
@@ -296,7 +296,7 @@ def api_delete_user(user_id):
 def api_user_settings():
     """Get or update current user's settings"""
     if not g.user:
-        return error('Not logged in', code=200)
+        return error(_('Not logged in'), code=200)
 
     if request.method == 'GET':
         settings = get_user_settings(g.user['id'])
@@ -334,7 +334,7 @@ def api_user_settings():
         # code=200 (success:false envelope) to match every other validation
         # error in this route — API.post throws on non-2xx, so a 400 would
         # surface as a generic "Network error" toast instead of this message.
-        return error('Invalid locale', code=200)
+        return error(_('Invalid locale'), code=200)
 
     for field in allowed_fields:
         if field in data:
@@ -353,7 +353,7 @@ def api_user_settings():
 def api_change_password():
     """Change current user's password (any authenticated role — Pass 24.1)."""
     if not g.user:
-        return error('Not logged in', code=200)
+        return error(_('Not logged in'), code=200)
 
     # Pass 41.1.B — bucket on (ip, user_id), not bare IP.  The legacy
     # IP-only bucket was shared with /api/login, so 5 failed
@@ -365,25 +365,25 @@ def api_change_password():
     user_id = g.user['id']
     rl_bucket = f"{client_ip}:cpw:{user_id}"
     if not rate_limit_login(rl_bucket):
-        return error('Too many attempts. Please try again later.', 429)
+        return error(_('Too many attempts. Please try again later.'), 429)
 
     data = request.get_json()
     current_password = data.get('current_password', '')
     new_password = data.get('new_password', '')
 
     if not new_password:
-        return error('New password is required', code=200)
+        return error(_('New password is required'), code=200)
 
     # Pass 24.4 — 8 → 12 char floor. OWASP 2026 Password Storage Cheat
     # Sheet minimum for accounts without MFA; 8 chars let `password` pass.
     if len(new_password) < 12:
-        return error('Password must be at least 12 characters', code=200)
+        return error(_('Password must be at least 12 characters'), code=200)
 
     # Verify current password
     user = query("SELECT password_hash FROM users WHERE id = ?", (user_id,), one=True)
     if not user or not verify_password(current_password, user['password_hash']):
         record_login_attempt(rl_bucket, False)
-        return error('Current password is incorrect', code=200)
+        return error(_('Current password is incorrect'), code=200)
 
     # Update password and clear force_password_change flag
     new_hash = hash_password(new_password)
@@ -409,20 +409,20 @@ def api_change_password():
 def api_force_change_password():
     """Change password when forced (first login with default password)"""
     if not g.user:
-        return error('Not logged in', code=200)
+        return error(_('Not logged in'), code=200)
 
     if not g.user.get('force_password_change'):
-        return error('Password change not required', code=200)
+        return error(_('Password change not required'), code=200)
 
     data = request.get_json()
     new_password = data.get('new_password', '')
 
     if not new_password:
-        return error('New password is required', code=200)
+        return error(_('New password is required'), code=200)
 
     # Pass 24.4 — 8 → 12 char floor, matching api_change_password.
     if len(new_password) < 12:
-        return error('Password must be at least 12 characters', code=200)
+        return error(_('Password must be at least 12 characters'), code=200)
 
     # Update password and clear force flag
     new_hash = hash_password(new_password)
@@ -464,21 +464,21 @@ def _delete_custom_avatar(user_id):
 def api_upload_avatar():
     """Upload a custom avatar image"""
     if 'avatar' not in request.files:
-        return error('No file provided', code=200)
+        return error(_('No file provided'), code=200)
 
     file = request.files['avatar']
     if not file.filename:
-        return error('No file selected', code=200)
+        return error(_('No file selected'), code=200)
 
     # Validate extension
     ext = file.filename.rsplit('.', 1)[-1].lower() if '.' in file.filename else ''
     if ext not in ALLOWED_AVATAR_EXTENSIONS:
-        return error('Invalid file type. Allowed: jpg, png, gif, webp', code=200)
+        return error(_('Invalid file type. Allowed: jpg, png, gif, webp'), code=200)
 
     # Read file data and check size
     file_data = file.read()
     if len(file_data) > MAX_AVATAR_SIZE:
-        return error('File too large. Maximum size is 2MB', code=200)
+        return error(_('File too large. Maximum size is 2MB'), code=200)
 
     # Delete any previous custom avatar
     _delete_custom_avatar(g.user['id'])
@@ -496,8 +496,8 @@ def api_upload_avatar():
         from PIL import Image
     except ImportError:
         return error(
-            'Avatar uploads require Pillow; please ask the operator to '
-            'install the project requirements.',
+            _('Avatar uploads require Pillow; please ask the operator to '
+              'install the project requirements.'),
             code=500,
         )
     import io
@@ -512,7 +512,7 @@ def api_upload_avatar():
         img.save(avatar_path, quality=90)
     except Exception:
         # PIL.verify() failed or decode error — treat as invalid upload.
-        return error('Invalid image file', code=200)
+        return error(_('Invalid image file'), code=200)
 
     # Update user settings
     execute("UPDATE user_settings SET avatar = ? WHERE user_id = ?", (filename, g.user['id']))

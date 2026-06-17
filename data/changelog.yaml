@@ -1,3 +1,40 @@
+- version: 3.9.0
+  date: 2026-06-17
+  tags:
+  - type: feature
+    label: Help manual & recent release notes now translated into all 6 languages
+  body: |
+    <ul>
+      <li><strong>The full in-app Help manual is now available in all six
+        languages</strong> &mdash; German, French, Spanish, Italian, Japanese
+        and Brazilian Portuguese &mdash; not just English. RetroDB shows the
+        manual in whichever language you've chosen in Settings, and quietly falls
+        back to English if something isn't translated yet.</li>
+      <li><strong>This Changelog now appears in your language too</strong> for the
+        most recent releases, and new releases will be translated from here on.
+        Older history stays in English.</li>
+      <li><strong>The Wishlist page and the last stragglers of English text</strong>
+        &mdash; a batch of pop-up error and status messages that had been missed
+        when the language packs first landed in 3.8.0 &mdash; now translate
+        properly across the app.</li>
+    </ul>
+- version: 3.8.2
+  date: 2026-06-17
+  tags:
+  - type: security
+    label: Security dependency update + CI fixes
+  body: |
+    <ul>
+      <li><strong>Security:</strong> updated the bundled <code>cryptography</code>
+        library (47 → 49) to clear a published advisory (GHSA-537c-gmf6-5ccf).
+        No behaviour change — just a safer version.</li>
+      <li>Fixed the automated test pipeline: a missing test-only helper
+        (<code>beautifulsoup4</code>) had been failing the test run since v3.7.0,
+        and the new packaging build script tripped a static-analysis check that's
+        a known false-positive (it runs trusted build commands, not user input)
+        — now documented and calibrated. Maintenance only; nothing changes in the
+        app itself.</li>
+    </ul>
 - version: 3.8.1
   date: 2026-06-17
   tags:

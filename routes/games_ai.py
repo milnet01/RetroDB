@@ -11,6 +11,7 @@ import logging
 from datetime import datetime, timezone
 
 from flask import Blueprint
+from flask_babel import gettext as _
 
 from services.analytics import invalidate_analytics_cache
 from services.api_helpers import handle_api_errors, success, error
@@ -42,7 +43,7 @@ def api_game_ai_fill(game_id):
         """, (game_id,), one=True)
 
         if not game:
-            return error('Game not found', 404)
+            return error(_('Game not found'), 404)
 
         from scraper.scrape_ai import get_game_details as ai_get_details, VALIDATE_FIELDS
         from scraper.hybrid_scraper import should_use_default_controller, get_system_default_controller_name
@@ -78,7 +79,7 @@ def api_game_ai_fill(game_id):
 
         if not ai_data:
             return error(
-                'AI returned no data. Check your API key and provider settings.',
+                _('AI returned no data. Check your API key and provider settings.'),
                 code=200,
             )
 
@@ -307,4 +308,4 @@ def api_game_ai_fill(game_id):
         )
 
     except ImportError:
-        return error('AI scraper module not available', 500)
+        return error(_('AI scraper module not available'), 500)

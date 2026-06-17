@@ -14,6 +14,7 @@
 import logging
 
 from flask import Blueprint
+from flask_babel import gettext as _
 
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required, has_permission, permission_required
@@ -61,7 +62,7 @@ def api_launch_game(game_id):
     """
     required = get_setting('launch_required_permission', 'launch')
     if not has_permission(required):
-        return error(f'This action requires the "{required}" permission', 403)
+        return error(_('This action requires the "%(perm)s" permission') % {'perm': required}, 403)
 
     launcher = get_launcher()
 
@@ -73,13 +74,13 @@ def api_launch_game(game_id):
             existing = h
             break
     if existing and policy == 'reject':
-        return error('This game is already running', 409,
+        return error(_('This game is already running'), 409,
                      existing_token=existing.token)
     if existing and policy == 'kill_and_relaunch':
         try:
             launcher.kill(existing.token, timeout_s=5.0)
         except LauncherError as e:
-            return error(f'failed to kill prior instance: {e}', 500)
+            return error(_('failed to kill prior instance: %(err)s') % {'err': e}, 500)
 
     # Resolve
     try:

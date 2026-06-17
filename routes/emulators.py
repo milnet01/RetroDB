@@ -8,6 +8,7 @@
 import logging
 
 from flask import Blueprint, render_template, request
+from flask_babel import gettext as _
 
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required, admin_required
@@ -74,7 +75,7 @@ def _validate_emulator_payload(data, require_all=True):
     binary_name = (data.get('binary_name') or '').strip()
     args_template = data.get('args_template') or ''
     if require_all and not (name and binary_name and args_template):
-        return None, error('name, binary_name, args_template are required', 400)
+        return None, error(_('name, binary_name, args_template are required'), 400)
     return {
         'name':                 name or None,
         'binary_name':          binary_name or None,
@@ -121,7 +122,7 @@ def api_update_emulator(emulator_id):
         args.append(v)
     sets.append("updated_at = datetime('now')")
     if not sets:
-        return error('nothing to update', 400)
+        return error(_('nothing to update'), 400)
     args.append(emulator_id)
     execute(f"UPDATE emulators SET {', '.join(sets)} WHERE id = ?", tuple(args))
     return success()
@@ -152,7 +153,7 @@ def api_map_system_emulator():
     system_id = data.get('system_id')
     emulator_id = data.get('emulator_id')
     if not (system_id and emulator_id):
-        return error('system_id and emulator_id required', 400)
+        return error(_('system_id and emulator_id required'), 400)
 
     is_default = int(bool(data.get('is_default')))
     if is_default:

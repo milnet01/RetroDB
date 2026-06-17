@@ -5,6 +5,7 @@
 # =============================================================================
 
 from flask import Blueprint, render_template, request, jsonify, g, current_app
+from flask_babel import gettext as _
 import sqlite3
 import os
 import shutil
@@ -205,7 +206,7 @@ def api_add_dropdown_option(category):
         value = data.get('value', '').strip()
 
         if not value:
-            return jsonify({'success': False, 'error': 'Value is required'}), 400
+            return jsonify({'success': False, 'error': _('Value is required')}), 400
 
         # Use a single connection for the read+write to avoid "database is locked"
         # when a background job holds a write lock between two separate connections
@@ -227,7 +228,7 @@ def api_add_dropdown_option(category):
 
         return jsonify({'success': True, 'message': f'Added "{value}" to {category}'})
     except sqlite3.IntegrityError:
-        return jsonify({'success': False, 'error': 'Option already exists'}), 400
+        return jsonify({'success': False, 'error': _('Option already exists')}), 400
 
 
 @bp.route('/api/dropdown-options/<int:option_id>', methods=['DELETE'])
@@ -298,7 +299,7 @@ def api_backup():
         })
     except Exception as e:
         logger.error(f"Backup error: {e}", exc_info=True)
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+        return jsonify({'success': False, 'error': _('An internal error occurred')})
 
 
 @bp.route('/api/backups', methods=['GET'])
@@ -322,7 +323,7 @@ def api_list_backups():
 
         return jsonify({'success': True, 'backups': backups})
     except Exception:
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+        return jsonify({'success': False, 'error': _('An internal error occurred')})
 
 
 @bp.route('/api/restore/<filename>', methods=['POST'])
@@ -331,13 +332,13 @@ def api_restore(filename):
     """Restore database from backup"""
     try:
         if not safe_filename(filename):
-            return jsonify({'success': False, 'error': 'Invalid filename'}), 400
+            return jsonify({'success': False, 'error': _('Invalid filename')}), 400
 
         backup_dir = os.path.join(os.path.dirname(config.DB_PATH), 'backups')
         backup_path = os.path.join(backup_dir, filename)
 
         if not os.path.exists(backup_path):
-            return jsonify({'success': False, 'error': 'Backup file not found'})
+            return jsonify({'success': False, 'error': _('Backup file not found')})
 
         # Pass 48.5 — refuse to restore while a background job is running. A
         # job thread holds an open handle to the live DB and would keep writing
@@ -352,7 +353,7 @@ def api_restore(filename):
         if active_jobs:
             return jsonify({
                 'success': False,
-                'error': 'A background job is running. Wait for it to finish before restoring.'
+                'error': _('A background job is running. Wait for it to finish before restoring.')
             }), 409
 
         # Pass 48.5 — integrity-gate the backup BEFORE the destructive swap. A
@@ -372,7 +373,7 @@ def api_restore(filename):
         if not integrity or integrity[0] != 'ok':
             return jsonify({
                 'success': False,
-                'error': 'Backup failed its integrity check; restore aborted.'
+                'error': _('Backup failed its integrity check; restore aborted.')
             }), 400
 
         # Create a backup of current db before restoring (online backup API
@@ -438,7 +439,7 @@ def api_restore(filename):
         })
     except Exception as e:
         logger.error(f"Restore error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+        return jsonify({'success': False, 'error': _('An internal error occurred')})
 
 
 # =============================================================================
@@ -494,7 +495,7 @@ def api_update_paths():
             if not ok:
                 return jsonify({
                     'success': False,
-                    'error': f'Invalid {incoming_key}: {result}',
+                    'error': _('Invalid %(field)s: %(result)s') % {'field': incoming_key, 'result': result},
                 }), 400
             current_settings[stored_key] = result
             changed_keys.append(stored_key)
@@ -513,11 +514,11 @@ def api_update_paths():
                 'restart_required': restart_needed
             })
         else:
-            return jsonify({'success': False, 'error': 'Failed to save settings'})
+            return jsonify({'success': False, 'error': _('Failed to save settings')})
 
     except Exception as e:
         logger.error(f"Settings update error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+        return jsonify({'success': False, 'error': _('An internal error occurred')})
 
 
 @bp.route('/api/settings', methods=['GET'])
@@ -532,7 +533,7 @@ def api_get_all_settings():
             'defaults': settings_manager.DEFAULT_SETTINGS
         })
     except Exception:
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+        return jsonify({'success': False, 'error': _('An internal error occurred')})
 
 
 @bp.route('/api/settings', methods=['POST'])
@@ -542,7 +543,7 @@ def api_update_all_settings():
     try:
         data = request.get_json()
         if not isinstance(data, dict):
-            return jsonify({'success': False, 'error': 'Request body must be a JSON object'}), 400
+            return jsonify({'success': False, 'error': _('Request body must be a JSON object')}), 400
         current_settings = settings_manager.load_settings()
         changed_keys = []
 
@@ -553,13 +554,13 @@ def api_update_all_settings():
             if key not in valid_keys:
                 return jsonify({
                     'success': False,
-                    'error': f"Unknown setting key: {key}",
+                    'error': _("Unknown setting key: %(key)s") % {'key': key},
                 }), 400
             ok, reason, cleaned = validate_settings_value(key, value)
             if not ok:
                 return jsonify({
                     'success': False,
-                    'error': f"Invalid value for '{key}': {reason}",
+                    'error': _("Invalid value for '%(key)s': %(reason)s") % {'key': key, 'reason': reason},
                 }), 400
             if current_settings.get(key) != cleaned:
                 changed_keys.append(key)
@@ -574,10 +575,10 @@ def api_update_all_settings():
                 'changed': changed_keys
             })
         else:
-            return jsonify({'success': False, 'error': 'Failed to save settings'})
+            return jsonify({'success': False, 'error': _('Failed to save settings')})
     except Exception as e:
         logger.error(f"Settings update error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+        return jsonify({'success': False, 'error': _('An internal error occurred')})
 
 
 @bp.route('/api/settings/reset', methods=['POST'])
@@ -592,9 +593,9 @@ def api_reset_settings():
                 'restart_required': True
             })
         else:
-            return jsonify({'success': False, 'error': 'Failed to reset settings'})
+            return jsonify({'success': False, 'error': _('Failed to reset settings')})
     except Exception:
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+        return jsonify({'success': False, 'error': _('An internal error occurred')})
 
 
 # =============================================================================
@@ -613,7 +614,7 @@ def api_save_logging_settings():
         # start. The validator is the same one /api/settings/<key> uses.
         ok, reason, cleaned = validate_settings_value('logging', data)
         if not ok:
-            return jsonify({'success': False, 'error': f'invalid logging settings: {reason}'}), 400
+            return jsonify({'success': False, 'error': _('invalid logging settings: %(reason)s') % {'reason': reason}}), 400
 
         # Get current settings
         settings = settings_manager.load_settings()
@@ -627,10 +628,10 @@ def api_save_logging_settings():
             log_manager.setup_all_logging()
             return jsonify({'success': True, 'message': 'Logging settings saved'})
         else:
-            return jsonify({'success': False, 'error': 'Failed to save settings'})
+            return jsonify({'success': False, 'error': _('Failed to save settings')})
     except Exception as e:
         logger.error(f"Error saving logging settings: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+        return jsonify({'success': False, 'error': _('An internal error occurred')})
 
 
 # =============================================================================
@@ -643,7 +644,7 @@ def api_save_logging_settings():
 def api_normalize_preview(field):
     """Preview normalization suggestions for a field (genre or modes)"""
     if field not in ('genre', 'modes'):
-        return jsonify({'success': False, 'error': 'Invalid field. Must be "genre" or "modes"'}), 400
+        return jsonify({'success': False, 'error': _('Invalid field. Must be "genre" or "modes"')}), 400
 
     values = get_unique_values(field)
 
@@ -672,10 +673,10 @@ def api_normalize_apply():
     mappings = data.get('mappings', [])
 
     if field not in ('genre', 'modes'):
-        return jsonify({'success': False, 'error': 'Invalid field. Must be "genre" or "modes"'}), 400
+        return jsonify({'success': False, 'error': _('Invalid field. Must be "genre" or "modes"')}), 400
 
     if not mappings:
-        return jsonify({'success': False, 'error': 'No mappings provided'}), 400
+        return jsonify({'success': False, 'error': _('No mappings provided')}), 400
 
     result = apply_normalization(field, mappings)
 

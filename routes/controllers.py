@@ -5,6 +5,7 @@
 # =============================================================================
 
 from flask import Blueprint, request
+from flask_babel import gettext as _
 import logging
 
 from services.database import query, execute
@@ -221,12 +222,12 @@ def api_add_controller():
     button_layout = data.get('button_layout', '').strip()
 
     if not name:
-        return error('Controller name is required', 400)
+        return error(_('Controller name is required'), 400)
 
     # Check for duplicates
     existing = query("SELECT id FROM controllers WHERE name = ?", (name,), one=True)
     if existing:
-        return error(f'Controller "{name}" already exists', 400)
+        return error(_('Controller "%(name)s" already exists') % {'name': name}, 400)
 
     # Get max sort order
     result = query("SELECT MAX(sort_order) as max_order FROM controllers", one=True)
@@ -283,17 +284,17 @@ def api_update_controller(controller_id):
     button_layout = data.get('button_layout', '').strip()
 
     if not name:
-        return error('Controller name is required', 400)
+        return error(_('Controller name is required'), 400)
 
     # Check controller exists
     existing = query("SELECT id FROM controllers WHERE id = ?", (controller_id,), one=True)
     if not existing:
-        return error('Controller not found', 404)
+        return error(_('Controller not found'), 404)
 
     # Check for name conflicts with other controllers
     duplicate = query("SELECT id FROM controllers WHERE name = ? AND id != ?", (name, controller_id), one=True)
     if duplicate:
-        return error(f'Another controller named "{name}" already exists', 400)
+        return error(_('Another controller named "%(name)s" already exists') % {'name': name}, 400)
 
     # Update controller (without system_id - we use junction table)
     execute("""
@@ -330,7 +331,7 @@ def api_get_controller(controller_id):
     """, (controller_id,), one=True)
 
     if not controller:
-        return error('Controller not found', 404)
+        return error(_('Controller not found'), 404)
 
     ctrl = dict(controller)
 
@@ -408,7 +409,7 @@ def api_set_system_default_controllers(system_id):
     # Verify system exists
     system = query("SELECT id, name FROM systems WHERE id = ?", (system_id,), one=True)
     if not system:
-        return error('System not found', 404)
+        return error(_('System not found'), 404)
 
     # Clear existing defaults for this system
     execute("UPDATE system_controllers SET is_default = 0 WHERE system_id = ?", (system_id,))
@@ -451,13 +452,13 @@ def api_set_system_default_controller(system_id):
     # Verify system exists
     system = query("SELECT id, name FROM systems WHERE id = ?", (system_id,), one=True)
     if not system:
-        return error('System not found', 404)
+        return error(_('System not found'), 404)
 
     # Verify controller exists (if provided)
     if controller_id:
         controller = query("SELECT id, name FROM controllers WHERE id = ?", (controller_id,), one=True)
         if not controller:
-            return error('Controller not found', 404)
+            return error(_('Controller not found'), 404)
 
     # Clear existing defaults
     execute("UPDATE system_controllers SET is_default = 0 WHERE system_id = ?", (system_id,))

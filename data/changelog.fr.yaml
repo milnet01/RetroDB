@@ -1,0 +1,72 @@
+- version: 3.9.0
+  date: '2026-06-17'
+  tags:
+  - type: feature
+    label: Le manuel d'aide et les notes de version récentes sont désormais traduits dans les 6 langues
+  body: "<ul>\n  <li><strong>Le manuel d'aide intégré complet est désormais disponible dans les six\n\
+    \    langues</strong> &mdash; allemand, français, espagnol, italien, japonais\n    et portugais brésilien\
+    \ &mdash; et plus seulement en anglais. RetroDB affiche le\n    manuel dans la langue que vous avez\
+    \ choisie dans les Paramètres, et revient\n    discrètement à l'anglais si un élément n'est pas encore\
+    \ traduit.</li>\n  <li><strong>Ce journal des modifications apparaît lui aussi dans votre langue</strong>\
+    \ pour les\n    versions les plus récentes, et les nouvelles versions seront traduites à partir de\
+    \ maintenant.\n    L'historique plus ancien reste en anglais.</li>\n  <li><strong>La page Liste de\
+    \ souhaits et les derniers vestiges de texte anglais</strong>\n    &mdash; un lot de messages d'erreur\
+    \ et de statut sous forme de pop-up qui avaient été oubliés\n    lors de l'arrivée des packs de langue\
+    \ dans la 3.8.0 &mdash; se traduisent désormais\n    correctement dans toute l'application.</li>\n\
+    </ul>\n"
+- version: 3.8.2
+  date: '2026-06-17'
+  tags:
+  - type: security
+    label: Mise à jour de dépendance de sécurité + corrections CI
+  body: "<ul>\n  <li><strong>Sécurité :</strong> mise à jour de la bibliothèque <code>cryptography</code>\
+    \ intégrée\n    (47 → 49) afin de corriger un avis de sécurité publié (GHSA-537c-gmf6-5ccf).\n   \
+    \ Aucun changement de comportement — simplement une version plus sûre.</li>\n  <li>Correction du pipeline\
+    \ de tests automatisés : un utilitaire réservé aux tests qui manquait\n    (<code>beautifulsoup4</code>)\
+    \ faisait échouer l'exécution des tests depuis la v3.7.0,\n    et le nouveau script de génération\
+    \ de package déclenchait une vérification d'analyse statique qui est\n    un faux positif connu (il\
+    \ exécute des commandes de génération de confiance, pas des entrées utilisateur)\n    — désormais\
+    \ documenté et calibré. Maintenance uniquement ; rien ne change dans\n    l'application elle-même.</li>\n\
+    </ul>\n"
+- version: 3.8.1
+  date: '2026-06-17'
+  tags:
+  - type: improvement
+    label: Option de téléchargement plus légère, nettoyage des dons et correction de traduction (Pass
+      46.3 / 47.6)
+  body: "<ul>\n  <li><strong>Un téléchargement bien plus léger arrive.</strong> La\n    version « il suffit\
+    \ de décompresser et de double-cliquer » prête à l'emploi de RetroDB peut désormais être\n    générée\
+    \ dans une variante <strong>CPU uniquement</strong> (~600&nbsp;Mo) destinée aux personnes qui\n  \
+    \  ne disposent pas de carte graphique AMD &mdash; soit environ un sixième de la taille de la version\n\
+    \    complète. Les deux seront proposées côte à côte afin que vous puissiez choisir celle qui\n  \
+    \  convient à votre machine.</li>\n  <li><strong>Le panneau « Soutenir le développement » dans les\
+    \ Paramètres se traduit désormais</strong>\n    avec le reste de l'application &mdash; il était resté\
+    \ par accident en\n    anglais lors de l'arrivée des packs de langue dans la 3.8.0.</li>\n  <li>Nettoyage\
+    \ des liens de dons (badge GitHub Sponsors dans le README ;\n    le fichier de financement est prêt\
+    \ pour Patreon et Buy&nbsp;Me&nbsp;A&nbsp;Coffee dès que\n    ceux-ci seront configurés). Jamais de\
+    \ fenêtres insistantes.</li>\n  <li>En coulisses : le pipeline de publication peut désormais générer\
+    \ automatiquement les\n    versions prêtes à l'emploi pour Windows, macOS et Linux. Remarque : le\
+    \ long\n    manuel d'<em>Aide</em> intégré reste pour l'instant uniquement en anglais &mdash; c'est\n\
+    \    consigné comme un travail à venir.</li>\n</ul>\n"
+- version: 3.8.0
+  date: '2026-06-12'
+  tags:
+  - type: feature
+    label: Traduction complète de l'interface + 6 langues (Pass 43.2/43.3/43.5)
+  body: "<ul>\n  <li><strong>RetroDB parle désormais 6 langues de plus.</strong> En s'appuyant sur les\n\
+    \    fondations de la 3.7.0, toute l'interface a été rendue traduisible et\n    traduite automatiquement\
+    \ en <strong>allemand, français, espagnol, italien,\n    japonais et portugais brésilien</strong>.\
+    \ Choisissez votre langue dans\n    Paramètres &rarr; Préférences d'affichage &rarr; Langue ; elle\
+    \ suit votre\n    préférence enregistrée, puis votre navigateur, puis revient à l'anglais &mdash;\
+    \ elle ne peut\n    jamais rester bloquée sur une langue manquante.</li>\n  <li><strong>Tout ce qui\
+    \ s'affiche à l'écran est couvert</strong> : le texte des pages et les boutons,\n    les messages\
+    \ pop-up (les petites notifications « toast »), les boîtes de dialogue d'édition\n    et de paramètres,\
+    \ les info-bulles et les libellés pour lecteurs d'écran. Les genres de jeux,\n    les perspectives\
+    \ et les modes de jeu (par ex. « First-Person-Shooter ») s'affichent\n    désormais dans votre langue\
+    \ également &mdash; tandis que les données sous-jacentes restent en\n    anglais, de sorte que votre\
+    \ bibliothèque et vos filtres continuent de fonctionner exactement comme avant.</li>\n  <li>Une <strong>langue\
+    \ « Pseudo »</strong> intégrée (visible dans le\n    menu Langue) est un outil de contrôle qualité\
+    \ pour traducteurs qui encadre et accentue chaque\n    libellé, rendant instantanément évident tout\
+    \ texte qui aurait été oublié.</li>\n  <li>Les traductions automatiques sont un point de départ et\
+    \ peuvent sembler un peu rigides par\n    endroits &mdash; elles sont faciles à affiner au fil du\
+    \ temps, et tout texte sans\n    traduction s'affiche simplement en anglais.</li>\n</ul>\n"

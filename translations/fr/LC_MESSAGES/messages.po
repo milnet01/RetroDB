@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-06-17 12:00+0200\n"
+"POT-Creation-Date: 2026-06-17 15:23+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -26,7 +26,12 @@ msgstr "Aucun jeu avec des RetroAchievements trouvé dans votre bibliothèque"
 msgid "System not found or has no achievement games"
 msgstr "Système introuvable ou sans jeux à succès"
 
-#: routes/achievements.py:170 routes/games.py:324
+#: routes/achievements.py:170 routes/achievements.py:435
+#: routes/bonus_discs.py:263 routes/bulk_scrape.py:46 routes/collections.py:275
+#: routes/collections.py:529 routes/games.py:324 routes/games.py:815
+#: routes/games.py:928 routes/games_ai.py:46 routes/games_media.py:33
+#: routes/games_media.py:80 routes/games_media.py:140 routes/reports.py:688
+#: routes/reports.py:804 routes/trophies.py:1265 services/hltb_service.py:127
 msgid "Game not found"
 msgstr "Jeu introuvable"
 
@@ -34,29 +39,951 @@ msgstr "Jeu introuvable"
 msgid "This game does not have RetroAchievements data"
 msgstr "Ce jeu ne possède pas de données RetroAchievements"
 
+#: routes/achievements.py:228
+msgid "No progress data - click Refresh to sync"
+msgstr "Aucune donnée de progression — cliquez sur Actualiser pour synchroniser"
+
+#: routes/achievements.py:242
+msgid "Game not linked to RetroAchievements"
+msgstr "Jeu non lié à RetroAchievements"
+
+#: routes/achievements.py:246
+msgid "RetroAchievements not configured"
+msgstr "RetroAchievements n'est pas configuré"
+
+#: routes/achievements.py:279
+msgid "Could not fetch achievement data"
+msgstr "Impossible de récupérer les données de succès"
+
+#: routes/achievements.py:292 routes/controllers.py:412
+#: routes/controllers.py:455 routes/museum.py:310 routes/museum.py:382
+#: routes/ra_sync.py:98 routes/systems.py:220
+msgid "System not found"
+msgstr "Système introuvable"
+
+#: routes/achievements.py:303
+msgid "No games with RetroAchievements in this system"
+msgstr "Aucun jeu avec RetroAchievements dans ce système"
+
+#: routes/achievements.py:313
+#, python-format
+msgid "Sync already in progress for %(name)s"
+msgstr "Synchronisation déjà en cours pour %(name)s"
+
+#: routes/achievements.py:452
+msgid "No RetroAchievements found for this game"
+msgstr "Aucun RetroAchievements trouvé pour ce jeu"
+
+#: routes/auth.py:58
+msgid "Too many login attempts. Please try again later."
+msgstr "Trop de tentatives de connexion. Veuillez réessayer plus tard."
+
+#: routes/auth.py:61
+msgid "No user selected"
+msgstr "Aucun utilisateur sélectionné"
+
+#: routes/auth.py:67 routes/auth.py:220 routes/auth.py:268
+msgid "User not found"
+msgstr "Utilisateur introuvable"
+
+#: routes/auth.py:77
+msgid "This account has no password set. Ask an administrator to set one."
+msgstr ""
+"Aucun mot de passe n'est défini pour ce compte. Demandez à un "
+"administrateur d'en définir un."
+
+#: routes/auth.py:81
+msgid "Password required"
+msgstr "Mot de passe requis"
+
+#: routes/auth.py:84
+msgid "Invalid password"
+msgstr "Mot de passe invalide"
+
 #: routes/auth.py:143
 msgid "You have been logged out"
 msgstr "Vous avez été déconnecté"
+
+#: routes/auth.py:176
+msgid "Username is required"
+msgstr "Le nom d'utilisateur est requis"
+
+#: routes/auth.py:179
+msgid "Invalid role"
+msgstr "Rôle invalide"
+
+#: routes/auth.py:184
+msgid "Username already exists"
+msgstr "Ce nom d'utilisateur existe déjà"
+
+#: routes/auth.py:194 routes/auth.py:243 routes/auth.py:380 routes/auth.py:425
+msgid "Password must be at least 12 characters"
+msgstr "Le mot de passe doit comporter au moins 12 caractères"
+
+#: routes/auth.py:272
+msgid "Cannot delete your own account"
+msgstr "Impossible de supprimer votre propre compte"
+
+#: routes/auth.py:277
+msgid "Cannot delete the last admin user"
+msgstr "Impossible de supprimer le dernier administrateur"
+
+#: routes/auth.py:299 routes/auth.py:356 routes/auth.py:412
+msgid "Not logged in"
+msgstr "Vous n'êtes pas connecté"
+
+#: routes/auth.py:337
+msgid "Invalid locale"
+msgstr "Langue invalide"
+
+#: routes/auth.py:368
+msgid "Too many attempts. Please try again later."
+msgstr "Trop de tentatives. Veuillez réessayer plus tard."
+
+#: routes/auth.py:375 routes/auth.py:421
+msgid "New password is required"
+msgstr "Le nouveau mot de passe est requis"
+
+#: routes/auth.py:386
+msgid "Current password is incorrect"
+msgstr "Le mot de passe actuel est incorrect"
+
+#: routes/auth.py:415
+msgid "Password change not required"
+msgstr "Aucun changement de mot de passe requis"
+
+#: routes/auth.py:467
+msgid "No file provided"
+msgstr "Aucun fichier fourni"
+
+#: routes/auth.py:471 routes/museum.py:692
+msgid "No file selected"
+msgstr "Aucun fichier sélectionné"
+
+#: routes/auth.py:476
+msgid "Invalid file type. Allowed: jpg, png, gif, webp"
+msgstr "Type de fichier invalide. Autorisés : jpg, png, gif, webp"
+
+#: routes/auth.py:481
+msgid "File too large. Maximum size is 2MB"
+msgstr "Fichier trop volumineux. La taille maximale est de 2 Mo"
+
+#: routes/auth.py:499
+msgid ""
+"Avatar uploads require Pillow; please ask the operator to install the "
+"project requirements."
+msgstr ""
+"L'envoi d'avatars nécessite Pillow ; veuillez demander à l'opérateur "
+"d'installer les dépendances du projet."
+
+#: routes/auth.py:515 routes/museum.py:724
+msgid "Invalid image file"
+msgstr "Fichier image invalide"
+
+#: routes/bonus_discs.py:191
+msgid "Bonus disc not found"
+msgstr "Disque bonus introuvable"
+
+#: routes/bonus_discs.py:193
+msgid "Parent game not found"
+msgstr "Jeu parent introuvable"
+
+#: routes/bonus_discs.py:195
+msgid "Bonus disc and parent game must be in the same system"
+msgstr "Le disque bonus et le jeu parent doivent appartenir au même système"
+
+#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1177
+#: routes/games.py:1207 routes/platform_import.py:283
+#: routes/platform_import.py:647 routes/platform_import.py:1016
+#: routes/scrape_logs.py:85 routes/scrape_logs.py:170 routes/scrape_logs.py:183
+#: routes/scrape_logs.py:221 routes/scraper.py:207 routes/scraper.py:531
+#: routes/scraper.py:924 routes/settings.py:302 routes/settings.py:326
+#: routes/settings.py:442 routes/settings.py:521 routes/settings.py:536
+#: routes/settings.py:581 routes/settings.py:598 routes/settings.py:634
+#: routes/steam_achievements.py:138 routes/systems.py:282 routes/systems.py:467
+#: routes/trophies.py:490 routes/trophies.py:686 routes/trophies.py:734
+#: routes/trophies.py:1582 routes/trophies.py:1606 routes/trophies.py:1651
+#: routes/trophies.py:1679 routes/trophies.py:1721 routes/trophies.py:1790
+#: routes/xbox_achievements.py:157 services/api_helpers.py:41
+msgid "An internal error occurred"
+msgstr "Une erreur interne s'est produite"
+
+#: routes/bonus_discs.py:279
+msgid "Missing bonus_id or parent_id"
+msgstr "bonus_id ou parent_id manquant"
+
+#: routes/bonus_discs.py:304 routes/reports.py:792
+msgid "Missing game_id"
+msgstr "game_id manquant"
+
+#: routes/bulk_scrape.py:35
+msgid "No game ID provided"
+msgstr "Aucun identifiant de jeu fourni"
+
+#: routes/bulk_scrape.py:142
+msgid "Failed to apply metadata"
+msgstr "Échec de l'application des métadonnées"
+
+#: routes/bulk_scrape.py:144
+msgid "No matches found"
+msgstr "Aucune correspondance trouvée"
+
+#: routes/bulk_scrape.py:163
+msgid "No game IDs provided"
+msgstr "Aucun identifiant de jeu fourni"
+
+#: routes/clz_import.py:257
+msgid ""
+"pdfplumber module not installed. Please run: pip install pdfplumber "
+"--break-system-packages"
+msgstr ""
+"Le module pdfplumber n'est pas installé. Veuillez exécuter : pip install "
+"pdfplumber --break-system-packages"
+
+#: routes/clz_import.py:262
+msgid "No file uploaded"
+msgstr "Aucun fichier envoyé"
+
+#: routes/clz_import.py:266
+msgid "File must be a PDF"
+msgstr "Le fichier doit être un PDF"
+
+#: routes/clz_import.py:273
+#, python-format
+msgid "File too large (%(size)sMB). Maximum size is 50MB"
+msgstr "Fichier trop volumineux (%(size)s Mo). La taille maximale est de 50 Mo"
+
+#: routes/clz_import.py:276
+msgid "Invalid PDF file (bad magic bytes)"
+msgstr "Fichier PDF invalide (octets magiques incorrects)"
+
+#: routes/clz_import.py:300
+#, python-format
+msgid "PDF has %(pages)s pages; maximum is %(max)s."
+msgstr "Le PDF comporte %(pages)s pages ; le maximum est de %(max)s."
+
+#: routes/clz_import.py:569
+msgid "No games to import"
+msgstr "Aucun jeu à importer"
+
+#: routes/collections.py:102 routes/collections.py:445
+#: routes/collections.py:474 routes/collections.py:496
+#: routes/collections.py:525 routes/collections.py:564
+msgid "List not found"
+msgstr "Liste introuvable"
+
+#: routes/collections.py:161
+msgid "Tag name is required"
+msgstr "Le nom de l'étiquette est requis"
+
+#: routes/collections.py:176 routes/collections.py:214
+msgid "A tag with that name already exists"
+msgstr "Une étiquette portant ce nom existe déjà"
+
+#: routes/collections.py:193 routes/collections.py:270
+#: routes/collections.py:437 routes/collections.py:677
+msgid "No data provided"
+msgstr "Aucune donnée fournie"
+
+#: routes/collections.py:201 routes/collections.py:232
+#: routes/collections.py:293 routes/collections.py:358
+msgid "Tag not found"
+msgstr "Étiquette introuvable"
+
+#: routes/collections.py:281
+msgid "Either tag_id or tag_name is required"
+msgstr "tag_id ou tag_name est requis"
+
+#: routes/collections.py:337
+msgid "Tag is not assigned to this game"
+msgstr "Cette étiquette n'est pas attribuée à ce jeu"
+
+#: routes/collections.py:405
+msgid "List name is required"
+msgstr "Le nom de la liste est requis"
+
+#: routes/collections.py:515
+msgid "game_id is required"
+msgstr "game_id est requis"
+
+#: routes/collections.py:571
+msgid "Game is not in this list"
+msgstr "Le jeu n'est pas dans cette liste"
+
+#: routes/collections.py:616
+msgid "Title is required"
+msgstr "Le titre est requis"
+
+#: routes/collections.py:628 routes/collections.py:695
+msgid "Priority must be an integer between 1 and 5"
+msgstr "La priorité doit être un entier compris entre 1 et 5"
+
+#: routes/collections.py:633 routes/collections.py:700
+msgid "system_id must be an integer"
+msgstr "system_id doit être un entier"
+
+#: routes/collections.py:636 routes/collections.py:703
+msgid "Unknown system_id"
+msgstr "system_id inconnu"
+
+#: routes/collections.py:647
+msgid "This game is already on your wishlist"
+msgstr "Ce jeu figure déjà dans votre liste de souhaits"
+
+#: routes/collections.py:685 routes/collections.py:730
+#: routes/collections.py:752
+msgid "Wishlist item not found"
+msgstr "Élément de la liste de souhaits introuvable"
+
+#: routes/controllers.py:225 routes/controllers.py:287
+msgid "Controller name is required"
+msgstr "Le nom de la manette est requis"
+
+#: routes/controllers.py:230
+#, python-format
+msgid "Controller \"%(name)s\" already exists"
+msgstr "La manette « %(name)s » existe déjà"
+
+#: routes/controllers.py:292 routes/controllers.py:334
+#: routes/controllers.py:461 routes/museum.py:600 routes/museum.py:685
+#: routes/museum.py:755
+msgid "Controller not found"
+msgstr "Manette introuvable"
+
+#: routes/controllers.py:297
+#, python-format
+msgid "Another controller named \"%(name)s\" already exists"
+msgstr "Une autre manette nommée « %(name)s » existe déjà"
+
+#: routes/emulators.py:78
+msgid "name, binary_name, args_template are required"
+msgstr "name, binary_name et args_template sont requis"
+
+#: routes/emulators.py:125
+msgid "nothing to update"
+msgstr "rien à mettre à jour"
+
+#: routes/emulators.py:156
+msgid "system_id and emulator_id required"
+msgstr "system_id et emulator_id requis"
+
+#: routes/games.py:219
+msgid "No IDs provided"
+msgstr "Aucun identifiant fourni"
+
+#: routes/games.py:227
+msgid "Provide 1-50 valid IDs"
+msgstr "Fournissez de 1 à 50 identifiants valides"
 
 #: routes/games.py:663
 msgid "Game not found after update"
 msgstr "Jeu introuvable après la mise à jour"
 
-#: routes/systems.py:220
-msgid "System not found"
-msgstr "Système introuvable"
+#: routes/games.py:954 routes/games.py:998
+msgid "No fields to update"
+msgstr "Aucun champ à mettre à jour"
+
+#: routes/games.py:995 routes/platform_import.py:205
+#: routes/platform_import.py:560 routes/platform_import.py:919
+#: routes/trophies.py:1870
+msgid "No games selected"
+msgstr "Aucun jeu sélectionné"
+
+#: routes/games.py:1005
+msgid "Invalid completion status"
+msgstr "Statut d'achèvement invalide"
+
+#: routes/games.py:1053
+msgid "No valid fields to update"
+msgstr "Aucun champ valide à mettre à jour"
+
+#: routes/games.py:1170
+msgid "Invalid status"
+msgstr "Statut invalide"
+
+#: routes/games.py:1195
+msgid "Not authenticated"
+msgstr "Non authentifié"
+
+#: routes/games.py:1226
+msgid "Filter type and value required"
+msgstr "Type et valeur de filtre requis"
+
+#: routes/games.py:1239
+msgid "Invalid filter type"
+msgstr "Type de filtre invalide"
+
+#: routes/games_ai.py:82
+msgid "AI returned no data. Check your API key and provider settings."
+msgstr ""
+"L'IA n'a renvoyé aucune donnée. Vérifiez votre clé API et les paramètres "
+"du fournisseur."
+
+#: routes/games_ai.py:311
+msgid "AI scraper module not available"
+msgstr "Module de récupération par IA non disponible"
+
+#: routes/games_media.py:69
+msgid "No filename provided"
+msgstr "Aucun nom de fichier fourni"
+
+#: routes/games_media.py:76 routes/reports.py:683 routes/scrape_logs.py:131
+#: routes/scrape_logs.py:156 routes/scrape_logs.py:205 routes/settings.py:335
+msgid "Invalid filename"
+msgstr "Nom de fichier invalide"
+
+#: routes/games_media.py:85
+#, python-format
+msgid "ROM file not found on disk: %(path)s"
+msgstr "Fichier ROM introuvable sur le disque : %(path)s"
+
+#: routes/games_media.py:101
+msgid "Destination is outside the configured ROM root"
+msgstr "La destination se trouve en dehors du dossier racine ROM configuré"
+
+#: routes/games_media.py:103
+msgid "Could not validate destination path"
+msgstr "Impossible de valider le chemin de destination"
+
+#: routes/games_media.py:106 routes/reports.py:715 routes/reports.py:877
+msgid "A file with that name already exists"
+msgstr "Un fichier portant ce nom existe déjà"
+
+#: routes/games_media.py:113
+msgid "Failed to rename file"
+msgstr "Échec du renommage du fichier"
+
+#: routes/games_media.py:133
+msgid "No screenshot specified"
+msgstr "Aucune capture d'écran spécifiée"
+
+#: routes/games_media.py:136
+msgid "Invalid screenshot filename"
+msgstr "Nom de fichier de capture d'écran invalide"
+
+#: routes/games_media.py:146
+msgid "Screenshot not found"
+msgstr "Capture d'écran introuvable"
+
+#: routes/games_search.py:42
+msgid "Title required"
+msgstr "Titre requis"
+
+#: routes/games_search.py:196
+msgid "Two game IDs required"
+msgstr "Deux identifiants de jeu requis"
+
+#: routes/games_search.py:210
+msgid "One or both games not found"
+msgstr "Un des jeux ou les deux sont introuvables"
+
+#: routes/launch.py:65
+#, python-format
+msgid "This action requires the \"%(perm)s\" permission"
+msgstr "Cette action requiert l'autorisation « %(perm)s »"
+
+#: routes/launch.py:77
+msgid "This game is already running"
+msgstr "Ce jeu est déjà en cours d'exécution"
+
+#: routes/launch.py:83
+#, python-format
+msgid "failed to kill prior instance: %(err)s"
+msgstr "échec de l'arrêt de l'instance précédente : %(err)s"
+
+#: routes/museum.py:386 routes/scraper.py:777
+msgid "No AI provider configured"
+msgstr "Aucun fournisseur d'IA configuré"
+
+#: routes/museum.py:399
+#, python-format
+msgid "Unknown provider: %(provider)s"
+msgstr "Fournisseur inconnu : %(provider)s"
+
+#: routes/museum.py:410
+msgid "Empty AI response"
+msgstr "Réponse de l'IA vide"
+
+#: routes/museum.py:417
+msgid "No usable content in AI response"
+msgstr "Aucun contenu exploitable dans la réponse de l'IA"
+
+#: routes/museum.py:623
+msgid "Could not find a suitable image for this controller"
+msgstr "Impossible de trouver une image adaptée pour cette manette"
+
+#: routes/museum.py:639
+msgid "No controllers found"
+msgstr "Aucune manette trouvée"
+
+#: routes/museum.py:688
+msgid "No image file provided"
+msgstr "Aucun fichier image fourni"
+
+#: routes/museum.py:704
+#, python-format
+msgid "File too large (%(size)s MB). Maximum is %(max)s MB."
+msgstr "Fichier trop volumineux (%(size)s Mo). Le maximum est de %(max)s Mo."
+
+#: routes/museum.py:714
+#, python-format
+msgid "File too large (> %(max)s MB)."
+msgstr "Fichier trop volumineux (> %(max)s Mo)."
+
+#: routes/museum.py:717
+msgid "File is too small"
+msgstr "Le fichier est trop petit"
+
+#: routes/museum.py:735
+msgid "Failed to process image"
+msgstr "Échec du traitement de l'image"
+
+#: routes/museum.py:758
+msgid "No image to process"
+msgstr "Aucune image à traiter"
+
+#: routes/museum.py:762
+msgid "Image file not found"
+msgstr "Fichier image introuvable"
+
+#: routes/museum.py:772 routes/museum.py:776 services/js_i18n_strings.py:391
+msgid "Background removal failed"
+msgstr "Échec de la suppression de l'arrière-plan"
+
+#: routes/platform_import.py:138
+msgid "Steam API key not configured. Add it in Settings → API Keys."
+msgstr ""
+"La clé API Steam n'est pas configurée. Ajoutez-la dans Paramètres → Clés "
+"API."
+
+#: routes/platform_import.py:140
+msgid "Steam ID not configured. Add it in Settings → API Keys."
+msgstr ""
+"L'identifiant Steam n'est pas configuré. Ajoutez-le dans Paramètres → "
+"Clés API."
+
+#: routes/platform_import.py:146
+#, python-format
+msgid ""
+"Could not resolve Steam vanity URL \"%(steam_id)s\". Use your 17-digit "
+"Steam ID instead."
+msgstr ""
+"Impossible de résoudre l'URL personnalisée Steam « %(steam_id)s ». "
+"Utilisez plutôt votre identifiant Steam à 17 chiffres."
+
+#: routes/platform_import.py:152
+msgid ""
+"No games found. Check that your Steam profile and game details are set to"
+" Public."
+msgstr ""
+"Aucun jeu trouvé. Vérifiez que votre profil Steam et les détails de vos "
+"jeux sont définis sur Public."
+
+#: routes/platform_import.py:210
+msgid "Could not create Windows system entry"
+msgstr "Impossible de créer l'entrée du système Windows"
+
+#: routes/platform_import.py:331
+msgid "Xbox Client ID not configured. Add it in Settings → API Keys."
+msgstr ""
+"L'identifiant client Xbox n'est pas configuré. Ajoutez-le dans Paramètres"
+" → Clés API."
+
+#: routes/platform_import.py:469
+msgid "Xbox credentials not configured. Add them in Settings → API Keys."
+msgstr ""
+"Les identifiants Xbox ne sont pas configurés. Ajoutez-les dans Paramètres"
+" → Clés API."
+
+#: routes/platform_import.py:473
+msgid "Xbox authentication failed. Please re-connect your Xbox account."
+msgstr "Échec de l'authentification Xbox. Veuillez reconnecter votre compte Xbox."
+
+#: routes/platform_import.py:477
+msgid "No games found in Xbox title history."
+msgstr "Aucun jeu trouvé dans l'historique des titres Xbox."
+
+#: routes/platform_import.py:755
+msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
+msgstr "Le NPSSO PSN n'est pas configuré. Ajoutez-le dans Paramètres → Clés API."
+
+#: routes/platform_import.py:784
+msgid "Failed to fetch PSN game list. Try syncing trophies first."
+msgstr ""
+"Échec de la récupération de la liste des jeux PSN. Essayez d'abord de "
+"synchroniser les trophées."
+
+#: routes/ra_sync.py:104
+#, python-format
+msgid "System %(name)s does not support RetroAchievements"
+msgstr "Le système %(name)s ne prend pas en charge RetroAchievements"
+
+#: routes/reports.py:408
+msgid "Unknown system"
+msgstr "Système inconnu"
+
+#: routes/reports.py:429 routes/reports.py:594
+msgid "ROM path not configured. Go to Settings → Paths to set it."
+msgstr ""
+"Le chemin des ROM n'est pas configuré. Accédez à Paramètres → Chemins "
+"pour le définir."
+
+#: routes/reports.py:590
+msgid "Missing required parameters"
+msgstr "Paramètres requis manquants"
+
+#: routes/reports.py:600 routes/tools.py:449 routes/tools.py:506
+#: routes/tools.py:541
+msgid "Invalid path"
+msgstr "Chemin invalide"
+
+#: routes/reports.py:606
+#, python-format
+msgid "Folder does not exist: %(folder_path)s"
+msgstr "Le dossier n'existe pas : %(folder_path)s"
+
+#: routes/reports.py:680
+msgid "Missing game_id or new_name"
+msgstr "game_id ou new_name manquant"
+
+#: routes/reports.py:692 routes/reports.py:808
+msgid "No ROM path set"
+msgstr "Aucun chemin ROM défini"
+
+#: routes/reports.py:707 routes/reports.py:813
+msgid "ROM file not found"
+msgstr "Fichier ROM introuvable"
+
+#: routes/reports.py:724
+msgid "M3U files must keep the .m3u extension"
+msgstr "Les fichiers M3U doivent conserver l'extension .m3u"
+
+#: routes/reports.py:737 routes/reports.py:889
+msgid "A folder with the new name already exists"
+msgstr "Un dossier portant le nouveau nom existe déjà"
+
+#: routes/reports.py:817
+msgid "No scraped title available"
+msgstr "Aucun titre récupéré disponible"
+
+#: routes/reports.py:835
+msgid "Title is empty after sanitization"
+msgstr "Le titre est vide après nettoyage"
+
+#: routes/reports.py:858
+msgid "Generated filename contains invalid characters"
+msgstr "Le nom de fichier généré contient des caractères invalides"
+
+#: routes/scrape_logs.py:98 routes/scrape_logs.py:134 routes/scrape_logs.py:159
+#: routes/scrape_logs.py:210
+msgid "Invalid log file"
+msgstr "Fichier journal invalide"
+
+#: routes/scrape_logs.py:102 routes/tools.py:452
+msgid "File not found"
+msgstr "Fichier introuvable"
+
+#: routes/scrape_logs.py:139 routes/scrape_logs.py:164
+#: routes/scrape_logs.py:216
+msgid "Log file not found"
+msgstr "Fichier journal introuvable"
+
+#: routes/scraper.py:222
+#, python-format
+msgid "invalid scraper settings: %(reason)s"
+msgstr "paramètres de récupération invalides : %(reason)s"
+
+#: routes/scraper.py:280
+#, python-format
+msgid "invalid api keys: %(reason)s"
+msgstr "clés API invalides : %(reason)s"
+
+#: routes/scraper.py:551
+msgid "No TGDB API key configured"
+msgstr "Aucune clé API TGDB configurée"
+
+#: routes/scraper.py:658
+msgid "No ScreenScraper credentials configured"
+msgstr "Aucun identifiant ScreenScraper configuré"
+
+#: routes/scraper.py:695
+msgid "Invalid JSON response from ScreenScraper"
+msgstr "Réponse JSON invalide de ScreenScraper"
+
+#: routes/scraper.py:698
+msgid "Error parsing API response"
+msgstr "Erreur lors de l'analyse de la réponse de l'API"
+
+#: routes/scraper.py:716
+msgid "No RAWG API key configured"
+msgstr "Aucune clé API RAWG configurée"
+
+#: routes/scraper.py:823
+#, python-format
+msgid "Unknown AI provider: %(provider)s"
+msgstr "Fournisseur d'IA inconnu : %(provider)s"
+
+#: routes/scraper.py:826
+msgid "No response from AI provider"
+msgstr "Aucune réponse du fournisseur d'IA"
+
+#: routes/scraper.py:917
+#, python-format
+msgid "Connection error: %(error)s"
+msgstr "Erreur de connexion : %(error)s"
+
+#: routes/scraper.py:920
+#, python-format
+msgid "Allowance check not supported for %(scraper)s"
+msgstr "Vérification du quota non prise en charge pour %(scraper)s"
+
+#: routes/settings.py:209
+msgid "Value is required"
+msgstr "La valeur est requise"
+
+#: routes/settings.py:231
+msgid "Option already exists"
+msgstr "Cette option existe déjà"
+
+#: routes/settings.py:341
+msgid "Backup file not found"
+msgstr "Fichier de sauvegarde introuvable"
+
+#: routes/settings.py:356
+msgid "A background job is running. Wait for it to finish before restoring."
+msgstr ""
+"Une tâche en arrière-plan est en cours. Attendez qu'elle se termine avant"
+" de restaurer."
+
+#: routes/settings.py:376
+msgid "Backup failed its integrity check; restore aborted."
+msgstr ""
+"La sauvegarde a échoué au contrôle d'intégrité ; la restauration a été "
+"annulée."
+
+#: routes/settings.py:498
+#, python-format
+msgid "Invalid %(field)s: %(result)s"
+msgstr "%(field)s invalide : %(result)s"
+
+#: routes/settings.py:517 routes/settings.py:578 routes/settings.py:631
+#: routes/tools.py:238 services/js_i18n_strings.py:476
+msgid "Failed to save settings"
+msgstr "Échec de l'enregistrement des paramètres"
+
+#: routes/settings.py:546
+msgid "Request body must be a JSON object"
+msgstr "Le corps de la requête doit être un objet JSON"
+
+#: routes/settings.py:557 routes/tools.py:230
+#, python-format
+msgid "Unknown setting key: %(key)s"
+msgstr "Clé de paramètre inconnue : %(key)s"
+
+#: routes/settings.py:563 routes/tools.py:233
+#, python-format
+msgid "Invalid value for '%(key)s': %(reason)s"
+msgstr "Valeur invalide pour « %(key)s » : %(reason)s"
+
+#: routes/settings.py:596
+msgid "Failed to reset settings"
+msgstr "Échec de la réinitialisation des paramètres"
+
+#: routes/settings.py:617
+#, python-format
+msgid "invalid logging settings: %(reason)s"
+msgstr "paramètres de journalisation invalides : %(reason)s"
+
+#: routes/settings.py:647 routes/settings.py:676
+msgid "Invalid field. Must be \"genre\" or \"modes\""
+msgstr "Champ invalide. Doit être « genre » ou « modes »"
+
+#: routes/settings.py:679
+msgid "No mappings provided"
+msgstr "Aucune correspondance fournie"
+
+#: routes/steam_achievements.py:111
+msgid "Steam credentials not configured"
+msgstr "Identifiants Steam non configurés"
+
+#: routes/steam_achievements.py:115
+msgid "Game not found or not a Steam game"
+msgstr "Jeu introuvable ou n'étant pas un jeu Steam"
+
+#: routes/systems.py:306
+msgid "System ID required"
+msgstr "Identifiant de système requis"
+
+#: routes/systems.py:439
+msgid "ES-DE scraper not available"
+msgstr "Récupérateur ES-DE non disponible"
+
+#: routes/tools.py:220
+msgid "Administrator privileges required"
+msgstr "Privilèges d'administrateur requis"
+
+#: routes/tools.py:224
+msgid "Settings payload must be an object"
+msgstr "Les données de paramètres doivent être un objet"
+
+#: routes/tools.py:273 routes/tools.py:885
+#, python-format
+msgid "Path does not exist: %(path)s"
+msgstr "Le chemin n'existe pas : %(path)s"
+
+#: routes/tools.py:300
+msgid "Permission denied"
+msgstr "Autorisation refusée"
+
+#: routes/tools.py:328
+msgid "Task not found"
+msgstr "Tâche introuvable"
+
+#: routes/tools.py:351 routes/tools.py:371
+msgid "Task not found or not running"
+msgstr "Tâche introuvable ou non en cours d'exécution"
+
+#: routes/tools.py:391
+msgid "Task not found or not paused"
+msgstr "Tâche introuvable ou non en pause"
+
+#: routes/tools.py:408 routes/tools.py:600 routes/tools.py:763
+#: routes/tools.py:877
+msgid "Invalid scan path"
+msgstr "Chemin d'analyse invalide"
+
+#: routes/tools.py:446 routes/tools.py:503 routes/tools.py:538
+msgid "No path provided"
+msgstr "Aucun chemin fourni"
+
+#: routes/tools.py:474
+msgid "No archive path provided"
+msgstr "Aucun chemin d'archive fourni"
+
+#: routes/tools.py:477
+msgid "Invalid archive path"
+msgstr "Chemin d'archive invalide"
+
+#: routes/tools.py:480
+msgid "No files to remove"
+msgstr "Aucun fichier à supprimer"
+
+#: routes/tools.py:569
+msgid "No paths provided"
+msgstr "Aucun chemin fourni"
+
+#: routes/tools.py:575
+#, python-format
+msgid "Invalid path: %(path)s"
+msgstr "Chemin invalide : %(path)s"
+
+#: routes/tools.py:648
+msgid "chdman not found. Please install MAME tools."
+msgstr "chdman introuvable. Veuillez installer les outils MAME."
+
+#: routes/tools.py:786
+msgid "chdman not found"
+msgstr "chdman introuvable"
 
 #: routes/trophies.py:378
-msgid "Please configure your RPCS3 Trophy Path in your profile settings to view trophies"
-msgstr "Veuillez configurer le chemin des trophées RPCS3 dans les paramètres de votre profil pour afficher les trophées"
+msgid ""
+"Please configure your RPCS3 Trophy Path in your profile settings to view "
+"trophies"
+msgstr ""
+"Veuillez configurer le chemin des trophées RPCS3 dans les paramètres de "
+"votre profil pour afficher les trophées"
 
 #: routes/trophies.py:409
 msgid "Trophy set not found"
 msgstr "Ensemble de trophées introuvable"
 
-#: routes/trophies.py:747
+#: routes/trophies.py:453
+msgid "RPCS3_TROPHY_PATH not configured"
+msgstr "RPCS3_TROPHY_PATH n'est pas configuré"
+
+#: routes/trophies.py:456
+#, python-format
+msgid "Trophy path not found: %(path)s"
+msgstr "Chemin des trophées introuvable : %(path)s"
+
+#: routes/trophies.py:747 routes/trophies.py:1704
 msgid "PSN game not found"
 msgstr "Jeu PSN introuvable"
+
+#: routes/trophies.py:984
+msgid "Sync already in progress"
+msgstr "Synchronisation déjà en cours"
+
+#: routes/trophies.py:1283
+msgid "Game not found in your PSN trophy list"
+msgstr "Jeu introuvable dans votre liste de trophées PSN"
+
+#: routes/trophies.py:1579
+msgid "Game not found on PSN"
+msgstr "Jeu introuvable sur PSN"
+
+#: routes/trophies.py:1594 routes/trophies.py:1667
+msgid "Missing npwr_id"
+msgstr "npwr_id manquant"
+
+#: routes/trophies.py:1692
+msgid "Missing npwr_id or group_id"
+msgstr "npwr_id ou group_id manquant"
+
+#: routes/trophies.py:1695
+msgid "Name cannot be empty"
+msgstr "Le nom ne peut pas être vide"
+
+#: routes/trophies.py:1733
+msgid "PSNAWP library not installed. Run: pip install psnawp"
+msgstr "Bibliothèque PSNAWP non installée. Exécutez : pip install psnawp"
+
+#: routes/trophies.py:1829
+msgid "No NPSSO token provided"
+msgstr "Aucun jeton NPSSO fourni"
+
+#: routes/trophies.py:1852
+#, python-format
+msgid "Connection failed: %(error)s"
+msgstr "Échec de la connexion : %(error)s"
+
+#: routes/trophies.py:1879
+msgid "PSN NPSSO not configured"
+msgstr "Le NPSSO PSN n'est pas configuré"
+
+#: routes/xbox_achievements.py:125
+msgid "Xbox credentials not configured"
+msgstr "Identifiants Xbox non configurés"
+
+#: routes/xbox_achievements.py:130
+msgid "Xbox authentication failed — please re-connect your account"
+msgstr "Échec de l'authentification Xbox — veuillez reconnecter votre compte"
+
+#: routes/xbox_achievements.py:134
+msgid "Game not found or not an Xbox game"
+msgstr "Jeu introuvable ou n'étant pas un jeu Xbox"
+
+#: services/hltb_service.py:136
+#, python-format
+msgid "No HLTB match found for \"%(title)s\""
+msgstr "Aucune correspondance HLTB trouvée pour « %(title)s »"
+
+#: services/hltb_service.py:178
+msgid "No search query provided"
+msgstr "Aucune requête de recherche fournie"
+
+#: services/hltb_service.py:203
+#, python-format
+msgid "No HLTB match found for \"%(query)s\""
+msgstr "Aucune correspondance HLTB trouvée pour « %(query)s »"
+
+#: services/hltb_service.py:227
+msgid "No playtime provided"
+msgstr "Aucun temps de jeu fourni"
+
+#: services/hltb_service.py:308
+msgid "Pending match not found"
+msgstr "Correspondance en attente introuvable"
 
 #: services/i18n_labels.py:32 templates/archive_scanner.html:752
 #: templates/multi_disc_organizer.html:243 templates/reports.html:364
@@ -496,11 +1423,15 @@ msgstr "Application…"
 msgid ""
 "Are you sure you want to cancel the bulk scrape?\n"
 "\n"
-"Note: the current game will finish scraping (usually 10–60 seconds) before the cancel takes effect — the progress toast will keep updating during that window."
+"Note: the current game will finish scraping (usually 10–60 seconds) "
+"before the cancel takes effect — the progress toast will keep updating "
+"during that window."
 msgstr ""
 "Voulez-vous vraiment annuler la récupération groupée ?\n"
 "\n"
-"Remarque : le jeu en cours terminera sa récupération (généralement 10 à 60 secondes) avant que l'annulation ne prenne effet — la notification de progression continuera de se mettre à jour pendant ce délai."
+"Remarque : le jeu en cours terminera sa récupération (généralement 10 à "
+"60 secondes) avant que l'annulation ne prenne effet — la notification de "
+"progression continuera de se mettre à jour pendant ce délai."
 
 #: services/js_i18n_strings.py:384
 msgid "Are you sure you want to cancel?"
@@ -513,12 +1444,20 @@ msgstr "Voulez-vous vraiment supprimer « {filename} » ?"
 
 #: services/js_i18n_strings.py:386
 #, python-brace-format
-msgid "Are you sure you want to delete user \"{username}\"? This action cannot be undone."
-msgstr "Voulez-vous vraiment supprimer l'utilisateur « {username} » ? Cette action est irréversible."
+msgid ""
+"Are you sure you want to delete user \"{username}\"? This action cannot "
+"be undone."
+msgstr ""
+"Voulez-vous vraiment supprimer l'utilisateur « {username} » ? Cette "
+"action est irréversible."
 
 #: services/js_i18n_strings.py:387
-msgid "Are you sure you want to reset all metadata for this game? This will delete boxart and screenshots."
-msgstr "Voulez-vous vraiment réinitialiser toutes les métadonnées de ce jeu ? Cela supprimera la jaquette et les captures d'écran."
+msgid ""
+"Are you sure you want to reset all metadata for this game? This will "
+"delete boxart and screenshots."
+msgstr ""
+"Voulez-vous vraiment réinitialiser toutes les métadonnées de ce jeu ? "
+"Cela supprimera la jaquette et les captures d'écran."
 
 #: services/js_i18n_strings.py:388
 msgid "Are you sure you want to restart the server?"
@@ -526,16 +1465,16 @@ msgstr "Voulez-vous vraiment redémarrer le serveur ?"
 
 #: services/js_i18n_strings.py:389
 #, python-brace-format
-msgid "Are you sure you want to restore from \"{filename}\"? This will replace all current data."
-msgstr "Voulez-vous vraiment restaurer à partir de « {filename} » ? Cela remplacera toutes les données actuelles."
+msgid ""
+"Are you sure you want to restore from \"{filename}\"? This will replace "
+"all current data."
+msgstr ""
+"Voulez-vous vraiment restaurer à partir de « {filename} » ? Cela "
+"remplacera toutes les données actuelles."
 
 #: services/js_i18n_strings.py:390 templates/settings.html:65
 msgid "Are you sure?"
 msgstr "Êtes-vous sûr ?"
-
-#: services/js_i18n_strings.py:391
-msgid "Background removal failed"
-msgstr "Échec de la suppression de l'arrière-plan"
 
 #: services/js_i18n_strings.py:392
 msgid "Background removed"
@@ -581,7 +1520,7 @@ msgstr "Imports CLZ"
 #: templates/psn_trophy_detail.html:180 templates/psn_trophy_detail.html:323
 #: templates/reports.html:516 templates/screenshot_dedup.html:289
 #: templates/settings.html:67 templates/steam_achievement_game.html:136
-#: templates/xbox_achievement_game.html:129
+#: templates/wishlist.html:112 templates/xbox_achievement_game.html:129
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -642,8 +1581,13 @@ msgstr "Données RA effacées pour {n} jeux dans {system}"
 
 #: services/js_i18n_strings.py:413
 #, python-brace-format
-msgid "Cleared RetroAchievements data for {n} games. Run \"Refresh RetroAchievements\" to re-scan with updated matching."
-msgstr "Données RetroAchievements effacées pour {n} jeux. Exécutez « Refresh RetroAchievements » pour relancer l'analyse avec une correspondance mise à jour."
+msgid ""
+"Cleared RetroAchievements data for {n} games. Run \"Refresh "
+"RetroAchievements\" to re-scan with updated matching."
+msgstr ""
+"Données RetroAchievements effacées pour {n} jeux. Exécutez « Refresh "
+"RetroAchievements » pour relancer l'analyse avec une correspondance mise "
+"à jour."
 
 #: services/js_i18n_strings.py:414
 msgid "Clearing..."
@@ -652,6 +1596,7 @@ msgstr "Effacement…"
 #: services/js_i18n_strings.py:415 templates/archive_scanner.html:783
 #: templates/base.html:210 templates/base.html:295 templates/base.html:312
 #: templates/base.html:666 templates/base.html:939 templates/base.html:1320
+#: templates/wishlist.html:54
 msgid "Close"
 msgstr "Fermer"
 
@@ -861,7 +1806,9 @@ msgstr "Exclusif"
 
 #: services/js_i18n_strings.py:461
 msgid "Failed to apply bulk edit. Check console for details."
-msgstr "Échec de l'application de la modification groupée. Consultez la console pour plus de détails."
+msgstr ""
+"Échec de l'application de la modification groupée. Consultez la console "
+"pour plus de détails."
 
 #: services/js_i18n_strings.py:462
 msgid "Failed to apply normalization"
@@ -918,10 +1865,6 @@ msgstr "Échec de l'enregistrement HLTB : "
 #: services/js_i18n_strings.py:475
 msgid "Failed to save language"
 msgstr "Échec de l'enregistrement de la langue"
-
-#: services/js_i18n_strings.py:476
-msgid "Failed to save settings"
-msgstr "Échec de l'enregistrement des paramètres"
 
 #: services/js_i18n_strings.py:477
 msgid "Failed to save user"
@@ -1004,8 +1947,12 @@ msgstr "Génération annulée"
 
 #: services/js_i18n_strings.py:496
 #, python-brace-format
-msgid "Generation complete: {generated} generated, {skipped} skipped, {failed} failed"
-msgstr "Génération terminée : {generated} générés, {skipped} ignorés, {failed} échoués"
+msgid ""
+"Generation complete: {generated} generated, {skipped} skipped, {failed} "
+"failed"
+msgstr ""
+"Génération terminée : {generated} générés, {skipped} ignorés, {failed} "
+"échoués"
 
 #: services/js_i18n_strings.py:497
 msgid "Generation failed"
@@ -1119,13 +2066,21 @@ msgid "Match found - please confirm to save"
 msgstr "Correspondance trouvée - veuillez confirmer pour enregistrer"
 
 #: services/js_i18n_strings.py:518
-msgid "Matched using this alternate/regional title — confirm it refers to the same game before saving."
-msgstr "Correspondance établie via ce titre alternatif/régional — confirmez qu'il désigne le même jeu avant d'enregistrer."
+msgid ""
+"Matched using this alternate/regional title — confirm it refers to the "
+"same game before saving."
+msgstr ""
+"Correspondance établie via ce titre alternatif/régional — confirmez qu'il"
+" désigne le même jeu avant d'enregistrer."
 
 #: services/js_i18n_strings.py:519
 #, python-brace-format
-msgid "Matched via alternate title \"{term}\" — HLTB shows it as \"{match}\". Confirm before saving."
-msgstr "Correspondance via le titre alternatif « {term} » — HLTB l'affiche comme « {match} ». Confirmez avant d'enregistrer."
+msgid ""
+"Matched via alternate title \"{term}\" — HLTB shows it as \"{match}\". "
+"Confirm before saving."
+msgstr ""
+"Correspondance via le titre alternatif « {term} » — HLTB l'affiche comme "
+"« {match} ». Confirmez avant d'enregistrer."
 
 #: services/js_i18n_strings.py:520
 msgid "Multi-System"
@@ -1253,7 +2208,9 @@ msgstr "Aucun système trouvé"
 #: services/js_i18n_strings.py:550
 #, python-brace-format
 msgid "Normalization applied: {games} games updated, {rules} rules saved"
-msgstr "Normalisation appliquée : {games} jeux mis à jour, {rules} règles enregistrées"
+msgstr ""
+"Normalisation appliquée : {games} jeux mis à jour, {rules} règles "
+"enregistrées"
 
 #: services/js_i18n_strings.py:551
 msgid "Notification settings saved!"
@@ -1427,7 +2384,9 @@ msgstr "Rapports"
 
 #: services/js_i18n_strings.py:589
 msgid "Restart required for changes to take full effect"
-msgstr "Un redémarrage est nécessaire pour que les modifications prennent pleinement effet"
+msgstr ""
+"Un redémarrage est nécessaire pour que les modifications prennent "
+"pleinement effet"
 
 #: services/js_i18n_strings.py:590
 msgid "Restarting server..."
@@ -1495,7 +2454,7 @@ msgid "Scraper settings saved!"
 msgstr "Paramètres du récupérateur enregistrés !"
 
 #: services/js_i18n_strings.py:605 templates/logs.html:708
-#: templates/settings.html:27
+#: templates/settings.html:27 templates/wishlist.html:504
 msgid "Scraping"
 msgstr "Récupération"
 
@@ -1619,7 +2578,9 @@ msgstr "Synchronisation en file d'attente"
 
 #: services/js_i18n_strings.py:633
 msgid "Sync complete! Refresh page to see updated progress."
-msgstr "Synchronisation terminée ! Actualisez la page pour voir la progression mise à jour."
+msgstr ""
+"Synchronisation terminée ! Actualisez la page pour voir la progression "
+"mise à jour."
 
 #: services/js_i18n_strings.py:634
 msgid "Sync failed"
@@ -1648,7 +2609,7 @@ msgstr "Synchronisation : {processed} / {total}"
 #: templates/logs.html:720 templates/multi_disc_organizer.html:239
 #: templates/reports.html:355 templates/reports.html:430
 #: templates/settings.html:39 templates/steam_achievement_game.html:171
-#: templates/xbox_achievement_game.html:164
+#: templates/wishlist.html:64 templates/xbox_achievement_game.html:164
 msgid "System"
 msgstr "Système"
 
@@ -1657,13 +2618,24 @@ msgid "This system is already being synced."
 msgstr "Ce système est déjà en cours de synchronisation."
 
 #: services/js_i18n_strings.py:640
-msgid "This will clear ALL RetroAchievements game IDs and progress data from your database. You will need to run \"Refresh RetroAchievements\" again afterwards to re-scan your games. Continue?"
-msgstr "Cette action effacera TOUS les identifiants de jeux et données de progression RetroAchievements de votre base de données. Vous devrez ensuite relancer « Actualiser les RetroAchievements » pour réanalyser vos jeux. Continuer ?"
+msgid ""
+"This will clear ALL RetroAchievements game IDs and progress data from "
+"your database. You will need to run \"Refresh RetroAchievements\" again "
+"afterwards to re-scan your games. Continue?"
+msgstr ""
+"Cette action effacera TOUS les identifiants de jeux et données de "
+"progression RetroAchievements de votre base de données. Vous devrez "
+"ensuite relancer « Actualiser les RetroAchievements » pour réanalyser vos"
+" jeux. Continuer ?"
 
 #: services/js_i18n_strings.py:641
 #, python-brace-format
-msgid "This will clear RetroAchievements game IDs and progress data for \"{system}\". Continue?"
-msgstr "Cette action effacera les identifiants de jeux et données de progression RetroAchievements pour « {system} ». Continuer ?"
+msgid ""
+"This will clear RetroAchievements game IDs and progress data for "
+"\"{system}\". Continue?"
+msgstr ""
+"Cette action effacera les identifiants de jeux et données de progression "
+"RetroAchievements pour « {system} ». Continuer ?"
 
 #: services/js_i18n_strings.py:642
 #, python-brace-format
@@ -1671,24 +2643,48 @@ msgid "This will remove \"{system}\" from the Achievements page. Continue?"
 msgstr "Cette action supprimera « {system} » de la page des succès. Continuer ?"
 
 #: services/js_i18n_strings.py:643
-msgid "This will remove ALL games imported via CLZ Games Import from the database. This cannot be undone. Continue?"
-msgstr "Cette action supprimera TOUS les jeux importés via CLZ Games Import de la base de données. Cette action est irréversible. Continuer ?"
+msgid ""
+"This will remove ALL games imported via CLZ Games Import from the "
+"database. This cannot be undone. Continue?"
+msgstr ""
+"Cette action supprimera TOUS les jeux importés via CLZ Games Import de la"
+" base de données. Cette action est irréversible. Continuer ?"
 
 #: services/js_i18n_strings.py:644
-msgid "This will remove database entries for ROM files that no longer exist on disk. This cannot be undone. Continue?"
-msgstr "Cette action supprimera les entrées de la base de données pour les fichiers ROM qui n'existent plus sur le disque. Cette action est irréversible. Continuer ?"
+msgid ""
+"This will remove database entries for ROM files that no longer exist on "
+"disk. This cannot be undone. Continue?"
+msgstr ""
+"Cette action supprimera les entrées de la base de données pour les "
+"fichiers ROM qui n'existent plus sur le disque. Cette action est "
+"irréversible. Continuer ?"
 
 #: services/js_i18n_strings.py:645
-msgid "This will scan all games and update their RetroAchievements status. This may take several minutes for large collections. Continue?"
-msgstr "Cette action analysera tous les jeux et mettra à jour leur statut RetroAchievements. Cela peut prendre plusieurs minutes pour les grandes collections. Continuer ?"
+msgid ""
+"This will scan all games and update their RetroAchievements status. This "
+"may take several minutes for large collections. Continue?"
+msgstr ""
+"Cette action analysera tous les jeux et mettra à jour leur statut "
+"RetroAchievements. Cela peut prendre plusieurs minutes pour les grandes "
+"collections. Continuer ?"
 
 #: services/js_i18n_strings.py:646
-msgid "This will search for and download images for all controllers without images. Continue?"
-msgstr "Cette action recherchera et téléchargera des images pour toutes les manettes sans image. Continuer ?"
+msgid ""
+"This will search for and download images for all controllers without "
+"images. Continue?"
+msgstr ""
+"Cette action recherchera et téléchargera des images pour toutes les "
+"manettes sans image. Continuer ?"
 
 #: services/js_i18n_strings.py:647
-msgid "This will use your configured AI provider to generate history and top games for all systems. This may take several minutes and use API credits. Continue?"
-msgstr "Cette action utilisera votre fournisseur d'IA configuré pour générer l'historique et les meilleurs jeux de tous les systèmes. Cela peut prendre plusieurs minutes et consommer des crédits API. Continuer ?"
+msgid ""
+"This will use your configured AI provider to generate history and top "
+"games for all systems. This may take several minutes and use API credits."
+" Continue?"
+msgstr ""
+"Cette action utilisera votre fournisseur d'IA configuré pour générer "
+"l'historique et les meilleurs jeux de tous les systèmes. Cela peut "
+"prendre plusieurs minutes et consommer des crédits API. Continuer ?"
 
 #: services/js_i18n_strings.py:648 templates/logs.html:743
 msgid "To"
@@ -1787,8 +2783,13 @@ msgstr "Oui"
 
 #: services/js_i18n_strings.py:669
 #, python-brace-format
-msgid "Your bulk scrape has been queued (position {position}). It will start automatically when the current scrape finishes."
-msgstr "Votre récupération groupée a été mise en file d'attente (position {position}). Elle démarrera automatiquement à la fin de la récupération en cours."
+msgid ""
+"Your bulk scrape has been queued (position {position}). It will start "
+"automatically when the current scrape finishes."
+msgstr ""
+"Votre récupération groupée a été mise en file d'attente (position "
+"{position}). Elle démarrera automatiquement à la fin de la récupération "
+"en cours."
 
 #: services/js_i18n_strings.py:670
 msgid "Your settings have been saved!"
@@ -2277,7 +3278,9 @@ msgstr "Données de succès indisponibles"
 
 #: templates/achievement_game.html:356
 msgid "Could not fetch achievement progress from RetroAchievements."
-msgstr "Impossible de récupérer la progression des succès depuis RetroAchievements."
+msgstr ""
+"Impossible de récupérer la progression des succès depuis "
+"RetroAchievements."
 
 #: templates/achievement_game.html:357
 msgid "Please check your API credentials in Settings."
@@ -2293,8 +3296,12 @@ msgid "RetroAchievements Not Configured"
 msgstr "RetroAchievements non configuré"
 
 #: templates/achievements_system.html:25
-msgid "To view your personal progress, configure your RetroAchievements username and API key in your"
-msgstr "Pour afficher votre progression personnelle, configurez votre nom d'utilisateur et votre clé API RetroAchievements dans vos"
+msgid ""
+"To view your personal progress, configure your RetroAchievements username"
+" and API key in your"
+msgstr ""
+"Pour afficher votre progression personnelle, configurez votre nom "
+"d'utilisateur et votre clé API RetroAchievements dans vos"
 
 #: templates/achievements_system.html:26
 msgid "Profile Settings"
@@ -3077,7 +4084,9 @@ msgstr "Chemin"
 
 #: templates/archive_scanner.html:760
 msgid "Configure scan options and click \"Start Scan\" to find archive issues."
-msgstr "Configurez les options d'analyse et cliquez sur « Démarrer l'analyse » pour détecter les problèmes d'archives."
+msgstr ""
+"Configurez les options d'analyse et cliquez sur « Démarrer l'analyse » "
+"pour détecter les problèmes d'archives."
 
 #: templates/archive_scanner.html:774
 msgid "Archive Contents"
@@ -3100,6 +4109,7 @@ msgid "Success"
 msgstr "Réussi"
 
 #: templates/archive_scanner.html:812 templates/reports.html:491
+#: templates/wishlist.html:506
 msgid "Failed"
 msgstr "Échoué"
 
@@ -3197,7 +4207,7 @@ msgstr "Étiquettes"
 msgid "Lists"
 msgstr "Listes"
 
-#: templates/base.html:143
+#: templates/base.html:143 templates/wishlist.html:3 templates/wishlist.html:9
 msgid "Wishlist"
 msgstr "Liste de souhaits"
 
@@ -3320,7 +4330,7 @@ msgid "AI Fill"
 msgstr "Remplissage IA"
 
 #: templates/_settings_tabs/account.html:307 templates/base.html:937
-#: templates/game_detail.html:95
+#: templates/game_detail.html:95 templates/wishlist.html:638
 msgid "Edit"
 msgstr "Modifier"
 
@@ -3346,7 +4356,9 @@ msgstr "Capture d'écran suivante"
 
 #: templates/base.html:951
 msgid "Use &#8592; &#8594; arrow keys to navigate &bull; ESC to close"
-msgstr "Utilisez les flèches &#8592; &#8594; pour naviguer &bull; ÉCHAP pour fermer"
+msgstr ""
+"Utilisez les flèches &#8592; &#8594; pour naviguer &bull; ÉCHAP pour "
+"fermer"
 
 #: templates/_modals/edit_modal.html:7 templates/base.html:958
 msgid "Close edit modal"
@@ -3683,6 +4695,7 @@ msgstr "Images/Vidéo"
 
 #: templates/_modals/edit_modal.html:15
 #: templates/_settings_tabs/customization.html:267 templates/base.html:1322
+#: templates/wishlist.html:697
 msgid "Save Changes"
 msgstr "Enregistrer les modifications"
 
@@ -3708,8 +4721,15 @@ msgid "About CHD Format"
 msgstr "À propos du format CHD"
 
 #: templates/chd_converter.html:101
-msgid "CHD (Compressed Hunks of Data) is a lossless compression format designed for disc images. It can reduce file sizes by 30-70% while maintaining perfect compatibility with emulators like PCSX2, Dolphin, and MAME."
-msgstr "Le CHD (Compressed Hunks of Data) est un format de compression sans perte conçu pour les images de disque. Il peut réduire la taille des fichiers de 30 à 70 % tout en conservant une compatibilité parfaite avec des émulateurs comme PCSX2, Dolphin et MAME."
+msgid ""
+"CHD (Compressed Hunks of Data) is a lossless compression format designed "
+"for disc images. It can reduce file sizes by 30-70% while maintaining "
+"perfect compatibility with emulators like PCSX2, Dolphin, and MAME."
+msgstr ""
+"Le CHD (Compressed Hunks of Data) est un format de compression sans perte"
+" conçu pour les images de disque. Il peut réduire la taille des fichiers "
+"de 30 à 70 % tout en conservant une compatibilité parfaite avec des "
+"émulateurs comme PCSX2, Dolphin et MAME."
 
 #: templates/chd_converter.html:107
 msgid "Source Files"
@@ -3809,8 +4829,15 @@ msgid "Why Verify CHD Files?"
 msgstr "Pourquoi vérifier les fichiers CHD ?"
 
 #: templates/chd_verify.html:117
-msgid "CHD files contain internal checksums. Verification ensures the file data matches these checksums, detecting corruption from storage errors, incomplete downloads, or bad conversions."
-msgstr "Les fichiers CHD contiennent des sommes de contrôle internes. La vérification garantit que les données du fichier correspondent à ces sommes de contrôle, détectant les corruptions dues à des erreurs de stockage, des téléchargements incomplets ou de mauvaises conversions."
+msgid ""
+"CHD files contain internal checksums. Verification ensures the file data "
+"matches these checksums, detecting corruption from storage errors, "
+"incomplete downloads, or bad conversions."
+msgstr ""
+"Les fichiers CHD contiennent des sommes de contrôle internes. La "
+"vérification garantit que les données du fichier correspondent à ces "
+"sommes de contrôle, détectant les corruptions dues à des erreurs de "
+"stockage, des téléchargements incomplets ou de mauvaises conversions."
 
 #: templates/chd_verify.html:123
 msgid "CHD Files"
@@ -3866,8 +4893,12 @@ msgstr "Rang de collectionneur"
 
 #: templates/collector_trophies.html:37
 #, python-format
-msgid "<span class=\"collector-rank-points-value\">%(points)s</span> trophy points"
-msgstr "<span class=\"collector-rank-points-value\">%(points)s</span> points de trophée"
+msgid ""
+"<span class=\"collector-rank-points-value\">%(points)s</span> trophy "
+"points"
+msgstr ""
+"<span class=\"collector-rank-points-value\">%(points)s</span> points de "
+"trophée"
 
 #: templates/collector_trophies.html:42
 #, python-format
@@ -4001,6 +5032,7 @@ msgstr "Chemin de la ROM"
 
 #: templates/compare_games.html:92 templates/dashboard.html:13
 #: templates/dashboard.html:365 templates/dashboard.html:489
+#: templates/wishlist.html:505
 msgid "Scraped"
 msgstr "Récupéré"
 
@@ -4234,8 +5266,13 @@ msgid "Careful Review Recommended"
 msgstr "Examen attentif recommandé"
 
 #: templates/duplicate_finder.html:203
-msgid "Always review duplicates before deleting. Some \"duplicates\" may be different versions (regions, revisions) you might want to keep."
-msgstr "Examinez toujours les doublons avant de les supprimer. Certains « doublons » peuvent être des versions différentes (régions, révisions) que vous souhaitez conserver."
+msgid ""
+"Always review duplicates before deleting. Some \"duplicates\" may be "
+"different versions (regions, revisions) you might want to keep."
+msgstr ""
+"Examinez toujours les doublons avant de les supprimer. Certains « "
+"doublons » peuvent être des versions différentes (régions, révisions) que"
+" vous souhaitez conserver."
 
 #: templates/duplicate_finder.html:226 templates/screenshot_dedup.html:267
 msgid "Detection Method"
@@ -4323,8 +5360,13 @@ msgid "Change Default Password"
 msgstr "Changer le mot de passe par défaut"
 
 #: templates/force_change_password.html:11
-msgid "You are using the default admin password. For security, you must set a new password before continuing."
-msgstr "Vous utilisez le mot de passe administrateur par défaut. Pour des raisons de sécurité, vous devez définir un nouveau mot de passe avant de continuer."
+msgid ""
+"You are using the default admin password. For security, you must set a "
+"new password before continuing."
+msgstr ""
+"Vous utilisez le mot de passe administrateur par défaut. Pour des raisons"
+" de sécurité, vous devez définir un nouveau mot de passe avant de "
+"continuer."
 
 #: templates/_settings_tabs/account.html:199
 #: templates/force_change_password.html:18
@@ -4406,6 +5448,7 @@ msgstr "Supprimer le jeu de la base de données"
 
 #: templates/_settings_tabs/account.html:309 templates/game_detail.html:110
 #: templates/logs.html:733 templates/settings.html:68
+#: templates/wishlist.html:639
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -4437,7 +5480,9 @@ msgstr "Statut d'achèvement"
 
 #: templates/game_detail.html:211
 msgid "No description available. Click \"Scrape\" to fetch metadata."
-msgstr "Aucune description disponible. Cliquez sur « Récupérer » pour obtenir les métadonnées."
+msgstr ""
+"Aucune description disponible. Cliquez sur « Récupérer » pour obtenir les"
+" métadonnées."
 
 #: templates/game_detail.html:282
 msgid "View on RetroAchievements.org"
@@ -4607,10 +5652,12 @@ msgstr "PSN"
 
 #: templates/game_imports.html:184
 msgid ""
-"Import games from a <strong>CLZ Games</strong> PDF export. Export your collection from the CLZ app,\n"
+"Import games from a <strong>CLZ Games</strong> PDF export. Export your "
+"collection from the CLZ app,\n"
 "                then upload the PDF here."
 msgstr ""
-"Importez des jeux à partir d'un export PDF <strong>CLZ Games</strong>. Exportez votre collection depuis l'application CLZ,\n"
+"Importez des jeux à partir d'un export PDF <strong>CLZ Games</strong>. "
+"Exportez votre collection depuis l'application CLZ,\n"
 "                puis téléversez le PDF ici."
 
 #: templates/game_imports.html:190
@@ -4673,11 +5720,17 @@ msgstr "Importer la sélection"
 #: templates/game_imports.html:240
 #, python-format
 msgid ""
-"Import your Steam game library. Games are created under the <strong>Microsoft Windows</strong> system.\n"
-"                Configure your Steam API key and Steam ID in <a href=\"%(settings_url)s\" style=\"color: var(--primary-cyan);\">Settings &rarr; API Keys</a>, or enter them below."
+"Import your Steam game library. Games are created under the "
+"<strong>Microsoft Windows</strong> system.\n"
+"                Configure your Steam API key and Steam ID in <a "
+"href=\"%(settings_url)s\" style=\"color: var(--primary-cyan);\">Settings "
+"&rarr; API Keys</a>, or enter them below."
 msgstr ""
-"Importez votre bibliothèque de jeux Steam. Les jeux sont créés sous le système <strong>Microsoft Windows</strong>.\n"
-"                Configurez votre clé API Steam et votre Steam ID dans <a href=\"%(settings_url)s\" style=\"color: var(--primary-cyan);\">Paramètres &rarr; Clés API</a>, ou saisissez-les ci-dessous."
+"Importez votre bibliothèque de jeux Steam. Les jeux sont créés sous le "
+"système <strong>Microsoft Windows</strong>.\n"
+"                Configurez votre clé API Steam et votre Steam ID dans <a "
+"href=\"%(settings_url)s\" style=\"color: var(--primary-"
+"cyan);\">Paramètres &rarr; Clés API</a>, ou saisissez-les ci-dessous."
 
 #: templates/game_imports.html:245
 msgid "Steam Credentials"
@@ -4715,11 +5768,17 @@ msgstr "Dernière partie"
 #: templates/game_imports.html:293
 #, python-format
 msgid ""
-"Import your Xbox game library. Games are assigned to their correct Xbox system.\n"
-"                You need an Azure AD app registration &mdash; configure credentials in <a href=\"%(settings_url)s\" style=\"color: var(--primary-cyan);\">Settings &rarr; API Keys</a>."
+"Import your Xbox game library. Games are assigned to their correct Xbox "
+"system.\n"
+"                You need an Azure AD app registration &mdash; configure "
+"credentials in <a href=\"%(settings_url)s\" style=\"color: var(--primary-"
+"cyan);\">Settings &rarr; API Keys</a>."
 msgstr ""
-"Importez votre bibliothèque de jeux Xbox. Les jeux sont attribués à leur système Xbox correct.\n"
-"                Vous avez besoin d'un enregistrement d'application Azure AD &mdash; configurez les identifiants dans <a href=\"%(settings_url)s\" style=\"color: var(--primary-cyan);\">Paramètres &rarr; Clés API</a>."
+"Importez votre bibliothèque de jeux Xbox. Les jeux sont attribués à leur "
+"système Xbox correct.\n"
+"                Vous avez besoin d'un enregistrement d'application Azure "
+"AD &mdash; configurez les identifiants dans <a href=\"%(settings_url)s\" "
+"style=\"color: var(--primary-cyan);\">Paramètres &rarr; Clés API</a>."
 
 #: templates/game_imports.html:298
 msgid "Xbox Account"
@@ -4748,6 +5807,7 @@ msgstr "Bibliothèque Xbox"
 #: templates/game_imports.html:327 templates/game_imports.html:390
 #: templates/hltb_review.html:26 templates/logs.html:705
 #: templates/psn_trophies.html:124 templates/psn_trophies.html:158
+#: templates/wishlist.html:24
 msgid "All"
 msgstr "Tous"
 
@@ -4774,13 +5834,23 @@ msgstr "Gamerscore"
 #: templates/game_imports.html:356
 #, python-format
 msgid ""
-"Import your PlayStation game library. Games come from your PSN trophy list.\n"
-"                Configure your PSN NPSSO token in <a href=\"%(settings_url)s\" style=\"color: var(--primary-cyan);\">Settings &rarr; API Keys</a>.\n"
-"                For faster imports, sync your trophies first via the <a href=\"%(trophies_url)s\" style=\"color: var(--primary-cyan);\">PSN Trophies</a> page."
+"Import your PlayStation game library. Games come from your PSN trophy "
+"list.\n"
+"                Configure your PSN NPSSO token in <a "
+"href=\"%(settings_url)s\" style=\"color: var(--primary-cyan);\">Settings "
+"&rarr; API Keys</a>.\n"
+"                For faster imports, sync your trophies first via the <a "
+"href=\"%(trophies_url)s\" style=\"color: var(--primary-cyan);\">PSN "
+"Trophies</a> page."
 msgstr ""
-"Importez votre bibliothèque de jeux PlayStation. Les jeux proviennent de votre liste de trophées PSN.\n"
-"                Configurez votre jeton PSN NPSSO dans <a href=\"%(settings_url)s\" style=\"color: var(--primary-cyan);\">Paramètres &rarr; Clés API</a>.\n"
-"                Pour des imports plus rapides, synchronisez d'abord vos trophées via la page <a href=\"%(trophies_url)s\" style=\"color: var(--primary-cyan);\">Trophées PSN</a>."
+"Importez votre bibliothèque de jeux PlayStation. Les jeux proviennent de "
+"votre liste de trophées PSN.\n"
+"                Configurez votre jeton PSN NPSSO dans <a "
+"href=\"%(settings_url)s\" style=\"color: var(--primary-"
+"cyan);\">Paramètres &rarr; Clés API</a>.\n"
+"                Pour des imports plus rapides, synchronisez d'abord vos "
+"trophées via la page <a href=\"%(trophies_url)s\" style=\"color: var"
+"(--primary-cyan);\">Trophées PSN</a>."
 
 #: templates/game_imports.html:362
 msgid "PSN Account"
@@ -4825,8 +5895,12 @@ msgid "HLTB Pending Matches"
 msgstr "Correspondances HLTB en attente"
 
 #: templates/hltb_review.html:9
-msgid "Review and approve bulk HowLongToBeat lookup matches that need a human glance."
-msgstr "Examinez et approuvez les correspondances de recherche groupée HowLongToBeat qui nécessitent un regard humain."
+msgid ""
+"Review and approve bulk HowLongToBeat lookup matches that need a human "
+"glance."
+msgstr ""
+"Examinez et approuvez les correspondances de recherche groupée "
+"HowLongToBeat qui nécessitent un regard humain."
 
 #: templates/hltb_review.html:13
 msgid "Approve All"
@@ -4853,8 +5927,12 @@ msgid "No pending HLTB matches"
 msgstr "Aucune correspondance HLTB en attente"
 
 #: templates/hltb_review.html:38
-msgid "Run a bulk HLTB lookup from the ROM Tools Hub to queue matches for review here."
-msgstr "Lancez une recherche HLTB groupée depuis le hub Outils ROM pour mettre des correspondances en file d'attente pour examen ici."
+msgid ""
+"Run a bulk HLTB lookup from the ROM Tools Hub to queue matches for review"
+" here."
+msgstr ""
+"Lancez une recherche HLTB groupée depuis le hub Outils ROM pour mettre "
+"des correspondances en file d'attente pour examen ici."
 
 #: templates/_settings_tabs/data.html:5 templates/local_trophies.html:4
 #: templates/psn_trophy_detail.html:274 templates/systems.html:87
@@ -4879,8 +5957,12 @@ msgid "Trophy Path Not Configured"
 msgstr "Chemin des trophées non configuré"
 
 #: templates/local_trophies.html:30
-msgid "Configure your personal RPCS3 trophy folder path in your profile settings to view your trophies."
-msgstr "Configurez le chemin de votre dossier de trophées RPCS3 personnel dans les paramètres de votre profil pour afficher vos trophées."
+msgid ""
+"Configure your personal RPCS3 trophy folder path in your profile settings"
+" to view your trophies."
+msgstr ""
+"Configurez le chemin de votre dossier de trophées RPCS3 personnel dans "
+"les paramètres de votre profil pour afficher vos trophées."
 
 #: templates/local_trophies.html:34 templates/psn_trophies.html:34
 msgid "Go to My Profile"
@@ -4891,8 +5973,12 @@ msgid "No Trophies Found"
 msgstr "Aucun trophée trouvé"
 
 #: templates/local_trophies.html:46
-msgid "Click \"Scan Trophies\" to search for trophy data in your RPCS3 installation."
-msgstr "Cliquez sur « Analyser les trophées » pour rechercher les données de trophées dans votre installation RPCS3."
+msgid ""
+"Click \"Scan Trophies\" to search for trophy data in your RPCS3 "
+"installation."
+msgstr ""
+"Cliquez sur « Analyser les trophées » pour rechercher les données de "
+"trophées dans votre installation RPCS3."
 
 #: templates/local_trophies.html:108
 #, python-format
@@ -5059,16 +6145,24 @@ msgid "What This Tool Does"
 msgstr "Ce que fait cet outil"
 
 #: templates/multi_disc_organizer.html:200
-msgid "Scans for multi-disc game files (Disc 1, Disc 2, etc.) that aren't properly organized"
-msgstr "Recherche les fichiers de jeux multi-disques (Disque 1, Disque 2, etc.) qui ne sont pas correctement organisés"
+msgid ""
+"Scans for multi-disc game files (Disc 1, Disc 2, etc.) that aren't "
+"properly organized"
+msgstr ""
+"Recherche les fichiers de jeux multi-disques (Disque 1, Disque 2, etc.) "
+"qui ne sont pas correctement organisés"
 
 #: templates/multi_disc_organizer.html:201
 msgid "Creates a folder for each game with the disc files inside"
 msgstr "Crée un dossier pour chaque jeu contenant les fichiers de disque"
 
 #: templates/multi_disc_organizer.html:202
-msgid "Adds a <code>noload.txt</code> file to prevent ES-DE from scanning individual discs"
-msgstr "Ajoute un fichier <code>noload.txt</code> pour empêcher ES-DE d'analyser les disques individuels"
+msgid ""
+"Adds a <code>noload.txt</code> file to prevent ES-DE from scanning "
+"individual discs"
+msgstr ""
+"Ajoute un fichier <code>noload.txt</code> pour empêcher ES-DE d'analyser "
+"les disques individuels"
 
 #: templates/multi_disc_organizer.html:203
 msgid "Creates an M3U playlist file for ES-DE compatibility"
@@ -5104,8 +6198,12 @@ msgid "Discs"
 msgstr "Disques"
 
 #: templates/multi_disc_organizer.html:251
-msgid "Click \"Scan for Loose Discs\" to find multi-disc games that need to be organized."
-msgstr "Cliquez sur « Rechercher les disques épars » pour trouver les jeux multi-disques à organiser."
+msgid ""
+"Click \"Scan for Loose Discs\" to find multi-disc games that need to be "
+"organized."
+msgstr ""
+"Cliquez sur « Rechercher les disques épars » pour trouver les jeux multi-"
+"disques à organiser."
 
 #: templates/multi_disc_organizer.html:261
 msgid "Systems scanned:"
@@ -5219,8 +6317,12 @@ msgid "Generated by %(generated_by)s on %(generated_at)s"
 msgstr "Généré par %(generated_by)s le %(generated_at)s"
 
 #: templates/museum_system.html:85
-msgid "No history generated yet. Click \"Generate Content\" to create AI-generated history for this system."
-msgstr "Aucun historique généré pour le moment. Cliquez sur « Générer le contenu » pour créer un historique généré par IA pour ce système."
+msgid ""
+"No history generated yet. Click \"Generate Content\" to create AI-"
+"generated history for this system."
+msgstr ""
+"Aucun historique généré pour le moment. Cliquez sur « Générer le contenu "
+"» pour créer un historique généré par IA pour ce système."
 
 #: templates/museum_system.html:92
 msgid "Technical Specifications"
@@ -5275,8 +6377,13 @@ msgid "AI suggested"
 msgstr "Suggéré par IA"
 
 #: templates/museum_system.html:162
-msgid "No top games data available. Generate content to get AI-suggested top games, or add games with critic scores to your library."
-msgstr "Aucune donnée de meilleurs jeux disponible. Générez du contenu pour obtenir des meilleurs jeux suggérés par IA, ou ajoutez des jeux avec des notes de la critique à votre bibliothèque."
+msgid ""
+"No top games data available. Generate content to get AI-suggested top "
+"games, or add games with critic scores to your library."
+msgstr ""
+"Aucune donnée de meilleurs jeux disponible. Générez du contenu pour "
+"obtenir des meilleurs jeux suggérés par IA, ou ajoutez des jeux avec des "
+"notes de la critique à votre bibliothèque."
 
 #: templates/museum_system.html:173
 msgid "Fetch All Images"
@@ -5305,8 +6412,12 @@ msgid "Button Layout"
 msgstr "Disposition des boutons"
 
 #: templates/museum_system.html:226
-msgid "No controllers registered for this system. Add controllers from the system game list page."
-msgstr "Aucune manette enregistrée pour ce système. Ajoutez des manettes depuis la page de liste des jeux du système."
+msgid ""
+"No controllers registered for this system. Add controllers from the "
+"system game list page."
+msgstr ""
+"Aucune manette enregistrée pour ce système. Ajoutez des manettes depuis "
+"la page de liste des jeux du système."
 
 #: templates/museum_system.html:239
 msgid "Controller image viewer"
@@ -5349,16 +6460,24 @@ msgid "PSN Not Configured"
 msgstr "PSN non configuré"
 
 #: templates/psn_trophies.html:30
-msgid "Configure your PSN NPSSO token in your profile settings to sync your PlayStation Network trophies."
-msgstr "Configurez votre jeton PSN NPSSO dans les paramètres de votre profil pour synchroniser vos trophées PlayStation Network."
+msgid ""
+"Configure your PSN NPSSO token in your profile settings to sync your "
+"PlayStation Network trophies."
+msgstr ""
+"Configurez votre jeton PSN NPSSO dans les paramètres de votre profil pour"
+" synchroniser vos trophées PlayStation Network."
 
 #: templates/psn_trophies.html:44
 msgid "No PSN Trophies Found"
 msgstr "Aucun trophée PSN trouvé"
 
 #: templates/psn_trophies.html:46
-msgid "Click \"Sync Trophies\" to fetch your trophy data from PlayStation Network."
-msgstr "Cliquez sur « Synchroniser les trophées » pour récupérer vos données de trophées depuis PlayStation Network."
+msgid ""
+"Click \"Sync Trophies\" to fetch your trophy data from PlayStation "
+"Network."
+msgstr ""
+"Cliquez sur « Synchroniser les trophées » pour récupérer vos données de "
+"trophées depuis PlayStation Network."
 
 #: templates/psn_trophies.html:67
 #, python-format
@@ -5480,7 +6599,9 @@ msgstr "ignorés"
 
 #: templates/psn_trophies.html:282
 msgid "Rate limited: ~2.5 seconds between games to respect PSN API limits"
-msgstr "Limité en débit : ~2,5 secondes entre les jeux pour respecter les limites de l'API PSN"
+msgstr ""
+"Limité en débit : ~2,5 secondes entre les jeux pour respecter les limites"
+" de l'API PSN"
 
 #: templates/psn_trophy_detail.html:71
 #, python-format
@@ -5530,7 +6651,9 @@ msgstr "Aucune description"
 
 #: templates/reports.html:264
 msgid "Analyze ROM filenames against naming standards and scraped metadata"
-msgstr "Analyser les noms de fichiers ROM par rapport aux normes de nommage et aux métadonnées récupérées"
+msgstr ""
+"Analyser les noms de fichiers ROM par rapport aux normes de nommage et "
+"aux métadonnées récupérées"
 
 #: templates/reports.html:269
 msgid "Last scan:"
@@ -5618,8 +6741,12 @@ msgid "Suggested Name"
 msgstr "Nom suggéré"
 
 #: templates/reports.html:372
-msgid "Click \"Scan All ROMs\" to analyze your ROM collection against the naming standard."
-msgstr "Cliquez sur « Analyser toutes les ROM » pour analyser votre collection de ROM par rapport à la norme de nommage."
+msgid ""
+"Click \"Scan All ROMs\" to analyze your ROM collection against the naming"
+" standard."
+msgstr ""
+"Cliquez sur « Analyser toutes les ROM » pour analyser votre collection de"
+" ROM par rapport à la norme de nommage."
 
 #: templates/reports.html:386 templates/reports.html:409
 msgid "Title Mismatch"
@@ -5650,12 +6777,20 @@ msgid "Mismatch"
 msgstr "Incohérence"
 
 #: templates/reports.html:453
-msgid "Click \"Scan All ROMs\" to find filenames that don't match scraped metadata."
-msgstr "Cliquez sur « Analyser toutes les ROM » pour trouver les noms de fichiers qui ne correspondent pas aux métadonnées récupérées."
+msgid ""
+"Click \"Scan All ROMs\" to find filenames that don't match scraped "
+"metadata."
+msgstr ""
+"Cliquez sur « Analyser toutes les ROM » pour trouver les noms de fichiers"
+" qui ne correspondent pas aux métadonnées récupérées."
 
 #: templates/reports.html:472
-msgid "This will rename <strong id=\"batchTotalCount\">0</strong> ROM files to their suggested names."
-msgstr "Cette action renommera <strong id=\"batchTotalCount\">0</strong> fichiers ROM avec leurs noms suggérés."
+msgid ""
+"This will rename <strong id=\"batchTotalCount\">0</strong> ROM files to "
+"their suggested names."
+msgstr ""
+"Cette action renommera <strong id=\"batchTotalCount\">0</strong> fichiers"
+" ROM avec leurs noms suggérés."
 
 #: templates/reports.html:479
 msgid "This action cannot be undone. Make sure you have backups."
@@ -5678,8 +6813,13 @@ msgid "Utilities for managing, converting, and organizing your ROM collection"
 msgstr "Utilitaires pour gérer, convertir et organiser votre collection de ROM"
 
 #: templates/rom_tools_hub.html:123
-msgid "Scan ROM archives for corruption, unwanted files, and multi-file disc images. Clean up and create M3U playlists automatically."
-msgstr "Analysez les archives ROM pour détecter les corruptions, les fichiers indésirables et les images de disque multi-fichiers. Nettoyez et créez des playlists M3U automatiquement."
+msgid ""
+"Scan ROM archives for corruption, unwanted files, and multi-file disc "
+"images. Clean up and create M3U playlists automatically."
+msgstr ""
+"Analysez les archives ROM pour détecter les corruptions, les fichiers "
+"indésirables et les images de disque multi-fichiers. Nettoyez et créez "
+"des playlists M3U automatiquement."
 
 #: templates/rom_tools_hub.html:127
 msgid "Tools available"
@@ -5690,8 +6830,13 @@ msgid "Requires 7z or unzip"
 msgstr "Nécessite 7z ou unzip"
 
 #: templates/rom_tools_hub.html:140
-msgid "Convert disc images (ISO, CUE/BIN, GDI) to compressed CHD format. Save significant storage space while maintaining full compatibility."
-msgstr "Convertissez les images de disque (ISO, CUE/BIN, GDI) au format CHD compressé. Économisez un espace de stockage important tout en conservant une compatibilité totale."
+msgid ""
+"Convert disc images (ISO, CUE/BIN, GDI) to compressed CHD format. Save "
+"significant storage space while maintaining full compatibility."
+msgstr ""
+"Convertissez les images de disque (ISO, CUE/BIN, GDI) au format CHD "
+"compressé. Économisez un espace de stockage important tout en conservant "
+"une compatibilité totale."
 
 #: templates/rom_tools_hub.html:144 templates/rom_tools_hub.html:161
 msgid "chdman available"
@@ -5702,12 +6847,22 @@ msgid "Requires chdman (MAME tools)"
 msgstr "Nécessite chdman (outils MAME)"
 
 #: templates/rom_tools_hub.html:157
-msgid "Verify the integrity of your CHD files to detect corruption. Ensure your compressed disc images are valid and playable."
-msgstr "Vérifiez l'intégrité de vos fichiers CHD pour détecter les corruptions. Assurez-vous que vos images de disque compressées sont valides et jouables."
+msgid ""
+"Verify the integrity of your CHD files to detect corruption. Ensure your "
+"compressed disc images are valid and playable."
+msgstr ""
+"Vérifiez l'intégrité de vos fichiers CHD pour détecter les corruptions. "
+"Assurez-vous que vos images de disque compressées sont valides et "
+"jouables."
 
 #: templates/rom_tools_hub.html:174
-msgid "Find duplicate ROMs by hash, filename, or both. Identify wasted storage from region variants and redundant copies."
-msgstr "Trouvez les ROM en double par empreinte, nom de fichier ou les deux. Identifiez l'espace de stockage gaspillé par les variantes régionales et les copies redondantes."
+msgid ""
+"Find duplicate ROMs by hash, filename, or both. Identify wasted storage "
+"from region variants and redundant copies."
+msgstr ""
+"Trouvez les ROM en double par empreinte, nom de fichier ou les deux. "
+"Identifiez l'espace de stockage gaspillé par les variantes régionales et "
+"les copies redondantes."
 
 #: templates/rom_tools_hub.html:177 templates/rom_tools_hub.html:190
 #: templates/rom_tools_hub.html:203 templates/rom_tools_hub.html:216
@@ -5715,28 +6870,60 @@ msgid "No dependencies required"
 msgstr "Aucune dépendance requise"
 
 #: templates/rom_tools_hub.html:187
-msgid "Organize multi-disc games into proper folder structures and generate M3U playlists for seamless disc-swapping in emulators."
-msgstr "Organisez les jeux multi-disques dans des structures de dossiers appropriées et générez des playlists M3U pour un changement de disque fluide dans les émulateurs."
+msgid ""
+"Organize multi-disc games into proper folder structures and generate M3U "
+"playlists for seamless disc-swapping in emulators."
+msgstr ""
+"Organisez les jeux multi-disques dans des structures de dossiers "
+"appropriées et générez des playlists M3U pour un changement de disque "
+"fluide dans les émulateurs."
 
 #: templates/rom_tools_hub.html:200
-msgid "Find and remove duplicate screenshots per game using exact file hash or visual similarity matching. Free up storage and clean up your media library."
-msgstr "Trouvez et supprimez les captures d'écran en double par jeu à l'aide de l'empreinte de fichier exacte ou de la correspondance par similarité visuelle. Libérez de l'espace de stockage et nettoyez votre bibliothèque de médias."
+msgid ""
+"Find and remove duplicate screenshots per game using exact file hash or "
+"visual similarity matching. Free up storage and clean up your media "
+"library."
+msgstr ""
+"Trouvez et supprimez les captures d'écran en double par jeu à l'aide de "
+"l'empreinte de fichier exacte ou de la correspondance par similarité "
+"visuelle. Libérez de l'espace de stockage et nettoyez votre bibliothèque "
+"de médias."
 
 #: templates/rom_tools_hub.html:210
 msgid "Image Resizer"
 msgstr "Redimensionneur d'images"
 
 #: templates/rom_tools_hub.html:213
-msgid "Standardize all images to consistent sizes using AI upscaling (Real-ESRGAN) for small images and Lanczos downscaling for large ones. Targets 1080px height for boxart/screenshots and 1280px longest edge for controllers/hardware."
-msgstr "Standardisez toutes les images à des tailles cohérentes à l'aide de l'agrandissement par IA (Real-ESRGAN) pour les petites images et de la réduction Lanczos pour les grandes. Cible une hauteur de 1080px pour les jaquettes/captures d'écran et 1280px pour le plus grand côté des manettes/matériel."
+msgid ""
+"Standardize all images to consistent sizes using AI upscaling (Real-"
+"ESRGAN) for small images and Lanczos downscaling for large ones. Targets "
+"1080px height for boxart/screenshots and 1280px longest edge for "
+"controllers/hardware."
+msgstr ""
+"Standardisez toutes les images à des tailles cohérentes à l'aide de "
+"l'agrandissement par IA (Real-ESRGAN) pour les petites images et de la "
+"réduction Lanczos pour les grandes. Cible une hauteur de 1080px pour les "
+"jaquettes/captures d'écran et 1280px pour le plus grand côté des "
+"manettes/matériel."
 
 #: templates/rom_tools_hub.html:223
 msgid "Backfill Alternate Titles"
 msgstr "Compléter les titres alternatifs"
 
 #: templates/rom_tools_hub.html:226
-msgid "Scan your library for regional / alternate game titles (e.g. &ldquo;Action in New York&rdquo; = &ldquo;S.C.A.T.&rdquo; = &ldquo;Final Mission&rdquo;) without re-scraping media. Uses the same IGDB and ScreenScraper search results that would fire during a scrape, just extracting the alt names."
-msgstr "Analysez votre bibliothèque pour trouver les titres de jeux régionaux / alternatifs (ex. : &ldquo;Action in New York&rdquo; = &ldquo;S.C.A.T.&rdquo; = &ldquo;Final Mission&rdquo;) sans récupérer à nouveau les médias. Utilise les mêmes résultats de recherche IGDB et ScreenScraper qui se déclencheraient lors d'une récupération, en extrayant simplement les noms alternatifs."
+msgid ""
+"Scan your library for regional / alternate game titles (e.g. "
+"&ldquo;Action in New York&rdquo; = &ldquo;S.C.A.T.&rdquo; = &ldquo;Final "
+"Mission&rdquo;) without re-scraping media. Uses the same IGDB and "
+"ScreenScraper search results that would fire during a scrape, just "
+"extracting the alt names."
+msgstr ""
+"Analysez votre bibliothèque pour trouver les titres de jeux régionaux / "
+"alternatifs (ex. : &ldquo;Action in New York&rdquo; = "
+"&ldquo;S.C.A.T.&rdquo; = &ldquo;Final Mission&rdquo;) sans récupérer à "
+"nouveau les médias. Utilise les mêmes résultats de recherche IGDB et "
+"ScreenScraper qui se déclencheraient lors d'une récupération, en "
+"extrayant simplement les noms alternatifs."
 
 #: templates/rom_tools_hub.html:229
 msgid "Metadata only &middot; no media downloads"
@@ -5747,8 +6934,16 @@ msgid "Bulk HLTB Lookup"
 msgstr "Recherche HLTB groupée"
 
 #: templates/rom_tools_hub.html:239
-msgid "Fetch HowLongToBeat playtime for every game. High-confidence primary-title matches apply automatically; alt-title matches and low-confidence hits are queued for review so you can approve or reject in bulk."
-msgstr "Récupérez le temps de jeu HowLongToBeat pour chaque jeu. Les correspondances de titre principal à confiance élevée s'appliquent automatiquement ; les correspondances de titre alternatif et les résultats à faible confiance sont mis en file d'attente pour examen afin que vous puissiez les approuver ou les rejeter par lot."
+msgid ""
+"Fetch HowLongToBeat playtime for every game. High-confidence primary-"
+"title matches apply automatically; alt-title matches and low-confidence "
+"hits are queued for review so you can approve or reject in bulk."
+msgstr ""
+"Récupérez le temps de jeu HowLongToBeat pour chaque jeu. Les "
+"correspondances de titre principal à confiance élevée s'appliquent "
+"automatiquement ; les correspondances de titre alternatif et les "
+"résultats à faible confiance sont mis en file d'attente pour examen afin "
+"que vous puissiez les approuver ou les rejeter par lot."
 
 #: templates/rom_tools_hub.html:242
 msgid "Uses stored alternate titles"
@@ -5759,8 +6954,13 @@ msgid "HLTB Pending Review"
 msgstr "Examen HLTB en attente"
 
 #: templates/rom_tools_hub.html:252
-msgid "Review and approve HLTB matches that were flagged during a bulk lookup &mdash; alt-title matches and anything below the confidence threshold."
-msgstr "Examinez et approuvez les correspondances HLTB signalées lors d'une recherche groupée &mdash; correspondances de titre alternatif et tout ce qui est en dessous du seuil de confiance."
+msgid ""
+"Review and approve HLTB matches that were flagged during a bulk lookup "
+"&mdash; alt-title matches and anything below the confidence threshold."
+msgstr ""
+"Examinez et approuvez les correspondances HLTB signalées lors d'une "
+"recherche groupée &mdash; correspondances de titre alternatif et tout ce "
+"qui est en dessous du seuil de confiance."
 
 #: templates/rom_tools_hub.html:255
 msgid "Requires review"
@@ -5771,8 +6971,12 @@ msgid "Tool Settings"
 msgstr "Paramètres des outils"
 
 #: templates/rom_tools_hub.html:265
-msgid "Configure paths, external tool locations, archive types, and other preferences shared across all ROM tools."
-msgstr "Configurez les chemins, les emplacements des outils externes, les types d'archives et autres préférences partagées par tous les outils ROM."
+msgid ""
+"Configure paths, external tool locations, archive types, and other "
+"preferences shared across all ROM tools."
+msgstr ""
+"Configurez les chemins, les emplacements des outils externes, les types "
+"d'archives et autres préférences partagées par tous les outils ROM."
 
 #: templates/screenshot_dedup.html:269
 msgid "Exact Hash (MD5) &mdash; identical files only"
@@ -5850,8 +7054,12 @@ msgid "No Individual Achievement Data"
 msgstr "Aucune donnée de succès individuel"
 
 #: templates/steam_achievement_game.html:272
-msgid "Click <strong>Refresh</strong> above to sync individual achievements from Steam."
-msgstr "Cliquez sur <strong>Actualiser</strong> ci-dessus pour synchroniser les succès individuels depuis Steam."
+msgid ""
+"Click <strong>Refresh</strong> above to sync individual achievements from"
+" Steam."
+msgstr ""
+"Cliquez sur <strong>Actualiser</strong> ci-dessus pour synchroniser les "
+"succès individuels depuis Steam."
 
 #: templates/steam_achievements.html:17 templates/xbox_achievements.html:17
 #, python-format
@@ -5880,8 +7088,12 @@ msgstr "Importez des jeux Steam et synchronisez les succès pour les voir ici."
 
 #: templates/steam_achievements.html:140 templates/xbox_achievements.html:140
 #, python-format
-msgid "Go to <a href=\"%(url)s\" style=\"color: var(--primary-cyan);\">Game Imports</a> to get started."
-msgstr "Allez dans <a href=\"%(url)s\" style=\"color: var(--primary-cyan);\">Imports de jeux</a> pour commencer."
+msgid ""
+"Go to <a href=\"%(url)s\" style=\"color: var(--primary-cyan);\">Game "
+"Imports</a> to get started."
+msgstr ""
+"Allez dans <a href=\"%(url)s\" style=\"color: var(--primary-"
+"cyan);\">Imports de jeux</a> pour commencer."
 
 #: templates/system_games.html:22
 msgid "games in your collection"
@@ -5947,6 +7159,223 @@ msgstr "Analysez votre bibliothèque de ROM pour ajouter des systèmes."
 msgid "System Specifications"
 msgstr "Caractéristiques du système"
 
+#: templates/wishlist.html:10
+msgid "Games you want to find and add to your collection"
+msgstr "Jeux que vous souhaitez trouver et ajouter à votre collection"
+
+#: templates/wishlist.html:13
+msgid "Scrape metadata for every un-scraped wishlist item"
+msgstr ""
+"Récupérer les métadonnées de chaque élément non récupéré de la liste de "
+"souhaits"
+
+#: templates/wishlist.html:14 templates/wishlist.html:654
+msgid "Scrape All"
+msgstr "Tout récupérer"
+
+#: templates/wishlist.html:17 templates/wishlist.html:53
+#: templates/wishlist.html:113 templates/wishlist.html:670
+#: templates/wishlist.html:671
+msgid "Add to Wishlist"
+msgstr "Ajouter à la liste de souhaits"
+
+#: templates/wishlist.html:25 templates/wishlist.html:81
+#: templates/wishlist.html:496
+msgid "Must Have"
+msgstr "Indispensable"
+
+#: templates/wishlist.html:26 templates/wishlist.html:84
+#: templates/wishlist.html:496
+msgid "High"
+msgstr "Élevée"
+
+#: templates/wishlist.html:27 templates/wishlist.html:87
+#: templates/wishlist.html:496
+msgid "Medium"
+msgstr "Moyenne"
+
+#: templates/wishlist.html:28 templates/wishlist.html:90
+#: templates/wishlist.html:496
+msgid "Low"
+msgstr "Faible"
+
+#: templates/wishlist.html:29 templates/wishlist.html:93
+#: templates/wishlist.html:496
+msgid "Someday"
+msgstr "Un jour"
+
+#: templates/wishlist.html:40
+msgid "Wishlist is Empty"
+msgstr "La liste de souhaits est vide"
+
+#: templates/wishlist.html:42
+msgid "Add games you're looking for to keep track of your wants."
+msgstr "Ajoutez les jeux que vous recherchez pour garder une trace de vos envies."
+
+#: templates/wishlist.html:45
+msgid "Add First Item"
+msgstr "Ajouter le premier élément"
+
+#: templates/wishlist.html:59
+msgid "Game Title"
+msgstr "Titre du jeu"
+
+#: templates/wishlist.html:60
+msgid "e.g., Chrono Trigger"
+msgstr "ex. : Chrono Trigger"
+
+#: templates/wishlist.html:66
+msgid "(optional — pick from the list or type a new one for upcoming systems)"
+msgstr ""
+"(facultatif — choisissez dans la liste ou saisissez-en un nouveau pour "
+"les systèmes à venir)"
+
+#: templates/wishlist.html:71
+msgid "e.g., SNES, PlayStation, Sony PlayStation 6"
+msgstr "ex. : SNES, PlayStation, Sony PlayStation 6"
+
+#: templates/wishlist.html:78
+msgid "Priority"
+msgstr "Priorité"
+
+#: templates/wishlist.html:98
+msgid "Notes"
+msgstr "Notes"
+
+#: templates/wishlist.html:98
+msgid "(optional)"
+msgstr "(facultatif)"
+
+#: templates/wishlist.html:99
+msgid "Any notes, preferred edition, price target..."
+msgstr "Notes diverses, édition préférée, prix cible..."
+
+#: templates/wishlist.html:104
+msgid "Scrape metadata now (boxart, description, release date, &hellip;)"
+msgstr ""
+"Récupérer les métadonnées maintenant (jaquette, description, date de "
+"sortie, &hellip;)"
+
+#: templates/wishlist.html:107
+msgid "Can be triggered later too. Unreleased titles may not have all fields."
+msgstr ""
+"Peut aussi être déclenché plus tard. Les titres non sortis peuvent ne pas"
+" avoir tous les champs."
+
+#: templates/wishlist.html:503
+msgid "Unscraped"
+msgstr "Non récupéré"
+
+#: templates/wishlist.html:507
+msgid "No Match"
+msgstr "Aucune correspondance"
+
+#: templates/wishlist.html:575
+msgid "No items match this filter."
+msgstr "Aucun élément ne correspond à ce filtre."
+
+#: templates/wishlist.html:612
+msgid "No boxart yet"
+msgstr "Pas encore de jaquette"
+
+#: templates/wishlist.html:614
+msgid "Re-scrape metadata"
+msgstr "Récupérer à nouveau les métadonnées"
+
+#: templates/wishlist.html:614
+msgid "Scrape metadata"
+msgstr "Récupérer les métadonnées"
+
+#: templates/wishlist.html:634
+#, python-brace-format
+msgid "Added {date}"
+msgstr "Ajouté le {date}"
+
+#: templates/wishlist.html:653
+#, python-brace-format
+msgid "Scrape All ({n})"
+msgstr "Tout récupérer ({n})"
+
+#: templates/wishlist.html:696
+msgid "Edit Wishlist Item"
+msgstr "Modifier l'élément de la liste de souhaits"
+
+#: templates/wishlist.html:740
+msgid "Please enter a game title."
+msgstr "Veuillez saisir un titre de jeu."
+
+#: templates/wishlist.html:780
+msgid "Wishlist item updated."
+msgstr "Élément de la liste de souhaits mis à jour."
+
+#: templates/wishlist.html:781
+msgid "Added to wishlist — scraping metadata in the background."
+msgstr ""
+"Ajouté à la liste de souhaits — récupération des métadonnées en arrière-"
+"plan."
+
+#: templates/wishlist.html:781
+msgid "Added to wishlist."
+msgstr "Ajouté à la liste de souhaits."
+
+#: templates/wishlist.html:786
+msgid "Failed to save."
+msgstr "Échec de l'enregistrement."
+
+#: templates/wishlist.html:790
+msgid "Error saving wishlist item."
+msgstr "Erreur lors de l'enregistrement de l'élément de la liste de souhaits."
+
+#: templates/wishlist.html:809
+msgid "Failed to start scrape."
+msgstr "Échec du démarrage de la récupération."
+
+#: templates/wishlist.html:813
+msgid "Scraping metadata — this may take a few seconds."
+msgstr "Récupération des métadonnées — cela peut prendre quelques secondes."
+
+#: templates/wishlist.html:818
+msgid "Error starting scrape."
+msgstr "Erreur lors du démarrage de la récupération."
+
+#: templates/wishlist.html:830
+msgid "Failed to start bulk scrape."
+msgstr "Échec du démarrage de la récupération en masse."
+
+#: templates/wishlist.html:834
+msgid "Everything is already scraped."
+msgstr "Tout est déjà récupéré."
+
+#: templates/wishlist.html:837
+#, python-brace-format
+msgid "Scraping {n} item(s) in the background."
+msgstr "Récupération de {n} élément(s) en arrière-plan."
+
+#: templates/wishlist.html:841
+msgid "Error starting bulk scrape."
+msgstr "Erreur lors du démarrage de la récupération en masse."
+
+#: templates/wishlist.html:854
+msgid "Remove from Wishlist"
+msgstr "Retirer de la liste de souhaits"
+
+#: templates/wishlist.html:855
+#, python-brace-format
+msgid "Are you sure you want to remove \"{title}\" from your wishlist?"
+msgstr "Êtes-vous sûr de vouloir retirer « {title} » de votre liste de souhaits ?"
+
+#: templates/wishlist.html:865
+msgid "Removed from wishlist."
+msgstr "Retiré de la liste de souhaits."
+
+#: templates/wishlist.html:868
+msgid "Failed to remove."
+msgstr "Échec de la suppression."
+
+#: templates/wishlist.html:872
+msgid "Error removing item."
+msgstr "Erreur lors de la suppression de l'élément."
+
 #: templates/xbox_achievement_game.html:98
 #, python-format
 msgid "%(earned)s / %(total)s Gamerscore"
@@ -5958,8 +7387,12 @@ msgid "%(count)s total (%(gs)s GS)"
 msgstr "%(count)s au total (%(gs)s GS)"
 
 #: templates/xbox_achievement_game.html:263
-msgid "Click <strong>Refresh</strong> above to sync individual achievements from Xbox."
-msgstr "Cliquez sur <strong>Actualiser</strong> ci-dessus pour synchroniser les succès individuels depuis Xbox."
+msgid ""
+"Click <strong>Refresh</strong> above to sync individual achievements from"
+" Xbox."
+msgstr ""
+"Cliquez sur <strong>Actualiser</strong> ci-dessus pour synchroniser les "
+"succès individuels depuis Xbox."
 
 #: templates/xbox_achievements.html:137
 msgid "No Xbox Achievements"
@@ -5986,12 +7419,20 @@ msgid "Auto"
 msgstr "Auto"
 
 #: templates/_modals/edit_modal.html:37
-msgid "Used for proper franchise ordering (e.g., \"Final Fantasy 07\" instead of \"VII\")"
-msgstr "Utilisé pour un classement correct des franchises (par ex. « Final Fantasy 07 » au lieu de « VII »)"
+msgid ""
+"Used for proper franchise ordering (e.g., \"Final Fantasy 07\" instead of"
+" \"VII\")"
+msgstr ""
+"Utilisé pour un classement correct des franchises (par ex. « Final "
+"Fantasy 07 » au lieu de « VII »)"
 
 #: templates/_modals/edit_modal.html:49
-msgid "Group related games together (e.g., \"Final Fantasy\", \"Crash Bandicoot\")"
-msgstr "Regroupe les jeux apparentés (par ex. « Final Fantasy », « Crash Bandicoot »)"
+msgid ""
+"Group related games together (e.g., \"Final Fantasy\", \"Crash "
+"Bandicoot\")"
+msgstr ""
+"Regroupe les jeux apparentés (par ex. « Final Fantasy », « Crash "
+"Bandicoot »)"
 
 #: templates/_modals/edit_modal.html:54
 msgid "Comma-separated list of similar titles"
@@ -6027,11 +7468,15 @@ msgstr "Séparés par des virgules pour plusieurs développeurs"
 
 #: templates/_modals/edit_modal.html:114
 msgid "Click × to remove, use dropdown to add genres"
-msgstr "Cliquez sur × pour supprimer, utilisez le menu déroulant pour ajouter des genres"
+msgstr ""
+"Cliquez sur × pour supprimer, utilisez le menu déroulant pour ajouter des"
+" genres"
 
 #: templates/_modals/edit_modal.html:125
 msgid "Click × to remove, use dropdown to add play modes"
-msgstr "Cliquez sur × pour supprimer, utilisez le menu déroulant pour ajouter des modes de jeu"
+msgstr ""
+"Cliquez sur × pour supprimer, utilisez le menu déroulant pour ajouter des"
+" modes de jeu"
 
 #: templates/_modals/edit_modal.html:142
 msgid "Does this game have a story campaign?"
@@ -6055,11 +7500,15 @@ msgstr "Ou saisissez une valeur personnalisée et appuyez sur Enter"
 
 #: templates/_modals/edit_modal.html:199
 msgid "Click ✕ to remove, use dropdown or type custom"
-msgstr "Cliquez sur ✕ pour supprimer, utilisez le menu déroulant ou saisissez une valeur personnalisée"
+msgstr ""
+"Cliquez sur ✕ pour supprimer, utilisez le menu déroulant ou saisissez une"
+" valeur personnalisée"
 
 #: templates/_modals/edit_modal.html:210
 msgid "Click × to remove, use dropdown to add save types"
-msgstr "Cliquez sur × pour supprimer, utilisez le menu déroulant pour ajouter des types de sauvegarde"
+msgstr ""
+"Cliquez sur × pour supprimer, utilisez le menu déroulant pour ajouter des"
+" types de sauvegarde"
 
 #: templates/_modals/edit_modal.html:221
 msgid "Xbox 360, PC, Nintendo Switch"
@@ -6071,7 +7520,9 @@ msgstr "Autres systèmes sur lesquels ce jeu est sorti"
 
 #: templates/_modals/edit_modal.html:229
 msgid "Empty ratings are auto-filled by cross-mapping from any available rating"
-msgstr "Les classifications vides sont remplies automatiquement par correspondance à partir de toute classification disponible"
+msgstr ""
+"Les classifications vides sont remplies automatiquement par "
+"correspondance à partir de toute classification disponible"
 
 #: templates/_modals/edit_modal.html:336
 msgid "Custom Images"
@@ -6149,8 +7600,12 @@ msgid "(use system default)"
 msgstr "(utiliser la valeur par défaut du système)"
 
 #: templates/_modals/edit_modal.html:406
-msgid "Pick a specific emulator for this game.  Leave blank to use the per-system default."
-msgstr "Choisissez un émulateur spécifique pour ce jeu.  Laissez vide pour utiliser la valeur par défaut du système."
+msgid ""
+"Pick a specific emulator for this game.  Leave blank to use the per-"
+"system default."
+msgstr ""
+"Choisissez un émulateur spécifique pour ce jeu.  Laissez vide pour "
+"utiliser la valeur par défaut du système."
 
 #: templates/_modals/edit_modal.html:409
 msgid "Custom launch args"
@@ -6161,8 +7616,13 @@ msgid "e.g.  --renderer vulkan"
 msgstr "par ex.  --renderer vulkan"
 
 #: templates/_modals/edit_modal.html:411
-msgid "Appended to the emulator's args template after substitution.  Use shell-quoted strings if values contain spaces."
-msgstr "Ajoutés au modèle d'arguments de l'émulateur après substitution.  Utilisez des chaînes entre guillemets shell si les valeurs contiennent des espaces."
+msgid ""
+"Appended to the emulator's args template after substitution.  Use shell-"
+"quoted strings if values contain spaces."
+msgstr ""
+"Ajoutés au modèle d'arguments de l'émulateur après substitution.  "
+"Utilisez des chaînes entre guillemets shell si les valeurs contiennent "
+"des espaces."
 
 #: templates/_modals/filter_modal.html:5
 msgid "Filter Games"
@@ -6197,8 +7657,14 @@ msgid "Warning:"
 msgstr "Avertissement :"
 
 #: templates/_modals/rename_modal.html:15
-msgid "This will rename the actual ROM file on disk. Make sure the filename is correct before proceeding. The file extension will be preserved automatically."
-msgstr "Cela renommera le fichier ROM réel sur le disque. Assurez-vous que le nom de fichier est correct avant de continuer. L'extension du fichier sera conservée automatiquement."
+msgid ""
+"This will rename the actual ROM file on disk. Make sure the filename is "
+"correct before proceeding. The file extension will be preserved "
+"automatically."
+msgstr ""
+"Cela renommera le fichier ROM réel sur le disque. Assurez-vous que le nom"
+" de fichier est correct avant de continuer. L'extension du fichier sera "
+"conservée automatiquement."
 
 #: templates/_modals/rename_modal.html:20
 msgid "Rename File"
@@ -6304,23 +7770,33 @@ msgstr "Paramètres des trophées"
 
 #: templates/_settings_tabs/account.html:80
 msgid "Configure your personal RPCS3 trophy path to view your PS3 trophies."
-msgstr "Configurez votre chemin de trophées RPCS3 personnel pour consulter vos trophées PS3."
+msgstr ""
+"Configurez votre chemin de trophées RPCS3 personnel pour consulter vos "
+"trophées PS3."
 
 #: templates/_settings_tabs/account.html:84
 msgid "Your RPCS3 Trophy Path"
 msgstr "Votre chemin de trophées RPCS3"
 
 #: templates/_settings_tabs/account.html:88
-msgid "Path to your RPCS3 trophy folder (e.g., /home/user/RPCS3/dev_hdd0/home/00000001/trophy)"
-msgstr "Chemin vers votre dossier de trophées RPCS3 (par ex. /home/user/RPCS3/dev_hdd0/home/00000001/trophy)"
+msgid ""
+"Path to your RPCS3 trophy folder (e.g., "
+"/home/user/RPCS3/dev_hdd0/home/00000001/trophy)"
+msgstr ""
+"Chemin vers votre dossier de trophées RPCS3 (par ex. "
+"/home/user/RPCS3/dev_hdd0/home/00000001/trophy)"
 
 #: templates/_settings_tabs/account.html:91
 msgid "RetroAchievements Settings"
 msgstr "Paramètres RetroAchievements"
 
 #: templates/_settings_tabs/account.html:93
-msgid "Configure your RetroAchievements credentials to view your achievement progress."
-msgstr "Configurez vos identifiants RetroAchievements pour suivre votre progression dans les succès."
+msgid ""
+"Configure your RetroAchievements credentials to view your achievement "
+"progress."
+msgstr ""
+"Configurez vos identifiants RetroAchievements pour suivre votre "
+"progression dans les succès."
 
 #: templates/_settings_tabs/account.html:97
 msgid "Your RA Username"
@@ -6335,12 +7811,24 @@ msgid "Your RetroAchievements API Key"
 msgstr "Votre clé API RetroAchievements"
 
 #: templates/_settings_tabs/account.html:108
-msgid "Get your API key from <a href=\"https://retroachievements.org/controlpanel.php\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color: var(--primary-cyan);\">RetroAchievements Control Panel</a>"
-msgstr "Obtenez votre clé API depuis le <a href=\"https://retroachievements.org/controlpanel.php\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color: var(--primary-cyan);\">panneau de configuration RetroAchievements</a>"
+msgid ""
+"Get your API key from <a "
+"href=\"https://retroachievements.org/controlpanel.php\" target=\"_blank\""
+" rel=\"noopener noreferrer\" style=\"color: var(--primary-"
+"cyan);\">RetroAchievements Control Panel</a>"
+msgstr ""
+"Obtenez votre clé API depuis le <a "
+"href=\"https://retroachievements.org/controlpanel.php\" target=\"_blank\""
+" rel=\"noopener noreferrer\" style=\"color: var(--primary-"
+"cyan);\">panneau de configuration RetroAchievements</a>"
 
 #: templates/_settings_tabs/account.html:113
-msgid "Connect your PSN account to sync trophies from PS3, PS4, PS5, and PS Vita games."
-msgstr "Connectez votre compte PSN pour synchroniser les trophées des jeux PS3, PS4, PS5 et PS Vita."
+msgid ""
+"Connect your PSN account to sync trophies from PS3, PS4, PS5, and PS Vita"
+" games."
+msgstr ""
+"Connectez votre compte PSN pour synchroniser les trophées des jeux PS3, "
+"PS4, PS5 et PS Vita."
 
 #: templates/_settings_tabs/account.html:121
 msgid "PSN Username"
@@ -6348,7 +7836,9 @@ msgstr "Nom d'utilisateur PSN"
 
 #: templates/_settings_tabs/account.html:125
 msgid "Your PlayStation Network Online ID (auto-detected on connection)"
-msgstr "Votre identifiant en ligne PlayStation Network (détecté automatiquement à la connexion)"
+msgstr ""
+"Votre identifiant en ligne PlayStation Network (détecté automatiquement à"
+" la connexion)"
 
 #: templates/_settings_tabs/account.html:130
 msgid "NPSSO Token Setup"
@@ -6359,8 +7849,12 @@ msgid "Open Sony's account page"
 msgstr "Ouvrez la page de compte Sony"
 
 #: templates/_settings_tabs/account.html:138
-msgid "Log in with your PlayStation account (if not already), then the page will show your NPSSO token as JSON."
-msgstr "Connectez-vous avec votre compte PlayStation (si ce n'est pas déjà fait), puis la page affichera votre jeton NPSSO au format JSON."
+msgid ""
+"Log in with your PlayStation account (if not already), then the page will"
+" show your NPSSO token as JSON."
+msgstr ""
+"Connectez-vous avec votre compte PlayStation (si ce n'est pas déjà fait),"
+" puis la page affichera votre jeton NPSSO au format JSON."
 
 #: templates/_settings_tabs/account.html:140
 msgid "Open Sony Account Page"
@@ -6371,8 +7865,21 @@ msgid "Copy the page content"
 msgstr "Copiez le contenu de la page"
 
 #: templates/_settings_tabs/account.html:150
-msgid "Select all (<kbd style=\"background: var(--bg-medium); padding: 1px 6px; border-radius: 3px; border: 1px solid var(--card-border); font-size: 0.8rem;\">Ctrl+A</kbd>) and copy (<kbd style=\"background: var(--bg-medium); padding: 1px 6px; border-radius: 3px; border: 1px solid var(--card-border); font-size: 0.8rem;\">Ctrl+C</kbd>). You can copy the entire JSON &mdash; we'll extract the token automatically."
-msgstr "Sélectionnez tout (<kbd style=\"background: var(--bg-medium); padding: 1px 6px; border-radius: 3px; border: 1px solid var(--card-border); font-size: 0.8rem;\">Ctrl+A</kbd>) et copiez (<kbd style=\"background: var(--bg-medium); padding: 1px 6px; border-radius: 3px; border: 1px solid var(--card-border); font-size: 0.8rem;\">Ctrl+C</kbd>). Vous pouvez copier l'intégralité du JSON &mdash; nous extrairons le jeton automatiquement."
+msgid ""
+"Select all (<kbd style=\"background: var(--bg-medium); padding: 1px 6px; "
+"border-radius: 3px; border: 1px solid var(--card-border); font-size: "
+"0.8rem;\">Ctrl+A</kbd>) and copy (<kbd style=\"background: var(--bg-"
+"medium); padding: 1px 6px; border-radius: 3px; border: 1px solid var"
+"(--card-border); font-size: 0.8rem;\">Ctrl+C</kbd>). You can copy the "
+"entire JSON &mdash; we'll extract the token automatically."
+msgstr ""
+"Sélectionnez tout (<kbd style=\"background: var(--bg-medium); padding: "
+"1px 6px; border-radius: 3px; border: 1px solid var(--card-border); font-"
+"size: 0.8rem;\">Ctrl+A</kbd>) et copiez (<kbd style=\"background: var"
+"(--bg-medium); padding: 1px 6px; border-radius: 3px; border: 1px solid "
+"var(--card-border); font-size: 0.8rem;\">Ctrl+C</kbd>). Vous pouvez "
+"copier l'intégralité du JSON &mdash; nous extrairons le jeton "
+"automatiquement."
 
 #: templates/_settings_tabs/account.html:158
 msgid "Paste the token"
@@ -6425,7 +7932,9 @@ msgstr "Veuillez vous connecter pour consulter les paramètres de votre profil."
 
 #: templates/_settings_tabs/account.html:220
 msgid "Set your timezone to ensure all dates and times display correctly."
-msgstr "Définissez votre fuseau horaire pour que toutes les dates et heures s'affichent correctement."
+msgstr ""
+"Définissez votre fuseau horaire pour que toutes les dates et heures "
+"s'affichent correctement."
 
 #: templates/_settings_tabs/account.html:225
 msgid "Search timezones..."
@@ -6448,8 +7957,13 @@ msgid "User Management"
 msgstr "Gestion des utilisateurs"
 
 #: templates/_settings_tabs/account.html:245
-msgid "Manage users who can access RetroDB. Admin users require a password to login, while Editor and Viewer users can login with a single click."
-msgstr "Gérez les utilisateurs pouvant accéder à RetroDB. Les administrateurs nécessitent un mot de passe pour se connecter, tandis que les éditeurs et les spectateurs peuvent se connecter en un seul clic."
+msgid ""
+"Manage users who can access RetroDB. Admin users require a password to "
+"login, while Editor and Viewer users can login with a single click."
+msgstr ""
+"Gérez les utilisateurs pouvant accéder à RetroDB. Les administrateurs "
+"nécessitent un mot de passe pour se connecter, tandis que les éditeurs et"
+" les spectateurs peuvent se connecter en un seul clic."
 
 #: templates/_settings_tabs/account.html:257
 msgid "User"
@@ -6559,8 +8073,13 @@ msgid "Notification Settings"
 msgstr "Paramètres de notification"
 
 #: templates/_settings_tabs/customization.html:19
-msgid "Configure how long toast notifications stay visible before automatically dismissing. Set to 0 for notifications that only close when clicked."
-msgstr "Configurez la durée d'affichage des notifications avant leur disparition automatique. Réglez sur 0 pour des notifications qui ne se ferment qu'au clic."
+msgid ""
+"Configure how long toast notifications stay visible before automatically "
+"dismissing. Set to 0 for notifications that only close when clicked."
+msgstr ""
+"Configurez la durée d'affichage des notifications avant leur disparition "
+"automatique. Réglez sur 0 pour des notifications qui ne se ferment qu'au "
+"clic."
 
 #: templates/_settings_tabs/customization.html:26
 msgid "Success Notifications"
@@ -6614,32 +8133,50 @@ msgid "Controller Management"
 msgstr "Gestion des manettes"
 
 #: templates/_settings_tabs/customization.html:100
-msgid "Manage controllers and assign default controllers to each system. The default controller will automatically appear for all games in that system."
-msgstr "Gérez les manettes et attribuez une manette par défaut à chaque système. La manette par défaut apparaîtra automatiquement pour tous les jeux de ce système."
+msgid ""
+"Manage controllers and assign default controllers to each system. The "
+"default controller will automatically appear for all games in that "
+"system."
+msgstr ""
+"Gérez les manettes et attribuez une manette par défaut à chaque système. "
+"La manette par défaut apparaîtra automatiquement pour tous les jeux de ce"
+" système."
 
 #: templates/_settings_tabs/customization.html:106
 msgid "System Default Controllers"
 msgstr "Manettes par défaut des systèmes"
 
 #: templates/_settings_tabs/customization.html:109
-msgid "Assign a default controller to each system. Games will inherit this controller unless manually changed."
-msgstr "Attribuez une manette par défaut à chaque système. Les jeux hériteront de cette manette sauf modification manuelle."
+msgid ""
+"Assign a default controller to each system. Games will inherit this "
+"controller unless manually changed."
+msgstr ""
+"Attribuez une manette par défaut à chaque système. Les jeux hériteront de"
+" cette manette sauf modification manuelle."
 
 #: templates/_settings_tabs/customization.html:114
 msgid "Auto-Assign Defaults"
 msgstr "Attribuer automatiquement les valeurs par défaut"
 
 #: templates/_settings_tabs/customization.html:117
-msgid "Automatically assigns appropriate controllers to all systems based on hardware type"
-msgstr "Attribue automatiquement les manettes appropriées à tous les systèmes selon le type de matériel"
+msgid ""
+"Automatically assigns appropriate controllers to all systems based on "
+"hardware type"
+msgstr ""
+"Attribue automatiquement les manettes appropriées à tous les systèmes "
+"selon le type de matériel"
 
 #: templates/_settings_tabs/customization.html:141
 msgid "Add New Controller"
 msgstr "Ajouter une nouvelle manette"
 
 #: templates/_settings_tabs/customization.html:144
-msgid "Add a custom controller to the library. Select one or more systems, or leave empty for \"Universal\" controllers."
-msgstr "Ajoutez une manette personnalisée à la bibliothèque. Sélectionnez un ou plusieurs systèmes, ou laissez vide pour les manettes « universelles »."
+msgid ""
+"Add a custom controller to the library. Select one or more systems, or "
+"leave empty for \"Universal\" controllers."
+msgstr ""
+"Ajoutez une manette personnalisée à la bibliothèque. Sélectionnez un ou "
+"plusieurs systèmes, ou laissez vide pour les manettes « universelles »."
 
 #: templates/_settings_tabs/customization.html:149
 #: templates/_settings_tabs/customization.html:230
@@ -6657,8 +8194,12 @@ msgid "+ Add system..."
 msgstr "+ Ajouter un système..."
 
 #: templates/_settings_tabs/customization.html:161
-msgid "Leave empty for Universal controllers. Select multiple systems for shared controllers."
-msgstr "Laissez vide pour les manettes universelles. Sélectionnez plusieurs systèmes pour les manettes partagées."
+msgid ""
+"Leave empty for Universal controllers. Select multiple systems for shared"
+" controllers."
+msgstr ""
+"Laissez vide pour les manettes universelles. Sélectionnez plusieurs "
+"systèmes pour les manettes partagées."
 
 #: templates/_settings_tabs/customization.html:166
 #: templates/_settings_tabs/customization.html:247
@@ -6690,8 +8231,13 @@ msgid "Controller Library"
 msgstr "Bibliothèque de manettes"
 
 #: templates/_settings_tabs/customization.html:210
-msgid "All controllers in the database, sorted alphabetically by manufacturer. Click to expand details. You can delete custom controllers."
-msgstr "Toutes les manettes de la base de données, triées par ordre alphabétique selon le fabricant. Cliquez pour afficher les détails. Vous pouvez supprimer les manettes personnalisées."
+msgid ""
+"All controllers in the database, sorted alphabetically by manufacturer. "
+"Click to expand details. You can delete custom controllers."
+msgstr ""
+"Toutes les manettes de la base de données, triées par ordre alphabétique "
+"selon le fabricant. Cliquez pour afficher les détails. Vous pouvez "
+"supprimer les manettes personnalisées."
 
 #: templates/_settings_tabs/customization.html:223
 msgid "Edit Controller"
@@ -6706,8 +8252,17 @@ msgid "System Logo Reference"
 msgstr "Référence des logos de systèmes"
 
 #: templates/_settings_tabs/customization.html:280
-msgid "System logos should be placed in <code>static/images/systems/</code> and named to match the system folder name with a supported extension (<code>.png</code>, <code>.webp</code>, <code>.jpg</code>, or <code>.svg</code>)."
-msgstr "Les logos de systèmes doivent être placés dans <code>static/images/systems/</code> et nommés pour correspondre au nom du dossier du système avec une extension prise en charge (<code>.png</code>, <code>.webp</code>, <code>.jpg</code> ou <code>.svg</code>)."
+msgid ""
+"System logos should be placed in <code>static/images/systems/</code> and "
+"named to match the system folder name with a supported extension "
+"(<code>.png</code>, <code>.webp</code>, <code>.jpg</code>, or "
+"<code>.svg</code>)."
+msgstr ""
+"Les logos de systèmes doivent être placés dans "
+"<code>static/images/systems/</code> et nommés pour correspondre au nom du"
+" dossier du système avec une extension prise en charge "
+"(<code>.png</code>, <code>.webp</code>, <code>.jpg</code> ou "
+"<code>.svg</code>)."
 
 #: templates/_settings_tabs/customization.html:285
 msgid "Refresh System Logos"
@@ -6719,7 +8274,9 @@ msgstr "Actualiser les noms de systèmes"
 
 #: templates/_settings_tabs/customization.html:291
 msgid "Updates database with detected logos and correct system names"
-msgstr "Met à jour la base de données avec les logos détectés et les noms de systèmes corrects"
+msgstr ""
+"Met à jour la base de données avec les logos détectés et les noms de "
+"systèmes corrects"
 
 #: templates/_settings_tabs/customization.html:301
 msgid "Folder Name"
@@ -6775,7 +8332,9 @@ msgstr "(Non configuré)"
 
 #: templates/_settings_tabs/data.html:54
 msgid "Set the RPCS3 Trophy Path in <strong>ES-DE Integration</strong> above"
-msgstr "Définissez le chemin des trophées RPCS3 dans <strong>Intégration ES-DE</strong> ci-dessus"
+msgstr ""
+"Définissez le chemin des trophées RPCS3 dans <strong>Intégration ES-"
+"DE</strong> ci-dessus"
 
 #: templates/_settings_tabs/data.html:55
 msgid "Example:"
@@ -6783,7 +8342,9 @@ msgstr "Exemple :"
 
 #: templates/_settings_tabs/data.html:64
 msgid "Scan your RPCS3 trophy folder for unlocked trophies"
-msgstr "Analysez votre dossier de trophées RPCS3 à la recherche de trophées débloqués"
+msgstr ""
+"Analysez votre dossier de trophées RPCS3 à la recherche de trophées "
+"débloqués"
 
 #: templates/_settings_tabs/data.html:74
 msgid "Dropdown Options"
@@ -6791,7 +8352,9 @@ msgstr "Options des menus déroulants"
 
 #: templates/_settings_tabs/data.html:78
 msgid "Manage the options available in dropdown menus when editing games."
-msgstr "Gérez les options disponibles dans les menus déroulants lors de la modification des jeux."
+msgstr ""
+"Gérez les options disponibles dans les menus déroulants lors de la "
+"modification des jeux."
 
 #: templates/_settings_tabs/data.html:86
 msgid "New genre..."
@@ -6822,8 +8385,13 @@ msgid "Data Normalization"
 msgstr "Normalisation des données"
 
 #: templates/_settings_tabs/data.html:151
-msgid "Fix inconsistent genre and mode values across your library. Custom rules are saved and automatically apply to future scrapes."
-msgstr "Corrigez les valeurs de genre et de mode incohérentes dans votre bibliothèque. Les règles personnalisées sont enregistrées et s'appliquent automatiquement aux futurs scrapings."
+msgid ""
+"Fix inconsistent genre and mode values across your library. Custom rules "
+"are saved and automatically apply to future scrapes."
+msgstr ""
+"Corrigez les valeurs de genre et de mode incohérentes dans votre "
+"bibliothèque. Les règles personnalisées sont enregistrées et s'appliquent"
+" automatiquement aux futurs scrapings."
 
 #: templates/_settings_tabs/data.html:164
 msgid "Show only values needing changes"
@@ -6850,8 +8418,12 @@ msgid "Select All Changed"
 msgstr "Sélectionner toutes les valeurs modifiées"
 
 #: templates/_settings_tabs/data.html:206
-msgid "No values found for this field. Make sure your library has games with metadata."
-msgstr "Aucune valeur trouvée pour ce champ. Assurez-vous que votre bibliothèque contient des jeux avec des métadonnées."
+msgid ""
+"No values found for this field. Make sure your library has games with "
+"metadata."
+msgstr ""
+"Aucune valeur trouvée pour ce champ. Assurez-vous que votre bibliothèque "
+"contient des jeux avec des métadonnées."
 
 #: templates/_settings_tabs/library.html:2
 msgid "Library settings"
@@ -6878,8 +8450,12 @@ msgid "Library Settings"
 msgstr "Paramètres de la bibliothèque"
 
 #: templates/_settings_tabs/library.html:17
-msgid "Configure the paths to your ROM library, ES-DE data, and other integrations."
-msgstr "Configurez les chemins vers votre bibliothèque de ROM, les données ES-DE et d'autres intégrations."
+msgid ""
+"Configure the paths to your ROM library, ES-DE data, and other "
+"integrations."
+msgstr ""
+"Configurez les chemins vers votre bibliothèque de ROM, les données ES-DE "
+"et d'autres intégrations."
 
 #: templates/_settings_tabs/library.html:21
 msgid "ROM Library Path"
@@ -6903,7 +8479,9 @@ msgstr "Enregistrer les paramètres de chemin"
 
 #: templates/_settings_tabs/library.html:45
 msgid "Changes to ROM path require a restart to take full effect"
-msgstr "Les modifications du chemin des ROM nécessitent un redémarrage pour prendre pleinement effet"
+msgstr ""
+"Les modifications du chemin des ROM nécessitent un redémarrage pour "
+"prendre pleinement effet"
 
 #: templates/_settings_tabs/library.html:53
 msgid "Display Preferences"
@@ -6943,7 +8521,9 @@ msgstr "Elite"
 
 #: templates/_settings_tabs/library.html:116
 msgid "Theme applies instantly. Changes are saved automatically."
-msgstr "Le thème s'applique instantanément. Les modifications sont enregistrées automatiquement."
+msgstr ""
+"Le thème s'applique instantanément. Les modifications sont enregistrées "
+"automatiquement."
 
 #: templates/_settings_tabs/library.html:124
 msgid "Language"
@@ -6967,15 +8547,21 @@ msgstr "Jaquette 3D (avec repli en 2D)"
 
 #: templates/_settings_tabs/library.html:142
 msgid "When 3D is selected, 2D boxart will be shown if no 3D version exists"
-msgstr "Lorsque la 3D est sélectionnée, la jaquette 2D s'affiche si aucune version 3D n'existe"
+msgstr ""
+"Lorsque la 3D est sélectionnée, la jaquette 2D s'affiche si aucune "
+"version 3D n'existe"
 
 #: templates/_settings_tabs/library.html:146
 msgid "Preferred Age Rating System"
 msgstr "Système de classification par âge préféré"
 
 #: templates/_settings_tabs/library.html:157
-msgid "Ratings from other systems are cross-mapped when the preferred system's rating is unavailable"
-msgstr "Les classifications d'autres systèmes sont mises en correspondance lorsque la classification du système préféré n'est pas disponible"
+msgid ""
+"Ratings from other systems are cross-mapped when the preferred system's "
+"rating is unavailable"
+msgstr ""
+"Les classifications d'autres systèmes sont mises en correspondance "
+"lorsque la classification du système préféré n'est pas disponible"
 
 #: templates/_settings_tabs/library.html:163
 msgid "Save Display Settings"
@@ -6987,19 +8573,27 @@ msgstr "Conventions de nommage des ROM"
 
 #: templates/_settings_tabs/library.html:176
 msgid ""
-"Configure the filename pattern for each system type. Title is always first.\n"
-"            Add tags in the order they should appear in filenames (e.g., <code>Title (Region).zip</code>)."
+"Configure the filename pattern for each system type. Title is always "
+"first.\n"
+"            Add tags in the order they should appear in filenames (e.g., "
+"<code>Title (Region).zip</code>)."
 msgstr ""
-"Configurez le modèle de nom de fichier pour chaque type de système. Le titre est toujours en premier.\n"
-"            Ajoutez les balises dans l'ordre où elles doivent apparaître dans les noms de fichiers (par ex. <code>Title (Region).zip</code>)."
+"Configurez le modèle de nom de fichier pour chaque type de système. Le "
+"titre est toujours en premier.\n"
+"            Ajoutez les balises dans l'ordre où elles doivent apparaître "
+"dans les noms de fichiers (par ex. <code>Title (Region).zip</code>)."
 
 #: templates/_settings_tabs/library.html:181
 msgid "Article Placement"
 msgstr "Placement des articles"
 
 #: templates/_settings_tabs/library.html:183
-msgid "Controls where articles (A, An, The) appear in game titles and ROM filenames."
-msgstr "Contrôle l'emplacement des articles (A, An, The) dans les titres de jeux et les noms de fichiers ROM."
+msgid ""
+"Controls where articles (A, An, The) appear in game titles and ROM "
+"filenames."
+msgstr ""
+"Contrôle l'emplacement des articles (A, An, The) dans les titres de jeux "
+"et les noms de fichiers ROM."
 
 #: templates/_settings_tabs/library.html:186
 msgid "Beginning (natural) — \"The Legend of Zelda\""
@@ -7010,24 +8604,38 @@ msgid "End (sort-friendly) — \"Legend of Zelda, The\""
 msgstr "Fin (pour le tri) — \"Legend of Zelda, The\""
 
 #: templates/_settings_tabs/library.html:189
-msgid "Applies to new scrapes and rename suggestions. Existing titles are not changed automatically."
-msgstr "S'applique aux nouveaux scrapings et aux suggestions de renommage. Les titres existants ne sont pas modifiés automatiquement."
+msgid ""
+"Applies to new scrapes and rename suggestions. Existing titles are not "
+"changed automatically."
+msgstr ""
+"S'applique aux nouveaux scrapings et aux suggestions de renommage. Les "
+"titres existants ne sont pas modifiés automatiquement."
 
 #: templates/_settings_tabs/library.html:193
 msgid "Region Options"
 msgstr "Options de région"
 
 #: templates/_settings_tabs/library.html:195
-msgid "Configure the available region values and default. The default region is used when scraping if no region is detected."
-msgstr "Configurez les valeurs de région disponibles et la valeur par défaut. La région par défaut est utilisée lors du scraping si aucune région n'est détectée."
+msgid ""
+"Configure the available region values and default. The default region is "
+"used when scraping if no region is detected."
+msgstr ""
+"Configurez les valeurs de région disponibles et la valeur par défaut. La "
+"région par défaut est utilisée lors du scraping si aucune région n'est "
+"détectée."
 
 #: templates/_settings_tabs/system.html:418
 msgid "Support Development"
 msgstr "Soutenir le développement"
 
 #: templates/_settings_tabs/system.html:422
-msgid "RetroDB is free and open source. If it saves you time, consider sponsoring — every bit helps keep solo development sustainable."
-msgstr "RetroDB est gratuit et open source. S'il vous fait gagner du temps, pensez à le soutenir — chaque contribution aide à pérenniser un développement en solo."
+msgid ""
+"RetroDB is free and open source. If it saves you time, consider "
+"sponsoring — every bit helps keep solo development sustainable."
+msgstr ""
+"RetroDB est gratuit et open source. S'il vous fait gagner du temps, "
+"pensez à le soutenir — chaque contribution aide à pérenniser un "
+"développement en solo."
 
 #: templates/_settings_tabs/system.html:426
 msgid "Sponsor on GitHub"

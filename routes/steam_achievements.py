@@ -14,6 +14,7 @@
 import logging
 
 from flask import Blueprint, render_template, jsonify, g
+from flask_babel import gettext as _
 
 from services.database import query, get_db
 from services.auth import login_required, editor_required
@@ -107,11 +108,11 @@ def api_steam_sync_single(game_id):
 
     steam_api_key, steam_id = _get_steam_credentials(user_id=g.user['id'])
     if not steam_api_key or not steam_id:
-        return jsonify({'success': False, 'error': 'Steam credentials not configured'})
+        return jsonify({'success': False, 'error': _('Steam credentials not configured')})
 
     game = query("SELECT id, title, steam_app_id FROM games WHERE id = ?", (game_id,), one=True)
     if not game or not game['steam_app_id']:
-        return jsonify({'success': False, 'error': 'Game not found or not a Steam game'})
+        return jsonify({'success': False, 'error': _('Game not found or not a Steam game')})
 
     result = get_player_achievements(steam_api_key, steam_id, game['steam_app_id'])
     if result is None:
@@ -134,7 +135,7 @@ def api_steam_sync_single(game_id):
         })
     except Exception as e:
         logger.error(f"Steam achievement sync error for game {game_id}: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+        return jsonify({'success': False, 'error': _('An internal error occurred')})
     finally:
         if conn:
             conn.close()

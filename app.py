@@ -1374,16 +1374,34 @@ def analytics():
 def changelog():
     """Changelog page showing version history"""
     import yaml
-    yaml_path = os.path.join(config.BUNDLE_DIR, 'data', 'changelog.yaml')
-    with open(yaml_path, 'r') as f:
+    from flask_babel import get_locale
+    data_dir = os.path.join(config.BUNDLE_DIR, 'data')
+    with open(os.path.join(data_dir, 'changelog.yaml'), 'r') as f:
         entries = yaml.safe_load(f)
+    # Per-locale changelog (Pass 43.6): recent entries are translated per
+    # language in data/changelog.<locale>.yaml; older history stays English.
+    # We swap in any translated entry by version, keeping the full timeline —
+    # long-form content is translated as whole files, not via the gettext
+    # catalog (see docs/specs/i18n.md §9).
+    locale = str(get_locale())
+    loc_path = os.path.join(data_dir, f'changelog.{locale}.yaml')
+    if os.path.exists(loc_path):
+        with open(loc_path, 'r') as f:
+            translated = {e['version']: e for e in (yaml.safe_load(f) or [])}
+        if translated:
+            entries = [translated.get(e['version'], e) for e in entries]
     return render_template('changelog.html', changelog=entries)
 
 
 @app.route('/help')
 def help_page():
     """Help and documentation page"""
-    return render_template('help.html')
+    from flask_babel import get_locale
+    # Per-locale manual (Pass 43.6): render templates/help.<locale>.html when it
+    # exists, else fall back to the English help.html. The manual is translated
+    # as a whole file per language, not via the gettext catalog (docs/specs/i18n.md §9).
+    locale = str(get_locale())
+    return render_template([f'help.{locale}.html', 'help.html'])
 
 
 @app.route('/setup')

@@ -3245,7 +3245,7 @@ are tracked here so the next pass picks them up:
      §1 (scope) so the boundary is explicit.
 - **Source**: user-request-2026-06-17 (help-section i18n question); carved from
   the Pass 43.5 "Follow-ons noted" status line.
-- **Status**: todo
+- **Status**: done
 
 ---
 

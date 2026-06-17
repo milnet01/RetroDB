@@ -20,6 +20,7 @@ import logging
 from datetime import datetime, timedelta, timezone
 
 from flask import Blueprint, request, jsonify
+from flask_babel import gettext as _
 
 import config
 from services.api_helpers import handle_api_errors
@@ -203,7 +204,7 @@ def api_get_scraper_settings():
             })
     except Exception as e:
         logger.error(f"Error loading scraper settings: {e}")
-        return jsonify({'error': 'An internal error occurred'}), 500
+        return jsonify({'error': _('An internal error occurred')}), 500
 
 
 @scraper_bp.route('/api/scraper-settings', methods=['POST'])
@@ -218,7 +219,7 @@ def api_save_scraper_settings():
     # would otherwise crash scraper_manager on next call.
     ok, reason, data = validate_scraper_settings(data)
     if not ok:
-        return jsonify({'success': False, 'error': f'invalid scraper settings: {reason}'}), 400
+        return jsonify({'success': False, 'error': _('invalid scraper settings: %(reason)s') % {'reason': reason}}), 400
 
     # Ensure data directory exists
     os.makedirs(os.path.dirname(SCRAPER_SETTINGS_FILE), exist_ok=True)
@@ -276,7 +277,7 @@ def api_save_api_keys():
     # frontend echoes the *** display value.
     ok, reason, data = validate_scraper_api_keys(data)
     if not ok:
-        return jsonify({'success': False, 'error': f'invalid api keys: {reason}'}), 400
+        return jsonify({'success': False, 'error': _('invalid api keys: %(reason)s') % {'reason': reason}}), 400
 
     # Update API keys
     existing['api_keys'] = data
@@ -527,7 +528,7 @@ def api_check_scraper(scraper):
 
     except Exception as e:
         logger.error(f"Error checking scraper {scraper}: {e}")
-        return jsonify({'online': False, 'scraper': scraper, 'error': 'An internal error occurred'})
+        return jsonify({'online': False, 'scraper': scraper, 'error': _('An internal error occurred')})
 
 
 @scraper_bp.route('/api/scraper-allowance/<scraper>')
@@ -547,7 +548,7 @@ def api_scraper_allowance(scraper):
             tgdb_public = api_keys.get('tgdb_public', '') or getattr(config, 'THEGAMESDB_PUBLIC_API_KEY', '')
 
             if not tgdb_private and not tgdb_public:
-                return jsonify({'success': False, 'error': 'No TGDB API key configured'})
+                return jsonify({'success': False, 'error': _('No TGDB API key configured')})
 
             result = {
                 'success': True,
@@ -654,7 +655,7 @@ def api_scraper_allowance(scraper):
             ss_devpassword = api_keys.get('screenscraper_devpassword', '')
             
             if not ss_username or not ss_password:
-                return jsonify({'success': False, 'error': 'No ScreenScraper credentials configured'})
+                return jsonify({'success': False, 'error': _('No ScreenScraper credentials configured')})
             
             # ScreenScraper ssuserInfos.php endpoint returns quota info
             params = []
@@ -691,10 +692,10 @@ def api_scraper_allowance(scraper):
                         'raw': user_data
                     })
                 except json.JSONDecodeError:
-                    return jsonify({'success': False, 'error': 'Invalid JSON response from ScreenScraper'})
+                    return jsonify({'success': False, 'error': _('Invalid JSON response from ScreenScraper')})
                 except Exception as e:
                     logger.error(f"Error parsing ScreenScraper response: {e}")
-                    return jsonify({'success': False, 'error': 'Error parsing API response'})
+                    return jsonify({'success': False, 'error': _('Error parsing API response')})
             else:
                 return jsonify({'success': False, 'error': f'HTTP {r.status_code}'})
         
@@ -712,7 +713,7 @@ def api_scraper_allowance(scraper):
         elif scraper == 'rawg':
             rawg_key = api_keys.get('rawg', '') or api_keys.get('rawg_api_key', '') or getattr(config, 'RAWG_API_KEY', '')
             if not rawg_key:
-                return jsonify({'success': False, 'error': 'No RAWG API key configured'})
+                return jsonify({'success': False, 'error': _('No RAWG API key configured')})
 
             # Make a lightweight API call to check for rate limit headers
             try:
@@ -773,7 +774,7 @@ def api_scraper_allowance(scraper):
             from scraper.scrape_ai import _get_active_provider, PROVIDERS
             provider_config = _get_active_provider()
             if not provider_config:
-                return jsonify({'success': False, 'error': 'No AI provider configured'})
+                return jsonify({'success': False, 'error': _('No AI provider configured')})
 
             provider = provider_config['provider']
             api_key = provider_config['api_key']
@@ -819,10 +820,10 @@ def api_scraper_allowance(scraper):
                         'anthropic-version': '2023-06-01',
                     }, timeout=15)
                 else:
-                    return jsonify({'success': False, 'error': f'Unknown AI provider: {provider}'})
+                    return jsonify({'success': False, 'error': _('Unknown AI provider: %(provider)s') % {'provider': provider}})
 
                 if response is None:
-                    return jsonify({'success': False, 'error': 'No response from AI provider'})
+                    return jsonify({'success': False, 'error': _('No response from AI provider')})
 
                 h = response.headers
                 result = {
@@ -913,11 +914,11 @@ def api_scraper_allowance(scraper):
 
             except (requests.RequestException, OSError, ValueError) as e:
                 logger.error(f"AI rate limit check error: {e}")
-                return jsonify({'success': False, 'error': f'Connection error: {type(e).__name__}'})
+                return jsonify({'success': False, 'error': _('Connection error: %(error)s') % {'error': type(e).__name__}})
 
         else:
-            return jsonify({'success': False, 'error': f'Allowance check not supported for {scraper}'})
+            return jsonify({'success': False, 'error': _('Allowance check not supported for %(scraper)s') % {'scraper': scraper}})
     
     except Exception as e:
         logger.error(f"Error checking allowance for {scraper}: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+        return jsonify({'success': False, 'error': _('An internal error occurred')})

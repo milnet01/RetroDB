@@ -9,6 +9,7 @@ import logging
 import re
 
 from flask import Blueprint, render_template, request
+from flask_babel import gettext as _
 
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required
@@ -38,7 +39,7 @@ def api_search_games():
     folder = request.args.get('folder', '')
 
     if not title:
-        return error('Title required', 400)
+        return error(_('Title required'), 400)
 
     clean_title = title
     patterns_to_remove = [
@@ -192,7 +193,7 @@ def api_compare_games():
     """Return comparison data for two games."""
     game_ids = request.args.getlist('id', type=int)
     if len(game_ids) < 2:
-        return error('Two game IDs required', 400)
+        return error(_('Two game IDs required'), 400)
 
     ids = game_ids[:2]
     placeholders = ','.join('?' for _ in ids)
@@ -206,6 +207,6 @@ def api_compare_games():
     results = [by_id[gid] for gid in ids if gid in by_id]
 
     if len(results) < 2:
-        return error('One or both games not found', 404)
+        return error(_('One or both games not found'), 404)
 
     return success(games=results)

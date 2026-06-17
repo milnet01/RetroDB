@@ -1,0 +1,2005 @@
+{% extends "base.html" %}
+
+{% block title %}ヘルプ - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ _('Help & Documentation') }}</h1>
+        <p class="page-subtitle">{% trans version=config.APP_VERSION %}Complete guide to RetroDB v{{ version }}{% endtrans %}</p>
+    </div>
+</div>
+
+<!-- Help Navigation -->
+<div class="help-nav" data-sticky-nav>
+    <a href="#installation" class="help-nav-item">インストール</a>
+    <a href="#getting-started" class="help-nav-item">はじめに</a>
+    <a href="#platform-notes" class="help-nav-item">プラットフォーム別の注意</a>
+    <a href="#navigation" class="help-nav-item">ナビゲーション</a>
+    <a href="#keyboard-shortcuts" class="help-nav-item">キーボードショートカット</a>
+    <a href="#themes" class="help-nav-item">テーマ</a>
+    <a href="#dashboard" class="help-nav-item">ダッシュボード</a>
+    <a href="#systems" class="help-nav-item">システム</a>
+    <a href="#api-keys" class="help-nav-item">APIキー</a>
+    <a href="#settings" class="help-nav-item">設定</a>
+    <a href="#scraping" class="help-nav-item">スクレイピング</a>
+    <a href="#bulk-scrape" class="help-nav-item">一括スクレイピング</a>
+    <a href="#ai-fill" class="help-nav-item">AIフィル</a>
+    <a href="#filtering" class="help-nav-item">フィルタリング</a>
+    <a href="#game-detail" class="help-nav-item">ゲーム詳細</a>
+    <a href="#bulk-edit" class="help-nav-item">一括編集</a>
+    <a href="#compare" class="help-nav-item">比較</a>
+    <a href="#collections" class="help-nav-item">コレクション</a>
+    <a href="#game-imports" class="help-nav-item">ゲームインポート</a>
+    <a href="#retroachievements" class="help-nav-item">RetroAchievements</a>
+    <a href="#steam-achievements" class="help-nav-item">Steam</a>
+    <a href="#xbox-achievements" class="help-nav-item">Xbox</a>
+    <a href="#hltb" class="help-nav-item">HLTB</a>
+    <a href="#trophies" class="help-nav-item">トロフィー</a>
+    <a href="#collector-trophies" class="help-nav-item">コレクタートロフィー</a>
+    <a href="#museum" class="help-nav-item">ミュージアム</a>
+    <a href="#analytics" class="help-nav-item">分析</a>
+    <a href="#reports" class="help-nav-item">レポート</a>
+    <a href="#rom-tools" class="help-nav-item">ROMツール</a>
+    <a href="#normalization" class="help-nav-item">正規化</a>
+    <a href="#image-standardization" class="help-nav-item">画像リサイズ</a>
+    <a href="#logs" class="help-nav-item">ログ</a>
+    <a href="#maintenance" class="help-nav-item">メンテナンス</a>
+    <a href="#multi-user" class="help-nav-item">マルチユーザー</a>
+    <a href="#backup" class="help-nav-item">バックアップ</a>
+    <a href="#updating" class="help-nav-item">アップデート</a>
+    <a href="#troubleshooting" class="help-nav-item">トラブルシューティング</a>
+    <a href="#security" class="help-nav-item">セキュリティ</a>
+</div>
+
+<!-- Installation -->
+<section id="installation" class="help-section card">
+    <h2 class="card-title">インストール</h2>
+    <div class="card-body">
+        <h3>システム要件</h3>
+        <ul>
+            <li><strong>Python 3.8 以上</strong>（pip 付き）</li>
+            <li><strong>Web ブラウザ</strong>（Chrome、Firefox、Safari、Edge）</li>
+            <li><strong>オペレーティングシステム:</strong> Linux、Windows 10/11、または macOS</li>
+        </ul>
+
+        <h3>クイックインストール</h3>
+        <ol>
+            <li>RetroDB の ZIP を任意のディレクトリに展開します</li>
+            <li>そのディレクトリでターミナル／コマンドプロンプトを開きます</li>
+            <li>次を実行します: <code>python install.py</code></li>
+            <li>サーバーを起動します:
+                <ul>
+                    <li>Linux: <code>./start.sh</code></li>
+                    <li>Windows: <code>start.bat</code> をダブルクリック</li>
+                    <li>macOS: <code>start.command</code> をダブルクリック</li>
+                </ul>
+            </li>
+            <li>ブラウザで <code>http://localhost:5000</code> を開きます</li>
+        </ol>
+
+        <h3>GUI インストーラー</h3>
+        <p>Linux では <code>./setup.sh</code> を実行してグラフィカルなインストールウィザードを起動することもできます。Python／pip／tkinter の有無を自動でチェックし、視覚的な進捗ログとともに各セットアップ手順をガイドします。</p>
+
+        <h3>install.py が行う処理</h3>
+        <ul>
+            <li>Python 3.8 以上と pip が利用可能か確認します</li>
+            <li><code>requirements.txt</code> から Python の依存関係をインストールします</li>
+            <li>サンプルテンプレートから <code>config.py</code> を作成します</li>
+            <li>必要なディレクトリ（データベース、ログ、メディアフォルダー）を作成します</li>
+            <li>CSS と JS のバンドルをビルドします</li>
+        </ul>
+
+        <h3>環境変数によるオーバーライド</h3>
+        <p>以下の環境変数を使うと、設定ファイルを編集せずにデフォルト設定を上書きできます:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>変数</th><th>デフォルト</th><th>説明</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>RETRODB_DB_PATH</code></td><td><code>database/roms.db</code></td><td>データベースファイルのパス</td></tr>
+                <tr><td><code>RETRODB_HOST</code></td><td><code>0.0.0.0</code></td><td>サーバーのバインドアドレス</td></tr>
+                <tr><td><code>RETRODB_PORT</code></td><td><code>5000</code></td><td>サーバーのポート</td></tr>
+                <tr><td><code>RETRODB_DEBUG</code></td><td><code>false</code></td><td>デバッグモード（<code>true</code> または <code>false</code>）&mdash; Werkzeug の対話型デバッガーを有効にします。ネットワーク上の他のデバイスから到達可能なインストールでは <code>false</code> のままにしてください。</td></tr>
+                <tr><td><code>RETRODB_SECRET_KEY</code></td><td>自動生成</td><td>Flask のシークレットキー</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Getting Started -->
+<section id="getting-started" class="help-section card">
+    <h2 class="card-title">はじめに</h2>
+    <div class="card-body">
+        <h3>初回セットアップ</h3>
+        <p>初回起動時、RetroDB は次の手順をガイドする<strong>セットアップウィザード</strong>を表示します:</p>
+        <ol>
+            <li><strong>管理者アカウント</strong> &mdash; ユーザー名とパスワードを作成します</li>
+            <li><strong>ライブラリパス</strong> &mdash; ROM ディレクトリを設定します</li>
+            <li><strong>ES-DE 連携</strong> &mdash; 任意で ES-DE のゲームリストとメディアをリンクします</li>
+            <li><strong>API キー</strong> &mdash; 任意でスクレイパーの API キーを追加します</li>
+        </ol>
+        <p>ウィザードを完了したら、ダッシュボードで<strong>「ライブラリをスキャン」</strong>をクリックして ROM を検出します。</p>
+
+        <h3>クイックスタートの流れ</h3>
+        <ol>
+            <li>ライブラリを<strong>スキャン</strong>して ROM をインポートします</li>
+            <li>システムごとに<strong>ブラウズ</strong>するか、ライブラリですべてのゲームを表示します</li>
+            <li>メタデータを個別に、または一括スクレイプで<strong>スクレイプ</strong>します</li>
+            <li>タグ、リスト、ウィッシュリストで<strong>整理</strong>します</li>
+            <li>クリア状況や実績で進捗を<strong>トラッキング</strong>します</li>
+        </ol>
+
+        <h3>ROM ライブラリの構造</h3>
+        <p>RetroDB はライブラリパス内のシステムフォルダーに ROM が整理されていることを前提とします:</p>
+        <pre>ROM Library/
+  nes/
+    Super Mario Bros. (USA).nes
+  snes/
+    Chrono Trigger (USA).sfc
+  psx/
+    Final Fantasy VII (USA)/
+      Final Fantasy VII (USA) (Disc 1).chd
+      Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>各システムフォルダーには、サポートするファイル拡張子を定義した ES-DE の <code>systeminfo.txt</code> ファイルが必要です。RetroDB はスキャン時にこれを読み込み、各システムでどのファイルが有効な ROM かを判別します。</p>
+
+        <div class="help-tip">
+            <strong>ヒント:</strong> すでに ES-DE でスクレイプ済みの場合、RetroDB はそのデータをインポートできます！
+            ES-DE のパスは「設定 &rarr; ES-DE 連携」で、またはセットアップウィザード中に設定します。
+        </div>
+    </div>
+</section>
+
+<!-- Platform Notes -->
+<section id="platform-notes" class="help-section card">
+    <h2 class="card-title">プラットフォーム別の注意</h2>
+    <div class="card-body">
+        <h3>Linux</h3>
+        <ul>
+            <li>Ubuntu、Fedora、openSUSE、Arch Linux でテスト済みです</li>
+            <li>ROM ツールには次が必要です: <code>sudo apt install p7zip-full unrar mame-tools</code>（Debian/Ubuntu）またはお使いのディストリビューションの同等品</li>
+            <li>システム Python を使用する場合、インストーラーが <code>--break-system-packages</code> を自動で処理します</li>
+            <li>AMD GPU 向けに ROCm による GPU アクセラレーションをサポートします（Real-ESRGAN による画像アップスケーリング）</li>
+        </ul>
+
+        <h3>Windows</h3>
+        <ul>
+            <li><a href="https://python.org" target="_blank" rel="noopener noreferrer">python.org</a> から Python をダウンロードします（インストール時に「Add to PATH」をチェック）</li>
+            <li>ROM ツール: <a href="https://www.7-zip.org/" target="_blank" rel="noopener noreferrer">7-Zip</a>、<a href="https://www.win-rar.com/" target="_blank" rel="noopener noreferrer">WinRAR</a>、<a href="https://www.mamedev.org/" target="_blank" rel="noopener noreferrer">MAME</a>（chdman 用）をインストールします</li>
+            <li><code>start.bat</code> で起動するか、コマンドプロンプトから <code>python app.py</code> を実行します</li>
+        </ul>
+
+        <h3>macOS</h3>
+        <ul>
+            <li>Python 3 は <a href="https://brew.sh/" target="_blank" rel="noopener noreferrer">Homebrew</a> でインストールできます: <code>brew install python3</code></li>
+            <li>ROM ツール: <code>brew install p7zip unrar rom-tools</code></li>
+            <li>Finder で <code>start.command</code> をダブルクリックして起動します</li>
+            <li>Apple Silicon 向けに CoreML アクセラレーションをサポートします（Real-ESRGAN による画像アップスケーリング）</li>
+        </ul>
+
+        <h3>機能ごとの ROM ツール要件</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>機能</th><th>必要なツール</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ZIP の展開</td><td>unzip（通常はプリインストール）</td></tr>
+                <tr><td>7z アーカイブのサポート</td><td>7z（p7zip-full）</td></tr>
+                <tr><td>RAR アーカイブのサポート</td><td>unrar</td></tr>
+                <tr><td>CHD の変換／検証</td><td>chdman（mame-tools）</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Navigation -->
+<section id="navigation" class="help-section card">
+    <h2 class="card-title">ナビゲーション</h2>
+    <div class="card-body">
+        <h3>サイドバーのセクション</h3>
+
+        <h4>メイン</h4>
+        <ul>
+            <li><strong>ダッシュボード</strong> &mdash; コレクションの健全性スコア、統計概要、API ステータス、最近プレイ／追加／スクレイプしたゲーム、ジョブの復旧</li>
+            <li><strong>システム</strong> &mdash; ゲーム数、システム画像、スペックとともにプラットフォームをブラウズし、種類や機能で絞り込み</li>
+            <li><strong>ライブラリ</strong> &mdash; 無限スクロール、高度なフィルタリング（含める／除外する）、検索、並べ替えを備えた全ゲーム表示</li>
+            <li><strong>分析</strong> &mdash; エクスポートオプション付きの 12 タブにわたるチャートとコレクション統計</li>
+        </ul>
+
+        <h4>トロフィーと実績</h4>
+        <ul>
+            <li><strong>RPCS3 トロフィー</strong> &mdash; RPCS3 エミュレーターでローカルに獲得した PS3 トロフィー</li>
+            <li><strong>PSN トロフィー</strong> &mdash; PSN API による PlayStation Network トロフィーの同期</li>
+            <li><strong>実績</strong> &mdash; システム別の RetroAchievements 進捗トラッキング</li>
+            <li><strong>Steam 実績</strong> &mdash; ゲームごとの詳細を含む Steam 実績トラッキング</li>
+            <li><strong>Xbox 実績</strong> &mdash; Xbox の実績とゲーマースコアのトラッキング</li>
+        </ul>
+
+        <h4>マイコレクション</h4>
+        <ul>
+            <li><strong>タグ</strong> &mdash; 色分けされたカスタムゲームタグ</li>
+            <li><strong>リスト</strong> &mdash; ドラッグ＆ドロップで並べ替えできる名前付きのキュレーション済みゲームリスト</li>
+            <li><strong>ウィッシュリスト</strong> &mdash; 入手したいゲームを優先度付きでトラッキング</li>
+            <li><strong>コレクタートロフィー</strong> &mdash; コレクションのゲーミフィケーションマイルストーン</li>
+        </ul>
+
+        <h4>ツール</h4>
+        <ul>
+            <li><strong>ROM レポート</strong> &mdash; ROM の命名検証と規約への準拠チェック</li>
+            <li><strong>ゲームインポート</strong> &mdash; CLZ、Steam、Xbox、PSN からのインポート</li>
+            <li><strong>ROM ツール</strong> &mdash; アーカイブスキャナー、CHD 変換／検証、重複ファインダー、マルチディスク整理、スクリーンショット重複除去、画像リサイザー</li>
+        </ul>
+
+        <h4>構成</h4>
+        <ul>
+            <li><strong>設定</strong> &mdash; アプリのすべての構成（多数のサブセクションを持つ 6 タブ）</li>
+            <li><strong>ログビューアー</strong> &mdash; すべてのカテゴリーにわたるアプリケーションログの閲覧</li>
+        </ul>
+
+        <h4>情報</h4>
+        <ul>
+            <li><strong>ミュージアム</strong> &mdash; AI 生成コンテンツを備えたインタラクティブなゲームシステム百科事典</li>
+            <li><strong>ヘルプ</strong> &mdash; このドキュメントページ</li>
+            <li><strong>変更履歴</strong> &mdash; バージョン履歴</li>
+        </ul>
+
+        <h3>サイドバーのハイライト</h3>
+        <p>サイドバーは現在のセクションをシアンでハイライトします。ドリルダウン時もコンテキストが保持され、システムのゲームを表示しているときは<strong>システム</strong>が、実績からゲームを表示しているときは<strong>実績</strong>がハイライトされたままになります。</p>
+
+        <h3>パンくずリスト</h3>
+        <p>各ページ上部のパンくずリストはナビゲーション経路を示します。例:</p>
+        <ul>
+            <li><code>Systems &rsaquo; NES &rsaquo; Super Mario Bros.</code></li>
+            <li><code>RetroAchievements &rsaquo; SNES</code></li>
+            <li><code>PSN Trophies &rsaquo; The Last of Us</code></li>
+        </ul>
+
+        <h3>タブ</h3>
+        <p>多くのページは整理のためにタブを使用します（設定、分析、レポート、ROM ツール、実績）。タブはコンテンツ幅いっぱいに広がり、該当する場合は最後に選択した状態を記憶します。</p>
+    </div>
+</section>
+
+<!-- Keyboard Shortcuts -->
+<section id="keyboard-shortcuts" class="help-section card">
+    <h2 class="card-title">キーボードショートカット</h2>
+    <div class="card-body">
+        <p>どこでも <kbd>?</kbd> を押すとすべてのショートカットを表示します。連続入力の 2 番目のキーを待っているとき（例: <code>g...</code>）には保留中キーのインジケーターが表示されます。</p>
+
+        <h3>ナビゲーション（G を押してから文字）</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>d</kbd> <span>ダッシュボード</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>s</kbd> <span>システム</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>l</kbd> <span>ライブラリ</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>a</kbd> <span>分析</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>t</kbd> <span>設定</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>h</kbd> <span>ヘルプ</span></div>
+        </div>
+
+        <h3>アクション</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>/</kbd> <span>検索にフォーカス</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>モーダルを閉じる</span></div>
+            <div class="shortcut-item"><kbd>?</kbd> <span>ショートカットを表示</span></div>
+        </div>
+
+        <h3>ゲームページ</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>e</kbd> <span>ゲームを編集</span></div>
+            <div class="shortcut-item"><kbd>s</kbd> <span>ゲームをスクレイプ</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>スクリーンショットを移動</span></div>
+        </div>
+
+        <div class="help-tip">
+            <strong>注:</strong> 誤操作によるナビゲーションを防ぐため、テキスト入力欄、テキストエリア、またはモーダルにフォーカスがあるときはキーボードショートカットは無効になります。
+        </div>
+    </div>
+</section>
+
+<!-- Themes -->
+<section id="themes" class="help-section card">
+    <h2 class="card-title">テーマ</h2>
+    <div class="card-body">
+        <p>RetroDB は 7 種類のビジュアルテーマを提供し、それぞれ独自のカラーパレットとアニメーション付きのキャンバス背景エフェクトを備えています。テーマは<strong>「設定 &rarr; ライブラリ &rarr; 表示」</strong>で変更します。</p>
+
+        <h3>利用可能なテーマ</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>テーマ</th><th>カラー</th><th>背景エフェクト</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Cyberpunk</strong>（デフォルト）</td><td>ダークブルー上のシアンとマゼンタ</td><td>シンプレックスノイズによるボリューメトリックな煙／霧</td></tr>
+                <tr><td><strong>Matrix</strong></td><td>黒上の緑</td><td>降り注ぐデジタルレイン（漢字文字）</td></tr>
+                <tr><td><strong>Amber</strong></td><td>ダークブラウン上のアンバー／オレンジ</td><td>太陽のコロナを伴う CRT 風の日の出グラデーション</td></tr>
+                <tr><td><strong>Ocean</strong></td><td>ダークネイビー上のティールとブルー</td><td>海の深度レイヤリングを伴う月の反射</td></tr>
+                <tr><td><strong>Cathedral</strong></td><td>深い紫上のゴールドとロイヤルパープル</td><td>暖かな雰囲気の上方から差す神々しい光線</td></tr>
+                <tr><td><strong>Blade Runner</strong></td><td>ダークブルーグレー上のエレクトリックブルーとネオンピンク</td><td>雨のすじと紫のもやを伴うネオンの街の輝き</td></tr>
+                <tr><td><strong>Elite</strong></td><td>純黒上のベクターグリーンとホワイト</td><td>Elite（1984）に着想を得たワイヤーフレームのベクター美学</td></tr>
+            </tbody>
+        </table>
+
+        <h3>仕組み</h3>
+        <ul>
+            <li>テーマは CSS のカラー変数を上書きし、すべての UI 要素が自動的に適応します</li>
+            <li>キャンバスエフェクトはハードウェアの性能ティア（高／中／低）を自動検出し、利用可能なときは GPU アクセラレーションを、低スペックデバイスでは CPU フォールバックを使用します</li>
+            <li>タブが非表示のときはエフェクトを一時停止してリソースを節約します</li>
+            <li>Cyberpunk の煙の状態はページ遷移をまたいで保持され、シームレスな遷移を実現します</li>
+            <li>控えめな CRT 風スキャンライン（走査線）のオーバーレイは各テーマのカラーパレットに適応します</li>
+            <li>テーマの設定はブラウザに保存され、セッションをまたいで維持されます</li>
+        </ul>
+
+        <h3>テーマ対応アイコン</h3>
+        <p>通知アイコン、ジョブ状態インジケーター、アクションアイコンは現在のテーマに自動的に適応します。たとえば成功アイコンは Cyberpunk では緑のチェックマークを表示し、Matrix では緑と黒の美学に合わせて別のシンボルを表示することがあります。</p>
+    </div>
+</section>
+
+<!-- Dashboard -->
+<section id="dashboard" class="help-section card">
+    <h2 class="card-title">ダッシュボード</h2>
+    <div class="card-body">
+        <h3>コレクション健全性スコア</h3>
+        <p>円形のプログレスリングが、コレクション全体の健全性をパーセンテージで表示し、品質に応じて色分けします:</p>
+        <ul>
+            <li><strong>緑</strong>（80% 以上）&mdash; メタデータの網羅性が優秀</li>
+            <li><strong>シアン</strong>（60&ndash;79%）&mdash; おおむね良好だが一部に抜けあり</li>
+            <li><strong>オレンジ</strong>（40&ndash;59%）&mdash; 網羅性は中程度、一括スクレイピングを検討</li>
+            <li><strong>赤</strong>（40% 未満）&mdash; メタデータに大きな抜けあり</li>
+        </ul>
+        <p>下に並ぶ内訳のミニリングは、ボックスアート、説明文、実績の網羅状況を示します。</p>
+
+        <h3>統計概要</h3>
+        <p>ひと目で分かるカードで次を表示します:</p>
+        <ul>
+            <li><strong>総システム数</strong> &mdash; ライブラリ内のプラットフォーム数</li>
+            <li><strong>総ゲーム数</strong> &mdash; 合計ゲーム数（ボーナスディスクを除く）</li>
+            <li><strong>メタデータなし</strong> &mdash; まだスクレイプしていないゲーム</li>
+            <li><strong>完了</strong> &mdash; メタデータをスクレイプ済みのゲーム</li>
+        </ul>
+
+        <h3>最近のアクティビティセクション</h3>
+        <p>最近のアクティビティを表示するスクロール可能なセクション（該当するゲームがある場合のみ表示）:</p>
+        <ul>
+            <li><strong>現在プレイ中</strong> &mdash; 「進行中」とマークされたゲーム</li>
+            <li><strong>最近追加</strong> &mdash; ライブラリに最近追加されたゲーム</li>
+            <li><strong>最近表示</strong> &mdash; 最近開いたゲーム</li>
+            <li><strong>最近スクレイプ</strong> &mdash; 最近メタデータを取得したゲーム</li>
+        </ul>
+
+        <h3>クイックアクション</h3>
+        <ul>
+            <li><strong>ライブラリをスキャン</strong> &mdash; 新しいゲームを探して ROM ディレクトリをスキャン</li>
+            <li><strong>ランダムゲーム</strong> &mdash; ライブラリからランダムにゲームを選択</li>
+        </ul>
+
+        <h3>API ステータス</h3>
+        <p>設定済みのすべてのスクレイパーと API の接続状態を表示します。オフラインまたは設定不備の API は、設定へのリンク付きの警告バナーを表示します。</p>
+
+        <h3>ジョブの復旧</h3>
+        <p>バックグラウンドジョブ（一括スクレイプ、RA 同期、画像リサイズなど）の実行中に RetroDB が再起動した場合、中断されたジョブが復旧バナーに表示されます。オプション:</p>
+        <ul>
+            <li><strong>再開</strong> &mdash; 中断された個別のジョブを再開</li>
+            <li><strong>すべて再開</strong> &mdash; 中断されたすべてのジョブを再開</li>
+            <li><strong>破棄</strong> &mdash; 復旧リストから個別のジョブを消去</li>
+            <li><strong>すべて破棄</strong> &mdash; 中断されたすべてのジョブを消去</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Systems Browser -->
+<section id="systems" class="help-section card">
+    <h2 class="card-title">システムブラウザー</h2>
+    <div class="card-body">
+        <h3>システムグリッド</h3>
+        <p>システムページは、ライブラリ内のすべてのプラットフォームをレスポンシブなメイソンリーグリッドのカードとして表示します。各カードには次が表示されます:</p>
+        <ul>
+            <li><strong>システムロゴ</strong>（「設定 &rarr; カスタマイズ &rarr; ロゴ」でカスタマイズ可能）</li>
+            <li><strong>ROM 数</strong>と<strong>未スクレイプ数</strong></li>
+            <li><strong>システム種別バッジ</strong> &mdash; 据置機、携帯機、コンピューター、アーケード、またはエンジン</li>
+            <li><strong>機能バッジ</strong> &mdash; RetroAchievements 対応、ローカルトロフィー（RPCS3）</li>
+        </ul>
+
+        <h3>システムスペックモーダル</h3>
+        <p>任意のシステムカードの情報ボタンをクリックすると、詳細なハードウェア仕様を表示します:</p>
+        <ul>
+            <li>ハードウェア画像（本体／システムの写真）</li>
+            <li>メーカーと発売日</li>
+            <li>CPU、GPU、RAM、VRAM</li>
+            <li>解像度、色深度、サウンドチップ</li>
+            <li>メディア種別（カートリッジ、ディスクなど）</li>
+        </ul>
+
+        <h3>フィルタリングと検索</h3>
+        <ul>
+            <li><strong>テキスト検索</strong> &mdash; システム名またはフォルダー名で絞り込み</li>
+            <li><strong>種別フィルター</strong> &mdash; 据置機、携帯機、コンピューター、アーケード、エンジン</li>
+            <li><strong>機能フィルター</strong> &mdash; RetroAchievements 対応、ローカルトロフィー</li>
+            <li>フィルター結果バーに <em>「X / Y システム」</em>を表示</li>
+            <li>フィルターはセッションストレージによりページ再読み込みをまたいで保持されます</li>
+        </ul>
+
+        <h3>システムごとのゲーム一覧</h3>
+        <p>任意のシステムカードをクリックすると、そのゲームを表示します。システムごとのゲーム一覧は、ライブラリページ全体と同じ機能（無限スクロール、検索、すべてのフィルターオプション、一括選択、並べ替え）を備えています。システムヘッダーにはシステム名、ゲーム数、システム種別バッジが表示されます。</p>
+    </div>
+</section>
+
+<!-- API Key Setup Guide -->
+<section id="api-keys" class="help-section card">
+    <h2 class="card-title">API キー設定ガイド</h2>
+    <div class="card-body">
+        <p>API キーは任意ですが、リッチなメタデータのスクレイピングや追加機能を有効にします。<strong>「設定 &rarr; スクレイピング &rarr; API キー」</strong>で設定します。</p>
+
+        <h3>メタデータスクレイパー</h3>
+
+        <h4>TheGamesDB</h4>
+        <ol>
+            <li><a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a> にアクセスします</li>
+            <li>API キーをリクエストします（無料、手動承認）&mdash; <strong>Public</strong> キーと <strong>Private</strong> キーが発行されます</li>
+            <li>両方のキーを「設定 &rarr; API キー &rarr; TheGamesDB」に入力します</li>
+            <li><strong>Public キー</strong>（IP ごとのレート制限）がスクレイピングの主キーとして使われます</li>
+            <li><strong>Private キー</strong>（共有の月間プール）は Public キーが失敗した場合のフォールバックとして使われます</li>
+        </ol>
+
+        <h4>IGDB（Twitch 経由）</h4>
+        <ol>
+            <li><a href="https://www.twitch.tv" target="_blank" rel="noopener noreferrer">twitch.tv</a> で Twitch アカウントを作成します</li>
+            <li><a href="https://dev.twitch.tv/console" target="_blank" rel="noopener noreferrer">dev.twitch.tv/console</a> にアクセスします</li>
+            <li>新しいアプリケーションを登録します（名前・カテゴリーは任意、OAuth リダイレクトに <code>http://localhost</code>）</li>
+            <li><strong>Client ID</strong> をコピーし、<strong>Client Secret</strong> を生成します</li>
+            <li>両方を「設定 &rarr; API キー &rarr; IGDB」に入力します</li>
+        </ol>
+
+        <h4>RAWG.io</h4>
+        <ol>
+            <li><a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer">rawg.io/apidocs</a> にアクセスします</li>
+            <li>「Get API Key」をクリックしてアカウントを作成します</li>
+            <li>ダッシュボードから API キーをコピーします</li>
+            <li>それを「設定 &rarr; API キー &rarr; RAWG」に入力します</li>
+        </ol>
+        <p><em>無料枠: 月 20,000 リクエスト</em></p>
+
+        <h4>ScreenScraper</h4>
+        <ol>
+            <li><a href="https://www.screenscraper.fr" target="_blank" rel="noopener noreferrer">screenscraper.fr</a> でアカウントを作成します</li>
+            <li>ユーザー名とパスワードを「設定 &rarr; API キー &rarr; ScreenScraper」に入力します</li>
+        </ol>
+        <p><em>注: ScreenScraper にはアカウントレベルに応じた 1 日あたりのリクエスト制限があります。データベースに貢献すると制限が緩和されます。</em></p>
+
+        <h3>実績とトロフィー</h3>
+
+        <h4>RetroAchievements</h4>
+        <ol>
+            <li><a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a> でアカウントを作成します</li>
+            <li>プロフィールの <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer">Settings &rarr; API Keys</a> にアクセスします</li>
+            <li>API キーをコピーします</li>
+            <li>ユーザー名と API キーを「設定 &rarr; アカウント &rarr; RetroAchievements」に入力します</li>
+        </ol>
+
+        <h4>Steam Web API</h4>
+        <ol>
+            <li><a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener noreferrer">steamcommunity.com/dev/apikey</a> にアクセスします</li>
+            <li>Steam Web API キーを登録します（Steam アカウントが必要）</li>
+            <li>API キーと Steam ID（またはバニティ URL）を設定に入力します</li>
+        </ol>
+        <p><em>Steam ライブラリのインポートと実績トラッキングに使用します。</em></p>
+
+        <h4>Xbox Live</h4>
+        <p>Xbox 認証は OAuth2 を使用するため、API キーは不要です。ゲームインポート &rarr; Xbox タブから Microsoft アカウントで直接サインインします。トークンは自動でキャッシュされ、必要に応じて更新されます。</p>
+
+        <h4>PlayStation Network（PSN）</h4>
+        <p>PSN は NPSSO クッキー認証を使用します。詳細な設定手順は<a href="#trophies">トロフィー</a>セクションを参照してください。</p>
+
+        <h3>AI プロバイダー（AI フィルとミュージアム用）</h3>
+        <p>AI フィルのメタデータとミュージアムのコンテンツ生成には、AI プロバイダーが 1 つ必要です。次から選択します:</p>
+
+        <table class="data-table">
+            <thead>
+                <tr><th>プロバイダー</th><th>デフォルトモデル</th><th>料金（入力／出力、100 万トークンあたり）</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0.10 / $0.40</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0.15 / $0.60</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 4.5</td><td>$1.00 / $5.00</td></tr>
+            </tbody>
+        </table>
+        <p>各プロバイダーは複数のモデルティアを提供します。最も安価なモデルでもメタデータやミュージアムのコンテンツには十分機能します。お好みのプロバイダーと API キーを<strong>「設定 &rarr; スクレイピング &rarr; API キー」</strong>で設定します。</p>
+    </div>
+</section>
+
+<!-- Settings -->
+<section id="settings" class="help-section card">
+    <h2 class="card-title">設定</h2>
+    <div class="card-body">
+        <p>設定は 6 つのタブに整理されており、それぞれ複数のサブセクションを持ちます。</p>
+
+        <h3>アカウントタブ</h3>
+        <ul>
+            <li><strong>マイプロフィール</strong> &mdash; アバターのアップロード／削除、表示名、ロール情報、パスワード変更</li>
+            <li><strong>RetroAchievements</strong> &mdash; RA 連携用のユーザー名と API キー</li>
+            <li><strong>PSN</strong> &mdash; PlayStation Network トロフィー同期用の NPSSO クッキー</li>
+            <li><strong>タイムゾーン</strong> &mdash; アプリ全体の日付表示に使うタイムゾーンを設定</li>
+            <li><strong>ユーザー</strong> &mdash; ユーザー管理: ユーザーの追加、編集、削除、ロールの割り当て（管理者のみ）</li>
+        </ul>
+
+        <h3>ライブラリタブ</h3>
+        <ul>
+            <li><strong>パス</strong> &mdash; ROM ライブラリのパス、データベースの場所</li>
+            <li><strong>表示</strong> &mdash; テーマ選択、ボックスアートのスタイル（2D/3D）、優先する年齢レーティングシステム、1 ページあたりの件数</li>
+            <li><strong>ROM 命名</strong> &mdash; 冠詞の配置（先頭／末尾の「The」）、地域オプション一覧、デフォルト地域、命名規則</li>
+            <li><strong>バックアップ</strong> &mdash; データベースバックアップの作成と復元</li>
+        </ul>
+
+        <h3>スクレイピングタブ</h3>
+        <ul>
+            <li><strong>ES-DE</strong> &mdash; ローカルデータインポート用の ES-DE ゲームリストとメディアのパス</li>
+            <li><strong>スクレイパー</strong> &mdash; 各スクレイパーの有効化／無効化、ドラッグ＆ドロップによる優先順位付け、スクレイパーごとのレート制限設定</li>
+            <li><strong>API キー</strong> &mdash; すべてのスクレイパー資格情報（TGDB、IGDB、RAWG、ScreenScraper）、AI プロバイダーの選択とモデルの選択（Gemini、OpenAI、Claude）</li>
+        </ul>
+
+        <h3>データタブ</h3>
+        <ul>
+            <li><strong>統計</strong> &mdash; ライブラリ統計の概要（総ゲーム数、システム数、ストレージ使用量）</li>
+            <li><strong>トロフィー</strong> &mdash; ローカル PS3 トロフィースキャン用の RPCS3 トロフィーパス設定</li>
+            <li><strong>ドロップダウン</strong> &mdash; 地域オプションやアプリ全体で使われるその他のドロップダウン値をカスタマイズ</li>
+            <li><strong>正規化</strong> &mdash; ジャンルとモードの正規化ルール &mdash; カスタムマッピングを追加してスクレイパー出力を標準化</li>
+        </ul>
+
+        <h3>カスタマイズタブ</h3>
+        <ul>
+            <li><strong>通知</strong> &mdash; 通知のタイムアウト設定（成功、情報、警告、エラー &mdash; それぞれ独立して設定可能）</li>
+            <li><strong>コントローラー</strong> &mdash; コントローラーライブラリの管理、システムごとのデフォルトコントローラー設定、カスタムコントローラーの追加。デフォルトコントローラーはメタデータ取得時にスクレイプ／AI 値を上書きします。</li>
+            <li><strong>ロゴ</strong> &mdash; システムロゴのカスタマイズ &mdash; システムロゴのインポートまたはデフォルトからの更新</li>
+        </ul>
+
+        <h3>システムタブ</h3>
+        <ul>
+            <li><strong>メンテナンス</strong> &mdash; データベース最適化（VACUUM/ANALYZE）、孤立メディアのクリーンアップ、欠落 ROM のクリーン、スクレイプデータのクリア、CLZ インポートのクリア、画像の一括標準化</li>
+            <li><strong>サーバー</strong> &mdash; サーバー構成（ホスト、ポート、デバッグモード）</li>
+            <li><strong>ロギング</strong> &mdash; カテゴリーごとのログレベル設定</li>
+            <li><strong>トラブルシューティング</strong> &mdash; 停止した一括スクレイプのクリア、RA 同期キューのクリア、PSN 更新のクリア、ミュージアム生成のクリア、サーバーの再起動</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>ヒント:</strong> 無効化されたスクレイパーはダッシュボードで「API オフライン」警告を出しません。使わないスクレイパーは API キーを削除するのではなく、「設定 &rarr; スクレイピング &rarr; スクレイパー」で無効化してください。
+        </div>
+    </div>
+</section>
+
+<!-- Scraping -->
+<section id="scraping" class="help-section card">
+    <h2 class="card-title">メタデータのスクレイピング</h2>
+    <div class="card-body">
+        <h3>単一ゲームのスクレイピング</h3>
+        <ol>
+            <li>任意のゲームの詳細モーダルを開きます（ゲームカードをクリック）</li>
+            <li><strong>「スクレイプ」</strong>をクリックします</li>
+            <li>必要に応じて検索タイトルを修正します</li>
+            <li>候補から正しい結果を選択します</li>
+            <li><strong>「適用」</strong>をクリックします</li>
+        </ol>
+
+        <h3>スクレイパーのソース</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>ソース</th><th>API キー</th><th>得意分野</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ES-DE（ローカル）</td><td>不要</td><td>すでにスクレイプ済みのコレクション &mdash; gamelist.xml とダウンロード済みメディアをインポート</td></tr>
+                <tr><td>TheGamesDB</td><td>必要</td><td>プラットフォーム固有のボックスアート、3D ボックスアート</td></tr>
+                <tr><td>IGDB</td><td>必要</td><td>現代のゲーム、詳細情報、ジャンル、レーティング</td></tr>
+                <tr><td>RAWG.io</td><td>必要</td><td>ユーザーレーティング、説明文、スクリーンショット</td></tr>
+                <tr><td>ScreenScraper</td><td>必要</td><td>地域別バリアント、3D ボックスアート、動画、マニュアル</td></tr>
+            </tbody>
+        </table>
+
+        <h3>ハイブリッドスクレイピング</h3>
+        <p>RetroDB は複数のソースのデータを自動的に組み合わせて、メタデータの網羅性を最大化します:</p>
+        <ul>
+            <li>テキストメタデータは利用可能な最も優先度の高いソースから取得</li>
+            <li>画像とメディアは、主ソースに無い場合は副ソースから取得</li>
+            <li>スクレイパーをまたいだ自動的な抜け埋めで網羅性を最大化</li>
+            <li>ソートタイトルはスクレイピング中にゲームタイトルから自動生成</li>
+        </ul>
+
+        <h3>メディアの扱い</h3>
+        <ul>
+            <li>メディアフィールド（ボックスアート、3D ボックスアート、スクリーンショット、ファンアート、動画、マニュアル）は通常のスクレイピング中に<strong>置き換えられることはなく</strong>、空のときのみ埋められます</li>
+            <li>スクリーンショットは常に<strong>追加</strong>され、置き換えられることはありません</li>
+            <li>メディアを再ダウンロードするには、まず編集モーダルで既存の画像をクリアしてから再スクレイプします</li>
+            <li><strong>完全再スクレイプ</strong>モードはこれを上書きし、すべてを置き換えます</li>
+            <li>古いメディア参照（ファイルは削除されたがファイル名は DB に残っている）はスクレイピング前に自動でクリアされ、新しいメディアをダウンロードできるようにします</li>
+            <li>ダウンロードした画像は目標サイズに自動的に標準化されます（<a href="#image-standardization">画像標準化</a>を参照）</li>
+        </ul>
+
+        <h3>スクレイパーの優先順位</h3>
+        <p>どのスクレイパーを先に実行するか、どれを有効／無効にするかは<strong>「設定 &rarr; スクレイピング &rarr; スクレイパー」</strong>で設定します。ドラッグ＆ドロップで優先順位を並べ替えます。無効化されたスクレイパーはスクレイピング中に試行されず、ダッシュボードで API ステータス警告も出しません。</p>
+
+        <h3>レート制限</h3>
+        <p>各スクレイパーには API スロットリングを防ぐための設定可能なレート制限があります。デフォルトの遅延は控えめに設定されています。遅延を減らすのは自己責任で行ってください &mdash; API のレート制限を超えると、該当サービスから一時的に BAN される可能性があります。</p>
+    </div>
+</section>
+
+<!-- Bulk Scraping -->
+<section id="bulk-scrape" class="help-section card">
+    <h2 class="card-title">一括スクレイピング</h2>
+    <div class="card-body">
+        <h3>一括スクレイプの開始</h3>
+        <ol>
+            <li>任意のシステムまたはライブラリページに移動します</li>
+            <li><strong>「選択」</strong>をクリックして選択モードに入ります</li>
+            <li>ゲームを個別に選択するか、クイック選択を使います:
+                <ul>
+                    <li><strong>すべて選択</strong> &mdash; 表示中のすべてのゲーム</li>
+                    <li><strong>未スクレイプを選択</strong> &mdash; メタデータのないゲームのみ</li>
+                </ul>
+            </li>
+            <li>モードを選びます: <strong>不足分を埋める</strong> または <strong>完全再スクレイプ</strong></li>
+            <li><strong>「選択をスクレイプ」</strong>をクリックします</li>
+        </ol>
+
+        <h3>操作</h3>
+        <ul>
+            <li><strong>一時停止／再開</strong> &mdash; スクレイピングの一時停止または続行</li>
+            <li><strong>キャンセル</strong> &mdash; 完全に停止</li>
+            <li><strong>バックグラウンド</strong> &mdash; 最小化し、スクレイプ実行中もブラウジングを続行</li>
+        </ul>
+
+        <h3>トースト通知</h3>
+        <p>バックグラウンドで実行中は、すべてのページに進捗を示す常駐トーストが表示されます:</p>
+        <ul>
+            <li>現在のゲーム名、進捗カウント、結果の統計（成功、失敗、スキップ）</li>
+            <li>どのページからも利用できる一時停止／キャンセル操作</li>
+            <li>トーストをクリックするとスクレイプモーダルに戻ります</li>
+        </ul>
+
+        <h3>キューシステム</h3>
+        <p>複数の一括スクレイプは自動的にキューに入ります:</p>
+        <ul>
+            <li>1 つが実行中に新しいスクレイプを開始すると &mdash; キューに入ります</li>
+            <li>キューは保留中ジョブ数とともにトーストに表示されます</li>
+            <li>ジョブは順番に自動処理されます</li>
+            <li>キューマネージャーを使ってキュー内ジョブの表示、並べ替え、キャンセルができます</li>
+        </ul>
+
+        <h3>スクレイプオプション</h3>
+        <ul>
+            <li><strong>不足分のみ埋める</strong> &mdash; 空のメタデータフィールドのみを埋め、既存データを保持</li>
+            <li><strong>完全再スクレイプ</strong> &mdash; メディアを含むすべてのフィールドを置き換え（新しい画像と動画をダウンロード）</li>
+            <li><strong>RetroAchievements をチェック</strong> &mdash; スクレイピング中に RetroAchievements の実績セットも確認</li>
+        </ul>
+
+        <h3>ジョブの復旧</h3>
+        <p>ジョブの実行中に RetroDB が再起動された場合、中断されたジョブはダッシュボードの復旧バナーに表示されます。個別のジョブで<strong>「再開」</strong>をクリックするか、<strong>「すべて再開」</strong>で再開します。再開後すぐに進捗トーストが表示されます。</p>
+    </div>
+</section>
+
+<!-- AI Fill -->
+<section id="ai-fill" class="help-section card">
+    <h2 class="card-title">AI フィル</h2>
+    <div class="card-body">
+        <h3>機能の概要</h3>
+        <p>AI フィルは大規模言語モデル（Gemini、OpenAI、または Claude）を使って、不足または不完全なゲームメタデータを賢く埋めます。ゲームに関する文脈的な知識を活用し、スクレイパーが持っていない正確なデータを提供できるため、通常のスクレイピングより賢いと言えます。</p>
+
+        <h3>使い方</h3>
+        <ol>
+            <li>ゲームの詳細モーダル（または詳細ページ）を開きます</li>
+            <li><strong>「AI フィル」</strong>をクリックします（設定で AI API キーが必要）</li>
+            <li>AI がゲームタイトルとシステムを分析し、不足フィールドを埋めます</li>
+            <li>結果を確認します &mdash; 変更は自動的に保存されます</li>
+        </ol>
+
+        <h3>AI フィルが提供できる情報</h3>
+        <ul>
+            <li>ジャンル、説明文、開発元、発売元、発売日</li>
+            <li>プレイ人数、プレイモード（シングルプレイ、マルチプレイ、協力プレイなど）</li>
+            <li>キャンペーン情報とゲーム構造</li>
+            <li>8 つすべての年齢レーティングシステム（ESRB、PEGI、CERO、USK、ACB、FPB、GRAC、ClassInd）</li>
+            <li>地域、フランチャイズ、類似ゲーム</li>
+            <li>コントローラー対応、セーブ方式</li>
+            <li>視点（一人称、トップダウン、横スクロールなど）、次元（2D、3D）</li>
+            <li>エディション情報、批評家スコアとユーザースコア</li>
+        </ul>
+
+        <h3>スマートフィルのロジック</h3>
+        <ul>
+            <li><strong>空のフィールド</strong>は常に埋められます</li>
+            <li><strong>既存のユーザーデータ</strong>は決して上書きされません</li>
+            <li><strong>類似ゲーム</strong>は常に更新されます（このフィールドでは AI データのほうが信頼できるため）</li>
+            <li><strong>クロスマッピングされたレーティング</strong> &mdash; あるレーティングシステムが分かっている場合、他システムの空のレーティングは成熟度ティアのクロスマッピングを使って自動的に埋められます</li>
+            <li><strong>ソートタイトル</strong>は埋められる際に自動生成されます</li>
+            <li><strong>プレイ人数</strong>フィールドは範囲を正規化します（例: 「1-4」は 4 になります）</li>
+        </ul>
+
+        <h3>ジャンルの正規化</h3>
+        <p>AI フィルはハイフン付きの名称による正規ジャンル形式を使用します:</p>
+        <ul>
+            <li><code>First-Person-Shooter</code>、<code>Shoot-em-up</code>、<code>Beat-em-up</code></li>
+            <li><code>Hack-n-Slash</code>、<code>Board-Card</code>、<code>Real-Time Strategy</code></li>
+        </ul>
+
+        <h3>要件</h3>
+        <p><strong>「設定 &rarr; スクレイピング &rarr; API キー」</strong>で少なくとも 1 つの AI プロバイダー API キーを設定する必要があります。最も安価なモデルティア（Gemini Flash Lite、GPT-4o Mini、または Claude Haiku）でもメタデータには十分機能します。</p>
+    </div>
+</section>
+
+<!-- Filtering -->
+<section id="filtering" class="help-section card">
+    <h2 class="card-title">フィルタリングと検索</h2>
+    <div class="card-body">
+        <h3>検索</h3>
+        <p>検索はタイトル（およびソートタイトル）でゲームを絞り込みます。<kbd>/</kbd> を押すと検索ボックスにフォーカスします。結果は 300ms のデバウンスでリアルタイムに更新されます。</p>
+
+        <h3>ソースフィルター</h3>
+        <p>インポート元でゲームを絞り込みます:</p>
+        <ul>
+            <li><strong>ROM ファイル</strong> &mdash; ROM ライブラリのゲーム</li>
+            <li><strong>CLZ インポート</strong> &mdash; CLZ からインポートした実物ゲーム</li>
+            <li><strong>Steam インポート</strong> &mdash; Steam からインポートしたゲーム</li>
+            <li><strong>Xbox インポート</strong> &mdash; Xbox からインポートしたゲーム</li>
+            <li><strong>PSN インポート</strong> &mdash; PlayStation Network からインポートしたゲーム</li>
+        </ul>
+
+        <h3>フィルターボタン</h3>
+        <p>各フィルターは、ライブラリ内のすべての固有値を件数とともに表示するモーダルを開きます。フィルターは 2 つのモードをサポートします:</p>
+        <ul>
+            <li><strong>含める（IS）</strong> &mdash; 選択した値に一致するゲームのみを表示</li>
+            <li><strong>除外する（IS NOT）</strong> &mdash; 選択した値に一致するゲームを非表示</li>
+        </ul>
+        <p>フィルターモーダル内のスイッチで含める／除外するモードを切り替えます。</p>
+
+        <h3>利用可能なフィルター</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>フィルター</th><th>説明</th><th>複数値</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>ジャンル</strong></td><td>アクション、RPG、プラットフォームなど</td><td>はい</td></tr>
+                <tr><td><strong>シリーズ</strong></td><td>ゲームフランチャイズ</td><td>はい</td></tr>
+                <tr><td><strong>発売元</strong></td><td>パブリッシング企業</td><td>はい</td></tr>
+                <tr><td><strong>開発元</strong></td><td>開発スタジオ</td><td>はい</td></tr>
+                <tr><td><strong>プレイ人数</strong></td><td>プレイ人数</td><td>いいえ</td></tr>
+                <tr><td><strong>モード</strong></td><td>シングルプレイ、マルチプレイ、協力プレイ</td><td>はい</td></tr>
+                <tr><td><strong>視点</strong></td><td>一人称、トップダウン、アイソメトリック、横スクロール</td><td>はい</td></tr>
+                <tr><td><strong>次元</strong></td><td>2D、3D</td><td>はい</td></tr>
+                <tr><td><strong>レーティング</strong></td><td>年齢レーティング（優先するシステムを表示）</td><td>いいえ</td></tr>
+                <tr><td><strong>RA あり</strong></td><td>RetroAchievements 対応のゲーム</td><td>いいえ</td></tr>
+                <tr><td><strong>ボーナスを表示</strong></td><td>ボーナスディスクの表示を切り替え</td><td>いいえ</td></tr>
+            </tbody>
+        </table>
+
+        <h3>並べ替えオプション</h3>
+        <ul>
+            <li><strong>タイトル</strong> &mdash; ソートタイトルのアルファベット順（大文字小文字を区別しない）</li>
+            <li><strong>発売日</strong> &mdash; 時系列順（古いものから）</li>
+            <li><strong>プラットフォーム</strong> &mdash; システム名でグループ化</li>
+        </ul>
+
+        <h3>アルファベットナビゲーション</h3>
+        <p>特定の文字で始まるゲームへジャンプします。一致するゲームのない文字はグレーアウトされます。数字と記号は <strong>#</strong> の下にまとめられます。</p>
+
+        <h3>無限スクロール</h3>
+        <p>ゲームはスクロールに合わせて 100 件ずつのバッチで読み込まれます。下端に近づくと新しいページが自動で読み込まれます。フィルターや検索を変更すると、結果は即座にリセットされ再読み込みされます。</p>
+
+        <h3>状態の保持</h3>
+        <p>現在のフィルター、検索語、スクロール位置はセッションストレージに保存されます。ページに戻ったり更新したりすると復元されます。</p>
+    </div>
+</section>
+
+<!-- Game Detail -->
+<section id="game-detail" class="help-section card">
+    <h2 class="card-title">ゲーム詳細</h2>
+    <div class="card-body">
+        <h3>ゲーム詳細モーダル</h3>
+        <p>任意のゲームカードをクリックすると、キャッシュされたクイックビューを備えた詳細モーダルが開きます。モーダルには次が表示されます:</p>
+        <ul>
+            <li>ボックスアート（2D と 3D）、ファンアート背景</li>
+            <li>説明文と発売情報</li>
+            <li>開発元、発売元、ジャンルバッジ</li>
+            <li>プレイ人数、プレイモード、ゲーム構造</li>
+            <li>年齢レーティング画像（優先するシステムから、クロスマッピングのフォールバック付き）</li>
+            <li>キーボードナビゲーション付きのスクリーンショットギャラリー（<kbd>&larr;</kbd> <kbd>&rarr;</kbd>）</li>
+            <li>予告編動画（利用可能な場合）</li>
+            <li>HLTB プレイ時間の見積もり（メインストーリー、メイン＋エクストラ、コンプリート）</li>
+            <li>RetroAchievements の状態と進捗</li>
+            <li>類似ゲーム（クリック可能なリンク）</li>
+            <li>コントローラー対応の詳細</li>
+            <li>ゲームに割り当てられたタグ</li>
+            <li>ファイルサイズと ROM パス</li>
+        </ul>
+
+        <h3>ゲーム詳細ページ全体</h3>
+        <p>ゲームタイトルのリンクをクリックするか、パンくずリストから移動するとゲーム詳細ページ全体を表示します。全体ページの追加機能には次が含まれます:</p>
+        <ul>
+            <li><strong>ファンアート背景ヘッダー</strong>（パンくずナビゲーション付き）</li>
+            <li><strong>プラットフォームインポートバッジ</strong> &mdash; 該当する場合、CLZ インポート、Steam インポート、Xbox インポート、PSN インポートをプラットフォームロゴ付きで表示</li>
+            <li><strong>ボーナスディスクのインジケーター</strong> &mdash; バッジと、サムネイル付きで親ゲームへの「一部:」リンクを表示</li>
+            <li><strong>削除ボタン</strong> &mdash; データベースからゲームを削除（確認あり）</li>
+            <li><strong>クリアボタン</strong> &mdash; ROM エントリを保持したまま、スクレイプ済みメタデータをすべてクリア</li>
+        </ul>
+
+        <h3>編集モーダル</h3>
+        <p><strong>編集</strong>をクリック（または <kbd>e</kbd> を押す）すると、次のセクションに整理された編集モーダルが開きます:</p>
+        <ul>
+            <li><strong>識別情報</strong> &mdash; タイトル、ソートタイトル（自動生成だが編集可能）、フランチャイズ、エディション</li>
+            <li><strong>発売情報</strong> &mdash; 発売日、地域（設定可能なドロップダウンから）</li>
+            <li><strong>ゲームプレイ</strong> &mdash; ジャンル（複数選択タグ）、モード、ゲーム構造、プレイ人数、開発元、発売元</li>
+            <li><strong>技術情報</strong> &mdash; コントローラー（複数選択）、セーブ方式、視点（複数値）、次元（複数値）</li>
+            <li><strong>年齢レーティング</strong> &mdash; 公式レーティング画像と自動クロスマッピングを備えた 8 つすべてのレーティングシステム。1 つのレーティングを変更すると、他システムの空のレーティングが自動で埋められます。</li>
+            <li><strong>スコア</strong> &mdash; 批評家スコア、ユーザースコア</li>
+            <li><strong>説明</strong> &mdash; ゲームの説明文</li>
+            <li><strong>カスタム画像</strong> &mdash; カスタムのボックスアート（2D）、3D ボックスアート、ファンアートをアップロード。既存画像をクリアすると再スクレイプが可能になります。</li>
+            <li><strong>動画／予告編</strong> &mdash; 動画予告編をアップロードまたはリンク</li>
+        </ul>
+
+        <h3>クイックアクション</h3>
+        <ul>
+            <li><strong>編集</strong> &mdash; 編集モーダルを開く（<kbd>e</kbd>）</li>
+            <li><strong>スクレイプ</strong> &mdash; スクレイパーソースからメタデータを取得（<kbd>s</kbd>）</li>
+            <li><strong>AI フィル</strong> &mdash; 不足フィールドを AI で埋める（AI API キーが必要）</li>
+            <li><strong>RA をチェック</strong> &mdash; RetroAchievements の実績セットを検索</li>
+            <li><strong>HLTB ルックアップ</strong> &mdash; HowLongToBeat からプレイ時間の見積もりを検索</li>
+        </ul>
+
+        <h3>クリア状況</h3>
+        <p>次のステータスで進捗をトラッキングします（ゲームカードにバッジとして表示）:</p>
+        <ul>
+            <li><strong>未開始</strong> &mdash; まだプレイしていない</li>
+            <li><strong>進行中</strong> &mdash; 現在プレイ中</li>
+            <li><strong>プレイ済み</strong> &mdash; プレイしたが未クリア</li>
+            <li><strong>クリア</strong> &mdash; メインゲームをクリア</li>
+            <li><strong>100%</strong> &mdash; すべてをコンプリート</li>
+        </ul>
+
+        <h3>マルチレーティングシステム</h3>
+        <p>RetroDB は 8 つの国際年齢レーティングシステムをサポートします:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>システム</th><th>地域</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>ESRB</strong></td><td>北米</td></tr>
+                <tr><td><strong>PEGI</strong></td><td>欧州</td></tr>
+                <tr><td><strong>CERO</strong></td><td>日本</td></tr>
+                <tr><td><strong>USK</strong></td><td>ドイツ</td></tr>
+                <tr><td><strong>ACB</strong></td><td>オーストラリア</td></tr>
+                <tr><td><strong>FPB</strong></td><td>南アフリカ</td></tr>
+                <tr><td><strong>GRAC</strong></td><td>韓国</td></tr>
+                <tr><td><strong>ClassInd</strong></td><td>ブラジル</td></tr>
+            </tbody>
+        </table>
+        <p>優先するシステムは<strong>「設定 &rarr; ライブラリ &rarr; 表示」</strong>で設定します。公式レーティング画像はゲームカード、詳細モーダル、詳細ページに表示されます。空のレーティングは、スクレイピング、AI フィル、手動編集の際に、利用可能なレーティングから成熟度ティアのクロスマッピングを使って自動で埋められます。</p>
+
+        <h3>ボーナスディスク</h3>
+        <p>RetroDB はボーナス／特典ディスク（例: サウンドトラック CD、特典コンテンツディスク）を自動検出し、親ゲームにリンクします。ボーナスディスクはライブラリで既定では非表示です &mdash; フィルターで<strong>「ボーナスを表示」</strong>を切り替えると表示されます。リンクされたボーナスディスクは親ゲームの詳細モーダルに表示されます。</p>
+
+        <div class="help-tip">
+            <strong>ヒント:</strong> 詳細モーダルは最近表示したゲームをキャッシュし、読み込みを高速化します。編集すると、更新なしでページ上のゲームカードが自動的に更新されます。
+        </div>
+    </div>
+</section>
+
+<!-- Bulk Edit -->
+<section id="bulk-edit" class="help-section card">
+    <h2 class="card-title">一括編集</h2>
+    <div class="card-body">
+        <h3>使い方</h3>
+        <ol>
+            <li>任意のシステムまたはライブラリページに移動します</li>
+            <li><strong>「選択」</strong>をクリックして選択モードに入ります</li>
+            <li>編集したいゲームを選択します（個別、すべて選択、または未スクレイプを選択）</li>
+            <li><strong>「一括編集」</strong>をクリックします</li>
+            <li>変更するフィールドを選び、新しい値を設定します</li>
+            <li><strong>置き換え</strong>または<strong>追加</strong>モードを選びます</li>
+            <li><strong>「適用」</strong>をクリックして選択したすべてのゲームを更新します</li>
+        </ol>
+
+        <h3>置き換えと追加</h3>
+        <ul>
+            <li><strong>置き換え</strong> &mdash; 既存の値を新しい値で上書きします</li>
+            <li><strong>追加</strong> &mdash; 新しい値を既存の値に追加します（複数値フィールド向け）</li>
+        </ul>
+
+        <h3>対応フィールド</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>フィールド</th><th>追加に対応</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ジャンル</td><td>はい</td></tr>
+                <tr><td>発売元</td><td>はい</td></tr>
+                <tr><td>開発元</td><td>はい</td></tr>
+                <tr><td>フランチャイズ</td><td>はい</td></tr>
+                <tr><td>地域</td><td>はい</td></tr>
+                <tr><td>ゲーム構造</td><td>はい</td></tr>
+                <tr><td>視点</td><td>はい</td></tr>
+                <tr><td>次元</td><td>はい</td></tr>
+                <tr><td>クリア状況</td><td>いいえ（置き換えのみ）</td></tr>
+                <tr><td>プレイ人数</td><td>いいえ（置き換えのみ）</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Compare Games -->
+<section id="compare" class="help-section card">
+    <h2 class="card-title">ゲームの比較</h2>
+    <div class="card-body">
+        <h3>機能の概要</h3>
+        <p>2 つのゲームのメタデータをテーブル形式で並べて比較します。メタデータの品質確認、重複の発見、システムをまたいだ同一ゲームのバージョン比較に便利です。</p>
+
+        <h3>使い方</h3>
+        <ol>
+            <li><strong>比較</strong>に移動します（ライブラリページからアクセス可能）</li>
+            <li>1 つ目のゲームを検索して選択します</li>
+            <li>2 つ目のゲームを検索して選択します</li>
+            <li>比較テーブルを確認します &mdash; 相違点がハイライトされます</li>
+        </ol>
+
+        <h3>比較されるフィールド</h3>
+        <p>システム、開発元、発売元、発売日、ジャンル、フランチャイズ、地域、プレイ人数、モード、視点、次元、8 つすべての年齢レーティング、ユーザーレーティング、批評家スコア、プレイ時間の見積もり、コントローラー対応、セーブ方式、ファイルサイズ、類似ゲーム、説明文など。</p>
+    </div>
+</section>
+
+<!-- Collections -->
+<section id="collections" class="help-section card">
+    <h2 class="card-title">コレクション（タグ、リスト、ウィッシュリスト）</h2>
+    <div class="card-body">
+        <h3>タグ</h3>
+        <p>ゲームを整理するために、色分けされたカスタムタグを作成します。タグはラベルのように機能します &mdash; 各ゲームは複数のタグを持つことができ、各タグは複数のゲームを含むことができます。</p>
+        <ul>
+            <li><strong>タグ</strong>ページからカスタム名と色でタグを作成します</li>
+            <li>ゲーム詳細モーダルからゲームにタグを割り当てます</li>
+            <li>任意のタグをクリックすると、そのタグの付いたすべてのゲームをブラウズできます</li>
+            <li>タグ管理ページからタグを編集または削除します</li>
+        </ul>
+
+        <h3>名前付きリスト</h3>
+        <p>カスタムの並び順でキュレーション済みのゲームリストを作成します。リストはプレイリストのようなもので &mdash; ゲームの正確な順序を自分で制御できます。</p>
+        <ul>
+            <li><strong>リスト</strong>ページから名前、説明、アイコンを付けてリストを作成します</li>
+            <li>ゲーム詳細モーダルまたはリストページからリストにゲームを追加します</li>
+            <li>ドラッグ＆ドロップでリスト内のゲームを並べ替えます</li>
+            <li>カスタム順またはアルファベット順で並べ替えます</li>
+        </ul>
+
+        <h3>ウィッシュリスト</h3>
+        <p>実物・デジタルを問わず、入手したいゲームをトラッキングします。</p>
+        <ul>
+            <li>タイトル、システム、メモ、優先度（1&ndash;5）を付けて手動でゲームを追加します</li>
+            <li>ウィッシュリストのアイテムは、見つかれば既存のライブラリゲームにリンクできます</li>
+            <li>優先度順（高い順）に、次に追加日順で並びます</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>ヒント:</strong> 横断的なラベルにはタグを（例: 「お気に入り」「カウチ協力プレイ」「積みゲー」）、特定のキュレーション済みコレクションにはリストを（例: 「SNES ベスト 10」「配信するゲーム」）使いましょう。
+        </div>
+    </div>
+</section>
+
+<!-- Game Imports -->
+<section id="game-imports" class="help-section card">
+    <h2 class="card-title">ゲームインポート</h2>
+    <div class="card-body">
+        <p>外部ソースからゲームコレクションをインポートします。サイドバーの<strong>ゲームインポート</strong>からアクセスします。すべてのインポート種別が 1 つのタブ付きページにまとめられています。</p>
+
+        <h3>CLZ Games インポート</h3>
+        <p>CLZ Games から実物のゲームコレクションをインポートします。</p>
+        <ol>
+            <li>CLZ Games のコレクションを PDF としてエクスポートします</li>
+            <li>ゲームインポート &rarr; <strong>CLZ</strong> タブに移動します</li>
+            <li>PDF ファイルをアップロードします</li>
+            <li>解析されたゲームを確認します</li>
+            <li>インポートするゲームを選択します</li>
+        </ol>
+        <p>CLZ インポートは ROM ゲームとは別に管理され（<code>clz_import/</code> プレフィックスを使用）、実物とデジタルの両方のコレクションをカタログ化できます。CLZ インポートは<strong>「設定 &rarr; システム &rarr; メンテナンス」</strong>からまとめてクリアできます。</p>
+
+        <h3>Steam インポート</h3>
+        <p>Steam のゲームライブラリをインポートし、実績をトラッキングします。</p>
+        <ol>
+            <li>設定で Steam Web API キーと Steam ID を設定します</li>
+            <li>ゲームインポート &rarr; <strong>Steam</strong> タブに移動します</li>
+            <li><strong>「ライブラリを取得」</strong>をクリックして Steam ゲームを取得します</li>
+            <li>インポートするゲームを選択します（重複は自動検出されます）</li>
+            <li>インポートしたゲームは実績トラッキング用に Steam App ID でタグ付けされます</li>
+        </ol>
+
+        <h3>Xbox インポート</h3>
+        <p>Microsoft アカウント経由で Xbox のゲームライブラリをインポートします。</p>
+        <ol>
+            <li>ゲームインポート &rarr; <strong>Xbox</strong> タブに移動します</li>
+            <li><strong>「サインイン」</strong>をクリックして Microsoft アカウントで認証します（OAuth2 フロー）</li>
+            <li>Xbox のタイトル履歴が自動的に取得されます</li>
+            <li>重複検出付きでインポートするゲームを選択します</li>
+            <li>インポートしたゲームは実績トラッキング用に Xbox Title ID でタグ付けされます</li>
+        </ol>
+        <p>Xbox トークンは <code>data/xbox_tokens.json</code> にキャッシュされ、自動的に更新されます。</p>
+
+        <h3>PSN インポート</h3>
+        <p>PlayStation Network のゲームライブラリをインポートします。</p>
+        <ol>
+            <li>ゲームインポート &rarr; <strong>PSN</strong> タブに移動します</li>
+            <li>NPSSO クッキーを入力します（取得方法は<a href="#trophies">トロフィー &rarr; PSN 認証</a>を参照）</li>
+            <li><strong>「ライブラリを取得」</strong>をクリックして PSN ゲームを取得します</li>
+            <li>インポートするゲームを選択します</li>
+        </ol>
+
+        <h3>インポート後</h3>
+        <ul>
+            <li>インポートしたゲームは、プラットフォーム固有のバッジ付きでライブラリに表示されます</li>
+            <li>一括スクレイプを使ってインポートしたゲームのメタデータを取得できます</li>
+            <li>実績／トロフィーのトラッキングは元のプラットフォームに自動的にリンクされます</li>
+            <li>インポートしたゲームはライブラリでソースフィルターを使って絞り込めます</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>ヒント:</strong> どのプラットフォームからゲームをインポートした後でも、ROM ゲームと同じように一括スクレイプでメタデータをスクレイプできます。インポートしたゲームは、それぞれのプラットフォームから実績をトラッキングすることもできます。
+        </div>
+    </div>
+</section>
+
+<!-- RetroAchievements -->
+<section id="retroachievements" class="help-section card">
+    <h2 class="card-title">RetroAchievements</h2>
+    <div class="card-body">
+        <h3>セットアップ</h3>
+        <ol>
+            <li><a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a> でアカウントを作成します</li>
+            <li>プロフィール設定で API キーを生成します</li>
+            <li>ユーザー名と API キーを「設定 &rarr; アカウント &rarr; RetroAchievements」に入力します</li>
+        </ol>
+
+        <h3>実績ページ</h3>
+        <ul>
+            <li><strong>システムタブ</strong> &mdash; プラットフォーム別に実績をブラウズ（最後に表示したタブを記憶）</li>
+            <li><strong>アルファベットナビゲーション</strong> &mdash; 各システムタブ内で頭文字によりゲームへジャンプ</li>
+            <li><strong>進捗を更新</strong> &mdash; RetroAchievements から実績の進捗を同期</li>
+            <li><strong>全体統計</strong> &mdash; すべてのシステムにわたる獲得実績とポイント</li>
+            <li><strong>ゲームごとの進捗</strong> &mdash; プログレスバーで各ゲームのクリア率を表示</li>
+        </ul>
+
+        <h3>同期キュー</h3>
+        <p>複数のシステム同期をキューに入れられます:</p>
+        <ul>
+            <li>任意のシステムで「進捗を更新」をクリックして同期を開始またはキューに追加します</li>
+            <li>すでに同期が実行中の場合、新しいリクエストは自動的にキューに入ります</li>
+            <li>現在の同期が完了するとキューが自動的に処理されます</li>
+            <li>トースト通知に現在の進捗とキュー数を表示します</li>
+        </ul>
+
+        <h3>実績のあるゲームを探す</h3>
+        <ul>
+            <li><strong>ライブラリフィルター</strong> &mdash; 「RA あり」フィルターを使って実績のあるゲームのみを表示</li>
+            <li><strong>RA をチェック</strong> &mdash; ゲーム詳細モーダルでクリックして実績セットを検索</li>
+            <li><strong>一括スクレイプ</strong> &mdash; 「RA をチェック」オプションを有効にしてスクレイピング中に実績を検出</li>
+            <li><strong>RA 更新ジョブ</strong> &mdash; システム内のすべてのゲームをスキャンして RA 対応のものを特定</li>
+        </ul>
+
+        <h3>ゲーム単位の詳細</h3>
+        <p>実績ページで任意のゲームをクリックすると、個々の実績名、説明、ポイント値、獲得状況を含む、ゲームごとの詳細な実績情報を表示します。</p>
+
+        <div class="help-tip">
+            <strong>注:</strong> 「進捗を更新」は、すでに RetroAchievements がリンクされているゲームの進捗を同期します。
+            新しい実績セットを見つけるには、ゲーム詳細モーダルで「RA をチェック」を使うか、一括スクレイピング中に有効にしてください。
+        </div>
+    </div>
+</section>
+
+<!-- Steam Achievements -->
+<section id="steam-achievements" class="help-section card">
+    <h2 class="card-title">Steam 実績</h2>
+    <div class="card-body">
+        <h3>セットアップ</h3>
+        <ol>
+            <li><strong>ゲームインポート &rarr; Steam</strong> から Steam ゲームをインポートします</li>
+            <li>Steam Web API キーが設定で構成されていることを確認します</li>
+        </ol>
+
+        <h3>実績ランディングページ</h3>
+        <p>すべての Steam ゲームを実績進捗とともにひと目で表示します:</p>
+        <ul>
+            <li><strong>全体統計</strong> &mdash; Steam ゲーム総数、獲得実績数、クリア率</li>
+            <li><strong>ゲームごとの進捗</strong> &mdash; 各ゲームのクリア率バー</li>
+        </ul>
+
+        <h3>ゲームごとの実績詳細</h3>
+        <p>任意の Steam ゲームをクリックすると、個々の実績を表示します:</p>
+        <ul>
+            <li>実績アイコン、名前、説明</li>
+            <li>解除済みと未解除の状態、解除タイムスタンプ付き</li>
+            <li>各実績の全プレイヤー解除率</li>
+        </ul>
+
+        <h3>同期</h3>
+        <ul>
+            <li>詳細ページから単一ゲームの実績を同期します</li>
+            <li>実績ランディングページからすべての Steam ゲームを一括同期します</li>
+            <li>同期はトースト通知の進捗付きでバックグラウンドジョブとして実行されます</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Xbox Achievements -->
+<section id="xbox-achievements" class="help-section card">
+    <h2 class="card-title">Xbox 実績</h2>
+    <div class="card-body">
+        <h3>セットアップ</h3>
+        <ol>
+            <li><strong>ゲームインポート &rarr; Xbox</strong> から Xbox ゲームをインポートします</li>
+            <li>認証はインポート中に Xbox OAuth 経由で処理されます</li>
+        </ol>
+
+        <h3>実績ランディングページ</h3>
+        <ul>
+            <li><strong>全体統計</strong> &mdash; Xbox ゲーム総数、獲得実績数、獲得／合計ゲーマースコア、クリア率</li>
+            <li><strong>ゲームごとの進捗</strong> &mdash; プログレスバー付きでゲームごとに獲得したゲーマースコア</li>
+        </ul>
+
+        <h3>ゲームごとの実績詳細</h3>
+        <p>任意の Xbox ゲームをクリックすると、個々の実績を表示します:</p>
+        <ul>
+            <li>個々のゲーマースコア値付きの実績アイコン</li>
+            <li>解除済みと未解除の状態、解除タイムスタンプ付き</li>
+            <li>各実績のゲーマースコアバッジ</li>
+        </ul>
+
+        <h3>同期</h3>
+        <ul>
+            <li>単一ゲームの同期またはすべての Xbox ゲームの一括同期</li>
+            <li>トースト通知付きでバックグラウンドジョブとして実行されます</li>
+            <li>各同期後にゲーマースコアの合計が自動的に更新されます</li>
+        </ul>
+    </div>
+</section>
+
+<!-- HLTB -->
+<section id="hltb" class="help-section card">
+    <h2 class="card-title">How Long to Beat</h2>
+    <div class="card-body">
+        <h3>使い方</h3>
+        <ol>
+            <li>任意のゲームの詳細モーダルを開きます</li>
+            <li><strong>「HLTB ルックアップ」</strong>をクリックします</li>
+            <li>結果から正しい一致を選択します</li>
+            <li>プレイ時間の見積もりがゲームに保存されます</li>
+        </ol>
+
+        <h3>時間カテゴリー</h3>
+        <ul>
+            <li><strong>メインストーリー</strong> &mdash; コアのクリア時間</li>
+            <li><strong>メイン＋エクストラ</strong> &mdash; サイドコンテンツを含む</li>
+            <li><strong>コンプリート</strong> &mdash; すべてを 100%</li>
+        </ul>
+
+        <h3>HLTB データが表示される場所</h3>
+        <ul>
+            <li><strong>ゲーム詳細モーダル</strong> &mdash; ゲーム情報内にプレイ時間の見積もりを表示</li>
+            <li><strong>ゲーム詳細ページ全体</strong> &mdash; 同じプレイ時間情報</li>
+            <li><strong>分析 &rarr; プレイ時間タブ</strong> &mdash; コレクション全体のプレイ時間分析</li>
+            <li><strong>ゲームの比較</strong> &mdash; プレイ時間の並列比較</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>ヒント:</strong> HLTB データは分析のプレイ時間タブにも表示され、コレクション全体の見積もりを確認できます。
+        </div>
+    </div>
+</section>
+
+<!-- Trophies -->
+<section id="trophies" class="help-section card">
+    <h2 class="card-title">PS3 / PSN トロフィー</h2>
+    <div class="card-body">
+        <h3>RPCS3 ローカルトロフィー</h3>
+        <p>RPCS3 エミュレーターで PS3 ゲームで獲得したトロフィーをトラッキングします。</p>
+        <ol>
+            <li><strong>「設定 &rarr; データ &rarr; トロフィー」</strong>で RPCS3 トロフィーパスを設定します</li>
+            <li><strong>「トロフィーをスキャン」</strong>をクリックして獲得済みトロフィーをインポートします</li>
+            <li><strong>RPCS3 トロフィー</strong>セクションでトロフィー一覧と個々のトロフィー詳細を表示します</li>
+        </ol>
+        <p>RPCS3 は RPCS3 ユーザーディレクトリからトロフィーの XML データを読み込み、ゲームをライブラリに自動的に一致させます。</p>
+
+        <h3>PSN API トロフィー</h3>
+        <p>PSN アカウントから PlayStation Network のトロフィーデータを同期します。</p>
+        <ol>
+            <li>NPSSO クッキーを取得します（下記参照）</li>
+            <li><strong>「設定 &rarr; アカウント &rarr; PSN」</strong>に入力します</li>
+            <li>PlayStation API 経由で PSN トロフィーライブラリが取得されます</li>
+            <li>獲得／合計数とともにゲームごとのトロフィー進捗を表示します</li>
+            <li>個々のトロフィー詳細には説明、レア度、解除タイムスタンプが含まれます</li>
+        </ol>
+
+        <h3>PSN 認証（NPSSO クッキー）</h3>
+        <p>PSN は NPSSO トークンと呼ばれる特別な認証クッキーを使用します。取得方法:</p>
+        <ol>
+            <li>Web ブラウザを開き、<a href="https://store.playstation.com" target="_blank" rel="noopener noreferrer">store.playstation.com</a> にログインします</li>
+            <li>ログインしたら、次に移動します: <code>https://ca.account.sony.com/api/v1/ssocookie</code></li>
+            <li>ページに NPSSO トークンを含む JSON が表示されます</li>
+            <li><code>npsso</code> の値をコピーし、設定 &rarr; アカウント &rarr; PSN に貼り付けます</li>
+        </ol>
+        <p>認証されると、トークンは <code>data/psn_tokens.json</code> にローカルでキャッシュされ、自動的に更新されます。キャッシュされたトークンは約 2 か月間有効です。</p>
+
+        <h3>トロフィー詳細</h3>
+        <ul>
+            <li>トロフィー種別: ブロンズ、シルバー、ゴールド、プラチナ</li>
+            <li>トロフィーアイコンはダウンロードされてローカルにキャッシュされます</li>
+            <li>ゲームごとのクリア率</li>
+            <li>獲得した各トロフィーの解除タイムスタンプ</li>
+        </ul>
+
+        <h3>一括同期</h3>
+        <p>バックグラウンドジョブで PSN の全ゲームトロフィーを一度に同期します。進捗はトースト通知に表示されます。レート制限（リクエスト間 2.5 秒）により PSN API のスロットリングを防ぎます。</p>
+    </div>
+</section>
+
+<!-- Collector Trophies -->
+<section id="collector-trophies" class="help-section card">
+    <h2 class="card-title">コレクタートロフィー</h2>
+    <div class="card-body">
+        <h3>概要</h3>
+        <p>コレクションのマイルストーンに基づいてトロフィーを授与するゲーミフィケーションシステムです。ゲームを追加し、メタデータをスクレイプし、ゲームをクリアするにつれて、トロフィーが自動的に解除されます。</p>
+
+        <h3>トロフィーティア</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>ティア</th><th>例</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>ブロンズ</strong></td><td>最初のゲームを追加、10 ゲーム到達、初スクレイプ、5 システム、初クリア</td></tr>
+                <tr><td><strong>シルバー</strong></td><td>100 ゲーム、50 スクレイプ、10 システム、10 クリア、500 ゲーム</td></tr>
+                <tr><td><strong>ゴールド</strong></td><td>1,000 ゲーム、メタデータ 100% 網羅、20 システム、50 クリア</td></tr>
+                <tr><td><strong>プラチナ</strong></td><td>5,000 ゲーム、100 クリア、30 以上のシステム</td></tr>
+            </tbody>
+        </table>
+
+        <h3>仕組み</h3>
+        <ul>
+            <li>進捗はライブラリ統計に基づいて自動的にトラッキングされます</li>
+            <li><strong>コレクタートロフィー</strong>ページにアクセスして、各トロフィーへの進捗を確認します</li>
+            <li>変更後は<strong>「更新」</strong>をクリックして進捗を更新します</li>
+            <li>獲得したトロフィーは解除日とともに表示されます</li>
+            <li>プログレスバーで次のマイルストーンまでの近さを表示します</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Museum -->
+<section id="museum" class="help-section card">
+    <h2 class="card-title">ミュージアム</h2>
+    <div class="card-body">
+        <h3>概要</h3>
+        <p>世代別に整理されたゲームシステムのインタラクティブな百科事典です。コレクション内の各プラットフォームの歴史、仕様、注目すべきゲームについて学べます。</p>
+
+        <h3>ランディングページ</h3>
+        <p>ミュージアムのランディングページは、世代別（第 1&ndash;9 世代、携帯機、アーケード、コンピューター）にグループ化されたゲームシステムのタイムラインを表示します。各システムカードにはハードウェア画像とライブラリ内のゲーム数が表示されます。</p>
+
+        <h3>システム詳細ページ</h3>
+        <p>任意のシステムをクリックすると、次を含むミュージアムページを表示します:</p>
+        <ul>
+            <li><strong>ハードウェア画像</strong> &mdash; 本体／システムの写真</li>
+            <li><strong>技術仕様</strong> &mdash; CPU、GPU、RAM、解像度、メディア種別</li>
+            <li><strong>歴史</strong> &mdash; システムの開発、ローンチ、レガシーに関する AI 生成のナラティブ</li>
+            <li><strong>トップ 10 ゲーム</strong> &mdash; システムの最も注目すべきタイトル（批評家スコアと AI の提案から）</li>
+            <li><strong>コントローラーギャラリー</strong> &mdash; 説明付きのシステムコントローラー画像</li>
+        </ul>
+
+        <h3>AI コンテンツ生成</h3>
+        <p>ミュージアムのコンテンツは AI（Gemini、OpenAI、または Claude）を使って生成されます。次のコンテンツを生成できます:</p>
+        <ul>
+            <li><strong>単一システム</strong> &mdash; 任意のシステムのミュージアムページで「生成」をクリック</li>
+            <li><strong>一括生成</strong> &mdash; ランディングページからすべてのシステムのコンテンツを一度に生成（トースト進捗付きのバックグラウンドジョブとして実行）</li>
+        </ul>
+
+        <h3>コントローラー画像</h3>
+        <p>コントローラー画像は次の方法で追加できます:</p>
+        <ul>
+            <li><strong>画像検索</strong> &mdash; Bing 画像検索を使ってコントローラーの写真を検索。結果は関連度（コントローラー名＋メーカー＋システムのバリエーション）でランク付けされます。</li>
+            <li><strong>手動アップロード</strong> &mdash; 自分のコントローラー画像をアップロード</li>
+            <li><strong>背景除去</strong> &mdash; ローカル AI（rembg ライブラリ）を使って背景を自動除去し、どんな背景でも使える透過コントローラー画像を作成</li>
+            <li><strong>画像の伝播</strong> &mdash; コントローラー画像が見つかると、他システムの同じコントローラー（兄弟コントローラー）に自動的に共有されます</li>
+            <li><strong>一括取得</strong> &mdash; システム内のすべてのコントローラーの画像を一度に取得</li>
+        </ul>
+        <p>すべてのコントローラー画像は目標サイズに標準化され、WebP 形式で保存されます。</p>
+
+        <div class="help-tip">
+            <strong>ヒント:</strong> コンテンツ生成には AI API キーが必要です。ミュージアムは「設定 &rarr; スクレイピング &rarr; API キー」で設定された AI プロバイダーと同じものを使用します。
+        </div>
+    </div>
+</section>
+
+<!-- Analytics -->
+<section id="analytics" class="help-section card">
+    <h2 class="card-title">分析</h2>
+    <div class="card-body">
+        <p>分析は 12 タブにわたる包括的な統計と可視化を提供します。すべてのチャートはインタラクティブで、PNG としてエクスポート、クリップボードにコピー、または CSV としてダウンロードできます。</p>
+
+        <h3>分析タブ</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>タブ</th><th>内容</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>サマリー</strong></td><td>統計概要カード（総ゲーム数、システム数、クリア率、スクレイプ率など）</td></tr>
+                <tr><td><strong>チャート</strong></td><td>プラットフォーム／メーカー別、ジャンル別のゲーム、年ごとのタイムライン</td></tr>
+                <tr><td><strong>開発元</strong></td><td>上位 15 の開発元と発売元の棒グラフ</td></tr>
+                <tr><td><strong>ゲームプレイ</strong></td><td>ジャンル内訳、プレイモード分析、ゲーム構造の分布</td></tr>
+                <tr><td><strong>プレイ時間</strong></td><td>コレクション全体の HLTB プレイ時間データ分析 &mdash; 総推定プレイ時間、平均、分布</td></tr>
+                <tr><td><strong>レビュースコア</strong></td><td>批評家スコアとユーザースコアの分布と平均</td></tr>
+                <tr><td><strong>年齢レーティング</strong></td><td>8 つすべてのレーティングシステムにわたる年齢レーティングの分布</td></tr>
+                <tr><td><strong>実績</strong></td><td>システム別の RetroAchievements 網羅率とクリア状況</td></tr>
+                <tr><td><strong>データ品質</strong></td><td>メタデータ網羅性のレーダーチャート（説明文、ボックスアート、ジャンル、開発元、発売元、発売日、スクリーンショット、ファンアート、動画、マニュアル、HLTB、レーティング、モード、地域）</td></tr>
+                <tr><td><strong>成長</strong></td><td>時間の経過とともにゲームが追加された時期を示すコレクション成長タイムライン</td></tr>
+                <tr><td><strong>ストレージ</strong></td><td>システム別のストレージ使用量内訳（整形されたファイルサイズ付き）</td></tr>
+                <tr><td><strong>リーダーボード</strong></td><td>ゲーム数別の上位システム、ファイルサイズ別の最大の個別ゲーム</td></tr>
+            </tbody>
+        </table>
+
+        <h3>エクスポートオプション</h3>
+        <p>各チャートはチャートツールバーのボタンを使ってエクスポートできます:</p>
+        <ul>
+            <li><strong>PNG</strong> &mdash; 画像ファイルとして保存</li>
+            <li><strong>クリップボード</strong> &mdash; チャート画像をクリップボードにコピー</li>
+            <li><strong>CSV</strong> &mdash; 生データをスプレッドシートとしてダウンロード</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Reports -->
+<section id="reports" class="help-section card">
+    <h2 class="card-title">ROM レポート</h2>
+    <div class="card-body">
+        <h3>機能の概要</h3>
+        <p>標準的な命名規則に対して ROM ファイル名を検証し、潜在的な問題を特定します。サイドバーの <strong>ROM レポート</strong>からアクセスします。</p>
+
+        <h3>レポート種別</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>タブ</th><th>チェック内容</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>非標準名</strong></td><td>命名規則に一致しないファイル名の ROM。現在のファイル名、検出された問題、提案される修正名を表示します。</td></tr>
+                <tr><td><strong>名前の不一致</strong></td><td>ファイル名がスクレイプ済みのメタデータタイトルと一致しない ROM。現在のファイル名とスクレイプ済みタイトル、地域、年、開発元を表示します。</td></tr>
+            </tbody>
+        </table>
+
+        <h3>チェックされる内容</h3>
+        <ul>
+            <li>ファイル名中の無効な文字（<code>: ? * / " &lt; &gt; | \</code>）</li>
+            <li>地域タグの欠落または誤り（例: <code>(USA)</code>、<code>(Europe)</code>）</li>
+            <li>年タグの欠落</li>
+            <li>ファイル名とデータベースタイトルの不一致</li>
+        </ul>
+
+        <p>レポートはシステム、ファイル名、問題種別で並べ替えられます。これらを使って ROM ライブラリを整理し、一貫した命名を保ちましょう。</p>
+    </div>
+</section>
+
+<!-- ROM Tools -->
+<section id="rom-tools" class="help-section card">
+    <h2 class="card-title">ROM ツール</h2>
+    <div class="card-body">
+        <p>サイドバーから ROM ツールハブにアクセスします。各ツールはリアルタイムの進捗更新、一時停止／再開対応、ロギングを備えたバックグラウンドジョブとして実行されます。</p>
+
+        <h3>アーカイブスキャナー</h3>
+        <p>次のオプション付きで ROM アーカイブ（ZIP、7Z、RAR）を展開します:</p>
+        <ul>
+            <li>サブディレクトリの再帰スキャン</li>
+            <li>展開後の不要ファイルの削除</li>
+            <li>マルチディスクゲーム用の M3U プレイリストの自動生成</li>
+        </ul>
+        <p><em>必要: 7z または unzip</em></p>
+
+        <h3>CHD コンバーター</h3>
+        <p>ディスクイメージ（ISO、BIN/CUE、GDI）を圧縮 CHD 形式に変換します。エミュレーターとの完全な互換性を保ちながら、ストレージを大幅に節約します。</p>
+        <p><em>必要: chdman（mame-tools から）</em></p>
+
+        <h3>CHD 検証</h3>
+        <p>ハッシュ検証で CHD ファイルの整合性を検証します。破損または不完全な変換を特定します。</p>
+        <p><em>必要: chdman</em></p>
+
+        <h3>重複ファインダー</h3>
+        <p>ハッシュまたはファイル名で重複した ROM を見つけ、地域タグで優先順位を付けるオプションがあります。</p>
+        <p><em>外部依存なし</em></p>
+
+        <h3>マルチディスク整理</h3>
+        <p>マルチディスクゲームをサブディレクトリに整理し、対応エミュレーター向けに M3U プレイリストを生成します。PlayStation や Saturn のようなシステムに便利です。</p>
+        <p><em>外部依存なし</em></p>
+
+        <h3>スクリーンショット重複除去</h3>
+        <p>ゲームライブラリ全体で重複したスクリーンショットを見つけて削除し、ストレージ容量を解放します。</p>
+        <ul>
+            <li><strong>完全ハッシュ（MD5）</strong> &mdash; 完全に同一のファイルのみを特定</li>
+            <li><strong>視覚的類似度</strong> &mdash; 設定可能なしきい値（1&ndash;20、低いほど一致が厳密）による知覚ハッシュ比較</li>
+        </ul>
+        <p>スキャンしたゲーム数、重複数、回収可能な容量を示すライブ統計とともに段階的にスキャンします。結果はゲームとシステムごとにグループ化されます。各重複グループで保持するファイルを選択できるほか、<strong>「最大を選択」</strong>を使って最高解像度のバージョンを自動的に保持できます。</p>
+        <p><em>外部依存なし</em></p>
+
+        <h3>画像リサイザー</h3>
+        <p>ゲームメディアを一貫した目標サイズに標準化します。詳細は<a href="#image-standardization">画像標準化</a>を参照してください。</p>
+        <p><em>外部依存なし（Python ベースの AI アップスケーリング）</em></p>
+
+        <h3>別名タイトルのバックフィル</h3>
+        <p><strong>別名タイトル</strong>フィールドが空のゲームをライブラリから探し、IGDB／TGDB／ScreenScraper から埋めます。大規模なカタログをインポートした後や、地域名／日本語／サブタイトルを保存していなかった別のツールから移行した後に便利です。バックグラウンドで実行され、進捗はツールカードに表示されます。</p>
+        <p><em>少なくとも 1 つのスクレイパー API キーが必要（IGDB／TGDB／ScreenScraper）</em></p>
+
+        <h3>HLTB 一括ルックアップ</h3>
+        <p>プレイ時間の見積もりが欠けているすべてのゲームに対して HowLongToBeat のルックアップを実行します。各一致はタイトル＋プラットフォーム＋発売年でスコア付けされ、高信頼度の一致は自動的に保存されます。信頼度しきい値を下回るもの（またはプラットフォームが矛盾するもの）は人によるレビュー用に保留されます。</p>
+        <p><em>外部依存なし（同梱のオフライン HLTB データセットを使用）</em></p>
+
+        <h3>HLTB 保留レビュー</h3>
+        <p>HLTB 一括ルックアップで浮かび上がった曖昧な一致のレビューキューです。各保留行は、元のゲームを HLTB 候補（タイトル、プラットフォーム、発売年、信頼度）とともに表示します。行ごとに承認、却下、または別の一致の選択ができます。レビューツールカードは、保留中の一致が少なくとも 1 件あるときだけ ROM ツールハブに表示されます。</p>
+        <ul>
+            <li>低信頼度、別名タイトル、プラットフォーム不一致の一致向けの<strong>フィルタータブ</strong>。</li>
+            <li><strong>承認</strong>はプレイ時間の見積もりを書き込み、<strong>却下</strong>は候補を破棄してルックアップキューをクリーンに保ちます。</li>
+        </ul>
+
+        <h3>ツール設定</h3>
+        <p>すべての ROM ツールで共有されるパス、ツールの場所、アーカイブ種別、設定を構成します。</p>
+
+        <div class="help-tip">
+            <strong>ヒント:</strong> すべての ROM ツールは一時停止／再開に対応し、バックグラウンドで実行されます。進捗と結果はログに記録され、ログビューアーで確認できます。ツールの状態（利用可能 vs 要インストール）は各ツールカードに表示されます。
+        </div>
+    </div>
+</section>
+
+<!-- Normalization -->
+<section id="normalization" class="help-section card">
+    <h2 class="card-title">正規化</h2>
+    <div class="card-body">
+        <h3>機能の概要</h3>
+        <p>ジャンルとプレイモードの値を一貫した正規形式に正規化します。これはスクレイピングと AI フィル中に自動的に行われ、既存のライブラリに手動で適用することもできます。</p>
+
+        <h3>なぜ重要か</h3>
+        <p>異なるスクレイパーは同じものに異なる名称を使います。正規化はライブラリ全体で一貫性を保ちます:</p>
+        <ul>
+            <li><code>platform</code> &rarr; <code>Platformer</code></li>
+            <li><code>fps</code>、<code>first person shooter</code> &rarr; <code>First-Person-Shooter</code></li>
+            <li><code>shoot 'em up</code>、<code>shmup</code> &rarr; <code>Shoot-em-up</code></li>
+            <li><code>beat 'em up</code>、<code>brawler</code> &rarr; <code>Beat-em-up</code></li>
+            <li><code>hack and slash</code> &rarr; <code>Hack-n-Slash</code></li>
+            <li><code>rts</code>、<code>real time strategy</code> &rarr; <code>Real-Time Strategy</code></li>
+            <li><code>board game</code>、<code>card game</code> &rarr; <code>Board-Card</code></li>
+        </ul>
+
+        <h3>カスタムルール</h3>
+        <p><strong>「設定 &rarr; データ &rarr; 正規化」</strong>でカスタム正規化ルールを追加できます。カスタムルールは組み込みのマッピングを上書きし、好みのジャンルやモードの名称を自分で定義できます。ルールはデータベースに保存されます。</p>
+
+        <h3>プレビューと適用</h3>
+        <p>正規化を適用する前に、どのゲームが影響を受け、どのような変更が行われるかをプレビューできます。これにより、ライブラリへの変更を確定する前に確認できます。</p>
+    </div>
+</section>
+
+<!-- Image Standardization -->
+<section id="image-standardization" class="help-section card">
+    <h2 class="card-title">画像標準化</h2>
+    <div class="card-body">
+        <h3>機能の概要</h3>
+        <p>すべてのゲームメディアを一貫した目標サイズに標準化し、ライブラリ全体で統一された見た目にします。目標サイズの 80&ndash;120% 以内の画像はスキップされます。</p>
+
+        <h3>仕組み</h3>
+        <ul>
+            <li><strong>アップスケーリング</strong> &mdash; 目標サイズより小さい画像は Real-ESRGAN x4（ONNX Runtime による AI 超解像）で高品質に拡大され、その後ちょうど目標サイズにリサイズされます</li>
+            <li><strong>ダウンスケーリング</strong> &mdash; 目標サイズより大きい画像は Lanczos フィルタリングで縮小され、シャープな結果になります</li>
+            <li><strong>しきい値帯</strong> &mdash; 目標サイズの 80&ndash;120% 以内の画像は不要な再処理を避けるためそのまま残されます</li>
+        </ul>
+
+        <h3>目標サイズ</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>メディア種別</th><th>目標</th><th>方式</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ボックスアート</td><td>高さ 1080px</td><td>幅は比例的に拡大縮小</td></tr>
+                <tr><td>3D ボックスアート</td><td>高さ 1080px</td><td>幅は比例的に拡大縮小（透過を保持）</td></tr>
+                <tr><td>スクリーンショット</td><td>高さ 1080px</td><td>幅は比例的に拡大縮小</td></tr>
+                <tr><td>コントローラー</td><td>最長辺 1280px</td><td>透過を保持（RGBA）</td></tr>
+                <tr><td>ハードウェア</td><td>最長辺 1280px</td><td>透過を保持（RGBA）</td></tr>
+                <tr><td>ファンアート</td><td>スキップ</td><td>標準化しない（元のサイズのまま）</td></tr>
+            </tbody>
+        </table>
+
+        <h3>実行方法</h3>
+        <ol>
+            <li><strong>「設定 &rarr; システム &rarr; メンテナンス」</strong>または <strong>「ROM ツール &rarr; 画像リサイザー」</strong>に移動します</li>
+            <li><strong>「開始」</strong>をクリックして一括標準化を始めます</li>
+            <li>ジョブは、現在のファイルと統計を示すトースト進捗付きでバックグラウンドで実行されます</li>
+            <li>画像はスクレイピング中にも自動標準化されます（新しいダウンロードは即座に標準化されます）</li>
+        </ol>
+
+        <h3>ハードウェアサポート</h3>
+        <p>Real-ESRGAN モデルはお使いのハードウェアを自動検出し、利用可能な最良のプロバイダーを使用します:</p>
+        <ul>
+            <li><strong>CUDA</strong> &mdash; NVIDIA GPU アクセラレーション</li>
+            <li><strong>ROCm</strong> &mdash; AMD GPU アクセラレーション（RX 6000 シリーズ向けの gfx バージョン自動オーバーライド付き）</li>
+            <li><strong>CoreML</strong> &mdash; Apple Silicon アクセラレーション</li>
+            <li><strong>CPU</strong> &mdash; GPU 非対応システム向けのフォールバック</li>
+        </ul>
+        <p>ONNX モデルファイルは初回使用時に Hugging Face から自動的にダウンロードされ、ローカルにキャッシュされます。</p>
+    </div>
+</section>
+
+<!-- Logs -->
+<section id="logs" class="help-section card">
+    <h2 class="card-title">ログビューアー</h2>
+    <div class="card-body">
+        <h3>機能の概要</h3>
+        <p>すべてのアプリケーションログ向けの統合ビューアーです。サイドバーの<strong>ログビューアー</strong>からアクセスします。</p>
+
+        <h3>ログカテゴリー</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>カテゴリー</th><th>内容</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>スクレイピング</strong></td><td>スクレイパーの活動、API 呼び出し、エラー、ゲームごとの結果</td></tr>
+                <tr><td><strong>ROM ツール</strong></td><td>アーカイブ展開、CHD 変換、重複検出、スクリーンショット重複除去</td></tr>
+                <tr><td><strong>ROM レポート</strong></td><td>命名検証の結果</td></tr>
+                <tr><td><strong>画像リサイズ</strong></td><td>画像標準化ジョブの進捗（ファイルごとのアップ／ダウンスケール）</td></tr>
+                <tr><td><strong>システム</strong></td><td>一般的なアプリの活動、メンテナンスタスク、起動、データベース操作</td></tr>
+            </tbody>
+        </table>
+
+        <h3>機能</h3>
+        <ul>
+            <li>カテゴリーで絞り込むか、すべてのログをまとめて表示</li>
+            <li>ファイル一覧に作成日とファイルサイズを表示</li>
+            <li>任意のログファイルをクリックして全内容を表示</li>
+            <li>個別のログファイルをダウンロード</li>
+            <li>素早い概観のためにカテゴリー数を上部に表示</li>
+            <li>ログレベルは「設定 &rarr; システム &rarr; ロギング」で設定可能</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Maintenance -->
+<section id="maintenance" class="help-section card">
+    <h2 class="card-title">メンテナンス</h2>
+    <div class="card-body">
+        <p>メンテナンス操作は<strong>「設定 &rarr; システム &rarr; メンテナンス」</strong>で利用できます。これらはライブラリをクリーンで最適な状態に保つのに役立ちます。</p>
+
+        <h3>ライブラリのスキャン</h3>
+        <ul>
+            <li><strong>ライブラリをスキャン</strong> &mdash; 新しいゲームを探して ROM ディレクトリをスキャンします。ES-DE の <code>systeminfo.txt</code> 拡張子一覧を使ってシステムフォルダーと対応ファイル種別を検出します。ダッシュボードからも利用できます。</li>
+        </ul>
+
+        <h3>クリーンアップ操作</h3>
+        <ul>
+            <li><strong>欠落 ROM のクリーン</strong> &mdash; ROM ファイルがディスク上に存在しなくなったゲームのデータベースエントリを削除します。ROM ファイルを再整理または削除した後に便利です。</li>
+            <li><strong>孤立メディアのクリーンアップ</strong> &mdash; 対応するデータベース参照のないディスク上の画像ファイル（ボックスアート、スクリーンショット、ファンアート）を見つけて削除します。削除前にプレビューで確認できます。</li>
+            <li><strong>スクレイプデータのクリア</strong> &mdash; ROM ファイルエントリを保持したまま、ゲームからすべてのスクレイプ済みメタデータを削除します。スクレイピングをやり直すときに便利です。実行前にプレビューで影響を受けるゲームを表示します。</li>
+            <li><strong>CLZ インポートのクリア</strong> &mdash; すべての CLZ Games インポート記録（ROM ファイルのないメタデータのみのエントリ）を削除します。</li>
+        </ul>
+
+        <h3>データベース最適化</h3>
+        <ul>
+            <li><strong>データベースを最適化</strong> &mdash; SQLite の VACUUM と ANALYZE を実行し、削除された記録からストレージを回収してクエリプランナーの統計を更新します。大量削除やクリーンアップ操作の後に推奨されます。</li>
+        </ul>
+
+        <h3>画像の一括標準化</h3>
+        <p>すべてのゲーム画像を目標サイズに標準化します。詳細は<a href="#image-standardization">画像標準化</a>を参照してください。</p>
+
+        <h3>サーバー管理</h3>
+        <ul>
+            <li><strong>サーバーを再起動</strong> &mdash; アプリケーションの正常な再起動（クリーンアップして終了）。「設定 &rarr; システム &rarr; トラブルシューティング」で利用できます。</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Multi-User Access -->
+<section id="multi-user" class="help-section card">
+    <h2 class="card-title">マルチユーザーアクセス</h2>
+    <div class="card-body">
+        <h3>ユーザーロール</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>ロール</th><th>アクセス</th><th>パスワード</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>管理者</strong></td><td>フルアクセス: 設定、ユーザー管理、メンテナンス、すべての機能</td><td>必須</td></tr>
+                <tr><td><strong>編集者</strong></td><td>ゲームの編集、スクレイプ、ROM ツールの使用、コレクションの管理が可能</td><td>なし</td></tr>
+                <tr><td><strong>閲覧者</strong></td><td>読み取り専用: ライブラリのブラウズ、詳細の表示、実績／トロフィーの表示</td><td>なし</td></tr>
+            </tbody>
+        </table>
+
+        <h3>ユーザーの管理</h3>
+        <ol>
+            <li><strong>「設定 &rarr; アカウント &rarr; ユーザー」</strong>に移動します（管理者のみ）</li>
+            <li><strong>「ユーザーを追加」</strong>をクリックして新しいアカウントを作成します</li>
+            <li>ユーザー名、表示名、ロールを設定します</li>
+            <li>管理者ユーザーには初回ログイン時に変更が必要なデフォルトパスワードが付与されます</li>
+        </ol>
+
+        <h3>認証</h3>
+        <p>ログインページにはすべてのアクティブユーザーが表示されます。管理者アカウントはパスワードを必要とし、他のロールは名前をクリックするだけでログインできます。セッションはログアウトするまで保持されます。</p>
+
+        <h3>ユーザーごとの設定</h3>
+        <p>各ユーザーは次を自分で設定できます:</p>
+        <ul>
+            <li>アバター（カスタム画像をアップロード）</li>
+            <li>表示名</li>
+            <li>テーマ設定</li>
+            <li>1 ページあたりの件数</li>
+            <li>タイムゾーン</li>
+            <li>RPCS3 トロフィーパス</li>
+            <li>RetroAchievements 資格情報（ユーザー名＋API キー）</li>
+            <li>PSN 資格情報（NPSSO クッキー）</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Backup -->
+<section id="backup" class="help-section card">
+    <h2 class="card-title">バックアップと復元</h2>
+    <div class="card-body">
+        <h3>バックアップの作成</h3>
+        <ol>
+            <li><strong>「設定 &rarr; ライブラリ &rarr; バックアップ」</strong>に移動します</li>
+            <li><strong>「バックアップを作成」</strong>をクリックします</li>
+            <li>バックアップはタイムスタンプ付きのファイル名で <code>backups/</code> フォルダーに保存されます</li>
+        </ol>
+
+        <h3>バックアップされる内容</h3>
+        <p>バックアップには SQLite データベース全体（<code>roms.db</code>）が含まれ、すべてのゲームメタデータ、ユーザーアカウント、設定、トロフィーデータ、実績進捗、タグ、リスト、ウィッシュリストアイテムが含まれます。</p>
+
+        <h3>バックアップされない内容</h3>
+        <p>メディアファイル（ボックスアート、スクリーンショット、ファンアート、動画、マニュアル）は、スクレイピングで再ダウンロードできるため、データベースバックアップには含まれません。カスタムアップロードがある場合は、<code>static/images/</code> ディレクトリを別途バックアップすることを検討してください。</p>
+
+        <h3>復元</h3>
+        <ol>
+            <li>バックアップ一覧でバックアップを見つけます</li>
+            <li><strong>「復元」</strong>をクリックします</li>
+            <li>操作を確認します</li>
+        </ol>
+
+        <div class="help-tip">
+            <strong>警告:</strong> バックアップを復元すると現在のデータベースが上書きされます。古いものを復元する前に、新しいバックアップを作成してください！
+        </div>
+    </div>
+</section>
+
+<!-- Updating RetroDB -->
+<section id="updating" class="help-section card">
+    <h2 class="card-title">RetroDB のアップデート</h2>
+    <div class="card-body">
+        <h3>アップデート方法</h3>
+        <ol>
+            <li>新しい RetroDB リリースをダウンロードします</li>
+            <li>これらのファイルをバックアップします（個人データが含まれます）:
+                <ul>
+                    <li><code>config.py</code>（パスと API キー）</li>
+                    <li><code>data/settings.json</code>（UI の設定）</li>
+                    <li><code>data/scraper_settings.json</code>（スクレイパーの構成）</li>
+                    <li><code>data/rom_tools_config.json</code>（ROM ツールの設定）</li>
+                    <li><code>data/psn_tokens.json</code>（PSN 認証トークン）</li>
+                    <li><code>data/xbox_tokens.json</code>（Xbox 認証トークン）</li>
+                    <li><code>database/</code> フォルダー（ゲームライブラリのデータベース）</li>
+                </ul>
+            </li>
+            <li>既存のインストールに上書きして新しいバージョンを展開します</li>
+            <li><code>python install.py</code> を実行して新しい依存関係をインストールします</li>
+            <li>サーバーを再起動します</li>
+        </ol>
+
+        <h3>上書きしても安全なファイル</h3>
+        <p>すべてのソースコードファイル（<code>.py</code>、<code>.html</code>、<code>.css</code>、<code>.js</code>）は安全に上書きできます。インストーラーは個人の設定ファイルを上書きしません。</p>
+
+        <h3>保持すべきファイル</h3>
+        <p>決して削除または上書きしないでください: <code>config.py</code>、<code>database/roms.db</code>、<code>data/settings.json</code>、<code>data/scraper_settings.json</code>、<code>data/rom_tools_config.json</code>。</p>
+
+        <h3>データベースマイグレーション</h3>
+        <p>RetroDB は起動時にデータベーススキーマの変更を自動的に処理します。新しいカラムやテーブルはデータを失うことなく必要に応じて追加されます。特別なことをする必要はありません &mdash; 新しいバージョンを起動するだけで、データベースが自動的に更新されます。</p>
+    </div>
+</section>
+
+<!-- Troubleshooting -->
+<section id="troubleshooting" class="help-section card">
+    <h2 class="card-title">トラブルシューティング</h2>
+    <div class="card-body">
+        <h3>よくある問題</h3>
+
+        <h4>「システムの拡張子が見つかりません」</h4>
+        <p>システムフォルダーには、対応する ROM ファイル拡張子を定義した有効な ES-DE <code>systeminfo.txt</code> ファイルが必要です。ROM ディレクトリ構造が ES-DE 標準に一致していることを確認してください。</p>
+
+        <h4>「API 接続に失敗しました」</h4>
+        <ul>
+            <li>インターネット接続を確認してください</li>
+            <li>「設定 &rarr; スクレイピング &rarr; API キー」で API キーを確認してください</li>
+            <li>レート制限されている場合は待ってください（一部の API には日次／時間ごとの上限があります）</li>
+            <li>スクレイパーが有効か確認してください（無効化されたスクレイパーはダッシュボードのステータスに「無効」と表示されます）</li>
+            <li>詳細なエラーメッセージはログビューアーで確認してください</li>
+        </ul>
+
+        <h4>「一括スクレイプが停止しています」</h4>
+        <p>「設定 &rarr; システム &rarr; トラブルシューティング &rarr; <strong>「停止した一括スクレイプをクリア」</strong>」に移動します。これはデータに影響を与えずにジョブの状態をリセットします。</p>
+
+        <h4>「RA 同期キューが停止しています」</h4>
+        <p>「設定 &rarr; システム &rarr; トラブルシューティング」から RetroAchievements 同期キューをクリアします。</p>
+
+        <h4>「PSN 同期が停止しています」</h4>
+        <p>「設定 &rarr; システム &rarr; トラブルシューティング」から PSN 更新ジョブをクリアします。</p>
+
+        <h4>「ミュージアム生成が停止しています」</h4>
+        <p>「設定 &rarr; システム &rarr; トラブルシューティング」からミュージアム生成ジョブをクリアします。</p>
+
+        <h4>「データベースエラー」</h4>
+        <ol>
+            <li>可能であればバックアップを作成します（設定 &rarr; ライブラリ &rarr; バックアップ）</li>
+            <li>「設定 &rarr; システム &rarr; メンテナンス &rarr; <strong>データベースを最適化</strong>」を試します</li>
+            <li><code>database/</code> ディレクトリのファイル権限を確認します</li>
+            <li>最終手段: バックアップから復元するか、データベースを削除して再スキャンします</li>
+        </ol>
+
+        <h4>「画像が保存されない」</h4>
+        <p>メディアディレクトリの書き込み権限を確認してください: <code>chmod -R 755 static/images/</code></p>
+
+        <h4>「ページが遅い、または応答しない」</h4>
+        <ul>
+            <li>大規模なコレクションは読み込みに時間がかかることがあります &mdash; 無限スクロールは 100 件ずつのバッチで読み込みます</li>
+            <li>蓄積されたメモリをクリアするためにページを更新してみてください</li>
+            <li>ブラウザのコンソールで JavaScript エラーを確認してください</li>
+            <li>より軽量なキャンバスエフェクトのテーマ（例: Amber や Elite）に切り替えてみてください</li>
+            <li>キャンバスエフェクトはハードウェアを自動検出します。低スペックデバイスは CPU フォールバックを使用します</li>
+        </ul>
+
+        <h4>ダッシュボードの「中断されたジョブ」バナー</h4>
+        <p>ジョブの実行中に RetroDB が再起動すると、復旧バナーに表示されます。個別に<strong>「再開」</strong>をクリックするか、<strong>「すべて再開」</strong>で再開します。<strong>「破棄」</strong>または<strong>「すべて破棄」</strong>をクリックして消去します。</p>
+
+        <h4>「PSN 認証に失敗しました」</h4>
+        <ul>
+            <li>NPSSO トークンは期限切れになります &mdash; <code>ca.account.sony.com/api/v1/ssocookie</code> から新しいものを生成してください</li>
+            <li>クッキー URL にアクセスする前に store.playstation.com にログインしていることを確認してください</li>
+            <li><code>data/psn_tokens.json</code> のキャッシュ済みトークンは約 2 か月持続します</li>
+        </ul>
+
+        <h4>「Xbox 認証に失敗しました」</h4>
+        <ul>
+            <li>ゲームインポート &rarr; Xbox タブで「サインイン」をクリックして再認証してください</li>
+            <li>Xbox トークンは <code>data/xbox_tokens.json</code> にキャッシュされ、自動的に更新されます</li>
+        </ul>
+
+        <h4>「画像アップスケーリングのエラー」</h4>
+        <ul>
+            <li>Real-ESRGAN ONNX モデルは初回使用時にダウンロードされます &mdash; インターネットアクセスを確認してください</li>
+            <li>GPU アクセラレーションには互換性のあるドライバーが必要です（NVIDIA は CUDA、AMD は ROCm）</li>
+            <li>GPU が失敗した場合、システムは自動的に CPU 処理にフォールバックします</li>
+        </ul>
+
+        <h3>パフォーマンスのヒント</h3>
+        <ul>
+            <li>最高のパフォーマンスのためにブラウザを最新の状態に保ってください</li>
+            <li>非常に大規模なコレクションを扱うときは他のブラウザタブを閉じてください</li>
+            <li>システムフィルターを使って一度に表示するゲーム数を減らしてください</li>
+            <li>大量の操作（スクレイピング、クリーンアップ、インポート）の後は定期的にデータベースを最適化してください</li>
+            <li>キャンバステーマのエフェクトはハードウェアを自動検出します。低スペックデバイスは CPU フォールバックを使用します</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Security & Disclaimer -->
+<section id="security" class="help-section card">
+    <h2 class="card-title">セキュリティと免責事項</h2>
+    <div class="card-body">
+        <h3>セキュリティのベストプラクティス</h3>
+        <ul>
+            <li><strong>デフォルトパスワードを変更する</strong> &mdash; デフォルトの管理者パスワード（<code>admin</code>）は初回ログイン時にすぐ変更すべきです。少なくとも 8 文字の強力なパスワードを使ってください。</li>
+            <li><strong>HTTPS リバースプロキシを使う</strong> &mdash; RetroDB は単体では TLS/SSL を提供しません。HTTPS を有効にしたリバースプロキシ（例: Nginx、Caddy、Traefik）の背後に配置し、クライアントとサーバー間の通信を暗号化してください。</li>
+            <li><strong>ネットワークアクセスを制限する</strong> &mdash; RetroDB を公開インターネットに直接公開するのは避けてください。VPN を使うか、アクセスをローカルネットワークに制限してください。リモートアクセスが必要な場合は、認証付きのリバースプロキシを使ってください。</li>
+            <li><strong>定期的にバックアップを取る</strong> &mdash; 設定の組み込みバックアップ機能を使って定期的なデータベースバックアップを作成してください。バックアップはアプリケーションとは別の場所に保管してください。</li>
+            <li><strong>RetroDB を最新に保つ</strong> &mdash; 新しいリリースを定期的に確認してください。セキュリティ修正と改善はアップデートに含まれます。</li>
+            <li><strong>API キーを保護する</strong> &mdash; API キーは <code>data/scraper_settings.json</code> に保存されます。このファイルが公開アクセス可能でないことを確認してください。<code>config.py</code> やトークンファイルを決して共有しないでください。</li>
+        </ul>
+
+        <h3>組み込みのセキュリティ機能</h3>
+        <ul>
+            <li><strong>パスワードハッシュ化</strong> &mdash; 管理者パスワードは PBKDF2 でハッシュ化されます（平文で保存されることはありません）</li>
+            <li><strong>ログインのレート制限</strong> &mdash; ログインエンドポイントでのブルートフォース対策</li>
+            <li><strong>パス検証</strong> &mdash; すべてのファイル操作は <code>safe_path</code> と <code>safe_filename</code> ヘルパーを使い、ディレクトリトラバーサル攻撃を防止します</li>
+            <li><strong>パラメーター化クエリ</strong> &mdash; すべてのデータベースクエリはパラメーター化されたステートメントを使い、SQL インジェクションを防止します</li>
+            <li><strong>XSS 対策</strong> &mdash; モーダルダイアログは安全な DOM 構築を使い、ユーザー入力はエスケープされます</li>
+            <li><strong>画像解凍爆弾対策</strong> &mdash; 悪意ある画像によるメモリ枯渇を防ぐため、最大画像ピクセル数が制限されています</li>
+        </ul>
+
+        <h3>免責事項</h3>
+        <p>
+            RetroDB は、商品性、特定目的への適合性、非侵害の保証を含むがこれらに限定されない、明示または黙示を問わずいかなる種類の保証もなく、
+            <strong>「現状のまま」</strong>提供されます。いかなる場合も、作者または著作権者は、契約行為、不法行為、その他を問わず、ソフトウェアまたはその使用もしくはその他の取り扱いから、
+            または関連して生じる、いかなる請求、損害、その他の責任についても責任を負いません。
+        </p>
+        <p>
+            ネットワーク構成、アクセス制御、データバックアップ、および本ソフトウェアで管理するコンテンツに関する適用法令の遵守を含め、
+            ご自身のデプロイの保護はすべて利用者の責任です。開発者は、不適切な構成またはデプロイに起因する不正アクセス、
+            データ損失、または誤用について一切の責任を負いません。
+        </p>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+.help-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin: 0 calc(-1 * var(--spacing-lg));
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(20, 26, 35, 0.98), rgba(15, 20, 25, 0.98));
+    border-bottom: 2px solid var(--primary-cyan);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(76, 201, 240, 0.2);
+}
+
+.help-nav-item {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.help-nav-item:hover {
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+.help-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.help-section h3 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--primary-cyan);
+    margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+}
+
+.help-section h3:first-child {
+    margin-top: 0;
+}
+
+.help-section h4 {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+}
+
+.help-section ol, .help-section ul {
+    padding-left: 1.5rem;
+    margin: var(--spacing-sm) 0;
+}
+
+.help-section li {
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.help-section p {
+    color: var(--text-secondary);
+    margin: var(--spacing-sm) 0;
+    line-height: 1.6;
+}
+
+.help-section pre {
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    overflow-x: auto;
+    margin: var(--spacing-md) 0;
+    line-height: 1.5;
+}
+
+.help-section code {
+    background: var(--bg-lighter);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--primary-cyan);
+}
+
+.help-section a {
+    color: var(--primary-cyan);
+    text-decoration: none;
+}
+
+.help-section a:hover {
+    text-decoration: underline;
+}
+
+.shortcut-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-sm);
+    margin: var(--spacing-md) 0;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border-radius: var(--radius-md);
+}
+
+.shortcut-item kbd {
+    display: inline-block;
+    min-width: 24px;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    text-align: center;
+}
+
+.shortcut-item span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--primary-cyan);
+}
+
+.help-tip {
+    background: rgba(76, 201, 240, 0.1);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    border-left: 4px solid var(--primary-cyan);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    color: var(--text-secondary);
+}
+
+.help-tip strong {
+    color: var(--primary-cyan);
+}
+
+.data-table {
+    width: 100%;
+    margin: var(--spacing-md) 0;
+}
+
+.data-table th,
+.data-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.data-table th {
+    background: var(--bg-medium);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.data-table td {
+    color: var(--text-primary);
+}
+
+.data-table tbody tr:hover {
+    background: rgba(76, 201, 240, 0.05);
+}
+</style>
+{% endblock %}

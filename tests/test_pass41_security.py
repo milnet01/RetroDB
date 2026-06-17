@@ -1923,7 +1923,8 @@ class TestPass41_13cLabelAsGroupHeading:
 
     def test_wishlist_priority_label_promoted(self):
         body = read_source('templates/wishlist.html')
-        assert '<div class="form-label" id="wishlistPriorityLabel">Priority</div>' in body, (
+        # Label text is i18n-wrapped (Pass 43.6) — pin the promoted element, not text.
+        assert '<div class="form-label" id="wishlistPriorityLabel">' in body, (
             "Pass 41.13c — wishlist Priority label-as-heading must be a "
             "<div class=\"form-label\">"
         )

@@ -19,6 +19,8 @@
 import json
 import logging
 
+from flask_babel import gettext as _
+
 from services.database import query, execute
 
 logger = logging.getLogger(__name__)
@@ -122,7 +124,7 @@ class HLTBLookup:
         """, (game_id,), one=True)
 
         if not game:
-            raise GameNotFound('Game not found')
+            raise GameNotFound(_('Game not found'))
 
         title = search_title or game['title']
         alt_titles = extract_alt_titles(game.get('alternate_titles'))
@@ -131,7 +133,7 @@ class HLTBLookup:
                                  alternate_titles=alt_titles)
 
         if not result:
-            raise NoHLTBMatch(f'No HLTB match found for "{title}"')
+            raise NoHLTBMatch(_('No HLTB match found for "%(title)s"') % {'title': title})
 
         parts = []
         if result['main_story']:
@@ -173,7 +175,7 @@ class HLTBLookup:
 
         q = str(search_query or '').strip()
         if not q:
-            raise HLTBError('No search query provided', status_code=200)
+            raise HLTBError(_('No search query provided'), status_code=200)
 
         alts = [str(t).strip() for t in alternate_titles if str(t).strip()] \
             if isinstance(alternate_titles, list) else []
@@ -198,7 +200,7 @@ class HLTBLookup:
                                  alternate_titles=alts or None)
 
         if not result:
-            raise NoHLTBMatch(f'No HLTB match found for "{q}"')
+            raise NoHLTBMatch(_('No HLTB match found for "%(query)s"') % {'query': q})
 
         return {
             'hltb_id': result.get('game_id'),
@@ -222,7 +224,7 @@ class HLTBLookup:
         """
         playtime = payload.get('playtime')
         if not playtime:
-            raise MissingPlaytime('No playtime provided')
+            raise MissingPlaytime(_('No playtime provided'))
 
         match_name = payload.get('match_name')
         match_platform = payload.get('match_platform')
@@ -303,7 +305,7 @@ class HLTBPendingQueue:
         row = query("SELECT * FROM hltb_pending_matches WHERE id = ?",
                     (pending_id,), one=True)
         if not row:
-            raise PendingMatchNotFound('Pending match not found')
+            raise PendingMatchNotFound(_('Pending match not found'))
         self._apply(dict(row))
 
     def reject(self, pending_id):

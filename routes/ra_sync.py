@@ -5,6 +5,7 @@
 # =============================================================================
 
 from flask import Blueprint, jsonify
+from flask_babel import gettext as _
 import logging
 
 from services.analytics import invalidate_analytics_cache
@@ -94,13 +95,13 @@ def api_refresh_retroachievements_system(system_id):
     # Get the system
     system = query("SELECT * FROM systems WHERE id = ?", (system_id,), one=True)
     if not system:
-        return error('System not found', 404)
+        return error(_('System not found'), 404)
 
     system_folder = system['folder'].lower()
 
     # Check if system supports RA
     if system_folder not in RA_CONSOLE_MAP:
-        return error(f'System {system["name"]} does not support RetroAchievements', 400)
+        return error(_('System %(name)s does not support RetroAchievements') % {'name': system["name"]}, 400)
 
     # Get game count for this system
     game_count = query("SELECT COUNT(*) as cnt FROM games WHERE system_id = ?", (system_id,), one=True)['cnt']

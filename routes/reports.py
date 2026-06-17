@@ -6,6 +6,7 @@
 # =============================================================================
 
 from flask import Blueprint, render_template, request
+from flask_babel import gettext as _
 import os
 import shutil
 import re
@@ -404,7 +405,7 @@ def api_reports_multidisc_scan():
         system_info = query("SELECT folder FROM systems WHERE id = ? OR folder = ?",
                           (system_filter, system_filter), one=True)
         if not system_info:
-            return error('Unknown system', 400)
+            return error(_('Unknown system'), 400)
         disc_systems = [system_info['folder']]
     
     # Disc file extensions (expanded)
@@ -425,7 +426,7 @@ def api_reports_multidisc_scan():
 
     rom_path = _get_rom_path()
     if not rom_path:
-        return error('ROM path not configured. Go to Settings → Paths to set it.', 400)
+        return error(_('ROM path not configured. Go to Settings → Paths to set it.'), 400)
 
     for system in disc_systems:
         system_path = os.path.join(rom_path, system)
@@ -586,23 +587,23 @@ def api_reports_organize_multidisc():
     in_folder = data.get('in_folder', False)  # True if files are already in a folder
     
     if not system or not name or not files:
-        return error('Missing required parameters', 400)
+        return error(_('Missing required parameters'), 400)
 
     rom_path = _get_rom_path()
     if not rom_path:
-        return error('ROM path not configured. Go to Settings → Paths to set it.', 400)
+        return error(_('ROM path not configured. Go to Settings → Paths to set it.'), 400)
 
     system_path = os.path.join(rom_path, system)
     folder_path = os.path.join(system_path, name)
 
     if safe_path(folder_path, rom_path) is None:
-        return error('Invalid path', 400)
+        return error(_('Invalid path'), 400)
     m3u_path = os.path.join(system_path, f"{name}.m3u")
 
     if in_folder:
         # Files are already in folder, just create M3U
         if not os.path.isdir(folder_path):
-            return error(f'Folder does not exist: {folder_path}', 400)
+            return error(_('Folder does not exist: %(folder_path)s') % {'folder_path': folder_path}, 400)
         
         # Create noload.txt if it doesn't exist
         noload_path = os.path.join(folder_path, 'noload.txt')
@@ -676,19 +677,19 @@ def api_reports_rename_rom():
     new_name = data.get('new_name')
     
     if not game_id or not new_name:
-        return error('Missing game_id or new_name', 400)
+        return error(_('Missing game_id or new_name'), 400)
 
     if not safe_filename(new_name):
-        return error('Invalid filename', 400)
+        return error(_('Invalid filename'), 400)
 
     # Get game info
     game = query("SELECT rom_path FROM games WHERE id = ?", (game_id,), one=True)
     if not game:
-        return error('Game not found', 404)
+        return error(_('Game not found'), 404)
 
     old_path = game['rom_path']
     if not old_path:
-        return error('No ROM path set', 404)
+        return error(_('No ROM path set'), 404)
 
     # CLZ imports have virtual paths — just update the database
     is_virtual = old_path.startswith(('clz_import/', 'steam_import/', 'xbox_import/', 'psn_import/'))
@@ -703,7 +704,7 @@ def api_reports_rename_rom():
         )
 
     if not os.path.exists(old_path):
-        return error('ROM file not found', 404)
+        return error(_('ROM file not found'), 404)
 
     # Build new path
     dir_path = os.path.dirname(old_path)
@@ -711,7 +712,7 @@ def api_reports_rename_rom():
 
     # Check if new name already exists
     if os.path.exists(new_path) and new_path != old_path:
-        return error('A file with that name already exists', 400)
+        return error(_('A file with that name already exists'), 400)
 
     # Check if this is an M3U file
     old_ext = os.path.splitext(old_path)[1].lower()
@@ -720,7 +721,7 @@ def api_reports_rename_rom():
 
     # Validate extension match for M3U
     if is_m3u and new_ext != '.m3u':
-        return error('M3U files must keep the .m3u extension', 400)
+        return error(_('M3U files must keep the .m3u extension'), 400)
 
     # Handle M3U files specially - need to rename folder and update M3U contents
     if is_m3u:
@@ -733,7 +734,7 @@ def api_reports_rename_rom():
         if os.path.isdir(old_folder):
             # Check if new folder name already exists
             if os.path.exists(new_folder) and new_folder != old_folder:
-                return error('A folder with the new name already exists', 400)
+                return error(_('A folder with the new name already exists'), 400)
 
             # Rename the folder first
             if new_folder != old_folder:
@@ -788,7 +789,7 @@ def api_reports_rename_to_scraped():
     game_id = data.get('game_id')
     
     if not game_id:
-        return error('Missing game_id', 400)
+        return error(_('Missing game_id'), 400)
 
     # Get game info (join with systems to get system folder)
     game = query("""
@@ -800,20 +801,20 @@ def api_reports_rename_to_scraped():
         WHERE g.id = ?
     """, (game_id,), one=True)
     if not game:
-        return error('Game not found', 404)
+        return error(_('Game not found'), 404)
 
     old_path = game['rom_path']
     if not old_path:
-        return error('No ROM path set', 404)
+        return error(_('No ROM path set'), 404)
 
     is_virtual = old_path.startswith(('clz_import/', 'steam_import/', 'xbox_import/', 'psn_import/'))
 
     if not is_virtual and not os.path.exists(old_path):
-        return error('ROM file not found', 404)
+        return error(_('ROM file not found'), 404)
 
     title = game['title']
     if not title:
-        return error('No scraped title available', 400)
+        return error(_('No scraped title available'), 400)
 
     system = game['system'] or ''
     region = game['region'] or 'USA'
@@ -831,7 +832,7 @@ def api_reports_rename_to_scraped():
     clean_title = clean_title.strip()
 
     if not clean_title:
-        return error('Title is empty after sanitization', 400)
+        return error(_('Title is empty after sanitization'), 400)
 
     ext = os.path.splitext(old_path)[1].lower()
     is_m3u = ext == '.m3u'
@@ -854,7 +855,7 @@ def api_reports_rename_to_scraped():
     new_name = new_base_name + ext
 
     if not safe_filename(new_name):
-        return error('Generated filename contains invalid characters', 400)
+        return error(_('Generated filename contains invalid characters'), 400)
 
     # CLZ imports have virtual paths — just update the database
     if is_virtual:
@@ -873,8 +874,8 @@ def api_reports_rename_to_scraped():
 
     # Check if new name already exists
     if os.path.exists(new_path) and new_path != old_path:
-        return error('A file with that name already exists', 400)
-    
+        return error(_('A file with that name already exists'), 400)
+
     # Handle M3U files specially - need to rename folder and update M3U contents
     if is_m3u:
         old_base_name = os.path.splitext(os.path.basename(old_path))[0]
@@ -885,7 +886,7 @@ def api_reports_rename_to_scraped():
         if os.path.isdir(old_folder):
             # Check if new folder name already exists
             if os.path.exists(new_folder) and new_folder != old_folder:
-                return error('A folder with the new name already exists', 400)
+                return error(_('A folder with the new name already exists'), 400)
             
             # Rename the folder first
             if new_folder != old_folder:

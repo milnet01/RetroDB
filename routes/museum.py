@@ -6,6 +6,7 @@
 # =============================================================================
 
 from flask import Blueprint, render_template, jsonify, request
+from flask_babel import gettext as _
 import json
 import os
 import re
@@ -306,7 +307,7 @@ def museum_system(system_id):
         "SELECT id, name, folder FROM systems WHERE id = ?", (system_id,)
     ).fetchone()
     if not system:
-        return render_template('museum_system.html', system=None, error='System not found'), 404
+        return render_template('museum_system.html', system=None, error=_('System not found')), 404
 
     folder = system['folder']
     specs = config.SYSTEM_SPECS.get(folder, {})
@@ -378,11 +379,11 @@ def generate_system(system_id):
         "SELECT id, name, folder FROM systems WHERE id = ?", (system_id,)
     ).fetchone()
     if not system:
-        return jsonify({'success': False, 'error': 'System not found'}), 404
+        return jsonify({'success': False, 'error': _('System not found')}), 404
 
     provider_config = _get_active_provider()
     if not provider_config:
-        return jsonify({'success': False, 'error': 'No AI provider configured'}), 400
+        return jsonify({'success': False, 'error': _('No AI provider configured')}), 400
 
     provider = provider_config['provider']
     api_key = provider_config['api_key']
@@ -395,7 +396,7 @@ def generate_system(system_id):
     }.get(provider)
 
     if not call_fn:
-        return jsonify({'success': False, 'error': f'Unknown provider: {provider}'}), 400
+        return jsonify({'success': False, 'error': _('Unknown provider: %(provider)s') % {'provider': provider}}), 400
 
     specs = config.SYSTEM_SPECS.get(system['folder'], {})
     prompt = _build_museum_prompt(system['name'], specs)
@@ -406,14 +407,14 @@ def generate_system(system_id):
 
     raw_text = call_fn(prompt, api_key, model, **kwargs)
     if not raw_text:
-        return jsonify({'success': False, 'error': 'Empty AI response'}), 500
+        return jsonify({'success': False, 'error': _('Empty AI response')}), 500
 
     data = _parse_museum_response(raw_text)
     history = data.get('history', '')
     summary = data.get('summary', '')
 
     if not history and not summary:
-        return jsonify({'success': False, 'error': 'No usable content in AI response'}), 500
+        return jsonify({'success': False, 'error': _('No usable content in AI response')}), 500
 
     # Generate top games
     db_games = db.execute("""
@@ -596,7 +597,7 @@ def fetch_controller_image(controller_id):
         (controller_id,)
     ).fetchone()
     if not controller:
-        return jsonify({'success': False, 'error': 'Controller not found'}), 404
+        return jsonify({'success': False, 'error': _('Controller not found')}), 404
 
     # Get system name for search context
     system = db.execute(
@@ -619,7 +620,7 @@ def fetch_controller_image(controller_id):
         _propagate_controller_image(db, controller_id, result)
         return jsonify({'success': True, 'image': result})
 
-    return jsonify({'success': False, 'error': 'Could not find a suitable image for this controller'})
+    return jsonify({'success': False, 'error': _('Could not find a suitable image for this controller')})
 
 
 @bp.route('/api/museum/controller-images-bulk/<int:system_id>', methods=['POST'])
@@ -635,7 +636,7 @@ def fetch_controller_images_bulk(system_id):
     ).fetchall()
 
     if not controllers:
-        return jsonify({'success': False, 'error': 'No controllers found'}), 404
+        return jsonify({'success': False, 'error': _('No controllers found')}), 404
 
     # Get system name for search context
     system = db.execute("SELECT name FROM systems WHERE id = ?", (system_id,)).fetchone()
@@ -681,14 +682,14 @@ def upload_controller_image(controller_id):
         (controller_id,)
     ).fetchone()
     if not controller:
-        return jsonify({'success': False, 'error': 'Controller not found'}), 404
+        return jsonify({'success': False, 'error': _('Controller not found')}), 404
 
     if 'image' not in request.files:
-        return jsonify({'success': False, 'error': 'No image file provided'})
+        return jsonify({'success': False, 'error': _('No image file provided')})
 
     file = request.files['image']
     if not file.filename:
-        return jsonify({'success': False, 'error': 'No file selected'})
+        return jsonify({'success': False, 'error': _('No file selected')})
 
     # Pass 25.4 — reject oversize uploads before reading the whole payload.
     # Werkzeug's MAX_CONTENT_LENGTH covers the full request body, but a single
@@ -700,24 +701,27 @@ def upload_controller_image(controller_id):
     if declared and declared > max_upload:
         return jsonify({
             'success': False,
-            'error': f'File too large ({declared // (1024*1024)} MB). Maximum is {max_upload // (1024*1024)} MB.',
+            'error': _('File too large (%(size)s MB). Maximum is %(max)s MB.') % {
+                'size': declared // (1024*1024),
+                'max': max_upload // (1024*1024),
+            },
         }), 413
 
     image_data = file.stream.read(max_upload + 1)
     if len(image_data) > max_upload:
         return jsonify({
             'success': False,
-            'error': f'File too large (> {max_upload // (1024*1024)} MB).',
+            'error': _('File too large (> %(max)s MB).') % {'max': max_upload // (1024*1024)},
         }), 413
     if len(image_data) < 100:
-        return jsonify({'success': False, 'error': 'File is too small'})
+        return jsonify({'success': False, 'error': _('File is too small')})
 
     # Validate it's actually an image
     try:
         img_check = Image.open(io.BytesIO(image_data))
         img_check.verify()
     except Exception:
-        return jsonify({'success': False, 'error': 'Invalid image file'})
+        return jsonify({'success': False, 'error': _('Invalid image file')})
 
     # Optionally remove background
     remove_bg = request.form.get('remove_bg', 'false') == 'true'
@@ -728,7 +732,7 @@ def upload_controller_image(controller_id):
     # Save as webp
     filename = _persist_controller_image(controller_id, image_data)
     if not filename:
-        return jsonify({'success': False, 'error': 'Failed to process image'})
+        return jsonify({'success': False, 'error': _('Failed to process image')})
 
     db.execute("UPDATE controllers SET image = ? WHERE id = ?", (filename, controller_id))
     db.commit()
@@ -748,14 +752,14 @@ def remove_controller_bg(controller_id):
         (controller_id,)
     ).fetchone()
     if not controller:
-        return jsonify({'success': False, 'error': 'Controller not found'}), 404
+        return jsonify({'success': False, 'error': _('Controller not found')}), 404
 
     if not controller['image']:
-        return jsonify({'success': False, 'error': 'No image to process'})
+        return jsonify({'success': False, 'error': _('No image to process')})
 
     filepath = os.path.join(config.STATIC_PATH, 'images', 'controllers', controller['image'])
     if not os.path.exists(filepath):
-        return jsonify({'success': False, 'error': 'Image file not found'})
+        return jsonify({'success': False, 'error': _('Image file not found')})
 
     try:
         with open(filepath, 'rb') as f:
@@ -765,11 +769,11 @@ def remove_controller_bg(controller_id):
         processed = _remove_background(image_data, removebg_key)
     except Exception as e:
         logger.error(f"Museum: Failed to remove background for {controller['name']}: {e}")
-        return jsonify({'success': False, 'error': 'Background removal failed'})
+        return jsonify({'success': False, 'error': _('Background removal failed')})
 
     filename = _persist_controller_image(controller_id, processed)
     if not filename:
-        return jsonify({'success': False, 'error': 'Background removal failed'})
+        return jsonify({'success': False, 'error': _('Background removal failed')})
 
     if controller['image'] != filename:
         db.execute("UPDATE controllers SET image = ? WHERE id = ?", (filename, controller_id))

@@ -8,6 +8,7 @@ import logging
 from functools import wraps
 
 from flask import jsonify
+from flask_babel import gettext as _
 
 
 def handle_api_errors(func):
@@ -37,7 +38,7 @@ def handle_api_errors(func):
             logging.getLogger(func.__module__).error(
                 f"{func.__name__} failed: {e}", exc_info=True
             )
-            return jsonify({'success': False, 'error': 'An internal error occurred'}), 500
+            return jsonify({'success': False, 'error': _('An internal error occurred')}), 500
     return wrapper
 
 

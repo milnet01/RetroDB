@@ -6,6 +6,7 @@
 # =============================================================================
 
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, send_file
+from flask_babel import gettext as _
 import os
 import logging
 
@@ -81,7 +82,7 @@ def api_log_files():
         })
     except Exception as e:
         logger.error(f"Error listing log files: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+        return jsonify({'success': False, 'error': _('An internal error occurred')})
 
 
 @logs_bp.route('/api/logs/content/<filename>')
@@ -94,11 +95,11 @@ def api_log_content(filename):
     Returns category field so JS knows the log type.
     """
     if not any(filename.startswith(p) for p in VALID_PREFIXES):
-        return jsonify({'success': False, 'error': 'Invalid log file'}), 403
+        return jsonify({'success': False, 'error': _('Invalid log file')}), 403
 
     content = log_manager.get_full_log_content(filename)
     if content is None:
-        return jsonify({'success': False, 'error': 'File not found'}), 404
+        return jsonify({'success': False, 'error': _('File not found')}), 404
 
     line_count = content.count('\n') + (1 if content and not content.endswith('\n') else 0)
     size = len(content.encode('utf-8'))
@@ -127,15 +128,15 @@ def api_log_content(filename):
 def api_download_log(filename):
     """Download a log file"""
     if not safe_filename(filename):
-        return jsonify({'success': False, 'error': 'Invalid filename'}), 400
+        return jsonify({'success': False, 'error': _('Invalid filename')}), 400
 
     if not any(filename.startswith(p) for p in VALID_PREFIXES):
-        return jsonify({'success': False, 'error': 'Invalid log file'}), 403
+        return jsonify({'success': False, 'error': _('Invalid log file')}), 403
 
     filepath = os.path.join(log_manager.LOGS_DIR, filename)
 
     if not os.path.exists(filepath):
-        return jsonify({'success': False, 'error': 'Log file not found'}), 404
+        return jsonify({'success': False, 'error': _('Log file not found')}), 404
 
     return send_file(
         filepath,
@@ -152,21 +153,21 @@ def api_delete_log(filename):
     """Delete a log file"""
     try:
         if not safe_filename(filename):
-            return jsonify({'success': False, 'error': 'Invalid filename'}), 400
+            return jsonify({'success': False, 'error': _('Invalid filename')}), 400
 
         if not any(filename.startswith(p) for p in VALID_PREFIXES):
-            return jsonify({'success': False, 'error': 'Invalid log file'}), 403
+            return jsonify({'success': False, 'error': _('Invalid log file')}), 403
 
         filepath = os.path.join(log_manager.LOGS_DIR, filename)
 
         if not os.path.exists(filepath):
-            return jsonify({'success': False, 'error': 'Log file not found'})
+            return jsonify({'success': False, 'error': _('Log file not found')})
 
         os.remove(filepath)
         return jsonify({'success': True, 'message': f'Deleted {filename}'})
     except Exception as e:
         logger.error(f"Error deleting log file: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+        return jsonify({'success': False, 'error': _('An internal error occurred')})
 
 
 @logs_bp.route('/api/logs/clear-old', methods=['POST'])
@@ -179,7 +180,7 @@ def api_clear_old_logs():
         return jsonify({'success': True, 'removed': removed})
     except Exception as e:
         logger.error(f"Error clearing old logs: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+        return jsonify({'success': False, 'error': _('An internal error occurred')})
 
 
 # =============================================================================
@@ -201,23 +202,23 @@ def api_view_log_compat(filename):
     """Backward-compat alias for settings page — returns content as array of lines"""
     try:
         if not safe_filename(filename):
-            return jsonify({'success': False, 'error': 'Invalid filename'}), 400
+            return jsonify({'success': False, 'error': _('Invalid filename')}), 400
 
         # Pass 48.5 — enforce the same VALID_PREFIXES allowlist the sibling log
         # endpoints use; this compat alias previously checked only safe_filename.
         if not any(filename.startswith(p) for p in VALID_PREFIXES):
-            return jsonify({'success': False, 'error': 'Invalid log file'}), 400
+            return jsonify({'success': False, 'error': _('Invalid log file')}), 400
 
         lines = request.args.get('lines', 100, type=int)
         content = log_manager.get_log_content(filename, lines=lines)
 
         if content is None:
-            return jsonify({'success': False, 'error': 'Log file not found'})
+            return jsonify({'success': False, 'error': _('Log file not found')})
 
         return jsonify({'success': True, 'content': content})
     except Exception as e:
         logger.error(f"Error viewing log file: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+        return jsonify({'success': False, 'error': _('An internal error occurred')})
 
 
 # =============================================================================

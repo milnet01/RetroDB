@@ -29,6 +29,7 @@ import logging
 from datetime import datetime, timezone
 
 from flask import Blueprint, request, jsonify, redirect, url_for, g, session as flask_session
+from flask_babel import gettext as _
 import secrets as _secrets
 
 import config
@@ -134,21 +135,21 @@ def api_steam_fetch_library():
     steam_id = data.get('steam_id') or steam_id
 
     if not steam_api_key:
-        return jsonify({'success': False, 'error': 'Steam API key not configured. Add it in Settings → API Keys.'}), 400
+        return jsonify({'success': False, 'error': _('Steam API key not configured. Add it in Settings → API Keys.')}), 400
     if not steam_id:
-        return jsonify({'success': False, 'error': 'Steam ID not configured. Add it in Settings → API Keys.'}), 400
+        return jsonify({'success': False, 'error': _('Steam ID not configured. Add it in Settings → API Keys.')}), 400
 
     # Resolve vanity URL if not numeric
     if not steam_id.isdigit():
         resolved = resolve_vanity_url(steam_api_key, steam_id)
         if not resolved:
-            return jsonify({'success': False, 'error': f'Could not resolve Steam vanity URL "{steam_id}". Use your 17-digit Steam ID instead.'}), 400
+            return jsonify({'success': False, 'error': _('Could not resolve Steam vanity URL "%(steam_id)s". Use your 17-digit Steam ID instead.') % {'steam_id': steam_id}}), 400
         steam_id = resolved
 
     # Fetch library
     games = get_owned_games(steam_api_key, steam_id)
     if not games:
-        return jsonify({'success': False, 'error': 'No games found. Check that your Steam profile and game details are set to Public.'})
+        return jsonify({'success': False, 'error': _('No games found. Check that your Steam profile and game details are set to Public.')})
 
     # Fetch profile info
     profile = get_player_summary(steam_api_key, steam_id)
@@ -201,12 +202,12 @@ def api_steam_import():
     selected_games = data.get('games', [])
 
     if not selected_games:
-        return jsonify({'success': False, 'error': 'No games selected'})
+        return jsonify({'success': False, 'error': _('No games selected')})
 
     # Ensure "windows" system exists
     system = _ensure_system_exists('windows', 'Microsoft Windows')
     if not system:
-        return jsonify({'success': False, 'error': 'Could not create Windows system entry'})
+        return jsonify({'success': False, 'error': _('Could not create Windows system entry')})
 
     system_id = system['id']
     imported = 0
@@ -279,7 +280,7 @@ def api_steam_import():
 
     except Exception as e:
         logger.error(f"Steam Import error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+        return jsonify({'success': False, 'error': _('An internal error occurred')})
     finally:
         if conn:
             conn.close()
@@ -327,7 +328,7 @@ def api_xbox_auth_url():
     client_id = api_keys.get('xbox_client_id', '')
 
     if not client_id:
-        return jsonify({'success': False, 'error': 'Xbox Client ID not configured. Add it in Settings → API Keys.'})
+        return jsonify({'success': False, 'error': _('Xbox Client ID not configured. Add it in Settings → API Keys.')})
 
     # Pass 24.6 — generate a CSRF-protection `state` token, stash it in
     # the caller's session, and include it in the Microsoft auth URL so
@@ -465,15 +466,15 @@ def api_xbox_fetch_library():
     client_secret = api_keys.get('xbox_client_secret', '')
 
     if not client_id or not client_secret:
-        return jsonify({'success': False, 'error': 'Xbox credentials not configured. Add them in Settings → API Keys.'}), 400
+        return jsonify({'success': False, 'error': _('Xbox credentials not configured. Add them in Settings → API Keys.')}), 400
 
     session = get_authenticated_session(client_id, client_secret, g.user['id'])
     if not session:
-        return jsonify({'success': False, 'error': 'Xbox authentication failed. Please re-connect your Xbox account.'}), 401
+        return jsonify({'success': False, 'error': _('Xbox authentication failed. Please re-connect your Xbox account.')}), 401
 
     titles = get_title_history(session['auth_header'], session['xuid'])
     if not titles:
-        return jsonify({'success': False, 'error': 'No games found in Xbox title history.'})
+        return jsonify({'success': False, 'error': _('No games found in Xbox title history.')})
 
     # Build system lookup and ensure Xbox systems exist
     xbox_systems = {}
@@ -556,7 +557,7 @@ def api_xbox_import():
     selected_games = data.get('games', [])
 
     if not selected_games:
-        return jsonify({'success': False, 'error': 'No games selected'})
+        return jsonify({'success': False, 'error': _('No games selected')})
 
     # Ensure all needed Xbox systems exist
     xbox_systems = {}
@@ -643,7 +644,7 @@ def api_xbox_import():
 
     except Exception as e:
         logger.error(f"Xbox Import error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+        return jsonify({'success': False, 'error': _('An internal error occurred')})
     finally:
         if conn:
             conn.close()
@@ -746,12 +747,12 @@ def api_psn_fetch_library():
     """Fetch PSN game library from local DB or live API."""
     from routes.trophies import create_psn_client, extract_psn_platform
 
-    npsso, _ = _get_psn_settings()
+    npsso, _username = _get_psn_settings()
 
     if not npsso:
         return jsonify({
             'success': False,
-            'error': 'PSN NPSSO not configured. Add it in Settings \u2192 API Keys.'
+            'error': _('PSN NPSSO not configured. Add it in Settings \u2192 API Keys.')
         }), 400
 
     # Check local psn_games table first (Pass 31.1 — per user).
@@ -780,7 +781,7 @@ def api_psn_fetch_library():
         logger.error(f"PSN Import: Failed to fetch trophy titles: {e}")
         return jsonify({
             'success': False,
-            'error': 'Failed to fetch PSN game list. Try syncing trophies first.'
+            'error': _('Failed to fetch PSN game list. Try syncing trophies first.')
         })
 
     games_data = []
@@ -915,7 +916,7 @@ def api_psn_import():
     selected_games = data.get('games', [])
 
     if not selected_games:
-        return jsonify({'success': False, 'error': 'No games selected'})
+        return jsonify({'success': False, 'error': _('No games selected')})
 
     # Ensure all needed PSN systems exist
     psn_systems = {}
@@ -1012,7 +1013,7 @@ def api_psn_import():
 
     except Exception as e:
         logger.error(f"PSN Import error: {e}")
-        return jsonify({'success': False, 'error': 'An internal error occurred'})
+        return jsonify({'success': False, 'error': _('An internal error occurred')})
     finally:
         if conn:
             conn.close()

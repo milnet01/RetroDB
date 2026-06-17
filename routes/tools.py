@@ -5,6 +5,7 @@ CHD verification, and duplicate finding.
 """
 
 from flask import Blueprint, render_template, request, jsonify, g
+from flask_babel import gettext as _
 from datetime import datetime
 import os
 import json
@@ -216,25 +217,25 @@ def api_rom_tools_settings():
         return jsonify(load_rom_tools_config())
 
     if not g.user or g.user.get('role') != 'admin':
-        return error('Administrator privileges required', 403)
+        return error(_('Administrator privileges required'), 403)
 
     incoming = request.get_json() or {}
     if not isinstance(incoming, dict):
-        return error('Settings payload must be an object', 400)
+        return error(_('Settings payload must be an object'), 400)
 
     valid_keys = known_rom_tools_keys()
     current = load_rom_tools_config()
     for key, value in incoming.items():
         if key not in valid_keys:
-            return error(f"Unknown setting key: {key}", 400)
+            return error(_("Unknown setting key: %(key)s") % {'key': key}, 400)
         ok, reason, cleaned = validate_rom_tools_value(key, value)
         if not ok:
-            return error(f"Invalid value for '{key}': {reason}", 400)
+            return error(_("Invalid value for '%(key)s': %(reason)s") % {'key': key, 'reason': reason}, 400)
         current[key] = cleaned
 
     if save_rom_tools_config(current):
         return success()
-    return error('Failed to save settings', 500)
+    return error(_('Failed to save settings'), 500)
 
 
 @tools_bp.route('/api/rom-tools/status')
@@ -269,7 +270,7 @@ def api_rom_tools_browse_folders():
         current_real = os.path.realpath(base_path)
 
     if not os.path.exists(current_path):
-        return error(f'Path does not exist: {current_path}', 400)
+        return error(_('Path does not exist: %(path)s') % {'path': current_path}, 400)
 
     parent_path = None
     if current_real != base_real:
@@ -296,7 +297,7 @@ def api_rom_tools_browse_folders():
                     'subfolder_count': subfolder_count
                 })
     except PermissionError:
-        return error('Permission denied', 403)
+        return error(_('Permission denied'), 403)
 
     return success(
         base_path=base_path,
@@ -324,7 +325,7 @@ def api_rom_tools_task_status(task_id):
     if task_obj:
         return jsonify(task_obj.to_dict())
 
-    return jsonify({'error': 'Task not found'}), 404
+    return jsonify({'error': _('Task not found')}), 404
 
 
 @tools_bp.route('/api/rom-tools/task/<task_id>/cancel', methods=['POST'])
@@ -347,7 +348,7 @@ def api_rom_tools_task_cancel(task_id):
     if cancel_task(task_id):
         return success()
 
-    return error('Task not found or not running', 404)
+    return error(_('Task not found or not running'), 404)
 
 
 @tools_bp.route('/api/rom-tools/task/<task_id>/pause', methods=['POST'])
@@ -367,7 +368,7 @@ def api_rom_tools_task_pause(task_id):
         update_task(task_obj)
         return success()
 
-    return error('Task not found or not running', 404)
+    return error(_('Task not found or not running'), 404)
 
 
 @tools_bp.route('/api/rom-tools/task/<task_id>/resume', methods=['POST'])
@@ -387,7 +388,7 @@ def api_rom_tools_task_resume(task_id):
         update_task(task_obj)
         return success()
 
-    return error('Task not found or not paused', 404)
+    return error(_('Task not found or not paused'), 404)
 
 
 # =============================================================================
@@ -404,7 +405,7 @@ def api_archive_scanner_scan():
     data = request.get_json() or {}
     path = data.get('path', _get_rom_path())
     if safe_path(path, _get_rom_path()) is None:
-        return error('Invalid scan path', 400)
+        return error(_('Invalid scan path'), 400)
     excluded_paths = data.get('excluded_paths', [])
     types = data.get('types', ['.zip', '.7z', '.rar'])
     modes = data.get('modes', {'corrupted': True, 'multiFile': True, 'unwanted': True})
@@ -442,13 +443,13 @@ def api_archive_scanner_contents():
     path = data.get('path')
 
     if not path:
-        return error('No path provided', 400)
+        return error(_('No path provided'), 400)
 
     if safe_path(path, _get_rom_path()) is None:
-        return error('Invalid path', 400)
+        return error(_('Invalid path'), 400)
 
     if not os.path.exists(path):
-        return error('File not found', 404)
+        return error(_('File not found'), 404)
 
     rom_config = ROMToolsConfig()
     scanner = ArchiveScanner(rom_config)
@@ -470,13 +471,13 @@ def api_archive_scanner_remove_files():
     files = data.get('files', [])
 
     if not archive_path:
-        return error('No archive path provided', 400)
+        return error(_('No archive path provided'), 400)
 
     if safe_path(archive_path, _get_rom_path()) is None:
-        return error('Invalid archive path', 400)
+        return error(_('Invalid archive path'), 400)
 
     if not files:
-        return error('No files to remove', 400)
+        return error(_('No files to remove'), 400)
 
     logger.info(f"Removing {len(files)} files from archive: {archive_path}")
     
@@ -499,10 +500,10 @@ def api_archive_scanner_clean():
     path = data.get('path')
 
     if not path:
-        return error('No path provided', 400)
+        return error(_('No path provided'), 400)
 
     if safe_path(path, _get_rom_path()) is None:
-        return error('Invalid path', 400)
+        return error(_('Invalid path'), 400)
 
     settings = load_rom_tools_config()
     unwanted_patterns = settings.get('unwanted_patterns', [])
@@ -534,10 +535,10 @@ def api_archive_scanner_create_m3u():
     move_to_staging = data.get('move_to_staging', True)
 
     if not path:
-        return error('No path provided', 400)
+        return error(_('No path provided'), 400)
 
     if safe_path(path, _get_rom_path()) is None:
-        return error('Invalid path', 400)
+        return error(_('Invalid path'), 400)
 
     rom_config = ROMToolsConfig()
     scanner = ArchiveScanner(rom_config)
@@ -565,13 +566,13 @@ def api_archive_scanner_batch_create_m3u():
     delete_archives = data.get('delete_archives', False)
 
     if not paths:
-        return error('No paths provided', 400)
+        return error(_('No paths provided'), 400)
 
     rom_root = _get_rom_path()
     valid_paths = []
     for p in paths:
         if not isinstance(p, str) or safe_path(p, rom_root) is None:
-            return error(f'Invalid path: {p}', 400)
+            return error(_('Invalid path: %(path)s') % {'path': p}, 400)
         valid_paths.append(p)
 
     staging_folder = os.path.join(tempfile.gettempdir(), 'retrodb_m3u_staging')
@@ -596,7 +597,7 @@ def api_chd_converter_scan():
     data = request.get_json() or {}
     path = data.get('path', _get_rom_path())
     if safe_path(path, _get_rom_path()) is None:
-        return error('Invalid scan path', 400)
+        return error(_('Invalid scan path'), 400)
     settings = load_rom_tools_config()
 
     extensions = ['.iso', '.cue', '.gdi', '.mds']
@@ -644,7 +645,7 @@ def api_chd_converter_convert():
     
     chdman_path = settings.get('chdman_path', 'chdman')
     if not shutil.which(chdman_path):
-        return error('chdman not found. Please install MAME tools.', 400)
+        return error(_('chdman not found. Please install MAME tools.'), 400)
     
     _cleanup_completed_tasks()
     # Pass 41.10 — full UUID (no [:8] slice). 32 bits gave attackers ~4.3B
@@ -759,7 +760,7 @@ def api_chd_verify_scan():
     data = request.get_json() or {}
     path = data.get('path', _get_rom_path())
     if safe_path(path, _get_rom_path()) is None:
-        return error('Invalid scan path', 400)
+        return error(_('Invalid scan path'), 400)
     settings = load_rom_tools_config()
 
     recursive = settings.get('recursive_scan', True)
@@ -782,7 +783,7 @@ def api_chd_verify_verify():
     
     chdman_path = settings.get('chdman_path', 'chdman')
     if not shutil.which(chdman_path):
-        return error('chdman not found', 400)
+        return error(_('chdman not found'), 400)
     
     _cleanup_completed_tasks()
     # Pass 41.10 — full UUID (no [:8] slice). 32 bits gave attackers ~4.3B
@@ -873,7 +874,7 @@ def api_duplicate_finder_scan():
     data = request.get_json() or {}
     path = data.get('path', _get_rom_path())
     if safe_path(path, _get_rom_path()) is None:
-        return error('Invalid scan path', 400)
+        return error(_('Invalid scan path'), 400)
     settings = load_rom_tools_config()
     method = data.get('method', settings.get('duplicate_method', 'hash'))
     recursive = data.get('recursive', True)
@@ -881,7 +882,7 @@ def api_duplicate_finder_scan():
     include_archives = data.get('include_archives', False)
 
     if not os.path.exists(path):
-        return error(f'Path does not exist: {path}', 400)
+        return error(_('Path does not exist: %(path)s') % {'path': path}, 400)
 
     _cleanup_completed_tasks()
     # Pass 41.10 — full UUID (no [:8] slice). 32 bits gave attackers ~4.3B
