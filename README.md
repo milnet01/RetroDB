@@ -38,6 +38,13 @@
 - **Log Viewer** - Unified log browser across all categories
 - **Genre Normalization** - Automatic normalization with custom rules
 
+> **Heads up:** The metadata scrapers, AI Fill, Museum AI content, and the
+> achievement/trophy integrations (RetroAchievements, Steam, Xbox, PSN) each
+> need the relevant account login or API key before they'll work. RetroDB runs
+> fine without them, but those specific features stay inactive until you supply
+> credentials — see [API Keys](#api-keys) below for where to get each one. Most
+> are free; the AI providers are paid (billed by usage).
+
 ## Quick Start
 
 > **End users:** download the source ZIP from Releases and follow the steps below. **Developers:** `git clone` the repo and see [CONTRIBUTING.md](CONTRIBUTING.md) for the dev setup instead.
@@ -90,21 +97,28 @@ RetroDB uses two configuration files:
 
 Most settings can be configured through the web interface at **Settings** or during the first-run **Setup Wizard**.
 
-### API Keys (Optional)
+### API Keys
 
-For metadata scraping and features, you can configure API keys for:
+The metadata scrapers and AI services do **not** work out of the box — each one
+needs its own account login or API key, which you create on that provider's
+site. RetroDB itself is free and runs without any of them; the related feature
+simply stays inactive until you add the credential. Most keys below are free to
+obtain, but a few are **paid / usage-billed** — the AI providers (OpenAI,
+Anthropic Claude, and Gemini beyond its free tier) charge per request, so you
+pay them directly for what you use. Check each provider's current pricing before
+enabling it.
 
-| Service | Signup URL | Used For |
-|---|---|---|
-| TheGamesDB | https://api.thegamesdb.net/key.php | Metadata & boxart |
-| IGDB (Twitch) | https://dev.twitch.tv/console | Metadata |
-| RAWG.io | https://rawg.io/apidocs | Metadata |
-| ScreenScraper | https://www.screenscraper.fr | Metadata, 3D boxart, videos |
-| RetroAchievements | https://retroachievements.org/controlpanel.php | Achievement tracking |
-| Steam Web API | https://steamcommunity.com/dev/apikey | Steam import & achievements |
-| Google Gemini | https://aistudio.google.com/apikey | AI Fill & Museum |
-| OpenAI | https://platform.openai.com/api-keys | AI Fill & Museum |
-| Anthropic Claude | https://console.anthropic.com/ | AI Fill & Museum |
+| Service | Signup URL | Used For | Cost |
+|---|---|---|---|
+| TheGamesDB | https://api.thegamesdb.net/key.php | Metadata & boxart | Free |
+| IGDB (Twitch) | https://dev.twitch.tv/console | Metadata | Free |
+| RAWG.io | https://rawg.io/apidocs | Metadata | Free |
+| ScreenScraper | https://www.screenscraper.fr | Metadata, 3D boxart, videos | Free account |
+| RetroAchievements | https://retroachievements.org/controlpanel.php | Achievement tracking | Free account |
+| Steam Web API | https://steamcommunity.com/dev/apikey | Steam import & achievements | Free |
+| Google Gemini | https://aistudio.google.com/apikey | AI Fill & Museum | Free tier + paid |
+| OpenAI | https://platform.openai.com/api-keys | AI Fill & Museum | Paid (usage-billed) |
+| Anthropic Claude | https://console.anthropic.com/ | AI Fill & Museum | Paid (usage-billed) |
 
 ## Platform Support
 
