@@ -8,8 +8,8 @@
 
 ### Library & Metadata
 - **Multi-System Library** - Supports 150+ gaming platforms from Atari 2600 to PS5
-- **Hybrid Metadata Scraping** - Combines data from TheGamesDB, IGDB, RAWG, ScreenScraper, and ES-DE gamelists
-- **AI Fill** - Intelligent metadata gap-filling using Gemini, OpenAI, or Claude
+- **Hybrid Metadata Scraping** - Combines data from TheGamesDB, IGDB, RAWG, ScreenScraper, and ES-DE gamelists *(requires your own login/API key per source — see [API Keys](#api-keys))*
+- **AI Fill** - Intelligent metadata gap-filling using Gemini, OpenAI, or Claude *(requires your own AI provider API key, which is paid/usage-billed — see [API Keys](#api-keys))*
 - **Multi-Rating System** - 8 international age rating systems (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd) with cross-mapping
 - **Bulk Operations** - Bulk scraping, bulk editing, compare games, and queue management with job recovery
 
