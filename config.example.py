@@ -110,8 +110,8 @@ except ValueError:
 
 # Application metadata
 APP_NAME = "RetroDB"
-APP_VERSION = "3.9.0"
-APP_LAST_UPDATE = "2026-06-17"
+APP_VERSION = "3.10.0"
+APP_LAST_UPDATE = "2026-06-26"
 APP_DESCRIPTION = "Retro Gaming ROM Library Manager"
 
 # Supported image extensions for boxart/screenshots

@@ -1370,9 +1370,12 @@ def analytics():
         return "An error occurred loading analytics. Check logs for details.", 500
 
 
+CHANGELOG_PAGE_SIZE = 20  # entries rendered per "Load More" slice (Pass 49.1)
+
+
 @app.route('/changelog')
 def changelog():
-    """Changelog page showing version history"""
+    """Changelog page showing version history (paginated — Pass 49.1)"""
     import yaml
     from flask_babel import get_locale
     data_dir = os.path.join(config.BUNDLE_DIR, 'data')
@@ -1390,7 +1393,20 @@ def changelog():
             translated = {e['version']: e for e in (yaml.safe_load(f) or [])}
         if translated:
             entries = [translated.get(e['version'], e) for e in entries]
-    return render_template('changelog.html', changelog=entries)
+    # Pagination (Pass 49.1): the changelog has 788+ entries; rendering them all
+    # server-side every visit cost ~550 ms. Slice AFTER the version-merge so the
+    # translated recent entries still win, then render one page; a "Load More"
+    # button fetches subsequent slices as HTML partials (?partial=1&offset=).
+    try:
+        offset = max(0, int(request.args.get('offset', 0)))
+    except (TypeError, ValueError):
+        offset = 0
+    page = entries[offset:offset + CHANGELOG_PAGE_SIZE]
+    has_more = offset + CHANGELOG_PAGE_SIZE < len(entries)
+    next_offset = offset + CHANGELOG_PAGE_SIZE
+    template = '_changelog_entries.html' if request.args.get('partial') else 'changelog.html'
+    return render_template(template, changelog=page,
+                           has_more=has_more, next_offset=next_offset)
 
 
 @app.route('/help')

@@ -15,23 +15,8 @@
 </div>
 
 <!-- Changelog Content -->
-<div class="changelog-container">
-
-    {% for entry in changelog %}
-    <article class="changelog-entry">
-        <div class="changelog-header">
-            <h2 class="changelog-version">v{{ entry.version }}</h2>
-            <span class="changelog-date">{{ entry.date }}</span>
-            {% for tag in entry.tags %}
-            <span class="changelog-tag tag-{{ tag.type }}">{{ tag.label }}</span>
-            {% endfor %}
-        </div>
-        <div class="changelog-body">
-            {{ entry.body | safe }}
-        </div>
-    </article>
-    {% endfor %}
-
+<div class="changelog-container" id="changelogContainer">
+    {% include '_changelog_entries.html' %}
 </div>
 
 {% endblock %}
@@ -42,6 +27,13 @@
     .changelog-container {
         max-width: 1300px;
         margin: 0 auto;
+    }
+
+    /* Load More button wrapper (Pass 49.1) */
+    .changelog-load-more {
+        display: flex;
+        justify-content: center;
+        margin-top: var(--spacing-xl);
     }
 
     /* Card-based layout override (pages.css uses simple bottom-border) */
@@ -173,4 +165,37 @@
         background: var(--card-bg-hover);
     }
 </style>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ csp_nonce }}">
+// Changelog "Load More" pagination (Pass 49.1): fetch the next slice as an HTML
+// partial and swap it in where the button sits. Each chunk carries its own
+// button, so when the history runs out the response has no button and it's gone.
+(function () {
+    const container = document.getElementById('changelogContainer');
+    if (!container) return;
+    const LOADING = {{ _('Loading...') | tojson }};
+    container.addEventListener('click', async function (e) {
+        const btn = e.target.closest('[data-load-more]');
+        if (!btn) return;
+        const offset = btn.dataset.nextOffset;
+        const original = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = LOADING;
+        try {
+            const resp = await fetch('/changelog?partial=1&offset=' + encodeURIComponent(offset));
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            const html = await resp.text();
+            // The wrapper holds the current button; replacing its outerHTML drops
+            // the fetched entries + next button into the same spot at the end.
+            btn.closest('.changelog-load-more').outerHTML = html;
+        } catch (err) {
+            btn.disabled = false;
+            btn.textContent = original;
+            showNotification({{ _('Failed to load more entries.') | tojson }}, 'error');
+        }
+    });
+})();
+</script>
 {% endblock %}

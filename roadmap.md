@@ -3538,7 +3538,7 @@ weren't worth blocking the ship on.  Ordered by rough priority.
 <a id="done-index"></a>
 
 #### Pass 49.1 Changelog pagination — "Load More" to cap initial render (MEDIUM, M)
-- **Status**: todo
+- **Status**: done
 - **Target**: `/changelog` route (`app.py::changelog`), `templates/changelog.html`.
 - **Why**: the changelog renders all 788+ entries server-side in one response (~550 ms `slow_request` warnings observed on /changelog). Most readers only look at the latest few releases; rendering the full history every visit is wasted work and a slow first paint.
 - **Plan**:

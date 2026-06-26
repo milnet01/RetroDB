@@ -1,0 +1,23 @@
+{# Changelog entries partial (Pass 49.1) — rendered both inline on first page
+   load (included by changelog.html) and standalone for the "Load More" AJAX
+   slices (?partial=1&offset=). Carries its own Load More button so each fetched
+   chunk brings the next button, or none when the history is exhausted. #}
+{% for entry in changelog %}
+<article class="changelog-entry">
+    <div class="changelog-header">
+        <h2 class="changelog-version">v{{ entry.version }}</h2>
+        <span class="changelog-date">{{ entry.date }}</span>
+        {% for tag in entry.tags %}
+        <span class="changelog-tag tag-{{ tag.type }}">{{ tag.label }}</span>
+        {% endfor %}
+    </div>
+    <div class="changelog-body">
+        {{ entry.body | safe }}
+    </div>
+</article>
+{% endfor %}
+{% if has_more %}
+<div class="changelog-load-more">
+    <button type="button" class="btn btn-secondary" data-load-more data-next-offset="{{ next_offset }}">{{ _('Load More') }}</button>
+</div>
+{% endif %}
