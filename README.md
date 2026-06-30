@@ -151,14 +151,16 @@ non-localhost interface without a proxy in front of it is unsupported.
 ## Support development
 
 [![Sponsor on GitHub](https://img.shields.io/github/sponsors/milnet01?label=Sponsor&logo=github&color=ea4aaa)](https://github.com/sponsors/milnet01)
+[![Support on Patreon](https://img.shields.io/badge/Patreon-Support-f96854?logo=patreon&logoColor=white)](https://www.patreon.com/c/AntsProjectsHub)
 
 RetroDB is free and open source. If it saves you time, consider tipping —
 every bit helps keep solo development sustainable.
 
 - **GitHub Sponsors:** [github.com/sponsors/milnet01](https://github.com/sponsors/milnet01)
+- **Patreon:** [patreon.com/c/AntsProjectsHub](https://www.patreon.com/c/AntsProjectsHub)
 
-(Additional donation surfaces — Patreon, Buy Me A Coffee — are linked from
-[`.github/FUNDING.yml`](.github/FUNDING.yml) as they come online.)
+(A Buy Me A Coffee surface will follow once it supports more regions; see
+[`.github/FUNDING.yml`](.github/FUNDING.yml).)
 
 ## License
 

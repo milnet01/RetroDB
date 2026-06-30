@@ -631,7 +631,8 @@ are tracked here so the next pass picks them up:
      - **Patron** ($15/mo) — same, plus a monthly behind-the-scenes
        update post (single paragraph; not a content treadmill).
   3. Add the Patreon URL to `.github/FUNDING.yml` (Pass 47.6).
-- **Status**: blocked on 47.2
+- **Status**: done
+Resolved (2026-06-30): Patreon page is live at https://www.patreon.com/c/AntsProjectsHub and wired into .github/FUNDING.yml as `patreon: AntsProjectsHub` (bare-username form verified via curl to resolve to the same creator page). Page tier copy/levels remain the maintainer's to finalize in Patreon web admin.
 
 #### Pass 47.4 GitHub Sponsors (MEDIUM, M)
 
@@ -678,6 +679,7 @@ are tracked here so the next pass picks them up:
      Patreon/Sponsors and fragments the monthly-tier story across
      three platforms. Use BMAC strictly for one-off coffees.
 - **Status**: blocked on 47.2
+Progress (2026-06-30): Parked by maintainer. Buy Me A Coffee does not support South Africa yet, so this surface can't go live regardless of code. Leave planned; revisit only if/when BMAC adds ZA payouts. GitHub Sponsors already covers the in-app/README/FUNDING donation surfaces, so nothing is blocked on this.
 
 #### Pass 47.6 Donation surfaces in app + repo (MEDIUM, M)
 
@@ -717,7 +719,7 @@ are tracked here so the next pass picks them up:
      Patreon / Sponsors tier into a "Supporters" section at the
      bottom of `data/changelog.yaml`'s release notes, fed manually
      per release. Defer until there *are* supporters.
-- **Status**: blocked on 47.3 / 47.4 / 47.5 (need the platform URLs
+- **Status**: done
   to populate). The Sponsors-only subset is unblocked — see 47.6.A.
   Progress (v3.8.1): unblocked prep landed — `.github/FUNDING.yml` now
   carries commented Patreon/`custom` BMAC placeholders ready to uncomment
@@ -729,6 +731,7 @@ are tracked here so the next pass picks them up:
   Remaining: populate FUNDING patreon/custom + README BMAC/Patreon badges
   once 47.3/47.5 accounts are live; footer link (step 4) skipped — no
   footer; supporters list (step 5) deferred until there are supporters.
+Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platforms. FUNDING.yml (GitHub Sponsors + Patreon); README Support section (badges + links); in-app links in Settings -> System -> Support Development panel and the About panel header. Both new strings i18n-wrapped and translated into all 6 locales. Deferred per the original plan: Buy Me A Coffee (no South Africa payouts yet, see PASS-47-5), footer link (no footer exists), CHANGELOG supporters list (until there are supporters).
 
 #### Pass 47.6.A In-app sponsorship link (GitHub Sponsors only) (LOW, S)
 
