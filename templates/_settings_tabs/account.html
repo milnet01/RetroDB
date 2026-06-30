@@ -139,6 +139,14 @@
                         <button type="button" class="btn btn-secondary btn-sm" onclick="window.open('https://ca.account.sony.com/api/v1/ssocookie', '_blank')">
                             {{ _('Open Sony Account Page') }}
                         </button>
+                        <!-- Pass 50.3 — optional one-click capture bookmarklet. Drag to
+                             the bookmarks bar; click it on the Sony JSON page to copy
+                             the NPSSO in one step. href is set by JS (settings.html) to
+                             avoid embedding a javascript: URL in the attribute. -->
+                        <div style="margin-top: 8px; padding: 8px 10px; background: var(--bg-medium); border: 1px dashed var(--card-border); border-radius: var(--radius-md);">
+                            <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0 0 6px;">{% trans %}Optional shortcut: drag the button below to your browser's bookmarks bar. Then, on the Sony JSON page, click the bookmark to copy your NPSSO in one click.{% endtrans %}</p>
+                            <a id="psnBookmarkletLink" href="#" class="btn btn-secondary btn-sm" draggable="true" style="cursor: grab;" onclick="return false;">📋 {{ _('Copy NPSSO') }}</a>
+                        </div>
                     </div>
                 </div>
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-06-30 13:25+0200\n"
+"POT-Creation-Date: 2026-06-30 22:11+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -28,10 +28,10 @@ msgstr "システムが見つからないか、実績対応ゲームがありま
 
 #: routes/achievements.py:170 routes/achievements.py:435
 #: routes/bonus_discs.py:263 routes/bulk_scrape.py:46 routes/collections.py:275
-#: routes/collections.py:529 routes/games.py:324 routes/games.py:815
-#: routes/games.py:928 routes/games_ai.py:46 routes/games_media.py:33
+#: routes/collections.py:529 routes/games.py:327 routes/games.py:818
+#: routes/games.py:931 routes/games_ai.py:46 routes/games_media.py:33
 #: routes/games_media.py:80 routes/games_media.py:140 routes/reports.py:688
-#: routes/reports.py:804 routes/trophies.py:1265 services/hltb_service.py:127
+#: routes/reports.py:804 routes/trophies.py:1283 services/hltb_service.py:127
 msgid "Game not found"
 msgstr "ゲームが見つかりません"
 
@@ -188,8 +188,8 @@ msgstr "親ゲームが見つかりません"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "ボーナスディスクと親ゲームは同じシステム内にある必要があります"
 
-#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1177
-#: routes/games.py:1207 routes/platform_import.py:283
+#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1180
+#: routes/games.py:1210 routes/platform_import.py:283
 #: routes/platform_import.py:647 routes/platform_import.py:1016
 #: routes/scrape_logs.py:85 routes/scrape_logs.py:170 routes/scrape_logs.py:183
 #: routes/scrape_logs.py:221 routes/scraper.py:207 routes/scraper.py:531
@@ -197,9 +197,9 @@ msgstr "ボーナスディスクと親ゲームは同じシステム内にある
 #: routes/settings.py:442 routes/settings.py:521 routes/settings.py:536
 #: routes/settings.py:581 routes/settings.py:598 routes/settings.py:634
 #: routes/steam_achievements.py:138 routes/systems.py:282 routes/systems.py:467
-#: routes/trophies.py:490 routes/trophies.py:686 routes/trophies.py:734
-#: routes/trophies.py:1582 routes/trophies.py:1606 routes/trophies.py:1651
-#: routes/trophies.py:1679 routes/trophies.py:1721 routes/trophies.py:1790
+#: routes/trophies.py:508 routes/trophies.py:704 routes/trophies.py:752
+#: routes/trophies.py:1600 routes/trophies.py:1624 routes/trophies.py:1669
+#: routes/trophies.py:1697 routes/trophies.py:1739 routes/trophies.py:1808
 #: routes/xbox_achievements.py:157 services/api_helpers.py:41
 msgid "An internal error occurred"
 msgstr "内部エラーが発生しました"
@@ -363,49 +363,49 @@ msgstr "更新する項目がありません"
 msgid "system_id and emulator_id required"
 msgstr "system_idとemulator_idが必要です"
 
-#: routes/games.py:219
+#: routes/games.py:222
 msgid "No IDs provided"
 msgstr "IDが指定されていません"
 
-#: routes/games.py:227
+#: routes/games.py:230
 msgid "Provide 1-50 valid IDs"
 msgstr "有効なIDを1〜50件指定してください"
 
-#: routes/games.py:663
+#: routes/games.py:666
 msgid "Game not found after update"
 msgstr "更新後にゲームが見つかりません"
 
-#: routes/games.py:954 routes/games.py:998
+#: routes/games.py:957 routes/games.py:1001
 msgid "No fields to update"
 msgstr "更新するフィールドがありません"
 
-#: routes/games.py:995 routes/platform_import.py:205
+#: routes/games.py:998 routes/platform_import.py:205
 #: routes/platform_import.py:560 routes/platform_import.py:919
-#: routes/trophies.py:1870
+#: routes/trophies.py:1888
 msgid "No games selected"
 msgstr "ゲームが選択されていません"
 
-#: routes/games.py:1005
+#: routes/games.py:1008
 msgid "Invalid completion status"
 msgstr "クリア状況が無効です"
 
-#: routes/games.py:1053
+#: routes/games.py:1056
 msgid "No valid fields to update"
 msgstr "更新できる有効なフィールドがありません"
 
-#: routes/games.py:1170
+#: routes/games.py:1173
 msgid "Invalid status"
 msgstr "ステータスが無効です"
 
-#: routes/games.py:1195
+#: routes/games.py:1198
 msgid "Not authenticated"
 msgstr "認証されていません"
 
-#: routes/games.py:1226
+#: routes/games.py:1229
 msgid "Filter type and value required"
 msgstr "フィルターの種類と値が必要です"
 
-#: routes/games.py:1239
+#: routes/games.py:1242
 msgid "Invalid filter type"
 msgstr "フィルターの種類が無効です"
 
@@ -859,67 +859,67 @@ msgstr "chdmanが見つかりません。MAMEツールをインストールし�
 msgid "chdman not found"
 msgstr "chdmanが見つかりません"
 
-#: routes/trophies.py:378
+#: routes/trophies.py:396
 msgid ""
 "Please configure your RPCS3 Trophy Path in your profile settings to view "
 "trophies"
 msgstr "トロフィーを表示するには、プロフィール設定でRPCS3トロフィーパスを設定してください"
 
-#: routes/trophies.py:409
+#: routes/trophies.py:427
 msgid "Trophy set not found"
 msgstr "トロフィーセットが見つかりません"
 
-#: routes/trophies.py:453
+#: routes/trophies.py:471
 msgid "RPCS3_TROPHY_PATH not configured"
 msgstr "RPCS3_TROPHY_PATHが設定されていません"
 
-#: routes/trophies.py:456
+#: routes/trophies.py:474
 #, python-format
 msgid "Trophy path not found: %(path)s"
 msgstr "トロフィーパスが見つかりません: %(path)s"
 
-#: routes/trophies.py:747 routes/trophies.py:1704
+#: routes/trophies.py:765 routes/trophies.py:1722
 msgid "PSN game not found"
 msgstr "PSNゲームが見つかりません"
 
-#: routes/trophies.py:984
+#: routes/trophies.py:1002
 msgid "Sync already in progress"
 msgstr "同期はすでに実行中です"
 
-#: routes/trophies.py:1283
+#: routes/trophies.py:1301
 msgid "Game not found in your PSN trophy list"
 msgstr "PSNのトロフィーリストにゲームが見つかりません"
 
-#: routes/trophies.py:1579
+#: routes/trophies.py:1597
 msgid "Game not found on PSN"
 msgstr "PSNにゲームが見つかりません"
 
-#: routes/trophies.py:1594 routes/trophies.py:1667
+#: routes/trophies.py:1612 routes/trophies.py:1685
 msgid "Missing npwr_id"
 msgstr "npwr_idがありません"
 
-#: routes/trophies.py:1692
+#: routes/trophies.py:1710
 msgid "Missing npwr_id or group_id"
 msgstr "npwr_idまたはgroup_idがありません"
 
-#: routes/trophies.py:1695
+#: routes/trophies.py:1713
 msgid "Name cannot be empty"
 msgstr "名前を空にすることはできません"
 
-#: routes/trophies.py:1733
+#: routes/trophies.py:1751
 msgid "PSNAWP library not installed. Run: pip install psnawp"
 msgstr "PSNAWPライブラリがインストールされていません。次を実行してください: pip install psnawp"
 
-#: routes/trophies.py:1829
+#: routes/trophies.py:1847
 msgid "No NPSSO token provided"
 msgstr "NPSSOトークンが指定されていません"
 
-#: routes/trophies.py:1852
+#: routes/trophies.py:1870
 #, python-format
 msgid "Connection failed: %(error)s"
 msgstr "接続に失敗しました: %(error)s"
 
-#: routes/trophies.py:1879
+#: routes/trophies.py:1897
 msgid "PSN NPSSO not configured"
 msgstr "PSN NPSSOが設定されていません"
 
@@ -1329,8 +1329,8 @@ msgstr "APIキーがありません"
 msgid "API keys saved!"
 msgstr "APIキーを保存しました！"
 
-#: services/js_i18n_strings.py:369 templates/_settings_tabs/account.html:250
-#: templates/_settings_tabs/account.html:324
+#: services/js_i18n_strings.py:369 templates/_settings_tabs/account.html:258
+#: templates/_settings_tabs/account.html:332
 msgid "Add User"
 msgstr "ユーザーを追加"
 
@@ -1473,7 +1473,7 @@ msgstr "CLZインポート"
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:72
-#: templates/_settings_tabs/account.html:357
+#: templates/_settings_tabs/account.html:365
 #: templates/_settings_tabs/customization.html:264
 #: templates/achievement_game.html:176 templates/archive_scanner.html:687
 #: templates/archive_scanner.html:824 templates/base.html:304
@@ -1565,7 +1565,7 @@ msgstr "閉じる"
 msgid "Close keyboard shortcuts"
 msgstr "キーボードショートカットを閉じる"
 
-#: services/js_i18n_strings.py:417 templates/dashboard.html:148
+#: services/js_i18n_strings.py:417 templates/dashboard.html:153
 msgid "Complete"
 msgstr "完了"
 
@@ -1574,7 +1574,7 @@ msgid "Complete!"
 msgstr "完了！"
 
 #: services/js_i18n_strings.py:419 templates/_bulk_edit_modal.html:29
-#: templates/base.html:984 templates/dashboard.html:431
+#: templates/base.html:984 templates/dashboard.html:436
 #: templates/game_detail.html:200
 msgid "Completed"
 msgstr "クリア済み"
@@ -1951,7 +1951,7 @@ msgstr "画像は10MB未満である必要があります"
 #: services/js_i18n_strings.py:506 templates/_bulk_edit_modal.html:27
 #: templates/achievements_system.html:146
 #: templates/achievements_system.html:165 templates/base.html:982
-#: templates/dashboard.html:287 templates/dashboard.html:427
+#: templates/dashboard.html:292 templates/dashboard.html:432
 #: templates/game_detail.html:198 templates/steam_achievements.html:72
 #: templates/xbox_achievements.html:72
 msgid "In Progress"
@@ -2210,7 +2210,7 @@ msgid "Platform not found"
 msgstr "プラットフォームが見つかりません"
 
 #: services/js_i18n_strings.py:562 templates/_bulk_edit_modal.html:28
-#: templates/base.html:983 templates/dashboard.html:429
+#: templates/base.html:983 templates/dashboard.html:434
 #: templates/game_detail.html:199
 msgid "Played"
 msgstr "プレイ済み"
@@ -2551,8 +2551,8 @@ msgstr "同期中: {processed} / {total}"
 #: templates/_settings_tabs/customization.html:299
 #: templates/achievement_game.html:226 templates/analytics.html:567
 #: templates/analytics.html:601 templates/compare_games.html:67
-#: templates/dashboard.html:255 templates/dashboard.html:314
-#: templates/dashboard.html:391 templates/dashboard.html:457
+#: templates/dashboard.html:260 templates/dashboard.html:319
+#: templates/dashboard.html:396 templates/dashboard.html:462
 #: templates/logs.html:720 templates/multi_disc_organizer.html:239
 #: templates/reports.html:355 templates/reports.html:430
 #: templates/settings.html:39 templates/steam_achievement_game.html:171
@@ -2859,7 +2859,7 @@ msgid "Only fields changed from \"Don't change\" will be updated."
 msgstr "「変更しない」から変更されたフィールドのみが更新されます。"
 
 #: templates/_bulk_edit_modal.html:26 templates/achievements_system.html:166
-#: templates/base.html:981 templates/dashboard.html:425
+#: templates/base.html:981 templates/dashboard.html:430
 #: templates/game_detail.html:197 templates/steam_achievements.html:73
 #: templates/xbox_achievements.html:73
 msgid "Not Started"
@@ -2870,7 +2870,7 @@ msgstr "未開始"
 #: templates/achievement_game.html:239 templates/all_games.html:89
 #: templates/analytics.html:479 templates/base.html:914
 #: templates/base.html:1115 templates/compare_games.html:71
-#: templates/dashboard.html:315 templates/game_detail.html:243
+#: templates/dashboard.html:320 templates/game_detail.html:243
 #: templates/local_trophy_detail.html:97 templates/psn_trophy_detail.html:92
 #: templates/psn_trophy_detail.html:256
 #: templates/steam_achievement_game.html:176 templates/system_games.html:80
@@ -3131,7 +3131,7 @@ msgstr "詳細を表示"
 msgid "First Achievement"
 msgstr "最初の実績"
 
-#: templates/_settings_tabs/account.html:302
+#: templates/_settings_tabs/account.html:310
 #: templates/achievement_game.html:231 templates/achievement_game.html:235
 #: templates/local_trophy_detail.html:209
 #: templates/local_trophy_detail.html:213 templates/psn_trophies.html:71
@@ -3157,7 +3157,7 @@ msgstr "入力"
 
 #: templates/achievement_game.html:263 templates/achievements_system.html:121
 #: templates/analytics.html:15 templates/base.html:119
-#: templates/dashboard.html:93 templates/dashboard.html:178
+#: templates/dashboard.html:98 templates/dashboard.html:183
 #: templates/steam_achievement_game.html:188
 #: templates/xbox_achievement_game.html:175 templates/xbox_achievements.html:41
 msgid "Achievements"
@@ -3233,7 +3233,7 @@ msgid "Profile Settings"
 msgstr "プロフィール設定"
 
 #: templates/_settings_tabs/data.html:23 templates/achievements_system.html:37
-#: templates/analytics.html:69 templates/dashboard.html:124
+#: templates/analytics.html:69 templates/dashboard.html:129
 #: templates/steam_achievements.html:34 templates/xbox_achievements.html:34
 msgid "Total Games"
 msgstr "ゲーム総数"
@@ -3241,7 +3241,7 @@ msgstr "ゲーム総数"
 #: templates/_settings_tabs/customization.html:153
 #: templates/_settings_tabs/customization.html:234
 #: templates/_settings_tabs/data.html:19 templates/achievements_system.html:44
-#: templates/base.html:95 templates/dashboard.html:9
+#: templates/base.html:95 templates/dashboard.html:14
 #: templates/game_detail.html:22 templates/system_games.html:13
 msgid "Systems"
 msgstr "システム"
@@ -3451,8 +3451,8 @@ msgstr "デベロッパー"
 msgid "Gameplay"
 msgstr "ゲームプレイ"
 
-#: templates/analytics.html:12 templates/dashboard.html:193
-#: templates/dashboard.html:256 templates/game_imports.html:274
+#: templates/analytics.html:12 templates/dashboard.html:198
+#: templates/dashboard.html:261 templates/game_imports.html:274
 msgid "Playtime"
 msgstr "プレイ時間"
 
@@ -3524,15 +3524,15 @@ msgstr "スプレッドシート用データ"
 msgid "Refresh"
 msgstr "更新"
 
-#: templates/analytics.html:76 templates/dashboard.html:115
+#: templates/analytics.html:76 templates/dashboard.html:120
 msgid "Total Systems"
 msgstr "システム総数"
 
-#: templates/analytics.html:83 templates/dashboard.html:160
+#: templates/analytics.html:83 templates/dashboard.html:165
 msgid "Total Storage"
 msgstr "総ストレージ"
 
-#: templates/analytics.html:90 templates/dashboard.html:169
+#: templates/analytics.html:90 templates/dashboard.html:174
 msgid "Completion Rate"
 msgstr "達成率"
 
@@ -3719,9 +3719,9 @@ msgstr "フィールド完全性"
 msgid "Description"
 msgstr "説明"
 
-#: templates/analytics.html:478 templates/dashboard.html:91
-#: templates/dashboard.html:253 templates/dashboard.html:312
-#: templates/dashboard.html:389 templates/dashboard.html:455
+#: templates/analytics.html:478 templates/dashboard.html:96
+#: templates/dashboard.html:258 templates/dashboard.html:317
+#: templates/dashboard.html:394 templates/dashboard.html:460
 msgid "Boxart"
 msgstr "ボックスアート"
 
@@ -3771,7 +3771,7 @@ msgstr "コレクションの成長"
 msgid "Storage by System"
 msgstr "システム別ストレージ"
 
-#: templates/analytics.html:561 templates/dashboard.html:207
+#: templates/analytics.html:561 templates/dashboard.html:212
 msgid "Top Systems by Game Count"
 msgstr "ゲーム数別トップシステム"
 
@@ -4079,7 +4079,7 @@ msgstr "ログイン"
 msgid "Main"
 msgstr "メイン"
 
-#: templates/base.html:91 templates/dashboard.html:54
+#: templates/base.html:91 templates/dashboard.html:59
 msgid "Dashboard"
 msgstr "ダッシュボード"
 
@@ -4257,7 +4257,7 @@ msgstr "AIで欠落したメタデータを補完"
 msgid "AI Fill"
 msgstr "AI補完"
 
-#: templates/_settings_tabs/account.html:307 templates/base.html:940
+#: templates/_settings_tabs/account.html:315 templates/base.html:940
 #: templates/game_detail.html:95 templates/wishlist.html:638
 msgid "Edit"
 msgstr "編集"
@@ -4333,9 +4333,9 @@ msgid "No playtime data"
 msgstr "プレイ時間データなし"
 
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
-#: templates/base.html:1048 templates/dashboard.html:254
-#: templates/dashboard.html:313 templates/dashboard.html:390
-#: templates/dashboard.html:456
+#: templates/base.html:1048 templates/dashboard.html:259
+#: templates/dashboard.html:318 templates/dashboard.html:395
+#: templates/dashboard.html:461
 msgid "Title"
 msgstr "タイトル"
 
@@ -4952,234 +4952,250 @@ msgstr "ファイルサイズ"
 msgid "ROM Path"
 msgstr "ROMパス"
 
-#: templates/compare_games.html:92 templates/dashboard.html:13
-#: templates/dashboard.html:365 templates/dashboard.html:489
+#: templates/compare_games.html:92 templates/dashboard.html:18
+#: templates/dashboard.html:370 templates/dashboard.html:494
 #: templates/wishlist.html:505
 msgid "Scraped"
 msgstr "取得済み"
 
-#: templates/dashboard.html:8
+#: templates/dashboard.html:13
 msgid "Overview"
 msgstr "概要"
 
-#: templates/dashboard.html:10
+#: templates/dashboard.html:15
 msgid "Playing"
 msgstr "プレイ中"
 
-#: templates/dashboard.html:11
+#: templates/dashboard.html:16
 msgid "Added"
 msgstr "追加日"
 
-#: templates/dashboard.html:12
+#: templates/dashboard.html:17
 msgid "Viewed"
 msgstr "閲覧日"
 
-#: templates/dashboard.html:14 templates/dashboard.html:317
-#: templates/dashboard.html:458 templates/game_imports.html:221
+#: templates/dashboard.html:19 templates/dashboard.html:322
+#: templates/dashboard.html:463 templates/game_imports.html:221
 #: templates/game_imports.html:274 templates/game_imports.html:337
 #: templates/game_imports.html:400
 msgid "Status"
 msgstr "ステータス"
 
-#: templates/dashboard.html:20
+#: templates/dashboard.html:25
 msgid "One or more configured APIs are offline"
 msgstr "設定された1つ以上のAPIがオフラインです"
 
-#: templates/dashboard.html:21
+#: templates/dashboard.html:26
 msgid "Check Settings →"
 msgstr "設定を確認 →"
 
-#: templates/dashboard.html:30
+#: templates/dashboard.html:35
 #, python-format
 msgid "%(count)s interrupted job found"
 msgid_plural "%(count)s interrupted jobs found"
 msgstr[0] ""
 
-#: templates/dashboard.html:31
+#: templates/dashboard.html:36
 msgid "Resume All"
 msgstr "すべて再開"
 
-#: templates/dashboard.html:32
+#: templates/dashboard.html:37
 msgid "Dismiss All"
 msgstr "すべて閉じる"
 
-#: templates/dashboard.html:44
+#: templates/dashboard.html:49 templates/dashboard.html:1311
 msgid "Dismiss"
 msgstr "閉じる"
 
-#: templates/dashboard.html:55
+#: templates/dashboard.html:60
 msgid "Overview of your retro gaming collection"
 msgstr "レトロゲームコレクションの概要"
 
-#: templates/dashboard.html:58
+#: templates/dashboard.html:63
 msgid "Pick a random game"
 msgstr "ランダムにゲームを選択"
 
-#: templates/dashboard.html:60
+#: templates/dashboard.html:65
 msgid "Random Game"
 msgstr "ランダムゲーム"
 
-#: templates/_settings_tabs/library.html:41 templates/dashboard.html:64
+#: templates/_settings_tabs/library.html:41 templates/dashboard.html:69
 #: templates/systems.html:109
 msgid "Scan Library"
 msgstr "ライブラリをスキャン"
 
-#: templates/dashboard.html:81
+#: templates/dashboard.html:86
 msgid "Collection Health"
 msgstr "コレクションの健全性"
 
-#: templates/dashboard.html:82
+#: templates/dashboard.html:87
 msgid "Metadata completeness across your library"
 msgstr "ライブラリ全体のメタデータの完全性"
 
-#: templates/dashboard.html:85
+#: templates/dashboard.html:90
 msgid "Excellent"
 msgstr "優秀"
 
-#: templates/dashboard.html:85
+#: templates/dashboard.html:90
 msgid "Good"
 msgstr "良好"
 
-#: templates/dashboard.html:85
+#: templates/dashboard.html:90
 msgid "Fair"
 msgstr "普通"
 
-#: templates/dashboard.html:85
+#: templates/dashboard.html:90
 msgid "Needs Work"
 msgstr "要改善"
 
-#: templates/dashboard.html:92
+#: templates/dashboard.html:97
 msgid "Descriptions"
 msgstr "説明"
 
-#: templates/dashboard.html:119
+#: templates/dashboard.html:124
 msgid "Gaming platforms"
 msgstr "ゲームプラットフォーム"
 
-#: templates/dashboard.html:128
+#: templates/dashboard.html:133
 msgid "ROMs in library"
 msgstr "ライブラリ内のROM"
 
-#: templates/_settings_tabs/data.html:31 templates/dashboard.html:133
+#: templates/_settings_tabs/data.html:31 templates/dashboard.html:138
 msgid "Missing Metadata"
 msgstr "メタデータ欠落"
 
-#: templates/dashboard.html:139
+#: templates/dashboard.html:144
 msgid "Action required"
 msgstr "対応が必要"
 
-#: templates/dashboard.html:141
+#: templates/dashboard.html:146
 msgid "All games scraped"
 msgstr "すべてのゲームを取得済み"
 
-#: templates/dashboard.html:152
+#: templates/dashboard.html:157
 msgid "Games with metadata"
 msgstr "メタデータのあるゲーム"
 
-#: templates/dashboard.html:164
+#: templates/dashboard.html:169
 msgid "ROM library size"
 msgstr "ROMライブラリのサイズ"
 
-#: templates/dashboard.html:173
+#: templates/dashboard.html:178
 #, python-format
 msgid "%(n)s game beaten"
 msgid_plural "%(n)s games beaten"
 msgstr[0] ""
 
-#: templates/dashboard.html:184
+#: templates/dashboard.html:189
 #, python-format
 msgid "of %(n)s available"
 msgstr "%(n)s件中"
 
-#: templates/dashboard.html:186
+#: templates/dashboard.html:191
 msgid "RetroAchievements earned"
 msgstr "獲得したRetroAchievements"
 
-#: templates/dashboard.html:197
+#: templates/dashboard.html:202
 msgid "Estimated total (HLTB)"
 msgstr "推定合計（HLTB）"
 
-#: templates/dashboard.html:208
+#: templates/dashboard.html:213
 msgid "View All Systems →"
 msgstr "すべてのシステムを表示 →"
 
-#: templates/dashboard.html:235
+#: templates/dashboard.html:240
 #, python-format
 msgid "%(pct)s%% scraped"
 msgstr "%(pct)s%% 取得済み"
 
-#: templates/dashboard.html:246
+#: templates/dashboard.html:251
 msgid "Continue Playing"
 msgstr "プレイを続ける"
 
-#: templates/dashboard.html:304
+#: templates/dashboard.html:309
 msgid "Recently Added"
 msgstr "最近追加"
 
-#: templates/dashboard.html:305
+#: templates/dashboard.html:310
 msgid "View All Games →"
 msgstr "すべてのゲームを表示 →"
 
-#: templates/dashboard.html:316 templates/reports.html:442
+#: templates/dashboard.html:321 templates/reports.html:442
 msgid "Year"
 msgstr "年"
 
-#: templates/dashboard.html:367
+#: templates/dashboard.html:372
 msgid "Missing"
 msgstr "欠落"
 
-#: templates/dashboard.html:382
+#: templates/dashboard.html:387
 msgid "Recently Viewed"
 msgstr "最近閲覧"
 
-#: templates/dashboard.html:392
+#: templates/dashboard.html:397
 msgid "Completion"
 msgstr "達成"
 
-#: templates/dashboard.html:448
+#: templates/dashboard.html:453
 msgid "Recently Scraped"
 msgstr "最近取得"
 
-#: templates/dashboard.html:502
+#: templates/dashboard.html:507
 msgid "System Status"
 msgstr "システムステータス"
 
-#: templates/dashboard.html:508
+#: templates/dashboard.html:513
 msgid "Database Service"
 msgstr "データベースサービス"
 
-#: templates/dashboard.html:510
+#: templates/dashboard.html:515
 msgid "Online"
 msgstr "オンライン"
 
-#: templates/dashboard.html:516
+#: templates/dashboard.html:521
 msgid "ES-DE Local Scraper"
 msgstr "ES-DEローカルスクレイパー"
 
-#: templates/dashboard.html:518
+#: templates/dashboard.html:523
 msgid "Available"
 msgstr "利用可能"
 
-#: templates/dashboard.html:527 templates/dashboard.html:537
-#: templates/dashboard.html:557 templates/dashboard.html:567
+#: templates/dashboard.html:532 templates/dashboard.html:542
+#: templates/dashboard.html:562 templates/dashboard.html:572
 #: templates/game_imports.html:365
 msgid "Checking..."
 msgstr "確認しています..."
 
-#: templates/dashboard.html:527 templates/dashboard.html:537
-#: templates/dashboard.html:557 templates/dashboard.html:567
+#: templates/dashboard.html:532 templates/dashboard.html:542
+#: templates/dashboard.html:562 templates/dashboard.html:572
 msgid "Disabled"
 msgstr "無効"
 
-#: templates/dashboard.html:527 templates/dashboard.html:537
-#: templates/dashboard.html:547 templates/dashboard.html:557
-#: templates/dashboard.html:567
+#: templates/dashboard.html:532 templates/dashboard.html:542
+#: templates/dashboard.html:552 templates/dashboard.html:562
+#: templates/dashboard.html:572
 msgid "Not Configured"
 msgstr "未設定"
 
-#: templates/_settings_tabs/account.html:286 templates/dashboard.html:547
+#: templates/_settings_tabs/account.html:294 templates/dashboard.html:552
 msgid "Configured"
 msgstr "設定済み"
+
+#: templates/dashboard.html:1294
+msgid ""
+"Your PlayStation Network session has expired — re-link it to keep trophy "
+"and library sync working."
+msgstr ""
+
+#: templates/dashboard.html:1297
+msgid ""
+"Your PlayStation Network session expires soon — re-link it to avoid an "
+"interruption."
+msgstr ""
+
+#: templates/dashboard.html:1310
+msgid "Re-link now"
+msgstr ""
 
 #: templates/duplicate_finder.html:202
 msgid "Careful Review Recommended"
@@ -5282,7 +5298,7 @@ msgid ""
 "new password before continuing."
 msgstr "デフォルトの管理者パスワードを使用しています。セキュリティのため、続行する前に新しいパスワードを設定する必要があります。"
 
-#: templates/_settings_tabs/account.html:199
+#: templates/_settings_tabs/account.html:207
 #: templates/force_change_password.html:18
 msgid "New Password"
 msgstr "新しいパスワード"
@@ -5360,7 +5376,7 @@ msgstr "取得"
 msgid "Delete game from database"
 msgstr "データベースからゲームを削除"
 
-#: templates/_settings_tabs/account.html:309 templates/game_detail.html:110
+#: templates/_settings_tabs/account.html:317 templates/game_detail.html:110
 #: templates/logs.html:733 templates/settings.html:68
 #: templates/wishlist.html:639
 msgid "Delete"
@@ -5790,13 +5806,14 @@ msgstr "トロフィーの進行状況"
 
 #: templates/help.de.html:9 templates/help.es.html:9 templates/help.fr.html:9
 #: templates/help.html:9 templates/help.it.html:9 templates/help.ja.html:9
-#: templates/help.pt_BR.html:9
+#: templates/help.ko.html:9 templates/help.pt_BR.html:9
 msgid "Help & Documentation"
 msgstr "ヘルプ＆ドキュメント"
 
 #: templates/help.de.html:10 templates/help.es.html:10
 #: templates/help.fr.html:10 templates/help.html:10 templates/help.it.html:10
-#: templates/help.ja.html:10 templates/help.pt_BR.html:10
+#: templates/help.ja.html:10 templates/help.ko.html:10
+#: templates/help.pt_BR.html:10
 #, python-format
 msgid "Complete guide to RetroDB v%(version)s"
 msgstr "RetroDB v%(version)sの完全ガイド"
@@ -7527,8 +7544,8 @@ msgid "My Profile"
 msgstr "マイプロフィール"
 
 #: templates/_settings_tabs/account.html:5
-#: templates/_settings_tabs/account.html:216
-#: templates/_settings_tabs/account.html:223
+#: templates/_settings_tabs/account.html:224
+#: templates/_settings_tabs/account.html:231
 msgid "Timezone"
 msgstr "タイムゾーン"
 
@@ -7651,11 +7668,22 @@ msgstr "PlayStationアカウントでログインすると（未ログインの�
 msgid "Open Sony Account Page"
 msgstr "Sonyアカウントページを開く"
 
-#: templates/_settings_tabs/account.html:149
+#: templates/_settings_tabs/account.html:147
+msgid ""
+"Optional shortcut: drag the button below to your browser's bookmarks bar."
+" Then, on the Sony JSON page, click the bookmark to copy your NPSSO in "
+"one click."
+msgstr ""
+
+#: templates/_settings_tabs/account.html:148
+msgid "Copy NPSSO"
+msgstr ""
+
+#: templates/_settings_tabs/account.html:157
 msgid "Copy the page content"
 msgstr "ページの内容をコピー"
 
-#: templates/_settings_tabs/account.html:150
+#: templates/_settings_tabs/account.html:158
 msgid ""
 "Select all (<kbd style=\"background: var(--bg-medium); padding: 1px 6px; "
 "border-radius: 3px; border: 1px solid var(--card-border); font-size: "
@@ -7671,164 +7699,164 @@ msgstr ""
 "border); font-size: 0.8rem;\">Ctrl+C</kbd>）します。JSON全体をコピーできます &mdash; "
 "トークンは自動的に抽出されます。"
 
-#: templates/_settings_tabs/account.html:158
+#: templates/_settings_tabs/account.html:166
 msgid "Paste the token"
 msgstr "トークンを貼り付け"
 
-#: templates/_settings_tabs/account.html:162
+#: templates/_settings_tabs/account.html:170
 msgid "Paste JSON or token here"
 msgstr "ここにJSONまたはトークンを貼り付け"
 
-#: templates/_settings_tabs/account.html:165
+#: templates/_settings_tabs/account.html:173
 msgid "Read from clipboard"
 msgstr "クリップボードから読み取り"
 
-#: templates/_settings_tabs/account.html:166
+#: templates/_settings_tabs/account.html:174
 msgid "Paste &amp; Detect"
 msgstr "貼り付け &amp; 検出"
 
-#: templates/_settings_tabs/account.html:177
+#: templates/_settings_tabs/account.html:185
 msgid "Save &amp; Test Connection"
 msgstr "保存 &amp; 接続テスト"
 
-#: templates/_settings_tabs/account.html:184
+#: templates/_settings_tabs/account.html:192
 msgid "Save My Settings"
 msgstr "設定を保存"
 
-#: templates/_settings_tabs/account.html:188
-#: templates/_settings_tabs/account.html:204
+#: templates/_settings_tabs/account.html:196
+#: templates/_settings_tabs/account.html:212
 msgid "Change Password"
 msgstr "パスワードを変更"
 
-#: templates/_settings_tabs/account.html:190
+#: templates/_settings_tabs/account.html:198
 msgid "Admin accounts require a password for login."
 msgstr "管理者アカウントはログインにパスワードが必要です。"
 
-#: templates/_settings_tabs/account.html:194
+#: templates/_settings_tabs/account.html:202
 msgid "Current Password"
 msgstr "現在のパスワード"
 
-#: templates/_settings_tabs/account.html:195
+#: templates/_settings_tabs/account.html:203
 msgid "Enter current password"
 msgstr "現在のパスワードを入力"
 
-#: templates/_settings_tabs/account.html:200
+#: templates/_settings_tabs/account.html:208
 msgid "Enter new password"
 msgstr "新しいパスワードを入力"
 
-#: templates/_settings_tabs/account.html:208
+#: templates/_settings_tabs/account.html:216
 msgid "Please log in to view your profile settings."
 msgstr "プロフィール設定を表示するにはログインしてください。"
 
-#: templates/_settings_tabs/account.html:220
+#: templates/_settings_tabs/account.html:228
 msgid "Set your timezone to ensure all dates and times display correctly."
 msgstr "すべての日付と時刻が正しく表示されるようにタイムゾーンを設定してください。"
 
-#: templates/_settings_tabs/account.html:225
+#: templates/_settings_tabs/account.html:233
 msgid "Search timezones..."
 msgstr "タイムゾーンを検索..."
 
-#: templates/_settings_tabs/account.html:229
+#: templates/_settings_tabs/account.html:237
 msgid "Browser detected:"
 msgstr "ブラウザが検出："
 
-#: templates/_settings_tabs/account.html:230
+#: templates/_settings_tabs/account.html:238
 msgid "Use detected"
 msgstr "検出した値を使用"
 
-#: templates/_settings_tabs/account.html:233
+#: templates/_settings_tabs/account.html:241
 msgid "Save Timezone"
 msgstr "タイムゾーンを保存"
 
-#: templates/_settings_tabs/account.html:241
+#: templates/_settings_tabs/account.html:249
 msgid "User Management"
 msgstr "ユーザー管理"
 
-#: templates/_settings_tabs/account.html:245
+#: templates/_settings_tabs/account.html:253
 msgid ""
 "Manage users who can access RetroDB. Admin users require a password to "
 "login, while Editor and Viewer users can login with a single click."
 msgstr "RetroDBにアクセスできるユーザーを管理します。管理者ユーザーはログインにパスワードが必要ですが、EditorおよびViewerユーザーはワンクリックでログインできます。"
 
-#: templates/_settings_tabs/account.html:257
+#: templates/_settings_tabs/account.html:265
 msgid "User"
 msgstr "ユーザー"
 
-#: templates/_settings_tabs/account.html:258
+#: templates/_settings_tabs/account.html:266
 msgid "Role"
 msgstr "役割"
 
-#: templates/_settings_tabs/account.html:259
+#: templates/_settings_tabs/account.html:267
 msgid "Trophy Path"
 msgstr "トロフィーパス"
 
-#: templates/_settings_tabs/account.html:260
+#: templates/_settings_tabs/account.html:268
 msgid "RA Username"
 msgstr "RAユーザー名"
 
-#: templates/_settings_tabs/account.html:261
+#: templates/_settings_tabs/account.html:269
 msgid "Last Login"
 msgstr "最終ログイン"
 
-#: templates/_settings_tabs/account.html:262
+#: templates/_settings_tabs/account.html:270
 msgid "Actions"
 msgstr "操作"
 
-#: templates/_settings_tabs/account.html:288
-#: templates/_settings_tabs/account.html:295
+#: templates/_settings_tabs/account.html:296
+#: templates/_settings_tabs/account.html:303
 msgid "Not Set"
 msgstr "未設定"
 
-#: templates/_settings_tabs/account.html:325
+#: templates/_settings_tabs/account.html:333
 msgid "Close user modal"
 msgstr "ユーザーモーダルを閉じる"
 
-#: templates/_settings_tabs/account.html:331
+#: templates/_settings_tabs/account.html:339
 msgid "Username *"
 msgstr "ユーザー名 *"
 
-#: templates/_settings_tabs/account.html:332
+#: templates/_settings_tabs/account.html:340
 msgid "username"
 msgstr "ユーザー名"
 
-#: templates/_settings_tabs/account.html:336
-#: templates/_settings_tabs/account.html:337
+#: templates/_settings_tabs/account.html:344
+#: templates/_settings_tabs/account.html:345
 msgid "Display Name"
 msgstr "表示名"
 
-#: templates/_settings_tabs/account.html:341
+#: templates/_settings_tabs/account.html:349
 msgid "Role *"
 msgstr "役割 *"
 
-#: templates/_settings_tabs/account.html:343
+#: templates/_settings_tabs/account.html:351
 msgid "Viewer - Read only access"
 msgstr "Viewer - 読み取り専用アクセス"
 
-#: templates/_settings_tabs/account.html:344
+#: templates/_settings_tabs/account.html:352
 msgid "Player - Can launch and track progress"
 msgstr "Player - 起動と進捗の記録が可能"
 
-#: templates/_settings_tabs/account.html:345
+#: templates/_settings_tabs/account.html:353
 msgid "Editor - Can edit games and scrape"
 msgstr "Editor - ゲームの編集とスクレイピングが可能"
 
-#: templates/_settings_tabs/account.html:346
+#: templates/_settings_tabs/account.html:354
 msgid "Admin - Full access"
 msgstr "Admin - フルアクセス"
 
-#: templates/_settings_tabs/account.html:351
+#: templates/_settings_tabs/account.html:359
 msgid "Reset Password"
 msgstr "パスワードをリセット"
 
-#: templates/_settings_tabs/account.html:352
+#: templates/_settings_tabs/account.html:360
 msgid "Leave blank to keep current"
 msgstr "現在の値を保持するには空欄のまま"
 
-#: templates/_settings_tabs/account.html:353
+#: templates/_settings_tabs/account.html:361
 msgid "Only for admin accounts"
 msgstr "管理者アカウントのみ"
 
-#: templates/_settings_tabs/account.html:358
+#: templates/_settings_tabs/account.html:366
 msgid "Save User"
 msgstr "ユーザーを保存"
 

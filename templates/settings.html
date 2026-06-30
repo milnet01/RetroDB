@@ -4942,6 +4942,18 @@ function extractNpsso(text) {
     return null;
 }
 
+// Pass 50.3 — wire the drag-to-bookmarks NPSSO bookmarklet. The href is set
+// here (not in the template) so we don't embed a javascript: URL in markup
+// (CSP / HTML-escaping). Clicking it inside RetroDB does nothing
+// (onclick="return false"); it is meant to be dragged to the bookmarks bar and
+// clicked while viewing the Sony ssocookie JSON page, where it extracts and
+// copies the npsso in one step.
+(function setupPsnBookmarklet() {
+    const link = document.getElementById('psnBookmarkletLink');
+    if (!link) return;
+    link.href = `javascript:(function(){var m=document.body.innerText.match(/"npsso"\\s*:\\s*"([^"]+)"/);if(!m){alert('NPSSO not found. Open https://ca.account.sony.com/api/v1/ssocookie while signed in to PlayStation, then click this bookmark.');return;}navigator.clipboard.writeText(m[1]).then(function(){alert('NPSSO copied \\u2014 paste it into RetroDB.');},function(){window.prompt('Copy your NPSSO:',m[1]);});})();`;
+})();
+
 /** Auto-detect on input change */
 function psnNpssoAutoDetect(input) {
     const resultEl = document.getElementById('psnNpssoDetectResult');

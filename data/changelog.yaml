@@ -1,3 +1,31 @@
+- version: 3.13.0
+  date: 2026-06-30
+  tags:
+  - type: enhancement
+    label: PlayStation Network sign-in is now far less of a chore
+  body: |
+    <ul>
+      <li><strong>Your PlayStation sign-in now renews itself.</strong>
+        Previously you had to re-paste your NPSSO token (the PlayStation
+        sign-in code) roughly every couple of months. RetroDB now quietly
+        refreshes the session in the background <em>before</em> it expires, so
+        in normal use you should rarely &mdash; if ever &mdash; need to enter a
+        new one. It only refreshes sessions that are still valid; an
+        already-expired one is left alone (no pointless pinging).</li>
+      <li><strong>A heads-up before it lapses.</strong> If your PlayStation
+        session is within two weeks of expiring (or has expired), the dashboard
+        now shows a small, dismissible reminder with a one-click link to
+        re-link &mdash; so you fix it on your own time instead of discovering it
+        through a failed sync.</li>
+      <li><strong>One-click token capture.</strong> The PlayStation setup
+        wizard now offers an optional bookmarklet: drag it to your browser's
+        bookmarks bar once, then a single click on Sony's token page copies your
+        NPSSO &mdash; no more select-all-and-copy. The manual paste still works
+        exactly as before.</li>
+      <li>Tidied the in-app PlayStation help to match how tokens are actually
+        stored (securely in RetroDB's database, per user), and fixed the backup
+        checklist.</li>
+    </ul>
 - version: 3.12.1
   date: 2026-06-30
   tags:

@@ -97,7 +97,7 @@ def _clear_psn_tokens(user_id=None):
     logger.debug("PSN token cache cleared (user=%d)", uid)
 
 
-def create_psn_client(npsso):
+def create_psn_client(npsso, user_id=None, allow_npsso_fallback=True):
     """Create an authenticated PSNAWP client with token caching.
 
     Tries cached refresh tokens first (valid ~2 months). Falls back to NPSSO
@@ -105,6 +105,13 @@ def create_psn_client(npsso):
 
     Args:
         npsso: The NPSSO cookie string.
+        user_id: Owner of the token cache. Defaults to the current request
+            user; the background keep-alive (Pass 50.1) passes it explicitly so
+            it can refresh a session with no request context.
+        allow_npsso_fallback: When False, ONLY the cached refresh-token path is
+            used — an expired or failed cache returns an error instead of
+            pinging Sony with the (possibly stale) NPSSO. The keep-alive passes
+            False so it never pings an already-expired session.
 
     Returns:
         (psnawp, None) on success, (None, error_string) on failure.
@@ -116,7 +123,7 @@ def create_psn_client(npsso):
         return None, "PSN NPSSO cookie not configured"
 
     # Try cached tokens first
-    cached_tokens = _load_psn_tokens()
+    cached_tokens = _load_psn_tokens(user_id)
     if cached_tokens:
         try:
             import time as _time
@@ -128,15 +135,26 @@ def create_psn_client(npsso):
                 # triggers the auth round-trip; result intentionally unused).
                 _ = psnawp.me().online_id
                 # Save refreshed tokens (access token may have been renewed)
-                _save_psn_tokens(psnawp.authenticator.token_response)
+                _save_psn_tokens(psnawp.authenticator.token_response, user_id=user_id)
                 logger.info("PSN authenticated using cached tokens")
                 return psnawp, None
             else:
                 logger.info("PSN cached refresh token expired, using NPSSO")
-                _clear_psn_tokens()
+                if not allow_npsso_fallback:
+                    # Keep-alive must not ping with NPSSO; leave the (expired)
+                    # cache in place so token-info still reports `expired:true`.
+                    return None, "PSN refresh token expired"
+                _clear_psn_tokens(user_id)
         except Exception as e:
-            logger.info(f"PSN cached tokens invalid ({e}), falling back to NPSSO")
-            _clear_psn_tokens()
+            logger.info(f"PSN cached tokens invalid ({e})")
+            if not allow_npsso_fallback:
+                return None, f"PSN cached-token refresh failed: {e}"
+            logger.info("Falling back to NPSSO")
+            _clear_psn_tokens(user_id)
+
+    if not allow_npsso_fallback:
+        # No usable cache and the keep-alive must not ping Sony with the NPSSO.
+        return None, "PSN refresh token expired"
 
     # Fresh auth via NPSSO
     try:
@@ -146,7 +164,7 @@ def create_psn_client(npsso):
         _ = psnawp.me().online_id
         # Cache the tokens for future use
         if psnawp.authenticator.token_response:
-            _save_psn_tokens(psnawp.authenticator.token_response)
+            _save_psn_tokens(psnawp.authenticator.token_response, user_id=user_id)
             logger.info("PSN authenticated via NPSSO, tokens cached")
         return psnawp, None
     except PSNAWPAuthenticationError as e:

@@ -3,6 +3,11 @@
 {% block title %}Dashboard - RetroDB{% endblock %}
 
 {% block content %}
+<!-- Pass 50.2 — proactive PSN session-expiry notice (shown only when the
+     session is expiring soon or has lapsed; hidden by default + dismissible). -->
+<div id="psnSessionBanner" role="alert"
+     style="display:none; align-items:center; gap:10px; margin:0 0 16px; padding:10px 14px; border-radius:8px;"></div>
+
 <!-- Sticky Dashboard Navigation -->
 <nav class="dashboard-nav" id="dashboardNav" data-sticky-nav data-tabbar>
     <a href="#overview" class="dashboard-nav-link active" aria-current="page" data-section="overview"><span class="tab-icon">📊</span> <span class="tab-label">{{ _('Overview') }}</span></a>
@@ -1275,5 +1280,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
     updateActiveLink();
 });
+
+// Pass 50.2 — proactive PSN session-expiry notice. Only shows when the session
+// is actually expiring soon (<=14 days) or has lapsed, so a healthy session is
+// silent. Dismissible for the browser session so it can't nag on every load.
+(function psnExpiryNotice() {
+    const banner = document.getElementById('psnSessionBanner');
+    if (!banner) return;
+    if (sessionStorage.getItem('psnBannerDismissed') === '1') return;
+    fetch('/api/psn/token-info').then(r => r.json()).then(data => {
+        let msg = null, urgent = false;
+        if (data && data.expired) {
+            msg = {{ _('Your PlayStation Network session has expired — re-link it to keep trophy and library sync working.')|tojson }};
+            urgent = true;
+        } else if (data && data.has_token && typeof data.days_remaining === 'number' && data.days_remaining <= 14) {
+            msg = {{ _('Your PlayStation Network session expires soon — re-link it to avoid an interruption.')|tojson }};
+            urgent = data.days_remaining <= 3;
+        }
+        if (!msg) return;
+        const color = urgent ? 'var(--neon-red)' : 'var(--neon-orange)';
+        const bg = urgent ? 'rgba(239,68,68,0.1)' : 'rgba(245,158,11,0.1)';
+        banner.style.background = bg;
+        banner.style.border = '1px solid ' + color;
+        banner.style.display = 'flex';
+        banner.innerHTML =
+            '<span style="color:' + color + '; font-weight:600;">&#9888;</span>' +
+            '<span style="color: var(--text-primary); flex:1;">' + escapeHtml(msg) + '</span>' +
+            '<a href="/settings#account" style="color:' + color + '; font-weight:600; text-decoration:underline; white-space:nowrap;">' +
+            {{ _('Re-link now')|tojson }} + '</a>' +
+            '<button type="button" id="psnBannerDismiss" aria-label="' + {{ _('Dismiss')|tojson }} +
+            '" style="background:none; border:none; color: var(--text-secondary); cursor:pointer; font-size:18px; line-height:1; padding:0 4px;">&times;</button>';
+        const dismiss = document.getElementById('psnBannerDismiss');
+        if (dismiss) {
+            dismiss.addEventListener('click', () => {
+                banner.style.display = 'none';
+                sessionStorage.setItem('psnBannerDismissed', '1');
+            });
+        }
+    }).catch(() => { /* token-info unavailable — stay silent */ });
+})();
 </script>
 {% endblock %}

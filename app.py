@@ -1830,6 +1830,17 @@ if __name__ == '__main__':
             print(f"WARN: ESRGAN init failed: {_upscaler_init_err}", file=sys.stderr)
             traceback.print_exc()
 
+    # Pass 50.1 — start the PSN session keep-alive (daily background refresh so
+    # the ~2-month refresh-token window never lapses while the app runs). Only in
+    # the serving worker, never the reloader parent (and never on a bare import,
+    # since this is inside `if __name__ == '__main__'`).
+    if is_reloader_process or not config.DEBUG_MODE:
+        try:
+            from services.jobs.psn_keepalive import start_psn_keepalive_thread
+            start_psn_keepalive_thread(app)
+        except Exception as _ka_err:
+            logger.warning(f"PSN keep-alive thread failed to start: {_ka_err}")
+
     host = config.SERVER_HOST
     port = config.SERVER_PORT
     local_ip = get_local_ip()

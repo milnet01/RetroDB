@@ -1214,7 +1214,7 @@
             <li>The page will display JSON containing your NPSSO token</li>
             <li>Copy the <code>npsso</code> value and paste it into Settings &rarr; Account &rarr; PSN</li>
         </ol>
-        <p>Once authenticated, tokens are cached locally in <code>data/psn_tokens.json</code> and automatically refreshed. The cached tokens remain valid for approximately 2 months.</p>
+        <p>Once authenticated, RetroDB caches the access tokens securely in its own database (per user) and refreshes them automatically &mdash; you do not paste the NPSSO again on every sync. The session stays valid for about two months, and RetroDB now also renews it automatically in the background, so in normal use you should rarely need a fresh NPSSO.</p>
 
         <h3>Trophy Details</h3>
         <ul>
@@ -1667,9 +1667,7 @@
                     <li><code>data/settings.json</code> (your UI preferences)</li>
                     <li><code>data/scraper_settings.json</code> (your scraper configuration)</li>
                     <li><code>data/rom_tools_config.json</code> (your ROM tools preferences)</li>
-                    <li><code>data/psn_tokens.json</code> (your PSN authentication tokens)</li>
-                    <li><code>data/xbox_tokens.json</code> (your Xbox authentication tokens)</li>
-                    <li><code>database/</code> folder (your game library database)</li>
+                    <li><code>database/</code> folder (your game library database, and your saved PSN/Xbox sign-in tokens)</li>
                 </ul>
             </li>
             <li>Extract the new version over the existing installation</li>
@@ -1745,7 +1743,7 @@
         <ul>
             <li>NPSSO tokens expire &mdash; generate a new one from <code>ca.account.sony.com/api/v1/ssocookie</code></li>
             <li>Make sure you're logged into store.playstation.com before visiting the cookie URL</li>
-            <li>Cached tokens in <code>data/psn_tokens.json</code> last approximately 2 months</li>
+            <li>RetroDB caches your PSN session for about two months and now auto-renews it in the background; if it still lapses, just paste a fresh NPSSO in Settings &rarr; Account &rarr; PSN</li>
         </ul>
 
         <h4>"Xbox Authentication Failed"</h4>

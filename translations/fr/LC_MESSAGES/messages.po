@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-06-30 13:25+0200\n"
+"POT-Creation-Date: 2026-06-30 22:11+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -28,10 +28,10 @@ msgstr "Système introuvable ou sans jeux à succès"
 
 #: routes/achievements.py:170 routes/achievements.py:435
 #: routes/bonus_discs.py:263 routes/bulk_scrape.py:46 routes/collections.py:275
-#: routes/collections.py:529 routes/games.py:324 routes/games.py:815
-#: routes/games.py:928 routes/games_ai.py:46 routes/games_media.py:33
+#: routes/collections.py:529 routes/games.py:327 routes/games.py:818
+#: routes/games.py:931 routes/games_ai.py:46 routes/games_media.py:33
 #: routes/games_media.py:80 routes/games_media.py:140 routes/reports.py:688
-#: routes/reports.py:804 routes/trophies.py:1265 services/hltb_service.py:127
+#: routes/reports.py:804 routes/trophies.py:1283 services/hltb_service.py:127
 msgid "Game not found"
 msgstr "Jeu introuvable"
 
@@ -192,8 +192,8 @@ msgstr "Jeu parent introuvable"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Le disque bonus et le jeu parent doivent appartenir au même système"
 
-#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1177
-#: routes/games.py:1207 routes/platform_import.py:283
+#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1180
+#: routes/games.py:1210 routes/platform_import.py:283
 #: routes/platform_import.py:647 routes/platform_import.py:1016
 #: routes/scrape_logs.py:85 routes/scrape_logs.py:170 routes/scrape_logs.py:183
 #: routes/scrape_logs.py:221 routes/scraper.py:207 routes/scraper.py:531
@@ -201,9 +201,9 @@ msgstr "Le disque bonus et le jeu parent doivent appartenir au même système"
 #: routes/settings.py:442 routes/settings.py:521 routes/settings.py:536
 #: routes/settings.py:581 routes/settings.py:598 routes/settings.py:634
 #: routes/steam_achievements.py:138 routes/systems.py:282 routes/systems.py:467
-#: routes/trophies.py:490 routes/trophies.py:686 routes/trophies.py:734
-#: routes/trophies.py:1582 routes/trophies.py:1606 routes/trophies.py:1651
-#: routes/trophies.py:1679 routes/trophies.py:1721 routes/trophies.py:1790
+#: routes/trophies.py:508 routes/trophies.py:704 routes/trophies.py:752
+#: routes/trophies.py:1600 routes/trophies.py:1624 routes/trophies.py:1669
+#: routes/trophies.py:1697 routes/trophies.py:1739 routes/trophies.py:1808
 #: routes/xbox_achievements.py:157 services/api_helpers.py:41
 msgid "An internal error occurred"
 msgstr "Une erreur interne s'est produite"
@@ -367,49 +367,49 @@ msgstr "rien à mettre à jour"
 msgid "system_id and emulator_id required"
 msgstr "system_id et emulator_id requis"
 
-#: routes/games.py:219
+#: routes/games.py:222
 msgid "No IDs provided"
 msgstr "Aucun identifiant fourni"
 
-#: routes/games.py:227
+#: routes/games.py:230
 msgid "Provide 1-50 valid IDs"
 msgstr "Fournissez de 1 à 50 identifiants valides"
 
-#: routes/games.py:663
+#: routes/games.py:666
 msgid "Game not found after update"
 msgstr "Jeu introuvable après la mise à jour"
 
-#: routes/games.py:954 routes/games.py:998
+#: routes/games.py:957 routes/games.py:1001
 msgid "No fields to update"
 msgstr "Aucun champ à mettre à jour"
 
-#: routes/games.py:995 routes/platform_import.py:205
+#: routes/games.py:998 routes/platform_import.py:205
 #: routes/platform_import.py:560 routes/platform_import.py:919
-#: routes/trophies.py:1870
+#: routes/trophies.py:1888
 msgid "No games selected"
 msgstr "Aucun jeu sélectionné"
 
-#: routes/games.py:1005
+#: routes/games.py:1008
 msgid "Invalid completion status"
 msgstr "Statut d'achèvement invalide"
 
-#: routes/games.py:1053
+#: routes/games.py:1056
 msgid "No valid fields to update"
 msgstr "Aucun champ valide à mettre à jour"
 
-#: routes/games.py:1170
+#: routes/games.py:1173
 msgid "Invalid status"
 msgstr "Statut invalide"
 
-#: routes/games.py:1195
+#: routes/games.py:1198
 msgid "Not authenticated"
 msgstr "Non authentifié"
 
-#: routes/games.py:1226
+#: routes/games.py:1229
 msgid "Filter type and value required"
 msgstr "Type et valeur de filtre requis"
 
-#: routes/games.py:1239
+#: routes/games.py:1242
 msgid "Invalid filter type"
 msgstr "Type de filtre invalide"
 
@@ -885,7 +885,7 @@ msgstr "chdman introuvable. Veuillez installer les outils MAME."
 msgid "chdman not found"
 msgstr "chdman introuvable"
 
-#: routes/trophies.py:378
+#: routes/trophies.py:396
 msgid ""
 "Please configure your RPCS3 Trophy Path in your profile settings to view "
 "trophies"
@@ -893,61 +893,61 @@ msgstr ""
 "Veuillez configurer le chemin des trophées RPCS3 dans les paramètres de "
 "votre profil pour afficher les trophées"
 
-#: routes/trophies.py:409
+#: routes/trophies.py:427
 msgid "Trophy set not found"
 msgstr "Ensemble de trophées introuvable"
 
-#: routes/trophies.py:453
+#: routes/trophies.py:471
 msgid "RPCS3_TROPHY_PATH not configured"
 msgstr "RPCS3_TROPHY_PATH n'est pas configuré"
 
-#: routes/trophies.py:456
+#: routes/trophies.py:474
 #, python-format
 msgid "Trophy path not found: %(path)s"
 msgstr "Chemin des trophées introuvable : %(path)s"
 
-#: routes/trophies.py:747 routes/trophies.py:1704
+#: routes/trophies.py:765 routes/trophies.py:1722
 msgid "PSN game not found"
 msgstr "Jeu PSN introuvable"
 
-#: routes/trophies.py:984
+#: routes/trophies.py:1002
 msgid "Sync already in progress"
 msgstr "Synchronisation déjà en cours"
 
-#: routes/trophies.py:1283
+#: routes/trophies.py:1301
 msgid "Game not found in your PSN trophy list"
 msgstr "Jeu introuvable dans votre liste de trophées PSN"
 
-#: routes/trophies.py:1579
+#: routes/trophies.py:1597
 msgid "Game not found on PSN"
 msgstr "Jeu introuvable sur PSN"
 
-#: routes/trophies.py:1594 routes/trophies.py:1667
+#: routes/trophies.py:1612 routes/trophies.py:1685
 msgid "Missing npwr_id"
 msgstr "npwr_id manquant"
 
-#: routes/trophies.py:1692
+#: routes/trophies.py:1710
 msgid "Missing npwr_id or group_id"
 msgstr "npwr_id ou group_id manquant"
 
-#: routes/trophies.py:1695
+#: routes/trophies.py:1713
 msgid "Name cannot be empty"
 msgstr "Le nom ne peut pas être vide"
 
-#: routes/trophies.py:1733
+#: routes/trophies.py:1751
 msgid "PSNAWP library not installed. Run: pip install psnawp"
 msgstr "Bibliothèque PSNAWP non installée. Exécutez : pip install psnawp"
 
-#: routes/trophies.py:1829
+#: routes/trophies.py:1847
 msgid "No NPSSO token provided"
 msgstr "Aucun jeton NPSSO fourni"
 
-#: routes/trophies.py:1852
+#: routes/trophies.py:1870
 #, python-format
 msgid "Connection failed: %(error)s"
 msgstr "Échec de la connexion : %(error)s"
 
-#: routes/trophies.py:1879
+#: routes/trophies.py:1897
 msgid "PSN NPSSO not configured"
 msgstr "Le NPSSO PSN n'est pas configuré"
 
@@ -1357,8 +1357,8 @@ msgstr "Clé API manquante"
 msgid "API keys saved!"
 msgstr "Clés API enregistrées !"
 
-#: services/js_i18n_strings.py:369 templates/_settings_tabs/account.html:250
-#: templates/_settings_tabs/account.html:324
+#: services/js_i18n_strings.py:369 templates/_settings_tabs/account.html:258
+#: templates/_settings_tabs/account.html:332
 msgid "Add User"
 msgstr "Ajouter un utilisateur"
 
@@ -1509,7 +1509,7 @@ msgstr "Imports CLZ"
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:72
-#: templates/_settings_tabs/account.html:357
+#: templates/_settings_tabs/account.html:365
 #: templates/_settings_tabs/customization.html:264
 #: templates/achievement_game.html:176 templates/archive_scanner.html:687
 #: templates/archive_scanner.html:824 templates/base.html:304
@@ -1604,7 +1604,7 @@ msgstr "Fermer"
 msgid "Close keyboard shortcuts"
 msgstr "Fermer les raccourcis clavier"
 
-#: services/js_i18n_strings.py:417 templates/dashboard.html:148
+#: services/js_i18n_strings.py:417 templates/dashboard.html:153
 msgid "Complete"
 msgstr "Terminé"
 
@@ -1613,7 +1613,7 @@ msgid "Complete!"
 msgstr "Terminé !"
 
 #: services/js_i18n_strings.py:419 templates/_bulk_edit_modal.html:29
-#: templates/base.html:984 templates/dashboard.html:431
+#: templates/base.html:984 templates/dashboard.html:436
 #: templates/game_detail.html:200
 msgid "Completed"
 msgstr "Terminé"
@@ -1994,7 +1994,7 @@ msgstr "L'image doit faire moins de 10 Mo"
 #: services/js_i18n_strings.py:506 templates/_bulk_edit_modal.html:27
 #: templates/achievements_system.html:146
 #: templates/achievements_system.html:165 templates/base.html:982
-#: templates/dashboard.html:287 templates/dashboard.html:427
+#: templates/dashboard.html:292 templates/dashboard.html:432
 #: templates/game_detail.html:198 templates/steam_achievements.html:72
 #: templates/xbox_achievements.html:72
 msgid "In Progress"
@@ -2259,7 +2259,7 @@ msgid "Platform not found"
 msgstr "Plateforme introuvable"
 
 #: services/js_i18n_strings.py:562 templates/_bulk_edit_modal.html:28
-#: templates/base.html:983 templates/dashboard.html:429
+#: templates/base.html:983 templates/dashboard.html:434
 #: templates/game_detail.html:199
 msgid "Played"
 msgstr "Joué"
@@ -2604,8 +2604,8 @@ msgstr "Synchronisation : {processed} / {total}"
 #: templates/_settings_tabs/customization.html:299
 #: templates/achievement_game.html:226 templates/analytics.html:567
 #: templates/analytics.html:601 templates/compare_games.html:67
-#: templates/dashboard.html:255 templates/dashboard.html:314
-#: templates/dashboard.html:391 templates/dashboard.html:457
+#: templates/dashboard.html:260 templates/dashboard.html:319
+#: templates/dashboard.html:396 templates/dashboard.html:462
 #: templates/logs.html:720 templates/multi_disc_organizer.html:239
 #: templates/reports.html:355 templates/reports.html:430
 #: templates/settings.html:39 templates/steam_achievement_game.html:171
@@ -2934,7 +2934,7 @@ msgid "Only fields changed from \"Don't change\" will be updated."
 msgstr "Seuls les champs modifiés depuis « Ne pas changer » seront mis à jour."
 
 #: templates/_bulk_edit_modal.html:26 templates/achievements_system.html:166
-#: templates/base.html:981 templates/dashboard.html:425
+#: templates/base.html:981 templates/dashboard.html:430
 #: templates/game_detail.html:197 templates/steam_achievements.html:73
 #: templates/xbox_achievements.html:73
 msgid "Not Started"
@@ -2945,7 +2945,7 @@ msgstr "Non commencé"
 #: templates/achievement_game.html:239 templates/all_games.html:89
 #: templates/analytics.html:479 templates/base.html:914
 #: templates/base.html:1115 templates/compare_games.html:71
-#: templates/dashboard.html:315 templates/game_detail.html:243
+#: templates/dashboard.html:320 templates/game_detail.html:243
 #: templates/local_trophy_detail.html:97 templates/psn_trophy_detail.html:92
 #: templates/psn_trophy_detail.html:256
 #: templates/steam_achievement_game.html:176 templates/system_games.html:80
@@ -3206,7 +3206,7 @@ msgstr "Plus de détails"
 msgid "First Achievement"
 msgstr "Premier succès"
 
-#: templates/_settings_tabs/account.html:302
+#: templates/_settings_tabs/account.html:310
 #: templates/achievement_game.html:231 templates/achievement_game.html:235
 #: templates/local_trophy_detail.html:209
 #: templates/local_trophy_detail.html:213 templates/psn_trophies.html:71
@@ -3232,7 +3232,7 @@ msgstr "Entrée"
 
 #: templates/achievement_game.html:263 templates/achievements_system.html:121
 #: templates/analytics.html:15 templates/base.html:119
-#: templates/dashboard.html:93 templates/dashboard.html:178
+#: templates/dashboard.html:98 templates/dashboard.html:183
 #: templates/steam_achievement_game.html:188
 #: templates/xbox_achievement_game.html:175 templates/xbox_achievements.html:41
 msgid "Achievements"
@@ -3312,7 +3312,7 @@ msgid "Profile Settings"
 msgstr "Paramètres du profil"
 
 #: templates/_settings_tabs/data.html:23 templates/achievements_system.html:37
-#: templates/analytics.html:69 templates/dashboard.html:124
+#: templates/analytics.html:69 templates/dashboard.html:129
 #: templates/steam_achievements.html:34 templates/xbox_achievements.html:34
 msgid "Total Games"
 msgstr "Total des jeux"
@@ -3320,7 +3320,7 @@ msgstr "Total des jeux"
 #: templates/_settings_tabs/customization.html:153
 #: templates/_settings_tabs/customization.html:234
 #: templates/_settings_tabs/data.html:19 templates/achievements_system.html:44
-#: templates/base.html:95 templates/dashboard.html:9
+#: templates/base.html:95 templates/dashboard.html:14
 #: templates/game_detail.html:22 templates/system_games.html:13
 msgid "Systems"
 msgstr "Systèmes"
@@ -3530,8 +3530,8 @@ msgstr "Développeurs"
 msgid "Gameplay"
 msgstr "Gameplay"
 
-#: templates/analytics.html:12 templates/dashboard.html:193
-#: templates/dashboard.html:256 templates/game_imports.html:274
+#: templates/analytics.html:12 templates/dashboard.html:198
+#: templates/dashboard.html:261 templates/game_imports.html:274
 msgid "Playtime"
 msgstr "Temps de jeu"
 
@@ -3603,15 +3603,15 @@ msgstr "Données pour tableurs"
 msgid "Refresh"
 msgstr "Actualiser"
 
-#: templates/analytics.html:76 templates/dashboard.html:115
+#: templates/analytics.html:76 templates/dashboard.html:120
 msgid "Total Systems"
 msgstr "Total des systèmes"
 
-#: templates/analytics.html:83 templates/dashboard.html:160
+#: templates/analytics.html:83 templates/dashboard.html:165
 msgid "Total Storage"
 msgstr "Stockage total"
 
-#: templates/analytics.html:90 templates/dashboard.html:169
+#: templates/analytics.html:90 templates/dashboard.html:174
 msgid "Completion Rate"
 msgstr "Taux d'achèvement"
 
@@ -3798,9 +3798,9 @@ msgstr "Exhaustivité des champs"
 msgid "Description"
 msgstr "Description"
 
-#: templates/analytics.html:478 templates/dashboard.html:91
-#: templates/dashboard.html:253 templates/dashboard.html:312
-#: templates/dashboard.html:389 templates/dashboard.html:455
+#: templates/analytics.html:478 templates/dashboard.html:96
+#: templates/dashboard.html:258 templates/dashboard.html:317
+#: templates/dashboard.html:394 templates/dashboard.html:460
 msgid "Boxart"
 msgstr "Jaquette"
 
@@ -3850,7 +3850,7 @@ msgstr "Croissance de la collection"
 msgid "Storage by System"
 msgstr "Stockage par système"
 
-#: templates/analytics.html:561 templates/dashboard.html:207
+#: templates/analytics.html:561 templates/dashboard.html:212
 msgid "Top Systems by Game Count"
 msgstr "Meilleurs systèmes par nombre de jeux"
 
@@ -4160,7 +4160,7 @@ msgstr "Connexion"
 msgid "Main"
 msgstr "Principal"
 
-#: templates/base.html:91 templates/dashboard.html:54
+#: templates/base.html:91 templates/dashboard.html:59
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
@@ -4338,7 +4338,7 @@ msgstr "Remplir les métadonnées manquantes avec l'IA"
 msgid "AI Fill"
 msgstr "Remplissage IA"
 
-#: templates/_settings_tabs/account.html:307 templates/base.html:940
+#: templates/_settings_tabs/account.html:315 templates/base.html:940
 #: templates/game_detail.html:95 templates/wishlist.html:638
 msgid "Edit"
 msgstr "Modifier"
@@ -4416,9 +4416,9 @@ msgid "No playtime data"
 msgstr "Aucune donnée de temps de jeu"
 
 #: templates/_modals/edit_modal.html:28 templates/_modals/filter_modal.html:13
-#: templates/base.html:1048 templates/dashboard.html:254
-#: templates/dashboard.html:313 templates/dashboard.html:390
-#: templates/dashboard.html:456
+#: templates/base.html:1048 templates/dashboard.html:259
+#: templates/dashboard.html:318 templates/dashboard.html:395
+#: templates/dashboard.html:461
 msgid "Title"
 msgstr "Titre"
 
@@ -5043,236 +5043,252 @@ msgstr "Taille du fichier"
 msgid "ROM Path"
 msgstr "Chemin de la ROM"
 
-#: templates/compare_games.html:92 templates/dashboard.html:13
-#: templates/dashboard.html:365 templates/dashboard.html:489
+#: templates/compare_games.html:92 templates/dashboard.html:18
+#: templates/dashboard.html:370 templates/dashboard.html:494
 #: templates/wishlist.html:505
 msgid "Scraped"
 msgstr "Récupéré"
 
-#: templates/dashboard.html:8
+#: templates/dashboard.html:13
 msgid "Overview"
 msgstr "Aperçu"
 
-#: templates/dashboard.html:10
+#: templates/dashboard.html:15
 msgid "Playing"
 msgstr "En cours"
 
-#: templates/dashboard.html:11
+#: templates/dashboard.html:16
 msgid "Added"
 msgstr "Ajouté"
 
-#: templates/dashboard.html:12
+#: templates/dashboard.html:17
 msgid "Viewed"
 msgstr "Consulté"
 
-#: templates/dashboard.html:14 templates/dashboard.html:317
-#: templates/dashboard.html:458 templates/game_imports.html:221
+#: templates/dashboard.html:19 templates/dashboard.html:322
+#: templates/dashboard.html:463 templates/game_imports.html:221
 #: templates/game_imports.html:274 templates/game_imports.html:337
 #: templates/game_imports.html:400
 msgid "Status"
 msgstr "Statut"
 
-#: templates/dashboard.html:20
+#: templates/dashboard.html:25
 msgid "One or more configured APIs are offline"
 msgstr "Une ou plusieurs API configurées sont hors ligne"
 
-#: templates/dashboard.html:21
+#: templates/dashboard.html:26
 msgid "Check Settings →"
 msgstr "Vérifier les paramètres →"
 
-#: templates/dashboard.html:30
+#: templates/dashboard.html:35
 #, python-format
 msgid "%(count)s interrupted job found"
 msgid_plural "%(count)s interrupted jobs found"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/dashboard.html:31
+#: templates/dashboard.html:36
 msgid "Resume All"
 msgstr "Tout reprendre"
 
-#: templates/dashboard.html:32
+#: templates/dashboard.html:37
 msgid "Dismiss All"
 msgstr "Tout ignorer"
 
-#: templates/dashboard.html:44
+#: templates/dashboard.html:49 templates/dashboard.html:1311
 msgid "Dismiss"
 msgstr "Ignorer"
 
-#: templates/dashboard.html:55
+#: templates/dashboard.html:60
 msgid "Overview of your retro gaming collection"
 msgstr "Aperçu de votre collection de jeux rétro"
 
-#: templates/dashboard.html:58
+#: templates/dashboard.html:63
 msgid "Pick a random game"
 msgstr "Choisir un jeu au hasard"
 
-#: templates/dashboard.html:60
+#: templates/dashboard.html:65
 msgid "Random Game"
 msgstr "Jeu aléatoire"
 
-#: templates/_settings_tabs/library.html:41 templates/dashboard.html:64
+#: templates/_settings_tabs/library.html:41 templates/dashboard.html:69
 #: templates/systems.html:109
 msgid "Scan Library"
 msgstr "Analyser la bibliothèque"
 
-#: templates/dashboard.html:81
+#: templates/dashboard.html:86
 msgid "Collection Health"
 msgstr "Santé de la collection"
 
-#: templates/dashboard.html:82
+#: templates/dashboard.html:87
 msgid "Metadata completeness across your library"
 msgstr "Exhaustivité des métadonnées dans votre bibliothèque"
 
-#: templates/dashboard.html:85
+#: templates/dashboard.html:90
 msgid "Excellent"
 msgstr "Excellent"
 
-#: templates/dashboard.html:85
+#: templates/dashboard.html:90
 msgid "Good"
 msgstr "Bon"
 
-#: templates/dashboard.html:85
+#: templates/dashboard.html:90
 msgid "Fair"
 msgstr "Correct"
 
-#: templates/dashboard.html:85
+#: templates/dashboard.html:90
 msgid "Needs Work"
 msgstr "À améliorer"
 
-#: templates/dashboard.html:92
+#: templates/dashboard.html:97
 msgid "Descriptions"
 msgstr "Descriptions"
 
-#: templates/dashboard.html:119
+#: templates/dashboard.html:124
 msgid "Gaming platforms"
 msgstr "Plateformes de jeu"
 
-#: templates/dashboard.html:128
+#: templates/dashboard.html:133
 msgid "ROMs in library"
 msgstr "ROM dans la bibliothèque"
 
-#: templates/_settings_tabs/data.html:31 templates/dashboard.html:133
+#: templates/_settings_tabs/data.html:31 templates/dashboard.html:138
 msgid "Missing Metadata"
 msgstr "Métadonnées manquantes"
 
-#: templates/dashboard.html:139
+#: templates/dashboard.html:144
 msgid "Action required"
 msgstr "Action requise"
 
-#: templates/dashboard.html:141
+#: templates/dashboard.html:146
 msgid "All games scraped"
 msgstr "Tous les jeux récupérés"
 
-#: templates/dashboard.html:152
+#: templates/dashboard.html:157
 msgid "Games with metadata"
 msgstr "Jeux avec métadonnées"
 
-#: templates/dashboard.html:164
+#: templates/dashboard.html:169
 msgid "ROM library size"
 msgstr "Taille de la bibliothèque de ROM"
 
-#: templates/dashboard.html:173
+#: templates/dashboard.html:178
 #, python-format
 msgid "%(n)s game beaten"
 msgid_plural "%(n)s games beaten"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/dashboard.html:184
+#: templates/dashboard.html:189
 #, python-format
 msgid "of %(n)s available"
 msgstr "sur %(n)s disponibles"
 
-#: templates/dashboard.html:186
+#: templates/dashboard.html:191
 msgid "RetroAchievements earned"
 msgstr "RetroAchievements gagnés"
 
-#: templates/dashboard.html:197
+#: templates/dashboard.html:202
 msgid "Estimated total (HLTB)"
 msgstr "Total estimé (HLTB)"
 
-#: templates/dashboard.html:208
+#: templates/dashboard.html:213
 msgid "View All Systems →"
 msgstr "Voir tous les systèmes →"
 
-#: templates/dashboard.html:235
+#: templates/dashboard.html:240
 #, python-format
 msgid "%(pct)s%% scraped"
 msgstr "%(pct)s%% récupérés"
 
-#: templates/dashboard.html:246
+#: templates/dashboard.html:251
 msgid "Continue Playing"
 msgstr "Continuer à jouer"
 
-#: templates/dashboard.html:304
+#: templates/dashboard.html:309
 msgid "Recently Added"
 msgstr "Ajoutés récemment"
 
-#: templates/dashboard.html:305
+#: templates/dashboard.html:310
 msgid "View All Games →"
 msgstr "Voir tous les jeux →"
 
-#: templates/dashboard.html:316 templates/reports.html:442
+#: templates/dashboard.html:321 templates/reports.html:442
 msgid "Year"
 msgstr "Année"
 
-#: templates/dashboard.html:367
+#: templates/dashboard.html:372
 msgid "Missing"
 msgstr "Manquant"
 
-#: templates/dashboard.html:382
+#: templates/dashboard.html:387
 msgid "Recently Viewed"
 msgstr "Consultés récemment"
 
-#: templates/dashboard.html:392
+#: templates/dashboard.html:397
 msgid "Completion"
 msgstr "Achèvement"
 
-#: templates/dashboard.html:448
+#: templates/dashboard.html:453
 msgid "Recently Scraped"
 msgstr "Récupérés récemment"
 
-#: templates/dashboard.html:502
+#: templates/dashboard.html:507
 msgid "System Status"
 msgstr "État du système"
 
-#: templates/dashboard.html:508
+#: templates/dashboard.html:513
 msgid "Database Service"
 msgstr "Service de base de données"
 
-#: templates/dashboard.html:510
+#: templates/dashboard.html:515
 msgid "Online"
 msgstr "En ligne"
 
-#: templates/dashboard.html:516
+#: templates/dashboard.html:521
 msgid "ES-DE Local Scraper"
 msgstr "Récupérateur local ES-DE"
 
-#: templates/dashboard.html:518
+#: templates/dashboard.html:523
 msgid "Available"
 msgstr "Disponible"
 
-#: templates/dashboard.html:527 templates/dashboard.html:537
-#: templates/dashboard.html:557 templates/dashboard.html:567
+#: templates/dashboard.html:532 templates/dashboard.html:542
+#: templates/dashboard.html:562 templates/dashboard.html:572
 #: templates/game_imports.html:365
 msgid "Checking..."
 msgstr "Vérification…"
 
-#: templates/dashboard.html:527 templates/dashboard.html:537
-#: templates/dashboard.html:557 templates/dashboard.html:567
+#: templates/dashboard.html:532 templates/dashboard.html:542
+#: templates/dashboard.html:562 templates/dashboard.html:572
 msgid "Disabled"
 msgstr "Désactivé"
 
-#: templates/dashboard.html:527 templates/dashboard.html:537
-#: templates/dashboard.html:547 templates/dashboard.html:557
-#: templates/dashboard.html:567
+#: templates/dashboard.html:532 templates/dashboard.html:542
+#: templates/dashboard.html:552 templates/dashboard.html:562
+#: templates/dashboard.html:572
 msgid "Not Configured"
 msgstr "Non configuré"
 
-#: templates/_settings_tabs/account.html:286 templates/dashboard.html:547
+#: templates/_settings_tabs/account.html:294 templates/dashboard.html:552
 msgid "Configured"
 msgstr "Configuré"
+
+#: templates/dashboard.html:1294
+msgid ""
+"Your PlayStation Network session has expired — re-link it to keep trophy "
+"and library sync working."
+msgstr ""
+
+#: templates/dashboard.html:1297
+msgid ""
+"Your PlayStation Network session expires soon — re-link it to avoid an "
+"interruption."
+msgstr ""
+
+#: templates/dashboard.html:1310
+msgid "Re-link now"
+msgstr ""
 
 #: templates/duplicate_finder.html:202
 msgid "Careful Review Recommended"
@@ -5381,7 +5397,7 @@ msgstr ""
 " de sécurité, vous devez définir un nouveau mot de passe avant de "
 "continuer."
 
-#: templates/_settings_tabs/account.html:199
+#: templates/_settings_tabs/account.html:207
 #: templates/force_change_password.html:18
 msgid "New Password"
 msgstr "Nouveau mot de passe"
@@ -5459,7 +5475,7 @@ msgstr "Récupérer"
 msgid "Delete game from database"
 msgstr "Supprimer le jeu de la base de données"
 
-#: templates/_settings_tabs/account.html:309 templates/game_detail.html:110
+#: templates/_settings_tabs/account.html:317 templates/game_detail.html:110
 #: templates/logs.html:733 templates/settings.html:68
 #: templates/wishlist.html:639
 msgid "Delete"
@@ -5896,13 +5912,14 @@ msgstr "Progression des trophées"
 
 #: templates/help.de.html:9 templates/help.es.html:9 templates/help.fr.html:9
 #: templates/help.html:9 templates/help.it.html:9 templates/help.ja.html:9
-#: templates/help.pt_BR.html:9
+#: templates/help.ko.html:9 templates/help.pt_BR.html:9
 msgid "Help & Documentation"
 msgstr "Aide et documentation"
 
 #: templates/help.de.html:10 templates/help.es.html:10
 #: templates/help.fr.html:10 templates/help.html:10 templates/help.it.html:10
-#: templates/help.ja.html:10 templates/help.pt_BR.html:10
+#: templates/help.ja.html:10 templates/help.ko.html:10
+#: templates/help.pt_BR.html:10
 #, python-format
 msgid "Complete guide to RetroDB v%(version)s"
 msgstr "Guide complet de RetroDB v%(version)s"
@@ -7740,8 +7757,8 @@ msgid "My Profile"
 msgstr "Mon profil"
 
 #: templates/_settings_tabs/account.html:5
-#: templates/_settings_tabs/account.html:216
-#: templates/_settings_tabs/account.html:223
+#: templates/_settings_tabs/account.html:224
+#: templates/_settings_tabs/account.html:231
 msgid "Timezone"
 msgstr "Fuseau horaire"
 
@@ -7877,11 +7894,22 @@ msgstr ""
 msgid "Open Sony Account Page"
 msgstr "Ouvrir la page de compte Sony"
 
-#: templates/_settings_tabs/account.html:149
+#: templates/_settings_tabs/account.html:147
+msgid ""
+"Optional shortcut: drag the button below to your browser's bookmarks bar."
+" Then, on the Sony JSON page, click the bookmark to copy your NPSSO in "
+"one click."
+msgstr ""
+
+#: templates/_settings_tabs/account.html:148
+msgid "Copy NPSSO"
+msgstr ""
+
+#: templates/_settings_tabs/account.html:157
 msgid "Copy the page content"
 msgstr "Copiez le contenu de la page"
 
-#: templates/_settings_tabs/account.html:150
+#: templates/_settings_tabs/account.html:158
 msgid ""
 "Select all (<kbd style=\"background: var(--bg-medium); padding: 1px 6px; "
 "border-radius: 3px; border: 1px solid var(--card-border); font-size: "
@@ -7898,82 +7926,82 @@ msgstr ""
 "copier l'intégralité du JSON &mdash; nous extrairons le jeton "
 "automatiquement."
 
-#: templates/_settings_tabs/account.html:158
+#: templates/_settings_tabs/account.html:166
 msgid "Paste the token"
 msgstr "Collez le jeton"
 
-#: templates/_settings_tabs/account.html:162
+#: templates/_settings_tabs/account.html:170
 msgid "Paste JSON or token here"
 msgstr "Collez le JSON ou le jeton ici"
 
-#: templates/_settings_tabs/account.html:165
+#: templates/_settings_tabs/account.html:173
 msgid "Read from clipboard"
 msgstr "Lire depuis le presse-papiers"
 
-#: templates/_settings_tabs/account.html:166
+#: templates/_settings_tabs/account.html:174
 msgid "Paste &amp; Detect"
 msgstr "Coller &amp; Détecter"
 
-#: templates/_settings_tabs/account.html:177
+#: templates/_settings_tabs/account.html:185
 msgid "Save &amp; Test Connection"
 msgstr "Enregistrer &amp; Tester la connexion"
 
-#: templates/_settings_tabs/account.html:184
+#: templates/_settings_tabs/account.html:192
 msgid "Save My Settings"
 msgstr "Enregistrer mes paramètres"
 
-#: templates/_settings_tabs/account.html:188
-#: templates/_settings_tabs/account.html:204
+#: templates/_settings_tabs/account.html:196
+#: templates/_settings_tabs/account.html:212
 msgid "Change Password"
 msgstr "Changer le mot de passe"
 
-#: templates/_settings_tabs/account.html:190
+#: templates/_settings_tabs/account.html:198
 msgid "Admin accounts require a password for login."
 msgstr "Les comptes administrateur nécessitent un mot de passe pour se connecter."
 
-#: templates/_settings_tabs/account.html:194
+#: templates/_settings_tabs/account.html:202
 msgid "Current Password"
 msgstr "Mot de passe actuel"
 
-#: templates/_settings_tabs/account.html:195
+#: templates/_settings_tabs/account.html:203
 msgid "Enter current password"
 msgstr "Saisissez le mot de passe actuel"
 
-#: templates/_settings_tabs/account.html:200
+#: templates/_settings_tabs/account.html:208
 msgid "Enter new password"
 msgstr "Saisissez le nouveau mot de passe"
 
-#: templates/_settings_tabs/account.html:208
+#: templates/_settings_tabs/account.html:216
 msgid "Please log in to view your profile settings."
 msgstr "Veuillez vous connecter pour consulter les paramètres de votre profil."
 
-#: templates/_settings_tabs/account.html:220
+#: templates/_settings_tabs/account.html:228
 msgid "Set your timezone to ensure all dates and times display correctly."
 msgstr ""
 "Définissez votre fuseau horaire pour que toutes les dates et heures "
 "s'affichent correctement."
 
-#: templates/_settings_tabs/account.html:225
+#: templates/_settings_tabs/account.html:233
 msgid "Search timezones..."
 msgstr "Rechercher des fuseaux horaires..."
 
-#: templates/_settings_tabs/account.html:229
+#: templates/_settings_tabs/account.html:237
 msgid "Browser detected:"
 msgstr "Détecté par le navigateur :"
 
-#: templates/_settings_tabs/account.html:230
+#: templates/_settings_tabs/account.html:238
 msgid "Use detected"
 msgstr "Utiliser celui détecté"
 
-#: templates/_settings_tabs/account.html:233
+#: templates/_settings_tabs/account.html:241
 msgid "Save Timezone"
 msgstr "Enregistrer le fuseau horaire"
 
-#: templates/_settings_tabs/account.html:241
+#: templates/_settings_tabs/account.html:249
 msgid "User Management"
 msgstr "Gestion des utilisateurs"
 
-#: templates/_settings_tabs/account.html:245
+#: templates/_settings_tabs/account.html:253
 msgid ""
 "Manage users who can access RetroDB. Admin users require a password to "
 "login, while Editor and Viewer users can login with a single click."
@@ -7982,85 +8010,85 @@ msgstr ""
 "nécessitent un mot de passe pour se connecter, tandis que les éditeurs et"
 " les spectateurs peuvent se connecter en un seul clic."
 
-#: templates/_settings_tabs/account.html:257
+#: templates/_settings_tabs/account.html:265
 msgid "User"
 msgstr "Utilisateur"
 
-#: templates/_settings_tabs/account.html:258
+#: templates/_settings_tabs/account.html:266
 msgid "Role"
 msgstr "Rôle"
 
-#: templates/_settings_tabs/account.html:259
+#: templates/_settings_tabs/account.html:267
 msgid "Trophy Path"
 msgstr "Chemin des trophées"
 
-#: templates/_settings_tabs/account.html:260
+#: templates/_settings_tabs/account.html:268
 msgid "RA Username"
 msgstr "Nom d'utilisateur RA"
 
-#: templates/_settings_tabs/account.html:261
+#: templates/_settings_tabs/account.html:269
 msgid "Last Login"
 msgstr "Dernière connexion"
 
-#: templates/_settings_tabs/account.html:262
+#: templates/_settings_tabs/account.html:270
 msgid "Actions"
 msgstr "Actions"
 
-#: templates/_settings_tabs/account.html:288
-#: templates/_settings_tabs/account.html:295
+#: templates/_settings_tabs/account.html:296
+#: templates/_settings_tabs/account.html:303
 msgid "Not Set"
 msgstr "Non défini"
 
-#: templates/_settings_tabs/account.html:325
+#: templates/_settings_tabs/account.html:333
 msgid "Close user modal"
 msgstr "Fermer la fenêtre d'utilisateur"
 
-#: templates/_settings_tabs/account.html:331
+#: templates/_settings_tabs/account.html:339
 msgid "Username *"
 msgstr "Nom d'utilisateur *"
 
-#: templates/_settings_tabs/account.html:332
+#: templates/_settings_tabs/account.html:340
 msgid "username"
 msgstr "nom d'utilisateur"
 
-#: templates/_settings_tabs/account.html:336
-#: templates/_settings_tabs/account.html:337
+#: templates/_settings_tabs/account.html:344
+#: templates/_settings_tabs/account.html:345
 msgid "Display Name"
 msgstr "Nom affiché"
 
-#: templates/_settings_tabs/account.html:341
+#: templates/_settings_tabs/account.html:349
 msgid "Role *"
 msgstr "Rôle *"
 
-#: templates/_settings_tabs/account.html:343
+#: templates/_settings_tabs/account.html:351
 msgid "Viewer - Read only access"
 msgstr "Spectateur - Accès en lecture seule"
 
-#: templates/_settings_tabs/account.html:344
+#: templates/_settings_tabs/account.html:352
 msgid "Player - Can launch and track progress"
 msgstr "Joueur - Peut lancer et suivre la progression"
 
-#: templates/_settings_tabs/account.html:345
+#: templates/_settings_tabs/account.html:353
 msgid "Editor - Can edit games and scrape"
 msgstr "Éditeur - Peut modifier les jeux et effectuer du scraping"
 
-#: templates/_settings_tabs/account.html:346
+#: templates/_settings_tabs/account.html:354
 msgid "Admin - Full access"
 msgstr "Administrateur - Accès complet"
 
-#: templates/_settings_tabs/account.html:351
+#: templates/_settings_tabs/account.html:359
 msgid "Reset Password"
 msgstr "Réinitialiser le mot de passe"
 
-#: templates/_settings_tabs/account.html:352
+#: templates/_settings_tabs/account.html:360
 msgid "Leave blank to keep current"
 msgstr "Laissez vide pour conserver le mot de passe actuel"
 
-#: templates/_settings_tabs/account.html:353
+#: templates/_settings_tabs/account.html:361
 msgid "Only for admin accounts"
 msgstr "Uniquement pour les comptes administrateur"
 
-#: templates/_settings_tabs/account.html:358
+#: templates/_settings_tabs/account.html:366
 msgid "Save User"
 msgstr "Enregistrer l'utilisateur"
 
