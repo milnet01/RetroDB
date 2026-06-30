@@ -31,6 +31,16 @@ import subprocess
 import sys
 import zipfile
 
+# Status output below contains Unicode (e.g. "→" in the size summary). Windows'
+# legacy cp1252 console codec can't encode those and aborts the build with
+# UnicodeEncodeError — which is exactly what broke the standalone Windows
+# bundle. Force UTF-8 on stdout/stderr so output is safe on every platform.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):
+        pass
+
 
 # ── Staging area (outside project dir) ──────────────────────────────────────
 # RETRODB_STAGING_DIR overrides the hardcoded path — used by release.yml
