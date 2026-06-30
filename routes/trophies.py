@@ -1072,7 +1072,7 @@ def _run_psn_full_sync(psnawp, user_id):
                 INSERT INTO psn_sync_status
                     (user_id, username, sync_in_progress, last_full_sync, trophy_level, avatar_url)
                 VALUES (?, ?, 1, datetime('now'), ?, ?)
-                ON CONFLICT(user_id) DO UPDATE SET
+                ON CONFLICT(user_id) WHERE user_id IS NOT NULL DO UPDATE SET
                     username = excluded.username,
                     sync_in_progress = excluded.sync_in_progress,
                     last_full_sync = excluded.last_full_sync,

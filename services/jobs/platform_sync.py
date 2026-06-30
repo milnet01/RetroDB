@@ -439,7 +439,6 @@ class SteamSyncJob:
             sync_conn = _get_conn()
             try:
                 sync_cursor = sync_conn.cursor()
-                _pending_commits = 0
 
                 for i, game in enumerate(games):
                     # Skip None placeholders (already-processed items from resume)
@@ -455,9 +454,6 @@ class SteamSyncJob:
                     # Persist progress periodically
                     _now = time.time()
                     if (i % 10 == 0 or _now - _last_persist_time >= 30) and i > 0:
-                        if _pending_commits > 0:
-                            _commit_with_retry(sync_conn)
-                            _pending_commits = 0
                         with self._lock:
                             _progress = {
                                 'current': i + 1, 'total': len(games),
@@ -500,7 +496,6 @@ class SteamSyncJob:
                             sync_conn.rollback()
                         except Exception:
                             pass
-                        _pending_commits = 0
                         with self._lock:
                             self.failed_count += 1
 
@@ -508,8 +503,6 @@ class SteamSyncJob:
                     # shutdown-aware sleep so SIGTERM collapses the wait.
                     shutdown_requested.wait(1.0)
 
-                if _pending_commits > 0:
-                    _commit_with_retry(sync_conn)
             finally:
                 sync_conn.close()
 
@@ -754,7 +747,6 @@ class XboxSyncJob:
             sync_conn = _get_conn()
             try:
                 sync_cursor = sync_conn.cursor()
-                _pending_commits = 0
 
                 for i, game in enumerate(games):
                     # Skip None placeholders (already-processed items from resume)
@@ -769,9 +761,6 @@ class XboxSyncJob:
 
                     _now = time.time()
                     if (i % 10 == 0 or _now - _last_persist_time >= 30) and i > 0:
-                        if _pending_commits > 0:
-                            _commit_with_retry(sync_conn)
-                            _pending_commits = 0
                         with self._lock:
                             _progress = {
                                 'current': i + 1, 'total': len(games),
@@ -814,15 +803,12 @@ class XboxSyncJob:
                             sync_conn.rollback()
                         except Exception:
                             pass
-                        _pending_commits = 0
                         with self._lock:
                             self.failed_count += 1
 
                     # Pass 40.10 — shutdown-aware rate-limit sleep.
                     shutdown_requested.wait(0.5)
 
-                if _pending_commits > 0:
-                    _commit_with_retry(sync_conn)
             finally:
                 sync_conn.close()
 

@@ -23,14 +23,12 @@
 import logging
 import sqlite3
 
+# Strict helper (spec §10/§11): pre-checks PRAGMA table_info instead of
+# swallowing every OperationalError, so a real error (bad col_type, locked DB)
+# bubbles instead of being silently masked.
+from services.migrations._helpers import _add_column_if_missing
+
 logger = logging.getLogger(__name__)
-
-
-def _add_column_if_missing(c, table, col_name, col_type):
-    try:
-        c.execute(f"ALTER TABLE {table} ADD COLUMN {col_name} {col_type}")
-    except sqlite3.OperationalError:
-        pass
 
 
 # (column, type-with-default) — types mirror the legacy games schema exactly.

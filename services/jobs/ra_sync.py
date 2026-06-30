@@ -264,7 +264,6 @@ class RASyncJob:
             ra_conn = _get_conn()
             try:
                 ra_cursor = ra_conn.cursor()
-                _pending_commits = 0
 
                 for i, game in enumerate(games):
                     # Skip None placeholders (already-processed items from resume)
@@ -277,14 +276,12 @@ class RASyncJob:
                         self.current_index = i + 1
                         self.current_game_title = game['title']
 
-                    # Persist progress every 10 items or 30 seconds
-                    # Commit pending writes first to release write lock before persist
-                    # opens its own connection (SQLite allows only one writer at a time)
+                    # Persist progress every 10 items or 30 seconds. Each game
+                    # already commits its own writes (per-game commit below), so
+                    # there is never anything pending to flush before persist
+                    # opens its own connection.
                     _now = time.time()
                     if (i % 10 == 0 or _now - _last_persist_time >= 30) and i > 0:
-                        if _pending_commits > 0:
-                            _commit_with_retry(ra_conn)
-                            _pending_commits = 0
                         with self._lock:
                             _progress = {
                                 'current': i + 1, 'total': len(games),
@@ -378,16 +375,11 @@ class RASyncJob:
                             ra_conn.rollback()
                         except Exception:
                             pass
-                        _pending_commits = 0
                         with self._lock:
                             self.failed_count += 1
 
                     # Rate limit — Pass 40.10: shutdown-aware sleep.
                     shutdown_requested.wait(0.5)
-
-                # Flush any remaining uncommitted writes
-                if _pending_commits > 0:
-                    _commit_with_retry(ra_conn)
             finally:
                 ra_conn.close()
 

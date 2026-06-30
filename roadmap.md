@@ -356,6 +356,22 @@ are tracked here so the next pass picks them up:
 - **MEDIUM** raw `{{ name }}` into JS string literals on 8 template sites (a `"`
   or `</script>` in a system/ROM name hard-broke the page) → `|tojson`.
 - **LOW** `/api/games` pagination `page` floored at 1.
+- **MEDIUM (Loop-2)** PSN trophy-sync upsert used a bare `ON CONFLICT(user_id)`
+  against the **partial** `idx_psn_sync_status_user_id` index
+  (`WHERE user_id IS NOT NULL`), which SQLite refuses — the first PSN full-sync
+  500'd on every install (fresh AND the legacy DB, both carry the partial
+  index). Conflict target now names the partial predicate
+  (`routes/trophies.py`); pinned by `tests/test_fresh_install_schema.py`.
+- **Loop-2 cleanup** removed the now-dead `_pending_commits` flush machinery the
+  per-game-commit fix orphaned (`ra_sync`/`platform_sync`); migration 013 now
+  imports the strict `_add_column_if_missing` from `_helpers` (spec §10/§11)
+  instead of an error-swallowing inline copy.
+
+> **Loop-2 cold re-review** (DB/migrations, jobs, SSRF — briefed cold, no mention
+> of the fixes): the port-0 SSRF fix, the per-game-commit fix, migration 013
+> (idempotency + completeness), and the atomic_write_json refactor were all
+> independently confirmed to hold. The deferred 49.x items below were re-raised
+> or newly surfaced and remain open.
 
 #### Pass 49.1 `clear-ra-data` library-wide vs per-user semantics (MEDIUM, S)
 - **Status**: deferred — design decision, not a silent fix.
@@ -457,6 +473,28 @@ are tracked here so the next pass picks them up:
     `audit_rule_quality.json` shipped); `EXCLUDE_DIRS` matches by basename at any
     depth. No secret leaked today, but make the walk respect `.gitignore` and
     anchor `EXCLUDE_DIRS` to top-level.
+  - **(Loop-2)** `ra_sync`/`platform_sync` skip-path (`if result is None:
+    continue`) bypasses the `shutdown_requested.wait()` rate-limit — a long run
+    of skipped games becomes a tight loop that drains a SIGTERM slightly slower
+    than the per-request budget implies.
+  - **(Loop-2)** `services/ssrf.py` pin host match is exact-string + fail-open
+    (`return _orig_getaddrinfo` on miss); a future caller passing a
+    non-normalized host (trailing dot / uppercase) to `pin_host_ip` would
+    silently skip the pin. Normalize/lower the host on both store and compare.
+
+#### Pass 49.8 Job resume off-by-one silently drops the in-progress game (MEDIUM, S)
+- **Status**: deferred — pre-existing (predates the Pass 49 per-game-commit fix);
+  surfaced by the Loop-2 cold re-review.
+- **Lane**: background jobs (Lane 7).
+- **Finding**: the periodic-persist block runs at the *top* of iteration `i` and
+  writes `'current': i + 1`, but only games `0..i-1` are committed at that point.
+  `resume_from_params` computes `remaining_ids = game_ids[resume_index:]` =
+  `game_ids[i+1:]`, so the in-progress game at index `i` is skipped on resume and
+  counted in neither success nor failed (`ra_sync.py`, `platform_sync.py` ×2).
+- **Decision**: persist `current` as completed-count, or resume from
+  `max(resume_index - 1, 0)` — the upserts are idempotent (`ON CONFLICT DO
+  UPDATE`), so re-processing one already-done game is harmless. Re-runnable sync
+  job, so impact is LOW-MEDIUM.
 
 ---
 

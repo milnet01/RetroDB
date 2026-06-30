@@ -70,3 +70,33 @@ def test_fresh_install_has_controller_and_psn_tables():
     tables = _tables()
     for required in ("controllers", "system_controllers", "psn_sync_status"):
         assert required in tables, f"{required} table missing on a fresh install"
+
+
+def test_fresh_psn_sync_status_upsert_matches_partial_index():
+    """The psn_sync_status user_id index is PARTIAL (WHERE user_id IS NOT NULL),
+    so the trophy-sync upsert must name that partial conflict target — a bare
+    `ON CONFLICT(user_id)` raises 'does not match any ... UNIQUE constraint' on
+    every fresh install (and on the legacy DB, which carries the same index).
+    This pins the routes/trophies.py upsert against the shipped index shape.
+    """
+    conn = sqlite3.connect(config.DB_PATH)
+    try:
+        for name in ("first", "second"):
+            conn.execute(
+                """
+                INSERT INTO psn_sync_status
+                    (user_id, username, sync_in_progress, last_full_sync,
+                     trophy_level, avatar_url)
+                VALUES (1, ?, 1, datetime('now'), 5, '')
+                ON CONFLICT(user_id) WHERE user_id IS NOT NULL DO UPDATE SET
+                    username = excluded.username
+                """,
+                (name,),
+            )
+        conn.commit()
+        row = conn.execute(
+            "SELECT username FROM psn_sync_status WHERE user_id = 1"
+        ).fetchone()
+        assert row[0] == "second", "upsert should have updated the existing row"
+    finally:
+        conn.close()
