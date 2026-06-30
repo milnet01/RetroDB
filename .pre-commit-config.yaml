@@ -1,15 +1,19 @@
 # Pre-commit hooks for RetroDB.
 #
-# Install locally:
+# Install locally (enables BOTH the per-commit hooks and the pre-push gate):
 #   pip install pre-commit --break-system-packages
-#   pre-commit install
+#   pre-commit install                       # ruff + gitleaks on every commit
+#   pre-commit install --hook-type pre-push  # full local-CI gate before push
 #
 # Run manually across the whole tree:
 #   pre-commit run --all-files
 #
 # Ruff config is read from pyproject.toml; gitleaks from .gitleaks.toml.
-# Pytest / mypy are intentionally NOT wired in here — they belong in CI,
-# not on every commit (too slow for an interactive dev loop).
+# Pytest / mypy are intentionally NOT wired into the per-COMMIT stage — they
+# belong in CI, not on every commit (too slow for an interactive dev loop).
+# They DO run in the pre-PUSH gate below (scripts/ci_local.sh), which mirrors
+# .github/workflows/ci.yml so a red build is caught locally before it reaches
+# GitHub. A push is infrequent, so the extra ~1-2 min is worth it.
 # ruff-format is intentionally omitted — the repo is not currently
 # format-clean and adopting it needs its own reviewable pass.
 
@@ -24,3 +28,18 @@ repos:
     rev: v8.30.1
     hooks:
       - id: gitleaks
+
+  # Local CI gate — runs the full GitHub Actions check set (ruff, import smoke,
+  # pytest, i18n freshness, semgrep, pip-audit, lockfile-drift) before every
+  # push. Pre-PUSH only (not pre-commit). Enable with:
+  #   pre-commit install --hook-type pre-push
+  - repo: local
+    hooks:
+      - id: ci-local
+        name: Local CI (mirrors .github/workflows/ci.yml)
+        entry: scripts/ci_local.sh
+        language: script
+        stages: [pre-push]
+        pass_filenames: false
+        always_run: true
+        verbose: true

@@ -186,7 +186,8 @@ Pre-release checklist: bump version + changelog → ensure `config.example.py` m
 - `audit_hygiene.md` — Portable `/audit`-skill recommendations (not RetroDB-specific)
 - `.semgrep.yml` — Documented threat model + excluded upstream rule IDs (read before triaging new audit findings)
 - `.gitleaks.toml` — Allowlist for `logs/`, `data/*.json` tokens, admin-editable settings
-- `.pre-commit-config.yaml` — `ruff check --fix` + `gitleaks`. Install: `pip install pre-commit` (use a venv, or `--user`, or `--break-system-packages` on PEP-668 distros) then `pre-commit install`. `ruff-format`, `pytest`, `mypy` intentionally excluded (CI-only).
+- `.pre-commit-config.yaml` — per-commit `ruff check --fix` + `gitleaks`, **plus a pre-push gate** (`scripts/ci_local.sh`) that mirrors `.github/workflows/ci.yml` (ruff · import smoke · pytest · i18n freshness · semgrep · pip-audit · lockfile-drift) so a red build is caught locally before it reaches GitHub. Install: `pip install pre-commit` (venv / `--user` / `--break-system-packages` on PEP-668 distros) then `pre-commit install && pre-commit install --hook-type pre-push`. `ruff-format` / `mypy` intentionally excluded; `pytest` runs in the pre-push gate, not per-commit.
+- `scripts/ci_local.sh` — the local-CI runner the pre-push gate invokes; run it by hand any time with `./scripts/ci_local.sh` (~40 s warm). Exit 0 = safe to push. A missing tool is reported as a skip (never silently passed); override a failing gate with `git push --no-verify`.
 
 ---
 
