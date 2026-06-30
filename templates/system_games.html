@@ -226,7 +226,7 @@
     // System-specific RA refresh function
     {% if ra_supported %}
     function refreshRAForSystem() {
-        RARefreshController.refreshForSystem({{ system.id }}, '{{ system.name|e }}');
+        RARefreshController.refreshForSystem({{ system.id }}, {{ system.name|tojson }});
     }
     {% endif %}
 </script>

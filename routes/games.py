@@ -127,8 +127,11 @@ def all_games():
 @handle_api_errors
 def api_games():
     """Paginated games API for the all-games page"""
-    page = request.args.get('page', 1, type=int)
-    per_page = min(request.args.get('per_page', 100, type=int), 200)
+    # Floor page at 1: a 0/negative page makes offset = (page-1)*per_page
+    # negative, which SQLite clamps to 0 but leaves total_pages/has_more math
+    # wrong, silently serving page-1 data for page=0.
+    page = max(request.args.get('page', 1, type=int), 1)
+    per_page = min(max(request.args.get('per_page', 100, type=int), 1), 200)
 
     params = {k: request.args.get(k) for k in
               ('system', 'system_type', 'genre', 'franchise', 'developer',

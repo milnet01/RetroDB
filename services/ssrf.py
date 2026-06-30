@@ -108,8 +108,27 @@ def _pinned_getaddrinfo(host, *args, **kwargs):
     if pinned and pinned[0] == host:
         ip = pinned[1]
         family = socket.AF_INET6 if ':' in ip else socket.AF_INET
-        # getaddrinfo 5-tuple: (family, type, proto, canonname, sockaddr)
-        return [(family, socket.SOCK_STREAM, 0, '', (ip, 0))]
+        # Echo the port the caller asked for. getaddrinfo's signature is
+        # getaddrinfo(host, port, family, type, proto, flags); urllib3 passes
+        # the real port (e.g. 443) as the second positional. Earlier this
+        # hard-coded port 0 into the sockaddr, so a *fresh* pinned connection
+        # tried to connect to port 0 and hung — the pin only "worked" when an
+        # earlier unpinned HEAD on the same session had warmed the connection
+        # pool (so getaddrinfo was never called for the GET, defeating the
+        # whole rebinding guard). Preserve the port so the pin is real.
+        # getaddrinfo's port arg is an int (connect), a service-name str, or
+        # None (resolve-only). urllib3 passes the real int port for a connect;
+        # echo it so the pinned socket targets e.g. 443 instead of 0 (the old
+        # bug). For the resolve-only (None) and service-name cases the sockaddr
+        # port is inconsequential, so fall back to 0 — exactly the prior
+        # always-pin behaviour, which the resolve-only path still relies on.
+        port = args[0] if args else kwargs.get('port', 0)
+        if not isinstance(port, int):
+            port = 0
+        # sockaddr is a 2-tuple for IPv4, 4-tuple (ip, port, flowinfo, scope)
+        # for IPv6. getaddrinfo 5-tuple: (family, type, proto, canonname, sockaddr)
+        sockaddr = (ip, port, 0, 0) if family == socket.AF_INET6 else (ip, port)
+        return [(family, socket.SOCK_STREAM, 0, '', sockaddr)]
     return _orig_getaddrinfo(host, *args, **kwargs)
 
 

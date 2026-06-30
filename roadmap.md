@@ -315,6 +315,151 @@ are tracked here so the next pass picks them up:
 
 ---
 
+### Pass 49 — audit + indie-review 2026-06-30 (fix-pass + deferrals)
+
+> Source: `/audit` (static analysis) + `/indie-review` (14-subsystem cold
+> review) run at v3.12.0. Static analysis was clean (ruff / semgrep / gitleaks /
+> pip-audit all green; 97 bandit + 132 mypy findings triaged to false-positives,
+> logged to `.ants_review_falsepos.jsonl`). The semantic sweep surfaced one
+> **CRITICAL** fresh-install schema gap plus a tier of HIGH/MEDIUM fixes — all
+> verified and **landed in v3.12.1** — and the deferred tail below, calibrated to
+> the single-household-LAN threat model.
+
+**Landed in v3.12.1** (do not re-open; the cold re-read is the verification):
+- **CRITICAL — fresh-install schema backfill** (migration 013). A truly fresh
+  install (`init_database()` runs migrations 001..012 only) built a `games`
+  table missing 12 columns (`critic_score`/`user_score`/`has_retroachievements`/
+  `ra_game_id`/`ra_achievement_count`/`ra_points`/`campaign`/`game_structure`/
+  `edition`/`other_platforms` + the two `*_count`s), a `systems` table missing
+  `system_type`/`default_controller_id`, and the `controllers` /
+  `system_controllers` / `psn_sync_status` tables entirely — they existed only
+  on the maintainer's legacy DB. Card-data (main library view), scraping, and
+  PSN sync 500'd on a clean install. Found only once the test suite was isolated
+  onto a fresh throwaway DB (see below). Migration 013 ensures all of them
+  idempotently; regression-pinned by `tests/test_fresh_install_schema.py`.
+- **HIGH** SSRF DNS-rebinding pin connected to port 0 (`services/ssrf.py`) — the
+  pin was a no-op that only "worked" via connection-pool reuse and hung on a
+  cold pool; now echoes the real port.
+- **HIGH** `ra_sync` / `platform_sync` batched-commit rollback discarded a prior
+  game's already-counted writes → per-game commit.
+- **HIGH** `game_cleanup.clear_scraped_data` deleted image files before nulling
+  DB columns → reordered (null first), no dangling refs on failure.
+- **HIGH** `pytest` (and the `ci_local.sh` pre-push gate) ran migrations +
+  seeder against the real `database/roms.db` → `tests/conftest.py` now points
+  `RETRODB_DB_PATH` at a throwaway DB.
+- **MEDIUM** bare `request.get_json()` on 9 POST endpoints (auth ×4, platform
+  imports ×3, games_media ×2) 500'd on empty/non-JSON bodies → `silent=True or {}`.
+- **MEDIUM** `atomic_write_json` static `.tmp` suffix (torn-write race) → routed
+  through `atomic_write_text`/`mkstemp`.
+- **MEDIUM** IGDB `comp['company']['name']` unguarded discarded the whole IGDB
+  apply on an unexpanded company → shape-guarded.
+- **MEDIUM** raw `{{ name }}` into JS string literals on 8 template sites (a `"`
+  or `</script>` in a system/ROM name hard-broke the page) → `|tojson`.
+- **LOW** `/api/games` pagination `page` floored at 1.
+
+#### Pass 49.1 `clear-ra-data` library-wide vs per-user semantics (MEDIUM, S)
+- **Status**: deferred — design decision, not a silent fix.
+- **Lane**: collections/achievements/trophies (Lane 10).
+- **Finding**: `routes/ra_sync.py` `api_clear_ra_data_all` / `_system` DELETE
+  `game_achievement_progress` with no `user_id` predicate, wiping every user's
+  earned-achievement progress (the table is per-user, migration 009). It is
+  paired with clearing the *shared* `games.ra_game_id` links, so clearing all
+  progress is internally consistent (otherwise orphaned) — which is why this is
+  a semantics call, not a clear bug.
+- **Decision**: confirm intended meaning — a library-wide admin reset (current)
+  or a per-user clear. If per-user, scope BOTH the link clear and the progress
+  DELETE by `g.user['id']`. Single-household threat model keeps impact LOW.
+
+#### Pass 49.2 bulk-scrape swap/demote counter corruption after join timeout (MEDIUM, M)
+- **Status**: deferred — needs careful concurrency design.
+- **Lane**: background jobs (Lane 7).
+- **Finding**: `services/jobs/bulk_scrape.py` `swap_with_running` /
+  `demote_running` `join(timeout=60)` then proceed even if the old worker is
+  still alive; a hung scraper's worker can wake after `reset()` and increment
+  the *new* job's `success_count`/`failed_count`.
+- **Decision**: block or hard-fail the swap when the old thread is still alive
+  rather than "proceed with state mixing possible".
+
+#### Pass 49.3 SSRF redirect-chain HEAD probes are unpinned (MEDIUM, M)
+- **Status**: deferred — hardening; the GET is now correctly pinned (Pass 49 port-0 fix).
+- **Lane**: core/SSRF (Lane 11).
+- **Finding**: `services/ssrf.py` `validate_redirect_chain` validates each hop
+  then issues `session.head(...)` unpinned, re-resolving DNS — a rebinding
+  server can pass validation and serve a private/metadata IP to the HEAD.
+- **Decision**: wrap each HEAD hop in `pin_host_ip` (or re-validate the IP the
+  HEAD resolved). Low live risk on a LAN with no internal SSRF targets.
+
+#### Pass 49.4 `organize-multidisc` relies on incidental path-nesting (MEDIUM, S)
+- **Status**: deferred — currently safe; explicit hardening.
+- **Lane**: maintenance/reports (Lane 9).
+- **Finding**: `routes/reports.py` move branch blocks a traversing `system`
+  param only because `folder_path` nests under `system_path` and `safe_path`
+  catches the escape — there is no independent DB/`safe_path` check on `system`
+  like the multidisc-scan path has.
+- **Decision**: add an explicit `system` validation mirroring `reports.py:405`.
+
+#### Pass 49.5 `/api/*` auth decorators 302-redirect instead of JSON 401/403 (LOW, M)
+- **Status**: deferred — cross-cutting, ~15 routes; spec-acknowledged debt.
+- **Lane**: auth + every blueprint using `@admin_required`/`@editor_required`.
+- **Finding**: `admin_required`/`editor_required` (services/auth.py) still emit a
+  302 on `/api/*` auth failure (only `permission_required` was migrated, Pass
+  45.1). A `fetch()` follows it transparently and sees 200 HTML instead of a 403
+  JSON envelope. Flagged independently by the auth, collections, and maintenance
+  lanes. Also: `api_change_password`/`api_force_change_password`/`api_user_settings`
+  return `code=200` for the anonymous branch instead of 401 (spec §11/INV-2).
+- **Decision**: add the `is_api` JSON-envelope branch to both decorators and
+  flip the three anonymous branches to 401. LOW under single-trust-domain.
+
+#### Pass 49.6 i18n — inline-`<script>` toast/modal strings untranslatable (MEDIUM, L)
+- **Status**: deferred — large mechanical sweep (~138 strings across ~20 templates).
+- **Lane**: templates/i18n (Lane 13).
+- **Finding**: `build_js.py` only scans `static/js/*.js`, so toast/modal string
+  literals inside template inline `<script>` blocks ride neither the JS `t()`
+  path nor `{{ _() }}`; they are permanently English for non-English locales and
+  invisible to `pybabel extract` (`game_detail.html`, `settings.html`,
+  `dashboard.html`, achievement/trophy/chd templates, …). Plus 4 constrained
+  `settings.html` JS-string sites (tz/avatar/role) still want `|tojson` for
+  consistency.
+- **Decision**: wrap each inline-`<script>` user-facing string in `{{ _('...') }}`
+  (the `wishlist.html` pattern) and regenerate catalogs per `docs/specs/i18n.md`.
+
+#### Pass 49.7 Assorted LOW / INFO review notes (LOW, S)
+- **Status**: deferred bundle — verified-but-low; pick up opportunistically.
+- Items:
+  - `services/migrations/__init__.py` — add a defensive `not conn.in_transaction`
+    assert before `BEGIN IMMEDIATE` so a future stray open transaction fails loudly.
+  - `services/database.py:_fsync_path` duplicates `services/atomic_io.py:fsync_path`
+    — dedupe to prevent drift.
+  - `services/jobs/museum.py` `get_status()` field names (`current_index`/
+    `total_systems`/`success_count`) diverge from the §7/§9 toast contract
+    (`current`/`total`/`success`, no `processing`/`percent`).
+  - `services/jobs/webp_migrate.py` resume path adopts a pre-existing `.webp`
+    sibling without the `verify()` the fresh path does (spec §12.1) → corrupt
+    sibling can silently replace a good boxart.
+  - `image_resize` and `webp_migrate` take distinct singleton locks and can race
+    the same boxart tree (stranded orphan `.png`); responsive-variant regen runs
+    on `'skipped'` files too (disk churn).
+  - `routes/trophies.py` import-time global monkeypatch of `pyrate_limiter`
+    (`_Limiter._try_acquire`) is fragile across library upgrades.
+  - `scraper/scrape_thegamesdb.py` assigns free-text TGDB ratings verbatim into
+    `esrb_rating`; `metadata_merger.py` drops bare single-letter ESRB codes
+    ("E"/"T"/"M") that lack a trailing space.
+  - `scraper/scrape_rawg.py` defaults `players` to `1` (truthy), pre-filling a
+    weak value that crowds out a better secondary source.
+  - Xbox scrapers (`scrape_xbox.py`) bypass `base_scraper.http_get` — no SSRF
+    risk (hardcoded `*.xboxlive.com`/`login.live.com` hosts) but `docs/specs/
+    scrapers.md` §10 wrongly claims Xbox was migrated; fix the doc.
+  - `hybrid_scraper.py` generic-controller `elif` branch is a no-op `pass` whose
+    comment promises to clear generic controller values.
+  - `static/js/main.js` `performGlobalSearch` is dead (`#globalSearch` absent
+    from all templates, `/api/search` route absent) — surface before removing.
+  - `build_dist.py` source-ZIP walk is denylist-only (a gitignored
+    `audit_rule_quality.json` shipped); `EXCLUDE_DIRS` matches by basename at any
+    depth. No secret leaked today, but make the walk respect `.gitignore` and
+    anchor `EXCLUDE_DIRS` to top-level.
+
+---
+
 ### Pass 48 — audit + indie-review fix-pass deferrals (2026-06-05)
 
 > Source: `/audit` (static analysis) + `/indie-review` (14-subsystem cold

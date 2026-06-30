@@ -194,7 +194,7 @@
 <script src="{{ url_for('static', filename='js/rom-tools.js') }}?v={{ config.APP_VERSION }}"></script>
 <script nonce="{{ csp_nonce }}">
 let foundFiles = [];
-const ROM_PATH = '{{ rom_path }}';
+const ROM_PATH = {{ rom_path|tojson }};
 
 // Path management
 function getFullPath() {

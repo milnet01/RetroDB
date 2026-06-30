@@ -198,7 +198,7 @@ def api_steam_fetch_library():
 @editor_required
 def api_steam_import():
     """Import selected Steam games into the library."""
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     selected_games = data.get('games', [])
 
     if not selected_games:
@@ -553,7 +553,7 @@ def api_xbox_fetch_library():
 @editor_required
 def api_xbox_import():
     """Import selected Xbox games into the library."""
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     selected_games = data.get('games', [])
 
     if not selected_games:
@@ -912,7 +912,7 @@ def _build_psn_library_response(games_data, from_api=False):
 @editor_required
 def api_psn_import():
     """Import selected PSN games into the library."""
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     selected_games = data.get('games', [])
 
     if not selected_games:

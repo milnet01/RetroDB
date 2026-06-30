@@ -477,16 +477,20 @@ def apply_metadata_to_game(db_game_id, igdb_data):
         
         involved_companies = igdb_data.get('involved_companies', [])
         for comp in involved_companies:
+            # IGDB returns `company` as the expanded object normally, but a bare
+            # integer ID when the reference fails to expand (deleted/merged
+            # company). Guard the shape: an unguarded comp['company']['name']
+            # raised TypeError on such an entry, and the outer except swallowed
+            # it and returned False — discarding the ENTIRE IGDB apply
+            # (publisher, developer, genre, ratings, media), not just this name.
+            company = comp.get('company')
+            name = company.get('name') if isinstance(company, dict) else None
+            if not name:
+                continue
             if comp.get('publisher'):
-                if publisher:
-                    publisher += f", {comp['company']['name']}"
-                else:
-                    publisher = comp['company']['name']
+                publisher = f"{publisher}, {name}" if publisher else name
             if comp.get('developer'):
-                if developer:
-                    developer += f", {comp['company']['name']}"
-                else:
-                    developer = comp['company']['name']
+                developer = f"{developer}, {name}" if developer else name
         
         # Release date
         release_date = igdb_data.get('first_release_date')

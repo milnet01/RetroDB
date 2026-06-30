@@ -12,6 +12,26 @@ from __future__ import annotations
 import os
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
+# Isolate the test database from the operator's real library DB.
+# `app.py` runs ensure_user_tables() + init_database() (schema migrations) and
+# the emulator seeder against config.DB_PATH at IMPORT time — not under
+# `if __name__ == '__main__'` — and many test modules `import app` (directly or
+# via the app_client fixture). config.DB_PATH defaults to database/roms.db, so
+# without this every `pytest` run (and the ci_local.sh pre-push gate) would run
+# migrations + seeding against the real library. Point it at a fresh throwaway
+# DB before config/app are first imported. An explicit RETRODB_DB_PATH (CI, or a
+# developer who wants a fixed path) still wins.
+import tempfile  # noqa: E402
+# Each pytest-xdist worker is a subprocess that inherits the master's env, so a
+# path set once would be SHARED by every worker and they'd race init_database
+# (UNIQUE constraint on the seeded admin). When running under xdist, key the DB
+# on the worker id so each gets its own; otherwise honour a developer/CI-set
+# RETRODB_DB_PATH and only mint one when none is set.
+_xdist_worker = os.environ.get("PYTEST_XDIST_WORKER")
+if _xdist_worker or "RETRODB_DB_PATH" not in os.environ:
+    _test_db_dir = tempfile.mkdtemp(prefix=f"retrodb-test-{_xdist_worker or 'main'}-")
+    os.environ["RETRODB_DB_PATH"] = os.path.join(_test_db_dir, "roms.db")
+
 import pytest  # noqa: E402
 
 # Re-export shared utilities so test files can `from tests._util import ...`

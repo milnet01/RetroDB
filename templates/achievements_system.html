@@ -239,7 +239,7 @@
 {% block scripts %}
 <script nonce="{{ csp_nonce }}">
 const systemId = {{ system.id }};
-const systemName = '{{ system.name }}';
+const systemName = {{ system.name|tojson }};
 const gameCount = {{ games|length }};
 const raConfigured = {{ 'true' if ra_configured else 'false' }};
 

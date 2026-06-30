@@ -3379,7 +3379,7 @@ body:has(.game-fanart-bg.active)::before {
 <script nonce="{{ csp_nonce }}">
 // Game ID for API calls
 const gameId = {{ game.id }};
-const systemFolder = "{{ game.system_folder }}";
+const systemFolder = {{ game.system_folder|tojson }};
 const systemId = {{ system.id }};
 const currentControllerSupport = {{ game.controller_support|tojson|default('""') }};
 
@@ -4631,7 +4631,7 @@ async function performSearch(event) {
             `Search ${enabledNames.join(', ')} for metadata and boxart.`;
         
         // Now search
-        const systemName = "{{ game.system_name }}";
+        const systemName = {{ game.system_name|tojson }};
         const response = await fetch(`/api/games/search?title=${encodeURIComponent(title)}&system=${encodeURIComponent(systemName)}&folder=${encodeURIComponent(systemFolder)}&rom_path=${encodeURIComponent(currentRomPath || '')}`);
         const data = await response.json();
         

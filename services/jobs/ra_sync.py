@@ -357,12 +357,13 @@ class RASyncJob:
                                     source = 'ra'
                             """, (game['id'], self._user_id, game['ra_game_id'], earned, total_achievements,
                                   earned_points, total_points, pct, now_iso, skip_points, skip_points))
-                            _pending_commits += 2
-
-                            # Batch commit every 3 successful writes to minimize lock hold time
-                            if _pending_commits >= 3:
-                                _commit_with_retry(ra_conn)
-                                _pending_commits = 0
+                            # Commit each game's writes immediately. Batching
+                            # across games left prior successes uncommitted, so
+                            # the NEXT game's except-branch rollback() discarded
+                            # them while success_count had already counted them
+                            # (silent data loss). Per-game commit also shortens
+                            # the write-lock hold the batch was chasing.
+                            _commit_with_retry(ra_conn)
 
                             with self._lock:
                                 self.success_count += 1

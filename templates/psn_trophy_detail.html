@@ -680,7 +680,7 @@
 
 {% block scripts %}
 <script nonce="{{ csp_nonce }}">
-const npwrId = "{{ psn_game.npwr_id }}";
+const npwrId = {{ psn_game.npwr_id|tojson }};
 
 // FU.1 — replace the inline `onerror=…` fallback dance with delegated
 // listeners. CSP enforcing forbids the inline form; the visible behaviour

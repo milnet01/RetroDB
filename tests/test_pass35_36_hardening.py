@@ -62,12 +62,17 @@ def test_35_1_fsync_helper_exists_and_handles_missing_path():
 # 35.2 — atomic_write_json fsyncs parent directory
 # -----------------------------------------------------------------------------
 def test_35_2_atomic_write_json_fsync_dir(tmp_path):
-    """Source-level check — verify the fsync path is wired in the source."""
+    """Source-level check — verify the fsync-the-parent-directory idiom is wired.
+
+    atomic_write_json now delegates to atomic_write_text → atomic_write_bytes,
+    which fsyncs the parent directory via `fsync_path(directory)` (the helper
+    does `os.open(path, os.O_RDONLY)` + os.fsync). The dir-fsync moved out of an
+    inline `os.open(directory, ...)` in atomic_write_json's body, so assert on
+    the canonical primitive + its call site instead.
+    """
     src = read_source(os.path.join('services', 'atomic_io.py'))
-    # The fsync-the-parent-directory idiom — load-bearing assertion.
-    # (Previously also asserted a "Pass 35.2" comment marker; that
-    # was comment-as-proof and got removed in the test-audit fix-pass.)
-    assert "os.open(directory, os.O_RDONLY)" in src
+    assert "os.open(path, os.O_RDONLY)" in src        # fsync_path primitive
+    assert "fsync_path(directory)" in src             # called by atomic_write_bytes
 
 
 def test_35_2_atomic_write_json_still_works(tmp_path):

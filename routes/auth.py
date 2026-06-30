@@ -167,7 +167,7 @@ def api_list_users():
 @handle_api_errors
 def api_create_user():
     """Create a new user (admin only)"""
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     username = data.get('username', '').strip()
     display_name = data.get('display_name', '').strip() or username
     role = data.get('role', 'viewer')
@@ -213,7 +213,7 @@ def api_create_user():
 @admin_required
 def api_update_user(user_id):
     """Update a user (admin only)"""
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     
     user = query("SELECT * FROM users WHERE id = ?", (user_id,), one=True)
     if not user:
@@ -367,7 +367,7 @@ def api_change_password():
     if not rate_limit_login(rl_bucket):
         return error(_('Too many attempts. Please try again later.'), 429)
 
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     current_password = data.get('current_password', '')
     new_password = data.get('new_password', '')
 
@@ -414,7 +414,7 @@ def api_force_change_password():
     if not g.user.get('force_password_change'):
         return error(_('Password change not required'), code=200)
 
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     new_password = data.get('new_password', '')
 
     if not new_password:

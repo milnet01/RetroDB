@@ -479,16 +479,17 @@ class SteamSyncJob:
                         _upsert_steam_progress(
                             sync_cursor, game['id'], self._user_id,
                             game['steam_app_id'], result)
-                        _pending_commits += 1
-
-                        # Save individual achievements
-                        _pending_commits += _upsert_steam_achievements(
+                        # Save individual achievements.
+                        _upsert_steam_achievements(
                             sync_cursor, game['id'], game['steam_app_id'],
                             steam_api_key, result, self._user_id)
 
-                        if _pending_commits >= 3:
-                            _commit_with_retry(sync_conn)
-                            _pending_commits = 0
+                        # Commit each game immediately. Batching across games left
+                        # a prior game's writes uncommitted, so the next game's
+                        # except-branch rollback() discarded them while
+                        # success_count had already counted them (silent data
+                        # loss). Per-game commit also shortens the write-lock hold.
+                        _commit_with_retry(sync_conn)
 
                         with self._lock:
                             self.success_count += 1
@@ -793,15 +794,16 @@ class XboxSyncJob:
                         _upsert_xbox_progress(
                             sync_cursor, game['id'], self.user_id,
                             game['xbox_title_id'], result)
-                        _pending_commits += 1
-
-                        # Save individual achievements
-                        _pending_commits += _upsert_xbox_achievements(
+                        # Save individual achievements.
+                        _upsert_xbox_achievements(
                             sync_cursor, game['id'], result.get('achievements', []), self.user_id)
 
-                        if _pending_commits >= 3:
-                            _commit_with_retry(sync_conn)
-                            _pending_commits = 0
+                        # Commit each game immediately. Batching across games left
+                        # a prior game's writes uncommitted, so the next game's
+                        # except-branch rollback() discarded them while
+                        # success_count had already counted them (silent data
+                        # loss). Per-game commit also shortens the write-lock hold.
+                        _commit_with_retry(sync_conn)
 
                         with self._lock:
                             self.success_count += 1

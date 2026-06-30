@@ -333,7 +333,7 @@
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/rom-tools.js') }}?v={{ config.APP_VERSION }}"></script>
 <script nonce="{{ csp_nonce }}">
-const ROM_PATH = '{{ rom_path }}';
+const ROM_PATH = {{ rom_path|tojson }};
 let duplicateGroups = [];
 
 // Update full path when subpath changes

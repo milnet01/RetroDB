@@ -86,10 +86,27 @@ class TestCardDataETag:
         with client.session_transaction() as sess:
             # Minimal user session — games blueprint's login_required just
             # checks g.user via routes.auth.get_current_user, which reads
-            # session['user_id']. We stub by inserting a fake admin user
-            # into the DB only if needed, but the simpler approach is to
-            # skip this test when no auth context is cheap to build.
+            # session['user_id']. user_id=1 is the seeded default admin.
             sess['user_id'] = 1
+
+        # tests/conftest.py points RETRODB_DB_PATH at a fresh throwaway DB, so
+        # this test no longer rides on the maintainer's real library happening
+        # to be authenticated + populated. The card-data ETag is computed from
+        # MAX(updated_at) over the requested ids and set on the response
+        # unconditionally, so an empty result still yields a weak ETag — the
+        # 304 parity this test checks needs no actual game rows. It only needs
+        # an authenticated session whose admin (user_id=1) isn't stuck on the
+        # fresh-install force_password_change flow (which the
+        # check_force_password_change before_request hook would otherwise turn
+        # into a redirect to the change-password page).
+        import sqlite3
+        import config
+        _seed = sqlite3.connect(config.DB_PATH)
+        try:
+            _seed.execute("UPDATE users SET force_password_change = 0 WHERE id = 1")
+            _seed.commit()
+        finally:
+            _seed.close()
 
         resp1 = client.get('/api/games/card-data?ids=1')
         # Endpoint may 400 (no such id), 302 (not authed — stub user_id=1

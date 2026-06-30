@@ -62,7 +62,7 @@ def api_delete_game(game_id):
 @handle_api_errors
 def api_rename_rom(game_id):
     """Rename a ROM file on disk and update the database."""
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     new_filename = data.get('new_filename', '').strip()
 
     if not new_filename:
@@ -126,7 +126,7 @@ def api_rename_rom(game_id):
 @handle_api_errors
 def api_delete_screenshot(game_id):
     """Delete a screenshot from a game."""
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     screenshot_to_delete = data.get('screenshot')
 
     if not screenshot_to_delete:

@@ -1,3 +1,41 @@
+- version: 3.12.1
+  date: 2026-06-30
+  tags:
+  - type: fix
+    label: Fresh installs now build a complete database; reliability fixes
+  body: |
+    <ul>
+      <li><strong>Brand-new installs now work out of the box.</strong> A
+        fresh install was building its game database without a handful of
+        columns and tables the app expects (review scores, RetroAchievements
+        data, controller info), so opening the library could show an error on
+        a clean setup. A new database upgrade step fills in everything that was
+        missing. Existing libraries are unaffected &mdash; the step simply
+        confirms the pieces are already there.</li>
+      <li><strong>Achievement &amp; trophy syncs no longer lose a game&rsquo;s
+        progress.</strong> If one game failed mid-sync (RetroAchievements,
+        Steam, Xbox), the recovery step could quietly discard the previous
+        game&rsquo;s freshly-saved progress even though it was counted as done.
+        Each game is now saved on its own, so one hiccup can&rsquo;t roll back
+        its neighbours.</li>
+      <li><strong>&ldquo;Clear scraped data&rdquo; is safer.</strong> When also
+        deleting images, the app now clears the database references first and
+        removes the files second, so an interrupted cleanup can&rsquo;t leave
+        the library pointing at pictures that are already gone.</li>
+      <li><strong>Forms and imports handle empty or malformed requests
+        cleanly</strong> (password change, user edit, Steam/Xbox/PSN imports,
+        ROM rename, screenshot delete) &mdash; they now return a tidy message
+        instead of an internal error.</li>
+      <li><strong>Game names with quotes no longer break a page.</strong>
+        Several screens that embedded a system or ROM name into the page now
+        escape it properly, so an apostrophe or unusual character can&rsquo;t
+        stop the page from loading.</li>
+      <li>Under-the-hood hardening: safer settings-file writes (no torn files
+        when two saves overlap), more robust game-metadata scraping (one bad
+        record no longer aborts an entire source), a working DNS-rebinding
+        guard on outbound image fetches, and a test suite that now runs against
+        a throwaway database so it can never touch your real library.</li>
+    </ul>
 - version: 3.12.0
   date: 2026-06-30
   tags:

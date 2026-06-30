@@ -171,14 +171,21 @@ def clear_scraped_data(system_id=None, delete_images=False):
 
     game_ids_to_reset = [g['id'] for g in games]
 
-    if delete_images:
-        images_deleted = delete_game_images(games)
-
+    # Null the DB references BEFORE unlinking files. The reverse order (delete
+    # files, then UPDATE) leaves dangling boxart/screenshot pointers site-wide
+    # if the UPDATE raises (lock, disk-full, interrupt): the files are gone but
+    # the columns still name them. Doing the UPDATE first means a later
+    # delete_game_images() failure only strands orphan files on disk — harmless
+    # and reclaimable by the media-cleanup sweep — never a broken DB reference.
+    # `games` already holds the captured paths, so the delete still has them.
     if system_id:
         execute(f"UPDATE games SET {set_clause} WHERE system_id = ?", (system_id,))
     else:
         execute(f"UPDATE games SET {set_clause}")
     cleared = len(game_ids_to_reset)
+
+    if delete_images:
+        images_deleted = delete_game_images(games)
 
     if game_ids_to_reset:
         # try/finally so a raise inside reset_game_title_from_filename can't
