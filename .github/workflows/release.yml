@@ -103,8 +103,17 @@ jobs:
           #     --certificate-identity-regexp '.*' \
           #     --certificate-oidc-issuer https://token.actions.githubusercontent.com \
           #     ZIP
+          #
+          # --new-bundle-format=false (2026-06-30): recent cosign flipped the
+          # sign-blob default to the single-file .bundle format, which *ignores*
+          # --output-signature/--output-certificate and then aborts on the empty
+          # --bundle path ("create bundle file: open : no such file or
+          # directory"), silently breaking every signed release. Pin the legacy
+          # behaviour so the .sig/.pem pair (and the verify command above) keep
+          # working. Migrate to --bundle if/when cosign removes the legacy path.
           for f in RetroDB-*.zip RetroDB-*-sbom.cdx.json SHA256SUMS.txt; do
             cosign sign-blob --yes \
+              --new-bundle-format=false \
               --output-signature "${f}.sig" \
               --output-certificate "${f}.pem" \
               "$f"

@@ -82,17 +82,23 @@ else
 fi
 
 # ── Dispatch the standalone build ────────────────────────────────────────────
+# Record the most-recent EXISTING workflow_dispatch run id BEFORE dispatching, so
+# we can tell the run we're about to create apart from a stale prior dispatch.
+# Without this, `gh run list -L 1` returns an OLD completed dispatch in the window
+# before GitHub registers the new run — the watcher then "completes" instantly
+# against the wrong run and the release is never finalised (the 2026-06-30 bug).
+prev_rid="$(gh run list -w "$WORKFLOW" -e workflow_dispatch -L 1 --json databaseId -q '.[0].databaseId' 2>/dev/null || true)"
 say "• Dispatching $WORKFLOW (build_standalone=true)"
 gh workflow run "$WORKFLOW" -f tag="$TAG" -f build_standalone=true
 
-# Grab the run we just started (newest workflow_dispatch run for this workflow).
+# Poll until a NEW workflow_dispatch run (id != prev_rid) appears.
 rid=""
-for _ in $(seq 1 12); do
-  rid="$(gh run list -w "$WORKFLOW" -e workflow_dispatch -L 1 --json databaseId -q '.[0].databaseId' 2>/dev/null || true)"
-  [[ -n "$rid" ]] && break
+for _ in $(seq 1 24); do
+  cand="$(gh run list -w "$WORKFLOW" -e workflow_dispatch -L 1 --json databaseId -q '.[0].databaseId' 2>/dev/null || true)"
+  if [[ -n "$cand" && "$cand" != "$prev_rid" ]]; then rid="$cand"; break; fi
   sleep 5
 done
-[[ -n "$rid" ]] || die "Couldn't find the dispatched run — check the Actions tab."
+[[ -n "$rid" ]] || die "Couldn't find the dispatched run (none newer than ${prev_rid:-none}) — check the Actions tab."
 say "• Watching run $rid — the 3-OS standalone matrix takes ~15-30 min…"
 gh run watch "$rid" --exit-status \
   || die "Release run failed. Inspect with: gh run view $rid --log-failed"
