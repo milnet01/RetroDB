@@ -1404,9 +1404,13 @@ def changelog():
     page = entries[offset:offset + CHANGELOG_PAGE_SIZE]
     has_more = offset + CHANGELOG_PAGE_SIZE < len(entries)
     next_offset = offset + CHANGELOG_PAGE_SIZE
-    template = '_changelog_entries.html' if request.args.get('partial') else 'changelog.html'
-    return render_template(template, changelog=page,
-                           has_more=has_more, next_offset=next_offset)
+    # Pass literal .html template names (not a variable) so Flask's autoescape
+    # and the semgrep unescaped-template-extension rule both see the safe
+    # extension statically — keep the kwargs DRY in one dict.
+    ctx = dict(changelog=page, has_more=has_more, next_offset=next_offset)
+    if request.args.get('partial'):
+        return render_template('_changelog_entries.html', **ctx)
+    return render_template('changelog.html', **ctx)
 
 
 @app.route('/help')
