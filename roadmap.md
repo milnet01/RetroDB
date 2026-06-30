@@ -315,6 +315,55 @@ are tracked here so the next pass picks them up:
 
 ---
 
+### Pass 51 — Chinese localization + China game-rating system (2026-06-30)
+
+> Source: user request 2026-06-30 — add Chinese (Mandarin + Cantonese) UI
+> languages and, if China has a ratings board, gather its icons + info. Roadmapped
+> for later, not yet started.
+
+#### Pass 51.1 Chinese UI locales — Simplified (Mandarin) + Traditional (Cantonese) (FEATURE, L)
+- **Status**: planned.
+- **Important nuance**: "Mandarin" and "Cantonese" are *spoken* languages; a UI is
+  translated into *written* Chinese, which splits as **Simplified** (`zh_Hans`,
+  mainland / Mandarin-speaking) vs **Traditional** (`zh_Hant`, Hong Kong /
+  Cantonese-speaking + Taiwan). So deliver two locales: `zh_Hans` (Simplified,
+  for Mandarin users) and `zh_Hant` (Traditional, for Cantonese/HK users). Don't
+  create a literal "Cantonese" locale — written Cantonese colloquial is niche;
+  Traditional is the correct, expected target.
+- **Plan**: mirror the Korean (v3.12.0) pilot end-to-end per `docs/specs/i18n.md`:
+  add the two locales to the UI-catalog set (`pybabel init -l zh_Hans -d
+  translations`, etc.), translate the `.po` catalogs, add the human-translation
+  long-form files (`templates/help.zh_Hans.html` / `.zh_Hant.html`,
+  `data/changelog.zh_Hans.yaml` / `.zh_Hant.yaml`), wire the language picker, run
+  `scripts/check_i18n_fresh.py`. Brings supported languages to ten.
+- **Est.**: large — full catalog translation (the app has ~1000+ msgids) + the
+  help manual + changelog recent-entry translation per i18n §9.
+
+#### Pass 51.2 China game-rating system (9th rating board) (FEATURE, M)
+- **Status**: research + planned.
+- **Background (verify before building)**: China has no ESRB/PEGI-style statutory
+  board, but since 2021 the **China Game Rating system** — the "网络游戏适龄提示"
+  (Online Game Age-Appropriateness Reminder) issued by the Game Publishing
+  Committee / China Audio-video and Digital Publishing Association (CADPA) — uses
+  age tiers **8+ / 12 / 16** (green "适龄提示" badge). Confirm the current official
+  tier set, the exact badge artwork, and — critically — **icon licensing /
+  redistribution terms** before bundling images (the existing boards' icons are
+  used under their respective fair-use/press terms; CADPA's may differ).
+- **Plan** (mirrors the existing 8-system multi-rating architecture — CLAUDE.md
+  "Multi-rating system"): add a `china_rating` (or `cadpa_rating`) DB column via a
+  new migration; extend `RATING_IMAGE_MAP` / `RATING_TO_TIER` / `TIER_TO_RATING`
+  in `services/game_utils.py` with the China tiers + maturity-tier cross-mapping;
+  drop badge art under `static/images/ratings/CHINA/`; add the canonical values to
+  `services/i18n_labels.py` + `tests/test_i18n_labels.py`; expose it in the rating
+  preference dropdown + edit modal; teach the AI/scraper fill path the new field.
+  Note: most Western scrapers won't supply a China rating, so it will be largely
+  manual / AI-fill — set expectations accordingly.
+- **Open question for the user**: confirm whether you want the CADPA age-reminder
+  system specifically (the only nationwide one), and whether bundling its badge
+  art is acceptable given licensing.
+
+---
+
 ### Pass 50 — PSN authentication simplification (2026-06-30)
 
 > Source: user request 2026-06-30 — "simplify the PSN NSO token required for
