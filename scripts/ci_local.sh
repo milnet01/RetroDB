@@ -3,8 +3,11 @@
 # scripts/ci_local.sh — run the GitHub Actions CI checks locally.
 #
 # Mirrors .github/workflows/ci.yml (its four jobs) plus the documented i18n
-# freshness gate, against the LOCAL interpreter and installed tools, so a push
-# that would go red in CI fails here first.
+# freshness gate AND a lint of the workflow files themselves (ci.yml +
+# release.yml), against the LOCAL interpreter and installed tools, so a push
+# that would go red in CI — or a malformed workflow — fails here first.
+# (The release pipeline's keyless cosign signing needs a GitHub OIDC token and
+# cannot run locally; the workflow lint catches its config-level bugs instead.)
 #
 # Wired as a git PRE-PUSH gate via pre-commit (.pre-commit-config.yaml). Also
 # runnable by hand at any time:
@@ -90,6 +93,21 @@ if have pip-compile; then
   else fail "lockfile drift — run: pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes"; fi
   rm -f "$FRESH"
 else skip "pip-compile not installed  (pip install pip-tools)"; fi
+
+# 8. Workflow lint — .github/workflows/*.yml (ci.yml + release.yml) -----------
+# The release pipeline (release.yml) isn't exercised by the CI mirror above and
+# can't be fully run locally (its keyless cosign signing needs a GitHub OIDC
+# token), but a linter still catches workflow-config bugs — bad expressions,
+# shell-quoting, unknown keys. Prefer actionlint (deep checks); fall back to a
+# YAML-parse of each workflow so this step ALWAYS runs without a new tool.
+step "Workflow lint  ·  .github/workflows/*.yml"
+if have actionlint; then
+  actionlint && ok "actionlint" || fail "actionlint"
+elif python3 -c "import yaml,glob; [yaml.safe_load(open(f)) for f in glob.glob('.github/workflows/*.yml')]" 2>/dev/null; then
+  ok "workflow YAML valid  (install actionlint for expression/shell checks: https://github.com/rhysd/actionlint)"
+else
+  fail "workflow YAML invalid in .github/workflows/"
+fi
 
 # Summary --------------------------------------------------------------------
 echo
