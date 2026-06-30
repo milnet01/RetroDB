@@ -97,25 +97,18 @@ jobs:
           COSIGN_EXPERIMENTAL: "1"
         run: |
           # Keyless signing uses the GitHub Actions OIDC token — no long-lived
-          # private key to rotate. Each .sig + .pem pair goes into the release
-          # so downstream Patreon recipients can verify via:
-          #   cosign verify-blob --certificate ZIP.pem --signature ZIP.sig \
+          # private key to rotate. Current cosign REQUIRES the new single-file
+          # bundle format — the legacy --output-signature/.sig + --output-certificate/.pem
+          # pair was removed (cosign aborts: "must provide --new-bundle-format or
+          # --bundle"). Each artifact gets one .cosign.bundle (signature + cert +
+          # Rekor entry, JSON) attached to the release; downstream recipients verify:
+          #   cosign verify-blob --bundle ZIP.cosign.bundle \
           #     --certificate-identity-regexp '.*' \
           #     --certificate-oidc-issuer https://token.actions.githubusercontent.com \
           #     ZIP
-          #
-          # --new-bundle-format=false (2026-06-30): recent cosign flipped the
-          # sign-blob default to the single-file .bundle format, which *ignores*
-          # --output-signature/--output-certificate and then aborts on the empty
-          # --bundle path ("create bundle file: open : no such file or
-          # directory"), silently breaking every signed release. Pin the legacy
-          # behaviour so the .sig/.pem pair (and the verify command above) keep
-          # working. Migrate to --bundle if/when cosign removes the legacy path.
           for f in RetroDB-*.zip RetroDB-*-sbom.cdx.json SHA256SUMS.txt; do
             cosign sign-blob --yes \
-              --new-bundle-format=false \
-              --output-signature "${f}.sig" \
-              --output-certificate "${f}.pem" \
+              --bundle "${f}.cosign.bundle" \
               "$f"
           done
           ls -la
@@ -161,8 +154,7 @@ jobs:
             /tmp/staging/RetroDB-v*-*.zip
             /tmp/staging/RetroDB-*-sbom.cdx.json
             /tmp/staging/SHA256SUMS.txt
-            /tmp/staging/*.sig
-            /tmp/staging/*.pem
+            /tmp/staging/*.cosign.bundle
 
   # ---------------------------------------------------------------------------
   # Optional standalone PyInstaller binaries (Pass 46.3 Part 4).
