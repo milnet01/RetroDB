@@ -315,6 +315,73 @@ are tracked here so the next pass picks them up:
 
 ---
 
+### Pass 52 — Post-v3.14.0 UX & i18n polish (2026-07-01)
+
+> Source: in-session review 2026-07-01, immediately after the v3.14.0 Chinese
+> localization ship. Three improvements surfaced while surveying the app; each
+> was verified against the code so none duplicates existing/rejected scope
+> (reduced-motion, backup/restore, and core a11y were checked and already exist).
+
+#### Pass 52.1 Translate JS-driven toasts / dialogs — the last i18n seam (I18N, M)
+
+- **Status**: planned (raises the priority of the Pass 49.x deferral now that
+  v3.14.0 ships ten UI locales, two of them Chinese).
+- **Problem**: the UI catalogs cover templates and Python, but user-facing
+  strings emitted from JavaScript — `showNotification()` / `showConfirm()` /
+  `showModal()` toast + dialog copy — are largely hard-coded English string
+  literals. ~365 such call-sites exist across the templates; the Pass 49.x
+  deferral estimated ~138 literal strings (~20 templates) can't currently route
+  through gettext. Result: a fully-translated interface that still pops up
+  English "Saved" / "Are you sure?" / "Scrape complete" messages. Each new locale
+  (now Simplified + Traditional Chinese) makes the seam more visible.
+- **Plan** (per `docs/specs/i18n.md` §6): the JS translation path is `t('...')`
+  with **string literals only**; `python3 build_js.py` regenerates
+  `services/js_i18n_strings.py` (the runtime manifest + `_()` bridge anchors that
+  carry JS msgids into the catalog via the Python extractor — there is no
+  `[javascript:]` babel mapping). Sweep the inline `<script>` blocks + bundled
+  JS, wrap the literal user-facing strings in `t()`, rebuild JS, run the
+  `pybabel extract`/`update` + `gen_pseudolocale` + `compile` chain, translate
+  the new msgids across all ten locales, and gate with
+  `scripts/check_i18n_fresh.py`. Respect the §7 canonical multi-value exclusions
+  — never wrap genre/perspective/dimension/modes/game_structure values.
+- **Est.**: M — mechanical sweep, but ~138 strings × 10 locales plus a
+  build + catalog round-trip. Supersedes the Pass 49.x inline-`<script>` deferral.
+
+#### Pass 52.2 aria-live announcements for long-running job progress (A11Y, S)
+
+- **Status**: planned.
+- **Problem**: only 4 templates carry an `aria-live` region. Long-running,
+  JS-driven progress surfaces (bulk-scrape, bulk-edit, AI Fill, RA/Steam/Xbox/PSN
+  sync) update the DOM silently, so a screen-reader user hears nothing between
+  "start" and "done" — no "scraping 12 of 40" milestones. Distinct from the
+  deferred **FU.5** group-label a11y pattern (that is a form-labelling concern).
+- **Plan**: audit which progress containers update via JS without an announce
+  region; add a polite `aria-live="polite"` region (or reuse the existing toast
+  announce region) to the progress surface so milestone + completion updates are
+  spoken. Throttle announcements (milestones, not every row) to avoid chatter.
+  Verify with a screen reader / a11y devtools on one scrape + one bulk-edit run.
+- **Est.**: S — a handful of templates; reuses the existing announce pattern.
+
+#### Pass 52.3 Library "health" at-a-glance panel on the dashboard (ENHANCEMENT, M)
+
+- **Status**: planned.
+- **Idea**: surface signals that already exist but are scattered across the ROM
+  Tools hub into one actionable dashboard card — counts of unscraped games, games
+  missing box-art, duplicate ROMs (from the duplicate-finder), and broken/missing
+  ROM paths — each linking to the existing filtered view / tool that fixes it
+  ("12 games missing art · 3 duplicates · 1 broken path → fix"). Turns existing
+  data into an at-a-glance to-do list; reuse-before-rewrite (no new scanning
+  subsystem).
+- **Plan**: add a read-only aggregate query (respect the `AllGamesController`
+  patterns and `safe_column()`), render a card in the dashboard template, and
+  link each metric to its existing filtered view / tool. Keep the summary cheap;
+  gate the heavier broken-path stat (needs a disk walk) behind a lazy / on-demand
+  load so the dashboard stays fast.
+- **Est.**: M — mostly a query + a card; heavier only if broken-path detection
+  walks the disk (make that async / on-demand).
+
+---
+
 ### Pass 51 — Chinese localization + China game-rating system (2026-06-30)
 
 > Source: user request 2026-06-30 — add Chinese (Mandarin + Cantonese) UI
