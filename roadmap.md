@@ -322,7 +322,7 @@ are tracked here so the next pass picks them up:
 > for later, not yet started.
 
 #### Pass 51.1 Chinese UI locales — Simplified (Mandarin) + Traditional (Cantonese) (FEATURE, L)
-- **Status**: planned.
+- **Status**: done
 - **Important nuance**: "Mandarin" and "Cantonese" are *spoken* languages; a UI is
   translated into *written* Chinese, which splits as **Simplified** (`zh_Hans`,
   mainland / Mandarin-speaking) vs **Traditional** (`zh_Hant`, Hong Kong /

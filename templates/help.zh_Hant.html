@@ -1,0 +1,2006 @@
+{% extends "base.html" %}
+
+{% block title %}Help - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ _('Help & Documentation') }}</h1>
+        <p class="page-subtitle">{% trans version=config.APP_VERSION %}Complete guide to RetroDB v{{ version }}{% endtrans %}</p>
+    </div>
+</div>
+
+<!-- Help Navigation -->
+<div class="help-nav" data-sticky-nav>
+    <a href="#installation" class="help-nav-item">安裝</a>
+    <a href="#getting-started" class="help-nav-item">快速上手</a>
+    <a href="#platform-notes" class="help-nav-item">平台說明</a>
+    <a href="#navigation" class="help-nav-item">導覽</a>
+    <a href="#keyboard-shortcuts" class="help-nav-item">鍵盤快捷鍵</a>
+    <a href="#themes" class="help-nav-item">主題</a>
+    <a href="#dashboard" class="help-nav-item">儀表板</a>
+    <a href="#systems" class="help-nav-item">系統</a>
+    <a href="#api-keys" class="help-nav-item">API 金鑰</a>
+    <a href="#settings" class="help-nav-item">設定</a>
+    <a href="#scraping" class="help-nav-item">抓取</a>
+    <a href="#bulk-scrape" class="help-nav-item">批次抓取</a>
+    <a href="#ai-fill" class="help-nav-item">AI 填充</a>
+    <a href="#filtering" class="help-nav-item">篩選</a>
+    <a href="#game-detail" class="help-nav-item">遊戲詳情</a>
+    <a href="#bulk-edit" class="help-nav-item">批次編輯</a>
+    <a href="#compare" class="help-nav-item">比較</a>
+    <a href="#collections" class="help-nav-item">合集</a>
+    <a href="#game-imports" class="help-nav-item">遊戲匯入</a>
+    <a href="#retroachievements" class="help-nav-item">RetroAchievements</a>
+    <a href="#steam-achievements" class="help-nav-item">Steam</a>
+    <a href="#xbox-achievements" class="help-nav-item">Xbox</a>
+    <a href="#hltb" class="help-nav-item">HLTB</a>
+    <a href="#trophies" class="help-nav-item">獎盃</a>
+    <a href="#collector-trophies" class="help-nav-item">收藏家獎盃</a>
+    <a href="#museum" class="help-nav-item">博物館</a>
+    <a href="#analytics" class="help-nav-item">分析</a>
+    <a href="#reports" class="help-nav-item">報告</a>
+    <a href="#rom-tools" class="help-nav-item">ROM 工具</a>
+    <a href="#normalization" class="help-nav-item">規範化</a>
+    <a href="#image-standardization" class="help-nav-item">圖片縮放</a>
+    <a href="#logs" class="help-nav-item">日誌</a>
+    <a href="#maintenance" class="help-nav-item">維護</a>
+    <a href="#multi-user" class="help-nav-item">多使用者</a>
+    <a href="#backup" class="help-nav-item">備份</a>
+    <a href="#updating" class="help-nav-item">更新</a>
+    <a href="#troubleshooting" class="help-nav-item">故障排除</a>
+    <a href="#security" class="help-nav-item">安全</a>
+</div>
+
+<!-- Installation -->
+<section id="installation" class="help-section card">
+    <h2 class="card-title">安裝</h2>
+    <div class="card-body">
+        <h3>系統需求</h3>
+        <ul>
+            <li><strong>Python 3.8+</strong> 及 pip</li>
+            <li><strong>網頁瀏覽器</strong>（Chrome、Firefox、Safari、Edge）</li>
+            <li><strong>作業系統：</strong>Linux、Windows 10/11 或 macOS</li>
+        </ul>
+
+        <h3>快速安裝</h3>
+        <ol>
+            <li>將 RetroDB 的 ZIP 解壓到你選擇的目錄</li>
+            <li>在該目錄中開啟終端機／命令提示字元</li>
+            <li>執行：<code>python install.py</code></li>
+            <li>啟動伺服器：
+                <ul>
+                    <li>Linux：<code>./start.sh</code></li>
+                    <li>Windows：雙擊 <code>start.bat</code></li>
+                    <li>macOS：雙擊 <code>start.command</code></li>
+                </ul>
+            </li>
+            <li>在瀏覽器中開啟 <code>http://localhost:5000</code></li>
+        </ol>
+
+        <h3>圖形介面安裝程式</h3>
+        <p>在 Linux 上，你還可以執行 <code>./setup.sh</code> 來啟動圖形化安裝精靈。它會自動檢查 Python／pip／tkinter，然後透過可視化的進度日誌引導你完成每一個安裝步驟。</p>
+
+        <h3>install.py 的作用</h3>
+        <ul>
+            <li>驗證 Python 3.8+ 和 pip 是否可用</li>
+            <li>從 <code>requirements.txt</code> 安裝 Python 相依套件</li>
+            <li>從範例範本建立 <code>config.py</code></li>
+            <li>建立所需的目錄（資料庫、日誌、媒體資料夾）</li>
+            <li>建置 CSS 和 JS 套件</li>
+        </ul>
+
+        <h3>環境變數覆寫</h3>
+        <p>以下環境變數可在不編輯設定檔的情況下覆寫預設設定：</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>變數</th><th>預設值</th><th>說明</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>RETRODB_DB_PATH</code></td><td><code>database/roms.db</code></td><td>資料庫檔案路徑</td></tr>
+                <tr><td><code>RETRODB_HOST</code></td><td><code>0.0.0.0</code></td><td>伺服器綁定位址</td></tr>
+                <tr><td><code>RETRODB_PORT</code></td><td><code>5000</code></td><td>伺服器連接埠</td></tr>
+                <tr><td><code>RETRODB_DEBUG</code></td><td><code>false</code></td><td>除錯模式（<code>true</code> 或 <code>false</code>）&mdash; 啟用 Werkzeug 互動式除錯器。對於任何可從網路中其他裝置存取的安裝，請保持 <code>false</code>。</td></tr>
+                <tr><td><code>RETRODB_SECRET_KEY</code></td><td>自動產生</td><td>Flask 密鑰</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Getting Started -->
+<section id="getting-started" class="help-section card">
+    <h2 class="card-title">快速上手</h2>
+    <div class="card-body">
+        <h3>首次設定</h3>
+        <p>首次啟動時，RetroDB 會顯示一個<strong>設定精靈</strong>，引導你完成以下步驟：</p>
+        <ol>
+            <li><strong>管理員帳戶</strong> &mdash; 建立你的使用者名稱和密碼</li>
+            <li><strong>遊戲庫路徑</strong> &mdash; 設定你的 ROM 目錄</li>
+            <li><strong>ES-DE 整合</strong> &mdash; 可選地關聯 ES-DE 遊戲列表和媒體</li>
+            <li><strong>API 金鑰</strong> &mdash; 可選地新增抓取器 API 金鑰</li>
+        </ol>
+        <p>完成精靈後，點擊儀表板上的<strong>「掃描遊戲庫」</strong>以發現你的 ROM。</p>
+
+        <h3>快速開始流程</h3>
+        <ol>
+            <li><strong>掃描</strong>你的遊戲庫以匯入 ROM</li>
+            <li>按系統<strong>瀏覽</strong>，或在遊戲庫中查看所有遊戲</li>
+            <li>逐個<strong>抓取</strong>中繼資料，或使用批次抓取</li>
+            <li>使用標籤、列表和願望單進行<strong>整理</strong></li>
+            <li>透過完成狀態和成就<strong>追蹤</strong>你的進度</li>
+        </ol>
+
+        <h3>ROM 遊戲庫結構</h3>
+        <p>RetroDB 期望你的 ROM 在遊戲庫路徑下按系統資料夾組織：</p>
+        <pre>ROM Library/
+  nes/
+    Super Mario Bros. (USA).nes
+  snes/
+    Chrono Trigger (USA).sfc
+  psx/
+    Final Fantasy VII (USA)/
+      Final Fantasy VII (USA) (Disc 1).chd
+      Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>每個系統資料夾都應包含一個 ES-DE <code>systeminfo.txt</code> 檔案，用於定義支援的檔案副檔名。RetroDB 在掃描時讀取該檔案，以識別哪些檔案是每個系統的有效 ROM。</p>
+
+        <div class="help-tip">
+            <strong>提示：</strong>如果你已經用 ES-DE 抓取過，RetroDB 可以匯入那些資料！
+            在設定 &rarr; ES-DE 整合中，或在設定精靈期間配置 ES-DE 路徑。
+        </div>
+    </div>
+</section>
+
+<!-- Platform Notes -->
+<section id="platform-notes" class="help-section card">
+    <h2 class="card-title">平台說明</h2>
+    <div class="card-body">
+        <h3>Linux</h3>
+        <ul>
+            <li>已在 Ubuntu、Fedora、openSUSE 和 Arch Linux 上測試</li>
+            <li>ROM 工具需要：<code>sudo apt install p7zip-full unrar mame-tools</code>（Debian/Ubuntu），或你所用發行版的等效命令</li>
+            <li>如果使用系統 Python，安裝程式會自動處理 <code>--break-system-packages</code></li>
+            <li>支援 AMD GPU 的 ROCm GPU 加速（Real-ESRGAN 圖片放大）</li>
+        </ul>
+
+        <h3>Windows</h3>
+        <ul>
+            <li>從 <a href="https://python.org" target="_blank" rel="noopener noreferrer">python.org</a> 下載 Python（安裝時勾選 "Add to PATH"）</li>
+            <li>ROM 工具：安裝 <a href="https://www.7-zip.org/" target="_blank" rel="noopener noreferrer">7-Zip</a>、<a href="https://www.win-rar.com/" target="_blank" rel="noopener noreferrer">WinRAR</a> 和 <a href="https://www.mamedev.org/" target="_blank" rel="noopener noreferrer">MAME</a>（用於 chdman）</li>
+            <li>使用 <code>start.bat</code> 啟動，或從命令提示字元執行 <code>python app.py</code></li>
+        </ul>
+
+        <h3>macOS</h3>
+        <ul>
+            <li>可透過 <a href="https://brew.sh/" target="_blank" rel="noopener noreferrer">Homebrew</a> 安裝 Python 3：<code>brew install python3</code></li>
+            <li>ROM 工具：<code>brew install p7zip unrar rom-tools</code></li>
+            <li>在 Finder 中雙擊 <code>start.command</code> 啟動</li>
+            <li>支援 Apple Silicon 的 CoreML 加速（Real-ESRGAN 圖片放大）</li>
+        </ul>
+
+        <h3>各功能所需的 ROM 工具</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>功能</th><th>所需工具</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ZIP 解壓</td><td>unzip（通常已預裝）</td></tr>
+                <tr><td>7z 壓縮檔支援</td><td>7z（p7zip-full）</td></tr>
+                <tr><td>RAR 壓縮檔支援</td><td>unrar</td></tr>
+                <tr><td>CHD 轉換／校驗</td><td>chdman（mame-tools）</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Navigation -->
+<section id="navigation" class="help-section card">
+    <h2 class="card-title">導覽</h2>
+    <div class="card-body">
+        <h3>側邊欄分區</h3>
+
+        <h4>主要</h4>
+        <ul>
+            <li><strong>儀表板</strong> &mdash; 合集健康評分、統計概覽、API 狀態、最近遊玩／新增／抓取的遊戲、任務恢復</li>
+            <li><strong>系統</strong> &mdash; 瀏覽帶遊戲數量、系統圖片、規格的平台，按類型和特性篩選</li>
+            <li><strong>遊戲庫</strong> &mdash; 所有遊戲，支援無限捲動、進階篩選（包含／排除）、搜尋和排序</li>
+            <li><strong>分析</strong> &mdash; 跨 12 個標籤頁的圖表和合集統計，帶匯出選項</li>
+        </ul>
+
+        <h4>獎盃與成就</h4>
+        <ul>
+            <li><strong>RPCS3 獎盃</strong> &mdash; 來自 RPCS3 模擬器的本地獲得的 PS3 獎盃</li>
+            <li><strong>PSN 獎盃</strong> &mdash; 透過 PSN API 同步 PlayStation Network 獎盃</li>
+            <li><strong>成就</strong> &mdash; 按系統追蹤 RetroAchievements 進度</li>
+            <li><strong>Steam 成就</strong> &mdash; Steam 成就追蹤，含每個遊戲的詳情</li>
+            <li><strong>Xbox 成就</strong> &mdash; Xbox 成就和遊戲得分追蹤</li>
+        </ul>
+
+        <h4>我的合集</h4>
+        <ul>
+            <li><strong>標籤</strong> &mdash; 自訂顏色標記的遊戲標籤</li>
+            <li><strong>列表</strong> &mdash; 具名的精選遊戲列表，支援拖放排序</li>
+            <li><strong>願望單</strong> &mdash; 追蹤你想入手的遊戲，帶優先順序</li>
+            <li><strong>收藏家獎盃</strong> &mdash; 針對你的合集的遊戲化里程碑</li>
+        </ul>
+
+        <h4>工具</h4>
+        <ul>
+            <li><strong>ROM 報告</strong> &mdash; ROM 命名校驗和標準合規性</li>
+            <li><strong>遊戲匯入</strong> &mdash; 從 CLZ、Steam、Xbox 和 PSN 匯入</li>
+            <li><strong>ROM 工具</strong> &mdash; 壓縮檔掃描器、CHD 轉換／校驗、重複項尋找器、多光碟整理器、螢幕截圖去重、圖片縮放器</li>
+        </ul>
+
+        <h4>配置</h4>
+        <ul>
+            <li><strong>設定</strong> &mdash; 所有應用配置（6 個標籤頁，含多個子分區）</li>
+            <li><strong>日誌檢視器</strong> &mdash; 瀏覽所有類別的應用日誌</li>
+        </ul>
+
+        <h4>資訊</h4>
+        <ul>
+            <li><strong>博物館</strong> &mdash; 帶 AI 生成內容的互動式遊戲系統百科</li>
+            <li><strong>幫助</strong> &mdash; 本文件頁面</li>
+            <li><strong>更新日誌</strong> &mdash; 版本歷史</li>
+        </ul>
+
+        <h3>側邊欄高亮</h3>
+        <p>側邊欄會以青色高亮目前分區。深入查看時會保留上下文 &mdash; 查看某個系統的遊戲會保持<strong>系統</strong>高亮，從成就查看某個遊戲會保持<strong>成就</strong>高亮，依此類推。</p>
+
+        <h3>麵包屑導覽</h3>
+        <p>每個頁面頂部的麵包屑顯示你的導覽路徑。範例：</p>
+        <ul>
+            <li><code>Systems &rsaquo; NES &rsaquo; Super Mario Bros.</code></li>
+            <li><code>RetroAchievements &rsaquo; SNES</code></li>
+            <li><code>PSN Trophies &rsaquo; The Last of Us</code></li>
+        </ul>
+
+        <h3>標籤頁</h3>
+        <p>許多頁面使用標籤頁進行組織（設定、分析、報告、ROM 工具、成就）。標籤頁會拉伸以填滿內容寬度，並在適用處記住你上次的選擇。</p>
+    </div>
+</section>
+
+<!-- Keyboard Shortcuts -->
+<section id="keyboard-shortcuts" class="help-section card">
+    <h2 class="card-title">鍵盤快捷鍵</h2>
+    <div class="card-body">
+        <p>在任意頁面按 <kbd>?</kbd> 可顯示所有快捷鍵。當等待按鍵序列中的第二個鍵時，會出現一個待按鍵提示（例如 <code>g...</code>）。</p>
+
+        <h3>導覽（先按 G，再按字母）</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>d</kbd> <span>儀表板</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>s</kbd> <span>系統</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>l</kbd> <span>遊戲庫</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>a</kbd> <span>分析</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>t</kbd> <span>設定</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>h</kbd> <span>說明</span></div>
+        </div>
+
+        <h3>操作</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>/</kbd> <span>聚焦搜尋</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>關閉彈窗</span></div>
+            <div class="shortcut-item"><kbd>?</kbd> <span>顯示快捷鍵</span></div>
+        </div>
+
+        <h3>遊戲頁面</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>e</kbd> <span>編輯遊戲</span></div>
+            <div class="shortcut-item"><kbd>s</kbd> <span>抓取遊戲</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>瀏覽螢幕截圖</span></div>
+        </div>
+
+        <div class="help-tip">
+            <strong>注意：</strong>當文字輸入框、文字區域或彈窗獲得焦點時，鍵盤快捷鍵會被停用，以避免誤觸導覽。
+        </div>
+    </div>
+</section>
+
+<!-- Themes -->
+<section id="themes" class="help-section card">
+    <h2 class="card-title">主題</h2>
+    <div class="card-body">
+        <p>RetroDB 提供 7 種視覺主題，每種都有獨特的配色方案和動態畫布背景效果。在 <strong>設定 &rarr; 遊戲庫 &rarr; 顯示</strong> 中更改主題。</p>
+
+        <h3>可用主題</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>主題</th><th>配色</th><th>背景效果</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Cyberpunk</strong>（預設）</td><td>深藍底上的青色與品紅色</td><td>基於單純形雜訊的體積煙霧／薄霧</td></tr>
+                <tr><td><strong>Matrix</strong></td><td>黑底綠字</td><td>下落的數字雨（漢字字元）</td></tr>
+                <tr><td><strong>Amber</strong></td><td>深棕底上的琥珀色／橙色</td><td>帶日冕的 CRT 日出漸變</td></tr>
+                <tr><td><strong>Ocean</strong></td><td>深藏青底上的青綠色與藍色</td><td>帶海洋深度分層的月光倒影</td></tr>
+                <tr><td><strong>Cathedral</strong></td><td>深紫底上的金色與皇家紫色</td><td>自上而下的神聖光束與暖色氛圍</td></tr>
+                <tr><td><strong>Blade Runner</strong></td><td>深藍灰底上的電光藍與霓虹粉</td><td>帶雨絲與紫色霧靄的霓虹都市光暈</td></tr>
+                <tr><td><strong>Elite</strong></td><td>純黑底上的向量綠與白色</td><td>靈感源自 Elite (1984) 的線框向量美學</td></tr>
+            </tbody>
+        </table>
+
+        <h3>運作原理</h3>
+        <ul>
+            <li>主題會覆蓋 CSS 顏色變數 &mdash; 所有 UI 元素都會自動適配</li>
+            <li>畫布效果包含自動硬體等級偵測（高／中／低），在可用時使用 GPU 加速，在低端裝置上回退到 CPU</li>
+            <li>當標籤頁不可見時，效果會暫停以節省資源</li>
+            <li>Cyberpunk 煙霧狀態在頁面導覽間保持，以實現無縫過渡</li>
+            <li>細微的 CRT 風格掃描線疊加層會適配每種主題的配色方案</li>
+            <li>你的主題偏好會儲存在瀏覽器中，並在多次工作階段間保留</li>
+        </ul>
+
+        <h3>主題感知圖示</h3>
+        <p>通知圖示、任務狀態指示器和操作圖示會自動適配當前主題。例如，成功圖示在 Cyberpunk 上可能顯示為綠色對勾，而在 Matrix 上則顯示為其他符號，以匹配黑底綠字的美學。</p>
+    </div>
+</section>
+
+<!-- Dashboard -->
+<section id="dashboard" class="help-section card">
+    <h2 class="card-title">儀表板</h2>
+    <div class="card-body">
+        <h3>合集健康度評分</h3>
+        <p>一個環形進度圈以百分比形式顯示你合集的整體健康度，並按品質用顏色標識：</p>
+        <ul>
+            <li><strong>綠色</strong>（80%+）&mdash; 中繼資料覆蓋極佳</li>
+            <li><strong>青色</strong>（60&ndash;79%）&mdash; 覆蓋良好，但有一些空缺</li>
+            <li><strong>橙色</strong>（40&ndash;59%）&mdash; 覆蓋一般，可考慮批量抓取</li>
+            <li><strong>紅色</strong>（&lt;40%）&mdash; 中繼資料空缺較多</li>
+        </ul>
+        <p>下方的細分小環顯示封面完整度、簡介完整度和成就覆蓋度。</p>
+
+        <h3>統計概覽</h3>
+        <p>一目了然的卡片顯示：</p>
+        <ul>
+            <li><strong>系統總數</strong> &mdash; 你遊戲庫中的平台數量</li>
+            <li><strong>遊戲總數</strong> &mdash; 遊戲總數（不含附贈光碟）</li>
+            <li><strong>缺失中繼資料</strong> &mdash; 尚未抓取的遊戲</li>
+            <li><strong>已完成</strong> &mdash; 已抓取中繼資料的遊戲</li>
+        </ul>
+
+        <h3>近期活動區域</h3>
+        <p>可捲動的區域顯示你的近期活動（僅在有相關遊戲時才出現）：</p>
+        <ul>
+            <li><strong>正在遊玩</strong> &mdash; 標記為“進行中”的遊戲</li>
+            <li><strong>最近新增</strong> &mdash; 最近新增到遊戲庫的遊戲</li>
+            <li><strong>最近檢視</strong> &mdash; 你最近開啟過的遊戲</li>
+            <li><strong>最近抓取</strong> &mdash; 最近獲取過中繼資料的遊戲</li>
+        </ul>
+
+        <h3>快捷操作</h3>
+        <ul>
+            <li><strong>掃描遊戲庫</strong> &mdash; 掃描你的 ROM 目錄以查找新遊戲</li>
+            <li><strong>隨機遊戲</strong> &mdash; 從你的遊戲庫中隨機挑選一款遊戲</li>
+        </ul>
+
+        <h3>API 狀態</h3>
+        <p>顯示所有已配置的抓取器和 API 的連接狀態。離線或配置有誤的 API 會顯示一個帶有指向設定連結的警告橫幅。</p>
+
+        <h3>任務恢復</h3>
+        <p>如果 RetroDB 在後台任務（批量抓取、RA 同步、圖片縮放等）運行期間重啟，被中斷的任務會出現在恢復橫幅中。選項：</p>
+        <ul>
+            <li><strong>恢復</strong> &mdash; 重新啟動單個被中斷的任務</li>
+            <li><strong>全部恢復</strong> &mdash; 重新啟動所有被中斷的任務</li>
+            <li><strong>忽略</strong> &mdash; 從恢復列表中清除單個任務</li>
+            <li><strong>全部忽略</strong> &mdash; 清除所有被中斷的任務</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Systems Browser -->
+<section id="systems" class="help-section card">
+    <h2 class="card-title">系統瀏覽器</h2>
+    <div class="card-body">
+        <h3>系統網格</h3>
+        <p>系統頁面以響應式瀑布流網格佈局，將你遊戲庫中的所有平台顯示為卡片。每張卡片顯示：</p>
+        <ul>
+            <li><strong>系統徽標</strong>（可在 設定 &rarr; 自訂 &rarr; 徽標 中自訂）</li>
+            <li><strong>ROM 數量</strong> 和 <strong>未抓取數量</strong></li>
+            <li><strong>系統類型標記</strong> &mdash; 主機、掌機、電腦、街機或引擎</li>
+            <li><strong>功能標記</strong> &mdash; RetroAchievements 支援、本地獎盃（RPCS3）</li>
+        </ul>
+
+        <h3>系統規格彈窗</h3>
+        <p>點擊任意系統卡片上的資訊按鈕，即可查看詳細的硬體規格：</p>
+        <ul>
+            <li>硬體圖片（主機／系統照片）</li>
+            <li>製造商與發行日期</li>
+            <li>CPU、GPU、RAM、VRAM</li>
+            <li>解析度、色深、聲音晶片</li>
+            <li>介質類型（卡帶、光碟等）</li>
+        </ul>
+
+        <h3>篩選與搜尋</h3>
+        <ul>
+            <li><strong>文字搜尋</strong> &mdash; 按系統名稱或資料夾名稱篩選</li>
+            <li><strong>類型篩選</strong> &mdash; 主機、掌機、電腦、街機、引擎</li>
+            <li><strong>功能篩選</strong> &mdash; RetroAchievements 支援、本地獎盃</li>
+            <li>篩選結果欄顯示 <em>“Y 個系統中的 X 個”</em></li>
+            <li>篩選條件透過工作階段儲存在頁面重新載入後保留</li>
+        </ul>
+
+        <h3>各系統遊戲列表</h3>
+        <p>點擊任意系統卡片即可查看其遊戲。各系統的遊戲列表擁有與完整遊戲庫頁面相同的功能 &mdash; 無限捲動、搜尋、全部篩選選項、批量選擇和排序。系統標題欄顯示系統名稱、遊戲數量和系統類型標記。</p>
+    </div>
+</section>
+
+<!-- API Key Setup Guide -->
+<section id="api-keys" class="help-section card">
+    <h2 class="card-title">API 金鑰設定指南</h2>
+    <div class="card-body">
+        <p>API 金鑰是可選的，但可啟用豐富的中繼資料抓取和額外功能。在 <strong>設定 &rarr; 抓取 &rarr; API 金鑰</strong> 中配置它們。</p>
+
+        <h3>中繼資料抓取器</h3>
+
+        <h4>TheGamesDB</h4>
+        <ol>
+            <li>前往 <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a></li>
+            <li>申請 API 金鑰（免費，人工審核）&mdash; 你將收到一個 <strong>公鑰（Public）</strong> 和一個 <strong>私鑰（Private）</strong></li>
+            <li>在 設定 &rarr; API 金鑰 &rarr; TheGamesDB 中輸入這兩個金鑰</li>
+            <li><strong>公鑰</strong>（按 IP 限速）用作抓取的主金鑰</li>
+            <li><strong>私鑰</strong>（共享月度額度池）在公鑰失敗時用作後備</li>
+        </ol>
+
+        <h4>IGDB（透過 Twitch）</h4>
+        <ol>
+            <li>在 <a href="https://www.twitch.tv" target="_blank" rel="noopener noreferrer">twitch.tv</a> 建立一個 Twitch 帳戶</li>
+            <li>前往 <a href="https://dev.twitch.tv/console" target="_blank" rel="noopener noreferrer">dev.twitch.tv/console</a></li>
+            <li>註冊一個新應用（任意名稱、任意類別，OAuth 重新導向填 <code>http://localhost</code>）</li>
+            <li>複製 <strong>Client ID</strong> 並生成一個 <strong>Client Secret</strong></li>
+            <li>在 設定 &rarr; API 金鑰 &rarr; IGDB 中輸入兩者</li>
+        </ol>
+
+        <h4>RAWG.io</h4>
+        <ol>
+            <li>前往 <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer">rawg.io/apidocs</a></li>
+            <li>點擊 “Get API Key” 並建立一個帳戶</li>
+            <li>從儀表板複製你的 API 金鑰</li>
+            <li>在 設定 &rarr; API 金鑰 &rarr; RAWG 中輸入</li>
+        </ol>
+        <p><em>免費額度：每月 20,000 次請求</em></p>
+
+        <h4>ScreenScraper</h4>
+        <ol>
+            <li>在 <a href="https://www.screenscraper.fr" target="_blank" rel="noopener noreferrer">screenscraper.fr</a> 建立一個帳戶</li>
+            <li>在 設定 &rarr; API 金鑰 &rarr; ScreenScraper 中輸入你的使用者名稱和密碼</li>
+        </ol>
+        <p><em>注意：ScreenScraper 根據你的帳戶等級設有每日請求限額。為資料庫做貢獻可提高你的限額。</em></p>
+
+        <h3>成就與獎盃</h3>
+
+        <h4>RetroAchievements</h4>
+        <ol>
+            <li>在 <a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a> 建立一個帳戶</li>
+            <li>在你的個人資料上前往 <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer">設定 &rarr; API 金鑰</a></li>
+            <li>複製你的 API 金鑰</li>
+            <li>在 設定 &rarr; 帳戶 &rarr; RetroAchievements 中輸入你的使用者名稱和 API 金鑰</li>
+        </ol>
+
+        <h4>Steam Web API</h4>
+        <ol>
+            <li>前往 <a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener noreferrer">steamcommunity.com/dev/apikey</a></li>
+            <li>註冊一個 Steam Web API 金鑰（需要 Steam 帳戶）</li>
+            <li>在設定中輸入你的 API 金鑰和 Steam ID（或個性化 URL）</li>
+        </ol>
+        <p><em>用於 Steam 遊戲庫匯入和成就追蹤。</em></p>
+
+        <h4>Xbox Live</h4>
+        <p>Xbox 認證使用 OAuth2 &mdash; 無需 API 金鑰。直接從 遊戲匯入 &rarr; Xbox 標籤頁用你的 Microsoft 帳戶登入。權杖會自動快取並按需重新整理。</p>
+
+        <h4>PlayStation Network (PSN)</h4>
+        <p>PSN 使用 NPSSO cookie 認證。詳細設定說明請參見 <a href="#trophies">獎盃</a> 部分。</p>
+
+        <h3>AI 提供商（用於 AI 填充與博物館）</h3>
+        <p>AI 填充中繼資料和博物館內容生成需要一個 AI 提供商。可從以下選項中選擇：</p>
+
+        <table class="data-table">
+            <thead>
+                <tr><th>提供商</th><th>預設模型</th><th>價格（輸入／輸出，每 100 萬 tokens）</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0.10 / $0.40</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0.15 / $0.60</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 4.5</td><td>$1.00 / $5.00</td></tr>
+            </tbody>
+        </table>
+        <p>每家提供商都提供多個模型層級。最便宜的模型對中繼資料和博物館內容都表現良好。在 <strong>設定 &rarr; 抓取 &rarr; API 金鑰</strong> 中配置你偏好的提供商和 API 金鑰。</p>
+    </div>
+</section>
+
+<!-- Settings -->
+<section id="settings" class="help-section card">
+    <h2 class="card-title">設定</h2>
+    <div class="card-body">
+        <p>設定分為 6 個標籤頁，每個標籤頁都有多個子部分。</p>
+
+        <h3>帳戶標籤頁</h3>
+        <ul>
+            <li><strong>我的資料</strong> &mdash; 頭像上傳／移除、顯示名稱、角色資訊、修改密碼</li>
+            <li><strong>RetroAchievements</strong> &mdash; 用於 RA 整合的使用者名稱和 API 金鑰</li>
+            <li><strong>PSN</strong> &mdash; 用於 PlayStation Network 獎盃同步的 NPSSO cookie</li>
+            <li><strong>時區</strong> &mdash; 設定你的時區，用於整個應用中的日期顯示</li>
+            <li><strong>使用者</strong> &mdash; 使用者管理：新增、編輯、刪除使用者並分配角色（僅限管理員）</li>
+        </ul>
+
+        <h3>遊戲庫標籤頁</h3>
+        <ul>
+            <li><strong>路徑</strong> &mdash; ROM 遊戲庫路徑、資料庫位置</li>
+            <li><strong>顯示</strong> &mdash; 主題選擇、封面樣式（2D/3D）、偏好的年齡分級系統、每頁項目數</li>
+            <li><strong>ROM 命名</strong> &mdash; 冠詞位置（前置／後置的 “The”）、地區選項列表、預設地區、命名規範</li>
+            <li><strong>備份</strong> &mdash; 建立和恢復資料庫備份</li>
+        </ul>
+
+        <h3>抓取標籤頁</h3>
+        <ul>
+            <li><strong>ES-DE</strong> &mdash; 用於本地資料匯入的 ES-DE 遊戲列表和媒體路徑</li>
+            <li><strong>抓取器</strong> &mdash; 啟用／停用單個抓取器、拖放優先級排序、每個抓取器的限速設定</li>
+            <li><strong>API 金鑰</strong> &mdash; 所有抓取器憑據（TGDB、IGDB、RAWG、ScreenScraper）、AI 提供商選擇和模型選擇（Gemini、OpenAI、Claude）</li>
+        </ul>
+
+        <h3>資料標籤頁</h3>
+        <ul>
+            <li><strong>統計</strong> &mdash; 遊戲庫統計概覽（遊戲總數、系統數、儲存佔用）</li>
+            <li><strong>獎盃</strong> &mdash; 用於本地 PS3 獎盃掃描的 RPCS3 獎盃路徑配置</li>
+            <li><strong>下拉選項</strong> &mdash; 自訂地區選項和整個應用中使用的其他下拉值</li>
+            <li><strong>規範化</strong> &mdash; 類型和模式的規範化規則 &mdash; 新增自訂映射以統一抓取器輸出</li>
+        </ul>
+
+        <h3>自訂標籤頁</h3>
+        <ul>
+            <li><strong>通知</strong> &mdash; 通知超時偏好（成功、資訊、警告、錯誤 &mdash; 每種均可獨立配置）</li>
+            <li><strong>手把</strong> &mdash; 管理手把庫、為每個系統設定預設手把、新增自訂手把。在中繼資料獲取期間，預設手把會覆蓋抓取／AI 的值。</li>
+            <li><strong>徽標</strong> &mdash; 系統徽標自訂 &mdash; 匯入系統徽標或從預設恢復</li>
+        </ul>
+
+        <h3>系統標籤頁</h3>
+        <ul>
+            <li><strong>維護</strong> &mdash; 資料庫優化（VACUUM/ANALYZE）、孤立媒體清理、清理缺失的 ROM、清除抓取資料、清除 CLZ 匯入、批量圖片標準化</li>
+            <li><strong>伺服器</strong> &mdash; 伺服器配置（主機、連接埠、除錯模式）</li>
+            <li><strong>日誌</strong> &mdash; 不同類別的日誌級別設定</li>
+            <li><strong>故障排除</strong> &mdash; 清除卡住的批量抓取、清除 RA 同步佇列、清除 PSN 重新整理、清除博物館生成、重啟伺服器</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>提示：</strong>已停用的抓取器不會在儀表板上觸發 “API 離線” 警告。如果你不使用某個抓取器，請在 設定 &rarr; 抓取 &rarr; 抓取器 中將其停用，而不是刪除 API 金鑰。
+        </div>
+    </div>
+</section>
+
+<!-- Scraping -->
+<section id="scraping" class="help-section card">
+    <h2 class="card-title">抓取中繼資料</h2>
+    <div class="card-body">
+        <h3>單個遊戲抓取</h3>
+        <ol>
+            <li>打開任意遊戲的詳情彈窗（點擊遊戲卡片）</li>
+            <li>點擊 <strong>"抓取"</strong></li>
+            <li>如有需要，修改搜尋標題</li>
+            <li>從匹配結果中選擇正確的條目</li>
+            <li>點擊 <strong>"套用"</strong></li>
+        </ol>
+
+        <h3>抓取來源</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>來源</th><th>API 密鑰</th><th>最適合</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ES-DE（本機）</td><td>否</td><td>已抓取的合集 &mdash; 匯入 gamelist.xml 和已下載的媒體</td></tr>
+                <tr><td>TheGamesDB</td><td>是</td><td>特定平台的封面、3D 封面</td></tr>
+                <tr><td>IGDB</td><td>是</td><td>現代遊戲、詳細資訊、類型、分級</td></tr>
+                <tr><td>RAWG.io</td><td>是</td><td>使用者評分、簡介、螢幕截圖</td></tr>
+                <tr><td>ScreenScraper</td><td>是</td><td>地區版本、3D 封面、影片、說明書</td></tr>
+            </tbody>
+        </table>
+
+        <h3>混合抓取</h3>
+        <p>RetroDB 會自動合併來自多個來源的資料，以最大化中繼資料的覆蓋範圍：</p>
+        <ul>
+            <li>文字中繼資料來自優先級最高的可用來源</li>
+            <li>當主來源沒有圖片和媒體時，從次要來源獲取</li>
+            <li>跨抓取器自動補全空缺，以獲得最大覆蓋</li>
+            <li>抓取過程中會根據遊戲標題自動生成排序標題</li>
+        </ul>
+
+        <h3>媒體處理</h3>
+        <ul>
+            <li>媒體欄位（封面、3D 封面、螢幕截圖、同人圖、影片、說明書）在正常抓取時<strong>絕不會被替換</strong> &mdash; 只在為空時填充</li>
+            <li>螢幕截圖始終是<strong>追加</strong>，絕不替換</li>
+            <li>若要重新下載媒體，請先在編輯彈窗中清除現有圖片，然後重新抓取</li>
+            <li><strong>完全重新抓取</strong>模式會覆蓋此規則並替換所有內容</li>
+            <li>失效的媒體引用（檔案已刪除但檔案名仍在資料庫中）會在抓取前自動清除，以便下載新的媒體</li>
+            <li>下載的圖片會自動標準化為目標尺寸（參見<a href="#image-standardization">圖片標準化</a>）</li>
+        </ul>
+
+        <h3>抓取器優先級</h3>
+        <p>在 <strong>設定 &rarr; 抓取 &rarr; 抓取器</strong> 中配置哪些抓取器優先運行以及哪些啟用/停用。拖放可重新排序優先級。停用的抓取器在抓取時不會被嘗試，也不會在儀表板上觸發 API 狀態警告。</p>
+
+        <h3>速率限制</h3>
+        <p>每個抓取器都有可配置的速率限制，以防止 API 被限流。預設延遲設定得較為保守。降低延遲需自行承擔風險 &mdash; 超出 API 速率限制可能導致相應服務對你臨時封禁。</p>
+    </div>
+</section>
+
+<!-- Bulk Scraping -->
+<section id="bulk-scrape" class="help-section card">
+    <h2 class="card-title">批量抓取</h2>
+    <div class="card-body">
+        <h3>開始批量抓取</h3>
+        <ol>
+            <li>前往任意系統或遊戲庫頁面</li>
+            <li>點擊 <strong>"選擇"</strong> 進入選擇模式</li>
+            <li>逐個選擇遊戲，或使用快速選擇：
+                <ul>
+                    <li><strong>全選</strong> &mdash; 所有可見的遊戲</li>
+                    <li><strong>選擇未抓取</strong> &mdash; 僅無中繼資料的遊戲</li>
+                </ul>
+            </li>
+            <li>選擇模式：<strong>填充缺失</strong> 或 <strong>完全重新抓取</strong></li>
+            <li>點擊 <strong>"抓取所選"</strong></li>
+        </ol>
+
+        <h3>控制</h3>
+        <ul>
+            <li><strong>暫停 / 繼續</strong> &mdash; 暫停或繼續抓取</li>
+            <li><strong>取消</strong> &mdash; 徹底停止</li>
+            <li><strong>後台</strong> &mdash; 最小化並在抓取運行時繼續瀏覽</li>
+        </ul>
+
+        <h3>提示通知</h3>
+        <p>在後台運行時，會有一個常駐提示在所有頁面上顯示進度：</p>
+        <ul>
+            <li>當前遊戲名稱、進度計數和結果統計（成功、失敗、已略過）</li>
+            <li>可從任意頁面使用暫停/取消控制</li>
+            <li>點擊提示可返回抓取彈窗</li>
+        </ul>
+
+        <h3>佇列系統</h3>
+        <p>多個批量抓取會自動排隊：</p>
+        <ul>
+            <li>在一個抓取運行時啟動新的抓取 &mdash; 它會進入佇列</li>
+            <li>佇列會在提示中顯示待處理任務的數量</li>
+            <li>任務會按順序自動處理</li>
+            <li>使用佇列管理器可查看、重新排序或取消排隊的任務</li>
+        </ul>
+
+        <h3>抓取選項</h3>
+        <ul>
+            <li><strong>僅填充缺失</strong> &mdash; 只填充空的中繼資料欄位，保留現有資料</li>
+            <li><strong>完全重新抓取</strong> &mdash; 替換所有欄位，包括媒體（下載新的圖片和影片）</li>
+            <li><strong>檢查 RetroAchievements</strong> &mdash; 抓取時也檢查 RetroAchievements 成就集</li>
+        </ul>
+
+        <h3>任務恢復</h3>
+        <p>如果 RetroDB 在任務運行期間被重啟，被中斷的任務會出現在儀表板的恢復橫幅中。點擊單個任務上的 <strong>"繼續"</strong> 或 <strong>"全部繼續"</strong> 來重新啟動它們。恢復後進度提示會立即出現。</p>
+    </div>
+</section>
+
+<!-- AI Fill -->
+<section id="ai-fill" class="help-section card">
+    <h2 class="card-title">AI 填充</h2>
+    <div class="card-body">
+        <h3>它的作用</h3>
+        <p>AI 填充使用大語言模型（Gemini、OpenAI 或 Claude）智能地填充缺失或不完整的遊戲中繼資料。它比常規抓取更聰明，因為它利用關於遊戲的上下文知識來提供抓取器可能沒有的準確資料。</p>
+
+        <h3>如何使用</h3>
+        <ol>
+            <li>打開遊戲的詳情彈窗（或完整詳情頁）</li>
+            <li>點擊 <strong>"AI 填充"</strong>（需要在設定中配置 AI API 密鑰）</li>
+            <li>AI 分析遊戲標題和系統，然後填充缺失的欄位</li>
+            <li>查看結果 &mdash; 更改會自動儲存</li>
+        </ol>
+
+        <h3>AI 填充可提供的內容</h3>
+        <ul>
+            <li>類型、簡介、開發商、發行商、發行日期</li>
+            <li>玩家人數、遊玩模式（單人、多人、合作等）</li>
+            <li>戰役資訊和遊戲結構</li>
+            <li>全部 8 個分級系統（ESRB、PEGI、CERO、USK、ACB、FPB、GRAC、ClassInd）</li>
+            <li>地區、系列、相似遊戲</li>
+            <li>手把支援、存檔類型</li>
+            <li>視角（第一人稱、俯視、橫版捲軸等）、維度（2D、3D）</li>
+            <li>版本資訊、媒體評分和使用者評分</li>
+        </ul>
+
+        <h3>智能填充邏輯</h3>
+        <ul>
+            <li><strong>空欄位</strong>始終會被填充</li>
+            <li><strong>現有的使用者資料</strong>絕不會被覆蓋</li>
+            <li><strong>相似遊戲</strong>始終會被重新整理（此欄位的 AI 資料更可靠）</li>
+            <li><strong>交叉映射的分級</strong> &mdash; 如果已知一個分級系統，其他系統中空的分級會使用成熟度等級交叉映射自動填充</li>
+            <li>填充時會自動生成<strong>排序標題</strong></li>
+            <li><strong>玩家人數</strong>欄位會規範化範圍（例如 "1-4" 變為 4）</li>
+        </ul>
+
+        <h3>類型規範化</h3>
+        <p>AI 填充使用帶連字符名稱的規範類型形式：</p>
+        <ul>
+            <li><code>First-Person-Shooter</code>、<code>Shoot-em-up</code>、<code>Beat-em-up</code></li>
+            <li><code>Hack-n-Slash</code>、<code>Board-Card</code>、<code>Real-Time Strategy</code></li>
+        </ul>
+
+        <h3>要求</h3>
+        <p>必須在 <strong>設定 &rarr; 抓取 &rarr; API 密鑰</strong> 中配置至少一個 AI 提供商的 API 密鑰。最便宜的模型層級（Gemini Flash Lite、GPT-4o Mini 或 Claude Haiku）對中繼資料的效果就很好。</p>
+    </div>
+</section>
+
+<!-- Filtering -->
+<section id="filtering" class="help-section card">
+    <h2 class="card-title">篩選與搜尋</h2>
+    <div class="card-body">
+        <h3>搜尋</h3>
+        <p>搜尋按標題（和排序標題）篩選遊戲。按 <kbd>/</kbd> 可聚焦搜尋框。結果實時更新，帶 300 毫秒防抖。</p>
+
+        <h3>來源篩選</h3>
+        <p>按匯入來源篩選遊戲：</p>
+        <ul>
+            <li><strong>ROM 檔案</strong> &mdash; 來自你的 ROM 遊戲庫的遊戲</li>
+            <li><strong>CLZ 匯入</strong> &mdash; 從 CLZ 匯入的實體遊戲</li>
+            <li><strong>Steam 匯入</strong> &mdash; 從 Steam 匯入的遊戲</li>
+            <li><strong>Xbox 匯入</strong> &mdash; 從 Xbox 匯入的遊戲</li>
+            <li><strong>PSN 匯入</strong> &mdash; 從 PlayStation Network 匯入的遊戲</li>
+        </ul>
+
+        <h3>篩選按鈕</h3>
+        <p>每個篩選器都會打開一個彈窗，顯示你遊戲庫中所有的唯一值及其數量。篩選器支援兩種模式：</p>
+        <ul>
+            <li><strong>包含（IS）</strong> &mdash; 只顯示匹配所選值的遊戲</li>
+            <li><strong>排除（IS NOT）</strong> &mdash; 隱藏匹配所選值的遊戲</li>
+        </ul>
+        <p>使用篩選彈窗中的開關在包含和排除模式之間切換。</p>
+
+        <h3>可用篩選器</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>篩選器</th><th>說明</th><th>多值</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>類型</strong></td><td>動作、RPG、平台跳躍等</td><td>是</td></tr>
+                <tr><td><strong>系列</strong></td><td>遊戲系列</td><td>是</td></tr>
+                <tr><td><strong>發行商</strong></td><td>發行公司</td><td>是</td></tr>
+                <tr><td><strong>開發商</strong></td><td>開發工作室</td><td>是</td></tr>
+                <tr><td><strong>玩家人數</strong></td><td>玩家數量</td><td>否</td></tr>
+                <tr><td><strong>模式</strong></td><td>單人、多人、合作</td><td>是</td></tr>
+                <tr><td><strong>視角</strong></td><td>第一人稱、俯視、等距、橫版捲軸</td><td>是</td></tr>
+                <tr><td><strong>維度</strong></td><td>2D、3D</td><td>是</td></tr>
+                <tr><td><strong>分級</strong></td><td>年齡分級（顯示你偏好的系統）</td><td>否</td></tr>
+                <tr><td><strong>含 RA</strong></td><td>支援 RetroAchievements 的遊戲</td><td>否</td></tr>
+                <tr><td><strong>顯示附贈</strong></td><td>切換附贈光碟的可見性</td><td>否</td></tr>
+            </tbody>
+        </table>
+
+        <h3>排序選項</h3>
+        <ul>
+            <li><strong>標題</strong> &mdash; 按排序標題字母順序（不區分大小寫）</li>
+            <li><strong>發行日期</strong> &mdash; 按時間順序（最早在前）</li>
+            <li><strong>平台</strong> &mdash; 按系統名稱分組</li>
+        </ul>
+
+        <h3>字母導航</h3>
+        <p>跳轉到以特定字母開頭的遊戲。沒有匹配遊戲的字母會顯示為灰色。數字和符號歸入 <strong>#</strong> 之下。</p>
+
+        <h3>無限滾動</h3>
+        <p>遊戲會在你滾動時以每批 100 個的方式載入。當你接近底部時會自動載入新頁面。更改篩選器或搜尋會立即重置並重新載入結果。</p>
+
+        <h3>狀態保持</h3>
+        <p>你當前的篩選器、搜尋詞和滾動位置會儲存在會話存儲中。當你返回該頁面或重新整理時會被恢復。</p>
+    </div>
+</section>
+
+<!-- Game Detail -->
+<section id="game-detail" class="help-section card">
+    <h2 class="card-title">遊戲詳情</h2>
+    <div class="card-body">
+        <h3>遊戲詳情彈窗</h3>
+        <p>點擊任意遊戲卡片會打開一個帶緩存快速視圖的詳情彈窗。該彈窗顯示：</p>
+        <ul>
+            <li>封面（2D 和 3D）、同人圖背景</li>
+            <li>簡介和發行資訊</li>
+            <li>開發商、發行商、類型徽章</li>
+            <li>玩家人數、遊玩模式、遊戲結構</li>
+            <li>年齡分級圖片（來自你偏好的系統，帶交叉映射回退）</li>
+            <li>帶鍵盤導航的螢幕截圖畫廊（<kbd>&larr;</kbd> <kbd>&rarr;</kbd>）</li>
+            <li>預告影片（若有）</li>
+            <li>HLTB 遊玩時長估算（主線、主線 + 額外內容、完美通關）</li>
+            <li>RetroAchievements 狀態和進度</li>
+            <li>相似遊戲（可點擊的連結）</li>
+            <li>手把支援詳情</li>
+            <li>分配給遊戲的標籤</li>
+            <li>檔案大小和 ROM 路徑</li>
+        </ul>
+
+        <h3>完整遊戲詳情頁</h3>
+        <p>點擊遊戲標題連結或從麵包屑導航進入，即可查看完整遊戲詳情頁。完整頁面上的附加功能包括：</p>
+        <ul>
+            <li><strong>同人圖背景頁頭</strong>，帶麵包屑導航</li>
+            <li><strong>平台匯入徽章</strong> &mdash; 適用時顯示 CLZ 匯入、Steam 匯入、Xbox 匯入或 PSN 匯入，並帶平台標誌</li>
+            <li><strong>附贈光碟指示</strong> &mdash; 顯示徽章和帶縮圖的 "所屬：" 連結，指向父遊戲</li>
+            <li><strong>刪除按鈕</strong> &mdash; 從資料庫中移除該遊戲（需確認）</li>
+            <li><strong>清除按鈕</strong> &mdash; 清除所有抓取的中繼資料，同時保留 ROM 條目</li>
+        </ul>
+
+        <h3>編輯彈窗</h3>
+        <p>點擊 <strong>編輯</strong>（或按 <kbd>e</kbd>）打開編輯彈窗，其分為以下幾個部分：</p>
+        <ul>
+            <li><strong>標識</strong> &mdash; 標題、排序標題（自動生成但可編輯）、系列、版本</li>
+            <li><strong>發行資訊</strong> &mdash; 發行日期、地區（來自可配置的下拉選單）</li>
+            <li><strong>玩法</strong> &mdash; 類型（多選標籤）、模式、遊戲結構、玩家人數、開發商、發行商</li>
+            <li><strong>技術</strong> &mdash; 手把（多選）、存檔類型、視角（多值）、維度（多值）</li>
+            <li><strong>年齡分級</strong> &mdash; 全部 8 個分級系統，帶官方分級圖片和自動交叉映射。更改一個分級會自動填充其他系統中空的分級。</li>
+            <li><strong>評分</strong> &mdash; 媒體評分、使用者評分</li>
+            <li><strong>簡介</strong> &mdash; 遊戲簡介文字</li>
+            <li><strong>自訂圖片</strong> &mdash; 上傳自訂封面（2D）、3D 封面和同人圖。清除現有圖片以允許重新抓取。</li>
+            <li><strong>影片 / 預告</strong> &mdash; 上傳或連結影片預告</li>
+        </ul>
+
+        <h3>快捷操作</h3>
+        <ul>
+            <li><strong>編輯</strong> &mdash; 打開編輯彈窗（<kbd>e</kbd>）</li>
+            <li><strong>抓取</strong> &mdash; 從抓取來源獲取中繼資料（<kbd>s</kbd>）</li>
+            <li><strong>AI 填充</strong> &mdash; 用 AI 填充缺失的欄位（需要 AI API 密鑰）</li>
+            <li><strong>檢查 RA</strong> &mdash; 搜尋 RetroAchievements 成就集</li>
+            <li><strong>HLTB 查詢</strong> &mdash; 從 HowLongToBeat 查找遊玩時長估算</li>
+        </ul>
+
+        <h3>完成狀態</h3>
+        <p>用以下狀態追蹤你的進度（以徽章形式顯示在遊戲卡片上）：</p>
+        <ul>
+            <li><strong>未開始</strong> &mdash; 還沒玩過</li>
+            <li><strong>進行中</strong> &mdash; 正在遊玩</li>
+            <li><strong>已遊玩</strong> &mdash; 玩過但未通關</li>
+            <li><strong>已完成</strong> &mdash; 完成了主線遊戲</li>
+            <li><strong>100%</strong> &mdash; 完成了所有內容</li>
+        </ul>
+
+        <h3>多分級系統</h3>
+        <p>RetroDB 支援 8 個國際年齡分級系統：</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>系統</th><th>地區</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>ESRB</strong></td><td>北美</td></tr>
+                <tr><td><strong>PEGI</strong></td><td>歐洲</td></tr>
+                <tr><td><strong>CERO</strong></td><td>日本</td></tr>
+                <tr><td><strong>USK</strong></td><td>德國</td></tr>
+                <tr><td><strong>ACB</strong></td><td>澳大利亞</td></tr>
+                <tr><td><strong>FPB</strong></td><td>南非</td></tr>
+                <tr><td><strong>GRAC</strong></td><td>韓國</td></tr>
+                <tr><td><strong>ClassInd</strong></td><td>巴西</td></tr>
+            </tbody>
+        </table>
+        <p>在 <strong>設定 &rarr; 遊戲庫 &rarr; 顯示</strong> 中設定你偏好的系統。官方分級圖片會顯示在遊戲卡片、詳情彈窗和詳情頁上。在抓取、AI 填充和手動編輯期間，空的分級會通過成熟度等級交叉映射從任意可用的分級自動填充。</p>
+
+        <h3>附贈光碟</h3>
+        <p>RetroDB 會自動檢測附贈/額外光碟（例如原聲 CD、額外內容光碟），並將它們連結到其父遊戲。附贈光碟在遊戲庫中預設隱藏 &mdash; 在篩選器中切換 <strong>"顯示附贈"</strong> 即可顯示它們。已連結的附贈光碟會出現在父遊戲的詳情彈窗中。</p>
+
+        <div class="help-tip">
+            <strong>提示：</strong> 詳情彈窗會緩存最近查看的遊戲以加快載入。編輯會自動更新頁面上的遊戲卡片，無需重新整理。
+        </div>
+    </div>
+</section>
+
+<!-- Bulk Edit -->
+<section id="bulk-edit" class="help-section card">
+    <h2 class="card-title">批量編輯</h2>
+    <div class="card-body">
+        <h3>如何使用</h3>
+        <ol>
+            <li>前往任意系統或遊戲庫頁面</li>
+            <li>點擊 <strong>"選擇"</strong> 進入選擇模式</li>
+            <li>選擇你想編輯的遊戲（逐個選擇、全選，或選擇未抓取）</li>
+            <li>點擊 <strong>"批量編輯"</strong></li>
+            <li>選擇要修改的欄位並設定新值</li>
+            <li>選擇 <strong>替換</strong> 或 <strong>追加</strong> 模式</li>
+            <li>點擊 <strong>"套用"</strong> 以更新所有所選遊戲</li>
+        </ol>
+
+        <h3>替換與追加</h3>
+        <ul>
+            <li><strong>替換</strong> &mdash; 用新值覆蓋現有值</li>
+            <li><strong>追加</strong> &mdash; 將新值添加到現有值中（用於多值欄位）</li>
+        </ul>
+
+        <h3>支援的欄位</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>欄位</th><th>支援追加</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>類型</td><td>是</td></tr>
+                <tr><td>發行商</td><td>是</td></tr>
+                <tr><td>開發商</td><td>是</td></tr>
+                <tr><td>系列</td><td>是</td></tr>
+                <tr><td>地區</td><td>是</td></tr>
+                <tr><td>遊戲結構</td><td>是</td></tr>
+                <tr><td>視角</td><td>是</td></tr>
+                <tr><td>維度</td><td>是</td></tr>
+                <tr><td>完成狀態</td><td>否（僅替換）</td></tr>
+                <tr><td>玩家人數</td><td>否（僅替換）</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Compare Games -->
+<section id="compare" class="help-section card">
+    <h2 class="card-title">比較遊戲</h2>
+    <div class="card-body">
+        <h3>功能說明</h3>
+        <p>在表格檢視中並排比較兩款遊戲的中繼資料。可用於檢查中繼資料品質、發現重複項，或比較同一遊戲在不同系統上的版本。</p>
+
+        <h3>使用方法</h3>
+        <ol>
+            <li>進入<strong>比較</strong>（可從遊戲庫頁面存取）</li>
+            <li>搜尋並選擇第一款遊戲</li>
+            <li>搜尋並選擇第二款遊戲</li>
+            <li>查看比較表格 &mdash; 差異會被醒目標示</li>
+        </ol>
+
+        <h3>比較的欄位</h3>
+        <p>系統、開發商、發行商、發行日期、類型、系列、地區、玩家人數、模式、視角、維度、全部 8 種年齡分級、使用者評分、媒體評分、遊玩時長估算、手把支援、存檔類型、檔案大小、相似遊戲、簡介等。</p>
+    </div>
+</section>
+
+<!-- Collections -->
+<section id="collections" class="help-section card">
+    <h2 class="card-title">合集（標籤、列表、願望清單）</h2>
+    <div class="card-body">
+        <h3>標籤</h3>
+        <p>建立自訂顏色的標籤來整理你的遊戲。標籤的作用類似於標記 &mdash; 每款遊戲可擁有多個標籤，每個標籤也可包含多款遊戲。</p>
+        <ul>
+            <li>在<strong>標籤</strong>頁面建立帶有自訂名稱和顏色的標籤</li>
+            <li>透過遊戲詳情彈窗為遊戲分配標籤</li>
+            <li>點擊任意標籤即可瀏覽帶有該標籤的所有遊戲</li>
+            <li>在標籤管理頁面編輯或刪除標籤</li>
+        </ul>
+
+        <h3>命名列表</h3>
+        <p>建立可自訂排序的精選遊戲列表。列表類似於播放列表 &mdash; 你可以精確控制遊戲的順序。</p>
+        <ul>
+            <li>在<strong>列表</strong>頁面建立帶有名稱、描述和圖示的列表</li>
+            <li>透過遊戲詳情彈窗或列表頁面將遊戲加入到列表</li>
+            <li>拖放以重新排列列表中的遊戲</li>
+            <li>按自訂順序或字母順序排序</li>
+        </ul>
+
+        <h3>願望清單</h3>
+        <p>追蹤你想要獲取的遊戲，無論是實體版還是數位版。</p>
+        <ul>
+            <li>手動加入遊戲，包含標題、系統、備註和優先級（1&ndash;5）</li>
+            <li>願望清單項目可在找到時連結到現有遊戲庫中的遊戲</li>
+            <li>按優先級（從高到低）排序，然後按加入日期排序</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>提示：</strong>標籤適用於跨類別的標記（例如「收藏」「沙發合作」「待玩清單」），而列表適用於特定的精選合集（例如「十大 SNES 遊戲」「待直播遊戲」）。
+        </div>
+    </div>
+</section>
+
+<!-- Game Imports -->
+<section id="game-imports" class="help-section card">
+    <h2 class="card-title">遊戲匯入</h2>
+    <div class="card-body">
+        <p>從外部來源匯入遊戲合集。透過側邊欄中的<strong>遊戲匯入</strong>存取。所有匯入類型都整合到一個帶標籤頁的頁面中。</p>
+
+        <h3>CLZ Games 匯入</h3>
+        <p>從 CLZ Games 匯入你的實體遊戲收藏。</p>
+        <ol>
+            <li>將你的 CLZ Games 收藏匯出為 PDF</li>
+            <li>進入遊戲匯入 &rarr; <strong>CLZ</strong> 標籤頁</li>
+            <li>上傳 PDF 檔案</li>
+            <li>查看解析出的遊戲</li>
+            <li>選擇要匯入的遊戲</li>
+        </ol>
+        <p>CLZ 匯入與 ROM 遊戲分開追蹤（使用 <code>clz_import/</code> 前綴），讓你可以同時編目實體和數位收藏。CLZ 匯入可從<strong>設定 &rarr; 系統 &rarr; 維護</strong>中完全清除。</p>
+
+        <h3>Steam 匯入</h3>
+        <p>匯入你的 Steam 遊戲庫並追蹤成就。</p>
+        <ol>
+            <li>在設定中配置你的 Steam Web API 密鑰和 Steam ID</li>
+            <li>進入遊戲匯入 &rarr; <strong>Steam</strong> 標籤頁</li>
+            <li>點擊<strong>「獲取遊戲庫」</strong>以檢索你的 Steam 遊戲</li>
+            <li>選擇要匯入的遊戲（會自動偵測重複項）</li>
+            <li>匯入的遊戲會標記其 Steam App ID 以便追蹤成就</li>
+        </ol>
+
+        <h3>Xbox 匯入</h3>
+        <p>透過 Microsoft 帳戶匯入你的 Xbox 遊戲庫。</p>
+        <ol>
+            <li>進入遊戲匯入 &rarr; <strong>Xbox</strong> 標籤頁</li>
+            <li>點擊<strong>「登入」</strong>以使用你的 Microsoft 帳戶進行身分驗證（OAuth2 流程）</li>
+            <li>系統會自動獲取你的 Xbox 遊戲歷史記錄</li>
+            <li>選擇要匯入的遊戲，並偵測重複項</li>
+            <li>匯入的遊戲會標記其 Xbox Title ID 以便追蹤成就</li>
+        </ol>
+        <p>Xbox 權杖快取在 <code>data/xbox_tokens.json</code> 中並會自動重新整理。</p>
+
+        <h3>PSN 匯入</h3>
+        <p>匯入你的 PlayStation Network 遊戲庫。</p>
+        <ol>
+            <li>進入遊戲匯入 &rarr; <strong>PSN</strong> 標籤頁</li>
+            <li>輸入你的 NPSSO cookie（獲取方法請參閱 <a href="#trophies">獎盃 &rarr; PSN 身分驗證</a>）</li>
+            <li>點擊<strong>「獲取遊戲庫」</strong>以檢索你的 PSN 遊戲</li>
+            <li>選擇要匯入的遊戲</li>
+        </ol>
+
+        <h3>匯入之後</h3>
+        <ul>
+            <li>匯入的遊戲會帶著平台專屬的徽章出現在你的遊戲庫中</li>
+            <li>使用批量抓取為匯入的遊戲獲取中繼資料</li>
+            <li>成就/獎盃追蹤會自動連結到來源平台</li>
+            <li>在遊戲庫中可使用來源篩選器篩選匯入的遊戲</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>提示：</strong>從任意平台匯入遊戲後，你可以像 ROM 遊戲一樣使用批量抓取為它們抓取中繼資料。匯入的遊戲也可以追蹤各自平台的成就。
+        </div>
+    </div>
+</section>
+
+<!-- RetroAchievements -->
+<section id="retroachievements" class="help-section card">
+    <h2 class="card-title">RetroAchievements</h2>
+    <div class="card-body">
+        <h3>設定</h3>
+        <ol>
+            <li>在 <a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a> 建立帳戶</li>
+            <li>在你的個人資料設定中產生 API 密鑰</li>
+            <li>在設定 &rarr; 帳戶 &rarr; RetroAchievements 中輸入你的使用者名稱和 API 密鑰</li>
+        </ol>
+
+        <h3>成就頁面</h3>
+        <ul>
+            <li><strong>系統標籤頁</strong> &mdash; 按平台瀏覽成就（會記住你上次查看的標籤頁）</li>
+            <li><strong>字母導航</strong> &mdash; 在每個系統標籤頁內按首字母跳轉到遊戲</li>
+            <li><strong>重新整理進度</strong> &mdash; 從 RetroAchievements 同步你的成就進度</li>
+            <li><strong>總體統計</strong> &mdash; 所有系統中已獲得的成就和點數</li>
+            <li><strong>單遊戲進度</strong> &mdash; 透過進度條查看每款遊戲的完成百分比</li>
+        </ul>
+
+        <h3>同步佇列</h3>
+        <p>可以將多個系統的同步加入佇列：</p>
+        <ul>
+            <li>點擊任意系統的「重新整理進度」以開始或排隊同步</li>
+            <li>如果已有同步正在運行，新請求會自動加入佇列</li>
+            <li>當前同步完成後，佇列會自動處理</li>
+            <li>Toast 通知會顯示當前進度和佇列數量</li>
+        </ul>
+
+        <h3>查找帶有成就的遊戲</h3>
+        <ul>
+            <li><strong>遊戲庫篩選器</strong> &mdash; 使用「含 RA」篩選器僅顯示帶有成就的遊戲</li>
+            <li><strong>檢查 RA</strong> &mdash; 在遊戲詳情彈窗中點擊以搜尋成就集</li>
+            <li><strong>批量抓取</strong> &mdash; 啟用「檢查 RA」選項以在抓取過程中查找成就</li>
+            <li><strong>RA 重新整理任務</strong> &mdash; 掃描系統中的所有遊戲以確定哪些支援 RA</li>
+        </ul>
+
+        <h3>遊戲級詳情</h3>
+        <p>在成就頁面上點擊任意遊戲，即可查看每款遊戲的詳細成就資訊，包括各個成就的名稱、描述、點數值和獲得狀態。</p>
+
+        <div class="help-tip">
+            <strong>注意：</strong>「重新整理進度」會為已連結 RetroAchievements 的遊戲同步你的進度。
+            要查找新的成就集，請在遊戲詳情彈窗中使用「檢查 RA」，或在批量抓取過程中啟用它。
+        </div>
+    </div>
+</section>
+
+<!-- Steam Achievements -->
+<section id="steam-achievements" class="help-section card">
+    <h2 class="card-title">Steam 成就</h2>
+    <div class="card-body">
+        <h3>設定</h3>
+        <ol>
+            <li>透過<strong>遊戲匯入 &rarr; Steam</strong> 匯入 Steam 遊戲</li>
+            <li>確保已在設定中配置你的 Steam Web API 密鑰</li>
+        </ol>
+
+        <h3>成就著陸頁</h3>
+        <p>一目了然地查看你所有 Steam 遊戲的成就進度：</p>
+        <ul>
+            <li><strong>總體統計</strong> &mdash; Steam 遊戲總數、已獲得成就、完成百分比</li>
+            <li><strong>單遊戲進度</strong> &mdash; 每款遊戲的完成進度條</li>
+        </ul>
+
+        <h3>單遊戲成就詳情</h3>
+        <p>點擊任意 Steam 遊戲即可查看其各個成就：</p>
+        <ul>
+            <li>成就圖示、名稱和描述</li>
+            <li>已解鎖與未解鎖狀態，附解鎖時間戳</li>
+            <li>每個成就的全球玩家解鎖百分比</li>
+        </ul>
+
+        <h3>同步</h3>
+        <ul>
+            <li>從單款遊戲的詳情頁面同步該遊戲的成就</li>
+            <li>從成就著陸頁批量同步所有 Steam 遊戲</li>
+            <li>同步作為後台任務運行，並帶有 toast 通知進度</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Xbox Achievements -->
+<section id="xbox-achievements" class="help-section card">
+    <h2 class="card-title">Xbox 成就</h2>
+    <div class="card-body">
+        <h3>設定</h3>
+        <ol>
+            <li>透過<strong>遊戲匯入 &rarr; Xbox</strong> 匯入 Xbox 遊戲</li>
+            <li>身分驗證在匯入過程中透過 Xbox OAuth 處理</li>
+        </ol>
+
+        <h3>成就著陸頁</h3>
+        <ul>
+            <li><strong>總體統計</strong> &mdash; Xbox 遊戲總數、已獲得成就、已獲得/總計遊戲得分、完成百分比</li>
+            <li><strong>單遊戲進度</strong> &mdash; 透過進度條顯示每款遊戲獲得的遊戲得分</li>
+        </ul>
+
+        <h3>單遊戲成就詳情</h3>
+        <p>點擊任意 Xbox 遊戲即可查看其各個成就：</p>
+        <ul>
+            <li>帶有各自遊戲得分值的成就圖示</li>
+            <li>已解鎖與未解鎖狀態，附解鎖時間戳</li>
+            <li>每個成就上的遊戲得分徽章</li>
+        </ul>
+
+        <h3>同步</h3>
+        <ul>
+            <li>同步單款遊戲或批量同步所有 Xbox 遊戲</li>
+            <li>作為後台任務運行，並帶有 toast 通知</li>
+            <li>每次同步後遊戲得分總計會自動更新</li>
+        </ul>
+    </div>
+</section>
+
+<!-- HLTB -->
+<section id="hltb" class="help-section card">
+    <h2 class="card-title">How Long to Beat</h2>
+    <div class="card-body">
+        <h3>用法</h3>
+        <ol>
+            <li>打開任意遊戲的詳情彈窗</li>
+            <li>點擊<strong>「查詢 HLTB」</strong></li>
+            <li>從結果中選擇正確的匹配項</li>
+            <li>遊玩時長估算會儲存到該遊戲</li>
+        </ol>
+
+        <h3>時長類別</h3>
+        <ul>
+            <li><strong>主線劇情</strong> &mdash; 核心通關時長</li>
+            <li><strong>主線 + 額外內容</strong> &mdash; 包含支線內容</li>
+            <li><strong>完美通關</strong> &mdash; 100% 完成所有內容</li>
+        </ul>
+
+        <h3>HLTB 資料顯示位置</h3>
+        <ul>
+            <li><strong>遊戲詳情彈窗</strong> &mdash; 遊戲資訊中顯示遊玩時長估算</li>
+            <li><strong>完整遊戲詳情頁面</strong> &mdash; 相同的遊玩時長資訊</li>
+            <li><strong>分析 &rarr; 遊玩時長標籤頁</strong> &mdash; 整個合集的遊玩時長分析</li>
+            <li><strong>比較遊戲</strong> &mdash; 並排比較遊玩時長</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>提示：</strong>HLTB 資料也會顯示在分析的遊玩時長標籤頁下，為你的整個合集提供估算。
+        </div>
+    </div>
+</section>
+
+<!-- Trophies -->
+<section id="trophies" class="help-section card">
+    <h2 class="card-title">PS3 / PSN 獎盃</h2>
+    <div class="card-body">
+        <h3>RPCS3 本地獎盃</h3>
+        <p>追蹤透過 RPCS3 模擬器在 PS3 遊戲中獲得的獎盃。</p>
+        <ol>
+            <li>在<strong>設定 &rarr; 資料 &rarr; 獎盃</strong>中設定你的 RPCS3 獎盃路徑</li>
+            <li>點擊<strong>「掃描獎盃」</strong>以匯入已獲得的獎盃</li>
+            <li>在 <strong>RPCS3 獎盃</strong>部分查看獎盃列表和各個獎盃詳情</li>
+        </ol>
+        <p>RPCS3 會從你的 RPCS3 使用者目錄讀取獎盃 XML 資料，並自動將遊戲與你的遊戲庫匹配。</p>
+
+        <h3>PSN API 獎盃</h3>
+        <p>從你的 PSN 帳戶同步 PlayStation Network 獎盃資料。</p>
+        <ol>
+            <li>獲取你的 NPSSO cookie（見下文）</li>
+            <li>在<strong>設定 &rarr; 帳戶 &rarr; PSN</strong>中輸入它</li>
+            <li>你的 PSN 獎盃庫會透過 PlayStation API 獲取</li>
+            <li>查看每款遊戲的獎盃進度，附已獲得/總計數量</li>
+            <li>各個獎盃詳情包括描述、稀有度和解鎖時間戳</li>
+        </ol>
+
+        <h3>PSN 身分驗證（NPSSO Cookie）</h3>
+        <p>PSN 使用一種稱為 NPSSO 權杖的特殊身分驗證 cookie。獲取方法如下：</p>
+        <ol>
+            <li>打開網頁瀏覽器並登入 <a href="https://store.playstation.com" target="_blank" rel="noopener noreferrer">store.playstation.com</a></li>
+            <li>登入後，導航至：<code>https://ca.account.sony.com/api/v1/ssocookie</code></li>
+            <li>該頁面會顯示包含你的 NPSSO 權杖的 JSON</li>
+            <li>複製 <code>npsso</code> 值並貼上到設定 &rarr; 帳戶 &rarr; PSN</li>
+        </ol>
+        <p>身分驗證完成後，RetroDB 會將存取權杖安全地快取在自己的資料庫中（按使用者），並自動重新整理它們 &mdash; 你無需在每次同步時重新貼上 NPSSO。工作階段大約在兩個月內保持有效，而且 RetroDB 現在還會在後台自動續期，因此在正常使用中你應該很少需要獲取新的 NPSSO。</p>
+
+        <h3>獎盃詳情</h3>
+        <ul>
+            <li>獎盃類型：銅杯、銀杯、金杯、白金杯</li>
+            <li>獎盃圖示會被下載並快取到本地</li>
+            <li>每款遊戲的完成百分比</li>
+            <li>每個已獲得獎盃的解鎖時間戳</li>
+        </ul>
+
+        <h3>批量同步</h3>
+        <p>透過後台任務一次性同步所有 PSN 遊戲獎盃。進度會顯示在 toast 通知中。速率限制（請求之間間隔 2.5 秒）可防止 PSN API 限流。</p>
+    </div>
+</section>
+
+<!-- Collector Trophies -->
+<section id="collector-trophies" class="help-section card">
+    <h2 class="card-title">收藏家獎盃</h2>
+    <div class="card-body">
+        <h3>功能說明</h3>
+        <p>這是一套遊戲化系統，會根據你的收藏里程碑頒發獎盃。隨著你加入遊戲、抓取中繼資料和完成遊戲，獎盃會自動解鎖。</p>
+
+        <h3>獎盃等級</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>等級</th><th>示例</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>銅杯</strong></td><td>加入第一款遊戲、達到 10 款遊戲、首次抓取、5 個系統、首次完成</td></tr>
+                <tr><td><strong>銀杯</strong></td><td>100 款遊戲、抓取 50 款、10 個系統、10 次完成、500 款遊戲</td></tr>
+                <tr><td><strong>金杯</strong></td><td>1,000 款遊戲、100% 中繼資料覆蓋率、20 個系統、50 次完成</td></tr>
+                <tr><td><strong>白金杯</strong></td><td>5,000 款遊戲、100 次完成、30 個以上系統</td></tr>
+            </tbody>
+        </table>
+
+        <h3>工作原理</h3>
+        <ul>
+            <li>進度會根據你的遊戲庫統計資料自動追蹤</li>
+            <li>訪問<strong>收藏家獎盃</strong>頁面，查看你朝每個獎盃的進度</li>
+            <li>點擊<strong>「重新整理」</strong>以在做出更改後更新進度</li>
+            <li>已獲得的獎盃會顯示其解鎖日期</li>
+            <li>進度條顯示你距離下一個里程碑還有多近</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Museum -->
+<section id="museum" class="help-section card">
+    <h2 class="card-title">博物館</h2>
+    <div class="card-body">
+        <h3>功能說明</h3>
+        <p>這是一部按世代組織的互動式遊戲系統百科全書。了解你收藏中每個平台的歷史、規格和知名遊戲。</p>
+
+        <h3>著陸頁</h3>
+        <p>博物館著陸頁展示按世代分組的遊戲系統時間軸（第 1&ndash;9 世代、掌機、街機、電腦）。每張系統卡片會顯示硬體圖片和你遊戲庫中的遊戲數量。</p>
+
+        <h3>系統詳情頁面</h3>
+        <p>點擊任意系統即可查看其博物館頁面，其中包括：</p>
+        <ul>
+            <li><strong>硬體圖片</strong> &mdash; 主機/系統的照片</li>
+            <li><strong>技術規格</strong> &mdash; CPU、GPU、記憶體、解析度、媒體類型</li>
+            <li><strong>歷史</strong> &mdash; 關於該系統開發、發布和影響的 AI 生成敘述</li>
+            <li><strong>十大遊戲</strong> &mdash; 該系統最知名的作品（根據媒體評分和 AI 建議）</li>
+            <li><strong>手把圖庫</strong> &mdash; 附帶描述的該系統手把圖片</li>
+        </ul>
+
+        <h3>AI 內容生成</h3>
+        <p>博物館內容使用 AI（Gemini、OpenAI 或 Claude）生成。你可以為以下內容生成：</p>
+        <ul>
+            <li><strong>單個系統</strong> &mdash; 在任意系統的博物館頁面上點擊「生成」</li>
+            <li><strong>批量生成</strong> &mdash; 從著陸頁一次性為所有系統生成內容（作為後台任務運行，並帶有 toast 進度）</li>
+        </ul>
+
+        <h3>手把圖片</h3>
+        <p>手把圖片可透過以下方式加入：</p>
+        <ul>
+            <li><strong>圖片搜尋</strong> &mdash; 使用 Bing 圖片搜尋查找手把照片。結果會按相關性排序（手把名稱 + 製造商 + 系統變體）。</li>
+            <li><strong>手動上傳</strong> &mdash; 上傳你自己的手把圖片</li>
+            <li><strong>背景移除</strong> &mdash; 使用本地 AI（rembg 庫）自動移除背景，讓手把圖片在任何背景上都保持透明</li>
+            <li><strong>圖片傳播</strong> &mdash; 找到手把圖片後，會自動共享給其他系統上的同一手把（同類手把）</li>
+            <li><strong>批量獲取</strong> &mdash; 一次性為一個系統中的所有手把獲取圖片</li>
+        </ul>
+        <p>所有手把圖片都會標準化為目標尺寸並以 WebP 格式儲存。</p>
+
+        <div class="help-tip">
+            <strong>提示：</strong>內容生成需要 AI API 密鑰。博物館使用在設定 &rarr; 抓取 &rarr; API 密鑰中配置的同一 AI 提供商。
+        </div>
+    </div>
+</section>
+
+<!-- Analytics -->
+<section id="analytics" class="help-section card">
+    <h2 class="card-title">分析</h2>
+    <div class="card-body">
+        <p>分析在 12 個標籤頁中提供全面的統計資料和視覺化圖表。所有圖表都是互動式的，並可匯出為 PNG、複製到剪貼簿或下載為 CSV。</p>
+
+        <h3>分析標籤頁</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>標籤頁</th><th>內容</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>摘要</strong></td><td>統計概覽卡片（遊戲總數、系統、完成率、抓取百分比等）</td></tr>
+                <tr><td><strong>圖表</strong></td><td>按平台/製造商、按類型、逐年時間軸統計遊戲</td></tr>
+                <tr><td><strong>開發商</strong></td><td>前 15 名開發商和發行商的條形圖</td></tr>
+                <tr><td><strong>玩法</strong></td><td>類型細分、遊戲模式分析、遊戲結構分布</td></tr>
+                <tr><td><strong>遊玩時長</strong></td><td>整個合集的 HLTB 遊玩時長資料分析 &mdash; 總估算遊玩時長、平均值、分布</td></tr>
+                <tr><td><strong>評測分數</strong></td><td>媒體和使用者評分的分布與平均值</td></tr>
+                <tr><td><strong>年齡分級</strong></td><td>全部 8 種分級系統的年齡分級分布</td></tr>
+                <tr><td><strong>成就</strong></td><td>按系統統計的 RetroAchievements 覆蓋率和完成度</td></tr>
+                <tr><td><strong>資料品質</strong></td><td>中繼資料完整度雷達圖（簡介、封面、類型、開發商、發行商、發行日期、螢幕截圖、同人圖、影片、說明書、HLTB、分級、模式、地區）</td></tr>
+                <tr><td><strong>增長</strong></td><td>合集增長時間軸，顯示遊戲隨時間的加入情況</td></tr>
+                <tr><td><strong>儲存</strong></td><td>按系統統計的儲存用量細分（附格式化的檔案大小）</td></tr>
+                <tr><td><strong>排行榜</strong></td><td>按遊戲數量排名的頂級系統、按檔案大小排名的最大單款遊戲</td></tr>
+            </tbody>
+        </table>
+
+        <h3>匯出選項</h3>
+        <p>每張圖表都可使用圖表工具列中的按鈕匯出：</p>
+        <ul>
+            <li><strong>PNG</strong> &mdash; 儲存為圖像檔案</li>
+            <li><strong>剪貼簿</strong> &mdash; 將圖表圖像複製到剪貼簿</li>
+            <li><strong>CSV</strong> &mdash; 將原始資料下載為試算表</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Reports -->
+<section id="reports" class="help-section card">
+    <h2 class="card-title">ROM 報告</h2>
+    <div class="card-body">
+        <h3>功能說明</h3>
+        <p>根據標準命名規範驗證 ROM 檔案名並識別潛在問題。透過側邊欄中的 <strong>ROM 報告</strong>存取。</p>
+
+        <h3>報告類型</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>標籤頁</th><th>檢查內容</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>非標準名稱</strong></td><td>檔案名不符合命名規範的 ROM。顯示當前檔案名、偵測到的問題，以及建議的更正名稱。</td></tr>
+                <tr><td><strong>名稱不匹配</strong></td><td>檔案名與抓取的中繼資料標題不匹配的 ROM。顯示當前檔案名與抓取的標題、地區、年份和開發商。</td></tr>
+            </tbody>
+        </table>
+
+        <h3>檢查內容</h3>
+        <ul>
+            <li>檔案名中的無效字元（<code>: ? * / " &lt; &gt; | \</code>）</li>
+            <li>缺失或不正確的地區標籤（例如 <code>(USA)</code>、<code>(Europe)</code>）</li>
+            <li>缺失的年份標籤</li>
+            <li>檔案名與資料庫標題不匹配</li>
+        </ul>
+
+        <p>報告可按系統、檔案名和問題類型排序。用它們來保持你的 ROM 遊戲庫有序且命名一致。</p>
+    </div>
+</section>
+
+<!-- ROM Tools -->
+<section id="rom-tools" class="help-section card">
+    <h2 class="card-title">ROM 工具</h2>
+    <div class="card-body">
+        <p>從側邊欄進入 ROM 工具中心。每個工具都作為後台任務執行，支援即時進度更新、暫停/恢復以及日誌記錄。</p>
+
+        <h3>壓縮包掃描器</h3>
+        <p>解壓 ROM 壓縮包（ZIP、7Z、RAR），可選項包括：</p>
+        <ul>
+            <li>遞迴掃描子資料夾</li>
+            <li>解壓後刪除不需要的檔案</li>
+            <li>為多光碟遊戲自動生成 M3U 播放列表</li>
+        </ul>
+        <p><em>需要：7z 或 unzip</em></p>
+
+        <h3>CHD 轉換器</h3>
+        <p>將光碟鏡像（ISO、BIN/CUE、GDI）轉換為壓縮的 CHD 格式。在保持與模擬器完全相容的同時大幅節省儲存空間。</p>
+        <p><em>需要：chdman（來自 mame-tools）</em></p>
+
+        <h3>CHD 校驗</h3>
+        <p>透過雜湊驗證檢查 CHD 檔案的完整性。識別損壞或不完整的轉換結果。</p>
+        <p><em>需要：chdman</em></p>
+
+        <h3>重複檔案查找器</h3>
+        <p>按雜湊或檔案名查找重複的 ROM，並可選擇按地區標籤設定優先級。</p>
+        <p><em>無外部依賴</em></p>
+
+        <h3>多光碟整理器</h3>
+        <p>將多光碟遊戲整理到子資料夾中，並為支援 M3U 的模擬器生成播放列表。適用於 PlayStation 和 Saturn 等系統。</p>
+        <p><em>無外部依賴</em></p>
+
+        <h3>螢幕截圖去重</h3>
+        <p>在你的遊戲庫中查找並刪除重複的螢幕截圖，以釋放儲存空間。</p>
+        <ul>
+            <li><strong>精確雜湊（MD5）</strong> &mdash; 僅識別完全相同的檔案</li>
+            <li><strong>視覺相似度</strong> &mdash; 感知雜湊比較，閾值可配置（1&ndash;20，數值越低匹配越嚴格）</li>
+        </ul>
+        <p>漸進式掃描並即時顯示統計資訊，包括已掃描遊戲數、重複數量和可回收空間。結果按遊戲和系統分組。你可以在每個重複組中選擇保留哪個檔案，或使用 <strong>“選擇最大”</strong> 自動保留解析度最高的版本。</p>
+        <p><em>無外部依賴</em></p>
+
+        <h3>圖片調整器</h3>
+        <p>將遊戲媒體標準化為統一的目標尺寸。詳情請參閱 <a href="#image-standardization">圖片標準化</a>。</p>
+        <p><em>無外部依賴（基於 Python 的 AI 放大）</em></p>
+
+        <h3>補全備用標題</h3>
+        <p>掃描遊戲庫，找出 <strong>備用標題</strong> 欄位為空的遊戲，並從 IGDB / TGDB / ScreenScraper 填充該欄位。在匯入大型目錄，或從另一款不儲存地區/日文/副標題的工具遷移後特別有用。在後台執行，進度顯示在工具卡片上。</p>
+        <p><em>至少需要一個抓取源 API 密鑰（IGDB / TGDB / ScreenScraper）</em></p>
+
+        <h3>批量 HLTB 查詢</h3>
+        <p>為每個缺少遊玩時長估算的遊戲執行 HowLongToBeat 查詢。每次匹配都按標題 + 平台 + 發行年份評分；高置信度的匹配會自動儲存。低於置信度閾值（或平台存在衝突）的結果會被擱置，等待人工審核。</p>
+        <p><em>無外部依賴（使用內建的離線 HLTB 資料集）</em></p>
+
+        <h3>HLTB 待審核</h3>
+        <p>用於審核批量 HLTB 查詢產生的模糊匹配的隊列。每一行待處理項都會顯示源遊戲及其對應的 HLTB 候選項（標題、平台、發行年份、置信度）。可逐行批准、拒絕或選擇其他匹配。僅當至少存在一個待處理匹配時，該審核工具卡片才會出現在 ROM 工具中心。</p>
+        <ul>
+            <li>針對低置信度、備用標題和平台不匹配等匹配的 <strong>篩選標籤頁</strong>。</li>
+            <li><strong>批准</strong> 會寫入遊玩時長估算；<strong>拒絕</strong> 會丟棄該候選項並保持查詢隊列整潔。</li>
+        </ul>
+
+        <h3>工具設定</h3>
+        <p>配置所有 ROM 工具共享的路徑、工具位置、壓縮包類型和偏好設定。</p>
+
+        <div class="help-tip">
+            <strong>提示：</strong> 所有 ROM 工具都支援暫停/恢復並在後台執行。進度和結果都會記錄到日誌中，可在日誌檢視器中查看。工具狀態（可用與需要安裝）會顯示在每個工具卡片上。
+        </div>
+    </div>
+</section>
+
+<!-- Normalization -->
+<section id="normalization" class="help-section card">
+    <h2 class="card-title">規範化</h2>
+    <div class="card-body">
+        <h3>它的作用</h3>
+        <p>將類型和遊戲模式的值規範化為統一的標準形式。此過程在抓取和 AI 填充時自動進行，也可以手動應用到你現有的遊戲庫。</p>
+
+        <h3>為何重要</h3>
+        <p>不同的抓取源對同一事物使用不同的名稱。規範化可確保整個遊戲庫的一致性：</p>
+        <ul>
+            <li><code>platform</code> &rarr; <code>Platformer</code></li>
+            <li><code>fps</code>, <code>first person shooter</code> &rarr; <code>First-Person-Shooter</code></li>
+            <li><code>shoot 'em up</code>, <code>shmup</code> &rarr; <code>Shoot-em-up</code></li>
+            <li><code>beat 'em up</code>, <code>brawler</code> &rarr; <code>Beat-em-up</code></li>
+            <li><code>hack and slash</code> &rarr; <code>Hack-n-Slash</code></li>
+            <li><code>rts</code>, <code>real time strategy</code> &rarr; <code>Real-Time Strategy</code></li>
+            <li><code>board game</code>, <code>card game</code> &rarr; <code>Board-Card</code></li>
+        </ul>
+
+        <h3>自訂規則</h3>
+        <p>你可以在 <strong>設定 &rarr; 資料 &rarr; 規範化</strong> 中添加自訂規範化規則。自訂規則會覆蓋內建映射，讓你定義自己偏好的類型和模式名稱。規則儲存在資料庫中。</p>
+
+        <h3>預覽與應用</h3>
+        <p>在應用規範化之前，你可以預覽哪些遊戲會受到影響以及將做出哪些更改。這讓你可以在向遊戲庫提交更改之前進行審核。</p>
+    </div>
+</section>
+
+<!-- Image Standardization -->
+<section id="image-standardization" class="help-section card">
+    <h2 class="card-title">圖片標準化</h2>
+    <div class="card-body">
+        <h3>它的作用</h3>
+        <p>將所有遊戲媒體標準化為統一的目標尺寸，讓整個遊戲庫保持統一的外觀。尺寸在目標值 80&ndash;120% 範圍內的圖片會被略過。</p>
+
+        <h3>工作原理</h3>
+        <ul>
+            <li><strong>放大</strong> &mdash; 小於目標尺寸的圖片會使用 Real-ESRGAN x4（透過 ONNX Runtime 的 AI 超解析度）進行高品質放大，然後調整為精確的目標尺寸</li>
+            <li><strong>縮小</strong> &mdash; 大於目標尺寸的圖片會使用 Lanczos 濾波進行縮小，以獲得清晰的效果</li>
+            <li><strong>閾值區間</strong> &mdash; 處於目標值 80&ndash;120% 範圍內的圖片會保持不變，以避免不必要的重複處理</li>
+        </ul>
+
+        <h3>目標尺寸</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>媒體類型</th><th>目標</th><th>方法</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>封面</td><td>高 1080px</td><td>寬度按比例縮放</td></tr>
+                <tr><td>3D 封面</td><td>高 1080px</td><td>寬度按比例縮放（保留透明度）</td></tr>
+                <tr><td>螢幕截圖</td><td>高 1080px</td><td>寬度按比例縮放</td></tr>
+                <tr><td>手把</td><td>最長邊 1280px</td><td>保留透明度（RGBA）</td></tr>
+                <tr><td>硬件</td><td>最長邊 1280px</td><td>保留透明度（RGBA）</td></tr>
+                <tr><td>同人圖</td><td>已略過</td><td>不進行標準化（保持原始尺寸）</td></tr>
+            </tbody>
+        </table>
+
+        <h3>如何執行</h3>
+        <ol>
+            <li>前往 <strong>設定 &rarr; 系統 &rarr; 維護</strong> 或 <strong>ROM 工具 &rarr; 圖片調整器</strong></li>
+            <li>點擊 <strong>“開始”</strong> 以啟動批量標準化</li>
+            <li>任務在後台執行，透過彈出通知顯示當前檔案和統計資訊</li>
+            <li>圖片在抓取過程中也會自動標準化（新下載的內容會立即標準化）</li>
+        </ol>
+
+        <h3>硬件支援</h3>
+        <p>Real-ESRGAN 模型會自動偵測你的硬件並使用可用的最佳提供程序：</p>
+        <ul>
+            <li><strong>CUDA</strong> &mdash; NVIDIA GPU 加速</li>
+            <li><strong>ROCm</strong> &mdash; AMD GPU 加速（針對 RX 6000 系列自動覆蓋 gfx 版本）</li>
+            <li><strong>CoreML</strong> &mdash; Apple Silicon 加速</li>
+            <li><strong>CPU</strong> &mdash; 無 GPU 支援的系統的後備方案</li>
+        </ul>
+        <p>ONNX 模型檔案會在首次使用時從 Hugging Face 自動下載並快取到本地。</p>
+    </div>
+</section>
+
+<!-- Logs -->
+<section id="logs" class="help-section card">
+    <h2 class="card-title">日誌檢視器</h2>
+    <div class="card-body">
+        <h3>它的作用</h3>
+        <p>用於查看所有應用程式日誌的統一檢視器。透過側邊欄的 <strong>日誌檢視器</strong> 進入。</p>
+
+        <h3>日誌分類</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>分類</th><th>內容</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>抓取</strong></td><td>抓取源活動、API 呼叫、錯誤以及每個遊戲的結果</td></tr>
+                <tr><td><strong>ROM 工具</strong></td><td>壓縮包解壓、CHD 轉換、重複檔案偵測、螢幕截圖去重</td></tr>
+                <tr><td><strong>ROM 報告</strong></td><td>命名驗證結果</td></tr>
+                <tr><td><strong>圖片調整</strong></td><td>圖片標準化任務進度（每個檔案的放大/縮小）</td></tr>
+                <tr><td><strong>系統</strong></td><td>常規應用活動、維護任務、啟動、資料庫操作</td></tr>
+            </tbody>
+        </table>
+
+        <h3>功能</h3>
+        <ul>
+            <li>按分類篩選或將所有日誌一併查看</li>
+            <li>檔案列表顯示創建日期和檔案大小</li>
+            <li>點擊任意日誌檔案查看其完整內容</li>
+            <li>下載單個日誌檔案</li>
+            <li>頂部顯示分類計數，便於快速概覽</li>
+            <li>日誌級別可在 設定 &rarr; 系統 &rarr; 日誌 中配置</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Maintenance -->
+<section id="maintenance" class="help-section card">
+    <h2 class="card-title">維護</h2>
+    <div class="card-body">
+        <p>維護操作位於 <strong>設定 &rarr; 系統 &rarr; 維護</strong> 中。它們有助於保持你的遊戲庫整潔並優化性能。</p>
+
+        <h3>遊戲庫掃描</h3>
+        <ul>
+            <li><strong>掃描遊戲庫</strong> &mdash; 掃描你的 ROM 目錄以查找新遊戲。使用 ES-DE 的 <code>systeminfo.txt</code> 副檔名列表偵測系統資料夾和支援的檔案類型。也可從儀表板使用。</li>
+        </ul>
+
+        <h3>清理操作</h3>
+        <ul>
+            <li><strong>清理缺失的 ROM</strong> &mdash; 刪除磁碟上 ROM 檔案已不存在的遊戲的資料庫條目。在重新整理或刪除 ROM 檔案後很有用。</li>
+            <li><strong>孤立媒體清理</strong> &mdash; 查找並刪除磁碟上沒有對應資料庫引用的圖片檔案（封面、螢幕截圖、同人圖）。刪除前可先預覽以確認。</li>
+            <li><strong>清除已抓取資料</strong> &mdash; 刪除遊戲的所有已抓取中繼資料，同時保留 ROM 檔案條目。適合重新開始抓取。預覽會在執行前顯示受影響的遊戲。</li>
+            <li><strong>清除 CLZ 匯入</strong> &mdash; 刪除所有 CLZ Games 匯入記錄（僅含中繼資料、無 ROM 檔案的條目）。</li>
+        </ul>
+
+        <h3>資料庫優化</h3>
+        <ul>
+            <li><strong>優化資料庫</strong> &mdash; 執行 SQLite VACUUM 和 ANALYZE，從已刪除記錄中回收儲存空間並更新查詢規劃器統計資訊。建議在大量刪除或清理操作後執行。</li>
+        </ul>
+
+        <h3>批量圖片標準化</h3>
+        <p>將所有遊戲圖片標準化為目標尺寸。詳情請參閱 <a href="#image-standardization">圖片標準化</a>。</p>
+
+        <h3>伺服器管理</h3>
+        <ul>
+            <li><strong>重啟伺服器</strong> &mdash; 優雅地重啟應用程式（清理並退出）。位於 設定 &rarr; 系統 &rarr; 故障排除。</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Multi-User Access -->
+<section id="multi-user" class="help-section card">
+    <h2 class="card-title">多用戶存取</h2>
+    <div class="card-body">
+        <h3>用戶角色</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>角色</th><th>存取權限</th><th>密碼</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>管理員</strong></td><td>完全存取：設定、用戶管理、維護、所有功能</td><td>必需</td></tr>
+                <tr><td><strong>編輯者</strong></td><td>可編輯遊戲、抓取、使用 ROM 工具、管理合集</td><td>無</td></tr>
+                <tr><td><strong>檢視者</strong></td><td>只讀：瀏覽遊戲庫、查看詳情、查看成就/獎盃</td><td>無</td></tr>
+            </tbody>
+        </table>
+
+        <h3>管理用戶</h3>
+        <ol>
+            <li>前往 <strong>設定 &rarr; 帳戶 &rarr; 用戶</strong>（僅限管理員）</li>
+            <li>點擊 <strong>“添加用戶”</strong> 以創建新帳戶</li>
+            <li>設定用戶名、顯示名稱和角色</li>
+            <li>管理員用戶會獲得一個預設密碼，必須在首次登入時更改</li>
+        </ol>
+
+        <h3>身份驗證</h3>
+        <p>登入頁面會顯示所有活躍用戶。管理員帳戶需要密碼；其他角色只需點擊自己的名字即可登入。會話會一直保持，直到登出。</p>
+
+        <h3>每用戶設定</h3>
+        <p>每個用戶都可以配置自己的：</p>
+        <ul>
+            <li>頭像（上傳自訂圖片）</li>
+            <li>顯示名稱</li>
+            <li>主題偏好</li>
+            <li>每頁項目數</li>
+            <li>時區</li>
+            <li>RPCS3 獎盃路徑</li>
+            <li>RetroAchievements 憑據（用戶名 + API 密鑰）</li>
+            <li>PSN 憑據（NPSSO cookie）</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Backup -->
+<section id="backup" class="help-section card">
+    <h2 class="card-title">備份與恢復</h2>
+    <div class="card-body">
+        <h3>創建備份</h3>
+        <ol>
+            <li>前往 <strong>設定 &rarr; 遊戲庫 &rarr; 備份</strong></li>
+            <li>點擊 <strong>“創建備份”</strong></li>
+            <li>備份會以帶時間戳的檔案名儲存到 <code>backups/</code> 資料夾</li>
+        </ol>
+
+        <h3>備份內容</h3>
+        <p>備份包含整個 SQLite 資料庫（<code>roms.db</code>），其中含有所有遊戲中繼資料、用戶帳戶、設定、獎盃資料、成就進度、標籤、列表和心願單項目。</p>
+
+        <h3>未備份的內容</h3>
+        <p>媒體檔案（封面、螢幕截圖、同人圖、影片、說明書）不包含在資料庫備份中，因為它們可以透過抓取重新下載。如果你有自訂上傳內容，可考慮單獨備份你的 <code>static/images/</code> 目錄。</p>
+
+        <h3>恢復</h3>
+        <ol>
+            <li>在備份列表中找到該備份</li>
+            <li>點擊 <strong>“恢復”</strong></li>
+            <li>確認該操作</li>
+        </ol>
+
+        <div class="help-tip">
+            <strong>警告：</strong> 恢復備份會覆蓋你當前的資料庫。在恢復較舊的備份之前，請先創建一個新備份！
+        </div>
+    </div>
+</section>
+
+<!-- Updating RetroDB -->
+<section id="updating" class="help-section card">
+    <h2 class="card-title">更新 RetroDB</h2>
+    <div class="card-body">
+        <h3>如何更新</h3>
+        <ol>
+            <li>下載新的 RetroDB 版本</li>
+            <li>備份以下檔案（它們包含你的個人資料）：
+                <ul>
+                    <li><code>config.py</code>（你的路徑和 API 密鑰）</li>
+                    <li><code>data/settings.json</code>（你的 UI 偏好設定）</li>
+                    <li><code>data/scraper_settings.json</code>（你的抓取源配置）</li>
+                    <li><code>data/rom_tools_config.json</code>（你的 ROM 工具偏好設定）</li>
+                    <li><code>database/</code> 資料夾（你的遊戲庫資料庫，以及已儲存的 PSN/Xbox 登入令牌）</li>
+                </ul>
+            </li>
+            <li>將新版本解壓覆蓋到現有安裝之上</li>
+            <li>執行 <code>python install.py</code> 以安裝任何新的依賴項</li>
+            <li>重啟伺服器</li>
+        </ol>
+
+        <h3>可安全覆蓋的檔案</h3>
+        <p>所有源代碼檔案（<code>.py</code>、<code>.html</code>、<code>.css</code>、<code>.js</code>）都可以安全覆蓋。安裝程式不會覆蓋你的個人配置檔案。</p>
+
+        <h3>需要保留的檔案</h3>
+        <p>切勿刪除或覆蓋：<code>config.py</code>、<code>database/roms.db</code>、<code>data/settings.json</code>、<code>data/scraper_settings.json</code>、<code>data/rom_tools_config.json</code>。</p>
+
+        <h3>資料庫遷移</h3>
+        <p>RetroDB 會在啟動時自動處理資料庫結構變更。新的列和表會按需添加而不會丟失資料。你無需做任何特殊操作 &mdash; 只需啟動新版本，資料庫便會自動更新。</p>
+    </div>
+</section>
+
+<!-- Troubleshooting -->
+<section id="troubleshooting" class="help-section card">
+    <h2 class="card-title">故障排除</h2>
+    <div class="card-body">
+        <h3>常見問題</h3>
+
+        <h4>“未找到該系統的副檔名”</h4>
+        <p>該系統資料夾需要一個有效的 ES-DE <code>systeminfo.txt</code> 檔案，用於定義支援的 ROM 檔案副檔名。請確保你的 ROM 目錄結構符合 ES-DE 標準。</p>
+
+        <h4>“API 連接失敗”</h4>
+        <ul>
+            <li>檢查你的網路連接</li>
+            <li>在 設定 &rarr; 抓取 &rarr; API 密鑰 中核對 API 密鑰</li>
+            <li>如遇速率限制請稍候（部分 API 有每日/每小時上限）</li>
+            <li>檢查該抓取源是否已啟用（已停用的抓取源在儀表板狀態中顯示“已停用”）</li>
+            <li>查看日誌檢視器以獲取詳細的錯誤資訊</li>
+        </ul>
+
+        <h4>“批量抓取卡住”</h4>
+        <p>前往 設定 &rarr; 系統 &rarr; 故障排除 &rarr; <strong>“清除卡住的批量抓取”</strong>。這會重置任務狀態而不影響你的資料。</p>
+
+        <h4>“RA 同步隊列卡住”</h4>
+        <p>從 設定 &rarr; 系統 &rarr; 故障排除 中清除 RetroAchievements 同步隊列。</p>
+
+        <h4>“PSN 同步卡住”</h4>
+        <p>從 設定 &rarr; 系統 &rarr; 故障排除 中清除 PSN 重新整理任務。</p>
+
+        <h4>“博物館生成卡住”</h4>
+        <p>從 設定 &rarr; 系統 &rarr; 故障排除 中清除博物館生成任務。</p>
+
+        <h4>“資料庫錯誤”</h4>
+        <ol>
+            <li>如有可能，先創建一個備份（設定 &rarr; 遊戲庫 &rarr; 備份）</li>
+            <li>嘗試 設定 &rarr; 系統 &rarr; 維護 &rarr; <strong>優化資料庫</strong></li>
+            <li>檢查 <code>database/</code> 目錄的檔案權限</li>
+            <li>最後手段：從備份恢復，或刪除資料庫並重新掃描</li>
+        </ol>
+
+        <h4>“圖片未儲存”</h4>
+        <p>檢查媒體目錄的寫入權限：<code>chmod -R 755 static/images/</code></p>
+
+        <h4>“頁面緩慢或無響應”</h4>
+        <ul>
+            <li>大型合集可能需要時間載入 &mdash; 無限滾動以每批 100 個的方式載入</li>
+            <li>嘗試重新整理頁面以清除累積的記憶體</li>
+            <li>檢查瀏覽器控制台是否有 JavaScript 錯誤</li>
+            <li>嘗試切換到畫布效果更輕量的主題（例如 Amber 或 Elite）</li>
+            <li>畫布效果會自動偵測硬件；低端設備會以降低的幀率使用 CPU 後備方案</li>
+        </ul>
+
+        <h4>儀表板上的“中斷的任務”橫幅</h4>
+        <p>如果 RetroDB 在任務執行時重啟，它們會出現在一個恢復橫幅中。逐個點擊 <strong>“恢復”</strong> 或點擊 <strong>“全部恢復”</strong> 以重新啟動它們。點擊 <strong>“忽略”</strong> 或 <strong>“全部忽略”</strong> 以清除它們。</p>
+
+        <h4>“PSN 身份驗證失敗”</h4>
+        <ul>
+            <li>NPSSO 令牌會過期 &mdash; 請從 <code>ca.account.sony.com/api/v1/ssocookie</code> 生成一個新的</li>
+            <li>在存取該 cookie 網址之前，請確保你已登入 store.playstation.com</li>
+            <li>RetroDB 會將你的 PSN 會話快取約兩個月，並且現在會在後台自動續期；如果仍然失效，只需在 設定 &rarr; 帳戶 &rarr; PSN 中貼上一個新的 NPSSO 即可</li>
+        </ul>
+
+        <h4>“Xbox 身份驗證失敗”</h4>
+        <ul>
+            <li>在 遊戲匯入 &rarr; Xbox 標籤頁中點擊“登入”以重新驗證</li>
+            <li>Xbox 令牌快取在 <code>data/xbox_tokens.json</code> 中並會自動重新整理</li>
+        </ul>
+
+        <h4>“圖片放大錯誤”</h4>
+        <ul>
+            <li>Real-ESRGAN ONNX 模型會在首次使用時下載 &mdash; 請確保有網路存取權限</li>
+            <li>GPU 加速需要相容的驅動程序（NVIDIA 用 CUDA，AMD 用 ROCm）</li>
+            <li>如果 GPU 失敗，系統會自動回退到 CPU 處理</li>
+        </ul>
+
+        <h3>性能提示</h3>
+        <ul>
+            <li>保持瀏覽器為最新版本以獲得最佳性能</li>
+            <li>處理超大型合集時關閉其他瀏覽器標籤頁</li>
+            <li>使用系統篩選器以減少一次顯示的遊戲數量</li>
+            <li>在大量操作（抓取、清理、匯入）後定期執行優化資料庫</li>
+            <li>畫布主題效果會自動偵測硬件；低端設備會使用 CPU 後備方案</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Security & Disclaimer -->
+<section id="security" class="help-section card">
+    <h2 class="card-title">安全與免責聲明</h2>
+    <div class="card-body">
+        <h3>安全最佳實踐</h3>
+        <ul>
+            <li><strong>更改預設密碼</strong> &mdash; 預設的管理員密碼（<code>admin</code>）應在首次登入時立即更改。請使用至少 8 個字符的強密碼。</li>
+            <li><strong>使用 HTTPS 反向代理</strong> &mdash; RetroDB 本身不提供 TLS/SSL。請將其置於反向代理（例如 Nginx、Caddy、Traefik）之後並啟用 HTTPS，以加密客戶端與伺服器之間的流量。</li>
+            <li><strong>限制網路存取</strong> &mdash; 避免將 RetroDB 直接暴露到公共互聯網。請使用 VPN 或將存取限制在你的本地網路內。如果需要遠端存取，請使用帶身份驗證的反向代理。</li>
+            <li><strong>保持定期備份</strong> &mdash; 使用設定中內建的備份功能定期創建資料庫備份。將備份存放在與應用程式不同的位置。</li>
+            <li><strong>保持 RetroDB 更新</strong> &mdash; 定期檢查新版本。更新中包含安全修復和改進。</li>
+            <li><strong>保護你的 API 密鑰</strong> &mdash; API 密鑰儲存在 <code>data/scraper_settings.json</code> 中。請確保該檔案不會被公開存取。切勿分享你的 <code>config.py</code> 或令牌檔案。</li>
+        </ul>
+
+        <h3>內建安全功能</h3>
+        <ul>
+            <li><strong>密碼雜湊</strong> &mdash; 管理員密碼使用 PBKDF2 進行雜湊處理（絕不以明文儲存）</li>
+            <li><strong>登入速率限制</strong> &mdash; 對登入端點的暴力破解防護</li>
+            <li><strong>路徑驗證</strong> &mdash; 所有檔案操作都使用 <code>safe_path</code> 和 <code>safe_filename</code> 輔助函數以防止目錄遍歷攻擊</li>
+            <li><strong>參數化查詢</strong> &mdash; 所有資料庫查詢都使用參數化語句以防止 SQL 注入</li>
+            <li><strong>XSS 防護</strong> &mdash; 模態對話框使用安全的 DOM 構造；用戶輸入會被轉義</li>
+            <li><strong>圖片解壓炸彈防護</strong> &mdash; 圖片的最大像素數受到限制，以防止惡意圖片耗盡記憶體</li>
+        </ul>
+
+        <h3>免責聲明</h3>
+        <p>
+            RetroDB 按 <strong>“原樣”</strong> 提供，不附帶任何形式的明示或暗示擔保，
+            包括但不限於對適銷性、特定用途適用性以及非侵權性的擔保。
+            在任何情況下，作者或版權持有者均不對任何索賠、
+            損害或其他責任負責，無論是在合同訴訟、侵權行為或其他方面，
+            無論是由軟件本身、軟件的使用還是軟件的其他交易所引起、由此產生或與之相關。
+        </p>
+        <p>
+            你需自行負責保護你的部署環境，包括網路配置、
+            存取控制、資料備份，以及遵守與你使用本軟件管理的內容相關的
+            任何適用法律。對於因不當配置或部署導致的未經授權的存取、
+            資料丟失或濫用，開發者不承擔任何責任。
+        </p>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+.help-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin: 0 calc(-1 * var(--spacing-lg));
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(20, 26, 35, 0.98), rgba(15, 20, 25, 0.98));
+    border-bottom: 2px solid var(--primary-cyan);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(76, 201, 240, 0.2);
+}
+
+.help-nav-item {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.help-nav-item:hover {
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+.help-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.help-section h3 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--primary-cyan);
+    margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+}
+
+.help-section h3:first-child {
+    margin-top: 0;
+}
+
+.help-section h4 {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+}
+
+.help-section ol, .help-section ul {
+    padding-left: 1.5rem;
+    margin: var(--spacing-sm) 0;
+}
+
+.help-section li {
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.help-section p {
+    color: var(--text-secondary);
+    margin: var(--spacing-sm) 0;
+    line-height: 1.6;
+}
+
+.help-section pre {
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    overflow-x: auto;
+    margin: var(--spacing-md) 0;
+    line-height: 1.5;
+}
+
+.help-section code {
+    background: var(--bg-lighter);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--primary-cyan);
+}
+
+.help-section a {
+    color: var(--primary-cyan);
+    text-decoration: none;
+}
+
+.help-section a:hover {
+    text-decoration: underline;
+}
+
+.shortcut-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-sm);
+    margin: var(--spacing-md) 0;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border-radius: var(--radius-md);
+}
+
+.shortcut-item kbd {
+    display: inline-block;
+    min-width: 24px;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    text-align: center;
+}
+
+.shortcut-item span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--primary-cyan);
+}
+
+.help-tip {
+    background: rgba(76, 201, 240, 0.1);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    border-left: 4px solid var(--primary-cyan);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    color: var(--text-secondary);
+}
+
+.help-tip strong {
+    color: var(--primary-cyan);
+}
+
+.data-table {
+    width: 100%;
+    margin: var(--spacing-md) 0;
+}
+
+.data-table th,
+.data-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.data-table th {
+    background: var(--bg-medium);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.data-table td {
+    color: var(--text-primary);
+}
+
+.data-table tbody tr:hover {
+    background: rgba(76, 201, 240, 0.05);
+}
+</style>
+{% endblock %}

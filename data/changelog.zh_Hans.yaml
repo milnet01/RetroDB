@@ -1,0 +1,60 @@
+- version: 3.14.0
+  date: '2026-07-01'
+  tags:
+  - type: feature
+    label: 新增语言 — 现已支持中文（简体和繁体）
+  body: "<ul>\n  <li><strong>RetroDB 现已支持中文。</strong>在\n    <strong>设置 &rarr; 系统 &rarr; 语言</strong> 下有两个选择:\n    <strong>中文 (简体)</strong>（简体，面向中国大陆）和\n    <strong>中文 (繁體)</strong>（繁体，面向中国香港和台湾）。整个界面\n    &mdash; 菜单、按钮、消息以及应用内帮助手册 &mdash; 均已翻译,\n    尚未翻译的内容会悄然回退为英文。至此,支持的语言达到十种(英语、德语、\n    西班牙语、法语、意大利语、日语、巴西葡萄牙语、韩语,以及现在的简体中文\n    &amp; 繁体中文)。</li>\n</ul>\n"
+- version: 3.13.0
+  date: '2026-06-30'
+  tags:
+  - type: enhancement
+    label: PlayStation Network 登录不再那么麻烦
+  body: "<ul>\n  <li><strong>你的 PlayStation 登录现在会自行续期。</strong>\n    以前你大约每隔几个月就得重新粘贴一次 NPSSO 令牌（PlayStation\n    登录码）。RetroDB 现在会在会话过期<em>之前</em>在后台悄悄\n    刷新它，因此在正常使用中你应该很少 &mdash; 甚至从不 &mdash; 需要输入\n    新的令牌。它只刷新仍然有效的会话；对已经过期的会话则不去理会\n    （不做无谓的探测）。</li>\n  <li><strong>过期前会有提醒。</strong>如果你的 PlayStation\n    会话距离过期不到两周（或已经过期），仪表盘\n    现在会显示一条可关闭的小提醒，附带一键\n    重新关联的链接 &mdash; 这样你可以在自己方便的时候修复，而不是\n    通过一次同步失败才发现问题。</li>\n  <li><strong>一键获取令牌。</strong>PlayStation 设置\n    向导现在提供一个可选的书签小工具：把它拖到浏览器的\n    书签栏一次，之后在索尼的令牌页面上单击一下即可复制你的\n    NPSSO &mdash; 无需再全选后复制。手动粘贴仍然\n    和以前完全一样可用。</li>\n  <li>整理了应用内的 PlayStation 帮助，使其与令牌的实际\n    存储方式相符（安全地按用户存储在 RetroDB 的数据库中），并\n    修正了备份清单。</li>\n</ul>\n"
+- version: 3.12.1
+  date: '2026-06-30'
+  tags:
+  - type: fix
+    label: 全新安装现在会构建完整的数据库；可靠性修复
+  body: "<ul>\n  <li><strong>全新安装现在开箱即用。</strong>之前\n    全新安装构建游戏数据库时缺少了应用所需的若干\n    列和表（评分、RetroAchievements\n    数据、手柄信息），因此在干净的环境中打开游戏库可能会显示错误。\n    新增的数据库升级步骤会补齐所有缺失的\n    部分。现有游戏库不受影响 &mdash; 该步骤只是\n    确认这些部分已经存在。</li>\n  <li><strong>成就与奖杯同步不再丢失某个游戏的\n    进度。</strong>如果某个游戏在同步途中失败（RetroAchievements、\n    Steam、Xbox），恢复步骤可能会悄悄丢弃上一个\n    游戏刚刚保存好的进度，即便它已被算作完成。\n    现在每个游戏都单独保存，因此一次小故障不会回滚\n    相邻的游戏。PSN 奖杯同步在首次\n    运行时也不再报错。</li>\n  <li><strong>&ldquo;清除抓取的数据&rdquo;更安全了。</strong>在同时\n    删除图片时，应用现在会先清除数据库引用，\n    再删除文件，这样即使清理过程被中断也不会让\n    游戏库指向已经消失的图片。</li>\n  <li><strong>表单和导入现在能干净地处理空的或格式错误的请求</strong>\n    （修改密码、编辑用户、Steam/Xbox/PSN 导入、\n    ROM 重命名、删除截图）&mdash; 它们现在会返回一条整洁的消息\n    而不是内部错误。</li>\n  <li><strong>带引号的游戏名称不再破坏页面。</strong>\n    多个将系统或 ROM 名称嵌入页面的界面现在\n    会正确转义它，因此撇号或不寻常的字符不会\n    阻止页面加载。</li>\n  <li>底层加固：更安全的设置文件写入（两次保存\n    重叠时不会产生损坏的文件）、更健壮的游戏元数据抓取（一条坏\n    记录不再中止整个来源）、对外发图片抓取上可用的 DNS 重绑定\n    防护，以及现在针对一次性数据库运行的\n    测试套件，因此它绝不会触及你真正的游戏库。</li>\n</ul>\n"
+- version: 3.12.0
+  date: '2026-06-30'
+  tags:
+  - type: feature
+    label: 新增语言 — 现已支持韩语（한국어）
+  body: "<ul>\n  <li><strong>RetroDB 现已提供韩语（한국어）版本。</strong>在\n    设置 &rarr; 系统 &rarr; 语言 中选择它。整个界面\n    &mdash; 菜单、按钮、消息以及应用内的帮助手册 &mdash;\n    都已翻译，使支持的语言增至八种（英语、德语、\n    西班牙语、法语、意大利语、日语、巴西葡萄牙语和韩语）。\n    韩语补全了 RetroDB 所显示的每一个游戏\n    分级机构的覆盖，包括韩国的 GRAC。</li>\n</ul>\n"
+- version: 3.11.0
+  date: '2026-06-30'
+  tags:
+  - type: enhancement
+    label: 在 Patreon 上支持 RetroDB — 新增捐赠链接
+  body: "<ul>\n  <li><strong>你现在可以在 Patreon 上支持 RetroDB。</strong>一个 Patreon\n    链接位于\n    <strong>设置 &rarr; 系统 &rarr; 支持开发</strong> 中现有的\n    &ldquo;在 GitHub 上赞助&rdquo;按钮旁，也出现在关于面板\n    以及项目的 README 中。RetroDB 始终保持完全\n    免费和开源 &mdash; 捐赠完全是可选的，只是\n    帮助个人开发得以持续。</li>\n</ul>\n"
+- version: 3.10.0
+  date: '2026-06-26'
+  tags:
+  - type: enhancement
+    label: 更新日志现在通过“加载更多”按钮加载更快
+  body: "<ul>\n  <li><strong>更新日志页面现在打开快得多。</strong>RetroDB 现在\n    不再在每次打开时绘制整个发行历史（数百条\n    条目），而是显示最近的 20 条，并在底部添加一个\n    <strong>加载更多</strong>按钮。点击它即可显示\n    下一批，以此类推 &mdash; 较早的历史仍然全部\n    保留，只是按需加载，而不再拖慢首次\n    浏览。</li>\n</ul>\n"
+- version: 3.9.0
+  date: '2026-06-17'
+  tags:
+  - type: feature
+    label: 帮助手册和近期发行说明现已翻译成全部 6 种语言
+  body: "<ul>\n  <li><strong>完整的应用内帮助手册现已提供全部六种\n    语言</strong> &mdash; 德语、法语、西班牙语、意大利语、日语\n    和巴西葡萄牙语 &mdash; 而不仅仅是英语。RetroDB 会以\n    你在设置中选择的语言显示手册，并在某些内容\n    尚未翻译时悄悄回退到英语。</li>\n  <li><strong>这份更新日志现在也会以你的语言显示</strong>，\n    针对最近的发行版本，今后的新发行也将从这里开始翻译。\n    较早的历史仍保留英语。</li>\n  <li><strong>愿望单页面和最后残留的英文文本</strong>\n    &mdash; 一批在 3.8.0 语言包首次落地时被遗漏的\n    弹出错误和状态消息 &mdash; 现在也能在整个应用中\n    正确翻译了。</li>\n</ul>\n"
+- version: 3.8.2
+  date: '2026-06-17'
+  tags:
+  - type: security
+    label: 安全依赖更新 + CI 修复
+  body: "<ul>\n  <li><strong>安全：</strong>更新了捆绑的 <code>cryptography</code>\n    库（47 → 49）以清除一条已发布的公告（GHSA-537c-gmf6-5ccf）。\n    行为没有变化 —— 只是更安全的版本。</li>\n  <li>修复了自动化测试流水线：一个仅供测试用的缺失辅助库\n    (<code>beautifulsoup4</code>) 自 v3.7.0 起一直导致测试运行失败，\n    而新的打包构建脚本触发了一项已知的静态分析误报\n    （它运行的是受信任的构建命令，而非用户输入）\n    —— 现已记录并校准。仅为维护；应用本身\n    没有任何变化。</li>\n</ul>\n"
+- version: 3.8.1
+  date: '2026-06-17'
+  tags:
+  - type: improvement
+    label: 更小的下载选项、捐赠整理与翻译修复（Pass 46.3 / 47.6）
+  body: "<ul>\n  <li><strong>一个小得多的下载版本即将到来。</strong>\n    RetroDB 那个“解压即双击运行”的现成版本现在可以\n    构建为<strong>仅 CPU</strong>版本（约 600&nbsp;MB），供\n    没有 AMD 显卡的用户使用 &mdash; 大约只有完整\n    版本的六分之一大小。两者将并列提供，方便你选择\n    适合你机器的那一个。</li>\n  <li><strong>设置中的“支持开发”面板现在会翻译了</strong>，\n    与应用的其余部分保持一致 &mdash; 之前它在语言包于\n    3.8.0 落地时被意外遗漏在英语中。</li>\n  <li>整理了捐赠链接（README 中的 GitHub Sponsors 徽章；\n    资金文件已为 Patreon 和 Buy&nbsp;Me&nbsp;A&nbsp;Coffee 准备就绪，\n    只待它们设置完成）。永远不会有唠叨弹窗。</li>\n  <li>幕后：发行流水线现在可以自动为 Windows、macOS\n    和 Linux 构建现成运行的版本。注意：冗长的\n    应用内<em>帮助</em>手册目前仍然仅有英语 &mdash; 这已\n    记录为后续工作。</li>\n</ul>\n"
+- version: 3.8.0
+  date: '2026-06-12'
+  tags:
+  - type: feature
+    label: 完整的界面翻译 + 6 种语言（Pass 43.2/43.3/43.5）
+  body: "<ul>\n  <li><strong>RetroDB 现在又多会说 6 种语言了。</strong>在\n    3.7.0 打下的基础上，整个界面已变得可翻译，并\n    经机器翻译为<strong>德语、法语、西班牙语、意大利语、\n    日语和巴西葡萄牙语</strong>。在\n    设置 &rarr; 显示偏好 &rarr; 语言 中选择你的语言；它会遵循你保存的\n    偏好，然后是你的浏览器，最后回退到英语 &mdash; 它\n    绝不会卡在某个缺失的语言上。</li>\n  <li><strong>屏幕上的一切都已覆盖</strong>：页面文本和按钮、\n    弹出消息（那些小小的&ldquo;toast&rdquo;通知）、编辑\n    和设置对话框、工具提示以及屏幕阅读器标签。游戏类型、\n    视角和游戏模式（例如&ldquo;First-Person-Shooter&rdquo;）现在也会\n    以你的语言显示 &mdash; 而底层数据仍保持\n    英语，因此你的游戏库和筛选依旧和以前完全一样地工作。</li>\n  <li>内置的\n    <strong>&ldquo;Pseudo&rdquo;语言</strong>（可在\n    语言菜单中看到）是一个供翻译人员使用的 QA 工具，它给每个\n    标签加上括号和重音符号，让任何被漏掉的文本一目了然。</li>\n  <li>机器翻译只是一个起点，某些地方读起来可能\n    有点生硬 &mdash; 它们很容易随时间改进，任何没有\n    翻译的文本会直接显示为英语。</li>\n</ul>\n"
