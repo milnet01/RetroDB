@@ -378,7 +378,7 @@ are tracked here so the next pass picks them up:
 > the NPSSO goes stale) the user must redo the whole browser copy-paste wizard.
 
 #### Pass 50.1 Proactive token keep-alive — make re-entry near-never (HIGH value, M)
-- **Status**: idea — highest-value simplification.
+- **Status**: done
 - **Idea**: the refresh token lasts ~2 months and PSNAWP silently renews the
   access token from it on every authenticated call. Today RetroDB only refreshes
   *on demand* (when a sync runs), so a user who syncs infrequently lets the
@@ -400,9 +400,10 @@ are tracked here so the next pass picks them up:
   with a cached PSN bundle. Must respect the Pass-31.5 per-user NPSSO scoping
   (`services/jobs/psn_refresh.py:175-221`) so one user's keep-alive can't refresh
   under another's token.
+Resolved (2026-07-01, v3.13.0): shipped as services/jobs/psn_keepalive.py — daily keep-alive refreshes still-valid PSN sessions within 14d of expiry. Verified the sliding-window assumption first (PSNAWP replaces the bundle with Sony's fresh refresh_token on each refresh). Pinned by tests/test_psn_keepalive.py. Roadmap flip was missed at release — reconciled now.
 
 #### Pass 50.2 Proactive expiry notification — prompt before it breaks (LOW, S)
-- **Status**: idea — cheap UX win, complements 50.1.
+- **Status**: done
 - **Idea**: the expiry data already exists (`/api/psn/token-info` returns
   `refresh_token_expires_at`; the Settings banner colour-codes at 14/3-day
   thresholds, `templates/settings.html:5033-5047`). Surface that same warning
@@ -410,9 +411,10 @@ are tracked here so the next pass picks them up:
   N days — re-link now" — so the user re-links on their schedule instead of
   discovering it via a failed sync. If 50.1 lands, this becomes the rare-but-clear
   fallback for when keep-alive can't save the session.
+Resolved (2026-07-01, v3.13.0): dismissible dashboard banner shown when the PSN session is within 14d of expiry / expired, with one-click re-link.
 
 #### Pass 50.3 One-click NPSSO capture for the (now-rare) re-entry (LOW, M)
-- **Status**: idea — nice-to-have once 50.1 makes re-entry infrequent.
+- **Status**: done
 - **Idea**: the wizard already opens the `ssocookie` URL and auto-extracts the
   `npsso` from pasted JSON (`extractNpsso`, `settings.html:4930-4942`). Trim the
   remaining friction with an installable **bookmarklet**: the user clicks it while
@@ -420,9 +422,10 @@ are tracked here so the next pass picks them up:
   ambitiously, POSTs it straight to RetroDB's `/api/psn/save-npsso` on the LAN),
   collapsing "navigate to a raw API URL → select-all → copy → paste" into one
   click. Keep the manual paste as the fallback (no extra setup required).
+Resolved (2026-07-01, v3.13.0): one-click NPSSO capture wired into settings.html (bookmarklet / save-npsso path), manual paste retained as fallback.
 
 #### Pass 50.4 PSN token hygiene + stale-doc cleanup (LOW, S)
-- **Status**: idea — hygiene, partly a leftover from the Pass-27.2 migration.
+- **Status**: done
 - Items:
   - Delete the lingering `data/psn_tokens.json` (gitignored + dist-excluded, so
     not a public leak, but migration 006 was supposed to ingest-and-delete it; it
@@ -440,6 +443,7 @@ are tracked here so the next pass picks them up:
     harden alongside any keep-alive work since 50.1 leans on the same internals.
 
 ---
+Resolved (2026-07-01, v3.13.0): stale data/psn_tokens.json removed; help.html stale token-cache text cleaned (0 remaining references).
 
 ### Pass 49 — audit + indie-review 2026-06-30 (fix-pass + deferrals)
 
@@ -987,7 +991,7 @@ Resolved (2026-06-30): Patreon page is live at https://www.patreon.com/c/AntsPro
   3. **Skip the BMAC "memberships" feature** — that overlaps
      Patreon/Sponsors and fragments the monthly-tier story across
      three platforms. Use BMAC strictly for one-off coffees.
-- **Status**: blocked on 47.2
+- **Status**: deferred
 Progress (2026-06-30): Parked by maintainer. Buy Me A Coffee does not support South Africa yet, so this surface can't go live regardless of code. Leave planned; revisit only if/when BMAC adds ZA payouts. GitHub Sponsors already covers the in-app/README/FUNDING donation surfaces, so nothing is blocked on this.
 
 #### Pass 47.6 Donation surfaces in app + repo (MEDIUM, M)

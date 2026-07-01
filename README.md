@@ -159,9 +159,6 @@ every bit helps keep solo development sustainable.
 - **GitHub Sponsors:** [github.com/sponsors/milnet01](https://github.com/sponsors/milnet01)
 - **Patreon:** [patreon.com/c/AntsProjectsHub](https://www.patreon.com/c/AntsProjectsHub)
 
-(A Buy Me A Coffee surface will follow once it supports more regions; see
-[`.github/FUNDING.yml`](.github/FUNDING.yml).)
-
 ## License
 
 RetroDB is released under the [MIT License](LICENSE).
