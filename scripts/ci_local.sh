@@ -2,12 +2,19 @@
 #
 # scripts/ci_local.sh — run the GitHub Actions CI checks locally.
 #
-# Mirrors .github/workflows/ci.yml (its four jobs) plus the documented i18n
-# freshness gate AND a lint of the workflow files themselves (ci.yml +
-# release.yml), against the LOCAL interpreter and installed tools, so a push
-# that would go red in CI — or a malformed workflow — fails here first.
-# (The release pipeline's keyless cosign signing needs a GitHub OIDC token and
-# cannot run locally; the workflow lint catches its config-level bugs instead.)
+# Mirrors every job in .github/workflows/ci.yml 1:1 — ruff, import smoke,
+# pytest, i18n freshness, semgrep, pip-audit, and lockfile-drift — against the
+# LOCAL interpreter and installed tools, so a push that would go red in CI fails
+# here first. Adds ONE local-only extra: a lint of the workflow files themselves
+# (ci.yml + release.yml). That extra is deliberately NOT a CI gate — GitHub
+# validates workflow YAML natively when it loads a run, and the release
+# pipeline's keyless cosign signing needs a GitHub OIDC token and can't run
+# locally, so linting the workflows before push is a pre-push nicety, not part
+# of the CI-parity contract.
+#
+# CI-only differences that can't be reproduced on one local box (environmental,
+# NOT check-logic gaps): the 3.12/3.13 interpreter matrix and the coverage-XML
+# upload. Every pass/fail check itself is mirrored, with CI's exact invocation.
 #
 # Wired as a git PRE-PUSH gate via pre-commit (.pre-commit-config.yaml). Also
 # runnable by hand at any time:
@@ -53,12 +60,15 @@ if RETRODB_DB_PATH="$SMOKE_DIR/smoke.db" RETRODB_DEBUG=false \
 else fail "import smoke"; fi
 rm -rf "$SMOKE_DIR"
 
-# 3. Pytest — CI's exact invocation (xdist + per-file dist) -------------------
-step "Pytest  ·  -n 4 --dist=loadfile"
-if have pytest; then pytest -n 4 --dist=loadfile -q && ok "pytest" || fail "pytest"
+# 3. Pytest — CI's exact invocation (xdist + per-file dist + durations) -------
+# `--durations=20` matches ci.yml so the slowest-20 report is identical; `-q`
+# is a local readability choice (verbosity only, no pass/fail impact). CI also
+# layers coverage on the primary interpreter — reporting-only, omitted here.
+step "Pytest  ·  -n 4 --dist=loadfile --durations=20"
+if have pytest; then pytest -n 4 --dist=loadfile --durations=20 -q && ok "pytest" || fail "pytest"
 else skip "pytest not installed  (pip install pytest pytest-xdist)"; fi
 
-# 4. i18n freshness gate (CLAUDE.md documented gate) -------------------------
+# 4. i18n freshness gate — mirrors ci.yml's `i18n-fresh` job (CLAUDE.md step 8) -
 step "i18n freshness  ·  scripts/check_i18n_fresh.py"
 if python3 scripts/check_i18n_fresh.py; then ok "i18n freshness"
 else fail "i18n freshness  (regenerate catalogs — see CLAUDE.md step 8)"; fi
@@ -95,11 +105,12 @@ if have pip-compile; then
 else skip "pip-compile not installed  (pip install pip-tools)"; fi
 
 # 8. Workflow lint — .github/workflows/*.yml (ci.yml + release.yml) -----------
-# The release pipeline (release.yml) isn't exercised by the CI mirror above and
-# can't be fully run locally (its keyless cosign signing needs a GitHub OIDC
-# token), but a linter still catches workflow-config bugs — bad expressions,
-# shell-quoting, unknown keys. Prefer actionlint (deep checks); fall back to a
-# YAML-parse of each workflow so this step ALWAYS runs without a new tool.
+# LOCAL-ONLY extra (not a CI gate — see the header note). The release pipeline
+# (release.yml) isn't exercised by the CI mirror above and can't be fully run
+# locally (its keyless cosign signing needs a GitHub OIDC token), but a linter
+# still catches workflow-config bugs — bad expressions, shell-quoting, unknown
+# keys — before they reach GitHub. Prefer actionlint (deep checks); fall back to
+# a YAML-parse of each workflow so this step ALWAYS runs without a new tool.
 step "Workflow lint  ·  .github/workflows/*.yml"
 if have actionlint; then
   actionlint && ok "actionlint" || fail "actionlint"

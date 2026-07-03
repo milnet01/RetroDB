@@ -276,3 +276,44 @@ jobs:
             echo "Run: pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes"
             exit 1
           fi
+
+  # ---------------------------------------------------------------------------
+  # i18n-fresh — the catalog-freshness gate documented in CLAUDE.md step 8.
+  # Fails when a t('...')/`_()` string was wrapped but the catalog was not
+  # re-extracted, or build_js.py was not re-run after a JS msgid changed. The
+  # local pre-push mirror (scripts/ci_local.sh) already runs this; wiring it
+  # into CI too means a `git push --no-verify` can't ship stale translations —
+  # exactly the "a fully-translated UI still pops English toasts" seam Pass 52
+  # is closing. Interpreter-independent; runs in parallel with the matrix.
+  # ---------------------------------------------------------------------------
+  i18n-fresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
+        with:
+          python-version: ${{ env.PRIMARY_PYTHON }}
+
+      - name: Cache uv wheels (i18n-fresh)
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        with:
+          path: ~/.cache/uv
+          key: uv-i18n-${{ runner.os }}-py${{ env.PRIMARY_PYTHON }}-${{ hashFiles('requirements.lock') }}-v2
+          restore-keys: |
+            uv-i18n-${{ runner.os }}-py${{ env.PRIMARY_PYTHON }}-
+
+      - name: Install runtime deps (uv)
+        run: |
+          # check_i18n_fresh.py shells out to `pybabel extract` and imports
+          # build_js + services.js_i18n_strings. It MUST run against the LOCKED
+          # Babel/Jinja2 (2.18.0 / 3.1.6) — a newer Babel can extract a slightly
+          # different msgid set and red-light this gate spuriously against the
+          # committed messages.pot. So install the exact lockfile, same as
+          # lint-and-smoke (build_js is stdlib-only; the lock covers babel+jinja2).
+          python -m pip install --upgrade pip uv
+          uv pip install --system --require-hashes -r requirements.lock
+
+      - name: i18n freshness gate
+        run: python scripts/check_i18n_fresh.py
