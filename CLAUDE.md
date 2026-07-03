@@ -58,11 +58,11 @@ proofs. Never mark a task complete just because those tests pass.
 - State what was verified in the session summary. If something couldn't be
   tested in-session, say so — never imply coverage that wasn't produced.
 - Architecturally significant passes (multi-subsystem, reshapes an abstraction,
-  touches security/auth/data flow): recommend the user run `/ultrareview` before
-  merging. `/ultrareview` is a Claude Code slash-command that dispatches a
-  multi-agent cloud review of the current branch (or PR number) — it is
-  user-triggered and billed; a Claude Code session cannot launch it itself.
-  Maintainer-only.
+  touches security/auth/data flow): recommend the user run `/code-review ultra`
+  before merging. `/code-review ultra` is a Claude Code slash-command that
+  dispatches a multi-agent cloud review of the current branch (or PR number) — it
+  is user-triggered and billed; a Claude Code session cannot launch it itself.
+  (`/ultrareview` is a deprecated alias for the same command.) Maintainer-only.
 - For 3+ step work, post a `step → verify` plan up front (global §12) and tick
   off as you go.
 
