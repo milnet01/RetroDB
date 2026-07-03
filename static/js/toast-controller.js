@@ -1374,8 +1374,26 @@ const UnifiedToastController = {
             pauseBtn.title = isPaused ? t('Resume') : t('Pause');
             pauseBtn.classList.toggle('is-paused', isPaused);
         }
+
+        // Pass 52.2 — speak progress to screen readers. Everything above updates
+        // the toast DOM silently; announce throttled running-milestones and a
+        // forced completion line through the visually-hidden live region. Pause
+        // is user-initiated (they clicked the button) so it's left to the visual
+        // toast. This block only runs when the state signature changed (the
+        // early return at the top of this method), so it never fires on an idle
+        // poll — the announce() throttle then thins rapid ticks to milestones.
+        if (isComplete) {
+            Notifications.announce(`${config.name} ${t('Complete')}`, { force: true });
+        } else if (!isPaused && total > 0) {
+            Notifications.announce(t('{job}: {current} of {total} ({percent}%)', {
+                job: config.name,
+                current: this.fmtNum(current),
+                total: this.fmtNum(total),
+                percent: percent,
+            }));
+        }
     },
-    
+
     /**
      * Hide active toast
      */

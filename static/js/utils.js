@@ -545,6 +545,47 @@ const Notifications = {
 
     info(message, duration) {
         return this.show(message, 'info', duration);
+    },
+
+    // Pass 52.2 — screen-reader progress announcements.
+    _announceRegion: null,
+    _lastAnnounceAt: 0,
+    ANNOUNCE_THROTTLE_MS: 3000,
+
+    /**
+     * Announce a job-progress milestone to screen readers WITHOUT a visible
+     * toast. Long-running polled jobs (bulk scrape, RA/PSN sync, image-resize)
+     * update the toast DOM silently, so a screen-reader user hears nothing
+     * between "start" and "done". This speaks periodic milestones + completion
+     * via a dedicated visually-hidden polite region, separate from the visible
+     * notification stack.
+     *
+     * Time-throttled (>= ANNOUNCE_THROTTLE_MS between spoken updates) so rapid
+     * poll ticks don't flood the reader — "milestones, not every row". Pass
+     * {force:true} for completion so it's never dropped by the throttle.
+     *
+     * @param {string} message - already-localized text (callers wrap with t()).
+     * @param {{force?: boolean}} [opts]
+     */
+    announce(message, { force = false } = {}) {
+        if (!message) return;
+        const now = Date.now();
+        if (!force && now - this._lastAnnounceAt < this.ANNOUNCE_THROTTLE_MS) return;
+        this._lastAnnounceAt = now;
+        if (!this._announceRegion) {
+            let region = document.getElementById('a11y-progress-announce');
+            if (!region) {
+                region = document.createElement('div');
+                region.id = 'a11y-progress-announce';
+                region.className = 'visually-hidden';
+                region.setAttribute('role', 'status');
+                region.setAttribute('aria-live', 'polite');
+                region.setAttribute('aria-atomic', 'true');
+                document.body.appendChild(region);
+            }
+            this._announceRegion = region;
+        }
+        this._announceRegion.textContent = message;
     }
 };
 

@@ -349,7 +349,7 @@ are tracked here so the next pass picks them up:
 
 #### Pass 52.2 aria-live announcements for long-running job progress (A11Y, S)
 
-- **Status**: planned.
+- **Status**: done
 - **Problem**: only 4 templates carry an `aria-live` region. Long-running,
   JS-driven progress surfaces (bulk-scrape, bulk-edit, AI Fill, RA/Steam/Xbox/PSN
   sync) update the DOM silently, so a screen-reader user hears nothing between
