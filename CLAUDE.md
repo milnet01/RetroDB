@@ -25,7 +25,7 @@ genuinely diverges.
 3. Rebuild CSS if any `static/css/**.css` changed: `python3 build_css.py`
 4. Rebuild JS if any bundled `static/js/*.js` changed: `python3 build_js.py`
 5. Run tests if any `services/*.py` or `scraper/*.py` changed: `python3 -m pytest`
-6. Regenerate lockfile if `requirements.txt` was edited: `pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes` (Pass 39.4 — `install.py` prefers `--require-hashes` when `requirements.lock` is present and falls back to `requirements.txt` otherwise; keep the lockfile current so the secure path stays the default)
+6. Regenerate lockfile if `requirements.txt` was edited: `pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes` (Pass 39.4 — `install.py` prefers `--require-hashes` when `requirements.lock` is present and falls back to `requirements.txt` otherwise; keep the lockfile current so the secure path stays the default). Dependencies track **latest-always** (features + security); a hold below latest is allowed only for a documented breakage recorded in `docs/DEPENDENCY_POLICY.md` — read it before pinning, capping, or bumping a major.
 7. Update this file if change adds/removes/renames routes, templates, bundled JS, CSS files, or alters page/asset wiring contracts
 8. Wrap any new user-facing string for i18n and regenerate catalogs — see `docs/specs/i18n.md` §2/§4/§6/§7/§9:
    - Templates `{{ _('...') }}` / `{% trans %}`; Python `flash(_('...'))` / `error(_('...'))`.
@@ -179,6 +179,7 @@ Pre-release checklist: bump version + changelog → ensure `config.example.py` m
 
 - `docs/RETRODB_DESIGN_STANDARDS.md` — Full UI/CSS/JS/API standards (25 sections; §23 controller naming, §25 schema migrations)
 - `docs/STANDARDS_ADDENDUM.md` — Version checklist, logging system
+- `docs/DEPENDENCY_POLICY.md` — Dependency policy: latest-always (features + security), held-back ledger, major-bump review gate, re-test workflow (read before pinning/capping/major-bumping any dep)
 - `docs/ROM_NAMING_STANDARD.md` — ROM file naming
 - `docs/specs/` — Per-feature design/contract docs (`api-contracts`, `auth`, `image-pipeline`, `jobs`, `migrations`, `scrapers`, `settings`, `themes`, `i18n`). Read the relevant one before touching that subsystem.
 - `docs/theme_contrast.md` — Generated WCAG output (`scripts/audit_contrast.py`); regenerate when theme colors change
