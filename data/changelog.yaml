@@ -1,3 +1,30 @@
+- version: 3.17.0
+  date: 2026-07-04
+  tags:
+  - type: feature
+    label: Clear database entries for media files that are missing from disk
+  - type: security
+    label: Guard against wiping your whole library's art when a media folder goes missing
+  body: |
+    <ul>
+      <li><strong>New maintenance tool: &ldquo;Missing Media References&rdquo;</strong>
+        (Settings &rarr; System &rarr; Maintenance). It is the mirror image of the
+        existing &ldquo;Orphaned Media&rdquo; cleanup: instead of finding leftover
+        image files with no game, it finds games whose box art, 3D box art,
+        screenshots, fanart, video or manual point to files that are no longer on
+        disk. Scan for them, then clear those stale references in one click so
+        scrapers can re-download the art. Your game entries themselves are never
+        touched.</li>
+      <li><strong>Safer automatic cleanup during scraping.</strong> When RetroDB
+        re-scrapes a game it quietly clears references to media files that have
+        vanished from disk. Previously, if a whole media folder disappeared at once
+        &mdash; an unmounted external drive, or a bulk deletion &mdash; that cleanup
+        could erase the record of what art thousands of games had, forcing costly
+        re-scrapes. RetroDB now recognises that signal: if a media folder is missing
+        or completely empty, it keeps the references and logs a warning instead of
+        wiping them. The new maintenance tool applies the same guard and clearly
+        flags any folder it held back.</li>
+    </ul>
 - version: 3.16.0
   date: 2026-07-04
   tags:

@@ -52,6 +52,30 @@ def _try_remove(path, label):
         return False
 
 
+def media_dir_is_healthy(directory):
+    """True if a media directory looks present and populated.
+
+    Pass 54.1 mass-missing guard. A media file's absence is only an
+    unambiguous "stale DB reference" when the directory it lives in is present
+    AND still holds other files. A directory that is *gone* (an unmounted
+    external drive) or has been *emptied wholesale* (a bulk external deletion)
+    makes every referenced file look missing at once — auto-clearing on that
+    signal would erase the record of what art thousands of games had. So when
+    a directory looks unhealthy we preserve the references and warn instead of
+    clearing. Mirrors ``clean_missing_roms``'s mount guard for ROMs.
+
+    Returns False on any OSError (missing dir, permission/IO error) — the safe
+    direction is to treat an ambiguous directory as unhealthy and keep the refs.
+    """
+    try:
+        with os.scandir(directory) as it:
+            for _ in it:
+                return True
+        return False
+    except OSError:
+        return False
+
+
 def delete_game_images(games):
     """Delete image/media files for a list of game rows.
 
@@ -303,3 +327,115 @@ def clean_orphaned_files(files, scan_started_override=None):
     if skipped:
         logger.info(f"Orphan cleanup: skipped {skipped} files modified during the cleanup window")
     return deleted, errors, freed_size
+
+
+def _media_ref_exists(value, root_dir, container_prefix):
+    """True if a DB media value resolves to a real file on disk."""
+    path = _resolve_media_path(value, root_dir, container_prefix)
+    return bool(path) and os.path.exists(path)
+
+
+def find_missing_media_refs(games):
+    """Find games whose media DB references point to files no longer on disk.
+
+    The inverse of ``find_orphaned_media`` (files with no DB reference); this
+    finds DB references with no file, so a maintenance action can clear them
+    and let scrapers re-download.
+
+    Returns ``(affected, guarded)``:
+
+      * ``affected`` — ``[{id, title, fields: [{field, value}, ...]}]`` for
+        games with at least one *clearable* stale reference. A multi-value
+        ``screenshots`` column is only flagged when EVERY referenced file is
+        gone (a single NULL can't express a partial prune — the scraper's
+        fill-path handles partial screenshot pruning on the next re-scrape).
+
+      * ``guarded`` — ``[{field, count}]`` for references skipped by the
+        Pass 54.1 mass-missing guard: their on-disk directory is missing or
+        empty, so treating the files as stale is unsafe (an unmounted drive /
+        bulk deletion). The caller surfaces these as a warning instead of
+        clearing them.
+    """
+    layout = _media_layout()
+    # Scan directory health once per field, not once per game.
+    dir_health = {root_dir: media_dir_is_healthy(root_dir)
+                  for _, root_dir, _, _ in layout}
+
+    affected = []
+    guarded_counts = {}  # field -> refs skipped because its dir looks unhealthy
+    for game in games:
+        game_fields = []
+        for field, root_dir, container_prefix, is_list in layout:
+            value = game[field]
+            if not value:
+                continue
+            if is_list:
+                items = [s.strip() for s in value.split(',') if s.strip()]
+                if not items:
+                    continue
+                # Clearable only when the whole set is gone.
+                if any(_media_ref_exists(s, root_dir, container_prefix) for s in items):
+                    continue
+            elif _media_ref_exists(value, root_dir, container_prefix):
+                continue
+            # This reference points at a file that is not on disk.
+            if not dir_health[root_dir]:
+                guarded_counts[field] = guarded_counts.get(field, 0) + 1
+                continue
+            game_fields.append({'field': field, 'value': value})
+        if game_fields:
+            affected.append({
+                'id': game['id'],
+                'title': game['title'],
+                'fields': game_fields,
+            })
+
+    guarded = [{'field': f, 'count': c} for f, c in sorted(guarded_counts.items())]
+    return affected, guarded
+
+
+def clear_missing_media_refs():
+    """Clear DB media references that point to files no longer on disk.
+
+    Re-derives the affected set server-side (never trusts a client-supplied
+    list) and NULLs each stale field under one transaction. Honours the
+    Pass 54.1 mass-missing guard via ``find_missing_media_refs`` — references
+    into a missing/empty media directory are preserved, not cleared.
+
+    The conditional ``AND <field> = ?`` WHERE mirrors the scraper's fill-path
+    clear: it protects against a concurrent upload that replaced the value
+    between the scan and this write, so only the exact stale value is NULL'd.
+
+    Returns ``(cleared, affected_games, guarded)``.
+    """
+    from services.database import get_db_with_context, query, safe_column
+
+    games = query(
+        "SELECT id, title, boxart, boxart_3d, screenshots, fanart, video, manual "
+        "FROM games"
+    )
+    affected, guarded = find_missing_media_refs(games)
+    if not affected:
+        return 0, 0, guarded
+
+    # `field` already comes from the allowlisted _media_layout, but pass it
+    # through safe_column for defence-in-depth before the f-string.
+    allowed_cols = {field for field, _, _, _ in _media_layout()}
+    cleared = 0
+    with get_db_with_context() as conn:
+        for g in affected:
+            for ref in g['fields']:
+                col = safe_column(ref['field'], allowed_cols)
+                cur = conn.execute(
+                    f"UPDATE games SET {col} = NULL WHERE id = ? AND {col} = ?",
+                    (g['id'], ref['value']),
+                )
+                if cur.rowcount and cur.rowcount > 0:
+                    cleared += cur.rowcount
+
+    logger.info(
+        f"Cleared {cleared} stale media reference(s) across {len(affected)} game(s)"
+        + (f"; {sum(x['count'] for x in guarded)} preserved by the mass-missing guard"
+           if guarded else "")
+    )
+    return cleared, len(affected), guarded

@@ -24,7 +24,12 @@ from services.game_cleanup import (
     clear_scraped_data,
     preview_scraped_data,
 )
-from services.media_cleanup import clean_orphaned_files, find_orphaned_media
+from services.media_cleanup import (
+    clean_orphaned_files,
+    clear_missing_media_refs,
+    find_missing_media_refs,
+    find_orphaned_media,
+)
 from services.rom_scanner import RomPathNotConfigured, run_inline_scan
 
 logger = logging.getLogger(__name__)
@@ -160,6 +165,50 @@ def api_orphaned_media_clean():
         deleted=deleted,
         errors=errors,
         freed_mb=freed_size / (1024 * 1024),
+    )
+
+
+@bp.route('/api/missing-media-refs/preview', methods=['GET'])
+@admin_required
+@handle_api_errors
+def api_missing_media_refs_preview():
+    """Preview games whose media DB references point to files gone from disk.
+
+    Inverse of orphaned-media (files with no DB row). Read-only — lists the
+    affected games/fields plus any directories held back by the Pass 54.1
+    mass-missing guard so the UI can warn before the user clears anything.
+    """
+    games = query(
+        "SELECT id, title, boxart, boxart_3d, screenshots, fanart, video, manual "
+        "FROM games"
+    )
+    affected, guarded = find_missing_media_refs(games)
+    ref_count = sum(len(g['fields']) for g in affected)
+    return success(
+        games=affected[:200],
+        game_count=len(affected),
+        ref_count=ref_count,
+        guarded=guarded,
+    )
+
+
+@bp.route('/api/missing-media-refs/clear', methods=['POST'])
+@admin_required
+@handle_api_errors
+def api_missing_media_refs_clear():
+    """Clear DB media references pointing to files no longer on disk.
+
+    Re-derives the set server-side (never trusts the preview payload) and
+    honours the mass-missing guard, so a bulk "everything's missing" state
+    can't wipe the whole library's references in one click.
+    """
+    cleared, game_count, guarded = clear_missing_media_refs()
+    if cleared:
+        invalidate_analytics_cache()
+    return success(
+        cleared=cleared,
+        game_count=game_count,
+        guarded=guarded,
     )
 
 

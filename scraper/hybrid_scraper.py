@@ -15,6 +15,7 @@ from config import IMAGE_PATH, STATIC_PATH
 from services.normalization import normalize_genre
 from services.game_utils import generate_sort_title, infer_rating_from_content, RATING_SYSTEM_KEYS, RATING_SYSTEMS
 from services.game_metadata_service import cross_map_ratings
+from services.media_cleanup import media_dir_is_healthy
 
 logger = logging.getLogger(__name__)
 
@@ -1246,6 +1247,13 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 value = metadata.get(field)
                 if value:
                     if not os.path.exists(os.path.join(directory, value)):
+                        # Pass 54.1 — skip the clear when the whole media dir is
+                        # gone/empty (unmounted drive / bulk deletion); erasing
+                        # the ref then would lose the record of every game's art.
+                        if not media_dir_is_healthy(directory):
+                            logger.warning(f"Media dir {directory} missing/empty — "
+                                           f"preserving DB ref {field}={value} (mass-missing guard)")
+                            continue
                         logger.warning(f"Media file missing from disk, clearing: {field}={value}")
                         metadata[field] = None
                         stale_media.append((field, value))
@@ -1253,10 +1261,15 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             # Video lives in STATIC_PATH/videos/
             video_value = metadata.get('video')
             if video_value:
-                if not os.path.exists(os.path.join(STATIC_PATH, 'videos', video_value)):
-                    logger.warning(f"Media file missing from disk, clearing: video={video_value}")
-                    metadata['video'] = None
-                    stale_media.append(('video', video_value))
+                _video_dir = os.path.join(STATIC_PATH, 'videos')
+                if not os.path.exists(os.path.join(_video_dir, video_value)):
+                    if not media_dir_is_healthy(_video_dir):
+                        logger.warning(f"Media dir {_video_dir} missing/empty — "
+                                       f"preserving DB ref video={video_value} (mass-missing guard)")
+                    else:
+                        logger.warning(f"Media file missing from disk, clearing: video={video_value}")
+                        metadata['video'] = None
+                        stale_media.append(('video', video_value))
 
             # Screenshots: filter out individual missing files
             screenshots_value = metadata.get('screenshots')
@@ -1264,7 +1277,11 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 ss_dir = os.path.join(IMAGE_PATH, 'screenshots')
                 ss_list = [s.strip() for s in screenshots_value.split(',') if s.strip()]
                 valid_ss = [s for s in ss_list if os.path.exists(os.path.join(ss_dir, s))]
-                if len(valid_ss) < len(ss_list):
+                if len(valid_ss) < len(ss_list) and not media_dir_is_healthy(ss_dir):
+                    # Whole screenshots dir gone/empty — don't prune every ref.
+                    logger.warning(f"Media dir {ss_dir} missing/empty — preserving "
+                                   f"{len(ss_list)} screenshot ref(s) (mass-missing guard)")
+                elif len(valid_ss) < len(ss_list):
                     missing = [s for s in ss_list if s not in valid_ss]
                     logger.warning(f"Screenshot files missing from disk, removing: {missing}")
                     metadata['screenshots'] = ', '.join(valid_ss) if valid_ss else None
@@ -1303,12 +1320,19 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 'manual': os.path.join(IMAGE_PATH, 'manuals'),
             }
             _force_stale = []  # list of (field, stale_filename)
+            # Pass 54.1 — same mass-missing guard as the fill-path above: only
+            # treat a missing file as a clearable stale ref when its media dir
+            # is still present and populated (a gone/empty dir means an
+            # unmounted drive or bulk deletion, not a genuine per-file removal).
             for field, directory in _media_dirs.items():
                 value = game.get(field)
-                if value and not os.path.exists(os.path.join(directory, value)):
+                if (value and not os.path.exists(os.path.join(directory, value))
+                        and media_dir_is_healthy(directory)):
                     _force_stale.append((field, value))
             video_value = game.get('video')
-            if video_value and not os.path.exists(os.path.join(STATIC_PATH, 'videos', video_value)):
+            _video_dir = os.path.join(STATIC_PATH, 'videos')
+            if (video_value and not os.path.exists(os.path.join(_video_dir, video_value))
+                    and media_dir_is_healthy(_video_dir)):
                 _force_stale.append(('video', video_value))
             # Screenshots: clear the column only when EVERY referenced file is
             # gone (single-value clears can't express a partial prune here).
@@ -1316,7 +1340,8 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             if ss_value:
                 ss_dir = os.path.join(IMAGE_PATH, 'screenshots')
                 ss_list = [s.strip() for s in ss_value.split(',') if s.strip()]
-                if ss_list and not any(os.path.exists(os.path.join(ss_dir, s)) for s in ss_list):
+                if (ss_list and media_dir_is_healthy(ss_dir)
+                        and not any(os.path.exists(os.path.join(ss_dir, s)) for s in ss_list)):
                     _force_stale.append(('screenshots', ss_value))
             if _force_stale:
                 for field, stale_filename in _force_stale:

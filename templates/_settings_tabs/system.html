@@ -128,6 +128,28 @@
         </div>
         <div id="orphanedMediaResult" style="margin-top: var(--spacing-md); display: none;"></div>
 
+        <!-- Missing Media References Section -->
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
+            <span>🖼️</span> Missing Media References
+        </h3>
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            The reverse of orphaned-media cleanup: find games whose boxart, screenshots, video or
+            manual point to files that are no longer on disk, and clear those stale references so
+            scrapers can re-download them. If a whole media folder looks missing or empty (for
+            example an unmounted drive), its references are kept and flagged rather than wiped.
+        </p>
+        <div style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
+            <button type="button" onclick="previewMissingMediaRefs()" class="btn btn-secondary" id="previewMissingRefsBtn">
+                <span class="btn-icon">🔍</span>
+                Scan for Missing Media
+            </button>
+            <button type="button" onclick="clearMissingMediaRefs()" class="btn btn-danger" id="clearMissingRefsBtn" style="display: none;">
+                <span class="btn-icon">🧹</span>
+                Clear Missing References
+            </button>
+        </div>
+        <div id="missingMediaRefsResult" style="margin-top: var(--spacing-md); display: none;"></div>
+
         <!-- Database Optimization Section -->
         <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
             <span>💾</span> Database Optimization

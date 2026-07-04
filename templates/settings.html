@@ -4068,6 +4068,133 @@ async function cleanOrphanedMedia() {
     );
 }
 
+// Missing Media References (inverse of orphaned-media: DB refs with no file)
+let missingMediaRefsCount = 0;
+
+function _escMediaField(f) {
+    return escapeHtml(String(f == null ? '' : f));
+}
+
+async function previewMissingMediaRefs() {
+    const btn = document.getElementById('previewMissingRefsBtn');
+    const resultDiv = document.getElementById('missingMediaRefsResult');
+    const clearBtn = document.getElementById('clearMissingRefsBtn');
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="btn-icon">⏳</span> Scanning...';
+    resultDiv.style.display = 'none';
+    clearBtn.style.display = 'none';
+
+    try {
+        const response = await fetch('/api/missing-media-refs/preview');
+        const data = await response.json();
+
+        if (data.success) {
+            missingMediaRefsCount = data.ref_count || 0;
+            const guarded = data.guarded || [];
+            resultDiv.style.display = 'block';
+
+            let guardHtml = '';
+            if (guarded.length > 0) {
+                const items = guarded.map(g =>
+                    `<li><strong>${_escMediaField(g.field)}</strong>: ${g.count} reference(s)</li>`
+                ).join('');
+                guardHtml = `
+                    <div class="alert alert-warning" style="margin: 0 0 var(--spacing-md) 0;">
+                        ⚠️ Some media folders look missing or empty (possibly an unmounted drive
+                        or a bulk deletion). Their references were <strong>kept, not cleared</strong>,
+                        to protect against wiping your whole library by accident:
+                        <ul style="margin: 0.5rem 0 0 1rem; padding: 0;">${items}</ul>
+                        Re-mount the media folder (or re-scrape) and scan again.
+                    </div>`;
+            }
+
+            if (missingMediaRefsCount === 0) {
+                resultDiv.innerHTML = guardHtml + `
+                    <div class="alert alert-success" style="margin: 0;">
+                        ✅ No clearable missing-media references found.
+                    </div>`;
+            } else {
+                resultDiv.innerHTML = guardHtml + `
+                    <div class="alert alert-warning" style="margin: 0;">
+                        <strong>Found ${missingMediaRefsCount} stale reference(s)</strong>
+                        across ${data.game_count} game(s) pointing to files no longer on disk.
+                    </div>`;
+                clearBtn.style.display = 'inline-flex';
+            }
+        } else {
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <div class="alert alert-error" style="margin: 0;">
+                    ❌ ${escapeHtml(data.error || 'Failed to scan for missing media references')}
+                </div>`;
+        }
+    } catch (error) {
+        console.error('Error scanning missing media references:', error);
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = `
+            <div class="alert alert-error" style="margin: 0;">❌ Network error</div>`;
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="btn-icon">🔍</span> Scan for Missing Media';
+    }
+}
+
+async function clearMissingMediaRefs() {
+    if (!missingMediaRefsCount) {
+        showModal('⚠️ Nothing to Clear', 'Please scan for missing media references first.');
+        return;
+    }
+
+    showConfirm(
+        '⚠️ Clear Missing References',
+        `This will clear ${missingMediaRefsCount} database reference(s) to media files that no longer exist on disk, so scrapers can re-download them. Your game entries are not affected.<br><br>Proceed?`,
+        async function() {
+            const btn = document.getElementById('clearMissingRefsBtn');
+            const resultDiv = document.getElementById('missingMediaRefsResult');
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="btn-icon">⏳</span> Clearing...';
+
+            try {
+                const response = await fetch('/api/missing-media-refs/clear', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: '{}'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    const guarded = data.guarded || [];
+                    const guardNote = guarded.length > 0
+                        ? ` <span style="color: var(--neon-orange);">⚠️ ${guarded.reduce((n, g) => n + g.count, 0)} reference(s) in missing/empty folders were preserved.</span>`
+                        : '';
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-success" style="margin: 0;">
+                            ✅ Cleared <strong>${data.cleared}</strong> stale reference(s) across
+                            <strong>${data.game_count}</strong> game(s).${guardNote}
+                        </div>`;
+                    missingMediaRefsCount = 0;
+                    btn.style.display = 'none';
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-error" style="margin: 0;">
+                            ❌ ${escapeHtml(data.error || 'Failed to clear references')}
+                        </div>`;
+                }
+            } catch (error) {
+                console.error('Error clearing missing media references:', error);
+                resultDiv.innerHTML = `
+                    <div class="alert alert-error" style="margin: 0;">❌ Network error</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span class="btn-icon">🧹</span> Clear Missing References';
+            }
+        },
+        {allowHtml: true}
+    );
+}
+
 async function optimizeDatabase() {
     const btn = document.getElementById('optimizeDbBtn');
     const resultDiv = document.getElementById('optimizeDbResult');

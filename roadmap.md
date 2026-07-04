@@ -330,7 +330,7 @@ are tracked here so the next pass picks them up:
 
 #### Pass 54.1 Mass-missing guard on the scraper's stale-media-ref auto-clear (SECURITY, S)
 
-- **Status**: planned.
+- **Status**: done
 - **Problem**: on scrape, `hybrid_scraper` clears a game's media DB reference when
   the file is missing from disk ("Media file missing from disk, clearing: ..."),
   then re-downloads. Correct for a one-off stale ref, but when media vanishes EN
@@ -344,10 +344,11 @@ are tracked here so the next pass picks them up:
   warning instead of erasing refs. Mirror `clean_missing_roms`'s mount-guard
   pattern; optionally gate auto-clear behind a setting.
 - **Est.**: S — a guard check in the scraper's stale-ref path.
+Resolved (2026-07-04, v3.17.0): added media_dir_is_healthy() guard in services/media_cleanup.py and wired it into both stale-media-clear blocks (fill-path + force-path) of hybrid_scraper.apply_hybrid_metadata. A gone/empty media dir (unmounted drive / bulk deletion) now preserves the DB refs and logs a warning instead of clearing. Mirrors clean_missing_roms's mount guard. Tests: tests/test_pass54_media_integrity.py.
 
 #### Pass 54.2 Settings: "Clear DB entries for missing media files" maintenance action (FEATURE, S)
 
-- **Status**: planned.
+- **Status**: done
 - **Idea** (user request 2026-07-04): a Settings → System → Maintenance action that
   finds games whose media DB references (boxart / boxart_3d / screenshots / fanart /
   video / manual) point to files no longer on disk, and lets the user clear those
@@ -363,6 +364,7 @@ are tracked here so the next pass picks them up:
   maintenance-action pattern (`clean_missing_roms`, orphaned-media).
 
 ---
+Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_refs() in services/media_cleanup.py (reuse _media_layout + the 54.1 guard); routes /api/missing-media-refs/preview + /clear (admin-only, server re-derives, never trusts client); Settings -> System -> Maintenance 'Missing Media References' card (scan + guarded-dir warning + confirm-to-clear). Verified end-to-end via authed test-client + pytest.
 
 ### Pass 53 — Interface UX review (2026-07-03)
 
