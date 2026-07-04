@@ -61,20 +61,31 @@ _CONFIG_DEPENDENT_MODULES = (
 
 @pytest.fixture
 def evict_config_modules():
-    """Pop every config-dependent module from sys.modules before the test, and
-    again on teardown so frozen-mode paths can't leak into subsequent tests.
+    """Evict every config-dependent module for the test, then RESTORE the
+    original module objects on teardown.
 
     c-005 deferred #4 fix: extracted from the manual eviction boilerplate that
-    used to live inline in test_split_takes_effect_when_frozen. The fixture's
-    teardown half also doesn't re-import — re-importing config here would
-    snapshot the still-monkeypatched sys.frozen / sys._MEIPASS state and leak
-    the temp BASE_DIR forward. The next `import config` happens after the
-    monkeypatch stack unwinds, which gets the real dev-mode paths."""
+    used to live inline in test_split_takes_effect_when_frozen.
+
+    Restore (not just pop) is critical for cross-file test isolation. Popping
+    `config` and letting a later test re-`import config` mints a NEW config
+    module object, while already-imported service modules
+    (`services.media_cleanup`, `services.image_pipeline`, `services.database`,
+    …) still hold the ORIGINAL one captured at their own import time. A later
+    test that does `import config; monkeypatch.setattr(config, 'IMAGE_PATH', …)`
+    then patches the wrong object and its paths silently don't take effect — the
+    seed-dependent order-pollution that intermittently reddened test_pass48 /
+    test_image_pipeline / test_pass35_36. Putting the exact original objects back
+    keeps module identity stable across the whole suite."""
+    saved = {mod: sys.modules.get(mod) for mod in _CONFIG_DEPENDENT_MODULES}
     for mod in _CONFIG_DEPENDENT_MODULES:
         sys.modules.pop(mod, None)
     yield
-    for mod in _CONFIG_DEPENDENT_MODULES:
-        sys.modules.pop(mod, None)
+    for mod, obj in saved.items():
+        if obj is not None:
+            sys.modules[mod] = obj
+        else:
+            sys.modules.pop(mod, None)
 
 
 class TestPass46_3_FrozenModeSplit:
@@ -161,14 +172,20 @@ def reloaded_app(monkeypatch):
         monkeypatch.setattr(app_mod, "_BUNDLE_IMAGE_DIR", bundle_dir)
         return app_mod
 
+    saved_app = sys.modules.get("app")
+    saved_config = sys.modules.get("config")
+
     yield _reload
 
-    # Always evict + re-import in the same order so subsequent tests see
-    # a fresh, real-config copy of both modules.
-    sys.modules.pop("app", None)
-    sys.modules.pop("config", None)
-    importlib.import_module("config")
-    importlib.import_module("app")
+    # Restore the ORIGINAL module objects (not a fresh re-import) so their
+    # identity is preserved for later tests. A fresh `import config` here would
+    # diverge from the object already-imported service modules hold, silently
+    # defeating their `monkeypatch.setattr(config, …)` — see evict_config_modules.
+    for mod, obj in (("app", saved_app), ("config", saved_config)):
+        if obj is not None:
+            sys.modules[mod] = obj
+        else:
+            sys.modules.pop(mod, None)
 
 
 class TestPass46_3_StaticImageRoute:

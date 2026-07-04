@@ -14,22 +14,11 @@ import pytest
 
 def _nested_layout(tmp_path, monkeypatch):
     """IMAGE_PATH under STATIC_PATH so safe_path (validated against STATIC_PATH)
-    accepts the media files. Creates every media subdir, all empty.
-
-    Patches the config module object that ``services.media_cleanup`` actually
-    holds — not just whatever ``import config`` returns. test_pass46_frozen_paths
-    evicts + re-imports ``config`` mid-suite, so a fresh ``import config`` can
-    diverge from the reference media_cleanup captured at its own import time
-    (the known order-pollution documented in the test-suite-order-pollution
-    memory). Patching media_cleanup.config keeps this test correct regardless of
-    run order.
-    """
-    import config as _config_direct
-    from services import media_cleanup
+    accepts the media files. Creates every media subdir, all empty."""
+    import config
     static = tmp_path / 'static'
-    for cfg in {_config_direct, media_cleanup.config}:
-        monkeypatch.setattr(cfg, 'STATIC_PATH', str(static))
-        monkeypatch.setattr(cfg, 'IMAGE_PATH', str(static / 'images'))
+    monkeypatch.setattr(config, 'STATIC_PATH', str(static))
+    monkeypatch.setattr(config, 'IMAGE_PATH', str(static / 'images'))
     for sub in ('boxart', 'boxart_3d', 'screenshots', 'fanart', 'manuals'):
         (static / 'images' / sub).mkdir(parents=True, exist_ok=True)
     (static / 'videos').mkdir(parents=True, exist_ok=True)
