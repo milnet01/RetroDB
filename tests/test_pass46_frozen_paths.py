@@ -34,12 +34,16 @@ class TestPass46_3_DevModeInvariant:
 
     def test_static_path_under_bundle_dir(self):
         import config
-        assert config.STATIC_PATH == os.path.join(config.BUNDLE_DIR, "static")
+        # Honour the test-harness env override but still assert the default
+        # derivation when it's absent — mirrors the RETRODB_DB_PATH guard below.
+        if not os.environ.get("RETRODB_STATIC_PATH"):
+            assert config.STATIC_PATH == os.path.join(config.BUNDLE_DIR, "static")
 
     def test_image_path_under_base_dir(self):
         """IMAGE_PATH writes go to the user-data root, never the bundle."""
         import config
-        assert config.IMAGE_PATH == os.path.join(config.BASE_DIR, "static", "images")
+        if not os.environ.get("RETRODB_IMAGE_PATH"):
+            assert config.IMAGE_PATH == os.path.join(config.BASE_DIR, "static", "images")
 
     def test_db_path_under_base_dir(self):
         """The SQLite file is user data — must live next to the launcher
@@ -107,8 +111,10 @@ class TestPass46_3_FrozenModeSplit:
         monkeypatch.setattr(sys, "frozen", True, raising=False)
         monkeypatch.setattr(sys, "_MEIPASS", str(meipass_dir), raising=False)
         monkeypatch.setattr(sys, "executable", str(fake_exe))
-        # Avoid the env override polluting the assertion.
+        # Avoid the env overrides polluting the frozen-path assertions.
         monkeypatch.delenv("RETRODB_DB_PATH", raising=False)
+        monkeypatch.delenv("RETRODB_STATIC_PATH", raising=False)
+        monkeypatch.delenv("RETRODB_IMAGE_PATH", raising=False)
 
         # evict_config_modules has already popped the snapshot-prone modules
         # both before and (on teardown) after this test. Re-import config now
@@ -210,14 +216,22 @@ class TestPass46_3_StaticImageRoute:
         assert r.data == b"USER_VERSION"
 
     def test_falls_back_to_bundle_when_user_missing(self, tmp_path, reloaded_app):
-        """placeholder.png ships in the bundle; the empty user dir forces
-        the route to fall through to BUNDLE_DIR/static/images/."""
-        empty_user_images = tmp_path / "static" / "images"
+        """placeholder.png present in the bundle image dir; the empty user dir
+        forces the route to fall through to BUNDLE_DIR/static/images/.
+
+        Uses an explicit bundle_root (like test_user_dir_takes_precedence) rather
+        than the real repo static tree, so the test is hermetic and doesn't
+        depend on config.STATIC_PATH — which the harness now isolates to a temp
+        dir to keep the media-cleanup tests off the operator's real files."""
+        empty_user_images = tmp_path / "user" / "static" / "images"
+        bundle_root = tmp_path / "bundle" / "static" / "images"
         empty_user_images.mkdir(parents=True)
-        app_mod = reloaded_app(empty_user_images)
+        bundle_root.mkdir(parents=True)
+        (bundle_root / "placeholder.png").write_bytes(b"BUNDLE_PLACEHOLDER")
+        app_mod = reloaded_app(empty_user_images, bundle_root)
         r = app_mod.app.test_client().get("/static/images/placeholder.png")
         assert r.status_code == 200
-        assert len(r.data) > 0
+        assert r.data == b"BUNDLE_PLACEHOLDER"
 
     def test_returns_404_when_neither_root_has_file(self, tmp_path, reloaded_app):
         empty_user_images = tmp_path / "static" / "images"

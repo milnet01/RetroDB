@@ -32,6 +32,28 @@ if _xdist_worker or "RETRODB_DB_PATH" not in os.environ:
     _test_db_dir = tempfile.mkdtemp(prefix=f"retrodb-test-{_xdist_worker or 'main'}-")
     os.environ["RETRODB_DB_PATH"] = os.path.join(_test_db_dir, "roms.db")
 
+# Isolate the scraped-media roots from the operator's real files, for the SAME
+# reason (and the same way) as the DB above. The media-cleanup helpers
+# (find_orphaned_media / clean_orphaned_files / delete_game_images) DELETE files
+# under IMAGE_PATH / STATIC_PATH. Tests monkeypatch those config attrs to a
+# tmp dir, but a monkeypatch can be silently defeated by module-eviction
+# pollution (see test_pass46_frozen_paths) — and when it is, an orphan sweep
+# scans the REAL image tree and deletes every file not matching its fake game
+# list. That once wiped a live ~5500-game library. Pointing IMAGE_PATH /
+# STATIC_PATH at throwaway dirs via env BEFORE config is imported makes the real
+# media tree physically unreachable from the test process no matter what — the
+# env override is read at config import time and survives a config re-import,
+# which a per-attribute monkeypatch does not. Keyed per xdist worker like the DB.
+if _xdist_worker or "RETRODB_IMAGE_PATH" not in os.environ:
+    _test_media_dir = tempfile.mkdtemp(prefix=f"retrodb-test-media-{_xdist_worker or 'main'}-")
+    _test_static = os.path.join(_test_media_dir, "static")
+    _test_images = os.path.join(_test_static, "images")
+    for _sub in ("boxart", "boxart_3d", "screenshots", "fanart", "manuals"):
+        os.makedirs(os.path.join(_test_images, _sub), exist_ok=True)
+    os.makedirs(os.path.join(_test_static, "videos"), exist_ok=True)
+    os.environ["RETRODB_STATIC_PATH"] = _test_static
+    os.environ["RETRODB_IMAGE_PATH"] = _test_images
+
 import pytest  # noqa: E402
 
 # Re-export shared utilities so test files can `from tests._util import ...`

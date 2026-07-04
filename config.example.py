@@ -37,8 +37,11 @@ else:
     BUNDLE_DIR = BASE_DIR
 
 DB_PATH = os.environ.get('RETRODB_DB_PATH', os.path.join(BASE_DIR, "database", "roms.db"))
-STATIC_PATH = os.path.join(BUNDLE_DIR, "static")
-IMAGE_PATH = os.path.join(BASE_DIR, "static", "images")
+# Env-overridable so the test suite can be hard-isolated from real scraped media
+# (the media-cleanup helpers delete files under these roots). Unset in normal
+# use → identical behaviour to before.
+STATIC_PATH = os.environ.get('RETRODB_STATIC_PATH', os.path.join(BUNDLE_DIR, "static"))
+IMAGE_PATH = os.environ.get('RETRODB_IMAGE_PATH', os.path.join(BASE_DIR, "static", "images"))
 
 # Path defaults (empty — set via Settings page, stored in data/settings.json)
 ROM_PATH = ""
