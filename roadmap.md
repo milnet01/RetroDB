@@ -550,7 +550,7 @@ are tracked here so the next pass picks them up:
 
 #### Pass 52.3 Library "health" at-a-glance panel on the dashboard (ENHANCEMENT, M)
 
-- **Status**: planned.
+- **Status**: in-progress
 - **Idea**: surface signals that already exist but are scattered across the ROM
   Tools hub into one actionable dashboard card — counts of unscraped games, games
   missing box-art, duplicate ROMs (from the duplicate-finder), and broken/missing
@@ -567,6 +567,7 @@ are tracked here so the next pass picks them up:
   walks the disk (make that async / on-demand).
 
 ---
+Progress (2026-07-04, v3.16.0): shipped a lean "Quick Fixes" dashboard card — `missing_boxart` count added to `get_stats()` (→ Library), plus shortcut tiles to the existing Duplicate Finder (`tools.duplicate_finder`) and broken-ROM cleanup (`settings.settings#system`). Design decision: the two heavier metrics (duplicate + broken-path COUNTS) need disk walks with no cheap/accurate DB primitive, so they are surfaced as tool links rather than live counts; the box-art count links to the whole Library (matching the existing "Missing Metadata → /games" convention) until PASS-53-2's no_boxart filter lands, at which point it can deep-link. Verified: get_stats (57/5569 on real DB), i18n gate, pytest (green minus known pollution), Jinja parse. PENDING: live desktop + ~375px mobile browser walk (app was not running this session). Kept in-progress until that live check + a decision on whether the deferred disk-walk counts are wanted.
 
 ### Pass 51 — Chinese localization + China game-rating system (2026-06-30)
 

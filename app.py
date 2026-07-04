@@ -1002,6 +1002,10 @@ def get_stats():
         health_desc_pct = round((health_fields['has_description'] or 0) / t * 100, 1) if health_fields and health_fields['total'] > 0 else 0
         health_ra_pct = round((health_fields['has_ra'] or 0) / t * 100, 1) if health_fields and health_fields['total'] > 0 else 0
 
+        # Quick-fixes count: games with no box-art (Pass 52.3). health_fields.total
+        # is COUNT(*) FROM games, so this reuses the same scan as the health score.
+        missing_boxart = (total_games - (health_fields['has_boxart'] or 0)) if health_fields else 0
+
         return {
             'total_systems': stats['total_systems'],
             'total_games': total_games,
@@ -1017,6 +1021,7 @@ def get_stats():
             'health_boxart_pct': health_boxart_pct,
             'health_desc_pct': health_desc_pct,
             'health_ra_pct': health_ra_pct,
+            'missing_boxart': missing_boxart,
         }
     except Exception as e:
         logger.error(f"Error getting stats: {e}")
@@ -1035,6 +1040,7 @@ def get_stats():
             'health_boxart_pct': 0,
             'health_desc_pct': 0,
             'health_ra_pct': 0,
+            'missing_boxart': 0,
         }
 
 

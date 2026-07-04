@@ -203,6 +203,41 @@
     </div>
 </div>
 
+<!-- Quick Fixes (Pass 52.3) — actionable library maintenance shortcuts -->
+{% if stats.total_games > 0 %}
+<section class="card quick-fixes-section">
+    <div class="card-header">
+        <h2 class="card-title"><span>🧹</span> {{ _('Quick Fixes') }}</h2>
+    </div>
+    <div class="quick-fixes-grid">
+        <a href="{{ url_for('games.all_games') }}" class="quick-fix{% if stats.missing_boxart > 0 %} attention{% endif %}">
+            <span class="quick-fix-icon" aria-hidden="true">🖼️</span>
+            <span class="quick-fix-body">
+                <span class="quick-fix-value">{{ stats.missing_boxart|format_number }}</span>
+                <span class="quick-fix-label">{{ _('Games missing box art') }}</span>
+            </span>
+            <span class="quick-fix-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="{{ url_for('tools.duplicate_finder') }}" class="quick-fix">
+            <span class="quick-fix-icon" aria-hidden="true">🔁</span>
+            <span class="quick-fix-body">
+                <span class="quick-fix-value quick-fix-action">{{ _('Scan') }}</span>
+                <span class="quick-fix-label">{{ _('Find duplicate ROMs') }}</span>
+            </span>
+            <span class="quick-fix-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="{{ url_for('settings.settings') }}#system" class="quick-fix">
+            <span class="quick-fix-icon" aria-hidden="true">📁</span>
+            <span class="quick-fix-body">
+                <span class="quick-fix-value quick-fix-action">{{ _('Check') }}</span>
+                <span class="quick-fix-label">{{ _('Broken ROM paths') }}</span>
+            </span>
+            <span class="quick-fix-arrow" aria-hidden="true">→</span>
+        </a>
+    </div>
+</section>
+{% endif %}
+
 <!-- Background Job Progress (shown via JS when jobs are running) -->
 <div id="jobProgressContainer" class="job-progress-container" style="display: none;"></div>
 
@@ -657,6 +692,43 @@
     background: none; border: none; color: var(--text-muted); cursor: pointer;
     font-size: 1rem; padding: 2px 6px; line-height: 1;
 }
+
+/* Quick Fixes (Pass 52.3) */
+.quick-fixes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+}
+.quick-fix {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--bg-medium);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: border-color var(--transition-fast), transform var(--transition-fast);
+}
+.quick-fix:hover {
+    border-color: var(--primary-cyan);
+    transform: translateY(-2px);
+}
+.quick-fix-icon { font-size: 1.6rem; flex-shrink: 0; }
+.quick-fix-body { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.quick-fix-value {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+.quick-fix-value.quick-fix-action { font-size: 1rem; color: var(--primary-cyan); }
+.quick-fix-label { font-size: 0.85rem; color: var(--text-secondary); }
+.quick-fix.attention .quick-fix-value { color: var(--neon-orange); }
+.quick-fix-arrow { color: var(--text-muted); font-size: 1.2rem; flex-shrink: 0; }
+.quick-fix:hover .quick-fix-arrow { color: var(--primary-cyan); }
 
 /* Collection Health Score */
 .health-score-container {
