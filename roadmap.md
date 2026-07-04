@@ -315,6 +315,192 @@ are tracked here so the next pass picks them up:
 
 ---
 
+### Pass 53 — Interface UX review (2026-07-03)
+
+> Source: user-requested interface/usability review 2026-07-03. Code-grounded,
+> not a live walkthrough — the login-gated app was not running and the browser
+> extension was unavailable, so findings were surveyed across `templates/base.html`
+> (nav/chrome), `all_games.html` + `static/js/all-games-controller.js` (browsing),
+> the game detail/edit modals, `settings.html` + `_settings_tabs/*`,
+> `rom_tools_hub.html`, and the toast / modal / empty-state layer. The
+> design-token system, icon+text nav, and a11y work (aria-live, focus traps,
+> aria-current) were confirmed already solid; these items target findability,
+> flow, and first-run. Prioritised T1 (biggest flow wins) → T4
+> (consistency/polish). A live visual pass (desktop + ~375px mobile) is still
+> owed once the app is running and the browser extension is connected.
+
+#### Pass 53.1 Global search in a persistent top bar (UX, M)
+
+- **Status**: planned.
+- **Problem**: there is no global search anywhere in the chrome — `base.html`
+  has no topbar, and search only exists inside the Library page
+  (`all_games.html:26`). From the Dashboard (or any other page) a user must
+  first navigate to Library, then search, to find one game. For a library app
+  this is the single biggest flow gap.
+- **Plan**: add a persistent top-bar search (games first; optionally systems +
+  settings) available on every page via `base.html`. Reuse the existing
+  `/api/games?search=` + `build_game_card` path; debounce like the Library
+  search (`all-games-controller.js:203`). Typeahead dropdown → game detail modal
+  / full page. Keyboard-accessible (focus-trap primitive already exists).
+- **Est.**: M — a shared component + a lightweight suggest endpoint (or reuse
+  `/api/games`).
+
+#### Pass 53.2 Library grid: sort control + real empty state (UX, M)
+
+- **Status**: planned.
+- **Problem**: the Library grid has (a) no sort control at all — the controller
+  only renders the server default; the A–Z strip (`all_games.html:133`) jumps,
+  it does not reorder — and (b) no empty state: a filter matching 0 games clears
+  the grid to blank with only "Showing 0 of 0" (`all_games.html:169`), reading
+  as a broken/loading page (`all-games-controller.js:334`).
+- **Plan**: add a sort dropdown (name / release year / rating / score /
+  recently-added) threaded through `_build_games_query`'s ORDER BY, persisted in
+  the same session-state the filters use. Add a friendly "No games match these
+  filters — Clear filters" panel when the count is 0 (mirror the filter-modal
+  empty state at `all-games-controller.js:741`).
+- **Est.**: M — one new query param + a sort UI + an empty-state partial.
+
+#### Pass 53.3 Slim the sidebar: consolidate achievements + tools sprawl (UX, M)
+
+- **Status**: planned.
+- **Problem**: the sidebar carries ~21 links across 6 groups (`base.html:85-197`).
+  Five near-synonymous destinations (RPCS3 / PSN / RetroAchievements / Steam /
+  Xbox — `base.html:107-128`) are indistinguishable by label to a non-technical
+  user, and four fuzzy "tools" entries (ROM Reports, ROM Tools, Game Imports,
+  Analytics) have unclear boundaries. Icon collisions (two 📊, two 📋) hurt
+  scanning.
+- **Plan**: fold the five achievement/trophy pages into one "Achievements" host
+  with per-platform tabs (frees ~4 slots); regroup the tools entries so a user
+  can predict where a utility lives; de-duplicate the nav icons. Keep icon+text.
+- **Est.**: M — mostly template/route reshaping + a tabbed achievements host.
+
+#### Pass 53.4 Scrape a single game from the detail modal (ENHANCEMENT, S)
+
+- **Status**: planned.
+- **Problem**: the detail modal offers AI Fill but no scraper trigger
+  (`base.html:932-943`); to scrape one game the user must click "View Full Page"
+  and leave the modal, an extra hop on a core action.
+- **Plan**: add a "Scrape" action to the detail-modal action row that opens the
+  existing per-game scrape flow (`openScrapeModal`) in place. Reuse the existing
+  endpoint; no new backend.
+- **Est.**: S — wire an existing action into the modal.
+
+#### Pass 53.5 Role-aware rating display in the edit form (UX, S)
+
+- **Status**: planned.
+- **Problem**: the Edit form's "Technical" tab stacks all 10 age-rating
+  dropdowns — ESRB/PEGI/CERO/USK/ACB/FPB/GRAC/ClassInd (`base.html:1213-1305`) —
+  for every user, though almost everyone cares about one region.
+- **Plan** (per user 2026-07-03): **admin** users keep all rating boards visible
+  (they curate cross-region data); **every non-admin** user sees ONLY the single
+  rating system selected in their Settings (`preferred_rating_system`). Gate the
+  extra boards on `current_user.role == 'admin'`; non-admins get one dropdown.
+  Cross-mapping / auto-fill (`map_rating`) is unchanged — this is a display
+  filter, not a data change.
+- **Est.**: S — a role check + conditional render around the rating block.
+
+#### Pass 53.6 ROM Tools nav link: hub vs last-visited, as a preference (UX, S)
+
+- **Status**: planned (low priority — the maintainer prefers the current
+  last-visited behaviour for their own use; kept as an opt-in option, not a
+  forced change).
+- **Problem**: the sidebar "ROM Tools" link jumps to the last sub-tool visited
+  (`base.html:840-855`) rather than the hub, so the label and destination
+  disagree — disorienting for a new user.
+- **Plan**: make it a user preference (Settings): "ROM Tools opens → hub /
+  last-visited", defaulting to hub for new users so power users keep the
+  shortcut. Small, opt-in; no behaviour forced.
+- **Est.**: S — one setting + a branch in the nav redirect.
+
+#### Pass 53.7 First-run / empty-library welcome CTA (UX, S)
+
+- **Status**: planned.
+- **Problem**: a fresh, empty install looks broken, not welcoming — the
+  Dashboard shows a health ring stuck at ~0% (`dashboard.html:75-83`) and the
+  Library shows the full filter chrome over a blank grid. "Scan Library" is a
+  small secondary button competing with "🎲 Random Game" (`dashboard.html:63-70`).
+- **Plan**: when the library is empty (0 games), replace the 0% ring / blank grid
+  with a prominent "Your library is empty — Scan to begin" call-to-action linking
+  to the scan / import flow. Overlaps Pass 52.3 (health panel) + Pass 53.2 (empty
+  state).
+- **Est.**: S — an empty-branch in the dashboard + library templates.
+
+#### Pass 53.8 Setup wizard progress indicator + optional-step marking (UX, S)
+
+- **Status**: planned.
+- **Problem**: the 6-step setup wizard (`setup.html`) navigates with bare
+  "← Back / Next →" (`setup.html:119-145`) — no "Step 3 of 6" and no signal that
+  the ES-DE and API-key steps are optional / skippable.
+- **Plan**: add a step indicator (dots or "Step N of 6") and mark the optional
+  steps so users know they can skip them and how far they are.
+- **Est.**: S — a progress component in the wizard shell.
+
+#### Pass 53.9 Deep-link from scrape failure to the API-key form (UX, S)
+
+- **Status**: planned.
+- **Problem**: API keys live three levels deep (Settings → Scraping → sub-tab,
+  `scraping.html:7,265`), yet skipping them causes silent scrape failures whose
+  fix is buried. There's no link from the failure back to the fix.
+- **Plan**: when a scrape fails for a missing / invalid key, surface a direct
+  link to the API-keys sub-tab (`/settings#scraping` + sub-nav anchor). Pairs
+  with the setup wizard's optional-API-key step (Pass 53.8).
+- **Est.**: S — a targeted link in the failure message / toast.
+
+#### Pass 53.10 Mobile navigation: fixed header + bottom bar (UX, M)
+
+- **Status**: planned.
+- **Problem**: on mobile the desktop sidebar simply slides in with all ~21 items
+  (`base.html:257`, `main.js:246`), and the hamburger sits inside the content
+  wrapper so it scrolls away with the page rather than staying fixed.
+- **Plan**: add a fixed top header carrying the menu toggle (+ the Pass 53.1
+  global search) and a bottom bar for the top ~4 destinations (Dashboard /
+  Library / Systems / Search), so the most-used pages are one tap from anywhere.
+- **Est.**: M — mobile-specific chrome + breakpoints.
+
+#### Pass 53.11 Multi-value filters + discoverable exclude affordance (UX, M)
+
+- **Status**: planned.
+- **Problem**: Library filters are single-value — `applyFilter` overwrites
+  `filters[type] = value` (`all-games-controller.js:788`), so you cannot pick
+  "Action OR RPG"; combining means reopening a modal per category. The useful
+  "exclude this value" feature is hidden behind an undocumented shift-click
+  (`all-games-controller.js:501`).
+- **Plan**: allow multi-select within a filter category (OR semantics) in the
+  filter modal + chips; surface the include / exclude toggle visibly instead of
+  the hidden shift-click. `_build_games_query` already has an exclude path
+  (`not_*`) to build on.
+- **Est.**: M — filter-modal + chip + query changes.
+
+#### Pass 53.12 Persistent inline error state for walk-away operations (UX, S)
+
+- **Status**: planned.
+- **Problem**: errors from user-initiated operations surface only as ephemeral
+  toasts (e.g. AI-fill error `game-modals.js:2311`). If the user walks away, the
+  only record vanishes when the toast times out — no lasting indication on the
+  affected item.
+- **Plan**: add a durable inline error indicator on the affected item (game card
+  / job row) for scrape / AI-fill / bulk operations, complementing — NOT
+  replacing — the toast system. NOTE (user 2026-07-03): toast timeouts are
+  already per-category user-editable (success / info / warning / error each
+  independently, `notification_timeouts`, injected `base.html:330-335`) — preserve
+  that. This item adds durability; it does not change toast timing.
+- **Est.**: S — an inline error state hooked into the existing error paths.
+
+#### Pass 53.13 Unify the parallel modal systems (REFACTOR, M)
+
+- **Status**: planned.
+- **Problem**: several independent modal systems coexist — generic `#customModal`
+  (`base.html:294`), bespoke `#gameDetailModal` / `#gameEditModal`
+  (`base.html:878,959`), and tool modals `folderBrowserModal` / `queueManagerModal`
+  (`base.html:311,659`) — with per-modal focus-trap wiring and subtly different
+  close affordances.
+- **Plan**: consolidate onto one modal primitive (the `showModal` / `showConfirm`
+  base already exists) so focus-trap, escape / close, and styling are consistent
+  across the app. Incremental — migrate one surface at a time.
+- **Est.**: M — refactor with regression risk; do in small steps.
+
+---
+
 ### Pass 52 — Post-v3.14.0 UX & i18n polish (2026-07-01)
 
 > Source: in-session review 2026-07-01, immediately after the v3.14.0 Chinese
