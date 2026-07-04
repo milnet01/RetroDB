@@ -315,6 +315,55 @@ are tracked here so the next pass picks them up:
 
 ---
 
+### Pass 54 — Media integrity & DB maintenance (2026-07-04)
+
+> Source: user session 2026-07-04, during investigation of an external, recurring
+> mass-deletion of scraped game media (boxart / boxart_3d / screenshots / fanart /
+> manuals) that occurs while RetroDB is NOT running. Root cause is external to
+> RetroDB (disk healthy — SMART pass, no ext4 / I/O errors, empty lost+found, fs
+> clean; RetroDB has no automatic media-delete code path). A fatrace + inotify
+> trap was installed to identify the deleter. These items harden RetroDB so it
+> stops AMPLIFYING such external loss and give the user a controlled cleanup tool.
+> CAUTION: do NOT run any ref-clearing bulk action until the external deleter is
+> identified and stopped — clearing refs erases the record of what art each game
+> had, which is what's needed to know what to re-scrape / re-link.
+
+#### Pass 54.1 Mass-missing guard on the scraper's stale-media-ref auto-clear (SECURITY, S)
+
+- **Status**: planned.
+- **Problem**: on scrape, `hybrid_scraper` clears a game's media DB reference when
+  the file is missing from disk ("Media file missing from disk, clearing: ..."),
+  then re-downloads. Correct for a one-off stale ref, but when media vanishes EN
+  MASSE (external deletion, an unmounted media dir), it silently erases the record
+  of what art thousands of games had — forcing paid re-scrapes and making recovery
+  impossible if the files return. `clean_missing_roms` already has this exact class
+  of guard for ROMs (skip when the parent dir is gone).
+- **Plan**: before auto-clearing a missing-media ref, apply a mass-missing guard —
+  if the media directory is present but a large fraction of expected files are
+  absent (or the dir is unexpectedly near-empty), skip the clear and surface a
+  warning instead of erasing refs. Mirror `clean_missing_roms`'s mount-guard
+  pattern; optionally gate auto-clear behind a setting.
+- **Est.**: S — a guard check in the scraper's stale-ref path.
+
+#### Pass 54.2 Settings: "Clear DB entries for missing media files" maintenance action (FEATURE, S)
+
+- **Status**: planned.
+- **Idea** (user request 2026-07-04): a Settings → System → Maintenance action that
+  finds games whose media DB references (boxart / boxart_3d / screenshots / fanart /
+  video / manual) point to files no longer on disk, and lets the user clear those
+  stale entries so scrapers re-download. The inverse of the existing "Clean Orphaned
+  Media" (which removes files with no DB entry) — this removes DB entries with no
+  file.
+- **Plan**: a read-only PREVIEW first (list affected games + fields + counts), then
+  an explicit confirm to clear. MUST include the Pass 54.1 mass-missing guard so a
+  bulk "everything's missing" state can't wipe the whole library's refs in one
+  click. Reuse the media-layout / on-disk-validation helpers; respect
+  `safe_column()`. Pairs with the Pass 52.3 broken-path detection.
+- **Est.**: S — a query + preview + guarded bulk update, mirroring the existing
+  maintenance-action pattern (`clean_missing_roms`, orphaned-media).
+
+---
+
 ### Pass 53 — Interface UX review (2026-07-03)
 
 > Source: user-requested interface/usability review 2026-07-03. Code-grounded,
