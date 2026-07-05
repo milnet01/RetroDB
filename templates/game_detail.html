@@ -3876,6 +3876,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Date input mask + picker sync
     if (window.initDateMask) initDateMask('edit_release_date', 'editReleaseDatePicker');
+
+    // Deep-link from the detail modal's Scrape action (PASS-53-4): arrive with
+    // ?scrape=1 and open the scrape modal straight away. Strip the param first
+    // so a reload / back-button doesn't re-trigger it.
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('scrape') === '1') {
+        params.delete('scrape');
+        const qs = params.toString();
+        history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : '') + window.location.hash);
+        openScrapeModal();
+    }
 });
 
 // ============================================

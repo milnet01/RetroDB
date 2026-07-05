@@ -338,7 +338,16 @@ const GameDetailModal = {
         }
 
         // Update links
-        document.getElementById('gdmViewFull').href = gameDetailUrl(game.id);
+        const detailUrl = gameDetailUrl(game.id);
+        document.getElementById('gdmViewFull').href = detailUrl;
+
+        // Scrape action deep-links to the full page with the scrape modal
+        // auto-opened (PASS-53-4). gameDetailUrl may already carry ?from=…,
+        // so pick the right separator.
+        const scrapeBtn = document.getElementById('gdmScrape');
+        if (scrapeBtn) {
+            scrapeBtn.href = detailUrl + (detailUrl.includes('?') ? '&' : '?') + 'scrape=1';
+        }
 
         // Show/hide AI Fill button
         const aiFillBtn = document.getElementById('gdmAiFill');

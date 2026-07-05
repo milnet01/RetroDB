@@ -1346,7 +1346,13 @@ const GameDetailModal = {
             }
         }
 
-        document.getElementById('gdmViewFull').href = gameDetailUrl(game.id);
+        const detailUrl = gameDetailUrl(game.id);
+        document.getElementById('gdmViewFull').href = detailUrl;
+
+        const scrapeBtn = document.getElementById('gdmScrape');
+        if (scrapeBtn) {
+            scrapeBtn.href = detailUrl + (detailUrl.includes('?') ? '&' : '?') + 'scrape=1';
+        }
 
         const aiFillBtn = document.getElementById('gdmAiFill');
         if (aiFillBtn) {

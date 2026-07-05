@@ -540,7 +540,7 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
 
 #### Pass 53.4 Scrape a single game from the detail modal (ENHANCEMENT, S)
 
-- **Status**: planned.
+- **Status**: done
 - **Problem**: the detail modal offers AI Fill but no scraper trigger
   (`base.html:932-943`); to scrape one game the user must click "View Full Page"
   and leave the modal, an extra hop on a core action.
@@ -714,7 +714,7 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
 
 #### Pass 52.3 Library "health" at-a-glance panel on the dashboard (ENHANCEMENT, M)
 
-- **Status**: in-progress
+- **Status**: done
 - **Idea**: surface signals that already exist but are scattered across the ROM
   Tools hub into one actionable dashboard card — counts of unscraped games, games
   missing box-art, duplicate ROMs (from the duplicate-finder), and broken/missing
