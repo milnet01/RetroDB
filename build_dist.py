@@ -315,6 +315,20 @@ def build_standalone(base_dir, version, host_name, cpu_only=False):
                 file_count += 1
                 total_size += os.path.getsize(full_path)
 
+        # Ship the platform's browser-opening start script next to the binary
+        # so users get a one-click launch, plus (Linux) the .desktop + icon to
+        # pin RetroDB to the taskbar.
+        _start = {'Linux': 'start.sh', 'macOS': 'start.command',
+                  'Windows': 'start.bat'}[host_name]
+        _extras = [_start]
+        if host_name == 'Linux':
+            _extras += ['packaging/RetroDB.desktop', 'packaging/icons/retrodb-256.png']
+        for extra in _extras:
+            src = os.path.join(base_dir, extra)
+            zf.write(src, os.path.join(folder_name, extra))
+            file_count += 1
+            total_size += os.path.getsize(src)
+
     zip_size = os.path.getsize(zip_path)
     ratio = (1 - zip_size / total_size) * 100 if total_size else 0
     print(f"    Files: {file_count}  |  "

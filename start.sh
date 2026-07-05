@@ -107,4 +107,7 @@ echo ""
 echo -e "${YELLOW}Press Ctrl+C to stop the server${NC}"
 echo ""
 
+# Open the browser a moment after the server binds (background; non-fatal).
+( sleep 3; xdg-open "http://localhost:5000" >/dev/null 2>&1 || true ) &
+
 $PYTHON app.py

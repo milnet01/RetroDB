@@ -58,5 +58,8 @@ echo   Press Ctrl+C to stop the server
 echo ========================================================
 echo.
 
+REM Open the browser (returns immediately; server still runs in foreground).
+start "" http://localhost:5000
+
 %PYTHON% app.py
 pause
