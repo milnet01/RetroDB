@@ -1,3 +1,71 @@
+- version: 3.19.1
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: Rastreo más rápido — las capturas de un juego ahora se descargan a la vez
+  body: |
+    <ul>
+      <li><strong>Las capturas de pantalla se descargan en paralelo.</strong>
+        Siguiendo el mismo enfoque que el popular frontend ES-DE (que obtiene todo
+        el material gráfico de un juego a la vez), RetroDB ahora descarga las
+        capturas de un juego <strong>de forma simultánea</strong> en lugar de una
+        tras otra, para todas las fuentes (TheGamesDB, IGDB, RAWG, ScreenScraper).
+        Los juegos con varias capturas terminan notablemente antes.</li>
+      <li>La comprobación de capturas duplicadas se sigue ejecutando después y en
+        orden, así que la eliminación de imágenes repetidas mantiene exactamente la
+        misma precisión que antes &mdash; solo se ha acelerado la descarga. Las
+        descargas están limitadas a cuatro a la vez para que ninguna fuente se
+        sobrecargue.</li>
+      <li>Mejora de velocidad interna; surte efecto tras el próximo reinicio.</li>
+    </ul>
+- version: 3.19.0
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: Rastreo más rápido — ahora las fuentes se consultan a la vez
+  body: |
+    <ul>
+      <li><strong>El rastreo es más rápido por juego.</strong> Cuando RetroDB busca
+        un juego, consulta varias bases de datos (ES-DE, TheGamesDB, IGDB, RAWG,
+        ScreenScraper). Antes las consultaba <em>de una en una</em> y esperaba la
+        respuesta de cada una antes de preguntar a la siguiente &mdash; así que la
+        espera era la suma de todas ellas. Ahora las consulta todas <strong>a la
+        vez</strong> y solo espera a la más lenta, lo que supone una aceleración
+        notable en cada juego. Los resultados se siguen ordenando y puntuando
+        exactamente igual que antes.</li>
+      <li><strong>Menos saludos desperdiciados al descargar arte.</strong> Las
+        descargas de imágenes ahora reutilizan una conexión ya abierta en lugar de
+        abrir una nueva para cada imagen, ahorrando tiempo en los juegos con muchas
+        capturas.</li>
+      <li>Se trata de mejoras de velocidad internas &mdash; no cambia nada en cómo
+        usas RetroDB, y no exige más a las bases de datos (las mismas peticiones,
+        solo solapadas). Surten efecto tras el próximo reinicio.</li>
+    </ul>
+- version: 3.18.0
+  date: '2026-07-05'
+  tags:
+  - type: feature
+    label: Añadidas las clasificaciones por edad de China (China) como noveno sistema de clasificación
+  body: |
+    <ul>
+      <li><strong>Nuevo sistema de clasificación por edad: China (CADPA).</strong>
+        RetroDB ahora admite el esquema oficial de aviso de edad para videojuegos de
+        China (&ldquo;网络游戏适龄提示&rdquo;, emitido por CADPA) junto a los ocho
+        organismos existentes (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC y ClassInd).
+        Utiliza tres niveles &mdash; <strong>8+</strong>, <strong>12+</strong> y
+        <strong>16+</strong> &mdash; mostrados con un sencillo distintivo verde.</li>
+      <li><strong>Se rellena solo, como los demás.</strong> Cuando un juego ya tiene
+        una clasificación de cualquier otro país, RetroDB calcula automáticamente el
+        nivel equivalente de China (y viceversa). También puedes elegirlo o
+        cambiarlo a mano en la pantalla de Edición de un juego, y seleccionarlo como
+        tu sistema de visualización preferido en Ajustes &rarr; Biblioteca. Nota: la
+        mayoría de las bases de datos de juegos occidentales no publican una
+        clasificación de China, así que en los juegos sin ninguna clasificación se
+        rellena a partir del contenido del juego durante el rastreo / AI Fill.</li>
+      <li>Los distintivos verdes son obra gráfica propia y sencilla de RetroDB (a
+        juego con el estilo de los demás organismos), no el logotipo oficial de
+        CADPA, por lo que no hay ninguna atadura de licencia de imágenes.</li>
+    </ul>
 - version: 3.15.0
   date: '2026-07-03'
   tags:

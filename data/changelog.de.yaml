@@ -1,3 +1,74 @@
+- version: 3.19.1
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: Schnelleres Scraping — die Screenshots eines Spiels werden jetzt gleichzeitig heruntergeladen
+  body: |
+    <ul>
+      <li><strong>Screenshots werden parallel heruntergeladen.</strong> Nach dem
+        gleichen Ansatz wie das beliebte Frontend ES-DE (das alle Medien eines
+        Spiels auf einmal abruft) lädt RetroDB die Screenshots eines Spiels jetzt
+        <strong>gleichzeitig</strong> herunter statt nacheinander &mdash; und das
+        für jede Quelle (TheGamesDB, IGDB, RAWG, ScreenScraper). Spiele mit
+        mehreren Screenshots sind spürbar schneller fertig.</li>
+      <li>Die Prüfung auf doppelte Screenshots läuft weiterhin danach der Reihe
+        nach ab, sodass das Entfernen doppelter Bilder genauso genau bleibt wie
+        zuvor &mdash; nur das Herunterladen wurde beschleunigt. Es werden höchstens
+        vier Downloads gleichzeitig ausgeführt, damit eine einzelne Quelle nie
+        überlastet wird.</li>
+      <li>Interne Geschwindigkeitsverbesserung; wird nach dem nächsten Neustart
+        wirksam.</li>
+    </ul>
+- version: 3.19.0
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: Schnelleres Scraping — Quellen werden jetzt gleichzeitig abgefragt
+  body: |
+    <ul>
+      <li><strong>Das Scraping ist pro Spiel schneller.</strong> Wenn RetroDB ein
+        Spiel nachschlägt, durchsucht es mehrere Datenbanken (ES-DE, TheGamesDB,
+        IGDB, RAWG, ScreenScraper). Bisher fragte es sie <em>nacheinander</em> ab
+        und wartete auf die Antwort jeder einzelnen, bevor es die nächste befragte
+        &mdash; die Wartezeit war also die Summe aller. Jetzt fragt es sie alle
+        <strong>auf einmal</strong> ab und wartet nur auf die langsamste, was bei
+        jedem Spiel einen spürbaren Geschwindigkeitsgewinn bringt. Die Ergebnisse
+        werden nach wie vor genau wie zuvor sortiert und bewertet.</li>
+      <li><strong>Weniger unnötige Verbindungsaufbauten beim Herunterladen von
+        Bildern.</strong> Bild-Downloads nutzen jetzt eine bereits offene
+        Verbindung wieder, statt für jedes einzelne Bild eine neue zu öffnen &mdash;
+        das spart Zeit bei Spielen mit vielen Screenshots.</li>
+      <li>Dies sind interne Geschwindigkeitsverbesserungen &mdash; an der Bedienung
+        von RetroDB ändert sich nichts, und die Datenbanken werden dadurch nicht
+        stärker belastet (dieselben Anfragen, nur überlappend). Wird nach dem
+        nächsten Neustart wirksam.</li>
+    </ul>
+- version: 3.18.0
+  date: '2026-07-05'
+  tags:
+  - type: feature
+    label: Chinesische Alterseinstufungen (China) als 9. Einstufungssystem hinzugefügt
+  body: |
+    <ul>
+      <li><strong>Neues Alterseinstufungssystem: China (CADPA).</strong> RetroDB
+        unterstützt jetzt Chinas offizielles Altershinweis-System für Spiele
+        (&ldquo;网络游戏适龄提示&rdquo;, herausgegeben von CADPA) zusätzlich zu den
+        bestehenden acht Gremien (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC und
+        ClassInd). Es verwendet drei Stufen &mdash; <strong>8+</strong>,
+        <strong>12+</strong> und <strong>16+</strong> &mdash; dargestellt mit einem
+        einfachen grünen Abzeichen.</li>
+      <li><strong>Es füllt sich selbst aus, wie die anderen.</strong> Wenn ein Spiel
+        bereits eine Einstufung aus einem anderen Land besitzt, ermittelt RetroDB
+        automatisch die passende China-Stufe (und umgekehrt). Sie können sie auch
+        von Hand im Bearbeiten-Fenster eines Spiels auswählen oder ändern und sie
+        unter Einstellungen &rarr; Bibliothek als Ihr bevorzugtes Anzeigesystem
+        festlegen. Hinweis: Die meisten westlichen Spieledatenbanken veröffentlichen
+        keine China-Einstufung, daher wird sie bei Spielen ohne Einstufung anhand
+        des Spielinhalts während des Scrapings / AI Fill ausgefüllt.</li>
+      <li>Die grünen Abzeichen sind RetroDBs eigene, schlichte Grafiken (passend zum
+        Hausstil der anderen Gremien), nicht das offizielle CADPA-Logo &mdash; so
+        sind keine Bildlizenz-Auflagen damit verbunden.</li>
+    </ul>
 - version: 3.15.0
   date: '2026-07-03'
   tags:

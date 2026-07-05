@@ -1,3 +1,80 @@
+- version: 3.19.1
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: Scraping plus rapide — les captures d'écran d'un jeu se téléchargent désormais en même temps
+  body: |
+    <ul>
+      <li><strong>Les captures d&rsquo;écran se téléchargent en parallèle.</strong>
+        En suivant la même approche que le populaire frontend ES-DE (qui récupère
+        tous les médias d&rsquo;un jeu d&rsquo;un coup), RetroDB télécharge
+        désormais les captures d&rsquo;écran d&rsquo;un jeu
+        <strong>simultanément</strong> au lieu de l&rsquo;une après l&rsquo;autre,
+        pour toutes les sources (TheGamesDB, IGDB, RAWG, ScreenScraper). Les jeux
+        comptant plusieurs captures d&rsquo;écran se terminent nettement plus
+        vite.</li>
+      <li>La vérification des captures en double s&rsquo;exécute toujours ensuite
+        dans l&rsquo;ordre, de sorte que la suppression des images en double reste
+        exactement aussi précise qu&rsquo;avant &mdash; seul le téléchargement a
+        été accéléré. Les téléchargements sont limités à quatre à la fois pour ne
+        jamais surcharger une source.</li>
+      <li>Amélioration de vitesse en coulisses ; prend effet après le prochain
+        redémarrage.</li>
+    </ul>
+- version: 3.19.0
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: Scraping plus rapide — les sources sont désormais interrogées en même temps
+  body: |
+    <ul>
+      <li><strong>Le scraping est plus rapide pour chaque jeu.</strong> Lorsque
+        RetroDB recherche un jeu, il consulte plusieurs bases de données (ES-DE,
+        TheGamesDB, IGDB, RAWG, ScreenScraper). Auparavant, il les interrogeait
+        <em>une par une</em> et attendait la réponse de chacune avant de passer à
+        la suivante &mdash; l&rsquo;attente correspondait donc à la somme de toutes.
+        Désormais, il les interroge toutes <strong>en même temps</strong> et
+        n&rsquo;attend que la plus lente, ce qui représente une accélération
+        notable sur chaque jeu. Les résultats sont toujours classés et notés
+        exactement comme avant.</li>
+      <li><strong>Moins de connexions inutiles lors du téléchargement des
+        images.</strong> Les téléchargements d&rsquo;images réutilisent désormais
+        une connexion déjà ouverte au lieu d&rsquo;en ouvrir une nouvelle pour
+        chaque image, ce qui fait gagner du temps sur les jeux comportant
+        beaucoup de captures d&rsquo;écran.</li>
+      <li>Ce sont des améliorations de vitesse en coulisses &mdash; rien ne change
+        dans votre façon d&rsquo;utiliser RetroDB, et cela ne sollicite pas
+        davantage les bases de données (mêmes requêtes, simplement effectuées en
+        parallèle). Prennent effet après le prochain redémarrage.</li>
+    </ul>
+- version: 3.18.0
+  date: '2026-07-05'
+  tags:
+  - type: feature
+    label: Ajout des classifications par âge chinoises (Chine) comme 9e système de classification
+  body: |
+    <ul>
+      <li><strong>Nouveau système de classification par âge : Chine (CADPA).</strong>
+        RetroDB prend désormais en charge le dispositif officiel chinois de
+        recommandation d&rsquo;âge pour les jeux (&ldquo;网络游戏适龄提示&rdquo;,
+        émis par CADPA) aux côtés des huit organismes existants (ESRB, PEGI, CERO,
+        USK, ACB, FPB, GRAC et ClassInd). Il utilise trois niveaux &mdash;
+        <strong>8+</strong>, <strong>12+</strong> et <strong>16+</strong> &mdash;
+        affichés avec un simple badge vert.</li>
+      <li><strong>Il se remplit tout seul, comme les autres.</strong> Lorsqu&rsquo;un
+        jeu possède déjà une classification d&rsquo;un autre pays, RetroDB détermine
+        automatiquement le niveau chinois correspondant (et inversement). Vous
+        pouvez aussi le choisir ou le modifier à la main dans l&rsquo;écran
+        d&rsquo;édition d&rsquo;un jeu, et le sélectionner comme système
+        d&rsquo;affichage préféré sous Paramètres &rarr; Bibliothèque. Remarque :
+        la plupart des bases de données de jeux occidentales ne publient pas de
+        classification chinoise, donc pour les jeux sans aucune classification,
+        elle est déduite du contenu du jeu lors du scraping / de l&rsquo;AI Fill.</li>
+      <li>Les badges verts sont une illustration simple propre à RetroDB
+        (conforme au style maison des autres organismes), et non le logo officiel
+        de CADPA, afin qu&rsquo;aucune contrainte de licence d&rsquo;image ne
+        s&rsquo;applique.</li>
+    </ul>
 - version: 3.15.0
   date: '2026-07-03'
   tags:

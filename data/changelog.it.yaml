@@ -1,3 +1,75 @@
+- version: 3.19.1
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: Scraping più veloce — gli screenshot di un gioco ora si scaricano contemporaneamente
+  body: |
+    <ul>
+      <li><strong>Gli screenshot si scaricano in parallelo.</strong> Seguendo lo
+        stesso approccio del popolare frontend ES-DE (che recupera tutti i
+        contenuti multimediali di un gioco in una sola volta), RetroDB ora scarica
+        gli screenshot di un gioco <strong>contemporaneamente</strong> invece che
+        uno dopo l&rsquo;altro, per ogni fonte (TheGamesDB, IGDB, RAWG,
+        ScreenScraper). I giochi con diversi screenshot terminano
+        sensibilmente più in fretta.</li>
+      <li>Il controllo degli screenshot duplicati viene comunque eseguito
+        successivamente in ordine, quindi la rimozione delle immagini duplicate
+        resta esattamente accurata come prima &mdash; solo lo scaricamento è stato
+        velocizzato. I download sono limitati a quattro alla volta, così una
+        singola fonte non viene mai sovraccaricata.</li>
+      <li>Miglioramento delle prestazioni dietro le quinte; ha effetto dopo il
+        prossimo riavvio.</li>
+    </ul>
+- version: 3.19.0
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: Scraping più veloce — le fonti vengono ora interrogate contemporaneamente
+  body: |
+    <ul>
+      <li><strong>Lo scraping è più rapido per ogni gioco.</strong> Quando RetroDB
+        cerca un gioco, consulta diversi database (ES-DE, TheGamesDB, IGDB, RAWG,
+        ScreenScraper). In precedenza li interrogava <em>uno alla volta</em> e
+        attendeva la risposta di ciascuno prima di passare al successivo &mdash;
+        così l&rsquo;attesa era la somma di tutti. Ora li interroga tutti
+        <strong>in una sola volta</strong> e attende solo il più lento, il che
+        rappresenta un notevole aumento di velocità su ogni gioco. I risultati
+        vengono comunque ordinati e valutati esattamente come prima.</li>
+      <li><strong>Meno negoziazioni sprecate durante lo scaricamento delle
+        immagini.</strong> I download delle immagini ora riutilizzano una
+        connessione già aperta invece di aprirne una nuova per ogni singola
+        immagine, riducendo i tempi per i giochi con molti screenshot.</li>
+      <li>Si tratta di miglioramenti delle prestazioni dietro le quinte &mdash;
+        nulla cambia nel modo in cui usi RetroDB, e non sollecita di più i
+        database (stesse richieste, semplicemente sovrapposte). Hanno effetto dopo
+        il prossimo riavvio.</li>
+    </ul>
+- version: 3.18.0
+  date: '2026-07-05'
+  tags:
+  - type: feature
+    label: Aggiunte le classificazioni per età cinesi (Cina) come 9º sistema di classificazione
+  body: |
+    <ul>
+      <li><strong>Nuovo sistema di classificazione per età: Cina (CADPA).</strong>
+        RetroDB ora supporta lo schema ufficiale cinese di indicazione dell&rsquo;età
+        per i giochi (&ldquo;网络游戏适龄提示&rdquo;, emesso da CADPA) accanto agli otto
+        enti esistenti (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC e ClassInd). Utilizza
+        tre livelli &mdash; <strong>8+</strong>, <strong>12+</strong> e
+        <strong>16+</strong> &mdash; mostrati con un semplice distintivo verde.</li>
+      <li><strong>Si compila da solo, come gli altri.</strong> Quando un gioco ha
+        già una classificazione di qualsiasi altro Paese, RetroDB determina
+        automaticamente il livello cinese corrispondente (e viceversa). Puoi anche
+        selezionarlo o modificarlo manualmente nella schermata di modifica di un
+        gioco, e sceglierlo come sistema di visualizzazione preferito in
+        Impostazioni &rarr; Libreria. Nota: la maggior parte dei database di giochi
+        occidentali non pubblica una classificazione cinese, quindi per i giochi
+        senza alcuna classificazione essa viene desunta dal contenuto del gioco
+        durante lo scraping / AI Fill.</li>
+      <li>I distintivi verdi sono opere grafiche semplici realizzate da RetroDB
+        (in linea con lo stile grafico degli altri enti), non il logo ufficiale
+        di CADPA, quindi non comportano alcun vincolo di licenza sulle immagini.</li>
+    </ul>
 - version: 3.15.0
   date: '2026-07-03'
   tags:

@@ -1,3 +1,63 @@
+- version: 3.19.1
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: 抓取更快 —— 同一游戏的截图现在会同时下载
+  body: |
+    <ul>
+      <li><strong>截图并行下载。</strong>沿用广受欢迎的 ES-DE
+        前端的做法（它会一次性获取一个游戏的所有媒体），RetroDB 现在会为每个
+        来源（TheGamesDB、IGDB、RAWG、ScreenScraper）<strong>并发</strong>下载
+        游戏的截图，而不再一张接一张地下载。拥有多张截图的游戏会明显
+        更快完成。</li>
+      <li>重复截图检查仍会随后按顺序运行，因此图片去重的准确度
+        与以往完全一致 &mdash; 加速的只是下载环节。下载最多同时进行四个，
+        以免单个来源被过度占用。</li>
+      <li>底层的速度改进；将在下次重启后生效。</li>
+    </ul>
+- version: 3.19.0
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: 抓取更快 —— 现在会同时查询各个来源
+  body: |
+    <ul>
+      <li><strong>每个游戏的抓取更快了。</strong>当 RetroDB 查询某个
+        游戏时，它会检索多个数据库（ES-DE、TheGamesDB、IGDB、RAWG、
+        ScreenScraper）。以前它<em>一次只问一个</em>，并等待每一个
+        回答后再问下一个 &mdash; 因此等待时间是所有来源之和。现在它会
+        <strong>同时</strong>询问全部来源，只等待最慢的那个，这在每个游戏上
+        都是明显的提速。结果的排序和评分方式与以往完全相同。</li>
+      <li><strong>下载图片时减少无谓的握手。</strong>现在图片下载
+        会复用一个已经打开的连接，而不是为每一张图片都重新打开
+        一个连接，从而为拥有大量截图的游戏节省时间。</li>
+      <li>这些都是底层的速度改进 &mdash; 你使用 RetroDB 的方式毫无变化，
+        它也不会对数据库造成更大压力（请求相同，只是重叠进行）。将在下次
+        重启后生效。</li>
+    </ul>
+- version: 3.18.0
+  date: '2026-07-05'
+  tags:
+  - type: feature
+    label: 新增中国（大陆）年龄分级，成为第 9 套分级体系
+  body: |
+    <ul>
+      <li><strong>新增年龄分级体系：中国（CADPA）。</strong>RetroDB 现在
+        支持中国官方的游戏适龄提示方案
+        （&ldquo;网络游戏适龄提示&rdquo;，由 CADPA 发布），与现有的
+        八套机构（ESRB、PEGI、CERO、USK、ACB、FPB、GRAC 和 ClassInd）并列。它采用
+        三个等级 &mdash; <strong>8+</strong>、<strong>12+</strong> 和
+        <strong>16+</strong> &mdash; 以简洁的绿色徽标显示。</li>
+      <li><strong>它会像其他体系一样自行填充。</strong>当某个游戏已经
+        拥有来自任何其他国家/地区的分级时，RetroDB 会自动推算出对应的中国
+        等级（反之亦然）。你也可以在游戏的编辑界面中手动选择或更改它，并
+        在设置 &rarr; 游戏库中将其设为你偏好的显示体系。注意：大多数西方游戏数据库
+        并不发布中国分级，因此对于任何来源都没有分级的游戏，会在抓取 /
+        AI Fill 期间根据游戏内容进行填充。</li>
+      <li>这些绿色徽标是 RetroDB 自制的简洁图案（与其他机构的整体
+        风格一致），并非 CADPA 的官方标志，因此不涉及任何图片
+        授权限制。</li>
+    </ul>
 - version: 3.15.0
   date: '2026-07-03'
   tags:

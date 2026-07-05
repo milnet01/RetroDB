@@ -1,3 +1,68 @@
+- version: 3.19.1
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: Coleta mais rápida — as capturas de tela de um jogo agora baixam ao mesmo tempo
+  body: |
+    <ul>
+      <li><strong>As capturas de tela baixam em paralelo.</strong> Seguindo a mesma
+        abordagem do popular frontend ES-DE (que busca toda a mídia de um
+        jogo de uma só vez), o RetroDB agora baixa as capturas de tela de um
+        jogo <strong>simultaneamente</strong> em vez de uma após a outra,
+        para todas as fontes (TheGamesDB, IGDB, RAWG, ScreenScraper). Jogos com
+        várias capturas de tela terminam visivelmente mais rápido.</li>
+      <li>A verificação de capturas duplicadas ainda é feita depois, em ordem, então
+        a remoção de imagens repetidas continua exatamente tão precisa quanto antes &mdash; só
+        o download foi acelerado. Os downloads são limitados a quatro por vez para que
+        uma única fonte nunca fique sobrecarregada.</li>
+      <li>Melhoria de velocidade nos bastidores; passa a valer após a próxima reinicialização.</li>
+    </ul>
+- version: 3.19.0
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: Coleta mais rápida — as fontes agora são consultadas ao mesmo tempo
+  body: |
+    <ul>
+      <li><strong>A coleta é mais rápida por jogo.</strong> Quando o RetroDB busca um
+        jogo, ele consulta vários bancos de dados (ES-DE, TheGamesDB, IGDB, RAWG,
+        ScreenScraper). Antes ele os consultava <em>um de cada vez</em> e
+        esperava a resposta de cada um antes de consultar o próximo &mdash; então a espera era
+        a soma de todos eles. Agora ele consulta todos <strong>de uma vez</strong> e
+        espera apenas pelo mais lento, o que representa uma aceleração perceptível em cada jogo.
+        Os resultados continuam sendo ordenados e pontuados exatamente como antes.</li>
+      <li><strong>Menos negociações desperdiçadas ao baixar imagens.</strong> Os downloads
+        de imagens agora reutilizam uma conexão já aberta em vez de abrir uma nova
+        para cada imagem, economizando tempo em jogos com muitas
+        capturas de tela.</li>
+      <li>São melhorias de velocidade nos bastidores &mdash; nada muda na
+        forma como você usa o RetroDB, e não sobrecarrega mais os
+        bancos de dados (as mesmas requisições, apenas sobrepostas). Passam a valer após a próxima reinicialização.</li>
+    </ul>
+- version: 3.18.0
+  date: '2026-07-05'
+  tags:
+  - type: feature
+    label: Adicionada a classificação etária da China (Continental) como 9º sistema de classificação
+  body: |
+    <ul>
+      <li><strong>Novo sistema de classificação etária: China (CADPA).</strong> O RetroDB agora
+        oferece suporte ao esquema oficial chinês de aviso de idade para jogos
+        (&ldquo;网络游戏适龄提示&rdquo;, emitido pela CADPA) ao lado dos oito órgãos
+        já existentes (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC e ClassInd). Ele usa
+        três faixas &mdash; <strong>8+</strong>, <strong>12+</strong> e
+        <strong>16+</strong> &mdash; exibidas com um selo verde simples.</li>
+      <li><strong>Ele se preenche sozinho, como os outros.</strong> Quando um jogo já
+        tem uma classificação de qualquer outro país, o RetroDB calcula a faixa
+        correspondente da China automaticamente (e vice-versa). Você também pode escolhê-la ou alterá-la manualmente
+        na tela de Edição de um jogo, e defini-la como seu sistema de exibição preferido
+        em Configurações &rarr; Biblioteca. Observação: a maioria dos bancos de dados de jogos ocidentais
+        não publica uma classificação da China, então, para jogos sem classificação em lugar nenhum, ela
+        é preenchida a partir do conteúdo do jogo durante a coleta / AI Fill.</li>
+      <li>Os selos verdes são a arte simples do próprio RetroDB (seguindo o
+        estilo da casa dos outros órgãos), não o logotipo oficial da CADPA, então não
+        há nenhuma amarra de licenciamento de imagem.</li>
+    </ul>
 - version: 3.15.0
   date: '2026-07-03'
   tags:

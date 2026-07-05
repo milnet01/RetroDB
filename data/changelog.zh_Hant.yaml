@@ -1,3 +1,64 @@
+- version: 3.19.1
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: 抓取更快 — 遊戲的螢幕截圖現在會同時下載
+  body: |
+    <ul>
+      <li><strong>螢幕截圖並行下載。</strong>採用與熱門前端 ES-DE
+        相同的做法（一次擷取遊戲的所有媒體），RetroDB 現在會
+        <strong>同時</strong>下載遊戲的螢幕截圖，而非一張接著一張，
+        且適用於每個來源（TheGamesDB、IGDB、RAWG、ScreenScraper）。擁有
+        多張螢幕截圖的遊戲會明顯更快完成。</li>
+      <li>重複螢幕截圖的檢查仍會在之後依序執行，因此圖片去重的
+        準確度與以往完全相同 &mdash; 加速的只是下載部分。下載一次
+        最多四張，因此單一來源絕不會過載。</li>
+      <li>幕後速度改進；於下次重新啟動後生效。</li>
+    </ul>
+- version: 3.19.0
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: 抓取更快 — 現在會同時查詢多個來源
+  body: |
+    <ul>
+      <li><strong>每個遊戲的抓取更快。</strong>當 RetroDB 查詢某個
+        遊戲時，會檢查數個資料庫（ES-DE、TheGamesDB、IGDB、RAWG、
+        ScreenScraper）。以往它會<em>逐一</em>詢問，並等待每個回覆
+        後才詢問下一個 &mdash; 因此等待時間是全部加總。現在它會
+        <strong>一次</strong>詢問全部，只等待最慢的一個，這在每個
+        遊戲上都是明顯的加速。結果的排序與評分仍與以往完全相同。</li>
+      <li><strong>下載美術圖時減少浪費的握手。</strong>圖片下載現在
+        會重複使用已開啟的連線，而非為每一張圖片都開啟新的連線，
+        替擁有大量螢幕截圖的遊戲省下時間。</li>
+      <li>這些都是幕後的速度改進 &mdash; 你使用 RetroDB 的方式毫無
+        改變，也不會對資料庫造成更大的負擔（相同的請求，只是重疊
+        進行）。於下次重新啟動後生效。</li>
+    </ul>
+- version: 3.18.0
+  date: '2026-07-05'
+  tags:
+  - type: feature
+    label: 新增中國（China）年齡分級，成為第 9 個分級系統
+  body: |
+    <ul>
+      <li><strong>新增年齡分級系統：中國（CADPA）。</strong>RetroDB 現在
+        支援中國官方的遊戲適齡提示制度
+        （&ldquo;網路遊戲適齡提示&rdquo;，由 CADPA 發布），與既有的
+        八個分級機構（ESRB、PEGI、CERO、USK、ACB、FPB、GRAC 與
+        ClassInd）並列。它採用三個級別 &mdash; <strong>8+</strong>、
+        <strong>12+</strong> 與 <strong>16+</strong> &mdash; 以簡單的
+        綠色徽章顯示。</li>
+      <li><strong>它會像其他系統一樣自動填入。</strong>當某個遊戲已經
+        有來自其他國家的分級時，RetroDB 會自動推算出對應的中國級別
+        （反之亦然）。你也可以在遊戲的編輯畫面中手動選擇或變更，並在
+        設定 &rarr; 遊戲庫 中選它做為你偏好的顯示系統。請注意：多數
+        西方遊戲資料庫都不提供中國分級，因此對於任何地方都沒有分級的
+        遊戲，會在抓取／AI Fill 期間依遊戲內容填入。</li>
+      <li>這些綠色徽章是 RetroDB 自製的簡單圖案（與其他分級機構的
+        風格一致），而非 CADPA 的官方標誌，因此沒有任何圖片授權的
+        牽絆。</li>
+    </ul>
 - version: 3.15.0
   date: '2026-07-03'
   tags:
