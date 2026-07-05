@@ -27,7 +27,10 @@
     <meta name="csrf-token" content="{{ csrf_token }}">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="{{ asset_url('favicon.svg') }}">
+    <link rel="alternate icon" type="image/png" sizes="32x32" href="{{ asset_url('favicon-32.png') }}">
+    <link rel="alternate icon" type="image/png" sizes="16x16" href="{{ asset_url('favicon-16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset_url('apple-touch-icon.png') }}">
 </head>
 <body data-mist-enabled="{{ user_settings.get('enable_mist_effect', true)|lower }}">
     <a href="#main-content" class="skip-link">{{ _('Skip to main content') }}</a>
