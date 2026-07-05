@@ -75,6 +75,53 @@
         de CADPA, afin qu&rsquo;aucune contrainte de licence d&rsquo;image ne
         s&rsquo;applique.</li>
     </ul>
+- version: 3.17.0
+  date: '2026-07-04'
+  tags:
+  - type: feature
+    label: Effacer les entrées de la base de données pour les fichiers médias absents du disque
+  - type: security
+    label: Protection contre l'effacement de toutes les illustrations de votre bibliothèque lorsqu'un dossier de médias disparaît
+  body: |
+    <ul>
+      <li><strong>Nouvel outil de maintenance : &ldquo;Références de médias manquantes&rdquo;</strong>
+        (Paramètres &rarr; Système &rarr; Maintenance). C&rsquo;est l&rsquo;image
+        inversée du nettoyage existant &ldquo;Médias orphelins&rdquo; : au lieu de
+        repérer des fichiers images restants sans jeu, il repère les jeux dont la
+        jaquette, la jaquette 3D, les captures d&rsquo;écran, les fan-arts, la
+        vidéo ou le manuel pointent vers des fichiers qui ne sont plus sur le
+        disque. Recherchez-les, puis effacez ces références obsolètes en un clic
+        afin que les scrapers puissent retélécharger les illustrations. Les fiches
+        de vos jeux elles-mêmes ne sont jamais modifiées.</li>
+      <li><strong>Un nettoyage automatique plus sûr pendant le scraping.</strong>
+        Lorsque RetroDB rescanne un jeu, il efface discrètement les références aux
+        fichiers médias qui ont disparu du disque. Auparavant, si tout un dossier
+        de médias disparaissait d&rsquo;un coup &mdash; un disque externe démonté
+        ou une suppression en masse &mdash; ce nettoyage pouvait effacer la trace
+        des illustrations que possédaient des milliers de jeux, imposant des
+        rescans coûteux. RetroDB reconnaît désormais ce signal : si un dossier de
+        médias est manquant ou totalement vide, il conserve les références et
+        consigne un avertissement au lieu de les effacer. Le nouvel outil de
+        maintenance applique la même protection et signale clairement tout dossier
+        qu&rsquo;il a préservé.</li>
+    </ul>
+- version: 3.16.0
+  date: '2026-07-04'
+  tags:
+  - type: feature
+    label: Nouveau panneau "Corrections rapides" sur le tableau de bord
+  body: |
+    <ul>
+      <li><strong>Un nouveau panneau &ldquo;Corrections rapides&rdquo; sur le
+        tableau de bord</strong> transforme les tâches éparses de votre
+        bibliothèque en une liste de choses à faire d&rsquo;un coup d&rsquo;œil. Il
+        indique combien de jeux n&rsquo;ont toujours pas de jaquette et propose des
+        raccourcis en un clic pour trouver les ROMs en double et pour vérifier les
+        chemins de ROM cassés (jeux dont les fichiers ont été déplacés ou
+        supprimés). Chaque raccourci mène directement à la page qui permet de le
+        corriger. Le panneau apparaît dès que votre bibliothèque contient des
+        jeux.</li>
+    </ul>
 - version: 3.15.0
   date: '2026-07-03'
   tags:

@@ -69,6 +69,53 @@
         Hausstil der anderen Gremien), nicht das offizielle CADPA-Logo &mdash; so
         sind keine Bildlizenz-Auflagen damit verbunden.</li>
     </ul>
+- version: 3.17.0
+  date: '2026-07-04'
+  tags:
+  - type: feature
+    label: Datenbankeinträge für Mediendateien löschen, die auf der Festplatte fehlen
+  - type: security
+    label: Schutz davor, die gesamte Bibliotheksgrafik zu löschen, wenn ein Medienordner verschwindet
+  body: |
+    <ul>
+      <li><strong>Neues Wartungswerkzeug: &ldquo;Fehlende Medienverweise&rdquo;</strong>
+        (Einstellungen &rarr; System &rarr; Wartung). Es ist das Gegenstück zur
+        bestehenden Bereinigung &ldquo;Verwaiste Medien&rdquo;: Statt übrig
+        gebliebene Bilddateien ohne Spiel zu finden, findet es Spiele, deren
+        Box-Art, 3D-Box-Art, Screenshots, Fanart, Video oder Handbuch auf Dateien
+        verweisen, die nicht mehr auf der Festplatte vorhanden sind. Suchen Sie
+        danach und löschen Sie diese veralteten Verweise mit einem Klick, damit
+        Scraper die Grafik erneut herunterladen können. Ihre Spieleinträge selbst
+        werden dabei nie verändert.</li>
+      <li><strong>Sicherere automatische Bereinigung beim Scraping.</strong> Wenn
+        RetroDB ein Spiel erneut scrapt, löscht es stillschweigend Verweise auf
+        Mediendateien, die von der Festplatte verschwunden sind. Bisher konnte
+        diese Bereinigung &mdash; falls ein ganzer Medienordner auf einmal
+        verschwand, etwa eine ausgehängte externe Festplatte oder eine
+        Massenlöschung &mdash; die Aufzeichnung darüber löschen, welche Grafik
+        Tausende von Spielen hatten, was aufwendige erneute Scrapes erzwang.
+        RetroDB erkennt dieses Signal jetzt: Wenn ein Medienordner fehlt oder
+        vollständig leer ist, behält es die Verweise und protokolliert stattdessen
+        eine Warnung, statt sie zu löschen. Das neue Wartungswerkzeug wendet
+        denselben Schutz an und kennzeichnet deutlich jeden Ordner, den es dabei
+        zurückgehalten hat.</li>
+    </ul>
+- version: 3.16.0
+  date: '2026-07-04'
+  tags:
+  - type: feature
+    label: Neues Panel "Schnelle Korrekturen" auf der Übersichtsseite
+  body: |
+    <ul>
+      <li><strong>Ein neues Panel &ldquo;Schnelle Korrekturen&rdquo; auf der
+        Übersichtsseite</strong> verwandelt verstreute Bibliotheksaufgaben in eine
+        übersichtliche To-do-Liste. Es zeigt, wie vielen Spielen noch die Box-Art
+        fehlt, und bietet Schnellzugriffe mit einem Klick, um doppelte ROMs zu
+        finden und um auf fehlerhafte ROM-Pfade zu prüfen (Spiele, deren Dateien
+        verschoben oder gelöscht wurden). Jeder Schnellzugriff führt direkt zu der
+        Seite, auf der sich das Problem beheben lässt. Das Panel erscheint, sobald
+        sich Spiele in Ihrer Bibliothek befinden.</li>
+    </ul>
 - version: 3.15.0
   date: '2026-07-03'
   tags:

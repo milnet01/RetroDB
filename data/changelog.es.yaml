@@ -66,6 +66,49 @@
         juego con el estilo de los demás organismos), no el logotipo oficial de
         CADPA, por lo que no hay ninguna atadura de licencia de imágenes.</li>
     </ul>
+- version: 3.17.0
+  date: '2026-07-04'
+  tags:
+  - type: feature
+    label: Borra las referencias de la base de datos a archivos de material gráfico que faltan en el disco
+  - type: security
+    label: Protege contra el borrado de todo el material gráfico de tu biblioteca cuando desaparece una carpeta de medios
+  body: |
+    <ul>
+      <li><strong>Nueva herramienta de mantenimiento: &ldquo;Referencias de medios faltantes&rdquo;</strong>
+        (Ajustes &rarr; Sistema &rarr; Mantenimiento). Es la imagen especular de la
+        limpieza existente de &ldquo;Medios huérfanos&rdquo;: en lugar de buscar
+        archivos de imagen sobrantes sin ningún juego, busca juegos cuya carátula,
+        carátula 3D, capturas de pantalla, fanart, vídeo o manual apuntan a archivos
+        que ya no están en el disco. Búscalos y luego borra esas referencias obsoletas
+        con un solo clic para que los rastreadores puedan volver a descargar el
+        material gráfico. Las entradas de tus juegos en sí nunca se tocan.</li>
+      <li><strong>Limpieza automática más segura durante el rastreo.</strong> Cuando
+        RetroDB vuelve a rastrear un juego, borra silenciosamente las referencias a
+        archivos de medios que han desaparecido del disco. Antes, si toda una carpeta
+        de medios desaparecía de golpe &mdash; una unidad externa desmontada o un
+        borrado masivo &mdash;, esa limpieza podía borrar el registro del material
+        gráfico que tenían miles de juegos, obligando a costosos re-rastreos. Ahora
+        RetroDB reconoce esa señal: si una carpeta de medios falta o está
+        completamente vacía, conserva las referencias y registra una advertencia en
+        lugar de borrarlas. La nueva herramienta de mantenimiento aplica la misma
+        protección y señala claramente cualquier carpeta que haya retenido.</li>
+    </ul>
+- version: 3.16.0
+  date: '2026-07-04'
+  tags:
+  - type: feature
+    label: Nuevo panel de "Soluciones rápidas" en el panel de control
+  body: |
+    <ul>
+      <li><strong>Un nuevo panel de &ldquo;Soluciones rápidas&rdquo; en el Panel de control</strong>
+        convierte las tareas dispersas de la biblioteca en una lista de tareas
+        pendientes de un vistazo. Muestra cuántos juegos siguen sin carátula y ofrece
+        atajos de un solo clic para encontrar ROMs duplicadas y comprobar rutas de ROM
+        rotas (juegos cuyos archivos se han movido o borrado). Cada atajo enlaza
+        directamente con la página que lo soluciona. El panel aparece en cuanto tienes
+        juegos en tu biblioteca.</li>
+    </ul>
 - version: 3.15.0
   date: '2026-07-03'
   tags:

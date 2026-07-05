@@ -70,6 +70,52 @@
         (in linea con lo stile grafico degli altri enti), non il logo ufficiale
         di CADPA, quindi non comportano alcun vincolo di licenza sulle immagini.</li>
     </ul>
+- version: 3.17.0
+  date: '2026-07-04'
+  tags:
+  - type: feature
+    label: Cancella le voci del database per i file multimediali mancanti dal disco
+  - type: security
+    label: Protezione contro la cancellazione di tutte le immagini della libreria quando una cartella multimediale sparisce
+  body: |
+    <ul>
+      <li><strong>Nuovo strumento di manutenzione: &ldquo;Riferimenti multimediali
+        mancanti&rdquo;</strong> (Impostazioni &rarr; Sistema &rarr; Manutenzione). È
+        l&rsquo;immagine speculare della pulizia &ldquo;Media orfani&rdquo; già
+        esistente: invece di individuare file immagine rimasti senza alcun gioco,
+        trova i giochi la cui copertina, copertina 3D, screenshot, fanart, video o
+        manuale puntano a file che non sono più presenti sul disco. Cercali, poi
+        cancella con un solo clic quei riferimenti obsoleti così che gli scraper
+        possano riscaricare le immagini. Le voci dei tuoi giochi non vengono mai
+        toccate.</li>
+      <li><strong>Pulizia automatica più sicura durante lo scraping.</strong> Quando
+        RetroDB esegue di nuovo lo scraping di un gioco, cancella silenziosamente i
+        riferimenti ai file multimediali spariti dal disco. In precedenza, se
+        un&rsquo;intera cartella multimediale spariva tutta in una volta &mdash; un
+        disco esterno smontato, o una cancellazione di massa &mdash; quella pulizia
+        poteva eliminare la registrazione delle immagini di migliaia di giochi,
+        costringendo a costosi nuovi scraping. Ora RetroDB riconosce questo segnale:
+        se una cartella multimediale è mancante o completamente vuota, mantiene i
+        riferimenti e registra un avviso invece di cancellarli. Il nuovo strumento di
+        manutenzione applica la stessa protezione e segnala chiaramente qualsiasi
+        cartella che ha lasciato intatta.</li>
+    </ul>
+- version: 3.16.0
+  date: '2026-07-04'
+  tags:
+  - type: feature
+    label: Nuovo pannello "Correzioni rapide" nella dashboard
+  body: |
+    <ul>
+      <li><strong>Un nuovo pannello &ldquo;Correzioni rapide&rdquo; nella
+        Dashboard</strong> trasforma le sparse incombenze della libreria in un elenco
+        di cose da fare a colpo d&rsquo;occhio. Mostra quanti giochi sono ancora privi
+        di copertina, e offre scorciatoie con un solo clic per trovare ROM duplicate e
+        per verificare i percorsi ROM interrotti (giochi i cui file sono stati spostati
+        o cancellati). Ogni scorciatoia rimanda direttamente alla pagina che risolve il
+        problema. Il pannello compare non appena hai dei giochi nella tua
+        libreria.</li>
+    </ul>
 - version: 3.15.0
   date: '2026-07-03'
   tags:

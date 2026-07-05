@@ -63,6 +63,49 @@
         estilo da casa dos outros órgãos), não o logotipo oficial da CADPA, então não
         há nenhuma amarra de licenciamento de imagem.</li>
     </ul>
+- version: 3.17.0
+  date: '2026-07-04'
+  tags:
+  - type: feature
+    label: Limpa as referências do banco de dados para arquivos de mídia que sumiram do disco
+  - type: security
+    label: Protege contra apagar todas as artes da sua biblioteca quando uma pasta de mídia desaparece
+  body: |
+    <ul>
+      <li><strong>Nova ferramenta de manutenção: &ldquo;Referências de Mídia Ausentes&rdquo;</strong>
+        (Configurações &rarr; Sistema &rarr; Manutenção). É a imagem espelhada da
+        limpeza de &ldquo;Mídia Órfã&rdquo; já existente: em vez de encontrar
+        arquivos de imagem sobrando sem jogo, ela encontra jogos cuja arte da caixa,
+        caixa 3D, capturas de tela, fanart, vídeo ou manual apontam para arquivos que
+        não estão mais no disco. Faça a varredura e limpe essas referências obsoletas
+        com um clique, para que as fontes possam baixar a arte novamente. Os próprios
+        registros dos seus jogos nunca são tocados.</li>
+      <li><strong>Limpeza automática mais segura durante a coleta.</strong> Quando o
+        RetroDB refaz a coleta de um jogo, ele limpa discretamente as referências a
+        arquivos de mídia que sumiram do disco. Antes, se uma pasta de mídia inteira
+        desaparecesse de uma vez &mdash; um disco externo desconectado, ou uma exclusão
+        em massa &mdash; essa limpeza podia apagar o registro de qual arte milhares de
+        jogos tinham, forçando coletas novas e custosas. O RetroDB agora reconhece esse
+        sinal: se uma pasta de mídia está ausente ou completamente vazia, ele mantém as
+        referências e registra um aviso em vez de apagá-las. A nova ferramenta de
+        manutenção aplica a mesma proteção e sinaliza claramente qualquer pasta que ela
+        tenha preservado.</li>
+    </ul>
+- version: 3.16.0
+  date: '2026-07-04'
+  tags:
+  - type: feature
+    label: Novo painel de "Correções Rápidas" no painel principal
+  body: |
+    <ul>
+      <li><strong>Um novo painel de &ldquo;Correções Rápidas&rdquo; no Painel Principal</strong>
+        transforma tarefas espalhadas da biblioteca em uma lista de afazeres à primeira
+        vista. Ele mostra quantos jogos ainda estão sem arte da caixa e oferece atalhos
+        de um clique para encontrar ROMs duplicadas e verificar caminhos de ROM quebrados
+        (jogos cujos arquivos foram movidos ou excluídos). Cada atalho leva direto à
+        página que resolve o problema. O painel aparece assim que você tem jogos na sua
+        biblioteca.</li>
+    </ul>
 - version: 3.15.0
   date: '2026-07-03'
   tags:
