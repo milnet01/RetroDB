@@ -347,6 +347,30 @@ are tracked here so the next pass picks them up:
   (now un-gated by this Hebrew catalog); Arabic was deliberately deferred to that
   pass for the same reason.
 
+#### Pass 56.2 Further language packs — Czech, Swedish, Thai, Vietnamese (FEATURE, L)
+- **Target**: four more locales — **`cs` Czech, `sv` Swedish, `th` Thai,
+  `vi` Vietnamese** — the next-highest-value gaps for a retro-gaming audience
+  after the Pass 56.1 set.
+- **Why**: all four are widely-spoken, well-resourced for quality translation,
+  all left-to-right (no RTL prerequisite, unlike Pass 43.4's Arabic), and absent
+  from the current 21-language set. Suggested to and approved by the user
+  2026-07-05.
+- **Plan**: identical pipeline to Pass 56.1 — `pybabel init -l <code>` →
+  per-locale `{msgid: translation}` JSON → `scripts/apply_po_translations.py`
+  (strict: hard-fails on any missing msgid or dropped placeholder) → `pybabel
+  compile`; then the 14-entry `data/changelog.<code>.yaml` + the ~2000-line
+  `templates/help.<code>.html` (copy-then-translate-prose, anchors byte-identical).
+  Zero code changes — `available_locales()` auto-surfaces each new catalog in the
+  Settings dropdown / validator / selector. Plural-form counts (from CLDR, set by
+  `pybabel init`): `cs` 4, `sv` 2, `th` 1, `vi` 1. Would take the shipped set to
+  25 languages.
+- **Verify**: `available_locales()` returns the four new codes; `pybabel compile`
+  clean; `scripts/check_i18n_fresh.py` green (msgid set unchanged — locales only);
+  each changelog parses at the current recent-entry count; each help file's
+  `id`/`href` anchor set + Jinja-token count byte-identical to `help.html`.
+- **Status**: planned (2026-07-05). Not started; a self-contained follow-on to
+  Pass 56.1 whenever the user wants the next batch.
+
 ---
 
 ### Pass 55 — Scraper throughput (2026-07-05)
