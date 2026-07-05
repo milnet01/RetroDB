@@ -462,8 +462,13 @@ class TestPass45_2DnsRebindingPin:
         ip = self._patch_validators(monkeypatch, pinned_ip='203.0.113.66')
         fake_get, observed = self._capture_pin_during_get()
 
-        from scraper import metadata_merger
-        monkeypatch.setattr(metadata_merger.requests, 'get',
+        # Pass 51.3: _download_and_finalize now streams through the shared
+        # base_scraper._http_session (pooled connection reuse), mirroring
+        # base_scraper.download_image. pin_host_ip() still wraps the GET, so the
+        # DNS-rebinding guarantee is unchanged — patch the session the function
+        # actually uses (same object the local import binds), not module `requests`.
+        from scraper import metadata_merger, base_scraper
+        monkeypatch.setattr(base_scraper._http_session, 'get',
                             lambda *a, **kw: fake_get(*a, **kw))
         monkeypatch.setattr(metadata_merger, 'finalize_downloaded_image',
                             lambda *a, **kw: None)

@@ -315,6 +315,57 @@ are tracked here so the next pass picks them up:
 
 ---
 
+### Pass 55 — Scraper throughput (2026-07-05)
+
+> Source: user request 2026-07-05 — "are there any performance improvements that
+> can be made to scraping?" Per-game latency is dominated by external API
+> round-trips; an Explore-agent map of `scraper/` found the code made that worse
+> than necessary (sequential source queries, per-image TCP+TLS handshakes).
+
+#### Pass 55.1 Parallel multi-source search (PERF, M)
+- **Status**: done (v3.19.0, 2026-07-05). `ScraperManager.search_games`
+  (`scraper/scraper_manager.py`) queried ES-DE→TGDB→IGDB→RAWG→ScreenScraper one
+  at a time — per-game search cost was the SUM of five round-trips despite the
+  docstring claiming "simultaneously". Refactored each source into a
+  self-contained worker (identical logic + per-source try/except) fired on a
+  `ThreadPoolExecutor`; results reassembled in the canonical order so downstream
+  ordering / scoring / priority-boost is byte-identical. Verified: 4× wall-clock
+  drop in a mocked 4-source run, canonical tie-break order preserved, a crashing
+  source no longer sinks the others. (ES-DE is local/fast so it was never the
+  bottleneck — the win is overlapping the four network sources.)
+
+#### Pass 55.2 Reuse the pooled HTTP session for merge-path image downloads (PERF, S)
+- **Status**: done (v3.19.0, 2026-07-05). `metadata_merger._download_and_finalize`
+  (and the non-image media path) used bare `requests.get`, opening a fresh
+  TCP+TLS connection per file. Switched both to `base_scraper._http_session`,
+  mirroring `base_scraper.download_image` exactly — `pin_host_ip()` still wraps
+  the GET so the Pass 45.2 DNS-rebinding guarantee is unchanged (security test
+  updated to patch the session it now uses; all 6 pin tests green).
+
+#### Pass 55.3 Parallel per-game image downloads (PERF, M) — DEFERRED
+- **Status**: considered, deferred 2026-07-05. Downloading a game's
+  boxart/screenshots/fanart concurrently would help games with many screenshots,
+  BUT the screenshot loops in the four `metadata_merger.apply_*` paths run each
+  file through a sequential perceptual-hash dedup (`keep_screenshot_if_unique`
+  against a growing hash set) — naive parallelism races that set and makes
+  which-duplicate-survives non-deterministic. A correct version needs a two-phase
+  split (download-all-in-parallel → dedup-sequentially-in-order) across all four
+  security-sensitive download paths that write the live media library. Marginal
+  win dropped sharply once 55.2 removed the per-image handshake, so the
+  effort/risk no longer justifies it. Revisit only if profiling shows screenshot
+  transfer time is a real bottleneck.
+
+#### Pass 55.4 Overlap whole games in the bulk scrape (PERF, L) — NOT STARTED
+- **Status**: considered, not started 2026-07-05. `BulkScrapeManager._run_scrape`
+  processes games one at a time on a single daemon thread; a small worker pool
+  (e.g. 3-4 games in flight) is the largest theoretical win. Risk is real:
+  ScreenScraper enforces per-account daily quotas + concurrent-thread caps
+  (already hard-stops on the daily limit), RAWG self-throttles, and DB writes
+  serialise under WAL. Needs quota-aware bounded concurrency, not a blind pool —
+  held pending user appetite for the extra complexity.
+
+---
+
 ### Pass 54 — Media integrity & DB maintenance (2026-07-04)
 
 > Source: user session 2026-07-04, during investigation of an external, recurring

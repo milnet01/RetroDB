@@ -18,6 +18,7 @@ import os
 import json
 import time
 import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 try:
     from circuitbreaker import circuit, CircuitBreakerError
@@ -305,115 +306,161 @@ class ScraperManager:
         logger.info(f"Searching for: '{title}' on system: {system_name} (folder: {system_folder})")
         logger.info(f"Enabled scrapers: {enabled}")
 
-        # Search ES-DE first (local, fastest)
-        if ESDE_AVAILABLE and enabled.get('esde', True) and system_folder:
-            try:
-                esde_results = search_esde(title, system_folder, limit)
-                if esde_results:
-                    logger.info(f"ES-DE found {len(esde_results)} results")
-                    # ES-DE results already have score calculated; store as title_score
-                    # for criteria-mode filtering (before priority boost is added)
-                    for r in esde_results:
-                        r['title_score'] = r.get('score', 0)
-                    all_results.extend(esde_results)
-            except Exception as e:
-                logger.error(f"ES-DE search failed: {e}")
+        # Each source below is a self-contained worker that returns its list of
+        # normalised candidates (or [] on failure — every worker swallows and
+        # logs its own exception exactly as the old sequential blocks did). The
+        # five sources hit five independent hosts, so we fire them concurrently
+        # on a thread pool: the per-game search cost drops from the SUM of the
+        # round-trips to the MAX of them (the docstring's long-standing intent).
+        # Results are reassembled in the canonical source order afterwards, so
+        # downstream ordering/scoring/priority-boost is identical to the old
+        # straight-line path. requests.Session (base_scraper._http_session),
+        # the per-source circuit breakers, and the lock-guarded settings/SS
+        # caches are all safe under this bounded concurrency.
+        def _src_esde():
+            results = []
+            # ES-DE is local (fastest); still runs on its own thread so a slow
+            # gamelist parse can't hold up the network sources.
+            if ESDE_AVAILABLE and enabled.get('esde', True) and system_folder:
+                try:
+                    esde_results = search_esde(title, system_folder, limit)
+                    if esde_results:
+                        logger.info(f"ES-DE found {len(esde_results)} results")
+                        # ES-DE results already have score calculated; store as
+                        # title_score for criteria-mode filtering (before boost).
+                        for r in esde_results:
+                            r['title_score'] = r.get('score', 0)
+                        results = esde_results
+                except Exception as e:
+                    logger.error(f"ES-DE search failed: {e}")
+            return results
 
-        # Search TheGamesDB
-        if enabled.get('tgdb', True):
-            try:
-                tgdb_results = _tgdb_breaker(search_tgdb)(title, system_name, limit)
-                if tgdb_results:
-                    logger.info(f"TheGamesDB found {len(tgdb_results)} results")
-                    for result in tgdb_results:
-                        result['source'] = 'thegamesdb'
-                        result['scraper'] = 'thegamesdb'
-                        result['score'] = calculate_tgdb_score(result, title)
-                    all_results.extend(tgdb_results)
-            except CircuitBreakerError:
-                logger.info("TheGamesDB circuit breaker open — skipping (recent failures)")
-            except Exception as e:
-                logger.error(f"TheGamesDB search failed: {e}")
+        def _src_tgdb():
+            results = []
+            if enabled.get('tgdb', True):
+                try:
+                    tgdb_results = _tgdb_breaker(search_tgdb)(title, system_name, limit)
+                    if tgdb_results:
+                        logger.info(f"TheGamesDB found {len(tgdb_results)} results")
+                        for result in tgdb_results:
+                            result['source'] = 'thegamesdb'
+                            result['scraper'] = 'thegamesdb'
+                            result['score'] = calculate_tgdb_score(result, title)
+                        results = tgdb_results
+                except CircuitBreakerError:
+                    logger.info("TheGamesDB circuit breaker open — skipping (recent failures)")
+                except Exception as e:
+                    logger.error(f"TheGamesDB search failed: {e}")
+            return results
 
-        # Search IGDB
-        if enabled.get('igdb', True):
-            try:
-                igdb_results = _igdb_breaker(search_igdb)(title, system_name, limit)
-                if igdb_results:
-                    logger.info(f"IGDB found {len(igdb_results)} results")
-                    for result in igdb_results:
-                        result['source'] = 'igdb'
-                        result['scraper'] = 'igdb'
-                        result['score'] = calculate_igdb_score(result, title)
-                    all_results.extend(igdb_results)
-            except CircuitBreakerError:
-                logger.info("IGDB circuit breaker open — skipping (recent failures)")
-            except Exception as e:
-                logger.error(f"IGDB search failed: {e}")
+        def _src_igdb():
+            results = []
+            if enabled.get('igdb', True):
+                try:
+                    igdb_results = _igdb_breaker(search_igdb)(title, system_name, limit)
+                    if igdb_results:
+                        logger.info(f"IGDB found {len(igdb_results)} results")
+                        for result in igdb_results:
+                            result['source'] = 'igdb'
+                            result['scraper'] = 'igdb'
+                            result['score'] = calculate_igdb_score(result, title)
+                        results = igdb_results
+                except CircuitBreakerError:
+                    logger.info("IGDB circuit breaker open — skipping (recent failures)")
+                except Exception as e:
+                    logger.error(f"IGDB search failed: {e}")
+            return results
 
-        # Search RAWG.io
-        if RAWG_AVAILABLE and enabled.get('rawg', True):
-            try:
-                rawg_results = _rawg_breaker(search_rawg)(title, system_folder, limit)
-                if rawg_results:
-                    logger.info(f"RAWG found {len(rawg_results)} results")
-                    for result in rawg_results:
-                        result['source'] = 'rawg'
-                        result['scraper'] = 'rawg'
-                        result['score'] = calculate_rawg_score(result, title)
-                    all_results.extend(rawg_results)
-            except CircuitBreakerError:
-                logger.info("RAWG circuit breaker open — skipping (recent failures)")
-            except Exception as e:
-                logger.error(f"RAWG search failed: {e}")
+        def _src_rawg():
+            results = []
+            if RAWG_AVAILABLE and enabled.get('rawg', True):
+                try:
+                    rawg_results = _rawg_breaker(search_rawg)(title, system_folder, limit)
+                    if rawg_results:
+                        logger.info(f"RAWG found {len(rawg_results)} results")
+                        for result in rawg_results:
+                            result['source'] = 'rawg'
+                            result['scraper'] = 'rawg'
+                            result['score'] = calculate_rawg_score(result, title)
+                        results = rawg_results
+                except CircuitBreakerError:
+                    logger.info("RAWG circuit breaker open — skipping (recent failures)")
+                except Exception as e:
+                    logger.error(f"RAWG search failed: {e}")
+            return results
 
-        # Search ScreenScraper
-        logger.info(f"ScreenScraper check: available={SCREENSCRAPER_AVAILABLE}, enabled={enabled.get('screenscraper', False)}, folder={system_folder}")
-        if SCREENSCRAPER_AVAILABLE and enabled.get('screenscraper', False) and system_folder:
-            try:
-                settings = load_scraper_settings()
-                api_keys = settings.get('api_keys', {})
-                ss_username = api_keys.get('screenscraper_username', '')
-                ss_password = api_keys.get('screenscraper_password', '')
-                ss_devid = api_keys.get('screenscraper_devid', '')
-                ss_devpassword = api_keys.get('screenscraper_devpassword', '')
+        def _src_screenscraper():
+            results = []
+            logger.info(f"ScreenScraper check: available={SCREENSCRAPER_AVAILABLE}, enabled={enabled.get('screenscraper', False)}, folder={system_folder}")
+            if SCREENSCRAPER_AVAILABLE and enabled.get('screenscraper', False) and system_folder:
+                try:
+                    settings = load_scraper_settings()
+                    api_keys = settings.get('api_keys', {})
+                    ss_username = api_keys.get('screenscraper_username', '')
+                    ss_password = api_keys.get('screenscraper_password', '')
+                    ss_devid = api_keys.get('screenscraper_devid', '')
+                    ss_devpassword = api_keys.get('screenscraper_devpassword', '')
 
-                # Pass 33.11: username and devid are credentials when paired
-                # with the password/devpassword, so don't write them at INFO.
-                # Downgrade to DEBUG for operator troubleshooting and report
-                # only boolean configuration state at INFO.
-                logger.debug(
-                    f"ScreenScraper credentials: username={ss_username}, "
-                    f"has_password={bool(ss_password)}, devid={ss_devid}"
-                )
-                logger.info(
-                    f"ScreenScraper configured: has_username={bool(ss_username)}, "
-                    f"has_password={bool(ss_password)}, has_devid={bool(ss_devid)}"
-                )
-
-                if ss_username and ss_password:
-                    logger.info(f"ScreenScraper searching for: '{title}' on system: {system_folder}")
-                    ss_results = _screenscraper_breaker(search_screenscraper)(
-                        title, system_folder,
-                        ss_username, ss_password,
-                        ss_devid, ss_devpassword
+                    # Pass 33.11: username and devid are credentials when paired
+                    # with the password/devpassword, so don't write them at INFO.
+                    logger.debug(
+                        f"ScreenScraper credentials: username={ss_username}, "
+                        f"has_password={bool(ss_password)}, devid={ss_devid}"
                     )
-                    if ss_results:
-                        logger.info(f"ScreenScraper found {len(ss_results)} results")
-                        for result in ss_results:
-                            parsed = self._parse_ss_result(result, system_folder)
-                            parsed['score'] = calculate_ss_score(parsed, title)
-                            all_results.append(parsed)
+                    logger.info(
+                        f"ScreenScraper configured: has_username={bool(ss_username)}, "
+                        f"has_password={bool(ss_password)}, has_devid={bool(ss_devid)}"
+                    )
+
+                    if ss_username and ss_password:
+                        logger.info(f"ScreenScraper searching for: '{title}' on system: {system_folder}")
+                        ss_results = _screenscraper_breaker(search_screenscraper)(
+                            title, system_folder,
+                            ss_username, ss_password,
+                            ss_devid, ss_devpassword
+                        )
+                        if ss_results:
+                            logger.info(f"ScreenScraper found {len(ss_results)} results")
+                            for result in ss_results:
+                                parsed = self._parse_ss_result(result, system_folder)
+                                parsed['score'] = calculate_ss_score(parsed, title)
+                                results.append(parsed)
+                        else:
+                            logger.info("ScreenScraper returned no results")
                     else:
-                        logger.info("ScreenScraper returned no results")
-                else:
-                    logger.warning("ScreenScraper: No credentials configured")
-            except CircuitBreakerError:
-                logger.info("ScreenScraper circuit breaker open — skipping (recent failures)")
-            except Exception as e:
-                logger.error(f"ScreenScraper search failed: {e}")
-                import traceback
-                logger.error(traceback.format_exc())
+                        logger.warning("ScreenScraper: No credentials configured")
+                except CircuitBreakerError:
+                    logger.info("ScreenScraper circuit breaker open — skipping (recent failures)")
+                except Exception as e:
+                    logger.error(f"ScreenScraper search failed: {e}")
+                    import traceback
+                    logger.error(traceback.format_exc())
+            return results
+
+        # Canonical order preserved on reassembly (ES-DE, TGDB, IGDB, RAWG, SS).
+        _source_workers = [
+            ('esde', _src_esde),
+            ('tgdb', _src_tgdb),
+            ('igdb', _src_igdb),
+            ('rawg', _src_rawg),
+            ('screenscraper', _src_screenscraper),
+        ]
+        _results_by_name = {}
+        with ThreadPoolExecutor(max_workers=len(_source_workers),
+                                thread_name_prefix='src-search') as _ex:
+            _future_to_name = {_ex.submit(fn): name for name, fn in _source_workers}
+            for _fut in as_completed(_future_to_name):
+                _name = _future_to_name[_fut]
+                try:
+                    _results_by_name[_name] = _fut.result()
+                except Exception as e:
+                    # Workers already swallow their own errors; this is a
+                    # belt-and-braces guard so one crashing source can't sink
+                    # the whole search.
+                    logger.error(f"{_name} search worker crashed: {e}")
+                    _results_by_name[_name] = []
+        for _name, _ in _source_workers:
+            all_results.extend(_results_by_name.get(_name, []))
 
         # Load priority settings and apply priority boost
         priority = load_scraper_priority()

@@ -78,6 +78,7 @@ def _download_and_finalize(url, local_path, image_type, *, timeout=15):
     """
     import tempfile
     from services.ssrf import validate_outbound_url, validate_and_pin_url, pin_host_ip
+    from scraper.base_scraper import _http_session
     from urllib.parse import urlparse as _urlparse
 
     if not url or not local_path:
@@ -89,7 +90,7 @@ def _download_and_finalize(url, local_path, image_type, *, timeout=15):
         return False
     # Pass 45.2: walk redirect chain + capture IP for DNS-rebinding pin.
     safe_url, pinned_ip, err = validate_and_pin_url(
-        requests, url, max_redirects=3, timeout=5,
+        _http_session, url, max_redirects=3, timeout=5,
     )
     if err:
         logger.warning(f"SSRF block: redirect chain rejected for {url} ({err})")
@@ -107,7 +108,12 @@ def _download_and_finalize(url, local_path, image_type, *, timeout=15):
     fd, tmp_path = tempfile.mkstemp(prefix='.dl_', dir=dirname)
     os.close(fd)
     try:
-        with pin_host_ip(pinned_host, pinned_ip), requests.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as r:
+        # Pass 51.3: reuse the pooled base_scraper session (mirrors
+        # base_scraper.download_image) so a game's images don't each pay a
+        # fresh TCP+TLS handshake. pin_host_ip still forces getaddrinfo for
+        # pinned_host to pinned_ip for the duration, so the DNS-rebinding
+        # guarantee is unchanged.
+        with pin_host_ip(pinned_host, pinned_ip), _http_session.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as r:
             if r.status_code != 200:
                 logger.warning(f"Download failed: HTTP {r.status_code} — {safe_url}")
                 return False
@@ -882,6 +888,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
 
         # Non-image media (manuals, videos) — still SSRF-validate and stream.
         from services.ssrf import validate_outbound_url, validate_and_pin_url, pin_host_ip
+        from scraper.base_scraper import _http_session
         from urllib.parse import urlparse as _urlparse
         ok, _, _ = validate_outbound_url(url)
         if not ok:
@@ -889,7 +896,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             return False
         # Pass 45.2: walk redirect chain + capture IP for DNS-rebinding pin.
         safe_url, pinned_ip, err = validate_and_pin_url(
-            requests, url, max_redirects=3, timeout=5,
+            _http_session, url, max_redirects=3, timeout=5,
         )
         if err:
             logger.warning(f"SSRF block: redirect chain rejected for {url} ({err})")
@@ -902,7 +909,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             max_bytes = 50 * 1024 * 1024
         try:
             os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-            with pin_host_ip(pinned_host, pinned_ip), requests.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as r:
+            with pin_host_ip(pinned_host, pinned_ip), _http_session.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as r:
                 if r.status_code != 200:
                     return False
                 declared = int(r.headers.get('Content-Length', 0) or 0)

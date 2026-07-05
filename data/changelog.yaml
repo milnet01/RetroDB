@@ -1,3 +1,25 @@
+- version: 3.19.0
+  date: 2026-07-05
+  tags:
+  - type: performance
+    label: Faster scraping — sources are now queried at the same time
+  body: |
+    <ul>
+      <li><strong>Scraping is quicker per game.</strong> When RetroDB looks a
+        game up, it checks several databases (ES-DE, TheGamesDB, IGDB, RAWG,
+        ScreenScraper). Previously it asked them <em>one at a time</em> and
+        waited for each to answer before asking the next &mdash; so the wait was
+        the sum of all of them. Now it asks them all <strong>at once</strong> and
+        waits only for the slowest, which is a noticeable speed-up on every game.
+        Results are still ordered and scored exactly as before.</li>
+      <li><strong>Fewer wasted handshakes when downloading art.</strong> Image
+        downloads now reuse an already-open connection instead of opening a fresh
+        one for every single picture, shaving time off games with lots of
+        screenshots.</li>
+      <li>These are under-the-hood speed improvements &mdash; nothing changes in
+        how you use RetroDB, and it doesn&rsquo;t hit the databases any harder
+        (same requests, just overlapped). Take effect after the next restart.</li>
+    </ul>
 - version: 3.18.0
   date: 2026-07-05
   tags:
