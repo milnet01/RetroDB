@@ -5,7 +5,6 @@ Copies the icon into ~/.local/share/icons and writes a .desktop file into
 ~/.local/share/applications with absolute Exec/Icon paths, then refreshes the
 desktop database. Run once: `python3 scripts/install_launcher.py`.
 """
-import os
 import shutil
 import subprocess
 import sys
@@ -35,7 +34,9 @@ def main() -> None:
     desktop = template.replace('__EXEC__', exec_line).replace('__ICON__', str(dst_icon))
     dst_desktop = apps / 'RetroDB.desktop'
     dst_desktop.write_text(desktop)
-    os.chmod(dst_desktop, 0o755)
+    # No exec bit needed: menu entries under ~/.local/share/applications/ are
+    # launched by the menu, not run as files (the +x requirement is only for
+    # file-manager / Desktop double-clicks).
 
     # Best-effort refresh so the entry appears without a re-login.
     if shutil.which('update-desktop-database'):
