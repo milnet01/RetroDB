@@ -342,18 +342,22 @@ are tracked here so the next pass picks them up:
   the GET so the Pass 45.2 DNS-rebinding guarantee is unchanged (security test
   updated to patch the session it now uses; all 6 pin tests green).
 
-#### Pass 55.3 Parallel per-game image downloads (PERF, M) — DEFERRED
-- **Status**: considered, deferred 2026-07-05. Downloading a game's
-  boxart/screenshots/fanart concurrently would help games with many screenshots,
-  BUT the screenshot loops in the four `metadata_merger.apply_*` paths run each
-  file through a sequential perceptual-hash dedup (`keep_screenshot_if_unique`
-  against a growing hash set) — naive parallelism races that set and makes
-  which-duplicate-survives non-deterministic. A correct version needs a two-phase
-  split (download-all-in-parallel → dedup-sequentially-in-order) across all four
-  security-sensitive download paths that write the live media library. Marginal
-  win dropped sharply once 55.2 removed the per-image handshake, so the
-  effort/risk no longer justifies it. Revisit only if profiling shows screenshot
-  transfer time is a real bottleneck.
+#### Pass 55.3 Parallel per-game screenshot downloads (PERF, M)
+- **Status**: done (v3.19.1, 2026-07-05). Implemented after reviewing ES-DE's
+  scraper (`es-app/src/scrapers/Scraper.cpp` — `MDResolveHandle` fires one
+  `MediaDownloadHandle` per media file, all concurrent): ES-DE's speed comes from
+  overlapping *downloads*, not parallelising games (it queries one source at a
+  time). Added `_download_screenshots_parallel(jobs, existing_hashes, label)` in
+  `scraper/metadata_merger.py` — a two-phase helper: phase 1 downloads every
+  candidate screenshot concurrently on a bounded pool (`_MEDIA_DOWNLOAD_WORKERS`
+  = 4, over the shared session), phase 2 runs `keep_screenshot_if_unique`
+  SEQUENTIALLY in the original order so the perceptual-hash dedup set is never
+  raced and which-duplicate-survives stays deterministic. Wired into all four
+  screenshot loops (TGDB / IGDB / RAWG / ScreenScraper). Verified: 4× wall-clock
+  drop on a mocked 4-download batch, failed downloads dropped, kept order +
+  dedup-call order preserved. pin_host_ip is thread-local (`services/ssrf.py`
+  `threading.local`) so concurrent downloads pin safely. Boxart/fanart (one file
+  each) left sequential — the multi-file batch is where the serial cost was.
 
 #### Pass 55.4 Overlap whole games in the bulk scrape (PERF, L) — NOT STARTED
 - **Status**: considered, not started 2026-07-05. `BulkScrapeManager._run_scrape`

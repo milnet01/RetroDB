@@ -22,6 +22,7 @@ import os
 import re
 import logging
 import requests
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from config import IMAGE_PATH, STATIC_PATH
 from services.image_utils import (
@@ -161,6 +162,67 @@ def _download_and_finalize(url, local_path, image_type, *, timeout=15):
     return True
 
 
+# Bounded concurrency for a game's screenshot downloads. ES-DE fetches a game's
+# media files all at once (Scraper.cpp / MediaDownloadHandle) rather than
+# one-by-one; this is the Python analogue. Capped so a burst never floods a
+# single host or trips a per-account quota (e.g. ScreenScraper's daily limit).
+_MEDIA_DOWNLOAD_WORKERS = 4
+
+
+def _download_screenshots_parallel(download_jobs, existing_hashes, source_label):
+    """Two-phase screenshot fetch: download every candidate concurrently, then
+    run the perceptual-hash dedup SEQUENTIALLY in the original order.
+
+    Only the network fetch is parallelised. The dedup decision
+    (`keep_screenshot_if_unique`, which mutates the shared `existing_hashes` set
+    and deletes duplicate files) stays single-threaded and in order, so *which*
+    duplicate survives is deterministic and the hash set is never raced — the
+    exact concern that made a naive parallel screenshot loop unsafe.
+
+    Args:
+        download_jobs: list of zero-arg callables, in the caller's preference
+            order. Each performs one screenshot download to a distinct filename
+            and returns that filename (str) on success, or a falsy value on
+            failure. Distinct filenames mean the concurrent downloads never
+            collide (each `_download_and_finalize` writes its own tempfile then
+            os.replace()s into its own path).
+        existing_hashes: mutable set of dHashes already on the game; grown in
+            place as unique new screenshots are kept.
+        source_label: e.g. 'IGDB' — forwarded to keep_screenshot_if_unique.
+
+    Returns:
+        list[str]: kept screenshot filenames, in the original job order.
+    """
+    if not download_jobs:
+        return []
+
+    # Phase 1 — download all candidates at once (bounded pool over the shared
+    # base_scraper session). results[i] is the filename jobs[i] produced, or None.
+    results = [None] * len(download_jobs)
+
+    def _run(idx):
+        return idx, download_jobs[idx]()
+
+    workers = min(_MEDIA_DOWNLOAD_WORKERS, len(download_jobs))
+    with ThreadPoolExecutor(max_workers=workers, thread_name_prefix='ss-dl') as ex:
+        for fut in as_completed([ex.submit(_run, i) for i in range(len(download_jobs))]):
+            try:
+                idx, filename = fut.result()
+                results[idx] = filename or None
+            except Exception as e:
+                logger.warning(f"{source_label} screenshot download worker crashed: {e}")
+
+    # Phase 2 — dedup in the original order (single-threaded; grows existing_hashes).
+    kept = []
+    for filename in results:
+        if not filename:
+            continue
+        local_path = os.path.join(IMAGE_PATH, 'screenshots', filename)
+        if keep_screenshot_if_unique(local_path, filename, existing_hashes, source_label):
+            kept.append(filename)
+    return kept
+
+
 # Re-export helpers through this module for backward compatibility with
 # existing callers (notably `scraper.hybrid_scraper`). New code should import
 # from `scraper.image_dedup` / `scraper.metadata_normalizer` directly.
@@ -283,16 +345,22 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
         existing_hashes = get_existing_screenshot_hashes(existing_screenshots)
 
         start_num = len(existing_screenshots) + 1
-        new_screenshots = []
 
-        for i, url in enumerate(ss_urls[:5]):
-            filename = download_tgdb_image(db_game_id, url, 'screenshots', suffix=f'_ss{start_num + i}')
-            if filename:
-                local_path = os.path.join(IMAGE_PATH, 'screenshots', filename)
-                if filename in existing_screenshots:
-                    continue
-                if keep_screenshot_if_unique(local_path, filename, existing_hashes, 'TGDB'):
-                    new_screenshots.append(filename)
+        def _tgdb_ss_job(url, suffix):
+            # download_tgdb_image both downloads and returns the filename. Skip
+            # the dedup (return None) when the name collides with an existing
+            # shot, so a same-name re-download is never treated as a duplicate
+            # and deleted — preserving the old `if filename in existing: continue`.
+            fn = download_tgdb_image(db_game_id, url, 'screenshots', suffix=suffix)
+            return fn if (fn and fn not in existing_screenshots) else None
+
+        _jobs = [
+            (lambda u=url, s=f'_ss{start_num + i}': _tgdb_ss_job(u, s))
+            for i, url in enumerate(ss_urls[:5])
+        ]
+
+        # Fetch all screenshots concurrently, then dedup in order.
+        new_screenshots = _download_screenshots_parallel(_jobs, existing_hashes, 'TGDB')
 
         if new_screenshots:
             all_screenshots = existing_screenshots + new_screenshots
@@ -453,7 +521,7 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
         existing_hashes = get_existing_screenshot_hashes(existing_screenshots)
 
         start_num = len(existing_screenshots) + 1
-        new_ss_files = []
+        _jobs = []
 
         for i, ss in enumerate(screenshots[:5]):
             if ss.get('url'):
@@ -467,9 +535,13 @@ def apply_igdb_to_metadata(metadata, igdb_data, db_game_id, result, fill_only=Fa
                 if filename in existing_screenshots or os.path.exists(local_path):
                     continue
 
-                if _download_and_finalize(url, local_path, 'screenshots', timeout=10):
-                    if keep_screenshot_if_unique(local_path, filename, existing_hashes, 'IGDB'):
-                        new_ss_files.append(filename)
+                _jobs.append(
+                    lambda u=url, p=local_path, f=filename:
+                        f if _download_and_finalize(u, p, 'screenshots', timeout=10) else None
+                )
+
+        # Fetch all screenshots concurrently, then dedup in order.
+        new_ss_files = _download_screenshots_parallel(_jobs, existing_hashes, 'IGDB')
 
         if new_ss_files:
             all_screenshots = existing_screenshots + new_ss_files
@@ -638,14 +710,18 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
         existing_ss = [s.strip() for s in metadata['screenshots'].split(',') if s.strip()] if metadata['screenshots'] else []
         existing_hashes = get_existing_screenshot_hashes(existing_ss)
 
-        downloaded = []
+        _jobs = []
         for i, url in enumerate(rawg_data['screenshot_urls'][:3]):
             if url:
                 filename = f"{db_game_id}_rawg_ss{i+1}{preferred_image_extension('screenshots', '.jpg')}"
                 local_path = os.path.join(screenshot_dir, filename)
-                if _download_and_finalize(url, local_path, 'screenshots', timeout=15):
-                    if keep_screenshot_if_unique(local_path, filename, existing_hashes, 'RAWG'):
-                        downloaded.append(filename)
+                _jobs.append(
+                    lambda u=url, p=local_path, f=filename:
+                        f if _download_and_finalize(u, p, 'screenshots', timeout=15) else None
+                )
+
+        # Fetch all screenshots concurrently, then dedup in order.
+        downloaded = _download_screenshots_parallel(_jobs, existing_hashes, 'RAWG')
 
         if downloaded:
             if metadata['screenshots']:
@@ -986,39 +1062,33 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
     existing_screenshots = [s.strip() for s in existing_screenshots if s.strip()]
     existing_hashes = get_existing_screenshot_hashes(existing_screenshots)
 
-    ss_files = []
-    ss_count = 0
     start_num = len(existing_screenshots)
 
-    # Try parsed media first (screenshot URL)
-    if parsed_media.get('screenshot') and ss_count < 5:
-        url = parsed_media['screenshot']
-        ext = url.rsplit('.', 1)[-1] if '.' in url else 'png'
-        filename = f"{db_game_id}_ss_screenshot_{start_num + ss_count}{preferred_image_extension('screenshots', '.' + ext)}"
-        local_path = os.path.join(IMAGE_PATH, 'screenshots', filename)
-        if filename not in existing_screenshots and not os.path.exists(local_path):
-            if _download_ss_media(url, local_path, timeout=10, image_type='screenshots'):
-                if keep_screenshot_if_unique(local_path, filename, existing_hashes, 'ScreenScraper'):
-                    ss_files.append(filename)
-                    ss_count += 1
-
-    # Also try raw medias list for additional screenshots
+    # Collect up to 5 candidate screenshot URLs — the parsed screenshot first,
+    # then the raw medias list — assigning a distinct indexed filename to each,
+    # skipping any already present. They then download concurrently.
+    _ss_candidates = []
+    if parsed_media.get('screenshot'):
+        _u = parsed_media['screenshot']
+        _ss_candidates.append((_u, _u.rsplit('.', 1)[-1] if '.' in _u else 'png'))
     for m in medias:
-        if m.get('type') == 'ss' and ss_count < 5:
-            url = m.get('url')
-            if url:
-                ext = m.get('format', 'png')
-                filename = f"{db_game_id}_ss_screenshot_{start_num + ss_count}{preferred_image_extension('screenshots', '.' + ext)}"
-                local_path = os.path.join(IMAGE_PATH, 'screenshots', filename)
+        if m.get('type') == 'ss' and m.get('url'):
+            _ss_candidates.append((m['url'], m.get('format', 'png')))
+    _ss_candidates = _ss_candidates[:5]
 
-                if filename in existing_screenshots or os.path.exists(local_path):
-                    ss_count += 1
-                    continue
+    _jobs = []
+    for idx, (url, ext) in enumerate(_ss_candidates):
+        filename = f"{db_game_id}_ss_screenshot_{start_num + idx}{preferred_image_extension('screenshots', '.' + ext)}"
+        local_path = os.path.join(IMAGE_PATH, 'screenshots', filename)
+        if filename in existing_screenshots or os.path.exists(local_path):
+            continue
+        _jobs.append(
+            lambda u=url, p=local_path, f=filename:
+                f if _download_ss_media(u, p, timeout=10, image_type='screenshots') else None
+        )
 
-                if _download_ss_media(url, local_path, timeout=10, image_type='screenshots'):
-                    if keep_screenshot_if_unique(local_path, filename, existing_hashes, 'ScreenScraper'):
-                        ss_files.append(filename)
-                        ss_count += 1
+    # Fetch all screenshots concurrently, then dedup in order.
+    ss_files = _download_screenshots_parallel(_jobs, existing_hashes, 'ScreenScraper')
 
     if ss_files:
         all_screenshots = existing_screenshots + ss_files

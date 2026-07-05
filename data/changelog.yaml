@@ -1,3 +1,22 @@
+- version: 3.19.1
+  date: 2026-07-05
+  tags:
+  - type: performance
+    label: Faster scraping — a game's screenshots now download at the same time
+  body: |
+    <ul>
+      <li><strong>Screenshots download in parallel.</strong> Following the same
+        approach as the popular ES-DE frontend (which fetches all of a
+        game&rsquo;s media at once), RetroDB now downloads a game&rsquo;s
+        screenshots <strong>concurrently</strong> instead of one after another,
+        for every source (TheGamesDB, IGDB, RAWG, ScreenScraper). Games with
+        several screenshots finish noticeably quicker.</li>
+      <li>The duplicate-screenshot check still runs afterwards in order, so
+        picture de-duplication stays exactly as accurate as before &mdash; only
+        the downloading was sped up. Downloads are capped at four at a time so a
+        single source is never overloaded.</li>
+      <li>Under-the-hood speed improvement; takes effect after the next restart.</li>
+    </ul>
 - version: 3.19.0
   date: 2026-07-05
   tags:
