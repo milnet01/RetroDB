@@ -645,7 +645,15 @@ Progress (2026-07-04, v3.16.0): shipped a lean "Quick Fixes" dashboard card — 
   help manual + changelog recent-entry translation per i18n §9.
 
 #### Pass 51.2 China game-rating system (9th rating board) (FEATURE, M)
-- **Status**: research + planned.
+- **Status**: done (v3.18.0, 2026-07-05). Added `china_rating` (CADPA 8+/12+/16+)
+  as the 9th board: migration 014, extended the `game_utils.py` rating tables +
+  cross-map (China appended last so Western boards win as the cross-map source),
+  both edit modals + settings preference dropdown + compare table, scraper /
+  AI-fill / manual-edit save paths, analytics buckets, and JS rating maps.
+  Badge art is RetroDB's own simple green SVGs under
+  `static/images/ratings/CHINA/` (not CADPA's logo — sidesteps the licensing
+  open question below). No Western scraper supplies a China rating, so it is
+  content-inference / AI-fill / manual only.
 - **Background (verify before building)**: China has no ESRB/PEGI-style statutory
   board, but since 2021 the **China Game Rating system** — the "网络游戏适龄提示"
   (Online Game Age-Appropriateness Reminder) issued by the Game Publishing

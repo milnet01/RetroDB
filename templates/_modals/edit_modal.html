@@ -321,6 +321,15 @@
                                 <option value="18" {% if game.classind_rating == '18' %}selected{% endif %}>18</option>
                             </select>
                         </div>
+                        <div class="edit-field">
+                            <label for="edit_china_rating">{{ _('CADPA (China)') }}</label>
+                            <select name="edit_china_rating" id="edit_china_rating">
+                                <option value="">{{ _('-- None --') }}</option>
+                                <option value="8+" {% if game.china_rating == '8+' %}selected{% endif %}>{{ _('8+ - Ages 8 and up') }}</option>
+                                <option value="12+" {% if game.china_rating == '12+' %}selected{% endif %}>{{ _('12+ - Ages 12 and up') }}</option>
+                                <option value="16+" {% if game.china_rating == '16+' %}selected{% endif %}>{{ _('16+ - Ages 16 and up') }}</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 

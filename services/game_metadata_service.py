@@ -33,6 +33,7 @@ _RP_VALUES = frozenset({'RP', 'rp'})
 _GAME_EDIT_RATING_KEYS = (
     'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating',
     'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating',
+    'china_rating',
 )
 
 
@@ -172,7 +173,7 @@ _CARD_COLUMNS = (
     'id', 'title', 'sort_title', 'system_id', 'boxart', 'boxart_3d', 'fanart',
     'genre', 'franchise', 'developer', 'publisher', 'release_date', 'modes',
     'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating', 'acb_rating',
-    'fpb_rating', 'grac_rating', 'classind_rating',
+    'fpb_rating', 'grac_rating', 'classind_rating', 'china_rating',
     'critic_score', 'critic_score_count', 'user_score', 'user_score_count',
     'completion_status', 'scraped', 'has_retroachievements', 'is_bonus_disc',
 )

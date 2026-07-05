@@ -1048,7 +1048,7 @@ window.RetroDB = window.RetroDB || {};
 const _MODAL_RATING_COLS = {
     esrb: 'esrb_rating', pegi: 'pegi_rating', cero: 'cero_rating',
     usk: 'usk_rating', acb: 'acb_rating', fpb: 'fpb_rating',
-    grac: 'grac_rating', classind: 'classind_rating'
+    grac: 'grac_rating', classind: 'classind_rating', china: 'china_rating'
 };
 
 /**
@@ -1844,6 +1844,7 @@ const GameEditModal = {
         document.getElementById('gemFpbRating').value = game.fpb_rating || '';
         document.getElementById('gemGracRating').value = game.grac_rating || '';
         document.getElementById('gemClassindRating').value = game.classind_rating || '';
+        document.getElementById('gemChinaRating').value = game.china_rating || '';
 
         document.getElementById('gemDescription').value = game.description || '';
 
@@ -1956,6 +1957,7 @@ const GameEditModal = {
             fpb_rating: document.getElementById('gemFpbRating').value,
             grac_rating: document.getElementById('gemGracRating').value,
             classind_rating: document.getElementById('gemClassindRating').value,
+            china_rating: document.getElementById('gemChinaRating').value,
             description: document.getElementById('gemDescription').value.trim()
         };
 

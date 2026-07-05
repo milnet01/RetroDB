@@ -254,6 +254,7 @@ FIELD_SOURCES = {
     'fpb_rating': ['screenscraper'],
     'grac_rating': ['igdb'],
     'classind_rating': ['igdb'],
+    'china_rating': [],  # No Western scraper supplies a CADPA rating — inference / manual / AI-fill only.
     'boxart': ['esde', 'screenscraper', 'rawg', 'tgdb', 'igdb'],  # SS and RAWG have system-specific covers; IGDB generic
     'boxart_3d': ['esde', 'screenscraper'],  # 3D boxart from ES-DE or ScreenScraper
     'screenshots': ['esde', 'screenscraper', 'tgdb', 'igdb'],
@@ -730,6 +731,7 @@ def _save_game_row(c, metadata, scrape_history_json, db_game_id):
             fpb_rating = COALESCE(?, fpb_rating),
             grac_rating = COALESCE(?, grac_rating),
             classind_rating = COALESCE(?, classind_rating),
+            china_rating = COALESCE(?, china_rating),
             boxart = COALESCE(?, boxart),
             boxart_3d = COALESCE(?, boxart_3d),
             screenshots = COALESCE(?, screenshots),
@@ -774,6 +776,7 @@ def _save_game_row(c, metadata, scrape_history_json, db_game_id):
         metadata.get('fpb_rating'),
         metadata.get('grac_rating'),
         metadata.get('classind_rating'),
+        metadata.get('china_rating'),
         metadata['boxart'],
         metadata['boxart_3d'],
         metadata['screenshots'],
@@ -1185,6 +1188,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             'fpb_rating': None,
             'grac_rating': None,
             'classind_rating': None,
+            'china_rating': None,
             'boxart': None,
             'boxart_3d': None,
             'screenshots': None,

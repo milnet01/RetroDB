@@ -258,7 +258,7 @@ def api_games_card_data():
                g.fanart, g.genre, g.franchise, g.developer, g.publisher,
                g.release_date, g.modes, g.esrb_rating, g.pegi_rating,
                g.cero_rating, g.usk_rating, g.acb_rating, g.fpb_rating,
-               g.grac_rating, g.classind_rating,
+               g.grac_rating, g.classind_rating, g.china_rating,
                g.critic_score, g.critic_score_count, g.user_score, g.user_score_count,
                g.completion_status, g.scraped, g.has_retroachievements,
                g.is_bonus_disc, g.rom_path, g.ra_achievement_count,
@@ -459,6 +459,7 @@ def game_detail(game_id):
                         'perspective', 'dimension', 'players',
                         'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating',
                         'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating',
+                        'china_rating',
                         'save_type', 'similar_games', 'edition', 'description',
                         'launch_args_override',
                     )
@@ -492,6 +493,7 @@ def game_detail(game_id):
                     fpb_rating = _normalized.get('fpb_rating') or ''
                     grac_rating = _normalized.get('grac_rating') or ''
                     classind_rating = _normalized.get('classind_rating') or ''
+                    china_rating = _normalized.get('china_rating') or ''
                     save_type = _normalized.get('save_type') or ''
                     similar_games = _normalized.get('similar_games') or ''
                     edition = _normalized.get('edition') or ''
@@ -577,6 +579,7 @@ def game_detail(game_id):
                             fpb_rating = NULLIF(?, ''),
                             grac_rating = NULLIF(?, ''),
                             classind_rating = NULLIF(?, ''),
+                            china_rating = NULLIF(?, ''),
                             save_type = NULLIF(?, ''),
                             similar_games = NULLIF(?, ''),
                             edition = NULLIF(?, ''),
@@ -595,6 +598,7 @@ def game_detail(game_id):
                         publisher, developer, genre, release_date,
                         region, franchise, other_platforms, modes, campaign, game_structure, perspective, dimension, controller_support, players,
                         esrb_rating, pegi_rating, cero_rating, usk_rating, acb_rating, fpb_rating, grac_rating, classind_rating,
+                        china_rating,
                         save_type, similar_games, edition, description,
                         boxart_filename, boxart_3d_filename, fanart_filename, screenshots, video_filename,
                         emulator_override_id, launch_args_override,
@@ -629,6 +633,7 @@ def game_detail(game_id):
                             genre = NULL, rating = NULL, esrb_rating = NULL, pegi_rating = NULL,
                             cero_rating = NULL, usk_rating = NULL, acb_rating = NULL,
                             fpb_rating = NULL, grac_rating = NULL, classind_rating = NULL,
+                            china_rating = NULL,
                             players = NULL, modes = NULL, description = NULL,
                             boxart = NULL, boxart_3d = NULL, screenshots = NULL,
                             fanart = NULL, video = NULL, manual = NULL,
@@ -895,6 +900,7 @@ def api_game_detail(game_id):
             'fpb_rating': game.get('fpb_rating'),
             'grac_rating': game.get('grac_rating'),
             'classind_rating': game.get('classind_rating'),
+            'china_rating': game.get('china_rating'),
             'critic_score': game['critic_score'],
             'user_score': game['user_score'],
             'players': game['players'],
@@ -936,7 +942,7 @@ def api_game_edit(game_id):
         'genre', 'modes', 'players', 'campaign', 'game_structure', 'perspective', 'dimension',
         'controller_support', 'save_type', 'other_platforms',
         'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating',
-        'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating',
+        'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating', 'china_rating',
         'description'
     ]
 
@@ -1013,7 +1019,7 @@ def api_games_bulk_edit():
     bulk_allowed_fields = frozenset({
         'completion_status', 'genre', 'publisher', 'developer',
         'esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating',
-        'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating',
+        'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating', 'china_rating',
         'region', 'players',
         'game_structure', 'perspective', 'dimension', 'campaign', 'franchise', 'modes',
     })

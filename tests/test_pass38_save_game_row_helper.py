@@ -26,7 +26,7 @@ _COLUMNS = [
     'title', 'sort_title', 'publisher', 'developer', 'release_date', 'genre',
     'description', 'players', 'modes', 'esrb_rating', 'pegi_rating',
     'cero_rating', 'usk_rating', 'acb_rating', 'fpb_rating', 'grac_rating',
-    'classind_rating', 'boxart', 'boxart_3d', 'screenshots', 'fanart',
+    'classind_rating', 'china_rating', 'boxart', 'boxart_3d', 'screenshots', 'fanart',
     'video', 'manual', 'region', 'franchise', 'similar_games',
     'playtime_estimate', 'controller_support', 'save_type', 'game_structure',
     'perspective', 'dimension', 'edition', 'campaign', 'other_platforms',

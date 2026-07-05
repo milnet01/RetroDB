@@ -38,6 +38,7 @@ MIGRATIONS = [
     '011_user_game_views_cascade_fk',
     '012_emulators',
     '013_fresh_install_schema_backfill',
+    '014_games_china_rating',
 ]
 
 

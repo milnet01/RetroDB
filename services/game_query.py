@@ -279,7 +279,7 @@ def _build_games_query(params, count_only=False, ids_only=False, user_id=None):
                    g.fanart, g.genre, g.franchise, g.developer, g.publisher,
                    g.release_date, g.modes, g.esrb_rating, g.pegi_rating,
                    g.cero_rating, g.usk_rating, g.acb_rating, g.fpb_rating,
-                   g.grac_rating, g.classind_rating,
+                   g.grac_rating, g.classind_rating, g.china_rating,
                    g.critic_score, g.critic_score_count, g.user_score, g.user_score_count,
                    g.completion_status, g.scraped, g.has_retroachievements,
                    g.is_bonus_disc, g.rom_path, g.ra_achievement_count,

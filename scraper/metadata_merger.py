@@ -1150,7 +1150,7 @@ def apply_ai_to_metadata(metadata, ai_data, db_game_id, result, fill_only=True):
 
     # Additional age rating fields
     rating_fields = ['cero_rating', 'usk_rating', 'acb_rating', 'fpb_rating',
-                     'grac_rating', 'classind_rating']
+                     'grac_rating', 'classind_rating', 'china_rating']
     for field in rating_fields:
         if ai_data.get(field) and _should_apply(field):
             metadata[field] = ai_data[field]

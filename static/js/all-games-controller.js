@@ -62,7 +62,7 @@ const AllGamesController = (function() {
     const _RATING_COLUMNS = {
         esrb: 'esrb_rating', pegi: 'pegi_rating', cero: 'cero_rating',
         usk: 'usk_rating', acb: 'acb_rating', fpb: 'fpb_rating',
-        grac: 'grac_rating', classind: 'classind_rating'
+        grac: 'grac_rating', classind: 'classind_rating', china: 'china_rating'
     };
 
     /**

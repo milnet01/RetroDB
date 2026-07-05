@@ -32,6 +32,7 @@ AI_FILLABLE_FIELDS = [
     'genre', 'description', 'developer', 'publisher', 'release_date',
     'players', 'modes', 'esrb_rating', 'pegi_rating', 'cero_rating',
     'usk_rating', 'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating',
+    'china_rating',
     'region', 'franchise', 'similar_games', 'controller_support', 'save_type',
     'game_structure', 'perspective', 'dimension', 'campaign',
     'other_platforms', 'edition',
@@ -139,6 +140,7 @@ FIELD_SCHEMAS = {
     'fpb_rating': ['A', 'PG', '7-9 PG', '10', '10-12 PG', '13', '16', '18'],
     'grac_rating': ['ALL', '12', '15', '18'],
     'classind_rating': ['L', '10', '12', '14', '16', '18'],
+    'china_rating': ['8+', '12+', '16+'],
 }
 
 # Aliases for platform names AI may return in non-canonical form
@@ -291,6 +293,11 @@ RATING_ALIASES = {
         'classind 16': '16',
         'classind 18': '18',
     },
+    'china_rating': {
+        '8+': '8+', '8': '8+', 'china 8+': '8+', 'cadpa 8+': '8+',
+        '12+': '12+', '12': '12+', 'china 12+': '12+', 'cadpa 12+': '12+',
+        '16+': '16+', '16': '16+', 'china 16+': '16+', 'cadpa 16+': '16+',
+    },
 }
 
 # Fields that AI Fill should validate even when already populated.
@@ -301,7 +308,7 @@ VALIDATE_FIELDS = {
     'save_type', 'campaign', 'players', 'edition', 'other_platforms',
     'publisher', 'developer', 'esrb_rating', 'pegi_rating',
     'cero_rating', 'usk_rating', 'acb_rating', 'fpb_rating',
-    'grac_rating', 'classind_rating',
+    'grac_rating', 'classind_rating', 'china_rating',
 }
 
 # Provider configurations
@@ -521,6 +528,11 @@ def _build_prompt(title, system_name, missing_fields, existing_values=None):
         elif field == 'classind_rating':
             field_instructions.append(
                 '"classind_rating": Brazilian ClassInd rating, one of: ' + ', '.join(FIELD_SCHEMAS['classind_rating'])
+                + '. Rate based on game content if no official rating exists.'
+            )
+        elif field == 'china_rating':
+            field_instructions.append(
+                '"china_rating": China CADPA age reminder (网络游戏适龄提示), one of: ' + ', '.join(FIELD_SCHEMAS['china_rating'])
                 + '. Rate based on game content if no official rating exists.'
             )
         elif field == 'region':

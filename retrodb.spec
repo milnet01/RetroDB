@@ -44,6 +44,7 @@ _MIGRATION_SCRIPTS = [
     'services.migrations.scripts.011_user_game_views_cascade_fk',
     'services.migrations.scripts.012_emulators',
     'services.migrations.scripts.013_fresh_install_schema_backfill',
+    'services.migrations.scripts.014_games_china_rating',
 ]
 
 # Some pip packages have their own runtime imports that PyInstaller's

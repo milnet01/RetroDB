@@ -23,7 +23,7 @@ _ALLOWED_THEMES = {
     'cyberpunk', 'matrix', 'amber', 'ocean', 'christian', 'bladerunner', 'elite',
 }
 _ALLOWED_RATING_SYSTEMS = {
-    'esrb', 'pegi', 'cero', 'usk', 'acb', 'fpb', 'grac', 'classind',
+    'esrb', 'pegi', 'cero', 'usk', 'acb', 'fpb', 'grac', 'classind', 'china',
 }
 _ALLOWED_BOXART_MODES = {'2d', '3d'}
 _ALLOWED_ARTICLE_PLACEMENTS = {'beginning', 'end'}

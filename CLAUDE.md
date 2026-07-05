@@ -102,11 +102,18 @@ has seen the raw output. Triage into new roadmap passes after.
 - Every `apply_*_to_game()` UPDATE in `scraper/scrape_*.py` MUST wrap every `?` in `COALESCE(?, column_name)` so an empty response from IGDB/TGDB/RAWG/etc. preserves the existing scraped or curated value. Bare `publisher = ?, developer = ?` is a bug (Pass 30.4 fix). `scrape_esde.apply_esde_metadata` is the canonical pattern. `tests/test_scrape_fill_only.py` pins the contract for IGDB + TGDB.
 - The only exception is Full Re-scrape mode in `hybrid_scraper` (user-requested overwrite of any field a source provides; fields no source fills are preserved, not blanked).
 
-### Multi-rating system (8 systems)
-ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd — DB columns `{system}_rating`.
+### Multi-rating system (9 systems)
+ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd, CADPA/China — DB columns
+`{system}_rating` (China's is `china_rating`; key `china`, values `8+/12+/16+`).
 Cross-mapping via maturity tiers in `services/game_utils.py` (`map_rating()`,
 `get_preferred_rating()`). Empty ratings auto-fill from any available rating
 during scrape / AI Fill / manual edit. User preference: `preferred_rating_system`.
+`RATING_SYSTEM_KEYS` order is cross-map source priority — China is appended last
+so Western boards win as the source. No Western scraper supplies a China rating
+(inference / AI-fill / manual only). Adding a board = extend the tables in
+`game_utils.py` + a migration + both edit modals (`_modals/edit_modal.html`
+`edit_*`, `base.html` `gem*`) + settings dropdown + compare table + the scraper /
+AI-fill / save paths + JS rating maps + `settings_validators._ALLOWED_RATING_SYSTEMS`.
 
 Rating images live in `static/images/ratings/{SYSTEM}/`. `RATING_IMAGE_MAP` in
 `game_utils.py` maps `(system, value)` → path. JS helpers expose

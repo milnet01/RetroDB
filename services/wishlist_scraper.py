@@ -80,6 +80,7 @@ def _empty_metadata():
         'fpb_rating': None,
         'grac_rating': None,
         'classind_rating': None,
+        'china_rating': None,
         'boxart': None,
         'boxart_3d': None,
         'screenshots': None,

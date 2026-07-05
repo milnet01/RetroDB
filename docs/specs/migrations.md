@@ -528,6 +528,8 @@ your migration — not in the runner.
 | 010 | `010_user_game_views.py` | Create `user_game_views` (per-user recently-viewed timestamps). | Pass 41.9. `games.last_viewed` becomes vestigial — kept, no longer written. |
 | 011 | `011_user_game_views_cascade_fk.py` | Rebuild `user_game_views` with `ON DELETE CASCADE` FKs. | Pass 45.15. Canonical CASCADE-FK rebuild example (§9). |
 | 012 | `012_emulators.py` | Create `emulators` + `system_emulators`; add `emulator_override_id` / `launch_args_override` to `games`. | Pass 44. Reference for the "new tables + additive columns" shape (§10), with two pre-Pass-42.2 caveats: it carries an inline `_add_column_if_missing` instead of importing the strict helper, and it calls `conn.commit()` mid-`apply()`. Don't copy either pattern into new migrations. Seed data loads separately from `data/emulator_seeds.json`. |
+| 013 | `013_fresh_install_schema_backfill.py` | Backfill additive columns a fresh install's baseline `CREATE TABLE` may lag behind. | Pass 45.x. Idempotent `PRAGMA table_info` guard per column. |
+| 014 | `014_games_china_rating.py` | Add `games.china_rating` (9th rating board — China CADPA age reminder). | Pass 51.2. Plain additive ALTER; population via the normal cross-map / AI-fill path (§10). |
 
 ---
 

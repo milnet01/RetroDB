@@ -57,7 +57,7 @@ class TestNormalizeRatings:
         metadata = {
             'esrb_rating': 'E', 'pegi_rating': 'PEGI 3', 'cero_rating': 'A',
             'usk_rating': '0', 'acb_rating': 'G', 'fpb_rating': 'A',
-            'grac_rating': 'ALL', 'classind_rating': 'L',
+            'grac_rating': 'ALL', 'classind_rating': 'L', 'china_rating': '8+',
         }
         result = {'filled_fields': []}
         hybrid_scraper._normalize_ratings(metadata, result)

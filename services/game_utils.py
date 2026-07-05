@@ -310,6 +310,7 @@ RATING_SYSTEMS = {
     'fpb':      {'name': 'FPB',       'full_name': 'Film and Publication Board',             'region': 'South Africa',  'db_column': 'fpb_rating'},
     'grac':     {'name': 'GRAC',      'full_name': 'Game Rating and Administration Comm.',   'region': 'South Korea',   'db_column': 'grac_rating'},
     'classind': {'name': 'CLASS_IND', 'full_name': 'Classificação Indicativa',               'region': 'Brazil',        'db_column': 'classind_rating'},
+    'china':    {'name': 'CADPA',     'full_name': 'China Game Rating (CADPA age reminder)',  'region': 'China',         'db_column': 'china_rating'},
 }
 
 # Valid values per rating system (order = least to most restrictive)
@@ -322,6 +323,9 @@ RATING_VALUES = {
     'fpb':      ['A', 'PG', '7-9 PG', '10', '10-12 PG', '13', '16', '18'],
     'grac':     ['ALL', '12', '15', '18'],
     'classind': ['L', '10', '12', '14', '16', '18'],
+    # China's CADPA scheme has no "all ages" or "adults only" badge — the
+    # floor is 8+ and the ceiling is 16+ (three tiers only).
+    'china':    ['8+', '12+', '16+'],
 }
 
 # Maturity tier mapping: (system, value) -> tier (0-6)
@@ -347,6 +351,8 @@ _RATING_TO_TIER = {
     # CLASS_IND
     ('classind', 'L'): 1, ('classind', '10'): 2, ('classind', '12'): 3,
     ('classind', '14'): 4, ('classind', '16'): 5, ('classind', '18'): 6,
+    # China (CADPA): 8+ ~ E10+/USK-6 (tier 2), 12+ ~ Teen (tier 3), 16+ ~ Mature (tier 4).
+    ('china', '8+'): 2, ('china', '12+'): 3, ('china', '16+'): 4,
 }
 
 # Tier -> best rating value per system (for cross-mapping)
@@ -367,6 +373,9 @@ _TIER_TO_RATING = {
     ('grac', 4): '15',   ('grac', 5): '18',     ('grac', 6): '18',
     ('classind', 0): 'L', ('classind', 1): 'L',  ('classind', 2): '10',  ('classind', 3): '12',
     ('classind', 4): '14', ('classind', 5): '16', ('classind', 6): '18',
+    # China (CADPA): floor 8+ absorbs tiers 0-2; ceiling 16+ absorbs tiers 4-6.
+    ('china', 0): '8+',  ('china', 1): '8+',  ('china', 2): '8+',  ('china', 3): '12+',
+    ('china', 4): '16+', ('china', 5): '16+', ('china', 6): '16+',
 }
 
 # Rating image file mapping: (system, value) -> path relative to /static/images/ratings/
@@ -425,11 +434,15 @@ RATING_IMAGE_MAP = {
     ('classind', '14'): 'CLASSIND/CLASSIND_14.svg',
     ('classind', '16'): 'CLASSIND/CLASSIND_16.svg',
     ('classind', '18'): 'CLASSIND/CLASSIND_18.svg',
+    # China (CADPA)
+    ('china', '8+'):  'CHINA/CHINA_8.svg',
+    ('china', '12+'): 'CHINA/CHINA_12.svg',
+    ('china', '16+'): 'CHINA/CHINA_16.svg',
 }
 
 # DB column names for all rating systems (order matters for cross-map preference)
-RATING_DB_COLUMNS = ['esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating', 'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating']
-RATING_SYSTEM_KEYS = ['esrb', 'pegi', 'cero', 'usk', 'acb', 'fpb', 'grac', 'classind']
+RATING_DB_COLUMNS = ['esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating', 'acb_rating', 'fpb_rating', 'grac_rating', 'classind_rating', 'china_rating']
+RATING_SYSTEM_KEYS = ['esrb', 'pegi', 'cero', 'usk', 'acb', 'fpb', 'grac', 'classind', 'china']
 
 
 def map_rating(from_system, from_value, to_system):

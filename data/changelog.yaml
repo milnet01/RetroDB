@@ -1,3 +1,27 @@
+- version: 3.18.0
+  date: 2026-07-05
+  tags:
+  - type: feature
+    label: Added Chinese (China) age ratings as a 9th rating system
+  body: |
+    <ul>
+      <li><strong>New age-rating system: China (CADPA).</strong> RetroDB now
+        supports China&rsquo;s official game age-reminder scheme
+        (&ldquo;网络游戏适龄提示&rdquo;, issued by CADPA) alongside the existing
+        eight boards (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC and ClassInd). It uses
+        three tiers &mdash; <strong>8+</strong>, <strong>12+</strong> and
+        <strong>16+</strong> &mdash; shown with a simple green badge.</li>
+      <li><strong>It fills itself in, like the others.</strong> When a game already
+        has a rating from any other country, RetroDB works out the matching China
+        tier automatically (and vice-versa). You can also pick or change it by hand
+        in a game&rsquo;s Edit screen, and choose it as your preferred display
+        system under Settings &rarr; Library. Note: most Western game databases
+        don&rsquo;t publish a China rating, so for games with no rating anywhere it
+        is filled from the game&rsquo;s content during scraping / AI Fill.</li>
+      <li>The green badges are RetroDB&rsquo;s own simple artwork (matching the
+        house style of the other boards), not CADPA&rsquo;s official logo, so there
+        are no image-licensing strings attached.</li>
+    </ul>
 - version: 3.17.0
   date: 2026-07-04
   tags:
