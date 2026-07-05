@@ -10,6 +10,7 @@ from flask import Blueprint, request, jsonify
 import os
 import sys
 import time
+import signal
 import threading
 import logging
 
@@ -367,3 +368,27 @@ def api_restart():
     threading.Thread(target=restart).start()
 
     return success(message='Server restarting...')
+
+
+@bp.route('/api/shutdown', methods=['POST'])
+@admin_required
+@handle_api_errors
+def api_shutdown():
+    """Gracefully shut the server down.
+
+    Mirrors api_restart's delayed-thread pattern, but sends SIGTERM to trigger
+    the graceful-drain handler installed in app.py (drains running jobs, then
+    re-raises to exit) instead of re-exec'ing. The ~1 s sleep lets the JSON
+    response flush to the browser before the process dies.
+
+    SIGTERM (not sys.exit / os._exit): sys.exit only unwinds this worker thread
+    while waitress keeps serving; os._exit skips the job drain the graceful
+    handler exists to provide.
+    """
+    def shutdown():
+        time.sleep(1)
+        os.kill(os.getpid(), signal.SIGTERM)
+
+    threading.Thread(target=shutdown, daemon=True).start()
+
+    return success(message='Server shutting down...')
