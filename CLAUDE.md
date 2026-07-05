@@ -152,6 +152,7 @@ signatures.
 - **Themed icons**: `getThemedIcon(key, fallback?)` (defined in `static/js/toast-controller.js`) returns icons matching the current theme (e.g. `'error'` → `❌` on cyberpunk, `✗` on matrix). Keys: job types (`bulk-scrape`, `ra-sync`, `ra-refresh`...), job states (`paused`, `resume`, `complete`, `queued`, `cancelled`, `background`), notifications (`success`, `error`, `warning`, `info`), stats (`stat-success`, `stat-failed`, `stat-skipped`), actions (`starting`, `running`, `cancel`, `save`, `loading`). `background` is a state, not an action — matches the bucketing in `toast-controller.js` and `docs/specs/themes.md` §7. In HTML use `data-themed-icon="key"` — `main.js` auto-populates on DOMContentLoaded.
 - **A11y**: `ModalFocusTrap.activate(modalEl, triggerEl, {onEscape, autoFocus})` / `.deactivate()` — WCAG 2.4.3, stacks for nested modals, restores focus to trigger on close.
 - **Number formatting**: Jinja `{{ value|format_number }}`; JS `formatNumber(value)`.
+- **Server controls** (`main.js`): `restartServer()` (`POST /api/restart`, `os.execv` re-exec) and `shutdownServer()` (`POST /api/shutdown`, admin-only graceful stop — a delayed thread sends `SIGTERM` to the drain handler in `app.py`; shutdownServer does NOT poll to reconnect). Both exported on `RetroDB`/`window`; buttons in `_settings_tabs/system.html` Server Controls card.
 
 Themes (display name on left, `internal key` in backticks): Cyberpunk (`cyberpunk`, default), Matrix (`matrix`), Amber (`amber`), Ocean (`ocean`), Cathedral (`christian`), Blade Runner (`bladerunner`), Elite (`elite`).
 
@@ -161,7 +162,11 @@ Themes (display name on left, `internal key` in backticks): Cyberpunk (`cyberpun
 
 Two shapes:
 - **Source** — small zip; user installs Python + runs `pip install -r requirements.txt`. Cross-platform from one host.
-- **Standalone** — PyInstaller bundle (Python runtime + deps + assets baked in). User unzips and double-clicks the platform's launcher (`start.sh` / `start.command` / `start.bat`) — the PyInstaller `retrodb` binary sits next to it. PyInstaller has no cross-compile — must build on the target OS.
+- **Standalone** — PyInstaller bundle (Python runtime + deps + assets baked in). User unzips and double-clicks the platform's launcher (`start.sh` / `start.command` / `start.bat`) — the PyInstaller `retrodb` binary sits next to it. PyInstaller has no cross-compile — must build on the target OS. `build_dist.build_standalone` also drops the platform's start script (which now auto-opens the browser) and, on Linux, `packaging/RetroDB.desktop` + `retrodb-256.png` into the zip so users can pin a launcher.
+
+### App icon assets
+- Master SVG: `packaging/icon.svg` (neon gamepad). `python3 scripts/render_icons.py` rasterizes it into `static/favicon.svg`/`-16`/`-32`/`apple-touch-icon.png` (wired in `base.html`) + `packaging/icons/retrodb-{256,512}.png`/`.ico`/`.icns`. Needs **`cairosvg`** — a BUILD-TIME-ONLY dep, deliberately NOT in `requirements.txt`; the raster outputs are committed so end users never import it. `retrodb.spec` sets `icon=` (`.ico`/`.icns`) and bundles `packaging/icons`.
+- **One-click launch (local install):** `scripts/retrodb_launcher.py` probes the unauthenticated `/health` (port from `config.SERVER_PORT`), starts `app.py` if down, opens the browser. `scripts/install_launcher.py` pins a `.desktop` (absolute `Exec`/`Icon` paths) into `~/.local/share/applications/`. Run the installer once.
 
 ```bash
 python3 build_dist.py                       # all 3 source ZIPs
