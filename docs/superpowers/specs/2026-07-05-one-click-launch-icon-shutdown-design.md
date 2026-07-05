@@ -39,18 +39,39 @@ page.
   `os.execv` re-exec, `@admin_required`) + `restartServer()` in
   `static/js/main.js` (~line 870, `showConfirm` → `API.post('/api/restart')` →
   `checkServerStatus()` poll) + button in
-  `templates/_settings_tabs/system.html` (~line 176, Server Controls card,
-  `id="server"`).
-- Graceful shutdown path exists: `services.jobs.base.request_shutdown`, invoked
-  by the SIGTERM/SIGINT handler (drains running jobs). Must verify the handler
-  actually exits the process (waitress) — see Open Items.
+  `templates/_settings_tabs/system.html` (~line 171, Server Controls card,
+  `id="server"`, Restart button ~line 176).
+- **Unauthenticated health endpoints already exist** (`app.py:599-613`):
+  `GET /health` (process-alive, no DB hit, returns `{status:'alive', version}`,
+  HTTP 200) and `GET /ready` (exercises the DB, 200 / 503). Both are exempt from
+  the first-time-setup redirect. These — NOT the `@admin_required` `/api/status`
+  — are what an unauthenticated launcher probes for readiness.
+- Graceful shutdown path exists: `request_shutdown` (defined in
+  `services/jobs/base.py`, imported at `app.py:1729`), invoked by the
+  SIGTERM/SIGINT handler def
+  (`app.py:1731-1739`, registered at `1741-1742`). The handler drains running
+  jobs, then restores the default handler and re-raises
+  (`_signal.signal(signum, SIG_DFL); os.kill(getpid(), signum)`) — so SIGTERM's
+  default action **does** terminate the process. Registration sits inside the
+  `if _is_worker:` block (`app.py:1712`; `_is_worker` is assigned at
+  `app.py:1711` = `WERKZEUG_RUN_MAIN=='true' or not config.DEBUG_MODE`), on the
+  main thread; any process that actually serves the shutdown HTTP request is that
+  worker, so the handler is registered on both the debug and packaged paths. The
+  `except (ValueError, OSError)` at `1743-1748` only swallows the off-main-thread
+  case (a WSGI host that imports the app on a worker thread — then the host owns
+  signal handling). RetroDB's own runner (`python app.py` / the standalone
+  binary) imports on the main thread, so the handler is live.
 
 ## Part 1 — App icon
 
 - **Master:** `static/images/icon.svg` — neon gamepad, dark rounded tile.
-- **Renderer:** `scripts/render_icons.py` — rasterizes the SVG into all outputs
-  (reproducible; pick cairosvg pip dep or a system tool — verify availability
-  during implementation, prefer no new heavy dep).
+- **Renderer:** `scripts/render_icons.py` — rasterizes the SVG into all outputs.
+  Uses **`cairosvg`** for SVG→PNG (build-time-only dependency; NOT added to the
+  runtime `requirements.txt` — icons are generated once by the maintainer and
+  the raster outputs are committed, so end users never import it). Pillow (already
+  a runtime dep) assembles the multi-size `.ico` / `.icns` from the rendered PNGs.
+  Document the build-only dep where the icon-regen step is described (a comment in
+  `render_icons.py` + a note in CLAUDE.md's asset-build section).
 - **Outputs:**
   - `static/favicon.svg` + `favicon-32.png`, `favicon-16.png`,
     `apple-touch-icon.png` (180) → wired into `base.html` (replace inline emoji).
@@ -62,10 +83,27 @@ page.
 ## Part 2 — One-click launch
 
 **Local (pinned icon → real install):**
-- `scripts/retrodb_launcher.py` — probe `localhost:<SERVER_PORT>/api/status`;
-  if up, just open browser; else start server from source (auto-detect
-  `.venv`/`venv`, fall back to system python), wait for readiness, open browser.
-  Single-instance safe (no double server).
+- `scripts/retrodb_launcher.py` — imports `config.SERVER_PORT` (which honours the
+  `RETRODB_PORT` env override, default 5000) and uses it for BOTH the probe and
+  the browser URL, so a user who has moved the server off 5000 still gets probed
+  and opened at the right port. Probe
+  `http://localhost:<config.SERVER_PORT>/health` (the unauthenticated endpoint
+  above — do NOT use `/api/status`, which is `@admin_required` and redirects an
+  anonymous probe to the login page, so it can never confirm readiness). "Up" =
+  any HTTP response on that port; connection-refused = down. If up, just open the
+  browser; else start the server from source (auto-detect `.venv`/`venv`, fall
+  back to system python), poll `/health` until it answers (bounded timeout), then
+  open the browser. (`/health` is process-alive, not DB-ready — acceptable here:
+  the browser lands on a live server a beat before the DB warms, and the page's
+  own requests tolerate that; polling `/ready` instead would only add latency for
+  no user-visible gain.)
+- **Start-race:** the launcher is NOT lock-protected — two near-simultaneous
+  clicks can both probe "down" and both try to start. That's bounded, not
+  catastrophic: the OS port bind is the real single-instance guard — the losing
+  process hits `_die_port_in_use()` (`app.py:1758`), which prints an EADDRINUSE
+  diagnostic to stderr and exits non-zero, leaving exactly one server running.
+  (A lockfile is deliberately omitted; YAGNI for a
+  single-user launcher — revisit only if the clean-exit-on-race proves noisy.)
 - `packaging/RetroDB.desktop` — `Exec`=launcher, `Icon`=256px PNG (absolute
   path OR installed hicolor name), `Categories=Game;Utility;`.
 - `scripts/install_launcher.py` — copies `.desktop` into
@@ -78,10 +116,25 @@ icon for Windows. Packaging changes in `build_dist.py` + `retrodb.spec`.
 
 ## Part 3 — Shutdown button
 
-- **Backend:** `POST /api/shutdown` in `routes/maintenance.py`, `@admin_required`,
-  mirrors `/api/restart` but graceful STOP (no re-exec). Drain jobs via existing
-  SIGTERM/graceful path then exit. Returns `success(message='Server shutting
-  down...')`.
+- **Backend:** `POST /api/shutdown` in `routes/maintenance.py`, `@admin_required`
+  + `@handle_api_errors` (same envelope pattern as the other mutating routes in
+  the file, so a drain-phase exception still returns JSON before the process
+  dies). Mirrors `/api/restart`'s delayed-background-thread pattern but does a
+  graceful STOP instead of a re-exec. **Concrete mechanism** (do not leave to the
+  implementer): add `import signal` to `maintenance.py` (it currently imports only
+  `os, sys, time, threading, logging` — `signal` is missing, and a route-exists /
+  decorator-only test would not catch the `NameError`). A `threading.Thread`
+  sleeps ~1 s — long enough for the HTTP response to flush to the browser, exactly
+  as `api_restart` does (`maintenance.py:364`) — then calls
+  `os.kill(os.getpid(), signal.SIGTERM)`. That fires the existing signal handler
+  (`app.py:1731-1739`), which drains running jobs and re-raises to exit the
+  process. Do NOT use `sys.exit()` (raises `SystemExit` only in the worker
+  thread — waitress keeps serving) or `os._exit()` (skips the job drain the
+  graceful path exists to provide). Returns
+  `success(message='Server shutting down...')`. Shutdown is validated on the
+  packaged/waitress path (main-thread `serve()`, `app.py:1891`); it is not
+  exercised under the `--debug` werkzeug dev-server, which the feature does not
+  target.
 - **Frontend:** `shutdownServer()` in `static/js/main.js` — red `showConfirm` →
   `API.post('/api/shutdown')` → toast "Server stopped, you can close this tab";
   do NOT poll to reconnect. Export on `RetroDB`/`window` like `restartServer`.
@@ -112,17 +165,24 @@ are free/allowed; the release stays a draft for the user's final say.
 
 ## Open items to verify during implementation
 
-1. **SIGTERM actually exits the process** under waitress — confirm in `app.py`
-   server-run + signal setup. If SIGTERM only drains jobs without stopping the
-   WSGI server, use an explicit exit after `request_shutdown()` (documented,
-   root-cause, not a hack).
-2. **SVG→PNG/ICO renderer** — prefer an already-present tool (Pillow can't
-   rasterize SVG; check for cairosvg / rsvg-convert / inkscape). Avoid adding a
-   heavy dep just for icon generation; a build-time-only dep is acceptable if
-   documented.
-3. **`.desktop` Icon reference** — absolute repo path vs installed hicolor
-   theme name; pick the one that survives reliably for pinning.
-4. Version number: next minor (current 3.20.x → **3.21.0**), confirm at bump.
+All previously-open mechanism questions were resolved against current code during
+the design's cold-eyes review (2026-07-05); they are recorded here as
+already-answered so the implementer doesn't re-investigate:
+
+1. **SIGTERM exits the process — RESOLVED.** The handler at `app.py:1731-1739`
+   drains jobs, restores `SIG_DFL`, and re-raises via `os.kill(getpid(), signum)`,
+   so the process terminates the default way. No explicit extra exit needed on the
+   main-thread runner. (Caveat carried into Part 3 / Current state: the handler is
+   main-thread-only.)
+2. **SVG→PNG/ICO renderer — RESOLVED:** `cairosvg` as a build-time-only dep (see
+   Part 1). Not added to runtime `requirements.txt`.
+3. **`.desktop` Icon reference — DECIDED:** use an **absolute path** to the
+   installed 256px PNG (written by `install_launcher.py` into
+   `~/.local/share/applications/` alongside the copied icon), not a hicolor theme
+   name — absolute path survives without a full icon-theme install and is the more
+   reliable choice for a single-user pin.
+4. **Version number:** next minor (current **3.20.0** → **3.21.0**, confirmed
+   against `config.py`), set at bump time.
 
 ## Next steps
 
