@@ -1,0 +1,335 @@
+- version: 3.20.0
+  date: '2026-07-05'
+  tags:
+  - type: feature
+    label: Jedenaście nowych języków — RetroDB mówi teraz w 21 językach
+  body: |
+    <ul>
+      <li><strong>Jedenaście nowych pakietów językowych.</strong> Interfejs
+        RetroDB, informacje o wydaniach i podręcznik pomocy zostały
+        przetłumaczone na <strong>Afrikaans, isiZulu, isiXhosa, Dutch,
+        Norwegian (Bokm&aring;l), Russian, Polish, Turkish, Ukrainian,
+        Indonesian i Hebrew</strong> &mdash; dołączając do istniejących już
+        German, Spanish, French, Italian, Japanese, Korean, Brazilian
+        Portuguese oraz Simplified &amp; Traditional Chinese. Wybierz swój
+        język w Ustawienia &rarr; Preferencje wyświetlania &rarr; Język;
+        aplikacja uruchomi się ponownie w wybranym języku.</li>
+      <li>Każdy język obejmuje całą aplikację: każdy przycisk, etykietę i
+        komunikat, pełną historię informacji o wydaniach oraz kompletny
+        podręcznik pomocy.</li>
+      <li><strong>isiZulu &amp; isiXhosa</strong> również zostały
+        uwzględnione. Ponieważ te języki mają niewiele ugruntowanego
+        słownictwa technicznego, niektóre terminy (ROM, scraper, box art)
+        pozostają po angielsku tam, gdzie nie ma naturalnego odpowiednika
+        &mdash; przed poleganiem na tych tłumaczeniach warto je zweryfikować
+        z native speakerem.</li>
+      <li><strong>Hebrew</strong> ma w pełni przetłumaczony tekst;
+        dopracowany układ strony od prawej do lewej (tak, aby interfejs
+        poprawnie się odbijał) pojawi się w kolejnej aktualizacji. Arabic
+        dołączy, gdy tylko ta praca nad układem zostanie ukończona.</li>
+    </ul>
+- version: 3.19.1
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: Szybsze pobieranie danych — zrzuty ekranu gry pobierają się teraz jednocześnie
+  body: |
+    <ul>
+      <li><strong>Zrzuty ekranu pobierają się równolegle.</strong> Podążając za
+        podejściem popularnego frontendu ES-DE (który pobiera wszystkie materiały
+        gry naraz), RetroDB pobiera teraz zrzuty ekranu gry
+        <strong>równocześnie</strong> zamiast jeden po drugim, dla każdego źródła
+        (TheGamesDB, IGDB, RAWG, ScreenScraper). Gry z wieloma zrzutami ekranu
+        kończą pobieranie zauważalnie szybciej.</li>
+      <li>Sprawdzanie duplikatów zrzutów ekranu nadal odbywa się później po
+        kolei, więc usuwanie duplikatów obrazów pozostaje dokładnie tak samo
+        precyzyjne jak wcześniej &mdash; przyspieszono tylko samo pobieranie.
+        Pobieranie jest ograniczone do czterech naraz, aby nigdy nie przeciążyć
+        jednego źródła.</li>
+      <li>Usprawnienie szybkości działające &bdquo;pod maską&rdquo;; zacznie
+        działać po następnym restarcie.</li>
+    </ul>
+- version: 3.19.0
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: Szybsze pobieranie danych — źródła są teraz odpytywane jednocześnie
+  body: |
+    <ul>
+      <li><strong>Pobieranie danych o grze jest teraz szybsze.</strong> Gdy
+        RetroDB wyszukuje grę, sprawdza kilka baz danych (ES-DE, TheGamesDB,
+        IGDB, RAWG, ScreenScraper). Wcześniej odpytywał je <em>jedna po
+        drugiej</em> i czekał na odpowiedź każdej, zanim zapytał kolejną
+        &mdash; więc czas oczekiwania był sumą wszystkich. Teraz odpytuje je
+        wszystkie <strong>naraz</strong> i czeka tylko na najwolniejszą, co daje
+        zauważalne przyspieszenie przy każdej grze. Wyniki są nadal
+        porządkowane i oceniane dokładnie tak samo jak wcześniej.</li>
+      <li><strong>Mniej marnowanych połączeń przy pobieraniu grafik.</strong>
+        Pobieranie obrazów wykorzystuje teraz już otwarte połączenie zamiast
+        otwierać nowe dla każdego pojedynczego obrazka, co skraca czas przy
+        grach z wieloma zrzutami ekranu.</li>
+      <li>To usprawnienia szybkości działające &bdquo;pod maską&rdquo;
+        &mdash; sposób korzystania z RetroDB się nie zmienia, a bazy danych
+        nie są obciążane mocniej (te same zapytania, po prostu wykonywane
+        równolegle). Zaczną działać po następnym restarcie.</li>
+    </ul>
+- version: 3.18.0
+  date: '2026-07-05'
+  tags:
+  - type: feature
+    label: Dodano chińskie (Chiny) oceny wiekowe jako 9. system klasyfikacji
+  body: |
+    <ul>
+      <li><strong>Nowy system ocen wiekowych: Chiny (CADPA).</strong> RetroDB
+        obsługuje teraz oficjalny chiński system przypomnień o wieku dla gier
+        (&ldquo;网络游戏适龄提示&rdquo;, wydawany przez CADPA) obok istniejących
+        ośmiu systemów (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC i ClassInd). Używa
+        trzech poziomów &mdash; <strong>8+</strong>, <strong>12+</strong> i
+        <strong>16+</strong> &mdash; wyświetlanych w postaci prostej zielonej
+        plakietki.</li>
+      <li><strong>Wypełnia się sam, tak jak pozostałe.</strong> Gdy gra ma już
+        ocenę z innego kraju, RetroDB automatycznie wylicza odpowiadający jej
+        poziom chiński (i odwrotnie). Możesz też wybrać lub zmienić go ręcznie
+        w ekranie edycji gry oraz ustawić jako preferowany system wyświetlania
+        w Ustawienia &rarr; Biblioteka. Uwaga: większość zachodnich baz danych
+        o grach nie publikuje chińskiej oceny, więc dla gier bez żadnej oceny
+        jest ona uzupełniana na podstawie zawartości gry podczas pobierania
+        danych / AI Fill.</li>
+      <li>Zielone plakietki to własna, prosta grafika RetroDB (zgodna ze
+        stylem pozostałych systemów), a nie oficjalne logo CADPA, więc nie
+        wiążą się z tym żadne ograniczenia licencyjne dotyczące obrazów.</li>
+    </ul>
+- version: 3.17.0
+  date: '2026-07-04'
+  tags:
+  - type: feature
+    label: Czyszczenie wpisów w bazie danych dla plików multimedialnych brakujących na dysku
+  - type: security
+    label: Zabezpieczenie przed wyczyszczeniem całej grafiki biblioteki, gdy zniknie folder z multimediami
+  body: |
+    <ul>
+      <li><strong>Nowe narzędzie konserwacyjne: &ldquo;Brakujące odwołania do
+        multimediów&rdquo;</strong> (Ustawienia &rarr; System &rarr;
+        Konserwacja). Jest lustrzanym odbiciem istniejącego czyszczenia
+        &ldquo;Osierocone multimedia&rdquo;: zamiast wyszukiwać pozostałe
+        pliki obrazów bez gry, znajduje gry, których okładka, okładka 3D,
+        zrzuty ekranu, fanart, wideo lub instrukcja wskazują na pliki,
+        których już nie ma na dysku. Wyszukaj je, a następnie wyczyść te
+        nieaktualne odwołania jednym kliknięciem, aby scrapery mogły
+        ponownie pobrać grafikę. Same wpisy gier nigdy nie są naruszane.</li>
+      <li><strong>Bezpieczniejsze automatyczne czyszczenie podczas
+        pobierania danych.</strong> Gdy RetroDB ponownie pobiera dane gry,
+        po cichu czyści odwołania do plików multimedialnych, które zniknęły
+        z dysku. Wcześniej, jeśli cały folder z multimediami znikał naraz
+        &mdash; odmontowany dysk zewnętrzny lub masowe usunięcie &mdash; to
+        czyszczenie mogło skasować zapis o tym, jaką grafikę miały tysiące
+        gier, wymuszając kosztowne ponowne pobieranie danych. RetroDB
+        rozpoznaje teraz ten sygnał: jeśli folder z multimediami jest
+        brakujący lub całkowicie pusty, zachowuje odwołania i zapisuje
+        ostrzeżenie zamiast je kasować. Nowe narzędzie konserwacyjne
+        stosuje to samo zabezpieczenie i wyraźnie oznacza każdy folder,
+        który zostawiło nietknięty.</li>
+    </ul>
+- version: 3.16.0
+  date: '2026-07-04'
+  tags:
+  - type: feature
+    label: Nowy panel „Szybkie poprawki” na pulpicie
+  body: |
+    <ul>
+      <li><strong>Nowy panel &ldquo;Szybkie poprawki&rdquo; na pulpicie</strong>
+        zamienia rozproszone zadania biblioteki w listę rzeczy do zrobienia
+        na pierwszy rzut oka. Pokazuje, ile gier wciąż nie ma okładki, i
+        daje skróty jednym kliknięciem do wyszukiwania duplikatów ROM-ów
+        oraz sprawdzania uszkodzonych ścieżek ROM-ów (gier, których pliki
+        zostały przeniesione lub usunięte). Każdy skrót prowadzi
+        bezpośrednio do strony, która to naprawia. Panel pojawia się, gdy
+        w bibliotece znajdują się już jakieś gry.</li>
+    </ul>
+- version: 3.15.0
+  date: '2026-07-03'
+  tags:
+  - type: accessibility
+    label: Czytniki ekranu odczytują teraz na głos postęp zadań
+  body: |
+    <ul>
+      <li><strong>Długo trwające zadania odczytują teraz swój postęp
+        czytnikom ekranu.</strong> Podczas masowego pobierania danych,
+        synchronizacji osiągnięć (RetroAchievements lub PlayStation) czy
+        zmiany rozmiaru obrazów, użytkownicy czytników ekranu wcześniej nie
+        słyszeli niczego między &ldquo;rozpoczęto&rdquo; a
+        &ldquo;zakończono&rdquo;. RetroDB ogłasza teraz okresowe kamienie
+        milowe (na przykład &ldquo;Masowe pobieranie danych: 12 z
+        40&rdquo;) oraz zakończenie głosowe &mdash; bez dodatkowych okienek
+        na ekranie. Ogłoszenia są rozłożone w czasie tak, aby informować
+        bez nadmiernej gadatliwości, i podążają za wybranym przez Ciebie
+        językiem.</li>
+    </ul>
+- version: 3.14.0
+  date: '2026-07-01'
+  tags:
+  - type: feature
+    label: Nowe języki — dostępny chiński (uproszczony i tradycyjny)
+  body: |
+    <ul>
+      <li><strong>RetroDB jest teraz dostępny w języku chińskim.</strong> Pod
+        <strong>Ustawienia &rarr; System &rarr; Język</strong> dostępne są
+        dwa warianty: <strong>中文 (简体)</strong> (uproszczony, dla Chin
+        kontynentalnych) oraz <strong>中文 (繁體)</strong> (tradycyjny, dla
+        Hongkongu i Tajwanu). Cały interfejs &mdash; menu, przyciski,
+        komunikaty oraz wbudowany podręcznik pomocy &mdash; jest
+        przetłumaczony, a wszystko, co nie zostało jeszcze przetłumaczone,
+        po cichu wraca do angielskiego. Liczba obsługiwanych języków
+        wzrasta tym samym do dziesięciu (angielski, niemiecki, hiszpański,
+        francuski, włoski, japoński, portugalski brazylijski, koreański, a
+        teraz chiński uproszczony i tradycyjny).</li>
+    </ul>
+- version: 3.12.0
+  date: '2026-06-30'
+  tags:
+  - type: feature
+    label: Nowy język — dostępny koreański (한국어)
+  body: |
+    <ul>
+      <li><strong>RetroDB jest teraz dostępny w języku koreańskim
+        (한국어).</strong> Wybierz go w Ustawienia &rarr; System &rarr;
+        Język. Cały interfejs &mdash; menu, przyciski, komunikaty oraz
+        wbudowany podręcznik pomocy &mdash; jest przetłumaczony, co
+        zwiększa liczbę obsługiwanych języków do ośmiu (angielski,
+        niemiecki, hiszpański, francuski, włoski, japoński, portugalski
+        brazylijski i koreański). Koreański uzupełnia obsługę wszystkich
+        systemów ocen wiekowych gier wyświetlanych przez RetroDB, w tym
+        południowokoreańskiego GRAC.</li>
+    </ul>
+- version: 3.11.0
+  date: '2026-06-30'
+  tags:
+  - type: enhancement
+    label: Wsparcie dla RetroDB na Patreon — dodano nowy link do darowizn
+  body: |
+    <ul>
+      <li><strong>Możesz teraz wspierać RetroDB na Patreon.</strong> Link do
+        Patreon znajduje się obok istniejącego przycisku &ldquo;Sponsoruj na
+        GitHub&rdquo; w <strong>Ustawienia &rarr; System &rarr; Wsparcie
+        rozwoju</strong>, w panelu O programie oraz w pliku README projektu.
+        RetroDB pozostaje całkowicie darmowy i open source &mdash; darowizny
+        są całkowicie opcjonalne i po prostu pomagają utrzymać rozwój przez
+        jedną osobę.</li>
+    </ul>
+- version: 3.10.0
+  date: '2026-06-26'
+  tags:
+  - type: enhancement
+    label: Dziennik zmian ładuje się teraz szybciej dzięki przyciskowi „Wczytaj więcej”
+  body: |
+    <ul>
+      <li><strong>Strona dziennika zmian otwiera się teraz znacznie
+        szybciej.</strong> Zamiast rysować całą historię wydań (setki
+        wpisów) za każdym razem, gdy ją otwierasz, RetroDB pokazuje teraz
+        20 najnowszych wpisów i dodaje na dole przycisk <strong>Wczytaj
+        więcej</strong>. Kliknij go, aby odsłonić kolejną partię, i tak
+        dalej &mdash; starsza historia wciąż tam jest, po prostu ładuje się
+        na żądanie zamiast spowalniać pierwsze wyświetlenie.</li>
+    </ul>
+- version: 3.9.0
+  date: '2026-06-17'
+  tags:
+  - type: feature
+    label: Podręcznik pomocy i ostatnie notatki wydania przetłumaczone na wszystkie 6 języków
+  body: |
+    <ul>
+      <li><strong>Pełny wbudowany podręcznik pomocy jest teraz dostępny we
+        wszystkich sześciu językach</strong> &mdash; niemieckim,
+        francuskim, hiszpańskim, włoskim, japońskim i portugalskim
+        brazylijskim &mdash; nie tylko po angielsku. RetroDB pokazuje
+        podręcznik w języku wybranym w Ustawieniach i po cichu wraca do
+        angielskiego, jeśli coś nie zostało jeszcze przetłumaczone.</li>
+      <li><strong>Ten dziennik zmian pojawia się teraz również w Twoim
+        języku</strong> dla najnowszych wydań, a nowe wydania będą
+        tłumaczone od teraz. Starsza historia pozostaje po angielsku.</li>
+      <li><strong>Strona Listy życzeń oraz ostatnie niedobitki
+        angielskiego tekstu</strong> &mdash; partia wyskakujących
+        komunikatów o błędach i stanie, które zostały pominięte, gdy
+        pakiety językowe pojawiły się po raz pierwszy w wersji 3.8.0
+        &mdash; tłumaczą się teraz poprawnie w całej aplikacji.</li>
+    </ul>
+- version: 3.8.2
+  date: '2026-06-17'
+  tags:
+  - type: security
+    label: Aktualizacja zależności bezpieczeństwa + poprawki CI
+  body: |
+    <ul>
+      <li><strong>Bezpieczeństwo:</strong> zaktualizowano dołączoną
+        bibliotekę <code>cryptography</code> (47 → 49), aby usunąć
+        opublikowaną lukę bezpieczeństwa (GHSA-537c-gmf6-5ccf). Brak zmian
+        w działaniu &mdash; po prostu bezpieczniejsza wersja.</li>
+      <li>Naprawiono zautomatyzowany potok testów: brakujący pomocnik
+        używany tylko w testach (<code>beautifulsoup4</code>) powodował
+        niepowodzenie testów od wersji v3.7.0, a nowy skrypt budowania
+        pakietu wywoływał kontrolę analizy statycznej, która jest znanym
+        fałszywym alarmem (uruchamia zaufane polecenia budowania, a nie
+        dane wejściowe użytkownika) &mdash; teraz jest to udokumentowane i
+        skalibrowane. Tylko konserwacja; w samej aplikacji nic się nie
+        zmienia.</li>
+    </ul>
+- version: 3.8.1
+  date: '2026-06-17'
+  tags:
+  - type: improvement
+    label: Mniejsza opcja pobierania, porządki w darowiznach i poprawka tłumaczenia (Pass
+      46.3 / 47.6)
+  body: |
+    <ul>
+      <li><strong>Nadchodzi znacznie mniejsze pobieranie.</strong> Gotowa do
+        uruchomienia wersja RetroDB typu „rozpakuj i kliknij dwukrotnie”
+        może być teraz budowana w wariancie <strong>tylko CPU</strong>
+        (~600&nbsp;MB) dla osób, które nie mają karty graficznej AMD
+        &mdash; to około jedna szósta rozmiaru pełnej wersji. Obie wersje
+        będą oferowane obok siebie, abyś mógł wybrać tę, która pasuje do
+        Twojego komputera.</li>
+      <li><strong>Panel „Wsparcie rozwoju” w Ustawieniach tłumaczy się
+        teraz</strong> wraz z resztą aplikacji &mdash; przez przypadek
+        pozostał po angielsku, gdy pakiety językowe pojawiły się w wersji
+        3.8.0.</li>
+      <li>Uporządkowano linki do darowizn (plakietka GitHub Sponsors w
+        README; plik finansowania jest gotowy na Patreon i
+        Buy&nbsp;Me&nbsp;A&nbsp;Coffee, gdy tylko zostaną skonfigurowane).
+        Żadnych natrętnych okienek, nigdy.</li>
+      <li>W tle: potok wydań może teraz automatycznie budować gotowe do
+        uruchomienia wersje dla Windows, macOS i Linux. Uwaga: obszerny
+        wbudowany podręcznik <em>Pomocy</em> jest na razie dostępny tylko
+        po angielsku &mdash; jest to odnotowane jako przyszłe zadanie.</li>
+    </ul>
+- version: 3.8.0
+  date: '2026-06-12'
+  tags:
+  - type: feature
+    label: Pełne tłumaczenie interfejsu + 6 języków (Pass 43.2/43.3/43.5)
+  body: |
+    <ul>
+      <li><strong>RetroDB mówi teraz w 6 kolejnych językach.</strong>
+        Bazując na fundamentach z wersji 3.7.0, cały interfejs stał się
+        tłumaczalny i został przetłumaczony maszynowo na <strong>niemiecki,
+        francuski, hiszpański, włoski, japoński i portugalski
+        brazylijski</strong>. Wybierz swój język w Ustawienia &rarr;
+        Preferencje wyświetlania &rarr; Język; podąża on za zapisaną
+        preferencją, następnie za przeglądarką, a na końcu wraca do
+        angielskiego &mdash; nigdy nie może utknąć na brakującym
+        języku.</li>
+      <li><strong>Wszystko na ekranie jest objęte tłumaczeniem</strong>:
+        tekst stron i przyciski, wyskakujące komunikaty (małe powiadomienia
+        typu „toast”), okna dialogowe edycji i ustawień, podpowiedzi oraz
+        etykiety dla czytników ekranu. Gatunki gier, perspektywy i tryby
+        rozgrywki (np. &ldquo;First-Person-Shooter&rdquo;) wyświetlają się
+        teraz również w Twoim języku &mdash; podczas gdy dane źródłowe
+        pozostają po angielsku, dzięki czemu Twoja biblioteka i filtry
+        działają dokładnie tak samo jak wcześniej.</li>
+      <li>Wbudowany <strong>język &ldquo;Pseudo&rdquo;</strong> (widoczny w
+        menu Język) to narzędzie kontroli jakości dla tłumaczy, które
+        ujmuje w nawiasy i akcentuje każdą etykietę, dzięki czemu od razu
+        widać, czy jakiś tekst został pominięty.</li>
+      <li>Tłumaczenia maszynowe są punktem wyjścia i miejscami mogą brzmieć
+        nieco sztywno &mdash; łatwo je z czasem dopracować, a każdy tekst
+        bez tłumaczenia po prostu wyświetla się po angielsku.</li>
+    </ul>

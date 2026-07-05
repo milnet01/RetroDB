@@ -1,0 +1,332 @@
+- version: 3.20.0
+  date: 2026-07-05
+  tags:
+  - type: feature
+    label: Elleve nye språk — RetroDB snakker nå 21 språk
+  body: |
+    <ul>
+      <li><strong>Elleve nye språkpakker.</strong> RetroDBs grensesnitt,
+        versjonsnotater og hjelpemanual er nå oversatt til
+        <strong>Afrikaans, isiZulu, isiXhosa, Dutch, Norwegian (Bokm&aring;l),
+        Russian, Polish, Turkish, Ukrainian, Indonesian og Hebrew</strong>
+        &mdash; i tillegg til de eksisterende tysk, spansk, fransk, italiensk,
+        japansk, koreansk, brasiliansk portugisisk, og forenklet &amp;
+        tradisjonell kinesisk. Velg ditt under Innstillinger &rarr;
+        Visningsinnstillinger &rarr; Språk; appen laster på nytt på språket du
+        velger.</li>
+      <li>Hvert språk dekker hele appen: hver knapp, etikett og melding,
+        hele historikken med versjonsnotater, og den komplette hjelpemanualen.</li>
+      <li><strong>isiZulu &amp; isiXhosa</strong> er også inkludert. Som språk
+        med lite eksisterende programvareordforråd beholder de vanlige
+        tekniske uttrykk (ROM, scraper, box art) på engelsk der det ikke
+        finnes et naturlig ord &mdash; korrekturlesing av en morsmålsbruker er
+        velkommen før du stoler på dem.</li>
+      <li><strong>Hebrew</strong> leveres med fullstendig oversatt tekst; et
+        polert høyre-til-venstre-sideoppsett (slik at grensesnittet speiler
+        riktig) kommer i en senere oppdatering. Arabic følger så snart det
+        oppsettarbeidet er på plass.</li>
+    </ul>
+- version: 3.19.1
+  date: 2026-07-05
+  tags:
+  - type: performance
+    label: Raskere skraping — et spills skjermbilder lastes nå ned samtidig
+  body: |
+    <ul>
+      <li><strong>Skjermbilder lastes ned parallelt.</strong> Etter samme
+        tilnærming som den populære ES-DE-frontenden (som henter alle
+        mediene til et spill på én gang), laster RetroDB nå ned et spills
+        skjermbilder <strong>samtidig</strong> i stedet for ett etter ett,
+        for hver kilde (TheGamesDB, IGDB, RAWG, ScreenScraper). Spill med
+        flere skjermbilder blir merkbart raskere ferdig.</li>
+      <li>Kontrollen for duplikate skjermbilder kjører fortsatt etterpå i
+        rekkefølge, så fjerning av dobbeltbilder er akkurat like nøyaktig
+        som før &mdash; det er bare selve nedlastingen som er blitt
+        raskere. Nedlastinger er begrenset til fire om gangen, slik at én
+        enkelt kilde aldri overbelastes.</li>
+      <li>Ytelsesforbedring under panseret; trer i kraft etter neste
+        omstart.</li>
+    </ul>
+- version: 3.19.0
+  date: 2026-07-05
+  tags:
+  - type: performance
+    label: Raskere skraping — kildene spørres nå samtidig
+  body: |
+    <ul>
+      <li><strong>Skraping går raskere per spill.</strong> Når RetroDB slår
+        opp et spill, sjekker den flere databaser (ES-DE, TheGamesDB, IGDB,
+        RAWG, ScreenScraper). Tidligere spurte den dem <em>én om
+        gangen</em> og ventet på svar fra hver før den spurte den neste
+        &mdash; så ventetiden var summen av alle sammen. Nå spør den dem
+        alle <strong>samtidig</strong> og venter bare på den tregeste, noe
+        som gir en merkbar hastighetsøkning for hvert spill. Resultatene
+        sorteres og poengsettes fortsatt akkurat som før.</li>
+      <li><strong>Færre bortkastede håndtrykk ved nedlasting av
+        bilder.</strong> Bildenedlastinger gjenbruker nå en allerede åpen
+        tilkobling i stedet for å åpne en ny for hvert enkelt bilde, noe
+        som sparer tid på spill med mange skjermbilder.</li>
+      <li>Dette er forbedringer under panseret &mdash; ingenting endrer
+        seg i hvordan du bruker RetroDB, og det belaster ikke databasene
+        noe mer (samme forespørsler, bare overlappende). Trer i kraft
+        etter neste omstart.</li>
+    </ul>
+- version: 3.18.0
+  date: 2026-07-05
+  tags:
+  - type: feature
+    label: Lagt til kinesisk (Kina) aldersgrense som 9. klassifiseringssystem
+  body: |
+    <ul>
+      <li><strong>Nytt aldersklassifiseringssystem: Kina (CADPA).</strong>
+        RetroDB støtter nå Kinas offisielle aldersanbefalingsordning for
+        spill (&ldquo;网络游戏适龄提示&rdquo;, utstedt av CADPA) i tillegg
+        til de åtte eksisterende ordningene (ESRB, PEGI, CERO, USK, ACB,
+        FPB, GRAC og ClassInd). Den bruker tre nivåer &mdash;
+        <strong>8+</strong>, <strong>12+</strong> og <strong>16+</strong>
+        &mdash; vist med et enkelt grønt merke.</li>
+      <li><strong>Den fylles ut selv, akkurat som de andre.</strong> Når et
+        spill allerede har en klassifisering fra et annet land, regner
+        RetroDB automatisk ut det tilsvarende kinesiske nivået (og
+        omvendt). Du kan også velge eller endre den manuelt i
+        redigeringsvisningen for et spill, og velge den som foretrukket
+        visningssystem under Innstillinger &rarr; Bibliotek. Merk: de
+        fleste vestlige spilldatabaser publiserer ikke en kinesisk
+        klassifisering, så for spill uten noen klassifisering blir den
+        fylt ut fra spillets innhold under skraping / AI-utfylling.</li>
+      <li>De grønne merkene er RetroDBs egen enkle illustrasjon (i tråd
+        med husstilen til de andre ordningene), ikke CADPAs offisielle
+        logo, så det følger ingen bilderettighetsbindinger med.</li>
+    </ul>
+- version: 3.17.0
+  date: 2026-07-04
+  tags:
+  - type: feature
+    label: Fjern databaseoppføringer for mediefiler som mangler på disk
+  - type: security
+    label: Vern mot at hele biblioteket ditt mister illustrasjoner hvis en mediemappe
+      forsvinner
+  body: |
+    <ul>
+      <li><strong>Nytt vedlikeholdsverktøy: &ldquo;Manglende
+        mediereferanser&rdquo;</strong> (Innstillinger &rarr; System &rarr;
+        Vedlikehold). Det er speilbildet av det eksisterende
+        opprydding-verktøyet &ldquo;Foreldreløse medier&rdquo;: i stedet
+        for å finne overflødige bildefiler uten noe spill, finner det
+        spill der omslag, 3D-omslag, skjermbilder, fan-art, video eller
+        manual peker til filer som ikke lenger finnes på disk. Søk etter
+        dem, og fjern så disse foreldede referansene med ett klikk, slik
+        at skraperne kan laste ned illustrasjonene på nytt. Selve
+        spilloppføringene røres aldri.</li>
+      <li><strong>Tryggere automatisk opprydding under skraping.</strong>
+        Når RetroDB skraper et spill på nytt, fjerner den stille
+        referanser til mediefiler som har forsvunnet fra disk. Tidligere
+        kunne denne oppryddingen &mdash; hvis en hel mediemappe forsvant
+        på én gang, for eksempel en frakoblet ekstern disk eller en
+        massesletting &mdash; slette informasjonen om hvilke
+        illustrasjoner tusenvis av spill hadde, noe som tvang frem
+        kostbare nye skrapinger. RetroDB kjenner nå igjen dette signalet:
+        hvis en mediemappe mangler eller er helt tom, beholder den
+        referansene og logger en advarsel i stedet for å slette dem. Det
+        nye vedlikeholdsverktøyet bruker den samme beskyttelsen og merker
+        tydelig enhver mappe det har holdt tilbake.</li>
+    </ul>
+- version: 3.16.0
+  date: 2026-07-04
+  tags:
+  - type: feature
+    label: Nytt panel for «Hurtigfikser» på dashbordet
+  body: |
+    <ul>
+      <li><strong>Et nytt &ldquo;Hurtigfikser&rdquo;-panel på
+        dashbordet</strong> gjør spredte biblioteksgjøremål om til en
+        oversiktlig gjøremålsliste. Det viser hvor mange spill som
+        fortsatt mangler omslag, og gir ett-klikks-snarveier for å finne
+        duplikat-ROM-er og sjekke for ødelagte ROM-baner (spill der
+        filene er flyttet eller slettet). Hver snarvei fører rett til
+        siden som fikser det. Panelet vises så snart du har spill i
+        biblioteket ditt.</li>
+    </ul>
+- version: 3.15.0
+  date: 2026-07-03
+  tags:
+  - type: accessibility
+    label: Skjermlesere leser nå opp fremdriften i jobber
+  body: |
+    <ul>
+      <li><strong>Langvarige jobber forteller nå fremdriften sin høyt til
+        skjermlesere.</strong> Når en massskraping, en
+        prestasjonssynkronisering (RetroAchievements eller PlayStation)
+        eller en endring av bildestørrelse pågår, hørte
+        skjermleser-brukere tidligere ingenting mellom &ldquo;startet&rdquo;
+        og &ldquo;ferdig&rdquo;. RetroDB varsler nå regelmessige
+        milepæler (for eksempel &ldquo;Massskraping: 12 av 40&rdquo;) og
+        en talt fullføring &mdash; uten ekstra sprettoppvinduer på
+        skjermen. Varslene er tidsstyrt slik at de informerer uten å
+        skravle, og de følger språket du har valgt.</li>
+    </ul>
+- version: 3.14.0
+  date: 2026-07-01
+  tags:
+  - type: feature
+    label: Nye språk — kinesisk (forenklet og tradisjonelt) nå tilgjengelig
+  body: |
+    <ul>
+      <li><strong>RetroDB er nå tilgjengelig på kinesisk.</strong> To valg
+        finnes under <strong>Innstillinger &rarr; System &rarr;
+        Språk</strong>: <strong>中文 (简体)</strong> (forenklet, for det
+        kinesiske fastlandet) og <strong>中文 (繁體)</strong> (tradisjonelt,
+        for Hongkong og Taiwan). Hele grensesnittet &mdash; menyer,
+        knapper, meldinger og den innebygde hjelpemanualen &mdash; er
+        oversatt, og alt som ennå ikke er oversatt, faller stille tilbake
+        til engelsk. Dette bringer antallet støttede språk opp til ti
+        (engelsk, tysk, spansk, fransk, italiensk, japansk, brasiliansk
+        portugisisk, koreansk, og nå forenklet &amp; tradisjonelt
+        kinesisk).</li>
+    </ul>
+- version: 3.12.0
+  date: 2026-06-30
+  tags:
+  - type: feature
+    label: Nytt språk — koreansk (한국어) er nå tilgjengelig
+  body: |
+    <ul>
+      <li><strong>RetroDB er nå tilgjengelig på koreansk (한국어).</strong>
+        Velg det under Innstillinger &rarr; System &rarr; Språk. Hele
+        grensesnittet &mdash; menyer, knapper, meldinger og den
+        innebygde hjelpemanualen &mdash; er oversatt, noe som bringer
+        antallet støttede språk opp til åtte (engelsk, tysk, spansk,
+        fransk, italiensk, japansk, brasiliansk portugisisk og
+        koreansk). Koreansk runder av dekningen for alle
+        spillaldersgrensetavler RetroDB viser, inkludert Sør-Koreas
+        GRAC.</li>
+    </ul>
+- version: 3.11.0
+  date: 2026-06-30
+  tags:
+  - type: enhancement
+    label: Støtt RetroDB på Patreon — ny donasjonslenke lagt til
+  body: |
+    <ul>
+      <li><strong>Du kan nå støtte RetroDB på Patreon.</strong> En
+        Patreon-lenke ligger ved siden av den eksisterende
+        &ldquo;Sponsor på GitHub&rdquo;-knappen i <strong>Innstillinger
+        &rarr; System &rarr; Støtt utviklingen</strong>, i Om-panelet, og
+        i prosjektets README. RetroDB forblir helt gratis og åpen
+        kildekode &mdash; donasjoner er helt valgfrie og bidrar bare til
+        å holde soloutviklingen i gang.</li>
+    </ul>
+- version: 3.10.0
+  date: 2026-06-26
+  tags:
+  - type: enhancement
+    label: Endringsloggen laster nå raskere med en «Last inn mer»-knapp
+  body: |
+    <ul>
+      <li><strong>Endringslogg-siden åpnes nå mye raskere.</strong> I
+        stedet for å tegne opp hele utgivelseshistorikken (hundrevis av
+        oppføringer) hver gang du åpner den, viser RetroDB nå de 20
+        nyeste og legger til en <strong>Last inn mer</strong>-knapp
+        nederst. Klikk på den for å vise neste omgang, og så videre
+        &mdash; den eldre historikken er fortsatt der, den lastes bare
+        inn ved behov i stedet for å bremse den første visningen.</li>
+    </ul>
+- version: 3.9.0
+  date: 2026-06-17
+  tags:
+  - type: feature
+    label: Hjelpemanual og nylige versjonsnotater nå oversatt til alle 6 språk
+  body: |
+    <ul>
+      <li><strong>Den fullstendige innebygde hjelpemanualen er nå
+        tilgjengelig på alle seks språk</strong> &mdash; tysk, fransk,
+        spansk, italiensk, japansk og brasiliansk portugisisk &mdash;
+        ikke bare engelsk. RetroDB viser manualen på det språket du har
+        valgt i Innstillinger, og faller stille tilbake til engelsk hvis
+        noe ikke er oversatt ennå.</li>
+      <li><strong>Denne endringsloggen vises nå også på ditt
+        språk</strong> for de nyeste utgivelsene, og nye utgivelser vil
+        bli oversatt fra nå av. Eldre historikk forblir på engelsk.</li>
+      <li><strong>Ønskeliste-siden og de siste restene av engelsk
+        tekst</strong> &mdash; en gruppe sprettopp-feil- og
+        statusmeldinger som ble oversett da språkpakkene først kom i
+        3.8.0 &mdash; oversettes nå riktig i hele appen.</li>
+    </ul>
+- version: 3.8.2
+  date: 2026-06-17
+  tags:
+  - type: security
+    label: Sikkerhetsoppdatering av avhengighet + CI-fikser
+  body: |
+    <ul>
+      <li><strong>Sikkerhet:</strong> oppdaterte det medfølgende
+        <code>cryptography</code>-biblioteket (47 → 49) for å rette et
+        publisert sikkerhetsvarsel (GHSA-537c-gmf6-5ccf). Ingen
+        atferdsendring — bare en tryggere versjon.</li>
+      <li>Fikset den automatiserte testpipelinen: en manglende
+        testverktøy-hjelper (<code>beautifulsoup4</code>) hadde fått
+        testkjøringen til å feile siden v3.7.0, og det nye
+        pakkebyggeskriptet utløste en statisk analysesjekk som er et
+        kjent falskt positivt (det kjører betrodde byggekommandoer, ikke
+        brukerinndata) — nå dokumentert og kalibrert. Kun vedlikehold;
+        ingenting endrer seg i selve appen.</li>
+    </ul>
+- version: 3.8.1
+  date: 2026-06-17
+  tags:
+  - type: improvement
+    label: Mindre nedlastingsalternativ, opprydding av donasjoner og
+      oversettelsesfiks (Pass 46.3 / 47.6)
+  body: |
+    <ul>
+      <li><strong>En mye mindre nedlasting er på vei.</strong> Den
+        ferdig-til-bruk «bare pakk ut og dobbeltklikk»-versjonen av
+        RetroDB kan nå bygges i en <strong>kun-CPU</strong>-variant
+        (~600&nbsp;MB) for de som ikke har et AMD-skjermkort &mdash;
+        omtrent en sjettedel av størrelsen på fullversjonen. Begge vil
+        tilbys side om side, slik at du kan velge den som passer
+        maskinen din.</li>
+      <li><strong>«Støtt utviklingen»-panelet i Innstillinger oversettes
+        nå</strong> sammen med resten av appen &mdash; det hadde blitt
+        liggende igjen på engelsk ved en feil da språkpakkene kom i
+        3.8.0.</li>
+      <li>Ryddet opp i donasjonslenkene (GitHub Sponsors-merket i README;
+        finansieringsfilen er klar for Patreon og Buy&nbsp;Me&nbsp;A&nbsp;Coffee
+        når de er satt opp). Ingen mas-skjermer, noensinne.</li>
+      <li>Bak kulissene: utgivelsespipelinen kan nå bygge de
+        ferdig-til-bruk-versjonene for Windows, macOS og Linux automatisk.
+        Merk: den omfattende innebygde <em>Hjelp</em>-manualen er
+        fortsatt kun på engelsk foreløpig &mdash; det er notert som
+        fremtidig arbeid.</li>
+    </ul>
+- version: 3.8.0
+  date: 2026-06-12
+  tags:
+  - type: feature
+    label: Full oversettelse av grensesnittet + 6 språk (Pass 43.2/43.3/43.5)
+  body: |
+    <ul>
+      <li><strong>RetroDB snakker nå 6 flere språk.</strong> Med
+        grunnlaget fra 3.7.0 som utgangspunkt er hele grensesnittet gjort
+        oversettbart og maskinoversatt til <strong>tysk, fransk, spansk,
+        italiensk, japansk og brasiliansk portugisisk</strong>. Velg
+        språket ditt under Innstillinger &rarr; Visningsinnstillinger
+        &rarr; Språk; det følger din lagrede preferanse, deretter
+        nettleseren din, og faller til slutt tilbake til engelsk &mdash;
+        det kan aldri sette seg fast på et manglende språk.</li>
+      <li><strong>Alt som vises på skjermen er dekket</strong>: sidetekst
+        og knapper, sprettoppmeldinger (de små «toast»-varslene),
+        redigerings- og innstillingsdialogene, verktøytips og etiketter
+        for skjermlesere. Spillsjangre, perspektiver og spillmodus (f.eks.
+        &ldquo;First-Person-Shooter&rdquo;) vises nå også på ditt språk
+        &mdash; mens de underliggende dataene forblir på engelsk, slik at
+        biblioteket og filtrene dine fortsetter å fungere akkurat som
+        før.</li>
+      <li>Et innebygd <strong>&ldquo;Pseudo&rdquo;-språk</strong> (synlig
+        i Språk-menyen) er et kvalitetssikringsverktøy for oversettere
+        som setter parenteser og aksenter rundt hver etikett, slik at det
+        umiddelbart blir tydelig om noe tekst er glemt.</li>
+      <li>Maskinoversettelser er et utgangspunkt og kan virke litt stive
+        enkelte steder &mdash; de er enkle å finpusse over tid, og all
+        tekst uten oversettelse vises rett og slett på engelsk.</li>
+    </ul>

@@ -1,0 +1,2006 @@
+{% extends "base.html" %}
+
+{% block title %}Довідка - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ _('Help & Documentation') }}</h1>
+        <p class="page-subtitle">{% trans version=config.APP_VERSION %}Complete guide to RetroDB v{{ version }}{% endtrans %}</p>
+    </div>
+</div>
+
+<!-- Help Navigation -->
+<div class="help-nav" data-sticky-nav>
+    <a href="#installation" class="help-nav-item">Встановлення</a>
+    <a href="#getting-started" class="help-nav-item">Початок роботи</a>
+    <a href="#platform-notes" class="help-nav-item">Примітки щодо платформ</a>
+    <a href="#navigation" class="help-nav-item">Навігація</a>
+    <a href="#keyboard-shortcuts" class="help-nav-item">Гарячі клавіші</a>
+    <a href="#themes" class="help-nav-item">Теми</a>
+    <a href="#dashboard" class="help-nav-item">Панель приладів</a>
+    <a href="#systems" class="help-nav-item">Системи</a>
+    <a href="#api-keys" class="help-nav-item">Ключі API</a>
+    <a href="#settings" class="help-nav-item">Налаштування</a>
+    <a href="#scraping" class="help-nav-item">Скрапінг</a>
+    <a href="#bulk-scrape" class="help-nav-item">Масовий скрапінг</a>
+    <a href="#ai-fill" class="help-nav-item">Заповнення ШІ</a>
+    <a href="#filtering" class="help-nav-item">Фільтрація</a>
+    <a href="#game-detail" class="help-nav-item">Деталі гри</a>
+    <a href="#bulk-edit" class="help-nav-item">Масове редагування</a>
+    <a href="#compare" class="help-nav-item">Порівняння</a>
+    <a href="#collections" class="help-nav-item">Колекції</a>
+    <a href="#game-imports" class="help-nav-item">Імпорт ігор</a>
+    <a href="#retroachievements" class="help-nav-item">RetroAchievements</a>
+    <a href="#steam-achievements" class="help-nav-item">Steam</a>
+    <a href="#xbox-achievements" class="help-nav-item">Xbox</a>
+    <a href="#hltb" class="help-nav-item">HLTB</a>
+    <a href="#trophies" class="help-nav-item">Трофеї</a>
+    <a href="#collector-trophies" class="help-nav-item">Трофеї колекціонера</a>
+    <a href="#museum" class="help-nav-item">Музей</a>
+    <a href="#analytics" class="help-nav-item">Аналітика</a>
+    <a href="#reports" class="help-nav-item">Звіти</a>
+    <a href="#rom-tools" class="help-nav-item">Інструменти ROM</a>
+    <a href="#normalization" class="help-nav-item">Нормалізація</a>
+    <a href="#image-standardization" class="help-nav-item">Зміна розміру зображень</a>
+    <a href="#logs" class="help-nav-item">Журнали</a>
+    <a href="#maintenance" class="help-nav-item">Обслуговування</a>
+    <a href="#multi-user" class="help-nav-item">Кілька користувачів</a>
+    <a href="#backup" class="help-nav-item">Резервне копіювання</a>
+    <a href="#updating" class="help-nav-item">Оновлення</a>
+    <a href="#troubleshooting" class="help-nav-item">Усунення несправностей</a>
+    <a href="#security" class="help-nav-item">Безпека</a>
+</div>
+
+<!-- Installation -->
+<section id="installation" class="help-section card">
+    <h2 class="card-title">Встановлення</h2>
+    <div class="card-body">
+        <h3>Системні вимоги</h3>
+        <ul>
+            <li><strong>Python 3.8+</strong> з pip</li>
+            <li><strong>Веб-браузер</strong> (Chrome, Firefox, Safari, Edge)</li>
+            <li><strong>Операційна система:</strong> Linux, Windows 10/11 або macOS</li>
+        </ul>
+
+        <h3>Швидке встановлення</h3>
+        <ol>
+            <li>Розпакуйте ZIP-архів RetroDB у папку на свій вибір</li>
+            <li>Відкрийте термінал/командний рядок у цій папці</li>
+            <li>Запустіть: <code>python install.py</code></li>
+            <li>Запустіть сервер:
+                <ul>
+                    <li>Linux: <code>./start.sh</code></li>
+                    <li>Windows: подвійний клік на <code>start.bat</code></li>
+                    <li>macOS: подвійний клік на <code>start.command</code></li>
+                </ul>
+            </li>
+            <li>Відкрийте <code>http://localhost:5000</code> у браузері</li>
+        </ol>
+
+        <h3>Графічний інсталятор</h3>
+        <p>У Linux можна також запустити <code>./setup.sh</code>, щоб відкрити майстер графічного встановлення. Він автоматично перевіряє наявність Python/pip/tkinter, а потім проведе вас через усі кроки налаштування з візуальним журналом прогресу.</p>
+
+        <h3>Що робить install.py</h3>
+        <ul>
+            <li>Перевіряє наявність Python 3.8+ і pip</li>
+            <li>Встановлює залежності Python з <code>requirements.txt</code></li>
+            <li>Створює <code>config.py</code> з файлу-прикладу</li>
+            <li>Створює необхідні папки (базу даних, журнали, папки медіа)</li>
+            <li>Збирає пакети CSS і JS</li>
+        </ul>
+
+        <h3>Перевизначення через змінні середовища</h3>
+        <p>Наведені нижче змінні середовища можуть перевизначати типові налаштування без редагування файлів конфігурації:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>Змінна</th><th>Типове значення</th><th>Опис</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>RETRODB_DB_PATH</code></td><td><code>database/roms.db</code></td><td>Шлях до файлу бази даних</td></tr>
+                <tr><td><code>RETRODB_HOST</code></td><td><code>0.0.0.0</code></td><td>Адреса прив'язки сервера</td></tr>
+                <tr><td><code>RETRODB_PORT</code></td><td><code>5000</code></td><td>Порт сервера</td></tr>
+                <tr><td><code>RETRODB_DEBUG</code></td><td><code>false</code></td><td>Режим налагодження (<code>true</code> або <code>false</code>) &mdash; вмикає інтерактивний налагоджувач Werkzeug. Залишайте <code>false</code> для будь-якої установки, доступної з інших пристроїв у мережі.</td></tr>
+                <tr><td><code>RETRODB_SECRET_KEY</code></td><td>Генерується автоматично</td><td>Секретний ключ Flask</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Getting Started -->
+<section id="getting-started" class="help-section card">
+    <h2 class="card-title">Початок роботи</h2>
+    <div class="card-body">
+        <h3>Первинне налаштування</h3>
+        <p>Під час першого запуску RetroDB показує <strong>Майстер налаштування</strong>, який проведе вас через:</p>
+        <ol>
+            <li><strong>Обліковий запис адміністратора</strong> &mdash; Створіть ім'я користувача та пароль</li>
+            <li><strong>Шлях до бібліотеки</strong> &mdash; Вкажіть папку з ROM</li>
+            <li><strong>Інтеграція з ES-DE</strong> &mdash; За бажанням прив'яжіть списки ігор та медіа ES-DE</li>
+            <li><strong>Ключі API</strong> &mdash; За бажанням додайте ключі API скраперів</li>
+        </ol>
+        <p>Після завершення роботи майстра натисніть <strong>"Сканувати бібліотеку"</strong> на панелі приладів, щоб знайти ваші ROM.</p>
+
+        <h3>Швидкий початок роботи</h3>
+        <ol>
+            <li><strong>Скануйте</strong> бібліотеку, щоб імпортувати ROM</li>
+            <li><strong>Переглядайте</strong> ігри за системою або всі ігри в бібліотеці</li>
+            <li><strong>Скрапте</strong> метадані окремо або скористайтеся масовим скрапінгом</li>
+            <li><strong>Організовуйте</strong> ігри за допомогою тегів, списків і списку бажань</li>
+            <li><strong>Відстежуйте</strong> прогрес за допомогою статусу проходження та досягнень</li>
+        </ol>
+
+        <h3>Структура бібліотеки ROM</h3>
+        <p>RetroDB очікує, що ваші ROM організовані у папках систем усередині шляху до бібліотеки:</p>
+        <pre>ROM Library/
+  nes/
+    Super Mario Bros. (USA).nes
+  snes/
+    Chrono Trigger (USA).sfc
+  psx/
+    Final Fantasy VII (USA)/
+      Final Fantasy VII (USA) (Disc 1).chd
+      Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>Кожна папка системи повинна містити файл ES-DE <code>systeminfo.txt</code>, який визначає підтримувані розширення файлів. RetroDB читає цей файл під час сканування, щоб визначити, які файли є коректними ROM для кожної системи.</p>
+
+        <div class="help-tip">
+            <strong>Порада:</strong> Якщо ви вже скрапили дані за допомогою ES-DE, RetroDB може імпортувати ці дані!
+            Налаштуйте шляхи ES-DE в Налаштування &rarr; Інтеграція з ES-DE, або під час роботи майстра налаштування.
+        </div>
+    </div>
+</section>
+
+<!-- Platform Notes -->
+<section id="platform-notes" class="help-section card">
+    <h2 class="card-title">Примітки щодо платформ</h2>
+    <div class="card-body">
+        <h3>Linux</h3>
+        <ul>
+            <li>Протестовано на Ubuntu, Fedora, openSUSE та Arch Linux</li>
+            <li>Інструменти ROM потребують: <code>sudo apt install p7zip-full unrar mame-tools</code> (Debian/Ubuntu) або еквівалент для вашого дистрибутива</li>
+            <li>Якщо використовується системний Python, інсталятор автоматично обробляє <code>--break-system-packages</code></li>
+            <li>Підтримується прискорення ROCm GPU для відеокарт AMD (масштабування зображень Real-ESRGAN)</li>
+        </ul>
+
+        <h3>Windows</h3>
+        <ul>
+            <li>Завантажте Python з <a href="https://python.org" target="_blank" rel="noopener noreferrer">python.org</a> (позначте "Add to PATH" під час встановлення)</li>
+            <li>Інструменти ROM: встановіть <a href="https://www.7-zip.org/" target="_blank" rel="noopener noreferrer">7-Zip</a>, <a href="https://www.win-rar.com/" target="_blank" rel="noopener noreferrer">WinRAR</a> та <a href="https://www.mamedev.org/" target="_blank" rel="noopener noreferrer">MAME</a> (для chdman)</li>
+            <li>Використовуйте <code>start.bat</code> для запуску або виконайте <code>python app.py</code> з командного рядка</li>
+        </ul>
+
+        <h3>macOS</h3>
+        <ul>
+            <li>Python 3 можна встановити через <a href="https://brew.sh/" target="_blank" rel="noopener noreferrer">Homebrew</a>: <code>brew install python3</code></li>
+            <li>Інструменти ROM: <code>brew install p7zip unrar rom-tools</code></li>
+            <li>Подвійний клік на <code>start.command</code> у Finder для запуску</li>
+            <li>Підтримується прискорення CoreML для Apple Silicon (масштабування зображень Real-ESRGAN)</li>
+        </ul>
+
+        <h3>Вимоги до інструментів ROM за функціями</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Функція</th><th>Необхідний інструмент</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Розпакування ZIP</td><td>unzip (зазвичай вже встановлено)</td></tr>
+                <tr><td>Підтримка архівів 7z</td><td>7z (p7zip-full)</td></tr>
+                <tr><td>Підтримка архівів RAR</td><td>unrar</td></tr>
+                <tr><td>Конвертація/перевірка CHD</td><td>chdman (mame-tools)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Navigation -->
+<section id="navigation" class="help-section card">
+    <h2 class="card-title">Навігація</h2>
+    <div class="card-body">
+        <h3>Розділи бічної панелі</h3>
+
+        <h4>Основні</h4>
+        <ul>
+            <li><strong>Панель приладів</strong> &mdash; Оцінка стану колекції, огляд статистики, статус API, останні зіграні/додані/скраплені ігри, відновлення завдань</li>
+            <li><strong>Системи</strong> &mdash; Перегляд платформ із кількістю ігор, зображеннями систем, характеристиками, фільтрацією за типом і функціями</li>
+            <li><strong>Бібліотека</strong> &mdash; Усі ігри з нескінченним прокручуванням, розширеною фільтрацією (включення/виключення), пошуком і сортуванням</li>
+            <li><strong>Аналітика</strong> &mdash; Графіки та статистика колекції на 12 вкладках із можливістю експорту</li>
+        </ul>
+
+        <h4>Трофеї та досягнення</h4>
+        <ul>
+            <li><strong>Трофеї RPCS3</strong> &mdash; Локально отримані трофеї PS3 з емулятора RPCS3</li>
+            <li><strong>Трофеї PSN</strong> &mdash; Синхронізація трофеїв PlayStation Network через API PSN</li>
+            <li><strong>Досягнення</strong> &mdash; Відстеження прогресу RetroAchievements за системами</li>
+            <li><strong>Досягнення Steam</strong> &mdash; Відстеження досягнень Steam з деталями по кожній грі</li>
+            <li><strong>Досягнення Xbox</strong> &mdash; Відстеження досягнень Xbox та ігрового рахунку (gamerscore)</li>
+        </ul>
+
+        <h4>Моя колекція</h4>
+        <ul>
+            <li><strong>Теги</strong> &mdash; Власні кольорові теги ігор</li>
+            <li><strong>Списки</strong> &mdash; Іменовані добірки ігор з упорядкуванням перетягуванням</li>
+            <li><strong>Список бажань</strong> &mdash; Відстеження ігор, які ви хочете придбати, з рівнями пріоритету</li>
+            <li><strong>Трофеї колекціонера</strong> &mdash; Гейміфіковані віхи вашої колекції</li>
+        </ul>
+
+        <h4>Інструменти</h4>
+        <ul>
+            <li><strong>Звіти ROM</strong> &mdash; Перевірка іменування ROM та відповідності стандартам</li>
+            <li><strong>Імпорт ігор</strong> &mdash; Імпорт з CLZ, Steam, Xbox та PSN</li>
+            <li><strong>Інструменти ROM</strong> &mdash; Сканер архівів, конвертер/перевірка CHD, пошук дублікатів, організатор багатодискових ігор, видалення дублікатів скріншотів, зміна розміру зображень</li>
+        </ul>
+
+        <h4>Конфігурація</h4>
+        <ul>
+            <li><strong>Налаштування</strong> &mdash; Уся конфігурація застосунку (6 вкладок з багатьма підрозділами)</li>
+            <li><strong>Перегляд журналів</strong> &mdash; Перегляд журналів застосунку за всіма категоріями</li>
+        </ul>
+
+        <h4>Інформація</h4>
+        <ul>
+            <li><strong>Музей</strong> &mdash; Інтерактивна енциклопедія ігрових систем із контентом, згенерованим ШІ</li>
+            <li><strong>Довідка</strong> &mdash; Ця сторінка документації</li>
+            <li><strong>Історія змін</strong> &mdash; Історія версій</li>
+        </ul>
+
+        <h3>Підсвічування бічної панелі</h3>
+        <p>Бічна панель підсвічує поточний розділ блакитним кольором. Контекст зберігається під час заглиблення &mdash; перегляд ігор системи залишає підсвіченим пункт <strong>Системи</strong>, перегляд гри з розділу "Досягнення" залишає підсвіченим пункт <strong>Досягнення</strong> тощо.</p>
+
+        <h3>Хлібні крихти</h3>
+        <p>Хлібні крихти вгорі кожної сторінки показують ваш шлях навігації. Приклади:</p>
+        <ul>
+            <li><code>Системи &rsaquo; NES &rsaquo; Super Mario Bros.</code></li>
+            <li><code>RetroAchievements &rsaquo; SNES</code></li>
+            <li><code>Трофеї PSN &rsaquo; The Last of Us</code></li>
+        </ul>
+
+        <h3>Вкладки</h3>
+        <p>Багато сторінок використовують вкладки для організації (Налаштування, Аналітика, Звіти, Інструменти ROM, Досягнення). Вкладки розтягуються на всю ширину вмісту та запам'ятовують ваш останній вибір, де це можливо.</p>
+    </div>
+</section>
+
+<!-- Keyboard Shortcuts -->
+<section id="keyboard-shortcuts" class="help-section card">
+    <h2 class="card-title">Гарячі клавіші</h2>
+    <div class="card-body">
+        <p>Натисніть <kbd>?</kbd> будь-де, щоб показати всі гарячі клавіші. Індикатор очікування клавіші з'являється під час очікування другої клавіші в послідовності (наприклад, <code>g...</code>).</p>
+
+        <h3>Навігація (натисніть G, потім літеру)</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>d</kbd> <span>Панель приладів</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>s</kbd> <span>Системи</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>l</kbd> <span>Бібліотека</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>a</kbd> <span>Аналітика</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>t</kbd> <span>Налаштування</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>h</kbd> <span>Довідка</span></div>
+        </div>
+
+        <h3>Дії</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>/</kbd> <span>Фокус на пошуку</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Закрити модальне вікно</span></div>
+            <div class="shortcut-item"><kbd>?</kbd> <span>Показати гарячі клавіші</span></div>
+        </div>
+
+        <h3>Сторінки гри</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>e</kbd> <span>Редагувати гру</span></div>
+            <div class="shortcut-item"><kbd>s</kbd> <span>Скрапити гру</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Навігація скріншотами</span></div>
+        </div>
+
+        <div class="help-tip">
+            <strong>Примітка:</strong> Гарячі клавіші вимкнено, коли у фокусі текстове поле, textarea або модальне вікно, щоб уникнути випадкової навігації.
+        </div>
+    </div>
+</section>
+
+<!-- Themes -->
+<section id="themes" class="help-section card">
+    <h2 class="card-title">Теми</h2>
+    <div class="card-body">
+        <p>RetroDB пропонує 7 візуальних тем, кожна з унікальною кольоровою палітрою та анімованим фоновим ефектом на полотні (canvas). Змінюйте теми в <strong>Налаштування &rarr; Бібліотека &rarr; Відображення</strong>.</p>
+
+        <h3>Доступні теми</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Тема</th><th>Кольори</th><th>Фоновий ефект</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Cyberpunk</strong> (типова)</td><td>Блакитний і пурпуровий на темно-синьому</td><td>Об'ємний дим/туман із симплекс-шумом</td></tr>
+                <tr><td><strong>Matrix</strong></td><td>Зелений на чорному</td><td>Падаючий цифровий дощ (символи кандзі)</td></tr>
+                <tr><td><strong>Amber</strong></td><td>Бурштиновий/помаранчевий на темно-коричневому</td><td>Градієнт світанку в стилі CRT з короною сонця</td></tr>
+                <tr><td><strong>Ocean</strong></td><td>Бірюзовий і синій на темно-синьому</td><td>Відображення місяця з шаруватою глибиною океану</td></tr>
+                <tr><td><strong>Cathedral</strong></td><td>Золотий і королівський пурпуровий на темно-фіолетовому</td><td>Промені божественного світла згори з теплою атмосферою</td></tr>
+                <tr><td><strong>Blade Runner</strong></td><td>Електрично-синій і неоново-рожевий на темному синьо-сірому</td><td>Неонове сяйво міста зі смугами дощу та фіолетовою імлою</td></tr>
+                <tr><td><strong>Elite</strong></td><td>Векторний зелений і білий на чисто чорному</td><td>Каркасна векторна естетика, натхненна грою Elite (1984)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Як це працює</h3>
+        <ul>
+            <li>Теми перевизначають CSS-змінні кольорів &mdash; усі елементи інтерфейсу адаптуються автоматично</li>
+            <li>Ефекти полотна включають автоматичне визначення рівня обладнання (високий/середній/низький) з апаратним прискоренням GPU за наявності та резервним варіантом на CPU для менш потужних пристроїв</li>
+            <li>Ефекти призупиняються, коли вкладка не видима, для економії ресурсів</li>
+            <li>Стан диму Cyberpunk зберігається під час переходів між сторінками для безшовних переходів</li>
+            <li>Тонке накладення сканліній у стилі CRT адаптується до кольорової палітри кожної теми</li>
+            <li>Ваша обрана тема зберігається в браузері та зберігається між сеансами</li>
+        </ul>
+
+        <h3>Значки, чутливі до теми</h3>
+        <p>Значки сповіщень, індикатори стану завдань і значки дій автоматично адаптуються до поточної теми. Наприклад, значок успіху може показувати зелену галочку в Cyberpunk, але інший символ у Matrix, щоб відповідати естетиці "зелене на чорному".</p>
+    </div>
+</section>
+
+<!-- Dashboard -->
+<section id="dashboard" class="help-section card">
+    <h2 class="card-title">Панель приладів</h2>
+    <div class="card-body">
+        <h3>Оцінка стану колекції</h3>
+        <p>Кругова шкала прогресу показує загальний стан вашої колекції у відсотках, з кольоровим кодуванням за якістю:</p>
+        <ul>
+            <li><strong>Зелений</strong> (80%+) &mdash; Відмінне покриття метаданих</li>
+            <li><strong>Блакитний</strong> (60&ndash;79%) &mdash; Гарне покриття з деякими прогалинами</li>
+            <li><strong>Помаранчевий</strong> (40&ndash;59%) &mdash; Помірне покриття, варто розглянути масовий скрапінг</li>
+            <li><strong>Червоний</strong> (&lt;40%) &mdash; Значні прогалини в метаданих</li>
+        </ul>
+        <p>Нижче міні-шкали розбивки показують повноту обкладинок, повноту описів і покриття досягнень.</p>
+
+        <h3>Огляд статистики</h3>
+        <p>Картки з швидким переглядом, що показують:</p>
+        <ul>
+            <li><strong>Усього систем</strong> &mdash; Кількість платформ у вашій бібліотеці</li>
+            <li><strong>Усього ігор</strong> &mdash; Загальна кількість ігор (без урахування бонусних дисків)</li>
+            <li><strong>Відсутні метадані</strong> &mdash; Ігри, які ще не скраплено</li>
+            <li><strong>Завершено</strong> &mdash; Ігри зі скрапленими метаданими</li>
+        </ul>
+
+        <h3>Розділи останньої активності</h3>
+        <p>Прокручувані розділи, що показують вашу останню активність (кожен з'являється лише за наявності відповідних ігор):</p>
+        <ul>
+            <li><strong>Зараз граю</strong> &mdash; Ігри, позначені як "В процесі"</li>
+            <li><strong>Нещодавно додані</strong> &mdash; Останні ігри, додані до бібліотеки</li>
+            <li><strong>Нещодавно переглянуті</strong> &mdash; Ігри, які ви нещодавно відкривали</li>
+            <li><strong>Нещодавно скраплені</strong> &mdash; Ігри з нещодавно отриманими метаданими</li>
+        </ul>
+
+        <h3>Швидкі дії</h3>
+        <ul>
+            <li><strong>Сканувати бібліотеку</strong> &mdash; Сканувати папки ROM на наявність нових ігор</li>
+            <li><strong>Випадкова гра</strong> &mdash; Обрати випадкову гру з вашої бібліотеки</li>
+        </ul>
+
+        <h3>Статус API</h3>
+        <p>Показує статус з'єднання всіх налаштованих скраперів та API. Офлайн або неправильно налаштовані API показують банер попередження з посиланням на Налаштування.</p>
+
+        <h3>Відновлення завдань</h3>
+        <p>Якщо RetroDB перезапускається під час виконання фонових завдань (масовий скрапінг, синхронізація RA, зміна розміру зображень тощо), перервані завдання з'являються в банері відновлення. Варіанти:</p>
+        <ul>
+            <li><strong>Відновити</strong> &mdash; Перезапустити окреме перерване завдання</li>
+            <li><strong>Відновити все</strong> &mdash; Перезапустити всі перервані завдання</li>
+            <li><strong>Відхилити</strong> &mdash; Прибрати окреме завдання зі списку відновлення</li>
+            <li><strong>Відхилити все</strong> &mdash; Прибрати всі перервані завдання</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Systems Browser -->
+<section id="systems" class="help-section card">
+    <h2 class="card-title">Огляд систем</h2>
+    <div class="card-body">
+        <h3>Сітка систем</h3>
+        <p>Сторінка "Системи" показує всі платформи у вашій бібліотеці у вигляді карток в адаптивній сітці масонрі. Кожна картка показує:</p>
+        <ul>
+            <li><strong>Логотип системи</strong> (налаштовується в Налаштування &rarr; Персоналізація &rarr; Логотипи)</li>
+            <li><strong>Кількість ROM</strong> та <strong>кількість нескраплених</strong></li>
+            <li><strong>Значок типу системи</strong> &mdash; Консоль, Портативна, Комп'ютер, Аркада або Рушій</li>
+            <li><strong>Значки можливостей</strong> &mdash; Підтримка RetroAchievements, Локальні трофеї (RPCS3)</li>
+        </ul>
+
+        <h3>Модальне вікно характеристик системи</h3>
+        <p>Натисніть кнопку інформації на будь-якій картці системи, щоб переглянути детальні апаратні характеристики:</p>
+        <ul>
+            <li>Зображення обладнання (фото консолі/системи)</li>
+            <li>Виробник і дата випуску</li>
+            <li>CPU, GPU, RAM, VRAM</li>
+            <li>Роздільна здатність, глибина кольору, звуковий чип</li>
+            <li>Тип носія (картридж, диск тощо)</li>
+        </ul>
+
+        <h3>Фільтрація та пошук</h3>
+        <ul>
+            <li><strong>Текстовий пошук</strong> &mdash; Фільтрація за назвою системи або назвою папки</li>
+            <li><strong>Фільтр за типом</strong> &mdash; Консоль, Портативна, Комп'ютер, Аркада, Рушій</li>
+            <li><strong>Фільтр за можливостями</strong> &mdash; Підтримка RetroAchievements, Локальні трофеї</li>
+            <li>Панель результатів фільтрації показує <em>"X із Y систем"</em></li>
+            <li>Фільтри зберігаються між перезавантаженнями сторінки через сховище сеансу</li>
+        </ul>
+
+        <h3>Список ігор за системою</h3>
+        <p>Натисніть на будь-яку картку системи, щоб переглянути її ігри. Список ігор за системою має ті самі можливості, що й повна сторінка бібліотеки &mdash; нескінченне прокручування, пошук, усі опції фільтрації, масовий вибір і сортування. Заголовок системи показує назву системи, кількість ігор і значок типу системи.</p>
+    </div>
+</section>
+
+<!-- API Key Setup Guide -->
+<section id="api-keys" class="help-section card">
+    <h2 class="card-title">Посібник з налаштування ключів API</h2>
+    <div class="card-body">
+        <p>Ключі API необов'язкові, але дозволяють отримати розширені метадані та додаткові можливості. Налаштуйте їх в <strong>Налаштування &rarr; Скрапінг &rarr; Ключі API</strong>.</p>
+
+        <h3>Скрапери метаданих</h3>
+
+        <h4>TheGamesDB</h4>
+        <ol>
+            <li>Перейдіть на <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a></li>
+            <li>Запросіть ключі API (безкоштовно, схвалюється вручну) &mdash; ви отримаєте <strong>Public</strong> та <strong>Private</strong> ключ</li>
+            <li>Введіть обидва ключі в Налаштування &rarr; Ключі API &rarr; TheGamesDB</li>
+            <li><strong>Public-ключ</strong> (ліміт запитів на IP) використовується як основний ключ для скрапінгу</li>
+            <li><strong>Private-ключ</strong> (спільний місячний пул) використовується як резервний варіант, якщо публічний ключ не спрацював</li>
+        </ol>
+
+        <h4>IGDB (через Twitch)</h4>
+        <ol>
+            <li>Створіть обліковий запис Twitch на <a href="https://www.twitch.tv" target="_blank" rel="noopener noreferrer">twitch.tv</a></li>
+            <li>Перейдіть на <a href="https://dev.twitch.tv/console" target="_blank" rel="noopener noreferrer">dev.twitch.tv/console</a></li>
+            <li>Зареєструйте нову програму (будь-яка назва, будь-яка категорія, <code>http://localhost</code> як OAuth-редирект)</li>
+            <li>Скопіюйте <strong>Client ID</strong> і згенеруйте <strong>Client Secret</strong></li>
+            <li>Введіть обидва в Налаштування &rarr; Ключі API &rarr; IGDB</li>
+        </ol>
+
+        <h4>RAWG.io</h4>
+        <ol>
+            <li>Перейдіть на <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer">rawg.io/apidocs</a></li>
+            <li>Натисніть "Get API Key" і створіть обліковий запис</li>
+            <li>Скопіюйте свій ключ API з панелі керування</li>
+            <li>Введіть його в Налаштування &rarr; Ключі API &rarr; RAWG</li>
+        </ol>
+        <p><em>Безкоштовний рівень: 20 000 запитів/місяць</em></p>
+
+        <h4>ScreenScraper</h4>
+        <ol>
+            <li>Створіть обліковий запис на <a href="https://www.screenscraper.fr" target="_blank" rel="noopener noreferrer">screenscraper.fr</a></li>
+            <li>Введіть своє ім'я користувача та пароль у Налаштування &rarr; Ключі API &rarr; ScreenScraper</li>
+        </ol>
+        <p><em>Примітка: ScreenScraper має денні ліміти запитів залежно від рівня вашого облікового запису. Внесок у базу даних збільшує ваші ліміти.</em></p>
+
+        <h3>Досягнення та трофеї</h3>
+
+        <h4>RetroAchievements</h4>
+        <ol>
+            <li>Створіть обліковий запис на <a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a></li>
+            <li>Перейдіть на <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer">Налаштування &rarr; Ключі API</a> у вашому профілі</li>
+            <li>Скопіюйте свій ключ API</li>
+            <li>Введіть ім'я користувача та ключ API в Налаштування &rarr; Обліковий запис &rarr; RetroAchievements</li>
+        </ol>
+
+        <h4>Steam Web API</h4>
+        <ol>
+            <li>Перейдіть на <a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener noreferrer">steamcommunity.com/dev/apikey</a></li>
+            <li>Зареєструйте ключ Steam Web API (потрібен обліковий запис Steam)</li>
+            <li>Введіть ключ API та Steam ID (або vanity URL) у Налаштуваннях</li>
+        </ol>
+        <p><em>Використовується для імпорту бібліотеки Steam та відстеження досягнень.</em></p>
+
+        <h4>Xbox Live</h4>
+        <p>Автентифікація Xbox використовує OAuth2 &mdash; ключ API не потрібен. Увійдіть за допомогою свого облікового запису Microsoft безпосередньо на вкладці Імпорт ігор &rarr; Xbox. Токени кешуються автоматично та оновлюються за потреби.</p>
+
+        <h4>PlayStation Network (PSN)</h4>
+        <p>PSN використовує автентифікацію через кукі NPSSO. Дивіться розділ <a href="#trophies">Трофеї</a> для детальних інструкцій з налаштування.</p>
+
+        <h3>Постачальники ШІ (для заповнення ШІ та Музею)</h3>
+        <p>Для заповнення метаданих ШІ та генерації контенту Музею потрібен один постачальник ШІ. Оберіть з-поміж:</p>
+
+        <table class="data-table">
+            <thead>
+                <tr><th>Постачальник</th><th>Типова модель</th><th>Ціна (вхід / вихід за 1М токенів)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0.10 / $0.40</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0.15 / $0.60</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 4.5</td><td>$1.00 / $5.00</td></tr>
+            </tbody>
+        </table>
+        <p>Кожен постачальник пропонує кілька рівнів моделей. Найдешевші моделі добре працюють для метаданих і контенту музею. Налаштуйте бажаного постачальника та ключ API в <strong>Налаштування &rarr; Скрапінг &rarr; Ключі API</strong>.</p>
+    </div>
+</section>
+
+<!-- Settings -->
+<section id="settings" class="help-section card">
+    <h2 class="card-title">Налаштування</h2>
+    <div class="card-body">
+        <p>Налаштування організовані в 6 вкладок, кожна з кількома підрозділами.</p>
+
+        <h3>Вкладка "Обліковий запис"</h3>
+        <ul>
+            <li><strong>Мій профіль</strong> &mdash; Завантаження/видалення аватара, відображуване ім'я, інформація про роль, зміна пароля</li>
+            <li><strong>RetroAchievements</strong> &mdash; Ім'я користувача та ключ API для інтеграції з RA</li>
+            <li><strong>PSN</strong> &mdash; Кукі NPSSO для синхронізації трофеїв PlayStation Network</li>
+            <li><strong>Часовий пояс</strong> &mdash; Встановіть часовий пояс для відображення дат у застосунку</li>
+            <li><strong>Користувачі</strong> &mdash; Керування користувачами: додавання, редагування, видалення користувачів і призначення ролей (лише для адміністратора)</li>
+        </ul>
+
+        <h3>Вкладка "Бібліотека"</h3>
+        <ul>
+            <li><strong>Шляхи</strong> &mdash; Шлях до бібліотеки ROM, розташування бази даних</li>
+            <li><strong>Відображення</strong> &mdash; Вибір теми, стиль обкладинки (2D/3D), бажана система вікових рейтингів, кількість елементів на сторінці</li>
+            <li><strong>Іменування ROM</strong> &mdash; Розташування артикля (провідний/кінцевий "The"), список опцій регіонів, регіон за замовчуванням, конвенції іменування</li>
+            <li><strong>Резервне копіювання</strong> &mdash; Створення та відновлення резервних копій бази даних</li>
+        </ul>
+
+        <h3>Вкладка "Скрапінг"</h3>
+        <ul>
+            <li><strong>ES-DE</strong> &mdash; Шляхи до списку ігор і медіа ES-DE для локального імпорту даних</li>
+            <li><strong>Скрапер</strong> &mdash; Увімкнення/вимкнення окремих скраперів, упорядкування пріоритету перетягуванням, налаштування обмеження швидкості для кожного скрапера</li>
+            <li><strong>Ключі API</strong> &mdash; Усі облікові дані скраперів (TGDB, IGDB, RAWG, ScreenScraper), вибір постачальника ШІ та вибір моделі (Gemini, OpenAI, Claude)</li>
+        </ul>
+
+        <h3>Вкладка "Дані"</h3>
+        <ul>
+            <li><strong>Статистика</strong> &mdash; Огляд статистики бібліотеки (всього ігор, систем, використання сховища)</li>
+            <li><strong>Трофеї</strong> &mdash; Налаштування шляху до трофеїв RPCS3 для локального сканування трофеїв PS3</li>
+            <li><strong>Випадаючі списки</strong> &mdash; Налаштування опцій регіону та інших значень випадаючих списків, що використовуються в застосунку</li>
+            <li><strong>Нормалізація</strong> &mdash; Правила нормалізації жанрів і режимів &mdash; додавайте власні відповідності для стандартизації результатів скраперів</li>
+        </ul>
+
+        <h3>Вкладка "Персоналізація"</h3>
+        <ul>
+            <li><strong>Сповіщення</strong> &mdash; Налаштування тайм-ауту сповіщень (успіх, інформація, попередження, помилка &mdash; кожен налаштовується окремо)</li>
+            <li><strong>Контролери</strong> &mdash; Керування бібліотекою контролерів, встановлення контролерів за замовчуванням для кожної системи, додавання власних контролерів. Контролери за замовчуванням перевизначають скраплені/ШІ-значення під час отримання метаданих.</li>
+            <li><strong>Логотипи</strong> &mdash; Налаштування логотипів систем &mdash; імпорт логотипів систем або оновлення до типових</li>
+        </ul>
+
+        <h3>Вкладка "Система"</h3>
+        <ul>
+            <li><strong>Обслуговування</strong> &mdash; Оптимізація бази даних (VACUUM/ANALYZE), очищення осиротілих медіа, очищення відсутніх ROM, очищення скраплених даних, очищення імпортів CLZ, масова стандартизація зображень</li>
+            <li><strong>Сервер</strong> &mdash; Конфігурація сервера (хост, порт, режим налагодження)</li>
+            <li><strong>Журналювання</strong> &mdash; Налаштування рівня журналювання для різних категорій</li>
+            <li><strong>Усунення несправностей</strong> &mdash; Очищення застряглого масового скрапінгу, черги синхронізації RA, оновлення PSN, генерації музею, перезапуск сервера</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Порада:</strong> Вимкнені скрапери не будуть викликати попередження "API офлайн" на панелі приладів. Якщо ви не використовуєте скрапер, вимкніть його в Налаштування &rarr; Скрапінг &rarr; Скрапер, а не видаляйте ключ API.
+        </div>
+    </div>
+</section>
+
+<!-- Scraping -->
+<section id="scraping" class="help-section card">
+    <h2 class="card-title">Скрапінг метаданих</h2>
+    <div class="card-body">
+        <h3>Скрапінг однієї гри</h3>
+        <ol>
+            <li>Відкрийте модальне вікно деталей будь-якої гри (клацніть на картку гри)</li>
+            <li>Натисніть <strong>"Scrape"</strong></li>
+            <li>За потреби змініть назву пошуку</li>
+            <li>Оберіть правильний результат зі списку відповідностей</li>
+            <li>Натисніть <strong>"Apply"</strong></li>
+        </ol>
+
+        <h3>Джерела скрапінгу</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Джерело</th><th>Ключ API</th><th>Найкраще для</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ES-DE (локально)</td><td>Ні</td><td>Уже скраплених колекцій &mdash; імпортує gamelist.xml та завантажені медіа</td></tr>
+                <tr><td>TheGamesDB</td><td>Так</td><td>Специфічних для платформи обкладинок, 3D-обкладинок</td></tr>
+                <tr><td>IGDB</td><td>Так</td><td>Сучасних ігор, детальної інформації, жанрів, рейтингів</td></tr>
+                <tr><td>RAWG.io</td><td>Так</td><td>Користувацьких рейтингів, описів, скріншотів</td></tr>
+                <tr><td>ScreenScraper</td><td>Так</td><td>Регіональних варіантів, 3D-обкладинок, відео, посібників</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Гібридний скрапінг</h3>
+        <p>RetroDB автоматично поєднує дані з кількох джерел для максимального покриття метаданих:</p>
+        <ul>
+            <li>Текстові метадані з джерела з найвищим пріоритетом</li>
+            <li>Зображення та медіа з другорядних джерел, якщо основне джерело їх не має</li>
+            <li>Автоматичне заповнення прогалин серед скраперів для максимального покриття</li>
+            <li>Назва для сортування генерується автоматично з назви гри під час скрапінгу</li>
+        </ul>
+
+        <h3>Робота з медіа</h3>
+        <ul>
+            <li>Поля медіа (обкладинка, 3D-обкладинка, скріншоти, fanart, відео, посібник) <strong>ніколи не замінюються</strong> під час звичайного скрапінгу &mdash; заповнюються лише коли порожні</li>
+            <li>Скріншоти завжди <strong>додаються</strong>, ніколи не замінюються</li>
+            <li>Щоб повторно завантажити медіа, спочатку очистіть наявне зображення в модальному вікні редагування, а потім скрапте повторно</li>
+            <li>Режим <strong>Повторний повний скрапінг</strong> перевизначає це і замінює все</li>
+            <li>Застарілі посилання на медіа (файл видалено, але назва файлу все ще в базі даних) автоматично очищуються перед скрапінгом, щоб можна було завантажити нові медіа</li>
+            <li>Завантажені зображення автоматично стандартизуються до цільових розмірів (дивіться <a href="#image-standardization">Стандартизація зображень</a>)</li>
+        </ul>
+
+        <h3>Пріоритет скраперів</h3>
+        <p>Налаштуйте, які скрапери запускаються першими та які увімкнено/вимкнено, в <strong>Налаштування &rarr; Скрапінг &rarr; Скрапер</strong>. Перетягніть, щоб змінити порядок пріоритету. Вимкнені скрапери не будуть використовуватися під час скрапінгу та не викликатимуть попереджень про статус API на панелі приладів.</p>
+
+        <h3>Обмеження швидкості</h3>
+        <p>Кожен скрапер має налаштовувані обмеження швидкості для запобігання обмеженню з боку API. Типові затримки встановлені консервативно. Зменшуйте затримки на власний ризик &mdash; перевищення лімітів швидкості API може призвести до тимчасового блокування відповідним сервісом.</p>
+    </div>
+</section>
+
+<!-- Bulk Scraping -->
+<section id="bulk-scrape" class="help-section card">
+    <h2 class="card-title">Масовий скрапінг</h2>
+    <div class="card-body">
+        <h3>Початок масового скрапінгу</h3>
+        <ol>
+            <li>Перейдіть на будь-яку сторінку системи або бібліотеки</li>
+            <li>Натисніть <strong>"Select"</strong>, щоб увійти в режим вибору</li>
+            <li>Виберіть ігри окремо або скористайтеся швидким вибором:
+                <ul>
+                    <li><strong>Вибрати все</strong> &mdash; Усі видимі ігри</li>
+                    <li><strong>Вибрати нескраплені</strong> &mdash; Лише ігри без метаданих</li>
+                </ul>
+            </li>
+            <li>Оберіть режим: <strong>Заповнити відсутнє</strong> або <strong>Повторний повний скрапінг</strong></li>
+            <li>Натисніть <strong>"Scrape Selected"</strong></li>
+        </ol>
+
+        <h3>Керування</h3>
+        <ul>
+            <li><strong>Пауза / Продовжити</strong> &mdash; Призупинити або продовжити скрапінг</li>
+            <li><strong>Скасувати</strong> &mdash; Зупинити повністю</li>
+            <li><strong>У фоні</strong> &mdash; Згорнути та продовжити перегляд, поки триває скрапінг</li>
+        </ul>
+
+        <h3>Спливаюче сповіщення</h3>
+        <p>Під час роботи у фоні постійне спливаюче сповіщення показує прогрес на всіх сторінках:</p>
+        <ul>
+            <li>Назва поточної гри, кількість прогресу та статистика результатів (успіх, помилка, пропущено)</li>
+            <li>Керування паузою/скасуванням доступне з будь-якої сторінки</li>
+            <li>Натисніть на сповіщення, щоб повернутися до вікна скрапінгу</li>
+        </ul>
+
+        <h3>Система черги</h3>
+        <p>Декілька масових скрапінгів автоматично стають у чергу:</p>
+        <ul>
+            <li>Почніть новий скрапінг, поки виконується інший &mdash; він стає в чергу</li>
+            <li>Черга показується у сповіщенні з кількістю завдань, що очікують</li>
+            <li>Завдання обробляються автоматично по черзі</li>
+            <li>Використовуйте менеджер черги для перегляду, зміни порядку або скасування завдань у черзі</li>
+        </ul>
+
+        <h3>Опції скрапінгу</h3>
+        <ul>
+            <li><strong>Заповнити лише відсутнє</strong> &mdash; Заповнювати лише порожні поля метаданих, зберігаючи наявні дані</li>
+            <li><strong>Повторний повний скрапінг</strong> &mdash; Замінити всі поля, включно з медіа (завантажує нові зображення та відео)</li>
+            <li><strong>Перевіряти RetroAchievements</strong> &mdash; Також перевіряти наявність наборів досягнень RetroAchievements під час скрапінгу</li>
+        </ul>
+
+        <h3>Відновлення завдань</h3>
+        <p>Якщо RetroDB перезапускається під час виконання завдання, перервані завдання з'являються в банері відновлення на панелі приладів. Натисніть <strong>"Resume"</strong> для окремих завдань або <strong>"Resume All"</strong>, щоб перезапустити їх усі. Спливаюче сповіщення про прогрес з'являється одразу після відновлення.</p>
+    </div>
+</section>
+
+<!-- AI Fill -->
+<section id="ai-fill" class="help-section card">
+    <h2 class="card-title">Заповнення ШІ</h2>
+    <div class="card-body">
+        <h3>Що це робить</h3>
+        <p>Заповнення ШІ використовує велику мовну модель (Gemini, OpenAI або Claude), щоб інтелектуально заповнити відсутні або неповні метадані гри. Це розумніше за звичайний скрапінг, оскільки використовує контекстні знання про гру для надання точних даних, яких можуть не мати скрапери.</p>
+
+        <h3>Як використовувати</h3>
+        <ol>
+            <li>Відкрийте модальне вікно деталей гри (або повну сторінку деталей)</li>
+            <li>Натисніть <strong>"AI Fill"</strong> (потребує налаштованого ключа API ШІ в Налаштуваннях)</li>
+            <li>ШІ аналізує назву гри та систему, а потім заповнює відсутні поля</li>
+            <li>Перегляньте результати &mdash; зміни зберігаються автоматично</li>
+        </ol>
+
+        <h3>Що може надати заповнення ШІ</h3>
+        <ul>
+            <li>Жанр, опис, розробника, видавця, дату випуску</li>
+            <li>Кількість гравців, режими гри (одиночна гра, багатокористувацька, кооператив тощо)</li>
+            <li>Інформацію про кампанію та структуру гри</li>
+            <li>Усі 8 систем вікових рейтингів (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd)</li>
+            <li>Регіон, франшизу, схожі ігри</li>
+            <li>Підтримку контролерів, тип збереження</li>
+            <li>Перспективу (від першої особи, вигляд зверху, платформер з горизонтальним прокручуванням тощо), вимірність (2D, 3D)</li>
+            <li>Інформацію про видання, оцінки критиків і користувачів</li>
+        </ul>
+
+        <h3>Логіка розумного заповнення</h3>
+        <ul>
+            <li><strong>Порожні поля</strong> заповнюються завжди</li>
+            <li><strong>Наявні дані користувача</strong> ніколи не перезаписуються</li>
+            <li><strong>Схожі ігри</strong> завжди оновлюються (дані ШІ надійніші для цього поля)</li>
+            <li><strong>Перехресно зіставлені рейтинги</strong> &mdash; Якщо відома одна система рейтингів, порожні рейтинги в інших системах автоматично заповнюються за допомогою перехресного зіставлення рівнів зрілості</li>
+            <li><strong>Назва для сортування</strong> генерується автоматично при заповненні</li>
+            <li>Поле <strong>Кількість гравців</strong> нормалізує діапазони (наприклад, "1-4" стає 4)</li>
+        </ul>
+
+        <h3>Нормалізація жанрів</h3>
+        <p>Заповнення ШІ використовує канонічні форми жанрів із назвами через дефіс:</p>
+        <ul>
+            <li><code>First-Person-Shooter</code>, <code>Shoot-em-up</code>, <code>Beat-em-up</code></li>
+            <li><code>Hack-n-Slash</code>, <code>Board-Card</code>, <code>Real-Time Strategy</code></li>
+        </ul>
+
+        <h3>Вимоги</h3>
+        <p>Потрібно налаштувати принаймні один ключ API постачальника ШІ в <strong>Налаштування &rarr; Скрапінг &rarr; Ключі API</strong>. Найдешевший рівень моделі (Gemini Flash Lite, GPT-4o Mini або Claude Haiku) добре працює для метаданих.</p>
+    </div>
+</section>
+
+<!-- Filtering -->
+<section id="filtering" class="help-section card">
+    <h2 class="card-title">Фільтрація та пошук</h2>
+    <div class="card-body">
+        <h3>Пошук</h3>
+        <p>Пошук фільтрує ігри за назвою (та назвою для сортування). Натисніть <kbd>/</kbd>, щоб перевести фокус на поле пошуку. Результати оновлюються в реальному часі з затримкою 300 мс.</p>
+
+        <h3>Фільтр за джерелом</h3>
+        <p>Фільтруйте ігри за джерелом імпорту:</p>
+        <ul>
+            <li><strong>Файли ROM</strong> &mdash; Ігри з вашої бібліотеки ROM</li>
+            <li><strong>Імпорти CLZ</strong> &mdash; Фізичні ігри, імпортовані з CLZ</li>
+            <li><strong>Імпорти Steam</strong> &mdash; Ігри, імпортовані зі Steam</li>
+            <li><strong>Імпорти Xbox</strong> &mdash; Ігри, імпортовані з Xbox</li>
+            <li><strong>Імпорти PSN</strong> &mdash; Ігри, імпортовані з PlayStation Network</li>
+        </ul>
+
+        <h3>Кнопки фільтрів</h3>
+        <p>Кожен фільтр відкриває модальне вікно з усіма унікальними значеннями у вашій бібліотеці з підрахунком. Фільтри підтримують два режими:</p>
+        <ul>
+            <li><strong>Включити (IS)</strong> &mdash; Показувати лише ігри, що відповідають обраному значенню</li>
+            <li><strong>Виключити (IS NOT)</strong> &mdash; Приховувати ігри, що відповідають обраному значенню</li>
+        </ul>
+        <p>Перемикайтеся між режимами включення та виключення за допомогою перемикача в модальному вікні фільтра.</p>
+
+        <h3>Доступні фільтри</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Фільтр</th><th>Опис</th><th>Множинне значення</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Жанр</strong></td><td>Екшн, RPG, платформер тощо</td><td>Так</td></tr>
+                <tr><td><strong>Серія</strong></td><td>Ігрова франшиза</td><td>Так</td></tr>
+                <tr><td><strong>Видавець</strong></td><td>Видавнича компанія</td><td>Так</td></tr>
+                <tr><td><strong>Розробник</strong></td><td>Студія розробки</td><td>Так</td></tr>
+                <tr><td><strong>Кількість гравців</strong></td><td>Кількість гравців</td><td>Ні</td></tr>
+                <tr><td><strong>Режими</strong></td><td>Одиночна гра, багатокористувацька, кооператив</td><td>Так</td></tr>
+                <tr><td><strong>Перспектива</strong></td><td>Від першої особи, вигляд зверху, ізометрична, з горизонтальним прокручуванням</td><td>Так</td></tr>
+                <tr><td><strong>Вимірність</strong></td><td>2D, 3D</td><td>Так</td></tr>
+                <tr><td><strong>Рейтинг</strong></td><td>Віковий рейтинг (показує вашу бажану систему)</td><td>Ні</td></tr>
+                <tr><td><strong>Має RA</strong></td><td>Ігри з підтримкою RetroAchievements</td><td>Ні</td></tr>
+                <tr><td><strong>Показувати бонусні</strong></td><td>Перемикання видимості бонусних дисків</td><td>Ні</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Опції сортування</h3>
+        <ul>
+            <li><strong>Назва</strong> &mdash; За алфавітом за назвою для сортування (без урахування регістру)</li>
+            <li><strong>Дата випуску</strong> &mdash; У хронологічному порядку (спочатку найдавніші)</li>
+            <li><strong>Платформа</strong> &mdash; Згруповано за назвою системи</li>
+        </ul>
+
+        <h3>Навігація за алфавітом</h3>
+        <p>Перейдіть до ігор, що починаються на певну літеру. Літери без відповідних ігор виділено сірим. Цифри та символи згруповано під <strong>#</strong>.</p>
+
+        <h3>Нескінченне прокручування</h3>
+        <p>Ігри завантажуються партіями по 100 під час прокручування. Нові сторінки завантажуються автоматично, коли ви наближаєтеся до кінця. Зміна фільтрів або пошуку миттєво скидає та перезавантажує результати.</p>
+
+        <h3>Збереження стану</h3>
+        <p>Ваші поточні фільтри, пошуковий запит і положення прокручування зберігаються в сховищі сеансу. Вони відновлюються, коли ви повертаєтеся на сторінку або оновлюєте її.</p>
+    </div>
+</section>
+
+<!-- Game Detail -->
+<section id="game-detail" class="help-section card">
+    <h2 class="card-title">Деталі гри</h2>
+    <div class="card-body">
+        <h3>Модальне вікно деталей гри</h3>
+        <p>Клацання на будь-яку картку гри відкриває модальне вікно деталей з кешованим швидким переглядом. Модальне вікно показує:</p>
+        <ul>
+            <li>Обкладинку (2D і 3D), фон fanart</li>
+            <li>Опис та інформацію про випуск</li>
+            <li>Значки розробника, видавця, жанру</li>
+            <li>Кількість гравців, режими гри, структуру гри</li>
+            <li>Зображення вікового рейтингу (з вашої бажаної системи, з резервним перехресним зіставленням)</li>
+            <li>Галерею скріншотів з навігацією клавіатурою (<kbd>&larr;</kbd> <kbd>&rarr;</kbd>)</li>
+            <li>Відео трейлера (якщо доступне)</li>
+            <li>Оцінки часу проходження HLTB (основна історія, основна + додатковий контент, повне проходження)</li>
+            <li>Статус і прогрес RetroAchievements</li>
+            <li>Схожі ігри (клікабельні посилання)</li>
+            <li>Деталі підтримки контролерів</li>
+            <li>Теги, призначені грі</li>
+            <li>Розмір файлу та шлях до ROM</li>
+        </ul>
+
+        <h3>Повна сторінка деталей гри</h3>
+        <p>Натисніть на посилання назви гри або перейдіть із хлібних крихт, щоб переглянути повну сторінку деталей гри. Додаткові можливості на повній сторінці включають:</p>
+        <ul>
+            <li><strong>Заголовок з фоном fanart</strong> з навігацією хлібними крихтами</li>
+            <li><strong>Значки платформи імпорту</strong> &mdash; Показує CLZ Import, Steam Import, Xbox Import або PSN Import з логотипами платформ, де застосовно</li>
+            <li><strong>Індикатор бонусного диска</strong> &mdash; Показує значок і посилання "Part of:" на батьківську гру з мініатюрою</li>
+            <li><strong>Кнопка видалення</strong> &mdash; Видалити гру з бази даних (з підтвердженням)</li>
+            <li><strong>Кнопка очищення</strong> &mdash; Очистити всі скраплені метадані, зберігаючи запис ROM</li>
+        </ul>
+
+        <h3>Модальне вікно редагування</h3>
+        <p>Натисніть <strong>Edit</strong> (або клавішу <kbd>e</kbd>), щоб відкрити модальне вікно редагування, організоване в розділи:</p>
+        <ul>
+            <li><strong>Ідентичність</strong> &mdash; Назва, назва для сортування (генерується автоматично, але редагована), франшиза, видання</li>
+            <li><strong>Інформація про випуск</strong> &mdash; Дата випуску, регіон (з налаштовуваного випадаючого списку)</li>
+            <li><strong>Ігровий процес</strong> &mdash; Жанр (теги з множинним вибором), режими, структура гри, кількість гравців, розробник, видавець</li>
+            <li><strong>Технічні дані</strong> &mdash; Контролери (множинний вибір), тип збереження, перспектива (множинне значення), вимірність (множинне значення)</li>
+            <li><strong>Вікові рейтинги</strong> &mdash; Усі 8 систем рейтингів з офіційними зображеннями рейтингів та автоматичним перехресним зіставленням. Зміна одного рейтингу автоматично заповнює порожні рейтинги в інших системах.</li>
+            <li><strong>Оцінки</strong> &mdash; Оцінка критиків, оцінка користувачів</li>
+            <li><strong>Опис</strong> &mdash; Текст опису гри</li>
+            <li><strong>Власні зображення</strong> &mdash; Завантаження власної обкладинки (2D), 3D-обкладинки та fanart. Очистіть наявні зображення, щоб дозволити повторний скрапінг.</li>
+            <li><strong>Відео / Трейлер</strong> &mdash; Завантаження або посилання на відеотрейлер</li>
+        </ul>
+
+        <h3>Швидкі дії</h3>
+        <ul>
+            <li><strong>Edit</strong> &mdash; Відкрити модальне вікно редагування (<kbd>e</kbd>)</li>
+            <li><strong>Scrape</strong> &mdash; Отримати метадані з джерел скрапінгу (<kbd>s</kbd>)</li>
+            <li><strong>AI Fill</strong> &mdash; Заповнити відсутні поля за допомогою ШІ (потребує ключа API ШІ)</li>
+            <li><strong>Check for RA</strong> &mdash; Пошук набору досягнень RetroAchievements</li>
+            <li><strong>HLTB Lookup</strong> &mdash; Знайти оцінки часу проходження з HowLongToBeat</li>
+        </ul>
+
+        <h3>Статус проходження</h3>
+        <p>Відстежуйте прогрес за допомогою цих статусів (показані як значки на картках ігор):</p>
+        <ul>
+            <li><strong>Не розпочато</strong> &mdash; Ще не грали</li>
+            <li><strong>В процесі</strong> &mdash; Наразі граєте</li>
+            <li><strong>Зіграно</strong> &mdash; Грали, але не завершили</li>
+            <li><strong>Завершено</strong> &mdash; Завершили основну гру</li>
+            <li><strong>100%</strong> &mdash; Завершили все</li>
+        </ul>
+
+        <h3>Система множинних рейтингів</h3>
+        <p>RetroDB підтримує 8 міжнародних систем вікових рейтингів:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>Система</th><th>Регіон</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>ESRB</strong></td><td>Північна Америка</td></tr>
+                <tr><td><strong>PEGI</strong></td><td>Європа</td></tr>
+                <tr><td><strong>CERO</strong></td><td>Японія</td></tr>
+                <tr><td><strong>USK</strong></td><td>Німеччина</td></tr>
+                <tr><td><strong>ACB</strong></td><td>Австралія</td></tr>
+                <tr><td><strong>FPB</strong></td><td>Південна Африка</td></tr>
+                <tr><td><strong>GRAC</strong></td><td>Південна Корея</td></tr>
+                <tr><td><strong>ClassInd</strong></td><td>Бразилія</td></tr>
+            </tbody>
+        </table>
+        <p>Встановіть бажану систему в <strong>Налаштування &rarr; Бібліотека &rarr; Відображення</strong>. Офіційні зображення рейтингів відображаються на картках ігор, у модальних вікнах деталей та на сторінках деталей. Порожні рейтинги автоматично заповнюються з будь-якого доступного рейтингу за допомогою перехресного зіставлення рівнів зрілості під час скрапінгу, заповнення ШІ та ручного редагування.</p>
+
+        <h3>Бонусні диски</h3>
+        <p>RetroDB автоматично виявляє бонусні/додаткові диски (наприклад, диски саундтреків, диски з додатковим контентом) і прив'язує їх до батьківської гри. Бонусні диски за замовчуванням приховані в бібліотеці &mdash; увімкніть <strong>"Show Bonus"</strong> у фільтрах, щоб їх показати. Прив'язані бонусні диски з'являються в модальному вікні деталей батьківської гри.</p>
+
+        <div class="help-tip">
+            <strong>Порада:</strong> Модальне вікно деталей кешує нещодавно переглянуті ігри для швидшого завантаження. Редагування автоматично оновлює картку гри на сторінці без потреби в оновленні.
+        </div>
+    </div>
+</section>
+
+<!-- Bulk Edit -->
+<section id="bulk-edit" class="help-section card">
+    <h2 class="card-title">Масове редагування</h2>
+    <div class="card-body">
+        <h3>Як використовувати</h3>
+        <ol>
+            <li>Перейдіть на будь-яку сторінку системи або бібліотеки</li>
+            <li>Натисніть <strong>"Select"</strong>, щоб увійти в режим вибору</li>
+            <li>Оберіть ігри, які хочете редагувати (окремо, вибрати все або вибрати нескраплені)</li>
+            <li>Натисніть <strong>"Bulk Edit"</strong></li>
+            <li>Оберіть поле для зміни та встановіть нове значення</li>
+            <li>Оберіть режим <strong>Замінити</strong> або <strong>Додати</strong></li>
+            <li>Натисніть <strong>"Apply"</strong>, щоб оновити всі обрані ігри</li>
+        </ol>
+
+        <h3>Замінити чи додати</h3>
+        <ul>
+            <li><strong>Замінити</strong> &mdash; Перезаписує наявне значення новим</li>
+            <li><strong>Додати</strong> &mdash; Додає нове значення до наявних значень (для полів з множинним значенням)</li>
+        </ul>
+
+        <h3>Підтримувані поля</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Поле</th><th>Підтримує додавання</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Жанр</td><td>Так</td></tr>
+                <tr><td>Видавець</td><td>Так</td></tr>
+                <tr><td>Розробник</td><td>Так</td></tr>
+                <tr><td>Франшиза</td><td>Так</td></tr>
+                <tr><td>Регіон</td><td>Так</td></tr>
+                <tr><td>Структура гри</td><td>Так</td></tr>
+                <tr><td>Перспектива</td><td>Так</td></tr>
+                <tr><td>Вимірність</td><td>Так</td></tr>
+                <tr><td>Статус проходження</td><td>Ні (лише заміна)</td></tr>
+                <tr><td>Кількість гравців</td><td>Ні (лише заміна)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Compare Games -->
+<section id="compare" class="help-section card">
+    <h2 class="card-title">Порівняння ігор</h2>
+    <div class="card-body">
+        <h3>Що це робить</h3>
+        <p>Порівняння метаданих двох ігор поруч у вигляді таблиці. Корисно для перевірки якості метаданих, виявлення дублікатів або порівняння версій однієї гри для різних систем.</p>
+
+        <h3>Як використовувати</h3>
+        <ol>
+            <li>Перейдіть у розділ <strong>Порівняння</strong> (доступний зі сторінки бібліотеки)</li>
+            <li>Знайдіть та оберіть першу гру</li>
+            <li>Знайдіть та оберіть другу гру</li>
+            <li>Перегляньте таблицю порівняння &mdash; відмінності виділено</li>
+        </ol>
+
+        <h3>Поля для порівняння</h3>
+        <p>Система, розробник, видавець, дата випуску, жанр, франшиза, регіон, кількість гравців, режими, перспектива, вимірність, усі 8 вікових рейтингів, користувацький рейтинг, оцінка критиків, оцінки часу проходження, підтримка контролерів, тип збереження, розмір файлу, схожі ігри, опис та інше.</p>
+    </div>
+</section>
+
+<!-- Collections -->
+<section id="collections" class="help-section card">
+    <h2 class="card-title">Колекції (Теги, Списки, Список бажань)</h2>
+    <div class="card-body">
+        <h3>Теги</h3>
+        <p>Створюйте власні кольорові теги для організації ігор. Теги працюють як ярлики &mdash; кожна гра може мати кілька тегів, а кожен тег може містити кілька ігор.</p>
+        <ul>
+            <li>Створюйте теги з власними назвами та кольорами на сторінці <strong>Теги</strong></li>
+            <li>Призначайте теги іграм через модальне вікно деталей гри</li>
+            <li>Натисніть на будь-який тег, щоб переглянути всі ігри з цим тегом</li>
+            <li>Редагуйте або видаляйте теги на сторінці керування тегами</li>
+        </ul>
+
+        <h3>Іменовані списки</h3>
+        <p>Створюйте кураторські списки ігор із власним порядком. Списки схожі на плейлисти &mdash; ви керуєте точним порядком ігор.</p>
+        <ul>
+            <li>Створюйте списки з назвою, описом та іконкою на сторінці <strong>Списки</strong></li>
+            <li>Додавайте ігри до списків через модальне вікно деталей гри або сторінку списку</li>
+            <li>Перетягуйте, щоб змінити порядок ігор у списку</li>
+            <li>Сортуйте за власним порядком або за алфавітом</li>
+        </ul>
+
+        <h3>Список бажань</h3>
+        <p>Відстежуйте ігри, які ви хочете придбати, фізично чи цифрово.</p>
+        <ul>
+            <li>Додавайте ігри вручну з назвою, системою, нотатками та пріоритетом (1&ndash;5)</li>
+            <li>Елементи списку бажань можуть бути прив'язані до наявних ігор у бібліотеці, якщо їх знайдено</li>
+            <li>Сортуються за пріоритетом (найвищий спочатку), потім за датою додавання</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Порада:</strong> Використовуйте теги для наскрізних ярликів (наприклад, "Улюблені", "Кооп на дивані", "Черга") і списки для конкретних кураторських колекцій (наприклад, "Топ-10 ігор SNES", "Ігри для стрімів").
+        </div>
+    </div>
+</section>
+
+<!-- Game Imports -->
+<section id="game-imports" class="help-section card">
+    <h2 class="card-title">Імпорт ігор</h2>
+    <div class="card-body">
+        <p>Імпортуйте колекції ігор із зовнішніх джерел. Доступ через <strong>Імпорт ігор</strong> на бічній панелі. Усі типи імпорту об'єднано на одній сторінці з вкладками.</p>
+
+        <h3>Імпорт з CLZ Games</h3>
+        <p>Імпортуйте вашу фізичну колекцію ігор із CLZ Games.</p>
+        <ol>
+            <li>Експортуйте вашу колекцію CLZ Games у PDF</li>
+            <li>Перейдіть в Імпорт ігор &rarr; вкладка <strong>CLZ</strong></li>
+            <li>Завантажте PDF-файл</li>
+            <li>Перегляньте розпізнані ігри</li>
+            <li>Оберіть, які ігри імпортувати</li>
+        </ol>
+        <p>Імпорти CLZ відстежуються окремо від ігор ROM (з використанням префікса <code>clz_import/</code>), що дозволяє каталогізувати як фізичні, так і цифрові колекції. Імпорти CLZ можна повністю очистити в <strong>Налаштування &rarr; Система &rarr; Обслуговування</strong>.</p>
+
+        <h3>Імпорт зі Steam</h3>
+        <p>Імпортуйте вашу бібліотеку ігор Steam та відстежуйте досягнення.</p>
+        <ol>
+            <li>Налаштуйте ключ Steam Web API та Steam ID у Налаштуваннях</li>
+            <li>Перейдіть в Імпорт ігор &rarr; вкладка <strong>Steam</strong></li>
+            <li>Натисніть <strong>"Fetch Library"</strong>, щоб отримати ваші ігри Steam</li>
+            <li>Оберіть ігри для імпорту (дублікати виявляються автоматично)</li>
+            <li>Імпортовані ігри позначаються їхнім Steam App ID для відстеження досягнень</li>
+        </ol>
+
+        <h3>Імпорт з Xbox</h3>
+        <p>Імпортуйте вашу бібліотеку ігор Xbox через обліковий запис Microsoft.</p>
+        <ol>
+            <li>Перейдіть в Імпорт ігор &rarr; вкладка <strong>Xbox</strong></li>
+            <li>Натисніть <strong>"Sign In"</strong>, щоб автентифікуватися через обліковий запис Microsoft (потік OAuth2)</li>
+            <li>Історію ваших назв Xbox буде отримано автоматично</li>
+            <li>Оберіть ігри для імпорту з виявленням дублікатів</li>
+            <li>Імпортовані ігри позначаються їхнім Xbox Title ID для відстеження досягнень</li>
+        </ol>
+        <p>Токени Xbox кешуються в <code>data/xbox_tokens.json</code> і оновлюються автоматично.</p>
+
+        <h3>Імпорт з PSN</h3>
+        <p>Імпортуйте вашу бібліотеку ігор PlayStation Network.</p>
+        <ol>
+            <li>Перейдіть в Імпорт ігор &rarr; вкладка <strong>PSN</strong></li>
+            <li>Введіть ваш кукі NPSSO (дивіться <a href="#trophies">Трофеї &rarr; Автентифікація PSN</a> для того, як його отримати)</li>
+            <li>Натисніть <strong>"Fetch Library"</strong>, щоб отримати ваші ігри PSN</li>
+            <li>Оберіть ігри для імпорту</li>
+        </ol>
+
+        <h3>Після імпортування</h3>
+        <ul>
+            <li>Імпортовані ігри з'являються у вашій бібліотеці зі значками, специфічними для платформи</li>
+            <li>Використовуйте масовий скрапінг для отримання метаданих для імпортованих ігор</li>
+            <li>Відстеження досягнень/трофеїв автоматично прив'язується до вихідної платформи</li>
+            <li>Імпортовані ігри можна фільтрувати в бібліотеці за допомогою фільтра джерела</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Порада:</strong> Після імпортування ігор з будь-якої платформи ви можете скрапити для них метадані за допомогою масового скрапінгу, так само як і для ігор ROM. Імпортовані ігри також можуть відстежувати досягнення з відповідних платформ.
+        </div>
+    </div>
+</section>
+
+<!-- RetroAchievements -->
+<section id="retroachievements" class="help-section card">
+    <h2 class="card-title">RetroAchievements</h2>
+    <div class="card-body">
+        <h3>Налаштування</h3>
+        <ol>
+            <li>Створіть обліковий запис на <a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a></li>
+            <li>Згенеруйте ключ API в налаштуваннях профілю</li>
+            <li>Введіть ім'я користувача та ключ API в Налаштування &rarr; Обліковий запис &rarr; RetroAchievements</li>
+        </ol>
+
+        <h3>Сторінка досягнень</h3>
+        <ul>
+            <li><strong>Вкладки систем</strong> &mdash; Перегляд досягнень за платформою (запам'ятовує останню переглянуту вкладку)</li>
+            <li><strong>Навігація за алфавітом</strong> &mdash; Перейдіть до ігор за першою літерою в межах кожної вкладки системи</li>
+            <li><strong>Оновити прогрес</strong> &mdash; Синхронізувати прогрес досягнень з RetroAchievements</li>
+            <li><strong>Загальна статистика</strong> &mdash; Отримані досягнення та бали за всіма системами</li>
+            <li><strong>Прогрес по кожній грі</strong> &mdash; Перегляд відсотка завершення для кожної гри зі смугами прогресу</li>
+        </ul>
+
+        <h3>Черга синхронізації</h3>
+        <p>Кілька синхронізацій систем можуть стояти в черзі:</p>
+        <ul>
+            <li>Натисніть "Refresh Progress" на будь-якій системі, щоб почати або поставити синхронізацію в чергу</li>
+            <li>Якщо синхронізація вже виконується, нові запити ставляться в чергу автоматично</li>
+            <li>Черга обробляється автоматично після завершення поточної синхронізації</li>
+            <li>Спливаюче сповіщення показує поточний прогрес і кількість у черзі</li>
+        </ul>
+
+        <h3>Пошук ігор з досягненнями</h3>
+        <ul>
+            <li><strong>Фільтр бібліотеки</strong> &mdash; Використовуйте фільтр "Has RA", щоб показувати лише ігри з досягненнями</li>
+            <li><strong>Check for RA</strong> &mdash; У модальних вікнах деталей гри натисніть, щоб знайти набір досягнень</li>
+            <li><strong>Масовий скрапінг</strong> &mdash; Увімкніть опцію "Check RA", щоб знаходити досягнення під час скрапінгу</li>
+            <li><strong>Завдання оновлення RA</strong> &mdash; Скануйте всі ігри системи, щоб визначити, які підтримують RA</li>
+        </ul>
+
+        <h3>Деталі на рівні гри</h3>
+        <p>Натисніть на будь-яку гру на сторінці досягнень, щоб побачити детальну інформацію про досягнення для цієї гри, включно з назвами окремих досягнень, описами, кількістю балів і статусом отримання.</p>
+
+        <div class="help-tip">
+            <strong>Примітка:</strong> "Refresh Progress" синхронізує ваш прогрес для ігор, які вже прив'язані до RetroAchievements.
+            Щоб знайти НОВІ набори досягнень, використовуйте "Check for RA" у модальних вікнах деталей гри або увімкніть цю опцію під час масового скрапінгу.
+        </div>
+    </div>
+</section>
+
+<!-- Steam Achievements -->
+<section id="steam-achievements" class="help-section card">
+    <h2 class="card-title">Досягнення Steam</h2>
+    <div class="card-body">
+        <h3>Налаштування</h3>
+        <ol>
+            <li>Імпортуйте ігри Steam через <strong>Імпорт ігор &rarr; Steam</strong></li>
+            <li>Переконайтеся, що ваш ключ Steam Web API налаштовано в Налаштуваннях</li>
+        </ol>
+
+        <h3>Сторінка досягнень</h3>
+        <p>Переглядайте всі ваші ігри Steam з прогресом досягнень одним поглядом:</p>
+        <ul>
+            <li><strong>Загальна статистика</strong> &mdash; Усього ігор Steam, отримані досягнення, відсоток завершення</li>
+            <li><strong>Прогрес по кожній грі</strong> &mdash; Смуги завершення для кожної гри</li>
+        </ul>
+
+        <h3>Деталі досягнень для кожної гри</h3>
+        <p>Натисніть на будь-яку гру Steam, щоб побачити її окремі досягнення:</p>
+        <ul>
+            <li>Значки, назви та описи досягнень</li>
+            <li>Статус розблоковано/заблоковано з мітками часу розблокування</li>
+            <li>Глобальний відсоток гравців, які розблокували кожне досягнення</li>
+        </ul>
+
+        <h3>Синхронізація</h3>
+        <ul>
+            <li>Синхронізуйте досягнення однієї гри з її сторінки деталей</li>
+            <li>Масова синхронізація всіх ігор Steam зі сторінки досягнень</li>
+            <li>Синхронізація виконується як фонове завдання з прогресом у спливаючому сповіщенні</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Xbox Achievements -->
+<section id="xbox-achievements" class="help-section card">
+    <h2 class="card-title">Досягнення Xbox</h2>
+    <div class="card-body">
+        <h3>Налаштування</h3>
+        <ol>
+            <li>Імпортуйте ігри Xbox через <strong>Імпорт ігор &rarr; Xbox</strong></li>
+            <li>Автентифікація виконується через Xbox OAuth під час імпорту</li>
+        </ol>
+
+        <h3>Сторінка досягнень</h3>
+        <ul>
+            <li><strong>Загальна статистика</strong> &mdash; Усього ігор Xbox, отримані досягнення, отриманий/загальний gamerscore, відсоток завершення</li>
+            <li><strong>Прогрес по кожній грі</strong> &mdash; Отриманий gamerscore для кожної гри зі смугами прогресу</li>
+        </ul>
+
+        <h3>Деталі досягнень для кожної гри</h3>
+        <p>Натисніть на будь-яку гру Xbox, щоб побачити її окремі досягнення:</p>
+        <ul>
+            <li>Значки досягнень з окремими значеннями gamerscore</li>
+            <li>Статус розблоковано/заблоковано з мітками часу розблокування</li>
+            <li>Значки gamerscore на кожному досягненні</li>
+        </ul>
+
+        <h3>Синхронізація</h3>
+        <ul>
+            <li>Синхронізуйте одну гру або всі ігри Xbox масово</li>
+            <li>Виконується як фонове завдання зі спливаючими сповіщеннями</li>
+            <li>Загальний gamerscore оновлюється автоматично після кожної синхронізації</li>
+        </ul>
+    </div>
+</section>
+
+<!-- HLTB -->
+<section id="hltb" class="help-section card">
+    <h2 class="card-title">How Long to Beat</h2>
+    <div class="card-body">
+        <h3>Використання</h3>
+        <ol>
+            <li>Відкрийте модальне вікно деталей будь-якої гри</li>
+            <li>Натисніть <strong>"Lookup HLTB"</strong></li>
+            <li>Оберіть правильну відповідність зі списку результатів</li>
+            <li>Оцінки часу проходження зберігаються для гри</li>
+        </ol>
+
+        <h3>Категорії часу</h3>
+        <ul>
+            <li><strong>Основна історія</strong> &mdash; Час завершення основної гри</li>
+            <li><strong>Основна + додатковий контент</strong> &mdash; З додатковим контентом</li>
+            <li><strong>Повне проходження</strong> &mdash; 100% усього</li>
+        </ul>
+
+        <h3>Де з'являються дані HLTB</h3>
+        <ul>
+            <li><strong>Модальне вікно деталей гри</strong> &mdash; Оцінки часу проходження показані в інформації про гру</li>
+            <li><strong>Повна сторінка деталей гри</strong> &mdash; Та сама інформація про час проходження</li>
+            <li><strong>Аналітика &rarr; вкладка "Час проходження"</strong> &mdash; Аналіз часу проходження для всієї колекції</li>
+            <li><strong>Порівняння ігор</strong> &mdash; Порівняння часу проходження поруч</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Порада:</strong> Дані HLTB також показуються в Аналітиці на вкладці "Час проходження", даючи вам оцінки для всієї вашої колекції.
+        </div>
+    </div>
+</section>
+
+<!-- Trophies -->
+<section id="trophies" class="help-section card">
+    <h2 class="card-title">Трофеї PS3 / PSN</h2>
+    <div class="card-body">
+        <h3>Локальні трофеї RPCS3</h3>
+        <p>Відстежуйте трофеї, отримані в іграх PS3 через емулятор RPCS3.</p>
+        <ol>
+            <li>Встановіть шлях до трофеїв RPCS3 в <strong>Налаштування &rarr; Дані &rarr; Трофеї</strong></li>
+            <li>Натисніть <strong>"Scan Trophies"</strong>, щоб імпортувати отримані трофеї</li>
+            <li>Переглядайте списки трофеїв та деталі окремих трофеїв у розділі <strong>Трофеї RPCS3</strong></li>
+        </ol>
+        <p>RPCS3 читає дані трофеїв XML з вашої користувацької папки RPCS3 та автоматично зіставляє ігри з вашою бібліотекою.</p>
+
+        <h3>Трофеї через API PSN</h3>
+        <p>Синхронізуйте дані трофеїв PlayStation Network з вашого облікового запису PSN.</p>
+        <ol>
+            <li>Отримайте свій кукі NPSSO (див. нижче)</li>
+            <li>Введіть його в <strong>Налаштування &rarr; Обліковий запис &rarr; PSN</strong></li>
+            <li>Ваша бібліотека трофеїв PSN буде отримана через API PlayStation</li>
+            <li>Переглядайте прогрес трофеїв для кожної гри з підрахунком отримано/усього</li>
+            <li>Деталі окремих трофеїв включають опис, рідкість і мітки часу розблокування</li>
+        </ol>
+
+        <h3>Автентифікація PSN (кукі NPSSO)</h3>
+        <p>PSN використовує спеціальний автентифікаційний кукі, який називається токеном NPSSO. Щоб його отримати:</p>
+        <ol>
+            <li>Відкрийте веб-браузер і увійдіть на <a href="https://store.playstation.com" target="_blank" rel="noopener noreferrer">store.playstation.com</a></li>
+            <li>Після входу перейдіть за адресою: <code>https://ca.account.sony.com/api/v1/ssocookie</code></li>
+            <li>На сторінці відобразиться JSON, що містить ваш токен NPSSO</li>
+            <li>Скопіюйте значення <code>npsso</code> і вставте його в Налаштування &rarr; Обліковий запис &rarr; PSN</li>
+        </ol>
+        <p>Після автентифікації RetroDB безпечно кешує токени доступу у власній базі даних (для кожного користувача) і автоматично оновлює їх &mdash; вам не потрібно вставляти NPSSO знову перед кожною синхронізацією. Сеанс залишається дійсним приблизно два місяці, і тепер RetroDB також автоматично оновлює його у фоновому режимі, тож за звичайного використання свіжий NPSSO знадобиться вкрай рідко.</p>
+
+        <h3>Деталі трофеїв</h3>
+        <ul>
+            <li>Типи трофеїв: бронза, срібло, золото, платина</li>
+            <li>Значки трофеїв завантажуються та кешуються локально</li>
+            <li>Відсоток завершення для кожної гри</li>
+            <li>Мітки часу розблокування для кожного отриманого трофея</li>
+        </ul>
+
+        <h3>Масова синхронізація</h3>
+        <p>Синхронізуйте всі трофеї ігор PSN одразу через фонове завдання. Прогрес показується у спливаючому сповіщенні. Обмеження швидкості (2,5 с між запитами) запобігає обмеженню з боку API PSN.</p>
+    </div>
+</section>
+
+<!-- Collector Trophies -->
+<section id="collector-trophies" class="help-section card">
+    <h2 class="card-title">Трофеї колекціонера</h2>
+    <div class="card-body">
+        <h3>Що це таке</h3>
+        <p>Система гейміфікації, яка присуджує трофеї на основі віх вашої колекції. Коли ви додаєте ігри, скрапите метадані та завершуєте ігри, трофеї розблоковуються автоматично.</p>
+
+        <h3>Рівні трофеїв</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Рівень</th><th>Приклади</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Бронза</strong></td><td>Додати першу гру, досягти 10 ігор, перший скрапінг, 5 систем, перше завершення</td></tr>
+                <tr><td><strong>Срібло</strong></td><td>100 ігор, 50 скраплено, 10 систем, 10 завершень, 500 ігор</td></tr>
+                <tr><td><strong>Золото</strong></td><td>1000 ігор, 100% покриття метаданих, 20 систем, 50 завершень</td></tr>
+                <tr><td><strong>Платина</strong></td><td>5000 ігор, 100 завершень, 30+ систем</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Як це працює</h3>
+        <ul>
+            <li>Прогрес відстежується автоматично на основі статистики вашої бібліотеки</li>
+            <li>Відвідайте сторінку <strong>Трофеї колекціонера</strong>, щоб побачити свій прогрес до кожного трофея</li>
+            <li>Натисніть <strong>"Refresh"</strong>, щоб оновити прогрес після внесення змін</li>
+            <li>Отримані трофеї відображаються з датою розблокування</li>
+            <li>Смуги прогресу показують, наскільки ви близькі до наступної віхи</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Museum -->
+<section id="museum" class="help-section card">
+    <h2 class="card-title">Музей</h2>
+    <div class="card-body">
+        <h3>Що це таке</h3>
+        <p>Інтерактивна енциклопедія ігрових систем, організована за поколіннями. Дізнайтеся про історію, характеристики та примітні ігри для кожної платформи у вашій колекції.</p>
+
+        <h3>Головна сторінка</h3>
+        <p>Головна сторінка Музею показує хронологію ігрових систем, згрупованих за поколіннями (1&ndash;9 покоління, портативні, аркадні, комп'ютери). Кожна картка системи показує зображення обладнання та кількість ігор з вашої бібліотеки.</p>
+
+        <h3>Сторінки деталей системи</h3>
+        <p>Натисніть на будь-яку систему, щоб переглянути її сторінку музею, яка включає:</p>
+        <ul>
+            <li><strong>Зображення обладнання</strong> &mdash; Фото консолі/системи</li>
+            <li><strong>Технічні характеристики</strong> &mdash; CPU, GPU, RAM, роздільна здатність, тип носія</li>
+            <li><strong>Історія</strong> &mdash; Згенерована ШІ розповідь про розробку системи, її запуск і спадщину</li>
+            <li><strong>Топ-10 ігор</strong> &mdash; Найпримітніші тайтли системи (за оцінками критиків і пропозиціями ШІ)</li>
+            <li><strong>Галерея контролерів</strong> &mdash; Зображення контролерів системи з описами</li>
+        </ul>
+
+        <h3>Генерація контенту ШІ</h3>
+        <p>Контент Музею генерується за допомогою ШІ (Gemini, OpenAI або Claude). Ви можете генерувати контент для:</p>
+        <ul>
+            <li><strong>Однієї системи</strong> &mdash; Натисніть "Generate" на сторінці музею будь-якої системи</li>
+            <li><strong>Масової генерації</strong> &mdash; Генеруйте контент для всіх систем одразу з головної сторінки (виконується як фонове завдання з прогресом у спливаючому сповіщенні)</li>
+        </ul>
+
+        <h3>Зображення контролерів</h3>
+        <p>Зображення контролерів можна додати через:</p>
+        <ul>
+            <li><strong>Пошук зображень</strong> &mdash; Шукайте фото контролерів за допомогою Bing Image Search. Результати ранжуються за релевантністю (назва контролера + виробник + варіації системи).</li>
+            <li><strong>Ручне завантаження</strong> &mdash; Завантажте власні зображення контролерів</li>
+            <li><strong>Видалення фону</strong> &mdash; Автоматичне видалення фону за допомогою локального ШІ (бібліотека rembg) для прозорих зображень контролерів на будь-якому фоні</li>
+            <li><strong>Поширення зображень</strong> &mdash; Коли знайдено зображення контролера, воно автоматично поширюється на той самий контролер в інших системах (спорідненні контролери)</li>
+            <li><strong>Масове отримання</strong> &mdash; Отримати зображення для всіх контролерів системи одразу</li>
+        </ul>
+        <p>Усі зображення контролерів стандартизуються до цільового розміру та зберігаються у форматі WebP.</p>
+
+        <div class="help-tip">
+            <strong>Порада:</strong> Для генерації контенту потрібен ключ API ШІ. Музей використовує того ж постачальника ШІ, налаштованого в Налаштування &rarr; Скрапінг &rarr; Ключі API.
+        </div>
+    </div>
+</section>
+
+<!-- Analytics -->
+<section id="analytics" class="help-section card">
+    <h2 class="card-title">Аналітика</h2>
+    <div class="card-body">
+        <p>Аналітика надає всебічну статистику та візуалізації на 12 вкладках. Усі графіки інтерактивні та можуть бути експортовані як PNG, скопійовані до буфера обміну або завантажені як CSV.</p>
+
+        <h3>Вкладки аналітики</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Вкладка</th><th>Вміст</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Зведення</strong></td><td>Картки з оглядом статистики (усього ігор, систем, рівень завершення, відсоток скрапінгу тощо)</td></tr>
+                <tr><td><strong>Графіки</strong></td><td>Ігри за платформою/виробником, за жанром, хронологія по роках</td></tr>
+                <tr><td><strong>Розробники</strong></td><td>Стовпчикові діаграми топ-15 розробників і видавців</td></tr>
+                <tr><td><strong>Ігровий процес</strong></td><td>Розбивка за жанрами, аналіз режимів гри, розподіл структури гри</td></tr>
+                <tr><td><strong>Час проходження</strong></td><td>Аналіз даних часу проходження HLTB для всієї колекції &mdash; загальний оцінюваний час проходження, середні значення, розподіл</td></tr>
+                <tr><td><strong>Оцінки</strong></td><td>Розподіл і середні значення оцінок критиків і користувачів</td></tr>
+                <tr><td><strong>Вікові рейтинги</strong></td><td>Розподіл вікових рейтингів за всіма 8 системами рейтингів</td></tr>
+                <tr><td><strong>Досягнення</strong></td><td>Покриття RetroAchievements та завершення за системами</td></tr>
+                <tr><td><strong>Якість даних</strong></td><td>Радарна діаграма повноти метаданих (опис, обкладинка, жанр, розробник, видавець, дата випуску, скріншоти, fanart, відео, посібник, HLTB, рейтинги, режими, регіон)</td></tr>
+                <tr><td><strong>Зростання</strong></td><td>Хронологія зростання колекції, що показує, коли ігри додавалися з часом</td></tr>
+                <tr><td><strong>Сховище</strong></td><td>Розбивка використання сховища за системою (з форматованими розмірами файлів)</td></tr>
+                <tr><td><strong>Рейтинги лідерів</strong></td><td>Топ систем за кількістю ігор, найбільші окремі ігри за розміром файлу</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Опції експорту</h3>
+        <p>Кожен графік можна експортувати за допомогою кнопок на панелі інструментів графіка:</p>
+        <ul>
+            <li><strong>PNG</strong> &mdash; Зберегти як файл зображення</li>
+            <li><strong>Буфер обміну</strong> &mdash; Скопіювати зображення графіка до буфера обміну</li>
+            <li><strong>CSV</strong> &mdash; Завантажити необроблені дані як електронну таблицю</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Reports -->
+<section id="reports" class="help-section card">
+    <h2 class="card-title">Звіти ROM</h2>
+    <div class="card-body">
+        <h3>Що це робить</h3>
+        <p>Перевіряє назви файлів ROM на відповідність стандартним конвенціям іменування та визначає потенційні проблеми. Доступ через <strong>Звіти ROM</strong> на бічній панелі.</p>
+
+        <h3>Типи звітів</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Вкладка</th><th>Що перевіряє</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Нестандартні назви</strong></td><td>ROM з назвами файлів, що не відповідають конвенціям іменування. Показує поточну назву файлу, виявлені проблеми та пропоновану виправлену назву.</td></tr>
+                <tr><td><strong>Невідповідності назв</strong></td><td>ROM, де назва файлу не відповідає скрапленій назві метаданих. Показує поточну назву файлу порівняно зі скрапленою назвою, регіоном, роком і розробником.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Що перевіряється</h3>
+        <ul>
+            <li>Неприпустимі символи в назвах файлів (<code>: ? * / " &lt; &gt; | \</code>)</li>
+            <li>Відсутні або неправильні теги регіону (наприклад, <code>(USA)</code>, <code>(Europe)</code>)</li>
+            <li>Відсутні теги року</li>
+            <li>Невідповідності назви файлу та назви в базі даних</li>
+        </ul>
+
+        <p>Звіти можна сортувати за системою, назвою файлу та типом проблеми. Використовуйте їх, щоб підтримувати бібліотеку ROM організованою та послідовно іменованою.</p>
+    </div>
+</section>
+
+<!-- ROM Tools -->
+<section id="rom-tools" class="help-section card">
+    <h2 class="card-title">Інструменти ROM</h2>
+    <div class="card-body">
+        <p>Доступ до центру інструментів ROM з бічної панелі. Кожен інструмент виконується як фонове завдання з оновленням прогресу в реальному часі, підтримкою паузи/відновлення та журналюванням.</p>
+
+        <h3>Сканер архівів</h3>
+        <p>Розпаковує архіви ROM (ZIP, 7Z, RAR) з опціями для:</p>
+        <ul>
+            <li>Рекурсивного сканування підпапок</li>
+            <li>Видалення небажаних файлів після розпакування</li>
+            <li>Автоматичної генерації плейлистів M3U для багатодискових ігор</li>
+        </ul>
+        <p><em>Потребує: 7z або unzip</em></p>
+
+        <h3>Конвертер CHD</h3>
+        <p>Конвертує образи дисків (ISO, BIN/CUE, GDI) у стиснутий формат CHD. Значно економить сховище, зберігаючи повну сумісність з емуляторами.</p>
+        <p><em>Потребує: chdman (з mame-tools)</em></p>
+
+        <h3>Перевірка CHD</h3>
+        <p>Перевіряє цілісність файлів CHD за допомогою перевірки хешів. Виявляє пошкоджені або неповні конвертації.</p>
+        <p><em>Потребує: chdman</em></p>
+
+        <h3>Пошук дублікатів</h3>
+        <p>Знаходить дублікати ROM за хешем або назвою файлу, з опціями пріоритезації за тегами регіону.</p>
+        <p><em>Без зовнішніх залежностей</em></p>
+
+        <h3>Організатор багатодискових ігор</h3>
+        <p>Організовує багатодискові ігри в підпапки та генерує плейлисти M3U для емуляторів, які їх підтримують. Корисно для таких систем, як PlayStation і Saturn.</p>
+        <p><em>Без зовнішніх залежностей</em></p>
+
+        <h3>Видалення дублікатів скріншотів</h3>
+        <p>Знаходить і видаляє дублікати скріншотів у вашій бібліотеці ігор, щоб звільнити місце в сховищі.</p>
+        <ul>
+            <li><strong>Точний хеш (MD5)</strong> &mdash; Визначає лише ідентичні файли</li>
+            <li><strong>Візуальна схожість</strong> &mdash; Порівняння за перцептивним хешем із налаштовуваним порогом (1&ndash;20, менше значення = суворіша відповідність)</li>
+        </ul>
+        <p>Сканує поступово з живою статистикою, що показує кількість сканованих ігор, кількість дублікатів і місце, яке можна звільнити. Результати згруповано за грою та системою. Ви можете обрати, який файл зберегти в кожній групі дублікатів, або скористатися <strong>"Select Largest"</strong>, щоб автоматично зберегти версію з найвищою роздільною здатністю.</p>
+        <p><em>Без зовнішніх залежностей</em></p>
+
+        <h3>Зміна розміру зображень</h3>
+        <p>Стандартизує медіа ігор до узгоджених цільових розмірів. Дивіться <a href="#image-standardization">Стандартизація зображень</a> для повних деталей.</p>
+        <p><em>Без зовнішніх залежностей (масштабування ШІ на основі Python)</em></p>
+
+        <h3>Заповнення альтернативних назв</h3>
+        <p>Сканує бібліотеку на предмет ігор, у яких поле <strong>альтернативні назви</strong> порожнє, і заповнює його з IGDB / TGDB / ScreenScraper. Корисно після імпортування великого каталогу або міграції з іншого інструмента, який не зберігав регіональні/японські/додаткові назви. Виконується у фоновому режимі; прогрес показується на картці інструмента.</p>
+        <p><em>Потребує принаймні одного ключа API скрапера (IGDB / TGDB / ScreenScraper)</em></p>
+
+        <h3>Масовий пошук HLTB</h3>
+        <p>Запускає пошук HowLongToBeat для кожної гри, якій бракує оцінки часу проходження. Кожна відповідність оцінюється за назвою + платформою + роком випуску; відповідності з високою впевненістю зберігаються автоматично. Усе, що нижче порогу впевненості (або з конфліктуючими платформами), відкладається для перегляду людиною.</p>
+        <p><em>Без зовнішніх залежностей (використовує вбудований офлайн-набір даних HLTB)</em></p>
+
+        <h3>Очікування перегляду HLTB</h3>
+        <p>Черга перегляду для неоднозначних відповідностей, виявлених масовим пошуком HLTB. Кожен рядок очікування показує вихідну гру поряд із кандидатом HLTB (назва, платформа, рік випуску, впевненість). Схваліть, відхиліть або оберіть іншу відповідність для кожного рядка. Картка інструмента перегляду з'являється в центрі інструментів ROM лише за наявності принаймні однієї відповідності, що очікує.</p>
+        <ul>
+            <li><strong>Вкладки фільтрів</strong> для відповідностей з низькою впевненістю, альтернативною назвою та невідповідністю платформи.</li>
+            <li><strong>Схвалення</strong> записує оцінку часу проходження; <strong>Відхилення</strong> відкидає кандидата й підтримує чистоту черги пошуку.</li>
+        </ul>
+
+        <h3>Налаштування інструментів</h3>
+        <p>Налаштуйте шляхи, розташування інструментів, типи архівів і параметри, спільні для всіх інструментів ROM.</p>
+
+        <div class="help-tip">
+            <strong>Порада:</strong> Усі інструменти ROM підтримують паузу/відновлення та виконуються у фоновому режимі. Прогрес і результати журналюються та доступні для перегляду в переглядачі журналів. Статус інструмента (доступний чи потребує встановлення) показується на картці кожного інструмента.
+        </div>
+    </div>
+</section>
+
+<!-- Normalization -->
+<section id="normalization" class="help-section card">
+    <h2 class="card-title">Нормалізація</h2>
+    <div class="card-body">
+        <h3>Що це робить</h3>
+        <p>Нормалізує значення жанру та режиму гри до узгоджених канонічних форм. Це відбувається автоматично під час скрапінгу та заповнення ШІ, а також може застосовуватися вручну до вашої наявної бібліотеки.</p>
+
+        <h3>Чому це важливо</h3>
+        <p>Різні скрапери використовують різні назви для однієї й тієї самої речі. Нормалізація забезпечує узгодженість у всій вашій бібліотеці:</p>
+        <ul>
+            <li><code>platform</code> &rarr; <code>Platformer</code></li>
+            <li><code>fps</code>, <code>first person shooter</code> &rarr; <code>First-Person-Shooter</code></li>
+            <li><code>shoot 'em up</code>, <code>shmup</code> &rarr; <code>Shoot-em-up</code></li>
+            <li><code>beat 'em up</code>, <code>brawler</code> &rarr; <code>Beat-em-up</code></li>
+            <li><code>hack and slash</code> &rarr; <code>Hack-n-Slash</code></li>
+            <li><code>rts</code>, <code>real time strategy</code> &rarr; <code>Real-Time Strategy</code></li>
+            <li><code>board game</code>, <code>card game</code> &rarr; <code>Board-Card</code></li>
+        </ul>
+
+        <h3>Власні правила</h3>
+        <p>Ви можете додати власні правила нормалізації в <strong>Налаштування &rarr; Дані &rarr; Нормалізація</strong>. Власні правила перевизначають вбудовані відповідності, дозволяючи вам визначити власні бажані назви жанрів і режимів. Правила зберігаються в базі даних.</p>
+
+        <h3>Попередній перегляд і застосування</h3>
+        <p>Перед застосуванням нормалізації ви можете переглянути, які ігри будуть змінені та які зміни буде внесено. Це дозволяє переглянути зміни перед їх внесенням до вашої бібліотеки.</p>
+    </div>
+</section>
+
+<!-- Image Standardization -->
+<section id="image-standardization" class="help-section card">
+    <h2 class="card-title">Стандартизація зображень</h2>
+    <div class="card-body">
+        <h3>Що це робить</h3>
+        <p>Стандартизує всі медіа ігор до узгоджених цільових розмірів для однорідного вигляду всієї вашої бібліотеки. Зображення в межах 80&ndash;120% від цільового розміру пропускаються.</p>
+
+        <h3>Як це працює</h3>
+        <ul>
+            <li><strong>Збільшення масштабу</strong> &mdash; Зображення, менші за цільовий розмір, збільшуються за допомогою Real-ESRGAN x4 (суперроздільна здатність на основі ШІ через ONNX Runtime) для якісного збільшення, а потім змінюються до точного цільового розміру</li>
+            <li><strong>Зменшення масштабу</strong> &mdash; Зображення, більші за цільовий розмір, зменшуються за допомогою фільтрації Lanczos для чітких результатів</li>
+            <li><strong>Смуга порогу</strong> &mdash; Зображення в межах 80&ndash;120% від цільового розміру залишаються без змін, щоб уникнути зайвої повторної обробки</li>
+        </ul>
+
+        <h3>Цільові розміри</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Тип медіа</th><th>Ціль</th><th>Метод</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Обкладинка</td><td>1080 пікселів висоти</td><td>Ширина масштабується пропорційно</td></tr>
+                <tr><td>3D-обкладинка</td><td>1080 пікселів висоти</td><td>Ширина масштабується пропорційно (зберігає прозорість)</td></tr>
+                <tr><td>Скріншоти</td><td>1080 пікселів висоти</td><td>Ширина масштабується пропорційно</td></tr>
+                <tr><td>Контролери</td><td>1280 пікселів найдовшого краю</td><td>Зберігає прозорість (RGBA)</td></tr>
+                <tr><td>Обладнання</td><td>1280 пікселів найдовшого краю</td><td>Зберігає прозорість (RGBA)</td></tr>
+                <tr><td>Fanart</td><td>Пропускається</td><td>Не стандартизується (залишається в оригінальному розмірі)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Як запустити</h3>
+        <ol>
+            <li>Перейдіть в <strong>Налаштування &rarr; Система &rarr; Обслуговування</strong> або <strong>Інструменти ROM &rarr; Зміна розміру зображень</strong></li>
+            <li>Натисніть <strong>"Start"</strong>, щоб почати масову стандартизацію</li>
+            <li>Завдання виконується у фоновому режимі зі спливаючим сповіщенням, що показує поточний файл і статистику</li>
+            <li>Зображення також автоматично стандартизуються під час скрапінгу (нові завантаження стандартизуються негайно)</li>
+        </ol>
+
+        <h3>Підтримка обладнання</h3>
+        <p>Модель Real-ESRGAN автоматично визначає ваше обладнання та використовує найкращого доступного постачальника:</p>
+        <ul>
+            <li><strong>CUDA</strong> &mdash; Прискорення на GPU NVIDIA</li>
+            <li><strong>ROCm</strong> &mdash; Прискорення на GPU AMD (з автоматичним перевизначенням версії gfx для серії RX 6000)</li>
+            <li><strong>CoreML</strong> &mdash; Прискорення для Apple Silicon</li>
+            <li><strong>CPU</strong> &mdash; Резервний варіант для систем без підтримки GPU</li>
+        </ul>
+        <p>Файл моделі ONNX завантажується автоматично з Hugging Face під час першого використання та кешується локально.</p>
+    </div>
+</section>
+
+<!-- Logs -->
+<section id="logs" class="help-section card">
+    <h2 class="card-title">Переглядач журналів</h2>
+    <div class="card-body">
+        <h3>Що це робить</h3>
+        <p>Уніфікований переглядач для всіх журналів застосунку. Доступ через <strong>Переглядач журналів</strong> на бічній панелі.</p>
+
+        <h3>Категорії журналів</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Категорія</th><th>Вміст</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Скрапінг</strong></td><td>Активність скраперів, виклики API, помилки та результати для кожної гри</td></tr>
+                <tr><td><strong>Інструменти ROM</strong></td><td>Розпакування архівів, конвертація CHD, виявлення дублікатів, видалення дублікатів скріншотів</td></tr>
+                <tr><td><strong>Звіти ROM</strong></td><td>Результати перевірки іменування</td></tr>
+                <tr><td><strong>Зміна розміру зображень</strong></td><td>Прогрес завдання стандартизації зображень (збільшення/зменшення масштабу для кожного файлу)</td></tr>
+                <tr><td><strong>Система</strong></td><td>Загальна активність застосунку, завдання обслуговування, запуск, операції з базою даних</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Можливості</h3>
+        <ul>
+            <li>Фільтрація за категорією або перегляд усіх журналів разом</li>
+            <li>Список файлів показує дати створення та розміри файлів</li>
+            <li>Натисніть на будь-який файл журналу, щоб переглянути весь його вміст</li>
+            <li>Завантаження окремих файлів журналів</li>
+            <li>Підрахунок за категоріями показано вгорі для швидкого огляду</li>
+            <li>Рівні журналювання налаштовуються в Налаштування &rarr; Система &rarr; Журналювання</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Maintenance -->
+<section id="maintenance" class="help-section card">
+    <h2 class="card-title">Обслуговування</h2>
+    <div class="card-body">
+        <p>Операції обслуговування доступні в <strong>Налаштування &rarr; Система &rarr; Обслуговування</strong>. Вони допомагають підтримувати вашу бібліотеку чистою та оптимізованою.</p>
+
+        <h3>Сканування бібліотеки</h3>
+        <ul>
+            <li><strong>Сканувати бібліотеку</strong> &mdash; Сканує ваші папки ROM на наявність нових ігор. Визначає папки систем і підтримувані типи файлів за допомогою списків розширень ES-DE <code>systeminfo.txt</code>. Також доступно з панелі приладів.</li>
+        </ul>
+
+        <h3>Операції очищення</h3>
+        <ul>
+            <li><strong>Очистити відсутні ROM</strong> &mdash; Видаляє записи бази даних для ігор, файли ROM яких більше не існують на диску. Корисно після реорганізації або видалення файлів ROM.</li>
+            <li><strong>Очищення осиротілих медіа</strong> &mdash; Знаходить і видаляє файли зображень на диску (обкладинки, скріншоти, fanart), які не мають відповідного посилання в базі даних. Попередній перегляд перед видаленням для підтвердження.</li>
+            <li><strong>Очистити скраплені дані</strong> &mdash; Видаляє всі скраплені метадані з ігор, зберігаючи записи файлів ROM. Корисно для початку роботи зі скрапінгом з чистого аркуша. Попередній перегляд показує уражені ігри перед виконанням.</li>
+            <li><strong>Очистити імпорти CLZ</strong> &mdash; Видаляє всі записи імпорту CLZ Games (записи лише з метаданими без файлів ROM).</li>
+        </ul>
+
+        <h3>Оптимізація бази даних</h3>
+        <ul>
+            <li><strong>Оптимізувати базу даних</strong> &mdash; Виконує SQLite VACUUM та ANALYZE для звільнення сховища від видалених записів і оновлення статистики планувальника запитів. Рекомендується після великих видалень або операцій очищення.</li>
+        </ul>
+
+        <h3>Масова стандартизація зображень</h3>
+        <p>Стандартизує всі зображення ігор до цільових розмірів. Дивіться <a href="#image-standardization">Стандартизація зображень</a> для деталей.</p>
+
+        <h3>Керування сервером</h3>
+        <ul>
+            <li><strong>Перезапустити сервер</strong> &mdash; Плавний перезапуск застосунку (очищення та вихід). Доступно в Налаштування &rarr; Система &rarr; Усунення несправностей.</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Multi-User Access -->
+<section id="multi-user" class="help-section card">
+    <h2 class="card-title">Доступ для кількох користувачів</h2>
+    <div class="card-body">
+        <h3>Ролі користувачів</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Роль</th><th>Доступ</th><th>Пароль</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Адміністратор</strong></td><td>Повний доступ: налаштування, керування користувачами, обслуговування, усі можливості</td><td>Потрібен</td></tr>
+                <tr><td><strong>Редактор</strong></td><td>Може редагувати ігри, скрапити, використовувати інструменти ROM, керувати колекціями</td><td>Не потрібен</td></tr>
+                <tr><td><strong>Глядач</strong></td><td>Лише читання: перегляд бібліотеки, деталей, досягнень/трофеїв</td><td>Не потрібен</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Керування користувачами</h3>
+        <ol>
+            <li>Перейдіть в <strong>Налаштування &rarr; Обліковий запис &rarr; Користувачі</strong> (лише для адміністратора)</li>
+            <li>Натисніть <strong>"Add User"</strong>, щоб створити новий обліковий запис</li>
+            <li>Встановіть ім'я користувача, відображуване ім'я та роль</li>
+            <li>Користувачі-адміністратори отримують типовий пароль, який потрібно змінити під час першого входу</li>
+        </ol>
+
+        <h3>Автентифікація</h3>
+        <p>Сторінка входу показує всіх активних користувачів. Облікові записи адміністратора потребують пароля; інші ролі просто натискають своє ім'я для входу. Сеанси зберігаються до виходу.</p>
+
+        <h3>Налаштування для кожного користувача</h3>
+        <p>Кожен користувач може налаштувати власні:</p>
+        <ul>
+            <li>Аватар (завантаження власного зображення)</li>
+            <li>Відображуване ім'я</li>
+            <li>Бажану тему</li>
+            <li>Кількість елементів на сторінці</li>
+            <li>Часовий пояс</li>
+            <li>Шлях до трофеїв RPCS3</li>
+            <li>Облікові дані RetroAchievements (ім'я користувача + ключ API)</li>
+            <li>Облікові дані PSN (кукі NPSSO)</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Backup -->
+<section id="backup" class="help-section card">
+    <h2 class="card-title">Резервне копіювання та відновлення</h2>
+    <div class="card-body">
+        <h3>Створення резервних копій</h3>
+        <ol>
+            <li>Перейдіть в <strong>Налаштування &rarr; Бібліотека &rarr; Резервне копіювання</strong></li>
+            <li>Натисніть <strong>"Create Backup"</strong></li>
+            <li>Резервна копія зберігається в папці <code>backups/</code> з іменем файлу, що містить мітку часу</li>
+        </ol>
+
+        <h3>Що входить до резервної копії</h3>
+        <p>Резервна копія включає всю базу даних SQLite (<code>roms.db</code>), яка містить усі метадані ігор, облікові записи користувачів, налаштування, дані трофеїв, прогрес досягнень, теги, списки та елементи списку бажань.</p>
+
+        <h3>Що НЕ входить до резервної копії</h3>
+        <p>Медіафайли (обкладинки, скріншоти, fanart, відео, посібники) НЕ включені до резервної копії бази даних, оскільки їх можна повторно завантажити за допомогою скрапінгу. Розгляньте окреме резервне копіювання папки <code>static/images/</code>, якщо у вас є власні завантаження.</p>
+
+        <h3>Відновлення</h3>
+        <ol>
+            <li>Знайдіть резервну копію у списку резервних копій</li>
+            <li>Натисніть <strong>"Restore"</strong></li>
+            <li>Підтвердіть дію</li>
+        </ol>
+
+        <div class="help-tip">
+            <strong>Попередження:</strong> Відновлення резервної копії перезаписує вашу поточну базу даних. Створіть свіжу резервну копію перед відновленням старішої!
+        </div>
+    </div>
+</section>
+
+<!-- Updating RetroDB -->
+<section id="updating" class="help-section card">
+    <h2 class="card-title">Оновлення RetroDB</h2>
+    <div class="card-body">
+        <h3>Як оновити</h3>
+        <ol>
+            <li>Завантажте новий випуск RetroDB</li>
+            <li>Створіть резервну копію цих файлів (вони містять ваші особисті дані):
+                <ul>
+                    <li><code>config.py</code> (ваші шляхи та ключі API)</li>
+                    <li><code>data/settings.json</code> (ваші налаштування інтерфейсу)</li>
+                    <li><code>data/scraper_settings.json</code> (ваша конфігурація скраперів)</li>
+                    <li><code>data/rom_tools_config.json</code> (ваші налаштування інструментів ROM)</li>
+                    <li>папку <code>database/</code> (базу даних вашої бібліотеки ігор та збережені токени входу PSN/Xbox)</li>
+                </ul>
+            </li>
+            <li>Розпакуйте нову версію поверх наявної установки</li>
+            <li>Запустіть <code>python install.py</code>, щоб встановити нові залежності</li>
+            <li>Перезапустіть сервер</li>
+        </ol>
+
+        <h3>Файли, які можна безпечно перезаписати</h3>
+        <p>Усі файли вихідного коду (<code>.py</code>, <code>.html</code>, <code>.css</code>, <code>.js</code>) можна безпечно перезаписати. Інсталятор не перезапише ваші особисті файли конфігурації.</p>
+
+        <h3>Файли, які слід зберегти</h3>
+        <p>Ніколи не видаляйте та не перезаписуйте: <code>config.py</code>, <code>database/roms.db</code>, <code>data/settings.json</code>, <code>data/scraper_settings.json</code>, <code>data/rom_tools_config.json</code>.</p>
+
+        <h3>Міграції бази даних</h3>
+        <p>RetroDB автоматично обробляє зміни схеми бази даних під час запуску. Нові стовпці та таблиці додаються за потреби без втрати даних. Вам не потрібно робити нічого особливого &mdash; просто запустіть нову версію, і база даних оновиться автоматично.</p>
+    </div>
+</section>
+
+<!-- Troubleshooting -->
+<section id="troubleshooting" class="help-section card">
+    <h2 class="card-title">Усунення несправностей</h2>
+    <div class="card-body">
+        <h3>Поширені проблеми</h3>
+
+        <h4>"No extensions found for system"</h4>
+        <p>Папці системи потрібен коректний файл ES-DE <code>systeminfo.txt</code>, який визначає підтримувані розширення файлів ROM. Переконайтеся, що структура папок ROM відповідає стандартам ES-DE.</p>
+
+        <h4>"API Connection Failed"</h4>
+        <ul>
+            <li>Перевірте своє інтернет-з'єднання</li>
+            <li>Перевірте ключі API в Налаштування &rarr; Скрапінг &rarr; Ключі API</li>
+            <li>Зачекайте, якщо досягнуто ліміту швидкості (деякі API мають денні/годинні обмеження)</li>
+            <li>Перевірте, чи увімкнено скрапер (вимкнені скрапери показують "Disabled" у статусі на панелі приладів)</li>
+            <li>Перевірте переглядач журналів на наявність детальних повідомлень про помилки</li>
+        </ul>
+
+        <h4>"Bulk Scrape Stuck"</h4>
+        <p>Перейдіть в Налаштування &rarr; Система &rarr; Усунення несправностей &rarr; <strong>"Clear Stuck Bulk Scrape"</strong>. Це скидає стан завдання без впливу на ваші дані.</p>
+
+        <h4>"RA Sync Queue Stuck"</h4>
+        <p>Очистіть чергу синхронізації RetroAchievements в Налаштування &rarr; Система &rarr; Усунення несправностей.</p>
+
+        <h4>"PSN Sync Stuck"</h4>
+        <p>Очистіть завдання оновлення PSN в Налаштування &rarr; Система &rarr; Усунення несправностей.</p>
+
+        <h4>"Museum Generation Stuck"</h4>
+        <p>Очистіть завдання генерації музею в Налаштування &rarr; Система &rarr; Усунення несправностей.</p>
+
+        <h4>"Database Errors"</h4>
+        <ol>
+            <li>Створіть резервну копію, якщо можливо (Налаштування &rarr; Бібліотека &rarr; Резервне копіювання)</li>
+            <li>Спробуйте Налаштування &rarr; Система &rarr; Обслуговування &rarr; <strong>Optimize Database</strong></li>
+            <li>Перевірте права доступу до файлів у папці <code>database/</code></li>
+            <li>Останній засіб: відновіть з резервної копії або видаліть базу даних і скануйте повторно</li>
+        </ol>
+
+        <h4>"Images Not Saving"</h4>
+        <p>Перевірте права запису на папки медіа: <code>chmod -R 755 static/images/</code></p>
+
+        <h4>"Page Slow or Unresponsive"</h4>
+        <ul>
+            <li>Великі колекції можуть завантажуватися довше &mdash; нескінченне прокручування завантажує партіями по 100</li>
+            <li>Спробуйте оновити сторінку, щоб очистити накопичену пам'ять</li>
+            <li>Перевірте консоль браузера на наявність помилок JavaScript</li>
+            <li>Спробуйте перейти на тему з легшим ефектом полотна (наприклад, Amber або Elite)</li>
+            <li>Ефекти полотна автоматично визначають обладнання; менш потужні пристрої використовують резервний варіант на CPU зі зниженою частотою кадрів</li>
+        </ul>
+
+        <h4>Банер "Interrupted Jobs" на панелі приладів</h4>
+        <p>Якщо RetroDB перезапускається під час виконання завдань, вони з'являються в банері відновлення. Натисніть <strong>"Resume"</strong> для окремих завдань або <strong>"Resume All"</strong>, щоб перезапустити їх. Натисніть <strong>"Dismiss"</strong> або <strong>"Dismiss All"</strong>, щоб прибрати їх.</p>
+
+        <h4>"PSN Authentication Failed"</h4>
+        <ul>
+            <li>Термін дії токенів NPSSO закінчується &mdash; згенеруйте новий на <code>ca.account.sony.com/api/v1/ssocookie</code></li>
+            <li>Переконайтеся, що ви увійшли на store.playstation.com перед переходом за адресою кукі</li>
+            <li>RetroDB кешує ваш сеанс PSN приблизно на два місяці і тепер автоматично оновлює його у фоновому режимі; якщо він усе ж закінчився, просто вставте свіжий NPSSO в Налаштування &rarr; Обліковий запис &rarr; PSN</li>
+        </ul>
+
+        <h4>"Xbox Authentication Failed"</h4>
+        <ul>
+            <li>Повторно автентифікуйтеся, натиснувши "Sign In" на вкладці Імпорт ігор &rarr; Xbox</li>
+            <li>Токени Xbox кешуються в <code>data/xbox_tokens.json</code> і оновлюються автоматично</li>
+        </ul>
+
+        <h4>"Image Upscaling Errors"</h4>
+        <ul>
+            <li>Модель ONNX Real-ESRGAN завантажується під час першого використання &mdash; переконайтеся в наявності доступу до інтернету</li>
+            <li>Прискорення GPU потребує сумісних драйверів (CUDA для NVIDIA, ROCm для AMD)</li>
+            <li>Якщо GPU не спрацював, система автоматично переходить до обробки на CPU</li>
+        </ul>
+
+        <h3>Поради щодо продуктивності</h3>
+        <ul>
+            <li>Тримайте свій браузер оновленим для найкращої продуктивності</li>
+            <li>Закривайте інші вкладки браузера під час роботи з дуже великими колекціями</li>
+            <li>Використовуйте фільтри систем, щоб зменшити кількість ігор, що відображаються одночасно</li>
+            <li>Періодично запускайте оптимізацію бази даних після великих операцій (скрапінг, очищення, імпорт)</li>
+            <li>Ефекти теми полотна автоматично визначають обладнання; менш потужні пристрої використовують резервний варіант на CPU</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Security & Disclaimer -->
+<section id="security" class="help-section card">
+    <h2 class="card-title">Безпека та відмова від відповідальності</h2>
+    <div class="card-body">
+        <h3>Найкращі практики безпеки</h3>
+        <ul>
+            <li><strong>Змініть типовий пароль</strong> &mdash; Типовий пароль адміністратора (<code>admin</code>) слід змінити одразу після першого входу. Використовуйте надійний пароль довжиною щонайменше 8 символів.</li>
+            <li><strong>Використовуйте зворотний проксі-сервер HTTPS</strong> &mdash; RetroDB сам по собі не надає TLS/SSL. Розмістіть його за зворотним проксі-сервером (наприклад, Nginx, Caddy, Traefik) з увімкненим HTTPS, щоб шифрувати трафік між клієнтами та сервером.</li>
+            <li><strong>Обмежте мережевий доступ</strong> &mdash; Уникайте відкриття прямого доступу до RetroDB з публічного інтернету. Використовуйте VPN або обмежте доступ вашою локальною мережею. Якщо потрібен віддалений доступ, використовуйте зворотний проксі-сервер з автентифікацією.</li>
+            <li><strong>Регулярно робіть резервні копії</strong> &mdash; Використовуйте вбудовану функцію резервного копіювання в Налаштуваннях для створення періодичних резервних копій бази даних. Зберігайте резервні копії в місці, окремому від застосунку.</li>
+            <li><strong>Тримайте RetroDB оновленим</strong> &mdash; Регулярно перевіряйте наявність нових випусків. Виправлення безпеки та вдосконалення включені до оновлень.</li>
+            <li><strong>Захищайте свої ключі API</strong> &mdash; Ключі API зберігаються в <code>data/scraper_settings.json</code>. Переконайтеся, що цей файл не є публічно доступним. Ніколи не діліться своїм <code>config.py</code> або файлами токенів.</li>
+        </ul>
+
+        <h3>Вбудовані функції безпеки</h3>
+        <ul>
+            <li><strong>Хешування паролів</strong> &mdash; Паролі адміністратора хешуються за допомогою PBKDF2 (ніколи не зберігаються у відкритому вигляді)</li>
+            <li><strong>Обмеження швидкості входу</strong> &mdash; Захист від перебору паролів на кінцевій точці входу</li>
+            <li><strong>Перевірка шляхів</strong> &mdash; Усі файлові операції використовують допоміжні функції <code>safe_path</code> та <code>safe_filename</code> для запобігання атакам обходу каталогів</li>
+            <li><strong>Параметризовані запити</strong> &mdash; Усі запити до бази даних використовують параметризовані вирази для запобігання SQL-ін'єкціям</li>
+            <li><strong>Захист від XSS</strong> &mdash; Модальні діалоги використовують безпечну побудову DOM; введені користувачем дані екрануються</li>
+            <li><strong>Захист від бомб декомпресії зображень</strong> &mdash; Максимальна кількість пікселів зображення обмежена для запобігання вичерпанню пам'яті через шкідливі зображення</li>
+        </ul>
+
+        <h3>Відмова від відповідальності</h3>
+        <p>
+            RetroDB надається <strong>"ЯК Є"</strong>, без будь-яких гарантій, явних чи неявних,
+            включно з, але не обмежуючись, гарантіями придатності для продажу, придатності для певної мети,
+            та відсутності порушень прав. Автори чи власники авторських прав за жодних обставин не несуть відповідальності за будь-які претензії,
+            збитки чи іншу відповідальність, чи то за договором, деліктом чи іншим чином, що виникають з,
+            унаслідок або у зв'язку з програмним забезпеченням чи використанням або іншими діями з програмним забезпеченням.
+        </p>
+        <p>
+            Ви несете повну відповідальність за безпеку вашого розгортання, включно з мережевою конфігурацією,
+            контролем доступу, резервним копіюванням даних та дотриманням будь-яких застосовних законів щодо контенту,
+            яким ви керуєте за допомогою цього програмного забезпечення. Розробники не несуть відповідальності за несанкціонований доступ,
+            втрату даних чи неналежне використання, що виникають унаслідок неправильної конфігурації чи розгортання.
+        </p>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+.help-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin: 0 calc(-1 * var(--spacing-lg));
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(20, 26, 35, 0.98), rgba(15, 20, 25, 0.98));
+    border-bottom: 2px solid var(--primary-cyan);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(76, 201, 240, 0.2);
+}
+
+.help-nav-item {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.help-nav-item:hover {
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+.help-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.help-section h3 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--primary-cyan);
+    margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+}
+
+.help-section h3:first-child {
+    margin-top: 0;
+}
+
+.help-section h4 {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+}
+
+.help-section ol, .help-section ul {
+    padding-left: 1.5rem;
+    margin: var(--spacing-sm) 0;
+}
+
+.help-section li {
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.help-section p {
+    color: var(--text-secondary);
+    margin: var(--spacing-sm) 0;
+    line-height: 1.6;
+}
+
+.help-section pre {
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    overflow-x: auto;
+    margin: var(--spacing-md) 0;
+    line-height: 1.5;
+}
+
+.help-section code {
+    background: var(--bg-lighter);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--primary-cyan);
+}
+
+.help-section a {
+    color: var(--primary-cyan);
+    text-decoration: none;
+}
+
+.help-section a:hover {
+    text-decoration: underline;
+}
+
+.shortcut-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-sm);
+    margin: var(--spacing-md) 0;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border-radius: var(--radius-md);
+}
+
+.shortcut-item kbd {
+    display: inline-block;
+    min-width: 24px;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    text-align: center;
+}
+
+.shortcut-item span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--primary-cyan);
+}
+
+.help-tip {
+    background: rgba(76, 201, 240, 0.1);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    border-left: 4px solid var(--primary-cyan);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    color: var(--text-secondary);
+}
+
+.help-tip strong {
+    color: var(--primary-cyan);
+}
+
+.data-table {
+    width: 100%;
+    margin: var(--spacing-md) 0;
+}
+
+.data-table th,
+.data-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.data-table th {
+    background: var(--bg-medium);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.data-table td {
+    color: var(--text-primary);
+}
+
+.data-table tbody tr:hover {
+    background: rgba(76, 201, 240, 0.05);
+}
+</style>
+{% endblock %}

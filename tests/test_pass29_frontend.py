@@ -93,6 +93,10 @@ def test_29_3_filter_modal_uses_ModalFocusTrap():
     assert '_filterModalTrapActive' in src
     # No standalone _onFilterKeydown registered directly on document any more.
     assert "document.addEventListener('keydown', _onFilterKeydown)" not in src
+    # ...and no dangling removeEventListener referencing the deleted symbol —
+    # destroy() runs on beforeunload, so an orphan reference throws
+    # "ReferenceError: _onFilterKeydown is not defined" on every navigation.
+    assert '_onFilterKeydown' not in src
 
 
 def test_29_3_lightbox_activates_focus_trap():

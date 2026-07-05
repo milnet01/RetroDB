@@ -1,0 +1,318 @@
+- version: 3.20.0
+  date: '2026-07-05'
+  tags:
+  - type: feature
+    label: On bir yeni dil — RetroDB artık 21 dil konuşuyor
+  body: |
+    <ul>
+      <li><strong>On bir yeni dil paketi.</strong> RetroDB&rsquo;nin arayüzü,
+        sürüm notları ve yardım kılavuzu artık <strong>Afrikaans, isiZulu,
+        isiXhosa, Dutch, Norwegian (Bokm&aring;l), Russian, Polish, Turkish,
+        Ukrainian, Indonesian ve Hebrew</strong> dillerine çevrildi &mdash;
+        mevcut German, Spanish, French, Italian, Japanese, Korean, Brazilian
+        Portuguese ve Simplified &amp; Traditional Chinese dillerine ek
+        olarak. Dilinizi Ayarlar &rarr; Görüntüleme Tercihleri &rarr; Dil
+        altından seçin; uygulama seçtiğiniz dilde yeniden yüklenir.</li>
+      <li>Her dil, uygulamanın tamamını kapsar: her düğme, etiket ve mesaj,
+        sürüm notlarının tüm geçmişi ve yardım kılavuzunun tamamı.</li>
+      <li><strong>isiZulu &amp; isiXhosa</strong> da dahil edildi. Mevcut
+        yazılım terminolojisi az olan bu dillerde, doğal bir karşılığı
+        olmayan yaygın teknik terimler (ROM, scraper, box art) İngilizce
+        bırakıldı &mdash; bunlara güvenmeden önce anadili konuşan biri
+        tarafından gözden geçirilmesi faydalı olacaktır.</li>
+      <li><strong>Hebrew</strong> tamamen çevrilmiş metinle sunuluyor;
+        arayüzün doğru şekilde yansıması için gerekli sağdan sola sayfa
+        düzeni iyileştirmesi ilerideki bir güncellemede gelecek. Arabic, bu
+        düzen çalışması tamamlandığında onu takip edecek.</li>
+    </ul>
+- version: 3.19.1
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: Daha hızlı tarama — bir oyunun ekran görüntüleri artık aynı anda indiriliyor
+  body: |
+    <ul>
+      <li><strong>Ekran görüntüleri paralel olarak indiriliyor.</strong> Popüler
+        ES-DE ön yüzünün kullandığı yaklaşımın aynısını izleyerek (bir oyunun tüm
+        medyasını tek seferde çeken), RetroDB artık bir oyunun ekran görüntülerini
+        <strong>eş zamanlı olarak</strong> indiriyor; bunu her kaynak için
+        (TheGamesDB, IGDB, RAWG, ScreenScraper) art arda değil aynı anda yapıyor.
+        Birden fazla ekran görüntüsü olan oyunlar belirgin şekilde daha hızlı
+        tamamlanıyor.</li>
+      <li>Yinelenen ekran görüntüsü denetimi hâlâ sonradan sırayla çalışıyor, bu
+        yüzden resim yinelenme temizliği eskisi kadar doğru kalıyor &mdash; yalnızca
+        indirme hızlandırıldı. İndirmeler, tek bir kaynağın aşırı yüklenmemesi için
+        aynı anda dörtle sınırlandırılmış durumda.</li>
+      <li>Arka planda yapılan bir hız iyileştirmesi; bir sonraki yeniden
+        başlatmadan sonra etkin olur.</li>
+    </ul>
+- version: 3.19.0
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: Daha hızlı tarama — kaynaklar artık aynı anda sorgulanıyor
+  body: |
+    <ul>
+      <li><strong>Tarama, oyun başına daha hızlı.</strong> RetroDB bir oyunu
+        aradığında birkaç veritabanını kontrol eder (ES-DE, TheGamesDB, IGDB, RAWG,
+        ScreenScraper). Daha önce bunları <em>tek tek</em> sorguluyor ve bir
+        sonrakine geçmeden önce her birinin yanıtını bekliyordu &mdash; bu yüzden
+        bekleme süresi hepsinin toplamı kadardı. Artık hepsini <strong>aynı
+        anda</strong> sorguluyor ve yalnızca en yavaş olanı bekliyor; bu da her
+        oyunda belirgin bir hız artışı sağlıyor. Sonuçlar hâlâ tıpkı öncekiyle aynı
+        şekilde sıralanıp puanlanıyor.</li>
+      <li><strong>Görsel indirirken daha az boşa el sıkışma.</strong> Görsel
+        indirmeleri artık her resim için yeni bir bağlantı açmak yerine zaten açık
+        olan bir bağlantıyı yeniden kullanıyor; bu da çok sayıda ekran görüntüsü
+        olan oyunlarda zaman kazandırıyor.</li>
+      <li>Bunlar arka planda yapılan hız iyileştirmeleri &mdash; RetroDB&rsquo;yi
+        kullanma şeklinizde hiçbir şey değişmiyor ve veritabanlarını daha fazla
+        zorlamıyor (aynı istekler, sadece çakışık şekilde yapılıyor). Bir sonraki
+        yeniden başlatmadan sonra etkin olur.</li>
+    </ul>
+- version: 3.18.0
+  date: '2026-07-05'
+  tags:
+  - type: feature
+    label: Çin yaş sınıflandırması 9. derecelendirme sistemi olarak eklendi
+  body: |
+    <ul>
+      <li><strong>Yeni yaş sınıflandırma sistemi: Çin (CADPA).</strong> RetroDB
+        artık mevcut sekiz kurulun (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC ve
+        ClassInd) yanı sıra Çin&rsquo;in resmi oyun yaş uyarı sistemini de
+        (&ldquo;网络游戏适龄提示&rdquo;, CADPA tarafından yayımlanır) destekliyor. Üç
+        seviye kullanır &mdash; <strong>8+</strong>, <strong>12+</strong> ve
+        <strong>16+</strong> &mdash; basit bir yeşil rozetle gösterilir.</li>
+      <li><strong>Diğerleri gibi kendiliğinden doldurulur.</strong> Bir oyunun
+        başka bir ülkeden zaten bir derecelendirmesi varsa RetroDB, eşleşen Çin
+        seviyesini otomatik olarak hesaplar (ve tam tersi de geçerlidir). Bunu bir
+        oyunun Düzenle ekranında elle de seçebilir veya değiştirebilir, Ayarlar
+        &rarr; Kütüphane altında tercih ettiğiniz görüntüleme sistemi olarak da
+        seçebilirsiniz. Not: çoğu Batılı oyun veritabanı bir Çin derecelendirmesi
+        yayımlamaz, bu yüzden hiçbir yerde derecelendirmesi olmayan oyunlarda bu
+        değer tarama / AI Doldurma sırasında oyunun içeriğinden çıkarılır.</li>
+      <li>Yeşil rozetler CADPA&rsquo;nın resmi logosu değil, RetroDB&rsquo;ye özgü
+        basit bir tasarımdır (diğer kurulların ev stiline uygun), bu yüzden
+        herhangi bir görsel lisans kısıtlaması söz konusu değildir.</li>
+    </ul>
+- version: 3.17.0
+  date: '2026-07-04'
+  tags:
+  - type: feature
+    label: Diskte bulunmayan medya dosyaları için veritabanı kayıtlarını temizle
+  - type: security
+    label: Bir medya klasörü kaybolduğunda tüm kütüphanenizin görsellerinin silinmesine karşı koruma
+  body: |
+    <ul>
+      <li><strong>Yeni bakım aracı: &ldquo;Eksik Medya Referansları&rdquo;</strong>
+        (Ayarlar &rarr; Sistem &rarr; Bakım). Mevcut &ldquo;Sahipsiz Medya&rdquo;
+        temizliğinin tam tersidir: sahibi olmayan artık kalıntı görsel dosyalarını
+        bulmak yerine, kutu resmi, 3D kutu resmi, ekran görüntüleri, arka plan
+        görseli (fanart), video veya kılavuzu artık diskte bulunmayan dosyalara
+        işaret eden oyunları bulur. Bunları tarayın, ardından tarayıcıların
+        görselleri yeniden indirebilmesi için bu eski referansları tek tıkla
+        temizleyin. Oyun kayıtlarınızın kendisine asla dokunulmaz.</li>
+      <li><strong>Tarama sırasında daha güvenli otomatik temizlik.</strong> RetroDB
+        bir oyunu yeniden taradığında, diskten kaybolmuş medya dosyalarına yapılan
+        referansları sessizce temizler. Daha önce, tüm bir medya klasörü birden
+        kaybolduğunda &mdash; bağlantısı kesilen bir harici disk veya toplu bir
+        silme işlemi &mdash; bu temizlik, binlerce oyunun hangi görsellere sahip
+        olduğu kaydını silebiliyor ve maliyetli yeniden taramalara yol açabiliyordu.
+        RetroDB artık bu belirtiyi tanıyor: bir medya klasörü eksik veya tamamen
+        boşsa, referansları koruyor ve silmek yerine bir uyarı kaydediyor. Yeni
+        bakım aracı da aynı korumayı uygular ve alıkoyduğu her klasörü açıkça
+        işaretler.</li>
+    </ul>
+- version: 3.16.0
+  date: '2026-07-04'
+  tags:
+  - type: feature
+    label: Kontrol panelinde yeni "Hızlı Düzeltmeler" paneli
+  body: |
+    <ul>
+      <li><strong>Kontrol Panelindeki yeni &ldquo;Hızlı Düzeltmeler&rdquo;
+        paneli</strong> dağınık kütüphane işlerini tek bakışta görülen bir
+        yapılacaklar listesine dönüştürür. Hâlâ kaç oyunun kutu resmi eksik
+        olduğunu gösterir ve yinelenen ROM&rsquo;ları bulmak ile bozuk ROM
+        yollarını (dosyaları taşınmış veya silinmiş oyunlar) denetlemek için tek
+        tıkla kısayollar sunar. Her kısayol, sorunu düzeltecek sayfaya doğrudan
+        bağlanır. Panel, kütüphanenizde oyun olduğunda görünür.</li>
+    </ul>
+- version: 3.15.0
+  date: '2026-07-03'
+  tags:
+  - type: accessibility
+    label: Ekran okuyucular artık iş ilerlemesini sesli olarak duyuruyor
+  body: |
+    <ul>
+      <li><strong>Uzun süren işler artık ilerlemelerini ekran okuyuculara sesli
+        olarak bildiriyor.</strong> Toplu bir tarama, bir başarı senkronizasyonu
+        (RetroAchievements veya PlayStation) ya da bir görsel yeniden
+        boyutlandırma çalışırken, ekran okuyucu kullanıcıları
+        &ldquo;başladı&rdquo; ile &ldquo;bitti&rdquo; arasında hiçbir şey
+        duymuyordu. RetroDB artık düzenli aralıklarla kilometre taşlarını
+        (örneğin &ldquo;Toplu Tarama: 40&rsquo;ta 12&rdquo;) ve sözlü bir
+        tamamlanma bildirimini duyuruyor &mdash; ekranda ekstra bir açılır pencere
+        olmadan. Duyurular, gevezelik etmeden bilgi verecek şekilde zamanlanmıştır
+        ve seçtiğiniz dili takip eder.</li>
+    </ul>
+- version: 3.14.0
+  date: '2026-07-01'
+  tags:
+  - type: feature
+    label: Yeni diller — Çince (Basitleştirilmiş ve Geleneksel) artık kullanılabilir
+  body: |
+    <ul>
+      <li><strong>RetroDB artık Çince olarak da kullanılabilir.</strong>
+        <strong>Ayarlar &rarr; Sistem &rarr; Dil</strong> altında iki seçenek
+        bulunuyor: <strong>中文 (简体)</strong> (Basitleştirilmiş, anakara Çin
+        için) ve <strong>中文 (繁體)</strong> (Geleneksel, Hong Kong ve Tayvan
+        için). Tüm arayüz &mdash; menüler, düğmeler, mesajlar ve uygulama içi
+        Yardım kılavuzu &mdash; çevrilmiştir ve henüz çevrilmemiş her şey sessizce
+        İngilizce&rsquo;ye geri döner. Bu, desteklenen dil sayısını ona çıkarır
+        (İngilizce, Almanca, İspanyolca, Fransızca, İtalyanca, Japonca, Brezilya
+        Portekizcesi, Korece ve şimdi Basitleştirilmiş &amp; Geleneksel
+        Çince).</li>
+    </ul>
+- version: 3.12.0
+  date: '2026-06-30'
+  tags:
+  - type: feature
+    label: Yeni dil — Korece (한국어) artık kullanılabilir
+  body: |
+    <ul>
+      <li><strong>RetroDB artık Korece (한국어) olarak da kullanılabilir.</strong>
+        Ayarlar &rarr; Sistem &rarr; Dil altından seçin. Tüm arayüz &mdash;
+        menüler, düğmeler, mesajlar ve uygulama içi Yardım kılavuzu &mdash;
+        çevrilmiştir; bu da desteklenen dil sayısını sekize çıkarır (İngilizce,
+        Almanca, İspanyolca, Fransızca, İtalyanca, Japonca, Brezilya Portekizcesi
+        ve Korece). Korece, RetroDB&rsquo;nin gösterdiği her oyun yaş
+        sınıflandırma kurulunun kapsamını tamamlar; Güney Kore&rsquo;nin GRAC&rsquo;ı
+        da dahil.</li>
+    </ul>
+- version: 3.11.0
+  date: '2026-06-30'
+  tags:
+  - type: enhancement
+    label: RetroDB'yi Patreon'da destekleyin — yeni bağış bağlantısı eklendi
+  body: |
+    <ul>
+      <li><strong>Artık RetroDB&rsquo;yi Patreon üzerinden
+        destekleyebilirsiniz.</strong> <strong>Ayarlar &rarr; Sistem &rarr;
+        Geliştirmeyi Destekle</strong> içinde, Hakkında panelinde ve projenin
+        README dosyasında mevcut &ldquo;GitHub&rsquo;da Sponsor Ol&rdquo;
+        düğmesinin yanına bir Patreon bağlantısı eklendi. RetroDB tamamen
+        ücretsiz ve açık kaynaklı kalmaya devam ediyor &mdash; bağışlar tamamen
+        isteğe bağlıdır ve yalnızca tek başına sürdürülen geliştirmeyi devam
+        ettirmeye yardımcı olur.</li>
+    </ul>
+- version: 3.10.0
+  date: '2026-06-26'
+  tags:
+  - type: enhancement
+    label: Sürüm notları artık "Daha Fazla Yükle" düğmesiyle daha hızlı yükleniyor
+  body: |
+    <ul>
+      <li><strong>Sürüm Notları sayfası artık çok daha hızlı açılıyor.</strong>
+        Her açılışta tüm sürüm geçmişini (yüzlerce girdi) çizmek yerine, RetroDB
+        şimdi en son 20 girdiyi gösteriyor ve altına bir <strong>Daha Fazla
+        Yükle</strong> düğmesi ekliyor. Bir sonraki grubu görmek için tıklayın,
+        böyle devam eder &mdash; daha eski geçmiş hâlâ orada, sadece ilk görünümü
+        yavaşlatmak yerine talep üzerine yükleniyor.</li>
+    </ul>
+- version: 3.9.0
+  date: '2026-06-17'
+  tags:
+  - type: feature
+    label: Yardım kılavuzu ve son sürüm notları artık 6 dilin tümüne çevrildi
+  body: |
+    <ul>
+      <li><strong>Uygulama içi tam Yardım kılavuzu artık altı dilin tümünde
+        kullanılabilir</strong> &mdash; Almanca, Fransızca, İspanyolca, İtalyanca,
+        Japonca ve Brezilya Portekizcesi &mdash; sadece İngilizce değil. RetroDB,
+        kılavuzu Ayarlar&rsquo;da seçtiğiniz hangi dildeyse o dilde gösterir ve
+        henüz çevrilmemiş bir şey varsa sessizce İngilizce&rsquo;ye geri döner.</li>
+      <li><strong>Bu Sürüm Notları da artık dilinizde görünüyor</strong> en son
+        sürümler için, ve bundan sonraki yeni sürümler de buradan itibaren
+        çevrilecek. Daha eski geçmiş İngilizce olarak kalıyor.</li>
+      <li><strong>İstek Listesi sayfası ve İngilizce metnin son
+        kalıntıları</strong> &mdash; dil paketleri ilk olarak 3.8.0&rsquo;da
+        geldiğinde gözden kaçan bir grup açılır hata ve durum mesajı &mdash; artık
+        uygulama genelinde düzgün şekilde çevriliyor.</li>
+    </ul>
+- version: 3.8.2
+  date: '2026-06-17'
+  tags:
+  - type: security
+    label: Güvenlik bağımlılık güncellemesi + CI düzeltmeleri
+  body: |
+    <ul>
+      <li><strong>Güvenlik:</strong> yayımlanan bir güvenlik bildirimini
+        (GHSA-537c-gmf6-5ccf) gidermek için birlikte paketlenen
+        <code>cryptography</code> kütüphanesi güncellendi (47 → 49). Davranış
+        değişikliği yok — sadece daha güvenli bir sürüm.</li>
+      <li>Otomatik test hattı düzeltildi: eksik bir yalnızca-test yardımcı
+        paketi (<code>beautifulsoup4</code>) v3.7.0&rsquo;dan beri test
+        çalıştırmasını başarısız kılıyordu ve yeni paketleme derleme betiği
+        bilinen bir yanlış pozitif olan bir statik analiz denetimini tetikliyordu
+        (güvenilir derleme komutlarını çalıştırır, kullanıcı girdisini değil)
+        &mdash; artık belgelenmiş ve kalibre edilmiş durumda. Yalnızca bakım;
+        uygulamanın kendisinde hiçbir şey değişmiyor.</li>
+    </ul>
+- version: 3.8.1
+  date: '2026-06-17'
+  tags:
+  - type: improvement
+    label: Daha küçük indirme seçeneği, bağış düzenlemesi ve çeviri düzeltmesi (Pass
+      46.3 / 47.6)
+  body: |
+    <ul>
+      <li><strong>Çok daha küçük bir indirme seçeneği geliyor.</strong> RetroDB&rsquo;nin
+        hazır çalışır "sadece aç ve çift tıkla" sürümü artık AMD ekran kartı
+        olmayan kişiler için <strong>yalnızca CPU</strong> çeşidinde
+        (~600&nbsp;MB) derlenebiliyor &mdash; tam sürümün yaklaşık altıda biri
+        boyutunda. Her ikisi de yan yana sunulacak, böylece makinenize uygun
+        olanı seçebilirsiniz.</li>
+      <li><strong>Ayarlar&rsquo;daki "Geliştirmeyi Destekle" paneli artık
+        uygulamanın geri kalanıyla birlikte çevriliyor</strong> &mdash; dil
+        paketleri 3.8.0&rsquo;da geldiğinde yanlışlıkla İngilizce olarak
+        kalmıştı.</li>
+      <li>Bağış bağlantıları düzenlendi (README&rsquo;deki GitHub Sponsors
+        rozeti; finansman dosyası, Patreon ve Buy&nbsp;Me&nbsp;A&nbsp;Coffee
+        kurulduğunda kullanılmaya hazır). Asla can sıkıcı açılır pencere yok.</li>
+      <li>Perde arkasında: yayın hattı artık Windows, macOS ve Linux için hazır
+        çalışır sürümleri otomatik olarak derleyebiliyor. Not: uzun uygulama içi
+        <em>Yardım</em> kılavuzu şimdilik hâlâ yalnızca İngilizce &mdash; bu,
+        gelecekteki bir iş olarak kaydedildi.</li>
+    </ul>
+- version: 3.8.0
+  date: '2026-06-12'
+  tags:
+  - type: feature
+    label: Tam arayüz çevirisi + 6 dil (Pass 43.2/43.3/43.5)
+  body: |
+    <ul>
+      <li><strong>RetroDB artık 6 dil daha konuşuyor.</strong> 3.7.0&rsquo;daki
+        temel çalışmaların üzerine inşa edilerek, tüm arayüz çevrilebilir hale
+        getirildi ve <strong>Almanca, Fransızca, İspanyolca, İtalyanca, Japonca
+        ve Brezilya Portekizcesi</strong>ne makine çevirisiyle çevrildi. Dilinizi
+        Ayarlar &rarr; Görüntüleme Tercihleri &rarr; Dil altından seçin; önce
+        kaydedilmiş tercihinizi, sonra tarayıcınızı takip eder, ardından
+        İngilizce&rsquo;ye geri döner &mdash; hiçbir zaman eksik bir dilde takılı
+        kalamaz.</li>
+      <li><strong>Ekrandaki her şey kapsanıyor</strong>: sayfa metni ve düğmeler,
+        açılır mesajlar (küçük "toast" bildirimleri), düzenleme ve ayarlar
+        iletişim kutuları, ipuçları ve ekran okuyucu etiketleri. Oyun türleri,
+        bakış açıları ve oynanış modları (örn.
+        &ldquo;First-Person-Shooter&rdquo;) artık dilinizde de gösteriliyor
+        &mdash; altta yatan veriler ise kütüphanenizin ve filtrelerinizin eskisi
+        gibi çalışmaya devam etmesi için İngilizce kalıyor.</li>
+      <li>Yerleşik bir <strong>&ldquo;Pseudo&rdquo; dili</strong> (Dil menüsünde
+        görünür), her etiketi parantez içine alıp aksanlarla süsleyen bir
+        çevirmen kalite kontrol aracıdır ve gözden kaçan herhangi bir metni anında
+        belli eder.</li>
+      <li>Makine çevirileri bir başlangıç noktasıdır ve bazı yerlerde biraz
+        resmi/katı okunabilir &mdash; zaman içinde kolayca iyileştirilebilirler ve
+        çevirisi olmayan herhangi bir metin basitçe İngilizce olarak
+        gösterilir.</li>
+    </ul>

@@ -1,0 +1,2006 @@
+{% extends "base.html" %}
+
+{% block title %}Hjelp - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ _('Help & Documentation') }}</h1>
+        <p class="page-subtitle">{% trans version=config.APP_VERSION %}Complete guide to RetroDB v{{ version }}{% endtrans %}</p>
+    </div>
+</div>
+
+<!-- Help Navigation -->
+<div class="help-nav" data-sticky-nav>
+    <a href="#installation" class="help-nav-item">Installasjon</a>
+    <a href="#getting-started" class="help-nav-item">Komme i gang</a>
+    <a href="#platform-notes" class="help-nav-item">Plattformnotater</a>
+    <a href="#navigation" class="help-nav-item">Navigasjon</a>
+    <a href="#keyboard-shortcuts" class="help-nav-item">Tastatursnarveier</a>
+    <a href="#themes" class="help-nav-item">Temaer</a>
+    <a href="#dashboard" class="help-nav-item">Dashboard</a>
+    <a href="#systems" class="help-nav-item">Systemer</a>
+    <a href="#api-keys" class="help-nav-item">API-nøkler</a>
+    <a href="#settings" class="help-nav-item">Innstillinger</a>
+    <a href="#scraping" class="help-nav-item">Scraping</a>
+    <a href="#bulk-scrape" class="help-nav-item">Masse-scraping</a>
+    <a href="#ai-fill" class="help-nav-item">KI-utfylling</a>
+    <a href="#filtering" class="help-nav-item">Filtrering</a>
+    <a href="#game-detail" class="help-nav-item">Spilldetaljer</a>
+    <a href="#bulk-edit" class="help-nav-item">Masseredigering</a>
+    <a href="#compare" class="help-nav-item">Sammenlign</a>
+    <a href="#collections" class="help-nav-item">Samlinger</a>
+    <a href="#game-imports" class="help-nav-item">Spillimport</a>
+    <a href="#retroachievements" class="help-nav-item">RetroAchievements</a>
+    <a href="#steam-achievements" class="help-nav-item">Steam</a>
+    <a href="#xbox-achievements" class="help-nav-item">Xbox</a>
+    <a href="#hltb" class="help-nav-item">HLTB</a>
+    <a href="#trophies" class="help-nav-item">Trofeer</a>
+    <a href="#collector-trophies" class="help-nav-item">Samlertrofeer</a>
+    <a href="#museum" class="help-nav-item">Museum</a>
+    <a href="#analytics" class="help-nav-item">Analyse</a>
+    <a href="#reports" class="help-nav-item">Rapporter</a>
+    <a href="#rom-tools" class="help-nav-item">ROM-verktøy</a>
+    <a href="#normalization" class="help-nav-item">Normalisering</a>
+    <a href="#image-standardization" class="help-nav-item">Bildestørrelse</a>
+    <a href="#logs" class="help-nav-item">Logger</a>
+    <a href="#maintenance" class="help-nav-item">Vedlikehold</a>
+    <a href="#multi-user" class="help-nav-item">Flerbruker</a>
+    <a href="#backup" class="help-nav-item">Sikkerhetskopi</a>
+    <a href="#updating" class="help-nav-item">Oppdatering</a>
+    <a href="#troubleshooting" class="help-nav-item">Feilsøking</a>
+    <a href="#security" class="help-nav-item">Sikkerhet</a>
+</div>
+
+<!-- Installation -->
+<section id="installation" class="help-section card">
+    <h2 class="card-title">Installasjon</h2>
+    <div class="card-body">
+        <h3>Systemkrav</h3>
+        <ul>
+            <li><strong>Python 3.8+</strong> med pip</li>
+            <li><strong>Nettleser</strong> (Chrome, Firefox, Safari, Edge)</li>
+            <li><strong>Operativsystem:</strong> Linux, Windows 10/11 eller macOS</li>
+        </ul>
+
+        <h3>Hurtiginstallasjon</h3>
+        <ol>
+            <li>Pakk ut RetroDB-ZIP-filen i en mappe du velger</li>
+            <li>Åpne en terminal/ledetekst i den mappen</li>
+            <li>Kjør: <code>python install.py</code></li>
+            <li>Start serveren:
+                <ul>
+                    <li>Linux: <code>./start.sh</code></li>
+                    <li>Windows: dobbeltklikk <code>start.bat</code></li>
+                    <li>macOS: dobbeltklikk <code>start.command</code></li>
+                </ul>
+            </li>
+            <li>Åpne <code>http://localhost:5000</code> i nettleseren din</li>
+        </ol>
+
+        <h3>Grafisk installasjonsveiviser</h3>
+        <p>På Linux kan du også kjøre <code>./setup.sh</code> for å starte en grafisk installasjonsveiviser. Den sjekker automatisk om Python/pip/tkinter er tilgjengelig, og veileder deg deretter gjennom hvert oppsettstrinn med en visuell fremdriftslogg.</p>
+
+        <h3>Hva install.py gjør</h3>
+        <ul>
+            <li>Bekrefter at Python 3.8+ og pip er tilgjengelig</li>
+            <li>Installerer Python-avhengigheter fra <code>requirements.txt</code></li>
+            <li>Oppretter <code>config.py</code> fra eksempelmalen</li>
+            <li>Oppretter nødvendige mapper (database, logger, mediemapper)</li>
+            <li>Bygger CSS- og JS-pakkene</li>
+        </ul>
+
+        <h3>Overstyring med miljøvariabler</h3>
+        <p>Følgende miljøvariabler kan overstyre standardinnstillingene uten å redigere konfigurasjonsfiler:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>Variabel</th><th>Standard</th><th>Beskrivelse</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>RETRODB_DB_PATH</code></td><td><code>database/roms.db</code></td><td>Filsti til databasen</td></tr>
+                <tr><td><code>RETRODB_HOST</code></td><td><code>0.0.0.0</code></td><td>Serverens bindingsadresse</td></tr>
+                <tr><td><code>RETRODB_PORT</code></td><td><code>5000</code></td><td>Serverport</td></tr>
+                <tr><td><code>RETRODB_DEBUG</code></td><td><code>false</code></td><td>Feilsøkingsmodus (<code>true</code> eller <code>false</code>) &mdash; aktiverer Werkzeugs interaktive feilsøker. Behold <code>false</code> for enhver installasjon som er tilgjengelig fra andre enheter på nettverket ditt.</td></tr>
+                <tr><td><code>RETRODB_SECRET_KEY</code></td><td>Autogenerert</td><td>Flasks hemmelige nøkkel</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Getting Started -->
+<section id="getting-started" class="help-section card">
+    <h2 class="card-title">Komme i gang</h2>
+    <div class="card-body">
+        <h3>Førstegangsoppsett</h3>
+        <p>Ved første oppstart viser RetroDB en <strong>oppsettsveiviser</strong> som veileder deg gjennom:</p>
+        <ol>
+            <li><strong>Administratorkonto</strong> &mdash; Opprett brukernavn og passord</li>
+            <li><strong>Biblioteksti</strong> &mdash; Angi ROM-mappen din</li>
+            <li><strong>ES-DE-integrasjon</strong> &mdash; Koble til ES-DE-spillister og medier (valgfritt)</li>
+            <li><strong>API-nøkler</strong> &mdash; Legg til API-nøkler for skrapere (valgfritt)</li>
+        </ol>
+        <p>Når veiviseren er fullført, klikk <strong>"Scan Library"</strong> på Dashboardet for å oppdage ROM-ene dine.</p>
+
+        <h3>Hurtigstart-arbeidsflyt</h3>
+        <ol>
+            <li><strong>Skann</strong> biblioteket ditt for å importere ROM-er</li>
+            <li><strong>Bla gjennom</strong> etter system eller vis alle spill i Bibliotek</li>
+            <li><strong>Scrap</strong> metadata individuelt eller bruk masse-scraping</li>
+            <li><strong>Organiser</strong> med tagger, lister og ønskeliste</li>
+            <li><strong>Følg med på</strong> fremgangen din med fullføringsstatus og prestasjoner</li>
+        </ol>
+
+        <h3>ROM-biblioteksstruktur</h3>
+        <p>RetroDB forventer at ROM-ene dine er organisert i systemmapper innenfor bibliotekstien din:</p>
+        <pre>ROM Library/
+  nes/
+    Super Mario Bros. (USA).nes
+  snes/
+    Chrono Trigger (USA).sfc
+  psx/
+    Final Fantasy VII (USA)/
+      Final Fantasy VII (USA) (Disc 1).chd
+      Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>Hver systemmappe bør inneholde en ES-DE <code>systeminfo.txt</code>-fil som definerer støttede filendelser. RetroDB leser denne under skanning for å avgjøre hvilke filer som er gyldige ROM-er for hvert system.</p>
+
+        <div class="help-tip">
+            <strong>Tips:</strong> Hvis du allerede har scrapet med ES-DE, kan RetroDB importere disse dataene!
+            Konfigurer ES-DE-stier i Innstillinger &rarr; ES-DE-integrasjon, eller under oppsettsveiviseren.
+        </div>
+    </div>
+</section>
+
+<!-- Platform Notes -->
+<section id="platform-notes" class="help-section card">
+    <h2 class="card-title">Plattformnotater</h2>
+    <div class="card-body">
+        <h3>Linux</h3>
+        <ul>
+            <li>Testet på Ubuntu, Fedora, openSUSE og Arch Linux</li>
+            <li>ROM-verktøy krever: <code>sudo apt install p7zip-full unrar mame-tools</code> (Debian/Ubuntu) eller tilsvarende for din distro</li>
+            <li>Hvis du bruker systemets Python, håndterer installasjonsprogrammet <code>--break-system-packages</code> automatisk</li>
+            <li>ROCm GPU-akselerasjon støttes for AMD-GPU-er (Real-ESRGAN bildeoppskalering)</li>
+        </ul>
+
+        <h3>Windows</h3>
+        <ul>
+            <li>Last ned Python fra <a href="https://python.org" target="_blank" rel="noopener noreferrer">python.org</a> (kryss av for "Add to PATH" under installasjonen)</li>
+            <li>ROM-verktøy: Installer <a href="https://www.7-zip.org/" target="_blank" rel="noopener noreferrer">7-Zip</a>, <a href="https://www.win-rar.com/" target="_blank" rel="noopener noreferrer">WinRAR</a> og <a href="https://www.mamedev.org/" target="_blank" rel="noopener noreferrer">MAME</a> (for chdman)</li>
+            <li>Bruk <code>start.bat</code> for å starte, eller kjør <code>python app.py</code> fra ledeteksten</li>
+        </ul>
+
+        <h3>macOS</h3>
+        <ul>
+            <li>Python 3 kan installeres via <a href="https://brew.sh/" target="_blank" rel="noopener noreferrer">Homebrew</a>: <code>brew install python3</code></li>
+            <li>ROM-verktøy: <code>brew install p7zip unrar rom-tools</code></li>
+            <li>Dobbeltklikk <code>start.command</code> i Finder for å starte</li>
+            <li>CoreML-akselerasjon støttes for Apple Silicon (Real-ESRGAN bildeoppskalering)</li>
+        </ul>
+
+        <h3>ROM-verktøykrav per funksjon</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Funksjon</th><th>Påkrevd verktøy</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ZIP-utpakking</td><td>unzip (vanligvis forhåndsinstallert)</td></tr>
+                <tr><td>7z-arkivstøtte</td><td>7z (p7zip-full)</td></tr>
+                <tr><td>RAR-arkivstøtte</td><td>unrar</td></tr>
+                <tr><td>CHD-konvertering/verifisering</td><td>chdman (mame-tools)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Navigation -->
+<section id="navigation" class="help-section card">
+    <h2 class="card-title">Navigasjon</h2>
+    <div class="card-body">
+        <h3>Sidefeltseksjoner</h3>
+
+        <h4>Hovedmeny</h4>
+        <ul>
+            <li><strong>Dashboard</strong> &mdash; Helsescore for samlingen, statistikkoversikt, API-status, nylig spilte/lagt til/scrapede spill, gjenoppretting av jobber</li>
+            <li><strong>Systemer</strong> &mdash; Bla gjennom plattformer med spillantall, systembilder, spesifikasjoner, filtrering etter type og funksjoner</li>
+            <li><strong>Bibliotek</strong> &mdash; Alle spill med uendelig rulling, avansert filtrering (inkluder/ekskluder), søk og sortering</li>
+            <li><strong>Analyse</strong> &mdash; Diagrammer og samlingsstatistikk fordelt på 12 faner med eksportmuligheter</li>
+        </ul>
+
+        <h4>Trofeer og prestasjoner</h4>
+        <ul>
+            <li><strong>RPCS3-trofeer</strong> &mdash; Lokalt opptjente PS3-trofeer fra RPCS3-emulatoren</li>
+            <li><strong>PSN-trofeer</strong> &mdash; Synkronisering av PlayStation Network-trofeer via PSN-API-et</li>
+            <li><strong>Prestasjoner</strong> &mdash; Fremdriftssporing av RetroAchievements per system</li>
+            <li><strong>Steam-prestasjoner</strong> &mdash; Sporing av Steam-prestasjoner med detaljer per spill</li>
+            <li><strong>Xbox-prestasjoner</strong> &mdash; Sporing av Xbox-prestasjoner og gamerscore</li>
+        </ul>
+
+        <h4>Min samling</h4>
+        <ul>
+            <li><strong>Tagger</strong> &mdash; Egendefinerte fargekodede spilltagger</li>
+            <li><strong>Lister</strong> &mdash; Navngitte kuraterte spillister med dra-og-slipp-rekkefølge</li>
+            <li><strong>Ønskeliste</strong> &mdash; Hold oversikt over spill du ønsker å skaffe, med prioritetsnivåer</li>
+            <li><strong>Samlertrofeer</strong> &mdash; Gamification-milepæler for samlingen din</li>
+        </ul>
+
+        <h4>Verktøy</h4>
+        <ul>
+            <li><strong>ROM-rapporter</strong> &mdash; Validering av ROM-navngiving og samsvar med standarder</li>
+            <li><strong>Spillimport</strong> &mdash; Importer fra CLZ, Steam, Xbox og PSN</li>
+            <li><strong>ROM-verktøy</strong> &mdash; Arkivskanner, CHD-konverterer/-verifisering, duplikatsøker, flerdisk-organiserer, skjermbildededuplisering, bildestørrelsesendring</li>
+        </ul>
+
+        <h4>Konfigurasjon</h4>
+        <ul>
+            <li><strong>Innstillinger</strong> &mdash; All appkonfigurasjon (6 faner med mange underseksjoner)</li>
+            <li><strong>Loggvisning</strong> &mdash; Bla gjennom applikasjonslogger på tvers av alle kategorier</li>
+        </ul>
+
+        <h4>Info</h4>
+        <ul>
+            <li><strong>Museum</strong> &mdash; Interaktivt leksikon over spillsystemer med AI-generert innhold</li>
+            <li><strong>Hjelp</strong> &mdash; Denne dokumentasjonssiden</li>
+            <li><strong>Endringslogg</strong> &mdash; Versjonshistorikk</li>
+        </ul>
+
+        <h3>Sidefeltuthevelse</h3>
+        <p>Sidefeltet uthever gjeldende seksjon i cyan. Konteksten bevares når du navigerer dypere &mdash; å vise et systems spill holder <strong>Systemer</strong> uthevet, å vise et spill fra Prestasjoner holder <strong>Prestasjoner</strong> uthevet, osv.</p>
+
+        <h3>Brødsmulesti</h3>
+        <p>Brødsmulestien øverst på hver side viser navigasjonsbanen din. Eksempler:</p>
+        <ul>
+            <li><code>Systems &rsaquo; NES &rsaquo; Super Mario Bros.</code></li>
+            <li><code>RetroAchievements &rsaquo; SNES</code></li>
+            <li><code>PSN Trophies &rsaquo; The Last of Us</code></li>
+        </ul>
+
+        <h3>Faner</h3>
+        <p>Mange sider bruker faner for organisering (Innstillinger, Analyse, Rapporter, ROM-verktøy, Prestasjoner). Fanene strekker seg til å fylle innholdsbredden og husker ditt siste valg der det er aktuelt.</p>
+    </div>
+</section>
+
+<!-- Keyboard Shortcuts -->
+<section id="keyboard-shortcuts" class="help-section card">
+    <h2 class="card-title">Tastatursnarveier</h2>
+    <div class="card-body">
+        <p>Trykk <kbd>?</kbd> hvor som helst for å vise alle snarveier. En ventende-tast-indikator vises mens du venter på den andre tasten i en sekvens (f.eks. <code>g...</code>).</p>
+
+        <h3>Navigasjon (trykk G, deretter en bokstav)</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>d</kbd> <span>Dashboard</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>s</kbd> <span>Systemer</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>l</kbd> <span>Bibliotek</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>a</kbd> <span>Analyse</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>t</kbd> <span>Innstillinger</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>h</kbd> <span>Hjelp</span></div>
+        </div>
+
+        <h3>Handlinger</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>/</kbd> <span>Fokuser søk</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Lukk modal</span></div>
+            <div class="shortcut-item"><kbd>?</kbd> <span>Vis snarveier</span></div>
+        </div>
+
+        <h3>Spillsider</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>e</kbd> <span>Rediger spill</span></div>
+            <div class="shortcut-item"><kbd>s</kbd> <span>Scrap spill</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Naviger skjermbilder</span></div>
+        </div>
+
+        <div class="help-tip">
+            <strong>Merk:</strong> Tastatursnarveier deaktiveres når et tekstfelt, tekstområde eller en modal har fokus, for å unngå utilsiktet navigasjon.
+        </div>
+    </div>
+</section>
+
+<!-- Themes -->
+<section id="themes" class="help-section card">
+    <h2 class="card-title">Temaer</h2>
+    <div class="card-body">
+        <p>RetroDB tilbyr 7 visuelle temaer, hver med en unik fargepalett og en animert bakgrunnseffekt på lerret. Bytt tema i <strong>Innstillinger &rarr; Bibliotek &rarr; Visning</strong>.</p>
+
+        <h3>Tilgjengelige temaer</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Tema</th><th>Farger</th><th>Bakgrunnseffekt</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Cyberpunk</strong> (standard)</td><td>Cyan og magenta på mørkeblått</td><td>Volumetrisk røyk/tåke med simplex-støy</td></tr>
+                <tr><td><strong>Matrix</strong></td><td>Grønt på svart</td><td>Fallende digitalt regn (kanji-tegn)</td></tr>
+                <tr><td><strong>Amber</strong></td><td>Rav/oransje på mørkebrunt</td><td>CRT-soloppgangsgradient med solkorona</td></tr>
+                <tr><td><strong>Ocean</strong></td><td>Turkis og blått på mørk marineblått</td><td>Månerefleksjon med havdybdelagdeling</td></tr>
+                <tr><td><strong>Cathedral</strong></td><td>Gull og kongelilla på dyp lilla</td><td>Guddommelige lysstråler ovenfra med varm stemning</td></tr>
+                <tr><td><strong>Blade Runner</strong></td><td>Elektrisk blått og neonrosa på mørk blågrå</td><td>Neonbyglød med regnstriper og lilla dis</td></tr>
+                <tr><td><strong>Elite</strong></td><td>Vektorgrønt og hvitt på ren svart</td><td>Wireframe-vektorestetikk inspirert av Elite (1984)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Slik fungerer det</h3>
+        <ul>
+            <li>Temaer overstyrer CSS-fargevariabler &mdash; alle UI-elementer tilpasser seg automatisk</li>
+            <li>Lerret-effekter inkluderer automatisk deteksjon av maskinvarenivå (høy/middels/lav) med GPU-akselerasjon når tilgjengelig og CPU-reserveløsning for svakere enheter</li>
+            <li>Effekter settes på pause når fanen ikke er synlig, for å spare ressurser</li>
+            <li>Cyberpunk-røyktilstanden bevares på tvers av sidenavigering for sømløse overganger</li>
+            <li>Et subtilt CRT-linjeoverlegg tilpasser seg hvert temas fargepalett</li>
+            <li>Temapreferansen din lagres i nettleseren og bevares på tvers av økter</li>
+        </ul>
+
+        <h3>Temabaserte ikoner</h3>
+        <p>Varselikoner, jobbstatusindikatorer og handlingsikoner tilpasser seg automatisk gjeldende tema. For eksempel kan suksessikonet vise en grønn hake på Cyberpunk, men et annet symbol på Matrix for å matche den grønn-på-svart-estetikken.</p>
+    </div>
+</section>
+
+<!-- Dashboard -->
+<section id="dashboard" class="help-section card">
+    <h2 class="card-title">Dashboard</h2>
+    <div class="card-body">
+        <h3>Helsescore for samlingen</h3>
+        <p>En sirkulær fremdriftsring viser den overordnede helsen til samlingen din som en prosentandel, fargekodet etter kvalitet:</p>
+        <ul>
+            <li><strong>Grønn</strong> (80&#37;+) &mdash; Utmerket metadatadekning</li>
+            <li><strong>Cyan</strong> (60&ndash;79&#37;) &mdash; God dekning med noen hull</li>
+            <li><strong>Oransje</strong> (40&ndash;59&#37;) &mdash; Moderat dekning, vurder masse-scraping</li>
+            <li><strong>Rød</strong> (&lt;40&#37;) &mdash; Betydelige metadatahull</li>
+        </ul>
+        <p>Mindre oppsummeringsringer under viser fullstendighet for boksbilde, beskrivelse og prestasjonsdekning.</p>
+
+        <h3>Statistikkoversikt</h3>
+        <p>Kort med rask oversikt som viser:</p>
+        <ul>
+            <li><strong>Totalt antall systemer</strong> &mdash; Antall plattformer i biblioteket ditt</li>
+            <li><strong>Totalt antall spill</strong> &mdash; Totalt spillantall (bonusdisker ikke medregnet)</li>
+            <li><strong>Manglende metadata</strong> &mdash; Spill som ennå ikke er scrapet</li>
+            <li><strong>Fullført</strong> &mdash; Spill med scrapet metadata</li>
+        </ul>
+
+        <h3>Nylig aktivitet-seksjoner</h3>
+        <p>Rullbare seksjoner som viser nylig aktivitet (hver vises kun når det finnes relevante spill):</p>
+        <ul>
+            <li><strong>Spilles nå</strong> &mdash; Spill merket som "In Progress"</li>
+            <li><strong>Nylig lagt til</strong> &mdash; Nyeste spill lagt til i biblioteket ditt</li>
+            <li><strong>Nylig sett</strong> &mdash; Spill du nylig har åpnet</li>
+            <li><strong>Nylig scrapet</strong> &mdash; Spill med nylig hentet metadata</li>
+        </ul>
+
+        <h3>Hurtighandlinger</h3>
+        <ul>
+            <li><strong>Scan Library</strong> &mdash; Skann ROM-mappene dine etter nye spill</li>
+            <li><strong>Tilfeldig spill</strong> &mdash; Velg et tilfeldig spill fra biblioteket ditt</li>
+        </ul>
+
+        <h3>API-status</h3>
+        <p>Viser tilkoblingsstatusen til alle konfigurerte skrapere og API-er. API-er som er frakoblet eller feilkonfigurert, viser et varselbanner med en lenke til Innstillinger.</p>
+
+        <h3>Gjenoppretting av jobber</h3>
+        <p>Hvis RetroDB starter på nytt mens bakgrunnsjobber kjører (masse-scraping, RA-synkronisering, bildestørrelsesendring, osv.), vises avbrutte jobber i et gjenopprettingsbanner. Alternativer:</p>
+        <ul>
+            <li><strong>Gjenoppta</strong> &mdash; Start en enkelt avbrutt jobb på nytt</li>
+            <li><strong>Gjenoppta alle</strong> &mdash; Start alle avbrutte jobber på nytt</li>
+            <li><strong>Avvis</strong> &mdash; Fjern en enkelt jobb fra gjenopprettingslisten</li>
+            <li><strong>Avvis alle</strong> &mdash; Fjern alle avbrutte jobber</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Systems Browser -->
+<section id="systems" class="help-section card">
+    <h2 class="card-title">Systemoversikt</h2>
+    <div class="card-body">
+        <h3>Systemrutenett</h3>
+        <p>Systemer-siden viser alle plattformer i biblioteket ditt som kort i et responsivt murverksrutenett. Hvert kort viser:</p>
+        <ul>
+            <li><strong>Systemlogo</strong> (tilpassbar i Innstillinger &rarr; Tilpasning &rarr; Logoer)</li>
+            <li><strong>ROM-antall</strong> og <strong>antall ikke-scrapet</strong></li>
+            <li><strong>Systemtype-merke</strong> &mdash; Konsoll, håndholdt, datamaskin, arkade eller motor</li>
+            <li><strong>Funksjonsmerker</strong> &mdash; Støtte for RetroAchievements, lokale trofeer (RPCS3)</li>
+        </ul>
+
+        <h3>Systemspesifikasjoner-modal</h3>
+        <p>Klikk info-knappen på et hvilket som helst systemkort for å se detaljerte maskinvarespesifikasjoner:</p>
+        <ul>
+            <li>Maskinvarebilde (bilde av konsollen/systemet)</li>
+            <li>Produsent og utgivelsesdato</li>
+            <li>CPU, GPU, RAM, VRAM</li>
+            <li>Oppløsning, fargedybde, lydbrikke</li>
+            <li>Medietype (kassett, plate, osv.)</li>
+        </ul>
+
+        <h3>Filtrering og søk</h3>
+        <ul>
+            <li><strong>Tekstsøk</strong> &mdash; Filtrer etter systemnavn eller mappenavn</li>
+            <li><strong>Typefilter</strong> &mdash; Konsoll, håndholdt, datamaskin, arkade, motor</li>
+            <li><strong>Funksjonsfilter</strong> &mdash; Støtte for RetroAchievements, lokale trofeer</li>
+            <li>Filterresultatlinjen viser <em>"X av Y systemer"</em></li>
+            <li>Filtre bevares på tvers av sideinnlastinger via øktlagring</li>
+        </ul>
+
+        <h3>Spilliste per system</h3>
+        <p>Klikk et systemkort for å vise spillene der. Spillisten per system har samme funksjoner som hele Bibliotek-siden &mdash; uendelig rulling, søk, alle filteralternativer, massevalg og sortering. En systemoverskrift viser systemnavnet, spillantallet og systemtype-merket.</p>
+    </div>
+</section>
+
+<!-- API Key Setup Guide -->
+<section id="api-keys" class="help-section card">
+    <h2 class="card-title">Oppsettsguide for API-nøkler</h2>
+    <div class="card-body">
+        <p>API-nøkler er valgfrie, men gir rikere metadata-scraping og tilleggsfunksjoner. Konfigurer dem i <strong>Innstillinger &rarr; Scraping &rarr; API-nøkler</strong>.</p>
+
+        <h3>Metadata-skrapere</h3>
+
+        <h4>TheGamesDB</h4>
+        <ol>
+            <li>Gå til <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a></li>
+            <li>Be om API-nøkler (gratis, godkjennes manuelt) &mdash; du vil motta en <strong>offentlig</strong> og en <strong>privat</strong> nøkkel</li>
+            <li>Angi begge nøklene i Innstillinger &rarr; API-nøkler &rarr; TheGamesDB</li>
+            <li>Den <strong>offentlige nøkkelen</strong> (grense per IP) brukes som hovednøkkel for scraping</li>
+            <li>Den <strong>private nøkkelen</strong> (delt månedlig kvote) brukes som reserveløsning hvis den offentlige nøkkelen feiler</li>
+        </ol>
+
+        <h4>IGDB (via Twitch)</h4>
+        <ol>
+            <li>Opprett en Twitch-konto på <a href="https://www.twitch.tv" target="_blank" rel="noopener noreferrer">twitch.tv</a></li>
+            <li>Gå til <a href="https://dev.twitch.tv/console" target="_blank" rel="noopener noreferrer">dev.twitch.tv/console</a></li>
+            <li>Registrer en ny applikasjon (hvilket som helst navn, hvilken som helst kategori, <code>http://localhost</code> som OAuth-omdirigering)</li>
+            <li>Kopier <strong>Client ID</strong> og generer en <strong>Client Secret</strong></li>
+            <li>Angi begge i Innstillinger &rarr; API-nøkler &rarr; IGDB</li>
+        </ol>
+
+        <h4>RAWG.io</h4>
+        <ol>
+            <li>Gå til <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer">rawg.io/apidocs</a></li>
+            <li>Klikk "Get API Key" og opprett en konto</li>
+            <li>Kopier API-nøkkelen din fra dashbordet</li>
+            <li>Angi den i Innstillinger &rarr; API-nøkler &rarr; RAWG</li>
+        </ol>
+        <p><em>Gratisnivå: 20 000 forespørsler/måned</em></p>
+
+        <h4>ScreenScraper</h4>
+        <ol>
+            <li>Opprett en konto på <a href="https://www.screenscraper.fr" target="_blank" rel="noopener noreferrer">screenscraper.fr</a></li>
+            <li>Angi brukernavnet og passordet ditt i Innstillinger &rarr; API-nøkler &rarr; ScreenScraper</li>
+        </ol>
+        <p><em>Merk: ScreenScraper har daglige forespørselsgrenser basert på kontonivået ditt. Å bidra til databasen øker grensene dine.</em></p>
+
+        <h3>Prestasjoner og trofeer</h3>
+
+        <h4>RetroAchievements</h4>
+        <ol>
+            <li>Opprett en konto på <a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a></li>
+            <li>Gå til <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer">Innstillinger &rarr; API-nøkler</a> på profilen din</li>
+            <li>Kopier API-nøkkelen din</li>
+            <li>Angi brukernavnet og API-nøkkelen din i Innstillinger &rarr; Konto &rarr; RetroAchievements</li>
+        </ol>
+
+        <h4>Steam Web API</h4>
+        <ol>
+            <li>Gå til <a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener noreferrer">steamcommunity.com/dev/apikey</a></li>
+            <li>Registrer deg for en Steam Web API-nøkkel (krever en Steam-konto)</li>
+            <li>Angi API-nøkkelen og Steam-ID-en din (eller vanity-URL-en) i Innstillinger</li>
+        </ol>
+        <p><em>Brukes til Steam-biblioteksimport og sporing av prestasjoner.</em></p>
+
+        <h4>Xbox Live</h4>
+        <p>Xbox-autentisering bruker OAuth2 &mdash; ingen API-nøkkel er nødvendig. Logg inn med Microsoft-kontoen din direkte fra Spillimport &rarr; Xbox-fanen. Tokens caches automatisk og fornyes ved behov.</p>
+
+        <h4>PlayStation Network (PSN)</h4>
+        <p>PSN bruker NPSSO-informasjonskapsel-autentisering. Se <a href="#trophies">Trofeer</a>-seksjonen for detaljerte oppsettsinstruksjoner.</p>
+
+        <h3>KI-leverandører (for KI-utfylling og Museum)</h3>
+        <p>Én KI-leverandør er nødvendig for KI-utfylling av metadata og generering av museumsinnhold. Velg mellom:</p>
+
+        <table class="data-table">
+            <thead>
+                <tr><th>Leverandør</th><th>Standardmodell</th><th>Pris (input/output per 1M tokens)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0.10 / $0.40</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0.15 / $0.60</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 4.5</td><td>$1.00 / $5.00</td></tr>
+            </tbody>
+        </table>
+        <p>Hver leverandør tilbyr flere modellnivåer. De billigste modellene fungerer godt for metadata og museumsinnhold. Konfigurer foretrukket leverandør og API-nøkkel i <strong>Innstillinger &rarr; Scraping &rarr; API-nøkler</strong>.</p>
+    </div>
+</section>
+
+<!-- Settings -->
+<section id="settings" class="help-section card">
+    <h2 class="card-title">Innstillinger</h2>
+    <div class="card-body">
+        <p>Innstillinger er organisert i 6 faner, hver med flere underseksjoner.</p>
+
+        <h3>Konto-fanen</h3>
+        <ul>
+            <li><strong>Min profil</strong> &mdash; Last opp/fjern avatar, visningsnavn, rolleinfo, endre passord</li>
+            <li><strong>RetroAchievements</strong> &mdash; Brukernavn og API-nøkkel for RA-integrasjon</li>
+            <li><strong>PSN</strong> &mdash; NPSSO-informasjonskapsel for synkronisering av PlayStation Network-trofeer</li>
+            <li><strong>Tidssone</strong> &mdash; Angi tidssonen din for datovisning i hele appen</li>
+            <li><strong>Brukere</strong> &mdash; Brukeradministrasjon: legg til, rediger, slett brukere og tildel roller (kun admin)</li>
+        </ul>
+
+        <h3>Bibliotek-fanen</h3>
+        <ul>
+            <li><strong>Stier</strong> &mdash; ROM-biblioteksti, databaseplassering</li>
+            <li><strong>Visning</strong> &mdash; Temavalg, boksbilde-stil (2D/3D), foretrukket aldersgrense-system, elementer per side</li>
+            <li><strong>ROM-navngiving</strong> &mdash; Plassering av artikkel (ledende/etterfølgende "The"), liste over regionalternativer, standardregion, navngivingskonvensjoner</li>
+            <li><strong>Sikkerhetskopi</strong> &mdash; Opprett og gjenopprett databasesikkerhetskopier</li>
+        </ul>
+
+        <h3>Scraping-fanen</h3>
+        <ul>
+            <li><strong>ES-DE</strong> &mdash; ES-DE-spilliste- og medie-stier for lokal dataimport</li>
+            <li><strong>Skraper</strong> &mdash; Aktiver/deaktiver individuelle skrapere, dra-og-slipp-prioritering, hastighetsgrenseinnstillinger per skraper</li>
+            <li><strong>API-nøkler</strong> &mdash; Alle skraper-legitimasjoner (TGDB, IGDB, RAWG, ScreenScraper), valg av KI-leverandør og modell (Gemini, OpenAI, Claude)</li>
+        </ul>
+
+        <h3>Data-fanen</h3>
+        <ul>
+            <li><strong>Statistikk</strong> &mdash; Oversikt over biblioteksstatistikk (totalt antall spill, systemer, lagringsbruk)</li>
+            <li><strong>Trofeer</strong> &mdash; Konfigurasjon av RPCS3-trofesti for lokal skanning av PS3-trofeer</li>
+            <li><strong>Nedtrekksmenyer</strong> &mdash; Tilpass regionalternativer og andre nedtrekksverdier brukt i appen</li>
+            <li><strong>Normalisering</strong> &mdash; Regler for normalisering av sjanger og spillmodus &mdash; legg til egendefinerte tilordninger for å standardisere skraperutdata</li>
+        </ul>
+
+        <h3>Tilpasning-fanen</h3>
+        <ul>
+            <li><strong>Varsler</strong> &mdash; Innstillinger for varslingstidsavbrudd (suksess, info, advarsel, feil &mdash; hver kan konfigureres uavhengig)</li>
+            <li><strong>Kontrollere</strong> &mdash; Administrer kontrollerbiblioteket, angi standardkontrollere per system, legg til egendefinerte kontrollere. Standardkontrollere overstyrer scrapede/KI-verdier under metadatahenting.</li>
+            <li><strong>Logoer</strong> &mdash; Tilpasning av systemlogoer &mdash; importer systemlogoer eller last inn standardverdier på nytt</li>
+        </ul>
+
+        <h3>System-fanen</h3>
+        <ul>
+            <li><strong>Vedlikehold</strong> &mdash; Databaseoptimalisering (VACUUM/ANALYZE), opprydding av foreldreløse medier, fjerning av manglende ROM-er, tømming av scrapede data, tømming av CLZ-import, masse-standardisering av bilder</li>
+            <li><strong>Server</strong> &mdash; Serverkonfigurasjon (vert, port, feilsøkingsmodus)</li>
+            <li><strong>Logging</strong> &mdash; Logg-nivåinnstillinger for ulike kategorier</li>
+            <li><strong>Feilsøking</strong> &mdash; Fjern fastlåst masse-scraping, tøm RA-synkroniseringskø, tøm PSN-oppdatering, tøm museumsgenerering, start server på nytt</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Tips:</strong> Deaktiverte skrapere vil ikke utløse "API offline"-varsler på Dashboardet. Hvis du ikke bruker en skraper, deaktiver den i Innstillinger &rarr; Scraping &rarr; Skraper i stedet for å slette API-nøkkelen.
+        </div>
+    </div>
+</section>
+
+<!-- Scraping -->
+<section id="scraping" class="help-section card">
+    <h2 class="card-title">Scraping av metadata</h2>
+    <div class="card-body">
+        <h3>Scraping av enkeltspill</h3>
+        <ol>
+            <li>Åpne detaljmodalen for et hvilket som helst spill (klikk på spillkortet)</li>
+            <li>Klikk <strong>"Scrape"</strong></li>
+            <li>Endre søketittelen om nødvendig</li>
+            <li>Velg riktig resultat blant treffene</li>
+            <li>Klikk <strong>"Apply"</strong></li>
+        </ol>
+
+        <h3>Skraper-kilder</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Kilde</th><th>API-nøkkel</th><th>Best egnet for</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ES-DE (lokal)</td><td>Nei</td><td>Allerede scrapede samlinger &mdash; importerer gamelist.xml og nedlastede medier</td></tr>
+                <tr><td>TheGamesDB</td><td>Ja</td><td>Plattformspesifikke boksbilder, 3D-boksbilder</td></tr>
+                <tr><td>IGDB</td><td>Ja</td><td>Moderne spill, detaljert info, sjangre, aldersgrenser</td></tr>
+                <tr><td>RAWG.io</td><td>Ja</td><td>Brukervurderinger, beskrivelser, skjermbilder</td></tr>
+                <tr><td>ScreenScraper</td><td>Ja</td><td>Regionale varianter, 3D-boksbilder, videoer, manualer</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Hybrid scraping</h3>
+        <p>RetroDB kombinerer automatisk data fra flere kilder for å maksimere metadatadekningen:</p>
+        <ul>
+            <li>Tekstmetadata fra kilden med høyest prioritet som er tilgjengelig</li>
+            <li>Bilder og medier fra sekundære kilder når primærkilden ikke har dem</li>
+            <li>Automatisk utfylling av hull på tvers av skrapere for maksimal dekning</li>
+            <li>Sorteringstittel genereres automatisk fra spilltittelen under scraping</li>
+        </ul>
+
+        <h3>Mediehåndtering</h3>
+        <ul>
+            <li>Mediefelt (boksbilde, 3D-boksbilde, skjermbilder, fanart, video, manual) blir <strong>aldri erstattet</strong> under normal scraping &mdash; kun fylt ut når de er tomme</li>
+            <li>Skjermbilder blir alltid <strong>lagt til</strong>, aldri erstattet</li>
+            <li>For å laste ned medier på nytt, fjern det eksisterende bildet i redigeringsmodalen først, og scrap deretter på nytt</li>
+            <li><strong>Full Re-scrape</strong>-modus overstyrer dette og erstatter alt</li>
+            <li>Foreldede medietilkoblinger (fil slettet, men filnavnet fortsatt i databasen) tømmes automatisk før scraping slik at nye medier kan lastes ned</li>
+            <li>Nedlastede bilder standardiseres automatisk til målstørrelser (se <a href="#image-standardization">Bildestandardisering</a>)</li>
+        </ul>
+
+        <h3>Skraper-prioritet</h3>
+        <p>Konfigurer hvilke skrapere som kjører først, og hvilke som er aktivert/deaktivert, i <strong>Innstillinger &rarr; Scraping &rarr; Skraper</strong>. Dra og slipp for å endre prioritetsrekkefølgen. Deaktiverte skrapere forsøkes ikke under scraping og utløser ikke API-statusvarsler på Dashboardet.</p>
+
+        <h3>Hastighetsbegrensning</h3>
+        <p>Hver skraper har konfigurerbare hastighetsgrenser for å unngå API-strupe. Standardforsinkelser er satt konservativt. Reduser forsinkelser på eget ansvar &mdash; å overskride API-hastighetsgrenser kan føre til midlertidig utestengelse fra den aktuelle tjenesten.</p>
+    </div>
+</section>
+
+<!-- Bulk Scraping -->
+<section id="bulk-scrape" class="help-section card">
+    <h2 class="card-title">Masse-scraping</h2>
+    <div class="card-body">
+        <h3>Starte en masse-scraping</h3>
+        <ol>
+            <li>Gå til en hvilken som helst System- eller Bibliotek-side</li>
+            <li>Klikk <strong>"Select"</strong> for å gå inn i valgmodus</li>
+            <li>Velg spill individuelt eller bruk hurtigvalg:
+                <ul>
+                    <li><strong>Velg alle</strong> &mdash; Alle synlige spill</li>
+                    <li><strong>Velg ikke-scrapede</strong> &mdash; Kun spill uten metadata</li>
+                </ul>
+            </li>
+            <li>Velg modus: <strong>Fill Missing</strong> eller <strong>Full Re-scrape</strong></li>
+            <li>Klikk <strong>"Scrape Selected"</strong></li>
+        </ol>
+
+        <h3>Kontroller</h3>
+        <ul>
+            <li><strong>Pause/gjenoppta</strong> &mdash; Sett scraping på pause eller fortsett</li>
+            <li><strong>Avbryt</strong> &mdash; Stopp helt</li>
+            <li><strong>Bakgrunn</strong> &mdash; Minimer og fortsett å bla mens scraping kjører</li>
+        </ul>
+
+        <h3>Varselboble</h3>
+        <p>Når den kjører i bakgrunnen, viser en vedvarende varselboble fremgang på alle sider:</p>
+        <ul>
+            <li>Gjeldende spillnavn, fremdriftstelling og resultatstatistikk (vellykket, feilet, hoppet over)</li>
+            <li>Pause/avbryt-kontroller tilgjengelig fra hvilken som helst side</li>
+            <li>Klikk varselboblen for å gå tilbake til scraping-modalen</li>
+        </ul>
+
+        <h3>Køsystem</h3>
+        <p>Flere masse-scrapinger settes automatisk i kø:</p>
+        <ul>
+            <li>Start en ny scraping mens én allerede kjører &mdash; den settes i kø</li>
+            <li>Køen vises i varselboblen med antall ventende jobber</li>
+            <li>Jobber behandles automatisk i rekkefølge</li>
+            <li>Bruk Kø-behandling for å vise, omorganisere eller avbryte jobber i kø</li>
+        </ul>
+
+        <h3>Scraping-alternativer</h3>
+        <ul>
+            <li><strong>Fill Missing Only</strong> &mdash; Fyll kun ut tomme metadatafelt, behold eksisterende data</li>
+            <li><strong>Full Re-scrape</strong> &mdash; Erstatt alle felt inkludert medier (laster ned nye bilder og videoer)</li>
+            <li><strong>Check RetroAchievements</strong> &mdash; Sjekk også etter RetroAchievements-prestasjonssett under scraping</li>
+        </ul>
+
+        <h3>Gjenoppretting av jobber</h3>
+        <p>Hvis RetroDB startes på nytt mens en jobb kjører, vises avbrutte jobber i et gjenopprettingsbanner på Dashboardet. Klikk <strong>"Resume"</strong> på enkeltjobber eller <strong>"Resume All"</strong> for å starte dem på nytt. Fremdriftsboblen vises umiddelbart etter gjenopptakelse.</p>
+    </div>
+</section>
+
+<!-- AI Fill -->
+<section id="ai-fill" class="help-section card">
+    <h2 class="card-title">KI-utfylling</h2>
+    <div class="card-body">
+        <h3>Hva den gjør</h3>
+        <p>KI-utfylling bruker en stor språkmodell (Gemini, OpenAI eller Claude) til å fylle ut manglende eller ufullstendig spillmetadata på en intelligent måte. Den er smartere enn vanlig scraping fordi den bruker kontekstuell kunnskap om spillet til å levere nøyaktige data som skrapere kanskje ikke har.</p>
+
+        <h3>Slik bruker du den</h3>
+        <ol>
+            <li>Åpne detaljmodalen for et spill (eller hele detaljsiden)</li>
+            <li>Klikk <strong>"AI Fill"</strong> (krever en KI-API-nøkkel konfigurert i Innstillinger)</li>
+            <li>KI-en analyserer spilltittelen og systemet, og fyller deretter ut manglende felt</li>
+            <li>Se over resultatene &mdash; endringer lagres automatisk</li>
+        </ol>
+
+        <h3>Hva KI-utfylling kan levere</h3>
+        <ul>
+            <li>Sjanger, beskrivelse, utvikler, utgiver, utgivelsesdato</li>
+            <li>Antall spillere, spillmodus (enkeltspiller, flerspiller, samarbeid, osv.)</li>
+            <li>Informasjon om kampanje og spillstruktur</li>
+            <li>Alle 8 aldersgrense-systemer (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd)</li>
+            <li>Region, franchise, lignende spill</li>
+            <li>Kontrollerstøtte, lagringstype</li>
+            <li>Perspektiv (førsteperson, ovenfra-og-ned, sidescroller, osv.), dimensjon (2D, 3D)</li>
+            <li>Utgaveinformasjon, kritiker- og brukerscore</li>
+        </ul>
+
+        <h3>Smart utfyllingslogikk</h3>
+        <ul>
+            <li><strong>Tomme felt</strong> fylles alltid ut</li>
+            <li><strong>Eksisterende brukerdata</strong> overskrives aldri</li>
+            <li><strong>Lignende spill</strong> oppdateres alltid (KI-data er mer pålitelig for dette feltet)</li>
+            <li><strong>Kryssmappede aldersgrenser</strong> &mdash; Hvis ett aldersgrense-system er kjent, fylles tomme aldersgrenser i andre systemer automatisk ut ved hjelp av kryssmapping av modenhetsnivå</li>
+            <li><strong>Sorteringstittel</strong> genereres automatisk når den fylles ut</li>
+            <li><strong>Antall spillere</strong>-feltet normaliserer intervaller (f.eks. blir "1-4" til 4)</li>
+        </ul>
+
+        <h3>Sjangernormalisering</h3>
+        <p>KI-utfylling bruker kanoniske sjangerformer med bindestrek-navn:</p>
+        <ul>
+            <li><code>First-Person-Shooter</code>, <code>Shoot-em-up</code>, <code>Beat-em-up</code></li>
+            <li><code>Hack-n-Slash</code>, <code>Board-Card</code>, <code>Real-Time Strategy</code></li>
+        </ul>
+
+        <h3>Krav</h3>
+        <p>Minst én API-nøkkel for en KI-leverandør må være konfigurert i <strong>Innstillinger &rarr; Scraping &rarr; API-nøkler</strong>. Det billigste modellnivået (Gemini Flash Lite, GPT-4o Mini eller Claude Haiku) fungerer godt for metadata.</p>
+    </div>
+</section>
+
+<!-- Filtering -->
+<section id="filtering" class="help-section card">
+    <h2 class="card-title">Filtrering og søk</h2>
+    <div class="card-body">
+        <h3>Søk</h3>
+        <p>Søk filtrerer spill etter tittel (og sorteringstittel). Trykk <kbd>/</kbd> for å fokusere søkefeltet. Resultatene oppdateres i sanntid med en 300ms-forsinkelse.</p>
+
+        <h3>Kildefilter</h3>
+        <p>Filtrer spill etter importkilde:</p>
+        <ul>
+            <li><strong>ROM-filer</strong> &mdash; Spill fra ROM-biblioteket ditt</li>
+            <li><strong>CLZ-import</strong> &mdash; Fysiske spill importert fra CLZ</li>
+            <li><strong>Steam-import</strong> &mdash; Spill importert fra Steam</li>
+            <li><strong>Xbox-import</strong> &mdash; Spill importert fra Xbox</li>
+            <li><strong>PSN-import</strong> &mdash; Spill importert fra PlayStation Network</li>
+        </ul>
+
+        <h3>Filterknapper</h3>
+        <p>Hvert filter åpner en modal som viser alle unike verdier i biblioteket ditt med antall. Filtre støtter to modi:</p>
+        <ul>
+            <li><strong>Inkluder (IS)</strong> &mdash; Vis kun spill som samsvarer med den valgte verdien</li>
+            <li><strong>Ekskluder (IS NOT)</strong> &mdash; Skjul spill som samsvarer med den valgte verdien</li>
+        </ul>
+        <p>Bytt mellom inkluder- og ekskluder-modus med bryteren i filtermodalen.</p>
+
+        <h3>Tilgjengelige filtre</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Filter</th><th>Beskrivelse</th><th>Flerverdi</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Sjanger</strong></td><td>Action, RPG, plattformspill, osv.</td><td>Ja</td></tr>
+                <tr><td><strong>Serie</strong></td><td>Spillfranchise</td><td>Ja</td></tr>
+                <tr><td><strong>Utgiver</strong></td><td>Utgiverselskap</td><td>Ja</td></tr>
+                <tr><td><strong>Utvikler</strong></td><td>Utviklingsstudio</td><td>Ja</td></tr>
+                <tr><td><strong>Antall spillere</strong></td><td>Antall spillere</td><td>Nei</td></tr>
+                <tr><td><strong>Modus</strong></td><td>Enkeltspiller, flerspiller, samarbeid</td><td>Ja</td></tr>
+                <tr><td><strong>Perspektiv</strong></td><td>Førsteperson, ovenfra-og-ned, isometrisk, sidescroller</td><td>Ja</td></tr>
+                <tr><td><strong>Dimensjon</strong></td><td>2D, 3D</td><td>Ja</td></tr>
+                <tr><td><strong>Aldersgrense</strong></td><td>Aldersgrense (viser ditt foretrukne system)</td><td>Nei</td></tr>
+                <tr><td><strong>Har RA</strong></td><td>Spill med støtte for RetroAchievements</td><td>Nei</td></tr>
+                <tr><td><strong>Vis bonus</strong></td><td>Slå av/på synlighet for bonusdisker</td><td>Nei</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Sorteringsalternativer</h3>
+        <ul>
+            <li><strong>Tittel</strong> &mdash; Alfabetisk etter sorteringstittel (ikke skiller mellom store/små bokstaver)</li>
+            <li><strong>Utgivelsesdato</strong> &mdash; Kronologisk rekkefølge (tidligst først)</li>
+            <li><strong>Plattform</strong> &mdash; Gruppert etter systemnavn</li>
+        </ul>
+
+        <h3>Alfabetnavigasjon</h3>
+        <p>Hopp til spill som starter med en bestemt bokstav. Bokstaver uten samsvarende spill vises nedtonet. Tall og symboler grupperes under <strong>#</strong>.</p>
+
+        <h3>Uendelig rulling</h3>
+        <p>Spill lastes inn i puljer på 100 etter hvert som du ruller. Nye sider lastes automatisk når du nærmer deg bunnen. Endring av filtre eller søk tilbakestiller og laster inn resultatene på nytt umiddelbart.</p>
+
+        <h3>Tilstandsbevaring</h3>
+        <p>Gjeldende filtre, søketerm og rulleposisjon lagres i øktlagring. De gjenopprettes når du navigerer tilbake til siden eller oppdaterer den.</p>
+    </div>
+</section>
+
+<!-- Game Detail -->
+<section id="game-detail" class="help-section card">
+    <h2 class="card-title">Spilldetaljer</h2>
+    <div class="card-body">
+        <h3>Spilldetaljmodal</h3>
+        <p>Å klikke på et spillkort åpner en detaljmodal med en hurtigbufret rask visning. Modalen viser:</p>
+        <ul>
+            <li>Boksbilde (2D og 3D), fanart-bakgrunn</li>
+            <li>Beskrivelse og utgivelsesinfo</li>
+            <li>Utvikler-, utgiver- og sjangermerker</li>
+            <li>Antall spillere, spillmodus, spillstruktur</li>
+            <li>Aldersgrensebilde (fra ditt foretrukne system, med kryssmapping som reserveløsning)</li>
+            <li>Skjermbildegalleri med tastaturnavigasjon (<kbd>&larr;</kbd> <kbd>&rarr;</kbd>)</li>
+            <li>Trailer-video (hvis tilgjengelig)</li>
+            <li>HLTB-spilletidsestimater (hovedhistorie, hovedhistorie + ekstrainnhold, komplettering)</li>
+            <li>RetroAchievements-status og fremgang</li>
+            <li>Lignende spill (klikkbare lenker)</li>
+            <li>Detaljer om kontrollerstøtte</li>
+            <li>Tagger tilknyttet spillet</li>
+            <li>Filstørrelse og ROM-sti</li>
+        </ul>
+
+        <h3>Full spilldetaljside</h3>
+        <p>Klikk lenken til spilltittelen eller naviger fra brødsmulestien for å se hele spilldetaljsiden. Ytterligere funksjoner på hele siden inkluderer:</p>
+        <ul>
+            <li><strong>Fanart-bakgrunnsoverskrift</strong> med brødsmulesti-navigasjon</li>
+            <li><strong>Plattformimport-merker</strong> &mdash; Viser CLZ-import, Steam-import, Xbox-import eller PSN-import med plattformlogoer der det gjelder</li>
+            <li><strong>Bonusdisk-indikator</strong> &mdash; Viser et merke og en "Part of:"-lenke til hovedspillet med miniatyrbilde</li>
+            <li><strong>Slett-knapp</strong> &mdash; Fjern spillet fra databasen (med bekreftelse)</li>
+            <li><strong>Tøm-knapp</strong> &mdash; Tøm all scrapet metadata mens ROM-oppføringen beholdes</li>
+        </ul>
+
+        <h3>Redigeringsmodal</h3>
+        <p>Klikk <strong>Edit</strong> (eller trykk <kbd>e</kbd>) for å åpne redigeringsmodalen, organisert i seksjoner:</p>
+        <ul>
+            <li><strong>Identitet</strong> &mdash; Tittel, sorteringstittel (autogenerert, men redigerbar), franchise, utgave</li>
+            <li><strong>Utgivelsesinfo</strong> &mdash; Utgivelsesdato, region (fra konfigurerbar nedtrekksmeny)</li>
+            <li><strong>Spillbarhet</strong> &mdash; Sjanger (flervalg-tagger), spillmodus, spillstruktur, antall spillere, utvikler, utgiver</li>
+            <li><strong>Teknisk</strong> &mdash; Kontrollere (flervalg), lagringstype, perspektiv (flerverdi), dimensjon (flerverdi)</li>
+            <li><strong>Aldersgrenser</strong> &mdash; Alle 8 aldersgrense-systemer med offisielle vurderingsbilder og automatisk kryssmapping. Endring av én aldersgrense fyller automatisk ut tomme aldersgrenser i andre systemer.</li>
+            <li><strong>Score</strong> &mdash; Kritikerscore, brukerscore</li>
+            <li><strong>Beskrivelse</strong> &mdash; Spillbeskrivelsestekst</li>
+            <li><strong>Egendefinerte bilder</strong> &mdash; Last opp egendefinert boksbilde (2D), 3D-boksbilde og fanart. Fjern eksisterende bilder for å tillate ny scraping.</li>
+            <li><strong>Video/trailer</strong> &mdash; Last opp eller lenk til en video-trailer</li>
+        </ul>
+
+        <h3>Hurtighandlinger</h3>
+        <ul>
+            <li><strong>Edit</strong> &mdash; Åpne redigeringsmodalen (<kbd>e</kbd>)</li>
+            <li><strong>Scrape</strong> &mdash; Hent metadata fra skraper-kilder (<kbd>s</kbd>)</li>
+            <li><strong>AI Fill</strong> &mdash; Fyll ut manglende felt med KI (krever KI-API-nøkkel)</li>
+            <li><strong>Check for RA</strong> &mdash; Søk etter et RetroAchievements-prestasjonssett</li>
+            <li><strong>HLTB Lookup</strong> &mdash; Finn spilletidsestimater fra HowLongToBeat</li>
+        </ul>
+
+        <h3>Fullføringsstatus</h3>
+        <p>Følg fremgangen din med disse statusene (vist som merker på spillkort):</p>
+        <ul>
+            <li><strong>Ikke startet</strong> &mdash; Har ikke spilt ennå</li>
+            <li><strong>Spilles</strong> &mdash; Spilles for øyeblikket</li>
+            <li><strong>Spilt</strong> &mdash; Spilt, men ikke fullført</li>
+            <li><strong>Fullført</strong> &mdash; Fullførte hovedspillet</li>
+            <li><strong>100%</strong> &mdash; Fullførte alt</li>
+        </ul>
+
+        <h3>Fleraldersgrense-system</h3>
+        <p>RetroDB støtter 8 internasjonale aldersgrense-systemer:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>System</th><th>Region</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>ESRB</strong></td><td>Nord-Amerika</td></tr>
+                <tr><td><strong>PEGI</strong></td><td>Europa</td></tr>
+                <tr><td><strong>CERO</strong></td><td>Japan</td></tr>
+                <tr><td><strong>USK</strong></td><td>Tyskland</td></tr>
+                <tr><td><strong>ACB</strong></td><td>Australia</td></tr>
+                <tr><td><strong>FPB</strong></td><td>Sør-Afrika</td></tr>
+                <tr><td><strong>GRAC</strong></td><td>Sør-Korea</td></tr>
+                <tr><td><strong>ClassInd</strong></td><td>Brasil</td></tr>
+            </tbody>
+        </table>
+        <p>Angi foretrukket system i <strong>Innstillinger &rarr; Bibliotek &rarr; Visning</strong>. Offisielle vurderingsbilder vises på spillkort, detaljmodaler og detaljsider. Tomme aldersgrenser fylles automatisk ut fra en hvilken som helst tilgjengelig aldersgrense via kryssmapping av modenhetsnivå under scraping, KI-utfylling og manuell redigering.</p>
+
+        <h3>Bonusdisker</h3>
+        <p>RetroDB oppdager automatisk bonus-/ekstradisker (f.eks. lydsporplater, disker med ekstra innhold) og kobler dem til hovedspillet. Bonusdisker er skjult som standard i biblioteket &mdash; slå på <strong>"Show Bonus"</strong> i filtre for å vise dem. Koblede bonusdisker vises i hovedspillets detaljmodal.</p>
+
+        <div class="help-tip">
+            <strong>Tips:</strong> Detaljmodalen bufrer nylig viste spill for raskere innlasting. Redigeringer oppdaterer automatisk spillkortet på siden uten at det er nødvendig å oppdatere siden.
+        </div>
+    </div>
+</section>
+
+<!-- Bulk Edit -->
+<section id="bulk-edit" class="help-section card">
+    <h2 class="card-title">Masseredigering</h2>
+    <div class="card-body">
+        <h3>Slik bruker du den</h3>
+        <ol>
+            <li>Gå til en hvilken som helst System- eller Bibliotek-side</li>
+            <li>Klikk <strong>"Select"</strong> for å gå inn i valgmodus</li>
+            <li>Velg spillene du vil redigere (individuelt, Velg alle, eller Velg ikke-scrapede)</li>
+            <li>Klikk <strong>"Bulk Edit"</strong></li>
+            <li>Velg feltet som skal endres, og angi den nye verdien</li>
+            <li>Velg modus <strong>Replace</strong> eller <strong>Append</strong></li>
+            <li>Klikk <strong>"Apply"</strong> for å oppdatere alle valgte spill</li>
+        </ol>
+
+        <h3>Erstatt vs. legg til</h3>
+        <ul>
+            <li><strong>Replace</strong> &mdash; Overskriver eksisterende verdi med den nye</li>
+            <li><strong>Append</strong> &mdash; Legger den nye verdien til de eksisterende verdiene (for flerverdifelt)</li>
+        </ul>
+
+        <h3>Støttede felt</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Felt</th><th>Støtter Append</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Sjanger</td><td>Ja</td></tr>
+                <tr><td>Utgiver</td><td>Ja</td></tr>
+                <tr><td>Utvikler</td><td>Ja</td></tr>
+                <tr><td>Franchise</td><td>Ja</td></tr>
+                <tr><td>Region</td><td>Ja</td></tr>
+                <tr><td>Spillstruktur</td><td>Ja</td></tr>
+                <tr><td>Perspektiv</td><td>Ja</td></tr>
+                <tr><td>Dimensjon</td><td>Ja</td></tr>
+                <tr><td>Fullføringsstatus</td><td>Nei (kun erstatt)</td></tr>
+                <tr><td>Antall spillere</td><td>Nei (kun erstatt)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Compare Games -->
+<section id="compare" class="help-section card">
+    <h2 class="card-title">Sammenlign spill</h2>
+    <div class="card-body">
+        <h3>Hva den gjør</h3>
+        <p>Side-ved-side-sammenligning av metadata for to spill i en tabellvisning. Nyttig for å sjekke metadatakvalitet, oppdage duplikater, eller sammenligne versjoner av samme spill på tvers av systemer.</p>
+
+        <h3>Slik bruker du den</h3>
+        <ol>
+            <li>Gå til <strong>Sammenlign</strong> (tilgjengelig fra Bibliotek-siden)</li>
+            <li>Søk etter og velg det første spillet</li>
+            <li>Søk etter og velg det andre spillet</li>
+            <li>Se over sammenligningstabellen &mdash; forskjeller er uthevet</li>
+        </ol>
+
+        <h3>Sammenlignede felt</h3>
+        <p>System, utvikler, utgiver, utgivelsesdato, sjanger, franchise, region, antall spillere, spillmodus, perspektiv, dimensjon, alle 8 aldersgrenser, brukervurdering, kritikerscore, spilletidsestimater, kontrollerstøtte, lagringstype, filstørrelse, lignende spill, beskrivelse og mer.</p>
+    </div>
+</section>
+
+<!-- Collections -->
+<section id="collections" class="help-section card">
+    <h2 class="card-title">Samlinger (tagger, lister, ønskeliste)</h2>
+    <div class="card-body">
+        <h3>Tagger</h3>
+        <p>Opprett egendefinerte fargekodede tagger for å organisere spillene dine. Tagger fungerer som etiketter &mdash; hvert spill kan ha flere tagger, og hver tagg kan inneholde flere spill.</p>
+        <ul>
+            <li>Opprett tagger med egendefinerte navn og farger fra <strong>Tagger</strong>-siden</li>
+            <li>Tildel tagger til spill via spilldetaljmodalen</li>
+            <li>Klikk en tagg for å bla gjennom alle spill med den taggen</li>
+            <li>Rediger eller slett tagger fra Tagger-administrasjonssiden</li>
+        </ul>
+
+        <h3>Navngitte lister</h3>
+        <p>Opprett kuraterte spillister med egendefinert rekkefølge. Lister fungerer som spillelister &mdash; du styrer den eksakte rekkefølgen på spillene.</p>
+        <ul>
+            <li>Opprett lister med et navn, en beskrivelse og et ikon fra <strong>Lister</strong>-siden</li>
+            <li>Legg til spill i lister via spilldetaljmodalen eller listesiden</li>
+            <li>Dra og slipp for å endre rekkefølgen på spill i en liste</li>
+            <li>Sorter etter egendefinert rekkefølge eller alfabetisk</li>
+        </ul>
+
+        <h3>Ønskeliste</h3>
+        <p>Hold oversikt over spill du ønsker å skaffe, enten fysisk eller digitalt.</p>
+        <ul>
+            <li>Legg til spill manuelt med tittel, system, notater og prioritet (1&ndash;5)</li>
+            <li>Ønskeliste-elementer kan kobles til eksisterende spill i biblioteket hvis de finnes</li>
+            <li>Sortert etter prioritet (høyest først), deretter etter dato lagt til</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Tips:</strong> Bruk tagger for tverrgående merkelapper (f.eks. "Favoritter", "Sofa-samarbeid", "Backlog") og lister for spesifikke kuraterte samlinger (f.eks. "Topp 10 SNES-spill", "Spill å strømme").
+        </div>
+    </div>
+</section>
+
+<!-- Game Imports -->
+<section id="game-imports" class="help-section card">
+    <h2 class="card-title">Spillimport</h2>
+    <div class="card-body">
+        <p>Importer spillsamlinger fra eksterne kilder. Tilgjengelig via <strong>Spillimport</strong> i sidefeltet. Alle importtyper er samlet på én side med faner.</p>
+
+        <h3>CLZ Games-import</h3>
+        <p>Importer den fysiske spillsamlingen din fra CLZ Games.</p>
+        <ol>
+            <li>Eksporter CLZ Games-samlingen din som PDF</li>
+            <li>Gå til Spillimport &rarr; <strong>CLZ</strong>-fanen</li>
+            <li>Last opp PDF-filen</li>
+            <li>Se over de tolkede spillene</li>
+            <li>Velg hvilke spill som skal importeres</li>
+        </ol>
+        <p>CLZ-import spores separat fra ROM-spill (med et <code>clz_import/</code>-prefiks), slik at du kan katalogisere både fysiske og digitale samlinger. CLZ-import kan tømmes helt fra <strong>Innstillinger &rarr; System &rarr; Vedlikehold</strong>.</p>
+
+        <h3>Steam-import</h3>
+        <p>Importer Steam-spillbiblioteket ditt og spor prestasjoner.</p>
+        <ol>
+            <li>Konfigurer Steam Web API-nøkkelen og Steam-ID-en din i Innstillinger</li>
+            <li>Gå til Spillimport &rarr; <strong>Steam</strong>-fanen</li>
+            <li>Klikk <strong>"Fetch Library"</strong> for å hente Steam-spillene dine</li>
+            <li>Velg spill som skal importeres (duplikater oppdages automatisk)</li>
+            <li>Importerte spill tagges med Steam App-ID-en sin for sporing av prestasjoner</li>
+        </ol>
+
+        <h3>Xbox-import</h3>
+        <p>Importer Xbox-spillbiblioteket ditt via Microsoft-konto.</p>
+        <ol>
+            <li>Gå til Spillimport &rarr; <strong>Xbox</strong>-fanen</li>
+            <li>Klikk <strong>"Sign In"</strong> for å autentisere med Microsoft-kontoen din (OAuth2-flyt)</li>
+            <li>Xbox-titelhistorikken din hentes automatisk</li>
+            <li>Velg spill som skal importeres, med duplikatgjenkjenning</li>
+            <li>Importerte spill tagges med Xbox Title ID-en sin for sporing av prestasjoner</li>
+        </ol>
+        <p>Xbox-tokens caches i <code>data/xbox_tokens.json</code> og fornyes automatisk.</p>
+
+        <h3>PSN-import</h3>
+        <p>Importer PlayStation Network-spillbiblioteket ditt.</p>
+        <ol>
+            <li>Gå til Spillimport &rarr; <strong>PSN</strong>-fanen</li>
+            <li>Angi NPSSO-informasjonskapselen din (se <a href="#trophies">Trofeer &rarr; PSN-autentisering</a> for hvordan du skaffer den)</li>
+            <li>Klikk <strong>"Fetch Library"</strong> for å hente PSN-spillene dine</li>
+            <li>Velg spill som skal importeres</li>
+        </ol>
+
+        <h3>Etter import</h3>
+        <ul>
+            <li>Importerte spill vises i Bibliotek med plattformspesifikke merker</li>
+            <li>Bruk masse-scraping for å hente metadata for importerte spill</li>
+            <li>Sporing av prestasjoner/trofeer kobles automatisk til kildeplattformen</li>
+            <li>Importerte spill kan filtreres i Bibliotek ved hjelp av Kilde-filteret</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Tips:</strong> Etter at du har importert spill fra en hvilken som helst plattform, kan du scrape metadata for dem med masse-scraping, akkurat som ROM-spill. Importerte spill kan også spore prestasjoner fra sine respektive plattformer.
+        </div>
+    </div>
+</section>
+
+<!-- RetroAchievements -->
+<section id="retroachievements" class="help-section card">
+    <h2 class="card-title">RetroAchievements</h2>
+    <div class="card-body">
+        <h3>Oppsett</h3>
+        <ol>
+            <li>Opprett en konto på <a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a></li>
+            <li>Generer en API-nøkkel i profilinnstillingene dine</li>
+            <li>Angi brukernavnet og API-nøkkelen din i Innstillinger &rarr; Konto &rarr; RetroAchievements</li>
+        </ol>
+
+        <h3>Prestasjoner-siden</h3>
+        <ul>
+            <li><strong>Systemfaner</strong> &mdash; Bla gjennom prestasjoner etter plattform (husker den sist viste fanen)</li>
+            <li><strong>Alfabetnavigasjon</strong> &mdash; Hopp til spill etter forbokstav innenfor hver systemfane</li>
+            <li><strong>Refresh Progress</strong> &mdash; Synkroniser prestasjonsfremgangen din fra RetroAchievements</li>
+            <li><strong>Samlet statistikk</strong> &mdash; Opptjente prestasjoner og poeng på tvers av alle systemer</li>
+            <li><strong>Fremgang per spill</strong> &mdash; Se fullføringsprosent for hvert spill med fremdriftslinjer</li>
+        </ul>
+
+        <h3>Synkroniseringskø</h3>
+        <p>Flere systemsynkroniseringer kan settes i kø:</p>
+        <ul>
+            <li>Klikk "Refresh Progress" på et system for å starte eller sette en synkronisering i kø</li>
+            <li>Hvis en synkronisering allerede kjører, settes nye forespørsler automatisk i kø</li>
+            <li>Køen behandles automatisk når gjeldende synkronisering er fullført</li>
+            <li>Varselboble viser gjeldende fremgang og antall i kø</li>
+        </ul>
+
+        <h3>Finne spill med prestasjoner</h3>
+        <ul>
+            <li><strong>Biblioteksfilter</strong> &mdash; Bruk "Has RA"-filteret for å vise kun spill med prestasjoner</li>
+            <li><strong>Check for RA</strong> &mdash; Klikk på spilldetaljmodaler for å søke etter et prestasjonssett</li>
+            <li><strong>Masse-scraping</strong> &mdash; Aktiver "Check RA"-alternativet for å finne prestasjoner under scraping</li>
+            <li><strong>RA Refresh-jobb</strong> &mdash; Skann alle spill i et system for å identifisere hvilke som har RA-støtte</li>
+        </ul>
+
+        <h3>Spilldetaljer</h3>
+        <p>Klikk et hvilket som helst spill på prestasjonssiden for å se detaljert prestasjonsinfo per spill, inkludert individuelle prestasjonsnavn, beskrivelser, poengverdier og oppnådd-status.</p>
+
+        <div class="help-tip">
+            <strong>Merk:</strong> "Refresh Progress" synkroniserer fremgangen din for spill som allerede har RetroAchievements koblet til.
+            For å finne NYE prestasjonssett, bruk "Check for RA" på spilldetaljmodaler eller aktiver det under masse-scraping.
+        </div>
+    </div>
+</section>
+
+<!-- Steam Achievements -->
+<section id="steam-achievements" class="help-section card">
+    <h2 class="card-title">Steam-prestasjoner</h2>
+    <div class="card-body">
+        <h3>Oppsett</h3>
+        <ol>
+            <li>Importer Steam-spill via <strong>Spillimport &rarr; Steam</strong></li>
+            <li>Sørg for at Steam Web API-nøkkelen din er konfigurert i Innstillinger</li>
+        </ol>
+
+        <h3>Prestasjoner-landingsside</h3>
+        <p>Se alle Steam-spillene dine med prestasjonsfremgang på et blikk:</p>
+        <ul>
+            <li><strong>Samlet statistikk</strong> &mdash; Totalt antall Steam-spill, opptjente prestasjoner, fullføringsprosent</li>
+            <li><strong>Fremgang per spill</strong> &mdash; Fullføringslinjer for hvert spill</li>
+        </ul>
+
+        <h3>Prestasjonsdetaljer per spill</h3>
+        <p>Klikk et Steam-spill for å se dets individuelle prestasjoner:</p>
+        <ul>
+            <li>Prestasjonsikoner, navn og beskrivelser</li>
+            <li>Låst opp vs. låst status med tidsstempler for opplåsing</li>
+            <li>Global opplåsingsprosent for hver prestasjon</li>
+        </ul>
+
+        <h3>Synkronisering</h3>
+        <ul>
+            <li>Synkroniser prestasjonene for ett enkelt spill fra detaljsiden</li>
+            <li>Massesynkroniser alle Steam-spill fra prestasjoner-landingssiden</li>
+            <li>Synkronisering kjører som en bakgrunnsjobb med fremgangsvisning i varselboble</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Xbox Achievements -->
+<section id="xbox-achievements" class="help-section card">
+    <h2 class="card-title">Xbox-prestasjoner</h2>
+    <div class="card-body">
+        <h3>Oppsett</h3>
+        <ol>
+            <li>Importer Xbox-spill via <strong>Spillimport &rarr; Xbox</strong></li>
+            <li>Autentisering håndteres via Xbox OAuth under import</li>
+        </ol>
+
+        <h3>Prestasjoner-landingsside</h3>
+        <ul>
+            <li><strong>Samlet statistikk</strong> &mdash; Totalt antall Xbox-spill, opptjente prestasjoner, opptjent/total gamerscore, fullføringsprosent</li>
+            <li><strong>Fremgang per spill</strong> &mdash; Opptjent gamerscore per spill med fremdriftslinjer</li>
+        </ul>
+
+        <h3>Prestasjonsdetaljer per spill</h3>
+        <p>Klikk et Xbox-spill for å se dets individuelle prestasjoner:</p>
+        <ul>
+            <li>Prestasjonsikoner med individuelle gamerscore-verdier</li>
+            <li>Låst opp vs. låst status med tidsstempler for opplåsing</li>
+            <li>Gamerscore-merker på hver prestasjon</li>
+        </ul>
+
+        <h3>Synkronisering</h3>
+        <ul>
+            <li>Synkroniser ett enkelt spill eller massesynkroniser alle Xbox-spill</li>
+            <li>Kjører som en bakgrunnsjobb med varselboble-varsler</li>
+            <li>Gamerscore-totaler oppdateres automatisk etter hver synkronisering</li>
+        </ul>
+    </div>
+</section>
+
+<!-- HLTB -->
+<section id="hltb" class="help-section card">
+    <h2 class="card-title">How Long to Beat</h2>
+    <div class="card-body">
+        <h3>Bruk</h3>
+        <ol>
+            <li>Åpne detaljmodalen for et spill</li>
+            <li>Klikk <strong>"Lookup HLTB"</strong></li>
+            <li>Velg riktig treff blant resultatene</li>
+            <li>Spilletidsestimater lagres på spillet</li>
+        </ol>
+
+        <h3>Tidskategorier</h3>
+        <ul>
+            <li><strong>Main Story</strong> &mdash; Tid for kjernefullføring</li>
+            <li><strong>Main + Extras</strong> &mdash; Med sideinnhold</li>
+            <li><strong>Completionist</strong> &mdash; 100% av alt</li>
+        </ul>
+
+        <h3>Hvor HLTB-data vises</h3>
+        <ul>
+            <li><strong>Spilldetaljmodal</strong> &mdash; Spilletidsestimater vises i spillinfoen</li>
+            <li><strong>Full spilldetaljside</strong> &mdash; Samme spilletidsinfo</li>
+            <li><strong>Analyse &rarr; Spilletid-fanen</strong> &mdash; Spilletidsanalyse for hele samlingen</li>
+            <li><strong>Sammenlign spill</strong> &mdash; Side-ved-side-sammenligning av spilletid</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Tips:</strong> HLTB-data vises også i Analyse under Spilletid-fanen, og gir deg estimater for hele samlingen din.
+        </div>
+    </div>
+</section>
+
+<!-- Trophies -->
+<section id="trophies" class="help-section card">
+    <h2 class="card-title">PS3/PSN-trofeer</h2>
+    <div class="card-body">
+        <h3>RPCS3-lokale trofeer</h3>
+        <p>Spor trofeer opptjent i PS3-spill via RPCS3-emulatoren.</p>
+        <ol>
+            <li>Angi RPCS3-trofestien din i <strong>Innstillinger &rarr; Data &rarr; Trofeer</strong></li>
+            <li>Klikk <strong>"Scan Trophies"</strong> for å importere opptjente trofeer</li>
+            <li>Vis trofelister og individuelle trofedetaljer i <strong>RPCS3-trofeer</strong>-seksjonen</li>
+        </ol>
+        <p>RPCS3 leser trofe-XML-dataene fra RPCS3-brukermappen din og matcher spill til biblioteket ditt automatisk.</p>
+
+        <h3>PSN API-trofeer</h3>
+        <p>Synkroniser PlayStation Network-trofedataene dine fra PSN-kontoen din.</p>
+        <ol>
+            <li>Skaff NPSSO-informasjonskapselen din (se nedenfor)</li>
+            <li>Angi den i <strong>Innstillinger &rarr; Konto &rarr; PSN</strong></li>
+            <li>PSN-trofebiblioteket ditt hentes via PlayStation-API-et</li>
+            <li>Vis trofefremgang per spill med opptjent/totalt antall</li>
+            <li>Individuelle trofedetaljer inkluderer beskrivelse, sjeldenhet og tidsstempler for opplåsing</li>
+        </ol>
+
+        <h3>PSN-autentisering (NPSSO-informasjonskapsel)</h3>
+        <p>PSN bruker en spesiell autentiseringsinformasjonskapsel kalt et NPSSO-token. Slik skaffer du det:</p>
+        <ol>
+            <li>Åpne en nettleser og logg inn på <a href="https://store.playstation.com" target="_blank" rel="noopener noreferrer">store.playstation.com</a></li>
+            <li>Når du er logget inn, naviger til: <code>https://ca.account.sony.com/api/v1/ssocookie</code></li>
+            <li>Siden vil vise JSON som inneholder NPSSO-tokenet ditt</li>
+            <li>Kopier <code>npsso</code>-verdien og lim den inn i Innstillinger &rarr; Konto &rarr; PSN</li>
+        </ol>
+        <p>Etter autentisering bufrer RetroDB tilgangstokenene sikkert i sin egen database (per bruker) og fornyer dem automatisk &mdash; du trenger ikke lime inn NPSSO igjen ved hver synkronisering. Økten forblir gyldig i omtrent to måneder, og RetroDB fornyer den nå også automatisk i bakgrunnen, så i normal bruk bør du sjelden trenge en ny NPSSO.</p>
+
+        <h3>Trofedetaljer</h3>
+        <ul>
+            <li>Trofetyper: bronse, sølv, gull, platina</li>
+            <li>Trofeikoner lastes ned og bufres lokalt</li>
+            <li>Fullføringsprosent per spill</li>
+            <li>Tidsstempler for opplåsing for hver opptjent trofe</li>
+        </ul>
+
+        <h3>Massesynkronisering</h3>
+        <p>Synkroniser alle PSN-spilltrofeer på én gang via en bakgrunnsjobb. Fremgang vises i en varselboble. Hastighetsbegrensning (2,5 sek mellom forespørsler) forhindrer PSN-API-strupe.</p>
+    </div>
+</section>
+
+<!-- Collector Trophies -->
+<section id="collector-trophies" class="help-section card">
+    <h2 class="card-title">Samlertrofeer</h2>
+    <div class="card-body">
+        <h3>Hva det er</h3>
+        <p>Et gamification-system som tildeler trofeer basert på milepæler i samlingen din. Etter hvert som du legger til spill, scraper metadata og fullfører spill, låses trofeer opp automatisk.</p>
+
+        <h3>Trofenivåer</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Nivå</th><th>Eksempler</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Bronse</strong></td><td>Legg til første spill, nå 10 spill, første scraping, 5 systemer, første fullføring</td></tr>
+                <tr><td><strong>Sølv</strong></td><td>100 spill, 50 scrapet, 10 systemer, 10 fullføringer, 500 spill</td></tr>
+                <tr><td><strong>Gull</strong></td><td>1 000 spill, 100% metadatadekning, 20 systemer, 50 fullføringer</td></tr>
+                <tr><td><strong>Platina</strong></td><td>5 000 spill, 100 fullføringer, 30+ systemer</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Slik fungerer det</h3>
+        <ul>
+            <li>Fremgang spores automatisk basert på biblioteksstatistikken din</li>
+            <li>Besøk <strong>Samlertrofeer</strong>-siden for å se fremgangen din mot hver trofe</li>
+            <li>Klikk <strong>"Refresh"</strong> for å oppdatere fremgangen etter endringer</li>
+            <li>Opptjente trofeer vises med opplåsingsdatoen sin</li>
+            <li>Fremdriftslinjer viser hvor nær du er neste milepæl</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Museum -->
+<section id="museum" class="help-section card">
+    <h2 class="card-title">Museum</h2>
+    <div class="card-body">
+        <h3>Hva det er</h3>
+        <p>Et interaktivt leksikon over spillsystemer organisert etter generasjon. Lær om historien, spesifikasjonene og de mest kjente spillene for hver plattform i samlingen din.</p>
+
+        <h3>Landingsside</h3>
+        <p>Museum-landingssiden viser en tidslinje over spillsystemer gruppert etter generasjon (1.&ndash;9. generasjon, håndholdte, arkade, datamaskiner). Hvert systemkort viser maskinvarebildet og spillantallet fra biblioteket ditt.</p>
+
+        <h3>Systemdetaljsider</h3>
+        <p>Klikk et hvilket som helst system for å se museumssiden dets, som inkluderer:</p>
+        <ul>
+            <li><strong>Maskinvarebilde</strong> &mdash; Bilde av konsollen/systemet</li>
+            <li><strong>Tekniske spesifikasjoner</strong> &mdash; CPU, GPU, RAM, oppløsning, medietype</li>
+            <li><strong>Historie</strong> &mdash; KI-generert fortelling om systemets utvikling, lansering og ettermæle</li>
+            <li><strong>Topp 10 spill</strong> &mdash; Systemets mest kjente titler (fra kritikerscore og KI-forslag)</li>
+            <li><strong>Kontrollergalleri</strong> &mdash; Bilder av systemets kontrollere med beskrivelser</li>
+        </ul>
+
+        <h3>KI-innholdsgenerering</h3>
+        <p>Museumsinnhold genereres ved hjelp av KI (Gemini, OpenAI eller Claude). Du kan generere innhold for:</p>
+        <ul>
+            <li><strong>Enkeltsystem</strong> &mdash; Klikk "Generate" på et systems museumsside</li>
+            <li><strong>Massegenerering</strong> &mdash; Generer innhold for alle systemer på én gang fra landingssiden (kjører som en bakgrunnsjobb med fremgangsvisning i varselboble)</li>
+        </ul>
+
+        <h3>Kontrollerbilder</h3>
+        <p>Kontrollerbilder kan legges til via:</p>
+        <ul>
+            <li><strong>Bildesøk</strong> &mdash; Søk etter kontrollerbilder med Bing Image Search. Resultater rangeres etter relevans (kontrollernavn + produsent + systemvariasjoner).</li>
+            <li><strong>Manuell opplasting</strong> &mdash; Last opp dine egne kontrollerbilder</li>
+            <li><strong>Bakgrunnsfjerning</strong> &mdash; Fjern bakgrunner automatisk med lokal KI (rembg-biblioteket) for gjennomsiktige kontrollerbilder på hvilken som helst bakgrunn</li>
+            <li><strong>Bildeforplantning</strong> &mdash; Når et kontrollerbilde blir funnet, deles det automatisk med samme kontroller på andre systemer (søsken-kontrollere)</li>
+            <li><strong>Masseinnhenting</strong> &mdash; Hent bilder for alle kontrollere i et system på én gang</li>
+        </ul>
+        <p>Alle kontrollerbilder standardiseres til målstørrelse og lagres som WebP-format.</p>
+
+        <div class="help-tip">
+            <strong>Tips:</strong> En KI-API-nøkkel er nødvendig for innholdsgenerering. Museum bruker samme KI-leverandør som er konfigurert i Innstillinger &rarr; Scraping &rarr; API-nøkler.
+        </div>
+    </div>
+</section>
+
+<!-- Analytics -->
+<section id="analytics" class="help-section card">
+    <h2 class="card-title">Analyse</h2>
+    <div class="card-body">
+        <p>Analyse gir omfattende statistikk og visualiseringer fordelt på 12 faner. Alle diagrammer er interaktive og kan eksporteres som PNG, kopieres til utklippstavlen, eller lastes ned som CSV.</p>
+
+        <h3>Analyse-faner</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Fane</th><th>Innhold</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Sammendrag</strong></td><td>Oversiktskort (totalt antall spill, systemer, fullføringsrate, scrapet-prosent, osv.)</td></tr>
+                <tr><td><strong>Diagrammer</strong></td><td>Spill etter plattform/produsent, etter sjanger, år-for-år-tidslinje</td></tr>
+                <tr><td><strong>Utviklere</strong></td><td>Topp 15 utviklere og utgivere som stolpediagrammer</td></tr>
+                <tr><td><strong>Spillbarhet</strong></td><td>Sjangerfordeling, analyse av spillmodus, fordeling av spillstruktur</td></tr>
+                <tr><td><strong>Spilletid</strong></td><td>Analyse av HLTB-spilletidsdata på tvers av samlingen din &mdash; total estimert spilletid, gjennomsnitt, fordeling</td></tr>
+                <tr><td><strong>Vurderingsscore</strong></td><td>Fordeling og gjennomsnitt for kritiker- og brukerscore</td></tr>
+                <tr><td><strong>Aldersgrenser</strong></td><td>Fordeling av aldersgrenser på tvers av alle 8 vurderingssystemer</td></tr>
+                <tr><td><strong>Prestasjoner</strong></td><td>RetroAchievements-dekning og -fullføring per system</td></tr>
+                <tr><td><strong>Datakvalitet</strong></td><td>Radardiagram for metadatafullstendighet (beskrivelse, boksbilde, sjanger, utvikler, utgiver, utgivelsesdato, skjermbilder, fanart, video, manual, HLTB, aldersgrenser, spillmodus, region)</td></tr>
+                <tr><td><strong>Vekst</strong></td><td>Tidslinje for samlingsvekst som viser når spill ble lagt til over tid</td></tr>
+                <tr><td><strong>Lagring</strong></td><td>Fordeling av lagringsbruk per system (med formaterte filstørrelser)</td></tr>
+                <tr><td><strong>Toppliste</strong></td><td>Topp systemer etter spillantall, største individuelle spill etter filstørrelse</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Eksportalternativer</h3>
+        <p>Hvert diagram kan eksporteres med knappene i diagramverktøylinjen:</p>
+        <ul>
+            <li><strong>PNG</strong> &mdash; Lagre som bildefil</li>
+            <li><strong>Utklippstavle</strong> &mdash; Kopier diagrambildet til utklippstavlen</li>
+            <li><strong>CSV</strong> &mdash; Last ned rådata som regneark</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Reports -->
+<section id="reports" class="help-section card">
+    <h2 class="card-title">ROM-rapporter</h2>
+    <div class="card-body">
+        <h3>Hva den gjør</h3>
+        <p>Validerer ROM-filnavn mot standard navngivingskonvensjoner og identifiserer potensielle problemer. Tilgjengelig via <strong>ROM-rapporter</strong> i sidefeltet.</p>
+
+        <h3>Rapporttyper</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Fane</th><th>Hva den sjekker</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Ikke-standard navn</strong></td><td>ROM-er med filnavn som ikke samsvarer med navngivingskonvensjoner. Viser gjeldende filnavn, oppdagede problemer og foreslått korrigert navn.</td></tr>
+                <tr><td><strong>Navnemismatch</strong></td><td>ROM-er der filnavnet ikke samsvarer med den scrapede metadatatittelen. Viser gjeldende filnavn vs. scrapet tittel, region, år og utvikler.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Hva som sjekkes</h3>
+        <ul>
+            <li>Ugyldige tegn i filnavn (<code>: ? * / " &lt; &gt; | \</code>)</li>
+            <li>Manglende eller feil regiontagger (f.eks. <code>(USA)</code>, <code>(Europe)</code>)</li>
+            <li>Manglende årstagger</li>
+            <li>Mismatch mellom filnavn og databasetittel</li>
+        </ul>
+
+        <p>Rapporter kan sorteres etter system, filnavn og problemtype. Bruk dem til å holde ROM-biblioteket ditt organisert og konsekvent navngitt.</p>
+    </div>
+</section>
+
+<!-- ROM Tools -->
+<section id="rom-tools" class="help-section card">
+    <h2 class="card-title">ROM-verktøy</h2>
+    <div class="card-body">
+        <p>Åpne ROM-verktøy-navet fra sidefeltet. Hvert verktøy kjører som en bakgrunnsjobb med fremdriftsoppdateringer i sanntid, pause/gjenoppta-støtte og logging.</p>
+
+        <h3>Arkivskanner</h3>
+        <p>Pakk ut ROM-arkiver (ZIP, 7Z, RAR) med alternativer for:</p>
+        <ul>
+            <li>Rekursiv skanning av undermapper</li>
+            <li>Fjerning av uønskede filer etter utpakking</li>
+            <li>Automatisk generering av M3U-spillelister for flerdisk-spill</li>
+        </ul>
+        <p><em>Krever: 7z eller unzip</em></p>
+
+        <h3>CHD-konverterer</h3>
+        <p>Konverter platebilder (ISO, BIN/CUE, GDI) til komprimert CHD-format. Sparer betydelig lagringsplass samtidig som full kompatibilitet med emulatorer opprettholdes.</p>
+        <p><em>Krever: chdman (fra mame-tools)</em></p>
+
+        <h3>CHD-verifisering</h3>
+        <p>Verifiser integriteten til CHD-filer med hash-validering. Identifiserer skadede eller ufullstendige konverteringer.</p>
+        <p><em>Krever: chdman</em></p>
+
+        <h3>Duplikatsøker</h3>
+        <p>Finn duplikate ROM-er etter hash eller filnavn, med alternativer for å prioritere etter regiontagger.</p>
+        <p><em>Ingen eksterne avhengigheter</em></p>
+
+        <h3>Flerdisk-organiserer</h3>
+        <p>Organiser flerdisk-spill i undermapper og generer M3U-spillelister for emulatorer som støtter dem. Nyttig for systemer som PlayStation og Saturn.</p>
+        <p><em>Ingen eksterne avhengigheter</em></p>
+
+        <h3>Skjermbildededuplisering</h3>
+        <p>Finn og fjern duplikate skjermbilder i spillbiblioteket ditt for å frigjøre lagringsplass.</p>
+        <ul>
+            <li><strong>Eksakt hash (MD5)</strong> &mdash; Identifiserer kun identiske filer</li>
+            <li><strong>Visuell likhet</strong> &mdash; Sammenligning med perseptuell hash med konfigurerbar terskel (1&ndash;20, lavere = strengere match)</li>
+        </ul>
+        <p>Skanner gradvis med live-statistikk som viser skannede spill, antall duplikater og gjenvinnbar plass. Resultater grupperes etter spill og system. Du kan velge hvilken fil som skal beholdes i hver duplikatgruppe, eller bruke <strong>"Select Largest"</strong> for automatisk å beholde versjonen med høyest oppløsning.</p>
+        <p><em>Ingen eksterne avhengigheter</em></p>
+
+        <h3>Bildestørrelsesendring</h3>
+        <p>Standardiser spillmedier til konsekvente målstørrelser. Se <a href="#image-standardization">Bildestandardisering</a> for alle detaljer.</p>
+        <p><em>Ingen eksterne avhengigheter (Python-basert KI-oppskalering)</em></p>
+
+        <h3>Etterfyll alternative titler</h3>
+        <p>Gjennomsøk biblioteket etter spill hvis felt for <strong>alternative titler</strong> er tomt, og fyll det ut fra IGDB/TGDB/ScreenScraper. Nyttig etter import av en stor katalog eller migrering fra et annet verktøy som ikke lagret regionale/japanske/undertitler. Kjører i bakgrunnen; fremgangen vises på verktøykortet.</p>
+        <p><em>Krever minst én skraper-API-nøkkel (IGDB/TGDB/ScreenScraper)</em></p>
+
+        <h3>Masse-HLTB-oppslag</h3>
+        <p>Kjør et HowLongToBeat-oppslag for hvert spill som mangler et spilletidsestimat. Hvert treff scores etter tittel + plattform + utgivelsesår; treff med høy tillit lagres automatisk. Alt under tillitsterskelen (eller med motstridende plattformer) parkeres for manuell gjennomgang.</p>
+        <p><em>Ingen eksterne avhengigheter (bruker det medfølgende frakoblede HLTB-datasettet)</em></p>
+
+        <h3>HLTB ventende gjennomgang</h3>
+        <p>Gjennomgangskø for tvetydige treff funnet av Masse-HLTB-oppslag. Hver ventende rad viser kildespillet sammen med HLTB-kandidaten (tittel, plattform, utgivelsesår, tillit). Godkjenn, avvis, eller velg et annet treff per rad. Gjennomgangsverktøykortet vises kun i ROM-verktøy-navet når det finnes minst ett ventende treff.</p>
+        <ul>
+            <li><strong>Filterfaner</strong> for lav tillit, alternativ tittel og plattform-mismatch-treff.</li>
+            <li><strong>Approve</strong> skriver spilletidsestimatet; <strong>Reject</strong> fjerner kandidaten og holder oppslagskøen ren.</li>
+        </ul>
+
+        <h3>Verktøyinnstillinger</h3>
+        <p>Konfigurer stier, verktøyplasseringer, arkivtyper og preferanser som deles på tvers av alle ROM-verktøy.</p>
+
+        <div class="help-tip">
+            <strong>Tips:</strong> Alle ROM-verktøy støtter pause/gjenoppta og kjører i bakgrunnen. Fremgang og resultater logges og kan vises i Loggvisning. Verktøystatus (tilgjengelig vs. krever installasjon) vises på hvert verktøykort.
+        </div>
+    </div>
+</section>
+
+<!-- Normalization -->
+<section id="normalization" class="help-section card">
+    <h2 class="card-title">Normalisering</h2>
+    <div class="card-body">
+        <h3>Hva den gjør</h3>
+        <p>Normaliserer sjanger- og spillmodus-verdier til konsekvente kanoniske former. Dette skjer automatisk under scraping og KI-utfylling, og kan også brukes manuelt på det eksisterende biblioteket ditt.</p>
+
+        <h3>Hvorfor det er viktig</h3>
+        <p>Ulike skrapere bruker ulike navn for samme ting. Normalisering sikrer konsistens gjennom hele biblioteket ditt:</p>
+        <ul>
+            <li><code>platform</code> &rarr; <code>Platformer</code></li>
+            <li><code>fps</code>, <code>first person shooter</code> &rarr; <code>First-Person-Shooter</code></li>
+            <li><code>shoot 'em up</code>, <code>shmup</code> &rarr; <code>Shoot-em-up</code></li>
+            <li><code>beat 'em up</code>, <code>brawler</code> &rarr; <code>Beat-em-up</code></li>
+            <li><code>hack and slash</code> &rarr; <code>Hack-n-Slash</code></li>
+            <li><code>rts</code>, <code>real time strategy</code> &rarr; <code>Real-Time Strategy</code></li>
+            <li><code>board game</code>, <code>card game</code> &rarr; <code>Board-Card</code></li>
+        </ul>
+
+        <h3>Egendefinerte regler</h3>
+        <p>Du kan legge til egendefinerte normaliseringsregler i <strong>Innstillinger &rarr; Data &rarr; Normalisering</strong>. Egendefinerte regler overstyrer de innebygde tilordningene, slik at du kan definere dine egne foretrukne sjanger- og modusnavn. Reglene lagres i databasen.</p>
+
+        <h3>Forhåndsvisning og bruk</h3>
+        <p>Før du bruker normalisering, kan du forhåndsvise hvilke spill som påvirkes og hvilke endringer som gjøres. Dette lar deg se over endringene før de utføres på biblioteket ditt.</p>
+    </div>
+</section>
+
+<!-- Image Standardization -->
+<section id="image-standardization" class="help-section card">
+    <h2 class="card-title">Bildestandardisering</h2>
+    <div class="card-body">
+        <h3>Hva den gjør</h3>
+        <p>Standardiserer alle spillmedier til konsekvente målstørrelser for et enhetlig utseende gjennom hele biblioteket ditt. Bilder innenfor 80&ndash;120% av målstørrelsen hoppes over.</p>
+
+        <h3>Slik fungerer det</h3>
+        <ul>
+            <li><strong>Oppskalering</strong> &mdash; Bilder mindre enn målstørrelsen skaleres opp med Real-ESRGAN x4 (KI-superoppløsning via ONNX Runtime) for høykvalitets forstørrelse, og endres deretter til nøyaktig målstørrelse</li>
+            <li><strong>Nedskalering</strong> &mdash; Bilder større enn målstørrelsen skaleres ned med Lanczos-filtrering for skarpe resultater</li>
+            <li><strong>Terskelbånd</strong> &mdash; Bilder innenfor 80&ndash;120% av målet la stå urørt for å unngå unødvendig ny behandling</li>
+        </ul>
+
+        <h3>Målstørrelser</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Medietype</th><th>Mål</th><th>Metode</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Boksbilde</td><td>1080px høyde</td><td>Bredden skaleres proporsjonalt</td></tr>
+                <tr><td>3D-boksbilde</td><td>1080px høyde</td><td>Bredden skaleres proporsjonalt (bevarer gjennomsiktighet)</td></tr>
+                <tr><td>Skjermbilder</td><td>1080px høyde</td><td>Bredden skaleres proporsjonalt</td></tr>
+                <tr><td>Kontrollere</td><td>1280px lengste kant</td><td>Bevarer gjennomsiktighet (RGBA)</td></tr>
+                <tr><td>Maskinvare</td><td>1280px lengste kant</td><td>Bevarer gjennomsiktighet (RGBA)</td></tr>
+                <tr><td>Fanart</td><td>Hoppet over</td><td>Ikke standardisert (beholdes i original størrelse)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Slik kjører du det</h3>
+        <ol>
+            <li>Gå til <strong>Innstillinger &rarr; System &rarr; Vedlikehold</strong> eller <strong>ROM-verktøy &rarr; Bildestørrelsesendring</strong></li>
+            <li>Klikk <strong>"Start"</strong> for å begynne massestandardisering</li>
+            <li>Jobben kjører i bakgrunnen med fremgangsvisning i varselboble som viser gjeldende fil og statistikk</li>
+            <li>Bilder standardiseres også automatisk under scraping (nye nedlastinger standardiseres umiddelbart)</li>
+        </ol>
+
+        <h3>Maskinvarestøtte</h3>
+        <p>Real-ESRGAN-modellen oppdager automatisk maskinvaren din og bruker den beste tilgjengelige leverandøren:</p>
+        <ul>
+            <li><strong>CUDA</strong> &mdash; NVIDIA GPU-akselerasjon</li>
+            <li><strong>ROCm</strong> &mdash; AMD GPU-akselerasjon (med automatisk overstyring av gfx-versjon for RX 6000-serien)</li>
+            <li><strong>CoreML</strong> &mdash; Apple Silicon-akselerasjon</li>
+            <li><strong>CPU</strong> &mdash; Reserveløsning for systemer uten GPU-støtte</li>
+        </ul>
+        <p>ONNX-modellfilen lastes ned automatisk fra Hugging Face ved første bruk og bufres lokalt.</p>
+    </div>
+</section>
+
+<!-- Logs -->
+<section id="logs" class="help-section card">
+    <h2 class="card-title">Loggvisning</h2>
+    <div class="card-body">
+        <h3>Hva den gjør</h3>
+        <p>En samlet visning for alle applikasjonslogger. Tilgjengelig via <strong>Loggvisning</strong> i sidefeltet.</p>
+
+        <h3>Loggkategorier</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Kategori</th><th>Innhold</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Scraping</strong></td><td>Skraper-aktivitet, API-kall, feil og resultater per spill</td></tr>
+                <tr><td><strong>ROM-verktøy</strong></td><td>Arkivutpakking, CHD-konvertering, duplikatgjenkjenning, skjermbildededuplisering</td></tr>
+                <tr><td><strong>ROM-rapporter</strong></td><td>Resultater av navngivingsvalidering</td></tr>
+                <tr><td><strong>Bildestørrelsesendring</strong></td><td>Fremgang for bildestandardiseringsjobb (oppskalering/nedskalering per fil)</td></tr>
+                <tr><td><strong>System</strong></td><td>Generell app-aktivitet, vedlikeholdsoppgaver, oppstart, databaseoperasjoner</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Funksjoner</h3>
+        <ul>
+            <li>Filtrer etter kategori eller vis alle logger sammen</li>
+            <li>Fillisten viser opprettelsesdatoer og filstørrelser</li>
+            <li>Klikk en loggfil for å se hele innholdet</li>
+            <li>Last ned individuelle loggfiler</li>
+            <li>Kategoriantall vises øverst for rask oversikt</li>
+            <li>Loggnivåer kan konfigureres i Innstillinger &rarr; System &rarr; Logging</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Maintenance -->
+<section id="maintenance" class="help-section card">
+    <h2 class="card-title">Vedlikehold</h2>
+    <div class="card-body">
+        <p>Vedlikeholdsoperasjoner er tilgjengelige i <strong>Innstillinger &rarr; System &rarr; Vedlikehold</strong>. Disse bidrar til å holde biblioteket ditt rent og optimalisert.</p>
+
+        <h3>Biblioteksskanning</h3>
+        <ul>
+            <li><strong>Scan Library</strong> &mdash; Skann ROM-mappene dine etter nye spill. Oppdager systemmapper og støttede filtyper ved hjelp av ES-DE <code>systeminfo.txt</code>-endelseslister. Også tilgjengelig fra Dashboardet.</li>
+        </ul>
+
+        <h3>Oppryddingsoperasjoner</h3>
+        <ul>
+            <li><strong>Clean Missing ROMs</strong> &mdash; Fjern databaseoppføringer for spill hvis ROM-filer ikke lenger finnes på disk. Nyttig etter omorganisering eller sletting av ROM-filer.</li>
+            <li><strong>Opprydding av foreldreløse medier</strong> &mdash; Finn og slett bildefiler på disk (boksbilde, skjermbilder, fanart) som ikke har noen tilsvarende databasetilkobling. Forhåndsvis før sletting for å bekrefte.</li>
+            <li><strong>Tøm scrapede data</strong> &mdash; Fjern all scrapet metadata fra spill, mens ROM-filoppføringene beholdes. Nyttig for å starte fra bunnen med scraping. Forhåndsvisning viser berørte spill før utførelse.</li>
+            <li><strong>Tøm CLZ-import</strong> &mdash; Fjern alle CLZ Games-importoppføringer (kun metadata-oppføringer uten ROM-filer).</li>
+        </ul>
+
+        <h3>Databaseoptimalisering</h3>
+        <ul>
+            <li><strong>Optimaliser database</strong> &mdash; Kjører SQLite VACUUM og ANALYZE for å gjenvinne lagringsplass fra slettede oppføringer og oppdatere spørreplanleggerstatistikk. Anbefales etter store slettinger eller oppryddingsoperasjoner.</li>
+        </ul>
+
+        <h3>Massestandardisering av bilder</h3>
+        <p>Standardiser alle spillbilder til målstørrelser. Se <a href="#image-standardization">Bildestandardisering</a> for detaljer.</p>
+
+        <h3>Serveradministrasjon</h3>
+        <ul>
+            <li><strong>Start server på nytt</strong> &mdash; Skånsom omstart av applikasjonen (opprydding og avslutning). Tilgjengelig i Innstillinger &rarr; System &rarr; Feilsøking.</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Multi-User Access -->
+<section id="multi-user" class="help-section card">
+    <h2 class="card-title">Flerbrukertilgang</h2>
+    <div class="card-body">
+        <h3>Brukerroller</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Rolle</th><th>Tilgang</th><th>Passord</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Admin</strong></td><td>Full tilgang: innstillinger, brukeradministrasjon, vedlikehold, alle funksjoner</td><td>Påkrevd</td></tr>
+                <tr><td><strong>Editor</strong></td><td>Kan redigere spill, scrape, bruke ROM-verktøy, administrere samlinger</td><td>Ingen</td></tr>
+                <tr><td><strong>Viewer</strong></td><td>Skrivebeskyttet: bla i biblioteket, vis detaljer, vis prestasjoner/trofeer</td><td>Ingen</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Administrere brukere</h3>
+        <ol>
+            <li>Gå til <strong>Innstillinger &rarr; Konto &rarr; Brukere</strong> (kun admin)</li>
+            <li>Klikk <strong>"Add User"</strong> for å opprette en ny konto</li>
+            <li>Angi brukernavn, visningsnavn og rolle</li>
+            <li>Admin-brukere mottar et standardpassord som må endres ved første innlogging</li>
+        </ol>
+
+        <h3>Autentisering</h3>
+        <p>Innloggingssiden viser alle aktive brukere. Admin-kontoer krever et passord; andre roller trenger bare å klikke navnet sitt for å logge inn. Økter varer til utlogging.</p>
+
+        <h3>Innstillinger per bruker</h3>
+        <p>Hver bruker kan konfigurere sitt eget:</p>
+        <ul>
+            <li>Avatar (last opp eget bilde)</li>
+            <li>Visningsnavn</li>
+            <li>Temapreferanse</li>
+            <li>Elementer per side</li>
+            <li>Tidssone</li>
+            <li>RPCS3-trofesti</li>
+            <li>RetroAchievements-legitimasjon (brukernavn + API-nøkkel)</li>
+            <li>PSN-legitimasjon (NPSSO-informasjonskapsel)</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Backup -->
+<section id="backup" class="help-section card">
+    <h2 class="card-title">Sikkerhetskopi og gjenoppretting</h2>
+    <div class="card-body">
+        <h3>Opprette sikkerhetskopier</h3>
+        <ol>
+            <li>Gå til <strong>Innstillinger &rarr; Bibliotek &rarr; Sikkerhetskopi</strong></li>
+            <li>Klikk <strong>"Create Backup"</strong></li>
+            <li>Sikkerhetskopien lagres i <code>backups/</code>-mappen med et tidsstemplet filnavn</li>
+        </ol>
+
+        <h3>Hva som sikkerhetskopieres</h3>
+        <p>Sikkerhetskopien inkluderer hele SQLite-databasen (<code>roms.db</code>), som inneholder all spillmetadata, brukerkontoer, innstillinger, trofedata, prestasjonsfremgang, tagger, lister og ønskeliste-elementer.</p>
+
+        <h3>Hva som IKKE sikkerhetskopieres</h3>
+        <p>Mediefiler (boksbilde, skjermbilder, fanart, videoer, manualer) er IKKE inkludert i databasesikkerhetskopien, siden de kan lastes ned på nytt ved scraping. Vurder å sikkerhetskopiere <code>static/images/</code>-mappen din separat hvis du har egendefinerte opplastinger.</p>
+
+        <h3>Gjenoppretting</h3>
+        <ol>
+            <li>Finn sikkerhetskopien i sikkerhetskopilisten</li>
+            <li>Klikk <strong>"Restore"</strong></li>
+            <li>Bekreft handlingen</li>
+        </ol>
+
+        <div class="help-tip">
+            <strong>Advarsel:</strong> Gjenoppretting av en sikkerhetskopi overskriver gjeldende database. Opprett en fersk sikkerhetskopi før du gjenoppretter en eldre en!
+        </div>
+    </div>
+</section>
+
+<!-- Updating RetroDB -->
+<section id="updating" class="help-section card">
+    <h2 class="card-title">Oppdatere RetroDB</h2>
+    <div class="card-body">
+        <h3>Slik oppdaterer du</h3>
+        <ol>
+            <li>Last ned den nye RetroDB-utgivelsen</li>
+            <li>Ta sikkerhetskopi av disse filene (de inneholder dine personlige data):
+                <ul>
+                    <li><code>config.py</code> (dine stier og API-nøkler)</li>
+                    <li><code>data/settings.json</code> (dine UI-preferanser)</li>
+                    <li><code>data/scraper_settings.json</code> (skraper-konfigurasjonen din)</li>
+                    <li><code>data/rom_tools_config.json</code> (ROM-verktøy-preferansene dine)</li>
+                    <li><code>database/</code>-mappen (spillbibliotekdatabasen din, og dine lagrede PSN-/Xbox-innloggingstokens)</li>
+                </ul>
+            </li>
+            <li>Pakk ut den nye versjonen over den eksisterende installasjonen</li>
+            <li>Kjør <code>python install.py</code> for å installere eventuelle nye avhengigheter</li>
+            <li>Start serveren på nytt</li>
+        </ol>
+
+        <h3>Filer som trygt kan overskrives</h3>
+        <p>Alle kildekodefiler (<code>.py</code>, <code>.html</code>, <code>.css</code>, <code>.js</code>) kan overskrives trygt. Installasjonsprogrammet vil ikke overskrive dine personlige konfigurasjonsfiler.</p>
+
+        <h3>Filer å beholde</h3>
+        <p>Slett eller overskriv aldri: <code>config.py</code>, <code>database/roms.db</code>, <code>data/settings.json</code>, <code>data/scraper_settings.json</code>, <code>data/rom_tools_config.json</code>.</p>
+
+        <h3>Databasemigreringer</h3>
+        <p>RetroDB håndterer automatisk endringer i databaseskjemaet ved oppstart. Nye kolonner og tabeller legges til ved behov uten datatap. Du trenger ikke gjøre noe spesielt &mdash; bare start den nye versjonen, så oppdateres databasen automatisk.</p>
+    </div>
+</section>
+
+<!-- Troubleshooting -->
+<section id="troubleshooting" class="help-section card">
+    <h2 class="card-title">Feilsøking</h2>
+    <div class="card-body">
+        <h3>Vanlige problemer</h3>
+
+        <h4>"No extensions found for system"</h4>
+        <p>Systemmappen trenger en gyldig ES-DE <code>systeminfo.txt</code>-fil som definerer støttede ROM-filendelser. Sørg for at ROM-mappestrukturen din samsvarer med ES-DE-standarder.</p>
+
+        <h4>"API Connection Failed"</h4>
+        <ul>
+            <li>Sjekk internettforbindelsen din</li>
+            <li>Verifiser API-nøkler i Innstillinger &rarr; Scraping &rarr; API-nøkler</li>
+            <li>Vent hvis hastighetsbegrenset (noen API-er har daglige/timevise grenser)</li>
+            <li>Sjekk om skraperen er aktivert (deaktiverte skrapere viser "Disabled" i Dashboard-status)</li>
+            <li>Sjekk Loggvisning for detaljerte feilmeldinger</li>
+        </ul>
+
+        <h4>"Bulk Scrape Stuck"</h4>
+        <p>Gå til Innstillinger &rarr; System &rarr; Feilsøking &rarr; <strong>"Clear Stuck Bulk Scrape"</strong>. Dette tilbakestiller jobbtilstanden uten å påvirke dataene dine.</p>
+
+        <h4>"RA Sync Queue Stuck"</h4>
+        <p>Tøm RetroAchievements-synkroniseringskøen fra Innstillinger &rarr; System &rarr; Feilsøking.</p>
+
+        <h4>"PSN Sync Stuck"</h4>
+        <p>Tøm PSN-oppdateringsjobben fra Innstillinger &rarr; System &rarr; Feilsøking.</p>
+
+        <h4>"Museum Generation Stuck"</h4>
+        <p>Tøm museumsgenereringsjobben fra Innstillinger &rarr; System &rarr; Feilsøking.</p>
+
+        <h4>"Database Errors"</h4>
+        <ol>
+            <li>Opprett en sikkerhetskopi hvis mulig (Innstillinger &rarr; Bibliotek &rarr; Sikkerhetskopi)</li>
+            <li>Prøv Innstillinger &rarr; System &rarr; Vedlikehold &rarr; <strong>Optimaliser database</strong></li>
+            <li>Sjekk filtillatelser på <code>database/</code>-mappen</li>
+            <li>Siste utvei: gjenopprett fra en sikkerhetskopi eller slett databasen og skann på nytt</li>
+        </ol>
+
+        <h4>"Images Not Saving"</h4>
+        <p>Sjekk skrivetillatelser på mediemappene: <code>chmod -R 755 static/images/</code></p>
+
+        <h4>"Page Slow or Unresponsive"</h4>
+        <ul>
+            <li>Store samlinger kan ta tid å laste &mdash; uendelig rulling laster i puljer på 100</li>
+            <li>Prøv å oppdatere siden for å tømme akkumulert minne</li>
+            <li>Sjekk nettleserkonsollen for JavaScript-feil</li>
+            <li>Prøv å bytte til et tema med en lettere lerret-effekt (f.eks. Amber eller Elite)</li>
+            <li>Lerret-effekter oppdager maskinvare automatisk; svakere enheter bruker CPU-reserveløsning med redusert bildefrekvens</li>
+        </ul>
+
+        <h4>"Interrupted Jobs"-banner på Dashboard</h4>
+        <p>Hvis RetroDB starter på nytt mens jobber kjører, vises de i et gjenopprettingsbanner. Klikk <strong>"Resume"</strong> individuelt eller <strong>"Resume All"</strong> for å starte dem på nytt. Klikk <strong>"Dismiss"</strong> eller <strong>"Dismiss All"</strong> for å fjerne dem.</p>
+
+        <h4>"PSN Authentication Failed"</h4>
+        <ul>
+            <li>NPSSO-tokens utløper &mdash; generer et nytt fra <code>ca.account.sony.com/api/v1/ssocookie</code></li>
+            <li>Sørg for at du er logget inn på store.playstation.com før du besøker informasjonskapsel-URL-en</li>
+            <li>RetroDB bufrer PSN-økten din i omtrent to måneder og fornyer den nå også automatisk i bakgrunnen; hvis den likevel utløper, bare lim inn en fersk NPSSO i Innstillinger &rarr; Konto &rarr; PSN</li>
+        </ul>
+
+        <h4>"Xbox Authentication Failed"</h4>
+        <ul>
+            <li>Autentiser på nytt ved å klikke "Sign In" på Spillimport &rarr; Xbox-fanen</li>
+            <li>Xbox-tokens caches i <code>data/xbox_tokens.json</code> og fornyes automatisk</li>
+        </ul>
+
+        <h4>"Image Upscaling Errors"</h4>
+        <ul>
+            <li>Real-ESRGAN ONNX-modellen lastes ned ved første bruk &mdash; sørg for internettilgang</li>
+            <li>GPU-akselerasjon krever kompatible drivere (CUDA for NVIDIA, ROCm for AMD)</li>
+            <li>Hvis GPU-en feiler, faller systemet automatisk tilbake til CPU-behandling</li>
+        </ul>
+
+        <h3>Ytelsestips</h3>
+        <ul>
+            <li>Hold nettleseren din oppdatert for best ytelse</li>
+            <li>Lukk andre nettleserfaner når du arbeider med svært store samlinger</li>
+            <li>Bruk systemfiltre for å redusere antall viste spill av gangen</li>
+            <li>Kjør Optimaliser database jevnlig etter store operasjoner (scraping, opprydding, import)</li>
+            <li>Lerret-temaeffekter oppdager maskinvare automatisk; svakere enheter bruker CPU-reserveløsning</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Security & Disclaimer -->
+<section id="security" class="help-section card">
+    <h2 class="card-title">Sikkerhet og ansvarsfraskrivelse</h2>
+    <div class="card-body">
+        <h3>Beste praksis for sikkerhet</h3>
+        <ul>
+            <li><strong>Endre standardpassordet</strong> &mdash; Standard admin-passord (<code>admin</code>) bør endres umiddelbart ved første innlogging. Bruk et sterkt passord på minst 8 tegn.</li>
+            <li><strong>Bruk en HTTPS-omvendt proxy</strong> &mdash; RetroDB tilbyr ikke TLS/SSL på egen hånd. Plasser det bak en omvendt proxy (f.eks. Nginx, Caddy, Traefik) med HTTPS aktivert for å kryptere trafikken mellom klienter og serveren.</li>
+            <li><strong>Begrens nettverkstilgang</strong> &mdash; Unngå å eksponere RetroDB direkte mot det åpne internett. Bruk en VPN eller begrens tilgangen til det lokale nettverket ditt. Hvis fjerntilgang er nødvendig, bruk en omvendt proxy med autentisering.</li>
+            <li><strong>Ta regelmessige sikkerhetskopier</strong> &mdash; Bruk den innebygde sikkerhetskopifunksjonen under Innstillinger for å opprette periodiske databasesikkerhetskopier. Lagre sikkerhetskopier på et annet sted enn applikasjonen.</li>
+            <li><strong>Hold RetroDB oppdatert</strong> &mdash; Se etter nye utgivelser jevnlig. Sikkerhetsfikser og forbedringer er inkludert i oppdateringer.</li>
+            <li><strong>Beskytt API-nøklene dine</strong> &mdash; API-nøkler lagres i <code>data/scraper_settings.json</code>. Sørg for at denne filen ikke er offentlig tilgjengelig. Del aldri <code>config.py</code>-filen din eller token-filer.</li>
+        </ul>
+
+        <h3>Innebygde sikkerhetsfunksjoner</h3>
+        <ul>
+            <li><strong>Passord-hashing</strong> &mdash; Admin-passord hashes med PBKDF2 (aldri lagret i klartekst)</li>
+            <li><strong>Hastighetsbegrensning ved innlogging</strong> &mdash; Beskyttelse mot brute force-angrep på innloggingsendepunktet</li>
+            <li><strong>Stivalidering</strong> &mdash; Alle filoperasjoner bruker hjelpefunksjonene <code>safe_path</code> og <code>safe_filename</code> for å forhindre katalogtraversering-angrep</li>
+            <li><strong>Parameteriserte spørringer</strong> &mdash; Alle databasespørringer bruker parameteriserte setninger for å forhindre SQL-injeksjon</li>
+            <li><strong>XSS-beskyttelse</strong> &mdash; Modale dialoger bruker trygg DOM-konstruksjon; brukerinndata escapes</li>
+            <li><strong>Beskyttelse mot bildedekomprimeringsbomber</strong> &mdash; Maksimalt antall bildepiksler er begrenset for å forhindre minneuttømming fra ondsinnede bilder</li>
+        </ul>
+
+        <h3>Ansvarsfraskrivelse</h3>
+        <p>
+            RetroDB leveres <strong>"AS IS"</strong> (som det er), uten garanti av noe slag, verken uttrykt eller underforstått,
+            inkludert, men ikke begrenset til, garantier om salgbarhet, egnethet for et bestemt formål,
+            og ikke-krenkelse. Under ingen omstendigheter skal forfatterne eller opphavsrettsinnehaverne holdes ansvarlige for noe krav,
+            skader eller annet ansvar, enten i en kontraktshandling, erstatningssak eller på annen måte, som oppstår fra,
+            ut av, eller i forbindelse med programvaren eller bruken eller andre håndteringer av programvaren.
+        </p>
+        <p>
+            Du er alene ansvarlig for å sikre din installasjon, inkludert nettverkskonfigurasjon,
+            tilgangskontroll, datasikkerhetskopiering og etterlevelse av gjeldende lover angående innholdet
+            du forvalter med denne programvaren. Utviklerne påtar seg intet ansvar for uautorisert tilgang,
+            datatap eller misbruk som følge av feil konfigurasjon eller distribusjon.
+        </p>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+.help-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin: 0 calc(-1 * var(--spacing-lg));
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(20, 26, 35, 0.98), rgba(15, 20, 25, 0.98));
+    border-bottom: 2px solid var(--primary-cyan);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(76, 201, 240, 0.2);
+}
+
+.help-nav-item {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.help-nav-item:hover {
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+.help-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.help-section h3 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--primary-cyan);
+    margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+}
+
+.help-section h3:first-child {
+    margin-top: 0;
+}
+
+.help-section h4 {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+}
+
+.help-section ol, .help-section ul {
+    padding-left: 1.5rem;
+    margin: var(--spacing-sm) 0;
+}
+
+.help-section li {
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.help-section p {
+    color: var(--text-secondary);
+    margin: var(--spacing-sm) 0;
+    line-height: 1.6;
+}
+
+.help-section pre {
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    overflow-x: auto;
+    margin: var(--spacing-md) 0;
+    line-height: 1.5;
+}
+
+.help-section code {
+    background: var(--bg-lighter);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--primary-cyan);
+}
+
+.help-section a {
+    color: var(--primary-cyan);
+    text-decoration: none;
+}
+
+.help-section a:hover {
+    text-decoration: underline;
+}
+
+.shortcut-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-sm);
+    margin: var(--spacing-md) 0;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border-radius: var(--radius-md);
+}
+
+.shortcut-item kbd {
+    display: inline-block;
+    min-width: 24px;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    text-align: center;
+}
+
+.shortcut-item span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--primary-cyan);
+}
+
+.help-tip {
+    background: rgba(76, 201, 240, 0.1);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    border-left: 4px solid var(--primary-cyan);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    color: var(--text-secondary);
+}
+
+.help-tip strong {
+    color: var(--primary-cyan);
+}
+
+.data-table {
+    width: 100%;
+    margin: var(--spacing-md) 0;
+}
+
+.data-table th,
+.data-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.data-table th {
+    background: var(--bg-medium);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.data-table td {
+    color: var(--text-primary);
+}
+
+.data-table tbody tr:hover {
+    background: rgba(76, 201, 240, 0.05);
+}
+</style>
+{% endblock %}

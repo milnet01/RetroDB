@@ -1439,7 +1439,6 @@ const AllGamesController = (function() {
         clearTimeout(scrollSaveTimer);
         clearTimeout(_imageRelayoutTimer);
         window.removeEventListener('scroll', _onScrollSave);
-        document.removeEventListener('keydown', _onFilterKeydown);
         document.removeEventListener('click', _onFilterBackdropClick);
         selectedGames.clear();
     }

@@ -1,0 +1,2010 @@
+{% extends "base.html" %}
+
+{% block title %}Yardım - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ _('Help & Documentation') }}</h1>
+        <p class="page-subtitle">{% trans version=config.APP_VERSION %}Complete guide to RetroDB v{{ version }}{% endtrans %}</p>
+    </div>
+</div>
+
+<!-- Help Navigation -->
+<div class="help-nav" data-sticky-nav>
+    <a href="#installation" class="help-nav-item">Kurulum</a>
+    <a href="#getting-started" class="help-nav-item">Başlarken</a>
+    <a href="#platform-notes" class="help-nav-item">Platform Notları</a>
+    <a href="#navigation" class="help-nav-item">Gezinme</a>
+    <a href="#keyboard-shortcuts" class="help-nav-item">Klavye Kısayolları</a>
+    <a href="#themes" class="help-nav-item">Temalar</a>
+    <a href="#dashboard" class="help-nav-item">Kontrol Paneli</a>
+    <a href="#systems" class="help-nav-item">Sistemler</a>
+    <a href="#api-keys" class="help-nav-item">API Anahtarları</a>
+    <a href="#settings" class="help-nav-item">Ayarlar</a>
+    <a href="#scraping" class="help-nav-item">Veri Çekme</a>
+    <a href="#bulk-scrape" class="help-nav-item">Toplu Veri Çekme</a>
+    <a href="#ai-fill" class="help-nav-item">AI Doldurma</a>
+    <a href="#filtering" class="help-nav-item">Filtreleme</a>
+    <a href="#game-detail" class="help-nav-item">Oyun Detayları</a>
+    <a href="#bulk-edit" class="help-nav-item">Toplu Düzenleme</a>
+    <a href="#compare" class="help-nav-item">Karşılaştır</a>
+    <a href="#collections" class="help-nav-item">Koleksiyonlar</a>
+    <a href="#game-imports" class="help-nav-item">Oyun İçe Aktarma</a>
+    <a href="#retroachievements" class="help-nav-item">RetroAchievements</a>
+    <a href="#steam-achievements" class="help-nav-item">Steam</a>
+    <a href="#xbox-achievements" class="help-nav-item">Xbox</a>
+    <a href="#hltb" class="help-nav-item">HLTB</a>
+    <a href="#trophies" class="help-nav-item">Kupalar</a>
+    <a href="#collector-trophies" class="help-nav-item">Koleksiyoncu Kupaları</a>
+    <a href="#museum" class="help-nav-item">Müze</a>
+    <a href="#analytics" class="help-nav-item">Analizler</a>
+    <a href="#reports" class="help-nav-item">Raporlar</a>
+    <a href="#rom-tools" class="help-nav-item">ROM Araçları</a>
+    <a href="#normalization" class="help-nav-item">Normalleştirme</a>
+    <a href="#image-standardization" class="help-nav-item">Görsel Boyutlandırma</a>
+    <a href="#logs" class="help-nav-item">Günlükler</a>
+    <a href="#maintenance" class="help-nav-item">Bakım</a>
+    <a href="#multi-user" class="help-nav-item">Çoklu Kullanıcı</a>
+    <a href="#backup" class="help-nav-item">Yedekleme</a>
+    <a href="#updating" class="help-nav-item">Güncelleme</a>
+    <a href="#troubleshooting" class="help-nav-item">Sorun Giderme</a>
+    <a href="#security" class="help-nav-item">Güvenlik</a>
+</div>
+
+<!-- Installation -->
+<section id="installation" class="help-section card">
+    <h2 class="card-title">Kurulum</h2>
+    <div class="card-body">
+        <h3>Sistem Gereksinimleri</h3>
+        <ul>
+            <li><strong>Python 3.8+</strong> ve pip</li>
+            <li><strong>Web tarayıcısı</strong> (Chrome, Firefox, Safari, Edge)</li>
+            <li><strong>İşletim Sistemi:</strong> Linux, Windows 10/11 veya macOS</li>
+        </ul>
+
+        <h3>Hızlı Kurulum</h3>
+        <ol>
+            <li>RetroDB ZIP dosyasını istediğiniz bir dizine çıkarın</li>
+            <li>O dizinde bir terminal/komut istemi açın</li>
+            <li>Şunu çalıştırın: <code>python install.py</code></li>
+            <li>Sunucuyu başlatın:
+                <ul>
+                    <li>Linux: <code>./start.sh</code></li>
+                    <li>Windows: <code>start.bat</code> dosyasına çift tıklayın</li>
+                    <li>macOS: <code>start.command</code> dosyasına çift tıklayın</li>
+                </ul>
+            </li>
+            <li>Tarayıcınızda <code>http://localhost:5000</code> adresini açın</li>
+        </ol>
+
+        <h3>Grafik Arayüzlü Kurulum</h3>
+        <p>Linux'ta, grafiksel bir kurulum sihirbazı başlatmak için <code>./setup.sh</code> komutunu da çalıştırabilirsiniz. Python/pip/tkinter varlığını otomatik olarak kontrol eder, ardından görsel bir ilerleme günlüğüyle her kurulum adımında size rehberlik eder.</p>
+
+        <h3>install.py Ne Yapar</h3>
+        <ul>
+            <li>Python 3.8+ ve pip'in mevcut olduğunu doğrular</li>
+            <li><code>requirements.txt</code> dosyasından Python bağımlılıklarını kurar</li>
+            <li>Örnek şablondan <code>config.py</code> dosyasını oluşturur</li>
+            <li>Gerekli dizinleri oluşturur (veritabanı, günlükler, medya klasörleri)</li>
+            <li>CSS ve JS paketlerini derler</li>
+        </ul>
+
+        <h3>Ortam Değişkeni Geçersiz Kılmaları</h3>
+        <p>Aşağıdaki ortam değişkenleri, yapılandırma dosyalarını düzenlemeden varsayılan ayarları geçersiz kılabilir:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>Değişken</th><th>Varsayılan</th><th>Açıklama</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>RETRODB_DB_PATH</code></td><td><code>database/roms.db</code></td><td>Veritabanı dosya yolu</td></tr>
+                <tr><td><code>RETRODB_HOST</code></td><td><code>0.0.0.0</code></td><td>Sunucu bağlanma adresi</td></tr>
+                <tr><td><code>RETRODB_PORT</code></td><td><code>5000</code></td><td>Sunucu portu</td></tr>
+                <tr><td><code>RETRODB_DEBUG</code></td><td><code>false</code></td><td>Hata ayıklama modu (<code>true</code> veya <code>false</code>) &mdash; Werkzeug etkileşimli hata ayıklayıcısını etkinleştirir. Ağınızdaki diğer cihazlardan erişilebilen herhangi bir kurulum için <code>false</code> olarak bırakın.</td></tr>
+                <tr><td><code>RETRODB_SECRET_KEY</code></td><td>Otomatik oluşturulur</td><td>Flask gizli anahtarı</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Getting Started -->
+<section id="getting-started" class="help-section card">
+    <h2 class="card-title">Başlarken</h2>
+    <div class="card-body">
+        <h3>İlk Kurulum</h3>
+        <p>İlk çalıştırmada RetroDB, size şu adımlarda rehberlik eden bir <strong>Kurulum Sihirbazı</strong> gösterir:</p>
+        <ol>
+            <li><strong>Yönetici Hesabı</strong> &mdash; Kullanıcı adınızı ve şifrenizi oluşturun</li>
+            <li><strong>Kütüphane Yolu</strong> &mdash; ROM dizininizi ayarlayın</li>
+            <li><strong>ES-DE Entegrasyonu</strong> &mdash; İsteğe bağlı olarak ES-DE oyun listelerini ve medyasını bağlayın</li>
+            <li><strong>API Anahtarları</strong> &mdash; İsteğe bağlı olarak veri çekme API anahtarları ekleyin</li>
+        </ol>
+        <p>Sihirbazı tamamladıktan sonra, ROM'larınızı keşfetmek için Kontrol Panelinde <strong>"Kütüphaneyi Tara"</strong> düğmesine tıklayın.</p>
+
+        <h3>Hızlı Başlangıç İş Akışı</h3>
+        <ol>
+            <li>ROM'larınızı içe aktarmak için kütüphanenizi <strong>tarayın</strong></li>
+            <li>Sisteme göre <strong>göz atın</strong> veya Kütüphane'de tüm oyunları görüntüleyin</li>
+            <li>Metadata'yı tek tek <strong>çekin</strong> veya toplu veri çekmeyi kullanın</li>
+            <li>Etiketler, listeler ve istek listesiyle <strong>düzenleyin</strong></li>
+            <li>Tamamlama durumu ve başarımlarla ilerlemenizi <strong>takip edin</strong></li>
+        </ol>
+
+        <h3>ROM Kütüphane Yapısı</h3>
+        <p>RetroDB, ROM'larınızın kütüphane yolunuz içinde sistem klasörlerinde düzenlenmesini bekler:</p>
+        <pre>ROM Library/
+  nes/
+    Super Mario Bros. (USA).nes
+  snes/
+    Chrono Trigger (USA).sfc
+  psx/
+    Final Fantasy VII (USA)/
+      Final Fantasy VII (USA) (Disc 1).chd
+      Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>Her sistem klasörü, desteklenen dosya uzantılarını tanımlayan bir ES-DE <code>systeminfo.txt</code> dosyası içermelidir. RetroDB, her sistem için hangi dosyaların geçerli ROM olduğunu belirlemek amacıyla taramada bunu okur.</p>
+
+        <div class="help-tip">
+            <strong>İpucu:</strong> ES-DE ile daha önce veri çektiyseniz, RetroDB o veriyi içe aktarabilir!
+            ES-DE yollarını Ayarlar &rarr; ES-DE Entegrasyonu bölümünde veya kurulum sihirbazı sırasında yapılandırın.
+        </div>
+    </div>
+</section>
+
+<!-- Platform Notes -->
+<section id="platform-notes" class="help-section card">
+    <h2 class="card-title">Platform Notları</h2>
+    <div class="card-body">
+        <h3>Linux</h3>
+        <ul>
+            <li>Ubuntu, Fedora, openSUSE ve Arch Linux üzerinde test edilmiştir</li>
+            <li>ROM Araçları şunları gerektirir: <code>sudo apt install p7zip-full unrar mame-tools</code> (Debian/Ubuntu) veya dağıtımınıza uygun eşdeğeri</li>
+            <li>Sistem Python'u kullanıyorsanız, kurulum programı <code>--break-system-packages</code> seçeneğini otomatik olarak yönetir</li>
+            <li>AMD GPU'lar için ROCm GPU hızlandırması desteklenir (Real-ESRGAN görsel büyütme)</li>
+        </ul>
+
+        <h3>Windows</h3>
+        <ul>
+            <li>Python'u <a href="https://python.org" target="_blank" rel="noopener noreferrer">python.org</a> adresinden indirin (kurulum sırasında "Add to PATH" seçeneğini işaretleyin)</li>
+            <li>ROM Araçları: <a href="https://www.7-zip.org/" target="_blank" rel="noopener noreferrer">7-Zip</a>, <a href="https://www.win-rar.com/" target="_blank" rel="noopener noreferrer">WinRAR</a> ve <a href="https://www.mamedev.org/" target="_blank" rel="noopener noreferrer">MAME</a> (chdman için) kurun</li>
+            <li>Başlatmak için <code>start.bat</code> dosyasını kullanın veya Komut İstemi'nden <code>python app.py</code> çalıştırın</li>
+        </ul>
+
+        <h3>macOS</h3>
+        <ul>
+            <li>Python 3, <a href="https://brew.sh/" target="_blank" rel="noopener noreferrer">Homebrew</a> aracılığıyla kurulabilir: <code>brew install python3</code></li>
+            <li>ROM Araçları: <code>brew install p7zip unrar rom-tools</code></li>
+            <li>Başlatmak için Finder'da <code>start.command</code> dosyasına çift tıklayın</li>
+            <li>Apple Silicon için CoreML hızlandırması desteklenir (Real-ESRGAN görsel büyütme)</li>
+        </ul>
+
+        <h3>Özelliğe Göre ROM Aracı Gereksinimleri</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Özellik</th><th>Gerekli Araç</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ZIP çıkarma</td><td>unzip (genellikle önceden kurulu)</td></tr>
+                <tr><td>7z arşiv desteği</td><td>7z (p7zip-full)</td></tr>
+                <tr><td>RAR arşiv desteği</td><td>unrar</td></tr>
+                <tr><td>CHD dönüştürme/doğrulama</td><td>chdman (mame-tools)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Navigation -->
+<section id="navigation" class="help-section card">
+    <h2 class="card-title">Gezinme</h2>
+    <div class="card-body">
+        <h3>Kenar Çubuğu Bölümleri</h3>
+
+        <h4>Ana</h4>
+        <ul>
+            <li><strong>Kontrol Paneli</strong> &mdash; Koleksiyon sağlık puanı, istatistik özeti, API durumu, son oynanan/eklenen/veri çekilen oyunlar, iş kurtarma</li>
+            <li><strong>Sistemler</strong> &mdash; Oyun sayıları, sistem görselleri, teknik özellikler, türe ve özelliklere göre filtreleme ile platformlara göz atın</li>
+            <li><strong>Kütüphane</strong> &mdash; Sonsuz kaydırma, gelişmiş filtreleme (dahil et/hariç tut), arama ve sıralama ile tüm oyunlar</li>
+            <li><strong>Analizler</strong> &mdash; Dışa aktarma seçenekleriyle 12 sekmede grafikler ve koleksiyon istatistikleri</li>
+        </ul>
+
+        <h4>Kupalar ve Başarımlar</h4>
+        <ul>
+            <li><strong>RPCS3 Kupaları</strong> &mdash; RPCS3 emülatöründen yerel olarak kazanılan PS3 kupaları</li>
+            <li><strong>PSN Kupaları</strong> &mdash; PSN API üzerinden PlayStation Network kupa senkronizasyonu</li>
+            <li><strong>Başarımlar</strong> &mdash; Sisteme göre RetroAchievements ilerleme takibi</li>
+            <li><strong>Steam Başarımları</strong> &mdash; Oyun başına detaylarla Steam başarım takibi</li>
+            <li><strong>Xbox Başarımları</strong> &mdash; Xbox başarım ve gamerscore takibi</li>
+        </ul>
+
+        <h4>Koleksiyonum</h4>
+        <ul>
+            <li><strong>Etiketler</strong> &mdash; Özel renk kodlu oyun etiketleri</li>
+            <li><strong>Listeler</strong> &mdash; Sürükle-bırak sıralamalı, isimlendirilmiş özel oyun listeleri</li>
+            <li><strong>İstek Listesi</strong> &mdash; Öncelik seviyeleriyle edinmek istediğiniz oyunları takip edin</li>
+            <li><strong>Koleksiyoncu Kupaları</strong> &mdash; Koleksiyonunuz için oyunlaştırma kilometre taşları</li>
+        </ul>
+
+        <h4>Araçlar</h4>
+        <ul>
+            <li><strong>ROM Raporları</strong> &mdash; ROM adlandırma doğrulaması ve standartlara uygunluk</li>
+            <li><strong>Oyun İçe Aktarma</strong> &mdash; CLZ, Steam, Xbox ve PSN'den içe aktarma</li>
+            <li><strong>ROM Araçları</strong> &mdash; Arşiv tarayıcı, CHD dönüştürücü/doğrulayıcı, yinelenen bulucu, çoklu disk düzenleyici, ekran görüntüsü yinelenen giderme, görsel yeniden boyutlandırıcı</li>
+        </ul>
+
+        <h4>Yapılandırma</h4>
+        <ul>
+            <li><strong>Ayarlar</strong> &mdash; Tüm uygulama yapılandırması (çok sayıda alt bölümlü 6 sekme)</li>
+            <li><strong>Günlük Görüntüleyici</strong> &mdash; Tüm kategorilerdeki uygulama günlüklerine göz atın</li>
+        </ul>
+
+        <h4>Bilgi</h4>
+        <ul>
+            <li><strong>Müze</strong> &mdash; AI tarafından oluşturulan içerikle etkileşimli oyun sistemleri ansiklopedisi</li>
+            <li><strong>Yardım</strong> &mdash; Bu belge sayfası</li>
+            <li><strong>Sürüm Notları</strong> &mdash; Sürüm geçmişi</li>
+        </ul>
+
+        <h3>Kenar Çubuğu Vurgulama</h3>
+        <p>Kenar çubuğu, geçerli bölümü camgöbeği renginde vurgular. Daha derine inildiğinde bağlam korunur &mdash; bir sistemin oyunlarını görüntülemek <strong>Sistemler</strong>'i vurgulu tutar, Başarımlar'dan bir oyunu görüntülemek <strong>Başarımlar</strong>'ı vurgulu tutar, vb.</p>
+
+        <h3>Gezinme Yolu (Breadcrumb)</h3>
+        <p>Her sayfanın üstündeki gezinme yolu, navigasyon rotanızı gösterir. Örnekler:</p>
+        <ul>
+            <li><code>Sistemler &rsaquo; NES &rsaquo; Super Mario Bros.</code></li>
+            <li><code>RetroAchievements &rsaquo; SNES</code></li>
+            <li><code>PSN Kupaları &rsaquo; The Last of Us</code></li>
+        </ul>
+
+        <h3>Sekmeler</h3>
+        <p>Birçok sayfa, düzenleme için sekmeler kullanır (Ayarlar, Analizler, Raporlar, ROM Araçları, Başarımlar). Sekmeler içerik genişliğini doldurmak için genişler ve uygun olduğunda son seçiminizi hatırlar.</p>
+    </div>
+</section>
+
+<!-- Keyboard Shortcuts -->
+<section id="keyboard-shortcuts" class="help-section card">
+    <h2 class="card-title">Klavye Kısayolları</h2>
+    <div class="card-body">
+        <p>Tüm kısayolları görmek için herhangi bir yerde <kbd>?</kbd> tuşuna basın. Bir dizideki ikinci tuş beklenirken bekleyen tuş göstergesi görünür (örn. <code>g...</code>).</p>
+
+        <h3>Gezinme (önce G, sonra harfe basın)</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>d</kbd> <span>Kontrol Paneli</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>s</kbd> <span>Sistemler</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>l</kbd> <span>Kütüphane</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>a</kbd> <span>Analizler</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>t</kbd> <span>Ayarlar</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>h</kbd> <span>Yardım</span></div>
+        </div>
+
+        <h3>Eylemler</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>/</kbd> <span>Aramaya odaklan</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Pencereyi kapat</span></div>
+            <div class="shortcut-item"><kbd>?</kbd> <span>Kısayolları göster</span></div>
+        </div>
+
+        <h3>Oyun Sayfaları</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>e</kbd> <span>Oyunu düzenle</span></div>
+            <div class="shortcut-item"><kbd>s</kbd> <span>Oyun için veri çek</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Ekran görüntülerinde gezin</span></div>
+        </div>
+
+        <div class="help-tip">
+            <strong>Not:</strong> Yanlışlıkla gezinmeyi önlemek için bir metin girişi, metin alanı veya pencere odaklandığında klavye kısayolları devre dışı bırakılır.
+        </div>
+    </div>
+</section>
+
+<!-- Themes -->
+<section id="themes" class="help-section card">
+    <h2 class="card-title">Temalar</h2>
+    <div class="card-body">
+        <p>RetroDB, her biri kendine özgü bir renk paletine ve animasyonlu tuval arka plan efektine sahip 7 görsel tema sunar. Temaları <strong>Ayarlar &rarr; Kütüphane &rarr; Görünüm</strong> bölümünden değiştirin.</p>
+
+        <h3>Mevcut Temalar</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Tema</th><th>Renkler</th><th>Arka Plan Efekti</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Cyberpunk</strong> (varsayılan)</td><td>Koyu mavi üzerinde camgöbeği ve macenta</td><td>Simpleks gürültülü hacimsel duman/sis</td></tr>
+                <tr><td><strong>Matrix</strong></td><td>Siyah üzerinde yeşil</td><td>Düşen dijital yağmur (kanji karakterleri)</td></tr>
+                <tr><td><strong>Amber</strong></td><td>Koyu kahverengi üzerinde amber/turuncu</td><td>Güneş halesi ile CRT gün doğumu geçişi</td></tr>
+                <tr><td><strong>Ocean</strong></td><td>Koyu lacivert üzerinde deniz mavisi ve mavi</td><td>Okyanus derinlik katmanlı ay yansıması</td></tr>
+                <tr><td><strong>Cathedral</strong></td><td>Koyu mor üzerinde altın ve kraliyet moru</td><td>Sıcak ortam ışığıyla yukarıdan gelen kutsal ışık huzmeleri</td></tr>
+                <tr><td><strong>Blade Runner</strong></td><td>Koyu mavi-gri üzerinde elektrik mavisi ve neon pembe</td><td>Yağmur çizgileri ve mor pus ile neon şehir parıltısı</td></tr>
+                <tr><td><strong>Elite</strong></td><td>Saf siyah üzerinde vektör yeşili ve beyaz</td><td>Elite'ten (1984) esinlenen tel kafes vektör estetiği</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Nasıl Çalışır</h3>
+        <ul>
+            <li>Temalar CSS renk değişkenlerini geçersiz kılar &mdash; tüm arayüz öğeleri otomatik olarak uyum sağlar</li>
+            <li>Tuval efektleri, mevcut olduğunda GPU hızlandırması ve düşük seviye cihazlar için CPU geri dönüşü ile otomatik donanım seviyesi algılamayı (yüksek/orta/düşük) içerir</li>
+            <li>Sekme görünür olmadığında kaynak tasarrufu için efektler duraklatılır</li>
+            <li>Cyberpunk duman durumu, kesintisiz geçişler için sayfa gezinmeleri arasında korunur</li>
+            <li>İnce CRT tarzı tarama çizgisi kaplaması her temanın renk paletine uyum sağlar</li>
+            <li>Tema tercihiniz tarayıcıda kaydedilir ve oturumlar arasında korunur</li>
+        </ul>
+
+        <h3>Temaya Duyarlı Simgeler</h3>
+        <p>Bildirim simgeleri, iş durumu göstergeleri ve eylem simgeleri, geçerli temaya otomatik olarak uyum sağlar. Örneğin, başarı simgesi Cyberpunk'ta yeşil bir onay işareti gösterebilirken Matrix'te yeşil-siyah estetiğe uyacak farklı bir sembol gösterebilir.</p>
+    </div>
+</section>
+
+<!-- Dashboard -->
+<section id="dashboard" class="help-section card">
+    <h2 class="card-title">Kontrol Paneli</h2>
+    <div class="card-body">
+        <h3>Koleksiyon Sağlık Puanı</h3>
+        <p>Dairesel bir ilerleme halkası, genel koleksiyon sağlığınızı kaliteye göre renk kodlanmış bir yüzde olarak gösterir:</p>
+        <ul>
+            <li><strong>Yeşil</strong> (%80+) &mdash; Mükemmel metadata kapsamı</li>
+            <li><strong>Camgöbeği</strong> (%60&ndash;79) &mdash; Bazı eksikliklerle birlikte iyi kapsam</li>
+            <li><strong>Turuncu</strong> (%40&ndash;59) &mdash; Orta düzey kapsam, toplu veri çekmeyi düşünün</li>
+            <li><strong>Kırmızı</strong> (&lt;%40) &mdash; Önemli metadata eksiklikleri</li>
+        </ul>
+        <p>Aşağıdaki ayrıntı mini halkaları, kutu resmi tamlığını, açıklama tamlığını ve başarım kapsamını gösterir.</p>
+
+        <h3>İstatistik Özeti</h3>
+        <p>Göz atarken görülen kartlar:</p>
+        <ul>
+            <li><strong>Toplam Sistem</strong> &mdash; Kütüphanenizdeki platform sayısı</li>
+            <li><strong>Toplam Oyun</strong> &mdash; Toplam oyun sayısı (bonus diskler hariç)</li>
+            <li><strong>Eksik Metadata</strong> &mdash; Henüz veri çekilmemiş oyunlar</li>
+            <li><strong>Tamamlanmış</strong> &mdash; Metadata'sı çekilmiş oyunlar</li>
+        </ul>
+
+        <h3>Son Etkinlik Bölümleri</h3>
+        <p>Son etkinliğinizi gösteren kaydırılabilir bölümler (her biri yalnızca ilgili oyunlar olduğunda görünür):</p>
+        <ul>
+            <li><strong>Şu An Oynanıyor</strong> &mdash; "Devam Ediyor" olarak işaretlenmiş oyunlar</li>
+            <li><strong>Son Eklenenler</strong> &mdash; Kütüphanenize eklenen en son oyunlar</li>
+            <li><strong>Son Görüntülenenler</strong> &mdash; Yakın zamanda açtığınız oyunlar</li>
+            <li><strong>Son Veri Çekilenler</strong> &mdash; Metadata'sı yakın zamanda alınmış oyunlar</li>
+        </ul>
+
+        <h3>Hızlı Eylemler</h3>
+        <ul>
+            <li><strong>Kütüphaneyi Tara</strong> &mdash; Yeni oyunlar için ROM dizinlerinizi tarayın</li>
+            <li><strong>Rastgele Oyun</strong> &mdash; Kütüphanenizden rastgele bir oyun seçin</li>
+        </ul>
+
+        <h3>API Durumu</h3>
+        <p>Yapılandırılmış tüm veri çekicilerin ve API'lerin bağlantı durumunu gösterir. Çevrimdışı veya yanlış yapılandırılmış API'ler, Ayarlar'a bir bağlantı içeren bir uyarı banner'ı gösterir.</p>
+
+        <h3>İş Kurtarma</h3>
+        <p>Arka plan işleri çalışırken (toplu veri çekme, RA senkronizasyonu, görsel yeniden boyutlandırma vb.) RetroDB yeniden başlarsa, kesintiye uğrayan işler bir kurtarma banner'ında görünür. Seçenekler:</p>
+        <ul>
+            <li><strong>Devam Ettir</strong> &mdash; Kesintiye uğrayan tek bir işi yeniden başlatır</li>
+            <li><strong>Tümünü Devam Ettir</strong> &mdash; Kesintiye uğrayan tüm işleri yeniden başlatır</li>
+            <li><strong>Yoksay</strong> &mdash; Kurtarma listesinden tek bir işi temizler</li>
+            <li><strong>Tümünü Yoksay</strong> &mdash; Kesintiye uğrayan tüm işleri temizler</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Systems Browser -->
+<section id="systems" class="help-section card">
+    <h2 class="card-title">Sistem Tarayıcı</h2>
+    <div class="card-body">
+        <h3>Sistemler Izgarası</h3>
+        <p>Sistemler sayfası, kütüphanenizdeki tüm platformları duyarlı bir tuğla düzeninde kartlar halinde gösterir. Her kart şunları görüntüler:</p>
+        <ul>
+            <li><strong>Sistem logosu</strong> (Ayarlar &rarr; Özelleştirme &rarr; Logolar bölümünden özelleştirilebilir)</li>
+            <li><strong>ROM sayısı</strong> ve <strong>veri çekilmemiş sayısı</strong></li>
+            <li><strong>Sistem türü rozeti</strong> &mdash; Konsol, El Cihazı, Bilgisayar, Arcade veya Motor</li>
+            <li><strong>Özellik rozetleri</strong> &mdash; RetroAchievements desteği, Yerel Kupalar (RPCS3)</li>
+        </ul>
+
+        <h3>Sistem Teknik Özellikleri Penceresi</h3>
+        <p>Ayrıntılı donanım teknik özelliklerini görüntülemek için herhangi bir sistem kartındaki bilgi düğmesine tıklayın:</p>
+        <ul>
+            <li>Donanım görseli (konsol/sistem fotoğrafı)</li>
+            <li>Üretici ve piyasaya çıkış tarihi</li>
+            <li>CPU, GPU, RAM, VRAM</li>
+            <li>Çözünürlük, renk derinliği, ses çipi</li>
+            <li>Medya türü (kartuş, disk vb.)</li>
+        </ul>
+
+        <h3>Filtreleme ve Arama</h3>
+        <ul>
+            <li><strong>Metin araması</strong> &mdash; Sistem adına veya klasör adına göre filtrele</li>
+            <li><strong>Tür filtresi</strong> &mdash; Konsol, El Cihazı, Bilgisayar, Arcade, Motor</li>
+            <li><strong>Özellik filtresi</strong> &mdash; RetroAchievements desteği, Yerel Kupalar</li>
+            <li>Filtre sonuçları çubuğu <em>"Y sistemin X tanesi"</em> şeklinde gösterir</li>
+            <li>Filtreler, oturum depolama aracılığıyla sayfa yenilemeleri arasında korunur</li>
+        </ul>
+
+        <h3>Sistem Başına Oyun Listesi</h3>
+        <p>Oyunlarını görüntülemek için herhangi bir sistem kartına tıklayın. Sistem başına oyun listesi, tam Kütüphane sayfasıyla aynı özelliklere sahiptir &mdash; sonsuz kaydırma, arama, tüm filtre seçenekleri, toplu seçim ve sıralama. Bir sistem başlığı, sistem adını, oyun sayısını ve sistem türü rozetini gösterir.</p>
+    </div>
+</section>
+
+<!-- API Key Setup Guide -->
+<section id="api-keys" class="help-section card">
+    <h2 class="card-title">API Anahtarı Kurulum Kılavuzu</h2>
+    <div class="card-body">
+        <p>API anahtarları isteğe bağlıdır ancak zengin metadata çekimi ve ek özellikler sağlar. Bunları <strong>Ayarlar &rarr; Veri Çekme &rarr; API Anahtarları</strong> bölümünde yapılandırın.</p>
+
+        <h3>Metadata Veri Çekiciler</h3>
+
+        <h4>TheGamesDB</h4>
+        <ol>
+            <li><a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a> adresine gidin</li>
+            <li>API anahtarları isteyin (ücretsiz, manuel olarak onaylanır) &mdash; bir <strong>Public</strong> ve <strong>Private</strong> anahtar alacaksınız</li>
+            <li>Her iki anahtarı da Ayarlar &rarr; API Anahtarları &rarr; TheGamesDB bölümüne girin</li>
+            <li><strong>Public anahtar</strong> (IP başına hız sınırı), veri çekme için birincil anahtar olarak kullanılır</li>
+            <li><strong>Private anahtar</strong> (paylaşılan aylık havuz), public anahtar başarısız olursa yedek olarak kullanılır</li>
+        </ol>
+
+        <h4>IGDB (Twitch üzerinden)</h4>
+        <ol>
+            <li><a href="https://www.twitch.tv" target="_blank" rel="noopener noreferrer">twitch.tv</a> adresinde bir Twitch hesabı oluşturun</li>
+            <li><a href="https://dev.twitch.tv/console" target="_blank" rel="noopener noreferrer">dev.twitch.tv/console</a> adresine gidin</li>
+            <li>Yeni bir uygulama kaydedin (herhangi bir ad, herhangi bir kategori, OAuth yönlendirmesi olarak <code>http://localhost</code>)</li>
+            <li><strong>Client ID</strong>'yi kopyalayın ve bir <strong>Client Secret</strong> oluşturun</li>
+            <li>Her ikisini de Ayarlar &rarr; API Anahtarları &rarr; IGDB bölümüne girin</li>
+        </ol>
+
+        <h4>RAWG.io</h4>
+        <ol>
+            <li><a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer">rawg.io/apidocs</a> adresine gidin</li>
+            <li>"Get API Key" düğmesine tıklayın ve bir hesap oluşturun</li>
+            <li>API anahtarınızı kontrol panelinden kopyalayın</li>
+            <li>Ayarlar &rarr; API Anahtarları &rarr; RAWG bölümüne girin</li>
+        </ol>
+        <p><em>Ücretsiz seviye: ayda 20.000 istek</em></p>
+
+        <h4>ScreenScraper</h4>
+        <ol>
+            <li><a href="https://www.screenscraper.fr" target="_blank" rel="noopener noreferrer">screenscraper.fr</a> adresinde bir hesap oluşturun</li>
+            <li>Kullanıcı adınızı ve şifrenizi Ayarlar &rarr; API Anahtarları &rarr; ScreenScraper bölümüne girin</li>
+        </ol>
+        <p><em>Not: ScreenScraper, hesap seviyenize bağlı günlük istek sınırlarına sahiptir. Veritabanına katkıda bulunmak sınırlarınızı artırır.</em></p>
+
+        <h3>Başarımlar ve Kupalar</h3>
+
+        <h4>RetroAchievements</h4>
+        <ol>
+            <li><a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a> adresinde bir hesap oluşturun</li>
+            <li>Profilinizde <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer">Ayarlar &rarr; API Anahtarları</a> bölümüne gidin</li>
+            <li>API anahtarınızı kopyalayın</li>
+            <li>Kullanıcı adınızı ve API anahtarınızı Ayarlar &rarr; Hesap &rarr; RetroAchievements bölümüne girin</li>
+        </ol>
+
+        <h4>Steam Web API</h4>
+        <ol>
+            <li><a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener noreferrer">steamcommunity.com/dev/apikey</a> adresine gidin</li>
+            <li>Bir Steam Web API anahtarı için kaydolun (bir Steam hesabı gerektirir)</li>
+            <li>API anahtarınızı ve Steam ID'nizi (veya vanity URL'nizi) Ayarlar bölümüne girin</li>
+        </ol>
+        <p><em>Steam kütüphanesi içe aktarma ve başarım takibi için kullanılır.</em></p>
+
+        <h4>Xbox Live</h4>
+        <p>Xbox kimlik doğrulaması OAuth2 kullanır &mdash; API anahtarına gerek yoktur. Oyun İçe Aktarma &rarr; Xbox sekmesinden doğrudan Microsoft hesabınızla oturum açın. Belirteçler (token) otomatik olarak önbelleğe alınır ve gerektiğinde yenilenir.</p>
+
+        <h4>PlayStation Network (PSN)</h4>
+        <p>PSN, NPSSO çerez kimlik doğrulaması kullanır. Ayrıntılı kurulum talimatları için <a href="#trophies">Kupalar</a> bölümüne bakın.</p>
+
+        <h3>AI Sağlayıcıları (AI Doldurma ve Müze için)</h3>
+        <p>AI Doldurma metadata'sı ve Müze içerik oluşturma için bir AI sağlayıcısı gereklidir. Şunlardan seçim yapın:</p>
+
+        <table class="data-table">
+            <thead>
+                <tr><th>Sağlayıcı</th><th>Varsayılan Model</th><th>Fiyat (1M token başına Giriş / Çıkış)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0,10 / $0,40</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0,15 / $0,60</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 4.5</td><td>$1,00 / $5,00</td></tr>
+            </tbody>
+        </table>
+        <p>Her sağlayıcı birden fazla model seviyesi sunar. En ucuz modeller, metadata ve müze içeriği için iyi çalışır. Tercih ettiğiniz sağlayıcıyı ve API anahtarını <strong>Ayarlar &rarr; Veri Çekme &rarr; API Anahtarları</strong> bölümünde yapılandırın.</p>
+    </div>
+</section>
+
+<!-- Settings -->
+<section id="settings" class="help-section card">
+    <h2 class="card-title">Ayarlar</h2>
+    <div class="card-body">
+        <p>Ayarlar, her biri birden çok alt bölüme sahip 6 sekmede düzenlenmiştir.</p>
+
+        <h3>Hesap Sekmesi</h3>
+        <ul>
+            <li><strong>Profilim</strong> &mdash; Avatar yükleme/kaldırma, görünen ad, rol bilgisi, şifre değiştirme</li>
+            <li><strong>RetroAchievements</strong> &mdash; RA entegrasyonu için kullanıcı adı ve API anahtarı</li>
+            <li><strong>PSN</strong> &mdash; PlayStation Network kupa senkronizasyonu için NPSSO çerezi</li>
+            <li><strong>Saat Dilimi</strong> &mdash; Uygulama genelinde tarih görüntüleme için saat diliminizi ayarlayın</li>
+            <li><strong>Kullanıcılar</strong> &mdash; Kullanıcı yönetimi: kullanıcı ekleme, düzenleme, silme ve rol atama (yalnızca yönetici)</li>
+        </ul>
+
+        <h3>Kütüphane Sekmesi</h3>
+        <ul>
+            <li><strong>Yollar</strong> &mdash; ROM kütüphane yolu, veritabanı konumu</li>
+            <li><strong>Görünüm</strong> &mdash; Tema seçimi, kutu resmi stili (2D/3D), tercih edilen yaş derecelendirme sistemi, sayfa başına öğe sayısı</li>
+            <li><strong>ROM Adlandırma</strong> &mdash; Makale yerleşimi (başta/sonda "The"), bölge seçenekleri listesi, varsayılan bölge, adlandırma kuralları</li>
+            <li><strong>Yedekleme</strong> &mdash; Veritabanı yedekleri oluşturma ve geri yükleme</li>
+        </ul>
+
+        <h3>Veri Çekme Sekmesi</h3>
+        <ul>
+            <li><strong>ES-DE</strong> &mdash; Yerel veri içe aktarma için ES-DE oyun listesi ve medya yolları</li>
+            <li><strong>Veri Çekici</strong> &mdash; Tek tek veri çekicileri etkinleştirme/devre dışı bırakma, sürükle-bırak öncelik sıralaması, veri çekici başına hız sınırı ayarları</li>
+            <li><strong>API Anahtarları</strong> &mdash; Tüm veri çekici kimlik bilgileri (TGDB, IGDB, RAWG, ScreenScraper), AI sağlayıcı seçimi ve model seçimi (Gemini, OpenAI, Claude)</li>
+        </ul>
+
+        <h3>Veri Sekmesi</h3>
+        <ul>
+            <li><strong>İstatistikler</strong> &mdash; Kütüphane istatistikleri özeti (toplam oyun, sistem, depolama kullanımı)</li>
+            <li><strong>Kupalar</strong> &mdash; Yerel PS3 kupa taraması için RPCS3 kupa yolu yapılandırması</li>
+            <li><strong>Açılır Menüler</strong> &mdash; Bölge seçeneklerini ve uygulama genelinde kullanılan diğer açılır menü değerlerini özelleştirin</li>
+            <li><strong>Normalleştirme</strong> &mdash; Tür ve mod normalleştirme kuralları &mdash; veri çekici çıktısını standartlaştırmak için özel eşlemeler ekleyin</li>
+        </ul>
+
+        <h3>Özelleştirme Sekmesi</h3>
+        <ul>
+            <li><strong>Bildirimler</strong> &mdash; Bildirim zaman aşımı tercihleri (başarı, bilgi, uyarı, hata &mdash; her biri bağımsız olarak yapılandırılabilir)</li>
+            <li><strong>Kontrolcüler</strong> &mdash; Kontrolcü kütüphanesini yönetin, sistem başına varsayılan kontrolcüleri ayarlayın, özel kontrolcüler ekleyin. Varsayılan kontrolcüler, metadata çekimi sırasında veri çekilen/AI değerlerini geçersiz kılar.</li>
+            <li><strong>Logolar</strong> &mdash; Sistem logosu özelleştirme &mdash; sistem logolarını içe aktarın veya varsayılanlardan yenileyin</li>
+        </ul>
+
+        <h3>Sistem Sekmesi</h3>
+        <ul>
+            <li><strong>Bakım</strong> &mdash; Veritabanı optimizasyonu (VACUUM/ANALYZE), sahipsiz medya temizliği, eksik ROM'ları temizleme, veri çekilen verileri temizleme, CLZ içe aktarmalarını temizleme, toplu görsel standartlaştırma</li>
+            <li><strong>Sunucu</strong> &mdash; Sunucu yapılandırması (host, port, hata ayıklama modu)</li>
+            <li><strong>Günlükleme</strong> &mdash; Farklı kategoriler için günlük seviyesi ayarları</li>
+            <li><strong>Sorun Giderme</strong> &mdash; Takılan toplu veri çekmeyi temizleme, RA senkronizasyon kuyruğunu temizleme, PSN yenilemeyi temizleme, müze oluşturmayı temizleme, sunucuyu yeniden başlatma</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>İpucu:</strong> Devre dışı bırakılan veri çekiciler, Kontrol Panelinde "API çevrimdışı" uyarılarını tetiklemez. Bir veri çekiciyi kullanmıyorsanız, API anahtarını silmek yerine Ayarlar &rarr; Veri Çekme &rarr; Veri Çekici bölümünden devre dışı bırakın.
+        </div>
+    </div>
+</section>
+
+<!-- Scraping -->
+<section id="scraping" class="help-section card">
+    <h2 class="card-title">Metadata Çekme</h2>
+    <div class="card-body">
+        <h3>Tekli Oyun Veri Çekme</h3>
+        <ol>
+            <li>Herhangi bir oyunun detay penceresini açın (oyun kartına tıklayın)</li>
+            <li><strong>"Veri Çek"</strong> düğmesine tıklayın</li>
+            <li>Gerekirse arama başlığını değiştirin</li>
+            <li>Eşleşmelerden doğru sonucu seçin</li>
+            <li><strong>"Uygula"</strong> düğmesine tıklayın</li>
+        </ol>
+
+        <h3>Veri Çekme Kaynakları</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Kaynak</th><th>API Anahtarı</th><th>En İyi Kullanım</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ES-DE (Yerel)</td><td>Hayır</td><td>Zaten veri çekilmiş koleksiyonlar &mdash; gamelist.xml ve indirilen medyayı içe aktarır</td></tr>
+                <tr><td>TheGamesDB</td><td>Evet</td><td>Platforma özgü kutu resmi, 3D kutu resmi</td></tr>
+                <tr><td>IGDB</td><td>Evet</td><td>Modern oyunlar, ayrıntılı bilgi, türler, derecelendirmeler</td></tr>
+                <tr><td>RAWG.io</td><td>Evet</td><td>Kullanıcı puanları, açıklamalar, ekran görüntüleri</td></tr>
+                <tr><td>ScreenScraper</td><td>Evet</td><td>Bölgesel varyantlar, 3D kutu resmi, videolar, kılavuzlar</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Hibrit Veri Çekme</h3>
+        <p>RetroDB, metadata kapsamını en üst düzeye çıkarmak için birden fazla kaynaktan gelen verileri otomatik olarak birleştirir:</p>
+        <ul>
+            <li>En yüksek öncelikli mevcut kaynaktan metin metadata'sı</li>
+            <li>Birincil kaynakta bulunmadığında ikincil kaynaklardan görseller ve medya</li>
+            <li>Maksimum kapsam için veri çekiciler arasında otomatik boşluk doldurma</li>
+            <li>Sıralama başlığı, veri çekme sırasında oyun başlığından otomatik olarak oluşturulur</li>
+        </ul>
+
+        <h3>Medya İşleme</h3>
+        <ul>
+            <li>Medya alanları (kutu resmi, 3D kutu resmi, ekran görüntüleri, fanart, video, kılavuz) normal veri çekme sırasında <strong>asla değiştirilmez</strong> &mdash; yalnızca boş olduklarında doldurulur</li>
+            <li>Ekran görüntüleri her zaman <strong>eklenir</strong>, asla değiştirilmez</li>
+            <li>Medyayı yeniden indirmek için önce düzenleme penceresindeki mevcut görseli temizleyin, ardından yeniden veri çekin</li>
+            <li><strong>Tam Yeniden Veri Çekme</strong> modu bunu geçersiz kılar ve her şeyi değiştirir</li>
+            <li>Eski medya referansları (dosya silinmiş ancak dosya adı hâlâ veritabanında) yeni medyanın indirilebilmesi için veri çekmeden önce otomatik olarak temizlenir</li>
+            <li>İndirilen görseller otomatik olarak hedef boyutlara standartlaştırılır (bkz. <a href="#image-standardization">Görsel Standartlaştırma</a>)</li>
+        </ul>
+
+        <h3>Veri Çekici Önceliği</h3>
+        <p>Hangi veri çekicilerin önce çalışacağını ve hangilerinin etkin/devre dışı olduğunu <strong>Ayarlar &rarr; Veri Çekme &rarr; Veri Çekici</strong> bölümünde yapılandırın. Önceliği yeniden sıralamak için sürükleyip bırakın. Devre dışı bırakılan veri çekiciler, veri çekme sırasında denenmez ve Kontrol Panelinde API durum uyarılarını tetiklemez.</p>
+
+        <h3>Hız Sınırlama</h3>
+        <p>Her veri çekicinin, API kısıtlamasını önlemek için yapılandırılabilir hız sınırları vardır. Varsayılan gecikmeler muhafazakâr şekilde ayarlanmıştır. Gecikmeleri kendi sorumluluğunuzda azaltın &mdash; API hız sınırlarını aşmak, ilgili hizmetten geçici olarak yasaklanmanıza neden olabilir.</p>
+    </div>
+</section>
+
+<!-- Bulk Scraping -->
+<section id="bulk-scrape" class="help-section card">
+    <h2 class="card-title">Toplu Veri Çekme</h2>
+    <div class="card-body">
+        <h3>Toplu Veri Çekme Başlatma</h3>
+        <ol>
+            <li>Herhangi bir Sistem veya Kütüphane sayfasına gidin</li>
+            <li>Seçim moduna girmek için <strong>"Seç"</strong> düğmesine tıklayın</li>
+            <li>Oyunları tek tek seçin veya hızlı seçimi kullanın:
+                <ul>
+                    <li><strong>Tümünü Seç</strong> &mdash; Görünen tüm oyunlar</li>
+                    <li><strong>Veri Çekilmemişleri Seç</strong> &mdash; Yalnızca metadata'sı olmayan oyunlar</li>
+                </ul>
+            </li>
+            <li>Modu seçin: <strong>Eksikleri Doldur</strong> veya <strong>Tam Yeniden Veri Çekme</strong></li>
+            <li><strong>"Seçilenler İçin Veri Çek"</strong> düğmesine tıklayın</li>
+        </ol>
+
+        <h3>Kontroller</h3>
+        <ul>
+            <li><strong>Duraklat / Devam Ettir</strong> &mdash; Veri çekmeyi duraklat veya devam ettir</li>
+            <li><strong>İptal</strong> &mdash; Tamamen durdur</li>
+            <li><strong>Arka Plan</strong> &mdash; Küçült ve veri çekme çalışırken gezinmeye devam et</li>
+        </ul>
+
+        <h3>Toast Bildirimi</h3>
+        <p>Arka planda çalışırken, kalıcı bir toast tüm sayfalarda ilerlemeyi gösterir:</p>
+        <ul>
+            <li>Geçerli oyun adı, ilerleme sayısı ve sonuç istatistikleri (başarılı, başarısız, atlanan)</li>
+            <li>Herhangi bir sayfadan Duraklat/İptal kontrolleri kullanılabilir</li>
+            <li>Veri çekme penceresine dönmek için toast'a tıklayın</li>
+        </ul>
+
+        <h3>Kuyruk Sistemi</h3>
+        <p>Birden fazla toplu veri çekme otomatik olarak kuyruğa girer:</p>
+        <ul>
+            <li>Biri çalışırken yeni bir veri çekme başlatın &mdash; kuyruğa girer</li>
+            <li>Kuyruk, toast içinde bekleyen iş sayısıyla gösterilir</li>
+            <li>İşler otomatik olarak sırayla işlenir</li>
+            <li>Kuyruğa alınan işleri görüntülemek, yeniden sıralamak veya iptal etmek için Kuyruk Yöneticisi'ni kullanın</li>
+        </ul>
+
+        <h3>Veri Çekme Seçenekleri</h3>
+        <ul>
+            <li><strong>Yalnızca Eksikleri Doldur</strong> &mdash; Mevcut verileri koruyarak yalnızca boş metadata alanlarını doldurur</li>
+            <li><strong>Tam Yeniden Veri Çekme</strong> &mdash; Medya dahil tüm alanları değiştirir (yeni görseller ve videolar indirir)</li>
+            <li><strong>RetroAchievements Kontrol Et</strong> &mdash; Veri çekme sırasında RetroAchievements başarım setlerini de kontrol eder</li>
+        </ul>
+
+        <h3>İş Kurtarma</h3>
+        <p>Bir iş çalışırken RetroDB yeniden başlatılırsa, kesintiye uğrayan işler Kontrol Panelinde bir kurtarma banner'ında görünür. Onları yeniden başlatmak için tek tek işlerde <strong>"Devam Ettir"</strong> veya <strong>"Tümünü Devam Ettir"</strong> düğmesine tıklayın. İlerleme toast'ı, devam ettirdikten hemen sonra görünür.</p>
+    </div>
+</section>
+
+<!-- AI Fill -->
+<section id="ai-fill" class="help-section card">
+    <h2 class="card-title">AI Doldurma</h2>
+    <div class="card-body">
+        <h3>Ne Yapar</h3>
+        <p>AI Doldurma, eksik veya tamamlanmamış oyun metadata'sını akıllıca doldurmak için büyük bir dil modeli (Gemini, OpenAI veya Claude) kullanır. Veri çekicilerin sahip olmayabileceği doğru verileri sağlamak için oyun hakkındaki bağlamsal bilgiyi kullandığından normal veri çekmeden daha akıllıdır.</p>
+
+        <h3>Nasıl Kullanılır</h3>
+        <ol>
+            <li>Bir oyunun detay penceresini (veya tam detay sayfasını) açın</li>
+            <li><strong>"AI Doldurma"</strong> düğmesine tıklayın (Ayarlar'da yapılandırılmış bir AI API anahtarı gerektirir)</li>
+            <li>AI, oyun başlığını ve sistemini analiz eder, ardından eksik alanları doldurur</li>
+            <li>Sonuçları gözden geçirin &mdash; değişiklikler otomatik olarak kaydedilir</li>
+        </ol>
+
+        <h3>AI Doldurma Neler Sağlayabilir</h3>
+        <ul>
+            <li>Tür, açıklama, geliştirici, yayıncı, piyasaya çıkış tarihi</li>
+            <li>Oyuncu sayısı, oynanış modları (Tek Oyunculu, Çok Oyunculu, Co-op vb.)</li>
+            <li>Kampanya bilgisi ve oyun yapısı</li>
+            <li>Tüm 8 yaş derecelendirme sistemi (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd)</li>
+            <li>Bölge, marka, benzer oyunlar</li>
+            <li>Kontrolcü desteği, kayıt türü</li>
+            <li>Perspektif (Birinci Şahıs, Üstten Görünüm, Yandan Kaydırmalı vb.), boyut (2D, 3D)</li>
+            <li>Sürüm bilgisi, eleştirmen ve kullanıcı puanları</li>
+        </ul>
+
+        <h3>Akıllı Doldurma Mantığı</h3>
+        <ul>
+            <li><strong>Boş alanlar</strong> her zaman doldurulur</li>
+            <li><strong>Mevcut kullanıcı verileri</strong> asla üzerine yazılmaz</li>
+            <li><strong>Benzer oyunlar</strong> her zaman yenilenir (AI verisi bu alan için daha güvenilirdir)</li>
+            <li><strong>Çapraz eşlenmiş derecelendirmeler</strong> &mdash; Bir derecelendirme sistemi biliniyorsa, diğer sistemlerdeki boş derecelendirmeler olgunluk seviyesi çapraz eşlemesi kullanılarak otomatik olarak doldurulur</li>
+            <li><strong>Sıralama başlığı</strong> doldurulduğunda otomatik olarak oluşturulur</li>
+            <li><strong>Oyuncu sayısı</strong> alanı aralıkları normalleştirir (örn. "1-4" değeri 4 olur)</li>
+        </ul>
+
+        <h3>Tür Normalleştirme</h3>
+        <p>AI Doldurma, tireli isimlerle standart tür biçimlerini kullanır:</p>
+        <ul>
+            <li><code>First-Person-Shooter</code>, <code>Shoot-em-up</code>, <code>Beat-em-up</code></li>
+            <li><code>Hack-n-Slash</code>, <code>Board-Card</code>, <code>Real-Time Strategy</code></li>
+        </ul>
+
+        <h3>Gereksinimler</h3>
+        <p><strong>Ayarlar &rarr; Veri Çekme &rarr; API Anahtarları</strong> bölümünde en az bir AI sağlayıcı API anahtarı yapılandırılmalıdır. En ucuz model seviyesi (Gemini Flash Lite, GPT-4o Mini veya Claude Haiku) metadata için iyi çalışır.</p>
+    </div>
+</section>
+
+<!-- Filtering -->
+<section id="filtering" class="help-section card">
+    <h2 class="card-title">Filtreleme ve Arama</h2>
+    <div class="card-body">
+        <h3>Arama</h3>
+        <p>Arama, oyunları başlığa (ve sıralama başlığına) göre filtreler. Arama kutusuna odaklanmak için <kbd>/</kbd> tuşuna basın. Sonuçlar 300 ms'lik bir gecikmeyle gerçek zamanlı olarak güncellenir.</p>
+
+        <h3>Kaynak Filtresi</h3>
+        <p>Oyunları içe aktarma kaynağına göre filtreleyin:</p>
+        <ul>
+            <li><strong>ROM Dosyaları</strong> &mdash; ROM kütüphanenizden gelen oyunlar</li>
+            <li><strong>CLZ İçe Aktarmaları</strong> &mdash; CLZ'den içe aktarılan fiziksel oyunlar</li>
+            <li><strong>Steam İçe Aktarmaları</strong> &mdash; Steam'den içe aktarılan oyunlar</li>
+            <li><strong>Xbox İçe Aktarmaları</strong> &mdash; Xbox'tan içe aktarılan oyunlar</li>
+            <li><strong>PSN İçe Aktarmaları</strong> &mdash; PlayStation Network'ten içe aktarılan oyunlar</li>
+        </ul>
+
+        <h3>Filtre Düğmeleri</h3>
+        <p>Her filtre, sayılarla birlikte kütüphanenizdeki tüm benzersiz değerleri gösteren bir pencere açar. Filtreler iki modu destekler:</p>
+        <ul>
+            <li><strong>Dahil Et (ŞUDUR)</strong> &mdash; Yalnızca seçilen değerle eşleşen oyunları gösterir</li>
+            <li><strong>Hariç Tut (ŞU DEĞİLDİR)</strong> &mdash; Seçilen değerle eşleşen oyunları gizler</li>
+        </ul>
+        <p>Filtre penceresindeki anahtarı kullanarak dahil etme ve hariç tutma modu arasında geçiş yapın.</p>
+
+        <h3>Mevcut Filtreler</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Filtre</th><th>Açıklama</th><th>Çoklu Değer</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Tür</strong></td><td>Aksiyon, RPG, Platform vb.</td><td>Evet</td></tr>
+                <tr><td><strong>Seri</strong></td><td>Oyun markası</td><td>Evet</td></tr>
+                <tr><td><strong>Yayıncı</strong></td><td>Yayıncı şirket</td><td>Evet</td></tr>
+                <tr><td><strong>Geliştirici</strong></td><td>Geliştirme stüdyosu</td><td>Evet</td></tr>
+                <tr><td><strong>Oyuncu Sayısı</strong></td><td>Oyuncu sayısı</td><td>Hayır</td></tr>
+                <tr><td><strong>Modlar</strong></td><td>Tek Oyunculu, Çok Oyunculu, Co-op</td><td>Evet</td></tr>
+                <tr><td><strong>Perspektif</strong></td><td>Birinci Şahıs, Üstten Görünüm, İzometrik, Yandan Kaydırmalı</td><td>Evet</td></tr>
+                <tr><td><strong>Boyut</strong></td><td>2D, 3D</td><td>Evet</td></tr>
+                <tr><td><strong>Derecelendirme</strong></td><td>Yaş derecelendirmesi (tercih ettiğiniz sistemi gösterir)</td><td>Hayır</td></tr>
+                <tr><td><strong>RA Var</strong></td><td>RetroAchievements desteği olan oyunlar</td><td>Hayır</td></tr>
+                <tr><td><strong>Bonusu Göster</strong></td><td>Bonus disk görünürlüğünü aç/kapat</td><td>Hayır</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Sıralama Seçenekleri</h3>
+        <ul>
+            <li><strong>Başlık</strong> &mdash; Sıralama başlığına göre alfabetik (büyük/küçük harf duyarsız)</li>
+            <li><strong>Piyasaya Çıkış Tarihi</strong> &mdash; Kronolojik sıra (önce en eski)</li>
+            <li><strong>Platform</strong> &mdash; Sistem adına göre gruplandırılmış</li>
+        </ul>
+
+        <h3>Alfabe Gezinmesi</h3>
+        <p>Belirli bir harfle başlayan oyunlara atlayın. Eşleşen oyunu olmayan harfler grileştirilir. Sayılar ve semboller <strong>#</strong> altında gruplandırılır.</p>
+
+        <h3>Sonsuz Kaydırma</h3>
+        <p>Kaydırdıkça oyunlar 100'lük gruplar halinde yüklenir. Alta yaklaştığınızda yeni sayfalar otomatik olarak yüklenir. Filtreleri veya aramayı değiştirmek sonuçları anında sıfırlar ve yeniden yükler.</p>
+
+        <h3>Durum Kalıcılığı</h3>
+        <p>Geçerli filtreleriniz, arama teriminiz ve kaydırma konumunuz oturum depolamasında kaydedilir. Sayfaya geri döndüğünüzde veya yenilediğinizde geri yüklenirler.</p>
+    </div>
+</section>
+
+<!-- Game Detail -->
+<section id="game-detail" class="help-section card">
+    <h2 class="card-title">Oyun Detayları</h2>
+    <div class="card-body">
+        <h3>Oyun Detay Penceresi</h3>
+        <p>Herhangi bir oyun kartına tıklamak, önbelleğe alınmış hızlı bir görünümle bir detay penceresi açar. Pencere şunları gösterir:</p>
+        <ul>
+            <li>Kutu resmi (2D ve 3D), fanart arka planı</li>
+            <li>Açıklama ve piyasaya çıkış bilgisi</li>
+            <li>Geliştirici, yayıncı, tür rozetleri</li>
+            <li>Oyuncu sayısı, oynanış modları, oyun yapısı</li>
+            <li>Yaş derecelendirme görseli (tercih ettiğiniz sistemden, çapraz eşleme yedeğiyle)</li>
+            <li>Klavye gezinmeli ekran görüntüsü galerisi (<kbd>&larr;</kbd> <kbd>&rarr;</kbd>)</li>
+            <li>Fragman videosu (varsa)</li>
+            <li>HLTB oynanış süresi tahminleri (Ana Hikaye, Ana + Ekstralar, Tamamlayıcı)</li>
+            <li>RetroAchievements durumu ve ilerlemesi</li>
+            <li>Benzer oyunlar (tıklanabilir bağlantılar)</li>
+            <li>Kontrolcü desteği ayrıntıları</li>
+            <li>Oyuna atanmış etiketler</li>
+            <li>Dosya boyutu ve ROM yolu</li>
+        </ul>
+
+        <h3>Tam Oyun Detay Sayfası</h3>
+        <p>Tam oyun detay sayfasını görüntülemek için oyun başlığı bağlantısına tıklayın veya gezinme yolundan gidin. Tam sayfadaki ek özellikler şunları içerir:</p>
+        <ul>
+            <li><strong>Gezinme yollu fanart arka plan başlığı</strong></li>
+            <li><strong>Platform içe aktarma rozetleri</strong> &mdash; Uygulanabilir olduğunda platform logolarıyla CLZ İçe Aktarma, Steam İçe Aktarma, Xbox İçe Aktarma veya PSN İçe Aktarma gösterir</li>
+            <li><strong>Bonus disk göstergesi</strong> &mdash; Bir rozet ve küçük resimle üst oyuna "Parçası:" bağlantısı gösterir</li>
+            <li><strong>Sil düğmesi</strong> &mdash; Oyunu veritabanından kaldırır (onay ile)</li>
+            <li><strong>Temizle düğmesi</strong> &mdash; ROM girişini korurken tüm veri çekilen metadata'yı temizler</li>
+        </ul>
+
+        <h3>Düzenleme Penceresi</h3>
+        <p>Bölümlere ayrılmış düzenleme penceresini açmak için <strong>Düzenle</strong> düğmesine tıklayın (veya <kbd>e</kbd> tuşuna basın):</p>
+        <ul>
+            <li><strong>Kimlik</strong> &mdash; Başlık, sıralama başlığı (otomatik oluşturulur ama düzenlenebilir), marka, sürüm</li>
+            <li><strong>Piyasaya Çıkış Bilgisi</strong> &mdash; Piyasaya çıkış tarihi, bölge (yapılandırılabilir açılır menüden)</li>
+            <li><strong>Oynanış</strong> &mdash; Tür (çoklu seçim etiketleri), modlar, oyun yapısı, oyuncu sayısı, geliştirici, yayıncı</li>
+            <li><strong>Teknik</strong> &mdash; Kontrolcüler (çoklu seçim), kayıt türü, perspektif (çoklu değer), boyut (çoklu değer)</li>
+            <li><strong>Yaş Derecelendirmeleri</strong> &mdash; Resmi derecelendirme görselleri ve otomatik çapraz eşleme ile tüm 8 derecelendirme sistemi. Bir derecelendirmeyi değiştirmek, diğer sistemlerdeki boş derecelendirmeleri otomatik olarak doldurur.</li>
+            <li><strong>Puanlar</strong> &mdash; Eleştirmen puanı, kullanıcı puanı</li>
+            <li><strong>Açıklama</strong> &mdash; Oyun açıklama metni</li>
+            <li><strong>Özel Görseller</strong> &mdash; Özel kutu resmi (2D), 3D kutu resmi ve fanart yükleyin. Yeniden veri çekmeye izin vermek için mevcut görselleri temizleyin.</li>
+            <li><strong>Video / Fragman</strong> &mdash; Bir video fragmanı yükleyin veya bağlayın</li>
+        </ul>
+
+        <h3>Hızlı Eylemler</h3>
+        <ul>
+            <li><strong>Düzenle</strong> &mdash; Düzenleme penceresini açar (<kbd>e</kbd>)</li>
+            <li><strong>Veri Çek</strong> &mdash; Veri çekici kaynaklarından metadata alır (<kbd>s</kbd>)</li>
+            <li><strong>AI Doldurma</strong> &mdash; Eksik alanları AI ile doldurur (AI API anahtarı gerektirir)</li>
+            <li><strong>RA İçin Kontrol Et</strong> &mdash; Bir RetroAchievements başarım seti arar</li>
+            <li><strong>HLTB Arama</strong> &mdash; HowLongToBeat'ten oynanış süresi tahminlerini bulur</li>
+        </ul>
+
+        <h3>Tamamlama Durumu</h3>
+        <p>İlerlemenizi bu durumlarla takip edin (oyun kartlarında rozet olarak gösterilir):</p>
+        <ul>
+            <li><strong>Başlanmadı</strong> &mdash; Henüz oynanmadı</li>
+            <li><strong>Devam Ediyor</strong> &mdash; Şu an oynanıyor</li>
+            <li><strong>Oynandı</strong> &mdash; Oynandı ama bitirilmedi</li>
+            <li><strong>Tamamlandı</strong> &mdash; Ana oyun bitirildi</li>
+            <li><strong>%100</strong> &mdash; Her şey tamamlandı</li>
+        </ul>
+
+        <h3>Çoklu Derecelendirme Sistemi</h3>
+        <p>RetroDB, 8 uluslararası yaş derecelendirme sistemini destekler:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>Sistem</th><th>Bölge</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>ESRB</strong></td><td>Kuzey Amerika</td></tr>
+                <tr><td><strong>PEGI</strong></td><td>Avrupa</td></tr>
+                <tr><td><strong>CERO</strong></td><td>Japonya</td></tr>
+                <tr><td><strong>USK</strong></td><td>Almanya</td></tr>
+                <tr><td><strong>ACB</strong></td><td>Avustralya</td></tr>
+                <tr><td><strong>FPB</strong></td><td>Güney Afrika</td></tr>
+                <tr><td><strong>GRAC</strong></td><td>Güney Kore</td></tr>
+                <tr><td><strong>ClassInd</strong></td><td>Brezilya</td></tr>
+            </tbody>
+        </table>
+        <p>Tercih ettiğiniz sistemi <strong>Ayarlar &rarr; Kütüphane &rarr; Görünüm</strong> bölümünden ayarlayın. Resmi derecelendirme görselleri, oyun kartlarında, detay pencerelerinde ve detay sayfalarında görüntülenir. Boş derecelendirmeler, veri çekme, AI Doldurma ve manuel düzenleme sırasında olgunluk seviyesi çapraz eşlemesi yoluyla mevcut herhangi bir derecelendirmeden otomatik olarak doldurulur.</p>
+
+        <h3>Bonus Diskler</h3>
+        <p>RetroDB, bonus/ekstra diskleri (örn. soundtrack CD'leri, ekstra içerik diskleri) otomatik olarak algılar ve üst oyunlarıyla bağlar. Bonus diskler varsayılan olarak kütüphanede gizlenir &mdash; bunları görüntülemek için filtrelerde <strong>"Bonusu Göster"</strong> seçeneğini açın. Bağlı bonus diskler, üst oyunun detay penceresinde görünür.</p>
+
+        <div class="help-tip">
+            <strong>İpucu:</strong> Detay penceresi, daha hızlı yükleme için yakın zamanda görüntülenen oyunları önbelleğe alır. Düzenlemeler, yenileme gerektirmeden sayfadaki oyun kartını otomatik olarak günceller.
+        </div>
+    </div>
+</section>
+
+<!-- Bulk Edit -->
+<section id="bulk-edit" class="help-section card">
+    <h2 class="card-title">Toplu Düzenleme</h2>
+    <div class="card-body">
+        <h3>Nasıl Kullanılır</h3>
+        <ol>
+            <li>Herhangi bir Sistem veya Kütüphane sayfasına gidin</li>
+            <li>Seçim moduna girmek için <strong>"Seç"</strong> düğmesine tıklayın</li>
+            <li>Düzenlemek istediğiniz oyunları seçin (tek tek, Tümünü Seç veya Veri Çekilmemişleri Seç)</li>
+            <li><strong>"Toplu Düzenle"</strong> düğmesine tıklayın</li>
+            <li>Değiştirilecek alanı seçin ve yeni değeri ayarlayın</li>
+            <li><strong>Değiştir</strong> veya <strong>Ekle</strong> modunu seçin</li>
+            <li>Seçili tüm oyunları güncellemek için <strong>"Uygula"</strong> düğmesine tıklayın</li>
+        </ol>
+
+        <h3>Değiştir ve Ekle Karşılaştırması</h3>
+        <ul>
+            <li><strong>Değiştir</strong> &mdash; Mevcut değerin üzerine yenisini yazar</li>
+            <li><strong>Ekle</strong> &mdash; Yeni değeri mevcut değerlere ekler (çoklu değerli alanlar için)</li>
+        </ul>
+
+        <h3>Desteklenen Alanlar</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Alan</th><th>Ekleme Destekler</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Tür</td><td>Evet</td></tr>
+                <tr><td>Yayıncı</td><td>Evet</td></tr>
+                <tr><td>Geliştirici</td><td>Evet</td></tr>
+                <tr><td>Marka</td><td>Evet</td></tr>
+                <tr><td>Bölge</td><td>Evet</td></tr>
+                <tr><td>Oyun Yapısı</td><td>Evet</td></tr>
+                <tr><td>Perspektif</td><td>Evet</td></tr>
+                <tr><td>Boyut</td><td>Evet</td></tr>
+                <tr><td>Tamamlama Durumu</td><td>Hayır (yalnızca değiştirme)</td></tr>
+                <tr><td>Oyuncu Sayısı</td><td>Hayır (yalnızca değiştirme)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Compare Games -->
+<section id="compare" class="help-section card">
+    <h2 class="card-title">Oyunları Karşılaştır</h2>
+    <div class="card-body">
+        <h3>Ne Yapar</h3>
+        <p>Bir tablo görünümünde iki oyunun metadata'sının yan yana karşılaştırması. Metadata kalitesini kontrol etmek, yinelenenleri tespit etmek veya aynı oyunun sistemler arasındaki sürümlerini karşılaştırmak için kullanışlıdır.</p>
+
+        <h3>Nasıl Kullanılır</h3>
+        <ol>
+            <li><strong>Karşılaştır</strong> sayfasına gidin (Kütüphane sayfasından erişilebilir)</li>
+            <li>İlk oyunu arayın ve seçin</li>
+            <li>İkinci oyunu arayın ve seçin</li>
+            <li>Karşılaştırma tablosunu gözden geçirin &mdash; farklılıklar vurgulanır</li>
+        </ol>
+
+        <h3>Karşılaştırılan Alanlar</h3>
+        <p>Sistem, geliştirici, yayıncı, piyasaya çıkış tarihi, tür, marka, bölge, oyuncu sayısı, modlar, perspektif, boyut, tüm 8 yaş derecelendirmesi, kullanıcı puanı, eleştirmen puanı, oynanış süresi tahminleri, kontrolcü desteği, kayıt türü, dosya boyutu, benzer oyunlar, açıklama ve daha fazlası.</p>
+    </div>
+</section>
+
+<!-- Collections -->
+<section id="collections" class="help-section card">
+    <h2 class="card-title">Koleksiyonlar (Etiketler, Listeler, İstek Listesi)</h2>
+    <div class="card-body">
+        <h3>Etiketler</h3>
+        <p>Oyunlarınızı düzenlemek için özel renk kodlu etiketler oluşturun. Etiketler ad kartları gibi çalışır &mdash; her oyunun birden fazla etiketi olabilir ve her etiket birden fazla oyun içerebilir.</p>
+        <ul>
+            <li><strong>Etiketler</strong> sayfasından özel adlar ve renklerle etiketler oluşturun</li>
+            <li>Oyun detay penceresi aracılığıyla oyunlara etiket atayın</li>
+            <li>Bu etikete sahip tüm oyunlara göz atmak için herhangi bir etikete tıklayın</li>
+            <li>Etiketler yönetim sayfasından etiketleri düzenleyin veya silin</li>
+        </ul>
+
+        <h3>İsimlendirilmiş Listeler</h3>
+        <p>Özel sıralamayla özel oyun listeleri oluşturun. Listeler çalma listeleri gibidir &mdash; oyunların tam sırasını siz kontrol edersiniz.</p>
+        <ul>
+            <li><strong>Listeler</strong> sayfasından ad, açıklama ve simgeyle listeler oluşturun</li>
+            <li>Oyun detay penceresi veya liste sayfası aracılığıyla listelere oyun ekleyin</li>
+            <li>Bir liste içindeki oyunları yeniden sıralamak için sürükleyip bırakın</li>
+            <li>Özel sıraya göre veya alfabetik olarak sıralayın</li>
+        </ul>
+
+        <h3>İstek Listesi</h3>
+        <p>Fiziksel veya dijital olsun, edinmek istediğiniz oyunları takip edin.</p>
+        <ul>
+            <li>Başlık, sistem, notlar ve öncelikle (1&ndash;5) oyunları manuel olarak ekleyin</li>
+            <li>İstek listesi öğeleri, bulunursa mevcut kütüphane oyunlarıyla bağlanabilir</li>
+            <li>Önceliğe göre (en yüksek önce), ardından eklenme tarihine göre sıralanır</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>İpucu:</strong> Genel etiketler için etiketleri (örn. "Favoriler", "Kanepe Co-op", "Bekleme Listesi"), belirli düzenlenmiş koleksiyonlar için ise listeleri kullanın (örn. "En İyi 10 SNES Oyunu", "Yayınlanacak Oyunlar").
+        </div>
+    </div>
+</section>
+
+<!-- Game Imports -->
+<section id="game-imports" class="help-section card">
+    <h2 class="card-title">Oyun İçe Aktarma</h2>
+    <div class="card-body">
+        <p>Harici kaynaklardan oyun koleksiyonları içe aktarın. Kenar çubuğundaki <strong>Oyun İçe Aktarma</strong> aracılığıyla erişin. Tüm içe aktarma türleri tek bir sekmeli sayfada birleştirilmiştir.</p>
+
+        <h3>CLZ Games İçe Aktarma</h3>
+        <p>Fiziksel oyun koleksiyonunuzu CLZ Games'ten içe aktarın.</p>
+        <ol>
+            <li>CLZ Games koleksiyonunuzu PDF olarak dışa aktarın</li>
+            <li>Oyun İçe Aktarma &rarr; <strong>CLZ</strong> sekmesine gidin</li>
+            <li>PDF dosyasını yükleyin</li>
+            <li>Ayrıştırılan oyunları gözden geçirin</li>
+            <li>İçe aktarılacak oyunları seçin</li>
+        </ol>
+        <p>CLZ içe aktarmaları, ROM oyunlarından ayrı olarak takip edilir (<code>clz_import/</code> öneki kullanılarak), böylece hem fiziksel hem de dijital koleksiyonları kataloglayabilirsiniz. CLZ içe aktarmaları <strong>Ayarlar &rarr; Sistem &rarr; Bakım</strong> bölümünden tamamen temizlenebilir.</p>
+
+        <h3>Steam İçe Aktarma</h3>
+        <p>Steam oyun kütüphanenizi içe aktarın ve başarımları takip edin.</p>
+        <ol>
+            <li>Ayarlar'da Steam Web API anahtarınızı ve Steam ID'nizi yapılandırın</li>
+            <li>Oyun İçe Aktarma &rarr; <strong>Steam</strong> sekmesine gidin</li>
+            <li>Steam oyunlarınızı almak için <strong>"Kütüphaneyi Getir"</strong> düğmesine tıklayın</li>
+            <li>İçe aktarılacak oyunları seçin (yinelenenler otomatik olarak tespit edilir)</li>
+            <li>İçe aktarılan oyunlar, başarım takibi için Steam App ID'leriyle etiketlenir</li>
+        </ol>
+
+        <h3>Xbox İçe Aktarma</h3>
+        <p>Xbox oyun kütüphanenizi Microsoft hesabı üzerinden içe aktarın.</p>
+        <ol>
+            <li>Oyun İçe Aktarma &rarr; <strong>Xbox</strong> sekmesine gidin</li>
+            <li>Microsoft hesabınızla kimlik doğrulamak için <strong>"Oturum Aç"</strong> düğmesine tıklayın (OAuth2 akışı)</li>
+            <li>Xbox oyun geçmişiniz otomatik olarak alınır</li>
+            <li>Yinelenen tespitiyle içe aktarılacak oyunları seçin</li>
+            <li>İçe aktarılan oyunlar, başarım takibi için Xbox Title ID'leriyle etiketlenir</li>
+        </ol>
+        <p>Xbox belirteçleri <code>data/xbox_tokens.json</code> içinde önbelleğe alınır ve otomatik olarak yenilenir.</p>
+
+        <h3>PSN İçe Aktarma</h3>
+        <p>PlayStation Network oyun kütüphanenizi içe aktarın.</p>
+        <ol>
+            <li>Oyun İçe Aktarma &rarr; <strong>PSN</strong> sekmesine gidin</li>
+            <li>NPSSO çerezinizi girin (nasıl alınacağı için bkz. <a href="#trophies">Kupalar &rarr; PSN Kimlik Doğrulama</a>)</li>
+            <li>PSN oyunlarınızı almak için <strong>"Kütüphaneyi Getir"</strong> düğmesine tıklayın</li>
+            <li>İçe aktarılacak oyunları seçin</li>
+        </ol>
+
+        <h3>İçe Aktarma Sonrası</h3>
+        <ul>
+            <li>İçe aktarılan oyunlar, platforma özgü rozetlerle Kütüphanenizde görünür</li>
+            <li>İçe aktarılan oyunlar için metadata almak amacıyla toplu veri çekmeyi kullanın</li>
+            <li>Başarım/kupa takibi otomatik olarak kaynak platforma bağlanır</li>
+            <li>İçe aktarılan oyunlar, Kütüphanede Kaynak filtresi kullanılarak filtrelenebilir</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>İpucu:</strong> Herhangi bir platformdan oyun içe aktardıktan sonra, tıpkı ROM oyunlarında olduğu gibi toplu veri çekmeyi kullanarak onlar için metadata çekebilirsiniz. İçe aktarılan oyunlar ayrıca kendi platformlarından başarımları da takip edebilir.
+        </div>
+    </div>
+</section>
+
+<!-- RetroAchievements -->
+<section id="retroachievements" class="help-section card">
+    <h2 class="card-title">RetroAchievements</h2>
+    <div class="card-body">
+        <h3>Kurulum</h3>
+        <ol>
+            <li><a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a> adresinde bir hesap oluşturun</li>
+            <li>Profil ayarlarınızda bir API anahtarı oluşturun</li>
+            <li>Kullanıcı adınızı ve API anahtarınızı Ayarlar &rarr; Hesap &rarr; RetroAchievements bölümüne girin</li>
+        </ol>
+
+        <h3>Başarımlar Sayfası</h3>
+        <ul>
+            <li><strong>Sistem Sekmeleri</strong> &mdash; Platforma göre başarımlara göz atın (son görüntülenen sekmeyi hatırlar)</li>
+            <li><strong>Alfabe Gezinmesi</strong> &mdash; Her sistem sekmesinde ilk harfe göre oyunlara atlayın</li>
+            <li><strong>İlerlemeyi Yenile</strong> &mdash; RetroAchievements'tan başarım ilerlemenizi senkronize edin</li>
+            <li><strong>Genel İstatistikler</strong> &mdash; Tüm sistemlerdeki kazanılan başarımlar ve puanlar</li>
+            <li><strong>Oyun Başına İlerleme</strong> &mdash; İlerleme çubuklarıyla her oyun için tamamlanma yüzdesini görün</li>
+        </ul>
+
+        <h3>Senkronizasyon Kuyruğu</h3>
+        <p>Birden fazla sistem senkronizasyonu kuyruğa alınabilir:</p>
+        <ul>
+            <li>Bir senkronizasyonu başlatmak veya kuyruğa almak için herhangi bir sistemde "İlerlemeyi Yenile" düğmesine tıklayın</li>
+            <li>Zaten bir senkronizasyon çalışıyorsa, yeni istekler otomatik olarak kuyruğa alınır</li>
+            <li>Geçerli senkronizasyon tamamlandığında kuyruk otomatik olarak işlenir</li>
+            <li>Toast bildirimi geçerli ilerlemeyi ve kuyruk sayısını gösterir</li>
+        </ul>
+
+        <h3>Başarımlı Oyunları Bulma</h3>
+        <ul>
+            <li><strong>Kütüphane Filtresi</strong> &mdash; Yalnızca başarımlı oyunları göstermek için "RA Var" filtresini kullanın</li>
+            <li><strong>RA İçin Kontrol Et</strong> &mdash; Oyun detay pencerelerinde, bir başarım seti aramak için tıklayın</li>
+            <li><strong>Toplu Veri Çekme</strong> &mdash; Veri çekme sırasında başarımları bulmak için "RA Kontrol Et" seçeneğini etkinleştirin</li>
+            <li><strong>RA Yenileme İşi</strong> &mdash; Hangi oyunların RA desteğine sahip olduğunu belirlemek için bir sistemdeki tüm oyunları tarayın</li>
+        </ul>
+
+        <h3>Oyun Düzeyinde Ayrıntılar</h3>
+        <p>Bireysel başarım adları, açıklamalar, puan değerleri ve kazanılma durumu dahil ayrıntılı oyun başına başarım bilgisini görmek için başarımlar sayfasındaki herhangi bir oyuna tıklayın.</p>
+
+        <div class="help-tip">
+            <strong>Not:</strong> "İlerlemeyi Yenile", zaten RetroAchievements bağlantısı olan oyunlar için ilerlemenizi senkronize eder.
+            YENİ başarım setleri bulmak için oyun detay pencerelerinde "RA İçin Kontrol Et" seçeneğini kullanın veya toplu veri çekme sırasında etkinleştirin.
+        </div>
+    </div>
+</section>
+
+<!-- Steam Achievements -->
+<section id="steam-achievements" class="help-section card">
+    <h2 class="card-title">Steam Başarımları</h2>
+    <div class="card-body">
+        <h3>Kurulum</h3>
+        <ol>
+            <li><strong>Oyun İçe Aktarma &rarr; Steam</strong> aracılığıyla Steam oyunlarını içe aktarın</li>
+            <li>Steam Web API anahtarınızın Ayarlar'da yapılandırıldığından emin olun</li>
+        </ol>
+
+        <h3>Başarımlar Ana Sayfası</h3>
+        <p>Tüm Steam oyunlarınızı başarım ilerlemesiyle bir bakışta görüntüleyin:</p>
+        <ul>
+            <li><strong>Genel İstatistikler</strong> &mdash; Toplam Steam oyunu, kazanılan başarımlar, tamamlanma yüzdesi</li>
+            <li><strong>Oyun Başına İlerleme</strong> &mdash; Her oyun için tamamlanma çubukları</li>
+        </ul>
+
+        <h3>Oyun Başına Başarım Ayrıntıları</h3>
+        <p>Bireysel başarımlarını görmek için herhangi bir Steam oyununa tıklayın:</p>
+        <ul>
+            <li>Başarım simgeleri, adları ve açıklamaları</li>
+            <li>Kilit açma zaman damgalarıyla açık/kilitli durum</li>
+            <li>Her başarım için genel oyuncu kilit açma yüzdesi</li>
+        </ul>
+
+        <h3>Senkronizasyon</h3>
+        <ul>
+            <li>Detay sayfasından tek bir oyunun başarımlarını senkronize edin</li>
+            <li>Başarımlar ana sayfasından tüm Steam oyunlarını toplu senkronize edin</li>
+            <li>Senkronizasyon, toast bildirim ilerlemesiyle arka plan işi olarak çalışır</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Xbox Achievements -->
+<section id="xbox-achievements" class="help-section card">
+    <h2 class="card-title">Xbox Başarımları</h2>
+    <div class="card-body">
+        <h3>Kurulum</h3>
+        <ol>
+            <li><strong>Oyun İçe Aktarma &rarr; Xbox</strong> aracılığıyla Xbox oyunlarını içe aktarın</li>
+            <li>Kimlik doğrulama, içe aktarma sırasında Xbox OAuth üzerinden yönetilir</li>
+        </ol>
+
+        <h3>Başarımlar Ana Sayfası</h3>
+        <ul>
+            <li><strong>Genel İstatistikler</strong> &mdash; Toplam Xbox oyunu, kazanılan başarımlar, kazanılan/toplam gamerscore, tamamlanma yüzdesi</li>
+            <li><strong>Oyun Başına İlerleme</strong> &mdash; İlerleme çubuklarıyla oyun başına kazanılan gamerscore</li>
+        </ul>
+
+        <h3>Oyun Başına Başarım Ayrıntıları</h3>
+        <p>Bireysel başarımlarını görmek için herhangi bir Xbox oyununa tıklayın:</p>
+        <ul>
+            <li>Bireysel gamerscore değerleriyle başarım simgeleri</li>
+            <li>Kilit açma zaman damgalarıyla açık/kilitli durum</li>
+            <li>Her başarımda gamerscore rozetleri</li>
+        </ul>
+
+        <h3>Senkronizasyon</h3>
+        <ul>
+            <li>Tek bir oyunu senkronize edin veya tüm Xbox oyunlarını toplu senkronize edin</li>
+            <li>Toast bildirimleriyle arka plan işi olarak çalışır</li>
+            <li>Her senkronizasyondan sonra gamerscore toplamları otomatik olarak güncellenir</li>
+        </ul>
+    </div>
+</section>
+
+<!-- HLTB -->
+<section id="hltb" class="help-section card">
+    <h2 class="card-title">How Long to Beat</h2>
+    <div class="card-body">
+        <h3>Kullanım</h3>
+        <ol>
+            <li>Herhangi bir oyunun detay penceresini açın</li>
+            <li><strong>"HLTB Ara"</strong> düğmesine tıklayın</li>
+            <li>Sonuçlardan doğru eşleşmeyi seçin</li>
+            <li>Oynanış süresi tahminleri oyuna kaydedilir</li>
+        </ol>
+
+        <h3>Süre Kategorileri</h3>
+        <ul>
+            <li><strong>Ana Hikaye</strong> &mdash; Temel tamamlama süresi</li>
+            <li><strong>Ana + Ekstralar</strong> &mdash; Yan içerikle birlikte</li>
+            <li><strong>Tamamlayıcı</strong> &mdash; %100 her şey</li>
+        </ul>
+
+        <h3>HLTB Verisinin Göründüğü Yerler</h3>
+        <ul>
+            <li><strong>Oyun detay penceresi</strong> &mdash; Oyun bilgisinde gösterilen oynanış süresi tahminleri</li>
+            <li><strong>Tam oyun detay sayfası</strong> &mdash; Aynı oynanış süresi bilgisi</li>
+            <li><strong>Analizler &rarr; Oynanış Süresi sekmesi</strong> &mdash; Koleksiyon genelinde oynanış süresi analizi</li>
+            <li><strong>Oyunları Karşılaştır</strong> &mdash; Yan yana oynanış süresi karşılaştırması</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>İpucu:</strong> HLTB verisi, Analizler'de Oynanış Süresi sekmesi altında da gösterilir ve tüm koleksiyonunuz için tahminler sunar.
+        </div>
+    </div>
+</section>
+
+<!-- Trophies -->
+<section id="trophies" class="help-section card">
+    <h2 class="card-title">PS3 / PSN Kupaları</h2>
+    <div class="card-body">
+        <h3>RPCS3 Yerel Kupaları</h3>
+        <p>RPCS3 emülatörü aracılığıyla PS3 oyunlarında kazanılan kupaları takip edin.</p>
+        <ol>
+            <li>RPCS3 kupa yolunuzu <strong>Ayarlar &rarr; Veri &rarr; Kupalar</strong> bölümünde ayarlayın</li>
+            <li>Kazanılan kupaları içe aktarmak için <strong>"Kupaları Tara"</strong> düğmesine tıklayın</li>
+            <li>Kupa listelerini ve bireysel kupa ayrıntılarını <strong>RPCS3 Kupaları</strong> bölümünde görüntüleyin</li>
+        </ol>
+        <p>RPCS3, kupa XML verilerini RPCS3 kullanıcı dizininizden okur ve oyunları otomatik olarak kütüphanenizle eşleştirir.</p>
+
+        <h3>PSN API Kupaları</h3>
+        <p>PSN hesabınızdan PlayStation Network kupa verilerinizi senkronize edin.</p>
+        <ol>
+            <li>NPSSO çerezinizi alın (aşağıya bakın)</li>
+            <li><strong>Ayarlar &rarr; Hesap &rarr; PSN</strong> bölümüne girin</li>
+            <li>PSN kupa kütüphaneniz PlayStation API'si aracılığıyla alınır</li>
+            <li>Kazanılan/toplam sayılarla oyun başına kupa ilerlemesini görüntüleyin</li>
+            <li>Bireysel kupa ayrıntıları açıklama, nadirlik ve kilit açma zaman damgalarını içerir</li>
+        </ol>
+
+        <h3>PSN Kimlik Doğrulama (NPSSO Çerezi)</h3>
+        <p>PSN, NPSSO belirteci adı verilen özel bir kimlik doğrulama çerezi kullanır. Bunu almak için:</p>
+        <ol>
+            <li>Bir web tarayıcısı açın ve <a href="https://store.playstation.com" target="_blank" rel="noopener noreferrer">store.playstation.com</a> adresine giriş yapın</li>
+            <li>Giriş yaptıktan sonra şuraya gidin: <code>https://ca.account.sony.com/api/v1/ssocookie</code></li>
+            <li>Sayfa, NPSSO belirtecinizi içeren JSON görüntüler</li>
+            <li><code>npsso</code> değerini kopyalayın ve Ayarlar &rarr; Hesap &rarr; PSN bölümüne yapıştırın</li>
+        </ol>
+        <p>Kimlik doğrulandıktan sonra, RetroDB erişim belirteçlerini kendi veritabanında (kullanıcı başına) güvenli bir şekilde önbelleğe alır ve otomatik olarak yeniler &mdash; her senkronizasyonda NPSSO'yu tekrar yapıştırmanız gerekmez. Oturum yaklaşık iki ay geçerli kalır ve RetroDB artık bunu arka planda otomatik olarak da yeniler, bu nedenle normal kullanımda nadiren yeni bir NPSSO'ya ihtiyaç duymanız gerekir.</p>
+
+        <h3>Kupa Ayrıntıları</h3>
+        <ul>
+            <li>Kupa türleri: Bronz, Gümüş, Altın, Platin</li>
+            <li>Kupa simgeleri indirilir ve yerel olarak önbelleğe alınır</li>
+            <li>Oyun başına tamamlanma yüzdesi</li>
+            <li>Her kazanılan kupa için kilit açma zaman damgaları</li>
+        </ul>
+
+        <h3>Toplu Senkronizasyon</h3>
+        <p>Tüm PSN oyun kupalarını bir arka plan işi aracılığıyla tek seferde senkronize edin. İlerleme bir toast bildiriminde gösterilir. Hız sınırlaması (istekler arasında 2,5 sn) PSN API kısıtlamasını önler.</p>
+    </div>
+</section>
+
+<!-- Collector Trophies -->
+<section id="collector-trophies" class="help-section card">
+    <h2 class="card-title">Koleksiyoncu Kupaları</h2>
+    <div class="card-body">
+        <h3>Nedir</h3>
+        <p>Koleksiyon kilometre taşlarınıza göre kupalar veren bir oyunlaştırma sistemi. Oyun ekledikçe, metadata çektikçe ve oyunları tamamladıkça kupalar otomatik olarak açılır.</p>
+
+        <h3>Kupa Seviyeleri</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Seviye</th><th>Örnekler</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Bronz</strong></td><td>İlk oyunu ekle, 10 oyuna ulaş, ilk veri çekme, 5 sistem, ilk tamamlama</td></tr>
+                <tr><td><strong>Gümüş</strong></td><td>100 oyun, 50 veri çekilmiş, 10 sistem, 10 tamamlama, 500 oyun</td></tr>
+                <tr><td><strong>Altın</strong></td><td>1.000 oyun, %100 metadata kapsamı, 20 sistem, 50 tamamlama</td></tr>
+                <tr><td><strong>Platin</strong></td><td>5.000 oyun, 100 tamamlama, 30+ sistem</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Nasıl Çalışır</h3>
+        <ul>
+            <li>İlerleme, kütüphane istatistiklerinize göre otomatik olarak takip edilir</li>
+            <li>Her kupaya doğru ilerlemenizi görmek için <strong>Koleksiyoncu Kupaları</strong> sayfasını ziyaret edin</li>
+            <li>Değişiklik yaptıktan sonra ilerlemeyi güncellemek için <strong>"Yenile"</strong> düğmesine tıklayın</li>
+            <li>Kazanılan kupalar kilit açma tarihleriyle görüntülenir</li>
+            <li>İlerleme çubukları bir sonraki kilometre taşına ne kadar yaklaştığınızı gösterir</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Museum -->
+<section id="museum" class="help-section card">
+    <h2 class="card-title">Müze</h2>
+    <div class="card-body">
+        <h3>Nedir</h3>
+        <p>Nesle göre düzenlenmiş oyun sistemlerinin etkileşimli bir ansiklopedisi. Koleksiyonunuzdaki her platform için tarih, teknik özellikler ve dikkat çekici oyunlar hakkında bilgi edinin.</p>
+
+        <h3>Ana Sayfa</h3>
+        <p>Müze ana sayfası, nesle göre gruplandırılmış oyun sistemlerinin bir zaman çizelgesini gösterir (1.&ndash;9. Nesil, El Cihazları, Arcade, Bilgisayarlar). Her sistem kartı, donanım görselini ve kütüphanenizdeki oyun sayısını gösterir.</p>
+
+        <h3>Sistem Detay Sayfaları</h3>
+        <p>Müze sayfasını görüntülemek için herhangi bir sisteme tıklayın; sayfa şunları içerir:</p>
+        <ul>
+            <li><strong>Donanım Görseli</strong> &mdash; Konsolun/sistemin fotoğrafı</li>
+            <li><strong>Teknik Özellikler</strong> &mdash; CPU, GPU, RAM, çözünürlük, medya türü</li>
+            <li><strong>Tarihçe</strong> &mdash; Sistemin geliştirilmesi, piyasaya çıkışı ve mirası hakkında AI tarafından oluşturulan anlatı</li>
+            <li><strong>En İyi 10 Oyun</strong> &mdash; Sistemin en dikkat çekici oyunları (eleştirmen puanlarından ve AI önerilerinden)</li>
+            <li><strong>Kontrolcü Galerisi</strong> &mdash; Açıklamalarla sistemin kontrolcülerinin görselleri</li>
+        </ul>
+
+        <h3>AI İçerik Oluşturma</h3>
+        <p>Müze içeriği AI (Gemini, OpenAI veya Claude) kullanılarak oluşturulur. Şunlar için içerik oluşturabilirsiniz:</p>
+        <ul>
+            <li><strong>Tekli sistem</strong> &mdash; Herhangi bir sistemin müze sayfasında "Oluştur" düğmesine tıklayın</li>
+            <li><strong>Toplu oluşturma</strong> &mdash; Ana sayfadan tüm sistemler için tek seferde içerik oluşturun (toast ilerlemesiyle arka plan işi olarak çalışır)</li>
+        </ul>
+
+        <h3>Kontrolcü Görselleri</h3>
+        <p>Kontrolcü görselleri şu yollarla eklenebilir:</p>
+        <ul>
+            <li><strong>Görsel Arama</strong> &mdash; Bing Görsel Arama kullanarak kontrolcü fotoğrafları arayın. Sonuçlar alaka düzeyine göre sıralanır (kontrolcü adı + üretici + sistem varyasyonları).</li>
+            <li><strong>Manuel Yükleme</strong> &mdash; Kendi kontrolcü görsellerinizi yükleyin</li>
+            <li><strong>Arka Plan Kaldırma</strong> &mdash; Herhangi bir arka planda saydam kontrolcü görselleri için yerel AI (rembg kütüphanesi) kullanarak arka planları otomatik olarak kaldırın</li>
+            <li><strong>Görsel Yayılımı</strong> &mdash; Bir kontrolcü görseli bulunduğunda, diğer sistemlerdeki aynı kontrolcüyle (kardeş kontrolcüler) otomatik olarak paylaşılır</li>
+            <li><strong>Toplu Getirme</strong> &mdash; Bir sistemdeki tüm kontrolcüler için görselleri tek seferde getirin</li>
+        </ul>
+        <p>Tüm kontrolcü görselleri hedef boyuta standartlaştırılır ve WebP biçiminde kaydedilir.</p>
+
+        <div class="help-tip">
+            <strong>İpucu:</strong> İçerik oluşturma için bir AI API anahtarı gereklidir. Müze, Ayarlar &rarr; Veri Çekme &rarr; API Anahtarları bölümünde yapılandırılan aynı AI sağlayıcısını kullanır.
+        </div>
+    </div>
+</section>
+
+<!-- Analytics -->
+<section id="analytics" class="help-section card">
+    <h2 class="card-title">Analizler</h2>
+    <div class="card-body">
+        <p>Analizler, 12 sekmede kapsamlı istatistikler ve görselleştirmeler sağlar. Tüm grafikler etkileşimlidir ve PNG olarak dışa aktarılabilir, panoya kopyalanabilir veya CSV olarak indirilebilir.</p>
+
+        <h3>Analiz Sekmeleri</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Sekme</th><th>İçerik</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Özet</strong></td><td>İstatistik özeti kartları (toplam oyun, sistem, tamamlanma oranı, veri çekilme yüzdesi vb.)</td></tr>
+                <tr><td><strong>Grafikler</strong></td><td>Platforma/üreticiye göre oyunlar, türe göre oyunlar, yıl bazlı zaman çizelgesi</td></tr>
+                <tr><td><strong>Geliştiriciler</strong></td><td>En iyi 15 geliştirici ve yayıncı çubuk grafikleri</td></tr>
+                <tr><td><strong>Oynanış</strong></td><td>Tür dağılımı, oynanış modu analizi, oyun yapısı dağılımı</td></tr>
+                <tr><td><strong>Oynanış Süresi</strong></td><td>Koleksiyonunuz genelinde HLTB oynanış süresi verisi analizi &mdash; toplam tahmini oynanış süresi, ortalamalar, dağılım</td></tr>
+                <tr><td><strong>İnceleme Puanları</strong></td><td>Eleştirmen ve kullanıcı puan dağılımları ve ortalamaları</td></tr>
+                <tr><td><strong>Yaş Derecelendirmeleri</strong></td><td>Tüm 8 derecelendirme sisteminde yaş derecelendirmesi dağılımı</td></tr>
+                <tr><td><strong>Başarımlar</strong></td><td>Sisteme göre RetroAchievements kapsamı ve tamamlanması</td></tr>
+                <tr><td><strong>Veri Kalitesi</strong></td><td>Metadata tamlığı radar grafiği (açıklama, kutu resmi, tür, geliştirici, yayıncı, piyasaya çıkış tarihi, ekran görüntüleri, fanart, video, kılavuz, HLTB, derecelendirmeler, modlar, bölge)</td></tr>
+                <tr><td><strong>Büyüme</strong></td><td>Oyunların zaman içinde ne zaman eklendiğini gösteren koleksiyon büyüme zaman çizelgesi</td></tr>
+                <tr><td><strong>Depolama</strong></td><td>Sisteme göre depolama kullanım dağılımı (biçimlendirilmiş dosya boyutlarıyla)</td></tr>
+                <tr><td><strong>Lider Tabloları</strong></td><td>Oyun sayısına göre en iyi sistemler, dosya boyutuna göre en büyük bireysel oyunlar</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Dışa Aktarma Seçenekleri</h3>
+        <p>Her grafik, grafik araç çubuğundaki düğmeler kullanılarak dışa aktarılabilir:</p>
+        <ul>
+            <li><strong>PNG</strong> &mdash; Görsel dosyası olarak kaydet</li>
+            <li><strong>Pano</strong> &mdash; Grafik görselini panoya kopyala</li>
+            <li><strong>CSV</strong> &mdash; Ham veriyi elektronik tablo olarak indir</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Reports -->
+<section id="reports" class="help-section card">
+    <h2 class="card-title">ROM Raporları</h2>
+    <div class="card-body">
+        <h3>Ne Yapar</h3>
+        <p>ROM dosya adlarını standart adlandırma kurallarına göre doğrular ve olası sorunları belirler. Kenar çubuğundaki <strong>ROM Raporları</strong> aracılığıyla erişin.</p>
+
+        <h3>Rapor Türleri</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Sekme</th><th>Neyi Kontrol Eder</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Standart Dışı Adlar</strong></td><td>Adlandırma kurallarıyla eşleşmeyen dosya adlarına sahip ROM'lar. Geçerli dosya adını, tespit edilen sorunları ve önerilen düzeltilmiş adı gösterir.</td></tr>
+                <tr><td><strong>Ad Uyuşmazlıkları</strong></td><td>Dosya adı, veri çekilen metadata başlığıyla eşleşmeyen ROM'lar. Geçerli dosya adını, veri çekilen başlıkla, bölgeyle, yılla ve geliştiriciyle karşılaştırmalı olarak gösterir.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Neler Kontrol Edilir</h3>
+        <ul>
+            <li>Dosya adlarındaki geçersiz karakterler (<code>: ? * / " &lt; &gt; | \</code>)</li>
+            <li>Eksik veya yanlış bölge etiketleri (örn. <code>(USA)</code>, <code>(Europe)</code>)</li>
+            <li>Eksik yıl etiketleri</li>
+            <li>Dosya adı ile veritabanı başlığı uyuşmazlıkları</li>
+        </ul>
+
+        <p>Raporlar sisteme, dosya adına ve sorun türüne göre sıralanabilir. ROM kütüphanenizi düzenli ve tutarlı adlandırılmış tutmak için bunları kullanın.</p>
+    </div>
+</section>
+
+<!-- ROM Tools -->
+<section id="rom-tools" class="help-section card">
+    <h2 class="card-title">ROM Araçları</h2>
+    <div class="card-body">
+        <p>Kenar çubuğundan ROM Araçları merkezine erişin. Her araç, gerçek zamanlı ilerleme güncellemeleri, duraklat/devam ettirme desteği ve günlükleme ile bir arka plan işi olarak çalışır.</p>
+
+        <h3>Arşiv Tarayıcı</h3>
+        <p>ROM arşivlerini (ZIP, 7Z, RAR) şu seçeneklerle çıkarın:</p>
+        <ul>
+            <li>Alt dizinlerin özyinelemeli taranması</li>
+            <li>Çıkarma sonrası istenmeyen dosyaların kaldırılması</li>
+            <li>Çoklu disk oyunları için otomatik M3U çalma listesi oluşturma</li>
+        </ul>
+        <p><em>Gerektirir: 7z veya unzip</em></p>
+
+        <h3>CHD Dönüştürücü</h3>
+        <p>Disk görüntülerini (ISO, BIN/CUE, GDI) sıkıştırılmış CHD biçimine dönüştürün. Emülatörlerle tam uyumluluğu korurken önemli ölçüde depolama alanı tasarrufu sağlar.</p>
+        <p><em>Gerektirir: chdman (mame-tools'tan)</em></p>
+
+        <h3>CHD Doğrulama</h3>
+        <p>Hash doğrulamasıyla CHD dosyalarının bütünlüğünü doğrulayın. Bozuk veya eksik dönüştürmeleri belirler.</p>
+        <p><em>Gerektirir: chdman</em></p>
+
+        <h3>Yinelenen Bulucu</h3>
+        <p>Bölge etiketlerine göre önceliklendirme seçenekleriyle hash veya dosya adına göre yinelenen ROM'ları bulun.</p>
+        <p><em>Harici bağımlılık yok</em></p>
+
+        <h3>Çoklu Disk Düzenleyici</h3>
+        <p>Çoklu disk oyunlarını alt dizinlere düzenleyin ve bunu destekleyen emülatörler için M3U çalma listeleri oluşturun. PlayStation ve Saturn gibi sistemler için kullanışlıdır.</p>
+        <p><em>Harici bağımlılık yok</em></p>
+
+        <h3>Ekran Görüntüsü Yinelenen Giderme</h3>
+        <p>Depolama alanı boşaltmak için oyun kütüphaneniz genelinde yinelenen ekran görüntülerini bulun ve kaldırın.</p>
+        <ul>
+            <li><strong>Kesin Hash (MD5)</strong> &mdash; Yalnızca özdeş dosyaları tanımlar</li>
+            <li><strong>Görsel Benzerlik</strong> &mdash; Yapılandırılabilir eşikle algısal hash karşılaştırması (1&ndash;20, düşük = daha katı eşleşme)</li>
+        </ul>
+        <p>Taranan oyunları, yinelenen sayısını ve geri kazanılabilir alanı gösteren canlı istatistiklerle aşamalı olarak tarar. Sonuçlar oyuna ve sisteme göre gruplandırılır. Her yinelenen grupta hangi dosyanın tutulacağını seçebilir veya en yüksek çözünürlüklü sürümü otomatik olarak tutmak için <strong>"En Büyüğü Seç"</strong> seçeneğini kullanabilirsiniz.</p>
+        <p><em>Harici bağımlılık yok</em></p>
+
+        <h3>Görsel Yeniden Boyutlandırıcı</h3>
+        <p>Oyun medyasını tutarlı hedef boyutlara standartlaştırın. Tüm ayrıntılar için <a href="#image-standardization">Görsel Standartlaştırma</a> bölümüne bakın.</p>
+        <p><em>Harici bağımlılık yok (Python tabanlı AI büyütme)</em></p>
+
+        <h3>Alternatif Başlıkları Geriye Doldurma</h3>
+        <p><strong>Alternatif başlıklar</strong> alanı boş olan oyunlar için kütüphaneyi tarar ve IGDB / TGDB / ScreenScraper'dan doldurur. Büyük bir katalog içe aktardıktan sonra veya bölgesel / Japonca / alt başlıkları saklamayan başka bir araçtan geçiş yaptıktan sonra kullanışlıdır. Arka planda çalışır; ilerleme araç kartında gösterilir.</p>
+        <p><em>En az bir veri çekici API anahtarı gerektirir (IGDB / TGDB / ScreenScraper)</em></p>
+
+        <h3>Toplu HLTB Arama</h3>
+        <p>Oynanış süresi tahmini eksik olan her oyun için bir HowLongToBeat araması çalıştırın. Her eşleşme başlık + platform + piyasaya çıkış yılına göre puanlanır; yüksek güvenilirlikli eşleşmeler otomatik olarak kaydedilir. Güven eşiğinin altında kalan (veya çelişen platformlara sahip) her şey insan incelemesi için beklemeye alınır.</p>
+        <p><em>Harici bağımlılık yok (paketlenmiş çevrimdışı HLTB veri kümesini kullanır)</em></p>
+
+        <h3>HLTB Bekleyen İnceleme</h3>
+        <p>Toplu HLTB Arama tarafından ortaya çıkarılan belirsiz eşleşmeler için inceleme kuyruğu. Her bekleyen satır, kaynak oyunu HLTB adayının (başlık, platform, piyasaya çıkış yılı, güven) yanında gösterir. Her satır için farklı bir eşleşmeyi onaylayın, reddedin veya seçin. İnceleme araç kartı, ROM Araçları merkezinde yalnızca en az bir bekleyen eşleşme olduğunda görünür.</p>
+        <ul>
+            <li>Düşük güvenilirlik, alternatif başlık ve platform uyuşmazlığı eşleşmeleri için <strong>filtre sekmeleri</strong>.</li>
+            <li><strong>Onayla</strong> oynanış süresi tahminini yazar; <strong>Reddet</strong> adayı düşürür ve arama kuyruğunu temiz tutar.</li>
+        </ul>
+
+        <h3>Araç Ayarları</h3>
+        <p>Tüm ROM araçları arasında paylaşılan yolları, araç konumlarını, arşiv türlerini ve tercihleri yapılandırın.</p>
+
+        <div class="help-tip">
+            <strong>İpucu:</strong> Tüm ROM araçları duraklatmayı/devam ettirmeyi destekler ve arka planda çalışır. İlerleme ve sonuçlar günlüğe kaydedilir ve Günlük Görüntüleyici'de görüntülenebilir. Araç durumu (mevcut ile kuruluma ihtiyaç duyulan) her araç kartında gösterilir.
+        </div>
+    </div>
+</section>
+
+<!-- Normalization -->
+<section id="normalization" class="help-section card">
+    <h2 class="card-title">Normalleştirme</h2>
+    <div class="card-body">
+        <h3>Ne Yapar</h3>
+        <p>Tür ve oynanış modu değerlerini tutarlı standart biçimlere normalleştirir. Bu, veri çekme ve AI Doldurma sırasında otomatik olarak gerçekleşir ve mevcut kütüphanenize manuel olarak da uygulanabilir.</p>
+
+        <h3>Neden Önemli</h3>
+        <p>Farklı veri çekiciler aynı şey için farklı adlar kullanır. Normalleştirme, tüm kütüphanenizde tutarlılık sağlar:</p>
+        <ul>
+            <li><code>platform</code> &rarr; <code>Platformer</code></li>
+            <li><code>fps</code>, <code>first person shooter</code> &rarr; <code>First-Person-Shooter</code></li>
+            <li><code>shoot 'em up</code>, <code>shmup</code> &rarr; <code>Shoot-em-up</code></li>
+            <li><code>beat 'em up</code>, <code>brawler</code> &rarr; <code>Beat-em-up</code></li>
+            <li><code>hack and slash</code> &rarr; <code>Hack-n-Slash</code></li>
+            <li><code>rts</code>, <code>real time strategy</code> &rarr; <code>Real-Time Strategy</code></li>
+            <li><code>board game</code>, <code>card game</code> &rarr; <code>Board-Card</code></li>
+        </ul>
+
+        <h3>Özel Kurallar</h3>
+        <p><strong>Ayarlar &rarr; Veri &rarr; Normalleştirme</strong> bölümünde özel normalleştirme kuralları ekleyebilirsiniz. Özel kurallar yerleşik eşlemeleri geçersiz kılarak kendi tercih ettiğiniz tür ve mod adlarını tanımlamanıza olanak tanır. Kurallar veritabanında saklanır.</p>
+
+        <h3>Önizleme ve Uygula</h3>
+        <p>Normalleştirmeyi uygulamadan önce, hangi oyunların etkileneceğini ve hangi değişikliklerin yapılacağını önizleyebilirsiniz. Bu, kütüphanenizde değişiklikleri onaylamadan önce gözden geçirmenizi sağlar.</p>
+    </div>
+</section>
+
+<!-- Image Standardization -->
+<section id="image-standardization" class="help-section card">
+    <h2 class="card-title">Görsel Standartlaştırma</h2>
+    <div class="card-body">
+        <h3>Ne Yapar</h3>
+        <p>Kütüphaneniz genelinde tek tip bir görünüm için tüm oyun medyasını tutarlı hedef boyutlara standartlaştırır. Hedef boyutun %80&ndash;120'si içindeki görseller atlanır.</p>
+
+        <h3>Nasıl Çalışır</h3>
+        <ul>
+            <li><strong>Büyütme</strong> &mdash; Hedef boyuttan küçük görseller, yüksek kaliteli büyütme için Real-ESRGAN x4 (ONNX Runtime üzerinden AI süper çözünürlük) kullanılarak büyütülür, ardından tam hedefe yeniden boyutlandırılır</li>
+            <li><strong>Küçültme</strong> &mdash; Hedef boyuttan büyük görseller, keskin sonuçlar için Lanczos filtrelemesi kullanılarak küçültülür</li>
+            <li><strong>Eşik bandı</strong> &mdash; Hedefin %80&ndash;120'si içindeki görseller, gereksiz yeniden işlemeyi önlemek için dokunulmadan bırakılır</li>
+        </ul>
+
+        <h3>Hedef Boyutlar</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Medya Türü</th><th>Hedef</th><th>Yöntem</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Kutu Resmi</td><td>1080px yükseklik</td><td>Genişlik orantılı olarak ölçeklenir</td></tr>
+                <tr><td>3D Kutu Resmi</td><td>1080px yükseklik</td><td>Genişlik orantılı olarak ölçeklenir (saydamlığı korur)</td></tr>
+                <tr><td>Ekran Görüntüleri</td><td>1080px yükseklik</td><td>Genişlik orantılı olarak ölçeklenir</td></tr>
+                <tr><td>Kontrolcüler</td><td>1280px en uzun kenar</td><td>Saydamlığı korur (RGBA)</td></tr>
+                <tr><td>Donanım</td><td>1280px en uzun kenar</td><td>Saydamlığı korur (RGBA)</td></tr>
+                <tr><td>Fanart</td><td>Atlanır</td><td>Standartlaştırılmaz (orijinal boyutta bırakılır)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Nasıl Çalıştırılır</h3>
+        <ol>
+            <li><strong>Ayarlar &rarr; Sistem &rarr; Bakım</strong> veya <strong>ROM Araçları &rarr; Görsel Yeniden Boyutlandırıcı</strong> bölümüne gidin</li>
+            <li>Toplu standartlaştırmayı başlatmak için <strong>"Başlat"</strong> düğmesine tıklayın</li>
+            <li>İş, geçerli dosyayı ve istatistikleri gösteren toast ilerlemesiyle arka planda çalışır</li>
+            <li>Görseller ayrıca veri çekme sırasında otomatik olarak standartlaştırılır (yeni indirmeler hemen standartlaştırılır)</li>
+        </ol>
+
+        <h3>Donanım Desteği</h3>
+        <p>Real-ESRGAN modeli donanımınızı otomatik olarak algılar ve mevcut en iyi sağlayıcıyı kullanır:</p>
+        <ul>
+            <li><strong>CUDA</strong> &mdash; NVIDIA GPU hızlandırması</li>
+            <li><strong>ROCm</strong> &mdash; AMD GPU hızlandırması (RX 6000 serisi için otomatik gfx sürümü geçersiz kılma ile)</li>
+            <li><strong>CoreML</strong> &mdash; Apple Silicon hızlandırması</li>
+            <li><strong>CPU</strong> &mdash; GPU desteği olmayan sistemler için yedek</li>
+        </ul>
+        <p>ONNX model dosyası, ilk kullanımda Hugging Face'ten otomatik olarak indirilir ve yerel olarak önbelleğe alınır.</p>
+    </div>
+</section>
+
+<!-- Logs -->
+<section id="logs" class="help-section card">
+    <h2 class="card-title">Günlük Görüntüleyici</h2>
+    <div class="card-body">
+        <h3>Ne Yapar</h3>
+        <p>Tüm uygulama günlükleri için birleşik bir görüntüleyici. Kenar çubuğundaki <strong>Günlük Görüntüleyici</strong> aracılığıyla erişin.</p>
+
+        <h3>Günlük Kategorileri</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Kategori</th><th>İçerik</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Veri Çekme</strong></td><td>Veri çekici etkinliği, API çağrıları, hatalar ve oyun başına sonuçlar</td></tr>
+                <tr><td><strong>ROM Araçları</strong></td><td>Arşiv çıkarma, CHD dönüştürme, yinelenen tespiti, ekran görüntüsü yinelenen giderme</td></tr>
+                <tr><td><strong>ROM Raporları</strong></td><td>Adlandırma doğrulama sonuçları</td></tr>
+                <tr><td><strong>Görsel Boyutlandırma</strong></td><td>Görsel standartlaştırma iş ilerlemesi (dosya başına büyütme/küçültme)</td></tr>
+                <tr><td><strong>Sistem</strong></td><td>Genel uygulama etkinliği, bakım görevleri, başlatma, veritabanı işlemleri</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Özellikler</h3>
+        <ul>
+            <li>Kategoriye göre filtreleyin veya tüm günlükleri birlikte görüntüleyin</li>
+            <li>Dosya listesi oluşturma tarihlerini ve dosya boyutlarını gösterir</li>
+            <li>Tam içeriğini görüntülemek için herhangi bir günlük dosyasına tıklayın</li>
+            <li>Bireysel günlük dosyalarını indirin</li>
+            <li>Hızlı genel bakış için üstte gösterilen kategori sayıları</li>
+            <li>Ayarlar &rarr; Sistem &rarr; Günlükleme bölümünde yapılandırılabilir günlük seviyeleri</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Maintenance -->
+<section id="maintenance" class="help-section card">
+    <h2 class="card-title">Bakım</h2>
+    <div class="card-body">
+        <p>Bakım işlemleri <strong>Ayarlar &rarr; Sistem &rarr; Bakım</strong> bölümünde bulunur. Bunlar, kütüphanenizi temiz ve optimize tutmaya yardımcı olur.</p>
+
+        <h3>Kütüphane Tarama</h3>
+        <ul>
+            <li><strong>Kütüphaneyi Tara</strong> &mdash; Yeni oyunlar için ROM dizinlerinizi tarar. ES-DE <code>systeminfo.txt</code> uzantı listelerini kullanarak sistem klasörlerini ve desteklenen dosya türlerini algılar. Kontrol Panelinden de kullanılabilir.</li>
+        </ul>
+
+        <h3>Temizleme İşlemleri</h3>
+        <ul>
+            <li><strong>Eksik ROM'ları Temizle</strong> &mdash; ROM dosyaları artık diskte bulunmayan oyunlar için veritabanı girişlerini kaldırır. ROM dosyalarını yeniden düzenledikten veya sildikten sonra kullanışlıdır.</li>
+            <li><strong>Sahipsiz Medya Temizliği</strong> &mdash; Diskte, veritabanında karşılık gelen bir referansı olmayan görsel dosyalarını (kutu resmi, ekran görüntüleri, fanart) bulur ve siler. Onaylamak için silmeden önce önizleyin.</li>
+            <li><strong>Veri Çekilen Verileri Temizle</strong> &mdash; ROM dosya girişlerini korurken oyunlardan tüm veri çekilen metadata'yı kaldırır. Veri çekmeye yeniden baştan başlamak için kullanışlıdır. Önizleme, çalıştırmadan önce etkilenen oyunları gösterir.</li>
+            <li><strong>CLZ İçe Aktarmalarını Temizle</strong> &mdash; Tüm CLZ Games içe aktarma kayıtlarını kaldırır (ROM dosyası olmayan yalnızca metadata girişleri).</li>
+        </ul>
+
+        <h3>Veritabanı Optimizasyonu</h3>
+        <ul>
+            <li><strong>Veritabanını Optimize Et</strong> &mdash; Silinen kayıtlardan depolama alanını geri kazanmak ve sorgu planlayıcı istatistiklerini güncellemek için SQLite VACUUM ve ANALYZE çalıştırır. Büyük silmelerden veya temizleme işlemlerinden sonra önerilir.</li>
+        </ul>
+
+        <h3>Toplu Görsel Standartlaştırma</h3>
+        <p>Tüm oyun görsellerini hedef boyutlara standartlaştırın. Ayrıntılar için <a href="#image-standardization">Görsel Standartlaştırma</a> bölümüne bakın.</p>
+
+        <h3>Sunucu Yönetimi</h3>
+        <ul>
+            <li><strong>Sunucuyu Yeniden Başlat</strong> &mdash; Zarif uygulama yeniden başlatması (temizleme ve çıkış). Ayarlar &rarr; Sistem &rarr; Sorun Giderme bölümünde kullanılabilir.</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Multi-User Access -->
+<section id="multi-user" class="help-section card">
+    <h2 class="card-title">Çoklu Kullanıcı Erişimi</h2>
+    <div class="card-body">
+        <h3>Kullanıcı Rolleri</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Rol</th><th>Erişim</th><th>Şifre</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Yönetici</strong></td><td>Tam erişim: ayarlar, kullanıcı yönetimi, bakım, tüm özellikler</td><td>Gerekli</td></tr>
+                <tr><td><strong>Düzenleyici</strong></td><td>Oyunları düzenleyebilir, veri çekebilir, ROM araçlarını kullanabilir, koleksiyonları yönetebilir</td><td>Yok</td></tr>
+                <tr><td><strong>Görüntüleyici</strong></td><td>Salt okunur: kütüphaneye göz atma, ayrıntıları görüntüleme, başarımları/kupaları görüntüleme</td><td>Yok</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Kullanıcıları Yönetme</h3>
+        <ol>
+            <li><strong>Ayarlar &rarr; Hesap &rarr; Kullanıcılar</strong> bölümüne gidin (yalnızca yönetici)</li>
+            <li>Yeni bir hesap oluşturmak için <strong>"Kullanıcı Ekle"</strong> düğmesine tıklayın</li>
+            <li>Kullanıcı adı, görünen ad ve rol ayarlayın</li>
+            <li>Yönetici kullanıcılar, ilk girişte değiştirilmesi gereken varsayılan bir şifre alır</li>
+        </ol>
+
+        <h3>Kimlik Doğrulama</h3>
+        <p>Giriş sayfası tüm etkin kullanıcıları gösterir. Yönetici hesapları bir şifre gerektirir; diğer roller giriş yapmak için yalnızca adlarına tıklar. Oturumlar çıkış yapılana kadar kalıcıdır.</p>
+
+        <h3>Kullanıcı Başına Ayarlar</h3>
+        <p>Her kullanıcı kendi tercihlerini yapılandırabilir:</p>
+        <ul>
+            <li>Avatar (özel görsel yükleme)</li>
+            <li>Görünen ad</li>
+            <li>Tema tercihi</li>
+            <li>Sayfa başına öğe sayısı</li>
+            <li>Saat dilimi</li>
+            <li>RPCS3 kupa yolu</li>
+            <li>RetroAchievements kimlik bilgileri (kullanıcı adı + API anahtarı)</li>
+            <li>PSN kimlik bilgileri (NPSSO çerezi)</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Backup -->
+<section id="backup" class="help-section card">
+    <h2 class="card-title">Yedekleme ve Geri Yükleme</h2>
+    <div class="card-body">
+        <h3>Yedek Oluşturma</h3>
+        <ol>
+            <li><strong>Ayarlar &rarr; Kütüphane &rarr; Yedekleme</strong> bölümüne gidin</li>
+            <li><strong>"Yedek Oluştur"</strong> düğmesine tıklayın</li>
+            <li>Yedek, zaman damgalı bir dosya adıyla <code>backups/</code> klasörüne kaydedilir</li>
+        </ol>
+
+        <h3>Neler Yedeklenir</h3>
+        <p>Yedek, tüm oyun metadata'sını, kullanıcı hesaplarını, ayarları, kupa verilerini, başarım ilerlemesini, etiketleri, listeleri ve istek listesi öğelerini içeren tüm SQLite veritabanını (<code>roms.db</code>) içerir.</p>
+
+        <h3>Neler Yedeklenmez</h3>
+        <p>Medya dosyaları (kutu resmi, ekran görüntüleri, fanart, videolar, kılavuzlar), veri çekilerek yeniden indirilebildikleri için veritabanı yedeğine dahil değildir. Özel yüklemeleriniz varsa <code>static/images/</code> dizininizi ayrıca yedeklemeyi düşünün.</p>
+
+        <h3>Geri Yükleme</h3>
+        <ol>
+            <li>Yedek listesinde yedeği bulun</li>
+            <li><strong>"Geri Yükle"</strong> düğmesine tıklayın</li>
+            <li>İşlemi onaylayın</li>
+        </ol>
+
+        <div class="help-tip">
+            <strong>Uyarı:</strong> Bir yedeği geri yüklemek, geçerli veritabanınızın üzerine yazar. Eskisini geri yüklemeden önce yeni bir yedek oluşturun!
+        </div>
+    </div>
+</section>
+
+<!-- Updating RetroDB -->
+<section id="updating" class="help-section card">
+    <h2 class="card-title">RetroDB'yi Güncelleme</h2>
+    <div class="card-body">
+        <h3>Nasıl Güncellenir</h3>
+        <ol>
+            <li>Yeni RetroDB sürümünü indirin</li>
+            <li>Bu dosyaları yedekleyin (kişisel verilerinizi içerirler):
+                <ul>
+                    <li><code>config.py</code> (yollarınız ve API anahtarlarınız)</li>
+                    <li><code>data/settings.json</code> (arayüz tercihleriniz)</li>
+                    <li><code>data/scraper_settings.json</code> (veri çekici yapılandırmanız)</li>
+                    <li><code>data/rom_tools_config.json</code> (ROM araçları tercihleriniz)</li>
+                    <li><code>database/</code> klasörü (oyun kütüphanesi veritabanınız ve kayıtlı PSN/Xbox oturum açma belirteçleriniz)</li>
+                </ul>
+            </li>
+            <li>Yeni sürümü mevcut kurulumun üzerine çıkarın</li>
+            <li>Yeni bağımlılıkları kurmak için <code>python install.py</code> komutunu çalıştırın</li>
+            <li>Sunucuyu yeniden başlatın</li>
+        </ol>
+
+        <h3>Üzerine Yazılması Güvenli Dosyalar</h3>
+        <p>Tüm kaynak kod dosyaları (<code>.py</code>, <code>.html</code>, <code>.css</code>, <code>.js</code>) güvenle üzerine yazılabilir. Kurulum programı kişisel yapılandırma dosyalarınızın üzerine yazmaz.</p>
+
+        <h3>Korunması Gereken Dosyalar</h3>
+        <p>Şunları asla silmeyin veya üzerine yazmayın: <code>config.py</code>, <code>database/roms.db</code>, <code>data/settings.json</code>, <code>data/scraper_settings.json</code>, <code>data/rom_tools_config.json</code>.</p>
+
+        <h3>Veritabanı Geçişleri</h3>
+        <p>RetroDB, başlatma sırasında veritabanı şema değişikliklerini otomatik olarak yönetir. Yeni sütunlar ve tablolar, veri kaybı olmadan gerektiğinde eklenir. Özel bir şey yapmanıza gerek yoktur &mdash; yalnızca yeni sürümü başlatın, veritabanı otomatik olarak güncellenir.</p>
+    </div>
+</section>
+
+<!-- Troubleshooting -->
+<section id="troubleshooting" class="help-section card">
+    <h2 class="card-title">Sorun Giderme</h2>
+    <div class="card-body">
+        <h3>Yaygın Sorunlar</h3>
+
+        <h4>"Sistem için uzantı bulunamadı"</h4>
+        <p>Sistem klasörünün, desteklenen ROM dosya uzantılarını tanımlayan geçerli bir ES-DE <code>systeminfo.txt</code> dosyasına ihtiyacı vardır. ROM dizin yapınızın ES-DE standartlarıyla eşleştiğinden emin olun.</p>
+
+        <h4>"API Bağlantısı Başarısız"</h4>
+        <ul>
+            <li>İnternet bağlantınızı kontrol edin</li>
+            <li>Ayarlar &rarr; Veri Çekme &rarr; API Anahtarları bölümünde API anahtarlarını doğrulayın</li>
+            <li>Hız sınırına takıldıysanız bekleyin (bazı API'lerin günlük/saatlik sınırları vardır)</li>
+            <li>Veri çekicinin etkin olup olmadığını kontrol edin (devre dışı veri çekiciler Kontrol Paneli durumunda "Devre Dışı" gösterir)</li>
+            <li>Ayrıntılı hata mesajları için Günlük Görüntüleyici'yi kontrol edin</li>
+        </ul>
+
+        <h4>"Toplu Veri Çekme Takıldı"</h4>
+        <p>Ayarlar &rarr; Sistem &rarr; Sorun Giderme &rarr; <strong>"Takılan Toplu Veri Çekmeyi Temizle"</strong> bölümüne gidin. Bu, verilerinizi etkilemeden iş durumunu sıfırlar.</p>
+
+        <h4>"RA Senkronizasyon Kuyruğu Takıldı"</h4>
+        <p>Ayarlar &rarr; Sistem &rarr; Sorun Giderme bölümünden RetroAchievements senkronizasyon kuyruğunu temizleyin.</p>
+
+        <h4>"PSN Senkronizasyonu Takıldı"</h4>
+        <p>Ayarlar &rarr; Sistem &rarr; Sorun Giderme bölümünden PSN yenileme işini temizleyin.</p>
+
+        <h4>"Müze Oluşturma Takıldı"</h4>
+        <p>Ayarlar &rarr; Sistem &rarr; Sorun Giderme bölümünden müze oluşturma işini temizleyin.</p>
+
+        <h4>"Veritabanı Hataları"</h4>
+        <ol>
+            <li>Mümkünse bir yedek oluşturun (Ayarlar &rarr; Kütüphane &rarr; Yedekleme)</li>
+            <li>Ayarlar &rarr; Sistem &rarr; Bakım &rarr; <strong>Veritabanını Optimize Et</strong> seçeneğini deneyin</li>
+            <li><code>database/</code> dizinindeki dosya izinlerini kontrol edin</li>
+            <li>Son çare: bir yedekten geri yükleyin veya veritabanını silip yeniden tarayın</li>
+        </ol>
+
+        <h4>"Görseller Kaydedilmiyor"</h4>
+        <p>Medya dizinlerindeki yazma izinlerini kontrol edin: <code>chmod -R 755 static/images/</code></p>
+
+        <h4>"Sayfa Yavaş veya Yanıt Vermiyor"</h4>
+        <ul>
+            <li>Büyük koleksiyonların yüklenmesi zaman alabilir &mdash; sonsuz kaydırma 100'lük gruplar halinde yüklenir</li>
+            <li>Birikmiş belleği temizlemek için sayfayı yenilemeyi deneyin</li>
+            <li>JavaScript hataları için tarayıcı konsolunu kontrol edin</li>
+            <li>Daha hafif bir tuval efektine sahip bir temaya geçmeyi deneyin (örn. Amber veya Elite)</li>
+            <li>Tuval efektleri donanımı otomatik olarak algılar; düşük seviye cihazlar azaltılmış kare hızında CPU yedeğini kullanır</li>
+        </ul>
+
+        <h4>Kontrol Panelinde "Kesintiye Uğramış İşler" Banner'ı</h4>
+        <p>İşler çalışırken RetroDB yeniden başlarsa, bir kurtarma banner'ında görünürler. Onları yeniden başlatmak için tek tek <strong>"Devam Ettir"</strong> veya <strong>"Tümünü Devam Ettir"</strong> düğmesine tıklayın. Temizlemek için <strong>"Yoksay"</strong> veya <strong>"Tümünü Yoksay"</strong> düğmesine tıklayın.</p>
+
+        <h4>"PSN Kimlik Doğrulama Başarısız"</h4>
+        <ul>
+            <li>NPSSO belirteçlerinin süresi dolar &mdash; <code>ca.account.sony.com/api/v1/ssocookie</code> adresinden yeni bir tane oluşturun</li>
+            <li>Çerez URL'sini ziyaret etmeden önce store.playstation.com adresine giriş yaptığınızdan emin olun</li>
+            <li>RetroDB, PSN oturumunuzu yaklaşık iki ay boyunca önbelleğe alır ve şimdi bunu arka planda otomatik olarak da yeniler; yine de süresi dolarsa, Ayarlar &rarr; Hesap &rarr; PSN bölümüne yeni bir NPSSO yapıştırmanız yeterlidir</li>
+        </ul>
+
+        <h4>"Xbox Kimlik Doğrulama Başarısız"</h4>
+        <ul>
+            <li>Oyun İçe Aktarma &rarr; Xbox sekmesinde "Oturum Aç" düğmesine tıklayarak yeniden kimlik doğrulaması yapın</li>
+            <li>Xbox belirteçleri <code>data/xbox_tokens.json</code> içinde önbelleğe alınır ve otomatik olarak yenilenir</li>
+        </ul>
+
+        <h4>"Görsel Büyütme Hataları"</h4>
+        <ul>
+            <li>Real-ESRGAN ONNX modeli ilk kullanımda indirilir &mdash; internet erişimi olduğundan emin olun</li>
+            <li>GPU hızlandırması uyumlu sürücüler gerektirir (NVIDIA için CUDA, AMD için ROCm)</li>
+            <li>GPU başarısız olursa, sistem otomatik olarak CPU işlemeye geri döner</li>
+        </ul>
+
+        <h3>Performans İpuçları</h3>
+        <ul>
+            <li>En iyi performans için tarayıcınızı güncel tutun</li>
+            <li>Çok büyük koleksiyonlarla çalışırken diğer tarayıcı sekmelerini kapatın</li>
+            <li>Aynı anda görüntülenen oyun sayısını azaltmak için sistem filtrelerini kullanın</li>
+            <li>Büyük işlemlerden sonra (veri çekme, temizleme, içe aktarma) periyodik olarak Veritabanını Optimize Et'i çalıştırın</li>
+            <li>Tuval tema efektleri donanımı otomatik olarak algılar; düşük seviye cihazlar CPU yedeğini kullanır</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Security & Disclaimer -->
+<section id="security" class="help-section card">
+    <h2 class="card-title">Güvenlik ve Sorumluluk Reddi</h2>
+    <div class="card-body">
+        <h3>En İyi Güvenlik Uygulamaları</h3>
+        <ul>
+            <li><strong>Varsayılan şifreyi değiştirin</strong> &mdash; Varsayılan yönetici şifresi (<code>admin</code>) ilk girişte hemen değiştirilmelidir. En az 8 karakterlik güçlü bir şifre kullanın.</li>
+            <li><strong>HTTPS ters proxy kullanın</strong> &mdash; RetroDB kendi başına TLS/SSL sağlamaz. İstemciler ve sunucu arasındaki trafiği şifrelemek için HTTPS etkinleştirilmiş bir ters proxy'nin (örn. Nginx, Caddy, Traefik) arkasına yerleştirin.</li>
+            <li><strong>Ağ erişimini kısıtlayın</strong> &mdash; RetroDB'yi doğrudan genel internete açmaktan kaçının. Bir VPN kullanın veya erişimi yerel ağınızla sınırlayın. Uzaktan erişim gerekiyorsa, kimlik doğrulamalı bir ters proxy kullanın.</li>
+            <li><strong>Düzenli yedekler alın</strong> &mdash; Periyodik veritabanı yedekleri oluşturmak için Ayarlar altındaki yerleşik yedekleme özelliğini kullanın. Yedekleri uygulamadan ayrı bir konumda saklayın.</li>
+            <li><strong>RetroDB'yi güncel tutun</strong> &mdash; Yeni sürümleri düzenli olarak kontrol edin. Güvenlik düzeltmeleri ve iyileştirmeler güncellemelere dahildir.</li>
+            <li><strong>API anahtarlarınızı koruyun</strong> &mdash; API anahtarları <code>data/scraper_settings.json</code> içinde saklanır. Bu dosyanın herkese açık olarak erişilebilir olmadığından emin olun. <code>config.py</code> veya belirteç dosyalarınızı asla paylaşmayın.</li>
+        </ul>
+
+        <h3>Yerleşik Güvenlik Özellikleri</h3>
+        <ul>
+            <li><strong>Şifre karma (hash)</strong> &mdash; Yönetici şifreleri PBKDF2 ile karmalanır (asla düz metin olarak saklanmaz)</li>
+            <li><strong>Giriş hız sınırlaması</strong> &mdash; Giriş uç noktasında kaba kuvvet saldırısı koruması</li>
+            <li><strong>Yol doğrulama</strong> &mdash; Dizin geçişi saldırılarını önlemek için tüm dosya işlemleri <code>safe_path</code> ve <code>safe_filename</code> yardımcılarını kullanır</li>
+            <li><strong>Parametreli sorgular</strong> &mdash; SQL enjeksiyonunu önlemek için tüm veritabanı sorguları parametreli ifadeler kullanır</li>
+            <li><strong>XSS koruması</strong> &mdash; Pencere iletişim kutuları güvenli DOM oluşturma kullanır; kullanıcı girdisi kaçışlanır (escape)</li>
+            <li><strong>Görsel sıkıştırma bombası koruması</strong> &mdash; Kötü amaçlı görsellerden kaynaklanan bellek tükenmesini önlemek için maksimum görsel piksel sayısı sınırlandırılmıştır</li>
+        </ul>
+
+        <h3>Sorumluluk Reddi</h3>
+        <p>
+            RetroDB, ticarete elverişlilik, belirli bir amaca uygunluk ve ihlal etmeme
+            garantileri de dahil ancak bunlarla sınırlı olmamak üzere, açık veya zımni
+            hiçbir türden garanti olmaksızın <strong>"OLDUĞU GİBİ"</strong> sağlanmaktadır.
+            Hiçbir durumda yazarlar veya telif hakkı sahipleri, sözleşme, haksız fiil veya
+            başka bir eylemde olsun, yazılımdan veya yazılımın kullanımından ya da
+            yazılımla ilgili diğer işlemlerden kaynaklanan herhangi bir talep, hasar
+            veya başka bir sorumluluktan sorumlu tutulamaz.
+        </p>
+        <p>
+            Ağ yapılandırması, erişim kontrolü, veri yedeklemeleri ve bu yazılımla
+            yönettiğiniz içerikle ilgili geçerli yasalara uyum dahil olmak üzere,
+            dağıtımınızın güvenliğini sağlamaktan yalnızca siz sorumlusunuz.
+            Geliştiriciler, yanlış yapılandırma veya dağıtımdan kaynaklanan
+            yetkisiz erişim, veri kaybı veya kötüye kullanımdan hiçbir sorumluluk
+            kabul etmez.
+        </p>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+.help-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin: 0 calc(-1 * var(--spacing-lg));
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(20, 26, 35, 0.98), rgba(15, 20, 25, 0.98));
+    border-bottom: 2px solid var(--primary-cyan);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(76, 201, 240, 0.2);
+}
+
+.help-nav-item {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.help-nav-item:hover {
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+.help-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.help-section h3 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--primary-cyan);
+    margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+}
+
+.help-section h3:first-child {
+    margin-top: 0;
+}
+
+.help-section h4 {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+}
+
+.help-section ol, .help-section ul {
+    padding-left: 1.5rem;
+    margin: var(--spacing-sm) 0;
+}
+
+.help-section li {
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.help-section p {
+    color: var(--text-secondary);
+    margin: var(--spacing-sm) 0;
+    line-height: 1.6;
+}
+
+.help-section pre {
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    overflow-x: auto;
+    margin: var(--spacing-md) 0;
+    line-height: 1.5;
+}
+
+.help-section code {
+    background: var(--bg-lighter);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--primary-cyan);
+}
+
+.help-section a {
+    color: var(--primary-cyan);
+    text-decoration: none;
+}
+
+.help-section a:hover {
+    text-decoration: underline;
+}
+
+.shortcut-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-sm);
+    margin: var(--spacing-md) 0;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border-radius: var(--radius-md);
+}
+
+.shortcut-item kbd {
+    display: inline-block;
+    min-width: 24px;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    text-align: center;
+}
+
+.shortcut-item span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--primary-cyan);
+}
+
+.help-tip {
+    background: rgba(76, 201, 240, 0.1);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    border-left: 4px solid var(--primary-cyan);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    color: var(--text-secondary);
+}
+
+.help-tip strong {
+    color: var(--primary-cyan);
+}
+
+.data-table {
+    width: 100%;
+    margin: var(--spacing-md) 0;
+}
+
+.data-table th,
+.data-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.data-table th {
+    background: var(--bg-medium);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.data-table td {
+    color: var(--text-primary);
+}
+
+.data-table tbody tr:hover {
+    background: rgba(76, 201, 240, 0.05);
+}
+</style>
+{% endblock %}

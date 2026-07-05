@@ -1,0 +1,2006 @@
+{% extends "base.html" %}
+
+{% block title %}Help - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ _('Help & Documentation') }}</h1>
+        <p class="page-subtitle">{% trans version=config.APP_VERSION %}Complete guide to RetroDB v{{ version }}{% endtrans %}</p>
+    </div>
+</div>
+
+<!-- Help Navigation -->
+<div class="help-nav" data-sticky-nav>
+    <a href="#installation" class="help-nav-item">Instalasi</a>
+    <a href="#getting-started" class="help-nav-item">Memulai</a>
+    <a href="#platform-notes" class="help-nav-item">Catatan Platform</a>
+    <a href="#navigation" class="help-nav-item">Navigasi</a>
+    <a href="#keyboard-shortcuts" class="help-nav-item">Pintasan Keyboard</a>
+    <a href="#themes" class="help-nav-item">Tema</a>
+    <a href="#dashboard" class="help-nav-item">Dasbor</a>
+    <a href="#systems" class="help-nav-item">Sistem</a>
+    <a href="#api-keys" class="help-nav-item">Kunci API</a>
+    <a href="#settings" class="help-nav-item">Pengaturan</a>
+    <a href="#scraping" class="help-nav-item">Pengambilan Data</a>
+    <a href="#bulk-scrape" class="help-nav-item">Pengambilan Data Massal</a>
+    <a href="#ai-fill" class="help-nav-item">Isi Otomatis AI</a>
+    <a href="#filtering" class="help-nav-item">Penyaringan</a>
+    <a href="#game-detail" class="help-nav-item">Detail Game</a>
+    <a href="#bulk-edit" class="help-nav-item">Edit Massal</a>
+    <a href="#compare" class="help-nav-item">Bandingkan</a>
+    <a href="#collections" class="help-nav-item">Koleksi</a>
+    <a href="#game-imports" class="help-nav-item">Impor Game</a>
+    <a href="#retroachievements" class="help-nav-item">RetroAchievements</a>
+    <a href="#steam-achievements" class="help-nav-item">Steam</a>
+    <a href="#xbox-achievements" class="help-nav-item">Xbox</a>
+    <a href="#hltb" class="help-nav-item">HLTB</a>
+    <a href="#trophies" class="help-nav-item">Trofi</a>
+    <a href="#collector-trophies" class="help-nav-item">Trofi Kolektor</a>
+    <a href="#museum" class="help-nav-item">Museum</a>
+    <a href="#analytics" class="help-nav-item">Analitik</a>
+    <a href="#reports" class="help-nav-item">Laporan</a>
+    <a href="#rom-tools" class="help-nav-item">Perkakas ROM</a>
+    <a href="#normalization" class="help-nav-item">Normalisasi</a>
+    <a href="#image-standardization" class="help-nav-item">Ubah Ukuran Gambar</a>
+    <a href="#logs" class="help-nav-item">Log</a>
+    <a href="#maintenance" class="help-nav-item">Pemeliharaan</a>
+    <a href="#multi-user" class="help-nav-item">Multi-Pengguna</a>
+    <a href="#backup" class="help-nav-item">Cadangan</a>
+    <a href="#updating" class="help-nav-item">Pembaruan</a>
+    <a href="#troubleshooting" class="help-nav-item">Pemecahan Masalah</a>
+    <a href="#security" class="help-nav-item">Keamanan</a>
+</div>
+
+<!-- Installation -->
+<section id="installation" class="help-section card">
+    <h2 class="card-title">Instalasi</h2>
+    <div class="card-body">
+        <h3>Persyaratan Sistem</h3>
+        <ul>
+            <li><strong>Python 3.8+</strong> dengan pip</li>
+            <li><strong>Peramban web</strong> (Chrome, Firefox, Safari, Edge)</li>
+            <li><strong>Sistem Operasi:</strong> Linux, Windows 10/11, atau macOS</li>
+        </ul>
+
+        <h3>Instalasi Cepat</h3>
+        <ol>
+            <li>Ekstrak ZIP RetroDB ke direktori pilihan Anda</li>
+            <li>Buka terminal/command prompt di direktori tersebut</li>
+            <li>Jalankan: <code>python install.py</code></li>
+            <li>Jalankan server:
+                <ul>
+                    <li>Linux: <code>./start.sh</code></li>
+                    <li>Windows: klik dua kali <code>start.bat</code></li>
+                    <li>macOS: klik dua kali <code>start.command</code></li>
+                </ul>
+            </li>
+            <li>Buka <code>http://localhost:5000</code> di peramban Anda</li>
+        </ol>
+
+        <h3>Installer GUI</h3>
+        <p>Di Linux, Anda juga bisa menjalankan <code>./setup.sh</code> untuk membuka wizard installer bergrafis. Wizard ini otomatis memeriksa Python/pip/tkinter, lalu memandu Anda melalui setiap langkah pengaturan dengan log kemajuan visual.</p>
+
+        <h3>Yang Dilakukan install.py</h3>
+        <ul>
+            <li>Memverifikasi Python 3.8+ dan pip tersedia</li>
+            <li>Memasang dependensi Python dari <code>requirements.txt</code></li>
+            <li>Membuat <code>config.py</code> dari template contoh</li>
+            <li>Membuat direktori yang diperlukan (database, log, folder media)</li>
+            <li>Membangun bundel CSS dan JS</li>
+        </ul>
+
+        <h3>Override Variabel Lingkungan</h3>
+        <p>Variabel lingkungan berikut dapat mengganti pengaturan bawaan tanpa mengedit berkas konfigurasi:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>Variabel</th><th>Bawaan</th><th>Keterangan</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>RETRODB_DB_PATH</code></td><td><code>database/roms.db</code></td><td>Jalur berkas database</td></tr>
+                <tr><td><code>RETRODB_HOST</code></td><td><code>0.0.0.0</code></td><td>Alamat bind server</td></tr>
+                <tr><td><code>RETRODB_PORT</code></td><td><code>5000</code></td><td>Port server</td></tr>
+                <tr><td><code>RETRODB_DEBUG</code></td><td><code>false</code></td><td>Mode debug (<code>true</code> atau <code>false</code>) &mdash; mengaktifkan debugger interaktif Werkzeug. Biarkan <code>false</code> untuk instalasi apa pun yang dapat diakses dari perangkat lain di jaringan Anda.</td></tr>
+                <tr><td><code>RETRODB_SECRET_KEY</code></td><td>Dibuat otomatis</td><td>Kunci rahasia Flask</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Getting Started -->
+<section id="getting-started" class="help-section card">
+    <h2 class="card-title">Memulai</h2>
+    <div class="card-body">
+        <h3>Pengaturan Pertama Kali</h3>
+        <p>Saat pertama kali dijalankan, RetroDB menampilkan <strong>Wizard Pengaturan</strong> yang memandu Anda melalui:</p>
+        <ol>
+            <li><strong>Akun Admin</strong> &mdash; Buat nama pengguna dan kata sandi Anda</li>
+            <li><strong>Jalur Perpustakaan</strong> &mdash; Atur direktori ROM Anda</li>
+            <li><strong>Integrasi ES-DE</strong> &mdash; Opsional, hubungkan gamelist dan media ES-DE</li>
+            <li><strong>Kunci API</strong> &mdash; Opsional, tambahkan kunci API scraper</li>
+        </ol>
+        <p>Setelah menyelesaikan wizard, klik <strong>"Scan Library"</strong> di Dasbor untuk menemukan ROM Anda.</p>
+
+        <h3>Alur Kerja Mulai Cepat</h3>
+        <ol>
+            <li><strong>Pindai</strong> perpustakaan Anda untuk mengimpor ROM</li>
+            <li><strong>Jelajahi</strong> berdasarkan sistem atau lihat semua game di Library</li>
+            <li><strong>Ambil metadata</strong> satu per satu atau gunakan pengambilan data massal</li>
+            <li><strong>Atur</strong> dengan tag, daftar, dan wishlist</li>
+            <li><strong>Lacak</strong> kemajuan Anda dengan status penyelesaian dan achievement</li>
+        </ol>
+
+        <h3>Struktur Perpustakaan ROM</h3>
+        <p>RetroDB mengharapkan ROM Anda diatur dalam folder per sistem di dalam jalur perpustakaan Anda:</p>
+        <pre>ROM Library/
+  nes/
+    Super Mario Bros. (USA).nes
+  snes/
+    Chrono Trigger (USA).sfc
+  psx/
+    Final Fantasy VII (USA)/
+      Final Fantasy VII (USA) (Disc 1).chd
+      Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>Setiap folder sistem harus berisi berkas <code>systeminfo.txt</code> gaya ES-DE yang mendefinisikan ekstensi berkas yang didukung. RetroDB membaca berkas ini saat memindai untuk mengenali berkas mana yang merupakan ROM yang valid untuk setiap sistem.</p>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> Jika Anda sudah pernah mengambil data dengan ES-DE, RetroDB bisa mengimpor data tersebut!
+            Atur jalur ES-DE di Settings &rarr; ES-DE Integration, atau saat wizard pengaturan.
+        </div>
+    </div>
+</section>
+
+<!-- Platform Notes -->
+<section id="platform-notes" class="help-section card">
+    <h2 class="card-title">Catatan Platform</h2>
+    <div class="card-body">
+        <h3>Linux</h3>
+        <ul>
+            <li>Sudah diuji di Ubuntu, Fedora, openSUSE, dan Arch Linux</li>
+            <li>Perkakas ROM memerlukan: <code>sudo apt install p7zip-full unrar mame-tools</code> (Debian/Ubuntu) atau yang setara untuk distro Anda</li>
+            <li>Jika menggunakan Python bawaan sistem, installer otomatis menangani <code>--break-system-packages</code></li>
+            <li>Akselerasi GPU ROCm didukung untuk GPU AMD (peningkatan skala gambar Real-ESRGAN)</li>
+        </ul>
+
+        <h3>Windows</h3>
+        <ul>
+            <li>Unduh Python dari <a href="https://python.org" target="_blank" rel="noopener noreferrer">python.org</a> (centang "Add to PATH" saat instalasi)</li>
+            <li>Perkakas ROM: Pasang <a href="https://www.7-zip.org/" target="_blank" rel="noopener noreferrer">7-Zip</a>, <a href="https://www.win-rar.com/" target="_blank" rel="noopener noreferrer">WinRAR</a>, dan <a href="https://www.mamedev.org/" target="_blank" rel="noopener noreferrer">MAME</a> (untuk chdman)</li>
+            <li>Gunakan <code>start.bat</code> untuk menjalankan, atau jalankan <code>python app.py</code> dari Command Prompt</li>
+        </ul>
+
+        <h3>macOS</h3>
+        <ul>
+            <li>Python 3 dapat dipasang lewat <a href="https://brew.sh/" target="_blank" rel="noopener noreferrer">Homebrew</a>: <code>brew install python3</code></li>
+            <li>Perkakas ROM: <code>brew install p7zip unrar rom-tools</code></li>
+            <li>Klik dua kali <code>start.command</code> di Finder untuk menjalankan</li>
+            <li>Akselerasi CoreML didukung untuk Apple Silicon (peningkatan skala gambar Real-ESRGAN)</li>
+        </ul>
+
+        <h3>Kebutuhan Perkakas ROM per Fitur</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Fitur</th><th>Perkakas yang Diperlukan</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Ekstraksi ZIP</td><td>unzip (biasanya sudah terpasang)</td></tr>
+                <tr><td>Dukungan arsip 7z</td><td>7z (p7zip-full)</td></tr>
+                <tr><td>Dukungan arsip RAR</td><td>unrar</td></tr>
+                <tr><td>Konversi/verifikasi CHD</td><td>chdman (mame-tools)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Navigation -->
+<section id="navigation" class="help-section card">
+    <h2 class="card-title">Navigasi</h2>
+    <div class="card-body">
+        <h3>Bagian Sidebar</h3>
+
+        <h4>Utama</h4>
+        <ul>
+            <li><strong>Dasbor</strong> &mdash; Skor kesehatan koleksi, ringkasan statistik, status API, game yang baru dimainkan/ditambahkan/diambil datanya, pemulihan job</li>
+            <li><strong>Sistem</strong> &mdash; Jelajahi platform dengan jumlah game, gambar sistem, spesifikasi, penyaringan berdasarkan jenis dan fitur</li>
+            <li><strong>Library</strong> &mdash; Semua game dengan infinite scroll, penyaringan lanjutan (sertakan/kecualikan), pencarian, dan pengurutan</li>
+            <li><strong>Analitik</strong> &mdash; Grafik dan statistik koleksi di 12 tab dengan opsi ekspor</li>
+        </ul>
+
+        <h4>Trofi & Achievement</h4>
+        <ul>
+            <li><strong>Trofi RPCS3</strong> &mdash; Trofi PS3 yang diperoleh secara lokal dari emulator RPCS3</li>
+            <li><strong>Trofi PSN</strong> &mdash; Sinkronisasi trofi PlayStation Network lewat API PSN</li>
+            <li><strong>Achievements</strong> &mdash; Pelacakan progres RetroAchievements per sistem</li>
+            <li><strong>Steam Achievements</strong> &mdash; Pelacakan achievement Steam dengan rincian per game</li>
+            <li><strong>Xbox Achievements</strong> &mdash; Pelacakan achievement dan gamerscore Xbox</li>
+        </ul>
+
+        <h4>Koleksi Saya</h4>
+        <ul>
+            <li><strong>Tags</strong> &mdash; Tag game kustom berkode warna</li>
+            <li><strong>Lists</strong> &mdash; Daftar game kurasi bernama dengan urutan seret-dan-lepas</li>
+            <li><strong>Wishlist</strong> &mdash; Lacak game yang ingin Anda miliki dengan tingkat prioritas</li>
+            <li><strong>Trofi Kolektor</strong> &mdash; Pencapaian gamifikasi untuk koleksi Anda</li>
+        </ul>
+
+        <h4>Perkakas</h4>
+        <ul>
+            <li><strong>ROM Reports</strong> &mdash; Validasi penamaan ROM dan kepatuhan standar</li>
+            <li><strong>Game Imports</strong> &mdash; Impor dari CLZ, Steam, Xbox, dan PSN</li>
+            <li><strong>ROM Tools</strong> &mdash; Pemindai arsip, konverter/verifikasi CHD, pencari duplikat, pengatur multi-disc, penghapus screenshot duplikat, pengubah ukuran gambar</li>
+        </ul>
+
+        <h4>Konfigurasi</h4>
+        <ul>
+            <li><strong>Settings</strong> &mdash; Semua konfigurasi aplikasi (6 tab dengan banyak subbagian)</li>
+            <li><strong>Log Viewer</strong> &mdash; Jelajahi log aplikasi di semua kategori</li>
+        </ul>
+
+        <h4>Info</h4>
+        <ul>
+            <li><strong>Museum</strong> &mdash; Ensiklopedia sistem game interaktif dengan konten hasil AI</li>
+            <li><strong>Help</strong> &mdash; Halaman dokumentasi ini</li>
+            <li><strong>Changelog</strong> &mdash; Riwayat versi</li>
+        </ul>
+
+        <h3>Penyorotan Sidebar</h3>
+        <p>Sidebar menyoroti bagian yang sedang aktif dengan warna cyan. Konteks tetap terjaga saat menjelajah lebih dalam &mdash; melihat game dari suatu sistem tetap menyoroti <strong>Sistem</strong>, melihat game dari Achievements tetap menyoroti <strong>Achievements</strong>, dan seterusnya.</p>
+
+        <h3>Breadcrumb</h3>
+        <p>Breadcrumb di bagian atas setiap halaman menunjukkan jalur navigasi Anda. Contoh:</p>
+        <ul>
+            <li><code>Systems &rsaquo; NES &rsaquo; Super Mario Bros.</code></li>
+            <li><code>RetroAchievements &rsaquo; SNES</code></li>
+            <li><code>PSN Trophies &rsaquo; The Last of Us</code></li>
+        </ul>
+
+        <h3>Tab</h3>
+        <p>Banyak halaman menggunakan tab untuk pengaturan (Settings, Analytics, Reports, ROM Tools, Achievements). Tab melebar mengisi lebar konten dan mengingat pilihan terakhir Anda jika berlaku.</p>
+    </div>
+</section>
+
+<!-- Keyboard Shortcuts -->
+<section id="keyboard-shortcuts" class="help-section card">
+    <h2 class="card-title">Pintasan Keyboard</h2>
+    <div class="card-body">
+        <p>Tekan <kbd>?</kbd> di mana saja untuk menampilkan semua pintasan. Indikator tombol tertunda muncul saat menunggu tombol kedua dalam sebuah urutan (mis. <code>g...</code>).</p>
+
+        <h3>Navigasi (tekan G, lalu huruf)</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>d</kbd> <span>Dasbor</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>s</kbd> <span>Sistem</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>l</kbd> <span>Library</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>a</kbd> <span>Analitik</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>t</kbd> <span>Settings</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>h</kbd> <span>Help</span></div>
+        </div>
+
+        <h3>Aksi</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>/</kbd> <span>Fokus pencarian</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Tutup modal</span></div>
+            <div class="shortcut-item"><kbd>?</kbd> <span>Tampilkan pintasan</span></div>
+        </div>
+
+        <h3>Halaman Game</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>e</kbd> <span>Edit game</span></div>
+            <div class="shortcut-item"><kbd>s</kbd> <span>Ambil data game</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Navigasi screenshot</span></div>
+        </div>
+
+        <div class="help-tip">
+            <strong>Catatan:</strong> Pintasan keyboard dinonaktifkan saat kotak teks, textarea, atau modal sedang difokus untuk menghindari navigasi yang tidak disengaja.
+        </div>
+    </div>
+</section>
+
+<!-- Themes -->
+<section id="themes" class="help-section card">
+    <h2 class="card-title">Tema</h2>
+    <div class="card-body">
+        <p>RetroDB menawarkan 7 tema visual, masing-masing dengan palet warna unik dan efek latar canvas beranimasi. Ganti tema di <strong>Settings &rarr; Library &rarr; Display</strong>.</p>
+
+        <h3>Tema yang Tersedia</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Tema</th><th>Warna</th><th>Efek Latar</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Cyberpunk</strong> (bawaan)</td><td>Cyan &amp; magenta di atas biru gelap</td><td>Asap/kabut volumetrik dengan simplex noise</td></tr>
+                <tr><td><strong>Matrix</strong></td><td>Hijau di atas hitam</td><td>Hujan digital jatuh (karakter kanji)</td></tr>
+                <tr><td><strong>Amber</strong></td><td>Amber/oranye di atas cokelat gelap</td><td>Gradien matahari terbit gaya CRT dengan korona matahari</td></tr>
+                <tr><td><strong>Ocean</strong></td><td>Teal &amp; biru di atas biru laut gelap</td><td>Pantulan bulan dengan lapisan kedalaman laut</td></tr>
+                <tr><td><strong>Cathedral</strong></td><td>Emas &amp; ungu kerajaan di atas ungu tua</td><td>Berkas cahaya ilahi dari atas dengan suasana hangat</td></tr>
+                <tr><td><strong>Blade Runner</strong></td><td>Biru elektrik &amp; pink neon di atas abu-biru gelap</td><td>Cahaya kota neon dengan garis hujan dan kabut ungu</td></tr>
+                <tr><td><strong>Elite</strong></td><td>Hijau vektor &amp; putih di atas hitam murni</td><td>Estetika vektor wireframe terinspirasi dari Elite (1984)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Cara Kerja</h3>
+        <ul>
+            <li>Tema mengganti variabel warna CSS &mdash; semua elemen UI otomatis menyesuaikan</li>
+            <li>Efek canvas mencakup deteksi otomatis tingkat perangkat keras (tinggi/sedang/rendah) dengan akselerasi GPU bila tersedia dan fallback CPU untuk perangkat kelas bawah</li>
+            <li>Efek berhenti sementara saat tab tidak terlihat untuk menghemat sumber daya</li>
+            <li>Status asap Cyberpunk tetap bertahan antar navigasi halaman untuk transisi yang mulus</li>
+            <li>Overlay garis pindai (scanline) bergaya CRT halus menyesuaikan dengan palet warna setiap tema</li>
+            <li>Preferensi tema Anda disimpan di peramban dan tetap berlaku antar sesi</li>
+        </ul>
+
+        <h3>Ikon Sadar-Tema</h3>
+        <p>Ikon notifikasi, indikator status job, dan ikon aksi otomatis menyesuaikan dengan tema yang aktif. Misalnya, ikon berhasil mungkin menampilkan tanda centang hijau pada Cyberpunk tetapi simbol berbeda pada Matrix agar sesuai dengan estetika hijau-di-atas-hitam.</p>
+    </div>
+</section>
+
+<!-- Dashboard -->
+<section id="dashboard" class="help-section card">
+    <h2 class="card-title">Dasbor</h2>
+    <div class="card-body">
+        <h3>Skor Kesehatan Koleksi</h3>
+        <p>Cincin progres melingkar menunjukkan kesehatan keseluruhan koleksi Anda sebagai persentase, berkode warna sesuai kualitas:</p>
+        <ul>
+            <li><strong>Hijau</strong> (80%+) &mdash; Cakupan metadata sangat baik</li>
+            <li><strong>Cyan</strong> (60&ndash;79%) &mdash; Cakupan baik dengan beberapa kekurangan</li>
+            <li><strong>Oranye</strong> (40&ndash;59%) &mdash; Cakupan sedang, pertimbangkan pengambilan data massal</li>
+            <li><strong>Merah</strong> (&lt;40%) &mdash; Kekurangan metadata yang signifikan</li>
+        </ul>
+        <p>Cincin-cincin rincian mini di bawahnya menunjukkan kelengkapan boxart, kelengkapan deskripsi, dan cakupan achievement.</p>
+
+        <h3>Ringkasan Statistik</h3>
+        <p>Kartu ringkas yang menampilkan:</p>
+        <ul>
+            <li><strong>Total Sistem</strong> &mdash; Jumlah platform dalam perpustakaan Anda</li>
+            <li><strong>Total Game</strong> &mdash; Jumlah total game (tidak termasuk disc bonus)</li>
+            <li><strong>Metadata Hilang</strong> &mdash; Game yang belum diambil datanya</li>
+            <li><strong>Lengkap</strong> &mdash; Game dengan metadata yang sudah diambil</li>
+        </ul>
+
+        <h3>Bagian Aktivitas Terbaru</h3>
+        <p>Bagian yang bisa digulir menampilkan aktivitas terbaru Anda (masing-masing hanya muncul jika ada game yang relevan):</p>
+        <ul>
+            <li><strong>Sedang Dimainkan</strong> &mdash; Game yang ditandai sebagai "In Progress"</li>
+            <li><strong>Baru Ditambahkan</strong> &mdash; Game terbaru yang ditambahkan ke perpustakaan Anda</li>
+            <li><strong>Baru Dilihat</strong> &mdash; Game yang baru saja Anda buka</li>
+            <li><strong>Baru Diambil Datanya</strong> &mdash; Game dengan metadata yang baru saja diambil</li>
+        </ul>
+
+        <h3>Aksi Cepat</h3>
+        <ul>
+            <li><strong>Scan Library</strong> &mdash; Pindai direktori ROM Anda untuk mencari game baru</li>
+            <li><strong>Random Game</strong> &mdash; Pilih game acak dari perpustakaan Anda</li>
+        </ul>
+
+        <h3>Status API</h3>
+        <p>Menampilkan status koneksi semua scraper dan API yang dikonfigurasi. API yang offline atau salah konfigurasi menampilkan spanduk peringatan dengan tautan ke Settings.</p>
+
+        <h3>Pemulihan Job</h3>
+        <p>Jika RetroDB dimulai ulang saat job latar belakang sedang berjalan (pengambilan data massal, sinkronisasi RA, pengubahan ukuran gambar, dll.), job yang terganggu akan muncul di spanduk pemulihan. Opsi:</p>
+        <ul>
+            <li><strong>Resume</strong> &mdash; Mulai ulang satu job yang terganggu</li>
+            <li><strong>Resume All</strong> &mdash; Mulai ulang semua job yang terganggu</li>
+            <li><strong>Dismiss</strong> &mdash; Hapus satu job dari daftar pemulihan</li>
+            <li><strong>Dismiss All</strong> &mdash; Hapus semua job yang terganggu</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Systems Browser -->
+<section id="systems" class="help-section card">
+    <h2 class="card-title">Penjelajah Sistem</h2>
+    <div class="card-body">
+        <h3>Grid Sistem</h3>
+        <p>Halaman Systems menampilkan semua platform dalam perpustakaan Anda sebagai kartu dalam tata letak grid masonry yang responsif. Setiap kartu menampilkan:</p>
+        <ul>
+            <li><strong>Logo sistem</strong> (dapat disesuaikan di Settings &rarr; Customization &rarr; Logos)</li>
+            <li><strong>Jumlah ROM</strong> dan <strong>jumlah yang belum diambil datanya</strong></li>
+            <li><strong>Badge jenis sistem</strong> &mdash; Console, Handheld, Computer, Arcade, atau Engine</li>
+            <li><strong>Badge fitur</strong> &mdash; Dukungan RetroAchievements, Trofi Lokal (RPCS3)</li>
+        </ul>
+
+        <h3>Modal Spesifikasi Sistem</h3>
+        <p>Klik tombol info pada kartu sistem mana pun untuk melihat spesifikasi perangkat keras secara rinci:</p>
+        <ul>
+            <li>Gambar perangkat keras (foto konsol/sistem)</li>
+            <li>Produsen dan tanggal rilis</li>
+            <li>CPU, GPU, RAM, VRAM</li>
+            <li>Resolusi, kedalaman warna, chip suara</li>
+            <li>Jenis media (kartrid, disc, dll.)</li>
+        </ul>
+
+        <h3>Penyaringan & Pencarian</h3>
+        <ul>
+            <li><strong>Pencarian teks</strong> &mdash; Saring berdasarkan nama sistem atau nama folder</li>
+            <li><strong>Filter jenis</strong> &mdash; Console, Handheld, Computer, Arcade, Engine</li>
+            <li><strong>Filter fitur</strong> &mdash; Dukungan RetroAchievements, Trofi Lokal</li>
+            <li>Bilah hasil filter menampilkan <em>"X of Y systems"</em></li>
+            <li>Filter tetap tersimpan antar muat ulang halaman lewat penyimpanan sesi</li>
+        </ul>
+
+        <h3>Daftar Game per Sistem</h3>
+        <p>Klik kartu sistem mana pun untuk melihat gamenya. Daftar game per sistem memiliki fitur yang sama dengan halaman Library penuh &mdash; infinite scroll, pencarian, semua opsi filter, pemilihan massal, dan pengurutan. Header sistem menampilkan nama sistem, jumlah game, dan badge jenis sistem.</p>
+    </div>
+</section>
+
+<!-- API Key Setup Guide -->
+<section id="api-keys" class="help-section card">
+    <h2 class="card-title">Panduan Pengaturan Kunci API</h2>
+    <div class="card-body">
+        <p>Kunci API bersifat opsional tetapi memungkinkan pengambilan metadata yang kaya dan fitur tambahan. Konfigurasikan di <strong>Settings &rarr; Scraping &rarr; API Keys</strong>.</p>
+
+        <h3>Scraper Metadata</h3>
+
+        <h4>TheGamesDB</h4>
+        <ol>
+            <li>Kunjungi <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a></li>
+            <li>Minta kunci API (gratis, disetujui secara manual) &mdash; Anda akan menerima kunci <strong>Public</strong> dan <strong>Private</strong></li>
+            <li>Masukkan kedua kunci di Settings &rarr; API Keys &rarr; TheGamesDB</li>
+            <li>Kunci <strong>Public</strong> (batas laju per IP) digunakan sebagai kunci utama untuk pengambilan data</li>
+            <li>Kunci <strong>Private</strong> (kuota bersama bulanan) digunakan sebagai cadangan jika kunci publik gagal</li>
+        </ol>
+
+        <h4>IGDB (via Twitch)</h4>
+        <ol>
+            <li>Buat akun Twitch di <a href="https://www.twitch.tv" target="_blank" rel="noopener noreferrer">twitch.tv</a></li>
+            <li>Kunjungi <a href="https://dev.twitch.tv/console" target="_blank" rel="noopener noreferrer">dev.twitch.tv/console</a></li>
+            <li>Daftarkan aplikasi baru (nama dan kategori bebas, gunakan <code>http://localhost</code> sebagai OAuth redirect)</li>
+            <li>Salin <strong>Client ID</strong> dan buat <strong>Client Secret</strong></li>
+            <li>Masukkan keduanya di Settings &rarr; API Keys &rarr; IGDB</li>
+        </ol>
+
+        <h4>RAWG.io</h4>
+        <ol>
+            <li>Kunjungi <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer">rawg.io/apidocs</a></li>
+            <li>Klik "Get API Key" dan buat akun</li>
+            <li>Salin kunci API Anda dari dasbor</li>
+            <li>Masukkan di Settings &rarr; API Keys &rarr; RAWG</li>
+        </ol>
+        <p><em>Tingkat gratis: 20.000 permintaan/bulan</em></p>
+
+        <h4>ScreenScraper</h4>
+        <ol>
+            <li>Buat akun di <a href="https://www.screenscraper.fr" target="_blank" rel="noopener noreferrer">screenscraper.fr</a></li>
+            <li>Masukkan nama pengguna dan kata sandi Anda di Settings &rarr; API Keys &rarr; ScreenScraper</li>
+        </ol>
+        <p><em>Catatan: ScreenScraper memiliki batas permintaan harian berdasarkan tingkat akun Anda. Berkontribusi ke database akan meningkatkan batas Anda.</em></p>
+
+        <h3>Achievement & Trofi</h3>
+
+        <h4>RetroAchievements</h4>
+        <ol>
+            <li>Buat akun di <a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a></li>
+            <li>Kunjungi <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer">Settings &rarr; API Keys</a> pada profil Anda</li>
+            <li>Salin kunci API Anda</li>
+            <li>Masukkan nama pengguna dan kunci API Anda di Settings &rarr; Account &rarr; RetroAchievements</li>
+        </ol>
+
+        <h4>Steam Web API</h4>
+        <ol>
+            <li>Kunjungi <a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener noreferrer">steamcommunity.com/dev/apikey</a></li>
+            <li>Daftarkan kunci Steam Web API (memerlukan akun Steam)</li>
+            <li>Masukkan kunci API dan Steam ID (atau vanity URL) Anda di Settings</li>
+        </ol>
+        <p><em>Digunakan untuk impor perpustakaan Steam dan pelacakan achievement.</em></p>
+
+        <h4>Xbox Live</h4>
+        <p>Autentikasi Xbox menggunakan OAuth2 &mdash; tidak diperlukan kunci API. Masuk dengan akun Microsoft Anda langsung dari tab Game Imports &rarr; Xbox. Token disimpan otomatis di cache dan diperbarui sesuai kebutuhan.</p>
+
+        <h4>PlayStation Network (PSN)</h4>
+        <p>PSN menggunakan autentikasi cookie NPSSO. Lihat bagian <a href="#trophies">Trophies</a> untuk petunjuk pengaturan yang rinci.</p>
+
+        <h3>Penyedia AI (untuk AI Fill &amp; Museum)</h3>
+        <p>Satu penyedia AI diperlukan untuk metadata AI Fill dan pembuatan konten Museum. Pilih dari:</p>
+
+        <table class="data-table">
+            <thead>
+                <tr><th>Penyedia</th><th>Model Bawaan</th><th>Harga (Input / Output per 1 Juta Token)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0.10 / $0.40</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0.15 / $0.60</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 4.5</td><td>$1.00 / $5.00</td></tr>
+            </tbody>
+        </table>
+        <p>Setiap penyedia menawarkan beberapa tingkatan model. Model termurah sudah bekerja dengan baik untuk metadata dan konten museum. Konfigurasikan penyedia pilihan dan kunci API Anda di <strong>Settings &rarr; Scraping &rarr; API Keys</strong>.</p>
+    </div>
+</section>
+
+<!-- Settings -->
+<section id="settings" class="help-section card">
+    <h2 class="card-title">Pengaturan</h2>
+    <div class="card-body">
+        <p>Pengaturan diatur ke dalam 6 tab, masing-masing dengan beberapa subbagian.</p>
+
+        <h3>Tab Account</h3>
+        <ul>
+            <li><strong>My Profile</strong> &mdash; Unggah/hapus avatar, nama tampilan, info peran, ubah kata sandi</li>
+            <li><strong>RetroAchievements</strong> &mdash; Nama pengguna dan kunci API untuk integrasi RA</li>
+            <li><strong>PSN</strong> &mdash; Cookie NPSSO untuk sinkronisasi trofi PlayStation Network</li>
+            <li><strong>Timezone</strong> &mdash; Atur zona waktu Anda untuk tampilan tanggal di seluruh aplikasi</li>
+            <li><strong>Users</strong> &mdash; Manajemen pengguna: tambah, edit, hapus pengguna, dan tetapkan peran (khusus admin)</li>
+        </ul>
+
+        <h3>Tab Library</h3>
+        <ul>
+            <li><strong>Paths</strong> &mdash; Jalur perpustakaan ROM, lokasi database</li>
+            <li><strong>Display</strong> &mdash; Pilihan tema, gaya boxart (2D/3D), sistem rating usia pilihan, jumlah item per halaman</li>
+            <li><strong>ROM Naming</strong> &mdash; Penempatan artikel ("The" di depan/belakang), daftar opsi region, region bawaan, konvensi penamaan</li>
+            <li><strong>Backup</strong> &mdash; Buat dan pulihkan cadangan database</li>
+        </ul>
+
+        <h3>Tab Scraping</h3>
+        <ul>
+            <li><strong>ES-DE</strong> &mdash; Jalur gamelist dan media ES-DE untuk impor data lokal</li>
+            <li><strong>Scraper</strong> &mdash; Aktifkan/nonaktifkan scraper masing-masing, urutan prioritas seret-dan-lepas, pengaturan batas laju per scraper</li>
+            <li><strong>API Keys</strong> &mdash; Semua kredensial scraper (TGDB, IGDB, RAWG, ScreenScraper), pemilihan penyedia AI dan pilihan model (Gemini, OpenAI, Claude)</li>
+        </ul>
+
+        <h3>Tab Data</h3>
+        <ul>
+            <li><strong>Stats</strong> &mdash; Ringkasan statistik perpustakaan (total game, sistem, penggunaan penyimpanan)</li>
+            <li><strong>Trophies</strong> &mdash; Konfigurasi jalur trofi RPCS3 untuk pemindaian trofi PS3 lokal</li>
+            <li><strong>Dropdowns</strong> &mdash; Sesuaikan opsi region dan nilai dropdown lain yang digunakan di seluruh aplikasi</li>
+            <li><strong>Normalization</strong> &mdash; Aturan normalisasi genre dan mode &mdash; tambahkan pemetaan kustom untuk menstandardisasi keluaran scraper</li>
+        </ul>
+
+        <h3>Tab Customization</h3>
+        <ul>
+            <li><strong>Notifications</strong> &mdash; Preferensi durasi tampil notifikasi (success, info, warning, error &mdash; masing-masing dapat dikonfigurasi terpisah)</li>
+            <li><strong>Controllers</strong> &mdash; Kelola perpustakaan kontroler, atur kontroler bawaan per sistem, tambahkan kontroler kustom. Kontroler bawaan menggantikan nilai hasil scraper/AI saat pengambilan metadata.</li>
+            <li><strong>Logos</strong> &mdash; Kustomisasi logo sistem &mdash; impor logo sistem atau segarkan dari bawaan</li>
+        </ul>
+
+        <h3>Tab System</h3>
+        <ul>
+            <li><strong>Maintenance</strong> &mdash; Optimasi database (VACUUM/ANALYZE), pembersihan media yatim, pembersihan ROM yang hilang, hapus data hasil scraping, hapus impor CLZ, standardisasi gambar massal</li>
+            <li><strong>Server</strong> &mdash; Konfigurasi server (host, port, mode debug)</li>
+            <li><strong>Logging</strong> &mdash; Pengaturan tingkat log untuk berbagai kategori</li>
+            <li><strong>Troubleshooting</strong> &mdash; Bersihkan pengambilan data massal yang macet, bersihkan antrean sinkronisasi RA, bersihkan penyegaran PSN, bersihkan pembuatan museum, mulai ulang server</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> Scraper yang dinonaktifkan tidak akan memicu peringatan "API offline" di Dasbor. Jika Anda tidak menggunakan sebuah scraper, nonaktifkan di Settings &rarr; Scraping &rarr; Scraper alih-alih menghapus kunci API-nya.
+        </div>
+    </div>
+</section>
+
+<!-- Scraping -->
+<section id="scraping" class="help-section card">
+    <h2 class="card-title">Pengambilan Metadata</h2>
+    <div class="card-body">
+        <h3>Pengambilan Data Satu Game</h3>
+        <ol>
+            <li>Buka modal detail game mana pun (klik kartu game)</li>
+            <li>Klik <strong>"Scrape"</strong></li>
+            <li>Ubah judul pencarian jika perlu</li>
+            <li>Pilih hasil yang benar dari daftar kecocokan</li>
+            <li>Klik <strong>"Apply"</strong></li>
+        </ol>
+
+        <h3>Sumber Scraper</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Sumber</th><th>Kunci API</th><th>Paling Cocok Untuk</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ES-DE (Lokal)</td><td>Tidak</td><td>Koleksi yang sudah diambil datanya &mdash; mengimpor gamelist.xml dan media yang sudah diunduh</td></tr>
+                <tr><td>TheGamesDB</td><td>Ya</td><td>Boxart khusus platform, boxart 3D</td></tr>
+                <tr><td>IGDB</td><td>Ya</td><td>Game modern, info rinci, genre, rating</td></tr>
+                <tr><td>RAWG.io</td><td>Ya</td><td>Rating pengguna, deskripsi, screenshot</td></tr>
+                <tr><td>ScreenScraper</td><td>Ya</td><td>Varian regional, boxart 3D, video, manual</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Pengambilan Data Hibrida</h3>
+        <p>RetroDB secara otomatis menggabungkan data dari beberapa sumber untuk memaksimalkan cakupan metadata:</p>
+        <ul>
+            <li>Metadata teks dari sumber tersedia dengan prioritas tertinggi</li>
+            <li>Gambar dan media dari sumber sekunder saat sumber utama tidak memilikinya</li>
+            <li>Pengisian celah otomatis lintas scraper untuk cakupan maksimal</li>
+            <li>Judul urut (sort title) dibuat otomatis dari judul game selama pengambilan data</li>
+        </ul>
+
+        <h3>Penanganan Media</h3>
+        <ul>
+            <li>Kolom media (boxart, boxart 3D, screenshot, fanart, video, manual) <strong>tidak pernah diganti</strong> selama pengambilan data normal &mdash; hanya diisi jika kosong</li>
+            <li>Screenshot selalu <strong>ditambahkan</strong>, tidak pernah diganti</li>
+            <li>Untuk mengunduh ulang media, kosongkan gambar yang ada di modal edit terlebih dahulu, lalu ambil data ulang</li>
+            <li>Mode <strong>Full Re-scrape</strong> menggantikan aturan ini dan mengganti semuanya</li>
+            <li>Referensi media yang basi (berkas dihapus tetapi nama berkas masih ada di database) otomatis dibersihkan sebelum pengambilan data agar media segar dapat diunduh</li>
+            <li>Gambar yang diunduh otomatis distandardisasi ke ukuran target (lihat <a href="#image-standardization">Image Standardization</a>)</li>
+        </ul>
+
+        <h3>Prioritas Scraper</h3>
+        <p>Konfigurasikan scraper mana yang berjalan lebih dulu dan mana yang aktif/nonaktif di <strong>Settings &rarr; Scraping &rarr; Scraper</strong>. Seret dan lepas untuk mengurutkan ulang prioritas. Scraper yang dinonaktifkan tidak akan dicoba selama pengambilan data dan tidak akan memicu peringatan status API di Dasbor.</p>
+
+        <h3>Pembatasan Laju</h3>
+        <p>Setiap scraper memiliki batas laju yang dapat dikonfigurasi untuk mencegah pembatasan API. Jeda bawaan diatur secara konservatif. Mengurangi jeda adalah risiko Anda sendiri &mdash; melebihi batas laju API dapat mengakibatkan pemblokiran sementara dari layanan terkait.</p>
+    </div>
+</section>
+
+<!-- Bulk Scraping -->
+<section id="bulk-scrape" class="help-section card">
+    <h2 class="card-title">Pengambilan Data Massal</h2>
+    <div class="card-body">
+        <h3>Memulai Pengambilan Data Massal</h3>
+        <ol>
+            <li>Buka halaman System atau Library mana pun</li>
+            <li>Klik <strong>"Select"</strong> untuk masuk ke mode pemilihan</li>
+            <li>Pilih game satu per satu atau gunakan pemilihan cepat:
+                <ul>
+                    <li><strong>Select All</strong> &mdash; Semua game yang terlihat</li>
+                    <li><strong>Select Unscraped</strong> &mdash; Hanya game tanpa metadata</li>
+                </ul>
+            </li>
+            <li>Pilih mode: <strong>Fill Missing</strong> atau <strong>Full Re-scrape</strong></li>
+            <li>Klik <strong>"Scrape Selected"</strong></li>
+        </ol>
+
+        <h3>Kontrol</h3>
+        <ul>
+            <li><strong>Pause / Resume</strong> &mdash; Jeda atau lanjutkan pengambilan data</li>
+            <li><strong>Cancel</strong> &mdash; Hentikan sepenuhnya</li>
+            <li><strong>Background</strong> &mdash; Kecilkan dan terus menjelajah selagi pengambilan data berjalan</li>
+        </ul>
+
+        <h3>Notifikasi Toast</h3>
+        <p>Saat berjalan di latar belakang, toast yang persisten menampilkan kemajuan di semua halaman:</p>
+        <ul>
+            <li>Nama game saat ini, jumlah kemajuan, dan statistik hasil (berhasil, gagal, dilewati)</li>
+            <li>Kontrol Pause/Cancel tersedia dari halaman mana pun</li>
+            <li>Klik toast untuk kembali ke modal pengambilan data</li>
+        </ul>
+
+        <h3>Sistem Antrean</h3>
+        <p>Beberapa pengambilan data massal otomatis masuk antrean:</p>
+        <ul>
+            <li>Mulai pengambilan data baru saat satu sedang berjalan &mdash; job masuk antrean</li>
+            <li>Antrean ditampilkan di toast dengan jumlah job yang tertunda</li>
+            <li>Job diproses otomatis secara berurutan</li>
+            <li>Gunakan Queue Manager untuk melihat, mengurutkan ulang, atau membatalkan job dalam antrean</li>
+        </ul>
+
+        <h3>Opsi Pengambilan Data</h3>
+        <ul>
+            <li><strong>Fill Missing Only</strong> &mdash; Hanya mengisi kolom metadata yang kosong, mempertahankan data yang sudah ada</li>
+            <li><strong>Full Re-scrape</strong> &mdash; Mengganti semua kolom termasuk media (mengunduh gambar dan video baru)</li>
+            <li><strong>Check RetroAchievements</strong> &mdash; Juga memeriksa set achievement RetroAchievements selama pengambilan data</li>
+        </ul>
+
+        <h3>Pemulihan Job</h3>
+        <p>Jika RetroDB dimulai ulang saat sebuah job sedang berjalan, job yang terganggu akan muncul di spanduk pemulihan pada Dasbor. Klik <strong>"Resume"</strong> pada job satu per satu atau <strong>"Resume All"</strong> untuk memulai ulang semuanya. Toast kemajuan langsung muncul setelah dilanjutkan.</p>
+    </div>
+</section>
+
+<!-- AI Fill -->
+<section id="ai-fill" class="help-section card">
+    <h2 class="card-title">AI Fill</h2>
+    <div class="card-body">
+        <h3>Fungsinya</h3>
+        <p>AI Fill menggunakan model bahasa besar (Gemini, OpenAI, atau Claude) untuk mengisi metadata game yang hilang atau tidak lengkap secara cerdas. Fitur ini lebih pintar daripada pengambilan data biasa karena menggunakan pengetahuan kontekstual tentang game untuk memberikan data akurat yang mungkin tidak dimiliki scraper.</p>
+
+        <h3>Cara Menggunakan</h3>
+        <ol>
+            <li>Buka modal detail game (atau halaman detail penuh)</li>
+            <li>Klik <strong>"AI Fill"</strong> (memerlukan kunci API AI yang dikonfigurasi di Settings)</li>
+            <li>AI menganalisis judul dan sistem game, lalu mengisi kolom yang hilang</li>
+            <li>Tinjau hasilnya &mdash; perubahan disimpan otomatis</li>
+        </ol>
+
+        <h3>Apa yang Bisa Disediakan AI Fill</h3>
+        <ul>
+            <li>Genre, deskripsi, developer, publisher, tanggal rilis</li>
+            <li>Jumlah pemain, mode permainan (Single-Player, Multi-Player, Co-op, dll.)</li>
+            <li>Info campaign dan struktur game</li>
+            <li>Semua 8 sistem rating usia (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd)</li>
+            <li>Region, franchise, game serupa</li>
+            <li>Dukungan kontroler, jenis penyimpanan</li>
+            <li>Perspektif (First-Person, Top-Down, Side-Scroller, dll.), dimensi (2D, 3D)</li>
+            <li>Info edisi, skor kritikus dan pengguna</li>
+        </ul>
+
+        <h3>Logika Pengisian Cerdas</h3>
+        <ul>
+            <li><strong>Kolom kosong</strong> selalu diisi</li>
+            <li><strong>Data pengguna yang sudah ada</strong> tidak pernah ditimpa</li>
+            <li><strong>Game serupa</strong> selalu disegarkan (data AI lebih andal untuk kolom ini)</li>
+            <li><strong>Rating hasil pemetaan silang</strong> &mdash; Jika satu sistem rating sudah diketahui, rating kosong di sistem lain otomatis diisi menggunakan pemetaan silang tingkat kedewasaan</li>
+            <li><strong>Sort title</strong> dibuat otomatis saat diisi</li>
+            <li>Kolom <strong>Players</strong> menormalkan rentang (mis. "1-4" menjadi 4)</li>
+        </ul>
+
+        <h3>Normalisasi Genre</h3>
+        <p>AI Fill menggunakan bentuk genre baku dengan nama berbentuk hyphen:</p>
+        <ul>
+            <li><code>First-Person-Shooter</code>, <code>Shoot-em-up</code>, <code>Beat-em-up</code></li>
+            <li><code>Hack-n-Slash</code>, <code>Board-Card</code>, <code>Real-Time Strategy</code></li>
+        </ul>
+
+        <h3>Persyaratan</h3>
+        <p>Setidaknya satu kunci API penyedia AI harus dikonfigurasi di <strong>Settings &rarr; Scraping &rarr; API Keys</strong>. Tingkatan model termurah (Gemini Flash Lite, GPT-4o Mini, atau Claude Haiku) sudah bekerja dengan baik untuk metadata.</p>
+    </div>
+</section>
+
+<!-- Filtering -->
+<section id="filtering" class="help-section card">
+    <h2 class="card-title">Penyaringan & Pencarian</h2>
+    <div class="card-body">
+        <h3>Pencarian</h3>
+        <p>Pencarian menyaring game berdasarkan judul (dan sort title). Tekan <kbd>/</kbd> untuk memfokuskan kotak pencarian. Hasil diperbarui secara real-time dengan debounce 300ms.</p>
+
+        <h3>Filter Sumber</h3>
+        <p>Saring game berdasarkan sumber impor:</p>
+        <ul>
+            <li><strong>ROM Files</strong> &mdash; Game dari perpustakaan ROM Anda</li>
+            <li><strong>CLZ Imports</strong> &mdash; Game fisik yang diimpor dari CLZ</li>
+            <li><strong>Steam Imports</strong> &mdash; Game yang diimpor dari Steam</li>
+            <li><strong>Xbox Imports</strong> &mdash; Game yang diimpor dari Xbox</li>
+            <li><strong>PSN Imports</strong> &mdash; Game yang diimpor dari PlayStation Network</li>
+        </ul>
+
+        <h3>Tombol Filter</h3>
+        <p>Setiap filter membuka modal yang menampilkan semua nilai unik dalam perpustakaan Anda beserta jumlahnya. Filter mendukung dua mode:</p>
+        <ul>
+            <li><strong>Sertakan (IS)</strong> &mdash; Hanya tampilkan game yang cocok dengan nilai yang dipilih</li>
+            <li><strong>Kecualikan (IS NOT)</strong> &mdash; Sembunyikan game yang cocok dengan nilai yang dipilih</li>
+        </ul>
+        <p>Beralih antara mode sertakan dan kecualikan menggunakan sakelar di modal filter.</p>
+
+        <h3>Filter yang Tersedia</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Filter</th><th>Keterangan</th><th>Multi-Nilai</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Genre</strong></td><td>Action, RPG, Platformer, dll.</td><td>Ya</td></tr>
+                <tr><td><strong>Series</strong></td><td>Franchise game</td><td>Ya</td></tr>
+                <tr><td><strong>Publisher</strong></td><td>Perusahaan penerbit</td><td>Ya</td></tr>
+                <tr><td><strong>Developer</strong></td><td>Studio pengembang</td><td>Ya</td></tr>
+                <tr><td><strong>Players</strong></td><td>Jumlah pemain</td><td>Tidak</td></tr>
+                <tr><td><strong>Modes</strong></td><td>Single-Player, Multi-Player, Co-op</td><td>Ya</td></tr>
+                <tr><td><strong>Perspective</strong></td><td>First-Person, Top-Down, Isometric, Side-Scroller</td><td>Ya</td></tr>
+                <tr><td><strong>Dimension</strong></td><td>2D, 3D</td><td>Ya</td></tr>
+                <tr><td><strong>Rating</strong></td><td>Rating usia (menampilkan sistem pilihan Anda)</td><td>Tidak</td></tr>
+                <tr><td><strong>Has RA</strong></td><td>Game dengan dukungan RetroAchievements</td><td>Tidak</td></tr>
+                <tr><td><strong>Show Bonus</strong></td><td>Alihkan visibilitas disc bonus</td><td>Tidak</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Opsi Pengurutan</h3>
+        <ul>
+            <li><strong>Title</strong> &mdash; Alfabetis berdasarkan sort title (tidak peduli huruf besar/kecil)</li>
+            <li><strong>Release Date</strong> &mdash; Urutan kronologis (paling awal dulu)</li>
+            <li><strong>Platform</strong> &mdash; Dikelompokkan berdasarkan nama sistem</li>
+        </ul>
+
+        <h3>Navigasi Alfabet</h3>
+        <p>Lompat ke game yang diawali huruf tertentu. Huruf tanpa game yang cocok akan ditampilkan pudar (abu-abu). Angka dan simbol dikelompokkan di bawah <strong>#</strong>.</p>
+
+        <h3>Infinite Scroll</h3>
+        <p>Game dimuat dalam kelompok 100 saat Anda menggulir. Halaman baru otomatis dimuat saat Anda mendekati bagian bawah. Mengubah filter atau pencarian langsung mengatur ulang dan memuat ulang hasil.</p>
+
+        <h3>Penyimpanan Status</h3>
+        <p>Filter, kata kunci pencarian, dan posisi gulir Anda saat ini disimpan dalam penyimpanan sesi. Semuanya dipulihkan saat Anda kembali ke halaman atau memuat ulang.</p>
+    </div>
+</section>
+
+<!-- Game Detail -->
+<section id="game-detail" class="help-section card">
+    <h2 class="card-title">Detail Game</h2>
+    <div class="card-body">
+        <h3>Modal Detail Game</h3>
+        <p>Mengklik kartu game mana pun membuka modal detail dengan tampilan cepat yang di-cache. Modal menampilkan:</p>
+        <ul>
+            <li>Boxart (2D dan 3D), latar fanart</li>
+            <li>Deskripsi dan info rilis</li>
+            <li>Badge developer, publisher, genre</li>
+            <li>Jumlah pemain, mode permainan, struktur game</li>
+            <li>Gambar rating usia (dari sistem pilihan Anda, dengan fallback pemetaan silang)</li>
+            <li>Galeri screenshot dengan navigasi keyboard (<kbd>&larr;</kbd> <kbd>&rarr;</kbd>)</li>
+            <li>Video trailer (jika tersedia)</li>
+            <li>Estimasi waktu bermain HLTB (Main Story, Main + Extras, Completionist)</li>
+            <li>Status dan progres RetroAchievements</li>
+            <li>Game serupa (tautan yang bisa diklik)</li>
+            <li>Detail dukungan kontroler</li>
+            <li>Tag yang diberikan pada game</li>
+            <li>Ukuran berkas dan jalur ROM</li>
+        </ul>
+
+        <h3>Halaman Detail Game Penuh</h3>
+        <p>Klik tautan judul game atau navigasi dari breadcrumb untuk melihat halaman detail game penuh. Fitur tambahan di halaman penuh meliputi:</p>
+        <ul>
+            <li><strong>Header latar fanart</strong> dengan navigasi breadcrumb</li>
+            <li><strong>Badge impor platform</strong> &mdash; Menampilkan CLZ Import, Steam Import, Xbox Import, atau PSN Import dengan logo platform bila berlaku</li>
+            <li><strong>Indikator disc bonus</strong> &mdash; Menampilkan badge dan tautan "Part of:" ke game induk beserta thumbnail-nya</li>
+            <li><strong>Tombol Delete</strong> &mdash; Hapus game dari database (dengan konfirmasi)</li>
+            <li><strong>Tombol Clear</strong> &mdash; Bersihkan semua metadata hasil scraping sambil mempertahankan entri ROM</li>
+        </ul>
+
+        <h3>Modal Edit</h3>
+        <p>Klik <strong>Edit</strong> (atau tekan <kbd>e</kbd>) untuk membuka modal edit, yang diatur ke dalam beberapa bagian:</p>
+        <ul>
+            <li><strong>Identity</strong> &mdash; Judul, sort title (dibuat otomatis tapi bisa diedit), franchise, edisi</li>
+            <li><strong>Release Info</strong> &mdash; Tanggal rilis, region (dari dropdown yang dapat dikonfigurasi)</li>
+            <li><strong>Gameplay</strong> &mdash; Genre (tag multi-pilih), mode, struktur game, jumlah pemain, developer, publisher</li>
+            <li><strong>Technical</strong> &mdash; Kontroler (multi-pilih), jenis penyimpanan, perspektif (multi-nilai), dimensi (multi-nilai)</li>
+            <li><strong>Age Ratings</strong> &mdash; Semua 8 sistem rating dengan gambar rating resmi dan pemetaan silang otomatis. Mengubah satu rating otomatis mengisi rating kosong di sistem lain.</li>
+            <li><strong>Scores</strong> &mdash; Skor kritikus, skor pengguna</li>
+            <li><strong>Description</strong> &mdash; Teks deskripsi game</li>
+            <li><strong>Custom Images</strong> &mdash; Unggah boxart kustom (2D), boxart 3D, dan fanart. Kosongkan gambar yang ada untuk mengizinkan pengambilan data ulang.</li>
+            <li><strong>Video / Trailer</strong> &mdash; Unggah atau tautkan video trailer</li>
+        </ul>
+
+        <h3>Aksi Cepat</h3>
+        <ul>
+            <li><strong>Edit</strong> &mdash; Buka modal edit (<kbd>e</kbd>)</li>
+            <li><strong>Scrape</strong> &mdash; Ambil metadata dari sumber scraper (<kbd>s</kbd>)</li>
+            <li><strong>AI Fill</strong> &mdash; Isi kolom yang hilang dengan AI (memerlukan kunci API AI)</li>
+            <li><strong>Check for RA</strong> &mdash; Cari set achievement RetroAchievements</li>
+            <li><strong>HLTB Lookup</strong> &mdash; Temukan estimasi waktu bermain dari HowLongToBeat</li>
+        </ul>
+
+        <h3>Status Penyelesaian</h3>
+        <p>Lacak kemajuan Anda dengan status berikut (ditampilkan sebagai badge pada kartu game):</p>
+        <ul>
+            <li><strong>Not Started</strong> &mdash; Belum pernah dimainkan</li>
+            <li><strong>In Progress</strong> &mdash; Sedang dimainkan</li>
+            <li><strong>Played</strong> &mdash; Sudah dimainkan tapi belum selesai</li>
+            <li><strong>Completed</strong> &mdash; Menyelesaikan game utama</li>
+            <li><strong>100%</strong> &mdash; Menyelesaikan semuanya</li>
+        </ul>
+
+        <h3>Sistem Multi-Rating</h3>
+        <p>RetroDB mendukung 8 sistem rating usia internasional:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>Sistem</th><th>Region</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>ESRB</strong></td><td>Amerika Utara</td></tr>
+                <tr><td><strong>PEGI</strong></td><td>Eropa</td></tr>
+                <tr><td><strong>CERO</strong></td><td>Jepang</td></tr>
+                <tr><td><strong>USK</strong></td><td>Jerman</td></tr>
+                <tr><td><strong>ACB</strong></td><td>Australia</td></tr>
+                <tr><td><strong>FPB</strong></td><td>Afrika Selatan</td></tr>
+                <tr><td><strong>GRAC</strong></td><td>Korea Selatan</td></tr>
+                <tr><td><strong>ClassInd</strong></td><td>Brasil</td></tr>
+            </tbody>
+        </table>
+        <p>Atur sistem pilihan Anda di <strong>Settings &rarr; Library &rarr; Display</strong>. Gambar rating resmi ditampilkan pada kartu game, modal detail, dan halaman detail. Rating yang kosong otomatis diisi dari rating yang tersedia lewat pemetaan silang tingkat kedewasaan selama pengambilan data, AI Fill, dan pengeditan manual.</p>
+
+        <h3>Disc Bonus</h3>
+        <p>RetroDB otomatis mendeteksi disc bonus/tambahan (mis. CD soundtrack, disc konten tambahan) dan menautkannya ke game induknya. Disc bonus disembunyikan secara bawaan di library &mdash; alihkan <strong>"Show Bonus"</strong> di filter untuk menampilkannya. Disc bonus yang tertaut muncul di modal detail game induknya.</p>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> Modal detail menyimpan cache game yang baru dilihat untuk pemuatan yang lebih cepat. Pengeditan otomatis memperbarui kartu game di halaman tanpa perlu memuat ulang.
+        </div>
+    </div>
+</section>
+
+<!-- Bulk Edit -->
+<section id="bulk-edit" class="help-section card">
+    <h2 class="card-title">Edit Massal</h2>
+    <div class="card-body">
+        <h3>Cara Menggunakan</h3>
+        <ol>
+            <li>Buka halaman System atau Library mana pun</li>
+            <li>Klik <strong>"Select"</strong> untuk masuk ke mode pemilihan</li>
+            <li>Pilih game yang ingin Anda edit (satu per satu, Select All, atau Select Unscraped)</li>
+            <li>Klik <strong>"Bulk Edit"</strong></li>
+            <li>Pilih kolom yang ingin diubah dan atur nilai barunya</li>
+            <li>Pilih mode <strong>Replace</strong> atau <strong>Append</strong></li>
+            <li>Klik <strong>"Apply"</strong> untuk memperbarui semua game yang dipilih</li>
+        </ol>
+
+        <h3>Replace vs Append</h3>
+        <ul>
+            <li><strong>Replace</strong> &mdash; Menimpa nilai yang ada dengan nilai baru</li>
+            <li><strong>Append</strong> &mdash; Menambahkan nilai baru ke nilai yang sudah ada (untuk kolom multi-nilai)</li>
+        </ul>
+
+        <h3>Kolom yang Didukung</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Kolom</th><th>Mendukung Append</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Genre</td><td>Ya</td></tr>
+                <tr><td>Publisher</td><td>Ya</td></tr>
+                <tr><td>Developer</td><td>Ya</td></tr>
+                <tr><td>Franchise</td><td>Ya</td></tr>
+                <tr><td>Region</td><td>Ya</td></tr>
+                <tr><td>Game Structure</td><td>Ya</td></tr>
+                <tr><td>Perspective</td><td>Ya</td></tr>
+                <tr><td>Dimension</td><td>Ya</td></tr>
+                <tr><td>Completion Status</td><td>Tidak (replace saja)</td></tr>
+                <tr><td>Players</td><td>Tidak (replace saja)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Compare Games -->
+<section id="compare" class="help-section card">
+    <h2 class="card-title">Bandingkan Game</h2>
+    <div class="card-body">
+        <h3>Fungsinya</h3>
+        <p>Perbandingan berdampingan metadata dua game dalam tampilan tabel. Berguna untuk memeriksa kualitas metadata, menemukan duplikat, atau membandingkan versi game yang sama di berbagai sistem.</p>
+
+        <h3>Cara Menggunakan</h3>
+        <ol>
+            <li>Buka <strong>Compare</strong> (dapat diakses dari halaman Library)</li>
+            <li>Cari dan pilih game pertama</li>
+            <li>Cari dan pilih game kedua</li>
+            <li>Tinjau tabel perbandingan &mdash; perbedaan akan disorot</li>
+        </ol>
+
+        <h3>Kolom yang Dibandingkan</h3>
+        <p>Sistem, developer, publisher, tanggal rilis, genre, franchise, region, jumlah pemain, mode, perspektif, dimensi, semua 8 rating usia, rating pengguna, skor kritikus, estimasi waktu bermain, dukungan kontroler, jenis penyimpanan, ukuran berkas, game serupa, deskripsi, dan lainnya.</p>
+    </div>
+</section>
+
+<!-- Collections -->
+<section id="collections" class="help-section card">
+    <h2 class="card-title">Koleksi (Tag, Daftar, Wishlist)</h2>
+    <div class="card-body">
+        <h3>Tag</h3>
+        <p>Buat tag kustom berkode warna untuk mengatur game Anda. Tag bekerja seperti label &mdash; setiap game bisa memiliki beberapa tag, dan setiap tag bisa berisi beberapa game.</p>
+        <ul>
+            <li>Buat tag dengan nama dan warna kustom dari halaman <strong>Tags</strong></li>
+            <li>Tetapkan tag ke game lewat modal detail game</li>
+            <li>Klik tag mana pun untuk menjelajahi semua game dengan tag tersebut</li>
+            <li>Edit atau hapus tag dari halaman manajemen Tags</li>
+        </ul>
+
+        <h3>Daftar Bernama</h3>
+        <p>Buat daftar game kurasi dengan urutan kustom. Daftar (Lists) mirip playlist &mdash; Anda mengendalikan urutan pasti dari game-game tersebut.</p>
+        <ul>
+            <li>Buat daftar dengan nama, deskripsi, dan ikon dari halaman <strong>Lists</strong></li>
+            <li>Tambahkan game ke daftar lewat modal detail game atau halaman daftar</li>
+            <li>Seret dan lepas untuk mengurutkan ulang game dalam sebuah daftar</li>
+            <li>Urutkan berdasarkan urutan kustom atau alfabetis</li>
+        </ul>
+
+        <h3>Wishlist</h3>
+        <p>Lacak game yang ingin Anda miliki, baik fisik maupun digital.</p>
+        <ul>
+            <li>Tambahkan game secara manual dengan judul, sistem, catatan, dan prioritas (1&ndash;5)</li>
+            <li>Item wishlist dapat ditautkan ke game perpustakaan yang sudah ada jika ditemukan</li>
+            <li>Diurutkan berdasarkan prioritas (tertinggi dulu), lalu tanggal ditambahkan</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> Gunakan tag untuk label lintas kategori (mis. "Favorites", "Couch Co-op", "Backlog") dan daftar untuk koleksi kurasi tertentu (mis. "Top 10 SNES Games", "Games to Stream").
+        </div>
+    </div>
+</section>
+
+<!-- Game Imports -->
+<section id="game-imports" class="help-section card">
+    <h2 class="card-title">Impor Game</h2>
+    <div class="card-body">
+        <p>Impor koleksi game dari sumber eksternal. Akses lewat <strong>Game Imports</strong> di sidebar. Semua jenis impor digabungkan menjadi satu halaman bertab.</p>
+
+        <h3>Impor CLZ Games</h3>
+        <p>Impor koleksi game fisik Anda dari CLZ Games.</p>
+        <ol>
+            <li>Ekspor koleksi CLZ Games Anda sebagai PDF</li>
+            <li>Buka tab Game Imports &rarr; <strong>CLZ</strong></li>
+            <li>Unggah berkas PDF-nya</li>
+            <li>Tinjau game yang berhasil diurai</li>
+            <li>Pilih game mana yang akan diimpor</li>
+        </ol>
+        <p>Impor CLZ dilacak terpisah dari game ROM (menggunakan awalan <code>clz_import/</code>), sehingga Anda dapat mengkatalogkan koleksi fisik maupun digital. Impor CLZ dapat dihapus seluruhnya dari <strong>Settings &rarr; System &rarr; Maintenance</strong>.</p>
+
+        <h3>Impor Steam</h3>
+        <p>Impor perpustakaan game Steam Anda dan lacak achievement-nya.</p>
+        <ol>
+            <li>Konfigurasikan kunci Steam Web API dan Steam ID Anda di Settings</li>
+            <li>Buka tab Game Imports &rarr; <strong>Steam</strong></li>
+            <li>Klik <strong>"Fetch Library"</strong> untuk mengambil game Steam Anda</li>
+            <li>Pilih game yang akan diimpor (duplikat terdeteksi otomatis)</li>
+            <li>Game yang diimpor ditandai dengan Steam App ID-nya untuk pelacakan achievement</li>
+        </ol>
+
+        <h3>Impor Xbox</h3>
+        <p>Impor perpustakaan game Xbox Anda lewat akun Microsoft.</p>
+        <ol>
+            <li>Buka tab Game Imports &rarr; <strong>Xbox</strong></li>
+            <li>Klik <strong>"Sign In"</strong> untuk mengautentikasi dengan akun Microsoft Anda (alur OAuth2)</li>
+            <li>Riwayat judul Xbox Anda diambil secara otomatis</li>
+            <li>Pilih game yang akan diimpor dengan deteksi duplikat</li>
+            <li>Game yang diimpor ditandai dengan Xbox Title ID-nya untuk pelacakan achievement</li>
+        </ol>
+        <p>Token Xbox disimpan di cache dalam <code>data/xbox_tokens.json</code> dan diperbarui secara otomatis.</p>
+
+        <h3>Impor PSN</h3>
+        <p>Impor perpustakaan game PlayStation Network Anda.</p>
+        <ol>
+            <li>Buka tab Game Imports &rarr; <strong>PSN</strong></li>
+            <li>Masukkan cookie NPSSO Anda (lihat <a href="#trophies">Trophies &rarr; PSN Authentication</a> untuk cara mendapatkannya)</li>
+            <li>Klik <strong>"Fetch Library"</strong> untuk mengambil game PSN Anda</li>
+            <li>Pilih game yang akan diimpor</li>
+        </ol>
+
+        <h3>Setelah Mengimpor</h3>
+        <ul>
+            <li>Game yang diimpor muncul di Library Anda dengan badge khusus platform</li>
+            <li>Gunakan pengambilan data massal untuk mengambil metadata game yang diimpor</li>
+            <li>Pelacakan achievement/trofi otomatis tertaut ke platform sumbernya</li>
+            <li>Game yang diimpor dapat disaring di Library menggunakan filter Source</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> Setelah mengimpor game dari platform mana pun, Anda dapat mengambil metadatanya menggunakan pengambilan data massal, sama seperti game ROM. Game yang diimpor juga bisa melacak achievement dari platform masing-masing.
+        </div>
+    </div>
+</section>
+
+<!-- RetroAchievements -->
+<section id="retroachievements" class="help-section card">
+    <h2 class="card-title">RetroAchievements</h2>
+    <div class="card-body">
+        <h3>Pengaturan</h3>
+        <ol>
+            <li>Buat akun di <a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a></li>
+            <li>Buat kunci API di pengaturan profil Anda</li>
+            <li>Masukkan nama pengguna dan kunci API Anda di Settings &rarr; Account &rarr; RetroAchievements</li>
+        </ol>
+
+        <h3>Halaman Achievements</h3>
+        <ul>
+            <li><strong>Tab Sistem</strong> &mdash; Jelajahi achievement berdasarkan platform (mengingat tab terakhir yang Anda lihat)</li>
+            <li><strong>Navigasi Alfabet</strong> &mdash; Lompat ke game berdasarkan huruf awal di dalam setiap tab sistem</li>
+            <li><strong>Refresh Progress</strong> &mdash; Sinkronkan progres achievement Anda dari RetroAchievements</li>
+            <li><strong>Statistik Keseluruhan</strong> &mdash; Achievement dan poin yang diperoleh di semua sistem</li>
+            <li><strong>Progres per Game</strong> &mdash; Lihat persentase penyelesaian untuk setiap game dengan bilah kemajuan</li>
+        </ul>
+
+        <h3>Antrean Sinkronisasi</h3>
+        <p>Beberapa sinkronisasi sistem dapat diantrekan:</p>
+        <ul>
+            <li>Klik "Refresh Progress" pada sistem mana pun untuk memulai atau mengantrekan sinkronisasi</li>
+            <li>Jika sinkronisasi sudah berjalan, permintaan baru otomatis masuk antrean</li>
+            <li>Antrean diproses otomatis saat sinkronisasi saat ini selesai</li>
+            <li>Notifikasi toast menampilkan kemajuan saat ini dan jumlah antrean</li>
+        </ul>
+
+        <h3>Menemukan Game dengan Achievement</h3>
+        <ul>
+            <li><strong>Filter Library</strong> &mdash; Gunakan filter "Has RA" untuk menampilkan hanya game dengan achievement</li>
+            <li><strong>Check for RA</strong> &mdash; Pada modal detail game, klik untuk mencari set achievement</li>
+            <li><strong>Bulk Scrape</strong> &mdash; Aktifkan opsi "Check RA" untuk menemukan achievement selama pengambilan data</li>
+            <li><strong>RA Refresh Job</strong> &mdash; Pindai semua game dalam sebuah sistem untuk mengenali mana yang punya dukungan RA</li>
+        </ul>
+
+        <h3>Detail Level Game</h3>
+        <p>Klik game mana pun di halaman achievement untuk melihat info achievement per game secara rinci, termasuk nama achievement masing-masing, deskripsi, nilai poin, dan status perolehan.</p>
+
+        <div class="help-tip">
+            <strong>Catatan:</strong> "Refresh Progress" menyinkronkan progres Anda untuk game yang sudah tertaut dengan RetroAchievements.
+            Untuk menemukan set achievement BARU, gunakan "Check for RA" pada modal detail game atau aktifkan saat pengambilan data massal.
+        </div>
+    </div>
+</section>
+
+<!-- Steam Achievements -->
+<section id="steam-achievements" class="help-section card">
+    <h2 class="card-title">Steam Achievements</h2>
+    <div class="card-body">
+        <h3>Pengaturan</h3>
+        <ol>
+            <li>Impor game Steam lewat <strong>Game Imports &rarr; Steam</strong></li>
+            <li>Pastikan kunci Steam Web API Anda sudah dikonfigurasi di Settings</li>
+        </ol>
+
+        <h3>Halaman Utama Achievements</h3>
+        <p>Lihat semua game Steam Anda dengan progres achievement sekilas:</p>
+        <ul>
+            <li><strong>Statistik Keseluruhan</strong> &mdash; Total game Steam, achievement yang diperoleh, persentase penyelesaian</li>
+            <li><strong>Progres per Game</strong> &mdash; Bilah penyelesaian untuk setiap game</li>
+        </ul>
+
+        <h3>Detail Achievement per Game</h3>
+        <p>Klik game Steam mana pun untuk melihat achievement individualnya:</p>
+        <ul>
+            <li>Ikon, nama, dan deskripsi achievement</li>
+            <li>Status terbuka vs terkunci beserta stempel waktu pembukaan</li>
+            <li>Persentase pemain global yang membuka setiap achievement</li>
+        </ul>
+
+        <h3>Sinkronisasi</h3>
+        <ul>
+            <li>Sinkronkan achievement satu game dari halaman detailnya</li>
+            <li>Sinkronkan massal semua game Steam dari halaman utama achievement</li>
+            <li>Sinkronisasi berjalan sebagai job latar belakang dengan kemajuan lewat notifikasi toast</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Xbox Achievements -->
+<section id="xbox-achievements" class="help-section card">
+    <h2 class="card-title">Xbox Achievements</h2>
+    <div class="card-body">
+        <h3>Pengaturan</h3>
+        <ol>
+            <li>Impor game Xbox lewat <strong>Game Imports &rarr; Xbox</strong></li>
+            <li>Autentikasi ditangani lewat OAuth Xbox selama impor</li>
+        </ol>
+
+        <h3>Halaman Utama Achievements</h3>
+        <ul>
+            <li><strong>Statistik Keseluruhan</strong> &mdash; Total game Xbox, achievement yang diperoleh, gamerscore diperoleh/total, persentase penyelesaian</li>
+            <li><strong>Progres per Game</strong> &mdash; Gamerscore yang diperoleh per game dengan bilah kemajuan</li>
+        </ul>
+
+        <h3>Detail Achievement per Game</h3>
+        <p>Klik game Xbox mana pun untuk melihat achievement individualnya:</p>
+        <ul>
+            <li>Ikon achievement dengan nilai gamerscore masing-masing</li>
+            <li>Status terbuka vs terkunci beserta stempel waktu pembukaan</li>
+            <li>Badge gamerscore pada setiap achievement</li>
+        </ul>
+
+        <h3>Sinkronisasi</h3>
+        <ul>
+            <li>Sinkronkan satu game atau sinkronkan massal semua game Xbox</li>
+            <li>Berjalan sebagai job latar belakang dengan notifikasi toast</li>
+            <li>Total gamerscore diperbarui otomatis setelah setiap sinkronisasi</li>
+        </ul>
+    </div>
+</section>
+
+<!-- HLTB -->
+<section id="hltb" class="help-section card">
+    <h2 class="card-title">How Long to Beat</h2>
+    <div class="card-body">
+        <h3>Penggunaan</h3>
+        <ol>
+            <li>Buka modal detail game mana pun</li>
+            <li>Klik <strong>"Lookup HLTB"</strong></li>
+            <li>Pilih kecocokan yang benar dari hasil</li>
+            <li>Estimasi waktu bermain disimpan ke game tersebut</li>
+        </ol>
+
+        <h3>Kategori Waktu</h3>
+        <ul>
+            <li><strong>Main Story</strong> &mdash; Waktu penyelesaian inti</li>
+            <li><strong>Main + Extras</strong> &mdash; Dengan konten sampingan</li>
+            <li><strong>Completionist</strong> &mdash; Menyelesaikan 100% semuanya</li>
+        </ul>
+
+        <h3>Di Mana Data HLTB Muncul</h3>
+        <ul>
+            <li><strong>Modal detail game</strong> &mdash; Estimasi waktu bermain ditampilkan di info game</li>
+            <li><strong>Halaman detail game penuh</strong> &mdash; Info waktu bermain yang sama</li>
+            <li><strong>Analytics &rarr; tab Playtime</strong> &mdash; Analisis waktu bermain untuk seluruh koleksi</li>
+            <li><strong>Compare Games</strong> &mdash; Perbandingan waktu bermain berdampingan</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> Data HLTB juga ditampilkan di Analytics pada tab Playtime, memberi Anda estimasi untuk seluruh koleksi Anda.
+        </div>
+    </div>
+</section>
+
+<!-- Trophies -->
+<section id="trophies" class="help-section card">
+    <h2 class="card-title">Trofi PS3 / PSN</h2>
+    <div class="card-body">
+        <h3>Trofi Lokal RPCS3</h3>
+        <p>Lacak trofi yang diperoleh dalam game PS3 lewat emulator RPCS3.</p>
+        <ol>
+            <li>Atur jalur trofi RPCS3 Anda di <strong>Settings &rarr; Data &rarr; Trophies</strong></li>
+            <li>Klik <strong>"Scan Trophies"</strong> untuk mengimpor trofi yang sudah diperoleh</li>
+            <li>Lihat daftar trofi dan detail trofi masing-masing di bagian <strong>RPCS3 Trophies</strong></li>
+        </ol>
+        <p>RPCS3 membaca data XML trofi dari direktori pengguna RPCS3 Anda dan mencocokkan game dengan perpustakaan Anda secara otomatis.</p>
+
+        <h3>Trofi API PSN</h3>
+        <p>Sinkronkan data trofi PlayStation Network Anda dari akun PSN Anda.</p>
+        <ol>
+            <li>Dapatkan cookie NPSSO Anda (lihat di bawah)</li>
+            <li>Masukkan di <strong>Settings &rarr; Account &rarr; PSN</strong></li>
+            <li>Perpustakaan trofi PSN Anda diambil lewat API PlayStation</li>
+            <li>Lihat progres trofi per game dengan jumlah diperoleh/total</li>
+            <li>Detail trofi masing-masing mencakup deskripsi, kelangkaan, dan stempel waktu pembukaan</li>
+        </ol>
+
+        <h3>Autentikasi PSN (Cookie NPSSO)</h3>
+        <p>PSN menggunakan cookie autentikasi khusus bernama token NPSSO. Untuk mendapatkannya:</p>
+        <ol>
+            <li>Buka peramban web dan masuk ke <a href="https://store.playstation.com" target="_blank" rel="noopener noreferrer">store.playstation.com</a></li>
+            <li>Setelah masuk, kunjungi: <code>https://ca.account.sony.com/api/v1/ssocookie</code></li>
+            <li>Halaman tersebut akan menampilkan JSON yang berisi token NPSSO Anda</li>
+            <li>Salin nilai <code>npsso</code> dan tempelkan di Settings &rarr; Account &rarr; PSN</li>
+        </ol>
+        <p>Setelah terautentikasi, RetroDB menyimpan token akses secara aman di database-nya sendiri (per pengguna) dan memperbaruinya secara otomatis &mdash; Anda tidak perlu menempelkan NPSSO lagi setiap kali sinkronisasi. Sesi tetap berlaku selama kira-kira dua bulan, dan sekarang RetroDB juga memperbaruinya secara otomatis di latar belakang, sehingga dalam penggunaan normal Anda jarang perlu NPSSO baru.</p>
+
+        <h3>Detail Trofi</h3>
+        <ul>
+            <li>Jenis trofi: Bronze, Silver, Gold, Platinum</li>
+            <li>Ikon trofi diunduh dan disimpan di cache secara lokal</li>
+            <li>Persentase penyelesaian per game</li>
+            <li>Stempel waktu pembukaan untuk setiap trofi yang diperoleh</li>
+        </ul>
+
+        <h3>Sinkronisasi Massal</h3>
+        <p>Sinkronkan semua trofi game PSN sekaligus lewat job latar belakang. Kemajuan ditampilkan dalam notifikasi toast. Pembatasan laju (2,5 detik antar permintaan) mencegah pembatasan API PSN.</p>
+    </div>
+</section>
+
+<!-- Collector Trophies -->
+<section id="collector-trophies" class="help-section card">
+    <h2 class="card-title">Trofi Kolektor</h2>
+    <div class="card-body">
+        <h3>Apa Itu</h3>
+        <p>Sistem gamifikasi yang memberikan trofi berdasarkan pencapaian koleksi Anda. Saat Anda menambahkan game, mengambil metadata, dan menyelesaikan game, trofi terbuka secara otomatis.</p>
+
+        <h3>Tingkatan Trofi</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Tingkatan</th><th>Contoh</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Bronze</strong></td><td>Tambahkan game pertama, capai 10 game, scraping pertama, 5 sistem, penyelesaian pertama</td></tr>
+                <tr><td><strong>Silver</strong></td><td>100 game, 50 diambil datanya, 10 sistem, 10 penyelesaian, 500 game</td></tr>
+                <tr><td><strong>Gold</strong></td><td>1.000 game, cakupan metadata 100%, 20 sistem, 50 penyelesaian</td></tr>
+                <tr><td><strong>Platinum</strong></td><td>5.000 game, 100 penyelesaian, 30+ sistem</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Cara Kerja</h3>
+        <ul>
+            <li>Progres dilacak secara otomatis berdasarkan statistik perpustakaan Anda</li>
+            <li>Kunjungi halaman <strong>Collector Trophies</strong> untuk melihat progres Anda menuju setiap trofi</li>
+            <li>Klik <strong>"Refresh"</strong> untuk memperbarui progres setelah membuat perubahan</li>
+            <li>Trofi yang sudah diperoleh menampilkan tanggal terbukanya</li>
+            <li>Bilah kemajuan menunjukkan seberapa dekat Anda dengan pencapaian berikutnya</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Museum -->
+<section id="museum" class="help-section card">
+    <h2 class="card-title">Museum</h2>
+    <div class="card-body">
+        <h3>Apa Itu</h3>
+        <p>Ensiklopedia interaktif sistem game yang diatur berdasarkan generasi. Pelajari sejarah, spesifikasi, dan game-game terkenal untuk setiap platform di koleksi Anda.</p>
+
+        <h3>Halaman Utama</h3>
+        <p>Halaman utama Museum menampilkan garis waktu sistem game yang dikelompokkan berdasarkan generasi (Gen ke-1 hingga ke-9, Handheld, Arcade, Komputer). Setiap kartu sistem menampilkan gambar perangkat keras dan jumlah game dari perpustakaan Anda.</p>
+
+        <h3>Halaman Detail Sistem</h3>
+        <p>Klik sistem mana pun untuk melihat halaman museumnya, yang mencakup:</p>
+        <ul>
+            <li><strong>Gambar Perangkat Keras</strong> &mdash; Foto konsol/sistem</li>
+            <li><strong>Spesifikasi Teknis</strong> &mdash; CPU, GPU, RAM, resolusi, jenis media</li>
+            <li><strong>Sejarah</strong> &mdash; Narasi hasil AI tentang pengembangan, peluncuran, dan warisan sistem tersebut</li>
+            <li><strong>10 Game Teratas</strong> &mdash; Judul-judul paling terkenal dari sistem tersebut (dari skor kritikus dan saran AI)</li>
+            <li><strong>Galeri Kontroler</strong> &mdash; Gambar kontroler sistem tersebut beserta deskripsinya</li>
+        </ul>
+
+        <h3>Pembuatan Konten AI</h3>
+        <p>Konten Museum dibuat menggunakan AI (Gemini, OpenAI, atau Claude). Anda dapat membuat konten untuk:</p>
+        <ul>
+            <li><strong>Satu sistem</strong> &mdash; Klik "Generate" di halaman museum sistem mana pun</li>
+            <li><strong>Pembuatan massal</strong> &mdash; Buat konten untuk semua sistem sekaligus dari halaman utama (berjalan sebagai job latar belakang dengan kemajuan lewat toast)</li>
+        </ul>
+
+        <h3>Gambar Kontroler</h3>
+        <p>Gambar kontroler dapat ditambahkan lewat:</p>
+        <ul>
+            <li><strong>Pencarian Gambar</strong> &mdash; Cari foto kontroler menggunakan Bing Image Search. Hasil diurutkan berdasarkan relevansi (nama kontroler + produsen + variasi sistem).</li>
+            <li><strong>Unggah Manual</strong> &mdash; Unggah gambar kontroler Anda sendiri</li>
+            <li><strong>Penghapusan Latar</strong> &mdash; Otomatis menghapus latar belakang menggunakan AI lokal (pustaka rembg) untuk gambar kontroler transparan di latar apa pun</li>
+            <li><strong>Penyebaran Gambar</strong> &mdash; Saat sebuah gambar kontroler ditemukan, gambar tersebut otomatis dibagikan ke kontroler yang sama pada sistem lain (kontroler yang sekeluarga)</li>
+            <li><strong>Ambil Massal</strong> &mdash; Ambil gambar untuk semua kontroler dalam sebuah sistem sekaligus</li>
+        </ul>
+        <p>Semua gambar kontroler distandardisasi ke ukuran target dan disimpan dalam format WebP.</p>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> Kunci API AI diperlukan untuk pembuatan konten. Museum menggunakan penyedia AI yang sama seperti yang dikonfigurasi di Settings &rarr; Scraping &rarr; API Keys.
+        </div>
+    </div>
+</section>
+
+<!-- Analytics -->
+<section id="analytics" class="help-section card">
+    <h2 class="card-title">Analitik</h2>
+    <div class="card-body">
+        <p>Analytics menyediakan statistik dan visualisasi lengkap di 12 tab. Semua grafik interaktif dan dapat diekspor sebagai PNG, disalin ke clipboard, atau diunduh sebagai CSV.</p>
+
+        <h3>Tab Analytics</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Tab</th><th>Isi</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Summary</strong></td><td>Kartu ringkasan statistik (total game, sistem, tingkat penyelesaian, persentase yang diambil datanya, dll.)</td></tr>
+                <tr><td><strong>Charts</strong></td><td>Game berdasarkan platform/produsen, berdasarkan genre, garis waktu per tahun</td></tr>
+                <tr><td><strong>Developers</strong></td><td>Grafik batang 15 developer dan publisher teratas</td></tr>
+                <tr><td><strong>Gameplay</strong></td><td>Rincian genre, analisis mode permainan, distribusi struktur game</td></tr>
+                <tr><td><strong>Playtime</strong></td><td>Analisis data waktu bermain HLTB di seluruh koleksi Anda &mdash; total estimasi waktu bermain, rata-rata, distribusi</td></tr>
+                <tr><td><strong>Review Scores</strong></td><td>Distribusi dan rata-rata skor kritikus dan pengguna</td></tr>
+                <tr><td><strong>Age Ratings</strong></td><td>Distribusi rating usia di semua 8 sistem rating</td></tr>
+                <tr><td><strong>Achievements</strong></td><td>Cakupan dan penyelesaian RetroAchievements berdasarkan sistem</td></tr>
+                <tr><td><strong>Data Quality</strong></td><td>Grafik radar kelengkapan metadata (deskripsi, boxart, genre, developer, publisher, tanggal rilis, screenshot, fanart, video, manual, HLTB, rating, mode, region)</td></tr>
+                <tr><td><strong>Growth</strong></td><td>Garis waktu pertumbuhan koleksi menunjukkan kapan game ditambahkan seiring waktu</td></tr>
+                <tr><td><strong>Storage</strong></td><td>Rincian penggunaan penyimpanan berdasarkan sistem (dengan ukuran berkas yang sudah diformat)</td></tr>
+                <tr><td><strong>Leaderboards</strong></td><td>Sistem teratas berdasarkan jumlah game, game individual terbesar berdasarkan ukuran berkas</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Opsi Ekspor</h3>
+        <p>Setiap grafik dapat diekspor menggunakan tombol di toolbar grafik:</p>
+        <ul>
+            <li><strong>PNG</strong> &mdash; Simpan sebagai berkas gambar</li>
+            <li><strong>Clipboard</strong> &mdash; Salin gambar grafik ke clipboard</li>
+            <li><strong>CSV</strong> &mdash; Unduh data mentah sebagai spreadsheet</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Reports -->
+<section id="reports" class="help-section card">
+    <h2 class="card-title">ROM Reports</h2>
+    <div class="card-body">
+        <h3>Fungsinya</h3>
+        <p>Memvalidasi nama berkas ROM terhadap konvensi penamaan baku dan mengenali potensi masalah. Akses lewat <strong>ROM Reports</strong> di sidebar.</p>
+
+        <h3>Jenis Laporan</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Tab</th><th>Yang Diperiksa</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Non-Standard Names</strong></td><td>ROM dengan nama berkas yang tidak sesuai konvensi penamaan. Menampilkan nama berkas saat ini, masalah yang terdeteksi, dan saran nama yang sudah dikoreksi.</td></tr>
+                <tr><td><strong>Name Mismatches</strong></td><td>ROM di mana nama berkasnya tidak cocok dengan judul metadata hasil scraping. Menampilkan nama berkas saat ini dibandingkan judul hasil scraping, region, tahun, dan developer.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Yang Diperiksa</h3>
+        <ul>
+            <li>Karakter tidak valid dalam nama berkas (<code>: ? * / " &lt; &gt; | \</code>)</li>
+            <li>Tag region yang hilang atau salah (mis. <code>(USA)</code>, <code>(Europe)</code>)</li>
+            <li>Tag tahun yang hilang</li>
+            <li>Ketidakcocokan antara nama berkas dan judul di database</li>
+        </ul>
+
+        <p>Laporan dapat diurutkan berdasarkan sistem, nama berkas, dan jenis masalah. Gunakan untuk menjaga perpustakaan ROM Anda tetap teratur dan konsisten penamaannya.</p>
+    </div>
+</section>
+
+<!-- ROM Tools -->
+<section id="rom-tools" class="help-section card">
+    <h2 class="card-title">Perkakas ROM</h2>
+    <div class="card-body">
+        <p>Akses hub ROM Tools dari sidebar. Setiap perkakas berjalan sebagai job latar belakang dengan pembaruan kemajuan real-time, dukungan jeda/lanjutkan, dan pencatatan log.</p>
+
+        <h3>Archive Scanner</h3>
+        <p>Ekstrak arsip ROM (ZIP, 7Z, RAR) dengan opsi untuk:</p>
+        <ul>
+            <li>Pemindaian rekursif subdirektori</li>
+            <li>Penghapusan berkas yang tidak diinginkan setelah ekstraksi</li>
+            <li>Pembuatan playlist M3U otomatis untuk game multi-disc</li>
+        </ul>
+        <p><em>Memerlukan: 7z atau unzip</em></p>
+
+        <h3>CHD Converter</h3>
+        <p>Konversi gambar disc (ISO, BIN/CUE, GDI) ke format CHD terkompresi. Menghemat penyimpanan secara signifikan sambil mempertahankan kompatibilitas penuh dengan emulator.</p>
+        <p><em>Memerlukan: chdman (dari mame-tools)</em></p>
+
+        <h3>CHD Verify</h3>
+        <p>Verifikasi integritas berkas CHD dengan validasi hash. Mengenali konversi yang rusak atau tidak lengkap.</p>
+        <p><em>Memerlukan: chdman</em></p>
+
+        <h3>Duplicate Finder</h3>
+        <p>Temukan ROM duplikat berdasarkan hash atau nama berkas, dengan opsi memprioritaskan berdasarkan tag region.</p>
+        <p><em>Tanpa dependensi eksternal</em></p>
+
+        <h3>Multi-Disc Organizer</h3>
+        <p>Atur game multi-disc ke dalam subdirektori dan buat playlist M3U untuk emulator yang mendukungnya. Berguna untuk sistem seperti PlayStation dan Saturn.</p>
+        <p><em>Tanpa dependensi eksternal</em></p>
+
+        <h3>Screenshot Dedup</h3>
+        <p>Temukan dan hapus screenshot duplikat di seluruh perpustakaan game Anda untuk membebaskan ruang penyimpanan.</p>
+        <ul>
+            <li><strong>Hash Persis (MD5)</strong> &mdash; Hanya mengenali berkas yang identik</li>
+            <li><strong>Kemiripan Visual</strong> &mdash; Perbandingan hash perseptual dengan ambang batas yang dapat dikonfigurasi (1&ndash;20, lebih rendah = kecocokan lebih ketat)</li>
+        </ul>
+        <p>Memindai secara bertahap dengan statistik langsung yang menampilkan jumlah game dipindai, jumlah duplikat, dan ruang yang bisa dibebaskan. Hasil dikelompokkan berdasarkan game dan sistem. Anda bisa memilih berkas mana yang dipertahankan di setiap grup duplikat, atau gunakan <strong>"Select Largest"</strong> untuk otomatis mempertahankan versi dengan resolusi tertinggi.</p>
+        <p><em>Tanpa dependensi eksternal</em></p>
+
+        <h3>Image Resizer</h3>
+        <p>Standardisasi media game ke ukuran target yang konsisten. Lihat <a href="#image-standardization">Image Standardization</a> untuk rincian lengkap.</p>
+        <p><em>Tanpa dependensi eksternal (peningkatan skala AI berbasis Python)</em></p>
+
+        <h3>Backfill Alternate Titles</h3>
+        <p>Pindai perpustakaan untuk game yang kolom <strong>judul alternatif</strong>-nya kosong dan isi dari IGDB / TGDB / ScreenScraper. Berguna setelah mengimpor katalog besar atau bermigrasi dari alat lain yang tidak menyimpan judul regional/Jepang/subjudul. Berjalan di latar belakang; kemajuan ditampilkan pada kartu perkakas.</p>
+        <p><em>Memerlukan setidaknya satu kunci API scraper (IGDB / TGDB / ScreenScraper)</em></p>
+
+        <h3>Bulk HLTB Lookup</h3>
+        <p>Jalankan pencarian HowLongToBeat untuk setiap game yang belum memiliki estimasi waktu bermain. Setiap kecocokan dinilai berdasarkan judul + platform + tahun rilis; kecocokan dengan keyakinan tinggi disimpan otomatis. Apa pun yang di bawah ambang keyakinan (atau dengan platform yang bertentangan) diparkir untuk ditinjau manusia.</p>
+        <p><em>Tanpa dependensi eksternal (menggunakan dataset HLTB offline bawaan)</em></p>
+
+        <h3>HLTB Pending Review</h3>
+        <p>Antrean tinjauan untuk kecocokan ambigu yang ditemukan oleh Bulk HLTB Lookup. Setiap baris tertunda menampilkan game sumber berdampingan dengan kandidat HLTB (judul, platform, tahun rilis, tingkat keyakinan). Setujui, tolak, atau pilih kecocokan lain per baris. Kartu perkakas tinjauan hanya muncul di hub ROM Tools saat ada setidaknya satu kecocokan yang tertunda.</p>
+        <ul>
+            <li><strong>Tab filter</strong> untuk kecocokan keyakinan rendah, judul alternatif, dan ketidakcocokan platform.</li>
+            <li><strong>Approve</strong> menuliskan estimasi waktu bermain; <strong>Reject</strong> membuang kandidat tersebut dan menjaga antrean pencarian tetap bersih.</li>
+        </ul>
+
+        <h3>Tool Settings</h3>
+        <p>Konfigurasikan jalur, lokasi perkakas, jenis arsip, dan preferensi yang digunakan bersama di semua perkakas ROM.</p>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> Semua perkakas ROM mendukung jeda/lanjutkan dan berjalan di latar belakang. Kemajuan dan hasil dicatat dalam log dan dapat dilihat di Log Viewer. Status perkakas (tersedia vs perlu dipasang) ditampilkan pada setiap kartu perkakas.
+        </div>
+    </div>
+</section>
+
+<!-- Normalization -->
+<section id="normalization" class="help-section card">
+    <h2 class="card-title">Normalisasi</h2>
+    <div class="card-body">
+        <h3>Fungsinya</h3>
+        <p>Menormalkan nilai genre dan mode permainan ke bentuk baku yang konsisten. Ini terjadi otomatis selama pengambilan data dan AI Fill, dan juga bisa diterapkan secara manual ke perpustakaan yang sudah ada.</p>
+
+        <h3>Mengapa Ini Penting</h3>
+        <p>Scraper yang berbeda menggunakan nama yang berbeda untuk hal yang sama. Normalisasi memastikan konsistensi di seluruh perpustakaan Anda:</p>
+        <ul>
+            <li><code>platform</code> &rarr; <code>Platformer</code></li>
+            <li><code>fps</code>, <code>first person shooter</code> &rarr; <code>First-Person-Shooter</code></li>
+            <li><code>shoot 'em up</code>, <code>shmup</code> &rarr; <code>Shoot-em-up</code></li>
+            <li><code>beat 'em up</code>, <code>brawler</code> &rarr; <code>Beat-em-up</code></li>
+            <li><code>hack and slash</code> &rarr; <code>Hack-n-Slash</code></li>
+            <li><code>rts</code>, <code>real time strategy</code> &rarr; <code>Real-Time Strategy</code></li>
+            <li><code>board game</code>, <code>card game</code> &rarr; <code>Board-Card</code></li>
+        </ul>
+
+        <h3>Aturan Kustom</h3>
+        <p>Anda dapat menambahkan aturan normalisasi kustom di <strong>Settings &rarr; Data &rarr; Normalization</strong>. Aturan kustom menggantikan pemetaan bawaan, sehingga Anda bisa menentukan nama genre dan mode pilihan sendiri. Aturan disimpan dalam database.</p>
+
+        <h3>Pratinjau & Terapkan</h3>
+        <p>Sebelum menerapkan normalisasi, Anda dapat melihat pratinjau game mana yang akan terpengaruh dan perubahan apa yang akan dibuat. Ini memungkinkan Anda meninjau sebelum menerapkan perubahan ke perpustakaan Anda.</p>
+    </div>
+</section>
+
+<!-- Image Standardization -->
+<section id="image-standardization" class="help-section card">
+    <h2 class="card-title">Standardisasi Gambar</h2>
+    <div class="card-body">
+        <h3>Fungsinya</h3>
+        <p>Menstandardisasi semua media game ke ukuran target yang konsisten untuk tampilan yang seragam di seluruh perpustakaan Anda. Gambar dalam rentang 80&ndash;120% dari ukuran target akan dilewati.</p>
+
+        <h3>Cara Kerja</h3>
+        <ul>
+            <li><strong>Upscaling</strong> &mdash; Gambar yang lebih kecil dari ukuran target ditingkatkan skalanya menggunakan Real-ESRGAN x4 (super-resolusi AI lewat ONNX Runtime) untuk perbesaran berkualitas tinggi, lalu diubah ukurannya ke ukuran target yang tepat</li>
+            <li><strong>Downscaling</strong> &mdash; Gambar yang lebih besar dari ukuran target diperkecil menggunakan filter Lanczos untuk hasil yang tajam</li>
+            <li><strong>Zona ambang batas</strong> &mdash; Gambar dalam rentang 80&ndash;120% dari target dibiarkan apa adanya untuk menghindari pemrosesan ulang yang tidak perlu</li>
+        </ul>
+
+        <h3>Ukuran Target</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Jenis Media</th><th>Target</th><th>Metode</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Boxart</td><td>tinggi 1080px</td><td>Lebar menyesuaikan secara proporsional</td></tr>
+                <tr><td>Boxart 3D</td><td>tinggi 1080px</td><td>Lebar menyesuaikan secara proporsional (mempertahankan transparansi)</td></tr>
+                <tr><td>Screenshot</td><td>tinggi 1080px</td><td>Lebar menyesuaikan secara proporsional</td></tr>
+                <tr><td>Kontroler</td><td>sisi terpanjang 1280px</td><td>Mempertahankan transparansi (RGBA)</td></tr>
+                <tr><td>Perangkat Keras</td><td>sisi terpanjang 1280px</td><td>Mempertahankan transparansi (RGBA)</td></tr>
+                <tr><td>Fanart</td><td>Dilewati</td><td>Tidak distandardisasi (dibiarkan pada ukuran asli)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Cara Menjalankan</h3>
+        <ol>
+            <li>Buka <strong>Settings &rarr; System &rarr; Maintenance</strong> atau <strong>ROM Tools &rarr; Image Resizer</strong></li>
+            <li>Klik <strong>"Start"</strong> untuk memulai standardisasi massal</li>
+            <li>Job berjalan di latar belakang dengan kemajuan toast yang menampilkan berkas dan statistik saat ini</li>
+            <li>Gambar juga otomatis distandardisasi selama pengambilan data (unduhan baru langsung distandardisasi)</li>
+        </ol>
+
+        <h3>Dukungan Perangkat Keras</h3>
+        <p>Model Real-ESRGAN otomatis mendeteksi perangkat keras Anda dan menggunakan penyedia terbaik yang tersedia:</p>
+        <ul>
+            <li><strong>CUDA</strong> &mdash; Akselerasi GPU NVIDIA</li>
+            <li><strong>ROCm</strong> &mdash; Akselerasi GPU AMD (dengan override versi gfx otomatis untuk seri RX 6000)</li>
+            <li><strong>CoreML</strong> &mdash; Akselerasi Apple Silicon</li>
+            <li><strong>CPU</strong> &mdash; Fallback untuk sistem tanpa dukungan GPU</li>
+        </ul>
+        <p>Berkas model ONNX diunduh otomatis dari Hugging Face saat pertama kali digunakan dan disimpan di cache lokal.</p>
+    </div>
+</section>
+
+<!-- Logs -->
+<section id="logs" class="help-section card">
+    <h2 class="card-title">Log Viewer</h2>
+    <div class="card-body">
+        <h3>Fungsinya</h3>
+        <p>Penampil terpadu untuk semua log aplikasi. Akses lewat <strong>Log Viewer</strong> di sidebar.</p>
+
+        <h3>Kategori Log</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Kategori</th><th>Isi</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Scraping</strong></td><td>Aktivitas scraper, panggilan API, error, dan hasil per game</td></tr>
+                <tr><td><strong>ROM Tools</strong></td><td>Ekstraksi arsip, konversi CHD, deteksi duplikat, screenshot dedup</td></tr>
+                <tr><td><strong>ROM Reports</strong></td><td>Hasil validasi penamaan</td></tr>
+                <tr><td><strong>Image Resize</strong></td><td>Kemajuan job standardisasi gambar (upscale/downscale per berkas)</td></tr>
+                <tr><td><strong>System</strong></td><td>Aktivitas aplikasi secara umum, tugas pemeliharaan, startup, operasi database</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Fitur</h3>
+        <ul>
+            <li>Saring berdasarkan kategori atau lihat semua log sekaligus</li>
+            <li>Daftar berkas menampilkan tanggal pembuatan dan ukuran berkas</li>
+            <li>Klik berkas log mana pun untuk melihat isi lengkapnya</li>
+            <li>Unduh berkas log satu per satu</li>
+            <li>Jumlah per kategori ditampilkan di bagian atas untuk ringkasan cepat</li>
+            <li>Tingkat log dapat dikonfigurasi di Settings &rarr; System &rarr; Logging</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Maintenance -->
+<section id="maintenance" class="help-section card">
+    <h2 class="card-title">Pemeliharaan</h2>
+    <div class="card-body">
+        <p>Operasi pemeliharaan tersedia di <strong>Settings &rarr; System &rarr; Maintenance</strong>. Fitur ini membantu menjaga perpustakaan Anda tetap bersih dan optimal.</p>
+
+        <h3>Pemindaian Perpustakaan</h3>
+        <ul>
+            <li><strong>Scan Library</strong> &mdash; Pindai direktori ROM Anda untuk mencari game baru. Mendeteksi folder sistem dan jenis berkas yang didukung menggunakan daftar ekstensi <code>systeminfo.txt</code> gaya ES-DE. Juga tersedia dari Dasbor.</li>
+        </ul>
+
+        <h3>Operasi Pembersihan</h3>
+        <ul>
+            <li><strong>Clean Missing ROMs</strong> &mdash; Hapus entri database untuk game yang berkas ROM-nya tidak lagi ada di disk. Berguna setelah mengatur ulang atau menghapus berkas ROM.</li>
+            <li><strong>Orphan Media Cleanup</strong> &mdash; Temukan dan hapus berkas gambar di disk (boxart, screenshot, fanart) yang tidak memiliki referensi database yang sesuai. Pratinjau sebelum menghapus untuk konfirmasi.</li>
+            <li><strong>Clear Scraped Data</strong> &mdash; Hapus semua metadata hasil scraping dari game sambil mempertahankan entri berkas ROM. Berguna untuk memulai ulang dari awal dengan scraping. Pratinjau menampilkan game yang terpengaruh sebelum dijalankan.</li>
+            <li><strong>Clear CLZ Imports</strong> &mdash; Hapus semua catatan impor CLZ Games (entri hanya metadata tanpa berkas ROM).</li>
+        </ul>
+
+        <h3>Optimasi Database</h3>
+        <ul>
+            <li><strong>Optimize Database</strong> &mdash; Menjalankan VACUUM dan ANALYZE SQLite untuk memulihkan ruang penyimpanan dari catatan yang dihapus dan memperbarui statistik perencana kueri. Direkomendasikan setelah penghapusan besar atau operasi pembersihan.</li>
+        </ul>
+
+        <h3>Standardisasi Gambar Massal</h3>
+        <p>Standardisasi semua gambar game ke ukuran target. Lihat <a href="#image-standardization">Image Standardization</a> untuk rincian.</p>
+
+        <h3>Manajemen Server</h3>
+        <ul>
+            <li><strong>Restart Server</strong> &mdash; Mulai ulang aplikasi secara rapi (pembersihan lalu keluar). Tersedia di Settings &rarr; System &rarr; Troubleshooting.</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Multi-User Access -->
+<section id="multi-user" class="help-section card">
+    <h2 class="card-title">Akses Multi-Pengguna</h2>
+    <div class="card-body">
+        <h3>Peran Pengguna</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Peran</th><th>Akses</th><th>Kata Sandi</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Admin</strong></td><td>Akses penuh: pengaturan, manajemen pengguna, pemeliharaan, semua fitur</td><td>Wajib</td></tr>
+                <tr><td><strong>Editor</strong></td><td>Bisa mengedit game, mengambil data, menggunakan ROM tools, mengelola koleksi</td><td>Tidak ada</td></tr>
+                <tr><td><strong>Viewer</strong></td><td>Hanya baca: menjelajahi perpustakaan, melihat detail, melihat achievement/trofi</td><td>Tidak ada</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Mengelola Pengguna</h3>
+        <ol>
+            <li>Buka <strong>Settings &rarr; Account &rarr; Users</strong> (khusus admin)</li>
+            <li>Klik <strong>"Add User"</strong> untuk membuat akun baru</li>
+            <li>Atur nama pengguna, nama tampilan, dan peran</li>
+            <li>Pengguna admin menerima kata sandi bawaan yang harus diganti saat login pertama kali</li>
+        </ol>
+
+        <h3>Autentikasi</h3>
+        <p>Halaman login menampilkan semua pengguna aktif. Akun admin memerlukan kata sandi; peran lain cukup mengklik namanya untuk masuk. Sesi tetap berlangsung sampai keluar (logout).</p>
+
+        <h3>Pengaturan per Pengguna</h3>
+        <p>Setiap pengguna dapat mengonfigurasi miliknya sendiri:</p>
+        <ul>
+            <li>Avatar (unggah gambar kustom)</li>
+            <li>Nama tampilan</li>
+            <li>Preferensi tema</li>
+            <li>Item per halaman</li>
+            <li>Zona waktu</li>
+            <li>Jalur trofi RPCS3</li>
+            <li>Kredensial RetroAchievements (nama pengguna + kunci API)</li>
+            <li>Kredensial PSN (cookie NPSSO)</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Backup -->
+<section id="backup" class="help-section card">
+    <h2 class="card-title">Cadangan & Pemulihan</h2>
+    <div class="card-body">
+        <h3>Membuat Cadangan</h3>
+        <ol>
+            <li>Buka <strong>Settings &rarr; Library &rarr; Backup</strong></li>
+            <li>Klik <strong>"Create Backup"</strong></li>
+            <li>Cadangan disimpan ke folder <code>backups/</code> dengan nama berkas berstempel waktu</li>
+        </ol>
+
+        <h3>Yang Dicadangkan</h3>
+        <p>Cadangan mencakup seluruh database SQLite (<code>roms.db</code>), yang berisi semua metadata game, akun pengguna, pengaturan, data trofi, progres achievement, tag, daftar, dan item wishlist.</p>
+
+        <h3>Yang TIDAK Dicadangkan</h3>
+        <p>Berkas media (boxart, screenshot, fanart, video, manual) TIDAK termasuk dalam cadangan database karena dapat diunduh ulang lewat pengambilan data. Pertimbangkan mencadangkan direktori <code>static/images/</code> Anda secara terpisah jika Anda memiliki unggahan kustom.</p>
+
+        <h3>Memulihkan</h3>
+        <ol>
+            <li>Temukan cadangan di daftar cadangan</li>
+            <li>Klik <strong>"Restore"</strong></li>
+            <li>Konfirmasi aksi tersebut</li>
+        </ol>
+
+        <div class="help-tip">
+            <strong>Peringatan:</strong> Memulihkan cadangan akan menimpa database Anda saat ini. Buat cadangan baru sebelum memulihkan yang lebih lama!
+        </div>
+    </div>
+</section>
+
+<!-- Updating RetroDB -->
+<section id="updating" class="help-section card">
+    <h2 class="card-title">Memperbarui RetroDB</h2>
+    <div class="card-body">
+        <h3>Cara Memperbarui</h3>
+        <ol>
+            <li>Unduh rilis RetroDB terbaru</li>
+            <li>Cadangkan berkas-berkas ini (berisi data pribadi Anda):
+                <ul>
+                    <li><code>config.py</code> (jalur dan kunci API Anda)</li>
+                    <li><code>data/settings.json</code> (preferensi UI Anda)</li>
+                    <li><code>data/scraper_settings.json</code> (konfigurasi scraper Anda)</li>
+                    <li><code>data/rom_tools_config.json</code> (preferensi ROM tools Anda)</li>
+                    <li>folder <code>database/</code> (database perpustakaan game Anda, dan token login PSN/Xbox yang tersimpan)</li>
+                </ul>
+            </li>
+            <li>Ekstrak versi baru menimpa instalasi yang ada</li>
+            <li>Jalankan <code>python install.py</code> untuk memasang dependensi baru</li>
+            <li>Mulai ulang server</li>
+        </ol>
+
+        <h3>Berkas yang Aman untuk Ditimpa</h3>
+        <p>Semua berkas kode sumber (<code>.py</code>, <code>.html</code>, <code>.css</code>, <code>.js</code>) dapat ditimpa dengan aman. Installer tidak akan menimpa berkas konfigurasi pribadi Anda.</p>
+
+        <h3>Berkas yang Harus Disimpan</h3>
+        <p>Jangan pernah menghapus atau menimpa: <code>config.py</code>, <code>database/roms.db</code>, <code>data/settings.json</code>, <code>data/scraper_settings.json</code>, <code>data/rom_tools_config.json</code>.</p>
+
+        <h3>Migrasi Database</h3>
+        <p>RetroDB otomatis menangani perubahan skema database saat startup. Kolom dan tabel baru ditambahkan sesuai kebutuhan tanpa kehilangan data. Anda tidak perlu melakukan apa pun secara khusus &mdash; cukup jalankan versi baru dan database akan diperbarui secara otomatis.</p>
+    </div>
+</section>
+
+<!-- Troubleshooting -->
+<section id="troubleshooting" class="help-section card">
+    <h2 class="card-title">Pemecahan Masalah</h2>
+    <div class="card-body">
+        <h3>Masalah Umum</h3>
+
+        <h4>"No extensions found for system"</h4>
+        <p>Folder sistem memerlukan berkas <code>systeminfo.txt</code> gaya ES-DE yang valid yang mendefinisikan ekstensi berkas ROM yang didukung. Pastikan struktur direktori ROM Anda sesuai dengan standar ES-DE.</p>
+
+        <h4>"API Connection Failed"</h4>
+        <ul>
+            <li>Periksa koneksi internet Anda</li>
+            <li>Verifikasi kunci API di Settings &rarr; Scraping &rarr; API Keys</li>
+            <li>Tunggu jika terkena batas laju (beberapa API memiliki batas harian/jam)</li>
+            <li>Periksa apakah scraper diaktifkan (scraper yang dinonaktifkan menampilkan "Disabled" di status Dasbor)</li>
+            <li>Periksa Log Viewer untuk pesan error yang rinci</li>
+        </ul>
+
+        <h4>"Bulk Scrape Stuck"</h4>
+        <p>Buka Settings &rarr; System &rarr; Troubleshooting &rarr; <strong>"Clear Stuck Bulk Scrape"</strong>. Ini mengatur ulang status job tanpa mempengaruhi data Anda.</p>
+
+        <h4>"RA Sync Queue Stuck"</h4>
+        <p>Bersihkan antrean sinkronisasi RetroAchievements dari Settings &rarr; System &rarr; Troubleshooting.</p>
+
+        <h4>"PSN Sync Stuck"</h4>
+        <p>Bersihkan job penyegaran PSN dari Settings &rarr; System &rarr; Troubleshooting.</p>
+
+        <h4>"Museum Generation Stuck"</h4>
+        <p>Bersihkan job pembuatan museum dari Settings &rarr; System &rarr; Troubleshooting.</p>
+
+        <h4>"Database Errors"</h4>
+        <ol>
+            <li>Buat cadangan jika memungkinkan (Settings &rarr; Library &rarr; Backup)</li>
+            <li>Coba Settings &rarr; System &rarr; Maintenance &rarr; <strong>Optimize Database</strong></li>
+            <li>Periksa hak akses berkas pada direktori <code>database/</code></li>
+            <li>Pilihan terakhir: pulihkan dari cadangan atau hapus database dan pindai ulang</li>
+        </ol>
+
+        <h4>"Images Not Saving"</h4>
+        <p>Periksa hak akses tulis pada direktori media: <code>chmod -R 755 static/images/</code></p>
+
+        <h4>"Page Slow or Unresponsive"</h4>
+        <ul>
+            <li>Koleksi besar mungkin butuh waktu untuk dimuat &mdash; infinite scroll memuat dalam kelompok 100</li>
+            <li>Coba muat ulang halaman untuk membersihkan memori yang menumpuk</li>
+            <li>Periksa konsol peramban untuk error JavaScript</li>
+            <li>Coba beralih ke tema dengan efek canvas yang lebih ringan (mis. Amber atau Elite)</li>
+            <li>Efek canvas otomatis mendeteksi perangkat keras; perangkat kelas bawah menggunakan fallback CPU dengan frame rate yang lebih rendah</li>
+        </ul>
+
+        <h4>Spanduk "Interrupted Jobs" di Dasbor</h4>
+        <p>Jika RetroDB dimulai ulang saat job sedang berjalan, job tersebut akan muncul di spanduk pemulihan. Klik <strong>"Resume"</strong> satu per satu atau <strong>"Resume All"</strong> untuk memulai ulang semuanya. Klik <strong>"Dismiss"</strong> atau <strong>"Dismiss All"</strong> untuk menghapusnya.</p>
+
+        <h4>"PSN Authentication Failed"</h4>
+        <ul>
+            <li>Token NPSSO kedaluwarsa &mdash; buat yang baru dari <code>ca.account.sony.com/api/v1/ssocookie</code></li>
+            <li>Pastikan Anda sudah masuk ke store.playstation.com sebelum mengunjungi URL cookie tersebut</li>
+            <li>RetroDB menyimpan sesi PSN Anda selama kira-kira dua bulan dan sekarang memperbaruinya secara otomatis di latar belakang; jika masih habis masa berlakunya, cukup tempelkan NPSSO baru di Settings &rarr; Account &rarr; PSN</li>
+        </ul>
+
+        <h4>"Xbox Authentication Failed"</h4>
+        <ul>
+            <li>Autentikasi ulang dengan mengklik "Sign In" pada tab Game Imports &rarr; Xbox</li>
+            <li>Token Xbox disimpan di cache dalam <code>data/xbox_tokens.json</code> dan diperbarui secara otomatis</li>
+        </ul>
+
+        <h4>"Image Upscaling Errors"</h4>
+        <ul>
+            <li>Model ONNX Real-ESRGAN diunduh saat pertama kali digunakan &mdash; pastikan ada akses internet</li>
+            <li>Akselerasi GPU memerlukan driver yang kompatibel (CUDA untuk NVIDIA, ROCm untuk AMD)</li>
+            <li>Jika GPU gagal, sistem otomatis kembali ke pemrosesan CPU</li>
+        </ul>
+
+        <h3>Tips Performa</h3>
+        <ul>
+            <li>Jaga peramban Anda tetap mutakhir untuk performa terbaik</li>
+            <li>Tutup tab peramban lain saat bekerja dengan koleksi yang sangat besar</li>
+            <li>Gunakan filter sistem untuk mengurangi jumlah game yang ditampilkan sekaligus</li>
+            <li>Jalankan Optimize Database secara berkala setelah operasi besar (scraping, pembersihan, impor)</li>
+            <li>Efek tema canvas otomatis mendeteksi perangkat keras; perangkat kelas bawah menggunakan fallback CPU</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Security & Disclaimer -->
+<section id="security" class="help-section card">
+    <h2 class="card-title">Keamanan & Penafian</h2>
+    <div class="card-body">
+        <h3>Praktik Terbaik Keamanan</h3>
+        <ul>
+            <li><strong>Ganti kata sandi bawaan</strong> &mdash; Kata sandi admin bawaan (<code>admin</code>) harus segera diganti saat login pertama kali. Gunakan kata sandi kuat setidaknya 8 karakter.</li>
+            <li><strong>Gunakan reverse proxy HTTPS</strong> &mdash; RetroDB tidak menyediakan TLS/SSL sendiri. Tempatkan di belakang reverse proxy (mis. Nginx, Caddy, Traefik) dengan HTTPS diaktifkan untuk mengenkripsi lalu lintas antara klien dan server.</li>
+            <li><strong>Batasi akses jaringan</strong> &mdash; Hindari mengekspos RetroDB langsung ke internet publik. Gunakan VPN atau batasi akses ke jaringan lokal Anda. Jika akses jarak jauh diperlukan, gunakan reverse proxy dengan autentikasi.</li>
+            <li><strong>Buat cadangan rutin</strong> &mdash; Gunakan fitur cadangan bawaan di Settings untuk membuat cadangan database secara berkala. Simpan cadangan di lokasi terpisah dari aplikasi.</li>
+            <li><strong>Jaga RetroDB tetap mutakhir</strong> &mdash; Periksa rilis baru secara berkala. Perbaikan keamanan dan peningkatan disertakan dalam pembaruan.</li>
+            <li><strong>Lindungi kunci API Anda</strong> &mdash; Kunci API disimpan dalam <code>data/scraper_settings.json</code>. Pastikan berkas ini tidak dapat diakses secara publik. Jangan pernah membagikan <code>config.py</code> atau berkas token Anda.</li>
+        </ul>
+
+        <h3>Fitur Keamanan Bawaan</h3>
+        <ul>
+            <li><strong>Hashing kata sandi</strong> &mdash; Kata sandi admin di-hash dengan PBKDF2 (tidak pernah disimpan dalam teks biasa)</li>
+            <li><strong>Pembatasan laju login</strong> &mdash; Perlindungan brute-force pada endpoint login</li>
+            <li><strong>Validasi jalur</strong> &mdash; Semua operasi berkas menggunakan helper <code>safe_path</code> dan <code>safe_filename</code> untuk mencegah serangan directory traversal</li>
+            <li><strong>Kueri berparameter</strong> &mdash; Semua kueri database menggunakan pernyataan berparameter untuk mencegah SQL injection</li>
+            <li><strong>Perlindungan XSS</strong> &mdash; Dialog modal menggunakan konstruksi DOM yang aman; input pengguna di-escape</li>
+            <li><strong>Perlindungan bom dekompresi gambar</strong> &mdash; Jumlah piksel gambar maksimum dibatasi untuk mencegah kehabisan memori akibat gambar berbahaya</li>
+        </ul>
+
+        <h3>Penafian</h3>
+        <p>
+            RetroDB disediakan <strong>"APA ADANYA"</strong>, tanpa jaminan dalam bentuk apa pun, tersurat maupun tersirat,
+            termasuk namun tidak terbatas pada jaminan kelayakan jual, kesesuaian untuk tujuan tertentu,
+            dan tidak adanya pelanggaran. Dalam keadaan apa pun para pengembang atau pemegang hak cipta tidak bertanggung jawab atas klaim,
+            kerusakan, atau kewajiban lain apa pun, baik dalam tindakan kontrak, kesalahan (tort), atau lainnya, yang timbul dari,
+            keluar dari, atau sehubungan dengan perangkat lunak ini atau penggunaan atau transaksi lain dalam perangkat lunak ini.
+        </p>
+        <p>
+            Anda sepenuhnya bertanggung jawab untuk mengamankan penerapan Anda, termasuk konfigurasi jaringan,
+            kontrol akses, cadangan data, dan kepatuhan terhadap hukum yang berlaku terkait konten
+            yang Anda kelola dengan perangkat lunak ini. Para pengembang tidak bertanggung jawab atas akses tidak sah,
+            kehilangan data, atau penyalahgunaan akibat konfigurasi atau penerapan yang tidak tepat.
+        </p>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+.help-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin: 0 calc(-1 * var(--spacing-lg));
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(20, 26, 35, 0.98), rgba(15, 20, 25, 0.98));
+    border-bottom: 2px solid var(--primary-cyan);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(76, 201, 240, 0.2);
+}
+
+.help-nav-item {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.help-nav-item:hover {
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+.help-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.help-section h3 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--primary-cyan);
+    margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+}
+
+.help-section h3:first-child {
+    margin-top: 0;
+}
+
+.help-section h4 {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+}
+
+.help-section ol, .help-section ul {
+    padding-left: 1.5rem;
+    margin: var(--spacing-sm) 0;
+}
+
+.help-section li {
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.help-section p {
+    color: var(--text-secondary);
+    margin: var(--spacing-sm) 0;
+    line-height: 1.6;
+}
+
+.help-section pre {
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    overflow-x: auto;
+    margin: var(--spacing-md) 0;
+    line-height: 1.5;
+}
+
+.help-section code {
+    background: var(--bg-lighter);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--primary-cyan);
+}
+
+.help-section a {
+    color: var(--primary-cyan);
+    text-decoration: none;
+}
+
+.help-section a:hover {
+    text-decoration: underline;
+}
+
+.shortcut-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-sm);
+    margin: var(--spacing-md) 0;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border-radius: var(--radius-md);
+}
+
+.shortcut-item kbd {
+    display: inline-block;
+    min-width: 24px;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    text-align: center;
+}
+
+.shortcut-item span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--primary-cyan);
+}
+
+.help-tip {
+    background: rgba(76, 201, 240, 0.1);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    border-left: 4px solid var(--primary-cyan);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    color: var(--text-secondary);
+}
+
+.help-tip strong {
+    color: var(--primary-cyan);
+}
+
+.data-table {
+    width: 100%;
+    margin: var(--spacing-md) 0;
+}
+
+.data-table th,
+.data-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.data-table th {
+    background: var(--bg-medium);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.data-table td {
+    color: var(--text-primary);
+}
+
+.data-table tbody tr:hover {
+    background: rgba(76, 201, 240, 0.05);
+}
+</style>
+{% endblock %}

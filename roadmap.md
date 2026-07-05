@@ -315,6 +315,40 @@ are tracked here so the next pass picks them up:
 
 ---
 
+### Pass 56 — Language expansion: eleven new locales (2026-07-05)
+
+> Source: user request 2026-07-05 — "since I am South African, please add these
+> languages: Afrikaans, Zulu, Xhosa … also Dutch, Norwegian, Russian … Polish,
+> Turkish, Ukrainian, Indonesian … and languages used in Israel (Hebrew)."
+
+#### Pass 56.1 Eleven new UI-catalog language packs (FEATURE, L)
+- **Status**: done (v3.20.0, 2026-07-05). Adds catalogs for **`af` Afrikaans,
+  `zu` isiZulu, `xh` isiXhosa, `nl` Dutch, `nb` Norwegian Bokmål, `ru` Russian,
+  `pl` Polish, `tr` Turkish, `uk` Ukrainian, `id` Indonesian, `he` Hebrew** —
+  taking the shipped UI-locale set from 10 (+`eo` pseudo) to 21. **Zero code
+  changes**: the Settings dropdown, the `/api/users/settings` validator, the
+  locale selector, and the endonym labels all read `available_locales()`
+  (`services/i18n.py`), which enumerates compiled `.mo` files — a new catalog
+  auto-appears. Each locale is full-parity with the existing 9 human-translation
+  locales: UI catalog (~1888 msgids), the 14-entry recent changelog
+  (`data/changelog.<code>.yaml`), and the ~2000-line help manual
+  (`templates/help.<code>.html`).
+- **Pipeline** (new reusable tool `scripts/apply_po_translations.py`):
+  `pybabel init -l <code>` → per-locale JSON `{msgid: translation}` → the apply
+  script fills the `.po` via `babel.messages.pofile` and **hard-fails on any
+  missing msgid or dropped placeholder** (`%(name)s` / `%d` / `{n}`) → `pybabel
+  compile`. The strict validator is the completeness gate; `check_i18n_fresh.py`
+  stays green because the msgid *set* is unchanged (only new locales added).
+- **Quality notes**: `zu` / `xh` are low-resource for software — everyday words
+  translated, specialised computing/gaming jargon (ROM, scraper, box art…) kept
+  in English per real-world isiZulu/isiXhosa localisation practice; a native
+  proofread is the recommended follow-up. `he` ships correct Hebrew **text** but
+  renders in the still-LTR layout — proper right-to-left layout is **Pass 43.4**
+  (now un-gated by this Hebrew catalog); Arabic was deliberately deferred to that
+  pass for the same reason.
+
+---
+
 ### Pass 55 — Scraper throughput (2026-07-05)
 
 > Source: user request 2026-07-05 — "are there any performance improvements that
@@ -3853,7 +3887,7 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   anchors — no `[javascript:]` mapping, since Babel's JS extractor mis-parses the
   codebase). CI gate `scripts/check_i18n_fresh.py`. ~340 JS strings wrapped.
 
-#### Pass 43.4 RTL layout support (LOW, L)
+#### Pass 43.4 RTL layout support + Arabic (MEDIUM, L)
 
 - **Target**: `static/css/core/*.css`, every grid/flex layout, every
   text-align/margin-left utility.
@@ -3863,10 +3897,21 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `text-align: left`) to logical properties (`margin-inline-start/end`,
   `text-align: start`).  Add `[dir="rtl"]` overrides where logical
   properties don't reach (icons, chevrons, sortable column arrows).
-  `<html dir="rtl">` driven by locale class.  Defer until at least one
-  RTL translation lands — a feature without a user is dead weight.
-- **Status**: deferred — gated on Pass 43.1 plus a translator who
-  ships an RTL `.po`.
+  `<html dir="rtl">` driven by locale class (`app.py::select_locale` result →
+  Babel `Locale.parse(code).text_direction`).  The CSS audit is the bulk:
+  ~360 physical `left/right` rules, zero logical, no `[dir]` handling as of
+  Pass 56.
+- **Status**: **un-gated (2026-07-05).** Pass 56 shipped a **Hebrew** (`he`)
+  catalog — the first RTL `.po`, so the "needs a real RTL user" gate is now met.
+  Hebrew currently renders correct Hebrew *text* in the still-LTR layout; this
+  pass is what makes the layout mirror properly. **Also add Arabic (`ar`) here:**
+  Arabic was deliberately held out of Pass 56's translation batch precisely
+  because it needs this layout work first — once RTL layout lands, adding the
+  `ar` catalog (same pipeline as Pass 56: `pybabel init` → translate →
+  `scripts/apply_po_translations.py` → compile) is translation-only. Scope:
+  the CSS logical-property conversion (shared by `he` + `ar`) **plus** the `ar`
+  catalog. Bumped priority MEDIUM (was LOW) now that a shipped RTL locale
+  depends on it.
 
 #### Pass 43.5 Bulk template/string migration + real-language catalogs (MEDIUM, L)
 

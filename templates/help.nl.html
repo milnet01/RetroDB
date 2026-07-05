@@ -1,0 +1,2006 @@
+{% extends "base.html" %}
+
+{% block title %}Help - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ _('Help & Documentation') }}</h1>
+        <p class="page-subtitle">{% trans version=config.APP_VERSION %}Complete guide to RetroDB v{{ version }}{% endtrans %}</p>
+    </div>
+</div>
+
+<!-- Help Navigation -->
+<div class="help-nav" data-sticky-nav>
+    <a href="#installation" class="help-nav-item">Installatie</a>
+    <a href="#getting-started" class="help-nav-item">Aan de slag</a>
+    <a href="#platform-notes" class="help-nav-item">Platformnotities</a>
+    <a href="#navigation" class="help-nav-item">Navigatie</a>
+    <a href="#keyboard-shortcuts" class="help-nav-item">Sneltoetsen</a>
+    <a href="#themes" class="help-nav-item">Thema's</a>
+    <a href="#dashboard" class="help-nav-item">Dashboard</a>
+    <a href="#systems" class="help-nav-item">Systemen</a>
+    <a href="#api-keys" class="help-nav-item">API-sleutels</a>
+    <a href="#settings" class="help-nav-item">Instellingen</a>
+    <a href="#scraping" class="help-nav-item">Scrapen</a>
+    <a href="#bulk-scrape" class="help-nav-item">Bulk scrapen</a>
+    <a href="#ai-fill" class="help-nav-item">AI-invulling</a>
+    <a href="#filtering" class="help-nav-item">Filteren</a>
+    <a href="#game-detail" class="help-nav-item">Speldetails</a>
+    <a href="#bulk-edit" class="help-nav-item">Bulkbewerking</a>
+    <a href="#compare" class="help-nav-item">Vergelijken</a>
+    <a href="#collections" class="help-nav-item">Collecties</a>
+    <a href="#game-imports" class="help-nav-item">Spelimporten</a>
+    <a href="#retroachievements" class="help-nav-item">RetroAchievements</a>
+    <a href="#steam-achievements" class="help-nav-item">Steam</a>
+    <a href="#xbox-achievements" class="help-nav-item">Xbox</a>
+    <a href="#hltb" class="help-nav-item">HLTB</a>
+    <a href="#trophies" class="help-nav-item">Trofeeën</a>
+    <a href="#collector-trophies" class="help-nav-item">Verzamelaarstrofeeën</a>
+    <a href="#museum" class="help-nav-item">Museum</a>
+    <a href="#analytics" class="help-nav-item">Analyse</a>
+    <a href="#reports" class="help-nav-item">Rapporten</a>
+    <a href="#rom-tools" class="help-nav-item">ROM-tools</a>
+    <a href="#normalization" class="help-nav-item">Normalisatie</a>
+    <a href="#image-standardization" class="help-nav-item">Afbeeldingsformaat</a>
+    <a href="#logs" class="help-nav-item">Logboeken</a>
+    <a href="#maintenance" class="help-nav-item">Onderhoud</a>
+    <a href="#multi-user" class="help-nav-item">Meerdere gebruikers</a>
+    <a href="#backup" class="help-nav-item">Back-up</a>
+    <a href="#updating" class="help-nav-item">Bijwerken</a>
+    <a href="#troubleshooting" class="help-nav-item">Probleemoplossing</a>
+    <a href="#security" class="help-nav-item">Beveiliging</a>
+</div>
+
+<!-- Installation -->
+<section id="installation" class="help-section card">
+    <h2 class="card-title">Installatie</h2>
+    <div class="card-body">
+        <h3>Systeemvereisten</h3>
+        <ul>
+            <li><strong>Python 3.8+</strong> met pip</li>
+            <li><strong>Webbrowser</strong> (Chrome, Firefox, Safari, Edge)</li>
+            <li><strong>Besturingssysteem:</strong> Linux, Windows 10/11 of macOS</li>
+        </ul>
+
+        <h3>Snelle installatie</h3>
+        <ol>
+            <li>Pak de RetroDB-ZIP uit naar een map naar keuze</li>
+            <li>Open een terminal/opdrachtprompt in die map</li>
+            <li>Voer uit: <code>python install.py</code></li>
+            <li>Start de server:
+                <ul>
+                    <li>Linux: <code>./start.sh</code></li>
+                    <li>Windows: dubbelklik op <code>start.bat</code></li>
+                    <li>macOS: dubbelklik op <code>start.command</code></li>
+                </ul>
+            </li>
+            <li>Open <code>http://localhost:5000</code> in uw browser</li>
+        </ol>
+
+        <h3>Grafische installatie</h3>
+        <p>Op Linux kunt u ook <code>./setup.sh</code> uitvoeren om een grafische installatiewizard te starten. Deze controleert automatisch op Python/pip/tkinter en begeleidt u vervolgens door elke installatiestap met een visueel voortgangslogboek.</p>
+
+        <h3>Wat install.py doet</h3>
+        <ul>
+            <li>Controleert of Python 3.8+ en pip beschikbaar zijn</li>
+            <li>Installeert Python-afhankelijkheden vanuit <code>requirements.txt</code></li>
+            <li>Maakt <code>config.py</code> aan vanuit het voorbeeldsjabloon</li>
+            <li>Maakt de benodigde mappen aan (database, logboeken, mediamappen)</li>
+            <li>Bouwt de CSS- en JS-bundels</li>
+        </ul>
+
+        <h3>Overschrijven via omgevingsvariabelen</h3>
+        <p>De volgende omgevingsvariabelen kunnen standaardinstellingen overschrijven zonder configuratiebestanden te bewerken:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>Variabele</th><th>Standaard</th><th>Beschrijving</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>RETRODB_DB_PATH</code></td><td><code>database/roms.db</code></td><td>Pad naar het databasebestand</td></tr>
+                <tr><td><code>RETRODB_HOST</code></td><td><code>0.0.0.0</code></td><td>Bind-adres van de server</td></tr>
+                <tr><td><code>RETRODB_PORT</code></td><td><code>5000</code></td><td>Serverpoort</td></tr>
+                <tr><td><code>RETRODB_DEBUG</code></td><td><code>false</code></td><td>Foutopsporingsmodus (<code>true</code> of <code>false</code>) &mdash; schakelt de interactieve Werkzeug-debugger in. Houd dit op <code>false</code> voor elke installatie die vanaf andere apparaten in uw netwerk bereikbaar is.</td></tr>
+                <tr><td><code>RETRODB_SECRET_KEY</code></td><td>Automatisch gegenereerd</td><td>Geheime Flask-sleutel</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Getting Started -->
+<section id="getting-started" class="help-section card">
+    <h2 class="card-title">Aan de slag</h2>
+    <div class="card-body">
+        <h3>Eerste installatie</h3>
+        <p>Bij de eerste start toont RetroDB een <strong>installatiewizard</strong> die u begeleidt door:</p>
+        <ol>
+            <li><strong>Beheerdersaccount</strong> &mdash; Maak uw gebruikersnaam en wachtwoord aan</li>
+            <li><strong>Bibliotheekpad</strong> &mdash; Stel uw ROM-map in</li>
+            <li><strong>ES-DE-integratie</strong> &mdash; Koppel optioneel ES-DE-gamelists en media</li>
+            <li><strong>API-sleutels</strong> &mdash; Voeg optioneel scraper-API-sleutels toe</li>
+        </ol>
+        <p>Klik na het doorlopen van de wizard op <strong>"Bibliotheek scannen"</strong> op het dashboard om uw ROMs te ontdekken.</p>
+
+        <h3>Snelstart-workflow</h3>
+        <ol>
+            <li><strong>Scan</strong> uw bibliotheek om ROMs te importeren</li>
+            <li><strong>Blader</strong> per systeem of bekijk alle spellen in de bibliotheek</li>
+            <li><strong>Scrape</strong> metadata afzonderlijk of gebruik bulk scrapen</li>
+            <li><strong>Organiseer</strong> met tags, lijsten en de verlanglijst</li>
+            <li><strong>Houd</strong> uw voortgang bij met voltooiingsstatus en prestaties</li>
+        </ol>
+
+        <h3>Structuur van de ROM-bibliotheek</h3>
+        <p>RetroDB verwacht dat uw ROMs zijn georganiseerd in systeemmappen binnen uw bibliotheekpad:</p>
+        <pre>ROM Library/
+  nes/
+    Super Mario Bros. (USA).nes
+  snes/
+    Chrono Trigger (USA).sfc
+  psx/
+    Final Fantasy VII (USA)/
+      Final Fantasy VII (USA) (Disc 1).chd
+      Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>Elke systeemmap moet een ES-DE-bestand <code>systeminfo.txt</code> bevatten dat de ondersteunde bestandsextensies definieert. RetroDB leest dit tijdens het scannen om te bepalen welke bestanden geldige ROMs zijn voor elk systeem.</p>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> Als u al met ES-DE hebt gescraped, kan RetroDB die gegevens importeren!
+            Configureer ES-DE-paden in Instellingen &rarr; ES-DE-integratie, of tijdens de installatiewizard.
+        </div>
+    </div>
+</section>
+
+<!-- Platform Notes -->
+<section id="platform-notes" class="help-section card">
+    <h2 class="card-title">Platformnotities</h2>
+    <div class="card-body">
+        <h3>Linux</h3>
+        <ul>
+            <li>Getest op Ubuntu, Fedora, openSUSE en Arch Linux</li>
+            <li>ROM-tools vereisen: <code>sudo apt install p7zip-full unrar mame-tools</code> (Debian/Ubuntu) of het equivalent voor uw distributie</li>
+            <li>Bij gebruik van het systeem-Python handelt het installatieprogramma <code>--break-system-packages</code> automatisch af</li>
+            <li>ROCm-GPU-versnelling ondersteund voor AMD-GPU's (Real-ESRGAN-afbeeldingsupscaling)</li>
+        </ul>
+
+        <h3>Windows</h3>
+        <ul>
+            <li>Download Python van <a href="https://python.org" target="_blank" rel="noopener noreferrer">python.org</a> (vink "Add to PATH" aan tijdens de installatie)</li>
+            <li>ROM-tools: installeer <a href="https://www.7-zip.org/" target="_blank" rel="noopener noreferrer">7-Zip</a>, <a href="https://www.win-rar.com/" target="_blank" rel="noopener noreferrer">WinRAR</a> en <a href="https://www.mamedev.org/" target="_blank" rel="noopener noreferrer">MAME</a> (voor chdman)</li>
+            <li>Gebruik <code>start.bat</code> om te starten, of voer <code>python app.py</code> uit vanuit de opdrachtprompt</li>
+        </ul>
+
+        <h3>macOS</h3>
+        <ul>
+            <li>Python 3 kan worden geïnstalleerd via <a href="https://brew.sh/" target="_blank" rel="noopener noreferrer">Homebrew</a>: <code>brew install python3</code></li>
+            <li>ROM-tools: <code>brew install p7zip unrar rom-tools</code></li>
+            <li>Dubbelklik op <code>start.command</code> in Finder om te starten</li>
+            <li>CoreML-versnelling ondersteund voor Apple Silicon (Real-ESRGAN-afbeeldingsupscaling)</li>
+        </ul>
+
+        <h3>Vereiste ROM-tools per functie</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Functie</th><th>Vereist hulpmiddel</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ZIP-extractie</td><td>unzip (meestal al geïnstalleerd)</td></tr>
+                <tr><td>Ondersteuning voor 7z-archieven</td><td>7z (p7zip-full)</td></tr>
+                <tr><td>Ondersteuning voor RAR-archieven</td><td>unrar</td></tr>
+                <tr><td>CHD-conversie/-verificatie</td><td>chdman (mame-tools)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Navigation -->
+<section id="navigation" class="help-section card">
+    <h2 class="card-title">Navigatie</h2>
+    <div class="card-body">
+        <h3>Zijbalkonderdelen</h3>
+
+        <h4>Hoofdmenu</h4>
+        <ul>
+            <li><strong>Dashboard</strong> &mdash; Gezondheidsscore van de collectie, statistiekenoverzicht, API-status, recent gespeelde/toegevoegde/gescrapete spellen, taakherstel</li>
+            <li><strong>Systemen</strong> &mdash; Blader door platforms met spelaantallen, systeemafbeeldingen, specificaties, filteren op type en functies</li>
+            <li><strong>Bibliotheek</strong> &mdash; Alle spellen met oneindig scrollen, geavanceerd filteren (in-/uitsluiten), zoeken en sorteren</li>
+            <li><strong>Analyse</strong> &mdash; Grafieken en collectiestatistieken verdeeld over 12 tabbladen met exportopties</li>
+        </ul>
+
+        <h4>Trofeeën & prestaties</h4>
+        <ul>
+            <li><strong>RPCS3-trofeeën</strong> &mdash; Lokaal behaalde PS3-trofeeën uit de RPCS3-emulator</li>
+            <li><strong>PSN-trofeeën</strong> &mdash; Synchronisatie van PlayStation Network-trofeeën via de PSN-API</li>
+            <li><strong>Prestaties</strong> &mdash; Voortgangsregistratie van RetroAchievements per systeem</li>
+            <li><strong>Steam-prestaties</strong> &mdash; Steam-prestatieregistratie met details per spel</li>
+            <li><strong>Xbox-prestaties</strong> &mdash; Xbox-prestaties en gamerscore-registratie</li>
+        </ul>
+
+        <h4>Mijn collectie</h4>
+        <ul>
+            <li><strong>Tags</strong> &mdash; Aangepaste, kleurgecodeerde speltags</li>
+            <li><strong>Lijsten</strong> &mdash; Benoemde, samengestelde spellijsten met sleep-en-neerzet-volgorde</li>
+            <li><strong>Verlanglijst</strong> &mdash; Houd bij welke spellen u wilt aanschaffen, met prioriteitsniveaus</li>
+            <li><strong>Verzamelaarstrofeeën</strong> &mdash; Gamification-mijlpalen voor uw collectie</li>
+        </ul>
+
+        <h4>Hulpmiddelen</h4>
+        <ul>
+            <li><strong>ROM-rapporten</strong> &mdash; Validatie van ROM-namen en naleving van naamgevingsnormen</li>
+            <li><strong>Spelimporten</strong> &mdash; Importeren vanuit CLZ, Steam, Xbox en PSN</li>
+            <li><strong>ROM-tools</strong> &mdash; Archiefscanner, CHD-converter/verificatie, dubbeledetector, multi-disc-organizer, deduplicatie van screenshots, afbeeldingsformaat aanpassen</li>
+        </ul>
+
+        <h4>Configuratie</h4>
+        <ul>
+            <li><strong>Instellingen</strong> &mdash; Alle app-configuratie (6 tabbladen met veel subsecties)</li>
+            <li><strong>Logboekviewer</strong> &mdash; Blader door toepassingslogboeken van alle categorieën</li>
+        </ul>
+
+        <h4>Informatie</h4>
+        <ul>
+            <li><strong>Museum</strong> &mdash; Interactieve encyclopedie van gamesystemen met door AI gegenereerde inhoud</li>
+            <li><strong>Help</strong> &mdash; Deze documentatiepagina</li>
+            <li><strong>Changelog</strong> &mdash; Versiegeschiedenis</li>
+        </ul>
+
+        <h3>Zijbalkmarkering</h3>
+        <p>De zijbalk markeert de huidige sectie in cyaan. De context blijft behouden bij het dieper navigeren &mdash; het bekijken van de spellen van een systeem houdt <strong>Systemen</strong> gemarkeerd, het bekijken van een spel vanuit Prestaties houdt <strong>Prestaties</strong> gemarkeerd, enz.</p>
+
+        <h3>Kruimelpad</h3>
+        <p>Het kruimelpad bovenaan elke pagina toont uw navigatiepad. Voorbeelden:</p>
+        <ul>
+            <li><code>Systems &rsaquo; NES &rsaquo; Super Mario Bros.</code></li>
+            <li><code>RetroAchievements &rsaquo; SNES</code></li>
+            <li><code>PSN Trophies &rsaquo; The Last of Us</code></li>
+        </ul>
+
+        <h3>Tabbladen</h3>
+        <p>Veel pagina's gebruiken tabbladen voor organisatie (Instellingen, Analyse, Rapporten, ROM-tools, Prestaties). Tabbladen strekken zich uit over de volledige breedte van de inhoud en onthouden waar mogelijk uw laatste keuze.</p>
+    </div>
+</section>
+
+<!-- Keyboard Shortcuts -->
+<section id="keyboard-shortcuts" class="help-section card">
+    <h2 class="card-title">Sneltoetsen</h2>
+    <div class="card-body">
+        <p>Druk overal op <kbd>?</kbd> om alle sneltoetsen te tonen. Er verschijnt een indicator voor de wachtende toets wanneer er wordt gewacht op de tweede toets in een reeks (bijv. <code>g...</code>).</p>
+
+        <h3>Navigatie (druk op G, gevolgd door een letter)</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>d</kbd> <span>Dashboard</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>s</kbd> <span>Systemen</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>l</kbd> <span>Bibliotheek</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>a</kbd> <span>Analyse</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>t</kbd> <span>Instellingen</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>h</kbd> <span>Help</span></div>
+        </div>
+
+        <h3>Acties</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>/</kbd> <span>Focus op zoeken</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Modaal venster sluiten</span></div>
+            <div class="shortcut-item"><kbd>?</kbd> <span>Sneltoetsen tonen</span></div>
+        </div>
+
+        <h3>Spelpagina's</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>e</kbd> <span>Spel bewerken</span></div>
+            <div class="shortcut-item"><kbd>s</kbd> <span>Spel scrapen</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Door screenshots navigeren</span></div>
+        </div>
+
+        <div class="help-tip">
+            <strong>Let op:</strong> Sneltoetsen zijn uitgeschakeld wanneer een tekstveld, tekstvak of modaal venster is gefocust, om onbedoelde navigatie te voorkomen.
+        </div>
+    </div>
+</section>
+
+<!-- Themes -->
+<section id="themes" class="help-section card">
+    <h2 class="card-title">Thema's</h2>
+    <div class="card-body">
+        <p>RetroDB biedt 7 visuele thema's, elk met een uniek kleurenpalet en geanimeerd canvas-achtergrondeffect. Wijzig thema's in <strong>Instellingen &rarr; Bibliotheek &rarr; Weergave</strong>.</p>
+
+        <h3>Beschikbare thema's</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Thema</th><th>Kleuren</th><th>Achtergrondeffect</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Cyberpunk</strong> (standaard)</td><td>Cyaan &amp; magenta op donkerblauw</td><td>Volumetrische rook/nevel met simplex-ruis</td></tr>
+                <tr><td><strong>Matrix</strong></td><td>Groen op zwart</td><td>Vallende digitale regen (kanji-tekens)</td></tr>
+                <tr><td><strong>Amber</strong></td><td>Amber/oranje op donkerbruin</td><td>CRT-zonsopgangverloop met zonnecorona</td></tr>
+                <tr><td><strong>Ocean</strong></td><td>Blauwgroen &amp; blauw op donkermarine</td><td>Maanreflectie met gelaagde oceaandiepte</td></tr>
+                <tr><td><strong>Cathedral</strong></td><td>Goud &amp; koningspaars op diep paars</td><td>Goddelijke lichtstralen van bovenaf met warme sfeer</td></tr>
+                <tr><td><strong>Blade Runner</strong></td><td>Elektrisch blauw &amp; neonroze op donker blauwgrijs</td><td>Neon stadsgloed met regenstrepen en paarse waas</td></tr>
+                <tr><td><strong>Elite</strong></td><td>Vectorgroen &amp; wit op zuiver zwart</td><td>Wireframe-vectoresthetiek geïnspireerd op Elite (1984)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Hoe het werkt</h3>
+        <ul>
+            <li>Thema's overschrijven CSS-kleurvariabelen &mdash; alle UI-elementen passen zich automatisch aan</li>
+            <li>Canvas-effecten omvatten automatische detectie van het hardwareniveau (hoog/gemiddeld/laag) met GPU-versnelling indien beschikbaar en CPU-terugval voor minder krachtige apparaten</li>
+            <li>Effecten pauzeren wanneer het tabblad niet zichtbaar is, om bronnen te sparen</li>
+            <li>De Cyberpunk-rookstatus blijft behouden bij paginanavigatie voor naadloze overgangen</li>
+            <li>Een subtiele CRT-stijl scanline-overlay past zich aan het kleurenpalet van elk thema aan</li>
+            <li>Uw themavoorkeur wordt opgeslagen in de browser en blijft behouden tussen sessies</li>
+        </ul>
+
+        <h3>Thema-bewuste iconen</h3>
+        <p>Meldingsiconen, taakstatusindicatoren en actie-iconen passen zich automatisch aan het huidige thema aan. Zo kan het succes-icoon een groen vinkje tonen bij Cyberpunk, maar een ander symbool bij Matrix om bij de groen-op-zwart-esthetiek te passen.</p>
+    </div>
+</section>
+
+<!-- Dashboard -->
+<section id="dashboard" class="help-section card">
+    <h2 class="card-title">Dashboard</h2>
+    <div class="card-body">
+        <h3>Gezondheidsscore van de collectie</h3>
+        <p>Een cirkelvormige voortgangsring toont de algehele gezondheid van uw collectie als percentage, kleurgecodeerd op kwaliteit:</p>
+        <ul>
+            <li><strong>Groen</strong> (80%+) &mdash; Uitstekende metadata-dekking</li>
+            <li><strong>Cyaan</strong> (60&ndash;79%) &mdash; Goede dekking met enkele hiaten</li>
+            <li><strong>Oranje</strong> (40&ndash;59%) &mdash; Matige dekking, overweeg bulk scrapen</li>
+            <li><strong>Rood</strong> (&lt;40%) &mdash; Aanzienlijke metadatahiaten</li>
+        </ul>
+        <p>De kleinere ringen eronder tonen de volledigheid van boxart, beschrijvingen en prestatiedekking.</p>
+
+        <h3>Statistiekenoverzicht</h3>
+        <p>Kaarten met een overzicht in één oogopslag:</p>
+        <ul>
+            <li><strong>Totaal aantal systemen</strong> &mdash; Aantal platforms in uw bibliotheek</li>
+            <li><strong>Totaal aantal spellen</strong> &mdash; Totaal aantal spellen (exclusief bonusschijven)</li>
+            <li><strong>Ontbrekende metadata</strong> &mdash; Nog niet gescrapete spellen</li>
+            <li><strong>Compleet</strong> &mdash; Spellen met gescrapete metadata</li>
+        </ul>
+
+        <h3>Recente activiteit</h3>
+        <p>Scrollbare secties met uw recente activiteit (elk verschijnt alleen wanneer er relevante spellen zijn):</p>
+        <ul>
+            <li><strong>Nu aan het spelen</strong> &mdash; Spellen gemarkeerd als "In uitvoering"</li>
+            <li><strong>Recent toegevoegd</strong> &mdash; Nieuwste spellen toegevoegd aan uw bibliotheek</li>
+            <li><strong>Recent bekeken</strong> &mdash; Spellen die u onlangs hebt geopend</li>
+            <li><strong>Recent gescraped</strong> &mdash; Spellen waarvan recent metadata is opgehaald</li>
+        </ul>
+
+        <h3>Snelle acties</h3>
+        <ul>
+            <li><strong>Bibliotheek scannen</strong> &mdash; Scan uw ROM-mappen op nieuwe spellen</li>
+            <li><strong>Willekeurig spel</strong> &mdash; Kies een willekeurig spel uit uw bibliotheek</li>
+        </ul>
+
+        <h3>API-status</h3>
+        <p>Toont de verbindingsstatus van alle geconfigureerde scrapers en API's. Offline of verkeerd geconfigureerde API's tonen een waarschuwingsbanner met een link naar Instellingen.</p>
+
+        <h3>Taakherstel</h3>
+        <p>Als RetroDB opnieuw opstart terwijl er achtergrondtaken lopen (bulk scrapen, RA-synchronisatie, afbeeldingsformaat aanpassen, enz.), verschijnen onderbroken taken in een herstelbanner. Opties:</p>
+        <ul>
+            <li><strong>Hervatten</strong> &mdash; Herstart een afzonderlijke onderbroken taak</li>
+            <li><strong>Alles hervatten</strong> &mdash; Herstart alle onderbroken taken</li>
+            <li><strong>Negeren</strong> &mdash; Verwijder een afzonderlijke taak uit de herstellijst</li>
+            <li><strong>Alles negeren</strong> &mdash; Verwijder alle onderbroken taken</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Systems Browser -->
+<section id="systems" class="help-section card">
+    <h2 class="card-title">Systemenoverzicht</h2>
+    <div class="card-body">
+        <h3>Systemenraster</h3>
+        <p>De pagina Systemen toont alle platforms in uw bibliotheek als kaarten in een responsief metselwerkraster. Elke kaart toont:</p>
+        <ul>
+            <li><strong>Systeemlogo</strong> (aan te passen via Instellingen &rarr; Aanpassing &rarr; Logo's)</li>
+            <li><strong>ROM-aantal</strong> en <strong>aantal niet-gescrapete spellen</strong></li>
+            <li><strong>Systeemtype-badge</strong> &mdash; Console, Handheld, Computer, Arcade of Engine</li>
+            <li><strong>Functiebadges</strong> &mdash; Ondersteuning voor RetroAchievements, lokale trofeeën (RPCS3)</li>
+        </ul>
+
+        <h3>Systeemspecificaties-venster</h3>
+        <p>Klik op de infoknop op een systeemkaart om gedetailleerde hardwarespecificaties te bekijken:</p>
+        <ul>
+            <li>Hardwareafbeelding (foto van de console/het systeem)</li>
+            <li>Fabrikant en releasedatum</li>
+            <li>CPU, GPU, RAM, VRAM</li>
+            <li>Resolutie, kleurdiepte, geluidschip</li>
+            <li>Mediatype (cartridge, schijf, enz.)</li>
+        </ul>
+
+        <h3>Filteren & zoeken</h3>
+        <ul>
+            <li><strong>Tekst zoeken</strong> &mdash; Filter op systeemnaam of mapnaam</li>
+            <li><strong>Typefilter</strong> &mdash; Console, Handheld, Computer, Arcade, Engine</li>
+            <li><strong>Functiefilter</strong> &mdash; Ondersteuning voor RetroAchievements, lokale trofeeën</li>
+            <li>De resultatenbalk toont <em>"X van Y systemen"</em></li>
+            <li>Filters blijven behouden bij het herladen van de pagina via sessieopslag</li>
+        </ul>
+
+        <h3>Spellijst per systeem</h3>
+        <p>Klik op een systeemkaart om de bijbehorende spellen te bekijken. De spellijst per systeem heeft dezelfde functies als de volledige bibliotheekpagina &mdash; oneindig scrollen, zoeken, alle filteropties, bulkselectie en sorteren. Een systeemkop toont de systeemnaam, het aantal spellen en de systeemtype-badge.</p>
+    </div>
+</section>
+
+<!-- API Key Setup Guide -->
+<section id="api-keys" class="help-section card">
+    <h2 class="card-title">Handleiding voor API-sleutels</h2>
+    <div class="card-body">
+        <p>API-sleutels zijn optioneel, maar maken uitgebreide metadata-scraping en extra functies mogelijk. Configureer ze in <strong>Instellingen &rarr; Scrapen &rarr; API-sleutels</strong>.</p>
+
+        <h3>Metadata-scrapers</h3>
+
+        <h4>TheGamesDB</h4>
+        <ol>
+            <li>Ga naar <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a></li>
+            <li>Vraag API-sleutels aan (gratis, handmatig goedgekeurd) &mdash; u ontvangt een <strong>publieke</strong> en <strong>privé</strong>sleutel</li>
+            <li>Voer beide sleutels in bij Instellingen &rarr; API-sleutels &rarr; TheGamesDB</li>
+            <li>De <strong>publieke sleutel</strong> (limiet per IP-adres) wordt gebruikt als primaire sleutel voor het scrapen</li>
+            <li>De <strong>privésleutel</strong> (gedeelde maandelijkse pool) wordt gebruikt als terugvaloptie als de publieke sleutel faalt</li>
+        </ol>
+
+        <h4>IGDB (via Twitch)</h4>
+        <ol>
+            <li>Maak een Twitch-account aan op <a href="https://www.twitch.tv" target="_blank" rel="noopener noreferrer">twitch.tv</a></li>
+            <li>Ga naar <a href="https://dev.twitch.tv/console" target="_blank" rel="noopener noreferrer">dev.twitch.tv/console</a></li>
+            <li>Registreer een nieuwe applicatie (elke naam, elke categorie, <code>http://localhost</code> als OAuth-omleiding)</li>
+            <li>Kopieer de <strong>Client-ID</strong> en genereer een <strong>Client Secret</strong></li>
+            <li>Voer beide in bij Instellingen &rarr; API-sleutels &rarr; IGDB</li>
+        </ol>
+
+        <h4>RAWG.io</h4>
+        <ol>
+            <li>Ga naar <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer">rawg.io/apidocs</a></li>
+            <li>Klik op "Get API Key" en maak een account aan</li>
+            <li>Kopieer uw API-sleutel vanaf het dashboard</li>
+            <li>Voer deze in bij Instellingen &rarr; API-sleutels &rarr; RAWG</li>
+        </ol>
+        <p><em>Gratis niveau: 20.000 verzoeken per maand</em></p>
+
+        <h4>ScreenScraper</h4>
+        <ol>
+            <li>Maak een account aan op <a href="https://www.screenscraper.fr" target="_blank" rel="noopener noreferrer">screenscraper.fr</a></li>
+            <li>Voer uw gebruikersnaam en wachtwoord in bij Instellingen &rarr; API-sleutels &rarr; ScreenScraper</li>
+        </ol>
+        <p><em>Let op: ScreenScraper hanteert dagelijkse verzoeklimieten op basis van uw accountniveau. Bijdragen aan de database verhoogt uw limieten.</em></p>
+
+        <h3>Prestaties & trofeeën</h3>
+
+        <h4>RetroAchievements</h4>
+        <ol>
+            <li>Maak een account aan op <a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a></li>
+            <li>Ga naar <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer">Settings &rarr; API Keys</a> in uw profiel</li>
+            <li>Kopieer uw API-sleutel</li>
+            <li>Voer uw gebruikersnaam en API-sleutel in bij Instellingen &rarr; Account &rarr; RetroAchievements</li>
+        </ol>
+
+        <h4>Steam Web API</h4>
+        <ol>
+            <li>Ga naar <a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener noreferrer">steamcommunity.com/dev/apikey</a></li>
+            <li>Registreer voor een Steam Web API-sleutel (vereist een Steam-account)</li>
+            <li>Voer uw API-sleutel en Steam-ID (of vriendelijke URL) in bij Instellingen</li>
+        </ol>
+        <p><em>Gebruikt voor het importeren van de Steam-bibliotheek en prestatieregistratie.</em></p>
+
+        <h4>Xbox Live</h4>
+        <p>Xbox-authenticatie gebruikt OAuth2 &mdash; er is geen API-sleutel nodig. Meld u rechtstreeks aan met uw Microsoft-account vanaf het tabblad Spelimporten &rarr; Xbox. Tokens worden automatisch gecachet en indien nodig vernieuwd.</p>
+
+        <h4>PlayStation Network (PSN)</h4>
+        <p>PSN gebruikt authenticatie via een NPSSO-cookie. Zie de sectie <a href="#trophies">Trofeeën</a> voor gedetailleerde instructies.</p>
+
+        <h3>AI-aanbieders (voor AI-invulling &amp; Museum)</h3>
+        <p>Er is één AI-aanbieder nodig voor het genereren van AI-invulling-metadata en museuminhoud. Kies uit:</p>
+
+        <table class="data-table">
+            <thead>
+                <tr><th>Aanbieder</th><th>Standaardmodel</th><th>Prijs (invoer / uitvoer per 1M tokens)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0,10 / $0,40</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0,15 / $0,60</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 4.5</td><td>$1,00 / $5,00</td></tr>
+            </tbody>
+        </table>
+        <p>Elke aanbieder biedt meerdere modelniveaus. De goedkoopste modellen werken prima voor metadata en museuminhoud. Configureer uw voorkeursaanbieder en API-sleutel in <strong>Instellingen &rarr; Scrapen &rarr; API-sleutels</strong>.</p>
+    </div>
+</section>
+
+<!-- Settings -->
+<section id="settings" class="help-section card">
+    <h2 class="card-title">Instellingen</h2>
+    <div class="card-body">
+        <p>Instellingen zijn georganiseerd in 6 tabbladen, elk met meerdere subsecties.</p>
+
+        <h3>Tabblad Account</h3>
+        <ul>
+            <li><strong>Mijn profiel</strong> &mdash; Avatar uploaden/verwijderen, weergavenaam, rolinformatie, wachtwoord wijzigen</li>
+            <li><strong>RetroAchievements</strong> &mdash; Gebruikersnaam en API-sleutel voor RA-integratie</li>
+            <li><strong>PSN</strong> &mdash; NPSSO-cookie voor synchronisatie van PlayStation Network-trofeeën</li>
+            <li><strong>Tijdzone</strong> &mdash; Stel uw tijdzone in voor datumweergave in de hele app</li>
+            <li><strong>Gebruikers</strong> &mdash; Gebruikersbeheer: gebruikers toevoegen, bewerken, verwijderen en rollen toewijzen (alleen beheerder)</li>
+        </ul>
+
+        <h3>Tabblad Bibliotheek</h3>
+        <ul>
+            <li><strong>Paden</strong> &mdash; Pad naar de ROM-bibliotheek, locatie van de database</li>
+            <li><strong>Weergave</strong> &mdash; Themakeuze, boxart-stijl (2D/3D), voorkeurssysteem voor leeftijdsclassificatie, aantal items per pagina</li>
+            <li><strong>ROM-naamgeving</strong> &mdash; Plaatsing van lidwoorden (voorop/achteraan "The"), lijst met regio-opties, standaardregio, naamgevingsconventies</li>
+            <li><strong>Back-up</strong> &mdash; Databaseback-ups maken en herstellen</li>
+        </ul>
+
+        <h3>Tabblad Scrapen</h3>
+        <ul>
+            <li><strong>ES-DE</strong> &mdash; Paden naar ES-DE-gamelists en -media voor lokale gegevensimport</li>
+            <li><strong>Scraper</strong> &mdash; Afzonderlijke scrapers in-/uitschakelen, prioriteitsvolgorde via slepen en neerzetten, instellingen voor snelheidslimieten per scraper</li>
+            <li><strong>API-sleutels</strong> &mdash; Alle scraper-inloggegevens (TGDB, IGDB, RAWG, ScreenScraper), keuze van AI-aanbieder en model (Gemini, OpenAI, Claude)</li>
+        </ul>
+
+        <h3>Tabblad Gegevens</h3>
+        <ul>
+            <li><strong>Statistieken</strong> &mdash; Overzicht van bibliotheekstatistieken (totaal aantal spellen, systemen, opslaggebruik)</li>
+            <li><strong>Trofeeën</strong> &mdash; Configuratie van het RPCS3-trofeeënpad voor het lokaal scannen van PS3-trofeeën</li>
+            <li><strong>Vervolgkeuzelijsten</strong> &mdash; Pas regio-opties en andere vervolgkeuzewaarden aan die in de hele app worden gebruikt</li>
+            <li><strong>Normalisatie</strong> &mdash; Normalisatieregels voor genre en spelmodi &mdash; voeg aangepaste toewijzingen toe om de scraper-uitvoer te standaardiseren</li>
+        </ul>
+
+        <h3>Tabblad Aanpassing</h3>
+        <ul>
+            <li><strong>Meldingen</strong> &mdash; Time-outvoorkeuren voor meldingen (succes, info, waarschuwing, fout &mdash; elk afzonderlijk instelbaar)</li>
+            <li><strong>Controllers</strong> &mdash; Beheer de controllerbibliotheek, stel standaardcontrollers per systeem in, voeg aangepaste controllers toe. Standaardcontrollers overschrijven gescrapete/AI-waarden tijdens het ophalen van metadata.</li>
+            <li><strong>Logo's</strong> &mdash; Aanpassing van systeemlogo's &mdash; importeer systeemlogo's of ververs vanaf de standaardwaarden</li>
+        </ul>
+
+        <h3>Tabblad Systeem</h3>
+        <ul>
+            <li><strong>Onderhoud</strong> &mdash; Database-optimalisatie (VACUUM/ANALYZE), opruimen van verweesde media, ontbrekende ROMs opschonen, gescrapete gegevens wissen, CLZ-importen wissen, bulk-afbeeldingsstandaardisatie</li>
+            <li><strong>Server</strong> &mdash; Serverconfiguratie (host, poort, foutopsporingsmodus)</li>
+            <li><strong>Logboekregistratie</strong> &mdash; Loglevelinstellingen per categorie</li>
+            <li><strong>Probleemoplossing</strong> &mdash; Vastgelopen bulk scrapen wissen, RA-synchronisatiewachtrij wissen, PSN-vernieuwing wissen, museumgeneratie wissen, server herstarten</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> Uitgeschakelde scrapers activeren geen "API offline"-waarschuwingen op het dashboard. Als u een scraper niet gebruikt, schakel deze dan uit bij Instellingen &rarr; Scrapen &rarr; Scraper in plaats van de API-sleutel te verwijderen.
+        </div>
+    </div>
+</section>
+
+<!-- Scraping -->
+<section id="scraping" class="help-section card">
+    <h2 class="card-title">Metadata scrapen</h2>
+    <div class="card-body">
+        <h3>Eén spel scrapen</h3>
+        <ol>
+            <li>Open het detailvenster van een spel (klik op de spelkaart)</li>
+            <li>Klik op <strong>"Scrape"</strong></li>
+            <li>Pas de zoektitel aan indien nodig</li>
+            <li>Selecteer het juiste resultaat uit de gevonden overeenkomsten</li>
+            <li>Klik op <strong>"Toepassen"</strong></li>
+        </ol>
+
+        <h3>Scraperbronnen</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Bron</th><th>API-sleutel</th><th>Het beste voor</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ES-DE (lokaal)</td><td>Nee</td><td>Reeds gescrapete collecties &mdash; importeert gamelist.xml en gedownloade media</td></tr>
+                <tr><td>TheGamesDB</td><td>Ja</td><td>Platformspecifieke boxart, 3D-boxart</td></tr>
+                <tr><td>IGDB</td><td>Ja</td><td>Moderne spellen, gedetailleerde info, genres, beoordelingen</td></tr>
+                <tr><td>RAWG.io</td><td>Ja</td><td>Gebruikersbeoordelingen, beschrijvingen, screenshots</td></tr>
+                <tr><td>ScreenScraper</td><td>Ja</td><td>Regionale varianten, 3D-boxart, video's, handleidingen</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Hybride scrapen</h3>
+        <p>RetroDB combineert automatisch gegevens uit meerdere bronnen om de metadata-dekking te maximaliseren:</p>
+        <ul>
+            <li>Tekstmetadata uit de best beschikbare bron met de hoogste prioriteit</li>
+            <li>Afbeeldingen en media uit secundaire bronnen wanneer de primaire bron ze niet heeft</li>
+            <li>Automatisch opvullen van hiaten tussen scrapers voor maximale dekking</li>
+            <li>De sorteertitel wordt tijdens het scrapen automatisch gegenereerd op basis van de speltitel</li>
+        </ul>
+
+        <h3>Media-afhandeling</h3>
+        <ul>
+            <li>Mediavelden (boxart, 3D-boxart, screenshots, fanart, video, handleiding) worden tijdens normaal scrapen <strong>nooit vervangen</strong> &mdash; alleen ingevuld wanneer ze leeg zijn</li>
+            <li>Screenshots worden altijd <strong>toegevoegd</strong>, nooit vervangen</li>
+            <li>Om media opnieuw te downloaden, wist u eerst de bestaande afbeelding in het bewerkingsvenster en scrapet u vervolgens opnieuw</li>
+            <li>De modus <strong>Volledig opnieuw scrapen</strong> negeert dit en vervangt alles</li>
+            <li>Verouderde mediaverwijzingen (bestand verwijderd, maar bestandsnaam nog in de database) worden vóór het scrapen automatisch gewist, zodat verse media kan worden gedownload</li>
+            <li>Gedownloade afbeeldingen worden automatisch gestandaardiseerd naar doelformaten (zie <a href="#image-standardization">Afbeeldingsstandaardisatie</a>)</li>
+        </ul>
+
+        <h3>Scraperprioriteit</h3>
+        <p>Configureer welke scrapers als eerste draaien en welke in-/uitgeschakeld zijn bij <strong>Instellingen &rarr; Scrapen &rarr; Scraper</strong>. Sleep om de prioriteit te herschikken. Uitgeschakelde scrapers worden niet geprobeerd tijdens het scrapen en activeren geen API-statuswaarschuwingen op het dashboard.</p>
+
+        <h3>Snelheidslimiet</h3>
+        <p>Elke scraper heeft instelbare snelheidslimieten om API-drosseling te voorkomen. Standaardvertragingen zijn voorzichtig ingesteld. Verlaag de vertragingen op eigen risico &mdash; het overschrijden van API-snelheidslimieten kan leiden tot tijdelijke blokkering door de betreffende dienst.</p>
+    </div>
+</section>
+
+<!-- Bulk Scraping -->
+<section id="bulk-scrape" class="help-section card">
+    <h2 class="card-title">Bulk scrapen</h2>
+    <div class="card-body">
+        <h3>Een bulk scrape starten</h3>
+        <ol>
+            <li>Ga naar een systeem- of bibliotheekpagina</li>
+            <li>Klik op <strong>"Selecteren"</strong> om de selectiemodus te openen</li>
+            <li>Selecteer spellen afzonderlijk of gebruik snelle selectie:
+                <ul>
+                    <li><strong>Alles selecteren</strong> &mdash; Alle zichtbare spellen</li>
+                    <li><strong>Niet-gescrapete selecteren</strong> &mdash; Alleen spellen zonder metadata</li>
+                </ul>
+            </li>
+            <li>Kies modus: <strong>Ontbrekende invullen</strong> of <strong>Volledig opnieuw scrapen</strong></li>
+            <li>Klik op <strong>"Geselecteerde scrapen"</strong></li>
+        </ol>
+
+        <h3>Bediening</h3>
+        <ul>
+            <li><strong>Pauzeren / hervatten</strong> &mdash; Scrapen pauzeren of hervatten</li>
+            <li><strong>Annuleren</strong> &mdash; Volledig stoppen</li>
+            <li><strong>Achtergrond</strong> &mdash; Minimaliseren en verder browsen terwijl het scrapen doorgaat</li>
+        </ul>
+
+        <h3>Meldingsvenster (toast)</h3>
+        <p>Wanneer op de achtergrond actief, toont een blijvende melding de voortgang op alle pagina's:</p>
+        <ul>
+            <li>Huidige spelnaam, voortgangsaantal en resultaatstatistieken (geslaagd, mislukt, overgeslagen)</li>
+            <li>Bediening voor pauzeren/annuleren beschikbaar vanaf elke pagina</li>
+            <li>Klik op de melding om terug te keren naar het scrape-venster</li>
+        </ul>
+
+        <h3>Wachtrijsysteem</h3>
+        <p>Meerdere bulk scrapes worden automatisch in de wachtrij geplaatst:</p>
+        <ul>
+            <li>Start een nieuwe scrape terwijl er al één loopt &mdash; deze wordt in de wachtrij geplaatst</li>
+            <li>De wachtrij wordt getoond in de melding met het aantal openstaande taken</li>
+            <li>Taken worden automatisch op volgorde verwerkt</li>
+            <li>Gebruik de wachtrijbeheerder om wachtende taken te bekijken, opnieuw te ordenen of te annuleren</li>
+        </ul>
+
+        <h3>Scrape-opties</h3>
+        <ul>
+            <li><strong>Alleen ontbrekende invullen</strong> &mdash; Vult alleen lege metadatavelden in, bestaande gegevens blijven behouden</li>
+            <li><strong>Volledig opnieuw scrapen</strong> &mdash; Vervangt alle velden, inclusief media (downloadt nieuwe afbeeldingen en video's)</li>
+            <li><strong>RetroAchievements controleren</strong> &mdash; Controleer tijdens het scrapen ook op RetroAchievements-prestatiesets</li>
+        </ul>
+
+        <h3>Taakherstel</h3>
+        <p>Als RetroDB opnieuw wordt opgestart terwijl een taak loopt, verschijnen onderbroken taken in een herstelbanner op het dashboard. Klik op <strong>"Hervatten"</strong> bij afzonderlijke taken of op <strong>"Alles hervatten"</strong> om ze allemaal te herstarten. De voortgangsmelding verschijnt direct na het hervatten.</p>
+    </div>
+</section>
+
+<!-- AI Fill -->
+<section id="ai-fill" class="help-section card">
+    <h2 class="card-title">AI-invulling</h2>
+    <div class="card-body">
+        <h3>Wat het doet</h3>
+        <p>AI-invulling gebruikt een groot taalmodel (Gemini, OpenAI of Claude) om ontbrekende of onvolledige spelmetadata intelligent aan te vullen. Het is slimmer dan gewoon scrapen, omdat het contextuele kennis over het spel gebruikt om nauwkeurige gegevens te leveren die scrapers mogelijk niet hebben.</p>
+
+        <h3>Hoe te gebruiken</h3>
+        <ol>
+            <li>Open het detailvenster van een spel (of de volledige detailpagina)</li>
+            <li>Klik op <strong>"AI Fill"</strong> (vereist een AI-API-sleutel geconfigureerd in Instellingen)</li>
+            <li>AI analyseert de speltitel en het systeem en vult vervolgens de ontbrekende velden in</li>
+            <li>Controleer de resultaten &mdash; wijzigingen worden automatisch opgeslagen</li>
+        </ol>
+
+        <h3>Wat AI-invulling kan leveren</h3>
+        <ul>
+            <li>Genre, beschrijving, ontwikkelaar, uitgever, releasedatum</li>
+            <li>Aantal spelers, spelmodi (Single-Player, Multi-Player, Co-op, enz.)</li>
+            <li>Campagne-informatie en spelstructuur</li>
+            <li>Alle 8 leeftijdsclassificatiesystemen (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd)</li>
+            <li>Regio, franchise, vergelijkbare spellen</li>
+            <li>Controllerondersteuning, opslagtype</li>
+            <li>Perspectief (First-Person, Top-Down, Side-Scroller, enz.), dimensie (2D, 3D)</li>
+            <li>Editie-informatie, criticus- en gebruikersscores</li>
+        </ul>
+
+        <h3>Slimme invullogica</h3>
+        <ul>
+            <li><strong>Lege velden</strong> worden altijd ingevuld</li>
+            <li><strong>Bestaande gebruikersgegevens</strong> worden nooit overschreven</li>
+            <li><strong>Vergelijkbare spellen</strong> worden altijd ververst (AI-gegevens zijn betrouwbaarder voor dit veld)</li>
+            <li><strong>Kruisgekoppelde beoordelingen</strong> &mdash; Als één beoordelingssysteem bekend is, worden lege beoordelingen in andere systemen automatisch ingevuld via kruiskoppeling op basis van leeftijdscategorieën</li>
+            <li><strong>Sorteertitel</strong> wordt automatisch gegenereerd wanneer deze wordt ingevuld</li>
+            <li>Het veld <strong>Aantal spelers</strong> normaliseert bereiken (bijv. "1-4" wordt 4)</li>
+        </ul>
+
+        <h3>Genre-normalisatie</h3>
+        <p>AI-invulling gebruikt canonieke genrevormen met namen met koppeltekens:</p>
+        <ul>
+            <li><code>First-Person-Shooter</code>, <code>Shoot-em-up</code>, <code>Beat-em-up</code></li>
+            <li><code>Hack-n-Slash</code>, <code>Board-Card</code>, <code>Real-Time Strategy</code></li>
+        </ul>
+
+        <h3>Vereisten</h3>
+        <p>Er moet minstens één API-sleutel van een AI-aanbieder zijn geconfigureerd in <strong>Instellingen &rarr; Scrapen &rarr; API-sleutels</strong>. Het goedkoopste modelniveau (Gemini Flash Lite, GPT-4o Mini of Claude Haiku) werkt prima voor metadata.</p>
+    </div>
+</section>
+
+<!-- Filtering -->
+<section id="filtering" class="help-section card">
+    <h2 class="card-title">Filteren & zoeken</h2>
+    <div class="card-body">
+        <h3>Zoeken</h3>
+        <p>Zoeken filtert spellen op titel (en sorteertitel). Druk op <kbd>/</kbd> om het zoekveld te focussen. Resultaten worden in real-time bijgewerkt met een debounce van 300 ms.</p>
+
+        <h3>Bronfilter</h3>
+        <p>Filter spellen op importbron:</p>
+        <ul>
+            <li><strong>ROM-bestanden</strong> &mdash; Spellen uit uw ROM-bibliotheek</li>
+            <li><strong>CLZ-importen</strong> &mdash; Fysieke spellen geïmporteerd vanuit CLZ</li>
+            <li><strong>Steam-importen</strong> &mdash; Spellen geïmporteerd vanuit Steam</li>
+            <li><strong>Xbox-importen</strong> &mdash; Spellen geïmporteerd vanuit Xbox</li>
+            <li><strong>PSN-importen</strong> &mdash; Spellen geïmporteerd vanuit PlayStation Network</li>
+        </ul>
+
+        <h3>Filterknoppen</h3>
+        <p>Elk filter opent een venster met alle unieke waarden in uw bibliotheek, inclusief aantallen. Filters ondersteunen twee modi:</p>
+        <ul>
+            <li><strong>Inclusief (IS)</strong> &mdash; Toon alleen spellen die overeenkomen met de geselecteerde waarde</li>
+            <li><strong>Exclusief (IS NIET)</strong> &mdash; Verberg spellen die overeenkomen met de geselecteerde waarde</li>
+        </ul>
+        <p>Schakel tussen inclusieve en exclusieve modus met de schakelaar in het filtervenster.</p>
+
+        <h3>Beschikbare filters</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Filter</th><th>Beschrijving</th><th>Meerdere waarden</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Genre</strong></td><td>Actie, RPG, Platformer, enz.</td><td>Ja</td></tr>
+                <tr><td><strong>Serie</strong></td><td>Spelfranchise</td><td>Ja</td></tr>
+                <tr><td><strong>Uitgever</strong></td><td>Uitgeverij</td><td>Ja</td></tr>
+                <tr><td><strong>Ontwikkelaar</strong></td><td>Ontwikkelstudio</td><td>Ja</td></tr>
+                <tr><td><strong>Spelers</strong></td><td>Aantal spelers</td><td>Nee</td></tr>
+                <tr><td><strong>Modi</strong></td><td>Single-Player, Multi-Player, Co-op</td><td>Ja</td></tr>
+                <tr><td><strong>Perspectief</strong></td><td>First-Person, Top-Down, Isometric, Side-Scroller</td><td>Ja</td></tr>
+                <tr><td><strong>Dimensie</strong></td><td>2D, 3D</td><td>Ja</td></tr>
+                <tr><td><strong>Classificatie</strong></td><td>Leeftijdsclassificatie (toont uw voorkeurssysteem)</td><td>Nee</td></tr>
+                <tr><td><strong>Heeft RA</strong></td><td>Spellen met ondersteuning voor RetroAchievements</td><td>Nee</td></tr>
+                <tr><td><strong>Bonus tonen</strong></td><td>Zichtbaarheid van bonusschijven in-/uitschakelen</td><td>Nee</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Sorteeropties</h3>
+        <ul>
+            <li><strong>Titel</strong> &mdash; Alfabetisch op sorteertitel (niet hoofdlettergevoelig)</li>
+            <li><strong>Releasedatum</strong> &mdash; Chronologische volgorde (eerste eerst)</li>
+            <li><strong>Platform</strong> &mdash; Gegroepeerd op systeemnaam</li>
+        </ul>
+
+        <h3>Alfabetnavigatie</h3>
+        <p>Spring naar spellen die met een bepaalde letter beginnen. Letters zonder overeenkomende spellen zijn grijs weergegeven. Cijfers en symbolen zijn gegroepeerd onder <strong>#</strong>.</p>
+
+        <h3>Oneindig scrollen</h3>
+        <p>Spellen worden geladen in batches van 100 terwijl u scrolt. Nieuwe pagina's worden automatisch geladen wanneer u de onderkant nadert. Het wijzigen van filters of zoekopdracht reset en herlaadt de resultaten direct.</p>
+
+        <h3>Behoud van status</h3>
+        <p>Uw huidige filters, zoekterm en scrollpositie worden opgeslagen in de sessieopslag. Ze worden hersteld wanneer u terugkeert naar de pagina of deze vernieuwt.</p>
+    </div>
+</section>
+
+<!-- Game Detail -->
+<section id="game-detail" class="help-section card">
+    <h2 class="card-title">Speldetails</h2>
+    <div class="card-body">
+        <h3>Spel-detailvenster</h3>
+        <p>Door op een spelkaart te klikken, opent u een detailvenster met een gecachete snelweergave. Het venster toont:</p>
+        <ul>
+            <li>Boxart (2D en 3D), fanart-achtergrond</li>
+            <li>Beschrijving en release-informatie</li>
+            <li>Ontwikkelaar, uitgever, genrebadges</li>
+            <li>Aantal spelers, spelmodi, spelstructuur</li>
+            <li>Leeftijdsclassificatie-afbeelding (van uw voorkeurssysteem, met kruiskoppeling als terugvaloptie)</li>
+            <li>Screenshotgalerij met toetsenbordnavigatie (<kbd>&larr;</kbd> <kbd>&rarr;</kbd>)</li>
+            <li>Trailervideo (indien beschikbaar)</li>
+            <li>HLTB-speeltijdschattingen (hoofdverhaal, hoofdverhaal + extra's, volledig voltooid)</li>
+            <li>Status en voortgang van RetroAchievements</li>
+            <li>Vergelijkbare spellen (klikbare links)</li>
+            <li>Details over controllerondersteuning</li>
+            <li>Aan het spel toegewezen tags</li>
+            <li>Bestandsgrootte en ROM-pad</li>
+        </ul>
+
+        <h3>Volledige spel-detailpagina</h3>
+        <p>Klik op de speltitel-link of navigeer via het kruimelpad om de volledige detailpagina van een spel te bekijken. Extra functies op de volledige pagina zijn onder meer:</p>
+        <ul>
+            <li><strong>Fanart-achtergrondkop</strong> met kruimelpadnavigatie</li>
+            <li><strong>Platform-importbadges</strong> &mdash; Toont CLZ-import, Steam-import, Xbox-import of PSN-import met platformlogo's indien van toepassing</li>
+            <li><strong>Bonusschijfindicator</strong> &mdash; Toont een badge en een "Onderdeel van:"-link naar het hoofdspel met miniatuurafbeelding</li>
+            <li><strong>Verwijderknop</strong> &mdash; Verwijder het spel uit de database (met bevestiging)</li>
+            <li><strong>Wisknop</strong> &mdash; Wis alle gescrapete metadata terwijl de ROM-vermelding behouden blijft</li>
+        </ul>
+
+        <h3>Bewerkingsvenster</h3>
+        <p>Klik op <strong>Bewerken</strong> (of druk op <kbd>e</kbd>) om het bewerkingsvenster te openen, georganiseerd in secties:</p>
+        <ul>
+            <li><strong>Identiteit</strong> &mdash; Titel, sorteertitel (automatisch gegenereerd maar bewerkbaar), franchise, editie</li>
+            <li><strong>Release-informatie</strong> &mdash; Releasedatum, regio (uit een instelbare vervolgkeuzelijst)</li>
+            <li><strong>Gameplay</strong> &mdash; Genre (tags met meerdere selecties), modi, spelstructuur, aantal spelers, ontwikkelaar, uitgever</li>
+            <li><strong>Technisch</strong> &mdash; Controllers (meerdere selecties), opslagtype, perspectief (meerdere waarden), dimensie (meerdere waarden)</li>
+            <li><strong>Leeftijdsclassificaties</strong> &mdash; Alle 8 classificatiesystemen met officiële classificatieafbeeldingen en automatische kruiskoppeling. Het wijzigen van één classificatie vult automatisch lege classificaties in andere systemen in.</li>
+            <li><strong>Scores</strong> &mdash; Criticusscore, gebruikersscore</li>
+            <li><strong>Beschrijving</strong> &mdash; Speltekstbeschrijving</li>
+            <li><strong>Aangepaste afbeeldingen</strong> &mdash; Upload aangepaste boxart (2D), 3D-boxart en fanart. Wis bestaande afbeeldingen om opnieuw scrapen mogelijk te maken.</li>
+            <li><strong>Video / trailer</strong> &mdash; Upload een videotrailer of koppel er een</li>
+        </ul>
+
+        <h3>Snelle acties</h3>
+        <ul>
+            <li><strong>Bewerken</strong> &mdash; Open het bewerkingsvenster (<kbd>e</kbd>)</li>
+            <li><strong>Scrape</strong> &mdash; Haal metadata op uit scraperbronnen (<kbd>s</kbd>)</li>
+            <li><strong>AI Fill</strong> &mdash; Vul ontbrekende velden in met AI (vereist een AI-API-sleutel)</li>
+            <li><strong>Controleren op RA</strong> &mdash; Zoek naar een RetroAchievements-prestatieset</li>
+            <li><strong>HLTB-opzoeken</strong> &mdash; Vind speeltijdschattingen van HowLongToBeat</li>
+        </ul>
+
+        <h3>Voltooiingsstatus</h3>
+        <p>Houd uw voortgang bij met deze statussen (weergegeven als badges op spelkaarten):</p>
+        <ul>
+            <li><strong>Niet gestart</strong> &mdash; Nog niet gespeeld</li>
+            <li><strong>In uitvoering</strong> &mdash; Wordt momenteel gespeeld</li>
+            <li><strong>Gespeeld</strong> &mdash; Gespeeld maar niet uitgespeeld</li>
+            <li><strong>Voltooid</strong> &mdash; Hoofdspel uitgespeeld</li>
+            <li><strong>100%</strong> &mdash; Alles voltooid</li>
+        </ul>
+
+        <h3>Multi-classificatiesysteem</h3>
+        <p>RetroDB ondersteunt 8 internationale leeftijdsclassificatiesystemen:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>Systeem</th><th>Regio</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>ESRB</strong></td><td>Noord-Amerika</td></tr>
+                <tr><td><strong>PEGI</strong></td><td>Europa</td></tr>
+                <tr><td><strong>CERO</strong></td><td>Japan</td></tr>
+                <tr><td><strong>USK</strong></td><td>Duitsland</td></tr>
+                <tr><td><strong>ACB</strong></td><td>Australië</td></tr>
+                <tr><td><strong>FPB</strong></td><td>Zuid-Afrika</td></tr>
+                <tr><td><strong>GRAC</strong></td><td>Zuid-Korea</td></tr>
+                <tr><td><strong>ClassInd</strong></td><td>Brazilië</td></tr>
+            </tbody>
+        </table>
+        <p>Stel uw voorkeurssysteem in bij <strong>Instellingen &rarr; Bibliotheek &rarr; Weergave</strong>. Officiële classificatieafbeeldingen worden getoond op spelkaarten, detailvensters en detailpagina's. Lege classificaties worden tijdens scrapen, AI-invulling en handmatig bewerken automatisch ingevuld vanuit elke beschikbare classificatie via kruiskoppeling op basis van leeftijdscategorieën.</p>
+
+        <h3>Bonusschijven</h3>
+        <p>RetroDB detecteert automatisch bonus-/extraschijven (bijv. soundtrack-cd's, schijven met extra inhoud) en koppelt ze aan het bijbehorende hoofdspel. Bonusschijven zijn standaard verborgen in de bibliotheek &mdash; schakel <strong>"Bonus tonen"</strong> in de filters in om ze weer te geven. Gekoppelde bonusschijven verschijnen in het detailvenster van het hoofdspel.</p>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> Het detailvenster cachet recent bekeken spellen voor sneller laden. Wijzigingen werken de spelkaart op de pagina automatisch bij, zonder dat u hoeft te vernieuwen.
+        </div>
+    </div>
+</section>
+
+<!-- Bulk Edit -->
+<section id="bulk-edit" class="help-section card">
+    <h2 class="card-title">Bulkbewerking</h2>
+    <div class="card-body">
+        <h3>Hoe te gebruiken</h3>
+        <ol>
+            <li>Ga naar een systeem- of bibliotheekpagina</li>
+            <li>Klik op <strong>"Selecteren"</strong> om de selectiemodus te openen</li>
+            <li>Selecteer de spellen die u wilt bewerken (afzonderlijk, Alles selecteren of Niet-gescrapete selecteren)</li>
+            <li>Klik op <strong>"Bulkbewerking"</strong></li>
+            <li>Kies het te wijzigen veld en stel de nieuwe waarde in</li>
+            <li>Kies modus <strong>Vervangen</strong> of <strong>Toevoegen</strong></li>
+            <li>Klik op <strong>"Toepassen"</strong> om alle geselecteerde spellen bij te werken</li>
+        </ol>
+
+        <h3>Vervangen versus toevoegen</h3>
+        <ul>
+            <li><strong>Vervangen</strong> &mdash; Overschrijft de bestaande waarde met de nieuwe</li>
+            <li><strong>Toevoegen</strong> &mdash; Voegt de nieuwe waarde toe aan bestaande waarden (voor velden met meerdere waarden)</li>
+        </ul>
+
+        <h3>Ondersteunde velden</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Veld</th><th>Ondersteunt toevoegen</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Genre</td><td>Ja</td></tr>
+                <tr><td>Uitgever</td><td>Ja</td></tr>
+                <tr><td>Ontwikkelaar</td><td>Ja</td></tr>
+                <tr><td>Franchise</td><td>Ja</td></tr>
+                <tr><td>Regio</td><td>Ja</td></tr>
+                <tr><td>Spelstructuur</td><td>Ja</td></tr>
+                <tr><td>Perspectief</td><td>Ja</td></tr>
+                <tr><td>Dimensie</td><td>Ja</td></tr>
+                <tr><td>Voltooiingsstatus</td><td>Nee (alleen vervangen)</td></tr>
+                <tr><td>Spelers</td><td>Nee (alleen vervangen)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Compare Games -->
+<section id="compare" class="help-section card">
+    <h2 class="card-title">Spellen vergelijken</h2>
+    <div class="card-body">
+        <h3>Wat het doet</h3>
+        <p>Vergelijkt de metadata van twee spellen naast elkaar in een tabelweergave. Handig om metadatakwaliteit te controleren, dubbele vermeldingen op te sporen, of versies van hetzelfde spel op verschillende systemen te vergelijken.</p>
+
+        <h3>Hoe te gebruiken</h3>
+        <ol>
+            <li>Ga naar <strong>Vergelijken</strong> (toegankelijk vanaf de bibliotheekpagina)</li>
+            <li>Zoek en selecteer het eerste spel</li>
+            <li>Zoek en selecteer het tweede spel</li>
+            <li>Bekijk de vergelijkingstabel &mdash; verschillen worden gemarkeerd</li>
+        </ol>
+
+        <h3>Vergeleken velden</h3>
+        <p>Systeem, ontwikkelaar, uitgever, releasedatum, genre, franchise, regio, aantal spelers, modi, perspectief, dimensie, alle 8 leeftijdsclassificaties, gebruikersbeoordeling, criticusscore, speeltijdschattingen, controllerondersteuning, opslagtype, bestandsgrootte, vergelijkbare spellen, beschrijving en meer.</p>
+    </div>
+</section>
+
+<!-- Collections -->
+<section id="collections" class="help-section card">
+    <h2 class="card-title">Collecties (tags, lijsten, verlanglijst)</h2>
+    <div class="card-body">
+        <h3>Tags</h3>
+        <p>Maak aangepaste, kleurgecodeerde tags om uw spellen te organiseren. Tags werken als labels &mdash; elk spel kan meerdere tags hebben en elke tag kan meerdere spellen bevatten.</p>
+        <ul>
+            <li>Maak tags aan met aangepaste namen en kleuren vanaf de pagina <strong>Tags</strong></li>
+            <li>Wijs tags toe aan spellen via het spel-detailvenster</li>
+            <li>Klik op een tag om alle spellen met die tag te bekijken</li>
+            <li>Bewerk of verwijder tags vanaf de tagbeheerpagina</li>
+        </ul>
+
+        <h3>Benoemde lijsten</h3>
+        <p>Maak samengestelde spellijsten met een aangepaste volgorde. Lijsten werken als afspeellijsten &mdash; u bepaalt de exacte volgorde van de spellen.</p>
+        <ul>
+            <li>Maak lijsten aan met een naam, beschrijving en icoon vanaf de pagina <strong>Lijsten</strong></li>
+            <li>Voeg spellen toe aan lijsten via het spel-detailvenster of de lijstpagina</li>
+            <li>Sleep om spellen binnen een lijst opnieuw te ordenen</li>
+            <li>Sorteer op aangepaste volgorde of alfabetisch</li>
+        </ul>
+
+        <h3>Verlanglijst</h3>
+        <p>Houd bij welke spellen u wilt aanschaffen, fysiek of digitaal.</p>
+        <ul>
+            <li>Voeg spellen handmatig toe met titel, systeem, notities en prioriteit (1&ndash;5)</li>
+            <li>Verlanglijst-items kunnen worden gekoppeld aan bestaande bibliotheekspellen indien gevonden</li>
+            <li>Gesorteerd op prioriteit (hoogste eerst), daarna op toevoegdatum</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> Gebruik tags voor overkoepelende labels (bijv. "Favorieten", "Bank-co-op", "Nog te spelen") en lijsten voor specifieke samengestelde collecties (bijv. "Top 10 SNES-spellen", "Spellen om te streamen").
+        </div>
+    </div>
+</section>
+
+<!-- Game Imports -->
+<section id="game-imports" class="help-section card">
+    <h2 class="card-title">Spelimporten</h2>
+    <div class="card-body">
+        <p>Importeer spelcollecties uit externe bronnen. Toegankelijk via <strong>Spelimporten</strong> in de zijbalk. Alle importtypen zijn samengevoegd op één pagina met tabbladen.</p>
+
+        <h3>CLZ Games-import</h3>
+        <p>Importeer uw fysieke spelcollectie vanuit CLZ Games.</p>
+        <ol>
+            <li>Exporteer uw CLZ Games-collectie als PDF</li>
+            <li>Ga naar Spelimporten &rarr; tabblad <strong>CLZ</strong></li>
+            <li>Upload het PDF-bestand</li>
+            <li>Controleer de geïnterpreteerde spellen</li>
+            <li>Selecteer welke spellen u wilt importeren</li>
+        </ol>
+        <p>CLZ-importen worden apart bijgehouden van ROM-spellen (met een <code>clz_import/</code>-voorvoegsel), zodat u zowel fysieke als digitale collecties kunt catalogiseren. CLZ-importen kunnen volledig worden gewist via <strong>Instellingen &rarr; Systeem &rarr; Onderhoud</strong>.</p>
+
+        <h3>Steam-import</h3>
+        <p>Importeer uw Steam-spelbibliotheek en houd prestaties bij.</p>
+        <ol>
+            <li>Configureer uw Steam Web API-sleutel en Steam-ID in Instellingen</li>
+            <li>Ga naar Spelimporten &rarr; tabblad <strong>Steam</strong></li>
+            <li>Klik op <strong>"Bibliotheek ophalen"</strong> om uw Steam-spellen op te halen</li>
+            <li>Selecteer spellen om te importeren (duplicaten worden automatisch gedetecteerd)</li>
+            <li>Geïmporteerde spellen worden getagd met hun Steam-app-ID voor prestatieregistratie</li>
+        </ol>
+
+        <h3>Xbox-import</h3>
+        <p>Importeer uw Xbox-spelbibliotheek via uw Microsoft-account.</p>
+        <ol>
+            <li>Ga naar Spelimporten &rarr; tabblad <strong>Xbox</strong></li>
+            <li>Klik op <strong>"Aanmelden"</strong> om te verifiëren met uw Microsoft-account (OAuth2-stroom)</li>
+            <li>Uw Xbox-titelgeschiedenis wordt automatisch opgehaald</li>
+            <li>Selecteer spellen om te importeren, met detectie van duplicaten</li>
+            <li>Geïmporteerde spellen worden getagd met hun Xbox-titel-ID voor prestatieregistratie</li>
+        </ol>
+        <p>Xbox-tokens worden gecachet in <code>data/xbox_tokens.json</code> en automatisch vernieuwd.</p>
+
+        <h3>PSN-import</h3>
+        <p>Importeer uw PlayStation Network-spelbibliotheek.</p>
+        <ol>
+            <li>Ga naar Spelimporten &rarr; tabblad <strong>PSN</strong></li>
+            <li>Voer uw NPSSO-cookie in (zie <a href="#trophies">Trofeeën &rarr; PSN-authenticatie</a> voor hoe u deze verkrijgt)</li>
+            <li>Klik op <strong>"Bibliotheek ophalen"</strong> om uw PSN-spellen op te halen</li>
+            <li>Selecteer spellen om te importeren</li>
+        </ol>
+
+        <h3>Na het importeren</h3>
+        <ul>
+            <li>Geïmporteerde spellen verschijnen in uw bibliotheek met platformspecifieke badges</li>
+            <li>Gebruik bulk scrapen om metadata op te halen voor geïmporteerde spellen</li>
+            <li>Prestatie-/trofeeënregistratie wordt automatisch gekoppeld aan het bronplatform</li>
+            <li>Geïmporteerde spellen kunnen in de bibliotheek worden gefilterd via het bronfilter</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> Na het importeren van spellen van elk platform kunt u metadata scrapen voor deze spellen met bulk scrapen, net als bij ROM-spellen. Geïmporteerde spellen kunnen ook prestaties bijhouden van hun respectieve platforms.
+        </div>
+    </div>
+</section>
+
+<!-- RetroAchievements -->
+<section id="retroachievements" class="help-section card">
+    <h2 class="card-title">RetroAchievements</h2>
+    <div class="card-body">
+        <h3>Instellen</h3>
+        <ol>
+            <li>Maak een account aan op <a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a></li>
+            <li>Genereer een API-sleutel in uw profielinstellingen</li>
+            <li>Voer uw gebruikersnaam en API-sleutel in bij Instellingen &rarr; Account &rarr; RetroAchievements</li>
+        </ol>
+
+        <h3>Prestatiepagina</h3>
+        <ul>
+            <li><strong>Systeemtabbladen</strong> &mdash; Blader door prestaties per platform (onthoudt uw laatst bekeken tabblad)</li>
+            <li><strong>Alfabetnavigatie</strong> &mdash; Spring naar spellen op eerste letter binnen elk systeemtabblad</li>
+            <li><strong>Voortgang vernieuwen</strong> &mdash; Synchroniseer uw prestatievoortgang vanuit RetroAchievements</li>
+            <li><strong>Algemene statistieken</strong> &mdash; Behaalde prestaties en punten over alle systemen</li>
+            <li><strong>Voortgang per spel</strong> &mdash; Bekijk het voltooiingspercentage per spel met voortgangsbalken</li>
+        </ul>
+
+        <h3>Synchronisatiewachtrij</h3>
+        <p>Meerdere systeemsynchronisaties kunnen in de wachtrij worden geplaatst:</p>
+        <ul>
+            <li>Klik op "Voortgang vernieuwen" bij elk systeem om een synchronisatie te starten of in de wachtrij te plaatsen</li>
+            <li>Als er al een synchronisatie loopt, worden nieuwe verzoeken automatisch in de wachtrij geplaatst</li>
+            <li>De wachtrij wordt automatisch verwerkt zodra de huidige synchronisatie is voltooid</li>
+            <li>De melding toont de huidige voortgang en het aantal in de wachtrij</li>
+        </ul>
+
+        <h3>Spellen met prestaties vinden</h3>
+        <ul>
+            <li><strong>Bibliotheekfilter</strong> &mdash; Gebruik het filter "Heeft RA" om alleen spellen met prestaties te tonen</li>
+            <li><strong>Controleren op RA</strong> &mdash; Klik in spel-detailvensters om te zoeken naar een prestatieset</li>
+            <li><strong>Bulk scrapen</strong> &mdash; Schakel de optie "RA controleren" in om prestaties te vinden tijdens het scrapen</li>
+            <li><strong>RA-vernieuwingstaak</strong> &mdash; Scan alle spellen in een systeem om te bepalen welke RA-ondersteuning hebben</li>
+        </ul>
+
+        <h3>Details per spel</h3>
+        <p>Klik op een spel op de prestatiepagina om gedetailleerde prestatie-informatie per spel te zien, inclusief individuele prestatienamen, beschrijvingen, puntenwaarden en behaalde status.</p>
+
+        <div class="help-tip">
+            <strong>Let op:</strong> "Voortgang vernieuwen" synchroniseert uw voortgang voor spellen die al aan RetroAchievements zijn gekoppeld.
+            Gebruik "Controleren op RA" in spel-detailvensters of schakel dit in tijdens bulk scrapen om NIEUWE prestatiesets te vinden.
+        </div>
+    </div>
+</section>
+
+<!-- Steam Achievements -->
+<section id="steam-achievements" class="help-section card">
+    <h2 class="card-title">Steam-prestaties</h2>
+    <div class="card-body">
+        <h3>Instellen</h3>
+        <ol>
+            <li>Importeer Steam-spellen via <strong>Spelimporten &rarr; Steam</strong></li>
+            <li>Zorg ervoor dat uw Steam Web API-sleutel is geconfigureerd in Instellingen</li>
+        </ol>
+
+        <h3>Prestatie-overzichtspagina</h3>
+        <p>Bekijk al uw Steam-spellen met prestatievoortgang in één oogopslag:</p>
+        <ul>
+            <li><strong>Algemene statistieken</strong> &mdash; Totaal aantal Steam-spellen, behaalde prestaties, voltooiingspercentage</li>
+            <li><strong>Voortgang per spel</strong> &mdash; Voortgangsbalken per spel</li>
+        </ul>
+
+        <h3>Prestatiedetails per spel</h3>
+        <p>Klik op een Steam-spel om de individuele prestaties te bekijken:</p>
+        <ul>
+            <li>Prestatie-iconen, namen en beschrijvingen</li>
+            <li>Ontgrendelde versus vergrendelde status met tijdstempels van ontgrendeling</li>
+            <li>Wereldwijd percentage spelers dat elke prestatie heeft ontgrendeld</li>
+        </ul>
+
+        <h3>Synchroniseren</h3>
+        <ul>
+            <li>Synchroniseer de prestaties van één spel vanaf de detailpagina</li>
+            <li>Synchroniseer alle Steam-spellen in bulk vanaf de prestatie-overzichtspagina</li>
+            <li>Synchronisatie loopt als achtergrondtaak met voortgangsmelding</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Xbox Achievements -->
+<section id="xbox-achievements" class="help-section card">
+    <h2 class="card-title">Xbox-prestaties</h2>
+    <div class="card-body">
+        <h3>Instellen</h3>
+        <ol>
+            <li>Importeer Xbox-spellen via <strong>Spelimporten &rarr; Xbox</strong></li>
+            <li>Authenticatie wordt tijdens het importeren via Xbox OAuth afgehandeld</li>
+        </ol>
+
+        <h3>Prestatie-overzichtspagina</h3>
+        <ul>
+            <li><strong>Algemene statistieken</strong> &mdash; Totaal aantal Xbox-spellen, behaalde prestaties, behaalde/totale gamerscore, voltooiingspercentage</li>
+            <li><strong>Voortgang per spel</strong> &mdash; Behaalde gamerscore per spel met voortgangsbalken</li>
+        </ul>
+
+        <h3>Prestatiedetails per spel</h3>
+        <p>Klik op een Xbox-spel om de individuele prestaties te bekijken:</p>
+        <ul>
+            <li>Prestatie-iconen met individuele gamerscore-waarden</li>
+            <li>Ontgrendelde versus vergrendelde status met tijdstempels van ontgrendeling</li>
+            <li>Gamerscore-badges bij elke prestatie</li>
+        </ul>
+
+        <h3>Synchroniseren</h3>
+        <ul>
+            <li>Synchroniseer één spel of alle Xbox-spellen in bulk</li>
+            <li>Loopt als achtergrondtaak met meldingen</li>
+            <li>Gamerscore-totalen worden na elke synchronisatie automatisch bijgewerkt</li>
+        </ul>
+    </div>
+</section>
+
+<!-- HLTB -->
+<section id="hltb" class="help-section card">
+    <h2 class="card-title">How Long to Beat</h2>
+    <div class="card-body">
+        <h3>Gebruik</h3>
+        <ol>
+            <li>Open het detailvenster van een spel</li>
+            <li>Klik op <strong>"HLTB opzoeken"</strong></li>
+            <li>Selecteer de juiste overeenkomst uit de resultaten</li>
+            <li>Speeltijdschattingen worden bij het spel opgeslagen</li>
+        </ol>
+
+        <h3>Tijdcategorieën</h3>
+        <ul>
+            <li><strong>Hoofdverhaal</strong> &mdash; Tijd om het hoofdverhaal te voltooien</li>
+            <li><strong>Hoofdverhaal + extra's</strong> &mdash; Met nevencontent</li>
+            <li><strong>Volledig voltooid</strong> &mdash; 100% van alles</li>
+        </ul>
+
+        <h3>Waar HLTB-gegevens verschijnen</h3>
+        <ul>
+            <li><strong>Spel-detailvenster</strong> &mdash; Speeltijdschattingen getoond in de spelinfo</li>
+            <li><strong>Volledige spel-detailpagina</strong> &mdash; Dezelfde speeltijdinfo</li>
+            <li><strong>Analyse &rarr; tabblad Speeltijd</strong> &mdash; Speeltijdanalyse voor de hele collectie</li>
+            <li><strong>Spellen vergelijken</strong> &mdash; Speeltijdvergelijking naast elkaar</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> HLTB-gegevens worden ook getoond in Analyse onder het tabblad Speeltijd, wat u schattingen geeft voor uw hele collectie.
+        </div>
+    </div>
+</section>
+
+<!-- Trophies -->
+<section id="trophies" class="help-section card">
+    <h2 class="card-title">PS3 / PSN-trofeeën</h2>
+    <div class="card-body">
+        <h3>Lokale RPCS3-trofeeën</h3>
+        <p>Houd trofeeën bij die zijn behaald in PS3-spellen via de RPCS3-emulator.</p>
+        <ol>
+            <li>Stel uw RPCS3-trofeeënpad in bij <strong>Instellingen &rarr; Gegevens &rarr; Trofeeën</strong></li>
+            <li>Klik op <strong>"Trofeeën scannen"</strong> om behaalde trofeeën te importeren</li>
+            <li>Bekijk trofeeënlijsten en details van individuele trofeeën in de sectie <strong>RPCS3-trofeeën</strong></li>
+        </ol>
+        <p>RPCS3 leest de trofee-XML-gegevens uit uw RPCS3-gebruikersmap en koppelt spellen automatisch aan uw bibliotheek.</p>
+
+        <h3>PSN API-trofeeën</h3>
+        <p>Synchroniseer uw PlayStation Network-trofeeëngegevens vanuit uw PSN-account.</p>
+        <ol>
+            <li>Verkrijg uw NPSSO-cookie (zie hieronder)</li>
+            <li>Voer deze in bij <strong>Instellingen &rarr; Account &rarr; PSN</strong></li>
+            <li>Uw PSN-trofeeënbibliotheek wordt opgehaald via de PlayStation-API</li>
+            <li>Bekijk trofeeënvoortgang per spel met behaald/totaal-aantallen</li>
+            <li>Details van individuele trofeeën omvatten beschrijving, zeldzaamheid en tijdstempels van ontgrendeling</li>
+        </ol>
+
+        <h3>PSN-authenticatie (NPSSO-cookie)</h3>
+        <p>PSN gebruikt een speciale authenticatiecookie, een NPSSO-token genaamd. Om deze te verkrijgen:</p>
+        <ol>
+            <li>Open een webbrowser en meld u aan bij <a href="https://store.playstation.com" target="_blank" rel="noopener noreferrer">store.playstation.com</a></li>
+            <li>Navigeer, eenmaal aangemeld, naar: <code>https://ca.account.sony.com/api/v1/ssocookie</code></li>
+            <li>De pagina toont JSON met uw NPSSO-token</li>
+            <li>Kopieer de <code>npsso</code>-waarde en plak deze bij Instellingen &rarr; Account &rarr; PSN</li>
+        </ol>
+        <p>Zodra u bent geauthenticeerd, cachet RetroDB de toegangstokens veilig in de eigen database (per gebruiker) en vernieuwt deze automatisch &mdash; u hoeft de NPSSO niet bij elke synchronisatie opnieuw te plakken. De sessie blijft ongeveer twee maanden geldig, en RetroDB vernieuwt deze nu ook automatisch op de achtergrond, dus in normaal gebruik zult u zelden een nieuwe NPSSO nodig hebben.</p>
+
+        <h3>Trofeedetails</h3>
+        <ul>
+            <li>Trofeetypen: brons, zilver, goud, platina</li>
+            <li>Trofee-iconen worden gedownload en lokaal gecachet</li>
+            <li>Voltooiingspercentage per spel</li>
+            <li>Tijdstempels van ontgrendeling voor elke behaalde trofee</li>
+        </ul>
+
+        <h3>Bulk-synchronisatie</h3>
+        <p>Synchroniseer alle PSN-speltrofeeën tegelijk via een achtergrondtaak. De voortgang wordt getoond in een melding. Snelheidslimiet (2,5 s tussen verzoeken) voorkomt drosseling door de PSN-API.</p>
+    </div>
+</section>
+
+<!-- Collector Trophies -->
+<section id="collector-trophies" class="help-section card">
+    <h2 class="card-title">Verzamelaarstrofeeën</h2>
+    <div class="card-body">
+        <h3>Wat het is</h3>
+        <p>Een gamification-systeem dat trofeeën toekent op basis van de mijlpalen van uw collectie. Naarmate u spellen toevoegt, metadata scrapet en spellen voltooit, worden trofeeën automatisch ontgrendeld.</p>
+
+        <h3>Trofeeniveaus</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Niveau</th><th>Voorbeelden</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Brons</strong></td><td>Eerste spel toevoegen, 10 spellen bereiken, eerste scrape, 5 systemen, eerste voltooiing</td></tr>
+                <tr><td><strong>Zilver</strong></td><td>100 spellen, 50 gescraped, 10 systemen, 10 voltooiingen, 500 spellen</td></tr>
+                <tr><td><strong>Goud</strong></td><td>1.000 spellen, 100% metadata-dekking, 20 systemen, 50 voltooiingen</td></tr>
+                <tr><td><strong>Platina</strong></td><td>5.000 spellen, 100 voltooiingen, 30+ systemen</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Hoe het werkt</h3>
+        <ul>
+            <li>De voortgang wordt automatisch bijgehouden op basis van uw bibliotheekstatistieken</li>
+            <li>Bezoek de pagina <strong>Verzamelaarstrofeeën</strong> om uw voortgang per trofee te bekijken</li>
+            <li>Klik op <strong>"Vernieuwen"</strong> om de voortgang bij te werken na wijzigingen</li>
+            <li>Behaalde trofeeën worden getoond met hun ontgrendelingsdatum</li>
+            <li>Voortgangsbalken tonen hoe dicht u bij de volgende mijlpaal bent</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Museum -->
+<section id="museum" class="help-section card">
+    <h2 class="card-title">Museum</h2>
+    <div class="card-body">
+        <h3>Wat het is</h3>
+        <p>Een interactieve encyclopedie van gamesystemen, georganiseerd op generatie. Leer meer over de geschiedenis, specificaties en opmerkelijke spellen voor elk platform in uw collectie.</p>
+
+        <h3>Startpagina</h3>
+        <p>De startpagina van het museum toont een tijdlijn van gamesystemen gegroepeerd op generatie (1e&ndash;9e generatie, handhelds, arcade, computers). Elke systeemkaart toont de hardwareafbeelding en het aantal spellen uit uw bibliotheek.</p>
+
+        <h3>Systeemdetailpagina's</h3>
+        <p>Klik op een systeem om de bijbehorende museumpagina te bekijken, met daarop:</p>
+        <ul>
+            <li><strong>Hardwareafbeelding</strong> &mdash; Foto van de console/het systeem</li>
+            <li><strong>Technische specificaties</strong> &mdash; CPU, GPU, RAM, resolutie, mediatype</li>
+            <li><strong>Geschiedenis</strong> &mdash; Door AI gegenereerd verhaal over de ontwikkeling, lancering en erfenis van het systeem</li>
+            <li><strong>Top 10 spellen</strong> &mdash; De bekendste titels van het systeem (op basis van criticusscores en AI-suggesties)</li>
+            <li><strong>Controllergalerij</strong> &mdash; Afbeeldingen van de controllers van het systeem met beschrijvingen</li>
+        </ul>
+
+        <h3>AI-inhoudgeneratie</h3>
+        <p>Museuminhoud wordt gegenereerd met AI (Gemini, OpenAI of Claude). U kunt inhoud genereren voor:</p>
+        <ul>
+            <li><strong>Eén systeem</strong> &mdash; Klik op "Genereren" op de museumpagina van een systeem</li>
+            <li><strong>Bulkgeneratie</strong> &mdash; Genereer in één keer inhoud voor alle systemen vanaf de startpagina (loopt als achtergrondtaak met voortgangsmelding)</li>
+        </ul>
+
+        <h3>Controllerafbeeldingen</h3>
+        <p>Controllerafbeeldingen kunnen worden toegevoegd via:</p>
+        <ul>
+            <li><strong>Afbeeldingen zoeken</strong> &mdash; Zoek naar controllerfoto's met Bing-afbeeldingenzoekopdracht. Resultaten worden gerangschikt op relevantie (controllernaam + fabrikant + systeemvarianten).</li>
+            <li><strong>Handmatig uploaden</strong> &mdash; Upload uw eigen controllerafbeeldingen</li>
+            <li><strong>Achtergrond verwijderen</strong> &mdash; Verwijder automatisch achtergronden met lokale AI (rembg-bibliotheek) voor transparante controllerafbeeldingen op elke achtergrond</li>
+            <li><strong>Afbeeldingsverspreiding</strong> &mdash; Wanneer een controllerafbeelding wordt gevonden, wordt deze automatisch gedeeld met dezelfde controller op andere systemen (verwante controllers)</li>
+            <li><strong>Bulk ophalen</strong> &mdash; Haal in één keer afbeeldingen op voor alle controllers in een systeem</li>
+        </ul>
+        <p>Alle controllerafbeeldingen worden gestandaardiseerd naar de doelgrootte en opgeslagen in WebP-formaat.</p>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> Voor het genereren van inhoud is een AI-API-sleutel vereist. Het museum gebruikt dezelfde AI-aanbieder die is geconfigureerd in Instellingen &rarr; Scrapen &rarr; API-sleutels.
+        </div>
+    </div>
+</section>
+
+<!-- Analytics -->
+<section id="analytics" class="help-section card">
+    <h2 class="card-title">Analyse</h2>
+    <div class="card-body">
+        <p>Analyse biedt uitgebreide statistieken en visualisaties verdeeld over 12 tabbladen. Alle grafieken zijn interactief en kunnen worden geëxporteerd als PNG, gekopieerd naar het klembord of gedownload als CSV.</p>
+
+        <h3>Analyse-tabbladen</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Tabblad</th><th>Inhoud</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Samenvatting</strong></td><td>Overzichtskaarten met statistieken (totaal aantal spellen, systemen, voltooiingspercentage, scrape-percentage, enz.)</td></tr>
+                <tr><td><strong>Grafieken</strong></td><td>Spellen per platform/fabrikant, per genre, tijdlijn per jaar</td></tr>
+                <tr><td><strong>Ontwikkelaars</strong></td><td>Staafdiagrammen van de top 15 ontwikkelaars en uitgevers</td></tr>
+                <tr><td><strong>Gameplay</strong></td><td>Genreverdeling, analyse van spelmodi, verdeling van spelstructuur</td></tr>
+                <tr><td><strong>Speeltijd</strong></td><td>Analyse van HLTB-speeltijdgegevens voor uw hele collectie &mdash; totale geschatte speeltijd, gemiddelden, verdeling</td></tr>
+                <tr><td><strong>Reviewscores</strong></td><td>Verdelingen en gemiddelden van criticus- en gebruikersscores</td></tr>
+                <tr><td><strong>Leeftijdsclassificaties</strong></td><td>Verdeling van leeftijdsclassificaties over alle 8 classificatiesystemen</td></tr>
+                <tr><td><strong>Prestaties</strong></td><td>Dekking en voltooiing van RetroAchievements per systeem</td></tr>
+                <tr><td><strong>Datakwaliteit</strong></td><td>Radardiagram van metadatavolledigheid (beschrijving, boxart, genre, ontwikkelaar, uitgever, releasedatum, screenshots, fanart, video, handleiding, HLTB, classificaties, modi, regio)</td></tr>
+                <tr><td><strong>Groei</strong></td><td>Tijdlijn van collectiegroei die toont wanneer spellen in de loop van de tijd zijn toegevoegd</td></tr>
+                <tr><td><strong>Opslag</strong></td><td>Verdeling van opslaggebruik per systeem (met opgemaakte bestandsgroottes)</td></tr>
+                <tr><td><strong>Topranglijsten</strong></td><td>Top systemen op aantal spellen, grootste individuele spellen op bestandsgrootte</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Exportopties</h3>
+        <p>Elke grafiek kan worden geëxporteerd met de knoppen in de grafiekwerkbalk:</p>
+        <ul>
+            <li><strong>PNG</strong> &mdash; Opslaan als afbeeldingsbestand</li>
+            <li><strong>Klembord</strong> &mdash; Kopieer de grafiekafbeelding naar het klembord</li>
+            <li><strong>CSV</strong> &mdash; Download ruwe gegevens als spreadsheet</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Reports -->
+<section id="reports" class="help-section card">
+    <h2 class="card-title">ROM-rapporten</h2>
+    <div class="card-body">
+        <h3>Wat het doet</h3>
+        <p>Valideert ROM-bestandsnamen aan de hand van standaard naamgevingsconventies en identificeert mogelijke problemen. Toegankelijk via <strong>ROM-rapporten</strong> in de zijbalk.</p>
+
+        <h3>Rapporttypen</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Tabblad</th><th>Wat het controleert</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Niet-standaard namen</strong></td><td>ROMs met bestandsnamen die niet overeenkomen met de naamgevingsconventies. Toont de huidige bestandsnaam, gedetecteerde problemen en een voorgestelde gecorrigeerde naam.</td></tr>
+                <tr><td><strong>Naamverschillen</strong></td><td>ROMs waarbij de bestandsnaam niet overeenkomt met de gescrapete metadatatitel. Toont de huidige bestandsnaam tegenover de gescrapete titel, regio, jaar en ontwikkelaar.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Wat wordt gecontroleerd</h3>
+        <ul>
+            <li>Ongeldige tekens in bestandsnamen (<code>: ? * / " &lt; &gt; | \</code>)</li>
+            <li>Ontbrekende of onjuiste regiotags (bijv. <code>(USA)</code>, <code>(Europe)</code>)</li>
+            <li>Ontbrekende jaartags</li>
+            <li>Verschillen tussen bestandsnaam en databasetitel</li>
+        </ul>
+
+        <p>Rapporten zijn sorteerbaar op systeem, bestandsnaam en probleemtype. Gebruik ze om uw ROM-bibliotheek georganiseerd en consistent benoemd te houden.</p>
+    </div>
+</section>
+
+<!-- ROM Tools -->
+<section id="rom-tools" class="help-section card">
+    <h2 class="card-title">ROM-tools</h2>
+    <div class="card-body">
+        <p>Open het ROM-tools-overzicht vanuit de zijbalk. Elk hulpmiddel loopt als achtergrondtaak met realtime voortgangsupdates, ondersteuning voor pauzeren/hervatten en logboekregistratie.</p>
+
+        <h3>Archiefscanner</h3>
+        <p>Pak ROM-archieven (ZIP, 7Z, RAR) uit met opties voor:</p>
+        <ul>
+            <li>Recursief scannen van submappen</li>
+            <li>Verwijderen van ongewenste bestanden na het uitpakken</li>
+            <li>Automatisch genereren van M3U-afspeellijsten voor spellen met meerdere schijven</li>
+        </ul>
+        <p><em>Vereist: 7z of unzip</em></p>
+
+        <h3>CHD-converter</h3>
+        <p>Converteer schijfkopieën (ISO, BIN/CUE, GDI) naar het gecomprimeerde CHD-formaat. Bespaart aanzienlijk veel opslagruimte met behoud van volledige compatibiliteit met emulators.</p>
+        <p><em>Vereist: chdman (uit mame-tools)</em></p>
+
+        <h3>CHD-verificatie</h3>
+        <p>Verifieer de integriteit van CHD-bestanden met hashvalidatie. Identificeert beschadigde of onvolledige conversies.</p>
+        <p><em>Vereist: chdman</em></p>
+
+        <h3>Dubbeledetector</h3>
+        <p>Vind dubbele ROMs op basis van hash of bestandsnaam, met opties om te prioriteren op regiotags.</p>
+        <p><em>Geen externe afhankelijkheden</em></p>
+
+        <h3>Multi-disc-organizer</h3>
+        <p>Organiseer spellen met meerdere schijven in submappen en genereer M3U-afspeellijsten voor emulators die dit ondersteunen. Handig voor systemen zoals PlayStation en Saturn.</p>
+        <p><em>Geen externe afhankelijkheden</em></p>
+
+        <h3>Deduplicatie van screenshots</h3>
+        <p>Vind en verwijder dubbele screenshots in uw spelbibliotheek om opslagruimte vrij te maken.</p>
+        <ul>
+            <li><strong>Exacte hash (MD5)</strong> &mdash; Identificeert alleen identieke bestanden</li>
+            <li><strong>Visuele gelijkenis</strong> &mdash; Perceptuele hashvergelijking met instelbare drempelwaarde (1&ndash;20, lager = strengere overeenkomst)</li>
+        </ul>
+        <p>Scant geleidelijk met live statistieken die gescande spellen, aantal duplicaten en terug te winnen ruimte tonen. Resultaten zijn gegroepeerd per spel en systeem. U kunt per duplicaatgroep kiezen welk bestand u wilt behouden, of gebruik <strong>"Grootste selecteren"</strong> om automatisch de versie met de hoogste resolutie te behouden.</p>
+        <p><em>Geen externe afhankelijkheden</em></p>
+
+        <h3>Afbeeldingsformaat aanpassen</h3>
+        <p>Standaardiseer spelmedia naar consistente doelformaten. Zie <a href="#image-standardization">Afbeeldingsstandaardisatie</a> voor volledige details.</p>
+        <p><em>Geen externe afhankelijkheden (Python-gebaseerde AI-upscaling)</em></p>
+
+        <h3>Alternatieve titels aanvullen</h3>
+        <p>Doorzoek de bibliotheek naar spellen waarvan het veld <strong>alternatieve titels</strong> leeg is en vul dit aan vanuit IGDB / TGDB / ScreenScraper. Handig na het importeren van een grote catalogus of het migreren vanuit een ander hulpmiddel dat geen regionale/Japanse/onder­titels opsloeg. Loopt op de achtergrond; de voortgang wordt getoond op de hulpmiddelkaart.</p>
+        <p><em>Vereist minstens één scraper-API-sleutel (IGDB / TGDB / ScreenScraper)</em></p>
+
+        <h3>Bulk HLTB-opzoeken</h3>
+        <p>Voer een HowLongToBeat-opzoeking uit voor elk spel zonder speeltijdschatting. Elke overeenkomst wordt beoordeeld op titel + platform + releasejaar; overeenkomsten met een hoge betrouwbaarheid worden automatisch opgeslagen. Alles onder de betrouwbaarheidsdrempel (of met tegenstrijdige platforms) wordt geparkeerd voor menselijke beoordeling.</p>
+        <p><em>Geen externe afhankelijkheden (gebruikt de meegeleverde offline HLTB-dataset)</em></p>
+
+        <h3>HLTB in afwachting van beoordeling</h3>
+        <p>Beoordelingswachtrij voor dubbelzinnige overeenkomsten die door Bulk HLTB-opzoeken naar boven zijn gehaald. Elke wachtende rij toont het bronspel naast de HLTB-kandidaat (titel, platform, releasejaar, betrouwbaarheid). Keur per rij goed, wijs af, of kies een andere overeenkomst. De beoordelingskaart verschijnt alleen in het ROM-tools-overzicht wanneer er minstens één wachtende overeenkomst is.</p>
+        <ul>
+            <li><strong>Filtertabbladen</strong> voor overeenkomsten met lage betrouwbaarheid, alternatieve titel en platformafwijking.</li>
+            <li><strong>Goedkeuren</strong> schrijft de speeltijdschatting weg; <strong>Afwijzen</strong> laat de kandidaat vallen en houdt de opzoekwachtrij schoon.</li>
+        </ul>
+
+        <h3>Hulpmiddelinstellingen</h3>
+        <p>Configureer paden, locaties van hulpmiddelen, archieftypen en voorkeuren die worden gedeeld door alle ROM-tools.</p>
+
+        <div class="help-tip">
+            <strong>Tip:</strong> Alle ROM-tools ondersteunen pauzeren/hervatten en lopen op de achtergrond. Voortgang en resultaten worden vastgelegd en zijn te bekijken in de logboekviewer. De status van een hulpmiddel (beschikbaar versus installatie vereist) wordt getoond op elke hulpmiddelkaart.
+        </div>
+    </div>
+</section>
+
+<!-- Normalization -->
+<section id="normalization" class="help-section card">
+    <h2 class="card-title">Normalisatie</h2>
+    <div class="card-body">
+        <h3>Wat het doet</h3>
+        <p>Normaliseert genre- en spelmoduswaarden naar consistente canonieke vormen. Dit gebeurt automatisch tijdens scrapen en AI-invulling, en kan ook handmatig worden toegepast op uw bestaande bibliotheek.</p>
+
+        <h3>Waarom het belangrijk is</h3>
+        <p>Verschillende scrapers gebruiken verschillende namen voor hetzelfde. Normalisatie zorgt voor consistentie in uw hele bibliotheek:</p>
+        <ul>
+            <li><code>platform</code> &rarr; <code>Platformer</code></li>
+            <li><code>fps</code>, <code>first person shooter</code> &rarr; <code>First-Person-Shooter</code></li>
+            <li><code>shoot 'em up</code>, <code>shmup</code> &rarr; <code>Shoot-em-up</code></li>
+            <li><code>beat 'em up</code>, <code>brawler</code> &rarr; <code>Beat-em-up</code></li>
+            <li><code>hack and slash</code> &rarr; <code>Hack-n-Slash</code></li>
+            <li><code>rts</code>, <code>real time strategy</code> &rarr; <code>Real-Time Strategy</code></li>
+            <li><code>board game</code>, <code>card game</code> &rarr; <code>Board-Card</code></li>
+        </ul>
+
+        <h3>Aangepaste regels</h3>
+        <p>U kunt aangepaste normalisatieregels toevoegen bij <strong>Instellingen &rarr; Gegevens &rarr; Normalisatie</strong>. Aangepaste regels overschrijven de ingebouwde toewijzingen, zodat u uw eigen voorkeursnamen voor genres en modi kunt definiëren. Regels worden opgeslagen in de database.</p>
+
+        <h3>Voorbeeld & toepassen</h3>
+        <p>Voordat u normalisatie toepast, kunt u een voorbeeld bekijken van welke spellen worden beïnvloed en welke wijzigingen zullen worden aangebracht. Zo kunt u alles controleren voordat de wijzigingen in uw bibliotheek worden doorgevoerd.</p>
+    </div>
+</section>
+
+<!-- Image Standardization -->
+<section id="image-standardization" class="help-section card">
+    <h2 class="card-title">Afbeeldingsstandaardisatie</h2>
+    <div class="card-body">
+        <h3>Wat het doet</h3>
+        <p>Standaardiseert alle spelmedia naar consistente doelformaten voor een uniforme uitstraling in uw hele bibliotheek. Afbeeldingen binnen 80&ndash;120% van het doelformaat worden overgeslagen.</p>
+
+        <h3>Hoe het werkt</h3>
+        <ul>
+            <li><strong>Upscalen</strong> &mdash; Afbeeldingen kleiner dan het doelformaat worden opgeschaald met Real-ESRGAN x4 (AI-superresolutie via ONNX Runtime) voor een hoogwaardige vergroting, en vervolgens aangepast naar het exacte doelformaat</li>
+            <li><strong>Downscalen</strong> &mdash; Afbeeldingen groter dan het doelformaat worden verkleind met Lanczos-filtering voor scherpe resultaten</li>
+            <li><strong>Drempelbereik</strong> &mdash; Afbeeldingen binnen 80&ndash;120% van het doel worden ongemoeid gelaten om onnodige herverwerking te voorkomen</li>
+        </ul>
+
+        <h3>Doelformaten</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Mediatype</th><th>Doel</th><th>Methode</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Boxart</td><td>1080px hoogte</td><td>Breedte schaalt proportioneel</td></tr>
+                <tr><td>3D-boxart</td><td>1080px hoogte</td><td>Breedte schaalt proportioneel (behoudt transparantie)</td></tr>
+                <tr><td>Screenshots</td><td>1080px hoogte</td><td>Breedte schaalt proportioneel</td></tr>
+                <tr><td>Controllers</td><td>1280px langste zijde</td><td>Behoudt transparantie (RGBA)</td></tr>
+                <tr><td>Hardware</td><td>1280px langste zijde</td><td>Behoudt transparantie (RGBA)</td></tr>
+                <tr><td>Fanart</td><td>Overgeslagen</td><td>Niet gestandaardiseerd (blijft op originele grootte)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Hoe uit te voeren</h3>
+        <ol>
+            <li>Ga naar <strong>Instellingen &rarr; Systeem &rarr; Onderhoud</strong> of <strong>ROM-tools &rarr; Afbeeldingsformaat aanpassen</strong></li>
+            <li>Klik op <strong>"Starten"</strong> om de bulk-standaardisatie te beginnen</li>
+            <li>De taak loopt op de achtergrond met een voortgangsmelding die het huidige bestand en statistieken toont</li>
+            <li>Afbeeldingen worden ook automatisch gestandaardiseerd tijdens het scrapen (nieuwe downloads worden direct gestandaardiseerd)</li>
+        </ol>
+
+        <h3>Hardwareondersteuning</h3>
+        <p>Het Real-ESRGAN-model detecteert automatisch uw hardware en gebruikt de best beschikbare provider:</p>
+        <ul>
+            <li><strong>CUDA</strong> &mdash; NVIDIA-GPU-versnelling</li>
+            <li><strong>ROCm</strong> &mdash; AMD-GPU-versnelling (met automatische gfx-versie-override voor de RX 6000-serie)</li>
+            <li><strong>CoreML</strong> &mdash; Apple Silicon-versnelling</li>
+            <li><strong>CPU</strong> &mdash; Terugvaloptie voor systemen zonder GPU-ondersteuning</li>
+        </ul>
+        <p>Het ONNX-modelbestand wordt bij het eerste gebruik automatisch gedownload van Hugging Face en lokaal gecachet.</p>
+    </div>
+</section>
+
+<!-- Logs -->
+<section id="logs" class="help-section card">
+    <h2 class="card-title">Logboekviewer</h2>
+    <div class="card-body">
+        <h3>Wat het doet</h3>
+        <p>Een centrale viewer voor alle toepassingslogboeken. Toegankelijk via <strong>Logboekviewer</strong> in de zijbalk.</p>
+
+        <h3>Logboekcategorieën</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Categorie</th><th>Inhoud</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Scrapen</strong></td><td>Scraperactiviteit, API-aanroepen, fouten en resultaten per spel</td></tr>
+                <tr><td><strong>ROM-tools</strong></td><td>Archiefextractie, CHD-conversie, detectie van duplicaten, deduplicatie van screenshots</td></tr>
+                <tr><td><strong>ROM-rapporten</strong></td><td>Resultaten van naamvalidatie</td></tr>
+                <tr><td><strong>Afbeeldingsformaat</strong></td><td>Voortgang van de afbeeldingsstandaardisatietaak (op-/afschalen per bestand)</td></tr>
+                <tr><td><strong>Systeem</strong></td><td>Algemene app-activiteit, onderhoudstaken, opstarten, databasebewerkingen</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Functies</h3>
+        <ul>
+            <li>Filter op categorie of bekijk alle logboeken samen</li>
+            <li>De bestandslijst toont aanmaakdatums en bestandsgroottes</li>
+            <li>Klik op een logbestand om de volledige inhoud te bekijken</li>
+            <li>Download afzonderlijke logbestanden</li>
+            <li>Categorietellingen bovenaan voor een snel overzicht</li>
+            <li>Loglevels instelbaar bij Instellingen &rarr; Systeem &rarr; Logboekregistratie</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Maintenance -->
+<section id="maintenance" class="help-section card">
+    <h2 class="card-title">Onderhoud</h2>
+    <div class="card-body">
+        <p>Onderhoudsbewerkingen zijn beschikbaar bij <strong>Instellingen &rarr; Systeem &rarr; Onderhoud</strong>. Deze helpen uw bibliotheek schoon en geoptimaliseerd te houden.</p>
+
+        <h3>Bibliotheek scannen</h3>
+        <ul>
+            <li><strong>Bibliotheek scannen</strong> &mdash; Scan uw ROM-mappen op nieuwe spellen. Detecteert systeemmappen en ondersteunde bestandstypen aan de hand van ES-DE <code>systeminfo.txt</code>-extensielijsten. Ook beschikbaar vanaf het dashboard.</li>
+        </ul>
+
+        <h3>Opschoonbewerkingen</h3>
+        <ul>
+            <li><strong>Ontbrekende ROMs opschonen</strong> &mdash; Verwijder databasevermeldingen voor spellen waarvan de ROM-bestanden niet meer op schijf bestaan. Handig na het reorganiseren of verwijderen van ROM-bestanden.</li>
+            <li><strong>Verweesde media opruimen</strong> &mdash; Zoek en verwijder afbeeldingsbestanden op schijf (boxart, screenshots, fanart) die geen bijbehorende databaseverwijzing hebben. Bekijk een voorbeeld voordat u bevestigt.</li>
+            <li><strong>Gescrapete gegevens wissen</strong> &mdash; Verwijder alle gescrapete metadata van spellen, terwijl de ROM-bestandsvermeldingen behouden blijven. Handig om opnieuw te beginnen met scrapen. Het voorbeeld toont de betrokken spellen vóór uitvoering.</li>
+            <li><strong>CLZ-importen wissen</strong> &mdash; Verwijder alle CLZ Games-importvermeldingen (alleen-metadatavermeldingen zonder ROM-bestanden).</li>
+        </ul>
+
+        <h3>Database-optimalisatie</h3>
+        <ul>
+            <li><strong>Database optimaliseren</strong> &mdash; Voert SQLite VACUUM en ANALYZE uit om opslagruimte van verwijderde records terug te winnen en de statistieken van de queryplanner bij te werken. Aanbevolen na grote verwijderingen of opschoonbewerkingen.</li>
+        </ul>
+
+        <h3>Bulk-afbeeldingsstandaardisatie</h3>
+        <p>Standaardiseer alle spelafbeeldingen naar doelformaten. Zie <a href="#image-standardization">Afbeeldingsstandaardisatie</a> voor details.</p>
+
+        <h3>Serverbeheer</h3>
+        <ul>
+            <li><strong>Server herstarten</strong> &mdash; Nette herstart van de toepassing (opschonen en afsluiten). Beschikbaar bij Instellingen &rarr; Systeem &rarr; Probleemoplossing.</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Multi-User Access -->
+<section id="multi-user" class="help-section card">
+    <h2 class="card-title">Toegang voor meerdere gebruikers</h2>
+    <div class="card-body">
+        <h3>Gebruikersrollen</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Rol</th><th>Toegang</th><th>Wachtwoord</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Beheerder</strong></td><td>Volledige toegang: instellingen, gebruikersbeheer, onderhoud, alle functies</td><td>Vereist</td></tr>
+                <tr><td><strong>Editor</strong></td><td>Kan spellen bewerken, scrapen, ROM-tools gebruiken, collecties beheren</td><td>Geen</td></tr>
+                <tr><td><strong>Kijker</strong></td><td>Alleen-lezen: door de bibliotheek bladeren, details bekijken, prestaties/trofeeën bekijken</td><td>Geen</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Gebruikers beheren</h3>
+        <ol>
+            <li>Ga naar <strong>Instellingen &rarr; Account &rarr; Gebruikers</strong> (alleen beheerder)</li>
+            <li>Klik op <strong>"Gebruiker toevoegen"</strong> om een nieuw account aan te maken</li>
+            <li>Stel gebruikersnaam, weergavenaam en rol in</li>
+            <li>Beheerdersgebruikers ontvangen een standaardwachtwoord dat bij de eerste aanmelding moet worden gewijzigd</li>
+        </ol>
+
+        <h3>Authenticatie</h3>
+        <p>De aanmeldpagina toont alle actieve gebruikers. Beheerdersaccounts vereisen een wachtwoord; andere rollen klikken eenvoudig op hun naam om aan te melden. Sessies blijven behouden tot het afmelden.</p>
+
+        <h3>Instellingen per gebruiker</h3>
+        <p>Elke gebruiker kan het volgende zelf configureren:</p>
+        <ul>
+            <li>Avatar (aangepaste afbeelding uploaden)</li>
+            <li>Weergavenaam</li>
+            <li>Themavoorkeur</li>
+            <li>Aantal items per pagina</li>
+            <li>Tijdzone</li>
+            <li>RPCS3-trofeeënpad</li>
+            <li>RetroAchievements-inloggegevens (gebruikersnaam + API-sleutel)</li>
+            <li>PSN-inloggegevens (NPSSO-cookie)</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Backup -->
+<section id="backup" class="help-section card">
+    <h2 class="card-title">Back-up & herstel</h2>
+    <div class="card-body">
+        <h3>Back-ups maken</h3>
+        <ol>
+            <li>Ga naar <strong>Instellingen &rarr; Bibliotheek &rarr; Back-up</strong></li>
+            <li>Klik op <strong>"Back-up maken"</strong></li>
+            <li>De back-up wordt opgeslagen in de map <code>backups/</code> met een bestandsnaam met tijdstempel</li>
+        </ol>
+
+        <h3>Wat wordt geback-upt</h3>
+        <p>De back-up omvat de volledige SQLite-database (<code>roms.db</code>), die alle spelmetadata, gebruikersaccounts, instellingen, trofeeëngegevens, prestatievoortgang, tags, lijsten en verlanglijst-items bevat.</p>
+
+        <h3>Wat NIET wordt geback-upt</h3>
+        <p>Mediabestanden (boxart, screenshots, fanart, video's, handleidingen) zitten NIET in de databaseback-up, omdat deze opnieuw kunnen worden gedownload via scrapen. Overweeg om uw map <code>static/images/</code> apart te back-uppen als u aangepaste uploads heeft.</p>
+
+        <h3>Herstellen</h3>
+        <ol>
+            <li>Zoek de back-up in de back-uplijst</li>
+            <li>Klik op <strong>"Herstellen"</strong></li>
+            <li>Bevestig de actie</li>
+        </ol>
+
+        <div class="help-tip">
+            <strong>Waarschuwing:</strong> Het herstellen van een back-up overschrijft uw huidige database. Maak een verse back-up voordat u een oudere herstelt!
+        </div>
+    </div>
+</section>
+
+<!-- Updating RetroDB -->
+<section id="updating" class="help-section card">
+    <h2 class="card-title">RetroDB bijwerken</h2>
+    <div class="card-body">
+        <h3>Hoe bij te werken</h3>
+        <ol>
+            <li>Download de nieuwe RetroDB-release</li>
+            <li>Maak een back-up van deze bestanden (ze bevatten uw persoonlijke gegevens):
+                <ul>
+                    <li><code>config.py</code> (uw paden en API-sleutels)</li>
+                    <li><code>data/settings.json</code> (uw UI-voorkeuren)</li>
+                    <li><code>data/scraper_settings.json</code> (uw scraperconfiguratie)</li>
+                    <li><code>data/rom_tools_config.json</code> (uw ROM-toolsvoorkeuren)</li>
+                    <li>de map <code>database/</code> (de database van uw spelbibliotheek, en uw opgeslagen PSN-/Xbox-aanmeldtokens)</li>
+                </ul>
+            </li>
+            <li>Pak de nieuwe versie uit over de bestaande installatie</li>
+            <li>Voer <code>python install.py</code> uit om eventuele nieuwe afhankelijkheden te installeren</li>
+            <li>Herstart de server</li>
+        </ol>
+
+        <h3>Bestanden die veilig overschreven kunnen worden</h3>
+        <p>Alle broncodebestanden (<code>.py</code>, <code>.html</code>, <code>.css</code>, <code>.js</code>) kunnen veilig worden overschreven. Het installatieprogramma overschrijft uw persoonlijke configuratiebestanden niet.</p>
+
+        <h3>Bestanden om te behouden</h3>
+        <p>Verwijder of overschrijf nooit: <code>config.py</code>, <code>database/roms.db</code>, <code>data/settings.json</code>, <code>data/scraper_settings.json</code>, <code>data/rom_tools_config.json</code>.</p>
+
+        <h3>Databasemigraties</h3>
+        <p>RetroDB verwerkt schemawijzigingen in de database automatisch bij het opstarten. Nieuwe kolommen en tabellen worden toegevoegd waar nodig, zonder gegevensverlies. U hoeft niets speciaals te doen &mdash; start gewoon de nieuwe versie en de database wordt automatisch bijgewerkt.</p>
+    </div>
+</section>
+
+<!-- Troubleshooting -->
+<section id="troubleshooting" class="help-section card">
+    <h2 class="card-title">Probleemoplossing</h2>
+    <div class="card-body">
+        <h3>Veelvoorkomende problemen</h3>
+
+        <h4>"No extensions found for system"</h4>
+        <p>De systeemmap heeft een geldig ES-DE-bestand <code>systeminfo.txt</code> nodig dat de ondersteunde ROM-bestandsextensies definieert. Zorg ervoor dat de structuur van uw ROM-map overeenkomt met de ES-DE-standaarden.</p>
+
+        <h4>"API Connection Failed"</h4>
+        <ul>
+            <li>Controleer uw internetverbinding</li>
+            <li>Controleer de API-sleutels bij Instellingen &rarr; Scrapen &rarr; API-sleutels</li>
+            <li>Wacht als de snelheidslimiet is bereikt (sommige API's hebben dagelijkse/uurlijkse limieten)</li>
+            <li>Controleer of de scraper is ingeschakeld (uitgeschakelde scrapers tonen "Uitgeschakeld" in de dashboardstatus)</li>
+            <li>Bekijk de logboekviewer voor gedetailleerde foutmeldingen</li>
+        </ul>
+
+        <h4>"Bulk Scrape Stuck"</h4>
+        <p>Ga naar Instellingen &rarr; Systeem &rarr; Probleemoplossing &rarr; <strong>"Vastgelopen bulk scrapen wissen"</strong>. Dit reset de taakstatus zonder uw gegevens te beïnvloeden.</p>
+
+        <h4>"RA Sync Queue Stuck"</h4>
+        <p>Wis de RetroAchievements-synchronisatiewachtrij bij Instellingen &rarr; Systeem &rarr; Probleemoplossing.</p>
+
+        <h4>"PSN Sync Stuck"</h4>
+        <p>Wis de PSN-vernieuwingstaak bij Instellingen &rarr; Systeem &rarr; Probleemoplossing.</p>
+
+        <h4>"Museum Generation Stuck"</h4>
+        <p>Wis de museumgeneratietaak bij Instellingen &rarr; Systeem &rarr; Probleemoplossing.</p>
+
+        <h4>"Database Errors"</h4>
+        <ol>
+            <li>Maak indien mogelijk een back-up (Instellingen &rarr; Bibliotheek &rarr; Back-up)</li>
+            <li>Probeer Instellingen &rarr; Systeem &rarr; Onderhoud &rarr; <strong>Database optimaliseren</strong></li>
+            <li>Controleer de bestandsrechten van de map <code>database/</code></li>
+            <li>Laatste redmiddel: herstel vanuit een back-up of verwijder de database en scan opnieuw</li>
+        </ol>
+
+        <h4>"Images Not Saving"</h4>
+        <p>Controleer de schrijfrechten van de mediamappen: <code>chmod -R 755 static/images/</code></p>
+
+        <h4>"Page Slow or Unresponsive"</h4>
+        <ul>
+            <li>Grote collecties kunnen even duren om te laden &mdash; oneindig scrollen laadt in batches van 100</li>
+            <li>Probeer de pagina te vernieuwen om opgebouwd geheugengebruik te wissen</li>
+            <li>Controleer de browserconsole op JavaScript-fouten</li>
+            <li>Probeer over te schakelen naar een thema met een lichter canvas-effect (bijv. Amber of Elite)</li>
+            <li>Canvas-effecten detecteren automatisch de hardware; minder krachtige apparaten gebruiken CPU-terugval met een lagere framerate</li>
+        </ul>
+
+        <h4>Banner "Onderbroken taken" op het dashboard</h4>
+        <p>Als RetroDB opnieuw opstart terwijl er taken lopen, verschijnen deze in een herstelbanner. Klik op <strong>"Hervatten"</strong> per taak of op <strong>"Alles hervatten"</strong> om ze allemaal te herstarten. Klik op <strong>"Negeren"</strong> of <strong>"Alles negeren"</strong> om ze te wissen.</p>
+
+        <h4>"PSN Authentication Failed"</h4>
+        <ul>
+            <li>NPSSO-tokens verlopen &mdash; genereer een nieuwe via <code>ca.account.sony.com/api/v1/ssocookie</code></li>
+            <li>Zorg ervoor dat u bent aangemeld bij store.playstation.com voordat u de cookie-URL bezoekt</li>
+            <li>RetroDB cachet uw PSN-sessie ongeveer twee maanden en vernieuwt deze nu ook automatisch op de achtergrond; als deze toch verloopt, plakt u eenvoudig een nieuwe NPSSO bij Instellingen &rarr; Account &rarr; PSN</li>
+        </ul>
+
+        <h4>"Xbox Authentication Failed"</h4>
+        <ul>
+            <li>Verifieer opnieuw door op "Aanmelden" te klikken op het tabblad Spelimporten &rarr; Xbox</li>
+            <li>Xbox-tokens worden gecachet in <code>data/xbox_tokens.json</code> en automatisch vernieuwd</li>
+        </ul>
+
+        <h4>"Image Upscaling Errors"</h4>
+        <ul>
+            <li>Het Real-ESRGAN ONNX-model wordt bij het eerste gebruik gedownload &mdash; zorg voor internettoegang</li>
+            <li>GPU-versnelling vereist compatibele drivers (CUDA voor NVIDIA, ROCm voor AMD)</li>
+            <li>Als de GPU faalt, valt het systeem automatisch terug op CPU-verwerking</li>
+        </ul>
+
+        <h3>Prestatietips</h3>
+        <ul>
+            <li>Houd uw browser up-to-date voor de beste prestaties</li>
+            <li>Sluit andere browsertabbladen bij het werken met zeer grote collecties</li>
+            <li>Gebruik systeemfilters om het aantal tegelijk weergegeven spellen te beperken</li>
+            <li>Voer Database optimaliseren periodiek uit na grote bewerkingen (scrapen, opschonen, importeren)</li>
+            <li>Canvas-themaeffecten detecteren automatisch de hardware; minder krachtige apparaten gebruiken CPU-terugval</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Security & Disclaimer -->
+<section id="security" class="help-section card">
+    <h2 class="card-title">Beveiliging & disclaimer</h2>
+    <div class="card-body">
+        <h3>Beste praktijken voor beveiliging</h3>
+        <ul>
+            <li><strong>Wijzig het standaardwachtwoord</strong> &mdash; Het standaard beheerderswachtwoord (<code>admin</code>) moet direct bij de eerste aanmelding worden gewijzigd. Gebruik een sterk wachtwoord van minstens 8 tekens.</li>
+            <li><strong>Gebruik een HTTPS-reverseproxy</strong> &mdash; RetroDB biedt zelf geen TLS/SSL. Plaats het achter een reverseproxy (bijv. Nginx, Caddy, Traefik) met HTTPS ingeschakeld om het verkeer tussen clients en de server te versleutelen.</li>
+            <li><strong>Beperk netwerktoegang</strong> &mdash; Vermijd het rechtstreeks blootstellen van RetroDB aan het openbare internet. Gebruik een VPN of beperk de toegang tot uw lokale netwerk. Als toegang op afstand nodig is, gebruik dan een reverseproxy met authenticatie.</li>
+            <li><strong>Houd regelmatig back-ups bij</strong> &mdash; Gebruik de ingebouwde back-upfunctie in Instellingen om periodiek databaseback-ups te maken. Bewaar back-ups op een andere locatie dan de toepassing.</li>
+            <li><strong>Houd RetroDB bijgewerkt</strong> &mdash; Controleer regelmatig op nieuwe releases. Beveiligingsoplossingen en verbeteringen worden opgenomen in updates.</li>
+            <li><strong>Bescherm uw API-sleutels</strong> &mdash; API-sleutels worden opgeslagen in <code>data/scraper_settings.json</code>. Zorg ervoor dat dit bestand niet openbaar toegankelijk is. Deel nooit uw <code>config.py</code> of tokenbestanden.</li>
+        </ul>
+
+        <h3>Ingebouwde beveiligingsfuncties</h3>
+        <ul>
+            <li><strong>Wachtwoordhashing</strong> &mdash; Beheerderswachtwoorden worden gehasht met PBKDF2 (nooit als platte tekst opgeslagen)</li>
+            <li><strong>Snelheidslimiet bij aanmelden</strong> &mdash; Bescherming tegen brute-force-aanvallen op het aanmeldpunt</li>
+            <li><strong>Padvalidatie</strong> &mdash; Alle bestandsbewerkingen gebruiken de hulpfuncties <code>safe_path</code> en <code>safe_filename</code> om directory-traversal-aanvallen te voorkomen</li>
+            <li><strong>Geparametriseerde queries</strong> &mdash; Alle databasequery's gebruiken geparametriseerde instructies om SQL-injectie te voorkomen</li>
+            <li><strong>XSS-bescherming</strong> &mdash; Modale dialoogvensters gebruiken veilige DOM-constructie; gebruikersinvoer wordt geëscaped</li>
+            <li><strong>Bescherming tegen afbeeldingsdecompressiebommen</strong> &mdash; Het maximale aantal pixels van een afbeelding is beperkt om geheugenuitputting door kwaadaardige afbeeldingen te voorkomen</li>
+        </ul>
+
+        <h3>Disclaimer</h3>
+        <p>
+            RetroDB wordt geleverd <strong>"AS IS"</strong> (in de huidige staat), zonder enige vorm van garantie, expliciet of impliciet,
+            met inbegrip van maar niet beperkt tot garanties van verkoopbaarheid, geschiktheid voor een bepaald doel,
+            en het niet inbreuk maken op rechten van derden. In geen geval zijn de auteurs of rechthebbenden aansprakelijk voor enige claim,
+            schade of andere aansprakelijkheid, hetzij in een actie op basis van een overeenkomst, onrechtmatige daad of anderszins, voortvloeiend uit,
+            uit of in verband met de software of het gebruik of andere handelingen met de software.
+        </p>
+        <p>
+            U bent zelf volledig verantwoordelijk voor het beveiligen van uw installatie, inclusief netwerkconfiguratie,
+            toegangscontrole, back-ups van gegevens en naleving van eventuele toepasselijke wetgeving met betrekking tot de inhoud
+            die u met deze software beheert. De ontwikkelaars aanvaarden geen verantwoordelijkheid voor ongeautoriseerde toegang,
+            gegevensverlies of misbruik als gevolg van onjuiste configuratie of implementatie.
+        </p>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+.help-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin: 0 calc(-1 * var(--spacing-lg));
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(20, 26, 35, 0.98), rgba(15, 20, 25, 0.98));
+    border-bottom: 2px solid var(--primary-cyan);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(76, 201, 240, 0.2);
+}
+
+.help-nav-item {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.help-nav-item:hover {
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+.help-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.help-section h3 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--primary-cyan);
+    margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+}
+
+.help-section h3:first-child {
+    margin-top: 0;
+}
+
+.help-section h4 {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+}
+
+.help-section ol, .help-section ul {
+    padding-left: 1.5rem;
+    margin: var(--spacing-sm) 0;
+}
+
+.help-section li {
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.help-section p {
+    color: var(--text-secondary);
+    margin: var(--spacing-sm) 0;
+    line-height: 1.6;
+}
+
+.help-section pre {
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    overflow-x: auto;
+    margin: var(--spacing-md) 0;
+    line-height: 1.5;
+}
+
+.help-section code {
+    background: var(--bg-lighter);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--primary-cyan);
+}
+
+.help-section a {
+    color: var(--primary-cyan);
+    text-decoration: none;
+}
+
+.help-section a:hover {
+    text-decoration: underline;
+}
+
+.shortcut-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-sm);
+    margin: var(--spacing-md) 0;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border-radius: var(--radius-md);
+}
+
+.shortcut-item kbd {
+    display: inline-block;
+    min-width: 24px;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    text-align: center;
+}
+
+.shortcut-item span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--primary-cyan);
+}
+
+.help-tip {
+    background: rgba(76, 201, 240, 0.1);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    border-left: 4px solid var(--primary-cyan);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    color: var(--text-secondary);
+}
+
+.help-tip strong {
+    color: var(--primary-cyan);
+}
+
+.data-table {
+    width: 100%;
+    margin: var(--spacing-md) 0;
+}
+
+.data-table th,
+.data-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.data-table th {
+    background: var(--bg-medium);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.data-table td {
+    color: var(--text-primary);
+}
+
+.data-table tbody tr:hover {
+    background: rgba(76, 201, 240, 0.05);
+}
+</style>
+{% endblock %}

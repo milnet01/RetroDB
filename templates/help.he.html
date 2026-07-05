@@ -1,0 +1,2006 @@
+{% extends "base.html" %}
+
+{% block title %}Help - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ _('Help & Documentation') }}</h1>
+        <p class="page-subtitle">{% trans version=config.APP_VERSION %}Complete guide to RetroDB v{{ version }}{% endtrans %}</p>
+    </div>
+</div>
+
+<!-- Help Navigation -->
+<div class="help-nav" data-sticky-nav>
+    <a href="#installation" class="help-nav-item">התקנה</a>
+    <a href="#getting-started" class="help-nav-item">תחילת העבודה</a>
+    <a href="#platform-notes" class="help-nav-item">הערות פלטפורמה</a>
+    <a href="#navigation" class="help-nav-item">ניווט</a>
+    <a href="#keyboard-shortcuts" class="help-nav-item">קיצורי מקלדת</a>
+    <a href="#themes" class="help-nav-item">ערכות נושא</a>
+    <a href="#dashboard" class="help-nav-item">לוח בקרה</a>
+    <a href="#systems" class="help-nav-item">מערכות</a>
+    <a href="#api-keys" class="help-nav-item">מפתחות API</a>
+    <a href="#settings" class="help-nav-item">הגדרות</a>
+    <a href="#scraping" class="help-nav-item">גירוד נתונים</a>
+    <a href="#bulk-scrape" class="help-nav-item">גירוד קבוצתי</a>
+    <a href="#ai-fill" class="help-nav-item">מילוי AI</a>
+    <a href="#filtering" class="help-nav-item">סינון</a>
+    <a href="#game-detail" class="help-nav-item">פרטי משחק</a>
+    <a href="#bulk-edit" class="help-nav-item">עריכה קבוצתית</a>
+    <a href="#compare" class="help-nav-item">השוואה</a>
+    <a href="#collections" class="help-nav-item">אוספים</a>
+    <a href="#game-imports" class="help-nav-item">ייבוא משחקים</a>
+    <a href="#retroachievements" class="help-nav-item">RetroAchievements</a>
+    <a href="#steam-achievements" class="help-nav-item">Steam</a>
+    <a href="#xbox-achievements" class="help-nav-item">Xbox</a>
+    <a href="#hltb" class="help-nav-item">HLTB</a>
+    <a href="#trophies" class="help-nav-item">גביעים</a>
+    <a href="#collector-trophies" class="help-nav-item">גביעי אספן</a>
+    <a href="#museum" class="help-nav-item">מוזיאון</a>
+    <a href="#analytics" class="help-nav-item">אנליטיקה</a>
+    <a href="#reports" class="help-nav-item">דוחות</a>
+    <a href="#rom-tools" class="help-nav-item">כלי ROM</a>
+    <a href="#normalization" class="help-nav-item">נרמול</a>
+    <a href="#image-standardization" class="help-nav-item">שינוי גודל תמונות</a>
+    <a href="#logs" class="help-nav-item">יומנים</a>
+    <a href="#maintenance" class="help-nav-item">תחזוקה</a>
+    <a href="#multi-user" class="help-nav-item">ריבוי משתמשים</a>
+    <a href="#backup" class="help-nav-item">גיבוי</a>
+    <a href="#updating" class="help-nav-item">עדכון</a>
+    <a href="#troubleshooting" class="help-nav-item">פתרון תקלות</a>
+    <a href="#security" class="help-nav-item">אבטחה</a>
+</div>
+
+<!-- Installation -->
+<section id="installation" class="help-section card">
+    <h2 class="card-title">התקנה</h2>
+    <div class="card-body">
+        <h3>דרישות מערכת</h3>
+        <ul>
+            <li><strong>Python 3.8+</strong> עם pip</li>
+            <li><strong>דפדפן אינטרנט</strong> (Chrome, Firefox, Safari, Edge)</li>
+            <li><strong>מערכת הפעלה:</strong> Linux, Windows 10/11, או macOS</li>
+        </ul>
+
+        <h3>התקנה מהירה</h3>
+        <ol>
+            <li>חלצו את קובץ ה-ZIP של RetroDB לתיקייה לבחירתכם</li>
+            <li>פתחו טרמינל/שורת פקודה בתיקייה זו</li>
+            <li>הריצו: <code>python install.py</code></li>
+            <li>הפעילו את השרת:
+                <ul>
+                    <li>Linux: <code>./start.sh</code></li>
+                    <li>Windows: לחיצה כפולה על <code>start.bat</code></li>
+                    <li>macOS: לחיצה כפולה על <code>start.command</code></li>
+                </ul>
+            </li>
+            <li>פתחו את <code>http://localhost:5000</code> בדפדפן שלכם</li>
+        </ol>
+
+        <h3>מתקין גרפי</h3>
+        <p>ב-Linux, ניתן גם להריץ <code>./setup.sh</code> כדי להפעיל אשף התקנה גרפי. הוא בודק אוטומטית את קיומם של Python/pip/tkinter, ולאחר מכן מלווה אתכם בכל שלב בהתקנה עם יומן התקדמות חזותי.</p>
+
+        <h3>מה install.py עושה</h3>
+        <ul>
+            <li>מוודא ש-Python 3.8+ ו-pip זמינים</li>
+            <li>מתקין תלויות Python מתוך <code>requirements.txt</code></li>
+            <li>יוצר את <code>config.py</code> מתבנית הדוגמה</li>
+            <li>יוצר את התיקיות הנדרשות (בסיס נתונים, יומנים, תיקיות מדיה)</li>
+            <li>בונה את חבילות ה-CSS וה-JS</li>
+        </ul>
+
+        <h3>עקיפות באמצעות משתני סביבה</h3>
+        <p>משתני הסביבה הבאים יכולים לעקוף הגדרות ברירת מחדל בלי לערוך קבצי תצורה:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>משתנה</th><th>ברירת מחדל</th><th>תיאור</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>RETRODB_DB_PATH</code></td><td><code>database/roms.db</code></td><td>נתיב קובץ בסיס הנתונים</td></tr>
+                <tr><td><code>RETRODB_HOST</code></td><td><code>0.0.0.0</code></td><td>כתובת הקישור של השרת</td></tr>
+                <tr><td><code>RETRODB_PORT</code></td><td><code>5000</code></td><td>יציאת השרת</td></tr>
+                <tr><td><code>RETRODB_DEBUG</code></td><td><code>false</code></td><td>מצב ניפוי באגים (<code>true</code> או <code>false</code>) &mdash; מפעיל את מנפה הבאגים האינטראקטיבי של Werkzeug. השאירו על <code>false</code> בכל התקנה הנגישה ממכשירים אחרים ברשת שלכם.</td></tr>
+                <tr><td><code>RETRODB_SECRET_KEY</code></td><td>נוצר אוטומטית</td><td>מפתח סודי של Flask</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Getting Started -->
+<section id="getting-started" class="help-section card">
+    <h2 class="card-title">תחילת העבודה</h2>
+    <div class="card-body">
+        <h3>הגדרה ראשונית</h3>
+        <p>בהפעלה הראשונה, RetroDB מציג <strong>אשף הגדרה</strong> שמדריך אתכם דרך:</p>
+        <ol>
+            <li><strong>חשבון מנהל</strong> &mdash; יצירת שם המשתמש והסיסמה שלכם</li>
+            <li><strong>נתיב הספרייה</strong> &mdash; הגדרת תיקיית ה-ROM שלכם</li>
+            <li><strong>שילוב ES-DE</strong> &mdash; קישור אופציונלי של רשימות משחקים ומדיה של ES-DE</li>
+            <li><strong>מפתחות API</strong> &mdash; הוספה אופציונלית של מפתחות API לגירוד נתונים</li>
+        </ol>
+        <p>לאחר השלמת האשף, לחצו על <strong>"סרוק ספרייה"</strong> בלוח הבקרה כדי לגלות את ה-ROMs שלכם.</p>
+
+        <h3>תהליך התחלה מהירה</h3>
+        <ol>
+            <li><strong>סרקו</strong> את הספרייה שלכם כדי לייבא ROMs</li>
+            <li><strong>עיינו</strong> לפי מערכת או צפו בכל המשחקים בספרייה</li>
+            <li><strong>גרדו</strong> מטא-נתונים בנפרד או השתמשו בגירוד קבוצתי</li>
+            <li><strong>ארגנו</strong> באמצעות תגיות, רשימות ורשימת משאלות</li>
+            <li><strong>עקבו</strong> אחר ההתקדמות שלכם עם סטטוס השלמה והישגים</li>
+        </ol>
+
+        <h3>מבנה ספריית ה-ROM</h3>
+        <p>RetroDB מצפה שה-ROMs שלכם יהיו מאורגנים בתיקיות מערכת בתוך נתיב הספרייה שלכם:</p>
+        <pre>ROM Library/
+  nes/
+    Super Mario Bros. (USA).nes
+  snes/
+    Chrono Trigger (USA).sfc
+  psx/
+    Final Fantasy VII (USA)/
+      Final Fantasy VII (USA) (Disc 1).chd
+      Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>כל תיקיית מערכת צריכה להכיל קובץ <code>systeminfo.txt</code> של ES-DE שמגדיר את סיומות הקבצים הנתמכות. RetroDB קורא אותו במהלך הסריקה כדי לזהות אילו קבצים הם ROMs תקינים עבור כל מערכת.</p>
+
+        <div class="help-tip">
+            <strong>טיפ:</strong> אם כבר גרדתם נתונים עם ES-DE, RetroDB יכול לייבא את הנתונים האלה!
+            הגדירו נתיבי ES-DE ב-הגדרות &rarr; שילוב ES-DE, או במהלך אשף ההגדרה.
+        </div>
+    </div>
+</section>
+
+<!-- Platform Notes -->
+<section id="platform-notes" class="help-section card">
+    <h2 class="card-title">הערות פלטפורמה</h2>
+    <div class="card-body">
+        <h3>Linux</h3>
+        <ul>
+            <li>נבדק על Ubuntu, Fedora, openSUSE ו-Arch Linux</li>
+            <li>כלי ROM דורשים: <code>sudo apt install p7zip-full unrar mame-tools</code> (Debian/Ubuntu) או המקבילה עבור ההפצה שלכם</li>
+            <li>אם משתמשים ב-Python של המערכת, המתקין מטפל ב-<code>--break-system-packages</code> אוטומטית</li>
+            <li>האצת GPU של ROCm נתמכת עבור מעבדי גרפיקה של AMD (הגדלת תמונות Real-ESRGAN)</li>
+        </ul>
+
+        <h3>Windows</h3>
+        <ul>
+            <li>הורידו את Python מ-<a href="https://python.org" target="_blank" rel="noopener noreferrer">python.org</a> (סמנו "Add to PATH" במהלך ההתקנה)</li>
+            <li>כלי ROM: התקינו את <a href="https://www.7-zip.org/" target="_blank" rel="noopener noreferrer">7-Zip</a>, <a href="https://www.win-rar.com/" target="_blank" rel="noopener noreferrer">WinRAR</a>, ו-<a href="https://www.mamedev.org/" target="_blank" rel="noopener noreferrer">MAME</a> (עבור chdman)</li>
+            <li>השתמשו ב-<code>start.bat</code> כדי להפעיל, או הריצו <code>python app.py</code> משורת הפקודה</li>
+        </ul>
+
+        <h3>macOS</h3>
+        <ul>
+            <li>ניתן להתקין את Python 3 באמצעות <a href="https://brew.sh/" target="_blank" rel="noopener noreferrer">Homebrew</a>: <code>brew install python3</code></li>
+            <li>כלי ROM: <code>brew install p7zip unrar rom-tools</code></li>
+            <li>לחיצה כפולה על <code>start.command</code> ב-Finder כדי להפעיל</li>
+            <li>האצת CoreML נתמכת עבור Apple Silicon (הגדלת תמונות Real-ESRGAN)</li>
+        </ul>
+
+        <h3>דרישות כלי ROM לפי תכונה</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>תכונה</th><th>כלי נדרש</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>חילוץ ZIP</td><td>unzip (בדרך כלל מותקן מראש)</td></tr>
+                <tr><td>תמיכה בארכיוני 7z</td><td>7z (p7zip-full)</td></tr>
+                <tr><td>תמיכה בארכיוני RAR</td><td>unrar</td></tr>
+                <tr><td>המרה/אימות CHD</td><td>chdman (mame-tools)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Navigation -->
+<section id="navigation" class="help-section card">
+    <h2 class="card-title">ניווט</h2>
+    <div class="card-body">
+        <h3>מקטעי סרגל הצד</h3>
+
+        <h4>ראשי</h4>
+        <ul>
+            <li><strong>לוח בקרה</strong> &mdash; ציון בריאות האוסף, סקירת סטטיסטיקות, סטטוס API, משחקים ששוחקו/נוספו/גורדו לאחרונה, שחזור עבודות</li>
+            <li><strong>מערכות</strong> &mdash; עיון בפלטפורמות עם מספרי משחקים, תמונות מערכת, מפרטים, סינון לפי סוג ותכונות</li>
+            <li><strong>ספרייה</strong> &mdash; כל המשחקים עם גלילה אינסופית, סינון מתקדם (הכללה/החרגה), חיפוש ומיון</li>
+            <li><strong>אנליטיקה</strong> &mdash; תרשימים וסטטיסטיקות אוסף על פני 12 כרטיסיות עם אפשרויות ייצוא</li>
+        </ul>
+
+        <h4>גביעים והישגים</h4>
+        <ul>
+            <li><strong>גביעי RPCS3</strong> &mdash; גביעי PS3 שהושגו מקומית מאמולטור RPCS3</li>
+            <li><strong>גביעי PSN</strong> &mdash; סנכרון גביעי PlayStation Network באמצעות PSN API</li>
+            <li><strong>הישגים</strong> &mdash; מעקב התקדמות RetroAchievements לפי מערכת</li>
+            <li><strong>הישגי Steam</strong> &mdash; מעקב הישגי Steam עם פרטים לכל משחק</li>
+            <li><strong>הישגי Xbox</strong> &mdash; מעקב הישגי Xbox וניקוד גיימרסקור</li>
+        </ul>
+
+        <h4>האוסף שלי</h4>
+        <ul>
+            <li><strong>תגיות</strong> &mdash; תגיות משחק מותאמות אישית עם קוד צבע</li>
+            <li><strong>רשימות</strong> &mdash; רשימות משחקים מאוצרות עם שמות וסידור בגרירה ושחרור</li>
+            <li><strong>רשימת משאלות</strong> &mdash; מעקב אחר משחקים שאתם רוצים לרכוש עם רמות עדיפות</li>
+            <li><strong>גביעי אספן</strong> &mdash; אבני דרך של גיימיפיקציה עבור האוסף שלכם</li>
+        </ul>
+
+        <h4>כלים</h4>
+        <ul>
+            <li><strong>דוחות ROM</strong> &mdash; אימות שמות ROM ותאימות לתקנים</li>
+            <li><strong>ייבוא משחקים</strong> &mdash; ייבוא מ-CLZ, Steam, Xbox ו-PSN</li>
+            <li><strong>כלי ROM</strong> &mdash; סורק ארכיונים, ממיר/מאמת CHD, מאתר כפילויות, מארגן ריבוי-דיסקים, איתור כפילויות צילומי מסך, משנה גודל תמונות</li>
+        </ul>
+
+        <h4>תצורה</h4>
+        <ul>
+            <li><strong>הגדרות</strong> &mdash; כל תצורת האפליקציה (6 כרטיסיות עם תת-מקטעים רבים)</li>
+            <li><strong>מציג יומנים</strong> &mdash; עיון ביומני האפליקציה בכל הקטגוריות</li>
+        </ul>
+
+        <h4>מידע</h4>
+        <ul>
+            <li><strong>מוזיאון</strong> &mdash; אנציקלופדיה אינטראקטיבית של מערכות משחק עם תוכן שנוצר על ידי AI</li>
+            <li><strong>עזרה</strong> &mdash; דף התיעוד הזה</li>
+            <li><strong>יומן שינויים</strong> &mdash; היסטוריית גרסאות</li>
+        </ul>
+
+        <h3>הדגשה בסרגל הצד</h3>
+        <p>סרגל הצד מדגיש את המקטע הנוכחי בציאן. ההקשר נשמר בעת ירידה לפרטים &mdash; צפייה במשחקים של מערכת שומרת על <strong>מערכות</strong> מודגש, צפייה במשחק מתוך הישגים שומרת על <strong>הישגים</strong> מודגש, וכן הלאה.</p>
+
+        <h3>שביל ניווט</h3>
+        <p>שביל הניווט בראש כל דף מציג את נתיב הניווט שלכם. דוגמאות:</p>
+        <ul>
+            <li><code>Systems &rsaquo; NES &rsaquo; Super Mario Bros.</code></li>
+            <li><code>RetroAchievements &rsaquo; SNES</code></li>
+            <li><code>PSN Trophies &rsaquo; The Last of Us</code></li>
+        </ul>
+
+        <h3>כרטיסיות</h3>
+        <p>דפים רבים משתמשים בכרטיסיות לצורך ארגון (הגדרות, אנליטיקה, דוחות, כלי ROM, הישגים). הכרטיסיות נמתחות למילוי רוחב התוכן וזוכרות את הבחירה האחרונה שלכם היכן שרלוונטי.</p>
+    </div>
+</section>
+
+<!-- Keyboard Shortcuts -->
+<section id="keyboard-shortcuts" class="help-section card">
+    <h2 class="card-title">קיצורי מקלדת</h2>
+    <div class="card-body">
+        <p>הקישו <kbd>?</kbd> בכל מקום כדי להציג את כל הקיצורים. מחוון מקש-ממתין מופיע כאשר המערכת ממתינה למקש השני ברצף (למשל <code>g...</code>).</p>
+
+        <h3>ניווט (הקישו G, ואז אות)</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>d</kbd> <span>לוח בקרה</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>s</kbd> <span>מערכות</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>l</kbd> <span>ספרייה</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>a</kbd> <span>ניתוח נתונים</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>t</kbd> <span>הגדרות</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>h</kbd> <span>עזרה</span></div>
+        </div>
+
+        <h3>פעולות</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>/</kbd> <span>מיקוד לחיפוש</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>סגירת חלון</span></div>
+            <div class="shortcut-item"><kbd>?</kbd> <span>הצגת קיצורים</span></div>
+        </div>
+
+        <h3>דפי משחקים</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>e</kbd> <span>עריכת משחק</span></div>
+            <div class="shortcut-item"><kbd>s</kbd> <span>גירוד משחק</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>ניווט בין צילומי מסך</span></div>
+        </div>
+
+        <div class="help-tip">
+            <strong>הערה:</strong> קיצורי המקלדת מושבתים כאשר שדה טקסט, אזור טקסט או חלון נמצאים במיקוד, כדי למנוע ניווט בטעות.
+        </div>
+    </div>
+</section>
+
+<!-- Themes -->
+<section id="themes" class="help-section card">
+    <h2 class="card-title">ערכות נושא</h2>
+    <div class="card-body">
+        <p>RetroDB מציעה 7 ערכות נושא חזותיות, כל אחת עם לוח צבעים ייחודי ואפקט רקע קנבס מונפש. שנו ערכות נושא ב<strong>הגדרות &rarr; ספרייה &rarr; תצוגה</strong>.</p>
+
+        <h3>ערכות נושא זמינות</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>ערכת נושא</th><th>צבעים</th><th>אפקט רקע</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Cyberpunk</strong> (ברירת מחדל)</td><td>ציאן ומגנטה על כחול כהה</td><td>עשן/ערפל נפחי עם רעש סימפלקס</td></tr>
+                <tr><td><strong>Matrix</strong></td><td>ירוק על שחור</td><td>גשם דיגיטלי נופל (תווי קאנג'י)</td></tr>
+                <tr><td><strong>Amber</strong></td><td>ענבר/כתום על חום כהה</td><td>מפל צבע זריחת CRT עם הילת שמש</td></tr>
+                <tr><td><strong>Ocean</strong></td><td>טורקיז וכחול על כחול נייבי כהה</td><td>השתקפות ירח עם שכבות עומק אוקיינוס</td></tr>
+                <tr><td><strong>Cathedral</strong></td><td>זהב וסגול מלכותי על סגול עמוק</td><td>קרני אור אלוהיות מלמעלה עם אווירה חמימה</td></tr>
+                <tr><td><strong>Blade Runner</strong></td><td>כחול חשמלי וורוד ניאון על כחול-אפור כהה</td><td>זוהר עיר ניאון עם פסי גשם וערפל סגול</td></tr>
+                <tr><td><strong>Elite</strong></td><td>ירוק וקטורי ולבן על שחור טהור</td><td>אסתטיקת וקטור שלד תיל בהשראת Elite (1984)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>איך זה עובד</h3>
+        <ul>
+            <li>ערכות הנושא דורסות את משתני צבעי ה-CSS &mdash; כל רכיבי הממשק מסתגלים אוטומטית</li>
+            <li>אפקטי הקנבס כוללים זיהוי אוטומטי של דרג החומרה (גבוה/בינוני/נמוך) עם האצת GPU כשזמינה ונפילה חזרה למעבד עבור מכשירים חלשים יותר</li>
+            <li>האפקטים מושהים כאשר הלשונית אינה גלויה כדי לחסוך במשאבים</li>
+            <li>מצב העשן של Cyberpunk נשמר בין ניווטי דפים למעברים חלקים</li>
+            <li>שכבת קווי סריקה עדינה בסגנון CRT מסתגלת ללוח הצבעים של כל ערכת נושא</li>
+            <li>העדפת ערכת הנושא שלכם נשמרת בדפדפן ונשמרת בין הפעלות</li>
+        </ul>
+
+        <h3>אייקונים מותאמי ערכת נושא</h3>
+        <p>אייקוני התראות, מחווני מצב עבודות ואייקוני פעולה מסתגלים אוטומטית לערכת הנושא הנוכחית. לדוגמה, אייקון ההצלחה עשוי להציג סימן וי ירוק ב-Cyberpunk אך סמל שונה ב-Matrix כדי להתאים לאסתטיקה של ירוק-על-שחור.</p>
+    </div>
+</section>
+
+<!-- Dashboard -->
+<section id="dashboard" class="help-section card">
+    <h2 class="card-title">לוח בקרה</h2>
+    <div class="card-body">
+        <h3>ציון בריאות האוסף</h3>
+        <p>טבעת התקדמות מעגלית מציגה את בריאות האוסף הכוללת שלכם כאחוז, מקודדת בצבע לפי איכות:</p>
+        <ul>
+            <li><strong>ירוק</strong> (80%+) &mdash; כיסוי מטא-דאטה מצוין</li>
+            <li><strong>ציאן</strong> (60&ndash;79%) &mdash; כיסוי טוב עם מעט פערים</li>
+            <li><strong>כתום</strong> (40&ndash;59%) &mdash; כיסוי בינוני, שקלו גירוד המוני</li>
+            <li><strong>אדום</strong> (&lt;40%) &mdash; פערי מטא-דאטה משמעותיים</li>
+        </ul>
+        <p>מיני-טבעות פירוט למטה מציגות את שלמות תמונות הקופסה, שלמות התיאורים וכיסוי ההישגים.</p>
+
+        <h3>סקירת סטטיסטיקות</h3>
+        <p>כרטיסים למבט חטוף המציגים:</p>
+        <ul>
+            <li><strong>סך המערכות</strong> &mdash; מספר הפלטפורמות בספרייה שלכם</li>
+            <li><strong>סך המשחקים</strong> &mdash; ספירת המשחקים הכוללת (לא כולל דיסקי בונוס)</li>
+            <li><strong>מטא-דאטה חסרה</strong> &mdash; משחקים שטרם נגרדו</li>
+            <li><strong>הושלם</strong> &mdash; משחקים עם מטא-דאטה גרודה</li>
+        </ul>
+
+        <h3>מקטעי פעילות אחרונה</h3>
+        <p>מקטעים ניתנים לגלילה המציגים את הפעילות האחרונה שלכם (כל אחד מופיע רק כאשר יש משחקים רלוונטיים):</p>
+        <ul>
+            <li><strong>משחקים כעת</strong> &mdash; משחקים המסומנים כ"בתהליך"</li>
+            <li><strong>נוספו לאחרונה</strong> &mdash; המשחקים האחרונים שנוספו לספרייה שלכם</li>
+            <li><strong>נצפו לאחרונה</strong> &mdash; משחקים שפתחתם לאחרונה</li>
+            <li><strong>נגרדו לאחרונה</strong> &mdash; משחקים עם מטא-דאטה שאוחזרה לאחרונה</li>
+        </ul>
+
+        <h3>פעולות מהירות</h3>
+        <ul>
+            <li><strong>סריקת ספרייה</strong> &mdash; סרקו את תיקיות ה-ROM שלכם לאיתור משחקים חדשים</li>
+            <li><strong>משחק אקראי</strong> &mdash; בחרו משחק אקראי מהספרייה שלכם</li>
+        </ul>
+
+        <h3>סטטוס API</h3>
+        <p>מציג את סטטוס החיבור של כל הגרדים וממשקי ה-API המוגדרים. ממשקי API לא מקוונים או לא מוגדרים כראוי מציגים באנר אזהרה עם קישור להגדרות.</p>
+
+        <h3>שחזור עבודות</h3>
+        <p>אם RetroDB מופעלת מחדש בזמן שעבודות רקע פועלות (גירוד המוני, סנכרון RA, שינוי גודל תמונות וכו'), עבודות שהופרעו מופיעות בבאנר שחזור. אפשרויות:</p>
+        <ul>
+            <li><strong>המשך</strong> &mdash; הפעלה מחדש של עבודה בודדת שהופרעה</li>
+            <li><strong>המשך הכל</strong> &mdash; הפעלה מחדש של כל העבודות שהופרעו</li>
+            <li><strong>ביטול</strong> &mdash; הסרת עבודה בודדת מרשימת השחזור</li>
+            <li><strong>ביטול הכל</strong> &mdash; הסרת כל העבודות שהופרעו</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Systems Browser -->
+<section id="systems" class="help-section card">
+    <h2 class="card-title">דפדפן מערכות</h2>
+    <div class="card-body">
+        <h3>רשת המערכות</h3>
+        <p>דף המערכות מציג את כל הפלטפורמות בספרייה שלכם ככרטיסים בפריסת רשת בנייה רספונסיבית. כל כרטיס מציג:</p>
+        <ul>
+            <li><strong>לוגו מערכת</strong> (ניתן להתאמה אישית בהגדרות &rarr; התאמה אישית &rarr; לוגואים)</li>
+            <li><strong>ספירת ROM</strong> ו<strong>ספירת לא-גרודים</strong></li>
+            <li><strong>תג סוג מערכת</strong> &mdash; קונסולה, נייד, מחשב, ארקייד או מנוע</li>
+            <li><strong>תגי תכונות</strong> &mdash; תמיכת RetroAchievements, גביעים מקומיים (RPCS3)</li>
+        </ul>
+
+        <h3>חלון מפרטי מערכת</h3>
+        <p>לחצו על כפתור המידע בכל כרטיס מערכת כדי לצפות במפרטי חומרה מפורטים:</p>
+        <ul>
+            <li>תמונת חומרה (תצלום קונסולה/מערכת)</li>
+            <li>יצרן ותאריך שחרור</li>
+            <li>CPU, GPU, RAM, VRAM</li>
+            <li>רזולוציה, עומק צבע, שבב קול</li>
+            <li>סוג מדיה (מחסנית, דיסק וכו')</li>
+        </ul>
+
+        <h3>סינון וחיפוש</h3>
+        <ul>
+            <li><strong>חיפוש טקסט</strong> &mdash; סינון לפי שם מערכת או שם תיקייה</li>
+            <li><strong>סינון לפי סוג</strong> &mdash; קונסולה, נייד, מחשב, ארקייד, מנוע</li>
+            <li><strong>סינון לפי תכונה</strong> &mdash; תמיכת RetroAchievements, גביעים מקומיים</li>
+            <li>סרגל תוצאות הסינון מציג <em>"X מתוך Y מערכות"</em></li>
+            <li>הסינונים נשמרים בין טעינות דף מחדש באמצעות אחסון הפעלה</li>
+        </ul>
+
+        <h3>רשימת משחקים לכל מערכת</h3>
+        <p>לחצו על כל כרטיס מערכת כדי לצפות במשחקים שלה. רשימת המשחקים לכל מערכת כוללת את אותן תכונות כמו דף הספרייה המלא &mdash; גלילה אינסופית, חיפוש, כל אפשרויות הסינון, בחירה המונית ומיון. כותרת מערכת מציגה את שם המערכת, ספירת המשחקים ותג סוג המערכת.</p>
+    </div>
+</section>
+
+<!-- API Key Setup Guide -->
+<section id="api-keys" class="help-section card">
+    <h2 class="card-title">מדריך הגדרת מפתחות API</h2>
+    <div class="card-body">
+        <p>מפתחות API הם אופציונליים אך מאפשרים גירוד מטא-דאטה עשיר ותכונות נוספות. הגדירו אותם ב<strong>הגדרות &rarr; גירוד &rarr; מפתחות API</strong>.</p>
+
+        <h3>גרדי מטא-דאטה</h3>
+
+        <h4>TheGamesDB</h4>
+        <ol>
+            <li>עברו אל <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a></li>
+            <li>בקשו מפתחות API (חינמי, מאושר ידנית) &mdash; תקבלו מפתח <strong>ציבורי</strong> ומפתח <strong>פרטי</strong></li>
+            <li>הזינו את שני המפתחות בהגדרות &rarr; מפתחות API &rarr; TheGamesDB</li>
+            <li>ה<strong>מפתח הציבורי</strong> (מגבלת קצב לכל IP) משמש כמפתח הראשי לגירוד</li>
+            <li>ה<strong>מפתח הפרטי</strong> (מאגר חודשי משותף) משמש כגיבוי אם המפתח הציבורי נכשל</li>
+        </ol>
+
+        <h4>IGDB (דרך Twitch)</h4>
+        <ol>
+            <li>צרו חשבון Twitch ב<a href="https://www.twitch.tv" target="_blank" rel="noopener noreferrer">twitch.tv</a></li>
+            <li>עברו אל <a href="https://dev.twitch.tv/console" target="_blank" rel="noopener noreferrer">dev.twitch.tv/console</a></li>
+            <li>רשמו אפליקציה חדשה (כל שם, כל קטגוריה, <code>http://localhost</code> כהפניית OAuth)</li>
+            <li>העתיקו את ה<strong>Client ID</strong> וצרו <strong>Client Secret</strong></li>
+            <li>הזינו את שניהם בהגדרות &rarr; מפתחות API &rarr; IGDB</li>
+        </ol>
+
+        <h4>RAWG.io</h4>
+        <ol>
+            <li>עברו אל <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer">rawg.io/apidocs</a></li>
+            <li>לחצו על "Get API Key" וצרו חשבון</li>
+            <li>העתיקו את מפתח ה-API שלכם מלוח הבקרה</li>
+            <li>הזינו אותו בהגדרות &rarr; מפתחות API &rarr; RAWG</li>
+        </ol>
+        <p><em>שכבה חינמית: 20,000 בקשות לחודש</em></p>
+
+        <h4>ScreenScraper</h4>
+        <ol>
+            <li>צרו חשבון ב<a href="https://www.screenscraper.fr" target="_blank" rel="noopener noreferrer">screenscraper.fr</a></li>
+            <li>הזינו את שם המשתמש והסיסמה שלכם בהגדרות &rarr; מפתחות API &rarr; ScreenScraper</li>
+        </ol>
+        <p><em>הערה: ל-ScreenScraper יש מגבלות בקשות יומיות בהתבסס על רמת החשבון שלכם. תרומה למסד הנתונים מגדילה את המגבלות שלכם.</em></p>
+
+        <h3>הישגים וגביעים</h3>
+
+        <h4>RetroAchievements</h4>
+        <ol>
+            <li>צרו חשבון ב<a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a></li>
+            <li>עברו אל <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer">הגדרות &rarr; מפתחות API</a> בפרופיל שלכם</li>
+            <li>העתיקו את מפתח ה-API שלכם</li>
+            <li>הזינו את שם המשתמש ומפתח ה-API שלכם בהגדרות &rarr; חשבון &rarr; RetroAchievements</li>
+        </ol>
+
+        <h4>Steam Web API</h4>
+        <ol>
+            <li>עברו אל <a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener noreferrer">steamcommunity.com/dev/apikey</a></li>
+            <li>הירשמו למפתח Steam Web API (דורש חשבון Steam)</li>
+            <li>הזינו את מפתח ה-API ואת מזהה ה-Steam שלכם (או כתובת ה-URL המותאמת אישית) בהגדרות</li>
+        </ol>
+        <p><em>משמש לייבוא ספריית Steam ומעקב הישגים.</em></p>
+
+        <h4>Xbox Live</h4>
+        <p>אימות Xbox משתמש ב-OAuth2 &mdash; אין צורך במפתח API. היכנסו עם חשבון ה-Microsoft שלכם ישירות מלשונית ייבוא משחקים &rarr; Xbox. אסימונים נשמרים במטמון אוטומטית ומרועננים לפי הצורך.</p>
+
+        <h4>PlayStation Network (PSN)</h4>
+        <p>PSN משתמשת באימות עוגיית NPSSO. עיינו במקטע <a href="#trophies">גביעים</a> לקבלת הוראות הגדרה מפורטות.</p>
+
+        <h3>ספקי AI (עבור AI Fill &amp; Museum)</h3>
+        <p>ספק AI אחד נדרש עבור מטא-דאטה של AI Fill ויצירת תוכן Museum. בחרו מבין:</p>
+
+        <table class="data-table">
+            <thead>
+                <tr><th>ספק</th><th>מודל ברירת מחדל</th><th>מחיר (קלט / פלט לכל מיליון אסימונים)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0.10 / $0.40</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0.15 / $0.60</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 4.5</td><td>$1.00 / $5.00</td></tr>
+            </tbody>
+        </table>
+        <p>כל ספק מציע מספר דרגי מודלים. המודלים הזולים ביותר עובדים היטב עבור מטא-דאטה ותוכן מוזיאון. הגדירו את הספק המועדף עליכם ואת מפתח ה-API ב<strong>הגדרות &rarr; גירוד &rarr; מפתחות API</strong>.</p>
+    </div>
+</section>
+
+<!-- Settings -->
+<section id="settings" class="help-section card">
+    <h2 class="card-title">הגדרות</h2>
+    <div class="card-body">
+        <p>ההגדרות מאורגנות ב-6 לשוניות, כל אחת עם מספר תת-מקטעים.</p>
+
+        <h3>לשונית חשבון</h3>
+        <ul>
+            <li><strong>הפרופיל שלי</strong> &mdash; העלאת/הסרת אווטאר, שם תצוגה, מידע על תפקיד, שינוי סיסמה</li>
+            <li><strong>RetroAchievements</strong> &mdash; שם משתמש ומפתח API לשילוב RA</li>
+            <li><strong>PSN</strong> &mdash; עוגיית NPSSO לסנכרון גביעי PlayStation Network</li>
+            <li><strong>אזור זמן</strong> &mdash; הגדירו את אזור הזמן שלכם לתצוגת תאריכים בכל האפליקציה</li>
+            <li><strong>משתמשים</strong> &mdash; ניהול משתמשים: הוספה, עריכה, מחיקת משתמשים והקצאת תפקידים (מנהל בלבד)</li>
+        </ul>
+
+        <h3>לשונית ספרייה</h3>
+        <ul>
+            <li><strong>נתיבים</strong> &mdash; נתיב ספריית ה-ROM, מיקום מסד הנתונים</li>
+            <li><strong>תצוגה</strong> &mdash; בחירת ערכת נושא, סגנון תמונת קופסה (2D/3D), מערכת דירוג גיל מועדפת, פריטים לכל דף</li>
+            <li><strong>מתן שמות ל-ROM</strong> &mdash; מיקום תווית ("The" מוביל/נגרר), רשימת אפשרויות אזור, אזור ברירת מחדל, מוסכמות מתן שמות</li>
+            <li><strong>גיבוי</strong> &mdash; יצירה ושחזור של גיבויי מסד הנתונים</li>
+        </ul>
+
+        <h3>לשונית גירוד</h3>
+        <ul>
+            <li><strong>ES-DE</strong> &mdash; נתיבי gamelist ומדיה של ES-DE לייבוא נתונים מקומי</li>
+            <li><strong>גרד</strong> &mdash; הפעלה/השבתה של גרדים בודדים, סידור עדיפויות בגרירה ושחרור, הגדרות מגבלת קצב לכל גרד</li>
+            <li><strong>מפתחות API</strong> &mdash; כל אישורי הגרדים (TGDB, IGDB, RAWG, ScreenScraper), בחירת ספק AI ובחירת מודל (Gemini, OpenAI, Claude)</li>
+        </ul>
+
+        <h3>לשונית נתונים</h3>
+        <ul>
+            <li><strong>סטטיסטיקות</strong> &mdash; סקירת סטטיסטיקות הספרייה (סך משחקים, מערכות, שימוש באחסון)</li>
+            <li><strong>גביעים</strong> &mdash; הגדרת נתיב גביעי RPCS3 לסריקת גביעי PS3 מקומיים</li>
+            <li><strong>תפריטים נפתחים</strong> &mdash; התאמה אישית של אפשרויות אזור וערכי תפריטים נפתחים אחרים בשימוש ברחבי האפליקציה</li>
+            <li><strong>נרמול</strong> &mdash; כללי נרמול ז'אנר ומצבים &mdash; הוסיפו מיפויים מותאמים אישית כדי לתקנן את פלט הגרד</li>
+        </ul>
+
+        <h3>לשונית התאמה אישית</h3>
+        <ul>
+            <li><strong>התראות</strong> &mdash; העדפות פסק זמן להתראות (הצלחה, מידע, אזהרה, שגיאה &mdash; כל אחת ניתנת להגדרה בנפרד)</li>
+            <li><strong>בקרים</strong> &mdash; ניהול ספריית הבקרים, הגדרת בקרי ברירת מחדל לכל מערכת, הוספת בקרים מותאמים אישית. בקרי ברירת מחדל דורסים ערכי גירוד/AI במהלך אחזור מטא-דאטה.</li>
+            <li><strong>לוגואים</strong> &mdash; התאמה אישית של לוגו מערכת &mdash; ייבוא לוגואי מערכת או רענון מברירות המחדל</li>
+        </ul>
+
+        <h3>לשונית מערכת</h3>
+        <ul>
+            <li><strong>תחזוקה</strong> &mdash; אופטימיזציית מסד נתונים (VACUUM/ANALYZE), ניקוי מדיה יתומה, ניקוי ROM חסרים, ניקוי נתונים גרודים, ניקוי ייבוא CLZ, תקנון תמונות המוני</li>
+            <li><strong>שרת</strong> &mdash; הגדרת שרת (מארח, פורט, מצב ניפוי באגים)</li>
+            <li><strong>רישום</strong> &mdash; הגדרות רמת רישום לקטגוריות שונות</li>
+            <li><strong>פתרון תקלות</strong> &mdash; ניקוי גירוד המוני תקוע, ניקוי תור סנכרון RA, ניקוי רענון PSN, ניקוי יצירת מוזיאון, הפעלה מחדש של השרת</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>טיפ:</strong> גרדים מושבתים לא יפעילו אזהרות "API לא מקוון" בלוח הבקרה. אם אינכם משתמשים בגרד, השביתו אותו בהגדרות &rarr; גירוד &rarr; גרד במקום למחוק את מפתח ה-API.
+        </div>
+    </div>
+</section>
+
+<!-- Scraping -->
+<section id="scraping" class="help-section card">
+    <h2 class="card-title">איסוף מטא-נתונים</h2>
+    <div class="card-body">
+        <h3>איסוף למשחק בודד</h3>
+        <ol>
+            <li>פתחו את חלון הפרטים של משחק כלשהו (לחצו על כרטיס המשחק)</li>
+            <li>לחצו על <strong>"Scrape"</strong></li>
+            <li>שנו את כותרת החיפוש אם צריך</li>
+            <li>בחרו את התוצאה הנכונה מבין ההתאמות</li>
+            <li>לחצו על <strong>"Apply"</strong></li>
+        </ol>
+
+        <h3>מקורות איסוף</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>מקור</th><th>מפתח API</th><th>הכי מתאים ל</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ES-DE (מקומי)</td><td>לא</td><td>אוספים שכבר נאספו &mdash; מייבא את gamelist.xml ומדיה שהורדה</td></tr>
+                <tr><td>TheGamesDB</td><td>כן</td><td>עטיפות ייחודיות לפלטפורמה, עטיפות תלת-ממד</td></tr>
+                <tr><td>IGDB</td><td>כן</td><td>משחקים מודרניים, מידע מפורט, ז'אנרים, דירוגים</td></tr>
+                <tr><td>RAWG.io</td><td>כן</td><td>דירוגי משתמשים, תיאורים, צילומי מסך</td></tr>
+                <tr><td>ScreenScraper</td><td>כן</td><td>גרסאות אזוריות, עטיפות תלת-ממד, סרטונים, מדריכים</td></tr>
+            </tbody>
+        </table>
+
+        <h3>איסוף היברידי</h3>
+        <p>RetroDB משלב אוטומטית נתונים ממספר מקורות כדי למקסם את כיסוי המטא-נתונים:</p>
+        <ul>
+            <li>מטא-נתוני טקסט מהמקור הזמין בעל העדיפות הגבוהה ביותר</li>
+            <li>תמונות ומדיה ממקורות משניים כשלמקור העיקרי אין אותם</li>
+            <li>מילוי פערים אוטומטי בין המאספים לכיסוי מרבי</li>
+            <li>כותרת המיון נוצרת אוטומטית מכותרת המשחק במהלך האיסוף</li>
+        </ul>
+
+        <h3>טיפול במדיה</h3>
+        <ul>
+            <li>שדות מדיה (עטיפה, עטיפת תלת-ממד, צילומי מסך, אמנות אוהדים, וידאו, מדריך) <strong>לעולם אינם מוחלפים</strong> במהלך איסוף רגיל &mdash; רק ממולאים כשהם ריקים</li>
+            <li>צילומי מסך תמיד <strong>מתווספים</strong>, לעולם לא מוחלפים</li>
+            <li>כדי להוריד מדיה מחדש, נקו תחילה את התמונה הקיימת בחלון העריכה, ואז אספו מחדש</li>
+            <li>מצב <strong>איסוף מחדש מלא</strong> עוקף זאת ומחליף את הכול</li>
+            <li>הפניות מדיה מיושנות (הקובץ נמחק אך שם הקובץ עדיין במסד הנתונים) מנוקות אוטומטית לפני האיסוף כדי שניתן יהיה להוריד מדיה חדשה</li>
+            <li>תמונות שהורדו מתוקננות אוטומטית לגדלי היעד (ראו <a href="#image-standardization">תקנון תמונות</a>)</li>
+        </ul>
+
+        <h3>עדיפות מאספים</h3>
+        <p>הגדירו אילו מאספים פועלים ראשונים ואילו מופעלים/מושבתים ב<strong>הגדרות &rarr; איסוף &rarr; מאסף</strong>. גררו ושחררו כדי לשנות את סדר העדיפות. מאספים מושבתים לא ינוסו במהלך האיסוף ולא יפעילו אזהרות מצב API בלוח הבקרה.</p>
+
+        <h3>הגבלת קצב</h3>
+        <p>לכל מאסף יש הגבלות קצב הניתנות להגדרה כדי למנוע חנק של ה-API. השהיות ברירת המחדל מוגדרות בזהירות. הפחיתו את ההשהיות על אחריותכם &mdash; חריגה ממגבלות הקצב של ה-API עלולה לגרום לחסימות זמניות מהשירות הרלוונטי.</p>
+    </div>
+</section>
+
+<!-- Bulk Scraping -->
+<section id="bulk-scrape" class="help-section card">
+    <h2 class="card-title">איסוף בכמות</h2>
+    <div class="card-body">
+        <h3>התחלת איסוף בכמות</h3>
+        <ol>
+            <li>עברו לעמוד מערכת או ספרייה כלשהו</li>
+            <li>לחצו על <strong>"Select"</strong> כדי להיכנס למצב בחירה</li>
+            <li>בחרו משחקים בנפרד או השתמשו בבחירה מהירה:
+                <ul>
+                    <li><strong>בחר הכול</strong> &mdash; כל המשחקים הנראים</li>
+                    <li><strong>בחר לא-נאספים</strong> &mdash; רק משחקים ללא מטא-נתונים</li>
+                </ul>
+            </li>
+            <li>בחרו מצב: <strong>מילוי חסרים</strong> או <strong>איסוף מחדש מלא</strong></li>
+            <li>לחצו על <strong>"Scrape Selected"</strong></li>
+        </ol>
+
+        <h3>פקדים</h3>
+        <ul>
+            <li><strong>השהה / המשך</strong> &mdash; השהו או המשיכו את האיסוף</li>
+            <li><strong>ביטול</strong> &mdash; עצירה מוחלטת</li>
+            <li><strong>רקע</strong> &mdash; מזערו והמשיכו לגלוש בזמן שהאיסוף רץ</li>
+        </ul>
+
+        <h3>התראת טוסט</h3>
+        <p>כשהאיסוף רץ ברקע, טוסט קבוע מציג את ההתקדמות בכל העמודים:</p>
+        <ul>
+            <li>שם המשחק הנוכחי, ספירת התקדמות, וסטטיסטיקות תוצאה (הצליחו, נכשלו, דולגו)</li>
+            <li>פקדי השהיה/ביטול זמינים מכל עמוד</li>
+            <li>לחצו על הטוסט כדי לחזור לחלון האיסוף</li>
+        </ul>
+
+        <h3>מערכת תור</h3>
+        <p>מספר איסופים בכמות נכנסים לתור אוטומטית:</p>
+        <ul>
+            <li>התחילו איסוף חדש בזמן שאחד רץ &mdash; הוא ייכנס לתור</li>
+            <li>התור מוצג בטוסט עם ספירת המשימות הממתינות</li>
+            <li>המשימות מעובדות אוטומטית לפי הסדר</li>
+            <li>השתמשו במנהל התור כדי לצפות, לסדר מחדש, או לבטל משימות בתור</li>
+        </ul>
+
+        <h3>אפשרויות איסוף</h3>
+        <ul>
+            <li><strong>מילוי חסרים בלבד</strong> &mdash; מלאו רק שדות מטא-נתונים ריקים, תוך שמירה על הנתונים הקיימים</li>
+            <li><strong>איסוף מחדש מלא</strong> &mdash; החליפו את כל השדות כולל מדיה (מוריד תמונות וסרטונים חדשים)</li>
+            <li><strong>בדוק RetroAchievements</strong> &mdash; בדקו גם קיום סטים של הישגי RetroAchievements במהלך האיסוף</li>
+        </ul>
+
+        <h3>שחזור משימות</h3>
+        <p>אם RetroDB מופעל מחדש בזמן שמשימה רצה, משימות שנקטעו מופיעות בכרזת שחזור בלוח הבקרה. לחצו על <strong>"Resume"</strong> על משימות בודדות או על <strong>"Resume All"</strong> כדי להפעילן מחדש. טוסט ההתקדמות מופיע מיד לאחר החידוש.</p>
+    </div>
+</section>
+
+<!-- AI Fill -->
+<section id="ai-fill" class="help-section card">
+    <h2 class="card-title">מילוי AI</h2>
+    <div class="card-body">
+        <h3>מה זה עושה</h3>
+        <p>מילוי AI משתמש במודל שפה גדול (Gemini, OpenAI, או Claude) כדי למלא בחוכמה מטא-נתונים חסרים או לא שלמים של משחק. הוא חכם יותר מאיסוף רגיל כי הוא משתמש בידע הקשרי על המשחק כדי לספק נתונים מדויקים שלמאספים אולי אין.</p>
+
+        <h3>איך להשתמש</h3>
+        <ol>
+            <li>פתחו את חלון הפרטים של משחק (או את עמוד הפרטים המלא)</li>
+            <li>לחצו על <strong>"AI Fill"</strong> (דורש מפתח API של AI המוגדר בהגדרות)</li>
+            <li>ה-AI מנתח את כותרת המשחק והמערכת, ואז ממלא שדות חסרים</li>
+            <li>סקרו את התוצאות &mdash; השינויים נשמרים אוטומטית</li>
+        </ol>
+
+        <h3>מה מילוי AI יכול לספק</h3>
+        <ul>
+            <li>ז'אנר, תיאור, מפתח, מפיץ, תאריך יציאה</li>
+            <li>שחקנים, מצבי משחק (יחיד, מרובה, שיתופי, וכו')</li>
+            <li>מידע על קמפיין ומבנה משחק</li>
+            <li>כל 8 מערכות דירוג הגיל (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd)</li>
+            <li>אזור, סדרה, משחקים דומים</li>
+            <li>תמיכה בבקרים, סוג שמירה</li>
+            <li>נקודת מבט (גוף ראשון, מלמעלה, גלילה צדדית, וכו'), ממד (2D, 3D)</li>
+            <li>מידע על מהדורה, ציוני מבקרים ומשתמשים</li>
+        </ul>
+
+        <h3>לוגיקת מילוי חכם</h3>
+        <ul>
+            <li><strong>שדות ריקים</strong> תמיד ממולאים</li>
+            <li><strong>נתוני משתמש קיימים</strong> לעולם לא נדרסים</li>
+            <li><strong>משחקים דומים</strong> תמיד מרועננים (נתוני AI אמינים יותר לשדה זה)</li>
+            <li><strong>דירוגים ממופים-צולב</strong> &mdash; אם מערכת דירוג אחת ידועה, דירוגים ריקים במערכות אחרות ממולאים אוטומטית באמצעות מיפוי-צולב לפי דרג בגרות</li>
+            <li><strong>כותרת מיון</strong> נוצרת אוטומטית בעת המילוי</li>
+            <li>שדה <strong>שחקנים</strong> מנרמל טווחים (למשל "1-4" הופך ל-4)</li>
+        </ul>
+
+        <h3>נרמול ז'אנרים</h3>
+        <p>מילוי AI משתמש בצורות ז'אנר קנוניות עם שמות מקופפים במקף:</p>
+        <ul>
+            <li><code>First-Person-Shooter</code>, <code>Shoot-em-up</code>, <code>Beat-em-up</code></li>
+            <li><code>Hack-n-Slash</code>, <code>Board-Card</code>, <code>Real-Time Strategy</code></li>
+        </ul>
+
+        <h3>דרישות</h3>
+        <p>יש להגדיר לפחות מפתח API אחד של ספק AI ב<strong>הגדרות &rarr; איסוף &rarr; מפתחות API</strong>. דרג המודל הזול ביותר (Gemini Flash Lite, GPT-4o Mini, או Claude Haiku) עובד היטב עבור מטא-נתונים.</p>
+    </div>
+</section>
+
+<!-- Filtering -->
+<section id="filtering" class="help-section card">
+    <h2 class="card-title">סינון וחיפוש</h2>
+    <div class="card-body">
+        <h3>חיפוש</h3>
+        <p>החיפוש מסנן משחקים לפי כותרת (וכותרת מיון). הקישו <kbd>/</kbd> כדי למקד את תיבת החיפוש. התוצאות מתעדכנות בזמן אמת עם השהיה של 300ms.</p>
+
+        <h3>סינון לפי מקור</h3>
+        <p>סננו משחקים לפי מקור הייבוא:</p>
+        <ul>
+            <li><strong>קובצי ROM</strong> &mdash; משחקים מספריית ה-ROM שלכם</li>
+            <li><strong>ייבוא CLZ</strong> &mdash; משחקים פיזיים שיובאו מ-CLZ</li>
+            <li><strong>ייבוא Steam</strong> &mdash; משחקים שיובאו מ-Steam</li>
+            <li><strong>ייבוא Xbox</strong> &mdash; משחקים שיובאו מ-Xbox</li>
+            <li><strong>ייבוא PSN</strong> &mdash; משחקים שיובאו מ-PlayStation Network</li>
+        </ul>
+
+        <h3>כפתורי סינון</h3>
+        <p>כל מסנן פותח חלון המציג את כל הערכים הייחודיים בספרייה שלכם עם ספירות. המסננים תומכים בשני מצבים:</p>
+        <ul>
+            <li><strong>כלול (IS)</strong> &mdash; הצג רק משחקים התואמים לערך שנבחר</li>
+            <li><strong>החרג (IS NOT)</strong> &mdash; הסתר משחקים התואמים לערך שנבחר</li>
+        </ul>
+        <p>עברו בין מצב כלול למצב החרג באמצעות המתג בחלון הסינון.</p>
+
+        <h3>מסננים זמינים</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>מסנן</th><th>תיאור</th><th>רב-ערכי</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>ז'אנר</strong></td><td>אקשן, RPG, פלטפורמה, וכו'</td><td>כן</td></tr>
+                <tr><td><strong>סדרה</strong></td><td>סדרת משחקים</td><td>כן</td></tr>
+                <tr><td><strong>מפיץ</strong></td><td>חברת הפצה</td><td>כן</td></tr>
+                <tr><td><strong>מפתח</strong></td><td>אולפן פיתוח</td><td>כן</td></tr>
+                <tr><td><strong>שחקנים</strong></td><td>מספר שחקנים</td><td>לא</td></tr>
+                <tr><td><strong>מצבים</strong></td><td>יחיד, מרובה, שיתופי</td><td>כן</td></tr>
+                <tr><td><strong>נקודת מבט</strong></td><td>גוף ראשון, מלמעלה, איזומטרי, גלילה צדדית</td><td>כן</td></tr>
+                <tr><td><strong>ממד</strong></td><td>2D, 3D</td><td>כן</td></tr>
+                <tr><td><strong>דירוג</strong></td><td>דירוג גיל (מציג את המערכת המועדפת עליכם)</td><td>לא</td></tr>
+                <tr><td><strong>יש RA</strong></td><td>משחקים עם תמיכת RetroAchievements</td><td>לא</td></tr>
+                <tr><td><strong>הצג בונוס</strong></td><td>החלף את נראות דיסקי הבונוס</td><td>לא</td></tr>
+            </tbody>
+        </table>
+
+        <h3>אפשרויות מיון</h3>
+        <ul>
+            <li><strong>כותרת</strong> &mdash; אלפביתי לפי כותרת מיון (ללא תלות ברישיות)</li>
+            <li><strong>תאריך יציאה</strong> &mdash; סדר כרונולוגי (המוקדם ביותר ראשון)</li>
+            <li><strong>פלטפורמה</strong> &mdash; מקובץ לפי שם המערכת</li>
+        </ul>
+
+        <h3>ניווט אלפבית</h3>
+        <p>קפצו למשחקים המתחילים באות מסוימת. אותיות ללא משחקים תואמים מוצגות באפור. מספרים וסמלים מקובצים תחת <strong>#</strong>.</p>
+
+        <h3>גלילה אינסופית</h3>
+        <p>משחקים נטענים באצוות של 100 תוך כדי גלילה. עמודים חדשים נטענים אוטומטית כשאתם מתקרבים לתחתית. שינוי מסננים או חיפוש מאפס ומרענן את התוצאות מיידית.</p>
+
+        <h3>שמירת מצב</h3>
+        <p>המסננים הנוכחיים, מונח החיפוש, ומיקום הגלילה שלכם נשמרים באחסון ההפעלה. הם משוחזרים כשאתם חוזרים לעמוד או מרעננים.</p>
+    </div>
+</section>
+
+<!-- Game Detail -->
+<section id="game-detail" class="help-section card">
+    <h2 class="card-title">פרטי משחק</h2>
+    <div class="card-body">
+        <h3>חלון פרטי המשחק</h3>
+        <p>לחיצה על כרטיס משחק כלשהו פותחת חלון פרטים עם תצוגה מהירה מהמטמון. החלון מציג:</p>
+        <ul>
+            <li>עטיפה (דו-ממד ותלת-ממד), רקע אמנות אוהדים</li>
+            <li>תיאור ומידע על היציאה</li>
+            <li>תגי מפתח, מפיץ, וז'אנר</li>
+            <li>שחקנים, מצבי משחק, מבנה משחק</li>
+            <li>תמונת דירוג גיל (מהמערכת המועדפת עליכם, עם נפילת מיפוי-צולב)</li>
+            <li>גלריית צילומי מסך עם ניווט מקלדת (<kbd>&larr;</kbd> <kbd>&rarr;</kbd>)</li>
+            <li>סרטון טריילר (אם זמין)</li>
+            <li>הערכות זמן משחק של HLTB (עלילה ראשית, ראשית + תוספות, השלמה מלאה)</li>
+            <li>מצב והתקדמות RetroAchievements</li>
+            <li>משחקים דומים (קישורים לחיצים)</li>
+            <li>פרטי תמיכה בבקרים</li>
+            <li>תגיות המשויכות למשחק</li>
+            <li>גודל קובץ ונתיב ROM</li>
+        </ul>
+
+        <h3>עמוד פרטי המשחק המלא</h3>
+        <p>לחצו על קישור כותרת המשחק או נווטו מפירורי הלחם כדי לצפות בעמוד פרטי המשחק המלא. תכונות נוספות בעמוד המלא כוללות:</p>
+        <ul>
+            <li><strong>כותרת רקע של אמנות אוהדים</strong> עם ניווט פירורי לחם</li>
+            <li><strong>תגי ייבוא פלטפורמה</strong> &mdash; מציג ייבוא CLZ, ייבוא Steam, ייבוא Xbox, או ייבוא PSN עם לוגואים של הפלטפורמה כשרלוונטי</li>
+            <li><strong>מחוון דיסק בונוס</strong> &mdash; מציג תג וקישור "חלק מ:" למשחק ההורה עם תמונה ממוזערת</li>
+            <li><strong>כפתור מחיקה</strong> &mdash; הסירו את המשחק ממסד הנתונים (עם אישור)</li>
+            <li><strong>כפתור ניקוי</strong> &mdash; נקו את כל המטא-נתונים שנאספו תוך שמירת רשומת ה-ROM</li>
+        </ul>
+
+        <h3>חלון עריכה</h3>
+        <p>לחצו על <strong>עריכה</strong> (או הקישו <kbd>e</kbd>) כדי לפתוח את חלון העריכה, המאורגן לסעיפים:</p>
+        <ul>
+            <li><strong>זהות</strong> &mdash; כותרת, כותרת מיון (נוצרת אוטומטית אך ניתנת לעריכה), סדרה, מהדורה</li>
+            <li><strong>מידע על יציאה</strong> &mdash; תאריך יציאה, אזור (מתפריט נפתח הניתן להגדרה)</li>
+            <li><strong>משחקיות</strong> &mdash; ז'אנר (תגי בחירה מרובה), מצבים, מבנה משחק, שחקנים, מפתח, מפיץ</li>
+            <li><strong>טכני</strong> &mdash; בקרים (בחירה מרובה), סוג שמירה, נקודת מבט (רב-ערכי), ממד (רב-ערכי)</li>
+            <li><strong>דירוגי גיל</strong> &mdash; כל 8 מערכות הדירוג עם תמונות דירוג רשמיות ומיפוי-צולב אוטומטי. שינוי דירוג אחד ממלא אוטומטית דירוגים ריקים במערכות אחרות.</li>
+            <li><strong>ציונים</strong> &mdash; ציון מבקרים, ציון משתמשים</li>
+            <li><strong>תיאור</strong> &mdash; טקסט תיאור המשחק</li>
+            <li><strong>תמונות מותאמות</strong> &mdash; העלו עטיפה מותאמת (דו-ממד), עטיפת תלת-ממד, ואמנות אוהדים. נקו תמונות קיימות כדי לאפשר איסוף מחדש.</li>
+            <li><strong>וידאו / טריילר</strong> &mdash; העלו או קשרו טריילר וידאו</li>
+        </ul>
+
+        <h3>פעולות מהירות</h3>
+        <ul>
+            <li><strong>עריכה</strong> &mdash; פתחו את חלון העריכה (<kbd>e</kbd>)</li>
+            <li><strong>איסוף</strong> &mdash; משכו מטא-נתונים ממקורות איסוף (<kbd>s</kbd>)</li>
+            <li><strong>מילוי AI</strong> &mdash; מלאו שדות חסרים עם AI (דורש מפתח API של AI)</li>
+            <li><strong>בדוק RA</strong> &mdash; חפשו סט הישגים של RetroAchievements</li>
+            <li><strong>חיפוש HLTB</strong> &mdash; מצאו הערכות זמן משחק מ-HowLongToBeat</li>
+        </ul>
+
+        <h3>מצב השלמה</h3>
+        <p>עקבו אחר ההתקדמות שלכם עם המצבים הבאים (מוצגים כתגים על כרטיסי משחק):</p>
+        <ul>
+            <li><strong>לא התחיל</strong> &mdash; עדיין לא שיחקתם</li>
+            <li><strong>בתהליך</strong> &mdash; משחקים כרגע</li>
+            <li><strong>שוחק</strong> &mdash; שיחקתם אך לא סיימתם</li>
+            <li><strong>הושלם</strong> &mdash; סיימתם את המשחק הראשי</li>
+            <li><strong>100%</strong> &mdash; השלמתם הכול</li>
+        </ul>
+
+        <h3>מערכת דירוג מרובה</h3>
+        <p>RetroDB תומך ב-8 מערכות דירוג גיל בינלאומיות:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>מערכת</th><th>אזור</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>ESRB</strong></td><td>צפון אמריקה</td></tr>
+                <tr><td><strong>PEGI</strong></td><td>אירופה</td></tr>
+                <tr><td><strong>CERO</strong></td><td>יפן</td></tr>
+                <tr><td><strong>USK</strong></td><td>גרמניה</td></tr>
+                <tr><td><strong>ACB</strong></td><td>אוסטרליה</td></tr>
+                <tr><td><strong>FPB</strong></td><td>דרום אפריקה</td></tr>
+                <tr><td><strong>GRAC</strong></td><td>דרום קוריאה</td></tr>
+                <tr><td><strong>ClassInd</strong></td><td>ברזיל</td></tr>
+            </tbody>
+        </table>
+        <p>הגדירו את המערכת המועדפת עליכם ב<strong>הגדרות &rarr; ספרייה &rarr; תצוגה</strong>. תמונות דירוג רשמיות מוצגות על כרטיסי משחק, חלונות פרטים, ועמודי פרטים. דירוגים ריקים ממולאים אוטומטית מכל דירוג זמין באמצעות מיפוי-צולב לפי דרג בגרות במהלך איסוף, מילוי AI, ועריכה ידנית.</p>
+
+        <h3>דיסקי בונוס</h3>
+        <p>RetroDB מזהה אוטומטית דיסקי בונוס/תוספת (למשל דיסקי פסקול, דיסקי תוכן נוסף) ומקשר אותם למשחק ההורה. דיסקי בונוס מוסתרים כברירת מחדל בספרייה &mdash; החליפו את <strong>"הצג בונוס"</strong> במסננים כדי להציגם. דיסקי בונוס מקושרים מופיעים בחלון הפרטים של משחק ההורה.</p>
+
+        <div class="help-tip">
+            <strong>טיפ:</strong> חלון הפרטים שומר במטמון משחקים שנצפו לאחרונה לטעינה מהירה יותר. עריכות מעדכנות אוטומטית את כרטיס המשחק בעמוד ללא צורך ברענון.
+        </div>
+    </div>
+</section>
+
+<!-- Bulk Edit -->
+<section id="bulk-edit" class="help-section card">
+    <h2 class="card-title">עריכה מרובה</h2>
+    <div class="card-body">
+        <h3>איך משתמשים</h3>
+        <ol>
+            <li>עברו לעמוד מערכת כלשהי או לעמוד הספרייה</li>
+            <li>לחצו על <strong>"בחירה"</strong> כדי להיכנס למצב בחירה</li>
+            <li>בחרו את המשחקים שברצונכם לערוך (בנפרד, בחר הכול, או בחר לא מגורדים)</li>
+            <li>לחצו על <strong>"עריכה מרובה"</strong></li>
+            <li>בחרו את השדה שברצונכם לשנות והגדירו את הערך החדש</li>
+            <li>בחרו במצב <strong>החלפה</strong> או <strong>הוספה</strong></li>
+            <li>לחצו על <strong>"החל"</strong> כדי לעדכן את כל המשחקים הנבחרים</li>
+        </ol>
+
+        <h3>החלפה מול הוספה</h3>
+        <ul>
+            <li><strong>החלפה</strong> &mdash; דורסת את הערך הקיים בערך החדש</li>
+            <li><strong>הוספה</strong> &mdash; מוסיפה את הערך החדש לערכים הקיימים (עבור שדות מרובי-ערכים)</li>
+        </ul>
+
+        <h3>שדות נתמכים</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>שדה</th><th>תומך בהוספה</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ז'אנר</td><td>כן</td></tr>
+                <tr><td>מוציא לאור</td><td>כן</td></tr>
+                <tr><td>מפתח</td><td>כן</td></tr>
+                <tr><td>זכיינות</td><td>כן</td></tr>
+                <tr><td>אזור</td><td>כן</td></tr>
+                <tr><td>מבנה משחק</td><td>כן</td></tr>
+                <tr><td>נקודת מבט</td><td>כן</td></tr>
+                <tr><td>ממד</td><td>כן</td></tr>
+                <tr><td>סטטוס השלמה</td><td>לא (החלפה בלבד)</td></tr>
+                <tr><td>שחקנים</td><td>לא (החלפה בלבד)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Compare Games -->
+<section id="compare" class="help-section card">
+    <h2 class="card-title">השוואת משחקים</h2>
+    <div class="card-body">
+        <h3>מה זה עושה</h3>
+        <p>השוואה זה-לצד-זה של המטא-נתונים של שני משחקים בתצוגת טבלה. שימושי לבדיקת איכות המטא-נתונים, איתור כפילויות, או השוואת גרסאות של אותו משחק בין מערכות.</p>
+
+        <h3>איך משתמשים</h3>
+        <ol>
+            <li>עברו אל <strong>השוואה</strong> (נגיש מעמוד הספרייה)</li>
+            <li>חפשו ובחרו את המשחק הראשון</li>
+            <li>חפשו ובחרו את המשחק השני</li>
+            <li>עיינו בטבלת ההשוואה &mdash; ההבדלים מודגשים</li>
+        </ol>
+
+        <h3>שדות מושווים</h3>
+        <p>מערכת, מפתח, מוציא לאור, תאריך יציאה, ז'אנר, זכיינות, אזור, שחקנים, מצבים, נקודת מבט, ממד, כל 8 דירוגי הגיל, דירוג משתמשים, ציון מבקרים, הערכות זמן משחק, תמיכת בקרים, סוג שמירה, גודל קובץ, משחקים דומים, תיאור, ועוד.</p>
+    </div>
+</section>
+
+<!-- Collections -->
+<section id="collections" class="help-section card">
+    <h2 class="card-title">אוספים (תגיות, רשימות, רשימת משאלות)</h2>
+    <div class="card-body">
+        <h3>תגיות</h3>
+        <p>צרו תגיות מותאמות אישית עם קודי צבע כדי לארגן את המשחקים שלכם. תגיות עובדות כמו תוויות &mdash; לכל משחק יכולות להיות מספר תגיות, וכל תגית יכולה להכיל מספר משחקים.</p>
+        <ul>
+            <li>צרו תגיות עם שמות וצבעים מותאמים אישית מעמוד <strong>תגיות</strong></li>
+            <li>שייכו תגיות למשחקים דרך חלון פרטי המשחק</li>
+            <li>לחצו על תגית כלשהי כדי לעיין בכל המשחקים עם אותה תגית</li>
+            <li>ערכו או מחקו תגיות מעמוד ניהול התגיות</li>
+        </ul>
+
+        <h3>רשימות בעלות שם</h3>
+        <p>צרו רשימות משחקים אוצרות עם סדר מותאם אישית. רשימות הן כמו רשימות השמעה &mdash; אתם שולטים בסדר המדויק של המשחקים.</p>
+        <ul>
+            <li>צרו רשימות עם שם, תיאור וסמל מעמוד <strong>רשימות</strong></li>
+            <li>הוסיפו משחקים לרשימות דרך חלון פרטי המשחק או עמוד הרשימה</li>
+            <li>גררו ושחררו כדי לסדר מחדש משחקים בתוך רשימה</li>
+            <li>מיינו לפי סדר מותאם אישית או לפי סדר אלפביתי</li>
+        </ul>
+
+        <h3>רשימת משאלות</h3>
+        <p>עקבו אחר משחקים שברצונכם לרכוש, בין אם פיזיים או דיגיטליים.</p>
+        <ul>
+            <li>הוסיפו משחקים ידנית עם כותרת, מערכת, הערות ועדיפות (1&ndash;5)</li>
+            <li>ניתן לקשר פריטים ברשימת המשאלות למשחקים קיימים בספרייה אם נמצאו</li>
+            <li>ממוינים לפי עדיפות (הגבוהה ביותר קודם), ואז לפי תאריך ההוספה</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>טיפ:</strong> השתמשו בתגיות עבור תוויות רוחביות (למשל "מועדפים", "קו-אופ בסלון", "ערימת המתנה") וברשימות עבור אוספים אוצרים ספציפיים (למשל "10 משחקי SNES המובילים", "משחקים לשידור").
+        </div>
+    </div>
+</section>
+
+<!-- Game Imports -->
+<section id="game-imports" class="help-section card">
+    <h2 class="card-title">ייבוא משחקים</h2>
+    <div class="card-body">
+        <p>ייבאו אוספי משחקים ממקורות חיצוניים. גישה דרך <strong>ייבוא משחקים</strong> בסרגל הצד. כל סוגי הייבוא מאוחדים לעמוד יחיד עם לשוניות.</p>
+
+        <h3>ייבוא CLZ Games</h3>
+        <p>ייבאו את אוסף המשחקים הפיזי שלכם מ-CLZ Games.</p>
+        <ol>
+            <li>ייצאו את אוסף CLZ Games שלכם כקובץ PDF</li>
+            <li>עברו אל ייבוא משחקים &rarr; לשונית <strong>CLZ</strong></li>
+            <li>העלו את קובץ ה-PDF</li>
+            <li>עיינו במשחקים שנותחו</li>
+            <li>בחרו אילו משחקים לייבא</li>
+        </ol>
+        <p>ייבוא CLZ נעקב בנפרד ממשחקי ROM (באמצעות קידומת <code>clz_import/</code>), ומאפשר לכם לקטלג אוספים פיזיים ודיגיטליים כאחד. ניתן לנקות את כל ייבוא ה-CLZ מ-<strong>הגדרות &rarr; מערכת &rarr; תחזוקה</strong>.</p>
+
+        <h3>ייבוא Steam</h3>
+        <p>ייבאו את ספריית משחקי ה-Steam שלכם ועקבו אחר הישגים.</p>
+        <ol>
+            <li>הגדירו את מפתח ה-Steam Web API ואת ה-Steam ID שלכם בהגדרות</li>
+            <li>עברו אל ייבוא משחקים &rarr; לשונית <strong>Steam</strong></li>
+            <li>לחצו על <strong>"אחזר ספרייה"</strong> כדי לקבל את משחקי ה-Steam שלכם</li>
+            <li>בחרו משחקים לייבוא (כפילויות מזוהות אוטומטית)</li>
+            <li>משחקים מיובאים מתויגים עם ה-Steam App ID שלהם למעקב הישגים</li>
+        </ol>
+
+        <h3>ייבוא Xbox</h3>
+        <p>ייבאו את ספריית משחקי ה-Xbox שלכם דרך חשבון Microsoft.</p>
+        <ol>
+            <li>עברו אל ייבוא משחקים &rarr; לשונית <strong>Xbox</strong></li>
+            <li>לחצו על <strong>"התחבר"</strong> כדי לאמת מול חשבון ה-Microsoft שלכם (תהליך OAuth2)</li>
+            <li>היסטוריית הכותרים של ה-Xbox שלכם מאוחזרת אוטומטית</li>
+            <li>בחרו משחקים לייבוא עם זיהוי כפילויות</li>
+            <li>משחקים מיובאים מתויגים עם ה-Xbox Title ID שלהם למעקב הישגים</li>
+        </ol>
+        <p>אסימוני Xbox נשמרים במטמון ב-<code>data/xbox_tokens.json</code> ומרועננים אוטומטית.</p>
+
+        <h3>ייבוא PSN</h3>
+        <p>ייבאו את ספריית משחקי ה-PlayStation Network שלכם.</p>
+        <ol>
+            <li>עברו אל ייבוא משחקים &rarr; לשונית <strong>PSN</strong></li>
+            <li>הזינו את עוגיית ה-NPSSO שלכם (ראו <a href="#trophies">גביעים &rarr; אימות PSN</a> להסבר כיצד להשיג אותה)</li>
+            <li>לחצו על <strong>"אחזר ספרייה"</strong> כדי לקבל את משחקי ה-PSN שלכם</li>
+            <li>בחרו משחקים לייבוא</li>
+        </ol>
+
+        <h3>לאחר הייבוא</h3>
+        <ul>
+            <li>משחקים מיובאים מופיעים בספרייה שלכם עם תגי פלטפורמה ייחודיים</li>
+            <li>השתמשו בגירוד מרובה כדי לאחזר מטא-נתונים למשחקים המיובאים</li>
+            <li>מעקב הישגים/גביעים מקושר אוטומטית לפלטפורמת המקור</li>
+            <li>ניתן לסנן משחקים מיובאים בספרייה באמצעות מסנן המקור</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>טיפ:</strong> לאחר ייבוא משחקים מכל פלטפורמה, תוכלו לגרד עבורם מטא-נתונים באמצעות גירוד מרובה, בדיוק כמו משחקי ROM. משחקים מיובאים יכולים גם לעקוב אחר הישגים מהפלטפורמות שלהם בהתאמה.
+        </div>
+    </div>
+</section>
+
+<!-- RetroAchievements -->
+<section id="retroachievements" class="help-section card">
+    <h2 class="card-title">RetroAchievements</h2>
+    <div class="card-body">
+        <h3>הגדרה</h3>
+        <ol>
+            <li>צרו חשבון ב-<a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a></li>
+            <li>צרו מפתח API בהגדרות הפרופיל שלכם</li>
+            <li>הזינו את שם המשתמש ומפתח ה-API שלכם בהגדרות &rarr; חשבון &rarr; RetroAchievements</li>
+        </ol>
+
+        <h3>עמוד ההישגים</h3>
+        <ul>
+            <li><strong>לשוניות מערכת</strong> &mdash; עיינו בהישגים לפי פלטפורמה (זוכר את הלשונית שצפיתם בה לאחרונה)</li>
+            <li><strong>ניווט אלפביתי</strong> &mdash; קפצו למשחקים לפי אות ראשונה בתוך כל לשונית מערכת</li>
+            <li><strong>רענון התקדמות</strong> &mdash; סנכרנו את התקדמות ההישגים שלכם מ-RetroAchievements</li>
+            <li><strong>סטטיסטיקה כוללת</strong> &mdash; הישגים ונקודות שהושגו בכל המערכות</li>
+            <li><strong>התקדמות לכל משחק</strong> &mdash; ראו אחוז השלמה לכל משחק עם סרגלי התקדמות</li>
+        </ul>
+
+        <h3>תור סנכרון</h3>
+        <p>ניתן להוסיף לתור מספר סנכרוני מערכת:</p>
+        <ul>
+            <li>לחצו על "רענון התקדמות" בכל מערכת כדי להתחיל או להוסיף סנכרון לתור</li>
+            <li>אם סנכרון כבר פועל, בקשות חדשות מתווספות לתור אוטומטית</li>
+            <li>התור מעובד אוטומטית כשהסנכרון הנוכחי מסתיים</li>
+            <li>הודעת טוסט מציגה את ההתקדמות הנוכחית וספירת התור</li>
+        </ul>
+
+        <h3>מציאת משחקים עם הישגים</h3>
+        <ul>
+            <li><strong>מסנן ספרייה</strong> &mdash; השתמשו במסנן "יש RA" כדי להציג רק משחקים עם הישגים</li>
+            <li><strong>בדיקה ל-RA</strong> &mdash; בחלונות פרטי המשחק, לחצו כדי לחפש סט הישגים</li>
+            <li><strong>גירוד מרובה</strong> &mdash; הפעילו את אפשרות "בדוק RA" כדי למצוא הישגים במהלך הגירוד</li>
+            <li><strong>עבודת רענון RA</strong> &mdash; סרקו את כל המשחקים במערכת כדי לזהות אילו תומכים ב-RA</li>
+        </ul>
+
+        <h3>פרטים ברמת המשחק</h3>
+        <p>לחצו על משחק כלשהו בעמוד ההישגים כדי לראות מידע מפורט על הישגים לכל משחק, כולל שמות הישגים בודדים, תיאורים, ערכי נקודות וסטטוס השגה.</p>
+
+        <div class="help-tip">
+            <strong>הערה:</strong> "רענון התקדמות" מסנכרן את ההתקדמות שלכם עבור משחקים שכבר מקושרים ל-RetroAchievements.
+            כדי למצוא סטים חדשים של הישגים, השתמשו ב-"בדיקה ל-RA" בחלונות פרטי המשחק או הפעילו זאת במהלך גירוד מרובה.
+        </div>
+    </div>
+</section>
+
+<!-- Steam Achievements -->
+<section id="steam-achievements" class="help-section card">
+    <h2 class="card-title">הישגי Steam</h2>
+    <div class="card-body">
+        <h3>הגדרה</h3>
+        <ol>
+            <li>ייבאו משחקי Steam דרך <strong>ייבוא משחקים &rarr; Steam</strong></li>
+            <li>ודאו שמפתח ה-Steam Web API שלכם מוגדר בהגדרות</li>
+        </ol>
+
+        <h3>עמוד נחיתה של הישגים</h3>
+        <p>צפו בכל משחקי ה-Steam שלכם עם התקדמות הישגים במבט חטוף:</p>
+        <ul>
+            <li><strong>סטטיסטיקה כוללת</strong> &mdash; סך משחקי Steam, הישגים שהושגו, אחוז השלמה</li>
+            <li><strong>התקדמות לכל משחק</strong> &mdash; סרגלי השלמה לכל משחק</li>
+        </ul>
+
+        <h3>פרטי הישגים לכל משחק</h3>
+        <p>לחצו על משחק Steam כלשהו כדי לראות את ההישגים הבודדים שלו:</p>
+        <ul>
+            <li>סמלי, שמות ותיאורי הישגים</li>
+            <li>סטטוס נעול מול פתוח עם חותמות זמן של פתיחה</li>
+            <li>אחוז פתיחה גלובלי של שחקנים לכל הישג</li>
+        </ul>
+
+        <h3>סנכרון</h3>
+        <ul>
+            <li>סנכרנו הישגים של משחק בודד מעמוד הפרטים שלו</li>
+            <li>סנכרנו בבת אחת את כל משחקי ה-Steam מעמוד הנחיתה של ההישגים</li>
+            <li>הסנכרון פועל כעבודת רקע עם התקדמות בהודעת טוסט</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Xbox Achievements -->
+<section id="xbox-achievements" class="help-section card">
+    <h2 class="card-title">הישגי Xbox</h2>
+    <div class="card-body">
+        <h3>הגדרה</h3>
+        <ol>
+            <li>ייבאו משחקי Xbox דרך <strong>ייבוא משחקים &rarr; Xbox</strong></li>
+            <li>האימות מטופל דרך Xbox OAuth במהלך הייבוא</li>
+        </ol>
+
+        <h3>עמוד נחיתה של הישגים</h3>
+        <ul>
+            <li><strong>סטטיסטיקה כוללת</strong> &mdash; סך משחקי Xbox, הישגים שהושגו, gamerscore שהושג/כולל, אחוז השלמה</li>
+            <li><strong>התקדמות לכל משחק</strong> &mdash; gamerscore שהושג לכל משחק עם סרגלי התקדמות</li>
+        </ul>
+
+        <h3>פרטי הישגים לכל משחק</h3>
+        <p>לחצו על משחק Xbox כלשהו כדי לראות את ההישגים הבודדים שלו:</p>
+        <ul>
+            <li>סמלי הישגים עם ערכי gamerscore בודדים</li>
+            <li>סטטוס נעול מול פתוח עם חותמות זמן של פתיחה</li>
+            <li>תגי gamerscore על כל הישג</li>
+        </ul>
+
+        <h3>סנכרון</h3>
+        <ul>
+            <li>סנכרנו משחק בודד או סנכרנו בבת אחת את כל משחקי ה-Xbox</li>
+            <li>פועל כעבודת רקע עם הודעות טוסט</li>
+            <li>סכומי ה-gamerscore מתעדכנים אוטומטית לאחר כל סנכרון</li>
+        </ul>
+    </div>
+</section>
+
+<!-- HLTB -->
+<section id="hltb" class="help-section card">
+    <h2 class="card-title">How Long to Beat</h2>
+    <div class="card-body">
+        <h3>שימוש</h3>
+        <ol>
+            <li>פתחו את חלון הפרטים של משחק כלשהו</li>
+            <li>לחצו על <strong>"חיפוש HLTB"</strong></li>
+            <li>בחרו את ההתאמה הנכונה מהתוצאות</li>
+            <li>הערכות זמן המשחק נשמרות למשחק</li>
+        </ol>
+
+        <h3>קטגוריות זמן</h3>
+        <ul>
+            <li><strong>עלילה ראשית</strong> &mdash; זמן השלמה בסיסי</li>
+            <li><strong>ראשית + תוספות</strong> &mdash; עם תוכן צדדי</li>
+            <li><strong>השלמה מלאה</strong> &mdash; 100% מהכול</li>
+        </ul>
+
+        <h3>היכן מופיעים נתוני HLTB</h3>
+        <ul>
+            <li><strong>חלון פרטי המשחק</strong> &mdash; הערכות זמן משחק מוצגות במידע על המשחק</li>
+            <li><strong>עמוד פרטי המשחק המלא</strong> &mdash; אותו מידע זמן משחק</li>
+            <li><strong>ניתוחים &rarr; לשונית זמן משחק</strong> &mdash; ניתוח זמן משחק ברמת האוסף</li>
+            <li><strong>השוואת משחקים</strong> &mdash; השוואת זמן משחק זה-לצד-זה</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>טיפ:</strong> נתוני HLTB מוצגים גם בניתוחים תחת לשונית זמן המשחק, ומספקים לכם הערכות עבור כל האוסף שלכם.
+        </div>
+    </div>
+</section>
+
+<!-- Trophies -->
+<section id="trophies" class="help-section card">
+    <h2 class="card-title">גביעי PS3 / PSN</h2>
+    <div class="card-body">
+        <h3>גביעים מקומיים של RPCS3</h3>
+        <p>עקבו אחר גביעים שהושגו במשחקי PS3 דרך אמולטור ה-RPCS3.</p>
+        <ol>
+            <li>הגדירו את נתיב גביעי ה-RPCS3 שלכם ב-<strong>הגדרות &rarr; נתונים &rarr; גביעים</strong></li>
+            <li>לחצו על <strong>"סרוק גביעים"</strong> כדי לייבא גביעים שהושגו</li>
+            <li>צפו ברשימות גביעים ובפרטי גביעים בודדים בקטע <strong>גביעי RPCS3</strong></li>
+        </ol>
+        <p>RPCS3 קורא את נתוני ה-XML של הגביעים מספריית המשתמש של ה-RPCS3 שלכם ומתאים משחקים לספרייה שלכם אוטומטית.</p>
+
+        <h3>גביעי PSN API</h3>
+        <p>סנכרנו את נתוני גביעי ה-PlayStation Network שלכם מחשבון ה-PSN שלכם.</p>
+        <ol>
+            <li>השיגו את עוגיית ה-NPSSO שלכם (ראו למטה)</li>
+            <li>הזינו אותה ב-<strong>הגדרות &rarr; חשבון &rarr; PSN</strong></li>
+            <li>ספריית גביעי ה-PSN שלכם מאוחזרת דרך ה-PlayStation API</li>
+            <li>צפו בהתקדמות הגביעים לכל משחק עם ספירות שהושגו/כולל</li>
+            <li>פרטי גביעים בודדים כוללים תיאור, נדירות וחותמות זמן של פתיחה</li>
+        </ol>
+
+        <h3>אימות PSN (עוגיית NPSSO)</h3>
+        <p>PSN משתמשת בעוגיית אימות מיוחדת בשם אסימון NPSSO. כדי להשיג אותה:</p>
+        <ol>
+            <li>פתחו דפדפן והתחברו אל <a href="https://store.playstation.com" target="_blank" rel="noopener noreferrer">store.playstation.com</a></li>
+            <li>לאחר ההתחברות, נווטו אל: <code>https://ca.account.sony.com/api/v1/ssocookie</code></li>
+            <li>העמוד יציג JSON המכיל את אסימון ה-NPSSO שלכם</li>
+            <li>העתיקו את הערך <code>npsso</code> והדביקו אותו בהגדרות &rarr; חשבון &rarr; PSN</li>
+        </ol>
+        <p>לאחר האימות, RetroDB שומר את אסימוני הגישה במטמון בצורה מאובטחת במסד הנתונים שלו (לכל משתמש) ומרענן אותם אוטומטית &mdash; אינכם מדביקים שוב את ה-NPSSO בכל סנכרון. הסשן נשאר תקף למשך כחודשיים, ו-RetroDB כעת גם מחדש אותו אוטומטית ברקע, כך שבשימוש רגיל תזדקקו לעיתים רחוקות ל-NPSSO חדש.</p>
+
+        <h3>פרטי גביעים</h3>
+        <ul>
+            <li>סוגי גביעים: ארד, כסף, זהב, פלטינה</li>
+            <li>סמלי גביעים מורדים ונשמרים במטמון מקומי</li>
+            <li>אחוז השלמה לכל משחק</li>
+            <li>חותמות זמן של פתיחה לכל גביע שהושג</li>
+        </ul>
+
+        <h3>סנכרון מרובה</h3>
+        <p>סנכרנו את כל גביעי משחקי ה-PSN בבת אחת דרך עבודת רקע. ההתקדמות מוצגת בהודעת טוסט. הגבלת קצב (2.5 שניות בין בקשות) מונעת חנק של ה-PSN API.</p>
+    </div>
+</section>
+
+<!-- Collector Trophies -->
+<section id="collector-trophies" class="help-section card">
+    <h2 class="card-title">גביעי אספן</h2>
+    <div class="card-body">
+        <h3>מה זה</h3>
+        <p>מערכת גיימיפיקציה שמעניקה גביעים בהתבסס על אבני הדרך של האוסף שלכם. ככל שאתם מוסיפים משחקים, מגרדים מטא-נתונים ומשלימים משחקים, גביעים נפתחים אוטומטית.</p>
+
+        <h3>דרגות גביעים</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>דרגה</th><th>דוגמאות</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>ארד</strong></td><td>הוספת משחק ראשון, הגעה ל-10 משחקים, גירוד ראשון, 5 מערכות, השלמה ראשונה</td></tr>
+                <tr><td><strong>כסף</strong></td><td>100 משחקים, 50 מגורדים, 10 מערכות, 10 השלמות, 500 משחקים</td></tr>
+                <tr><td><strong>זהב</strong></td><td>1,000 משחקים, 100% כיסוי מטא-נתונים, 20 מערכות, 50 השלמות</td></tr>
+                <tr><td><strong>פלטינה</strong></td><td>5,000 משחקים, 100 השלמות, 30+ מערכות</td></tr>
+            </tbody>
+        </table>
+
+        <h3>איך זה עובד</h3>
+        <ul>
+            <li>ההתקדמות נעקבת אוטומטית בהתבסס על סטטיסטיקת הספרייה שלכם</li>
+            <li>בקרו בעמוד <strong>גביעי אספן</strong> כדי לראות את ההתקדמות שלכם לכל גביע</li>
+            <li>לחצו על <strong>"רענן"</strong> כדי לעדכן את ההתקדמות לאחר ביצוע שינויים</li>
+            <li>גביעים שהושגו מוצגים עם תאריך הפתיחה שלהם</li>
+            <li>סרגלי התקדמות מראים כמה אתם קרובים לאבן הדרך הבאה</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Museum -->
+<section id="museum" class="help-section card">
+    <h2 class="card-title">מוזיאון</h2>
+    <div class="card-body">
+        <h3>מה זה</h3>
+        <p>אנציקלופדיה אינטראקטיבית של מערכות משחק המאורגנת לפי דור. למד על ההיסטוריה, המפרטים והמשחקים הבולטים של כל פלטפורמה באוסף שלך.</p>
+
+        <h3>עמוד הנחיתה</h3>
+        <p>עמוד הנחיתה של המוזיאון מציג ציר זמן של מערכות משחק המקובצות לפי דור (דור 1&ndash;9, מכשירים ניידים, ארקייד, מחשבים). כל כרטיס מערכת מציג את תמונת החומרה ואת מספר המשחקים מהספרייה שלך.</p>
+
+        <h3>עמודי פירוט מערכת</h3>
+        <p>לחץ על מערכת כלשהי כדי לצפות בעמוד המוזיאון שלה, הכולל:</p>
+        <ul>
+            <li><strong>תמונת חומרה</strong> &mdash; צילום של הקונסולה/המערכת</li>
+            <li><strong>מפרטים טכניים</strong> &mdash; CPU, GPU, RAM, רזולוציה, סוג מדיה</li>
+            <li><strong>היסטוריה</strong> &mdash; נרטיב שנוצר על ידי AI על הפיתוח, ההשקה והמורשת של המערכת</li>
+            <li><strong>10 המשחקים המובילים</strong> &mdash; הכותרים הבולטים ביותר של המערכת (מציוני מבקרים והצעות AI)</li>
+            <li><strong>גלריית בקרים</strong> &mdash; תמונות של בקרי המערכת עם תיאורים</li>
+        </ul>
+
+        <h3>יצירת תוכן באמצעות AI</h3>
+        <p>תוכן המוזיאון נוצר באמצעות AI (Gemini, OpenAI, או Claude). ניתן ליצור תוכן עבור:</p>
+        <ul>
+            <li><strong>מערכת בודדת</strong> &mdash; לחץ על "Generate" בעמוד המוזיאון של כל מערכת</li>
+            <li><strong>יצירה מרוכזת</strong> &mdash; צור תוכן עבור כל המערכות בבת אחת מעמוד הנחיתה (רץ כמשימת רקע עם התקדמות בהודעות קופצות)</li>
+        </ul>
+
+        <h3>תמונות בקרים</h3>
+        <p>ניתן להוסיף תמונות בקרים באמצעות:</p>
+        <ul>
+            <li><strong>חיפוש תמונות</strong> &mdash; חפש צילומי בקרים באמצעות Bing Image Search. התוצאות מדורגות לפי רלוונטיות (שם הבקר + יצרן + וריאציות מערכת).</li>
+            <li><strong>העלאה ידנית</strong> &mdash; העלה תמונות בקרים משלך</li>
+            <li><strong>הסרת רקע</strong> &mdash; הסר רקעים אוטומטית באמצעות AI מקומי (ספריית rembg) לתמונות בקרים שקופות על כל רקע</li>
+            <li><strong>הפצת תמונות</strong> &mdash; כאשר נמצאת תמונת בקר, היא משותפת אוטומטית עם אותו בקר במערכות אחרות (בקרים אחים)</li>
+            <li><strong>שליפה מרוכזת</strong> &mdash; שלוף תמונות עבור כל הבקרים במערכת בבת אחת</li>
+        </ul>
+        <p>כל תמונות הבקרים מתוקננות לגודל היעד ונשמרות בפורמט WebP.</p>
+
+        <div class="help-tip">
+            <strong>טיפ:</strong> נדרש מפתח AI API ליצירת תוכן. המוזיאון משתמש באותו ספק AI המוגדר ב-Settings &rarr; Scraping &rarr; API Keys.
+        </div>
+    </div>
+</section>
+
+<!-- Analytics -->
+<section id="analytics" class="help-section card">
+    <h2 class="card-title">אנליטיקה</h2>
+    <div class="card-body">
+        <p>האנליטיקה מספקת סטטיסטיקות ותצוגות מקיפות ב-12 לשוניות. כל התרשימים אינטראקטיביים וניתן לייצא אותם כ-PNG, להעתיק ללוח, או להוריד כ-CSV.</p>
+
+        <h3>לשוניות אנליטיקה</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>לשונית</th><th>תוכן</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>סיכום</strong></td><td>כרטיסי סקירת סטטיסטיקה (סך המשחקים, המערכות, שיעור השלמה, אחוז שנגרד, וכו')</td></tr>
+                <tr><td><strong>תרשימים</strong></td><td>משחקים לפי פלטפורמה/יצרן, לפי ז'אנר, ציר זמן שנה אחר שנה</td></tr>
+                <tr><td><strong>מפתחים</strong></td><td>תרשימי עמודות של 15 המפתחים והמפיצים המובילים</td></tr>
+                <tr><td><strong>משחקיות</strong></td><td>פילוח ז'אנרים, ניתוח מצבי משחק, התפלגות מבנה המשחק</td></tr>
+                <tr><td><strong>זמן משחק</strong></td><td>ניתוח נתוני זמן משחק של HLTB באוסף שלך &mdash; סך זמן משחק מוערך, ממוצעים, התפלגות</td></tr>
+                <tr><td><strong>ציוני ביקורת</strong></td><td>התפלגויות וממוצעים של ציוני מבקרים ומשתמשים</td></tr>
+                <tr><td><strong>דירוגי גיל</strong></td><td>התפלגות דירוגי גיל בכל 8 מערכות הדירוג</td></tr>
+                <tr><td><strong>הישגים</strong></td><td>כיסוי והשלמה של RetroAchievements לפי מערכת</td></tr>
+                <tr><td><strong>איכות נתונים</strong></td><td>תרשים מכ"ם של שלמות מטא-דאטה (תיאור, תמונת קופסה, ז'אנר, מפתח, מפיץ, תאריך יציאה, צילומי מסך, fanart, וידאו, מדריך, HLTB, דירוגים, מצבים, אזור)</td></tr>
+                <tr><td><strong>צמיחה</strong></td><td>ציר זמן של צמיחת האוסף המציג מתי משחקים נוספו לאורך זמן</td></tr>
+                <tr><td><strong>אחסון</strong></td><td>פילוח שימוש באחסון לפי מערכת (עם גדלי קבצים מעוצבים)</td></tr>
+                <tr><td><strong>טבלאות מובילים</strong></td><td>המערכות המובילות לפי מספר משחקים, המשחקים הבודדים הגדולים ביותר לפי גודל קובץ</td></tr>
+            </tbody>
+        </table>
+
+        <h3>אפשרויות ייצוא</h3>
+        <p>ניתן לייצא כל תרשים באמצעות הכפתורים בסרגל הכלים של התרשים:</p>
+        <ul>
+            <li><strong>PNG</strong> &mdash; שמור כקובץ תמונה</li>
+            <li><strong>לוח</strong> &mdash; העתק את תמונת התרשים ללוח</li>
+            <li><strong>CSV</strong> &mdash; הורד נתונים גולמיים כגיליון אלקטרוני</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Reports -->
+<section id="reports" class="help-section card">
+    <h2 class="card-title">דוחות ROM</h2>
+    <div class="card-body">
+        <h3>מה זה עושה</h3>
+        <p>מאמת שמות קבצי ROM מול מוסכמות שמות תקניות ומזהה בעיות אפשריות. גישה דרך <strong>ROM Reports</strong> בסרגל הצד.</p>
+
+        <h3>סוגי דוחות</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>לשונית</th><th>מה היא בודקת</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>שמות לא תקניים</strong></td><td>קבצי ROM עם שמות שאינם תואמים למוסכמות השמות. מציג את שם הקובץ הנוכחי, בעיות שזוהו, ושם מתוקן מוצע.</td></tr>
+                <tr><td><strong>אי-התאמות שם</strong></td><td>קבצי ROM שבהם שם הקובץ אינו תואם לכותרת המטא-דאטה שנגרדה. מציג את שם הקובץ הנוכחי מול הכותרת שנגרדה, אזור, שנה, ומפתח.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>מה נבדק</h3>
+        <ul>
+            <li>תווים לא חוקיים בשמות קבצים (<code>: ? * / " &lt; &gt; | \</code>)</li>
+            <li>תגי אזור חסרים או שגויים (למשל <code>(USA)</code>, <code>(Europe)</code>)</li>
+            <li>תגי שנה חסרים</li>
+            <li>אי-התאמות בין שם קובץ לכותרת במסד הנתונים</li>
+        </ul>
+
+        <p>הדוחות ניתנים למיון לפי מערכת, שם קובץ, וסוג בעיה. השתמש בהם כדי לשמור על ספריית ה-ROM שלך מאורגנת ובעלת שמות עקביים.</p>
+    </div>
+</section>
+
+<!-- ROM Tools -->
+<section id="rom-tools" class="help-section card">
+    <h2 class="card-title">כלי ROM</h2>
+    <div class="card-body">
+        <p>גש למרכז כלי ה-ROM מסרגל הצד. כל כלי רץ כמשימת רקע עם עדכוני התקדמות בזמן אמת, תמיכה בהשהיה/המשך, ורישום לוג.</p>
+
+        <h3>סורק ארכיונים</h3>
+        <p>חלץ ארכיוני ROM (ZIP, 7Z, RAR) עם אפשרויות עבור:</p>
+        <ul>
+            <li>סריקה רקורסיבית של תת-תיקיות</li>
+            <li>הסרת קבצים לא רצויים לאחר החילוץ</li>
+            <li>יצירת רשימת השמעה M3U אוטומטית למשחקים מרובי-דיסקים</li>
+        </ul>
+        <p><em>דורש: 7z או unzip</em></p>
+
+        <h3>ממיר CHD</h3>
+        <p>המר תמונות דיסק (ISO, BIN/CUE, GDI) לפורמט CHD דחוס. חוסך אחסון משמעותי תוך שמירה על תאימות מלאה עם אמולטורים.</p>
+        <p><em>דורש: chdman (מ-mame-tools)</em></p>
+
+        <h3>אימות CHD</h3>
+        <p>אמת את שלמות קבצי CHD עם ולידציית hash. מזהה המרות פגומות או לא שלמות.</p>
+        <p><em>דורש: chdman</em></p>
+
+        <h3>מאתר כפילויות</h3>
+        <p>מצא קבצי ROM כפולים לפי hash או שם קובץ, עם אפשרויות לתעדוף לפי תגי אזור.</p>
+        <p><em>ללא תלויות חיצוניות</em></p>
+
+        <h3>מארגן מרובי-דיסקים</h3>
+        <p>ארגן משחקים מרובי-דיסקים לתת-תיקיות וצור רשימות השמעה M3U עבור אמולטורים התומכים בהן. שימושי למערכות כמו PlayStation ו-Saturn.</p>
+        <p><em>ללא תלויות חיצוניות</em></p>
+
+        <h3>ניכוי כפילויות צילומי מסך</h3>
+        <p>מצא והסר צילומי מסך כפולים ברחבי ספריית המשחקים שלך כדי לפנות שטח אחסון.</p>
+        <ul>
+            <li><strong>Hash מדויק (MD5)</strong> &mdash; מזהה קבצים זהים בלבד</li>
+            <li><strong>דמיון חזותי</strong> &mdash; השוואת perceptual hash עם סף מתכוונן (1&ndash;20, נמוך יותר = התאמה מחמירה יותר)</li>
+        </ul>
+        <p>סורק בהדרגה עם סטטיסטיקה חיה המציגה משחקים שנסרקו, מספר כפילויות, ושטח שניתן לשחזור. התוצאות מקובצות לפי משחק ומערכת. ניתן לבחור איזה קובץ לשמור בכל קבוצת כפילויות, או להשתמש ב-<strong>"Select Largest"</strong> כדי לשמור אוטומטית את הגרסה ברזולוציה הגבוהה ביותר.</p>
+        <p><em>ללא תלויות חיצוניות</em></p>
+
+        <h3>משנה גודל תמונות</h3>
+        <p>תקנן מדיית משחקים לגדלי יעד עקביים. ראה <a href="#image-standardization">תקנון תמונות</a> לפרטים מלאים.</p>
+        <p><em>ללא תלויות חיצוניות (הגדלת AI מבוססת Python)</em></p>
+
+        <h3>מילוי כותרות חלופיות</h3>
+        <p>סרוק את הספרייה לאיתור משחקים ששדה <strong>הכותרות החלופיות</strong> שלהם ריק ומלא אותו מ-IGDB / TGDB / ScreenScraper. שימושי לאחר ייבוא קטלוג גדול או מעבר מכלי אחר שלא שמר כותרות אזוריות / יפניות / משנה. רץ ברקע; ההתקדמות מוצגת בכרטיס הכלי.</p>
+        <p><em>דורש לפחות מפתח scraper API אחד (IGDB / TGDB / ScreenScraper)</em></p>
+
+        <h3>חיפוש HLTB מרוכז</h3>
+        <p>הרץ חיפוש HowLongToBeat עבור כל משחק שחסר לו הערכת זמן משחק. כל התאמה מדורגת לפי כותרת + פלטפורמה + שנת יציאה; התאמות בעלות ביטחון גבוה נשמרות אוטומטית. כל דבר מתחת לסף הביטחון (או עם פלטפורמות סותרות) מוחזק לבדיקה אנושית.</p>
+        <p><em>ללא תלויות חיצוניות (משתמש במאגר HLTB לא-מקוון המצורף)</em></p>
+
+        <h3>בדיקת HLTB ממתינה</h3>
+        <p>תור בדיקה להתאמות עמומות שהועלו על ידי חיפוש HLTB מרוכז. כל שורה ממתינה מציגה את משחק המקור לצד מועמד HLTB (כותרת, פלטפורמה, שנת יציאה, ביטחון). אשר, דחה, או בחר התאמה אחרת לכל שורה. כרטיס כלי הבדיקה מופיע במרכז כלי ה-ROM רק כאשר יש לפחות התאמה ממתינה אחת.</p>
+        <ul>
+            <li><strong>לשוניות סינון</strong> להתאמות בעלות ביטחון נמוך, כותרת חלופית, ואי-התאמת פלטפורמה.</li>
+            <li><strong>אישור</strong> כותב את הערכת זמן המשחק; <strong>דחייה</strong> משמיטה את המועמד ושומרת על תור החיפוש נקי.</li>
+        </ul>
+
+        <h3>הגדרות כלים</h3>
+        <p>הגדר נתיבים, מיקומי כלים, סוגי ארכיונים, והעדפות משותפות לכל כלי ה-ROM.</p>
+
+        <div class="help-tip">
+            <strong>טיפ:</strong> כל כלי ה-ROM תומכים בהשהיה/המשך ורצים ברקע. ההתקדמות והתוצאות נרשמות בלוג וניתנות לצפייה במציג הלוג. סטטוס הכלי (זמין מול דורש התקנה) מוצג בכל כרטיס כלי.
+        </div>
+    </div>
+</section>
+
+<!-- Normalization -->
+<section id="normalization" class="help-section card">
+    <h2 class="card-title">תקנון</h2>
+    <div class="card-body">
+        <h3>מה זה עושה</h3>
+        <p>מתקנן ערכי ז'אנר ומצב משחק לצורות קנוניות עקביות. זה קורה אוטומטית במהלך גרידה ומילוי AI, וניתן גם להחיל אותו ידנית על הספרייה הקיימת שלך.</p>
+
+        <h3>למה זה חשוב</h3>
+        <p>scrapers שונים משתמשים בשמות שונים לאותו דבר. תקנון מבטיח עקביות בכל הספרייה שלך:</p>
+        <ul>
+            <li><code>platform</code> &rarr; <code>Platformer</code></li>
+            <li><code>fps</code>, <code>first person shooter</code> &rarr; <code>First-Person-Shooter</code></li>
+            <li><code>shoot 'em up</code>, <code>shmup</code> &rarr; <code>Shoot-em-up</code></li>
+            <li><code>beat 'em up</code>, <code>brawler</code> &rarr; <code>Beat-em-up</code></li>
+            <li><code>hack and slash</code> &rarr; <code>Hack-n-Slash</code></li>
+            <li><code>rts</code>, <code>real time strategy</code> &rarr; <code>Real-Time Strategy</code></li>
+            <li><code>board game</code>, <code>card game</code> &rarr; <code>Board-Card</code></li>
+        </ul>
+
+        <h3>כללים מותאמים אישית</h3>
+        <p>ניתן להוסיף כללי תקנון מותאמים אישית ב-<strong>Settings &rarr; Data &rarr; Normalization</strong>. כללים מותאמים אישית עוקפים את המיפויים המובנים, ומאפשרים לך להגדיר שמות ז'אנר ומצב מועדפים משלך. הכללים נשמרים במסד הנתונים.</p>
+
+        <h3>תצוגה מקדימה והחלה</h3>
+        <p>לפני החלת התקנון, ניתן לצפות בתצוגה מקדימה של אילו משחקים יושפעו ואילו שינויים יבוצעו. זה מאפשר לך לבדוק לפני ביצוע שינויים בספרייה שלך.</p>
+    </div>
+</section>
+
+<!-- Image Standardization -->
+<section id="image-standardization" class="help-section card">
+    <h2 class="card-title">תקנון תמונות</h2>
+    <div class="card-body">
+        <h3>מה זה עושה</h3>
+        <p>מתקנן את כל מדיית המשחקים לגדלי יעד עקביים למראה אחיד בכל הספרייה שלך. תמונות שנמצאות בטווח של 80&ndash;120% מגודל היעד מדולגות.</p>
+
+        <h3>איך זה עובד</h3>
+        <ul>
+            <li><strong>הגדלה</strong> &mdash; תמונות קטנות מגודל היעד מוגדלות באמצעות Real-ESRGAN x4 (רזולוציית-על של AI דרך ONNX Runtime) להגדלה באיכות גבוהה, ולאחר מכן משונות גודל לגודל היעד המדויק</li>
+            <li><strong>הקטנה</strong> &mdash; תמונות גדולות מגודל היעד מוקטנות באמצעות סינון Lanczos לתוצאות חדות</li>
+            <li><strong>רצועת סף</strong> &mdash; תמונות בטווח של 80&ndash;120% מהיעד נשארות ללא שינוי כדי להימנע מעיבוד חוזר מיותר</li>
+        </ul>
+
+        <h3>גדלי יעד</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>סוג מדיה</th><th>יעד</th><th>שיטה</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>תמונת קופסה</td><td>גובה 1080px</td><td>הרוחב מתכווץ באופן יחסי</td></tr>
+                <tr><td>תמונת קופסה תלת-ממדית</td><td>גובה 1080px</td><td>הרוחב מתכווץ באופן יחסי (שומר על שקיפות)</td></tr>
+                <tr><td>צילומי מסך</td><td>גובה 1080px</td><td>הרוחב מתכווץ באופן יחסי</td></tr>
+                <tr><td>בקרים</td><td>הצלע הארוכה ביותר 1280px</td><td>שומר על שקיפות (RGBA)</td></tr>
+                <tr><td>חומרה</td><td>הצלע הארוכה ביותר 1280px</td><td>שומר על שקיפות (RGBA)</td></tr>
+                <tr><td>Fanart</td><td>מדולג</td><td>לא מתוקנן (נשאר בגודל המקורי)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>איך להריץ</h3>
+        <ol>
+            <li>עבור אל <strong>Settings &rarr; System &rarr; Maintenance</strong> או <strong>ROM Tools &rarr; Image Resizer</strong></li>
+            <li>לחץ על <strong>"Start"</strong> כדי להתחיל תקנון מרוכז</li>
+            <li>המשימה רצה ברקע עם התקדמות בהודעות קופצות המציגה את הקובץ הנוכחי וסטטיסטיקה</li>
+            <li>תמונות גם מתוקננות אוטומטית במהלך גרידה (הורדות חדשות מתוקננות מיד)</li>
+        </ol>
+
+        <h3>תמיכת חומרה</h3>
+        <p>מודל Real-ESRGAN מזהה אוטומטית את החומרה שלך ומשתמש בספק הטוב ביותר הזמין:</p>
+        <ul>
+            <li><strong>CUDA</strong> &mdash; האצת GPU של NVIDIA</li>
+            <li><strong>ROCm</strong> &mdash; האצת GPU של AMD (עם עקיפת גרסת gfx אוטומטית לסדרת RX 6000)</li>
+            <li><strong>CoreML</strong> &mdash; האצת Apple Silicon</li>
+            <li><strong>CPU</strong> &mdash; חלופה למערכות ללא תמיכת GPU</li>
+        </ul>
+        <p>קובץ מודל ה-ONNX מורד אוטומטית מ-Hugging Face בשימוש הראשון ונשמר במטמון מקומי.</p>
+    </div>
+</section>
+
+<!-- Logs -->
+<section id="logs" class="help-section card">
+    <h2 class="card-title">מציג לוג</h2>
+    <div class="card-body">
+        <h3>מה זה עושה</h3>
+        <p>מציג מאוחד לכל לוגי היישום. גישה דרך <strong>Log Viewer</strong> בסרגל הצד.</p>
+
+        <h3>קטגוריות לוג</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>קטגוריה</th><th>תוכן</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>גרידה</strong></td><td>פעילות scraper, קריאות API, שגיאות, ותוצאות לכל משחק</td></tr>
+                <tr><td><strong>כלי ROM</strong></td><td>חילוץ ארכיונים, המרת CHD, זיהוי כפילויות, ניכוי כפילויות צילומי מסך</td></tr>
+                <tr><td><strong>דוחות ROM</strong></td><td>תוצאות ולידציית שמות</td></tr>
+                <tr><td><strong>שינוי גודל תמונה</strong></td><td>התקדמות משימת תקנון תמונות (הגדלה/הקטנה לכל קובץ)</td></tr>
+                <tr><td><strong>מערכת</strong></td><td>פעילות יישום כללית, משימות תחזוקה, הפעלה, פעולות מסד נתונים</td></tr>
+            </tbody>
+        </table>
+
+        <h3>תכונות</h3>
+        <ul>
+            <li>סנן לפי קטגוריה או צפה בכל הלוגים יחד</li>
+            <li>רשימת הקבצים מציגה תאריכי יצירה וגדלי קבצים</li>
+            <li>לחץ על כל קובץ לוג כדי לצפות בתוכנו המלא</li>
+            <li>הורד קבצי לוג בודדים</li>
+            <li>ספירות קטגוריות מוצגות בראש לסקירה מהירה</li>
+            <li>רמות לוג ניתנות להגדרה ב-Settings &rarr; System &rarr; Logging</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Maintenance -->
+<section id="maintenance" class="help-section card">
+    <h2 class="card-title">תחזוקה</h2>
+    <div class="card-body">
+        <p>פעולות תחזוקה זמינות ב-<strong>Settings &rarr; System &rarr; Maintenance</strong>. אלה עוזרות לשמור על הספרייה שלך נקייה ומאופטמת.</p>
+
+        <h3>סריקת ספרייה</h3>
+        <ul>
+            <li><strong>סרוק ספרייה</strong> &mdash; סרוק את תיקיות ה-ROM שלך למשחקים חדשים. מזהה תיקיות מערכת וסוגי קבצים נתמכים באמצעות רשימות סיומות של ES-DE <code>systeminfo.txt</code>. זמין גם מלוח הבקרה.</li>
+        </ul>
+
+        <h3>פעולות ניקוי</h3>
+        <ul>
+            <li><strong>נקה קבצי ROM חסרים</strong> &mdash; הסר רשומות מסד נתונים עבור משחקים שקבצי ה-ROM שלהם כבר לא קיימים בדיסק. שימושי לאחר ארגון מחדש או מחיקת קבצי ROM.</li>
+            <li><strong>ניקוי מדיה יתומה</strong> &mdash; מצא ומחק קבצי תמונה בדיסק (תמונת קופסה, צילומי מסך, fanart) שאין להם רשומת מסד נתונים תואמת. צפה בתצוגה מקדימה לפני המחיקה לאישור.</li>
+            <li><strong>נקה נתונים שנגרדו</strong> &mdash; הסר את כל המטא-דאטה שנגרדה מהמשחקים תוך שמירה על רשומות קבצי ה-ROM. שימושי להתחלה רעננה עם גרידה. תצוגה מקדימה מציגה את המשחקים המושפעים לפני הביצוע.</li>
+            <li><strong>נקה ייבוא CLZ</strong> &mdash; הסר את כל רשומות הייבוא של CLZ Games (רשומות מטא-דאטה בלבד ללא קבצי ROM).</li>
+        </ul>
+
+        <h3>אופטימיזציית מסד נתונים</h3>
+        <ul>
+            <li><strong>אופטימיזציית מסד נתונים</strong> &mdash; מריץ SQLite VACUUM ו-ANALYZE כדי לשחזר אחסון מרשומות שנמחקו ולעדכן סטטיסטיקות מתכנן שאילתות. מומלץ לאחר מחיקות גדולות או פעולות ניקוי.</li>
+        </ul>
+
+        <h3>תקנון תמונות מרוכז</h3>
+        <p>תקנן את כל תמונות המשחקים לגדלי יעד. ראה <a href="#image-standardization">תקנון תמונות</a> לפרטים.</p>
+
+        <h3>ניהול שרת</h3>
+        <ul>
+            <li><strong>הפעל שרת מחדש</strong> &mdash; הפעלה מחדש חלקה של היישום (ניקוי ויציאה). זמין ב-Settings &rarr; System &rarr; Troubleshooting.</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Multi-User Access -->
+<section id="multi-user" class="help-section card">
+    <h2 class="card-title">גישת ריבוי-משתמשים</h2>
+    <div class="card-body">
+        <h3>תפקידי משתמשים</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>תפקיד</th><th>גישה</th><th>סיסמה</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>מנהל</strong></td><td>גישה מלאה: הגדרות, ניהול משתמשים, תחזוקה, כל התכונות</td><td>נדרשת</td></tr>
+                <tr><td><strong>עורך</strong></td><td>יכול לערוך משחקים, לגרד, להשתמש בכלי ROM, לנהל אוספים</td><td>ללא</td></tr>
+                <tr><td><strong>צופה</strong></td><td>קריאה בלבד: עיון בספרייה, צפייה בפרטים, צפייה בהישגים/גביעים</td><td>ללא</td></tr>
+            </tbody>
+        </table>
+
+        <h3>ניהול משתמשים</h3>
+        <ol>
+            <li>עברו אל <strong>הגדרות &rarr; חשבון &rarr; משתמשים</strong> (מנהל בלבד)</li>
+            <li>לחצו על <strong>"הוסף משתמש"</strong> כדי ליצור חשבון חדש</li>
+            <li>הגדירו שם משתמש, שם תצוגה ותפקיד</li>
+            <li>משתמשי מנהל מקבלים סיסמת ברירת מחדל שיש לשנות בהתחברות הראשונה</li>
+        </ol>
+
+        <h3>אימות</h3>
+        <p>עמוד ההתחברות מציג את כל המשתמשים הפעילים. חשבונות מנהל דורשים סיסמה; תפקידים אחרים פשוט לוחצים על שמם כדי להתחבר. ההפעלות נשמרות עד להתנתקות.</p>
+
+        <h3>הגדרות לכל משתמש</h3>
+        <p>כל משתמש יכול להגדיר את הפרטים האישיים שלו:</p>
+        <ul>
+            <li>אווטאר (העלאת תמונה מותאמת אישית)</li>
+            <li>שם תצוגה</li>
+            <li>העדפת ערכת נושא</li>
+            <li>פריטים לעמוד</li>
+            <li>אזור זמן</li>
+            <li>נתיב גביעי RPCS3</li>
+            <li>פרטי RetroAchievements (שם משתמש + מפתח API)</li>
+            <li>פרטי PSN (עוגיית NPSSO)</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Backup -->
+<section id="backup" class="help-section card">
+    <h2 class="card-title">גיבוי ושחזור</h2>
+    <div class="card-body">
+        <h3>יצירת גיבויים</h3>
+        <ol>
+            <li>עברו אל <strong>הגדרות &rarr; ספרייה &rarr; גיבוי</strong></li>
+            <li>לחצו על <strong>"צור גיבוי"</strong></li>
+            <li>הגיבוי נשמר בתיקייה <code>backups/</code> עם שם קובץ הנושא חותמת זמן</li>
+        </ol>
+
+        <h3>מה מגובה</h3>
+        <p>הגיבוי כולל את כל מסד הנתונים SQLite (<code>roms.db</code>), המכיל את כל המטא-נתונים של המשחקים, חשבונות המשתמשים, ההגדרות, נתוני הגביעים, התקדמות ההישגים, תגיות, רשימות ופריטי רשימת המשאלות.</p>
+
+        <h3>מה לא מגובה</h3>
+        <p>קובצי מדיה (עטיפות, צילומי מסך, אמנות מעריצים, סרטונים, מדריכים) אינם כלולים בגיבוי מסד הנתונים מכיוון שניתן להוריד אותם מחדש באמצעות גירוד. שקלו לגבות את התיקייה <code>static/images/</code> בנפרד אם יש לכם העלאות מותאמות אישית.</p>
+
+        <h3>שחזור</h3>
+        <ol>
+            <li>מצאו את הגיבוי ברשימת הגיבויים</li>
+            <li>לחצו על <strong>"שחזר"</strong></li>
+            <li>אשרו את הפעולה</li>
+        </ol>
+
+        <div class="help-tip">
+            <strong>אזהרה:</strong> שחזור גיבוי דורס את מסד הנתונים הנוכחי שלכם. צרו גיבוי טרי לפני שחזור גיבוי ישן יותר!
+        </div>
+    </div>
+</section>
+
+<!-- Updating RetroDB -->
+<section id="updating" class="help-section card">
+    <h2 class="card-title">עדכון RetroDB</h2>
+    <div class="card-body">
+        <h3>כיצד לעדכן</h3>
+        <ol>
+            <li>הורידו את גרסת RetroDB החדשה</li>
+            <li>גבו את הקבצים הבאים (הם מכילים את הנתונים האישיים שלכם):
+                <ul>
+                    <li><code>config.py</code> (הנתיבים ומפתחות ה-API שלכם)</li>
+                    <li><code>data/settings.json</code> (העדפות ממשק המשתמש שלכם)</li>
+                    <li><code>data/scraper_settings.json</code> (תצורת הגירוד שלכם)</li>
+                    <li><code>data/rom_tools_config.json</code> (העדפות כלי ה-ROM שלכם)</li>
+                    <li>התיקייה <code>database/</code> (מסד נתוני ספריית המשחקים שלכם, ואסימוני הכניסה השמורים של PSN/Xbox)</li>
+                </ul>
+            </li>
+            <li>חלצו את הגרסה החדשה מעל ההתקנה הקיימת</li>
+            <li>הריצו <code>python install.py</code> כדי להתקין תלויות חדשות</li>
+            <li>הפעילו מחדש את השרת</li>
+        </ol>
+
+        <h3>קבצים שבטוח לדרוס</h3>
+        <p>כל קובצי קוד המקור (<code>.py</code>, <code>.html</code>, <code>.css</code>, <code>.js</code>) ניתנים לדריסה בבטחה. תוכנית ההתקנה לא תדרוס את קובצי התצורה האישיים שלכם.</p>
+
+        <h3>קבצים לשמור</h3>
+        <p>לעולם אל תמחקו או תדרסו: <code>config.py</code>, <code>database/roms.db</code>, <code>data/settings.json</code>, <code>data/scraper_settings.json</code>, <code>data/rom_tools_config.json</code>.</p>
+
+        <h3>העברות מסד נתונים</h3>
+        <p>RetroDB מטפל אוטומטית בשינויי סכימת מסד הנתונים בהפעלה. עמודות וטבלאות חדשות נוספות לפי הצורך ללא אובדן נתונים. אינכם צריכים לעשות דבר מיוחד &mdash; פשוט הפעילו את הגרסה החדשה ומסד הנתונים מתעדכן אוטומטית.</p>
+    </div>
+</section>
+
+<!-- Troubleshooting -->
+<section id="troubleshooting" class="help-section card">
+    <h2 class="card-title">פתרון בעיות</h2>
+    <div class="card-body">
+        <h3>בעיות נפוצות</h3>
+
+        <h4>"לא נמצאו סיומות למערכת"</h4>
+        <p>תיקיית המערכת זקוקה לקובץ ES-DE <code>systeminfo.txt</code> תקין המגדיר את סיומות קובצי ה-ROM הנתמכות. ודאו שמבנה ספריית ה-ROM שלכם תואם לתקני ES-DE.</p>
+
+        <h4>"החיבור ל-API נכשל"</h4>
+        <ul>
+            <li>בדקו את חיבור האינטרנט שלכם</li>
+            <li>אמתו את מפתחות ה-API בהגדרות &rarr; גירוד &rarr; מפתחות API</li>
+            <li>המתינו אם הגעתם למגבלת קצב (לחלק מה-API יש מכסות יומיות/שעתיות)</li>
+            <li>בדקו אם הגורד מופעל (גורדים מושבתים מציגים "מושבת" בסטטוס לוח הבקרה)</li>
+            <li>בדקו את מציג היומן להודעות שגיאה מפורטות</li>
+        </ul>
+
+        <h4>"גירוד בכמות תקוע"</h4>
+        <p>עברו אל הגדרות &rarr; מערכת &rarr; פתרון בעיות &rarr; <strong>"נקה גירוד בכמות תקוע"</strong>. זה מאפס את מצב המשימה מבלי להשפיע על הנתונים שלכם.</p>
+
+        <h4>"תור סנכרון RA תקוע"</h4>
+        <p>נקו את תור הסנכרון של RetroAchievements מהגדרות &rarr; מערכת &rarr; פתרון בעיות.</p>
+
+        <h4>"סנכרון PSN תקוע"</h4>
+        <p>נקו את משימת רענון ה-PSN מהגדרות &rarr; מערכת &rarr; פתרון בעיות.</p>
+
+        <h4>"יצירת מוזיאון תקועה"</h4>
+        <p>נקו את משימת יצירת המוזיאון מהגדרות &rarr; מערכת &rarr; פתרון בעיות.</p>
+
+        <h4>"שגיאות מסד נתונים"</h4>
+        <ol>
+            <li>צרו גיבוי אם אפשר (הגדרות &rarr; ספרייה &rarr; גיבוי)</li>
+            <li>נסו הגדרות &rarr; מערכת &rarr; תחזוקה &rarr; <strong>ייעל מסד נתונים</strong></li>
+            <li>בדקו את הרשאות הקבצים בתיקייה <code>database/</code></li>
+            <li>מוצא אחרון: שחזרו מגיבוי או מחקו את מסד הנתונים וסרקו מחדש</li>
+        </ol>
+
+        <h4>"תמונות לא נשמרות"</h4>
+        <p>בדקו הרשאות כתיבה בספריות המדיה: <code>chmod -R 755 static/images/</code></p>
+
+        <h4>"העמוד איטי או לא מגיב"</h4>
+        <ul>
+            <li>אוספים גדולים עשויים לקחת זמן להיטען &mdash; גלילה אינסופית נטענת באצוות של 100</li>
+            <li>נסו לרענן את העמוד כדי לנקות זיכרון שהצטבר</li>
+            <li>בדקו את מסוף הדפדפן לשגיאות JavaScript</li>
+            <li>נסו לעבור לערכת נושא עם אפקט קנבס קל יותר (למשל Amber או Elite)</li>
+            <li>אפקטי קנבס מזהים אוטומטית את החומרה; מכשירים חלשים יותר משתמשים בגיבוי מעבד בקצב פריימים מופחת</li>
+        </ul>
+
+        <h4>באנר "משימות שהופרעו" בלוח הבקרה</h4>
+        <p>אם RetroDB מופעל מחדש בזמן שמשימות פועלות, הן מופיעות בבאנר שחזור. לחצו על <strong>"המשך"</strong> בנפרד או על <strong>"המשך הכל"</strong> כדי להפעילן מחדש. לחצו על <strong>"התעלם"</strong> או על <strong>"התעלם מהכל"</strong> כדי לנקות אותן.</p>
+
+        <h4>"אימות PSN נכשל"</h4>
+        <ul>
+            <li>אסימוני NPSSO פגים &mdash; צרו אסימון חדש מ-<code>ca.account.sony.com/api/v1/ssocookie</code></li>
+            <li>ודאו שאתם מחוברים ל-store.playstation.com לפני ביקור בכתובת העוגייה</li>
+            <li>RetroDB שומר במטמון את הפעלת ה-PSN שלכם למשך כחודשיים וכעת מחדש אותה אוטומטית ברקע; אם היא עדיין פוקעת, פשוט הדביקו NPSSO טרי בהגדרות &rarr; חשבון &rarr; PSN</li>
+        </ul>
+
+        <h4>"אימות Xbox נכשל"</h4>
+        <ul>
+            <li>אמתו מחדש בלחיצה על "התחבר" בכרטיסייה ייבוא משחקים &rarr; Xbox</li>
+            <li>אסימוני Xbox נשמרים במטמון ב-<code>data/xbox_tokens.json</code> ומתרעננים אוטומטית</li>
+        </ul>
+
+        <h4>"שגיאות שדרוג תמונות"</h4>
+        <ul>
+            <li>מודל Real-ESRGAN ONNX מורד בשימוש הראשון &mdash; ודאו גישה לאינטרנט</li>
+            <li>האצת GPU דורשת מנהלי התקן תואמים (CUDA עבור NVIDIA, ROCm עבור AMD)</li>
+            <li>אם ה-GPU נכשל, המערכת עוברת לעיבוד מעבד אוטומטית</li>
+        </ul>
+
+        <h3>טיפים לביצועים</h3>
+        <ul>
+            <li>שמרו על הדפדפן שלכם מעודכן לביצועים מיטביים</li>
+            <li>סגרו כרטיסיות דפדפן אחרות בעבודה עם אוספים גדולים מאוד</li>
+            <li>השתמשו במסנני מערכת כדי לצמצם את המשחקים המוצגים בבת אחת</li>
+            <li>הריצו ייעול מסד נתונים מעת לעת לאחר פעולות גדולות (גירוד, ניקוי, ייבוא)</li>
+            <li>אפקטי קנבס של ערכת הנושא מזהים אוטומטית את החומרה; מכשירים חלשים יותר משתמשים בגיבוי מעבד</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Security & Disclaimer -->
+<section id="security" class="help-section card">
+    <h2 class="card-title">אבטחה והצהרת אחריות</h2>
+    <div class="card-body">
+        <h3>שיטות עבודה מומלצות לאבטחה</h3>
+        <ul>
+            <li><strong>שנו את סיסמת ברירת המחדל</strong> &mdash; יש לשנות את סיסמת המנהל שברירת המחדל (<code>admin</code>) מיד בהתחברות הראשונה. השתמשו בסיסמה חזקה של לפחות 8 תווים.</li>
+            <li><strong>השתמשו בפרוקסי הפוך של HTTPS</strong> &mdash; RetroDB אינו מספק TLS/SSL בעצמו. הציבו אותו מאחורי פרוקסי הפוך (למשל Nginx, Caddy, Traefik) עם HTTPS מופעל כדי להצפין את התעבורה בין הלקוחות לשרת.</li>
+            <li><strong>הגבילו את הגישה לרשת</strong> &mdash; הימנעו מחשיפת RetroDB ישירות לאינטרנט הציבורי. השתמשו ב-VPN או הגבילו את הגישה לרשת המקומית שלכם. אם נדרשת גישה מרחוק, השתמשו בפרוקסי הפוך עם אימות.</li>
+            <li><strong>שמרו על גיבויים סדירים</strong> &mdash; השתמשו בתכונת הגיבוי המובנית תחת הגדרות כדי ליצור גיבויים תקופתיים של מסד הנתונים. אחסנו את הגיבויים במיקום נפרד מהיישום.</li>
+            <li><strong>שמרו על RetroDB מעודכן</strong> &mdash; בדקו אם יש גרסאות חדשות באופן קבוע. תיקוני אבטחה ושיפורים כלולים בעדכונים.</li>
+            <li><strong>הגנו על מפתחות ה-API שלכם</strong> &mdash; מפתחות API מאוחסנים ב-<code>data/scraper_settings.json</code>. ודאו שקובץ זה אינו נגיש לציבור. לעולם אל תשתפו את <code>config.py</code> או את קובצי האסימונים שלכם.</li>
+        </ul>
+
+        <h3>תכונות אבטחה מובנות</h3>
+        <ul>
+            <li><strong>גיבוב סיסמאות</strong> &mdash; סיסמאות מנהל מגובבות באמצעות PBKDF2 (לעולם לא מאוחסנות כטקסט רגיל)</li>
+            <li><strong>הגבלת קצב התחברות</strong> &mdash; הגנה מפני התקפות כוח גס בנקודת הקצה של ההתחברות</li>
+            <li><strong>אימות נתיבים</strong> &mdash; כל פעולות הקבצים משתמשות בעוזרי <code>safe_path</code> ו-<code>safe_filename</code> כדי למנוע התקפות חצייה של ספריות</li>
+            <li><strong>שאילתות מפורמטרות</strong> &mdash; כל שאילתות מסד הנתונים משתמשות בהצהרות מפורמטרות כדי למנוע הזרקת SQL</li>
+            <li><strong>הגנת XSS</strong> &mdash; תיבות דו-שיח מודאליות משתמשות בבניית DOM בטוחה; קלט המשתמש מנוטרל</li>
+            <li><strong>הגנה מפני פצצת דחיסת תמונות</strong> &mdash; ספירת הפיקסלים המרבית של תמונה מוגבלת כדי למנוע התשת זיכרון מתמונות זדוניות</li>
+        </ul>
+
+        <h3>הצהרת אחריות</h3>
+        <p>
+            RetroDB מסופק <strong>"כמות שהוא"</strong>, ללא אחריות מכל סוג, מפורשת או משתמעת,
+            לרבות אך לא רק אחריות לסחירות, התאמה למטרה מסוימת,
+            ואי-הפרה. בשום מקרה לא יישאו המחברים או בעלי זכויות היוצרים באחריות לכל תביעה,
+            נזק, או חבות אחרת, בין אם בפעולה חוזית, נזיקית, או אחרת, הנובעת,
+            מתוך, או בקשר עם התוכנה או השימוש בה או עסקאות אחרות בתוכנה.
+        </p>
+        <p>
+            אתם האחראים הבלעדיים לאבטחת הפריסה שלכם, לרבות תצורת רשת,
+            בקרת גישה, גיבויי נתונים, ועמידה בכל החוקים החלים לגבי התוכן
+            שאתם מנהלים באמצעות תוכנה זו. המפתחים אינם נושאים באחריות לגישה בלתי מורשית,
+            אובדן נתונים, או שימוש לרעה הנובעים מתצורה או פריסה שגויה.
+        </p>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+.help-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin: 0 calc(-1 * var(--spacing-lg));
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(20, 26, 35, 0.98), rgba(15, 20, 25, 0.98));
+    border-bottom: 2px solid var(--primary-cyan);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(76, 201, 240, 0.2);
+}
+
+.help-nav-item {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.help-nav-item:hover {
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+.help-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.help-section h3 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--primary-cyan);
+    margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+}
+
+.help-section h3:first-child {
+    margin-top: 0;
+}
+
+.help-section h4 {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+}
+
+.help-section ol, .help-section ul {
+    padding-left: 1.5rem;
+    margin: var(--spacing-sm) 0;
+}
+
+.help-section li {
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.help-section p {
+    color: var(--text-secondary);
+    margin: var(--spacing-sm) 0;
+    line-height: 1.6;
+}
+
+.help-section pre {
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    overflow-x: auto;
+    margin: var(--spacing-md) 0;
+    line-height: 1.5;
+}
+
+.help-section code {
+    background: var(--bg-lighter);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--primary-cyan);
+}
+
+.help-section a {
+    color: var(--primary-cyan);
+    text-decoration: none;
+}
+
+.help-section a:hover {
+    text-decoration: underline;
+}
+
+.shortcut-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-sm);
+    margin: var(--spacing-md) 0;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border-radius: var(--radius-md);
+}
+
+.shortcut-item kbd {
+    display: inline-block;
+    min-width: 24px;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    text-align: center;
+}
+
+.shortcut-item span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--primary-cyan);
+}
+
+.help-tip {
+    background: rgba(76, 201, 240, 0.1);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    border-left: 4px solid var(--primary-cyan);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    color: var(--text-secondary);
+}
+
+.help-tip strong {
+    color: var(--primary-cyan);
+}
+
+.data-table {
+    width: 100%;
+    margin: var(--spacing-md) 0;
+}
+
+.data-table th,
+.data-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.data-table th {
+    background: var(--bg-medium);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.data-table td {
+    color: var(--text-primary);
+}
+
+.data-table tbody tr:hover {
+    background: rgba(76, 201, 240, 0.05);
+}
+</style>
+{% endblock %}

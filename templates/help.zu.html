@@ -1,0 +1,2006 @@
+{% extends "base.html" %}
+
+{% block title %}Help - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ _('Help & Documentation') }}</h1>
+        <p class="page-subtitle">{% trans version=config.APP_VERSION %}Complete guide to RetroDB v{{ version }}{% endtrans %}</p>
+    </div>
+</div>
+
+<!-- Help Navigation -->
+<div class="help-nav" data-sticky-nav>
+    <a href="#installation" class="help-nav-item">Ukufaka</a>
+    <a href="#getting-started" class="help-nav-item">Ukuqalisa</a>
+    <a href="#platform-notes" class="help-nav-item">Amanothi Eplatifomu</a>
+    <a href="#navigation" class="help-nav-item">Ukuzulazula</a>
+    <a href="#keyboard-shortcuts" class="help-nav-item">Izinqamuleli Zekhibhodi</a>
+    <a href="#themes" class="help-nav-item">Izingqikithi</a>
+    <a href="#dashboard" class="help-nav-item">I-Dashboard</a>
+    <a href="#systems" class="help-nav-item">Izinhlelo</a>
+    <a href="#api-keys" class="help-nav-item">Okhiye be-API</a>
+    <a href="#settings" class="help-nav-item">Izilungiselelo</a>
+    <a href="#scraping" class="help-nav-item">I-Scraping</a>
+    <a href="#bulk-scrape" class="help-nav-item">I-Scraping Ngobuningi</a>
+    <a href="#ai-fill" class="help-nav-item">AI Fill</a>
+    <a href="#filtering" class="help-nav-item">Ukuhluza</a>
+    <a href="#game-detail" class="help-nav-item">Imininingwane Yegeyimu</a>
+    <a href="#bulk-edit" class="help-nav-item">Ukuhlela Ngobuningi</a>
+    <a href="#compare" class="help-nav-item">Qhathanisa</a>
+    <a href="#collections" class="help-nav-item">Amaqoqo</a>
+    <a href="#game-imports" class="help-nav-item">Ukungenisa Amageyimu</a>
+    <a href="#retroachievements" class="help-nav-item">RetroAchievements</a>
+    <a href="#steam-achievements" class="help-nav-item">Steam</a>
+    <a href="#xbox-achievements" class="help-nav-item">Xbox</a>
+    <a href="#hltb" class="help-nav-item">HLTB</a>
+    <a href="#trophies" class="help-nav-item">Amatrophy</a>
+    <a href="#collector-trophies" class="help-nav-item">Amatrophy Omqoqi</a>
+    <a href="#museum" class="help-nav-item">Umnyuziyamu</a>
+    <a href="#analytics" class="help-nav-item">I-Analytics</a>
+    <a href="#reports" class="help-nav-item">Imibiko</a>
+    <a href="#rom-tools" class="help-nav-item">Amathuluzi e-ROM</a>
+    <a href="#normalization" class="help-nav-item">Ukulinganisa</a>
+    <a href="#image-standardization" class="help-nav-item">Ukushintsha Usayizi Wesithombe</a>
+    <a href="#logs" class="help-nav-item">Amalogi</a>
+    <a href="#maintenance" class="help-nav-item">Ukugcina</a>
+    <a href="#multi-user" class="help-nav-item">Abasebenzisi Abaningi</a>
+    <a href="#backup" class="help-nav-item">Backup</a>
+    <a href="#updating" class="help-nav-item">Ukubuyekeza</a>
+    <a href="#troubleshooting" class="help-nav-item">Ukuxazulula Izinkinga</a>
+    <a href="#security" class="help-nav-item">Ezokuphepha</a>
+</div>
+
+<!-- Installation -->
+<section id="installation" class="help-section card">
+    <h2 class="card-title">Ukufaka</h2>
+    <div class="card-body">
+        <h3>Izidingo Zohlelo</h3>
+        <ul>
+            <li><strong>Python 3.8+</strong> ene-pip</li>
+            <li><strong>Isiphequluli sewebhu</strong> (Chrome, Firefox, Safari, Edge)</li>
+            <li><strong>Uhlelo Lokusebenza:</strong> Linux, Windows 10/11, noma macOS</li>
+        </ul>
+
+        <h3>Ukufaka Okusheshayo</h3>
+        <ol>
+            <li>Khipha i-ZIP ye-RetroDB uyifake kwidayirekthri oyikhethayo</li>
+            <li>Vula i-terminal/command prompt kuleyo dayirekthri</li>
+            <li>Sebenzisa: <code>python install.py</code></li>
+            <li>Qalisa iseva:
+                <ul>
+                    <li>Linux: <code>./start.sh</code></li>
+                    <li>Windows: chofoza kabili i-<code>start.bat</code></li>
+                    <li>macOS: chofoza kabili i-<code>start.command</code></li>
+                </ul>
+            </li>
+            <li>Vula i-<code>http://localhost:5000</code> kusiphequluli sakho</li>
+        </ol>
+
+        <h3>Isifaki se-GUI</h3>
+        <p>Ku-Linux, ungasebenzisa futhi i-<code>./setup.sh</code> ukuqalisa isihloko sokufaka esibonakalayo. Sihlola i-Python/pip/tkinter ngokuzenzakalelayo, bese sikuhola kuzo zonke izinyathelo zokusetha ngelogi yenqubekela phambili ebonakalayo.</p>
+
+        <h3>Okwenziwa yi-install.py</h3>
+        <ul>
+            <li>Ihlola ukuthi i-Python 3.8+ ne-pip ziyatholakala</li>
+            <li>Ifaka izinto ezidingekayo ze-Python ezisuka ku-<code>requirements.txt</code></li>
+            <li>Idala i-<code>config.py</code> isuselwa kuthempulethi yesibonelo</li>
+            <li>Idala amadayirekthri adingekayo (i-database, amalogi, izikhwama zemidiya)</li>
+            <li>Yakha amaphakethe e-CSS ne-JS</li>
+        </ul>
+
+        <h3>Ukushintsha Ngezinguquko Zemvelo</h3>
+        <p>Izinguquko zemvelo ezilandelayo zingashintsha izilungiselelo ezizenzakalelayo ngaphandle kokuhlela amafayela okumisa:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>Inguquko</th><th>Ezenzakalelayo</th><th>Incazelo</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>RETRODB_DB_PATH</code></td><td><code>database/roms.db</code></td><td>Indlela yefayela le-database</td></tr>
+                <tr><td><code>RETRODB_HOST</code></td><td><code>0.0.0.0</code></td><td>Ikheli lokubopha iseva</td></tr>
+                <tr><td><code>RETRODB_PORT</code></td><td><code>5000</code></td><td>Iphothi yeseva</td></tr>
+                <tr><td><code>RETRODB_DEBUG</code></td><td><code>false</code></td><td>Imodi ye-debug (<code>true</code> noma <code>false</code>) &mdash; ivumela i-debugger esebenzisanayo ye-Werkzeug. Gcina i-<code>false</code> kunoma yikuphi ukufaka okufinyeleleka kwamanye amadivayisi kunethiwekhi yakho.</td></tr>
+                <tr><td><code>RETRODB_SECRET_KEY</code></td><td>Kuzenzakalelayo</td><td>Ukhiye oyimfihlo we-Flask</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Getting Started -->
+<section id="getting-started" class="help-section card">
+    <h2 class="card-title">Ukuqalisa</h2>
+    <div class="card-body">
+        <h3>Ukusetha Kokuqala</h3>
+        <p>Ekuqaliseni kokuqala, i-RetroDB ikhombisa <strong>Isihloko Sokusetha</strong> esikuhola kulokhu:</p>
+        <ol>
+            <li><strong>I-akhawunti Yomlawuli</strong> &mdash; Dala igama lakho lomsebenzisi nephasiwedi</li>
+            <li><strong>Indlela Yomtapo</strong> &mdash; Setha idayirekthri yakho ye-ROM</li>
+            <li><strong>Ukuhlanganisa i-ES-DE</strong> &mdash; Ngokukhetha, xhuma ama-gamelist e-ES-DE nemidiya</li>
+            <li><strong>Okhiye be-API</strong> &mdash; Ngokukhetha, engeza okhiye be-API be-scraper</li>
+        </ol>
+        <p>Ngemva kokuqeda isihloko, chofoza <strong>"Scan Library"</strong> ku-Dashboard ukuthola ama-ROM akho.</p>
+
+        <h3>Inqubo Yokuqala Ngokushesha</h3>
+        <ol>
+            <li><strong>Skena</strong> umtapo wakho ukungenisa ama-ROM</li>
+            <li><strong>Phequlula</strong> ngohlelo noma buka wonke amageyimu ku-Library</li>
+            <li><strong>Scrape</strong> imethadatha nganye ngayodwa noma sebenzisa i-bulk scrape</li>
+            <li><strong>Hlela</strong> ngamathegi, izinhlu, ne-wishlist</li>
+            <li><strong>Landelela</strong> inqubekela phambili yakho ngesimo sokuqeda nezimpumelelo</li>
+        </ol>
+
+        <h3>Isakhiwo Somtapo Wama-ROM</h3>
+        <p>I-RetroDB ilindele ukuthi ama-ROM akho ahlelwe ezikhwameni zohlelo ngaphakathi kwendlela yomtapo wakho:</p>
+        <pre>ROM Library/
+  nes/
+    Super Mario Bros. (USA).nes
+  snes/
+    Chrono Trigger (USA).sfc
+  psx/
+    Final Fantasy VII (USA)/
+      Final Fantasy VII (USA) (Disc 1).chd
+      Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>Isikhwama sohlelo ngasinye kufanele sibe nefayela le-ES-DE <code>systeminfo.txt</code> elichaza izandiso zamafayela esekelwayo. I-RetroDB ilifunda ngesikhathi sokuskena ukuhlonza ukuthi imaphi amafayela ayi-ROM evumelekile kuhlelo ngalunye.</p>
+
+        <div class="help-tip">
+            <strong>Ithiphu:</strong> Uma usuvele u-scrapile nge-ES-DE, i-RetroDB ingayingenisa leyo datha!
+            Misa izindlela ze-ES-DE ku-Settings &rarr; ES-DE Integration, noma ngesikhathi sesihloko sokusetha.
+        </div>
+    </div>
+</section>
+
+<!-- Platform Notes -->
+<section id="platform-notes" class="help-section card">
+    <h2 class="card-title">Amanothi Eplatifomu</h2>
+    <div class="card-body">
+        <h3>Linux</h3>
+        <ul>
+            <li>Kuhlolwe ku-Ubuntu, Fedora, openSUSE, ne-Arch Linux</li>
+            <li>Amathuluzi e-ROM adinga: <code>sudo apt install p7zip-full unrar mame-tools</code> (Debian/Ubuntu) noma okufanayo kwesabiwo sakho</li>
+            <li>Uma usebenzisa i-Python yohlelo, isifaki siphatha i-<code>--break-system-packages</code> ngokuzenzakalelayo</li>
+            <li>Ukusheshisa kwe-GPU ye-ROCm kusekelwe kuma-GPU e-AMD (Real-ESRGAN ukukhulisa isithombe)</li>
+        </ul>
+
+        <h3>Windows</h3>
+        <ul>
+            <li>Landa i-Python ku-<a href="https://python.org" target="_blank" rel="noopener noreferrer">python.org</a> (khetha "Add to PATH" ngesikhathi sokufaka)</li>
+            <li>Amathuluzi e-ROM: Faka i-<a href="https://www.7-zip.org/" target="_blank" rel="noopener noreferrer">7-Zip</a>, i-<a href="https://www.win-rar.com/" target="_blank" rel="noopener noreferrer">WinRAR</a>, ne-<a href="https://www.mamedev.org/" target="_blank" rel="noopener noreferrer">MAME</a> (ye-chdman)</li>
+            <li>Sebenzisa i-<code>start.bat</code> ukuqalisa, noma sebenzisa i-<code>python app.py</code> usuka ku-Command Prompt</li>
+        </ul>
+
+        <h3>macOS</h3>
+        <ul>
+            <li>I-Python 3 ingafakwa nge-<a href="https://brew.sh/" target="_blank" rel="noopener noreferrer">Homebrew</a>: <code>brew install python3</code></li>
+            <li>Amathuluzi e-ROM: <code>brew install p7zip unrar rom-tools</code></li>
+            <li>Chofoza kabili i-<code>start.command</code> ku-Finder ukuqalisa</li>
+            <li>Ukusheshisa kwe-CoreML kusekelwe kwi-Apple Silicon (Real-ESRGAN ukukhulisa isithombe)</li>
+        </ul>
+
+        <h3>Izidingo Zamathuluzi e-ROM Ngokwesici</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Isici</th><th>Ithuluzi Elidingekayo</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Ukukhipha i-ZIP</td><td>unzip (ngokuvamile ifakwe kuqala)</td></tr>
+                <tr><td>Ukusekela i-archive ye-7z</td><td>7z (p7zip-full)</td></tr>
+                <tr><td>Ukusekela i-archive ye-RAR</td><td>unrar</td></tr>
+                <tr><td>Ukuguqula/ukuqinisekisa i-CHD</td><td>chdman (mame-tools)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Navigation -->
+<section id="navigation" class="help-section card">
+    <h2 class="card-title">Ukuzulazula</h2>
+    <div class="card-body">
+        <h3>Izigaba Ze-Sidebar</h3>
+
+        <h4>Okuyinhloko</h4>
+        <ul>
+            <li><strong>Dashboard</strong> &mdash; Isikolo sempilo yeqoqo, ukubuka konke kwezibalo, isimo se-API, amageyimu asanda kudlalwa/ukungezwa/uku-scrapiwa, ukubuyisa umsebenzi</li>
+            <li><strong>Systems</strong> &mdash; Phequlula amaplatifomu anama-count amageyimu, izithombe zohlelo, imininingwane, ukuhluza ngohlobo nezici</li>
+            <li><strong>Library</strong> &mdash; Wonke amageyimu ane-infinite scroll, ukuhluza okuthuthukisiwe (faka/khipha), ukusesha, nokuhlunga</li>
+            <li><strong>Analytics</strong> &mdash; Amashadi nezibalo zeqoqo kumathebhu ayi-12 nezinketho zokuthumela</li>
+        </ul>
+
+        <h4>Amatrophy Nezimpumelelo</h4>
+        <ul>
+            <li><strong>RPCS3 Trophies</strong> &mdash; Amatrophy e-PS3 azuzwe endaweni asuka ku-emulator ye-RPCS3</li>
+            <li><strong>PSN Trophies</strong> &mdash; Ukuvumelanisa amatrophy e-PlayStation Network nge-PSN API</li>
+            <li><strong>Achievements</strong> &mdash; Ukulandelela inqubekela phambili ye-RetroAchievements ngohlelo</li>
+            <li><strong>Steam Achievements</strong> &mdash; Ukulandelela izimpumelelo ze-Steam ngemininingwane ngegeyimu ngayinye</li>
+            <li><strong>Xbox Achievements</strong> &mdash; Ukulandelela izimpumelelo ze-Xbox ne-gamerscore</li>
+        </ul>
+
+        <h4>Iqoqo Lami</h4>
+        <ul>
+            <li><strong>Tags</strong> &mdash; Amathegi amageyimu angokwezifiso anemibala</li>
+            <li><strong>Lists</strong> &mdash; Izinhlu zamageyimu ezinegama ezilungiselelwe ngokuhlela ngokudonsa-udedele</li>
+            <li><strong>Wishlist</strong> &mdash; Landelela amageyimu ofuna ukuwathola ngamazinga okubaluleka</li>
+            <li><strong>Collector Trophies</strong> &mdash; Izimpawu zomdlalo zeqoqo lakho</li>
+        </ul>
+
+        <h4>Amathuluzi</h4>
+        <ul>
+            <li><strong>ROM Reports</strong> &mdash; Ukuqinisekiswa kokuqamba ama-ROM nokuhambisana namazinga</li>
+            <li><strong>Game Imports</strong> &mdash; Ngenisa kusuka ku-CLZ, Steam, Xbox, ne-PSN</li>
+            <li><strong>ROM Tools</strong> &mdash; Isiskeni se-archive, isiguquli/isiqinisekisi se-CHD, isitholi seziphindiwe, isihleli se-multi-disc, i-dedup yesithombe-skrini, isishintshi usayizi wesithombe</li>
+        </ul>
+
+        <h4>Ukumisa</h4>
+        <ul>
+            <li><strong>Settings</strong> &mdash; Konke ukumisa kwe-app (amathebhu ayi-6 anezingxenyana eziningi)</li>
+            <li><strong>Log Viewer</strong> &mdash; Phequlula amalogi e-app kuzo zonke izigaba</li>
+        </ul>
+
+        <h4>Ulwazi</h4>
+        <ul>
+            <li><strong>Museum</strong> &mdash; Isichazamazwi sohlelo lwamageyimu esisebenzisanayo esinokuqukethwe okwenziwe yi-AI</li>
+            <li><strong>Help</strong> &mdash; Leli khasi lombhalo</li>
+            <li><strong>Changelog</strong> &mdash; Umlando wezinguqulo</li>
+        </ul>
+
+        <h3>Ukugqamisa i-Sidebar</h3>
+        <p>I-sidebar igqamisa isigaba samanje ngombala oluhlaza okwesibhakabhaka. Umongo uyalondolozwa lapho ugxila phansi &mdash; ukubuka amageyimu ohlelo kugcina i-<strong>Systems</strong> igqanyisiwe, ukubuka igeyimu esuka ku-Achievements kugcina i-<strong>Achievements</strong> igqanyisiwe, njll.</p>
+
+        <h3>Imicu Yohlelo</h3>
+        <p>Imicu yohlelo esesiqongweni sekhasi ngalinye ikhombisa indlela yakho yokuzulazula. Izibonelo:</p>
+        <ul>
+            <li><code>Systems &rsaquo; NES &rsaquo; Super Mario Bros.</code></li>
+            <li><code>RetroAchievements &rsaquo; SNES</code></li>
+            <li><code>PSN Trophies &rsaquo; The Last of Us</code></li>
+        </ul>
+
+        <h3>Amathebhu</h3>
+        <p>Amakhasi amaningi asebenzisa amathebhu ukuhlela (Settings, Analytics, Reports, ROM Tools, Achievements). Amathebhu anweba ukugcwalisa ububanzi bokuqukethwe futhi akhumbula ukukhetha kwakho kokugcina lapho kufaneleka khona.</p>
+    </div>
+</section>
+
+<!-- Keyboard Shortcuts -->
+<section id="keyboard-shortcuts" class="help-section card">
+    <h2 class="card-title">Izinqamuleli Zekhibhodi</h2>
+    <div class="card-body">
+        <p>Cindezela <kbd>?</kbd> noma kuphi ukukhombisa zonke izinqamuleli. Isikhombisi sokhiye osalindile sivela lapho kulindelwe ukhiye wesibili ohlwini (isb. <code>g...</code>).</p>
+
+        <h3>Ukuzulazula (cindezela G, bese unhlamvu)</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>d</kbd> <span>Dashboard</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>s</kbd> <span>Systems</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>l</kbd> <span>Library</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>a</kbd> <span>Analytics</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>t</kbd> <span>Settings</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>h</kbd> <span>Help</span></div>
+        </div>
+
+        <h3>Izenzo</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>/</kbd> <span>Gxilisa ekuseshini</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Vala i-modal</span></div>
+            <div class="shortcut-item"><kbd>?</kbd> <span>Khombisa izinqamuleli</span></div>
+        </div>
+
+        <h3>Amakhasi Amageyimu</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>e</kbd> <span>Hlela igeyimu</span></div>
+            <div class="shortcut-item"><kbd>s</kbd> <span>Scrape igeyimu</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Zulazula izithombe-skrini</span></div>
+        </div>
+
+        <div class="help-tip">
+            <strong>Qaphela:</strong> Izinqamuleli zekhibhodi zikhutshaziwe lapho okokufaka kombhalo, i-textarea, noma i-modal igxilisiwe ukugwema ukuzulazula ngephutha.
+        </div>
+    </div>
+</section>
+
+<!-- Themes -->
+<section id="themes" class="help-section card">
+    <h2 class="card-title">Izingqikithi</h2>
+    <div class="card-body">
+        <p>I-RetroDB inikeza izingqikithi ezibonakalayo eziyi-7, ngayinye inephethini yemibala eyingqayizivele nomphumela wangemuva we-canvas onezithombe. Shintsha izingqikithi ku-<strong>Settings &rarr; Library &rarr; Display</strong>.</p>
+
+        <h3>Izingqikithi Ezitholakalayo</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Ingqikithi</th><th>Imibala</th><th>Umphumela Wangemuva</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Cyberpunk</strong> (ezenzakalelayo)</td><td>Okuluhlaza okwesibhakabhaka &amp; i-magenta phezu kokuluhlaza okwesibhakabhaka okumnyama</td><td>Intuthu/inkungu ye-volumetric ene-simplex noise</td></tr>
+                <tr><td><strong>Matrix</strong></td><td>Okuluhlaza phezu kokumnyama</td><td>Imvula yedijithali ewayo (izinhlamvu ze-kanji)</td></tr>
+                <tr><td><strong>Amber</strong></td><td>I-amber/okuluphuzi okusayibomvu phezu kokunsundu okumnyama</td><td>I-gradient yokuphuma kwelanga ye-CRT ne-corona yelanga</td></tr>
+                <tr><td><strong>Ocean</strong></td><td>I-teal &amp; okuluhlaza okwesibhakabhaka phezu kwe-navy emnyama</td><td>Ukukhanya kwenyanga nemibhalo yokujula kolwandle</td></tr>
+                <tr><td><strong>Cathedral</strong></td><td>Igolide &amp; okunsomi kwasebukhosini phezu kokunsomi okujulile</td><td>Imisebe yokukhanya kwaphezulu enomoya ofudumele</td></tr>
+                <tr><td><strong>Blade Runner</strong></td><td>Okuluhlaza okwesibhakabhaka kwe-electric &amp; okupinki kwe-neon phezu kokuluhlaza okumpunga okumnyama</td><td>Ukukhanya kwedolobha le-neon nemibhalo yemvula nenkungu enkulu ensomi</td></tr>
+                <tr><td><strong>Elite</strong></td><td>Okuluhlaza kwe-vector &amp; okumhlophe phezu kokumnyama okucwebile</td><td>Isimo se-wireframe vector esigqugquzelwe yi-Elite (1984)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Indlela Esebenza Ngayo</h3>
+        <ul>
+            <li>Izingqikithi zishintsha izinguquko zemibala ye-CSS &mdash; zonke izinto ze-UI zizivumelanisa ngokuzenzakalelayo</li>
+            <li>Imiphumela ye-canvas ihlanganisa ukuhlonza kwezinga le-hardware ngokuzenzakalelayo (phezulu/maphakathi/phansi) ngokusheshiswa kwe-GPU lapho kutholakala nokubuyela kwe-CPU emadivayisini aphansi</li>
+            <li>Imiphumela ima lapho ithebhu ingabonakali ukonga izinsiza</li>
+            <li>Isimo sentuthu ye-Cyberpunk siyaqhubeka kuwo wonke amakhasi ukuze kube nezinguquko ezingenamphazamiseko</li>
+            <li>I-overlay yamalayini we-CRT scanline aluhle iyazivumelanisa nephethini yemibala yengqikithi ngayinye</li>
+            <li>Okuncamelayo kwengqikithi yakho kulondolozwa esipheqululini futhi kuyaqhubeka kuzo zonke izikhathi</li>
+        </ul>
+
+        <h3>Izithonjana Ezaziyo Ingqikithi</h3>
+        <p>Izithonjana zezaziso, izikhombisi zesimo somsebenzi, nezithonjana zezenzo zizivumelanisa ngokuzenzakalelayo nengqikithi yamanje. Isibonelo, isithonjana sempumelelo singakhombisa uphawu oluluhlaza ku-Cyberpunk kodwa uphawu oluhlukile ku-Matrix ukuvumelana nesimo esiluhlaza-phezu-kokumnyama.</p>
+    </div>
+</section>
+
+<!-- Dashboard -->
+<section id="dashboard" class="help-section card">
+    <h2 class="card-title">Dashboard</h2>
+    <div class="card-body">
+        <h3>Isikolo Sempilo Yeqoqo</h3>
+        <p>Isongo senqubekela phambili esiyindilinga sikhombisa impilo yeqoqo lakho iyonke njengephesenti, enemibala ngokwekhwalithi:</p>
+        <ul>
+            <li><strong>Okuluhlaza</strong> (80%+) &mdash; Ukumbozwa okuhle kakhulu kwemethadatha</li>
+            <li><strong>Okuluhlaza okwesibhakabhaka</strong> (60&ndash;79%) &mdash; Ukumbozwa okuhle nezikhala ezithile</li>
+            <li><strong>I-Orange</strong> (40&ndash;59%) &mdash; Ukumbozwa okumaphakathi, cabangela i-bulk scraping</li>
+            <li><strong>Okubomvu</strong> (&lt;40%) &mdash; Izikhala ezinkulu zemethadatha</li>
+        </ul>
+        <p>Amasongo amancane esehlukaniso ngezansi akhombisa ukuphelela kwe-boxart, ukuphelela kwencazelo, nokumbozwa kwezimpumelelo.</p>
+
+        <h3>Ukubuka Konke Kwezibalo</h3>
+        <p>Amakhadi okubuka ngokushesha akhombisa:</p>
+        <ul>
+            <li><strong>Izinhlelo Zizonke</strong> &mdash; Inani lamaplatifomu emtapweni wakho</li>
+            <li><strong>Amageyimu Wonke</strong> &mdash; Inani lonke lamageyimu (ngaphandle kwamadiski e-bonus)</li>
+            <li><strong>Imethadatha Elahlekile</strong> &mdash; Amageyimu angaku-scrapiwe okwamanje</li>
+            <li><strong>Kuphelele</strong> &mdash; Amageyimu anemethadatha e-scrapiwe</li>
+        </ul>
+
+        <h3>Izigaba Zomsebenzi Wakamuva</h3>
+        <p>Izigaba ezingaskrolwa ezikhombisa umsebenzi wakho wakamuva (ngasinye sivela kuphela lapho kunamageyimu afanele):</p>
+        <ul>
+            <li><strong>Okudlalwa Manje</strong> &mdash; Amageyimu amakwe njenge "In Progress"</li>
+            <li><strong>Okusanda Kungezwa</strong> &mdash; Amageyimu akamuva angezwe emtapweni wakho</li>
+            <li><strong>Okusanda Kubukwa</strong> &mdash; Amageyimu osuwavule muva nje</li>
+            <li><strong>Okusanda Kuscrapiwa</strong> &mdash; Amageyimu anemethadatha esanda kutholwa</li>
+        </ul>
+
+        <h3>Izenzo Ezisheshayo</h3>
+        <ul>
+            <li><strong>Scan Library</strong> &mdash; Skena amadayirekthri akho e-ROM ukuthola amageyimu amasha</li>
+            <li><strong>Random Game</strong> &mdash; Khetha igeyimu engahleliwe emtapweni wakho</li>
+        </ul>
+
+        <h3>Isimo se-API</h3>
+        <p>Sikhombisa isimo soxhumano lwawo wonke ama-scraper nama-API amisiwe. Ama-API angaxhunyiwe noma amiswe kabi akhombisa ibhena yesixwayiso enokuxhumana ku-Settings.</p>
+
+        <h3>Ukubuyisa Umsebenzi</h3>
+        <p>Uma i-RetroDB iqalisa kabusha ngenkathi imisebenzi yangemuva isebenza (bulk scrape, RA sync, ukushintsha usayizi wesithombe, njll.), imisebenzi ephazamisekile ivela kwibhena yokubuyisa. Izinketho:</p>
+        <ul>
+            <li><strong>Resume</strong> &mdash; Qalisa kabusha umsebenzi owodwa ophazamisekile</li>
+            <li><strong>Resume All</strong> &mdash; Qalisa kabusha yonke imisebenzi ephazamisekile</li>
+            <li><strong>Dismiss</strong> &mdash; Susa umsebenzi owodwa ohlwini lokubuyisa</li>
+            <li><strong>Dismiss All</strong> &mdash; Susa yonke imisebenzi ephazamisekile</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Systems Browser -->
+<section id="systems" class="help-section card">
+    <h2 class="card-title">Isiphequluli Sezinhlelo</h2>
+    <div class="card-body">
+        <h3>Igridi Yezinhlelo</h3>
+        <p>Ikhasi le-Systems likhombisa wonke amaplatifomu emtapweni wakho njengamakhadi kwisimo se-masonry grid esisabelayo. Ikhadi ngalinye likhombisa:</p>
+        <ul>
+            <li><strong>Ilogo yohlelo</strong> (engalungiswa ku-Settings &rarr; Customization &rarr; Logos)</li>
+            <li><strong>I-count ye-ROM</strong> ne-<strong>count engaka-scrapiwe</strong></li>
+            <li><strong>Ibheji lohlobo lohlelo</strong> &mdash; Console, Handheld, Computer, Arcade, noma Engine</li>
+            <li><strong>Amabheji ezici</strong> &mdash; Ukusekelwa kwe-RetroAchievements, Amatrophy Endawo (RPCS3)</li>
+        </ul>
+
+        <h3>I-Modal Yemininingwane Yohlelo</h3>
+        <p>Chofoza inkinobho yolwazi kunoma iliphi ikhadi lohlelo ukubuka imininingwane eneminingwane ye-hardware:</p>
+        <ul>
+            <li>Isithombe se-hardware (isithombe se-console/sohlelo)</li>
+            <li>Umkhiqizi nosuku lokukhishwa</li>
+            <li>CPU, GPU, RAM, VRAM</li>
+            <li>Ukulungiswa, ukujula kombala, i-chip yomsindo</li>
+            <li>Uhlobo lwemidiya (i-cartridge, idiski, njll.)</li>
+        </ul>
+
+        <h3>Ukuhluza Nokusesha</h3>
+        <ul>
+            <li><strong>Ukusesha umbhalo</strong> &mdash; Hluza ngegama lohlelo noma igama lesikhwama</li>
+            <li><strong>Isihluzi sohlobo</strong> &mdash; Console, Handheld, Computer, Arcade, Engine</li>
+            <li><strong>Isihluzi sesici</strong> &mdash; Ukusekelwa kwe-RetroAchievements, Amatrophy Endawo</li>
+            <li>Ibha yemiphumela yesihluzi ikhombisa <em>"X of Y systems"</em></li>
+            <li>Izihluzi ziyaqhubeka kuwo wonke amakhasi asetshenzwe kabusha nge-session storage</li>
+        </ul>
+
+        <h3>Uhlu Lwamageyimu Ngohlelo Ngalunye</h3>
+        <p>Chofoza kunoma iliphi ikhadi lohlelo ukubuka amageyimu alo. Uhlu lwamageyimu ngohlelo ngalunye lunezici ezifanayo nekhasi eliphelele le-Library &mdash; i-infinite scroll, ukusesha, zonke izinketho zokuhluza, ukukhetha ngobuningi, nokuhlunga. Isihloko sohlelo sikhombisa igama lohlelo, i-count yamageyimu, nebheji lohlobo lohlelo.</p>
+    </div>
+</section>
+
+<!-- API Key Setup Guide -->
+<section id="api-keys" class="help-section card">
+    <h2 class="card-title">Umhlahlandlela Wokusetha i-API Key</h2>
+    <div class="card-body">
+        <p>Ama-API key awakhethekile kodwa avumela ukukhwephulwa kwe-metadata ecebile nezici ezengeziwe. Wazisethe ku-<strong>Settings &rarr; Scraping &rarr; API Keys</strong>.</p>
+
+        <h3>Ama-scraper we-Metadata</h3>
+
+        <h4>TheGamesDB</h4>
+        <ol>
+            <li>Yiya ku-<a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a></li>
+            <li>Cela ama-API key (mahhala, avunywa ngesandla) &mdash; uzothola i-key <strong>Public</strong> ne-<strong>Private</strong></li>
+            <li>Faka womabili ama-key ku-Settings &rarr; API Keys &rarr; TheGamesDB</li>
+            <li>I-key <strong>Public</strong> (umkhawulo wesivinini nge-IP ngayinye) isetshenziswa njenge-key eyinhloko yokukhwephula</li>
+            <li>I-key <strong>Private</strong> (ichibi elabelwana ngenyanga) isetshenziswa njengokuweleza uma i-key ye-public yehluleka</li>
+        </ol>
+
+        <h4>IGDB (nge-Twitch)</h4>
+        <ol>
+            <li>Dala i-akhawunti ye-Twitch ku-<a href="https://www.twitch.tv" target="_blank" rel="noopener noreferrer">twitch.tv</a></li>
+            <li>Yiya ku-<a href="https://dev.twitch.tv/console" target="_blank" rel="noopener noreferrer">dev.twitch.tv/console</a></li>
+            <li>Bhalisa uhlelo olusha (noma yiliphi igama, noma yiliphi isigaba, <code>http://localhost</code> njenge-OAuth redirect)</li>
+            <li>Kopisha i-<strong>Client ID</strong> bese ukhiqiza i-<strong>Client Secret</strong></li>
+            <li>Faka womabili ku-Settings &rarr; API Keys &rarr; IGDB</li>
+        </ol>
+
+        <h4>RAWG.io</h4>
+        <ol>
+            <li>Yiya ku-<a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer">rawg.io/apidocs</a></li>
+            <li>Chofoza "Get API Key" bese udala i-akhawunti</li>
+            <li>Kopisha i-API key yakho ku-dashboard</li>
+            <li>Yifake ku-Settings &rarr; API Keys &rarr; RAWG</li>
+        </ol>
+        <p><em>Isigaba samahhala: izicelo ezingu-20,000 ngenyanga</em></p>
+
+        <h4>ScreenScraper</h4>
+        <ol>
+            <li>Dala i-akhawunti ku-<a href="https://www.screenscraper.fr" target="_blank" rel="noopener noreferrer">screenscraper.fr</a></li>
+            <li>Faka igama lakho lomsebenzisi nephasiwedi ku-Settings &rarr; API Keys &rarr; ScreenScraper</li>
+        </ol>
+        <p><em>Qaphela: i-ScreenScraper inemikhawulo yezicelo yansuku zonke encike ezingeni le-akhawunti yakho. Ukufaka isandla kwi-database kwandisa imikhawulo yakho.</em></p>
+
+        <h3>Achievements & Trophies</h3>
+
+        <h4>RetroAchievements</h4>
+        <ol>
+            <li>Dala i-akhawunti ku-<a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a></li>
+            <li>Yiya ku-<a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer">Settings &rarr; API Keys</a> kuphrofayela yakho</li>
+            <li>Kopisha i-API key yakho</li>
+            <li>Faka igama lakho lomsebenzisi ne-API key ku-Settings &rarr; Account &rarr; RetroAchievements</li>
+        </ol>
+
+        <h4>Steam Web API</h4>
+        <ol>
+            <li>Yiya ku-<a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener noreferrer">steamcommunity.com/dev/apikey</a></li>
+            <li>Bhalisela i-Steam Web API key (idinga i-akhawunti ye-Steam)</li>
+            <li>Faka i-API key yakho ne-Steam ID (noma i-vanity URL) ku-Settings</li>
+        </ol>
+        <p><em>Isetshenziselwa ukungenisa umtapo we-Steam nokulandelela ama-achievement.</em></p>
+
+        <h4>Xbox Live</h4>
+        <p>Ukuqinisekiswa kwe-Xbox kusebenzisa i-OAuth2 &mdash; ayikho i-API key edingekayo. Ngena nge-akhawunti yakho ye-Microsoft ngqo ku-thebhu ye-Game Imports &rarr; Xbox. Ama-token agcinwa ku-cache ngokuzenzakalelayo futhi avuselelwe njengoba kudingeka.</p>
+
+        <h4>PlayStation Network (PSN)</h4>
+        <p>I-PSN isebenzisa ukuqinisekiswa kwe-cookie ye-NPSSO. Bheka isigaba se-<a href="#trophies">Trophies</a> ukuze uthole imiyalelo yokusetha eningiliziwe.</p>
+
+        <h3>Abahlinzeki be-AI (be-AI Fill &amp; Museum)</h3>
+        <p>Kudingeka umhlinzeki owodwa we-AI ku-metadata ye-AI Fill nokukhiqizwa kokuqukethwe kwe-Museum. Khetha kokulandelayo:</p>
+
+        <table class="data-table">
+            <thead>
+                <tr><th>Umhlinzeki</th><th>I-Model Ezenzakalelayo</th><th>Intengo (Okufakwayo / Okukhishwayo nge-token eyi-1M ngayinye)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0.10 / $0.40</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0.15 / $0.60</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 4.5</td><td>$1.00 / $5.00</td></tr>
+            </tbody>
+        </table>
+        <p>Umhlinzeki ngamunye unikeza amazinga amaningi e-model. Ama-model ashibhile asebenza kahle ku-metadata nokuqukethwe kwe-museum. Sethela umhlinzeki oyithandayo ne-API key ku-<strong>Settings &rarr; Scraping &rarr; API Keys</strong>.</p>
+    </div>
+</section>
+
+<!-- Settings -->
+<section id="settings" class="help-section card">
+    <h2 class="card-title">Izilungiselelo</h2>
+    <div class="card-body">
+        <p>Izilungiselelo zihlelwe zaba ama-thebhu ayi-6, ngalinye linezingxenyana eziningi.</p>
+
+        <h3>Ithebhu ye-Account</h3>
+        <ul>
+            <li><strong>My Profile</strong> &mdash; Ukulayisha/ukususa i-avatar, igama elibonisiwe, ulwazi lweqhaza, ukushintsha iphasiwedi</li>
+            <li><strong>RetroAchievements</strong> &mdash; Igama lomsebenzisi ne-API key yokuhlanganisa i-RA</li>
+            <li><strong>PSN</strong> &mdash; I-cookie ye-NPSSO yokuvumelanisa i-trophy ye-PlayStation Network</li>
+            <li><strong>Timezone</strong> &mdash; Setha izoni yesikhathi sakho yokubonisa idethi kuyo yonke i-app</li>
+            <li><strong>Users</strong> &mdash; Ukuphathwa kwabasebenzisi: engeza, hlela, susa abasebenzisi bese wabela izindima (umlawuli kuphela)</li>
+        </ul>
+
+        <h3>Ithebhu ye-Library</h3>
+        <ul>
+            <li><strong>Paths</strong> &mdash; Indlela yomtapo we-ROM, indawo ye-database</li>
+            <li><strong>Display</strong> &mdash; Ukukhethwa kwe-theme, isitayela se-boxart (2D/3D), uhlelo lwesilinganiso seminyaka oluthandwayo, izinto ekhasini ngalinye</li>
+            <li><strong>ROM Naming</strong> &mdash; Ukubekwa kwe-athikili (u-"The" ophambili/olandelayo), uhlu lwezinketho zesifunda, isifunda esizenzakalelayo, izindlela zokuqamba</li>
+            <li><strong>Backup</strong> &mdash; Dala futhi ubuyisele ama-backup e-database</li>
+        </ul>
+
+        <h3>Ithebhu ye-Scraping</h3>
+        <ul>
+            <li><strong>ES-DE</strong> &mdash; I-gamelist ye-ES-DE nezindlela zemidiya zokungenisa idatha yasendaweni</li>
+            <li><strong>Scraper</strong> &mdash; Vula/vala ama-scraper ngayinye, ukuhlela ngokudonsa-uphonse okubaluleke kuqala, izilungiselelo zomkhawulo wesivinini nge-scraper ngayinye</li>
+            <li><strong>API Keys</strong> &mdash; Zonke iziqinisekiso ze-scraper (TGDB, IGDB, RAWG, ScreenScraper), ukukhethwa komhlinzeki we-AI nokukhetha i-model (Gemini, OpenAI, Claude)</li>
+        </ul>
+
+        <h3>Ithebhu ye-Data</h3>
+        <ul>
+            <li><strong>Stats</strong> &mdash; Ukubuka konke kwezibalo zomtapo (imidlalo iyonke, izinhlelo, ukusetshenziswa kwesitoreji)</li>
+            <li><strong>Trophies</strong> &mdash; Ukumiswa kwendlela ye-trophy ye-RPCS3 yokuskena ama-trophy e-PS3 asendaweni</li>
+            <li><strong>Dropdowns</strong> &mdash; Yenza ngokwezifiso izinketho zesifunda namanye amanani e-dropdown asetshenziswa kuyo yonke i-app</li>
+            <li><strong>Normalization</strong> &mdash; Imithetho yokulinganisa i-genre nama-modes &mdash; engeza ukumepha kwangokwezifiso ukuze kwenziwe okuphumayo kwe-scraper kube sezingeni</li>
+        </ul>
+
+        <h3>Ithebhu ye-Customization</h3>
+        <ul>
+            <li><strong>Notifications</strong> &mdash; Izintandokazi zesikhathi sokuphela kwesaziso (impumelelo, ulwazi, isexwayiso, iphutha &mdash; ngalinye lisethwa ngokuzimela)</li>
+            <li><strong>Controllers</strong> &mdash; Phatha umtapo we-controller, setha ama-controller azenzakalelayo nge-system ngayinye, engeza ama-controller angokwezifiso. Ama-controller azenzakalelayo abhala phezu kwamanani e-scraper/AI ngesikhathi sokulanda i-metadata.</li>
+            <li><strong>Logos</strong> &mdash; Ukwenziwa ngokwezifiso kwe-logo ye-system &mdash; ngenisa ama-logo e-system noma uvuselele kokuzenzakalelayo</li>
+        </ul>
+
+        <h3>Ithebhu ye-System</h3>
+        <ul>
+            <li><strong>Maintenance</strong> &mdash; Ukulungiselela i-database (VACUUM/ANALYZE), ukuhlanza imidiya eyintandane, hlanza ama-ROM angekho, sula idatha ekhwephuliwe, sula ama-CLZ import, ukwenza izithombe zibe sezingeni ngobuningi</li>
+            <li><strong>Server</strong> &mdash; Ukumiswa kwe-server (i-host, i-port, imodi ye-debug)</li>
+            <li><strong>Logging</strong> &mdash; Izilungiselelo zezinga le-log zezigaba ezahlukene</li>
+            <li><strong>Troubleshooting</strong> &mdash; Sula i-bulk scrape ejamile, sula ulayini wokuvumelanisa i-RA, sula ukuvuselelwa kwe-PSN, sula ukukhiqizwa kwe-museum, qala kabusha i-server</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Ithiphu:</strong> Ama-scraper avaliwe ngeke aqalise izexwayiso "API offline" ku-Dashboard. Uma ungawusebenzisi u-scraper, wuvale ku-Settings &rarr; Scraping &rarr; Scraper kunokususa i-API key.
+        </div>
+    </div>
+</section>
+
+<!-- Scraping -->
+<section id="scraping" class="help-section card">
+    <h2 class="card-title">Ukukhwephula i-Metadata</h2>
+    <div class="card-body">
+        <h3>Ukukhwephula Umdlalo Owodwa</h3>
+        <ol>
+            <li>Vula i-modal yemininingwane yanoma yimuphi umdlalo (chofoza ikhadi lomdlalo)</li>
+            <li>Chofoza <strong>"Scrape"</strong></li>
+            <li>Shintsha isihloko sokusesha uma kudingeka</li>
+            <li>Khetha umphumela ofanele kokufanayo</li>
+            <li>Chofoza <strong>"Apply"</strong></li>
+        </ol>
+
+        <h3>Imithombo ye-Scraper</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Umthombo</th><th>API Key</th><th>Kungcono Kwi-</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ES-DE (Endaweni)</td><td>Cha</td><td>Iqoqo esekukhwephuliwe &mdash; kungenisa i-gamelist.xml nemidiya elandiwe</td></tr>
+                <tr><td>TheGamesDB</td><td>Yebo</td><td>I-boxart eqondene ne-platform, i-boxart ye-3D</td></tr>
+                <tr><td>IGDB</td><td>Yebo</td><td>Imidlalo yanamuhla, ulwazi oluningiliziwe, ama-genre, izilinganiso</td></tr>
+                <tr><td>RAWG.io</td><td>Yebo</td><td>Izilinganiso zabasebenzisi, izincazelo, ama-screenshot</td></tr>
+                <tr><td>ScreenScraper</td><td>Yebo</td><td>Okuhlukile kwesifunda, i-boxart ye-3D, amavidiyo, ama-manual</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Ukukhwephula Okuxubile</h3>
+        <p>I-RetroDB ihlanganisa ngokuzenzakalelayo idatha evela emithonjeni eminingi ukuze kukhuliswe ukugcwaliseka kwe-metadata:</p>
+        <ul>
+            <li>I-metadata yombhalo evela emthonjeni otholakalayo obaluleke kakhulu</li>
+            <li>Izithombe nemidiya evela emithonjeni yesibili uma eyinhloko ingenayo</li>
+            <li>Ukugcwalisa amagebe ngokuzenzakalelayo kuwo wonke ama-scraper ukuze kube khona ukugcwaliseka okukhulu</li>
+            <li>Isihloko sokuhlunga sikhiqizwa ngokuzenzakalelayo esihlokweni somdlalo ngesikhathi sokukhwephula</li>
+        </ul>
+
+        <h3>Ukuphathwa Kwemidiya</h3>
+        <ul>
+            <li>Izinkambu zemidiya (boxart, boxart ye-3D, ama-screenshot, fanart, ividiyo, i-manual) <strong>azishintshwa neze</strong> ngesikhathi sokukhwephula okujwayelekile &mdash; zigcwaliswa kuphela uma zingenalutho</li>
+            <li>Ama-screenshot ahlala <strong>enezelwa</strong>, awashintshwa neze</li>
+            <li>Ukuze ulande kabusha imidiya, sula isithombe esikhona ku-modal yokuhlela kuqala, bese ukhwephula kabusha</li>
+            <li>Imodi ye-<strong>Full Re-scrape</strong> ibhala phezu kwalokhu bese ishintsha yonke into</li>
+            <li>Izinkomba zemidiya endala (ifayela lisusiwe kodwa igama lefayela lisekhona ku-DB) zisulwa ngokuzenzakalelayo ngaphambi kokukhwephula ukuze imidiya entsha ilandwe</li>
+            <li>Izithombe ezilandiwe zenziwa zibe sezingeni ngokuzenzakalelayo emasayizini ahlosiwe (bheka <a href="#image-standardization">Ukwenza Izithombe Zibe Sezingeni</a>)</li>
+        </ul>
+
+        <h3>Okubalulekayo Kwe-Scraper</h3>
+        <p>Sethela ukuthi imaphi ama-scraper asebenza kuqala nokuthi imaphi avuliwe/avaliwe ku-<strong>Settings &rarr; Scraping &rarr; Scraper</strong>. Donsa-uphonse ukuze uhlele kabusha okubalulekayo. Ama-scraper avaliwe ngeke azanywe ngesikhathi sokukhwephula futhi ngeke aqalise izexwayiso zesimo se-API ku-Dashboard.</p>
+
+        <h3>Ukukhawulela Isivinini</h3>
+        <p>I-scraper ngalinye linemikhawulo yesivinini esethekayo ukuze kuvinjelwe ukwenqatshelwa kwe-API. Ukubambezeleka okuzenzakalelayo kusethwe ngokuqaphela. Nciphisa ukubambezeleka ngokuzibonela kwakho &mdash; ukudlula imikhawulo yesivinini se-API kungabangela ukuvinjelwa okwesikhashana ezinsizakalweni ezithintekayo.</p>
+    </div>
+</section>
+
+<!-- Bulk Scraping -->
+<section id="bulk-scrape" class="help-section card">
+    <h2 class="card-title">Ukukhwephula Ngobuningi</h2>
+    <div class="card-body">
+        <h3>Ukuqala i-Bulk Scrape</h3>
+        <ol>
+            <li>Yiya kunoma yiliphi ikhasi le-System noma le-Library</li>
+            <li>Chofoza <strong>"Select"</strong> ukuze ungene emodini yokukhetha</li>
+            <li>Khetha imidlalo ngayinye noma usebenzise ukukhetha okusheshayo:
+                <ul>
+                    <li><strong>Select All</strong> &mdash; Yonke imidlalo ebonakalayo</li>
+                    <li><strong>Select Unscraped</strong> &mdash; Imidlalo engenayo i-metadata kuphela</li>
+                </ul>
+            </li>
+            <li>Khetha imodi: <strong>Fill Missing</strong> noma <strong>Full Re-scrape</strong></li>
+            <li>Chofoza <strong>"Scrape Selected"</strong></li>
+        </ol>
+
+        <h3>Izilawuli</h3>
+        <ul>
+            <li><strong>Pause / Resume</strong> &mdash; Misa noma uqhubeke nokukhwephula</li>
+            <li><strong>Cancel</strong> &mdash; Yeka ngokuphelele</li>
+            <li><strong>Background</strong> &mdash; Nciphisa bese uqhubeka nokubhrawuza ngenkathi ukukhwephula kuqhubeka</li>
+        </ul>
+
+        <h3>Isaziso se-Toast</h3>
+        <p>Uma kusebenza ngasemuva, i-toast eqhubekayo ibonisa inqubekelaphambili kuwo wonke amakhasi:</p>
+        <ul>
+            <li>Igama lomdlalo lamanje, isibalo senqubekelaphambili, nezibalo zemiphumela (impumelelo, kwehluleka, kweqiwe)</li>
+            <li>Izilawuli ze-Pause/Cancel ziyatholakala kunoma yiliphi ikhasi</li>
+            <li>Chofoza i-toast ukuze ubuyele ku-modal yokukhwephula</li>
+        </ul>
+
+        <h3>Uhlelo Lolayini</h3>
+        <p>Ukukhwephula ngobuningi okuningi kufaka olayini ngokuzenzakalelayo:</p>
+        <ul>
+            <li>Qala ukukhwephula okusha ngenkathi okunye kusebenza &mdash; kufaka olayini</li>
+            <li>Ulayini ubonakala ku-toast nesibalo semisebenzi esalindile</li>
+            <li>Imisebenzi icutshungulwa ngokuzenzakalelayo ngokulandelana</li>
+            <li>Sebenzisa i-Queue Manager ukuze ubuke, uhlele kabusha, noma ukhansele imisebenzi esolayinini</li>
+        </ul>
+
+        <h3>Izinketho Zokukhwephula</h3>
+        <ul>
+            <li><strong>Fill Missing Only</strong> &mdash; Gcwalisa kuphela izinkambu ze-metadata ezingenalutho, ugcina idatha ekhona</li>
+            <li><strong>Full Re-scrape</strong> &mdash; Shintsha zonke izinkambu kufaka phakathi imidiya (ilanda izithombe namavidiyo amasha)</li>
+            <li><strong>Check RetroAchievements</strong> &mdash; Hlola futhi amasethi we-achievement e-RetroAchievements ngesikhathi sokukhwephula</li>
+        </ul>
+
+        <h3>Ukubuyiswa Komsebenzi</h3>
+        <p>Uma i-RetroDB iqaliswa kabusha ngenkathi umsebenzi usebenza, imisebenzi ephazamisekile ivela kubhena yokubuyisa ku-Dashboard. Chofoza <strong>"Resume"</strong> emisebenzini ngayinye noma <strong>"Resume All"</strong> ukuze uyiqale kabusha. I-toast yenqubekelaphambili ivela ngokushesha ngemuva kokuqhubeka.</p>
+    </div>
+</section>
+
+<!-- AI Fill -->
+<section id="ai-fill" class="help-section card">
+    <h2 class="card-title">AI Fill</h2>
+    <div class="card-body">
+        <h3>Ukuthi Yenzani</h3>
+        <p>I-AI Fill isebenzisa i-large language model (Gemini, OpenAI, noma Claude) ukugcwalisa ngobuhlakani i-metadata yomdlalo engekho noma engaphelele. Ihlakaniphile kunokukhwephula okujwayelekile ngoba isebenzisa ulwazi olusemongweni ngomdlalo ukuze inikeze idatha enembile ama-scraper angeke abe nayo.</p>
+
+        <h3>Indlela Yokusebenzisa</h3>
+        <ol>
+            <li>Vula i-modal yemininingwane yomdlalo (noma ikhasi eliphelele lemininingwane)</li>
+            <li>Chofoza <strong>"AI Fill"</strong> (kudinga i-AI API key emisiwe ku-Settings)</li>
+            <li>I-AI ihlaziya isihloko somdlalo ne-system, bese igcwalisa izinkambu ezingekho</li>
+            <li>Buyekeza imiphumela &mdash; izinshintsho zigcinwa ngokuzenzakalelayo</li>
+        </ol>
+
+        <h3>Okungahlinzekwa yi-AI Fill</h3>
+        <ul>
+            <li>I-genre, incazelo, umenzi, umshicileli, idethi yokukhishwa</li>
+            <li>Abadlali, ama-modes okudlala (Single-Player, Multi-Player, Co-op, njll.)</li>
+            <li>Ulwazi lomkhankaso nesakhiwo somdlalo</li>
+            <li>Zonke izinhlelo ezingu-8 zesilinganiso seminyaka (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd)</li>
+            <li>Isifunda, i-franchise, imidlalo efanayo</li>
+            <li>Ukusekelwa kwe-controller, uhlobo lokugcina</li>
+            <li>I-perspective (First-Person, Top-Down, Side-Scroller, njll.), i-dimension (2D, 3D)</li>
+            <li>Ulwazi lohlobo, amaphuzu abagxeki nabasebenzisi</li>
+        </ul>
+
+        <h3>Umqondo Wokugcwalisa Okuhlakaniphile</h3>
+        <ul>
+            <li><strong>Izinkambu ezingenalutho</strong> zihlala zigcwaliswa</li>
+            <li><strong>Idatha yomsebenzisi ekhona</strong> ayibhalwa phezu kwayo neze</li>
+            <li><strong>Imidlalo efanayo</strong> ihlala ivuselelwa (idatha ye-AI ithenjwa kakhulu kule nkambu)</li>
+            <li><strong>Izilinganiso ezimephwe ngokuphambana</strong> &mdash; Uma uhlelo olulodwa lwesilinganiso lwaziwa, izilinganiso ezingenalutho kwezinye izinhlelo zigcwaliswa ngokuzenzakalelayo kusetshenziswa ukumepha okuphambana kwezinga lokuvuthwa</li>
+            <li><strong>Isihloko sokuhlunga</strong> sikhiqizwa ngokuzenzakalelayo uma sigcwaliswa</li>
+            <li>Inkambu <strong>Abadlali</strong> yenza ababanzi babe sezingeni (isb. "1-4" iba ngu-4)</li>
+        </ul>
+
+        <h3>Ukulinganisa i-Genre</h3>
+        <p>I-AI Fill isebenzisa izinhlobo ze-genre ezisemthethweni ezinamagama afakwe uhlonze:</p>
+        <ul>
+            <li><code>First-Person-Shooter</code>, <code>Shoot-em-up</code>, <code>Beat-em-up</code></li>
+            <li><code>Hack-n-Slash</code>, <code>Board-Card</code>, <code>Real-Time Strategy</code></li>
+        </ul>
+
+        <h3>Izidingo</h3>
+        <p>Okungenani i-API key eyodwa yomhlinzeki we-AI kufanele imiswe ku-<strong>Settings &rarr; Scraping &rarr; API Keys</strong>. Izinga le-model elishibhile (Gemini Flash Lite, GPT-4o Mini, noma Claude Haiku) lisebenza kahle ku-metadata.</p>
+    </div>
+</section>
+
+<!-- Filtering -->
+<section id="filtering" class="help-section card">
+    <h2 class="card-title">Ukuhlunga & Ukusesha</h2>
+    <div class="card-body">
+        <h3>Ukusesha</h3>
+        <p>Ukusesha kuhlunga imidlalo ngesihloko (nesihloko sokuhlunga). Cindezela <kbd>/</kbd> ukuze ugxile ebhokisini lokusesha. Imiphumela ibuyekezwa ngesikhathi sangempela nge-debounce engu-300ms.</p>
+
+        <h3>Isihlungi Somthombo</h3>
+        <p>Hlunga imidlalo ngomthombo wokungenisa:</p>
+        <ul>
+            <li><strong>ROM Files</strong> &mdash; Imidlalo evela emtapweni wakho we-ROM</li>
+            <li><strong>CLZ Imports</strong> &mdash; Imidlalo ephathekayo engeniswe kusuka ku-CLZ</li>
+            <li><strong>Steam Imports</strong> &mdash; Imidlalo engeniswe kusuka ku-Steam</li>
+            <li><strong>Xbox Imports</strong> &mdash; Imidlalo engeniswe kusuka ku-Xbox</li>
+            <li><strong>PSN Imports</strong> &mdash; Imidlalo engeniswe kusuka ku-PlayStation Network</li>
+        </ul>
+
+        <h3>Izinkinobho Zesihlungi</h3>
+        <p>Isihlungi ngasinye sivula i-modal ebonisa wonke amanani ahlukile emtapweni wakho anezibalo. Izihlungi zisekela amamodi amabili:</p>
+        <ul>
+            <li><strong>Include (IS)</strong> &mdash; Bonisa kuphela imidlalo efana nenani elikhethiwe</li>
+            <li><strong>Exclude (IS NOT)</strong> &mdash; Fihla imidlalo efana nenani elikhethiwe</li>
+        </ul>
+        <p>Guqula phakathi kwemodi ye-include ne-exclude usebenzisa iswishi ku-modal yesihlungi.</p>
+
+        <h3>Izihlungi Ezitholakalayo</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Isihlungi</th><th>Incazelo</th><th>Amanani Amaningi</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Genre</strong></td><td>Action, RPG, Platformer, njll.</td><td>Yebo</td></tr>
+                <tr><td><strong>Series</strong></td><td>I-franchise yomdlalo</td><td>Yebo</td></tr>
+                <tr><td><strong>Publisher</strong></td><td>Inkampani eshicilelayo</td><td>Yebo</td></tr>
+                <tr><td><strong>Developer</strong></td><td>Isitudiyo sokwakha</td><td>Yebo</td></tr>
+                <tr><td><strong>Players</strong></td><td>Isibalo sabadlali</td><td>Cha</td></tr>
+                <tr><td><strong>Modes</strong></td><td>Single-Player, Multi-Player, Co-op</td><td>Yebo</td></tr>
+                <tr><td><strong>Perspective</strong></td><td>First-Person, Top-Down, Isometric, Side-Scroller</td><td>Yebo</td></tr>
+                <tr><td><strong>Dimension</strong></td><td>2D, 3D</td><td>Yebo</td></tr>
+                <tr><td><strong>Rating</strong></td><td>Isilinganiso seminyaka (sibonisa uhlelo olathandayo)</td><td>Cha</td></tr>
+                <tr><td><strong>Has RA</strong></td><td>Imidlalo enokusekelwa kwe-RetroAchievements</td><td>Cha</td></tr>
+                <tr><td><strong>Show Bonus</strong></td><td>Guqula ukubonakala kwe-bonus disc</td><td>Cha</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Izinketho Zokuhlunga</h3>
+        <ul>
+            <li><strong>Title</strong> &mdash; Ngokulandelana kwezinhlamvu ngesihloko sokuhlunga (akunaki osonhlamvukhulu)</li>
+            <li><strong>Release Date</strong> &mdash; Ukulandelana ngesikhathi (okokuqala kuqala)</li>
+            <li><strong>Platform</strong> &mdash; Kuhlanganiswe ngegama le-system</li>
+        </ul>
+
+        <h3>Ukuzulazula Kwezinhlamvu</h3>
+        <p>Gxumela emidlalweni eqala ngonhlamvu othile. Izinhlamvu ezingenayo imidlalo efanayo zenziwe zibe mpunga. Izinombolo namasimboli ahlanganiswe ngaphansi kuka-<strong>#</strong>.</p>
+
+        <h3>Ukuzula Okungapheli</h3>
+        <p>Imidlalo ilayishwa ngamaqoqo ayi-100 njengoba uzula. Amakhasi amasha alayisha ngokuzenzakalelayo uma usondela phansi. Ukushintsha izihlungi noma ukusesha kusetha kabusha ngokushesha bese kulayisha kabusha imiphumela.</p>
+
+        <h3>Ukuqhubeka Kwesimo</h3>
+        <p>Izihlungi zakho zamanje, itemu lokusesha, nendawo yokuzula kugcinwa ku-session storage. Kubuyiselwa uma ubuyela ekhasini noma uvuselela.</p>
+    </div>
+</section>
+
+<!-- Game Detail -->
+<section id="game-detail" class="help-section card">
+    <h2 class="card-title">Imininingwane Yegeyimu</h2>
+    <div class="card-body">
+        <h3>I-Detail Modal Yegeyimu</h3>
+        <p>Ukuchofoza noma iliphi ikhadi legeyimu kuvula i-detail modal enokubuka okusheshayo okusesigcini (cached). I-modal ibonisa:</p>
+        <ul>
+            <li>I-Boxart (2D ne-3D), isizinda se-fanart</li>
+            <li>Incazelo nolwazi lokukhishwa</li>
+            <li>Ama-badge omthuthukisi, umshicileli, ne-genre</li>
+            <li>Abadlali, izindlela zokudlala, isakhiwo segeyimu</li>
+            <li>Isithombe se-age rating (esivela ohlelweni olukhethayo, nge-cross-mapping fallback)</li>
+            <li>Igalari yama-screenshot enokuzulazula ngekhibhodi (<kbd>&larr;</kbd> <kbd>&rarr;</kbd>)</li>
+            <li>Ividiyo ye-trailer (uma itholakala)</li>
+            <li>Izilinganiso zesikhathi sokudlala ze-HLTB (Main Story, Main + Extras, Completionist)</li>
+            <li>Isimo nenqubekelaphambili ye-RetroAchievements</li>
+            <li>Amageyimu afanayo (izixhumanisi ezingachofozwa)</li>
+            <li>Imininingwane yokusekelwa kwe-controller</li>
+            <li>Ama-tag anikezwe igeyimu</li>
+            <li>Usayizi wefayela nendlela ye-ROM</li>
+        </ul>
+
+        <h3>Ikhasi Eligcwele Lemininingwane Yegeyimu</h3>
+        <p>Chofoza isixhumanisi sesihloko segeyimu noma uzulazule usuka kuma-breadcrumbs ukuze ubuke ikhasi eligcwele lemininingwane yegeyimu. Izici ezengeziwe ekhasini eligcwele zihlanganisa:</p>
+        <ul>
+            <li><strong>Isihloko sesizinda se-fanart</strong> nokuzulazula kwe-breadcrumb</li>
+            <li><strong>Ama-badge okungenisa enkundla</strong> &mdash; Abonisa i-CLZ Import, Steam Import, Xbox Import, noma PSN Import ngamalogo enkundla lapho kufanele</li>
+            <li><strong>Isikhombisi se-bonus disc</strong> &mdash; Sibonisa i-badge nesixhumanisi esithi "Ingxenye ka:" segeyimu emzali ne-thumbnail</li>
+            <li><strong>Inkinobho yokususa</strong> &mdash; Susa igeyimu ku-database (ngokuqinisekisa)</li>
+            <li><strong>Inkinobho yokusula</strong> &mdash; Sula yonke i-metadata e-scraped kuyilapho ugcina okufakiwe kwe-ROM</li>
+        </ul>
+
+        <h3>I-Edit Modal</h3>
+        <p>Chofoza <strong>Hlela</strong> (noma cindezela <kbd>e</kbd>) ukuze uvule i-edit modal, ehlelwe ngezigaba:</p>
+        <ul>
+            <li><strong>Ubunikazi</strong> &mdash; Isihloko, i-sort title (ezenzakalelayo kodwa engahlelwa), i-franchise, uhlelo</li>
+            <li><strong>Ulwazi Lokukhishwa</strong> &mdash; Usuku lokukhishwa, isifunda (esivela ku-dropdown elilungiselelwayo)</li>
+            <li><strong>Ukudlalwa</strong> &mdash; I-genre (ama-tag okukhetha okuningi), izindlela, isakhiwo segeyimu, abadlali, umthuthukisi, umshicileli</li>
+            <li><strong>Ubuchwepheshe</strong> &mdash; Ama-controller (ukukhetha okuningi), uhlobo lwe-save, i-perspective (amanani amaningi), i-dimension (amanani amaningi)</li>
+            <li><strong>Ama-Age Rating</strong> &mdash; Zonke izinhlelo eziyi-8 zokulinganisa ezinezithombe ezisemthethweni zokulinganisa ne-cross-mapping ezenzakalelayo. Ukushintsha isilinganiso esisodwa kugcwalisa ngokuzenzakalela izilinganiso ezingenalutho kwezinye izinhlelo.</li>
+            <li><strong>Amaphuzu</strong> &mdash; Amaphuzu abagxeki, amaphuzu omsebenzisi</li>
+            <li><strong>Incazelo</strong> &mdash; Umbhalo wencazelo yegeyimu</li>
+            <li><strong>Izithombe Zangokwezifiso</strong> &mdash; Layisha i-boxart yangokwezifiso (2D), i-boxart engu-3D, ne-fanart. Sula izithombe ezikhona ukuze uvumele ukuphinda ku-scrape.</li>
+            <li><strong>Ividiyo / Trailer</strong> &mdash; Layisha noma uxhume i-video trailer</li>
+        </ul>
+
+        <h3>Izenzo Ezisheshayo</h3>
+        <ul>
+            <li><strong>Hlela</strong> &mdash; Vula i-edit modal (<kbd>e</kbd>)</li>
+            <li><strong>Scrape</strong> &mdash; Landa i-metadata emithonjeni ye-scraper (<kbd>s</kbd>)</li>
+            <li><strong>AI Fill</strong> &mdash; Gcwalisa izinkambu ezingekho nge-AI (idinga i-AI API key)</li>
+            <li><strong>Check for RA</strong> &mdash; Sesha isethi ye-achievement ye-RetroAchievements</li>
+            <li><strong>HLTB Lookup</strong> &mdash; Thola izilinganiso zesikhathi sokudlala ku-HowLongToBeat</li>
+        </ul>
+
+        <h3>Isimo Sokuqedela</h3>
+        <p>Landelela inqubekelaphambili yakho ngalezi zimo (ezibonakala njengama-badge emakhadini egeyimu):</p>
+        <ul>
+            <li><strong>Akuqalwanga</strong> &mdash; Awukadlali okwamanje</li>
+            <li><strong>Kuyaqhubeka</strong> &mdash; Uyadlala njengamanje</li>
+            <li><strong>Kudlaliwe</strong> &mdash; Kudlaliwe kodwa akuqedwanga</li>
+            <li><strong>Kuqediwe</strong> &mdash; Kuqedwe igeyimu eyinhloko</li>
+            <li><strong>100%</strong> &mdash; Kuqedwe konke</li>
+        </ul>
+
+        <h3>Uhlelo Lwezilinganiso Eziningi</h3>
+        <p>I-RetroDB isekela izinhlelo zamazwe omhlaba eziyi-8 zokulinganisa ubudala:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>Uhlelo</th><th>Isifunda</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>ESRB</strong></td><td>iNyakatho Melika</td></tr>
+                <tr><td><strong>PEGI</strong></td><td>iYurophu</td></tr>
+                <tr><td><strong>CERO</strong></td><td>iJapane</td></tr>
+                <tr><td><strong>USK</strong></td><td>iJalimane</td></tr>
+                <tr><td><strong>ACB</strong></td><td>i-Australia</td></tr>
+                <tr><td><strong>FPB</strong></td><td>iNingizimu Afrika</td></tr>
+                <tr><td><strong>GRAC</strong></td><td>iNingizimu Korea</td></tr>
+                <tr><td><strong>ClassInd</strong></td><td>iBrazil</td></tr>
+            </tbody>
+        </table>
+        <p>Setha uhlelo olukhethayo ku-<strong>Settings &rarr; Library &rarr; Display</strong>. Izithombe ezisemthethweni zokulinganisa ziboniswa emakhadini egeyimu, kuma-detail modal, nasemakhasini emininingwane. Izilinganiso ezingenalutho zigcwaliswa ngokuzenzakalela kusuka kunoma yisiphi isilinganiso esitholakalayo nge-cross-mapping yezigaba zokuvuthwa ngesikhathi se-scraping, i-AI Fill, nokuhlela ngesandla.</p>
+
+        <h3>Ama-Bonus Disc</h3>
+        <p>I-RetroDB ithola ngokuzenzakalela ama-bonus/extra disc (isb. ama-CD e-soundtrack, ama-disc okuqukethwe okwengeziwe) bese iwaxhuma egeyimu yawo emzali. Ama-bonus disc afihliwe ngokuzenzakalela emtapweni &mdash; guqula <strong>"Show Bonus"</strong> kumahluzo ukuze uwabonise. Ama-bonus disc axhunyiwe avela ku-detail modal yegeyimu emzali.</p>
+
+        <div class="help-tip">
+            <strong>Ithiphu:</strong> I-detail modal igcina esigcinini amageyimu abukwe muva ukuze ilayishe ngokushesha. Ukuhlela kubuyekeza ngokuzenzakalela ikhadi legeyimu ekhasini ngaphandle kokudinga ukulayisha kabusha.
+        </div>
+    </div>
+</section>
+
+<!-- Bulk Edit -->
+<section id="bulk-edit" class="help-section card">
+    <h2 class="card-title">Ukuhlela Ngobuningi</h2>
+    <div class="card-body">
+        <h3>Indlela Yokusebenzisa</h3>
+        <ol>
+            <li>Iya kunoma iliphi ikhasi le-System noma i-Library</li>
+            <li>Chofoza <strong>"Select"</strong> ukuze ungene endleleni yokukhetha</li>
+            <li>Khetha amageyimu ofuna ukuwahlela (ngayinye, Select All, noma Select Unscraped)</li>
+            <li>Chofoza <strong>"Bulk Edit"</strong></li>
+            <li>Khetha inkambu ozoyishintsha bese usetha inani elisha</li>
+            <li>Khetha indlela ye-<strong>Replace</strong> noma i-<strong>Append</strong></li>
+            <li>Chofoza <strong>"Apply"</strong> ukuze ubuyekeze wonke amageyimu akhethiwe</li>
+        </ol>
+
+        <h3>Replace vs Append</h3>
+        <ul>
+            <li><strong>Replace</strong> &mdash; Ibhala phezu kwenani elikhona ngelisha</li>
+            <li><strong>Append</strong> &mdash; Yengeza inani elisha kumanani akhona (ezinkambini zamanani amaningi)</li>
+        </ul>
+
+        <h3>Izinkambu Ezisekelwayo</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Inkambu</th><th>Isekela i-Append</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Genre</td><td>Yebo</td></tr>
+                <tr><td>Umshicileli</td><td>Yebo</td></tr>
+                <tr><td>Umthuthukisi</td><td>Yebo</td></tr>
+                <tr><td>Franchise</td><td>Yebo</td></tr>
+                <tr><td>Isifunda</td><td>Yebo</td></tr>
+                <tr><td>Isakhiwo Segeyimu</td><td>Yebo</td></tr>
+                <tr><td>Perspective</td><td>Yebo</td></tr>
+                <tr><td>Dimension</td><td>Yebo</td></tr>
+                <tr><td>Isimo Sokuqedela</td><td>Cha (i-replace kuphela)</td></tr>
+                <tr><td>Abadlali</td><td>Cha (i-replace kuphela)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Compare Games -->
+<section id="compare" class="help-section card">
+    <h2 class="card-title">Qhathanisa Amageyimu</h2>
+    <div class="card-body">
+        <h3>Ikwenzani</h3>
+        <p>Ukuqhathaniswa eceleni kwelinye kwe-metadata yamageyimu amabili ngokubuka kwetafula. Kuwusizo ekuhloleni ikhwalithi ye-metadata, ekutholeni okufanayo, noma ekuqhathaniseni izinguqulo zegeyimu efanayo phakathi kwezinhlelo.</p>
+
+        <h3>Indlela Yokusebenzisa</h3>
+        <ol>
+            <li>Iya ku-<strong>Compare</strong> (etholakala ekhasini le-Library)</li>
+            <li>Sesha bese ukhetha igeyimu yokuqala</li>
+            <li>Sesha bese ukhetha igeyimu yesibili</li>
+            <li>Buyekeza itafula lokuqhathanisa &mdash; umehluko uqhakanjisiwe</li>
+        </ol>
+
+        <h3>Izinkambu Eziqhathanisiwe</h3>
+        <p>Uhlelo, umthuthukisi, umshicileli, usuku lokukhishwa, i-genre, i-franchise, isifunda, abadlali, izindlela, i-perspective, i-dimension, wonke ama-age rating ayi-8, isilinganiso somsebenzisi, amaphuzu abagxeki, izilinganiso zesikhathi sokudlala, ukusekelwa kwe-controller, uhlobo lwe-save, usayizi wefayela, amageyimu afanayo, incazelo, nokuningi.</p>
+    </div>
+</section>
+
+<!-- Collections -->
+<section id="collections" class="help-section card">
+    <h2 class="card-title">Amaqoqo (Tags, Lists, Wishlist)</h2>
+    <div class="card-body">
+        <h3>Tags</h3>
+        <p>Dala ama-tag angokwezifiso anemibala ukuze uhlele amageyimu akho. Ama-tag asebenza njengama-label &mdash; igeyimu ngayinye ingaba nama-tag amaningi, futhi i-tag ngayinye ingaqukatha amageyimu amaningi.</p>
+        <ul>
+            <li>Dala ama-tag anamagama nemibala yangokwezifiso ekhasini le-<strong>Tags</strong></li>
+            <li>Nikeza ama-tag emageyimini nge-detail modal yegeyimu</li>
+            <li>Chofoza noma yiliphi i-tag ukuze ubheke wonke amageyimu anelo tag</li>
+            <li>Hlela noma susa ama-tag ekhasini lokuphatha ama-Tags</li>
+        </ul>
+
+        <h3>Ama-List Aqanjiwe</h3>
+        <p>Dala ama-list amageyimu ahleliwe ngokulandelana kwangokwezifiso. Ama-list afana nama-playlist &mdash; ulawula ukulandelana okuqondile kwamageyimu.</p>
+        <ul>
+            <li>Dala ama-list ngegama, incazelo, ne-icon ekhasini le-<strong>Lists</strong></li>
+            <li>Engeza amageyimu kuma-list nge-detail modal yegeyimu noma ikhasi le-list</li>
+            <li>Hudula-uphonse ukuze uphinde uhlele amageyimu ngaphakathi kwe-list</li>
+            <li>Hlunga ngokulandelana kwangokwezifiso noma ngezinhlamvu</li>
+        </ul>
+
+        <h3>Wishlist</h3>
+        <p>Landelela amageyimu ofuna ukuwathola, kungakhathaliseki ukuthi angokoqobo noma angedijithali.</p>
+        <ul>
+            <li>Engeza amageyimu ngesandla ngesihloko, uhlelo, amanothi, nokubaluleka (1&ndash;5)</li>
+            <li>Izinto ze-wishlist zingaxhunywa emageyimini emtapo akhona uma etholakala</li>
+            <li>Zihlungwa ngokubaluleka (okuphezulu kuqala), bese usuku olwengeziwe</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Ithiphu:</strong> Sebenzisa ama-tag ama-label anqamulayo (isb. "Favorites", "Couch Co-op", "Backlog") kanye nama-list amaqoqo athize ahleliwe (isb. "Top 10 SNES Games", "Games to Stream").
+        </div>
+    </div>
+</section>
+
+<!-- Game Imports -->
+<section id="game-imports" class="help-section card">
+    <h2 class="card-title">Ukungeniswa Kwamageyimu</h2>
+    <div class="card-body">
+        <p>Ngenisa amaqoqo egeyimu emithonjeni yangaphandle. Ufinyelela nge-<strong>Game Imports</strong> ku-sidebar. Zonke izinhlobo zokungenisa zihlanganiswe ekhasini elilodwa elinama-tab.</p>
+
+        <h3>CLZ Games Import</h3>
+        <p>Ngenisa iqoqo lakho legeyimu elingokoqobo kusuka ku-CLZ Games.</p>
+        <ol>
+            <li>Khipha iqoqo lakho le-CLZ Games njenge-PDF</li>
+            <li>Iya ku-Game Imports &rarr; ithebhu ye-<strong>CLZ</strong></li>
+            <li>Layisha ifayela le-PDF</li>
+            <li>Buyekeza amageyimu ahluziwe</li>
+            <li>Khetha ukuthi yimaphi amageyimu ozowangenisa</li>
+        </ol>
+        <p>Okungenisiwe kwe-CLZ kulandelelwa ngokwehlukene kumageyimu e-ROM (kusetshenziswa isiqalo esithi <code>clz_import/</code>), kukuvumela ukubhala amaqoqo kokubili angokoqobo nangedijithali. Okungenisiwe kwe-CLZ kungasulwa ngokuphelele ku-<strong>Settings &rarr; System &rarr; Maintenance</strong>.</p>
+
+        <h3>Steam Import</h3>
+        <p>Ngenisa umtapo wakho wamageyimu we-Steam bese ulandelela ama-achievement.</p>
+        <ol>
+            <li>Lungisa i-Steam Web API key yakho ne-Steam ID ku-Settings</li>
+            <li>Iya ku-Game Imports &rarr; ithebhu ye-<strong>Steam</strong></li>
+            <li>Chofoza <strong>"Fetch Library"</strong> ukuze uthole amageyimu akho e-Steam</li>
+            <li>Khetha amageyimu ozowangenisa (okufanayo kutholakala ngokuzenzakalela)</li>
+            <li>Amageyimu angenisiwe afakwa i-tag nge-Steam App ID yawo ukuze kulandelelwe ama-achievement</li>
+        </ol>
+
+        <h3>Xbox Import</h3>
+        <p>Ngenisa umtapo wakho wamageyimu we-Xbox nge-akhawunti ye-Microsoft.</p>
+        <ol>
+            <li>Iya ku-Game Imports &rarr; ithebhu ye-<strong>Xbox</strong></li>
+            <li>Chofoza <strong>"Sign In"</strong> ukuze uqinisekise nge-akhawunti yakho ye-Microsoft (i-OAuth2 flow)</li>
+            <li>Umlando wesihloko sakho se-Xbox ulandwa ngokuzenzakalela</li>
+            <li>Khetha amageyimu ozowangenisa ngokutholwa kokufanayo</li>
+            <li>Amageyimu angenisiwe afakwa i-tag nge-Xbox Title ID yawo ukuze kulandelelwe ama-achievement</li>
+        </ol>
+        <p>Ama-token e-Xbox agcinwa esigcinini ku-<code>data/xbox_tokens.json</code> futhi avuselelwa ngokuzenzakalela.</p>
+
+        <h3>PSN Import</h3>
+        <p>Ngenisa umtapo wakho wamageyimu we-PlayStation Network.</p>
+        <ol>
+            <li>Iya ku-Game Imports &rarr; ithebhu ye-<strong>PSN</strong></li>
+            <li>Faka i-NPSSO cookie yakho (bheka <a href="#trophies">Trophies &rarr; PSN Authentication</a> ukuze uthole indlela yokuyithola)</li>
+            <li>Chofoza <strong>"Fetch Library"</strong> ukuze uthole amageyimu akho e-PSN</li>
+            <li>Khetha amageyimu ozowangenisa</li>
+        </ol>
+
+        <h3>Ngemva Kokungenisa</h3>
+        <ul>
+            <li>Amageyimu angenisiwe avela ku-Library yakho nama-badge athize enkundla</li>
+            <li>Sebenzisa i-bulk scrape ukuze ulande i-metadata yamageyimu angenisiwe</li>
+            <li>Ukulandelela kwe-achievement/trophy kuxhunywa ngokuzenzakalela enkundleni yomthombo</li>
+            <li>Amageyimu angenisiwe angahluzwa ku-Library kusetshenziswa i-Source filter</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Ithiphu:</strong> Ngemva kokungenisa amageyimu kunoma iyiphi inkundla, ungayi-scrape i-metadata yawo kusetshenziswa i-bulk scrape, njengamageyimu e-ROM. Amageyimu angenisiwe angalandelela nama-achievement asezinkundleni zawo.
+        </div>
+    </div>
+</section>
+
+<!-- RetroAchievements -->
+<section id="retroachievements" class="help-section card">
+    <h2 class="card-title">RetroAchievements</h2>
+    <div class="card-body">
+        <h3>Ukusetha</h3>
+        <ol>
+            <li>Dala i-akhawunti ku-<a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a></li>
+            <li>Khiqiza i-API key kuzilungiselelo zephrofayela yakho</li>
+            <li>Faka igama lakho lomsebenzisi ne-API key ku-Settings &rarr; Account &rarr; RetroAchievements</li>
+        </ol>
+
+        <h3>Ikhasi Lama-Achievement</h3>
+        <ul>
+            <li><strong>Ama-System Tab</strong> &mdash; Bheka ama-achievement ngenkundla (ikhumbula ithebhu yakho yokugcina oyibukile)</li>
+            <li><strong>Ukuzulazula Ngezinhlamvu</strong> &mdash; Yeqela kumageyimu ngohlamvu lokuqala ngaphakathi kwethebhu ngayinye yohlelo</li>
+            <li><strong>Refresh Progress</strong> &mdash; Vumelanisa inqubekelaphambili yakho ye-achievement kusuka ku-RetroAchievements</li>
+            <li><strong>Izibalo Zizonke</strong> &mdash; Ama-achievement namaphuzu ozuzile kuzo zonke izinhlelo</li>
+            <li><strong>Inqubekelaphambili Ngegeyimu</strong> &mdash; Bona iphesenti lokuqedela lwegeyimu ngayinye ngamabha enqubekelaphambili</li>
+        </ul>
+
+        <h3>Sync Queue</h3>
+        <p>Ukuvumelanisa kwezinhlelo eziningi kungabekwa kulayini:</p>
+        <ul>
+            <li>Chofoza "Refresh Progress" kunoma yiluphi uhlelo ukuze uqale noma ubeke kulayini i-sync</li>
+            <li>Uma i-sync isivele iqhubeka, izicelo ezisha zibekwa kulayini ngokuzenzakalela</li>
+            <li>Ulayini uqhutshwa ngokuzenzakalela lapho i-sync yamanje iqeda</li>
+            <li>Isaziso se-toast sibonisa inqubekelaphambili yamanje nokubalwa kolayini</li>
+        </ul>
+
+        <h3>Ukuthola Amageyimu Anama-Achievement</h3>
+        <ul>
+            <li><strong>I-Library Filter</strong> &mdash; Sebenzisa i-filter ethi "Has RA" ukuze ubonise amageyimu anama-achievement kuphela</li>
+            <li><strong>Check for RA</strong> &mdash; Kuma-detail modal egeyimu, chofoza ukuze useshe isethi ye-achievement</li>
+            <li><strong>Bulk Scrape</strong> &mdash; Nika amandla inketho ethi "Check RA" ukuze uthole ama-achievement ngesikhathi se-scraping</li>
+            <li><strong>RA Refresh Job</strong> &mdash; Skena wonke amageyimu ohlelweni ukuze uhlonze ukuthi yimaphi anokusekelwa kwe-RA</li>
+        </ul>
+
+        <h3>Imininingwane Ezingeni Legeyimu</h3>
+        <p>Chofoza noma yiliphi igeyimu ekhasini lama-achievement ukuze ubone ulwazi olunemininingwane lwe-achievement ngegeyimu okuhlanganisa amagama e-achievement ngayinye, izincazelo, amanani ephuzu, nesimo sokuzuzwa.</p>
+
+        <div class="help-tip">
+            <strong>Qaphela:</strong> "Refresh Progress" ivumelanisa inqubekelaphambili yakho yamageyimu asevele ane-RetroAchievements exhunyiwe.
+            Ukuze uthole amasethi AMASHA e-achievement, sebenzisa "Check for RA" kuma-detail modal egeyimu noma uwanike amandla ngesikhathi se-bulk scraping.
+        </div>
+    </div>
+</section>
+
+<!-- Steam Achievements -->
+<section id="steam-achievements" class="help-section card">
+    <h2 class="card-title">Steam Achievements</h2>
+    <div class="card-body">
+        <h3>Ukusetha</h3>
+        <ol>
+            <li>Ngenisa amageyimu e-Steam nge-<strong>Game Imports &rarr; Steam</strong></li>
+            <li>Qiniseka ukuthi i-Steam Web API key yakho ilungiselelwe ku-Settings</li>
+        </ol>
+
+        <h3>Ikhasi Lokufika Lama-Achievement</h3>
+        <p>Buka wonke amageyimu akho e-Steam ngenqubekelaphambili ye-achievement ngokushesha:</p>
+        <ul>
+            <li><strong>Izibalo Zizonke</strong> &mdash; Amageyimu e-Steam esewonke, ama-achievement azuziwe, iphesenti lokuqedela</li>
+            <li><strong>Inqubekelaphambili Ngegeyimu</strong> &mdash; Amabha okuqedela egeyimu ngayinye</li>
+        </ul>
+
+        <h3>Imininingwane Yama-Achievement Ngegeyimu</h3>
+        <p>Chofoza noma iyiphi igeyimu ye-Steam ukuze ubone ama-achievement ayo ngayinye:</p>
+        <ul>
+            <li>Ama-icon, amagama, nezincazelo ze-achievement</li>
+            <li>Isimo esivuliwe naesikhiyiwe ngezitembu zesikhathi zokuvula</li>
+            <li>Iphesenti lokuvula labadlali bomhlaba lwe-achievement ngayinye</li>
+        </ul>
+
+        <h3>Ukuvumelanisa</h3>
+        <ul>
+            <li>Vumelanisa ama-achievement egeyimu eyodwa kusuka ekhasini layo lemininingwane</li>
+            <li>Vumelanisa ngobuningi wonke amageyimu e-Steam kusuka ekhasini lokufika lama-achievement</li>
+            <li>I-sync isebenza njengomsebenzi wangemuva nenqubekelaphambili yesaziso se-toast</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Xbox Achievements -->
+<section id="xbox-achievements" class="help-section card">
+    <h2 class="card-title">Xbox Achievements</h2>
+    <div class="card-body">
+        <h3>Ukusetha</h3>
+        <ol>
+            <li>Ngenisa amageyimu e-Xbox nge-<strong>Game Imports &rarr; Xbox</strong></li>
+            <li>Ukuqinisekiswa kuphathwa nge-Xbox OAuth ngesikhathi sokungenisa</li>
+        </ol>
+
+        <h3>Ikhasi Lokufika Lama-Achievement</h3>
+        <ul>
+            <li><strong>Izibalo Zizonke</strong> &mdash; Amageyimu e-Xbox esewonke, ama-achievement azuziwe, i-gamerscore ezuziwe/esewonke, iphesenti lokuqedela</li>
+            <li><strong>Inqubekelaphambili Ngegeyimu</strong> &mdash; I-gamerscore ezuzwe ngegeyimu ngayinye ngamabha enqubekelaphambili</li>
+        </ul>
+
+        <h3>Imininingwane Yama-Achievement Ngegeyimu</h3>
+        <p>Chofoza noma iyiphi igeyimu ye-Xbox ukuze ubone ama-achievement ayo ngayinye:</p>
+        <ul>
+            <li>Ama-icon e-achievement anamanani e-gamerscore ngayinye</li>
+            <li>Isimo esivuliwe naesikhiyiwe ngezitembu zesikhathi zokuvula</li>
+            <li>Ama-badge e-gamerscore ku-achievement ngayinye</li>
+        </ul>
+
+        <h3>Ukuvumelanisa</h3>
+        <ul>
+            <li>Vumelanisa igeyimu eyodwa noma uvumelanise ngobuningi wonke amageyimu e-Xbox</li>
+            <li>Isebenza njengomsebenzi wangemuva nezaziso ze-toast</li>
+            <li>Ama-total e-gamerscore abuyekezwa ngokuzenzakalela ngemva kwe-sync ngayinye</li>
+        </ul>
+    </div>
+</section>
+
+<!-- HLTB -->
+<section id="hltb" class="help-section card">
+    <h2 class="card-title">How Long to Beat</h2>
+    <div class="card-body">
+        <h3>Ukusetshenziswa</h3>
+        <ol>
+            <li>Vula i-modal yemininingwane yanoma yimuphi umdlalo</li>
+            <li>Chofoza <strong>"Lookup HLTB"</strong></li>
+            <li>Khetha okuqondene okulungile emiphumeleni</li>
+            <li>Izilinganiso zesikhathi sokudlala zilondolozwa kumdlalo</li>
+        </ol>
+
+        <h3>Izigaba Zesikhathi</h3>
+        <ul>
+            <li><strong>Main Story</strong> &mdash; Isikhathi esiyisisekelo sokuqedela</li>
+            <li><strong>Main + Extras</strong> &mdash; Kanye nokuqukethwe okuseceleni</li>
+            <li><strong>Completionist</strong> &mdash; 100% konke</li>
+        </ul>
+
+        <h3>Lapho Idatha ye-HLTB Ivela Khona</h3>
+        <ul>
+            <li><strong>I-modal yemininingwane yomdlalo</strong> &mdash; Izilinganiso zesikhathi sokudlala ziboniswa emininingwaneni yomdlalo</li>
+            <li><strong>Ikhasi eligcwele lemininingwane yomdlalo</strong> &mdash; Umniningwane ofanayo wesikhathi sokudlala</li>
+            <li><strong>Analytics &rarr; ithebhu ye-Playtime</strong> &mdash; Ukuhlaziywa kwesikhathi sokudlala kuqoqo lonke</li>
+            <li><strong>Qhathanisa Imidlalo</strong> &mdash; Ukuqhathaniswa kwesikhathi sokudlala eduze kwesinye</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Ithiphu:</strong> Idatha ye-HLTB nayo iboniswa ku-Analytics ngaphansi kwethebhu ye-Playtime, ikunika izilinganiso zeqoqo lakho lonke.
+        </div>
+    </div>
+</section>
+
+<!-- Trophies -->
+<section id="trophies" class="help-section card">
+    <h2 class="card-title">Ama-Trophy e-PS3 / PSN</h2>
+    <div class="card-body">
+        <h3>Ama-Trophy Asendaweni e-RPCS3</h3>
+        <p>Landelela ama-trophy azuzwe emidlalweni ye-PS3 nge-emulator ye-RPCS3.</p>
+        <ol>
+            <li>Setha indlela ye-trophy ye-RPCS3 ku-<strong>Settings &rarr; Data &rarr; Trophies</strong></li>
+            <li>Chofoza <strong>"Scan Trophies"</strong> ukungenisa ama-trophy azuziwe</li>
+            <li>Buka izinhlu zama-trophy nemininingwane yama-trophy ngayinye esigabeni se-<strong>RPCS3 Trophies</strong></li>
+        </ol>
+        <p>I-RPCS3 ifunda idatha ye-XML ye-trophy ku-directory yomsebenzisi we-RPCS3 futhi ifanisa imidlalo neqoqo lakho ngokuzenzakalelayo.</p>
+
+        <h3>Ama-Trophy e-API ye-PSN</h3>
+        <p>Vumelanisa idatha yakho ye-trophy ye-PlayStation Network ku-akhawunti yakho ye-PSN.</p>
+        <ol>
+            <li>Thola i-cookie yakho ye-NPSSO (bheka ngezansi)</li>
+            <li>Yifake ku-<strong>Settings &rarr; Account &rarr; PSN</strong></li>
+            <li>Iqoqo lakho lama-trophy e-PSN lilandwa nge-PlayStation API</li>
+            <li>Buka inqubekelaphambili yama-trophy ngomdlalo ngamunye nezibalo ezizuziwe/eziphelele</li>
+            <li>Imininingwane yama-trophy ngayinye ihlanganisa incazelo, ubuncane, nezikhathi zokuvula</li>
+        </ol>
+
+        <h3>Ukuqinisekiswa kwe-PSN (I-Cookie ye-NPSSO)</h3>
+        <p>I-PSN isebenzisa i-cookie ekhethekile yokuqinisekisa ebizwa ngokuthi i-token ye-NPSSO. Ukuze uyithole:</p>
+        <ol>
+            <li>Vula isiphequluli sewebhu bese ungena ku-<a href="https://store.playstation.com" target="_blank" rel="noopener noreferrer">store.playstation.com</a></li>
+            <li>Uma usungenile, iya ku: <code>https://ca.account.sony.com/api/v1/ssocookie</code></li>
+            <li>Ikhasi lizobonisa i-JSON equkethe i-token yakho ye-NPSSO</li>
+            <li>Kopisha inani le-<code>npsso</code> bese ulinamathelisa ku-Settings &rarr; Account &rarr; PSN</li>
+        </ol>
+        <p>Uma usuqinisekisiwe, i-RetroDB igcina ama-token okufinyelela ngokuphephile kudatabhesi yayo (ngomsebenzisi ngamunye) futhi iwavuselela ngokuzenzakalelayo &mdash; awuphinde unamathelise i-NPSSO kuwo wonke amasesheni okuvumelanisa. Iseshini ihlala isebenza cishe izinyanga ezimbili, futhi i-RetroDB manje iyayivuselela ngokuzenzakalelayo ngemuva, ngakho ekusetshenzisweni okujwayelekile kufanele kudingeke kancane i-NPSSO entsha.</p>
+
+        <h3>Imininingwane Yama-Trophy</h3>
+        <ul>
+            <li>Izinhlobo zama-trophy: Bronze, Silver, Gold, Platinum</li>
+            <li>Izithonjana zama-trophy ziyalandwa futhi zigcinwe endaweni yasekhaya</li>
+            <li>Iphesenti lokuqedela ngomdlalo ngamunye</li>
+            <li>Izikhathi zokuvula zetrophy ngalinye elizuziwe</li>
+        </ul>
+
+        <h3>Ukuvumelanisa Okuningi</h3>
+        <p>Vumelanisa wonke ama-trophy emidlalo ye-PSN ngesikhathi esisodwa nge-background job. Inqubekelaphambili iboniswa esaziso se-toast. Ukukhawulela izinga (2.5s phakathi kwezicelo) kuvimbela ukucindezelwa kwe-API ye-PSN.</p>
+    </div>
+</section>
+
+<!-- Collector Trophies -->
+<section id="collector-trophies" class="help-section card">
+    <h2 class="card-title">Ama-Trophy Omqoqi</h2>
+    <div class="card-body">
+        <h3>Kuyini</h3>
+        <p>Uhlelo lomdlalo olunikeza ama-trophy ngokusekelwe kwizigaba eziphawulekayo zeqoqo lakho. Njengoba wengeza imidlalo, uklwebha imininingwane, futhi uqedela imidlalo, ama-trophy avuleka ngokuzenzakalelayo.</p>
+
+        <h3>Amazinga Ama-Trophy</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Izinga</th><th>Izibonelo</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Bronze</strong></td><td>Engeza umdlalo wokuqala, fika kwimidlalo eyi-10, i-scrape yokuqala, izinhlelo eziyi-5, ukuqedela kokuqala</td></tr>
+                <tr><td><strong>Silver</strong></td><td>Imidlalo eyi-100, eyi-50 e-scraped, izinhlelo eziyi-10, ukuqedela okuyi-10, imidlalo eyi-500</td></tr>
+                <tr><td><strong>Gold</strong></td><td>Imidlalo eyi-1,000, ukumbozwa kwemininingwane okuyi-100%, izinhlelo eziyi-20, ukuqedela okuyi-50</td></tr>
+                <tr><td><strong>Platinum</strong></td><td>Imidlalo eyi-5,000, ukuqedela okuyi-100, izinhlelo eziyi-30+</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Kusebenza Kanjani</h3>
+        <ul>
+            <li>Inqubekelaphambili ilandelelwa ngokuzenzakalelayo ngokusekelwe kwizibalo zeqoqo lakho</li>
+            <li>Vakashela ikhasi le-<strong>Collector Trophies</strong> ukubona inqubekelaphambili yakho kuwo wonke ama-trophy</li>
+            <li>Chofoza <strong>"Refresh"</strong> ukubuyekeza inqubekelaphambili ngemuva kokwenza izinguquko</li>
+            <li>Ama-trophy azuziwe abonisa nedethi yawo yokuvula</li>
+            <li>Amabha enqubekelaphambili abonisa ukuthi useduze kangakanani nesigaba esilandelayo</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Museum -->
+<section id="museum" class="help-section card">
+    <h2 class="card-title">I-Museum</h2>
+    <div class="card-body">
+        <h3>Kuyini</h3>
+        <p>Isichazamazwi esisebenzisanayo sezinhlelo zemidlalo ezihlelwe ngesizukulwane. Funda ngomlando, imininingwane yobuchwepheshe, nemidlalo ephawulekayo yesikhulumisi ngasinye eqoqweni lakho.</p>
+
+        <h3>Ikhasi Lokuqala</h3>
+        <p>Ikhasi lokuqala le-Museum libonisa umugqa wesikhathi wezinhlelo zemidlalo eziqoqwe ngesizukulwane (1st&ndash;9th Gen, Handhelds, Arcade, Computers). Ikhadi lesikhulumisi ngasinye libonisa isithombe sehardware nenani lemidlalo livela eqoqweni lakho.</p>
+
+        <h3>Amakhasi Emininingwane Yesistimu</h3>
+        <p>Chofoza noma yisiphi isistimu ukubuka ikhasi layo le-museum, elihlanganisa:</p>
+        <ul>
+            <li><strong>Isithombe se-Hardware</strong> &mdash; Isithombe se-console/isistimu</li>
+            <li><strong>Imininingwane Yobuchwepheshe</strong> &mdash; CPU, GPU, RAM, ukulungiswa kwesithombe, uhlobo lwemedia</li>
+            <li><strong>Umlando</strong> &mdash; Indaba eyakhiwe nge-AI mayelana nokuthuthukiswa kwesistimu, ukwethulwa, nefagugu</li>
+            <li><strong>Top 10 Games</strong> &mdash; Izihloko ezidume kakhulu zesistimu (ezivela emaphuzwini abagxeki nezincomo ze-AI)</li>
+            <li><strong>Igalari Yezilawuli</strong> &mdash; Izithombe zezilawuli zesistimu nezincazelo</li>
+        </ul>
+
+        <h3>Ukukhiqizwa Kokuqukethwe Nge-AI</h3>
+        <p>Okuqukethwe kwe-Museum kukhiqizwa kusetshenziswa i-AI (Gemini, OpenAI, noma Claude). Ungakhiqiza okuqukethwe kwe:</p>
+        <ul>
+            <li><strong>Isistimu esisodwa</strong> &mdash; Chofoza "Generate" kwikhasi le-museum lanoma yisiphi isistimu</li>
+            <li><strong>Ukukhiqiza okuningi</strong> &mdash; Khiqiza okuqukethwe kwazo zonke izinhlelo ngesikhathi esisodwa ekhasini lokuqala (kusebenza njenge-background job ngenqubekelaphambili ye-toast)</li>
+        </ul>
+
+        <h3>Izithombe Zezilawuli</h3>
+        <p>Izithombe zezilawuli zingangezwa nge:</p>
+        <ul>
+            <li><strong>Ukusesha Isithombe</strong> &mdash; Sesha izithombe zezilawuli usebenzisa i-Bing Image Search. Imiphumela ihlelwa ngokufaneleka (igama lomlawuli + umkhiqizi + okuhlukahlukene kwesistimu).</li>
+            <li><strong>Ukulayisha Mathupha</strong> &mdash; Layisha izithombe zakho zezilawuli</li>
+            <li><strong>Ukususwa Kwesizinda</strong> &mdash; Susa izizinda ngokuzenzakalelayo usebenzisa i-AI yasendaweni (umtapo we-rembg) ukuze uthole izithombe zezilawuli ezisobala kunoma yisiphi isizinda</li>
+            <li><strong>Ukusakazwa Kwesithombe</strong> &mdash; Uma isithombe somlawuli sitholakala, sabelwana ngokuzenzakalelayo nomlawuli ofanayo kwezinye izinhlelo (izilawuli ezingabafowethu)</li>
+            <li><strong>Ukulanda Okuningi</strong> &mdash; Landa izithombe zazo zonke izilawuli esistimwini ngesikhathi esisodwa</li>
+        </ul>
+        <p>Zonke izithombe zezilawuli zenziwa zibe zinye zibe usayizi oqondiwe futhi zigcinwe njenge-fomethi ye-WebP.</p>
+
+        <div class="help-tip">
+            <strong>Ithiphu:</strong> Kudingeka i-AI API key ukuze kukhiqizwe okuqukethwe. I-Museum isebenzisa umhlinzeki we-AI ofanayo olungiselelwe ku-Settings &rarr; Scraping &rarr; API Keys.
+        </div>
+    </div>
+</section>
+
+<!-- Analytics -->
+<section id="analytics" class="help-section card">
+    <h2 class="card-title">Analytics</h2>
+    <div class="card-body">
+        <p>I-Analytics inikeza izibalo eziphelele nemibukiso kumathebhu ayi-12. Wonke amashadi asebenzisanayo futhi angathunyelwa njenge-PNG, akopishwe ku-clipboard, noma alandwe njenge-CSV.</p>
+
+        <h3>Amathebhu e-Analytics</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Ithebhu</th><th>Okuqukethwe</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Summary</strong></td><td>Amakhadi okubuka konke kwezibalo (inani lonke lemidlalo, izinhlelo, izinga lokuqedela, iphesenti le-scraped, njll.)</td></tr>
+                <tr><td><strong>Charts</strong></td><td>Imidlalo ngesikhulumisi/umkhiqizi, ngohlobo, umugqa wesikhathi unyaka nonyaka</td></tr>
+                <tr><td><strong>Developers</strong></td><td>Amashadi ebha abathuthukisi nabashicileli abangama-Top 15</td></tr>
+                <tr><td><strong>Gameplay</strong></td><td>Ukuhlukaniswa ngohlobo, ukuhlaziywa kwezindlela zokudlala, ukusatshalaliswa kwesakhiwo somdlalo</td></tr>
+                <tr><td><strong>Playtime</strong></td><td>Ukuhlaziywa kwedatha yesikhathi sokudlala ye-HLTB kuqoqo lakho &mdash; isikhathi sonke esilinganiselwe sokudlala, iziliganiso, ukusatshalaliswa</td></tr>
+                <tr><td><strong>Review Scores</strong></td><td>Ukusatshalaliswa nezilinganiso zamaphuzu abagxeki nabasebenzisi</td></tr>
+                <tr><td><strong>Age Ratings</strong></td><td>Ukusatshalaliswa kokukalwa kweminyaka kuzo zonke izinhlelo zokukala eziyi-8</td></tr>
+                <tr><td><strong>Achievements</strong></td><td>Ukumbozwa kwe-RetroAchievements nokuqedela ngesistimu</td></tr>
+                <tr><td><strong>Data Quality</strong></td><td>Ishadi le-radar lokuphelela kwemininingwane (incazelo, boxart, uhlobo, umthuthukisi, umshicileli, idethi yokukhishwa, screenshots, fanart, ividiyo, incwadi, HLTB, ukukalwa, izindlela, isifunda)</td></tr>
+                <tr><td><strong>Growth</strong></td><td>Umugqa wesikhathi wokukhula kweqoqo obonisa lapho imidlalo yengezwa ngokuhamba kwesikhathi</td></tr>
+                <tr><td><strong>Storage</strong></td><td>Ukuhlukaniswa kokusetshenziswa kwesitoreji ngesistimu (nosayizi wamafayela ohlelekile)</td></tr>
+                <tr><td><strong>Leaderboards</strong></td><td>Izinhlelo eziphezulu ngenani lemidlalo, imidlalo emikhulu kunazo zonke ngosayizi wefayela</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Izinketho Zokuthumela</h3>
+        <p>Ishadi ngalinye lingathunyelwa lisebenzisa izinkinobho ku-toolbar yeshadi:</p>
+        <ul>
+            <li><strong>PNG</strong> &mdash; Londoloza njengefayela lesithombe</li>
+            <li><strong>Clipboard</strong> &mdash; Kopisha isithombe seshadi ku-clipboard</li>
+            <li><strong>CSV</strong> &mdash; Landa idatha eluhlaza njenge-spreadsheet</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Reports -->
+<section id="reports" class="help-section card">
+    <h2 class="card-title">Imibiko ye-ROM</h2>
+    <div class="card-body">
+        <h3>Kwenzani</h3>
+        <p>Iqinisekisa amagama amafayela e-ROM ngokumelene nezindlela ezijwayelekile zokuqamba futhi ikhomba izinkinga ezingaba khona. Finyelela nge-<strong>ROM Reports</strong> ku-sidebar.</p>
+
+        <h3>Izinhlobo Zemibiko</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Ithebhu</th><th>Ihlola Ini</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Amagama Angajwayelekile</strong></td><td>Ama-ROM anamagama amafayela angahambisani nezindlela zokuqamba. Ibonisa igama lefayela lamanje, izinkinga ezitholiwe, negama elisikiselwe elilungisiwe.</td></tr>
+                <tr><td><strong>Ukungafani Kwamagama</strong></td><td>Ama-ROM lapho igama lefayela lingahambisani nesihloko semininingwane e-scraped. Ibonisa igama lefayela lamanje uma kuqhathaniswa nesihloko esi-scraped, isifunda, unyaka, nomthuthukisi.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Okuhloliwe</h3>
+        <ul>
+            <li>Izinhlamvu ezingasebenzi emagameni amafayela (<code>: ? * / " &lt; &gt; | \</code>)</li>
+            <li>Amathegi esifunda angekho noma angalungile (isb. <code>(USA)</code>, <code>(Europe)</code>)</li>
+            <li>Amathegi onyaka angekho</li>
+            <li>Ukungafani phakathi kwegama lefayela nesihloko sedatabhesi</li>
+        </ul>
+
+        <p>Imibiko ingahlelwa ngesistimu, igama lefayela, nohlobo lwenkinga. Yisebenzise ukuze ugcine umtapo wakho we-ROM uhlelekile futhi uqanjwe ngokungaguquki.</p>
+    </div>
+</section>
+
+<!-- ROM Tools -->
+<section id="rom-tools" class="help-section card">
+    <h2 class="card-title">Amathuluzi e-ROM</h2>
+    <div class="card-body">
+        <p>Finyelela isikhungo Samathuluzi e-ROM ku-sidebar. Ithuluzi ngalinye lisebenza njenge-background job nezibuyekezo zenqubekelaphambili zesikhathi sangempela, ukusekelwa kokumisa/ukuqhubeka, nokugcinwa kwerekhodi.</p>
+
+        <h3>I-Archive Scanner</h3>
+        <p>Khipha ama-archive e-ROM (ZIP, 7Z, RAR) ngezinketho ze:</p>
+        <ul>
+            <li>Ukuskena okuphindaphindayo kwama-subdirectory</li>
+            <li>Ukususwa kwamafayela angafunwa ngemva kokukhipha</li>
+            <li>Ukukhiqizwa okuzenzakalelayo kohlu lokudlala lwe-M3U lwemidlalo enama-disc amaningi</li>
+        </ul>
+        <p><em>Kudinga: 7z noma unzip</em></p>
+
+        <h3>I-CHD Converter</h3>
+        <p>Guqula izithombe ze-disc (ISO, BIN/CUE, GDI) zibe yifomethi ye-CHD ecindezelwe. Ilondoloza isitoreji esikhulu ngenkathi igcina ukusebenzisana okuphelele nama-emulator.</p>
+        <p><em>Kudinga: chdman (esuka ku-mame-tools)</em></p>
+
+        <h3>I-CHD Verify</h3>
+        <p>Qinisekisa ubuqotho bamafayela e-CHD ngokuqinisekiswa kwe-hash. Ikhomba ukuguqulwa okonakele noma okungaphelele.</p>
+        <p><em>Kudinga: chdman</em></p>
+
+        <h3>I-Duplicate Finder</h3>
+        <p>Thola ama-ROM aphindaphindiwe nge-hash noma igama lefayela, ngezinketho zokubeka phambili ngamathegi esifunda.</p>
+        <p><em>Ayikho okuncike ngaphandle</em></p>
+
+        <h3>I-Multi-Disc Organizer</h3>
+        <p>Hlela imidlalo enama-disc amaningi ibe ngama-subdirectory futhi ukhiqize izinhlu zokudlala ze-M3U zama-emulator awasekelayo. Iwusizo ezinhlelweni ezifana ne-PlayStation ne-Saturn.</p>
+        <p><em>Ayikho okuncike ngaphandle</em></p>
+
+        <h3>I-Screenshot Dedup</h3>
+        <p>Thola futhi ususe ama-screenshot aphindaphindiwe kuwo wonke umtapo wakho wemidlalo ukukhulula isikhala sesitoreji.</p>
+        <ul>
+            <li><strong>Exact Hash (MD5)</strong> &mdash; Ikhomba amafayela afanayo kuphela</li>
+            <li><strong>Ukufana Kwezibonakalayo</strong> &mdash; Ukuqhathaniswa kwe-perceptual hash ngombandela olungiselelekayo (1&ndash;20, okuphansi = ukuqondana okuqinile)</li>
+        </ul>
+        <p>Iskena ngokuqhubekayo ngezibalo eziphilayo ezibonisa imidlalo eskeniwe, inani eliphindaphindiwe, nesikhala esingatholakala futhi. Imiphumela iqoqwa ngomdlalo nangesistimu. Ungakhetha ukuthi yiliphi ifayela ozoligcina eqenjini ngalinye eliphindaphindiwe, noma usebenzise <strong>"Select Largest"</strong> ukugcina ngokuzenzakalelayo inguqulo enokulungiswa okuphakeme kakhulu.</p>
+        <p><em>Ayikho okuncike ngaphandle</em></p>
+
+        <h3>I-Image Resizer</h3>
+        <p>Yenza imedia yemidlalo ibe yenye yibe usayizi oqondiwe ozwakalayo. Bheka <a href="#image-standardization">Ukwenziwa Kwezithombe Zibe Zinye</a> ukuze uthole imininingwane egcwele.</p>
+        <p><em>Ayikho okuncike ngaphandle (i-AI upscaling esekelwe ku-Python)</em></p>
+
+        <h3>Backfill Alternate Titles</h3>
+        <p>Skena umtapo ufuna imidlalo enensimu <strong>yezihloko ezingabadala</strong> engenalutho bese uyigcwalisa ku-IGDB / TGDB / ScreenScraper. Iwusizo ngemva kokungenisa ikhathalogi enkulu noma ukuthuthela kusuka kwelinye ithuluzi elingazange ligcine izihloko zesifunda / zaseJapan / ezingaphansi. Isebenza ngemuva; inqubekelaphambili iboniswa ekhadini lethuluzi.</p>
+        <p><em>Kudinga okungenani i-scraper API key eyodwa (IGDB / TGDB / ScreenScraper)</em></p>
+
+        <h3>Bulk HLTB Lookup</h3>
+        <p>Sebenzisa i-HowLongToBeat lookup kuwo wonke umdlalo ontula isilinganiso sesikhathi sokudlala. Okuqondene ngakunye kunikwa amaphuzu ngesihloko + isikhulumisi + unyaka wokukhishwa; okuqondene okunethemba eliphezulu kulondolozwa ngokuzenzakalelayo. Noma yikuphi okungaphansi kombandela wethemba (noma okunezikhulumisi ezingqubuzanayo) kubekelwa ukubuyekezwa ngumuntu.</p>
+        <p><em>Ayikho okuncike ngaphandle (isebenzisa idathasethi ye-HLTB engaxhunyiwe ku-inthanethi efakiwe)</em></p>
+
+        <h3>HLTB Pending Review</h3>
+        <p>Ulayini wokubuyekeza wokuqondene okungacacile okuvezwe yi-Bulk HLTB Lookup. Umugqa ngamunye osalindile ubonisa umdlalo womthombo eceleni komdlalo we-HLTB (isihloko, isikhulumisi, unyaka wokukhishwa, ithemba). Vuma, yala, noma khetha okunye okuqondene ngomugqa ngamunye. Ikhadi lethuluzi lokubuyekeza livela kuphela esikhungweni Samathuluzi e-ROM uma kunokuqondene okukodwa okusalindile.</p>
+        <ul>
+            <li><strong>Amathebhu okuhlunga</strong> okuqondene okunethemba eliphansi, isihloko esingabadala, nokungafani kwesikhulumisi.</li>
+            <li><strong>Vuma</strong> kubhala isilinganiso sesikhathi sokudlala; <strong>Yala</strong> kulahla okuqondene bese kugcina ulayini we-lookup uhlanzekile.</li>
+        </ul>
+
+        <h3>Izilungiselelo Zethuluzi</h3>
+        <p>Lungiselela izindlela, izindawo zamathuluzi, izinhlobo ze-archive, nokuthandwayo okwabelwana ngakho kuwo wonke amathuluzi e-ROM.</p>
+
+        <div class="help-tip">
+            <strong>Ithiphu:</strong> Wonke amathuluzi e-ROM asekela ukumisa/ukuqhubeka futhi asebenza ngemuva. Inqubekelaphambili nemiphumela iyagcinwa futhi ingabukwa ku-Log Viewer. Isimo sethuluzi (siyatholakala uma kuqhathaniswa nokudinga ukufakwa) siboniswa ekhadini lethuluzi ngalinye.
+        </div>
+    </div>
+</section>
+
+<!-- Normalization -->
+<section id="normalization" class="help-section card">
+    <h2 class="card-title">Ukwenziwa Kwejwayelekile</h2>
+    <div class="card-body">
+        <h3>Kwenzani</h3>
+        <p>Yenza amanani ohlobo nendlela yokudlala abe yizinhlobo ezijwayelekile ezizwakalayo. Lokhu kwenzeka ngokuzenzakalelayo ngesikhathi se-scraping ne-AI Fill, futhi kungasetshenziswa nangesandla emtapweni wakho okhona.</p>
+
+        <h3>Kungani Kubalulekile</h3>
+        <p>Ama-scraper ahlukene asebenzisa amagama ahlukene entweni efanayo. Ukwenziwa kwejwayelekile kuqinisekisa ukuzwakala kuwo wonke umtapo wakho:</p>
+        <ul>
+            <li><code>platform</code> &rarr; <code>Platformer</code></li>
+            <li><code>fps</code>, <code>first person shooter</code> &rarr; <code>First-Person-Shooter</code></li>
+            <li><code>shoot 'em up</code>, <code>shmup</code> &rarr; <code>Shoot-em-up</code></li>
+            <li><code>beat 'em up</code>, <code>brawler</code> &rarr; <code>Beat-em-up</code></li>
+            <li><code>hack and slash</code> &rarr; <code>Hack-n-Slash</code></li>
+            <li><code>rts</code>, <code>real time strategy</code> &rarr; <code>Real-Time Strategy</code></li>
+            <li><code>board game</code>, <code>card game</code> &rarr; <code>Board-Card</code></li>
+        </ul>
+
+        <h3>Imithetho Yangokwezifiso</h3>
+        <p>Ungangeza imithetho yokwenziwa kwejwayelekile yangokwezifiso ku-<strong>Settings &rarr; Data &rarr; Normalization</strong>. Imithetho yangokwezifiso ithathela indawo ukumaphu okwakhelwe ngaphakathi, ikuvumela ukuchaza amagama akho ayintandokazi wohlobo nendlela. Imithetho igcinwe kudatabhesi.</p>
+
+        <h3>Buka Kuqala & Sebenzisa</h3>
+        <p>Ngaphambi kokusebenzisa ukwenziwa kwejwayelekile, ungabuka kuqala ukuthi yimiphi imidlalo ezothinteka nokuthi yiziphi izinguquko ezizokwenziwa. Lokhu kukuvumela ukubuyekeza ngaphambi kokwenza izinguquko emtapweni wakho.</p>
+    </div>
+</section>
+
+<!-- Image Standardization -->
+<section id="image-standardization" class="help-section card">
+    <h2 class="card-title">Ukwenziwa Kwezithombe Zibe Zinye</h2>
+    <div class="card-body">
+        <h3>Kwenzani</h3>
+        <p>Yenza yonke imedia yemidlalo ibe usayizi oqondiwe ozwakalayo ukuze kube nokubukeka okufanayo kuwo wonke umtapo wakho. Izithombe ezingaphakathi kwe-80&ndash;120% yosayizi oqondiwe ziyaeqiwa.</p>
+
+        <h3>Kusebenza Kanjani</h3>
+        <ul>
+            <li><strong>Upscaling</strong> &mdash; Izithombe ezincane kunosayizi oqondiwe zenziwa zibe zinkulu kusetshenziswa i-Real-ESRGAN x4 (i-AI super-resolution nge-ONNX Runtime) ukuze zikhuliswe ngezinga eliphezulu, bese zenziwa usayizi oqondiwe ngqo</li>
+            <li><strong>Downscaling</strong> &mdash; Izithombe ezinkulu kunosayizi oqondiwe zenziwa zincane kusetshenziswa i-Lanczos filtering ukuze kutholakale imiphumela ebukhali</li>
+            <li><strong>Ibhande lombandela</strong> &mdash; Izithombe ezingaphakathi kwe-80&ndash;120% yoqondiwe zishiywa zingathintwanga ukuze kugwenywe ukucutshungulwa okungadingekile</li>
+        </ul>
+
+        <h3>Osayizi Abaqondiwe</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Uhlobo Lwemedia</th><th>Okuqondiwe</th><th>Indlela</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Boxart</td><td>1080px ubude</td><td>Ububanzi bukala ngokulinganayo</td></tr>
+                <tr><td>3D Boxart</td><td>1080px ubude</td><td>Ububanzi bukala ngokulinganayo (bugcina ukusobala)</td></tr>
+                <tr><td>Screenshots</td><td>1080px ubude</td><td>Ububanzi bukala ngokulinganayo</td></tr>
+                <tr><td>Izilawuli</td><td>1280px unqenqema olude kunawo wonke</td><td>Igcina ukusobala (RGBA)</td></tr>
+                <tr><td>Hardware</td><td>1280px unqenqema olude kunawo wonke</td><td>Igcina ukusobala (RGBA)</td></tr>
+                <tr><td>Fanart</td><td>Iyaeqiwa</td><td>Ayenziwa yinye (ishiywa ngosayizi wayo wangempela)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Indlela Yokusebenzisa</h3>
+        <ol>
+            <li>Iya ku-<strong>Settings &rarr; System &rarr; Maintenance</strong> noma <strong>ROM Tools &rarr; Image Resizer</strong></li>
+            <li>Chofoza <strong>"Start"</strong> ukuqala ukwenziwa kwejwayelekile okuningi</li>
+            <li>Umsebenzi usebenza ngemuva ngenqubekelaphambili ye-toast ebonisa ifayela lamanje nezibalo</li>
+            <li>Izithombe futhi zenziwa zibe zinye ngokuzenzakalelayo ngesikhathi se-scraping (okulandwa okusha kwenziwa kube okujwayelekile ngokushesha)</li>
+        </ol>
+
+        <h3>Ukusekelwa kwe-Hardware</h3>
+        <p>Imodeli ye-Real-ESRGAN ithola ngokuzenzakalelayo i-hardware yakho futhi isebenzisa umhlinzeki ongcono kakhulu otholakalayo:</p>
+        <ul>
+            <li><strong>CUDA</strong> &mdash; Ukusheshisa kwe-GPU ye-NVIDIA</li>
+            <li><strong>ROCm</strong> &mdash; Ukusheshisa kwe-GPU ye-AMD (ngokushintshwa okuzenzakalelayo kwenguqulo ye-gfx ye-RX 6000 series)</li>
+            <li><strong>CoreML</strong> &mdash; Ukusheshisa kwe-Apple Silicon</li>
+            <li><strong>CPU</strong> &mdash; Okuwela kuzo izinhlelo ezingenakho ukusekelwa kwe-GPU</li>
+        </ul>
+        <p>Ifayela lemodeli ye-ONNX lilandwa ngokuzenzakalelayo kusuka ku-Hugging Face ekusetshenzisweni kokuqala futhi ligcinwe endaweni yasekhaya.</p>
+    </div>
+</section>
+
+<!-- Logs -->
+<section id="logs" class="help-section card">
+    <h2 class="card-title">Isibuki-Log</h2>
+    <div class="card-body">
+        <h3>Yenzani</h3>
+        <p>Isibuki esihlangene sawo wonke ama-log ohlelo. Ungakufinyelela nge-<strong>Log Viewer</strong> ku-sidebar.</p>
+
+        <h3>Izigaba Zama-Log</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Isigaba</th><th>Okuqukethwe</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Scraping</strong></td><td>Umsebenzi we-scraper, ama-API call, amaphutha, kanye nemiphumela ngegeyimu ngayinye</td></tr>
+                <tr><td><strong>ROM Tools</strong></td><td>Ukukhipha kwe-archive, ukuguqulwa kwe-CHD, ukutholwa kokuphindaphindwayo, ukususwa kwezithombe eziphindaphindwayo</td></tr>
+                <tr><td><strong>ROM Reports</strong></td><td>Imiphumela yokuqinisekiswa kwamagama</td></tr>
+                <tr><td><strong>Image Resize</strong></td><td>Inqubekela phambili yomsebenzi wokwenza izithombe zifane (upscale/downscale ngefayela ngalinye)</td></tr>
+                <tr><td><strong>System</strong></td><td>Umsebenzi jikelele wohlelo, imisebenzi yokugcina, ukuqala, imisebenzi ye-database</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Izici</h3>
+        <ul>
+            <li>Hlunga ngesigaba noma bona wonke ama-log ndawonye</li>
+            <li>Uhlu lwamafayela lubonisa izinsuku zokudalwa kanye nosayizi wamafayela</li>
+            <li>Chofoza noma iliphi ifayela le-log ukuze ubone okuqukethwe kwalo okuphelele</li>
+            <li>Landa amafayela e-log ngayinye</li>
+            <li>Izibalo zezigaba zibonakala ngaphezulu ukuze ubuke ngokushesha</li>
+            <li>Amazinga e-log angalungiswa ku-Settings &rarr; System &rarr; Logging</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Maintenance -->
+<section id="maintenance" class="help-section card">
+    <h2 class="card-title">Ukugcinwa</h2>
+    <div class="card-body">
+        <p>Imisebenzi yokugcina iyatholakala ku-<strong>Settings &rarr; System &rarr; Maintenance</strong>. Lokhu kusiza ukugcina umtapo wakho uhlanzekile futhi ulungisiwe.</p>
+
+        <h3>Ukuskena Umtapo</h3>
+        <ul>
+            <li><strong>Scan Library</strong> &mdash; Skena izinkomba ze-ROM zakho ufune amageyimu amasha. Ithola izinkomba zezinhlelo kanye nezinhlobo zamafayela ezisekelwayo isebenzisa uhlu lokwelula lwe-ES-DE <code>systeminfo.txt</code>. Iyatholakala futhi ku-Dashboard.</li>
+        </ul>
+
+        <h3>Imisebenzi Yokuhlanza</h3>
+        <ul>
+            <li><strong>Clean Missing ROMs</strong> &mdash; Susa okufakwe ku-database kwamageyimu amafayela ROM awo angasekho kudiski. Kuwusizo ngemva kokuhlela kabusha noma ukususa amafayela ROM.</li>
+            <li><strong>Orphan Media Cleanup</strong> &mdash; Thola futhi ususe amafayela ezithombe akudiski (boxart, izithombe zesikrini, fanart) angenayo inkomba ye-database ehambisanayo. Buka kuqala ngaphambi kokususa ukuze uqinisekise.</li>
+            <li><strong>Clear Scraped Data</strong> &mdash; Susa yonke i-metadata e-scraped emageyimini kodwa ugcine okufakwe kwamafayela ROM. Kuwusizo lapho uqala kabusha nge-scraping. Ukubuka kubonisa amageyimu athintekayo ngaphambi kokusebenza.</li>
+            <li><strong>Clear CLZ Imports</strong> &mdash; Susa wonke amarekhodi e-CLZ Games import (okufakwe kwe-metadata kuphela ngaphandle kwamafayela ROM).</li>
+        </ul>
+
+        <h3>Ukulungiswa Kwe-Database</h3>
+        <ul>
+            <li><strong>Optimize Database</strong> &mdash; Isebenzisa i-SQLite VACUUM kanye ne-ANALYZE ukuze ibuyise isitoreji emarekhodini asusiwe futhi ivuselele izibalo ze-query planner. Kunconywa ngemva kokususa okukhulu noma imisebenzi yokuhlanza.</li>
+        </ul>
+
+        <h3>Ukwenziwa Kwezithombe Zifane Ngobuningi</h3>
+        <p>Yenza zonke izithombe zegeyimu zibe ngosayizi oqondiwe. Bheka i-<a href="#image-standardization">Image Standardization</a> ukuze uthole imininingwane.</p>
+
+        <h3>Ukuphathwa Kweseva</h3>
+        <ul>
+            <li><strong>Restart Server</strong> &mdash; Ukuqala kabusha kohlelo ngokuthula (ukuhlanza nokuphuma). Iyatholakala ku-Settings &rarr; System &rarr; Troubleshooting.</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Multi-User Access -->
+<section id="multi-user" class="help-section card">
+    <h2 class="card-title">Ukufinyelela Kwabasebenzisi Abaningi</h2>
+    <div class="card-body">
+        <h3>Izindima Zomsebenzisi</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Indima</th><th>Ukufinyelela</th><th>Iphasiwedi</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Admin</strong></td><td>Ukufinyelela okugcwele: izilungiselelo, ukuphathwa kwabasebenzisi, ukugcina, zonke izici</td><td>Kuyadingeka</td></tr>
+                <tr><td><strong>Editor</strong></td><td>Angahlela amageyimu, a-scrape, asebenzise ama-ROM tool, aphathe amaqoqo</td><td>Ayikho</td></tr>
+                <tr><td><strong>Viewer</strong></td><td>Ukufunda kuphela: buka umtapo, buka imininingwane, buka ama-achievement/trophy</td><td>Ayikho</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Ukuphatha Abasebenzisi</h3>
+        <ol>
+            <li>Iya ku-<strong>Settings &rarr; Account &rarr; Users</strong> (admin kuphela)</li>
+            <li>Chofoza <strong>"Add User"</strong> ukuze udale i-akhawunti entsha</li>
+            <li>Setha igama lomsebenzisi, igama eliboniswayo, kanye nendima</li>
+            <li>Abasebenzisi be-admin bathola iphasiwedi ezenzakalelayo okumele ishintshwe ekungeneni kokuqala</li>
+        </ol>
+
+        <h3>Ukuqinisekiswa</h3>
+        <p>Ikhasi lokungena libonisa bonke abasebenzisi abasebenzayo. Ama-akhawunti e-admin adinga iphasiwedi; ezinye izindima zimane zichofoze igama lazo ukuze zingene. Ama-session aqhubeka aze aphume.</p>
+
+        <h3>Izilungiselelo Zomsebenzisi Ngamunye</h3>
+        <p>Umsebenzisi ngamunye angalungiselela okwakhe:</p>
+        <ul>
+            <li>Avatar (layisha isithombe sakho)</li>
+            <li>Igama eliboniswayo</li>
+            <li>Ukukhetha i-theme</li>
+            <li>Izinto ekhasini ngalinye</li>
+            <li>I-timezone</li>
+            <li>Indlela ye-RPCS3 trophy</li>
+            <li>Imininingwane ye-RetroAchievements (igama lomsebenzisi + i-API key)</li>
+            <li>Imininingwane ye-PSN (i-NPSSO cookie)</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Backup -->
+<section id="backup" class="help-section card">
+    <h2 class="card-title">Backup & Restore</h2>
+    <div class="card-body">
+        <h3>Ukwenza Ama-Backup</h3>
+        <ol>
+            <li>Iya ku-<strong>Settings &rarr; Library &rarr; Backup</strong></li>
+            <li>Chofoza <strong>"Create Backup"</strong></li>
+            <li>I-backup igcinwa efolderni <code>backups/</code> negama lefayela elinesikhathi</li>
+        </ol>
+
+        <h3>Okwenziwa I-Backup</h3>
+        <p>I-backup ihlanganisa yonke i-SQLite database (<code>roms.db</code>), equkethe yonke i-metadata yegeyimu, ama-akhawunti abasebenzisi, izilungiselelo, idatha ye-trophy, inqubekela phambili ye-achievement, amatag, izinhlu, kanye nezinto ze-wishlist.</p>
+
+        <h3>Okungenziwa I-Backup</h3>
+        <p>Amafayela emithombo yezithombe (boxart, izithombe zesikrini, fanart, amavidiyo, izincwadi) AWAHLANGANISWA e-backup ye-database ngoba angalandwa kabusha nge-scraping. Cabangela ukwenza i-backup yenkomba yakho ye-<code>static/images/</code> ngokuhlukene uma unokulayishwe wena.</p>
+
+        <h3>Ukubuyisela</h3>
+        <ol>
+            <li>Thola i-backup ohlwini lwe-backup</li>
+            <li>Chofoza <strong>"Restore"</strong></li>
+            <li>Qinisekisa isenzo</li>
+        </ol>
+
+        <div class="help-tip">
+            <strong>Isexwayiso:</strong> Ukubuyisela i-backup kubhala phezu kwe-database yakho yamanje. Yenza i-backup entsha ngaphambi kokubuyisela endala!
+        </div>
+    </div>
+</section>
+
+<!-- Updating RetroDB -->
+<section id="updating" class="help-section card">
+    <h2 class="card-title">Ukubuyekeza i-RetroDB</h2>
+    <div class="card-body">
+        <h3>Indlela Yokubuyekeza</h3>
+        <ol>
+            <li>Landa ukukhishwa okusha kwe-RetroDB</li>
+            <li>Yenza i-backup yala mafayela (aqukethe idatha yakho yomuntu siqu):
+                <ul>
+                    <li><code>config.py</code> (izindlela zakho nama-API key)</li>
+                    <li><code>data/settings.json</code> (okukhethayo kwe-UI)</li>
+                    <li><code>data/scraper_settings.json</code> (ukumisa kwakho kwe-scraper)</li>
+                    <li><code>data/rom_tools_config.json</code> (okukhethayo kwama-ROM tool)</li>
+                    <li>Ifolda ye-<code>database/</code> (i-database yomtapo wakho wamageyimu, kanye nama-token akho e-sign-in e-PSN/Xbox agciniwe)</li>
+                </ul>
+            </li>
+            <li>Khipha inguqulo entsha phezu kokufakiwe okukhona</li>
+            <li>Sebenzisa <code>python install.py</code> ukuze ufake noma iziphi izincike ezintsha</li>
+            <li>Qala kabusha iseva</li>
+        </ol>
+
+        <h3>Amafayela Aphephile Ukubhalwa Phezu Kwawo</h3>
+        <p>Wonke amafayela ekhodi yomthombo (<code>.py</code>, <code>.html</code>, <code>.css</code>, <code>.js</code>) angabhalwa phezu kwawo ngokuphepha. Isifaki ngeke sibhale phezu kwamafayela akho e-config omuntu siqu.</p>
+
+        <h3>Amafayela Okumele Uwagcine</h3>
+        <p>Ungalokothi ususe noma ubhale phezu kwe: <code>config.py</code>, <code>database/roms.db</code>, <code>data/settings.json</code>, <code>data/scraper_settings.json</code>, <code>data/rom_tools_config.json</code>.</p>
+
+        <h3>Ukufuduka Kwe-Database</h3>
+        <p>I-RetroDB iphatha ngokuzenzakalelayo izinguquko ze-schema ye-database ekuqaleni. Amakholomu amasha namathebula angezwa lapho kudingeka ngaphandle kokulahleka kwedatha. Awudingi ukwenza okukhethekile &mdash; mane uqale inguqulo entsha bese i-database ivuselelwa ngokuzenzakalelayo.</p>
+    </div>
+</section>
+
+<!-- Troubleshooting -->
+<section id="troubleshooting" class="help-section card">
+    <h2 class="card-title">Ukuxazulula Izinkinga</h2>
+    <div class="card-body">
+        <h3>Izinkinga Ezivamile</h3>
+
+        <h4>"No extensions found for system"</h4>
+        <p>Ifolda yohlelo idinga ifayela le-ES-DE <code>systeminfo.txt</code> elivumelekile elichaza izinhlobo zamafayela ROM ezisekelwayo. Qinisekisa ukuthi isakhiwo senkomba yakho ye-ROM sivumelana namazinga e-ES-DE.</p>
+
+        <h4>"API Connection Failed"</h4>
+        <ul>
+            <li>Hlola uxhumano lwakho lwe-inthanethi</li>
+            <li>Qinisekisa ama-API key ku-Settings &rarr; Scraping &rarr; API Keys</li>
+            <li>Linda uma unqunyelwe (amanye ama-API anemikhawulo yansuku zonke/yamahora)</li>
+            <li>Hlola ukuthi i-scraper ivuliwe (ama-scraper avaliwe abonisa "Disabled" esimweni se-Dashboard)</li>
+            <li>Hlola i-Log Viewer ukuze uthole imilayezo yamaphutha eneminingwane</li>
+        </ul>
+
+        <h4>"Bulk Scrape Stuck"</h4>
+        <p>Iya ku-Settings &rarr; System &rarr; Troubleshooting &rarr; <strong>"Clear Stuck Bulk Scrape"</strong>. Lokhu kusetha kabusha isimo somsebenzi ngaphandle kokuthinta idatha yakho.</p>
+
+        <h4>"RA Sync Queue Stuck"</h4>
+        <p>Susa i-queue ye-RetroAchievements sync ku-Settings &rarr; System &rarr; Troubleshooting.</p>
+
+        <h4>"PSN Sync Stuck"</h4>
+        <p>Susa umsebenzi we-PSN refresh ku-Settings &rarr; System &rarr; Troubleshooting.</p>
+
+        <h4>"Museum Generation Stuck"</h4>
+        <p>Susa umsebenzi we-museum generation ku-Settings &rarr; System &rarr; Troubleshooting.</p>
+
+        <h4>"Database Errors"</h4>
+        <ol>
+            <li>Yenza i-backup uma kungenzeka (Settings &rarr; Library &rarr; Backup)</li>
+            <li>Zama i-Settings &rarr; System &rarr; Maintenance &rarr; <strong>Optimize Database</strong></li>
+            <li>Hlola izimvume zamafayela enkombeni ye-<code>database/</code></li>
+            <li>Isinyathelo sokugcina: buyisela kusuka ku-backup noma ususe i-database bese uskena kabusha</li>
+        </ol>
+
+        <h4>"Images Not Saving"</h4>
+        <p>Hlola izimvume zokubhala ezinkombeni zemithombo yezithombe: <code>chmod -R 755 static/images/</code></p>
+
+        <h4>"Page Slow or Unresponsive"</h4>
+        <ul>
+            <li>Amaqoqo amakhulu angathatha isikhathi ukuze alayishe &mdash; i-infinite scroll ilayisha ngamaqoqo angu-100</li>
+            <li>Zama ukuvuselela ikhasi ukuze ususe inkumbulo eqongelelwe</li>
+            <li>Hlola i-console yesiphequluli ukuthola amaphutha e-JavaScript</li>
+            <li>Zama ukushintshela ku-theme enomthelela we-canvas olula (isb. Amber noma Elite)</li>
+            <li>Imithelela ye-canvas ithola i-hardware ngokuzenzakalelayo; amadivayisi aphansi asebenzisa i-CPU fallback ngezinga eliphansi lezithombe</li>
+        </ul>
+
+        <h4>"Interrupted Jobs" Banner on Dashboard</h4>
+        <p>Uma i-RetroDB iqala kabusha ngenkathi imisebenzi isebenza, ivela kubhaneli lokubuyisela. Chofoza <strong>"Resume"</strong> ngayinye noma <strong>"Resume All"</strong> ukuze uyiqale kabusha. Chofoza <strong>"Dismiss"</strong> noma <strong>"Dismiss All"</strong> ukuze uyisuse.</p>
+
+        <h4>"PSN Authentication Failed"</h4>
+        <ul>
+            <li>Ama-token e-NPSSO ayaphelelwa &mdash; dala elisha ku-<code>ca.account.sony.com/api/v1/ssocookie</code></li>
+            <li>Qinisekisa ukuthi ungenile ku-store.playstation.com ngaphambi kokuvakashela i-URL ye-cookie</li>
+            <li>I-RetroDB igcina i-session yakho ye-PSN cishe izinyanga ezimbili futhi manje iyayivuselela ngokuzenzakalelayo ngasemuva; uma isaphelelwa, mane unamathelise i-NPSSO entsha ku-Settings &rarr; Account &rarr; PSN</li>
+        </ul>
+
+        <h4>"Xbox Authentication Failed"</h4>
+        <ul>
+            <li>Qinisekisa kabusha ngokuchofoza "Sign In" kuthebhu ye-Game Imports &rarr; Xbox</li>
+            <li>Ama-token e-Xbox agcinwa ku-<code>data/xbox_tokens.json</code> futhi avuselelwa ngokuzenzakalelayo</li>
+        </ul>
+
+        <h4>"Image Upscaling Errors"</h4>
+        <ul>
+            <li>Imodeli ye-Real-ESRGAN ONNX ilandwa ekusetshenzisweni kokuqala &mdash; qinisekisa ukufinyelela kwe-inthanethi</li>
+            <li>Ukusheshiswa kwe-GPU kudinga ama-driver ahambisanayo (CUDA ye-NVIDIA, ROCm ye-AMD)</li>
+            <li>Uma i-GPU yehluleka, uhlelo lubuyela ku-CPU processing ngokuzenzakalelayo</li>
+        </ul>
+
+        <h3>Amathiphu Wokusebenza</h3>
+        <ul>
+            <li>Gcina isiphequluli sakho sibuyekeziwe ukuze usebenze kahle kakhulu</li>
+            <li>Vala amanye amathebhu esiphequluli lapho usebenza namaqoqo amakhulu kakhulu</li>
+            <li>Sebenzisa izihlungi zohlelo ukwehlisa amageyimu aboniswa ngasikhathi sinye</li>
+            <li>Sebenzisa i-Optimize Database ngezikhathi ezithile ngemva kwemisebenzi emikhulu (scraping, ukuhlanza, ama-import)</li>
+            <li>Imithelela ye-canvas theme ithola i-hardware ngokuzenzakalelayo; amadivayisi aphansi asebenzisa i-CPU fallback</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Security & Disclaimer -->
+<section id="security" class="help-section card">
+    <h2 class="card-title">Security & Disclaimer</h2>
+    <div class="card-body">
+        <h3>Izindlela Ezinhle Zokuphepha</h3>
+        <ul>
+            <li><strong>Shintsha iphasiwedi ezenzakalelayo</strong> &mdash; Iphasiwedi ye-admin ezenzakalelayo (<code>admin</code>) kufanele ishintshwe ngokushesha ekungeneni kokuqala. Sebenzisa iphasiwedi eqinile enezinhlamvu okungenani ezingu-8.</li>
+            <li><strong>Sebenzisa i-HTTPS reverse proxy</strong> &mdash; I-RetroDB ayihlinzeki nge-TLS/SSL ngokwayo. Yibeke ngemuva kwe-reverse proxy (isb. Nginx, Caddy, Traefik) ne-HTTPS evuliwe ukuze ubethele i-traffic phakathi kwamakhasimende neseva.</li>
+            <li><strong>Khawulela ukufinyelela kwenethiwekhi</strong> &mdash; Gwema ukuveza i-RetroDB ngokuqondile ku-inthanethi yomphakathi. Sebenzisa i-VPN noma khawulela ukufinyelela kunethiwekhi yakho yendawo. Uma ukufinyelela kude kudingeka, sebenzisa i-reverse proxy ene-authentication.</li>
+            <li><strong>Gcina ama-backup njalo</strong> &mdash; Sebenzisa isici se-backup esakhelwe ngaphakathi ku-Settings ukwenza ama-backup e-database ngezikhathi ezithile. Gcina ama-backup endaweni ehlukene nohlelo.</li>
+            <li><strong>Gcina i-RetroDB ibuyekeziwe</strong> &mdash; Bheka ukukhishwa okusha njalo. Ukulungiswa kokuphepha nokuthuthukiswa kufakwe ezibuyekezweni.</li>
+            <li><strong>Vikela ama-API key akho</strong> &mdash; Ama-API key agcinwa ku-<code>data/scraper_settings.json</code>. Qinisekisa ukuthi leli fayela alifinyeleleki ngokuvamile. Ungalokothi wabelane ngo-<code>config.py</code> wakho noma amafayela e-token.</li>
+        </ul>
+
+        <h3>Izici Zokuphepha Ezakhelwe Ngaphakathi</h3>
+        <ul>
+            <li><strong>Uku-hash kwephasiwedi</strong> &mdash; Amaphasiwedi e-admin a-hash-wa nge-PBKDF2 (awagcinwa ngombhalo osobala)</li>
+            <li><strong>Ukukhawulelwa kwezinga lokungena</strong> &mdash; Ukuvikelwa kwe-brute-force endaweni yokungena</li>
+            <li><strong>Ukuqinisekiswa kwendlela</strong> &mdash; Yonke imisebenzi yamafayela isebenzisa izisizi ze-<code>safe_path</code> ne-<code>safe_filename</code> ukuvimbela ukuhlaselwa kwe-directory traversal</li>
+            <li><strong>Ama-parameterized query</strong> &mdash; Yonke ama-query e-database asebenzisa ama-parameterized statement ukuvimbela i-SQL injection</li>
+            <li><strong>Ukuvikelwa kwe-XSS</strong> &mdash; Amabhokisi e-modal asebenzisa ukwakhiwa kwe-DOM okuphephile; okufakwa umsebenzisi kuya-escape-wa</li>
+            <li><strong>Ukuvikelwa kwe-decompression bomb yezithombe</strong> &mdash; Inani eliphezulu lama-pixel ezithombe likhawulelwe ukuvimbela ukuphela kwenkumbulo ngenxa yezithombe ezinobungozi</li>
+        </ul>
+
+        <h3>Isaziso Sokuzichaza</h3>
+        <p>
+            I-RetroDB inikezwa <strong>"NJENGOBA INJALO"</strong>, ngaphandle kwesiqinisekiso saluhlobo, esisobala noma esishiwo,
+            kufaka kodwa kungagcini eziqinisekisweni zokuthengiswa, ukufaneleka kwenjongo ethile,
+            kanye nokungephuli. Kuyona yonke imicimbi ababhali noma abanikazi belungelo lokushicilela ngeke bathwale icala nganoma yisiphi isimangalo,
+            umonakalo, noma omunye umthwalo, kungakhathaliseki ukuthi kusesenzweni sekhontrakthi, ubushiqela, noma ngenye indlela, okuvela,
+            ku-, noma ngokuhambisana ne-software noma ukusebenzisa noma okunye ukusebenzelana ne-software.
+        </p>
+        <p>
+            Unesibopho sedwa sokuvikela ukusetshenziswa kwakho, kufaka ukumiswa kwenethiwekhi,
+            ukulawulwa kokufinyelela, ama-backup edatha, kanye nokuhambisana nanoma yimiphi imithetho esebenzayo mayelana nokuqukethwe
+            okuphatha ngale software. Abathuthukisi abathathi mthwalo waluhlobo ngokufinyelela okungagunyaziwe,
+            ukulahleka kwedatha, noma ukusetshenziswa kabi okuvela ekumisweni noma ekusetshenzisweni okungafanele.
+        </p>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+.help-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin: 0 calc(-1 * var(--spacing-lg));
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(20, 26, 35, 0.98), rgba(15, 20, 25, 0.98));
+    border-bottom: 2px solid var(--primary-cyan);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(76, 201, 240, 0.2);
+}
+
+.help-nav-item {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.help-nav-item:hover {
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+.help-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.help-section h3 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--primary-cyan);
+    margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+}
+
+.help-section h3:first-child {
+    margin-top: 0;
+}
+
+.help-section h4 {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+}
+
+.help-section ol, .help-section ul {
+    padding-left: 1.5rem;
+    margin: var(--spacing-sm) 0;
+}
+
+.help-section li {
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.help-section p {
+    color: var(--text-secondary);
+    margin: var(--spacing-sm) 0;
+    line-height: 1.6;
+}
+
+.help-section pre {
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    overflow-x: auto;
+    margin: var(--spacing-md) 0;
+    line-height: 1.5;
+}
+
+.help-section code {
+    background: var(--bg-lighter);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--primary-cyan);
+}
+
+.help-section a {
+    color: var(--primary-cyan);
+    text-decoration: none;
+}
+
+.help-section a:hover {
+    text-decoration: underline;
+}
+
+.shortcut-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-sm);
+    margin: var(--spacing-md) 0;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border-radius: var(--radius-md);
+}
+
+.shortcut-item kbd {
+    display: inline-block;
+    min-width: 24px;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    text-align: center;
+}
+
+.shortcut-item span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--primary-cyan);
+}
+
+.help-tip {
+    background: rgba(76, 201, 240, 0.1);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    border-left: 4px solid var(--primary-cyan);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    color: var(--text-secondary);
+}
+
+.help-tip strong {
+    color: var(--primary-cyan);
+}
+
+.data-table {
+    width: 100%;
+    margin: var(--spacing-md) 0;
+}
+
+.data-table th,
+.data-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.data-table th {
+    background: var(--bg-medium);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.data-table td {
+    color: var(--text-primary);
+}
+
+.data-table tbody tr:hover {
+    background: rgba(76, 201, 240, 0.05);
+}
+</style>
+{% endblock %}

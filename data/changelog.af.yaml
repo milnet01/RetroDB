@@ -1,0 +1,324 @@
+- version: 3.20.0
+  date: '2026-07-05'
+  tags:
+  - type: feature
+    label: Elf nuwe tale — RetroDB praat nou 21 tale
+  body: |
+    <ul>
+      <li><strong>Elf nuwe taalpakkette.</strong> RetroDB se koppelvlak,
+        vrystellingsnotas en Hulp-handleiding is nou vertaal na
+        <strong>Afrikaans, isiZulu, isiXhosa, Dutch, Norwegian (Bokm&aring;l),
+        Russian, Polish, Turkish, Ukrainian, Indonesian en Hebrew</strong>
+        &mdash; wat aansluit by die bestaande Duits, Spaans, Frans, Italiaans,
+        Japannees, Koreaans, Brasiliaanse Portugees, en Vereenvoudigde &amp;
+        Tradisionele Chinees. Kies joune onder Instellings &rarr; Vertoonvoorkeure
+        &rarr; Taal; die app herlaai in die taal wat jy kies.</li>
+      <li>Elke taal dek die hele app: elke knoppie, etiket en boodskap,
+        die volledige vrystellingsnotas-geskiedenis, en die volledige
+        Hulp-handleiding.</li>
+      <li><strong>isiZulu &amp; isiXhosa</strong> is ook ingesluit. As tale met min
+        bestaande sagteware-woordeskat, behou hulle algemene tegniese terme (ROM,
+        scraper, box art) in Engels waar daar geen natuurlike woord is nie
+        &mdash; 'n moedertaalspreker se proeflees is welkom voordat jy op hulle
+        staatmaak.</li>
+      <li><strong>Hebrew</strong> word gelewer met volledig vertaalde teks;
+        verfynde regs-na-links-bladuitleg (sodat die koppelvlak korrek spieël)
+        kom in 'n latere opdatering. Arabic sal volg sodra daardie uitlegwerk
+        klaar is.</li>
+    </ul>
+- version: 3.19.1
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: Vinniger scraping — 'n speletjie se skermkiekies laai nou terselfdertyd af
+  body: |
+    <ul>
+      <li><strong>Skermkiekies laai nou parallel af.</strong> Deur dieselfde
+        benadering as die gewilde ES-DE-frontend te volg (wat al 'n speletjie se
+        media in een slag gaan haal), laai RetroDB nou 'n speletjie se
+        skermkiekies <strong>gelyktydig</strong> af in plaas van een-vir-een, vir
+        elke bron (TheGamesDB, IGDB, RAWG, ScreenScraper). Speletjies met verskeie
+        skermkiekies is merkbaar vinniger klaar.</li>
+      <li>Die dubbel-skermkiekie-kontrole loop steeds daarna in volgorde, sodat
+        die verwydering van duplikaatprente steeds net so akkuraat is soos
+        voorheen &mdash; slegs die aflaai is vinniger gemaak. Aflaaie word tot
+        vier op 'n slag beperk sodat 'n enkele bron nooit oorlaai word nie.</li>
+      <li>Onder-die-kap-spoedverbetering; tree in werking ná die volgende
+        herbegin.</li>
+    </ul>
+- version: 3.19.0
+  date: '2026-07-05'
+  tags:
+  - type: performance
+    label: Vinniger scraping — bronne word nou terselfdertyd bevra
+  body: |
+    <ul>
+      <li><strong>Scraping is vinniger per speletjie.</strong> Wanneer RetroDB
+        'n speletjie opsoek, gaan dit verskeie databasisse na (ES-DE, TheGamesDB,
+        IGDB, RAWG, ScreenScraper). Voorheen het dit hulle <em>een-vir-een</em>
+        gevra en op elkeen se antwoord gewag voordat die volgende gevra is
+        &mdash; die wagtyd was dus die som van almal s'n. Nou vra dit hulle almal
+        <strong>gelyktydig</strong> en wag net vir die stadigste, wat 'n merkbare
+        spoedverbetering op elke speletjie is. Resultate word steeds presies
+        dieselfde georden en gepunt soos voorheen.</li>
+      <li><strong>Minder onnodige verbindings tydens die aflaai van
+        illustrasies.</strong> Prent-aflaaie hergebruik nou 'n reeds-oop
+        verbinding in plaas daarvan om vir elke enkele prent 'n nuwe een oop te
+        maak, wat tyd bespaar op speletjies met baie skermkiekies.</li>
+      <li>Dit is onder-die-kap-spoedverbeterings &mdash; niks verander aan hoe
+        jy RetroDB gebruik nie, en dit belas die databasisse nie harder nie
+        (dieselfde versoeke, net oorvleuelend uitgevoer). Tree in werking ná die
+        volgende herbegin.</li>
+    </ul>
+- version: 3.18.0
+  date: '2026-07-05'
+  tags:
+  - type: feature
+    label: Chinese (China) ouderdomsgraderings bygevoeg as 'n 9de graderingstelsel
+  body: |
+    <ul>
+      <li><strong>Nuwe ouderdomsgraderingstelsel: China (CADPA).</strong>
+        RetroDB ondersteun nou China se amptelike speletjie-ouderdomsleidraad-
+        skema (&ldquo;网络游戏适龄提示&rdquo;, uitgereik deur CADPA) langs die
+        bestaande agt rade (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC en ClassInd).
+        Dit gebruik drie vlakke &mdash; <strong>8+</strong>, <strong>12+</strong>
+        en <strong>16+</strong> &mdash; vertoon met 'n eenvoudige groen
+        kentekentjie.</li>
+      <li><strong>Dit vul homself in, soos die ander.</strong> Wanneer 'n
+        speletjie reeds 'n gradering van enige ander land het, werk RetroDB die
+        ooreenstemmende China-vlak outomaties uit (en andersom). Jy kan dit ook
+        self kies of verander in 'n speletjie se Wysig-skerm, en dit as jou
+        voorkeur-vertoonstelsel kies onder Instellings &rarr; Biblioteek. Let
+        wel: die meeste Westerse speletjie-databasisse publiseer nie 'n
+        China-gradering nie, dus vir speletjies sonder enige gradering word dit
+        gedurende scraping / AI Fill uit die speletjie se inhoud afgelei.</li>
+      <li>Die groen kentekens is RetroDB se eie eenvoudige kunswerk (wat by die
+        huisstyl van die ander rade pas), nie CADPA se amptelike logo nie, sodat
+        daar geen beeldlisensiëringsbeperkings aan verbonde is nie.</li>
+    </ul>
+- version: 3.17.0
+  date: '2026-07-04'
+  tags:
+  - type: feature
+    label: Maak databasisinskrywings skoon vir media-lêers wat van die skyf ontbreek
+  - type: security
+    label: Beskerm teen die uitwis van jou hele biblioteek se illustrasies wanneer 'n media-vouer verdwyn
+  body: |
+    <ul>
+      <li><strong>Nuwe instandhoudingsnutsding: &ldquo;Ontbrekende
+        Media-verwysings&rdquo;</strong> (Instellings &rarr; Stelsel &rarr;
+        Instandhouding). Dit is die spieëlbeeld van die bestaande
+        &ldquo;Weeskind-media&rdquo;-skoonmaak: in plaas daarvan om oorblywende
+        prentlêers sonder 'n speletjie te vind, vind dit speletjies waarvan die
+        bokskuns, 3D-bokskuns, skermkiekies, fan-kuns, video of handleiding na
+        lêers verwys wat nie meer op die skyf is nie. Deursoek daarvoor, en maak
+        dan daardie verouderde verwysings met een klik skoon sodat scrapers die
+        kuns kan herlaai. Jou speletjie-inskrywings self word nooit aangeraak
+        nie.</li>
+      <li><strong>Veiliger outomatiese skoonmaak tydens scraping.</strong>
+        Wanneer RetroDB 'n speletjie herskraap, maak dit stilweg verwysings na
+        media-lêers wat van die skyf verdwyn het, skoon. Voorheen, as 'n hele
+        media-vouer skielik verdwyn het &mdash; 'n ontkoppelde eksterne skyf, of
+        'n grootskaalse uitvee &mdash; kon daardie skoonmaak die rekord van
+        watter kuns duisende speletjies gehad het, uitwis, wat duur herskrapings
+        genoodsaak het. RetroDB herken nou daardie sein: as 'n media-vouer
+        ontbreek of heeltemal leeg is, behou dit die verwysings en teken 'n
+        waarskuwing aan in plaas daarvan om hulle uit te wis. Die nuwe
+        instandhoudingsnutsding pas dieselfde beskerming toe en dui duidelik
+        enige vouer aan wat dit teruggehou het.</li>
+    </ul>
+- version: 3.16.0
+  date: '2026-07-04'
+  tags:
+  - type: feature
+    label: Nuwe "Vinnige Regstellings"-paneel op die paneelbord
+  body: |
+    <ul>
+      <li><strong>'n Nuwe &ldquo;Vinnige Regstellings&rdquo;-paneel op die
+        Paneelbord</strong> verander verspreide biblioteektake in 'n
+        oogopslag-doenlys. Dit wys hoeveel speletjies nog bokskuns kortkom, en
+        bied eenklik-kortpaaie om duplikaat-ROM's te vind en om stukkende
+        ROM-paaie na te gaan (speletjies waarvan die lêers geskuif of uitgevee
+        is). Elke kortpad skakel reguit na die bladsy wat dit regstel. Die
+        paneel verskyn sodra jy speletjies in jou biblioteek het.</li>
+    </ul>
+- version: 3.15.0
+  date: '2026-07-03'
+  tags:
+  - type: accessibility
+    label: Skermlesers kondig nou taakvordering hardop aan
+  body: |
+    <ul>
+      <li><strong>Langlopende take praat nou hul vordering hardop vir
+        skermlesers.</strong> Terwyl 'n grootskaalse scrape, 'n
+        prestasie-sinchronisasie (RetroAchievements of PlayStation), of 'n
+        prentheraffronting aan die gang is, het skermleser-gebruikers voorheen
+        niks gehoor tussen &ldquo;begin&rdquo; en &ldquo;klaar&rdquo; nie.
+        RetroDB kondig nou gereelde mylpale aan (byvoorbeeld &ldquo;Grootskaalse
+        Scrape: 12 van 40&rdquo;) sowel as 'n gesproke voltooiing &mdash; sonder
+        enige ekstra opspringboodskappe op die skerm. Die aankondigings word so
+        gepaseer dat hulle inlig sonder om te babbel, en hulle volg die taal wat
+        jy gekies het.</li>
+    </ul>
+- version: 3.14.0
+  date: '2026-07-01'
+  tags:
+  - type: feature
+    label: Nuwe tale — Chinees (Vereenvoudig & Tradisioneel) nou beskikbaar
+  body: |
+    <ul>
+      <li><strong>RetroDB is nou beskikbaar in Chinees.</strong> Twee keuses is
+        onder <strong>Instellings &rarr; Stelsel &rarr; Taal</strong>:
+        <strong>中文 (简体)</strong> (Vereenvoudig, vir vasteland-China) en
+        <strong>中文 (繁體)</strong> (Tradisioneel, vir Hongkong en Taiwan). Die
+        hele koppelvlak &mdash; kieslyste, knoppies, boodskappe en die
+        ingeboude Hulp-handleiding &mdash; is vertaal, en enigiets wat nog nie
+        vertaal is nie, val stilweg terug na Engels. Dit bring die aantal
+        ondersteunde tale tot tien (Engels, Duits, Spaans, Frans, Italiaans,
+        Japannees, Brasiliaanse Portugees, Koreaans, en nou Vereenvoudigde
+        &amp; Tradisionele Chinees).</li>
+    </ul>
+- version: 3.12.0
+  date: '2026-06-30'
+  tags:
+  - type: feature
+    label: Nuwe taal — Koreaans (한국어) is nou beskikbaar
+  body: |
+    <ul>
+      <li><strong>RetroDB is nou beskikbaar in Koreaans (한국어).</strong> Kies
+        dit onder Instellings &rarr; Stelsel &rarr; Taal. Die hele koppelvlak
+        &mdash; kieslyste, knoppies, boodskappe en die ingeboude
+        Hulp-handleiding &mdash; is vertaal, wat die aantal ondersteunde tale
+        tot agt bring (Engels, Duits, Spaans, Frans, Italiaans, Japannees,
+        Brasiliaanse Portugees en Koreaans). Koreaans voltooi die dekking vir
+        elke speletjie-ouderdomsgraderingsraad wat RetroDB vertoon, insluitend
+        Suid-Korea se GRAC.</li>
+    </ul>
+- version: 3.11.0
+  date: '2026-06-30'
+  tags:
+  - type: enhancement
+    label: Ondersteun RetroDB op Patreon — nuwe skenkingskakel bygevoeg
+  body: |
+    <ul>
+      <li><strong>Jy kan nou RetroDB op Patreon ondersteun.</strong> 'n
+        Patreon-skakel is nou langs die bestaande &ldquo;Borg op
+        GitHub&rdquo;-knoppie in <strong>Instellings &rarr; Stelsel &rarr;
+        Ondersteun Ontwikkeling</strong>, in die Oor-paneel, en in die projek
+        se README. RetroDB bly heeltemal gratis en oopbron &mdash; skenkings
+        is heeltemal opsioneel en help eenvoudig net om die
+        eenman-ontwikkeling aan die gang te hou.</li>
+    </ul>
+- version: 3.10.0
+  date: '2026-06-26'
+  tags:
+  - type: enhancement
+    label: Veranderingslog laai nou vinniger met 'n "Laai Meer"-knoppie
+  body: |
+    <ul>
+      <li><strong>Die Veranderingslog-bladsy maak nou baie vinniger
+        oop.</strong> In plaas daarvan om die hele vrystellingsgeskiedenis
+        (honderde inskrywings) elke keer te teken wanneer jy dit oopmaak, wys
+        RetroDB nou die mees onlangse 20 en voeg 'n <strong>Laai
+        Meer</strong>-knoppie onderaan by. Klik daarop om die volgende bondel
+        te wys, ensovoorts &mdash; die ouer geskiedenis is steeds almal daar,
+        dit laai net op aanvraag in plaas daarvan om die eerste vertoning te
+        vertraag.</li>
+    </ul>
+- version: 3.9.0
+  date: '2026-06-17'
+  tags:
+  - type: feature
+    label: Hulp-handleiding en onlangse vrystellingsnotas nou vertaal in al 6 tale
+  body: |
+    <ul>
+      <li><strong>Die volledige ingeboude Hulp-handleiding is nou in al ses
+        tale beskikbaar</strong> &mdash; Duits, Frans, Spaans, Italiaans,
+        Japannees en Brasiliaanse Portugees &mdash; nie net Engels nie.
+        RetroDB wys die handleiding in watter taal jy ook al in Instellings
+        gekies het, en val stilweg terug na Engels as iets nog nie vertaal is
+        nie.</li>
+      <li><strong>Hierdie Veranderingslog verskyn nou ook in jou taal</strong>
+        vir die mees onlangse vrystellings, en nuwe vrystellings sal van nou
+        af vertaal word. Ouer geskiedenis bly in Engels.</li>
+      <li><strong>Die Wenslys-bladsy en die laaste oorblyfsels van Engelse
+        teks</strong> &mdash; 'n bondel opspringboodskappe vir foute en status
+        wat gemis is toe die taalpakke die eerste keer in 3.8.0 aangekom het
+        &mdash; vertaal nou behoorlik regoor die app.</li>
+    </ul>
+- version: 3.8.2
+  date: '2026-06-17'
+  tags:
+  - type: security
+    label: Sekuriteits-afhanklikheidopdatering + CI-regstellings
+  body: |
+    <ul>
+      <li><strong>Sekuriteit:</strong> die ingeboude <code>cryptography</code>-
+        biblioteek is opgedateer (47 → 49) om 'n gepubliseerde
+        sekuriteitswaarskuwing (GHSA-537c-gmf6-5ccf) reg te stel. Geen
+        gedragsverandering nie — net 'n veiliger weergawe.</li>
+      <li>Die outomatiese toetspyplyn is reggestel: 'n ontbrekende
+        toets-alleen-hulpmiddel (<code>beautifulsoup4</code>) het die
+        toetslopie sedert v3.7.0 laat misluk, en die nuwe
+        verpakkingsboukript het 'n statiese-ontleding-kontrole ontlok wat 'n
+        bekende vals-positief is (dit voer vertroude boubevele uit, nie
+        gebruikersinvoer nie) &mdash; nou gedokumenteer en gekalibreer. Slegs
+        instandhouding; niks verander in die app self nie.</li>
+    </ul>
+- version: 3.8.1
+  date: '2026-06-17'
+  tags:
+  - type: improvement
+    label: Kleiner aflaai-opsie, skenking-opruiming en vertaalregstelling (Pass
+      46.3 / 47.6)
+  body: |
+    <ul>
+      <li><strong>'n Baie kleiner aflaai is op pad.</strong> Die gebruiksklaar
+        &ldquo;pak net uit en dubbelklik&rdquo;-weergawe van RetroDB kan nou
+        in 'n <strong>slegs-SVE (CPU-only)</strong>-variant (~600&nbsp;MB)
+        gebou word vir mense sonder 'n AMD-grafiese kaart &mdash; ongeveer 'n
+        sesde van die grootte van die volledige weergawe. Albei sal langs
+        mekaar aangebied word sodat jy die een kan kies wat by jou masjien
+        pas.</li>
+      <li><strong>Die &ldquo;Ondersteun Ontwikkeling&rdquo;-paneel in
+        Instellings vertaal nou</strong> saam met die res van die app
+        &mdash; dit is per ongeluk in Engels laat staan toe die taalpakke in
+        3.8.0 aangekom het.</li>
+      <li>Die skenkingskakels is opgeruim (GitHub Sponsors-kenteken in die
+        README; die befondsingslêer is gereed vir Patreon en
+        Buy&nbsp;Me&nbsp;A&nbsp;Coffee sodra dié opgestel is). Nooit lastige
+        opspringskerms nie.</li>
+      <li>Agter die skerms: die vrystellingspyplyn kan nou outomaties die
+        gebruiksklaar weergawes vir Windows, macOS en Linux bou. Let wel: die
+        lang ingeboude <em>Hulp</em>-handleiding is vir eers steeds net in
+        Engels &mdash; dit is aangeteken as toekomstige werk.</li>
+    </ul>
+- version: 3.8.0
+  date: '2026-06-12'
+  tags:
+  - type: feature
+    label: Volledige koppelvlakvertaling + 6 tale (Pass 43.2/43.3/43.5)
+  body: |
+    <ul>
+      <li><strong>RetroDB praat nou 6 meer tale.</strong> Voortbouend op die
+        grondslag van 3.7.0, is die hele koppelvlak vertaalbaar gemaak en
+        masjienvertaal na <strong>Duits, Frans, Spaans, Italiaans, Japannees
+        en Brasiliaanse Portugees</strong>. Kies jou taal onder Instellings
+        &rarr; Vertoonvoorkeure &rarr; Taal; dit volg jou gestoorde voorkeur,
+        dan jou blaaier, en val dan terug na Engels &mdash; dit kan nooit
+        vasval op 'n ontbrekende taal nie.</li>
+      <li><strong>Alles op die skerm word gedek</strong>: bladsyteks en
+        knoppies, opspringboodskappe (die klein &ldquo;toast&rdquo;-
+        kennisgewings), die wysig- en instellings-dialoë, nutswenke, en
+        skermleser-etikette. Speletjiegenres, perspektiewe en speelmodusse
+        (bv. &ldquo;First-Person-Shooter&rdquo;) verskyn nou ook in jou taal
+        &mdash; terwyl die onderliggende data in Engels bly sodat jou
+        biblioteek en filters presies soos voorheen bly werk.</li>
+      <li>'n Ingeboude <strong>&ldquo;Pseudo&rdquo;-taal</strong> (sigbaar in
+        die Taal-kieslys) is 'n vertaler se QA-hulpmiddel wat elke etiket
+        omhaak en aksentueer, wat dit onmiddellik duidelik maak of enige teks
+        gemis is.</li>
+      <li>Masjienvertalings is 'n beginpunt en kan hier en daar 'n bietjie
+        stroef lees &mdash; hulle is maklik om oor tyd te verfyn, en enige
+        teks sonder 'n vertaling verskyn eenvoudig in Engels.</li>
+    </ul>

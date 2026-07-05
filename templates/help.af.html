@@ -1,0 +1,2006 @@
+{% extends "base.html" %}
+
+{% block title %}Help - RetroDB{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ _('Help & Documentation') }}</h1>
+        <p class="page-subtitle">{% trans version=config.APP_VERSION %}Complete guide to RetroDB v{{ version }}{% endtrans %}</p>
+    </div>
+</div>
+
+<!-- Help Navigation -->
+<div class="help-nav" data-sticky-nav>
+    <a href="#installation" class="help-nav-item">Installasie</a>
+    <a href="#getting-started" class="help-nav-item">Aan die Gang</a>
+    <a href="#platform-notes" class="help-nav-item">Platformnotas</a>
+    <a href="#navigation" class="help-nav-item">Navigasie</a>
+    <a href="#keyboard-shortcuts" class="help-nav-item">Sleutelbordkortpaaie</a>
+    <a href="#themes" class="help-nav-item">Temas</a>
+    <a href="#dashboard" class="help-nav-item">Kontrolebord</a>
+    <a href="#systems" class="help-nav-item">Stelsels</a>
+    <a href="#api-keys" class="help-nav-item">API-sleutels</a>
+    <a href="#settings" class="help-nav-item">Instellings</a>
+    <a href="#scraping" class="help-nav-item">Ontginning</a>
+    <a href="#bulk-scrape" class="help-nav-item">Grootmaat-ontginning</a>
+    <a href="#ai-fill" class="help-nav-item">KI-invul</a>
+    <a href="#filtering" class="help-nav-item">Filtrering</a>
+    <a href="#game-detail" class="help-nav-item">Speletjie-besonderhede</a>
+    <a href="#bulk-edit" class="help-nav-item">Grootmaat-redigering</a>
+    <a href="#compare" class="help-nav-item">Vergelyk</a>
+    <a href="#collections" class="help-nav-item">Versamelings</a>
+    <a href="#game-imports" class="help-nav-item">Speletjie-invoere</a>
+    <a href="#retroachievements" class="help-nav-item">RetroAchievements</a>
+    <a href="#steam-achievements" class="help-nav-item">Steam</a>
+    <a href="#xbox-achievements" class="help-nav-item">Xbox</a>
+    <a href="#hltb" class="help-nav-item">HLTB</a>
+    <a href="#trophies" class="help-nav-item">Trofeë</a>
+    <a href="#collector-trophies" class="help-nav-item">Versamelaar-trofeë</a>
+    <a href="#museum" class="help-nav-item">Museum</a>
+    <a href="#analytics" class="help-nav-item">Analise</a>
+    <a href="#reports" class="help-nav-item">Verslae</a>
+    <a href="#rom-tools" class="help-nav-item">ROM-nutsgoed</a>
+    <a href="#normalization" class="help-nav-item">Normalisering</a>
+    <a href="#image-standardization" class="help-nav-item">Beeldgrootte</a>
+    <a href="#logs" class="help-nav-item">Logboeke</a>
+    <a href="#maintenance" class="help-nav-item">Onderhoud</a>
+    <a href="#multi-user" class="help-nav-item">Multi-gebruiker</a>
+    <a href="#backup" class="help-nav-item">Rugsteun</a>
+    <a href="#updating" class="help-nav-item">Opdatering</a>
+    <a href="#troubleshooting" class="help-nav-item">Probleemoplossing</a>
+    <a href="#security" class="help-nav-item">Sekuriteit</a>
+</div>
+
+<!-- Installation -->
+<section id="installation" class="help-section card">
+    <h2 class="card-title">Installasie</h2>
+    <div class="card-body">
+        <h3>Stelselvereistes</h3>
+        <ul>
+            <li><strong>Python 3.8+</strong> met pip</li>
+            <li><strong>Webblaaier</strong> (Chrome, Firefox, Safari, Edge)</li>
+            <li><strong>Bedryfstelsel:</strong> Linux, Windows 10/11, of macOS</li>
+        </ul>
+
+        <h3>Vinnige Installasie</h3>
+        <ol>
+            <li>Pak die RetroDB-ZIP uit na 'n gids van jou keuse</li>
+            <li>Maak 'n terminaal/opdragvenster oop in daardie gids</li>
+            <li>Voer uit: <code>python install.py</code></li>
+            <li>Begin die bediener:
+                <ul>
+                    <li>Linux: <code>./start.sh</code></li>
+                    <li>Windows: dubbelklik <code>start.bat</code></li>
+                    <li>macOS: dubbelklik <code>start.command</code></li>
+                </ul>
+            </li>
+            <li>Maak <code>http://localhost:5000</code> in jou blaaier oop</li>
+        </ol>
+
+        <h3>Grafiese Installeerder</h3>
+        <p>Op Linux kan jy ook <code>./setup.sh</code> uitvoer om 'n grafiese installasie-assistent te begin. Dit gaan outomaties na of Python/pip/tkinter beskikbaar is, en lei jou dan deur elke opstelstap met 'n visuele vorderingslog.</p>
+
+        <h3>Wat install.py Doen</h3>
+        <ul>
+            <li>Verifieer dat Python 3.8+ en pip beskikbaar is</li>
+            <li>Installeer Python-afhanklikhede vanaf <code>requirements.txt</code></li>
+            <li>Skep <code>config.py</code> vanaf die voorbeeldsjabloon</li>
+            <li>Skep die nodige gidse (databasis-, log- en mediagidse)</li>
+            <li>Bou die CSS- en JS-bundels</li>
+        </ul>
+
+        <h3>Omgewingsveranderlike-oorskrywings</h3>
+        <p>Die volgende omgewingsveranderlikes kan verstekinstellings oorskryf sonder om konfigurasielêers te wysig:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>Veranderlike</th><th>Verstek</th><th>Beskrywing</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>RETRODB_DB_PATH</code></td><td><code>database/roms.db</code></td><td>Lêerpad van die databasis</td></tr>
+                <tr><td><code>RETRODB_HOST</code></td><td><code>0.0.0.0</code></td><td>Bediener-bindadres</td></tr>
+                <tr><td><code>RETRODB_PORT</code></td><td><code>5000</code></td><td>Bedienerpoort</td></tr>
+                <tr><td><code>RETRODB_DEBUG</code></td><td><code>false</code></td><td>Ontfoutmodus (<code>true</code> of <code>false</code>) &mdash; skakel die interaktiewe Werkzeug-ontfouter aan. Hou dit op <code>false</code> vir enige installasie wat vanaf ander toestelle op jou netwerk bereikbaar is.</td></tr>
+                <tr><td><code>RETRODB_SECRET_KEY</code></td><td>Outomaties gegenereer</td><td>Flask-geheime sleutel</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Getting Started -->
+<section id="getting-started" class="help-section card">
+    <h2 class="card-title">Aan die Gang</h2>
+    <div class="card-body">
+        <h3>Eerste-keer-opstelling</h3>
+        <p>Met die eerste bekendstelling wys RetroDB 'n <strong>Opstel-assistent</strong> wat jou deur die volgende lei:</p>
+        <ol>
+            <li><strong>Admin-rekening</strong> &mdash; Skep jou gebruikersnaam en wagwoord</li>
+            <li><strong>Biblioteekpad</strong> &mdash; Stel jou ROM-gids in</li>
+            <li><strong>ES-DE-integrasie</strong> &mdash; Skakel opsioneel ES-DE-speletjielyste en -media in</li>
+            <li><strong>API-sleutels</strong> &mdash; Voeg opsioneel ontginner-API-sleutels by</li>
+        </ol>
+        <p>Nadat jy die assistent voltooi het, klik op <strong>"Skandeer Biblioteek"</strong> op die Kontrolebord om jou ROM's op te spoor.</p>
+
+        <h3>Vinnige-begin-werkvloei</h3>
+        <ol>
+            <li><strong>Skandeer</strong> jou biblioteek om ROM's in te voer</li>
+            <li><strong>Blaai</strong> volgens stelsel of bekyk alle speletjies in Biblioteek</li>
+            <li><strong>Ontgin</strong> metadata individueel of gebruik grootmaat-ontginning</li>
+            <li><strong>Organiseer</strong> met etikette, lyste en 'n verlanglys</li>
+            <li><strong>Volg</strong> jou vordering met voltooiingstatus en prestasies</li>
+        </ol>
+
+        <h3>ROM-biblioteekstruktuur</h3>
+        <p>RetroDB verwag dat jou ROM's in stelselgidse binne jou biblioteekpad georganiseer word:</p>
+        <pre>ROM Library/
+  nes/
+    Super Mario Bros. (USA).nes
+  snes/
+    Chrono Trigger (USA).sfc
+  psx/
+    Final Fantasy VII (USA)/
+      Final Fantasy VII (USA) (Disc 1).chd
+      Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>Elke stelselgids moet 'n ES-DE <code>systeminfo.txt</code>-lêer bevat wat die ondersteunde lêeruitbreidings bepaal. RetroDB lees dit tydens skandering om te bepaal watter lêers geldige ROM's vir elke stelsel is.</p>
+
+        <div class="help-tip">
+            <strong>Wenk:</strong> As jy reeds met ES-DE ontgin het, kan RetroDB daardie data invoer!
+            Stel ES-DE-paaie in by Instellings &rarr; ES-DE-integrasie, of tydens die opstel-assistent.
+        </div>
+    </div>
+</section>
+
+<!-- Platform Notes -->
+<section id="platform-notes" class="help-section card">
+    <h2 class="card-title">Platformnotas</h2>
+    <div class="card-body">
+        <h3>Linux</h3>
+        <ul>
+            <li>Getoets op Ubuntu, Fedora, openSUSE en Arch Linux</li>
+            <li>ROM-nutsgoed vereis: <code>sudo apt install p7zip-full unrar mame-tools</code> (Debian/Ubuntu) of die ekwivalent vir jou verspreiding</li>
+            <li>As jy stelsel-Python gebruik, hanteer die installeerder <code>--break-system-packages</code> outomaties</li>
+            <li>ROCm GPU-versnelling word ondersteun vir AMD-GPU's (Real-ESRGAN-beeldopskalering)</li>
+        </ul>
+
+        <h3>Windows</h3>
+        <ul>
+            <li>Laai Python af vanaf <a href="https://python.org" target="_blank" rel="noopener noreferrer">python.org</a> (merk "Add to PATH" tydens installasie)</li>
+            <li>ROM-nutsgoed: Installeer <a href="https://www.7-zip.org/" target="_blank" rel="noopener noreferrer">7-Zip</a>, <a href="https://www.win-rar.com/" target="_blank" rel="noopener noreferrer">WinRAR</a>, en <a href="https://www.mamedev.org/" target="_blank" rel="noopener noreferrer">MAME</a> (vir chdman)</li>
+            <li>Gebruik <code>start.bat</code> om te begin, of voer <code>python app.py</code> vanaf Command Prompt uit</li>
+        </ul>
+
+        <h3>macOS</h3>
+        <ul>
+            <li>Python 3 kan via <a href="https://brew.sh/" target="_blank" rel="noopener noreferrer">Homebrew</a> geïnstalleer word: <code>brew install python3</code></li>
+            <li>ROM-nutsgoed: <code>brew install p7zip unrar rom-tools</code></li>
+            <li>Dubbelklik <code>start.command</code> in Finder om te begin</li>
+            <li>CoreML-versnelling word ondersteun vir Apple Silicon (Real-ESRGAN-beeldopskalering)</li>
+        </ul>
+
+        <h3>ROM-nutsgoedvereistes volgens Funksie</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Funksie</th><th>Nodige Nutsprogram</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ZIP-uitpak</td><td>unzip (gewoonlik reeds geïnstalleer)</td></tr>
+                <tr><td>7z-argiefondersteuning</td><td>7z (p7zip-full)</td></tr>
+                <tr><td>RAR-argiefondersteuning</td><td>unrar</td></tr>
+                <tr><td>CHD-omskakeling/-verifikasie</td><td>chdman (mame-tools)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Navigation -->
+<section id="navigation" class="help-section card">
+    <h2 class="card-title">Navigasie</h2>
+    <div class="card-body">
+        <h3>Kantbalk-afdelings</h3>
+
+        <h4>Hoof</h4>
+        <ul>
+            <li><strong>Kontrolebord</strong> &mdash; Versamelinggesondheidstelling, statistiekoorsig, API-status, onlangs gespeelde/bygevoegde/ontginde speletjies, taakherstel</li>
+            <li><strong>Stelsels</strong> &mdash; Blaai deur platforms met speletjietellings, stelselbeelde, spesifikasies, filtrering volgens tipe en funksies</li>
+            <li><strong>Biblioteek</strong> &mdash; Alle speletjies met oneindige rol, gevorderde filtrering (insluit/uitsluit), soek en sortering</li>
+            <li><strong>Analise</strong> &mdash; Grafieke en versamelingstatistieke oor 12 oortjies met uitvoeropsies</li>
+        </ul>
+
+        <h4>Trofeë & Prestasies</h4>
+        <ul>
+            <li><strong>RPCS3-trofeë</strong> &mdash; Plaaslik verdiende PS3-trofeë vanaf die RPCS3-emulator</li>
+            <li><strong>PSN-trofeë</strong> &mdash; PlayStation Network-trofeësinkronisasie via die PSN-API</li>
+            <li><strong>Prestasies</strong> &mdash; RetroAchievements-vorderingsopsporing per stelsel</li>
+            <li><strong>Steam-prestasies</strong> &mdash; Steam-prestasie-opsporing met besonderhede per speletjie</li>
+            <li><strong>Xbox-prestasies</strong> &mdash; Xbox-prestasie- en gamerscore-opsporing</li>
+        </ul>
+
+        <h4>My Versameling</h4>
+        <ul>
+            <li><strong>Etikette</strong> &mdash; Pasgemaakte, kleurgekodeerde speletjie-etikette</li>
+            <li><strong>Lyste</strong> &mdash; Benoemde, saamgestelde speletjielyste met sleep-en-los-volgorde</li>
+            <li><strong>Verlanglys</strong> &mdash; Volg speletjies wat jy wil bekom, met prioriteitsvlakke</li>
+            <li><strong>Versamelaar-trofeë</strong> &mdash; Speletjie-agtige mylpale vir jou versameling</li>
+        </ul>
+
+        <h4>Nutsgoed</h4>
+        <ul>
+            <li><strong>ROM-verslae</strong> &mdash; ROM-naamgewingsvalidering en standaardnakoming</li>
+            <li><strong>Speletjie-invoere</strong> &mdash; Voer in vanaf CLZ, Steam, Xbox en PSN</li>
+            <li><strong>ROM-nutsgoed</strong> &mdash; Argiefskandeerder, CHD-omskakelaar/-verifieerder, duplikaatvinder, multi-skyf-organiseerder, skermkiekie-ontdubbeling, beeld-hergrootte-maker</li>
+        </ul>
+
+        <h4>Konfigurasie</h4>
+        <ul>
+            <li><strong>Instellings</strong> &mdash; Alle toepassingskonfigurasie (6 oortjies met verskeie subafdelings)</li>
+            <li><strong>Logboekbekyker</strong> &mdash; Blaai deur toepassingslogboeke oor alle kategorieë</li>
+        </ul>
+
+        <h4>Inligting</h4>
+        <ul>
+            <li><strong>Museum</strong> &mdash; Interaktiewe speletjie-stelsel-ensiklopedie met KI-gegenereerde inhoud</li>
+            <li><strong>Hulp</strong> &mdash; Hierdie dokumentasiebladsy</li>
+            <li><strong>Wysigingslog</strong> &mdash; Weergawegeskiedenis</li>
+        </ul>
+
+        <h3>Kantbalk-verligting</h3>
+        <p>Die kantbalk verlig die huidige afdeling in sian. Konteks word behou wanneer jy dieper delf &mdash; om 'n stelsel se speletjies te bekyk hou <strong>Stelsels</strong> verlig, om 'n speletjie vanaf Prestasies te bekyk hou <strong>Prestasies</strong> verlig, ens.</p>
+
+        <h3>Broodkrummels</h3>
+        <p>Broodkrummels bo-aan elke bladsy wys jou navigasiepad. Voorbeelde:</p>
+        <ul>
+            <li><code>Systems &rsaquo; NES &rsaquo; Super Mario Bros.</code></li>
+            <li><code>RetroAchievements &rsaquo; SNES</code></li>
+            <li><code>PSN Trophies &rsaquo; The Last of Us</code></li>
+        </ul>
+
+        <h3>Oortjies</h3>
+        <p>Baie bladsye gebruik oortjies vir organisasie (Instellings, Analise, Verslae, ROM-nutsgoed, Prestasies). Oortjies rek om die inhoudsbreedte te vul en onthou jou laaste keuse waar van toepassing.</p>
+    </div>
+</section>
+
+<!-- Keyboard Shortcuts -->
+<section id="keyboard-shortcuts" class="help-section card">
+    <h2 class="card-title">Sleutelbordkortpaaie</h2>
+    <div class="card-body">
+        <p>Druk <kbd>?</kbd> enige plek om alle kortpaaie te wys. 'n Aanhangige-sleutel-aanwyser verskyn wanneer daar op die tweede sleutel in 'n reeks gewag word (bv. <code>g...</code>).</p>
+
+        <h3>Navigasie (druk G, dan 'n letter)</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>d</kbd> <span>Kontrolebord</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>s</kbd> <span>Stelsels</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>l</kbd> <span>Biblioteek</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>a</kbd> <span>Analise</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>t</kbd> <span>Instellings</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>h</kbd> <span>Hulp</span></div>
+        </div>
+
+        <h3>Aksies</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>/</kbd> <span>Fokus soek</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Maak modaalvenster toe</span></div>
+            <div class="shortcut-item"><kbd>?</kbd> <span>Wys kortpaaie</span></div>
+        </div>
+
+        <h3>Speletjiebladsye</h3>
+        <div class="shortcut-grid">
+            <div class="shortcut-item"><kbd>e</kbd> <span>Redigeer speletjie</span></div>
+            <div class="shortcut-item"><kbd>s</kbd> <span>Ontgin speletjie</span></div>
+            <div class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> <span>Blaai deur skermkiekies</span></div>
+        </div>
+
+        <div class="help-tip">
+            <strong>Nota:</strong> Sleutelbordkortpaaie word gedeaktiveer wanneer 'n teksinvoer, teksarea, of modaalvenster gefokus is, om toevallige navigasie te vermy.
+        </div>
+    </div>
+</section>
+
+<!-- Themes -->
+<section id="themes" class="help-section card">
+    <h2 class="card-title">Temas</h2>
+    <div class="card-body">
+        <p>RetroDB bied 7 visuele temas, elk met 'n unieke kleurpalet en geanimeerde doekagtergrond-effek. Verander temas by <strong>Instellings &rarr; Biblioteek &rarr; Vertoning</strong>.</p>
+
+        <h3>Beskikbare Temas</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Tema</th><th>Kleure</th><th>Agtergrondeffek</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Cyberpunk</strong> (verstek)</td><td>Sian &amp; magenta op donkerblou</td><td>Volumetriese rook/mis met simplex-geraas</td></tr>
+                <tr><td><strong>Matrix</strong></td><td>Groen op swart</td><td>Vallende digitale reën (kanji-karakters)</td></tr>
+                <tr><td><strong>Amber</strong></td><td>Amber/oranje op donkerbruin</td><td>CRT-sonopkoms-gradiënt met sonkoroon</td></tr>
+                <tr><td><strong>Ocean</strong></td><td>Blougroen &amp; blou op donker vlootblou</td><td>Maanrefleksie met oseaandiepte-lae</td></tr>
+                <tr><td><strong>Cathedral</strong></td><td>Goud &amp; koningspers op dieppers</td><td>Goddelike ligstrale van bo met warm sfeer</td></tr>
+                <tr><td><strong>Blade Runner</strong></td><td>Elektriese blou &amp; neonpienk op donker blougrys</td><td>Neonstadgloed met reënstrepe en pers newel</td></tr>
+                <tr><td><strong>Elite</strong></td><td>Vektorgroen &amp; wit op suiwer swart</td><td>Draadraam-vektor-estetika geïnspireer deur Elite (1984)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Hoe Dit Werk</h3>
+        <ul>
+            <li>Temas oorskryf CSS-kleurveranderlikes &mdash; alle koppelvlak-elemente pas outomaties aan</li>
+            <li>Doek-effekte sluit outomatiese hardeware-vlak-opsporing in (hoog/medium/laag) met GPU-versnelling waar beskikbaar en 'n CPU-terugvalopsie vir laer-end toestelle</li>
+            <li>Effekte word onderbreek wanneer die oortjie nie sigbaar is nie, om hulpbronne te bespaar</li>
+            <li>Die Cyberpunk-rook-toestand bly behoue oor bladsynavigasie heen vir naatlose oorgange</li>
+            <li>'n Subtiele CRT-styl-skanlyn-oorlegsel pas by elke tema se kleurpalet aan</li>
+            <li>Jou temavoorkeur word in die blaaier gestoor en bly behoue oor sessies heen</li>
+        </ul>
+
+        <h3>Temabewuste Ikone</h3>
+        <p>Kennisgewing-ikone, taakstatus-aanwysers en aksie-ikone pas outomaties by die huidige tema aan. Byvoorbeeld, die suksesikoon mag 'n groen regmerkie op Cyberpunk wys, maar 'n ander simbool op Matrix om by die groen-op-swart-estetika te pas.</p>
+    </div>
+</section>
+
+<!-- Dashboard -->
+<section id="dashboard" class="help-section card">
+    <h2 class="card-title">Kontrolebord</h2>
+    <div class="card-body">
+        <h3>Versamelinggesondheidstelling</h3>
+        <p>'n Sirkelvormige vorderingsring wys jou algehele versamelinggesondheid as 'n persentasie, kleurgekodeer volgens gehalte:</p>
+        <ul>
+            <li><strong>Groen</strong> (80%+) &mdash; Uitstekende metadata-dekking</li>
+            <li><strong>Sian</strong> (60&ndash;79%) &mdash; Goeie dekking met sommige gapings</li>
+            <li><strong>Oranje</strong> (40&ndash;59%) &mdash; Matige dekking, oorweeg grootmaat-ontginning</li>
+            <li><strong>Rooi</strong> (&lt;40%) &mdash; Beduidende metadata-gapings</li>
+        </ul>
+        <p>Uiteensetting-mini-ringe hieronder wys boekskyf-volledigheid, beskrywing-volledigheid en prestasie-dekking.</p>
+
+        <h3>Statistiekoorsig</h3>
+        <p>Oorsigkaarte wat die volgende wys:</p>
+        <ul>
+            <li><strong>Totale Stelsels</strong> &mdash; Aantal platforms in jou biblioteek</li>
+            <li><strong>Totale Speletjies</strong> &mdash; Totale speletjietelling (bonus-skywe uitgesluit)</li>
+            <li><strong>Ontbrekende Metadata</strong> &mdash; Speletjies wat nog nie ontgin is nie</li>
+            <li><strong>Volledig</strong> &mdash; Speletjies met ontginde metadata</li>
+        </ul>
+
+        <h3>Onlangse Aktiwiteit-afdelings</h3>
+        <p>Rolbare afdelings wat jou onlangse aktiwiteit wys (elkeen verskyn slegs wanneer daar relevante speletjies is):</p>
+        <ul>
+            <li><strong>Tans Besig Om Te Speel</strong> &mdash; Speletjies gemerk as "In Uitvoering"</li>
+            <li><strong>Onlangs Bygevoeg</strong> &mdash; Nuutste speletjies by jou biblioteek gevoeg</li>
+            <li><strong>Onlangs Bekyk</strong> &mdash; Speletjies wat jy onlangs oopgemaak het</li>
+            <li><strong>Onlangs Ontgin</strong> &mdash; Speletjies met onlangs opgehaalde metadata</li>
+        </ul>
+
+        <h3>Vinnige Aksies</h3>
+        <ul>
+            <li><strong>Skandeer Biblioteek</strong> &mdash; Skandeer jou ROM-gidse vir nuwe speletjies</li>
+            <li><strong>Ewekansige Speletjie</strong> &mdash; Kies 'n ewekansige speletjie uit jou biblioteek</li>
+        </ul>
+
+        <h3>API-status</h3>
+        <p>Wys die verbindingstatus van alle gekonfigureerde ontginners en API's. API's wat vanlyn of verkeerd gekonfigureer is, wys 'n waarskuwingsbanier met 'n skakel na Instellings.</p>
+
+        <h3>Taakherstel</h3>
+        <p>As RetroDB herbegin terwyl agtergrondtake loop (grootmaat-ontginning, RA-sinkronisasie, beeld-hergrootte, ens.), verskyn onderbroke take in 'n herstelbanier. Opsies:</p>
+        <ul>
+            <li><strong>Hervat</strong> &mdash; Herbegin 'n individuele onderbroke taak</li>
+            <li><strong>Hervat Almal</strong> &mdash; Herbegin alle onderbroke take</li>
+            <li><strong>Verwerp</strong> &mdash; Verwyder 'n individuele taak uit die herstellys</li>
+            <li><strong>Verwerp Almal</strong> &mdash; Verwyder alle onderbroke take</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Systems Browser -->
+<section id="systems" class="help-section card">
+    <h2 class="card-title">Stelselblaaier</h2>
+    <div class="card-body">
+        <h3>Stelselrooster</h3>
+        <p>Die Stelsels-bladsy wys alle platforms in jou biblioteek as kaarte in 'n responsiewe messelwerk-roosteruitleg. Elke kaart wys:</p>
+        <ul>
+            <li><strong>Stelsellogo</strong> (aanpasbaar by Instellings &rarr; Aanpassing &rarr; Logo's)</li>
+            <li><strong>ROM-telling</strong> en <strong>onontginde telling</strong></li>
+            <li><strong>Stelseltipe-kenteken</strong> &mdash; Konsole, Handstelsel, Rekenaar, Arcade, of Enjin</li>
+            <li><strong>Funksie-kentekens</strong> &mdash; RetroAchievements-ondersteuning, Plaaslike Trofeë (RPCS3)</li>
+        </ul>
+
+        <h3>Stelselspesifikasie-modaalvenster</h3>
+        <p>Klik die inligtingsknoppie op enige stelselkaart om gedetailleerde hardeware-spesifikasies te bekyk:</p>
+        <ul>
+            <li>Hardewarebeeld (konsole/stelselfoto)</li>
+            <li>Vervaardiger en vrystellingsdatum</li>
+            <li>CPU, GPU, RAM, VRAM</li>
+            <li>Resolusie, kleurdiepte, klankskyfie</li>
+            <li>Mediatipe (kasset, skyf, ens.)</li>
+        </ul>
+
+        <h3>Filtrering & Soek</h3>
+        <ul>
+            <li><strong>Teksoek</strong> &mdash; Filtreer volgens stelselnaam of gidsnaam</li>
+            <li><strong>Tipe-filter</strong> &mdash; Konsole, Handstelsel, Rekenaar, Arcade, Enjin</li>
+            <li><strong>Funksie-filter</strong> &mdash; RetroAchievements-ondersteuning, Plaaslike Trofeë</li>
+            <li>Filterresultaat-balk wys <em>"X van Y stelsels"</em></li>
+            <li>Filters bly behoue oor bladsyherlaaie heen via sessie-berging</li>
+        </ul>
+
+        <h3>Speletjielys per Stelsel</h3>
+        <p>Klik enige stelselkaart om sy speletjies te bekyk. Die speletjielys per stelsel het dieselfde funksies as die volle Biblioteek-bladsy &mdash; oneindige rol, soek, alle filteropsies, grootmaatkeuse en sortering. 'n Stelselkopstuk wys die stelselnaam, speletjietelling en stelseltipe-kenteken.</p>
+    </div>
+</section>
+
+<!-- API Key Setup Guide -->
+<section id="api-keys" class="help-section card">
+    <h2 class="card-title">API-sleutel-opstelgids</h2>
+    <div class="card-body">
+        <p>API-sleutels is opsioneel, maar skakel ryk metadata-ontginning en bykomende funksies in. Stel hulle op by <strong>Instellings &rarr; Ontginning &rarr; API-sleutels</strong>.</p>
+
+        <h3>Metadata-ontginners</h3>
+
+        <h4>TheGamesDB</h4>
+        <ol>
+            <li>Gaan na <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a></li>
+            <li>Versoek API-sleutels (gratis, met hande goedgekeur) &mdash; jy sal 'n <strong>Publieke</strong> en <strong>Private</strong> sleutel ontvang</li>
+            <li>Voer albei sleutels in by Instellings &rarr; API-sleutels &rarr; TheGamesDB</li>
+            <li>Die <strong>Publieke sleutel</strong> (tempolimiet per IP) word as die primêre sleutel vir ontginning gebruik</li>
+            <li>Die <strong>Private sleutel</strong> ('n gedeelde maandelikse pool) word as terugval gebruik as die publieke sleutel misluk</li>
+        </ol>
+
+        <h4>IGDB (via Twitch)</h4>
+        <ol>
+            <li>Skep 'n Twitch-rekening by <a href="https://www.twitch.tv" target="_blank" rel="noopener noreferrer">twitch.tv</a></li>
+            <li>Gaan na <a href="https://dev.twitch.tv/console" target="_blank" rel="noopener noreferrer">dev.twitch.tv/console</a></li>
+            <li>Registreer 'n nuwe toepassing (enige naam, enige kategorie, <code>http://localhost</code> as OAuth-herleiding)</li>
+            <li>Kopieer die <strong>Kliënt-ID</strong> en genereer 'n <strong>Kliëntgeheim</strong></li>
+            <li>Voer albei in by Instellings &rarr; API-sleutels &rarr; IGDB</li>
+        </ol>
+
+        <h4>RAWG.io</h4>
+        <ol>
+            <li>Gaan na <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer">rawg.io/apidocs</a></li>
+            <li>Klik "Get API Key" en skep 'n rekening</li>
+            <li>Kopieer jou API-sleutel vanaf die kontrolebord</li>
+            <li>Voer dit in by Instellings &rarr; API-sleutels &rarr; RAWG</li>
+        </ol>
+        <p><em>Gratis vlak: 20 000 versoeke/maand</em></p>
+
+        <h4>ScreenScraper</h4>
+        <ol>
+            <li>Skep 'n rekening by <a href="https://www.screenscraper.fr" target="_blank" rel="noopener noreferrer">screenscraper.fr</a></li>
+            <li>Voer jou gebruikersnaam en wagwoord in by Instellings &rarr; API-sleutels &rarr; ScreenScraper</li>
+        </ol>
+        <p><em>Let wel: ScreenScraper het daaglikse versoeklimiete gebaseer op jou rekeningvlak. Om by te dra tot die databasis verhoog jou limiete.</em></p>
+
+        <h3>Prestasies & Trofeë</h3>
+
+        <h4>RetroAchievements</h4>
+        <ol>
+            <li>Skep 'n rekening by <a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a></li>
+            <li>Gaan na <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer">Settings &rarr; API Keys</a> op jou profiel</li>
+            <li>Kopieer jou API-sleutel</li>
+            <li>Voer jou gebruikersnaam en API-sleutel in by Instellings &rarr; Rekening &rarr; RetroAchievements</li>
+        </ol>
+
+        <h4>Steam Web API</h4>
+        <ol>
+            <li>Gaan na <a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener noreferrer">steamcommunity.com/dev/apikey</a></li>
+            <li>Registreer vir 'n Steam Web API-sleutel (vereis 'n Steam-rekening)</li>
+            <li>Voer jou API-sleutel en Steam-ID (of vanity-URL) in by Instellings</li>
+        </ol>
+        <p><em>Word gebruik vir Steam-biblioteek-invoer en prestasie-opsporing.</em></p>
+
+        <h4>Xbox Live</h4>
+        <p>Xbox-verifikasie gebruik OAuth2 &mdash; geen API-sleutel is nodig nie. Meld aan met jou Microsoft-rekening direk vanaf die Speletjie-invoere &rarr; Xbox-oortjie. Tekens word outomaties in kas gestoor en opgedateer soos nodig.</p>
+
+        <h4>PlayStation Network (PSN)</h4>
+        <p>PSN gebruik NPSSO-koekie-verifikasie. Sien die <a href="#trophies">Trofeë</a>-afdeling vir gedetailleerde opstelinstruksies.</p>
+
+        <h3>KI-verskaffers (vir KI-invul &amp; Museum)</h3>
+        <p>Een KI-verskaffer is nodig vir KI-invul-metadata en Museum-inhoudopwekking. Kies uit:</p>
+
+        <table class="data-table">
+            <thead>
+                <tr><th>Verskaffer</th><th>Verstekmodel</th><th>Prys (Invoer / Uitvoer per 1M tokens)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0.10 / $0.40</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0.15 / $0.60</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 4.5</td><td>$1.00 / $5.00</td></tr>
+            </tbody>
+        </table>
+        <p>Elke verskaffer bied verskeie modelvlakke. Die goedkoopste modelle werk goed vir metadata en museuminhoud. Stel jou voorkeurverskaffer en API-sleutel op by <strong>Instellings &rarr; Ontginning &rarr; API-sleutels</strong>.</p>
+    </div>
+</section>
+
+<!-- Settings -->
+<section id="settings" class="help-section card">
+    <h2 class="card-title">Instellings</h2>
+    <div class="card-body">
+        <p>Instellings is georganiseer in 6 oortjies, elk met verskeie subafdelings.</p>
+
+        <h3>Rekening-oortjie</h3>
+        <ul>
+            <li><strong>My Profiel</strong> &mdash; Avatar-oplaai/verwydering, vertoonnaam, rolinligting, wagwoordverandering</li>
+            <li><strong>RetroAchievements</strong> &mdash; Gebruikersnaam en API-sleutel vir RA-integrasie</li>
+            <li><strong>PSN</strong> &mdash; NPSSO-koekie vir PlayStation Network-trofeësinkronisasie</li>
+            <li><strong>Tydsone</strong> &mdash; Stel jou tydsone vir datumvertoning regdeur die toepassing</li>
+            <li><strong>Gebruikers</strong> &mdash; Gebruikerbestuur: voeg by, redigeer, verwyder gebruikers en ken rolle toe (slegs admin)</li>
+        </ul>
+
+        <h3>Biblioteek-oortjie</h3>
+        <ul>
+            <li><strong>Paaie</strong> &mdash; ROM-biblioteekpad, databasisligging</li>
+            <li><strong>Vertoning</strong> &mdash; Temakeuse, boekskyfstyl (2D/3D), voorkeur-ouderdomsgraderingstelsel, items per bladsy</li>
+            <li><strong>ROM-naamgewing</strong> &mdash; Artikelplasing (voorafgaande/agternagaande "The"), streeklys, verstekstreek, naamgewingskonvensies</li>
+            <li><strong>Rugsteun</strong> &mdash; Skep en herstel databasis-rugsteune</li>
+        </ul>
+
+        <h3>Ontginning-oortjie</h3>
+        <ul>
+            <li><strong>ES-DE</strong> &mdash; ES-DE speletjielys- en media-paaie vir plaaslike data-invoer</li>
+            <li><strong>Ontginner</strong> &mdash; Skakel individuele ontginners aan/af, sleep-en-los-prioriteitsvolgorde, tempolimietinstellings per ontginner</li>
+            <li><strong>API-sleutels</strong> &mdash; Alle ontginner-geloofsbriewe (TGDB, IGDB, RAWG, ScreenScraper), KI-verskaffer-keuse en modelkeuse (Gemini, OpenAI, Claude)</li>
+        </ul>
+
+        <h3>Data-oortjie</h3>
+        <ul>
+            <li><strong>Statistieke</strong> &mdash; Biblioteekstatistiekoorsig (totale speletjies, stelsels, bergingsgebruik)</li>
+            <li><strong>Trofeë</strong> &mdash; RPCS3-trofeëpad-konfigurasie vir plaaslike PS3-trofeeskandering</li>
+            <li><strong>Aftreklyste</strong> &mdash; Pas streekopsies en ander aftreklys-waardes wat regdeur die toepassing gebruik word, aan</li>
+            <li><strong>Normalisering</strong> &mdash; Genre- en modus-normaliseringsreëls &mdash; voeg pasgemaakte afbeeldings by om ontginner-uitvoer te standaardiseer</li>
+        </ul>
+
+        <h3>Aanpassing-oortjie</h3>
+        <ul>
+            <li><strong>Kennisgewings</strong> &mdash; Kennisgewing-uittelvoorkeure (sukses, inligting, waarskuwing, fout &mdash; elk onafhanklik instelbaar)</li>
+            <li><strong>Beheerders</strong> &mdash; Bestuur die beheerderbiblioteek, stel verstekbeheerders per stelsel, voeg pasgemaakte beheerders by. Verstekbeheerders oorskryf ontginde/KI-waardes tydens metadata-ophaal.</li>
+            <li><strong>Logo's</strong> &mdash; Stelsellogo-aanpassing &mdash; voer stelsellogo's in of verfris vanaf verstekwaardes</li>
+        </ul>
+
+        <h3>Stelsel-oortjie</h3>
+        <ul>
+            <li><strong>Onderhoud</strong> &mdash; Databasisoptimering (VACUUM/ANALYZE), skoonmaak van weesmedia, skoonmaak van ontbrekende ROM's, verwyder ontginde data, verwyder CLZ-invoere, grootmaat-beeldstandaardisering</li>
+            <li><strong>Bediener</strong> &mdash; Bedienerkonfigurasie (gasheer, poort, ontfoutmodus)</li>
+            <li><strong>Logboek</strong> &mdash; Loguitvoervlak-instellings vir verskillende kategorieë</li>
+            <li><strong>Probleemoplossing</strong> &mdash; Maak vasgehaakte grootmaat-ontginning skoon, maak RA-sinkronisasietou skoon, maak PSN-verfrissing skoon, maak museumopwekking skoon, herbegin bediener</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Wenk:</strong> Gedeaktiveerde ontginners sal nie "API vanlyn"-waarskuwings op die Kontrolebord ontketen nie. As jy nie 'n ontginner gebruik nie, deaktiveer dit by Instellings &rarr; Ontginning &rarr; Ontginner eerder as om die API-sleutel te verwyder.
+        </div>
+    </div>
+</section>
+
+<!-- Scraping -->
+<section id="scraping" class="help-section card">
+    <h2 class="card-title">Metadata Ontgin</h2>
+    <div class="card-body">
+        <h3>Enkelspeletjie-ontginning</h3>
+        <ol>
+            <li>Maak enige speletjie se detail-modaalvenster oop (klik die speletjiekaart)</li>
+            <li>Klik <strong>"Ontgin"</strong></li>
+            <li>Wysig die soektitel indien nodig</li>
+            <li>Kies die korrekte resultaat uit die passings</li>
+            <li>Klik <strong>"Pas Toe"</strong></li>
+        </ol>
+
+        <h3>Ontginner-bronne</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Bron</th><th>API-sleutel</th><th>Beste Vir</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ES-DE (Plaaslik)</td><td>Nee</td><td>Reeds ontginde versamelings &mdash; voer gamelist.xml en afgelaaide media in</td></tr>
+                <tr><td>TheGamesDB</td><td>Ja</td><td>Platform-spesifieke boekskyf, 3D-boekskyf</td></tr>
+                <tr><td>IGDB</td><td>Ja</td><td>Moderne speletjies, gedetailleerde inligting, genres, graderings</td></tr>
+                <tr><td>RAWG.io</td><td>Ja</td><td>Gebruikergraderings, beskrywings, skermkiekies</td></tr>
+                <tr><td>ScreenScraper</td><td>Ja</td><td>Streekvariante, 3D-boekskyf, video's, handleidings</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Hibriede Ontginning</h3>
+        <p>RetroDB kombineer outomaties data van verskeie bronne om metadata-dekking te maksimeer:</p>
+        <ul>
+            <li>Teksmetadata van die hoogste-prioriteit beskikbare bron</li>
+            <li>Beelde en media van sekondêre bronne wanneer die primêre bron dit nie het nie</li>
+            <li>Outomatiese gapingsvulling oor ontginners heen vir maksimum dekking</li>
+            <li>Sorteertitel word outomaties uit die speletjietitel gegenereer tydens ontginning</li>
+        </ul>
+
+        <h3>Mediahantering</h3>
+        <ul>
+            <li>Media-velde (boekskyf, 3D-boekskyf, skermkiekies, agtergrondkuns, video, handleiding) word <strong>nooit vervang</strong> tydens normale ontginning nie &mdash; slegs ingevul wanneer leeg</li>
+            <li>Skermkiekies word altyd <strong>bygevoeg</strong>, nooit vervang nie</li>
+            <li>Om media te herlaai, maak die bestaande beeld eers leeg in die redigeer-modaalvenster, en ontgin dan weer</li>
+            <li>Die <strong>Volledige Her-ontginning</strong>-modus oorskryf dit en vervang alles</li>
+            <li>Verouderde media-verwysings (lêer verwyder maar lêernaam steeds in die databasis) word outomaties leeggemaak voor ontginning sodat vars media afgelaai kan word</li>
+            <li>Afgelaaide beelde word outomaties gestandaardiseer na teikengroottes (sien <a href="#image-standardization">Beeldstandaardisering</a>)</li>
+        </ul>
+
+        <h3>Ontginner-prioriteit</h3>
+        <p>Stel op watter ontginners eerste loop en watter aan-/afgeskakel is by <strong>Instellings &rarr; Ontginning &rarr; Ontginner</strong>. Sleep-en-los om prioriteit te herrangskik. Gedeaktiveerde ontginners word nie tydens ontginning probeer nie en ontketen nie API-statuswaarskuwings op die Kontrolebord nie.</p>
+
+        <h3>Tempolimiete</h3>
+        <p>Elke ontginner het instelbare tempolimiete om API-drosseling te voorkom. Verstekvertragings word konserwatief ingestel. Verminder vertragings op eie risiko &mdash; om API-tempolimiete te oorskry kan lei tot tydelike verbanning vanaf die betrokke diens.</p>
+    </div>
+</section>
+
+<!-- Bulk Scraping -->
+<section id="bulk-scrape" class="help-section card">
+    <h2 class="card-title">Grootmaat-ontginning</h2>
+    <div class="card-body">
+        <h3>'n Grootmaat-ontginning Begin</h3>
+        <ol>
+            <li>Gaan na enige Stelsel- of Biblioteek-bladsy</li>
+            <li>Klik <strong>"Kies"</strong> om die keusemodus te betree</li>
+            <li>Kies speletjies individueel of gebruik vinnige keuse:
+                <ul>
+                    <li><strong>Kies Almal</strong> &mdash; Alle sigbare speletjies</li>
+                    <li><strong>Kies Onontgin</strong> &mdash; Slegs speletjies sonder metadata</li>
+                </ul>
+            </li>
+            <li>Kies modus: <strong>Vul Ontbrekendes In</strong> of <strong>Volledige Her-ontginning</strong></li>
+            <li>Klik <strong>"Ontgin Gekiesdes"</strong></li>
+        </ol>
+
+        <h3>Kontroles</h3>
+        <ul>
+            <li><strong>Onderbreek / Hervat</strong> &mdash; Onderbreek of gaan voort met ontginning</li>
+            <li><strong>Kanselleer</strong> &mdash; Stop heeltemal</li>
+            <li><strong>Agtergrond</strong> &mdash; Verklein en gaan voort met blaai terwyl ontginning loop</li>
+        </ul>
+
+        <h3>Kennisgewing-boodskap</h3>
+        <p>Wanneer dit in die agtergrond loop, wys 'n aanhoudende kennisgewing vordering op alle bladsye:</p>
+        <ul>
+            <li>Huidige speletjienaam, vorderingtelling, en uitkomsstatistieke (geslaag, misluk, oorgeslaan)</li>
+            <li>Onderbreek/Kanselleer-kontroles beskikbaar vanaf enige bladsy</li>
+            <li>Klik die kennisgewing om na die ontginning-modaalvenster terug te keer</li>
+        </ul>
+
+        <h3>Toustelsel</h3>
+        <p>Verskeie grootmaat-ontginnings tou outomaties:</p>
+        <ul>
+            <li>Begin 'n nuwe ontginning terwyl een reeds loop &mdash; dit tou</li>
+            <li>Die tou verskyn in die kennisgewing met 'n telling van hangende take</li>
+            <li>Take word outomaties in volgorde verwerk</li>
+            <li>Gebruik die Toubestuurder om getoude take te bekyk, te herrangskik, of te kanselleer</li>
+        </ul>
+
+        <h3>Ontginningsopsies</h3>
+        <ul>
+            <li><strong>Vul Slegs Ontbrekendes In</strong> &mdash; Vul slegs leë metadata-velde in, en behou bestaande data</li>
+            <li><strong>Volledige Her-ontginning</strong> &mdash; Vervang alle velde insluitend media (laai vars beelde en video's af)</li>
+            <li><strong>Kontroleer RetroAchievements</strong> &mdash; Kontroleer ook vir RetroAchievements-prestasiestelle tydens ontginning</li>
+        </ul>
+
+        <h3>Taakherstel</h3>
+        <p>As RetroDB herbegin word terwyl 'n taak loop, verskyn onderbroke take in 'n herstelbanier op die Kontrolebord. Klik <strong>"Hervat"</strong> op individuele take of <strong>"Hervat Almal"</strong> om hulle te herbegin. Die vorderingkennisgewing verskyn onmiddellik na hervatting.</p>
+    </div>
+</section>
+
+<!-- AI Fill -->
+<section id="ai-fill" class="help-section card">
+    <h2 class="card-title">KI-invul</h2>
+    <div class="card-body">
+        <h3>Wat Dit Doen</h3>
+        <p>KI-invul gebruik 'n groot taalmodel (Gemini, OpenAI, of Claude) om ontbrekende of onvolledige speletjie-metadata intelligent in te vul. Dit is slimmer as gewone ontginning omdat dit kontekstuele kennis oor die speletjie gebruik om akkurate data te verskaf wat ontginners dalk nie het nie.</p>
+
+        <h3>Hoe Om Te Gebruik</h3>
+        <ol>
+            <li>Maak 'n speletjie se detail-modaalvenster (of volle detailbladsy) oop</li>
+            <li>Klik <strong>"KI-invul"</strong> (vereis 'n KI-API-sleutel wat by Instellings opgestel is)</li>
+            <li>Die KI ontleed die speletjietitel en -stelsel, en vul dan ontbrekende velde in</li>
+            <li>Gaan die resultate na &mdash; veranderinge word outomaties gestoor</li>
+        </ol>
+
+        <h3>Wat KI-invul Kan Verskaf</h3>
+        <ul>
+            <li>Genre, beskrywing, ontwikkelaar, uitgewer, vrystellingsdatum</li>
+            <li>Spelers, speelmodusse (Enkelspeler, Multi-speler, Koöp, ens.)</li>
+            <li>Veldtogtinligting en speletjiestruktuur</li>
+            <li>Alle 8 ouderdomsgraderingstelsels (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd)</li>
+            <li>Streek, franchise, soortgelyke speletjies</li>
+            <li>Beheerder-ondersteuning, storingtipe</li>
+            <li>Perspektief (Eerstepersoon, Bo-aansig, Kant-rol, ens.), dimensie (2D, 3D)</li>
+            <li>Uitgawe-inligting, kritikus- en gebruikertellings</li>
+        </ul>
+
+        <h3>Slim Invullogika</h3>
+        <ul>
+            <li><strong>Leë velde</strong> word altyd ingevul</li>
+            <li><strong>Bestaande gebruikerdata</strong> word nooit oorskryf nie</li>
+            <li><strong>Soortgelyke speletjies</strong> word altyd verfris (KI-data is meer betroubaar vir hierdie veld)</li>
+            <li><strong>Kruis-afgebeelde graderings</strong> &mdash; As een graderingstelsel bekend is, word leë graderings in ander stelsels outomaties ingevul via volwassenheidsvlak-kruisafbeelding</li>
+            <li><strong>Sorteertitel</strong> word outomaties gegenereer wanneer ingevul</li>
+            <li>Die <strong>Spelers</strong>-veld normaliseer reekse (bv. word "1-4" 4)</li>
+        </ul>
+
+        <h3>Genre-normalisering</h3>
+        <p>KI-invul gebruik kanonieke genrevorme met koppelteken-name:</p>
+        <ul>
+            <li><code>First-Person-Shooter</code>, <code>Shoot-em-up</code>, <code>Beat-em-up</code></li>
+            <li><code>Hack-n-Slash</code>, <code>Board-Card</code>, <code>Real-Time Strategy</code></li>
+        </ul>
+
+        <h3>Vereistes</h3>
+        <p>Ten minste een KI-verskaffer-API-sleutel moet opgestel wees by <strong>Instellings &rarr; Ontginning &rarr; API-sleutels</strong>. Die goedkoopste modelvlak (Gemini Flash Lite, GPT-4o Mini, of Claude Haiku) werk goed vir metadata.</p>
+    </div>
+</section>
+
+<!-- Filtering -->
+<section id="filtering" class="help-section card">
+    <h2 class="card-title">Filtrering & Soek</h2>
+    <div class="card-body">
+        <h3>Soek</h3>
+        <p>Soek filtreer speletjies volgens titel (en sorteertitel). Druk <kbd>/</kbd> om die soekkassie te fokus. Resultate word intyds opgedateer met 'n 300ms-vertraging.</p>
+
+        <h3>Bronfilter</h3>
+        <p>Filtreer speletjies volgens invoerbron:</p>
+        <ul>
+            <li><strong>ROM-lêers</strong> &mdash; Speletjies vanuit jou ROM-biblioteek</li>
+            <li><strong>CLZ-invoere</strong> &mdash; Fisiese speletjies vanaf CLZ ingevoer</li>
+            <li><strong>Steam-invoere</strong> &mdash; Speletjies vanaf Steam ingevoer</li>
+            <li><strong>Xbox-invoere</strong> &mdash; Speletjies vanaf Xbox ingevoer</li>
+            <li><strong>PSN-invoere</strong> &mdash; Speletjies vanaf PlayStation Network ingevoer</li>
+        </ul>
+
+        <h3>Filterknoppies</h3>
+        <p>Elke filter maak 'n modaalvenster oop wat alle unieke waardes in jou biblioteek met tellings wys. Filters ondersteun twee modusse:</p>
+        <ul>
+            <li><strong>Insluit (IS)</strong> &mdash; Wys slegs speletjies wat by die gekiesde waarde pas</li>
+            <li><strong>Uitsluit (IS NOT)</strong> &mdash; Versteek speletjies wat by die gekiesde waarde pas</li>
+        </ul>
+        <p>Wissel tussen insluit- en uitsluitmodus met die skakelaar in die filter-modaalvenster.</p>
+
+        <h3>Beskikbare Filters</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Filter</th><th>Beskrywing</th><th>Multi-waarde</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Genre</strong></td><td>Aksie, RPG, Platformspel, ens.</td><td>Ja</td></tr>
+                <tr><td><strong>Reeks</strong></td><td>Speletjie-franchise</td><td>Ja</td></tr>
+                <tr><td><strong>Uitgewer</strong></td><td>Uitgewersmaatskappy</td><td>Ja</td></tr>
+                <tr><td><strong>Ontwikkelaar</strong></td><td>Ontwikkelingstudio</td><td>Ja</td></tr>
+                <tr><td><strong>Spelers</strong></td><td>Spelertelling</td><td>Nee</td></tr>
+                <tr><td><strong>Modusse</strong></td><td>Enkelspeler, Multi-speler, Koöp</td><td>Ja</td></tr>
+                <tr><td><strong>Perspektief</strong></td><td>Eerstepersoon, Bo-aansig, Isometries, Kant-rol</td><td>Ja</td></tr>
+                <tr><td><strong>Dimensie</strong></td><td>2D, 3D</td><td>Ja</td></tr>
+                <tr><td><strong>Gradering</strong></td><td>Ouderdomsgradering (wys jou voorkeurstelsel)</td><td>Nee</td></tr>
+                <tr><td><strong>Het RA</strong></td><td>Speletjies met RetroAchievements-ondersteuning</td><td>Nee</td></tr>
+                <tr><td><strong>Wys Bonus</strong></td><td>Wissel bonus-skyf-sigbaarheid</td><td>Nee</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Sorteeropsies</h3>
+        <ul>
+            <li><strong>Titel</strong> &mdash; Alfabeties volgens sorteertitel (kassensitief onbelangrik)</li>
+            <li><strong>Vrystellingsdatum</strong> &mdash; Chronologiese volgorde (vroegste eerste)</li>
+            <li><strong>Platform</strong> &mdash; Gegroepeer volgens stelselnaam</li>
+        </ul>
+
+        <h3>Alfabet-navigasie</h3>
+        <p>Spring na speletjies wat met 'n spesifieke letter begin. Letters sonder passende speletjies word grys vertoon. Syfers en simbole word onder <strong>#</strong> gegroepeer.</p>
+
+        <h3>Oneindige Rol</h3>
+        <p>Speletjies laai in groepe van 100 terwyl jy rol. Nuwe bladsye laai outomaties wanneer jy naby die onderkant kom. Om filters of soek te verander, herstel en herlaai resultate onmiddellik.</p>
+
+        <h3>Toestandbehoud</h3>
+        <p>Jou huidige filters, soekterm, en rolposisie word in sessie-berging gestoor. Hulle word herstel wanneer jy na die bladsy terugkeer of dit herlaai.</p>
+    </div>
+</section>
+
+<!-- Game Detail -->
+<section id="game-detail" class="help-section card">
+    <h2 class="card-title">Speletjie-besonderhede</h2>
+    <div class="card-body">
+        <h3>Speletjie-detail-modaalvenster</h3>
+        <p>Om enige speletjiekaart te klik maak 'n detail-modaalvenster met 'n vinnige, in-kas-gestoorde aansig oop. Die modaalvenster wys:</p>
+        <ul>
+            <li>Boekskyf (2D en 3D), agtergrondkuns-agtergrond</li>
+            <li>Beskrywing en vrystellinginligting</li>
+            <li>Ontwikkelaar-, uitgewer-, genre-kentekens</li>
+            <li>Spelers, speelmodusse, speletjiestruktuur</li>
+            <li>Ouderdomsgraderingbeeld (vanaf jou voorkeurstelsel, met kruisafbeelding-terugval)</li>
+            <li>Skermkiekie-galery met sleutelbordnavigasie (<kbd>&larr;</kbd> <kbd>&rarr;</kbd>)</li>
+            <li>Voorskou-video (indien beskikbaar)</li>
+            <li>HLTB-speeltyd-beramings (Hoofverhaal, Hoof + Ekstras, Volledigheidsoeker)</li>
+            <li>RetroAchievements-status en -vordering</li>
+            <li>Soortgelyke speletjies (klikbare skakels)</li>
+            <li>Beheerder-ondersteuning-besonderhede</li>
+            <li>Etikette aan die speletjie toegeken</li>
+            <li>Lêergrootte en ROM-pad</li>
+        </ul>
+
+        <h3>Volle Speletjie-detailbladsy</h3>
+        <p>Klik die speletjietitel-skakel of navigeer vanaf broodkrummels om die volle speletjie-detailbladsy te bekyk. Bykomende funksies op die volle bladsy sluit in:</p>
+        <ul>
+            <li><strong>Agtergrondkuns-agtergrondkopstuk</strong> met broodkrummel-navigasie</li>
+            <li><strong>Platform-invoer-kentekens</strong> &mdash; Wys CLZ-invoer, Steam-invoer, Xbox-invoer, of PSN-invoer met platformlogo's waar van toepassing</li>
+            <li><strong>Bonus-skyf-aanwyser</strong> &mdash; Wys 'n kenteken en 'n "Deel van:"-skakel na die ouerspeletjie met duimnael</li>
+            <li><strong>Verwyder-knoppie</strong> &mdash; Verwyder die speletjie uit die databasis (met bevestiging)</li>
+            <li><strong>Maak-skoon-knoppie</strong> &mdash; Maak alle ontginde metadata skoon terwyl die ROM-inskrywing behou word</li>
+        </ul>
+
+        <h3>Redigeer-modaalvenster</h3>
+        <p>Klik <strong>Redigeer</strong> (of druk <kbd>e</kbd>) om die redigeer-modaalvenster oop te maak, georganiseer in afdelings:</p>
+        <ul>
+            <li><strong>Identiteit</strong> &mdash; Titel, sorteertitel (outomaties gegenereer maar redigeerbaar), franchise, uitgawe</li>
+            <li><strong>Vrystellinginligting</strong> &mdash; Vrystellingsdatum, streek (vanaf 'n instelbare aftreklys)</li>
+            <li><strong>Speelbaarheid</strong> &mdash; Genre (multi-keuse-etikette), modusse, speletjiestruktuur, spelers, ontwikkelaar, uitgewer</li>
+            <li><strong>Tegnies</strong> &mdash; Beheerders (multi-keuse), storingtipe, perspektief (multi-waarde), dimensie (multi-waarde)</li>
+            <li><strong>Ouderdomsgraderings</strong> &mdash; Alle 8 graderingstelsels met amptelike graderingbeelde en outomatiese kruisafbeelding. Om een gradering te verander vul outomaties leë graderings in ander stelsels in.</li>
+            <li><strong>Tellings</strong> &mdash; Kritikustelling, gebruikertelling</li>
+            <li><strong>Beskrywing</strong> &mdash; Speletjiebeskrywingsteks</li>
+            <li><strong>Pasgemaakte Beelde</strong> &mdash; Laai pasgemaakte boekskyf (2D), 3D-boekskyf, en agtergrondkuns op. Maak bestaande beelde skoon om her-ontginning toe te laat.</li>
+            <li><strong>Video / Voorskou</strong> &mdash; Laai 'n video-voorskou op of skakel daarna</li>
+        </ul>
+
+        <h3>Vinnige Aksies</h3>
+        <ul>
+            <li><strong>Redigeer</strong> &mdash; Maak die redigeer-modaalvenster oop (<kbd>e</kbd>)</li>
+            <li><strong>Ontgin</strong> &mdash; Haal metadata van ontginner-bronne af (<kbd>s</kbd>)</li>
+            <li><strong>KI-invul</strong> &mdash; Vul ontbrekende velde met KI in (vereis 'n KI-API-sleutel)</li>
+            <li><strong>Kontroleer vir RA</strong> &mdash; Soek na 'n RetroAchievements-prestasiestel</li>
+            <li><strong>HLTB-opsoek</strong> &mdash; Vind speeltyd-beramings vanaf HowLongToBeat</li>
+        </ul>
+
+        <h3>Voltooiingstatus</h3>
+        <p>Volg jou vordering met hierdie statusse (gewys as kentekens op speletjiekaarte):</p>
+        <ul>
+            <li><strong>Nie Begin Nie</strong> &mdash; Nog nie gespeel nie</li>
+            <li><strong>In Uitvoering</strong> &mdash; Word tans gespeel</li>
+            <li><strong>Gespeel</strong> &mdash; Gespeel maar nie voltooi nie</li>
+            <li><strong>Voltooi</strong> &mdash; Die hoofspeletjie voltooi</li>
+            <li><strong>100%</strong> &mdash; Alles voltooi</li>
+        </ul>
+
+        <h3>Multi-graderingstelsel</h3>
+        <p>RetroDB ondersteun 8 internasionale ouderdomsgraderingstelsels:</p>
+        <table class="data-table">
+            <thead>
+                <tr><th>Stelsel</th><th>Streek</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>ESRB</strong></td><td>Noord-Amerika</td></tr>
+                <tr><td><strong>PEGI</strong></td><td>Europa</td></tr>
+                <tr><td><strong>CERO</strong></td><td>Japan</td></tr>
+                <tr><td><strong>USK</strong></td><td>Duitsland</td></tr>
+                <tr><td><strong>ACB</strong></td><td>Australië</td></tr>
+                <tr><td><strong>FPB</strong></td><td>Suid-Afrika</td></tr>
+                <tr><td><strong>GRAC</strong></td><td>Suid-Korea</td></tr>
+                <tr><td><strong>ClassInd</strong></td><td>Brasilië</td></tr>
+            </tbody>
+        </table>
+        <p>Stel jou voorkeurstelsel by <strong>Instellings &rarr; Biblioteek &rarr; Vertoning</strong>. Amptelike graderingbeelde word op speletjiekaarte, detail-modaalvensters, en detailbladsye vertoon. Leë graderings word outomaties ingevul vanaf enige beskikbare gradering via volwassenheidsvlak-kruisafbeelding tydens ontginning, KI-invul, en handmatige redigering.</p>
+
+        <h3>Bonus-skywe</h3>
+        <p>RetroDB bespeur outomaties bonus-/ekstra-skywe (bv. klankbaan-CD's, ekstra-inhoud-skywe) en koppel hulle aan hul ouerspeletjie. Bonus-skywe word by verstek in die biblioteek versteek &mdash; wissel <strong>"Wys Bonus"</strong> in filters om hulle te vertoon. Gekoppelde bonus-skywe verskyn in die ouerspeletjie se detail-modaalvenster.</p>
+
+        <div class="help-tip">
+            <strong>Wenk:</strong> Die detail-modaalvenster stoor onlangs-bekykte speletjies in kas vir vinniger laai. Redigerings werk die speletjiekaart op die bladsy outomaties by sonder om 'n herlaai te vereis.
+        </div>
+    </div>
+</section>
+
+<!-- Bulk Edit -->
+<section id="bulk-edit" class="help-section card">
+    <h2 class="card-title">Grootmaat-redigering</h2>
+    <div class="card-body">
+        <h3>Hoe Om Te Gebruik</h3>
+        <ol>
+            <li>Gaan na enige Stelsel- of Biblioteek-bladsy</li>
+            <li>Klik <strong>"Kies"</strong> om die keusemodus te betree</li>
+            <li>Kies die speletjies wat jy wil redigeer (individueel, Kies Almal, of Kies Onontgin)</li>
+            <li>Klik <strong>"Grootmaat-redigering"</strong></li>
+            <li>Kies die veld om te wysig en stel die nuwe waarde</li>
+            <li>Kies <strong>Vervang</strong>- of <strong>Voeg By</strong>-modus</li>
+            <li>Klik <strong>"Pas Toe"</strong> om alle gekiesde speletjies op te dateer</li>
+        </ol>
+
+        <h3>Vervang vs Voeg By</h3>
+        <ul>
+            <li><strong>Vervang</strong> &mdash; Oorskryf die bestaande waarde met die nuwe een</li>
+            <li><strong>Voeg By</strong> &mdash; Voeg die nuwe waarde by bestaande waardes (vir multi-waarde-velde)</li>
+        </ul>
+
+        <h3>Ondersteunde Velde</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Veld</th><th>Ondersteun Voeg By</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Genre</td><td>Ja</td></tr>
+                <tr><td>Uitgewer</td><td>Ja</td></tr>
+                <tr><td>Ontwikkelaar</td><td>Ja</td></tr>
+                <tr><td>Franchise</td><td>Ja</td></tr>
+                <tr><td>Streek</td><td>Ja</td></tr>
+                <tr><td>Speletjiestruktuur</td><td>Ja</td></tr>
+                <tr><td>Perspektief</td><td>Ja</td></tr>
+                <tr><td>Dimensie</td><td>Ja</td></tr>
+                <tr><td>Voltooiingstatus</td><td>Nee (slegs vervang)</td></tr>
+                <tr><td>Spelers</td><td>Nee (slegs vervang)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Compare Games -->
+<section id="compare" class="help-section card">
+    <h2 class="card-title">Vergelyk Speletjies</h2>
+    <div class="card-body">
+        <h3>Wat Dit Doen</h3>
+        <p>Kant-aan-kant-vergelyking van twee speletjies se metadata in 'n tabelaansig. Nuttig om metadata-gehalte na te gaan, duplikate op te spoor, of weergawes van dieselfde speletjie oor stelsels heen te vergelyk.</p>
+
+        <h3>Hoe Om Te Gebruik</h3>
+        <ol>
+            <li>Gaan na <strong>Vergelyk</strong> (toeganklik vanaf die Biblioteek-bladsy)</li>
+            <li>Soek en kies die eerste speletjie</li>
+            <li>Soek en kies die tweede speletjie</li>
+            <li>Gaan die vergelykingstabel na &mdash; verskille word uitgelig</li>
+        </ol>
+
+        <h3>Vergelykte Velde</h3>
+        <p>Stelsel, ontwikkelaar, uitgewer, vrystellingsdatum, genre, franchise, streek, spelers, modusse, perspektief, dimensie, alle 8 ouderdomsgraderings, gebruikergradering, kritikustelling, speeltyd-beramings, beheerder-ondersteuning, storingtipe, lêergrootte, soortgelyke speletjies, beskrywing, en meer.</p>
+    </div>
+</section>
+
+<!-- Collections -->
+<section id="collections" class="help-section card">
+    <h2 class="card-title">Versamelings (Etikette, Lyste, Verlanglys)</h2>
+    <div class="card-body">
+        <h3>Etikette</h3>
+        <p>Skep pasgemaakte, kleurgekodeerde etikette om jou speletjies te organiseer. Etikette werk soos byskrifte &mdash; elke speletjie kan meervoudige etikette hê, en elke etiket kan meervoudige speletjies bevat.</p>
+        <ul>
+            <li>Skep etikette met pasgemaakte name en kleure vanaf die <strong>Etikette</strong>-bladsy</li>
+            <li>Ken etikette aan speletjies toe via die speletjie-detail-modaalvenster</li>
+            <li>Klik enige etiket om al die speletjies met daardie etiket te blaai</li>
+            <li>Redigeer of verwyder etikette vanaf die Etikette-bestuurbladsy</li>
+        </ul>
+
+        <h3>Benoemde Lyste</h3>
+        <p>Skep saamgestelde speletjielyste met pasgemaakte volgorde. Lyste is soos speellyste &mdash; jy beheer die presiese volgorde van speletjies.</p>
+        <ul>
+            <li>Skep lyste met 'n naam, beskrywing, en ikoon vanaf die <strong>Lyste</strong>-bladsy</li>
+            <li>Voeg speletjies by lyste via die speletjie-detail-modaalvenster of lys-bladsy</li>
+            <li>Sleep-en-los om speletjies binne 'n lys te herrangskik</li>
+            <li>Sorteer volgens pasgemaakte volgorde of alfabeties</li>
+        </ul>
+
+        <h3>Verlanglys</h3>
+        <p>Volg speletjies wat jy wil bekom, hetsy fisies of digitaal.</p>
+        <ul>
+            <li>Voeg speletjies handmatig by met titel, stelsel, notas, en prioriteit (1&ndash;5)</li>
+            <li>Verlanglys-items kan aan bestaande biblioteekspeletjies gekoppel word indien gevind</li>
+            <li>Gesorteer volgens prioriteit (hoogste eerste), dan datum bygevoeg</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Wenk:</strong> Gebruik etikette vir deurlopende byskrifte (bv. "Gunstelinge", "Rusbank-koöp", "Agterstand") en lyste vir spesifieke saamgestelde versamelings (bv. "Top 10 SNES-speletjies", "Speletjies om te Stroom").
+        </div>
+    </div>
+</section>
+
+<!-- Game Imports -->
+<section id="game-imports" class="help-section card">
+    <h2 class="card-title">Speletjie-invoere</h2>
+    <div class="card-body">
+        <p>Voer speletjieversamelings vanaf eksterne bronne in. Toeganklik via <strong>Speletjie-invoere</strong> in die kantbalk. Alle invoertipes is saamgevoeg in 'n enkele oortjie-bladsy.</p>
+
+        <h3>CLZ Games-invoer</h3>
+        <p>Voer jou fisiese speletjieversameling vanaf CLZ Games in.</p>
+        <ol>
+            <li>Voer jou CLZ Games-versameling as PDF uit</li>
+            <li>Gaan na Speletjie-invoere &rarr; <strong>CLZ</strong>-oortjie</li>
+            <li>Laai die PDF-lêer op</li>
+            <li>Gaan die ontlede speletjies na</li>
+            <li>Kies watter speletjies om in te voer</li>
+        </ol>
+        <p>CLZ-invoere word apart van ROM-speletjies opgespoor (met 'n <code>clz_import/</code>-voorvoegsel), wat jou toelaat om beide fisiese en digitale versamelings te katalogiseer. CLZ-invoere kan heeltemal verwyder word vanaf <strong>Instellings &rarr; Stelsel &rarr; Onderhoud</strong>.</p>
+
+        <h3>Steam-invoer</h3>
+        <p>Voer jou Steam-speletjiebiblioteek in en volg prestasies.</p>
+        <ol>
+            <li>Stel jou Steam Web API-sleutel en Steam-ID op by Instellings</li>
+            <li>Gaan na Speletjie-invoere &rarr; <strong>Steam</strong>-oortjie</li>
+            <li>Klik <strong>"Haal Biblioteek Op"</strong> om jou Steam-speletjies te bekom</li>
+            <li>Kies speletjies om in te voer (duplikate word outomaties bespeur)</li>
+            <li>Ingevoerde speletjies word geëtiketteer met hul Steam-toepassing-ID vir prestasie-opsporing</li>
+        </ol>
+
+        <h3>Xbox-invoer</h3>
+        <p>Voer jou Xbox-speletjiebiblioteek via 'n Microsoft-rekening in.</p>
+        <ol>
+            <li>Gaan na Speletjie-invoere &rarr; <strong>Xbox</strong>-oortjie</li>
+            <li>Klik <strong>"Meld Aan"</strong> om met jou Microsoft-rekening te verifieer (OAuth2-vloei)</li>
+            <li>Jou Xbox-titelgeskiedenis word outomaties opgehaal</li>
+            <li>Kies speletjies om in te voer met duplikaatbespeuring</li>
+            <li>Ingevoerde speletjies word geëtiketteer met hul Xbox-titel-ID vir prestasie-opsporing</li>
+        </ol>
+        <p>Xbox-tekens word in <code>data/xbox_tokens.json</code> in kas gestoor en outomaties opgedateer.</p>
+
+        <h3>PSN-invoer</h3>
+        <p>Voer jou PlayStation Network-speletjiebiblioteek in.</p>
+        <ol>
+            <li>Gaan na Speletjie-invoere &rarr; <strong>PSN</strong>-oortjie</li>
+            <li>Voer jou NPSSO-koekie in (sien <a href="#trophies">Trofeë &rarr; PSN-verifikasie</a> vir hoe om dit te bekom)</li>
+            <li>Klik <strong>"Haal Biblioteek Op"</strong> om jou PSN-speletjies te bekom</li>
+            <li>Kies speletjies om in te voer</li>
+        </ol>
+
+        <h3>Na Invoer</h3>
+        <ul>
+            <li>Ingevoerde speletjies verskyn in jou Biblioteek met platform-spesifieke kentekens</li>
+            <li>Gebruik grootmaat-ontginning om metadata vir ingevoerde speletjies te bekom</li>
+            <li>Prestasie-/trofee-opsporing word outomaties aan die bronplatform gekoppel</li>
+            <li>Ingevoerde speletjies kan in die Biblioteek gefiltreer word met die Bronfilter</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Wenk:</strong> Nadat jy speletjies vanaf enige platform ingevoer het, kan jy metadata daarvoor ontgin met grootmaat-ontginning, net soos ROM-speletjies. Ingevoerde speletjies kan ook prestasies vanaf hul onderskeie platforms volg.
+        </div>
+    </div>
+</section>
+
+<!-- RetroAchievements -->
+<section id="retroachievements" class="help-section card">
+    <h2 class="card-title">RetroAchievements</h2>
+    <div class="card-body">
+        <h3>Opstelling</h3>
+        <ol>
+            <li>Skep 'n rekening by <a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a></li>
+            <li>Genereer 'n API-sleutel in jou profielinstellings</li>
+            <li>Voer jou gebruikersnaam en API-sleutel in by Instellings &rarr; Rekening &rarr; RetroAchievements</li>
+        </ol>
+
+        <h3>Prestasies-bladsy</h3>
+        <ul>
+            <li><strong>Stelseloortjies</strong> &mdash; Blaai deur prestasies volgens platform (onthou jou laaste bekykte oortjie)</li>
+            <li><strong>Alfabet-navigasie</strong> &mdash; Spring na speletjies volgens eerste letter binne elke stelseloortjie</li>
+            <li><strong>Verfris Vordering</strong> &mdash; Sinkroniseer jou prestasievordering vanaf RetroAchievements</li>
+            <li><strong>Algehele Statistieke</strong> &mdash; Verdiende prestasies en punte oor alle stelsels</li>
+            <li><strong>Vordering per Speletjie</strong> &mdash; Sien voltooiingspersentasie vir elke speletjie met vorderingsbalke</li>
+        </ul>
+
+        <h3>Sinkronisasietou</h3>
+        <p>Verskeie stelselsinkronisasies kan getou word:</p>
+        <ul>
+            <li>Klik "Verfris Vordering" op enige stelsel om 'n sinkronisasie te begin of te tou</li>
+            <li>As 'n sinkronisasie reeds loop, word nuwe versoeke outomaties getou</li>
+            <li>Die tou word outomaties verwerk wanneer die huidige sinkronisasie voltooi is</li>
+            <li>Die kennisgewing wys huidige vordering en toutelling</li>
+        </ul>
+
+        <h3>Speletjies met Prestasies Vind</h3>
+        <ul>
+            <li><strong>Biblioteekfilter</strong> &mdash; Gebruik die "Het RA"-filter om slegs speletjies met prestasies te wys</li>
+            <li><strong>Kontroleer vir RA</strong> &mdash; Klik op speletjie-detail-modaalvensters om vir 'n prestasiestel te soek</li>
+            <li><strong>Grootmaat-ontginning</strong> &mdash; Skakel die "Kontroleer RA"-opsie aan om prestasies tydens ontginning te vind</li>
+            <li><strong>RA-verfristaak</strong> &mdash; Skandeer alle speletjies in 'n stelsel om te bepaal watter RA-ondersteuning het</li>
+        </ul>
+
+        <h3>Speletjievlak-besonderhede</h3>
+        <p>Klik enige speletjie op die prestasies-bladsy om gedetailleerde prestasie-inligting per speletjie te sien, insluitend individuele prestasienames, beskrywings, puntwaardes, en verdien-status.</p>
+
+        <div class="help-tip">
+            <strong>Nota:</strong> "Verfris Vordering" sinkroniseer jou vordering vir speletjies wat reeds aan RetroAchievements gekoppel is.
+            Om NUWE prestasiestelle te vind, gebruik "Kontroleer vir RA" op speletjie-detail-modaalvensters of skakel dit aan tydens grootmaat-ontginning.
+        </div>
+    </div>
+</section>
+
+<!-- Steam Achievements -->
+<section id="steam-achievements" class="help-section card">
+    <h2 class="card-title">Steam-prestasies</h2>
+    <div class="card-body">
+        <h3>Opstelling</h3>
+        <ol>
+            <li>Voer Steam-speletjies in via <strong>Speletjie-invoere &rarr; Steam</strong></li>
+            <li>Verseker dat jou Steam Web API-sleutel by Instellings opgestel is</li>
+        </ol>
+
+        <h3>Prestasies-landingsbladsy</h3>
+        <p>Bekyk al jou Steam-speletjies met prestasievordering op 'n oogopslag:</p>
+        <ul>
+            <li><strong>Algehele Statistieke</strong> &mdash; Totale Steam-speletjies, verdiende prestasies, voltooiingspersentasie</li>
+            <li><strong>Vordering per Speletjie</strong> &mdash; Voltooiingsbalke vir elke speletjie</li>
+        </ul>
+
+        <h3>Prestasiebesonderhede per Speletjie</h3>
+        <p>Klik enige Steam-speletjie om sy individuele prestasies te sien:</p>
+        <ul>
+            <li>Prestasie-ikone, name, en beskrywings</li>
+            <li>Ontsluit- vs gesluit-status met ontsluitings-tydstempels</li>
+            <li>Globale speler-ontsluitingspersentasie vir elke prestasie</li>
+        </ul>
+
+        <h3>Sinkronisering</h3>
+        <ul>
+            <li>Sinkroniseer 'n enkele speletjie se prestasies vanaf sy detailbladsy</li>
+            <li>Sinkroniseer alle Steam-speletjies in grootmaat vanaf die prestasies-landingsbladsy</li>
+            <li>Sinkronisasie loop as 'n agtergrondtaak met kennisgewing-vordering</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Xbox Achievements -->
+<section id="xbox-achievements" class="help-section card">
+    <h2 class="card-title">Xbox-prestasies</h2>
+    <div class="card-body">
+        <h3>Opstelling</h3>
+        <ol>
+            <li>Voer Xbox-speletjies in via <strong>Speletjie-invoere &rarr; Xbox</strong></li>
+            <li>Verifikasie word via Xbox OAuth tydens invoer hanteer</li>
+        </ol>
+
+        <h3>Prestasies-landingsbladsy</h3>
+        <ul>
+            <li><strong>Algehele Statistieke</strong> &mdash; Totale Xbox-speletjies, verdiende prestasies, verdiende/totale gamerscore, voltooiingspersentasie</li>
+            <li><strong>Vordering per Speletjie</strong> &mdash; Gamerscore verdien per speletjie met vorderingsbalke</li>
+        </ul>
+
+        <h3>Prestasiebesonderhede per Speletjie</h3>
+        <p>Klik enige Xbox-speletjie om sy individuele prestasies te sien:</p>
+        <ul>
+            <li>Prestasie-ikone met individuele gamerscore-waardes</li>
+            <li>Ontsluit- vs gesluit-status met ontsluitings-tydstempels</li>
+            <li>Gamerscore-kentekens op elke prestasie</li>
+        </ul>
+
+        <h3>Sinkronisering</h3>
+        <ul>
+            <li>Sinkroniseer 'n enkele speletjie of sinkroniseer alle Xbox-speletjies in grootmaat</li>
+            <li>Loop as 'n agtergrondtaak met kennisgewings</li>
+            <li>Gamerscore-totale word na elke sinkronisasie outomaties opgedateer</li>
+        </ul>
+    </div>
+</section>
+
+<!-- HLTB -->
+<section id="hltb" class="help-section card">
+    <h2 class="card-title">How Long to Beat</h2>
+    <div class="card-body">
+        <h3>Gebruik</h3>
+        <ol>
+            <li>Maak enige speletjie se detail-modaalvenster oop</li>
+            <li>Klik <strong>"Soek HLTB Op"</strong></li>
+            <li>Kies die korrekte passing uit die resultate</li>
+            <li>Speeltyd-beramings word by die speletjie gestoor</li>
+        </ol>
+
+        <h3>Tydkategorieë</h3>
+        <ul>
+            <li><strong>Hoofverhaal</strong> &mdash; Kerntyd om te voltooi</li>
+            <li><strong>Hoof + Ekstras</strong> &mdash; Met sy-inhoud</li>
+            <li><strong>Volledigheidsoeker</strong> &mdash; 100% van alles</li>
+        </ul>
+
+        <h3>Waar HLTB-data Verskyn</h3>
+        <ul>
+            <li><strong>Speletjie-detail-modaalvenster</strong> &mdash; Speeltyd-beramings in die speletjie-inligting gewys</li>
+            <li><strong>Volle speletjie-detailbladsy</strong> &mdash; Dieselfde speeltyd-inligting</li>
+            <li><strong>Analise &rarr; Speeltyd-oortjie</strong> &mdash; Versamelingwye speeltyd-ontleding</li>
+            <li><strong>Vergelyk Speletjies</strong> &mdash; Kant-aan-kant-speeltyd-vergelyking</li>
+        </ul>
+
+        <div class="help-tip">
+            <strong>Wenk:</strong> HLTB-data word ook in Analise onder die Speeltyd-oortjie gewys, wat jou beramings vir jou hele versameling gee.
+        </div>
+    </div>
+</section>
+
+<!-- Trophies -->
+<section id="trophies" class="help-section card">
+    <h2 class="card-title">PS3 / PSN-trofeë</h2>
+    <div class="card-body">
+        <h3>RPCS3 Plaaslike Trofeë</h3>
+        <p>Volg trofeë verdien in PS3-speletjies deur die RPCS3-emulator.</p>
+        <ol>
+            <li>Stel jou RPCS3-trofeepad by <strong>Instellings &rarr; Data &rarr; Trofeë</strong></li>
+            <li>Klik <strong>"Skandeer Trofeë"</strong> om verdiende trofeë in te voer</li>
+            <li>Bekyk trofeelyste en individuele trofeebesonderhede in die <strong>RPCS3-trofeë</strong>-afdeling</li>
+        </ol>
+        <p>RPCS3 lees die trofee-XML-data vanaf jou RPCS3-gebruikersgids en pas speletjies outomaties by jou biblioteek.</p>
+
+        <h3>PSN-API-trofeë</h3>
+        <p>Sinkroniseer jou PlayStation Network-trofee-data vanaf jou PSN-rekening.</p>
+        <ol>
+            <li>Bekom jou NPSSO-koekie (sien hieronder)</li>
+            <li>Voer dit in by <strong>Instellings &rarr; Rekening &rarr; PSN</strong></li>
+            <li>Jou PSN-trofeebiblioteek word via die PlayStation-API opgehaal</li>
+            <li>Bekyk trofeevordering per speletjie met verdiende/totale tellings</li>
+            <li>Individuele trofeebesonderhede sluit beskrywing, skaarsheid, en ontsluitings-tydstempels in</li>
+        </ol>
+
+        <h3>PSN-verifikasie (NPSSO-koekie)</h3>
+        <p>PSN gebruik 'n spesiale verifikasiekoekie genaamd 'n NPSSO-teken. Om dit te bekom:</p>
+        <ol>
+            <li>Maak 'n webblaaier oop en meld aan by <a href="https://store.playstation.com" target="_blank" rel="noopener noreferrer">store.playstation.com</a></li>
+            <li>Nadat jy aangemeld het, navigeer na: <code>https://ca.account.sony.com/api/v1/ssocookie</code></li>
+            <li>Die bladsy sal JSON wys wat jou NPSSO-teken bevat</li>
+            <li>Kopieer die <code>npsso</code>-waarde en plak dit in Instellings &rarr; Rekening &rarr; PSN</li>
+        </ol>
+        <p>Sodra jy geverifieer is, stoor RetroDB die toegangstekens veilig in sy eie databasis (per gebruiker) en dateer hulle outomaties op &mdash; jy hoef nie die NPSSO weer by elke sinkronisasie te plak nie. Die sessie bly ongeveer twee maande geldig, en RetroDB hernu dit nou ook outomaties in die agtergrond, sodat jy in normale gebruik selde 'n vars NPSSO sal nodig hê.</p>
+
+        <h3>Trofeebesonderhede</h3>
+        <ul>
+            <li>Trofeetipes: Brons, Silwer, Goud, Platinum</li>
+            <li>Trofee-ikone word afgelaai en plaaslik in kas gestoor</li>
+            <li>Voltooiingspersentasie per speletjie</li>
+            <li>Ontsluitings-tydstempels vir elke verdiende trofee</li>
+        </ul>
+
+        <h3>Grootmaat-sinkronisasie</h3>
+        <p>Sinkroniseer alle PSN-speletjietrofeë tegelyk via 'n agtergrondtaak. Vordering word in 'n kennisgewing gewys. Tempolimietering (2.5s tussen versoeke) voorkom PSN-API-drosseling.</p>
+    </div>
+</section>
+
+<!-- Collector Trophies -->
+<section id="collector-trophies" class="help-section card">
+    <h2 class="card-title">Versamelaar-trofeë</h2>
+    <div class="card-body">
+        <h3>Wat Dit Is</h3>
+        <p>'n Speletjie-agtige stelsel wat trofeë toeken gebaseer op jou versamelingmylpale. Soos jy speletjies byvoeg, metadata ontgin, en speletjies voltooi, ontsluit trofeë outomaties.</p>
+
+        <h3>Trofeevlakke</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Vlak</th><th>Voorbeelde</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Brons</strong></td><td>Voeg eerste speletjie by, bereik 10 speletjies, eerste ontginning, 5 stelsels, eerste voltooiing</td></tr>
+                <tr><td><strong>Silwer</strong></td><td>100 speletjies, 50 ontgin, 10 stelsels, 10 voltooiings, 500 speletjies</td></tr>
+                <tr><td><strong>Goud</strong></td><td>1 000 speletjies, 100% metadata-dekking, 20 stelsels, 50 voltooiings</td></tr>
+                <tr><td><strong>Platinum</strong></td><td>5 000 speletjies, 100 voltooiings, 30+ stelsels</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Hoe Dit Werk</h3>
+        <ul>
+            <li>Vordering word outomaties opgespoor gebaseer op jou biblioteekstatistieke</li>
+            <li>Besoek die <strong>Versamelaar-trofeë</strong>-bladsy om jou vordering na elke trofee te sien</li>
+            <li>Klik <strong>"Verfris"</strong> om vordering op te dateer nadat jy veranderinge gemaak het</li>
+            <li>Verdiende trofeë word met hul ontsluitingsdatum vertoon</li>
+            <li>Vorderingsbalke wys hoe naby jy aan die volgende mylpaal is</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Museum -->
+<section id="museum" class="help-section card">
+    <h2 class="card-title">Museum</h2>
+    <div class="card-body">
+        <h3>Wat Dit Is</h3>
+        <p>'n Interaktiewe ensiklopedie van speletjiestelsels, georganiseer volgens generasie. Leer oor die geskiedenis, spesifikasies, en noemenswaardige speletjies vir elke platform in jou versameling.</p>
+
+        <h3>Landingsbladsy</h3>
+        <p>Die Museum-landingsbladsy wys 'n tydlyn van speletjiestelsels gegroepeer volgens generasie (1ste&ndash;9de Generasie, Handstelsels, Arcade, Rekenaars). Elke stelselkaart wys die hardewarebeeld en speletjietelling vanaf jou biblioteek.</p>
+
+        <h3>Stelsel-detailbladsye</h3>
+        <p>Klik enige stelsel om sy museumbladsy te bekyk, wat die volgende insluit:</p>
+        <ul>
+            <li><strong>Hardewarebeeld</strong> &mdash; Foto van die konsole/stelsel</li>
+            <li><strong>Tegniese Spesifikasies</strong> &mdash; CPU, GPU, RAM, resolusie, mediatipe</li>
+            <li><strong>Geskiedenis</strong> &mdash; KI-gegenereerde vertelling oor die stelsel se ontwikkeling, bekendstelling, en nalatenskap</li>
+            <li><strong>Top 10 Speletjies</strong> &mdash; Die stelsel se mees noemenswaardige titels (vanaf kritikustellings en KI-voorstelle)</li>
+            <li><strong>Beheerder-galery</strong> &mdash; Beelde van die stelsel se beheerders met beskrywings</li>
+        </ul>
+
+        <h3>KI-inhoudopwekking</h3>
+        <p>Museum-inhoud word met KI opgewek (Gemini, OpenAI, of Claude). Jy kan inhoud opwek vir:</p>
+        <ul>
+            <li><strong>Enkele stelsel</strong> &mdash; Klik "Wek Op" op enige stelsel se museumbladsy</li>
+            <li><strong>Grootmaat-opwekking</strong> &mdash; Wek inhoud vir alle stelsels tegelyk op vanaf die landingsbladsy (loop as 'n agtergrondtaak met kennisgewing-vordering)</li>
+        </ul>
+
+        <h3>Beheerderbeelde</h3>
+        <p>Beheerderbeelde kan bygevoeg word via:</p>
+        <ul>
+            <li><strong>Beeldsoektog</strong> &mdash; Soek vir beheerderfoto's met Bing-beeldsoektog. Resultate word volgens relevansie gerangskik (beheerdernaam + vervaardiger + stelselvariasies).</li>
+            <li><strong>Handmatige Oplaai</strong> &mdash; Laai jou eie beheerderbeelde op</li>
+            <li><strong>Agtergrondverwydering</strong> &mdash; Verwyder agtergronde outomaties met plaaslike KI ('n rembg-biblioteek) vir deursigtige beheerderbeelde op enige agtergrond</li>
+            <li><strong>Beeldverspreiding</strong> &mdash; Wanneer 'n beheerderbeeld gevind word, word dit outomaties met dieselfde beheerder op ander stelsels gedeel (susterbeheerders)</li>
+            <li><strong>Grootmaat-ophaal</strong> &mdash; Haal beelde vir alle beheerders in 'n stelsel tegelyk op</li>
+        </ul>
+        <p>Alle beheerderbeelde word na die teikengrootte gestandaardiseer en as WebP-formaat gestoor.</p>
+
+        <div class="help-tip">
+            <strong>Wenk:</strong> 'n KI-API-sleutel word vereis vir inhoudopwekking. Die Museum gebruik dieselfde KI-verskaffer wat by Instellings &rarr; Ontginning &rarr; API-sleutels opgestel is.
+        </div>
+    </div>
+</section>
+
+<!-- Analytics -->
+<section id="analytics" class="help-section card">
+    <h2 class="card-title">Analise</h2>
+    <div class="card-body">
+        <p>Analise bied omvattende statistieke en visualiserings oor 12 oortjies. Alle grafieke is interaktief en kan as PNG uitgevoer, na die knipbord gekopieer, of as CSV afgelaai word.</p>
+
+        <h3>Analise-oortjies</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Oortjie</th><th>Inhoud</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Opsomming</strong></td><td>Statistiekoorsigkaarte (totale speletjies, stelsels, voltooiingskoers, ontginningspersentasie, ens.)</td></tr>
+                <tr><td><strong>Grafieke</strong></td><td>Speletjies volgens platform/vervaardiger, volgens genre, jaar-vir-jaar-tydlyn</td></tr>
+                <tr><td><strong>Ontwikkelaars</strong></td><td>Top-15 ontwikkelaars- en uitgewers-staafgrafieke</td></tr>
+                <tr><td><strong>Speelbaarheid</strong></td><td>Genre-uiteensetting, speelmodus-ontleding, speletjiestruktuurverspreiding</td></tr>
+                <tr><td><strong>Speeltyd</strong></td><td>HLTB-speeltyd-data-ontleding oor jou versameling &mdash; totale beraamde speeltyd, gemiddeldes, verspreiding</td></tr>
+                <tr><td><strong>Resensietellings</strong></td><td>Kritikus- en gebruikertelling-verspreidings en gemiddeldes</td></tr>
+                <tr><td><strong>Ouderdomsgraderings</strong></td><td>Ouderdomsgradering-verspreiding oor alle 8 graderingstelsels</td></tr>
+                <tr><td><strong>Prestasies</strong></td><td>RetroAchievements-dekking en -voltooiing per stelsel</td></tr>
+                <tr><td><strong>Datagehalte</strong></td><td>Metadata-volledigheid-radargrafiek (beskrywing, boekskyf, genre, ontwikkelaar, uitgewer, vrystellingsdatum, skermkiekies, agtergrondkuns, video, handleiding, HLTB, graderings, modusse, streek)</td></tr>
+                <tr><td><strong>Groei</strong></td><td>Versamelinggroei-tydlyn wat wys wanneer speletjies oor tyd bygevoeg is</td></tr>
+                <tr><td><strong>Berging</strong></td><td>Bergingsgebruik-uiteensetting per stelsel (met geformateerde lêergroottes)</td></tr>
+                <tr><td><strong>Ranglyste</strong></td><td>Top-stelsels volgens speletjietelling, grootste individuele speletjies volgens lêergrootte</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Uitvoeropsies</h3>
+        <p>Elke grafiek kan uitgevoer word met die knoppies in die grafiek-nutsbalk:</p>
+        <ul>
+            <li><strong>PNG</strong> &mdash; Stoor as beeldlêer</li>
+            <li><strong>Knipbord</strong> &mdash; Kopieer grafiekbeeld na die knipbord</li>
+            <li><strong>CSV</strong> &mdash; Laai rou data as sigblad af</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Reports -->
+<section id="reports" class="help-section card">
+    <h2 class="card-title">ROM-verslae</h2>
+    <div class="card-body">
+        <h3>Wat Dit Doen</h3>
+        <p>Valideer ROM-lêername teen standaard naamgewingskonvensies en identifiseer moontlike probleme. Toeganklik via <strong>ROM-verslae</strong> in die kantbalk.</p>
+
+        <h3>Verslagtipes</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Oortjie</th><th>Wat Dit Nagaan</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Nie-standaard Name</strong></td><td>ROM's met lêername wat nie by naamgewingskonvensies pas nie. Wys huidige lêernaam, bespeurde probleme, en 'n voorgestelde regstelling.</td></tr>
+                <tr><td><strong>Naam-teenstrydighede</strong></td><td>ROM's waar die lêernaam nie by die ontginde metadata-titel pas nie. Wys huidige lêernaam vs ontginde titel, streek, jaar, en ontwikkelaar.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Wat Nagegaan Word</h3>
+        <ul>
+            <li>Ongeldige karakters in lêername (<code>: ? * / " &lt; &gt; | \</code>)</li>
+            <li>Ontbrekende of verkeerde streek-etikette (bv. <code>(USA)</code>, <code>(Europe)</code>)</li>
+            <li>Ontbrekende jaar-etikette</li>
+            <li>Teenstrydighede tussen lêernaam en databasistitel</li>
+        </ul>
+
+        <p>Verslae kan gesorteer word volgens stelsel, lêernaam, en probleemtipe. Gebruik hulle om jou ROM-biblioteek georganiseerd en konsekwent benoem te hou.</p>
+    </div>
+</section>
+
+<!-- ROM Tools -->
+<section id="rom-tools" class="help-section card">
+    <h2 class="card-title">ROM-nutsgoed</h2>
+    <div class="card-body">
+        <p>Kry toegang tot die ROM-nutsgoed-middelpunt vanaf die kantbalk. Elke nutsprogram loop as 'n agtergrondtaak met intydse vorderingsopdaterings, onderbreek/hervat-ondersteuning, en logboekhouding.</p>
+
+        <h3>Argiefskandeerder</h3>
+        <p>Pak ROM-argiewe (ZIP, 7Z, RAR) uit met opsies vir:</p>
+        <ul>
+            <li>Rekursiewe skandering van subgidse</li>
+            <li>Verwydering van ongewenste lêers na uitpak</li>
+            <li>Outomatiese M3U-speellys-generering vir multi-skyf-speletjies</li>
+        </ul>
+        <p><em>Vereis: 7z of unzip</em></p>
+
+        <h3>CHD-omskakelaar</h3>
+        <p>Skakel skyfbeelde (ISO, BIN/CUE, GDI) om na saamgeperste CHD-formaat. Bespaar aansienlike berging terwyl volle versoenbaarheid met emulators behou word.</p>
+        <p><em>Vereis: chdman (vanaf mame-tools)</em></p>
+
+        <h3>CHD-verifieerder</h3>
+        <p>Verifieer die integriteit van CHD-lêers met hutswaarde-validasie. Identifiseer korrupte of onvolledige omskakelings.</p>
+        <p><em>Vereis: chdman</em></p>
+
+        <h3>Duplikaatvinder</h3>
+        <p>Vind duplikaat-ROM's volgens hutswaarde of lêernaam, met opsies om volgens streek-etikette te prioritiseer.</p>
+        <p><em>Geen eksterne afhanklikhede</em></p>
+
+        <h3>Multi-skyf-organiseerder</h3>
+        <p>Organiseer multi-skyf-speletjies in subgidse en genereer M3U-speellyste vir emulators wat dit ondersteun. Nuttig vir stelsels soos PlayStation en Saturn.</p>
+        <p><em>Geen eksterne afhanklikhede</em></p>
+
+        <h3>Skermkiekie-ontdubbeling</h3>
+        <p>Vind en verwyder duplikaat-skermkiekies oor jou speletjiebiblioteek om bergingspasie vry te maak.</p>
+        <ul>
+            <li><strong>Presiese Hutswaarde (MD5)</strong> &mdash; Identifiseer slegs identiese lêers</li>
+            <li><strong>Visuele Ooreenkoms</strong> &mdash; Perseptuele hutswaarde-vergelyking met instelbare drempel (1&ndash;20, laer = strenger passing)</li>
+        </ul>
+        <p>Skandeer progressief met intydse statistieke wat gestandeerde speletjies, duplikaattelling, en herwinbare spasie wys. Resultate word gegroepeer volgens speletjie en stelsel. Jy kan kies watter lêer om in elke duplikaatgroep te behou, of <strong>"Kies Grootste"</strong> gebruik om outomaties die hoogste-resolusie-weergawe te behou.</p>
+        <p><em>Geen eksterne afhanklikhede</em></p>
+
+        <h3>Beeld-hergrootte-maker</h3>
+        <p>Standaardiseer speletjie-media na konsekwente teikengroottes. Sien <a href="#image-standardization">Beeldstandaardisering</a> vir volle besonderhede.</p>
+        <p><em>Geen eksterne afhanklikhede (Python-gebaseerde KI-opskalering)</em></p>
+
+        <h3>Terugvul Alternatiewe Titels</h3>
+        <p>Deursoek die biblioteek vir speletjies waarvan die <strong>alternatiewe titels</strong>-veld leeg is, en vul dit vanaf IGDB / TGDB / ScreenScraper in. Nuttig na die invoer van 'n groot katalogus of migrasie vanaf 'n ander nutsprogram wat nie streeks-/Japannese/subtitels gestoor het nie. Loop in die agtergrond; vordering word op die nutsprogramkaart gewys.</p>
+        <p><em>Vereis ten minste een ontginner-API-sleutel (IGDB / TGDB / ScreenScraper)</em></p>
+
+        <h3>Grootmaat-HLTB-opsoek</h3>
+        <p>Voer 'n HowLongToBeat-opsoek uit vir elke speletjie sonder 'n speeltyd-beraming. Elke passing word gepunt volgens titel + platform + vrystellingsjaar; hoë-vertroue-passings word outomaties gestoor. Enigiets onder die vertroue-drempel (of met botsende platforms) word geparkeer vir menslike hersiening.</p>
+        <p><em>Geen eksterne afhanklikhede (gebruik die gebundelde vanlyn HLTB-datastel)</em></p>
+
+        <h3>HLTB Hangende Hersiening</h3>
+        <p>Hersieningstou vir dubbelsinnige passings wat deur Grootmaat-HLTB-opsoek na vore gebring word. Elke hangende ry wys die bronspeletjie langs die HLTB-kandidaat (titel, platform, vrystellingsjaar, vertroue). Keur goed, verwerp, of kies 'n ander passing per ry. Die hersienings-nutsprogramkaart verskyn slegs in die ROM-nutsgoed-middelpunt wanneer daar ten minste een hangende passing is.</p>
+        <ul>
+            <li><strong>Filteroortjies</strong> vir lae-vertroue-, alt-titel-, en platform-teenstrydigheid-passings.</li>
+            <li><strong>Keur Goed</strong> skryf die speeltyd-beraming; <strong>Verwerp</strong> laat vaar die kandidaat en hou die opsoektou skoon.</li>
+        </ul>
+
+        <h3>Nutsprograminstellings</h3>
+        <p>Stel paaie, nutsprogramliggings, argieftipes, en voorkeure op wat oor alle ROM-nutsgoed gedeel word.</p>
+
+        <div class="help-tip">
+            <strong>Wenk:</strong> Alle ROM-nutsgoed ondersteun onderbreek/hervat en loop in die agtergrond. Vordering en resultate word gelog en is sigbaar in die Logboekbekyker. Nutsprogramstatus (beskikbaar vs vereis installasie) word op elke nutsprogramkaart gewys.
+        </div>
+    </div>
+</section>
+
+<!-- Normalization -->
+<section id="normalization" class="help-section card">
+    <h2 class="card-title">Normalisering</h2>
+    <div class="card-body">
+        <h3>Wat Dit Doen</h3>
+        <p>Normaliseer genre- en speelmodus-waardes na konsekwente kanonieke vorme. Dit gebeur outomaties tydens ontginning en KI-invul, en kan ook handmatig op jou bestaande biblioteek toegepas word.</p>
+
+        <h3>Waarom Dit Saak Maak</h3>
+        <p>Verskillende ontginners gebruik verskillende name vir dieselfde ding. Normalisering verseker konsekwentheid oor jou hele biblioteek:</p>
+        <ul>
+            <li><code>platform</code> &rarr; <code>Platformer</code></li>
+            <li><code>fps</code>, <code>first person shooter</code> &rarr; <code>First-Person-Shooter</code></li>
+            <li><code>shoot 'em up</code>, <code>shmup</code> &rarr; <code>Shoot-em-up</code></li>
+            <li><code>beat 'em up</code>, <code>brawler</code> &rarr; <code>Beat-em-up</code></li>
+            <li><code>hack and slash</code> &rarr; <code>Hack-n-Slash</code></li>
+            <li><code>rts</code>, <code>real time strategy</code> &rarr; <code>Real-Time Strategy</code></li>
+            <li><code>board game</code>, <code>card game</code> &rarr; <code>Board-Card</code></li>
+        </ul>
+
+        <h3>Pasgemaakte Reëls</h3>
+        <p>Jy kan pasgemaakte normaliseringsreëls byvoeg by <strong>Instellings &rarr; Data &rarr; Normalisering</strong>. Pasgemaakte reëls oorskryf die ingeboude afbeeldings, en laat jou toe om jou eie voorkeur-genre- en modusname te definieer. Reëls word in die databasis gestoor.</p>
+
+        <h3>Voorskou & Toepassing</h3>
+        <p>Voordat jy normalisering toepas, kan jy 'n voorskou sien van watter speletjies geraak sal word en watter veranderinge gemaak sal word. Dit laat jou toe om na te gaan voordat veranderinge aan jou biblioteek vasgelê word.</p>
+    </div>
+</section>
+
+<!-- Image Standardization -->
+<section id="image-standardization" class="help-section card">
+    <h2 class="card-title">Beeldstandaardisering</h2>
+    <div class="card-body">
+        <h3>Wat Dit Doen</h3>
+        <p>Standaardiseer alle speletjie-media na konsekwente teikengroottes vir 'n eenvormige voorkoms regdeur jou biblioteek. Beelde binne 80&ndash;120% van die teikengrootte word oorgeslaan.</p>
+
+        <h3>Hoe Dit Werk</h3>
+        <ul>
+            <li><strong>Opskalering</strong> &mdash; Beelde kleiner as die teikengrootte word opgeskaal met Real-ESRGAN x4 (KI-superresolusie via ONNX Runtime) vir hoë-gehalte-vergroting, en dan na die presiese teikengrootte hergrootgemaak</li>
+            <li><strong>Afskalering</strong> &mdash; Beelde groter as die teikengrootte word afgeskaal met Lanczos-filtrering vir skerp resultate</li>
+            <li><strong>Drempelband</strong> &mdash; Beelde binne 80&ndash;120% van die teiken word ongeraak gelaat om onnodige herverwerking te vermy</li>
+        </ul>
+
+        <h3>Teikengroottes</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Mediatipe</th><th>Teiken</th><th>Metode</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Boekskyf</td><td>1080px hoogte</td><td>Breedte skaal eweredig</td></tr>
+                <tr><td>3D-boekskyf</td><td>1080px hoogte</td><td>Breedte skaal eweredig (behou deursigtigheid)</td></tr>
+                <tr><td>Skermkiekies</td><td>1080px hoogte</td><td>Breedte skaal eweredig</td></tr>
+                <tr><td>Beheerders</td><td>1280px langste rand</td><td>Behou deursigtigheid (RGBA)</td></tr>
+                <tr><td>Hardeware</td><td>1280px langste rand</td><td>Behou deursigtigheid (RGBA)</td></tr>
+                <tr><td>Agtergrondkuns</td><td>Oorgeslaan</td><td>Nie gestandaardiseer nie (op oorspronklike grootte gelaat)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Hoe Om Uit Te Voer</h3>
+        <ol>
+            <li>Gaan na <strong>Instellings &rarr; Stelsel &rarr; Onderhoud</strong> of <strong>ROM-nutsgoed &rarr; Beeld-hergrootte-maker</strong></li>
+            <li>Klik <strong>"Begin"</strong> om grootmaat-standaardisering te begin</li>
+            <li>Die taak loop in die agtergrond met kennisgewing-vordering wat die huidige lêer en statistieke wys</li>
+            <li>Beelde word ook outomaties gestandaardiseer tydens ontginning (nuwe aflaaie word onmiddellik gestandaardiseer)</li>
+        </ol>
+
+        <h3>Hardeware-ondersteuning</h3>
+        <p>Die Real-ESRGAN-model bespeur jou hardeware outomaties en gebruik die beste beskikbare verskaffer:</p>
+        <ul>
+            <li><strong>CUDA</strong> &mdash; NVIDIA-GPU-versnelling</li>
+            <li><strong>ROCm</strong> &mdash; AMD-GPU-versnelling (met outomatiese gfx-weergawe-oorskrywing vir die RX 6000-reeks)</li>
+            <li><strong>CoreML</strong> &mdash; Apple Silicon-versnelling</li>
+            <li><strong>CPU</strong> &mdash; Terugval vir stelsels sonder GPU-ondersteuning</li>
+        </ul>
+        <p>Die ONNX-modellêer word outomaties vanaf Hugging Face afgelaai met eerste gebruik en plaaslik in kas gestoor.</p>
+    </div>
+</section>
+
+<!-- Logs -->
+<section id="logs" class="help-section card">
+    <h2 class="card-title">Logboekbekyker</h2>
+    <div class="card-body">
+        <h3>Wat Dit Doen</h3>
+        <p>'n Verenigde bekyker vir alle toepassingslogboeke. Toeganklik via <strong>Logboekbekyker</strong> in die kantbalk.</p>
+
+        <h3>Logboekkategorieë</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Kategorie</th><th>Inhoud</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Ontginning</strong></td><td>Ontginner-aktiwiteit, API-oproepe, foute, en resultate per speletjie</td></tr>
+                <tr><td><strong>ROM-nutsgoed</strong></td><td>Argiefuitpak, CHD-omskakeling, duplikaatbespeuring, skermkiekie-ontdubbeling</td></tr>
+                <tr><td><strong>ROM-verslae</strong></td><td>Naamgewingsvalideringsresultate</td></tr>
+                <tr><td><strong>Beeldhergrootte</strong></td><td>Beeldstandaardisering-taakvordering (opskaal/afskaal per lêer)</td></tr>
+                <tr><td><strong>Stelsel</strong></td><td>Algemene toepassingsaktiwiteit, onderhoudstake, opstart, databasisbewerkings</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Funksies</h3>
+        <ul>
+            <li>Filtreer volgens kategorie of bekyk alle logboeke saam</li>
+            <li>Lêerlys wys skeppingsdatums en lêergroottes</li>
+            <li>Klik enige logboeklêer om sy volle inhoud te bekyk</li>
+            <li>Laai individuele logboeklêers af</li>
+            <li>Kategorietellings bo-aan gewys vir 'n vinnige oorsig</li>
+            <li>Loguitvoervlakke instelbaar by Instellings &rarr; Stelsel &rarr; Logboek</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Maintenance -->
+<section id="maintenance" class="help-section card">
+    <h2 class="card-title">Onderhoud</h2>
+    <div class="card-body">
+        <p>Onderhoudsbewerkings is beskikbaar by <strong>Instellings &rarr; Stelsel &rarr; Onderhoud</strong>. Dit help om jou biblioteek skoon en geoptimeer te hou.</p>
+
+        <h3>Biblioteekskandering</h3>
+        <ul>
+            <li><strong>Skandeer Biblioteek</strong> &mdash; Skandeer jou ROM-gidse vir nuwe speletjies. Bespeur stelselgidse en ondersteunde lêertipes deur ES-DE <code>systeminfo.txt</code>-uitbreidinglyste te gebruik. Ook beskikbaar vanaf die Kontrolebord.</li>
+        </ul>
+
+        <h3>Skoonmaakbewerkings</h3>
+        <ul>
+            <li><strong>Maak Ontbrekende ROM's Skoon</strong> &mdash; Verwyder databasisinskrywings vir speletjies waarvan die ROM-lêers nie meer op skyf bestaan nie. Nuttig na die herorganisering of verwydering van ROM-lêers.</li>
+            <li><strong>Skoonmaak van Weesmedia</strong> &mdash; Vind en verwyder beeldlêers op skyf (boekskyf, skermkiekies, agtergrondkuns) wat geen ooreenstemmende databasisverwysing het nie. Voorskou voor verwydering ter bevestiging.</li>
+            <li><strong>Verwyder Ontginde Data</strong> &mdash; Verwyder alle ontginde metadata van speletjies terwyl ROM-lêerinskrywings behou word. Nuttig om vars met ontginning te begin. Voorskou wys geraakte speletjies voor uitvoering.</li>
+            <li><strong>Verwyder CLZ-invoere</strong> &mdash; Verwyder alle CLZ Games-invoerrekords (metadata-slegs-inskrywings sonder ROM-lêers).</li>
+        </ul>
+
+        <h3>Databasisoptimering</h3>
+        <ul>
+            <li><strong>Optimeer Databasis</strong> &mdash; Voer SQLite VACUUM en ANALYZE uit om berging van verwyderde rekords terug te wen en soekbeplanner-statistieke op te dateer. Aanbeveel na groot verwyderings of skoonmaakbewerkings.</li>
+        </ul>
+
+        <h3>Grootmaat-beeldstandaardisering</h3>
+        <p>Standaardiseer alle speletjiebeelde na teikengroottes. Sien <a href="#image-standardization">Beeldstandaardisering</a> vir besonderhede.</p>
+
+        <h3>Bedienerbestuur</h3>
+        <ul>
+            <li><strong>Herbegin Bediener</strong> &mdash; Grasieuse toepassingsherbegin (skoonmaak en afsluiting). Beskikbaar by Instellings &rarr; Stelsel &rarr; Probleemoplossing.</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Multi-User Access -->
+<section id="multi-user" class="help-section card">
+    <h2 class="card-title">Multi-gebruiker-toegang</h2>
+    <div class="card-body">
+        <h3>Gebruikersrolle</h3>
+        <table class="data-table">
+            <thead>
+                <tr><th>Rol</th><th>Toegang</th><th>Wagwoord</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Admin</strong></td><td>Volle toegang: instellings, gebruikerbestuur, onderhoud, alle funksies</td><td>Vereis</td></tr>
+                <tr><td><strong>Redigeerder</strong></td><td>Kan speletjies redigeer, ontgin, ROM-nutsgoed gebruik, versamelings bestuur</td><td>Geen</td></tr>
+                <tr><td><strong>Bekyker</strong></td><td>Leesalleen: blaai deur biblioteek, bekyk besonderhede, bekyk prestasies/trofeë</td><td>Geen</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Gebruikers Bestuur</h3>
+        <ol>
+            <li>Gaan na <strong>Instellings &rarr; Rekening &rarr; Gebruikers</strong> (slegs admin)</li>
+            <li>Klik <strong>"Voeg Gebruiker By"</strong> om 'n nuwe rekening te skep</li>
+            <li>Stel gebruikersnaam, vertoonnaam, en rol</li>
+            <li>Admin-gebruikers ontvang 'n verstekwagwoord wat met eerste aanmelding verander moet word</li>
+        </ol>
+
+        <h3>Verifikasie</h3>
+        <p>Die aanmeldbladsy wys alle aktiewe gebruikers. Admin-rekenings vereis 'n wagwoord; ander rolle klik eenvoudig hul naam om aan te meld. Sessies bly behoue tot afmelding.</p>
+
+        <h3>Instellings per Gebruiker</h3>
+        <p>Elke gebruiker kan hul eie stel:</p>
+        <ul>
+            <li>Avatar (laai 'n pasgemaakte beeld op)</li>
+            <li>Vertoonnaam</li>
+            <li>Temavoorkeur</li>
+            <li>Items per bladsy</li>
+            <li>Tydsone</li>
+            <li>RPCS3-trofeepad</li>
+            <li>RetroAchievements-geloofsbriewe (gebruikersnaam + API-sleutel)</li>
+            <li>PSN-geloofsbriewe (NPSSO-koekie)</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Backup -->
+<section id="backup" class="help-section card">
+    <h2 class="card-title">Rugsteun & Herstel</h2>
+    <div class="card-body">
+        <h3>Rugsteune Skep</h3>
+        <ol>
+            <li>Gaan na <strong>Instellings &rarr; Biblioteek &rarr; Rugsteun</strong></li>
+            <li>Klik <strong>"Skep Rugsteun"</strong></li>
+            <li>Die rugsteun word na die <code>backups/</code>-gids gestoor met 'n tydstempel-lêernaam</li>
+        </ol>
+
+        <h3>Wat Rugsteun Word</h3>
+        <p>Die rugsteun sluit die hele SQLite-databasis (<code>roms.db</code>) in, wat alle speletjie-metadata, gebruikersrekeninge, instellings, trofee-data, prestasievordering, etikette, lyste, en verlanglysitems bevat.</p>
+
+        <h3>Wat NIE Rugsteun Word Nie</h3>
+        <p>Medialêers (boekskyf, skermkiekies, agtergrondkuns, video's, handleidings) is NIE in die databasisrugsteun ingesluit nie, aangesien hulle deur ontginning herlaai kan word. Oorweeg om jou <code>static/images/</code>-gids apart te rugsteun as jy pasgemaakte oplaaie het.</p>
+
+        <h3>Herstel</h3>
+        <ol>
+            <li>Vind die rugsteun in die rugsteunlys</li>
+            <li>Klik <strong>"Herstel"</strong></li>
+            <li>Bevestig die aksie</li>
+        </ol>
+
+        <div class="help-tip">
+            <strong>Waarskuwing:</strong> Om 'n rugsteun te herstel oorskryf jou huidige databasis. Skep 'n vars rugsteun voordat jy 'n ouer een herstel!
+        </div>
+    </div>
+</section>
+
+<!-- Updating RetroDB -->
+<section id="updating" class="help-section card">
+    <h2 class="card-title">RetroDB Opdateer</h2>
+    <div class="card-body">
+        <h3>Hoe Om Op Te Dateer</h3>
+        <ol>
+            <li>Laai die nuwe RetroDB-vrystelling af</li>
+            <li>Rugsteun hierdie lêers (hulle bevat jou persoonlike data):
+                <ul>
+                    <li><code>config.py</code> (jou paaie en API-sleutels)</li>
+                    <li><code>data/settings.json</code> (jou koppelvlak-voorkeure)</li>
+                    <li><code>data/scraper_settings.json</code> (jou ontginner-konfigurasie)</li>
+                    <li><code>data/rom_tools_config.json</code> (jou ROM-nutsgoed-voorkeure)</li>
+                    <li><code>database/</code>-gids (jou speletjiebiblioteek-databasis, en jou gestoorde PSN-/Xbox-aanmeldtekens)</li>
+                </ul>
+            </li>
+            <li>Pak die nuwe weergawe uit oor die bestaande installasie</li>
+            <li>Voer <code>python install.py</code> uit om enige nuwe afhanklikhede te installeer</li>
+            <li>Herbegin die bediener</li>
+        </ol>
+
+        <h3>Lêers Wat Veilig Oorskryf Kan Word</h3>
+        <p>Alle bronkode-lêers (<code>.py</code>, <code>.html</code>, <code>.css</code>, <code>.js</code>) kan veilig oorskryf word. Die installeerder sal nie jou persoonlike konfigurasielêers oorskryf nie.</p>
+
+        <h3>Lêers Om Te Behou</h3>
+        <p>Verwyder of oorskryf nooit: <code>config.py</code>, <code>database/roms.db</code>, <code>data/settings.json</code>, <code>data/scraper_settings.json</code>, <code>data/rom_tools_config.json</code>.</p>
+
+        <h3>Databasis-migrasies</h3>
+        <p>RetroDB hanteer databasisskema-veranderinge outomaties tydens opstart. Nuwe kolomme en tabelle word bygevoeg soos nodig sonder dataverlies. Jy hoef niks spesiaals te doen nie &mdash; begin net die nuwe weergawe en die databasis word outomaties opgedateer.</p>
+    </div>
+</section>
+
+<!-- Troubleshooting -->
+<section id="troubleshooting" class="help-section card">
+    <h2 class="card-title">Probleemoplossing</h2>
+    <div class="card-body">
+        <h3>Algemene Probleme</h3>
+
+        <h4>"No extensions found for system"</h4>
+        <p>Die stelselgids benodig 'n geldige ES-DE <code>systeminfo.txt</code>-lêer wat die ondersteunde ROM-lêeruitbreidings bepaal. Verseker dat jou ROM-gidsstruktuur by ES-DE-standaarde pas.</p>
+
+        <h4>"API Connection Failed"</h4>
+        <ul>
+            <li>Gaan jou internetverbinding na</li>
+            <li>Verifieer API-sleutels by Instellings &rarr; Ontginning &rarr; API-sleutels</li>
+            <li>Wag as jy tempo-beperk is (sommige API's het daaglikse/uurlikse limiete)</li>
+            <li>Gaan na of die ontginner aangeskakel is (gedeaktiveerde ontginners wys "Gedeaktiveer" in Kontrolebord-status)</li>
+            <li>Kyk na die Logboekbekyker vir gedetailleerde foutboodskappe</li>
+        </ul>
+
+        <h4>"Bulk Scrape Stuck"</h4>
+        <p>Gaan na Instellings &rarr; Stelsel &rarr; Probleemoplossing &rarr; <strong>"Maak Vasgehaakte Grootmaat-ontginning Skoon"</strong>. Dit herstel die taaktoestand sonder om jou data te raak.</p>
+
+        <h4>"RA Sync Queue Stuck"</h4>
+        <p>Maak die RetroAchievements-sinkronisasietou skoon vanaf Instellings &rarr; Stelsel &rarr; Probleemoplossing.</p>
+
+        <h4>"PSN Sync Stuck"</h4>
+        <p>Maak die PSN-verfristaak skoon vanaf Instellings &rarr; Stelsel &rarr; Probleemoplossing.</p>
+
+        <h4>"Museum Generation Stuck"</h4>
+        <p>Maak die museumopwekkingstaak skoon vanaf Instellings &rarr; Stelsel &rarr; Probleemoplossing.</p>
+
+        <h4>"Database Errors"</h4>
+        <ol>
+            <li>Skep 'n rugsteun indien moontlik (Instellings &rarr; Biblioteek &rarr; Rugsteun)</li>
+            <li>Probeer Instellings &rarr; Stelsel &rarr; Onderhoud &rarr; <strong>Optimeer Databasis</strong></li>
+            <li>Gaan lêertoestemmings op die <code>database/</code>-gids na</li>
+            <li>Laaste uitweg: herstel vanaf 'n rugsteun of verwyder die databasis en herskandeer</li>
+        </ol>
+
+        <h4>"Images Not Saving"</h4>
+        <p>Gaan skryftoestemmings op die media-gidse na: <code>chmod -R 755 static/images/</code></p>
+
+        <h4>"Page Slow or Unresponsive"</h4>
+        <ul>
+            <li>Groot versamelings mag tyd neem om te laai &mdash; oneindige rol laai in groepe van 100</li>
+            <li>Probeer om die bladsy te herlaai om opgehoopte geheue vry te maak</li>
+            <li>Kyk na die blaaierkonsole vir JavaScript-foute</li>
+            <li>Probeer oorskakel na 'n tema met 'n ligter doek-effek (bv. Amber of Elite)</li>
+            <li>Doek-effekte bespeur hardeware outomaties; laer-end toestelle gebruik CPU-terugval teen 'n verminderde raamtempo</li>
+        </ul>
+
+        <h4>"Interrupted Jobs"-banier op die Kontrolebord</h4>
+        <p>As RetroDB herbegin terwyl take loop, verskyn hulle in 'n herstelbanier. Klik <strong>"Hervat"</strong> individueel of <strong>"Hervat Almal"</strong> om hulle te herbegin. Klik <strong>"Verwerp"</strong> of <strong>"Verwerp Almal"</strong> om hulle skoon te maak.</p>
+
+        <h4>"PSN Authentication Failed"</h4>
+        <ul>
+            <li>NPSSO-tekens verval &mdash; genereer 'n nuwe een vanaf <code>ca.account.sony.com/api/v1/ssocookie</code></li>
+            <li>Maak seker jy is aangemeld by store.playstation.com voordat jy die koekie-URL besoek</li>
+            <li>RetroDB stoor jou PSN-sessie vir ongeveer twee maande in kas en hernu dit nou outomaties in die agtergrond; as dit steeds verval, plak eenvoudig 'n vars NPSSO in Instellings &rarr; Rekening &rarr; PSN</li>
+        </ul>
+
+        <h4>"Xbox Authentication Failed"</h4>
+        <ul>
+            <li>Verifieer weer deur "Meld Aan" op die Speletjie-invoere &rarr; Xbox-oortjie te klik</li>
+            <li>Xbox-tekens word in <code>data/xbox_tokens.json</code> in kas gestoor en outomaties opgedateer</li>
+        </ul>
+
+        <h4>"Image Upscaling Errors"</h4>
+        <ul>
+            <li>Die Real-ESRGAN ONNX-model word met eerste gebruik afgelaai &mdash; verseker internettoegang</li>
+            <li>GPU-versnelling vereis versoenbare drywers (CUDA vir NVIDIA, ROCm vir AMD)</li>
+            <li>As die GPU misluk, val die stelsel outomaties terug na CPU-verwerking</li>
+        </ul>
+
+        <h3>Werkverrigtingswenke</h3>
+        <ul>
+            <li>Hou jou blaaier op datum vir beste werkverrigting</li>
+            <li>Maak ander blaaieroortjies toe wanneer jy met baie groot versamelings werk</li>
+            <li>Gebruik stelselfilters om die aantal speletjies wat gelyktydig vertoon word, te verminder</li>
+            <li>Voer Optimeer Databasis gereeld uit na groot bewerkings (ontginning, skoonmaak, invoere)</li>
+            <li>Doek-tema-effekte bespeur hardeware outomaties; laer-end toestelle gebruik CPU-terugval</li>
+        </ul>
+    </div>
+</section>
+
+<!-- Security & Disclaimer -->
+<section id="security" class="help-section card">
+    <h2 class="card-title">Sekuriteit & Vrywaring</h2>
+    <div class="card-body">
+        <h3>Beste Sekuriteitspraktyke</h3>
+        <ul>
+            <li><strong>Verander die verstekwagwoord</strong> &mdash; Die verstek-admin-wagwoord (<code>admin</code>) behoort onmiddellik met eerste aanmelding verander te word. Gebruik 'n sterk wagwoord van ten minste 8 karakters.</li>
+            <li><strong>Gebruik 'n HTTPS-omgekeerde-instaanbediener</strong> &mdash; RetroDB bied nie self TLS/SSL nie. Plaas dit agter 'n omgekeerde-instaanbediener (bv. Nginx, Caddy, Traefik) met HTTPS aangeskakel om verkeer tussen kliënte en die bediener te enkripteer.</li>
+            <li><strong>Beperk netwerktoegang</strong> &mdash; Vermy om RetroDB direk aan die publieke internet bloot te stel. Gebruik 'n VPN of beperk toegang tot jou plaaslike netwerk. As afgeleë toegang nodig is, gebruik 'n omgekeerde-instaanbediener met verifikasie.</li>
+            <li><strong>Hou gereelde rugsteune</strong> &mdash; Gebruik die ingeboude rugsteunfunksie onder Instellings om periodieke databasisrugsteune te skep. Stoor rugsteune op 'n aparte plek van die toepassing.</li>
+            <li><strong>Hou RetroDB opgedateer</strong> &mdash; Kyk gereeld vir nuwe vrystellings. Sekuriteitregstellings en verbeterings is in opdaterings ingesluit.</li>
+            <li><strong>Beskerm jou API-sleutels</strong> &mdash; API-sleutels word in <code>data/scraper_settings.json</code> gestoor. Verseker dat hierdie lêer nie openbaar toeganklik is nie. Deel nooit jou <code>config.py</code> of tekenlêers nie.</li>
+        </ul>
+
+        <h3>Ingeboude Sekuriteitsfunksies</h3>
+        <ul>
+            <li><strong>Wagwoord-verhutsing</strong> &mdash; Admin-wagwoorde word met PBKDF2 verhuts (nooit as gewone teks gestoor nie)</li>
+            <li><strong>Aanmeld-tempolimietering</strong> &mdash; Beskerming teen brute-krag-aanvalle op die aanmeld-eindpunt</li>
+            <li><strong>Padvalidasie</strong> &mdash; Alle lêerbewerkings gebruik <code>safe_path</code>- en <code>safe_filename</code>-helpers om gidsdeurkruisingsaanvalle te voorkom</li>
+            <li><strong>Parameteriseerde soektogte</strong> &mdash; Alle databasissoektogte gebruik parameteriseerde stellings om SQL-inspuiting te voorkom</li>
+            <li><strong>XSS-beskerming</strong> &mdash; Modaalvenster-dialoë gebruik veilige DOM-konstruksie; gebruikerinvoer word ontsnap</li>
+            <li><strong>Beeld-dekompressiebom-beskerming</strong> &mdash; Maksimum beeldpiksel-telling word beperk om geheue-uitputting van kwaadwillige beelde te voorkom</li>
+        </ul>
+
+        <h3>Vrywaring</h3>
+        <p>
+            RetroDB word verskaf <strong>"SOOS DIT IS"</strong>, sonder enige waarborg, uitdruklik of geïmpliseer,
+            insluitend maar nie beperk tot die waarborge van verhandelbaarheid, geskiktheid vir 'n spesifieke doel,
+            en nie-inbreukmaking nie. Die outeurs of kopieregeienaars sal in geen geval aanspreeklik wees vir enige eis,
+            skade, of ander aanspreeklikheid nie, hetsy in 'n aksie van kontrak, onregmatige daad, of andersins, wat voortspruit uit,
+            uit of in verband met die sagteware of die gebruik of ander hantering van die sagteware.
+        </p>
+        <p>
+            Jy is uitsluitlik verantwoordelik vir die beveiliging van jou ontplooiing, insluitend netwerkkonfigurasie,
+            toegangsbeheer, datarugsteune, en nakoming van enige toepaslike wette rakende die inhoud
+            wat jy met hierdie sagteware bestuur. Die ontwikkelaars aanvaar geen verantwoordelikheid vir ongemagtigde toegang,
+            dataverlies, of misbruik wat voortspruit uit verkeerde konfigurasie of ontplooiing nie.
+        </p>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+.help-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin: 0 calc(-1 * var(--spacing-lg));
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(20, 26, 35, 0.98), rgba(15, 20, 25, 0.98));
+    border-bottom: 2px solid var(--primary-cyan);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(76, 201, 240, 0.2);
+}
+
+.help-nav-item {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.help-nav-item:hover {
+    border-color: var(--primary-cyan);
+    color: var(--primary-cyan);
+}
+
+.help-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.help-section h3 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: var(--primary-cyan);
+    margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+}
+
+.help-section h3:first-child {
+    margin-top: 0;
+}
+
+.help-section h4 {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+}
+
+.help-section ol, .help-section ul {
+    padding-left: 1.5rem;
+    margin: var(--spacing-sm) 0;
+}
+
+.help-section li {
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.help-section p {
+    color: var(--text-secondary);
+    margin: var(--spacing-sm) 0;
+    line-height: 1.6;
+}
+
+.help-section pre {
+    background: var(--bg-medium);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    overflow-x: auto;
+    margin: var(--spacing-md) 0;
+    line-height: 1.5;
+}
+
+.help-section code {
+    background: var(--bg-lighter);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--primary-cyan);
+}
+
+.help-section a {
+    color: var(--primary-cyan);
+    text-decoration: none;
+}
+
+.help-section a:hover {
+    text-decoration: underline;
+}
+
+.shortcut-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-sm);
+    margin: var(--spacing-md) 0;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-medium);
+    border-radius: var(--radius-md);
+}
+
+.shortcut-item kbd {
+    display: inline-block;
+    min-width: 24px;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--primary-cyan);
+    text-align: center;
+}
+
+.shortcut-item span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    background: var(--bg-lighter);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--primary-cyan);
+}
+
+.help-tip {
+    background: rgba(76, 201, 240, 0.1);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    border-left: 4px solid var(--primary-cyan);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    color: var(--text-secondary);
+}
+
+.help-tip strong {
+    color: var(--primary-cyan);
+}
+
+.data-table {
+    width: 100%;
+    margin: var(--spacing-md) 0;
+}
+
+.data-table th,
+.data-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.data-table th {
+    background: var(--bg-medium);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.data-table td {
+    color: var(--text-primary);
+}
+
+.data-table tbody tr:hover {
+    background: rgba(76, 201, 240, 0.05);
+}
+</style>
+{% endblock %}

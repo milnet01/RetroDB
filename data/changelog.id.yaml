@@ -1,0 +1,330 @@
+- version: 3.20.0
+  date: 2026-07-05
+  tags:
+  - type: feature
+    label: Sebelas bahasa baru — RetroDB kini berbicara dalam 21 bahasa
+  body: |
+    <ul>
+      <li><strong>Sebelas paket bahasa baru.</strong> Antarmuka RetroDB,
+        catatan rilis, dan manual bantuan kini diterjemahkan ke dalam
+        <strong>Afrikaans, isiZulu, isiXhosa, Dutch, Norwegian (Bokm&aring;l),
+        Russian, Polish, Turkish, Ukrainian, Indonesian, dan Hebrew</strong>
+        &mdash; bergabung dengan German, Spanyol, French, Italia, Jepang,
+        Korea, Portugis Brasil, dan Chinese Sederhana &amp; Tradisional yang
+        sudah ada. Pilih bahasa Anda di Settings &rarr; Display Preferences
+        &rarr; Language; aplikasi akan dimuat ulang dalam bahasa yang Anda
+        pilih.</li>
+      <li>Setiap bahasa mencakup seluruh aplikasi: setiap tombol, label dan
+        pesan, seluruh riwayat catatan rilis, dan panduan bantuan
+        lengkap.</li>
+      <li><strong>isiZulu &amp; isiXhosa</strong> juga disertakan. Sebagai
+        bahasa dengan sedikit kosakata perangkat lunak yang ada, keduanya
+        mempertahankan istilah teknis umum (ROM, scraper, box art) dalam
+        bahasa Inggris jika tidak ada padanan yang alami &mdash; koreksi dari
+        penutur asli sangat diterima sebelum Anda mengandalkannya.</li>
+      <li><strong>Hebrew</strong> hadir dengan teks yang diterjemahkan
+        sepenuhnya; tata letak halaman kanan-ke-kiri yang rapi (agar
+        antarmuka tercermin dengan benar) akan hadir pada pembaruan
+        berikutnya. Arabic akan menyusul setelah pengerjaan tata letak
+        tersebut selesai.</li>
+    </ul>
+- version: 3.19.1
+  date: 2026-07-05
+  tags:
+  - type: performance
+    label: Scraping lebih cepat — screenshot game kini diunduh secara bersamaan
+  body: |
+    <ul>
+      <li><strong>Screenshot diunduh secara paralel.</strong> Mengikuti
+        pendekatan yang sama dengan frontend ES-DE yang populer (yang mengambil
+        semua media game sekaligus), RetroDB kini mengunduh screenshot game
+        <strong>secara bersamaan</strong> alih-alih satu per satu, untuk setiap
+        sumber (TheGamesDB, IGDB, RAWG, ScreenScraper). Game dengan banyak
+        screenshot selesai jauh lebih cepat.</li>
+      <li>Pemeriksaan screenshot duplikat tetap berjalan berurutan setelahnya,
+        sehingga penghapusan duplikat gambar tetap seakurat sebelumnya &mdash;
+        hanya proses unduhan yang dipercepat. Unduhan dibatasi maksimal empat
+        sekaligus agar satu sumber tidak pernah kelebihan beban.</li>
+      <li>Peningkatan kecepatan di balik layar; berlaku setelah restart
+        berikutnya.</li>
+    </ul>
+- version: 3.19.0
+  date: 2026-07-05
+  tags:
+  - type: performance
+    label: Scraping lebih cepat — sumber kini diminta secara bersamaan
+  body: |
+    <ul>
+      <li><strong>Scraping kini lebih cepat untuk setiap game.</strong> Saat
+        RetroDB mencari data sebuah game, ia memeriksa beberapa basis data
+        (ES-DE, TheGamesDB, IGDB, RAWG, ScreenScraper). Sebelumnya ia
+        menanyakannya <em>satu per satu</em> dan menunggu setiap jawaban
+        sebelum bertanya ke yang berikutnya &mdash; sehingga waktu tunggu
+        adalah jumlah dari semuanya. Kini ia menanyakan semuanya
+        <strong>sekaligus</strong> dan hanya menunggu yang paling lambat, yang
+        memberikan percepatan signifikan pada setiap game. Hasil tetap
+        diurutkan dan dinilai persis seperti sebelumnya.</li>
+      <li><strong>Lebih sedikit koneksi terbuang saat mengunduh
+        gambar.</strong> Unduhan gambar kini menggunakan kembali koneksi yang
+        sudah terbuka alih-alih membuka koneksi baru untuk setiap gambar,
+        sehingga menghemat waktu pada game dengan banyak screenshot.</li>
+      <li>Ini adalah peningkatan kecepatan di balik layar &mdash; tidak ada
+        yang berubah dalam cara Anda menggunakan RetroDB, dan ini tidak
+        membebani basis data lebih berat (permintaan yang sama, hanya
+        dijalankan bersamaan). Berlaku setelah restart berikutnya.</li>
+    </ul>
+- version: 3.18.0
+  date: 2026-07-05
+  tags:
+  - type: feature
+    label: Menambahkan klasifikasi usia Tiongkok (China) sebagai sistem klasifikasi ke-9
+  body: |
+    <ul>
+      <li><strong>Sistem klasifikasi usia baru: Tiongkok (CADPA).</strong>
+        RetroDB kini mendukung skema resmi pengingat usia game Tiongkok
+        (&ldquo;网络游戏适龄提示&rdquo;, diterbitkan oleh CADPA) di samping
+        delapan badan yang sudah ada (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC,
+        dan ClassInd). Sistem ini menggunakan tiga tingkatan &mdash;
+        <strong>8+</strong>, <strong>12+</strong>, dan <strong>16+</strong>
+        &mdash; ditampilkan dengan lencana hijau sederhana.</li>
+      <li><strong>Terisi otomatis, seperti yang lain.</strong> Ketika sebuah
+        game sudah memiliki klasifikasi dari negara lain mana pun, RetroDB
+        secara otomatis menghitung tingkatan Tiongkok yang sesuai (dan
+        sebaliknya). Anda juga dapat memilih atau mengubahnya secara manual di
+        layar Edit game, dan memilihnya sebagai sistem tampilan pilihan Anda di
+        Pengaturan &rarr; Perpustakaan. Catatan: sebagian besar basis data game
+        Barat tidak menerbitkan klasifikasi Tiongkok, jadi untuk game tanpa
+        klasifikasi apa pun, nilainya diisi dari konten game selama scraping /
+        AI Fill.</li>
+      <li>Lencana hijau tersebut adalah ilustrasi sederhana buatan RetroDB
+        sendiri (sesuai gaya khas badan-badan lainnya), bukan logo resmi
+        CADPA, sehingga tidak ada keterikatan lisensi gambar.</li>
+    </ul>
+- version: 3.17.0
+  date: 2026-07-04
+  tags:
+  - type: feature
+    label: Bersihkan entri database untuk file media yang hilang dari disk
+  - type: security
+    label: Perlindungan agar seluruh gambar perpustakaan Anda tidak terhapus saat folder media hilang
+  body: |
+    <ul>
+      <li><strong>Alat pemeliharaan baru: &ldquo;Referensi Media yang
+        Hilang&rdquo;</strong> (Pengaturan &rarr; Sistem &rarr; Pemeliharaan).
+        Ini adalah kebalikan dari pembersihan &ldquo;Media Yatim&rdquo; yang
+        sudah ada: alih-alih mencari file gambar tersisa tanpa game, alat ini
+        mencari game yang boxart, boxart 3D, screenshot, fanart, video, atau
+        manualnya menunjuk ke file yang sudah tidak ada di disk. Pindai
+        file-file tersebut, lalu bersihkan referensi basi itu dalam satu klik
+        agar scraper dapat mengunduh ulang gambarnya. Data game Anda sendiri
+        tidak pernah disentuh.</li>
+      <li><strong>Pembersihan otomatis yang lebih aman saat scraping.</strong>
+        Ketika RetroDB men-scrape ulang sebuah game, ia diam-diam membersihkan
+        referensi ke file media yang telah hilang dari disk. Sebelumnya, jika
+        satu folder media hilang sekaligus &mdash; drive eksternal yang tidak
+        ter-mount, atau penghapusan massal &mdash; pembersihan tersebut dapat
+        menghapus catatan gambar yang dimiliki ribuan game, memaksa scraping
+        ulang yang mahal. RetroDB kini mengenali sinyal ini: jika sebuah folder
+        media hilang atau benar-benar kosong, ia mempertahankan referensinya
+        dan mencatat peringatan alih-alih menghapusnya. Alat pemeliharaan baru
+        ini menerapkan perlindungan yang sama dan dengan jelas menandai folder
+        mana pun yang ditahannya.</li>
+    </ul>
+- version: 3.16.0
+  date: 2026-07-04
+  tags:
+  - type: feature
+    label: Panel "Perbaikan Cepat" baru di dashboard
+  body: |
+    <ul>
+      <li><strong>Panel &ldquo;Perbaikan Cepat&rdquo; baru di Dashboard</strong>
+        mengubah tugas-tugas perpustakaan yang tersebar menjadi daftar tugas
+        yang bisa dilihat sekilas. Panel ini menampilkan berapa banyak game
+        yang masih belum memiliki boxart, dan menyediakan pintasan satu klik
+        untuk menemukan ROM duplikat serta memeriksa jalur ROM yang rusak
+        (game yang filenya telah dipindahkan atau dihapus). Setiap pintasan
+        langsung menuju halaman yang memperbaikinya. Panel ini muncul setelah
+        Anda memiliki game di perpustakaan.</li>
+    </ul>
+- version: 3.15.0
+  date: 2026-07-03
+  tags:
+  - type: accessibility
+    label: Pembaca layar kini mengumumkan kemajuan tugas secara lisan
+  body: |
+    <ul>
+      <li><strong>Tugas yang berjalan lama kini mengucapkan kemajuannya kepada
+        pembaca layar.</strong> Saat scraping massal, sinkronisasi pencapaian
+        (RetroAchievements atau PlayStation), atau pengubahan ukuran gambar
+        sedang berjalan, pengguna pembaca layar sebelumnya tidak mendengar apa
+        pun di antara &ldquo;dimulai&rdquo; dan &ldquo;selesai&rdquo;. RetroDB
+        kini mengumumkan tonggak berkala (misalnya &ldquo;Scraping Massal: 12
+        dari 40&rdquo;) dan penyelesaian yang diucapkan &mdash; tanpa jendela
+        pop-up tambahan di layar. Pengumuman ini diberi jeda agar memberi
+        informasi tanpa berisik, dan mengikuti bahasa yang telah Anda
+        pilih.</li>
+    </ul>
+- version: 3.14.0
+  date: 2026-07-01
+  tags:
+  - type: feature
+    label: Bahasa baru — Tiongkok (Sederhana & Tradisional) kini tersedia
+  body: |
+    <ul>
+      <li><strong>RetroDB kini tersedia dalam bahasa Tionghoa.</strong> Dua
+        pilihan tersedia di <strong>Pengaturan &rarr; Sistem &rarr;
+        Bahasa</strong>: <strong>中文 (简体)</strong> (Sederhana, untuk Tiongkok
+        daratan) dan <strong>中文 (繁體)</strong> (Tradisional, untuk Hong Kong
+        dan Taiwan). Seluruh antarmuka &mdash; menu, tombol, pesan, dan manual
+        Bantuan dalam aplikasi &mdash; telah diterjemahkan, dan apa pun yang
+        belum diterjemahkan akan diam-diam kembali ke bahasa Inggris. Ini
+        menjadikan jumlah bahasa yang didukung menjadi sepuluh (Inggris,
+        Jerman, Spanyol, Prancis, Italia, Jepang, Portugis Brasil, Korea, dan
+        kini Tionghoa Sederhana &amp; Tradisional).</li>
+    </ul>
+- version: 3.12.0
+  date: 2026-06-30
+  tags:
+  - type: feature
+    label: Bahasa baru — Korea (한국어) kini tersedia
+  body: |
+    <ul>
+      <li><strong>RetroDB kini tersedia dalam bahasa Korea (한국어).</strong>
+        Pilih di Pengaturan &rarr; Sistem &rarr; Bahasa. Seluruh antarmuka
+        &mdash; menu, tombol, pesan, dan manual Bantuan dalam aplikasi &mdash;
+        telah diterjemahkan, menjadikan jumlah bahasa yang didukung menjadi
+        delapan (Inggris, Jerman, Spanyol, Prancis, Italia, Jepang, Portugis
+        Brasil, dan Korea). Bahasa Korea melengkapi cakupan untuk setiap badan
+        klasifikasi usia game yang ditampilkan RetroDB, termasuk GRAC dari
+        Korea Selatan.</li>
+    </ul>
+- version: 3.11.0
+  date: 2026-06-30
+  tags:
+  - type: enhancement
+    label: Dukung RetroDB di Patreon — tautan donasi baru ditambahkan
+  body: |
+    <ul>
+      <li><strong>Kini Anda dapat mendukung RetroDB di Patreon.</strong>
+        Tautan Patreon kini berada di samping tombol &ldquo;Sponsor on
+        GitHub&rdquo; yang sudah ada di <strong>Pengaturan &rarr; Sistem
+        &rarr; Dukung Pengembangan</strong>, di panel Tentang, dan di README
+        proyek. RetroDB tetap sepenuhnya gratis dan open source &mdash; donasi
+        sepenuhnya opsional dan hanya membantu menjaga pengembangan solo tetap
+        berjalan.</li>
+    </ul>
+- version: 3.10.0
+  date: 2026-06-26
+  tags:
+  - type: enhancement
+    label: Changelog kini dimuat lebih cepat dengan tombol "Muat Lebih Banyak"
+  body: |
+    <ul>
+      <li><strong>Halaman Changelog kini terbuka jauh lebih cepat.</strong>
+        Alih-alih menggambar seluruh riwayat rilis (ratusan entri) setiap kali
+        Anda membukanya, RetroDB kini menampilkan 20 entri terbaru dan
+        menambahkan tombol <strong>Muat Lebih Banyak</strong> di bagian
+        bawah. Klik tombol tersebut untuk menampilkan kelompok berikutnya, dan
+        seterusnya &mdash; riwayat yang lebih lama tetap ada semuanya, hanya
+        saja dimuat sesuai permintaan alih-alih memperlambat tampilan
+        pertama.</li>
+    </ul>
+- version: 3.9.0
+  date: 2026-06-17
+  tags:
+  - type: feature
+    label: Manual Bantuan & catatan rilis terbaru kini diterjemahkan ke dalam ke-6 bahasa
+  body: |
+    <ul>
+      <li><strong>Manual Bantuan lengkap dalam aplikasi kini tersedia dalam
+        keenam bahasa</strong> &mdash; Jerman, Prancis, Spanyol, Italia,
+        Jepang, dan Portugis Brasil &mdash; tidak hanya bahasa Inggris.
+        RetroDB menampilkan manual dalam bahasa apa pun yang telah Anda pilih
+        di Pengaturan, dan diam-diam kembali ke bahasa Inggris jika sesuatu
+        belum diterjemahkan.</li>
+      <li><strong>Changelog ini kini juga tampil dalam bahasa Anda</strong>
+        untuk rilis-rilis terbaru, dan rilis-rilis baru akan diterjemahkan
+        mulai dari sini. Riwayat yang lebih lama tetap dalam bahasa
+        Inggris.</li>
+      <li><strong>Halaman Wishlist dan sisa-sisa terakhir teks berbahasa
+        Inggris</strong> &mdash; sekumpulan pesan error dan status pop-up yang
+        terlewat saat paket bahasa pertama kali hadir di 3.8.0 &mdash; kini
+        diterjemahkan dengan benar di seluruh aplikasi.</li>
+    </ul>
+- version: 3.8.2
+  date: 2026-06-17
+  tags:
+  - type: security
+    label: Pembaruan dependensi keamanan + perbaikan CI
+  body: |
+    <ul>
+      <li><strong>Keamanan:</strong> memperbarui pustaka <code>cryptography</code>
+        bawaan (47 &rarr; 49) untuk mengatasi advisory yang telah
+        dipublikasikan (GHSA-537c-gmf6-5ccf). Tidak ada perubahan perilaku —
+        hanya versi yang lebih aman.</li>
+      <li>Memperbaiki pipeline pengujian otomatis: sebuah helper khusus
+        pengujian yang hilang (<code>beautifulsoup4</code>) telah menyebabkan
+        pengujian gagal sejak v3.7.0, dan skrip build paket baru memicu
+        pemeriksaan analisis statis yang merupakan false-positive yang telah
+        diketahui (skrip ini menjalankan perintah build tepercaya, bukan input
+        pengguna) — kini didokumentasikan dan dikalibrasi. Hanya pemeliharaan;
+        tidak ada yang berubah pada aplikasi itu sendiri.</li>
+    </ul>
+- version: 3.8.1
+  date: 2026-06-17
+  tags:
+  - type: improvement
+    label: Opsi unduhan lebih kecil, perapian donasi & perbaikan terjemahan (Pass 46.3 / 47.6)
+  body: |
+    <ul>
+      <li><strong>Unduhan yang jauh lebih kecil akan segera hadir.</strong>
+        Versi RetroDB yang siap pakai "tinggal ekstrak dan klik dua kali" kini
+        dapat dibangun dalam varian <strong>khusus CPU</strong> (~600&nbsp;MB)
+        untuk pengguna yang tidak memiliki kartu grafis AMD &mdash; sekitar
+        seperenam ukuran versi lengkap. Keduanya akan ditawarkan berdampingan
+        sehingga Anda dapat memilih yang sesuai dengan perangkat Anda.</li>
+      <li><strong>Panel "Dukung Pengembangan" di Pengaturan kini
+        diterjemahkan</strong> bersama bagian aplikasi lainnya &mdash;
+        sebelumnya tidak sengaja tertinggal dalam bahasa Inggris saat paket
+        bahasa hadir di 3.8.0.</li>
+      <li>Merapikan tautan donasi (lencana GitHub Sponsors di README; file
+        pendanaan sudah siap untuk Patreon dan
+        Buy&nbsp;Me&nbsp;A&nbsp;Coffee begitu keduanya disiapkan). Tidak ada
+        layar ajakan yang mengganggu, sama sekali.</li>
+      <li>Di balik layar: pipeline rilis kini dapat membangun versi siap
+        pakai untuk Windows, macOS, dan Linux secara otomatis. Catatan: manual
+        <em>Bantuan</em> dalam aplikasi yang panjang masih hanya berbahasa
+        Inggris untuk saat ini &mdash; ini tercatat sebagai pekerjaan
+        mendatang.</li>
+    </ul>
+- version: 3.8.0
+  date: 2026-06-12
+  tags:
+  - type: feature
+    label: Terjemahan antarmuka penuh + 6 bahasa (Pass 43.2/43.3/43.5)
+  body: |
+    <ul>
+      <li><strong>RetroDB kini berbicara 6 bahasa tambahan.</strong> Dibangun
+        di atas fondasi dari 3.7.0, seluruh antarmuka telah dibuat dapat
+        diterjemahkan dan diterjemahkan secara otomatis ke dalam <strong>bahasa
+        Jerman, Prancis, Spanyol, Italia, Jepang, dan Portugis
+        Brasil</strong>. Pilih bahasa Anda di Pengaturan &rarr; Preferensi
+        Tampilan &rarr; Bahasa; pilihan ini mengikuti preferensi tersimpan
+        Anda, lalu browser Anda, lalu kembali ke bahasa Inggris &mdash;
+        sehingga tidak akan pernah macet pada bahasa yang hilang.</li>
+      <li><strong>Semua yang ada di layar telah tercakup</strong>: teks
+        halaman dan tombol, pesan pop-up (notifikasi &ldquo;toast&rdquo;
+        kecil), dialog edit dan pengaturan, tooltip, dan label pembaca layar.
+        Genre game, perspektif, dan mode permainan (misalnya
+        &ldquo;First-Person-Shooter&rdquo;) kini juga tampil dalam bahasa Anda
+        &mdash; sementara data yang mendasarinya tetap dalam bahasa Inggris
+        sehingga perpustakaan dan filter Anda tetap berfungsi persis seperti
+        sebelumnya.</li>
+      <li>Sebuah <strong>bahasa &ldquo;Pseudo&rdquo;</strong> bawaan (terlihat
+        di menu Bahasa) adalah alat QA penerjemah yang memberi tanda kurung
+        dan aksen pada setiap label, membuatnya langsung terlihat jelas jika
+        ada teks yang terlewat.</li>
+      <li>Terjemahan mesin adalah titik awal dan mungkin terasa sedikit kaku
+        di beberapa tempat &mdash; mudah disempurnakan seiring waktu, dan teks
+        apa pun tanpa terjemahan hanya akan tampil dalam bahasa Inggris.</li>
+    </ul>
