@@ -891,6 +891,25 @@ async function restartServer() {
     );
 }
 
+async function shutdownServer() {
+    showConfirm(
+        t('🛑 Shut Down Server'),
+        t('Are you sure you want to shut down the server? You will need to start it again manually.'),
+        async function() {
+            showNotification(t('Shutting down server...'), 'info');
+
+            try {
+                await API.post('/api/shutdown');
+            } catch (error) {
+                // Expected — the connection drops as the server exits.
+            }
+
+            // Do NOT poll to reconnect: the server is going down for good.
+            showNotification(t('Server stopped. You can close this tab.'), 'success');
+        }
+    );
+}
+
 async function checkServerStatus() {
     const maxAttempts = 10;
     let attempts = 0;
@@ -1731,6 +1750,7 @@ function updateCompletionStatus(gameId, status) {
 
 RetroDB.scanLibrary = scanLibrary;
 RetroDB.restartServer = restartServer;
+RetroDB.shutdownServer = shutdownServer;
 RetroDB.cleanMissingRoms = cleanMissingRoms;
 RetroDB.clearClzImports = clearClzImports;
 RetroDB.refreshRetroAchievements = refreshRetroAchievements;
@@ -1754,6 +1774,7 @@ RetroDB.closeShortcutsModal = closeShortcutsModal;
 
 window.scanLibrary = scanLibrary;
 window.restartServer = restartServer;
+window.shutdownServer = shutdownServer;
 window.cleanMissingRoms = cleanMissingRoms;
 window.clearClzImports = clearClzImports;
 window.refreshRetroAchievements = refreshRetroAchievements;

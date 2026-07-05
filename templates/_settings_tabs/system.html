@@ -177,8 +177,12 @@
             <span class="btn-icon">🔄</span>
             Restart Server
         </button>
+        <button type="button" onclick="shutdownServer()" class="btn btn-danger">
+            <span class="btn-icon">🛑</span>
+            {{ _('Shut Down Server') }}
+        </button>
         <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-sm);">
-            Restart the Flask server (useful after configuration changes)
+            {{ _('Restart the Flask server (useful after configuration changes), or shut it down completely') }}
         </p>
     </div>
 </section>
