@@ -1,3 +1,12 @@
+- version: 3.22.1
+  date: '2026-07-31'
+  tags:
+  - type: fix
+    label: Evita que o arquivo de trabalho do banco de dados cresça sem limite
+  body: |
+    <ul>
+      <li><strong>O journal do banco de dados voltou a ter limite.</strong> O SQLite mantém um arquivo de trabalho (o arquivo <code>-wal</code>) ao lado do banco da sua biblioteca. O RetroDB pretendia limitá-lo a 64&nbsp;MB, mas o limite só era aplicado às tarefas em segundo plano &mdash; carregamentos de página e edições comuns rodavam sem limite algum. Depois de uma gravação excepcionalmente grande, o arquivo ficava para sempre no seu tamanho máximo, às vezes maior que o próprio banco. Agora o limite vale em todo lugar, e o espaço é devolvido.</li>
+    </ul>
 - version: 3.22.0
   date: '2026-07-05'
   tags:

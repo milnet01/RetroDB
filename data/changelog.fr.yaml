@@ -1,3 +1,12 @@
+- version: 3.22.1
+  date: '2026-07-31'
+  tags:
+  - type: fix
+    label: Le fichier temporaire de la base de données ne grossit plus sans limite
+  body: |
+    <ul>
+      <li><strong>Le journal de la base de données est de nouveau borné.</strong> SQLite conserve un fichier temporaire (le fichier <code>-wal</code>) à côté de la base de votre bibliothèque. RetroDB voulait le plafonner à 64&nbsp;Mo, mais le plafond ne s&rsquo;appliquait qu&rsquo;aux tâches en arrière-plan &mdash; les chargements de page et les modifications ordinaires n&rsquo;en avaient aucun. Après une écriture inhabituellement volumineuse, le fichier restait indéfiniment à sa taille maximale, parfois plus gros que la base elle-même. Il est désormais plafonné partout, et l&rsquo;espace est rendu.</li>
+    </ul>
 - version: 3.22.0
   date: '2026-07-05'
   tags:

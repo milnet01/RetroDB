@@ -1,3 +1,12 @@
+- version: 3.22.1
+  date: '2026-07-31'
+  tags:
+  - type: fix
+    label: Mencegah berkas kerja basis data membengkak tanpa batas
+  body: |
+    <ul>
+      <li><strong>Jurnal basis data kembali dibatasi.</strong> SQLite menyimpan berkas kerja (berkas <code>-wal</code>) di samping basis data pustaka Anda. RetroDB seharusnya membatasinya pada 64&nbsp;MB, tetapi batas itu hanya berlaku untuk tugas latar belakang &mdash; pemuatan halaman dan penyuntingan biasa berjalan tanpa batas sama sekali. Setelah satu penulisan yang luar biasa besar, berkas itu tetap pada ukuran terbesarnya selamanya, kadang lebih besar daripada basis datanya sendiri. Kini batasnya berlaku di mana saja, sehingga ruangnya dikembalikan.</li>
+    </ul>
 - version: 3.22.0
   date: '2026-07-05'
   tags:

@@ -87,16 +87,22 @@ def get_db():
     """
     conn = sqlite3.connect(config.DB_PATH)
     conn.row_factory = sqlite3.Row
-    # Pass 35.4 — journal_mode=WAL and journal_size_limit are DB-file-level
-    # settings (stored in the SQLite header). They're applied once at init
-    # by init_database(); re-issuing them per connection wastes a parse
-    # round-trip. Keep the six connection-scoped PRAGMAs below.
+    # Pass 35.4 — journal_mode=WAL is a DB-file-level setting (stored in the
+    # SQLite header). It's applied once at init by init_database();
+    # re-issuing it per connection wastes a parse round-trip.
+    #
+    # journal_size_limit is NOT file-level despite sitting next to it in the
+    # docs — it is connection-scoped, and a fresh connection gets -1 (no
+    # limit) regardless of what init set. Without it here, every request-path
+    # connection runs with an unbounded WAL that keeps its high-water mark
+    # after any large write. Pinned by test_35_4_get_db_bounds_wal_size.
     conn.execute("PRAGMA busy_timeout = 5000")
     conn.execute("PRAGMA synchronous = NORMAL")
     conn.execute("PRAGMA cache_size = -64000")
     conn.execute("PRAGMA foreign_keys = ON")
     conn.execute("PRAGMA temp_store = MEMORY")
     conn.execute("PRAGMA mmap_size = 268435456")
+    conn.execute("PRAGMA journal_size_limit = 67108864")
     return conn
 
 

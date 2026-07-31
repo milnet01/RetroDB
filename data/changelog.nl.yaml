@@ -1,3 +1,12 @@
+- version: 3.22.1
+  date: '2026-07-31'
+  tags:
+  - type: fix
+    label: Voorkomt dat het werkbestand van de database ongelimiteerd groeit
+  body: |
+    <ul>
+      <li><strong>Het databasejournaal heeft weer een limiet.</strong> SQLite houdt een werkbestand (het <code>-wal</code>-bestand) naast de database van je bibliotheek. RetroDB wilde dat op 64&nbsp;MB begrenzen, maar de limiet gold alleen voor achtergrondtaken &mdash; gewone paginaweergaven en bewerkingen draaiden helemaal zonder limiet. Na één ongewoon grote schrijfactie bleef het bestand voorgoed op zijn grootste omvang staan, soms groter dan de database zelf. Nu geldt de limiet overal, zodat de ruimte wordt teruggegeven.</li>
+    </ul>
 - version: 3.22.0
   date: '2026-07-05'
   tags:

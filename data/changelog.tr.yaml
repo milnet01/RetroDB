@@ -1,3 +1,12 @@
+- version: 3.22.1
+  date: '2026-07-31'
+  tags:
+  - type: fix
+    label: Veritabanının geçici dosyası artık sınırsız büyümüyor
+  body: |
+    <ul>
+      <li><strong>Veritabanı günlüğü yeniden sınırlandı.</strong> SQLite, kitaplık veritabanınızın yanında bir geçici dosya (<code>-wal</code> dosyası) tutar. RetroDB bunu 64&nbsp;MB ile sınırlamayı amaçlıyordu, ancak sınır yalnızca arka plan işlerine uygulanıyordu &mdash; olağan sayfa yüklemeleri ve düzenlemeler hiçbir sınır olmadan çalışıyordu. Alışılmadık büyüklükte tek bir yazma işleminden sonra dosya sonsuza dek en büyük boyutunda kalıyor, bazen veritabanının kendisinden bile büyük oluyordu. Artık sınır her yerde geçerli, böylece alan geri veriliyor.</li>
+    </ul>
 - version: 3.22.0
   date: '2026-07-05'
   tags:

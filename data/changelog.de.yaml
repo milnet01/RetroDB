@@ -1,3 +1,12 @@
+- version: 3.22.1
+  date: '2026-07-31'
+  tags:
+  - type: fix
+    label: Die Zwischendatei der Datenbank wächst nicht mehr unbegrenzt
+  body: |
+    <ul>
+      <li><strong>Das Datenbank-Journal ist wieder begrenzt.</strong> SQLite legt neben deiner Bibliotheksdatenbank eine Zwischendatei an (die <code>-wal</code>-Datei). RetroDB wollte sie auf 64&nbsp;MB begrenzen, doch die Grenze galt nur für Hintergrundaufgaben &mdash; normale Seitenaufrufe und Bearbeitungen liefen ganz ohne Grenze. Nach einem ungewöhnlich großen Schreibvorgang blieb die Datei dauerhaft auf ihrer maximalen Größe, teils größer als die Datenbank selbst. Jetzt gilt die Grenze überall, und der Speicherplatz wird wieder freigegeben.</li>
+    </ul>
 - version: 3.22.0
   date: '2026-07-05'
   tags:

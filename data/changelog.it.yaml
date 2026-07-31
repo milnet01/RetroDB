@@ -1,3 +1,12 @@
+- version: 3.22.1
+  date: '2026-07-31'
+  tags:
+  - type: fix
+    label: Il file di appoggio del database non cresce più senza limiti
+  body: |
+    <ul>
+      <li><strong>Il journal del database ha di nuovo un limite.</strong> SQLite mantiene un file di appoggio (il file <code>-wal</code>) accanto al database della tua libreria. RetroDB intendeva limitarlo a 64&nbsp;MB, ma il limite veniva applicato solo ai processi in background &mdash; i normali caricamenti di pagina e le modifiche non ne avevano alcuno. Dopo una scrittura insolitamente grande il file restava per sempre alla sua dimensione massima, a volte più grande del database stesso. Ora è limitato ovunque, così lo spazio viene restituito.</li>
+    </ul>
 - version: 3.22.0
   date: '2026-07-05'
   tags:

@@ -105,14 +105,15 @@ def test_35_3_init_database_issues_foreign_keys_on():
 
 
 def test_35_4_get_db_no_longer_issues_journal_mode():
-    """get_db() should leave journal_mode and journal_size_limit to init.
-    Codebase invariant: the pragma calls must not appear in get_db's body
-    (ensures we don't double-issue them on every connection acquire)."""
+    """get_db() should leave journal_mode (a DB-header setting) to init.
+    Codebase invariant: the pragma call must not appear in get_db's body
+    (ensures we don't double-issue it on every connection acquire).
+    journal_size_limit is deliberately NOT in this list — it is
+    connection-scoped, see test_35_4_get_db_bounds_wal_size below."""
     src = read_source(os.path.join('services', 'database.py'))
     get_db_body = slice_function(src, 'get_db')
     assert get_db_body, "get_db function not found in services/database.py"
     assert "PRAGMA journal_mode = WAL" not in get_db_body
-    assert "PRAGMA journal_size_limit" not in get_db_body
 
 
 def test_35_4_init_database_issues_wal(tmp_path, monkeypatch):
@@ -126,9 +127,33 @@ def test_35_4_init_database_issues_wal(tmp_path, monkeypatch):
     try:
         mode = conn.execute("PRAGMA journal_mode").fetchone()[0]
         assert mode.lower() == 'wal', f"journal_mode should be WAL, got {mode}"
-        # journal_size_limit is per-connection, not stored in the DB header.
-        # We can only sanity-check that init didn't leave it unset on its
-        # own connection — re-run init and verify no error.
+    finally:
+        conn.close()
+
+
+def test_35_4_get_db_bounds_wal_size(tmp_path, monkeypatch):
+    """Functional: journal_size_limit is CONNECTION-scoped, not stored in the
+    DB header — a fresh connection gets -1 (unbounded) no matter what init
+    set. So get_db() must issue it itself, or every request-path connection
+    runs with an unbounded WAL.
+
+    Reading it back on a NEW connection is the whole point: asserting it on
+    the connection that set it would pass either way (reported by the Ants
+    Terminal session, 2026-07-30)."""
+    import config as cfg
+    db_path = str(tmp_path / 'wal_limit.db')
+    monkeypatch.setattr(cfg, 'DB_PATH', db_path)
+    from services.database_init import init_database
+    init_database()
+
+    from services.database import get_db
+    conn = get_db()
+    try:
+        limit = conn.execute("PRAGMA journal_size_limit").fetchone()[0]
+        assert limit == 67108864, (
+            f"get_db() connection has journal_size_limit={limit}; expected "
+            "67108864 (64 MiB). It does not inherit from init_database()."
+        )
     finally:
         conn.close()
 

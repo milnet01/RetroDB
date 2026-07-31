@@ -1,3 +1,12 @@
+- version: 3.22.1
+  date: '2026-07-31'
+  tags:
+  - type: fix
+    label: Plik roboczy bazy danych nie rośnie już bez ograniczeń
+  body: |
+    <ul>
+      <li><strong>Dziennik bazy danych znów ma limit.</strong> SQLite trzyma plik roboczy (plik <code>-wal</code>) obok bazy danych Twojej biblioteki. RetroDB miał ograniczyć go do 64&nbsp;MB, ale limit obejmował wyłącznie zadania w tle &mdash; zwykłe ładowanie stron i edycje działały zupełnie bez limitu. Po jednym nietypowo dużym zapisie plik zostawał na zawsze przy swoim największym rozmiarze, czasem większym niż sama baza. Teraz limit działa wszędzie, więc miejsce wraca.</li>
+    </ul>
 - version: 3.22.0
   date: '2026-07-05'
   tags:

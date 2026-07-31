@@ -1,3 +1,12 @@
+- version: 3.22.1
+  date: '2026-07-31'
+  tags:
+  - type: fix
+    label: Evita que el archivo temporal de la base de datos crezca sin límite
+  body: |
+    <ul>
+      <li><strong>El diario de la base de datos vuelve a tener límite.</strong> SQLite mantiene un archivo temporal (el archivo <code>-wal</code>) junto a la base de datos de tu biblioteca. RetroDB pretendía limitarlo a 64&nbsp;MB, pero el límite solo se aplicaba a las tareas en segundo plano &mdash; las cargas de página y las ediciones normales no tenían ningún límite. Tras una escritura inusualmente grande, el archivo se quedaba para siempre en su tamaño máximo, a veces mayor que la propia base de datos. Ahora está limitado en todas partes, así que el espacio se devuelve.</li>
+    </ul>
 - version: 3.22.0
   date: '2026-07-05'
   tags:

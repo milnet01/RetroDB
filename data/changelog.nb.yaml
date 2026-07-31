@@ -1,3 +1,12 @@
+- version: 3.22.1
+  date: '2026-07-31'
+  tags:
+  - type: fix
+    label: Hindrer at databasens arbeidsfil vokser uten grense
+  body: |
+    <ul>
+      <li><strong>Databasejournalen har grense igjen.</strong> SQLite holder en arbeidsfil (<code>-wal</code>-filen) ved siden av bibliotekdatabasen din. RetroDB skulle begrense den til 64&nbsp;MB, men grensen gjaldt bare bakgrunnsjobber &mdash; vanlige sidelastinger og redigeringer kjørte helt uten grense. Etter én uvanlig stor skriving ble filen liggende på sin største størrelse for alltid, iblant større enn selve databasen. Nå gjelder grensen overalt, så plassen frigis.</li>
+    </ul>
 - version: 3.22.0
   date: '2026-07-05'
   tags:

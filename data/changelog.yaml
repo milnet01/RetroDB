@@ -1,3 +1,19 @@
+- version: 3.22.1
+  date: 2026-07-31
+  tags:
+  - type: fix
+    label: Keep the database's scratch file from growing without limit
+  body: |
+    <ul>
+      <li><strong>The database journal is bounded again.</strong> SQLite keeps a
+        scratch file (the <code>-wal</code> file) alongside your library
+        database. RetroDB meant to cap it at 64&nbsp;MB, but the cap was only
+        being applied to background jobs &mdash; ordinary page loads and edits
+        ran with no cap at all. After one unusually large write the scratch file
+        would stay at its biggest size forever, sometimes larger than the
+        database itself. It is now capped everywhere, so the space gets handed
+        back.</li>
+    </ul>
 - version: 3.22.0
   date: 2026-07-05
   tags:

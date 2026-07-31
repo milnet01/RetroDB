@@ -51,9 +51,12 @@ def init_database():
         # only runtime get_db() enforces. Turn them on here too so any
         # future FK-sensitive migration step sees consistent enforcement.
         conn.execute("PRAGMA foreign_keys = ON")
-        # Pass 35.4 — file-level PRAGMAs applied once per boot, not per
-        # connection. Writes to the DB header.
+        # Pass 35.4 — journal_mode is file-level: applied once per boot, not
+        # per connection, because it writes to the DB header.
         conn.execute("PRAGMA journal_mode = WAL")
+        # journal_size_limit is connection-scoped, so this bounds THIS
+        # connection's WAL only (migrations can write a lot). Every other
+        # connection sets it for itself — see get_db() / jobs.base._get_conn().
         conn.execute("PRAGMA journal_size_limit = 67108864")
         # Pass 45.10 — busy_timeout lets BEGIN IMMEDIATE wait up to 5s
         # for the write lock instead of failing fast under contention.

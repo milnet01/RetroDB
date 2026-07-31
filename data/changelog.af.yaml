@@ -1,3 +1,12 @@
+- version: 3.22.1
+  date: '2026-07-31'
+  tags:
+  - type: fix
+    label: Keer dat die databasis se kladlêer sonder perk groei
+  body: |
+    <ul>
+      <li><strong>Die databasisjoernaal het weer &rsquo;n perk.</strong> SQLite hou &rsquo;n kladlêer (die <code>-wal</code>-lêer) langs jou biblioteekdatabasis. RetroDB wou dit tot 64&nbsp;MB beperk, maar die perk is net op agtergrondtake toegepas &mdash; gewone bladsylaaie en wysigings het glad geen perk gehad nie. Ná een ongewoon groot skryfbewerking het die kladlêer vir altyd op sy grootste grootte gebly, soms groter as die databasis self. Dit word nou oral beperk, sodat die spasie teruggegee word.</li>
+    </ul>
 - version: 3.22.0
   date: '2026-07-05'
   tags:
