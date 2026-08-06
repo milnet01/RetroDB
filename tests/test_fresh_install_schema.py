@@ -59,6 +59,23 @@ def test_fresh_games_table_has_score_and_ra_columns():
         assert required in cols, f"games.{required} missing on a fresh install"
 
 
+def test_fresh_games_table_has_every_rating_system_column():
+    """Every board in RATING_SYSTEM_KEYS needs its `{key}_rating` column.
+
+    Derived from the key list rather than restated, so adding a tenth board
+    without shipping its migration fails here instead of 500'ing at runtime.
+    `china_rating` (migration 014_games_china_rating.py) is the column the
+    hardcoded list above missed and this one covers (Pass 57.7 item 4).
+    """
+    from services.game_utils import RATING_SYSTEM_KEYS
+
+    cols = _columns("games")
+    missing = [f"{key}_rating" for key in RATING_SYSTEM_KEYS
+               if f"{key}_rating" not in cols]
+    assert not missing, \
+        f"rating columns missing on a fresh install: {missing}"
+
+
 def test_fresh_systems_table_has_type_and_default_controller():
     cols = _columns("systems")
     assert "system_type" in cols, "systems.system_type missing on a fresh install"

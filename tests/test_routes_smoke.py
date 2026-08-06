@@ -42,6 +42,10 @@ class TestRouteRegistration:
         'maintenance.api_alt_titles_backfill_start': '/api/maintenance/alt-titles-backfill/start',
         'maintenance.api_alt_titles_backfill_status': '/api/maintenance/alt-titles-backfill/status',
         'maintenance.api_alt_titles_backfill_cancel': '/api/maintenance/alt-titles-backfill/cancel',
+        # Missing-media-ref sweep (Pass 54.1) — admin-guarded, and absent from
+        # this map meant they escaped the auth sweep below too (Pass 57.7 item 6).
+        'maintenance.api_missing_media_refs_preview': '/api/missing-media-refs/preview',
+        'maintenance.api_missing_media_refs_clear': '/api/missing-media-refs/clear',
         # AI blueprint (v2.77.10)
         'games_ai.api_game_ai_fill': '/api/game/<int:game_id>/ai-fill',
         # Search/compare blueprint (v2.77.10)
@@ -90,6 +94,8 @@ class TestAuthGuards:
         '/api/maintenance/alt-titles-backfill/status',
         '/api/games/compare?ids=1,2',
         '/api/games/1/similar',
+        # admin_required, not login_required — same unauthenticated redirect.
+        '/api/missing-media-refs/preview',
         # Pass 41.9 — `/api/recently-viewed` removed (zero callers; the
         # dashboard reads `user_game_views` directly via app.py).
     ])
@@ -118,6 +124,9 @@ class TestAuthGuards:
         '/api/game/1/ai-fill',
         '/api/maintenance/alt-titles-backfill/start',
         '/api/maintenance/alt-titles-backfill/cancel',
+        # Clears DB media references library-wide — the most destructive
+        # unauthenticated POST in this file (Pass 57.7 item 6).
+        '/api/missing-media-refs/clear',
     ])
     def test_protected_post_redirects_unauthenticated(self, app_client, path):
         """Write endpoints must reject unauthenticated POSTs. An unauthenticated

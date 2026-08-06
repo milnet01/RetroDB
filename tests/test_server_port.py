@@ -9,6 +9,7 @@ a malformed value raises so the caller can exit non-zero.  A silent fallback to
 `env` is passed explicitly (never monkeypatched into os.environ) so a stray
 PORT in the developer's own shell cannot change what these assert.
 """
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -179,10 +180,29 @@ def test_cli_prints_the_resolved_port():
     assert proc.stdout.strip() == '5999'
 
 
-def test_cli_prints_the_default_when_absent():
+def test_cli_prints_the_resolved_saved_port_when_the_environment_is_absent():
+    """With PORT/RETRODB_PORT unset the CLI falls through to the saved tier.
+
+    Asserted against that same chain rather than a hardcoded 5000: the
+    subprocess runs with cwd=ROOT and settings_manager.SETTINGS_FILE is derived
+    from config.BASE_DIR, so it reads the *operator's* real data/settings.json,
+    which no test controls. This used to assert '5000' and passed only because
+    that file happens to hold 5000 (Pass 57.7 item 9). What the CLI actually
+    owes us is that its __main__ passes use_saved=True and prints the number —
+    the saved tier's own behaviour is pinned by the in-process tests below.
+    """
+    import settings_manager
+
+    try:
+        expected = resolve_server_port(env={}, use_saved=True)
+    finally:
+        # The lookup above populated the settings cache from the operator's
+        # real file; don't leave that visible to the rest of the suite.
+        settings_manager._invalidate_cache()
+
     proc = _cli()
     assert proc.returncode == 0
-    assert proc.stdout.strip() == '5000'
+    assert proc.stdout.strip() == str(expected)
 
 
 def test_cli_exits_non_zero_and_names_the_bad_value():
@@ -190,3 +210,63 @@ def test_cli_exits_non_zero_and_names_the_bad_value():
     assert proc.returncode != 0
     assert proc.stdout.strip() == '', 'a failed resolve must print no port'
     assert '[abc]' in proc.stderr
+
+
+# ---------------------------------------------------------------------------
+# Case 6 — the saved `server_port` tier (data/settings.json).
+#
+# In-process against a throwaway settings file. settings_manager.SETTINGS_FILE
+# is built from config.BASE_DIR (the repo root) with no env override, so a test
+# that does not redirect it reads the operator's real file and asserts nothing
+# it controls (Pass 57.7 item 9).
+# ---------------------------------------------------------------------------
+
+@pytest.fixture
+def saved_port(tmp_path, monkeypatch):
+    """Write a `server_port` into a throwaway settings.json and return None.
+
+    Yields a writer; call it with the value to save. The settings cache is
+    invalidated on the way in and out so neither the operator's real file nor
+    this test's fake one leaks across tests.
+    """
+    import settings_manager
+
+    path = tmp_path / 'settings.json'
+    monkeypatch.setattr(settings_manager, 'SETTINGS_FILE', str(path))
+    settings_manager._invalidate_cache()
+
+    def _write(value):
+        path.write_text(json.dumps({'server_port': value}), encoding='utf-8')
+        settings_manager._invalidate_cache()
+
+    yield _write
+    settings_manager._invalidate_cache()
+
+
+def test_saved_port_is_used_when_the_environment_is_absent(saved_port):
+    saved_port(5123)
+    assert resolve_server_port(env={}, use_saved=True) == 5123
+
+
+def test_environment_beats_the_saved_port(saved_port):
+    # An external process manager must be unaffected by the Settings page.
+    saved_port(5123)
+    assert resolve_server_port(env={'PORT': '5999'}, use_saved=True) == 5999
+    assert resolve_server_port(env={'RETRODB_PORT': '8080'}, use_saved=True) == 8080
+
+
+def test_saved_port_is_opt_in(saved_port):
+    """config.py calls resolve_server_port() at import, long before the
+    settings layer is safe to touch — so the saved tier must stay off by
+    default. Without use_saved=True the saved 5123 is invisible."""
+    saved_port(5123)
+    assert resolve_server_port(env={}) == DEFAULT_PORT
+
+
+def test_out_of_range_saved_port_falls_back_to_the_default(saved_port, capsys):
+    """settings.json can be hand-edited past what the settings API accepts.
+    The saved tier revalidates, warns, and falls back — it must never raise,
+    because the server still has to boot."""
+    saved_port(99999)
+    assert resolve_server_port(env={}, use_saved=True) == DEFAULT_PORT
+    assert '99999' in capsys.readouterr().err

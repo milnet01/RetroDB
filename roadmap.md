@@ -4604,8 +4604,49 @@ weren't worth blocking the ship on.  Ordered by rough priority.
      `5000`. Point it at a temp settings file.
 - **Verify**: `python3 -m pytest` green; items 2 and 3 proved able to fail
   (break the invariant, confirm red, restore) before they are trusted.
-- **Status**: planned (2026-08-06). Lanes: tests, i18n, scrapers.
+- **Status**: shipped (2026-08-06). Lanes: tests, i18n, scrapers.
 - **Source**: debt-sweep 2026-08-06 (v3.12.0..HEAD).
+
+  Resolved (2026-08-06). All nine landed; 1268 → 1296 tests, suite green plain,
+  under `-n 4`, and across five repeats of the touched files. Zero production
+  files changed, so no staged-only-tree exposure. Every new assertion was
+  proved able to fail by breaking what it pins and restoring. New files:
+  `tests/test_i18n_longform.py` (items 2, 3), `tests/test_scraper_parallel.py`
+  (item 5). Three items did not land as written:
+
+  - **Item 8 needed more than the roadmap said.** Asserting `.atomic_*`
+    residue is *still* vacuous on that test: `atomic_write_json` calls
+    `json.dumps`, so a serialization `TypeError` fires before any tempfile
+    exists — the finally-block cleanup is never reached, and disabling it
+    left the corrected assertion green. The path that reaches the cleanup is a
+    failure *after* mkstemp, so `test_tempfile_removed_when_the_swap_fails`
+    was added with `os.replace` monkeypatched to raise; that one does redden.
+    The original test was rewritten as `test_serialization_failure_creates_
+    nothing`, which is a real (if narrower) contract.
+  - **Item 9 could not be done as specified.** There is no env override for
+    `settings_manager.SETTINGS_FILE` — it is built from `config.BASE_DIR`, so
+    a subprocess cannot be pointed at a temp settings file by changing `cwd`.
+    Split instead: the CLI test now asserts the subprocess agrees with
+    `resolve_server_port(env={}, use_saved=True)` rather than a hardcoded
+    5000 (and invalidates the settings cache it warms), and the saved tier
+    itself gained four in-process tests against a monkeypatched
+    `SETTINGS_FILE` — used-when-env-absent, env-beats-saved, opt-in via
+    `use_saved`, and out-of-range-falls-back-with-a-warning.
+  - **Item 2 ships with one exemption.** `KNOWN_TAG_GAPS = {'3.20.0'}` — the
+    violation Pass 57.6 found is still on disk in all 20 locales, so the test
+    would be red on arrival. Asserted in both directions: a new gap fails, and
+    a listed version that no longer has a gap also fails, so closing Pass 57.6
+    forces the exemption out rather than letting it rot.
+
+  Items 1 and 4 were derived rather than restated, which is what stops them
+  recurring: `HUMAN_LOCALES` now globs `translations/*/LC_MESSAGES/messages.po`
+  minus `eo` (9 → 20 locales checked, all already green) with a floor assert so
+  a broken glob fails instead of going vacuous, and the fresh-install schema
+  pin walks `RATING_SYSTEM_KEYS` so a tenth rating board without its migration
+  fails there. Item 5's two contracts are asserted with completion order set to
+  the exact reverse of the declared order, so an as-completed reassembly cannot
+  pass by luck; the screenshot concurrency test uses a `threading.Barrier` so
+  serial execution times out rather than passing on a timing guess.
 
 ---
 

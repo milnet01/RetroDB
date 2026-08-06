@@ -13,6 +13,7 @@
 # check (test-audit hardening pattern, cf. test_pass35_36_hardening.py:313).
 # =============================================================================
 
+import glob
 import os
 
 from babel.messages.pofile import read_po
@@ -21,9 +22,31 @@ from tests._util import REPO_ROOT, read_source
 
 PROGRESS_MSGID = "{job}: {current} of {total} ({percent}%)"
 PLACEHOLDERS = ("{job}", "{current}", "{total}", "{percent}")
-# The human-translation locales (docs/specs/i18n.md §9); `eo` is the
-# auto-generated pseudolocale and is excluded from the translated-content pin.
-HUMAN_LOCALES = ("de", "es", "fr", "it", "ja", "ko", "pt_BR", "zh_Hans", "zh_Hant")
+
+
+def _human_locales():
+    """Every shipped catalog locale except `eo`, the generated pseudolocale.
+
+    Derived from what is on disk rather than restated. This was a hardcoded
+    9-tuple, while docs/specs/i18n.md §9 lists 20 human-translation locales —
+    so the eleven languages Pass 56 added escaped the translated-content pin
+    entirely, and so would the next language pack (Pass 57.7 item 1).
+    """
+    pattern = os.path.join(REPO_ROOT, "translations", "*", "LC_MESSAGES",
+                           "messages.po")
+    locales = sorted(
+        os.path.basename(os.path.dirname(os.path.dirname(path)))
+        for path in glob.glob(pattern)
+    )
+    human = tuple(loc for loc in locales if loc != "eo")
+    # A glob that matched nothing would make every loop below vacuous rather
+    # than red — the exact failure mode this derivation exists to remove.
+    # Floor is the Pass 43.5/43.6 set (9); the set only ever grows.
+    assert len(human) >= 9, f"expected the shipped catalog set, found {human}"
+    return human
+
+
+HUMAN_LOCALES = _human_locales()
 
 
 def _slice(src, start_marker, end_marker):
