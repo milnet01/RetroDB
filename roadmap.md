@@ -4372,10 +4372,45 @@ weren't worth blocking the ship on.  Ordered by rough priority.
      or `# shellcheck disable=SC2086` with a reason if word-splitting is
      intentional — it is, for both, since they carry multiple flags.
 - **Verify**: `./scripts/ci_local.sh` exits 0 with all 8 checks green.
-- **Status**: planned (2026-08-06). Surfaced during v3.23.0/v3.23.1; both are
-  in files neither commit touched, so they were left alone. User was asked
-  whether to fix them as a third commit and had not answered when the session
-  ended. Lanes: ci, deps.
+- **Status**: done (2026-08-06). `cryptography` 49.0.0 → 50.0.0 in
+  `requirements.lock` (transitive, via `limits`; no project code imports it,
+  so no caller changes). The three SC2086 are gone by turning both variables
+  into bash **arrays** rather than suppressing the warning — the flags were
+  always meant to be separate words, and an array says so without depending
+  on word-splitting an unquoted expansion.
+  Third fix, found while verifying: gate 7 (lockfile drift) was reporting
+  "in sync" **falsely**. It seeds its scratch file with a copy of
+  `requirements.lock`, so a crashed `pip-compile` leaves the two files
+  identical and the diff passes. It now checks the exit status first and
+  reports a skip. It skips on this machine today: pip-tools 7.6.0 (latest)
+  imports `stdlib_pkgs` from pip internals, which pip 26 removed — so the
+  lock was regenerated from a venv pinned to pip 25.3. See Pass 57.3.
+  Lanes: ci, deps.
+- **Source**: in-session-2026-08-06.
+
+---
+
+#### Pass 57.3 Restore a working `pip-compile` so the lockfile-drift gate runs again (LOW, S)
+- **Target**: local tooling; possibly `scripts/ci_local.sh` gate 7.
+- **Why**: pip-tools 7.6.0 (latest) imports `stdlib_pkgs` from
+  `pip._internal.utils.compat`, which pip 26 removed. The maintainer box runs
+  distro pip 26.2, so `pip-compile` dies on every invocation and gate 7 can
+  only report a skip (Pass 57.2 made it honest; it used to report a false
+  "in sync"). Drift between `requirements.txt` and `requirements.lock` is
+  therefore unguarded locally until this is resolved.
+- **Plan** (pick one):
+  1. Wait for a pip-tools release that supports pip 26, then bump. Cheapest
+     if it lands soon — this is an upstream break, not a project one.
+  2. Keep a dedicated venv pinned to `pip<26` for lock generation, and point
+     gate 7 at its `pip-compile`. Deterministic, but one more thing to own.
+  3. Switch lock generation to `uv pip compile` — `uv` is already installed in
+     CI (`.github/workflows/ci.yml`, semgrep job) and does not import pip
+     internals. Verify the emitted lock is byte-comparable first; if it is
+     not, the whole lockfile is rewritten in one commit.
+- **Verify**: `./scripts/ci_local.sh` reports gate 7 green (not skipped), and
+  an intentional edit to `requirements.txt` makes it go red.
+- **Status**: planned (2026-08-06). Upstream break, not a project one;
+  surfaced while clearing Pass 57.2. Lanes: ci, deps.
 - **Source**: in-session-2026-08-06.
 
 ---
