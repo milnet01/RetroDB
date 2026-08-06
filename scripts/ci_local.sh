@@ -96,12 +96,22 @@ else skip "pip-audit not installed  (pip install pip-audit)"; fi
 # 7. Lockfile drift — requirements.txt vs requirements.lock ------------------
 step "Lockfile drift  ·  pip-compile round-trip"
 if have pip-compile; then
-  FRESH="$(mktemp)"
+  FRESH="$(mktemp)"; ERRLOG="$(mktemp)"
+  # --output-file must already exist for pip-compile to reuse its pins, so the
+  # scratch file starts as a copy of the lock. That makes a *crashed*
+  # pip-compile indistinguishable from a clean round-trip — the diff below
+  # would compare the lock against itself and report "in sync". So check the
+  # exit status first and report a skip, never a silent pass. (Seen for real:
+  # pip-tools 7.6.0 dies on pip >= 26, which dropped `stdlib_pkgs`.)
   cp requirements.lock "$FRESH"
-  pip-compile --quiet --strip-extras --generate-hashes --output-file "$FRESH" requirements.txt >/dev/null 2>&1
-  if diff -u <(grep -v '^#' requirements.lock) <(grep -v '^#' "$FRESH") >/dev/null; then ok "lockfile in sync"
-  else fail "lockfile drift — run: pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes"; fi
-  rm -f "$FRESH"
+  if pip-compile --quiet --strip-extras --generate-hashes --output-file "$FRESH" requirements.txt >/dev/null 2>"$ERRLOG"; then
+    if diff -u <(grep -v '^#' requirements.lock) <(grep -v '^#' "$FRESH") >/dev/null; then ok "lockfile in sync"
+    else fail "lockfile drift — run: pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes"; fi
+  else
+    tail -n 3 "$ERRLOG"
+    skip "pip-compile failed to run — drift NOT checked (see error above)"
+  fi
+  rm -f "$FRESH" "$ERRLOG"
 else skip "pip-compile not installed  (pip install pip-tools)"; fi
 
 # 8. Workflow lint — .github/workflows/*.yml (ci.yml + release.yml) -----------

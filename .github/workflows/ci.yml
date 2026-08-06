@@ -110,13 +110,17 @@ jobs:
           # pytest-randomly is auto-enabled by being installed; its random
           #   seed is logged at the top of the pytest output so a flake can
           #   be reproduced locally with `pytest --randomly-seed=<N>`.
-          XDIST="-n 4 --dist=loadfile --durations=20"
+          # Array, not a string: the flags must reach pytest as separate
+          #   words, and an unquoted "$XDIST" would get there by way of
+          #   word-splitting (SC2086) — same result, one glob away from a
+          #   surprise.
+          XDIST=(-n 4 --dist=loadfile --durations=20)
           if [ "${{ matrix.python-version }}" = "${{ env.PRIMARY_PYTHON }}" ]; then
-            pytest $XDIST \
+            pytest "${XDIST[@]}" \
               --cov=services --cov=scraper --cov=routes \
               --cov-report=term-missing --cov-report=xml
           else
-            pytest $XDIST
+            pytest "${XDIST[@]}"
           fi
 
       - name: Upload coverage artifact
@@ -162,14 +166,19 @@ jobs:
           # the awk-scrape of .semgrep.yml comment prose, which a reformat could
           # silently empty). One ID per line; blank lines and `#` comments
           # ignored. The per-rule rationale still lives in .semgrep.yml.
-          EXCLUDES=$(grep -vE '^\s*(#|$)' .semgrep-excludes.txt \
-                     | awk '{print "--exclude-rule " $1}' | tr '\n' ' ')
+          mapfile -t RULE_IDS < <(grep -vE '^\s*(#|$)' .semgrep-excludes.txt \
+                                  | awk '{print $1}')
           # Fail loudly if the exclusion list came back empty — that means the
           # file was renamed/emptied, not that there's nothing to exclude.
-          if [ -z "$EXCLUDES" ]; then
+          if [ ${#RULE_IDS[@]} -eq 0 ]; then
             echo "::error::.semgrep-excludes.txt yielded no rule IDs"; exit 1
           fi
-          echo "Applying exclusions:"; echo "$EXCLUDES" | tr ' ' '\n' | grep -v '^$' || true
+          # One `--exclude-rule <id>` pair per ID, held as array elements so
+          # they reach semgrep as separate words without relying on
+          # word-splitting an unquoted expansion (SC2086).
+          EXCLUDES=()
+          for id in "${RULE_IDS[@]}"; do EXCLUDES+=(--exclude-rule "$id"); done
+          echo "Applying exclusions:"; printf '%s\n' "${RULE_IDS[@]}"
           semgrep \
             --config p/security-audit \
             --config p/python \
@@ -183,7 +192,7 @@ jobs:
             --exclude database \
             --exclude static/images \
             --exclude static/videos \
-            $EXCLUDES \
+            "${EXCLUDES[@]}" \
             .
         # Hard-fail since v2.98.1 (Pass 30 debt sweep): with the calibrated
         # exclusion list in .semgrep.yml, CI runs at 0 findings. If a new
