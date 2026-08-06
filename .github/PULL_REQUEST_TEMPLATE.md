@@ -36,7 +36,7 @@ rejected. Skip otherwise.
 - [ ] **CSS rebuilt** (`python3 build_css.py`) — if any `static/css/**.css` changed
 - [ ] **JS rebuilt** (`python3 build_js.py`) — if any bundled `static/js/*.js` changed
 - [ ] **Tests run** (`python3 -m pytest`) — if `services/*.py` or `scraper/*.py` changed
-- [ ] **Lockfile regenerated** (`pip-compile … --generate-hashes`) — if `requirements.txt` changed
+- [ ] **Lockfile regenerated** (`uv pip compile … --generate-hashes`) — if `requirements.txt` changed
 - [ ] **CLAUDE.md updated** — if routes / templates / bundled JS / CSS files / page-asset wiring changed
 
 ## Verification

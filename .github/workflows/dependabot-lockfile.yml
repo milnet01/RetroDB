@@ -1,10 +1,10 @@
 name: Dependabot lockfile regeneration
 
 # Pass 39.5 — Dependabot bumps `requirements.txt` natively but doesn't know
-# how to recompile our pip-compile-generated `requirements.lock`. Without
-# this workflow, every Dependabot PR fails the lockfile-drift check in CI
-# until a human runs `pip-compile --generate-hashes` and pushes a follow-up
-# commit. This workflow does that automatically the moment Dependabot opens
+# how to recompile our generated `requirements.lock`. Without this workflow,
+# every Dependabot PR fails the lockfile-drift check in CI until a human
+# recompiles the lock and pushes a follow-up commit. This workflow does that
+# automatically the moment Dependabot opens
 # the PR, then pushes the regenerated lockfile back to the same branch so
 # the original Dependabot PR goes green on its own.
 
@@ -49,17 +49,18 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Install pip-tools
-        run: pip install pip-tools
+      - name: Install uv
+        run: pip install uv
 
       - name: Regenerate requirements.lock with hashes
         run: |
           # Match exactly the recipe baked into the lockfile header so the
           # CI drift check stays comparable. Pass 39.4 added --generate-hashes;
           # without it the resulting lockfile won't satisfy `pip install
-          # --require-hashes` in the installers.
-          pip-compile --quiet --strip-extras --generate-hashes \
-            --output-file requirements.lock requirements.txt
+          # --require-hashes` in the installers. Pass 57.3 moved the compiler
+          # from pip-tools to uv — see the note in ci.yml's drift job.
+          uv pip compile requirements.txt --strip-extras --generate-hashes \
+            --quiet -o requirements.lock
 
       - name: Commit and push if changed
         run: |

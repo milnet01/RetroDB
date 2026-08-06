@@ -22,13 +22,23 @@
 #     ./scripts/ci_local.sh
 #
 # Exit 0 = every check passed (safe to push). Nonzero = a check failed; the
-# failing checks are listed at the end. To push anyway (e.g. a docs-only branch
-# where a flaky check is irrelevant), use:  git push --no-verify
+# failing checks are listed at the end. To push anyway, use:
+#
+#     git push --no-verify
 #
 # Design notes:
 #   - No dependency (re)install — unlike CI's fresh runner, your box already has
-#     the deps. Each check is skipped with an install hint if its tool is absent
-#     (a skip never blocks the push, but is reported so coverage gaps are loud).
+#     the deps.
+#   - A CI-mirrored check whose tool is MISSING or BROKEN is a FAILURE, not a
+#     skip. It used to be a skip, on the reasoning that a missing tool is the
+#     box's problem rather than the branch's. That reasoning is wrong: CI will
+#     run the check regardless, so a locally-skipped check is precisely a check
+#     whose CI verdict you have not seen — which is the one thing this script
+#     exists to prevent. Learned the hard way on 2026-08-06: pip-compile was
+#     broken locally (skip, "safe to push") and broken identically on the
+#     runner (hard fail, red main). The install hint is printed with the
+#     failure; `--no-verify` is still there for when you mean it.
+#   - Docs-only pushes short-circuit to exit 0 (see the fast path below).
 #   - pytest uses CI's exact `-n 4 --dist=loadfile` invocation. Without the
 #     per-file isolation, cross-file order-pollution (test_pass48_media_cleanup
 #     et al.) produces false failures that CI never sees.
@@ -39,18 +49,42 @@
 set -uo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || { echo "cannot cd to repo root"; exit 2; }
 
-GREEN=$'\e[32m'; RED=$'\e[31m'; YELLOW=$'\e[33m'; BOLD=$'\e[1m'; RST=$'\e[0m'
-FAILED=(); SKIPPED=()
+GREEN=$'\e[32m'; RED=$'\e[31m'; BOLD=$'\e[1m'; RST=$'\e[0m'
+FAILED=()
 step() { printf '\n%s▶ %s%s\n' "$BOLD" "$1" "$RST"; }
 ok()   { printf '%s  ✓ %s%s\n' "$GREEN" "$1" "$RST"; }
 fail() { printf '%s  ✗ %s%s\n' "$RED" "$1" "$RST"; FAILED+=("$1"); }
-skip() { printf '%s  ⚠ SKIP: %s%s\n' "$YELLOW" "$1" "$RST"; SKIPPED+=("$1"); }
 have() { command -v "$1" >/dev/null 2>&1; }
+# A CI-mirrored check whose tool is absent is a failure, not a skip — see the
+# header. `hint` is the install line, shown with the failure.
+missing() { fail "$1 not installed  ($2)"; }
+
+# Docs-only fast path ---------------------------------------------------------
+# A push whose every file is prose cannot change the outcome of a single check
+# below — no Python, no templates, no workflows, no lockfile. Running the full
+# ~40 s suite to prove that is pure latency, so short-circuit it.
+#
+# "Prose" is deliberately narrow: *.md, anything under docs/, and LICENSE.
+# NOT *.txt (requirements.txt lives there), NOT *.yaml (data/changelog.yaml is
+# read at runtime), NOT .github/workflows/*.yml.
+#
+# Scope is what would actually be pushed — @{upstream}..HEAD. With no upstream,
+# or nothing to push (a bare manual run), everything runs. CI_LOCAL_FORCE=1
+# runs everything regardless.
+if [ "${CI_LOCAL_FORCE:-0}" != "1" ] && UPSTREAM="$(git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' 2>/dev/null)"; then
+  CHANGED="$(git diff --name-only "$UPSTREAM..HEAD" 2>/dev/null)"
+  if [ -n "$CHANGED" ] && ! printf '%s\n' "$CHANGED" | grep -qvE '(\.md$|^docs/|^LICENSE$)'; then
+    printf '%s%s✓ Docs-only push (%d file(s) vs %s) — CI-local skipped.%s\n' \
+      "$BOLD" "$GREEN" "$(printf '%s\n' "$CHANGED" | wc -l)" "$UPSTREAM" "$RST"
+    printf '  Run anyway with: %sCI_LOCAL_FORCE=1 ./scripts/ci_local.sh%s\n' "$BOLD" "$RST"
+    exit 0
+  fi
+fi
 
 # 1. Ruff (bugs only — E, F, B, S; config in pyproject.toml) -----------------
 step "Ruff lint  ·  ruff check ."
 if have ruff; then ruff check . && ok "ruff" || fail "ruff"
-else skip "ruff not installed  (pip install ruff)"; fi
+else missing "ruff" "pip install ruff"; fi
 
 # 2. Import smoke — catch import-time errors against an isolated temp DB ------
 step "Import smoke  ·  python -c 'import app'"
@@ -66,7 +100,7 @@ rm -rf "$SMOKE_DIR"
 # layers coverage on the primary interpreter — reporting-only, omitted here.
 step "Pytest  ·  -n 4 --dist=loadfile --durations=20"
 if have pytest; then pytest -n 4 --dist=loadfile --durations=20 -q && ok "pytest" || fail "pytest"
-else skip "pytest not installed  (pip install pytest pytest-xdist)"; fi
+else missing "pytest" "pip install pytest pytest-xdist"; fi
 
 # 4. i18n freshness gate — mirrors ci.yml's `i18n-fresh` job (CLAUDE.md step 8) -
 step "i18n freshness  ·  scripts/check_i18n_fresh.py"
@@ -76,43 +110,49 @@ else fail "i18n freshness  (regenerate catalogs — see CLAUDE.md step 8)"; fi
 # 5. Semgrep — calibrated via .semgrep-excludes.txt --------------------------
 step "Semgrep  ·  calibrated security scan"
 if have semgrep; then
-  EXCLUDES=$(grep -vE '^\s*(#|$)' .semgrep-excludes.txt | awk '{print "--exclude-rule " $1}' | tr '\n' ' ')
-  if [ -z "$EXCLUDES" ]; then fail "semgrep — .semgrep-excludes.txt yielded no rule IDs"
+  # Same array construction as ci.yml's semgrep step — the flags must arrive as
+  # separate words, and an array says so without relying on word-splitting an
+  # unquoted expansion (SC2086).
+  mapfile -t RULE_IDS < <(grep -vE '^\s*(#|$)' .semgrep-excludes.txt | awk '{print $1}')
+  if [ ${#RULE_IDS[@]} -eq 0 ]; then fail "semgrep — .semgrep-excludes.txt yielded no rule IDs"
   else
-    # shellcheck disable=SC2086
+    EXCLUDES=()
+    for id in "${RULE_IDS[@]}"; do EXCLUDES+=(--exclude-rule "$id"); done
     if semgrep --config p/security-audit --config p/python --config p/flask --config .semgrep.yml \
          --error --timeout 60 --metrics=off \
          --exclude logs --exclude data --exclude database --exclude static/images --exclude static/videos \
-         $EXCLUDES . ; then ok "semgrep"
+         "${EXCLUDES[@]}" . ; then ok "semgrep"
     else fail "semgrep"; fi
   fi
-else skip "semgrep not installed  (pip install semgrep)"; fi
+else missing "semgrep" "pip install semgrep"; fi
 
 # 6. pip-audit — CVEs in the pinned lockfile ---------------------------------
 step "pip-audit  ·  requirements.lock --strict"
 if have pip-audit; then pip-audit --requirement requirements.lock --strict && ok "pip-audit" || fail "pip-audit"
-else skip "pip-audit not installed  (pip install pip-audit)"; fi
+else missing "pip-audit" "pip install pip-audit"; fi
 
 # 7. Lockfile drift — requirements.txt vs requirements.lock ------------------
-step "Lockfile drift  ·  pip-compile round-trip"
-if have pip-compile; then
+step "Lockfile drift  ·  uv pip compile round-trip"
+if have uv; then
   FRESH="$(mktemp)"; ERRLOG="$(mktemp)"
-  # --output-file must already exist for pip-compile to reuse its pins, so the
-  # scratch file starts as a copy of the lock. That makes a *crashed*
-  # pip-compile indistinguishable from a clean round-trip — the diff below
-  # would compare the lock against itself and report "in sync". So check the
-  # exit status first and report a skip, never a silent pass. (Seen for real:
-  # pip-tools 7.6.0 dies on pip >= 26, which dropped `stdlib_pkgs`.)
+  # The output file must already exist for the compiler to reuse its pins, so
+  # the scratch file starts as a copy of the lock. That makes a *crashed*
+  # compile indistinguishable from a clean round-trip — the diff below would
+  # compare the lock against itself and report "in sync". So check the exit
+  # status first and fail loudly, never pass silently. This is not
+  # hypothetical: pip-compile broke exactly this way against pip 26 (Pass
+  # 57.3), the gate reported green, and CI went red on the same check.
   cp requirements.lock "$FRESH"
-  if pip-compile --quiet --strip-extras --generate-hashes --output-file "$FRESH" requirements.txt >/dev/null 2>"$ERRLOG"; then
+  if uv pip compile requirements.txt --strip-extras --generate-hashes \
+       --quiet -o "$FRESH" >/dev/null 2>"$ERRLOG"; then
     if diff -u <(grep -v '^#' requirements.lock) <(grep -v '^#' "$FRESH") >/dev/null; then ok "lockfile in sync"
-    else fail "lockfile drift — run: pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes"; fi
+    else fail "lockfile drift — run: uv pip compile requirements.txt --strip-extras --generate-hashes -o requirements.lock"; fi
   else
     tail -n 3 "$ERRLOG"
-    skip "pip-compile failed to run — drift NOT checked (see error above)"
+    fail "uv pip compile failed to run — drift NOT checked (see error above)"
   fi
   rm -f "$FRESH" "$ERRLOG"
-else skip "pip-compile not installed  (pip install pip-tools)"; fi
+else missing "uv" "pip install uv"; fi
 
 # 8. Workflow lint — .github/workflows/*.yml (ci.yml + release.yml) -----------
 # LOCAL-ONLY extra (not a CI gate — see the header note). The release pipeline
@@ -132,10 +172,6 @@ fi
 
 # Summary --------------------------------------------------------------------
 echo
-if [ ${#SKIPPED[@]} -gt 0 ]; then
-  printf '%s%d check(s) skipped (tool not installed) — local coverage is partial:%s\n' "$YELLOW" "${#SKIPPED[@]}" "$RST"
-  printf '   - %s\n' "${SKIPPED[@]}"
-fi
 if [ ${#FAILED[@]} -gt 0 ]; then
   printf '%s%s✗ CI-local FAILED — %d check(s):%s\n' "$BOLD" "$RED" "${#FAILED[@]}" "$RST"
   printf '   - %s\n' "${FAILED[@]}"

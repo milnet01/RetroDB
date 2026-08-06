@@ -251,10 +251,8 @@ jobs:
           path: ~/.cache/uv
           key: uv-drift-${{ runner.os }}-py${{ env.PRIMARY_PYTHON }}-v2
 
-      - name: Install pip-tools (uv)
-        run: |
-          python -m pip install --upgrade pip uv
-          uv pip install --system pip-tools
+      - name: Install uv
+        run: python -m pip install --upgrade pip uv
 
       - name: Lockfile drift check
         run: |
@@ -266,23 +264,30 @@ jobs:
           # version newer than what we've pinned" (that's Dependabot's job).
           #
           # Implementation: seed /tmp/fresh.lock with the existing lock, then
-          # recompile. pip-compile honors existing pins unless the input
-          # constraints actually force a change, so a clean PR produces an
-          # identical body. The 6-line auto-generated header differs by
+          # recompile. The compiler honors the pins already in the output file
+          # unless the input constraints actually force a change, so a clean PR
+          # produces an identical body. The auto-generated header differs by
           # output path between the two runs — strip it before diffing.
           cp requirements.lock /tmp/fresh.lock
           # Pass 39.4 — `--generate-hashes` so the regenerated lockfile carries
           # per-package SHA256s; installers use `pip install --require-hashes`
           # for fail-closed install on MITM / PyPI tamper. Diff stays apples-
           # to-apples since the seed lockfile already has hashes.
-          pip-compile --quiet --strip-extras --generate-hashes --output-file /tmp/fresh.lock requirements.txt
-          # Strip any leading `# ...` header lines (newer pip-compile emits a
-          # 6-line comment block; older invocations produce none). Per-package
-          # `# via` lines are indented with spaces so they don't match ^#.
+          #
+          # Pass 57.3 — `uv pip compile`, not `pip-compile`. pip-tools (7.6.0,
+          # latest) imports `stdlib_pkgs` from pip's internals, which pip 26
+          # removed, so pip-compile dies on import against any current pip.
+          # uv is a drop-in for this invocation: seeded with the same lock it
+          # reproduces the body byte-for-byte, and it does not reach into pip.
+          uv pip compile requirements.txt --strip-extras --generate-hashes \
+            --quiet -o /tmp/fresh.lock
+          # Strip leading `# ...` header lines (both compilers emit a small
+          # provenance block naming the output path). Per-package `# via` lines
+          # are indented with spaces so they don't match ^#.
           if ! diff -u <(grep -v '^#' requirements.lock) <(grep -v '^#' /tmp/fresh.lock); then
             echo ""
             echo "::error::requirements.lock is out of sync with requirements.txt."
-            echo "Run: pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes"
+            echo "Run: uv pip compile requirements.txt --strip-extras --generate-hashes -o requirements.lock"
             exit 1
           fi
 

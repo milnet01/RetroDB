@@ -25,7 +25,7 @@ genuinely diverges.
 3. Rebuild CSS if any `static/css/**.css` changed: `python3 build_css.py`
 4. Rebuild JS if any bundled `static/js/*.js` changed: `python3 build_js.py`
 5. Run tests if any `services/*.py` or `scraper/*.py` changed: `python3 -m pytest`
-6. Regenerate lockfile if `requirements.txt` was edited: `pip-compile requirements.txt -o requirements.lock --strip-extras --generate-hashes` (Pass 39.4 — `install.py` prefers `--require-hashes` when `requirements.lock` is present and falls back to `requirements.txt` otherwise; keep the lockfile current so the secure path stays the default). Dependencies track **latest-always** (features + security); a hold below latest is allowed only for a documented breakage recorded in `docs/DEPENDENCY_POLICY.md` — read it before pinning, capping, or bumping a major.
+6. Regenerate lockfile if `requirements.txt` was edited: `uv pip compile requirements.txt --strip-extras --generate-hashes -o requirements.lock` (Pass 57.3 moved the compiler from pip-tools to uv — pip-tools breaks against pip 26; Pass 39.4 — `install.py` prefers `--require-hashes` when `requirements.lock` is present and falls back to `requirements.txt` otherwise; keep the lockfile current so the secure path stays the default). Dependencies track **latest-always** (features + security); a hold below latest is allowed only for a documented breakage recorded in `docs/DEPENDENCY_POLICY.md` — read it before pinning, capping, or bumping a major.
 7. Update this file if change adds/removes/renames routes, templates, bundled JS, CSS files, or alters page/asset wiring contracts
 8. Wrap any new user-facing string for i18n and regenerate catalogs — see `docs/specs/i18n.md` §2/§4/§6/§7/§9:
    - Templates `{{ _('...') }}` / `{% trans %}`; Python `flash(_('...'))` / `error(_('...'))`.
@@ -200,7 +200,7 @@ Pre-release checklist: bump version + changelog → ensure `config.example.py` m
 - `.semgrep.yml` — Documented threat model + excluded upstream rule IDs (read before triaging new audit findings)
 - `.gitleaks.toml` — Allowlist for `logs/`, `data/*.json` tokens, admin-editable settings
 - `.pre-commit-config.yaml` — per-commit `ruff check --fix` + `gitleaks`, **plus a pre-push gate** (`scripts/ci_local.sh`) that mirrors `.github/workflows/ci.yml` (ruff · import smoke · pytest · i18n freshness · semgrep · pip-audit · lockfile-drift) so a red build is caught locally before it reaches GitHub. Install: `pip install pre-commit` (venv / `--user` / `--break-system-packages` on PEP-668 distros) then `pre-commit install && pre-commit install --hook-type pre-push`. `ruff-format` / `mypy` intentionally excluded; `pytest` runs in the pre-push gate, not per-commit.
-- `scripts/ci_local.sh` — the local-CI runner the pre-push gate invokes; run it by hand any time with `./scripts/ci_local.sh` (~40 s warm). Exit 0 = safe to push. A missing tool is reported as a skip (never silently passed); override a failing gate with `git push --no-verify`.
+- `scripts/ci_local.sh` — the local-CI runner the pre-push gate invokes; run it by hand any time with `./scripts/ci_local.sh` (~40 s warm). Exit 0 = safe to push. A CI-mirrored check whose tool is missing or broken **fails** (a skip would be a check whose CI verdict you haven't seen — Pass 57.3); override with `git push --no-verify`. Docs-only pushes (`*.md`, `docs/`, `LICENSE`) short-circuit to exit 0; force with `CI_LOCAL_FORCE=1`.
 
 ---
 

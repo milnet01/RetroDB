@@ -4409,9 +4409,46 @@ weren't worth blocking the ship on.  Ordered by rough priority.
      not, the whole lockfile is rewritten in one commit.
 - **Verify**: `./scripts/ci_local.sh` reports gate 7 green (not skipped), and
   an intentional edit to `requirements.txt` makes it go red.
-- **Status**: planned (2026-08-06). Upstream break, not a project one;
-  surfaced while clearing Pass 57.2. Lanes: ci, deps.
+- **Status**: done (2026-08-06). Took option 3. Filed as LOW on the belief this
+  was local-only; it was not — CI installs `pip-tools` with
+  `pip install --upgrade pip` first, so the runner hits the identical
+  ImportError and the `lockfile-drift` job hard-failed on the v3.23.1 push.
+  Verified before switching: seeded with the existing lock, `uv pip compile`
+  reproduces `requirements.lock` **byte-for-byte** (0 lines of diff over the
+  compared body). Swapped in three places — `ci.yml`'s drift job,
+  `dependabot-lockfile.yml`, and `ci_local.sh` gate 7 — plus the three live doc
+  citations (`CLAUDE.md` step 6, `docs/DEPENDENCY_POLICY.md`, the PR template).
+  The lock's own header was regenerated so it names the real recipe; body
+  unchanged. Net effect is one dependency fewer: `uv` was already installed in
+  both workflows purely to install `pip-tools`. Lanes: ci, deps.
 - **Source**: in-session-2026-08-06.
+
+---
+
+#### Pass 57.4 Close the local-CI / GitHub-CI parity hole; docs-only fast path (HIGH, S)
+- **Status**: done
+- **Target**: `scripts/ci_local.sh`.
+- **Why**: the pre-push gate said "safe to push" and CI went red on the very
+  next commit. Not a check-coverage gap — `lockfile-drift` was mirrored — but
+  a *verdict* gap: the local gate treated a missing or broken tool as a SKIP,
+  which never blocks a push. A skipped check is exactly the check whose CI
+  result you have not seen, so the one case where a skip is cheap is also the
+  one case where it is wrong.
+- **Done**:
+  1. A CI-mirrored check whose tool is missing or broken now **fails**
+     (`missing()` helper); the install hint prints with the failure and
+     `--no-verify` remains the escape. The `skip()` machinery had no callers
+     left and was removed.
+  2. Docs-only pushes short-circuit to exit 0 — `*.md`, `docs/**`, `LICENSE`
+     only, scoped to `@{upstream}..HEAD`, overridable with `CI_LOCAL_FORCE=1`.
+     Deliberately excludes `*.txt` (`requirements.txt`), `*.yaml`
+     (`data/changelog.yaml` is read at runtime) and `.github/workflows/*.yml`.
+  3. Gate 5's semgrep exclusion list uses the same bash-array construction as
+     `ci.yml`'s semgrep step, so the two invocations read identically.
+- **Verify**: `./scripts/ci_local.sh` exits 0 with 8/8 green and no skips; the
+  push it gates comes back green in GitHub Actions.
+- **Status**: done (2026-08-06). Lanes: ci.
+- **Source**: user-request-2026-08-06.
 
 ---
 

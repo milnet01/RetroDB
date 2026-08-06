@@ -15,6 +15,17 @@ import pytest
 from tests._util import REPO_ROOT as _REPO_ROOT
 
 
+def _join_continuations(src: str) -> str:
+    """Fold `\\`-continued shell lines into one line.
+
+    These tests grep a workflow's `run:` block for a whole invocation. A long
+    command wrapped across continuation lines is the same command, but a naive
+    line-wise grep sees only fragments and reports the invocation as missing —
+    which is how this file went red on a purely cosmetic rewrap (Pass 57.3).
+    """
+    return re.sub(r'\\\n\s*', ' ', src)
+
+
 # -----------------------------------------------------------------------------
 # 39.4 — requirements.lock with --generate-hashes + installers --require-hashes
 # -----------------------------------------------------------------------------
@@ -70,17 +81,17 @@ class TestPass39_4LockfileHashes:
         )
 
     def test_lockfile_header_records_generate_hashes_recipe(self):
-        """pip-compile writes the regeneration command into the lockfile
-        header. Pin that header carries `--generate-hashes` so a future
-        pip-compile run without that flag is visible in the diff."""
+        """The compiler writes the regeneration command into the lockfile
+        header. Pin that the header carries `--generate-hashes` so a future
+        regen without that flag is visible in the diff."""
         src = self._read(self.LOCKFILE)
         # Header is the first ~6 lines. Take a generous slice.
         header = src[:512]
         assert '--generate-hashes' in header, (
             "requirements.lock header should record `--generate-hashes` in "
-            "its pip-compile recipe — regenerate with: "
-            "pip-compile requirements.txt -o requirements.lock "
-            "--strip-extras --generate-hashes"
+            "its recipe — regenerate with: "
+            "uv pip compile requirements.txt --strip-extras "
+            "--generate-hashes -o requirements.lock"
         )
 
     def test_select_pip_args_falls_back_when_lockfile_missing(self, tmp_path):
@@ -140,11 +151,16 @@ class TestPass39_4LockfileHashes:
         for diffing. It must use `--generate-hashes` so the regenerated
         lock is comparable to the committed one (which carries hashes).
         Otherwise the diff false-positives on every PR."""
-        src = self._read(self.CI_WORKFLOW)
-        # Grab the line containing `pip-compile` inside the drift step.
-        compile_lines = [ln for ln in src.splitlines() if 'pip-compile' in ln and '/tmp/fresh.lock' in ln]
+        src = _join_continuations(self._read(self.CI_WORKFLOW))
+        # Grab the invocation that recompiles into the scratch lock. Pass 57.3
+        # moved the compiler from pip-compile to `uv pip compile`; match either
+        # so this pins the FLAG, which is the invariant, not the tool.
+        compile_lines = [
+            ln for ln in src.splitlines()
+            if ('pip-compile' in ln or 'pip compile' in ln) and '/tmp/fresh.lock' in ln
+        ]
         assert compile_lines, (
-            "ci.yml lockfile-drift step doesn't run pip-compile against "
+            "ci.yml lockfile-drift step doesn't recompile into "
             "/tmp/fresh.lock anymore — update this test."
         )
         for ln in compile_lines:
@@ -217,14 +233,18 @@ class TestPass39_5DependabotLockfileWorkflow:
         the installers (Pass 39.4)."""
         with open(self.WORKFLOW, encoding='utf-8') as f:
             src = f.read()
+        # Pass 57.3 moved the compiler from pip-compile to `uv pip compile`;
+        # match either, since the invariant being pinned is the flag.
         compile_lines = [
-            ln for ln in src.splitlines() if 'pip-compile' in ln
+            ln for ln in src.splitlines()
+            if 'pip-compile' in ln or 'pip compile' in ln
         ]
         assert compile_lines, (
-            "workflow has no pip-compile invocation — update this test"
+            "workflow has no lockfile-compile invocation — update this test"
         )
-        # At least one of the pip-compile lines must carry --generate-hashes
-        # (the actual run command may span multiple continuation lines).
+        # At least one of those lines must carry --generate-hashes (the actual
+        # run command may span multiple continuation lines).
         assert '--generate-hashes' in src, (
-            "workflow's pip-compile invocation must include --generate-hashes"
+            "workflow's lockfile-compile invocation must include "
+            "--generate-hashes"
         )
