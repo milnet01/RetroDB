@@ -4516,7 +4516,46 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   Scraper Config page shows the new value immediately, with no up-to-30-second
   window where the UI reports the old one; and (if 2b) a test that a save
   invalidates the cache.
-- **Status**: planned (2026-08-06). Lanes: scrapers, refactor.
+- **Status**: done (v3.23.2, 2026-08-06). Lanes: scrapers, refactor.
+  **Step 2 resolved as (b) + (a), and both halves were forced, not chosen.**
+  Invalidation (b) is not optional once the reads are cached: a 30-second TTL
+  has no mtime check, so without an explicit bust the save-then-render round
+  trip in *Verify* fails by construction. `invalidate_scraper_settings_cache()`
+  is called after each `atomic_write_json`. The mutators then keep their fresh
+  `open()` (a) on the merits — a read-modify-write wants the bytes on disk, and
+  invalidating the cache does not make a snapshot safe against a change landing
+  between the read and the save.
+  **Two hazards the bullet did not anticipate, both found while implementing:**
+  1. *The loader aliased its cache.* It returned `_settings_cache` itself, and
+     `api_get_scraper_settings` mutates what it is handed — it masks `api_keys`
+     to `***<last4>` before responding. Routing it through the loader would
+     have written those masks into the shared cache, leaving every scraper
+     authenticating with `***` until the TTL expired. `load_scraper_settings()`
+     now returns a deep copy. Pinned in both directions:
+     `tests/test_scraper_settings_cache.py::TestReturnsACopy` fails against the
+     pre-fix loader (verified by reverting the copy and re-running).
+  2. *The two modules disagreed on the file path.* `scraper_manager` derived
+     it from `dirname(dirname(__file__))`; the writers in `routes/scraper.py`
+     use `config.BASE_DIR`. Identical from a source checkout, divergent inside
+     a PyInstaller bundle, where `BASE_DIR` sits next to the launcher and the
+     module's `__file__` sits under `_internal/` — so the routes would have
+     written one file and the scrapers read another. The loader is now anchored
+     to `config.BASE_DIR` too. **Not verified against a real frozen bundle** —
+     `TestPathAgreement` asserts the two constants are equal and that the
+     anchor is `BASE_DIR`, which is the checkable half.
+  **Sixth call-site.** The bullet named five; `routes/museum.py:789`
+  (`_get_removebg_key`) is a sixth pure read and was routed too. Its
+  `removebg_api_key` is not in `_ALLOWED_API_KEY_FIELDS`, so it is hand-added
+  to the file — the loader passes `api_keys` through wholesale, so it survives.
+  **Scope check done before the swap:** the persisted key set
+  (`_SETTINGS_VALIDATORS` + `api_keys`) is exactly the set the loader passes
+  through, so no reader lost a field. The GET handler's file-missing branch was
+  deleted rather than kept — it carried a *different* default priority order
+  than the loader, i.e. the endpoint reported an order the scrapers would not
+  have used.
+  **Not verified in-session:** no browser walk of the Scraper Config page (the
+  save-then-read round trip is covered by test, not by hand) and no standalone
+  build.
 - **Source**: `/apply-fixes` sweep during Pass 57.1, 2026-08-06 — found as an
   out-of-scope defect next door, not as a Pass 57.1 finding.
 

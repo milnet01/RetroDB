@@ -12,6 +12,7 @@
 # ScreenScraper result cache lives in scraper.scraper_cache.
 # =============================================================================
 
+import copy
 import logging
 import sys
 import os
@@ -53,8 +54,17 @@ from scraper.match_scorer import (
     calculate_rawg_score,
 )
 
-# Settings file path
-SCRAPER_SETTINGS_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'scraper_settings.json')
+# Settings file path.
+# Pass 57.5 — anchored to config.BASE_DIR, the same expression the writers in
+# routes/scraper.py use. The old repo-root derivation agreed with them from a
+# source checkout but not from a PyInstaller bundle, where BASE_DIR sits next to
+# the launcher and this module's __file__ sits under _internal/ — so the routes
+# would have written one file and the scrapers read another. Falls back to the
+# repo root only when config itself failed to import (see above).
+SCRAPER_SETTINGS_FILE = os.path.join(
+    config.BASE_DIR if config else os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    'data', 'scraper_settings.json',
+)
 
 # Minimum match score for bulk scrape auto-selection
 # A score of 200 means roughly "close title match with platform confirmation" —
@@ -71,10 +81,31 @@ _settings_lock = threading.Lock()
 
 
 def load_scraper_settings():
-    """Load all scraper settings from file, with config.py as fallback"""
+    """Load all scraper settings from file, with config.py as fallback.
+
+    Returns a **deep copy** of the cached dict. Pass 57.5 routed the request-path
+    readers through here, and two of them mutate what they get back (the GET
+    handler masks `api_keys` before returning it). Handing out the cache object
+    itself would let a masked `***` value replace the real key for every
+    scraper until the TTL expired.
+    """
     global _settings_cache, _settings_cache_time
     with _settings_lock:
-        return _load_scraper_settings_locked()
+        return copy.deepcopy(_load_scraper_settings_locked())
+
+
+def invalidate_scraper_settings_cache():
+    """Drop the cached settings so the next read re-parses the file.
+
+    Pass 57.5 — the 30-second TTL is fine for scraper worker threads but not for
+    a save-then-render round trip: without this the Scraper Config page could
+    report the pre-save values for up to 30 s. Every writer of
+    `scraper_settings.json` calls this after its `atomic_write_json`.
+    """
+    global _settings_cache, _settings_cache_time
+    with _settings_lock:
+        _settings_cache = None
+        _settings_cache_time = 0
 
 
 def _load_scraper_settings_locked():

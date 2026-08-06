@@ -30,6 +30,10 @@ from services.scraper_settings_validators import (
     validate_scraper_settings,
     validate_scraper_api_keys,
 )
+from scraper.scraper_manager import (
+    invalidate_scraper_settings_cache,
+    load_scraper_settings,
+)
 
 # Create blueprint
 scraper_bp = Blueprint('scraper', __name__)
@@ -132,17 +136,16 @@ def get_saved_api_keys():
     }
     
     try:
-        if os.path.exists(SCRAPER_SETTINGS_FILE):
-            with open(SCRAPER_SETTINGS_FILE, 'r') as f:
-                settings = json.load(f)
-                if 'api_keys' in settings:
-                    # Override with saved keys (only if not empty)
-                    for key, value in settings['api_keys'].items():
-                        if value:  # Only override if value is not empty
-                            keys[key] = value
+        # Pass 57.5 — via the manager helper, not a fresh open(): this runs on
+        # every /api/check-scraper request.
+        saved_keys = load_scraper_settings().get('api_keys', {})
+        # Override with saved keys (only if not empty)
+        for key, value in saved_keys.items():
+            if value:  # Only override if value is not empty
+                keys[key] = value
     except Exception as e:
         logger.warning(f"Could not load saved API keys: {e}")
-    
+
     return keys
 
 
@@ -155,53 +158,43 @@ def get_saved_api_keys():
 def api_get_scraper_settings():
     """Get scraper priority and settings"""
     try:
-        if os.path.exists(SCRAPER_SETTINGS_FILE):
-            with open(SCRAPER_SETTINGS_FILE, 'r') as f:
-                settings = json.load(f)
-                
-                # Ensure all scrapers are in the settings (for backwards compatibility)
-                # Add screenscraper if missing
-                if 'screenscraper' not in settings.get('enabled', {}):
-                    settings.setdefault('enabled', {})['screenscraper'] = False
-                if 'screenscraper' not in settings.get('priority', []):
-                    settings.setdefault('priority', []).append('screenscraper')
-                
-                # Add RAWG if missing (for older settings files)
-                if 'rawg' not in settings.get('enabled', {}):
-                    settings.setdefault('enabled', {})['rawg'] = config.SCRAPER_RAWG_ENABLED
-                if 'rawg' not in settings.get('priority', []):
-                    # Insert RAWG before screenscraper if possible
-                    priority = settings.get('priority', [])
-                    if 'screenscraper' in priority:
-                        idx = priority.index('screenscraper')
-                        priority.insert(idx, 'rawg')
-                    else:
-                        priority.append('rawg')
-                    settings['priority'] = priority
+        # Pass 57.5 — via the manager helper, not a fresh open(). The helper
+        # already applies the config.py defaults this handler used to duplicate
+        # in its own file-missing branch, and it hands back a copy, so the
+        # masking below cannot leak `***` values into the shared cache.
+        settings = load_scraper_settings()
 
-                # Add AI if missing (for older settings files)
-                if 'ai' not in settings.get('enabled', {}):
-                    settings.setdefault('enabled', {})['ai'] = False
-                if 'ai' not in settings.get('priority', []):
-                    settings.get('priority', []).append('ai')
+        # Ensure all scrapers are in the settings (for backwards compatibility)
+        # Add screenscraper if missing
+        if 'screenscraper' not in settings.get('enabled', {}):
+            settings.setdefault('enabled', {})['screenscraper'] = False
+        if 'screenscraper' not in settings.get('priority', []):
+            settings.setdefault('priority', []).append('screenscraper')
 
-                # Pass 26.5 — mask secret API keys before returning.
-                if isinstance(settings.get('api_keys'), dict):
-                    settings['api_keys'] = mask_api_keys_for_response(settings['api_keys'])
+        # Add RAWG if missing (for older settings files)
+        if 'rawg' not in settings.get('enabled', {}):
+            settings.setdefault('enabled', {})['rawg'] = config.SCRAPER_RAWG_ENABLED
+        if 'rawg' not in settings.get('priority', []):
+            # Insert RAWG before screenscraper if possible
+            priority = settings.get('priority', [])
+            if 'screenscraper' in priority:
+                idx = priority.index('screenscraper')
+                priority.insert(idx, 'rawg')
+            else:
+                priority.append('rawg')
+            settings['priority'] = priority
 
-                return jsonify(settings)
-        else:
-            # Return defaults
-            return jsonify({
-                'priority': ['esde', 'tgdb', 'igdb', 'rawg', 'screenscraper'],
-                'enabled': {
-                    'esde': config.SCRAPER_ESDE_ENABLED,
-                    'tgdb': config.SCRAPER_TGDB_ENABLED,
-                    'igdb': config.SCRAPER_IGDB_ENABLED,
-                    'rawg': config.SCRAPER_RAWG_ENABLED,
-                    'screenscraper': getattr(config, 'SCRAPER_SCREENSCRAPER_ENABLED', False)
-                }
-            })
+        # Add AI if missing (for older settings files)
+        if 'ai' not in settings.get('enabled', {}):
+            settings.setdefault('enabled', {})['ai'] = False
+        if 'ai' not in settings.get('priority', []):
+            settings.get('priority', []).append('ai')
+
+        # Pass 26.5 — mask secret API keys before returning.
+        if isinstance(settings.get('api_keys'), dict):
+            settings['api_keys'] = mask_api_keys_for_response(settings['api_keys'])
+
+        return jsonify(settings)
     except Exception as e:
         logger.error(f"Error loading scraper settings: {e}")
         return jsonify({'error': _('An internal error occurred')}), 500
@@ -241,6 +234,9 @@ def api_save_scraper_settings():
 
     # Save to file
     atomic_write_json(SCRAPER_SETTINGS_FILE, data)
+    # Pass 57.5 — the readers are cached now; without this the settings page
+    # would keep reporting the pre-save values for up to the 30-second TTL.
+    invalidate_scraper_settings_cache()
 
     logger.info(f"Saved scraper settings: priority={data.get('priority')}, enabled={data.get('enabled')}")
 
@@ -284,6 +280,7 @@ def api_save_api_keys():
 
     # Save to file
     atomic_write_json(SCRAPER_SETTINGS_FILE, existing)
+    invalidate_scraper_settings_cache()
 
     logger.info("Saved API keys for scrapers")
 

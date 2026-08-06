@@ -1,3 +1,33 @@
+- version: 3.23.2
+  date: 2026-08-06
+  tags:
+  - type: fix
+    label: Scraper settings pages load faster and never show a stale API key
+  body: |
+    <ul>
+      <li><strong>The Settings and Scraper Config pages stop re-reading the
+        scraper settings file on every request.</strong> Four places were
+        opening and re-parsing it from disk each time a page or check ran,
+        even though a shared cached reader already existed. They all use it
+        now, so those pages do less work per visit.</li>
+      <li><strong>Saving still takes effect instantly.</strong> A cache that
+        forgets on a timer could have shown you the old values for up to half
+        a minute after a save. Every save now clears the cache as it writes,
+        so what you see is what you just saved.</li>
+      <li><strong>Your real API keys can no longer be replaced by their own
+        masked display value.</strong> Settings pages show saved keys as
+        <code>***1234</code> rather than the real thing. Because the page was
+        handed the same copy of the settings the scrapers use, that masking
+        could have overwritten the genuine keys in memory and left scrapers
+        signing in with asterisks until the cache expired.</li>
+      <li><strong>Standalone builds now look for scraper settings in the right
+        place.</strong> The scrapers derived the file's location differently
+        from the pages that save it. In a normal install both landed on the
+        same file; in a standalone (double-click) build they would not have,
+        so saved API keys could have gone somewhere the scrapers never
+        looked.</li>
+    </ul>
+
 - version: 3.23.1
   date: 2026-08-06
   tags:

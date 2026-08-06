@@ -85,8 +85,8 @@ def format_size(bytes_size):
 def settings():
     """Settings page"""
     try:
-        # Import SCRAPER_SETTINGS_FILE from scraper blueprint
-        from routes.scraper import SCRAPER_SETTINGS_FILE
+        # Local import: routes.scraper imports back into this package.
+        from scraper.scraper_manager import load_scraper_settings
 
         stats = get_stats()
         api_status = get_api_status()
@@ -132,26 +132,28 @@ def settings():
             }
         }
 
-        # Override with saved settings if available
-        if os.path.exists(SCRAPER_SETTINGS_FILE):
-            try:
-                with open(SCRAPER_SETTINGS_FILE, 'r') as f:
-                    saved = json.load(f)
-                    if 'priority' in saved:
-                        scraper_settings['priority'] = saved['priority']
-                    if 'enabled' in saved:
-                        scraper_settings['enabled'].update(saved['enabled'])
-                    if 'api_keys' in saved:
-                        scraper_settings['api_keys'].update(saved['api_keys'])
-                    # Load match filtering settings from saved file
-                    if 'minimum_match_score' in saved:
-                        scraper_settings['minimum_match_score'] = saved['minimum_match_score']
-                    if 'match_mode' in saved:
-                        scraper_settings['match_mode'] = saved['match_mode']
-                    if 'match_criteria' in saved:
-                        scraper_settings['match_criteria'] = saved['match_criteria']
-            except Exception as e:
-                logger.warning(f"Could not load saved scraper settings: {e}")
+        # Override with saved settings if available.
+        # Pass 57.5 — via the manager helper, not a fresh open(). The merge
+        # below is unchanged and still `update()`s rather than replaces, which
+        # is what keeps the config.py key fallbacks above visible for any field
+        # the saved file does not carry.
+        try:
+            saved = load_scraper_settings()
+            if 'priority' in saved:
+                scraper_settings['priority'] = saved['priority']
+            if 'enabled' in saved:
+                scraper_settings['enabled'].update(saved['enabled'])
+            if 'api_keys' in saved:
+                scraper_settings['api_keys'].update(saved['api_keys'])
+            # Load match filtering settings from saved file
+            if 'minimum_match_score' in saved:
+                scraper_settings['minimum_match_score'] = saved['minimum_match_score']
+            if 'match_mode' in saved:
+                scraper_settings['match_mode'] = saved['match_mode']
+            if 'match_criteria' in saved:
+                scraper_settings['match_criteria'] = saved['match_criteria']
+        except Exception as e:
+            logger.warning(f"Could not load saved scraper settings: {e}")
 
         # Ensure match filtering settings have defaults
         scraper_settings.setdefault('minimum_match_score', 200)

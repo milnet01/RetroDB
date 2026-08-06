@@ -630,20 +630,31 @@ pure functions with no filesystem dependency.
 - **Every write goes through `atomic_write_json` (or `atomic_write_bytes`
   for secrets).** Plain `open('w') + json.dump` is forbidden — grep
   catches drift at audit time.
-- **Read the two cached stores via their manager helper, never a fresh
-  `open()` in a request handler.** `settings_manager.load_settings()`
-  mtime-caches; the scraper-settings reader in `app.py:inject_config` also
-  mtime-caches (Pass 34.2). Bypassing the cache costs a re-parse per request,
-  which is what Pass 34 went out of its way to remove.
-  **Scoped deliberately, because the wider claim is not true of the tree.**
-  `routes/scraper.py` and `routes/settings.py` still do uncached `open()` +
-  `json.load` on `scraper_settings.json` in request paths — including both
-  mutating handlers, which read-modify-write it (`api_save_scraper_settings`,
-  `api_save_api_keys`). That is drift, not the design: `scraper_manager`
-  already exposes `load_scraper_settings()` (`scraper/scraper_manager.py`) and
-  is the helper those call-sites should route through. Documented rather than
-  asserted away, so an implementer reading this does not copy the drift as
-  precedent — but the invariant above is what new code is held to.
+- **Read the cached stores via their manager helper, never a fresh `open()` in
+  a request handler.** `settings_manager.load_settings()` mtime-caches; the
+  scraper-settings reader in `app.py:inject_config` also mtime-caches (Pass
+  34.2); `scraper_manager.load_scraper_settings()` caches on a 30-second TTL.
+  Bypassing the cache costs a re-parse per request, which is what Pass 34 went
+  out of its way to remove. Pass 57.5 closed the last of the drift — every
+  pure read of `scraper_settings.json` now routes through
+  `load_scraper_settings()` (`routes/scraper.py` ×2, `routes/settings.py`,
+  `routes/museum.py`).
+  **Two things a TTL cache owes that an mtime cache does not**, both settled in
+  Pass 57.5 and both silent when missing:
+  - *Every writer invalidates.* `invalidate_scraper_settings_cache()` is called
+    after each `atomic_write_json` of the file. Without it a save-then-render
+    round trip can report the pre-save values for up to the full TTL — an
+    mtime cache notices the write by itself, a TTL cache cannot.
+  - *The loader hands back a deep copy.* Its callers mutate what they get (the
+    GET handler masks `api_keys` to `***<last4>` before returning them), and
+    handing out the cache object would replace the real keys with their display
+    masks for the rest of the TTL.
+  **The two mutating handlers are a deliberate exception, not residual drift.**
+  `api_save_scraper_settings` and `api_save_api_keys` read-modify-write the
+  file, and they keep their fresh `open()`: a read-modify-write wants the bytes
+  currently on disk, since writing back a snapshot would clobber any change
+  made between the read and the save. Cache-freshness is not the property they
+  need, so routing them through the loader would be strictly worse.
 - **Path validators run before persistence.** Any path-shaped string (rom
   path, ESDE paths, chdman path, RetroArch binary path) goes through a
   validator that rejects traversal sequences, NUL bytes, and unsafe

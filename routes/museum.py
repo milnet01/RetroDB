@@ -786,15 +786,14 @@ def remove_controller_bg(controller_id):
 
 def _get_removebg_key():
     """Get remove.bg API key from scraper settings."""
-    settings_file = os.path.join(config.BASE_DIR, 'data', 'scraper_settings.json')
+    # Pass 57.5 — via the manager helper, not a fresh open(). The helper passes
+    # the whole `api_keys` block through untouched, so `removebg_api_key` (which
+    # is hand-added — it is not in the /api/scraper-api-keys allowlist) survives.
+    from scraper.scraper_manager import load_scraper_settings
     try:
-        if os.path.exists(settings_file):
-            with open(settings_file, 'r') as f:
-                settings = json.load(f)
-            return settings.get('api_keys', {}).get('removebg_api_key', '')
+        return load_scraper_settings().get('api_keys', {}).get('removebg_api_key', '')
     except Exception:
-        pass
-    return ''
+        return ''
 
 
 def _crop_to_content(img):
