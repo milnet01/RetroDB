@@ -4349,9 +4349,31 @@ weren't worth blocking the ship on.  Ordered by rough priority.
 - **Verify**: `mcp__ants__doc_citations` + `doc_integrity` clean (they already
   are — these are semantic, not mechanical); each fixed claim re-checked
   against the cited source; a `/cold-eyes` loop-log row appended.
-- **Status**: planned (2026-08-06). Filed from the v3.23.1 `/cold-eyes` run.
-  Deliberately NOT folded into that bug-fix commit — none of it is collateral
-  of the `server_port` change. Lanes: docs.
+- **Status**: done (2026-08-06). Filed from the v3.23.1 `/cold-eyes` run;
+  deliberately NOT folded into that bug-fix commit — none of it is collateral
+  of the `server_port` change. Lanes: docs. All 7 findings re-verified against
+  source before fixing — all 7 still stood, none dismissed. The atomic-write
+  contract now states the real `mkstemp` + chmod-before-`os.replace` + `finally:`
+  sequence and the per-step `OSError` policy; dropdown-options is split into its
+  three real routes, with the phantom `safe_column` allowlist replaced by the
+  truth (`category` binds as a value parameter — no injection surface, and no
+  allowlist either); the *Authentication* / *API endpoints* contradiction is
+  resolved in favour of the latter (`routes/tools.py:201` is `@login_required`
+  with an in-handler role check); `RETRODB_SECRET_KEY` is off the `config.py`
+  import-time list with its env → `data/.secret_key` → generated ladder now
+  documented under Precedence; the fresh-`open()` invariant is scoped to the two
+  stores that honour it, naming `routes/scraper.py` + `routes/settings.py` as
+  drift and `load_scraper_settings()` as the helper they should use;
+  `validate_settings_path` is documented as the two-tuple exception the paths
+  route calls directly. Smaller items all folded (closure claim split into
+  plain-vs-constructor, `_SETTINGS_VALIDATORS`/`_VALIDATORS` mapped per module,
+  CSRF corrected to the hand-rolled `before_request` hook with the exempt set
+  left to `auth.md` which owns it, Module-location blockquote moved out of the
+  *What lives where* list, `dropdown_options` explained as deliberately not a
+  seventh store, worked test example given explicit accept/reject directions).
+  Sweep: `auth.md`, `api-contracts.md`, `image-pipeline.md`, `docs/README.md`
+  and `CLAUDE.md` all agree; no code changed. Gate: `doc_integrity` 0 findings,
+  `doc_citations` 1/1 ok, fences closed, every new symbol resolves.
 - **Source**: cold-eyes-2026-08-06 loop 2, deferred tail.
 
 ---

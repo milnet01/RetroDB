@@ -47,26 +47,27 @@ as the JSON stores; it appears in the table for symmetry.
   `DEBUG_MODE`) — see Precedence for why `SERVER_PORT` is *not* the bound
   port.
 - **Env vars** — `RETRODB_DB_PATH`, `RETRODB_HOST`, `RETRODB_PORT`,
-  `RETRODB_DEBUG`, `RETRODB_SECRET_KEY`, `RETRODB_SLOW_QUERY_MS`,
+  `RETRODB_DEBUG`, `RETRODB_SLOW_QUERY_MS`,
   `RETRODB_SLOW_REQUEST_MS`, `RETRODB_IMAGE_FORMAT`, `RETRODB_MAX_UPLOAD_MB`,
   `RETRODB_MAX_BACKUPS`, `RETRODB_JOB_HISTORY_RETENTION_DAYS`,
   `RETRODB_STATIC_PATH`, `RETRODB_IMAGE_PATH`, and **`PORT`**
   (deliberately un-prefixed — it is the conventional name an external process
-  manager sets). All but the bind port are read once at `config.py` import
-  time via `os.environ.get(...)`; the port pair (`PORT` / `RETRODB_PORT`) goes
-  through `server_port.resolve_server_port()` instead, because a malformed
-  value must produce a message and a non-zero exit rather than a `ValueError`
-  traceback out of an import. See Precedence below.
+  manager sets). Those are read once at `config.py` import time via
+  `os.environ.get(...)`. **Two are not**, and both are listed in `config.py`'s
+  header comment despite being read elsewhere — grep before you assume the
+  comment marks a read:
+  - the port pair (`PORT` / `RETRODB_PORT`) goes through
+    `server_port.resolve_server_port()`, because a malformed value must produce
+    a message and a non-zero exit rather than a `ValueError` traceback out of an
+    import. See Precedence below.
+  - `RETRODB_SECRET_KEY` is read in `app.py:_get_secret_key()`, never in
+    `config.py`. It has its own three-tier ladder — see Precedence.
 - **`data/settings.json`** — every UI-editable preference: paths
   (`rom_path`, `esde_gamelists_path`, …), server port, theme, scraper
   priority/enabled flags, notification timeouts, naming convention, logging
   config, RetroArch launch settings. Full default set lives in
   `settings_manager.DEFAULT_SETTINGS`.
 
-> **Module location.** `settings_manager.py` lives at the **project root**
-> (next to `app.py`, `config.py`) and is imported as `import settings_manager`
-> — there is no `services.settings_manager` package. Every reference to
-> `settings_manager.X` in this spec means the root module.
 - **`data/scraper_settings.json`** — scraper `priority`, `enabled`,
   `minimum_match_score`, `match_mode`, `match_criteria`, and the `api_keys`
   block (TGDB, IGDB, RAWG, ScreenScraper, RetroAchievements, Steam, Xbox, and
@@ -81,6 +82,12 @@ as the JSON stores; it appears in the table for symmetry.
   `data/psn_tokens.json` / `data/xbox_tokens.json` files in Pass 27.2 because
   those leaked the first authenticated user's tokens to every subsequent
   user.
+
+> **Module location.** `settings_manager.py` lives at the **project root**
+> (next to `app.py`, `config.py`) and is imported as `import settings_manager`
+> — there is no `services.settings_manager` package. Every reference to
+> `settings_manager.X` in this spec means the root module. Its validators are
+> the exception: those live under `services/`.
 
 ## Precedence
 
@@ -161,6 +168,21 @@ The collision points worth knowing:
   `server_host` changes which interfaces the app answers on.
   `settings_manager._RETIRED_SETTINGS` drops both from an older
   `settings.json` on load. Do not re-add them to `DEFAULT_SETTINGS`.
+- **The Flask secret key has its own ladder, in `app.py`, over a store this
+  document otherwise does not list.** `_get_secret_key()` resolves
+  `RETRODB_SECRET_KEY` → the `data/.secret_key` file → a freshly generated
+  `secrets.token_hex(32)`, and `app.secret_key` is assigned at import. It is a
+  settings-bearing store (one secret, one file) that deliberately sits outside
+  the six: it has no UI, no validator and no default, and it self-heals rather
+  than failing. Two behaviours follow from that and are easy to get wrong:
+  - **Generation is the fallback, so nothing errors when the file is
+    unreadable.** An `OSError` reading *or* writing `.secret_key` is swallowed
+    and a key is generated in memory. The app boots either way; the cost is that
+    every restart invalidates existing sessions, which looks like random logouts
+    rather than like a failure.
+  - **The write goes through `atomic_write_text(..., mode=0o600)`** (Pass 45.5),
+    so the file never exists world-readable — see the Atomic-write contract's
+    step-3-before-step-4 note.
 - API keys exist as zero-default attributes in `config.py`
   (`THEGAMESDB_API_KEY`, `IGDB_CLIENT_ID`, …) AND as fields under
   `scraper_settings.json#api_keys`. The JSON values always win — the
@@ -169,26 +191,46 @@ The collision points worth knowing:
 ## Atomic-write contract
 
 Every JSON store goes through `services/atomic_io.py:atomic_write_json` (Pass
-35). The contract:
+35). There is one implementation behind three entry points —
+`atomic_write_json` serializes and calls `atomic_write_text`, which encodes and
+calls `atomic_write_bytes` (Pass 45.5), where the whole sequence lives. The
+contract:
 
-1. Open a sibling tempfile `<path>.tmp`.
-2. Write the JSON, `flush()`, `fsync(fd)`.
-3. `os.replace(tmp, path)` — atomic on POSIX and Windows.
-4. `fsync()` the parent directory so the rename's directory-entry update is
-   durable.
-5. On any exception, `os.remove(tmp)` and re-raise.
+1. `tempfile.mkstemp(prefix='.atomic_', dir=directory)` — a **unique** tempfile
+   in the target's own directory. Not a static `<path>.tmp`: two concurrent
+   writers (multi-worker Waitress, two admins POSTing scraper settings) would
+   compute the same name, interleave their writes, and `os.replace` could then
+   publish a torn blob. Building to a static suffix reintroduces exactly the
+   race Pass 45.5 removed.
+2. Write the bytes, `flush()`, `fsync(fd)`.
+3. `os.chmod(tmp_path, mode)` — on the **tempfile, before the rename**. Ordering
+   is load-bearing; see the `0o600` note below.
+4. `os.replace(tmp, path)` — atomic on POSIX and Windows.
+5. `fsync()` the parent directory (`fsync_path`) so the rename's directory-entry
+   update is durable.
+6. A `finally:` removes the tempfile if it still exists — i.e. on any path that
+   did not reach step 4. It is not an `except` and it does not re-raise: an
+   in-flight exception propagates on its own.
 
-Why it matters: power loss or kernel panic between step 2 and step 3 leaves
-the original file intact; between step 3 and step 4 (on XFS or a `nobarrier`
-mount) the rename can be lost, but never a half-written JSON blob. The plain
-`open('w') + json.dump` pattern these helpers replaced could truncate the
-target file mid-write — a single crash mid-save would wipe every setting.
+Steps 2, 3, 5 and the step-6 cleanup each swallow `OSError` individually. A
+filesystem that cannot `fsync` or `chmod` must not fail a write that otherwise
+succeeded, and a failed cleanup must not mask the original exception. Only
+`os.replace` — the step that decides whether the new bytes are published — is
+allowed to propagate.
 
-The harder-edged sibling `atomic_write_bytes` (Pass 45.5) is used for
-secret-bearing writes (`.secret_key`, DB backups) and `chmod`s the tmpfile
-to `0o600` *before* the rename, so the final path never exists at the
-default umask. Settings JSON uses the `0o644` `atomic_write_json` variant
-because the data dir's own permissions are the access boundary.
+Why it matters: power loss or kernel panic before step 4 leaves the original
+file intact; between steps 4 and 5 (on XFS or a `nobarrier` mount) the rename
+can be lost, but never a half-written JSON blob. The plain `open('w') +
+json.dump` pattern these helpers replaced could truncate the target file
+mid-write — a single crash mid-save would wipe every setting.
+
+Call `atomic_write_bytes` (or `atomic_write_text`) directly for secret-bearing
+writes — `.secret_key` and DB backups pass `mode=0o600`, and because step 3
+precedes step 4 the final path never exists at the default umask. Settings JSON
+goes through `atomic_write_json`, which takes the `0o644` default because the
+data dir's own permissions are the access boundary. Note `atomic_write_json`
+exposes no `mode` parameter: a JSON store that ever needs `0o600` must call
+`atomic_write_text` itself.
 
 ## Validator pattern
 
@@ -202,9 +244,19 @@ def _validator(value) -> tuple[bool, str | None, Any]:
     """
 ```
 
-Validator constructors live in the three `*_validators.py` modules and
-return closures so they can carry parameters (allowed enum sets, length
-caps, range bounds). The canonical shape is the `_enum_validator` from
+Validators live in the three `*_validators.py` modules in two shapes, and the
+`_VALIDATORS` table holds the *function*, so which shape you are looking at
+decides whether the entry is called or referenced:
+
+- **Plain validators** — `_bool_validator`, `_path_validator`, `_port_validator`
+  take no parameters and are themselves the validator. Register them bare:
+  `'enable_telemetry': _bool_validator,`.
+- **Validator constructors** — `_enum_validator(allowed, label)`,
+  `_positive_int_validator(lo, hi)` and friends return a closure so they can
+  carry parameters (allowed enum sets, length caps, range bounds). Register the
+  *call*: `'theme': _enum_validator(_ALLOWED_THEMES, 'theme'),`.
+
+The canonical constructor shape is `_enum_validator` from
 `services/settings_validators.py`:
 
 ```python
@@ -232,6 +284,23 @@ def _positive_int_validator(lo, hi):
 Note the explicit `isinstance(value, bool)` rejection — without it, Python's
 `bool ⊂ int` would let `True` slip through as `1` and break downstream
 consumers that switch on the value.
+
+**`validate_settings_path` is the one exception to the signature above, and the
+API-endpoints table names it as a validator, so do not build against the
+three-tuple there.** It lives in `services/security.py` (not a `*_validators.py`
+module) and returns a **two-tuple** — `(True, canonical_path)` on success,
+`(False, reason)` on failure — because the success value it carries is the
+canonicalised path, not a cleaned copy of the input. Two consequences:
+
+- `POST /api/settings/paths` calls `validate_settings_path(raw,
+  allow_empty=True)` **directly** and unpacks two values. It does not go through
+  the `_VALIDATORS` table at all, which is why the paths route is described
+  elsewhere as bypassing the per-key validator map.
+- `_path_validator` in `services/settings_validators.py` is the adapter that
+  makes it table-compatible: it calls `validate_settings_path` and re-shapes the
+  result into `(ok, reason, cleaned)`. That is the form `rom_path` and the ESDE
+  path keys are registered with — so the same check reaches `/api/settings` POST
+  and `/api/settings/paths` POST by two different routes.
 
 **Convention (not enforced by code):** validators are invoked at the
 **route layer** (every POST handler runs them before persistence), never
@@ -284,7 +353,9 @@ unless explicitly noted.
 | `/api/scraper-api-keys` | POST | `validate_scraper_api_keys` (Pass 45.11) | `data/scraper_settings.json#api_keys` |
 | `/api/rom-tools/settings` | GET | n/a (login-required, not admin — scanner UI reads it) | `data/rom_tools_config.json` |
 | `/api/rom-tools/settings` | POST | `validate_rom_tools_value` per key (Pass 40.1) | `data/rom_tools_config.json` |
-| `/api/dropdown-options/<category>` | GET/POST/DELETE | column allowlist via `safe_column` | DB (`dropdown_options`) |
+| `/api/dropdown-options/<category>` | GET | n/a (`@login_required`, not admin — every edit form reads it) | DB (`dropdown_options`) |
+| `/api/dropdown-options/<category>` | POST | n/a — non-empty check only | DB (`dropdown_options`) |
+| `/api/dropdown-options/<int:option_id>` | DELETE | n/a — the `int` converter is the whole check | DB (`dropdown_options`) |
 
 The `/api/rom-tools/settings` GET is intentionally `@login_required` rather
 than `@admin_required` because the archive-scanner page (accessible to
@@ -292,6 +363,25 @@ Player role) reads `roms_path`, `excluded_paths`, and `unwanted_patterns` to
 populate its scan UI. POST is gated at the handler with an explicit role
 check (`g.user.get('role') != 'admin'`) — the only mutating-but-not-`@admin_required`
 endpoint in this surface.
+
+Two notes on the dropdown-options rows, because both are easy to assume wrong:
+
+- **The three verbs are three routes, not one.** DELETE is keyed by row id
+  (`/api/dropdown-options/<int:option_id>`), not by category — build from the
+  URL shapes above, not from the category form.
+- **`category` carries no allowlist.** It reaches SQLite as a bound value
+  parameter in all three handlers, so there is no injection surface and
+  `safe_column` — which guards column *names* interpolated into f-strings, and
+  is called only in `routes/games.py` and `services/media_cleanup.py` — is not
+  involved here. What that leaves open is data hygiene, not security: a POST
+  can create a category nothing reads.
+
+`dropdown_options` is a DB table but deliberately **not** one of the six stores
+above. It holds the canonical per-field vocabulary for game metadata (`genre`,
+`perspective`, `dimension`, `game_structure`, `game_modes`, `save_type` — seeded
+by `services/migrations/scripts/001_baseline.py`), which is library content that
+happens to be admin-editable, not application configuration. Nothing resolves a
+setting through it.
 
 ## Per-key vs full-replace POST
 
@@ -347,13 +437,24 @@ in the Settings page).
 6. **Add a test.** In `tests/test_launch_settings_validators.py` (the
    canonical home for new validator tests; previously-named
    `test_settings_validators.py` does not exist — don't create it),
-   add `_ok('enable_telemetry', True)` and `_ok('enable_telemetry', 'yes')`
-   asserting accept/reject. The fixture pattern (see Testability) does the
-   per-test isolation for you.
+   assert both directions explicitly —
+   `assert _ok('enable_telemetry', True)` (a real bool is accepted) and
+   `assert not _ok('enable_telemetry', 'yes')` (the string is rejected;
+   `_bool_validator` requires `isinstance(value, bool)`, so a truthy string is
+   not coerced). `_ok` returns the bare `ok` flag, so a test that omits the
+   `not` passes for the wrong reason. The fixture pattern (see Testability) does
+   the per-test isolation for you.
 
-For `scraper_settings.json` or `rom_tools_config.json` the shape is the
-same: add an entry to `_SETTINGS_VALIDATORS` /
-`_VALIDATORS` in the corresponding module, then a test.
+For `scraper_settings.json` or `rom_tools_config.json` the shape is the same —
+add an entry to the corresponding module's table, then a test. The two tables
+are **not** named alike, so grep for the module, not the name:
+
+- `services/scraper_settings_validators.py` → `_SETTINGS_VALIDATORS`
+- `services/rom_tools_validators.py` → `_VALIDATORS`
+
+Neither has the import-time cross-check that `services/settings_validators.py`
+carries, so a missing entry there fails at request time (an unknown-key 400),
+not at import.
 
 For a new `RETRODB_*` env var: read it at module top in **both `config.py`
 and `config.example.py`**, set the default explicitly, and document it in the
@@ -413,10 +514,26 @@ before you assume either behaves like `settings.json`:
 
 ## Authentication
 
-After Pass 41.10, every settings-mutating endpoint is `@admin_required`.
-The exceptions are the GET-only paths used by non-admin pages:
+After Pass 41.10, every settings mutation requires an admin — but that is not
+the same as saying every mutating route carries `@admin_required`, and the
+difference is the one exception:
 
-- `/api/rom-tools/settings` GET — `@login_required` only, as above.
+- **`POST /api/rom-tools/settings` is admin-gated inside the handler**, not by
+  the decorator (`g.user.get('role') != 'admin'` → 403). It shares a rule with a
+  GET that must stay reachable by the Player role, and a decorator gates the
+  rule, not the method. It is the only mutating endpoint in this surface not
+  decorated `@admin_required`; see API endpoints.
+
+The GETs that are **not** admin-gated:
+
+- `/api/rom-tools/settings` GET — `@login_required`, as above.
+- `/api/dropdown-options/<category>` GET — `@login_required`; every game edit
+  form reads its vocabulary, so restricting it to admins would break the Player
+  role's edit UI.
+
+The remaining settings GETs *are* admin-gated, which is worth stating because
+read-only is not the criterion:
+
 - `/api/scraper-settings` GET — `@admin_required` (api_keys are sensitive
   even when displayed; the response masks secret values via
   `mask_api_keys_for_response`).
@@ -424,8 +541,14 @@ The exceptions are the GET-only paths used by non-admin pages:
 
 `@admin_required` is the strictest gate in `services/auth.py`'s role
 hierarchy. Player and Viewer roles cannot reach any settings mutation;
-attempts return 403. CSRF protection applies to every POST through the
-Flask app's session middleware.
+attempts return 403. CSRF protection is **hand-rolled, not Flask-WTF or any
+session middleware**: an `@app.before_request` hook (`app.py:validate_csrf`)
+compares an `X-CSRF-Token` header or `_csrf_token` form field against the
+session token with `secrets.compare_digest` on every POST/PUT/DELETE. It skips
+`GET`/`HEAD`/`OPTIONS` and an explicit `csrf_exempt` endpoint set — so a new
+settings endpoint is protected by default, and exempting one is a deliberate act
+with no validator behind it. The exempt set itself is enumerated in
+[`auth.md §10 CSRF`](auth.md#10-csrf), which owns it; do not restate it here.
 
 Per-user OAuth tokens (`user_platform_tokens`) are different — the
 `load_tokens(user_id, platform)` accessor takes the `user_id` as a
@@ -507,11 +630,20 @@ pure functions with no filesystem dependency.
 - **Every write goes through `atomic_write_json` (or `atomic_write_bytes`
   for secrets).** Plain `open('w') + json.dump` is forbidden — grep
   catches drift at audit time.
-- **Read JSON stores via their manager helper, never a fresh `open()` in a
-  request handler.** `settings_manager.load_settings()` mtime-caches; the
-  scraper-settings reader in `app.py:inject_config` also mtime-caches (Pass
-  34.2). Bypassing the cache costs a re-parse per request, which is what
-  Pass 34 went out of its way to remove.
+- **Read the two cached stores via their manager helper, never a fresh
+  `open()` in a request handler.** `settings_manager.load_settings()`
+  mtime-caches; the scraper-settings reader in `app.py:inject_config` also
+  mtime-caches (Pass 34.2). Bypassing the cache costs a re-parse per request,
+  which is what Pass 34 went out of its way to remove.
+  **Scoped deliberately, because the wider claim is not true of the tree.**
+  `routes/scraper.py` and `routes/settings.py` still do uncached `open()` +
+  `json.load` on `scraper_settings.json` in request paths — including both
+  mutating handlers, which read-modify-write it (`api_save_scraper_settings`,
+  `api_save_api_keys`). That is drift, not the design: `scraper_manager`
+  already exposes `load_scraper_settings()` (`scraper/scraper_manager.py`) and
+  is the helper those call-sites should route through. Documented rather than
+  asserted away, so an implementer reading this does not copy the drift as
+  precedent — but the invariant above is what new code is held to.
 - **Path validators run before persistence.** Any path-shaped string (rom
   path, ESDE paths, chdman path, RetroArch binary path) goes through a
   validator that rejects traversal sequences, NUL bytes, and unsafe
@@ -532,3 +664,4 @@ pure functions with no filesystem dependency.
 | --- | --- | --- | --- | --- | --- |
 | 1 | 2026-08-06 | 2 (general-purpose) | 0/4/9/3/1 | dim 2×5, dim 5×7, dim 4×4, dim 8×3, dim 15×4, dim 6×2 | All verified findings fixed. Two were in text written that same session (the `RESTART_REQUIRED_SETTINGS` invariant was worded so narrowly it condemned `rom_path`; the `server_port` bullet omitted the range split, the absence-vs-invalidity rule and four of five consumers). Pre-existing: the precedence ladder ranked the `config.py` literal above the saved value, inverting the order for every dual-store key. |
 | 2 | 2026-08-06 | 2 (general-purpose) | 0/3/8/9/1 | dim 2×6, dim 5×6, dim 4×5, dim 12×3, dim 6×3, dim 1×1 | Converged **for the changed section** — one lane checked the `server_port` ladder, every sub-bullet and the new "Retiring a setting" procedure step-by-step and returned no finding against them. Remaining loop-2 findings in text written this session were fixed (step-4 ordering contradiction, unqualified `known_keys()`, missing cross-store note, over-broad claim about the other two loaders — corrected after executing it). The rest are pre-existing defects in sections this change never touched (atomic-write contract, dropdown-options endpoints, CSRF description, admin-gating contradiction, secret-key precedence) and are filed, not folded into a bug-fix commit. |
+| 3 | 2026-08-06 | 0 — **no review dispatched**; this row records a fold-in, not a loop | 7 folded (0/0/7/0/0) | carried from loop 2 | Loop 2's deferred tail applied (roadmap Pass 57.1). Each finding re-verified against source before its fix — all 7 still stood. Atomic-write contract rewritten to the real `mkstemp` + chmod-before-replace + `finally:` sequence; dropdown-options split into its three real routes and the phantom `safe_column` allowlist removed; the *Authentication* / *API endpoints* contradiction resolved in favour of the latter; `RETRODB_SECRET_KEY` moved off the `config.py` import-time list and its own ladder documented; the fresh-`open()` invariant scoped to the two stores that honour it with the drift named; `validate_settings_path`'s two-tuple exception documented. Sweep: `auth.md`, `api-contracts.md`, `image-pipeline.md`, `docs/README.md`, `CLAUDE.md` all **agree** — CSRF exempt set now points at `auth.md` rather than restating it. |
