@@ -30,6 +30,18 @@ if %errorlevel% neq 0 (
 )
 echo   OK: Python found
 
+REM Resolve the port once (PORT -^> RETRODB_PORT -^> config default) so the
+REM banner and the browser-open URL below match what app.py actually binds.
+REM On a malformed value server_port.py prints the reason and produces no
+REM output, so SERVER_PORT stays undefined and we stop here.
+set SERVER_PORT=
+for /f "delims=" %%p in ('%PYTHON% server_port.py') do set SERVER_PORT=%%p
+if not defined SERVER_PORT (
+    echo ERROR: Could not determine the server port ^(see the message above^).
+    pause
+    exit /b 1
+)
+
 REM Check if Flask is installed
 %PYTHON% -c "import flask" >nul 2>&1
 if %errorlevel% neq 0 (
@@ -53,13 +65,13 @@ echo Building CSS bundle...
 echo.
 echo ========================================================
 echo   Starting RetroDB server...
-echo   Local:   http://localhost:5000
+echo   Local:   http://localhost:%SERVER_PORT%
 echo   Press Ctrl+C to stop the server
 echo ========================================================
 echo.
 
 REM Open the browser (returns immediately; server still runs in foreground).
-start "" http://localhost:5000
+start "" http://localhost:%SERVER_PORT%
 
 %PYTHON% app.py
 pause

@@ -1754,6 +1754,18 @@ if _is_worker:
 if __name__ == '__main__':
     import errno
     from platform_utils import get_local_ip, IS_WINDOWS, IS_MACOS
+    from server_port import resolve_server_port
+
+    # Resolve the bind port first — before directory creation, logging setup
+    # and the GPU warm-up below — so a bad value costs a second, not a minute.
+    # config.SERVER_PORT is the fallback (not a third env source): it is 5000
+    # unless the user hand-edited config.py, which _die_port_in_use() below
+    # still tells them to do.
+    try:
+        port = resolve_server_port(default=config.SERVER_PORT)
+    except ValueError as _port_err:
+        print(f'ERROR: {_port_err}', file=sys.stderr)
+        sys.exit(1)
 
     def _die_port_in_use(port: int) -> None:
         """Print a cross-platform diagnostic for EADDRINUSE and exit."""
@@ -1848,7 +1860,6 @@ if __name__ == '__main__':
             logger.warning(f"PSN keep-alive thread failed to start: {_ka_err}")
 
     host = config.SERVER_HOST
-    port = config.SERVER_PORT
     local_ip = get_local_ip()
 
     if config.DEBUG_MODE:

@@ -10,12 +10,16 @@
 # Environment variable overrides (RETRODB_ prefix):
 #   RETRODB_DB_PATH       - Database file path
 #   RETRODB_HOST          - Server bind address (default: 0.0.0.0)
-#   RETRODB_PORT          - Server port (default: 5000)
+#   RETRODB_PORT          - Server port, 1-65535 (default: 5000)
+#   PORT                  - Server port, 1024-65535; wins over RETRODB_PORT.
+#                           For an external supervisor that assigns a port.
 #   RETRODB_DEBUG         - Debug mode: "true" or "false" (default: false)
 #   RETRODB_SECRET_KEY    - Flask secret key (overrides auto-generated key)
 
 import os
 import sys
+
+from server_port import DEFAULT_PORT, resolve_server_port
 
 # =============================================================================
 # INTERNAL PATHS (not user-configurable here — use Settings page)
@@ -82,9 +86,21 @@ SCRAPER_RAWG_ENABLED = True       # RAWG.io
 # SERVER CONFIGURATION
 # =============================================================================
 
-# Flask server settings (overridable via RETRODB_HOST, RETRODB_PORT, RETRODB_DEBUG)
+# Flask server settings (overridable via RETRODB_HOST, PORT / RETRODB_PORT,
+# RETRODB_DEBUG)
 SERVER_HOST = os.environ.get('RETRODB_HOST', "0.0.0.0")
-SERVER_PORT = int(os.environ.get('RETRODB_PORT', "5000"))
+
+# Port precedence: PORT -> RETRODB_PORT -> 5000.  See server_port.py for why
+# the logic lives there and why the two variables have different valid ranges.
+#
+# A malformed value must NOT explode here: this module is imported by app.py,
+# scripts/retrodb_launcher.py and every test.  app.py's __main__ re-resolves
+# the port, prints a clean message and exits non-zero before anything binds,
+# so the fallback below is never what actually gets served.
+try:
+    SERVER_PORT = resolve_server_port()
+except ValueError:
+    SERVER_PORT = DEFAULT_PORT
 DEBUG_MODE = os.environ.get('RETRODB_DEBUG', "false").lower() in ('true', '1', 'yes')
 
 # Slow-query threshold (ms).  When > 0, services.database logs a WARNING for
@@ -113,8 +129,8 @@ except ValueError:
 
 # Application metadata
 APP_NAME = "RetroDB"
-APP_VERSION = "3.22.1"
-APP_LAST_UPDATE = "2026-07-31"
+APP_VERSION = "3.23.0"
+APP_LAST_UPDATE = "2026-08-06"
 APP_DESCRIPTION = "Retro Gaming ROM Library Manager"
 
 # Supported image extensions for boxart/screenshots

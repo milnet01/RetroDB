@@ -1,3 +1,29 @@
+- version: 3.23.0
+  date: 2026-08-06
+  tags:
+  - type: enhancement
+    label: Start RetroDB on a port of someone else's choosing
+  body: |
+    <ul>
+      <li><strong>RetroDB now reads a <code>PORT</code> setting from its
+        environment.</strong> If you launch RetroDB from another tool &mdash; a
+        dashboard, a container, a home-server panel &mdash; that tool can now
+        hand RetroDB the port it wants it on, without anybody editing a file.
+        Set <code>PORT</code> and RetroDB binds there; leave it alone and
+        nothing changes at all. The existing <code>RETRODB_PORT</code> still
+        works exactly as before, and <code>PORT</code> wins if both are set.</li>
+      <li><strong>A bad port number now says so instead of guessing.</strong>
+        Previously an unreadable port produced a wall of Python error text, and
+        a port outside the usable range was only discovered when the server
+        failed to start. RetroDB now stops immediately with one line naming the
+        value it could not use. It will never quietly start on a different port
+        than the one it was asked for &mdash; being silently moved is worse than
+        being told no.</li>
+      <li><strong>The startup banner and the browser tab follow the real
+        port.</strong> The address printed when RetroDB starts, and the page it
+        opens for you, both used to say 5000 no matter which port was actually
+        in use.</li>
+    </ul>
 - version: 3.22.1
   date: 2026-07-31
   tags:

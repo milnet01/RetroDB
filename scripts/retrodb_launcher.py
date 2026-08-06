@@ -9,8 +9,8 @@ browser.
 Probe target is the unauthenticated GET /health (NOT /api/status, which is
 @admin_required and would 302 an anonymous probe to the login page — it could
 never confirm readiness). Port comes from config.SERVER_PORT, which honours the
-RETRODB_PORT override, so a user who moved the server off 5000 is still probed
-and opened at the right port.
+PORT / RETRODB_PORT overrides (see server_port.py), so a user who moved the
+server off 5000 is still probed and opened at the right port.
 
 Start-race note: this launcher is intentionally NOT lock-protected. Two near-
 simultaneous clicks can both see "down" and both try to start; that is bounded,

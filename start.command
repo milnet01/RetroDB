@@ -28,6 +28,15 @@ else
 fi
 echo "  OK: Python found ($($PYTHON --version))"
 
+# Resolve the port once (PORT -> RETRODB_PORT -> config default) so the banner
+# and the browser-open URL below match what app.py actually binds.  A malformed
+# value dies here with the message from server_port.py.
+if ! SERVER_PORT=$($PYTHON server_port.py); then
+    echo "Press any key to exit..."
+    read -n 1
+    exit 1
+fi
+
 # Check dependencies
 if ! $PYTHON -c "import flask" 2>/dev/null; then
     echo "  Installing dependencies..."
@@ -44,12 +53,12 @@ $PYTHON build_css.py > /dev/null 2>&1
 echo ""
 echo "========================================================"
 echo "  Starting RetroDB server..."
-echo "  Local:   http://localhost:5000"
+echo "  Local:   http://localhost:${SERVER_PORT}"
 echo "  Press Ctrl+C to stop the server"
 echo "========================================================"
 echo ""
 
 # Open the browser a moment after the server binds (background; non-fatal).
-( sleep 3; open "http://localhost:5000" >/dev/null 2>&1 || true ) &
+( sleep 3; open "http://localhost:${SERVER_PORT}" >/dev/null 2>&1 || true ) &
 
 $PYTHON app.py

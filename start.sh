@@ -47,6 +47,15 @@ else
     exit 1
 fi
 
+# Resolve the port once (PORT -> RETRODB_PORT -> config default) so the banner
+# and the browser-open URL below match what app.py actually binds.  app.py
+# re-resolves it from the same environment, so nothing is passed through here.
+# A malformed value dies now, with the message from server_port.py, rather
+# than after a dependency check and a CSS build.
+if ! SERVER_PORT=$($PYTHON server_port.py); then
+    exit 1
+fi
+
 # Check Flask
 echo -e "${YELLOW}Checking Flask installation...${NC}"
 if $PYTHON -c "import flask" 2>/dev/null; then
@@ -99,8 +108,8 @@ echo ""
 echo -e "${GREEN}Starting RetroDB server...${NC}"
 echo -e "${CYAN}═══════════════════════════════════════════════════════════${NC}"
 echo ""
-echo -e "  ${GREEN}➜${NC}  Local:   ${CYAN}http://localhost:5000${NC}"
-echo -e "  ${GREEN}➜${NC}  Network: ${CYAN}http://${LOCAL_IP}:5000${NC}"
+echo -e "  ${GREEN}➜${NC}  Local:   ${CYAN}http://localhost:${SERVER_PORT}${NC}"
+echo -e "  ${GREEN}➜${NC}  Network: ${CYAN}http://${LOCAL_IP}:${SERVER_PORT}${NC}"
 echo ""
 echo -e "${CYAN}═══════════════════════════════════════════════════════════${NC}"
 echo ""
@@ -108,6 +117,6 @@ echo -e "${YELLOW}Press Ctrl+C to stop the server${NC}"
 echo ""
 
 # Open the browser a moment after the server binds (background; non-fatal).
-( sleep 3; xdg-open "http://localhost:5000" >/dev/null 2>&1 || true ) &
+( sleep 3; xdg-open "http://localhost:${SERVER_PORT}" >/dev/null 2>&1 || true ) &
 
 $PYTHON app.py
