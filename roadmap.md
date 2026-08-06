@@ -4555,7 +4555,10 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   have used.
   **Not verified in-session:** no browser walk of the Scraper Config page (the
   save-then-read round trip is covered by test, not by hand) and no standalone
-  build.
+  build. `docs/specs/settings.md`'s *Known invariants* bullet was edited here
+  (step 3) but **not run through `/cold-eyes`** — global CLAUDE.md §14 gates an
+  edited spec on it. Judged a one-bullet factual sync rather than a redesign, so
+  the loop was offered to the user rather than spent unasked; still open.
 - **Source**: `/apply-fixes` sweep during Pass 57.1, 2026-08-06 — found as an
   out-of-scope defect next door, not as a Pass 57.1 finding.
 
