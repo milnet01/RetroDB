@@ -4288,6 +4288,98 @@ weren't worth blocking the ship on.  Ordered by rough priority.
 
 ---
 
+#### Pass 57.1 `docs/specs/settings.md` — pre-existing defects the v3.23.1 cold-eyes surfaced (MEDIUM, M)
+- **Target**: `docs/specs/settings.md`, sections *Atomic-write contract*,
+  *API endpoints*, *Authentication*, *Known invariants*, *Validator pattern*.
+- **Why**: the v3.23.1 `/cold-eyes` run (2 loops × 2 cold lanes, loop log in
+  the spec) converged on the section that change touched, but its lanes read
+  the whole document and found verified defects in sections the change never
+  went near. These are **filed, not lost** — do NOT re-run a review to
+  rediscover them; the detail below is lane-level on purpose. Fold it in.
+- **Findings**, highest-consequence first:
+  1. **The atomic-write contract specifies the torn-write bug that was
+     removed.** Step 1 says "Open a sibling tempfile `<path>.tmp`" — the exact
+     static-suffix race `atomic_write_bytes` was written to kill (already on
+     this roadmap at the `atomic_write_json` MEDIUM entry). Real code is
+     `tempfile.mkstemp(prefix='.atomic_', dir=directory)`. An implementer
+     building to the doc reintroduces the race. Also: the numbered list omits
+     the `chmod(tmp_path, mode)` between fsync and `os.replace` even though
+     the next paragraph makes that ordering load-bearing, and step 5's
+     "on any exception, `os.remove(tmp)`" is a `finally:` whose `os.remove`
+     swallows `OSError`.
+  2. **`/api/dropdown-options` row credits a `safe_column` allowlist that
+     does not exist there.** `safe_column` is called only in `routes/games.py`;
+     the three dropdown handlers bind `category` as a *value* parameter, so
+     there is no allowlist on the category name at all. Separately the table
+     folds GET/POST/DELETE into one `/<category>` row, but DELETE is
+     `/api/dropdown-options/<int:option_id>` — wrong URL shape to build from.
+     And its GET is `@login_required`, a second non-admin GET missing from the
+     Authentication section's list, which reads as exhaustive.
+  3. **Two sections contradict each other on admin-gating.** *Authentication*
+     says every settings-mutating endpoint is `@admin_required`; *API
+     endpoints* says `POST /api/rom-tools/settings` is "the only
+     mutating-but-not-`@admin_required` endpoint". The second is correct
+     (`routes/tools.py` does the role check inside the handler because the GET
+     on the same rule must stay `@login_required`).
+  4. **`RETRODB_SECRET_KEY` is not read in `config.py`.** It is read in
+     `app.py`, and its real precedence (env → `data/.secret_key` → generate)
+     is documented nowhere in the spec, though `.secret_key` is a
+     settings-bearing store with its own ladder.
+  5. **"Never a fresh `open()` in a request handler" is a rule the tree does
+     not follow** — `routes/scraper.py` and `routes/settings.py` do uncached
+     `open()` + `json.load` of `scraper_settings.json` in request paths,
+     including both mutating handlers. Either scope the invariant to the two
+     stores that honour it and route the rest here, or name
+     `scraper_manager.load_scraper_settings()` as the helper and call the
+     call-sites drift.
+  6. **`validate_settings_path` does not have the documented validator
+     signature** — it is a two-tuple `(ok, canonical_or_reason)` in
+     `services/security.py`, not the three-tuple contract, and the paths route
+     calls it directly rather than the `_path_validator` wrapper.
+  7. Smaller: "validator constructors return closures" is false for the three
+     parameterless ones (`_bool_validator`, `_path_validator`,
+     `_port_validator`), which the doc's own example registers bare; the
+     `_SETTINGS_VALIDATORS` / `_VALIDATORS` pair is given unmapped; the CSRF
+     description credits Flask session middleware when it is a hand-rolled
+     `before_request` hook with an exemption set; the "Module location"
+     blockquote splits the *What lives where* list in two; `dropdown_options`
+     appears as a store in the API table but in neither the store table nor
+     *What lives where*; the worked test example gives two bare `_ok(...)`
+     calls "asserting accept/reject" without saying which is which.
+- **Verify**: `mcp__ants__doc_citations` + `doc_integrity` clean (they already
+  are — these are semantic, not mechanical); each fixed claim re-checked
+  against the cited source; a `/cold-eyes` loop-log row appended.
+- **Status**: planned (2026-08-06). Filed from the v3.23.1 `/cold-eyes` run.
+  Deliberately NOT folded into that bug-fix commit — none of it is collateral
+  of the `server_port` change. Lanes: docs.
+- **Source**: cold-eyes-2026-08-06 loop 2, deferred tail.
+
+---
+
+#### Pass 57.2 Clear the two red `scripts/ci_local.sh` gates (MEDIUM, S)
+- **Target**: `requirements.lock`, `.github/workflows/ci.yml`.
+- **Why**: the pre-push gate has been failing on two pre-existing issues since
+  before v3.23.0, so every push now needs `--no-verify` — which is exactly how
+  a real failure gets waved through later. Two commits (v3.23.0, v3.23.1) are
+  queued unpushed behind it.
+- **Plan**:
+  1. `cryptography==49.0.0` → PYSEC-2026-3552, fixed in 50.0.0. Bump per
+     `docs/DEPENDENCY_POLICY.md` (latest-always for security), regenerate with
+     `pip-compile requirements.txt -o requirements.lock --strip-extras
+     --generate-hashes`, re-run the suite.
+  2. `actionlint` reports three SC2086 (unquoted `$XDIST` in the pytest step,
+     `$EXCLUDES` in the build step) in `.github/workflows/ci.yml`. Quote them,
+     or `# shellcheck disable=SC2086` with a reason if word-splitting is
+     intentional — it is, for both, since they carry multiple flags.
+- **Verify**: `./scripts/ci_local.sh` exits 0 with all 8 checks green.
+- **Status**: planned (2026-08-06). Surfaced during v3.23.0/v3.23.1; both are
+  in files neither commit touched, so they were left alone. User was asked
+  whether to fix them as a third commit and had not answered when the session
+  ended. Lanes: ci, deps.
+- **Source**: in-session-2026-08-06.
+
+---
+
 <a id="done-index"></a>
 
 #### Pass 49.1 Changelog pagination — "Load More" to cap initial render (MEDIUM, M)
