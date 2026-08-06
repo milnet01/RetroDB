@@ -4448,7 +4448,6 @@ weren't worth blocking the ship on.  Ordered by rough priority.
 ---
 
 #### Pass 57.4 Close the local-CI / GitHub-CI parity hole; docs-only fast path (HIGH, S)
-- **Status**: done
 - **Target**: `scripts/ci_local.sh`.
 - **Why**: the pre-push gate said "safe to push" and CI went red on the very
   next commit. Not a check-coverage gap — `lockfile-drift` was mirrored — but
@@ -4471,6 +4470,49 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   push it gates comes back green in GitHub Actions.
 - **Status**: done (2026-08-06). Lanes: ci.
 - **Source**: user-request-2026-08-06.
+
+---
+
+#### Pass 57.5 Route the `scraper_settings.json` request-path readers through their manager helper (MEDIUM, S)
+- **Target**: `routes/scraper.py:136,159,230,263`, `routes/settings.py:138`,
+  `scraper/scraper_manager.py:73`.
+- **Why**: `docs/specs/settings.md`'s invariant — *read JSON stores via their
+  manager helper, never a fresh `open()` in a request handler* — is not true of
+  `scraper_settings.json`. Five request-path call-sites do uncached `open()` +
+  `json.load`. Pass 34.2 mtime-cached the `app.py:inject_config` reader and
+  `settings_manager.load_settings()` caches the other store; these five were
+  missed and have been drifting since. Pass 57.1 scoped the invariant to the two
+  stores that honour it and named this as drift rather than asserting it away —
+  documenting the gap, not closing it. This pass closes it.
+- **Not a find-and-replace — decide the cache semantics first.**
+  `scraper_manager.load_scraper_settings()` is a **30-second TTL** cache
+  (`_SETTINGS_CACHE_TTL`, `scraper/scraper_manager.py:64-66`), *not* an mtime
+  cache like the two stores the invariant was written for. Two of the five
+  call-sites (`:230`, `:263`) sit inside mutating handlers that read-modify-write
+  the file (`api_save_scraper_settings`, `api_save_api_keys`). Feeding those from
+  a 30-second-stale snapshot risks writing back a stale dict and silently
+  clobbering a change made seconds earlier — strictly worse than the uncached
+  read they do today. The read paths have no such hazard.
+- **Plan**:
+  1. Route the three pure reads (`routes/scraper.py:136,159`,
+     `routes/settings.py:138`) through `load_scraper_settings()`. Low risk, and
+     it is the whole benefit — these are the per-request re-parses.
+  2. Decide the mutator story, and it is a real choice, not an oversight to
+     tidy: either (a) leave `:230`/`:263` reading fresh and say so in the
+     invariant — a read-modify-write wants the current bytes, which is a
+     principled exception, not drift; or (b) give the loader an mtime path or an
+     invalidate-on-save hook so a save busts the cache, and route them too.
+     Option (b) is the tidier invariant and the larger change.
+  3. Whichever wins, update `docs/specs/settings.md`'s *Known invariants* entry
+     to match — it currently names these exact call-sites as drift, so leaving
+     it unedited would turn a true statement into a false one.
+- **Verify**: `python3 -m pytest`; a save-then-read round trip through the
+  Scraper Config page shows the new value immediately, with no up-to-30-second
+  window where the UI reports the old one; and (if 2b) a test that a save
+  invalidates the cache.
+- **Status**: planned (2026-08-06). Lanes: scrapers, refactor.
+- **Source**: `/apply-fixes` sweep during Pass 57.1, 2026-08-06 — found as an
+  out-of-scope defect next door, not as a Pass 57.1 finding.
 
 ---
 
