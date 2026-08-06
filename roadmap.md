@@ -4634,6 +4634,63 @@ weren't worth blocking the ship on.  Ordered by rough priority.
 - **Status**: planned (2026-08-06). Lanes: docs.
 - **Source**: debt-sweep 2026-08-06 (v3.12.0..HEAD).
 
+---
+
+#### Pass 57.9 Dependency freshness snapshot — one major bump needs the §5 gate (LOW, S)
+
+- **Target**: `.github/workflows/*.yml`, `.pre-commit-config.yaml`,
+  `requirements.txt` / `requirements.lock`.
+- **Why**: `docs/DEPENDENCY_POLICY.md` §5c mandates *check, don't wait*. This is
+  the 2026-08-06 snapshot so the result is on disk rather than in a chat log.
+  Nothing is deprecated or EOL; the Python matrix (3.12/3.13) is fully
+  supported. **11 of 13 direct Python deps and 3 of 7 actions are exactly at
+  latest.**
+- **Behind, breaking — needs a decision**:
+  - `actions/setup-python` **v6.3.0 → v7.0.0**. A major, so
+    `docs/DEPENDENCY_POLICY.md` §5 applies: read the upstream migration notes,
+    refresh our calling code to v7 idioms in the *same* change, run
+    `./scripts/ci_local.sh`, then re-pin the SHA + `# v7.0.0` comment.
+- **Behind, safe (patch/minor — Dependabot should take these on its own weekly
+  pip + github-actions runs; listed so a silent Dependabot failure is visible)**:
+  - `onnxruntime` 1.27.0 → 1.28.0 (minor)
+  - `numpy` 2.5.0 → 2.5.1 (patch)
+  - `actions/checkout` v7.0.0 → v7.0.1 (patch)
+  - `softprops/action-gh-release` v3.0.1 → v3.0.2 (patch)
+  - `ruff-pre-commit` v0.15.20 → v0.16.1 (minor)
+- **Not bumped by the sweep, deliberately**: global `CLAUDE.md` §5b requires the
+  bump and the caller-side idiom refresh to ship together, and a sweep cannot
+  verify the second half. A bump landed under a cleanup commit is exactly the
+  rot §5b exists to prevent.
+- **Verify**: `./scripts/ci_local.sh` green after any bump; `pip-audit` clean.
+- **Status**: planned (2026-08-06). Lanes: ci, deps.
+- **Source**: debt-sweep 2026-08-06 (v3.12.0..HEAD), step 2d.
+
+---
+
+#### Pass 57.10 A frozen cold-eyes bullet records a finding that has since been fixed (LOW, S)
+
+- **Target**: `roadmap.md:247` (inside `#### Cold-eyes 2026-05-18 #2 — deferred
+  items folded into roadmap`).
+- **Why**: the bullet reads *"`retrodb.spec:96` vs `build_dist.py:77`
+  `INCLUDE_IMAGE_DIRS` — the PyInstaller spec bundles `static/images/controllers/`
+  into standalone builds; the source ZIPs omit it."* Both halves are now wrong:
+  `grep -n controllers retrodb.spec` returns nothing (removed in v3.6.29,
+  commit `38d0940`), and `INCLUDE_IMAGE_DIRS` is at `build_dist.py:91`, not
+  `:77`. So a reader of the deferred-items list sees open work that closed
+  fifteen months of passes ago.
+- **Why it was not fixed in the sweep that found it.** The bullet lives inside a
+  **dated** cold-eyes record. `/apply-fixes` classes a dated review record as
+  *frozen* — editing one to match current behaviour rewrites history, and it is
+  the most tempting wrong move when every neighbouring row is asking to be
+  updated. Correcting the citation in place would also silently restate what
+  that 2026-05-18 session actually observed, which was true when written.
+- **Plan**: append a dated resolution line under the bullet rather than editing
+  it — e.g. `Resolved (2026-08-06): controllers/ removed from retrodb.spec in
+  v3.6.29 (38d0940); INCLUDE_IMAGE_DIRS now build_dist.py:91.` The original
+  observation stays intact and the item stops reading as open.
+- **Status**: planned (2026-08-06). Lanes: docs.
+- **Source**: debt-sweep 2026-08-06 — surfaced, deliberately not auto-edited.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
