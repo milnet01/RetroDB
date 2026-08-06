@@ -73,20 +73,6 @@ def _positive_int_validator(lo, hi):
     return _inner
 
 
-def _host_validator(value):
-    if not isinstance(value, str):
-        return False, 'must be a string', None
-    stripped = value.strip()
-    if not stripped:
-        return False, 'must not be empty', None
-    # Allow IPv4/IPv6/hostname forms; reject control characters and whitespace.
-    if any(c.isspace() or ord(c) < 0x20 for c in stripped):
-        return False, 'contains invalid characters', None
-    if len(stripped) > 255:
-        return False, 'host name too long', None
-    return True, None, stripped
-
-
 def _enum_validator(allowed, label):
     def _inner(value):
         if not isinstance(value, str) or value not in allowed:
@@ -260,9 +246,16 @@ _VALIDATORS = {
     'esde_gamelists_path': _path_validator,
     'esde_downloaded_media_path': _path_validator,
     'rpcs3_trophy_path': _path_validator,
-    'server_host': _host_validator,
+    # `server_port` only.  server_host / debug_mode were removed from the
+    # settings surface — see settings_manager._RETIRED_SETTINGS.  A request
+    # naming either now gets a 400 "unknown setting key", which is the honest
+    # answer: nothing would have applied them.
+    #
+    # 1-65535 here is deliberate and differs from the PORT environment
+    # variable's 1024-65535 (server_port.py).  This is the human channel — an
+    # operator choosing a port for their own machine may pick a privileged
+    # one.  Do not "unify" the two ranges.
     'server_port': _port_validator,
-    'debug_mode': _bool_validator,
     'items_per_page': _positive_int_validator(1, 500),
     'default_sort': _string_validator(max_len=64),
     'default_sort_order': _enum_validator(_ALLOWED_SORT_ORDERS, 'default_sort_order'),

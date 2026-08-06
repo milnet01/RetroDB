@@ -25,7 +25,7 @@ precedence is the separate axis covered under "Precedence" below.
 | Store | Format | Owner | Writeable from UI? | Validator |
 | --- | --- | --- | --- | --- |
 | `config.py` + `config.example.py` | Python module | dev / installer | No (edit file + restart) | n/a — module-load is the validator |
-| `RETRODB_*` environment variables | env | operator / systemd unit | No | n/a — read into `config.py` at import time |
+| Environment variables (`RETRODB_*`, plus `PORT`) | env | operator / process manager | No | n/a — read into `config.py` at import time, EXCEPT the bind port, which `server_port.py` range-validates |
 | `data/settings.json` | JSON object | UI (Settings page, `@admin_required`) | Yes | `services/settings_validators.py` (`validate_settings_value`) |
 | `data/scraper_settings.json` | JSON object | UI (Scraper Config page, `@admin_required`) | Yes | `services/scraper_settings_validators.py` (`validate_scraper_settings` + `validate_scraper_api_keys`) |
 | `data/rom_tools_config.json` | JSON object | UI (ROM Tools Settings, `@admin_required` on POST) | Yes | `services/rom_tools_validators.py` (`validate_rom_tools_value`) |
@@ -43,14 +43,22 @@ as the JSON stores; it appears in the table for symmetry.
   operator wants to harden the deployment. The legacy stub fields (`ROM_PATH`,
   `THEGAMESDB_API_KEY`, …) are kept as empty defaults so any old code path
   importing `config.ROM_PATH` still resolves — the real values live in the
-  JSON stores.
-- **`RETRODB_*` env vars** — `RETRODB_DB_PATH`, `RETRODB_HOST`, `RETRODB_PORT`,
+  JSON stores. Also the server block (`SERVER_HOST`, `SERVER_PORT`,
+  `DEBUG_MODE`) — see Precedence for why `SERVER_PORT` is *not* the bound
+  port.
+- **Env vars** — `RETRODB_DB_PATH`, `RETRODB_HOST`, `RETRODB_PORT`,
   `RETRODB_DEBUG`, `RETRODB_SECRET_KEY`, `RETRODB_SLOW_QUERY_MS`,
   `RETRODB_SLOW_REQUEST_MS`, `RETRODB_IMAGE_FORMAT`, `RETRODB_MAX_UPLOAD_MB`,
-  `RETRODB_MAX_BACKUPS`, `RETRODB_JOB_HISTORY_RETENTION_DAYS`. Read once at
-  `config.py` import time via `os.environ.get(...)`.
+  `RETRODB_MAX_BACKUPS`, `RETRODB_JOB_HISTORY_RETENTION_DAYS`,
+  `RETRODB_STATIC_PATH`, `RETRODB_IMAGE_PATH`, and **`PORT`**
+  (deliberately un-prefixed — it is the conventional name an external process
+  manager sets). All but the bind port are read once at `config.py` import
+  time via `os.environ.get(...)`; the port pair (`PORT` / `RETRODB_PORT`) goes
+  through `server_port.resolve_server_port()` instead, because a malformed
+  value must produce a message and a non-zero exit rather than a `ValueError`
+  traceback out of an import. See Precedence below.
 - **`data/settings.json`** — every UI-editable preference: paths
-  (`rom_path`, `esde_gamelists_path`, …), server host/port, theme, scraper
+  (`rom_path`, `esde_gamelists_path`, …), server port, theme, scraper
   priority/enabled flags, notification timeouts, naming convention, logging
   config, RetroArch launch settings. Full default set lives in
   `settings_manager.DEFAULT_SETTINGS`.
@@ -78,16 +86,17 @@ as the JSON stores; it appears in the table for symmetry.
 
 For values that exist in more than one store, the resolution order is:
 
-1. **Environment variable (`RETRODB_*`)** — wins if set. Read at `config.py`
-   import time, so changes require a restart.
-2. **`config.py` literal default** — used when the env var is absent. Edited
-   by the developer; effectively the install-time baseline.
-3. **`data/settings.json` user value** — wins for any key listed in
-   `settings_manager.DEFAULT_SETTINGS`. For paths specifically, the helper
+1. **Environment variable** (`RETRODB_*`, plus `PORT` for the bind port) —
+   wins if set. Read at `config.py` import time, so changes require a
+   restart.
+2. **`data/settings.json` user value** — wins for every key present in the
+   file, `_RETIRED_SETTINGS` excepted. Membership in
+   `settings_manager.DEFAULT_SETTINGS` governs whether a key gets a *default*,
+   not whether its saved value wins. For paths specifically, the helper
    `settings_manager.get_effective_path(key, config_fallback='')` returns the
    user value when non-empty, otherwise the `config_fallback` (which is
    always `''` in normal operation — paths are UI-only since Pass 32.1).
-4. **`settings_manager.DEFAULT_SETTINGS` literal** — the fallback baked into
+3. **`settings_manager.DEFAULT_SETTINGS` literal** — the fallback baked into
    `settings_manager.py`, used when `settings.json` is missing the key. The
    `_deep_merge` in `load_settings()` overlays saved values on top of these
    defaults so a newly-added default automatically appears for existing
@@ -96,17 +105,62 @@ For values that exist in more than one store, the resolution order is:
    wholesale by the saved value, so adding a new entry to a list default
    will NOT appear for an existing install. For those, ship a migration
    that mutates `data/settings.json` instead of relying on default-overlay.
+4. **`config.py` literal** — the last-resort floor, NOT a tier above the
+   saved value. It is what a resolver passes as its `default` argument
+   (`resolve_server_port(default=config.SERVER_PORT, …)`,
+   `get_effective_path(key, config.ROM_PATH)`), so a saved user value beats
+   it. Ranking it second — which this list did until v3.23.1 — inverts the
+   order for every dual-store key.
 
 The collision points worth knowing:
 
-- `server_host` / `server_port` / `debug_mode` exist as `RETRODB_HOST` /
-  `RETRODB_PORT` / `RETRODB_DEBUG` env vars AND as `server_host` /
-  `server_port` / `debug_mode` keys in `settings.json`. The env-var values
-  populate `config.SERVER_HOST` / `config.SERVER_PORT` / `config.DEBUG_MODE`
-  at import time, and the runtime startup code in `app.py` chooses between
-  them and the user values based on whether `setup_completed` is true. Mark
-  these keys in `RESTART_REQUIRED_SETTINGS` (they already are) so the UI
-  prompts the operator.
+- `server_port` exists as the `PORT` / `RETRODB_PORT` env vars AND as a
+  `server_port` key in `settings.json`. The root-level `server_port.py`
+  resolves the whole chain in one place — `PORT` → `RETRODB_PORT` → saved
+  `server_port` → 5000. The environment always wins, so an external process
+  manager is never overridden by a stored value. The saved tier is read
+  *inside* the resolver, never at module scope: `settings_manager` imports
+  `config`, so `config.py` cannot read the setting back without a circular
+  import. That direction-of-dependency is why the key sat unread from its
+  introduction until v3.23.1 — validated, stored, and reported as
+  restart-required while nothing ever bound it.
+  - **Absence and invalidity are different, and differ by channel.** An unset
+    or empty env var falls through to the next tier; a *malformed* one is
+    fatal — `resolve_server_port()` raises and `app.py`'s `__main__` prints
+    the offending value and exits non-zero, because a supervisor that asked
+    for a port and silently got another has been lied to. The saved tier is
+    the opposite: a missing, corrupt, unreadable or no-longer-valid
+    `settings.json` warns on stderr and falls through. The port the
+    environment gave you never depends on the settings file being loadable.
+  - **Three channels, two ranges, on purpose.** `PORT` is machine-facing and
+    accepts 1024-65535 only; `RETRODB_PORT` and the settings-UI validator
+    accept 1-65535, because a human choosing a privileged port for their own
+    machine is their call. Both `server_port.py` and
+    `services/settings_validators.py` carry a do-not-unify comment. Pinned by
+    `tests/test_server_port.py` and `tests/test_settings_bind_config.py`.
+  - **Five consumers resolve this chain; all of them include the saved tier.**
+    `app.py`'s `__main__` (`use_saved=True`) is the one that binds;
+    `scripts/retrodb_launcher.py` uses it for the `/health` probe and browser
+    URL; and `start.sh` / `start.command` / `start.bat` shell out to
+    `python3 server_port.py` for their banner and browser-open URL. A change
+    to the chain that misses one leaves a script announcing a port the server
+    did not bind — or a launcher probing the wrong port, seeing "down", and
+    starting a second instance that dies on EADDRINUSE.
+  - **`config.SERVER_PORT` is NOT the bound port.** It omits the saved tier by
+    design (it is computed at import, before the settings layer is safe to
+    touch), so it is env-or-5000 and diverges from the bind whenever a
+    `server_port` is saved. It is the resolver's `default` argument, never the
+    authoritative answer — ask `resolve_server_port(..., use_saved=True)`.
+- **Bind address and debug mode are environment-only**, via `RETRODB_HOST` /
+  `RETRODB_DEBUG` → `config.SERVER_HOST` / `config.DEBUG_MODE`, both fixed at
+  import of `config`. They were once `server_host` / `debug_mode` keys in
+  `settings.json` that nothing read; v3.23.1 removed them rather than wiring
+  them up. `debug_mode` would have let a settings request enable Flask's
+  debug server, and the Werkzeug debugger is an interactive Python console —
+  a remote-code-execution surface reachable from a form, admin-gated or not.
+  `server_host` changes which interfaces the app answers on.
+  `settings_manager._RETIRED_SETTINGS` drops both from an older
+  `settings.json` on load. Do not re-add them to `DEFAULT_SETTINGS`.
 - API keys exist as zero-default attributes in `config.py`
   (`THEGAMESDB_API_KEY`, `IGDB_CLIENT_ID`, …) AND as fields under
   `scraper_settings.json#api_keys`. The JSON values always win — the
@@ -194,9 +248,18 @@ modules (`routes/settings.py`, `routes/scraper.py`, `routes/tools.py`). No
 test pins this — if a future service-layer caller imported a validator the
 build would still pass; the rule is a code-review concern.
 
+**The one sanctioned exception is re-validation on read at startup.**
+`server_port.saved_server_port()` calls `validate_settings_value('server_port',
+…)` outside any route, because `data/settings.json` is a plain file an operator
+can hand-edit — a stored value need not have come through a POST handler, so
+"service reads → already-clean value" does not hold for it. Deleting that call
+as a convention violation would restore the hole. A read-side validator is
+correct wherever the store is hand-editable AND the consumer cannot tolerate a
+bad value; it is not a licence to validate everywhere.
+
 The settings-validators module has an import-time cross-check
-(`services/settings_validators.py:322`, inside the block starting at line
-320) that raises `RuntimeError` if anyone adds a new key to
+(`services/settings_validators.py:315`, inside the block starting at line
+313) that raises `RuntimeError` if anyone adds a new key to
 `DEFAULT_SETTINGS` without wiring a validator entry. Adding a key without
 the validator turns the next `import settings_validators` into a startup
 error — the test suite catches it before merge.
@@ -246,19 +309,34 @@ endpoint in this surface.
 Worked example: adding `enable_telemetry` (boolean, defaults off, UI toggle
 in the Settings page).
 
+0. **Name the consumer.** Write down which code path will read the key,
+   before anything else. A key that nothing reads does not go on the surface
+   at all — see Known invariants; this is the check `server_port` went years
+   without, and it is the cheapest step here to skip and the most expensive
+   to discover later.
 1. **Pick the store.** UI-editable boolean preference → `data/settings.json`,
    not `config.py` (no env-var override needed) and not `scraper_settings.json`
    (not scraper-scoped).
 2. **Add the default.** In `settings_manager.DEFAULT_SETTINGS`, add
    `'enable_telemetry': False`. Place it near the other feature-toggle
-   booleans for readability.
+   booleans for readability. Steps 2 and 3 are one edit: a default with no
+   validator raises `RuntimeError` at import of `services.settings_validators`,
+   so a tree stopped between them will neither boot nor test. If the default
+   is a **list** (or you are adding an entry to an existing list default),
+   stop and read Precedence tier 3 — `_deep_merge` replaces lists wholesale,
+   so existing installs will silently not pick it up and you need a migration
+   instead.
 3. **Add the validator entry.** In `services/settings_validators.py`,
    add `'enable_telemetry': _bool_validator,` to the `_VALIDATORS` dict.
    The import-time cross-check at the bottom of that module fails the
    import if you skip this step.
-4. **Decide on restart semantics.** If consumers cache the value at startup,
-   add `'enable_telemetry'` to `settings_manager.RESTART_REQUIRED_SETTINGS`
-   so the UI prompts for a restart. Pure-runtime reads can be left out.
+4. **Decide on restart semantics.** List the key in
+   `settings_manager.RESTART_REQUIRED_SETTINGS` if a restart is what makes
+   the new value take effect — a startup-bound key like `server_port` must be
+   listed; a per-call reader may still be listed where a restart is the
+   conservative advice (`rom_path` is). A key with no reader at all is never
+   listed, because it should not be on the surface in the first place — that
+   is step 0, and Known invariants states it.
 5. **Wire the UI.** Add the toggle to the relevant settings-page partial
    under `templates/_settings_tabs/<tab>.html` — pick from `account`,
    `library`, `scraping`, `data`, `customization`, `system` (Pass 38.6 split
@@ -277,10 +355,61 @@ For `scraper_settings.json` or `rom_tools_config.json` the shape is the
 same: add an entry to `_SETTINGS_VALIDATORS` /
 `_VALIDATORS` in the corresponding module, then a test.
 
-For a new `RETRODB_*` env var: read it in `config.py` at module top, set
-the default explicitly, and document it in the env-var block at the top of
-the file. There is no validator — `int(...)`, `lower() in {'true','1'}`, etc.
-is inline.
+For a new `RETRODB_*` env var: read it at module top in **both `config.py`
+and `config.example.py`**, set the default explicitly, and document it in the
+env-var block at the top of both files. `config.py` is gitignored and
+user-owned — `installer_core.py` seeds a fresh install from
+`config.example.py` — so an edit to `config.py` alone works on your box and
+ships nothing. There is no validator; parsing is inline (`int(...)`,
+`.lower() in ('true', '1', 'yes')` — match the existing triple, not a
+two-value variant). **Exception:** anything whose malformed value should stop the
+process with a message rather than a traceback needs a resolver function
+called from `app.py`'s `__main__`, not a bare `os.environ.get` at import —
+`server_port.py` is the worked example.
+
+## Retiring a setting
+
+The inverse of the above, and not symmetric with it — a stored key outlives
+the code that read it. Worked example: `server_host` and `debug_mode` in
+v3.23.1, removed rather than wired up because neither belongs behind a web
+form (see Precedence).
+
+1. **Drop the default** from `settings_manager.DEFAULT_SETTINGS`.
+2. **Drop the `_VALIDATORS` entry** in `services/settings_validators.py`. Skip
+   this and `/api/settings` POST keeps *accepting* the key — a write that
+   reports success and changes nothing, since `load_settings()` then prunes
+   it. The import-time cross-check will not catch the omission — it is
+   one-directional; see Known invariants.
+3. **Drop it from `RESTART_REQUIRED_SETTINGS`**, or it keeps promising a
+   restart will apply a key that no longer exists.
+4. **Add it to `settings_manager._RETIRED_SETTINGS`.** `load_settings()`
+   filters these out of the saved dict before the default-merge, so an
+   existing `settings.json` degrades quietly. Skip this and the dead key is
+   carried forward, re-saved forever, and served by `GET /api/settings` as a
+   setting that configures nothing.
+5. **Remove the UI control** from the relevant `templates/_settings_tabs/`
+   partial and its save handler.
+6. **Pin it.** `tests/test_settings_bind_config.py` is the pattern — assert
+   the key is absent from `settings_manager.DEFAULT_SETTINGS` and from
+   `services.settings_validators.known_keys()`, that
+   `settings_manager.requires_restart([key])` is False, and that a
+   `settings.json` still containing it loads with the key dropped and its
+   neighbours intact.
+
+`_RETIRED_SETTINGS` exists only in `settings_manager.py`, and step 4 needs no
+counterpart in the other two stores — for opposite reasons, both worth knowing
+before you assume either behaves like `settings.json`:
+
+- `scraper_settings.json` — `scraper_manager._load_scraper_settings_locked()`
+  merges by an explicit **key allowlist** (`priority`, `enabled`, `api_keys`,
+  `minimum_match_score`, `match_mode`, `match_criteria`), so an unknown or
+  retired key never reaches the loaded dict at all. Nothing to prune.
+- `rom_tools_config.json` — `routes/tools.py::load_rom_tools_config()` does a
+  blanket `defaults.update(saved)`, so a retired key **does** survive into the
+  loaded dict and gets re-saved, exactly as `settings.json` behaved before
+  `_RETIRED_SETTINGS`. It is inert (with the validator gone no POST can set
+  it again) but it will keep appearing in that store's GET response. Add the
+  analogue there if a retirement ever needs to be invisible.
 
 ## Authentication
 
@@ -328,8 +457,19 @@ the file outside of `save_settings`.
 
 After adding a new validator entry, run
 `python3 -m pytest tests/test_launch_settings_validators.py` to confirm
-the import-time cross-check still fires — that test passes if and only if
-every key in `DEFAULT_SETTINGS` has a validator entry.
+the import-time cross-check still fires — the run fails at import if any
+`DEFAULT_SETTINGS` key lacks a validator entry. It is a module-import side
+effect, not an assertion in that file, so every other test importing
+`services.settings_validators` fails the same way; that file is just the
+cheapest place to see it.
+
+**Port resolution** is testable without touching the process environment or
+the real settings file: `resolve_server_port(env={...}, use_saved=…)` takes
+the environment mapping as a parameter, and the saved tier reads through
+`settings_manager.SETTINGS_FILE`, which the fixture above monkeypatches.
+`tests/test_server_port.py` covers the two env tiers, the absent/invalid
+split and the CLI; `tests/test_settings_bind_config.py` covers the saved
+tier, the retired keys and the never-block-the-boot fallbacks.
 
 For the scraper-settings validators, call `validate_scraper_settings(body)`
 and `validate_scraper_api_keys(body)` directly with crafted dicts — they're
@@ -340,7 +480,30 @@ pure functions with no filesystem dependency.
 - **Every UI-writable key has a validator entry.** The import-time check in
   `services/settings_validators.py` enforces it for `DEFAULT_SETTINGS`;
   add the equivalent guard to any future store that grows past a handful
-  of keys.
+  of keys. (One-directional — see below.)
+- **No key claims a restart applies it unless a restart applies it.** Every
+  entry in `settings_manager.RESTART_REQUIRED_SETTINGS` must be a key that
+  something actually reads, so that restarting genuinely results in the new
+  value being used — `requires_restart()` reports it to the client and the
+  client tells the operator to restart. The bar is a real consumer, not a
+  startup-time one: `server_port` is startup-bound, while `rom_path` is read
+  per call (`settings_manager.get_effective_path`) and is listed only because
+  a restart is the conservative advice. **A key that is validated and stored
+  but never read at all does not belong on the settings surface** — wire it
+  up or retire it (v3.23.1, which did one of each). Half machine-checked:
+  `tests/test_settings_bind_config.py::test_every_restart_required_key_is_a_real_setting`
+  pins surface-membership only; "something reads it" is a review gate, since
+  no test can see a reader that does not exist.
+- **The environment always beats a stored value, and a broken settings file
+  never changes the port.** `PORT` / `RETRODB_PORT` win over the saved
+  `server_port`, and a corrupt, missing or unreadable `settings.json` can
+  neither move the bind port nor stop the server booting. Pinned by
+  `test_environment_still_beats_the_saved_port` and
+  `test_environment_port_survives_an_unloadable_settings_file`.
+- **The validator cross-check is one-directional.** The import-time guard is
+  `set(DEFAULT_SETTINGS) - set(_VALIDATORS)`, so a default without a
+  validator raises and a *validator without a default* does not. Retirements
+  need the explicit test above; the guard will not catch a half-done one.
 - **Every write goes through `atomic_write_json` (or `atomic_write_bytes`
   for secrets).** Plain `open('w') + json.dump` is forbidden — grep
   catches drift at audit time.
@@ -362,3 +525,10 @@ pure functions with no filesystem dependency.
   `(user_id, platform)`; calls without a `user_id` log a warning and
   return without writing. Multi-user installs depend on this — the legacy
   shared-file design leaked tokens across users (Pass 27.2).
+
+## Cold-eyes loop log
+
+| Loop | Date | Lanes | Findings (C/H/M/L/I) | Dimensions | Outcome |
+| --- | --- | --- | --- | --- | --- |
+| 1 | 2026-08-06 | 2 (general-purpose) | 0/4/9/3/1 | dim 2×5, dim 5×7, dim 4×4, dim 8×3, dim 15×4, dim 6×2 | All verified findings fixed. Two were in text written that same session (the `RESTART_REQUIRED_SETTINGS` invariant was worded so narrowly it condemned `rom_path`; the `server_port` bullet omitted the range split, the absence-vs-invalidity rule and four of five consumers). Pre-existing: the precedence ladder ranked the `config.py` literal above the saved value, inverting the order for every dual-store key. |
+| 2 | 2026-08-06 | 2 (general-purpose) | 0/3/8/9/1 | dim 2×6, dim 5×6, dim 4×5, dim 12×3, dim 6×3, dim 1×1 | Converged **for the changed section** — one lane checked the `server_port` ladder, every sub-bullet and the new "Retiring a setting" procedure step-by-step and returned no finding against them. Remaining loop-2 findings in text written this session were fixed (step-4 ordering contradiction, unqualified `known_keys()`, missing cross-store note, over-broad claim about the other two loaders — corrected after executing it). The rest are pre-existing defects in sections this change never touched (atomic-write contract, dropdown-options endpoints, CSRF description, admin-gating contradiction, secret-key precedence) and are filed, not folded into a bug-fix commit. |

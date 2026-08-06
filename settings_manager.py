@@ -36,11 +36,10 @@ DEFAULT_SETTINGS = {
     'esde_downloaded_media_path': '',
     'rpcs3_trophy_path': '',
     
-    # Server settings
-    'server_host': '0.0.0.0',
+    # Server settings.  Only the port is user-editable — see _RETIRED_SETTINGS
+    # below for why the bind address and debug mode are environment-only.
     'server_port': 5000,
-    'debug_mode': True,
-    
+
     # UI Preferences
     'items_per_page': 50,
     'default_sort': 'title',
@@ -136,6 +135,23 @@ DEFAULT_SETTINGS = {
     }
 }
 
+# Keys that were once persisted here and are no longer part of the settings
+# surface.  An existing settings.json still holds them, so load_settings()
+# drops them on the way in — otherwise they linger in the loaded dict, get
+# re-saved forever, and show up in GET /api/settings as settings that
+# configure nothing.
+#
+# Both are server bind configuration and are now environment-only
+# (RETRODB_HOST / RETRODB_DEBUG), deliberately:
+#   - debug_mode would let a Settings request turn on Flask's debug server,
+#     and the Werkzeug debugger is an interactive Python console in the
+#     browser — a remote-code-execution surface reachable from a settings
+#     form.  Admin-gated is not the same as safe.
+#   - server_host changes which interfaces the app answers on, which is not
+#     something a web form should be able to do to its own host.
+# `server_port` is genuinely benign and stays.
+_RETIRED_SETTINGS = frozenset({'server_host', 'debug_mode'})
+
 
 def ensure_settings_dir():
     """Ensure the data directory exists"""
@@ -187,6 +203,11 @@ def load_settings():
             try:
                 with open(SETTINGS_FILE, 'r', encoding='utf-8') as f:
                     saved = json.load(f)
+                    # Drop keys that are no longer part of the surface before
+                    # merging, so a settings.json written by an older version
+                    # degrades quietly instead of carrying dead keys forward.
+                    saved = {k: v for k, v in saved.items()
+                             if k not in _RETIRED_SETTINGS}
                     # Deep merge saved settings with defaults (saved takes precedence)
                     settings = _deep_merge(settings, saved)
                     logger.debug("Loaded user settings from settings.json")
@@ -260,11 +281,13 @@ def reset_to_defaults():
 # SETTINGS THAT REQUIRE RESTART
 # =============================================================================
 
+# A key belongs here only if a restart genuinely applies it.  `server_port` is
+# read by server_port.resolve_server_port() in app.py's startup path, so a
+# restart really does pick it up; `server_host` and `debug_mode` used to sit
+# here promising the same thing while nothing ever read them.
 RESTART_REQUIRED_SETTINGS = [
     'rom_path',
-    'server_host', 
     'server_port',
-    'debug_mode'
 ]
 
 def requires_restart(changed_keys):

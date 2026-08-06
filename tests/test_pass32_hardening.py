@@ -73,7 +73,10 @@ def test_32_2_settings_validators_rejects_unknown_key():
 def test_32_2_settings_validator_bool_accepts_true():
     from services.settings_validators import validate_settings_value
 
-    ok, _reason, cleaned = validate_settings_value('debug_mode', True)
+    # `show_unscraped_first` is the vehicle for _bool_validator here; this
+    # used to use `debug_mode`, which left the settings surface when it turned
+    # out nothing read it (see settings_manager._RETIRED_SETTINGS).
+    ok, _reason, cleaned = validate_settings_value('show_unscraped_first', True)
     assert ok
     assert cleaned is True
 
@@ -81,7 +84,7 @@ def test_32_2_settings_validator_bool_accepts_true():
 def test_32_2_settings_validator_bool_rejects_string():
     from services.settings_validators import validate_settings_value
 
-    ok, _reason, _ = validate_settings_value('debug_mode', 'yes')
+    ok, _reason, _ = validate_settings_value('show_unscraped_first', 'yes')
     assert not ok
 
 

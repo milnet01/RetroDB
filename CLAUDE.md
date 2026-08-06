@@ -166,7 +166,7 @@ Two shapes:
 
 ### App icon assets
 - Master SVG: `packaging/icon.svg` (neon gamepad). `python3 scripts/render_icons.py` rasterizes it into `static/favicon.svg`/`-16`/`-32`/`apple-touch-icon.png` (wired in `base.html`) + `packaging/icons/retrodb-{256,512}.png`/`.ico`/`.icns`. Needs **`cairosvg`** — a BUILD-TIME-ONLY dep, deliberately NOT in `requirements.txt`; the raster outputs are committed so end users never import it. `retrodb.spec` sets `icon=` (`.ico`/`.icns`) and bundles `packaging/icons`.
-- **One-click launch (local install):** `scripts/retrodb_launcher.py` probes the unauthenticated `/health` (port from `config.SERVER_PORT`), starts `app.py` if down, opens the browser. `scripts/install_launcher.py` pins a `.desktop` (absolute `Exec`/`Icon` paths) into `~/.local/share/applications/`. Run the installer once.
+- **One-click launch (local install):** `scripts/retrodb_launcher.py` probes the unauthenticated `/health` (port from `server_port.resolve_server_port(use_saved=True)` — the same chain `app.py` binds with: `PORT` → `RETRODB_PORT` → saved `server_port` → 5000; see `docs/specs/settings.md` §Precedence), starts `app.py` if down, opens the browser. `scripts/install_launcher.py` pins a `.desktop` (absolute `Exec`/`Icon` paths) into `~/.local/share/applications/`. Run the installer once.
 
 ```bash
 python3 build_dist.py                       # all 3 source ZIPs

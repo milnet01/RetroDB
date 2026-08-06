@@ -3,7 +3,7 @@
 # ================================================================================
 # Resolves the TCP port the server binds, from the environment.
 #
-#   PORT  ->  RETRODB_PORT  ->  caller's default (config.SERVER_PORT, itself 5000)
+#   PORT  ->  RETRODB_PORT  ->  saved `server_port`  ->  caller's default (5000)
 #
 # Lives in its own top-level module rather than inside config.py for two
 # reasons.  config.py is user-owned and gitignored (installer_core.py copies
@@ -43,12 +43,53 @@ _PORT_VARS = {
 }
 
 
-def resolve_server_port(default=DEFAULT_PORT, env=None):
+def saved_server_port():
+    """The `server_port` saved in data/settings.json, or None.
+
+    A fallback tier, never a requirement.  Any failure — no settings file, a
+    corrupt one, an unreadable one, a value that no longer validates — returns
+    None so the server still boots on the default.  The port the environment
+    gave us must never depend on the settings file being loadable.
+
+    Imported lazily on purpose: settings_manager imports config, and config
+    imports this module, so a module-scope import would be a cycle.  That
+    direction-of-dependency is exactly why config.py could never read the
+    setting back, and why the fix lives here in the startup path instead.
+    """
+    try:
+        import settings_manager
+        from services.settings_validators import validate_settings_value
+
+        raw = settings_manager.get_setting('server_port')
+        if raw is None:
+            return None
+        # Same validator the settings API uses on the way in — 1-65535, see
+        # the range note above.  A settings.json edited by hand can still hold
+        # something the API would have rejected.
+        ok, reason, cleaned = validate_settings_value('server_port', raw)
+        if not ok:
+            print(f'WARN: ignoring server_port={raw!r} from settings.json '
+                  f'({reason}); falling back to {DEFAULT_PORT}.', file=sys.stderr)
+            return None
+        return cleaned
+    except Exception as exc:
+        print(f'WARN: could not read server_port from settings.json ({exc}); '
+              f'falling back to {DEFAULT_PORT}.', file=sys.stderr)
+        return None
+
+
+def resolve_server_port(default=DEFAULT_PORT, env=None, use_saved=False):
     """Return the port to bind, or raise ValueError naming the bad value.
 
-    `default` is used only when every variable is absent.  app.py passes
-    config.SERVER_PORT so a hand-edited config.py still wins over the 5000
-    baked in here — _die_port_in_use() tells users to edit that file.
+    Full chain, highest first:
+
+        PORT  ->  RETRODB_PORT  ->  saved `server_port`  ->  default (5000)
+
+    `use_saved` is opt-in because the saved tier reads settings.json, which
+    only the startup path may do — config.py calls this at *import*, long
+    before the settings layer is safe to touch.  The environment still wins
+    over the saved value, so an external process manager is unaffected by
+    whatever the Settings page holds.
     """
     env = os.environ if env is None else env
 
@@ -67,6 +108,11 @@ def resolve_server_port(default=DEFAULT_PORT, env=None):
                 f'{name}={raw!r} is out of range '
                 f'(expected an integer between {low} and {high}).')
         return port
+
+    if use_saved:
+        saved = saved_server_port()
+        if saved is not None:
+            return saved
 
     return default
 
@@ -91,7 +137,7 @@ if __name__ == '__main__':
     # `from server_port import ...` loads a second, independent copy.  Both are
     # stateless function definitions, so this costs nothing.
     try:
-        print(resolve_server_port(default=_config_default()))
+        print(resolve_server_port(default=_config_default(), use_saved=True))
     except ValueError as exc:
         print(f'ERROR: {exc}', file=sys.stderr)
         sys.exit(1)

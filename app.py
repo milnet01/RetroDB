@@ -1758,11 +1758,11 @@ if __name__ == '__main__':
 
     # Resolve the bind port first — before directory creation, logging setup
     # and the GPU warm-up below — so a bad value costs a second, not a minute.
-    # config.SERVER_PORT is the fallback (not a third env source): it is 5000
-    # unless the user hand-edited config.py, which _die_port_in_use() below
-    # still tells them to do.
+    # use_saved=True adds the Settings-page `server_port` tier, which is safe
+    # here and only here: this runs after imports, so reading the settings
+    # layer (which imports config) is no longer a cycle.
     try:
-        port = resolve_server_port(default=config.SERVER_PORT)
+        port = resolve_server_port(default=config.SERVER_PORT, use_saved=True)
     except ValueError as _port_err:
         print(f'ERROR: {_port_err}', file=sys.stderr)
         sys.exit(1)
@@ -1795,8 +1795,9 @@ if __name__ == '__main__':
             '  Stop it (substitute the PID from the line above):',
             f'    {kill_cmd}',
             '',
-            '  Or change SERVER_PORT in config.py to a free port',
-            '  (e.g. 5001) and restart RetroDB.',
+            '  Or move RetroDB to a free port (e.g. 5001) and restart:',
+            '    Settings -> System -> Server Port, or PORT=5001 in the',
+            '    environment, which overrides the saved setting.',
             '',
             '=' * 60,
             '',

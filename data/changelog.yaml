@@ -1,3 +1,30 @@
+- version: 3.23.1
+  date: 2026-08-06
+  tags:
+  - type: fix
+    label: The server port you save in Settings is now the port it uses
+  body: |
+    <ul>
+      <li><strong>Saving a server port actually moves the server.</strong>
+        Settings accepted a port, checked it, saved it, and told you a restart
+        was needed to apply it &mdash; then the server started on 5000 anyway.
+        Nothing ever read the value back. It is now part of the startup chain,
+        so a restart really does move RetroDB to the port you chose. Anything
+        set in the environment still wins, so a launcher or container that
+        assigns a port is unaffected.</li>
+      <li><strong>Two settings that never did anything have been removed
+        rather than repaired.</strong> "Server host" and "debug mode" were
+        stored and reported the same false promise. Turning debug mode on from
+        a web form would have exposed an interactive Python console in the
+        browser, and the bind address controls which machines can reach
+        RetroDB at all &mdash; neither belongs behind a settings form. Both stay
+        configurable from the environment, where they already lived. If your
+        settings file still contains them they are dropped quietly on load;
+        nothing to do.</li>
+      <li><strong>Nothing now claims a restart will apply it unless a restart
+        applies it.</strong> That was the real defect &mdash; a dead setting is
+        untidy, but a false promise wastes an afternoon.</li>
+    </ul>
 - version: 3.23.0
   date: 2026-08-06
   tags:

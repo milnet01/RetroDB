@@ -24,10 +24,16 @@ class _FakeResp:
         return False
 
 
-def test_server_url_uses_config_port(monkeypatch):
-    monkeypatch.setattr(launcher.config, 'SERVER_PORT', 5000)
+def test_server_url_uses_the_resolved_port(monkeypatch):
+    """The probe URL must follow the same chain app.py binds with.
+
+    Was pinned to config.SERVER_PORT; the saved `server_port` setting is now
+    part of the chain too, and a probe on a different port than the server
+    binds would start a second instance and lose it to EADDRINUSE.
+    """
+    monkeypatch.setattr(launcher, 'resolve_server_port', lambda **kw: 5000)
     assert launcher.server_url() == 'http://localhost:5000'
-    monkeypatch.setattr(launcher.config, 'SERVER_PORT', 8080)
+    monkeypatch.setattr(launcher, 'resolve_server_port', lambda **kw: 8080)
     assert launcher.server_url() == 'http://localhost:8080'
 
 

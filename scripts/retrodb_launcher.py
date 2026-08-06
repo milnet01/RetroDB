@@ -8,9 +8,10 @@ browser.
 
 Probe target is the unauthenticated GET /health (NOT /api/status, which is
 @admin_required and would 302 an anonymous probe to the login page — it could
-never confirm readiness). Port comes from config.SERVER_PORT, which honours the
-PORT / RETRODB_PORT overrides (see server_port.py), so a user who moved the
-server off 5000 is still probed and opened at the right port.
+never confirm readiness). Port comes from server_port.resolve_server_port() —
+the same chain app.py binds with (PORT / RETRODB_PORT / the saved server_port
+setting) — so a user who moved the server off 5000 by any of those routes is
+still probed and opened at the right port.
 
 Start-race note: this launcher is intentionally NOT lock-protected. Two near-
 simultaneous clicks can both see "down" and both try to start; that is bounded,
@@ -30,13 +31,17 @@ from urllib.request import urlopen
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 import config  # noqa: E402  (needs ROOT on sys.path first)
+from server_port import resolve_server_port  # noqa: E402
 
 PROBE_TIMEOUT = 1.0     # seconds per /health probe
 START_TIMEOUT = 60.0    # seconds to wait for a freshly-started server
 
 
 def server_url() -> str:
-    return f'http://localhost:{config.SERVER_PORT}'
+    # Same resolution app.py binds with, saved-settings tier included — a
+    # probe on a different port than the server uses would see "down", start a
+    # second instance, and lose it to EADDRINUSE.
+    return f'http://localhost:{resolve_server_port(default=config.SERVER_PORT, use_saved=True)}'
 
 
 def is_running() -> bool:
