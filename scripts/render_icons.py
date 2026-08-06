@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rasterize static/images/icon.svg into all favicon / launcher / exe icons.
+"""Rasterize packaging/icon.svg into all favicon / launcher / exe icons.
 
 BUILD-TIME ONLY. Requires cairosvg (`pip install cairosvg`) which is NOT a
 runtime dependency — it is deliberately absent from requirements.txt. The

@@ -4,7 +4,7 @@
 > features *and* for security. A dependency is held below latest **only** when a
 > newer version explicitly breaks a RetroDB feature and there is no reasonable
 > workaround, and every such hold is recorded in the [Held-Back Dependency
-> Ledger](#held-back-dependency-ledger) so it is deliberate, visible, and
+> Ledger](#7-held-back-dependency-ledger) so it is deliberate, visible, and
 > re-tested as soon as a fixed version ships.
 
 This extends the global rule in `~/.claude/CLAUDE.md` §5 ("use the latest
@@ -110,7 +110,7 @@ When you hold one back you **must**, in the same commit:
    (e.g. `somepkg>=1.4.0,<1.7  # capped — see docs/DEPENDENCY_POLICY.md ledger`).
    The inline comment is mandatory so the cap never reads as neglect
    (global development rule 1).
-2. **Add a row to the [ledger](#held-back-dependency-ledger)** recording the
+2. **Add a row to the [ledger](#7-held-back-dependency-ledger)** recording the
    first broken version, the exact symptom, the evidence (test name / issue /
    commit), and the re-test trigger.
 3. Regenerate `requirements.lock`.

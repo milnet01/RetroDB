@@ -10,10 +10,12 @@ carve-outs, response helpers, etc.).
 ## Table of contents
 
 - [§ Active](#active) — open work, grouped by theme
-- [§ Doc-sweep history](#doc-sweep-history) — meta-log of cold-eyes / indie-review sessions
+- [§ Doc-sweep history](#cold-eyes-2026-05-18-doc-sweep-history) — meta-log of cold-eyes / indie-review sessions
 - [§ Done index](#done-index) — landed passes, organised by shipped version
 - [§ Scope notes — considered and dropped](#scope-notes--considered-and-dropped) — work explicitly excluded
+- [§ Audit hygiene](#audit-hygiene) — why audit findings are triaged here, and where the portable recommendations live
 - [§ Periodic Independent Review](#periodic-independent-review) — cadence and procedure for the multi-agent audit
+- [§ Notes](#notes) — standing conventions for working this file
 
 Each item lists:
 - **Target** — file(s) and approximate line range / LOC
@@ -4529,6 +4531,108 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   4. Keep the per-locale merge (Pass 43.6, docs/specs/i18n.md §9) intact — paginate AFTER the version-merge so translated recent entries still win.
   5. i18n: wrap the "Load More" label (`{{ _('Load More') }}`, or `t('Load More')` if JS-built).
 - **Source**: user-request-2026-06-17 (deferred — perf/UX enhancement).
+
+---
+
+#### Pass 57.6 Per-locale changelogs have drifted from the English source (MEDIUM, M)
+
+- **Target**: all 20 `data/changelog.<locale>.yaml`; contract in
+  `docs/specs/i18n.md` §9 (`:409-416`) and `CLAUDE.md` workflow step 2.
+- **Why**: the `/changelog` route swaps the whole entry in **by version**, so a
+  tag omitted from a locale file is *dropped*, not inherited from English. Two
+  live breaches, both confirmed by this sweep:
+  1. The v3.20.0 `fix` tag ("Fixed a harmless console error when leaving the
+     games list", `data/changelog.yaml:115`) is **absent from all 20** locale
+     files. Non-English users see a v3.20.0 entry with the feature tag only —
+     the bug-fix line is invisible to them. The matching `<li>` in the entry
+     body is missing too, so it is not only the tag.
+  2. **v3.23.0 and v3.23.1 are absent from all 20** locale files, so both
+     releases render English for every non-English user.
+- **Plan**:
+  1. Re-add the v3.20.0 `fix` tag (translated `label`) plus its body `<li>` to
+     each locale file — `version`, `date` and every tag repeated verbatim per
+     the §9 contract.
+  2. Translate the v3.23.0 / v3.23.1 entries into all 20, or record in §9 that
+     the 3.23.x line is deliberately English-only.
+  3. Add the regression pin Pass 57.7 describes so the class cannot recur
+     silently.
+- **Verify**: for each locale, the tag-`type` multiset of every entry matches
+  English for the same `version`; `/changelog` under a non-English locale shows
+  the v3.20.0 fix tag and the two 3.23.x entries.
+- **Status**: planned (2026-08-06). Lanes: i18n, docs.
+- **Source**: debt-sweep 2026-08-06 (v3.12.0..HEAD).
+
+---
+
+#### Pass 57.7 Test-coverage gaps the debt sweep surfaced (MEDIUM, M)
+
+- **Target**: `tests/` — see per-item citations below.
+- **Why**: each is a contract that ships with no behavioural assertion. Grouped
+  so they can be taken in one sitting; none is urgent alone.
+- **Plan**:
+  1. `tests/test_pass52_a11y.py:26` — `HUMAN_LOCALES` hardcodes 9 locales;
+     `docs/specs/i18n.md:411-412` defines 20. Derive the set rather than
+     restating it, or the next language pack silently escapes the check.
+  2. No test pins the `docs/specs/i18n.md` §9 changelog-locale invariant — the
+     one Pass 57.6 found violated. A YAML cross-check (same `version`/`date`,
+     same tag multiset per entry) would have caught it at commit time.
+  3. No test pins the §9 help-anchor byte-identity invariant
+     (`docs/specs/i18n.md:385`); 14 new `templates/help.<locale>.html` landed
+     since v3.12.0. Assert `id=` / `href="#..."` set-equality against
+     `help.html`.
+  4. `tests/test_fresh_install_schema.py:52` — required-column list omits
+     `china_rating`; migration `014_games_china_rating.py` has no schema
+     assertion.
+  5. `scraper/metadata_merger.py::_download_screenshots_parallel` (Pass 55.3)
+     and `scraper/scraper_manager.py:449` parallel search (Pass 55.1) have no
+     tests; both contracts are order-determinism + per-source failure
+     isolation.
+  6. `routes/maintenance.py:175,199` — `/api/missing-media-refs/preview|clear`
+     are absent from `tests/test_routes_smoke.py`'s `EXPECTED_ENDPOINTS`, so
+     they also escape its auth-guard sweep.
+  7. `tests/test_shutdown_route.py:19` — the whole file is `inspect.getsource`
+     string-matching. The `app_client` fixture (`tests/conftest.py:65`) already
+     exists; assert the url_map entry, the admin guard, and a monkeypatched
+     `os.kill` instead.
+  8. `tests/test_atomic_io.py:45` — `assert not (tmp_path/'settings.json.tmp')
+     .exists()` is vacuous: `services/atomic_io.py:65` uses
+     `mkstemp(prefix='.atomic_')`, so that filename never existed. Assert no
+     `.atomic_*` residue.
+  9. `tests/test_server_port.py:182` — `_cli()` clears `PORT`/`RETRODB_PORT`
+     but runs `use_saved=True` with `cwd=ROOT`, so it reads the operator's real
+     `data/settings.json` and passes only because that file happens to hold
+     `5000`. Point it at a temp settings file.
+- **Verify**: `python3 -m pytest` green; items 2 and 3 proved able to fail
+  (break the invariant, confirm red, restore) before they are trusted.
+- **Status**: planned (2026-08-06). Lanes: tests, i18n, scrapers.
+- **Source**: debt-sweep 2026-08-06 (v3.12.0..HEAD).
+
+---
+
+#### Pass 57.8 Design docs sit under `docs/superpowers/`, not the declared tree (LOW, S)
+
+- **Target**: `docs/superpowers/specs/` (2 files), `docs/superpowers/plans/`
+  (1 file); declared `specs_dir` is `docs/specs` (`.ants/project.json`).
+- **Why**: the global rule in `~/.claude/CLAUDE.md` §14a fixes a spec at
+  `docs/specs/<ID>-<topic>.md` and a build plan at `docs/plans/<ID>-<topic>.md`;
+  `docs/plans/` does not exist here and three design docs live under the
+  superpowers path instead. Two of the three landed since v3.12.0, so the drift
+  is active, not historical. Low severity — nothing is broken, but the split
+  means a reader has two places to look and `docs_index` only indexes one as
+  the specs dir.
+- **Not automatic — the files are cited.** `roadmap.md:3872` and
+  `docs/specs/i18n.md:6` both reference
+  `docs/superpowers/specs/2026-06-10-i18n-foundation-design.md` by path, and
+  the design doc references its own location at `:308-311`. A move that does
+  not retarget those strands them.
+- **Plan**: decide one of — (a) relocate to `docs/specs/` + a new `docs/plans/`
+  and retarget all three citations in the same change; or (b) record the
+  superpowers path as a deliberate project exemption from §14a, so the next
+  sweep stops re-reporting it.
+- **Verify**: `doc_integrity` over `docs/` reports no broken links;
+  `grep -rn "docs/superpowers"` returns only whatever option (b) sanctioned.
+- **Status**: planned (2026-08-06). Lanes: docs.
+- **Source**: debt-sweep 2026-08-06 (v3.12.0..HEAD).
 
 ## Done index
 

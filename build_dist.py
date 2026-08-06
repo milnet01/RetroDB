@@ -72,6 +72,8 @@ EXCLUDE_FILES = {
     'docs/psn-npsso.env',
     'RetroDB_Directory_Listing.txt',
     '.continueignore',
+    # Maintainer-only audit ledger (tracked, but meaningless to end users).
+    '.ants_review_falsepos.jsonl',
 }
 
 EXCLUDE_DIRS = {
@@ -80,11 +82,12 @@ EXCLUDE_DIRS = {
     'database', 'logs',  # .gitkeep files added explicitly
 }
 
-EXCLUDE_EXTENSIONS = {'.db', '.db-journal', '.db-wal', '.log', '.pyc', '.pyo', '.bak'}
+# .db-shm joins .db-wal/.db-journal — WAL mode (v3.22.1) leaves all three behind.
+EXCLUDE_EXTENSIONS = {'.db', '.db-journal', '.db-wal', '.db-shm', '.log', '.pyc', '.pyo', '.bak'}
 
 # Scraped/runtime media (excluded from distribution)
 # static/videos/ is a top-level directory under static/
-# static/images/ uses a whitelist — only hardware, ratings, systems are included
+# static/images/ uses a whitelist — only hardware, ratings, systems, avatars are included
 INCLUDE_IMAGE_DIRS = {'hardware', 'ratings', 'systems', 'avatars'}
 EXCLUDE_STATIC_DIRS = {'videos'}  # Top-level dirs under static/ to skip entirely
 

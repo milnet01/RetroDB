@@ -106,12 +106,13 @@ DATAS = [
     # Per-locale changelog translations (Pass 43.6) — the /changelog route merges
     # these over changelog.yaml by version; bundle them or non-English users see
     # English release notes. (help.<locale>.html ride the templates/ dir above.)
-    ('data/changelog.de.yaml', 'data'),
-    ('data/changelog.es.yaml', 'data'),
-    ('data/changelog.fr.yaml', 'data'),
-    ('data/changelog.it.yaml', 'data'),
-    ('data/changelog.ja.yaml', 'data'),
-    ('data/changelog.pt_BR.yaml', 'data'),
+    # Globbed, not hand-listed: the set grew 9 -> 20 at Pass 56 and Pass 56.2
+    # plans four more, and a stale hand-list ships English notes for every
+    # locale added after it was written (it had drifted to 6 of 20 by v3.23.1).
+    # 'changelog.*.yaml' needs a locale segment, so changelog.yaml above is not
+    # matched twice.
+    *[(p.relative_to(PROJECT_ROOT).as_posix(), 'data')
+      for p in sorted((PROJECT_ROOT / 'data').glob('changelog.*.yaml'))],
     # i18n catalogs (Pass 43.1) — .po/.mo are committed and have no build step
     # on the user's machine, so the bundle must carry them or it ships with no
     # translations (the dropdown would collapse to English-only).

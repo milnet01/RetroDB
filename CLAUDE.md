@@ -129,7 +129,7 @@ Rating images live in `static/images/ratings/{SYSTEM}/`. `RATING_IMAGE_MAP` in
 
 - CSS: edit `static/css/<category>/<file>.css`, then `python3 build_css.py` to rebuild `main.min.css`.
 - JS: edit `static/js/<file>.js`, then `python3 build_js.py` if it's bundled. Never edit `core.bundle.js` / `games.bundle.js` directly — generated output.
-- Bundles: `core.bundle.js` (every page) and `games.bundle.js` (game-centric pages only). Templates that need the games bundle MUST set `{% set needs_games_bundle = true %}` right after `{% extends "base.html" %}`.
+- Bundles: `core.bundle.js` (every page) and `games.bundle.js` (game-centric pages only). Templates that need the games bundle MUST set `{% set needs_games_bundle = true %}` at the template's top level — before the first `{% block %}`, so `base.html` sees it at render time. An intervening `{% from %}` import is fine; 6 of the 13 opted-in templates have one.
 - Cache-busting: `build_css.py` / `build_js.py` write `static/asset_manifest.json` with SHA-256 prefixes. Reference assets via `{{ asset_url('js/core.bundle.js') }}` (Jinja global from `services/assets.py`). Fallback is `?v={APP_VERSION}`.
 - CSS rules: never duplicate external classes inline; use variables from `core/variables.css` (no hardcoded colors); promote any style used on 2+ pages to external CSS.
 
@@ -199,7 +199,7 @@ Pre-release checklist: bump version + changelog → ensure `config.example.py` m
 - `audit_hygiene.md` — Portable `/audit`-skill recommendations (not RetroDB-specific)
 - `.semgrep.yml` — Documented threat model + excluded upstream rule IDs (read before triaging new audit findings)
 - `.gitleaks.toml` — Allowlist for `logs/`, `data/*.json` tokens, admin-editable settings
-- `.pre-commit-config.yaml` — per-commit `ruff check --fix` + `gitleaks`, **plus a pre-push gate** (`scripts/ci_local.sh`) that mirrors `.github/workflows/ci.yml` (ruff · import smoke · pytest · i18n freshness · semgrep · pip-audit · lockfile-drift) so a red build is caught locally before it reaches GitHub. Install: `pip install pre-commit` (venv / `--user` / `--break-system-packages` on PEP-668 distros) then `pre-commit install && pre-commit install --hook-type pre-push`. `ruff-format` / `mypy` intentionally excluded; `pytest` runs in the pre-push gate, not per-commit.
+- `.pre-commit-config.yaml` — per-commit `ruff check --fix` + `gitleaks`, **plus a pre-push gate** (`scripts/ci_local.sh`) that mirrors `.github/workflows/ci.yml` (ruff · import smoke · pytest · i18n freshness · semgrep · pip-audit · lockfile-drift · workflow lint) so a red build is caught locally before it reaches GitHub. Install: `pip install pre-commit` (venv / `--user` / `--break-system-packages` on PEP-668 distros) then `pre-commit install && pre-commit install --hook-type pre-push`. `ruff-format` / `mypy` intentionally excluded; `pytest` runs in the pre-push gate, not per-commit.
 - `scripts/ci_local.sh` — the local-CI runner the pre-push gate invokes; run it by hand any time with `./scripts/ci_local.sh` (~40 s warm). Exit 0 = safe to push. A CI-mirrored check whose tool is missing or broken **fails** (a skip would be a check whose CI verdict you haven't seen — Pass 57.3); override with `git push --no-verify`. Docs-only pushes (`*.md`, `docs/`, `LICENSE`) short-circuit to exit 0; force with `CI_LOCAL_FORCE=1`.
 
 ---
