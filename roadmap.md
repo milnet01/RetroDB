@@ -249,6 +249,10 @@ are tracked here so the next pass picks them up:
   builds; the source ZIPs omit it. Decide whether controller images
   ship with both shapes (add to `INCLUDE_IMAGE_DIRS`) or neither (drop
   from `retrodb.spec`).
+  - *Resolved (2026-08-06)*: dropped from the spec — `controllers/` was
+    removed from `retrodb.spec` in v3.6.29 (`38d0940`), so neither shape
+    ships it. The `build_dist.py` cite has also drifted:
+    `INCLUDE_IMAGE_DIRS` is now at `build_dist.py:91`. (Pass 57.10)
 - **`templates/base.html` line cite for `<meta name="csrf-token">`** —
   `api-contracts.md` cites lines 340-352 (the fetch patch); the meta tag
   itself is at line 27. Minor — refine the cite.
@@ -4729,7 +4733,10 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   it — e.g. `Resolved (2026-08-06): controllers/ removed from retrodb.spec in
   v3.6.29 (38d0940); INCLUDE_IMAGE_DIRS now build_dist.py:91.` The original
   observation stays intact and the item stops reading as open.
-- **Status**: planned (2026-08-06). Lanes: docs.
+- **Status**: done (2026-08-06). Lanes: docs. Resolution line appended under
+  `roadmap.md:247`; the original 2026-05-18 observation left byte-identical.
+  Both halves re-verified before writing: `grep -n controllers retrodb.spec`
+  returns nothing, `INCLUDE_IMAGE_DIRS` is at `build_dist.py:91`.
 - **Source**: debt-sweep 2026-08-06 — surfaced, deliberately not auto-edited.
 
 ## Done index
