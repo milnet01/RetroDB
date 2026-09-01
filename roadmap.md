@@ -4781,6 +4781,171 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   returns nothing, `INCLUDE_IMAGE_DIRS` is at `build_dist.py:91`.
 - **Source**: debt-sweep 2026-08-06 — surfaced, deliberately not auto-edited.
 
+---
+
+#### Pass 58.1 JS, templates and CSS are analysed by no static-analysis tool (LOW, M)
+
+- **Target**: `static/js/*.js` (22 tracked files), `templates/**.html` (82),
+  `static/css/**/*.css` (34). Tool selection in `check-code` step 2.
+- **Why**: every static-analysis tool is selected by a language signal, and the
+  JavaScript signal is `package.json`. RetroDB has none — it is a Python project
+  that ships hand-written browser JS — so `eslint` and `tsc` were never selected,
+  and no row exists at all for Jinja templates or CSS. The whole-tree sweep of
+  2026-09-01 therefore analysed 232 Python files, 8 shell scripts and 3
+  workflows, and **zero** of the 138 front-end files. That is not a clean result
+  for them; it is no result. The bundles (`core.bundle.js`, `games.bundle.js`)
+  are generated, but the sources under `static/js/` are not.
+- **Plan**: decide between three, in preference order.
+  1. Accept the gap deliberately and record it here, so the next sweep does not
+     re-discover it. Cheapest, and defensible for a LAN-only single-household
+     app whose JS has no build step.
+  2. Add a minimal `package.json` + flat `eslint.config.js` covering
+     `static/js/*.js` only, wired into `scripts/ci_local.sh` and `ci.yml`. Buys
+     real coverage; costs a Node toolchain in a project that has none, and the
+     `--require-hashes` install story does not extend to npm.
+  3. Cover the JS with a Python-side check instead (e.g. `node --check` per file
+     if node is present, skipped with a named line if not) — much weaker than a
+     linter but catches syntax errors before a user does.
+- **Verify**: whichever option is taken, `check-code --tree` names the JS files
+  as covered, or names them as deliberately uncovered with a reason.
+- **Status**: planned (2026-09-01). Lanes: ci, frontend.
+- **Source**: check-code whole-tree sweep 2026-09-01 — the language-signal gap
+  list, which is what surfaced it.
+
+---
+
+#### Pass 58.2 Three analysers run unconfigured, so their output is mostly noise (LOW, S)
+
+- **Target**: `pyproject.toml` (or a new `.claude/audit/audit-config.json`),
+  `.yamllint`, and whatever carries a `typos` config.
+- **Why**: measured on the 2026-09-01 whole-tree sweep. **`bandit`** has no
+  config here, so it re-reports 117 findings whose rule ids map 1:1 onto ruff
+  codes this project already suppresses in `pyproject.toml` with a written
+  rationale (`B608`↔`S608` ×100, `B310`↔`S310`, `B104`↔`S104`, `B201`↔`S201`,
+  and `B108`↔`S108` covered by the `"tests/*" = ["S","B"]` per-file-ignore).
+  Every one is already adjudicated; nothing reads that adjudication.
+  **`typos`** over the tree returns 4,157 findings of which 3,948 are in
+  non-English content it cannot read (`translations/*.po`, the per-locale
+  `templates/help.<locale>.html`) and 68 more in the vendored
+  `static/js/vendor/chart.umd.min.js` — 97% noise, and the 141 that remain are
+  still mostly truncated SQL keywords and base64 font data. **`yamllint`** has
+  no config, so it enforces an 80-column default against a project whose own
+  line length is 120; scoped to the 5 non-`data/` YAML files it returns 18
+  findings, 12 of them line-length.
+- **Plan**: give each one a config that states this project's calibration.
+  bandit: a `[tool.bandit]` section (or `-c`) carrying the same skips as ruff's
+  `ignore`, citing it so the two cannot drift. typos: an exclude list for
+  `translations/`, `templates/help.*.html`, `data/changelog.*.yaml` and
+  `static/js/vendor/`. yamllint: `line-length: 120` and `document-start:
+  disable`. Alternatively write one `.claude/audit/audit-config.json`, which
+  `check-code` probes first and which would carry all three plus the path
+  exclusions in one place.
+- **Verify**: re-run each tool; the surviving findings should be ones nobody has
+  already adjudicated.
+- **Status**: planned (2026-09-01). Lanes: ci.
+- **Source**: check-code whole-tree sweep 2026-09-01.
+
+---
+
+#### Pass 58.3 mypy reports 118 findings and none of them is a runtime defect (LOW, L)
+
+- **Target**: `scraper/rom_tools.py` (≈35 of the findings), `services/launcher/`,
+  `services/log_redactor.py`, `scraper/trophy_parser.py`, and the absent
+  `[tool.mypy]` section in `pyproject.toml`.
+- **Why**: a no-config `mypy` run over the 232 tracked Python files returns 118
+  errors across 51 files. 43 are `import-untyped` on third-party libraries that
+  ship no stubs — environment noise, not code. The other 75 were sampled against
+  source and **every one checked is an annotation gap, not a bug**:
+  `scripts/retrodb_launcher.py:72` reads `subprocess.CREATE_NEW_CONSOLE` inside
+  `if os.name == 'nt':`, which mypy on Linux cannot narrow;
+  `scraper/scraper_manager.py:30` is the deliberate, commented
+  `try: import / except ImportError:` fallback class; `trophy_parser.py:80`
+  widens a fixed 2-element list to `tuple[int, ...]`; `rom_tools.py:1158`
+  does `size /= 1024` on a parameter annotated `int`, which formats identically
+  at runtime. This is real work — it is just typing adoption, and CLAUDE.md
+  already excludes mypy from the gates on purpose.
+- **Plan**: either (a) record the decision not to adopt typing, in
+  `docs/STANDARDS_ADDENDUM.md`, so the next sweep stops re-deriving it; or (b)
+  adopt incrementally — add `[tool.mypy]` with `ignore_missing_imports = true`
+  (kills the 43), then annotate one module at a time behind a per-module
+  `disallow_untyped_defs`, starting with `services/launcher/` where the
+  inferred-`object` findings cluster. Do NOT bulk-annotate: the value is in the
+  modules where a type actually constrains something.
+- **Verify**: (a) the addendum states it; (b) `mypy` is green on the modules
+  opted in, and `scripts/ci_local.sh` gates them.
+- **Status**: planned (2026-09-01). Lanes: python, ci.
+- **Source**: check-code whole-tree sweep 2026-09-01; the per-finding dismissals
+  are in `.ants_review_falsepos.jsonl`.
+
+---
+
+#### Pass 58.4 `vulture` has no committed whitelist, so its output is partial (LOW, S)
+
+- **Target**: a new `.vulture-whitelist.py`, and `scripts/ci_local.sh` if it is
+  ever gated.
+- **Why**: `vulture --min-confidence 80` returns 22 findings. 15 are pytest
+  fixture parameters that are used by injection and cannot be seen statically
+  (`isolated_singletons`, `factory_snapshot`, `noop_download`); the remaining 7
+  are `__exit__` signature parameters (`services/database.py:412` `exc_val`,
+  `exc_tb`), a signal-handler `frame` (`app.py:1731`), and genuinely unused
+  locals (`routes/trophies.py:35` `blocking`/`weight`,
+  `services/image_utils.py:196` `outscale`, `services/launch_resolver.py:106`
+  `sys_emu_row`). Without a whitelist the framework noise recurs on every run,
+  and `check-code` is obliged to report the whole run as partial.
+- **Plan**: `vulture --make-whitelist` over the tracked Python files, prune it to
+  the framework entries only, and commit it. Then look at the ~4 real unused
+  locals separately — those are a genuine (tiny) cleanup, and they are the
+  signal the whitelist is meant to expose.
+- **Verify**: `vulture --min-confidence 80 <files> .vulture-whitelist.py`
+  returns only findings a human has not already dismissed.
+- **Status**: planned (2026-09-01). Lanes: python, ci.
+- **Source**: check-code whole-tree sweep 2026-09-01.
+
+---
+
+#### Pass 58.5 Two release steps use a pinned action for what the runner already has (INFO, M)
+
+- **Target**: `.github/workflows/release.yml:162` and `:251`, both
+  `softprops/action-gh-release@718ea10b…` (v3.0.1).
+- **Why**: `zizmor` reports `superfluous-actions` on both — the runner ships
+  `gh`, so `gh release create` / `gh release upload` in a `run:` step does the
+  same job with one less third-party action in the supply chain. These are the
+  only two findings left after the 2026-09-01 hardening pass (Informational, so
+  deliberately not fixed there).
+- **Plan**: weigh it rather than doing it reflexively. The action handles draft
+  creation, multi-file globbing and the release body in one declarative block;
+  hand-rolling that in `gh` is more shell in the most failure-sensitive workflow
+  in the repo, and a release that half-publishes is expensive. Against that: one
+  fewer pinned dependency for Dependabot to track and one fewer third party with
+  a token in the release job. **Recommendation: keep the action** unless the
+  supply-chain argument becomes load-bearing; record that decision here so the
+  next sweep does not re-raise it.
+- **Verify**: if changed, a full `workflow_dispatch` release to a draft, with
+  every asset and the changelog body present.
+- **Status**: planned (2026-09-01) — decision, not a fix. Lanes: ci.
+- **Source**: check-code whole-tree sweep 2026-09-01 (zizmor, Informational).
+
+---
+
+#### Pass 58.6 Five `shellcheck` SC2015 hits, verified inert (INFO, S)
+
+- **Target**: `setup.sh:143`, `scripts/ci_local.sh:86`, `:102`, `:131`, `:166`.
+- **Why**: `shellcheck` flags `A && B || C` because C also runs when A succeeds
+  and B fails. Checked all five against source and **none can fire**. In
+  `ci_local.sh` the pattern is `<tool> && ok "x" || fail "x"`, and `ok()` is a
+  bare `printf` (line 55) which does not fail in practice — so `fail` cannot run
+  after a successful tool. In `setup.sh:143` the `&&` block is
+  `{ if … then USE_GUI=true else USE_GUI=false fi }`, and both branches end in an
+  assignment returning 0, so the `|| { … }` fallback is unreachable when
+  `install_pkg` succeeded. All five are `info` severity.
+- **Plan**: no code change. Recorded so the next sweep does not re-verify them.
+  If `ci_local.sh` is ever restructured, prefer a plain `if`/`else` — the pattern
+  is only safe because `ok()` happens to be a one-line `printf`, which is a
+  property nothing enforces.
+- **Verify**: n/a — the finding is recorded as analysed, not fixed.
+- **Status**: done (2026-09-01) — verified inert, no change warranted. Lanes: ci.
+- **Source**: check-code whole-tree sweep 2026-09-01.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
