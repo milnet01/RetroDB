@@ -31,7 +31,13 @@ jobs:
     # Only run for Dependabot PRs that actually touched requirements.txt;
     # human-authored PRs already include the regenerated lockfile, and the
     # `paths:` filter above keeps the workflow itself dormant.
-    if: github.actor == 'dependabot[bot]'
+    #
+    # Gate on the PR's AUTHOR, not on `github.actor`. `github.actor` is whoever
+    # most recently caused the event, so a human re-running this workflow on a
+    # Dependabot PR makes it their login — the check then fails open or closed
+    # depending on who touched it last, which is not the question being asked
+    # (zizmor bot-conditions). The PR author is fixed for the life of the PR.
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -42,6 +48,13 @@ jobs:
           # the resulting push. We don't need a downstream re-run here — the
           # original CI run on the Dependabot PR is what the lockfile commit
           # is meant to satisfy. Keep the default token; no PAT required.
+          #
+          # persist-credentials MUST stay on here: the last step does a real
+          # `git push`, which reads the credential this checkout leaves in
+          # .git/config. This is the one checkout in the repo that cannot take
+          # `persist-credentials: false` — zizmor's artipacked finding on this
+          # line is accepted, not overlooked.
+          persist-credentials: true
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 

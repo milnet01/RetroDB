@@ -17,19 +17,25 @@ on:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
-# SLSA build provenance + keyless cosign signatures need `id-token: write`
-# for the OIDC exchange with Sigstore. `attestations: write` publishes the
-# generated attestation back to the repo. `contents: write` is for the
-# release itself.
+# Least privilege at the workflow level; each job widens only to what it
+# actually needs (zizmor excessive-permissions). A job with no `permissions:`
+# block inherits whatever sits here, so the default stays read-only.
 permissions:
-  contents: write
-  id-token: write
-  attestations: write
+  contents: read
 
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+
+    # SLSA build provenance + keyless cosign signatures need `id-token: write`
+    # for the OIDC exchange with Sigstore. `attestations: write` publishes the
+    # generated attestation back to the repo. `contents: write` is for the
+    # release itself.
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
 
     steps:
       # All third-party actions are pinned by commit SHA — tag references can
@@ -39,6 +45,9 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
         with:
           ref: ${{ github.event.inputs.tag || github.ref }}
+          # Nothing here pushes — the release is published through
+          # action-gh-release's own token, not through git (zizmor artipacked).
+          persist-credentials: false
 
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
         with:
@@ -74,12 +83,18 @@ jobs:
           ls -la /tmp/staging
 
       - name: Generate SBOM (CycloneDX)
+        env:
+          # Interpolated through the environment rather than spliced into the
+          # script text: a `${{ }}` expansion inside a `run:` block is pasted in
+          # before bash sees the line, so a crafted workflow_dispatch tag would
+          # run as shell (zizmor template-injection).
+          RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
         run: |
           # One SBOM per release — all three ZIPs share the same Python
           # dependency set (only the start-script varies per platform).
           cyclonedx-py requirements requirements.lock \
             --output-format JSON \
-            --output-file /tmp/staging/RetroDB-${{ github.event.inputs.tag || github.ref_name }}-sbom.cdx.json
+            --output-file "/tmp/staging/RetroDB-${RELEASE_TAG}-sbom.cdx.json"
           ls -la /tmp/staging
 
       - name: Emit SHA-256 checksums for ZIPs + SBOM
@@ -168,6 +183,12 @@ jobs:
   build-standalone:
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.build_standalone }}
     needs: build-and-release
+
+    # Attaches assets to the draft release build-and-release already created.
+    # No cosign signing and no attestation here, so neither `id-token` nor
+    # `attestations` is needed (zizmor excessive-permissions).
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -179,6 +200,9 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
         with:
           ref: ${{ github.event.inputs.tag || github.ref }}
+          # Nothing here pushes — the release is published through
+          # action-gh-release's own token, not through git (zizmor artipacked).
+          persist-credentials: false
 
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
         with:
