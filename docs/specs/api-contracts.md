@@ -123,11 +123,18 @@ The decorator family in `services/auth.py` distinguishes API and HTML paths via
 - **HTML path, no user** → 302 to `/login?next=…`.
 - **HTML path, user but no permission** → flash + 302 to `/dashboard`.
 
-`admin_required` and `editor_required` currently emit the redirect form even on
-API paths — they predate Pass 45.1's API-aware split. Routes that need an API
-envelope from admin gating should compose `permission_required('manage_users')`
-instead. Migrating those two decorators to the API-aware shape is tracked in
-`roadmap.md` (search "admin_required").
+All four decorators — `login_required`, `admin_required`, `editor_required` and
+`permission_required` — produce the table above, because all four route their
+refusals through `services/auth.py`'s `_deny_unauthenticated()` and
+`_deny_forbidden()`. **Do not re-implement the API-vs-page split inside a
+decorator**; that divergence is what Pass 49.5 closed.
+
+> **Corrected 2026-09-01 (Pass 49.5).** This read: *"`admin_required` and
+> `editor_required` currently emit the redirect form even on API paths — they
+> predate Pass 45.1's API-aware split."* That was true, and the migration it
+> deferred has now happened, so composing `permission_required` is no longer
+> required to get an envelope from admin gating. `login_required` had the same
+> gap and this paragraph never mentioned it.
 
 ### 3.2 Validation-failure shape (current vs target)
 

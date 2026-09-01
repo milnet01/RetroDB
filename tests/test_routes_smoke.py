@@ -99,17 +99,43 @@ class TestAuthGuards:
         # Pass 41.9 — `/api/recently-viewed` removed (zero callers; the
         # dashboard reads `user_game_views` directly via app.py).
     ])
-    def test_protected_get_redirects_unauthenticated(self, app_client, path):
+    def test_protected_get_denies_unauthenticated(self, app_client, path):
+        """An unauthenticated GET is refused -- in the shape its caller reads.
+
+        The contract being asserted is unchanged: none of these serves
+        content to an anonymous caller. What changed on 2026-09-01 is the
+        SHAPE of the refusal, and this test previously pinned the wrong one.
+
+        api-contracts.md invariant 1: "Every /api/* route returns JSON,
+        never HTML or a redirect" -- and a redirect here is worse than
+        untidy, because fetch() follows it and the calling JS sees a 200
+        carrying dashboard HTML. So /api/* must answer 401 with the
+        envelope; a page route still redirects to /login or /setup.
+
+        This is a stronger assertion than the one it replaces: it proves the
+        envelope as well as the refusal.
+        """
         resp = app_client.get(path, follow_redirects=False)
-        # login_required redirects unauthenticated GETs. Destination is /login
-        # on a set-up install, or /setup when the first-time-setup middleware
-        # detects a blank DB (e.g. on a fresh CI runner). Either proves the
-        # endpoint is not serving content to unauthenticated callers.
-        assert resp.status_code in (301, 302, 303), \
-            f"Expected redirect for {path}, got {resp.status_code}"
-        location = resp.headers.get('Location', '')
-        assert '/login' in location or '/setup' in location, \
-            f"Expected redirect to /login or /setup for {path}, got {location!r}"
+
+        if path.startswith('/api/'):
+            assert resp.status_code == 401, (
+                f"{path} must answer an anonymous caller with 401 JSON, "
+                f"got {resp.status_code}. A 3xx here is the Pass 45.1 defect: "
+                f"fetch() follows it and the caller reads 200-with-HTML as "
+                f"success."
+            )
+            body = resp.get_json()
+            assert body is not None, f"{path} returned non-JSON to an anonymous caller"
+            assert body.get('success') is False, f"{path}: {body!r}"
+        else:
+            # Page routes keep the redirect. Destination is /login on a
+            # set-up install, or /setup when the first-time-setup middleware
+            # detects a blank DB (e.g. on a fresh CI runner).
+            assert resp.status_code in (301, 302, 303), \
+                f"Expected redirect for {path}, got {resp.status_code}"
+            location = resp.headers.get('Location', '')
+            assert '/login' in location or '/setup' in location, \
+                f"Expected redirect to /login or /setup for {path}, got {location!r}"
 
     @pytest.mark.parametrize("path", [
         '/api/delete-game/1',
@@ -167,8 +193,11 @@ class TestLocalSearchInputValidation:
     """Tests for /api/games/find input-handling that don't require DB state."""
 
     def test_find_requires_login(self, app_client):
+        # 2026-09-01: was a 302 assertion. /api/* now answers 401 JSON per
+        # api-contracts.md invariant 1 -- the refusal is unchanged, its
+        # shape is not. See TestAuthGuards for the full reasoning.
         resp = app_client.get('/api/games/find?q=zelda', follow_redirects=False)
-        assert resp.status_code in (301, 302, 303), \
-            f"/api/games/find should require auth, got {resp.status_code}"
-        location = resp.headers.get('Location', '')
-        assert '/login' in location or '/setup' in location
+        assert resp.status_code == 401, \
+            f"/api/games/find should require auth (401 JSON), got {resp.status_code}"
+        body = resp.get_json()
+        assert body is not None and body.get('success') is False, f"{body!r}"

@@ -89,8 +89,15 @@ def api_login():
         execute("UPDATE users SET password_hash = ? WHERE id = ?",
                 (hash_password(password), user['id']))
 
-    # Login successful.
-    record_login_attempt(client_ip, True)
+    # Login successful. Clear only THIS user's bucket.
+    #
+    # This was `record_login_attempt(client_ip, True)`, which pops the whole
+    # per-IP entry -- so any household account holder could reset the
+    # counter at will: four guesses against `admin`, one successful login
+    # as themselves, repeat forever. That is the viewer-to-admin escalation
+    # the threat model puts in scope, and the per-(ip, user) pattern was
+    # already in this file at api_change_password.
+    record_login_attempt(f"{client_ip}:login:{user_id}", True)
 
     # Pass 24.2 — rotate the session on the auth boundary so any pre-login
     # session state (including an attacker-planted cookie) is discarded.
@@ -296,7 +303,12 @@ def api_delete_user(user_id):
 def api_user_settings():
     """Get or update current user's settings"""
     if not g.user:
-        return error(_('Not logged in'), code=200)
+        # 401, not code=200. The 200-with-success:false shape is this
+        # file's house convention for VALIDATION rejections, where the
+        # caller is authenticated and the message is the payload. An
+        # anonymous caller is a different case and api-contracts.md §11
+        # mandates 401 for it (Pass 49.5).
+        return error(_('Not logged in'), 401)
 
     if request.method == 'GET':
         settings = get_user_settings(g.user['id'])
@@ -353,7 +365,7 @@ def api_user_settings():
 def api_change_password():
     """Change current user's password (any authenticated role — Pass 24.1)."""
     if not g.user:
-        return error(_('Not logged in'), code=200)
+        return error(_('Not logged in'), 401)
 
     # Pass 41.1.B — bucket on (ip, user_id), not bare IP.  The legacy
     # IP-only bucket was shared with /api/login, so 5 failed
@@ -409,7 +421,7 @@ def api_change_password():
 def api_force_change_password():
     """Change password when forced (first login with default password)"""
     if not g.user:
-        return error(_('Not logged in'), code=200)
+        return error(_('Not logged in'), 401)
 
     if not g.user.get('force_password_change'):
         return error(_('Password change not required'), code=200)

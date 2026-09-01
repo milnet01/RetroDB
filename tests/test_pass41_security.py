@@ -49,15 +49,26 @@ class TestPass41_1ALoginRequiredAllowList:
             f"login_required must not contain {needle!r} (Pass 41.1.A)"
         )
 
-    def test_decorator_still_redirects_anonymous(self):
-        """Sanity: removing the allow-list must not break the anonymous
-        redirect path."""
+    def test_decorator_still_refuses_anonymous(self):
+        """Sanity: removing the allow-list must not break the anonymous path.
+
+        2026-09-01: the redirect moved into services.auth._deny_unauthenticated
+        so all four decorators share one /api/-vs-page split -- three of them
+        had been 302ing on /api/* at 115 sites. The contract is unchanged and
+        is asserted at its new home; login_required must still refuse, and
+        must route that refusal through the shared helper rather than
+        hand-rolling it again.
+        """
         from inspect import getsource
         import services.auth as a
 
         body = getsource(a.login_required)
         assert "if not g.user" in body
-        assert "url_for('auth.login'" in body
+        assert "_deny_unauthenticated" in body
+
+        deny = getsource(a._deny_unauthenticated)
+        assert "url_for('auth.login'" in deny
+        assert "/api/" in deny
 
 
 # -----------------------------------------------------------------------------

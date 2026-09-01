@@ -112,12 +112,48 @@ class TestPass45_1TrackProgressPermission:
         error rather than a raw 403 page."""
         import services.auth as auth_mod
         from inspect import getsource
-        body = getsource(auth_mod.permission_required)
         # Both branches must exist.  We grep here because the routing
         # tables don't expose any non-/api/* permission_required usage
         # in this repo (the smoke wouldn't exercise the branch).
-        assert "redirect(url_for('dashboard'))" in body
-        assert "/api/" in body
+        #
+        # 2026-09-01: this read getsource(permission_required) and asserted
+        # the literal there. The two branches were hoisted into _deny_*
+        # so that admin_required / editor_required / login_required could
+        # share them -- they had been 302ing on /api/* at 115 sites. The
+        # CONTRACT is unchanged, so this asserts it at its new home rather
+        # than being relaxed: the split still has to exist, and
+        # permission_required still has to route through it.
+        deny = getsource(auth_mod._deny_forbidden)
+        assert "redirect(url_for('dashboard'))" in deny
+        assert "/api/" in deny
+
+        used = getsource(auth_mod.permission_required)
+        assert "_deny_forbidden" in used, (
+            "permission_required no longer routes its denial through "
+            "_deny_forbidden -- the /api/ vs page split may have been "
+            "reintroduced per-decorator, which is what drifted before."
+        )
+
+    def test_all_four_decorators_share_the_api_split(self):
+        """The 302-on-/api/* defect was three decorators missing a branch a
+        fourth already had. Pin that none of them hand-rolls it again.
+
+        Found by five independent review lanes on 2026-09-01: 115 /api/*
+        routes answered a denial with a 302 to /dashboard, which fetch()
+        follows transparently, so calling JS saw 200-with-dashboard-HTML.
+        """
+        import services.auth as auth_mod
+        from inspect import getsource
+        for name in ('login_required', 'admin_required',
+                     'editor_required', 'permission_required'):
+            src = getsource(getattr(auth_mod, name))
+            assert "_deny_unauthenticated" in src or "_deny_forbidden" in src, (
+                f"{name} does not use the shared deny helpers"
+            )
+            assert "redirect(url_for('auth.login'" not in src, (
+                f"{name} hand-rolls the unauthenticated redirect again -- "
+                f"that is the shape that skipped the /api/ branch"
+            )
 
 
 # -----------------------------------------------------------------------------

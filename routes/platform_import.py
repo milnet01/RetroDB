@@ -125,9 +125,16 @@ def api_steam_fetch_library():
     """Fetch the user's Steam library with duplicate detection."""
     from scraper.scrape_steam import get_owned_games, get_player_summary, resolve_vanity_url
 
-    api_keys = get_saved_api_keys()
-    steam_api_key = api_keys.get('steam_api_key', '')
-    steam_id = api_keys.get('steam_id', '')
+    # Per-user, not install-wide. This read get_saved_api_keys(), which
+    # resolves the SHARED scraper_settings.json -- so whichever household
+    # member's Steam credentials were in that blob were used for every
+    # caller's library fetch, and a user whose credentials live only in
+    # user_settings got "not configured" here while their sync job worked.
+    # auth.md calls the RA fallback the only install-wide read permitted.
+    # services/jobs/platform_sync.py::_get_steam_credentials is the correct
+    # helper and two other call sites already use it.
+    from services.jobs.platform_sync import _get_steam_credentials
+    steam_api_key, steam_id = _get_steam_credentials(user_id=g.user['id'])
 
     # Allow overriding from request body
     data = request.get_json() or {}
@@ -306,8 +313,12 @@ def api_steam_sync_status():
     return jsonify(steam_sync_job.get_status())
 
 
+# Cancelling a sync is the same privilege as starting one (both are
+# @editor_required's `scrape` surface); at @login_required a viewer could
+# cancel an editor's running import. The museum sibling already gates its
+# cancel this way.
 @bp.route('/api/steam/cancel-sync', methods=['POST'])
-@login_required
+@editor_required
 def api_steam_cancel_sync():
     """Cancel the Steam achievement sync."""
     from services.jobs import steam_sync_job
@@ -673,7 +684,7 @@ def api_xbox_sync_status():
 
 
 @bp.route('/api/xbox/cancel-sync', methods=['POST'])
-@login_required
+@editor_required
 def api_xbox_cancel_sync():
     """Cancel the Xbox achievement sync."""
     from services.jobs import xbox_sync_job

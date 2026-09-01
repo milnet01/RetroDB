@@ -147,26 +147,47 @@ class PSNRefreshJob:
             'first_game': first_game_title
         }
 
-    def pause(self):
+    # This job is a process-wide singleton, so `self.running` alone does not
+    # say WHOSE job is running. Until 2026-09-01 pause/resume/cancel checked
+    # only that, and every control route is reachable by any signed-in role
+    # -- so a read-only viewer could cancel the admin's running refresh.
+    # self._user_id is already stored at start() precisely to identify the
+    # owner; it was simply never compared against.
+    #
+    # caller_id=None preserves the internal callers (shutdown drain, resume
+    # after restart), which act on behalf of the job rather than a request.
+    def _owns(self, caller_id):
+        """True when caller_id may control the running job."""
+        return caller_id is None or self._user_id is None or self._user_id == caller_id
+
+    _NOT_YOURS = {'success': False, 'error': 'That job belongs to another user'}
+
+    def pause(self, caller_id=None):
         """Pause the current job"""
         with self._lock:
             if self.running and not self.completed:
+                if not self._owns(caller_id):
+                    return dict(self._NOT_YOURS)
                 self.paused = True
                 return {'success': True}
             return {'success': False, 'error': 'No running job to pause'}
 
-    def resume(self):
+    def resume(self, caller_id=None):
         """Resume the current job"""
         with self._lock:
             if self.running and self.paused:
+                if not self._owns(caller_id):
+                    return dict(self._NOT_YOURS)
                 self.paused = False
                 return {'success': True}
             return {'success': False, 'error': 'No paused job to resume'}
 
-    def cancel(self):
+    def cancel(self, caller_id=None):
         """Cancel the current job"""
         with self._lock:
             if self.running and not self.completed:
+                if not self._owns(caller_id):
+                    return dict(self._NOT_YOURS)
                 self.cancelled = True
                 self.paused = False  # Unpause so the loop can exit
                 return {'success': True}

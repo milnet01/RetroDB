@@ -206,9 +206,19 @@ class TestPasswordPolicyAndRateLimit:
 # =============================================================================
 
 class TestEditorRequiredOnDestructiveEndpoints:
-    """Viewer-level accounts must get a 302 redirect to /dashboard when
-    hitting destructive endpoints (the editor_required decorator's
-    reject path)."""
+    """Destructive metadata endpoints must be gated at editor or above.
+
+    2026-09-01, two corrections to this docstring's old claim that a viewer
+    "must get a 302 redirect to /dashboard":
+
+    1. On /api/* the reject path is now 401/403 JSON, not a 302. A redirect
+       there is the Pass 45.1 defect -- fetch() follows it and the caller
+       reads 200-with-dashboard-HTML as success.
+    2. collector-trophies refresh left this list. It recalculates the
+       CALLER'S OWN rows, which auth.md grants to every signed-in role via
+       `track_progress`; gated at editor it made the feature unusable for
+       player and viewer, and it is the only writer of those rows.
+    """
 
     DESTRUCTIVE_ENDPOINTS = [
         ('games_media.api_delete_game', '/api/delete-game/1', 'POST'),
@@ -221,8 +231,40 @@ class TestEditorRequiredOnDestructiveEndpoints:
         ('bulk_scrape.api_bulk_scrape_job_cancel', '/api/bulk-scrape-job/cancel', 'POST'),
         ('achievements.api_sync_game_achievements', '/api/achievements/sync/1', 'POST'),
         ('achievements.api_refresh_achievements', '/api/achievements/refresh/1', 'POST'),
-        ('collector_trophies.refresh_trophies', '/api/collector-trophies/refresh', 'POST'),
     ]
+
+    # Not destructive metadata work -- self-tracking, and therefore
+    # `track_progress`. Pinned explicitly so the move off editor_required is
+    # a recorded decision rather than a gap in the list above.
+    SELF_TRACKING_ENDPOINTS = [
+        ('collector_trophies.refresh_trophies',
+         '/api/collector-trophies/refresh', 'track_progress'),
+    ]
+
+    def test_self_tracking_endpoints_use_track_progress(self):
+        """A route writing only the caller's own rows is gated at
+        `track_progress`, which every signed-in role holds -- not at editor.
+        """
+        import re as _re
+        for endpoint, _path, permission in self.SELF_TRACKING_ENDPOINTS:
+            module_name, view_name = endpoint.split('.', 1)
+            src = read_source(os.path.join('routes', f'{module_name}.py'))
+            pat = _re.compile(
+                rf'((?:@\w+(?:\([^)]*\))?\s*\n)+)\s*def {view_name}\b',
+                _re.MULTILINE,
+            )
+            m = pat.search(src)
+            assert m, f"Could not locate {endpoint}"
+            decorators = m.group(1)
+            assert f"@permission_required('{permission}')" in decorators, (
+                f"{endpoint} should be @permission_required('{permission}'), "
+                f"got: {decorators!r}"
+            )
+            assert '@editor_required' not in decorators, (
+                f"{endpoint} is back on @editor_required -- that made the "
+                f"feature unreachable for player and viewer, who are the "
+                f"roles it exists for"
+            )
 
     def test_all_destructive_endpoints_use_editor_required(self):
         """Source-level check: each destructive endpoint has @editor_required

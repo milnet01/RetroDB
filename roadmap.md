@@ -977,7 +977,20 @@ Resolved (2026-07-01, v3.13.0): stale data/psn_tokens.json removed; help.html st
 - **Decision**: add an explicit `system` validation mirroring `reports.py:405`.
 
 #### Pass 49.5 `/api/*` auth decorators 302-redirect instead of JSON 401/403 (LOW, M)
-- **Status**: deferred — cross-cutting, ~15 routes; spec-acknowledged debt.
+- **Status**: done (2026-09-01). Lanes: auth. Both halves closed. The
+  `is_api` branch was hoisted out of `permission_required` into shared
+  `_deny_unauthenticated()` / `_deny_forbidden()` helpers in
+  `services/auth.py`, and all four decorators route through them —
+  `login_required` had the same gap and this bullet did not name it. The
+  three anonymous branches in `routes/auth.py` flipped from `code=200` to
+  401. Pinned by `test_all_four_decorators_share_the_api_split`, which
+  fails if a decorator hand-rolls the split again.
+  **The estimate was wrong by an order of magnitude**: this bullet said
+  "~15 routes"; a count on 2026-09-01 found **115** across 22 route
+  modules. Recorded because the severity (LOW) was set against the smaller
+  number, and five independent review lanes re-found it before it was
+  fixed — three of them separately flagging that `docs/specs/auth.md` had
+  told every reader the decorators were used only on page routes.
 - **Lane**: auth + every blueprint using `@admin_required`/`@editor_required`.
 - **Finding**: `admin_required`/`editor_required` (services/auth.py) still emit a
   302 on `/api/*` auth failure (only `permission_required` was migrated, Pass

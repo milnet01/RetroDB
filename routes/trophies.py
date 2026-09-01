@@ -1903,17 +1903,36 @@ def api_psn_bulk_refresh_start():
 @bp.route('/api/psn/bulk-refresh/status')
 @login_required
 def api_psn_bulk_refresh_status():
-    """Get status of PSN bulk refresh job"""
+    """Get status of PSN bulk refresh job.
+
+    The progress fields are shared -- any signed-in user may see THAT a
+    refresh is running, which the nav badge and toast both need. The two
+    identity fields are not: `current_game` / `current_npwr` name the game
+    another household member is refreshing right now. Pass 48.4 fixed
+    exactly this leak 900 lines up in this file for the per-game sync
+    states, and the bulk-refresh singleton was left carrying it.
+
+    Filtered here rather than in get_status() because that method is shared
+    with ten other job status routes and its output is what the owner's own
+    toast renders.
+    """
     from services.jobs import psn_refresh_job
-    return jsonify({'success': True, **psn_refresh_job.get_status()})
+    status = psn_refresh_job.get_status()
+    owner = getattr(psn_refresh_job, '_user_id', None)
+    if owner is not None and owner != g.user['id']:
+        status['current_game'] = None
+        status['current_npwr'] = None
+    return jsonify({'success': True, **status})
 
 
+# The three control routes pass the caller's id so the job can refuse a
+# request from someone who does not own the running refresh (2026-09-01).
 @bp.route('/api/psn/bulk-refresh/pause', methods=['POST'])
 @login_required
 def api_psn_bulk_refresh_pause():
     """Pause the PSN bulk refresh job"""
     from services.jobs import psn_refresh_job
-    return jsonify(psn_refresh_job.pause())
+    return jsonify(psn_refresh_job.pause(caller_id=g.user['id']))
 
 
 @bp.route('/api/psn/bulk-refresh/resume', methods=['POST'])
@@ -1921,7 +1940,7 @@ def api_psn_bulk_refresh_pause():
 def api_psn_bulk_refresh_resume():
     """Resume the PSN bulk refresh job"""
     from services.jobs import psn_refresh_job
-    return jsonify(psn_refresh_job.resume())
+    return jsonify(psn_refresh_job.resume(caller_id=g.user['id']))
 
 
 @bp.route('/api/psn/bulk-refresh/cancel', methods=['POST'])
@@ -1929,7 +1948,7 @@ def api_psn_bulk_refresh_resume():
 def api_psn_bulk_refresh_cancel():
     """Cancel the PSN bulk refresh job"""
     from services.jobs import psn_refresh_job
-    return jsonify(psn_refresh_job.cancel())
+    return jsonify(psn_refresh_job.cancel(caller_id=g.user['id']))
 
 
 

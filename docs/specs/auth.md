@@ -110,18 +110,39 @@ inside `login_required` (`auth.login`, `auth.api_login`, `static`,
 one of those names became silently public. Public pages must simply not
 apply the decorator — there is no allow-list.
 
-**Pass 45.1 contract on `permission_required`:** the JSON-envelope branch
-on `/api/*` is mandatory. A pre-Pass-45.1 decorator returned a 302 on
-every failure; `fetch()` followed it transparently and the caller saw a
+**Pass 45.1 contract, now on all four decorators:** the JSON-envelope
+branch on `/api/*` is mandatory. A pre-Pass-45.1 decorator returned a 302
+on every failure; `fetch()` followed it transparently and the caller saw a
 200 of dashboard HTML, which is impossible to handle. Pinned by
 `tests/test_pass45_security.py::TestPass45_1TrackProgressPermission`.
 
-> ⚠️ `admin_required` and `editor_required` (`services/auth.py:295-336`)
-> still emit the redirect form on `/api/*` failures — Pass 45.1 only
-> migrated `permission_required`. Today this is safe because the two
-> decorators are used only on page routes; if you reach for them on an
-> `/api/*` route, compose `permission_required('manage_users')` (or
-> equivalent) instead, or migrate both decorators first.
+`login_required`, `admin_required`, `editor_required` and
+`permission_required` all route their refusals through two shared helpers
+in `services/auth.py` — `_deny_unauthenticated()` (401 JSON on `/api/*`,
+else a 302 to the login page) and `_deny_forbidden()` (403 JSON, else a
+flash and a 302 to the dashboard). **Do not re-implement that split inside
+a decorator.** Sharing it is the point: the defect below was three
+decorators missing a branch the fourth already had, and
+`test_all_four_decorators_share_the_api_split` fails if one hand-rolls it
+again.
+
+> **Corrected 2026-09-01.** This block previously read: *"`admin_required`
+> and `editor_required` still emit the redirect form on `/api/*` failures
+> — Pass 45.1 only migrated `permission_required`. Today this is safe
+> because the two decorators are used only on page routes."*
+>
+> The first half was true and is now fixed. **The second half was never
+> true.** A count taken on 2026-09-01 found **115** `/api/*` routes gated
+> by those two decorators, across 22 route modules — `maintenance.py` (19),
+> `settings.py` (13), `bulk_scrape.py` (11), `museum.py` (8), and this
+> file's own `/api/users*` endpoints (4) among them. Every one answered a
+> denial with a 302 that `fetch()` followed into 200-with-HTML.
+>
+> It is recorded rather than deleted because the sentence is why the defect
+> survived: five independent review lanes found the routes, and three of
+> them separately flagged that this paragraph had told every reader the
+> problem did not exist. A false reassurance in a contract document is more
+> durable than the bug it describes.
 
 ### Adding a new permission
 1. Add the key to the right rows in `services.auth.ROLE_PERMISSIONS`.

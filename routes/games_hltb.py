@@ -7,7 +7,7 @@
 
 from flask import Blueprint, jsonify, render_template, request
 
-from services.auth import login_required, admin_required
+from services.auth import login_required, admin_required, permission_required
 from services.api_helpers import handle_api_errors, success, error
 from services.hltb_service import (
     lookup_service, pending_queue, bulk_orchestrator,
@@ -17,8 +17,12 @@ from services.hltb_service import (
 bp = Blueprint('games_hltb', __name__)
 
 
+# `edit`, not `login_required`: lookup writes playtime_estimate whenever
+# `preview` is falsy, and `preview` defaults to False -- so this is a write
+# path, not a read one. save/clear likewise: clear() NULLs four curated
+# columns. At @login_required the read-only `viewer` role reached all three.
 @bp.route('/api/hltb-lookup/<int:game_id>', methods=['POST'])
-@login_required
+@permission_required('edit')
 @handle_api_errors
 def api_hltb_lookup(game_id):
     """Look up playtime from HLTB for a game."""
@@ -35,7 +39,7 @@ def api_hltb_lookup(game_id):
 
 
 @bp.route('/api/hltb-save/<int:game_id>', methods=['POST'])
-@login_required
+@permission_required('edit')
 @handle_api_errors
 def api_hltb_save(game_id):
     """Save HLTB playtime data to the database."""
@@ -47,7 +51,7 @@ def api_hltb_save(game_id):
 
 
 @bp.route('/api/hltb-clear/<int:game_id>', methods=['POST'])
-@login_required
+@permission_required('edit')
 @handle_api_errors
 def api_hltb_clear(game_id):
     """Clear HLTB playtime data from the database."""

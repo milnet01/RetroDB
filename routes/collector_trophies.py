@@ -19,7 +19,7 @@ from datetime import datetime, timezone
 from flask import Blueprint, render_template, jsonify, g
 
 from services.api_helpers import handle_api_errors, success
-from services.auth import login_required, editor_required
+from services.auth import login_required, permission_required
 from services.database import query, execute
 from services.formatters import get_manufacturer
 
@@ -654,8 +654,14 @@ def get_all_trophies():
     })
 
 
+# `track_progress`, not `editor_required`. This recalculates the CALLER'S
+# OWN trophy rows (user_id=g.user['id']) -- self-tracking, which auth.md
+# grants to every signed-in role. Gated at editor it was worse than
+# restrictive: it is the only writer of collector_trophies rows, so a
+# player or viewer could never earn one, and the 302 the decorator returned
+# made the failure unhandleable by the page's fetch() caller.
 @bp.route('/api/collector-trophies/refresh', methods=['POST'])
-@editor_required
+@permission_required('track_progress')
 @handle_api_errors
 def refresh_trophies():
     """Recalculate the caller's trophy progress from current database state."""

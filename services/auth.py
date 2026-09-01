@@ -165,7 +165,15 @@ def get_current_user():
     """
     user_id = session.get('user_id')
     if user_id:
-        return query("SELECT * FROM users WHERE id = ?", (user_id,), one=True)
+        # `AND is_active = 1` matters as much here as it does in api_login
+        # (routes/auth.py). Without it, deactivating a user hid them from
+        # every UI surface while their existing session cookie kept full
+        # role privileges for the remaining PERMANENT_SESSION_LIFETIME --
+        # and deactivation is the only revocation short of deletion.
+        return query(
+            "SELECT * FROM users WHERE id = ? AND is_active = 1",
+            (user_id,), one=True,
+        )
     return None
 
 
@@ -245,10 +253,44 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not g.user:
-            flash('Please log in to access this page', 'warning')
-            return redirect(url_for('auth.login', next=request.url))
+            return _deny_unauthenticated()
         return f(*args, **kwargs)
     return decorated_function
+
+
+def _deny_unauthenticated():
+    """Reject a caller with no session, in the shape the caller can read.
+
+    Pass 45.1 established this for `permission_required` and the branch was
+    never copied to its three siblings, so 115 `/api/*` routes answered a
+    denial with a 302 to /dashboard. `fetch()` follows a redirect
+    transparently, so the calling JS saw a 200 carrying dashboard HTML --
+    indistinguishable from success, and impossible to handle. Two live
+    callers gated on `response.ok` alone and read it as success.
+
+    Hoisted here so the four decorators cannot drift again.
+    """
+    if request.path.startswith('/api/'):
+        from services.api_helpers import error as api_error
+        return api_error('Authentication required', 401)
+    flash('Please log in to access this page', 'warning')
+    return redirect(url_for('auth.login', next=request.url))
+
+
+def _deny_forbidden(flash_message):
+    """Reject an authenticated caller who lacks the right, same split.
+
+    `flash_message` is used only on the HTML branch; the JSON branch returns
+    one canonical string so a client never has to parse prose to tell a
+    permission failure from anything else.
+    """
+    if request.path.startswith('/api/'):
+        from services.api_helpers import error as api_error
+        return api_error(
+            'You do not have permission to perform this action', 403,
+        )
+    flash(flash_message, 'error')
+    return redirect(url_for('dashboard'))
 
 
 def permission_required(permission):
@@ -268,25 +310,13 @@ def permission_required(permission):
         @wraps(f)
         def decorated_function(*args, **kwargs):
             # Pass 45.1 — /api/* callers need the canonical JSON envelope,
-            # not a 302 to /dashboard.  fetch() with credentials follows
-            # the redirect transparently and the calling JS sees a 200 of
-            # dashboard HTML, which is impossible to handle correctly.
-            is_api = request.path.startswith('/api/')
+            # not a 302 to /dashboard. Shared with the three sibling
+            # decorators via _deny_* since 2026-09-01.
             if not g.user:
-                if is_api:
-                    from services.api_helpers import error as api_error
-                    return api_error('Authentication required', 401)
-                flash('Please log in to access this page', 'warning')
-                return redirect(url_for('auth.login', next=request.url))
+                return _deny_unauthenticated()
             if not has_permission(permission):
-                if is_api:
-                    from services.api_helpers import error as api_error
-                    return api_error(
-                        'You do not have permission to perform this action',
-                        403,
-                    )
-                flash('You do not have permission to access this feature', 'error')
-                return redirect(url_for('dashboard'))
+                return _deny_forbidden(
+                    'You do not have permission to access this feature')
             return f(*args, **kwargs)
         return decorated_function
     return decorator
@@ -305,11 +335,9 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not g.user:
-            flash('Please log in to access this page', 'warning')
-            return redirect(url_for('auth.login', next=request.url))
+            return _deny_unauthenticated()
         if g.user['role'] != 'admin':
-            flash('This action requires administrator privileges', 'error')
-            return redirect(url_for('dashboard'))
+            return _deny_forbidden('This action requires administrator privileges')
         return f(*args, **kwargs)
     return decorated_function
 
@@ -327,10 +355,8 @@ def editor_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not g.user:
-            flash('Please log in to access this page', 'warning')
-            return redirect(url_for('auth.login', next=request.url))
+            return _deny_unauthenticated()
         if g.user['role'] not in ['admin', 'editor']:
-            flash('This action requires editor privileges', 'error')
-            return redirect(url_for('dashboard'))
+            return _deny_forbidden('This action requires editor privileges')
         return f(*args, **kwargs)
     return decorated_function

@@ -1,3 +1,44 @@
+- version: 3.23.3
+  date: 2026-09-01
+  tags:
+  - type: fix
+    label: Household roles now do exactly what they say, and a deactivated account really is locked out
+  body: |
+    <ul>
+      <li><strong>Deactivating someone now ends their session.</strong> Turning
+        an account off hid it from every screen, but anyone already signed in
+        on that account kept working normally for up to a week. Deactivation
+        is the only way to lock someone out short of deleting them, so it now
+        takes effect on their very next click.</li>
+      <li><strong>Read-only accounts can no longer change game data.</strong>
+        Three "how long to beat" actions were open to every signed-in person,
+        including view-only ones \u2014 so a read-only account could overwrite a
+        playtime, or wipe it from every game in the library. They now need
+        edit rights, like every other action that changes a game.</li>
+      <li><strong>The trophy tracker works for everyone again.</strong>
+        Refreshing your own collector trophies needed editor rights, which the
+        Player and Viewer roles do not have \u2014 and it is the only thing that
+        writes those trophies. Those accounts could never earn one, and the
+        Refresh button just showed an error. It is your own progress, so it
+        now needs no special rights at all.</li>
+      <li><strong>One person's PlayStation refresh is no longer anyone else's
+        to stop.</strong> Any signed-in account could pause or cancel a
+        refresh someone else had started, and could see which game that person
+        was on. Both are now limited to whoever started it.</li>
+      <li><strong>Steam imports use your own account, not whoever saved theirs
+        first.</strong> The library import read one shared copy of the Steam
+        credentials instead of yours, so it could fetch somebody else's
+        library \u2014 while your own saved details appeared to be missing.</li>
+      <li><strong>Guessing an admin password is hard again.</strong> The limit
+        on failed sign-in attempts was shared across everyone on the network,
+        so anyone with their own account could clear it by signing in and keep
+        guessing indefinitely. The limit is now per account.</li>
+      <li><strong>Errors from the app now reach the page instead of vanishing.
+        </strong> When an action was refused, 115 of them replied in a form the
+        page could not read, so it looked like the action had worked. They now
+        report the refusal properly, and you see the real message.</li>
+    </ul>
+
 - version: 3.23.2
   date: 2026-08-06
   tags:
