@@ -117,8 +117,22 @@ DATAS = [
     # on the user's machine, so the bundle must carry them or it ships with no
     # translations (the dropdown would collapse to English-only).
     ('translations', 'translations'),
-    # Bundled docs the help-page route reads from disk.
-    ('docs', 'docs'),
+    # docs/ is deliberately NOT bundled. The comment here used to read "docs
+    # the help-page route reads from disk", and that was never true: the help
+    # route renders templates/help.<locale>.html (app.py::help_page), a
+    # TEMPLATE, and no runtime code opens anything under docs/ at all.
+    #
+    # Shipping the directory wholesale put maintainer-only material into every
+    # standalone bundle -- and, because PyInstaller's directory form takes the
+    # whole tree with no per-file filter, it swept in docs/psn-npsso.env, a
+    # real PSN NPSSO credential. That file is gitignored and is excluded from
+    # the source ZIPs by name (build_dist.py EXCLUDE_FILES), so the source path
+    # was safe and only this one leaked. Verified in a bundle built 2026-04-27:
+    # dist/retrodb/_internal/docs/psn-npsso.env was byte-identical to the live
+    # file. gitleaks could not catch it -- the file is untracked, so it is
+    # absent from the `git ls-files` set a secret scan is scoped to.
+    #
+    # If a doc ever genuinely needs to ship, add that FILE, never the tree.
     # Note: HLTB lookups go through the live API at runtime — no dataset
     # bundled. rom_tools_config.json / settings.json / scraper_settings.json
     # are user-editable and live in the writable data dir, not bundled.

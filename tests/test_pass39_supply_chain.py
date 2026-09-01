@@ -248,3 +248,66 @@ class TestPass39_5DependabotLockfileWorkflow:
             "workflow's lockfile-compile invocation must include "
             "--generate-hashes"
         )
+
+
+# -----------------------------------------------------------------------------
+# 59.1 — retrodb.spec must not bundle a directory tree wholesale
+# -----------------------------------------------------------------------------
+class TestPass59_1SpecBundlesNoSecretTrees:
+    """A PyInstaller `datas` entry of the form ('docs', 'docs') copies the
+    WHOLE directory with no per-file filter.
+
+    That is how a real PSN NPSSO credential shipped: `docs/psn-npsso.env` is
+    gitignored and is excluded from the source ZIPs by name, so the source
+    path was safe — but `retrodb.spec` bundled `('docs', 'docs')` and swept it
+    into every standalone build. Verified in a bundle built 2026-04-27, where
+    `dist/retrodb/_internal/docs/psn-npsso.env` was byte-identical to the live
+    file. `gitleaks` could not have caught it: the file is untracked, so it is
+    absent from the `git ls-files` set a secret scan is scoped to.
+
+    These are source-grep pins, matching this file's house style — the
+    contract is a file-on-disk invariant, and building a bundle to assert it
+    would cost minutes per test run.
+    """
+
+    SPEC = 'retrodb.spec'
+
+    def _read(self, rel):
+        with open(os.path.join(_REPO_ROOT, rel), encoding='utf-8') as fh:
+            return fh.read()
+
+    def test_spec_does_not_bundle_docs_directory(self):
+        """docs/ holds maintainer-only material and one gitignored credential.
+
+        Nothing reads it at runtime — `app.py::help_page` renders the
+        TEMPLATE `templates/help.<locale>.html`, not a file under docs/.
+        """
+        src = self._read(self.SPEC)
+        # Match a datas tuple whose SOURCE is the bare docs dir, in either
+        # quote style. A specific file under docs/ is fine and is not matched.
+        offenders = re.findall(r"""\(\s*['"]docs['"]\s*,""", src)
+        assert not offenders, (
+            "retrodb.spec bundles the whole docs/ tree. PyInstaller's "
+            "directory form has no per-file filter, so this ships "
+            "docs/psn-npsso.env (a real credential) in every standalone "
+            "build. Ship individual files if a doc is genuinely needed."
+        )
+
+    def test_no_datas_entry_sources_a_secret_bearing_dir(self):
+        """Generalises the above: `data/` and `logs/` carry the same hazard.
+
+        data/ holds settings.json, scraper_settings.json, psn_tokens.json,
+        xbox_tokens.json and .secret_key; logs/ accumulates scraper output
+        that the redactor is meant to scrub. Neither may be bundled whole.
+        The spec's per-FILE data entries (changelog.yaml and the per-locale
+        changelog.<locale>.yaml globs) are deliberate and are not matched
+        here, because their source is a file path, not the bare directory.
+        """
+        src = self._read(self.SPEC)
+        for risky in ('data', 'logs', 'database'):
+            found = re.findall(rf"""\(\s*['"]{risky}['"]\s*,""", src)
+            assert not found, (
+                f"retrodb.spec bundles the whole {risky}/ tree — that "
+                f"directory holds user or maintainer secrets. Bundle "
+                f"individual files instead."
+            )
