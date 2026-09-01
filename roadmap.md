@@ -935,7 +935,7 @@ Resolved (2026-07-01, v3.13.0): stale data/psn_tokens.json removed; help.html st
 > independently confirmed to hold. The deferred 49.x items below were re-raised
 > or newly surfaced and remain open.
 
-#### Pass 49.1 `clear-ra-data` library-wide vs per-user semantics (MEDIUM, S)
+#### Pass 49.9 `clear-ra-data` library-wide vs per-user semantics (MEDIUM, S)
 - **Status**: deferred — design decision, not a silent fix.
 - **Lane**: collections/achievements/trophies (Lane 10).
 - **Finding**: `routes/ra_sync.py` `api_clear_ra_data_all` / `_system` DELETE
