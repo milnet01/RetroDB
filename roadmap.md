@@ -6844,6 +6844,56 @@ were corrected in `2836bc3` and are not repeated here.
 - **Source**: in-session 2026-09-02 — the gate reported green on the commit
   that took main red.
 
+#### Pass 59.71 ACTION REQUIRED — rotate the PSN NPSSO token that standalone builds shipped (HIGH, S)
+
+- **Target**: the live PSN NPSSO credential (`docs/psn-npsso.env`, gitignored).
+  Not a code task: `a5e0939` already closed the leak path.
+- **Why**: `retrodb.spec` carried `('docs', 'docs')`, and PyInstaller's
+  directory form takes the whole tree with no per-file filter, so every
+  standalone build embedded the real token. Confirmed against a bundle already
+  on disk built 2026-04-27 — `dist/retrodb/_internal/docs/psn-npsso.env` was
+  byte-identical to the live file, so this was shipped, not theoretical. The
+  source ZIPs were never affected (the file is gitignored and `build_dist.py`
+  excludes it by name); only the PyInstaller path, which keeps its own
+  whitelist. `gitleaks` could not have caught it: it is scoped to
+  `git ls-files`, so an untracked secret a build step copies into an artifact
+  is invisible to it.
+- **Plan**: the code fix has landed and the local `dist/` was deleted. What
+  remains is the credential itself. **Rotate it if any standalone build was
+  ever shared** — Patreon release, a zip sent to a tester, anything off this
+  machine. If no bundle ever left the machine, no rotation is needed; record
+  that conclusion here so the question is not reopened.
+- **Verify**: a fresh `--standalone` build contains no `docs/` tree
+  (`tests/test_pass58_standalone_docs.py` pins it); then the old token no
+  longer authenticates.
+- **Status**: planned (2026-09-02). Lanes: security, packaging.
+- **Source**: in-session 2026-09-01 (`a5e0939`); filed 2026-09-02 because it
+  existed only in a session handoff, which is not somewhere the next session
+  will find it.
+
+---
+
+#### Pass 59.72 A container-relative media value still resolves against the bundle in a frozen build (MEDIUM, S)
+
+- **Target**: `services/media_cleanup.py::_resolve_media_path`;
+  `services/game_media_service.py::resolve_media_path`.
+- **Why**: Pass 59.2 fixed the dominant case — a bare filename now validates
+  against the root it was joined to. The other branch is unchanged: a value
+  starting `/` or `images/` is still joined to `STATIC_PATH`, which in a frozen
+  build is the read-only bundle rather than the writable tree where media
+  actually lives. Such a value would resolve to a path that does not exist.
+- **Plan**: needs evidence before code. The scrapers store BARE filenames
+  (`metadata_merger` assigns `filename`, not a path), so it is unclear whether
+  any real database holds a container-relative media value at all. Check a real
+  library first; if none exist, the branch is dead and should be deleted rather
+  than fixed, and if some do, join `images/`-prefixed values under `IMAGE_PATH`
+  instead.
+- **Verify**: whichever way, a frozen build resolves every stored media value
+  in a real library.
+- **Status**: planned (2026-09-02). Lanes: media, packaging.
+- **Source**: in-session 2026-09-02 — surfaced by the Pass 59.2 fix and
+  deliberately left out of its scope.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
