@@ -99,7 +99,7 @@ class TestAuthGuards:
         # Pass 41.9 — `/api/recently-viewed` removed (zero callers; the
         # dashboard reads `user_game_views` directly via app.py).
     ])
-    def test_protected_get_denies_unauthenticated(self, app_client, path):
+    def test_protected_get_denies_unauthenticated(self, app_client, setup_complete, path):
         """An unauthenticated GET is refused -- in the shape its caller reads.
 
         The contract being asserted is unchanged: none of these serves
@@ -192,7 +192,7 @@ class TestHLTBSearchAuth:
 class TestLocalSearchInputValidation:
     """Tests for /api/games/find input-handling that don't require DB state."""
 
-    def test_find_requires_login(self, app_client):
+    def test_find_requires_login(self, app_client, setup_complete):
         # 2026-09-01: was a 302 assertion. /api/* now answers 401 JSON per
         # api-contracts.md invariant 1 -- the refusal is unchanged, its
         # shape is not. See TestAuthGuards for the full reasoning.

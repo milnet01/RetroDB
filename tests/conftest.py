@@ -73,3 +73,20 @@ def app_client(monkeypatch):
     import app as app_module
     monkeypatch.setitem(app_module.app.config, 'TESTING', True)
     yield app_module.app.test_client()
+
+
+@pytest.fixture
+def setup_complete(monkeypatch):
+    """Neutralise the first-run setup gate for tests that assert on later layers.
+
+    `app.check_first_time_setup` redirects EVERY request to /setup while no
+    settings file marks setup done. It runs before any route decorator, so a
+    test aiming at the auth layer never reaches it on a fresh tree.
+
+    This is environment-sensitive in the worst way: `data/settings.json` is
+    gitignored, so a developer checkout has one and a fresh clone does not.
+    Without this stub such a test passes locally and fails in CI, which is
+    exactly how the auth-guard assertions here reached main red.
+    """
+    monkeypatch.setattr('app.settings_manager.load_settings',
+                        lambda: {'setup_completed': True, 'rom_path': '/tmp'})
