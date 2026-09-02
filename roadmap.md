@@ -6737,6 +6737,56 @@ were corrected in `2836bc3` and are not repeated here.
 - **Source**: orchestrator — recorded as a coverage gap of the sweep, not a
   finding about the code.
 
+#### Pass 59.69 The first-run setup gate 302s `/api/*`, against the JSON invariant (HIGH, S)
+
+- **Target**: `app.py::check_first_time_setup`; contract at
+  `docs/specs/api-contracts.md` §1 and its numbered invariant 1 — *"Every
+  `/api/*` route returns JSON, never HTML or a redirect."*
+- **Why**: the hook runs as a `before_request`, ahead of every route
+  decorator, and returns `redirect(url_for('setup_page'))` for any endpoint
+  outside its small exempt set. Its exempt set is endpoint-named
+  (`setup_page`, `setup_api`, the auth routes, the probes) and contains no
+  `/api/*` rule, so on a fresh install every API call answers a 302 to
+  `/setup`. That is the same defect class Pass 45.1 closed one layer down:
+  `fetch()` follows the redirect and the calling JS reads a 200 carrying
+  setup-page HTML as success. The auth decorators were taught the API split
+  on 2026-09-01; this hook was not, and it runs first.
+- **Evidence**: a fresh clone with `cp config.example.py config.py` and no
+  `data/settings.json` answered 302 on every `/api/*` path asserted by
+  `tests/test_routes_smoke.py::TestAuthGuards`. Commit e236d9f fixed the
+  TESTS to isolate the auth layer; it did not change this hook.
+- **Plan**: needs a decision, not just an edit — during setup an `/api/*`
+  caller should get a JSON envelope, but which status is a judgement call
+  (401 is wrong; 503 with a `setup_required` marker reads best, and any
+  choice has to keep the setup wizard's own API calls working). Decide, then
+  mirror the `request.path.startswith('/api/')` split `_deny_unauthenticated`
+  already uses.
+- **Verify**: fresh tree, no settings file, `GET /api/games` returns a JSON
+  envelope rather than a redirect, and the setup wizard still completes.
+- **Status**: planned (2026-09-02). Lanes: auth, api.
+- **Source**: in-session 2026-09-02 — surfaced while fixing the CI-red
+  auth-guard tests, not by the 2026-09-01 review lanes.
+
+---
+
+#### Pass 59.70 The local CI gate cannot catch a test that depends on gitignored state (MEDIUM, S)
+
+- **Target**: `scripts/ci_local.sh`.
+- **Why**: the gate runs pytest against the working tree, which carries the
+  developer's gitignored `config.py` and `data/settings.json`. A test whose
+  result depends on those passes the gate and fails CI, which is what
+  happened to the auth-guard assertions. The gate mirrors CI's STEPS but not
+  its ENVIRONMENT, so this whole class is invisible to it.
+- **Plan**: decide whether the gate should run the suite against a clean
+  worktree (`git worktree add` a detached checkout of HEAD plus
+  `cp config.example.py config.py`) — correct but slower — or whether a
+  narrower guard suffices, e.g. a test that asserts the setup gate's
+  behaviour explicitly so the dependency is pinned rather than incidental.
+- **Verify**: reintroduce the e236d9f defect and confirm the gate goes red.
+- **Status**: planned (2026-09-02). Lanes: ci.
+- **Source**: in-session 2026-09-02 — the gate reported green on the commit
+  that took main red.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
