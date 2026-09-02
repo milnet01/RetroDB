@@ -39,7 +39,7 @@
 
     if (detectBtn) {
         detectBtn.addEventListener('click', async () => {
-            statusLine.textContent = 'Detecting…';
+            statusLine.textContent = t('Detecting…');
             try {
                 const out = await fetchJSON(
                     '/api/settings/retroarch/detect?validate=true',
@@ -53,14 +53,14 @@
                     : (out.data.cores_dir.error || '');
                 statusLine.textContent = `${bv} · ${cn}`;
             } catch (e) {
-                statusLine.textContent = 'Detect failed: ' + e.message;
+                statusLine.textContent = t('Detect failed: {error}', {error: e.message});
             }
         });
     }
 
     if (saveBtn) {
         saveBtn.addEventListener('click', async () => {
-            statusLine.textContent = 'Saving…';
+            statusLine.textContent = t('Saving…');
             try {
                 await fetchJSON('/api/settings', {
                     method: 'PUT',
@@ -69,9 +69,9 @@
                         retroarch_cores_dir: $('#ra-cores-dir').value.trim(),
                     }),
                 });
-                statusLine.textContent = 'Saved.';
+                statusLine.textContent = t('Saved.');
             } catch (e) {
-                statusLine.textContent = 'Save failed: ' + e.message;
+                statusLine.textContent = t('Save failed: {error}', {error: e.message});
             }
         });
     }
@@ -85,13 +85,15 @@
 
     function renderSuggestions(suggestions) {
         if (!suggestions || suggestions.length === 0) {
-            emuDetectResults.innerHTML = '<span class="text-muted">No emulator AppImages found in the scan paths.</span>';
+            emuDetectResults.innerHTML = '<span class="text-muted">' + escapeHtml(t('No emulator AppImages found in the scan paths.')) + '</span>';
             emuApplyBtn.disabled = true;
             return;
         }
         const wrap = document.createElement('table');
         wrap.className = 'data-table';
-        wrap.innerHTML = '<thead><tr><th>Emulator</th><th>Detected path</th><th>Currently set</th><th>Will change?</th></tr></thead>';
+        wrap.innerHTML = '<thead><tr><th>' + escapeHtml(t('Emulator')) + '</th><th>'
+        + escapeHtml(t('Detected path')) + '</th><th>' + escapeHtml(t('Currently set'))
+        + '</th><th>' + escapeHtml(t('Will change?')) + '</th></tr></thead>';
         const tbody = document.createElement('tbody');
         for (const s of suggestions) {
             const tr = document.createElement('tr');
@@ -127,7 +129,7 @@
 
     if (emuDetectBtn) {
         emuDetectBtn.addEventListener('click', async () => {
-            emuDetectStatus.textContent = 'Scanning…';
+            emuDetectStatus.textContent = t('Scanning…');
             emuDetectResults.innerHTML = '';
             emuApplyBtn.disabled = true;
             try {
@@ -135,7 +137,7 @@
                 emuDetectStatus.textContent = `Scanned ${(out.scanned_paths || []).length} paths · found ${out.found_count || 0} matches.`;
                 renderSuggestions(out.suggestions);
             } catch (e) {
-                emuDetectStatus.textContent = 'Scan failed: ' + e.message;
+                emuDetectStatus.textContent = t('Scan failed: {error}', {error: e.message});
             }
         });
     }
@@ -143,14 +145,14 @@
     if (emuApplyBtn) {
         emuApplyBtn.addEventListener('click', async () => {
             emuApplyBtn.disabled = true;
-            emuDetectStatus.textContent = 'Applying…';
+            emuDetectStatus.textContent = t('Applying…');
             try {
                 const out = await fetchJSON('/api/settings/emulators/detect?apply=true', {method: 'POST'});
                 emuDetectStatus.textContent = `Applied ${(out.applied || []).length} update(s).`;
                 renderSuggestions(out.suggestions);
                 refreshEmulators();
             } catch (e) {
-                emuDetectStatus.textContent = 'Apply failed: ' + e.message;
+                emuDetectStatus.textContent = t('Apply failed: {error}', {error: e.message});
                 emuApplyBtn.disabled = false;
             }
         });
@@ -199,7 +201,7 @@
                 closeEmuEditModal();
                 refreshEmulators();
             } catch (e) {
-                alert('Save failed: ' + e.message);
+                alert(t('Save failed: {error}', {error: e.message}));
             }
         });
     }
@@ -214,7 +216,7 @@
             const out = await fetchJSON('/api/emulators');
             _lastEmulators = out.emulators || [];
             if (_lastEmulators.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="text-muted">No emulators registered.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="text-muted">' + escapeHtml(t('No emulators registered.')) + '</td></tr>';
                 return;
             }
             tbody.innerHTML = '';
@@ -233,7 +235,7 @@
                     c.style.fontSize = '0.8rem';
                     override.appendChild(c);
                 } else {
-                    override.textContent = '(none)';
+                    override.textContent = t('(none)');
                     override.style.color = 'var(--text-muted)';
                 }
                 const args = document.createElement('td');
@@ -248,7 +250,7 @@
                 const actions = document.createElement('td');
                 const editBtn = document.createElement('button');
                 editBtn.className = 'btn btn-sm btn-secondary';
-                editBtn.innerHTML = '<span class="btn-icon">✏️</span> Edit';
+                editBtn.innerHTML = '<span class="btn-icon">✏️</span> ' + escapeHtml(t('Edit'));
                 editBtn.addEventListener('click', () => openEmuEditModal(e));
                 actions.appendChild(editBtn);
 

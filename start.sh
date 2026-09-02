@@ -13,8 +13,16 @@ CYAN='\033[0;36m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# AMD GPU (gfx1032) ROCm compatibility — map to supported gfx1030 architecture
-export HSA_OVERRIDE_GFX_VERSION=10.3.0
+# AMD GPU ROCm compatibility — gfx1032 has no ROCm kernels of its own and must
+# be told to load gfx1030's.  Only set it for a card that actually needs it: on
+# a different architecture this loads kernels for the wrong ISA and the ESRGAN
+# upscaler hangs or crashes instead of failing cleanly.  An explicit value from
+# the environment always wins (Pass 59.17).
+if [[ -z "${HSA_OVERRIDE_GFX_VERSION:-}" ]] \
+   && command -v rocminfo >/dev/null 2>&1 \
+   && rocminfo 2>/dev/null | grep -q 'gfx1032'; then
+    export HSA_OVERRIDE_GFX_VERSION=10.3.0
+fi
 
 # Get script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -61,16 +69,17 @@ echo -e "${YELLOW}Checking Flask installation...${NC}"
 if $PYTHON -c "import flask" 2>/dev/null; then
     echo -e "${GREEN}✓ Flask is installed${NC}"
 else
-    echo -e "${YELLOW}Flask not found. Installing dependencies...${NC}"
-    $PYTHON -m pip install -r requirements.txt --break-system-packages
-fi
-
-# Check requests
-if $PYTHON -c "import requests" 2>/dev/null; then
-    echo -e "${GREEN}✓ Requests library is installed${NC}"
-else
-    echo -e "${YELLOW}Installing requests...${NC}"
-    $PYTHON -m pip install requests --break-system-packages
+    echo -e "${YELLOW}Flask not found. Running the installer...${NC}"
+    # install.py -> installer_core.select_pip_args, which prefers
+    # `--require-hashes -r requirements.lock` and only falls back to an
+    # unhashed requirements.txt when no lockfile is present.  It also applies
+    # --break-system-packages as a PEP 668 retry rather than unconditionally,
+    # so a Debian/Ubuntu system's site-packages is not clobbered up front.
+    # Installing by hand here bypassed both controls (Pass 59.12).
+    if ! $PYTHON install.py; then
+        echo -e "${RED}✗ Dependency install failed — see the output above.${NC}"
+        exit 1
+    fi
 fi
 
 # Create directories if they don't exist

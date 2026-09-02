@@ -143,14 +143,25 @@ def is_output_fresh():
     # or the bundle membership, rebuild regardless of source mtimes.
     script_mtime = Path(__file__).resolve().stat().st_mtime
 
-    for bundle_name, order in BUNDLES:
-        output_path = js_dir / bundle_name
+    # Pass 59.16 — every i18n-scanned source, not just the bundled ones.
+    # build() regenerates services/js_i18n_strings.py, so a t() added to a
+    # page-specific file (settings-page.js, museum.js, theme.js...) must
+    # invalidate the build; iterating BUNDLES alone reported "up-to-date" and
+    # main() returned before the manifest was ever rewritten.
+    watched = set(js_i18n_sources(js_dir))
+    for _bundle_name, order in BUNDLES:
+        watched.update(order)
+
+    outputs = [js_dir / bundle_name for bundle_name, _order in BUNDLES]
+    outputs.append(js_i18n_manifest_path())
+
+    for output_path in outputs:
         if not output_path.exists():
             return False
         output_mtime = output_path.stat().st_mtime
         if script_mtime > output_mtime:
             return False
-        for js_file in order:
+        for js_file in watched:
             path = js_dir / js_file
             if not path.exists():
                 continue
@@ -272,7 +283,16 @@ def _hash_vendor_files(js_dir):
 # key set for window.I18N; catalog coverage comes separately from babel.cfg's
 # [javascript:] mapping. The CI gate (scripts/check_i18n_fresh.py) cross-checks
 # the two. See docs/specs/i18n.md §6.
-_JS_I18N_SOURCES = CORE_ORDER + GAMES_ORDER + EXCLUDED
+# Pass 59.15 — globbed, not enumerated. The old `CORE_ORDER + GAMES_ORDER +
+# EXCLUDED` list silently omitted every JS file added since it was written, so
+# a t() call in one was never scanned, never reached the catalog, and never
+# failed the CI gate (which calls this same collector, so it compared a blind
+# scan against a blind manifest). A glob scans a new file by default.
+def js_i18n_sources(js_dir):
+    """Sorted names of every hand-written JS source (generated bundles out)."""
+    return sorted(
+        p.name for p in js_dir.glob('*.js') if not p.name.endswith('.bundle.js')
+    )
 
 # t('...') / t("...") literal calls — single-line, quote immediately after `t(`
 # (optional whitespace tolerated). \b before t so format()/print() never match;
@@ -293,6 +313,11 @@ _JS_SIMPLE_ESCAPES = {'\\': '\\', "'": "'", '"': '"', '/': '/',
                       'b': '\b', 'f': '\f', 'n': '\n', 'r': '\r', 't': '\t'}
 
 JS_I18N_MANIFEST = 'js_i18n_strings.py'  # written under services/
+
+
+def js_i18n_manifest_path():
+    """Where generate_js_i18n_manifest writes, and is_output_fresh reads."""
+    return Path(__file__).resolve().parent / 'services' / JS_I18N_MANIFEST
 
 
 def _decode_js_string(raw):
@@ -316,7 +341,7 @@ def scan_t_keys(js_text):
 def collect_js_i18n_keys(js_dir):
     """Sorted unique JS msgids across every source file (skips missing files)."""
     keys = set()
-    for name in _JS_I18N_SOURCES:
+    for name in js_i18n_sources(js_dir):
         path = js_dir / name
         if path.exists():
             keys |= scan_t_keys(path.read_text(encoding='utf-8'))
@@ -368,7 +393,7 @@ def generate_js_i18n_manifest(js_dir):
     """Write services/js_i18n_strings.py from the current JS sources. Returns the
     key count. Only rewrites when content changes (keeps mtime stable for caches)."""
     keys = collect_js_i18n_keys(js_dir)
-    out_path = Path(__file__).parent / 'services' / JS_I18N_MANIFEST
+    out_path = js_i18n_manifest_path()
     new_text = render_js_i18n_module(keys)
     if not out_path.exists() or out_path.read_text(encoding='utf-8') != new_text:
         out_path.write_text(new_text, encoding='utf-8')

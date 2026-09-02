@@ -45,8 +45,17 @@ if not defined SERVER_PORT (
 REM Check if Flask is installed
 %PYTHON% -c "import flask" >nul 2>&1
 if %errorlevel% neq 0 (
-    echo Installing dependencies...
-    %PYTHON% -m pip install -r requirements.txt
+    echo Running the installer...
+    REM install.py prefers `--require-hashes -r requirements.lock`; a bare
+    REM `pip install -r requirements.txt` here defeated that ^(Pass 59.12^).
+    %PYTHON% install.py
+    REM `if errorlevel 1`, not `%errorlevel%` — inside a parenthesised block
+    REM the latter expands at parse time, i.e. before install.py has run.
+    if errorlevel 1 (
+        echo ERROR: dependency install failed - see the output above.
+        pause
+        exit /b 1
+    )
 )
 
 REM Create directories if needed

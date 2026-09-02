@@ -39,8 +39,15 @@ fi
 
 # Check dependencies
 if ! $PYTHON -c "import flask" 2>/dev/null; then
-    echo "  Installing dependencies..."
-    $PYTHON -m pip install -r requirements.txt
+    echo "  Running the installer..."
+    # install.py prefers `--require-hashes -r requirements.lock`; a bare
+    # `pip install -r requirements.txt` here defeated that (Pass 59.12).
+    if ! $PYTHON install.py; then
+        echo "ERROR: dependency install failed — see the output above."
+        echo "Press any key to exit..."
+        read -n 1
+        exit 1
+    fi
 fi
 
 # Create directories

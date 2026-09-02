@@ -65,7 +65,18 @@ if git ls-remote --tags --exit-code "$REMOTE" "refs/tags/$TAG" >/dev/null 2>&1; 
   say "• Tag $TAG already on $REMOTE — reusing it."
 else
   say "• Creating + pushing tag $TAG"
-  git tag -a "$TAG" -m "RetroDB $TAG" 2>/dev/null || true
+  # Pass 59.18 — a local $TAG left over from an earlier attempt makes `git tag`
+  # fail, and the `|| true` swallowed it; the push then published the OLD
+  # commit's tag and the whole matrix built the wrong tree while this script
+  # reported success. The preflight above only proves HEAD is on the remote
+  # branch, and the ls-remote check above misses a tag that never got pushed.
+  if existing="$(git rev-parse -q --verify "refs/tags/$TAG^{commit}")"; then
+    [[ "$existing" == "$(git rev-parse HEAD)" ]] \
+      || die "Local tag $TAG points at $existing, not HEAD. Delete it (git tag -d $TAG) or check out the right commit."
+    say "  reusing existing local tag $TAG (already at HEAD)"
+  else
+    git tag -a "$TAG" -m "RetroDB $TAG"
+  fi
   git push "$REMOTE" "$TAG"
   # Pushing a tag auto-triggers release.yml (on: push: tags) — the source-ZIP
   # job only. We immediately run the SAME workflow via workflow_dispatch (which

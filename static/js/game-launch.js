@@ -18,7 +18,7 @@
         const gid = btn.dataset.gameId;
         const orig = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = '<span class="btn-icon">⏳</span> Launching…';
+        btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml(t('Launching…'));
 
         try {
             const rv = await fetch(`/api/game/${gid}/launch`, {
@@ -28,7 +28,7 @@
             const body = await rv.json().catch(() => ({}));
 
             if (rv.status === 409 && body.existing_token) {
-                if (confirm('This game is already running.  Kill the existing process and relaunch?')) {
+                if (confirm(t('This game is already running.  Kill the existing process and relaunch?'))) {
                     // Pass 48.4 — check the kill succeeded before retrying. A
                     // failed kill (process unkillable, token expired) otherwise
                     // surfaces as a second confusing "already running" 409.
@@ -38,7 +38,7 @@
                     });
                     if (!killRv.ok) {
                         const killBody = await killRv.json().catch(() => ({}));
-                        throw new Error(killBody.error || 'Could not stop the running instance.');
+                        throw new Error(killBody.error || t('Could not stop the running instance.'));
                     }
                     // Retry the launch once
                     const rv2 = await fetch(`/api/game/${gid}/launch`, {
@@ -48,7 +48,7 @@
                     const body2 = await rv2.json().catch(() => ({}));
                     if (!rv2.ok) throw new Error(body2.error || rv2.statusText);
                     if (typeof showNotification === 'function') {
-                        showNotification('Launched (replaced previous instance)', 'success');
+                        showNotification(t('Launched (replaced previous instance)'), 'success');
                     }
                 } else {
                     return;
@@ -57,14 +57,14 @@
                 throw new Error(body.error || rv.statusText);
             } else {
                 if (typeof showNotification === 'function') {
-                    showNotification('Launched (pid ' + (body.data && body.data.pid) + ')', 'success');
+                    showNotification(t('Launched (pid {pid})', {pid: body.data && body.data.pid}), 'success');
                 }
             }
         } catch (e) {
             if (typeof showNotification === 'function') {
-                showNotification('Launch failed: ' + e.message, 'error');
+                showNotification(t('Launch failed: {error}', {error: e.message}), 'error');
             } else {
-                alert('Launch failed: ' + e.message);
+                alert(t('Launch failed: {error}', {error: e.message}));
             }
         } finally {
             btn.disabled = false;

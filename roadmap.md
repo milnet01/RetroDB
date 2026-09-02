@@ -5263,8 +5263,15 @@ orchestrator, several by execution rather than reading.
   ./retrodb` and open the browser, and ship those from `build_standalone`.
 - **Verify**: build a standalone bundle on a machine with no project
   checkout, unzip, double-click, confirm the UI comes up.
-- **Status**: planned (2026-09-01). Lanes: packaging.
+- **Status**: shipped (2026-09-02). Lanes: packaging.
 - **Source**: review-code build/install lane 2026-09-01.
+- **Resolution** (2026-09-02, v3.23.5): `packaging/standalone/start.{sh,command,bat}`
+  exec `./retrodb` and reach for no Python at all; `build_standalone` ships
+  them in place of the source launchers. The browser open moved into `app.py`
+  behind `sys.frozen` — only the server knows the resolved port, and
+  `server_port.py` is not a file in the bundle. Pinned in
+  `tests/test_pass59_packaging.py`. Not verified on a built bundle: the
+  PyInstaller build was not run in-session.
 - **Note**: not observed on a built bundle — read from the spec and the
   launcher sources. Settle whether Standalone has shipped to users before
   grading the urgency.
@@ -5285,8 +5292,14 @@ orchestrator, several by execution rather than reading.
   extract time.
 - **Verify**: extract the Linux standalone zip, copy the `.desktop` into
   `~/.local/share/applications/`, click it.
-- **Status**: planned (2026-09-01). Lanes: packaging.
+- **Status**: shipped (2026-09-02). Lanes: packaging.
 - **Source**: review-code build/install lane 2026-09-01.
+- **Resolution** (2026-09-02, v3.23.5): the Linux zip now also carries
+  `install-launcher.sh`, which resolves its own directory and substitutes
+  `__EXEC__` / `__ICON__` into `~/.local/share/applications/RetroDB.desktop`.
+  The template keeps its placeholders — the extraction path is only known on
+  the user's machine. The test runs the script against a fake extracted
+  bundle and asserts no placeholder survives.
 
 ---
 
@@ -5307,8 +5320,13 @@ orchestrator, several by execution rather than reading.
   `installer_core.pip_install(*select_pip_args('.'))`.
 - **Verify**: run `start.sh` on a clean checkout with the lockfile present;
   confirm the install log shows `--require-hashes`.
-- **Status**: planned (2026-09-01). Lanes: packaging, security.
+- **Status**: shipped (2026-09-02). Lanes: packaging, security.
 - **Source**: review-code build/install lane 2026-09-01.
+- **Resolution** (2026-09-02, v3.23.5): all three launchers hand over to
+  `install.py`, which routes through `installer_core.select_pip_args`
+  (`--require-hashes -r requirements.lock`) and applies
+  `--break-system-packages` only as `pip_install`'s PEP 668 retry. Pinned by
+  a grep for any hand-rolled `pip install`.
 
 ---
 
@@ -5337,8 +5355,13 @@ orchestrator, several by execution rather than reading.
   second filter.
 - **Verify**: `unzip -l` a fresh source ZIP and diff its file list against
   `git ls-files`.
-- **Status**: planned (2026-09-01). Lanes: packaging, security.
+- **Status**: shipped (2026-09-02). Lanes: packaging, security.
 - **Source**: review-code build/install lane 2026-09-01.
+- **Resolution** (2026-09-02, v3.23.5): `collect_files` enumerates `git ls-files`
+  and applies the deny-lists as a second filter, falling back to the walk
+  when git is unavailable. Measured against the previous walk this also
+  dropped the whole `build/` tree (PyInstaller output — `EXCLUDE_DIRS` held
+  only `dist`) alongside `audit_rule_quality.json`.
 
 ---
 
@@ -5357,9 +5380,13 @@ orchestrator, several by execution rather than reading.
   module both sides import normally (cleaner — a module importing the entry
   script is the underlying smell).
 - **Verify**: build the bundle and hit both settings endpoints.
-- **Status**: planned (2026-09-01). Lanes: packaging.
+- **Status**: shipped (2026-09-02). Lanes: packaging.
 - **Source**: review-code build/install lane 2026-09-01. Read from the spec;
   not observed on a built bundle.
+- **Resolution** (2026-09-02, v3.23.5): `routes/settings.py::_entry_attr` reads
+  app.py out of `sys.modules` under either name rather than re-importing it.
+  This also fixes the source install, where `python app.py` makes app.py
+  `__main__` and the old import built a second Flask app.
 
 ---
 
@@ -5382,9 +5409,14 @@ orchestrator, several by execution rather than reading.
   strings.
 - **Verify**: add a `t('probe')` to one of the three, run `build_js.py`, and
   confirm the key appears in `services/js_i18n_strings.py`.
-- **Status**: planned (2026-09-01). Lanes: i18n, frontend.
+- **Status**: shipped (2026-09-02). Lanes: i18n, frontend.
 - **Source**: review-code build/install and JS-features lanes 2026-09-01
   (found independently by both).
+- **Resolution** (2026-09-02, v3.23.5): `build_js.js_i18n_sources()` globs
+  `static/js/*.js` minus the generated bundles, so a new file is scanned by
+  default; the CI gate shares the collector and widens with it. The
+  user-facing strings in the three files are now wrapped in `t()` and the
+  catalogs regenerated.
 
 ---
 
@@ -5402,8 +5434,11 @@ orchestrator, several by execution rather than reading.
   `generate_js_i18n_manifest(js_dir)` above the short-circuit.
 - **Verify**: touch a `t()` in `settings-page.js`, run the build, confirm the
   manifest changes.
-- **Status**: planned (2026-09-01). Lanes: i18n, frontend.
+- **Status**: shipped (2026-09-02). Lanes: i18n, frontend.
 - **Source**: review-code build/install lane 2026-09-01.
+- **Resolution** (2026-09-02, v3.23.5): `is_output_fresh()` watches every i18n
+  source and treats `services/js_i18n_strings.py` as an output, so a `t()`
+  added to a page-specific file invalidates the build.
 
 ---
 
@@ -5420,9 +5455,13 @@ orchestrator, several by execution rather than reading.
   move it out of the shipped script into the maintainer's own environment.
 - **Verify**: unset it and confirm upscaling still works locally; confirm the
   variable is absent from the shipped script's environment on other hardware.
-- **Status**: planned (2026-09-01). Lanes: packaging.
+- **Status**: shipped (2026-09-02). Lanes: packaging.
 - **Source**: review-code build/install lane 2026-09-01. See also
   [[onnxruntime_rocm_trap]] in agent memory.
+- **Resolution** (2026-09-02, v3.23.5): the export is gated on an unset
+  `HSA_OVERRIDE_GFX_VERSION` and on `rocminfo` actually reporting gfx1032, so
+  an explicit value wins and other hardware is untouched. Not verified on
+  non-gfx1032 hardware — none available in-session.
 
 ---
 
@@ -5438,8 +5477,11 @@ orchestrator, several by execution rather than reading.
 - **Plan**: `git rev-parse -q --verify "refs/tags/$TAG"` first, and `die`
   unless it resolves to `HEAD`.
 - **Verify**: create a stale local tag and confirm the script refuses.
-- **Status**: planned (2026-09-01). Lanes: release.
+- **Status**: shipped (2026-09-02). Lanes: release.
 - **Source**: review-code build/install lane 2026-09-01.
+- **Resolution** (2026-09-02, v3.23.5): the `|| true` is gone; an existing local
+  `$TAG` must resolve to HEAD or the script dies naming the commit it points
+  at.
 
 ---
 

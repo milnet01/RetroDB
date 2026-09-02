@@ -11,6 +11,7 @@ import os
 import shutil
 import json
 import logging
+import sys
 from datetime import datetime, timezone
 
 import config
@@ -51,18 +52,31 @@ def get_rpcs3_trophy_path():
     return settings_manager.get_effective_path('rpcs3_trophy_path', getattr(config, 'RPCS3_TROPHY_PATH', ''))
 
 
+def _entry_attr(name):
+    """Look `name` up on the already-loaded app.py, whatever it is called.
+
+    Pass 59.14 — `importlib.import_module('app')` only finds app.py when it was
+    imported under that name. Run directly (`python app.py`) it is `__main__`,
+    and a PyInstaller bundle compiles it into the PYZ as the entry script, so
+    there is no importable `app` module at all and the import raises
+    ModuleNotFoundError. Re-importing would also execute app.py a second time,
+    building a duplicate Flask app. Reading it out of sys.modules avoids both.
+    """
+    for mod_name in ('app', '__main__'):
+        module = sys.modules.get(mod_name)
+        if module is not None and hasattr(module, name):
+            return getattr(module, name)
+    raise RuntimeError(f'{name}() not found on the running entry module')
+
+
 def get_stats():
     """Get library statistics - delegates to app.py's canonical version."""
-    import importlib
-    app_module = importlib.import_module('app')
-    return app_module.get_stats()
+    return _entry_attr('get_stats')()
 
 
 def get_api_status():
     """Get API status - delegates to app.py's canonical version."""
-    import importlib
-    app_module = importlib.import_module('app')
-    return app_module.get_api_status()
+    return _entry_attr('get_api_status')()
 
 
 def format_size(bytes_size):

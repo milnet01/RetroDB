@@ -1899,6 +1899,19 @@ if __name__ == '__main__':
         # queued behind each other and every page load flooded the log with
         # "Task queue depth" warnings. 16 gives comfortable headroom for a
         # local single-user / small-household workload without being wasteful.
+        # Standalone bundle only: open the browser shortly after the bind.
+        # A source install gets this from start.sh / start.command / start.bat
+        # or scripts/retrodb_launcher.py, none of which ship in the bundle —
+        # and only the server knows the resolved port (Pass 59.10).
+        if getattr(sys, 'frozen', False):
+            import threading
+            import webbrowser
+            _opener = threading.Timer(
+                2.0, lambda: webbrowser.open(f'http://localhost:{port}')
+            )
+            _opener.daemon = True  # never hold up Ctrl+C
+            _opener.start()
+
         try:
             serve(app, host=host, port=port, threads=16)
         except OSError as _bind_err:

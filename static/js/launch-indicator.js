@@ -55,7 +55,7 @@
         popover.className = 'launch-indicator-popover';
         const title = document.createElement('div');
         title.className = 'launch-indicator-popover-title';
-        title.textContent = 'Now playing';
+        title.textContent = t('Now playing');
         popover.appendChild(title);
         for (const h of handles) {
             const row = document.createElement('div');
@@ -64,7 +64,7 @@
             label.textContent = `game #${h.game_id} (pid ${h.pid})`;
             const kbtn = document.createElement('button');
             kbtn.className = 'btn btn-sm btn-danger';
-            kbtn.textContent = 'Kill';
+            kbtn.textContent = t('Kill');
             kbtn.addEventListener('click', () => killLaunch(h.token));
             row.appendChild(label);
             row.appendChild(kbtn);

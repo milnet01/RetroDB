@@ -1,3 +1,54 @@
+- version: 3.23.5
+  date: 2026-09-02
+  tags:
+  - type: fix
+    label: The packaged download could not start, and other build fixes
+  body: |
+    <ul>
+      <li><strong>The Standalone download could not start at all.</strong> The
+        packaged build carries its own Python, but the launcher inside it was
+        the one written for the source install &mdash; it went looking for
+        Python files that a packaged build does not contain, and stopped on the
+        first line. The bundle now ships its own launcher, which simply runs
+        the app and opens your browser once the server is up.</li>
+      <li><strong>The desktop shortcut in the Linux download launched
+        nothing.</strong> It shipped with placeholder text where the path to
+        the app should be. There is now an <code>install-launcher.sh</code>
+        next to the launcher &mdash; run it once and the shortcut is written
+        with the real path to wherever you unpacked it.</li>
+      <li><strong>Starting from source installed unverified
+        dependencies.</strong> When Flask was missing, the start script fetched
+        packages straight from the internet with no checksum check, and forced
+        past your system package manager on the way. It now hands over to
+        <code>install.py</code>, which uses the checksummed lock file.</li>
+      <li><strong>The source download carried maintainer files it should
+        not.</strong> The list of what to leave out was maintained by hand and
+        had fallen behind, so audit output and leftover build folders were
+        being packaged up with the app. The download is now built from the list
+        of files actually in the project, which cannot drift.</li>
+      <li><strong>Two Settings panels broke in the packaged build.</strong> The
+        library-statistics and API-status panels looked up the main program by
+        a name it does not have inside a packaged build, so both failed.</li>
+      <li><strong>Some on-screen text could never be translated.</strong> Three
+        newer parts of the app &mdash; the emulator settings, the launch button
+        and the "now playing" bar &mdash; were skipped by the translation
+        scan, and the check meant to catch that was looking at the same
+        incomplete list. The scan now covers every file automatically, and
+        their text has been added to the translations.</li>
+      <li><strong>Rebuilding translations could quietly do nothing.</strong>
+        Adding text to a page-specific script left the rebuild convinced there
+        was nothing to do, so the new text never reached the translation
+        file.</li>
+      <li><strong>A graphics-card workaround was applied to everyone.</strong>
+        The Linux start script forced a setting meant for one specific AMD card
+        onto every machine, which could hang the image upscaler on other AMD
+        hardware. It now only applies when that card is actually present, and
+        never overrides a value you set yourself.</li>
+      <li><strong>The release script could publish the wrong version.</strong>
+        A leftover tag from an earlier attempt was silently reused, so the
+        build could be made from an older snapshot while reporting
+        success.</li>
+    </ul>
 - version: 3.23.4
   date: 2026-09-02
   tags:

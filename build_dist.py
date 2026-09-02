@@ -104,9 +104,70 @@ def get_version(base_dir):
     return '0.0.0'
 
 
+def _tracked_files(base_dir):
+    """Project-relative paths of every git-tracked file, or None.
+
+    Pass 59.13 — the exclusion lists below are a deny-list, so anything new and
+    untracked (audit output, a stray venv, a downloaded dataset) shipped in the
+    source ZIP until somebody remembered to add it in two places. `git
+    ls-files` is the allow-list `.gitignore` already maintains, and every
+    generated artifact the ZIP needs (main.min.css, both JS bundles,
+    translations/**/*.mo) is committed. The deny-lists still run afterwards,
+    for the tracked-but-maintainer-only files.
+
+    Returns None when git is unavailable or this is not a checkout, so a
+    tarball build still works off the filesystem walk.
+    """
+    try:
+        result = subprocess.run(
+            ['git', '-C', base_dir, 'ls-files', '-z'],
+            capture_output=True, check=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    paths = [p for p in result.stdout.decode('utf-8').split('\0') if p]
+    return paths or None
+
+
+def _is_excluded(rel_normalized, all_exclude_files):
+    """True when a project-relative path matches any deny-list rule."""
+    if rel_normalized in all_exclude_files:
+        return True
+
+    parts = rel_normalized.split('/')
+    filename = parts[-1]
+
+    if os.path.splitext(filename)[1] in EXCLUDE_EXTENSIONS:
+        return True
+    if filename.startswith('.') and filename not in ('.gitkeep', '.gitignore'):
+        return True
+    # Any directory component excluded or hidden takes the whole path with it.
+    for part in parts[:-1]:
+        if part in EXCLUDE_DIRS or part.startswith('.'):
+            return True
+    if parts[0] == 'static':
+        if len(parts) >= 2 and parts[1] in EXCLUDE_STATIC_DIRS:
+            return True
+        # static/images/ is a whitelist; files directly in it are always kept.
+        if len(parts) >= 4 and parts[1] == 'images' and parts[2] not in INCLUDE_IMAGE_DIRS:
+            return True
+    return False
+
+
 def collect_files(base_dir, platform_exclude_files):
-    """Walk the project tree and yield (rel_path, full_path) tuples to include."""
+    """Yield (rel_path, full_path) tuples to include in a source ZIP."""
     all_exclude_files = EXCLUDE_FILES | {f for f in platform_exclude_files}
+
+    tracked = _tracked_files(base_dir)
+    if tracked is not None:
+        for rel_normalized in tracked:
+            if _is_excluded(rel_normalized, all_exclude_files):
+                continue
+            full_path = os.path.join(base_dir, rel_normalized)
+            if not os.path.isfile(full_path):
+                continue  # tracked but deleted in the working tree
+            yield os.path.normpath(rel_normalized), full_path
+        return
 
     for root, dirs, files in os.walk(base_dir):
         rel_root = os.path.relpath(root, base_dir)
@@ -318,17 +379,26 @@ def build_standalone(base_dir, version, host_name, cpu_only=False):
                 file_count += 1
                 total_size += os.path.getsize(full_path)
 
-        # Ship the platform's browser-opening start script next to the binary
-        # so users get a one-click launch, plus (Linux) the .desktop + icon to
-        # pin RetroDB to the taskbar.
+        # Ship the platform's start script next to the binary so users get a
+        # one-click launch, plus (Linux) the .desktop + icon + the substituting
+        # installer that pins RetroDB to the taskbar.
+        #
+        # These come from packaging/standalone/, NOT from the repo root: the
+        # root scripts are the SOURCE-install launchers and run `python3
+        # app.py`, which the bundle has no .py files for (Pass 59.10).
         _start = {'Linux': 'start.sh', 'macOS': 'start.command',
                   'Windows': 'start.bat'}[host_name]
-        _extras = [_start]
+        # (source path, path inside the zip folder)
+        _extras = [(f'packaging/standalone/{_start}', _start)]
         if host_name == 'Linux':
-            _extras += ['packaging/RetroDB.desktop', 'packaging/icons/retrodb-256.png']
-        for extra in _extras:
-            src = os.path.join(base_dir, extra)
-            zf.write(src, os.path.join(folder_name, extra))
+            _extras += [
+                ('packaging/RetroDB.desktop', 'packaging/RetroDB.desktop'),
+                ('packaging/icons/retrodb-256.png', 'packaging/icons/retrodb-256.png'),
+                ('packaging/standalone/install-launcher.sh', 'install-launcher.sh'),
+            ]
+        for src_rel, arc_rel in _extras:
+            src = os.path.join(base_dir, src_rel)
+            zf.write(src, os.path.join(folder_name, arc_rel))
             file_count += 1
             total_size += os.path.getsize(src)
 
