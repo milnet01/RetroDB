@@ -33,12 +33,28 @@ def _media_layout():
 
 
 def _resolve_media_path(value, root_dir, container_prefix):
-    """Resolve a DB media value to an absolute path inside STATIC_PATH, or None if unsafe."""
+    """Resolve a DB media value to an absolute path, or None if unsafe.
+
+    Containment is checked against the root the value was actually joined to,
+    which is not always STATIC_PATH. In a PyInstaller build config.py splits
+    the two: STATIC_PATH is the read-only bundle (sys._MEIPASS) and IMAGE_PATH
+    is the writable dir beside the launcher. Every image field's root_dir is
+    under IMAGE_PATH, so validating those against STATIC_PATH asked whether a
+    path in one tree sat inside an unrelated one -- always False. That made
+    _media_ref_exists report the WHOLE library missing, and "clear missing
+    media references" NULLed every boxart / boxart_3d / fanart / screenshots /
+    video / manual column in one click. The Pass 54.1 mass-missing guard could
+    not catch it: that guard is handed the real, populated IMAGE_PATH dir and
+    correctly reports it healthy. Invisible from a source checkout, where the
+    two roots coincide.
+    """
     if value.startswith('/') or value.startswith(container_prefix):
-        path = os.path.join(config.STATIC_PATH, value.lstrip('/'))
+        base = config.STATIC_PATH
+        path = os.path.join(base, value.lstrip('/'))
     else:
-        path = os.path.join(root_dir, value)
-    return safe_path(path, config.STATIC_PATH)
+        base = root_dir
+        path = os.path.join(base, value)
+    return safe_path(path, base)
 
 
 def _try_remove(path, label):
@@ -302,20 +318,35 @@ def clean_orphaned_files(files, scan_started_override=None):
                     )
                     skipped += 1
                     continue
-            # If scan_started_at is unset (older callers), fall back to
-            # the strict mtime-equality check; if BOTH are unset, behave
-            # as before.
-            elif scan_mtime is not None and stat.st_mtime > scan_mtime:
-                # File was modified after scan recorded its mtime.
-                # If we also know when the scan started, only refuse to
-                # delete if the modification happened *after* scan start
-                # (a scraper wrote to it during the cleanup window).
-                if scan_started_at is None or stat.st_mtime > scan_started_at:
+            # docs/specs/image-pipeline.md §10 item 3 states the rule as
+            # `stat.st_mtime <= scan_started_at`, i.e. skip anything touched
+            # at or after the scan began. This previously compared the CURRENT
+            # mtime against the SCAN-RECORDED mtime, which misses the exact
+            # window Pass 45.7 exists to close: a file written during the scan
+            # -- after scan_started_at but before its own os.stat -- records
+            # equal values, so the guard read False and the file was deleted.
+            # The games snapshot is taken in the route before the scan, so a
+            # game inserted mid-scan is absent from game_ids and its
+            # just-written boxart is classified orphaned. Same hole let an
+            # in-flight `.save_*` tempfile from _atomic_save be unlinked. The
+            # strong form ran only under scan_started_override, and that value
+            # comes from the CLIENT echoing the preview timestamp, so any
+            # direct API call dropped to this weak branch.
+            elif scan_started_at is not None:
+                if stat.st_mtime > scan_started_at:
                     logger.info(
                         f"Skipping orphan candidate (modified during cleanup window): {filepath}"
                     )
                     skipped += 1
                     continue
+            # Only when the scan start is unknown (older callers) fall back to
+            # the weaker mtime-equality check.
+            elif scan_mtime is not None and stat.st_mtime > scan_mtime:
+                logger.info(
+                    f"Skipping orphan candidate (modified since scan): {filepath}"
+                )
+                skipped += 1
+                continue
             freed_size += stat.st_size
             os.remove(filepath)
             deleted += 1

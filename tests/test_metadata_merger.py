@@ -464,9 +464,13 @@ class TestApplyAi:
         assert meta['description'] == 'AI override'
         assert meta['publisher'] == 'AI pub'
 
-    def test_validate_fields_always_applied_even_when_fill_only(self, blank):
-        # VALIDATE_FIELDS (from scrape_ai) always override — AI is treated as
-        # a correction source for those. Sanity-check with a known entry.
+    def test_validate_fields_are_not_overwritten_when_fill_only(self, blank):
+        # Pass 59.8: VALIDATE_FIELDS used to override a curated value even
+        # under fill_only=True, which is the ONLY mode the hybrid scraper's
+        # normal path uses -- so a routine scrape replaced hand-curated genre,
+        # publisher, ratings and the rest. fill_only now means what it says.
+        # The user-invoked AI Fill route keeps its own override; it does not
+        # call this function.
         from scraper.scrape_ai import VALIDATE_FIELDS
         if not VALIDATE_FIELDS:
             pytest.skip("VALIDATE_FIELDS empty on this build")
@@ -474,9 +478,15 @@ class TestApplyAi:
         if field not in _METADATA_KEYS:
             pytest.skip(f"VALIDATE_FIELDS entry {field} not in test metadata skeleton")
         meta, result = blank
-        meta[field] = 'stale'
-        apply_ai_to_metadata(meta, {field: 'corrected'}, db_game_id=1, result=result, fill_only=True)
-        assert meta[field] == 'corrected'
+        meta[field] = 'curated'
+        apply_ai_to_metadata(meta, {field: 'ai value'}, db_game_id=1, result=result, fill_only=True)
+        assert meta[field] == 'curated'
+
+        # fill_only=False is still the overwrite path.
+        meta2, result2 = blank
+        meta2[field] = 'curated'
+        apply_ai_to_metadata(meta2, {field: 'ai value'}, db_game_id=1, result=result2, fill_only=False)
+        assert meta2[field] == 'ai value'
 
     def test_scores_coerced_to_int(self, blank):
         meta, result = blank

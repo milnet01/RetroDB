@@ -12,11 +12,6 @@ const BulkEditController = (function() {
     let gameIds = [];
     let _abortController = null;
 
-    // Fields that support append mode (comma-separated values)
-    // Keep in lockstep with appendable_fields in routes/games.py (region is a
-    // single-value field and is intentionally NOT appendable).
-    const APPENDABLE_FIELDS = ['genre', 'publisher', 'developer', 'franchise', 'game_structure'];
-
     /**
      * Open the bulk edit modal with the given game IDs
      * @param {number[]} ids - Array of game IDs to edit
@@ -209,10 +204,18 @@ const BulkEditController = (function() {
      * @returns {Object} - Object mapping field names to 'append' or 'replace'
      */
     function collectAppendModes() {
+        // Every rendered .bulk-append-toggle IS an appendable field -- the
+        // modal only emits the toggle for those -- and routes/games.py
+        // re-validates each one against its own appendable_fields list before
+        // acting. A second copy of that list here bought nothing and silently
+        // drifted: it was missing 'perspective' and 'dimension', so ticking
+        // Append on either dropped the mode, the server fell through to its
+        // replace branch, and the control did the exact opposite of its label
+        // on a bulk path with no undo. Read the DOM, let the server decide.
         const modes = {};
         document.querySelectorAll('.bulk-append-toggle').forEach(toggle => {
             const field = toggle.dataset.field;
-            if (field && APPENDABLE_FIELDS.includes(field)) {
+            if (field) {
                 modes[field] = toggle.checked ? 'append' : 'replace';
             }
         });

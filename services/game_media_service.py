@@ -86,28 +86,37 @@ def resolve_media_path(filename, media_type):
     `config.STATIC_PATH` (via services.security.safe_path). A scraper
     filename derived from a URL could otherwise contain `../...`, letting
     `remove_media_file` delete files outside the image root. Returns None
-    if the resolved path escapes STATIC_PATH.
+    if the resolved path escapes the root it was resolved against
+    (IMAGE_PATH for images, STATIC_PATH for video and container-relative
+    values) -- these are separate trees in a frozen build.
     """
     if not filename:
         return None
 
+    # Validate against the root actually joined to. A frozen build puts
+    # STATIC_PATH in the read-only bundle and IMAGE_PATH beside the launcher,
+    # so checking an IMAGE_PATH candidate for containment in STATIC_PATH is
+    # always False and remove_media_file silently no-ops on every image.
     if media_type == 'video':
+        base = config.STATIC_PATH
         if not filename.startswith('/') and not filename.startswith('videos/'):
-            candidate = os.path.join(config.STATIC_PATH, 'videos', filename)
+            candidate = os.path.join(base, 'videos', filename)
         else:
-            candidate = os.path.join(config.STATIC_PATH, filename.lstrip('/'))
+            candidate = os.path.join(base, filename.lstrip('/'))
     else:
         subdir = media_type  # boxart, boxart_3d, fanart
         if not filename.startswith('/') and not filename.startswith('images/'):
-            candidate = os.path.join(config.IMAGE_PATH, subdir, filename)
+            base = config.IMAGE_PATH
+            candidate = os.path.join(base, subdir, filename)
         else:
-            candidate = os.path.join(config.STATIC_PATH, filename.lstrip('/'))
+            base = config.STATIC_PATH
+            candidate = os.path.join(base, filename.lstrip('/'))
 
-    safe = safe_path(candidate, config.STATIC_PATH)
+    safe = safe_path(candidate, base)
     if safe is None:
         logger.warning(
             f"resolve_media_path rejected: {filename!r} (media_type={media_type}) "
-            f"escapes STATIC_PATH"
+            f"escapes its media root"
         )
         return None
     return safe

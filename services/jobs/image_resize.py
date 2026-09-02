@@ -173,6 +173,8 @@ class ImageResizeJob:
                 self.persist_id = persist_id
 
             # Build file list
+            from services.image_utils import _RESPONSIVE_VARIANTS
+
             files_to_process = []
             for img_type in image_types:
                 if img_type in config.IMAGE_SKIP_TYPES:
@@ -189,9 +191,26 @@ class ImageResizeJob:
                     target = config.IMAGE_TARGET_HEIGHT
                     preserve_rgba = img_type == 'boxart_3d'  # 3D boxart often has transparency
 
+                # Skip the responsive variants this job's own output creates.
+                # They live beside the primary and the listing matched on
+                # extension alone, so a 160px `-sm` scored far under the
+                # upscale threshold, was blown up to full height, and then had
+                # variants generated FROM it -- `foo-sm-sm.jpg`, `foo-sm-md.jpg`
+                # -- which the next run upscaled in turn. Three costs: srcset
+                # served a full-size image under the `-sm` name (killing the
+                # payload saving), Real-ESRGAN ran on ~3x the intended files,
+                # and every run multiplied the file count. Suffixes come from
+                # _RESPONSIVE_VARIANTS itself so the two cannot drift.
+                variant_suffixes = tuple(
+                    f"-{suffix}" for suffix, _ in _RESPONSIVE_VARIANTS.get(img_type, ())
+                )
+
                 for fname in os.listdir(dir_path):
-                    ext = os.path.splitext(fname)[1].lower()
+                    stem, ext = os.path.splitext(fname)
+                    ext = ext.lower()
                     if ext in SUPPORTED_EXTS:
+                        if variant_suffixes and stem.endswith(variant_suffixes):
+                            continue
                         files_to_process.append({
                             'path': os.path.join(dir_path, fname),
                             'type': img_type,

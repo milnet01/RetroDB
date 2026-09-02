@@ -450,6 +450,14 @@ result tracking (`'skipped'` / `'upscaled'` / `'downscaled'`). After
 each save it regenerates the responsive variants so cards pick up the
 new primary on the next page load.
 
+The job's input list **excludes the `-sm` / `-md` variants** it writes
+itself (suffixes read from `_RESPONSIVE_VARIANTS`, so the two cannot
+drift). They are siblings of the primary in the same directory with the
+same extension, so a listing filtered on extension alone picks them up —
+and a 160 px `-sm` then scores far below the upscale threshold, gets
+blown up to full height, and has variants generated from it in turn.
+Regenerate variants from the primary only.
+
 The job does **not** convert `.jpg` / `.png` to `.webp` — extensions
 are preserved. For format migration, use `WebPMigrateJob` (§12.1).
 

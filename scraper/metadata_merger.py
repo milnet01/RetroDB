@@ -710,11 +710,23 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
         existing_ss = [s.strip() for s in metadata['screenshots'].split(',') if s.strip()] if metadata['screenshots'] else []
         existing_hashes = get_existing_screenshot_hashes(existing_ss)
 
+        # Offset by what is already stored and skip a name that exists, the
+        # same guard the IGDB / TGDB / ScreenScraper loops carry. Fixed indices
+        # 1-3 collided on a re-scrape: the same path was overwritten, and since
+        # existing_hashes was computed BEFORE that write, the re-download was a
+        # visual duplicate of itself -- so dedup deleted the file while its name
+        # was still in existing_ss and still went into games.screenshots. That
+        # left a good screenshot gone from disk and dangling in the DB, which
+        # the next scrape's stale prune then dropped from the DB too.
+        start_num = len(existing_ss) + 1
+
         _jobs = []
         for i, url in enumerate(rawg_data['screenshot_urls'][:3]):
             if url:
-                filename = f"{db_game_id}_rawg_ss{i+1}{preferred_image_extension('screenshots', '.jpg')}"
+                filename = f"{db_game_id}_rawg_ss{start_num + i}{preferred_image_extension('screenshots', '.jpg')}"
                 local_path = os.path.join(screenshot_dir, filename)
+                if filename in existing_ss or os.path.exists(local_path):
+                    continue
                 _jobs.append(
                     lambda u=url, p=local_path, f=filename:
                         f if _download_and_finalize(u, p, 'screenshots', timeout=15) else None
@@ -1172,28 +1184,34 @@ def apply_ai_to_metadata(metadata, ai_data, db_game_id, result, fill_only=True):
 
     AI only fills text fields — never images, screenshots, video, or manuals.
     fill_only=True by default: AI never overwrites existing data, EXCEPT for
-    fields in VALIDATE_FIELDS which are always applied (AI corrections).
+    fill_only is honoured for every field, with no exceptions.
 
     Args:
         metadata: The unified metadata dict being built.
         ai_data: Dict returned by scrape_ai.get_game_details().
         db_game_id: Database game ID (unused, kept for interface consistency).
         result: The result tracking dict with 'filled_fields' list.
-        fill_only: If True (default), only fill empty fields (except VALIDATE_FIELDS).
+        fill_only: If True (default), only fill empty fields.
     """
     if not ai_data:
         return
 
-    from scraper.scrape_ai import VALIDATE_FIELDS
-
     def _should_apply(field):
-        """Check if an AI field value should be applied."""
-        if not metadata.get(field) or not fill_only:
-            return True
-        # VALIDATE_FIELDS are always applied — AI corrections override existing values
-        if field in VALIDATE_FIELDS:
-            return True
-        return False
+        """Check if an AI field value should be applied.
+
+        This used to return True for every field in scrape_ai.VALIDATE_FIELDS
+        regardless of fill_only -- genre, modes, publisher, developer, players,
+        save_type, the nine rating columns and more. The hybrid scraper's only
+        call is fill_only=True on a NORMAL scrape, so a gap-fill silently
+        replaced hand-curated values in all of them: a second, undocumented
+        exception to the fill-only invariant that docs/specs/scrapers.md and
+        CLAUDE.md both state has exactly one (force_overwrite).
+
+        The user-invoked AI Fill path is unaffected -- routes/games_ai.py does
+        not call this function and applies its own VALIDATE_FIELDS handling,
+        which is where overwriting is the point.
+        """
+        return not metadata.get(field) or not fill_only
 
     # Simple text fields — direct mapping
     simple_fields = [

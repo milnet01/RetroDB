@@ -4999,7 +4999,11 @@ orchestrator, several by execution rather than reading.
 - **Verify**: seed a DB with scraped and unscraped rows; preview, act,
   confirm the unscraped rows and their custom art survive and `cleared`
   matches the preview.
-- **Status**: planned (2026-09-01). Lanes: media, data.
+- **Status**: done (v3.23.4, 2026-09-02). Lanes: media, data.
+- **Resolved** (v3.23.4, 2026-09-02). SELECT and both UPDATEs now carry
+  `scraped = 1`, matching `preview_scraped_data` exactly. Decision: "clear
+  scraped data" means the scraped rows -- the preview was right and the action
+  was wrong. Pinned by `tests/test_pass59_destructive_ops.py`.
 - **Source**: review-code media-pipeline lane 2026-09-01.
 
 ---
@@ -5028,7 +5032,13 @@ orchestrator, several by execution rather than reading.
   the same reason.
 - **Verify**: build a standalone bundle, run the missing-media preview, and
   confirm it reports zero missing rather than the whole library.
-- **Status**: planned (2026-09-01). Lanes: media, packaging.
+- **Status**: done (v3.23.4, 2026-09-02). Lanes: media, packaging.
+- **Resolved** (v3.23.4, 2026-09-02). `_resolve_media_path` and
+  `game_media_service.resolve_media_path` now validate against the root they
+  actually joined to, so an IMAGE_PATH value is no longer tested for
+  containment in an unrelated tree. Pinned by a test using the SPLIT (frozen)
+  layout -- the existing media tests all nest the two roots, which is what hid
+  this. Not verified against a real standalone build in-session.
 - **Source**: review-code media-pipeline lane 2026-09-01; orchestrator
   re-verified the path split.
 
@@ -5053,7 +5063,12 @@ orchestrator, several by execution rather than reading.
   lockstep comment stops being the enforcement.
 - **Verify**: select two games with different `perspective` values, tick
   Append, confirm both values survive on both rows.
-- **Status**: planned (2026-09-01). Lanes: frontend, games.
+- **Status**: done (v3.23.4, 2026-09-02). Lanes: frontend, games.
+- **Resolved** (v3.23.4, 2026-09-02). The client-side copy of the list was
+  DELETED rather than synced: the modal only renders a toggle for an appendable
+  field and the server re-validates every one, so the second list bought
+  nothing and could only drift. A test now asserts no toggle offers a field the
+  server will not append.
 - **Source**: review-code JS-features lane 2026-09-01; orchestrator
   re-verified the list mismatch.
 
@@ -5079,7 +5094,11 @@ orchestrator, several by execution rather than reading.
   `scan_started_at` is absent — i.e. make the code read as §10 does.
 - **Verify**: start a scan, write a new boxart during it, confirm the sweep
   leaves it alone.
-- **Status**: planned (2026-09-01). Lanes: media.
+- **Status**: done (v3.23.4, 2026-09-02). Lanes: media.
+- **Resolved** (v3.23.4, 2026-09-02). The no-override branch now skips
+  whenever `stat.st_mtime > scan_started_at`, i.e. reads as
+  `docs/specs/image-pipeline.md` §10 item 3 states it, falling back to mtime
+  equality only when the scan start is unknown.
 - **Source**: review-code media-pipeline lane 2026-09-01.
 
 ---
@@ -5099,7 +5118,10 @@ orchestrator, several by execution rather than reading.
 - **Plan**: add `'boxart_3d'` to `_SCRAPED_FIELDS` and to the docstring.
 - **Verify**: clear with images on a game holding a 3D boxart; confirm the
   column is NULL and no `-sm`/`-md` orphan remains.
-- **Status**: planned (2026-09-01). Lanes: media.
+- **Status**: done (v3.23.4, 2026-09-02). Lanes: media.
+- **Resolved** (v3.23.4, 2026-09-02). `boxart_3d` added to `_SCRAPED_FIELDS`
+  and to the docstring, so the column is nulled by the same UPDATE that
+  precedes the unlink.
 - **Source**: review-code media-pipeline lane 2026-09-01.
 
 ---
@@ -5125,7 +5147,13 @@ orchestrator, several by execution rather than reading.
   3, so either the document or the API flag has to give.
 - **Verify**: batch-create with `delete_archives=False`; confirm the originals
   are still in place and no `move_error` is reported.
-- **Status**: planned (2026-09-01). Lanes: rom-tools.
+- **Status**: done (v3.23.4, 2026-09-02). Lanes: rom-tools.
+- **Resolved** (v3.23.4, 2026-09-02). `batch_create_m3u` now passes
+  `move_to_staging=delete_archives` and `staging_folder` through, and its
+  redundant second move is gone -- that block was also the source of the bogus
+  `move_error` on a move that had succeeded. Decision: honour the checkbox;
+  `docs/ROM_NAMING_STANDARD.md` step 3 corrected to match, since it described
+  the move as unconditional.
 - **Source**: review-code AI-fill/ROM-tools lane 2026-09-01.
 
 ---
@@ -5150,7 +5178,12 @@ orchestrator, several by execution rather than reading.
   already created.
 - **Verify**: run the job twice on a directory with variants; confirm the file
   count is stable and `-sm` files keep their small dimensions.
-- **Status**: planned (2026-09-01). Lanes: jobs, media.
+- **Status**: done (v3.23.4, 2026-09-02). Lanes: jobs, media.
+- **Resolved** (v3.23.4, 2026-09-02). The file list now skips names ending in
+  a responsive-variant suffix, read from `_RESPONSIVE_VARIANTS` so the two
+  cannot drift. **Still outstanding:** the one-off cleanup of any `-sm-sm` /
+  `-sm-md` files an earlier run already created -- this stops the growth, it
+  does not remove what exists.
 - **Source**: review-code background-jobs lane 2026-09-01.
 
 ---
@@ -5176,7 +5209,13 @@ orchestrator, several by execution rather than reading.
   but the code side looks wrong.
 - **Verify**: curate a `publisher`, enable AI, run a normal (non-force)
   scrape, confirm the curated value survives.
-- **Status**: planned (2026-09-01). Lanes: scraper.
+- **Status**: done (v3.23.4, 2026-09-02). Lanes: scraper.
+- **Resolved** (v3.23.4, 2026-09-02). `_should_apply` now honours `fill_only`
+  for every field. Decision: AI never overwrites curated data on a normal
+  scrape. The user-invoked path is untouched -- `routes/games_ai.py` does not
+  call this function. `docs/specs/scrapers.md`'s "only documented exception"
+  sentence needed no edit: it was false before this fix and is true after it.
+  The test that pinned the old behaviour was inverted, not deleted.
 - **Source**: review-code scraper-orchestration lane 2026-09-01.
 
 ---
@@ -5199,7 +5238,9 @@ orchestrator, several by execution rather than reading.
   the name already exists.
 - **Verify**: scrape a RAWG-sourced game twice; confirm screenshot count grows
   or holds and no referenced file is missing from disk.
-- **Status**: planned (2026-09-01). Lanes: scraper, media.
+- **Status**: done (v3.23.4, 2026-09-02). Lanes: scraper, media.
+- **Resolved** (v3.23.4, 2026-09-02). The RAWG loop now offsets by the stored
+  count and skips an existing name, mirroring its three guarded siblings.
 - **Source**: review-code scraper-orchestration lane 2026-09-01.
 
 ---
@@ -5537,6 +5578,10 @@ orchestrator, several by execution rather than reading.
 - **Verify**: whichever way, `grep FIELD_SOURCES` returns either a live reader
   or nothing at all.
 - **Status**: planned (2026-09-01). Lanes: scraper, docs.
+- **Decision** (2026-09-02, user): DELETE `FIELD_SOURCES` and rewrite §4 /
+  §13 step 3 to say priority is the user's source list. Note the knock-on the
+  finding records: the `save_type` sentinel is meant to block normal-source
+  filling and does not, so that needs handling either way.
 - **Source**: review-code scraper-orchestration lane 2026-09-01.
 
 ---
@@ -5870,6 +5915,10 @@ orchestrator, several by execution rather than reading.
   pass.
 - **Verify**: set a theme, clear `localStorage`, reload — the theme survives.
 - **Status**: planned (2026-09-01). Lanes: frontend, themes.
+- **Decision** (2026-09-02, user): the theme SHOULD follow the user across
+  devices. Emit the stored theme into the FOUC block as the fallback when
+  `localStorage` is empty, and settle `user_settings.theme_preference` as the
+  per-user home in the same pass.
 - **Source**: review-code JS-core lane 2026-09-01.
 
 ---
@@ -6133,6 +6182,9 @@ orchestrator, several by execution rather than reading.
   per that spec's "Retiring a setting" procedure.
 - **Verify**: change a setting and confirm the behaviour changes.
 - **Status**: planned (2026-09-01). Lanes: rom-tools, settings.
+- **Decision** (2026-09-02, user): WIRE the six controls up
+  (`ROMToolsConfig.from_dict(load_rom_tools_config())`) rather than retiring
+  them.
 - **Source**: review-code tools/admin lane 2026-09-01.
 
 ---
@@ -6764,6 +6816,9 @@ were corrected in `2836bc3` and are not repeated here.
 - **Verify**: fresh tree, no settings file, `GET /api/games` returns a JSON
   envelope rather than a redirect, and the setup wizard still completes.
 - **Status**: planned (2026-09-02). Lanes: auth, api.
+- **Decision** (2026-09-02, user): return a JSON envelope, not a redirect.
+  Preference is 503 with a `setup_required` marker; the setup wizard's own API
+  calls must keep working.
 - **Source**: in-session 2026-09-02 — surfaced while fixing the CI-red
   auth-guard tests, not by the 2026-09-01 review lanes.
 
@@ -6784,6 +6839,8 @@ were corrected in `2836bc3` and are not repeated here.
   behaviour explicitly so the dependency is pinned rather than incidental.
 - **Verify**: reintroduce the e236d9f defect and confirm the gate goes red.
 - **Status**: planned (2026-09-02). Lanes: ci.
+- **Decision** (2026-09-02, user): run the pre-push suite against a clean
+  throwaway checkout, the way CI does, rather than only pinning this one case.
 - **Source**: in-session 2026-09-02 — the gate reported green on the commit
   that took main red.
 

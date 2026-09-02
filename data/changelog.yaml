@@ -1,3 +1,53 @@
+- version: 3.23.4
+  date: 2026-09-02
+  tags:
+  - type: fix
+    label: Nine ways your library could lose data, closed
+  body: |
+    <ul>
+      <li><strong>"Clear scraped data" cleared your whole library.</strong> The
+        confirmation box counted only the games that had actually been scraped,
+        and then the action wiped every game regardless &mdash; so it could
+        promise a dozen and clear thousands. With images turned on it also
+        deleted cover art you had uploaded by hand and reset titles you had
+        edited yourself, on games that were never scraped at all. It now does
+        exactly what the box says.</li>
+      <li><strong>3D box art left behind a broken link.</strong> Clearing with
+        images deleted the 3D cover from disk but kept the database pointing at
+        it, so the app went looking for a file that was gone.</li>
+      <li><strong>Bulk edit's "Append" switch replaced instead of added.</strong>
+        For Perspective and Dimension it did the exact opposite of its label,
+        overwriting the existing values on every selected game at once, with no
+        undo.</li>
+      <li><strong>Standalone builds could wipe every image reference in one
+        click.</strong> In the packaged download the app looked for your media
+        in the wrong place, decided every single image was missing, and
+        "clear missing media references" then emptied the art, screenshot,
+        video and manual entries for the entire library. The safety check that
+        exists to catch exactly this could not see it. Only the packaged build
+        was affected.</li>
+      <li><strong>The orphan-file sweep could delete art as it arrived.</strong>
+        A cover downloaded while the sweep was running could be treated as an
+        orphan and removed.</li>
+      <li><strong>Playlist creation moved your archives without asking.</strong>
+        Batch-creating M3U playlists moved your original archive files away even
+        when you had left that option off &mdash; and when you did ask for it,
+        reported a failure for a move that had worked.</li>
+      <li><strong>The image resizer was inflating your media folder.</strong> It
+        treated the small thumbnails it generates as new images to enlarge,
+        blowing them up to full size and then making thumbnails of those. Every
+        run added more files, pages quietly served full-size images in place of
+        thumbnails, and the AI upscaler ran on roughly three times the intended
+        number of files.</li>
+      <li><strong>AI fill-in overwrote details you had corrected.</strong> On a
+        normal scrape it could replace your own publisher, developer, genre, age
+        ratings and more. It now only fills blanks; the AI Fill button you press
+        yourself is unchanged.</li>
+      <li><strong>Repeat scrapes could delete a good screenshot.</strong> Games
+        scraped from RAWG reused the same filenames, so a second scrape
+        overwrote a stored screenshot, then removed it as a duplicate while the
+        library still listed it.</li>
+    </ul>
 - version: 3.23.3
   date: 2026-09-01
   tags:

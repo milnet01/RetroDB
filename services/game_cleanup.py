@@ -30,7 +30,8 @@ _SCRAPED_FIELDS = (
     'grac_rating', 'classind_rating', 'china_rating', 'region',
     'franchise', 'similar_games', 'playtime_estimate', 'controller_support',
     'save_type', 'critic_score', 'critic_score_count', 'user_score',
-    'user_score_count', 'boxart', 'screenshots', 'fanart', 'video', 'manual',
+    'user_score_count', 'boxart', 'boxart_3d', 'screenshots', 'fanart',
+    'video', 'manual',
 )
 
 
@@ -151,8 +152,8 @@ def preview_scraped_data(system_id=None):
 def clear_scraped_data(system_id=None, delete_images=False):
     """Null scraped metadata columns and reset titles to their filename forms.
 
-    If `delete_images` is set, also remove every boxart/screenshot/fanart/
-    video/manual file linked from the affected games.
+    If `delete_images` is set, also remove every boxart/boxart_3d/screenshot/
+    fanart/video/manual file linked from the affected games.
 
     Returns (cleared_count, images_deleted).
     """
@@ -161,13 +162,23 @@ def clear_scraped_data(system_id=None, delete_images=False):
 
     images_deleted = 0
 
+    # `scraped = 1` mirrors preview_scraped_data() exactly. Without it the
+    # preview counted the scraped rows and the action cleared the whole table,
+    # so the dialog promised N and did something else entirely — and with
+    # delete_images it unlinked hand-uploaded custom art on never-scraped rows
+    # and reset their hand-edited titles. Keep the two in lockstep: the preview
+    # is the promise this function is measured against.
     if system_id:
         games = query(
-            "SELECT id, boxart, boxart_3d, screenshots, fanart, video, manual FROM games WHERE system_id = ?",
+            "SELECT id, boxart, boxart_3d, screenshots, fanart, video, manual "
+            "FROM games WHERE system_id = ? AND scraped = 1",
             (system_id,),
         )
     else:
-        games = query("SELECT id, boxart, boxart_3d, screenshots, fanart, video, manual FROM games")
+        games = query(
+            "SELECT id, boxart, boxart_3d, screenshots, fanart, video, manual "
+            "FROM games WHERE scraped = 1"
+        )
 
     game_ids_to_reset = [g['id'] for g in games]
 
@@ -179,9 +190,12 @@ def clear_scraped_data(system_id=None, delete_images=False):
     # and reclaimable by the media-cleanup sweep — never a broken DB reference.
     # `games` already holds the captured paths, so the delete still has them.
     if system_id:
-        execute(f"UPDATE games SET {set_clause} WHERE system_id = ?", (system_id,))
+        execute(
+            f"UPDATE games SET {set_clause} WHERE system_id = ? AND scraped = 1",
+            (system_id,),
+        )
     else:
-        execute(f"UPDATE games SET {set_clause}")
+        execute(f"UPDATE games SET {set_clause} WHERE scraped = 1")
     cleared = len(game_ids_to_reset)
 
     if delete_images:

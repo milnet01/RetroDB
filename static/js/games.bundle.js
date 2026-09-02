@@ -532,8 +532,6 @@ const BulkEditController = (function() {
     let gameIds = [];
     let _abortController = null;
 
-    const APPENDABLE_FIELDS = ['genre', 'publisher', 'developer', 'franchise', 'game_structure'];
-
     /**
      * Open the bulk edit modal with the given game IDs
      * @param {number[]} ids - Array of game IDs to edit
@@ -719,7 +717,7 @@ const BulkEditController = (function() {
         const modes = {};
         document.querySelectorAll('.bulk-append-toggle').forEach(toggle => {
             const field = toggle.dataset.field;
-            if (field && APPENDABLE_FIELDS.includes(field)) {
+            if (field) {
                 modes[field] = toggle.checked ? 'append' : 'replace';
             }
         });

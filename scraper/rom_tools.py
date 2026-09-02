@@ -900,7 +900,11 @@ class ArchiveScanner:
             
             try:
                 # Create M3U for this archive
-                result = self.create_m3u_playlist(archive_path)
+                result = self.create_m3u_playlist(
+                    archive_path,
+                    move_to_staging=delete_archives,
+                    staging_folder=staging_folder,
+                )
                 
                 detail = {
                     "path": archive_path,
@@ -914,30 +918,20 @@ class ArchiveScanner:
                 if result.get("success"):
                     results["succeeded"] += 1
                     
-                    # Move original archive to staging folder instead of deleting
-                    if delete_archives and staging_folder:
-                        try:
-                            archive_file = Path(archive_path)
-                            dest_path = Path(staging_folder) / archive_file.name
-                            
-                            # Handle duplicate names in staging folder
-                            if dest_path.exists():
-                                base = dest_path.stem
-                                ext = dest_path.suffix
-                                counter = 1
-                                while dest_path.exists():
-                                    dest_path = Path(staging_folder) / f"{base}_{counter}{ext}"
-                                    counter += 1
-                            
-                            shutil.move(str(archive_file), str(dest_path))
-                            results["moved_archives"] += 1
-                            detail["moved"] = True
-                            detail["moved_to"] = str(dest_path)
-                            logger.info(f"Moved archive to staging: {archive_path} -> {dest_path}")
-                        except Exception as e:
-                            detail["moved"] = False
-                            detail["move_error"] = str(e)
-                            logger.warning(f"Failed to move archive {archive_path}: {e}")
+                    # create_m3u_playlist performs the move itself when asked,
+                    # and reports it back. This used to re-do the move here
+                    # with its own copy of the logic, which meant two things:
+                    # the originals moved even when delete_archives was False
+                    # (the default, and the UI's "leave my archives alone"
+                    # choice), and when it was True the second move ran against
+                    # a file the first had already taken, raised, and reported
+                    # move_error for a move that had in fact succeeded.
+                    if result.get("archive_moved"):
+                        results["moved_archives"] += 1
+                        detail["moved"] = True
+                        detail["moved_to"] = result.get("moved_to")
+                    elif delete_archives:
+                        detail["moved"] = False
                 else:
                     results["failed"] += 1
                 
