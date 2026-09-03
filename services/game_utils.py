@@ -445,6 +445,28 @@ RATING_DB_COLUMNS = ['esrb_rating', 'pegi_rating', 'cero_rating', 'usk_rating', 
 RATING_SYSTEM_KEYS = ['esrb', 'pegi', 'cero', 'usk', 'acb', 'fpb', 'grac', 'classind', 'china']
 
 
+ESRB_CODES = ('E10+', 'EC', 'E', 'T', 'M', 'AO', 'RP')
+
+
+def parse_esrb_code(rating):
+    """Extract the ESRB code from a free-form rating string, else ''.
+
+    TGDB sends 'T - Teen', 'M - Mature 17+', 'AO - Adults Only 18+'. A
+    substring test mis-assigns four of the six real strings: 'E' is a
+    substring of TEEN, MATURE and PENDING, and 'T' of ADULTS. Match whole
+    tokens instead. ESRB_CODES is the complete set, so a string matching none
+    of them is not an ESRB rating and must not be stored as one — it would
+    seed all nine boards through cross_map_ratings (Pass 59.19).
+    """
+    if not rating:
+        return ''
+    tokens = set(re.split(r'[^A-Z0-9+]+', re.sub(r'(?i)\besrb\b', '', rating).upper()))
+    for code in ESRB_CODES:
+        if code in tokens:
+            return code
+    return ''
+
+
 def map_rating(from_system, from_value, to_system):
     """Cross-map a rating from one system to another via maturity tier.
 
@@ -1284,24 +1306,25 @@ def normalize_players_value(value):
     stripped = value.strip()
     if not stripped:
         return None
+    # A trailing '+' ("4+", "1-4+") is an open-ended upper bound; the
+    # number is still the largest count the source states. ES-DE sends this
+    # form and only its own copy of the parse handled it (Pass 59.29).
+    def _as_int(token):
+        try:
+            return int(token.rstrip('+').strip())
+        except ValueError:
+            return None
+
     # Range form "1-4" / "2-8" — take the maximum.
     if '-' in stripped:
-        parts = [p.strip() for p in stripped.split('-') if p.strip()]
-        nums = []
-        for part in parts:
-            try:
-                nums.append(int(part))
-            except ValueError:
-                continue
+        nums = [n for n in (_as_int(p) for p in stripped.split('-') if p.strip())
+                if n is not None]
         if nums:
             return max(nums) if max(nums) >= 1 else None
         return None
     # Plain integer string.
-    try:
-        n = int(stripped)
-        return n if n >= 1 else None
-    except ValueError:
-        return None
+    n = _as_int(stripped)
+    return n if n is not None and n >= 1 else None
 
 
 def generate_sort_title(title):

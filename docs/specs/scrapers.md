@@ -63,29 +63,23 @@ The single UPDATE is **not** wrapped in a try/except fallback: a failure means `
 
 ## 4. Merge priority
 
-Defined in `hybrid_scraper.FIELD_SOURCES`. Reading order = preference order. Within a single hybrid run the *primary* source applies first (regardless of where it sits in FIELD_SOURCES); secondaries then walk in user-priority order, filling only what the primary left empty. The table below shows the most relevant fields; the canonical mapping is the `FIELD_SOURCES` dict in `scraper/hybrid_scraper.py` (grep for the name). A few metadata-dict keys (`dimension`, `perspective`, `game_structure`, `edition`, `campaign`, `other_platforms`, `alternate_titles`, `sort_title`) are filled by per-source mergers in `metadata_merger.py` directly and don't carry their own FIELD_SOURCES row. `save_type` is a special case — it has a sentinel `FIELD_SOURCES['save_type'] = ['manual']` entry that prevents normal-source filling and defers to the `detect_save_type` post-merge pass instead.
+Priority is the user's configured scraper order (Settings -> Scrapers, `fallback_settings['priority']`, default `screenscraper -> esde -> tgdb -> igdb`). There is no per-field allow-list. Within a hybrid run:
 
-| Field                                                                                          | Preference order                                |
-|------------------------------------------------------------------------------------------------|--------------------------------------------------|
-| title / publisher / developer / release_date / genre / description / players / modes           | esde → tgdb → igdb                              |
-| esrb_rating                                                                                    | igdb → tgdb → rawg → screenscraper              |
-| pegi_rating                                                                                    | igdb → tgdb → screenscraper                     |
-| cero_rating / usk_rating / acb_rating                                                          | igdb → screenscraper                            |
-| fpb_rating                                                                                     | screenscraper                                   |
-| grac_rating / classind_rating                                                                  | igdb                                            |
-| boxart                                                                                         | esde → screenscraper → rawg → tgdb → igdb       |
-| boxart_3d                                                                                      | esde → screenscraper                            |
-| screenshots / fanart                                                                           | esde → screenscraper → tgdb → igdb              |
-| video / manual                                                                                 | esde → screenscraper                            |
-| region                                                                                         | esde → screenscraper → filename                 |
-| franchise                                                                                      | igdb → tgdb                                     |
-| similar_games / playtime_estimate / controller_support                                         | igdb                                            |
-| critic_score / critic_score_count                                                              | rawg → igdb → ai                                |
-| user_score / user_score_count                                                                  | rawg → igdb → screenscraper → ai                |
+1. The **primary** source applies first, wherever it sits in that list.
+2. The remaining enabled scrapers then run in the user's order, minus the primary and any disabled one (`_run_fallbacks`).
+3. Each per-source merger in `metadata_merger.py` writes a field only while it is still empty (`if not metadata['field']`), so the first source to supply a value keeps it.
+
+Which fields a source can fill is therefore decided by what that source's merger implements.
+
+Fields no scraper supplies:
+
+- `save_type` - the `detect_save_type` post-merge pass, AI fill, or manual entry.
+- `china_rating` - inference, AI fill or manual; no Western scraper supplies a CADPA rating.
+- `dimension`, `perspective`, `game_structure`, `edition`, `campaign`, `other_platforms`, `alternate_titles`, `sort_title` - written directly by the per-source mergers.
 
 Tie-breakers:
 
-- **Boxart**: ScreenScraper + RAWG ship system-specific covers (Saturn JP boxart for a Saturn ROM), IGDB ships the generic / global cover — that's why IGDB is last. ES-DE wins outright because the user already curated it.
+- **Boxart**: ScreenScraper and RAWG ship system-specific covers (Saturn JP boxart for a Saturn ROM) where IGDB ships the generic global cover, so order IGDB last if regional covers matter. ES-DE first means the cover the user already curated wins.
 - **Screenshots**: never replaced, always *appended*, then deduped via `image_dedup.compute_dhash` with Hamming-distance threshold 10. Each per-source merger reads existing filenames + their hashes once, then calls `keep_screenshot_if_unique` on each new download. Visual dupes (re-encodes / resizes) are dropped before they reach the UPDATE.
 - **Empty values never win**: the fill-only invariant (§5) means a later high-priority source filling an empty field always wins, but an empty response from a high-priority source never wipes what came from a lower-priority source.
 - **Curated DB defaults always win for controllers**: `get_system_default_controller_name` runs after gap-fill and overrides whatever was scraped/inferred.
@@ -232,7 +226,7 @@ Hand-off points:
 
 ## 10. HTTP base contract
 
-`scraper/base_scraper.py` is the only sanctioned HTTP layer for the scraper subsystem. Every adapter (TGDB, IGDB, RAWG, ScreenScraper, AI, RA, Steam, Xbox) goes through it (Pass 41.5 / 41.5.B closed the carry-overs).
+`scraper/base_scraper.py` is the only sanctioned HTTP layer for the scraper subsystem. Every adapter (TGDB, IGDB, RAWG, ScreenScraper, AI, RA, Steam, Xbox) goes through it (Pass 41.5 / 41.5.B closed most carry-overs; Xbox followed in Pass 59.26).
 
 `http_get(url, params=None, headers=None, timeout=30, retries=2, max_bytes=None)` and `http_post(url, data=None, json_data=None, headers=None, timeout=30, retries=2, max_bytes=None)`:
 
@@ -309,7 +303,6 @@ End-to-end checklist for a new remote source `foo`:
 3. **Wire into `hybrid_scraper.apply_hybrid_metadata`**:
    - Add an `elif primary_source == 'foo':` branch wrapped in `try / except` (Pass 41.4.B pattern; log + fall through to gap-fill on exception).
    - Add an `elif fallback_source == 'foo':` branch in the gap-fill loop with `if secondary_sources` shortcut + fresh-search path (use `_pick_best_secondary` / `_pick_best_fallback`).
-   - Add `'foo': ['foo']` (or insert into existing field lists) in `FIELD_SOURCES` for every field `foo` can supply.
 
 4. **Wire into `scraper_manager.ScraperManager.search_games`**:
    - Import `search_games` as `search_foo`.
@@ -328,7 +321,7 @@ End-to-end checklist for a new remote source `foo`:
    - `tests/test_match_scorer.py` — pin per-source scoring extras.
    - `tests/test_pass40_security.py` (or successor) — if `foo` downloads images, add SSRF + redirect-chain tests asserting it goes through `base_scraper.download_image`.
 
-7. **Docs** — extend §2 source inventory; add a row to `FIELD_SOURCES` table in §4 if `foo` contributes any new field; update CLAUDE.md "Scraper fill-only invariant" only if `foo` introduces a new exception (it shouldn't).
+7. **Docs** — extend §2 source inventory; add `foo` to the §4 default priority order if it ships enabled; update CLAUDE.md "Scraper fill-only invariant" only if `foo` introduces a new exception (it shouldn't).
 
 ---
 

@@ -463,28 +463,14 @@ def extract_region_from_filename(filename):
 
 
 def derive_game_modes(players_str):
-    """Derive game modes from players string"""
-    if not players_str:
-        return 'Single-Player'
+    """Derive canonical game modes from an ES-DE players string ("1-4").
 
-    try:
-        # Handle formats like "1-4", "1-2", "1", "2", "4+"
-        players_str = str(players_str).strip()
-
-        if '-' in players_str:
-            parts = players_str.split('-')
-            max_players = int(parts[1].replace('+', ''))
-        elif '+' in players_str:
-            max_players = int(players_str.replace('+', ''))
-        else:
-            max_players = int(players_str)
-
-        if max_players > 1:
-            return 'Single-Player, Multiplayer'
-        else:
-            return 'Single-Player'
-    except Exception:
-        return 'Single-Player'
+    Delegates to services.normalization so the three copies of this
+    derivation cannot diverge again; an unknown count keeps this function's
+    existing 'Single-Player' contract (Pass 59.29).
+    """
+    from services.normalization import modes_from_player_count
+    return modes_from_player_count(players_str) or 'Single-Player'
 
 
 def search_esde_games(title, system_folder, limit=10):

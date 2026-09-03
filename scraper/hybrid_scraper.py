@@ -234,44 +234,6 @@ def should_use_default_controller(controller_value):
 # METADATA FIELD DEFINITIONS
 # =============================================================================
 
-# Fields that can be filled from each source
-# NOTE: For boxart, screenscraper and rawg provide system-specific covers which are preferred
-# IGDB provides generic covers so should be last resort for boxart
-FIELD_SOURCES = {
-    'title': ['esde', 'tgdb', 'igdb'],
-    'publisher': ['esde', 'tgdb', 'igdb'],
-    'developer': ['esde', 'tgdb', 'igdb'],
-    'release_date': ['esde', 'tgdb', 'igdb'],
-    'genre': ['esde', 'tgdb', 'igdb'],
-    'description': ['esde', 'tgdb', 'igdb'],
-    'players': ['esde', 'tgdb', 'igdb'],
-    'modes': ['esde', 'tgdb', 'igdb'],
-    'esrb_rating': ['igdb', 'tgdb', 'rawg', 'screenscraper'],
-    'pegi_rating': ['igdb', 'tgdb', 'screenscraper'],
-    'cero_rating': ['igdb', 'screenscraper'],
-    'usk_rating': ['igdb', 'screenscraper'],
-    'acb_rating': ['igdb', 'screenscraper'],
-    'fpb_rating': ['screenscraper'],
-    'grac_rating': ['igdb'],
-    'classind_rating': ['igdb'],
-    'china_rating': [],  # No Western scraper supplies a CADPA rating — inference / manual / AI-fill only.
-    'boxart': ['esde', 'screenscraper', 'rawg', 'tgdb', 'igdb'],  # SS and RAWG have system-specific covers; IGDB generic
-    'boxart_3d': ['esde', 'screenscraper'],  # 3D boxart from ES-DE or ScreenScraper
-    'screenshots': ['esde', 'screenscraper', 'tgdb', 'igdb'],
-    'fanart': ['esde', 'screenscraper', 'tgdb', 'igdb'],
-    'video': ['esde', 'screenscraper'],
-    'manual': ['esde', 'screenscraper'],
-    'region': ['esde', 'screenscraper', 'filename'],
-    'franchise': ['igdb', 'tgdb'],
-    'similar_games': ['igdb'],
-    'playtime_estimate': ['igdb'],
-    'controller_support': ['igdb'],
-    'save_type': ['manual'],  # Derived from common patterns
-    'critic_score': ['rawg', 'igdb', 'ai'],  # RAWG has Metacritic, IGDB has aggregated critic scores, AI searches online
-    'critic_score_count': ['rawg', 'igdb', 'ai'],
-    'user_score': ['rawg', 'igdb', 'screenscraper', 'ai'],  # RAWG user ratings, IGDB user ratings, SS community, AI searches online
-    'user_score_count': ['rawg', 'igdb', 'ai'],
-}
 
 # =============================================================================
 # IGDB EXTENDED FETCH
@@ -1054,7 +1016,14 @@ def _run_fallbacks(metadata, result, sources_data, game, db_game_id,
                                     ss_devid, ss_devpassword
                                 )
                                 if ss_results:
-                                    ss_data = _pick_best_fallback(ss_results, game_title) if len(ss_results) > 1 else ss_results[0]
+                                    # Score unconditionally: a single result
+                                    # used to be accepted with no score at all,
+                                    # bypassing the 80-point floor scrapers.md
+                                    # §6 exists to enforce — and ScreenScraper
+                                    # also supplies video and manual, which are
+                                    # fill-only and so survive a re-scrape
+                                    # (Pass 59.21).
+                                    ss_data = _pick_best_fallback(ss_results, game_title)
                                 else:
                                     logger.info(f"ScreenScraper fallback: no results found for '{game_title}'")
 
@@ -1577,6 +1546,19 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         # =============================================
 
         # Region from filename if not set
+        # Full Re-scrape starts `metadata` empty, so region and save_type fell
+        # through to a default ('USA') and a folder guess, and COALESCE then
+        # overwrote curated values. Both are DERIVED, not source-supplied, and
+        # CLAUDE.md scopes the force-mode exception to "any field a source
+        # actually provides" — so seed them from the existing row when no
+        # source filled them. A source-supplied value still wins, because
+        # sources run before this block (Pass 59.22).
+        if force_overwrite:
+            if not metadata['region']:
+                metadata['region'] = game.get('region') or None
+            if not metadata['save_type']:
+                metadata['save_type'] = game.get('save_type') or None
+
         if not metadata['region']:
             rom_path = game.get('rom_path', '')
             filename = os.path.basename(rom_path)

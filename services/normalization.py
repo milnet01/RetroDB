@@ -155,7 +155,28 @@ MODES_NORMALIZATION = {
     'splitscreen': 'Split-Screen',
     'versus': 'Versus',
     'pvp': 'Versus',
+    # A bare 'Multiplayer' (IGDB's generic mode, and what the player-count
+    # derivations used to emit) is not in the canonical set, so
+    # display_field_value() could not translate it and the modes filter chip
+    # could not match it. 'Local Multiplayer' is the token this library
+    # already uses for it (Pass 59.29).
+    'multiplayer': 'Local Multiplayer',
 }
+
+
+def modes_from_player_count(players):
+    """Derive canonical `modes` from a max-player count or range ("1-4").
+
+    Single home for a derivation that had three diverged copies - TGDB wrote
+    a lowercase 'Single-player', ES-DE wrote 'Single-Player', and neither
+    emitted a canonical multiplayer token. Returns '' when the count is
+    unknown so each caller decides what an absent value means (Pass 59.29).
+    """
+    from services.game_utils import normalize_players_value
+    count = normalize_players_value(players)
+    if not count:
+        return ''
+    return 'Single-Player, Local Multiplayer' if count > 1 else 'Single-Player'
 
 
 # =============================================================================

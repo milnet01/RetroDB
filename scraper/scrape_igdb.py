@@ -510,7 +510,12 @@ def apply_metadata_to_game(db_game_id, igdb_data):
         # the contract holds regardless of caller.
         from services.normalization import normalize_genre
         genres = igdb_data.get('genres', [])
-        genre = normalize_genre(', '.join(g['name'] for g in genres)) if genres else ''
+        # isinstance guard, as at the company loop above: an unexpanded
+        # reference arrives as a bare int and ['name'] raised TypeError,
+        # which the outer except swallowed — discarding the ENTIRE IGDB
+        # apply rather than this one field (Pass 59.27).
+        genre_names = [g['name'] for g in genres if isinstance(g, dict) and g.get('name')]
+        genre = normalize_genre(', '.join(genre_names)) if genre_names else ''
         
         # Age ratings - IGDB category: 1=ESRB, 2=PEGI
         # ESRB ratings: 6=RP, 7=EC, 8=E, 9=E10+, 10=T, 11=M, 12=AO
@@ -577,7 +582,10 @@ def apply_metadata_to_game(db_game_id, igdb_data):
             rating = pegi_rating
         
         # Game modes
-        modes = ', '.join(g['name'] for g in igdb_data.get('game_modes', [])) or ''
+        modes = ', '.join(
+            g['name'] for g in igdb_data.get('game_modes', [])
+            if isinstance(g, dict) and g.get('name')
+        ) or ''
         
         # Players — Pass 40.6: leave as None when IGDB has no value so
         # COALESCE(?, players) preserves the curated DB value.  The previous
@@ -586,7 +594,13 @@ def apply_metadata_to_game(db_game_id, igdb_data):
         players = None
         multiplayer_modes = igdb_data.get('multiplayer_modes', [])
         if multiplayer_modes:
-            max_players = max((m.get('offlinemax', 0) for m in multiplayer_modes), default=0)
+            # `.get('offlinemax', 0)` returns None — not the default — when
+            # IGDB sends an explicit null, and max() then raises comparing
+            # None with int.
+            max_players = max(
+                ((m.get('offlinemax') or 0) for m in multiplayer_modes if isinstance(m, dict)),
+                default=0,
+            )
             if max_players:
                 players = max_players
         
@@ -595,7 +609,7 @@ def apply_metadata_to_game(db_game_id, igdb_data):
         
         # Download cover art — fill-only: skip when the game already has boxart.
         boxart = None
-        if not existing_boxart and 'cover' in igdb_data and 'url' in igdb_data['cover']:
+        if not existing_boxart and isinstance(igdb_data.get('cover'), dict) and 'url' in igdb_data['cover']:
             boxart_url = igdb_data['cover']['url'].replace('t_thumb', 't_cover_big')
             if not boxart_url.startswith('http'):
                 boxart_url = f"https:{boxart_url}"

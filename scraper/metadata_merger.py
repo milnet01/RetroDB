@@ -292,36 +292,25 @@ def apply_tgdb_to_metadata(metadata, tgdb_data, db_game_id, result, fill_only=Fa
         if players:
             metadata['players'] = players
             if not metadata['modes']:
-                metadata['modes'] = 'Single-Player, Multiplayer' if players > 1 else 'Single-Player'
+                from services.normalization import modes_from_player_count
+                metadata['modes'] = modes_from_player_count(players)
             result['filled_fields'].append('players (TGDB)')
 
     # Parse rating field into ESRB and PEGI
     rating = tgdb_data.get('rating', '') or ''
     if rating:
-        rating_lower = rating.lower()
-        rating_upper = rating.upper()
-
-        # Check for ESRB rating
+        # Check for ESRB rating — shared with the single-source path
+        # (scrape_thegamesdb) so the two token parses cannot diverge again.
         if not metadata['esrb_rating']:
-            if 'esrb' in rating_lower:
-                esrb_val = rating.replace('ESRB', '').replace('esrb', '').strip()
-                if esrb_val:
-                    metadata['esrb_rating'] = esrb_val
-                    result['filled_fields'].append('esrb_rating (TGDB)')
-            elif any(esrb in rating_upper for esrb in ['E ', 'E10+', 'T ', 'M ', 'AO', 'RP', 'EC']):
-                # Match the ESRB code as a whole token, not a bare-letter
-                # substring: "M - MATURE" must map to M, but a substring test
-                # finds the 'E' in "MATURE" first and mis-maps it to E.
-                tokens = set(re.split(r'[^A-Z0-9+]+', rating_upper))
-                for esrb in ['E10+', 'EC', 'E', 'T', 'M', 'AO', 'RP']:
-                    if esrb in tokens:
-                        metadata['esrb_rating'] = esrb
-                        result['filled_fields'].append('esrb_rating (TGDB)')
-                        break
+            from services.game_utils import parse_esrb_code
+            esrb_val = parse_esrb_code(rating)
+            if esrb_val:
+                metadata['esrb_rating'] = esrb_val
+                result['filled_fields'].append('esrb_rating (TGDB)')
 
         # Check for PEGI rating
         if not metadata['pegi_rating']:
-            if 'pegi' in rating_lower:
+            if 'pegi' in rating.lower():
                 numbers = re.findall(r'\d+', rating)
                 if numbers:
                     metadata['pegi_rating'] = f"PEGI {numbers[0]}"

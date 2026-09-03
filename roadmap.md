@@ -1032,14 +1032,16 @@ Resolved (2026-07-01, v3.13.0): stale data/psn_tokens.json removed; help.html st
     on `'skipped'` files too (disk churn).
   - `routes/trophies.py` import-time global monkeypatch of `pyrate_limiter`
     (`_Limiter._try_acquire`) is fragile across library upgrades.
-  - `scraper/scrape_thegamesdb.py` assigns free-text TGDB ratings verbatim into
+  - ~~`scraper/scrape_thegamesdb.py` assigns free-text TGDB ratings verbatim into
     `esrb_rating`; `metadata_merger.py` drops bare single-letter ESRB codes
-    ("E"/"T"/"M") that lack a trailing space.
+    ("E"/"T"/"M") that lack a trailing space.~~ Closed by Pass 59.19 — both
+    parses share one whole-token parser and the verbatim fallback is gone.
   - `scraper/scrape_rawg.py` defaults `players` to `1` (truthy), pre-filling a
     weak value that crowds out a better secondary source.
-  - Xbox scrapers (`scrape_xbox.py`) bypass `base_scraper.http_get` — no SSRF
+  - ~~Xbox scrapers (`scrape_xbox.py`) bypass `base_scraper.http_get` — no SSRF
     risk (hardcoded `*.xboxlive.com`/`login.live.com` hosts) but `docs/specs/
-    scrapers.md` §10 wrongly claims Xbox was migrated; fix the doc.
+    scrapers.md` §10 wrongly claims Xbox was migrated; fix the doc.~~ Closed by
+    Pass 59.26 — the code was migrated instead, so §10 is now true as written.
   - `hybrid_scraper.py` generic-controller `elif` branch is a no-op `pass` whose
     comment promises to clear generic controller values.
   - `static/js/main.js` `performGlobalSearch` is dead (`#globalSearch` absent
@@ -5512,7 +5514,14 @@ orchestrator, several by execution rather than reading.
   exact set `{'E','E10+','T','M','AO','RP','EC'}`, longest-first, before any
   substring fallback. Add a test with all six real strings.
 - **Verify**: the table above, as a parametrised test.
-- **Status**: planned (2026-09-01). Lanes: scraper, ratings.
+- **Resolution** (2026-09-03): Both TGDB rating parses now call one shared `services.game_utils.parse_esrb_code`, which
+  matches whole tokens. The hybrid copy in `metadata_merger` had already been
+  fixed and the single-source copy had not, so the fix was a deduplication
+  rather than a second repair. The blind `esrb_rating = rating` fallback went
+  with it: it stored non-ESRB text (a PEGI string) in the ESRB column, which
+  then seeded the other boards. All six real TGDB strings are pinned in
+  `tests/test_pass59_scrapers.py`.
+- **Status**: shipped (2026-09-03). Lanes: scraper, ratings.
 - **Source**: review-code scraper-providers lane 2026-09-01; orchestrator
   re-verified by execution.
 
@@ -5535,7 +5544,11 @@ orchestrator, several by execution rather than reading.
   second independent bug making age ratings under-report severity. For a
   library a household browses, that is the one direction that matters.
 - **Verify**: the two cases above, as a test.
-- **Status**: planned (2026-09-01). Lanes: data, ratings.
+- **Resolution** (2026-09-03): `cross_map_ratings` now reads a snapshot of the ratings it was given, so a slot it
+  filled cannot become a source for a later one. The two measured cases are
+  pinned: CERO `D` yields GRAC `18` / ClassInd `16`, and ClassInd `16` yields
+  CERO `D`.
+- **Status**: shipped (2026-09-03). Lanes: data, ratings.
 - **Source**: review-code data-layer lane 2026-09-01; orchestrator re-verified
   by execution.
 
@@ -5554,7 +5567,10 @@ orchestrator, several by execution rather than reading.
 - **Plan**: call `_pick_best_fallback(ss_results, game_title)`
   unconditionally.
 - **Verify**: feed a single low-scoring candidate and confirm it is rejected.
-- **Status**: planned (2026-09-01). Lanes: scraper.
+- **Resolution** (2026-09-03): `_pick_best_fallback` is called unconditionally, so a lone ScreenScraper result is
+  scored against the same floor as any other. The helper already handled a
+  single-element list; only the call site was wrong.
+- **Status**: shipped (2026-09-03). Lanes: scraper.
 - **Source**: review-code scraper-orchestration lane 2026-09-01.
 
 ---
@@ -5574,7 +5590,11 @@ orchestrator, several by execution rather than reading.
   default/heuristic fill so only source-supplied values overwrite.
 - **Verify**: curate `region='Japan'`, Full Re-scrape with a source that
   supplies no region, confirm Japan survives.
-- **Status**: planned (2026-09-01). Lanes: scraper.
+- **Resolution** (2026-09-03): In force mode `region` and `save_type` are seeded from the existing row before the
+  derived fills run, so the default region and the folder guess can no longer
+  reach `COALESCE`. A source-supplied value still wins, because sources run
+  before that block.
+- **Status**: shipped (2026-09-03). Lanes: scraper.
 - **Source**: review-code scraper-orchestration lane 2026-09-01.
 
 ---
@@ -5595,7 +5615,10 @@ orchestrator, several by execution rather than reading.
 - **Plan**: copy the delete-and-return-False block from
   `_download_and_finalize`.
 - **Verify**: force a finalize failure and confirm no DB field is set.
-- **Status**: planned (2026-09-01). Lanes: scraper, media.
+- **Resolution** (2026-09-03): `download_image` now deletes the file and returns `False` when finalize raises,
+  which is what `_download_and_finalize` already did and what §9 states. Pinned
+  by a test that forces a finalize failure and asserts the file is gone.
+- **Status**: shipped (2026-09-03). Lanes: scraper, media.
 - **Source**: review-code scraper-orchestration lane 2026-09-01.
 
 ---
@@ -5619,7 +5642,14 @@ orchestrator, several by execution rather than reading.
   queued rather than fixed for that reason.
 - **Verify**: whichever way, `grep FIELD_SOURCES` returns either a live reader
   or nothing at all.
-- **Status**: planned (2026-09-01). Lanes: scraper, docs.
+- **Resolution** (2026-09-03): Implemented as decided: `FIELD_SOURCES` deleted, and §4 rewritten to state the
+  priority the code actually uses — the user's configured source order, the
+  primary first, each merger writing only into an empty field. The per-field
+  table went with it; it documented an order nothing enforced. §13's step to
+  add a row is gone. On the `save_type` knock-on: the sentinel gated nothing,
+  so deleting it changed no behaviour, and §4 now lists the fields no scraper
+  supplies instead.
+- **Status**: shipped (2026-09-03). Lanes: scraper, docs.
 - **Decision** (2026-09-02, user): DELETE `FIELD_SOURCES` and rewrite §4 /
   §13 step 3 to say priority is the user's source list. Note the knock-on the
   finding records: the `save_type` sentinel is meant to block normal-source
@@ -5647,7 +5677,12 @@ orchestrator, several by execution rather than reading.
   string stripped from its return.
 - **Verify**: `grep` returns no orphaned definition and no changelog entry
   promising an unreachable feature.
-- **Status**: planned (2026-09-01). Lanes: scraper, docs.
+- **Resolution** (2026-09-03): Both functions deleted, with the orphaned `SYSTEM_MEDIA_URL` and the SSRF test
+  that pinned `download_media` — the finding said zero callers tree-wide, and
+  that test was the one caller. The changelog entry promising
+  `fetch_system_media` was NOT edited: a shipped release section is a record of
+  what was released. The removal is recorded as a new changelog entry instead.
+- **Status**: shipped (2026-09-03). Lanes: scraper, docs.
 - **Source**: review-code scraper-providers lane 2026-09-01.
 
 ---
@@ -5668,7 +5703,11 @@ orchestrator, several by execution rather than reading.
   roadmap note can close too.
 - **Verify**: confirm a 429 from Xbox Live produces a backoff rather than a
   hard failure.
-- **Status**: planned (2026-09-01). Lanes: scraper.
+- **Resolution** (2026-09-03): All seven call sites go through `http_get` / `http_post` with a `max_bytes` cap,
+  including the paginated title-history body the finding named. `requests` was
+  left orphaned by the change and removed. This makes §10 and §14 true rather
+  than needing the doc fix Pass 49.7 proposed.
+- **Status**: shipped (2026-09-03). Lanes: scraper.
 - **Source**: review-code scraper-providers lane 2026-09-01.
 
 ---
@@ -5689,7 +5728,11 @@ orchestrator, several by execution rather than reading.
   four, and use `(m.get('offlinemax') or 0)`.
 - **Verify**: feed each shape and confirm the apply completes with the other
   fields intact.
-- **Status**: planned (2026-09-01). Lanes: scraper.
+- **Resolution** (2026-09-03): All four shapes guarded with the `isinstance` idiom the module already used at the
+  company loop, and `offlinemax` reads `(x or 0)` so an explicit null cannot
+  reach `max()`. Pinned by running `apply_metadata_to_game` on each malformed
+  shape and asserting the unrelated fields still write.
+- **Status**: shipped (2026-09-03). Lanes: scraper.
 - **Source**: review-code scraper-providers lane 2026-09-01.
 
 ---
@@ -5708,7 +5751,10 @@ orchestrator, several by execution rather than reading.
   throughout.
 - **Verify**: feed a response with `"developpeur": null` and confirm the rest
   of the record still applies.
-- **Status**: planned (2026-09-01). Lanes: scraper.
+- **Resolution** (2026-09-03): Every null-unsafe default in the module hardened, not only the listed sites. The
+  list-shaped ones (`.get(k, [])`) had the same defect and were not in the
+  finding — a test written for this pass hit `dates: null` and found them.
+- **Status**: shipped (2026-09-03). Lanes: scraper.
 - **Source**: review-code scraper-providers lane 2026-09-01.
 
 ---
@@ -5734,7 +5780,17 @@ orchestrator, several by execution rather than reading.
   `MODES_NORMALIZATION`.
 - **Verify**: scrape via each provider and confirm the stored `modes` value
   translates and filters.
-- **Status**: planned (2026-09-01). Lanes: scraper, i18n.
+- **Resolution** (2026-09-03): One `services.normalization.modes_from_player_count`, called by all three copies.
+  `'multiplayer'` maps to `Local Multiplayer`, which is the token this library
+  already uses for it — the canonical set has no bare `Multiplayer`. Two
+  existing merger tests pinned the old non-canonical value and were updated.
+  Also fixed at the source: `normalize_players_value` mis-parsed the `4+` form
+  that only ES-DE's own copy had handled.
+- **Note**: existing rows still carry the old values — the library has many
+  `Single-player` rows and one bare `Multiplayer`. A re-scrape or the Settings
+  normalization apply fixes stored data; this pass changed only what is
+  written from now on.
+- **Status**: shipped (2026-09-03). Lanes: scraper, i18n.
 - **Source**: review-code scraper-providers and scraper-orchestration lanes
   2026-09-01 (found independently by both).
 
@@ -6766,9 +6822,10 @@ Each checked against the code it describes. `auth.md` and `api-contracts.md`
 were corrected in `2836bc3` and are not repeated here.
 
 - **`scrapers.md` §10/§14** — *"Every API call goes through
-  `base_scraper.http_get` / `http_post`"*. Xbox and `routes/scraper.py` use
-  bare `requests` (Pass 59.26). **Which side is wrong is ambiguous**: §10
-  enumerates *adapters*, and the route's calls are status probes. Decide
+  `base_scraper.http_get` / `http_post`"*. The Xbox half is closed: Pass 59.26
+  migrated the adapter, so §10's enumeration of adapters is now true.
+  `routes/scraper.py` still uses bare `requests`. **Which side is wrong there is
+  ambiguous**: the route's calls are status probes, not adapter calls. Decide
   before editing.
 - **`scrapers.md` §2/§11** — lists Steam and Xbox as metadata sources in the
   fallback walk. Neither appears in `hybrid_scraper` at all; they are library

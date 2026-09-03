@@ -855,27 +855,18 @@ def apply_metadata_to_game(db_game_id, tgdb_data):
         pegi_rating = ''
 
         if rating:
-            rating_lower = rating.lower()
-            rating_upper = rating.upper()
+            # Shared with the hybrid path (metadata_merger) so the two cannot
+            # diverge again — this copy matched substrings and mis-assigned
+            # four of the six real TGDB strings (Pass 59.19). No blind
+            # fallback to the raw string: a value matching no ESRB code is not
+            # an ESRB rating, and the raw text stays in the `rating` column.
+            from services.game_utils import parse_esrb_code
+            esrb_rating = parse_esrb_code(rating)
 
-            # Check for ESRB
-            if 'esrb' in rating_lower:
-                esrb_rating = rating.replace('ESRB', '').replace('esrb', '').strip()
-            elif any(esrb in rating_upper for esrb in ['E ', 'E10+', 'T ', 'M ', 'AO', 'RP']):
-                for esrb in ['E10+', 'E', 'T', 'M', 'AO', 'RP']:
-                    if esrb in rating_upper:
-                        esrb_rating = esrb
-                        break
-
-            # Check for PEGI
-            if 'pegi' in rating_lower:
+            if 'pegi' in rating.lower():
                 numbers = re.findall(r'\d+', rating)
                 if numbers:
                     pegi_rating = f"PEGI {numbers[0]}"
-
-        # If no specific rating found, use as-is for ESRB
-        if not esrb_rating and rating:
-            esrb_rating = rating
 
         # Genre — normalize to hyphenated canonical forms (FIELD_SCHEMAS). This
         # single-source apply is a fallback when the hybrid fetch fails; the
@@ -952,10 +943,8 @@ def apply_metadata_to_game(db_game_id, tgdb_data):
 
         # modes_str follows the source signal: only emit when TGDB supplied
         # a player count, otherwise leave None so COALESCE preserves curated.
-        if players is None:
-            modes_str = None
-        else:
-            modes_str = 'Single-player, Multiplayer' if players > 1 else 'Single-player'
+        from services.normalization import modes_from_player_count
+        modes_str = modes_from_player_count(players) or None
         c.execute("""
             UPDATE games SET
                 title = COALESCE(?, title),

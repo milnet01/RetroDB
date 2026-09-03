@@ -7,8 +7,14 @@
 
 import logging
 import time
-import requests
+import config
 from urllib.parse import urlencode
+
+# scrapers.md §10 makes base_scraper the only sanctioned HTTP layer, and §14
+# repeats that every API call goes through http_get / http_post. Xbox went
+# through neither: no shared session, no 429/Retry-After backoff, and no
+# response-size cap on the paginated title-history body (Pass 59.26).
+from scraper.base_scraper import http_get, http_post
 
 logger = logging.getLogger(__name__)
 
@@ -91,13 +97,16 @@ def exchange_code_for_tokens(client_id, client_secret, code, redirect_uri):
         dict: Token data including access_token, refresh_token, or None on error
     """
     try:
-        resp = requests.post(XBOX_TOKEN_URL, data={
+        resp = http_post(XBOX_TOKEN_URL, data={
             'client_id': client_id,
             'client_secret': client_secret,
             'code': code,
             'grant_type': 'authorization_code',
             'redirect_uri': redirect_uri,
-        }, timeout=15)
+        }, timeout=15, max_bytes=getattr(config, "MAX_API_RESPONSE_BYTES", 10 * 1024 * 1024))
+        if resp is None:
+            logger.error("Xbox token exchange: no response from token endpoint")
+            return None
         resp.raise_for_status()
         return resp.json()
     except Exception as e:
@@ -117,13 +126,16 @@ def refresh_access_token(client_id, client_secret, refresh_token):
         dict: New token data, or None on error
     """
     try:
-        resp = requests.post(XBOX_TOKEN_URL, data={
+        resp = http_post(XBOX_TOKEN_URL, data={
             'client_id': client_id,
             'client_secret': client_secret,
             'refresh_token': refresh_token,
             'grant_type': 'refresh_token',
             'scope': SCOPES,
-        }, timeout=15)
+        }, timeout=15, max_bytes=getattr(config, "MAX_API_RESPONSE_BYTES", 10 * 1024 * 1024))
+        if resp is None:
+            logger.error("Xbox token refresh: no response from token endpoint")
+            return None
         resp.raise_for_status()
         return resp.json()
     except Exception as e:
@@ -143,7 +155,7 @@ def authenticate_xbox_live(access_token):
         tuple: (xbl_token, user_hash) or (None, None) on error
     """
     try:
-        resp = requests.post(XBL_AUTH_URL, json={
+        resp = http_post(XBL_AUTH_URL, json_data={
             'Properties': {
                 'AuthMethod': 'RPS',
                 'SiteName': 'user.auth.xboxlive.com',
@@ -151,7 +163,10 @@ def authenticate_xbox_live(access_token):
             },
             'RelyingParty': 'http://auth.xboxlive.com',
             'TokenType': 'JWT',
-        }, headers={'Content-Type': 'application/json'}, timeout=15)
+        }, headers={'Content-Type': 'application/json'}, timeout=15, max_bytes=getattr(config, "MAX_API_RESPONSE_BYTES", 10 * 1024 * 1024))
+        if resp is None:
+            logger.error("Xbox Live auth: no response from auth endpoint")
+            return None, None
         resp.raise_for_status()
         data = resp.json()
         xbl_token = data.get('Token')
@@ -172,14 +187,17 @@ def get_xsts_token(xbl_token):
         tuple: (xsts_token, xuid) or (None, None) on error
     """
     try:
-        resp = requests.post(XSTS_AUTH_URL, json={
+        resp = http_post(XSTS_AUTH_URL, json_data={
             'Properties': {
                 'SandboxId': 'RETAIL',
                 'UserTokens': [xbl_token],
             },
             'RelyingParty': 'http://xboxlive.com',
             'TokenType': 'JWT',
-        }, headers={'Content-Type': 'application/json'}, timeout=15)
+        }, headers={'Content-Type': 'application/json'}, timeout=15, max_bytes=getattr(config, "MAX_API_RESPONSE_BYTES", 10 * 1024 * 1024))
+        if resp is None:
+            logger.error("XSTS auth: no response from auth endpoint")
+            return None, None
         resp.raise_for_status()
         data = resp.json()
         xsts_token = data.get('Token')
@@ -358,11 +376,15 @@ def get_title_history(auth_header, xuid, max_items=1000):
             if continuation_token:
                 params['continuationToken'] = continuation_token
 
-            resp = requests.get(url, params=params, headers={
+            resp = http_get(url, params=params, headers={
                 'Authorization': auth_header,
                 'x-xbl-contract-version': '2',
                 'Accept-Language': 'en-US',
-            }, timeout=30)
+            }, timeout=30, max_bytes=getattr(config, "MAX_API_RESPONSE_BYTES", 10 * 1024 * 1024))
+
+            if resp is None:
+                logger.error("Xbox API: no response for title history page")
+                return all_titles
 
             if resp.status_code == 401:
                 logger.error("Xbox API: Authentication expired")
@@ -401,14 +423,18 @@ def get_achievements(auth_header, xuid, title_id):
     try:
         url = f'{XBOX_ACHIEVEMENTS_URL}/users/xuid({xuid})/achievements'
 
-        resp = requests.get(url, params={
+        resp = http_get(url, params={
             'titleId': title_id,
             'maxItems': 1000,
         }, headers={
             'Authorization': auth_header,
             'x-xbl-contract-version': '2',
             'Accept-Language': 'en-US',
-        }, timeout=15)
+        }, timeout=15, max_bytes=getattr(config, "MAX_API_RESPONSE_BYTES", 10 * 1024 * 1024))
+
+        if resp is None:
+            logger.error("Xbox get_achievements: no response")
+            return None
 
         if resp.status_code in (401, 404):
             return None
@@ -469,12 +495,15 @@ def get_gamertag(auth_header, xuid):
     """
     try:
         url = f'{XBOX_PROFILE_URL}/users/xuid({xuid})/profile/settings'
-        resp = requests.get(url, params={
+        resp = http_get(url, params={
             'settings': 'Gamertag',
         }, headers={
             'Authorization': auth_header,
             'x-xbl-contract-version': '2',
-        }, timeout=15)
+        }, timeout=15, max_bytes=getattr(config, "MAX_API_RESPONSE_BYTES", 10 * 1024 * 1024))
+        if resp is None:
+            logger.error("Xbox get_gamertag: no response")
+            return None
         resp.raise_for_status()
         data = resp.json()
         settings = data.get('profileUsers', [{}])[0].get('settings', [])

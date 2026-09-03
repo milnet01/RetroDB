@@ -49,13 +49,20 @@ def cross_map_ratings(ratings):
               mappable source.
     """
     result = {k: (ratings.get(k) or '') for k in RATING_SYSTEM_KEYS}
+    # Snapshot the GIVEN ratings before filling. The loop writes `result` in
+    # place, so reading it back made a slot filled earlier in this same pass a
+    # source for later slots and tier collapse compounded — a CERO 'D' game
+    # derived GRAC '15' and ClassInd '14' (both a tier low) instead of '18'
+    # and '16'. RATING_SYSTEM_KEYS order is priority over the ratings the
+    # caller supplied, not over ones this loop invented (Pass 59.20).
+    sources = dict(result)
     for tgt_key in RATING_SYSTEM_KEYS:
         if result[tgt_key] and result[tgt_key] not in _RP_VALUES:
             continue
         for src_key in RATING_SYSTEM_KEYS:
             if src_key == tgt_key:
                 continue
-            src_val = result[src_key]
+            src_val = sources[src_key]
             if not src_val or src_val in _RP_VALUES:
                 continue
             mapped = map_rating(src_key, src_val, tgt_key)

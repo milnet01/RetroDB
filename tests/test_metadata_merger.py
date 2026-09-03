@@ -108,17 +108,19 @@ class TestApplyTgdb:
         meta, result = blank
         apply_tgdb_to_metadata(meta, {'players': 4}, db_game_id=1, result=result)
         assert meta['players'] == 4
-        assert meta['modes'] == 'Single-Player, Multiplayer'
+        assert meta['modes'] == 'Single-Player, Local Multiplayer'
 
     def test_players_string_range_normalized_not_raising(self, blank):
         """Indie-review fix: a string/range players value (e.g. '1-4') used to
         hit `players > 1` and raise TypeError, silently aborting the whole TGDB
         apply. It must now coerce through normalize_players_value to the max
-        int and set the multiplayer mode."""
+        int and set the multiplayer mode. Pass 59.29 made that token
+    canonical ('Local Multiplayer'); a bare 'Multiplayer' is not in the
+    canonical set and neither translates nor filters."""
         meta, result = blank
         apply_tgdb_to_metadata(meta, {'players': '1-4'}, db_game_id=1, result=result)
         assert meta['players'] == 4
-        assert meta['modes'] == 'Single-Player, Multiplayer'
+        assert meta['modes'] == 'Single-Player, Local Multiplayer'
 
     def test_players_string_single_sets_single_player(self, blank):
         meta, result = blank

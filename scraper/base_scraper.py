@@ -384,8 +384,18 @@ def download_image(url, dest_path, timeout=15):
             parent_dir = os.path.basename(os.path.dirname(dest_path))
             if parent_dir in ('boxart', 'screenshots', 'boxart_3d', 'controllers', 'fanart'):
                 finalize_downloaded_image(dest_path, parent_dir)
-        except Exception:
-            pass  # Non-critical — don't fail the download
+        except Exception as e:
+            # scrapers.md §9: when finalize raises, delete the on-disk file and
+            # return False so the caller does NOT set metadata[field] to a
+            # filename whose bytes are not a decodable image. §10 calls this
+            # function and _download_and_finalize twins with the same contract;
+            # only the twin implemented it (Pass 59.23).
+            logger.warning(f"finalize_downloaded_image failed for {dest_path}: {e}")
+            try:
+                os.remove(dest_path)
+            except OSError:
+                pass
+            return False
         logger.debug(f"Downloaded image: {dest_path}")
         return True
     except Exception as e:

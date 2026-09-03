@@ -1,3 +1,60 @@
+- version: 3.23.6
+  date: 2026-09-03
+  tags:
+  - type: fix
+    label: Age ratings were often wrong, and scraped games could lose their details
+  body: |
+    <ul>
+      <li><strong>Age ratings were frequently wrong, and the mistake spread.</strong>
+        When a rating came from TheGamesDB, the app looked for the rating code
+        anywhere inside the text instead of reading it properly &mdash; so
+        "T - Teen", "M - Mature 17+", "AO - Adults Only 18+" and
+        "RP - Rating Pending" were all stored as the wrong rating, and a Mature
+        game could be filed as suitable for everyone. Worse, that wrong rating
+        was then used to fill in the eight other rating systems, so one bad
+        read spread across the lot. Ratings are now read from the code at the
+        start of the text.</li>
+      <li><strong>Converted ratings came out too lenient.</strong> When filling
+        in a missing rating from one you already had, the app could use a
+        rating it had just worked out moments earlier rather than the one you
+        actually started with. Each hop lost a little severity. It now always
+        converts from the ratings the game really has.</li>
+      <li><strong>Full Re-scrape wiped hand-picked Region and Save Type.</strong>
+        Neither of those comes from a scraper &mdash; the app works them out
+        &mdash; so a Full Re-scrape would replace your curated "Japan" with the
+        default "USA". Your values are now kept unless a source genuinely
+        supplies a new one.</li>
+      <li><strong>A scraper could accept the wrong game.</strong> ScreenScraper
+        results are normally checked against a match score before being used,
+        but a search returning exactly one result skipped that check entirely.
+        Every result is now scored.</li>
+      <li><strong>A game could lose all its scraped details over one missing
+        field.</strong> If IGDB or ScreenScraper left a single field blank in an
+        unexpected way, the whole update was thrown away &mdash; publisher,
+        developer, artwork and all. Those cases are now handled and the rest of
+        the details are kept.</li>
+      <li><strong>A failed image could be recorded as a success.</strong> If a
+        downloaded picture turned out not to be a usable image, the app deleted
+        nothing and still saved the filename, leaving a broken reference. The
+        file is now removed and the field left alone.</li>
+      <li><strong>Game modes now use consistent wording.</strong> Different
+        scrapers wrote "Single-player" and "Single-Player" and a plain
+        "Multiplayer" that was not one of the app's own labels, so those games
+        could not be translated or matched by the Modes filter. All sources now
+        write the same labels. Existing games keep their old wording until you
+        re-scrape them or run the normalisation tool in Settings.</li>
+      <li><strong>Xbox lookups now behave like every other source.</strong> They
+        were making their own web requests, so they had no retry when Xbox Live
+        asked them to slow down, and no limit on how much data a reply could
+        pull in. They now use the same shared connection as the other
+        scrapers.</li>
+      <li><strong>Unused ScreenScraper code removed.</strong> Two functions
+        nothing in the app called have been deleted. One of them returned a web
+        address with your ScreenScraper password still in it, which would have
+        handed the password to anything that used it. The "System Media
+        Endpoint" listed in the 3.6.x release notes was one of these &mdash; it
+        was never reachable from anywhere in the app.</li>
+    </ul>
 - version: 3.23.5
   date: 2026-09-02
   tags:

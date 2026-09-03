@@ -24,7 +24,6 @@ GAME_INFO_URL = f"{API_BASE}/jeuInfos.php"
 GAME_SEARCH_URL = f"{API_BASE}/jeuRecherche.php"
 SYSTEMS_URL = f"{API_BASE}/systemesListe.php"
 USER_INFO_URL = f"{API_BASE}/ssuserInfos.php"
-SYSTEM_MEDIA_URL = f"{MEDIA_BASE}/mediaSysteme.php"
 
 # Software identifier for RetroDB
 SOFTWARE_NAME = "RetroDB"
@@ -382,7 +381,7 @@ def search_game(game_title, system_folder, username, password, dev_id=None, dev_
                         else:
                             # Log what we're filtering to help debug missing results
                             r_name = ''
-                            noms = r.get('noms', [])
+                            noms = (r.get('noms') or [])
                             if noms and isinstance(noms, list) and len(noms) > 0:
                                 r_name = noms[0].get('text', '') if isinstance(noms[0], dict) else ''
                             logger.info(f"ScreenScraper: Filtered result with id={rid!r}, keys={list(r.keys())[:5]}, name='{r_name}'")
@@ -539,17 +538,17 @@ def parse_game_data(jeu):
     }
     
     # Get title (prefer English/region name)
-    names = jeu.get("noms", [])
+    names = (jeu.get("noms") or [])
     result["title"] = get_localized_text(names, "text", region_key="region")
     
     # Get description/synopsis
-    synopsis_list = jeu.get("synopsis", [])
+    synopsis_list = (jeu.get("synopsis") or [])
     result["description"] = get_localized_text(synopsis_list, "text", lang_key="langue")
     
     # Get release date
-    dates = jeu.get("dates", [])
+    dates = (jeu.get("dates") or [])
     for date_entry in dates:
-        region = date_entry.get("region", "").lower()
+        region = (date_entry.get("region") or "").lower()
         if region in REGION_PRIORITY[:4]:  # US, World, EU, UK
             result["release_date"] = date_entry.get("text", "")
             break
@@ -557,49 +556,53 @@ def parse_game_data(jeu):
         result["release_date"] = dates[0].get("text", "")
     
     # Get developer
-    developer = jeu.get("developpeur", {})
+    # The `{}` / `""` defaults do NOT fire when the key is present with an
+    # explicit JSON null, which ScreenScraper sends for unset fields — so
+    # this was None.get / None.lower, aborting parse_game_data and losing
+    # the ENTIRE record over one null field (Pass 59.28).
+    developer = jeu.get("developpeur") or {}
     result["developer"] = developer.get("text", "")
     
     # Get publisher
-    publisher = jeu.get("editeur", {})
+    publisher = jeu.get("editeur") or {}
     result["publisher"] = publisher.get("text", "")
     
     # Get genres
-    genres = jeu.get("genres", [])
+    genres = (jeu.get("genres") or [])
     genre_names = []
     for genre in genres:
-        names = genre.get("noms", [])
+        names = (genre.get("noms") or [])
         genre_name = get_localized_text(names, "text", lang_key="langue")
         if genre_name:
             genre_names.append(genre_name)
     result["genres"] = ", ".join(genre_names)
 
     # Get franchise/series (familles)
-    familles = jeu.get("familles", [])
+    familles = (jeu.get("familles") or [])
     franchise_names = []
     for famille in familles:
-        names = famille.get("noms", [])
+        names = (famille.get("noms") or [])
         franchise_name = get_localized_text(names, "text", lang_key="langue")
         if franchise_name:
             franchise_names.append(franchise_name)
     result["franchise"] = ", ".join(franchise_names) if franchise_names else ""
 
     # Get game modes
-    modes_list = jeu.get("modes", [])
+    modes_list = (jeu.get("modes") or [])
     mode_names = []
     for mode in modes_list:
-        names = mode.get("noms", [])
+        names = (mode.get("noms") or [])
         mode_name = get_localized_text(names, "text", lang_key="langue")
         if mode_name:
             mode_names.append(mode_name)
     result["modes"] = ", ".join(mode_names) if mode_names else ""
 
     # Get player count
-    joueurs = jeu.get("joueurs", {})
+    joueurs = jeu.get("joueurs") or {}
     result["players"] = joueurs.get("text", "")
     
     # Get community rating (note) - ScreenScraper uses 0-20 scale, convert to 0-100
-    note = jeu.get("note", {}).get("text", "")
+    note = (jeu.get("note") or {}).get("text", "")
     if note:
         try:
             note_value = float(note)
@@ -611,12 +614,12 @@ def parse_game_data(jeu):
         result["user_score"] = None
     
     # Get classification/age ratings - capture BOTH ESRB and PEGI separately
-    classifications = jeu.get("classifications", [])
+    classifications = (jeu.get("classifications") or [])
     result["esrb_rating"] = None
     result["pegi_rating"] = None
     
     for classification in classifications:
-        rating_type = classification.get("type", "").upper()
+        rating_type = (classification.get("type") or "").upper()
         rating_text = classification.get("text", "")
         
         if rating_type == "PEGI" and rating_text:
@@ -642,11 +645,11 @@ def parse_game_data(jeu):
                 result["esrb_rating"] = esrb_text
     
     # Get media URLs
-    medias = jeu.get("medias", [])
+    medias = (jeu.get("medias") or [])
     result["media"] = parse_media(medias)
     
     # Get ROM info
-    roms = jeu.get("roms", [])
+    roms = (jeu.get("roms") or [])
     if roms:
         result["rom_info"] = {
             "romfilename": roms[0].get("romfilename", ""),
@@ -704,7 +707,7 @@ def select_best_media(media_list):
     # Try to find media matching region priority
     for region in REGION_PRIORITY:
         for media in media_list:
-            media_region = media.get("region", "").lower()
+            media_region = (media.get("region") or "").lower()
             if media_region == region:
                 return media
     
@@ -721,14 +724,14 @@ def get_localized_text(items, text_key="text", lang_key=None, region_key=None):
     if lang_key:
         for lang in LANGUAGE_PRIORITY:
             for item in items:
-                if item.get(lang_key, "").lower() == lang:
+                if (item.get(lang_key) or "").lower() == lang:
                     return item.get(text_key, "")
     
     # Try region-based selection
     if region_key:
         for region in REGION_PRIORITY:
             for item in items:
-                if item.get(region_key, "").lower() == region:
+                if (item.get(region_key) or "").lower() == region:
                     return item.get(text_key, "")
     
     # Fall back to first item
@@ -738,101 +741,6 @@ def get_localized_text(items, text_key="text", lang_key=None, region_key=None):
     return ""
 
 
-def download_media(url, dest_path, timeout=60):
-    """Download media file from ScreenScraper.
-
-    Pass 25.7 — cap at MAX_MEDIA_DOWNLOAD_BYTES (default 50 MB). Deletes the
-    partial file on overflow so disk can't be exhausted by a misconfigured
-    or malicious upstream.
-    Pass 32.6 — SSRF gate on the URL and redirect chain.
-    """
-    try:
-        import config as _config
-        max_bytes = getattr(_config, 'MAX_MEDIA_DOWNLOAD_BYTES', 50 * 1024 * 1024)
-    except Exception:
-        max_bytes = 50 * 1024 * 1024
-
-    from services.ssrf import validate_outbound_url, validate_and_pin_url, pin_host_ip
-    from urllib.parse import urlparse as _urlparse
-    ok, _, _ = validate_outbound_url(url)
-    if not ok:
-        logger.warning(f"SSRF block: refusing to fetch {url}")
-        return False
-    # Pass 45.2: walk redirect chain + capture IP for DNS-rebinding pin.
-    safe_url, pinned_ip, err = validate_and_pin_url(
-        _http_session, url, max_redirects=3, timeout=5,
-    )
-    if err:
-        logger.warning(f"SSRF block: redirect chain rejected for {url} ({err})")
-        return False
-    pinned_host = _urlparse(safe_url).hostname
-
-    try:
-        # Route through shared session for connection pooling (Pass 26.1).
-        # stream=True is required for the mid-stream size cap below, so this
-        # stays on _http_session.get rather than base_scraper.http_get.
-        with pin_host_ip(pinned_host, pinned_ip), _http_session.get(safe_url, timeout=timeout, stream=True, allow_redirects=False) as response:
-            if response.status_code != 200:
-                return False
-            declared = int(response.headers.get('Content-Length', 0) or 0)
-            if declared and declared > max_bytes:
-                logger.warning(
-                    f"ScreenScraper media rejected: declared {declared} bytes exceeds {max_bytes}"
-                )
-                return False
-            # Pass 48.3 — atomic write: stream into a tempfile in the same
-            # directory, fsync, then os.replace into the final path. Mirrors
-            # base_scraper.download_image (Pass 40.15). The previous bare
-            # open(dest_path, 'wb') left a partial file at dest_path on any
-            # mid-stream failure (connection reset, SIGKILL), and the
-            # "already exists, skip" guards elsewhere then treated the corrupt
-            # bytes as a complete download forever.
-            import tempfile as _tempfile
-            dest_dir = os.path.dirname(dest_path)
-            if dest_dir:
-                os.makedirs(dest_dir, exist_ok=True)
-            tmp_fd, tmp_path = _tempfile.mkstemp(
-                prefix='.dl-', suffix='.part', dir=dest_dir or None,
-            )
-            written = 0
-            try:
-                with os.fdopen(tmp_fd, 'wb') as f:
-                    tmp_fd = None  # ownership transferred to the file object
-                    for chunk in response.iter_content(chunk_size=8192):
-                        if not chunk:
-                            continue
-                        written += len(chunk)
-                        if written > max_bytes:
-                            logger.warning(
-                                f"ScreenScraper media aborted: exceeded {max_bytes} bytes"
-                            )
-                            return False
-                        f.write(chunk)
-                    f.flush()
-                    try:
-                        os.fsync(f.fileno())
-                    except OSError:
-                        pass
-                os.replace(tmp_path, dest_path)
-                tmp_path = None  # ownership transferred to dest_path
-                return True
-            finally:
-                if tmp_fd is not None:
-                    try:
-                        os.close(tmp_fd)
-                    except OSError:
-                        pass
-                if tmp_path is not None:
-                    try:
-                        os.remove(tmp_path)
-                    except OSError:
-                        pass
-    except Exception as e:
-        logger.error(f"Error downloading media: {e}")
-    return False
-
-
-# Main scraper function for integration with RetroDB
 def scrape(game_title, system_folder, rom_path=None, settings=None):
     """
     Main entry point for ScreenScraper scraping
@@ -881,7 +789,7 @@ def scrape(game_title, system_folder, rom_path=None, settings=None):
         return {
             "source": "ScreenScraper",
             "screenscraper_id": first_match.get("id"),
-            "title": get_localized_text(first_match.get("noms", []), "text", region_key="region"),
+            "title": get_localized_text((first_match.get("noms") or []), "text", region_key="region"),
         }
     
     return None
@@ -944,58 +852,6 @@ def get_game_by_id(game_id, username, password, dev_id=None, dev_password=None, 
 
     except Exception as e:
         logger.error(f"Error fetching game by ID: {e}")
-        return None
-
-
-def fetch_system_media(system_id, media_type, username, password, dev_id=None, dev_password=None, region="us"):
-    """Fetch system-level media from ScreenScraper (logos, controllers, bezels, etc.).
-
-    Args:
-        system_id: ScreenScraper system ID.
-        media_type: Media type string (e.g. 'photo-console', 'photo-manette',
-                     'illustration', 'logo-monochrome', 'bezel-4-3', 'bezel-16-9').
-        username: ScreenScraper username.
-        password: ScreenScraper password.
-        dev_id: Optional developer ID.
-        dev_password: Optional developer password.
-        region: Region code (default 'us').
-
-    Returns:
-        URL string for the media, or None.
-    """
-    try:
-        params = []
-        if dev_id and dev_password:
-            params.append(("devid", dev_id))
-            params.append(("devpassword", dev_password))
-        params.extend([
-            ("softname", SOFTWARE_NAME),
-            ("ssid", username),
-            ("sspassword", password),
-            ("systemeid", str(system_id)),
-            ("media", media_type),
-            ("region", region),
-        ])
-
-        # System media uses a different CDN host
-        logger.info(f"Fetching ScreenScraper system media: system={system_id}, type={media_type}")
-
-        response = _ss_request_with_retry(SYSTEM_MEDIA_URL, params, timeout=30, retries=1)
-
-        if response is None:
-            logger.warning("ScreenScraper system media request failed")
-            return None
-
-        if response.status_code == 200 and response.content:
-            # The endpoint returns the image binary directly, not JSON
-            # Return the full URL so the caller can download it
-            return response.url
-
-        logger.warning(f"ScreenScraper system media not found: {response.status_code}")
-        return None
-
-    except Exception as e:
-        logger.error(f"ScreenScraper system media error: {e}")
         return None
 
 

@@ -376,8 +376,10 @@ class TestPass45_2DnsRebindingPin:
     from a public A-record to 127.0.0.1, defeating the SSRF gate. Pass
     45.2 introduces ``validate_and_pin_url`` and threads ``pin_host_ip``
     through ``base_scraper.download_image``, ``metadata_merger._download_
-    and_finalize`` / ``_download_ss_media``, ``scrape_screenscraper.
-    download_media``, and ``services.image_utils._download_model``.
+    and_finalize`` / ``_download_ss_media``, and
+    ``services.image_utils._download_model``. (``scrape_screenscraper.
+    download_media`` was also threaded, and was deleted unused in Pass
+    59.25 along with the test that pinned it.)
 
     These tests pin the contract by stubbing the redirect-chain validator
     and the outbound HTTP call, then checking that ``socket.getaddrinfo``
@@ -512,22 +514,6 @@ class TestPass45_2DnsRebindingPin:
         dest = tmp_path / 'boxart' / 'm.png'
         result = metadata_merger._download_and_finalize(
             'https://upstream.example.com/img.png', str(dest), 'boxart',
-        )
-        assert result is True
-        assert observed.get('ips') == [ip]
-
-    def test_scrape_screenscraper_download_media_pins_ip(self, tmp_path, monkeypatch):
-        """ScreenScraper download_media must pin the IP."""
-        ip = self._patch_validators(monkeypatch, pinned_ip='203.0.113.77')
-        fake_get, observed = self._capture_pin_during_get()
-
-        from scraper import scrape_screenscraper
-        monkeypatch.setattr(scrape_screenscraper._http_session, 'get',
-                            lambda *a, **kw: fake_get(*a, **kw))
-
-        dest = tmp_path / 'media.png'
-        result = scrape_screenscraper.download_media(
-            'https://www.screenscraper.fr/api/media.php?x=1', str(dest),
         )
         assert result is True
         assert observed.get('ips') == [ip]
