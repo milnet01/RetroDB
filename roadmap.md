@@ -4607,19 +4607,29 @@ weren't worth blocking the ship on.  Ordered by rough priority.
      files. Non-English users see a v3.20.0 entry with the feature tag only —
      the bug-fix line is invisible to them. The matching `<li>` in the entry
      body is missing too, so it is not only the tag.
-  2. **v3.23.0 and v3.23.1 are absent from all 20** locale files, so both
-     releases render English for every non-English user.
+  2. **The whole 3.23.x line is absent from all 20** locale files, which
+     therefore render English for every non-English user. The locale files
+     stop at 3.22.1. (Recorded as v3.23.0/v3.23.1 when this was filed; the
+     gap has grown with every release since, and each internal bump widens
+     it — see the Note below.)
 - **Plan**:
   1. Re-add the v3.20.0 `fix` tag (translated `label`) plus its body `<li>` to
      each locale file — `version`, `date` and every tag repeated verbatim per
      the §9 contract.
-  2. Translate the v3.23.0 / v3.23.1 entries into all 20, or record in §9 that
-     the 3.23.x line is deliberately English-only.
+  2. Translate the outstanding 3.23.x entries into all 20, or record in §9
+     that the 3.23.x line is deliberately English-only.
   3. Add the regression pin Pass 57.7 describes so the class cannot recur
      silently.
 - **Verify**: for each locale, the tag-`type` multiset of every entry matches
   English for the same `version`; `/changelog` under a non-English locale shows
   the v3.20.0 fix tag and the two 3.23.x entries.
+- **Note** (2026-09-03): every patch release since has widened this. The
+  project's working practice is that the English changelog leads and the
+  locale files are brought up at a real Patreon release, not at an
+  internal bump — CLAUDE.md workflow step 2 says as much ("Skip for
+  internal/no-release bumps"). So the drift is expected between releases;
+  what this bullet is for is that nothing forces the catch-up to happen,
+  and the backlog is now the whole 3.23.x line rather than two entries.
 - **Status**: planned (2026-08-06). Lanes: i18n, docs.
 - **Source**: debt-sweep 2026-08-06 (v3.12.0..HEAD).
 
