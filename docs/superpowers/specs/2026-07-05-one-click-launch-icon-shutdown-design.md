@@ -64,7 +64,7 @@ page.
 
 ## Part 1 — App icon
 
-- **Master:** `static/images/icon.svg` — neon gamepad, dark rounded tile.
+- **Master:** `packaging/icon.svg` — neon gamepad, dark rounded tile.
 - **Renderer:** `scripts/render_icons.py` — rasterizes the SVG into all outputs.
   Uses **`cairosvg`** for SVG→PNG (build-time-only dependency; NOT added to the
   runtime `requirements.txt` — icons are generated once by the maintainer and

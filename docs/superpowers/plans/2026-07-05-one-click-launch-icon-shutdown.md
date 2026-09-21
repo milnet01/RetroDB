@@ -27,7 +27,7 @@
 ## File Structure
 
 **New files:**
-- `static/images/icon.svg` — neon-gamepad master (single source of truth).
+- `packaging/icon.svg` — neon-gamepad master (single source of truth).
 - `scripts/render_icons.py` — build-time rasterizer (cairosvg + Pillow).
 - `static/favicon.svg`, `static/favicon-32.png`, `static/favicon-16.png`, `static/apple-touch-icon.png` — favicon outputs (committed).
 - `packaging/icons/retrodb-256.png`, `retrodb-512.png`, `retrodb.ico`, `retrodb.icns` — launcher/exe icons (committed).
@@ -246,7 +246,7 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 ## Task 3: App icon assets
 
 **Files:**
-- Create: `static/images/icon.svg`, `scripts/render_icons.py`
+- Create: `packaging/icon.svg`, `scripts/render_icons.py`
 - Create (generated, committed): `static/favicon.svg`, `static/favicon-32.png`, `static/favicon-16.png`, `static/apple-touch-icon.png`, `packaging/icons/retrodb-256.png`, `retrodb-512.png`, `retrodb.ico`, `retrodb.icns`
 - Modify: `templates/base.html:29-30`
 
@@ -260,7 +260,7 @@ Expected: cairosvg + its cairo binding import cleanly (`python3 -c "import cairo
 
 - [ ] **Step 2: Author the master SVG**
 
-Create `static/images/icon.svg` — a neon gamepad on a dark rounded-square tile, cyberpunk cyan (`#00f0ff`) + magenta (`#ff00d4`) glow on near-black (`#0a0a12`). 512×512 viewBox. Keep it self-contained (no external font/href refs) so cairosvg renders it headless:
+Create `packaging/icon.svg` — a neon gamepad on a dark rounded-square tile, cyberpunk cyan (`#00f0ff`) + magenta (`#ff00d4`) glow on near-black (`#0a0a12`). 512×512 viewBox. Keep it self-contained (no external font/href refs) so cairosvg renders it headless:
 
 ```xml
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
@@ -296,7 +296,7 @@ Create `static/images/icon.svg` — a neon gamepad on a dark rounded-square tile
 
 ```python
 #!/usr/bin/env python3
-"""Rasterize static/images/icon.svg into all favicon / launcher / exe icons.
+"""Rasterize packaging/icon.svg into all favicon / launcher / exe icons.
 
 BUILD-TIME ONLY. Requires cairosvg (`pip install cairosvg`) which is NOT a
 runtime dependency — it is deliberately absent from requirements.txt. The
@@ -373,7 +373,7 @@ Start the dev server, load any page, DevTools → Network: confirm `favicon.svg`
 - [ ] **Step 7: Commit**
 
 ```bash
-git add static/images/icon.svg scripts/render_icons.py static/favicon.svg static/favicon-*.png static/apple-touch-icon.png packaging/icons/ templates/base.html
+git add packaging/icon.svg scripts/render_icons.py static/favicon.svg static/favicon-*.png static/apple-touch-icon.png packaging/icons/ templates/base.html
 git commit -m "feat: real neon-gamepad app icon (favicon + launcher/exe assets)
 
 SVG master + render_icons.py (build-time cairosvg, not a runtime dep);

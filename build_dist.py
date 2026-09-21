@@ -45,10 +45,12 @@ for _stream in (sys.stdout, sys.stderr):
 # ── Staging area (outside project dir) ──────────────────────────────────────
 # RETRODB_STAGING_DIR overrides the hardcoded path — used by release.yml
 # to redirect output to /tmp/staging on CI runners that don't have the
-# host's /mnt/Storage/ tree. Default mirrors the maintainer's local layout.
+# host's drive layout. Default mirrors the maintainer's local layout.
+# Must name a drive that is mounted and writable: makedirs below raises
+# PermissionError otherwise, which is what the retired /mnt/Storage did.
 STAGING_DIR = os.environ.get(
     'RETRODB_STAGING_DIR',
-    '/mnt/Storage/Scripts/Linux/Staging_Area/RetroDB',
+    '/mnt/Games/Scripts/Linux/Staging_Area/RetroDB',
 )
 
 # ── Platform definitions ────────────────────────────────────────────────────
