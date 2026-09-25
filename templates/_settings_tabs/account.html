@@ -314,7 +314,7 @@
                         <div style="display: flex; gap: 0.5rem;">
                             <button type="button" class="btn btn-secondary btn-sm" onclick="editUser({{ user.id }})" title="{{ _('Edit') }}">✏️</button>
                             {% if user.id != current_user.id %}
-                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteUser({{ user.id }}, '{{ user.username }}')" title="{{ _('Delete') }}">🗑️</button>
+                            <button type="button" class="btn btn-danger btn-sm" data-username="{{ user.username }}" onclick="deleteUser({{ user.id }}, this.dataset.username)" title="{{ _('Delete') }}">🗑️</button>
                             {% endif %}
                         </div>
                     </td>

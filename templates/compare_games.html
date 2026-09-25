@@ -599,10 +599,10 @@ async function searchForCompare() {
         }
 
         results.innerHTML = data.games.map(g => {
-            const thumb = g.boxart ? `/static/images/boxart/${g.boxart}` : '/static/images/placeholder.png';
+            const thumb = g.boxart ? `/static/images/boxart/${encodeURIComponent(g.boxart)}` : '/static/images/placeholder.png';
             return `
                 <div class="compare-search-item" onclick="selectCompareGame(${g.id})">
-                    <img src="${thumb}" alt="" class="compare-search-thumb" loading="lazy">
+                    <img src="${escapeHtml(thumb)}" alt="" class="compare-search-thumb" loading="lazy">
                     <div class="compare-search-info">
                         <div class="compare-search-title">${escapeHtml(g.title)}</div>
                         <div class="compare-search-system">${escapeHtml(g.system_name || '')}</div>
@@ -628,10 +628,5 @@ function updateCompareUrl() {
     window.location.href = '/compare?' + params.toString();
 }
 
-function escapeHtml(text) {
-    const d = document.createElement('div');
-    d.textContent = text;
-    return d.innerHTML;
-}
 </script>
 {% endblock %}

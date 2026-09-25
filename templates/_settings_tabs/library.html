@@ -199,7 +199,7 @@
                 {% for r in user_settings.get('region_options', ['USA', 'Europe', 'Japan', 'World']) %}
                 <span class="badge badge-info" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; font-size: 0.85rem;">
                     {{ r }}
-                    <button type="button" class="btn-icon-only" onclick="removeRegionOption(this, '{{ r }}')" title="Remove" style="background:none; border:none; color:var(--neon-red); cursor:pointer; font-size:1rem; padding:0 2px;">&times;</button>
+                    <button type="button" class="btn-icon-only" data-region="{{ r }}" onclick="removeRegionOption(this, this.dataset.region)" title="Remove" style="background:none; border:none; color:var(--neon-red); cursor:pointer; font-size:1rem; padding:0 2px;">&times;</button>
                 </span>
                 {% endfor %}
             </div>

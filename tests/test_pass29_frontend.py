@@ -8,7 +8,7 @@
 
 import os
 
-from tests._util import REPO_ROOT, read_source, js_method_body as _js_method_body
+from tests._util import read_source
 
 
 def _read_js(name):
@@ -49,24 +49,10 @@ def test_29_4_no_unguarded_localstorage_json_parse_in_audited_files():
         )
 
 
-def test_29_1_confirmmodal_defaults_to_textcontent():
-    """Pass 29.1 — settings-page.js ConfirmModal now uses textContent
-    unless callers opt into HTML via options.allowHtml.
-
-    Anchor the `options.allowHtml` check to the bodies of `show` and
-    `showInfo` rather than a global `src.count(...)`, so the assertion
-    can't pass from comments or unrelated occurrences (test-audit ASSERT-1).
-    """
-    src = _read_js('settings-page.js')
-    show_body = _js_method_body(src, 'show')
-    show_info_body = _js_method_body(src, 'showInfo')
-    assert 'options.allowHtml' in show_body, (
-        "show() must guard innerHTML behind options.allowHtml"
-    )
-    assert 'options.allowHtml' in show_info_body, (
-        "showInfo() must guard innerHTML behind options.allowHtml"
-    )
-    assert 'messageEl.textContent = message' in src
+# test_29_1_confirmmodal_defaults_to_textcontent retired (Pass 59.35): the
+# ConfirmModal in settings-page.js was shadowed by settings.html's inline
+# showConfirmModal and never ran, so it was deleted. The live dialog's
+# textContent default is pinned in tests/test_pass45_security.py.
 
 
 def test_29_1_trophies_render_escapes_icon_url():
@@ -114,13 +100,6 @@ def test_29_3_lightbox_activates_focus_trap():
     assert 'onArrowRight' in src
 
 
-def test_29_5_global_search_uses_abort_controller():
-    """Pass 29.5 — performGlobalSearch aborts any in-flight request before
-    issuing a new one, and silently ignores AbortError on the stale promise.
-    """
-    src = _read_js('main.js')
-    assert '_globalSearchController = null' in src
-    assert '_globalSearchController.abort()' in src
-    assert "error.name === 'AbortError'" in src
-
-
+# test_29_5_global_search_uses_abort_controller retired (Pass 59.39):
+# performGlobalSearch called a route that does not exist, keyed on an element
+# no template renders, and had no caller, so it was deleted.

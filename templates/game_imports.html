@@ -520,7 +520,7 @@ async function uploadClzFile(input) {
     formData.append('file', file);
 
     try {
-        const resp = await fetch('/api/clz-import/upload', { method: 'POST', body: formData });
+        const resp = await fetch('/api/clz-import/parse', { method: 'POST', body: formData });
         const data = await resp.json();
         if (!data.success) throw new Error(data.error || 'Parse failed');
 

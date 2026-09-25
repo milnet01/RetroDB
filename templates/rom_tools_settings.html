@@ -473,7 +473,7 @@ function renderUnwantedPatterns() {
     container.innerHTML = sorted.map(pattern => `
         <span class="tag">
             ${pattern}
-            <span class="remove-tag" onclick="removeUnwantedPattern('${pattern}')" title="Remove">×</span>
+            <span class="remove-tag" data-pattern="${escapeHtml(pattern)}" onclick="removeUnwantedPattern(this.dataset.pattern)" title="Remove">×</span>
         </span>
     `).join('');
 }
@@ -512,7 +512,7 @@ function renderExcludedPaths() {
     container.innerHTML = sorted.map(path => `
         <span class="tag">
             ${path}
-            <span class="remove-tag" onclick="removeExcludedPathSetting('${path}')" title="Remove">×</span>
+            <span class="remove-tag" data-path="${escapeHtml(path)}" onclick="removeExcludedPathSetting(this.dataset.path)" title="Remove">×</span>
         </span>
     `).join('');
 }

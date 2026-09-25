@@ -347,7 +347,7 @@ function renderLists() {
                     </div>
                     <div class="list-card-actions">
                         <button type="button" class="list-action-btn" onclick="openEditListModal(${list.id})" title="Edit list">&#9998;</button>
-                        <button type="button" class="list-action-btn danger" onclick="confirmDeleteList(${list.id}, '${escapeAttr(list.name)}')" title="Delete list">&#10005;</button>
+                        <button type="button" class="list-action-btn danger" data-name="${escapeHtml(list.name)}" onclick="confirmDeleteList(${list.id}, this.dataset.name)" title="Delete list">&#10005;</button>
                     </div>
                 </div>
             </div>
@@ -484,14 +484,6 @@ function formatDate(dateStr) {
     }
 }
 
-function escapeHtml(text) {
-    const d = document.createElement('div');
-    d.textContent = text;
-    return d.innerHTML;
-}
 
-function escapeAttr(str) {
-    return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
-}
 </script>
 {% endblock %}

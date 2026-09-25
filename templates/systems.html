@@ -89,7 +89,7 @@
                 </div>
             </div>
         </a>
-        <button type="button" class="specs-btn" onclick="showSpecs('{{ system.folder }}', event)" title="{{ _('View Specifications') }}">
+        <button type="button" class="specs-btn" data-folder="{{ system.folder }}" onclick="showSpecs(this.dataset.folder, event)" title="{{ _('View Specifications') }}">
             ℹ️
         </button>
     </div>
@@ -804,7 +804,7 @@ function loadHardwareImage(folder) {
         img.onload = function() {
             container.innerHTML = `
                 <div class="hardware-image-wrapper">
-                    <img src="/static/images/hardware/${folder}${ext}" alt="${folder} Hardware" class="hardware-image">
+                    <img src="/static/images/hardware/${encodeURIComponent(folder + ext)}" alt="${escapeHtml(folder)} Hardware" class="hardware-image">
                 </div>
             `;
         };
@@ -814,7 +814,7 @@ function loadHardwareImage(folder) {
             tryNextExtension();
         };
         
-        img.src = `/static/images/hardware/${folder}${ext}`;
+        img.src = `/static/images/hardware/${encodeURIComponent(folder + ext)}`;
     }
     
     tryNextExtension();

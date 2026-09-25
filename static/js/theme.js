@@ -136,7 +136,11 @@ const ThemeManager = {
      * Initialize theme system
      */
     init() {
-        const saved = localStorage.getItem(this.STORAGE_KEY) || 'cyberpunk';
+        // localStorage first; else the theme base.html's FOUC block applied
+        // from the user's saved preference (Pass 59.38); else the default.
+        const saved = localStorage.getItem(this.STORAGE_KEY)
+            || document.documentElement.getAttribute('data-theme')
+            || 'cyberpunk';
         this.apply(saved, false);
 
         // Guard against duplicate listeners on re-init
@@ -212,11 +216,12 @@ const ThemeManager = {
     },
 
     /**
-     * Persist theme choice to server settings
+     * Persist theme choice to the current user's settings, so it follows the
+     * user to other devices (Pass 59.38).
      * @param {string} theme - Theme name
      */
     save(theme) {
-        API.post('/api/settings', { theme: theme })
+        API.post('/api/users/settings', { theme_preference: theme })
             .catch(err => console.error('Failed to save theme:', err));
     },
 

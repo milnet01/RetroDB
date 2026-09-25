@@ -364,7 +364,7 @@ function renderSetupFolderBrowser(data) {
     let html = '';
 
     if (data.parent_path) {
-        html += '<div class="folder-item folder-parent" onclick="navigateSetupFolder(\'' + escapeAttr(data.parent_path) + '\')">' +
+        html += '<div class="folder-item folder-parent" data-path="' + escapeHtml(data.parent_path) + '" onclick="navigateSetupFolder(this.dataset.path)">' +
                 '<span class="folder-icon">\u{1F4C1}</span>' +
                 '<span class="folder-name">..</span>' +
                 '<span class="folder-info">Parent folder</span>' +
@@ -382,7 +382,7 @@ function renderSetupFolderBrowser(data) {
         if (folder.file_count > 0) info.push(folder.file_count + ' files');
         if (folder.subfolder_count > 0) info.push(folder.subfolder_count + ' folders');
 
-        html += '<div class="folder-item" onclick="navigateSetupFolder(\'' + escapeAttr(folder.path) + '\')">' +
+        html += '<div class="folder-item" data-path="' + escapeHtml(folder.path) + '" onclick="navigateSetupFolder(this.dataset.path)">' +
                 '<span class="folder-icon">\u{1F4C1}</span>' +
                 '<span class="folder-name">' + escapeHtml(folder.name) + '</span>' +
                 '<span class="folder-info">' + (info.join(', ') || 'Empty') + '</span>' +

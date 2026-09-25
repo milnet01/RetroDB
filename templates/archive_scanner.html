@@ -1042,7 +1042,7 @@ function renderExcludedBadges() {
     container.innerHTML = sorted.map(path => `
         <span class="excluded-badge">
             ${escapeHtml(path)}
-            <button type="button" class="remove-badge" onclick="removeExcludedPath('${escapeHtml(path)}')" title="Remove">×</button>
+            <button type="button" class="remove-badge" data-path="${escapeHtml(path)}" onclick="removeExcludedPath(this.dataset.path)" title="Remove">×</button>
         </span>
     `).join('');
 }
@@ -1299,11 +1299,11 @@ function updateResultsTable() {
             <td>${result.timestamp || formatTimestamp(new Date())}</td>
             <td><span class="type-badge ${result.type}">${result.type.toUpperCase()}</span></td>
             <td title="${result.type === 'multi-file' ? 'ROM files / Total files' : ''}">${fileCountDisplay}</td>
-            <td class="path-cell" title="${escapeHtml(result.path)}" onclick="viewArchive('${escapeHtml(result.path)}', '${result.type}')">${escapeHtml(result.relative_path || result.path)}</td>
+            <td class="path-cell" title="${escapeHtml(result.path)}" data-path="${escapeHtml(result.path)}" onclick="viewArchive(this.dataset.path, '${result.type}')">${escapeHtml(result.relative_path || result.path)}</td>
             <td class="action-cell">
-                <button type="button" class="action-btn" onclick="viewArchive('${escapeHtml(result.path)}', '${result.type}')">👁️ View</button>
-                ${result.type === 'unwanted' ? `<button type="button" class="action-btn danger" onclick="removeUnwanted('${escapeHtml(result.path)}')">🗑️</button>` : ''}
-                ${result.type === 'multi-file' ? `<button type="button" class="action-btn" onclick="createM3U('${escapeHtml(result.path)}')">💿</button>` : ''}
+                <button type="button" class="action-btn" data-path="${escapeHtml(result.path)}" onclick="viewArchive(this.dataset.path, '${result.type}')">👁️ View</button>
+                ${result.type === 'unwanted' ? `<button type="button" class="action-btn danger" data-path="${escapeHtml(result.path)}" onclick="removeUnwanted(this.dataset.path)">🗑️</button>` : ''}
+                ${result.type === 'multi-file' ? `<button type="button" class="action-btn" data-path="${escapeHtml(result.path)}" onclick="createM3U(this.dataset.path)">💿</button>` : ''}
             </td>
         </tr>
     `}).join('');

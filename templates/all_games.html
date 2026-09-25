@@ -235,12 +235,12 @@
 {% block scripts %}
 <script nonce="{{ csp_nonce }}">
     // Server-provided data for the all-games controller
-    window.FILTER_OPTIONS = {{ filter_options | tojson }};
-    window.PREFERRED_BOXART = '{{ user_settings.get("preferred_boxart", "2d") }}';
-    window.TOTAL_GAMES = {{ total_games }};
-    window.TOTAL_MISSING = {{ total_missing }};
-    window.BONUS_COUNT = {{ bonus_count }};
-    window.AVAILABLE_LETTERS = {{ available_letters | tojson }};
+    window.FILTER_OPTIONS = {{ filter_options | tojson }}; // nosemgrep: var-in-script-tag
+    window.PREFERRED_BOXART = {{ user_settings.get("preferred_boxart", "2d")|tojson }}; // nosemgrep: var-in-script-tag
+    window.TOTAL_GAMES = {{ total_games }}; // nosemgrep: var-in-script-tag
+    window.TOTAL_MISSING = {{ total_missing }}; // nosemgrep: var-in-script-tag
+    window.BONUS_COUNT = {{ bonus_count }}; // nosemgrep: var-in-script-tag
+    window.AVAILABLE_LETTERS = {{ available_letters | tojson }}; // nosemgrep: var-in-script-tag
 </script>
 <script src="{{ url_for('static', filename='js/all-games-controller.js') }}?v={{ config.APP_VERSION }}"></script>
 <script nonce="{{ csp_nonce }}">

@@ -50,7 +50,7 @@
                 <tr data-game-id="{{ game.id }}" data-position="{{ loop.index }}">
                     <td class="list-row-num">{{ loop.index }}</td>
                     <td>
-                        <img src="{{ game.boxart or url_for('static', filename='images/placeholder.png') }}"
+                        <img src="{{ url_for('static', filename='images/boxart/' + game.boxart) if game.boxart else url_for('static', filename='images/placeholder.png') }}"
                              alt="" class="list-game-thumb" loading="lazy" decoding="async">
                     </td>
                     <td>
@@ -60,7 +60,7 @@
                         <span class="list-game-system">{{ game.system_name or '' }}</span>
                     </td>
                     <td>
-                        <button type="button" class="list-action-btn danger" onclick="confirmRemoveGame({{ game.id }}, '{{ game.title|e }}')" title="Remove from list">&#10005;</button>
+                        <button type="button" class="list-action-btn danger" data-title="{{ game.title }}" onclick="confirmRemoveGame({{ game.id }}, this.dataset.title)" title="Remove from list">&#10005;</button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -403,10 +403,10 @@ async function searchGamesForList() {
 
         results.innerHTML = data.games.map(g => {
             const isAdded = existingGameIds.has(g.id);
-            const thumb = g.boxart || '/static/images/placeholder.png';
+            const thumb = g.boxart ? `/static/images/boxart/${encodeURIComponent(g.boxart)}` : '/static/images/placeholder.png';
             return `
                 <div class="add-game-result-item">
-                    <img src="${thumb}" alt="" class="add-game-result-thumb" loading="lazy" decoding="async">
+                    <img src="${escapeHtml(thumb)}" alt="" class="add-game-result-thumb" loading="lazy" decoding="async">
                     <div class="add-game-result-info">
                         <div class="add-game-result-title">${escapeHtml(g.title)}</div>
                         <div class="add-game-result-system">${escapeHtml(g.system_name || '')}</div>
@@ -495,10 +495,5 @@ async function removeGameFromList(gameId) {
     }
 }
 
-function escapeHtml(text) {
-    const d = document.createElement('div');
-    d.textContent = text;
-    return d.innerHTML;
-}
 </script>
 {% endblock %}

@@ -277,14 +277,7 @@ function initializeSearch() {
             filterGames(e.target.value);
         }, 300));
     }
-    
-    // Global search
-    const globalSearch = document.getElementById('globalSearch');
-    if (globalSearch) {
-        globalSearch.addEventListener('input', debounce(function(e) {
-            performGlobalSearch(e.target.value);
-        }, 500));
-    }
+
 }
 
 function filterSystems(query) {
@@ -339,75 +332,6 @@ function filterGames(query) {
     });
     
     updateRowCount(visibleCount);
-}
-
-// Pass 29.5: last-in-wins guard for the global search input. Rapid typing
-// used to fire parallel fetches; whichever completed last painted the
-// results, so a slow response to "Zel" could overwrite a fast response to
-// "Zelda". The controller is aborted before issuing each new request.
-let _globalSearchController = null;
-
-function performGlobalSearch(query) {
-    if (query.length < 2) {
-        if (_globalSearchController) {
-            _globalSearchController.abort();
-            _globalSearchController = null;
-        }
-        hideSearchResults();
-        return;
-    }
-
-    if (_globalSearchController) _globalSearchController.abort();
-    _globalSearchController = new AbortController();
-    const signal = _globalSearchController.signal;
-
-    showSearchLoading();
-
-    API.get(`/api/search?q=${encodeURIComponent(query)}`, { signal })
-        .then(data => {
-            if (signal.aborted) return;  // a newer request is in flight
-            displaySearchResults(data);
-        })
-        .catch(error => {
-            // AbortError just means we were superseded; don't wipe results
-            // that the follow-up request may have already painted.
-            if (error && error.name === 'AbortError') return;
-            console.error('Search error:', error);
-            hideSearchResults();
-        });
-}
-
-function displaySearchResults(results) {
-    const container = document.getElementById('searchResults');
-    if (!container) return;
-    
-    if (!results || results.length === 0) {
-        container.innerHTML = `<div class="search-no-results">${escapeHtml(t('No results found'))}</div>`;
-    } else {
-        container.innerHTML = results.map(result => `
-            <a href="${encodeURI(result.url)}" class="search-result-item">
-                <span class="search-result-type">${escapeHtml(result.type)}</span>
-                <span class="search-result-name">${escapeHtml(result.name)}</span>
-            </a>
-        `).join('');
-    }
-    
-    container.classList.add('active');
-}
-
-function hideSearchResults() {
-    const container = document.getElementById('searchResults');
-    if (container) {
-        container.classList.remove('active');
-    }
-}
-
-function showSearchLoading() {
-    const container = document.getElementById('searchResults');
-    if (container) {
-        container.innerHTML = `<div class="search-loading"><span class="loading-spinner"></span> ${escapeHtml(t('Searching...'))}</div>`;
-        container.classList.add('active');
-    }
 }
 
 // =============================================================================
@@ -1214,86 +1138,6 @@ async function clearRAData() {
 }
 
 // =============================================================================
-// SCRAPER FUNCTIONS
-// =============================================================================
-
-async function searchGame(gameId, title) {
-    const resultsContainer = document.getElementById('searchResults');
-    const searchBtn = document.getElementById('searchBtn');
-    
-    if (!resultsContainer || !searchBtn) return;
-    
-    const originalText = searchBtn.innerHTML;
-    searchBtn.innerHTML = `<span class="loading-spinner"></span> ${escapeHtml(t('Searching...'))}`;
-    searchBtn.disabled = true;
-    
-    try {
-        const data = await API.post('/api/games/search', { game_id: gameId, title: title });
-
-        if (data.results && data.results.length > 0) {
-            displayScraperResults(data.results, gameId);
-        } else {
-            resultsContainer.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-state-icon">🔍</div>
-                    <div class="empty-state-title">${escapeHtml(t('No results found'))}</div>
-                    <div class="empty-state-text">${escapeHtml(t('Try modifying the search title'))}</div>
-                </div>
-            `;
-        }
-    } catch (error) {
-        resultsContainer.innerHTML = `
-            <div class="alert alert-error">
-                ${escapeHtml(t('Error searching: {error}', {error: error.message}))}
-            </div>
-        `;
-    } finally {
-        searchBtn.innerHTML = originalText;
-        searchBtn.disabled = false;
-    }
-}
-
-function displayScraperResults(results, gameId) {
-    const container = document.getElementById('searchResults');
-    if (!container) return;
-
-    container.innerHTML = results.map(result => {
-        const alts = Array.isArray(result.alternate_titles) ? result.alternate_titles : [];
-        const primaryLower = (result.name || '').trim().toLowerCase();
-        const altChips = alts
-            .filter(a => a && a.title && a.title.trim().toLowerCase() !== primaryLower)
-            .slice(0, 6)
-            .map(a => `
-                <span class="alt-title-chip">
-                    ${a.region ? `<span class="alt-title-region">${escapeHtml(a.region)}</span>` : ''}
-                    <span class="alt-title-text">${escapeHtml(a.title)}</span>
-                </span>
-            `).join('');
-
-        return `
-            <div class="search-result">
-                <div class="search-result-info">
-                    <h4>${escapeHtml(result.name)}</h4>
-                    <div class="search-result-meta">
-                        <span class="source-badge ${result.source}">${result.source.toUpperCase()}</span>
-                        ${result.release_date ? `<span>${result.release_date.substring(0, 4)}</span>` : ''}
-                        ${result.score ? `<span>${escapeHtml(t('Score: {score}', {score: result.score.toFixed(1)}))}</span>` : ''}
-                    </div>
-                    ${altChips ? `<div class="search-result-alts"><span class="search-result-alts-label">${escapeHtml(t('Also known as:'))}</span> ${altChips}</div>` : ''}
-                </div>
-                <form method="POST" style="margin: 0;">
-                    <input type="hidden" name="action" value="apply">
-                    <input type="hidden" name="game_source" value="${result.source}_${result.id}">
-                    <button type="submit" class="btn btn-success btn-sm">
-                        ${escapeHtml(t('Apply'))}
-                    </button>
-                </form>
-            </div>
-        `;
-    }).join('');
-}
-
-// =============================================================================
 // CSS ANIMATIONS (added via JS for dynamic elements)
 // =============================================================================
 
@@ -1448,24 +1292,24 @@ const KeyboardShortcuts = {
     
     shortcuts: {
         // Navigation shortcuts (g + key)
-        'g d': { action: () => window.location.href = '/dashboard', description: 'Go to Dashboard', category: 'Navigation' },
-        'g s': { action: () => window.location.href = '/systems', description: 'Go to Systems', category: 'Navigation' },
-        'g l': { action: () => window.location.href = '/games', description: 'Go to Library', category: 'Navigation' },
-        'g a': { action: () => window.location.href = '/analytics', description: 'Go to Analytics', category: 'Navigation' },
-        'g t': { action: () => window.location.href = '/settings', description: 'Go to Settings', category: 'Navigation' },
-        'g h': { action: () => window.location.href = '/help', description: 'Go to Help', category: 'Navigation' },
-        'g c': { action: () => window.location.href = '/changelog', description: 'Go to Changelog', category: 'Navigation' },
+        'g d': { action: () => window.location.href = '/dashboard', description: t('Go to Dashboard'), category: t('Navigation') },
+        'g s': { action: () => window.location.href = '/systems', description: t('Go to Systems'), category: t('Navigation') },
+        'g l': { action: () => window.location.href = '/games', description: t('Go to Library'), category: t('Navigation') },
+        'g a': { action: () => window.location.href = '/analytics', description: t('Go to Analytics'), category: t('Navigation') },
+        'g t': { action: () => window.location.href = '/settings', description: t('Go to Settings'), category: t('Navigation') },
+        'g h': { action: () => window.location.href = '/help', description: t('Go to Help'), category: t('Navigation') },
+        'g c': { action: () => window.location.href = '/changelog', description: t('Go to Changelog'), category: t('Navigation') },
 
         // Single key shortcuts
-        '/': { action: () => focusSearch(), description: 'Focus search box', category: 'Actions' },
-        '?': { action: () => showShortcutsModal(), description: 'Show keyboard shortcuts', category: 'Actions' },
-        'Escape': { action: () => closeAnyModal(), description: 'Close modal / cancel', category: 'Actions' },
+        '/': { action: () => focusSearch(), description: t('Focus search box'), category: t('Actions') },
+        '?': { action: () => showShortcutsModal(), description: t('Show keyboard shortcuts'), category: t('Actions') },
+        'Escape': { action: () => closeAnyModal(), description: t('Close modal / cancel'), category: t('Actions') },
     },
 
     // Game page shortcuts (only active on game detail pages)
     gameShortcuts: {
-        'e': { action: () => { if (typeof openEditModal === 'function') openEditModal(); }, description: 'Edit game', category: 'Game Page' },
-        's': { action: () => { if (typeof openScrapeModal === 'function') openScrapeModal(); }, description: 'Scrape game', category: 'Game Page' },
+        'e': { action: () => { if (typeof openEditModal === 'function') openEditModal(); }, description: t('Edit game'), category: t('Game Page') },
+        's': { action: () => { if (typeof openScrapeModal === 'function') openScrapeModal(); }, description: t('Scrape game'), category: t('Game Page') },
     },
     
     init() {
@@ -1574,7 +1418,7 @@ const KeyboardShortcuts = {
 
 function focusSearch() {
     // Try various search input IDs
-    const searchIds = ['gameSearch', 'systemSearch', 'globalSearch', 'searchInput'];
+    const searchIds = ['gameSearch', 'systemSearch', 'searchInput'];
     for (const id of searchIds) {
         const input = document.getElementById(id);
         if (input) {
@@ -1628,9 +1472,12 @@ function _buildShortcutsBody() {
     // single source of truth (KeyboardShortcuts.shortcuts + .gameShortcuts).
     const buckets = new Map();
     const addEntry = (combo, meta) => {
-        const cat = t(meta.category || 'Other');
+        // Pass 59.36 — description and category are already translated where
+        // the shortcut tables define them: a t() call here would take a
+        // variable, which the msgid extractor cannot see.
+        const cat = meta.category || t('Other');
         if (!buckets.has(cat)) buckets.set(cat, []);
-        buckets.get(cat).push({ combo, description: t(meta.description) });
+        buckets.get(cat).push({ combo, description: meta.description });
     };
     Object.entries(KeyboardShortcuts.shortcuts).forEach(([k, v]) => addEntry(k, v));
     Object.entries(KeyboardShortcuts.gameShortcuts).forEach(([k, v]) => addEntry(k, v));

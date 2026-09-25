@@ -444,7 +444,7 @@ async function refreshSystemProgress() {
                 const initialData = {
                     running: true,
                     completed: false,
-                    current_system: '{{ system.name }}',
+                    current_system: {{ system.name|tojson }},
                     total: {{ games|length }},
                     current: 0,
                     percent: 0,

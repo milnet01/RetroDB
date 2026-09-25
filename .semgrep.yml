@@ -149,22 +149,26 @@
 #     attacker-controlled text never flows through these attributes.
 #     Admin-only settings surface.
 #
-#   generic.html-templates.security.var-in-script-tag.var-in-script-tag
-#     Anchor: templates/base.html emits admin-editable user_settings dicts
-#     through `|tojson` (valid JS literal encoding). Admin authors the data.
-#
 #   generic.html-templates.security.var-in-href.var-in-href
 #     Anchors: (1) templates/game_detail.html renders the RetroAchievements
 #     game URL, always `https://retroachievements.org/game/{ID}` sourced from
 #     the RA API client. (2) templates/_macros/breadcrumb.html renders the
 #     `href` from caller (label, url) tuples — every call site passes a
 #     url_for(...) result or None in the url position (verified 2026-06-05);
-#     user data only reaches the auto-escaped {{ label }} text node. Neither
-#     href is user-controllable.
+#     user data only reaches the auto-escaped {{ label }} text node. (3) The
+#     `{% trans %}` links in templates/game_imports.html,
+#     templates/steam_achievements.html and templates/xbox_achievements.html,
+#     whose url variables are url_for(...) results bound in the trans tag
+#     (verified 2026-09-25). No href here is user-controllable.
 #
-#   python.flask.security.xss.audit.template-unescaped-with-safe.template-unescaped-with-safe
-#     Anchor: templates/changelog.html:30 renders entry.body HTML authored in
-#     data/changelog.yaml (in-repo, admin-authored).
+# Re-enabled (Pass 59.32): var-in-script-tag and template-unescaped-with-safe.
+#   Their waivers cited anchors that did not say what the waiver claimed. Each
+#   reviewed site now carries an inline `nosemgrep` naming the rule: the
+#   script globals in base.html, all_games.html and system_games.html, each
+#   `|tojson`-encoded, a server-computed integer or a literal boolean; and
+#   templates/_changelog_entries.html's `entry.body | safe` (HTML authored in
+#   data/changelog.yaml). A new interpolation in those places fails CI until
+#   it is reviewed and annotated.
 #
 #   python.lang.security.audit.logging.logger-credential-leak.python-logger-credential-disclosure
 #     Anchor: services/platform_tokens.py:43,50 and

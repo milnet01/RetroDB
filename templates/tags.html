@@ -405,7 +405,7 @@ function renderTags() {
                 <span class="tag-pill" style="background: ${escapeHtml(tag.color || '#4cc9f0')};">${escapeHtml(tag.name)}</span>
                 <div class="tag-card-actions" onclick="event.stopPropagation();">
                     <button type="button" class="tag-action-btn" onclick="openEditTagModal(${tag.id})" title="Edit tag">&#9998;</button>
-                    <button type="button" class="tag-action-btn danger" onclick="confirmDeleteTag(${tag.id}, '${escapeHtml(tag.name)}')" title="Delete tag">&#10005;</button>
+                    <button type="button" class="tag-action-btn danger" data-name="${escapeHtml(tag.name)}" onclick="confirmDeleteTag(${tag.id}, this.dataset.name)" title="Delete tag">&#10005;</button>
                 </div>
             </div>
             <div class="tag-card-count">${formatNumber(tag.game_count || 0)}</div>
@@ -557,7 +557,7 @@ async function toggleTagGames(tagId) {
         if (data.success && data.games && data.games.length > 0) {
             grid.innerHTML = data.games.map(g => `
                 <a href="/game/${g.id}" class="tag-game-item">
-                    <img src="${g.boxart || '/static/images/placeholder.png'}" alt="" class="tag-game-thumb" loading="lazy">
+                    <img src="${escapeHtml(g.boxart || '/static/images/placeholder.png')}" alt="" class="tag-game-thumb" loading="lazy">
                     <div class="tag-game-info">
                         <div class="tag-game-title">${escapeHtml(g.title)}</div>
                         <div class="tag-game-system">${escapeHtml(g.system_name || '')}</div>
@@ -584,10 +584,5 @@ function closeTagGamesPanel() {
 }
 
 // Escape HTML helper
-function escapeHtml(text) {
-    const d = document.createElement('div');
-    d.textContent = text;
-    return d.innerHTML;
-}
 </script>
 {% endblock %}

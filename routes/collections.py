@@ -102,9 +102,10 @@ def list_detail_page(list_id):
         return render_template('lists.html', lists=[], error=_('List not found')), 404
 
     games = query("""
-        SELECT g.*, lg.position, lg.added_at AS list_added_at
+        SELECT g.*, s.name AS system_name, lg.position, lg.added_at AS list_added_at
         FROM list_games lg
         JOIN games g ON g.id = lg.game_id
+        LEFT JOIN systems s ON s.id = g.system_id
         WHERE lg.list_id = ?
         ORDER BY lg.position, g.title COLLATE NOCASE
     """, (list_id,))
@@ -496,9 +497,10 @@ def api_get_list_games(list_id):
         return error(_('List not found'), 404)
 
     games = query("""
-        SELECT g.*, lg.position, lg.added_at AS list_added_at
+        SELECT g.*, s.name AS system_name, lg.position, lg.added_at AS list_added_at
         FROM list_games lg
         JOIN games g ON g.id = lg.game_id
+        LEFT JOIN systems s ON s.id = g.system_id
         WHERE lg.list_id = ?
         ORDER BY lg.position, g.title COLLATE NOCASE
     """, (list_id,))

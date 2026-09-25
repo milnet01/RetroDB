@@ -523,7 +523,7 @@ async function loadSystems() {
             const dl = document.getElementById('wishlistSystemOptions');
             if (dl) {
                 dl.innerHTML = systemsList.map(s =>
-                    `<option value="${escapeAttr(s.name)}"></option>`
+                    `<option value="${escapeHtml(s.name)}"></option>`
                 ).join('');
             }
         }
@@ -608,7 +608,7 @@ function renderWishlistCard(item) {
     if (item.critic_score) chips.push(`<span class="meta-chip score">&#9733; ${Math.round(item.critic_score)}</span>`);
 
     const boxartHtml = item.boxart
-        ? `<div class="wishlist-item-boxart"><img src="/static/images/boxart/${escapeAttr(item.boxart)}" alt="" loading="lazy" decoding="async"></div>`
+        ? `<div class="wishlist-item-boxart"><img src="/static/images/boxart/${escapeHtml(encodeURIComponent(item.boxart))}" alt="" loading="lazy" decoding="async"></div>`
         : `<div class="wishlist-item-boxart" title="${ {{ _('No boxart yet')|tojson }} }">&#127918;</div>`;
 
     const rescrapeTitle = status === 'scraped' ? {{ _('Re-scrape metadata')|tojson }} : {{ _('Scrape metadata')|tojson }};
@@ -636,7 +636,7 @@ function renderWishlistCard(item) {
             <div class="wishlist-item-actions">
                 <button type="button" class="wishlist-action-btn" onclick="scrapeWishlistItem(${item.id})" title="${rescrapeTitle}" ${rescrapeDisabled}>${rescrapeIcon}</button>
                 <button type="button" class="wishlist-action-btn" onclick="openEditWishlistModal(${item.id})" title="${ {{ _('Edit')|tojson }} }">&#9998;</button>
-                <button type="button" class="wishlist-action-btn danger" onclick="confirmDeleteWishlistItem(${item.id}, '${escapeAttr(item.title)}')" title="${ {{ _('Delete')|tojson }} }">&#10005;</button>
+                <button type="button" class="wishlist-action-btn danger" data-title="${escapeHtml(item.title)}" onclick="confirmDeleteWishlistItem(${item.id}, this.dataset.title)" title="${ {{ _('Delete')|tojson }} }">&#10005;</button>
             </div>
         </div>
     `;
@@ -882,14 +882,6 @@ function formatDate(dateStr) {
     }
 }
 
-function escapeHtml(text) {
-    const d = document.createElement('div');
-    d.textContent = text;
-    return d.innerHTML;
-}
 
-function escapeAttr(str) {
-    return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
-}
 </script>
 {% endblock %}

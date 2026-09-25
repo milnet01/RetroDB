@@ -118,7 +118,8 @@ File: `static/js/theme.js`. Single module-style object exported as
 - `ThemeManager._SMOKE_STATE_KEY` — `'retrodb-smoke-state'`. sessionStorage
   key used to carry cyberpunk smoke state across page navigations (so the
   background doesn't visibly reset on every nav).
-- `init()` — reads `localStorage[STORAGE_KEY]` (default `'cyberpunk'`), calls
+- `init()` — reads `localStorage[STORAGE_KEY]`, else the `data-theme` the FOUC
+  block applied from the user's saved theme (§5), else `'cyberpunk'`; calls
   `apply(saved, false)` (the `false` suppresses a redundant server save on
   page load), and wires `visibilitychange` (pause/resume canvas) and
   `beforeunload` (save smoke state) listeners.
@@ -126,9 +127,11 @@ File: `static/js/theme.js`. Single module-style object exported as
   `data-theme` attribute on `<html>`, writes to localStorage, tears down any
   active canvas, then dispatches to the theme's `_initX` method (unless
   `prefers-reduced-motion: reduce` is true — see §6). Updates the
-  `.theme-option` UI active state and (if `save`) POSTs to `/api/settings` so
-  the choice is recorded server-side too.
-- `save(theme)` — fire-and-forget POST to `/api/settings`.
+  `.theme-option` UI active state and (if `save`) calls `save(theme)`.
+- `save(theme)` — fire-and-forget POST of `{theme_preference}` to
+  `/api/users/settings`, the current user's row in `user_settings`. The route
+  rejects a value outside `services.settings_validators.ALLOWED_THEMES`
+  (Pass 59.38). Any logged-in role may save its own theme.
 
 ### Per-theme methods (one pair each, plus dispatch)
 
@@ -195,11 +198,16 @@ The inline script at the top of `templates/base.html` (lines ~13–18) runs
 ```html
 <script>
 (function(){
-    var t = localStorage.getItem('retrodb-theme');
+    var t = localStorage.getItem('retrodb-theme') || {{ user_theme|tojson }};
     if (t && t !== 'cyberpunk') document.documentElement.setAttribute('data-theme', t);
 })();
 </script>
 ```
+
+`user_theme` is the logged-in user's saved `theme_preference`, or `null`
+(`app.py::_user_theme`, re-validated against `ALLOWED_THEMES` on read). So
+this browser's own choice wins, and a browser with none gets the user's saved
+theme: the theme follows the user across devices (Pass 59.38).
 
 Why this matters:
 
@@ -481,6 +489,9 @@ What can be tested:
   theme. (Manual only; not automated.)
 - **Persistence across reload**: `localStorage['retrodb-theme'] === <chosen>`
   after switching themes; reload → theme stays.
+- **Persistence across devices**: switch theme, clear `localStorage`, reload →
+  the saved theme returns. `tests/test_pass59_frontend.py` pins the server
+  half (the write validation and the FOUC fallback).
 - **Persistence across navigation**: switch to cyberpunk, navigate between
   pages — smoke effect should appear continuous (sessionStorage handoff).
 - **Theme switch teardown**: switch between all 7 themes in sequence; check

@@ -22,6 +22,9 @@ import settings_manager
 _ALLOWED_THEMES = {
     'cyberpunk', 'matrix', 'amber', 'ocean', 'christian', 'bladerunner', 'elite',
 }
+# Public name for the per-user theme (Pass 59.38): routes/auth.py validates
+# user_settings.theme_preference against it and app.py re-checks on read.
+ALLOWED_THEMES = frozenset(_ALLOWED_THEMES)
 _ALLOWED_RATING_SYSTEMS = {
     'esrb', 'pegi', 'cero', 'usk', 'acb', 'fpb', 'grac', 'classind', 'china',
 }

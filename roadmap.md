@@ -1044,8 +1044,9 @@ Resolved (2026-07-01, v3.13.0): stale data/psn_tokens.json removed; help.html st
     Pass 59.26 — the code was migrated instead, so §10 is now true as written.
   - `hybrid_scraper.py` generic-controller `elif` branch is a no-op `pass` whose
     comment promises to clear generic controller values.
-  - `static/js/main.js` `performGlobalSearch` is dead (`#globalSearch` absent
-    from all templates, `/api/search` route absent) — surface before removing.
+  - ~~`static/js/main.js` `performGlobalSearch` is dead (`#globalSearch` absent
+    from all templates, `/api/search` route absent) — surface before removing.~~
+    Closed by Pass 59.39 — deleted with its binding and helpers.
   - `build_dist.py` source-ZIP walk is denylist-only (a gitignored
     `audit_rule_quality.json` shipped); `EXCLUDE_DIRS` matches by basename at any
     depth. No secret leaked today, but make the walk respect `.gitignore` and
@@ -5828,7 +5829,14 @@ orchestrator, several by execution rather than reading.
   as an alias). Then re-test the whole flow — nothing downstream of the
   upload has ever run in production.
 - **Verify**: upload a CLZ PDF export and complete an import.
-- **Status**: planned (2026-09-01). Lanes: frontend, import.
+- **Resolution** (2026-09-25, v3.23.8): The template now posts to `/api/clz-import/parse`.
+  `tests/test_pass59_frontend.py::test_every_browser_api_call_hits_a_registered_route`
+  generalises the fix: every literal `/api/...` path a template or page script
+  passes to fetch() or API.* must match a registered route. Browser walk: a
+  non-PDF upload reaches `/parse` and gets its validation message. **Not
+  verified**: a real CLZ PDF export through to a completed import — none was
+  available.
+- **Status**: shipped (2026-09-25). Lanes: frontend, import.
 - **Source**: review-code import/museum lane 2026-09-01; orchestrator
   re-verified the route table against the template.
 
@@ -5851,7 +5859,12 @@ orchestrator, several by execution rather than reading.
   `LEFT JOIN systems s ON g.system_id = s.id` + `s.name AS system_name`.
 - **Verify**: open a list with games and confirm covers render and the System
   column populates.
-- **Status**: planned (2026-09-01). Lanes: frontend, collections.
+- **Resolution** (2026-09-25, v3.23.8): The cover is built with `url_for('static', filename='images/boxart/' + ...)`,
+  and both list queries (`list_detail` and `/api/lists/<id>/games`) join
+  `systems` for `system_name`. The page's add-game search had the same bare
+  filename and is fixed too. Browser walk (DB copy): covers load and the
+  System column fills.
+- **Status**: shipped (2026-09-25). Lanes: frontend, collections.
 - **Source**: review-code templates lane 2026-09-01.
 
 ---
@@ -5880,7 +5893,14 @@ orchestrator, several by execution rather than reading.
   together — the rule cannot come back while the sites are open. Audit the
   other two waivers' anchors in the same pass.
 - **Verify**: `semgrep` with the two rules re-enabled returns clean.
-- **Status**: planned (2026-09-01). Lanes: security, templates.
+- **Resolution** (2026-09-25, v3.23.8): Both waived rules are enabled again (`.semgrep-excludes.txt`). Every
+  hand-quoted Jinja value in a template script now uses `|tojson`, including
+  a user-writable timezone and avatar in `settings.html`. Each reviewed site
+  the rule flags carries an inline `nosemgrep: <rule>`. The `var-in-href`
+  anchor now names the `{% trans %}` url_for links it had not listed; the
+  `unquoted-attribute-var` anchor still matches its hits. `ci_local.sh`
+  semgrep is green with the rules on.
+- **Status**: shipped (2026-09-25). Lanes: security, templates.
 - **Source**: review-code templates lane 2026-09-01; orchestrator re-verified
   both anchors.
 
@@ -5904,7 +5924,12 @@ orchestrator, several by execution rather than reading.
 - **Plan**: `escapeAttr` / `encodeURIComponent` at all four, matching the
   sibling that already does it.
 - **Verify**: set a game filename containing a quote and confirm no breakout.
-- **Status**: planned (2026-09-01). Lanes: security, frontend.
+- **Resolution** (2026-09-25, v3.23.8): The four sites escape. Root cause next door: five templates defined
+  their own `escapeHtml` that did not escape quotes and replaced the
+  `utils.js` one on those pages, and three defined an `escapeAttr` that
+  escaped for JS rather than HTML. All removed; pinned by
+  `test_no_template_defines_its_own_escape_helper`.
+- **Status**: shipped (2026-09-25). Lanes: security, frontend.
 - **Source**: review-code templates lane 2026-09-01.
 
 ---
@@ -5924,7 +5949,16 @@ orchestrator, several by execution rather than reading.
 - **Plan**: `data-` attributes plus a delegated listener — which FU.1's CSP
   flip requires anyway.
 - **Verify**: a game titled `Assassin's Creed`; the Remove button works.
-- **Status**: planned (2026-09-01). Lanes: security, frontend.
+- **Resolution** (2026-09-25, v3.23.8): Values move into `data-` attributes read with `this.dataset` —
+  the smallest fix that is safe now. The delegated listener stays with FU.1's
+  CSP flip. The sweep found the same defect beyond the five named sites: the
+  cover-zoom handlers in `game_detail.html`, and JS-built handlers in
+  `archive_scanner.html`, `game_detail.html` (tag chips), `settings.html`,
+  `setup.html`, `base.html`, `lists.html`, `tags.html`, `wishlist.html` and
+  `rom_tools_settings.html`. All fixed; pinned by
+  `test_no_untrusted_value_inside_a_js_string_in_a_handler`. Handlers
+  carrying server-generated ids or fixed keys were left as they are.
+- **Status**: shipped (2026-09-25). Lanes: security, frontend.
 - **Source**: review-code templates lane 2026-09-01.
 
 ---
@@ -5952,7 +5986,14 @@ orchestrator, several by execution rather than reading.
   `settings-page.js:952` and the dead `SettingsPage.init`.
 - **Verify**: set `settingsActiveTab` to a nonexistent tab and confirm the
   page still renders a panel.
-- **Status**: planned (2026-09-01). Lanes: frontend.
+- **Resolution** (2026-09-25, v3.23.8): `settings-page.js` now holds only `NormalizationManager` and the
+  `showConfirm` alias; the shadowed copies are deleted. The inline
+  `switchSettingsTab` refuses a tab with no panel and mirrors the tab in the
+  URL hash; the page restores from the hash first (a section id opens its
+  tab), then localStorage, and clears a stale saved tab. Browser walk: a
+  bogus saved tab still shows a panel; `/settings#data` and
+  `/settings#apikeys` open the right tab.
+- **Status**: shipped (2026-09-25). Lanes: frontend.
 - **Source**: review-code JS-features lane 2026-09-01.
 
 ---
@@ -5974,7 +6015,12 @@ orchestrator, several by execution rather than reading.
   `description: t('Go to Dashboard')` in the `shortcuts` / `gameShortcuts`
   tables — and have `_buildShortcutsBody` pass them through verbatim.
 - **Verify**: the msgids appear in `messages.pot` after re-extraction.
-- **Status**: planned (2026-09-01). Lanes: i18n, frontend.
+- **Resolution** (2026-09-25, v3.23.8): Descriptions and categories are wrapped in `t()` where the shortcut
+  tables define them, and `_buildShortcutsBody` passes them through. The
+  msgids are now in `services/js_i18n_strings.py` and `messages.pot`. **Not
+  done**: translations for them — every locale shows English until they are
+  translated.
+- **Status**: shipped (2026-09-25). Lanes: i18n, frontend.
 - **Source**: review-code JS-core lane 2026-09-01.
 
 ---
@@ -5998,7 +6044,9 @@ orchestrator, several by execution rather than reading.
   likewise for `'complete'` / `'queued'`, keeping a real glyph as the second
   argument if a fallback is wanted.
 - **Verify**: pause a job and confirm the toast icon changes.
-- **Status**: planned (2026-09-01). Lanes: frontend, themes.
+- **Resolution** (2026-09-25, v3.23.8): All four sites pass the state as the key. Not checked in a browser: no
+  job was paused during the walk.
+- **Status**: shipped (2026-09-25). Lanes: frontend, themes.
 - **Source**: review-code JS-core lane 2026-09-01.
 
 ---
@@ -6022,7 +6070,17 @@ orchestrator, several by execution rather than reading.
   document the theme as device-local. Settle `theme_preference` in the same
   pass.
 - **Verify**: set a theme, clear `localStorage`, reload — the theme survives.
-- **Status**: planned (2026-09-01). Lanes: frontend, themes.
+- **Resolution** (2026-09-25, v3.23.8): Implemented as the Decision says. `ThemeManager.save` posts
+  `theme_preference` to `/api/users/settings`, which rejects a value outside
+  `settings_validators.ALLOWED_THEMES`. `app.py::_user_theme` re-validates on
+  read and base.html's FOUC block falls back to it. `ThemeManager.init` keeps
+  that fallback rather than overwriting it with cyberpunk. Browser probe:
+  pick a theme, clear localStorage, reload — the theme returns, from both the
+  dashboard and Settings. Side effect: a viewer can now save a theme; the
+  old `/api/settings` save was admin-only and failed silently for others.
+  The site-wide `theme` key in `settings.json` now has no reader or writer
+  (Pass 59.79).
+- **Status**: shipped (2026-09-25). Lanes: frontend, themes.
 - **Decision** (2026-09-02, user): the theme SHOULD follow the user across
   devices. Emit the stored theme into the FOUC block as the fallback when
   `localStorage` is empty, and settle `user_settings.theme_preference` as the
@@ -6048,7 +6106,10 @@ orchestrator, several by execution rather than reading.
 - **Plan**: delete both blocks and their `window` exports.
 - **Verify**: `grep` returns no orphaned definition; the `?` shortcuts and
   search UI still work.
-- **Status**: planned (2026-09-01). Lanes: frontend.
+- **Resolution** (2026-09-25, v3.23.8): Both blocks and the `#globalSearch` binding are deleted.
+  `test_29_5_global_search_uses_abort_controller`, which pinned the dead
+  function, is retired with a note.
+- **Status**: shipped (2026-09-25). Lanes: frontend.
 - **Source**: review-code JS-core lane 2026-09-01.
 
 ---
@@ -6065,7 +6126,9 @@ orchestrator, several by execution rather than reading.
   `tField()`, breaking invariant 6.
 - **Plan**: delete the function and the export, and correct the changelog
   claim; or re-point it at `refreshCards`.
-- **Status**: planned (2026-09-01). Lanes: frontend, docs.
+- **Resolution** (2026-09-25, v3.23.8): Method and export deleted. The shipped changelog line stays: cards do
+  still update after a save, through `AllGamesController.refreshCards`.
+- **Status**: shipped (2026-09-25). Lanes: frontend, docs.
 - **Source**: review-code JS-features lane 2026-09-01.
 
 ---
@@ -7096,6 +7159,61 @@ were corrected in `2836bc3` and are not repeated here.
 - **Status**: planned (2026-09-25). Lanes: auth, api.
 - **Source**: v2 cost-trial review 2026-09-24; re-verified in-session
   2026-09-25.
+
+---
+
+#### Pass 59.78 `trophies.js` is loaded by no page, and its calls name routes that do not exist (LOW, S)
+
+- **Target**: `static/js/trophies.js`; `build_js.py`'s page-specific list;
+  `tests/test_pass29_frontend.py`; `docs/RETRODB_DESIGN_STANDARDS.md`.
+- **Why**: no template has a `<script>` for it, and git history shows none
+  ever did. It calls `/api/trophies/sync/<id>`, `/api/trophies/scan` and
+  `/api/psn/test-connection`, none of which is registered. It still costs an
+  i18n scan and a Pass 29 test that reads its source.
+- **Plan**: delete the file and its `build_js.py` entry, retire the test that
+  reads it, and update the design-standards list naming it. Then drop it
+  from `_KNOWN_DEAD_JS` in `tests/test_pass59_frontend.py`.
+- **Verify**: the route-map test passes with the exclusion removed.
+- **Status**: planned (2026-09-25). Lanes: frontend.
+- **Source**: in-session 2026-09-25 — found by Pass 59.30's route-map test.
+
+---
+
+#### Pass 59.79 The site-wide `theme` setting has no reader and no writer (LOW, S)
+
+- **Target**: `settings_manager.py` defaults; `services/settings_validators.py`
+  (`'theme'` validator).
+- **Why**: Pass 59.38 moved the saved theme to `user_settings.theme_preference`.
+  The `theme` key in `data/settings.json` was never read, and now nothing
+  writes it either. It survives as a default and a validator.
+- **Plan**: remove the default and the validator, and check the Settings
+  export / import and backup paths for a reader first.
+- **Verify**: `git grep` finds no reader; saving Settings still round-trips.
+- **Status**: planned (2026-09-25). Lanes: settings.
+- **Source**: in-session 2026-09-25 — Pass 59.38 sweep.
+
+---
+
+#### Pass 59.80 Small browser defects the Pass 59.30-59.40 walk found (LOW, S)
+
+- **Target**: as listed.
+- **Why**: each was seen in the 2026-09-25 browser walk or its sweep, and
+  each predates that group.
+  (a) Fanart backgrounds use `url('{{ url_for(...) }}')` in a `style`
+  attribute, in `game_detail.html` and the achievement and trophy detail
+  pages. `url_for` leaves an apostrophe unencoded, so a fanart file named
+  with one breaks the CSS and shows no background. Not a script risk.
+  (b) Leaving a page aborts the toast controller's status polls, and
+  `API.get` logs each `AbortError` as a console error.
+  (c) `switchSettingsTab` toggles `.active` but never updates the tabs'
+  `aria-selected`, so a screen reader keeps announcing Account as selected.
+- **Plan**: (a) quote with `|tojson` or percent-encode the apostrophe;
+  (b) have `API.get` stay quiet on `AbortError`; (c) set `aria-selected` in
+  the same loop that sets `.active`.
+- **Verify**: a fanart file named with an apostrophe shows; navigating away
+  mid-poll logs nothing; the selected tab reports `aria-selected="true"`.
+- **Status**: planned (2026-09-25). Lanes: frontend, a11y.
+- **Source**: in-session 2026-09-25 — Pass 59.30-59.40 browser walk.
 
 ## Done index
 

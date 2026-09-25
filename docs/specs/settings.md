@@ -431,7 +431,7 @@ in the Settings page).
    under `templates/_settings_tabs/<tab>.html` — pick from `account`,
    `library`, `scraping`, `data`, `customization`, `system` (Pass 38.6 split
    `templates/settings.html` into these six partials). The frontend save
-   handler lives in `static/js/settings-page.js` (launch-emulator-specific
+   handler lives in the inline script in `templates/settings.html` (launch-emulator-specific
    keys belong in `static/js/emulators-settings.js`). The value rides in
    the next `/api/settings` POST.
 6. **Add a test.** In `tests/test_launch_settings_validators.py` (the

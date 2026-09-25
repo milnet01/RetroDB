@@ -12,7 +12,7 @@
         {% endfor %}
     </div>
     <div class="changelog-body">
-        {{ entry.body | safe }}
+        {{ entry.body | safe }} {# nosemgrep: template-unescaped-with-safe -- body is HTML authored in data/changelog.yaml, in-repo #}
     </div>
 </article>
 {% endfor %}

@@ -15,6 +15,7 @@ import config
 from services.database import query, execute
 from services.api_helpers import handle_api_errors, success, error
 from services.i18n import available_locales
+from services.settings_validators import ALLOWED_THEMES
 from services.auth import (
     hash_password, verify_password, needs_rehash, get_user_settings,
     admin_required, login_required, VALID_ROLES,
@@ -347,6 +348,11 @@ def api_user_settings():
         # error in this route — API.post throws on non-2xx, so a 400 would
         # surface as a generic "Network error" toast instead of this message.
         return error(_('Invalid locale'), code=200)
+
+    # Pass 59.38 — the stored theme is emitted into every page's FOUC script,
+    # so only a known theme key may be saved.
+    if 'theme_preference' in data and data['theme_preference'] not in ALLOWED_THEMES:
+        return error(_('Invalid theme'), code=200)
 
     for field in allowed_fields:
         if field in data:

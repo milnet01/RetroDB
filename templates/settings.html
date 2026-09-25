@@ -1130,7 +1130,12 @@
 // SETTINGS TAB SYSTEM
 // =============================================================================
 
-function switchSettingsTab(tabId) {
+function switchSettingsTab(tabId, skipScroll) {
+    // Pass 59.35 — only switch to a tab whose panel exists. A stale saved or
+    // linked tab id would otherwise strip `.active` from every panel and leave
+    // the page blank. Returns whether it switched.
+    if (!tabId || !document.getElementById('tab-' + tabId)) return false;
+
     // Update tab buttons
     document.querySelectorAll('.settings-tab').forEach(tab => {
         tab.classList.remove('active');
@@ -1147,8 +1152,12 @@ function switchSettingsTab(tabId) {
         }
     });
     
-    // Save active tab to localStorage
+    // Save active tab to localStorage, and mirror it in the URL so the tab
+    // can be linked to and survives a reload.
     localStorage.setItem('settingsActiveTab', tabId);
+    if (window.location.hash !== '#' + tabId) {
+        history.replaceState(null, '', '#' + tabId);
+    }
     
     // Re-apply masonry layout and reload logo reference when switching to customization tab
     // (needed because masonry can't calculate when element is hidden)
@@ -1174,8 +1183,24 @@ function switchSettingsTab(tabId) {
         }, 50);
     }
 
-    // Scroll to top of content
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll to top of content (skipped when restoring on page load)
+    if (!skipScroll) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    return true;
+}
+
+// Open the tab named by the URL hash. The hash may also name a section inside
+// a tab (e.g. #apikeys); then open that tab and scroll to the section.
+function openSettingsFromHash() {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    if (!id) return false;
+    if (switchSettingsTab(id, true)) return true;
+    const section = document.getElementById(id);
+    const panel = section && section.closest('.settings-tab-panel');
+    if (!panel || !switchSettingsTab(panel.id.slice('tab-'.length), true)) return false;
+    setTimeout(() => scrollToSection(id), 100);
+    return true;
 }
 
 // Reload logo reference table (for use after tab switch)
@@ -1212,10 +1237,14 @@ function scrollToSection(sectionId) {
 
 // Restore active tab on page load
 document.addEventListener('DOMContentLoaded', function() {
-    const savedTab = localStorage.getItem('settingsActiveTab');
-    if (savedTab) {
-        switchSettingsTab(savedTab);
+    // URL hash first, then the last tab this browser used.
+    if (!openSettingsFromHash()) {
+        const savedTab = localStorage.getItem('settingsActiveTab');
+        if (savedTab && !switchSettingsTab(savedTab, true)) {
+            localStorage.removeItem('settingsActiveTab');
+        }
     }
+    window.addEventListener('hashchange', openSettingsFromHash);
     
     // Update subnav active state on scroll
     const sections = document.querySelectorAll('section[id]');
@@ -1282,7 +1311,7 @@ function saveUserSettings() {
 // =============================================================================
 
 const _detectedTz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-const _currentUserTz = '{{ user_timezone|default("UTC") }}';
+const _currentUserTz = {{ user_timezone|default("UTC")|tojson }};
 
 function loadTimezones() {
     const label = document.getElementById('detectedTimezone');
@@ -1787,7 +1816,7 @@ function addRegionOption() {
     const badge = document.createElement('span');
     badge.className = 'badge badge-info';
     badge.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:4px 10px;font-size:0.85rem;';
-    badge.innerHTML = `${escapeHtml(val)}<button type="button" class="btn-icon-only" onclick="removeRegionOption(this,'${escapeHtml(val)}')" title="Remove" style="background:none;border:none;color:var(--neon-red);cursor:pointer;font-size:1rem;padding:0 2px;">&times;</button>`;
+    badge.innerHTML = `${escapeHtml(val)}<button type="button" class="btn-icon-only" data-region="${escapeHtml(val)}" onclick="removeRegionOption(this, this.dataset.region)" title="Remove" style="background:none;border:none;color:var(--neon-red);cursor:pointer;font-size:1rem;padding:0 2px;">&times;</button>`;
     container.appendChild(badge);
     // Also add to default region dropdown
     const sel = document.getElementById('defaultRegionSelect');
@@ -2218,7 +2247,7 @@ let pendingConfirmAction = null;
 // admin-curated values (controller name, system name, dropdown option,
 // upstream API error string) into an XSS sink. Callers that need
 // formatted HTML pass `{allowHtml: true}` to opt in, mirroring the
-// `ConfirmModal.show` helper in settings-page.js (Pass 29.1).
+// ConfirmModal.show helper that settings-page.js once carried (Pass 29.1).
 function showConfirmModal(title, message, onConfirm, options = {}) {
     document.getElementById('confirmTitle').textContent = title;
     const messageEl = document.getElementById('confirmMessage');
@@ -3333,7 +3362,7 @@ async function loadControllerLibrary() {
                                     <button type="button" class="btn btn-primary btn-sm" onclick="event.stopPropagation(); openEditControllerModal(${c.id})">
                                         ✏️ Edit
                                     </button>
-                                    <button type="button" class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteController(${c.id}, '${c.name.replace(/'/g, "\\'")}')">
+                                    <button type="button" class="btn btn-danger btn-sm" data-name="${escapeHtml(c.name)}" onclick="event.stopPropagation(); deleteController(${c.id}, this.dataset.name)">
                                         🗑️ Delete
                                     </button>
                                 </div>
@@ -5227,7 +5256,7 @@ function openAvatarPicker() {
     const trigger = document.activeElement;
     selectedDefaultAvatar = null;
     document.querySelectorAll('.avatar-option').forEach(opt => opt.classList.remove('selected'));
-    const currentAvatar = '{{ current_user_settings.avatar if current_user_settings and current_user_settings.avatar else "" }}';
+    const currentAvatar = {{ (current_user_settings.avatar if current_user_settings and current_user_settings.avatar else "")|tojson }};
     if (currentAvatar.startsWith('default_')) {
         const opt = document.querySelector('.avatar-option[data-avatar="' + currentAvatar + '"]');
         if (opt) {
@@ -5259,7 +5288,7 @@ function updateAllAvatars(url) {
     if (url) {
         profileAvatar.innerHTML = '<img src="' + url + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
     } else {
-        const role = '{{ current_user.role if current_user else "viewer" }}';
+        const role = {{ (current_user.role if current_user else "viewer")|tojson }};
         const emoji = role === 'admin' ? '👑' : role === 'editor' ? '✏️' : '👤';
         profileAvatar.innerHTML = emoji;
     }
@@ -5269,7 +5298,7 @@ function updateAllAvatars(url) {
         if (url) {
             sidebarAvatar.innerHTML = '<img src="' + url + '" alt="" class="user-avatar-img">';
         } else {
-            const role = '{{ current_user.role if current_user else "viewer" }}';
+            const role = {{ (current_user.role if current_user else "viewer")|tojson }};
             const emoji = role === 'admin' ? '👑' : role === 'editor' ? '✏️' : '👤';
             sidebarAvatar.innerHTML = emoji;
         }

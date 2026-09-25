@@ -2037,97 +2037,6 @@ const GameEditModal = {
     },
 
     /**
-     * Update the game card in the page after saving
-     * @param {number} gameId - The game ID
-     * @param {Object} formData - The updated form data
-     */
-    updateGameCardInPage(gameId, formData) {
-        const card = document.querySelector(`.game-card-new[data-game-id="${gameId}"]`);
-        if (!card) return;
-
-        const titleEl = card.querySelector('.game-card-title');
-        if (titleEl && formData.title) {
-            titleEl.textContent = formData.title;
-        }
-
-        card.querySelectorAll('.meta-item').forEach(item => {
-            const label = item.querySelector('.meta-label');
-            const value = item.querySelector('.meta-value');
-            if (!label || !value) return;
-
-            const labelText = label.textContent;
-            if (labelText === 'Genre' && formData.genre !== undefined) {
-                if (formData.genre) {
-                    value.textContent = formData.genre.split(',')[0].trim();
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
-            } else if (labelText === 'Series' && formData.franchise !== undefined) {
-                if (formData.franchise) {
-                    value.textContent = formData.franchise.substring(0, 20) + (formData.franchise.length > 20 ? '...' : '');
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
-            } else if (labelText === 'Developer' && formData.developer !== undefined) {
-                if (formData.developer) {
-                    const dev = formData.developer.split(',')[0].trim();
-                    value.textContent = dev.substring(0, 20) + (dev.length > 20 ? '...' : '');
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
-            } else if (labelText === 'Publisher' && formData.publisher !== undefined) {
-                if (formData.publisher) {
-                    const pub = formData.publisher.split(',')[0].trim();
-                    value.textContent = pub.substring(0, 20) + (pub.length > 20 ? '...' : '');
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
-            }
-        });
-
-        const existingAgeBadge = card.querySelector('.game-badge.age-rating-badge');
-        const updatedRating = _getPreferredRatingFromGame(formData);
-        if (updatedRating) {
-            const tooltip = updatedRating.crossmapped ? `${updatedRating.label}: ${updatedRating.value} (cross-mapped)` : `${updatedRating.label}: ${updatedRating.value}`;
-            let badgeHtml;
-            if (updatedRating.image) {
-                badgeHtml = `<img src="/static/images/ratings/${updatedRating.image}" alt="${escapeHtml(updatedRating.value)}" class="age-rating-img">`;
-            } else {
-                badgeHtml = `${escapeHtml(updatedRating.label.split(' (')[0])} ${escapeHtml(updatedRating.value)}`;
-            }
-            if (existingAgeBadge) {
-                existingAgeBadge.className = `game-badge age-rating-badge${updatedRating.crossmapped ? ' crossmapped' : ''}`;
-                existingAgeBadge.title = tooltip;
-                existingAgeBadge.innerHTML = badgeHtml;
-            } else {
-                const badgeContainer = card.querySelector('.rating-badges');
-                if (badgeContainer) {
-                    const completionBadge = badgeContainer.querySelector('.game-badge.completion');
-                    const newBadge = document.createElement('span');
-                    newBadge.className = `game-badge age-rating-badge${updatedRating.crossmapped ? ' crossmapped' : ''}`;
-                    newBadge.title = tooltip;
-                    newBadge.innerHTML = badgeHtml;
-                    if (completionBadge) {
-                        completionBadge.after(newBadge);
-                    } else {
-                        badgeContainer.insertBefore(newBadge, badgeContainer.firstChild);
-                    }
-                }
-            }
-        } else if (existingAgeBadge) {
-            existingAgeBadge.remove();
-        }
-
-        if (typeof window.relayoutMasonry === 'function') {
-            requestAnimationFrame(() => window.relayoutMasonry());
-        }
-    },
-
-    /**
      * Update HLTB display in the edit modal
      * @param {Object} game - The game data
      */
@@ -2995,7 +2904,6 @@ window.switchEditTab = (tabId) => GameEditModal.switchTab(tabId);
 window.generateModalSortTitle = () => GameEditModal.generateSortTitle();
 window.saveGameEdits = () => GameEditModal.save();
 window.closeGameEditModal = () => GameEditModal.close();
-window.updateGameCardInPage = (gameId, formData) => GameEditModal.updateGameCardInPage(gameId, formData);
 window.updateHltbDisplay = (game) => GameEditModal.updateHltbDisplay(game);
 window.updateGameCompletion = () => GameEditModal.updateCompletion();
 

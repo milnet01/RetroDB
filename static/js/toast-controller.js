@@ -1013,7 +1013,7 @@ const UnifiedToastController = {
         toast.innerHTML = `
             <div class="toast-content">
                 <div class="toast-main">
-                    <div class="toast-icon">${getThemedIcon(item.type === 'sync' ? 'ra-sync' : 'ra-refresh', 'queued')}</div>
+                    <div class="toast-icon">${getThemedIcon('queued')}</div>
                     <div class="toast-info">
                         <div class="toast-title">${title}</div>
                         <div class="toast-subtitle"><span class="queue-position">#${position}</span> ${this.escapeHtml(t('in queue'))}${item.gameCount ? ` • ${this.escapeHtml(t('{n} games', {n: this.fmtNum(item.gameCount)}))}` : ''}</div>
@@ -1201,7 +1201,7 @@ const UnifiedToastController = {
         return `
             <div class="toast-content">
                 <div class="toast-main" data-toast-action="navigate" data-toast-type="${this.escapeHtml(type)}" data-toast-return-url="${this.escapeHtml(data.return_url || '')}">
-                    <div class="toast-icon ${isPaused ? 'paused' : ''}">${isPaused ? getThemedIcon(type, 'paused') : getThemedIcon(type)}</div>
+                    <div class="toast-icon ${isPaused ? 'paused' : ''}">${isPaused ? getThemedIcon('paused') : getThemedIcon(type)}</div>
                     <div class="toast-info">
                         <div class="toast-title ${isPaused ? 'paused' : ''}">${config.name} ${isPaused ? t('(Paused)') : t('Running')}</div>
                         ${systemNameHTML}
@@ -1265,7 +1265,7 @@ const UnifiedToastController = {
         // Update icon (theme-aware)
         const icon = toast.querySelector('.toast-icon');
         if (icon) {
-            icon.textContent = isComplete ? getThemedIcon(type, 'complete') : (isPaused ? getThemedIcon(type, 'paused') : getThemedIcon(type));
+            icon.textContent = isComplete ? getThemedIcon('complete') : (isPaused ? getThemedIcon('paused') : getThemedIcon(type));
             icon.classList.toggle('paused', isPaused);
         }
 
@@ -1515,7 +1515,7 @@ const UnifiedToastController = {
         toast.innerHTML = `
             <div class="toast-content queued">
                 <div class="toast-main">
-                    <div class="toast-icon">${getThemedIcon(type, 'queued')}</div>
+                    <div class="toast-icon">${getThemedIcon('queued')}</div>
                     <div class="toast-info">
                         <div class="toast-title">${this.escapeHtml(t('{job} Queued (#{position})', {job: config.name, position: position}))}</div>
                         <div class="toast-subtitle">${this.escapeHtml(subtitleText)}</div>

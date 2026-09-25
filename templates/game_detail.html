@@ -136,7 +136,7 @@
                      decoding="async"
                      fetchpriority="high"
                      style="{% if show_3d_initially %}display: none;{% endif %}"
-                     onclick="openBoxartZoom('{{ url_for('static', filename='images/boxart/' + game.boxart) }}')"
+                     data-zoom-url="{{ url_for('static', filename='images/boxart/' + game.boxart) }}" onclick="openBoxartZoom(this.dataset.zoomUrl)"
                      title="{{ _('Click to zoom') }}"
                      data-on-error="hide-show-id"
                      data-on-error-target-id="boxartPlaceholder">
@@ -148,7 +148,7 @@
                      class="game-boxart-image clickable boxart-3d"
                      id="boxart3d"
                      style="{% if not show_3d_initially and game.boxart %}display: none;{% endif %}"
-                     onclick="openBoxartZoom('{{ url_for('static', filename='images/boxart_3d/' + game.boxart_3d) }}')"
+                     data-zoom-url="{{ url_for('static', filename='images/boxart_3d/' + game.boxart_3d) }}" onclick="openBoxartZoom(this.dataset.zoomUrl)"
                      title="{{ _('Click to zoom') }}"
                      data-on-error="hide-3d-fallback-2d">
                 {% endif %}
@@ -403,7 +403,7 @@
                     <div class="screenshot-thumb" data-filename="{{ ss.strip() }}">
                         <img src="{{ url_for('static', filename='images/screenshots/' + ss.strip()) }}"
                              alt="Screenshot {{ loop.index }}" loading="lazy" decoding="async">
-                        <button type="button" class="screenshot-delete-btn" onclick="event.stopPropagation(); deleteScreenshot('{{ ss.strip() }}')" title="{{ _('Delete screenshot') }}">×</button>
+                        <button type="button" class="screenshot-delete-btn" data-filename="{{ ss.strip() }}" onclick="event.stopPropagation(); deleteScreenshot(this.dataset.filename)" title="{{ _('Delete screenshot') }}">×</button>
                     </div>
                     {% endfor %}
                 </div>
@@ -3540,7 +3540,7 @@ function renderGameStructureTags() {
     container.innerHTML = selectedGameStructures.map(structure => `
         <span class="genre-tag">
             ${structure}
-            <span class="remove-genre" onclick="removeGameStructure('${structure.replace(/'/g, "\\'")}')">×</span>
+            <span class="remove-genre" data-value="${escapeHtml(structure)}" onclick="removeGameStructure(this.dataset.value)">×</span>
         </span>
     `).join('');
 
@@ -3731,7 +3731,7 @@ function renderPerspectiveTags() {
     container.innerHTML = selectedPerspectives.map(perspective => `
         <span class="genre-tag">
             ${perspective}
-            <span class="remove-genre" onclick="removePerspective('${perspective.replace(/'/g, "\\'")}')">×</span>
+            <span class="remove-genre" data-value="${escapeHtml(perspective)}" onclick="removePerspective(this.dataset.value)">×</span>
         </span>
     `).join('');
 
@@ -3811,7 +3811,7 @@ function renderDimensionTags() {
     container.innerHTML = selectedDimensions.map(dimension => `
         <span class="genre-tag">
             ${dimension}
-            <span class="remove-genre" onclick="removeDimension('${dimension.replace(/'/g, "\\'")}')">×</span>
+            <span class="remove-genre" data-value="${escapeHtml(dimension)}" onclick="removeDimension(this.dataset.value)">×</span>
         </span>
     `).join('');
 
@@ -4063,7 +4063,7 @@ function renderGenreTags() {
     container.innerHTML = selectedGenres.map(genre => `
         <span class="genre-tag">
             ${genre}
-            <span class="remove-genre" onclick="removeGenre('${genre.replace(/'/g, "\\'")}')">×</span>
+            <span class="remove-genre" data-value="${escapeHtml(genre)}" onclick="removeGenre(this.dataset.value)">×</span>
         </span>
     `).join('');
     
@@ -4147,7 +4147,7 @@ function renderModesTags() {
     container.innerHTML = selectedModes.map(mode => `
         <span class="genre-tag">
             ${mode}
-            <span class="remove-genre" onclick="removeMode('${mode.replace(/'/g, "\\'")}')">×</span>
+            <span class="remove-genre" data-value="${escapeHtml(mode)}" onclick="removeMode(this.dataset.value)">×</span>
         </span>
     `).join('');
 
@@ -4231,7 +4231,7 @@ function renderControllerTags() {
     container.innerHTML = selectedControllers.map(controller => `
         <span class="controller-tag">
             ${controller}
-            <span class="remove-controller" onclick="removeController('${controller.replace(/'/g, "\\'")}')">×</span>
+            <span class="remove-controller" data-value="${escapeHtml(controller)}" onclick="removeController(this.dataset.value)">×</span>
         </span>
     `).join('');
     
@@ -4359,7 +4359,7 @@ function renderSaveTypeTags() {
     container.innerHTML = selectedSaveTypes.map(saveType => `
         <span class="genre-tag">
             ${saveType}
-            <span class="remove-genre" onclick="removeSaveType('${saveType.replace(/'/g, "\\'")}')">×</span>
+            <span class="remove-genre" data-value="${escapeHtml(saveType)}" onclick="removeSaveType(this.dataset.value)">×</span>
         </span>
     `).join('');
 
@@ -4562,7 +4562,7 @@ function deleteGame(gameId) {
     // Remember where user came from (for redirect after delete)
     const returnUrl = document.referrer && document.referrer.includes(window.location.host)
         ? document.referrer
-        : '{{ url_for("games.all_games") }}';
+        : {{ url_for("games.all_games")|tojson }};
 
     showConfirm(
         '🗑️ Delete Game',

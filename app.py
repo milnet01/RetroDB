@@ -68,6 +68,7 @@ from services.game_utils import (
 from services.template_filters import register_filters as _register_template_filters
 from services.database_init import init_database, ensure_user_tables
 from services.assets import asset_url
+from services.settings_validators import ALLOWED_THEMES
 from services.api_helpers import handle_api_errors, success as api_success, error as api_error
 from services.analytics import (
     build_analytics_context,
@@ -869,6 +870,20 @@ def _ai_scraper_enabled_cached():
         return False
 
 
+def _user_theme(user_settings_obj):
+    """The logged-in user's saved theme, or None (Pass 59.38).
+
+    Emitted into base.html's FOUC block as the fallback when this browser has
+    no theme in localStorage, so the theme follows the user across devices.
+    Re-validated here as well as on write: a row written before the write
+    validation existed may hold any string.
+    """
+    if not user_settings_obj:
+        return None
+    theme = dict(user_settings_obj).get('theme_preference')
+    return theme if theme in ALLOWED_THEMES else None
+
+
 @app.context_processor
 def inject_config():
     """Make config, user settings, and current user available to all templates"""
@@ -897,6 +912,7 @@ def inject_config():
         'user_settings': user_settings,
         'current_user': g.get('user'),
         'current_user_settings': g.get('user_settings'),
+        'user_theme': _user_theme(g.get('user_settings')),
         'has_permission': has_permission,
         'get_avatar_url': get_avatar_url,
         # Pass 34.6 — asset_url is already registered as a Jinja global

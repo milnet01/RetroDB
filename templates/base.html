@@ -12,7 +12,7 @@
     <!-- Theme FOUC prevention: apply saved theme before CSS renders -->
     <script nonce="{{ csp_nonce }}">
     (function(){
-        var t = localStorage.getItem('retrodb-theme');
+        var t = localStorage.getItem('retrodb-theme') || {{ user_theme|tojson }}; // nosemgrep: var-in-script-tag
         if (t && t !== 'cyberpunk') document.documentElement.setAttribute('data-theme', t);
     })();
     </script>
@@ -369,20 +369,20 @@
 
     <!-- Rating system globals (used by game-modals.js and all-games-controller.js) -->
     <script nonce="{{ csp_nonce }}">
-        window.PREFERRED_RATING_SYSTEM = window.PREFERRED_RATING_SYSTEM || '{{ user_settings.get("preferred_rating_system", "esrb") }}';
-        window.RATING_IMAGE_MAP = window.RATING_IMAGE_MAP || {{ rating_image_map_js | tojson }};
-        window.RATING_SYSTEM_NAMES = window.RATING_SYSTEM_NAMES || {{ rating_system_names_js | tojson }};
-        window.RATING_SYSTEM_KEYS = window.RATING_SYSTEM_KEYS || {{ rating_system_keys | tojson }};
-        window.RATING_TO_TIER = window.RATING_TO_TIER || {{ rating_to_tier_js | tojson }};
-        window.TIER_TO_RATING = window.TIER_TO_RATING || {{ tier_to_rating_js | tojson }};
-        window.IS_ADMIN = {{ 'true' if current_user and current_user.role == 'admin' else 'false' }};
+        window.PREFERRED_RATING_SYSTEM = window.PREFERRED_RATING_SYSTEM || {{ user_settings.get("preferred_rating_system", "esrb") | tojson }}; // nosemgrep: var-in-script-tag
+        window.RATING_IMAGE_MAP = window.RATING_IMAGE_MAP || {{ rating_image_map_js | tojson }}; // nosemgrep: var-in-script-tag
+        window.RATING_SYSTEM_NAMES = window.RATING_SYSTEM_NAMES || {{ rating_system_names_js | tojson }}; // nosemgrep: var-in-script-tag
+        window.RATING_SYSTEM_KEYS = window.RATING_SYSTEM_KEYS || {{ rating_system_keys | tojson }}; // nosemgrep: var-in-script-tag
+        window.RATING_TO_TIER = window.RATING_TO_TIER || {{ rating_to_tier_js | tojson }}; // nosemgrep: var-in-script-tag
+        window.TIER_TO_RATING = window.TIER_TO_RATING || {{ tier_to_rating_js | tojson }}; // nosemgrep: var-in-script-tag
+        window.IS_ADMIN = {{ 'true' if current_user and current_user.role == 'admin' else 'false' }}; // nosemgrep: var-in-script-tag
     </script>
 
     <!-- i18n maps (Pass 43.3/43.2) — synchronous, before the deferred bundles, so
          t()/tField() have their data ready. Locale-aware Jinja globals, once per page. -->
     <script nonce="{{ csp_nonce }}">
-        window.I18N = {{ js_i18n_map() | tojson }};
-        window.FIELD_LABELS = {{ field_labels_map() | tojson }};
+        window.I18N = {{ js_i18n_map() | tojson }}; // nosemgrep: var-in-script-tag
+        window.FIELD_LABELS = {{ field_labels_map() | tojson }}; // nosemgrep: var-in-script-tag
     </script>
 
     <!-- Core JavaScript Bundle (utils + page-lifecycle + toast-controller + main) - loaded on every page -->
@@ -394,7 +394,7 @@
     <script nonce="{{ csp_nonce }}">
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof DateUtils !== 'undefined') {
-                DateUtils.setTimezone('{{ user_timezone|default("UTC") }}');
+                DateUtils.setTimezone({{ user_timezone|default("UTC") | tojson }}); // nosemgrep: var-in-script-tag
             }
         });
     </script>
@@ -561,7 +561,7 @@
         // Parent folder link (if not at root)
         if (data.parent_path) {
             html += `
-                <button type="button" class="folder-item folder-parent" onclick="navigateFolder('${escapeAttr(data.parent_path)}')">
+                <button type="button" class="folder-item folder-parent" data-path="${escapeHtml(data.parent_path)}" onclick="navigateFolder(this.dataset.path)">
                     <span class="folder-icon">📁</span>
                     <span class="folder-name">..</span>
                     <span class="folder-info">Parent folder</span>
@@ -582,7 +582,7 @@
             if (folder.subfolder_count > 0) info.push(`${folder.subfolder_count} folders`);
             
             html += `
-                <button type="button" class="folder-item" onclick="navigateFolder('${escapeAttr(folder.path)}')">
+                <button type="button" class="folder-item" data-path="${escapeHtml(folder.path)}" onclick="navigateFolder(this.dataset.path)">
                     <span class="folder-icon">📁</span>
                     <span class="folder-name">${escapeHtml(folder.name)}</span>
                     <span class="folder-info">${info.join(', ') || 'Empty'}</span>
@@ -631,10 +631,6 @@
         document.getElementById('folderBrowserModal').classList.remove('active');
         folderBrowserCallback = null;
         if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
-    }
-    
-    function escapeAttr(str) {
-        return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
     }
     
     // About Modal Functions

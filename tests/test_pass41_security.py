@@ -1864,7 +1864,7 @@ class TestPass41_13cDivAsButton:
         assert '<button type="button" class="folder-item folder-parent"' in body, (
             "Pass 41.13c — folder-parent row must be a <button>"
         )
-        assert '<button type="button" class="folder-item" onclick="navigateFolder' in body, (
+        assert '<button type="button" class="folder-item" data-path=' in body, (
             "Pass 41.13c — folder-item row must be a <button>"
         )
 

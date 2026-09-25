@@ -1,3 +1,43 @@
+- version: 3.23.8
+  date: 2026-09-25
+  tags:
+  - type: fix
+    label: CLZ import works again, list covers show, and several pages stop breaking on an apostrophe
+  - type: security
+    label: Scraped names and file paths can no longer break out of page buttons
+  body: |
+    <ul>
+      <li><strong>CLZ import did nothing.</strong> Uploading a CLZ PDF sent it
+        to an address the server does not have, so every upload failed with
+        "Parse failed". It now reaches the parser.</li>
+      <li><strong>Covers on a list page were all missing.</strong> The list page
+        asked for each cover at the wrong address, and the System column was
+        always blank. Both now show. The cover pictures in the page's "add a
+        game" search are fixed too.</li>
+      <li><strong>Buttons broke on names with an apostrophe.</strong> Removing
+        "Assassin's Creed" from a list, deleting a screenshot, zooming a cover
+        or removing a genre tag could silently do nothing when the name
+        contained an apostrophe. The same fault let a crafted scraped name run
+        code in the page. Names now travel to those buttons in a way that
+        cannot be misread as code.</li>
+      <li><strong>Image and link addresses are escaped everywhere.</strong> A few
+        pages built picture addresses from scraped file names without escaping
+        them, and five pages carried their own weaker copy of the escaping
+        helper. They now all use the shared one.</li>
+      <li><strong>The Settings page could open blank.</strong> If the tab you
+        last used had been renamed by an update, Settings opened with no panel
+        visible. It now ignores a tab that no longer exists. Links such as
+        <code>/settings#account</code> open that tab again.</li>
+      <li><strong>Your theme now follows you to other devices.</strong> The
+        theme you pick is saved to your account. A browser that has never been
+        told a theme uses your saved one instead of the default.</li>
+      <li><strong>Job progress pop-ups show the right icon.</strong> Paused,
+        finished and queued jobs showed the same "running" icon. Each state now
+        has its own, per theme.</li>
+      <li><strong>The keyboard-shortcut list can now be translated.</strong> Its
+        labels were invisible to the translation tools, so they stayed in
+        English in every language.</li>
+    </ul>
 - version: 3.23.6
   date: 2026-09-03
   tags:
