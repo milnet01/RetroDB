@@ -51,9 +51,10 @@ def admin_client(monkeypatch):
 @pytest.fixture
 def list_with_game():
     """A list holding one game whose title and cover name carry an apostrophe."""
+    import uuid
     from services.database import execute, query
     sys_id = execute("INSERT INTO systems (name, folder) VALUES (?, ?)",
-                     ('Pass59 System', 'pass59sys'))
+                     ('Pass59 System', f'pass59-{uuid.uuid4().hex}'))
     game_id = execute(
         "INSERT INTO games (system_id, title, rom_path, boxart) VALUES (?, ?, ?, ?)",
         (sys_id, "Assassin's Creed", 'pass59/ac.iso', "Assassin's Creed.png"))
@@ -61,7 +62,15 @@ def list_with_game():
     execute("INSERT INTO list_games (list_id, game_id, position) VALUES (?, ?, 1)",
             (list_id, game_id))
     yield {'list_id': list_id, 'game_id': game_id}
-    execute("DELETE FROM list_games WHERE list_id = ?", (list_id,))
+    # Rendering a game page can record rows that reference it (view history
+    # and the like), so remove every row pointing at these parents first.
+    for parent, pid in (('lists', list_id), ('games', game_id), ('systems', sys_id)):
+        refs = query(
+            "SELECT m.name AS tbl, f.\"from\" AS col FROM sqlite_master m "
+            "JOIN pragma_foreign_key_list(m.name) f "
+            "WHERE m.type = 'table' AND f.\"table\" = ?", (parent,))
+        for ref in refs:
+            execute(f"DELETE FROM {ref['tbl']} WHERE {ref['col']} = ?", (pid,))
     execute("DELETE FROM lists WHERE id = ?", (list_id,))
     execute("DELETE FROM games WHERE id = ?", (game_id,))
     execute("DELETE FROM systems WHERE id = ?", (sys_id,))
