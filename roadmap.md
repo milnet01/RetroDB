@@ -6839,9 +6839,46 @@ when already in the file.
 - **Plan**: author with `write-spec`; gate with `review-contract` before
   anything is built to it. `spec-format.md` §1's triggers are met — a
   contract others bind to, a real design choice, expensive to undo.
-- **Status**: planned (2026-09-01). Lanes: launch, docs.
+- **Scope widened (2026-09-26, user decision)**: the spec also carries the
+  shared launch contract for RetroArch "player mode" — RETR-0004 in the
+  RetroArch fork at `/mnt/Games/Scripts/Linux/RetroArch`, whose session is
+  `retroarch-f5`. RetroDB is the caller, so the contract lives here; the fork
+  documents only its player profile and points at this spec. Fold in Pass
+  59.53 and 59.54. Core ranking and download are a separate spec (Pass
+  59.81). Decisions already made — do not reopen:
+  1. **Platforms**: Linux, Windows and macOS from the start. Only Linux can
+     be built and tested on this machine, so the Windows and macOS clauses
+     are marked unverified.
+  2. **argv**: `<player> --config <player-cfg> -L <absolute core>
+     <absolute content>`. Prefer existing RetroArch config keys
+     (`quit_on_close_content`, `ui_companion_start_on_boot=false`) over new
+     flags or new code.
+  3. **I/O**: stdin and stdout are null. stderr is quiet by default; a fatal
+     error ends with one plain-language line, because RetroDB keeps only the
+     stderr tail and shows it to the user. Exit code 0 means OK, anything
+     else means failure. Process exit is the "game exited" signal.
+  4. **Closing content quits the process**, never returning to the menu.
+     Otherwise RetroDB reports the game as still running.
+  5. **Shutdown is per-platform**: SIGTERM on Linux and macOS, with SRAM
+     flushed inside RetroDB's grace period before SIGKILL. On Windows, a
+     graceful quit over RetroArch's network command interface, falling back
+     to TerminateProcess, which cannot flush.
+  6. **Ownership**: RetroDB owns the cores directory, with a default kept
+     apart from the user's normal `~/.config/retroarch`. The player owns its
+     config, saves, states, core options and remaps.
+  7. **BIOS**: the player's `system_directory` points at the user's existing
+     RetroArch system dir, read-only. The same applies to core info files.
+  8. **RetroAchievements login belongs to the player.** RetroDB holds only
+     the RA web API key, which cannot sign RetroArch in.
+  9. **Nothing flows back for v1** beyond the exit code and stderr tail.
+     RetroDB times play itself.
+  Send the draft's path to `retroarch-f5` before the gate, so it can check
+  the player-side clauses against its synced upstream code.
+- **Status**: planned (2026-09-01); drafting agreed 2026-09-26. Lanes:
+  launch, docs.
 - **Source**: review-code launch lane 2026-09-01; absence confirmed against
-  `docs/specs/`.
+  `docs/specs/`. Scope widening: user decisions 2026-09-26, relayed with
+  `retroarch-f5`.
 
 ---
 
@@ -7214,6 +7251,27 @@ were corrected in `2836bc3` and are not repeated here.
   mid-poll logs nothing; the selected tab reports `aria-selected="true"`.
 - **Status**: planned (2026-09-25). Lanes: frontend, a11y.
 - **Source**: in-session 2026-09-25 — Pass 59.30-59.40 browser walk.
+
+---
+
+#### Pass 59.81 MISSING DOCUMENT — best-core ranking, per-game override and core downloader (HIGH, M)
+
+- **Target**: a new RetroDB-only spec under `docs/specs/`, sibling to Pass
+  59.64's `launcher.md`.
+- **Why**: RetroArch player mode (Pass 59.64, RETR-0004) must launch the
+  best core for each system and download it if missing. Today core filenames
+  are static per system, seeded from `data/emulator_seeds.json`, hardcoded
+  with the Linux `.so` suffix, and RetroDB has no core updater.
+- **What it must settle**: a ranked core list per system (e.g. SNES: Snes9x,
+  then bsnes); per-system and per-game overrides; cores keyed by host
+  platform (`.so` / `.dll` / `.dylib`, and the matching libretro buildbot
+  path); where downloads land (the RetroDB-owned cores dir from Pass 59.64);
+  what happens when a download fails.
+- **Plan**: author with `write-spec` after Pass 59.64's draft; gate with
+  `review-contract`. A separate spec by user decision 2026-09-26, so the
+  shared launch contract is not held up by RetroDB-only work.
+- **Status**: planned (2026-09-26). Lanes: launch, docs.
+- **Source**: user decision 2026-09-26, relayed with `retroarch-f5`.
 
 ## Done index
 
