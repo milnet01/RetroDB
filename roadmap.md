@@ -7003,6 +7003,100 @@ were corrected in `2836bc3` and are not repeated here.
 - **Source**: in-session 2026-09-02 — surfaced by the Pass 59.2 fix and
   deliberately left out of its scope.
 
+---
+
+#### Pass 59.73 Every Flask-Limiter per-route limit is inert (HIGH, S)
+
+- **Target**: `app.py::_rate_limit`.
+- **Why**: the helper calls `limiter.limit(spec)(view)` and discards the
+  wrapper it returns. Flask-Limiter registers the limit under a name the
+  request-time lookup never matches, so no limit in the `if limiter:` block
+  is enforced. That includes the login brute-force limit.
+- **Evidence**: 2026-09-25, test client, Flask-Limiter 4.1.1: repeated
+  `POST /api/login` from one address all answered 200 against a
+  `10 per minute` rule. `limiter.limit_manager._decorated_limits` keys carry
+  a doubled suffix (`routes.auth.api_login.api_login`).
+- **Plan**: assign the wrapper back to `app.view_functions[endpoint]`. Add a
+  JSON 429 handler so an `/api/*` caller gets the envelope, not Flask-Limiter's
+  HTML page.
+- **Verify**: a regression test exceeds one configured limit and gets a JSON
+  429; red with the production half stashed.
+- **Status**: planned (2026-09-25). Lanes: auth, api.
+- **Source**: v2 cost-trial review 2026-09-24
+  (`~/.claude/docs/reviews/v2-cost-trial-draft-2026-09-24.md`); re-verified
+  in-session 2026-09-25.
+
+---
+
+#### Pass 59.74 Login never returns the user to the page they asked for (MEDIUM, S)
+
+- **Target**: `services/auth.py::_deny_unauthenticated`; `routes/auth.py::api_login`.
+- **Why**: the guard redirects with `next=request.url`, an absolute URL.
+  `api_login`'s open-redirect check rejects any value with a scheme or netloc,
+  so every post-login redirect falls back to `/dashboard`.
+- **Plan**: emit a path, not a URL (`request.full_path` or
+  `request.script_root + request.path` plus query). Keep the open-redirect
+  check unchanged.
+- **Verify**: an unauthenticated `GET /games` then a login lands on `/games`;
+  an absolute or `//host` `next` still lands on `/dashboard`.
+- **Status**: planned (2026-09-25). Lanes: auth.
+- **Source**: v2 cost-trial review 2026-09-24; re-verified in-session
+  2026-09-25.
+
+---
+
+#### Pass 59.75 Bulk-scrape status overwrites the envelope's `success` flag with a count (MEDIUM, S)
+
+- **Target**: `routes/bulk_scrape.py::api_bulk_scrape_job_status`;
+  `services/jobs/bulk_scrape.py` `get_status`.
+- **Why**: the route returns `success(**status)`. `status` carries
+  `'success': self.success_count`, which overwrites the envelope's
+  `'success': True`. A job with no successes yet answers `success: 0`, which a
+  caller reads as a failed request.
+- **Plan**: rename the counter key, or nest the status under `data`, and update
+  every JS reader of the old key in the same change.
+- **Verify**: status of a fresh job returns `success: true` and the count under
+  its new key; the bulk-scrape progress UI still shows the success count.
+- **Status**: planned (2026-09-25). Lanes: api, jobs, frontend.
+- **Source**: v2 cost-trial review 2026-09-24; re-verified in-session
+  2026-09-25.
+
+---
+
+#### Pass 59.76 Deleting a user leaves or blocks on rows in user-owned tables (MEDIUM, M)
+
+- **Target**: `routes/auth.py::api_delete_user`.
+- **Why**: it deletes from `user_settings` and `users` only. Tables with a
+  `REFERENCES users(id)` foreign key and no cascade make the `users` delete
+  fail while `PRAGMA foreign_keys = ON`. Per-user tables without a foreign key
+  keep orphaned rows.
+- **Plan**: enumerate every table carrying `user_id` / `owner_id` (the
+  `docs/specs/auth.md` §5 list plus the migrations), then delete or cascade in
+  one transaction.
+- **Verify**: a test user with a row in each per-user table deletes cleanly and
+  leaves no row behind.
+- **Status**: planned (2026-09-25). Lanes: auth, database.
+- **Source**: v2 cost-trial review 2026-09-24; code re-read in-session
+  2026-09-25, delete not re-run.
+
+---
+
+#### Pass 59.77 The force-password-change hook answers `/api/*` with an HTML page and 200 (MEDIUM, S)
+
+- **Target**: `app.py::check_force_password_change`; contract at
+  `docs/specs/api-contracts.md` invariant 1.
+- **Why**: for a user flagged `force_password_change`, the hook returns
+  `render_template('force_change_password.html'), 200` for every endpoint
+  outside its allow-list, `/api/*` included. `fetch()` callers read the page
+  as success. Same class as Pass 59.69.
+- **Plan**: mirror `_deny_unauthenticated`'s `request.path.startswith('/api/')`
+  split and return a JSON error envelope there.
+- **Verify**: a flagged user's `GET /api/games` returns a JSON envelope with a
+  non-2xx status; page requests still render the change form.
+- **Status**: planned (2026-09-25). Lanes: auth, api.
+- **Source**: v2 cost-trial review 2026-09-24; re-verified in-session
+  2026-09-25.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
