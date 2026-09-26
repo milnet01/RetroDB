@@ -1,3 +1,23 @@
+- version: 3.23.12
+  date: 2026-09-26
+  tags:
+  - type: fix
+    label: The dashboard shows a running bulk scrape, and four small fixes
+  body: |
+    <ul>
+      <li><strong>The dashboard's scrape progress card never appeared.</strong>
+        It now shows while a bulk scrape runs, and says when it is
+        paused.</li>
+      <li><strong>No more errors in the browser console on the login
+        page.</strong> It stopped checking background jobs before anyone is
+        logged in.</li>
+      <li><strong>The setup wizard no longer says "Setup complete!" when
+        saving failed.</strong> It now tells you the settings could not be
+        saved.</li>
+      <li><strong>Two bulk scrapes started in the same second no longer share
+        an id</strong>, so queue actions such as cancel act on the right
+        one.</li>
+    </ul>
 - version: 3.23.11
   date: 2026-09-26
   tags:

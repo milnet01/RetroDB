@@ -7187,7 +7187,12 @@ were corrected in `2836bc3` and are not repeated here.
 - **Plan**: key the card on `data.running && !data.completed`, and the
   "(Paused)" label on `data.paused`.
 - **Verify**: start a bulk scrape and see the card on the dashboard.
-- **Status**: planned (2026-09-26). Lanes: frontend, jobs.
+- **Resolution** (2026-09-26, v3.23.12, 0486dd0): `checkJobs()` keys on
+  `running`, `completed` and `paused`. Test:
+  `tests/test_pass59_frontend.py::test_dashboard_job_card_reads_only_real_status_keys`,
+  which checks every key the function reads against `get_status()`. Browser
+  walk: the card shows a paused job at 1400px and 375px.
+- **Status**: shipped (2026-09-26). Lanes: frontend, jobs.
 - **Source**: close-findings sweep of Pass 59.75, 2026-09-26.
 
 ---
@@ -7200,7 +7205,10 @@ were corrected in `2836bc3` and are not repeated here.
   actions look jobs up by id. Seen while writing the Pass 59.43 test.
 - **Plan**: add a monotonically increasing counter, or use `uuid4().hex`.
 - **Verify**: start two jobs within one second; their ids differ.
-- **Status**: planned (2026-09-26). Lanes: jobs.
+- **Resolution** (2026-09-26, v3.23.12, 65bcbee): The id suffix is a
+  process-wide sequence (`_JOB_SEQ`). Test:
+  `tests/test_bulk_scrape_job.py::test_jobs_started_in_one_second_get_distinct_ids`.
+- **Status**: shipped (2026-09-26). Lanes: jobs.
 - **Source**: close-findings run of Pass 59.43, 2026-09-26.
 
 ---
@@ -7213,7 +7221,10 @@ were corrected in `2836bc3` and are not repeated here.
   the one page every user sees.
 - **Plan**: do not start polling without a session, or stop on a 401.
 - **Verify**: open `/login` logged out; the console has no 401 errors.
-- **Status**: planned (2026-09-26). Lanes: frontend.
+- **Resolution** (2026-09-26, v3.23.12, 0486dd0): `base.html` sets
+  `window.IS_LOGGED_IN`, and the toast controller skips polling without a
+  session. Browser walk: no console errors on `/login` at either width.
+- **Status**: shipped (2026-09-26). Lanes: frontend.
 - **Source**: v3.23.9 browser walk, 2026-09-26.
 
 ---
@@ -7225,7 +7236,10 @@ were corrected in `2836bc3` and are not repeated here.
   also be refused on purpose, after a failed read.
 - **Plan**: return an error when the save fails.
 - **Verify**: make the save fail; the wizard reports it.
-- **Status**: planned (2026-09-26). Lanes: settings.
+- **Resolution** (2026-09-26, v3.23.12, 9109a34): `setup_api` returns a 500
+  with a plain message when `save_settings()` fails or refuses. Test:
+  `tests/test_pass59_settings.py::test_setup_wizard_reports_a_failed_save`.
+- **Status**: shipped (2026-09-26). Lanes: settings.
 - **Source**: close-findings sweep of Pass 59.42, 2026-09-26.
 
 ---
