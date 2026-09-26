@@ -23,6 +23,12 @@ from services.jobs.base import (
 logger = logging.getLogger(__name__)
 
 
+# The media sub-directories this job may standardise. Each name is joined onto
+# IMAGE_PATH, so anything else — an absolute path, a '..' — would point the
+# in-place re-encode outside the media root (Pass 59.47).
+IMAGE_TYPES = ('boxart', 'screenshots', 'boxart_3d', 'controllers', 'hardware')
+
+
 class ImageResizeJob:
     """Manages bulk image standardization via Real-ESRGAN upscaling and Lanczos downscaling."""
 
@@ -55,11 +61,17 @@ class ImageResizeJob:
         """Start bulk image standardization.
 
         Args:
-            image_types: Optional list of types to process.
-                         Defaults to ['boxart', 'screenshots', 'boxart_3d', 'controllers'].
+            image_types: Optional list of types to process, each one of
+                         IMAGE_TYPES. Defaults to all of them.
         Returns:
             dict with status info.
         """
+        if image_types is None:
+            image_types = list(IMAGE_TYPES)
+        bad = [t for t in image_types if t not in IMAGE_TYPES]
+        if bad or not isinstance(image_types, (list, tuple)):
+            return {'success': False, 'error': f'Unknown image type: {bad[0] if bad else image_types!r}'}
+
         with self._lock:
             if self.running:
                 return {'success': False, 'error': 'Image resize already in progress'}
@@ -75,9 +87,6 @@ class ImageResizeJob:
             self._singleton_fd = singleton_fd
             self.running = True
             self.start_time = datetime.now(timezone.utc).isoformat()
-
-            if image_types is None:
-                image_types = ['boxart', 'screenshots', 'boxart_3d', 'controllers', 'hardware']
 
             self._thread = threading.Thread(
                 target=self._worker,

@@ -7,6 +7,7 @@
 # =============================================================================
 
 from flask import Blueprint, request, jsonify
+from flask_babel import gettext as _
 import os
 import sys
 import time
@@ -251,9 +252,12 @@ def api_database_optimize():
 def api_image_resize_start():
     """Start bulk image standardization job."""
     from services.jobs import image_resize_job
+    from services.jobs.image_resize import IMAGE_TYPES
 
     data = request.get_json(silent=True) or {}
-    image_types = data.get('image_types', ['boxart', 'screenshots', 'boxart_3d', 'controllers'])
+    image_types = data.get('image_types', list(IMAGE_TYPES))
+    if not isinstance(image_types, list) or any(t not in IMAGE_TYPES for t in image_types):
+        return error(_('Unknown image type'), 400)
 
     result = image_resize_job.start(image_types=image_types)
     return jsonify(result)

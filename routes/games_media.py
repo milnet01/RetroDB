@@ -16,7 +16,8 @@ from services.api_helpers import handle_api_errors, success, error
 from services.auth import editor_required
 from services.database import query, execute
 from services.game_query import invalidate_filter_cache
-from services.security import safe_filename
+from services.security import safe_filename, safe_path
+import settings_manager
 
 logger = logging.getLogger(__name__)
 
@@ -92,15 +93,12 @@ def api_rename_rom(game_id):
     # (or a pre-Pass-32.1 admin setting) could leave a row whose rom_path
     # points outside ROM_PATH — without this check, rename-rom would then
     # become an arbitrary rename primitive anywhere on disk.
-    rom_root = getattr(config, 'ROM_PATH', '') or ''
-    if rom_root:
-        try:
-            canonical_root = os.path.realpath(rom_root)
-            canonical_new = os.path.realpath(os.path.dirname(new_path))
-            if os.path.commonpath([canonical_root, canonical_new]) != canonical_root:
-                return error(_('Destination is outside the configured ROM root'), 400)
-        except (ValueError, OSError):
-            return error(_('Could not validate destination path'), 400)
+    # Pass 59.48: read the live setting. config.ROM_PATH is always "", so the
+    # jail keyed on it never ran. No configured root means nothing to jail
+    # against, so the rename is refused.
+    rom_root = settings_manager.get_effective_path('rom_path', '')
+    if safe_path(os.path.dirname(new_path), rom_root) is None:
+        return error(_('Destination is outside the configured ROM root'), 400)
 
     if os.path.exists(new_path) and new_path != old_path:
         return error(_('A file with that name already exists'), 400)

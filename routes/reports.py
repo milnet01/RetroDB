@@ -710,6 +710,11 @@ def api_reports_rename_rom():
     dir_path = os.path.dirname(old_path)
     new_path = os.path.join(dir_path, new_name)
 
+    # Pass 59.48: a stored rom_path outside the ROM root must not make this a
+    # rename-anywhere primitive.
+    if safe_path(dir_path, _get_rom_path()) is None:
+        return error(_('Destination is outside the configured ROM root'), 400)
+
     # Check if new name already exists
     if os.path.exists(new_path) and new_path != old_path:
         return error(_('A file with that name already exists'), 400)
@@ -871,6 +876,11 @@ def api_reports_rename_to_scraped():
     # Build new path
     dir_path = os.path.dirname(old_path)
     new_path = os.path.join(dir_path, new_name)
+
+    # Pass 59.48: a stored rom_path outside the ROM root must not make this a
+    # rename-anywhere primitive.
+    if safe_path(dir_path, _get_rom_path()) is None:
+        return error(_('Destination is outside the configured ROM root'), 400)
 
     # Check if new name already exists
     if os.path.exists(new_path) and new_path != old_path:
