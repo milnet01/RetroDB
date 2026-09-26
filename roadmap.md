@@ -6205,7 +6205,16 @@ orchestrator, several by execution rather than reading.
   `ROMToolsConfig.from_dict(load_rom_tools_config())`, or retire the six keys
   per that spec's "Retiring a setting" procedure.
 - **Verify**: change a setting and confirm the behaviour changes.
-- **Status**: planned (2026-09-01). Lanes: rom-tools, settings.
+- **Resolution** (2026-09-26, v3.23.10, 51c5677): per the user's 2026-09-26
+  choice, saved settings are the tool pages' defaults. Scanners use
+  `ROMToolsConfig.from_dict(load_rom_tools_config())`; Duplicate Finder and
+  CHD Converter preset their tick-boxes from the settings; the CHD page now
+  sends its three tick-boxes, which were never sent (so unticking "Delete
+  original files" did not stop a delete); M3U staging lives under the saved
+  Temporary Path. `verify_integrity`, `generate_m3u`, `remove_unwanted` and
+  `output_path` have no control on the settings page, so nothing was wired for
+  them. Test: `tests/test_pass59_rom_tools.py`.
+- **Status**: shipped (2026-09-26). Lanes: rom-tools, settings.
 - **Decision** (2026-09-02, user): WIRE the six controls up
   (`ROMToolsConfig.from_dict(load_rom_tools_config())`) rather than retiring
   them.
@@ -7180,6 +7189,23 @@ were corrected in `2836bc3` and are not repeated here.
 - **Verify**: make the save fail; the wizard reports it.
 - **Status**: planned (2026-09-26). Lanes: settings.
 - **Source**: close-findings sweep of Pass 59.42, 2026-09-26.
+
+---
+
+#### Pass 59.86 Page scripts call t() before it exists, so the ROM Tools helpers and the Logs viewer never load (HIGH, S)
+- **Target**: `static/js/rom-tools.js` (`ResultsTable.emptyMessage`),
+  `static/js/log-viewer.js` (`CATEGORY_LABELS`).
+- **Why**: both load with a plain `<script>`, which runs before the deferred
+  `core.bundle.js` that defines `t()`. Each called `t()` at load time, threw
+  `ReferenceError: t is not defined`, and left everything after that line
+  undefined. Since v3.8.0 (6781240). Found by the Pass 59.49 browser walk.
+- **Resolution** (2026-09-26, v3.23.10, 63b6111): the message is resolved
+  when rendered, and `CATEGORY_LABELS` is a getter. Test:
+  `tests/test_pass59_rom_tools_js.py` runs every `build_js.EXCLUDED` script
+  in Node with `t()` absent. Browser walk: `/logs` and three ROM Tools pages
+  load with no page errors at 1400px and 375px.
+- **Status**: shipped (2026-09-26). Lanes: frontend, i18n.
+- **Source**: v3.23.9 Pass 59.49 browser walk, 2026-09-26.
 
 ## Done index
 

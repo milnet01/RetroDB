@@ -1,3 +1,24 @@
+- version: 3.23.10
+  date: 2026-09-26
+  tags:
+  - type: fix
+    label: ROM Tools pages follow your saved settings, and the Logs and ROM Tools pages work again
+  body: |
+    <ul>
+      <li><strong>The Logs page and some ROM Tools pages were broken.</strong>
+        A script on those pages failed as it loaded, so the log viewer and
+        the shared ROM Tools helpers never started. They load properly
+        now.</li>
+      <li><strong>ROM Tools settings now do something.</strong> The Duplicate
+        Finder and CHD Converter open with their options set from the ROM
+        Tools Settings page, and you can still change them for one run.</li>
+      <li><strong>The CHD Converter's switches were ignored.</strong> Turning
+        off "Delete original files" on the page did not stop the delete if
+        your saved setting said to delete. The switches on the page now
+        decide.</li>
+      <li><strong>The Temporary Path setting is used.</strong> Files staged
+        while building M3U playlists now go inside it.</li>
+    </ul>
 - version: 3.23.9
   date: 2026-09-26
   tags:
