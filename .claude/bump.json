@@ -1,18 +1,19 @@
 {
-  "$comment": "Recipe consumed by ~/.claude/skills/bump/SKILL.md. RetroDB's source of truth is config.py's APP_VERSION; APP_LAST_UPDATE bumps to today on every release. Changelog body lives in data/changelog.yaml as a YAML list with HTML <li> bodies — a todo because the body content can't be auto-generated.",
-  "version_source": "config.py",
+  "$comment": "Recipe consumed by ~/.claude/skills/cut-release (references/bump-recipe.md). The TRACKED version is config.example.py's APP_VERSION; config.py is the gitignored local copy and may not exist on a fresh clone, so it is a todo rather than a files[] entry (the format has no optional file). APP_LAST_UPDATE bumps to the release date. Changelog body lives in data/changelog.yaml as a YAML list with HTML <li> bodies, so it is a todo.",
+  "version_source": "config.example.py",
   "version_pattern": "APP_VERSION\\s*=\\s*\"([0-9]+\\.[0-9]+\\.[0-9]+)\"",
   "files": [
     {
-      "path": "config.py",
+      "path": "config.example.py",
       "pattern": "APP_VERSION = \"{OLD}\"",
       "replace": "APP_VERSION = \"{NEW}\""
     }
   ],
-  "post_check": "grep -E 'APP_VERSION = \"[0-9]+\\.[0-9]+\\.[0-9]+\"' config.py",
+  "post_check": "grep -qE '^APP_VERSION = \"[0-9]+\\.[0-9]+\\.[0-9]+\"' config.example.py && { [ ! -f config.py ] || [ \"$(grep -E '^APP_VERSION' config.py)\" = \"$(grep -E '^APP_VERSION' config.example.py)\" ]; }",
   "todos": [
-    "Update APP_LAST_UPDATE in config.py to {TODAY} (the recipe's pattern-edit is too broad to match the date safely; do it by hand).",
-    "Prepend a new entry to data/changelog.yaml. Format: `- version: {NEW}` / `  date: {TODAY}` / `  tags:` / `    - type: <feat|fix|breaking>` / `      label: <label>` / `  body: |` / `    <ul><li>…</li></ul>`. Mirror the body of the most recent entry as a style reference.",
+    "Set APP_LAST_UPDATE to \"{TODAY}\" in config.example.py (the old date is not known to the recipe, so it cannot be a literal pattern).",
+    "If the gitignored local config.py exists, set its APP_VERSION to \"{NEW}\" and APP_LAST_UPDATE to \"{TODAY}\" too — CLAUDE.md requires both files bumped, and post_check fails while they differ.",
+    "Prepend a new entry to data/changelog.yaml. Format: `- version: {NEW}` / `  date: {TODAY}` / `  tags:` / `  - type: <feat|fix|ui|...>` / `    label: <label>` / `  body: |` / `    <ul><li>…</li></ul>`. Mirror the body of the most recent entry as a style reference.",
     "Rebuild minified assets if any CSS/JS changed: `python3 build_css.py && python3 build_js.py`.",
     "Smoke-test: launch the app and verify the new APP_VERSION shows in the footer / about page."
   ]
