@@ -6773,6 +6773,15 @@ when already in the file.
 - **Source**: review-code launch lane 2026-09-01; absence confirmed against
   `docs/specs/`. Scope widening: user decisions 2026-09-26, relayed with
   `retroarch-f5`.
+- **Progress** (2026-09-26): draft written,
+`docs/specs/PASS-59-64-launcher.md` (d986fd9; spec_lint and
+doc_integrity clean; loop log
+`docs/reviews/PASS-59-64-launcher-loop-log.md`, empty). WAITING on the
+RetroArch fork session's player-side check, recorded on its RETR-0004;
+its reply lists findings by section number and may come from a fresh
+session. Next: fold those findings in, then run `review-contract` on
+the spec, the gate before 59.53/59.54/59.55 are built to it. Section
+15 lists what is still unverified.
 
 ---
 
