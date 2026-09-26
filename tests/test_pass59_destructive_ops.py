@@ -194,6 +194,37 @@ class TestMediaPathsResolveOnASplitLayout:
         from services.game_media_service import resolve_media_path
         assert resolve_media_path('../../../etc/passwd', 'boxart') is None
 
+    # 59.72 — a container-relative value ("images/boxart/x") names a file in
+    # the writable tree, the same form find_orphaned_media computes against
+    # the parent of IMAGE_PATH. Joined to STATIC_PATH it pointed into the
+    # bundle, so the file read as missing and could be cleared.
+    def test_container_relative_boxart_is_not_reported_missing(self, tmp_path, monkeypatch):
+        _bundle, data = _split_layout(tmp_path, monkeypatch)
+        (data / 'boxart' / '1_boxart.png').write_bytes(b'x')
+
+        from services.media_cleanup import find_missing_media_refs
+        game = {'id': 1, 'title': 'Sonic', 'boxart': 'images/boxart/1_boxart.png',
+                'boxart_3d': '', 'screenshots': '/images/screenshots/1_s.png',
+                'fanart': '', 'video': '', 'manual': ''}
+        (data / 'screenshots' / '1_s.png').write_bytes(b'x')
+        affected, _guarded = find_missing_media_refs([game])
+        assert affected == []
+
+    def test_resolver_accepts_a_container_relative_image(self, tmp_path, monkeypatch):
+        _bundle, data = _split_layout(tmp_path, monkeypatch)
+        (data / 'boxart' / '1_boxart.png').write_bytes(b'x')
+
+        from services.game_media_service import resolve_media_path
+        resolved = resolve_media_path('images/boxart/1_boxart.png', 'boxart')
+        assert resolved == str(data / 'boxart' / '1_boxart.png')
+
+    def test_container_relative_traversal_is_refused(self, tmp_path, monkeypatch):
+        _split_layout(tmp_path, monkeypatch)
+        from services.game_media_service import resolve_media_path
+        from services.media_cleanup import _resolve_media_path
+        assert resolve_media_path('images/../../../etc/passwd', 'boxart') is None
+        assert _resolve_media_path('images/../../../etc/passwd', '/unused', 'images/') is None
+
 
 # -----------------------------------------------------------------------------
 # 59.4 — a file written DURING the scan must survive the sweep

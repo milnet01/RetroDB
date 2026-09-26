@@ -87,8 +87,8 @@ def resolve_media_path(filename, media_type):
     filename derived from a URL could otherwise contain `../...`, letting
     `remove_media_file` delete files outside the image root. Returns None
     if the resolved path escapes the root it was resolved against
-    (IMAGE_PATH for images, STATIC_PATH for video and container-relative
-    values) -- these are separate trees in a frozen build.
+    (IMAGE_PATH for images, its parent for container-relative images,
+    STATIC_PATH for video) -- these are separate trees in a frozen build.
     """
     if not filename:
         return None
@@ -109,7 +109,9 @@ def resolve_media_path(filename, media_type):
             base = config.IMAGE_PATH
             candidate = os.path.join(base, subdir, filename)
         else:
-            base = config.STATIC_PATH
+            # Pass 59.72 -- "images/..." is relative to IMAGE_PATH's parent,
+            # the writable tree, not to the bundle's STATIC_PATH.
+            base = os.path.dirname(config.IMAGE_PATH)
             candidate = os.path.join(base, filename.lstrip('/'))
 
     safe = safe_path(candidate, base)

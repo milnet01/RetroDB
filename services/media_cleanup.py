@@ -17,8 +17,8 @@ logger = logging.getLogger(__name__)
 # Per-field layout: (db_field, root_dir, container_prefix, is_list).
 # `root_dir` is where files live on disk when the DB value is a bare filename.
 # `container_prefix` is the top-level segment that indicates a stored value is
-# already a relative-to-STATIC path (e.g. "images/boxart/foo.png"), in which
-# case we join against STATIC_PATH instead.
+# already a container-relative path (e.g. "images/boxart/foo.png"), in which
+# case we join against the tree that holds that container (_container_base).
 # Built at call time (not module import) so it tracks the live config paths —
 # matches how find_orphaned_media derives its media_dirs.
 def _media_layout():
@@ -30,6 +30,19 @@ def _media_layout():
         ('video',       os.path.join(config.STATIC_PATH, 'videos'),     'videos/', False),
         ('manual',      os.path.join(config.IMAGE_PATH, 'manuals'),     'images/', False),
     )
+
+
+def _container_base(container_prefix):
+    """The directory a container-relative value is joined to.
+
+    Pass 59.72 -- "images/..." lives under the parent of IMAGE_PATH, the
+    writable tree; find_orphaned_media computes its rel_path against the same
+    base. Joining it to STATIC_PATH pointed into the read-only bundle in a
+    frozen build. Videos live under STATIC_PATH in both builds.
+    """
+    if container_prefix == 'images/':
+        return os.path.dirname(config.IMAGE_PATH)
+    return config.STATIC_PATH
 
 
 def _resolve_media_path(value, root_dir, container_prefix):
@@ -49,7 +62,7 @@ def _resolve_media_path(value, root_dir, container_prefix):
     two roots coincide.
     """
     if value.startswith('/') or value.startswith(container_prefix):
-        base = config.STATIC_PATH
+        base = _container_base(container_prefix)
         path = os.path.join(base, value.lstrip('/'))
     else:
         base = root_dir
