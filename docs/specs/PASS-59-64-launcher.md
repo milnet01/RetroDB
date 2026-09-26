@@ -190,7 +190,7 @@ auto_overrides_enable     = "false"
 game_specific_options     = "false"
 global_core_options       = "false"
 quit_on_close_content     = "2"      # quit when launched from the CLI
-confirm_quit              = "false"
+confirm_quit              = "false"  # required: see §4.6
 ui_companion_start_on_boot = "false"
 rgui_config_directory     = "<profile>/config"
 savefile_directory        = "<profile>/saves"
@@ -206,6 +206,12 @@ including RetroDB's appended ones, into the base cfg at quit. With
 `auto_overrides_enable = "true"`, RetroArch's own override files layer over
 RetroDB's settings. With either `.opt` key true, a `.opt` in the config
 directory beats `core_options_path`.
+
+These keys would work in an appended layer too. `config_load_file` merges
+every `--appendconfig` file into one config before it reads any setting, so
+an appended key behaves exactly like a base-cfg key (fork session,
+`configuration.c`). They stay in the base cfg because RetroDB rewrites it
+before every launch.
 
 On macOS and Windows the base cfg also sets `network_cmd_enable = "true"`
 (§4.6). RetroDB never sets it anywhere the user's own RetroArch reads:
@@ -232,8 +238,11 @@ per-game settings PASS-59-81 recommends or the user chose.
 
 `--appendconfig` is RetroArch's `RARCH_PATH_CONFIG_APPEND`: a `|`-separated
 list applied in order over `--config`, so game beats system beats base. A
-system cfg that does not exist is left out of the list. Every path is
-absolute. No path in the list may contain `|`.
+system cfg that does not exist is left out of the list. That is hygiene,
+not a requirement: RetroArch skips an unreadable appended file, logs
+"Failed to append config", and carries on (fork session,
+`config_load_file`). Every path is absolute. No path in the list may
+contain `|`.
 
 ### 4.5 Keeping in-game changes
 
@@ -242,10 +251,13 @@ absolute. No path in the list may contain `|`.
 - **Other settings** saved from the menu land as override files under the
   player's `rgui_config_directory` D, in `D/<core>/`: `<content file name
   without extension>.cfg` (game), `<content's parent directory name>.cfg`
-  (folder), `<core>.cfg` (core). `<core>` is the core's reported
-  `library_name`; RetroDB reads it from the core's `.info` file
-  (`corename`), which §15 Q2 still has to confirm matches. After a player
-  session exits, RetroDB merges whichever of the three exist into
+  (folder), `<core>.cfg` (core). `<core>` is the core's runtime
+  `library_name`, which RetroDB does not predict. After a player session
+  exits, RetroDB looks in every subdirectory S of D for
+  `S/<content file name without extension>.cfg`,
+  `S/<content's parent directory name>.cfg` and `S/<S's own name>.cfg`.
+  D is inside the RetroDB-owned profile, so any such file came from the
+  player. RetroDB merges whichever exist into
   `settings/game/<game_id>.cfg`, core first, then folder, then game (§3.16),
   and deletes them. A missing file means nothing to absorb. Verified by the fork session: the file holds only the
   user's changes relative to the settings loaded for that launch, never
@@ -270,17 +282,22 @@ Stopping a player, as the fork session read its source:
   **second** SIGTERM calls `exit(1)` with no save, and a third calls
   `abort()`. So `kill()` sends SIGTERM **at most once per process**. A
   repeated kill request for a process already signalled only waits out the
-  remaining grace, then escalates to SIGKILL. The 5 s grace is unmeasured
-  (§15 Q3).
+  remaining grace, then escalates to SIGKILL. That quit also writes RTC
+  data: `path_init_savefile_rtc` puts the `.rtc` file in the same save list
+  as SRAM (fork session, `save.c`). The 5 s grace is unmeasured (§15 Q3).
 - **macOS:** the fork sets no signal handler, so SIGTERM ends the process
   without a save. RetroDB sends `QUIT` over UDP to `127.0.0.1` on the
   launch's `network_cmd_port`, waits the grace, then SIGKILL. *Unverified at
-  runtime.*
+  runtime.* `QUIT` is the quit key, so it obeys `confirm_quit`. With
+  `confirm_quit = "true"`, one `QUIT` only shows "press again to quit",
+  which is why §4.4 requires it false (fork session, `command.h`).
 - **Windows:** the same `QUIT`, then `TerminateProcess`, which cannot flush.
   *Unverified.*
 - The port is chosen free per launch and written into a third
   `--appendconfig` layer, `<profile>/run/<token>.cfg`, which is deleted
-  after the session. Two players must not share one port.
+  after the session. Two players must not share one port. RetroArch reads
+  an appended `network_cmd_port` like a base-cfg key and builds the command
+  interface after loading settings (fork session, `input_driver.c`).
 - Every other emulator row keeps today's SIGTERM, grace, SIGKILL.
 
 ## 5. Invariants
@@ -455,9 +472,10 @@ No test here launches the fork's real player; the player-side behaviour
   it, and `.m3u` already covers multi-disc launch. Re-adding it later is
   cheap. Carrying a dead variable is not.
 - **Put the must-be-false keys in the appended layer** instead of the base
-  cfg. Rejected: whether a key applied through `--appendconfig` governs the
-  quit-time save and override loading is not verified. The base cfg is the
-  one layer RetroArch is known to read first.
+  cfg. Rejected, although an appended key would work: `--appendconfig`
+  files merge before settings are read (§4.4). The base cfg is the one file
+  the player can save over, and RetroDB rewrites it every launch (INV-9),
+  so keeping the keys there leaves nothing for a menu save to undo.
 - **Hand the player a temporary copy of the settings each launch.**
   Rejected: it discards in-game changes, and the user chose to keep them.
 - **Slim the player now** to hide the override menu. Deferred, not rejected
@@ -539,12 +557,14 @@ The fork session answered the first round from its `local/fixes-2026-09`
 source on 2026-09-26; what it could not verify stays here.
 
 - **Q1** — *Resolved:* `quit_on_close_content = "2"` (§4.4).
-- **Q2** — Whether the core's `library_name`, which names the override
-  directory, always equals the `.info` file's `corename`. It does in
-  practice, but no one has verified it. If it does not, RetroDB must read
-  the name another way.
-- **Q3** — Whether the SIGTERM quit also writes RTC data, and how long it
-  takes. The 5 s grace is unmeasured.
-- **Q4** — Whether the network `QUIT` is subject to `confirm_quit`. §4.4
-  sets it false until tested. macOS and Windows `QUIT` behaviour is untested
-  at runtime.
+- **Q2** — *Retired:* RetroDB no longer predicts the override directory's
+  name. It scans every subdirectory of the config directory (§4.5).
+- **Q3** — *Partly resolved:* the SIGTERM quit writes RTC data (§4.6). How
+  long it takes is unmeasured, so the 5 s grace is too.
+- **Q4** — *Resolved:* `QUIT` obeys `confirm_quit`, so §4.4 requires it
+  false. Still open: whether `QUIT` is acted on while the menu is open or
+  content is paused. macOS and Windows `QUIT` behaviour is untested at
+  runtime.
+- **Q5** — Whether the macOS Xcode project builds with `HAVE_NETWORK_CMD`.
+  `configure` and the MSVC projects enable it (fork session,
+  `qb/config.libs.sh`); the Xcode project was not checked.
