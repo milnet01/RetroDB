@@ -18,13 +18,16 @@ const LogViewer = {
     allFiles: [],              // All log files from API
     categoryCounts: {},        // { scraping: 3, rom_tools: 1, ... }
 
-    // Category display names
-    CATEGORY_LABELS: {
-        'scraping': t('Scraping'),
-        'rom_tools': t('ROM Tools'),
-        'rom_reports': t('Reports'),
-        'image_resize': t('Image Resize'),
-        'system': t('System')
+    // Category display names. A getter: this file loads before the deferred
+    // bundle that defines t(), so evaluating t() here threw (Pass 59.86).
+    get CATEGORY_LABELS() {
+        return {
+            'scraping': t('Scraping'),
+            'rom_tools': t('ROM Tools'),
+            'rom_reports': t('Reports'),
+            'image_resize': t('Image Resize'),
+            'system': t('System')
+        };
     },
 
     // Session-start patterns (only meaningful for scraping logs)

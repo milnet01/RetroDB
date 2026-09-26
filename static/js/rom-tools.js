@@ -380,7 +380,9 @@ const BatchOperations = {
 
 const ResultsTable = {
     container: null,
-    emptyMessage: t('No results'),
+    // Resolved when rendered: this file loads before the deferred bundle
+    // that defines t(), so a t() call here threw at load (Pass 59.86).
+    emptyMessage: null,
     columns: [],
 
     /**
@@ -402,7 +404,7 @@ const ResultsTable = {
         if (!this.container) return;
 
         if (!results || results.length === 0) {
-            this.container.innerHTML = `<tr><td colspan="${this.columns.length || 4}" class="text-center text-muted">${this.emptyMessage}</td></tr>`;
+            this.container.innerHTML = `<tr><td colspan="${this.columns.length || 4}" class="text-center text-muted">${this.emptyMessage || t('No results')}</td></tr>`;
             return;
         }
 
