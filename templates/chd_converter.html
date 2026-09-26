@@ -169,24 +169,24 @@
         <div class="toggle-grid">
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="optVerify" aria-label="{{ _('Verify after conversion') }}" checked onchange="updateToggleLabel(this)">
+                    <input type="checkbox" id="optVerify" aria-label="{{ _('Verify after conversion') }}" {% if settings.chd_verify_after_convert %}checked{% endif %} onchange="updateToggleLabel(this)">
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label active" onclick="document.getElementById('optVerify').click()">{{ _('Verify after conversion') }}</span>
+                <span class="toggle-label{% if settings.chd_verify_after_convert %} active{% endif %}" onclick="document.getElementById('optVerify').click()">{{ _('Verify after conversion') }}</span>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="optDelete" aria-label="{{ _('Delete original files after success') }}" onchange="updateToggleLabel(this)">
+                    <input type="checkbox" id="optDelete" aria-label="{{ _('Delete original files after success') }}" {% if settings.chd_delete_originals %}checked{% endif %} onchange="updateToggleLabel(this)">
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label" onclick="document.getElementById('optDelete').click()">{{ _('Delete original files after success') }}</span>
+                <span class="toggle-label{% if settings.chd_delete_originals %} active{% endif %}" onclick="document.getElementById('optDelete').click()">{{ _('Delete original files after success') }}</span>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="optSkip" aria-label="{{ _('Skip existing CHD files') }}" checked onchange="updateToggleLabel(this)">
+                    <input type="checkbox" id="optSkip" aria-label="{{ _('Skip existing CHD files') }}" {% if settings.chd_skip_existing %}checked{% endif %} onchange="updateToggleLabel(this)">
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label active" onclick="document.getElementById('optSkip').click()">{{ _('Skip existing CHD files') }}</span>
+                <span class="toggle-label{% if settings.chd_skip_existing %} active{% endif %}" onclick="document.getElementById('optSkip').click()">{{ _('Skip existing CHD files') }}</span>
             </div>
         </div>
     </div>
@@ -268,7 +268,8 @@ async function scanFiles() {
         const response = await fetch('/api/rom-tools/chd-converter/scan', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ path: path })
+            body: JSON.stringify({ path: path,
+                                   skip_existing: document.getElementById('optSkip').checked })
         });
         
         const data = await response.json();
@@ -339,7 +340,9 @@ async function startConversion() {
         const response = await fetch('/api/rom-tools/chd-converter/convert', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ files: selectedFiles })
+            body: JSON.stringify({ files: selectedFiles,
+                                   verify: document.getElementById('optVerify').checked,
+                                   delete_originals: document.getElementById('optDelete').checked })
         });
 
         const data = await response.json();

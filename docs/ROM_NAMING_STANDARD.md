@@ -308,8 +308,8 @@ RetroDB's Archive Scanner can automatically create M3U playlists:
 2. **Create M3U** extracts the archive, creates the folder structure, adds `noload.txt`, and generates the M3U playlist
 3. **Original archive** stays where it is unless you ask for it to be moved.
    Tick *delete archives* and it is moved — never deleted — to a server-side
-   staging folder (`{tempfile.gettempdir()}/retrodb_m3u_staging`, hard-coded
-   in `routes/tools.py` and not configurable from the UI). Leaving the option
+   staging folder: `m3u_staging` inside the *Temporary Path* set on the ROM
+   Tools Settings page (the system temp folder when that is empty). Leaving the option
    off is the default. Either way the original survives as a fallback if the
    extracted set is rejected; delete it by hand once you have verified it.
 

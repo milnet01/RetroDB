@@ -250,14 +250,14 @@
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="optIgnoreRegion" aria-label="{{ _('Ignore region tags') }}" checked>
+                    <input type="checkbox" id="optIgnoreRegion" aria-label="{{ _('Ignore region tags') }}" {% if settings.ignore_region_tags %}checked{% endif %}>
                     <span class="toggle-slider"></span>
                 </label>
                 <span class="toggle-label">{{ _('Ignore region tags (USA, Europe, etc.)') }}</span>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="optArchives" aria-label="{{ _('Include archives in scan') }}">
+                    <input type="checkbox" id="optArchives" aria-label="{{ _('Include archives in scan') }}" {% if settings.include_archives %}checked{% endif %}>
                     <span class="toggle-slider"></span>
                 </label>
                 <span class="toggle-label">{{ _('Include archives (.zip, .7z, .rar)') }}</span>

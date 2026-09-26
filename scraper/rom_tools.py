@@ -301,6 +301,12 @@ class ArchiveScanner:
         self.config = config
         self.task: Optional[TaskStatus] = None
     
+    def _staging_folder(self) -> str:
+        """Where M3U builds stage extracted files: under the saved Temporary
+        Path, else the system temp dir (Pass 59.49)."""
+        base = self.config.temp_path or tempfile.gettempdir()
+        return os.path.join(base, 'm3u_staging')
+
     def scan_for_issues(self, path: str, task: TaskStatus, 
                         excluded_paths: List[str] = None,
                         types: List[str] = None,
@@ -730,7 +736,7 @@ class ArchiveScanner:
 
         # Default staging folder
         if not staging_folder:
-            staging_folder = os.path.join(tempfile.gettempdir(), 'retrodb_m3u_staging')
+            staging_folder = self._staging_folder()
         
         # Get archive contents to verify it's a multi-file archive
         contents = self._list_archive_contents(path)
@@ -884,7 +890,7 @@ class ArchiveScanner:
 
         # Default staging folder
         if delete_archives and not staging_folder:
-            staging_folder = os.path.join(tempfile.gettempdir(), 'retrodb_m3u_staging')
+            staging_folder = self._staging_folder()
         
         # Create staging folder if moving files
         if delete_archives and staging_folder:

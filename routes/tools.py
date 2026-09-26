@@ -101,6 +101,23 @@ def load_rom_tools_config():
     return defaults
 
 
+def _run_option(data, key, settings, setting_key, default):
+    """A tool run's on/off option: the value the page sent, else the saved
+    setting (Pass 59.49 — saved settings are the tool pages' defaults). Only a
+    real boolean from the request counts as a choice."""
+    value = data.get(key)
+    if isinstance(value, bool):
+        return value
+    return bool(settings.get(setting_key, default))
+
+
+def _rom_tools_config():
+    """The scanner config built from the saved settings, not the class
+    defaults (Pass 59.49)."""
+    from scraper.rom_tools import ROMToolsConfig
+    return ROMToolsConfig.from_dict(load_rom_tools_config())
+
+
 def save_rom_tools_config(settings):
     """Save ROM Tools configuration to JSON file"""
     config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'rom_tools_config.json')
@@ -152,7 +169,8 @@ def archive_scanner():
 @login_required
 def chd_converter():
     """CHD Converter tool page"""
-    return render_template('chd_converter.html', rom_path=_get_rom_path())
+    return render_template('chd_converter.html', rom_path=_get_rom_path(),
+                           settings=load_rom_tools_config())
 
 
 @tools_bp.route('/tools/chd-verify')
@@ -166,7 +184,8 @@ def chd_verify():
 @login_required
 def duplicate_finder():
     """Duplicate Finder tool page"""
-    return render_template('duplicate_finder.html', rom_path=_get_rom_path())
+    return render_template('duplicate_finder.html', rom_path=_get_rom_path(),
+                           settings=load_rom_tools_config())
 
 
 @tools_bp.route('/tools/multi-disc-organizer')
@@ -420,7 +439,7 @@ def api_archive_scanner_scan():
     update_task(task)
     
     def run_scan():
-        rom_config = ROMToolsConfig()
+        rom_config = _rom_tools_config()
         scanner = ArchiveScanner(rom_config)
         scanner.scan_for_issues(path, task, excluded_paths, types, modes, unwanted_patterns)
     
@@ -451,7 +470,7 @@ def api_archive_scanner_contents():
     if not os.path.exists(path):
         return error(_('File not found'), 404)
 
-    rom_config = ROMToolsConfig()
+    rom_config = _rom_tools_config()
     scanner = ArchiveScanner(rom_config)
     result = scanner.get_archive_contents_detailed(path)
 
@@ -481,7 +500,7 @@ def api_archive_scanner_remove_files():
 
     logger.info(f"Removing {len(files)} files from archive: {archive_path}")
     
-    rom_config = ROMToolsConfig()
+    rom_config = _rom_tools_config()
     scanner = ArchiveScanner(rom_config)
     result = scanner.remove_files_from_archive(archive_path, files)
     
@@ -508,7 +527,7 @@ def api_archive_scanner_clean():
     settings = load_rom_tools_config()
     unwanted_patterns = settings.get('unwanted_patterns', [])
 
-    rom_config = ROMToolsConfig()
+    rom_config = _rom_tools_config()
     scanner = ArchiveScanner(rom_config)
     result = scanner.clean_archive(path, unwanted_patterns)
     
@@ -540,10 +559,10 @@ def api_archive_scanner_create_m3u():
     if safe_path(path, _get_rom_path()) is None:
         return error(_('Invalid path'), 400)
 
-    rom_config = ROMToolsConfig()
+    rom_config = _rom_tools_config()
     scanner = ArchiveScanner(rom_config)
-    # staging_folder intentionally omitted — scanner falls back to
-    # tempfile.gettempdir()/retrodb_m3u_staging.
+    # staging_folder intentionally omitted — the scanner falls back to its
+    # own, under the saved temp_path (Pass 59.49).
     result = scanner.create_m3u_playlist(path, move_to_staging=move_to_staging)
 
     return jsonify(result)
@@ -575,11 +594,9 @@ def api_archive_scanner_batch_create_m3u():
             return error(_('Invalid path: %(path)s') % {'path': p}, 400)
         valid_paths.append(p)
 
-    staging_folder = os.path.join(tempfile.gettempdir(), 'retrodb_m3u_staging')
-
-    rom_config = ROMToolsConfig()
+    rom_config = _rom_tools_config()
     scanner = ArchiveScanner(rom_config)
-    result = scanner.batch_create_m3u(valid_paths, delete_archives, staging_folder)
+    result = scanner.batch_create_m3u(valid_paths, delete_archives, scanner._staging_folder())
 
     return jsonify(result)
     
@@ -599,6 +616,7 @@ def api_chd_converter_scan():
     if safe_path(path, _get_rom_path()) is None:
         return error(_('Invalid scan path'), 400)
     settings = load_rom_tools_config()
+    skip_existing = _run_option(data, 'skip_existing', settings, 'chd_skip_existing', True)
 
     extensions = ['.iso', '.cue', '.gdi', '.mds']
     files = []
@@ -612,7 +630,7 @@ def api_chd_converter_scan():
         chd_path = os.path.splitext(f)[0] + '.chd'
         chd_exists = os.path.exists(chd_path)
         
-        if chd_exists and settings.get('chd_skip_existing', True):
+        if chd_exists and skip_existing:
             continue
         
         result.append({
@@ -670,8 +688,8 @@ def api_chd_converter_convert():
     
     rom_root = _get_rom_path()
 
-    do_verify = settings.get('chd_verify_after_convert', True)
-    delete_originals = settings.get('chd_delete_originals', False)
+    do_verify = _run_option(data, 'verify', settings, 'chd_verify_after_convert', True)
+    delete_originals = _run_option(data, 'delete_originals', settings, 'chd_delete_originals', False)
 
     def run_conversion():
         # Pass 42.5 — atomic per-file work delegates to the shared
@@ -878,8 +896,8 @@ def api_duplicate_finder_scan():
     settings = load_rom_tools_config()
     method = data.get('method', settings.get('duplicate_method', 'hash'))
     recursive = data.get('recursive', True)
-    ignore_region = data.get('ignore_region', True)
-    include_archives = data.get('include_archives', False)
+    ignore_region = _run_option(data, 'ignore_region', settings, 'ignore_region_tags', True)
+    include_archives = _run_option(data, 'include_archives', settings, 'include_archives', False)
 
     if not os.path.exists(path):
         return error(_('Path does not exist: %(path)s') % {'path': path}, 400)
