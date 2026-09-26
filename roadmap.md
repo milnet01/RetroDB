@@ -270,8 +270,7 @@ are tracked here so the next pass picks them up:
 
 ### Carry-overs from landed passes
 
-#### Pass 2 — continue gradual migration of `jsonify({'success': …})` → `success()` / `error()`
-
+#### Pass 2.9 Pass 2 carry-over — continue gradual migration of `jsonify({'success': …})` → `success()` / `error()`
 - **Target**: partially-swept routes (`bonus_discs`, `games`, `scraper`,
   `scrape_logs`, `settings`, `systems`) and HTTP-200-only
   (`platform_import`, `steam_achievements`, `xbox_achievements`,
@@ -3911,8 +3910,7 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
 Small, well-scoped items that surfaced while finishing an earlier pass but
 weren't worth blocking the ship on.  Ordered by rough priority.
 
-#### FU.1 Flip CSP from Report-Only to enforcing (MEDIUM, L — needs template migration)
-
+#### Pass 60.1 FU.1 Flip CSP from Report-Only to enforcing (MEDIUM, L — needs template migration)
 - **Context**: Pass 16.2 shipped CSP as `Content-Security-Policy-Report-Only`
   because ~765 inline `on*` event handlers and ~38 inline `<script>` blocks
   still exist across templates.  Violations surface in the browser console
@@ -3939,8 +3937,7 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   `Content-Security-Policy-Report-Only` to `Content-Security-Policy`
   in `app.py::set_security_headers` and drop this entry.
 
-#### FU.2 Grid-card `srcset` for boxart (LOW, M)
-
+#### Pass 60.2 FU.2 Grid-card `srcset` for boxart (LOW, M)
 - **Context**: Pass 18.3 wired `boxart_srcset()` into the detail-page hero
   `<img>` but deliberately left the card grid off because emitting per-card
   srcset on a 500-item page would mean 500 filesystem `stat` calls per
@@ -3962,8 +3959,7 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   test (`test_batch_mode_uses_existing_set_no_pil`) pins the no-PIL
   contract.
 
-#### FU.3 Bulk JPEG→WebP migration endpoint (LOW, M)
-
+#### Pass 60.3 FU.3 Bulk JPEG→WebP migration endpoint (LOW, M)
 - **Context**: Pass 18.1 ships WebP on ingest, but legacy `.jpg` / `.png`
   files in existing libraries stay in their original format.  The bulk
   `ImageResizeJob` already re-encodes via `_save_image()` when it runs, but
@@ -3990,8 +3986,7 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   behaviour, atomicity, CSV-collision safety, verification rollback,
   variant sync, resume path, disk-space guard, and lock-guarded status.
 
-#### FU.4 Stream large image downloads in the TGDB scraper (LOW, S)
-
+#### Pass 60.4 FU.4 Stream large image downloads in the TGDB scraper (LOW, S)
 - **Context**: Pass 13.1 moved `base_scraper.download_image()` to streamed
   chunked writes, but the TGDB wrapper in
   `scraper/scrape_thegamesdb.py::download_image` still buffers
@@ -4008,8 +4003,7 @@ weren't worth blocking the ship on.  Ordered by rough priority.
   cap. The original `response.content` buffering pattern this entry
   describes is gone.
 
-#### FU.5 Group-label a11y pattern (LOW–MEDIUM, S–M)
-
+#### Pass 60.5 FU.5 Group-label a11y pattern (LOW–MEDIUM, S–M)
 - **Context**: Pass 28.1 fixed the 87 sibling-label cases by adding
   `for=…`, but 33 cases remain where one `<label>` heads a *group* of
   controls — button groups (`templates/lists.html:54` icon picker,
@@ -4057,8 +4051,7 @@ weren't worth blocking the ship on.  Ordered by rough priority.
     14 fields total. Custom-controller text input also picked up
     `aria-label="Custom controller name"`.
 
-#### FU.6 Test-audit 2026-05-18 deferred items (LOW–MEDIUM, M)
-
+#### Pass 60.6 FU.6 Test-audit 2026-05-18 deferred items (LOW–MEDIUM, M)
 - **Context**: `/test-audit` 2026-05-18 (v3.6.21) folded ~85 actionable
   findings across 70 pytest files. The HIGH-severity items and the
   surgical MEDIUM/LOW fixes landed in v3.6.21 (see changelog 3.6.21 for
@@ -5990,7 +5983,12 @@ orchestrator, several by execution rather than reading.
   have (`callHandlers` walks ancestor **handlers**, never ancestor logger
   filters), and `app.py:790-795` repeats the same false premise.
 - **Verify**: log a token through a scraper logger and grep the category file.
-- **Status**: planned (2026-09-01). Lanes: logging, security.
+- **Resolution** (2026-09-26, v3.23.9, 772afef): The redactor now sits on
+  `CategoryFileHandler` itself, where `Handler.handle()` runs it. The
+  `install_global_redactor` docstring and the `app.py` comment are corrected.
+  Test: `tests/test_log_redactor.py::TestCategoryFileHandlerRedacts`, red with
+  the fix stashed. Log files written before v3.23.9 still hold secrets.
+- **Status**: shipped (2026-09-26). Lanes: logging, security.
 - **Source**: review-code app-core lane 2026-09-01.
 
 ---
@@ -6014,7 +6012,13 @@ orchestrator, several by execution rather than reading.
   defaults through, so the data is recoverable.
 - **Verify**: corrupt `settings.json`, load, save, confirm the original is
   recoverable and the save refused.
-- **Status**: planned (2026-09-01). Lanes: settings, data.
+- **Resolution** (2026-09-26, v3.23.9, 7ad9aa3): After a failed read,
+  `save_settings()` checks the file again. If it still does not parse, it is
+  kept as `settings.json.corrupt-<UTC stamp>` and the save proceeds; if it
+  parses now, the save is refused. `docs/specs/settings.md` § Known invariants
+  records it. Test: `tests/test_pass59_settings.py`. **Not fixed**: `app.py`'s
+  setup-wizard save ignores the return value (filed separately).
+- **Status**: shipped (2026-09-26). Lanes: settings, data.
 - **Source**: review-code app-core lane 2026-09-01.
 
 ---
@@ -6037,7 +6041,12 @@ orchestrator, several by execution rather than reading.
   that reason — or have the handler not start a thread at all and let
   `_start_next_queued` own it.
 - **Verify**: swap a running job and assert exactly one live worker thread.
-- **Status**: planned (2026-09-01). Lanes: jobs, concurrency.
+- **Resolution** (2026-09-26, v3.23.9, b150f02): swap/demote record the worker
+  they replace in `_handoff_thread`; that worker's exit (`_finish_worker`)
+  skips the queue hand-off. Both `_run_scrape` exits go through it. Test:
+  `tests/test_bulk_scrape_race.py::TestOneWorkerAfterHandoff`, whose stub
+  exits the way the real worker does; red with the fix stashed (2 workers).
+- **Status**: shipped (2026-09-26). Lanes: jobs, concurrency.
 - **Source**: review-code background-jobs lane 2026-09-01.
 
 ---
@@ -6063,7 +6072,13 @@ orchestrator, several by execution rather than reading.
   ingests what it finds, and **renames rather than deletes**.
 - **Verify**: place a legacy token file, migrate, confirm ingest and that the
   original is renamed not unlinked.
-- **Status**: planned (2026-09-01). Lanes: migrations, security.
+- **Resolution** (2026-09-26, v3.23.9, a4c375b): New migration 015 ingests
+  from the DB directory and its sibling `data/`, uses INSERT OR IGNORE, and
+  renames each file to `*.migrated-015`. The renamed files are gitignored and
+  excluded from `build_dist.py`; `retrodb.spec` lists 015. Test:
+  `tests/test_migration_015.py`. Applied 14 -> 15 cleanly to a copy of the
+  real database.
+- **Status**: shipped (2026-09-26). Lanes: migrations, security.
 - **Source**: review-code data-layer lane 2026-09-01.
 
 ---
@@ -6087,7 +6102,12 @@ orchestrator, several by execution rather than reading.
   `except Exception` block; then correct §4 and the `app.py:643` docstring.
 - **Verify**: POST a malformed JSON body and confirm a 400 with the envelope;
   POST an oversized upload and confirm the 413 handler fires.
-- **Status**: planned (2026-09-01). Lanes: api, docs.
+- **Resolution** (2026-09-26, v3.23.9, de0b8f7): `@handle_api_errors`
+  re-raises `HTTPException`, and a new app-level handler answers `/api/*` HTTP
+  errors with the envelope and the real status. `docs/specs/api-contracts.md`
+  §4 and §11, the 413 docstring and the `config.example.py` comment are
+  corrected. Browser walk: a malformed JSON body got a 400 envelope.
+- **Status**: shipped (2026-09-26). Lanes: api, docs.
 - **Source**: review-code support-services lane 2026-09-01.
 
 ---
@@ -6111,7 +6131,11 @@ orchestrator, several by execution rather than reading.
   `'engine': ['region']` to `settings_manager.DEFAULT_SETTINGS['naming_convention']`.
 - **Verify**: set an Engine tag, save, confirm it persists and the three
   sibling settings survive.
-- **Status**: planned (2026-09-01). Lanes: settings.
+- **Resolution** (2026-09-26, v3.23.9, 7ad9aa3): `engine` is an allowed naming
+  type with a `['region']` default, and the settings page's error fallback
+  includes it. Test: `tests/test_pass59_settings.py`, which also pins that the
+  allowlist, the defaults and `get_system_type()` agree.
+- **Status**: shipped (2026-09-26). Lanes: settings.
 - **Source**: review-code tools/admin lane 2026-09-01.
 
 ---
@@ -6131,7 +6155,10 @@ orchestrator, several by execution rather than reading.
 - **Plan**: `image_types = [t for t in image_types if t in _ALLOWED_IMAGE_TYPES]`
   before `start()`.
 - **Verify**: POST an absolute and a traversal value; confirm both are refused.
-- **Status**: planned (2026-09-01). Lanes: security, jobs.
+- **Resolution** (2026-09-26, v3.23.9, 3a95980): The resize job accepts only
+  `IMAGE_TYPES`, and the route refuses anything else with a 400. Test:
+  `tests/test_pass59_paths.py`.
+- **Status**: shipped (2026-09-26). Lanes: security, jobs.
 - **Source**: review-code tools/admin lane 2026-09-01.
 
 ---
@@ -6152,7 +6179,11 @@ orchestrator, several by execution rather than reading.
   `safe_path(os.path.dirname(new_path), _get_rom_path())`; change
   `games_media.py:95` to `settings_manager.get_effective_path('rom_path', '')`.
 - **Verify**: attempt a rename with a traversal target on all three paths.
-- **Status**: planned (2026-09-01). Lanes: security, rom-tools.
+- **Resolution** (2026-09-26, v3.23.9, 3a95980): All three rename handlers
+  check the destination with `safe_path()` against the live `rom_path`
+  setting; with no ROM root configured the rename is refused. Test:
+  `tests/test_pass59_paths.py`, with an in-root rename as the passing control.
+- **Status**: shipped (2026-09-26). Lanes: security, rom-tools.
 - **Source**: review-code tools/admin lane 2026-09-01.
 
 ---
@@ -6919,7 +6950,11 @@ were corrected in `2836bc3` and are not repeated here.
   HTML page.
 - **Verify**: a regression test exceeds one configured limit and gets a JSON
   429; red with the production half stashed.
-- **Status**: planned (2026-09-25). Lanes: auth, api.
+- **Resolution** (2026-09-26, v3.23.9, de0b8f7): `_rate_limit()` installs the
+  wrapper into `app.view_functions`, and a 429 on `/api/*` returns the
+  envelope. `docs/specs/api-contracts.md` §7.3 updated. Test:
+  `tests/test_pass59_auth_api.py`, red with the fix stashed.
+- **Status**: shipped (2026-09-26). Lanes: auth, api.
 - **Source**: v2 cost-trial review 2026-09-24
   (`~/.claude/docs/reviews/v2-cost-trial-draft-2026-09-24.md`); re-verified
   in-session 2026-09-25.
@@ -6936,7 +6971,10 @@ were corrected in `2836bc3` and are not repeated here.
   check unchanged.
 - **Verify**: an unauthenticated `GET /games` then a login lands on `/games`;
   an absolute or `//host` `next` still lands on `/dashboard`.
-- **Status**: planned (2026-09-25). Lanes: auth.
+- **Resolution** (2026-09-26, v3.23.9, de0b8f7): The guard sends the path and
+  query, not `request.url`. Browser walk: a logged-out `/games?page=1`
+  returned there after login.
+- **Status**: shipped (2026-09-26). Lanes: auth.
 - **Source**: v2 cost-trial review 2026-09-24; re-verified in-session
   2026-09-25.
 
@@ -6953,7 +6991,12 @@ were corrected in `2836bc3` and are not repeated here.
   every JS reader of the old key in the same change.
 - **Verify**: status of a fresh job returns `success: true` and the count under
   its new key; the bulk-scrape progress UI still shows the success count.
-- **Status**: planned (2026-09-25). Lanes: api, jobs, frontend.
+- **Resolution** (2026-09-26, v3.23.9, b150f02): The count is `success_count`.
+  `bulk-scrape.js` reads the new key and `toast-controller.js` reads counts
+  through `successCount()`, since its toast code is shared with jobs that
+  report a numeric `success`. Browser walk: status answered `success: true`,
+  `success_count: 0`.
+- **Status**: shipped (2026-09-26). Lanes: api, jobs, frontend.
 - **Source**: v2 cost-trial review 2026-09-24; re-verified in-session
   2026-09-25.
 
@@ -6970,7 +7013,13 @@ were corrected in `2836bc3` and are not repeated here.
   one transaction.
 - **Verify**: a test user with a row in each per-user table deletes cleanly and
   leaves no row behind.
-- **Status**: planned (2026-09-25). Lanes: auth, database.
+- **Resolution** (2026-09-26, v3.23.9, 0dc9ab9):
+  `_delete_user_and_owned_rows()` finds every table with a `user_id` or
+  `owner_id` column from the schema and deletes in one transaction, clearing
+  non-cascading references first. The avatar file is removed only after.
+  `docs/specs/auth.md` §5 records the dependency. Test:
+  `tests/test_pass59_auth_api.py`.
+- **Status**: shipped (2026-09-26). Lanes: auth, database.
 - **Source**: v2 cost-trial review 2026-09-24; code re-read in-session
   2026-09-25, delete not re-run.
 
@@ -6987,7 +7036,10 @@ were corrected in `2836bc3` and are not repeated here.
   split and return a JSON error envelope there.
 - **Verify**: a flagged user's `GET /api/games` returns a JSON envelope with a
   non-2xx status; page requests still render the change form.
-- **Status**: planned (2026-09-25). Lanes: auth, api.
+- **Resolution** (2026-09-26, v3.23.9, de0b8f7): `/api/*` requests from a
+  flagged user get a 403 envelope; pages still render the change form. Test:
+  `tests/test_pass59_auth_api.py`.
+- **Status**: shipped (2026-09-26). Lanes: auth, api.
 - **Source**: v2 cost-trial review 2026-09-24; re-verified in-session
   2026-09-25.
 
@@ -7062,6 +7114,58 @@ were corrected in `2836bc3` and are not repeated here.
   shared launch contract is not held up by RetroDB-only work.
 - **Status**: planned (2026-09-26). Lanes: launch, docs.
 - **Source**: user decision 2026-09-26, relayed with `retroarch-f5`.
+
+---
+
+#### Pass 59.82 The dashboard's job card never appears (LOW, S)
+- **Target**: `templates/dashboard.html::checkJobs`.
+- **Why**: it shows the card when `data.status === 'running'` or
+  `'paused'`, but `/api/bulk-scrape-job/status` has no `status` key. It
+  reports `running`, `paused` and `completed` as booleans, so the card never
+  shows.
+- **Plan**: key the card on `data.running && !data.completed`, and the
+  "(Paused)" label on `data.paused`.
+- **Verify**: start a bulk scrape and see the card on the dashboard.
+- **Status**: planned (2026-09-26). Lanes: frontend, jobs.
+- **Source**: close-findings sweep of Pass 59.75, 2026-09-26.
+
+---
+
+#### Pass 59.83 Two bulk-scrape jobs started in the same second share a job id (LOW, S)
+- **Target**: `services/jobs/bulk_scrape.py::start` and `resume_from_params`
+  (`f"bulk_{int(time.time())}_{len(self._queue)}"`).
+- **Why**: the running job is started with an empty queue, so it gets
+  `_0`, and the first job queued in the same second also gets `_0`. Queue
+  actions look jobs up by id. Seen while writing the Pass 59.43 test.
+- **Plan**: add a monotonically increasing counter, or use `uuid4().hex`.
+- **Verify**: start two jobs within one second; their ids differ.
+- **Status**: planned (2026-09-26). Lanes: jobs.
+- **Source**: close-findings run of Pass 59.43, 2026-09-26.
+
+---
+
+#### Pass 59.84 The login page polls job status and logs 401 errors (LOW, S)
+- **Target**: `static/js/toast-controller.js::pollStatus` and whatever starts
+  it on `templates/login.html`.
+- **Why**: a logged-out visitor's browser console fills with
+  `HTTP 401` errors from job-status polling. Harmless, but it is noise on
+  the one page every user sees.
+- **Plan**: do not start polling without a session, or stop on a 401.
+- **Verify**: open `/login` logged out; the console has no 401 errors.
+- **Status**: planned (2026-09-26). Lanes: frontend.
+- **Source**: v3.23.9 browser walk, 2026-09-26.
+
+---
+
+#### Pass 59.85 The setup wizard ignores a failed settings save (LOW, S)
+- **Target**: `app.py` setup-wizard handler (`settings_manager.save_settings(user_settings)`).
+- **Why**: it discards `save_settings()`'s return value and answers
+  "Setup complete!" even when the save failed. Since Pass 59.42 a save can
+  also be refused on purpose, after a failed read.
+- **Plan**: return an error when the save fails.
+- **Verify**: make the save fail; the wizard reports it.
+- **Status**: planned (2026-09-26). Lanes: settings.
+- **Source**: close-findings sweep of Pass 59.42, 2026-09-26.
 
 ## Done index
 
