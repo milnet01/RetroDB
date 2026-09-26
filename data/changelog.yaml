@@ -1,3 +1,16 @@
+- version: 3.23.13
+  date: 2026-09-26
+  tags:
+  - type: fix
+    label: Media stored as a folder path is no longer reported missing
+  body: |
+    <ul>
+      <li><strong>In the standalone build, "clear missing media
+        references" could blank media that was really there.</strong> This
+        happened when the database stored the media as a folder path such as
+        <code>images/boxart/…</code> rather than a bare file name. RetroDB
+        now looks for it in the right folder.</li>
+    </ul>
 - version: 3.23.12
   date: 2026-09-26
   tags:

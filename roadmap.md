@@ -5148,6 +5148,10 @@ orchestrator, several by execution rather than reading.
 - **Note**: not observed on a built bundle — read from the spec and the
   launcher sources. Settle whether Standalone has shipped to users before
   grading the urgency.
+- **Verified** (2026-09-26): on a built bundle. `build_dist.py --standalone
+  --cpu-only` at v3.23.12, extracted to a scratch folder and run against a
+  copy of the live database. `start.sh` only execs `./retrodb`, and the
+  binary served on port 5099.
 
 ---
 
@@ -5172,6 +5176,11 @@ orchestrator, several by execution rather than reading.
   The template keeps its placeholders — the extraction path is only known on
   the user's machine. The test runs the script against a fake extracted
   bundle and asserts no placeholder survives.
+- **Verified** (2026-09-26): on a built bundle. `build_dist.py --standalone
+  --cpu-only` at v3.23.12, extracted to a scratch folder and run against a
+  copy of the live database. `install-launcher.sh` against a throwaway
+  home wrote a `.desktop` with no placeholder left, whose `Exec` and `Icon`
+  exist.
 
 ---
 
@@ -5256,6 +5265,11 @@ orchestrator, several by execution rather than reading.
   app.py out of `sys.modules` under either name rather than re-importing it.
   This also fixes the source install, where `python app.py` makes app.py
   `__main__` and the old import built a second Flask app.
+- **Verified** (2026-09-26): on a built bundle. `build_dist.py --standalone
+  --cpu-only` at v3.23.12, extracted to a scratch folder and run against a
+  copy of the live database. `/settings` rendered the live stats (193
+  systems, 5,572 games), which needs both `get_stats` and `get_api_status`;
+  no error in the server log.
 
 ---
 
@@ -6768,21 +6782,17 @@ when already in the file.
   menu (a game override under `config/<core>/`) are read back by RetroDB
   after the session and absorbed into its per-game settings. Hiding or
   redirecting those menu entries is left to the slim build.
-- **Status**: planned (2026-09-01); drafting agreed 2026-09-26. Lanes:
-  launch, docs.
+- **Resolution** (2026-09-26, docs only, 60bdc74): `docs/specs/PASS-59-64-launcher.md`
+  accepted. The fork session (retroarch-92) checked the player side from its
+  source; its findings are folded in (a9a93ac, 4eee0da). `review-contract`
+  ran two loops of three cold lanes: 18 findings verified and fixed, capped
+  at 2 and shipped with nothing deferred (loop log
+  `docs/reviews/PASS-59-64-launcher-loop-log.md`). Next: build 59.53, 59.54
+  and 59.55 to it, then write the 59.81 spec.
+- **Status**: shipped (2026-09-26). Lanes: launch, docs.
 - **Source**: review-code launch lane 2026-09-01; absence confirmed against
   `docs/specs/`. Scope widening: user decisions 2026-09-26, relayed with
   `retroarch-f5`.
-- **Progress** (2026-09-26): draft written,
-`docs/specs/PASS-59-64-launcher.md` (d986fd9; spec_lint and
-doc_integrity clean; loop log
-`docs/reviews/PASS-59-64-launcher-loop-log.md`, empty). WAITING on the
-RetroArch fork session's player-side check, recorded on its RETR-0004;
-its reply lists findings by section number and may come from a fresh
-session. Next: fold those findings in, then run `review-contract` on
-the spec, the gate before 59.53/59.54/59.55 are built to it. Section
-15 lists what is still unverified.
-
 ---
 
 #### Pass 59.65 MISSING DOCUMENTS — no project design document, no decision records (MEDIUM, M)
@@ -6975,6 +6985,10 @@ were corrected in `2836bc3` and are not repeated here.
 - **Source**: in-session 2026-09-01 (`a5e0939`); filed 2026-09-02 because it
   existed only in a session handoff, which is not somewhere the next session
   will find it.
+- **Progress** (2026-09-26): the user is not sure whether a standalone
+  build ever left the machine, and chose to rotate the token. Waiting on the
+  user. The v3.23.12 bundle built today contains no `docs/` tree and no
+  `psn-npsso` file.
 
 ---
 
@@ -6994,7 +7008,13 @@ were corrected in `2836bc3` and are not repeated here.
   instead.
 - **Verify**: whichever way, a frozen build resolves every stored media value
   in a real library.
-- **Status**: planned (2026-09-02). Lanes: media, packaging.
+- **Resolution** (2026-09-26, v3.23.13, 9ed9d45): the live library (5,572
+  games) holds no container-relative media value, but the branch was fixed
+  rather than deleted, so another install holding one keeps its media. An
+  `images/...` value now resolves against `IMAGE_PATH`'s parent, the base
+  `find_orphaned_media` already used; videos keep `STATIC_PATH`. Tests in
+  `tests/test_pass59_destructive_ops.py` were red before and green after.
+- **Status**: shipped (2026-09-26). Lanes: media, packaging.
 - **Source**: in-session 2026-09-02 — surfaced by the Pass 59.2 fix and
   deliberately left out of its scope.
 
