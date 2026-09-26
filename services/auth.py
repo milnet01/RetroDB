@@ -274,7 +274,13 @@ def _deny_unauthenticated():
         from services.api_helpers import error as api_error
         return api_error('Authentication required', 401)
     flash('Please log in to access this page', 'warning')
-    return redirect(url_for('auth.login', next=request.url))
+    # A path, not request.url: api_login's open-redirect check rejects any
+    # value with a scheme or host, so an absolute URL always fell back to
+    # /dashboard (Pass 59.74).
+    next_path = request.script_root + request.path
+    if request.query_string:
+        next_path += '?' + request.query_string.decode('utf-8', 'replace')
+    return redirect(url_for('auth.login', next=next_path))
 
 
 def _deny_forbidden(flash_message):

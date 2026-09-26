@@ -157,8 +157,8 @@ IMAGE_FORMAT = os.environ.get('RETRODB_IMAGE_FORMAT', 'webp').lower()
 if IMAGE_FORMAT not in ('webp', 'jpeg'):
     IMAGE_FORMAT = 'webp'
 
-# Maximum HTTP request body size, in bytes. Werkzeug enforces this at the
-# WSGI layer before any handler runs — a multipart edit-modal POST with
+# Maximum HTTP request body size, in bytes. Werkzeug enforces this when a
+# handler first reads the request body — a multipart edit-modal POST with
 # boxart + boxart_3d + several screenshots can easily exceed the old 16 MB
 # default. Per-file caps in services.game_media_service still apply.
 # Override via RETRODB_MAX_UPLOAD_MB.

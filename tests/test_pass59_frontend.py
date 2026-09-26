@@ -11,6 +11,8 @@ from pathlib import Path
 
 import pytest
 
+from tests._util import delete_rows
+
 ROOT = Path(__file__).resolve().parent.parent
 TEMPLATES = ROOT / 'templates'
 JS = ROOT / 'static' / 'js'
@@ -62,18 +64,7 @@ def list_with_game():
     execute("INSERT INTO list_games (list_id, game_id, position) VALUES (?, ?, 1)",
             (list_id, game_id))
     yield {'list_id': list_id, 'game_id': game_id}
-    # Rendering a game page can record rows that reference it (view history
-    # and the like), so remove every row pointing at these parents first.
-    for parent, pid in (('lists', list_id), ('games', game_id), ('systems', sys_id)):
-        refs = query(
-            "SELECT m.name AS tbl, f.\"from\" AS col FROM sqlite_master m "
-            "JOIN pragma_foreign_key_list(m.name) f "
-            "WHERE m.type = 'table' AND f.\"table\" = ?", (parent,))
-        for ref in refs:
-            execute(f"DELETE FROM {ref['tbl']} WHERE {ref['col']} = ?", (pid,))
-    execute("DELETE FROM lists WHERE id = ?", (list_id,))
-    execute("DELETE FROM games WHERE id = ?", (game_id,))
-    execute("DELETE FROM systems WHERE id = ?", (sys_id,))
+    delete_rows(('lists', list_id), ('games', game_id), ('systems', sys_id))
     assert query("SELECT 1 FROM games WHERE id = ?", (game_id,), one=True) is None
 
 

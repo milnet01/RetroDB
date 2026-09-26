@@ -8,6 +8,7 @@ import logging
 from functools import wraps
 
 from flask import jsonify
+from werkzeug.exceptions import HTTPException
 from flask_babel import gettext as _
 
 
@@ -34,6 +35,10 @@ def handle_api_errors(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
+        except HTTPException:
+            # A client's 4xx (bad JSON, oversized body, abort()) must reach
+            # Flask's error handling, not become a 500 (Pass 59.45).
+            raise
         except Exception as e:
             logging.getLogger(func.__module__).error(
                 f"{func.__name__} failed: {e}", exc_info=True

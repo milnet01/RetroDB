@@ -160,7 +160,10 @@ def api_foo():
     ...
 ```
 
-What it catches: every exception that escapes the wrapped function. Logs with
+What it catches: every exception that escapes the wrapped function **except
+Werkzeug's `HTTPException`**, which it re-raises so Flask's own error handling
+answers with the intended 4xx (a malformed JSON body's 400, an oversized
+body's 413, an `abort(403)`) (Pass 59.45). For anything else it logs with
 `logger.error(..., exc_info=True)` under the wrapped function's module logger,
 then returns:
 
@@ -323,10 +326,14 @@ non-trivial.
 
 ### 7.3 429 envelope
 
-Custom buckets emit the standard `error(...)` envelope. Flask-Limiter's
-default 429 page is plain text — operators expecting JSON from `/api/*` should
-register a Flask-Limiter error handler that uses `services.api_helpers.error`.
-(Not yet wired; tracked separately if it becomes a real issue.)
+Custom buckets emit the standard `error(...)` envelope. So does
+Flask-Limiter on `/api/*`: `app.py`'s 429 handler returns `error(...)` with
+status 429 there, and Flask's default page elsewhere (Pass 59.73).
+
+`_rate_limit()` must install the wrapper `limiter.limit(spec)` returns back
+into `app.view_functions[endpoint]`. Decorating the view and discarding the
+result registers the limit under a name the request-time lookup never
+matches, so nothing is enforced.
 
 ---
 
@@ -426,9 +433,10 @@ relevant pattern by route shape; the rule is "always cap", not "always paginate"
 
 - `app.config['MAX_CONTENT_LENGTH'] = config.MAX_UPLOAD_BYTES` (`app.py:137`).
 - Default 64 MB. Override via `RETRODB_MAX_UPLOAD_MB` env var (`config.py:144-147`).
-- Werkzeug raises `RequestEntityTooLarge` (413) before the handler runs.
-  `app.py:560-575` converts it to the standard envelope for `/api/*` and
-  includes the configured cap in the message so operators know what to raise.
+- Werkzeug raises `RequestEntityTooLarge` (413) when the view first reads
+  the body, i.e. inside the handler. `@handle_api_errors` re-raises it (§4),
+  and `app.py`'s 413 handler converts it to the standard envelope for `/api/*`,
+  including the configured cap in the message so operators know what to raise.
 
 **Reverse-proxy alignment** (`docs/PROXY-DEPLOY.md`): the proxy's
 `client_max_body_size` (nginx) / equivalent (Caddy) **must be at least as high

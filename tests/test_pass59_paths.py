@@ -12,6 +12,8 @@ import uuid
 
 import pytest
 
+from tests._util import delete_rows
+
 _CSRF = 'tok'
 HEADERS = {'X-CSRF-Token': _CSRF}
 
@@ -52,8 +54,7 @@ def game_outside_root(roots):
     game_id = execute("INSERT INTO games (system_id, title, rom_path) VALUES (?, ?, ?)",
                       (sys_id, 'Victim Game', str(rom)))
     yield game_id, rom
-    execute("DELETE FROM games WHERE id = ?", (game_id,))
-    execute("DELETE FROM systems WHERE id = ?", (sys_id,))
+    delete_rows(('games', game_id), ('systems', sys_id))
 
 
 # ---------------------------------------------------------------------------
@@ -131,5 +132,4 @@ def test_rename_inside_the_root_still_works(admin_client, roots):
         assert resp.status_code == 200, resp.get_json()
         assert (rom_root / 'Better Game (USA).zip').exists()
     finally:
-        execute("DELETE FROM games WHERE id = ?", (game_id,))
-        execute("DELETE FROM systems WHERE id = ?", (sys_id,))
+        delete_rows(('games', game_id), ('systems', sys_id))

@@ -234,11 +234,9 @@ class TestRateLimits:
         import app as app_module
         if not app_module.limiter:
             pytest.skip('flask-limiter not installed')
-        # The Limiter instance holds a limit registry keyed on view_func.
-        # We just verify the view functions exist; the actual limit
-        # application happens via limiter.limit(...) at app.py registration
-        # time, which runs on import, so if that succeeded the limits are
-        # registered. This is a smoke assertion.
+        # Smoke assertion: the view functions exist. It does not show a limit
+        # is enforced — import succeeded for years while none was (Pass 59.73).
+        # tests/test_pass59_auth_api.py exceeds a real limit.
         funcs = app_module.app.view_functions
         assert 'games_hltb.api_hltb_lookup' in funcs
         assert 'museum.generate_system' in funcs

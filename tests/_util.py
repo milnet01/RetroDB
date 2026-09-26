@@ -148,3 +148,24 @@ def count_except_blocks(src: str, function_name: str) -> int:
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == function_name:
             return sum(1 for sub in ast.walk(node) if isinstance(sub, ast.Try))
     return 0
+
+
+def delete_rows(*parents: tuple[str, int]) -> None:
+    """Delete test rows in order, clearing every row that references each one.
+
+    Rendering or routing can record rows pointing at a fixture's game or
+    system (view history and the like), and a test run in random order can
+    leave such rows behind. Delete those first, or the parent's DELETE fails
+    its FOREIGN KEY check. Pass parents child-first, e.g.
+    ``delete_rows(('games', gid), ('systems', sid))``.
+    """
+    from services.database import execute, query
+    for parent, pid in parents:
+        refs = query(
+            "SELECT m.name AS tbl, f.\"from\" AS col FROM sqlite_master m "
+            "JOIN pragma_foreign_key_list(m.name) f "
+            "WHERE m.type = 'table' AND f.\"table\" = ?", (parent,))
+        for ref in refs:
+            execute(f"DELETE FROM {ref['tbl']} WHERE {ref['col']} = ?", (pid,))
+    for parent, pid in parents:
+        execute(f"DELETE FROM {parent} WHERE id = ?", (pid,))

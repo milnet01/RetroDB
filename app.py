@@ -5,6 +5,7 @@
 # Features: ROM scanning, metadata scraping, beautiful cyberpunk UI
 # =============================================================================
 
+from werkzeug.exceptions import HTTPException
 from flask import Flask, render_template, request, redirect, url_for, jsonify, session, g, send_from_directory, abort
 import gzip
 import os
@@ -379,7 +380,10 @@ def _rate_limit(endpoint, spec):
             f"Pass 34.4: rate-limiter endpoint '{endpoint}' is not registered "
             f"(did the route get renamed?)"
         )
-    limiter.limit(spec)(view)
+    # Install the wrapper. Decorating `view` and discarding the result
+    # registers the limit under a name the request-time lookup never matches,
+    # so nothing was enforced (Pass 59.73).
+    app.view_functions[endpoint] = limiter.limit(spec)(view)
 
 
 if limiter:
@@ -641,9 +645,10 @@ def handle_internal_error(e):
 
 @app.errorhandler(413)
 def handle_request_too_large(e):
-    """Werkzeug raises this from MAX_CONTENT_LENGTH before any handler runs.
-    Default page is bare HTML — give the user a hint about the per-file cap
-    and where the global limit comes from.
+    """Werkzeug raises this from MAX_CONTENT_LENGTH when the view first reads
+    the request body. @handle_api_errors re-raises HTTPException so it lands
+    here (Pass 59.45). Default page is bare HTML — give the user a hint about
+    the per-file cap and where the global limit comes from.
     """
     mb = config.MAX_UPLOAD_BYTES // (1024 * 1024)
     msg = (
@@ -655,6 +660,28 @@ def handle_request_too_large(e):
     if request.path.startswith('/api/'):
         return api_error(msg, 413)
     return msg, 413
+
+
+@app.errorhandler(HTTPException)
+def handle_http_exception(e):
+    """Any other HTTP error on /api/* answers with the envelope and its real
+    status. @handle_api_errors lets HTTPException through (Pass 59.45), so a
+    malformed JSON body's 400 or an abort(403) arrives here. The handlers for
+    specific codes above take precedence; page requests keep Werkzeug's page.
+    """
+    if request.path.startswith('/api/'):
+        return api_error(e.description or e.name, e.code or 500)
+    return e
+
+
+@app.errorhandler(429)
+def handle_rate_limited(e):
+    """Flask-Limiter's default 429 is a plain page; /api/* callers read
+    JSON (Pass 59.73)."""
+    if request.path.startswith('/api/'):
+        from flask_babel import gettext as _
+        return api_error(_('Too many requests. Please wait and try again.'), 429)
+    return e
 
 
 # =============================================================================
@@ -756,6 +783,11 @@ def check_force_password_change():
                          'setup_page', 'setup_api')
     if request.endpoint in allowed_endpoints:
         return
+    # Pass 59.77: an /api/* caller reads JSON. The HTML page with a 200 read
+    # as success to every fetch() caller.
+    if request.path.startswith('/api/'):
+        from flask_babel import gettext as _
+        return api_error(_('Password change required'), 403)
     # Return the force change password page
     return render_template('force_change_password.html'), 200
 
