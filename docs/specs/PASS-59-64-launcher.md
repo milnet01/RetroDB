@@ -136,7 +136,8 @@ shape and its steps. The changes:
   `launch_args_override`) converts `ValueError` into a
   `LaunchResolutionError` that names the field. `routes/launch.py` already
   maps that to 422.
-- **Auto-append** of extra args when the template lacks the token is kept.
+- **Auto-append** of extra args when the template lacks the token is kept
+  for every row except the player's (§4.4).
 
 ### 4.2 Who may write argv inputs
 
@@ -148,15 +149,20 @@ modal hides the field. Emulator rows (`routes/emulators.py`) and the
 
 ### 4.3 Process registry
 
-- `LocalLauncher.active()` calls `ProcessRegistry.gc()` first, so exited
-  entries older than `post_exit_ttl_s` (3600 s) are dropped on the next
-  nav-badge poll.
+- `LocalLauncher.active()` first marks exited every entry whose process has
+  ended (`poll()` is not `None`), then calls `ProcessRegistry.gc()`. So an
+  entry that exited more than `post_exit_ttl_s` (3600 s) ago is dropped on
+  the next nav-badge poll, whether or not anyone polled its status. Today
+  only `status()` and `kill()` mark an entry exited, and `gc()` skips any
+  entry never marked.
 - `routes/launch.py::api_launch_game` uses
   `ProcessRegistry.find_running_by_game` through the launcher rather than
   re-implementing it. `ProcessRegistry.remove` has no caller and is
   deleted.
-- `'remote'` is removed from `_ALLOWED_LAUNCHER_BACKENDS`; `get_launcher`
-  loses its `remote` branch.
+- `'remote'` is removed from `_ALLOWED_LAUNCHER_BACKENDS`. `get_launcher`
+  loses its `remote` branch and treats any stored backend other than
+  `'local'` as `'local'`, logging a warning. `get_setting` does not
+  validate on read, so a saved `'remote'` reaches `get_launcher` unchanged.
 
 ### 4.4 The player: profile, row and argv
 
@@ -169,17 +175,33 @@ data/player/
   settings/system/<system folder>.cfg
   settings/game/<game_id>.cfg
   settings/game/<game_id>.opt
+  settings/game/<game_id>.json   # RetroDB's record of what it wrote (§4.5)
   config/                # the player's config_directory (its own files)
+  rejected/              # override files §6 could not parse
+  run/                   # per-launch layers, macOS and Windows (§4.6)
   saves/  states/  remaps/
 ```
 
 `BASE_DIR` is `config.BASE_DIR`, which is writable in a frozen build too.
 
 **Row.** A new `emulators` row for the player, marked by a new column
-`is_player INTEGER NOT NULL DEFAULT 0` (migration 016). It is
-`is_default = 1` in `system_emulators` for every system PASS-59-81 gives a
-core. The user's RetroArch row is untouched: no profile and no
-`--appendconfig`.
+`is_player INTEGER NOT NULL DEFAULT 0` (migration 016). Author's choices,
+because the resolver's RetroArch path cannot serve it:
+
+- `is_retroarch = 0`. The player never reads `retroarch_binary` or
+  `retroarch_cores_dir`, which point at the user's own RetroArch.
+- **Binary:** the row's `binary_path_override`, else `binary_name` on
+  `PATH` — §3.18's order without the `retroarch_binary` step.
+- **Core:** `<profile>/cores/<system_emulators.retroarch_core>`. The
+  player reuses that column for the core file name.
+- **argv** is built by an `is_player` branch in `resolve_launch_context`,
+  not from `args_template`, in the shape below.
+
+When the player row becomes `is_default = 1` in `system_emulators` for a
+system, the same write sets `is_default = 0` on that system's other rows.
+The resolver takes the lowest-id default row, so the RetroArch row would
+otherwise keep winning. The user's RetroArch row is otherwise untouched: no
+profile and no `--appendconfig`.
 
 **Base cfg keys** RetroDB writes before every player launch, overwriting
 whatever the player saved there:
@@ -232,12 +254,18 @@ per-game settings PASS-59-81 recommends or the user chose.
 
 ```
 <player> --config <profile>/retroarch.cfg
-         --appendconfig "<settings/system/<folder>.cfg>|<settings/game/<id>.cfg>"
+         --appendconfig "<settings/system/<folder>.cfg>|<settings/game/<id>.cfg>[|<run/<token>.cfg>]"
+         [<system extra args> <game extra args>]
          -L <absolute core path> <absolute content path>
 ```
 
+The run layer is present on macOS and Windows only (§4.6). Extra args,
+when set, are `shlex.split` and placed before `-L`; the auto-append of
+§4.1 does not apply to the player.
+
 `--appendconfig` is RetroArch's `RARCH_PATH_CONFIG_APPEND`: a `|`-separated
-list applied in order over `--config`, so game beats system beats base. A
+list applied in order over `--config`, so run beats game beats system beats
+base. A
 system cfg that does not exist is left out of the list. That is hygiene,
 not a requirement: RetroArch skips an unreadable appended file, logs
 "Failed to append config", and carries on (fork session,
@@ -262,12 +290,22 @@ contain `|`.
   and deletes them. A missing file means nothing to absorb. Verified by the fork session: the file holds only the
   user's changes relative to the settings loaded for that launch, never
   RetroDB's own values echoed back.
-- **Customised.** RetroDB stores the SHA-256 of each game file it writes.
-  After a session, a game file whose hash differs, or that received
-  absorbed keys, marks the game *customised*. From then on RetroDB
-  regenerates only the keys the user has not set.
-- **Reset to recommended** deletes the game's `.cfg` and `.opt` and clears
-  the mark. The next launch writes fresh ones.
+- **When the hook runs.** The post-exit hook runs once per player session,
+  synchronously, inside the call that first marks the registry entry
+  exited: `status()`, `kill()` or `active()` (§4.3). `api_launch_game`
+  calls `active()` before it resolves, so a finished session's hook has
+  always run before the next launch writes a game cfg.
+- **Customised.** Beside the game's `.cfg` and `.opt`, RetroDB keeps
+  `settings/game/<game_id>.json` (author's choice). It records every key and
+  value RetroDB last wrote to each file, the keys the user has set, and the
+  *customised* mark. After a session, a key whose value differs from what
+  RetroDB wrote, or that was absorbed from an override, becomes a user-set
+  key and marks the game *customised*. From then on RetroDB regenerates
+  only the keys that are not user-set.
+- **Reset to recommended** deletes the game's `.cfg`, `.opt` and `.json`.
+  The next launch writes fresh ones. It is
+  `POST /api/games/<game_id>/player-settings/reset`, gated on `edit`
+  (author's choice).
 
 ### 4.6 Output and shutdown
 
@@ -298,9 +336,10 @@ Stopping a player, as the fork session read its source:
   `QUIT` is harmless (fork session, `runloop_check_state`).
 - **Windows:** the same `QUIT`, then `TerminateProcess`, which cannot flush.
   *Unverified.*
-- The port is chosen free per launch and written into a third
-  `--appendconfig` layer, `<profile>/run/<token>.cfg`, which is deleted
-  after the session. Two players must not share one port. RetroArch reads
+- On macOS and Windows the port is chosen free per launch and written into
+  a last `--appendconfig` layer, `<profile>/run/<token>.cfg`, which is
+  deleted after the session. It comes after the game cfg, so a network key
+  absorbed into a game's settings cannot override it. Two players must not share one port. RetroArch reads
   an appended `network_cmd_port` like a base-cfg key and builds the command
   interface after loading settings (fork session, `input_driver.c`).
 - Every other emulator row keeps today's SIGTERM, grace, SIGKILL.
@@ -347,23 +386,32 @@ Stopping a player, as the fork session read its source:
 
 - **INV-6** — An entry that exited more than `post_exit_ttl_s` ago is gone
   from the registry after the next `active()` call.
-  *Test:* `tests/test_launcher_registry.py` — register, mark exited with
-  `exit_time` older than the TTL, call `LocalLauncher.active()`, assert
-  `len(registry) == 0`.
-  *Breaks when:* nothing in production calls `gc()`, as today.
+  *Test:* `tests/test_launcher_registry.py` — register a stub process that
+  has exited, never calling `status()` or `kill()`; call
+  `LocalLauncher.active()`, move the clock past the TTL, call it again, and
+  assert `len(registry) == 0`.
+  *Breaks when:* nothing in production calls `gc()`, as today, or
+  `active()` does not mark exited entries before collecting.
 
-- **INV-7** — `launcher_backend` accepts `'local'` only.
+- **INV-7** — `launcher_backend` accepts `'local'` only, and a stored
+  `'remote'` still launches locally.
   *Test:* `tests/test_launch_settings_validators.py` —
-  `validate_settings_value('launcher_backend', 'remote')` is rejected.
-  *Breaks when:* `'remote'` stays in `_ALLOWED_LAUNCHER_BACKENDS`.
+  `validate_settings_value('launcher_backend', 'remote')` is rejected; with
+  `'remote'` stored, `get_launcher()` returns a `LocalLauncher`.
+  *Breaks when:* `'remote'` stays in `_ALLOWED_LAUNCHER_BACKENDS`, or
+  `get_launcher` raises on a value the validator no longer allows.
 
 - **INV-8** — A player launch's argv is exactly
-  `[player, '--config', base, '--appendconfig', layers, '-L', core, rom]`,
-  with every path absolute and `layers` ending in the game cfg.
+  `[player, '--config', base, '--appendconfig', layers, *extras, '-L', core,
+  rom]`, with every path absolute. `layers` is the system cfg if it exists,
+  then the game cfg, then on macOS and Windows only the run cfg. `extras`
+  is the system then game extra args, split, or nothing.
   *Test:* `tests/test_player_launch.py` — resolve a game whose default row
-  is the player; assert the shape and `os.path.isabs` on every path.
-  *Breaks when:* a relative core path, a missing game layer, or a system
-  layer placed after the game layer.
+  is the player, on Linux and on a monkeypatched `darwin`, with and without
+  extra args; assert the shape and `os.path.isabs` on every path.
+  *Breaks when:* a relative core path, a missing game layer, a system layer
+  after the game layer, a run layer before the game layer or on Linux, or
+  extra args after the content path.
 
 - **INV-9** — Before every player launch, the base cfg holds every key in
   §4.4's base block with its stated value, whatever it held before.
@@ -382,18 +430,20 @@ Stopping a player, as the fork session read its source:
 - **INV-11** — After a player session exits, the game's override file is
   merged into `settings/game/<game_id>.cfg` and deleted. No file means no
   change.
-  *Test:* `tests/test_player_launch.py` — place an override holding
-  `video_shader_enable = "true"`, run the post-exit hook, and assert the
-  key is in the game cfg and the override is gone. Then run the hook again
-  with no file and assert the game cfg is unchanged.
+  *Test:* `tests/test_player_launch.py` — launch a stub player through
+  `LocalLauncher` that writes an override holding
+  `video_shader_enable = "true"` and exits; call `active()`; assert the
+  key is in the game cfg and the override is gone. Launch it again writing
+  no file and assert the game cfg is unchanged.
   *Breaks when:* the hook is not called on exit, or it overwrites the game
   cfg instead of merging.
 
 - **INV-12** — A customised game keeps its user-set keys when RetroDB
   regenerates its recommended settings. *Reset to recommended* removes them.
-  *Test:* `tests/test_player_launch.py` — mark a key as user-set,
-  regenerate with a different recommendation, and assert the user value
-  survives. Reset, regenerate, and assert the recommended value.
+  *Test:* `tests/test_player_launch.py` — write a game's settings, change
+  one key's value in its `.cfg` as the player would, run the post-exit
+  hook, regenerate with a different recommendation, and assert the user
+  value survives. Reset, regenerate, and assert the recommended value.
   *Breaks when:* regeneration rewrites the whole game cfg.
 
 - **INV-13** — Launching the user's own RetroArch row writes nothing under
@@ -414,8 +464,9 @@ Stopping a player, as the fork session read its source:
 - **INV-15** — A player process receives SIGTERM at most once, however
   many kill requests arrive.
   *Test:* `tests/test_launcher_local.py` — a stub child that ignores
-  SIGTERM and counts the ones it receives; call `kill()` twice with a short
-  timeout; the child reports 1.
+  SIGTERM and appends a line to a file on each one it receives; start
+  `kill()` with a 2 s timeout on a thread, call `kill()` again while the
+  first is inside its grace, and assert the file holds one line.
   *Breaks when:* each `kill()` call sends its own SIGTERM, as today's
   `LocalLauncher.kill` does whenever the process is still running.
 
@@ -440,10 +491,12 @@ Stopping a player, as the fork session read its source:
   post-exit hook still runs, because a menu save before the crash is still
   the user's choice.
 - **Override file malformed** → the hook skips the keys it cannot parse,
-  logs a warning, keeps the file, and does not mark the game customised.
+  logs a warning, moves the file to `<profile>/rejected/`, and does not
+  mark the game customised. Left in the config directory, the next
+  session's scan would absorb it into whichever game ran next.
 - **Two sessions of one game** → prevented by `launch_concurrent_same_game`
-  (`reject` by default). Under `kill_and_relaunch`, the killed session's
-  hook runs before the new launch writes the game cfg.
+  (`reject` by default). Under `kill_and_relaunch`, `kill()` runs the
+  killed session's hook before the new launch writes the game cfg (§4.5).
 - **SIGKILL after the grace** → SRAM may be lost. That is the stated cost
   of §4.6 when the player does not exit in time.
 
@@ -526,6 +579,8 @@ No test here launches the fork's real player; the player-side behaviour
 - `docs/specs/auth.md` — the `edit` row notes that launch arguments need
   `manage_settings`.
 - `docs/specs/migrations.md` — migration 016 (`emulators.is_player`).
+- `docs/specs/api-contracts.md` — `POST /api/games/<game_id>/player-settings/reset`
+  (§4.5).
 - The module docstrings that cite "spec §…" are repointed at this file's
   sections.
 - `data/changelog.yaml` — per release, as each PASS item implements its
@@ -539,7 +594,7 @@ Rows live in `../reviews/PASS-59-64-launcher-loop-log.md`.
 
 - Registry: bounded by launches in the last `post_exit_ttl_s` (3600 s),
   each holding one `Popen` and at most 4096 bytes of stderr.
-- Profile: two small text files per launched game plus the player's own
+- Profile: three small text files per launched game plus the player's own
   saves and states. Cores are PASS-59-81's budget.
 - No new Python dependency.
 
