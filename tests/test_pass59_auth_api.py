@@ -155,3 +155,68 @@ def test_bulk_scrape_status_keeps_the_envelope_success_flag(monkeypatch, setup_c
     body = app_module.app.test_client().get('/api/bulk-scrape-job/status').get_json()
     assert body['success'] is True
     assert body['success_count'] == 0
+
+
+# ---------------------------------------------------------------------------
+# 59.76
+# ---------------------------------------------------------------------------
+
+def _owned_tables():
+    """Every table with a per-user column, read from the live schema."""
+    from services.database import query
+    tables = [r['name'] for r in query(
+        "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")]
+    owned = []
+    for t in tables:
+        cols = {r['name'] for r in query(f"SELECT name FROM pragma_table_info('{t}')")}
+        owned += [(t, c) for c in ('user_id', 'owner_id') if c in cols]
+    return owned
+
+
+def test_deleting_a_user_removes_every_row_they_own(monkeypatch, setup_complete):
+    import uuid
+    import app as app_module
+    from services.database import execute, query
+    from tests._util import delete_rows
+
+    admin = {'id': 1, 'username': 'admin', 'role': 'admin'}
+    monkeypatch.setattr('app.get_current_user', lambda: admin)
+    monkeypatch.setattr('app.get_user_settings', lambda _uid: {})
+
+    uid = execute("INSERT INTO users (username, role) VALUES (?, 'viewer')",
+                  (f'pass5976-{uuid.uuid4().hex}',))
+    sys_id = execute("INSERT INTO systems (name, folder) VALUES (?, ?)",
+                     ('Pass59 Users', f'pass5976-{uuid.uuid4().hex}'))
+    game_id = execute("INSERT INTO games (system_id, title, rom_path) VALUES (?, ?, ?)",
+                      (sys_id, 'Owned Game', f'pass5976/{uuid.uuid4().hex}.zip'))
+    try:
+        execute("INSERT INTO user_settings (user_id) VALUES (?)", (uid,))
+        tag = execute("INSERT INTO tags (name, owner_id) VALUES ('mine', ?)", (uid,))
+        execute("INSERT INTO game_tags (game_id, tag_id) VALUES (?, ?)", (game_id, tag))
+        lst = execute("INSERT INTO lists (name, owner_id) VALUES ('mine', ?)", (uid,))
+        execute("INSERT INTO list_games (list_id, game_id, position) VALUES (?, ?, 1)", (lst, game_id))
+        execute("INSERT INTO wishlist (title, owner_id) VALUES ('mine', ?)", (uid,))
+        execute("INSERT INTO user_platform_tokens (user_id, platform, tokens) VALUES (?, 'psn', '{}')", (uid,))
+        pg = execute("INSERT INTO psn_games (npwr_id, user_id) VALUES (?, ?)", (f'NPWR{uid}', uid))
+        execute("INSERT INTO psn_trophies (psn_game_id, user_id) VALUES (?, ?)", (pg, uid))
+        execute("INSERT INTO user_game_views (user_id, game_id, last_viewed) VALUES (?, ?, 'now')",
+                (uid, game_id))
+
+        client = app_module.app.test_client()
+        with client.session_transaction() as sess:
+            sess['_csrf_token'] = _CSRF
+        resp = client.post(f'/api/users/{uid}/delete', headers=HEADERS)
+        body = resp.get_json()
+        assert body['success'] is True, body
+
+        assert query("SELECT 1 FROM users WHERE id = ?", (uid,), one=True) is None
+        left = [(t, c) for t, c in _owned_tables()
+                if query(f"SELECT 1 FROM {t} WHERE {c} = ?", (uid,), one=True)]
+        assert not left, f"rows left behind: {left}"
+        assert query("SELECT 1 FROM psn_trophies WHERE psn_game_id = ?", (pg,), one=True) is None
+    finally:
+        # psn_trophies references psn_games, so it goes first.
+        for t, c in sorted(_owned_tables(), key=lambda tc: tc[0] != 'psn_trophies'):
+            execute(f"DELETE FROM {t} WHERE {c} = ?", (uid,))
+        execute("DELETE FROM users WHERE id = ?", (uid,))
+        delete_rows(('games', game_id), ('systems', sys_id))

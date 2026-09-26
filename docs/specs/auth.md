@@ -207,6 +207,11 @@ Every read of a per-user-scoped table MUST carry
 the owner column on `INSERT` and the owner predicate on `UPDATE / DELETE`.
 A bare `SELECT * FROM tags` is a cross-user leak.
 
+Deleting a user (`routes/auth.py::_delete_user_and_owned_rows`) removes every
+row in every table carrying a `user_id` or `owner_id` column, found from the
+schema at delete time, in one transaction. A per-user table named any other
+way is missed by it, which is one more reason for the rule above (Pass 59.76).
+
 ---
 
 ## 6. Per-User Platform Tokens

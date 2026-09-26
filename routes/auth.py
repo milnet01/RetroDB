@@ -12,7 +12,7 @@ import os
 import time
 
 import config
-from services.database import query, execute
+from services.database import query, execute, get_db_with_context
 from services.api_helpers import handle_api_errors, success, error
 from services.i18n import available_locales
 from services.settings_validators import ALLOWED_THEMES
@@ -284,7 +284,8 @@ def api_delete_user(user_id):
     if user['role'] == 'admin' and admin_count['count'] <= 1:
         return error(_('Cannot delete the last admin user'), code=200)
 
-    # Delete custom avatar file if one exists
+    # Custom avatar file, removed only once the rows are gone.
+    avatar_path = None
     user_settings = get_user_settings(user_id)
     if user_settings:
         avatar = dict(user_settings).get('avatar', '')
@@ -292,12 +293,46 @@ def api_delete_user(user_id):
             clean_name = safe_filename(avatar)
             if clean_name:
                 avatar_path = os.path.join(config.IMAGE_PATH, 'avatars', clean_name)
-                if os.path.isfile(avatar_path):
-                    os.remove(avatar_path)
 
-    execute("DELETE FROM user_settings WHERE user_id = ?", (user_id,))
-    execute("DELETE FROM users WHERE id = ?", (user_id,))
+    _delete_user_and_owned_rows(user_id)
+    if avatar_path and os.path.isfile(avatar_path):
+        os.remove(avatar_path)
     return success(message='User deleted successfully')
+
+
+def _delete_user_and_owned_rows(user_id):
+    """Delete a user and every row they own, in one transaction (Pass 59.76).
+
+    The per-user tables are read from the schema — every table with a
+    `user_id` or `owner_id` column — so a new one cannot be missed the way the
+    old two-table delete missed them. Rows elsewhere that reference an owned
+    row without ON DELETE CASCADE (psn_trophies -> psn_games) go first, or the
+    owned row's delete fails its FOREIGN KEY check.
+    """
+    with get_db_with_context() as conn:
+        tables = [r[0] for r in conn.execute(
+            "SELECT name FROM sqlite_master WHERE type = 'table' "
+            "AND name NOT LIKE 'sqlite_%' AND name != 'users'")]
+        owned = []
+        for t in tables:
+            cols = {r[1] for r in conn.execute(f"PRAGMA table_info('{t}')")}
+            owned += [(t, c) for c in ('user_id', 'owner_id') if c in cols]
+        owned_names = {t for t, _c in owned}
+        for child in tables:
+            for fk in conn.execute(f"PRAGMA foreign_key_list('{child}')"):
+                parent, frm, to, on_delete = fk[2], fk[3], fk[4], fk[6]
+                if parent not in owned_names or on_delete == 'CASCADE':
+                    continue
+                for t, c in owned:
+                    if t == parent:
+                        conn.execute(
+                            f"DELETE FROM {child} WHERE {frm} IN "
+                            f"(SELECT {to or 'rowid'} FROM {parent} WHERE {c} = ?)",
+                            (user_id,))
+        for t, c in owned:
+            conn.execute(f"DELETE FROM {t} WHERE {c} = ?", (user_id,))
+        conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
+        conn.commit()
 
 
 @bp.route('/api/users/settings', methods=['GET', 'POST'])
