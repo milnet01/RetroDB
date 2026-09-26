@@ -376,6 +376,7 @@
         window.RATING_TO_TIER = window.RATING_TO_TIER || {{ rating_to_tier_js | tojson }}; // nosemgrep: var-in-script-tag
         window.TIER_TO_RATING = window.TIER_TO_RATING || {{ tier_to_rating_js | tojson }}; // nosemgrep: var-in-script-tag
         window.IS_ADMIN = {{ 'true' if current_user and current_user.role == 'admin' else 'false' }}; // nosemgrep: var-in-script-tag
+        window.IS_LOGGED_IN = {{ 'true' if current_user else 'false' }}; // nosemgrep: var-in-script-tag
     </script>
 
     <!-- i18n maps (Pass 43.3/43.2) — synchronous, before the deferred bundles, so

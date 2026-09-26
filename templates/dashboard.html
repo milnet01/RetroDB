@@ -1276,9 +1276,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 const container = document.getElementById('jobProgressContainer');
                 if (!container) return;
 
-                if (data.status === 'running' || data.status === 'paused') {
+                // The status reports running/paused/completed as booleans;
+                // there is no `status` key (Pass 59.82).
+                if (data.running && !data.completed) {
                     const pct = data.total > 0 ? Math.round((data.processed / data.total) * 100) : 0;
-                    const statusLabel = data.status === 'paused' ? ' (Paused)' : '';
+                    const statusLabel = data.paused ? ' (Paused)' : '';
                     container.innerHTML = `
                         <div class="job-progress-card">
                             <span class="job-progress-label">Bulk Scrape${statusLabel}</span>

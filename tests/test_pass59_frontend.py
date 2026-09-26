@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from tests._util import delete_rows
+from tests._util import delete_rows, read_source
 
 ROOT = Path(__file__).resolve().parent.parent
 TEMPLATES = ROOT / 'templates'
@@ -283,3 +283,29 @@ def test_theme_is_saved_per_user():
 ])
 def test_dead_function_is_gone(path, name):
     assert not re.search(rf'\b{name}\b', _code(JS / path))
+
+
+def test_dashboard_job_card_reads_only_real_status_keys():
+    """Pass 59.82: the dashboard's checkJobs() showed its card when
+    `data.status` was 'running', but the bulk-scrape status has no `status`
+    key, so the card never appeared. Every key it reads must be one
+    get_status() returns."""
+    from services.jobs.bulk_scrape import BulkScrapeJob
+    src = read_source('templates/dashboard.html')
+    body = src[src.index('function checkJobs()'):src.index('checkJobs();')]
+    read = set(re.findall(r'\bdata\.([a-z_]+)', body))
+    real = set(BulkScrapeJob().get_status()) | {'success'}
+    assert read and read <= real, f"keys the endpoint never returns: {sorted(read - real)}"
+
+
+def test_job_polling_does_not_start_without_a_session(app_client, setup_complete):
+    """Pass 59.84: the toast controller polled every job-status endpoint on
+    the login page, and each poll logged a 401 in the console. The page
+    now says whether anyone is logged in, and init() skips polling if not."""
+    html = app_client.get('/login').get_data(as_text=True)
+    assert 'window.IS_LOGGED_IN = false' in html
+    src = read_source('static/js/toast-controller.js')
+    init = src[src.index('    init() {'):src.index('    cleanupOldCompletionKeys()')]
+    guard = init.index('IS_LOGGED_IN')
+    assert guard < init.index('this.startPolling()')
+    assert guard < init.index('this.restoreSavedState()')

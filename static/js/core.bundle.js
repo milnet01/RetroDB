@@ -1261,6 +1261,7 @@ const UnifiedToastController = {
         this.createContainer();
         this.cleanupOldCompletionKeys();
         this.setupBroadcastChannel();
+        if (window.IS_LOGGED_IN === false) return;
         this.startPolling();
         this.restoreSavedState();
         this.setupVisibilityHandler();

@@ -186,6 +186,9 @@ const UnifiedToastController = {
         this.createContainer();
         this.cleanupOldCompletionKeys();
         this.setupBroadcastChannel();
+        // Pass 59.84: every job-status endpoint answers 401 without a session,
+        // so polling from the login page only fills the console with errors.
+        if (window.IS_LOGGED_IN === false) return;
         this.startPolling();
         this.restoreSavedState();
         this.setupVisibilityHandler();
