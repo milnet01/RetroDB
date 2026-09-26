@@ -6745,13 +6745,29 @@ when already in the file.
   otherwise a `.opt` in the player's config dir wins. RetroArch writes
   changed core options back to `core_options_path`. The player's config dir
   must hold no RetroArch override files (`config/<core>/<game>.cfg`).
-  **Unverified**: whether appended values are saved into the base config on
-  exit; the base cfg sets `config_save_on_exit = "false"` either way.
+  Source (corrected 2026-09-26): `--appendconfig` is
+  `RARCH_PATH_CONFIG_APPEND`, applied by the `|` loop in `config_load_file`
+  (`configuration.c`). **Verified since**: `config_save_on_exit = true` bakes
+  the appended values into the base cfg at quit, so it must be `"false"`.
+  `auto_overrides_enable = true` (the default) layers RetroArch's own
+  `config/<core>/...cfg` override files over RetroDB's, so it must be
+  `"false"`. The player's menu can still WRITE override files and
+  per-game `.opt` files; with those two keys off they are never read.
 - **Decision** (2026-09-26, user): changes made in the player's own menu
   during play are KEPT as that game's settings and win over RetroDB's
   automatic ones from then on. RetroDB marks the game "customised" and
   offers "Reset to recommended". The slim build is a later step and does not
   change the command-line contract; step 1 is the fork's normal build.
+- **Decision** (2026-09-26, user): (a) `launch_args_override` is writable by
+  admins only, like every other launch input (settles question 2 and Pass
+  59.53's plan). (b) The bundled player is its own emulator row, the default
+  wherever it has a core; the user's own RetroArch row stays selectable.
+- **In-game edits, step 1** (fork session's option (b), adopted to deliver
+  the keep-edits decision without fork changes): core-option changes land in
+  RetroDB's per-game `.opt` directly. Other settings saved from the player's
+  menu (a game override under `config/<core>/`) are read back by RetroDB
+  after the session and absorbed into its per-game settings. Hiding or
+  redirecting those menu entries is left to the slim build.
 - **Status**: planned (2026-09-01); drafting agreed 2026-09-26. Lanes:
   launch, docs.
 - **Source**: review-code launch lane 2026-09-01; absence confirmed against
