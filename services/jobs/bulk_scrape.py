@@ -4,6 +4,7 @@
 # Backend-driven bulk metadata scraping with queue support.
 # =============================================================================
 
+import itertools
 import threading
 import time
 import sqlite3
@@ -43,6 +44,11 @@ def _extract_year_from_result(result):
             return m.group(0)
 
     return None
+
+
+# Pass 59.83 — a process-wide sequence, not the queue length: the running job
+# (queue empty) and the first job queued in the same second both got `_0`.
+_JOB_SEQ = itertools.count()
 
 
 class BulkScrapeJob:
@@ -191,7 +197,7 @@ class BulkScrapeJob:
                 logger.warning(f"Could not fetch first game title: {e}")
 
         with self._lock:
-            new_job_id = f"bulk_{int(time.time())}_{len(self._queue)}"
+            new_job_id = f"bulk_{int(time.time())}_{next(_JOB_SEQ)}"
 
             # If a job is currently running and not completed, queue this one
             if self.running and not self.completed:
@@ -564,7 +570,7 @@ class BulkScrapeJob:
                 # If a job is already running, queue this one with partial progress
                 # (happens when "Resume All" fires multiple requests in parallel)
                 if self.running and not self.completed:
-                    new_job_id = f"bulk_{int(time.time())}_{len(self._queue)}"
+                    new_job_id = f"bulk_{int(time.time())}_{next(_JOB_SEQ)}"
                     queued_job = {
                         'job_id': new_job_id,
                         'game_ids': remaining_ids,

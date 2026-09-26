@@ -249,3 +249,14 @@ class TestGetStatus:
         assert status['running'] is True
         assert status['total'] == 2
         assert status['system_name'] == 'NES'
+
+
+def test_jobs_started_in_one_second_get_distinct_ids(job):
+    """Pass 59.83: ids were bulk_<unix second>_<queue length>, so the running
+    job (queue empty) and the first job queued in the same second were both
+    `_0`. Queue actions look jobs up by id."""
+    first = job.start([100], system_id=1)
+    second = job.start([200], system_id=2)
+    ids = {job.job_id} | {q['job_id'] for q in job._queue}
+    assert first['success'] and second['success']
+    assert len(ids) == 2, ids
