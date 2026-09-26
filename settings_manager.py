@@ -9,6 +9,7 @@ import os
 import json
 import logging
 import threading
+from datetime import datetime, timezone
 
 from services.atomic_io import atomic_write_json
 import config
@@ -23,6 +24,10 @@ SETTINGS_FILE = os.path.join(config.BASE_DIR, 'data', 'settings.json')
 # In-memory cache for settings
 _settings_cache = None
 _settings_cache_mtime = None
+# Pass 59.42 — True while the last load hit an existing settings.json it could
+# not read, so what load_settings() returned was DEFAULTS, not the user's file.
+# save_settings() must then not write that dict over the file.
+_settings_read_failed = False
 _settings_cache_lock = threading.Lock()
 
 # Default values for user-editable settings
@@ -79,6 +84,7 @@ DEFAULT_SETTINGS = {
         'console':  ['region'],
         'handheld': ['region'],
         'computer': ['year', 'publisher'],
+        'engine':   ['region'],
     },
 
     # Region options and default
@@ -179,7 +185,7 @@ def _deep_merge(base, override):
 
 def load_settings():
     """Load settings from JSON file, merging with defaults. Uses in-memory caching."""
-    global _settings_cache, _settings_cache_mtime
+    global _settings_cache, _settings_cache_mtime, _settings_read_failed
     
     ensure_settings_dir()
     
@@ -215,24 +221,62 @@ def load_settings():
                 # Update cache
                 _settings_cache = copy.deepcopy(settings)
                 _settings_cache_mtime = os.path.getmtime(SETTINGS_FILE)
+                _settings_read_failed = False
             except Exception as e:
                 logger.warning(f"Could not load settings.json: {e}")
                 _settings_cache = copy.deepcopy(settings)
                 _settings_cache_mtime = None
+                _settings_read_failed = True
         else:
             # No file exists, cache the defaults
             import copy
             _settings_cache = copy.deepcopy(settings)
             _settings_cache_mtime = None
+            _settings_read_failed = False
         
         return settings
+
+
+def _settings_file_parses():
+    try:
+        with open(SETTINGS_FILE, 'r', encoding='utf-8') as f:
+            return isinstance(json.load(f), dict)
+    except Exception:
+        return False
+
+
+def _guard_unreadable_file():
+    """Pass 59.42 — decide whether a save may proceed after a failed read.
+
+    The caller's dict was built from DEFAULTS, so writing it would destroy the
+    user's file. If the file still does not parse, move it aside to
+    ``settings.json.corrupt-<UTC timestamp>`` so it stays recoverable, and let
+    the save through. If it parses now, the failure was transient: refuse, and
+    let the next load read the real file.
+    """
+    global _settings_read_failed
+    if not _settings_read_failed or not os.path.exists(SETTINGS_FILE):
+        return True
+    if _settings_file_parses():
+        logger.error("Refusing to save settings: the last read of settings.json "
+                     "failed, so the settings in hand are defaults")
+        _invalidate_cache()
+        return False
+    stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+    kept = f"{SETTINGS_FILE}.corrupt-{stamp}"
+    os.replace(SETTINGS_FILE, kept)
+    logger.error(f"settings.json could not be read; kept it as {kept}")
+    _settings_read_failed = False
+    return True
 
 
 def save_settings(settings):
     """Save settings to JSON file"""
     ensure_settings_dir()
-    
+
     try:
+        if not _guard_unreadable_file():
+            return False
         atomic_write_json(SETTINGS_FILE, settings)
         logger.info("Saved user settings to settings.json")
         

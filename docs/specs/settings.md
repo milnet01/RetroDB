@@ -623,6 +623,13 @@ pure functions with no filesystem dependency.
   neither move the bind port nor stop the server booting. Pinned by
   `test_environment_still_beats_the_saved_port` and
   `test_environment_port_survives_an_unloadable_settings_file`.
+- **A settings.json that exists but cannot be read is never overwritten
+  with defaults.** `load_settings()` then returns defaults, and every persist
+  path is load-modify-save. So `save_settings()` checks the file again first.
+  If it still does not parse, it is renamed to
+  `settings.json.corrupt-<UTC timestamp>` and the save proceeds. If it parses
+  now, the read failure was transient and the save is refused (returns
+  `False`). Pinned by `tests/test_pass59_settings.py` (Pass 59.42).
 - **The validator cross-check is one-directional.** The import-time guard is
   `set(DEFAULT_SETTINGS) - set(_VALIDATORS)`, so a default without a
   validator raises and a *validator without a default* does not. Retirements

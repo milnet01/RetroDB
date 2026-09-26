@@ -34,7 +34,7 @@ _ALLOWED_SORT_ORDERS = {'asc', 'desc'}
 _ALLOWED_SCRAPERS = {'esde', 'tgdb', 'igdb', 'screenscraper', 'rawg'}
 _ALLOWED_LOG_CATEGORIES = {'scraping', 'rom_tools', 'rom_reports', 'image_resize', 'system'}
 _ALLOWED_LOG_LEVELS = {'info', 'warning', 'error'}
-_ALLOWED_NAMING_SYSTEM_TYPES = {'console', 'handheld', 'computer'}
+_ALLOWED_NAMING_SYSTEM_TYPES = {'console', 'handheld', 'computer', 'engine'}
 _ALLOWED_NAMING_TAGS = {
     'region', 'year', 'publisher', 'developer', 'genre', 'system_type', 'system_name',
 }

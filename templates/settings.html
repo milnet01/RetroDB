@@ -1680,7 +1680,7 @@ const NAMING_SYSTEM_TYPES = [
     { key: 'engine',   label: 'Engine',   icon: '⚙️', example: 'ScummVM, PICO-8, Doom' },
 ];
 
-// Current state: { console: ['region'], handheld: ['region'], computer: ['year', 'publisher'] }
+// Current state: { console: ['region'], handheld: ['region'], computer: ['year', 'publisher'], engine: ['region'] }
 let namingConvention = {};
 
 function renderNamingBuilder() {
@@ -1791,7 +1791,7 @@ function loadNamingSettings() {
         })
         .catch(e => {
             console.error('Failed to load naming settings:', e);
-            namingConvention = { console: ['region'], handheld: ['region'], computer: ['year', 'publisher'] };
+            namingConvention = { console: ['region'], handheld: ['region'], computer: ['year', 'publisher'], engine: ['region'] };
             renderNamingBuilder();
         });
 }
