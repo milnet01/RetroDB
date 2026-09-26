@@ -1671,7 +1671,9 @@ def setup_api():
 
     # 5. Mark setup as completed
     user_settings['setup_completed'] = True
-    settings_manager.save_settings(user_settings)
+    # Pass 59.85: a failed (or, since 59.42, refused) save is not "complete".
+    if not settings_manager.save_settings(user_settings):
+        return api_error('Could not save your settings. Check that the data folder is writable, then try again.', 500)
 
     # Update runtime config paths
     app.config['ROM_PATH'] = get_rom_path()

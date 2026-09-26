@@ -98,3 +98,23 @@ def test_every_system_type_has_a_naming_row():
                  next(iter(game_utils.ENGINE_SYSTEMS)))}
     assert returned == _ALLOWED_NAMING_SYSTEM_TYPES
     assert set(settings_manager.DEFAULT_SETTINGS['naming_convention']) == returned
+
+
+def test_setup_wizard_reports_a_failed_save(monkeypatch, tmp_path):
+    """Pass 59.85: the wizard answered "Setup complete!" whatever
+    save_settings() returned. Since 59.42 a save can also be refused on
+    purpose. Every file write is redirected away from the real install."""
+    import app as app_module
+    monkeypatch.setattr(app_module.config, 'BASE_DIR', str(tmp_path))
+    monkeypatch.setattr('app.atomic_write_json', lambda *a, **k: None)
+    monkeypatch.setattr('app.settings_manager.load_settings', lambda: {})
+    monkeypatch.setattr('app.settings_manager.save_settings', lambda s: False)
+    monkeypatch.setattr(app_module.config, 'ROM_PATH', '', raising=False)
+    client = app_module.app.test_client()
+    with client.session_transaction() as sess:
+        sess['_csrf_token'] = 'tok'
+    resp = client.post('/api/setup', json={'license_accepted': True},
+                       headers={'X-CSRF-Token': 'tok'})
+    body = resp.get_json()
+    assert resp.status_code >= 400, body
+    assert body['success'] is False
