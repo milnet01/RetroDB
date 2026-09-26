@@ -288,7 +288,6 @@ are tracked here so the next pass picks them up:
 - **Status**: in-progress
 
 #### Pass 12.5 — FTS5 virtual table for `games.title` + `alternate_titles` (MEDIUM, L)
-
 - **Target**: search endpoints (`routes/games_search.py::api_games_find`
   and similar), plus filter pages doing `WHERE title LIKE '%q%'`.
 - **Why**: `LIKE '%q%'` on a 10k-row games table with no index is an
@@ -307,7 +306,6 @@ are tracked here so the next pass picks them up:
   instrument to collect that data.
 
 #### Pass 14.2 — Gradual type hints on high-risk modules (LOW, L)
-
 - **Target**: `scraper/metadata_merger.py`, `services/game_query.py`,
   `routes/games.py`.
 - **Why**: largest / most-called modules in the codebase. Type hints on
@@ -448,7 +446,6 @@ are tracked here so the next pass picks them up:
 > had, which is what's needed to know what to re-scrape / re-link.
 
 #### Pass 54.1 Mass-missing guard on the scraper's stale-media-ref auto-clear (SECURITY, S)
-
 - **Status**: done
 - **Problem**: on scrape, `hybrid_scraper` clears a game's media DB reference when
   the file is missing from disk ("Media file missing from disk, clearing: ..."),
@@ -466,7 +463,6 @@ are tracked here so the next pass picks them up:
 Resolved (2026-07-04, v3.17.0): added media_dir_is_healthy() guard in services/media_cleanup.py and wired it into both stale-media-clear blocks (fill-path + force-path) of hybrid_scraper.apply_hybrid_metadata. A gone/empty media dir (unmounted drive / bulk deletion) now preserves the DB refs and logs a warning instead of clearing. Mirrors clean_missing_roms's mount guard. Tests: tests/test_pass54_media_integrity.py.
 
 #### Pass 54.2 Settings: "Clear DB entries for missing media files" maintenance action (FEATURE, S)
-
 - **Status**: done
 - **Idea** (user request 2026-07-04): a Settings → System → Maintenance action that
   finds games whose media DB references (boxart / boxart_3d / screenshots / fanart /
@@ -500,7 +496,6 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
 > owed once the app is running and the browser extension is connected.
 
 #### Pass 53.1 Global search in a persistent top bar (UX, M)
-
 - **Status**: planned.
 - **Problem**: there is no global search anywhere in the chrome — `base.html`
   has no topbar, and search only exists inside the Library page
@@ -516,7 +511,6 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
   `/api/games`).
 
 #### Pass 53.2 Library grid: sort control + real empty state (UX, M)
-
 - **Status**: planned.
 - **Problem**: the Library grid has (a) no sort control at all — the controller
   only renders the server default; the A–Z strip (`all_games.html:133`) jumps,
@@ -531,7 +525,6 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
 - **Est.**: M — one new query param + a sort UI + an empty-state partial.
 
 #### Pass 53.3 Slim the sidebar: consolidate achievements + tools sprawl (UX, M)
-
 - **Status**: planned.
 - **Problem**: the sidebar carries ~21 links across 6 groups (`base.html:85-197`).
   Five near-synonymous destinations (RPCS3 / PSN / RetroAchievements / Steam /
@@ -545,7 +538,6 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
 - **Est.**: M — mostly template/route reshaping + a tabbed achievements host.
 
 #### Pass 53.4 Scrape a single game from the detail modal (ENHANCEMENT, S)
-
 - **Status**: done
 - **Problem**: the detail modal offers AI Fill but no scraper trigger
   (`base.html:932-943`); to scrape one game the user must click "View Full Page"
@@ -556,7 +548,6 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
 - **Est.**: S — wire an existing action into the modal.
 
 #### Pass 53.5 Role-aware rating display in the edit form (UX, S)
-
 - **Status**: planned.
 - **Problem**: the Edit form's "Technical" tab stacks all 10 age-rating
   dropdowns — ESRB/PEGI/CERO/USK/ACB/FPB/GRAC/ClassInd (`base.html:1213-1305`) —
@@ -570,7 +561,6 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
 - **Est.**: S — a role check + conditional render around the rating block.
 
 #### Pass 53.6 ROM Tools nav link: hub vs last-visited, as a preference (UX, S)
-
 - **Status**: planned (low priority — the maintainer prefers the current
   last-visited behaviour for their own use; kept as an opt-in option, not a
   forced change).
@@ -583,7 +573,6 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
 - **Est.**: S — one setting + a branch in the nav redirect.
 
 #### Pass 53.7 First-run / empty-library welcome CTA (UX, S)
-
 - **Status**: planned.
 - **Problem**: a fresh, empty install looks broken, not welcoming — the
   Dashboard shows a health ring stuck at ~0% (`dashboard.html:75-83`) and the
@@ -596,7 +585,6 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
 - **Est.**: S — an empty-branch in the dashboard + library templates.
 
 #### Pass 53.8 Setup wizard progress indicator + optional-step marking (UX, S)
-
 - **Status**: planned.
 - **Problem**: the 6-step setup wizard (`setup.html`) navigates with bare
   "← Back / Next →" (`setup.html:119-145`) — no "Step 3 of 6" and no signal that
@@ -606,7 +594,6 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
 - **Est.**: S — a progress component in the wizard shell.
 
 #### Pass 53.9 Deep-link from scrape failure to the API-key form (UX, S)
-
 - **Status**: planned.
 - **Problem**: API keys live three levels deep (Settings → Scraping → sub-tab,
   `scraping.html:7,265`), yet skipping them causes silent scrape failures whose
@@ -617,7 +604,6 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
 - **Est.**: S — a targeted link in the failure message / toast.
 
 #### Pass 53.10 Mobile navigation: fixed header + bottom bar (UX, M)
-
 - **Status**: planned.
 - **Problem**: on mobile the desktop sidebar simply slides in with all ~21 items
   (`base.html:257`, `main.js:246`), and the hamburger sits inside the content
@@ -628,7 +614,6 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
 - **Est.**: M — mobile-specific chrome + breakpoints.
 
 #### Pass 53.11 Multi-value filters + discoverable exclude affordance (UX, M)
-
 - **Status**: planned.
 - **Problem**: Library filters are single-value — `applyFilter` overwrites
   `filters[type] = value` (`all-games-controller.js:788`), so you cannot pick
@@ -642,7 +627,6 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
 - **Est.**: M — filter-modal + chip + query changes.
 
 #### Pass 53.12 Persistent inline error state for walk-away operations (UX, S)
-
 - **Status**: planned.
 - **Problem**: errors from user-initiated operations surface only as ephemeral
   toasts (e.g. AI-fill error `game-modals.js:2311`). If the user walks away, the
@@ -657,7 +641,6 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
 - **Est.**: S — an inline error state hooked into the existing error paths.
 
 #### Pass 53.13 Unify the parallel modal systems (REFACTOR, M)
-
 - **Status**: planned.
 - **Problem**: several independent modal systems coexist — generic `#customModal`
   (`base.html:294`), bespoke `#gameDetailModal` / `#gameEditModal`
@@ -679,7 +662,6 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
 > (reduced-motion, backup/restore, and core a11y were checked and already exist).
 
 #### Pass 52.1 Translate JS-driven toasts / dialogs — the last i18n seam (I18N, M)
-
 - **Status**: planned (raises the priority of the Pass 49.x deferral now that
   v3.14.0 ships ten UI locales, two of them Chinese).
 - **Problem**: the UI catalogs cover templates and Python, but user-facing
@@ -704,7 +686,6 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
   build + catalog round-trip. Supersedes the Pass 49.x inline-`<script>` deferral.
 
 #### Pass 52.2 aria-live announcements for long-running job progress (A11Y, S)
-
 - **Status**: done
 - **Problem**: only 4 templates carry an `aria-live` region. Long-running,
   JS-driven progress surfaces (bulk-scrape, bulk-edit, AI Fill, RA/Steam/Xbox/PSN
@@ -719,7 +700,6 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
 - **Est.**: S — a handful of templates; reuses the existing announce pattern.
 
 #### Pass 52.3 Library "health" at-a-glance panel on the dashboard (ENHANCEMENT, M)
-
 - **Status**: done
 - **Idea**: surface signals that already exist but are scattered across the ROM
   Tools hub into one actionable dashboard card — counts of unscraped games, games
@@ -1283,7 +1263,6 @@ Resolved (2026-07-01, v3.13.0): stale data/psn_tokens.json removed; help.html st
 > mainstream users).
 
 #### Pass 47.1 Pre-publish hygiene sweep (HIGH, M)
-
 - **Target**: full git history, repo metadata, README, root community
   files (`SECURITY.md`, issue / PR templates).
 - **Why**: visibility flip is irreversible in practice — anything ever
@@ -1343,7 +1322,6 @@ Resolved (2026-07-01, v3.13.0): stale data/psn_tokens.json removed; help.html st
   the `gh repo edit` call is paired with the visibility flip.
 
 #### Pass 47.2 Flip repo visibility private → public (MEDIUM, S)
-
 - **Target**: GitHub Settings → General → Danger Zone → Change
   visibility (or `gh repo edit milnet01/RetroDB --visibility public
   --accept-visibility-change-consequences`).
@@ -1372,7 +1350,6 @@ Resolved (2026-07-01, v3.13.0): stale data/psn_tokens.json removed; help.html st
   for this repo.
 
 #### Pass 47.3 Repurpose Patreon (free app, donation-only tiers) (MEDIUM, S)
-
 - **Target**: existing Patreon page (off-repo, web admin).
 - **Why**: existing setup with zero subscribers — the paywall is the
   discovery bottleneck, not willingness-to-pay. Free + donate is the
@@ -1396,7 +1373,6 @@ Resolved (2026-07-01, v3.13.0): stale data/psn_tokens.json removed; help.html st
 Resolved (2026-06-30): Patreon page is live at https://www.patreon.com/c/AntsProjectsHub and wired into .github/FUNDING.yml as `patreon: AntsProjectsHub` (bare-username form verified via curl to resolve to the same creator page). Page tier copy/levels remain the maintainer's to finalize in Patreon web admin.
 
 #### Pass 47.4 GitHub Sponsors (MEDIUM, M)
-
 - **Target**: <https://github.com/sponsors> waitlist + sponsor
   profile.
 - **Why**: integrated with the public repo (Sponsor button on the repo
@@ -1424,7 +1400,6 @@ Resolved (2026-06-30): Patreon page is live at https://www.patreon.com/c/AntsPro
   configuration left to operator-side admin once 47.3 lands.
 
 #### Pass 47.5 Buy Me A Coffee (LOW, S)
-
 - **Target**: <https://buymeacoffee.com> profile.
 - **Why**: lowest-friction one-off-tip surface for users without a
   GitHub account or who don't want monthly commitment. Stripe-backed;
@@ -1443,7 +1418,6 @@ Resolved (2026-06-30): Patreon page is live at https://www.patreon.com/c/AntsPro
 Progress (2026-06-30): Parked by maintainer. Buy Me A Coffee does not support South Africa yet, so this surface can't go live regardless of code. Leave planned; revisit only if/when BMAC adds ZA payouts. GitHub Sponsors already covers the in-app/README/FUNDING donation surfaces, so nothing is blocked on this.
 
 #### Pass 47.6 Donation surfaces in app + repo (MEDIUM, M)
-
 - **Target**: `.github/FUNDING.yml`, `README.md`, in-app
   Settings/About surface.
 - **Why**: discovery — users only donate if they see the link. The
@@ -1495,7 +1469,6 @@ Progress (2026-06-30): Parked by maintainer. Buy Me A Coffee does not support So
 Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platforms. FUNDING.yml (GitHub Sponsors + Patreon); README Support section (badges + links); in-app links in Settings -> System -> Support Development panel and the About panel header. Both new strings i18n-wrapped and translated into all 6 locales. Deferred per the original plan: Buy Me A Coffee (no South Africa payouts yet, see PASS-47-5), footer link (no footer exists), CHANGELOG supporters list (until there are supporters).
 
 #### Pass 47.6.A In-app sponsorship link (GitHub Sponsors only) (LOW, S)
-
 - **Target**: in-app surface — settings page (likely the
   `templates/_settings_tabs/system.html` partial or About modal) +
   optional footer link.
@@ -1543,7 +1516,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
 > distribution channels.
 
 #### Pass 46.1 Vendor Chart.js + Google Fonts (privacy / offline)
-
 - **Targets**: `templates/analytics.html` (CDN Chart.js ref),
   `templates/base.html` (Google Fonts ref).
 - **Why**: every browser load made requests to `cdn.jsdelivr.net`
@@ -1568,7 +1540,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   bytes. 683 tests green.
 
 #### Pass 46.2 Refresh pinned pip versions within current ranges
-
 - **Target**: `requirements.txt`, `requirements.lock`.
 - **Why**: lockfile pins are 2-week-old snapshots; latest patch/minor
   releases within the existing version ceilings (Flask `<4.0`, Pillow
@@ -1587,7 +1558,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   drops ~25 MB from sympy removal.
 
 #### Pass 46.3 PyInstaller spec + dual-distribution `build_dist.py`
-
 - **Target**: new `retrodb.spec`, extended `build_dist.py`, distribution
   README updates.
 - **Why**: end users currently must install Python + pip-install
@@ -1688,7 +1658,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
 > gap, migration runner BEGIN DEFERRED.
 
 #### Pass 45.1 CRITICAL — `track_progress` permission unsatisfiable (CRITICAL, S)
-
 - **Targets**: `services/auth.py:31-42` (`ROLE_PERMISSIONS`) +
   `routes/games.py:1101, 1130` (`@permission_required('track_progress')`).
 - **Why**: Pass 41.9.A added the decorator on `api_track_view` and
@@ -1707,7 +1676,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `tests/test_pass45_security.py::TestPass45_1*`.
 
 #### Pass 45.2 SSRF DNS-rebinding TOCTOU on scraper download path (HIGH, M)
-
 - **Targets**: `services/ssrf.py:127` (`pin_host_ip`), threaded through
   `scraper/base_scraper.download_image`,
   `scraper/metadata_merger._download_and_finalize`,
@@ -1736,7 +1704,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   (and fails with `gaierror` in the sandbox).
 
 #### Pass 45.3 AI Fill breaks fill-only invariant on integer columns (HIGH, S)
-
 - **Targets**: `routes/games_ai.py:109` — `all_updates.append(f"{field} = ?")`.
 - **Why**: writes bare `field = ?` instead of `COALESCE(?, field)`.
   `_int_fields` coerce path at `:106` writes `0` after `int(float("0"))`,
@@ -1757,7 +1724,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   fails the curated-`players` and spurious-`critic_score` cases.
 
 #### Pass 45.4 XSS sinks in toast / HLTB / settings dialogs (HIGH, S)
-
 - **Targets**:
   - `static/js/toast-controller.js:1171` — raw-interpolated `data.return_url`
     in inline `onclick` JS-string. Pass 41.12.B's runtime guard fires too
@@ -1788,7 +1754,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   settings` so the empty-data CI environment doesn't 302 to /setup.
 
 #### Pass 45.5 Atomic-write contract drift (HIGH, M)
-
 - **Targets**:
   - `app.py:115-120` `_get_secret_key` truncates without `os.replace`;
     chmod-after-write leaves brief 644 window.
@@ -1815,7 +1780,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   position check.
 
 #### Pass 45.6 Decompression-bomb / `MAX_IMAGE_PIXELS` global (HIGH, S)
-
 - **Targets**: `services/image_utils.py` + `services/game_media_service.py`
   module imports; `_validate_image_bytes`, `_ensure_format_matches_extension`,
   `standardize_image` exception handling.
@@ -1835,7 +1799,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   5 regression tests in `tests/test_pass45_security.py::TestPass45_6*`.
 
 #### Pass 45.7 Stale-ref orphan-cleanup race (HIGH, M)
-
 - **Targets**: `services/media_cleanup.py:127-187`.
 - **Why**: `clean_orphaned_files` deletes based on a snapshot taken by
   `find_orphaned_media` at scan time. A scraper writing a new
@@ -1856,7 +1819,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `services/media_cleanup.py` change fails 4 of 5.
 
 #### Pass 45.8 Steam/Xbox/PSN/wishlist endpoint rate-limits (HIGH, S)
-
 - **Targets**: `app.py:266-300` registrations. Add for:
   `platform_import.api_steam_fetch_library`, `..._import`,
   `..._sync_achievements`, Xbox + PSN siblings,
@@ -1877,7 +1839,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   actions.
 
 #### Pass 45.9 collector_trophies regressions (HIGH, S)
-
 - **Targets**:
   - `routes/collector_trophies.py:372` — `for g in (r['genre'] or '').split(',')`
     is the exact Pass 41.8.A `flask.g` shadow pattern.
@@ -1897,7 +1858,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   the fix fails all 4 (functional smoke pins zero writes from GET).
 
 #### Pass 45.10 Migration runner `BEGIN IMMEDIATE` + busy_timeout (HIGH, S)
-
 - **Targets**:
   - `services/migrations/__init__.py:84` — `conn.execute("BEGIN")` is
     DEFERRED; table-rebuild migrations 007/008/009 deadlock under
@@ -1920,7 +1880,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   test fixtures updated to handle the new pragma + the seeded games row.
 
 #### Pass 45.11 `/api/settings/logging` POST bypasses validator (HIGH, S)
-
 - **Targets**: `routes/settings.py:579`.
 - **Why**: writes `data` directly to `settings['logging']` without
   calling `validate_settings_value('logging', data)`. The validator
@@ -1946,7 +1905,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   suite 633 → 650.
 
 #### Pass 45.12 Xbox refresh-token rotation hardening (HIGH, M)
-
 - **Targets**: `scraper/scrape_xbox.py:236-286`.
 - **Why**: refresh on every sync (no `expires_at` tracking); revocation
   leaves stale tokens forever (no `clear_tokens` on 401-loop); `xuid`/
@@ -1966,7 +1924,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   tests in `TestPass45_12*`; suite 650 → 658.
 
 #### Pass 45.13 IGDB token cache thread-safety + `y/z` redactor (HIGH, S)
-
 - **Targets**:
   - `scraper/scrape_igdb.py:31` — `_igdb_token_cache` mutated by
     background threads without lock; concurrent expiry → duplicate
@@ -1989,7 +1946,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   665.
 
 #### Pass 45.14 TGDB / RAWG / IGDB add `max_bytes` (MEDIUM, S)
-
 - **Targets**: `scraper/scrape_thegamesdb.py:85,150,170,190`,
   `scrape_rawg.py:124`, `scrape_igdb.py:84-90,102-108`.
 - **Why**: each calls `http_get` without `max_bytes`; OOM risk on
@@ -2005,7 +1961,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   suite 665 → 671.
 
 #### Pass 45.15 Migration 010 missing CASCADE FKs (MEDIUM, S)
-
 - **Target**: `services/migrations/scripts/010_user_game_views.py:43-49`.
 - **Why**: composite PK exists but no `FOREIGN KEY (game_id) REFERENCES
   games(id) ON DELETE CASCADE` and no `FOREIGN KEY (user_id) REFERENCES
@@ -2024,7 +1979,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `TestPass45_15*`; suite 671 → 678.
 
 #### Pass 45.16 `aria-current` rollout to remaining 50+ nav links (HIGH, M)
-
 - **Targets**: `templates/dashboard.html:8` (8 tabs),
   `templates/analytics.html:8` (6 tabs),
   `templates/museum_system.html:58` (4 tabs),
@@ -2049,7 +2003,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   tests in `TestPass45_16*`; suite 678 → 685.
 
 #### Pass 45.17 `ModalFocusTrap` rollout to 20+ remaining dialogs (HIGH, M)
-
 - **Targets**: `templates/base.html:290` `customModal`,
   `:307` `folderBrowserModal`, `:640` queue-manager,
   `:858` `gameDetailModal`, `:939` `gameEditModal`,
@@ -2074,7 +2027,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   attach. 7 regression tests in `TestPass45_17*`; suite 685 → 692.
 
 #### Pass 45.18 Source-grep test antipattern (HIGH systemic, L)
-
 - **Targets**: `tests/test_pass40_security.py`, `test_pass41_security.py`
   (78 cases / 1645 LOC), `test_pass33_34_hardening.py`,
   `test_pass35_36_hardening.py`, `test_auth_hardening.py`. ~140
@@ -2131,7 +2083,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   init_database_issues_wal`. Both restored after verification.
 
 #### Pass 45.19 release.yml heredoc indentation (HIGH, S)
-
 - **Target**: `.github/workflows/release.yml:55-64`.
 - **Why**: `python - <<'PY'` heredoc has 10 spaces of leading whitespace
   on every line; `python -` reads stdin and parses module-level
@@ -2147,7 +2098,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   2 regression tests in `tests/test_pass45_security.py::TestPass45_19*`.
 
 #### Pass 45.20 chmod-after-verify race + `<button type="button">` sweep (MEDIUM, S)
-
 - **Targets**:
   - `services/database.py:295-323` — chmod 0o600 happens after the
     integrity-check open; brief 0644 window.
@@ -2178,7 +2128,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
 > remediation workflow.
 
 #### Pass 40.1 RCE via unvalidated `chdman_path` in `rom_tools_config.json` POST (CRITICAL, S)
-
 - **Target**: `routes/tools.py:196-208` (`api_rom_tools_settings` POST).
 - **Why**: `@login_required` only; JSON body written verbatim via
   `atomic_write_json(config_path, settings)`.  Downstream
@@ -2201,7 +2150,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   per-shape validator. Tests: `test_pass40_security.py` (22 cases).
 
 #### Pass 40.2 Arbitrary-path CHD convert + source file delete (CRITICAL, S)
-
 - **Target**: `routes/tools.py:571-654` (`api_chd_converter_convert`) +
   `:682-752` (`api_chd_verify_verify`).
 - **Why**: `files[]` list from request body goes straight into
@@ -2222,7 +2170,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   (4 cases including an `os.remove`-monitor smoke).
 
 #### Pass 40.3 Archive-scanner batch extract + move to arbitrary paths (CRITICAL, S)
-
 - **Target**: `routes/tools.py:479-525` (`api_archive_scanner_create_m3u`
   + `api_archive_scanner_batch_create_m3u`).
 - **Why**: `@login_required` only; `paths` and `staging_folder` not
@@ -2241,7 +2188,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   (5 cases).
 
 #### Pass 40.4 Steam achievement IDOR — three queries missing `user_id` filter (CRITICAL, S)
-
 - **Target**: `routes/steam_achievements.py:31-40, 73-78, 80-84`.
 - **Why**: Landing-page query joins `game_achievement_progress gap` without
   `AND gap.user_id = ?`; per-game progress query and per-game achievements
@@ -2260,7 +2206,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `test_pass40_security.py::TestPass40_4SteamAchievementsUserScoping`.
 
 #### Pass 40.5 ETag cross-user cache bleed on `/api/games/card-data` (CRITICAL, S)
-
 - **Target**: `routes/games.py:235`.
 - **Why**: `etag_payload = f"cd:{...}:{max_updated}"` — `max_updated` is
   global, not per-user.  Per-user PSN and achievement progress join in
@@ -2276,7 +2221,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `test_pass40_security.py::TestPass40_5CardDataEtagPerUser`.
 
 #### Pass 40.6 `players` fill-only invariant broken at 3 sites (CRITICAL, S)
-
 - **Target**:
   - `scraper/scrape_igdb.py:477-481, 591` — `players = 1` default + no
     `COALESCE(?, players)`.
@@ -2312,7 +2256,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   cases).
 
 #### Pass 40.7 TGDB image downloads bypass SSRF (CRITICAL, S)
-
 - **Target**: `scraper/scrape_thegamesdb.py:985-1043`
   (`_download_tgdb_image`).
 - **Why**: calls `http_get(image_url, ...)` + `open(local_path,
@@ -2334,7 +2277,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   Tests: `test_pass40_security.py::TestPass40_7TgdbImageSsrf`.
 
 #### Pass 40.8 Museum job `finally` clobbers `failed` status back to `completed` (CRITICAL, S)
-
 - **Target**: `services/jobs/museum.py:136-336`.
 - **Why**: two early-exit failure paths at lines 189 (no-AI-provider) and
   213 (unknown-provider) call `persist_job_complete(persist_id,
@@ -2358,7 +2300,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `test_pass40_security.py::TestPass40_8MuseumJobFailedStatusPreserved`.
 
 #### Pass 40.9 ImageResizeJob has no persistence, no lock, no shutdown recovery (CRITICAL, M)
-
 - **Target**: `services/jobs/image_resize.py`.
 - **Why**: `_worker` never calls `persist_job_start`/`persist_job_progress`/
   `persist_job_complete`; reads/writes `self.running`, `self.cancelled`,
@@ -2385,7 +2326,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   Tests: `test_pass40_security.py::TestPass40_9ImageResizeJobBaseConvention`.
 
 #### Pass 40.10 Rate-limit `time.sleep` blocks shutdown drain, loses progress (CRITICAL, M)
-
 - **Target**: `services/jobs/psn_refresh.py:433, 459`,
   `platform_sync.py:452, 767`, `ra_sync.py:359`, `ra_refresh.py:306`,
   `museum.py:272, 283, 315`.
@@ -2416,7 +2356,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   on rare in-flight HTTP calls for honest API durations.)
 
 #### Pass 40.11 CHD conversion non-atomic + dead `chd_verify_after_convert` (CRITICAL, M)
-
 - **Target**: `scraper/rom_tools.py:1129-1188` (`CHDConverter._convert_file`),
   `routes/tools.py:602-648` (inline worker).
 - **Why**: both paths run `chdman createcd -i src -o dst` where
@@ -2447,7 +2386,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `test_pass40_security.py::TestPass40_11ChdAtomicConversion`.
 
 #### Pass 40.12 Toast-controller XSS on `job.system_name` (CRITICAL, S)
-
 - **Target**: `static/js/toast-controller.js:1462-1467`.
 - **Why**: `${job.system_name || 'Multi-System'}` interpolated into
   `toast.innerHTML` without escape; `${type}`/`${job.job_id}`
@@ -2469,7 +2407,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `test_pass40_security.py::TestPass40_12ToastControllerXss`.
 
 #### Pass 40.13 `showModal` HTML auto-detect heuristic is blocklist XSS sink (CRITICAL, M)
-
 - **Target**: `templates/base.html:385-401`.
 - **Why**: `if (message.includes('<') && message.includes('>'))` triggers
   an `innerHTML` render with a `<script>`-only strip — misses `<img
@@ -2491,7 +2428,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `test_pass40_security.py::TestPass40_13ShowModalOptInHtml`.
 
 #### Pass 40.14 PSN trophy-detail game-link search XSS (CRITICAL, S)
-
 - **Target**: `templates/psn_trophy_detail.html:815-831`.
 - **Why**: user-authored `game.title` / `game.boxart` / `game.system`
   interpolated into a template literal (both HTML-text and attribute
@@ -2515,7 +2451,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   Tests: `test_pass40_security.py::TestPass40_14PsnTrophyDetailXss`.
 
 #### Pass 40.15 `base_scraper.download_image` non-atomic + stale-clear race (CRITICAL, S)
-
 - **Target**: `scraper/base_scraper.py:257-358` (`download_image`) +
   `scraper/hybrid_scraper.py:593-632` (stale-clear) +
   `services/media_cleanup.py:100-166` (orphan sweep).
@@ -2549,7 +2484,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   (source pin, functional smoke, conditional-UPDATE pin).
 
 #### Pass 40.16 Missing `docs/PROXY-DEPLOY.md` referenced in `app.py:147` (HIGH, S)
-
 - **Target**: `docs/PROXY-DEPLOY.md` (non-existent), referenced by
   `app.py:147` comment "See docs/PROXY-DEPLOY.md (added in this pass)
   for the trust contract."
@@ -2581,7 +2515,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
 > cross-cutting churn.
 
 #### Pass 41.1 Auth — three decorator / bucket hygiene findings
-
 - **Targets**:
   - `services/auth.py:204` — `login_required` inline allow-list bypass
     for 5 endpoint names is a footgun (any future endpoint that
@@ -2611,7 +2544,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `tests/test_pass41_security.py::TestPass41_1A/B/C` (10 cases).
 
 #### Pass 41.2 Database — FK-OFF PRAGMA is no-op inside transaction; connection leaks in 10+ route sites
-
 - **Targets**:
   - `services/migrations/__init__.py:83` — `conn.execute("BEGIN")`
     runs before per-migration PRAGMAs, so `PRAGMA foreign_keys = OFF`
@@ -2639,7 +2571,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `tests/test_pass41_security.py::TestPass41_2A/B` (6 cases).
 
 #### Pass 41.3 App bootstrap — CSP nonce zombie + `'system'` log category dead + redactor ordering
-
 - **Targets**:
   - `app.py:342-356` — CSP Report-Only header references
     `nonce-{{csp_nonce}}`; `grep -rn csp_nonce templates/` → zero hits.
@@ -2665,7 +2596,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   Tests: `tests/test_pass41_security.py::TestPass41_3A/B/C` (3 cases).
 
 #### Pass 41.4 Scraper orchestration — ES-DE screenshot append lost + primary-source exceptions abort scrape
-
 - **Targets**:
   - `scraper/hybrid_scraper.py:714-727` — sync-back from DB reload after
     `apply_esde_metadata` uses `if game.get(field) and not
@@ -2695,7 +2625,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `tests/test_pass41_security.py::TestPass41_4A/B` (3 cases).
 
 #### Pass 41.5 Scraper adapters — credential leak in logs + adapters bypassing `base_scraper`
-
 - **Targets**:
   - `scraper/scrape_steam.py` (7 endpoints) and `scraper/hltb_lookup.py`
     (3 endpoints) call raw `requests.get/post` — no retry+size-cap via
@@ -2730,7 +2659,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `TestPass41_5bSteamHltbThroughBaseScraper`. Parent now fully resolved.
 
 #### Pass 41.5.B Steam + HLTB through base_scraper (carry-over from 41.5)
-
 - **Target**: `scraper/scrape_steam.py` (7 endpoints) and
   `scraper/hltb_lookup.py` (3 endpoints) — raw `requests.get`/`requests.post`.
 - **Why**: `base_scraper.http_get` / `http_post` provide retry/backoff/
@@ -2752,7 +2680,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   for all 7 Steam wrappers and both HLTB internals).
 
 #### Pass 41.6 Jobs — cross-process singleton + persist-under-lock + PSN inner-thread unsync
-
 - **Targets**:
   - every job class (`bulk_scrape`, `psn_refresh`, etc.) — in-memory
     `self.running` flag only prevents concurrent starts in the same
@@ -2788,7 +2715,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   test fixtures updated to release the FD in teardown.
 
 #### Pass 41.6.D Apply singleton lock to remaining 9 job classes (carry-over from 41.6.A)
-
 - **Target**: `ra_sync`, `ra_refresh`, `psn_refresh`,
   `museum_generate`, `image_resize`, `steam_sync`, `xbox_sync`,
   `alt_titles_backfill`, `hltb_bulk`.
@@ -2819,7 +2745,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   classes plus helper idempotency.
 
 #### Pass 41.7 OAuth / trophy-parser — TROPUSR bounds hardening + Xbox redirect URL concat + RA 401 observability
-
 - **Targets**:
   - `scraper/trophy_parser.py:189-216` — attacker-controlled
     `tables_count`/`entries_count`/`offset` in TROPUSR.DAT; inner
@@ -2850,7 +2775,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `tests/test_pass41_security.py::TestPass41_7A/B/C` (4 cases).
 
 #### Pass 41.8 Achievements/trophies — `flask.g` shadow + achievement aggregation silent-drop
-
 - **Targets**:
   - `routes/trophies.py:1075, 1119, 1125, 1131` — four `for g in ...`
     loops in `_run_psn_full_sync` shadow module-level `from flask
@@ -2876,7 +2800,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `tests/test_pass41_security.py::TestPass41_8A/B` (2 cases).
 
 #### Pass 41.9 Game routes — track-view / completion / recently-viewed / sort_title
-
 - **Targets**:
   - `routes/games.py:1086, 1106` — `@editor_required` on
     `api_track_view` + `api_update_completion`; viewers can't mark
@@ -2910,7 +2833,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   it to 011_emulators.py.
 
 #### Pass 41.10 Settings/maintenance/tools — every destructive endpoint at `@login_required` + task-cancel authz + scan unboundedness
-
 - **Targets**:
   - `routes/tools.py` — 10+ endpoints at `@login_required` that
     mutate filesystem / launch subprocesses; `api_archive_scanner_scan`,
@@ -2940,7 +2862,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `tests/test_pass41_security.py::TestPass41_10A/B/C/D` (13 cases).
 
 #### Pass 41.11 Museum — silent JSON decode failure + GET-handler DB mutation
-
 - **Targets**:
   - `routes/museum.py:192` — `_get_top_games` catches
     `(json.JSONDecodeError, TypeError): pass`; admin sees a page
@@ -2962,7 +2883,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   Tests: `tests/test_pass41_security.py::TestPass41_11A/B` (4 cases).
 
 #### Pass 41.12 Frontend JS — fetch timeout + navigateTo open-redirect + inline-onclick JSON
-
 - **Targets**:
   - `static/js/utils.js:264-329` — `API.get/post/postForm` use `fetch()`
     without `AbortController`, no default timeout, no `signal` param.
@@ -3000,7 +2920,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `tests/test_pass45_security.py::TestPass45_4*`.
 
 #### Pass 41.13 Templates / a11y — aria-current + div-as-button + mis-targeted label-for + label-as-group-heading
-
 - **Targets**:
   - `templates/base.html:83-189` — no `aria-current="page"` on sidebar
     nav links.
@@ -3045,7 +2964,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   Parent now fully resolved.
 
 #### Pass 41.13.C Templates a11y carry-over (div-as-button + label-as-heading)
-
 - **Target**: 6 `<div onclick=>` / `<h2 onclick=>` primary actions in
   `base.html`, `rom_tools_hub.html`, `game_detail.html`,
   `duplicate_finder.html`, `screenshot_dedup.html`, `game_imports.html`.
@@ -3081,7 +2999,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   LabelAsGroupHeading` (8); suite 710 → 725.
 
 #### Pass 41.14 Image/media — Pillow bomb-error not caught + ESRGAN SSRF gap + `rglob` follows symlinks
-
 - **Targets**:
   - `scraper/image_dedup.py:24-45` — `except (OSError, ValueError)`
     misses `PIL.Image.DecompressionBombError`; one bomb-image aborts
@@ -3121,7 +3038,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
 > Dependabot lockfile regeneration.
 
 #### Pass 39.1 Pin CI workflow actions to SHA (HIGH, S)
-
 - **Target**: `.github/workflows/ci.yml:39, 41, 132` (`actions/checkout@v4`, `actions/setup-python@v5`, `actions/upload-artifact@v4`).
 - **Why**: release workflow pins every action by SHA + version
   comment (e.g. `release.yml:35, 39, 83, 106, 133`); CI uses floating
@@ -3137,7 +3053,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   Dependabot legibility, mirrors release.yml convention.
 
 #### Pass 39.2 Explicit `permissions:` block on CI (HIGH, S)
-
 - **Target**: `.github/workflows/ci.yml`.
 - **Why**: no workflow-level `permissions:` block; job inherits repo-
   default `GITHUB_TOKEN` scope, which for private/org repos can
@@ -3150,7 +3065,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   writes to the repo, so this is the tightest viable scope.
 
 #### Pass 39.3 Hard-fail `pip-audit` + `semgrep` in CI (HIGH, S)
-
 - **Target**: `.github/workflows/ci.yml:81, 86`.
 - **Why**: both marked `continue-on-error: true` with TODO comments
   promising an eventual flip.  Security steps perpetually warn =
@@ -3169,7 +3083,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   bar is documented in CLAUDE.md / audit_hygiene.md).
 
 #### Pass 39.4 `requirements.lock` with `--generate-hashes` + `--require-hashes` install (MEDIUM, S)
-
 - **Target**: `requirements.lock`; `install.py:192`, `install_gui.py:433`; regen command in CLAUDE.md.
 - **Why**: lockfile has no hashes — installs don't fail-closed on
   MITM or PyPI compromise.  OWASP CICD-SEC-3 Dependency Chain Abuse.
@@ -3193,7 +3106,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   drift step uses `--generate-hashes`). Full pytest 707/707 green.
 
 #### Pass 39.5 Dependabot regenerates `requirements.lock` (MEDIUM, S)
-
 - **Target**: `.github/dependabot.yml:10-27`.
 - **Why**: currently updates `requirements.txt` only.  Lockfile-drift
   check at `ci.yml:88-113` hard-fails every Dependabot PR until
@@ -3222,7 +3134,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   --generate-hashes). Full pytest 710/710 green.
 
 #### Pass 39.6 `build_dist.py` env-configurable `STAGING_DIR` (MEDIUM, S)
-
 - **Target**: `build_dist.py:22`; `release.yml:55-64`.
 - **Why**: hardcoded absolute path under the maintainer-local staging tree
   (`/mnt/Storage/Scripts/Linux/Staging_Area/RetroDB` at landing; was originally
@@ -3242,7 +3153,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   was an artifact of the wrapper script — gone with the wrapper.
 
 #### Pass 39.7 Rate-limit `api_reports_multidisc_scan` (MEDIUM, S)
-
 - **Target**: `routes/reports.py:376-378`; `app.py:232-236` limiter config.
 - **Why**: `@login_required`-only POST that walks the filesystem;
   non-editor users can loop-hammer it.  Pass 25.9 scope.
@@ -3254,7 +3164,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `tools.api_*_scan` block. Same family as Pass 41.10.D.
 
 #### Pass 39.8 Audit-hygiene: gitleaks allowlist for `tests/test_log_redactor.py` (LOW, S)
-
 - **Target**: `.gitleaks.toml`.
 - **Why**: `/audit` run 2026-04-24 surfaced the synthetic-JWT test
   fixture at `tests/test_log_redactor.py:9` — intended to verify the
@@ -3267,7 +3176,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `.gitleaks.toml`'s admin-runtime-state allowlist.
 
 #### Pass 39.9 Audit-hygiene: `usedforsecurity=False` kwarg on non-security MD5/SHA1 (LOW, S)
-
 - **Target**: `routes/games.py:236` (ETag fingerprint),
   `routes/tools.py:1071` (user-requested file hash),
   `scraper/retroachievements.py:95` (RA API contract),
@@ -3290,7 +3198,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `bandit -ll` on the four files now reports zero B324.
 
 #### Pass 39.10 Audit-hygiene: gitleaks regex allowlist for Claude model literal (LOW, S)
-
 - **Target**: `.gitleaks.toml`; re-firing at `templates/settings.html:1265`.
 - **Why**: the existing `claude-(opus|sonnet|haiku)-\d[-\w]*` regex
   allowlist isn't suppressing the `generic-api-key` hit on the
@@ -3308,7 +3215,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   alongside the test_log_redactor entry from 39.8.
 
 #### Pass 39.11 Re-pin CI actions when upstream releases Node 24 builds (LOW, S)
-
 - **Target**: `.github/workflows/ci.yml:39, 41, 132` —
   `actions/checkout@34e114876b… (v4.3.1)`,
   `actions/setup-python@a26af69be9… (v5.6.0)`,
@@ -3343,7 +3249,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `dependabot-lockfile.yml`, and `release.yml`.
 
 #### Pass 39.12 Create the labels referenced by `.github/dependabot.yml` (LOW, S)
-
 - **Target**: GitHub repo labels (`gh label list`) vs.
   `.github/dependabot.yml:25-27, 42-44`.
 - **Why**: `dependabot.yml` declares `labels: ["dependencies",
@@ -3377,7 +3282,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
 > feature PRs that touch adjacent code.
 
 #### Pass 38.1 Split `apply_hybrid_metadata` (HIGH, L)
-
 - **Target**: `scraper/hybrid_scraper.py:495-1516` (1,022-line function).
 - **Why**: untestable in isolation, hard to audit.  The fallback loop
   (807-1112), normalize block (1222-1266), save block (1268-1464), RA
@@ -3409,7 +3313,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   the function below ~300 lines.
 
 #### Pass 38.2 Consolidate `load_scraper_settings` (MEDIUM, S)
-
 - **Target**: `scraper/scraper_manager.py:63-106` vs `scraper/metadata_merger.py:72-86`.
 - **Why**: duplicated with divergent miss-behavior; the manager's
   returns a fully-defaulted dict, the merger's returns
@@ -3429,7 +3332,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   unchanged. 694/694 tests pass.
 
 #### Pass 38.3 Extract `installer_core.py` (MEDIUM, M)
-
 - **Target**: `install.py`, `install_gui.py` share ~90% of logic
   (distro detection, `_run_pip`, `_check_module`, `_build_script`,
   config-copy list, directory list).
@@ -3457,7 +3359,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   shared module. 746/746 green.
 
 #### Pass 38.4 Extract Jinja macros (MEDIUM, M)
-
 - **Target**: zero `{% macro %}` across 45 templates; duplicated
   rating `<select>` (8 sub-systems × ~90 lines × 2+ files), filter
   modal (3 copies), breadcrumb (2+), sticky-subnav (6× in
@@ -3510,7 +3411,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   members.
 
 #### Pass 38.5 Delete `app.bundle.js` references in installers (MEDIUM, S)
-
 - **Target**: `install.py:299`, `install_gui.py:569, 572`.
 - **Why**: `build_js.py:277-279` deletes `app.bundle.js` as a legacy
   artifact since the split into `core.bundle.js` + `games.bundle.js`.
@@ -3527,7 +3427,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `docs/README.md` (ASCII tree).
 
 #### Pass 38.6 Split `settings.html` by tab (LOW, M)
-
 - **Target**: `templates/settings.html` (7,333 lines).
 - **Why**: CSP / a11y / i18n sweeps all bottleneck on this file.
 - **Plan**: split into `_partials/settings_{account,library,
@@ -3574,7 +3473,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   confirmModal still in the shell). Suite 1,039 → 1,084 (+45) green.
 
 #### Pass 38.7 Consolidate duplicate platform-sync endpoints (MEDIUM, S)
-
 - **Target**: `routes/platform_import.py:298-361` vs `routes/steam_achievements.py:95-158` (`api_steam_sync_single` × 2); similarly Xbox single-sync in `xbox_achievements.py:110-175`.
 - **Why**: two copies of near-identical UPSERT SQL; one uses
   `sqlite3.connect(config.DB_PATH)` directly, bypassing `get_db()`.
@@ -3598,7 +3496,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   pytest 694/694 green.
 
 #### Pass 38.8 Consolidate resume-path boilerplate across job classes (LOW, M)
-
 - **Target**: `services/jobs/ra_sync.py:112-157`, `ra_refresh.py:94-136`, `platform_sync.py:222-260, 514-564`, `psn_refresh.py:149-214`, `bulk_scrape.py:512-603`.
 - **Why**: six copies of "if resume_index > 0 and game_ids, reset +
   prepend Nones + restore counts + start thread, else fall through."
@@ -3630,7 +3527,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   green (was 746).
 
 #### Pass 42.1 Extract `_normalize_game_edit` helper (MEDIUM, M)
-
 - **Target**: `routes/games.py:458` (form-POST) + `routes/games.py:917`
   (JSON).  Helper in `services/game_metadata_service.py`.
 - **Why**: both edit paths independently normalize `players`, compute
@@ -3664,7 +3560,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   route through `normalize_game_edit`. Suite 725 → 749.
 
 #### Pass 42.2 Deduplicate migration helpers (MEDIUM, S)
-
 - **Target**: `services/migrations/_helpers.py` (new); remove 4-6
   copies from individual migration scripts.
 - **Why**: `_table_exists`, `_has_column`, `_admin_user_id`,
@@ -3689,7 +3584,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   694/694 green.
 
 #### Pass 42.3 Global `window.onerror` + `unhandledrejection` handler (MEDIUM, S)
-
 - **Target**: `static/js/main.js` or `static/js/utils.js` — handler
   pipes into `showNotification(msg, 'error')` with sampling.
 - **Why**: 57 `console.error` sites and zero global handlers; silent
@@ -3709,7 +3603,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   Bundle rebuilt; 694/694 tests green.
 
 #### Pass 42.4 Pin / vendor Chart.js (MEDIUM, S)
-
 - **Target**: `templates/analytics.html:1515`.
 - **Why**: unpinned `cdn.jsdelivr.net/npm/chart.js` with no SRI on an
   admin-only page with session cookie.  Supply-chain attack surface.
@@ -3721,7 +3614,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `asset_url()` pipeline. No CDN reference left in the templates.
 
 #### Pass 42.5 CHD converter dedup + `_persist_controller_image` (MEDIUM, M)
-
 - **Target**: `scraper/rom_tools.py:CHDConverter` vs
   `routes/tools.py:602-648` inline worker; `routes/museum.py:670-698,
   723-755, 1105-1127` controller-image save.
@@ -3756,7 +3648,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   - **Suite**: 746/746 green.
 
 #### Pass 42.6 RA 401 observability + Steam / SS log-redaction tightening (MEDIUM, S)
-
 - **Target**: `scraper/retroachievements.py` (5 callers),
   `services/log_redactor.py:31`.
 - **Why**: stale API key masquerades as "no match"; credential
@@ -3776,7 +3667,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   Scrapers". Stale roadmap entry; verified 2026-05-02.
 
 #### Pass 42.7 Adopt or remove `PageLifecycle` (MEDIUM, M)
-
 - **Target**: `static/js/page-lifecycle.js` (467 LoC) + all JS call
   sites currently rolling their own cleanup.
 - **Why**: 0 current consumers of `PageLifecycle.*`; CLAUDE.md
@@ -3794,7 +3684,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   longer exists). 694/694 tests green.
 
 #### Pass 42.8 Remove `/api/recently-viewed` + `ScraperManager.get_enabled_scrapers` + CSP nonce dead infrastructure (LOW, S — bundle)
-
 - **Targets**:
   - `routes/games.py:1117-1142` — zero callers.
   - `scraper/scraper_manager.py:286-302` — zero callers.
@@ -3809,7 +3698,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   `search_games`). CSP nonce infrastructure stays gated on FU.1.
 
 #### Pass 42.9 Test-suite hygiene sweep (LOW, S)
-
 - **Target**: `tests/` — drop redundant / misplaced / subsumed tests
   surfaced by an end-to-end audit (749-test suite, 12k LoC).
 - **Why**: The audit asked the six standard questions — accurate /
@@ -3861,7 +3749,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
 > because that's content, not chrome.
 
 #### Pass 43.1 i18n foundation — Flask-Babel machinery + login pilot (HIGH, L)
-
 - **Target**: the server-side i18n *machinery* + a single-page pilot. NOT the
   bulk template/string migration or real-language catalogs — those are Pass 43.5.
 - **Why**: single-household deployments often have non-English-speaking family
@@ -3895,7 +3782,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
 - **Status**: done (v3.7.0, 2026-06-12). Follow-on bulk migration = Pass 43.5.
 
 #### Pass 43.2 Translate canonical genre / dimension / perspective labels (MEDIUM, M)
-
 - **Target**: `services/game_utils.py` field-display helpers + every
   `<select>` populating canonical multi-value fields.
 - **Why**: 43.1 leaves DB-stored canonical values untranslated for
@@ -3915,7 +3801,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   chips). Filter values stay canonical. Drift guard in `tests/test_i18n_labels.py`.
 
 #### Pass 43.3 JS-side i18n bundle (MEDIUM, M)
-
 - **Target**: `static/js/toast-controller.js`, `game-modals.js`,
   `main.js`, every JS file that constructs user-visible strings via
   template literals.
@@ -3934,7 +3819,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   codebase). CI gate `scripts/check_i18n_fresh.py`. ~340 JS strings wrapped.
 
 #### Pass 43.4 RTL layout support + Arabic (MEDIUM, L)
-
 - **Target**: `static/css/core/*.css`, every grid/flex layout, every
   text-align/margin-left utility.
 - **Why**: Arabic and Hebrew are RTL; the current CSS bakes
@@ -3960,7 +3844,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   depends on it.
 
 #### Pass 43.5 Bulk template/string migration + real-language catalogs (MEDIUM, L)
-
 - **Target**: the ~60 remaining `templates/*.html` (top-level + nested under
   `_settings_tabs/`, `_modals/`, `_macros/`), `routes/*.py` flash + error sites,
   and `services/api_helpers.py::error()` callers — every server-rendered string
@@ -3994,7 +3877,6 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   (wishlist Priority, etc.) the agents missed are findable via the Pseudo locale.
 
 #### Pass 43.6 i18n follow-ons — help.html manual + exhaustive error() wrapping (LOW, L)
-
 - **Target**: `templates/help.html` (~2000 lines, currently English-only bar
   the page title + subtitle), the remaining `error()` / API-JSON-error callers
   across `routes/*.py` + `services/api_helpers.py`, and the handful of stray
@@ -4597,7 +4479,6 @@ weren't worth blocking the ship on.  Ordered by rough priority.
 ---
 
 #### Pass 57.6 Per-locale changelogs have drifted from the English source (MEDIUM, M)
-
 - **Target**: all 20 `data/changelog.<locale>.yaml`; contract in
   `docs/specs/i18n.md` §9 (`:409-416`) and `CLAUDE.md` workflow step 2.
 - **Why**: the `/changelog` route swaps the whole entry in **by version**, so a
@@ -4637,7 +4518,6 @@ weren't worth blocking the ship on.  Ordered by rough priority.
 ---
 
 #### Pass 57.7 Test-coverage gaps the debt sweep surfaced (MEDIUM, M)
-
 - **Target**: `tests/` — see per-item citations below.
 - **Why**: each is a contract that ships with no behavioural assertion. Grouped
   so they can be taken in one sitting; none is urgent alone.
@@ -4723,7 +4603,6 @@ weren't worth blocking the ship on.  Ordered by rough priority.
 ---
 
 #### Pass 57.8 Design docs sit under `docs/superpowers/`, not the declared tree (LOW, S)
-
 - **Target**: `docs/superpowers/specs/` (2 files), `docs/superpowers/plans/`
   (1 file); declared `specs_dir` is `docs/specs` (`.ants/project.json`).
 - **Why**: the global rule in `~/.claude/CLAUDE.md` §14a fixes a spec at
@@ -4750,7 +4629,6 @@ weren't worth blocking the ship on.  Ordered by rough priority.
 ---
 
 #### Pass 57.9 Dependency freshness snapshot — one major bump needs the §5 gate (LOW, S)
-
 - **Target**: `.github/workflows/*.yml`, `.pre-commit-config.yaml`,
   `requirements.txt` / `requirements.lock`.
 - **Why**: `docs/DEPENDENCY_POLICY.md` §5c mandates *check, don't wait*. This is
@@ -4781,7 +4659,6 @@ weren't worth blocking the ship on.  Ordered by rough priority.
 ---
 
 #### Pass 57.10 A frozen cold-eyes bullet records a finding that has since been fixed (LOW, S)
-
 - **Target**: `roadmap.md:247` (inside `#### Cold-eyes 2026-05-18 #2 — deferred
   items folded into roadmap`).
 - **Why**: the bullet reads *"`retrodb.spec:96` vs `build_dist.py:77`
@@ -4810,7 +4687,6 @@ weren't worth blocking the ship on.  Ordered by rough priority.
 ---
 
 #### Pass 58.1 JS, templates and CSS are analysed by no static-analysis tool (LOW, M)
-
 - **Target**: `static/js/*.js` (22 tracked files), `templates/**.html` (82),
   `static/css/**/*.css` (34). Tool selection in `check-code` step 2.
 - **Why**: every static-analysis tool is selected by a language signal, and the
@@ -4841,7 +4717,6 @@ weren't worth blocking the ship on.  Ordered by rough priority.
 ---
 
 #### Pass 58.2 Three analysers run unconfigured, so their output is mostly noise (LOW, S)
-
 - **Target**: `pyproject.toml` (or a new `.claude/audit/audit-config.json`),
   `.yamllint`, and whatever carries a `typos` config.
 - **Why**: measured on the 2026-09-01 whole-tree sweep. **`bandit`** has no
@@ -4874,7 +4749,6 @@ weren't worth blocking the ship on.  Ordered by rough priority.
 ---
 
 #### Pass 58.3 mypy reports 118 findings and none of them is a runtime defect (LOW, L)
-
 - **Target**: `scraper/rom_tools.py` (≈35 of the findings), `services/launcher/`,
   `services/log_redactor.py`, `scraper/trophy_parser.py`, and the absent
   `[tool.mypy]` section in `pyproject.toml`.
@@ -4906,7 +4780,6 @@ weren't worth blocking the ship on.  Ordered by rough priority.
 ---
 
 #### Pass 58.4 `vulture` has no committed whitelist, so its output is partial (LOW, S)
-
 - **Target**: a new `.vulture-whitelist.py`, and `scripts/ci_local.sh` if it is
   ever gated.
 - **Why**: `vulture --min-confidence 80` returns 22 findings. 15 are pytest
@@ -4930,7 +4803,6 @@ weren't worth blocking the ship on.  Ordered by rough priority.
 ---
 
 #### Pass 58.5 Two release steps use a pinned action for what the runner already has (INFO, M)
-
 - **Target**: `.github/workflows/release.yml:162` and `:251`, both
   `softprops/action-gh-release@718ea10b…` (v3.0.1).
 - **Why**: `zizmor` reports `superfluous-actions` on both — the runner ships
@@ -4954,7 +4826,6 @@ weren't worth blocking the ship on.  Ordered by rough priority.
 ---
 
 #### Pass 58.6 Five `shellcheck` SC2015 hits, verified inert (INFO, S)
-
 - **Target**: `setup.sh:143`, `scripts/ci_local.sh:86`, `:102`, `:131`, `:166`.
 - **Why**: `shellcheck` flags `A && B || C` because C also runs when A succeeds
   and B fails. Checked all five against source and **none can fire**. In
@@ -4990,7 +4861,6 @@ the ones marked **re-verified** were additionally reproduced by the
 orchestrator, several by execution rather than reading.
 
 #### Pass 59.1 `clear_scraped_data` ignores the `scraped` filter its own preview uses (CRITICAL, S)
-
 - **Target**: `services/game_cleanup.py:165-184`, both the all-systems and
   the per-system branch.
 - **Why**: the preview counts `SELECT COUNT(*) FROM games WHERE scraped = 1`
@@ -5022,7 +4892,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.2 Standalone builds resolve media against the wrong root, so one click wipes every media reference (CRITICAL, S)
-
 - **Target**: `services/media_cleanup.py:41`, `services/game_media_service.py:106`.
 - **Why**: **re-verified by simulating the frozen layout.** `config.py:33-38`
   sets `BASE_DIR` next to the launcher and `BUNDLE_DIR` to `sys._MEIPASS`
@@ -5058,7 +4927,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.3 Bulk edit's Append toggle silently REPLACES two multi-value fields (CRITICAL, S)
-
 - **Target**: `static/js/bulk-edit.js:18`, `routes/games.py:1031`,
   `templates/_bulk_edit_modal.html:136-158`.
 - **Why**: **re-verified by diffing the two lists.** The server accepts seven
@@ -5088,7 +4956,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.4 The orphan sweep's delete-time guard does not implement the rule the spec states (HIGH, M)
-
 - **Target**: `services/media_cleanup.py:299-320`; contract at
   `docs/specs/image-pipeline.md:383` (§10 item 3).
 - **Why**: the spec says the re-check is `stat.st_mtime <= scan_started_at`.
@@ -5117,7 +4984,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.5 `boxart_3d` is deleted from disk but not cleared from the DB (HIGH, S)
-
 - **Target**: `services/game_cleanup.py:26-34` (`_SCRAPED_FIELDS`) and its
   docstring at `:154-155`.
 - **Why**: `boxart_3d` is absent from `_SCRAPED_FIELDS`, yet the SELECT at
@@ -5140,7 +5006,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.6 `batch_create_m3u` moves the user's original archives against an explicit instruction not to (HIGH, S)
-
 - **Target**: `scraper/rom_tools.py:903`, and the now-redundant second move at
   `:918-940`; caller `routes/tools.py:582`.
 - **Why**: `batch_create_m3u` calls `self.create_m3u_playlist(archive_path)`
@@ -5172,7 +5037,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.7 The image-resize job upscales responsive variants and multiplies them on every run (HIGH, S)
-
 - **Target**: `services/jobs/image_resize.py:192`.
 - **Why**: `_RESPONSIVE_VARIANTS` writes `{stem}-sm{ext}` (160 px) and
   `{stem}-md{ext}` (320 px) into the same directory as the primary. The
@@ -5202,7 +5066,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.8 AI gap-fill overwrites curated data on a normal fill-only scrape (HIGH, M)
-
 - **Target**: `scraper/metadata_merger.py:1194` (`_should_apply`),
   `scraper/hybrid_scraper.py:1122`.
 - **Why**: `_should_apply` returns True **regardless of `fill_only`** for
@@ -5234,7 +5097,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.9 RAWG screenshots collide, then dedup deletes a good file that stays referenced (HIGH, S)
-
 - **Target**: `scraper/metadata_merger.py:716`; compare the guarded siblings at
   `:535` (IGDB), `:1083` (ScreenScraper), `:355` (TGDB).
 - **Why**: RAWG is the one screenshot loop of four with no collision guard —
@@ -5259,7 +5121,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.10 The Standalone zip ships the source-install launcher, so it cannot start (CRITICAL, S)
-
 - **Target**: `build_dist.py:324-331`; `start.sh`, `start.command`,
   `start.bat`; `retrodb.spec` DATAS.
 - **Why**: `CLAUDE.md` § Distribution promises *"User unzips and
@@ -5292,7 +5153,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.11 The shipped `.desktop` launcher has unsubstituted placeholders (CRITICAL, S)
-
 - **Target**: `packaging/RetroDB.desktop:5-6`; `build_dist.py:328`;
   `scripts/install_launcher.py:34`.
 - **Why**: the file ships with `Exec=__EXEC__` and `Icon=__ICON__`. The only
@@ -5317,7 +5177,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.12 `start.sh` installs unhashed dependencies, defeating the lockfile control (HIGH, S)
-
 - **Target**: `start.sh:65`, `start.command:43`; the correct implementation is
   `installer_core.select_pip_args` (`:170-188`).
 - **Why**: the launcher runs
@@ -5344,7 +5203,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.13 The source-ZIP exclusion list is a deny-list that has drifted from `.gitignore` (HIGH, M)
-
 - **Target**: `build_dist.py:63-86` (`EXCLUDE_FILES`, `EXCLUDE_DIRS`,
   `EXCLUDE_EXTENSIONS`).
 - **Why**: `audit_rule_quality.json` sits at the repo root (54 KB;
@@ -5379,7 +5237,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.14 `'app'` is missing from the spec's hidden imports, breaking two settings endpoints in Standalone (HIGH, S)
-
 - **Target**: `retrodb.spec:52-70` (`_RUNTIME_HIDDEN`); call sites
   `routes/settings.py:57` and `:65`.
 - **Why**: both call `importlib.import_module('app')` — a string import
@@ -5404,7 +5261,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.15 Three JS files are outside the i18n scan, and the CI gate is blind by construction (HIGH, S)
-
 - **Target**: `build_js.py:275` (`_JS_I18N_SOURCES`),
   `scripts/check_i18n_fresh.py:50`.
 - **Why**: `static/js/` holds 19 hand-written sources; `CORE_ORDER +
@@ -5434,7 +5290,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.16 `build_js.py`'s freshness check skips page-specific JS, so the i18n manifest silently no-ops (MEDIUM, S)
-
 - **Target**: `build_js.py:146-160` (`is_output_fresh`), `:448` (`main`).
 - **Why**: the freshness loop iterates `for bundle_name, order in BUNDLES` and
   only stats files in `CORE_ORDER + GAMES_ORDER`. Add a `t('New string')` to
@@ -5456,7 +5311,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.17 `start.sh` exports a maintainer-specific AMD workaround to every Linux user (MEDIUM, S)
-
 - **Target**: `start.sh:17`.
 - **Why**: `export HSA_OVERRIDE_GFX_VERSION=10.3.0` is unconditional in the
   launcher shipped to every Linux user, source and standalone. The comment
@@ -5479,7 +5333,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.18 `release-standalone.sh` can push a stale tag and build the wrong commit (MEDIUM, S)
-
 - **Target**: `release-standalone.sh:68`, preflight at `:54-56`, `:64`.
 - **Why**: `git tag -a "$TAG" -m "..." 2>/dev/null || true` swallows the
   failure when a local `$TAG` already exists at an older commit. The preflight
@@ -5499,7 +5352,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.19 TheGamesDB ESRB parsing mis-assigns four of six ratings, then seeds eight other boards (HIGH, S)
-
 - **Target**: `scraper/scrape_thegamesdb.py:864-868`.
 - **Why**: **re-verified by execution against TGDB's real rating strings.**
   The `elif` tests membership by substring with `'E'` ahead of `'T'`/`'M'`,
@@ -5539,7 +5391,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.20 The rating cross-map reads its own output, so derived boards drift two tiers low (MEDIUM, S)
-
 - **Target**: `services/game_metadata_service.py:55-63` (`cross_map_ratings`).
 - **Why**: **re-verified by execution.** The fill loop reads `result[src_key]`
   — the dict it is filling **in place** — so a slot filled earlier in the same
@@ -5566,7 +5417,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.21 A single-result ScreenScraper match bypasses the 80-point score floor (HIGH, S)
-
 - **Target**: `scraper/hybrid_scraper.py:1057`.
 - **Why**: `ss_data = _pick_best_fallback(...) if len(ss_results) > 1 else
   ss_results[0]` — when ScreenScraper returns exactly one result, no score is
@@ -5587,7 +5437,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.22 Full Re-scrape overwrites curated `region` and `save_type` with derived defaults (HIGH, S)
-
 - **Target**: `scraper/hybrid_scraper.py:613` and `:1592-1595`.
 - **Why**: in force mode `metadata` starts empty, so when no source and no
   filename tag supplies a region, `_normalize_region` writes `default_region`
@@ -5611,7 +5460,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.23 `download_image` swallows a finalize failure and commits a possibly-broken filename (HIGH, S)
-
 - **Target**: `scraper/base_scraper.py:387-388`; the correct twin is
   `metadata_merger.py:149-160`.
 - **Why**: `docs/specs/scrapers.md` §9 states the contract in so many words:
@@ -5635,7 +5483,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.24 `FIELD_SOURCES` has zero readers while the spec calls it canonical (HIGH, M)
-
 - **Target**: `scraper/hybrid_scraper.py:240`; `docs/specs/scrapers.md` §4 and
   §13 step 3.
 - **Why**: a project-wide search (tests excluded) returns the definition and
@@ -5670,7 +5517,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.25 Two ScreenScraper zombies, one returning a credential-bearing URL (HIGH, S)
-
 - **Target**: `scraper/scrape_screenscraper.py:950` (`fetch_system_media`) and
   `:741` (`download_media`).
 - **Why**: both have zero callers tree-wide, and the tree **lies about them**.
@@ -5699,7 +5545,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.26 Xbox bypasses the sanctioned HTTP layer at seven call sites (HIGH, M)
-
 - **Target**: `scraper/scrape_xbox.py:94, 120, 146, 175, 361, 404, 472`.
 - **Why**: `docs/specs/scrapers.md` §10 calls `base_scraper` *"the only
   sanctioned HTTP layer for the scraper subsystem"* and §14 repeats *"Every
@@ -5724,7 +5569,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.27 IGDB loses an entire apply on any unexpanded reference, at four sites (MEDIUM, S)
-
 - **Target**: `scraper/scrape_igdb.py:513, 580, 589, 598`; the guarded sibling
   is `:486-489`.
 - **Why**: the module hardens **one** unexpanded-reference shape and leaves
@@ -5749,7 +5593,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.28 ScreenScraper loses a whole record when the API returns an explicit null (MEDIUM, S)
-
 - **Target**: `scraper/scrape_screenscraper.py:560, 564, 598, 602, 619, 708,
   724, 731`.
 - **Why**: `jeu.get("developpeur", {})` followed by `.get("text", "")` — the
@@ -5771,7 +5614,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.29 Two diverged copies of "derive modes from player count", neither canonical (MEDIUM, S)
-
 - **Target**: `scraper/scrape_thegamesdb.py:958`, `scraper/scrape_esde.py:483`,
   `scraper/metadata_merger.py:295`; canonical set in
   `services/i18n_labels.py:51-54`; `services/normalization.py:139-158`.
@@ -5808,7 +5650,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.30 The CLZ import feature is entirely dead from the browser (CRITICAL, S)
-
 - **Target**: `templates/game_imports.html:523`; routes registered in
   `routes/clz_import.py:248` and `:560`.
 - **Why**: **re-verified.** The template posts to
@@ -5843,7 +5684,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.31 Every cover image on the list-detail page 404s (CRITICAL, S)
-
 - **Target**: `templates/list_detail.html:53`, and the missing join at
   `:60`; query at `routes/collections.py:104`.
 - **Why**: `<img src="{{ game.boxart or ... }}">` — `game.boxart` is the bare
@@ -5870,7 +5710,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.32 Two semgrep waivers rest on anchors that do not say what the waiver claims (HIGH, M)
-
 - **Target**: `.semgrep.yml:152-154` and `:165-167`; `.semgrep-excludes.txt`.
 - **Why**: **re-verified by reading both cited anchors.**
   (a) The `var-in-script-tag` waiver justifies itself on *"templates/base.html
@@ -5907,7 +5746,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.33 Four unescaped attribute interpolations inside `innerHTML`, where four siblings are escaped (HIGH, S)
-
 - **Target**: `templates/tags.html:560`, `templates/list_detail.html:409`,
   `templates/compare_games.html:605`, `templates/systems.html:807`. Escaped
   siblings for reference: `wishlist.html:611` (`escapeAttr`),
@@ -5935,7 +5773,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.34 Five Jinja-in-JS-in-attribute sites break on an apostrophe and admit arbitrary JS (HIGH, S)
-
 - **Target**: `templates/list_detail.html:63`, `templates/game_detail.html:406`,
   `templates/systems.html:92`, `templates/_settings_tabs/account.html:317`,
   `templates/_settings_tabs/library.html:202`.
@@ -5964,7 +5801,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.35 `settings-page.js` is shadowed by an inline script, and the surviving copy lost its allowlist (HIGH, M)
-
 - **Target**: `static/js/settings-page.js` (nine functions), the inline block
   at `templates/settings.html:1128` onward; the guard at
   `settings-page.js:64` vs `settings.html:1216`.
@@ -5999,7 +5835,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.36 Two non-literal `t()` calls void an entire UI surface's localisation (HIGH, S)
-
 - **Target**: `static/js/main.js:1631` and `:1633`.
 - **Why**: `docs/specs/i18n.md` §6 names this a contract violation in those
   words: *"Non-literal `t()` calls (`t(someVar)`) cannot be statically
@@ -6026,7 +5861,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.37 A whole themed-icon key category is unreachable in every theme (HIGH, S)
-
 - **Target**: `static/js/toast-controller.js:1204, 1268, 1016, 1518`;
   `getThemedIcon` at `:159`; contract `docs/specs/themes.md` §7.
 - **Why**: `getThemedIcon(type, 'paused')` passes the state as the **second**
@@ -6052,7 +5886,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.38 The saved theme is write-only (HIGH, S)
-
 - **Target**: `static/js/theme.js:219`; `templates/base.html:15-16`.
 - **Why**: `API.post('/api/settings', { theme })` persists the choice, and
   **nothing reads it back**. `base.html`'s FOUC block is the only place the
@@ -6090,7 +5923,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.39 Two dead JS feature blocks, one already on the roadmap (MEDIUM, S)
-
 - **Target**: `static/js/main.js:350-396` (`performGlobalSearch` + four
   helpers) and `:1220-1294` (`searchGame` + `displayScraperResults`).
 - **Why**: the first calls `/api/search`, which does not exist (only
@@ -6115,7 +5947,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.40 `zombie updateGameCardInPage`, promised by the changelog (MEDIUM, S)
-
 - **Target**: `static/js/game-modals.js:1111` and its `window` export at
   `:2148`; claim at `data/changelog.yaml:8401`.
 - **Why**: 90 lines, zero callers — `GameEditModal.save()` uses
@@ -6134,7 +5965,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.41 The `SecretRedactor` attached to every category log file never runs (CRITICAL, S)
-
 - **Target**: `log_manager.py:209` (`self.file_handler.emit(record)`); filter
   attached at `:162-163`; the false docstring at `:270-276`.
 - **Why**: `logging.Handler` runs filters in `handle()`, not `emit()` —
@@ -6166,7 +5996,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.42 A failed settings read returns DEFAULTS, and the next save overwrites the user's file (HIGH, S)
-
 - **Target**: `services/settings_manager.py:218-228`.
 - **Why**: `load_settings()` builds `copy.deepcopy(DEFAULT_SETTINGS)` and,
   when the `json.load` or the `open` raises, falls out of the `try` and
@@ -6191,7 +6020,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.43 Bulk-scrape swap/demote leaves two worker threads running on the SUCCESS path (HIGH, M)
-
 - **Target**: `services/jobs/bulk_scrape.py:1003`, `:404`, `:436`, `:515`.
 - **Why**: `swap_with_running` re-inserts the old job at `self._queue[0]`, sets
   `cancelled = True`, then joins. The old worker breaks out and, **before
@@ -6215,7 +6043,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.44 Migration 006's token ingest has been dead on every default install (HIGH, M)
-
 - **Target**: `services/migrations/scripts/006_per_user_platform_tokens.py:44`
   (`_data_dir`), `:100` (`os.remove`).
 - **Why**: `_data_dir()` derives the legacy-token directory from the
@@ -6242,7 +6069,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.45 `@handle_api_errors` swallows `HTTPException`, so client 4xx become 500 (HIGH, S)
-
 - **Target**: `services/api_helpers.py:37`; contract at
   `docs/specs/api-contracts.md` §4.
 - **Why**: the decorator catches `Exception`, and
@@ -6267,7 +6093,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.46 The Engine naming row is rejected by its own validator, discarding three sibling settings (CRITICAL, S)
-
 - **Target**: `services/settings_validators.py:34`
   (`_ALLOWED_NAMING_SYSTEM_TYPES`); UI row at `templates/settings.html:1651`;
   `services/game_utils.py:86-87`.
@@ -6292,7 +6117,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.47 `image_types` reaches `os.path.join` unfiltered and can rewrite files outside the media root (HIGH, S)
-
 - **Target**: `routes/maintenance.py:256`; consumer
   `services/jobs/image_resize.py:181`.
 - **Why**: `data.get('image_types', [...])` is passed straight to
@@ -6313,7 +6137,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.48 Two ROM-rename endpoints have no root jail, and the third's is inert (HIGH, S)
-
 - **Target**: `routes/reports.py:711` and `:873`;
   `routes/games_media.py:90-103` (the guarded copy) and `:95` (why it is
   inert).
@@ -6335,7 +6158,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.49 `ROMToolsConfig.from_dict` has no callers, so six live settings controls reach nothing (HIGH, M)
-
 - **Target**: `routes/tools.py:454, 484, 511, 543, 580`;
   `scraper/rom_tools.py:186`; UI at `templates/rom_tools_settings.html`.
 - **Why**: every construction is a bare `ROMToolsConfig()`, and `from_dict` has
@@ -6361,7 +6183,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.50 The AI prompt interpolates the current DB value unsanitised (HIGH, S)
-
 - **Target**: `scraper/scrape_ai.py:654`; the sanitiser at `:406` is applied
   only at `:454-455`.
 - **Why**: `_sanitize_prompt_input` was written for exactly this (OWASP LLM01,
@@ -6381,7 +6202,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.51 Two unguarded ROM-tree walks, and the symlink guard sits on dead code (HIGH, M)
-
 - **Target**: `scraper/rom_tools.py:804` and `:1339-1340`;
   `routes/tools.py:606-608` and `:767-768`; contract at
   `docs/specs/image-pipeline.md:399-403`.
@@ -6407,7 +6227,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.52 A `None` hash poisons the dedup list and kills the rest of the scrape's dedup (HIGH, S)
-
 - **Target**: `scraper/image_dedup.py:104`; the guarded sibling is `:63-65`.
 - **Why**: `compute_dhash` returns `None` for an unreadable, corrupt or
   decompression-bomb image (`:51`), and this call site does not check —
@@ -6428,7 +6247,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.53 Emulator launch args are editor-writable with no validator, reaching `Popen` argv (HIGH, S)
-
 - **Target**: `services/launch_resolver.py:203`, `:223`; write path
   `routes/games.py:593`; UI field `templates/_modals/edit_modal.html:419`.
 - **Why**: **re-verified — no validator exists anywhere in the tree.**
@@ -6455,7 +6273,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.54 Three documented launch template variables cannot work, and a bad quote 500s forever (HIGH, S)
-
 - **Target**: `services/launch_resolver.py:216-223`; header at `:13-14`;
   caller `routes/launch.py:88`.
 - **Why**: two defects in the same block.
@@ -6484,7 +6301,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.55 `ProcessRegistry.gc()` has never run in production (HIGH, S)
-
 - **Target**: `services/launcher/registry.py:70`; module docstring `:7-8`;
   `roadmap.md:5183`.
 - **Why**: the docstring promises *"Entries linger `post_exit_ttl_s` seconds
@@ -6508,7 +6324,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.56 A verify worker dies on a deleted file and leaves its task `running` forever (HIGH, S)
-
 - **Target**: `routes/tools.py:828` (outside the `try` at `:832`); reaper at
   `:55`.
 - **Why**: `os.path.getsize(file_path)` sits outside the `try` inside the
@@ -6527,7 +6342,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.57 Two zombie endpoints the changelog promises by name (HIGH, S)
-
 - **Target**: `routes/games_search.py:190` (`/api/games/compare`);
   `services/achievement_linking.py:183` (`find_linked_game_for_psn`) with its
   re-export at `routes/trophies.py:245-257`.
@@ -6548,7 +6362,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.58 An empty PSN response blanks stored trophy counts (MEDIUM, S)
-
 - **Target**: `routes/trophies.py:1304-1316`, write at `:1331-1367`; same shape
   in the full sync at `:1188-1204`.
 - **Why**: when PSN omits the `earned_trophies` / `defined_trophies` block — a
@@ -6568,7 +6381,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.59 Job-resume and commit-batching defects the earlier fixes did not reach (MEDIUM, M)
-
 - **Target**: `services/jobs/ra_refresh.py:350-356` and `:294`;
   `services/jobs/psn_refresh.py:423`; `services/jobs/ra_sync.py:139`;
   `services/jobs/platform_sync.py:336`; `services/jobs/webp_migrate.py:349-356`
@@ -6608,7 +6420,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.60 Two landed migrations drop rows on a state their siblings raise on (MEDIUM, M)
-
 - **Target**: `services/migrations/scripts/008_collector_trophies_user_id.py:69-96`;
   `009_achievement_tables_user_id.py:90` and `:130`;
   `011_user_game_views_cascade_fk.py:83-96`.
@@ -6639,7 +6450,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.61 Analytics renders canonical labels untranslated, and the obvious fix is wrong (MEDIUM, M)
-
 - **Target**: `services/analytics.py:99, 411, 422, 433`;
   `templates/analytics.html:1612, 2224, 2250, 2276`; cache at
   `analytics.py:649-659`.
@@ -6662,7 +6472,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.62 The msgid `"Action"` has two homes and is already mistranslated in shipped locales (MEDIUM, S)
-
 - **Target**: `services/i18n_labels.py:32`;
   `templates/archive_scanner.html:752`, `multi_disc_organizer.html:243`,
   `reports.html:364` and `:445`; evidence at `messages.pot:957`.
@@ -6684,7 +6493,6 @@ orchestrator, several by execution rather than reading.
 ---
 
 #### Pass 59.63 Assorted MEDIUM findings by subsystem (MEDIUM, L)
-
 Grouped so none is lost; each is small and independent. Fix opportunistically
 when already in the file.
 
@@ -6810,7 +6618,6 @@ when already in the file.
 ---
 
 #### Pass 59.64 MISSING DOCUMENT — the launcher subsystem has no spec, and three modules cite one (HIGH, M)
-
 - **Target**: a new `docs/specs/launcher.md`. Citing modules:
   `services/launcher/__init__.py` (*"remote launcher backend is spec §F5"*),
   `services/launcher/registry.py` (*"see spec §Future work F1"*),
@@ -6883,7 +6690,6 @@ when already in the file.
 ---
 
 #### Pass 59.65 MISSING DOCUMENTS — no project design document, no decision records (MEDIUM, M)
-
 - **Target**: `docs/design.md`; `docs/decisions/`.
 - **Why**: both absent. Observed consequence rather than asserted principle:
   `invariant_check` over the CI workflows returned nothing, and its documented
@@ -6906,7 +6712,6 @@ when already in the file.
 ---
 
 #### Pass 59.66 MISSING DOCUMENTS — subsystems shipping without a spec (MEDIUM, L)
-
 - **Target**: `docs/specs/` covers api-contracts, auth, i18n, image-pipeline,
   jobs, migrations, scrapers, settings, themes. Uncovered: **launcher**
   (filed separately as 59.64), **rom-tools**, **trophies/achievements**,
@@ -6927,7 +6732,6 @@ when already in the file.
 ---
 
 #### Pass 59.67 Verified false statements in shipped contract documents (HIGH, M)
-
 Each checked against the code it describes. `auth.md` and `api-contracts.md`
 were corrected in `2836bc3` and are not repeated here.
 
@@ -6986,7 +6790,6 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.68 Coverage gap — the deterministic document checks never ran (LOW, S)
-
 - **Target**: `docs/specs/`.
 - **Why**: this audit reviewed code against documents and corrected documents
   a lane proved false. It never ran the mechanical checks — links, anchors,
@@ -6999,7 +6802,6 @@ were corrected in `2836bc3` and are not repeated here.
   finding about the code.
 
 #### Pass 59.69 The first-run setup gate 302s `/api/*`, against the JSON invariant (HIGH, S)
-
 - **Target**: `app.py::check_first_time_setup`; contract at
   `docs/specs/api-contracts.md` §1 and its numbered invariant 1 — *"Every
   `/api/*` route returns JSON, never HTML or a redirect."*
@@ -7034,7 +6836,6 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.70 The local CI gate cannot catch a test that depends on gitignored state (MEDIUM, S)
-
 - **Target**: `scripts/ci_local.sh`.
 - **Why**: the gate runs pytest against the working tree, which carries the
   developer's gitignored `config.py` and `data/settings.json`. A test whose
@@ -7054,7 +6855,6 @@ were corrected in `2836bc3` and are not repeated here.
   that took main red.
 
 #### Pass 59.71 ACTION REQUIRED — rotate the PSN NPSSO token that standalone builds shipped (HIGH, S)
-
 - **Target**: the live PSN NPSSO credential (`docs/psn-npsso.env`, gitignored).
   Not a code task: `a5e0939` already closed the leak path.
 - **Why**: `retrodb.spec` carried `('docs', 'docs')`, and PyInstaller's
@@ -7083,7 +6883,6 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.72 A container-relative media value still resolves against the bundle in a frozen build (MEDIUM, S)
-
 - **Target**: `services/media_cleanup.py::_resolve_media_path`;
   `services/game_media_service.py::resolve_media_path`.
 - **Why**: Pass 59.2 fixed the dominant case — a bare filename now validates
@@ -7106,7 +6905,6 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.73 Every Flask-Limiter per-route limit is inert (HIGH, S)
-
 - **Target**: `app.py::_rate_limit`.
 - **Why**: the helper calls `limiter.limit(spec)(view)` and discards the
   wrapper it returns. Flask-Limiter registers the limit under a name the
@@ -7129,7 +6927,6 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.74 Login never returns the user to the page they asked for (MEDIUM, S)
-
 - **Target**: `services/auth.py::_deny_unauthenticated`; `routes/auth.py::api_login`.
 - **Why**: the guard redirects with `next=request.url`, an absolute URL.
   `api_login`'s open-redirect check rejects any value with a scheme or netloc,
@@ -7146,7 +6943,6 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.75 Bulk-scrape status overwrites the envelope's `success` flag with a count (MEDIUM, S)
-
 - **Target**: `routes/bulk_scrape.py::api_bulk_scrape_job_status`;
   `services/jobs/bulk_scrape.py` `get_status`.
 - **Why**: the route returns `success(**status)`. `status` carries
@@ -7164,7 +6960,6 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.76 Deleting a user leaves or blocks on rows in user-owned tables (MEDIUM, M)
-
 - **Target**: `routes/auth.py::api_delete_user`.
 - **Why**: it deletes from `user_settings` and `users` only. Tables with a
   `REFERENCES users(id)` foreign key and no cascade make the `users` delete
@@ -7182,7 +6977,6 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.77 The force-password-change hook answers `/api/*` with an HTML page and 200 (MEDIUM, S)
-
 - **Target**: `app.py::check_force_password_change`; contract at
   `docs/specs/api-contracts.md` invariant 1.
 - **Why**: for a user flagged `force_password_change`, the hook returns
@@ -7200,7 +6994,6 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.78 `trophies.js` is loaded by no page, and its calls name routes that do not exist (LOW, S)
-
 - **Target**: `static/js/trophies.js`; `build_js.py`'s page-specific list;
   `tests/test_pass29_frontend.py`; `docs/RETRODB_DESIGN_STANDARDS.md`.
 - **Why**: no template has a `<script>` for it, and git history shows none
@@ -7217,7 +7010,6 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.79 The site-wide `theme` setting has no reader and no writer (LOW, S)
-
 - **Target**: `settings_manager.py` defaults; `services/settings_validators.py`
   (`'theme'` validator).
 - **Why**: Pass 59.38 moved the saved theme to `user_settings.theme_preference`.
@@ -7232,7 +7024,6 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.80 Small browser defects the Pass 59.30-59.40 walk found (LOW, S)
-
 - **Target**: as listed.
 - **Why**: each was seen in the 2026-09-25 browser walk or its sweep, and
   each predates that group.
@@ -7255,7 +7046,6 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.81 MISSING DOCUMENT — best-core ranking, per-game override and core downloader (HIGH, M)
-
 - **Target**: a new RetroDB-only spec under `docs/specs/`, sibling to Pass
   59.64's `launcher.md`.
 - **Why**: RetroArch player mode (Pass 59.64, RETR-0004) must launch the
