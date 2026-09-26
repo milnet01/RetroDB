@@ -6736,6 +6736,22 @@ when already in the file.
   and the user can change them. So the launch contract must carry per-launch
   settings from RetroDB to the player; the mechanism is being confirmed with
   the fork session.
+- **Launch mechanism** (verified 2026-09-26 by the fork session in
+  `local/fixes-2026-09` source; for the spec to cite): RetroDB passes
+  per-launch settings with `--appendconfig "<system.cfg>|<game.cfg>"`, a
+  `|`-separated list applied in order over `--config`. Core options: the
+  appended cfg sets `core_options_path` to a per-game `.opt` AND
+  `game_specific_options = "false"` AND `global_core_options = "false"`;
+  otherwise a `.opt` in the player's config dir wins. RetroArch writes
+  changed core options back to `core_options_path`. The player's config dir
+  must hold no RetroArch override files (`config/<core>/<game>.cfg`).
+  **Unverified**: whether appended values are saved into the base config on
+  exit; the base cfg sets `config_save_on_exit = "false"` either way.
+- **Decision** (2026-09-26, user): changes made in the player's own menu
+  during play are KEPT as that game's settings and win over RetroDB's
+  automatic ones from then on. RetroDB marks the game "customised" and
+  offers "Reset to recommended". The slim build is a later step and does not
+  change the command-line contract; step 1 is the fork's normal build.
 - **Status**: planned (2026-09-01); drafting agreed 2026-09-26. Lanes:
   launch, docs.
 - **Source**: review-code launch lane 2026-09-01; absence confirmed against
