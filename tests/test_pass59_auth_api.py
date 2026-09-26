@@ -139,3 +139,19 @@ def test_malformed_json_body_is_a_400_envelope(monkeypatch, setup_complete):
     assert resp.status_code == 400
     body = resp.get_json()
     assert body is not None and body['success'] is False
+
+
+# ---------------------------------------------------------------------------
+# 59.75
+# ---------------------------------------------------------------------------
+
+def test_bulk_scrape_status_keeps_the_envelope_success_flag(monkeypatch, setup_complete):
+    """A job with no successes yet answered `success: 0`, which every caller
+    reads as a failed request."""
+    import app as app_module
+    user = {'id': 1, 'username': 'admin', 'role': 'admin'}
+    monkeypatch.setattr('app.get_current_user', lambda: user)
+    monkeypatch.setattr('app.get_user_settings', lambda _uid: {})
+    body = app_module.app.test_client().get('/api/bulk-scrape-job/status').get_json()
+    assert body['success'] is True
+    assert body['success_count'] == 0

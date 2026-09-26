@@ -176,3 +176,56 @@ class TestDemoteJobOrdering:
             # remainder of the pytest session. Mirrors the swap test cleanup
             # at line 121.
             worker_can_exit.set()
+
+
+class TestOneWorkerAfterHandoff:
+    """Pass 59.43: the old worker's exit ran the queue hand-off, which popped
+    the job swap/demote had just re-queued and started it — then the handler
+    started the promoted job as well. Two workers, sharing one set of counters.
+
+    The stubs above return without the hand-off, which is how that stayed
+    hidden. This stub exits the way `_run_scrape` does."""
+
+    def _exiting_worker(self, alive):
+        def worker(job):
+            alive.add(threading.current_thread())
+            try:
+                while True:
+                    with job._lock:
+                        if job.cancelled:
+                            break
+                    threading.Event().wait(0.02)
+            finally:
+                alive.discard(threading.current_thread())
+            # Exactly the real worker's exit path.
+            finish = getattr(job, '_finish_worker', None)
+            (finish or job._start_next_queued)()
+        return worker
+
+    def _stop_all(self, job, alive):
+        with job._lock:
+            job._queue.clear()
+            job.cancelled = True
+        for t in list(alive):
+            t.join(timeout=2.0)
+
+    @pytest.mark.parametrize('action', ['swap', 'demote'])
+    def test_exactly_one_worker_runs(self, job_with_real_thread, action):
+        alive = set()
+        with patch.object(BulkScrapeJob, '_run_scrape', self._exiting_worker(alive)):
+            job = job_with_real_thread()
+            job.start([100], system_id=1)
+            job.start([200], system_id=2)
+            promoted = job._queue[0]['job_id']
+            try:
+                if action == 'swap':
+                    assert job.swap_with_running(promoted)['success']
+                else:
+                    assert job.demote_running()['success']
+                threading.Event().wait(0.3)
+                assert len(alive) == 1, f"{len(alive)} workers running"
+                # The promoted job runs; the displaced one waits in the queue.
+                assert job.game_ids == [200]
+                assert [q['game_ids'] for q in job._queue] == [[100]]
+            finally:
+                self._stop_all(job, alive)

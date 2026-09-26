@@ -301,7 +301,7 @@ const BulkScrapeController = {
         el.currentGame.textContent = data.current_game || t('Processing...');
         el.progress.textContent = formatNumber(data.processing || 1);
         el.total.textContent = formatNumber(data.total || 0);
-        el.successLive.textContent = formatNumber(data.success || 0);
+        el.successLive.textContent = formatNumber(data.success_count || 0);
         el.failedLive.textContent = formatNumber(data.failed || 0);
         el.skippedLive.textContent = formatNumber(data.skipped || 0);
 
@@ -348,7 +348,7 @@ const BulkScrapeController = {
             el.currentGame.textContent = t('Done');
         }
 
-        el.successFinal.textContent = formatNumber(data.success || 0);
+        el.successFinal.textContent = formatNumber(data.success_count || 0);
         el.failedFinal.textContent = formatNumber(data.failed || 0);
         el.skippedFinal.textContent = formatNumber(data.skipped || 0);
 

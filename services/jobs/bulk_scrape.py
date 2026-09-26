@@ -56,6 +56,9 @@ class BulkScrapeJob:
         # is active. Acquired in start(), released in _start_next_queued()
         # when the queue empties.
         self._singleton_fd = None
+        # Pass 59.43 — the worker swap/demote is replacing. Its exit must not
+        # run the queue hand-off: the handler starts the promoted job itself.
+        self._handoff_thread = None
         self.reset()
 
     def reset(self):
@@ -154,7 +157,10 @@ class BulkScrapeJob:
                 'total': total,
                 'percent': percent,
                 'current_game': self.current_game_title,
-                'success': self.success_count,
+                # Not 'success': the route spreads this dict into the response
+                # envelope, and a count there overwrote its success flag
+                # (Pass 59.75).
+                'success_count': self.success_count,
                 'failed': self.failed_count,
                 'skipped': self.skipped_count,
                 'return_url': self.return_url,
@@ -393,6 +399,7 @@ class BulkScrapeJob:
             self.cancelled = True
             self.paused = False
             old_thread = self._thread
+            self._handoff_thread = old_thread
 
             logger.info(f"Swapping running job {self.job_id} with queued job {job_id}")
 
@@ -474,6 +481,7 @@ class BulkScrapeJob:
             self.cancelled = True
             self.paused = False
             old_thread = self._thread
+            self._handoff_thread = old_thread
 
             logger.info(f"Demoting running job {self.job_id}, promoting {new_running_job['job_id']}")
 
@@ -668,6 +676,18 @@ class BulkScrapeJob:
         self._thread = threading.Thread(target=self._run_scrape, daemon=True)
         self._thread.start()
         return True
+
+    def _finish_worker(self):
+        """Run the queue hand-off as a worker exits — unless swap/demote is
+        replacing this worker, in which case the handler starts the promoted
+        job and a hand-off here would start a second worker (Pass 59.43)."""
+        with self._lock:
+            replaced = (self._handoff_thread is not None
+                        and self._handoff_thread is threading.current_thread())
+            if replaced:
+                self._handoff_thread = None
+        if not replaced:
+            self._start_next_queued()
 
     def _run_scrape(self):
         """Background thread that runs the actual scraping"""
@@ -1000,7 +1020,7 @@ class BulkScrapeJob:
                 logger.debug(f"Cache invalidation after bulk scrape failed: {cache_err}")
 
             # Start next queued job if any
-            self._start_next_queued()
+            self._finish_worker()
 
         except Exception as e:
             logger.error(f"Bulk scrape error: {e}")
@@ -1017,4 +1037,4 @@ class BulkScrapeJob:
                 self.error_message = str(e)
             persist_job_complete(persist_id, status='failed', error=str(e))
             # Even on error, try to start the next queued job
-            self._start_next_queued()
+            self._finish_worker()

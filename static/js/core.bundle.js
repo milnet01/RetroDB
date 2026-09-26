@@ -1739,7 +1739,7 @@ const UnifiedToastController = {
                 } else if (data.cancelled) {
                     showNotification(t('{job} cancelled', {job: typeConfig.name}), 'warning');
                 } else {
-                    const total = data.success || data.processed || 0;
+                    const total = this.successCount(data) || data.processed || 0;
                     showNotification(t('{job} completed ({n} processed)', {job: typeConfig.name, n: total}), 'success');
                 }
             }
@@ -2095,7 +2095,7 @@ const UnifiedToastController = {
         if (type === 'bulk-scrape') {
             statsHTML = `
                 <div class="toast-stats">
-                    <span class="stat success">${si.s} <span class="stat-value" data-stat="success">${fmt(data.success)}</span></span>
+                    <span class="stat success">${si.s} <span class="stat-value" data-stat="success">${fmt(this.successCount(data))}</span></span>
                     <span class="stat failed">${si.f} <span class="stat-value" data-stat="failed">${fmt(data.failed)}</span></span>
                     <span class="stat skipped">${si.k} <span class="stat-value" data-stat="skipped">${fmt(data.skipped)}</span></span>
                 </div>
@@ -2283,7 +2283,7 @@ const UnifiedToastController = {
 
         if (type === 'bulk-scrape' || type === 'ra-sync' || type === 'ra-refresh' || type === 'psn-refresh') {
             const successEl = toast.querySelector('[data-stat="success"]');
-            if (successEl) successEl.textContent = this.fmtNum(data.success);
+            if (successEl) successEl.textContent = this.fmtNum(this.successCount(data));
         }
 
         if (type === 'bulk-scrape' || type === 'ra-sync' || type === 'psn-refresh') {
@@ -2639,6 +2639,16 @@ const UnifiedToastController = {
      */
     fmtNum(n) {
         return typeof formatNumber === 'function' ? formatNumber(n || 0) : String(n || 0);
+    },
+
+    /**
+     * A job's success count. Bulk scrape reports it as `success_count`, because
+     * its status shares the response envelope's `success` flag (Pass 59.75);
+     * the other jobs still report it as a numeric `success`.
+     */
+    successCount(data) {
+        if (typeof data.success_count === 'number') return data.success_count;
+        return typeof data.success === 'number' ? data.success : 0;
     },
 
     /**
