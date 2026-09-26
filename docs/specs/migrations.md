@@ -461,7 +461,7 @@ Reference: roadmap Pass 44.
    ```
 10. **Cross-platform check.** SQLite is uniform across platforms; the gotcha
     is path separators and file permissions in helper code. If your migration
-    reads sibling files (e.g. migration 006 ingests `data/psn_tokens.json`),
+    reads sibling files (e.g. migration 015 ingests `data/psn_tokens.json`),
     use `os.path.join` and tolerate `OSError` on Windows.
 
 ---
@@ -521,7 +521,7 @@ your migration — not in the runner.
 | 003 | `003_normalize_pegi.py` | Promote bare PEGI numbers (`12`) to `PEGI 12`. | Pure data migration. |
 | 004 | `004_games_updated_at.py` | Add `games.updated_at` + INSERT/UPDATE triggers. | Pass 21 ETag scheme keys off `MAX(updated_at)`; triggers free callers from stamping it manually. |
 | 005 | `005_collections_owner_id.py` | Add `owner_id` to `tags` / `lists` / `wishlist`; backfill to first admin. | Pass 27.1 — multi-user data ownership round 1. Uses `_admin_user_id` helper. |
-| 006 | `006_per_user_platform_tokens.py` | Create `user_platform_tokens`; ingest legacy `psn_tokens.json` / `xbox_tokens.json`; add `user_id` to `psn_sync_status`. | Pass 27.2. Deletes ingested files. |
+| 006 | `006_per_user_platform_tokens.py` | Create `user_platform_tokens`; ingest legacy `psn_tokens.json` / `xbox_tokens.json`; add `user_id` to `psn_sync_status`. | Pass 27.2. Its ingest never ran on the shipped layout, because it looked beside the DB file rather than in `data/`; 015 does it (Pass 59.44). |
 | 007 | `007_psn_user_id.py` | Table-rebuild `psn_games` / `psn_trophies` to add `user_id` + composite UNIQUE keys. | Pass 31.1. First rebuild migration; uses `defer_foreign_keys = ON` (Pass 41.2 lesson). |
 | 008 | `008_collector_trophies_user_id.py` | Table-rebuild `collector_trophies` with composite PK `(id, user_id)`. | Pass 31.3. Per-user Collector Rank. |
 | 009 | `009_achievement_tables_user_id.py` | Add `user_id` to `game_achievement_progress`, `steam_achievements`, `xbox_achievements`. | Pass 31.2. Mix of table-rebuild (one table) + additive ALTER (two tables). |
@@ -530,6 +530,7 @@ your migration — not in the runner.
 | 012 | `012_emulators.py` | Create `emulators` + `system_emulators`; add `emulator_override_id` / `launch_args_override` to `games`. | Pass 44. Reference for the "new tables + additive columns" shape (§10), with two pre-Pass-42.2 caveats: it carries an inline `_add_column_if_missing` instead of importing the strict helper, and it calls `conn.commit()` mid-`apply()`. Don't copy either pattern into new migrations. Seed data loads separately from `data/emulator_seeds.json`. |
 | 013 | `013_fresh_install_schema_backfill.py` | Backfill additive columns a fresh install's baseline `CREATE TABLE` may lag behind. | Pass 45.x. Idempotent `PRAGMA table_info` guard per column. |
 | 014 | `014_games_china_rating.py` | Add `games.china_rating` (9th rating board — China CADPA age reminder). | Pass 51.2. Plain additive ALTER; population via the normal cross-map / AI-fill path (§10). |
+| 015 | `015_ingest_legacy_platform_tokens.py` | Ingest legacy `psn_tokens.json` / `xbox_tokens.json` from the DB's directory or its sibling `data/`. | Pass 59.44. `INSERT OR IGNORE`, so a token saved since wins. Renames each ingested file to `*.migrated-015` rather than deleting it, so a rolled-back transaction loses nothing. |
 
 ---
 

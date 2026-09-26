@@ -69,6 +69,8 @@ EXCLUDE_FILES = {
     'data/rom_tools_config.json',
     'data/psn_tokens.json',
     'data/xbox_tokens.json',
+    'data/psn_tokens.json.migrated-015',
+    'data/xbox_tokens.json.migrated-015',
     'data/.secret_key',
     'data/retrodb.db',
     'docs/psn-npsso.env',
