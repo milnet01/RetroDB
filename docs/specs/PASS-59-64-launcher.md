@@ -1,6 +1,6 @@
 # PASS-59-64 — Launch contract: resolving, spawning and the bundled player
 
-**Status:** spec draft (2026-09-26).
+**Status:** accepted (2026-09-26).
 **Kind:** implement.
 **Source:** ROADMAP PASS-59-64 (review-code launch lane 2026-09-01; scope
 widened by user decisions 2026-09-26, relayed with the RetroArch fork session).
@@ -155,10 +155,13 @@ modal hides the field. Emulator rows (`routes/emulators.py`) and the
   the next nav-badge poll, whether or not anyone polled its status. Today
   only `status()` and `kill()` mark an entry exited, and `gc()` skips any
   entry never marked.
-- `routes/launch.py::api_launch_game` uses
-  `ProcessRegistry.find_running_by_game` through the launcher rather than
-  re-implementing it. `ProcessRegistry.remove` has no caller and is
-  deleted.
+- `routes/launch.py::api_launch_game` keeps finding a running session of the
+  game in `launcher.active()`, because that call also marks exits and runs
+  their hooks (§4.5). `ProcessRegistry.find_running_by_game` and
+  `ProcessRegistry.remove` have no caller and are deleted.
+- `LaunchContext` gains `is_player` and `content_path`, so the launcher knows
+  which sessions get the post-exit hook and what the override files are
+  named after.
 - `'remote'` is removed from `_ALLOWED_LAUNCHER_BACKENDS`. `get_launcher`
   loses its `remote` branch and treats any stored backend other than
   `'local'` as `'local'`, logging a warning. `get_setting` does not
@@ -197,14 +200,21 @@ because the resolver's RetroArch path cannot serve it:
 - **argv** is built by an `is_player` branch in `resolve_launch_context`,
   not from `args_template`, in the shape below.
 
+**Who writes what.** Migration 016 inserts the player's `emulators` row,
+with no `system_emulators` rows. PASS-59-81's core installer owns the rest:
+when it installs a core for a system, it writes that system's player
+`system_emulators` row with `retroarch_core`, makes it the default, and
+writes `settings/system/<folder>.cfg`.
+
 When the player row becomes `is_default = 1` in `system_emulators` for a
 system, the same write sets `is_default = 0` on that system's other rows.
 The resolver takes the lowest-id default row, so the RetroArch row would
 otherwise keep winning. The user's RetroArch row is otherwise untouched: no
 profile and no `--appendconfig`.
 
-**Base cfg keys** RetroDB writes before every player launch, overwriting
-whatever the player saved there:
+**Base cfg keys** RetroDB sets before every player launch. It rewrites only
+these keys and keeps every other line, so global menu choices the player
+saved there survive:
 
 ```
 config_save_on_exit       = "false"
@@ -232,8 +242,8 @@ directory beats `core_options_path`.
 These keys would work in an appended layer too. `config_load_file` merges
 every `--appendconfig` file into one config before it reads any setting, so
 an appended key behaves exactly like a base-cfg key (fork session,
-`configuration.c`). They stay in the base cfg because RetroDB rewrites it
-before every launch.
+`configuration.c`). They stay in the base cfg because RetroDB resets them
+there before every launch.
 
 On macOS and Windows the base cfg also sets `network_cmd_enable = "true"`
 (§4.6). RetroDB never sets it anywhere the user's own RetroArch reads:
@@ -289,7 +299,14 @@ contain `|`.
   `settings/game/<game_id>.cfg`, core first, then folder, then game (§3.16),
   and deletes them. A missing file means nothing to absorb. Verified by the fork session: the file holds only the
   user's changes relative to the settings loaded for that launch, never
-  RetroDB's own values echoed back.
+  RetroDB's own values echoed back. The merge drops every key in §4.4's
+  base block and every `network_cmd_*` key, so a menu save cannot re-enable
+  what RetroDB requires off.
+- **One player session at a time** (author's choice). D is shared, so a
+  second session's core or folder override would otherwise be absorbed into
+  whichever game exited first. `api_launch_game` refuses a player launch
+  with 409 while another player session is running, whatever
+  `launch_concurrent_same_game` says.
 - **When the hook runs.** The post-exit hook runs once per player session,
   synchronously, inside the call that first marks the registry entry
   exited: `status()`, `kill()` or `active()` (§4.3). `api_launch_game`
@@ -339,10 +356,11 @@ Stopping a player, as the fork session read its source:
 - On macOS and Windows the port is chosen free per launch and written into
   a last `--appendconfig` layer, `<profile>/run/<token>.cfg`, which is
   deleted after the session. It comes after the game cfg, so a network key
-  absorbed into a game's settings cannot override it. Two players must not share one port. RetroArch reads
+  absorbed into a game's settings cannot override it. RetroArch reads
   an appended `network_cmd_port` like a base-cfg key and builds the command
   interface after loading settings (fork session, `input_driver.c`).
-- Every other emulator row keeps today's SIGTERM, grace, SIGKILL.
+- Every other emulator row keeps SIGTERM, grace, SIGKILL, with the same
+  at-most-once SIGTERM: `LocalLauncher.kill` applies it to every process.
 
 ## 5. Invariants
 
@@ -415,10 +433,12 @@ Stopping a player, as the fork session read its source:
 
 - **INV-9** — Before every player launch, the base cfg holds every key in
   §4.4's base block with its stated value, whatever it held before.
+  Every other line is kept.
   *Test:* `tests/test_player_launch.py` — write a base cfg with
-  `config_save_on_exit = "true"`, resolve, and read it back as `"false"`.
-  *Breaks when:* RetroDB writes the base cfg once only, and the player's
-  menu "save configuration" turns a key back on.
+  `config_save_on_exit = "true"` and `video_driver = "vulkan"`, resolve, and
+  read back `"false"` and `"vulkan"`.
+  *Breaks when:* RetroDB writes the base cfg once only, so the player's menu
+  "save configuration" turns a key back on, or it rewrites the whole file.
 
 - **INV-10** — A player launch whose profile path contains `|` is refused
   with a `LaunchResolutionError`, never spawned.
@@ -432,18 +452,19 @@ Stopping a player, as the fork session read its source:
   change.
   *Test:* `tests/test_player_launch.py` — launch a stub player through
   `LocalLauncher` that writes an override holding
-  `video_shader_enable = "true"` and exits; call `active()`; assert the
-  key is in the game cfg and the override is gone. Launch it again writing
+  `video_shader_enable = "true"` and `confirm_quit = "true"` and exits; call
+  `active()`; assert the first key is in the game cfg, the second is not,
+  and the override is gone. Launch it again writing
   no file and assert the game cfg is unchanged.
   *Breaks when:* the hook is not called on exit, or it overwrites the game
-  cfg instead of merging.
+  cfg instead of merging, or merges a §4.4 base-block key.
 
 - **INV-12** — A customised game keeps its user-set keys when RetroDB
   regenerates its recommended settings. *Reset to recommended* removes them.
   *Test:* `tests/test_player_launch.py` — write a game's settings, change
-  one key's value in its `.cfg` as the player would, run the post-exit
-  hook, regenerate with a different recommendation, and assert the user
-  value survives. Reset, regenerate, and assert the recommended value.
+  one core option's value in its `.opt` as the player would, run the
+  post-exit hook, regenerate with a different recommendation, and assert
+  the user value survives. Reset, regenerate, and assert the recommended value.
   *Breaks when:* regeneration rewrites the whole game cfg.
 
 - **INV-13** — Launching the user's own RetroArch row writes nothing under
@@ -461,7 +482,7 @@ Stopping a player, as the fork session read its source:
   *Breaks when:* the constant is raised without a cap, or `stdout` is
   piped and never drained, which blocks the child on a full pipe.
 
-- **INV-15** — A player process receives SIGTERM at most once, however
+- **INV-15** — A launched process receives SIGTERM at most once, however
   many kill requests arrive.
   *Test:* `tests/test_launcher_local.py` — a stub child that ignores
   SIGTERM and appends a line to a file on each one it receives; start
@@ -478,6 +499,14 @@ Stopping a player, as the fork session read its source:
   user's RetroArch config directory is untouched.
   *Breaks when:* the key is set on the user's own RetroArch, or on Linux
   where nothing uses it.
+
+- **INV-17** — While one player session runs, a second player launch is
+  refused with 409 and nothing is spawned.
+  *Test:* `tests/test_player_launch.py` — launch a stub player for game A,
+  then POST a launch of game B on the player row; assert 409, and one
+  registry entry.
+  *Breaks when:* only `launch_concurrent_same_game` is consulted, which
+  allows a different game.
 
 ## 6. Failure modes
 
@@ -510,7 +539,7 @@ Stopping a player, as the fork session read its source:
 - `tests/test_launcher_local.py` — INV-15, with a stub child that ignores
   SIGTERM and counts the signals it receives.
 - `tests/test_player_launch.py` (new) — INV-8, INV-9, INV-10, INV-11, INV-12,
-  INV-13 and INV-16, with the profile
+  INV-13, INV-16 and INV-17, with the profile
   under `tmp_path` and a stub player binary. No real RetroArch runs in the
   suite.
 - INV-5's and INV-14's grep halves run as written above.
@@ -531,9 +560,9 @@ No test here launches the fork's real player; the player-side behaviour
   cheap. Carrying a dead variable is not.
 - **Put the must-be-false keys in the appended layer** instead of the base
   cfg. Rejected, although an appended key would work: `--appendconfig`
-  files merge before settings are read (§4.4). The base cfg is the one file
-  the player can save over, and RetroDB rewrites it every launch (INV-9),
-  so keeping the keys there leaves nothing for a menu save to undo.
+  files merge before settings are read (§4.4). RetroDB resets these keys in
+  the base cfg every launch (INV-9), and the §4.5 merge drops them from
+  absorbed overrides, so a menu save cannot undo them.
 - **Hand the player a temporary copy of the settings each launch.**
   Rejected: it discards in-game changes, and the user chose to keep them.
 - **Slim the player now** to hide the override menu. Deferred, not rejected
@@ -569,6 +598,7 @@ No test here launches the fork's real player; the player-side behaviour
 | INV-14 | grep in §5 plus `tests/test_launcher_local.py` |
 | INV-15 | `tests/test_launcher_local.py` (to add) |
 | INV-16 | `tests/test_player_launch.py` (to add) |
+| INV-17 | `tests/test_player_launch.py` (to add) |
 | §4.4 base keys behave as described in the player | **Partial:** INV-9 proves RetroDB writes them; that RetroArch honours them is checked only by the fork session reading its source |
 | §4.6 macOS and Windows `QUIT` shutdown | **nothing** — no macOS or Windows build here; marked unverified |
 
