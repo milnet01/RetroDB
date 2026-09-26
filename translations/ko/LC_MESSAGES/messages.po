@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-26 09:58+0200\n"
+"POT-Creation-Date: 2026-09-26 11:16+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -626,8 +626,8 @@ msgstr "ROM 경로가 설정되지 않았습니다. 설정 → 경로에서 설�
 msgid "Missing required parameters"
 msgstr "필수 매개변수가 누락되었습니다"
 
-#: routes/reports.py:600 routes/tools.py:449 routes/tools.py:506
-#: routes/tools.py:541
+#: routes/reports.py:600 routes/tools.py:468 routes/tools.py:525
+#: routes/tools.py:560
 msgid "Invalid path"
 msgstr "잘못된 경로입니다"
 
@@ -673,7 +673,7 @@ msgstr "생성된 파일 이름에 잘못된 문자가 포함되어 있습니다
 msgid "Invalid log file"
 msgstr "잘못된 로그 파일입니다"
 
-#: routes/scrape_logs.py:102 routes/tools.py:452
+#: routes/scrape_logs.py:102 routes/tools.py:471
 msgid "File not found"
 msgstr "파일을 찾을 수 없습니다"
 
@@ -757,7 +757,7 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "잘못된 %(field)s: %(result)s"
 
 #: routes/settings.py:533 routes/settings.py:594 routes/settings.py:647
-#: routes/tools.py:238
+#: routes/tools.py:257
 msgid "Failed to save settings"
 msgstr "설정 저장에 실패했습니다"
 
@@ -765,12 +765,12 @@ msgstr "설정 저장에 실패했습니다"
 msgid "Request body must be a JSON object"
 msgstr "요청 본문은 JSON 객체여야 합니다"
 
-#: routes/settings.py:573 routes/tools.py:230
+#: routes/settings.py:573 routes/tools.py:249
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "알 수 없는 설정 키: %(key)s"
 
-#: routes/settings.py:579 routes/tools.py:233
+#: routes/settings.py:579 routes/tools.py:252
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "'%(key)s'에 대한 잘못된 값: %(reason)s"
@@ -808,70 +808,70 @@ msgstr "시스템 ID가 필요합니다"
 msgid "ES-DE scraper not available"
 msgstr "ES-DE 스크레이퍼를 사용할 수 없습니다"
 
-#: routes/tools.py:220
+#: routes/tools.py:239
 msgid "Administrator privileges required"
 msgstr "관리자 권한이 필요합니다"
 
-#: routes/tools.py:224
+#: routes/tools.py:243
 msgid "Settings payload must be an object"
 msgstr "설정 페이로드는 객체여야 합니다"
 
-#: routes/tools.py:273 routes/tools.py:885
+#: routes/tools.py:292 routes/tools.py:903
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "경로가 존재하지 않습니다: %(path)s"
 
-#: routes/tools.py:300
+#: routes/tools.py:319
 msgid "Permission denied"
 msgstr "권한이 거부되었습니다"
 
-#: routes/tools.py:328
+#: routes/tools.py:347
 msgid "Task not found"
 msgstr "작업을 찾을 수 없습니다"
 
-#: routes/tools.py:351 routes/tools.py:371
+#: routes/tools.py:370 routes/tools.py:390
 msgid "Task not found or not running"
 msgstr "작업을 찾을 수 없거나 실행 중이 아닙니다"
 
-#: routes/tools.py:391
+#: routes/tools.py:410
 msgid "Task not found or not paused"
 msgstr "작업을 찾을 수 없거나 일시정지되어 있지 않습니다"
 
-#: routes/tools.py:408 routes/tools.py:600 routes/tools.py:763
-#: routes/tools.py:877
+#: routes/tools.py:427 routes/tools.py:617 routes/tools.py:781
+#: routes/tools.py:895
 msgid "Invalid scan path"
 msgstr "잘못된 스캔 경로입니다"
 
-#: routes/tools.py:446 routes/tools.py:503 routes/tools.py:538
+#: routes/tools.py:465 routes/tools.py:522 routes/tools.py:557
 msgid "No path provided"
 msgstr "제공된 경로가 없습니다"
 
-#: routes/tools.py:474
+#: routes/tools.py:493
 msgid "No archive path provided"
 msgstr "제공된 아카이브 경로가 없습니다"
 
-#: routes/tools.py:477
+#: routes/tools.py:496
 msgid "Invalid archive path"
 msgstr "잘못된 아카이브 경로입니다"
 
-#: routes/tools.py:480
+#: routes/tools.py:499
 msgid "No files to remove"
 msgstr "제거할 파일이 없습니다"
 
-#: routes/tools.py:569
+#: routes/tools.py:588
 msgid "No paths provided"
 msgstr "제공된 경로가 없습니다"
 
-#: routes/tools.py:575
+#: routes/tools.py:594
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "잘못된 경로: %(path)s"
 
-#: routes/tools.py:648
+#: routes/tools.py:666
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdman을 찾을 수 없습니다. MAME 도구를 설치하세요."
 
-#: routes/tools.py:786
+#: routes/tools.py:804
 msgid "chdman not found"
 msgstr "chdman을 찾을 수 없습니다"
 
@@ -4196,13 +4196,24 @@ msgstr "버전"
 msgid "Last Updated"
 msgstr "마지막 업데이트"
 
+#: templates/base.html:241
+msgid "Support RetroDB's development on GitHub Sponsors"
+msgstr ""
+
 #: templates/base.html:242
-msgid "Sponsor"
+#, fuzzy
+msgid "Sponsor RetroDB"
 msgstr "후원"
 
+#: templates/base.html:244
+#, fuzzy
+msgid "Support RetroDB's development on Patreon"
+msgstr "개발 지원"
+
 #: templates/base.html:245
-msgid "Patreon"
-msgstr "Patreon"
+#, fuzzy
+msgid "Support RetroDB"
+msgstr "Patreon에서 후원하기"
 
 #: templates/base.html:260
 msgid "Toggle menu"
@@ -8663,4 +8674,7 @@ msgstr "Patreon에서 후원하기"
 
 #~ msgid "Could not validate destination path"
 #~ msgstr "대상 경로를 검증할 수 없습니다"
+
+#~ msgid "Patreon"
+#~ msgstr "Patreon"
 

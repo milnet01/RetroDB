@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-26 09:58+0200\n"
+"POT-Creation-Date: 2026-09-26 11:16+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -646,8 +646,8 @@ msgstr ""
 msgid "Missing required parameters"
 msgstr "Faltan parámetros obligatorios"
 
-#: routes/reports.py:600 routes/tools.py:449 routes/tools.py:506
-#: routes/tools.py:541
+#: routes/reports.py:600 routes/tools.py:468 routes/tools.py:525
+#: routes/tools.py:560
 msgid "Invalid path"
 msgstr "Ruta no válida"
 
@@ -693,7 +693,7 @@ msgstr "El nombre de archivo generado contiene caracteres no válidos"
 msgid "Invalid log file"
 msgstr "Archivo de registro no válido"
 
-#: routes/scrape_logs.py:102 routes/tools.py:452
+#: routes/scrape_logs.py:102 routes/tools.py:471
 msgid "File not found"
 msgstr "Archivo no encontrado"
 
@@ -781,7 +781,7 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "%(field)s no válido: %(result)s"
 
 #: routes/settings.py:533 routes/settings.py:594 routes/settings.py:647
-#: routes/tools.py:238
+#: routes/tools.py:257
 msgid "Failed to save settings"
 msgstr "No se pudieron guardar los ajustes"
 
@@ -789,12 +789,12 @@ msgstr "No se pudieron guardar los ajustes"
 msgid "Request body must be a JSON object"
 msgstr "El cuerpo de la solicitud debe ser un objeto JSON"
 
-#: routes/settings.py:573 routes/tools.py:230
+#: routes/settings.py:573 routes/tools.py:249
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "Clave de ajuste desconocida: %(key)s"
 
-#: routes/settings.py:579 routes/tools.py:233
+#: routes/settings.py:579 routes/tools.py:252
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "Valor no válido para '%(key)s': %(reason)s"
@@ -832,70 +832,70 @@ msgstr "Se requiere el ID del sistema"
 msgid "ES-DE scraper not available"
 msgstr "El scraper de ES-DE no está disponible"
 
-#: routes/tools.py:220
+#: routes/tools.py:239
 msgid "Administrator privileges required"
 msgstr "Se requieren privilegios de administrador"
 
-#: routes/tools.py:224
+#: routes/tools.py:243
 msgid "Settings payload must be an object"
 msgstr "Los datos de los ajustes deben ser un objeto"
 
-#: routes/tools.py:273 routes/tools.py:885
+#: routes/tools.py:292 routes/tools.py:903
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "La ruta no existe: %(path)s"
 
-#: routes/tools.py:300
+#: routes/tools.py:319
 msgid "Permission denied"
 msgstr "Permiso denegado"
 
-#: routes/tools.py:328
+#: routes/tools.py:347
 msgid "Task not found"
 msgstr "Tarea no encontrada"
 
-#: routes/tools.py:351 routes/tools.py:371
+#: routes/tools.py:370 routes/tools.py:390
 msgid "Task not found or not running"
 msgstr "Tarea no encontrada o no en ejecución"
 
-#: routes/tools.py:391
+#: routes/tools.py:410
 msgid "Task not found or not paused"
 msgstr "Tarea no encontrada o no pausada"
 
-#: routes/tools.py:408 routes/tools.py:600 routes/tools.py:763
-#: routes/tools.py:877
+#: routes/tools.py:427 routes/tools.py:617 routes/tools.py:781
+#: routes/tools.py:895
 msgid "Invalid scan path"
 msgstr "Ruta de análisis no válida"
 
-#: routes/tools.py:446 routes/tools.py:503 routes/tools.py:538
+#: routes/tools.py:465 routes/tools.py:522 routes/tools.py:557
 msgid "No path provided"
 msgstr "No se proporcionó ninguna ruta"
 
-#: routes/tools.py:474
+#: routes/tools.py:493
 msgid "No archive path provided"
 msgstr "No se proporcionó ninguna ruta de archivo comprimido"
 
-#: routes/tools.py:477
+#: routes/tools.py:496
 msgid "Invalid archive path"
 msgstr "Ruta de archivo comprimido no válida"
 
-#: routes/tools.py:480
+#: routes/tools.py:499
 msgid "No files to remove"
 msgstr "No hay archivos que eliminar"
 
-#: routes/tools.py:569
+#: routes/tools.py:588
 msgid "No paths provided"
 msgstr "No se proporcionaron rutas"
 
-#: routes/tools.py:575
+#: routes/tools.py:594
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "Ruta no válida: %(path)s"
 
-#: routes/tools.py:648
+#: routes/tools.py:666
 msgid "chdman not found. Please install MAME tools."
 msgstr "No se encontró chdman. Instala las herramientas de MAME."
 
-#: routes/tools.py:786
+#: routes/tools.py:804
 msgid "chdman not found"
 msgstr "No se encontró chdman"
 
@@ -4253,13 +4253,24 @@ msgstr "Versión"
 msgid "Last Updated"
 msgstr "Última actualización"
 
+#: templates/base.html:241
+msgid "Support RetroDB's development on GitHub Sponsors"
+msgstr ""
+
 #: templates/base.html:242
-msgid "Sponsor"
+#, fuzzy
+msgid "Sponsor RetroDB"
 msgstr "Patrocinar"
 
+#: templates/base.html:244
+#, fuzzy
+msgid "Support RetroDB's development on Patreon"
+msgstr "Apoyar el desarrollo"
+
 #: templates/base.html:245
-msgid "Patreon"
-msgstr "Patreon"
+#, fuzzy
+msgid "Support RetroDB"
+msgstr "Apoyar en Patreon"
 
 #: templates/base.html:260
 msgid "Toggle menu"
@@ -8902,4 +8913,7 @@ msgstr "Apoyar en Patreon"
 
 #~ msgid "Could not validate destination path"
 #~ msgstr "No se pudo validar la ruta de destino"
+
+#~ msgid "Patreon"
+#~ msgstr "Patreon"
 

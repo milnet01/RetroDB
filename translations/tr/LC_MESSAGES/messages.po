@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-26 09:58+0200\n"
+"POT-Creation-Date: 2026-09-26 11:16+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: tr\n"
@@ -646,8 +646,8 @@ msgstr ""
 msgid "Missing required parameters"
 msgstr "Gerekli parametreler eksik"
 
-#: routes/reports.py:600 routes/tools.py:449 routes/tools.py:506
-#: routes/tools.py:541
+#: routes/reports.py:600 routes/tools.py:468 routes/tools.py:525
+#: routes/tools.py:560
 msgid "Invalid path"
 msgstr "Geçersiz yol"
 
@@ -693,7 +693,7 @@ msgstr "Oluşturulan dosya adı geçersiz karakterler içeriyor"
 msgid "Invalid log file"
 msgstr "Geçersiz günlük dosyası"
 
-#: routes/scrape_logs.py:102 routes/tools.py:452
+#: routes/scrape_logs.py:102 routes/tools.py:471
 msgid "File not found"
 msgstr "Dosya bulunamadı"
 
@@ -777,7 +777,7 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "Geçersiz %(field)s: %(result)s"
 
 #: routes/settings.py:533 routes/settings.py:594 routes/settings.py:647
-#: routes/tools.py:238
+#: routes/tools.py:257
 msgid "Failed to save settings"
 msgstr "Ayarlar kaydedilemedi"
 
@@ -785,12 +785,12 @@ msgstr "Ayarlar kaydedilemedi"
 msgid "Request body must be a JSON object"
 msgstr "İstek gövdesi bir JSON nesnesi olmalıdır"
 
-#: routes/settings.py:573 routes/tools.py:230
+#: routes/settings.py:573 routes/tools.py:249
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "Bilinmeyen ayar anahtarı: %(key)s"
 
-#: routes/settings.py:579 routes/tools.py:233
+#: routes/settings.py:579 routes/tools.py:252
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "'%(key)s' için geçersiz değer: %(reason)s"
@@ -828,70 +828,70 @@ msgstr "Sistem ID'si gerekli"
 msgid "ES-DE scraper not available"
 msgstr "ES-DE kazıyıcısı kullanılamıyor"
 
-#: routes/tools.py:220
+#: routes/tools.py:239
 msgid "Administrator privileges required"
 msgstr "Yönetici izinleri gerekli"
 
-#: routes/tools.py:224
+#: routes/tools.py:243
 msgid "Settings payload must be an object"
 msgstr "Ayarlar verisi bir nesne olmalıdır"
 
-#: routes/tools.py:273 routes/tools.py:885
+#: routes/tools.py:292 routes/tools.py:903
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "Yol mevcut değil: %(path)s"
 
-#: routes/tools.py:300
+#: routes/tools.py:319
 msgid "Permission denied"
 msgstr "İzin reddedildi"
 
-#: routes/tools.py:328
+#: routes/tools.py:347
 msgid "Task not found"
 msgstr "Görev bulunamadı"
 
-#: routes/tools.py:351 routes/tools.py:371
+#: routes/tools.py:370 routes/tools.py:390
 msgid "Task not found or not running"
 msgstr "Görev bulunamadı veya çalışmıyor"
 
-#: routes/tools.py:391
+#: routes/tools.py:410
 msgid "Task not found or not paused"
 msgstr "Görev bulunamadı veya duraklatılmamış"
 
-#: routes/tools.py:408 routes/tools.py:600 routes/tools.py:763
-#: routes/tools.py:877
+#: routes/tools.py:427 routes/tools.py:617 routes/tools.py:781
+#: routes/tools.py:895
 msgid "Invalid scan path"
 msgstr "Geçersiz tarama yolu"
 
-#: routes/tools.py:446 routes/tools.py:503 routes/tools.py:538
+#: routes/tools.py:465 routes/tools.py:522 routes/tools.py:557
 msgid "No path provided"
 msgstr "Yol sağlanmadı"
 
-#: routes/tools.py:474
+#: routes/tools.py:493
 msgid "No archive path provided"
 msgstr "Arşiv yolu sağlanmadı"
 
-#: routes/tools.py:477
+#: routes/tools.py:496
 msgid "Invalid archive path"
 msgstr "Geçersiz arşiv yolu"
 
-#: routes/tools.py:480
+#: routes/tools.py:499
 msgid "No files to remove"
 msgstr "Kaldırılacak dosya yok"
 
-#: routes/tools.py:569
+#: routes/tools.py:588
 msgid "No paths provided"
 msgstr "Yol sağlanmadı"
 
-#: routes/tools.py:575
+#: routes/tools.py:594
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "Geçersiz yol: %(path)s"
 
-#: routes/tools.py:648
+#: routes/tools.py:666
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdman bulunamadı. Lütfen MAME araçlarını kurun."
 
-#: routes/tools.py:786
+#: routes/tools.py:804
 msgid "chdman not found"
 msgstr "chdman bulunamadı"
 
@@ -4253,13 +4253,24 @@ msgstr "Sürüm"
 msgid "Last Updated"
 msgstr "Son Güncelleme"
 
+#: templates/base.html:241
+msgid "Support RetroDB's development on GitHub Sponsors"
+msgstr ""
+
 #: templates/base.html:242
-msgid "Sponsor"
+#, fuzzy
+msgid "Sponsor RetroDB"
 msgstr "Destekle"
 
+#: templates/base.html:244
+#, fuzzy
+msgid "Support RetroDB's development on Patreon"
+msgstr "Geliştirmeyi Destekle"
+
 #: templates/base.html:245
-msgid "Patreon"
-msgstr "Patreon"
+#, fuzzy
+msgid "Support RetroDB"
+msgstr "Patreon'da Destekle"
 
 #: templates/base.html:260
 msgid "Toggle menu"
@@ -8876,4 +8887,7 @@ msgstr "Patreon'da Destekle"
 
 #~ msgid "Could not validate destination path"
 #~ msgstr "Hedef yol doğrulanamadı"
+
+#~ msgid "Patreon"
+#~ msgstr "Patreon"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-26 09:58+0200\n"
+"POT-Creation-Date: 2026-09-26 11:16+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: id\n"
@@ -634,8 +634,8 @@ msgstr "Jalur ROM belum dikonfigurasi. Buka Pengaturan → Jalur untuk mengaturn
 msgid "Missing required parameters"
 msgstr "Parameter yang diperlukan tidak ada"
 
-#: routes/reports.py:600 routes/tools.py:449 routes/tools.py:506
-#: routes/tools.py:541
+#: routes/reports.py:600 routes/tools.py:468 routes/tools.py:525
+#: routes/tools.py:560
 msgid "Invalid path"
 msgstr "Jalur tidak valid"
 
@@ -681,7 +681,7 @@ msgstr "Nama berkas yang dihasilkan mengandung karakter tidak valid"
 msgid "Invalid log file"
 msgstr "Berkas log tidak valid"
 
-#: routes/scrape_logs.py:102 routes/tools.py:452
+#: routes/scrape_logs.py:102 routes/tools.py:471
 msgid "File not found"
 msgstr "Berkas tidak ditemukan"
 
@@ -767,7 +767,7 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "%(field)s tidak valid: %(result)s"
 
 #: routes/settings.py:533 routes/settings.py:594 routes/settings.py:647
-#: routes/tools.py:238
+#: routes/tools.py:257
 msgid "Failed to save settings"
 msgstr "Gagal menyimpan pengaturan"
 
@@ -775,12 +775,12 @@ msgstr "Gagal menyimpan pengaturan"
 msgid "Request body must be a JSON object"
 msgstr "Isi permintaan harus berupa objek JSON"
 
-#: routes/settings.py:573 routes/tools.py:230
+#: routes/settings.py:573 routes/tools.py:249
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "Kunci pengaturan tidak dikenal: %(key)s"
 
-#: routes/settings.py:579 routes/tools.py:233
+#: routes/settings.py:579 routes/tools.py:252
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "Nilai tidak valid untuk '%(key)s': %(reason)s"
@@ -818,70 +818,70 @@ msgstr "ID sistem diperlukan"
 msgid "ES-DE scraper not available"
 msgstr "Scraper ES-DE tidak tersedia"
 
-#: routes/tools.py:220
+#: routes/tools.py:239
 msgid "Administrator privileges required"
 msgstr "Diperlukan hak akses administrator"
 
-#: routes/tools.py:224
+#: routes/tools.py:243
 msgid "Settings payload must be an object"
 msgstr "Payload pengaturan harus berupa objek"
 
-#: routes/tools.py:273 routes/tools.py:885
+#: routes/tools.py:292 routes/tools.py:903
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "Jalur tidak ada: %(path)s"
 
-#: routes/tools.py:300
+#: routes/tools.py:319
 msgid "Permission denied"
 msgstr "Izin ditolak"
 
-#: routes/tools.py:328
+#: routes/tools.py:347
 msgid "Task not found"
 msgstr "Tugas tidak ditemukan"
 
-#: routes/tools.py:351 routes/tools.py:371
+#: routes/tools.py:370 routes/tools.py:390
 msgid "Task not found or not running"
 msgstr "Tugas tidak ditemukan atau tidak sedang berjalan"
 
-#: routes/tools.py:391
+#: routes/tools.py:410
 msgid "Task not found or not paused"
 msgstr "Tugas tidak ditemukan atau tidak sedang dijeda"
 
-#: routes/tools.py:408 routes/tools.py:600 routes/tools.py:763
-#: routes/tools.py:877
+#: routes/tools.py:427 routes/tools.py:617 routes/tools.py:781
+#: routes/tools.py:895
 msgid "Invalid scan path"
 msgstr "Jalur pemindaian tidak valid"
 
-#: routes/tools.py:446 routes/tools.py:503 routes/tools.py:538
+#: routes/tools.py:465 routes/tools.py:522 routes/tools.py:557
 msgid "No path provided"
 msgstr "Tidak ada jalur yang diberikan"
 
-#: routes/tools.py:474
+#: routes/tools.py:493
 msgid "No archive path provided"
 msgstr "Tidak ada jalur arsip yang diberikan"
 
-#: routes/tools.py:477
+#: routes/tools.py:496
 msgid "Invalid archive path"
 msgstr "Jalur arsip tidak valid"
 
-#: routes/tools.py:480
+#: routes/tools.py:499
 msgid "No files to remove"
 msgstr "Tidak ada berkas untuk dihapus"
 
-#: routes/tools.py:569
+#: routes/tools.py:588
 msgid "No paths provided"
 msgstr "Tidak ada jalur yang diberikan"
 
-#: routes/tools.py:575
+#: routes/tools.py:594
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "Jalur tidak valid: %(path)s"
 
-#: routes/tools.py:648
+#: routes/tools.py:666
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdman tidak ditemukan. Silakan pasang MAME tools."
 
-#: routes/tools.py:786
+#: routes/tools.py:804
 msgid "chdman not found"
 msgstr "chdman tidak ditemukan"
 
@@ -4230,13 +4230,24 @@ msgstr "Versi"
 msgid "Last Updated"
 msgstr "Terakhir Diperbarui"
 
+#: templates/base.html:241
+msgid "Support RetroDB's development on GitHub Sponsors"
+msgstr ""
+
 #: templates/base.html:242
-msgid "Sponsor"
+#, fuzzy
+msgid "Sponsor RetroDB"
 msgstr "Sponsor"
 
+#: templates/base.html:244
+#, fuzzy
+msgid "Support RetroDB's development on Patreon"
+msgstr "Dukung Pengembangan"
+
 #: templates/base.html:245
-msgid "Patreon"
-msgstr "Patreon"
+#, fuzzy
+msgid "Support RetroDB"
+msgstr "Dukung di Patreon"
 
 #: templates/base.html:260
 msgid "Toggle menu"
@@ -8837,4 +8848,7 @@ msgstr "Dukung di Patreon"
 
 #~ msgid "Could not validate destination path"
 #~ msgstr "Tidak dapat memvalidasi jalur tujuan"
+
+#~ msgid "Patreon"
+#~ msgstr "Patreon"
 

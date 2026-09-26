@@ -153,8 +153,11 @@ non-localhost interface without a proxy in front of it is unsupported.
 [![Sponsor on GitHub](https://img.shields.io/github/sponsors/milnet01?label=Sponsor&logo=github&color=ea4aaa)](https://github.com/sponsors/milnet01)
 [![Support on Patreon](https://img.shields.io/badge/Patreon-Support-f96854?logo=patreon&logoColor=white)](https://www.patreon.com/c/AntsProjectsHub)
 
-RetroDB is free and open source. If it saves you time, consider tipping —
-every bit helps keep solo development sustainable.
+RetroDB is free and open source, and every release is free to download.
+If it saves you time, you can support its development. Donations fund
+RetroDB itself: they buy no features, no early access and no downloads.
+They do not pay for the emulators or cores RetroDB can launch. Those
+belong to their own authors and are covered by their own licences.
 
 - **GitHub Sponsors:** [github.com/sponsors/milnet01](https://github.com/sponsors/milnet01)
 - **Patreon:** [patreon.com/c/AntsProjectsHub](https://www.patreon.com/c/AntsProjectsHub)

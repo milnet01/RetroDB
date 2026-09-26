@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-26 09:58+0200\n"
+"POT-Creation-Date: 2026-09-26 11:16+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: pl\n"
@@ -649,8 +649,8 @@ msgstr ""
 msgid "Missing required parameters"
 msgstr "Brak wymaganych parametrów"
 
-#: routes/reports.py:600 routes/tools.py:449 routes/tools.py:506
-#: routes/tools.py:541
+#: routes/reports.py:600 routes/tools.py:468 routes/tools.py:525
+#: routes/tools.py:560
 msgid "Invalid path"
 msgstr "Nieprawidłowa ścieżka"
 
@@ -696,7 +696,7 @@ msgstr "Wygenerowana nazwa pliku zawiera nieprawidłowe znaki"
 msgid "Invalid log file"
 msgstr "Nieprawidłowy plik dziennika"
 
-#: routes/scrape_logs.py:102 routes/tools.py:452
+#: routes/scrape_logs.py:102 routes/tools.py:471
 msgid "File not found"
 msgstr "Nie znaleziono pliku"
 
@@ -784,7 +784,7 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "Nieprawidłowe %(field)s: %(result)s"
 
 #: routes/settings.py:533 routes/settings.py:594 routes/settings.py:647
-#: routes/tools.py:238
+#: routes/tools.py:257
 msgid "Failed to save settings"
 msgstr "Nie udało się zapisać ustawień"
 
@@ -792,12 +792,12 @@ msgstr "Nie udało się zapisać ustawień"
 msgid "Request body must be a JSON object"
 msgstr "Treść żądania musi być obiektem JSON"
 
-#: routes/settings.py:573 routes/tools.py:230
+#: routes/settings.py:573 routes/tools.py:249
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "Nieznany klucz ustawienia: %(key)s"
 
-#: routes/settings.py:579 routes/tools.py:233
+#: routes/settings.py:579 routes/tools.py:252
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "Nieprawidłowa wartość dla „%(key)s”: %(reason)s"
@@ -835,70 +835,70 @@ msgstr "Wymagany identyfikator systemu"
 msgid "ES-DE scraper not available"
 msgstr "Scraper ES-DE jest niedostępny"
 
-#: routes/tools.py:220
+#: routes/tools.py:239
 msgid "Administrator privileges required"
 msgstr "Wymagane uprawnienia administratora"
 
-#: routes/tools.py:224
+#: routes/tools.py:243
 msgid "Settings payload must be an object"
 msgstr "Dane ustawień muszą być obiektem"
 
-#: routes/tools.py:273 routes/tools.py:885
+#: routes/tools.py:292 routes/tools.py:903
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "Ścieżka nie istnieje: %(path)s"
 
-#: routes/tools.py:300
+#: routes/tools.py:319
 msgid "Permission denied"
 msgstr "Odmowa dostępu"
 
-#: routes/tools.py:328
+#: routes/tools.py:347
 msgid "Task not found"
 msgstr "Nie znaleziono zadania"
 
-#: routes/tools.py:351 routes/tools.py:371
+#: routes/tools.py:370 routes/tools.py:390
 msgid "Task not found or not running"
 msgstr "Nie znaleziono zadania lub nie jest ono uruchomione"
 
-#: routes/tools.py:391
+#: routes/tools.py:410
 msgid "Task not found or not paused"
 msgstr "Nie znaleziono zadania lub nie jest ono wstrzymane"
 
-#: routes/tools.py:408 routes/tools.py:600 routes/tools.py:763
-#: routes/tools.py:877
+#: routes/tools.py:427 routes/tools.py:617 routes/tools.py:781
+#: routes/tools.py:895
 msgid "Invalid scan path"
 msgstr "Nieprawidłowa ścieżka skanowania"
 
-#: routes/tools.py:446 routes/tools.py:503 routes/tools.py:538
+#: routes/tools.py:465 routes/tools.py:522 routes/tools.py:557
 msgid "No path provided"
 msgstr "Nie podano ścieżki"
 
-#: routes/tools.py:474
+#: routes/tools.py:493
 msgid "No archive path provided"
 msgstr "Nie podano ścieżki archiwum"
 
-#: routes/tools.py:477
+#: routes/tools.py:496
 msgid "Invalid archive path"
 msgstr "Nieprawidłowa ścieżka archiwum"
 
-#: routes/tools.py:480
+#: routes/tools.py:499
 msgid "No files to remove"
 msgstr "Brak plików do usunięcia"
 
-#: routes/tools.py:569
+#: routes/tools.py:588
 msgid "No paths provided"
 msgstr "Nie podano ścieżek"
 
-#: routes/tools.py:575
+#: routes/tools.py:594
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "Nieprawidłowa ścieżka: %(path)s"
 
-#: routes/tools.py:648
+#: routes/tools.py:666
 msgid "chdman not found. Please install MAME tools."
 msgstr "Nie znaleziono chdman. Zainstaluj narzędzia MAME."
 
-#: routes/tools.py:786
+#: routes/tools.py:804
 msgid "chdman not found"
 msgstr "Nie znaleziono chdman"
 
@@ -4257,13 +4257,24 @@ msgstr "Wersja"
 msgid "Last Updated"
 msgstr "Ostatnia aktualizacja"
 
+#: templates/base.html:241
+msgid "Support RetroDB's development on GitHub Sponsors"
+msgstr ""
+
 #: templates/base.html:242
-msgid "Sponsor"
+#, fuzzy
+msgid "Sponsor RetroDB"
 msgstr "Sponsoruj"
 
+#: templates/base.html:244
+#, fuzzy
+msgid "Support RetroDB's development on Patreon"
+msgstr "Wesprzyj rozwój"
+
 #: templates/base.html:245
-msgid "Patreon"
-msgstr "Patreon"
+#, fuzzy
+msgid "Support RetroDB"
+msgstr "Wesprzyj na Patreon"
 
 #: templates/base.html:260
 msgid "Toggle menu"
@@ -8873,4 +8884,7 @@ msgstr "Wesprzyj na Patreon"
 
 #~ msgid "Could not validate destination path"
 #~ msgstr "Nie udało się zweryfikować ścieżki docelowej"
+
+#~ msgid "Patreon"
+#~ msgstr "Patreon"
 

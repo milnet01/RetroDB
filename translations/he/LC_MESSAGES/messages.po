@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-26 09:58+0200\n"
+"POT-Creation-Date: 2026-09-26 11:16+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: he\n"
@@ -628,8 +628,8 @@ msgstr "נתיב ה-ROM לא הוגדר. עבור להגדרות ← נתיבי�
 msgid "Missing required parameters"
 msgstr "חסרים פרמטרים נדרשים"
 
-#: routes/reports.py:600 routes/tools.py:449 routes/tools.py:506
-#: routes/tools.py:541
+#: routes/reports.py:600 routes/tools.py:468 routes/tools.py:525
+#: routes/tools.py:560
 msgid "Invalid path"
 msgstr "נתיב לא חוקי"
 
@@ -675,7 +675,7 @@ msgstr "שם הקובץ שנוצר מכיל תווים לא חוקיים"
 msgid "Invalid log file"
 msgstr "קובץ יומן לא חוקי"
 
-#: routes/scrape_logs.py:102 routes/tools.py:452
+#: routes/scrape_logs.py:102 routes/tools.py:471
 msgid "File not found"
 msgstr "הקובץ לא נמצא"
 
@@ -759,7 +759,7 @@ msgid "Invalid %(field)s: %(result)s"
 msgstr "%(field)s לא חוקי: %(result)s"
 
 #: routes/settings.py:533 routes/settings.py:594 routes/settings.py:647
-#: routes/tools.py:238
+#: routes/tools.py:257
 msgid "Failed to save settings"
 msgstr "שמירת ההגדרות נכשלה"
 
@@ -767,12 +767,12 @@ msgstr "שמירת ההגדרות נכשלה"
 msgid "Request body must be a JSON object"
 msgstr "גוף הבקשה חייב להיות אובייקט JSON"
 
-#: routes/settings.py:573 routes/tools.py:230
+#: routes/settings.py:573 routes/tools.py:249
 #, python-format
 msgid "Unknown setting key: %(key)s"
 msgstr "מפתח הגדרה לא ידוע: %(key)s"
 
-#: routes/settings.py:579 routes/tools.py:233
+#: routes/settings.py:579 routes/tools.py:252
 #, python-format
 msgid "Invalid value for '%(key)s': %(reason)s"
 msgstr "ערך לא חוקי עבור '%(key)s': %(reason)s"
@@ -810,70 +810,70 @@ msgstr "נדרש מזהה מערכת"
 msgid "ES-DE scraper not available"
 msgstr "מגרד ES-DE אינו זמין"
 
-#: routes/tools.py:220
+#: routes/tools.py:239
 msgid "Administrator privileges required"
 msgstr "נדרשות הרשאות מנהל"
 
-#: routes/tools.py:224
+#: routes/tools.py:243
 msgid "Settings payload must be an object"
 msgstr "מטען ההגדרות חייב להיות אובייקט"
 
-#: routes/tools.py:273 routes/tools.py:885
+#: routes/tools.py:292 routes/tools.py:903
 #, python-format
 msgid "Path does not exist: %(path)s"
 msgstr "הנתיב אינו קיים: %(path)s"
 
-#: routes/tools.py:300
+#: routes/tools.py:319
 msgid "Permission denied"
 msgstr "ההרשאה נדחתה"
 
-#: routes/tools.py:328
+#: routes/tools.py:347
 msgid "Task not found"
 msgstr "המשימה לא נמצאה"
 
-#: routes/tools.py:351 routes/tools.py:371
+#: routes/tools.py:370 routes/tools.py:390
 msgid "Task not found or not running"
 msgstr "המשימה לא נמצאה או אינה פועלת"
 
-#: routes/tools.py:391
+#: routes/tools.py:410
 msgid "Task not found or not paused"
 msgstr "המשימה לא נמצאה או אינה מושהית"
 
-#: routes/tools.py:408 routes/tools.py:600 routes/tools.py:763
-#: routes/tools.py:877
+#: routes/tools.py:427 routes/tools.py:617 routes/tools.py:781
+#: routes/tools.py:895
 msgid "Invalid scan path"
 msgstr "נתיב סריקה לא חוקי"
 
-#: routes/tools.py:446 routes/tools.py:503 routes/tools.py:538
+#: routes/tools.py:465 routes/tools.py:522 routes/tools.py:557
 msgid "No path provided"
 msgstr "לא סופק נתיב"
 
-#: routes/tools.py:474
+#: routes/tools.py:493
 msgid "No archive path provided"
 msgstr "לא סופק נתיב ארכיון"
 
-#: routes/tools.py:477
+#: routes/tools.py:496
 msgid "Invalid archive path"
 msgstr "נתיב ארכיון לא חוקי"
 
-#: routes/tools.py:480
+#: routes/tools.py:499
 msgid "No files to remove"
 msgstr "אין קבצים להסרה"
 
-#: routes/tools.py:569
+#: routes/tools.py:588
 msgid "No paths provided"
 msgstr "לא סופקו נתיבים"
 
-#: routes/tools.py:575
+#: routes/tools.py:594
 #, python-format
 msgid "Invalid path: %(path)s"
 msgstr "נתיב לא חוקי: %(path)s"
 
-#: routes/tools.py:648
+#: routes/tools.py:666
 msgid "chdman not found. Please install MAME tools."
 msgstr "chdman לא נמצא. התקן את כלי MAME."
 
-#: routes/tools.py:786
+#: routes/tools.py:804
 msgid "chdman not found"
 msgstr "chdman לא נמצא"
 
@@ -4213,13 +4213,24 @@ msgstr "גרסה"
 msgid "Last Updated"
 msgstr "עודכן לאחרונה"
 
+#: templates/base.html:241
+msgid "Support RetroDB's development on GitHub Sponsors"
+msgstr ""
+
 #: templates/base.html:242
-msgid "Sponsor"
+#, fuzzy
+msgid "Sponsor RetroDB"
 msgstr "תמוך"
 
+#: templates/base.html:244
+#, fuzzy
+msgid "Support RetroDB's development on Patreon"
+msgstr "תמוך בפיתוח"
+
 #: templates/base.html:245
-msgid "Patreon"
-msgstr "Patreon"
+#, fuzzy
+msgid "Support RetroDB"
+msgstr "תמוך ב-Patreon"
 
 #: templates/base.html:260
 msgid "Toggle menu"
@@ -8751,4 +8762,7 @@ msgstr "תמוך ב-Patreon"
 
 #~ msgid "Could not validate destination path"
 #~ msgstr "לא ניתן לאמת את נתיב היעד"
+
+#~ msgid "Patreon"
+#~ msgstr "Patreon"
 
