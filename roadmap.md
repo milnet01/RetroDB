@@ -6712,6 +6712,15 @@ when already in the file.
      RetroDB times play itself.
   Send the draft's path to `retroarch-f5` before the gate, so it can check
   the player-side clauses against its synced upstream code.
+- **Decision** (2026-09-26 later, user): (a) the end state is a slimmed-down
+  player build; the fork's normal RetroArch plus its own config is an interim
+  step. (b) Every RetroDB release is free to everyone, so Snes9x and Genesis
+  Plus GX may stay default cores; FBNeo is never offered. (c) The player gets
+  its own name, "based on RetroArch", with no RetroArch logo; the name is not
+  chosen yet. (d) RetroDB applies the best settings per game automatically,
+  and the user can change them. So the launch contract must carry per-launch
+  settings from RetroDB to the player; the mechanism is being confirmed with
+  the fork session.
 - **Status**: planned (2026-09-01); drafting agreed 2026-09-26. Lanes:
   launch, docs.
 - **Source**: review-code launch lane 2026-09-01; absence confirmed against
@@ -7112,6 +7121,11 @@ were corrected in `2836bc3` and are not repeated here.
 - **Plan**: author with `write-spec` after Pass 59.64's draft; gate with
   `review-contract`. A separate spec by user decision 2026-09-26, so the
   shared launch contract is not held up by RetroDB-only work.
+- **Decision** (2026-09-26 later, user): users should not have to set up
+  cores or adjust settings. RetroDB picks the core AND the settings (core
+  options; player settings such as shader, aspect ratio and latency) per
+  system, refined per game, and applies them at launch. The user can change
+  any of them per system or per game.
 - **Status**: planned (2026-09-26). Lanes: launch, docs.
 - **Source**: user decision 2026-09-26, relayed with `retroarch-f5`.
 
