@@ -290,7 +290,12 @@ Stopping a player, as the fork session read its source:
   launch's `network_cmd_port`, waits the grace, then SIGKILL. *Unverified at
   runtime.* `QUIT` is the quit key, so it obeys `confirm_quit`. With
   `confirm_quit = "true"`, one `QUIT` only shows "press again to quit",
-  which is why §4.4 requires it false (fork session, `command.h`).
+  which is why §4.4 requires it false (fork session, `command.h`). `QUIT`
+  is acted on with the menu open and while paused, except for a few frames
+  after the menu opens or closes, when input flushing drops it silently. So
+  if the process is still alive 1 s after the first `QUIT`, RetroDB sends
+  one more before the grace runs out. With `confirm_quit` false a second
+  `QUIT` is harmless (fork session, `runloop_check_state`).
 - **Windows:** the same `QUIT`, then `TerminateProcess`, which cannot flush.
   *Unverified.*
 - The port is chosen free per launch and written into a third
@@ -561,10 +566,10 @@ source on 2026-09-26; what it could not verify stays here.
   name. It scans every subdirectory of the config directory (§4.5).
 - **Q3** — *Partly resolved:* the SIGTERM quit writes RTC data (§4.6). How
   long it takes is unmeasured, so the 5 s grace is too.
-- **Q4** — *Resolved:* `QUIT` obeys `confirm_quit`, so §4.4 requires it
-  false. Still open: whether `QUIT` is acted on while the menu is open or
-  content is paused. macOS and Windows `QUIT` behaviour is untested at
+- **Q4** — *Resolved from source:* `QUIT` obeys `confirm_quit`, and is
+  acted on with the menu open and while paused, bar the flush window §4.6
+  covers with one resend. macOS and Windows `QUIT` behaviour is untested at
   runtime.
-- **Q5** — Whether the macOS Xcode project builds with `HAVE_NETWORK_CMD`.
-  `configure` and the MSVC projects enable it (fork session,
-  `qb/config.libs.sh`); the Xcode project was not checked.
+- **Q5** — *Resolved from source:* every build enables `HAVE_NETWORK_CMD` —
+  `configure` (`qb/config.libs.sh`), the MSVC projects, and the Xcode
+  projects (`pkg/apple/BaseConfig.xcconfig`).
