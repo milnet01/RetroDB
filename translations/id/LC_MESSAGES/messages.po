@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-25 09:20+0200\n"
+"POT-Creation-Date: 2026-09-26 09:58+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: id\n"
@@ -17,6 +17,16 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: app.py:683
+#, fuzzy
+msgid "Too many requests. Please wait and try again."
+msgstr "Terlalu banyak percobaan. Silakan coba lagi nanti."
+
+#: app.py:790
+#, fuzzy
+msgid "Password change required"
+msgstr "Perubahan kata sandi tidak diperlukan"
 
 #: routes/achievements.py:48
 msgid "No games with RetroAchievements found in your library"
@@ -29,9 +39,9 @@ msgstr "Sistem tidak ditemukan atau tidak memiliki game achievement"
 #: routes/achievements.py:170 routes/achievements.py:435
 #: routes/bonus_discs.py:263 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/games.py:327 routes/games.py:823
-#: routes/games.py:937 routes/games_ai.py:46 routes/games_media.py:33
-#: routes/games_media.py:80 routes/games_media.py:140 routes/reports.py:688
-#: routes/reports.py:804 routes/trophies.py:1283 services/hltb_service.py:127
+#: routes/games.py:937 routes/games_ai.py:46 routes/games_media.py:34
+#: routes/games_media.py:81 routes/games_media.py:138 routes/reports.py:688
+#: routes/reports.py:809 routes/trophies.py:1283 services/hltb_service.py:127
 msgid "Game not found"
 msgstr "Game tidak ditemukan"
 
@@ -114,7 +124,7 @@ msgstr "Peran tidak valid"
 msgid "Username already exists"
 msgstr "Nama pengguna sudah ada"
 
-#: routes/auth.py:202 routes/auth.py:251 routes/auth.py:398 routes/auth.py:443
+#: routes/auth.py:202 routes/auth.py:251 routes/auth.py:433 routes/auth.py:478
 msgid "Password must be at least 12 characters"
 msgstr "Kata sandi harus terdiri dari minimal 12 karakter"
 
@@ -126,52 +136,52 @@ msgstr "Tidak dapat menghapus akun Anda sendiri"
 msgid "Cannot delete the last admin user"
 msgstr "Tidak dapat menghapus pengguna admin terakhir"
 
-#: routes/auth.py:312 routes/auth.py:374 routes/auth.py:430
+#: routes/auth.py:347 routes/auth.py:409 routes/auth.py:465
 msgid "Not logged in"
 msgstr "Belum login"
 
-#: routes/auth.py:350
+#: routes/auth.py:385
 msgid "Invalid locale"
 msgstr "Locale tidak valid"
 
-#: routes/auth.py:355
+#: routes/auth.py:390
 #, fuzzy
 msgid "Invalid theme"
 msgstr "Jalur tidak valid"
 
-#: routes/auth.py:386
+#: routes/auth.py:421
 msgid "Too many attempts. Please try again later."
 msgstr "Terlalu banyak percobaan. Silakan coba lagi nanti."
 
-#: routes/auth.py:393 routes/auth.py:439
+#: routes/auth.py:428 routes/auth.py:474
 msgid "New password is required"
 msgstr "Kata sandi baru wajib diisi"
 
-#: routes/auth.py:404
+#: routes/auth.py:439
 msgid "Current password is incorrect"
 msgstr "Kata sandi saat ini salah"
 
-#: routes/auth.py:433
+#: routes/auth.py:468
 msgid "Password change not required"
 msgstr "Perubahan kata sandi tidak diperlukan"
 
-#: routes/auth.py:485
+#: routes/auth.py:520
 msgid "No file provided"
 msgstr "Tidak ada berkas yang diberikan"
 
-#: routes/auth.py:489 routes/museum.py:692
+#: routes/auth.py:524 routes/museum.py:692
 msgid "No file selected"
 msgstr "Tidak ada berkas yang dipilih"
 
-#: routes/auth.py:494
+#: routes/auth.py:529
 msgid "Invalid file type. Allowed: jpg, png, gif, webp"
 msgstr "Jenis berkas tidak valid. Diizinkan: jpg, png, gif, webp"
 
-#: routes/auth.py:499
+#: routes/auth.py:534
 msgid "File too large. Maximum size is 2MB"
 msgstr "Berkas terlalu besar. Ukuran maksimum adalah 2MB"
 
-#: routes/auth.py:517
+#: routes/auth.py:552
 msgid ""
 "Avatar uploads require Pillow; please ask the operator to install the "
 "project requirements."
@@ -179,7 +189,7 @@ msgstr ""
 "Unggah avatar memerlukan Pillow; mohon minta operator untuk memasang "
 "requirements proyek."
 
-#: routes/auth.py:533 routes/museum.py:724
+#: routes/auth.py:568 routes/museum.py:724
 msgid "Invalid image file"
 msgstr "Berkas gambar tidak valid"
 
@@ -207,7 +217,7 @@ msgstr "Disc bonus dan game induk harus berada di sistem yang sama"
 #: routes/trophies.py:508 routes/trophies.py:704 routes/trophies.py:752
 #: routes/trophies.py:1600 routes/trophies.py:1624 routes/trophies.py:1669
 #: routes/trophies.py:1697 routes/trophies.py:1739 routes/trophies.py:1808
-#: routes/xbox_achievements.py:157 services/api_helpers.py:41
+#: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "Terjadi kesalahan internal"
 
@@ -215,7 +225,7 @@ msgstr "Terjadi kesalahan internal"
 msgid "Missing bonus_id or parent_id"
 msgstr "bonus_id atau parent_id tidak ada"
 
-#: routes/bonus_discs.py:304 routes/reports.py:792
+#: routes/bonus_discs.py:304 routes/reports.py:797
 msgid "Missing game_id"
 msgstr "game_id tidak ada"
 
@@ -426,45 +436,41 @@ msgstr ""
 msgid "AI scraper module not available"
 msgstr "Modul scraper AI tidak tersedia"
 
-#: routes/games_media.py:69
+#: routes/games_media.py:70
 msgid "No filename provided"
 msgstr "Nama berkas tidak diberikan"
 
-#: routes/games_media.py:76 routes/reports.py:683 routes/scrape_logs.py:131
+#: routes/games_media.py:77 routes/reports.py:683 routes/scrape_logs.py:131
 #: routes/scrape_logs.py:156 routes/scrape_logs.py:205 routes/settings.py:351
 msgid "Invalid filename"
 msgstr "Nama berkas tidak valid"
 
-#: routes/games_media.py:85
+#: routes/games_media.py:86
 #, python-format
 msgid "ROM file not found on disk: %(path)s"
 msgstr "Berkas ROM tidak ditemukan di disk: %(path)s"
 
-#: routes/games_media.py:101
+#: routes/games_media.py:101 routes/reports.py:716 routes/reports.py:883
 msgid "Destination is outside the configured ROM root"
 msgstr "Tujuan berada di luar root ROM yang dikonfigurasi"
 
-#: routes/games_media.py:103
-msgid "Could not validate destination path"
-msgstr "Tidak dapat memvalidasi jalur tujuan"
-
-#: routes/games_media.py:106 routes/reports.py:715 routes/reports.py:877
+#: routes/games_media.py:104 routes/reports.py:720 routes/reports.py:887
 msgid "A file with that name already exists"
 msgstr "Berkas dengan nama tersebut sudah ada"
 
-#: routes/games_media.py:113
+#: routes/games_media.py:111
 msgid "Failed to rename file"
 msgstr "Gagal mengganti nama berkas"
 
-#: routes/games_media.py:133
+#: routes/games_media.py:131
 msgid "No screenshot specified"
 msgstr "Tidak ada screenshot yang ditentukan"
 
-#: routes/games_media.py:136
+#: routes/games_media.py:134
 msgid "Invalid screenshot filename"
 msgstr "Nama berkas screenshot tidak valid"
 
-#: routes/games_media.py:146
+#: routes/games_media.py:144
 msgid "Screenshot not found"
 msgstr "Screenshot tidak ditemukan"
 
@@ -493,6 +499,11 @@ msgstr "Game ini sudah berjalan"
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "gagal menghentikan instance sebelumnya: %(err)s"
+
+#: routes/maintenance.py:260
+#, fuzzy
+msgid "Unknown image type"
+msgstr "Tidak ada gambar untuk diproses"
 
 #: routes/museum.py:386 routes/scraper.py:774
 msgid "No AI provider configured"
@@ -637,31 +648,31 @@ msgstr "Folder tidak ada: %(folder_path)s"
 msgid "Missing game_id or new_name"
 msgstr "game_id atau new_name tidak ada"
 
-#: routes/reports.py:692 routes/reports.py:808
+#: routes/reports.py:692 routes/reports.py:813
 msgid "No ROM path set"
 msgstr "Jalur ROM belum diatur"
 
-#: routes/reports.py:707 routes/reports.py:813
+#: routes/reports.py:707 routes/reports.py:818
 msgid "ROM file not found"
 msgstr "Berkas ROM tidak ditemukan"
 
-#: routes/reports.py:724
+#: routes/reports.py:729
 msgid "M3U files must keep the .m3u extension"
 msgstr "Berkas M3U harus mempertahankan ekstensi .m3u"
 
-#: routes/reports.py:737 routes/reports.py:889
+#: routes/reports.py:742 routes/reports.py:899
 msgid "A folder with the new name already exists"
 msgstr "Folder dengan nama baru tersebut sudah ada"
 
-#: routes/reports.py:817
+#: routes/reports.py:822
 msgid "No scraped title available"
 msgstr "Tidak ada judul hasil scrape yang tersedia"
 
-#: routes/reports.py:835
+#: routes/reports.py:840
 msgid "Title is empty after sanitization"
 msgstr "Judul kosong setelah sanitasi"
 
-#: routes/reports.py:858
+#: routes/reports.py:863
 msgid "Generated filename contains invalid characters"
 msgstr "Nama berkas yang dihasilkan mengandung karakter tidak valid"
 
@@ -8823,4 +8834,7 @@ msgstr "Dukung di Patreon"
 
 #~ msgid "Your settings have been saved!"
 #~ msgstr "Pengaturan Anda telah disimpan!"
+
+#~ msgid "Could not validate destination path"
+#~ msgstr "Tidak dapat memvalidasi jalur tujuan"
 

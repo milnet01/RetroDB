@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-25 09:20+0200\n"
+"POT-Creation-Date: 2026-09-26 09:58+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans\n"
@@ -17,6 +17,16 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: app.py:683
+#, fuzzy
+msgid "Too many requests. Please wait and try again."
+msgstr "尝试次数过多，请稍后再试。"
+
+#: app.py:790
+#, fuzzy
+msgid "Password change required"
+msgstr "无需更改密码"
 
 #: routes/achievements.py:48
 msgid "No games with RetroAchievements found in your library"
@@ -29,9 +39,9 @@ msgstr "未找到系统，或该系统没有包含成就的游戏"
 #: routes/achievements.py:170 routes/achievements.py:435
 #: routes/bonus_discs.py:263 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/games.py:327 routes/games.py:823
-#: routes/games.py:937 routes/games_ai.py:46 routes/games_media.py:33
-#: routes/games_media.py:80 routes/games_media.py:140 routes/reports.py:688
-#: routes/reports.py:804 routes/trophies.py:1283 services/hltb_service.py:127
+#: routes/games.py:937 routes/games_ai.py:46 routes/games_media.py:34
+#: routes/games_media.py:81 routes/games_media.py:138 routes/reports.py:688
+#: routes/reports.py:809 routes/trophies.py:1283 services/hltb_service.py:127
 msgid "Game not found"
 msgstr "未找到游戏"
 
@@ -114,7 +124,7 @@ msgstr "角色无效"
 msgid "Username already exists"
 msgstr "用户名已存在"
 
-#: routes/auth.py:202 routes/auth.py:251 routes/auth.py:398 routes/auth.py:443
+#: routes/auth.py:202 routes/auth.py:251 routes/auth.py:433 routes/auth.py:478
 msgid "Password must be at least 12 characters"
 msgstr "密码长度至少为 12 个字符"
 
@@ -126,58 +136,58 @@ msgstr "无法删除您自己的账户"
 msgid "Cannot delete the last admin user"
 msgstr "无法删除最后一个管理员用户"
 
-#: routes/auth.py:312 routes/auth.py:374 routes/auth.py:430
+#: routes/auth.py:347 routes/auth.py:409 routes/auth.py:465
 msgid "Not logged in"
 msgstr "未登录"
 
-#: routes/auth.py:350
+#: routes/auth.py:385
 msgid "Invalid locale"
 msgstr "无效的语言区域"
 
-#: routes/auth.py:355
+#: routes/auth.py:390
 #, fuzzy
 msgid "Invalid theme"
 msgstr "路径无效"
 
-#: routes/auth.py:386
+#: routes/auth.py:421
 msgid "Too many attempts. Please try again later."
 msgstr "尝试次数过多，请稍后再试。"
 
-#: routes/auth.py:393 routes/auth.py:439
+#: routes/auth.py:428 routes/auth.py:474
 msgid "New password is required"
 msgstr "需要设置新密码"
 
-#: routes/auth.py:404
+#: routes/auth.py:439
 msgid "Current password is incorrect"
 msgstr "当前密码不正确"
 
-#: routes/auth.py:433
+#: routes/auth.py:468
 msgid "Password change not required"
 msgstr "无需更改密码"
 
-#: routes/auth.py:485
+#: routes/auth.py:520
 msgid "No file provided"
 msgstr "未提供文件"
 
-#: routes/auth.py:489 routes/museum.py:692
+#: routes/auth.py:524 routes/museum.py:692
 msgid "No file selected"
 msgstr "未选择文件"
 
-#: routes/auth.py:494
+#: routes/auth.py:529
 msgid "Invalid file type. Allowed: jpg, png, gif, webp"
 msgstr "文件类型无效。允许的类型：jpg、png、gif、webp"
 
-#: routes/auth.py:499
+#: routes/auth.py:534
 msgid "File too large. Maximum size is 2MB"
 msgstr "文件过大。最大大小为 2MB"
 
-#: routes/auth.py:517
+#: routes/auth.py:552
 msgid ""
 "Avatar uploads require Pillow; please ask the operator to install the "
 "project requirements."
 msgstr "上传头像需要 Pillow；请联系操作员安装项目依赖。"
 
-#: routes/auth.py:533 routes/museum.py:724
+#: routes/auth.py:568 routes/museum.py:724
 msgid "Invalid image file"
 msgstr "无效的图片文件"
 
@@ -205,7 +215,7 @@ msgstr "附赠光盘与主游戏必须属于同一系统"
 #: routes/trophies.py:508 routes/trophies.py:704 routes/trophies.py:752
 #: routes/trophies.py:1600 routes/trophies.py:1624 routes/trophies.py:1669
 #: routes/trophies.py:1697 routes/trophies.py:1739 routes/trophies.py:1808
-#: routes/xbox_achievements.py:157 services/api_helpers.py:41
+#: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "发生内部错误"
 
@@ -213,7 +223,7 @@ msgstr "发生内部错误"
 msgid "Missing bonus_id or parent_id"
 msgstr "缺少 bonus_id 或 parent_id"
 
-#: routes/bonus_discs.py:304 routes/reports.py:792
+#: routes/bonus_discs.py:304 routes/reports.py:797
 msgid "Missing game_id"
 msgstr "缺少 game_id"
 
@@ -420,45 +430,41 @@ msgstr "AI 未返回任何数据。请检查您的 API 密钥和提供商设置�
 msgid "AI scraper module not available"
 msgstr "AI 抓取模块不可用"
 
-#: routes/games_media.py:69
+#: routes/games_media.py:70
 msgid "No filename provided"
 msgstr "未提供文件名"
 
-#: routes/games_media.py:76 routes/reports.py:683 routes/scrape_logs.py:131
+#: routes/games_media.py:77 routes/reports.py:683 routes/scrape_logs.py:131
 #: routes/scrape_logs.py:156 routes/scrape_logs.py:205 routes/settings.py:351
 msgid "Invalid filename"
 msgstr "无效的文件名"
 
-#: routes/games_media.py:85
+#: routes/games_media.py:86
 #, python-format
 msgid "ROM file not found on disk: %(path)s"
 msgstr "磁盘上未找到 ROM 文件：%(path)s"
 
-#: routes/games_media.py:101
+#: routes/games_media.py:101 routes/reports.py:716 routes/reports.py:883
 msgid "Destination is outside the configured ROM root"
 msgstr "目标位置在已配置的 ROM 根目录之外"
 
-#: routes/games_media.py:103
-msgid "Could not validate destination path"
-msgstr "无法验证目标路径"
-
-#: routes/games_media.py:106 routes/reports.py:715 routes/reports.py:877
+#: routes/games_media.py:104 routes/reports.py:720 routes/reports.py:887
 msgid "A file with that name already exists"
 msgstr "已存在同名文件"
 
-#: routes/games_media.py:113
+#: routes/games_media.py:111
 msgid "Failed to rename file"
 msgstr "重命名文件失败"
 
-#: routes/games_media.py:133
+#: routes/games_media.py:131
 msgid "No screenshot specified"
 msgstr "未指定截图"
 
-#: routes/games_media.py:136
+#: routes/games_media.py:134
 msgid "Invalid screenshot filename"
 msgstr "截图文件名无效"
 
-#: routes/games_media.py:146
+#: routes/games_media.py:144
 msgid "Screenshot not found"
 msgstr "未找到截图"
 
@@ -487,6 +493,11 @@ msgstr "该游戏已在运行中"
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "无法终止先前实例：%(err)s"
+
+#: routes/maintenance.py:260
+#, fuzzy
+msgid "Unknown image type"
+msgstr "没有可处理的图片"
 
 #: routes/museum.py:386 routes/scraper.py:774
 msgid "No AI provider configured"
@@ -627,31 +638,31 @@ msgstr "文件夹不存在：%(folder_path)s"
 msgid "Missing game_id or new_name"
 msgstr "缺少 game_id 或 new_name"
 
-#: routes/reports.py:692 routes/reports.py:808
+#: routes/reports.py:692 routes/reports.py:813
 msgid "No ROM path set"
 msgstr "未设置 ROM 路径"
 
-#: routes/reports.py:707 routes/reports.py:813
+#: routes/reports.py:707 routes/reports.py:818
 msgid "ROM file not found"
 msgstr "未找到 ROM 文件"
 
-#: routes/reports.py:724
+#: routes/reports.py:729
 msgid "M3U files must keep the .m3u extension"
 msgstr "M3U 文件必须保留 .m3u 扩展名"
 
-#: routes/reports.py:737 routes/reports.py:889
+#: routes/reports.py:742 routes/reports.py:899
 msgid "A folder with the new name already exists"
 msgstr "已存在同名的文件夹"
 
-#: routes/reports.py:817
+#: routes/reports.py:822
 msgid "No scraped title available"
 msgstr "没有可用的抓取标题"
 
-#: routes/reports.py:835
+#: routes/reports.py:840
 msgid "Title is empty after sanitization"
 msgstr "清理后标题为空"
 
-#: routes/reports.py:858
+#: routes/reports.py:863
 msgid "Generated filename contains invalid characters"
 msgstr "生成的文件名包含无效字符"
 
@@ -8621,4 +8632,7 @@ msgstr "在 Patreon 上支持"
 
 #~ msgid "Your settings have been saved!"
 #~ msgstr "你的设置已保存！"
+
+#~ msgid "Could not validate destination path"
+#~ msgstr "无法验证目标路径"
 

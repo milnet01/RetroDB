@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-25 09:20+0200\n"
+"POT-Creation-Date: 2026-09-26 09:58+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -17,6 +17,16 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: app.py:683
+#, fuzzy
+msgid "Too many requests. Please wait and try again."
+msgstr "Demasiados intentos. Inténtalo de nuevo más tarde."
+
+#: app.py:790
+#, fuzzy
+msgid "Password change required"
+msgstr "No se requiere cambiar la contraseña"
 
 #: routes/achievements.py:48
 msgid "No games with RetroAchievements found in your library"
@@ -29,9 +39,9 @@ msgstr "Sistema no encontrado o sin juegos con logros"
 #: routes/achievements.py:170 routes/achievements.py:435
 #: routes/bonus_discs.py:263 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/games.py:327 routes/games.py:823
-#: routes/games.py:937 routes/games_ai.py:46 routes/games_media.py:33
-#: routes/games_media.py:80 routes/games_media.py:140 routes/reports.py:688
-#: routes/reports.py:804 routes/trophies.py:1283 services/hltb_service.py:127
+#: routes/games.py:937 routes/games_ai.py:46 routes/games_media.py:34
+#: routes/games_media.py:81 routes/games_media.py:138 routes/reports.py:688
+#: routes/reports.py:809 routes/trophies.py:1283 services/hltb_service.py:127
 msgid "Game not found"
 msgstr "Juego no encontrado"
 
@@ -116,7 +126,7 @@ msgstr "Rol no válido"
 msgid "Username already exists"
 msgstr "El nombre de usuario ya existe"
 
-#: routes/auth.py:202 routes/auth.py:251 routes/auth.py:398 routes/auth.py:443
+#: routes/auth.py:202 routes/auth.py:251 routes/auth.py:433 routes/auth.py:478
 msgid "Password must be at least 12 characters"
 msgstr "La contraseña debe tener al menos 12 caracteres"
 
@@ -128,52 +138,52 @@ msgstr "No puedes eliminar tu propia cuenta"
 msgid "Cannot delete the last admin user"
 msgstr "No se puede eliminar el último usuario administrador"
 
-#: routes/auth.py:312 routes/auth.py:374 routes/auth.py:430
+#: routes/auth.py:347 routes/auth.py:409 routes/auth.py:465
 msgid "Not logged in"
 msgstr "Sesión no iniciada"
 
-#: routes/auth.py:350
+#: routes/auth.py:385
 msgid "Invalid locale"
 msgstr "Idioma no válido"
 
-#: routes/auth.py:355
+#: routes/auth.py:390
 #, fuzzy
 msgid "Invalid theme"
 msgstr "Ruta no válida"
 
-#: routes/auth.py:386
+#: routes/auth.py:421
 msgid "Too many attempts. Please try again later."
 msgstr "Demasiados intentos. Inténtalo de nuevo más tarde."
 
-#: routes/auth.py:393 routes/auth.py:439
+#: routes/auth.py:428 routes/auth.py:474
 msgid "New password is required"
 msgstr "Se requiere una nueva contraseña"
 
-#: routes/auth.py:404
+#: routes/auth.py:439
 msgid "Current password is incorrect"
 msgstr "La contraseña actual es incorrecta"
 
-#: routes/auth.py:433
+#: routes/auth.py:468
 msgid "Password change not required"
 msgstr "No se requiere cambiar la contraseña"
 
-#: routes/auth.py:485
+#: routes/auth.py:520
 msgid "No file provided"
 msgstr "No se proporcionó ningún archivo"
 
-#: routes/auth.py:489 routes/museum.py:692
+#: routes/auth.py:524 routes/museum.py:692
 msgid "No file selected"
 msgstr "No se seleccionó ningún archivo"
 
-#: routes/auth.py:494
+#: routes/auth.py:529
 msgid "Invalid file type. Allowed: jpg, png, gif, webp"
 msgstr "Tipo de archivo no válido. Permitidos: jpg, png, gif, webp"
 
-#: routes/auth.py:499
+#: routes/auth.py:534
 msgid "File too large. Maximum size is 2MB"
 msgstr "Archivo demasiado grande. El tamaño máximo es 2MB"
 
-#: routes/auth.py:517
+#: routes/auth.py:552
 msgid ""
 "Avatar uploads require Pillow; please ask the operator to install the "
 "project requirements."
@@ -181,7 +191,7 @@ msgstr ""
 "La subida de avatares requiere Pillow; pide al operador que instale las "
 "dependencias del proyecto."
 
-#: routes/auth.py:533 routes/museum.py:724
+#: routes/auth.py:568 routes/museum.py:724
 msgid "Invalid image file"
 msgstr "Archivo de imagen no válido"
 
@@ -209,7 +219,7 @@ msgstr "El disco extra y el juego principal deben estar en el mismo sistema"
 #: routes/trophies.py:508 routes/trophies.py:704 routes/trophies.py:752
 #: routes/trophies.py:1600 routes/trophies.py:1624 routes/trophies.py:1669
 #: routes/trophies.py:1697 routes/trophies.py:1739 routes/trophies.py:1808
-#: routes/xbox_achievements.py:157 services/api_helpers.py:41
+#: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "Se produjo un error interno"
 
@@ -217,7 +227,7 @@ msgstr "Se produjo un error interno"
 msgid "Missing bonus_id or parent_id"
 msgstr "Falta bonus_id o parent_id"
 
-#: routes/bonus_discs.py:304 routes/reports.py:792
+#: routes/bonus_discs.py:304 routes/reports.py:797
 msgid "Missing game_id"
 msgstr "Falta game_id"
 
@@ -428,45 +438,41 @@ msgstr ""
 msgid "AI scraper module not available"
 msgstr "El módulo del scraper de IA no está disponible"
 
-#: routes/games_media.py:69
+#: routes/games_media.py:70
 msgid "No filename provided"
 msgstr "No se proporcionó ningún nombre de archivo"
 
-#: routes/games_media.py:76 routes/reports.py:683 routes/scrape_logs.py:131
+#: routes/games_media.py:77 routes/reports.py:683 routes/scrape_logs.py:131
 #: routes/scrape_logs.py:156 routes/scrape_logs.py:205 routes/settings.py:351
 msgid "Invalid filename"
 msgstr "Nombre de archivo no válido"
 
-#: routes/games_media.py:85
+#: routes/games_media.py:86
 #, python-format
 msgid "ROM file not found on disk: %(path)s"
 msgstr "Archivo ROM no encontrado en el disco: %(path)s"
 
-#: routes/games_media.py:101
+#: routes/games_media.py:101 routes/reports.py:716 routes/reports.py:883
 msgid "Destination is outside the configured ROM root"
 msgstr "El destino está fuera de la raíz de ROMs configurada"
 
-#: routes/games_media.py:103
-msgid "Could not validate destination path"
-msgstr "No se pudo validar la ruta de destino"
-
-#: routes/games_media.py:106 routes/reports.py:715 routes/reports.py:877
+#: routes/games_media.py:104 routes/reports.py:720 routes/reports.py:887
 msgid "A file with that name already exists"
 msgstr "Ya existe un archivo con ese nombre"
 
-#: routes/games_media.py:113
+#: routes/games_media.py:111
 msgid "Failed to rename file"
 msgstr "No se pudo renombrar el archivo"
 
-#: routes/games_media.py:133
+#: routes/games_media.py:131
 msgid "No screenshot specified"
 msgstr "No se especificó ninguna captura de pantalla"
 
-#: routes/games_media.py:136
+#: routes/games_media.py:134
 msgid "Invalid screenshot filename"
 msgstr "Nombre de archivo de captura de pantalla no válido"
 
-#: routes/games_media.py:146
+#: routes/games_media.py:144
 msgid "Screenshot not found"
 msgstr "Captura de pantalla no encontrada"
 
@@ -495,6 +501,11 @@ msgstr "Este juego ya está en ejecución"
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "no se pudo finalizar la instancia anterior: %(err)s"
+
+#: routes/maintenance.py:260
+#, fuzzy
+msgid "Unknown image type"
+msgstr "No hay ninguna imagen que procesar"
 
 #: routes/museum.py:386 routes/scraper.py:774
 msgid "No AI provider configured"
@@ -649,31 +660,31 @@ msgstr "La carpeta no existe: %(folder_path)s"
 msgid "Missing game_id or new_name"
 msgstr "Falta game_id o new_name"
 
-#: routes/reports.py:692 routes/reports.py:808
+#: routes/reports.py:692 routes/reports.py:813
 msgid "No ROM path set"
 msgstr "No se ha establecido ninguna ruta de ROMs"
 
-#: routes/reports.py:707 routes/reports.py:813
+#: routes/reports.py:707 routes/reports.py:818
 msgid "ROM file not found"
 msgstr "Archivo ROM no encontrado"
 
-#: routes/reports.py:724
+#: routes/reports.py:729
 msgid "M3U files must keep the .m3u extension"
 msgstr "Los archivos M3U deben conservar la extensión .m3u"
 
-#: routes/reports.py:737 routes/reports.py:889
+#: routes/reports.py:742 routes/reports.py:899
 msgid "A folder with the new name already exists"
 msgstr "Ya existe una carpeta con el nuevo nombre"
 
-#: routes/reports.py:817
+#: routes/reports.py:822
 msgid "No scraped title available"
 msgstr "No hay ningún título obtenido disponible"
 
-#: routes/reports.py:835
+#: routes/reports.py:840
 msgid "Title is empty after sanitization"
 msgstr "El título queda vacío tras la depuración"
 
-#: routes/reports.py:858
+#: routes/reports.py:863
 msgid "Generated filename contains invalid characters"
 msgstr "El nombre de archivo generado contiene caracteres no válidos"
 
@@ -8888,4 +8899,7 @@ msgstr "Apoyar en Patreon"
 
 #~ msgid "Your settings have been saved!"
 #~ msgstr "¡Tus ajustes se han guardado!"
+
+#~ msgid "Could not validate destination path"
+#~ msgstr "No se pudo validar la ruta de destino"
 

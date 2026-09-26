@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-25 09:20+0200\n"
+"POT-Creation-Date: 2026-09-26 09:58+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: nl\n"
@@ -17,6 +17,16 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: app.py:683
+#, fuzzy
+msgid "Too many requests. Please wait and try again."
+msgstr "Te veel pogingen. Probeer het later opnieuw."
+
+#: app.py:790
+#, fuzzy
+msgid "Password change required"
+msgstr "Wachtwoordwijziging niet vereist"
 
 #: routes/achievements.py:48
 msgid "No games with RetroAchievements found in your library"
@@ -29,9 +39,9 @@ msgstr "Systeem niet gevonden of heeft geen games met prestaties"
 #: routes/achievements.py:170 routes/achievements.py:435
 #: routes/bonus_discs.py:263 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/games.py:327 routes/games.py:823
-#: routes/games.py:937 routes/games_ai.py:46 routes/games_media.py:33
-#: routes/games_media.py:80 routes/games_media.py:140 routes/reports.py:688
-#: routes/reports.py:804 routes/trophies.py:1283 services/hltb_service.py:127
+#: routes/games.py:937 routes/games_ai.py:46 routes/games_media.py:34
+#: routes/games_media.py:81 routes/games_media.py:138 routes/reports.py:688
+#: routes/reports.py:809 routes/trophies.py:1283 services/hltb_service.py:127
 msgid "Game not found"
 msgstr "Game niet gevonden"
 
@@ -116,7 +126,7 @@ msgstr "Ongeldige rol"
 msgid "Username already exists"
 msgstr "Gebruikersnaam bestaat al"
 
-#: routes/auth.py:202 routes/auth.py:251 routes/auth.py:398 routes/auth.py:443
+#: routes/auth.py:202 routes/auth.py:251 routes/auth.py:433 routes/auth.py:478
 msgid "Password must be at least 12 characters"
 msgstr "Wachtwoord moet minimaal 12 tekens bevatten"
 
@@ -128,52 +138,52 @@ msgstr "Je kunt je eigen account niet verwijderen"
 msgid "Cannot delete the last admin user"
 msgstr "Kan de laatste beheerder niet verwijderen"
 
-#: routes/auth.py:312 routes/auth.py:374 routes/auth.py:430
+#: routes/auth.py:347 routes/auth.py:409 routes/auth.py:465
 msgid "Not logged in"
 msgstr "Niet ingelogd"
 
-#: routes/auth.py:350
+#: routes/auth.py:385
 msgid "Invalid locale"
 msgstr "Ongeldige taalinstelling"
 
-#: routes/auth.py:355
+#: routes/auth.py:390
 #, fuzzy
 msgid "Invalid theme"
 msgstr "Ongeldig pad"
 
-#: routes/auth.py:386
+#: routes/auth.py:421
 msgid "Too many attempts. Please try again later."
 msgstr "Te veel pogingen. Probeer het later opnieuw."
 
-#: routes/auth.py:393 routes/auth.py:439
+#: routes/auth.py:428 routes/auth.py:474
 msgid "New password is required"
 msgstr "Nieuw wachtwoord is vereist"
 
-#: routes/auth.py:404
+#: routes/auth.py:439
 msgid "Current password is incorrect"
 msgstr "Huidig wachtwoord is onjuist"
 
-#: routes/auth.py:433
+#: routes/auth.py:468
 msgid "Password change not required"
 msgstr "Wachtwoordwijziging niet vereist"
 
-#: routes/auth.py:485
+#: routes/auth.py:520
 msgid "No file provided"
 msgstr "Geen bestand opgegeven"
 
-#: routes/auth.py:489 routes/museum.py:692
+#: routes/auth.py:524 routes/museum.py:692
 msgid "No file selected"
 msgstr "Geen bestand geselecteerd"
 
-#: routes/auth.py:494
+#: routes/auth.py:529
 msgid "Invalid file type. Allowed: jpg, png, gif, webp"
 msgstr "Ongeldig bestandstype. Toegestaan: jpg, png, gif, webp"
 
-#: routes/auth.py:499
+#: routes/auth.py:534
 msgid "File too large. Maximum size is 2MB"
 msgstr "Bestand te groot. Maximale grootte is 2 MB"
 
-#: routes/auth.py:517
+#: routes/auth.py:552
 msgid ""
 "Avatar uploads require Pillow; please ask the operator to install the "
 "project requirements."
@@ -181,7 +191,7 @@ msgstr ""
 "Avatar-uploads vereisen Pillow; vraag de beheerder om de projectvereisten"
 " te installeren."
 
-#: routes/auth.py:533 routes/museum.py:724
+#: routes/auth.py:568 routes/museum.py:724
 msgid "Invalid image file"
 msgstr "Ongeldig afbeeldingsbestand"
 
@@ -209,7 +219,7 @@ msgstr "Bonusschijf en hoofdgame moeten in hetzelfde systeem staan"
 #: routes/trophies.py:508 routes/trophies.py:704 routes/trophies.py:752
 #: routes/trophies.py:1600 routes/trophies.py:1624 routes/trophies.py:1669
 #: routes/trophies.py:1697 routes/trophies.py:1739 routes/trophies.py:1808
-#: routes/xbox_achievements.py:157 services/api_helpers.py:41
+#: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "Er is een interne fout opgetreden"
 
@@ -217,7 +227,7 @@ msgstr "Er is een interne fout opgetreden"
 msgid "Missing bonus_id or parent_id"
 msgstr "bonus_id of parent_id ontbreekt"
 
-#: routes/bonus_discs.py:304 routes/reports.py:792
+#: routes/bonus_discs.py:304 routes/reports.py:797
 msgid "Missing game_id"
 msgstr "game_id ontbreekt"
 
@@ -428,45 +438,41 @@ msgstr ""
 msgid "AI scraper module not available"
 msgstr "AI-scrapermodule niet beschikbaar"
 
-#: routes/games_media.py:69
+#: routes/games_media.py:70
 msgid "No filename provided"
 msgstr "Geen bestandsnaam opgegeven"
 
-#: routes/games_media.py:76 routes/reports.py:683 routes/scrape_logs.py:131
+#: routes/games_media.py:77 routes/reports.py:683 routes/scrape_logs.py:131
 #: routes/scrape_logs.py:156 routes/scrape_logs.py:205 routes/settings.py:351
 msgid "Invalid filename"
 msgstr "Ongeldige bestandsnaam"
 
-#: routes/games_media.py:85
+#: routes/games_media.py:86
 #, python-format
 msgid "ROM file not found on disk: %(path)s"
 msgstr "ROM-bestand niet gevonden op schijf: %(path)s"
 
-#: routes/games_media.py:101
+#: routes/games_media.py:101 routes/reports.py:716 routes/reports.py:883
 msgid "Destination is outside the configured ROM root"
 msgstr "Bestemming ligt buiten de geconfigureerde ROM-hoofdmap"
 
-#: routes/games_media.py:103
-msgid "Could not validate destination path"
-msgstr "Kon bestemmingspad niet valideren"
-
-#: routes/games_media.py:106 routes/reports.py:715 routes/reports.py:877
+#: routes/games_media.py:104 routes/reports.py:720 routes/reports.py:887
 msgid "A file with that name already exists"
 msgstr "Er bestaat al een bestand met die naam"
 
-#: routes/games_media.py:113
+#: routes/games_media.py:111
 msgid "Failed to rename file"
 msgstr "Bestand hernoemen mislukt"
 
-#: routes/games_media.py:133
+#: routes/games_media.py:131
 msgid "No screenshot specified"
 msgstr "Geen screenshot opgegeven"
 
-#: routes/games_media.py:136
+#: routes/games_media.py:134
 msgid "Invalid screenshot filename"
 msgstr "Ongeldige screenshot-bestandsnaam"
 
-#: routes/games_media.py:146
+#: routes/games_media.py:144
 msgid "Screenshot not found"
 msgstr "Screenshot niet gevonden"
 
@@ -495,6 +501,11 @@ msgstr "Deze game draait al"
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "vorige instantie afsluiten mislukt: %(err)s"
+
+#: routes/maintenance.py:260
+#, fuzzy
+msgid "Unknown image type"
+msgstr "Geen afbeelding om te verwerken"
 
 #: routes/museum.py:386 routes/scraper.py:774
 msgid "No AI provider configured"
@@ -653,31 +664,31 @@ msgstr "Map bestaat niet: %(folder_path)s"
 msgid "Missing game_id or new_name"
 msgstr "game_id of new_name ontbreekt"
 
-#: routes/reports.py:692 routes/reports.py:808
+#: routes/reports.py:692 routes/reports.py:813
 msgid "No ROM path set"
 msgstr "Geen ROM-pad ingesteld"
 
-#: routes/reports.py:707 routes/reports.py:813
+#: routes/reports.py:707 routes/reports.py:818
 msgid "ROM file not found"
 msgstr "ROM-bestand niet gevonden"
 
-#: routes/reports.py:724
+#: routes/reports.py:729
 msgid "M3U files must keep the .m3u extension"
 msgstr "M3U-bestanden moeten de extensie .m3u behouden"
 
-#: routes/reports.py:737 routes/reports.py:889
+#: routes/reports.py:742 routes/reports.py:899
 msgid "A folder with the new name already exists"
 msgstr "Er bestaat al een map met de nieuwe naam"
 
-#: routes/reports.py:817
+#: routes/reports.py:822
 msgid "No scraped title available"
 msgstr "Geen gescrapete titel beschikbaar"
 
-#: routes/reports.py:835
+#: routes/reports.py:840
 msgid "Title is empty after sanitization"
 msgstr "Titel is leeg na opschoning"
 
-#: routes/reports.py:858
+#: routes/reports.py:863
 msgid "Generated filename contains invalid characters"
 msgstr "Gegenereerde bestandsnaam bevat ongeldige tekens"
 
@@ -8875,4 +8886,7 @@ msgstr "Steunen op Patreon"
 
 #~ msgid "Your settings have been saved!"
 #~ msgstr "Je instellingen zijn opgeslagen!"
+
+#~ msgid "Could not validate destination path"
+#~ msgstr "Kon bestemmingspad niet valideren"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-25 09:20+0200\n"
+"POT-Creation-Date: 2026-09-26 09:58+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -17,6 +17,16 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: app.py:683
+#, fuzzy
+msgid "Too many requests. Please wait and try again."
+msgstr "시도가 너무 많습니다. 잠시 후 다시 시도하세요."
+
+#: app.py:790
+#, fuzzy
+msgid "Password change required"
+msgstr "비밀번호 변경이 필요하지 않습니다"
 
 #: routes/achievements.py:48
 msgid "No games with RetroAchievements found in your library"
@@ -29,9 +39,9 @@ msgstr "시스템을 찾을 수 없거나 업적이 있는 게임이 없습니�
 #: routes/achievements.py:170 routes/achievements.py:435
 #: routes/bonus_discs.py:263 routes/bulk_scrape.py:46 routes/collections.py:276
 #: routes/collections.py:531 routes/games.py:327 routes/games.py:823
-#: routes/games.py:937 routes/games_ai.py:46 routes/games_media.py:33
-#: routes/games_media.py:80 routes/games_media.py:140 routes/reports.py:688
-#: routes/reports.py:804 routes/trophies.py:1283 services/hltb_service.py:127
+#: routes/games.py:937 routes/games_ai.py:46 routes/games_media.py:34
+#: routes/games_media.py:81 routes/games_media.py:138 routes/reports.py:688
+#: routes/reports.py:809 routes/trophies.py:1283 services/hltb_service.py:127
 msgid "Game not found"
 msgstr "게임을 찾을 수 없습니다"
 
@@ -114,7 +124,7 @@ msgstr "잘못된 역할입니다"
 msgid "Username already exists"
 msgstr "사용자 이름이 이미 존재합니다"
 
-#: routes/auth.py:202 routes/auth.py:251 routes/auth.py:398 routes/auth.py:443
+#: routes/auth.py:202 routes/auth.py:251 routes/auth.py:433 routes/auth.py:478
 msgid "Password must be at least 12 characters"
 msgstr "비밀번호는 최소 12자 이상이어야 합니다"
 
@@ -126,58 +136,58 @@ msgstr "자신의 계정은 삭제할 수 없습니다"
 msgid "Cannot delete the last admin user"
 msgstr "마지막 관리자 사용자는 삭제할 수 없습니다"
 
-#: routes/auth.py:312 routes/auth.py:374 routes/auth.py:430
+#: routes/auth.py:347 routes/auth.py:409 routes/auth.py:465
 msgid "Not logged in"
 msgstr "로그인되어 있지 않습니다"
 
-#: routes/auth.py:350
+#: routes/auth.py:385
 msgid "Invalid locale"
 msgstr "잘못된 로캘입니다"
 
-#: routes/auth.py:355
+#: routes/auth.py:390
 #, fuzzy
 msgid "Invalid theme"
 msgstr "잘못된 경로입니다"
 
-#: routes/auth.py:386
+#: routes/auth.py:421
 msgid "Too many attempts. Please try again later."
 msgstr "시도가 너무 많습니다. 잠시 후 다시 시도하세요."
 
-#: routes/auth.py:393 routes/auth.py:439
+#: routes/auth.py:428 routes/auth.py:474
 msgid "New password is required"
 msgstr "새 비밀번호가 필요합니다"
 
-#: routes/auth.py:404
+#: routes/auth.py:439
 msgid "Current password is incorrect"
 msgstr "현재 비밀번호가 올바르지 않습니다"
 
-#: routes/auth.py:433
+#: routes/auth.py:468
 msgid "Password change not required"
 msgstr "비밀번호 변경이 필요하지 않습니다"
 
-#: routes/auth.py:485
+#: routes/auth.py:520
 msgid "No file provided"
 msgstr "제공된 파일이 없습니다"
 
-#: routes/auth.py:489 routes/museum.py:692
+#: routes/auth.py:524 routes/museum.py:692
 msgid "No file selected"
 msgstr "선택된 파일이 없습니다"
 
-#: routes/auth.py:494
+#: routes/auth.py:529
 msgid "Invalid file type. Allowed: jpg, png, gif, webp"
 msgstr "잘못된 파일 형식입니다. 허용 형식: jpg, png, gif, webp"
 
-#: routes/auth.py:499
+#: routes/auth.py:534
 msgid "File too large. Maximum size is 2MB"
 msgstr "파일이 너무 큽니다. 최대 크기는 2MB입니다"
 
-#: routes/auth.py:517
+#: routes/auth.py:552
 msgid ""
 "Avatar uploads require Pillow; please ask the operator to install the "
 "project requirements."
 msgstr "아바타 업로드에는 Pillow가 필요합니다. 운영자에게 프로젝트 요구 사항 설치를 요청하세요."
 
-#: routes/auth.py:533 routes/museum.py:724
+#: routes/auth.py:568 routes/museum.py:724
 msgid "Invalid image file"
 msgstr "잘못된 이미지 파일입니다"
 
@@ -205,7 +215,7 @@ msgstr "보너스 디스크와 상위 게임은 같은 시스템에 있어야 �
 #: routes/trophies.py:508 routes/trophies.py:704 routes/trophies.py:752
 #: routes/trophies.py:1600 routes/trophies.py:1624 routes/trophies.py:1669
 #: routes/trophies.py:1697 routes/trophies.py:1739 routes/trophies.py:1808
-#: routes/xbox_achievements.py:157 services/api_helpers.py:41
+#: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "내부 오류가 발생했습니다"
 
@@ -213,7 +223,7 @@ msgstr "내부 오류가 발생했습니다"
 msgid "Missing bonus_id or parent_id"
 msgstr "bonus_id 또는 parent_id가 누락되었습니다"
 
-#: routes/bonus_discs.py:304 routes/reports.py:792
+#: routes/bonus_discs.py:304 routes/reports.py:797
 msgid "Missing game_id"
 msgstr "game_id가 누락되었습니다"
 
@@ -422,45 +432,41 @@ msgstr "AI가 데이터를 반환하지 않았습니다. API 키와 공급자 �
 msgid "AI scraper module not available"
 msgstr "AI 스크레이퍼 모듈을 사용할 수 없습니다"
 
-#: routes/games_media.py:69
+#: routes/games_media.py:70
 msgid "No filename provided"
 msgstr "제공된 파일 이름이 없습니다"
 
-#: routes/games_media.py:76 routes/reports.py:683 routes/scrape_logs.py:131
+#: routes/games_media.py:77 routes/reports.py:683 routes/scrape_logs.py:131
 #: routes/scrape_logs.py:156 routes/scrape_logs.py:205 routes/settings.py:351
 msgid "Invalid filename"
 msgstr "잘못된 파일 이름입니다"
 
-#: routes/games_media.py:85
+#: routes/games_media.py:86
 #, python-format
 msgid "ROM file not found on disk: %(path)s"
 msgstr "디스크에서 ROM 파일을 찾을 수 없습니다: %(path)s"
 
-#: routes/games_media.py:101
+#: routes/games_media.py:101 routes/reports.py:716 routes/reports.py:883
 msgid "Destination is outside the configured ROM root"
 msgstr "대상이 설정된 ROM 루트 외부에 있습니다"
 
-#: routes/games_media.py:103
-msgid "Could not validate destination path"
-msgstr "대상 경로를 검증할 수 없습니다"
-
-#: routes/games_media.py:106 routes/reports.py:715 routes/reports.py:877
+#: routes/games_media.py:104 routes/reports.py:720 routes/reports.py:887
 msgid "A file with that name already exists"
 msgstr "해당 이름의 파일이 이미 존재합니다"
 
-#: routes/games_media.py:113
+#: routes/games_media.py:111
 msgid "Failed to rename file"
 msgstr "파일 이름 변경에 실패했습니다"
 
-#: routes/games_media.py:133
+#: routes/games_media.py:131
 msgid "No screenshot specified"
 msgstr "지정된 스크린샷이 없습니다"
 
-#: routes/games_media.py:136
+#: routes/games_media.py:134
 msgid "Invalid screenshot filename"
 msgstr "잘못된 스크린샷 파일 이름입니다"
 
-#: routes/games_media.py:146
+#: routes/games_media.py:144
 msgid "Screenshot not found"
 msgstr "스크린샷을 찾을 수 없습니다"
 
@@ -489,6 +495,11 @@ msgstr "이 게임은 이미 실행 중입니다"
 #, python-format
 msgid "failed to kill prior instance: %(err)s"
 msgstr "이전 인스턴스 종료에 실패했습니다: %(err)s"
+
+#: routes/maintenance.py:260
+#, fuzzy
+msgid "Unknown image type"
+msgstr "처리할 이미지가 없습니다"
 
 #: routes/museum.py:386 routes/scraper.py:774
 msgid "No AI provider configured"
@@ -629,31 +640,31 @@ msgstr "폴더가 존재하지 않습니다: %(folder_path)s"
 msgid "Missing game_id or new_name"
 msgstr "game_id 또는 new_name이 누락되었습니다"
 
-#: routes/reports.py:692 routes/reports.py:808
+#: routes/reports.py:692 routes/reports.py:813
 msgid "No ROM path set"
 msgstr "설정된 ROM 경로가 없습니다"
 
-#: routes/reports.py:707 routes/reports.py:813
+#: routes/reports.py:707 routes/reports.py:818
 msgid "ROM file not found"
 msgstr "ROM 파일을 찾을 수 없습니다"
 
-#: routes/reports.py:724
+#: routes/reports.py:729
 msgid "M3U files must keep the .m3u extension"
 msgstr "M3U 파일은 .m3u 확장자를 유지해야 합니다"
 
-#: routes/reports.py:737 routes/reports.py:889
+#: routes/reports.py:742 routes/reports.py:899
 msgid "A folder with the new name already exists"
 msgstr "새 이름의 폴더가 이미 존재합니다"
 
-#: routes/reports.py:817
+#: routes/reports.py:822
 msgid "No scraped title available"
 msgstr "사용 가능한 스크래핑된 제목이 없습니다"
 
-#: routes/reports.py:835
+#: routes/reports.py:840
 msgid "Title is empty after sanitization"
 msgstr "정리 후 제목이 비어 있습니다"
 
-#: routes/reports.py:858
+#: routes/reports.py:863
 msgid "Generated filename contains invalid characters"
 msgstr "생성된 파일 이름에 잘못된 문자가 포함되어 있습니다"
 
@@ -8649,4 +8660,7 @@ msgstr "Patreon에서 후원하기"
 
 #~ msgid "Your settings have been saved!"
 #~ msgstr "설정이 저장되었습니다!"
+
+#~ msgid "Could not validate destination path"
+#~ msgstr "대상 경로를 검증할 수 없습니다"
 

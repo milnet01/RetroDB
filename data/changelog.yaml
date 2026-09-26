@@ -1,3 +1,53 @@
+- version: 3.23.9
+  date: 2026-09-26
+  tags:
+  - type: security
+    label: Scraper log files no longer store passwords and tokens, and login attempts are rate-limited again
+  - type: fix
+    label: Settings saves no longer wipe your settings, and deleting a user works
+  body: |
+    <ul>
+      <li><strong>Log files kept secrets in plain text.</strong> Scraper log
+        files were meant to hide sign-in tokens and API keys, but the hiding
+        step never ran, so they were written in full. They are hidden now.
+        Older log files still contain them; delete old files in
+        <code>logs/</code> if you share your install.</li>
+      <li><strong>Login attempt limits were not enforced.</strong> The limits
+        on repeated logins and on heavy actions (scans, scrapes, imports) were
+        set up but never switched on. They work now, and a blocked request
+        gets a clear "too many requests" message.</li>
+      <li><strong>A damaged settings file could be wiped.</strong> If
+        <code>data/settings.json</code> could not be read, the next save
+        replaced it with the defaults. RetroDB now keeps the damaged file as
+        <code>settings.json.corrupt-&lt;time&gt;</code> before saving. If the
+        file reads fine again, the save is refused instead.</li>
+      <li><strong>The Engine naming row lost other settings.</strong> Adding a
+        tag to the Engine row in the naming settings failed, and also threw
+        away the article and region settings saved with it. It saves
+        properly now.</li>
+      <li><strong>Deleting a user failed.</strong> A user with tags, lists,
+        wishlist items or PSN data could not be deleted. Deleting now removes
+        the user and everything they own.</li>
+      <li><strong>Two scrapes could run at once.</strong> Swapping or
+        moving a running bulk scrape in the queue started two scrapes that
+        shared one progress count. Only one runs now.</li>
+      <li><strong>Bulk scrape progress could look like an error.</strong>
+        Before its first success, a bulk scrape reported its status in a way
+        some screens read as a failure. That is fixed.</li>
+      <li><strong>Logging in now returns you to the page you asked for.</strong>
+        It used to always go to the dashboard.</li>
+      <li><strong>Admin file actions stay inside your folders.</strong> The
+        image-resize tool and the ROM rename actions now refuse anything
+        outside your media folder or ROM folder.</li>
+      <li><strong>Old PSN and Xbox sign-in files are moved into your
+        account.</strong> A leftover <code>data/psn_tokens.json</code> or
+        <code>data/xbox_tokens.json</code> is loaded into your account and
+        renamed to end in <code>.migrated-015</code>. That file still holds
+        the token, so delete it once you have checked that sign-in works.</li>
+      <li><strong>Clearer errors from the server.</strong> A bad request now
+        answers with a proper error message instead of "An internal error
+        occurred".</li>
+    </ul>
 - version: 3.23.8
   date: 2026-09-25
   tags:
