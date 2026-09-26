@@ -3836,7 +3836,7 @@ Resolved (2026-06-30, v3.11.0): Donation surfaces shipped for the two live platf
   Babel `Locale.parse(code).text_direction`).  The CSS audit is the bulk:
   ~360 physical `left/right` rules, zero logical, no `[dir]` handling as of
   Pass 56.
-- **Status**: **un-gated (2026-07-05).** Pass 56 shipped a **Hebrew** (`he`)
+- **Status**: planned — **un-gated (2026-07-05).** Pass 56 shipped a **Hebrew** (`he`)
   catalog — the first RTL `.po`, so the "needs a real RTL user" gate is now met.
   Hebrew currently renders correct Hebrew *text* in the still-LTR layout; this
   pass is what makes the layout mirror properly. **Also add Arabic (`ar`) here:**
@@ -6785,7 +6785,7 @@ when already in the file.
 - **Resolution** (2026-09-26, docs only, 60bdc74): `docs/specs/PASS-59-64-launcher.md`
   accepted. The fork session (retroarch-92) checked the player side from its
   source; its findings are folded in (a9a93ac, 4eee0da). `review-contract`
-  ran two loops of three cold lanes: 18 findings verified and fixed, capped
+  ran two loops, each with three cold lanes. 18 findings verified and fixed, capped
   at 2 and shipped with nothing deferred (loop log
   `docs/reviews/PASS-59-64-launcher-loop-log.md`). Next: build 59.53, 59.54
   and 59.55 to it, then write the 59.81 spec.
