@@ -130,6 +130,12 @@ class CategoryFileHandler(logging.Handler):
         self.category = category
         self.current_date = None
         self.file_handler = None
+        # Secret redaction lives on THIS handler: Handler.handle() runs its
+        # filters before calling emit(). emit() below writes through the inner
+        # FileHandler's emit(), which never runs that handler's filters —
+        # so a filter attached there did nothing (Pass 59.41).
+        from services.log_redactor import SecretRedactor
+        self.addFilter(SecretRedactor())
         self._setup_handler()
     
     def _setup_handler(self):
@@ -157,10 +163,6 @@ class CategoryFileHandler(logging.Handler):
                 '%(asctime)s | %(levelname)-8s | %(request_id)s | %(name)s | %(message)s',
                 datefmt='%Y-%m-%d %H:%M:%S'
             ))
-            # Attach secret-redaction filter so JWTs / OAuth tokens / API keys
-            # logged by scrapers don't accumulate on disk as plaintext.
-            from services.log_redactor import SecretRedactor
-            self.file_handler.addFilter(SecretRedactor())
             self.current_date = today
 
             # Write version banner on new file or server restart
@@ -267,13 +269,13 @@ def install_global_redactor():
     handler it currently holds.
 
     Catches the StreamHandler registered by ``logging.basicConfig()`` plus
-    any third-party handlers attached before this call. Records originating
-    in child loggers (scrapers / services / routes) that propagate to root
-    pass through the root-logger filter, so their message/args get redacted
-    before any root handler emits them. The per-category
-    ``CategoryFileHandler`` already installs its own SecretRedactor
-    instance — this adds a second, universal layer that covers anything
-    routing through the stdout console or a basicConfig StreamHandler.
+    any third-party handlers attached before this call. The HANDLER filters
+    are what redact propagated records: a logger's own filters run only for
+    records created on that logger, never for records propagating up from a
+    child, so the root-logger filter covers direct ``logging.info()`` calls
+    alone. Handlers attached after this call are not covered. Each
+    ``CategoryFileHandler`` carries its own SecretRedactor, so the category
+    log files do not depend on this function.
 
     Idempotent — calling twice won't attach two copies.
     """

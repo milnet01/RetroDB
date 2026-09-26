@@ -174,3 +174,42 @@ class TestInstallGlobalRedactor:
         formatted = record.getMessage()
         assert jwt not in formatted
         assert "<redacted-jwt>" in formatted
+
+
+class TestCategoryFileHandlerRedacts:
+    def test_scraper_token_is_redacted_in_category_file(self, tmp_path, monkeypatch):
+        """Pass 59.41: the redactor sat on the INNER FileHandler, whose
+        filters only run from handle(); CategoryFileHandler.emit() called
+        the inner emit() directly, so category log files were written
+        unredacted. Log through a propagate=False child logger, exactly as
+        the scrapers do, and read the file back."""
+        import log_manager
+        monkeypatch.setattr(log_manager, 'LOGS_DIR', str(tmp_path))
+        monkeypatch.setattr(log_manager, 'get_logging_settings', lambda: {})
+        jwt = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ4In0.abc123DEFghi456jklMNOpqrSTU"
+
+        handler = log_manager.CategoryFileHandler('scraping')
+        logger = logging.getLogger('scraper.pass5941_probe')
+        logger.propagate = False
+        logger.setLevel(logging.INFO)
+        logger.addHandler(handler)
+
+        def _ensure_request_id(record):
+            # Normally set by the app's record factory, which may or may not
+            # be installed depending on which tests ran first.
+            if not hasattr(record, 'request_id'):
+                record.request_id = '-'
+            return True
+
+        logger.addFilter(_ensure_request_id)
+        try:
+            logger.info("igdb token %s", jwt)
+        finally:
+            logger.removeFilter(_ensure_request_id)
+            logger.removeHandler(handler)
+            handler.close()
+
+        written = "".join(p.read_text(encoding='utf-8') for p in tmp_path.glob('scraping_*.log'))
+        assert "igdb token" in written, "the record never reached the category file"
+        assert jwt not in written
+        assert "<redacted-jwt>" in written

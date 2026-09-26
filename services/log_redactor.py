@@ -10,6 +10,10 @@ triage report for the original finding.
 Usage:
     from services.log_redactor import SecretRedactor
     handler.addFilter(SecretRedactor())
+
+Attach it to the handler the logger itself calls. Filters run in
+``Handler.handle()``, so a filter on a handler that another handler drives
+through ``emit()`` never runs (Pass 59.41).
 """
 
 import collections.abc
