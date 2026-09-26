@@ -522,6 +522,12 @@ Resolved (2026-07-04, v3.17.0): find_missing_media_refs() + clear_missing_media_
   filters — Clear filters" panel when the count is 0 (mirror the filter-modal
   empty state at `all-games-controller.js:741`).
 - **Est.**: M — one new query param + a sort UI + an empty-state partial.
+- **Note** (2026-09-26): gate the new empty state on the fetch having
+finished. In `all-games-controller.js::fetchGames`, show it only when
+a non-aborted, non-append response returns zero games, never while
+`isLoading` is true. MAME Curator shipped exactly that flash, on
+filter switches and a drawer's first open. Today the grid has no empty
+message, so nothing flashes yet.
 
 #### Pass 53.3 Slim the sidebar: consolidate achievements + tools sprawl (UX, M)
 - **Status**: planned.
