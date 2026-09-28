@@ -1,3 +1,5 @@
+<!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
+
 # RetroDB Roadmap
 
 Tracking file for refactoring, security, performance, and quality work
@@ -7287,6 +7289,29 @@ were corrected in `2836bc3` and are not repeated here.
   load with no page errors at 1400px and 375px.
 - **Status**: shipped (2026-09-26). Lanes: frontend, i18n.
 - **Source**: v3.23.9 Pass 59.49 browser walk, 2026-09-26.
+
+---
+
+#### Pass 59.87 `.gitleaks.toml` excuses two whole files, which would also hide a real secret added there (MEDIUM, S)
+- **Target**: `.gitleaks.toml`, `.gitleaksignore`, `tests/test_log_redactor.py`.
+- **Why**: path allows for `tests/test_log_redactor\.py$` (Pass 39.8) and
+  `templates/settings\.html$` (Pass 39.10) excuse every future match in those
+  files. The global security standard § 2 excuses a false positive by its
+  fingerprint or an inline `gitleaks:allow`, never by path. The model-name
+  content regex was unanchored (`[-\w]*`), so it could excuse a
+  high-entropy string that started `claude-opus-4`.
+- **Plan**: drop both path allows; inline `gitleaks:allow` on the live JWT
+  fixture line; list the history-scan fingerprint of its first commit in
+  `.gitleaksignore`; anchor the model regex to family name plus digit groups.
+- **Verify**: `gitleaks git`, `gitleaks dir` and the pre-commit `--staged`
+  scan all report no leaks; a template line `api_key = "claude-opus-4-<random>"`
+  still fires.
+- **Resolution** (2026-09-28): done as planned. The `templates/settings.html`
+  history finding is a model name, so the anchored regex covers it and no
+  fingerprint was needed. All three scans clean; the negative check fires.
+- **Status**: shipped (2026-09-28). Lanes: ci, security.
+- **Source**: ~/.claude session message 2026-09-28 — RetroArch field pass of
+  security standard § 2.
 
 ## Done index
 

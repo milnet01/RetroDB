@@ -1,13 +1,15 @@
 # Gitleaks allowlist for RetroDB.
 #
-# This file tells gitleaks which matches are known false positives so repeat
-# /audit runs don't re-surface them.
+# A false positive in tracked source is excused per finding, never by path:
+# an inline `gitleaks:allow` on the line, or its fingerprint in
+# .gitleaksignore (global standards/security.md § 2). This file holds only
+# scan scope and one content rule that cannot match a secret.
 
 [extend]
 useDefault = true
 
 [[allowlists]]
-description = "Admin-authored runtime state (tokens, settings). Users place their own API keys here; gitleaks should not flag files the user is expected to edit."
+description = "Scan scope, not excuses: git-ignored runtime state (user-edited settings and tokens, logs, the DB) and scraped binary media. None of it is project source."
 paths = [
   '''logs/.*''',
   '''data/scraper_settings\.json$''',
@@ -17,17 +19,15 @@ paths = [
   '''database/.*''',
   '''static/images/.*''',
   '''static/videos/.*''',
-  # Pass 39.8 — synthetic JWT fixture verifying the log redactor strips
-  # `eyJ...` tokens; intentional, recurs on every audit otherwise.
-  '''tests/test_log_redactor\.py$''',
-  # Pass 39.10 — Claude model literals embedded as <option value="..."> in
-  # the settings template trip generic-api-key (high-entropy attribute
-  # context); the regex allowlist below only matches the substring.
-  '''templates/settings\.html$''',
 ]
 
 [[allowlists]]
-description = "Claude model identifier literals used as <select> option values in the settings template — not secrets, just model names."
+description = "Claude model identifiers (e.g. claude-haiku-4-5-20251001) in the settings templates' <select> options trip generic-api-key."
+# Anchored to the whole matched secret and limited to a model family name
+# followed by digit-only groups, so it cannot excuse a real credential:
+# Anthropic keys start `sk-ant-`, and a digits-and-dashes tail carries no
+# entropy. Any other finding in these templates still fires. Pass 59.87.
+regexTarget = "secret"
 regexes = [
-  '''claude-(opus|sonnet|haiku)-\d[-\w]*''',
+  '''^claude-(opus|sonnet|haiku)(-\d+)+$''',
 ]

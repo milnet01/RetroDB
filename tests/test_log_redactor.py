@@ -12,7 +12,7 @@ class TestRedactPatterns:
         # Kept separate because it asserts both "<redacted-jwt>" in output
         # AND the original JWT not in output — dual assertion doesn't fit
         # the (input, secret, tag) shape cleanly.
-        jwt = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NSIsIm5hbWUiOiJhYWFhIn0.abc123DEF456ghi"
+        jwt = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NSIsIm5hbWUiOiJhYWFhIn0.abc123DEF456ghi"  # gitleaks:allow — synthetic test JWT
         assert "<redacted-jwt>" in redact(f"got token {jwt} from idp")
         assert jwt not in redact(f"got token {jwt} from idp")
 
