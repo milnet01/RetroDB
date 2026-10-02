@@ -7313,6 +7313,41 @@ were corrected in `2836bc3` and are not repeated here.
 - **Source**: ~/.claude session message 2026-09-28 — RetroArch field pass of
   security standard § 2.
 
+---
+
+#### Pass 59.88 urllib3 2.7.0 in requirements.lock has three known vulnerabilities (HIGH, S)
+- **Target**: `requirements.txt` / `requirements.lock` (urllib3).
+- **Why**: pip-audit on 2026-10-02 reports PYSEC-2026-4175, -4176 and -4177
+  against urllib3 2.7.0, all fixed in 2.8.0. The pre-push gate's pip-audit
+  step fails on it, so no push can land until it is fixed.
+- **Plan**: bump urllib3 to 2.8.0 (or what its dependents allow), regenerate
+  the lock per CLAUDE.md step 6, run the full gate.
+- **Verify**: `pip-audit --requirement requirements.lock --strict` clean;
+  `./scripts/ci_local.sh` green.
+- **Status**: todo. Lanes: deps, security.
+- **Source**: pre-push gate run, 2026-10-02.
+
+---
+
+#### Pass 59.89 A saved theme never reaches a new browser: the login page stores Cyberpunk first (MEDIUM, S)
+- **Target**: `static/js/theme.js` (`ThemeManager.init` / `apply`),
+  `templates/base.html` (FOUC block).
+- **Why**: on the login page there is no user, so `user_theme` is empty and
+  `init()` calls `apply('cyberpunk', false)`, which still writes
+  `retrodb-theme=cyberpunk` to localStorage. Every page after login reads
+  localStorage first, so the user's saved `theme_preference` (Pass 59.38,
+  "follows the user to other devices") is never used in a fresh browser.
+  Seen 2026-10-02 while recording the website demo: a demo account with
+  `theme_preference='matrix'` rendered Cyberpunk after login in a new
+  Chrome profile.
+- **Plan**: write localStorage only for a theme the user chose or the server
+  supplied, never for the no-user fallback; or let a server value win over
+  localStorage when they differ after login. Decide which in the fix.
+- **Verify**: fresh browser profile, account with a non-default saved theme,
+  log in: the saved theme shows. Regression test pins it.
+- **Status**: todo. Lanes: frontend, auth.
+- **Source**: website demo recording, 2026-10-02.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
