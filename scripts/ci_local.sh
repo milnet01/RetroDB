@@ -16,15 +16,17 @@
 # NOT check-logic gaps): the 3.12/3.13 interpreter matrix and the coverage-XML
 # upload. Every pass/fail check itself is mirrored, with CI's exact invocation.
 #
-# Wired as a git PRE-PUSH gate via pre-commit (.pre-commit-config.yaml). Also
-# runnable by hand at any time:
+# Run by the git PRE-PUSH hook (.githooks/pre-push, installed by
+# scripts/setup-hooks.sh), which hands off to the machine-wide hook: that runs
+# the secret scan, then this script inside a fresh checkout of the pushed
+# commit, with --docs when every pushed file is prose. Also runnable by hand:
 #
-#     ./scripts/ci_local.sh
+#     ./scripts/ci_local.sh            # every check
+#     ./scripts/ci_local.sh --docs     # the documentation checks only
 #
 # Exit 0 = every check passed (safe to push). Nonzero = a check failed; the
-# failing checks are listed at the end. To push anyway, use:
-#
-#     git push --no-verify
+# failing checks are listed at the end. Skipping the gate is commits.md § 2.3's
+# call (SKIP_LOCAL_CI=1, or git push --no-verify), not this script's.
 #
 # Design notes:
 #   - No dependency (re)install — unlike CI's fresh runner, your box already has
@@ -38,7 +40,7 @@
 #     broken locally (skip, "safe to push") and broken identically on the
 #     runner (hard fail, red main). The install hint is printed with the
 #     failure; `--no-verify` is still there for when you mean it.
-#   - Docs-only pushes short-circuit to exit 0 (see the fast path below).
+#   - Docs-only pushes run documentation mode (see below), never nothing.
 #   - pytest uses CI's exact `-n 4 --dist=loadfile` invocation. Without the
 #     per-file isolation, cross-file order-pollution (test_pass48_media_cleanup
 #     et al.) produces false failures that CI never sees.
@@ -59,27 +61,35 @@ have() { command -v "$1" >/dev/null 2>&1; }
 # header. `hint` is the install line, shown with the failure.
 missing() { fail "$1 not installed  ($2)"; }
 
-# Docs-only fast path ---------------------------------------------------------
-# A push whose every file is prose cannot change the outcome of a single check
-# below — no Python, no templates, no workflows, no lockfile. Running the full
-# ~40 s suite to prove that is pure latency, so short-circuit it.
+# Documentation mode ----------------------------------------------------------
+# `--docs` is for a push whose every file is prose: *.md and LICENSE, the
+# `ants.gate.docsGlob` in .ants/gate.conf. Not docs/* — docs/ also holds
+# requirements.txt and an env example. Not *.yaml (data/changelog.yaml is read
+# at runtime). The pre-push hook decides which push is prose; this script never
+# skips on its own.
 #
-# "Prose" is deliberately narrow: *.md, anything under docs/, and LICENSE.
-# NOT *.txt (requirements.txt lives there), NOT *.yaml (data/changelog.yaml is
-# read at runtime), NOT .github/workflows/*.yml.
-#
-# Scope is what would actually be pushed — @{upstream}..HEAD. With no upstream,
-# or nothing to push (a bare manual run), everything runs. CI_LOCAL_FORCE=1
-# runs everything regardless.
-if [ "${CI_LOCAL_FORCE:-0}" != "1" ] && UPSTREAM="$(git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' 2>/dev/null)"; then
-  CHANGED="$(git diff --name-only "$UPSTREAM..HEAD" 2>/dev/null)"
-  if [ -n "$CHANGED" ] && ! printf '%s\n' "$CHANGED" | grep -qvE '(\.md$|^docs/|^LICENSE$)'; then
-    printf '%s%s✓ Docs-only push (%d file(s) vs %s) — CI-local skipped.%s\n' \
-      "$BOLD" "$GREEN" "$(printf '%s\n' "$CHANGED" | wc -l)" "$UPSTREAM" "$RST"
-    printf '  Run anyway with: %sCI_LOCAL_FORCE=1 ./scripts/ci_local.sh%s\n' "$BOLD" "$RST"
-    exit 0
+# A prose edit can still break a test: some tests open markdown files
+# (docs/PROXY-DEPLOY.md, docs/specs/scrapers.md). So documentation mode runs
+# every test file that names a .md path in a string, found fresh each run so a
+# new one is picked up without editing this list.
+if [ "${1:-}" = "--docs" ]; then
+  step "Pytest (documentation mode)  ·  tests that read markdown"
+  mapfile -t DOC_TESTS < <(grep -lE "\.md['\"]" tests/test_*.py)
+  if ! have pytest; then missing "pytest" "pip install pytest pytest-xdist"
+  elif [ "${#DOC_TESTS[@]}" -eq 0 ]; then fail "no markdown-reading tests found"
+  else pytest -q "${DOC_TESTS[@]}" && ok "pytest (${#DOC_TESTS[@]} files)" || fail "pytest"; fi
+  if [ "${#FAILED[@]}" -gt 0 ]; then
+    printf '\n%s%sDocumentation checks FAILED:%s %s\n' "$BOLD" "$RED" "$RST" "${FAILED[*]}"
+    exit 1
   fi
+  printf '\n%s%s✓ Documentation checks passed.%s\n' "$BOLD" "$GREEN" "$RST"
+  exit 0
 fi
+
+# A fresh checkout has no config.py (it holds the user's own settings and is
+# untracked). CI copies the example into place; the pre-push hook gates a fresh
+# worktree of the pushed commit, so it needs the same step.
+if [ ! -f config.py ]; then cp config.example.py config.py; fi
 
 # 1. Ruff (bugs only — E, F, B, S; config in pyproject.toml) -----------------
 step "Ruff lint  ·  ruff check ."
