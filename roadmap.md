@@ -7326,7 +7326,11 @@ were corrected in `2836bc3` and are not repeated here.
   the lock per CLAUDE.md step 6, run the full gate.
 - **Verify**: `pip-audit --requirement requirements.lock --strict` clean;
   `./scripts/ci_local.sh` green.
-- **Status**: todo. Lanes: deps, security.
+- **Resolution** (2026-10-10, v3.23.14): lockfile regenerated with
+  `--upgrade-package urllib3 --upgrade-package werkzeug`; only those two
+  moved (urllib3 2.8.0, werkzeug 3.1.9). pip-audit clean;
+  `./scripts/ci_local.sh` green.
+- **Status**: shipped (2026-10-10). Lanes: deps, security.
 - **Source**: pre-push gate run, 2026-10-02.
 
 ---
