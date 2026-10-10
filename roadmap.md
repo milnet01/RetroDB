@@ -7319,7 +7319,9 @@ were corrected in `2836bc3` and are not repeated here.
 - **Target**: `requirements.txt` / `requirements.lock` (urllib3).
 - **Why**: pip-audit on 2026-10-02 reports PYSEC-2026-4175, -4176 and -4177
   against urllib3 2.7.0, all fixed in 2.8.0. The pre-push gate's pip-audit
-  step fails on it, so no push can land until it is fixed.
+  step fails on it, so no push can land until it is fixed. On 2026-10-10 the
+  same step also reports CVE-2026-102598 against werkzeug 3.1.8, fixed in
+  3.1.9; bump both in this pass.
 - **Plan**: bump urllib3 to 2.8.0 (or what its dependents allow), regenerate
   the lock per CLAUDE.md step 6, run the full gate.
 - **Verify**: `pip-audit --requirement requirements.lock --strict` clean;
@@ -7347,6 +7349,27 @@ were corrected in `2836bc3` and are not repeated here.
   log in: the saved theme shows. Regression test pins it.
 - **Status**: todo. Lanes: frontend, auth.
 - **Source**: website demo recording, 2026-10-02.
+
+---
+
+#### Pass 59.90 CI cache and cancel settings miss two local-gate.md § 9 rules (LOW, S)
+- **Target**: `.github/workflows/ci.yml`.
+- **Why**: two § 9 levers are only partly taken. (1) Each job's uv cache uses
+  one `actions/cache` step, which saves only when the job succeeds; § 9 wants
+  restore by prefix and a save with `if: always()`, so a failed or timed-out
+  run still warms the next. (2) `concurrency` groups on workflow and ref, and
+  cancels on every branch; § 9 wants the event in the key and cancelling on
+  non-default branches only, so a cancelled run on `main` cannot hide which
+  commit broke. Already taken: per-job cache prefixes, `timeout-minutes` on
+  every job, `pytest -n 4 --dist=loadfile`, docs-only local pushes.
+- **Plan**: one lever per commit. Split each cache into
+  `actions/cache/restore` + `actions/cache/save` with `if: always()`; then fix
+  the concurrency key and limit cancelling to non-default branches.
+- **Verify**: time a cold and a warm CI run before and after each commit and
+  record both; a run cancelled mid-job still saves its cache.
+- **Status**: todo. Lanes: ci.
+- **Source**: claude-config message 2026-09-28 (local-gate.md § 9 walk),
+  checked 2026-10-10.
 
 ## Done index
 
