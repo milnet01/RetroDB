@@ -103,22 +103,7 @@ has seen the raw output. Triage into new roadmap passes after.
 - The only exception is Full Re-scrape mode in `hybrid_scraper` (user-requested overwrite of any field a source provides; fields no source fills are preserved, not blanked).
 
 ### Multi-rating system (9 systems)
-ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd, CADPA/China — DB columns
-`{system}_rating` (China's is `china_rating`; key `china`, values `8+/12+/16+`).
-Cross-mapping via maturity tiers in `services/game_utils.py` (`map_rating()`,
-`get_preferred_rating()`). Empty ratings auto-fill from any available rating
-during scrape / AI Fill / manual edit. User preference: `preferred_rating_system`.
-`RATING_SYSTEM_KEYS` order is cross-map source priority — China is appended last
-so Western boards win as the source. No Western scraper supplies a China rating
-(inference / AI-fill / manual only). Adding a board = extend the tables in
-`game_utils.py` + a migration + both edit modals (`_modals/edit_modal.html`
-`edit_*`, `base.html` `gem*`) + settings dropdown + compare table + the scraper /
-AI-fill / save paths + JS rating maps + `settings_validators._ALLOWED_RATING_SYSTEMS`.
-
-Rating images live in `static/images/ratings/{SYSTEM}/`. `RATING_IMAGE_MAP` in
-`game_utils.py` maps `(system, value)` → path. JS helpers expose
-`window.RATING_IMAGE_MAP`, `window.RATING_TO_TIER`, `window.TIER_TO_RATING` via
-`base.html`.
+Moved to `.claude/rules/ratings.md`, which loads when a matching file is read. Read it before touching ratings, the edit modals or the scrapers.
 
 ### Page wiring
 - Both `/games` (Library) and `/system/<id>` use `AllGamesController` — keep them in sync.
@@ -137,53 +122,13 @@ Rating images live in `static/images/ratings/{SYSTEM}/`. `RATING_IMAGE_MAP` in
 
 ## Non-Obvious JS / Template Contracts
 
-Use these names exactly in template `<script>` blocks — never invent aliases.
-Globals are defined in `static/js/utils.js`, `main.js`, `toast-controller.js`,
-`game-modals.js`, `theme.js`, and `templates/base.html` (the two dialog
-primitives `showConfirm` / `showModal` live in `base.html` rather than a JS
-file so the CSP-nonce script-tag inlines them). Read source for full
-signatures.
-
-- **Toasts/dialogs**: `showNotification(msg, type, duration?)` (`utils.js`), `showConfirm(title, msg, onConfirm, opts?)` (`base.html`), `showModal(title, msg, onConfirm?, showCancel?, onCancel?)` (`base.html`).
-- **HTTP/storage**: `API.get/post/postForm`, `Storage.get/set/remove/clearAll`.
-- **Utilities**: `escapeHtml`, `formatNumber` (thin-space thousands), `formatBytes`, `copyToClipboard`, `debounce`, `throttle`, `DOM.$/$$/create/toggle/delegate`, `DateUtils`.
-- **Game modals**: `GameDetailModal.open/close/clearCache`, `GameEditModal.open/save/close`, `HLTBManager.lookup/save/cancel/clear`, `triggerAiFill`.
-- **Sticky nav**: `StickyScroll.to(target)`, `.stackPositions()`, `.updateMargins()`. Mark sticky elements containing anchor links with `data-sticky-nav`. Both `stackPositions()` + `updateMargins()` run on DOMContentLoaded in `main.js`; call them again after tab/panel switches that show/hide sticky navs.
-- **Themed icons**: `getThemedIcon(key, fallback?)` (defined in `static/js/toast-controller.js`) returns icons matching the current theme (e.g. `'error'` → `❌` on cyberpunk, `✗` on matrix). Keys: job types (`bulk-scrape`, `ra-sync`, `ra-refresh`...), job states (`paused`, `resume`, `complete`, `queued`, `cancelled`, `background`), notifications (`success`, `error`, `warning`, `info`), stats (`stat-success`, `stat-failed`, `stat-skipped`), actions (`starting`, `running`, `cancel`, `save`, `loading`). `background` is a state, not an action — matches the bucketing in `toast-controller.js` and `docs/specs/themes.md` §7. In HTML use `data-themed-icon="key"` — `main.js` auto-populates on DOMContentLoaded.
-- **A11y**: `ModalFocusTrap.activate(modalEl, triggerEl, {onEscape, autoFocus})` / `.deactivate()` — WCAG 2.4.3, stacks for nested modals, restores focus to trigger on close.
-- **Number formatting**: Jinja `{{ value|format_number }}`; JS `formatNumber(value)`.
-- **Server controls** (`main.js`): `restartServer()` (`POST /api/restart`, `os.execv` re-exec) and `shutdownServer()` (`POST /api/shutdown`, admin-only graceful stop — a delayed thread sends `SIGTERM` to the drain handler in `app.py`; shutdownServer does NOT poll to reconnect). Both exported on `RetroDB`/`window`; buttons in `_settings_tabs/system.html` Server Controls card.
-
-Themes (display name on left, `internal key` in backticks): Cyberpunk (`cyberpunk`, default), Matrix (`matrix`), Amber (`amber`), Ocean (`ocean`), Cathedral (`christian`), Blade Runner (`bladerunner`), Elite (`elite`).
+Moved to `.claude/rules/js-template-contracts.md`, which loads when a matching file is read. Read it before touching a template `<script>` block or `static/js/`.
 
 ---
 
 ## Distribution (Patreon Releases)
 
-Two shapes:
-- **Source** — small zip; user installs Python + runs `pip install -r requirements.txt`. Cross-platform from one host.
-- **Standalone** — PyInstaller bundle (Python runtime + deps + assets baked in). User unzips and double-clicks the platform's launcher (`start.sh` / `start.command` / `start.bat`) — the PyInstaller `retrodb` binary sits next to it. PyInstaller has no cross-compile — must build on the target OS. `build_dist.build_standalone` ships those launchers from **`packaging/standalone/`**, never the repo root: the root scripts are the *source*-install launchers and run `python3 app.py`, which a bundle has no `.py` files for (Pass 59.10). A standalone launcher must only `exec ./retrodb` — the binary opens the browser itself (`app.py`'s `sys.frozen` branch), since only the server knows the resolved port. On Linux the zip also carries `packaging/RetroDB.desktop` + `retrodb-256.png` and `install-launcher.sh`, which substitutes the template's `__EXEC__` / `__ICON__` against the extraction path (Pass 59.11); `scripts/install_launcher.py` is the source-install equivalent and needs Python, so it cannot run inside a bundle.
-
-### App icon assets
-- Master SVG: `packaging/icon.svg` (neon gamepad). `python3 scripts/render_icons.py` rasterizes it into `static/favicon.svg`/`-16`/`-32`/`apple-touch-icon.png` (wired in `base.html`) + `packaging/icons/retrodb-{256,512}.png`/`.ico`/`.icns`. Needs **`cairosvg`** — a BUILD-TIME-ONLY dep, deliberately NOT in `requirements.txt`; the raster outputs are committed so end users never import it. `retrodb.spec` sets `icon=` (`.ico`/`.icns`) and bundles `packaging/icons`.
-- **One-click launch (local install):** `scripts/retrodb_launcher.py` probes the unauthenticated `/health` (port from `server_port.resolve_server_port(use_saved=True)` — the same chain `app.py` binds with: `PORT` → `RETRODB_PORT` → saved `server_port` → 5000; see `docs/specs/settings.md` §Precedence), starts `app.py` if down, opens the browser. `scripts/install_launcher.py` pins a `.desktop` (absolute `Exec`/`Icon` paths) into `~/.local/share/applications/`. Run the installer once.
-
-```bash
-python3 build_dist.py                       # all 3 source ZIPs
-python3 build_dist.py linux|macos|windows   # one source ZIP
-python3 build_dist.py --standalone          # standalone for host platform
-python3 build_dist.py --standalone --cpu-only  # CPU-only standalone (~600 MB, -CPU suffix)
-```
-
-- Output: `STAGING_DIR` constant in `build_dist.py` — defaults to `/mnt/Games/Scripts/Linux/Staging_Area/RetroDB`; override with the `RETRODB_STAGING_DIR` env var (`release.yml` does, to `/tmp/staging`). The default must name a mounted, writable drive: `build_standalone` calls `os.makedirs(STAGING_DIR)`, so a retired drive fails the documented build command with `PermissionError`.
-- Filename: `RetroDB-v{VERSION}-{Platform}.zip` (source) or `RetroDB-v{VERSION}-{Platform}-Standalone.zip`
-- What ships in a source ZIP: `collect_files` enumerates **`git ls-files`** — the allow-list `.gitignore` already maintains — and only then applies the deny-lists (Pass 59.13). Every generated artifact the ZIP needs (`main.min.css`, both bundles, `translations/**/*.mo`) is committed, so nothing shipped depends on the walk. Without git (a tarball, not a checkout) it falls back to the filesystem walk, which is why the deny-lists stay. They are `EXCLUDE_FILES`, `EXCLUDE_DIRS`, `EXCLUDE_EXTENSIONS` and the `INCLUDE_IMAGE_DIRS` whitelist in `build_dist.py`, and they remove the tracked-but-maintainer-only files. Between them this excludes user config (`config.py`, `data/{settings,scraper_settings,rom_tools_config,psn_tokens,xbox_tokens}.json`, `data/.secret_key`), the runtime DB (the whole `database/` dir — covers `database/roms.db`; `data/retrodb.db` is also listed as a legacy path, and all `.db*` / `.log` files are excluded by extension), and scraped media (`static/videos/`, plus every `static/images/<dir>/` that is not in `INCLUDE_IMAGE_DIRS = {'hardware','ratings','systems','avatars'}`). Per-platform: only that platform's start script (`start.sh` / `start.command` / `start.bat`).
-- Standalone build is driven by `retrodb.spec` (PyInstaller onedir mode). Spec whitelists static subdirs explicitly to avoid sweeping in scraped media; new pip deps that PyInstaller's static analyser can't follow (string-imported via `importlib`) must be added to `HIDDEN_IMPORTS` in the spec.
-- `--cpu-only` (Pass 46.3 Part 3) builds the standalone inside an isolated venv under `STAGING_DIR/.cpu-build-venv` (vanilla CPU `onnxruntime` from `requirements.txt` + PyInstaller), so it produces the ~600 MB CPU bundle even on the maintainer's AMD box where `onnxruntime-rocm` is installed system-wide (the two flavours share the `onnxruntime` import name and can't coexist). Artifacts get a `-CPU` filename suffix. Plain `--standalone` inherits whatever onnxruntime is in the current env (GPU/ROCm locally; CPU on a clean checkout, since `requirements.txt` pins vanilla).
-- CI standalone build (Pass 46.3 Part 4): `.github/workflows/release.yml` has a `build-standalone` job — a `[ubuntu, macos, windows]-latest` matrix gated behind `workflow_dispatch` + `build_standalone: true` (never fires on an automatic tag push; triples CI minutes). Each runner builds `--standalone --cpu-only` and attaches the zip + SHA-256 to the draft release.
-- `./release-standalone.sh` (repo root) automates that standalone CI release: detects the version from `config.example.py`, pushes the `vX.Y.Z` tag (cancelling the redundant push-triggered source run), dispatches `release.yml` with `build_standalone=true`, watches the matrix, and fixes the draft's release notes from `data/changelog.yaml` (the dispatch path leaves a placeholder body). Leaves the release as a **draft** — review and publish manually. Windows/macOS standalones can only come from this CI path (PyInstaller has no cross-compile).
-
-Pre-release checklist: bump version + changelog → ensure `config.example.py` matches any new settings → `python3 build_dist.py` (source) and/or `python3 build_dist.py --standalone` (host platform) → upload from staging.
+Moved to `.claude/rules/distribution.md`, which loads when a matching file is read. Read it before touching a release build, the launchers or the app icons.
 
 ---
 
@@ -199,8 +144,7 @@ Pre-release checklist: bump version + changelog → ensure `config.example.py` m
 - `audit_hygiene.md` — Portable `/audit`-skill recommendations (not RetroDB-specific)
 - `.semgrep.yml` — Documented threat model + excluded upstream rule IDs (read before triaging new audit findings)
 - `.gitleaks.toml` — scan scope (`logs/`, `data/*.json` tokens, admin-editable settings, media) plus one anchored model-name rule. A false positive in tracked source is excused per finding: inline `gitleaks:allow`, or its fingerprint in `.gitleaksignore` — never a path allow (Pass 59.87)
-- **Git hooks** — install both with `./scripts/setup-hooks.sh` (needs `pip install pre-commit`; venv / `--user` / `--break-system-packages` on PEP-668 distros), then check `ls -l .git/hooks` shows `pre-commit` and a `pre-push` link. Per-commit: `.pre-commit-config.yaml` runs `ruff check --fix` + `gitleaks`. Pre-push: the tracked `.githooks/pre-push` hands off to the machine-wide `~/.claude/githooks/pre-push`. That hook scans the pushed commits for secrets. It then runs `scripts/ci_local.sh` in a fresh checkout of the pushed commit, with `--docs` when every pushed file matches `docsGlob`. The hook's settings are in the committed `.ants/gate.conf`. The repo pins `core.hooksPath=.git/hooks`, because this machine sets a global one and `pre-commit install` refuses under any hooksPath; the setup script lifts and restores the pin. `ruff-format` / `mypy` intentionally excluded.
-- `scripts/ci_local.sh` — the gate script. It mirrors `.github/workflows/ci.yml` (ruff · import smoke · pytest · i18n freshness · semgrep · pip-audit · lockfile-drift · workflow lint). Run it by hand any time with `./scripts/ci_local.sh` (~40 s warm), or with `--docs` for the documentation checks alone (the tests that open markdown files). Exit 0 = safe to push. A CI-mirrored check whose tool is missing or broken **fails** (a skip would be a check whose CI verdict you haven't seen — Pass 57.3). With no `config.py`, it copies `config.example.py` into place, as CI does. Skipping the gate (`SKIP_LOCAL_CI=1`, `git push --no-verify`) needs the user (`commits.md` § 2.3).
+- **Git hooks** and `scripts/ci_local.sh` (the pre-push gate; run `./scripts/ci_local.sh` by hand, or `--docs` for the documentation checks alone) — setup, settings and skip rules are in `.claude/rules/git-hooks.md`. Read it before touching the hooks or pushing past a failed gate.
 
 ---
 
