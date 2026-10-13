@@ -7369,8 +7369,8 @@ were corrected in `2836bc3` and are not repeated here.
 - **Plan**: one lever per commit. Split each cache into
   `actions/cache/restore` + `actions/cache/save` with `if: always()`; then fix
   the concurrency key and limit cancelling to non-default branches.
-- **Verify**: time a cold and a warm CI run before and after each commit and
-  record both; a run cancelled mid-job still saves its cache.
+- **Verify**: time a cold and a warm CI run before and after each commit, and
+  record all four times; a run cancelled mid-job still saves its cache.
 - **Status**: todo. Lanes: ci.
 - **Source**: claude-config message 2026-09-28 (local-gate.md § 9 walk),
   checked 2026-10-10.
