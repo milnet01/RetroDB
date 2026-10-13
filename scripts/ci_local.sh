@@ -61,6 +61,12 @@ have() { command -v "$1" >/dev/null 2>&1; }
 # header. `hint` is the install line, shown with the failure.
 missing() { fail "$1 not installed  ($2)"; }
 
+# A fresh checkout has no config.py (it holds the user's own settings and is
+# untracked). CI copies the example into place; the pre-push hook gates a fresh
+# worktree of the pushed commit, so it needs the same step. Both modes need it:
+# some markdown-reading tests import config (tests/test_backup_rotation.py).
+if [ ! -f config.py ]; then cp config.example.py config.py; fi
+
 # Documentation mode ----------------------------------------------------------
 # `--docs` is for a push whose every file is prose: *.md and LICENSE, the
 # `ants.gate.docsGlob` in .ants/gate.conf. Not docs/* — docs/ also holds
@@ -85,11 +91,6 @@ if [ "${1:-}" = "--docs" ]; then
   printf '\n%s%s✓ Documentation checks passed.%s\n' "$BOLD" "$GREEN" "$RST"
   exit 0
 fi
-
-# A fresh checkout has no config.py (it holds the user's own settings and is
-# untracked). CI copies the example into place; the pre-push hook gates a fresh
-# worktree of the pushed commit, so it needs the same step.
-if [ ! -f config.py ]; then cp config.example.py config.py; fi
 
 # 1. Ruff (bugs only — E, F, B, S; config in pyproject.toml) -----------------
 step "Ruff lint  ·  ruff check ."
