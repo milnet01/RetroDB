@@ -1,3 +1,19 @@
+- version: 3.23.18
+  date: 2026-10-15
+  tags:
+  - type: security
+    label: RetroDB only launches or renames to real ROM file types
+  body: |
+    <ul>
+      <li><strong>A game could be launched with a file that is not a
+        ROM.</strong> Renaming a ROM accepted any name, so
+        <code>crash.bin</code> could become <code>crash.cfg</code> and the
+        emulator was handed it. Launching now checks the file type against the
+        list in that system folder's <code>systeminfo.txt</code>, the same list
+        the library scan uses, and renaming refuses a type that list does not
+        hold. If a system folder has no list, its games will not launch, and
+        the message names the missing file.</li>
+    </ul>
 - version: 3.23.17
   date: 2026-10-15
   tags:

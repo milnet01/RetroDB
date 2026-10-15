@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-15 10:51+0200\n"
+"POT-Creation-Date: 2026-10-15 18:21+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: nb\n"
@@ -38,10 +38,10 @@ msgstr "System ikke funnet eller har ingen spill med prestasjoner"
 
 #: routes/achievements.py:170 routes/achievements.py:435
 #: routes/bonus_discs.py:263 routes/bulk_scrape.py:46 routes/collections.py:276
-#: routes/collections.py:531 routes/games.py:327 routes/games.py:823
-#: routes/games.py:937 routes/games_ai.py:46 routes/games_media.py:34
-#: routes/games_media.py:81 routes/games_media.py:138 routes/reports.py:688
-#: routes/reports.py:809 routes/trophies.py:1283 services/hltb_service.py:127
+#: routes/collections.py:531 routes/games.py:327 routes/games.py:828
+#: routes/games.py:942 routes/games_ai.py:46 routes/games_media.py:35
+#: routes/games_media.py:82 routes/games_media.py:143 routes/reports.py:689
+#: routes/reports.py:814 routes/trophies.py:1283 services/hltb_service.py:127
 msgid "Game not found"
 msgstr "Spill ikke funnet"
 
@@ -207,8 +207,8 @@ msgstr "Overordnet spill ikke funnet"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Bonusplaten og det overordnede spillet må være i samme system"
 
-#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1186
-#: routes/games.py:1216 routes/platform_import.py:290
+#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1191
+#: routes/games.py:1221 routes/platform_import.py:290
 #: routes/platform_import.py:658 routes/platform_import.py:1027
 #: routes/scrape_logs.py:85 routes/scrape_logs.py:170 routes/scrape_logs.py:183
 #: routes/scrape_logs.py:221 routes/scraper.py:200 routes/scraper.py:528
@@ -227,7 +227,7 @@ msgstr "En intern feil oppstod"
 msgid "Missing bonus_id or parent_id"
 msgstr "Mangler bonus_id eller parent_id"
 
-#: routes/bonus_discs.py:304 routes/reports.py:797
+#: routes/bonus_discs.py:304 routes/reports.py:802
 msgid "Missing game_id"
 msgstr "Mangler game_id"
 
@@ -390,41 +390,41 @@ msgstr "Ingen IDer angitt"
 msgid "Provide 1-50 valid IDs"
 msgstr "Angi 1–50 gyldige IDer"
 
-#: routes/games.py:671
+#: routes/games.py:676
 msgid "Game not found after update"
 msgstr "Spillet ble ikke funnet etter oppdatering"
 
-#: routes/games.py:963 routes/games.py:1007
+#: routes/games.py:968 routes/games.py:1012
 msgid "No fields to update"
 msgstr "Ingen felt å oppdatere"
 
-#: routes/games.py:1004 routes/platform_import.py:212
+#: routes/games.py:1009 routes/platform_import.py:212
 #: routes/platform_import.py:571 routes/platform_import.py:930
 #: routes/trophies.py:1888
 msgid "No games selected"
 msgstr "Ingen spill valgt"
 
-#: routes/games.py:1014
+#: routes/games.py:1019
 msgid "Invalid completion status"
 msgstr "Ugyldig fullføringsstatus"
 
-#: routes/games.py:1062
+#: routes/games.py:1067
 msgid "No valid fields to update"
 msgstr "Ingen gyldige felt å oppdatere"
 
-#: routes/games.py:1179
+#: routes/games.py:1184
 msgid "Invalid status"
 msgstr "Ugyldig status"
 
-#: routes/games.py:1204
+#: routes/games.py:1209
 msgid "Not authenticated"
 msgstr "Ikke autentisert"
 
-#: routes/games.py:1235
+#: routes/games.py:1240
 msgid "Filter type and value required"
 msgstr "Filtertype og verdi kreves"
 
-#: routes/games.py:1248
+#: routes/games.py:1253
 msgid "Invalid filter type"
 msgstr "Ugyldig filtertype"
 
@@ -438,41 +438,46 @@ msgstr ""
 msgid "AI scraper module not available"
 msgstr "AI-skrapemodulen er ikke tilgjengelig"
 
-#: routes/games_media.py:70
+#: routes/games_media.py:71
 msgid "No filename provided"
 msgstr "Ingen filnavn angitt"
 
-#: routes/games_media.py:77 routes/reports.py:683 routes/scrape_logs.py:131
+#: routes/games_media.py:78 routes/reports.py:684 routes/scrape_logs.py:131
 #: routes/scrape_logs.py:156 routes/scrape_logs.py:205 routes/settings.py:351
 msgid "Invalid filename"
 msgstr "Ugyldig filnavn"
 
-#: routes/games_media.py:86
+#: routes/games_media.py:87
 #, python-format
 msgid "ROM file not found on disk: %(path)s"
 msgstr "ROM-filen ble ikke funnet på disk: %(path)s"
 
-#: routes/games_media.py:101 routes/reports.py:716 routes/reports.py:883
+#: routes/games_media.py:102 routes/reports.py:717 routes/reports.py:888
 msgid "Destination is outside the configured ROM root"
 msgstr "Målet er utenfor den konfigurerte ROM-rotmappen"
 
-#: routes/games_media.py:104 routes/reports.py:720 routes/reports.py:887
+#: routes/games_media.py:106 routes/reports.py:721
+#, python-format
+msgid "Cannot rename: %(reason)s"
+msgstr ""
+
+#: routes/games_media.py:109 routes/reports.py:725 routes/reports.py:892
 msgid "A file with that name already exists"
 msgstr "En fil med det navnet finnes allerede"
 
-#: routes/games_media.py:111
+#: routes/games_media.py:116
 msgid "Failed to rename file"
 msgstr "Kunne ikke endre navn på filen"
 
-#: routes/games_media.py:131
+#: routes/games_media.py:136
 msgid "No screenshot specified"
 msgstr "Ingen skjermbilde angitt"
 
-#: routes/games_media.py:134
+#: routes/games_media.py:139
 msgid "Invalid screenshot filename"
 msgstr "Ugyldig filnavn for skjermbilde"
 
-#: routes/games_media.py:144
+#: routes/games_media.py:149
 msgid "Screenshot not found"
 msgstr "Skjermbildet ble ikke funnet"
 
@@ -634,57 +639,57 @@ msgstr "Kunne ikke hente PSN-spillisten. Prøv å synkronisere trofeer først."
 msgid "System %(name)s does not support RetroAchievements"
 msgstr "Systemet %(name)s støtter ikke RetroAchievements"
 
-#: routes/reports.py:408
+#: routes/reports.py:409
 msgid "Unknown system"
 msgstr "Ukjent system"
 
-#: routes/reports.py:429 routes/reports.py:594
+#: routes/reports.py:430 routes/reports.py:595
 msgid "ROM path not configured. Go to Settings → Paths to set it."
 msgstr "ROM-sti er ikke konfigurert. Gå til Innstillinger → Stier for å angi den."
 
-#: routes/reports.py:590
+#: routes/reports.py:591
 msgid "Missing required parameters"
 msgstr "Mangler nødvendige parametere"
 
-#: routes/reports.py:600 routes/tools.py:468 routes/tools.py:525
+#: routes/reports.py:601 routes/tools.py:468 routes/tools.py:525
 #: routes/tools.py:560
 msgid "Invalid path"
 msgstr "Ugyldig sti"
 
-#: routes/reports.py:606
+#: routes/reports.py:607
 #, python-format
 msgid "Folder does not exist: %(folder_path)s"
 msgstr "Mappen finnes ikke: %(folder_path)s"
 
-#: routes/reports.py:680
+#: routes/reports.py:681
 msgid "Missing game_id or new_name"
 msgstr "Mangler game_id eller new_name"
 
-#: routes/reports.py:692 routes/reports.py:813
+#: routes/reports.py:693 routes/reports.py:818
 msgid "No ROM path set"
 msgstr "Ingen ROM-sti angitt"
 
-#: routes/reports.py:707 routes/reports.py:818
+#: routes/reports.py:708 routes/reports.py:823
 msgid "ROM file not found"
 msgstr "ROM-filen ble ikke funnet"
 
-#: routes/reports.py:729
+#: routes/reports.py:734
 msgid "M3U files must keep the .m3u extension"
 msgstr "M3U-filer må beholde .m3u-filendelsen"
 
-#: routes/reports.py:742 routes/reports.py:899
+#: routes/reports.py:747 routes/reports.py:904
 msgid "A folder with the new name already exists"
 msgstr "En mappe med det nye navnet finnes allerede"
 
-#: routes/reports.py:822
+#: routes/reports.py:827
 msgid "No scraped title available"
 msgstr "Ingen skrapet tittel tilgjengelig"
 
-#: routes/reports.py:840
+#: routes/reports.py:845
 msgid "Title is empty after sanitization"
 msgstr "Tittelen er tom etter sanering"
 
-#: routes/reports.py:863
+#: routes/reports.py:868
 msgid "Generated filename contains invalid characters"
 msgstr "Det genererte filnavnet inneholder ugyldige tegn"
 
@@ -7641,15 +7646,15 @@ msgstr ""
 "Velg en bestemt emulator for dette spillet. La stå tomt for å bruke "
 "standarden per system."
 
-#: templates/_modals/edit_modal.html:418
+#: templates/_modals/edit_modal.html:419
 msgid "Custom launch args"
 msgstr "Egendefinerte startargumenter"
 
-#: templates/_modals/edit_modal.html:419
+#: templates/_modals/edit_modal.html:420
 msgid "e.g.  --renderer vulkan"
 msgstr "f.eks. --renderer vulkan"
 
-#: templates/_modals/edit_modal.html:420
+#: templates/_modals/edit_modal.html:421
 msgid ""
 "Appended to the emulator's args template after substitution.  Use shell-"
 "quoted strings if values contain spaces."

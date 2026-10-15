@@ -16,6 +16,7 @@ from services.api_helpers import handle_api_errors, success, error
 from services.auth import editor_required
 from services.database import query, execute
 from services.game_query import invalidate_filter_cache
+from services.rom_scanner import rom_type_problem
 from services.security import safe_filename, safe_path
 import settings_manager
 
@@ -99,6 +100,10 @@ def api_rename_rom(game_id):
     rom_root = settings_manager.get_effective_path('rom_path', '')
     if safe_path(os.path.dirname(new_path), rom_root) is None:
         return error(_('Destination is outside the configured ROM root'), 400)
+    # PASS-59-95 — the new name must keep a ROM type the system lists.
+    problem = rom_type_problem(new_path, rom_root)
+    if problem:
+        return error(_('Cannot rename: %(reason)s') % {'reason': problem}, 400)
 
     if os.path.exists(new_path) and new_path != old_path:
         return error(_('A file with that name already exists'), 400)

@@ -119,7 +119,11 @@ def test_rename_inside_the_root_still_works(admin_client, roots):
     """Control: the jail must not block a legitimate rename."""
     from services.database import execute
     rom_root, _ = roots
-    rom = rom_root / 'Good Game (USA).zip'
+    system_dir = rom_root / 'snes'
+    system_dir.mkdir()
+    (system_dir / 'systeminfo.txt').write_text(
+        'Supported file extensions:\n.sfc .zip\n')
+    rom = system_dir / 'Good Game (USA).zip'
     rom.write_bytes(b'rom')
     sys_id = execute("INSERT INTO systems (name, folder) VALUES (?, ?)",
                      ('Pass59 Paths OK', f'pass59p-{uuid.uuid4().hex}'))
@@ -130,6 +134,54 @@ def test_rename_inside_the_root_still_works(admin_client, roots):
                                  json={'new_filename': 'Better Game (USA).zip'},
                                  headers=HEADERS)
         assert resp.status_code == 200, resp.get_json()
-        assert (rom_root / 'Better Game (USA).zip').exists()
+        assert (system_dir / 'Better Game (USA).zip').exists()
     finally:
         delete_rows(('games', game_id), ('systems', sys_id))
+
+
+# ---------------------------------------------------------------------------
+# 59.95 — a rename may not give a ROM a type its system does not list
+# ---------------------------------------------------------------------------
+
+@pytest.fixture
+def game_in_system(roots):
+    from services.database import execute
+    rom_root, _ = roots
+    system_dir = rom_root / 'snes'
+    system_dir.mkdir()
+    (system_dir / 'systeminfo.txt').write_text(
+        'Supported file extensions:\n.sfc .zip\n')
+    rom = system_dir / 'Typed Game (USA).sfc'
+    rom.write_bytes(b'rom')
+    sys_id = execute("INSERT INTO systems (name, folder) VALUES (?, ?)",
+                     ('Pass59 Types', f'pass59t-{uuid.uuid4().hex}'))
+    game_id = execute("INSERT INTO games (system_id, title, rom_path) VALUES (?, ?, ?)",
+                      (sys_id, 'Typed Game', str(rom)))
+    yield game_id, rom, system_dir
+    delete_rows(('games', game_id), ('systems', sys_id))
+
+
+def _rename(client, route, game_id, name):
+    if route == 'games_media':
+        return client.post(f'/api/rename-rom/{game_id}',
+                           json={'new_filename': name}, headers=HEADERS)
+    return client.post('/api/reports/rename-rom',
+                       json={'game_id': game_id, 'new_name': name}, headers=HEADERS)
+
+
+@pytest.mark.parametrize('route', ['games_media', 'reports'])
+def test_rename_to_an_unlisted_type_is_refused(admin_client, game_in_system, route):
+    game_id, rom, system_dir = game_in_system
+    resp = _rename(admin_client, route, game_id, 'Typed Game (USA).cfg')
+    assert resp.status_code == 400
+    assert '.cfg' in resp.get_json()['error']
+    assert rom.exists()
+    assert not (system_dir / 'Typed Game (USA).cfg').exists()
+
+
+@pytest.mark.parametrize('route', ['games_media', 'reports'])
+def test_rename_to_a_listed_type_still_works(admin_client, game_in_system, route):
+    game_id, rom, system_dir = game_in_system
+    resp = _rename(admin_client, route, game_id, 'Typed Game (Europe).SFC')
+    assert resp.status_code == 200, resp.get_json()
+    assert (system_dir / 'Typed Game (Europe).SFC').exists()

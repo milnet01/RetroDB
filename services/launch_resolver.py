@@ -16,7 +16,8 @@
 #      str.format_map(_SafeDict). A parse error names its field.
 #   7. Auto-append extra_args / launch_args_override if template lacked tokens.
 #   8. Prefix the binary -> argv.
-#   9. Validate rom_path under scan roots.
+#   9. Validate rom_path under scan roots, and its type against the system's
+#      systeminfo.txt list.
 #  10. Return LaunchContext.
 # =============================================================================
 
@@ -33,6 +34,7 @@ from typing import Optional
 
 from services.database import query
 from services.launcher.base import LaunchContext, LaunchResolutionError
+from services.rom_scanner import rom_type_problem
 from settings_manager import get_setting
 
 logger = logging.getLogger(__name__)
@@ -240,9 +242,15 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
     if not rom_path_obj.is_file():
         raise LaunchResolutionError(f"ROM path is not a file: {rom_path_obj}")
     roots = _allowed_rom_roots()
-    if roots and not _resolve_under(rom_path_obj, roots):
-        raise LaunchResolutionError(
-            f"ROM path is outside configured scan roots: {rom_path_obj}")
+    if roots:
+        root = next((r for r in roots if _resolve_under(rom_path_obj, [r])), None)
+        if root is None:
+            raise LaunchResolutionError(
+                f"ROM path is outside configured scan roots: {rom_path_obj}")
+        # PASS-59-95 — only a file type the system's own list allows.
+        problem = rom_type_problem(str(rom_path_obj), str(root))
+        if problem:
+            raise LaunchResolutionError(f"Not launching {rom_path_obj.name}: {problem}")
 
     return LaunchContext(
         game_id=game['id'],

@@ -12,6 +12,8 @@ def tmpdb(monkeypatch, tmp_path):
     (rom_root / 'psx').mkdir(parents=True)
     rom_file = rom_root / 'psx' / 'crash.bin'
     rom_file.write_text('rom-bytes')
+    (rom_root / 'psx' / 'systeminfo.txt').write_text(
+        'Supported file extensions:\n.bin .BIN .cue .chd .m3u\n')
 
     conn = sqlite3.connect(':memory:')
     conn.row_factory = sqlite3.Row
@@ -263,4 +265,49 @@ def test_missing_rom_file_raises(tmpdb):
     from services.launch_resolver import resolve_launch_context
     from services.launcher.base import LaunchResolutionError
     with pytest.raises(LaunchResolutionError, match='not found'):
+        resolve_launch_context(game_id=1)
+
+
+def test_rom_of_a_type_the_system_does_not_list_is_refused(tmpdb):
+    """PASS-59-95: the launcher hands the emulator only a file whose type is
+    on its system's systeminfo.txt list, the list the library scan uses."""
+    cfg = tmpdb['rom_file'].parent / 'crash.cfg'
+    cfg.write_text('not a rom')
+    tmpdb['conn'].execute("UPDATE games SET rom_path = ? WHERE id = 1", (str(cfg),))
+    tmpdb['conn'].commit()
+    from services.launch_resolver import resolve_launch_context
+    from services.launcher.base import LaunchResolutionError
+    with pytest.raises(LaunchResolutionError, match=r"\.cfg"):
+        resolve_launch_context(game_id=1)
+
+
+def test_rom_type_check_ignores_case(tmpdb):
+    upper = tmpdb['rom_file'].parent / 'CRASH.CHD'
+    upper.write_text('rom')
+    tmpdb['conn'].execute("UPDATE games SET rom_path = ? WHERE id = 1", (str(upper),))
+    tmpdb['conn'].commit()
+    from services.launch_resolver import resolve_launch_context
+    assert resolve_launch_context(game_id=1).argv[-1] == str(upper)
+
+
+def test_rom_in_a_subfolder_uses_its_system_list(tmpdb):
+    """Multi-disc games keep discs in a subfolder; the list is the system
+    folder's, one level above."""
+    sub = tmpdb['rom_file'].parent / 'Crash (Disc 1)'
+    sub.mkdir()
+    disc = sub / 'disc.cue'
+    disc.write_text('cue')
+    tmpdb['conn'].execute("UPDATE games SET rom_path = ? WHERE id = 1", (str(disc),))
+    tmpdb['conn'].commit()
+    from services.launch_resolver import resolve_launch_context
+    assert resolve_launch_context(game_id=1).argv[-1] == str(disc)
+
+
+def test_missing_type_list_is_refused_naming_the_file(tmpdb):
+    """PASS-59-95, user decision 2026-10-15: no list, no launch."""
+    info = tmpdb['rom_file'].parent / 'systeminfo.txt'
+    info.unlink()
+    from services.launch_resolver import resolve_launch_context
+    from services.launcher.base import LaunchResolutionError
+    with pytest.raises(LaunchResolutionError, match='systeminfo.txt'):
         resolve_launch_context(game_id=1)

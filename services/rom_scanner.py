@@ -77,6 +77,34 @@ def parse_systeminfo(system_path):
     return extensions
 
 
+def rom_type_problem(rom_path, rom_root):
+    """Why `rom_path` is not a ROM type its system lists, or None if it is.
+
+    The system folder is the first folder under `rom_root`, as the scanners
+    walk it; its systeminfo.txt holds the allowed extensions. A missing or
+    empty list is a problem too, since the scan admits nothing there
+    (PASS-59-95). `rom_path` may be a name not yet on disk, for a rename.
+    """
+    try:
+        rel = os.path.relpath(os.path.realpath(os.path.dirname(rom_path)),
+                              os.path.realpath(rom_root))
+    except ValueError:
+        rel = os.pardir
+    folder = rel.split(os.sep)[0]
+    if folder in ('', os.curdir, os.pardir):
+        return f"{rom_path} is not inside a system folder under {rom_root}"
+    system_path = os.path.join(rom_root, folder)
+    extensions = parse_systeminfo(system_path)
+    if not extensions:
+        return ("no file types are listed for this system: "
+                f"{os.path.join(system_path, 'systeminfo.txt')} is missing or empty")
+    ext = os.path.splitext(rom_path)[1].lower()
+    if ext not in extensions:
+        return (f"'{ext or '(none)'}' is not a ROM type for this system "
+                f"(allowed: {' '.join(sorted(extensions))})")
+    return None
+
+
 def run_inline_scan():
     """Inline ROM scanning when scraper.scan_roms module is not available."""
     new_games = 0

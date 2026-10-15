@@ -7465,6 +7465,27 @@ were corrected in `2836bc3` and are not repeated here.
 - **Status**: todo — waiting on the user. Lanes: i18n.
 - **Source**: trailer recording, 2026-10-15.
 
+#### Pass 59.95 Launch and rename accept a file of any type (MEDIUM, S)
+- **Target**: `services/launch_resolver.py::resolve_launch_context`;
+  `routes/games_media.py` and `routes/reports.py` rename routes.
+- **Why**: the launcher checks that the ROM exists, is a file and sits under
+  the ROM folder, but not its type. Both rename routes accept any new name,
+  so `crash.bin` can become `crash.cfg` and the emulator is handed it.
+- **Plan**: read the system folder's `systeminfo.txt` with the scanner's own
+  `parse_systeminfo`. Launch refuses a ROM whose extension is not listed,
+  and refuses when the list file is missing, naming it (user decision
+  2026-10-15). Rename refuses a new extension the list does not hold (user
+  decision 2026-10-15).
+- **Verify**: measured 2026-10-15 on the live library, read-only: all 5356
+  launchable games pass, and every system folder has a list.
+- **Resolution** (2026-10-15, v3.23.18): `services/rom_scanner.py::rom_type_problem`
+  is the one check. The launcher runs it after the ROM-folder jail; both
+  rename-rom routes run it after theirs, so the jail tests still test the
+  jail. Rename-to-scraped keeps the file's type and is unchanged. Pinned in
+  `tests/test_launch_resolver.py` and `tests/test_pass59_paths.py`.
+- **Status**: shipped (2026-10-15). Lanes: security, launch.
+- **Source**: user request, 2026-10-15.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history

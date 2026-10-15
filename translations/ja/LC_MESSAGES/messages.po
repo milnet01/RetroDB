@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-15 10:51+0200\n"
+"POT-Creation-Date: 2026-10-15 18:21+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -38,10 +38,10 @@ msgstr "システムが見つからないか、実績対応ゲームがありま
 
 #: routes/achievements.py:170 routes/achievements.py:435
 #: routes/bonus_discs.py:263 routes/bulk_scrape.py:46 routes/collections.py:276
-#: routes/collections.py:531 routes/games.py:327 routes/games.py:823
-#: routes/games.py:937 routes/games_ai.py:46 routes/games_media.py:34
-#: routes/games_media.py:81 routes/games_media.py:138 routes/reports.py:688
-#: routes/reports.py:809 routes/trophies.py:1283 services/hltb_service.py:127
+#: routes/collections.py:531 routes/games.py:327 routes/games.py:828
+#: routes/games.py:942 routes/games_ai.py:46 routes/games_media.py:35
+#: routes/games_media.py:82 routes/games_media.py:143 routes/reports.py:689
+#: routes/reports.py:814 routes/trophies.py:1283 services/hltb_service.py:127
 msgid "Game not found"
 msgstr "ゲームが見つかりません"
 
@@ -203,8 +203,8 @@ msgstr "親ゲームが見つかりません"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "ボーナスディスクと親ゲームは同じシステム内にある必要があります"
 
-#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1186
-#: routes/games.py:1216 routes/platform_import.py:290
+#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1191
+#: routes/games.py:1221 routes/platform_import.py:290
 #: routes/platform_import.py:658 routes/platform_import.py:1027
 #: routes/scrape_logs.py:85 routes/scrape_logs.py:170 routes/scrape_logs.py:183
 #: routes/scrape_logs.py:221 routes/scraper.py:200 routes/scraper.py:528
@@ -223,7 +223,7 @@ msgstr "内部エラーが発生しました"
 msgid "Missing bonus_id or parent_id"
 msgstr "bonus_idまたはparent_idがありません"
 
-#: routes/bonus_discs.py:304 routes/reports.py:797
+#: routes/bonus_discs.py:304 routes/reports.py:802
 msgid "Missing game_id"
 msgstr "game_idがありません"
 
@@ -386,41 +386,41 @@ msgstr "IDが指定されていません"
 msgid "Provide 1-50 valid IDs"
 msgstr "有効なIDを1〜50件指定してください"
 
-#: routes/games.py:671
+#: routes/games.py:676
 msgid "Game not found after update"
 msgstr "更新後にゲームが見つかりません"
 
-#: routes/games.py:963 routes/games.py:1007
+#: routes/games.py:968 routes/games.py:1012
 msgid "No fields to update"
 msgstr "更新するフィールドがありません"
 
-#: routes/games.py:1004 routes/platform_import.py:212
+#: routes/games.py:1009 routes/platform_import.py:212
 #: routes/platform_import.py:571 routes/platform_import.py:930
 #: routes/trophies.py:1888
 msgid "No games selected"
 msgstr "ゲームが選択されていません"
 
-#: routes/games.py:1014
+#: routes/games.py:1019
 msgid "Invalid completion status"
 msgstr "クリア状況が無効です"
 
-#: routes/games.py:1062
+#: routes/games.py:1067
 msgid "No valid fields to update"
 msgstr "更新できる有効なフィールドがありません"
 
-#: routes/games.py:1179
+#: routes/games.py:1184
 msgid "Invalid status"
 msgstr "ステータスが無効です"
 
-#: routes/games.py:1204
+#: routes/games.py:1209
 msgid "Not authenticated"
 msgstr "認証されていません"
 
-#: routes/games.py:1235
+#: routes/games.py:1240
 msgid "Filter type and value required"
 msgstr "フィルターの種類と値が必要です"
 
-#: routes/games.py:1248
+#: routes/games.py:1253
 msgid "Invalid filter type"
 msgstr "フィルターの種類が無効です"
 
@@ -432,41 +432,46 @@ msgstr "AIからデータが返されませんでした。API キーとプロバ
 msgid "AI scraper module not available"
 msgstr "AIスクレイパーモジュールが利用できません"
 
-#: routes/games_media.py:70
+#: routes/games_media.py:71
 msgid "No filename provided"
 msgstr "ファイル名が指定されていません"
 
-#: routes/games_media.py:77 routes/reports.py:683 routes/scrape_logs.py:131
+#: routes/games_media.py:78 routes/reports.py:684 routes/scrape_logs.py:131
 #: routes/scrape_logs.py:156 routes/scrape_logs.py:205 routes/settings.py:351
 msgid "Invalid filename"
 msgstr "ファイル名が無効です"
 
-#: routes/games_media.py:86
+#: routes/games_media.py:87
 #, python-format
 msgid "ROM file not found on disk: %(path)s"
 msgstr "ディスク上にROMファイルが見つかりません: %(path)s"
 
-#: routes/games_media.py:101 routes/reports.py:716 routes/reports.py:883
+#: routes/games_media.py:102 routes/reports.py:717 routes/reports.py:888
 msgid "Destination is outside the configured ROM root"
 msgstr "保存先が設定済みのROMルートの外にあります"
 
-#: routes/games_media.py:104 routes/reports.py:720 routes/reports.py:887
+#: routes/games_media.py:106 routes/reports.py:721
+#, python-format
+msgid "Cannot rename: %(reason)s"
+msgstr ""
+
+#: routes/games_media.py:109 routes/reports.py:725 routes/reports.py:892
 msgid "A file with that name already exists"
 msgstr "その名前のファイルはすでに存在します"
 
-#: routes/games_media.py:111
+#: routes/games_media.py:116
 msgid "Failed to rename file"
 msgstr "ファイル名の変更に失敗しました"
 
-#: routes/games_media.py:131
+#: routes/games_media.py:136
 msgid "No screenshot specified"
 msgstr "スクリーンショットが指定されていません"
 
-#: routes/games_media.py:134
+#: routes/games_media.py:139
 msgid "Invalid screenshot filename"
 msgstr "スクリーンショットのファイル名が無効です"
 
-#: routes/games_media.py:144
+#: routes/games_media.py:149
 msgid "Screenshot not found"
 msgstr "スクリーンショットが見つかりません"
 
@@ -614,57 +619,57 @@ msgstr "PSNのゲームリストの取得に失敗しました。まずトロフ
 msgid "System %(name)s does not support RetroAchievements"
 msgstr "システム%(name)sはRetroAchievementsに対応していません"
 
-#: routes/reports.py:408
+#: routes/reports.py:409
 msgid "Unknown system"
 msgstr "不明なシステムです"
 
-#: routes/reports.py:429 routes/reports.py:594
+#: routes/reports.py:430 routes/reports.py:595
 msgid "ROM path not configured. Go to Settings → Paths to set it."
 msgstr "ROMパスが設定されていません。「設定」→「パス」で設定してください。"
 
-#: routes/reports.py:590
+#: routes/reports.py:591
 msgid "Missing required parameters"
 msgstr "必須パラメーターがありません"
 
-#: routes/reports.py:600 routes/tools.py:468 routes/tools.py:525
+#: routes/reports.py:601 routes/tools.py:468 routes/tools.py:525
 #: routes/tools.py:560
 msgid "Invalid path"
 msgstr "パスが無効です"
 
-#: routes/reports.py:606
+#: routes/reports.py:607
 #, python-format
 msgid "Folder does not exist: %(folder_path)s"
 msgstr "フォルダーが存在しません: %(folder_path)s"
 
-#: routes/reports.py:680
+#: routes/reports.py:681
 msgid "Missing game_id or new_name"
 msgstr "game_idまたはnew_nameがありません"
 
-#: routes/reports.py:692 routes/reports.py:813
+#: routes/reports.py:693 routes/reports.py:818
 msgid "No ROM path set"
 msgstr "ROMパスが設定されていません"
 
-#: routes/reports.py:707 routes/reports.py:818
+#: routes/reports.py:708 routes/reports.py:823
 msgid "ROM file not found"
 msgstr "ROMファイルが見つかりません"
 
-#: routes/reports.py:729
+#: routes/reports.py:734
 msgid "M3U files must keep the .m3u extension"
 msgstr "M3Uファイルは.m3u拡張子を保持する必要があります"
 
-#: routes/reports.py:742 routes/reports.py:899
+#: routes/reports.py:747 routes/reports.py:904
 msgid "A folder with the new name already exists"
 msgstr "その新しい名前のフォルダーはすでに存在します"
 
-#: routes/reports.py:822
+#: routes/reports.py:827
 msgid "No scraped title available"
 msgstr "スクレイピングされたタイトルがありません"
 
-#: routes/reports.py:840
+#: routes/reports.py:845
 msgid "Title is empty after sanitization"
 msgstr "サニタイズ後にタイトルが空になりました"
 
-#: routes/reports.py:863
+#: routes/reports.py:868
 msgid "Generated filename contains invalid characters"
 msgstr "生成されたファイル名に無効な文字が含まれています"
 
@@ -7505,15 +7510,15 @@ msgid ""
 "system default."
 msgstr "このゲーム専用のエミュレーターを選択します。  空欄にすると機種ごとのデフォルトが使用されます。"
 
-#: templates/_modals/edit_modal.html:418
+#: templates/_modals/edit_modal.html:419
 msgid "Custom launch args"
 msgstr "カスタム起動引数"
 
-#: templates/_modals/edit_modal.html:419
+#: templates/_modals/edit_modal.html:420
 msgid "e.g.  --renderer vulkan"
 msgstr "例：  --renderer vulkan"
 
-#: templates/_modals/edit_modal.html:420
+#: templates/_modals/edit_modal.html:421
 msgid ""
 "Appended to the emulator's args template after substitution.  Use shell-"
 "quoted strings if values contain spaces."

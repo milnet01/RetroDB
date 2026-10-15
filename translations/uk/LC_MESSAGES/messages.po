@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-15 10:51+0200\n"
+"POT-Creation-Date: 2026-10-15 18:21+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: uk\n"
@@ -39,10 +39,10 @@ msgstr "Систему не знайдено або вона не має іго�
 
 #: routes/achievements.py:170 routes/achievements.py:435
 #: routes/bonus_discs.py:263 routes/bulk_scrape.py:46 routes/collections.py:276
-#: routes/collections.py:531 routes/games.py:327 routes/games.py:823
-#: routes/games.py:937 routes/games_ai.py:46 routes/games_media.py:34
-#: routes/games_media.py:81 routes/games_media.py:138 routes/reports.py:688
-#: routes/reports.py:809 routes/trophies.py:1283 services/hltb_service.py:127
+#: routes/collections.py:531 routes/games.py:327 routes/games.py:828
+#: routes/games.py:942 routes/games_ai.py:46 routes/games_media.py:35
+#: routes/games_media.py:82 routes/games_media.py:143 routes/reports.py:689
+#: routes/reports.py:814 routes/trophies.py:1283 services/hltb_service.py:127
 msgid "Game not found"
 msgstr "Гру не знайдено"
 
@@ -208,8 +208,8 @@ msgstr "Батьківську гру не знайдено"
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "Бонусний диск і батьківська гра мають належати до однієї системи"
 
-#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1186
-#: routes/games.py:1216 routes/platform_import.py:290
+#: routes/bonus_discs.py:209 routes/bonus_discs.py:227 routes/games.py:1191
+#: routes/games.py:1221 routes/platform_import.py:290
 #: routes/platform_import.py:658 routes/platform_import.py:1027
 #: routes/scrape_logs.py:85 routes/scrape_logs.py:170 routes/scrape_logs.py:183
 #: routes/scrape_logs.py:221 routes/scraper.py:200 routes/scraper.py:528
@@ -228,7 +228,7 @@ msgstr "Сталася внутрішня помилка"
 msgid "Missing bonus_id or parent_id"
 msgstr "Відсутній bonus_id або parent_id"
 
-#: routes/bonus_discs.py:304 routes/reports.py:797
+#: routes/bonus_discs.py:304 routes/reports.py:802
 msgid "Missing game_id"
 msgstr "Відсутній game_id"
 
@@ -391,41 +391,41 @@ msgstr "ID не надано"
 msgid "Provide 1-50 valid IDs"
 msgstr "Надайте від 1 до 50 дійсних ID"
 
-#: routes/games.py:671
+#: routes/games.py:676
 msgid "Game not found after update"
 msgstr "Гру не знайдено після оновлення"
 
-#: routes/games.py:963 routes/games.py:1007
+#: routes/games.py:968 routes/games.py:1012
 msgid "No fields to update"
 msgstr "Немає полів для оновлення"
 
-#: routes/games.py:1004 routes/platform_import.py:212
+#: routes/games.py:1009 routes/platform_import.py:212
 #: routes/platform_import.py:571 routes/platform_import.py:930
 #: routes/trophies.py:1888
 msgid "No games selected"
 msgstr "Не вибрано жодної гри"
 
-#: routes/games.py:1014
+#: routes/games.py:1019
 msgid "Invalid completion status"
 msgstr "Недійсний статус проходження"
 
-#: routes/games.py:1062
+#: routes/games.py:1067
 msgid "No valid fields to update"
 msgstr "Немає дійсних полів для оновлення"
 
-#: routes/games.py:1179
+#: routes/games.py:1184
 msgid "Invalid status"
 msgstr "Недійсний статус"
 
-#: routes/games.py:1204
+#: routes/games.py:1209
 msgid "Not authenticated"
 msgstr "Не автентифіковано"
 
-#: routes/games.py:1235
+#: routes/games.py:1240
 msgid "Filter type and value required"
 msgstr "Потрібні тип і значення фільтра"
 
-#: routes/games.py:1248
+#: routes/games.py:1253
 msgid "Invalid filter type"
 msgstr "Недійсний тип фільтра"
 
@@ -437,41 +437,46 @@ msgstr "ШІ не повернув даних. Перевірте ключ API �
 msgid "AI scraper module not available"
 msgstr "Модуль скрапера ШІ недоступний"
 
-#: routes/games_media.py:70
+#: routes/games_media.py:71
 msgid "No filename provided"
 msgstr "Не надано ім'я файлу"
 
-#: routes/games_media.py:77 routes/reports.py:683 routes/scrape_logs.py:131
+#: routes/games_media.py:78 routes/reports.py:684 routes/scrape_logs.py:131
 #: routes/scrape_logs.py:156 routes/scrape_logs.py:205 routes/settings.py:351
 msgid "Invalid filename"
 msgstr "Недійсне ім'я файлу"
 
-#: routes/games_media.py:86
+#: routes/games_media.py:87
 #, python-format
 msgid "ROM file not found on disk: %(path)s"
 msgstr "Файл ROM не знайдено на диску: %(path)s"
 
-#: routes/games_media.py:101 routes/reports.py:716 routes/reports.py:883
+#: routes/games_media.py:102 routes/reports.py:717 routes/reports.py:888
 msgid "Destination is outside the configured ROM root"
 msgstr "Місце призначення поза межами налаштованого кореневого каталогу ROM"
 
-#: routes/games_media.py:104 routes/reports.py:720 routes/reports.py:887
+#: routes/games_media.py:106 routes/reports.py:721
+#, python-format
+msgid "Cannot rename: %(reason)s"
+msgstr ""
+
+#: routes/games_media.py:109 routes/reports.py:725 routes/reports.py:892
 msgid "A file with that name already exists"
 msgstr "Файл з такою назвою вже існує"
 
-#: routes/games_media.py:111
+#: routes/games_media.py:116
 msgid "Failed to rename file"
 msgstr "Не вдалося перейменувати файл"
 
-#: routes/games_media.py:131
+#: routes/games_media.py:136
 msgid "No screenshot specified"
 msgstr "Не вказано знімок екрана"
 
-#: routes/games_media.py:134
+#: routes/games_media.py:139
 msgid "Invalid screenshot filename"
 msgstr "Недійсне ім'я файлу знімка екрана"
 
-#: routes/games_media.py:144
+#: routes/games_media.py:149
 msgid "Screenshot not found"
 msgstr "Знімок екрана не знайдено"
 
@@ -629,59 +634,59 @@ msgstr ""
 msgid "System %(name)s does not support RetroAchievements"
 msgstr "Система %(name)s не підтримує RetroAchievements"
 
-#: routes/reports.py:408
+#: routes/reports.py:409
 msgid "Unknown system"
 msgstr "Невідома система"
 
-#: routes/reports.py:429 routes/reports.py:594
+#: routes/reports.py:430 routes/reports.py:595
 msgid "ROM path not configured. Go to Settings → Paths to set it."
 msgstr ""
 "Шлях до ROM не налаштовано. Перейдіть у «Налаштування → Шляхи», щоб "
 "встановити його."
 
-#: routes/reports.py:590
+#: routes/reports.py:591
 msgid "Missing required parameters"
 msgstr "Відсутні обов'язкові параметри"
 
-#: routes/reports.py:600 routes/tools.py:468 routes/tools.py:525
+#: routes/reports.py:601 routes/tools.py:468 routes/tools.py:525
 #: routes/tools.py:560
 msgid "Invalid path"
 msgstr "Недійсний шлях"
 
-#: routes/reports.py:606
+#: routes/reports.py:607
 #, python-format
 msgid "Folder does not exist: %(folder_path)s"
 msgstr "Папка не існує: %(folder_path)s"
 
-#: routes/reports.py:680
+#: routes/reports.py:681
 msgid "Missing game_id or new_name"
 msgstr "Відсутній game_id або new_name"
 
-#: routes/reports.py:692 routes/reports.py:813
+#: routes/reports.py:693 routes/reports.py:818
 msgid "No ROM path set"
 msgstr "Шлях до ROM не встановлено"
 
-#: routes/reports.py:707 routes/reports.py:818
+#: routes/reports.py:708 routes/reports.py:823
 msgid "ROM file not found"
 msgstr "Файл ROM не знайдено"
 
-#: routes/reports.py:729
+#: routes/reports.py:734
 msgid "M3U files must keep the .m3u extension"
 msgstr "Файли M3U мають зберігати розширення .m3u"
 
-#: routes/reports.py:742 routes/reports.py:899
+#: routes/reports.py:747 routes/reports.py:904
 msgid "A folder with the new name already exists"
 msgstr "Папка з такою назвою вже існує"
 
-#: routes/reports.py:822
+#: routes/reports.py:827
 msgid "No scraped title available"
 msgstr "Немає отриманої скрапером назви"
 
-#: routes/reports.py:840
+#: routes/reports.py:845
 msgid "Title is empty after sanitization"
 msgstr "Назва порожня після очищення"
 
-#: routes/reports.py:863
+#: routes/reports.py:868
 msgid "Generated filename contains invalid characters"
 msgstr "Згенероване ім'я файлу містить недійсні символи"
 
@@ -7661,15 +7666,15 @@ msgstr ""
 "Виберіть конкретний емулятор для цієї гри. Залиште порожнім, щоб "
 "використовувати значення за замовчуванням для системи."
 
-#: templates/_modals/edit_modal.html:418
+#: templates/_modals/edit_modal.html:419
 msgid "Custom launch args"
 msgstr "Власні аргументи запуску"
 
-#: templates/_modals/edit_modal.html:419
+#: templates/_modals/edit_modal.html:420
 msgid "e.g.  --renderer vulkan"
 msgstr "напр. --renderer vulkan"
 
-#: templates/_modals/edit_modal.html:420
+#: templates/_modals/edit_modal.html:421
 msgid ""
 "Appended to the emulator's args template after substitution.  Use shell-"
 "quoted strings if values contain spaces."
