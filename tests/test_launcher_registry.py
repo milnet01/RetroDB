@@ -45,15 +45,6 @@ def test_active_returns_running_only(registry, fake_proc):
     assert 'exited' not in tokens
 
 
-def test_find_by_game_returns_running(registry, fake_proc):
-    registry.register(token='t1', proc=fake_proc, game_id=42, emulator_id=1, started_at=100.0)
-    found = registry.find_running_by_game(42)
-    assert found is not None
-    assert found.token == 't1'
-
-    assert registry.find_running_by_game(999) is None
-
-
 def test_gc_removes_exited_after_ttl(registry):
     """Exited entries linger for post_exit_ttl_s, then are GC'd.
 
@@ -90,3 +81,24 @@ def test_gc_keeps_recent_exited(registry):
     with patch('services.launcher.registry.time.time', return_value=t):
         registry.gc()
     assert registry.get('recent') is not None
+
+
+def test_active_collects_entries_exited_past_ttl(registry):
+    """PASS-59-64 INV-6 (PASS-59-55): an entry whose process ended is gone
+    after the next `active()` call once `post_exit_ttl_s` has passed, even
+    though nobody ever called `status()` or `kill()` on it."""
+    from services.launcher.local import LocalLauncher
+    launcher = LocalLauncher(registry)
+    proc = MagicMock()
+    proc.poll.return_value = 0
+    proc.pid = 1
+    t = 10_000.0
+    registry.register(token='forgotten', proc=proc, game_id=1, emulator_id=1,
+                      started_at=t - 5.0)
+
+    with patch('time.time', return_value=t):
+        launcher.active()          # notices the exit
+    assert len(registry) == 1      # still inside the TTL
+    with patch('time.time', return_value=t + 2.0):   # ttl=1.0
+        launcher.active()
+    assert len(registry) == 0

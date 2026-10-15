@@ -35,7 +35,8 @@ _STDERR_TAIL_BYTES = 4096
 
 class LocalLauncher:
     def __init__(self, registry: Optional[ProcessRegistry] = None):
-        self._registry = registry or ProcessRegistry()
+        # `is None`, not `or`: an empty registry has len 0 and is falsy.
+        self._registry = registry if registry is not None else ProcessRegistry()
 
     # ---------------- Launcher protocol --------------------------------------
 
@@ -100,6 +101,12 @@ class LocalLauncher:
         return self._status_from_entry(entry)
 
     def active(self) -> list[LaunchHandle]:
+        # Mark every ended process exited, then collect the ones past their
+        # TTL, so the registry stays bounded (PASS-59-64 §4.3).
+        now = time.time()
+        for token in self._registry.newly_exited():
+            self._registry._mark_exited(token, exit_time=now)
+        self._registry.gc()
         return self._registry.active()
 
     # ---------------- internals ---------------------------------------------

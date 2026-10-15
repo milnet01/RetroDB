@@ -53,13 +53,11 @@ class ProcessRegistry:
         with self._lock:
             return [e.handle for e in self._entries.values() if e.proc.poll() is None]
 
-    def find_running_by_game(self, game_id: int) -> Optional[LaunchHandle]:
-        """First running entry whose game_id matches, or None."""
+    def newly_exited(self) -> list[str]:
+        """Tokens whose process has ended but which are not yet marked exited."""
         with self._lock:
-            for entry in self._entries.values():
-                if entry.handle.game_id == game_id and entry.proc.poll() is None:
-                    return entry.handle
-        return None
+            return [t for t, e in self._entries.items()
+                    if e.exit_time is None and e.proc.poll() is not None]
 
     def _mark_exited(self, token: str, *, exit_time: float):
         with self._lock:
@@ -75,10 +73,6 @@ class ProcessRegistry:
                       if e.exit_time is not None and e.exit_time < cutoff]
             for t in doomed:
                 del self._entries[t]
-
-    def remove(self, token: str) -> None:
-        with self._lock:
-            self._entries.pop(token, None)
 
     def __len__(self) -> int:
         with self._lock:
