@@ -1,3 +1,29 @@
+- version: 3.23.17
+  date: 2026-10-15
+  tags:
+  - type: security
+    label: Only an admin can change a game's launch arguments
+  - type: fix
+    label: Launch arguments with several words, or a stray quote, now work
+  - type: fix
+    label: RetroDB no longer keeps every finished launch in memory
+  body: |
+    <ul>
+      <li><strong>An editor could add launch arguments that ran other
+        code.</strong> A game's <em>Custom launch args</em> go straight to the
+        emulator, and with RetroArch they could load any program file on the
+        computer. Changing them now needs the admin role, and the field is
+        hidden from everyone else.</li>
+      <li><strong>Launch arguments with more than one word reached the
+        emulator as one.</strong> <code>--a --b</code> now arrives as two
+        arguments, and an empty value adds nothing. A missing closing quote
+        used to break every launch of that game with a server error; it now
+        shows a message naming the field to fix. The
+        <code>{disc_paths}</code> token is gone: it was always empty.</li>
+      <li><strong>Finished launches piled up in memory until RetroDB
+        restarted.</strong> A launch that ended more than an hour ago is now
+        cleared away.</li>
+    </ul>
 - version: 3.23.16
   date: 2026-10-15
   tags:

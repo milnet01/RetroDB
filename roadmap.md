@@ -6328,7 +6328,11 @@ orchestrator, several by execution rather than reading.
   forbid `-L`/`--libretro`/`--appendconfig`/`--config`), or require
   `manage_settings` to set the field.
 - **Verify**: attempt to save `-L /tmp/evil.so` and confirm refusal.
-- **Status**: planned (2026-09-01). Lanes: security, launch.
+- **Resolution** (2026-10-15, v3.23.17, bc27d4a): took the plan's second
+  option, per PASS-59-64 §4.2. The `edit_metadata` branch keeps the stored
+  value unless the caller holds `manage_settings`, and the edit modal hides
+  the field. INV-2 pinned in `tests/test_routes_launch.py`.
+- **Status**: shipped (2026-10-15). Lanes: security, launch.
 - **Source**: review-code scraper/launch-routes lane 2026-09-01; orchestrator
   re-verified the write path.
 
@@ -6357,7 +6361,14 @@ orchestrator, several by execution rather than reading.
   offending text.
 - **Verify**: a two-disc game with `{disc_paths}` in its template; an
   unbalanced quote produces a 422 with the field named.
-- **Status**: planned (2026-09-01). Lanes: launch.
+- **Resolution** (2026-10-15, v3.23.17, eff6421): built to PASS-59-64 §4.1
+  rather than this plan. A token that is exactly `{game_extra_args}` or
+  `{system_extra_args}` expands to its words; inside a larger token it is
+  refused. `{disc_paths}` is retired, not expanded. Each `shlex.split`
+  raises `LaunchResolutionError` naming its field, so the route answers 422.
+  INV-3 and INV-5 pinned in `tests/test_launch_resolver.py`, INV-4 in
+  `tests/test_routes_launch.py`.
+- **Status**: shipped (2026-10-15). Lanes: launch.
 - **Source**: review-code scraper/launch-routes lane 2026-09-01.
 
 ---
@@ -6380,7 +6391,12 @@ orchestrator, several by execution rather than reading.
   the launch blueprint; delete or wire `find_running_by_game` / `remove`.
 - **Verify**: launch and exit N games; confirm `_entries` shrinks after the
   TTL.
-- **Status**: planned (2026-09-01). Lanes: launch.
+- **Resolution** (2026-10-15, v3.23.17, 16c0ec8): `LocalLauncher.active()`
+  marks every ended process exited, then calls `gc()`, per PASS-59-64 §4.3.
+  `find_running_by_game` and `remove` are deleted. Also fixed: an empty
+  registry passed to `LocalLauncher` was discarded, being falsy. INV-6 pinned
+  in `tests/test_launcher_registry.py`.
+- **Status**: shipped (2026-10-15). Lanes: launch.
 - **Source**: review-code scraper/launch-routes lane 2026-09-01.
 
 ---
