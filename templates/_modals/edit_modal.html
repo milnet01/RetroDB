@@ -414,11 +414,13 @@
                         </select>
                         <span class="field-tip">{{ _('Pick a specific emulator for this game.  Leave blank to use the per-system default.') }}</span>
                     </div>
+                    {% if has_permission('manage_settings') %}
                     <div class="edit-field">
                         <label for="edit_launch_args_override">{{ _('Custom launch args') }}</label>
                         <input id="edit_launch_args_override" type="text" name="edit_launch_args_override" value="{{ game.launch_args_override or '' }}" placeholder='{{ _("e.g.  --renderer vulkan") }}' />
                         <span class="field-tip">{{ _("Appended to the emulator's args template after substitution.  Use shell-quoted strings if values contain spaces.") }}</span>
                     </div>
+                    {% endif %}
                 </div>
 
             </form>

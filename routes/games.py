@@ -507,7 +507,12 @@ def game_detail(game_id):
                         emulator_override_id = int(emu_override_raw) if emu_override_raw else None
                     except ValueError:
                         emulator_override_id = None
-                    launch_args_override = _normalized.get('launch_args_override')
+                    # PASS-59-53 — the args reach the emulator's argv, so only
+                    # manage_settings may change them (PASS-59-64 §4.2).
+                    if has_permission('manage_settings'):
+                        launch_args_override = _normalized.get('launch_args_override')
+                    else:
+                        launch_args_override = game['launch_args_override']
 
                     boxart_filename = game['boxart']
                     boxart_3d_filename = game['boxart_3d'] if game['boxart_3d'] else ''

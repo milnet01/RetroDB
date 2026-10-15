@@ -68,6 +68,9 @@ guarded routes — never just one.
   endpoints were unreachable until Pass 45.1 (CRITICAL) fixed the matrix.
 - `delete_rom` is admin-only; editor's `delete_metadata` removes the DB
   row but not the file on disk — two destructive surfaces, two perms.
+- `edit` does not cover a game's custom launch arguments
+  (`games.launch_args_override`). They reach the emulator's command line,
+  so changing them needs `manage_settings` (PASS-59-64 §4.2).
 - `viewer` can read everything (`view`) and self-track (`track_progress`); no mutating perms — read-only with one self-mutation carve-out.
 
 ---

@@ -137,3 +137,55 @@ class TestLaunchEndpointBehavior:
         rv = client.post('/api/game/1/launch', headers=self._csrf_headers())
         # has_permission('launch') returns False for viewer; route returns 403
         assert rv.status_code == 403
+
+
+class TestLaunchArgsOverrideNeedsManageSettings:
+    """PASS-59-64 INV-2 (PASS-59-53): `games.launch_args_override` reaches
+    the emulator's argv, so only a `manage_settings` holder may change it.
+    An editor's `edit_metadata` POST leaves the stored value as it was."""
+
+    @pytest.fixture
+    def seeded_game(self, app_module):
+        from services.database import execute, query
+        sys_id = execute("INSERT INTO systems (name, folder) VALUES (?, ?)",
+                         ('INV-2 System', 'inv2-system'))
+        game_id = execute(
+            "INSERT INTO games (system_id, title, rom_path, launch_args_override) "
+            "VALUES (?, ?, ?, ?)",
+            (sys_id, 'INV-2 Game', '/tmp/inv2-game.bin', '--keep-me'))
+        yield game_id, lambda: query(
+            "SELECT launch_args_override FROM games WHERE id = ?",
+            (game_id,), one=True)['launch_args_override']
+        execute("DELETE FROM games WHERE id = ?", (game_id,))
+        execute("DELETE FROM systems WHERE id = ?", (sys_id,))
+
+    def _post_edit(self, client, game_id, value):
+        return client.post(f'/game/{game_id}', data={
+            'action': 'edit_metadata',
+            'edit_title': 'INV-2 Game',
+            'edit_launch_args_override': value,
+        }, headers={'X-CSRF-Token': 'test-csrf-token'})
+
+    def test_editor_cannot_change_launch_args(self, app_module, monkeypatch,
+                                              seeded_game):
+        game_id, stored = seeded_game
+        client = _make_authed_client(app_module, monkeypatch, 'editor')
+        rv = self._post_edit(client, game_id, '-L /tmp/x.so')
+        assert rv.status_code == 200
+        assert stored() == '--keep-me'
+
+    def test_admin_can_change_launch_args(self, app_module, monkeypatch,
+                                          seeded_game):
+        game_id, stored = seeded_game
+        client = _make_authed_client(app_module, monkeypatch, 'admin')
+        rv = self._post_edit(client, game_id, '--renderer vulkan')
+        assert rv.status_code == 200
+        assert stored() == '--renderer vulkan'
+
+    @pytest.mark.parametrize('role,shown', [('editor', False), ('admin', True)])
+    def test_edit_modal_shows_field_only_with_manage_settings(
+            self, app_module, monkeypatch, seeded_game, role, shown):
+        game_id, _stored = seeded_game
+        client = _make_authed_client(app_module, monkeypatch, role)
+        page = client.get(f'/game/{game_id}').get_data(as_text=True)
+        assert ('name="edit_launch_args_override"' in page) is shown
