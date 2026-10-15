@@ -10,10 +10,12 @@
 #   3. Verify enabled.
 #   4. Resolve binary (RA-special-cased to read settings).
 #   5. Resolve RA core (only when is_retroarch=1).
-#   6. Substitute {rom}, {rom_dir}, {rom_name}, {retroarch_core}, {disc_paths},
-#      {system_extra_args}, {game_extra_args} via str.format_map(_SafeDict).
+#   6. shlex.split the template, then per token: {system_extra_args} and
+#      {game_extra_args} as a whole token expand to their words; {rom},
+#      {rom_dir}, {rom_name}, {retroarch_core} substitute via
+#      str.format_map(_SafeDict). A parse error names its field.
 #   7. Auto-append extra_args / launch_args_override if template lacked tokens.
-#   8. shlex.split -> argv.
+#   8. Prefix the binary -> argv.
 #   9. Validate rom_path under scan roots.
 #  10. Return LaunchContext.
 # =============================================================================
@@ -85,15 +87,13 @@ def _default_cores_dir() -> str:
     return str(Path('~/.config/retroarch/cores/').expanduser())
 
 
-def _disc_paths_for_game(game_id: int) -> list:
-    """Return absolute paths from the bonus_discs table for this game.
-    Empty list if the table doesn't exist or has no rows."""
+def _split(value: str, field: str) -> list:
+    """shlex.split, with a parse error reported against the field it came
+    from so the route answers 422 instead of 500 (PASS-59-64 §4.1)."""
     try:
-        rows = query("""SELECT rom_path FROM bonus_discs
-                        WHERE parent_game_id = ? ORDER BY id""", (game_id,))
-    except Exception:
-        return []
-    return [r['rom_path'] for r in rows if r and r.get('rom_path')]
+        return shlex.split(value)
+    except ValueError as e:
+        raise LaunchResolutionError(f"Cannot parse {field} {value!r}: {e}") from e
 
 
 _FIX_HINT = (
@@ -198,7 +198,6 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
     # shlex.quote-then-split round-trip suggested by the spec, which produced
     # paths wrapped in literal single-quotes that confused emulators.
     rom_path_obj = Path(game['rom_path'])
-    disc_paths = _disc_paths_for_game(game_id)
     system_extra = (sys_emu.get('extra_args') if sys_emu else None) or ''
     game_extra = game.get('launch_args_override') or ''
 
@@ -207,20 +206,31 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
         rom_dir=str(rom_path_obj.parent),
         rom_name=rom_path_obj.stem,
         retroarch_core=core_path,
-        disc_paths=' '.join(disc_paths),
-        system_extra_args=system_extra,
-        game_extra_args=game_extra,
     )
+    # List variables: a token that is exactly one expands to zero or more
+    # argv elements; inside a larger token it cannot, so it is refused.
+    list_vars = {
+        '{system_extra_args}': _split(system_extra, 'extra_args'),
+        '{game_extra_args}': _split(game_extra, 'launch_args_override'),
+    }
 
     template = emu['args_template']
-    template_tokens = shlex.split(template)
-    substituted = [tok.format_map(vars_dict) for tok in template_tokens]
+    substituted = []
+    for tok in _split(template, 'args_template'):
+        if tok in list_vars:
+            substituted.extend(list_vars[tok])
+            continue
+        for name in list_vars:
+            if name in tok:
+                raise LaunchResolutionError(
+                    f"{name} must be a whole argument in args_template, "
+                    f"not part of {tok!r}")
+        substituted.append(tok.format_map(vars_dict))
 
     # Auto-append if template did NOT explicitly use the token
-    if '{system_extra_args}' not in template and system_extra:
-        substituted.extend(shlex.split(system_extra))
-    if '{game_extra_args}' not in template and game_extra:
-        substituted.extend(shlex.split(game_extra))
+    for name, words in list_vars.items():
+        if name not in template:
+            substituted.extend(words)
 
     argv = list(binary_argv_prefix) + substituted
 

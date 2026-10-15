@@ -18,7 +18,6 @@ def tmpdb(monkeypatch, tmp_path):
     c = conn.cursor()
     c.execute("CREATE TABLE systems (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, folder TEXT UNIQUE)")
     c.execute("CREATE TABLE games (id INTEGER PRIMARY KEY AUTOINCREMENT, system_id INTEGER, title TEXT, rom_path TEXT UNIQUE, emulator_override_id INTEGER, launch_args_override TEXT)")
-    c.execute("CREATE TABLE bonus_discs (id INTEGER PRIMARY KEY AUTOINCREMENT, parent_game_id INTEGER, rom_path TEXT)")
     c.execute("CREATE TABLE emulators (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, binary_name TEXT, binary_path_override TEXT, args_template TEXT, is_retroarch INTEGER, description TEXT, enabled INTEGER DEFAULT 1, created_at TEXT, updated_at TEXT)")
     c.execute("CREATE TABLE system_emulators (id INTEGER PRIMARY KEY AUTOINCREMENT, system_id INTEGER, emulator_id INTEGER, is_default INTEGER, retroarch_core TEXT, extra_args TEXT, UNIQUE(system_id, emulator_id))")
     # Seed
@@ -152,34 +151,93 @@ def test_launch_args_override_appended(tmpdb):
     assert '--no-throttle' in ctx.argv
 
 
-def test_bonus_disc_paths_included(tmpdb, tmp_path):
-    """games.bonus_discs rows (multi-disc games) must be expanded into
-    argv via the {disc_paths} template token. The tmpdb fixture defined
-    the bonus_discs table but no test previously exercised the
-    `_disc_paths_for_game` -> `vars_dict['disc_paths']` -> template
-    substitution chain (test-audit c-003 LOW coverage_gaps)."""
-    disc2 = tmpdb['rom_file'].parent / 'crash_disc2.bin'
-    disc2.write_text('disc2-bytes')
-    tmpdb['conn'].execute(
-        "INSERT INTO bonus_discs (parent_game_id, rom_path) VALUES (1, ?)",
-        (str(disc2),),
-    )
-    # Use a template that references {disc_paths} explicitly so the
-    # resolver wires the bonus-discs lookup into argv. Production
-    # DuckStation templates that lack the token would not expand the
-    # discs; this test is for the expansion code path, not the default
-    # template.
+def test_disc_paths_is_retired(tmpdb):
+    """PASS-59-64 §4.1: `{disc_paths}` is removed (it read a table no
+    migration creates), so a template using it fails like any unknown
+    variable instead of passing nothing."""
     tmpdb['conn'].execute(
         "UPDATE emulators SET args_template = ? WHERE name = 'DuckStation'",
-        ('-batch "{rom}" --extra-discs {disc_paths}',),
+        ('-batch "{rom}" {disc_paths}',),
     )
     tmpdb['conn'].commit()
     from services.launch_resolver import resolve_launch_context
+    from services.launcher.base import LaunchResolutionError
+    with pytest.raises(LaunchResolutionError, match='Unknown template variable'):
+        resolve_launch_context(game_id=1)
+
+
+def _set_template(tmpdb, template):
+    tmpdb['conn'].execute(
+        "UPDATE emulators SET args_template = ? WHERE name = 'DuckStation'",
+        (template,))
+    tmpdb['conn'].commit()
+
+
+@pytest.mark.parametrize('column,table,var', [
+    ('launch_args_override', 'games', 'game_extra_args'),
+    ('extra_args', 'system_emulators', 'system_extra_args'),
+])
+def test_list_variable_expands_one_element_per_word(tmpdb, column, table, var):
+    """PASS-59-64 INV-3: a token that is exactly a list variable expands
+    to one argv element per word."""
+    _set_template(tmpdb, '{%s} "{rom}"' % var)
+    tmpdb['conn'].execute(f"UPDATE {table} SET {column} = '--a --b'")
+    tmpdb['conn'].commit()
+    from services.launch_resolver import resolve_launch_context
     ctx = resolve_launch_context(game_id=1)
-    argv_joined = ' '.join(ctx.argv)
-    assert str(disc2) in argv_joined, (
-        f"bonus disc path {str(disc2)!r} not expanded into argv: {ctx.argv!r}"
-    )
+    assert ctx.argv[1:] == ['--a', '--b', str(tmpdb['rom_file'])]
+
+
+@pytest.mark.parametrize('var', ['game_extra_args', 'system_extra_args'])
+def test_empty_list_variable_expands_to_nothing(tmpdb, var):
+    """PASS-59-64 INV-3: an empty list variable adds no argv element,
+    not an empty-string one."""
+    _set_template(tmpdb, '{%s} "{rom}"' % var)
+    from services.launch_resolver import resolve_launch_context
+    ctx = resolve_launch_context(game_id=1)
+    assert ctx.argv[1:] == [str(tmpdb['rom_file'])]
+
+
+def test_list_variable_inside_a_token_is_refused(tmpdb):
+    """PASS-59-64 §4.1: a list variable inside a larger token cannot
+    expand to several elements, so it is refused."""
+    _set_template(tmpdb, '--opts={game_extra_args} "{rom}"')
+    from services.launch_resolver import resolve_launch_context
+    from services.launcher.base import LaunchResolutionError
+    with pytest.raises(LaunchResolutionError, match='game_extra_args'):
+        resolve_launch_context(game_id=1)
+
+
+@pytest.mark.parametrize('column,table,field', [
+    ('launch_args_override', 'games', 'launch_args_override'),
+    ('extra_args', 'system_emulators', 'extra_args'),
+    ('args_template', 'emulators', 'args_template'),
+])
+def test_unbalanced_quote_names_the_field(tmpdb, column, table, field):
+    """PASS-59-64 §4.1: a shlex ValueError becomes a LaunchResolutionError
+    naming the field, so the route answers 422 rather than 500."""
+    tmpdb['conn'].execute(f"UPDATE {table} SET {column} = ?",
+                          ('--renderer "vulkan',))
+    tmpdb['conn'].commit()
+    from services.launch_resolver import resolve_launch_context
+    from services.launcher.base import LaunchResolutionError
+    with pytest.raises(LaunchResolutionError, match=field):
+        resolve_launch_context(game_id=1)
+
+
+def test_metacharacter_rom_path_stays_one_element(tmpdb):
+    """PASS-59-64 INV-5: list expansion must not re-split a scalar
+    variable's value."""
+    bad = tmpdb['rom_file'].parent / '$(x); y.bin'
+    bad.write_text('x')
+    tmpdb['conn'].execute("UPDATE games SET rom_path = ?, "
+                          "launch_args_override = '--a' WHERE id = 1",
+                          (str(bad),))
+    tmpdb['conn'].commit()
+    _set_template(tmpdb, '{game_extra_args} "{rom}"')
+    from services.launch_resolver import resolve_launch_context
+    ctx = resolve_launch_context(game_id=1)
+    assert ctx.argv[1:] == ['--a', str(bad)]
 
 
 def test_token_is_random_per_call(tmpdb):

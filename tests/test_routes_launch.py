@@ -189,3 +189,34 @@ class TestLaunchArgsOverrideNeedsManageSettings:
         client = _make_authed_client(app_module, monkeypatch, role)
         page = client.get(f'/game/{game_id}').get_data(as_text=True)
         assert ('name="edit_launch_args_override"' in page) is shown
+
+
+def test_unbalanced_quote_in_launch_args_is_422_naming_the_field(
+        app_module, monkeypatch):
+    """PASS-59-64 INV-4 (PASS-59-54): a malformed quote in a game's launch
+    args answers 422 naming `launch_args_override`, never a 500. Runs the
+    real resolver against the isolated test DB."""
+    from services.database import execute
+    sys_id = execute("INSERT INTO systems (name, folder) VALUES (?, ?)",
+                     ('INV-4 System', 'inv4-system'))
+    emu_id = execute(
+        "INSERT INTO emulators (name, binary_name, args_template, "
+        "is_retroarch, enabled) VALUES (?, ?, ?, 0, 1)",
+        ('INV-4 Emu', 'sh', '"{rom}"'))
+    execute("INSERT INTO system_emulators (system_id, emulator_id, is_default) "
+            "VALUES (?, ?, 1)", (sys_id, emu_id))
+    game_id = execute(
+        "INSERT INTO games (system_id, title, rom_path, launch_args_override) "
+        "VALUES (?, ?, ?, ?)",
+        (sys_id, 'INV-4 Game', '/tmp/inv4-game.bin', '--renderer "vulkan'))
+    try:
+        client = _make_authed_client(app_module, monkeypatch, 'player')
+        rv = client.post(f'/api/game/{game_id}/launch',
+                         headers={'X-CSRF-Token': 'test-csrf-token'})
+        assert rv.status_code == 422
+        assert 'launch_args_override' in rv.get_json()['error']
+    finally:
+        execute("DELETE FROM games WHERE id = ?", (game_id,))
+        execute("DELETE FROM system_emulators WHERE system_id = ?", (sys_id,))
+        execute("DELETE FROM emulators WHERE id = ?", (emu_id,))
+        execute("DELETE FROM systems WHERE id = ?", (sys_id,))
