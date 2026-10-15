@@ -7375,6 +7375,78 @@ were corrected in `2836bc3` and are not repeated here.
 - **Source**: claude-config message 2026-09-28 (local-gate.md § 9 walk),
   checked 2026-10-10.
 
+---
+
+#### Pass 59.91 Zero-setup play: point at an emulator, RetroDB does the rest (HIGH, L)
+- **Target**: a new spec under `docs/specs/`, written with `write-spec`. It
+  extends PASS-59-64 (launch contract) and PASS-59-81 (best core and settings)
+  to standalone emulators.
+- **Why**: the user wants RetroDB to be their way of launching games. The user
+  only points RetroDB at an emulator's folder (RetroArch, DuckStation, PCSX2,
+  RPCS3 or any other, per system); RetroDB handles the rest, including the
+  best settings per game. Today Play is on the game page only and needs hand
+  setup, and the per-system mapping section of Settings → Emulators never
+  loads (`emulators-settings.js` does not fill it).
+- **Plan** (four stages, agreed 2026-10-15):
+  1. Build PASS-59-64's fixes (Passes 59.53–59.55); no new spec needed.
+  2. Point at a folder: detect the emulator and its binary (Flatpak and
+     AppImage too), wire it to its systems, and report missing BIOS files.
+  3. Play on library cards and system pages, not only the game page.
+  4. Best settings per game: RetroArch through PASS-59-64's player and
+     PASS-59-81; standalone emulators use their own game databases for
+     compatibility fixes, and RetroDB sets per-system experience settings
+     (fullscreen, scaling, aspect ratio) plus the user's per-game changes.
+     Their per-game files are keyed by disc serial, so RetroDB must read it.
+- **Decisions** (user, 2026-10-15): write the spec after the trailer
+  footage; per-game compatibility fixes come from each emulator's own
+  database, not a RetroDB-curated list.
+- **Verify**: stages 2–4 are the spec's to define.
+- **Status**: todo. Lanes: launch, docs.
+- **Source**: user request and decisions 2026-10-15; current state mapped
+  from `routes/launch.py`, `services/launch_resolver.py` and
+  `data/emulator_seeds.json` the same day.
+
+---
+
+#### Pass 59.92 Titles named "Name, The" fail the scraper match filter (MEDIUM, S)
+- **Target**: `services/jobs/bulk_scrape.py` match filter and
+  `scraper/match_scorer.py`.
+- **Why**: on 2026-10-15 a bulk scrape logged "No results passed match filter
+  (score mode)" for `Legend of Zelda, The` and `Legend of Zelda, The: Ocarina
+  of Time`, from No-Intro file names. Renamed to "The Legend of Zelda …",
+  both scraped. No-Intro puts the article last, so any such library hits this.
+  The `article_placement` setting may be the place to start.
+- **Verify**: a regression test where a title ending ", The" matches its
+  "The …" result; then one real scrape of each.
+- **Status**: todo. Lanes: scrapers.
+- **Source**: trailer library scrape, 2026-10-15.
+
+---
+
+#### Pass 59.93 Per-locale changelogs stop at 3.22.1 (LOW, M)
+- **Target**: `data/changelog.<locale>.yaml`, one per human-translation
+  locale (`docs/specs/i18n.md` §9).
+- **Why**: CLAUDE.md asks for the recent entries to be translated for a real
+  release. Releases 3.23.14 to 3.23.16 went out on 2026-10-15 with every 3.23.x
+  entry untranslated, so those show in English in the other languages.
+- **Verify**: each locale file's top entry matches `data/changelog.yaml`'s,
+  with version, date and tags repeated verbatim.
+- **Status**: todo. Lanes: i18n.
+- **Source**: release checks, 2026-10-15.
+
+---
+
+#### Pass 59.94 The "Pseudo" test language is offered to every user (LOW, S)
+- **Target**: `templates/_settings_tabs/library.html` language list;
+  `docs/specs/i18n.md` §5.
+- **Why**: the list shows "Pseudo", the developer test locale. §5 makes it a
+  permanent QA tool selectable in Settings, by design. Seen in the trailer
+  footage; a user picking it gets bracketed, accented text.
+- **Decision needed**: keep it for everyone, show it only to admins or in
+  debug mode, or hide it. Changing it amends §5.
+- **Status**: todo — waiting on the user. Lanes: i18n.
+- **Source**: trailer recording, 2026-10-15.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
