@@ -7418,6 +7418,15 @@ were corrected in `2836bc3` and are not repeated here.
   database, not a RetroDB-curated list.
 - **Spec**: `docs/specs/PASS-59-91-zero-setup-play.md`, accepted 2026-10-15
   (review-contract capped at 2 loops; 21 findings fixed).
+- **Progress** (2026-10-15): stage 1 shipped in v3.23.17 (Passes
+  59.53–59.55; PASS-59-64 INV-2 to INV-6).
+- **Still unbuilt from PASS-59-64**, owned by no other item: INV-1
+  (`binary_path_override` before the `retroarch_binary` setting), INV-7
+  (`launcher_backend` loses `'remote'`), INV-15 (one SIGTERM per process),
+  the player clauses (§4.4–4.6, migration 016) and §11's cross-doc edits.
+- **Stage 2 gotcha**: a PS3 game stored as a folder cannot launch, because
+  `launch_resolver.py` refuses a ROM path that is not a file. This predates
+  Pass 59.95.
 - **Verify**: stages 2–4 by that spec's invariants.
 - **Status**: todo. Lanes: launch, docs.
 - **Source**: user request and decisions 2026-10-15; current state mapped
