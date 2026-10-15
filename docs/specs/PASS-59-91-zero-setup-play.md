@@ -1,7 +1,7 @@
 <!-- ants-spec-format: 1 -->
 # PASS-59-91 — Zero-setup play: point at an emulator, RetroDB does the rest
 
-**Status:** spec draft (2026-10-15).
+**Status:** accepted (2026-10-15).
 **Kind:** implement.
 **Source:** ROADMAP PASS-59-91 (user request and decisions 2026-10-15).
 **Blocked by:** PASS-59-53, PASS-59-54, PASS-59-55 (stage 1: building
@@ -43,8 +43,7 @@ What is still missing, against the code as it stands:
    `services/emulator_seeder.py::seed_emulators_from_file`, which never
    updates an existing row. The per-system mapping section of
    `templates/settings_emulators.html` (`#mapping-body`) is never filled:
-   `grep -c mapping-body static/js/emulators-settings.js` → `0`. No route
-   lists `system_emulators` rows.
+   `grep -c mapping-body static/js/emulators-settings.js` → `0`.
 3. **Missing BIOS files are found only by launching.** No code in
    `services/` or `routes/` reads or reports BIOS files.
 4. **Play exists on the game page only.** `#play-btn` lives in
@@ -139,7 +138,7 @@ emulator Flatpak is installed here.
 
 Settings → Emulators gains an **Emulator folders** list, the editable form of
 the existing `emulator_scan_paths` setting. Adding a folder runs detection on
-it at once.
+it at once, with `apply=true`.
 
 `POST /api/settings/emulators/detect` (admin, existing) keeps its query flag
 `apply` and its response, and changes underneath:
@@ -153,17 +152,24 @@ it at once.
   unchanged (§3.7). RetroArch's own Flatpak probe is unchanged.
 - **Each suggestion gains** `systems` (the adapter's system folders that
   exist in `systems`) and `data_dir` (§4.1, or `null`).
-- **`apply=true`** writes `binary_path_override` as today, then wires each
-  applied emulator (§4.3).
+- **`apply=true`** writes `binary_path_override` as today, then wires every
+  suggestion, whether or not its override changed (§4.3).
 
 ### 4.3 Wiring to systems
 
 For each system in a suggestion's `systems`, `apply` upserts the
 `system_emulators` row for that emulator, with `retroarch_core` and
 `extra_args` left as they are. It makes the row the default only when the
-system has no default row, or its default row's binary does not resolve
-(`_resolve_binary` raises). Making a row default clears the others, as
+system has no default row, or its default row does not resolve. Making a row
+default clears the others, as
 `routes/emulators.py::api_map_system_emulator` already does.
+
+**A mapping resolves** when its emulator is enabled, `_resolve_binary`
+returns a path that exists and is executable (or a `flatpak run <id>` command
+whose id `flatpak info` accepts), and, for a RetroArch row, its core file
+exists. `_resolve_binary` returns the `retroarch_binary` setting unchecked,
+so not raising is not enough. §4.3, §4.5, the `resolves` field below and §6
+all use this test.
 
 The RetroArch adapter lists no `systems`. Which core runs a system is
 PASS-59-81's, and a RetroArch row with no `retroarch_core` cannot launch, so
@@ -191,14 +197,15 @@ def bios_status(emu_row, sys_emu_row) -> dict
 | Emulator | Where | Satisfied when |
 |---|---|---|
 | DuckStation | `settings.ini` `[BIOS] SearchDirectory`, relative to the data dir; default `<data>/bios` | the directory holds a file of exactly 524288 bytes |
-| PCSX2 | `inis/PCSX2.ini` `[Folders] Bios` joined with `[Filenames] BIOS` | that file exists |
+| PCSX2 | `inis/PCSX2.ini` `[Folders] Bios`, relative to the data dir, joined with `[Filenames] BIOS` | that file exists |
 | RPCS3 | `<data>/dev_flash/vsh/module/vsh.self` | it exists (firmware installed) |
 | RetroArch | the core's `.info` file beside the core; the `system_directory` of the RetroArch config RetroDB reads | every `firmwareN_path` whose `firmwareN_opt` is `"false"` exists under the system directory |
 
 The RetroArch config is found from the binary `_resolve_binary` returns for
 the row. Where that binary is an AppImage, or a `*-portable.sh` beside one,
 and `<AppImage>.home/.config/retroarch/retroarch.cfg` exists, that file is
-read; else `~/.config/retroarch/retroarch.cfg`. A leading `~` in
+read; a `flatpak run` binary gives `unknown`; else
+`~/.config/retroarch/retroarch.cfg`. A leading `~` in
 `system_directory` is expanded against the same home. RetroArch needs no data
 dir. A standalone adapter with no data dir, and an adapter with no rule,
 return `unknown`.
@@ -210,10 +217,11 @@ fails. It never blocks a launch: the emulator gives its own error.
 
 `routes/games.py::api_games` adds `can_launch` to each game it returns. It is
 true when the caller holds the permission named by `launch_required_permission`
-and the game's system is in a set computed once per request. A system is in
-it when the mapping the resolver picks (the default row, else the lowest-id
-row) has an enabled emulator whose binary resolves and, for a RetroArch row,
-whose core file exists. One resolve per mapped emulator, not per game.
+and the mapping the resolver would pick for it resolves (§4.3). That pick is
+the game's `emulator_override_id` emulator with its system's row for that
+emulator, else the system's default row, else its lowest-id row. Results are
+cached per request by (system, emulator), so one resolve per distinct pair,
+not per game.
 
 `AllGamesController.renderGameCard` renders a Play button on a card whose
 game has `can_launch`, carrying `data-game-id`. It calls `window.launchGame`
@@ -251,8 +259,9 @@ def read_disc_ids(rom_path: Path, system_folder: str) -> tuple[str, str | None]
   already `BLUS-31024`.
 - **CRC (PS2 only).** The XOR of every little-endian 32-bit word of the boot
   ELF named by `BOOT2`, as PCSX2 names its per-game files.
-- **When.** At the first launch of the game through a settings adapter; the
-  result is stored. A missing `chdman` gives `''`.
+- **When.** At the first launch of the game through a settings adapter, or
+  the first GET of its emulator settings (§4.6 Routes), whichever comes first;
+  the result is stored. A missing `chdman` gives `''`.
 
 Probe, 2026-10-15, on this machine's library: a scratch prototype of this
 reader returned a serial for 40 of 40 `.chd` files picked by `shuf -n 40`
@@ -337,17 +346,22 @@ emulator has a settings adapter, for each file setting:
 
 1. **The user's own.** The key is the user's, and is left alone, when it is
    in the file and either has no `emulator_written_settings` row or differs
-   from that row's `written`. A file RetroDB has never touched, like the
-   user's existing `gamesettings/SLUS-00006.ini`, is all the user's.
+   from that row's `written`. Values are compared as the text after `=`
+   or `:`, trimmed. In a file RetroDB has never
+   touched, like the user's existing `gamesettings/SLUS-00006.ini`, every key
+   already there is the user's; managed keys it lacks are added (step 2).
 2. **Otherwise RetroDB's value**, first found of: the game's choice, the
    system's choice, the table's `default`. It is written, and `written` is
    recorded.
 
 Files are edited line by line: only the managed keys change, every other line
 and comment stays, a missing section is appended, and the new file replaces
-the old with `os.replace` from a temporary file in the same directory. RPCS3's
-YAML is loaded and dumped with PyYAML (`sort_keys=False`); any other key keeps
-its value.
+the old with `os.replace` from a temporary file in the same directory.
+RPCS3's YAML is edited the same way, never loaded and dumped: the `path`'s
+first part is a top-level `Name:` line, the second a two-space-indented
+`  Key: value` line inside that block. PyYAML reads the user's unquoted
+`Aspect ratio: 16:9` as the integer `969` (YAML 1.1 base-60) and would write
+`969` back.
 
 **Routes.**
 
@@ -356,7 +370,8 @@ its value.
   [{setting, value, source, values}]}`. `reason` is `null` when `supported`
   is true, else a plain-language string (§6). `candidates` lists the PCSX2
   files when there are two or more, else `[]`. `source` is `game`, `system`,
-  `default` or `emulator` (the user's own, read from the file).
+  `default` or `emulator` (the user's own, read from the file). A `NULL`
+  `disc_serial` is read and stored before the GET answers.
 - `PUT` the same path (`edit`), body `{setting: value | null}`; `null`
   removes the game choice. A `flag` setting is refused with 400: it is an
   argv input, admin-only under PASS-59-64 §3.14, so it is set per system
@@ -396,9 +411,10 @@ binary detection (§4.2) only.
   when that system's default does not resolve.
   *Test:* `tests/test_emulator_autodetect.py` — psx default on a resolving
   RetroArch row: apply DuckStation and assert RetroArch stays default. Again
-  with RetroArch's binary missing: assert DuckStation is default and one
-  default row exists.
-  *Breaks when:* apply always sets the new row default, or never does.
+  with RetroArch's `retroarch_binary` setting naming a deleted file: assert
+  DuckStation is default and one default row exists.
+  *Breaks when:* apply always sets the new row default, or never does, or
+  "resolves" means only that `_resolve_binary` did not raise.
 
 - **INV-4** — BIOS status reports a missing DuckStation BIOS and an existing
   one, and the check writes nothing.
@@ -427,8 +443,10 @@ binary detection (§4.2) only.
   launch permission and a game whose system is in §4.5's set.
   *Test:* `tests/test_api_games_can_launch.py` — two systems, one resolving and one
   not; as a player assert true and false; as a viewer assert false for both.
-  *Breaks when:* `can_launch` ignores the permission, or is true for a system
-  whose default binary does not resolve.
+  A game on the resolving system with `emulator_override_id` naming a
+  disabled emulator → false.
+  *Breaks when:* `can_launch` ignores the permission, ignores the game's
+  override, or is true for a mapping that does not resolve (§4.3).
 
 - **INV-8** — A library card with `can_launch` has a Play button that starts
   the game without leaving the page.
@@ -532,6 +550,15 @@ binary detection (§4.2) only.
   *Breaks when:* a new route takes `login_required` alone, as
   `GET /api/emulators` does today, or the game PUT accepts a `flag` setting.
 
+- **INV-20** — Writing RPCS3's `resolution_scale` leaves every other line of
+  the file byte-identical.
+  *Test:* `tests/test_standalone_settings.py` — a `config_BLUS31024.yml`
+  holding `Video:` with `  Aspect ratio: 16:9` and `  Resolution Scale: 100`;
+  write `resolution_scale`; assert the `Aspect ratio` line still reads `16:9`
+  and only the `Resolution Scale` line changed.
+  *Breaks when:* the file is round-tripped through PyYAML, which writes
+  `Aspect ratio: 969`.
+
 ## 6. Failure modes
 
 - **No data dir found** (emulator never run) → no file written; the panel
@@ -564,7 +591,7 @@ binary detection (§4.2) only.
 - `tests/test_disc_serial.py` (new) — INV-9, INV-10, with ISO fixtures built
   in `tmp_path` and a stub `chdman`. No real disc image is read.
 - `tests/test_standalone_settings.py` (new) — INV-11, INV-12, INV-13, INV-14,
-  INV-15 and INV-16, with data
+  INV-15, INV-16 and INV-20, with data
   dirs under `tmp_path` and a stub launcher.
 - `tests/test_launch_resolver.py` (extends) — INV-17.
 - `tests/test_migrations.py` — INV-18.
@@ -631,13 +658,16 @@ it is given; §10 says so.
 | INV-17 | `tests/test_launch_resolver.py` (to add) |
 | INV-18 | `tests/test_migrations.py` (to add) |
 | INV-19 | `tests/test_emulator_autodetect.py` (to add) |
+| INV-20 | `tests/test_standalone_settings.py` (to add) |
 | §4.6 the emulators honour the keys RetroDB writes | **nothing** — no test runs an emulator; key names were read from this machine's config files, not from each emulator's source |
 | §4.1 Flatpak and XDG data-dir candidates | **nothing** — no emulator Flatpak installed here; marked unverified |
 
 ## 11. Cross-doc impact
 
 - `docs/specs/PASS-59-64-launcher.md` §4.1 — the list variables gain
-  `{fullscreen_flag}` (§4.6). An addition; no clause there changes.
+  `{fullscreen_flag}` (§4.6). An addition; no clause there changes. Its
+  "migration 016" becomes the next free number if this spec's migration lands
+  first (§4.6).
 - `docs/specs/migrations.md` — this spec's migration.
 - `docs/specs/api-contracts.md` — `GET /api/system_emulators`, the
   emulator-settings routes, `can_launch` on `/api/games`, and the detect
@@ -671,8 +701,9 @@ Rows live in `../reviews/PASS-59-91-zero-setup-play-loop-log.md`.
 - DuckStation and PCSX2 rows still at their seeded template change to use
   `{fullscreen_flag}`; the default choice is `on`, so a launch starts
   fullscreen as before.
-- The user's existing per-game files are left exactly as they are: every key
-  in them counts as the user's (§4.6 step 1).
+- In the user's existing per-game files every key already there counts as
+  the user's and is kept; RetroDB only adds managed keys they lack (§4.6
+  step 1).
 
 ## 15. Open questions
 
@@ -680,3 +711,7 @@ Rows live in `../reviews/PASS-59-91-zero-setup-play-loop-log.md`.
   `portable.ini`) are taken from its documentation's description of
   `-portable` and not checked against its source. The user's PCSX2 runs from
   `pcsx2.AppImage.home`, which is verified.
+- **Q2** — Whether DuckStation or PCSX2 rewrite a value in another form when
+  the user saves per-game settings (`4` as `4.000000`, say) is unmeasured.
+  If they do, step 1 hands that key to the user for good. Settle it by saving
+  a per-game setting in each over a file RetroDB wrote and diffing the file.

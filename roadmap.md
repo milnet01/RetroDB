@@ -7400,7 +7400,9 @@ were corrected in `2836bc3` and are not repeated here.
 - **Decisions** (user, 2026-10-15): write the spec after the trailer
   footage; per-game compatibility fixes come from each emulator's own
   database, not a RetroDB-curated list.
-- **Verify**: stages 2–4 are the spec's to define.
+- **Spec**: `docs/specs/PASS-59-91-zero-setup-play.md`, accepted 2026-10-15
+  (review-contract capped at 2 loops; 21 findings fixed).
+- **Verify**: stages 2–4 by that spec's invariants.
 - **Status**: todo. Lanes: launch, docs.
 - **Source**: user request and decisions 2026-10-15; current state mapped
   from `routes/launch.py`, `services/launch_resolver.py` and
