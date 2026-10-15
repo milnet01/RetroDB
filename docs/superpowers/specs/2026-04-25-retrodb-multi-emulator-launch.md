@@ -1,6 +1,6 @@
 # RetroDB — Multi-Emulator Launch (Design)
 
-> **Historical record.** This shipped as Pass 44 in v3.6.2 (commit `1a70052`). Copied from the retired `retroarch-frontend-design` workspace on 2026-10-13. The launcher is now governed by `docs/specs/PASS-59-64-launcher.md`; paths below still name the retired `/mnt/Storage` drive.
+> **Historical record.** This shipped as Pass 44 in v3.6.2 (commit `1a70052`). Copied from the retired `retroarch-frontend-design` workspace on 2026-10-13; that workspace and its git history now sit, untracked, in `.archive/retroarch-frontend-design/`. The launcher is now governed by `docs/specs/PASS-59-64-launcher.md`; paths below still name the retired `/mnt/Storage` drive.
 
 **Date:** 2026-04-25
 **Target repo:** `/mnt/Storage/Scripts/Linux/RetroDB/`
