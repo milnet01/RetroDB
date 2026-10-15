@@ -1,5 +1,6 @@
 {
   "$comment": "Recipe consumed by ~/.claude/skills/cut-release (references/bump-recipe.md). The TRACKED version is config.example.py's APP_VERSION; config.py is the gitignored local copy and may not exist on a fresh clone, so it is a todo rather than a files[] entry (the format has no optional file). APP_LAST_UPDATE bumps to the release date. Changelog body lives in data/changelog.yaml as a YAML list with HTML <li> bodies, so it is a todo.",
+  "$release": "Every change already bumps APP_VERSION and prepends its data/changelog.yaml entry (CLAUDE.md Mandatory Workflow), so a release tags the CURRENT version with no further bump, as v3.12.0, v3.23.14 and v3.23.15 were: run ./release-standalone.sh, which pushes the tag and builds all downloads as a draft, then check the draft (asset count, notes) and publish it. It is not a release_command: it neither bumps nor publishes, and there is no CHANGELOG.md [Unreleased] section for cut-release 0e to read.",
   "version_source": "config.example.py",
   "version_pattern": "APP_VERSION\\s*=\\s*\"([0-9]+\\.[0-9]+\\.[0-9]+)\"",
   "files": [
