@@ -124,7 +124,7 @@
             <div class="form-label" id="languageSelectLabel">{{ _('Language') }}</div>
             <select id="languageSelect" class="form-select" style="max-width: 300px;"
                     aria-labelledby="languageSelectLabel"
-                    onchange="UserManager.saveLanguage(this.value)">
+                    onchange="saveLanguage(this.value)">
                 {% set current_locale = (current_user_settings.get('locale_preference') if current_user_settings else 'en') or 'en' %}
                 {% for code in available_locales() %}
                 <option value="{{ code }}" {% if code == current_locale %}selected{% endif %}>{{ locale_display_name(code) }}</option>

@@ -258,3 +258,43 @@ class TestAnchorsPreserved:
             assert needle in body, (
                 f"missing sticky-subnav call for {tab!r}: `{needle}`"
             )
+
+
+class TestInlineHandlersResolve:
+    """Every name a Settings tab's inline handler calls is defined on the page.
+
+    Pass 59.35 trimmed settings-page.js and deleted UserManager; the language
+    picker still called UserManager.saveLanguage, so choosing a language threw
+    a ReferenceError and nothing changed (v3.23.8 to v3.23.15).
+    """
+
+    _BUILTINS = {
+        'this', 'event', 'document', 'window', 'location', 'JSON', 'Number',
+        'String', 'parseInt', 'setTimeout', 'navigator', 'confirm', 'console',
+        'Math', 'Object', 'Array', 'if', 'return', 'function',
+    }
+    _PAGE_SCRIPTS = ('templates/settings.html', 'static/js/settings-page.js',
+                     'static/js/core.bundle.js', 'static/js/theme.js')
+
+    def _callees(self):
+        import re
+        names = set()
+        for path in sorted((Path(REPO_ROOT) / 'templates' / '_settings_tabs').glob('*.html')):
+            for handler in re.findall(r'\bon[a-z]+="([^"]*)"', path.read_text(encoding='utf-8')):
+                code = re.sub(r"'[^']*'", "''", handler)
+                names.update(re.findall(r'(?<![\w.$])([A-Za-z_$][\w$]*)\s*[.(]', code))
+        return names - self._BUILTINS
+
+    def test_the_scan_sees_the_language_picker(self):
+        assert 'saveLanguage' in self._callees() or 'UserManager' in self._callees()
+
+    def test_every_handler_callee_is_defined(self):
+        import re
+        source = ''.join((Path(REPO_ROOT) / p).read_text(encoding='utf-8')
+                         for p in self._PAGE_SCRIPTS)
+        missing = sorted(
+            name for name in self._callees()
+            if not re.search(r'(function\s+{0}\s*\(|(const|let|var)\s+{0}\s*='
+                             r'|window\.{0}\s*=|class\s+{0}\b)'.format(re.escape(name)),
+                             source))
+        assert not missing, f'inline handlers call undefined names: {missing}'

@@ -1392,6 +1392,21 @@ function useDetectedTimezone() {
 
 document.addEventListener('DOMContentLoaded', loadTimezones);
 
+// Per-user UI language (Pass 43.1). The page reloads to re-render in it.
+function saveLanguage(locale) {
+    API.post('/api/users/settings', { locale_preference: locale })
+    .then(result => {
+        if (result.success) {
+            location.reload();
+        } else {
+            showNotification(result.error || {{ _('Failed to save language')|tojson }}, 'error');
+        }
+    })
+    .catch(() => {
+        showNotification({{ _('Network error saving language')|tojson }}, 'error');
+    });
+}
+
 function changePassword() {
     const currentPassword = document.getElementById('currentPassword').value;
     const newPassword = document.getElementById('newPassword').value;
