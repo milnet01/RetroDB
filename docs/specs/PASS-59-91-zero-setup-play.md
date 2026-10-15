@@ -19,9 +19,9 @@ After this ships, a user adds one folder in Settings → Emulators and can
 press Play on a library card. RetroDB finds each emulator in that folder (an
 AppImage, a portable script or an installed Flatpak), maps it to the systems
 it runs, and says which BIOS files are missing. For DuckStation, PCSX2 and
-RPCS3, RetroDB also sets the scaling, aspect ratio and fullscreen choice for
-each game, in the emulator's own per-game settings file. The user can change
-any of these per system or per game. Compatibility fixes stay the emulator's
+RPCS3, RetroDB also sets the scaling and aspect ratio for each game, in the
+emulator's own per-game settings file, and whether it starts fullscreen. The
+user can change these per system, and the file settings per game. Compatibility fixes stay the emulator's
 own job, from its own game database.
 
 ## 2. Problem
@@ -165,6 +165,10 @@ system has no default row, or its default row's binary does not resolve
 (`_resolve_binary` raises). Making a row default clears the others, as
 `routes/emulators.py::api_map_system_emulator` already does.
 
+The RetroArch adapter lists no `systems`. Which core runs a system is
+PASS-59-81's, and a RetroArch row with no `retroarch_core` cannot launch, so
+detection sets only RetroArch's binary.
+
 A new `GET /api/system_emulators` (admin) returns every mapping, joined to
 its system and emulator names, with `resolves` (bool) and `bios` (§4.4).
 `static/js/emulators-settings.js` fills `#mapping-body` from it: one row per
@@ -177,10 +181,8 @@ The same file reads `api_retroarch_detect`'s top-level `binary` and
 ### 4.4 BIOS status
 
 ```python
-@dataclass(frozen=True)
-class BiosRule:
-    locate: Callable[[Path], list[Path]]   # data dir → files or dirs to check
-    satisfied: Callable[[list[Path]], bool]
+BiosRule = Callable[[Path, Path | None, Row], dict]
+# (binary from _resolve_binary, data dir or None, system_emulators row) → status
 
 def bios_status(emu_row, sys_emu_row) -> dict
 # {"state": "ok" | "missing" | "unknown", "missing": [str], "checked": [str]}
@@ -193,11 +195,13 @@ def bios_status(emu_row, sys_emu_row) -> dict
 | RPCS3 | `<data>/dev_flash/vsh/module/vsh.self` | it exists (firmware installed) |
 | RetroArch | the core's `.info` file beside the core; the `system_directory` of the RetroArch config RetroDB reads | every `firmwareN_path` whose `firmwareN_opt` is `"false"` exists under the system directory |
 
-The RetroArch config read is the user's `retroarch.cfg`: `<AppImage>.home/.config/retroarch/retroarch.cfg`
-when that exists beside the `retroarch_binary` AppImage, else
-`~/.config/retroarch/retroarch.cfg`. A leading `~` in `system_directory` is
-expanded against the same home. Any other adapter returns `unknown`, as does
-an adapter with no data dir.
+The RetroArch config is found from the binary `_resolve_binary` returns for
+the row. Where that binary is an AppImage, or a `*-portable.sh` beside one,
+and `<AppImage>.home/.config/retroarch/retroarch.cfg` exists, that file is
+read; else `~/.config/retroarch/retroarch.cfg`. A leading `~` in
+`system_directory` is expanded against the same home. RetroArch needs no data
+dir. A standalone adapter with no data dir, and an adapter with no rule,
+return `unknown`.
 
 BIOS status is shown in the mapping table and in the 422 text when a launch
 fails. It never blocks a launch: the emulator gives its own error.
@@ -206,22 +210,27 @@ fails. It never blocks a launch: the emulator gives its own error.
 
 `routes/games.py::api_games` adds `can_launch` to each game it returns. It is
 true when the caller holds the permission named by `launch_required_permission`
-and the game's system is in a set computed once per request: systems whose
-default mapping's emulator is enabled and whose binary resolves. One resolve
-per mapped emulator, not per game.
+and the game's system is in a set computed once per request. A system is in
+it when the mapping the resolver picks (the default row, else the lowest-id
+row) has an enabled emulator whose binary resolves and, for a RetroArch row,
+whose core file exists. One resolve per mapped emulator, not per game.
 
 `AllGamesController.renderGameCard` renders a Play button on a card whose
-game has `can_launch`. It calls `launchGameImpl` from `game-launch.js`, which
+game has `can_launch`, carrying `data-game-id`. It calls `window.launchGame`
+from `game-launch.js` with the button, which
 `templates/all_games.html` and `templates/system_games.html` now load as
 `game_detail.html` does. A click does not open the game page. A 422 shows its
 message in a toast.
 
 ### 4.6 Per-game settings for DuckStation, PCSX2 and RPCS3
 
-**Disc serial.** Migration 017 (after PASS-59-64's 016) adds
-`games.disc_serial TEXT` and `games.disc_crc TEXT`, both nullable. `NULL`
-means not read yet; `''` means read and none found. A rescan that changes a
-game's `rom_path` sets both back to `NULL`.
+**Disc serial.** This spec's migration adds `games.disc_serial TEXT` and
+`games.disc_crc TEXT`, both nullable. It takes the next number in
+`services/migrations/__init__.py`'s list, where the position is the version;
+PASS-59-64 plans 016 for its player row, and whichever lands second takes the
+next number. `disc_serial` `NULL` means not read yet; `''` means read and none
+found. `disc_crc` is set for ps2 only and is `NULL` otherwise. A rescan that
+changes a game's `rom_path` sets both back to `NULL`.
 
 `services/disc_serial.py`:
 
@@ -283,7 +292,7 @@ on the command line. One with `section` or `path` is written into the file.
 
 **Fullscreen flag.** PASS-59-64 §4.1's list variables gain
 `{fullscreen_flag}`. It expands to the adapter's on or off flag, or to no
-argv element for an emulator with no `flag` entry. Migration 017 also
+argv element for an emulator with no `flag` entry. The migration also
 changes the seeded `args_template` of the DuckStation and PCSX2 rows from
 `-batch -fullscreen "{rom}"` to `-batch {fullscreen_flag} "{rom}"`, only where
 the stored value still equals the old seed exactly. `data/emulator_seeds.json`
@@ -301,7 +310,7 @@ A serial must match `^[A-Z]{4}-\d{5}$` and a CRC `^[0-9A-F]{8}$`, or nothing
 is written. The resolved path must lie under `<data>`. When PCSX2 has two
 or more `<serial>_*.ini` files, nothing is written and §6 applies.
 
-**Choices** live in a new table, created by migration 017:
+**Choices** live in a new table, created by the same migration:
 
 ```sql
 CREATE TABLE emulator_setting_choices (
@@ -311,7 +320,6 @@ CREATE TABLE emulator_setting_choices (
   scope_id    INTEGER NOT NULL,          -- systems.id or games.id
   setting     TEXT NOT NULL,             -- a key of the settings table
   value       TEXT NOT NULL,             -- a key of that setting's "values"
-  takes_over  INTEGER NOT NULL DEFAULT 0, -- game scope: overwrite the user's key once
   UNIQUE (emulator_id, scope, scope_id, setting)
 );
 CREATE TABLE emulator_written_settings (
@@ -334,10 +342,6 @@ emulator has a settings adapter, for each file setting:
 2. **Otherwise RetroDB's value**, first found of: the game's choice, the
    system's choice, the table's `default`. It is written, and `written` is
    recorded.
-3. **Exception:** a game choice made in RetroDB after the key became the
-   user's is an explicit change. The PUT below saves it with
-   `takes_over = 1`. The next launch writes it whatever step 1 says, records
-   `written`, and sets `takes_over` back to 0.
 
 Files are edited line by line: only the managed keys change, every other line
 and comment stays, a missing section is appended, and the new file replaces
@@ -348,12 +352,15 @@ its value.
 **Routes.**
 
 - `GET /api/games/<game_id>/emulator-settings` (`view`) →
-  `{supported, emulator, serial, file, settings: [{setting, value, source,
-  values}]}`. `source` is `game`, `system`, `default` or `emulator` (the
-  user's own, read from the file).
+  `{supported, reason, candidates, emulator, serial, file, settings:
+  [{setting, value, source, values}]}`. `reason` is `null` when `supported`
+  is true, else a plain-language string (§6). `candidates` lists the PCSX2
+  files when there are two or more, else `[]`. `source` is `game`, `system`,
+  `default` or `emulator` (the user's own, read from the file).
 - `PUT` the same path (`edit`), body `{setting: value | null}`; `null`
-  removes the game choice. The game page gains an **Emulator settings**
-  panel built on these.
+  removes the game choice. A `flag` setting is refused with 400: it is an
+  argv input, admin-only under PASS-59-64 §3.14, so it is set per system
+  only. The game page gains an **Emulator settings** panel built on these.
 - `GET` and `PUT /api/systems/<system_id>/emulator-settings/<emulator_id>`
   (`manage_settings`), the system level, shown in the mapping table.
 
@@ -364,8 +371,8 @@ their own game databases to every launch without RetroDB (§3.2).
 
 The user's own RetroArch row launches as PASS-59-64 says (its INV-13).
 Settings for RetroArch games are the player's (PASS-59-64 §4.4) and
-PASS-59-81's. This spec adds BIOS status (§4.4) and wiring (§4.3) for
-RetroArch rows only.
+PASS-59-81's. For RetroArch rows this spec adds BIOS status (§4.4) and
+binary detection (§4.2) only.
 
 ## 5. Invariants
 
@@ -417,7 +424,7 @@ RetroArch rows only.
   *Breaks when:* the JS never fills the table, as today.
 
 - **INV-7** — `api_games` marks `can_launch` true only for a caller with the
-  launch permission and a game whose system's default mapping resolves.
+  launch permission and a game whose system is in §4.5's set.
   *Test:* `tests/test_api_games_can_launch.py` — two systems, one resolving and one
   not; as a player assert true and false; as a viewer assert false for both.
   *Breaks when:* `can_launch` ignores the permission, or is true for a system
@@ -426,7 +433,9 @@ RetroArch rows only.
 - **INV-8** — A library card with `can_launch` has a Play button that starts
   the game without leaving the page.
   *Test:* manual — on `/games` and `/system/<id>` at desktop and 375 px width,
-  press Play on a card; the running badge appears and the URL is unchanged.
+  press Play on a card; the "Launched" toast shows, the game appears in the
+  `#launch-indicator` popover in `templates/base.html`, and the URL is
+  unchanged.
   Press it on a game whose ROM is missing; a toast shows the 422 message.
   *Breaks when:* the button calls `window.location` or the page lacks
   `game-launch.js`.
@@ -469,13 +478,11 @@ RetroArch rows only.
   file with no record as its own.
 
 - **INV-13** — RetroDB's value is the game choice, else the system choice,
-  else the default; a game choice saved in RetroDB takes back a key the user
-  had set in the emulator.
+  else the default.
   *Test:* `tests/test_standalone_settings.py` — default `4x`; system `3x`
-  → `3`; game `2x` → `2`; game `null` → `3`. Then set the file to `5`, PUT a
-  game choice of `1x`, launch → `1`.
-  *Breaks when:* the system choice beats the game choice, or the PUT does not
-  set `takes_over`, so step 1 keeps the user's `5`.
+  → `3`; game `2x` → `2`; game `null` → `3`.
+  *Breaks when:* the system choice beats the game choice, or a removed game
+  choice leaves its value in place.
 
 - **INV-14** — Each adapter writes the file named in §4.6's file table.
   *Test:* `tests/test_standalone_settings.py` — serial `SLUS-20001`, CRC
@@ -509,7 +516,7 @@ RetroArch rows only.
   *Breaks when:* it is a scalar variable, which leaves an empty-string
   argument (PASS-59-64 §2.3).
 
-- **INV-18** — Migration 017 changes a seeded DuckStation or PCSX2
+- **INV-18** — The migration changes a seeded DuckStation or PCSX2
   `args_template` only where it still equals the old seed exactly.
   *Test:* `tests/test_migrations.py` — one row at the old seed, one edited to
   `-batch "{rom}"`; migrate; assert the first holds `{fullscreen_flag}` and
@@ -520,10 +527,10 @@ RetroArch rows only.
   the folder walk keeps its depth and entry caps.
   *Test:* `tests/test_emulator_autodetect.py` — an editor gets 403 from
   `POST /api/settings/emulators/detect`, `GET /api/system_emulators` and the
-  system-level PUT; a tree deeper than the cap yields no suggestion from
-  below it.
+  system-level PUT; an editor's game-level PUT of DuckStation's `fullscreen`
+  gets 400; a tree deeper than the cap yields no suggestion from below it.
   *Breaks when:* a new route takes `login_required` alone, as
-  `GET /api/emulators` does today.
+  `GET /api/emulators` does today, or the game PUT accepts a `flag` setting.
 
 ## 6. Failure modes
 
@@ -631,7 +638,7 @@ it is given; §10 says so.
 
 - `docs/specs/PASS-59-64-launcher.md` §4.1 — the list variables gain
   `{fullscreen_flag}` (§4.6). An addition; no clause there changes.
-- `docs/specs/migrations.md` — migration 017.
+- `docs/specs/migrations.md` — this spec's migration.
 - `docs/specs/api-contracts.md` — `GET /api/system_emulators`, the
   emulator-settings routes, `can_launch` on `/api/games`, and the detect
   response's new fields.
@@ -659,7 +666,7 @@ Rows live in `../reviews/PASS-59-91-zero-setup-play-loop-log.md`.
 
 ## 14. Migration / compatibility
 
-- Migration 017 adds two nullable `games` columns and two tables. Existing
+- The migration adds two nullable `games` columns and two tables. Existing
   rows are unaffected.
 - DuckStation and PCSX2 rows still at their seeded template change to use
   `{fullscreen_flag}`; the default choice is `on`, so a launch starts
