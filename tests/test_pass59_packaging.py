@@ -205,6 +205,65 @@ class TestPass59_13SourceZipEnumeration:
 
 
 # -----------------------------------------------------------------------------
+# Every image the templates and scripts name ships in each package. The trophy
+# and platform icons sat in static/images/trophies/, which is excluded because
+# it also holds each user's downloaded PSN trophy art, so v3.23.14 shipped
+# without them and every library card showed a broken RetroAchievements badge.
+# -----------------------------------------------------------------------------
+def _referenced_images():
+    pattern = re.compile(
+        r"(?:/static/|filename=')(images/[A-Za-z0-9_./-]+"
+        r"\.(?:png|webp|svg|jpg|gif))")
+    roots = [pathlib.Path(_REPO_ROOT, 'templates'),
+             pathlib.Path(_REPO_ROOT, 'static', 'js')]
+    found = set()
+    for root in roots:
+        for path in root.rglob('*'):
+            if path.suffix not in ('.html', '.js') or path.name.endswith('.bundle.js'):
+                continue
+            for match in pattern.finditer(path.read_text(encoding='utf-8')):
+                found.add('static/' + match.group(1))
+    return found
+
+
+class TestReferencedImagesShip:
+
+    def test_the_scan_finds_the_trophy_icons(self):
+        assert 'static/images/trophies/ra.webp' in _referenced_images()
+
+    def _collected(self):
+        import build_dist
+        return {p.replace(os.sep, '/')
+                for p, _ in build_dist.collect_files(_REPO_ROOT, set())}
+
+    @pytest.mark.skipif(shutil.which('git') is None, reason='git not available')
+    def test_source_zip_ships_every_referenced_image(self):
+        missing = _referenced_images() - self._collected()
+        assert not missing, f'not in the source ZIP: {sorted(missing)}'
+
+    def test_fallback_walk_ships_every_referenced_image(self, monkeypatch):
+        import build_dist
+        monkeypatch.setattr(build_dist, '_tracked_files', lambda base: None)
+        missing = _referenced_images() - self._collected()
+        assert not missing, f'not in the no-git ZIP: {sorted(missing)}'
+
+    def test_fallback_walk_still_drops_downloaded_trophy_art(self, monkeypatch):
+        import build_dist
+        monkeypatch.setattr(build_dist, '_tracked_files', lambda base: None)
+        collected = self._collected()
+        assert not any(p.startswith('static/images/trophies/NPWR')
+                       for p in collected)
+
+    def test_standalone_bundle_ships_every_referenced_image(self):
+        spec = _read('retrodb.spec')
+        sources = set(re.findall(r"\(\s*'(static/[^']+)'\s*,", spec))
+        missing = {img for img in _referenced_images()
+                   if not any(img == s or img.startswith(s + '/')
+                              for s in sources)}
+        assert not missing, f'not in retrodb.spec DATAS: {sorted(missing)}'
+
+
+# -----------------------------------------------------------------------------
 # 59.14 — settings must not re-import app.py by name
 # -----------------------------------------------------------------------------
 class TestPass59_14EntryModuleLookup:

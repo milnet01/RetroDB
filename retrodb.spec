@@ -97,6 +97,18 @@ DATAS = [
     ('static/images/ratings', 'static/images/ratings'),
     ('static/images/systems', 'static/images/systems'),
     ('static/images/avatars', 'static/images/avatars'),
+    # App icons beside per-user PSN trophy art (build_dist.INCLUDE_IMAGE_FILES).
+    ('static/images/trophies/bronze.png', 'static/images/trophies'),
+    ('static/images/trophies/silver.png', 'static/images/trophies'),
+    ('static/images/trophies/gold.png', 'static/images/trophies'),
+    ('static/images/trophies/platinum.png', 'static/images/trophies'),
+    ('static/images/trophies/default_trophy.png', 'static/images/trophies'),
+    ('static/images/trophies/clz-games-web.svg', 'static/images/trophies'),
+    ('static/images/trophies/psn.png', 'static/images/trophies'),
+    ('static/images/trophies/ra.webp', 'static/images/trophies'),
+    ('static/images/trophies/rpcs3.png', 'static/images/trophies'),
+    ('static/images/trophies/steam.png', 'static/images/trophies'),
+    ('static/images/trophies/xbox.png', 'static/images/trophies'),
     # App icon assets (favicon + launcher/exe icons). Small; shipped so the
     # running app can serve the favicon and the Linux zip can pin a .desktop.
     ('packaging/icons', 'packaging/icons'),

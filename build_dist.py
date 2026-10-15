@@ -93,6 +93,16 @@ EXCLUDE_EXTENSIONS = {'.db', '.db-journal', '.db-wal', '.db-shm', '.log', '.pyc'
 # static/videos/ is a top-level directory under static/
 # static/images/ uses a whitelist — only hardware, ratings, systems, avatars are included
 INCLUDE_IMAGE_DIRS = {'hardware', 'ratings', 'systems', 'avatars'}
+# App icons living in a dir that is otherwise per-user downloads:
+# static/images/trophies/ also holds each user's PSN trophy art.
+# Mirrored in .gitignore and retrodb.spec.
+INCLUDE_IMAGE_FILES = {
+    f'static/images/trophies/{name}' for name in (
+        'bronze.png', 'silver.png', 'gold.png', 'platinum.png',
+        'default_trophy.png', 'clz-games-web.svg', 'psn.png', 'ra.webp',
+        'rpcs3.png', 'steam.png', 'xbox.png',
+    )
+}
 EXCLUDE_STATIC_DIRS = {'videos'}  # Top-level dirs under static/ to skip entirely
 
 
@@ -153,7 +163,8 @@ def _is_excluded(rel_normalized, all_exclude_files):
         if len(parts) >= 2 and parts[1] in EXCLUDE_STATIC_DIRS:
             return True
         # static/images/ is a whitelist; files directly in it are always kept.
-        if len(parts) >= 4 and parts[1] == 'images' and parts[2] not in INCLUDE_IMAGE_DIRS:
+        if (len(parts) >= 4 and parts[1] == 'images' and parts[2] not in INCLUDE_IMAGE_DIRS
+                and rel_normalized not in INCLUDE_IMAGE_FILES):
             return True
     return False
 
@@ -203,6 +214,10 @@ def collect_files(base_dir, platform_exclude_files):
             parts = rel_normalized.split('/')
             if len(parts) >= 3 and parts[2] not in INCLUDE_IMAGE_DIRS:
                 dirs.clear()
+                for filename in files:
+                    rel_path = os.path.join(rel_root, filename)
+                    if rel_path.replace('\\', '/') in INCLUDE_IMAGE_FILES:
+                        yield rel_path, os.path.join(root, filename)
                 continue
 
         # Filter subdirs so os.walk doesn't recurse into them
