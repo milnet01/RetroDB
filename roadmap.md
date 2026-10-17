@@ -7723,6 +7723,13 @@ were corrected in `2836bc3` and are not repeated here.
 - **Status**: todo. Needs a spec (schema plus several subsystems). Builds on
   PASS-59-105. Lanes: schema, ui, scraper, tools.
 - **Source**: user, 2026-10-17.
+- **Progress** (2026-10-17): **Spec** (2026-10-17): `docs/specs/PASS-59-106-regional-versions.md`,
+  accepted; no contract review (cancelled by RetroDB CLAUDE.md). Findings
+  that shaped it: `games` stores no IGDB or ScreenScraper id, so the spec
+  adds both, filled by scrapes and the alt-titles backfill; the RA id is
+  not a signal until PASS-59-110; 3873 rows have no stored region, so the
+  preferred version also reads the filename's region tag; the Duplicate
+  Finder is filesystem-only and maps paths to `games.rom_path`.
 
 #### Pass 59.107 AI summary of known differences between regional versions (LOW, M)
 - **Target**: PASS-59-106's version comparison, through the existing AI
@@ -7786,6 +7793,24 @@ were corrected in `2836bc3` and are not repeated here.
   place, so a fuzzy entry it fills still does not compile. It also exits 1
   on any catalog with older untranslated entries. Clear the flag there (or
   in this pass's fix) before relying on it.
+
+---
+
+#### Pass 59.110 Sequels share one RetroAchievements game id (HIGH, S)
+- **Target**: whatever writes `games.ra_game_id` — candidates are
+  `services/jobs/ra_refresh.py` (the UPDATE setting `ra_game_id = ?`),
+  `scraper/hybrid_scraper.py`'s RA block and
+  `routes/achievements.py`'s manual link. Not yet located.
+- **Why**: some games show another game's achievements. Donkey Kong
+  Country 2 and 3 are linked to the first game's set. PASS-59-106 cannot
+  use the RA id as a version signal until this is fixed.
+- **Evidence** (live DB, read-only, 2026-10-17): games 695, 705 and 610
+  (Donkey Kong Country, 2 and 3) all hold `ra_game_id` 750; games 564 and
+  625 (DOOM) hold 528 beside "Doom 2". Grouping non-bonus games by
+  `(system_id, ra_game_id)` gives 140 groups of two or more; the sample
+  read were sequels, not regional versions.
+- **Status**: todo. Use `locate-defect` first. Lanes: achievements.
+- **Source**: PASS-59-106 spec research, 2026-10-17.
 
 ## Done index
 
