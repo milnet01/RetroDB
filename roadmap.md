@@ -8175,7 +8175,16 @@ were corrected in `2836bc3` and are not repeated here.
 ---
 
 #### Pass 59.114 Error replies still sent with HTTP 200 in ten route files (LOW, M).
-- **Status**: todo
+- **Resolution** (2026-10-17): Shipped 2026-10-17 (07229ac, merged in 46fa22f; 3.29.1, open). Every
+  hand-built success:false reply in the ten listed files now uses
+  error(msg, 4xx/5xx); red first in
+  tests/test_pass59_114_error_status.py (19 cases).
+  API.get/post/postForm now reject with the server's message (.data,
+  .status). /api/psn/status stays 200 (a state report). Also:
+  /api/psn/save-npsso no longer leaks exception text. ADR 0003 narrowed,
+  not ended: explicit error(..., code=200) calls remain in seven other
+  files (follow-up item). Browser walk of the error toasts owed.
+- **Status**: done
 - **Target**: `jsonify({'success': False, 'error': ...})` with no status
   code in `routes/bonus_discs.py`, `games.py`, `scraper.py`,
   `scrape_logs.py`, `settings.py`, `systems.py`, `platform_import.py`,
@@ -8299,6 +8308,24 @@ were corrected in `2836bc3` and are not repeated here.
   symlinked file that points outside the ROM root; the batch M3U confirm
   text does not say archives are moved to staging. Low risk each; fold in
   with the items above.
+
+---
+
+#### Pass 59.120 Explicit error(..., code=200) replies remain in seven files (LOW, M).
+- **Status**: todo
+- **Target**: `error(..., code=200)` in `routes/auth.py`,
+  `achievements.py`, `bulk_scrape.py`, `clz_import.py`, `games_ai.py`,
+  `games_media.py` and `services/hltb_service.py`; list them with
+  `grep -n "code=200" <file>`.
+- **Why**: PASS-59-114 converted the ten files it named; ADR 0003 now
+  names these as what is left. The routes/auth.py comments say API.post
+  threw on non-2xx; since PASS-59-114 it rejects with the server's
+  message, so that reason may no longer hold.
+- **Plan**: per endpoint, check its JS callers read the reply on a 4xx
+  (API.* now surfaces `error`), then switch to the right 4xx; end ADR
+  0003 when the last one goes.
+- **Verify**: per file, a test pinning one failure path's status and
+  envelope; a browser check of each changed error toast.
 
 ## Done index
 
