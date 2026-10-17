@@ -12,7 +12,6 @@ import os
 import re
 import logging
 import requests
-import time
 from urllib.parse import urlparse
 
 import threading
@@ -604,47 +603,38 @@ def fetch_controller_image(controller_id):
 @bp.route('/api/museum/controller-images-bulk/<int:system_id>', methods=['POST'])
 @editor_required
 def fetch_controller_images_bulk(system_id):
-    """Bulk fetch controller images for a system."""
+    """Start the background fetch of a system's missing controller images.
+
+    PASS-59-116 — the search, download and background-removal loop runs in
+    `museum_images_job`; the page polls the status route below.
+    """
+    from services.jobs import museum_images_job
     db = get_request_db()
-    controllers = db.execute(
-        """SELECT c.id, c.name, c.manufacturer, c.image FROM controllers c
-           JOIN system_controllers sc ON c.id = sc.controller_id
-           WHERE sc.system_id = ?""",
-        (system_id,)
-    ).fetchall()
-
-    if not controllers:
+    has_any = db.execute(
+        "SELECT 1 FROM system_controllers WHERE system_id = ? LIMIT 1", (system_id,)
+    ).fetchone()
+    if not has_any:
         return jsonify({'success': False, 'error': _('No controllers found')}), 404
+    result = museum_images_job.start(system_id)
+    if not result['success']:
+        return jsonify({'success': False, 'error': _('An image fetch is already running')}), 409
+    return jsonify(result)
 
-    # Get system name for search context
-    system = db.execute("SELECT name FROM systems WHERE id = ?", (system_id,)).fetchone()
-    system_name = system['name'] if system else ''
 
-    removebg_key = _get_removebg_key()
-    results = {'success': 0, 'failed': 0, 'skipped': 0}
+@bp.route('/api/museum/controller-images-bulk/status')
+@login_required
+def fetch_controller_images_bulk_status():
+    """Status of the background controller-image fetch."""
+    from services.jobs import museum_images_job
+    return jsonify({'success': True, **museum_images_job.get_status()})
 
-    for ctrl in controllers:
-        if ctrl['image']:
-            # Already has an image
-            results['skipped'] += 1
-            continue
 
-        result = _fetch_and_process_image(
-            ctrl['id'], ctrl['name'], ctrl['manufacturer'] or '',
-            system_name, removebg_key
-        )
-
-        if result:
-            db.execute("UPDATE controllers SET image = ? WHERE id = ?", (result, ctrl['id']))
-            db.commit()
-            _propagate_controller_image(db, ctrl['id'], result)
-            results['success'] += 1
-        else:
-            results['failed'] += 1
-
-        time.sleep(1)  # Rate limit
-
-    return jsonify({'success': True, 'results': results})
+@bp.route('/api/museum/controller-images-bulk/cancel', methods=['POST'])
+@editor_required
+def fetch_controller_images_bulk_cancel():
+    """Cancel the background controller-image fetch."""
+    from services.jobs import museum_images_job
+    return jsonify(museum_images_job.cancel())
 
 
 @bp.route('/api/museum/controller-image-upload/<int:controller_id>', methods=['POST'])

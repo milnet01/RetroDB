@@ -171,9 +171,17 @@
     <div class="museum-section-header">
         <h2 class="museum-section-title">{{ _('Controllers') }}</h2>
         {% if controllers %}
-        <button type="button" class="btn btn-sm btn-secondary" onclick="fetchAllControllerImages({{ system.id }})">
+        <div class="museum-section-actions">
+        <button type="button" class="btn btn-sm btn-secondary" id="ctrlFetchAllBtn"
+                data-system-id="{{ system.id }}" onclick="fetchAllControllerImages({{ system.id }})">
             {{ _('Fetch All Images') }}
         </button>
+        <span id="ctrlFetchProgress" role="status" aria-live="polite" hidden></span>
+        <button type="button" class="btn btn-sm btn-secondary" id="ctrlFetchCancelBtn"
+                onclick="cancelControllerImageFetch()" hidden>
+            {{ _('Cancel') }}
+        </button>
+        </div>
         {% endif %}
     </div>
 

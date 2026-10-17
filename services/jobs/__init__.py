@@ -38,6 +38,7 @@ from services.jobs.webp_migrate import WebPMigrateJob
 from services.jobs.platform_sync import SteamSyncJob, XboxSyncJob
 from services.jobs.alt_titles_backfill import AltTitlesBackfillJob
 from services.jobs.hltb_bulk import HLTBBulkLookupJob
+from services.jobs.museum_images import MuseumImageFetchJob
 
 # =============================================================================
 # GLOBAL JOB INSTANCES
@@ -55,6 +56,7 @@ steam_sync_job = SteamSyncJob()
 xbox_sync_job = XboxSyncJob()
 alt_titles_backfill_job = AltTitlesBackfillJob()
 hltb_bulk_job = HLTBBulkLookupJob()
+museum_images_job = MuseumImageFetchJob()
 
 __all__ = [
     # Helpers
@@ -84,6 +86,7 @@ __all__ = [
     'XboxSyncJob',
     'AltTitlesBackfillJob',
     'HLTBBulkLookupJob',
+    'MuseumImageFetchJob',
     # Singleton instances
     'bulk_scrape_job',
     'ra_sync_job',
@@ -96,4 +99,5 @@ __all__ = [
     'xbox_sync_job',
     'alt_titles_backfill_job',
     'hltb_bulk_job',
+    'museum_images_job',
 ]

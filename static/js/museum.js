@@ -382,27 +382,88 @@ function fetchAllControllerImages(systemId) {
         t('Fetch All Controller Images'),
         t('This will search for and download images for all controllers without images. Continue?'),
         function () {
-            showNotification(t('Fetching controller images...'), 'info');
             API.post('/api/museum/controller-images-bulk/' + systemId)
                 .then(function (data) {
                     if (data.success) {
-                        var r = data.results;
-                        showNotification(
-                            t('{fetched} fetched, {skipped} skipped, {failed} failed', {fetched: r.success, skipped: r.skipped, failed: r.failed}),
-                            r.success > 0 ? 'success' : 'warning'
-                        );
-                        if (r.success > 0) {
-                            setTimeout(function () { location.reload(); }, 1500);
-                        }
+                        _ctrlFetchShow(true);
+                        _ctrlFetchPoll();
                     } else {
                         showNotification(data.error || t('Bulk fetch failed'), 'error');
                     }
                 })
-                .catch(function () {
-                    showNotification(t('Bulk fetch request failed'), 'error');
+                .catch(function (err) {
+                    showNotification((err && err.message) || t('Bulk fetch request failed'), 'error');
                 });
         }
     );
+}
+
+// PASS-59-116 — the fetch runs as a background job; poll its status.
+var _ctrlFetchTimer = null;
+
+function _ctrlFetchShow(running) {
+    var btn = document.getElementById('ctrlFetchAllBtn');
+    var progress = document.getElementById('ctrlFetchProgress');
+    var cancel = document.getElementById('ctrlFetchCancelBtn');
+    if (btn) btn.disabled = running;
+    if (progress) progress.hidden = !running;
+    if (cancel) cancel.hidden = !running;
+}
+
+function _ctrlFetchPoll() {
+    clearTimeout(_ctrlFetchTimer);
+    API.get('/api/museum/controller-images-bulk/status')
+        .then(function (s) {
+            var progress = document.getElementById('ctrlFetchProgress');
+            if (s.running) {
+                if (progress) {
+                    progress.textContent = t('Fetching images: {done} of {total}', {
+                        done: formatNumber(s.processed), total: formatNumber(s.total)
+                    });
+                }
+                _ctrlFetchTimer = setTimeout(_ctrlFetchPoll, 2000);
+                return;
+            }
+            _ctrlFetchShow(false);
+            if (s.error) {
+                showNotification(s.error, 'error');
+                return;
+            }
+            showNotification(
+                (s.cancelled ? t('Image fetch cancelled.') + ' ' : '') +
+                t('{fetched} fetched, {skipped} skipped, {failed} failed', {fetched: s.success, skipped: s.skipped, failed: s.failed}),
+                s.success > 0 ? 'success' : 'warning'
+            );
+            if (s.success > 0) {
+                setTimeout(function () { location.reload(); }, 1500);
+            }
+        })
+        .catch(function () {
+            _ctrlFetchTimer = setTimeout(_ctrlFetchPoll, 5000);
+        });
+}
+
+function cancelControllerImageFetch() {
+    API.post('/api/museum/controller-images-bulk/cancel')
+        .then(function (data) {
+            if (!data.success) showNotification(data.error || t('Cancel failed'), 'error');
+        })
+        .catch(function () {
+            showNotification(t('Cancel failed'), 'error');
+        });
+}
+
+function _ctrlFetchResume() {
+    var btn = document.getElementById('ctrlFetchAllBtn');
+    if (!btn) return;
+    API.get('/api/museum/controller-images-bulk/status')
+        .then(function (s) {
+            if (s.running && String(s.system_id) === btn.dataset.systemId) {
+                _ctrlFetchShow(true);
+                _ctrlFetchPoll();
+            }
+        })
+        .catch(function () { /* nothing running */ });
 }
 
 
@@ -616,6 +677,9 @@ function switchMuseumTab(event, tabId) {
 // =============================================================================
 
 document.addEventListener('DOMContentLoaded', function () {
+    // --- System page: pick up a controller-image fetch still running ---
+    _ctrlFetchResume();
+
     // --- System page: handle hash-based tab navigation ---
     var hash = window.location.hash.replace('#', '');
     if (hash && document.getElementById(hash)) {

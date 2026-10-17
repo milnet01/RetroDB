@@ -42,6 +42,7 @@ can be resumed (or surfaced) on the next start.
 | `platform_sync.py` | `SteamSyncJob`, `XboxSyncJob` | `steam_sync_job`, `xbox_sync_job` | Per-user Steam / Xbox achievement-progress sync (one file, two classes). |
 | `alt_titles_backfill.py` | `AltTitlesBackfillJob` | `alt_titles_backfill_job` | Walks scraped games to refresh `games.alternate_titles` without re-pulling other metadata. |
 | `hltb_bulk.py` | `HLTBBulkLookupJob` | `hltb_bulk_job` | Bulk HowLongToBeat lookup — auto-applies high-confidence primary matches, queues the rest into `hltb_pending_matches` for review. |
+| `museum_images.py` | `MuseumImageFetchJob` | `museum_images_job` | Fetches missing controller images for one system's Museum page (search, download, background removal). Not persisted. |
 | `webp_migrate.py` | `WebPMigrateJob` | `webp_migrate_job` | Bulk JPEG/PNG → WebP format migration for boxart / boxart_3d / fanart / screenshots (FU.3, v3.6.19). |
 
 ## 3. Lifecycle / states
@@ -192,6 +193,7 @@ Lock-name → DB column-name mapping (used in routes / `request_shutdown`):
 | `xbox_sync.lock` | `xbox_sync_job` |
 | `alt_titles_backfill.lock` | `alt_titles_backfill_job` |
 | `hltb_bulk.lock` | `hltb_bulk_job` |
+| `museum_images.lock` | `museum_images_job` |
 | `webp_migrate.lock` | `webp_migrate_job` |
 
 **Degradation notes** (`base.py:316-341`):
@@ -289,7 +291,8 @@ two-zone progress layout and the toast detail-line table.
    `services/jobs/base.py::request_shutdown` enumerates:
    `bulk_scrape_job`, `ra_sync_job`, `ra_refresh_job`, `psn_refresh_job`,
    `museum_generate_job`, `image_resize_job`, `steam_sync_job`,
-   `xbox_sync_job`, `alt_titles_backfill_job`, `hltb_bulk_job`. **Note:**
+   `xbox_sync_job`, `alt_titles_backfill_job`, `hltb_bulk_job`,
+   `museum_images_job`. **Note:**
    `webp_migrate_job` is intentionally absent today — SIGTERM mid-WebP
    migration leaves the row `running` until `mark_jobs_interrupted` flips
    it on next start, then the user re-runs the job from the top
@@ -319,10 +322,12 @@ Anything not persisted in the last progress-tick window (≤ 10 items or
    `PSNRefreshJob`, `SteamSyncJob`, `XboxSyncJob`, `MuseumGenerateJob`.
    Use the shared `pad_resume_game_ids` / `restore_progress_counts` /
    `try_acquire_singleton_or_warn` helpers in `services/jobs/base.py`
-   (search the symbol names; line numbers drift). The remaining four
+   (search the symbol names; line numbers drift). The remaining
    singletons (`ImageResizeJob`, `AltTitlesBackfillJob`,
-   `HLTBBulkLookupJob`, `WebPMigrateJob`) have no `resume_from_params`
-   — they're idempotent and re-run from the top after `interrupted`.
+   `HLTBBulkLookupJob`, `WebPMigrateJob`, `MuseumImageFetchJob`) have no
+   `resume_from_params` — they're idempotent and re-run from the top after
+   `interrupted`. `MuseumImageFetchJob` writes no job row at all: a restart
+   loses one system's fetch, which a second click redoes.
 
 **`params` must include enough to resume.** Most jobs persist the full
 `game_ids` list in `params` so resume doesn't have to re-query — this
