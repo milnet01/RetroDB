@@ -41,7 +41,7 @@ def test_emulator_routes_registered():
     assert '/api/emulators/for-system/<int:system_id>' in rules
 
 
-def test_unauth_list_blocked(monkeypatch):
+def test_unauth_list_blocked(monkeypatch, setup_complete):
     import app as app_module
     # TESTING=True so the test client doesn't swallow exceptions silently
     # (test-audit c-002 MED isolation): without it a 500 from internal

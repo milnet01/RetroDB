@@ -39,7 +39,7 @@ def test_unauth_launch_returns_401_or_redirect(app_module):
     assert rv.status_code in (302, 401, 403)
 
 
-def test_active_endpoint_unauth_blocked(app_module):
+def test_active_endpoint_unauth_blocked(app_module, setup_complete):
     client = app_module.app.test_client()
     rv = client.get('/api/launches/active')
     assert rv.status_code in (302, 401, 403)
