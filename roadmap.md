@@ -7494,6 +7494,9 @@ were corrected in `2836bc3` and are not repeated here.
 - **Decision** (user, 2026-10-17): show it to admins only. Changing it
   amends `docs/specs/i18n.md` §5, so that edit goes through rule 14's
   contract check first.
+- **Spec gate** (2026-10-17): `review-contract` converged on the §3/§5/§8
+  amendment in 2 loops, 1 fix (§5's `Accept-Language` sentence). Record:
+  `docs/reviews/i18n-loop-log.md`. The code is unbuilt.
 - **Status**: todo. Lanes: i18n.
 - **Source**: trailer recording, 2026-10-15.
 
