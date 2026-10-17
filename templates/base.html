@@ -9,10 +9,14 @@
     <!-- Fonts — Pass 46.1: locally vendored, no fonts.googleapis.com / fonts.gstatic.com fetches -->
     <link rel="stylesheet" href="{{ asset_url('css/core/fonts.css') }}">
 
-    <!-- Theme FOUC prevention: apply saved theme before CSS renders -->
+    <!-- Theme FOUC prevention: apply saved theme before CSS renders.
+         The signed-in user's saved theme wins over this browser's stored one
+         (PASS-59-89: the login page stores the default before anyone signs in). -->
     <script nonce="{{ csp_nonce }}">
     (function(){
-        var t = localStorage.getItem('retrodb-theme') || {{ user_theme|tojson }}; // nosemgrep: var-in-script-tag
+        var u = {{ user_theme|tojson }}; // nosemgrep: var-in-script-tag
+        var t = u || localStorage.getItem('retrodb-theme');
+        if (u) document.documentElement.setAttribute('data-user-theme', u);
         if (t && t !== 'cyberpunk') document.documentElement.setAttribute('data-theme', t);
     })();
     </script>

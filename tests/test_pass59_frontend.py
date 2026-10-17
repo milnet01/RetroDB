@@ -251,16 +251,48 @@ def test_user_theme_rejects_an_unknown_value(admin_client, monkeypatch):
     assert row['theme_preference'] == 'matrix'
 
 
-@pytest.mark.parametrize('stored, expected', [
-    ('bladerunner', '|| "bladerunner"'),
-    ('default', '|| null'),          # the column's schema default
-    ('"</script>', '|| null'),       # a value written before validation existed
+def _run_fouc(html, local_theme):
+    """Run base.html's FOUC block in node with stub localStorage and
+    document; return the data-theme it set (None for cyberpunk)."""
+    import json
+    import shutil
+    import subprocess
+    if not shutil.which('node'):
+        pytest.skip('node not installed')
+    start = html.index('<!-- Theme FOUC prevention')
+    body = html[start:]
+    script = body[body.index('>', body.index('<script')) + 1:body.index('</script>')]
+    stub = (
+        'const attrs = {};'
+        'const document = {documentElement: {setAttribute: (k, v) => { attrs[k] = v; }}};'
+        f'const localStorage = {{getItem: () => {json.dumps(local_theme)}}};'
+    )
+    out = subprocess.run(['node', '-e', stub + script + ';console.log(JSON.stringify(attrs))'],
+                         capture_output=True, text=True, check=True).stdout
+    return json.loads(out).get('data-theme')
+
+
+@pytest.mark.parametrize('stored, local, expected', [
+    # PASS-59-89: a saved preference beats whatever this browser stored
+    # (the login page writes the default before anyone signs in).
+    ('bladerunner', 'cyberpunk', 'bladerunner'),
+    ('bladerunner', None, 'bladerunner'),
+    ('default', 'matrix', 'matrix'),       # the column's schema default
+    ('"</script>', 'matrix', 'matrix'),    # a value written before validation existed
+    ('default', None, None),
 ])
-def test_fouc_block_falls_back_to_the_users_saved_theme(admin_client, monkeypatch, stored, expected):
+def test_fouc_prefers_the_users_saved_theme(admin_client, monkeypatch, stored, local, expected):
     monkeypatch.setattr('app.get_user_settings', lambda _uid: {'theme_preference': stored})
     html = admin_client.get('/help').get_data(as_text=True)
-    fouc = html[html.index("localStorage.getItem('retrodb-theme')"):][:120]
-    assert expected in fouc
+    assert _run_fouc(html, local) == expected
+
+
+def test_theme_init_prefers_the_server_theme():
+    """theme.js init must read the server's theme before localStorage, or
+    it re-applies the stale browser value right after the FOUC block."""
+    src = (Path(__file__).parent.parent / 'static/js/theme.js').read_text()
+    init = src[src.index('    init() {'):src.index('    apply(theme')]
+    assert init.index("'data-user-theme'") < init.index('localStorage.getItem')
 
 
 def test_theme_is_saved_per_user():

@@ -136,9 +136,10 @@ const ThemeManager = {
      * Initialize theme system
      */
     init() {
-        // localStorage first; else the theme base.html's FOUC block applied
-        // from the user's saved preference (Pass 59.38); else the default.
-        const saved = localStorage.getItem(this.STORAGE_KEY)
+        // The signed-in user's saved theme first (PASS-59-89, set by
+        // base.html's FOUC block), then this browser's, then the default.
+        const saved = document.documentElement.getAttribute('data-user-theme')
+            || localStorage.getItem(this.STORAGE_KEY)
             || document.documentElement.getAttribute('data-theme')
             || 'cyberpunk';
         this.apply(saved, false);

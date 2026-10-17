@@ -239,15 +239,15 @@
     </div>
 </div>
 
-<!-- Password Modal for Admin Users -->
+<!-- Password Modal (every role signs in with a password, Pass 24.1) -->
 <div class="password-modal" id="passwordModal">
     <div class="password-dialog">
-        <h3>🔐 {{ _('Admin Login') }}</h3>
+        <h3>🔐 {{ _('Login') }}</h3>
         <form id="passwordForm">
             <input type="hidden" id="selectedUserId" name="user_id" value="">
             <div class="form-group">
                 <label class="form-label" for="passwordInput">{{ _('Password') }}</label>
-                <input type="password" class="form-input" id="passwordInput" name="password" placeholder="{{ _('Enter admin password') }}" autocomplete="current-password">
+                <input type="password" class="form-input" id="passwordInput" name="password" placeholder="{{ _('Enter your password') }}" autocomplete="current-password">
                 <div class="login-error" id="loginError"></div>
             </div>
             <div class="btn-group">

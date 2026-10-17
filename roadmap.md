@@ -7559,7 +7559,18 @@ were corrected in `2836bc3` and are not repeated here.
   localStorage when they differ after login. Decide which in the fix.
 - **Verify**: fresh browser profile, account with a non-default saved theme,
   log in: the saved theme shows. Regression test pins it.
-- **Status**: todo. Lanes: frontend, auth.
+- **Shipped** (2026-10-17, v3.29.1): the server value wins. base.html's
+  FOUC block applies the signed-in user's `theme_preference` before
+  localStorage and marks it `data-user-theme`; `ThemeManager.init` reads
+  that first, so localStorage is overwritten with the saved theme. The
+  login page has no user and still uses this browser's stored theme.
+  Pinned by `tests/test_pass59_frontend.py::test_fouc_prefers_the_users_saved_theme`
+  (runs the real FOUC block in node, red before the fix) and
+  `test_theme_init_prefers_the_server_theme`. Browser check on a
+  scratch-DB server: localStorage cleared, the login page stored
+  cyberpunk, a viewer with `matrix` saved signed in, and `/games` rendered
+  Matrix; no console errors.
+- **Status**: done. Lanes: frontend, auth.
 - **Source**: website demo recording, 2026-10-02.
 
 ---
@@ -7762,7 +7773,15 @@ were corrected in `2836bc3` and are not repeated here.
 - **Why**: Pass 24.1 made every role sign in with a password, but the
   dialog still calls it an admin login. It misleads: the user recalled
   non-admin accounts as passwordless.
-- **Status**: todo. The new strings need every locale. Lanes: auth, i18n.
+- **Shipped** (2026-10-17, v3.29.1): the dialog heading reuses the
+  translated "Login"; the placeholder is "Enter your password". The same
+  stale claim was fixed on Settings → Account ("Every account needs a
+  password to log in.") and in the English Help login paragraph, checked
+  against `routes/auth.py::api_login` (every role needs a password since
+  Pass 24.1). The two new strings await translation in PASS-59-113 step 7;
+  the 20 translated Help pages are filed as PASS-59-115. Seen live on the
+  scratch-DB server.
+- **Status**: done. The new strings need every locale. Lanes: auth, i18n.
 - **Source**: PASS-59-97 browser check, 2026-10-17.
 
 #### Pass 59.99 The Windows source zip cannot install: the lock omits Windows-only deps (HIGH, S)
@@ -8048,7 +8067,7 @@ were corrected in `2836bc3` and are not repeated here.
   6. Stricter browser security: PASS-60-1, after the template changes
      above, so inline scripts move once.
   7. Fully translated: PASS-52-1, PASS-59-109, PASS-57-6, PASS-59-93,
-     PASS-59-61, PASS-59-62; last, once every new string has landed.
+     PASS-59-61, PASS-59-62, PASS-59-115; last, once every new string has landed.
   8. Full code review, the last thing done before v4.0.0 (user,
      2026-10-17): the 14-agent audit (CLAUDE.md Periodic Independent
      Review), run once everything above has shipped.
@@ -8075,6 +8094,21 @@ were corrected in `2836bc3` and are not repeated here.
   then switch to `error(msg, 4xx)`. Several sit in functions with a local
   variable named `error`; rename it.
 - **Verify**: per endpoint, the error path shows its message in the UI.
+
+---
+
+#### Pass 59.115 Two Help sentences are stale in all 20 translated Help pages (LOW, S).
+- **Status**: todo
+- **Target**: `templates/help.<locale>.html`, the theme bullet in the
+  Themes section and the login paragraph in the Users section (the same
+  places as in `templates/help.html`).
+- **Why**: on 2026-10-17 the English Help was corrected. Every role needs
+  a password to log in (Pass 24.1), and the theme is saved with the
+  account (Pass 59.38, PASS-59-89). Each translated page still says only
+  admins need a password and that the theme is saved in the browser.
+- **Plan**: translate the two corrected English sentences into each
+  locale. Part of the v4.0.0 "Fully translated" group (PASS-59-113 step 7).
+- **Verify**: grep each locale page for the old claims; none remain.
 
 ## Done index
 
