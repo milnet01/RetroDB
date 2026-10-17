@@ -295,7 +295,7 @@ jobs:
           # removed, so pip-compile dies on import against any current pip.
           # uv is a drop-in for this invocation: seeded with the same lock it
           # reproduces the body byte-for-byte, and it does not reach into pip.
-          uv pip compile requirements.txt --strip-extras --generate-hashes \
+          uv pip compile requirements.txt --strip-extras --generate-hashes --universal \
             --quiet -o /tmp/fresh.lock
           # Strip leading `# ...` header lines (both compilers emit a small
           # provenance block naming the output path). Per-package `# via` lines
@@ -303,7 +303,7 @@ jobs:
           if ! diff -u <(grep -v '^#' requirements.lock) <(grep -v '^#' /tmp/fresh.lock); then
             echo ""
             echo "::error::requirements.lock is out of sync with requirements.txt."
-            echo "Run: uv pip compile requirements.txt --strip-extras --generate-hashes -o requirements.lock"
+            echo "Run: uv pip compile requirements.txt --strip-extras --generate-hashes --universal -o requirements.lock"
             exit 1
           fi
 

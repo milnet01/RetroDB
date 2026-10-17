@@ -7558,6 +7558,51 @@ were corrected in `2836bc3` and are not repeated here.
 - **Status**: todo. The new strings need every locale. Lanes: auth, i18n.
 - **Source**: PASS-59-97 browser check, 2026-10-17.
 
+#### Pass 59.99 The Windows source zip cannot install: the lock omits Windows-only deps (HIGH, S)
+- **Target**: `requirements.lock` and every command that compiles it
+  (`CLAUDE.md` step 6, `.github/workflows/ci.yml`,
+  `.github/workflows/dependabot-lockfile.yml`).
+- **Why**: the lock was compiled on Linux, so it lacked `colorama`, which
+  `click` needs on Windows only. `install.py` runs
+  `pip install --require-hashes`, which refuses a requirement the lock does
+  not pin, so "Core dependencies failed to install" on the v3.24.0
+  Windows zip (wintest, 2026-10-17).
+- **Resolution** (2026-10-17, v3.24.1): compile with `--universal`;
+  Windows-only deps now carry `sys_platform` markers. No version changed.
+  `tests/test_pass39_supply_chain.py::TestPass59_99UniversalLockfile` pins
+  the lock and all three commands. Re-run on wintest: `install.py` passed
+  and `app.py` answered `/health`.
+- **Status**: shipped (2026-10-17). Lanes: ci, distribution.
+- **Source**: Windows zip test, 2026-10-17.
+
+#### Pass 59.100 Cyberpunk smoke throws on every frame after the window widens (MEDIUM, S)
+- **Target**: `static/js/theme.js::_resizeCanvas`.
+- **Why**: a resize rebuilt the smoke buffer but not its per-column color
+  regions, so a wider buffer read past their end in `_drawSmokeFrame` and
+  each frame raised a TypeError toast. Seen after narrowing the window to
+  375 px and widening it again.
+- **Resolution** (2026-10-17, v3.24.1): the resize rebuilds the color
+  regions too. Chrome, same resize steps: no console errors.
+- **Status**: shipped (2026-10-17). Lanes: ui.
+- **Source**: user report, 2026-10-17.
+
+#### Pass 59.101 The upscaler model's first download address answers 401 (LOW, S)
+- **Target**: `REALESRGAN_MODEL_URL` in `config.example.py`, and the
+  fallback default and `_MODEL_URLS` order in `services/image_utils.py`.
+- **Why**: the Xenova address returns 401, so every fresh install logs a
+  warning before the AXERA-TECH fallback succeeds (wintest, 2026-10-17).
+- **Status**: todo. Lanes: media.
+- **Source**: Windows zip test, 2026-10-17.
+
+#### Pass 59.102 `install.py` crashes when its output is redirected on Windows (LOW, S)
+- **Target**: `install.py::_print_banner`.
+- **Why**: with stdout redirected to a file, Python on Windows encodes as
+  cp1252 and the banner's box-drawing characters raise
+  `UnicodeEncodeError`. A console window is unaffected. Seen on wintest,
+  2026-10-17.
+- **Status**: todo. Lanes: distribution.
+- **Source**: Windows zip test, 2026-10-17.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history

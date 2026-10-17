@@ -368,9 +368,15 @@ const ThemeManager = {
             }
         }
 
-        // Noise smoke: recreate buffer at new proportions
+        // Noise smoke: recreate buffer at new proportions. The color regions
+        // are per buffer column, so a wider buffer needs them rebuilt too or
+        // _drawSmokeFrame reads past their end on every frame.
         if (this._activeEffect === 'cyberpunk' && this._smokeOffscreen) {
             this._createSmokeBuffer();
+            const cfg = this._smokeCfg;
+            if (cfg && cfg.colorTint && cfg.colorRegions > 0) {
+                this._computeColorRegions(cfg.colorRegions);
+            }
         }
 
         // Remap fallback blob positions proportionally on resize

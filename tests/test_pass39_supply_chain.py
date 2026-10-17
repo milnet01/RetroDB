@@ -91,7 +91,7 @@ class TestPass39_4LockfileHashes:
             "requirements.lock header should record `--generate-hashes` in "
             "its recipe — regenerate with: "
             "uv pip compile requirements.txt --strip-extras "
-            "--generate-hashes -o requirements.lock"
+            "--generate-hashes --universal -o requirements.lock"
         )
 
     def test_select_pip_args_falls_back_when_lockfile_missing(self, tmp_path):
@@ -253,6 +253,39 @@ class TestPass39_5DependabotLockfileWorkflow:
 # -----------------------------------------------------------------------------
 # 59.1 — retrodb.spec must not bundle a directory tree wholesale
 # -----------------------------------------------------------------------------
+class TestPass59_99UniversalLockfile:
+    """Pass 59.99 — the lock is compiled on Linux but installed on every
+    platform. A platform-specific lock omits Windows-only transitive deps
+    (click needs colorama there), and `pip install --require-hashes` then
+    refuses the whole install. Seen on the v3.24.0 Windows zip, 2026-10-17.
+    `--universal` writes those deps with environment markers instead."""
+
+    LOCKFILE = os.path.join(_REPO_ROOT, 'requirements.lock')
+    COMPILE_SITES = (
+        os.path.join(_REPO_ROOT, '.github', 'workflows', 'ci.yml'),
+        os.path.join(_REPO_ROOT, '.github', 'workflows', 'dependabot-lockfile.yml'),
+        os.path.join(_REPO_ROOT, 'CLAUDE.md'),
+    )
+
+    def test_lockfile_carries_windows_only_dependency(self):
+        with open(self.LOCKFILE, encoding='utf-8') as f:
+            src = f.read()
+        assert re.search(r'^colorama==\S+ ; sys_platform == .win32.', src, re.M), (
+            "requirements.lock has no win32-marked colorama pin — regenerate "
+            "it with `uv pip compile ... --universal`"
+        )
+
+    @pytest.mark.parametrize('path', COMPILE_SITES, ids=os.path.basename)
+    def test_every_lock_compile_command_is_universal(self, path):
+        with open(path, encoding='utf-8') as f:
+            src = _join_continuations(f.read())
+        compile_lines = [ln for ln in src.splitlines()
+                         if 'uv pip compile requirements.txt' in ln]
+        assert compile_lines, f"{path} names no lock compile command"
+        for ln in compile_lines:
+            assert '--universal' in ln, f"compile without --universal: {ln.strip()}"
+
+
 class TestPass59_1SpecBundlesNoSecretTrees:
     """A PyInstaller `datas` entry of the form ('docs', 'docs') copies the
     WHOLE directory with no per-file filter.

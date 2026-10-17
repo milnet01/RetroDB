@@ -72,7 +72,7 @@ jobs:
           # without it the resulting lockfile won't satisfy `pip install
           # --require-hashes` in the installers. Pass 57.3 moved the compiler
           # from pip-tools to uv — see the note in ci.yml's drift job.
-          uv pip compile requirements.txt --strip-extras --generate-hashes \
+          uv pip compile requirements.txt --strip-extras --generate-hashes --universal \
             --quiet -o requirements.lock
 
       - name: Commit and push if changed

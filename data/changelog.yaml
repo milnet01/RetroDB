@@ -1,3 +1,20 @@
+- version: 3.24.1
+  date: 2026-10-17
+  tags:
+  - type: fix
+    label: The Windows download installs again, and no error flood after resizing
+  body: |
+    <ul>
+      <li><strong>The normal Windows download could not install.</strong>
+        The installer stopped at "Core dependencies failed to install",
+        because its locked package list left out a package that Windows
+        alone needs. The list now covers every platform. The no-Python
+        Windows download was not affected.</li>
+      <li><strong>Error messages kept appearing in the top-right corner</strong>
+        on the Cyberpunk theme after the browser window was made wider, for
+        example by maximising it. The animated background now resizes
+        cleanly.</li>
+    </ul>
 - version: 3.24.0
   date: 2026-10-17
   tags:
