@@ -80,10 +80,10 @@ The Multi-Disc Organizer page is served from `routes/tools.py`, but its API is
 
 | Operation | Undo? | Protection |
 |---|---|---|
-| Remove files / clean archive | No. Members are gone. | Admin only. `safe_path` on the archive path. Success is reported only when a re-listing shows members actually left (`ArchiveScanner.remove_files_from_archive`). Member names follow `--` (zip) or `-i!` (7z), so a name starting with `-` is not read as a switch. |
-| Create M3U | Partly. The archive is moved, not deleted. | Admin only. `move_to_staging` defaults to true and the page does not send it, so every M3U built from the page moves its archive. `safe_path` on every path. Refuses when the `.m3u` or the game folder already exists (PASS-59-63, see §13). The archive moves only when the caller asks (`move_to_staging`, or `delete_archives` on the batch call). The staging folder is server-side: `ArchiveScanner._staging_folder()`, which is `<temp_path>/m3u_staging`, else the system temp dir. A name clash in staging gets a `_N` suffix. |
-| CHD convert | Source deletion has no undo. | Admin only. `safe_path` per file, inside the worker. `convert_one_to_chd` writes `<name>.chd.part`, verifies it when verify is on, and only then renames it to `.chd`. The source is deleted only after the `.chd` is in place, and only when `chd_delete_originals` (or the request's `delete_originals`) is true. A failed run removes the `.part` file. With verify off, the source can be deleted after an unverified conversion. For a `.cue`, only the `.cue` is deleted; its `.bin` tracks stay. The route passes `skip_existing=False`, so an existing `.chd` the user selected is replaced. |
-| Duplicate delete | No. `os.remove`. | Admin only. `safe_path` per file. Nothing is staged. The server does not check that a group keeps one file; only the page's selection and its confirm dialog do. |
+| Remove files / clean archive | No. Members are gone. | Admin only. `safe_path` on the archive path. Clean refuses when the patterns match every member, and a pattern made only of `*`, `?` and `.` is refused at save. Success is reported only when a re-listing shows members actually left (`ArchiveScanner.remove_files_from_archive`). Member names follow `--` (zip) or `-i!` (7z), so a name starting with `-` is not read as a switch. |
+| Create M3U | Partly. The archive is moved, not deleted. | Admin only. `move_to_staging` defaults to true and the page does not send it, so every M3U built from the page moves its archive. `safe_path` on every path. Refuses when the `.m3u` or the game folder already exists (PASS-59-63, see §13). The archive moves only when the caller asks (`move_to_staging`, or `delete_archives` on the batch call). The staging folder is server-side: `ArchiveScanner._staging_folder()`, which is `<temp_path>/m3u_staging`, else `data/m3u_staging` under RetroDB's own folder. The old default `temp_path`, `<system temp>/retrodb_romtools`, counts as empty. A name clash in staging gets a `_N` suffix. |
+| CHD convert | Source deletion has no undo. | Admin only. `safe_path` per file, inside the worker. `convert_one_to_chd` writes `<name>.chd.part`, verifies it when verify is on, and only then renames it to `.chd`. The source is deleted only after the `.chd` is in place, and only when `chd_delete_originals` (or the request's `delete_originals`) is true. A failed run removes the `.part` file. With verify off, the source is kept, and the result says so. For a `.cue`, only the `.cue` is deleted; its `.bin` tracks stay. An existing `.chd` is replaced only when Skip existing is off (the request's `skip_existing`, else `chd_skip_existing`). |
+| Duplicate delete | No. `os.remove`. | Admin only. `safe_path` per file. Nothing is staged. The request names its scan (`task_id`); the server refuses the whole request when it would delete every file of a group, refuses it when the scan is gone, and skips any file that scan did not group. |
 | Screenshot delete | No. `os.remove`. | Admin only. A filename containing a path separator or `..` is refused. Files live under `static/images/screenshots/`, not the ROM root. |
 | Save settings | Yes, by saving again. | Admin only (checked inside the handler). Every key goes through `validate_rom_tools_value`; an unknown key is refused. |
 
@@ -100,13 +100,13 @@ registry first, then the scanner registry.
 |---|---|---|
 | Where | `routes/tools.py::_rom_tool_tasks` (plain dicts) | `scraper/rom_tools.py::_tasks` (`TaskStatus` objects, under `_task_lock`) |
 | Used by | CHD convert, CHD verify, duplicate scan, screenshot dedup scan | Archive scan |
-| Task id | `str(uuid.uuid4())` | `str(uuid.uuid4())[:8]` (`create_task`) |
-| Failure | Convert, verify and duplicate scan run inside `_guarded_worker`: an uncaught exception sets `status='failed'`, stamps `end_time` and logs. Screenshot dedup is not wrapped (§13). | `scan_for_issues` catches its own exceptions and sets `status='error'`. |
-| Pause | The status flips to `paused`, but no worker checks for it, so work continues (§13). | `scan_for_issues` sleeps while `paused`. |
-| Cleanup | `_cleanup_completed_tasks` runs when a new task is created. It removes tasks in `completed`, `failed` or `cancelled` whose `end_time` is older than `_TASK_RETENTION_SECONDS`, and stamps `end_time` on a finished task that lacks one. A `running` task is never removed. | None. Tasks stay until the process exits (§13). |
+| Task id | `str(uuid.uuid4())` | `str(uuid.uuid4())` (`create_task`) |
+| Failure | Every worker runs inside `_guarded_worker`: an uncaught exception sets `status='failed'`, stamps `end_time` and logs. | `scan_for_issues` catches its own exceptions and sets `status='error'`. |
+| Pause | Each worker waits in `_wait_if_paused` before its next item. | Each worker sleeps while `paused`, and stops if it was cancelled meanwhile. |
+| Cleanup | `_cleanup_completed_tasks` runs when a new task is created. It removes tasks in `completed`, `failed` or `cancelled` whose `end_time` is older than `_TASK_RETENTION_SECONDS`, and stamps `end_time` on a finished task that lacks one. A `running` task is never removed. | `create_task` removes `completed`, `error` or `cancelled` tasks whose `end_time` is older than `_TASK_RETENTION_SECONDS`. |
 
 Neither registry is persisted. A restart loses every task and its log.
-Cancel, pause and resume are admin-only. Cancel acts only on a `running` task.
+Cancel, pause and resume are admin-only. Cancel acts on a `running` or `paused` task.
 
 ### 4.4 Roles per endpoint
 
@@ -131,7 +131,8 @@ saved. Two keys carry security weight:
 - `chdman_path` becomes `argv[0]` of `subprocess.run`. It may be the bare name
   `chdman` or `chdman.exe`, or an absolute path made of one entry in
   `_SAFE_BIN_PREFIXES` followed directly by `chdman` or `chdman.exe`.
-- `duplicate_method` must be `hash`, `name` or `both`.
+- `duplicate_method` must be `hash`, `name` or `both`. The duplicate scan
+  checks the request's own `method` against the same list and refuses others.
 
 A tool run takes each on/off option from the request when it is a real
 boolean, else from the saved setting (`_run_option`, Pass 59.49). Scanners are
@@ -152,9 +153,11 @@ Two separate guards apply.
    applied in `ArchiveScanner._find_archives_filtered`, `_find_archives`, the
    extracted-folder walk in `create_m3u_playlist`,
    `CHDConverter.find_convertible_files`, `CHDVerifier.find_chd_files`,
-   `DuplicateFinder._find_rom_files`, and the CHD scan routes through
-   `_glob_under_rom_root`. The duplicate-scan route walks with `os.walk`,
-   which does not descend symlinked folders but does list a symlinked file.
+   `DuplicateFinder._find_rom_files` (recursive or not), and the CHD scan
+   routes through `_glob_under_rom_root`. The duplicate-scan route's
+   `os.walk` and `os.listdir` branches drop a symlinked file that resolves
+   outside the root. `browse-folders` offers a parent link only inside the
+   root.
    `CHDConverter`, `CHDVerifier` and `DuplicateFinder` are not called by any
    route; the routes carry their own loops.
 
@@ -191,8 +194,8 @@ which are on `PATH`. CHD convert and verify refuse to start when
   tests/test_pass59_rom_tools.py::test_scan_skips_files_reached_through_an_escaping_symlink
   tests/test_pass59_rom_tools.py::test_extracted_folder_walk_is_guarded
   tests/test_pass41_security.py::TestPass41_14CRglobSymlinkGuard` →
-  `6 passed`. The archive scanner's own walk and `DuplicateFinder` have no
-  test. *Breaks when:* a `rglob` or `glob(..., recursive=True)` result is used
+  `6 passed`. The non-recursive finders and the duplicate-scan route are
+  tested in `tests/test_pass59_119_rom_tools.py`. *Breaks when:* a `rglob` or `glob(..., recursive=True)` result is used
   without `_safe_under_root`.
 - **INV-4** — A `chdman_path` outside the allowed shapes is never saved, and an
   unknown settings key is refused. *Test:* `python3 -m pytest -q
@@ -227,19 +230,21 @@ which are on `PATH`. CHD convert and verify refuse to start when
 - **INV-9** — The saved `duplicate_method` is one of `hash`, `name`, `both`.
   *Test:* `python3 -m pytest -q
   tests/test_pass59_63_services.py::TestDuplicateMethodAllowlist` →
-  `2 passed`. *Breaks when:* `size` is accepted. The request's own `method`
-  field is not checked (§13).
+  `2 passed`. *Breaks when:* `size` is accepted. The request's `method` is
+  tested in `tests/test_pass59_119_rom_tools.py::test_duplicate_scan_refuses_an_unknown_method`.
 - **INV-10** — A routes-registry worker that raises ends its task `failed`
   with an `end_time`, and a file deleted before its turn counts as invalid
   without stopping the run. *Test:* `python3 -m pytest -q
   tests/test_pass59_rom_tools.py::test_worker_crash_marks_the_task_failed
   tests/test_pass59_rom_tools.py::test_verify_survives_a_file_deleted_before_its_turn`
-  → `2 passed`. *Breaks when:* a worker thread is started without
+  → `2 passed`. The screenshot scan's guard is tested in `tests/test_pass59_119_rom_tools.py`.
+  *Breaks when:* a worker thread is started without
   `_guarded_worker`, or `os.path.getsize` moves back outside the `try`.
 - **INV-11** — Routes-registry task ids are full UUIDs. *Test:* `python3 -m
   pytest -q tests/test_pass41_security.py::TestPass41_10CTaskIdFullUuid` →
   `2 passed`. *Breaks when:* `uuid.uuid4())[:8]` reappears in
-  `routes/tools.py`. The scanner registry still truncates (§13).
+  `routes/tools.py`. The scanner registry's ids and reaping are tested in
+  `tests/test_pass59_119_rom_tools.py`.
 - **INV-12** — A run option sent as a real boolean wins; anything else falls
   back to the saved setting. *Test:* `python3 -m pytest -q
   tests/test_pass59_rom_tools.py::test_run_option_prefers_the_request_then_the_setting`
@@ -257,12 +262,29 @@ which are on `PATH`. CHD convert and verify refuse to start when
 - **INV-14** — Removing archive members reports success only when a
   re-listing shows at least one member gone. *Test:* none. *Breaks when:*
   the result is taken from `zip`'s return code alone.
+- **INV-16** — Clean never removes every member of an archive, and a pattern
+  made only of `*`, `?` and `.` is never saved. *Test:* `tests/test_pass59_119_rom_tools.py` (Clean cases).
+  *Breaks when:* `clean_archive` loses its every-member check, or
+  `unwanted_patterns` goes back to the plain string-list validator.
+- **INV-17** — With verify off, CHD convert keeps the source; with Skip
+  existing on, it leaves an existing `.chd` alone. *Test:* `tests/test_pass59_119_rom_tools.py` (CHD cases).
+  *Breaks when:* `convert_one_to_chd` deletes without `do_verify`, or the
+  route passes a fixed `skip_existing`.
+- **INV-18** — Duplicate delete removes only files its scan grouped, and
+  never every file of a group. *Test:* `tests/test_pass59_119_rom_tools.py` (duplicate delete cases).
+  *Breaks when:* the route stops reading `task_id` or drops the group check.
+- **INV-19** — A paused task starts no new item until resumed, and can be
+  cancelled, in both registries. *Test:* `tests/test_pass59_119_rom_tools.py` (pause cases). *Breaks when:*
+  a worker loop loses `_wait_if_paused`, or cancel needs `running`.
+- **INV-20** — With no Temporary Path set, Create M3U never stages archives in
+  the system temp dir. *Test:* `tests/test_pass59_119_rom_tools.py` (staging cases). *Breaks when:*
+  `_staging_folder` falls back to `tempfile.gettempdir()`.
 
 ## 6. Failure modes
 
-- **Staging is in the temp dir by default.** With `temp_path` empty, archives
-  moved by Create M3U go to the system temp dir. On a system whose `/tmp` is
-  cleared at boot, a moved archive is lost at the next reboot.
+- **Staging on a cleared disk.** A Temporary Path the user sets inside a
+  folder cleared at boot loses any archive staged there. The default is
+  `data/m3u_staging`, which is not cleared.
 - **Restart mid-task.** Both registries are in memory. The task and its log
   are lost; a CHD conversion leaves at most a `.chd.part` file, which the next
   run of the same file removes.
@@ -275,6 +297,9 @@ which are on `PATH`. CHD convert and verify refuse to start when
   removal two minutes). A timeout marks that file failed and the run goes on.
 - **File gone between scan and action.** Verify counts it invalid; duplicate
   delete counts it failed; screenshot delete counts it deleted.
+- **Scan results gone before a duplicate delete.** The routes registry drops
+  a finished scan after `_TASK_RETENTION_SECONDS`; a delete naming it is
+  refused and the page says to scan again.
 
 ## 7. Tests
 
@@ -295,6 +320,11 @@ which are on `PATH`. CHD convert and verify refuse to start when
 | INV-13 | none |
 | INV-14 | none |
 | INV-15 | `tests/test_pass41_security.py::TestPass41_10DScanAuthzAndRateLimit` |
+| INV-16 | `tests/test_pass59_119_rom_tools.py` |
+| INV-17 | `tests/test_pass59_119_rom_tools.py` |
+| INV-18 | `tests/test_pass59_119_rom_tools.py` |
+| INV-19 | `tests/test_pass59_119_rom_tools.py` |
+| INV-20 | `tests/test_pass59_119_rom_tools.py`; `tests/test_pass59_rom_tools.py::test_m3u_staging_follows_temp_path` |
 
 `tests/test_pass59_rom_tools_js.py` checks that `rom-tools.js` loads without
 the i18n helpers; it pins no invariant here.
@@ -315,7 +345,7 @@ None. This spec records existing behaviour; it chose no design.
 | Rule | What catches a breach |
 |------|----------------------|
 | INV-1 | Partial: the tests in §7 cover task control, CHD and M3U; nothing covers `remove-files`, `clean`, `duplicate-finder/delete` or `screenshot-dedup/delete` |
-| INV-2 | Partial: §7's tests cover CHD and M3U; nothing covers duplicate delete |
+| INV-2 | Partial: §7's tests cover CHD and M3U; nothing covers duplicate delete's `safe_path` |
 | INV-3 | Partial: §7's tests cover the CHD scan routes and the extracted-folder walk |
 | INV-4 | §7's tests |
 | INV-5 | Partial: source-text checks only |
@@ -329,6 +359,11 @@ None. This spec records existing behaviour; it chose no design.
 | INV-13 | **nothing** |
 | INV-14 | **nothing** |
 | INV-15 | §7's test |
+| INV-16 | §7's tests |
+| INV-17 | §7's tests |
+| INV-18 | §7's tests |
+| INV-19 | §7's tests |
+| INV-20 | §7's tests |
 
 ## 11. Cross-doc impact
 
@@ -351,25 +386,7 @@ queued by this document.
   INV-8 and INV-9 describe it: the M3U overwrite refusal, `is not None` for
   the pattern list, the anchored `readme` / `release` globs, and the `hash` /
   `name` / `both` allowlist (formerly `size` in place of `both`).
-- **Request `method` is unchecked.** `api_duplicate_finder_scan` reads
-  `method` from the request; any value other than `hash` or `name` runs the
-  name-plus-hash branch.
-- **Pause does nothing on the routes registry.** The status flips to
-  `paused`; the workers check only `cancelled`, and finish as `completed`. A
-  paused task cannot then be cancelled, because cancel needs `running`.
-- **Screenshot dedup scan is unguarded.** Its thread is not wrapped in
-  `_guarded_worker`, so an uncaught error leaves it `running`, and the
-  cleanup never removes it.
-- **Scanner registry.** Archive-scan task ids are eight hex characters, and
-  its tasks are never removed.
 - **Screenshot delete trusts the filename.** It removes any matching file in
   the screenshots folder, whether or not that game lists it.
-- **Unwanted patterns are not checked for content.** A saved pattern of `*`
-  would make Clean delete every member, ROMs included.
-- **CHD convert can replace a `.chd` and skip verify.** See §4.2's CHD row.
-- **The archive-scanner page names a fixed staging path** that is not
-  `_staging_folder()`'s.
-- **`rom_tools_settings.html` reset** sets an element id, `duplicateMethod`,
-  that the template does not have.
 - **Duplicate delete has no staging.** Unlike Create M3U, deleted duplicates
   cannot be recovered.
