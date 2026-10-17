@@ -7729,8 +7729,16 @@ were corrected in `2836bc3` and are not repeated here.
   video…"); a large download moves the gauge by bytes received. At 100% the
   page reloads as it does now. The overlay's strings, English-only today,
   get wrapped for i18n.
-- **Status**: todo, next after the PASS-59-104 release, before PASS-59-91
-  stage 2. Lanes: ui, scraper.
+- **Resolution** (2026-10-17, v3.27.0, 7504ed1): the apply runs in a
+  background thread under an in-memory tracker (`services/apply_progress.py`),
+  not a `services/jobs` job: a one-game action the user watches needs no
+  `job_queue` row or crash recovery. The page polls it into the ring gauge
+  with the current step beneath. Steps: primary fetch, each fallback source,
+  each download (moved by bytes received), each image's post-processing
+  (Real-ESRGAN can outlast the download), save, RetroAchievements check. The
+  ring moves unevenly: a source's image count is known only when it answers.
+  Overlay strings in 20 locales, reviewed by Gemini and DeepSeek.
+- **Status**: done (2026-10-17, v3.27.0). Lanes: ui, scraper.
 - **Source**: user, 2026-10-17.
 
 ---
@@ -7748,6 +7756,11 @@ were corrected in `2836bc3` and are not repeated here.
 - **Status**: todo. Translate or confirm each entry, drop the flag, check
   drafts with Gemini and DeepSeek. Lanes: i18n.
 - **Source**: changelog backlog translation, 2026-10-17.
+- **Note** (2026-10-17, PASS-59-108): `scripts/apply_po_translations.py`
+  sets msgstr but leaves the `fuzzy` flag and the `#|` previous msgid in
+  place, so a fuzzy entry it fills still does not compile. It also exits 1
+  on any catalog with older untranslated entries. Clear the flag there (or
+  in this pass's fix) before relying on it.
 
 ## Done index
 
