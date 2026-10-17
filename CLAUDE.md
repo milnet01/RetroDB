@@ -66,6 +66,14 @@ proofs. Never mark a task complete just because those tests pass.
 - For 3+ step work, post a `step → verify` plan up front (global §12) and tick
   off as you go.
 
+### Contract Reviews (Global Rule 14)
+Rule 14's contract gate is **cancelled for this project** (user,
+2026-10-17); record each such edit as "no gate: cancelled by RetroDB
+CLAUDE.md". The practice kept instead: run `review-contract` on a spec, plan
+or standard only when its author is unsure of details in the planned work,
+and say which details. Otherwise the code and the user's viewing of the result
+are the review.
+
 ### Periodic Independent Review (Multi-Agent Audit)
 Run a multi-agent independent sweep at one of these triggers (whichever first):
 1. Every 5 landed roadmap passes
