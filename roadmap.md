@@ -6275,7 +6275,12 @@ orchestrator, several by execution rather than reading.
   `get_game_details` (`:1019`), or at the interpolation site. `region_opts` at
   `:548` has the same shape at lower reach.
 - **Verify**: set a hostile publisher and confirm the prompt is escaped.
-- **Status**: planned (2026-09-01). Lanes: scraper, security.
+- **Shipped** (2026-10-17, v3.29.1): `_build_prompt` runs each existing
+  value through `_sanitize_prompt_input` (max 512) before the "Current
+  value" line; region options are sanitised too. Pinned by
+  `tests/test_pass59_scrapers.py::test_ai_prompt_sanitises_existing_values`
+  (red before the fix).
+- **Status**: done (2026-10-17). Lanes: scraper, security.
 - **Source**: review-code AI-fill/ROM-tools lane 2026-09-01.
 
 ---

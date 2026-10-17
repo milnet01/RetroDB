@@ -545,7 +545,7 @@ def _build_prompt(title, system_name, missing_fields, existing_values=None):
                 region_opts = ['USA', 'Europe', 'Japan', 'World']
             field_instructions.append(
                 '"region": a SINGLE region value from this list: '
-                + ', '.join(region_opts)
+                + ', '.join(_sanitize_prompt_input(r, max_len=64) for r in region_opts)
                 + '. Pick the primary release region for this specific copy/platform. '
                 'Do NOT return multiple regions.'
             )
@@ -651,7 +651,10 @@ def _build_prompt(title, system_name, missing_fields, existing_values=None):
         if field_name_match:
             fname = field_name_match.group(1)
             if fname in existing_values and existing_values[fname]:
-                fi = fi + f' Current value: "{existing_values[fname]}". Verify this is correct and fix if needed.'
+                # PASS-59-50: these are editor-set DB values, so sanitise
+                # them like the title (publisher, developer, edition, ...).
+                current = _sanitize_prompt_input(existing_values[fname], max_len=512)
+                fi = fi + f' Current value: "{current}". Verify this is correct and fix if needed.'
         final_instructions.append(fi)
 
     fields_block = '\n'.join(f'  - {fi}' for fi in final_instructions)
