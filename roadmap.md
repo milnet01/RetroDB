@@ -7740,6 +7740,10 @@ were corrected in `2836bc3` and are not repeated here.
   Overlay strings in 20 locales, reviewed by Gemini and DeepSeek.
 - **Status**: done (2026-10-17, v3.27.0). Lanes: ui, scraper.
 - **Source**: user, 2026-10-17.
+- **Release** (2026-10-17): v3.27.0 is committed and pushed but NOT
+  published as a GitHub release; the website session has not been told.
+  Recommended to the user: hold it and bundle with the next release, as
+  v3.24.2 to v3.26.0 were. Awaiting the user's answer.
 
 ---
 
