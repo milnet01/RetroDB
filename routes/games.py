@@ -33,9 +33,10 @@ from services.analytics import invalidate_analytics_cache
 from services.launch_resolver import launch_checker, rom_launch_problem
 from services.game_metadata_service import (
     build_game_card,
-    apply_metadata_to_game, apply_hybrid_metadata_to_game,
+    apply_hybrid_metadata_to_game,
     normalize_game_edit, cross_map_ratings,
 )
+from services import apply_progress
 
 # Single source of truth for the completion-status whitelist, shared by the
 # single-edit endpoint (api_update_completion) and bulk-edit (Pass 48.5 — bulk
@@ -58,20 +59,16 @@ bp = Blueprint('games', __name__)
 # Scraper manager with graceful fallback when scrapers are unavailable.
 # The apply path is served by services.game_metadata_service (imported above)
 # so routes/games.py and both bulk-scrape sites share one code path. Search
-# and fetch stay on the manager — they're orchestration concerns, not merge.
+# stays on the manager — it's an orchestration concern, not merge.
 try:
     from scraper.scraper_manager import scraper_manager
     search_games = scraper_manager.search_games
-    fetch_game_details = scraper_manager.fetch_game_details
     SCRAPER_AVAILABLE = True
 except ImportError:
     SCRAPER_AVAILABLE = False
 
     def search_games(*args, **kwargs):
         return []
-
-    def fetch_game_details(*args, **kwargs):
-        return None
 
 
 @bp.route('/games')
@@ -382,80 +379,6 @@ def game_detail(game_id):
                 except Exception as e:
                     message = "An error occurred during search"
                     logger.error(f"Search error: {e}")
-
-            elif action == 'apply':
-                game_source = request.form.get('game_source')
-                use_hybrid = request.form.get('hybrid', 'true') == 'true'
-
-                if not game_source:
-                    message = "No game selected."
-                else:
-                    try:
-                        source_parts = game_source.split('_')
-
-                        if len(source_parts) >= 2:
-                            source = source_parts[0]
-                            source_id = '_'.join(source_parts[1:])
-                            system_folder = game['system_folder'] if 'system_folder' in game.keys() else ''
-
-                            if use_hybrid:
-                                all_results = session.get('last_search_results', [])
-
-                                # Parse explicit secondary selections from UI checkboxes
-                                explicit_secondary = None
-                                secondary_json = request.form.get('secondary_selections', '')
-                                if secondary_json:
-                                    try:
-                                        explicit_secondary = json.loads(secondary_json)
-                                    except (json.JSONDecodeError, TypeError):
-                                        logger.warning("Invalid secondary_selections JSON, ignoring")
-
-                                result = apply_hybrid_metadata_to_game(
-                                    db_game_id=game_id,
-                                    primary_source=source,
-                                    primary_id=source_id,
-                                    system_folder=system_folder,
-                                    all_results=all_results,
-                                    explicit_secondary=explicit_secondary
-                                )
-
-                                if result.get('success'):
-                                    sources = ', '.join(result.get('sources_used', [source.upper()]))
-                                    filled = len(result.get('filled_fields', []))
-                                    missing = len(result.get('missing_fields', []))
-                                    message = f"Metadata applied from {sources}! ({filled} fields filled, {missing} still missing)"
-
-                                    game = query("""
-                                        SELECT g.*, s.name AS system_name, s.folder AS system_folder
-                                        FROM games g
-                                        JOIN systems s ON g.system_id = s.id
-                                        WHERE g.id = ?
-                                    """, (game_id,), one=True)
-                                else:
-                                    message = "Failed to apply metadata."
-                            else:
-                                game_details = fetch_game_details(source_id, source, system_folder=system_folder)
-
-                                if game_details:
-                                    success = apply_metadata_to_game(game_id, game_details, source, system_folder=system_folder)
-
-                                    if success:
-                                        message = f"Metadata applied from {source.upper()}!"
-                                        game = query("""
-                                            SELECT g.*, s.name AS system_name, s.folder AS system_folder
-                                            FROM games g
-                                            JOIN systems s ON g.system_id = s.id
-                                            WHERE g.id = ?
-                                        """, (game_id,), one=True)
-                                    else:
-                                        message = f"Failed to apply metadata from {source.upper()}."
-                                else:
-                                    message = f"Failed to fetch details from {source.upper()}."
-                        else:
-                            message = "Invalid game selection."
-                    except Exception as e:
-                        message = "An error occurred applying metadata"
-                        logger.error(f"Apply error: {e}", exc_info=True)
 
             elif action == 'edit_metadata':
                 try:
@@ -946,6 +869,72 @@ def api_game_detail(game_id):
             'hltb_match_confidence': game['hltb_match_confidence']
         }
     })
+
+
+@bp.route('/api/game/<int:game_id>/apply-metadata', methods=['POST'])
+@editor_required
+@handle_api_errors
+def api_game_apply_metadata(game_id):
+    """Start the Search Metadata apply in the background (PASS-59-108).
+
+    Returns a task id; the page polls api_apply_metadata_progress for the
+    gauge. Same apply as the form POST's action == 'apply' hybrid branch.
+    """
+    data = request.get_json() or {}
+
+    game = query("""
+        SELECT g.id, s.folder AS system_folder
+        FROM games g JOIN systems s ON g.system_id = s.id
+        WHERE g.id = ?
+    """, (game_id,), one=True)
+    if not game:
+        return jsonify({'success': False, 'error': _('Game not found')}), 404
+
+    source, _sep, source_id = (data.get('game_source') or '').partition('_')
+    if not source or not source_id:
+        return jsonify({'success': False, 'error': _('No game selected.')}), 400
+
+    explicit_secondary = data.get('secondary_selections')
+    if not isinstance(explicit_secondary, list):
+        explicit_secondary = None
+
+    task = apply_progress.start(
+        game_id, apply_hybrid_metadata_to_game,
+        db_game_id=game_id,
+        primary_source=source,
+        primary_id=source_id,
+        system_folder=game['system_folder'] or '',
+        all_results=session.get('last_search_results', []),
+        explicit_secondary=explicit_secondary,
+    )
+    return jsonify({'success': True, 'task_id': task.id})
+
+
+@bp.route('/api/apply-metadata/<task_id>')
+@editor_required
+@handle_api_errors
+def api_apply_metadata_progress(task_id):
+    """Progress of one background apply: percent, current step, finished."""
+    task = apply_progress.get(task_id)
+    if not task:
+        return jsonify({'success': False,
+                        'error': _('This metadata apply is no longer running.')}), 404
+
+    snap = task.snapshot()
+    if snap['finished']:
+        if snap['applied']:
+            # Flashed once, so it shows on the page the gauge reloads into.
+            if not task.flashed:
+                task.flashed = True
+                result = task.result
+                flash(_('Metadata applied from %(sources)s! '
+                        '(%(filled)d fields filled, %(missing)d still missing)',
+                        sources=', '.join(result.get('sources_used', [])),
+                        filled=len(result.get('filled_fields', [])),
+                        missing=len(result.get('missing_fields', []))), 'success')
+        else:
+            snap['error'] = _('Failed to apply metadata.')
+    return jsonify({'success': True, **snap})
 
 
 @bp.route('/api/game/<int:game_id>/edit', methods=['POST'])

@@ -18,6 +18,7 @@ import sys
 # Ensure project root is on path for config import
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import DB_PATH
+from services import apply_progress
 
 logger = logging.getLogger(__name__)
 
@@ -355,7 +356,7 @@ def download_image(url, dest_path, timeout=15):
                 )
                 return False
             written = 0
-            with os.fdopen(tmp_fd, 'wb') as f:
+            with os.fdopen(tmp_fd, 'wb') as f, apply_progress.download(dest_path, declared) as dl:
                 tmp_fd = None  # ownership transferred to the file object
                 for chunk in response.iter_content(chunk_size=8192):
                     if chunk:
@@ -366,6 +367,7 @@ def download_image(url, dest_path, timeout=15):
                             )
                             return False
                         f.write(chunk)
+                        dl.received(written)
                 f.flush()
                 try:
                     os.fsync(f.fileno())

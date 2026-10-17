@@ -12,6 +12,8 @@ import queue
 import tempfile
 import threading
 
+from services import apply_progress
+
 logger = logging.getLogger(__name__)
 
 
@@ -548,9 +550,11 @@ def finalize_downloaded_image(path, image_type):
     if not path or not os.path.exists(path):
         return
 
-    _ensure_format_matches_extension(path)
-    standardize_downloaded_image(path, image_type)
-    _make_responsive_variants(path, image_type)
+    # PASS-59-108 — its own gauge step: upscaling can outlast the download.
+    with apply_progress.step('process'):
+        _ensure_format_matches_extension(path)
+        standardize_downloaded_image(path, image_type)
+        _make_responsive_variants(path, image_type)
 
 
 # Responsive boxart variants: keep cards light without touching the original.

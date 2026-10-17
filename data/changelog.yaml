@@ -1,3 +1,23 @@
+- version: 3.27.0
+  date: 2026-10-17
+  tags:
+  - type: feature
+    label: Applying metadata shows how far along it is
+  body: |
+    <ul>
+      <li><strong>Applying metadata shows how far along it is.</strong> When
+        you pick a result in Search Metadata, a ring fills from 0 to 100% with
+        the percentage in its centre, and the line beneath says what is
+        happening: which site is being searched, which image or video is
+        downloading, or that images are being processed. A large download,
+        such as a video, moves the ring as it arrives. At 100% the page
+        reloads with the result, as before.</li>
+      <li>The ring can move unevenly. Each source decides how many images it
+        sends only when it answers, so the first source with many images can
+        fill much of the ring and later ones less.</li>
+      <li>If an apply fails, the ring closes and a message says so, without
+        reloading the page.</li>
+    </ul>
 - version: 3.26.0
   date: 2026-10-17
   tags:

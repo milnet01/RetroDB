@@ -16,8 +16,15 @@ from services.normalization import normalize_genre
 from services.game_utils import generate_sort_title, infer_rating_from_content, RATING_SYSTEM_KEYS, RATING_SYSTEMS
 from services.game_metadata_service import cross_map_ratings
 from services.media_cleanup import media_dir_is_healthy
+from services import apply_progress
 
 logger = logging.getLogger(__name__)
+
+# Source names as the Apply Metadata progress gauge shows them (PASS-59-108).
+_PROGRESS_SOURCE_LABELS = {
+    'esde': 'ES-DE', 'tgdb': 'TheGamesDB', 'igdb': 'IGDB', 'rawg': 'RAWG',
+    'screenscraper': 'ScreenScraper', 'ai': 'AI',
+}
 
 # Import individual scrapers
 from scraper.base_scraper import get_scraper_conn
@@ -767,6 +774,45 @@ def _save_game_row(c, metadata, scrape_history_json, db_game_id):
     ))
 
 
+def _fallback_order(primary_source, sources_data, restrict_to_selected,
+                    secondary_sources):
+    """The fallback scrapers _run_fallbacks will try, in the user's priority
+    order: minus the primary, any already-used source and any disabled one.
+    With `restrict_to_selected`, only the user-selected secondary_sources
+    (plus AI, always allowed for gap-filling)."""
+    fallback_settings = load_scraper_settings()
+    user_priority = fallback_settings.get('priority', ['screenscraper', 'esde', 'tgdb', 'igdb'])
+    fallback_enabled = fallback_settings.get('enabled', {})
+
+    # Map internal names to priority list names
+    source_name_map = {
+        'screenscraper': 'screenscraper',
+        'esde': 'esde',
+        'tgdb': 'tgdb',
+        'thegamesdb': 'tgdb',
+        'igdb': 'igdb',
+        'rawg': 'rawg'
+    }
+    primary_normalized = source_name_map.get(primary_source, primary_source)
+
+    fallback_scrapers = []
+    for scraper in user_priority:
+        scraper_normalized = source_name_map.get(scraper, scraper)
+        if scraper_normalized == primary_normalized:
+            continue
+        if scraper_normalized in sources_data:
+            continue
+        if not fallback_enabled.get(scraper_normalized, True):
+            continue
+        fallback_scrapers.append(scraper_normalized)
+
+    if restrict_to_selected and secondary_sources:
+        selected_scrapers = {s['source'] for s in secondary_sources}
+        fallback_scrapers = [s for s in fallback_scrapers
+                             if s in selected_scrapers or s == 'ai']
+    return fallback_scrapers
+
+
 def _run_fallbacks(metadata, result, sources_data, game, db_game_id,
                    primary_source, system_folder, secondary_sources,
                    restrict_to_selected, force_overwrite, c):
@@ -830,60 +876,35 @@ def _run_fallbacks(metadata, result, sources_data, game, db_game_id,
         logger.info(f"Missing fields: {missing}")
         logger.info(f"Searching other scrapers for: '{game_title}' on {system_name}")
 
-        # Get user's scraper priority from settings
         fallback_settings = load_scraper_settings()
-        user_priority = fallback_settings.get('priority', ['screenscraper', 'esde', 'tgdb', 'igdb'])
         fallback_api_keys = fallback_settings.get('api_keys', {})
         fallback_enabled = fallback_settings.get('enabled', {})
-
-        # Map internal names to priority list names
-        source_name_map = {
-            'screenscraper': 'screenscraper',
-            'esde': 'esde',
-            'tgdb': 'tgdb',
-            'thegamesdb': 'tgdb',
-            'igdb': 'igdb',
-            'rawg': 'rawg'
-        }
-
-        # Get the normalized primary source name
-        primary_normalized = source_name_map.get(primary_source, primary_source)
-
-        # Build fallback list: user priority order, excluding primary and disabled scrapers
-        fallback_scrapers = []
-        for scraper in user_priority:
-            scraper_normalized = source_name_map.get(scraper, scraper)
-            # Skip if it's the primary source
-            if scraper_normalized == primary_normalized:
-                continue
-            # Skip if already used
-            if scraper_normalized in sources_data:
-                continue
-            # Skip if disabled
-            if not fallback_enabled.get(scraper_normalized, True):
-                continue
-            fallback_scrapers.append(scraper_normalized)
-
-        # When user explicitly selected secondary sources, restrict fallbacks
-        # to only those scrapers (plus AI which is always allowed for gap-filling)
-        if restrict_to_selected and secondary_sources:
-            selected_scrapers = {s['source'] for s in secondary_sources}
-            fallback_scrapers = [s for s in fallback_scrapers
-                                 if s in selected_scrapers or s == 'ai']
+        fallback_scrapers = _fallback_order(
+            primary_source, sources_data, restrict_to_selected, secondary_sources)
 
         logger.info(f"Primary source: {primary_source} -> Fallback scrapers in priority order: {fallback_scrapers}")
 
-        for fallback_source in fallback_scrapers:
+        apply_progress.plan(len(fallback_scrapers))
+        for i, fallback_source in enumerate(fallback_scrapers):
             # Re-check missing fields
             missing = [k for k, v in metadata.items() if not v]
             if not missing:
+                apply_progress.unplan(len(fallback_scrapers) - i)
                 break  # All fields filled
 
             # Skip if scraper is disabled
             if not fallback_enabled.get(fallback_source, True):
                 logger.info(f"Fallback scraper {fallback_source} is disabled, skipping")
+                apply_progress.unplan(1)
                 continue
 
+            if fallback_source == 'ai':
+                apply_progress.begin('ai')
+            else:
+                apply_progress.begin(
+                    'search',
+                    source=_PROGRESS_SOURCE_LABELS.get(fallback_source, fallback_source),
+                )
             try:
                 if fallback_source == 'esde':
                     # Try ES-DE fallback
@@ -1096,6 +1117,7 @@ def _run_fallbacks(metadata, result, sources_data, game, db_game_id,
 
             except Exception as fallback_error:
                 logger.warning(f"Fallback scraper {fallback_source} failed: {fallback_error}")
+            apply_progress.step_done()
 
 
 def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
@@ -1335,6 +1357,14 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         # =============================================
 
         logger.info(f"Fetching from primary source: {primary_source}")
+        # Primary fetch, database save, RetroAchievements check, and the
+        # fallbacks expected now so the primary's downloads don't read as most
+        # of the job. Each media download adds its own steps when reached.
+        expected_fallbacks = len(_fallback_order(
+            primary_source, {}, restrict_to_selected, secondary_sources)) if fill_gaps else 0
+        apply_progress.plan(3 + expected_fallbacks)
+        apply_progress.begin(
+            'fetch', source=_PROGRESS_SOURCE_LABELS.get(primary_source, primary_source))
 
         if primary_source == 'esde':
             # Pass 41.4.B (ES-DE branch) — guard the ES-DE primary dispatch
@@ -1530,11 +1560,15 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 logger.warning(f"Primary ScreenScraper fetch/apply failed for {primary_id}: {e}; "
                                "falling through to gap-fill")
 
+        apply_progress.step_done()
+
         # =============================================
         # FILL GAPS FROM SECONDARY SOURCES
         # =============================================
 
         if fill_gaps:
+            # _run_fallbacks plans the steps it will actually take.
+            apply_progress.unplan(expected_fallbacks)
             _run_fallbacks(
                 metadata, result, sources_data, game, db_game_id,
                 primary_source, system_folder, secondary_sources,
@@ -1623,14 +1657,18 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         # =============================================
 
         # Pass 38.1 — SAVE TO DATABASE block extracted to _save_game_row.
+        apply_progress.begin('save')
         _save_game_row(c, metadata, scrape_history_json, db_game_id)
 
         conn.commit()
+        apply_progress.step_done()
 
         # Pass 38.1 — RA-check extracted to _apply_retroachievements_check.
+        apply_progress.begin('achievements')
         title_to_check = metadata['title'] or game.get('title', '')
         if _apply_retroachievements_check(db_game_id, title_to_check, system_folder):
             result['filled_fields'].append('retroachievements')
+        apply_progress.step_done()
 
         # Calculate final missing fields
         result['missing_fields'] = [k for k, v in metadata.items() if not v]

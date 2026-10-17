@@ -18,6 +18,7 @@
 #                                   alt_title_entry, merge_alt_titles
 # =============================================================================
 
+import contextvars
 import os
 import re
 import logging
@@ -25,6 +26,7 @@ import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from config import IMAGE_PATH, STATIC_PATH
+from services import apply_progress
 from services.image_utils import (
     preferred_image_extension,
     finalize_downloaded_image,
@@ -125,7 +127,7 @@ def _download_and_finalize(url, local_path, image_type, *, timeout=15):
                 )
                 return False
             written = 0
-            with open(tmp_path, 'wb') as f:
+            with open(tmp_path, 'wb') as f, apply_progress.download(local_path, declared) as dl:
                 for chunk in r.iter_content(chunk_size=8192):
                     if not chunk:
                         continue
@@ -136,6 +138,7 @@ def _download_and_finalize(url, local_path, image_type, *, timeout=15):
                         )
                         return False
                     f.write(chunk)
+                    dl.received(written)
         os.replace(tmp_path, local_path)
     except Exception as e:
         logger.warning(f"Download error for {url}: {e}")
@@ -205,7 +208,12 @@ def _download_screenshots_parallel(download_jobs, existing_hashes, source_label)
 
     workers = min(_MEDIA_DOWNLOAD_WORKERS, len(download_jobs))
     with ThreadPoolExecutor(max_workers=workers, thread_name_prefix='ss-dl') as ex:
-        for fut in as_completed([ex.submit(_run, i) for i in range(len(download_jobs))]):
+        # A fresh context copy per job carries the Apply Metadata progress
+        # tracker into the pool thread; one Context cannot be entered twice
+        # at once, so the copies are not shared.
+        futures = [ex.submit(contextvars.copy_context().run, _run, i)
+                   for i in range(len(download_jobs))]
+        for fut in as_completed(futures):
             try:
                 idx, filename = fut.result()
                 results[idx] = filename or None
@@ -994,7 +1002,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
                     logger.warning(f"ScreenScraper media rejected: declared {declared} > {max_bytes}")
                     return False
                 written = 0
-                with open(dest_path, 'wb') as f:
+                with open(dest_path, 'wb') as f, apply_progress.download(dest_path, declared) as dl:
                     for chunk in r.iter_content(chunk_size=8192):
                         if not chunk:
                             continue
@@ -1008,6 +1016,7 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
                                 pass
                             return False
                         f.write(chunk)
+                        dl.received(written)
             return True
         except Exception as e:
             logger.warning(f"Failed to download ScreenScraper media: {e}")

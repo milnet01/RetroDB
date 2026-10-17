@@ -738,14 +738,6 @@
 
 {% include '_modals/filter_modal.html' %}
 
-<!-- Hidden form for applying metadata -->
-<form id="applyMetadataForm" method="POST" style="display: none;">
-    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
-    <input type="hidden" name="action" value="apply">
-    <input type="hidden" id="applyGameSource" name="game_source" value="">
-    <input type="hidden" id="applySecondarySelections" name="secondary_selections" value="">
-</form>
-
 {% include '_modals/edit_modal.html' %}
 
 {% include '_modals/boxart_zoom_modal.html' %}
@@ -3012,18 +3004,45 @@ body:has(.game-fanart-bg.active)::before {
     text-align: center;
 }
 
-.applying-spinner {
-    width: 60px;
-    height: 60px;
-    border: 4px solid rgba(76, 201, 240, 0.2);
-    border-top-color: var(--primary-cyan);
-    border-radius: 50%;
+/* PASS-59-108 — ring gauge, filled by static/js/apply-progress.js */
+.applying-gauge {
+    position: relative;
+    width: 140px;
+    height: 140px;
     margin: 0 auto 20px;
-    animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
+.applying-gauge svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.applying-gauge circle {
+    fill: none;
+    stroke-width: 8;
+}
+
+.applying-gauge-track {
+    stroke: var(--border-color);
+}
+
+.applying-gauge-fill {
+    stroke: var(--primary-cyan);
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 6px var(--primary-cyan-glow));
+    transition: stroke-dashoffset var(--transition-slow);
+}
+
+.applying-gauge-percent {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    color: var(--primary-cyan);
 }
 
 .applying-text {
@@ -4847,9 +4866,6 @@ async function performSearch(event) {
 function applyMetadata(gameSource) {
     console.log('applyMetadata called with:', gameSource);
 
-    // Show loading overlay
-    showApplyingOverlay();
-
     // Decode the URI-encoded source (for ES-DE paths with special characters)
     const decodedSource = decodeURIComponent(gameSource);
     console.log('Decoded source:', decodedSource);
@@ -4870,29 +4886,9 @@ function applyMetadata(gameSource) {
         }
     });
 
-    document.getElementById('applyGameSource').value = decodedSource;
-    document.getElementById('applySecondarySelections').value = selections.length ? JSON.stringify(selections) : '';
-    console.log('Form value set, secondary selections:', selections.length, 'submitting form...');
-    document.getElementById('applyMetadataForm').submit();
-}
-
-function showApplyingOverlay() {
-    // Create overlay if it doesn't exist
-    let overlay = document.getElementById('applyingOverlay');
-    if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.id = 'applyingOverlay';
-        overlay.className = 'applying-overlay';
-        overlay.innerHTML = `
-            <div class="applying-content">
-                <div class="applying-spinner"></div>
-                <div class="applying-text">Applying Metadata...</div>
-                <div class="applying-subtext">Downloading images and updating database</div>
-            </div>
-        `;
-        document.body.appendChild(overlay);
-    }
-    overlay.classList.add('active');
+    console.log('Secondary selections:', selections.length, 'starting apply...');
+    // PASS-59-108 — runs in the background behind a progress gauge.
+    ApplyProgress.run(gameId, decodedSource, selections.length ? selections : null);
 }
 
 // ============================================
@@ -5458,4 +5454,6 @@ document.querySelectorAll('.filter-link').forEach(link => {
 
 <!-- Pass 44 — multi-emulator launch -->
 <script src="{{ asset_url('js/game-launch.js') }}" defer></script>
+<!-- PASS-59-108 — Apply Metadata progress gauge -->
+<script src="{{ asset_url('js/apply-progress.js') }}" defer></script>
 {% endblock %}

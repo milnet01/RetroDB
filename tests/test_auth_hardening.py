@@ -225,6 +225,7 @@ class TestEditorRequiredOnDestructiveEndpoints:
         ('games_media.api_rename_rom', '/api/rename-rom/1', 'POST'),
         ('games_media.api_delete_screenshot', '/api/delete-screenshot/1', 'POST'),
         ('games.api_game_edit', '/api/game/1/edit', 'POST'),
+        ('games.api_game_apply_metadata', '/api/game/1/apply-metadata', 'POST'),
         ('games.api_games_bulk_edit', '/api/games/bulk-edit', 'POST'),
         ('bulk_scrape.api_bulk_scrape', '/api/bulk-scrape', 'POST'),
         ('bulk_scrape.api_bulk_scrape_job_start', '/api/bulk-scrape-job/start', 'POST'),
