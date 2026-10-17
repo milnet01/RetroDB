@@ -7812,6 +7812,66 @@ were corrected in `2836bc3` and are not repeated here.
 - **Status**: todo. Use `locate-defect` first. Lanes: achievements.
 - **Source**: PASS-59-106 spec research, 2026-10-17.
 
+---
+
+#### Pass 59.111 Make renewing the PSN sign-in painless (MEDIUM, M)
+- **Target**: the PSN setup in `templates/_settings_tabs/account.html`
+  (NPSSO wizard, Copy NPSSO bookmarklet, paste auto-detect) and
+  `services/jobs/psn_keepalive.py`, which renews a live session daily but
+  only while RetroDB runs.
+- **Why**: the user wants renewing the token to be as easy as possible.
+  A session left alone for about two months while RetroDB is off expires,
+  and the user goes through the whole wizard again.
+- **Plan**: first walk the flow end to end as a new user (`verify-delivery`),
+  starting with the PASS-59-71 rotation, and list every rough step. Then fix
+  what the walk finds. No design until the walk is done.
+- **Status**: todo. Lanes: psn, ui.
+- **Source**: user, 2026-10-17.
+
+---
+
+#### Pass 59.112 Remake the trailer for v4.0.0, with a disclaimer (MEDIUM, M)
+- **Target**: new clips for the Hub website session, which builds the
+  trailer (recipe in memory `trailer-footage-owed`).
+- **Why**: the current trailer skips achievements and trophies and much
+  else. The user wants one new trailer once v4.0.0 ships.
+- **Plan**: cover achievements and trophies, Play from the library,
+  scraping and AI Fill, tools and stats, and regional versions. End on the
+  disclaimer card the user approved 2026-10-17 (text in memory
+  `trailer-v4-plan`): RetroDB supplies no games, ROMs or BIOS files and does
+  not condone piracy; trademarks belong to their owners; online services
+  need your own account, some limit free use or charge, AI services charge
+  per use.
+- **Status**: todo; blocked by the v4.0.0 release (PASS-59-113).
+  Lanes: marketing.
+- **Source**: user, 2026-10-17.
+
+---
+
+#### Pass 59.113 v4.0.0 release plan: what ships before the major bump (HIGH, L)
+- **Why**: the user set the v4.0.0 scope on 2026-10-17. v4.0.0 ships when
+  every theme below is done; then the trailer is remade (PASS-59-112).
+- **Order**: items stay filed where they are; work them in this order.
+  1. Known serious bugs: PASS-59-50, PASS-59-51, PASS-59-52, PASS-59-56,
+     PASS-59-57, PASS-59-67, PASS-59-69.
+  2. Achievements you trust: PASS-59-110, PASS-59-58, PASS-59-111.
+  3. One game, many versions: PASS-59-106, then PASS-59-107.
+  4. Play out of the box: PASS-59-91 (remaining stages), PASS-59-81.
+  5. Easier everyday use: PASS-53-1, PASS-53-2, PASS-53-7, PASS-53-8,
+     PASS-53-10, PASS-53-11.
+  6. Stricter browser security: PASS-60-1, after the template changes
+     above, so inline scripts move once.
+  7. Fully translated: PASS-52-1, PASS-59-109, PASS-57-6, PASS-59-93,
+     PASS-59-61, PASS-59-62; last, once every new string has landed.
+  8. Full code review, the last thing done before v4.0.0 (user,
+     2026-10-17): the 14-agent audit (CLAUDE.md Periodic Independent
+     Review), run once everything above has shipped.
+  9. Fix everything the review finds, translating any new strings the
+     fixes add.
+  10. Release v4.0.0, then PASS-59-112.
+- **Status**: todo. Lanes: release.
+- **Source**: user, 2026-10-17.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
