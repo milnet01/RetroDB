@@ -197,8 +197,9 @@ def _logging_validator(value):
 # retroarch_binary may be empty (resolver fallback chain), an absolute
 # path, or the literal `flatpak run <app-id>` form.  No shell metacharacters
 # are accepted: the resolver passes argv to subprocess.Popen with shell=False
-# and shlex.quote-s every variable, but defense in depth — reject obvious
-# injection attempts at the persistence boundary so a leaked admin session
+# and substitutes variables into already-split tokens, so a value cannot
+# become extra arguments (see launch_resolver). Still, defense in depth —
+# reject obvious injection attempts at the persistence boundary so a leaked admin session
 # can't poison the setting.
 import re as _re
 _FLATPAK_RUN_RE = _re.compile(r'^flatpak run [A-Za-z0-9._\-]+$')

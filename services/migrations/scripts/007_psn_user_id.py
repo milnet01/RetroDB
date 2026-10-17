@@ -20,9 +20,9 @@
 # Why a full table rebuild: SQLite can't DROP an inline column-level UNIQUE
 # constraint, only recreate the table around it. Steps follow the canonical
 # 12-step procedure from https://sqlite.org/lang_altertable.html#otheralter.
-# FOREIGN KEYS are left OFF for the duration since the connection factory
-# never turns them ON anyway; belt-and-braces still disables them here so
-# the rebuild is safe even if a future init enables FKs globally.
+# The connection factory turns FOREIGN KEYS ON (Pass 35.3), so the rebuild
+# defers enforcement to COMMIT (`defer_foreign_keys`, below) and then checks
+# the rebuilt tables for violations.
 #
 # PSN schema history: `psn_games` / `psn_trophies` / `psn_sync_status` were
 # created by an ad-hoc migration in `services.psn_sync` that pre-dates the

@@ -284,7 +284,7 @@ ROMAN_NUMERAL_MAP = {
     'XVI': '16', 'XVII': '17', 'XVIII': '18', 'XIX': '19', 'XX': '20'
 }
 
-# ESRB to PEGI rating mapping (legacy — prefer RATING_CROSS_MAP for new code)
+# ESRB to PEGI rating mapping (legacy — prefer map_rating() and the tier tables for new code)
 ESRB_TO_PEGI_MAP = {
     'E': 'PEGI 3',      # Everyone -> PEGI 3
     'EC': 'PEGI 3',     # Early Childhood -> PEGI 3
@@ -745,7 +745,8 @@ def infer_rating_from_content(game):
     """Infer age ratings from game metadata when no ratings are available.
 
     Analyzes genre, description, game structure, franchise, and system era
-    to estimate a maturity tier, then maps it to all 8 rating systems.
+    to estimate a maturity tier, then maps it to every rating system in
+    RATING_SYSTEM_KEYS.
 
     Args:
         game: dict with keys like 'genre', 'description', 'game_structure',
@@ -1197,8 +1198,8 @@ def derive_title_from_filename(rom_path, is_computer_system=False):
     # Convert ' - ' back to ': ' (reversing the naming standard)
     # But be careful: "The Legend of Zelda - A Link to the Past" should become
     # "The Legend of Zelda: A Link to the Past"
-    # We only convert the FIRST ' - ' if it looks like a subtitle separator
-    # A subtitle separator typically has a capital letter after it
+    # Every ' - ' followed by a capital letter is treated as a subtitle
+    # separator and converted, not only the first.
     name = re.sub(r' - (?=[A-Z])', ': ', name)
     
     # Normalize colon formatting: " : " -> ": " and " :" -> ":"

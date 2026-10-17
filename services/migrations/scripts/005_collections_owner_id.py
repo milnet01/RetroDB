@@ -10,8 +10,9 @@
 # now applies to every read.
 #
 # Note: the FK reference does not require the `users` table to exist at DDL
-# time — SQLite validates FK targets only at INSERT/UPDATE with PRAGMA
-# foreign_keys=ON, which RetroDB does not enable. Backfill is guarded so a
+# time — SQLite validates FK targets only at INSERT/UPDATE, and only with
+# PRAGMA foreign_keys=ON (RetroDB enables it since Pass 35.3). Backfill is
+# guarded so a
 # truly fresh install (no users table, no rows to scope) is a no-op.
 # =============================================================================
 

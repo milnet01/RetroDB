@@ -85,9 +85,9 @@ def normalize_game_edit(payload):
         - `release_date`: accepts `YYYY-MM-DD` or `YYYY/MM/DD`; junk → None.
         - `players`: routed through `normalize_players_value` so the INTEGER
           column stays well-typed (Pass 40.6 invariant).
-        - 8-system rating cross-map: fires only on the rating keys that are
+        - Rating cross-map: fires only on the rating keys that are
           actually present in the payload, so callers that pass a single
-          rating field do not get the other seven written underneath them.
+          rating field do not get the other systems written underneath them.
         - `sort_title`: auto-generated from `title` when `title` is provided
           and `sort_title` is empty / missing.
         - `similar_games`: comma-separated list re-joined with one space after

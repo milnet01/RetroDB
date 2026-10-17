@@ -6,7 +6,7 @@
 
 ## 1. Purpose
 
-RetroDB ingests game metadata from a mix of remote APIs (IGDB, TGDB, RAWG, ScreenScraper, Steam, Xbox, RetroAchievements, HLTB), a local file source (ES-DE `gamelist.xml` + `downloaded_media/`), and a generative AI fallback. The scraper subsystem unifies these into a single `games` row: it walks one user-selected primary source, falls back to user-prioritised secondaries to fill any remaining gaps, and writes the result without ever overwriting a non-empty field unless the user has opted into Full Re-scrape mode.
+RetroDB ingests game metadata from a mix of remote APIs (IGDB, TGDB, RAWG, ScreenScraper, RetroAchievements, HLTB), a local file source (ES-DE `gamelist.xml` + `downloaded_media/`), and a generative AI fallback. Steam and Xbox modules supply per-user library imports and achievement data, not metadata. The scraper subsystem unifies these into a single `games` row: it walks one user-selected primary source, falls back to user-prioritised secondaries to fill any remaining gaps, and writes the result without ever overwriting a non-empty field unless the user has opted into Full Re-scrape mode.
 
 Three contracts pin the subsystem and exist solely because they were broken in the past:
 
@@ -29,8 +29,8 @@ See also: CLAUDE.md "Scraper fill-only invariant" and "Schema / data shapes"; [`
 | IGDB              | `scraper/scrape_igdb.py`          | remote          | `igdb_client_id` + `igdb_client_secret`                                   | Richest metadata (genres, modes, perspectives, age ratings × 7 systems, franchise, similar games) |
 | RAWG.io           | `scraper/scrape_rawg.py`          | remote          | `rawg` (settings key; falls back to `RAWG_API_KEY` in `config.py`)        | Metacritic critic score, user score, ESRB; platform-specific boxart                               |
 | ScreenScraper     | `scraper/scrape_screenscraper.py` | remote          | `screenscraper_username` + `_password` + `_devid` + `_devpassword`        | Retro-specific metadata, regional alt titles, system-specific media (boxart 3D, video, manual)    |
-| Steam             | `scraper/scrape_steam.py`         | remote          | No (public store API)                                                     | PC port metadata; HLTB-adjacent enrichment                                                        |
-| Xbox              | `scraper/scrape_xbox.py`          | remote          | No (public store API)                                                     | Xbox port metadata; achievement-adjacent enrichment                                               |
+| Steam             | `scraper/scrape_steam.py`         | remote          | `steam_api_key` + `steam_id` (store app details need no key)              | Per-user owned-games import and achievement sync. Not a source in the hybrid walk.                |
+| Xbox              | `scraper/scrape_xbox.py`          | remote          | `xbox_client_id` + `xbox_client_secret`, then a per-user Microsoft OAuth2 sign-in (XBL + XSTS tokens) | Per-user title import and achievement sync. Not a source in the hybrid walk. |
 | RetroAchievements | `scraper/retroachievements.py`    | remote          | `ra_apikey`                                                               | `has_retroachievements`, `ra_game_id`, `ra_achievement_count`, `ra_points` (tail of hybrid apply) |
 | AI Fill           | `scraper/scrape_ai.py`            | AI              | One of: `ai_gemini_api_key`, `ai_openai_api_key`, `ai_anthropic_api_key` (+ optional `ai_gemini_project_id`) | Final gap-fill for text-only fields; never media (see §12)                                        |
 | HLTB              | `scraper/hltb_lookup.py`          | remote          | No (public site scrape)                                                   | Playtime estimates (main / extra / completionist) for HowLongToBeat                               |
@@ -52,7 +52,7 @@ Walk order:
 
 1. **Primary fetch** — `_pick_best_secondary` if the user picked from search results, else freshly fetched via the source-specific `fetch_*_extended` / `fetch_*_game_details`. Each primary dispatch is wrapped in `try / except` (Pass 41.4.B) so a malformed response from one provider falls through to gap-fill rather than aborting the whole hybrid apply.
 2. **Apply primary** — call the matching `apply_<src>_to_metadata(metadata, data, db_game_id, result, fill_only=False)` from `metadata_merger.py`. `fill_only=False` lets the primary overwrite `title` only (other fields stay fill-only across both modes).
-3. **Gap fill** — compute `missing = [k for k, v in metadata.items() if not v]`. Walk user priority (skipping primary, disabled sources, and sources already applied). When `restrict_to_selected=True` and the caller passed `secondary_sources`, fallback is further restricted to that allowlist (plus AI). Each fallback for **TGDB, IGDB, RAWG, ScreenScraper, and AI** runs under the per-source circuit breaker (`_<src>_breaker` in `scraper_manager`) — five consecutive failures opens the breaker for 120 s. ES-DE, Steam, Xbox, RetroAchievements, and HLTB do not have breakers (see §11).
+3. **Gap fill** — compute `missing = [k for k, v in metadata.items() if not v]`. Walk user priority (skipping primary, disabled sources, and sources already applied). When `restrict_to_selected=True` and the caller passed `secondary_sources`, fallback is further restricted to that allowlist (plus AI). Each fallback for **TGDB, IGDB, RAWG, ScreenScraper, and AI** runs under the per-source circuit breaker (`_<src>_breaker` in `scraper_manager`) — five consecutive failures opens the breaker for 120 s. ES-DE has no breaker (see §11). Steam, Xbox and HLTB are not part of the fallback walk; RetroAchievements runs only as the tail step (6).
 4. **Post-merge passes** — region inference from filename (`extract_region_from_filename`), region single-value reduction (`_normalize_region`), save-type detection (`detect_save_type`), controller support detection (`detect_controller_support`), curated DB-default controller override (`get_system_default_controller_name`), rating normalize + cross-map + content-inference (`_normalize_ratings`), `players` integer-coercion via `re.findall(r'\d+', ...)` + `max(...)`, sort-title regeneration.
 5. **Single fill-only UPDATE** — one statement with `COALESCE(?, col)` on every column (see §5 for the exact SQL).
 6. **RA tail** — `_apply_retroachievements_check` opens its own connection, looks up the game by title + system folder, and updates `has_retroachievements` / `ra_*` columns on hit. Exceptions are swallowed so a down RA service can't poison the rest of the scrape.
@@ -226,7 +226,7 @@ Hand-off points:
 
 ## 10. HTTP base contract
 
-`scraper/base_scraper.py` is the only sanctioned HTTP layer for the scraper subsystem. Every adapter (TGDB, IGDB, RAWG, ScreenScraper, AI, RA, Steam, Xbox) goes through it (Pass 41.5 / 41.5.B closed most carry-overs; Xbox followed in Pass 59.26).
+`scraper/base_scraper.py` is the only sanctioned HTTP layer for the `scraper/` package. Every adapter (TGDB, IGDB, RAWG, ScreenScraper, AI, RA, Steam, Xbox) goes through it (Pass 41.5 / 41.5.B closed most carry-overs; Xbox followed in Pass 59.26). The key and status probes in `routes/scraper.py` (`api_check_scraper`, `api_scraper_allowance`) call `requests` directly and are outside this contract: a probe must not wait out a 429 backoff.
 
 `http_get(url, params=None, headers=None, timeout=30, retries=2, max_bytes=None)` and `http_post(url, data=None, json_data=None, headers=None, timeout=30, retries=2, max_bytes=None)`:
 
@@ -333,7 +333,7 @@ End-to-end checklist for a new remote source `foo`:
 - Media fields (`boxart`, `boxart_3d`, `fanart`, `video`, `manual`) are filled only when empty; clear them via the edit modal to force a re-fetch.
 - Stale media references (file deleted, filename still in DB) are detected pre-merge and conditionally NULLed under `WHERE id = ? AND <field> = ?` (Pass 40.15).
 - Every image download MUST go through `base_scraper.download_image` or `metadata_merger._download_and_finalize` — both gate on SSRF, walk the redirect chain, pin the resolved IP, stream with `MAX_MEDIA_DOWNLOAD_BYTES` cap (50 MB default), and write atomically (Pass 25.7, 32.6, 32.7, 40.7, 40.15, 45.2).
-- Every API call goes through `base_scraper.http_get` / `http_post` — backoff with jitter on 429/5xx, optional `max_bytes` cap (Pass 26.4, 32.14).
+- Every API call from a `scraper/` module goes through `base_scraper.http_get` / `http_post` — backoff with jitter on 429/5xx, optional `max_bytes` cap (Pass 26.4, 32.14). Route-level key and status probes in `routes/scraper.py` are exempt (§10).
 - `players` is INTEGER; ranges like `"1-4"` are normalised to the max (4) via `re.findall + max` before save. `normalize_players_value` is the canonical helper for route-layer writes (Pass 40.6).
 - `genre` values are hyphenated and constrained to `FIELD_SCHEMAS` in `scrape_ai.py`. New genres added to either list must be added to both.
 - Curated DB-default controllers always override scraped/AI controller values (`get_system_default_controller_name`).

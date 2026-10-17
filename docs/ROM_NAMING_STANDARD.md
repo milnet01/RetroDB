@@ -176,22 +176,37 @@ When a game was released in multiple regions, use **Europe** as the default for 
 
 ## Systems Classification
 
-The mapping from system → `console` / `computer` lives in code at
-`services.game_utils::get_system_type` (used by `routes/reports.py::141`).
-To add a new system or change the classification of an existing one,
-edit that function — the lists below are illustrative.
+`services.game_utils::get_system_type` sorts each system folder into one
+of four types: `computer`, `handheld`, `engine`, or `console` (the default).
+`routes/reports.py` uses it to pick the naming tags. Each type's tags come
+from the `naming_convention` setting; by default computers use Year +
+Publisher and the other three use Region. To add a system or change its
+type, edit the sets that function reads — the lists below are illustrative.
 
 ### Console Systems (use Region, default USA)
 
 - Nintendo: NES, SNES, N64, GameCube, Wii, Wii U, Switch
-- Nintendo Handheld: Game Boy, GBC, GBA, DS, 3DS
-- Sony: PlayStation, PS2, PS3, PSP, PS Vita
-- Sega: Master System, Genesis/Mega Drive, Saturn, Dreamcast, Game Gear
+- Sony: PlayStation, PS2, PS3
+- Sega: Master System, Genesis/Mega Drive, Saturn, Dreamcast
 - Microsoft: Xbox, Xbox 360
-- Atari: 2600, 5200, 7800, Jaguar, Lynx
+- Atari: 2600, 5200, 7800, Jaguar
 - NEC: PC Engine, TurboGrafx-16, PC-FX
-- SNK: Neo Geo, Neo Geo Pocket
+- SNK: Neo Geo
 - Other: 3DO, ColecoVision, Intellivision, Vectrex
+
+### Handheld Systems (use Region)
+
+- Nintendo: Game Boy, GBC, GBA, Virtual Boy, DS, 3DS
+- Sony: PSP, PS Vita
+- Sega: Game Gear
+- Atari: Lynx
+- SNK: Neo Geo Pocket
+- Bandai: WonderSwan
+
+### Engine Systems (use Region)
+
+Game engines, frameworks and fantasy consoles, such as PICO-8, TIC-80,
+ScummVM, OpenBOR and Doom ports.
 
 ### Computer Systems (use Year + Publisher, default Europe)
 
@@ -306,12 +321,13 @@ RetroDB's Archive Scanner can automatically create M3U playlists:
 
 1. **Scan** for multi-file archives
 2. **Create M3U** extracts the archive, creates the folder structure, adds `noload.txt`, and generates the M3U playlist
-3. **Original archive** stays where it is unless you ask for it to be moved.
-   Tick *delete archives* and it is moved — never deleted — to a server-side
-   staging folder: `m3u_staging` inside the *Temporary Path* set on the ROM
-   Tools Settings page (the system temp folder when that is empty). Leaving the option
-   off is the default. Either way the original survives as a fallback if the
-   extracted set is rejected; delete it by hand once you have verified it.
+3. **Original archive** is moved — never deleted — to a server-side staging
+   folder: `m3u_staging` inside the *Temporary Path* set on the ROM Tools
+   Settings page (the system temp folder when that is empty). The Archive
+   Scanner page always moves it. The API accepts `move_to_staging: false` on
+   `/api/rom-tools/archive-scanner/create-m3u` to leave it in place. The
+   original survives as a fallback if the extracted set is rejected; delete
+   it by hand once you have verified it.
 
 ---
 

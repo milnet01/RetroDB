@@ -6955,7 +6955,17 @@ were corrected in `2836bc3` and are not repeated here.
   the wrong range.
 - **Plan**: fix the document side where named; decide first where marked
   ambiguous. Prefer dropping a stale figure over re-taking it.
-- **Status**: planned (2026-09-01). Lanes: docs.
+- **Shipped** (2026-10-17): each claim re-checked against the code, then
+  the document side fixed. Decisions on the two marked ambiguous:
+  `routes/scraper.py`'s bare `requests` calls are key/status probes, so
+  `scrapers.md` §10/§14 now exempt them (a probe must not wait out a 429
+  backoff); the subtitle-dash comment in `game_utils.py` now matches the
+  code, which converts every ` - ` before a capital. `ROM_NAMING_STANDARD.md`
+  now lists four system types and says the Archive Scanner always moves
+  the original archive to staging. `image-pipeline.md` was done in
+  PASS-59-51. CLAUDE.md's template count was dropped, not re-taken. Other
+  `path:line` ranges in `api-contracts.md` were not checked.
+- **Status**: done (2026-10-17). Lanes: docs.
 - **Source**: review-code, 18 lanes, 2026-09-01.
 
 ---

@@ -540,8 +540,8 @@ read-only is not the criterion:
 - `/api/settings` GET — `@admin_required`.
 
 `@admin_required` is the strictest gate in `services/auth.py`'s role
-hierarchy. Player and Viewer roles cannot reach any settings mutation;
-attempts return 403. CSRF protection is **hand-rolled, not Flask-WTF or any
+hierarchy. Only the admin role can reach a settings mutation; editor,
+player and viewer requests get 403. CSRF protection is **hand-rolled, not Flask-WTF or any
 session middleware**: an `@app.before_request` hook (`app.py:validate_csrf`)
 compares an `X-CSRF-Token` header or `_csrf_token` form field against the
 session token with `secrets.compare_digest` on every POST/PUT/DELETE. It skips

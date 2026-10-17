@@ -1,6 +1,6 @@
 # Background Jobs Subsystem
 
-> **TL;DR.** Eleven singleton job classes share one `services/jobs/base.py` toolkit:
+> **TL;DR.** Singleton job classes share one `services/jobs/base.py` toolkit:
 > a `job_queue` table for crash recovery, an `fcntl.flock`-based cross-process
 > singleton, a `self.cancelled` cooperative-cancel flag, and a module-level
 > `shutdown_requested` Event for SIGTERM drain. New jobs subclass nothing —
@@ -29,7 +29,7 @@ can be resumed (or surfaced) on the next start.
 
 ## 2. Inventory
 
-Ten files, eleven singleton classes (`platform_sync.py` hosts two — Steam + Xbox). All live in `services/jobs/`. The singleton instances are at the bottom of [`services/jobs/__init__.py`](../../services/jobs/__init__.py).
+`platform_sync.py` hosts two job classes (Steam and Xbox); every other file in the table hosts one. The singleton instances are at the bottom of [`services/jobs/__init__.py`](../../services/jobs/__init__.py). `services/jobs/psn_keepalive.py` is not a job class: it is a daily daemon thread (`start_psn_keepalive_thread`) that refreshes PSN sessions near expiry.
 
 | File | Class | Singleton name | What it does |
 |------|-------|----------------|--------------|
@@ -260,7 +260,7 @@ thread cancel event").
 
 ## 7. `processing` field contract
 
-`get_status()` returns **both** `processed` and `processing`:
+`BulkScrapeJob.get_status()` returns **both** `processed` and `processing`; new jobs should too (§11 skeleton). `PSNRefreshJob` and `ImageResizeJob` return `processed` only, and in `ImageResizeJob` it counts images processed:
 
 - `processed = success_count + failed_count + skipped_count` — past tense,
   the count rendered below the progress bar.
@@ -338,9 +338,10 @@ it. The fields and their consumers
 
 | Field | Type | Producer | Toast consumer |
 |-------|------|----------|----------------|
-| `running` / `paused` / `completed` / `cancelled` | bool | all jobs | state machine — drives polling cadence + cancel-button visibility |
-| `current` / `total` / `percent` | int | all jobs | progress bar fill |
-| `processed` / `processing` | int | all jobs (§7) | counter strings above + below the bar |
+| `running` / `completed` / `cancelled` | bool | all jobs | state machine — drives polling cadence + cancel-button visibility |
+| `paused` | bool | bulk_scrape, psn_refresh | paused state |
+| `current` / `total` / `percent` | int | all jobs (`percent`: all but museum) | progress bar fill |
+| `processed` / `processing` | int | bulk_scrape (both); psn_refresh, image_resize (`processed` only) (§7) | counter strings above + below the bar |
 | `success` / `failed` / `skipped` | int | scrape / sync jobs | result-breakdown line (icons + counts) |
 | `current_game` | string | bulk_scrape, ra_*, psn_refresh, hltb_bulk | "currently being processed" line on most job types |
 | `current_file` | string | image_resize | same line, file-rather-than-game wording |

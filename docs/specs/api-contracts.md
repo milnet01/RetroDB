@@ -194,7 +194,7 @@ exception path should render HTML.
 ## 5. ETag
 
 Only one route currently sets `ETag` / honours `If-None-Match`:
-`/api/games/card-data` (`routes/games.py:220-298`, Pass 21.1 + Pass 40.5).
+`/api/games/card-data` (`routes/games.py::api_games_card_data`, Pass 21.1 + Pass 40.5).
 
 ### 5.1 Key composition
 
@@ -394,11 +394,11 @@ HMAC because the token is opaque session state, not signed content).
 ## 10. Pagination
 
 Single convention (page/per_page with server-side cap), modeled by
-`/api/games` (`routes/games.py:116-164`):
+`/api/games` (`routes/games.py::api_games`):
 
 ```python
-page = request.args.get('page', 1, type=int)
-per_page = min(request.args.get('per_page', 100, type=int), 200)
+page = max(request.args.get('page', 1, type=int), 1)
+per_page = min(max(request.args.get('per_page', 100, type=int), 1), 200)
 # ... data query ...
 data_sql += " LIMIT ? OFFSET ?"
 data_vals.extend([per_page, (page - 1) * per_page])

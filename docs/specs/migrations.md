@@ -402,8 +402,8 @@ Things to copy when authoring a similar migration:
   `_add_column_if_missing` there checks `_has_column()` first and only ALTERs
   when missing. The inline `try/except sqlite3.OperationalError: pass` shape
   in 012 is the pre-Pass-42.2 pattern and is **not** the model to copy; it
-  silently swallows non-duplicate-column SQL errors. Migration 012's inline
-  helper is the last remaining instance and is left in place per the
+  silently swallows non-duplicate-column SQL errors. Migrations 001 and 012
+  both carry this inline helper; they stay as they are under the
   append-only rule.
 - **FK clauses on brand-new tables are free.** You only need the table-rebuild
   procedure (§9) when adding FKs to a table that already exists in production.
@@ -524,7 +524,7 @@ your migration — not in the runner.
 | 006 | `006_per_user_platform_tokens.py` | Create `user_platform_tokens`; ingest legacy `psn_tokens.json` / `xbox_tokens.json`; add `user_id` to `psn_sync_status`. | Pass 27.2. Its ingest never ran on the shipped layout, because it looked beside the DB file rather than in `data/`; 015 does it (Pass 59.44). |
 | 007 | `007_psn_user_id.py` | Table-rebuild `psn_games` / `psn_trophies` to add `user_id` + composite UNIQUE keys. | Pass 31.1. First rebuild migration; uses `defer_foreign_keys = ON` (Pass 41.2 lesson). |
 | 008 | `008_collector_trophies_user_id.py` | Table-rebuild `collector_trophies` with composite PK `(id, user_id)`. | Pass 31.3. Per-user Collector Rank. |
-| 009 | `009_achievement_tables_user_id.py` | Add `user_id` to `game_achievement_progress`, `steam_achievements`, `xbox_achievements`. | Pass 31.2. Mix of table-rebuild (one table) + additive ALTER (two tables). |
+| 009 | `009_achievement_tables_user_id.py` | Add `user_id` to `game_achievement_progress`, `steam_achievements`, `xbox_achievements`. | Pass 31.2. Rebuilds all three tables to add `user_id` (backfilled to the admin). If `user_id` already exists, it only creates the indexes. |
 | 010 | `010_user_game_views.py` | Create `user_game_views` (per-user recently-viewed timestamps). | Pass 41.9. `games.last_viewed` becomes vestigial — kept, no longer written. |
 | 011 | `011_user_game_views_cascade_fk.py` | Rebuild `user_game_views` with `ON DELETE CASCADE` FKs. | Pass 45.15. Canonical CASCADE-FK rebuild example (§9). |
 | 012 | `012_emulators.py` | Create `emulators` + `system_emulators`; add `emulator_override_id` / `launch_args_override` to `games`. | Pass 44. Reference for the "new tables + additive columns" shape (§10), with two pre-Pass-42.2 caveats: it carries an inline `_add_column_if_missing` instead of importing the strict helper, and it calls `conn.commit()` mid-`apply()`. Don't copy either pattern into new migrations. Seed data loads separately from `data/emulator_seeds.json`. |
