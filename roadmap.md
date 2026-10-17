@@ -7533,8 +7533,25 @@ were corrected in `2836bc3` and are not repeated here.
   with a generated password, kept in a local gitignored scratch file and
   never in chat or a tracked file; sign in as it in Chrome; check; delete
   the account.
-- **Status**: todo. Lanes: auth, ui.
+- **Resolution** (2026-10-17, v3.23.21, no code change): an `editor`
+  account signed in through `/login` in Chrome. The sidebar had no Log
+  Viewer link. The edit modal on `/game/1` opened with no
+  `edit_launch_args_override` field and no "Custom launch args" label. The
+  account was then removed with `_delete_user_and_owned_rows`. The password
+  handling changed with the user's consent: the browser tools could not
+  paste from the clipboard, so a throwaway password was typed. The stale
+  "Admin Login" dialog wording seen on the way is Pass 59.98.
+- **Status**: shipped (2026-10-17). Lanes: auth, ui.
 - **Source**: user, 2026-10-17.
+
+#### Pass 59.98 The login password dialog says "Admin Login" for every role (LOW, S)
+- **Target**: `templates/login.html` password modal heading and
+  placeholder (`Admin Login`, `Enter admin password`).
+- **Why**: Pass 24.1 made every role sign in with a password, but the
+  dialog still calls it an admin login. It misleads: the user recalled
+  non-admin accounts as passwordless.
+- **Status**: todo. The new strings need every locale. Lanes: auth, i18n.
+- **Source**: PASS-59-97 browser check, 2026-10-17.
 
 ## Done index
 
