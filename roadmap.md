@@ -6862,6 +6862,14 @@ when already in the file.
   completion menu were checked: no console errors, menu disabled).
 - **Status**: done (2026-10-17). Lanes: all.
 - **Source**: review-code, 18 lanes, 2026-09-01.
+- **Progress** (2026-10-17): Browser walk done 2026-10-17 on :5001 (scratch DB): (1) edit modal
+  opened twice pushes one focus trap, close pops it; (2) with the
+  pseudolocale, a genre chip's × removes the right value; (3)
+  normalisation confirm renders a real table, markup in a value shows as
+  text; (4) Ctrl+G / Ctrl+D / Alt+G pass through the handler, plain g is
+  handled; (6) closing an unrelated dialog leaves scroll lock and trap
+  stack alone; (7) a boxart file name with ' and " gives a valid onerror
+  that falls back correctly. No console errors.
 
 ---
 
@@ -8198,6 +8206,10 @@ were corrected in `2836bc3` and are not repeated here.
   then switch to `error(msg, 4xx)`. Several sit in functions with a local
   variable named `error`; rename it.
 - **Verify**: per endpoint, the error path shows its message in the UI.
+- **Progress** (2026-10-17): Browser check 2026-10-17: API.get/post reject with the server's
+  message and status (scraper allowance 404, bonus-disc link 400). The
+  per-page error toasts listed in the helper's report were not walked
+  one by one.
 
 ---
 
@@ -8232,6 +8244,12 @@ were corrected in `2836bc3` and are not repeated here.
   the page polls it instead of waiting on the response.
 - **Verify**: a bulk fetch over several controllers returns at once, shows
   progress, and can be cancelled.
+- **Progress** (2026-10-17): Browser walk done 2026-10-17 (Amiga1200, real fetch): progress "0 of
+  7", button disabled, reopening the page resumed polling, Cancel
+  stopped after 1 of 7 and reset the page. Found and fixed: Cancel
+  showed before any fetch (8b71fb7). Narrow-width (375 px) layout not
+  checked. Note: controller images save to the live
+  static/images/controllers even on a scratch DB.
 
 ---
 
@@ -8274,6 +8292,10 @@ were corrected in `2836bc3` and are not repeated here.
 - **Plan**: confirm each with a red test, then fix; drop any that do
   not reproduce.
 - **Verify**: per item, its test.
+- **Progress** (2026-10-17): Browser check done 2026-10-17: Settings → Save My Settings with a
+  missing RPCS3 folder shows "Invalid RPCS3 trophy folder: directory
+  does not exist"; the user's real folder passes the new check and
+  saves.
 
 ---
 
@@ -8308,6 +8330,12 @@ were corrected in `2836bc3` and are not repeated here.
   symlinked file that points outside the ROM root; the batch M3U confirm
   text does not say archives are moved to staging. Low risk each; fold in
   with the items above.
+- **Progress** (2026-10-17): Browser check 2026-10-17: ROM Tools settings Reset now runs to the end
+  (Temporary Path cleared, last field reset, no script errors); new
+  Temporary Path placeholder and help text show. Not run in a browser,
+  because each moves or deletes real ROM files: batch Create M3U
+  (moved-to folder text), Duplicate Finder delete, CHD convert Skip
+  existing. Covered by the helper's render and unit tests only.
 
 ---
 
