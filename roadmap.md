@@ -7649,6 +7649,50 @@ were corrected in `2836bc3` and are not repeated here.
 - **Status**: in progress. Lanes: ui, docs.
 - **Source**: user, 2026-10-17.
 
+#### Pass 59.105 Show every regional name of a game, tagged by region (MEDIUM, M)
+- **Target**: `games.alternate_titles` (JSON `[{title, source}]`, no region
+  today), the scrapers that fill it (`scraper/scrape_igdb.py`,
+  `scraper/metadata_merger.py`, `scraper/scraper_manager.py`), the game
+  page's alternate-titles block, and the ROM Tools Duplicate Finder
+  (`routes/tools.py::api_duplicate_finder_scan`).
+- **Why**: the user wants each game to list all its names by region
+  ("Rockman" in Japan, "Mega Man" in the USA). The names are stored without
+  their region, so they cannot be shown that way or used to match one game's
+  regional ROMs, which PASS-59-106 and duplicate finding need.
+- **Status**: todo. Lanes: scraper, ui.
+- **Source**: user, 2026-10-17.
+
+#### Pass 59.106 Regional versions of a game shown as one game (HIGH, L)
+- **Target**: schema (a version link between `games` rows), Library and
+  system cards, the game page, counts, the Duplicate Finder, and Play.
+- **Why**: a user with a game in several regions sees unrelated cards, and
+  the Duplicate Finder cannot tell a second copy from a regional version.
+- **Decisions** (user, 2026-10-17): versions stay separate `games` rows
+  (own ROM, launch, RetroAchievements set, ratings), linked as one game.
+  One card per game with a versions badge; clicking opens the preferred
+  region's version (the `default_region` setting) with a version switcher on
+  the game page, and the card's Play starts that version. RetroDB suggests
+  groups from strong signals (same IGDB, ScreenScraper or RetroAchievements
+  game, region-stripped title, PASS-59-105's regional names) into a review
+  list the user confirms; manual link and unlink too, never a silent merge.
+  Counts show games with ROMs beside them ("1,204 games (1,530 ROMs)"). The
+  version comparison uses stored data (title, date, publisher, file size and
+  revision, languages from No-Intro tags, ratings, achievements support).
+  Versions in one group are not duplicates.
+- **Status**: todo. Needs a spec (schema plus several subsystems). Builds on
+  PASS-59-105. Lanes: schema, ui, scraper, tools.
+- **Source**: user, 2026-10-17.
+
+#### Pass 59.107 AI summary of known differences between regional versions (LOW, M)
+- **Target**: PASS-59-106's version comparison, through the existing AI
+  Fill path.
+- **Why**: gameplay differences (censorship, difficulty, removed content)
+  are in no scraped field. The user wants them shown, after the data
+  comparison ships (user, 2026-10-17).
+- **Status**: todo, after PASS-59-106. Marked as AI-written wherever shown.
+  Lanes: ai, ui.
+- **Source**: user, 2026-10-17.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
