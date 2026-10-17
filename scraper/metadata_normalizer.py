@@ -101,22 +101,92 @@ def normalize_esrb_rating(rating):
 #
 # Dedupe is case-insensitive on title. Entries whose title matches the game's
 # primary title are dropped — no point storing the same string twice.
+#
+# PASS-59-105: `region` is stored as a CLDR territory code ("JP", "US", "150"
+# Europe, "001" World) so the game page can name it in the user's language via
+# Babel. Sources send raw tags: ScreenScraper short codes ("jp", "eu", "wor")
+# and IGDB free-text comments ("Japanese title - romanization"). An IGDB
+# comment is kept as `note`. ScreenScraper's "ss" (its own house name for the
+# game) and "cus" (custom) are not regions.
 
-def alt_title_entry(title, region=None, source=None):
-    """Build a normalized alt-title dict, or None if title is empty/whitespace."""
+# ScreenScraper region codes that are not the CLDR code upper-cased.
+_SS_REGION_CODES = {
+    'eu': '150', 'wor': '001', 'asi': '142', 'ame': '019', 'oce': '009',
+    'afr': '002', 'mor': '145', 'uk': 'GB', 'sp': 'ES',
+    'ss': None, 'cus': None,
+}
+
+# First word(s) of an IGDB alternative-name comment → CLDR code.
+_IGDB_REGION_WORDS = {
+    'japanese': 'JP', 'japan': 'JP',
+    'us': 'US', 'usa': 'US', 'american': 'US', 'north american': 'US',
+    'european': '150', 'europe': '150', 'eu': '150', 'pal': '150',
+    'uk': 'GB', 'british': 'GB',
+    'german': 'DE', 'french': 'FR', 'spanish': 'ES', 'italian': 'IT',
+    'russian': 'RU', 'chinese': 'CN', 'taiwanese': 'TW', 'korean': 'KR',
+    'brazilian': 'BR', 'portuguese': 'PT', 'swedish': 'SE', 'hebrew': 'IL',
+    'australia': 'AU', 'australian': 'AU', 'polish': 'PL', 'dutch': 'NL',
+    'turkish': 'TR', 'greek': 'GR', 'czech': 'CZ', 'hungarian': 'HU',
+    'finnish': 'FI', 'danish': 'DK', 'norwegian': 'NO', 'canadian': 'CA',
+    'mexican': 'MX', 'latin american': '419', 'asian': '142',
+    'world': '001', 'worldwide': '001', 'international': '001',
+}
+
+_CLDR_REGION_RE = re.compile(r'^(?:[A-Z]{2}|\d{3})$')
+_SS_CODE_RE = re.compile(r'^[a-z]{2,3}$')
+
+
+def alt_title_region(raw):
+    """Split a raw alt-title region tag into `(cldr_code, note)`.
+
+    Either part may be None. A CLDR code passes through unchanged, so the
+    function is safe to run again on stored data.
+    """
+    if not raw:
+        return None, None
+    r = str(raw).strip()
+    if not r:
+        return None, None
+    if _CLDR_REGION_RE.match(r):
+        return r, None
+    if _SS_CODE_RE.match(r):
+        if r in _SS_REGION_CODES:
+            return _SS_REGION_CODES[r], None
+        return (r.upper() if len(r) == 2 else None), None
+    words = re.findall(r'[a-z]+', r.lower())
+    for n in (2, 1):
+        code = _IGDB_REGION_WORDS.get(' '.join(words[:n]))
+        if code:
+            return code, r
+    return None, r
+
+
+def alt_title_entry(title, region=None, source=None, note=None):
+    """Build a normalized alt-title dict, or None if title is empty/whitespace.
+
+    `region` may be a raw source tag; see alt_title_region().
+    """
     if not title:
         return None
     t = str(title).strip()
     if not t:
         return None
     entry = {'title': t}
-    if region:
-        r = str(region).strip()
-        if r:
-            entry['region'] = r
+    code, raw_note = alt_title_region(region)
+    if code:
+        entry['region'] = code
+    note = (str(note).strip() if note else '') or raw_note
+    if note:
+        entry['note'] = note
     if source:
         entry['source'] = source
     return entry
+
+
+def _as_alt_entry(e):
+    """Re-normalize a stored or source alt-title dict (idempotent)."""
+    return alt_title_entry(e.get('title'), region=e.get('region'),
+                           source=e.get('source'), note=e.get('note'))
 
 
 def merge_alt_titles(existing, new_entries, primary_title=None):
@@ -141,18 +211,26 @@ def merge_alt_titles(existing, new_entries, primary_title=None):
             merged = []
     else:
         merged = []
+    merged = [_as_alt_entry(e) for e in merged]
 
-    seen = {e['title'].lower() for e in merged}
-    if primary_title:
-        seen.add(str(primary_title).strip().lower())
+    by_title = {e['title'].lower(): e for e in merged}
+    primary = str(primary_title).strip().lower() if primary_title else None
 
     for entry in new_entries or []:
         if not entry or not entry.get('title'):
             continue
+        entry = _as_alt_entry(entry)
         key = entry['title'].lower()
-        if key in seen:
+        if key == primary:
+            continue
+        if key in by_title:
+            # A name stored before regions were kept gains its region here.
+            held = by_title[key]
+            for field in ('region', 'note'):
+                if entry.get(field) and not held.get(field):
+                    held[field] = entry[field]
             continue
         merged.append(entry)
-        seen.add(key)
+        by_title[key] = entry
 
     return merged

@@ -78,3 +78,19 @@ def locale_display_name(code):
         return Locale.parse(code).get_display_name(code) or code
     except Exception:
         return code
+
+
+def region_display_name(region_code, locale):
+    """A CLDR territory code ("JP", "150") named in ``locale``'s language,
+    via Babel's CLDR data (PASS-59-105). Falls back to English, then to the
+    code itself. The first letter is capitalised: CLDR writes "world" in
+    lower case."""
+    from babel import Locale
+    for loc in (str(locale or 'en'), 'en'):
+        try:
+            name = Locale.parse(loc).territories.get(region_code)
+        except Exception:
+            name = None
+        if name:
+            return name[:1].upper() + name[1:]
+    return region_code

@@ -716,16 +716,18 @@ def game_detail(game_id):
             if xbox_counts and not xbox_counts['total']:
                 xbox_counts = None
 
-        # Decode alternate_titles (stored as JSON list of {title, region?, source?})
-        alternate_titles = []
-        if game_dict.get('alternate_titles'):
-            try:
-                import json as _json_at
-                parsed_alts = _json_at.loads(game_dict['alternate_titles'])
-                if isinstance(parsed_alts, list):
-                    alternate_titles = [a for a in parsed_alts if isinstance(a, dict) and a.get('title')]
-            except (ValueError, TypeError):
-                alternate_titles = []
+        # Decode alternate_titles (stored as JSON list of {title, region?,
+        # note?, source?}). PASS-59-105: re-normalize so names stored with a
+        # raw source tag show a region too, name each region in the user's
+        # language, and list region-tagged names first, grouped by region.
+        from scraper.metadata_normalizer import merge_alt_titles
+        from services.i18n import region_display_name
+        from flask_babel import get_locale
+        alternate_titles = merge_alt_titles(game_dict.get('alternate_titles'), [])
+        for alt in alternate_titles:
+            if alt.get('region'):
+                alt['region_label'] = region_display_name(alt['region'], get_locale())
+        alternate_titles.sort(key=lambda a: (not a.get('region_label'), a.get('region_label') or ''))
 
         return render_template('game_detail.html',
                              game=game,

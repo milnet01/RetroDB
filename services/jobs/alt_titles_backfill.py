@@ -6,7 +6,7 @@
 # them into games.alternate_titles. No media, no other metadata — just names.
 #
 # Uses scraper_manager.search_games() which already surfaces alt titles from
-# IGDB (via alternative_names.name) and ScreenScraper (via regional noms) in
+# IGDB (via alternative_names name + comment) and ScreenScraper (via regional noms) in
 # its search results at no extra API cost.
 # =============================================================================
 
@@ -235,7 +235,9 @@ class AltTitlesBackfillJob:
                         merged = merge_alt_titles(existing, new_alts,
                                                   primary_title=game['title'])
                         added = len(merged) - len(existing)
-                        if added <= 0:
+                        # PASS-59-105: a run can also add regions to names
+                        # already stored, so compare content, not length.
+                        if merged == existing:
                             with self._lock:
                                 self.no_new_alts_count += 1
                             continue

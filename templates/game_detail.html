@@ -428,8 +428,9 @@
             <h2 class="media-title">🏷️ {{ _('Also Known As') }}</h2>
             <div class="aka-list">
                 {% for alt in alternate_titles %}
-                <span class="alt-title-chip" {% if alt.region %}title="{{ alt.region }}{% if alt.source %} · {{ alt.source }}{% endif %}"{% elif alt.source %}title="{% trans source=alt.source %}Source: {{ source }}{% endtrans %}"{% endif %}>
-                    {% if alt.region %}<span class="alt-title-region">{{ alt.region }}</span>{% endif %}
+                {% set alt_tip = [alt.region_label, alt.note]|select|join(' · ') %}
+                <span class="alt-title-chip" {% if alt_tip %}title="{{ alt_tip }}{% if alt.source %} · {{ alt.source }}{% endif %}"{% elif alt.source %}title="{% trans source=alt.source %}Source: {{ source }}{% endtrans %}"{% endif %}>
+                    {% if alt.region_label %}<span class="alt-title-region">{{ alt.region_label }}</span>{% endif %}
                     <span class="alt-title-text">{{ alt.title }}</span>
                 </span>
                 {% endfor %}

@@ -262,7 +262,9 @@ class TestApplyIgdb:
         apply_igdb_to_metadata(meta, igdb, db_game_id=1, result=result)
         assert len(meta['alternate_titles']) == 1
         assert meta['alternate_titles'][0]['title'] == 'Rockman'
-        assert meta['alternate_titles'][0]['region'] == 'Japan'
+        # PASS-59-105: the comment becomes a CLDR code; the raw text is kept.
+        assert meta['alternate_titles'][0]['region'] == 'JP'
+        assert meta['alternate_titles'][0]['note'] == 'Japan'
         assert meta['alternate_titles'][0]['source'] == 'igdb'
 
 

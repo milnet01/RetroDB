@@ -260,7 +260,7 @@ def fetch_igdb_extended(game_id):
                multiplayer_modes.offlinemax, multiplayer_modes.onlinemax,
                multiplayer_modes.campaigncoop, multiplayer_modes.splitscreen,
                summary, storyline, cover.url, screenshots.url, artworks.url,
-               videos.video_id, alternative_names.name,
+               videos.video_id, alternative_names.name, alternative_names.comment,
                franchise.name, franchises.name, collection.name,
                similar_games.name, similar_games.cover.url,
                game_engines.name, platforms.name,

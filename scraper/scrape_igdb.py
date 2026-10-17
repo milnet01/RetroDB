@@ -429,7 +429,7 @@ def fetch_game_details(game_id):
                multiplayer_modes.offlinemax, multiplayer_modes.onlinemax,
                multiplayer_modes.campaigncoop, multiplayer_modes.splitscreen,
                summary, storyline, cover.url, screenshots.url, artworks.url,
-               videos.video_id, alternative_names.name,
+               videos.video_id, alternative_names.name, alternative_names.comment,
                rating, rating_count, aggregated_rating, aggregated_rating_count;
         where id = {game_id};
         """

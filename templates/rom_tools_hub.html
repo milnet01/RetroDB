@@ -297,12 +297,12 @@ function startAltTitlesBackfill() {
         '🌐 Backfill Alternate Titles',
         'Scan every scraped game for alternate / regional titles using IGDB and ScreenScraper search results. ' +
         '<br><br>No media is downloaded, no other metadata is touched — just alternate title lists are merged into the DB.' +
-        '<br><br>By default only games with <em>no</em> alternate titles yet are processed. This may take a while for large libraries.',
+        '<br><br>This may take a while for large libraries.',
         function() {
             fetch('/api/maintenance/alt-titles-backfill/start', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ only_empty: true })
+                body: JSON.stringify({ only_empty: false })
             })
             .then(r => r.json())
             .then(data => {
