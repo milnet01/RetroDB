@@ -2,11 +2,13 @@
 
 import logging
 import time
+from types import SimpleNamespace
 from unittest.mock import patch
 
 import pytest
 
 import config
+import services.database as database_mod
 from services.database import _log_if_slow
 
 
@@ -31,8 +33,15 @@ class TestSlowQueryGate:
         assert capture_db_log.records == []
 
     def test_fast_query_below_threshold_does_not_log(self, capture_db_log):
-        with patch.object(config, 'SLOW_QUERY_MS', 100):
-            _log_if_slow("SELECT 1", (), time.perf_counter())
+        # Pin the clock so the measured elapsed time is exactly 50 ms — under
+        # the 100 ms threshold — whatever the scheduler does between the
+        # call and the check. A real perf_counter() start could cross the
+        # threshold on a stalled runner.
+        start = 1000.0
+        fake_time = SimpleNamespace(perf_counter=lambda: start + 0.050)
+        with patch.object(config, 'SLOW_QUERY_MS', 100), \
+                patch.object(database_mod, 'time', fake_time):
+            _log_if_slow("SELECT 1", (), start)
         assert capture_db_log.records == []
 
     def test_slow_query_above_threshold_logs_warning(self, capture_db_log):

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import ast
 import os
+import sqlite3
 import sys
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -169,3 +170,23 @@ def delete_rows(*parents: tuple[str, int]) -> None:
             execute(f"DELETE FROM {ref['tbl']} WHERE {ref['col']} = ?", (pid,))
     for parent, pid in parents:
         execute(f"DELETE FROM {parent} WHERE id = ?", (pid,))
+
+
+def open_db_positional(path) -> sqlite3.Connection:
+    """Open a SQLite DB whose rows are plain tuples (row[0] access).
+
+    The twin of `open_db_named`: tests that read rows by position use this
+    one, tests that read by column name use that one. The two differ only
+    in `row_factory`; the split lives here so neither caller has to guess.
+    """
+    return sqlite3.connect(path)
+
+
+def open_db_named(path) -> sqlite3.Connection:
+    """Open a SQLite DB whose rows are sqlite3.Row (row['col'] and row[0]).
+
+    See `open_db_positional` for why both exist.
+    """
+    conn = sqlite3.connect(path)
+    conn.row_factory = sqlite3.Row
+    return conn

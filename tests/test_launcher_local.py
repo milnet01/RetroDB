@@ -1,6 +1,5 @@
 # Pass 44 — LocalLauncher: real subprocess wiring.
 import shutil
-import time
 from pathlib import Path
 
 import pytest
@@ -11,35 +10,33 @@ TRUE = shutil.which('true')
 FALSE = shutil.which('false')
 
 
-def _poll_exited(launcher, token, deadline_s=5.0):
-    """Poll launcher.status(token) until state == 'exited' or deadline passes.
+# Generous: wait() returns the moment the child exits, so this bound costs
+# nothing on the happy path and only matters for a genuinely stuck child.
+_WAIT_S = 10.0
 
-    Returns the final status. Fails the test loudly with the last-observed
-    status if the deadline is breached — replaces the prior pattern of a
-    bare poll loop whose timeout surfaced as a silent downstream assert.
 
-    Default 5s (was 2s) tolerates slow CI scheduler reaping of `/bin/true`
-    and `/bin/false` children without flaking; the test still fails on a
-    genuinely stuck child.
-    """
-    deadline = time.time() + deadline_s
-    st = None
-    while time.time() < deadline:
-        st = launcher.status(token)
-        if st.state == 'exited':
-            return st
-        time.sleep(0.05)
-    pytest.fail(f"timed out waiting for state; last={st!r}")
+@pytest.fixture
+def local_launcher():
+    """A fresh LocalLauncher that kills every child still running at
+    teardown, so a failing test cannot leak a `sleep 60` into later tests."""
+    from services.launcher.local import LocalLauncher
+
+    launcher = LocalLauncher()
+    yield launcher
+    for handle in launcher.active():
+        try:
+            launcher.kill(handle.token, timeout_s=2.0)
+        except Exception:
+            pass
 
 
 @pytest.mark.skipif(not SLEEP, reason='no /bin/sleep')
-def test_launch_then_kill_terminates_process():
+def test_launch_then_kill_terminates_process(local_launcher):
     """`kill` with a 2s timeout must terminate a `sleep 60` child cleanly
     (POSIX SIGTERM → SIGKILL escalation in LocalLauncher.kill)."""
-    from services.launcher.local import LocalLauncher
     from services.launcher.base import LaunchContext
 
-    launcher = LocalLauncher()
+    launcher = local_launcher
     ctx = LaunchContext(game_id=1, emulator_id=1, binary=Path(SLEEP),
                         argv=[SLEEP, '60'], token='t1')
     h = launcher.launch(ctx)
@@ -52,41 +49,39 @@ def test_launch_then_kill_terminates_process():
 
 
 @pytest.mark.skipif(not TRUE, reason='no /bin/true')
-def test_launch_quick_exit_reaps_cleanly():
+def test_launch_quick_exit_reaps_cleanly(local_launcher):
     """A fast-exiting child (`/bin/true`) is reaped and surfaces exit_code=0."""
-    from services.launcher.local import LocalLauncher
     from services.launcher.base import LaunchContext
 
-    launcher = LocalLauncher()
+    launcher = local_launcher
     ctx = LaunchContext(game_id=2, emulator_id=2, binary=Path(TRUE),
                         argv=[TRUE], token='t2')
     launcher.launch(ctx)
-    # _poll_exited returns a LaunchStatus or calls pytest.fail — never
-    # returns None — so the prior `assert st is not None` was a dead guard
-    # (test-audit c-003 LOW).
-    st = _poll_exited(launcher, 't2')
+    launcher.wait('t2', timeout_s=_WAIT_S)
+    # Status is read through status(), the public path the app uses.
+    st = launcher.status('t2')
     assert st.state == 'exited'
     assert st.exit_code == 0
 
 
 @pytest.mark.skipif(not FALSE, reason='no /bin/false')
-def test_launch_failed_exit_code_propagates():
+def test_launch_failed_exit_code_propagates(local_launcher):
     """A failing child (`/bin/false`) surfaces its non-zero exit_code."""
-    from services.launcher.local import LocalLauncher
     from services.launcher.base import LaunchContext
 
-    launcher = LocalLauncher()
+    launcher = local_launcher
     ctx = LaunchContext(game_id=3, emulator_id=3, binary=Path(FALSE),
                         argv=[FALSE], token='t3')
     launcher.launch(ctx)
-    st = _poll_exited(launcher, 't3')
+    launcher.wait('t3', timeout_s=_WAIT_S)
+    st = launcher.status('t3')
+    assert st.state == 'exited'
     assert st.exit_code == 1
 
 
-def test_status_unknown_token_raises():
-    from services.launcher.local import LocalLauncher
+def test_status_unknown_token_raises(local_launcher):
     from services.launcher.base import LauncherError
-    launcher = LocalLauncher()
+    launcher = local_launcher
     # Pin the exact error wording — a refactor that raises LauncherError with a
     # generic message (e.g. "internal error") should fail this test loudly
     # rather than pass silently. Production message is "unknown token: <token>".
@@ -95,11 +90,10 @@ def test_status_unknown_token_raises():
 
 
 @pytest.mark.skipif(not SLEEP, reason='no /bin/sleep')
-def test_active_returns_running_only():
+def test_active_returns_running_only(local_launcher):
     """`active()` only includes still-running tokens; killed entries drop out."""
-    from services.launcher.local import LocalLauncher
     from services.launcher.base import LaunchContext
-    launcher = LocalLauncher()
+    launcher = local_launcher
     ctx = LaunchContext(game_id=1, emulator_id=1, binary=Path(SLEEP),
                         argv=[SLEEP, '30'], token='running1')
     launcher.launch(ctx)
@@ -109,15 +103,34 @@ def test_active_returns_running_only():
 
 
 @pytest.mark.skipif(not TRUE, reason='no /bin/true')
-def test_kill_idempotent_on_already_exited():
+def test_kill_idempotent_on_already_exited(local_launcher):
     """Calling `kill` on a token whose child has already exited is a no-op
     that returns an 'exited' status rather than raising."""
-    from services.launcher.local import LocalLauncher
     from services.launcher.base import LaunchContext
-    launcher = LocalLauncher()
+    launcher = local_launcher
     ctx = LaunchContext(game_id=1, emulator_id=1, binary=Path(TRUE),
                         argv=[TRUE], token='quick')
     launcher.launch(ctx)
-    _poll_exited(launcher, 'quick')
+    assert launcher.wait('quick', timeout_s=_WAIT_S).state == 'exited'
     end = launcher.kill('quick', timeout_s=1.0)
     assert end.state == 'exited'
+
+
+def test_wait_unknown_token_raises(local_launcher):
+    from services.launcher.base import LauncherError
+    with pytest.raises(LauncherError, match=r"unknown token.*nope"):
+        local_launcher.wait('nope', timeout_s=1.0)
+
+
+@pytest.mark.skipif(not SLEEP, reason='no /bin/sleep')
+def test_wait_times_out_on_running_child(local_launcher):
+    """wait() is bounded: a still-running child raises TimeoutExpired
+    rather than blocking forever. The fixture kills the child afterwards."""
+    import subprocess
+    from services.launcher.base import LaunchContext
+    ctx = LaunchContext(game_id=4, emulator_id=4, binary=Path(SLEEP),
+                        argv=[SLEEP, '60'], token='slow')
+    local_launcher.launch(ctx)
+    with pytest.raises(subprocess.TimeoutExpired):
+        local_launcher.wait('slow', timeout_s=0.05)
+    assert local_launcher.status('slow').state == 'running'

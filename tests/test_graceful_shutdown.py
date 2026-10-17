@@ -67,7 +67,8 @@ class TestRequestShutdown:
         # `isolated_singletons` Nones out every real job singleton and
         # clears the shutdown_requested event on entry/exit, so this test
         # can't accidentally `.cancel()` a real running job in the process.
-        base_mod.request_shutdown(timeout=0.1)
+        # Every singleton is None, so there is nothing to drain: timeout=0.
+        base_mod.request_shutdown(timeout=0)
         assert base_mod.shutdown_requested.is_set()
 
     def test_calls_cancel_on_running_jobs(self, isolated_singletons):
@@ -80,7 +81,8 @@ class TestRequestShutdown:
         for name, fake in fakes.items():
             setattr(jobs_pkg, name, fake)
 
-        base_mod.request_shutdown(timeout=0.5)
+        # The fakes' threads have already exited, so no join blocks.
+        base_mod.request_shutdown(timeout=0.01)
 
         for name, fake in fakes.items():
             assert fake.cancel_called is True, f"{name}.cancel() was not called"
@@ -89,7 +91,9 @@ class TestRequestShutdown:
         slow = _FakeJob(running=True, slow=True)
         jobs_pkg.bulk_scrape_job = slow
 
-        base_mod.request_shutdown(timeout=0.5)
+        # join() returns as soon as the thread exits, so a generous timeout
+        # costs nothing on the happy path and cannot flake on a slow runner.
+        base_mod.request_shutdown(timeout=5.0)
         # The thread-liveness check is the real contract: cancel() set the exit
         # event, so request_shutdown's join() must have observed the thread exit
         # before returning. A wall-clock bound on top of that is flake-bait on
@@ -98,27 +102,30 @@ class TestRequestShutdown:
 
     def test_timeout_caps_drain_wait(self, isolated_singletons):
         """If a worker ignores cancel and refuses to exit, request_shutdown
-        must still return within roughly `timeout` seconds."""
-        stuck = _FakeJob(running=True, slow=True)
+        must cap its wait at `timeout` seconds rather than block on the
+        worker. A recording stand-in for the thread replaces a real stuck
+        thread, so the test never blocks on the wall clock."""
+        class _StuckThread:
+            def __init__(self):
+                self.join_timeouts = []
+
+            def is_alive(self):
+                return True
+
+            def join(self, timeout=None):
+                self.join_timeouts.append(timeout)
+
+        stuck = _FakeJob(running=True)
+        stuck._thread = _StuckThread()
         def stubborn_cancel():
             stuck.cancel_called = True
         stuck.cancel = stubborn_cancel
         jobs_pkg.bulk_scrape_job = stuck
 
-        try:
-            base_mod.request_shutdown(timeout=0.3)
+        base_mod.request_shutdown(timeout=0.3)
 
-            # The wall-clock `assert elapsed < 1.0` upper bound was dropped:
-            # on a loaded CI runner (single vCPU, neighbour-noisy VM) the
-            # join() + Python overhead can easily push past 1.0 s for a
-            # 0.3 s timeout, producing a flaky failure that says nothing
-            # about the actual contract. The thread-liveness assertion
-            # below is the load-independent statement of intent: if the
-            # stuck worker is still alive after shutdown returns, the
-            # timeout *must* have capped the wait (otherwise join would
-            # have blocked until the thread exited).
-            assert stuck._thread.is_alive(), \
-                "stuck worker should still be running after timed-out shutdown"
-        finally:
-            stuck._exit.set()
-            stuck._thread.join(timeout=1.0)
+        assert stuck.cancel_called is True
+        joins = stuck._thread.join_timeouts
+        assert len(joins) == 1, f"expected one bounded join, got {joins!r}"
+        assert joins[0] is not None, "join() must be bounded, never unbounded"
+        assert 0 < joins[0] <= 0.3, f"join timeout {joins[0]!r} exceeds the cap"

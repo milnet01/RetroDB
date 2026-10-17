@@ -12,14 +12,14 @@
 # slips an inline handler back in trips the pin instead of waiting for a
 # manual CSP-console audit.
 
-from tests._util import REPO_ROOT, read_source
-
 import pytest
 import pathlib
 import re
 
+from tests import _util
 
-REPO_ROOT = pathlib.Path(REPO_ROOT)
+
+REPO_ROOT = pathlib.Path(_util.REPO_ROOT)
 TEMPLATES_DIR = REPO_ROOT / 'templates'
 
 
@@ -50,23 +50,28 @@ class TestInlineScriptNonces:
         )
 
     def test_every_template_with_script_uses_nonce(self):
-        """Forward-pin: the count of nonced inline `<script nonce=...>`
-        blocks matches the total count of inline-script-bearing templates.
-        Catches the case where a future commit re-introduces `<script>`
-        without `nonce=`."""
-        nonced = 0
+        """Every inline `<script ...>` opening tag — whatever its other
+        attributes — carries the per-request nonce. Widens the bare-`<script>`
+        gate above to tags with attributes (`<script type=...>`), and replaces
+        a hand-maintained count floor that drifted as templates changed.
+        Tags with `src=` are external and need no nonce. Only tags that open
+        a line are checked, so `<script>` written inside a JS comment or
+        string is not mistaken for a tag."""
+        tag_pattern = re.compile(r'^[ \t]*(<script\b[^>]*>)', re.MULTILINE)
+        inline = 0
+        offenders = []
         for path in _iter_template_files():
-            nonced += len(re.findall(
-                r'<script nonce="{{ csp_nonce }}">',
-                path.read_text(encoding='utf-8'),
-            ))
-        # Pin: as of FU.1 this is at least 45 (38 templates, base.html has 7,
-        # one template has 2 → ~46). Hard-floor at 40 so a regression that
-        # drops a few still trips here.
-        assert nonced >= 40, (
-            f"Only {nonced} nonced inline scripts found — FU.1 closed at "
-            f"~46. A nonced block must have been replaced with a bare "
-            f"`<script>` (which CSP enforcing will block)."
+            for m in tag_pattern.finditer(path.read_text(encoding='utf-8')):
+                tag = m.group(1)
+                if 'src=' in tag:
+                    continue
+                inline += 1
+                if 'nonce="{{ csp_nonce }}"' not in tag:
+                    offenders.append(f"{path.relative_to(REPO_ROOT)}: {tag}")
+        assert inline > 0, "found no inline <script> tags — the scan is broken"
+        assert not offenders, (
+            "Inline <script> tags must carry `nonce=\"{{ csp_nonce }}\"`:\n  "
+            + "\n  ".join(offenders)
         )
 
 

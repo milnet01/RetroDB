@@ -162,9 +162,17 @@ class TestMigrateOne:
 
         items, _ = _build_work_list()
         assert len(items) == 1
+        original_size = (webp_env['tmp'] / 'images' / 'boxart' / 'g.jpg').stat().st_size
         status, saved = _migrate_one(items[0])
         assert status == 'converted'
-        assert saved >= 0
+        assert isinstance(saved, int)
+        # A flat-colour 800x1120 JPEG shrinks sharply as WebP, so a real
+        # saving is the expected outcome; `saved >= 0` held even when the
+        # production code clamps a growth to zero.
+        new_size = (webp_env['tmp'] / 'images' / 'boxart' / 'g.webp').stat().st_size
+        assert new_size < original_size, (original_size, new_size)
+        assert saved == original_size - new_size
+        assert saved > 0
 
         # On disk: .webp exists, .jpg is gone.
         assert (webp_env['tmp'] / 'images' / 'boxart' / 'g.webp').exists()
@@ -329,9 +337,58 @@ class TestWebPMigrateJobLifecycle:
 
     def test_status_snapshot_holds_lock(self):
         """get_status reads every shared counter under self._lock to avoid
-        torn reads against a running worker (Pass 40.9 convention)."""
-        import inspect
+        torn reads against a running worker (Pass 40.9 convention).
+
+        Behavioural, not a source grep: the job's lock is swapped for one
+        that wraps the real lock and rewrites the counters as it is taken
+        (state A, what a worker left behind) and again as it is released
+        (state B, a worker write racing in afterwards). A snapshot read
+        entirely inside the lock equals A; any field read before acquiring
+        or after releasing shows up as a zero or a B value."""
         from services.jobs.webp_migrate import WebPMigrateJob
 
-        src = inspect.getsource(WebPMigrateJob.get_status)
-        assert 'with self._lock' in src
+        job = WebPMigrateJob()
+        state_a = {
+            'running': True, 'cancelled': False, 'completed': False,
+            'current_index': 7, 'total_files': 10,
+            'current_file': 'a.jpg', 'current_type': 'boxart',
+            'converted_count': 5, 'skipped_count': 1, 'failed_count': 1,
+            'bytes_saved': 1234, 'error_message': None,
+        }
+        state_b = {
+            'running': False, 'cancelled': True, 'completed': True,
+            'current_index': 9, 'total_files': 11,
+            'current_file': 'b.png', 'current_type': 'fanart',
+            'converted_count': 8, 'skipped_count': 0, 'failed_count': 1,
+            'bytes_saved': 9999, 'error_message': 'later write',
+        }
+
+        class _RewritingLock:
+            def __init__(self, real):
+                self._real = real
+
+            def __enter__(self):
+                self._real.acquire()
+                for k, v in state_a.items():
+                    setattr(job, k, v)
+                return self
+
+            def __exit__(self, *exc):
+                for k, v in state_b.items():
+                    setattr(job, k, v)
+                self._real.release()
+                return False
+
+        job._lock = _RewritingLock(threading.Lock())
+        snap = job.get_status()
+
+        assert {
+            'running': snap['running'], 'cancelled': snap['cancelled'],
+            'completed': snap['completed'], 'current_index': snap['current'],
+            'total_files': snap['total'], 'current_file': snap['current_file'],
+            'current_type': snap['current_type'],
+            'converted_count': snap['converted'], 'skipped_count': snap['skipped'],
+            'failed_count': snap['failed'], 'bytes_saved': snap['bytes_saved'],
+            'error_message': snap['error_message'],
+        } == state_a
+        assert snap['percent'] == 70

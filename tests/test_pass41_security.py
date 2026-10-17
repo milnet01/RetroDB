@@ -5,7 +5,7 @@
 # 14-agent independent review.  Each sub-item gets narrow unit checks that
 # fail if the fix is reverted.
 #
-# Pass 45.21 audit (2026-04-27): see test_pass40_security.py for the full
+# Pass 45.21 audit (2026-04-27): see test_pass40_1_8_security.py for the full
 # bucket philosophy. Tests here that look like source-grep are kept on
 # purpose where the contract IS a codebase invariant — migration FK rules,
 # JS XSS patterns, decorator-stack pins (functional alternative needs

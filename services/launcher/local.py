@@ -8,6 +8,7 @@
 #   launch()  -> Popen, register handle
 #   status()  -> proc.poll(); transition to 'exited' on first non-None
 #   kill()    -> SIGTERM, poll up to timeout_s, then SIGKILL
+#   wait()    -> block until the child exits (or timeout_s passes)
 #
 # stderr is drained into a 4KB ring buffer (last bytes wins) so a quickly-
 # exiting emulator's failure can be surfaced to the user.
@@ -98,6 +99,19 @@ class LocalLauncher:
 
         if entry.exit_time is None:
             self._registry._mark_exited(token, exit_time=time.time())
+        return self._status_from_entry(entry)
+
+    def wait(self, token: str, *, timeout_s: Optional[float] = None) -> LaunchStatus:
+        """Block until the child exits, then return its status.
+
+        Raises subprocess.TimeoutExpired if it is still running after
+        timeout_s seconds. Not part of the Launcher protocol: callers that
+        hold a LocalLauncher (tests, chiefly) use it to join a child
+        instead of polling status()."""
+        entry = self._registry.get(token)
+        if entry is None:
+            raise LauncherError(f"unknown token: {token}")
+        entry.proc.wait(timeout=timeout_s)
         return self._status_from_entry(entry)
 
     def active(self) -> list[LaunchHandle]:

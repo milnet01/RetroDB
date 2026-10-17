@@ -38,10 +38,17 @@ def db():
 @pytest.fixture
 def seeded_db(db):
     """`db` with emulator seed data loaded — common setup for three tests
-    that previously each repeated the seed call inline."""
+    that previously each repeated the seed call inline.
+
+    `db` is module-scoped and the seeder commits, so a rollback cannot undo
+    the seed: teardown deletes the seeded rows instead, leaving `db` empty
+    for the next test whatever the run order."""
     from services.emulator_seeder import seed_emulators_from_file
     seed_emulators_from_file(db, _SEEDS_PATH)
-    return db
+    yield db
+    db.execute("DELETE FROM system_emulators")
+    db.execute("DELETE FROM emulators")
+    db.commit()
 
 
 def test_seeder_inserts_emulators(seeded_db):
@@ -109,8 +116,13 @@ def test_seeder_is_idempotent(db):
     that breaks every time someone adds an emulator to the seed file."""
     from services.emulator_seeder import seed_emulators_from_file
 
-    seed_emulators_from_file(db, _SEEDS_PATH)
     c = db.cursor()
+    # Precondition: start from empty tables, so the first call below is a
+    # real first seed and not a repeat of a sibling test's seed.
+    assert c.execute("SELECT COUNT(*) FROM emulators").fetchone()[0] == 0
+    assert c.execute("SELECT COUNT(*) FROM system_emulators").fetchone()[0] == 0
+
+    seed_emulators_from_file(db, _SEEDS_PATH)
     emu_before = c.execute("SELECT COUNT(*) FROM emulators").fetchone()[0]
     se_before = c.execute("SELECT COUNT(*) FROM system_emulators").fetchone()[0]
     # Sanity floor — seed file isn't empty.

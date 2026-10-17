@@ -319,7 +319,7 @@ End-to-end checklist for a new remote source `foo`:
 6. **Tests** (required for landing):
    - `tests/test_scrape_fill_only.py` — add a test exercising `apply_foo_to_game` with an existing populated row + an empty API response; assert every column survives. Mirror the IGDB/TGDB tests.
    - `tests/test_hybrid_scraper.py` — pin per-source scoring extras against `scraper/match_scorer.py`.
-   - `tests/test_pass40_security.py` (or successor) — if `foo` downloads images, add SSRF + redirect-chain tests asserting it goes through `base_scraper.download_image`.
+   - `tests/test_pass40_9_16_security.py` (the Pass 40 SSRF tests) — if `foo` downloads images, add SSRF + redirect-chain tests asserting it goes through `base_scraper.download_image`.
 
 7. **Docs** — extend §2 source inventory; add `foo` to the §4 default priority order if it ships enabled; update CLAUDE.md "Scraper fill-only invariant" only if `foo` introduces a new exception (it shouldn't).
 

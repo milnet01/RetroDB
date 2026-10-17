@@ -8,22 +8,13 @@ Verifies migrations 007, 008, 009 reshape their target tables correctly:
     pick up user_id with legacy rows backfilled to admin
 """
 
-import sqlite3
 
 import pytest
 
 from services import migrations
+from tests._util import open_db_named as _open
 
 
-def _open(path):
-    # NOTE: a near-twin exists in tests/test_migrations.py without the
-    # `row_factory = sqlite3.Row` line. Kept separate intentionally —
-    # this file's tests use name access (row['col']), the other uses
-    # positional (row[0]). Don't merge without auditing both call
-    # patterns.
-    conn = sqlite3.connect(path)
-    conn.row_factory = sqlite3.Row
-    return conn
 
 
 def _seed_admin(conn):

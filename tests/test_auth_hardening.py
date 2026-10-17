@@ -7,7 +7,7 @@
 # and collectively they cover the pass. Where DB state matters we use
 # `session_transaction()` to stub `session['user_id']` and seed the DB
 # inline — the pattern the existing tests (test_etag_and_gzip.py,
-# test_input_hardening.py) already use.
+# test_input_hardening_app.py) already use.
 #
 # Pass 45.21 audit (2026-04-27): rename-rom traversal test rewritten to
 # exercise safe_filename() directly. Rate-limit-on-change-password test
@@ -327,7 +327,9 @@ class TestPerUserPlatformTokens:
     (b) per-(user, platform) isolation so one user's tokens can't leak to
     another, and (c) clear_tokens() truly removes the row."""
 
-    def _isolated_db(self, tmp_path, monkeypatch):
+    @pytest.fixture
+    def isolated_db(self, tmp_path, monkeypatch):
+        """A migrated on-disk DB under tmp_path, wired in as config.DB_PATH."""
         import sqlite3
         from services import migrations
         db_path = str(tmp_path / 'tokens.db')
@@ -349,40 +351,35 @@ class TestPerUserPlatformTokens:
         conn.close()
         return db_path
 
-    def test_psn_save_and_load_round_trip(self, tmp_path, monkeypatch):
-        self._isolated_db(tmp_path, monkeypatch)
+    def test_psn_save_and_load_round_trip(self, isolated_db):
         from services.platform_tokens import save_tokens, load_tokens
         save_tokens(1, 'psn', {'access_token': 'abc', 'refresh_token': 'def'})
         got = load_tokens(1, 'psn')
         assert got == {'access_token': 'abc', 'refresh_token': 'def'}
 
-    def test_tokens_isolated_between_users(self, tmp_path, monkeypatch):
-        self._isolated_db(tmp_path, monkeypatch)
+    def test_tokens_isolated_between_users(self, isolated_db):
         from services.platform_tokens import save_tokens, load_tokens
         save_tokens(1, 'psn', {'access_token': 'admin_token'})
         save_tokens(2, 'psn', {'access_token': 'editor_token'})
         assert load_tokens(1, 'psn') == {'access_token': 'admin_token'}
         assert load_tokens(2, 'psn') == {'access_token': 'editor_token'}
 
-    def test_tokens_isolated_between_platforms(self, tmp_path, monkeypatch):
-        self._isolated_db(tmp_path, monkeypatch)
+    def test_tokens_isolated_between_platforms(self, isolated_db):
         from services.platform_tokens import save_tokens, load_tokens
         save_tokens(1, 'psn', {'a': 1})
         save_tokens(1, 'xbox', {'b': 2})
         assert load_tokens(1, 'psn') == {'a': 1}
         assert load_tokens(1, 'xbox') == {'b': 2}
 
-    def test_clear_tokens_removes_row(self, tmp_path, monkeypatch):
-        self._isolated_db(tmp_path, monkeypatch)
+    def test_clear_tokens_removes_row(self, isolated_db):
         from services.platform_tokens import save_tokens, load_tokens, clear_tokens
         save_tokens(1, 'psn', {'access_token': 'abc'})
         clear_tokens(1, 'psn')
         assert load_tokens(1, 'psn') is None
 
-    def test_save_with_no_user_id_is_noop(self, tmp_path, monkeypatch):
+    def test_save_with_no_user_id_is_noop(self, isolated_db):
         """Defence-in-depth: a misconfigured caller that passes user_id=None
         must not write a row that would later be ambiguous to read."""
-        self._isolated_db(tmp_path, monkeypatch)
         from services.platform_tokens import save_tokens, load_tokens
         save_tokens(None, 'psn', {'access_token': 'abc'})
         # Nothing to load for any real user.

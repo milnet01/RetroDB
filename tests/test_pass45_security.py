@@ -43,7 +43,7 @@ class TestPass45_1TrackProgressPermission:
         from services.auth import ROLE_PERMISSIONS
         assert 'track_progress' in ROLE_PERMISSIONS['viewer']
 
-    def test_permission_denied_on_api_returns_403_json(self, monkeypatch):
+    def test_permission_denied_on_api_returns_403_json(self, monkeypatch, admin_test_client):
         """A logged-in user who lacks the permission must receive a 403
         with the canonical JSON envelope on /api/* — not a 302 to /dashboard
         (which fetch() with credentials follows transparently and turns the
@@ -58,9 +58,7 @@ class TestPass45_1TrackProgressPermission:
         We now monkeypatch ``get_current_user`` directly (so the decorator
         sees a real admin) AND seed a matching CSRF token, so the 403 is
         truly the permission decorator's response."""
-        import app as app_module
         from services import auth as auth_mod
-        import settings_manager as _settings_manager
 
         # Stash the permission map, drop track_progress so the decorator
         # denies access. monkeypatch restores on teardown — atomic with the
@@ -71,20 +69,12 @@ class TestPass45_1TrackProgressPermission:
 
         # Bypass the DB-backed user loader and the first-time-setup redirect
         # (CI's empty data/ directory has no settings.json → 302 to /setup).
-        fake_admin = {'id': 1, 'username': 'admin-stub', 'role': 'admin'}
-        monkeypatch.setattr(app_module, 'get_current_user', lambda: fake_admin)
-        monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
-        monkeypatch.setattr(_settings_manager, 'load_settings',
-                            lambda: {'setup_completed': True})
-
-        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
-        with app_module.app.test_client() as c:
-            with c.session_transaction() as sess:
-                sess['_csrf_token'] = 'pass45_1-csrf-token'
+        client, csrf = admin_test_client()
+        with client as c:
             resp = c.post(
                 '/api/game/1/completion',
                 json={'status': 'played'},
-                headers={'X-CSRF-Token': 'pass45_1-csrf-token'},
+                headers={'X-CSRF-Token': csrf},
                 follow_redirects=False,
             )
 
@@ -215,11 +205,10 @@ class TestPass45_3AiFillIntFields:
     Pass 45.3 skips the write when an int field coerces to 0."""
 
     @staticmethod
-    def _capture_updates(monkeypatch, *, ai_data, game_row):
+    def _capture_updates(monkeypatch, admin_test_client, *, ai_data, game_row):
         """Drive routes.games_ai.api_game_ai_fill end-to-end with stubbed I/O
         and return the (sql, values) tuple passed to ``execute``."""
 
-        import app as app_module
         import routes.games_ai as ga
         import scraper.scrape_ai as scrape_ai
         import scraper.hybrid_scraper as hybrid
@@ -251,29 +240,15 @@ class TestPass45_3AiFillIntFields:
                             lambda _sid: None)
 
         # app.before_request runs `get_current_user()` and writes the result
-        # to `g.user`; bypass the DB lookup with a fake admin so editor_required
-        # admits the POST.
-        fake_admin = {'id': 1, 'username': 'admin-stub', 'role': 'admin'}
-        monkeypatch.setattr(app_module, 'get_current_user',
-                            lambda: fake_admin)
-        monkeypatch.setattr(app_module, 'get_user_settings',
-                            lambda _uid: None)
-
-        # In CI the data/ dir is empty, so app.check_first_time_setup sees no
-        # rom_path and no `setup_completed` flag and 302s every endpoint to
-        # /setup. Stub settings_manager.load_settings to claim setup is done
-        # so the route under test is the one that actually runs.
-        import settings_manager as _settings_manager
-        monkeypatch.setattr(_settings_manager, 'load_settings',
-                            lambda: {'setup_completed': True})
-
-        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
-        with app_module.app.test_client() as c:
-            with c.session_transaction() as sess:
-                sess['_csrf_token'] = 'test-csrf-token-pass45_3'
+        # to `g.user`; the stub admin lets editor_required admit the POST.
+        # In CI the data/ dir is empty, so app.check_first_time_setup would
+        # 302 every endpoint to /setup; the fixture reports setup as done so
+        # the route under test is the one that actually runs.
+        client, csrf = admin_test_client()
+        with client as c:
             resp = c.post(
                 '/api/game/1/ai-fill',
-                headers={'X-CSRF-Token': 'test-csrf-token-pass45_3'},
+                headers={'X-CSRF-Token': csrf},
             )
 
         assert resp.status_code == 200, (
@@ -304,11 +279,11 @@ class TestPass45_3AiFillIntFields:
         base.update(overrides)
         return base
 
-    def test_ai_zero_does_not_overwrite_curated_players(self, monkeypatch):
+    def test_ai_zero_does_not_overwrite_curated_players(self, monkeypatch, admin_test_client):
         """Curated players=4, AI returns players='0'.  Pre-fix: UPDATE wrote
         players=0.  Post-fix: no players clause is emitted."""
         captured = self._capture_updates(
-            monkeypatch,
+            monkeypatch, admin_test_client,
             ai_data={'players': '0'},
             game_row=self._row(players=4),
         )
@@ -320,12 +295,12 @@ class TestPass45_3AiFillIntFields:
             f"(scraper-fill-only invariant). Got SQL: {sql!r}"
         )
 
-    def test_ai_zero_does_not_write_spurious_critic_score(self, monkeypatch):
+    def test_ai_zero_does_not_write_spurious_critic_score(self, monkeypatch, admin_test_client):
         """Curated critic_score=NULL, AI returns critic_score='0'.  Pre-fix:
         a `critic_score = 0` clause was emitted (an unknown score persisted
         as a real 0/100).  Post-fix: skipped."""
         captured = self._capture_updates(
-            monkeypatch,
+            monkeypatch, admin_test_client,
             ai_data={'critic_score': '0'},
             game_row=self._row(critic_score=None),
         )
@@ -334,11 +309,11 @@ class TestPass45_3AiFillIntFields:
             f"AI '0' must not write a spurious zero score. Got SQL: {sql!r}"
         )
 
-    def test_ai_nonzero_int_still_applies(self, monkeypatch):
+    def test_ai_nonzero_int_still_applies(self, monkeypatch, admin_test_client):
         """Sanity check: a real int from AI still flows through.  Curated
         players=NULL, AI returns players='2' → UPDATE writes players=2."""
         captured = self._capture_updates(
-            monkeypatch,
+            monkeypatch, admin_test_client,
             ai_data={'players': '2'},
             game_row=self._row(players=None),
         )
@@ -351,11 +326,11 @@ class TestPass45_3AiFillIntFields:
             f"Expected players=2 in update values, got {values!r}"
         )
 
-    def test_ai_invalid_int_string_skipped(self, monkeypatch):
+    def test_ai_invalid_int_string_skipped(self, monkeypatch, admin_test_client):
         """Curated players=4, AI returns players='unknown' (un-parseable).
         The except-clause already skipped this; pin it in regression."""
         captured = self._capture_updates(
-            monkeypatch,
+            monkeypatch, admin_test_client,
             ai_data={'players': 'unknown'},
             game_row=self._row(players=4),
         )
@@ -563,7 +538,7 @@ class TestPass45_4XssSinks:
 
     These are template/JS-level sinks, so the tests are source-grep against
     the contract (mirrors Pass 40.13's pattern in
-    ``test_pass40_security.py::TestPass40_13TextContentDefault``)."""
+    ``test_pass40_9_16_security.py::TestPass40_13ShowModalOptInHtml``)."""
 
     @staticmethod
     def _read(rel):
@@ -1252,12 +1227,10 @@ class TestPass45_9CollectorTrophies:
             assert {'id', 'name', 'description', 'icon', 'tier',
                     'category', 'threshold'} <= stub.keys()
 
-    def test_get_does_not_mutate_db(self, tmp_path, monkeypatch):
+    def test_get_does_not_mutate_db(self, tmp_path, monkeypatch, admin_test_client):
         """Functional smoke: GET /api/collector-trophies on a brand-new
         user must not cause any INSERT into collector_trophies."""
-        import app as app_module
         import routes.collector_trophies as ct
-        import settings_manager as _settings_manager
 
         executes = []
 
@@ -1272,14 +1245,9 @@ class TestPass45_9CollectorTrophies:
                             lambda sql, params=(), one=False: None if one else [])
 
         # Bypass auth + setup wizard.
-        fake_user = {'id': 99, 'username': 'test', 'role': 'admin'}
-        monkeypatch.setattr(app_module, 'get_current_user', lambda: fake_user)
-        monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
-        monkeypatch.setattr(_settings_manager, 'load_settings',
-                            lambda: {'setup_completed': True})
-
-        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
-        with app_module.app.test_client() as c:
+        client, _csrf = admin_test_client(
+            user={'id': 99, 'username': 'test', 'role': 'admin'})
+        with client as c:
             resp = c.get('/api/collector-trophies', follow_redirects=False)
 
         assert resp.status_code == 200, (
@@ -1427,53 +1395,37 @@ class TestPass45_11SettingsValidators:
         assert ok is False
         assert 'object' in reason.lower()
 
-    def test_logging_endpoint_rejects_malformed_with_400(self, monkeypatch):
+    def test_logging_endpoint_rejects_malformed_with_400(self, monkeypatch, admin_test_client):
         """End-to-end: POST a non-dict logging body, expect 400 and a
         validator-shaped error message."""
-        import app as app_module
         import settings_manager as _settings_manager
-        fake_admin = {'id': 1, 'username': 'admin-stub', 'role': 'admin'}
-        monkeypatch.setattr(app_module, 'get_current_user', lambda: fake_admin)
-        monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
-        monkeypatch.setattr(_settings_manager, 'load_settings',
-                            lambda: {'setup_completed': True})
         # Belt-and-braces: if validation ever regresses, save_settings must
         # NOT touch the real data/settings.json — Pass 46.4 traced a silent
         # ESRGAN-init outage to a stale `"this is not a dict"` value left
         # in the user's settings.json by an unsandboxed earlier run.
         monkeypatch.setattr(_settings_manager, 'save_settings', lambda _s: True)
-        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
-        with app_module.app.test_client() as c:
-            with c.session_transaction() as sess:
-                sess['_csrf_token'] = 'pass45_11-token'
+        client, csrf = admin_test_client()
+        with client as c:
             resp = c.post(
                 '/api/settings/logging',
                 json='this is not a dict',
-                headers={'X-CSRF-Token': 'pass45_11-token'},
+                headers={'X-CSRF-Token': csrf},
             )
         assert resp.status_code == 400, resp.get_data(as_text=True)
         body = resp.get_json()
         assert body['success'] is False
         assert 'invalid logging settings' in body['error']
 
-    def test_logging_endpoint_rejects_unknown_category(self, monkeypatch):
+    def test_logging_endpoint_rejects_unknown_category(self, monkeypatch, admin_test_client):
         """Unknown log category like 'rce_via_log_init' must be rejected."""
-        import app as app_module
         import settings_manager as _settings_manager
-        fake_admin = {'id': 1, 'username': 'admin-stub', 'role': 'admin'}
-        monkeypatch.setattr(app_module, 'get_current_user', lambda: fake_admin)
-        monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
-        monkeypatch.setattr(_settings_manager, 'load_settings',
-                            lambda: {'setup_completed': True})
         monkeypatch.setattr(_settings_manager, 'save_settings', lambda _s: True)
-        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
-        with app_module.app.test_client() as c:
-            with c.session_transaction() as sess:
-                sess['_csrf_token'] = 'pass45_11-token'
+        client, csrf = admin_test_client()
+        with client as c:
             resp = c.post(
                 '/api/settings/logging',
                 json={'rce_via_log_init': {'info': True}},
-                headers={'X-CSRF-Token': 'pass45_11-token'},
+                headers={'X-CSRF-Token': csrf},
             )
         assert resp.status_code == 400
         assert 'unknown log category' in resp.get_json()['error']
@@ -1550,23 +1502,14 @@ class TestPass45_11SettingsValidators:
         assert cleaned['priority'] == ['esde', 'tgdb', 'igdb', 'rawg', 'screenscraper', 'ai']
         assert cleaned['match_criteria']['title_quality'] == 'close'
 
-    def test_scraper_settings_endpoint_rejects_with_400(self, monkeypatch):
+    def test_scraper_settings_endpoint_rejects_with_400(self, monkeypatch, admin_test_client):
         """End-to-end: bogus priority must return 400 from the route."""
-        import app as app_module
-        import settings_manager as _settings_manager
-        fake_admin = {'id': 1, 'username': 'admin-stub', 'role': 'admin'}
-        monkeypatch.setattr(app_module, 'get_current_user', lambda: fake_admin)
-        monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
-        monkeypatch.setattr(_settings_manager, 'load_settings',
-                            lambda: {'setup_completed': True})
-        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
-        with app_module.app.test_client() as c:
-            with c.session_transaction() as sess:
-                sess['_csrf_token'] = 'pass45_11-token'
+        client, csrf = admin_test_client()
+        with client as c:
             resp = c.post(
                 '/api/scraper-settings',
                 json={'priority': ['../etc/passwd']},
-                headers={'X-CSRF-Token': 'pass45_11-token'},
+                headers={'X-CSRF-Token': csrf},
             )
         assert resp.status_code == 400, resp.get_data(as_text=True)
         assert 'invalid scraper settings' in resp.get_json()['error']
@@ -1614,23 +1557,14 @@ class TestPass45_11SettingsValidators:
         assert ok is True, reason
         assert cleaned['tgdb'] == 'a' * 64
 
-    def test_api_keys_endpoint_rejects_with_400(self, monkeypatch):
+    def test_api_keys_endpoint_rejects_with_400(self, monkeypatch, admin_test_client):
         """End-to-end: bogus type must return 400 from the route."""
-        import app as app_module
-        import settings_manager as _settings_manager
-        fake_admin = {'id': 1, 'username': 'admin-stub', 'role': 'admin'}
-        monkeypatch.setattr(app_module, 'get_current_user', lambda: fake_admin)
-        monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
-        monkeypatch.setattr(_settings_manager, 'load_settings',
-                            lambda: {'setup_completed': True})
-        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
-        with app_module.app.test_client() as c:
-            with c.session_transaction() as sess:
-                sess['_csrf_token'] = 'pass45_11-token'
+        client, csrf = admin_test_client()
+        with client as c:
             resp = c.post(
                 '/api/scraper-api-keys',
                 json={'ra_apikey': 42},
-                headers={'X-CSRF-Token': 'pass45_11-token'},
+                headers={'X-CSRF-Token': csrf},
             )
         assert resp.status_code == 400, resp.get_data(as_text=True)
         assert 'invalid api keys' in resp.get_json()['error']

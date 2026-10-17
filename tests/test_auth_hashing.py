@@ -78,9 +78,9 @@ def test_needs_rehash_flags_legacy_format():
 
 def test_needs_rehash_flags_low_iteration_pbkdf2():
     # Explicitly-prefixed hashes with old iteration counts should also
-    # be flagged for upgrade.
-    old = hash_password("x", iterations=100_000)
-    assert old.startswith("pbkdf2:100000:")
+    # be flagged for upgrade. `needs_rehash` reads only the prefix, so the
+    # hash string is synthesised rather than paying for real PBKDF2 rounds.
+    old = "pbkdf2:100000:" + ("a" * 32) + ":" + ("b" * 64)
     assert needs_rehash(old) is True
 
 

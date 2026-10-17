@@ -90,3 +90,48 @@ def setup_complete(monkeypatch):
     """
     monkeypatch.setattr('app.settings_manager.load_settings',
                         lambda: {'setup_completed': True, 'rom_path': '/tmp'})
+
+
+ADMIN_STUB_USER = {'id': 1, 'username': 'admin-stub', 'role': 'admin'}
+ADMIN_STUB_CSRF = 'admin-stub-csrf-token'
+
+
+@pytest.fixture
+def admin_test_client(monkeypatch):
+    """Factory for a Flask test client signed in as a stub admin.
+
+    Call it as `client, csrf = admin_test_client()`. It stubs, in one place,
+    what route-level tests otherwise inlined one by one:
+      - `app.get_current_user` returns the stub user (no DB user lookup);
+      - `app.get_user_settings` returns None;
+      - `settings_manager.load_settings` reports setup as done, so the
+        first-run gate does not 302 every request to /setup;
+      - `app.config['TESTING']` is True;
+      - the session carries `user_id` and a CSRF token, which is returned
+        for the `X-CSRF-Token` header.
+
+    Keyword arguments:
+      settings — what load_settings returns (default {'setup_completed': True});
+      user     — the stub user dict (default ADMIN_STUB_USER).
+
+    Every patch goes through monkeypatch, so all are undone at teardown.
+    """
+    import app as app_module
+    import settings_manager as _settings_manager
+
+    def _make(*, settings=None, user=None):
+        stub_user = dict(user if user is not None else ADMIN_STUB_USER)
+        stub_settings = dict(settings if settings is not None
+                             else {'setup_completed': True})
+        monkeypatch.setattr(app_module, 'get_current_user', lambda: stub_user)
+        monkeypatch.setattr(app_module, 'get_user_settings', lambda _uid: None)
+        monkeypatch.setattr(_settings_manager, 'load_settings',
+                            lambda: dict(stub_settings))
+        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
+        client = app_module.app.test_client()
+        with client.session_transaction() as sess:
+            sess['user_id'] = stub_user['id']
+            sess['_csrf_token'] = ADMIN_STUB_CSRF
+        return client, ADMIN_STUB_CSRF
+
+    return _make

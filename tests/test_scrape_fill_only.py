@@ -20,9 +20,8 @@ class _PersistentConn:
     scraper's `finally: conn.close()` doesn't discard the test's connection
     before we assert on it.
 
-    The wrapped connection is closed when the wrapper itself is collected.
-    For deterministic close (e.g. on Windows or PyPy where GC is lazier), call
-    .real_close() explicitly."""
+    The `make_conn_with_existing_row` fixture calls .real_close() on teardown,
+    so the connection is released deterministically rather than by GC."""
 
     def __init__(self, conn):
         self._conn = conn
@@ -35,14 +34,6 @@ class _PersistentConn:
 
     def real_close(self):
         """Actually close the underlying connection — used in test teardown."""
-        try:
-            self._conn.close()
-        except Exception:
-            pass
-
-    def __del__(self):
-        # Best-effort: ensure the in-memory DB is released even if a test
-        # forgets to call real_close (c-005 deferred #8 partial fix).
         try:
             self._conn.close()
         except Exception:
@@ -76,14 +67,30 @@ def _make_conn_with_existing_row(**values):
 
 
 @pytest.fixture
+def make_conn_with_existing_row():
+    """Factory over _make_conn_with_existing_row that closes every connection
+    it made on teardown, even when the test fails."""
+    made = []
+
+    def _make(**values):
+        conn = _make_conn_with_existing_row(**values)
+        made.append(conn)
+        return conn
+
+    yield _make
+    for conn in made:
+        conn.real_close()
+
+
+@pytest.fixture
 def noop_download(monkeypatch):
     """Neutralise image-download helpers so tests don't touch the network."""
     monkeypatch.setattr(scrape_igdb, 'download_image', lambda *a, **kw: None)
     monkeypatch.setattr(scrape_thegamesdb, '_download_tgdb_image', lambda *a, **kw: None, raising=False)
 
 
-def test_igdb_apply_preserves_existing_values_when_response_is_empty(monkeypatch, noop_download):
-    conn = _make_conn_with_existing_row(
+def test_igdb_apply_preserves_existing_values_when_response_is_empty(make_conn_with_existing_row, monkeypatch, noop_download):
+    conn = make_conn_with_existing_row(
         id=1, title='Chrono Trigger', publisher='Squaresoft',
         developer='Square', release_date='1995-03-11', genre='RPG',
         rating='92', esrb_rating='T', pegi_rating='12',
@@ -111,8 +118,8 @@ def test_igdb_apply_preserves_existing_values_when_response_is_empty(monkeypatch
     assert row['boxart'] == 'static/images/boxart/1.jpg'
 
 
-def test_tgdb_apply_preserves_existing_values_when_response_is_empty(monkeypatch, noop_download):
-    conn = _make_conn_with_existing_row(
+def test_tgdb_apply_preserves_existing_values_when_response_is_empty(make_conn_with_existing_row, monkeypatch, noop_download):
+    conn = make_conn_with_existing_row(
         id=1, title='Mega Man X', publisher='Capcom',
         developer='Capcom', release_date='1993-12-17', genre='Platformer',
         rating='88', esrb_rating='E', pegi_rating='7',
@@ -186,8 +193,8 @@ class _FailingConn:
 # a curated one and overwrote the screenshots column on the fallback path.
 
 
-def test_igdb_apply_does_not_overwrite_curated_media_and_appends_screenshots(monkeypatch, tmp_path):
-    conn = _make_conn_with_existing_row(
+def test_igdb_apply_does_not_overwrite_curated_media_and_appends_screenshots(make_conn_with_existing_row, monkeypatch, tmp_path):
+    conn = make_conn_with_existing_row(
         id=1, title='Curated Game',
         boxart='curated_box.webp', screenshots='old_ss.webp',
         fanart='curated_fan.webp',
@@ -213,8 +220,8 @@ def test_igdb_apply_does_not_overwrite_curated_media_and_appends_screenshots(mon
     assert len(ss) == 3                             # two new appended
 
 
-def test_tgdb_apply_does_not_overwrite_curated_media_and_appends_screenshots(monkeypatch, tmp_path):
-    conn = _make_conn_with_existing_row(
+def test_tgdb_apply_does_not_overwrite_curated_media_and_appends_screenshots(make_conn_with_existing_row, monkeypatch, tmp_path):
+    conn = make_conn_with_existing_row(
         id=1, title='Curated Game',
         boxart='curated_box.webp', screenshots='old_ss.webp',
         fanart='curated_fan.webp',
@@ -242,9 +249,9 @@ def test_tgdb_apply_does_not_overwrite_curated_media_and_appends_screenshots(mon
     assert len(ss) == 3                             # two new appended
 
 
-def test_igdb_apply_fills_media_when_empty(monkeypatch, tmp_path):
+def test_igdb_apply_fills_media_when_empty(make_conn_with_existing_row, monkeypatch, tmp_path):
     """Counterpart: when media columns are empty, the fallback still fills them."""
-    conn = _make_conn_with_existing_row(id=1, title='Blank Game')
+    conn = make_conn_with_existing_row(id=1, title='Blank Game')
     monkeypatch.setattr(scrape_igdb, 'get_scraper_conn', lambda: conn)
     monkeypatch.setattr(scrape_igdb, 'download_image', lambda *a, **kw: True)
     monkeypatch.setattr(scrape_igdb, 'IMAGE_PATH', str(tmp_path), raising=False)

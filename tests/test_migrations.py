@@ -10,22 +10,15 @@ Verifies the PRAGMA user_version-driven migration runner:
 """
 
 import os
-import sqlite3
 import tempfile
 from datetime import datetime
 
 import pytest
 
 from services import migrations
+from tests._util import open_db_positional as _open
 
 
-def _open(path):
-    # NOTE: a near-twin exists in tests/test_pass31_migrations.py with
-    # `conn.row_factory = sqlite3.Row` set. Kept separate intentionally —
-    # this file's tests use positional row access (row[0]), the other
-    # uses name access (row['col']). Don't merge without auditing both
-    # call patterns.
-    return sqlite3.connect(path)
 
 
 def _seed_legacy(path):
@@ -111,44 +104,63 @@ class TestApplyPending:
             conn.close()
             assert applied == []
 
-    def test_failed_migration_rolls_back_and_keeps_version(self, monkeypatch):
-        """If a migration raises, user_version must NOT advance and any partial
-        DDL must roll back."""
-        with tempfile.TemporaryDirectory() as tmp:
-            path = os.path.join(tmp, 'fail.db')
-            conn = _open(path)
+    @staticmethod
+    def _run_failing_migration(monkeypatch, path):
+        """Apply every real migration plus a synthetic last one that creates
+        a table and then raises. Returns the number of real migrations."""
+        conn = _open(path)
 
-            # Inject a synthetic "004" migration that creates a table then crashes.
-            class BoomModule:
-                @staticmethod
-                def apply(conn):
-                    conn.execute("CREATE TABLE boom_marker (id INTEGER)")
-                    raise RuntimeError("simulated migration failure")
+        class BoomModule:
+            @staticmethod
+            def apply(conn):
+                conn.execute("CREATE TABLE boom_marker (id INTEGER)")
+                raise RuntimeError("simulated migration failure")
 
-            real_load = migrations._load
-            real_list = migrations.MIGRATIONS
+        real_load = migrations._load
+        real_list = migrations.MIGRATIONS
 
-            def fake_load(name):
-                if name == '004_boom':
-                    return BoomModule
-                return real_load(name)
+        def fake_load(name):
+            if name == '004_boom':
+                return BoomModule
+            return real_load(name)
 
-            monkeypatch.setattr(migrations, '_load', fake_load)
-            monkeypatch.setattr(migrations, 'MIGRATIONS', real_list + ['004_boom'])
+        monkeypatch.setattr(migrations, '_load', fake_load)
+        monkeypatch.setattr(migrations, 'MIGRATIONS', real_list + ['004_boom'])
 
+        try:
             with pytest.raises(RuntimeError, match="simulated"):
                 migrations.apply_pending(conn)
+        finally:
+            conn.close()
+        return len(real_list)
+
+    # The two halves of "a failed migration leaves no trace" are separate
+    # tests so a failure in one cannot mask the other.
+
+    def test_failed_migration_keeps_version(self, monkeypatch, tmp_path):
+        """If a migration raises, user_version must NOT advance."""
+        path = str(tmp_path / 'fail.db')
+        real_count = self._run_failing_migration(monkeypatch, path)
+        conn = _open(path)
+        try:
+            # latest_version() now counts the synthetic migration, but the DB
+            # must stay at the last migration that succeeded.
+            assert migrations.current_version(conn) == real_count
+        finally:
             conn.close()
 
-            conn = _open(path)
-            # latest_version() now reports 4 because we patched MIGRATIONS, but
-            # the DB should be stuck at 3 (the last migration that succeeded).
-            assert migrations.current_version(conn) == len(real_list)
+    def test_failed_migration_rolls_back_ddl(self, monkeypatch, tmp_path):
+        """If a migration raises, its partial DDL must roll back."""
+        path = str(tmp_path / 'fail.db')
+        self._run_failing_migration(monkeypatch, path)
+        conn = _open(path)
+        try:
             tables = {
                 row[0]
                 for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
             }
             assert 'boom_marker' not in tables
+        finally:
             conn.close()
 
     def test_db_ahead_of_build_refuses(self):
